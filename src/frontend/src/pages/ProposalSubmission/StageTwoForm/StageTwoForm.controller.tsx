@@ -1,0 +1,314 @@
+import React, { useState, useMemo, useEffect } from 'react'
+import { useSelector } from 'react-redux'
+import { State } from 'reducers'
+
+// types
+import { StageTwoFormProps, ProposalBytesType, ValidationResult } from '../ProposalSybmittion.types'
+
+// components
+import Icon from '../../../app/App.components/Icon/Icon.view'
+import { StyledTooltip } from '../../../app/App.components/Tooltip/Tooltip.view'
+import { Input } from '../../../app/App.components/Input/Input.controller'
+import { StatusFlag } from '../../../app/App.components/StatusFlag/StatusFlag.controller'
+import { TextArea } from '../../../app/App.components/TextArea/TextArea.controller'
+
+// const
+import { checkBytesPairExists, getBytesPairValidationStatus, PROPOSAL_BYTE } from '../ProposalSubmition.helpers'
+import { ProposalStatus } from '../../../utils/TypesAndInterfaces/Governance'
+import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import { isValidLength } from 'utils/validatorFunctions'
+import { isHexadecimal } from 'utils/validatorFunctions'
+
+// styles
+import {
+  BytesWarning,
+  FormHeaderGroup,
+  FormTitleAndFeeContainer,
+  FormTitleContainer,
+  FormTitleEntry,
+} from '../ProposalSubmission.style'
+
+// TODO: valid bytes text for testing: 05050505080508050805050505050505080505050507070017050505050508030b
+export const StageTwoForm = ({
+  proposalId,
+  currentProposal: { proposalData = [], title, locked },
+  currentProposalValidation,
+  updateLocalProposalValidation,
+  updateLocalProposalData,
+  setProposalHasChange,
+}: StageTwoFormProps) => {
+  const {
+    governancePhase,
+    governanceStorage: {
+      fee,
+      config: { successReward, proposalMetadataTitleMaxLength },
+    },
+  } = useSelector((state: State) => state.governance)
+  const isProposalPeriod = governancePhase === 'PROPOSAL'
+
+  // effect to track change of proposal, by tab clicking, and default validate it // TODO: if need uncomment it
+  useEffect(() => {
+    if (!proposalData.some(checkBytesPairExists)) {
+      handleCreateNewByte()
+    }
+  }, [proposalId, proposalData])
+
+  const handleOnBlur = (byte: ProposalBytesType, text: string, type: 'validTitle' | 'validBytes') => {
+    let validationStatus: ValidationResult
+
+    switch (type) {
+      case 'validTitle':
+        validationStatus =
+          isValidLength(text, 1, proposalMetadataTitleMaxLength) &&
+          getBytesPairValidationStatus(text, type) === INPUT_STATUS_SUCCESS
+            ? INPUT_STATUS_SUCCESS
+            : INPUT_STATUS_ERROR
+        updateLocalProposalValidation(
+          {
+            bytesValidation: currentProposalValidation.bytesValidation.map((byteValidity) =>
+              byteValidity.byteId === byte.id ? { ...byteValidity, validTitle: validationStatus } : byteValidity,
+            ),
+          },
+          proposalId,
+        )
+        break
+      case 'validBytes':
+        validationStatus =
+          isHexadecimal(text) && getBytesPairValidationStatus(text, type) === INPUT_STATUS_SUCCESS
+            ? INPUT_STATUS_SUCCESS
+            : INPUT_STATUS_ERROR
+        updateLocalProposalValidation(
+          {
+            bytesValidation: currentProposalValidation.bytesValidation.map((byteValidity) =>
+              byteValidity.byteId === byte.id ? { ...byteValidity, validBytes: validationStatus } : byteValidity,
+            ),
+          },
+          proposalId,
+        )
+        break
+    }
+  }
+
+  const handleOnChange = (byte: ProposalBytesType, text: string, type: 'title' | 'encoded_code') => {
+    updateLocalProposalData(
+      {
+        proposalData: proposalData.map((oldByte) =>
+          oldByte.id === byte.id ? { ...oldByte, [type === 'title' ? 'title' : 'encoded_code']: text } : oldByte,
+        ),
+      },
+      proposalId,
+    )
+
+    setProposalHasChange(true)
+  }
+
+  // adding new empty bytes pair
+  const handleCreateNewByte = () => {
+    const newId = Date.now()
+    const newOrder = Math.max(...proposalData.map(({ order }) => order), 0) + 1
+    // add bytes pair to actual proposal data to display it to user
+    updateLocalProposalData(
+      {
+        proposalData: [
+          ...proposalData,
+          {
+            ...PROPOSAL_BYTE,
+            id: newId,
+            order: newOrder,
+          },
+        ],
+      },
+      proposalId,
+    )
+    updateLocalProposalValidation(
+      {
+        bytesValidation: currentProposalValidation.bytesValidation.concat({
+          validBytes: '',
+          validTitle: '',
+          byteId: newId,
+        }),
+      },
+      proposalId,
+    )
+    setProposalHasChange(true)
+  }
+
+  // removing bytes pair
+  const handleDeletePair = (removeId: number) => {
+    const pairToRemove = proposalData.find(({ id }) => removeId === id)
+
+    if (pairToRemove) {
+      updateLocalProposalData(
+        {
+          proposalData: proposalData.filter(({ id }) => id !== removeId),
+        },
+        proposalId,
+      )
+      updateLocalProposalValidation(
+        {
+          bytesValidation: currentProposalValidation.bytesValidation.filter(({ byteId }) => byteId !== removeId),
+        },
+        proposalId,
+      )
+      setProposalHasChange(true)
+    }
+  }
+
+  // Drag & drop variables and event handlers
+  const [dndBytes, setdndBytes] = useState<Array<ProposalBytesType>>([])
+  const [DnDSelectedProposal, setDnDSeletedProposal] = useState<ProposalBytesType | null>(null)
+  const isDraggable = useMemo(() => proposalData?.length > 1, [proposalData])
+
+  useEffect(() => {
+    setdndBytes(proposalData)
+  }, [proposalData])
+
+  // handling changing order of elements on drop event
+  const dropHandler = (e: React.DragEvent<HTMLElement>, byteToDrop: ProposalBytesType) => {
+    e.preventDefault()
+    if (DnDSelectedProposal) {
+      // reordered and saved client bytes that user sees
+      const updatedBytes = proposalData
+        .map((byte) => {
+          if (byte.id === byteToDrop.id) {
+            return { ...byte, order: Number(DnDSelectedProposal?.order) }
+          }
+
+          if (byte.id === DnDSelectedProposal?.id) {
+            return { ...byte, order: byteToDrop.order }
+          }
+
+          return byte
+        })
+        .sort((a, b) => a.order - b.order)
+
+      setdndBytes(updatedBytes)
+
+      updateLocalProposalData(
+        {
+          proposalData: updatedBytes,
+        },
+        proposalId,
+      )
+    }
+  }
+
+  // removing classNames for under grad event cards
+  const dragRemoveStyling = () => {
+    setdndBytes(
+      dndBytes.map((byte) => ({
+        ...byte,
+        isUnderTheDrop: false,
+      })),
+    )
+  }
+
+  // selecting card to drag
+  const dragStartHandler = (byte: ProposalBytesType) => {
+    setDnDSeletedProposal(byte)
+  }
+
+  // adding class names to under drag cards
+  const dragOverHandler = (e: React.DragEvent<HTMLElement>, bytePairId: number) => {
+    e.preventDefault()
+    setdndBytes(
+      dndBytes.map((byte) => ({
+        ...byte,
+        ...(bytePairId === byte.id && byte.id !== DnDSelectedProposal?.id ? { isUnderTheDrop: true } : {}),
+      })),
+    )
+  }
+
+  return (
+    <>
+      <FormHeaderGroup>
+        <h1>Stage 2</h1>
+        <StatusFlag
+          text={locked ? 'LOCKED' : 'UNLOCKED'}
+          status={locked ? ProposalStatus.DEFEATED : ProposalStatus.EXECUTED}
+        />
+        <a className="info-link" href="https://mavryk.finance/litepaper#governance" target="_blank" rel="noreferrer">
+          <Icon id="question" />
+        </a>
+      </FormHeaderGroup>
+      <FormTitleAndFeeContainer>
+        <FormTitleContainer>
+          <label>1 - Enter Proposal Title</label>
+          <FormTitleEntry>{title}</FormTitleEntry>
+        </FormTitleContainer>
+        <div>
+          <label>2 - Proposal Success Reward</label>
+          <FormTitleEntry>{successReward} MVK</FormTitleEntry>
+        </div>
+        <div>
+          <label>3 - Fee</label>
+          <FormTitleEntry>{fee} XTZ</FormTitleEntry>
+        </div>
+      </FormTitleAndFeeContainer>
+      <BytesWarning>
+        <Icon id="info" />
+        Bytes are executed in FILO. If you want to change the order of execution of the bytes, drag the pair to the
+        desired position.
+      </BytesWarning>
+      <div className="step-bytes">
+        {dndBytes.map((item, i) => {
+          if (!checkBytesPairExists(item)) return null
+          const existInServer = Boolean(proposalData?.find(({ id }) => item.id === id && !item.isLocalBytes))
+          const validityObject = currentProposalValidation.bytesValidation?.find(({ byteId }) => byteId === item.id)
+
+          return (
+            <article
+              key={item.id}
+              className={`${isDraggable ? 'draggabe' : ''} ${item.isUnderTheDrop ? 'underDrop' : ''}`}
+              draggable={isDraggable}
+              onDragLeave={dragRemoveStyling}
+              onDragEnd={dragRemoveStyling}
+              onDragStart={() => dragStartHandler(item)}
+              onDragOver={(e) => dragOverHandler(e, item.id)}
+              onDrop={(e) => dropHandler(e, item)}
+            >
+              <div className="idx">{i + 1}</div>
+              <div className="step-bytes-title">
+                <label>Enter Proposal Bytes Title</label>
+                <Input
+                  type="text"
+                  value={item.title ?? ''}
+                  required
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleOnChange(item, e.target.value, 'title')}
+                  onBlur={(e: React.ChangeEvent<HTMLInputElement>) => handleOnBlur(item, e.target.value, 'validTitle')}
+                  inputStatus={validityObject?.validTitle}
+                  disabled={existInServer || locked}
+                />
+              </div>
+
+              <label>Enter Proposal Bytes Data</label>
+              <TextArea
+                className="step-2-textarea"
+                value={item.encoded_code ?? ''}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                  handleOnChange(item, e.target.value, 'encoded_code')
+                }
+                onBlur={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleOnBlur(item, e.target.value, 'validBytes')}
+                inputStatus={validityObject?.validBytes}
+                disabled={!isProposalPeriod || locked}
+              />
+
+              <div className={`remove-byte ${!isProposalPeriod || locked ? 'disabled' : ''}`}>
+                <StyledTooltip placement="top" title="Delete bytes pair">
+                  <button onClick={() => handleDeletePair(item.id)} className="delete-button">
+                    <Icon id="delete" />
+                  </button>
+                </StyledTooltip>
+              </div>
+            </article>
+          )
+        })}
+        <StyledTooltip placement="top" title="Add bytes pair">
+          <button disabled={!isProposalPeriod || locked} onClick={handleCreateNewByte} className="step-plus-bytes">
+            +
+          </button>
+        </StyledTooltip>
+      </div>
+    </>
+  )
+}

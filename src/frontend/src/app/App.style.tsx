@@ -1,0 +1,70 @@
+import styled, { css } from 'styled-components/macro'
+
+import { MavrykTheme } from '../styles/interfaces'
+
+export const AppStyled = styled.div<{ theme: MavrykTheme; isExpandedMenu?: boolean }>`
+  --carousel-button-size: 30px;
+  --carousel-button-bg: rgb(22 14 63 / 70%);
+  --carousel-button-indent: -15px;
+  min-height: 100vh;
+  padding-left: ${({ isExpandedMenu }) => (isExpandedMenu ? '232px' : '72px')};
+
+  @media screen and (max-width: 1400px) {
+    padding-left: 72px;
+  }
+`
+
+export const AppBg = styled.div<{ theme: MavrykTheme }>`
+  position: fixed;
+  top: 0;
+  left: 0;
+  min-width: 100vw;
+  min-height: 100vh;
+  background-color: ${({ theme }) => theme.containerColor};
+  /* background-image: url('/images/bg.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover; */
+`
+
+export const AppWrapper = styled.div`
+  position: absolute;
+  width: 100vw;
+  top: 0;
+  background: url('/images/grid.svg') repeat center top;
+  /* height: 100vh; */
+  will-change: transform, opacity;
+`
+
+export const EmptyContainer = styled.figure<{ theme: MavrykTheme }>`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  color: ${({ theme }) => theme.headerColor};
+  font-size: 18px;
+  font-weight: 800;
+  flex-direction: column;
+  padding-top: 16px;
+
+  & ~ figure {
+    display: none;
+  }
+
+  &.centered {
+    margin: 50px auto 0 auto;
+  }
+`
+
+export const Truncate = styled.div<{ maxWidth?: number }>`
+  text-overflow: ellipsis;
+  ${({ maxWidth }) =>
+    maxWidth
+      ? css`
+          max-width: ${maxWidth}%;
+        `
+      : ''};
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+`

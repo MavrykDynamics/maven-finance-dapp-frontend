@@ -1,0 +1,37 @@
+import * as React from 'react'
+import { AdminStyled } from './Admin.style'
+import { Button } from '../../app/App.components/Button/Button.controller'
+
+type AdminViewProps = {
+  handleChangeGovernancePeriod: (period: string) => void
+  handleTrackFarm: () => void
+  handleChangeAllAdminsFromGov: () => void
+}
+
+export const AdminView = ({
+                            handleChangeGovernancePeriod,
+                            handleTrackFarm,
+                            handleChangeAllAdminsFromGov,
+                          }: AdminViewProps) => {
+  return (
+    <AdminStyled>
+      <Button
+        text={'Change to Proposal Period'}
+        kind='actionPrimary'
+        onClick={() => handleChangeGovernancePeriod('PROPOSAL')}
+      />
+      <Button
+        text={'Change to Voting Period'}
+        kind='actionPrimary'
+        onClick={() => handleChangeGovernancePeriod('VOTING')}
+      />
+      <Button
+        text={'Change to Time-lock Period'}
+        kind='actionPrimary'
+        onClick={() => handleChangeGovernancePeriod('TIME_LOCK')}
+      />
+      <Button text={'Track Farm'} kind='actionPrimary' onClick={handleTrackFarm} />
+      <Button text={'ChangeAdminsFromGov'} kind='actionPrimary' onClick={handleChangeAllAdminsFromGov} />
+    </AdminStyled>
+  )
+}

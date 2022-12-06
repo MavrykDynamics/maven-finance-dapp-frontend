@@ -1,0 +1,143 @@
+import { TezosToolkit } from '@taquito/taquito'
+import { validateAddress } from '@taquito/utils';
+import { showToaster } from '../app/App.components/Toaster/Toaster.actions'
+import { ERROR } from '../app/App.components/Toaster/Toaster.constants'
+import { AllValidFormTypes } from './TypesAndInterfaces/Forms'
+import type { AppDispatch } from '../app/App.controller'
+import { InputStatusType } from 'app/App.components/Input/Input.constants'
+
+const isIPFS = require('is-ipfs')
+
+/**
+ * File contains different functions used to validate input throughout the dapp
+ */
+export function isJsonString(input: string) {
+  try {
+    JSON.parse(input)
+  } catch (e) {
+    return false
+  }
+  return true
+}
+
+export function isValidHttpUrl(input: string) {
+  let url
+  try {
+    url = new URL(input)
+  } catch (_) {
+    return false
+  }
+
+  return url.protocol === 'http:' || url.protocol === 'https:'
+}
+
+export function isValidIPFSUrl(input: string) {
+  return isIPFS.url(input)
+}
+
+export function isNotAllWhitespace(input: string) {
+  return !(input?.length > 0 && input?.replace(/\s/g, '').length === 0) && input?.length > 0
+}
+
+export function isHexadecimalByteString(input: string) {
+  const a = parseInt(input, 16)
+  return a.toString(16) === input
+}
+
+export function isValidNumberValue(input: number, minValue?: number, maxValue?: number) {
+  if (minValue && !maxValue) {
+    return input >= minValue
+  } else if (!minValue && maxValue) {
+    return input <= maxValue
+  } else if (minValue && maxValue) {
+    return input >= minValue && input <= maxValue
+  } else {
+    return input > 0
+  }
+}
+
+export function getFormErrors(form: AllValidFormTypes) {
+  const errors: [string, boolean | undefined][] = []
+  let errorMessage = 'Please correct:'
+  Object.entries(form).forEach((k) => {
+    if (!k[1]) {
+      errors.push(k)
+      errorMessage += ` ${k[0].charAt(0).toUpperCase() + k[0].substr(1)},`
+    }
+  })
+  errorMessage = errorMessage.substr(0, errorMessage.length - 1)
+  return { errors, errorMessage: errorMessage }
+}
+
+export function validateFormAndThrowErrors(dispatch: AppDispatch, validForm: AllValidFormTypes): boolean {
+  const { errors, errorMessage } = getFormErrors(validForm)
+  if (errors.length === 0) return true
+  else {
+    const errorTitle = 'Invalid fields'
+    dispatch(showToaster(ERROR, errorTitle, errorMessage, 3000))
+    return false
+  }
+}
+
+export function mathRoundTwoDigit(digit: string | number | undefined): number | '' {
+  return digit ? Math.floor(+digit * 100) / 100 : 0
+}
+
+export const containsCode = (str: string) => /<[a-z][\s\S]*>/i.test(str) || /eval/i.test(str)
+
+export function isValidLength(input: string, minLength: number, maxLength: number) {
+  if (!input) return false
+  return input.length >= minLength && input.length <= maxLength
+}
+
+export const isValidRPCNode = (input: string): boolean => {
+  if (!input) return false
+  let result
+
+  try {
+    result = Boolean(new TezosToolkit(input))
+  } catch {
+    result = false
+  }
+  
+  return result;
+}
+
+export const validateFormField = (setFormInputStatus: (value: React.SetStateAction<Record<string, InputStatusType>>) => void) => (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>, maxLength?: number) => {
+  setFormInputStatus((prev) => {
+    const { value, name } = e.target
+
+    // if maxLength is missing, we check only for an empty field
+    const checkMaxLengthField = maxLength ? isValidLength(value, 1, maxLength) ? 'success' : 'error' : 'success'
+    const checkEmptyField = isNotAllWhitespace(value) ? checkMaxLengthField : 'error'
+
+    return { ...prev, [name]: checkEmptyField }
+  })
+}
+
+export const validateFormAddress = (setFormInputStatus: (value: React.SetStateAction<Record<string, InputStatusType>>) => void) => (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
+  setFormInputStatus((prev) => {
+    const { value, name } = e.target
+
+    const isValidAddress = validateTzAddress(value) ? 'success' : 'error'
+    return { ...prev, [name]: isValidAddress }
+  })
+}
+
+export const isHexadecimal = (value: string) => {
+  const regex = /[0-9A-Fa-f]{6}/g;
+  return value.match(regex) ? true : false
+}
+
+export const addressErrors = {
+  0: 'NO_PREFIX_MATCHED',
+  1: 'INVALID_CHECKSUM',
+  2: 'INVALID_LENGTH',
+  3: 'VALID',
+}
+
+export const validateTzAddress = (address: string) => {
+  const resultNumber = validateAddress(address)
+
+  return addressErrors[resultNumber] === addressErrors[3] ? true : false
+}

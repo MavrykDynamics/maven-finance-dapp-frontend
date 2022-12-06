@@ -1,0 +1,26 @@
+**/*.log
+**/node_modules
+**/dist
+**/downloads
+**/screenshots
+**/yarn-error.log
+**/error.log
+**/compiled/*.tz
+
+# Windows
+**/Thumbs.db
+**/ehthumbs.db
+**/Desktop.ini
+**/$RECYCLE.BIN/
+
+# OSX
+**/.DS_Store
+
+# Temp
+./src/contracts
+
+# Webstorm IDE
+./.idea
+**/.idea/**
+/src/frontend/.env
+/yarn.lock

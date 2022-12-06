@@ -1,0 +1,115 @@
+import { InputStatusType } from 'app/App.components/Input/Input.constants'
+
+/**
+ * Types for forms
+ * 1. Proposal Submission
+ * 2. Proposal Update
+ * 3. Financial Request
+ */
+export type AllValidFormTypes =
+  | ValidSubmitProposalForm
+  | ValidProposalUpdateForm
+  | ValidRegisterAsSatelliteForm
+  | ValidEmergencyGovernanceProposalForm
+  | ValidStakeUnstakeForm
+
+export type SubmitProposalForm = {
+  title: string
+  description: string
+  ipfs: string
+  sourceCode: string
+}
+
+export type ValidSubmitProposalForm = {
+  title: boolean | undefined
+  description: boolean | undefined
+  ipfs: boolean | undefined
+  successMVKReward: boolean | undefined
+  invoiceTable: boolean | undefined
+  sourceCode: boolean | undefined
+}
+
+export type SubmitProposalFormInputStatus = {
+  title: InputStatusType
+  description: InputStatusType
+  ipfs: InputStatusType
+  successMVKReward: InputStatusType
+  invoiceTable: InputStatusType
+  sourceCode: InputStatusType
+}
+
+export type ProposalBytesType = {
+  id: number
+  title: string
+  data: string
+}
+
+export type ValidProposalUpdateForm = {
+  title: boolean | undefined
+  proposalBytes: boolean | undefined
+}
+
+export type ProposalUpdateFormInputStatus = {
+  title: InputStatusType
+  proposalBytes: InputStatusType
+}
+
+export type ProposalFinancialRequestForm = {
+  financialData: {
+    jsonString: string
+  }
+}
+
+export type SubmitProposalStageThreeValidation = Array<{
+  token_amount: InputStatusType
+  to__id: InputStatusType
+  title: InputStatusType
+}>
+
+export type RegisterAsSatelliteForm = {
+  name: string
+  description: string
+  website: string
+  fee: number
+  image: string
+}
+
+export type ValidRegisterAsSatelliteForm = {
+  name: boolean | undefined
+  description: boolean | undefined
+  website: boolean | undefined
+  fee: boolean | undefined
+  image: boolean | undefined
+}
+export type RegisterAsSatelliteFormInputStatus = {
+  name: InputStatusType
+  description: InputStatusType
+  website: InputStatusType
+  fee: InputStatusType
+  image: InputStatusType
+}
+
+export type EmergencyGovernanceProposalForm = {
+  title: string
+  description: string
+}
+export type ValidEmergencyGovernanceProposalForm = {
+  title: boolean
+  description: boolean
+}
+export type EmergencyGovernanceProposalFormInputStatus = {
+  title: InputStatusType
+  description: InputStatusType
+}
+
+export type StakeUnstakeForm = {
+  amount: number | ''
+}
+
+export type ValidStakeUnstakeForm = {
+  amount: boolean | undefined
+}
+
+export type StakeUnstakeFormInputStatus = {
+  amount: InputStatusType
+}

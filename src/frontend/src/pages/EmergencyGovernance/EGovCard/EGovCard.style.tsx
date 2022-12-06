@@ -1,0 +1,178 @@
+import styled from 'styled-components/macro'
+import { Card, royalPurpleColor, cyanColor, boxShadowColor, CardHover } from 'styles'
+
+import { MavrykTheme } from '../../../styles/interfaces'
+
+export const EGovHistoryCardStyled = styled(CardHover)`
+  width: 100%;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  margin-top: 0;
+  padding: 0;
+  cursor: pointer;
+  overflow: hidden;
+
+  &.open {
+    border-color: ${cyanColor};
+    box-shadow: 0px 4px 4px ${boxShadowColor};
+  }
+`
+export const EGovHistoryCardTopSection = styled.div<{
+  theme: MavrykTheme
+}>`
+  width: 100%;
+  display: grid;
+  grid-template-columns: 180px 260px 150px auto 130px;
+  padding: 20px 40px;
+  padding-right: 26px;
+
+  &.show {
+    display: block;
+    padding-bottom: 0;
+  }
+
+  .expanded-top {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+
+    .arrow-btn {
+      margin-left: auto;
+      margin-right: 20px;
+    }
+
+    .statusFlag {
+      margin: 0;
+    }
+  }
+`
+
+export const EGovHistoryArrowButton = styled.div<{ theme: MavrykTheme }>`
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  > svg {
+    height: 12px;
+    width: 16px;
+    stroke: ${({ theme }) => theme.headerColor};
+    stroke-width: 5px;
+    fill: none;
+  }
+`
+
+export const EGovHistoryCardTitleTextGroup = styled.div<{ theme: MavrykTheme }>`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+
+  > h3 {
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 21px;
+    color: ${({ theme }) => theme.headerSkyColor};
+  }
+
+  .group-data {
+    margin-bottom: 0;
+    margin-top: 0;
+    color: ${({ theme }) => theme.valueColor};
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 14px;
+    word-break: break-all;
+    padding-right: 16px;
+  }
+
+  > svg {
+    height: 8px;
+    width: 13px;
+    stroke: ${({ theme }) => theme.valueColor};
+    stroke-width: 5px;
+    fill: none;
+  }
+
+  &.statusFlag {
+    margin-left: auto;
+    justify-content: center;
+  }
+`
+
+export const EGovHistoryCardDropDown = styled.div<{
+  theme: MavrykTheme
+}>`
+  width: 100%;
+  height: 0;
+  justify-content: space-between;
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  cursor: pointer;
+  transition: height 0.3s ease-in-out; /* added */
+  overflow: hidden;
+  position: relative;
+
+  .left {
+    display: flex;
+    flex-direction: column;
+    row-gap: 20px;
+
+    .voting-end {
+      font-weight: 700;
+      font-size: 14px;
+      line-height: 21px;
+      color: ${({ theme }) => theme.navTitleColor};
+    }
+
+    .drop {
+      max-width: 200px;
+    }
+
+    .descr {
+      -webkit-line-clamp: 4;
+      -webkit-box-orient: vertical;
+      font-weight: 400;
+      font-size: 14px;
+      line-height: 21px;
+      color: ${({ theme }) => theme.headerSkyColor};
+      display: -webkit-box;
+      overflow: hidden;
+    }
+  }
+
+  .accordion {
+    padding: 5px 40px 20px 40px;
+    text-align: left;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+
+    article {
+      margin: 5px 0;
+    }
+
+    aside {
+      margin-top: 20px;
+      margin-bottom: 32px;
+
+      > div {
+        .text {
+          transform: translateX(-40%);
+        }
+      }
+    }
+  }
+
+  &.show {
+    height: fit-content;
+  }
+
+  &.hide {
+    height: 0; /* changed */
+  }
+`
