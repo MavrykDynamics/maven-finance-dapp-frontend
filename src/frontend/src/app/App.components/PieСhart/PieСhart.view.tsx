@@ -2,8 +2,8 @@ import { PieChart } from 'react-minimal-pie-chart'
 import { SECTOR_STYLES } from './pieChart.const'
 import { PieChartWrap } from './PieChart.style'
 
-// @ts-ignore
-export default function PieChartView({ chartData }: { chartData }) {
+// TODO: type this chart data
+export default function PieChartView({ chartData }: { chartData: any }) {
   return (
     <PieChartWrap>
       <PieChart
