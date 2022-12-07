@@ -30,11 +30,11 @@ export const InputComponentContainer = styled.div<{ theme: MavrykTheme }>`
     transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
     will-change: border-color, box-shadow;
 
-    // for saving styling with autocomplete
     &:-webkit-autofill,
     &:-webkit-autofill:hover,
     &:-webkit-autofill:focus {
-      transition: background-color 600000s 0s, color 600000s 0s;
+      -webkit-text-fill-color: ${({ theme }) => theme.textColor};
+      -webkit-box-shadow: 0 0 0px 1000px ${({ theme }) => theme.backgroundColor} inset;
     }
 
     &.search {
@@ -65,6 +65,13 @@ export const InputComponentContainer = styled.div<{ theme: MavrykTheme }>`
     &.error {
       border: 1px solid ${({ theme }) => theme.downColor};
       color: ${({ theme }) => theme.downColor};
+
+      &:-webkit-autofill,
+      &:-webkit-autofill:hover,
+      &:-webkit-autofill:focus {
+        -webkit-text-fill-color: ${({ theme }) => theme.downColor};
+        -webkit-box-shadow: 0 0 0px 1000px ${({ theme }) => theme.backgroundColor} inset;
+      }
       &:focus {
         box-shadow: 0 0 0 2px ${({ theme }) => theme.downColor}7F;
       }
@@ -73,6 +80,13 @@ export const InputComponentContainer = styled.div<{ theme: MavrykTheme }>`
     &.success {
       border: 1px solid ${({ theme }) => theme.upColor};
       color: ${({ theme }) => theme.upColor};
+
+      &:-webkit-autofill,
+      &:-webkit-autofill:hover,
+      &:-webkit-autofill:focus {
+        -webkit-text-fill-color: ${({ theme }) => theme.upColor};
+        -webkit-box-shadow: 0 0 0px 1000px ${({ theme }) => theme.backgroundColor} inset;
+      }
       &:focus {
         box-shadow: 0 0 0 2px ${({ theme }) => theme.upColor}7F;
       }
