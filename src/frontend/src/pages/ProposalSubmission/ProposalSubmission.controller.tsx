@@ -306,7 +306,7 @@ export const ProposalSubmission = () => {
         <FormButtonContainer>
           <Button
             icon="close-stroke"
-            className="close delete-pair"
+            className="delete-pair"
             text="Drop Proposal"
             kind={ACTION_SECONDARY}
             disabled={!isProposalSubmitted || !isProposalPeriod}

@@ -9,7 +9,6 @@ export const ProposalSubmissionStyled = styled.div<{ theme: MavrykTheme }>`
 `
 
 export const SubmissionStyled = styled.section<{ theme: MavrykTheme }>`
-  min-height: 477px;
   display: flex;
   flex-direction: column;
 `
@@ -19,7 +18,6 @@ export const ProposalSubmissionForm = styled(Card)<{ theme: MavrykTheme }>`
   position: relative;
   margin-top: 20px;
   padding-top: 28px;
-  min-height: 555px;
 
   h1 {
     margin-top: 0;
@@ -135,6 +133,10 @@ export const ProposalSubmissionForm = styled(Card)<{ theme: MavrykTheme }>`
       align-self: flex-end;
       padding: 0 40px;
       margin-top: 20px;
+
+      svg {
+        stroke: ${cyanColor};
+      }
     }
   }
 
@@ -190,7 +192,7 @@ export const FormSubTitle = styled.p<{ theme: MavrykTheme }>`
 export const FormTitleEntry = styled.div<{ theme: MavrykTheme }>`
   font-weight: 500;
   font-size: 14px;
-  line-height: 14px;
+  line-height: 20px;
   padding-left: 5px;
   color: ${({ theme }) => theme.textColor};
   padding-top: 10px;

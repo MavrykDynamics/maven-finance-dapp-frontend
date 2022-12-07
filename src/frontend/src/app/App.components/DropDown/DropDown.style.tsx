@@ -12,6 +12,13 @@ export const DropDownStyled = styled.div<{ theme: MavrykTheme }>`
   font-size: 14px;
   line-height: 24px;
   color: ${({ theme }) => theme.colorText};
+
+  &.cycle-dropdown {
+    ul {
+      max-height: 250px;
+      overflow-y: auto;
+    }
+  }
 `
 
 export const DropDownMenu = styled.div<{ theme: MavrykTheme }>`
