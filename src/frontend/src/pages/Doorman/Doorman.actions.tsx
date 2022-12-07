@@ -388,8 +388,8 @@ export const fetchUserData = async (
 
     return userInfo
   } catch (error) {
+    console.error(error)
     if (error instanceof Error) {
-      console.error(error)
       throw error
     }
     return DEFAULT_USER
