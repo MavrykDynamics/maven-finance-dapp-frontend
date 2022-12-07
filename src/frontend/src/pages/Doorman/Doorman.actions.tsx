@@ -126,8 +126,6 @@ export const stake = (amount: number) => async (dispatch: AppDispatch, getState:
   try {
     const mvkTokenContract = await state.wallet.tezos?.wallet.at(state.contractAddresses.mvkTokenAddress.address)
     const doormanContract = await state.wallet.tezos?.wallet.at(state.contractAddresses.doormanAddress.address)
-    console.log('MvkToken contract', mvkTokenContract)
-    console.log('Doorman contract', doormanContract)
 
     const addOperators = [
         {
@@ -166,9 +164,9 @@ export const stake = (amount: number) => async (dispatch: AppDispatch, getState:
     dispatch(showToaster(SUCCESS, 'Staking done', 'All good :)'))
     dispatch(toggleLoader())
 
-    if (state.wallet.accountPkh) dispatch(updateUserData(state.wallet.accountPkh))
-    dispatch(getMvkTokenStorage())
-    dispatch(getDoormanStorage())
+    if (state.wallet.accountPkh) await dispatch(updateUserData(state.wallet.accountPkh))
+    await dispatch(getMvkTokenStorage())
+    await dispatch(getDoormanStorage())
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
@@ -211,9 +209,9 @@ export const unstake = (amount: number) => async (dispatch: AppDispatch, getStat
     dispatch(showToaster(SUCCESS, 'Unstaking done', 'All good :)'))
     dispatch(toggleLoader())
 
-    if (state.wallet.accountPkh) dispatch(updateUserData(state.wallet.accountPkh))
-    dispatch(getMvkTokenStorage())
-    dispatch(getDoormanStorage())
+    if (state.wallet.accountPkh) await dispatch(updateUserData(state.wallet.accountPkh))
+    await dispatch(getMvkTokenStorage())
+    await dispatch(getDoormanStorage())
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
@@ -248,9 +246,9 @@ export const rewardsCompound = (address: string) => async (dispatch: AppDispatch
     dispatch(showToaster(SUCCESS, 'Compounding done', 'All good :)'))
     dispatch(toggleLoader())
 
-    if (state.wallet.accountPkh) dispatch(updateUserData(state.wallet.accountPkh))
-    dispatch(getMvkTokenStorage())
-    dispatch(getDoormanStorage())
+    if (state.wallet.accountPkh) await dispatch(updateUserData(state.wallet.accountPkh))
+    await dispatch(getMvkTokenStorage())
+    await dispatch(getDoormanStorage())
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
@@ -388,6 +386,8 @@ export const fetchUserData = async (
     //   userInfo.myDoormanRewardsData.myAvailableDoormanRewards +
     //   userInfo.mySatelliteRewardsData.myAvailableSatelliteRewards
 
+    console.log('userInfo', userInfo)
+
     return userInfo
   } catch (error) {
     if (error instanceof Error) {
@@ -408,7 +408,7 @@ export const updateUserData = (accountPkh: string) => async (dispatch: AppDispat
   } = getState()
 
   try {
-    const userData = fetchUserData(accountPkh, activeSatellites, level)
+    const userData = await fetchUserData(accountPkh, activeSatellites, level)
 
     dispatch({
       type: UPDATE_USER_DATA,

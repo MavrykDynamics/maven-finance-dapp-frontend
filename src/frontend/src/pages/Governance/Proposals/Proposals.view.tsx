@@ -58,8 +58,6 @@ export const ProposalsView = ({
 
   const dropDownOptions = useMemo(() => Array.from({ length: cycle - 1 }, (_, idx) => String(idx + 1)), [cycle])
 
-  const isProposalPhase = governancePhase === 'PROPOSAL'
-
   const [showWithDroppped, setShowWithDroppped] = useState(false)
   const [selectedCycle, setSelectedCycle] = useState<undefined | string>()
   const [ddIsOpen, setDdIsOpen] = useState(false)
@@ -153,7 +151,7 @@ export const ProposalsView = ({
             governancePhase,
             proposal,
             timelockProposalId,
-            isProposalPhase,
+            !isHistoryPage,
             cycleHighestVotedProposalId,
             cycleCounter,
           )
@@ -171,7 +169,7 @@ export const ProposalsView = ({
                 <span>{index + 1 + (Number(currentPage) - 1) * LIST_NAMES_MAPPER[listName]}</span>
                 <h4>{proposal.title}</h4>
               </ProposalItemLeftSide>
-              {!isProposalPhase && (
+              {governancePhase !== 'PROPOSAL' && (
                 <CommaNumber
                   className="proposal-voted-mvk"
                   value={votedMVK}
