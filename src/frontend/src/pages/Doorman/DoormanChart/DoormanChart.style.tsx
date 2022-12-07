@@ -3,6 +3,9 @@ import { MavrykTheme } from '../../../styles/interfaces'
 import { Card } from 'styles'
 
 export const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+
   .switcher {
     margin-top: 30px;
     width: 287px;

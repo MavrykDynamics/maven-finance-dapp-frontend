@@ -5,6 +5,10 @@ import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingT
 
 export const ChartCard = styled(Card)<{ theme: MavrykTheme }>`
   padding: 30px 12px 14px 40px;
+  min-height: 415px;
+
+  display: flex;
+  flex-direction: column;
 `
 
 export const ChartSlidingTabButtons = styled(SlidingTabButtons)`

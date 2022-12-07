@@ -48,7 +48,7 @@ export function DoormanChart({ className }: Props) {
 
   return (
     <Wrapper>
-       {tabsList?.length ? <TabSwitcher className='switcher' tabItems={tabsList} onClick={handleChangeTabs} /> : null}
+      {tabsList?.length ? <TabSwitcher className="switcher" tabItems={tabsList} onClick={handleChangeTabs} /> : null}
 
       <Chart
         data={shownData}
@@ -62,6 +62,7 @@ export function DoormanChart({ className }: Props) {
           height: 290,
         }}
         numberOfItemsToDisplay={10}
+        className="dorman-chart"
       />
     </Wrapper>
   )

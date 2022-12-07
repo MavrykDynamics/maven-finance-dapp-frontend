@@ -61,7 +61,7 @@ export const Chart = ({
 }: TradingViewChartProps & { numberOfItemsToDisplay?: number }) => {
   if (data.length < numberOfItemsToDisplay) {
     return (
-      <Plug>
+      <Plug className={className}>
         <div>
           <Icon id="stars" className="icon-stars" />
           <Icon id="cow" className="icon-cow" />

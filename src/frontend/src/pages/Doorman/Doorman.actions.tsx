@@ -386,8 +386,6 @@ export const fetchUserData = async (
     //   userInfo.myDoormanRewardsData.myAvailableDoormanRewards +
     //   userInfo.mySatelliteRewardsData.myAvailableSatelliteRewards
 
-    console.log('userInfo', userInfo)
-
     return userInfo
   } catch (error) {
     if (error instanceof Error) {
