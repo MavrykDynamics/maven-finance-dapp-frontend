@@ -47,6 +47,7 @@ const OracleSatellitesView = ({
   undelegateCallback,
 }: OracleSatellitesViewProps) => {
   const loading = useSelector((state: State) => state.loading.isLoading)
+  const { satelliteMvkIsDelegatedTo } = useSelector((state: State) => state.wallet.user)
 
   const [ddItems, _] = useState(itemsForDropDown.map(({ text }) => text))
   const [ddIsOpen, setDdIsOpen] = useState(false)
@@ -105,6 +106,7 @@ const OracleSatellitesView = ({
               additionaldata={{
                 isAllOracles: true,
                 fullUtemsCount: satellitesList.length,
+                satelliteUserIsDelegatedTo: satelliteMvkIsDelegatedTo,
                 delegateCallback,
                 undelegateCallback,
               }}

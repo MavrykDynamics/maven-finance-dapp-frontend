@@ -22,7 +22,7 @@ const SatelliteNodes = () => {
     dispatch(getDelegationStorage())
     setAllSatellites(activeSatellites)
     setFilteredSatelliteList(activeSatellites)
-  }, [])
+  }, [activeSatellites])
 
   const handleSearch = (e: {
     target: {

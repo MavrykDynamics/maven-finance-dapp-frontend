@@ -72,9 +72,8 @@ export const delegate = (satelliteAddress: string) => async (dispatch: AppDispat
 
   try {
     const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.delegationAddress.address)
-    console.log(contract, 'contract')
     const transaction = await contract?.methods.delegateToSatellite(state.wallet.accountPkh, satelliteAddress).send()
-    console.log(transaction, 'transaction')
+
     dispatch(toggleLoader(ROCKET_LOADER))
     dispatch(showToaster(INFO, 'Delegating...', 'Please wait 30s'))
 
@@ -83,10 +82,10 @@ export const delegate = (satelliteAddress: string) => async (dispatch: AppDispat
     dispatch(showToaster(SUCCESS, 'Delegation done', 'All good :)'))
     dispatch(toggleLoader())
 
-    if (state.wallet.accountPkh) await dispatch(updateUserData(state.wallet.accountPkh))
     await dispatch(getMvkTokenStorage())
     await dispatch(getDelegationStorage())
     await dispatch(getDoormanStorage())
+    if (state.wallet.accountPkh) await dispatch(updateUserData(state.wallet.accountPkh))
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
@@ -121,10 +120,10 @@ export const undelegate = (delegateAddress: string) => async (dispatch: AppDispa
     dispatch(showToaster(SUCCESS, 'Undelegating done', 'All good :)'))
     dispatch(toggleLoader())
 
-    if (state.wallet.accountPkh) await dispatch(updateUserData(state.wallet.accountPkh))
     await dispatch(getMvkTokenStorage())
     await dispatch(getDelegationStorage())
     await dispatch(getDoormanStorage())
+    if (state.wallet.accountPkh) await dispatch(updateUserData(state.wallet.accountPkh))
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)

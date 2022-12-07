@@ -51,6 +51,12 @@ export const Plug = styled.div`
     text-align: center;
     color: ${({ theme }) => theme.textColor};
   }
+
+  &.dorman-chart,
+  &.data-feeds-chart {
+    margin-top: auto;
+    margin-bottom: auto;
+  }
 `
 
 export const ChartStyled = styled.div<{ theme: MavrykTheme }>`
@@ -61,6 +67,12 @@ export const ChartStyled = styled.div<{ theme: MavrykTheme }>`
 
   &.portfolio {
     margin-top: auto;
+  }
+
+  &.dorman-chart,
+  &.data-feeds-chart {
+    margin-top: auto;
+    margin-bottom: auto;
   }
 `
 

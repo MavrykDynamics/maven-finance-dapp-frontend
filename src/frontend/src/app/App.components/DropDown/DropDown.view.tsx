@@ -52,7 +52,7 @@ export const DropDownView = ({
       </DropDownMenu>
       {isOpen && (
         <DropDownListContainer ref={ref} id={'dropDownListContainer'}>
-          <DropDownList>
+          <DropDownList className="scroll-block">
             {items.map((value, idx) => {
               const isActive = itemSelected === value
               return (

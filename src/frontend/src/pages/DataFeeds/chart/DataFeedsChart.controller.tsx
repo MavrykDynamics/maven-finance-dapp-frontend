@@ -60,6 +60,7 @@ export function DataFeedsChart({ className, dataFeedsHistory, dataFeedsVolatilit
         settings={{
           height: 300,
         }}
+        className="data-feeds-chart"
       />
     </ChartCard>
   )
