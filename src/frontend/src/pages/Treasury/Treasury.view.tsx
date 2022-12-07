@@ -63,7 +63,7 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
         </header>
         {factoryAddress ? (
           <div className="info-block">
-            <div className="text">Treasury Factory address</div>
+            <div className="text">Treasury Factory Address</div>
             <div className="value">
               <TzAddress type={BLUE} tzAddress={factoryAddress} hasIcon={true} />
             </div>
@@ -81,9 +81,9 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
               </div>
               <div className="info-block not-global">
                 <p className="text">Treasury Address</p>
-                <p className="value">
-                  <CommaNumber beginningText="$" value={treasury.treasuryTVL} />
-                </p>
+                <div className="value">
+                  <TzAddress type={BLUE} tzAddress={treasury.address} hasIcon={true} />
+                </div>
                 <div />
               </div>
 

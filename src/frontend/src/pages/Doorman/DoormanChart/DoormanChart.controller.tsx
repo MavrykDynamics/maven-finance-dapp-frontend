@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { State } from 'reducers'
 
 // styles
-import { Wrapper } from './DoormanChart.style'
+import { ChartCard, Wrapper } from './DoormanChart.style'
 import { TabSwitcher } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 
 // components
@@ -11,6 +11,7 @@ import { Chart } from '../../../app/App.components/Chart/Chart.view'
 import { TabItem } from '../../../app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import { formatNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { cyanColor } from 'styles'
+import { CHART_TEST_DATA } from 'pages/DashboardPersonal/tabs.const'
 
 type Props = {
   className?: string
@@ -50,20 +51,22 @@ export function DoormanChart({ className }: Props) {
     <Wrapper>
       {tabsList?.length ? <TabSwitcher className="switcher" tabItems={tabsList} onClick={handleChangeTabs} /> : null}
 
-      <Chart
-        data={shownData}
-        colors={{
-          lineColor: cyanColor,
-          areaTopColor: cyanColor,
-          areaBottomColor: 'rgba(119, 164, 242, 0)',
-          textColor: '#CDCDCD',
-        }}
-        settings={{
-          height: 290,
-        }}
-        numberOfItemsToDisplay={10}
-        className="dorman-chart"
-      />
+      <ChartCard>
+        <Chart
+          data={shownData}
+          colors={{
+            lineColor: cyanColor,
+            areaTopColor: cyanColor,
+            areaBottomColor: 'rgba(119, 164, 242, 0)',
+            textColor: '#CDCDCD',
+          }}
+          settings={{
+            height: 370,
+          }}
+          numberOfItemsToDisplay={10}
+          className="dorman-chart"
+        />
+      </ChartCard>
     </Wrapper>
   )
 }

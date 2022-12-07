@@ -13,6 +13,9 @@ export const Wrapper = styled.div`
 `
 
 export const ChartCard = styled(Card)<{ theme: MavrykTheme }>`
-  margin-top: 20px;
   padding: 30px 20px 15px 20px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `

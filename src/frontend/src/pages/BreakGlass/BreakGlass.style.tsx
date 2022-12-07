@@ -35,6 +35,7 @@ export const BGStatusIndicator = styled(BGBlockBaseStyles)<{ theme: MavrykTheme 
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  row-gap: 10px;
   width: 100%;
 
   padding-bottom: 20px;
