@@ -56,7 +56,10 @@ export const ProposalsView = ({
   } = useSelector((state: State) => state.governance)
   const { satelliteLedger } = useSelector((state: State) => state.delegation.delegationStorage)
 
-  const dropDownOptions = useMemo(() => Array.from({ length: cycle - 1 }, (_, idx) => String(idx + 1)), [cycle])
+  const dropDownOptions = useMemo(
+    () => Array.from({ length: cycle - 1 }, (_, idx) => String(cycle - (idx + 1))),
+    [cycle],
+  )
 
   const [showWithDroppped, setShowWithDroppped] = useState(false)
   const [selectedCycle, setSelectedCycle] = useState<undefined | string>()
