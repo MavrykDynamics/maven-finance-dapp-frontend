@@ -8,6 +8,7 @@ type TextAreaProps = {
   name?: string
   className?: string
   value: string | number
+  textAreaMaxLimit?: number
   onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
   onBlur?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
   inputStatus?: TextAreaStatusType
@@ -28,6 +29,7 @@ export const TextArea = ({
   errorMessage,
   disabled,
   required,
+  textAreaMaxLimit = 200,
 }: TextAreaProps) => {
   return (
     <TextAreaView
@@ -42,6 +44,7 @@ export const TextArea = ({
       errorMessage={errorMessage}
       disabled={disabled}
       required={required}
+      textAreaMaxLimit={textAreaMaxLimit}
     />
   )
 }

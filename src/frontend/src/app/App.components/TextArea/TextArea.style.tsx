@@ -4,60 +4,89 @@ import { MavrykTheme } from '../../../styles/interfaces'
 
 export const TextAreaStyled = styled.div`
   position: relative;
+
+  .textArea-wrapper {
+    border-radius: 10px;
+    background-color: ${({ theme }) => theme.backgroundColor};
+    border: 1px solid ${({ theme }) => theme.cardBorderColor};
+    padding: 20px 30px;
+    position: relative;
+    width: 100%;
+
+    &.disabled {
+      opacity: 0.4;
+    }
+
+    &:hover:not(.disabled):not(:focus-within) {
+      background-color: ${({ theme }) => theme.containerColor};
+
+      .textarea {
+        background-color: ${({ theme }) => theme.containerColor};
+      }
+    }
+
+    &:focus-within {
+      box-shadow: 0 0 0 2px ${({ theme }) => theme.primaryColor}19;
+      border-color: ${({ theme }) => theme.primaryColor}7F;
+    }
+
+    &.error {
+      border: 1px solid ${({ theme }) => theme.downColor};
+      &:focus-within {
+        box-shadow: 0 0 0 2px ${({ theme }) => theme.downColor}7F;
+      }
+
+      .textarea {
+        color: ${({ theme }) => theme.downColor};
+      }
+    }
+
+    &.success {
+      border: 1px solid ${({ theme }) => theme.upColor};
+      &:focus-within {
+        box-shadow: 0 0 0 2px ${({ theme }) => theme.upColor}7F;
+      }
+
+      .textarea {
+        color: ${({ theme }) => theme.upColor};
+      }
+    }
+  }
+
+  .textarea {
+    resize: none;
+    background-color: ${({ theme }) => theme.backgroundColor};
+    color: ${({ theme }) => theme.headerColor};
+    border: unset;
+    width: 100%;
+    hyphens: auto;
+    font-family: 'Metropolis', Helvetica, Arial, sans-serif;
+    font-weight: 500;
+    margin: 0;
+    display: block;
+    overflow: visible;
+    transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+
+    &::placeholder {
+      color: ${({ theme }) => theme.inputPlaceholder};
+    }
+  }
 `
 
-export const TextAreaComponent = styled.textarea<{ theme: MavrykTheme }>`
-  min-width: 100%;
-  resize: none;
-  width: 100%;
-  font-family: 'Metropolis', Helvetica, Arial, sans-serif;
-  height: 107px;
-  background-color: ${({ theme }) => theme.backgroundColor};
-  font-weight: 500;
-  border: 1px solid ${({ theme }) => theme.cardBorderColor};
-  margin: 0;
-  color: ${({ theme }) => theme.headerColor};
-  -webkit-appearance: none;
-  appearance: none;
-  display: block;
-  position: relative;
-  padding: 22px 30px 13px 20px;
-  border-radius: 10px;
-  transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-  will-change: border-color, box-shadow;
-
-  &::placeholder {
-    color: ${({ theme }) => theme.inputPlaceholder};
-  }
-  &:disabled {
-    opacity: 0.4;
-  }
-
-  &:hover:not(:disabled) {
-    background-color: ${({ theme }) => theme.containerColor};
-  }
-
-  &:focus {
-    box-shadow: 0 0 0 2px ${({ theme }) => theme.primaryColor}19;
-    border-color: ${({ theme }) => theme.primaryColor}7F;
-  }
+export const TextAreaCounter = styled.div`
+  position: absolute;
+  bottom: -20px;
+  right: 10px;
 
   &.error {
-    border: 1px solid ${({ theme }) => theme.downColor};
     color: ${({ theme }) => theme.downColor};
-    &:focus {
-      box-shadow: 0 0 0 2px ${({ theme }) => theme.downColor}7F;
-    }
   }
 
   &.success {
-    border: 1px solid ${({ theme }) => theme.upColor};
     color: ${({ theme }) => theme.upColor};
-    &:focus {
-      box-shadow: 0 0 0 2px ${({ theme }) => theme.upColor}7F;
-    }
   }
 `
+
 const zoomIn = keyframes`
   from {
     transform:scale(.2);
