@@ -294,6 +294,7 @@ export const BecomeSatelliteView = ({
               }}
               onBlur={() => handleValidate('DESCRIPTION')}
               inputStatus={formInputStatus.description}
+              textAreaMaxLimit={satelliteConfig.satelliteDescriptionMaxLength}
             />
             {updateSatellite ? (
               <label className="label">5 - Edit your fee (%)</label>
@@ -324,7 +325,7 @@ export const BecomeSatelliteView = ({
               listNumber={6}
             />
             <BecomeSatelliteButttons>
-              {(updateSatellite && isSutelliteRegistered) && (
+              {updateSatellite && isSutelliteRegistered && (
                 <Button
                   icon="close-stroke"
                   kind={ACTION_SECONDARY}
@@ -336,7 +337,13 @@ export const BecomeSatelliteView = ({
               )}
               <Button
                 icon="satellite-stroke"
-                text={updateSatellite ? isSutelliteRegistered ? 'Update Satellite Info' : 'Register Satellite' : 'Become a Satellite'}
+                text={
+                  updateSatellite
+                    ? isSutelliteRegistered
+                      ? 'Update Satellite Info'
+                      : 'Register Satellite'
+                    : 'Become a Satellite'
+                }
                 loading={loading}
                 disabled={disabled}
                 kind={ACTION_PRIMARY}

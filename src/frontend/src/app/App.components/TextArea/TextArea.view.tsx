@@ -1,5 +1,6 @@
-import { TextAreaStyled, TextAreaComponent, TextAreaStatus, TextAreaIcon, TextAreaErrorMessage } from './TextArea.style'
+import { TextAreaStyled, TextAreaStatus, TextAreaIcon, TextAreaErrorMessage, TextAreaCounter } from './TextArea.style'
 import { TextAreaStatusType } from './TextArea.controller'
+import { TextareaAutosize } from '@mui/material'
 
 type TextAreaViewProps = {
   icon?: string
@@ -7,6 +8,7 @@ type TextAreaViewProps = {
   name?: string
   className?: string
   value: string | number
+  textAreaMaxLimit: number
   onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
   onBlur?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
   textAreaStatus?: TextAreaStatusType
@@ -27,6 +29,7 @@ export const TextAreaView = ({
   errorMessage,
   disabled,
   required,
+  textAreaMaxLimit,
 }: TextAreaViewProps) => {
   let status = textAreaStatus !== undefined ? textAreaStatus : 'none'
   return (
@@ -36,17 +39,25 @@ export const TextAreaView = ({
           <use xlinkHref={`/icons/sprites.svg#${icon}`} />
         </TextAreaIcon>
       )}
-      <TextAreaComponent
-        name={name}
-        className={`scroll-block ${status}`}
-        placeholder={placeholder}
-        value={value}
-        onChange={onChange}
-        onBlur={onBlur}
-        autoComplete={name}
-        disabled={disabled}
-        required={required}
-      />
+      <div className={`textArea-wrapper ${status} ${disabled ? 'disabled' : ''}`}>
+        <TextareaAutosize
+          minRows={4}
+          aria-label="textArea"
+          placeholder={placeholder}
+          value={value}
+          onChange={onChange}
+          className={`textarea`}
+          name={name}
+          onBlur={onBlur}
+          autoComplete={name}
+          disabled={disabled}
+          required={required}
+        />
+      </div>
+
+      <TextAreaCounter className={status}>
+        {String(value).length}/{textAreaMaxLimit}
+      </TextAreaCounter>
       <TextAreaStatus className={status} />
       {errorMessage && <TextAreaErrorMessage>{errorMessage}</TextAreaErrorMessage>}
     </TextAreaStyled>

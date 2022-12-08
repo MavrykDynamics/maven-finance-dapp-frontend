@@ -3,10 +3,10 @@ import { useDispatch } from 'react-redux'
 
 // type
 import type { InputStatusType } from '../../../app/App.components/Input/Input.constants'
-import { RequestTokenNameMaxLength, RequestPurposeMaxLength  } from 'utils/TypesAndInterfaces/Council'
+import { RequestTokenNameMaxLength, RequestPurposeMaxLength } from 'utils/TypesAndInterfaces/Council'
 
 // helpers
-import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'  
+import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
 
 // view
 import { Input } from '../../../app/App.components/Input/Input.controller'
@@ -103,11 +103,14 @@ export const CouncilFormRequestTokens = ({ requestTokenNameMaxLength, requestPur
     setDdIsOpen(!ddIsOpen)
   }, [ddIsOpen])
 
-  const handleClickDropdownItem = useCallback((e: string) => {
-    const chosenItem = itemsForDropDown.filter((item) => item.text === e)[0]
-    setTokenType(chosenItem)
-    setDdIsOpen(!ddIsOpen)
-  }, [ddIsOpen])
+  const handleClickDropdownItem = useCallback(
+    (e: string) => {
+      const chosenItem = itemsForDropDown.filter((item) => item.text === e)[0]
+      setTokenType(chosenItem)
+      setDdIsOpen(!ddIsOpen)
+    },
+    [ddIsOpen],
+  )
 
   return (
     <CouncilFormStyled onSubmit={handleSubmit}>
@@ -218,10 +221,10 @@ export const CouncilFormRequestTokens = ({ requestTokenNameMaxLength, requestPur
           name="purpose"
           onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
             handleChange(e)
-            handleBlur(e, requestPurposeMaxLength)
           }}
           onBlur={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleBlur(e, requestPurposeMaxLength)}
           inputStatus={formInputStatus.purpose}
+          textAreaMaxLimit={requestPurposeMaxLength}
         />
       </div>
       <div className="btn-group">
