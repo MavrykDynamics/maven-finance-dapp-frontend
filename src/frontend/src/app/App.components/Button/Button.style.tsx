@@ -74,6 +74,12 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
     background-color: ${skyColor};
   }
 
+  &.move-to-next {
+    svg {
+      stroke: ${cyanColor};
+    }
+  }
+
   &.actionSimple {
     width: fit-content;
     height: fit-content;

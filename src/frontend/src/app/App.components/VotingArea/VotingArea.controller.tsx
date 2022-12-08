@@ -112,7 +112,7 @@ export const VotingProposalsArea = ({
     return (
       <VotingAreaStyled className={className}>
         <div className="voted-block">
-          <CommaNumber className="voted-label" value={voteStatistics.forVotesMVKTotal} endingText={'voted MVK'} />
+          <CommaNumber className="voted-label" value={voteStatistics.passVotesMVKTotal ?? 0} endingText={'voted MVK'} />
           {accountPkh ? (
             <Button
               text={'Vote for this Proposal'}

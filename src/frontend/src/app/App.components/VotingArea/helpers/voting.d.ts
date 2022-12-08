@@ -4,6 +4,7 @@ export type VoteStatistics = {
   forVotesMVKTotal: number
   againstVotesMVKTotal?: number
   abstainVotesMVKTotal?: number
+  passVotesMVKTotal?: number
   unusedVotesMVKTotal: number
   quorum: number
 }

@@ -156,8 +156,6 @@ export const updateProposalData =
       }
 
       try {
-        console.log('bytesChanges: ', bytesChanges, 'paymentChanges: ', paymentChanges)
-
         const operationEstimate = await state.wallet.tezos?.estimate.transfer(
           contract.methods.updateProposalData(proposalId, bytesChanges, paymentChanges).toTransferParams(),
         )

@@ -12,6 +12,7 @@ import { TabItem } from '../../../app/App.components/SlidingTabButtons/SlidingTa
 import { formatNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { cyanColor } from 'styles'
 import { CHART_TEST_DATA } from 'pages/DashboardPersonal/tabs.const'
+import { DECIMALS_TO_SHOW } from 'utils/constants'
 
 type Props = {
   className?: string
@@ -43,7 +44,7 @@ export function DoormanChart({ className }: Props) {
   const valueFormatter =
     (label: string) =>
     (value: number): string =>
-      `${formatNumber(true, value)}${label}`
+      `${formatNumber(true, DECIMALS_TO_SHOW, value)}${label}`
 
   const shownData = isStakingHistory ? smvkHistoryData : mvkMintHistoryData
 

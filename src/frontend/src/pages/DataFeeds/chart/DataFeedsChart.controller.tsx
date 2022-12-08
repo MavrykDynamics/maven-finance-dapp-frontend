@@ -11,6 +11,7 @@ import { ChartCard, ChartSlidingTabButtons } from './DataFeedsChart.style'
 import { DataFeedsHistory, DataFeedsVolatility } from '../../Satellites/helpers/Satellites.types'
 import { formatNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { cyanColor } from 'styles'
+import { DECIMALS_TO_SHOW } from 'utils/constants'
 
 type Props = {
   dataFeedsHistory: DataFeedsHistory
@@ -40,7 +41,9 @@ export function DataFeedsChart({ className, dataFeedsHistory, dataFeedsVolatilit
   }
 
   const tickFormater = (value: number): string => {
-    return isHistory ? `$${formatNumber(true, value)}` : `${formatNumber(true, value)}%`
+    return isHistory
+      ? `$${formatNumber(true, DECIMALS_TO_SHOW, value)}`
+      : `${formatNumber(true, DECIMALS_TO_SHOW, value)}%`
   }
 
   const shownData = isHistory ? dataFeedsHistory : dataFeedsVolatility

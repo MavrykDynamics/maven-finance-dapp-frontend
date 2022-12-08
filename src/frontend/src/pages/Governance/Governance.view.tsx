@@ -115,57 +115,58 @@ export const GovernanceView = ({
             rightSideContent.downvoteMvkTotal -
             rightSideContent.upvoteMvkTotal,
         ),
+        passVotesMVKTotal: Number(rightSideContent.passVoteMvkTotal),
         quorum: rightSideContent.minQuorumPercentage,
       })
     }
   }, [rightSideContent, currentRoundProposals])
 
-  const handleProposalRoundVote = (proposalId: number) => {
+  const handleProposalRoundVote = async (proposalId: number) => {
     //TODO: Adjust for the number of votes * voting power each satellite has
-    setVoteStatistics({
-      ...voteStatistics,
-      unusedVotesMVKTotal: voteStatistics.unusedVotesMVKTotal - 1,
-      forVotesMVKTotal: voteStatistics.forVotesMVKTotal + 1,
-    })
-    dispatch(proposalRoundVote(proposalId))
+    // setVoteStatistics({
+    //   ...voteStatistics,
+    //   unusedVotesMVKTotal: voteStatistics.unusedVotesMVKTotal - 1,
+    //   forVotesMVKTotal: voteStatistics.forVotesMVKTotal + 1,
+    // })
+    await dispatch(proposalRoundVote(proposalId))
   }
 
-  const handleVotingRoundVote = (vote: string) => {
+  const handleVotingRoundVote = async (vote: string) => {
     let voteType
     switch (vote) {
       case 'yay':
         voteType = 'yay'
-        setVoteStatistics({
-          ...voteStatistics,
-          forVotesMVKTotal: +voteStatistics.forVotesMVKTotal + 1,
-          unusedVotesMVKTotal: Math.max(+voteStatistics.unusedVotesMVKTotal - 1, 0),
-        })
+        // setVoteStatistics({
+        //   ...voteStatistics,
+        //   forVotesMVKTotal: +voteStatistics.forVotesMVKTotal + 1,
+        //   unusedVotesMVKTotal: Math.max(+voteStatistics.unusedVotesMVKTotal - 1, 0),
+        // })
         break
       case 'nay':
         voteType = 'nay'
-        setVoteStatistics({
-          ...voteStatistics,
-          againstVotesMVKTotal: Number(voteStatistics.againstVotesMVKTotal) + 1,
-          unusedVotesMVKTotal: Math.max(+voteStatistics.unusedVotesMVKTotal - 1, 0),
-        })
+        // setVoteStatistics({
+        //   ...voteStatistics,
+        //   againstVotesMVKTotal: Number(voteStatistics.againstVotesMVKTotal) + 1,
+        //   unusedVotesMVKTotal: Math.max(+voteStatistics.unusedVotesMVKTotal - 1, 0),
+        // })
         break
       case 'pass':
         voteType = 'abstain'
-        setVoteStatistics({
-          ...voteStatistics,
-          abstainVotesMVKTotal: Number(voteStatistics.abstainVotesMVKTotal) + 1,
-          unusedVotesMVKTotal: Math.max(+voteStatistics.unusedVotesMVKTotal - 1, 0),
-        })
+        // setVoteStatistics({
+        //   ...voteStatistics,
+        //   abstainVotesMVKTotal: Number(voteStatistics.abstainVotesMVKTotal) + 1,
+        //   unusedVotesMVKTotal: Math.max(+voteStatistics.unusedVotesMVKTotal - 1, 0),
+        // })
         break
       default:
         return
     }
 
-    dispatch(votingRoundVote(voteType))
+    await dispatch(votingRoundVote(voteType))
   }
 
-  const handleClickProcessPayment = () => {
-    if (rightSideContent?.id) dispatch(processProposalPayment(rightSideContent.id))
+  const handleClickProcessPayment = async () => {
+    if (rightSideContent?.id) await dispatch(processProposalPayment(rightSideContent.id))
   }
 
   const _handleItemSelect = (chosenProposal: ProposalRecordType | undefined) => {

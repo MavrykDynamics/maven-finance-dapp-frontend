@@ -108,6 +108,35 @@ export const proposalRoundVote = (proposalId: number) => async (dispatch: AppDis
   }
 }
 
+// TODO: finish implementing execution estimation
+export const estimateExecution = async (
+  proposalId: number,
+  tezos: State['wallet']['tezos'],
+  govAddress: string,
+): Promise<{ minimalFeeMutez: number; totalCost: number }> => {
+  try {
+    if (!tezos) {
+      throw new Error('no tezos provided')
+    }
+
+    const contract = await tezos?.wallet.at(govAddress)
+    console.log('contract', contract)
+
+    const operationEstimate = await tezos?.estimate.transfer(
+      contract.methods.executeProposal(proposalId).toTransferParams(),
+    )
+
+    console.log('operationEstimate', operationEstimate)
+    return operationEstimate
+  } catch (e) {
+    console.error('estimateExecution error', e)
+    return {
+      minimalFeeMutez: 0,
+      totalCost: 0,
+    }
+  }
+}
+
 export const votingRinancialRequestVote =
   (vote: string, requestId: number) => async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
