@@ -159,8 +159,12 @@ export const ProposalsView = ({
             cycleCounter,
           )
 
-          const votedMVK =
-            (proposal.abstainMvkTotal ?? 0) + (proposal.downvoteMvkTotal ?? 0) + (proposal.upvoteMvkTotal ?? 0)
+          const votedMVK = Math.floor(
+            (proposal.abstainMvkTotal ?? 0) +
+              (proposal.downvoteMvkTotal ?? 0) +
+              (proposal.upvoteMvkTotal ?? 0) +
+              (proposal?.passVoteMvkTotal ?? 0),
+          )
 
           return (
             <ProposalListItem
@@ -172,14 +176,12 @@ export const ProposalsView = ({
                 <span>{index + 1 + (Number(currentPage) - 1) * LIST_NAMES_MAPPER[listName]}</span>
                 <h4>{proposal.title}</h4>
               </ProposalItemLeftSide>
-              {governancePhase !== 'PROPOSAL' && (
-                <CommaNumber
-                  className="proposal-voted-mvk"
-                  value={votedMVK}
-                  endingText={'voted MVK'}
-                  showDecimal={false}
-                />
-              )}
+              <CommaNumber
+                className="proposal-voted-mvk"
+                value={votedMVK}
+                endingText={'voted MVK'}
+                showDecimal={false}
+              />
               <StatusFlag text={statusFlag} status={statusFlag} />
             </ProposalListItem>
           )

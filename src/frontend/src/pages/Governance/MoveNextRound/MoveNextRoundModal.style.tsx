@@ -1,27 +1,49 @@
 import styled from 'styled-components/macro'
-import { skyColor } from 'styles'
+import { MavrykTheme } from 'styles/interfaces'
 
-export const MoveNextRoundModalstyle = styled.div`
-  h1 {
-    font-size: 25px;
-    font-weight: 700;
-  }
-
+export const MoveNextRoundModalstyle = styled.div<{ theme: MavrykTheme }>`
   p {
-    font-weight: 400;
+    font-weight: 600;
     font-size: 18px;
     line-height: 27px;
-    color: ${skyColor};
+    color: ${({ theme }) => theme.textColor};
     text-align: center;
-    padding: 0 32px;
-    margin-top: 27px;
-    margin-bottom: 67px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+  }
+
+  .step-info {
+    margin: 10px auto;
+    width: 320px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    p {
+      margin: 0;
+    }
+
+    .name {
+      font-weight: 500;
+      font-size: 14px;
+      color: ${({ theme }) => theme.dataColor};
+    }
+
+    .value {
+      font-weight: 600;
+      font-size: 16px;
+
+      p {
+        color: ${({ theme }) => theme.valueColor};
+      }
+    }
   }
 
   .btn-group {
     display: flex;
     justify-content: center;
     margin-bottom: 27px;
+    margin-top: 20px;
 
     button {
       margin: 0 5px;

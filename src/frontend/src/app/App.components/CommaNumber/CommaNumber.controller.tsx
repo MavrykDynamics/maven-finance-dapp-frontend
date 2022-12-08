@@ -11,9 +11,11 @@ const roundDecimalPart = (number: string, symbolsCount: number): string => {
   let formatterNumber = parseFloat(`0.${number}`)
   return formatterNumber.toFixed(symbolsCount).split('.')[1]
 }
-export const formatNumber = (showDecimal: boolean, number?: number): string | undefined => {
+export const formatNumber = (showDecimal: boolean, decimalsToShow: number, number?: number): string | undefined => {
   if (showDecimal && !number) return '0.00'
-  return number?.toLocaleString('en-US', { maximumFractionDigits: showDecimal ? DECIMALS_TO_SHOW : 0 })
+  return number?.toLocaleString('en-US', {
+    maximumFractionDigits: showDecimal ? decimalsToShow : 0,
+  })
 }
 export const CommaNumber = ({
   value,
@@ -22,10 +24,12 @@ export const CommaNumber = ({
   beginningText,
   className = '',
   showDecimal = true,
+  decimalsToShow = DECIMALS_TO_SHOW,
   svgKind = SECONDARY_COMMA_NUMBER,
   useAccurateParsing = false,
 }: {
   value: number
+  decimalsToShow?: number
   loading?: boolean
   endingText?: string
   beginningText?: string
@@ -34,7 +38,7 @@ export const CommaNumber = ({
   useAccurateParsing?: boolean
   svgKind?: CommaNumberSvgKind
 }) => {
-  let numberWithCommas = formatNumber(showDecimal, value)
+  let numberWithCommas = formatNumber(showDecimal, decimalsToShow, value)
   let titleForNumber = undefined
 
   // it's exponential number if e-7 it will scientific notation, every that are < -7 normal notation
