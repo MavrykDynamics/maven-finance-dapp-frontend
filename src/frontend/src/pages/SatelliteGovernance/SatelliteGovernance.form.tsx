@@ -28,7 +28,7 @@ import {
 import { AvailableActionsStyle } from './SatelliteGovernance.style'
 
 // helpers
-import { validateFormField, validateFormAddress } from 'utils/validatorFunctions' 
+import { validateFormField, validateFormAddress } from 'utils/validatorFunctions'
 
 type MaxLength = {
   purposeMaxLength: number
@@ -256,10 +256,10 @@ export const SatelliteGovernanceForm = ({ variant, maxLength }: Props) => {
               required
               onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
                 handleChange(e)
-                handleBlur(e, maxLength.purposeMaxLength)
               }}
               onBlur={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleBlur(e, maxLength.purposeMaxLength)}
               inputStatus={formInputStatus.purpose}
+              textAreaMaxLimit={maxLength.purposeMaxLength}
             />
           </div>
         </div>

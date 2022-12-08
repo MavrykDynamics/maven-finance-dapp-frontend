@@ -24,6 +24,7 @@ type EmergencyGovProposalModalViewProps = {
   cancelCallback: () => void
   form: EmergencyGovernanceProposalForm
   fee: number
+  proposalDescMaxLength: number
   formInputStatus: EmergencyGovernanceProposalFormInputStatus
   setForm: (form: EmergencyGovernanceProposalForm) => void
   handleOnBlur: (
@@ -38,6 +39,7 @@ export const EmergencyGovProposalModalView = ({
   cancelCallback,
   form,
   fee,
+  proposalDescMaxLength,
   formInputStatus,
   setForm,
   handleOnBlur,
@@ -96,6 +98,7 @@ export const EmergencyGovProposalModalView = ({
                     }
                     onBlur={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleOnBlur(e, 'DESCRIPTION')}
                     inputStatus={formInputStatus.description}
+                    textAreaMaxLimit={proposalDescMaxLength}
                   />
                   {/* <div className="upload-wrap">
                     <IPFSUploader

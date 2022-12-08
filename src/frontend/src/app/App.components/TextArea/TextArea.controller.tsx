@@ -29,7 +29,7 @@ export const TextArea = ({
   errorMessage,
   disabled,
   required,
-  textAreaMaxLimit = 200,
+  textAreaMaxLimit = 1000,
 }: TextAreaProps) => {
   return (
     <TextAreaView

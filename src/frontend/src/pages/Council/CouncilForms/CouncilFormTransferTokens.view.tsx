@@ -6,7 +6,7 @@ import type { InputStatusType } from '../../../app/App.components/Input/Input.co
 import { RequestPurposeMaxLength } from 'utils/TypesAndInterfaces/Council'
 
 // helpers
-import { validateFormAddress, validateFormField } from 'utils/validatorFunctions' 
+import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
 
 // view
 import { Input } from '../../../app/App.components/Input/Input.controller'
@@ -66,7 +66,9 @@ export const CouncilFormTransferTokens = ({ requestPurposeMaxLength }: RequestPu
     e.preventDefault()
     try {
       const typeOfToken = tokenType?.value || ''
-      await dispatch(transferTokens(receiverAddress, tokenContractAddress, +tokenAmount, typeOfToken, +tokenId, purpose))
+      await dispatch(
+        transferTokens(receiverAddress, tokenContractAddress, +tokenAmount, typeOfToken, +tokenId, purpose),
+      )
 
       setTokenType(undefined)
       setDdIsOpen(false)
@@ -96,11 +98,14 @@ export const CouncilFormTransferTokens = ({ requestPurposeMaxLength }: RequestPu
     setDdIsOpen(!ddIsOpen)
   }, [ddIsOpen])
 
-  const handleClickDropdownItem = useCallback((e: string) => {
-    const chosenItem = itemsForDropDown.filter((item) => item.text === e)[0]
-    setTokenType(chosenItem)
-    setDdIsOpen(!ddIsOpen)
-  }, [ddIsOpen])
+  const handleClickDropdownItem = useCallback(
+    (e: string) => {
+      const chosenItem = itemsForDropDown.filter((item) => item.text === e)[0]
+      setTokenType(chosenItem)
+      setDdIsOpen(!ddIsOpen)
+    },
+    [ddIsOpen],
+  )
 
   return (
     <CouncilFormStyled onSubmit={handleSubmit}>
@@ -197,10 +202,10 @@ export const CouncilFormTransferTokens = ({ requestPurposeMaxLength }: RequestPu
           name="purpose"
           onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
             handleChange(e)
-            handleBlur(e, requestPurposeMaxLength)
           }}
           onBlur={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleBlur(e, requestPurposeMaxLength)}
           inputStatus={formInputStatus.purpose}
+          textAreaMaxLimit={requestPurposeMaxLength}
         />
       </div>
       <div className="btn-group">

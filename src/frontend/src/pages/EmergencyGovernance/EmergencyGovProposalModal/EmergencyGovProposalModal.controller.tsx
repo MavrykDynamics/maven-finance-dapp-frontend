@@ -15,7 +15,11 @@ export const EmergencyGovProposalModal = () => {
   const dispatch = useDispatch()
   const { showing } = useSelector((state: State) => state.exitFeeModal)
   const { governanceStorage } = useSelector((state: State) => state.governance)
-  const { emergencyGovernanceStorage: { config: { proposalTitleMaxLength, proposalDescMaxLength } } } = useSelector((state: State) => state.emergencyGovernance)
+  const {
+    emergencyGovernanceStorage: {
+      config: { proposalTitleMaxLength, proposalDescMaxLength },
+    },
+  } = useSelector((state: State) => state.emergencyGovernance)
   const { fee } = governanceStorage
 
   const [form, setForm] = useState<EmergencyGovernanceProposalForm>({
@@ -70,6 +74,7 @@ export const EmergencyGovProposalModal = () => {
       setForm={setForm}
       formInputStatus={formInputStatus}
       handleOnBlur={handleOnBlur}
+      proposalDescMaxLength={proposalDescMaxLength}
     />
   )
 }

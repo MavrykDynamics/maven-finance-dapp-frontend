@@ -176,6 +176,7 @@ export const StageOneForm = ({
             onBlur={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleOnBlur(e, 'DESCRIPTION')}
             inputStatus={currentProposalValidation.description}
             disabled={disabled}
+            textAreaMaxLimit={proposalDescriptionMaxLength}
           />
         </>
       )}

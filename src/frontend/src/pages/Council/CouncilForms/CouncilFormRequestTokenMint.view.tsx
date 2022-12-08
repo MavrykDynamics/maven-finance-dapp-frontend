@@ -6,7 +6,7 @@ import type { InputStatusType } from '../../../app/App.components/Input/Input.co
 import { RequestPurposeMaxLength } from 'utils/TypesAndInterfaces/Council'
 
 // helpers
-import { validateFormAddress, validateFormField } from 'utils/validatorFunctions' 
+import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
 
 // view
 import { Input } from '../../../app/App.components/Input/Input.controller'
@@ -95,7 +95,6 @@ export const CouncilFormRequestTokenMint = ({ requestPurposeMaxLength }: Request
             name="tokenAmount"
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               handleChange(e)
-              handleBlur(e)
             }}
             onBlur={(e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e)}
             inputStatus={formInputStatus.tokenAmount}
@@ -111,10 +110,10 @@ export const CouncilFormRequestTokenMint = ({ requestPurposeMaxLength }: Request
           name="purpose"
           onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
             handleChange(e)
-            handleBlur(e, requestPurposeMaxLength)
           }}
           onBlur={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleBlur(e, requestPurposeMaxLength)}
           inputStatus={formInputStatus.purpose}
+          textAreaMaxLimit={requestPurposeMaxLength}
         />
       </div>
       <div className="btn-group">
