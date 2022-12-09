@@ -9,7 +9,7 @@ export const TextAreaStyled = styled.div`
     border-radius: 10px;
     background-color: ${({ theme }) => theme.backgroundColor};
     border: 1px solid ${({ theme }) => theme.cardBorderColor};
-    padding: 20px 30px;
+    padding: 10px 20px;
     position: relative;
     width: 100%;
 

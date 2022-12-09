@@ -90,7 +90,7 @@ export const SatelliteGovernanceStyled = styled.section<{ theme: MavrykTheme }>`
   }
 `
 
-export const AvailableActionsStyle = styled.div`
+export const AvailableActionsStyle = styled.div<{ theme: MavrykTheme }>`
   padding: 0;
   margin-top: 0;
   border-top: 1px solid ${royalPurpleColor};
@@ -105,6 +105,18 @@ export const AvailableActionsStyle = styled.div`
     padding-right: 26px;
     padding-bottom: 23px;
     position: relative;
+
+    a {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      width: fit-content;
+      svg {
+        fill: ${cyanColor};
+        width: 16px;
+        height: 16px;
+      }
+    }
 
     button:not(.btn-add-row, .table-drop-btn-cur, .delete-button) {
       width: 260px;
@@ -133,20 +145,24 @@ export const AvailableActionsStyle = styled.div`
     }
 
     p {
-      font-weight: 400;
+      font-weight: 600;
       font-size: 14px;
       line-height: 21px;
-      color: ${skyColor};
+      color: ${({ theme }) => theme.textColor};
       margin-top: 1px;
       margin-bottom: 17px;
       margin-left: 10px;
+    }
+
+    .textarea {
+      color: ${({ theme }) => theme.textColor};
     }
 
     label {
       font-weight: 700;
       font-size: 14px;
       line-height: 21px;
-      color: ${headerColor};
+      color: ${({ theme }) => theme.textColor};
       padding-left: 8px;
       padding-left: 10px;
       margin-bottom: 5px;

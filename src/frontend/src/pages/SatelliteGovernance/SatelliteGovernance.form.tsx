@@ -29,6 +29,7 @@ import { AvailableActionsStyle } from './SatelliteGovernance.style'
 
 // helpers
 import { validateFormField, validateFormAddress } from 'utils/validatorFunctions'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 type MaxLength = {
   purposeMaxLength: number
@@ -42,7 +43,7 @@ type Props = {
 
 const CONTENT_FORM = new Map<string, Record<string, string>>([
   [
-    'suspendSatellite',
+    'Suspend Satellite',
     {
       title: 'Suspend Satellite',
       btnText: 'Suspend Satellite',
@@ -50,7 +51,7 @@ const CONTENT_FORM = new Map<string, Record<string, string>>([
     },
   ],
   [
-    'unsuspendSatellite',
+    'Unsuspend Satellite',
     {
       title: 'Unsuspend Satellite',
       btnText: 'Unsuspend Satellite',
@@ -58,7 +59,7 @@ const CONTENT_FORM = new Map<string, Record<string, string>>([
     },
   ],
   [
-    'banSatellite',
+    'Ban Satellite',
     {
       title: 'Ban Satellite',
       btnText: 'Ban Satellite',
@@ -66,7 +67,7 @@ const CONTENT_FORM = new Map<string, Record<string, string>>([
     },
   ],
   [
-    'unbanSatellite',
+    'Unban Satellite',
     {
       title: 'Unban Satellite',
       btnText: 'Unban Satellite',
@@ -74,7 +75,7 @@ const CONTENT_FORM = new Map<string, Record<string, string>>([
     },
   ],
   [
-    'removeOracles',
+    'Remove Oracles',
     {
       title: 'Remove all Oracles from Satellite',
       btnText: 'Remove Oracles',
@@ -82,7 +83,7 @@ const CONTENT_FORM = new Map<string, Record<string, string>>([
     },
   ],
   [
-    'removeFromAggregator',
+    'Remove from Aggregator',
     {
       title: 'Remove from Aggregator',
       btnText: 'Remove from Aggregator',
@@ -90,7 +91,7 @@ const CONTENT_FORM = new Map<string, Record<string, string>>([
     },
   ],
   [
-    'addToAggregator',
+    'Add to Aggregator',
     {
       title: 'Add Oracle to Aggregator',
       btnText: 'Add to Aggregator',
@@ -98,7 +99,7 @@ const CONTENT_FORM = new Map<string, Record<string, string>>([
     },
   ],
   [
-    'restoreSatellite',
+    'Restore Satellite',
     {
       title: 'Restore Satellite',
       btnText: 'Restore Satellite',
@@ -106,7 +107,7 @@ const CONTENT_FORM = new Map<string, Record<string, string>>([
     },
   ],
   [
-    'setAggregatorMaintainer',
+    'Set Aggregator Maintainer',
     {
       title: 'Set Aggregator Maintainer',
       btnText: 'Set Aggregator Maintainer',
@@ -114,7 +115,7 @@ const CONTENT_FORM = new Map<string, Record<string, string>>([
     },
   ],
   [
-    'updateAggregatorStatus',
+    'Update Aggregator Status',
     {
       title: 'Update Aggregator Status',
       btnText: 'Update Aggregator Status',
@@ -194,12 +195,11 @@ export const SatelliteGovernanceForm = ({ variant, maxLength }: Props) => {
     <AvailableActionsStyle>
       <form onSubmit={handleSubmit} className="inputs-block">
         <a
-          className="info-link"
           href="https://mavryk.finance/litepaper#satellites-governance-and-the-decentralized-oracle"
           target="_blank"
           rel="noreferrer"
         >
-          <Icon id="question" />
+          <CustomTooltip iconId="question" />
         </a>
         <div>
           <h1>{content?.title}</h1>

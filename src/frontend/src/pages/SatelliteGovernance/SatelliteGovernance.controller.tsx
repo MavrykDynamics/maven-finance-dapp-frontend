@@ -215,9 +215,9 @@ export const SatelliteGovernance = () => {
                 clickOnItem={(e) => handleOnClickDropdownItem(e)}
               />
             </DropdownWrap>
-            {chosenDdItem === 'registerAggregator' ? (
+            {chosenDdItem === 'Register Aggregator' ? (
               <RegisterAggregatorForm maxLength={maxLength} />
-            ) : chosenDdItem === 'fixMistakenTransfer' ? (
+            ) : chosenDdItem === 'Fix Mistaken Transfer' ? (
               <FixMistakenTransferForm maxLength={maxLength} />
             ) : (
               <SatelliteGovernanceForm maxLength={maxLength} variant={chosenDdItem || ''} />
