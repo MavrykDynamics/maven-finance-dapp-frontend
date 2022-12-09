@@ -214,14 +214,14 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback }: StakeUnstak
           <h3>My MVK Balance</h3>
           {myMvkTokenBalance === 0 ? <StakeLabel>Not Staking</StakeLabel> : null}
           <img src="/images/coin-gold.svg" alt="coin" />
-          <CommaNumber value={8000000000} endingText={'MVK'} />
+          <CommaNumber value={myMvkTokenBalance ?? 0} endingText={'MVK'} />
         </StakeUnstakeBalance>
       </StakeUnstakeCard>
       <StakeUnstakeCard>
         <StakeUnstakeBalance>
           <h3>Total MVK Staked</h3>
           <img src="/images/coin-silver.svg" alt="coin" />
-          <CommaNumber value={1600000000000} endingText={'MVK'} />
+          <CommaNumber value={mySMvkTokenBalance ?? 0} endingText={'MVK'} />
         </StakeUnstakeBalance>
       </StakeUnstakeCard>
       <StakeUnstakeCard>
