@@ -18,6 +18,7 @@ export const ExpandStyled = styled(CardHover)`
     display: flex;
     justify-content: center;
     align-items: center;
+    height: 100%;
 
     span {
       font-weight: 400;
@@ -27,13 +28,23 @@ export const ExpandStyled = styled(CardHover)`
       margin-right: 8px;
     }
 
-    svg {
-      fill: none;
-      stroke: ${headerColor};
-      stroke-width: 5px;
-      height: 12px;
-      width: 16px;
-      transition: transform 0.3s ease-in-out;
+    .expand-btn {
+      color: ${({ theme }) => theme.navIconColor};
+      font-weight: 600;
+      height: 100%;
+      font-size: 16px;
+      display: flex;
+      column-gap: 8px;
+      align-items: center;
+
+      svg {
+        height: 8px;
+        width: 14px;
+        stroke: ${({ theme }) => theme.navIconColor};
+        transition: transform 0.3s ease-in-out;
+        fill: none;
+        stroke-width: 5px;
+      }
     }
 
     &.top {
@@ -47,9 +58,9 @@ export const ExpandStyled = styled(CardHover)`
     margin-bottom: 16px;
 
     .expand-header {
-      padding-left: 40px;
-      padding-right: 20px;
-      grid-template-columns: 1fr 260px 1fr 1fr 110px 110px;
+      padding-left: 30px;
+      padding-right: 25px;
+      grid-template-columns: 0.6fr 0.9fr 0.6fr 0.6fr 0.4fr 0.4fr;
     }
   }
 `

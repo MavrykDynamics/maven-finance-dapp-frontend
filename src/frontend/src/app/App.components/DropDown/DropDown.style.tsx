@@ -137,6 +137,10 @@ export const DropdownWrap = styled.div<{ theme: MavrykTheme }>`
     line-height: 22px;
     color: ${({ theme }) => theme.textColor};
 
+    &::after {
+      display: none;
+    }
+
     & + div {
       width: 450px;
       margin-right: 0;

@@ -76,13 +76,13 @@ export const calculateSlicePositions = (currentPage: number, listName: string) =
   return [(currentPage - 1) * itemsPerPage, currentPage * itemsPerPage]
 }
 
-export const getSatelliteGovernanceListName = (tabId: string) => {
+export const getSatelliteGovernanceListName = (tabId: number) => {
   switch (tabId) {
-    case 'past':
+    case 2:
       return PAST_ACTIONS_SATELLITE_GOVERNANCE_LIST
-    case 'ongoing':
+    case 1:
       return ONGOING_ACTIONS_SATELLITE_GOVERNANCE_LIST
-    case 'my':
+    case 3:
     default:
       return MY_ACTIONS_SATELLITE_GOVERNANCE_LIST
   }

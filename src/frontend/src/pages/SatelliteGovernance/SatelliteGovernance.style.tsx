@@ -1,5 +1,6 @@
 import styled from 'styled-components/macro'
 import { Card, royalPurpleColor, containerColor, skyColor, cyanColor, headerColor } from 'styles'
+import { MavrykTheme } from 'styles/interfaces'
 
 export const SlidingTabButtonsWrap = styled.div`
   display: flex;
@@ -17,7 +18,7 @@ export const SlidingTabButtonsWrap = styled.div`
   }
 `
 
-export const SatelliteGovernanceStyled = styled.section`
+export const SatelliteGovernanceStyled = styled.section<{ theme: MavrykTheme }>`
   .satellite-governance-article {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -38,6 +39,10 @@ export const SatelliteGovernanceStyled = styled.section`
     }
   }
 
+  .buttons-selector {
+    margin: 30px 0 25px 0;
+  }
+
   textarea {
     height: 84px;
   }
@@ -50,18 +55,18 @@ export const SatelliteGovernanceStyled = styled.section`
   }
 
   .satellite-governance-info {
-    border: 1px solid ${royalPurpleColor};
+    border: 1px solid ${({ theme }) => theme.cardBorderColor};
     border-radius: 10px;
-    background-color: ${containerColor};
-    padding: 24px 28px;
+    background-color: ${({ theme }) => theme.containerColor};
+    padding: 25px 28px;
+    display: flex;
+    flex-direction: column;
+    row-gap: 7px;
 
     h3 {
       font-weight: 600;
-      font-size: 18px;
-      line-height: 18px;
-      color: ${skyColor};
-      margin-top: 0;
-      margin-bottom: 18px;
+      font-size: 14px;
+      color: ${({ theme }) => theme.textColor};
     }
 
     .info-content {
@@ -69,24 +74,21 @@ export const SatelliteGovernanceStyled = styled.section`
       align-items: center;
       font-weight: 600;
       font-size: 16px;
-      line-height: 16px;
-      color: ${cyanColor};
-      margin-top: 0;
-      margin-bottom: 0;
+      color: ${({ theme }) => theme.dataColor};
+      position: relative;
 
       p {
         margin: 0;
       }
 
       a {
-        position: static;
         width: 16px;
         height: 16px;
-        margin-left: 8px;
+        margin-left: 4px;
       }
     }
   }
-` // SatelliteGovernanceStyled
+`
 
 export const AvailableActionsStyle = styled.div`
   padding: 0;

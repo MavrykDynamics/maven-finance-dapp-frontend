@@ -17,6 +17,10 @@ export const StatusFlagStyled = styled.div<{ theme: MavrykTheme }>`
   justify-content: center;
   flex-shrink: 0;
 
+  &.expand-gov-status {
+    margin-left: auto;
+  }
+
   &.${PRIMARY} {
     color: ${({ theme }) => theme.infoColor};
     border-color: ${({ theme }) => theme.infoColor};
