@@ -36,15 +36,16 @@ import {
   SideBySideImageAndText,
 } from './SatelliteCard.style'
 import { getSatelliteMetrics } from 'pages/Satellites/Satellites.helpers'
+import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 
 const renderVotingHistoryItem = (vote: number) => {
   switch (vote) {
     case 1:
-      return <span className="voting-yes">"YES"</span>
+      return <span className="voting-yes">YES</span>
     case 2:
-      return <span className="voting-pass">"PASS"</span>
+      return <span className="voting-pass">PASS</span>
     default:
-      return <span className="voting-no">"NO"</span>
+      return <span className="voting-no">NO</span>
   }
 }
 
@@ -156,7 +157,7 @@ export const SatelliteListItem = ({
 
               <SatelliteTextGroup>
                 <SatelliteMainText>{satellite.name}</SatelliteMainText>
-                <TzAddress tzAddress={satellite.address} type={'secondary'} hasIcon={true} isBold={true} />
+                <TzAddress tzAddress={satellite.address} type={BLUE} hasIcon={true} isBold={true} />
               </SatelliteTextGroup>
             </SideBySideImageAndText>
 
@@ -222,7 +223,7 @@ export const SatelliteListItem = ({
             ) : null}
 
             {isSatelliteOracle ? (
-              <SatelliteTextGroup>
+              <SatelliteTextGroup className="oracle-status">
                 <SatelliteMainText>Oracle Status</SatelliteMainText>
                 <SatelliteSubText>
                   <SatelliteOracleStatusComponent statusType={oracleStatusType}>
