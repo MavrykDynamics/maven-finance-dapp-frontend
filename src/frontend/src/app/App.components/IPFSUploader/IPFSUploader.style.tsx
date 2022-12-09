@@ -30,24 +30,21 @@ export const UploaderFileSelector = styled.div<{ isUploaded: boolean; theme: Mav
   justify-content: center;
   align-items: center;
   position: relative;
-  ${({ isUploaded }) => isUploaded
-    ? `
+  ${({ isUploaded }) =>
+    isUploaded
+      ? `
     background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='10' ry='10' stroke='rgb(39, 174, 96)' stroke-width='2' stroke-dasharray='10' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
-    ` : `
-    background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='10' ry='10' stroke='rgb(255, 67, 67)' stroke-width='2' stroke-dasharray='10' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
     `
-  }
-  
+      : `
+    background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='10' ry='10' stroke='rgb(255, 67, 67)' stroke-width='2' stroke-dasharray='10' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
+    `}
+
   &.disabled {
     cursor: default;
   }
 
   &:hover:not(.disabled) {
     background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='10' ry='10' stroke='%2386D4C9FF' stroke-width='2' stroke-dasharray='10' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
-
-    figcaption {
-      color: ${({ theme }) => theme.secondaryColor};
-    }
   }
 
   .delete-icon {
@@ -108,7 +105,7 @@ export const UploadIconContainer = styled.div<{
   .upload-figure {
     font-size: 12px;
     font-weight: 400;
-    color: ${({ theme }) => theme.headerColor};
+    color: ${({ theme }) => theme.textColor};
     white-space: nowrap;
     display: flex;
     flex-direction: column;
@@ -120,7 +117,7 @@ export const UploadIconContainer = styled.div<{
       padding-top: 4px;
       font-size: 10px;
       line-height: 10px;
-      color: ${primaryColor};
+      color: ${({ theme }) => theme.textColor};
     }
 
     figcaption {
@@ -139,7 +136,7 @@ export const UploadIconContainer = styled.div<{
   }
 
   .upload-icon {
-    stroke: ${({ theme }) => theme.headerColor};
+    stroke: ${({ theme }) => theme.textColor};
     width: 24px;
     height: 24px;
     display: block;
@@ -148,7 +145,7 @@ export const UploadIconContainer = styled.div<{
   .pencil-wrap {
     width: 16px;
     height: 16px;
-    background-color: ${({ theme }) => theme.headerColor};
+    background-color: ${({ theme }) => theme.textColor};
     display: flex;
     align-items: center;
     justify-content: center;
@@ -160,7 +157,7 @@ export const UploadIconContainer = styled.div<{
     svg {
       width: 10px;
       height: 10px;
-      stroke: ${({ theme }) => theme.containerColor};
+      stroke: ${({ theme }) => theme.textColor};
     }
   }
 `

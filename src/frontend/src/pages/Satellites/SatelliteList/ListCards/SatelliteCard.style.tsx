@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components/macro'
-import { Card, cyanColor, headerColor, boxShadowColor, skyColor, upColor, downColor } from 'styles'
+import { Card, upColor, downColor, warningColor } from 'styles'
 import { MavrykTheme } from 'styles/interfaces'
 
 export const SatelliteItemStyle = styled(Card)<{ oracle?: boolean; theme: MavrykTheme }>`
@@ -77,9 +77,9 @@ export const SatelliteItemStyle = styled(Card)<{ oracle?: boolean; theme: Mavryk
     }
 
     .secondary {
-      color: ${cyanColor};
       font-weight: 600;
-      stroke: ${cyanColor};
+      color: ${({ theme }) => theme.valueColor};
+      stroke: ${({ theme }) => theme.valueColor};
     }
   }
 
@@ -90,21 +90,21 @@ export const SatelliteItemStyle = styled(Card)<{ oracle?: boolean; theme: Mavryk
     svg {
       width: 16px;
       height: 16px;
-      fill: ${headerColor};
-      stroke: ${headerColor};
+      fill: ${({ theme }) => theme.headerColor};
+      stroke: ${({ theme }) => theme.headerColor};
       transition: 0.5s all;
     }
   }
 
   &:hover {
-    border-color: ${cyanColor};
-    box-shadow: 0px 4px 4px ${boxShadowColor};
+    border-color: ${({ theme }) => theme.valueColor};
+    box-shadow: 0px 4px 4px ${({ theme }) => theme.boxShadowColor};
     cursor: pointer;
 
     .svg-wrapper {
       svg {
-        fill: ${cyanColor};
-        stroke: ${cyanColor};
+        fill: ${({ theme }) => theme.valueColor};
+        stroke: ${({ theme }) => theme.valueColor};
       }
     }
   }
@@ -122,7 +122,7 @@ export const SatelliteOracleStatusComponent = styled.div<{ statusType: 'responde
   text-transform: uppercase;
   border: 1px solid
     ${({ statusType }) =>
-      statusType === 'responded' ? '#27AE60' : statusType === 'noResponse' ? '#FF4343' : '#FFCA43'};
+      statusType === 'responded' ? upColor : statusType === 'noResponse' ? downColor : warningColor};
   border-radius: 10px;
   font-weight: 600;
   font-size: 12px;
@@ -130,7 +130,7 @@ export const SatelliteOracleStatusComponent = styled.div<{ statusType: 'responde
   text-align: center;
   max-width: 130px;
   color: ${({ statusType }) =>
-    statusType === 'responded' ? '#27AE60' : statusType === 'noResponse' ? '#FF4343' : '#FFCA43'};
+    statusType === 'responded' ? upColor : statusType === 'noResponse' ? downColor : warningColor};
 `
 
 export const SatelliteCard = styled(Card)<{ theme: MavrykTheme }>`
@@ -198,7 +198,7 @@ export const SatelliteCardRow = styled.div<{ theme: MavrykTheme }>`
     }
 
     &.voting-pass {
-      color: ${skyColor};
+      color: ${({ theme }) => theme.headerSkyColor};
     }
   }
 `
@@ -290,10 +290,10 @@ export const SatelliteProfileDetails = styled.div<{ theme: MavrykTheme }>`
     }
 
     &:hover {
-      color: ${cyanColor};
+      color: ${({ theme }) => theme.valueColor};
 
       svg {
-        stroke: ${cyanColor};
+        stroke: ${({ theme }) => theme.valueColor};
       }
     }
   }

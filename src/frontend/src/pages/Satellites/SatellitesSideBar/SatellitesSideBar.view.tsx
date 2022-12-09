@@ -2,8 +2,6 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { RoutingButton } from 'app/App.components/RoutingButton/RoutingButton.controller'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { SatelliteSideBarStyled, SideBarSection, SideBarItem, FAQLink, SideBarFaq } from './SatelliteSideBar.style'
-import React from 'react'
-import { TreasurySelectStyle } from 'pages/Treasury/Treasury.style'
 
 type OraclesSideBarProps = {
   userIsSatellite: boolean
@@ -84,13 +82,13 @@ const SatellitesSideBarView = ({
         <SideBarItem>
           <h3>Satellite Contract</h3>
           <var>
-            <TzAddress tzAddress={infoBlockAddresses.satellite} hasIcon={true} />
+            {infoBlockAddresses.satellite ? <TzAddress tzAddress={infoBlockAddresses.satellite} hasIcon={true} /> : '-'}
           </var>
         </SideBarItem>
         <SideBarItem>
           <h3>Oracle Contract</h3>
           <var>
-            <TzAddress tzAddress={infoBlockAddresses.oracle} hasIcon={true} />
+            {infoBlockAddresses.oracle ? <TzAddress tzAddress={infoBlockAddresses.oracle} hasIcon={true} /> : '-'}
           </var>
         </SideBarItem>
       </SideBarSection>

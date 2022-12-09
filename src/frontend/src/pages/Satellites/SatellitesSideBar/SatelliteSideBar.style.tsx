@@ -90,6 +90,7 @@ export const SideBarItem = styled.div<{ theme: MavrykTheme }>`
 
   var {
     max-width: 50%;
+    color: ${({ theme }) => theme.dataColor};
 
     * {
       font-style: normal;
