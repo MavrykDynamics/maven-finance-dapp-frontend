@@ -8,41 +8,30 @@ export const SatelliteGovernanceCardTitleTextGroup = styled.div<{ theme: MavrykT
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
+  row-gap: 5px;
 
   > h3 {
-    font-weight: 400;
+    font-weight: 600;
     font-size: 14px;
-    line-height: 21px;
-    color: ${({ theme }) => theme.headerSkyColor};
+    color: ${({ theme }) => theme.textColor};
   }
 
   .inner {
     margin-bottom: 0;
     margin-top: 0;
-    color: ${({ theme }) => theme.valueColor};
-    font-weight: 700;
-    font-size: 14px;
-    line-height: 14px;
+    color: ${({ theme }) => theme.dataColor};
+    font-weight: 600;
+    font-size: 16px;
     word-break: break-all;
-    padding-right: 16px;
-  }
 
-  > svg {
-    height: 8px;
-    width: 13px;
-    stroke: ${({ theme }) => theme.valueColor};
-    stroke-width: 5px;
-    fill: none;
-  }
+    &.capitallize {
+      &::first-letter {
+        text-transform: uppercase;
+      }
+    }
 
-  &.statusFlag {
-    margin-left: auto;
-    justify-content: center;
-  }
-
-  .first-big-letter {
-    &::first-letter {
-      text-transform: uppercase;
+    svg {
+      stroke: ${({ theme }) => theme.dataColor};
     }
   }
 `
@@ -57,9 +46,12 @@ export const SatelliteGovernanceCardDropDown = styled.div<{ theme: MavrykTheme }
   cursor: pointer;
   overflow: hidden;
   position: relative;
-  padding: 20px 40px;
+  padding: 30px 40px;
+
   .purpose {
     word-break: break-all;
+    color: ${({ theme }) => theme.textColor};
+    font-weight: 500;
   }
 
   .description {
@@ -70,10 +62,9 @@ export const SatelliteGovernanceCardDropDown = styled.div<{ theme: MavrykTheme }
 
   h3 {
     margin: 0;
-    font-weight: 700;
-    font-size: 14px;
-    line-height: 14px;
-    color: ${({ theme }) => theme.headerColor};
+    font-weight: 600;
+    font-size: 18px;
+    color: ${({ theme }) => theme.textColor};
   }
 
   ul {
@@ -105,10 +96,10 @@ export const SatelliteGovernanceCardDropDown = styled.div<{ theme: MavrykTheme }
   }
 
   .view-satellite {
-    font-weight: 400;
+    font-weight: 500;
     font-size: 14px;
-    line-height: 21px;
-    color: ${headerColor};
+    text-decoration: underline;
+    color: ${({ theme }) => theme.navLinkTextActive};
   }
 
   .brop-btn {
@@ -118,7 +109,7 @@ export const SatelliteGovernanceCardDropDown = styled.div<{ theme: MavrykTheme }
   }
 
   .voting-ends {
-    color: ${cyanColor};
+    color: ${({ theme }) => theme.dataColor};
     font-weight: 700;
     font-size: 14px;
     line-height: 21px;
@@ -140,9 +131,9 @@ export const SatelliteGovernanceCardDropDown = styled.div<{ theme: MavrykTheme }
   .voting-block {
     width: 440px;
     margin-left: auto;
-  }
 
-  .voting-bar {
-    margin-bottom: 54px;
+    article {
+      margin-bottom: 0;
+    }
   }
 `

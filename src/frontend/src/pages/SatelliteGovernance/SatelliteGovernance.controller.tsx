@@ -36,20 +36,23 @@ import { SatelliteGovernanceStyled, SlidingTabButtonsWrap } from './SatelliteGov
 import { DropdownCard, DropdownWrap } from '../../app/App.components/DropDown/DropDown.style'
 import { SatelliteStatus } from '../../utils/TypesAndInterfaces/Delegation'
 import { EmptyContainer } from '../../app/App.style'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import { Button } from 'app/App.components/Button/Button.controller'
+import { ACTION_SIMPLE } from 'app/App.components/Button/Button.constants'
 
 const itemsForDropDown = [
-  { text: 'Suspend Satellite', value: 'suspendSatellite' },
-  { text: 'Unsuspend Satellite', value: 'unsuspendSatellite' },
-  { text: 'Ban Satellite', value: 'banSatellite' },
-  { text: 'Unban Satellite', value: 'unbanSatellite' },
-  { text: 'Remove Oracles', value: 'removeOracles' },
-  { text: 'Remove from Aggregator', value: 'removeFromAggregator' },
-  { text: 'Add to Aggregator', value: 'addToAggregator' },
-  { text: 'Restore Satellite', value: 'restoreSatellite' },
-  { text: 'Set Aggregator Maintainer', value: 'setAggregatorMaintainer' },
-  { text: 'Update Aggregator Status', value: 'updateAggregatorStatus' },
-  { text: 'Register Aggregator', value: 'registerAggregator' },
-  { text: 'Fix Mistaken Transfer', value: 'fixMistakenTransfer' },
+  'Suspend Satellite',
+  'Unsuspend Satellite',
+  'Ban Satellite',
+  'Unban Satellite',
+  'Remove Oracles',
+  'Remove from Aggregator',
+  'Add to Aggregator',
+  'Restore Satellite',
+  'Set Aggregator Maintainer',
+  'Update Aggregator Status',
+  'Register Aggregator',
+  'Fix Mistaken Transfer',
 ]
 
 const getOngoingActionsList = (list: GovernanceSatelliteActionGraphQL[]): GovernanceSatelliteActionGraphQL[] => {
@@ -69,98 +72,102 @@ const getPastActionsList = (list: GovernanceSatelliteActionGraphQL[]): Governanc
 }
 
 export const SatelliteGovernance = () => {
+  const { search } = useLocation()
   const dispatch = useDispatch()
-  const { accountPkh } = useSelector((state: State) => state.wallet)
+  const {
+    accountPkh,
+    user: { isSatellite },
+  } = useSelector((state: State) => state.wallet)
   const {
     delegationStorage: { satelliteLedger, activeSatellites, oraclesAmount },
   } = useSelector((state: State) => state.delegation)
-  const { governanceSatelliteStorage } = useSelector((state: State) => state.governance)
-  const { oraclesStorage: { feedsFactory } } = useSelector((state: State) => state.oracles)
+  const {
+    governanceSatelliteStorage: { governance_satellite_action, governance_satellite },
+  } = useSelector((state: State) => state.governance)
+  const {
+    oraclesStorage: { feedsFactory },
+  } = useSelector((state: State) => state.oracles)
 
-  const totalDelegatedMVK = getTotalDelegatedMVK(satelliteLedger)
-  const userIsSatellite = checkIfUserIsSatellite(accountPkh, activeSatellites)
-
-  const [ddItems, _] = useState(itemsForDropDown.map(({ text }) => text))
   const [ddIsOpen, setDdIsOpen] = useState(false)
-  const [chosenDdItem, setChosenDdItem] = useState<DropdownItemType | undefined>()
-  const [activeTab, setActiveTab] = useState('ongoing')
-  const governanceSatelliteActionRecord = governanceSatelliteStorage?.governance_satellite_action
-
-  const ongoingActionsAmount = getOngoingActionsList(governanceSatelliteActionRecord)?.length
-
+  const [chosenDdItem, setChosenDdItem] = useState<string | undefined>()
+  const [activeTab, setActiveTab] = useState(1)
+  const [tabsList, setTabsList] = useState<TabItem[]>([])
   const [separateRecord, setSeparateRecord] = useState<GovernanceSatelliteActionGraphQL[]>([])
 
-  const [tabsList, setTabsList] = useState<TabItem[]>([])
-  const maxLength = {
-    purposeMaxLength: governanceSatelliteStorage.governance_satellite[0]?.gov_purpose_max_length,
-    aggregatorNameMaxLength: feedsFactory[0]?.aggregator_name_max_length,
-  }
-
   useEffect(() => {
-    const filterOngoing = getOngoingActionsList(governanceSatelliteActionRecord)
-
-    const filterPast = getPastActionsList(governanceSatelliteActionRecord)
-
-    setSeparateRecord(filterOngoing?.length ? filterOngoing : filterPast)
-    setActiveTab(filterOngoing?.length ? 'ongoing' : 'past')
-
-    const prevTabs = [
-      { text: 'Ongoing Actions', id: 1, active: Boolean(filterOngoing?.length) },
-      { text: 'Past Actions', id: 2, active: Boolean(!filterOngoing?.length) },
-    ]
-
-    if (userIsSatellite) {
-      setTabsList([...prevTabs, { text: 'My Actions', id: 3, active: false }])
-    } else {
-      setTabsList([...prevTabs])
-    }
-  }, [governanceSatelliteActionRecord, userIsSatellite])
-
-  const handleClickDropdown = () => {
-    setDdIsOpen(!ddIsOpen)
-  }
-
-  const handleOnClickDropdownItem = (e: string) => {
-    const chosenItem = itemsForDropDown.filter((item) => item.text === e)[0]
-    setChosenDdItem(chosenItem)
-    setDdIsOpen(!ddIsOpen)
-  }
-
-  const handleChangeTabs = (tabId?: number) => {
-    if (tabId === 1) {
-      setActiveTab('ongoing')
-      const filterOngoing = getOngoingActionsList(governanceSatelliteActionRecord)
-
-      setSeparateRecord(filterOngoing)
-    }
-
-    if (tabId === 2) {
-      setActiveTab('past')
-      const filterPast = getPastActionsList(governanceSatelliteActionRecord)
-      setSeparateRecord(filterPast)
-    }
-
-    if (tabId === 3) {
-      setActiveTab('my')
-      const filterPast = governanceSatelliteActionRecord.filter((item) => {
-        return accountPkh === item.initiator_id
-      })
-      setSeparateRecord(filterPast)
-    }
-  }
-
-  useEffect(() => {
-    dispatch(getGovernanceSatelliteStorage())
+    ;(async () => {
+      await dispatch(getGovernanceSatelliteStorage())
+    })()
   }, [dispatch])
 
   const listName = useMemo(() => getSatelliteGovernanceListName(activeTab), [activeTab])
-  const { search } = useLocation()
   const currentPage = getPageNumber(search, listName)
 
   const paginatedItemsList = useMemo(() => {
     const [from, to] = calculateSlicePositions(currentPage, listName)
     return separateRecord?.slice(from, to)
   }, [currentPage, separateRecord])
+
+  const totalDelegatedMVK = getTotalDelegatedMVK(satelliteLedger)
+  const ongoingActionsAmount = getOngoingActionsList(governance_satellite_action)?.length
+
+  const maxLength = {
+    purposeMaxLength: governance_satellite[0]?.gov_purpose_max_length,
+    aggregatorNameMaxLength: feedsFactory[0]?.aggregator_name_max_length,
+  }
+
+  useEffect(() => {
+    const filterOngoing = getOngoingActionsList(governance_satellite_action)
+    const filterPast = getPastActionsList(governance_satellite_action)
+
+    setSeparateRecord(filterOngoing?.length ? filterOngoing : filterPast)
+    setActiveTab(filterOngoing?.length ? 1 : 2)
+
+    const prevTabs = [
+      { text: 'Ongoing Actions', id: 1, active: Boolean(filterOngoing?.length) },
+      { text: 'Past Actions', id: 2, active: Boolean(!filterOngoing?.length) },
+    ]
+
+    if (isSatellite) {
+      setTabsList([...prevTabs, { text: 'My Actions', id: 3, active: false }])
+    } else {
+      setTabsList([...prevTabs])
+    }
+  }, [governance_satellite_action, isSatellite])
+
+  const handleClickDropdown = () => {
+    setDdIsOpen(!ddIsOpen)
+  }
+
+  const handleOnClickDropdownItem = (e: string) => {
+    const chosenItem = itemsForDropDown.find((item) => item === e)
+    if (chosenItem) {
+      setChosenDdItem(chosenItem)
+      setDdIsOpen(!ddIsOpen)
+    }
+  }
+
+  const handleChangeTabs = (tabId?: number) => {
+    if (tabId === 1) {
+      setActiveTab(tabId)
+      const filterOngoing = getOngoingActionsList(governance_satellite_action)
+      setSeparateRecord(filterOngoing)
+    }
+
+    if (tabId === 2) {
+      setActiveTab(tabId)
+      const filterPast = getPastActionsList(governance_satellite_action)
+      setSeparateRecord(filterPast)
+    }
+
+    if (tabId === 3) {
+      setActiveTab(tabId)
+      const filterPast = governance_satellite_action.filter((item) => {
+        return accountPkh === item.initiator_id
+      })
+      setSeparateRecord(filterPast)
+    }
+  }
 
   const emptyContainer = (
     <EmptyContainer>
@@ -176,62 +183,25 @@ export const SatelliteGovernance = () => {
         <article className="satellite-governance-article">
           <div className="satellite-governance-info">
             <h3>Total Active Satellites</h3>
-            <p className="info-content">
-              {activeSatellites?.length}{' '}
-              <a
-                className="info-link"
-                href="https://mavryk.finance/litepaper#satellites-governance-and-the-decentralized-oracle"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <Icon id="question" />
-              </a>
-            </p>
+            <div className="info-content">{activeSatellites?.length}</div>
           </div>
           <div className="satellite-governance-info">
             <h3>Total Oracle Networks</h3>
-            <p className="info-content">
-              {oraclesAmount}{' '}
-              <a
-                className="info-link"
-                href="https://mavryk.finance/litepaper#satellites-governance-and-the-decentralized-oracle"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <Icon id="question" />
-              </a>
-            </p>
+            <div className="info-content">{oraclesAmount}</div>
           </div>
           <div className="satellite-governance-info">
             <h3>Total Delegated MVK</h3>
             <div className="info-content">
-              <CommaNumber value={totalDelegatedMVK} endingText={'MVK'} />{' '}
-              <a
-                className="info-link"
-                href="https://mavryk.finance/litepaper#satellites-governance-and-the-decentralized-oracle"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <Icon id="question" />
-              </a>
+              <CommaNumber value={totalDelegatedMVK} endingText={'MVK'} />
+              <CustomTooltip iconId="info" text="All staked MVK that is delegated to satellites by users" />
             </div>
           </div>
           <div className="satellite-governance-info">
             <h3>Ongoing Actions</h3>
-            <p className="info-content">
-              {ongoingActionsAmount}{' '}
-              <a
-                className="info-link"
-                href="https://mavryk.finance/litepaper#satellites-governance-and-the-decentralized-oracle"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <Icon id="question" />
-              </a>
-            </p>
+            <div className="info-content">{ongoingActionsAmount}</div>
           </div>
         </article>
-        {accountPkh ? (
+        {isSatellite ? (
           <DropdownCard className="satellite-governance-dropdown">
             <DropdownWrap>
               <h2>Available Actions</h2>
@@ -240,23 +210,34 @@ export const SatelliteGovernance = () => {
                 placeholder="Choose action"
                 isOpen={ddIsOpen}
                 setIsOpen={setDdIsOpen}
-                itemSelected={chosenDdItem?.text}
-                items={ddItems}
+                itemSelected={chosenDdItem}
+                items={itemsForDropDown}
                 clickOnItem={(e) => handleOnClickDropdownItem(e)}
               />
             </DropdownWrap>
-            {chosenDdItem?.value === 'registerAggregator' ? (
+            {chosenDdItem === 'Register Aggregator' ? (
               <RegisterAggregatorForm maxLength={maxLength} />
-            ) : chosenDdItem?.value === 'fixMistakenTransfer' ? (
+            ) : chosenDdItem === 'Fix Mistaken Transfer' ? (
               <FixMistakenTransferForm maxLength={maxLength} />
             ) : (
-              <SatelliteGovernanceForm maxLength={maxLength} variant={chosenDdItem?.value || ''} />
+              <SatelliteGovernanceForm maxLength={maxLength} variant={chosenDdItem || ''} />
             )}
           </DropdownCard>
         ) : null}
-        <SlidingTabButtonsWrap>
-          {tabsList?.length ? <SlidingTabButtons tabItems={tabsList} onClick={handleChangeTabs} /> : null}
-        </SlidingTabButtonsWrap>
+        {tabsList?.length ? (
+          <div className="buttons-selector">
+            {tabsList.map(({ id, text }) => (
+              <Button
+                kind={ACTION_SIMPLE}
+                onClick={() => {
+                  handleChangeTabs(id)
+                }}
+                text={text}
+                className={id === activeTab ? 'active' : ''}
+              />
+            ))}
+          </div>
+        ) : null}
       </SatelliteGovernanceStyled>
 
       {paginatedItemsList?.length

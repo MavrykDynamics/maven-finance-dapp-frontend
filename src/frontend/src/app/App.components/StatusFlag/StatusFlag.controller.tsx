@@ -5,10 +5,11 @@ import { ProposalStatus } from '../../../utils/TypesAndInterfaces/Governance'
 
 type StatusFlagProps = {
   text?: string
+  className?: string
   status: ProposalStatus | StatusFlagStyle | undefined
 }
 
-export const StatusFlag = ({ text = '', status }: StatusFlagProps) => {
+export const StatusFlag = ({ text = '', status, className }: StatusFlagProps) => {
   let kind: StatusFlagStyle
   switch (status) {
     case ProposalStatus.EXECUTED:
@@ -36,5 +37,5 @@ export const StatusFlag = ({ text = '', status }: StatusFlagProps) => {
     kind = status as StatusFlagStyle
   }
 
-  return <StatusFlagView kind={kind} text={text} />
+  return <StatusFlagView className={className} kind={kind} text={text} />
 }

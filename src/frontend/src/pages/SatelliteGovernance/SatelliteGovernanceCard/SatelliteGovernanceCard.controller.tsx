@@ -104,26 +104,26 @@ export const SatelliteGovernanceCard = ({
           </SatelliteGovernanceCardTitleTextGroup>
           <SatelliteGovernanceCardTitleTextGroup>
             <h3>Action</h3>
-            <p className="inner first-big-letter">{getSeparateSnakeCase(governanceType)}</p>
+            <p className="inner capitallize">{getSeparateSnakeCase(governanceType)}</p>
           </SatelliteGovernanceCardTitleTextGroup>
           <SatelliteGovernanceCardTitleTextGroup>
             <h3>Target</h3>
             <div className="inner">
-              <TzAddress tzAddress={satelliteId} hasIcon={false} />
+              <TzAddress tzAddress={satelliteId} hasIcon={true} />
             </div>
           </SatelliteGovernanceCardTitleTextGroup>
           <SatelliteGovernanceCardTitleTextGroup>
             <h3>Initiator</h3>
             <div className="inner">
-              <TzAddress tzAddress={initiatorId} hasIcon={false} />
+              <TzAddress tzAddress={initiatorId} hasIcon={true} />
             </div>
           </SatelliteGovernanceCardTitleTextGroup>
         </>
       }
-      sufix={<StatusFlag status={statusFlag} text={statusFlag} />}
+      sufix={<StatusFlag className="expand-gov-status" status={statusFlag} text={statusFlag} />}
     >
       <SatelliteGovernanceCardDropDown>
-        <div>
+        <div className="left">
           <h3>Purpose</h3>
           <p className="purpose">{purpose}</p>
           {initiatorId ? (
@@ -131,7 +131,7 @@ export const SatelliteGovernanceCard = ({
               View Satellite
             </Link>
           ) : null}
-          {(statusFlag === ProposalStatus.ONGOING && accountPkh === initiatorId) ? (
+          {statusFlag === ProposalStatus.ONGOING && accountPkh === initiatorId ? (
             <Button
               text="Drop Action"
               className="brop-btn"

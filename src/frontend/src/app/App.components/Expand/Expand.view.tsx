@@ -42,28 +42,32 @@ export default function Expand({
   // move the scroll to fix it
   useEffect(() => {
     if (expanded) {
-       scrollToFullView(ref.current)
+      scrollToFullView(ref.current)
     }
   }, [expanded])
 
   return (
     <ExpandStyled className={className}>
-      <header
-        className="expand-header"
-        onClick={() => {
-          handleToggleExpand()
-          onClickCallback && onClickCallback()
-        }}
-      >
+      <header className="expand-header">
         {header}
         <div className={`arrow-wrap ${expanded ? 'top' : 'bottom'}`}>
           {showText ? <span>{expanded ? 'Hide' : 'Show'}</span> : null}
           {showCustomText ? <span>{showCustomText}</span> : null}
-          <Icon id="arrow-down" />
+          <div
+            className="expand-btn"
+            onClick={() => {
+              handleToggleExpand()
+              onClickCallback && onClickCallback()
+            }}
+          >
+            Details <Icon id="arrow-down" />
+          </div>
         </div>
         {sufix}
       </header>
-      <ExpandArticleStyled ref={ref} show={expanded}>{children}</ExpandArticleStyled>
+      <ExpandArticleStyled ref={ref} show={expanded}>
+        {children}
+      </ExpandArticleStyled>
     </ExpandStyled>
   )
 }
