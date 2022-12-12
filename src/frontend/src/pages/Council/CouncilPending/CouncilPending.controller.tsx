@@ -35,7 +35,7 @@ export const CouncilPending = (props: Props) => {
   const dispatch = useDispatch()
 
   const [showing, setShowing] = useState(false)
-  const { name, value } = parameters?.[0]
+  const { name, value } = parameters?.[0] || {}
   const cardNumber = index + 1
 
   const ref = useRef<HTMLDivElement | null>(null)
