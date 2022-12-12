@@ -52,7 +52,7 @@ const renderVotingHistoryItem = (item: SatelliteProposalVotingHistory | Satellit
         {item.vote === 1 ? (
           <b className="voting-yes">YES </b>
         ) : item.vote === 2 ? (
-          <b className="voting-abstain">ABSTAIN </b>
+          <b className="voting-abstain">PASS </b>
         ) : (
           <b className="voting-no">NO </b>
         )}
@@ -105,7 +105,7 @@ export const SatelliteDetailsView = ({
         >
           <SatelliteCardBottomRow>
             <SatelliteDescrBlock>
-              <BlockName>Description:</BlockName>
+              <BlockName>Description</BlockName>
               <p>{satellite.description}</p>
               {satellite.website ? (
                 <a className="satellite-website" href={satellite.website} target="_blank" rel="noreferrer">
@@ -114,43 +114,41 @@ export const SatelliteDetailsView = ({
               ) : null}
             </SatelliteDescrBlock>
 
-            <div className="column-wrapper">
-              <div>
-                <BlockName>Satellite metrics:</BlockName>
-                <SatelliteMetricsBlock>
-                  <h5>Proposal Participation</h5>
-                  <p>
-                    <CommaNumber value={satelliteMetrics.proposalParticipation} endingText="%" showDecimal={false} />
-                  </p>
-                  <h5>Vote Participation</h5>
-                  <p>
-                    <CommaNumber value={satelliteMetrics.votingPartisipation} endingText="%" showDecimal={false} />
-                  </p>
-                  <h5>Oracle Participation</h5>
-                  <p>
-                    <CommaNumber value={satelliteMetrics.oracleEfficiency} endingText="%" showDecimal={false} />
-                  </p>
-                </SatelliteMetricsBlock>
-              </div>
-
-              <SatelliteVotingInfoWrapper>
-                <BlockName>Voting History:</BlockName>
-                <div className="voting-info-list-wrapper scroll-block">
-                  {satellite.proposalVotingHistory?.map((item) => renderVotingHistoryItem(item))}
-                  {satellite.financialRequestsVotes?.map((item) => renderVotingHistoryItem(item))}
-                  {satellite.emergencyGovernanceVotes?.map((item) => renderVotingHistoryItem(item))}
-                  {satellite.satelliteActionVotes?.map((item) => renderVotingHistoryItem(item))}
-                  {!satellite.proposalVotingHistory?.length &&
-                    !satellite.satelliteActionVotes?.length &&
-                    !satellite.financialRequestsVotes?.length &&
-                    !satellite.emergencyGovernanceVotes?.length && (
-                      <SatelliteVotingHistoryListItem>
-                        <p>No voting history available</p>
-                      </SatelliteVotingHistoryListItem>
-                    )}
-                </div>
-              </SatelliteVotingInfoWrapper>
+            <div>
+              <BlockName>Satellite metrics</BlockName>
+              <SatelliteMetricsBlock>
+                <h5>Proposal Participation</h5>
+                <p>
+                  <CommaNumber value={satelliteMetrics.proposalParticipation} endingText="%" showDecimal={false} />
+                </p>
+                <h5>Vote Participation</h5>
+                <p>
+                  <CommaNumber value={satelliteMetrics.votingPartisipation} endingText="%" showDecimal={false} />
+                </p>
+                <h5>Oracle Participation</h5>
+                <p>
+                  <CommaNumber value={satelliteMetrics.oracleEfficiency} endingText="%" showDecimal={false} />
+                </p>
+              </SatelliteMetricsBlock>
             </div>
+
+            <SatelliteVotingInfoWrapper>
+              <BlockName>Voting History</BlockName>
+              <div className="voting-info-list-wrapper scroll-block">
+                {satellite.proposalVotingHistory?.map((item) => renderVotingHistoryItem(item))}
+                {satellite.financialRequestsVotes?.map((item) => renderVotingHistoryItem(item))}
+                {satellite.emergencyGovernanceVotes?.map((item) => renderVotingHistoryItem(item))}
+                {satellite.satelliteActionVotes?.map((item) => renderVotingHistoryItem(item))}
+                {!satellite.proposalVotingHistory?.length &&
+                  !satellite.satelliteActionVotes?.length &&
+                  !satellite.financialRequestsVotes?.length &&
+                  !satellite.emergencyGovernanceVotes?.length && (
+                    <SatelliteVotingHistoryListItem>
+                      <p>No voting history available</p>
+                    </SatelliteVotingHistoryListItem>
+                  )}
+              </div>
+            </SatelliteVotingInfoWrapper>
           </SatelliteCardBottomRow>
         </SatelliteListItem>
       ) : (

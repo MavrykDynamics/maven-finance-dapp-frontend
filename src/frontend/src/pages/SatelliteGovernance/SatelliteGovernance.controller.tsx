@@ -32,7 +32,7 @@ import { getGovernanceSatelliteStorage } from './SatelliteGovernance.actions'
 import { getTotalDelegatedMVK } from 'pages/Satellites/helpers/Satellites.consts'
 
 // style
-import { SatelliteGovernanceStyled, SlidingTabButtonsWrap } from './SatelliteGovernance.style'
+import { SatelliteGovernanceStyled, SlidingTabButtonsWrap, SmallInfoBlock } from './SatelliteGovernance.style'
 import { DropdownCard, DropdownWrap } from '../../app/App.components/DropDown/DropDown.style'
 import { SatelliteStatus } from '../../utils/TypesAndInterfaces/Delegation'
 import { EmptyContainer } from '../../app/App.style'
@@ -181,25 +181,25 @@ export const SatelliteGovernance = () => {
       <PageHeader page={'satellite-governance'} />
       <SatelliteGovernanceStyled>
         <article className="satellite-governance-article">
-          <div className="satellite-governance-info">
+          <SmallInfoBlock>
             <h3>Total Active Satellites</h3>
             <div className="info-content">{activeSatellites?.length}</div>
-          </div>
-          <div className="satellite-governance-info">
+          </SmallInfoBlock>
+          <SmallInfoBlock>
             <h3>Total Oracle Networks</h3>
             <div className="info-content">{oraclesAmount}</div>
-          </div>
-          <div className="satellite-governance-info">
+          </SmallInfoBlock>
+          <SmallInfoBlock>
             <h3>Total Delegated MVK</h3>
             <div className="info-content">
               <CommaNumber value={totalDelegatedMVK} endingText={'MVK'} />
               <CustomTooltip iconId="info" text="All staked MVK that is delegated to satellites by users" />
             </div>
-          </div>
-          <div className="satellite-governance-info">
+          </SmallInfoBlock>
+          <SmallInfoBlock>
             <h3>Ongoing Actions</h3>
             <div className="info-content">{ongoingActionsAmount}</div>
-          </div>
+          </SmallInfoBlock>
         </article>
         {isSatellite ? (
           <DropdownCard className="satellite-governance-dropdown">

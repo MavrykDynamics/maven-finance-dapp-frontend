@@ -13,17 +13,23 @@ export const BecomeSatelliteForm = styled(Card)`
   margin-top: 0;
   padding-top: 28px;
 
-  > h1 {
+  > h2 {
     margin: 0;
-    color: ${headerColor};
+    font-weight: 600;
+    font-size: 22px;
+    color: ${({ theme }) => theme.textColor};
     padding-bottom: 26px;
+  }
+
+  .textArea {
+    color: ${({ theme }) => theme.blockNameTitleColor};
   }
 
   label,
   .label {
     font-weight: 600;
     font-size: 14px;
-    color: ${({ theme }) => theme.headerColor};
+    color: ${({ theme }) => theme.textColor};
     margin-bottom: 10px;
     display: block;
 

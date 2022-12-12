@@ -226,14 +226,14 @@ export const signAction = (breakGlassActionID: number) => async (dispatch: AppDi
     dispatch(toggleLoader('rocket'))
     const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.breakGlassAddress.address)
     const transaction = await contract?.methods.signAction(breakGlassActionID).send()
-    dispatch(showToaster(INFO, 'Propagate Break Glass...', 'Please wait 30s'))
+    dispatch(showToaster(INFO, 'Signing action...', 'Please wait 30s'))
 
     await transaction?.confirmation()
-    dispatch(showToaster(SUCCESS, 'Propagate Break Glass done', 'All good :)'))
+    dispatch(showToaster(SUCCESS, 'Action signed', 'All good :)'))
     dispatch(toggleLoader())
   } catch (error) {
     if (error instanceof Error) {
-      console.error('propagateBreakGlass - ERROR ', error)
+      console.error('signAction - ERROR ', error)
       dispatch(showToaster(ERROR, 'Error', error.message))
     }
     dispatch(toggleLoader())

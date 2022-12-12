@@ -23,19 +23,15 @@ export const Page = styled.div<{ theme: MavrykTheme }>`
       position: absolute;
       right: 0;
       top: 15px;
-      font-weight: 400;
+      font-weight: 500;
       font-size: 14px;
       line-height: 21px;
-      text-decoration-line: underline;
-      color: #8d86eb;
+      color: ${({ theme }) => theme.navLinkTextActive};
       cursor: pointer;
       transition: 0.5s all;
 
       &:hover {
-        color: #86d4c9;
-        svg {
-          stroke: #86d4c9;
-        }
+        opacity: 0.8;
       }
 
       svg {
@@ -43,7 +39,7 @@ export const Page = styled.div<{ theme: MavrykTheme }>`
         height: 13px;
         width: 18px;
         transform: rotate(180deg);
-        stroke: #8d86eb;
+        stroke: ${({ theme }) => theme.navLinkTextActive};
         transition: 0.5s all;
       }
     }

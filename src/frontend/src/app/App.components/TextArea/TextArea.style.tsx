@@ -68,7 +68,7 @@ export const TextAreaStyled = styled.div`
     transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 
     &::placeholder {
-      color: ${({ theme }) => theme.inputPlaceholder};
+      color: ${({ theme }) => theme.textColor};
     }
   }
 `
@@ -77,6 +77,7 @@ export const TextAreaCounter = styled.div`
   position: absolute;
   bottom: -20px;
   right: 10px;
+  color: ${({ theme }) => theme.headerColor};
 
   &.error {
     color: ${({ theme }) => theme.downColor};
