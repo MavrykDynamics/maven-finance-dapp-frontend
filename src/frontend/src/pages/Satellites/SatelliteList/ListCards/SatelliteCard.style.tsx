@@ -87,6 +87,7 @@ export const SatelliteItemStyle = styled(Card)<{ oracle?: boolean; theme: Mavryk
     display: flex;
     justify-content: flex-end;
     align-items: center;
+    height: 100%;
     svg {
       width: 16px;
       height: 16px;

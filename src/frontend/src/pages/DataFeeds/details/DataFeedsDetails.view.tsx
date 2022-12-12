@@ -90,17 +90,17 @@ const DataFeedDetailsView = ({
   )
 
   const isTrustedAnswer = feed && feed.last_completed_data_pct_oracle_resp >= feed.pct_oracle_threshold
-  const heartbeatUpdateInfo =
-    dayjs(Date.now()).diff(dayjs(feed?.last_completed_data_last_updated_at), 'minutes') >= 30
-      ? `
-  Price feed is outdated, missed the schedule price update at ${parseDate({
-    time: new Date(feed?.last_completed_data_last_updated_at || '').getTime() + 1000 * 60 * 30,
-    timeFormat: 'MMM DD, HH:mm:ss',
-  })}
-  `
-      : `
-  Price feed updated every 30 mins, starting from latest time it was updated
-  `
+  // const heartbeatUpdateInfo =
+  //   dayjs(Date.now()).diff(dayjs(feed?.last_completed_data_last_updated_at), 'minutes') >= 30
+  //     ? `
+  // Price feed is outdated, missed the schedule price update at ${parseDate({
+  //   time: new Date(feed?.last_completed_data_last_updated_at || '').getTime() + 1000 * 60 * 30,
+  //   timeFormat: 'MMM DD, HH:mm:ss',
+  // })}
+  // `
+  //     : `
+  // Price feed updated every 30 mins, starting from latest time it was updated
+  // `
 
   const imageLink = dipDupTokens.find(({ contract }) => contract === feed?.address)?.metadata?.icon
 
@@ -135,7 +135,7 @@ const DataFeedDetailsView = ({
                 <DataFeedsTitle fontSize={14} fontWeidth={500}>
                   {isTrustedAnswer ? 'Trusted Answer' : 'Not Trusted Answer'}
                   <CustomTooltip
-                    text={`Answer is calculated in the smart contract and required a minimum of 60% of oracles to be trusted`}
+                    text={`The current price is trusted and approved by a majority of the oracles`}
                     iconId={'info'}
                     className="info-icon"
                   />
@@ -147,8 +147,7 @@ const DataFeedDetailsView = ({
                 <DataFeedsTitle fontSize={14} fontWeidth={600}>
                   Trigger parameters
                   <CustomTooltip
-                    text={`A new trusted answer is written when the off-chain data moves more than the deviation threshold or 3600
-                    seconds have passed since the last answer was written on-chain.`}
+                    text={`A new trusted answer is written when the off-chain data moves more than the deviation threshold or 30 seconds have passed since the last answer was written on-chain`}
                     iconId={'info'}
                     className="info-icon"
                   />
@@ -167,8 +166,7 @@ const DataFeedDetailsView = ({
                 <DataFeedSubTitleText fontSize={14} fontWeidth={500}>
                   Heartbeat
                   <CustomTooltip
-                    text={heartbeatUpdateInfo}
-                    defaultStrokeColor="#77a4f2"
+                    text={'Timer until the next feed data will be written on chain'}
                     iconId={'info'}
                     className="info-icon"
                   />
@@ -195,8 +193,7 @@ const DataFeedDetailsView = ({
                   Oracle responses
                   <CustomTooltip
                     className="info-icon"
-                    text={`The smart contract is connected to X oracles. Each aggregation requires a minimum of 60% oracles
-                    responses to be able to calculate a trusted answer.`}
+                    text={`The aggregator requires a minimum amount of responses from oracles for the answer to be trusted`}
                     iconId={'info'}
                   />
                 </DataFeedsTitle>
@@ -212,7 +209,7 @@ const DataFeedDetailsView = ({
                 <DataFeedsTitle fontSize={14} fontWeidth={600}>
                   Last update
                   <CustomTooltip
-                    text={`Time since last answer was written on-chain`}
+                    text={`Last time the aggregator was updated with a trusted answer and written on-chain`}
                     iconId={'info'}
                     className="info-icon"
                   />
@@ -244,13 +241,7 @@ const DataFeedDetailsView = ({
             <div className="info-wrapper">
               <DataFeedsTitle fontSize={14} fontWeidth={600} style={{ lineHeight: '100%' }}>
                 Contract address
-                <CustomTooltip
-                  text={`The contract address is an on-chain address that points to this particular data feed.
-                    The ENS address resolves to the contract address and is preferred as an easily-identifiable, tamper-proof agaddress.`}
-                  defaultStrokeColor="#8D86EB"
-                  iconId={'info'}
-                  className="info-icon"
-                />
+                <CustomTooltip text={`Address of this specific data feed`} iconId={'info'} className="info-icon" />
               </DataFeedsTitle>
               <DataFeedValueText fontSize={14} fontWeidth={600} style={{ lineHeight: '100%' }}>
                 <TzAddress tzAddress={feed.address} type={BLUE} hasIcon={true} />
@@ -261,13 +252,12 @@ const DataFeedDetailsView = ({
                 Oracle Factory
                 <CustomTooltip
                   text={`Address of the oracle (aggregator) factory which is responsible for creating the aggregator feeds which oracles can sign price feeds for`}
-                  defaultStrokeColor="#8D86EB"
                   iconId={'info'}
                   className="info-icon"
                 />
               </DataFeedsTitle>
               <DataFeedValueText fontSize={14} fontWeidth={600} style={{ lineHeight: '100%' }}>
-                <TzAddress tzAddress={feed.address} type={BLUE} hasIcon={true} />
+                <TzAddress tzAddress={feed.factory?.address ?? feed.admin} type={BLUE} hasIcon={true} />
               </DataFeedValueText>
             </div>
             {!isClickedRegister ? (

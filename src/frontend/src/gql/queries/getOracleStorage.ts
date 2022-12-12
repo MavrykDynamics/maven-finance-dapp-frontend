@@ -1,9 +1,13 @@
 export const ORACLE_STORAGE_QUERY = `
    query GetOracleDataFeeds {
-    aggregator(where: {admin: {_neq: ""}}) {
+    aggregator(where: {admin: {_neq: ""}}, order_by: {creation_timestamp: desc}) {
       address
       admin
       decimals
+      factory {
+        address
+      }
+      creation_timestamp
       governance_id
       last_completed_data
       last_completed_data_last_updated_at
