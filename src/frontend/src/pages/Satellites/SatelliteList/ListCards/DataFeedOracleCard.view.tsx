@@ -1,4 +1,5 @@
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { DataFeedSubTitleText } from 'pages/DataFeeds/details/DataFeedsDetails.style'
 import { getOracleStatus, ORACLE_STATUSES_MAPPER } from 'pages/Satellites/helpers/Satellites.consts'
@@ -14,47 +15,55 @@ export const OracleCard = ({ oracle }: { oracle: SatelliteRecord }) => {
   const oracleStatusType = getOracleStatus(oracle, feeds)
 
   return (
-    <Link to={`/satellites/satellite-details/${oracle.address}`}>
-      <SatelliteItemStyle oracle>
-        <div className="item">
-          <DataFeedSubTitleText fontSize={14} fontWeidth={600}>
-            Oracle
-          </DataFeedSubTitleText>
-          <TzAddress tzAddress={oracle.address} hasIcon type="secondary" />
-        </div>
-        <div className="item">
-          <DataFeedSubTitleText fontSize={14} fontWeidth={600}>
-            sMVK Rewards
-          </DataFeedSubTitleText>
-          <var>
-            <CommaNumber
-              showDecimal
-              value={oracle.oracleRecords.reduce<number>((acc, { sMVKReward }) => (acc += sMVKReward), 0)}
-            />
-          </var>
-        </div>
-        <div className="item">
-          <DataFeedSubTitleText fontSize={14} fontWeidth={600}>
-            XTZ Rewards
-          </DataFeedSubTitleText>
-          <var>
-            <CommaNumber
-              showDecimal
-              value={oracle.oracleRecords.reduce<number>((acc, { XTZReward }) => (acc += XTZReward), 0)}
-            />
-          </var>
-        </div>
-        <div className="item center-v">
-          <SatelliteOracleStatusComponent statusType={oracleStatusType}>
-            {ORACLE_STATUSES_MAPPER[oracleStatusType]}
-          </SatelliteOracleStatusComponent>
-        </div>
+    <SatelliteItemStyle oracle>
+      <div className="item">
+        <DataFeedSubTitleText fontSize={14} fontWeidth={500}>
+          Oracle
+        </DataFeedSubTitleText>
+        <TzAddress tzAddress={oracle.address} hasIcon type={BLUE} />
+      </div>
+      <div className="item">
+        <DataFeedSubTitleText fontSize={14} fontWeidth={500}>
+          sMVK Rewards
+        </DataFeedSubTitleText>
+        <var>
+          <CommaNumber
+            showDecimal
+            value={oracle.oracleRecords.reduce<number>((acc, { sMVKReward }) => (acc += sMVKReward), 0)}
+          />
+        </var>
+      </div>
+      <div className="item">
+        <DataFeedSubTitleText fontSize={14} fontWeidth={500}>
+          XTZ Rewards
+        </DataFeedSubTitleText>
+        <var>
+          <CommaNumber
+            showDecimal
+            value={oracle.oracleRecords.reduce<number>((acc, { XTZReward }) => (acc += XTZReward), 0)}
+          />
+        </var>
+      </div>
+      <div className="item">
+        <DataFeedSubTitleText fontSize={14} fontWeidth={500}>
+          Accuracy
+        </DataFeedSubTitleText>
+        <var>
+          <CommaNumber showDecimal value={0.08} endingText="%" />
+        </var>
+      </div>
+      <div className="item center-v">
+        <SatelliteOracleStatusComponent statusType={oracleStatusType}>
+          {ORACLE_STATUSES_MAPPER[oracleStatusType]}
+        </SatelliteOracleStatusComponent>
+      </div>
+      <Link to={`/satellites/satellite-details/${oracle.address}`}>
         <div className="svg-wrapper">
           <svg>
             <use xlinkHref="/icons/sprites.svg#openLink" />
           </svg>
         </div>
-      </SatelliteItemStyle>
-    </Link>
+      </Link>
+    </SatelliteItemStyle>
   )
 }

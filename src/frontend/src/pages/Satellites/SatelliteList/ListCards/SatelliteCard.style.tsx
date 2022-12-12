@@ -1,26 +1,26 @@
 import styled, { css } from 'styled-components/macro'
-import { Card, cyanColor, headerColor, boxShadowColor, skyColor, upColor, downColor } from 'styles'
+import { Card, upColor, downColor, warningColor } from 'styles'
 import { MavrykTheme } from 'styles/interfaces'
 
-export const SatelliteItemStyle = styled(Card)<{ oracle?: boolean }>`
+export const SatelliteItemStyle = styled(Card)<{ oracle?: boolean; theme: MavrykTheme }>`
   margin-top: 0;
   margin-bottom: 10px;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  padding: 16px 40px;
+  padding: 16px 30px;
   transition: 0.5s all;
 
   &.userFeed {
     grid-template-columns: 0.75fr 1fr 0.75fr 1.5fr 0.75fr;
-    padding: 25px 40px;
+    padding: 25px 30px;
 
     var {
-      text-transform: capitalize
+      text-transform: capitalize;
     }
   }
 
   &.feed {
-    grid-template-columns: 1fr 1.2fr 1.3fr 1fr;
+    grid-template-columns: 1.1fr 1fr 1.3fr 0.9fr;
   }
 
   .item {
@@ -41,8 +41,8 @@ export const SatelliteItemStyle = styled(Card)<{ oracle?: boolean }>`
       }
     }
     h5 {
-      color: ${skyColor};
-      font-weight: 400;
+      color: ${({ theme }) => theme.textColor};
+      font-weight: 600;
       font-size: 14px;
       line-height: 21px;
       margin-top: 0;
@@ -51,9 +51,9 @@ export const SatelliteItemStyle = styled(Card)<{ oracle?: boolean }>`
 
     var {
       font-style: normal;
-      color: ${cyanColor};
-      font-weight: 700;
-      font-size: 14px;
+      color: ${({ theme }) => theme.dataColor};
+      font-weight: 600;
+      font-size: 16px;
       line-height: 14px;
       display: flex;
       column-gap: 10px;
@@ -67,15 +67,19 @@ export const SatelliteItemStyle = styled(Card)<{ oracle?: boolean }>`
       }
     }
 
+    &.feed-last {
+      margin-left: auto;
+    }
+
     &.center-v {
       display: flex;
       align-items: center;
     }
 
     .secondary {
-      color: ${cyanColor};
       font-weight: 600;
-      stroke: ${cyanColor};
+      color: ${({ theme }) => theme.valueColor};
+      stroke: ${({ theme }) => theme.valueColor};
     }
   }
 
@@ -83,24 +87,25 @@ export const SatelliteItemStyle = styled(Card)<{ oracle?: boolean }>`
     display: flex;
     justify-content: flex-end;
     align-items: center;
+    height: 100%;
     svg {
       width: 16px;
       height: 16px;
-      fill: ${headerColor};
-      stroke: ${headerColor};
+      fill: ${({ theme }) => theme.valueColor};
+      stroke: ${({ theme }) => theme.valueColor};
       transition: 0.5s all;
     }
   }
 
   &:hover {
-    border-color: ${cyanColor};
-    box-shadow: 0px 4px 4px ${boxShadowColor};
+    border-color: ${({ theme }) => theme.valueColor};
+    box-shadow: 0px 4px 4px ${({ theme }) => theme.boxShadowColor};
     cursor: pointer;
 
     .svg-wrapper {
       svg {
-        fill: ${cyanColor};
-        stroke: ${cyanColor};
+        fill: ${({ theme }) => theme.valueColor};
+        stroke: ${({ theme }) => theme.valueColor};
       }
     }
   }
@@ -108,7 +113,7 @@ export const SatelliteItemStyle = styled(Card)<{ oracle?: boolean }>`
   ${({ oracle }) =>
     oracle
       ? css`
-          grid-template-columns: repeat(4, 1fr) 75px;
+          grid-template-columns: repeat(5, 1fr) 75px;
         `
       : ''}
 `
@@ -118,7 +123,7 @@ export const SatelliteOracleStatusComponent = styled.div<{ statusType: 'responde
   text-transform: uppercase;
   border: 1px solid
     ${({ statusType }) =>
-      statusType === 'responded' ? '#27AE60' : statusType === 'noResponse' ? '#FF4343' : '#FFCA43'};
+      statusType === 'responded' ? upColor : statusType === 'noResponse' ? downColor : warningColor};
   border-radius: 10px;
   font-weight: 600;
   font-size: 12px;
@@ -126,7 +131,7 @@ export const SatelliteOracleStatusComponent = styled.div<{ statusType: 'responde
   text-align: center;
   max-width: 130px;
   color: ${({ statusType }) =>
-    statusType === 'responded' ? '#27AE60' : statusType === 'noResponse' ? '#FF4343' : '#FFCA43'};
+    statusType === 'responded' ? upColor : statusType === 'noResponse' ? downColor : warningColor};
 `
 
 export const SatelliteCard = styled(Card)<{ theme: MavrykTheme }>`
@@ -176,15 +181,14 @@ export const SatelliteCardRow = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   padding: 15px;
   justify-content: center;
-  font-weight: 400;
-  font-size: 12px;
-  line-height: 12px;
-  color: ${({ theme }) => theme.headerColor};
+  font-weight: 600;
+  font-size: 16px;
+  color: ${({ theme }) => theme.textColor};
   border-top: 1px solid ${({ theme }) => theme.cardBorderColor};
 
   span {
-    font-weight: 700;
-    font-size: 14px;
+    font-weight: 600;
+    font-size: 16px;
 
     &.voting-yes {
       color: ${upColor};
@@ -195,7 +199,7 @@ export const SatelliteCardRow = styled.div<{ theme: MavrykTheme }>`
     }
 
     &.voting-pass {
-      color: ${skyColor};
+      color: ${({ theme }) => theme.headerSkyColor};
     }
   }
 `
@@ -217,18 +221,24 @@ export const SatelliteProfileImage = styled.div`
   height: 100%;
 `
 
-export const SideBySideImageAndText = styled.div`
+export const SideBySideImageAndText = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   flex-direction: row;
   align-items: center;
   margin-right: 10px;
 `
 
-export const SatelliteTextGroup = styled.div`
+export const SatelliteTextGroup = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: flex-start;
-  justify-content: space-around;
+  row-gap: 5px;
+
+  &.oracle-status {
+    row-gap: 2px;
+    height: 120%;
+  }
 
   &.voted {
     margin-left: 70px;
@@ -236,11 +246,9 @@ export const SatelliteTextGroup = styled.div`
 `
 
 export const SatelliteMainText = styled.div<{ theme: MavrykTheme }>`
-  color: ${({ theme }) => theme.headerSkyColor};
+  color: ${({ theme }) => theme.textColor};
   font-weight: 600;
-  line-height: 21px;
   font-size: 14px;
-  margin-bottom: 2px;
   width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -254,10 +262,9 @@ export const SatelliteMainText = styled.div<{ theme: MavrykTheme }>`
 `
 
 export const SatelliteSubText = styled.div<{ theme: MavrykTheme }>`
-  color: ${({ theme }) => theme.valueColor};
-  font-weight: 700;
-  font-size: 14px;
-  line-height: 14px;
+  color: ${({ theme }) => theme.dataColor};
+  font-weight: 600;
+  font-size: 16px;
   white-space: nowrap;
 
   &.toClick {
@@ -271,24 +278,23 @@ export const SatelliteSubText = styled.div<{ theme: MavrykTheme }>`
 
 export const SatelliteProfileDetails = styled.div<{ theme: MavrykTheme }>`
   display: flex;
-  justify-content: center;
-  margin-right: 15px;
+  margin-left: 7px;
   button.transparent {
-    color: ${({ theme }) => theme.headerSkyColor};
+    color: ${({ theme }) => theme.valueColor};
     font-weight: 600;
     font-size: 14px;
     line-height: 14px;
 
     svg {
-      stroke: ${({ theme }) => theme.headerSkyColor};
+      stroke: ${({ theme }) => theme.valueColor};
       margin-right: 0;
     }
 
     &:hover {
-      color: ${cyanColor};
+      color: ${({ theme }) => theme.valueColor};
 
       svg {
-        stroke: ${cyanColor};
+        stroke: ${({ theme }) => theme.valueColor};
       }
     }
   }

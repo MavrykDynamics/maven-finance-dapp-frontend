@@ -2,7 +2,6 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { RoutingButton } from 'app/App.components/RoutingButton/RoutingButton.controller'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { SatelliteSideBarStyled, SideBarSection, SideBarItem, FAQLink, SideBarFaq } from './SatelliteSideBar.style'
-import React from 'react'
 
 type OraclesSideBarProps = {
   userIsSatellite: boolean
@@ -83,13 +82,13 @@ const SatellitesSideBarView = ({
         <SideBarItem>
           <h3>Satellite Contract</h3>
           <var>
-            <TzAddress tzAddress={infoBlockAddresses.satellite} hasIcon={false} />
+            {infoBlockAddresses.satellite ? <TzAddress tzAddress={infoBlockAddresses.satellite} hasIcon={true} /> : '-'}
           </var>
         </SideBarItem>
         <SideBarItem>
-          <h3>Oracle Contract</h3>
+          <h3>Oracles Contract</h3>
           <var>
-            <TzAddress tzAddress={infoBlockAddresses.oracle} hasIcon={false} />
+            {infoBlockAddresses.oracle ? <TzAddress tzAddress={infoBlockAddresses.oracle} hasIcon={true} /> : '-'}
           </var>
         </SideBarItem>
       </SideBarSection>
@@ -109,26 +108,20 @@ const SatellitesSideBarView = ({
           </var>
         </SideBarItem>
         <SideBarItem>
-          <h3>Total Oracle Networks</h3>
+          <h3>Total Oracle</h3>
           <var>
             <CommaNumber value={totalOracleNetworks} showDecimal={false} />
           </var>
         </SideBarItem>
         <SideBarItem>
-          <h3>Total MVK delegated</h3>
+          <h3>Total delegated MVK</h3>
           <var>
-            <CommaNumber value={totalDelegatedMVK} endingText={'MVK'} />
+            <CommaNumber value={totalDelegatedMVK} showDecimal={false} />
           </var>
         </SideBarItem>
         <SideBarItem>
-          <h3>Total Value Secured</h3>
-          <var>
-            <CommaNumber value={dataPointsCount} showDecimal={false} />
-          </var>
-        </SideBarItem>
-        <SideBarItem>
-          <h3>Average Rewards per Oracle</h3>
-          <var>{averageRevard ? <CommaNumber value={averageRevard} endingText={'MVK'} /> : '-'}</var>
+          <h3>Avg. Oracle Rewards MVK</h3>
+          <var>{averageRevard ? <CommaNumber value={averageRevard} /> : '-'}</var>
         </SideBarItem>
       </SideBarSection>
 

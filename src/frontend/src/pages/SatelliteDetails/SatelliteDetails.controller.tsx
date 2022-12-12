@@ -1,4 +1,3 @@
-import * as React from 'react'
 import { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -11,6 +10,7 @@ import { getSatelliteByAddress } from './SatelliteDetails.actions'
 import { delegate, getDelegationStorage, getOracleStorage, undelegate } from 'pages/Satellites/Satellites.actions'
 import { rewardsCompound } from 'pages/Doorman/Doorman.actions'
 import { getSatelliteMetrics } from 'pages/Satellites/Satellites.helpers'
+import { getGovernanceStorage } from 'pages/Governance/Governance.actions'
 
 export const SatelliteDetails = () => {
   const dispatch = useDispatch()
@@ -35,6 +35,7 @@ export const SatelliteDetails = () => {
     dispatch(getSatelliteByAddress(satelliteId))
     dispatch(getDelegationStorage())
     dispatch(getOracleStorage())
+    dispatch(getGovernanceStorage())
   }, [dispatch, satelliteId])
 
   const delegateCallback = (address: string) => {

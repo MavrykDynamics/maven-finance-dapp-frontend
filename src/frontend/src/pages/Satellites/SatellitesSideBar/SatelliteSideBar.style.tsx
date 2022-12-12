@@ -8,16 +8,20 @@ export const SatelliteSideBarStyled = styled(Card)`
   max-width: 310px;
 
   h2 {
-    font-weight: 700;
-    font-size: 14px;
-    line-height: 21px;
-    color: ${({ theme }) => theme.headerColor};
+    font-weight: 600;
+    font-size: 18px;
+    margin-bottom: 25px;
+    color: ${({ theme }) => theme.textColor};
+
+    &::after {
+      display: none;
+    }
   }
 `
 
 export const SideBarSection = styled.aside<{ theme: MavrykTheme }>`
   padding: 0 20px;
-  padding: 31px 20px;
+  padding: 31px 17px;
   position: relative;
 
   &:first-child {
@@ -40,8 +44,20 @@ export const SideBarSection = styled.aside<{ theme: MavrykTheme }>`
 
 export const FAQLink = styled.div<{ theme: MavrykTheme }>`
   font-size: 14px;
-  color: ${({ theme }) => theme.headerColor};
   margin: 14px 0;
+  padding-left: 20px;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    top: 8px;
+    width: 5px;
+    height: 5px;
+    background: ${({ theme }) => theme.valueColor};
+    left: 5px;
+  }
 
   &.BG-faq-link {
     margin: 0;
@@ -49,10 +65,10 @@ export const FAQLink = styled.div<{ theme: MavrykTheme }>`
   }
 
   > a {
-    font-weight: 400;
+    font-weight: 500;
     font-size: 14px;
     line-height: 21px;
-    color: ${({ theme }) => theme.headerColor};
+    color: ${({ theme }) => theme.valueColor};
     text-decoration: underline;
   }
 `
@@ -61,7 +77,6 @@ export const SideBarItem = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   justify-content: space-between;
   font-weight: 600;
-  color: ${({ theme }) => theme.subTextColor};
   align-items: center;
   margin-top: 10px;
   margin-bottom: 9px;
@@ -69,20 +84,19 @@ export const SideBarItem = styled.div<{ theme: MavrykTheme }>`
 
   h3 {
     font-weight: 600;
-    font-size: 12px;
-    line-height: 12px;
-    color: ${({ theme }) => theme.headerSkyColor};
+    font-size: 14px;
+    color: ${({ theme }) => theme.textColor};
   }
 
   var {
     max-width: 50%;
+    color: ${({ theme }) => theme.dataColor};
 
     * {
       font-style: normal;
       font-weight: 600;
-      font-size: 12px;
-      line-height: 12px;
-      color: ${({ theme }) => theme.valueColor};
+      font-size: 14px;
+      color: ${({ theme }) => theme.dataColor};
       white-space: nowrap;
       max-width: 100%;
       overflow: hidden;
@@ -90,7 +104,7 @@ export const SideBarItem = styled.div<{ theme: MavrykTheme }>`
       margin: 0;
 
       svg {
-        stroke: ${({ theme }) => theme.valueColor};
+        stroke: ${({ theme }) => theme.dataColor};
         width: 16px;
         margin-left: 8px;
       }

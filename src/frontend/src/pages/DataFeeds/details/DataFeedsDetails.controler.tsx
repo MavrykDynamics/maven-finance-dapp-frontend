@@ -10,7 +10,7 @@ import { FeedGQL } from 'pages/Satellites/helpers/Satellites.types'
 import DataFeedDetailsView from './DataFeedsDetails.view'
 
 // actions
-import { getOracleStorage, registerFeedAction } from 'pages/Satellites/Satellites.actions'
+import { getDelegationStorage, getOracleStorage, registerFeedAction } from 'pages/Satellites/Satellites.actions'
 import { getDataFeedsHistory } from '../../Satellites/Satellites.actions'
 
 const DataFeedDetails = () => {
@@ -29,6 +29,7 @@ const DataFeedDetails = () => {
 
   useEffect(() => {
     dispatch(getOracleStorage())
+    dispatch(getDelegationStorage())
     dispatch(getDataFeedsHistory())
   }, [])
 

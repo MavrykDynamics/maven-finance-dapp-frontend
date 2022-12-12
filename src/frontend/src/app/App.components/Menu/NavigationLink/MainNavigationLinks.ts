@@ -141,6 +141,7 @@ export const mainNavigationLinks: MainNavigationRoute[] = [
         id: 15757,
         subTitle: 'Users',
         subPath: 'oracle-users',
+        disabled: true,
         routeSubPath: ['/oracle-users', '/satellites/user-details/:tabId'],
       },
     ],

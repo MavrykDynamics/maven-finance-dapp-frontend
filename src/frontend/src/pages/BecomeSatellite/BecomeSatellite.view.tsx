@@ -208,11 +208,7 @@ export const BecomeSatelliteView = ({
           ) : null}
 
           <BecomeSatelliteForm>
-            {updateSatellite ? (
-              <BecomeSatelliteFormTitle>Edit Satellite Profile</BecomeSatelliteFormTitle>
-            ) : (
-              <BecomeSatelliteFormTitle>Become a Satellite</BecomeSatelliteFormTitle>
-            )}
+            {updateSatellite ? <h2>Edit Satellite Profile</h2> : <h2>Become a Satellite</h2>}
             <CommaNumber
               className="label"
               value={Number(satelliteConfig.minimumStakedMvkBalance)}

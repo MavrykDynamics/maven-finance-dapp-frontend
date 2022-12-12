@@ -9,6 +9,7 @@ import { State } from 'reducers'
 import { parseDate } from 'utils/time'
 
 import { SatelliteItemStyle } from './SatelliteCard.style'
+import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 
 export const handleCoinName = (name: string) => {
   const updatedName = name.split('/')?.[1]
@@ -43,10 +44,10 @@ export const DataFeedCard = ({ feed }: { feed: FeedGQL }) => {
         <div className="item">
           <h5>Contact address</h5>
           <var>
-            <TzAddress tzAddress={feed.address} hasIcon={false} />
+            <TzAddress tzAddress={feed.address} hasIcon={true} type={BLUE} />
           </var>
         </div>
-        <div className="item">
+        <div className="item feed-last">
           <h5>Date</h5>
           <var>{parseDate({ time: feed.last_completed_data_last_updated_at, timeFormat: 'MMM DD, YYYY' })}</var>
         </div>
