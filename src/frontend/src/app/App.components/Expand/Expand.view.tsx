@@ -14,7 +14,6 @@ type Props = {
   header?: React.ReactNode
   sufix?: React.ReactNode
   className?: string
-  showText?: boolean
   showCustomText?: string
   isExpandedByDefault?: boolean
   onClickCallback?: () => void
@@ -26,7 +25,6 @@ export default function Expand({
   className = '',
   showCustomText = '',
   sufix = null,
-  showText = false,
   isExpandedByDefault = false,
   onClickCallback,
 }: Props) {
@@ -51,7 +49,6 @@ export default function Expand({
       <header className="expand-header">
         {header}
         <div className={`arrow-wrap ${expanded ? 'top' : 'bottom'}`}>
-          {showText ? <span>{expanded ? 'Hide' : 'Show'}</span> : null}
           {showCustomText ? <span>{showCustomText}</span> : null}
           <div
             className="expand-btn"

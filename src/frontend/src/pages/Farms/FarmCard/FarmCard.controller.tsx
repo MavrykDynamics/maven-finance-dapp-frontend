@@ -245,7 +245,6 @@ const VerticalFarmComponent = ({
         className="vertical-expand"
         onClickCallback={expandBlockCallback}
         isExpandedByDefault={isOpenedCard}
-        showText
       >
         <LinksBlock
           farmAddress={farm.address}
