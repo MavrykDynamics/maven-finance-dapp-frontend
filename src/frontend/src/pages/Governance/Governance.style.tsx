@@ -54,14 +54,6 @@ export const GovernanceRightContainer = styled(Card)<{ isAuthorized?: boolean; t
     }
   }
 
-  h1 {
-    color: ${({ theme }) => theme.dataColor};
-
-    &::after {
-      background: ${({ theme }) => theme.dataColor};
-    }
-  }
-
   .byte,
   .hide {
     svg {
