@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-
 import OracleSatellitesView from './SatelliteNodes.view'
-
+import { getSatelliteMetrics } from 'pages/Satellites/Satellites.helpers'
 import { SatelliteRecord } from 'utils/TypesAndInterfaces/Delegation'
 import { DropdownItemType } from '../../app/App.components/DropDown/DropDown.controller'
-
 import { State } from 'reducers'
 import { getDelegationStorage, delegate, undelegate } from 'pages/Satellites/Satellites.actions'
 
@@ -13,6 +11,14 @@ const SatelliteNodes = () => {
   const {
     delegationStorage: { activeSatellites = [] },
   } = useSelector((state: State) => state.delegation)
+  const { feeds } = useSelector((state: State) => state.oracles.oraclesStorage)
+  const {
+    governanceStorage: { financialRequestLedger, proposalLedger },
+    pastProposals,
+  } = useSelector((state: State) => state.governance)
+  const {
+    emergencyGovernanceStorage: { emergencyGovernanceLedger },
+  } = useSelector((state: State) => state.emergencyGovernance)
   const dispatch = useDispatch()
 
   const [allSatellites, setAllSatellites] = useState<SatelliteRecord[]>(activeSatellites)
@@ -20,6 +26,9 @@ const SatelliteNodes = () => {
 
   useEffect(() => {
     dispatch(getDelegationStorage())
+  }, [])
+
+  useEffect(() => {
     setAllSatellites(activeSatellites)
     setFilteredSatelliteList(activeSatellites)
   }, [activeSatellites])
@@ -46,33 +55,49 @@ const SatelliteNodes = () => {
   }
 
   const handleSelect = (selectedOption: DropdownItemType) => {
-    const sortLabel = selectedOption.text,
-      sortValue = selectedOption.value
+    const sortedData = (filteredSatelliteList ? [...filteredSatelliteList] : []).sort((a, b) => {
+      let res = 0
+      switch (selectedOption.text) {
+        case 'Lowest Fee':
+          res = Number(a.satelliteFee) - Number(b.satelliteFee)
+          break
+        case 'Highest Fee':
+          res = Number(b.satelliteFee) - Number(a.satelliteFee)
+          break
+        case 'Delegated MVK':
+          res = b.totalDelegatedAmount + b.sMvkBalance - (a.totalDelegatedAmount + a.sMvkBalance)
 
-    if (sortValue !== '') {
-      setFilteredSatelliteList((data: SatelliteRecord[]) => {
-        const dataToSort = data ? [...data] : []
+          break
+        case 'Participation':
+          const aMetrics = getSatelliteMetrics(
+            pastProposals,
+            proposalLedger,
+            emergencyGovernanceLedger,
+            a,
+            feeds,
+            financialRequestLedger,
+          )
 
-        dataToSort.sort((a, b) => {
-          let res = 0
-          switch (sortLabel) {
-            case 'Lowest Fee':
-              /* @ts-ignore */
-              res = Number(a[sortValue]) - Number(b[sortValue])
-              break
-            case 'Highest Fee':
-            case 'Delegated MVK':
-            case 'Participation':
-            default:
-              /* @ts-ignore */
-              res = Number(b[sortValue]) - Number(a[sortValue])
-              break
-          }
-          return res
-        })
-        return dataToSort
-      })
-    }
+          const bMetrics = getSatelliteMetrics(
+            pastProposals,
+            proposalLedger,
+            emergencyGovernanceLedger,
+            b,
+            feeds,
+            financialRequestLedger,
+          )
+
+          res =
+            (bMetrics.proposalParticipation + bMetrics.votingPartisipation) / 2 -
+            (aMetrics.proposalParticipation + aMetrics.votingPartisipation) / 2
+          break
+        default:
+          return 0
+      }
+      return res
+    })
+
+    setFilteredSatelliteList(sortedData)
   }
 
   const delegateCallback = (satelliteAddress: string) => {
