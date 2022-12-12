@@ -231,7 +231,7 @@ export const signAction = (breakGlassActionID: number) => async (dispatch: AppDi
     dispatch(showToaster(INFO, 'Propagate Break Glass...', 'Please wait 30s'))
 
     await transaction?.confirmation()
-    dispatch(showToaster(SUCCESS, 'Propagate Break Glass done', 'All good :)'))
+    dispatch(showToaster(SUCCESS, 'Action signed', 'All good :)'))
     dispatch(getBreakGlassActionPendingSignature())
     dispatch(toggleLoader())
   } catch (error) {
