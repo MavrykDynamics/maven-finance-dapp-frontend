@@ -12,6 +12,7 @@ import { TabSwitcher } from './Council.style'
 import { BreakGlassActions } from "utils/TypesAndInterfaces/BreakGlass";
 import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 import { CouncilActions } from "utils/TypesAndInterfaces/Council";
+import { CouncilPageType } from "./CouncilOngoingAction.view";
 
 type MyPastCouncilActionType = (BreakGlassActions[0] | CouncilActions[0]) & {
   councilId?: string,
@@ -30,6 +31,7 @@ type Props = {
   handleDropAction: (arg: number) => void
   listNameMyPastActions: string
   listNameMyOngoingActions: string
+  pageType: CouncilPageType
 }
 
 export function MyCouncilActions({
@@ -44,6 +46,7 @@ export function MyCouncilActions({
   handleDropAction,
   listNameMyPastActions,
   listNameMyOngoingActions,
+  pageType
 }: Props) {
     const handleChangeTabs = (tabId?: number) => {
     setActiveActionTab(tabId === 1 ? tabsList[0].text : tabsList[1].text)
@@ -79,6 +82,7 @@ export function MyCouncilActions({
               key={String(item.id)}
               numCouncilMembers={numCouncilMembers}
               handleDropAction={handleDropAction}
+              pageType={pageType}
             />
           ))}
 

@@ -326,6 +326,7 @@ export const Council = () => {
                 handleDropAction={handleDropAction}
                 listNameMyPastActions={COUNCIL_MY_PAST_ACTIONS_LIST_NAME}
                 listNameMyOngoingActions={COUNCIL_MY_ONGOING_ACTIONS_LIST_NAME}
+                pageType='council'
               />
             )}
           </div>
