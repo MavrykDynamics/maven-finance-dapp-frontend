@@ -165,6 +165,7 @@ export const setAllContractsAdmin = (newAdminAddress: string) => async (dispatch
 
     await transaction?.confirmation()
     dispatch(showToaster(SUCCESS, 'Propagate Break Glass done', 'All good :)'))
+    dispatch(getBreakGlassActionPendingSignature())
     dispatch(toggleLoader())
   } catch (error) {
     if (error instanceof Error) {
@@ -198,6 +199,7 @@ export const setSingleContractAdmin =
 
       await transaction?.confirmation()
       dispatch(showToaster(SUCCESS, 'Propagate Break Glass done', 'All good :)'))
+      dispatch(getBreakGlassActionPendingSignature())
       dispatch(toggleLoader())
     } catch (error) {
       if (error instanceof Error) {
@@ -230,6 +232,7 @@ export const signAction = (breakGlassActionID: number) => async (dispatch: AppDi
 
     await transaction?.confirmation()
     dispatch(showToaster(SUCCESS, 'Action signed', 'All good :)'))
+    dispatch(getBreakGlassActionPendingSignature())
     dispatch(toggleLoader())
   } catch (error) {
     if (error instanceof Error) {
@@ -266,6 +269,7 @@ export const addCouncilMember =
 
       await transaction?.confirmation()
       dispatch(showToaster(SUCCESS, 'Propagate Break Glass done', 'All good :)'))
+      dispatch(getBreakGlassActionPendingSignature())
       dispatch(toggleLoader())
     } catch (error) {
       if (error instanceof Error) {
@@ -302,6 +306,7 @@ export const updateCouncilMember =
 
       await transaction?.confirmation()
       dispatch(showToaster(SUCCESS, 'Propagate Break Glass done', 'All good :)'))
+      dispatch(getBreakGlassActionPendingSignature())
       dispatch(toggleLoader())
     } catch (error) {
       if (error instanceof Error) {
@@ -350,6 +355,7 @@ export const changeCouncilMember =
 
       await transaction?.confirmation()
       dispatch(showToaster(SUCCESS, 'Propagate Break Glass done', 'All good :)'))
+      dispatch(getBreakGlassActionPendingSignature())
       dispatch(toggleLoader())
     } catch (error) {
       if (error instanceof Error) {
@@ -382,6 +388,7 @@ export const removeCouncilMember = (memberAddress: string) => async (dispatch: A
 
     await transaction?.confirmation()
     dispatch(showToaster(SUCCESS, 'Propagate Break Glass done', 'All good :)'))
+    dispatch(getBreakGlassActionPendingSignature())
     dispatch(toggleLoader())
   } catch (error) {
     if (error instanceof Error) {
@@ -414,6 +421,7 @@ export const propagateBreakGlass = () => async (dispatch: AppDispatch, getState:
 
     await transaction?.confirmation()
     dispatch(showToaster(SUCCESS, 'Propagate Break Glass done', 'All good :)'))
+    
     dispatch(toggleLoader())
   } catch (error) {
     if (error instanceof Error) {
@@ -446,6 +454,11 @@ export const dropBreakGlass = (breakGlassActionID: number) => async (dispatch: A
 
     await transaction?.confirmation()
     dispatch(showToaster(SUCCESS, 'Propagate Break Glass done', 'All good :)'))
+
+    dispatch(getPastBreakGlassCouncilAction())
+    dispatch(getMyPastBreakGlassCouncilAction())
+    dispatch(getBreakGlassActionPendingSignature())
+    
     dispatch(toggleLoader())
   } catch (error) {
     if (error instanceof Error) {

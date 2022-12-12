@@ -17,15 +17,19 @@ import { CouncilOngoingActionStyled } from './Council.style'
 import { BreakGlassActions } from "utils/TypesAndInterfaces/BreakGlass";
 import { CouncilActions } from "utils/TypesAndInterfaces/Council";
 
+export type CouncilPageType = 'council' | 'breakGlassCouncil'
+
 type Props = (BreakGlassActions[0] | CouncilActions[0]) & {
   numCouncilMembers: number
   handleDropAction: (arg: number) => void
+  pageType: CouncilPageType
 }
 
 export function CouncilOngoingAction(props: Props) {
-  const { executionDatetime, actionType, signersCount, numCouncilMembers, id, parameters, handleDropAction } = props
+  const { executionDatetime, actionType, signersCount, numCouncilMembers, id, parameters, handleDropAction, pageType } = props
   const [isOpen, setIsOpen] = useState(false)
   const ref = useRef<HTMLDivElement | null>(null)
+  const isCouncilPage = pageType === 'council'
 
   const handleClickCard = () => {
     setIsOpen(!isOpen)
@@ -44,7 +48,7 @@ export function CouncilOngoingAction(props: Props) {
     <>
       <div className='row two-columns'>
         <div className='column'>
-          <div className='column-name'>Break Glass Action ID</div>
+          <div className='column-name'>{isCouncilPage ? 'Council ID' : 'Break Glass Action ID'}</div>
           <div className='column-value'>{id}</div>
         </div>
 
