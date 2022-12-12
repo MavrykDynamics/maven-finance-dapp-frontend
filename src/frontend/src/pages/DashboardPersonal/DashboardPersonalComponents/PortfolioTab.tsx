@@ -93,28 +93,36 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount }: Por
           <div className="name">Staked MVK</div>
           <div className="value">
             <CommaNumber value={sMVKAmount} />
-            <Button text="View" className="no-before" kind={ACTION_SIMPLE} />
+            <Link to="/">
+              <Button text="View" className="no-before" kind={ACTION_SIMPLE} />
+            </Link>
           </div>
         </div>
         <div className="wallet-info">
           <div className="name">MVK Not Staked</div>
           <div className="value">
             <CommaNumber value={notsMVKAmount} />
-            <Button text="Stake" className="no-before" kind={ACTION_SIMPLE} />
+            <Link to="/">
+              <Button text="Stake" className="no-before" kind={ACTION_SIMPLE} />
+            </Link>
           </div>
         </div>
         <div className="wallet-info">
           <div className="name">XTZ in Wallet</div>
           <div className="value">
             <CommaNumber value={xtzAmount} />
-            <Button text="Delegate" className="no-before" kind={ACTION_SIMPLE} />
+            <Link to="/satellites">
+              <Button text="Delegate" className="no-before" kind={ACTION_SIMPLE} />
+            </Link>
           </div>
         </div>
         <div className="wallet-info">
           <div className="name">tzBTC in Wallet</div>
           <div className="value">
             <CommaNumber value={tzBTCAmount} />
-            <Button text="Borrow" className="no-before" kind={ACTION_SIMPLE} />
+            <Link to="/lending" style={{ pointerEvents: 'none' }}>
+              <Button text="Borrow" className="no-before" kind={ACTION_SIMPLE} disabled />
+            </Link>
           </div>
         </div>
       </PortfolioWalletStyled>
