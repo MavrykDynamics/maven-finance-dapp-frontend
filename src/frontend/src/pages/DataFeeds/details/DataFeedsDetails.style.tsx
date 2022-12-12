@@ -195,8 +195,10 @@ export const DataFeedSubTitleText = styled.div<{ fontWeidth?: number; fontSize?:
     margin-bottom: 20px;
   }
 
-  svg {
-    fill: ${({ theme }) => theme.textColor};
+  .info-icon {
+    svg {
+      fill: ${({ theme }) => theme.textColor};
+    }
   }
 
   &.descr {

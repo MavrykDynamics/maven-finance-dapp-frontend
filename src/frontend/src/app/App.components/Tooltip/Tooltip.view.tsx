@@ -23,7 +23,7 @@ export const TooltipStyled = styled.div<{ defaultStrokeColor?: string; theme: Ma
   svg {
     width: 16px;
     height: 16px;
-    fill: ${({ theme }) => theme.dataColor}
+    fill: ${({ theme }) => theme.dataColor};
   }
 
   .text {
@@ -33,7 +33,8 @@ export const TooltipStyled = styled.div<{ defaultStrokeColor?: string; theme: Ma
     left: 50%;
     transform: translateX(-50%);
     display: block;
-    white-space: pre-line;
+    hyphens: auto;
+    text-align: center;
     padding: 3px 5px;
     border-radius: 3px;
     line-height: 15px;
@@ -44,6 +45,7 @@ export const TooltipStyled = styled.div<{ defaultStrokeColor?: string; theme: Ma
     visibility: hidden;
     width: max-content;
     max-width: 330px;
+    z-index: 1000;
   }
 
   .text::after {
@@ -54,6 +56,7 @@ export const TooltipStyled = styled.div<{ defaultStrokeColor?: string; theme: Ma
     margin-left: -5px;
     border-width: 5px;
     border-style: solid;
+    z-index: 1000;
     border-color: #503eaa transparent transparent transparent;
   }
 

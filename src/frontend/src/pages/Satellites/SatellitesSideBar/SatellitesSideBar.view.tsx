@@ -86,7 +86,7 @@ const SatellitesSideBarView = ({
           </var>
         </SideBarItem>
         <SideBarItem>
-          <h3>Oracle Contract</h3>
+          <h3>Oracles Contract</h3>
           <var>
             {infoBlockAddresses.oracle ? <TzAddress tzAddress={infoBlockAddresses.oracle} hasIcon={true} /> : '-'}
           </var>
@@ -108,26 +108,20 @@ const SatellitesSideBarView = ({
           </var>
         </SideBarItem>
         <SideBarItem>
-          <h3>Total Oracle Networks</h3>
+          <h3>Total Oracle</h3>
           <var>
             <CommaNumber value={totalOracleNetworks} showDecimal={false} />
           </var>
         </SideBarItem>
         <SideBarItem>
-          <h3>Total MVK delegated</h3>
+          <h3>Total delegated MVK</h3>
           <var>
-            <CommaNumber value={totalDelegatedMVK} endingText={'MVK'} />
+            <CommaNumber value={totalDelegatedMVK} showDecimal={false} />
           </var>
         </SideBarItem>
         <SideBarItem>
-          <h3>Total Value Secured</h3>
-          <var>
-            <CommaNumber value={dataPointsCount} showDecimal={false} />
-          </var>
-        </SideBarItem>
-        <SideBarItem>
-          <h3>Avg. Rewards per Oracle</h3>
-          <var>{averageRevard ? <CommaNumber value={averageRevard} endingText={'MVK'} /> : '-'}</var>
+          <h3>Avg. Oracle Rewards MVK</h3>
+          <var>{averageRevard ? <CommaNumber value={averageRevard} /> : '-'}</var>
         </SideBarItem>
       </SideBarSection>
 

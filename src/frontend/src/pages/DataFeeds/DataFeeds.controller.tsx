@@ -119,13 +119,7 @@ export const DataFeeds = () => {
       </SatelliteSearchFilter>
       <DataFeedsStyled>
         {sortedFeeds.length ? (
-          <SatelliteList
-            listTitle={'Data feeds'}
-            loading={loading}
-            items={sortedFeeds}
-            listType={'feeds'}
-            name={FEEDS_ALL_LIST_NAME}
-          />
+          <SatelliteList loading={loading} items={sortedFeeds} listType={'feeds'} name={FEEDS_ALL_LIST_NAME} />
         ) : (
           emptyContainer
         )}
