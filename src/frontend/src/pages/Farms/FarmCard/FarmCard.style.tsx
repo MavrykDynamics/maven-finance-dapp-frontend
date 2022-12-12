@@ -146,7 +146,7 @@ export const FarmCardStyled = styled(Card)<{ theme: MavrykTheme }>`
       display: flex;
       justify-content: space-between;
       text-align: right;
-      padding-left: 20px;
+      padding-left: 40px;
       padding-right: 40px;
       padding-top: 40px;
       margin-bottom: 25px;

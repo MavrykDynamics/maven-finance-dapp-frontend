@@ -31,31 +31,46 @@ export const FarmCardSecondTokenIcon = styled.img<{ theme: MavrykTheme }>`
   align-self: flex-end;
 `
 
+export const FarmCardOneTokenIcon = styled.img<{ theme: MavrykTheme }>`
+  height: 40px;
+  width: 44px;
+  left: 0;
+  top: 4px;
+  align-self: flex-end;
+`
+
 export default function CoinsIcons({
   firstAssetLogoSrc,
   secondAssetLogoSrc,
+  className,
 }: {
   firstAssetLogoSrc?: string
   secondAssetLogoSrc?: string
+  className?: string
 }) {
+  const withoutValidLogos = !firstAssetLogoSrc && !secondAssetLogoSrc
   return (
-    <FarmCardTokenLogoContainer>
-      <FarmCardFirstTokenIcon
-        src={firstAssetLogoSrc ? `https://services.tzkt.io/v1/avatars/${firstAssetLogoSrc}` : '/images/coin-gold.svg'}
-        onError={({ currentTarget }) => {
-          currentTarget.onerror = null
-          currentTarget.src = '/images/coin-gold.svg'
-        }}
-      />
-      <FarmCardSecondTokenIcon
-        src={
-          secondAssetLogoSrc ? `https://services.tzkt.io/v1/avatars/${secondAssetLogoSrc}` : '/images/coin-silver.svg'
-        }
-        onError={({ currentTarget }) => {
-          currentTarget.onerror = null
-          currentTarget.src = '/images/coin-silver.svg'
-        }}
-      />
+    <FarmCardTokenLogoContainer className={className}>
+      {withoutValidLogos
+        ? <FarmCardOneTokenIcon src='/images/coin-gold.svg' />
+        : <>
+          <FarmCardFirstTokenIcon
+            src={firstAssetLogoSrc ? `https://services.tzkt.io/v1/avatars/${firstAssetLogoSrc}` : '/images/coin-gold.svg'}
+            onError={({ currentTarget }) => {
+              currentTarget.onerror = null
+              currentTarget.src = '/images/coin-gold.svg'
+            }}
+          />
+          <FarmCardSecondTokenIcon
+            src={
+              secondAssetLogoSrc ? `https://services.tzkt.io/v1/avatars/${secondAssetLogoSrc}` : '/images/coin-silver.svg'
+            }
+            onError={({ currentTarget }) => {
+              currentTarget.onerror = null
+              currentTarget.src = '/images/coin-silver.svg'
+            }}
+          />
+        </>}
     </FarmCardTokenLogoContainer>
   )
 }
