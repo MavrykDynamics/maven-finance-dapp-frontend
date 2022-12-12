@@ -90,8 +90,8 @@ export const SatelliteItemStyle = styled(Card)<{ oracle?: boolean; theme: Mavryk
     svg {
       width: 16px;
       height: 16px;
-      fill: ${({ theme }) => theme.headerColor};
-      stroke: ${({ theme }) => theme.headerColor};
+      fill: ${({ theme }) => theme.valueColor};
+      stroke: ${({ theme }) => theme.valueColor};
       transition: 0.5s all;
     }
   }
@@ -112,7 +112,7 @@ export const SatelliteItemStyle = styled(Card)<{ oracle?: boolean; theme: Mavryk
   ${({ oracle }) =>
     oracle
       ? css`
-          grid-template-columns: repeat(4, 1fr) 75px;
+          grid-template-columns: repeat(5, 1fr) 75px;
         `
       : ''}
 `

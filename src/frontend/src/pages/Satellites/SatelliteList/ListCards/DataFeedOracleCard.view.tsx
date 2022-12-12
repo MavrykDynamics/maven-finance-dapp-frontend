@@ -1,4 +1,5 @@
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { DataFeedSubTitleText } from 'pages/DataFeeds/details/DataFeedsDetails.style'
 import { getOracleStatus, ORACLE_STATUSES_MAPPER } from 'pages/Satellites/helpers/Satellites.consts'
@@ -17,13 +18,13 @@ export const OracleCard = ({ oracle }: { oracle: SatelliteRecord }) => {
     <Link to={`/satellites/satellite-details/${oracle.address}`}>
       <SatelliteItemStyle oracle>
         <div className="item">
-          <DataFeedSubTitleText fontSize={14} fontWeidth={600}>
+          <DataFeedSubTitleText fontSize={14} fontWeidth={500}>
             Oracle
           </DataFeedSubTitleText>
-          <TzAddress tzAddress={oracle.address} hasIcon type="secondary" />
+          <TzAddress tzAddress={oracle.address} hasIcon type={BLUE} />
         </div>
         <div className="item">
-          <DataFeedSubTitleText fontSize={14} fontWeidth={600}>
+          <DataFeedSubTitleText fontSize={14} fontWeidth={500}>
             sMVK Rewards
           </DataFeedSubTitleText>
           <var>
@@ -34,7 +35,7 @@ export const OracleCard = ({ oracle }: { oracle: SatelliteRecord }) => {
           </var>
         </div>
         <div className="item">
-          <DataFeedSubTitleText fontSize={14} fontWeidth={600}>
+          <DataFeedSubTitleText fontSize={14} fontWeidth={500}>
             XTZ Rewards
           </DataFeedSubTitleText>
           <var>
@@ -42,6 +43,14 @@ export const OracleCard = ({ oracle }: { oracle: SatelliteRecord }) => {
               showDecimal
               value={oracle.oracleRecords.reduce<number>((acc, { XTZReward }) => (acc += XTZReward), 0)}
             />
+          </var>
+        </div>
+        <div className="item">
+          <DataFeedSubTitleText fontSize={14} fontWeidth={500}>
+            Accuracy
+          </DataFeedSubTitleText>
+          <var>
+            <CommaNumber showDecimal value={0.08} endingText="%" />
           </var>
         </div>
         <div className="item center-v">

@@ -1,7 +1,8 @@
 import styled from 'styled-components/macro'
-import { Card, headerColor, cyanColor } from 'styles'
+import { Card } from 'styles'
+import { MavrykTheme } from 'styles/interfaces'
 
-export const SatellitePaginationStyled = styled(Card)`
+export const SatellitePaginationStyled = styled(Card)<{ theme: MavrykTheme }>`
   margin-top: 30px;
   margin-bottom: 20px;
   display: flex;
@@ -12,11 +13,11 @@ export const SatellitePaginationStyled = styled(Card)`
 
   .pagination-link {
     display: flex;
-    color: ${headerColor};
+    color: ${({ theme }) => theme.valueColor};
     align-items: center;
     min-height: 23px;
-    stroke: ${headerColor};
-    font-weight: 400;
+    stroke: ${({ theme }) => theme.valueColor};
+    font-weight: 600;
     font-size: 14px;
 
     svg {
@@ -26,8 +27,7 @@ export const SatellitePaginationStyled = styled(Card)`
     }
 
     &:hover {
-      color: ${cyanColor};
-      stroke: ${cyanColor};
+      opacity: 0.8;
     }
 
     &.back {

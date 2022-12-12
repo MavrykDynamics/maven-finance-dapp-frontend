@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import { boxShadowColor, cyanColor } from 'styles'
 import { MavrykTheme } from '../../../styles/interfaces'
 
-export const DataFeedsStyled = styled.div`
+export const DataFeedsStyled = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   flex-direction: column;
 
@@ -19,11 +19,13 @@ export const DataFeedsStyled = styled.div`
   .top-section-wrapper {
     display: flex;
     justify-content: space-between;
+    height: 225px;
     .left-part {
       max-width: 745px;
+      height: 100%;
       width: 100%;
-      background: #160e3f;
-      border: 1px solid #503eaa;
+      background: ${({ theme }) => theme.containerColor};
+      border: 1px solid ${({ theme }) => theme.cardBorderColor};
       border-radius: 10px;
 
       .top {
@@ -35,14 +37,28 @@ export const DataFeedsStyled = styled.div`
         .name-part {
           padding-left: 55px;
           position: relative;
+          display: flex;
+          align-items: center;
+
+          .text {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+          }
 
           a {
             font-weight: 600;
             font-size: 12px;
             line-height: 18px;
-            color: #8d86eb;
+            color: ${({ theme }) => theme.textColor};
             display: flex;
             align-items: center;
+
+            .info-icon {
+              svg {
+                fill: ${({ theme }) => theme.textColor};
+              }
+            }
           }
 
           .img-wrapper {
@@ -64,6 +80,7 @@ export const DataFeedsStyled = styled.div`
         .price-part {
           display: flex;
           flex-direction: column;
+          justify-content: space-between;
           align-items: flex-end;
         }
 
@@ -73,14 +90,14 @@ export const DataFeedsStyled = styled.div`
           bottom: 0;
           left: 0;
           height: 1px;
-          background-color: #503eaa;
+          background-color: ${({ theme }) => theme.cardBorderColor};
           width: 100%;
         }
       }
 
       .bottom {
-        display: grid;
-        grid-template-columns: 170px 165px 155px 165px;
+        display: flex;
+        justify-content: space-between;
         column-gap: 5px;
         padding: 5px 40px 30px;
       }
@@ -88,52 +105,35 @@ export const DataFeedsStyled = styled.div`
 
     .right-part {
       max-width: 315px;
+      height: 100%;
       width: 100%;
-      row-gap: 20px;
+      padding: 30px 17px;
       display: flex;
+      align-items: center;
       flex-direction: column;
+      background: ${({ theme }) => theme.containerColor};
+      border: 1px solid ${({ theme }) => theme.cardBorderColor};
+      border-radius: 10px;
+
+      .register-pair-wrapper {
+        max-width: 255px;
+        width: 100%;
+        margin-top: 25px;
+      }
+
+      h3 {
+        font-weight: 600;
+        font-size: 18px;
+        color: ${({ theme }) => theme.textColor};
+        margin-bottom: 20px;
+      }
 
       .info-wrapper {
         display: flex;
+        width: 100%;
         justify-content: space-between;
         align-items: center;
-        margin-top: 10px;
-      }
-
-      .adresses-info,
-      .register-pair-wrapper {
-        background: #160e3f;
-        border: 1px solid #503eaa;
-        border-radius: 10px;
-        padding: 0 30px 10px 30px;
-      }
-
-      .register-pair-wrapper {
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .adresses-info {
-        position: relative;
-        height: 110px;
-        padding-top: 15px;
-        &.registered {
-          height: 100%;
-          &::before {
-            content: '';
-            position: absolute;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            height: 3px;
-            width: 44px;
-            background: #503eaa;
-            border-radius: 10px;
-          }
-        }
+        margin: 5px 0;
       }
     }
   }
@@ -144,20 +144,19 @@ export const DataFeedsStyled = styled.div`
   }
 `
 
-export const DataFeedInfoBlock = styled.div<{ justifyContent?: string }>`
-  position: relative; 
+export const DataFeedInfoBlock = styled.div<{ justifyContent?: string; theme: MavrykTheme }>`
+  position: relative;
   display: flex;
   flex-direction: column;
   padding-top: 15px;
   justify-content: ${({ justifyContent }) => justifyContent || 'flex-start'};
-  top: ${({ justifyContent }) => justifyContent === 'flex-end' ? '-2px' : ''};
-  min-height: 85px;
+  min-height: 56px;
 `
 
-export const DataFeedsTitle = styled.div<{ fontWeidth?: number; fontSize?: number }>`
+export const DataFeedsTitle = styled.div<{ fontWeidth?: number; fontSize?: number; theme: MavrykTheme }>`
   font-weight: ${({ fontWeidth }) => fontWeidth || 400};
   font-size: ${({ fontSize }) => (fontSize ? `${fontSize}px` : '12px')};
-  color: #8d86eb;
+  color: ${({ theme }) => theme.textColor};
   display: flex;
   align-items: center;
 
@@ -166,6 +165,12 @@ export const DataFeedsTitle = styled.div<{ fontWeidth?: number; fontSize?: numbe
   &.title {
     margin: 0 auto;
     margin-bottom: 45px;
+  }
+
+  .info-icon {
+    svg {
+      fill: ${({ theme }) => theme.textColor};
+    }
   }
 
   &.link {
@@ -177,10 +182,10 @@ export const DataFeedsTitle = styled.div<{ fontWeidth?: number; fontSize?: numbe
   }
 `
 
-export const DataFeedSubTitleText = styled.div<{ fontWeidth?: number; fontSize?: number }>`
+export const DataFeedSubTitleText = styled.div<{ fontWeidth?: number; fontSize?: number; theme: MavrykTheme }>`
   font-weight: ${({ fontWeidth }) => fontWeidth || 400};
   font-size: ${({ fontSize }) => (fontSize ? `${fontSize}px` : '12px')};
-  color: #77a4f2;
+  color: ${({ theme }) => theme.textColor};
   padding: 3px 0 4px 0;
   display: flex;
   align-items: center;
@@ -188,6 +193,10 @@ export const DataFeedSubTitleText = styled.div<{ fontWeidth?: number; fontSize?:
   &.title {
     margin: 0 auto;
     margin-bottom: 20px;
+  }
+
+  svg {
+    fill: ${({ theme }) => theme.textColor};
   }
 
   &.descr {
@@ -198,25 +207,35 @@ export const DataFeedSubTitleText = styled.div<{ fontWeidth?: number; fontSize?:
   }
 `
 
-export const DataFeedValueText = styled.div<{ fontWeidth?: number; fontSize?: number }>`
+export const DataFeedValueText = styled.div<{ fontWeidth?: number; fontSize?: number; theme: MavrykTheme }>`
   font-weight: ${({ fontWeidth }) => fontWeidth || 400};
   font-size: ${({ fontSize }) => (fontSize ? `${fontSize}px` : '12px')};
-  line-height: 25px;
-  color: #86d4c9;
+  color: ${({ theme }) => theme.dataColor};
   display: flex;
 
   p {
     margin: 0;
   }
 
+  .timer {
+    * {
+      line-height: 100%;
+    }
+  }
+
+  &.shield {
+    svg {
+      margin-right: 7px;
+    }
+  }
+
   svg {
-    width: 22px;
-    height: 22px;
-    margin-right: 7px;
+    width: 20px;
+    height: 20px;
   }
 `
 
-export const UsersListWrapper = styled.div`
+export const UsersListWrapper = styled.div<{ theme: MavrykTheme }>`
   margin-top: 30px;
 
   .see-all-link {
@@ -224,18 +243,18 @@ export const UsersListWrapper = styled.div`
   }
 `
 
-export const UsersListCardsWrapper = styled.div`
+export const UsersListCardsWrapper = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   column-gap: 20px;
   margin-top: 30px;
   overflow: hidden;
 `
 
-export const UserSmallCard = styled.div`
+export const UserSmallCard = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   align-items: center;
-  background: #160e3f;
-  border: 1px solid #503eaa;
+  background: ${({ theme }) => theme.containerColor};
+  border: 1px solid ${({ theme }) => theme.cardBorderColor};
   border-radius: 10px;
   padding: 20px 35px;
   transition: 0.6s all;
@@ -243,7 +262,7 @@ export const UserSmallCard = styled.div`
   .img-wrapper {
     width: 40px;
     height: 40px;
-    border: 1px solid #8d86eb;
+    border: 1px solid ${({ theme }) => theme.headerColor};
     margin-right: 20px;
     display: flex;
     align-items: center;

@@ -1,17 +1,11 @@
 import styled from 'styled-components/macro'
-import { cyanColor, downColor, skyColor, subTextColor, upColor } from 'styles'
+import { cyanColor, downColor, upColor } from 'styles'
 import { MavrykTheme } from 'styles/interfaces'
 
 export const SatelliteDetailsStyled = styled.div<{ theme: MavrykTheme }>`
   background-color: ${({ theme }) => theme.containerColor};
 `
 
-export const SatelliteDescriptionText = styled.p`
-  font-size: 14px;
-  color: ${subTextColor};
-  font-weight: ${({ fontWeight }: { fontWeight: number }) => `${fontWeight}`};
-  margin: 0;
-`
 export const SatelliteCardBottomRow = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   flex-direction: column;
