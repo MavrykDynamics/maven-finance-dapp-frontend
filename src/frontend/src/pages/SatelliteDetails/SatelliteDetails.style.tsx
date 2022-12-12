@@ -1,18 +1,9 @@
 import styled from 'styled-components/macro'
-import {
-  cyanColor,
-  containerColor,
-  royalPurpleColor,
-  downColor,
-  headerColor,
-  skyColor,
-  subTextColor,
-  infoColor,
-  upColor,
-} from 'styles'
+import { cyanColor, downColor, skyColor, subTextColor, upColor } from 'styles'
+import { MavrykTheme } from 'styles/interfaces'
 
-export const SatelliteDetailsStyled = styled.div`
-  background-color: ${containerColor};
+export const SatelliteDetailsStyled = styled.div<{ theme: MavrykTheme }>`
+  background-color: ${({ theme }) => theme.containerColor};
 `
 
 export const SatelliteDescriptionText = styled.p`
@@ -21,7 +12,7 @@ export const SatelliteDescriptionText = styled.p`
   font-weight: ${({ fontWeight }: { fontWeight: number }) => `${fontWeight}`};
   margin: 0;
 `
-export const SatelliteCardBottomRow = styled.div`
+export const SatelliteCardBottomRow = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   flex-direction: column;
   padding: 38px 25px;
@@ -29,15 +20,8 @@ export const SatelliteCardBottomRow = styled.div`
   font-weight: 400;
   font-size: 12px;
   line-height: 12px;
-  color: ${headerColor};
-  border-top: 1px solid ${royalPurpleColor};
-
-  .column-wrapper {
-    display: flex;
-    justify-content: space-between;
-    column-gap: 130px;
-    align-items: flex-start;
-  }
+  row-gap: 40px;
+  border-top: 1px solid ${({ theme }) => theme.cardBorderColor};
 
   p {
     font-weight: 600;
@@ -47,14 +31,14 @@ export const SatelliteCardBottomRow = styled.div`
   }
 `
 
-export const BlockName = styled.div`
+export const BlockName = styled.div<{ theme: MavrykTheme }>`
   font-weight: 600;
-  font-size: 14px;
-  line-height: 14px;
-  color: ${headerColor};
+  font-size: 18px;
+  margin-bottom: 20px;
+  color: ${({ theme }) => theme.textColor};
 `
 
-export const SatelliteMetricsBlock = styled.div`
+export const SatelliteMetricsBlock = styled.div<{ theme: MavrykTheme }>`
   display: grid;
   grid-template-columns: 200px 60px;
   align-items: center;
@@ -63,14 +47,16 @@ export const SatelliteMetricsBlock = styled.div`
   p {
     margin: 3px 0;
     text-align: right;
+    color: ${({ theme }) => theme.dataColor};
+    font-weight: 600;
+    font-size: 16px;
   }
 
   h5 {
     margin: 0;
-    font-weight: 400;
+    font-weight: 500;
     font-size: 14px;
-    line-height: 16px;
-    color: ${skyColor};
+    color: ${({ theme }) => theme.textColor};
   }
 `
 
@@ -89,17 +75,18 @@ export const SatelliteVotingInfoWrapper = styled.div`
   }
 `
 
-export const SatelliteDescrBlock = styled.div`
+export const SatelliteDescrBlock = styled.div<{ theme: MavrykTheme }>`
   margin-bottom: 25px;
 
   p {
     padding-top: 8px;
     margin-bottom: 25px;
     font-size: 15px;
+    color: ${({ theme }) => theme.textColor};
   }
 
   .satellite-website {
-    color: ${infoColor};
+    color: ${cyanColor};
     font-weight: 700;
     font-size: 14px;
     line-height: 14px;
@@ -112,6 +99,12 @@ export const SatelliteVotingHistoryListItem = styled.div`
   justify-content: space-between;
   max-height: 28px;
 
+  p {
+    color: ${({ theme }) => theme.textColor};
+    font-weight: 500;
+    font-size: 14px;
+  }
+
   p:first-letter {
     text-transform: uppercase;
   }
@@ -119,7 +112,9 @@ export const SatelliteVotingHistoryListItem = styled.div`
   .satellite-voting-history-info {
     flex-shrink: 0;
     padding-left: 16px;
-    color: ${skyColor};
+    color: ${({ theme }) => theme.textColor};
+    font-weight: 400;
+    font-size: 14px;
   }
 
   b {
@@ -135,7 +130,7 @@ export const SatelliteVotingHistoryListItem = styled.div`
     }
 
     &.voting-abstain {
-      color: ${skyColor};
+      color: ${({ theme }) => theme.headerColor};
     }
   }
 `
