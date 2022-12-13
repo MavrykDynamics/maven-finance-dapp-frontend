@@ -14,7 +14,7 @@ export const EMERGENCY_GOVERNANCE_STORAGE_QUERY = `
       governance_id
       decimals
       admin
-      emergency_governance_records {
+      emergency_governance_records(order_by: {start_timestamp: desc}) {
         description
         dropped
         emergency_governance_id

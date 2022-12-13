@@ -9,11 +9,9 @@ import { EmergencyGovernanceView } from './EmergencyGovernance.view'
 import { getBreakGlassStorage } from '../BreakGlass/BreakGlass.actions'
 import { EmergencyGovProposalModal } from './EmergencyGovProposalModal/EmergencyGovProposalModal.controller'
 import { showExitFeeModal } from './EmergencyGovProposalModal/EmergencyGovProposalModal.actions'
-import { proposalRoundVote, votingRoundVote } from '../Governance/Governance.actions'
 import { dropProposal } from 'pages/ProposalSubmission/ProposalSubmission.actions'
 import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
 
-// TODO: add voting when I will be able to create proposals here, and get sam clarification for it
 export const EmergencyGovernance = () => {
   const dispatch = useDispatch()
   const { accountPkh } = useSelector((state: State) => state.wallet)
