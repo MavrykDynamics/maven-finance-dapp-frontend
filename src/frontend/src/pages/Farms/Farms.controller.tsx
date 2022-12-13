@@ -35,7 +35,7 @@ export type FarmsViewVariantType = typeof VERTICAL_FARM_VIEW | typeof HORIZONTAL
 const EmptyContainer = () => (
   <EmptyList>
     <img src="/images/not-found.svg" alt=" No results to show" />
-    <figcaption> No farms to show</figcaption>
+    <figcaption>No results to show</figcaption>
   </EmptyList>
 )
 

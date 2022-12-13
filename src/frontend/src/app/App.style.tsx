@@ -41,11 +41,11 @@ export const EmptyContainer = styled.figure<{ theme: MavrykTheme }>`
   justify-content: center;
   align-items: center;
   margin: 0;
-  color: ${({ theme }) => theme.headerColor};
+  color: ${({ theme }) => theme.textColor};
   font-size: 18px;
-  font-weight: 800;
+  font-weight: 600;
   flex-direction: column;
-  padding-top: 16px;
+  padding-top: 80px;
 
   & ~ figure {
     display: none;
