@@ -59,9 +59,9 @@ export const EmergencyGovProposalModalView = ({
               <EmergencyGovProposalModalContent>
                 <h1>Trigger Emergency Governance Vote & Break Glass</h1>
                 <ModalFormContentContainer>
-                  <FormTitleAndFeeContainer>
+                  <FormTitleAndFeeContainer className="eGov-modal">
                     <FormTitleContainer style={{ width: '510px' }}>
-                      <label>1- Title</label>
+                      <label>Title</label>
                       <Input
                         type="text"
                         value={form.title}
@@ -72,25 +72,13 @@ export const EmergencyGovProposalModalView = ({
                         inputStatus={formInputStatus.title}
                       />
                     </FormTitleContainer>
-                    {/* <div>
-                      <label>2- Enter MVK amount to trigger Break Glass</label>
-                      <Input
-                        type="number"
-                        value={form.amountMVKtoTriggerBreakGlass}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                          setForm({ ...form, amountMVKtoTriggerBreakGlass: Number(e.target.value) })
-                        }
-                        onBlur={(e: React.ChangeEvent<HTMLInputElement>) => handleOnBlur(e, 'MVK_TRIGGER_AMOUNT')}
-                        inputStatus={formInputStatus.amountMVKtoTriggerBreakGlass}
-                      />
-                    </div> */}
                     <div>
-                      <label>2 - Fee</label>
+                      <label>Fee</label>
                       <FormTitleEntry>{fee} XTZ</FormTitleEntry>
                     </div>
                   </FormTitleAndFeeContainer>
 
-                  <label>3 - Enter your description</label>
+                  <label>Enter your description</label>
                   <TextArea
                     value={form.description}
                     onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
@@ -100,15 +88,6 @@ export const EmergencyGovProposalModalView = ({
                     inputStatus={formInputStatus.description}
                     textAreaMaxLimit={proposalDescMaxLength}
                   />
-                  {/* <div className="upload-wrap">
-                    <IPFSUploader
-                      typeFile="image"
-                      imageIpfsUrl={form.screenshots}
-                      setIpfsImageUrl={(e: string) => setForm({ ...form, screenshots: e })}
-                      title={'Add pdf of screenshots (if relevant)'}
-                      listNumber={4}
-                    />
-                  </div> */}
                 </ModalFormContentContainer>
                 <EmergencyGovProposalModalButtons>
                   <Button text="Cancel" kind="actionSecondary" icon="error" onClick={cancelCallback} />

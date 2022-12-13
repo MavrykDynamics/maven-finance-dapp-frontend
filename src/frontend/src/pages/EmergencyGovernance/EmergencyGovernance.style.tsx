@@ -1,56 +1,57 @@
-import styled, { css } from "styled-components/macro";
-import { Card, skyColor, cyanColor } from "styles";
+import styled, { css } from 'styled-components/macro'
+import { Card, skyColor, cyanColor } from 'styles'
 
-import { MavrykTheme } from "../../styles/interfaces";
+import { MavrykTheme } from '../../styles/interfaces'
 
 export const EmergencyGovernanceCard = styled(Card)<{ theme: MavrykTheme }>`
   padding-top: 28px;
   position: relative;
 
-  .inner {
-    font-weight: 400;
-    font-size: 16px;
+  > div {
+    font-weight: 500;
+    font-size: 14px;
     line-height: 24px;
-    color: ${skyColor};
+    color: ${({ theme }) => theme.textColor};
     margin: 0;
-
-    div {
-      margin: 8px 0;
-      margin-bottom: 13px;
-      font-size: 12px;
-
-      a {
-        font-size: 14px;
-        text-decoration: none;
-      }
-    }
   }
 
-  h1 {
+  a {
+    color: ${({ theme }) => theme.valueColor};
+    margin-top: 10px;
+    font-size: 14px;
+    text-decoration: none;
+    display: block;
+  }
+
+  h2 {
     margin-top: 0;
     margin-bottom: 0;
+    font-weight: 600;
   }
-`;
+`
 
 export const CardContentLeftSide = styled.div<{ theme: MavrykTheme }>`
   width: 50%;
   align-items: center;
   justify-content: center;
 
-  .voting-ends {
-    display: block;
-    font-weight: 700;
-    font-size: 14px;
-    line-height: 21px;
-    color: ${cyanColor};
-    padding-bottom: 12px;
-    padding-top: 2px;
+  > div {
+    -webkit-line-clamp: 6;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
-`;
+
+  h2 {
+    margin: 0;
+  }
+`
 export const CardContent = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   justify-content: center;
-`;
+`
 export const CardContentRightSide = styled.div<{ theme: MavrykTheme }>`
   width: 50%;
   align-items: center;
@@ -67,7 +68,7 @@ export const CardContentRightSide = styled.div<{ theme: MavrykTheme }>`
     display: flex;
     margin: 0;
   }
-`;
+`
 
 export const EmergencyGovernHistory = styled.div<{ theme: MavrykTheme }>`
   padding-top: 39px;
@@ -76,16 +77,16 @@ export const EmergencyGovernHistory = styled.div<{ theme: MavrykTheme }>`
     margin: 0;
     margin-bottom: 10px;
   }
-`;
+`
 
 export const BGTextWithStatus = styled.div<{
-  status: boolean;
-  theme: MavrykTheme;
+  status: boolean
+  theme: MavrykTheme
 }>`
   color: ${({ status, theme }) => (status ? theme.downColor : theme.upColor)};
   font-weight: 600;
   font-size: 22px;
-`;
+`
 
 export const CardContentVoiting = styled.div`
   width: 100%;
@@ -107,4 +108,4 @@ export const CardContentVoiting = styled.div`
   article {
     margin-bottom: 30px;
   }
-`;
+`

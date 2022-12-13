@@ -36,7 +36,7 @@ export const VotingArea = ({
 
   const votingButtons = accountPkh ? (
     isSatellite && handleVote ? (
-      <VotingButtonsContainer>
+      <VotingButtonsContainer className="voting-buttons-wrapper">
         {forBtn && (
           <Button
             text={forBtn.text ?? 'Vote YES'}

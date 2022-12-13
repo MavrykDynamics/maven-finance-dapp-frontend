@@ -23,9 +23,11 @@ export const EmergencyGovernance = () => {
   const { glassBroken } = useSelector((state: State) => state.breakGlass)
 
   useEffect(() => {
-    dispatch(getEmergencyGovernanceStorage())
-    dispatch(getBreakGlassStorage())
-    dispatch(getDoormanStorage())
+    ;(async () => {
+      await dispatch(getEmergencyGovernanceStorage())
+      await dispatch(getBreakGlassStorage())
+      await dispatch(getDoormanStorage())
+    })()
   }, [dispatch])
 
   const handleTriggerEmergencyProposal = useCallback(() => {

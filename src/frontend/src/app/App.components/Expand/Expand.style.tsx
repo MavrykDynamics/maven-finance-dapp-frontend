@@ -63,6 +63,16 @@ export const ExpandStyled = styled(CardHover)`
       grid-template-columns: 0.6fr 0.9fr 0.6fr 0.6fr 0.4fr 0.4fr;
     }
   }
+
+  &.expand-egov {
+    margin-bottom: 16px;
+
+    .expand-header {
+      padding-left: 30px;
+      padding-right: 25px;
+      grid-template-columns: 0.7fr 0.9fr 0.6fr 0.4fr 0.4fr;
+    }
+  }
 `
 
 export const ExpandArticleStyled = styled.article<{ show?: boolean; theme: MavrykTheme }>`

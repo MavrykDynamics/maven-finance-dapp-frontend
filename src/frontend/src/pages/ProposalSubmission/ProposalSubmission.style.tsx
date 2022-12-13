@@ -182,6 +182,10 @@ export const FormTitleAndFeeContainer = styled.div<{ theme: MavrykTheme }>`
   grid-template-columns: 517px 1fr 170px;
   column-gap: 30px;
   font-weight: 500;
+
+  &.eGov-modal {
+    grid-template-columns: 1.2fr 0.4fr;
+  }
 `
 export const FormTitleContainer = styled.div<{ theme: MavrykTheme }>``
 
