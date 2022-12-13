@@ -106,12 +106,12 @@ const DelegationTab = () => {
                 </div>
               </div>
             </div>
-            <Link to="#">Satellites Overview</Link>
+            <Link to="/satellites">Satellites Overview</Link>
           </>
         ) : (
           <div className="no-data">
             <span>You are not delegated at this time.</span>
-            <Link to="/yield-farms">
+            <Link to="/satellites">
               <Button
                 text="Satellites"
                 icon="satellite"
