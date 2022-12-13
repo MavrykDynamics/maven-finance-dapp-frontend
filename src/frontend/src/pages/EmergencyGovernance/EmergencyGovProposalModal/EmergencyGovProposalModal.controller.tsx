@@ -13,8 +13,7 @@ import {
 
 export const EmergencyGovProposalModal = () => {
   const dispatch = useDispatch()
-  // const { showing } = useSelector((state: State) => state.exitFeeModal)
-  const showing = true
+  const { showing } = useSelector((state: State) => state.exitFeeModal)
   const { governanceStorage } = useSelector((state: State) => state.governance)
   const {
     emergencyGovernanceStorage: {
