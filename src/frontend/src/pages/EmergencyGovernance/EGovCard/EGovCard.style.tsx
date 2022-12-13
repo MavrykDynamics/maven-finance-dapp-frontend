@@ -13,6 +13,7 @@ export const EGovActiveCardStyled = styled.div<{ theme: MavrykTheme }>`
 
   .voting-ends {
     color: ${({ theme }) => theme.dataColor};
+    display: flex;
     margin: 10px 0 20px 0;
     font-weight: 600;
     font-size: 14px;
@@ -34,8 +35,8 @@ export const EGovActiveCardStyled = styled.div<{ theme: MavrykTheme }>`
       display: flex;
       flex-direction: column;
       row-gap: 20px;
-      min-height: 100%;
-      justify-content: space-between;
+      /* min-height: 100%;
+      justify-content: space-between; */
 
       button {
         max-width: 200px;
@@ -47,6 +48,17 @@ export const EGovActiveCardStyled = styled.div<{ theme: MavrykTheme }>`
       font-size: 14px;
       line-height: 24px;
       color: ${({ theme }) => theme.textColor};
+    }
+
+    .eGov-voting {
+      .voting-buttons-wrapper {
+        padding-top: 7px;
+      }
+
+      button.votingFor {
+        background: ${({ theme }) => theme.valueColor};
+        width: 50%;
+      }
     }
   }
 `

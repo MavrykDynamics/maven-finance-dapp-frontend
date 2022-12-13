@@ -12,6 +12,8 @@ import { getDoormanStorage, getMvkTokenStorage } from '../Doorman/Doorman.action
 import { HIDE_EXIT_FEE_MODAL } from '../Doorman/ExitFeeModal/ExitFeeModal.actions'
 import { normalizeEmergencyGovernance } from '../EmergencyGovernance/EmergencyGovernance.helpers'
 import { EmergencyGovernanceProposalForm } from '../../utils/TypesAndInterfaces/Forms'
+import { toggleLoader } from 'app/App.components/Loader/Loader.action'
+import { ROCKET_LOADER } from 'utils/constants'
 
 export const GET_EMERGENCY_GOVERNANCE_STORAGE = 'GET_EMERGENCY_GOVERNANCE_STORAGE'
 export const SET_EMERGENCY_GOVERNANCE_ACTIVE = 'SET_EMERGENCY_GOVERNANCE_ACTIVE'
@@ -37,9 +39,6 @@ export const getEmergencyGovernanceStorage = () => async (dispatch: AppDispatch,
   })
 }
 
-export const SUBMIT_EMERGENCY_GOVERNANCE_PROPOSAL_REQUEST = 'SUBMIT_EMERGENCY_GOVERNANCE_PROPOSAL_REQUEST'
-export const SUBMIT_EMERGENCY_GOVERNANCE_PROPOSAL_RESULT = 'SUBMIT_EMERGENCY_GOVERNANCE_PROPOSAL_RESULT'
-export const SUBMIT_EMERGENCY_GOVERNANCE_PROPOSAL_ERROR = 'SUBMIT_EMERGENCY_GOVERNANCE_PROPOSAL_ERROR'
 export const submitEmergencyGovernanceProposal =
   (form: EmergencyGovernanceProposalForm) => async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
@@ -55,42 +54,63 @@ export const submitEmergencyGovernanceProposal =
     }
 
     try {
-      dispatch({
-        type: SUBMIT_EMERGENCY_GOVERNANCE_PROPOSAL_REQUEST,
-        emergencyGovernanceProposal: form,
-      })
       const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.emergencyGovernanceAddress.address)
-      console.log('contract', contract)
-      const triggerFee = state.emergencyGovernance.emergencyGovernanceStorage.config.requiredFeeMutez || 0
-      console.log(triggerFee)
       const transaction = await contract?.methods
         .triggerEmergencyControl(form.title, form.description)
-        .send({ amount: triggerFee })
-      console.log('transaction', transaction)
+        .send({ amount: state.emergencyGovernance.emergencyGovernanceStorage.config.requiredFeeMutez || 0 })
 
-      dispatch(showToaster(INFO, 'Submitting emergency proposal...', 'Please wait 30s'))
-      dispatch({
+      await dispatch(toggleLoader(ROCKET_LOADER))
+      await dispatch(showToaster(INFO, 'Submitting emergency proposal...', 'Please wait 30s'))
+      await dispatch({
         type: HIDE_EXIT_FEE_MODAL,
       })
 
-      const done = await transaction?.confirmation()
-      console.log('done', done)
-      dispatch(showToaster(SUCCESS, 'Emergency Proposal Submitted', 'All good :)'))
+      await transaction?.confirmation()
 
-      dispatch({
-        type: SUBMIT_EMERGENCY_GOVERNANCE_PROPOSAL_RESULT,
-      })
-
-      dispatch(getMvkTokenStorage())
-      dispatch(getDoormanStorage())
+      await dispatch(showToaster(SUCCESS, 'Emergency Proposal Submitted', 'All good :)'))
+      await dispatch(getMvkTokenStorage())
+      await dispatch(getDoormanStorage())
+      await dispatch(toggleLoader())
     } catch (error) {
       if (error instanceof Error) {
         console.error(error)
-        dispatch(showToaster(ERROR, 'Error', error.message))
+        await dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      dispatch({
-        type: SUBMIT_EMERGENCY_GOVERNANCE_PROPOSAL_ERROR,
-        error,
-      })
+      await dispatch(toggleLoader())
     }
   }
+
+export const voteEmergencyGovernanceProposal = () => async (dispatch: AppDispatch, getState: GetState) => {
+  const state: State = getState()
+
+  if (!state.wallet.accountPkh) {
+    dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
+    return
+  }
+
+  if (state.loading.isLoading) {
+    dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
+    return
+  }
+
+  try {
+    const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.emergencyGovernanceAddress.address)
+    const transaction = await contract?.methods.voteForEmergencyControl().send()
+
+    await dispatch(toggleLoader(ROCKET_LOADER))
+    await dispatch(showToaster(INFO, 'Voting for emergency proposal...', 'Please wait 30s'))
+
+    await transaction?.confirmation()
+
+    await dispatch(showToaster(SUCCESS, 'Emergency Proposal voted', 'All good :)'))
+    await dispatch(getMvkTokenStorage())
+    await dispatch(getDoormanStorage())
+    await dispatch(toggleLoader())
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error)
+      await dispatch(showToaster(ERROR, 'Error', error.message))
+    }
+    await dispatch(toggleLoader())
+  }
+}

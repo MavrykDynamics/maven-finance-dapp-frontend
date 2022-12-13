@@ -2,15 +2,12 @@ import {
   GET_EMERGENCY_GOVERNANCE_STORAGE,
   SET_EMERGENCY_GOVERNANCE_ACTIVE,
   SET_HAS_ACKNOWLEDGED_EMERGENCY_GOV,
-  SUBMIT_EMERGENCY_GOVERNANCE_PROPOSAL_ERROR,
-  SUBMIT_EMERGENCY_GOVERNANCE_PROPOSAL_REQUEST,
-  SUBMIT_EMERGENCY_GOVERNANCE_PROPOSAL_RESULT,
 } from '../pages/EmergencyGovernance/EmergencyGovernance.actions'
 import { EmergencyGovernanceStorage } from '../utils/TypesAndInterfaces/EmergencyGovernance'
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
 
 export interface EmergencyGovernanceState {
-  type?: typeof GET_EMERGENCY_GOVERNANCE_STORAGE | typeof SUBMIT_EMERGENCY_GOVERNANCE_PROPOSAL_REQUEST
+  type?: typeof GET_EMERGENCY_GOVERNANCE_STORAGE
   emergencyGovernanceStorage: EmergencyGovernanceStorage
   emergencyGovActive: boolean
   hasAcknowledgeEmergencyGovernance: boolean
@@ -55,17 +52,6 @@ export function emergencyGovernance(state = emergencyGovernanceDefaultState, act
       return {
         ...state,
         hasAcknowledgeEmergencyGovernance: action.hasAcknowledgeEmergencyGovernance,
-      }
-    case SUBMIT_EMERGENCY_GOVERNANCE_PROPOSAL_RESULT:
-      return {
-        ...state,
-        type: SUBMIT_EMERGENCY_GOVERNANCE_PROPOSAL_REQUEST,
-      }
-    case SUBMIT_EMERGENCY_GOVERNANCE_PROPOSAL_ERROR:
-      return {
-        ...state,
-        type: SUBMIT_EMERGENCY_GOVERNANCE_PROPOSAL_REQUEST,
-        error: action.error,
       }
     default:
       return state

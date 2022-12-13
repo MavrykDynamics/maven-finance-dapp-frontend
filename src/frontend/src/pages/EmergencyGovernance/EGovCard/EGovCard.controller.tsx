@@ -1,50 +1,55 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { useSelector } from 'react-redux'
-import { State } from 'reducers'
+import { useMemo } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 
+// helpers
+import { ACTION_SECONDARY } from 'app/App.components/Button/Button.constants'
+import { voteEmergencyGovernanceProposal } from '../EmergencyGovernance.actions'
+import { skyColor } from 'styles/colors'
+import { COLON_VIEW } from 'app/App.components/Timer/Timer.view'
+import { parseDate } from 'utils/time'
+
+import type { State } from 'reducers'
 import type { EmergencyGovernanceStorage } from '../../../utils/TypesAndInterfaces/EmergencyGovernance'
 
 // view
 import { StatusFlag } from '../../../app/App.components/StatusFlag/StatusFlag.controller'
 import { TzAddress } from '../../../app/App.components/TzAddress/TzAddress.view'
 import { ProposalStatus } from '../../../utils/TypesAndInterfaces/Governance'
-import { VotingArea } from 'app/App.components/VotingArea/VotingArea.controller'
-
-import { PRECISION_NUMBER } from 'utils/constants'
-
-import { EGovActiveCardStyled } from './EGovCard.style'
-import { parseDate } from 'utils/time'
-import { ACTION_PRIMARY, ACTION_SECONDARY } from 'app/App.components/Button/Button.constants'
 import { Button } from 'app/App.components/Button/Button.controller'
 import Expand from 'app/App.components/Expand/Expand.view'
+import { Timer } from 'app/App.components/Timer/Timer.controller'
+import { VotingArea } from 'app/App.components/VotingArea/VotingArea.controller'
+
+// styles
+import { EGovActiveCardStyled } from './EGovCard.style'
 import {
   SatelliteGovernanceCardDropDown,
   SatelliteGovernanceCardTitleTextGroup,
 } from 'pages/SatelliteGovernance/SatelliteGovernanceCard/SatelliteGovernanceCard.style'
-import { VotingTypes } from 'app/App.components/VotingArea/helpers/voting.const'
 
-type EGovHistoryCardProps = {
+type EGovCardProps = {
   emergencyGovernance: EmergencyGovernanceStorage['emergencyGovernanceLedger'][0]
   dropProposalHandler: (proposalId: number) => void
 }
-export const EGovHistoryCard = ({ emergencyGovernance, dropProposalHandler }: EGovHistoryCardProps) => {
+
+export const EGovCard = ({ emergencyGovernance, dropProposalHandler }: EGovCardProps) => {
+  const dispatch = useDispatch()
   const { totalStakedMvk } = useSelector((state: State) => state.doorman)
-  const { accountPkh } = useSelector((state: State) => state.wallet)
+  const { minStakedMvkRequiredToVote } = useSelector(
+    (state: State) => state.emergencyGovernance.emergencyGovernanceStorage.config,
+  )
+  const {
+    accountPkh,
+    user: { mySMvkTokenBalance },
+  } = useSelector((state: State) => state.wallet)
 
   const isActiveProposal =
     !emergencyGovernance.executed &&
     !emergencyGovernance.dropped &&
     emergencyGovernance.expirationTimestamp > Date.now()
 
-  const handleProposalVote = (vote: string) => {
-    switch (vote) {
-      case VotingTypes.YES:
-        break
-      case VotingTypes.NO:
-        break
-      case VotingTypes.PASS:
-        break
-    }
+  const handleProposalVote = async () => {
+    await dispatch(voteEmergencyGovernanceProposal())
   }
 
   const status = isActiveProposal
@@ -55,28 +60,28 @@ export const EGovHistoryCard = ({ emergencyGovernance, dropProposalHandler }: EG
     ? ProposalStatus.DROPPED
     : ProposalStatus.DEFEATED
 
-  // TODO: clarify it with sam, cuz this data isn't right
   const votingStatistic = useMemo(
     () => ({
       forVotesMVKTotal: emergencyGovernance.totalsMvkVotes,
-      unusedVotesMVKTotal: Math.round((totalStakedMvk ?? 0 / PRECISION_NUMBER) - emergencyGovernance.totalsMvkVotes),
+      unusedVotesMVKTotal: totalStakedMvk ?? 0,
       quorum: emergencyGovernance?.sMvkPercentageRequired ?? 0,
     }),
     [emergencyGovernance?.sMvkPercentageRequired, emergencyGovernance.totalsMvkVotes, totalStakedMvk],
   )
 
-  console.log('emergencyGovernance', emergencyGovernance)
-
-  return true ? (
+  return isActiveProposal ? (
     <EGovActiveCardStyled>
       <h2>{emergencyGovernance.title}</h2>
       <div className="voting-ends">
         Voting ends in{' '}
-        {parseDate({
-          time: Date.now() - new Date(emergencyGovernance.expirationTimestamp).getTime(),
-          timeFormat: 'HH:mm',
-        })}{' '}
-        CEST
+        <Timer
+          timestamp={new Date(emergencyGovernance.expirationTimestamp).getTime()}
+          options={{
+            showZeros: true,
+            timerView: COLON_VIEW,
+            defaultColor: skyColor,
+          }}
+        />
       </div>
       <div className="main-info">
         <div className="left">
@@ -90,8 +95,13 @@ export const EGovHistoryCard = ({ emergencyGovernance, dropProposalHandler }: EG
         <VotingArea
           voteStatistics={votingStatistic}
           isVotingActive={true}
-          disableVotingButtons={Boolean(emergencyGovernance.voters.find((voter) => accountPkh === voter.voterId))}
+          disableVotingButtons={
+            Boolean(emergencyGovernance.voters.find((voter) => accountPkh === voter.voterId)) ||
+            mySMvkTokenBalance < minStakedMvkRequiredToVote
+          }
           handleVote={handleProposalVote}
+          buttonsToShow={{ forBtn: { text: 'Vote to Trigger' } }}
+          className="eGov-voting"
         />
       </div>
     </EGovActiveCardStyled>

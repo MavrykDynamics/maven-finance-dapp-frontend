@@ -18,7 +18,7 @@ import Icon from '../../app/App.components/Icon/Icon.view'
 import { ACTION_PRIMARY } from '../../app/App.components/Button/Button.constants'
 import { Button } from '../../app/App.components/Button/Button.controller'
 import { ConnectWallet } from '../../app/App.components/ConnectWallet/ConnectWallet.controller'
-import { EGovHistoryCard } from './EGovCard/EGovCard.controller'
+import { EGovCard } from './EGovCard/EGovCard.controller'
 import {
   CardContent,
   CardContentLeftSide,
@@ -126,7 +126,7 @@ export const EmergencyGovernanceView = ({
       {activeItems.length
         ? activeItems.map((emergencyGovernance) => {
             return (
-              <EGovHistoryCard
+              <EGovCard
                 key={emergencyGovernance.id}
                 emergencyGovernance={emergencyGovernance}
                 dropProposalHandler={dropProposalHandler}
@@ -139,7 +139,7 @@ export const EmergencyGovernanceView = ({
         <h1>Emergency Governance History</h1>
         {paginatedItemsListHistory.map((emergencyGovernance) => {
           return (
-            <EGovHistoryCard
+            <EGovCard
               key={emergencyGovernance.id}
               emergencyGovernance={emergencyGovernance}
               dropProposalHandler={dropProposalHandler}
