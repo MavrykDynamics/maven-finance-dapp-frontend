@@ -49,6 +49,10 @@ h1, h2 {
   }
 }
 
+h2 {
+  font-weight: 600;
+}
+
 fieldset {
   border: none;
   padding: 0;
@@ -66,7 +70,6 @@ button {
 
 h2 {
   font-size: 20px;
-  font-weight: normal;
   display: block;
   margin: 0;
 }

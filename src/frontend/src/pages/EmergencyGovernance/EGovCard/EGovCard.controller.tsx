@@ -12,33 +12,40 @@ import { VotingArea } from 'app/App.components/VotingArea/VotingArea.controller'
 
 import { PRECISION_NUMBER } from 'utils/constants'
 
-import {
-  EGovHistoryArrowButton,
-  EGovHistoryCardDropDown,
-  EGovHistoryCardStyled,
-  EGovHistoryCardTitleTextGroup,
-  EGovHistoryCardTopSection,
-} from './EGovCard.style'
+import { EGovActiveCardStyled } from './EGovCard.style'
 import { parseDate } from 'utils/time'
-import { ACTION_SECONDARY } from 'app/App.components/Button/Button.constants'
+import { ACTION_PRIMARY, ACTION_SECONDARY } from 'app/App.components/Button/Button.constants'
 import { Button } from 'app/App.components/Button/Button.controller'
-import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
-import { scrollToFullView } from 'utils/scrollToFullView'
+import Expand from 'app/App.components/Expand/Expand.view'
+import {
+  SatelliteGovernanceCardDropDown,
+  SatelliteGovernanceCardTitleTextGroup,
+} from 'pages/SatelliteGovernance/SatelliteGovernanceCard/SatelliteGovernanceCard.style'
+import { VotingTypes } from 'app/App.components/VotingArea/helpers/voting.const'
 
 type EGovHistoryCardProps = {
   emergencyGovernance: EmergencyGovernanceStorage['emergencyGovernanceLedger'][0]
-
   dropProposalHandler: (proposalId: number) => void
 }
 export const EGovHistoryCard = ({ emergencyGovernance, dropProposalHandler }: EGovHistoryCardProps) => {
   const { totalStakedMvk } = useSelector((state: State) => state.doorman)
-  const [expanded, setExpanded] = useState(false)
-  const open = () => setExpanded(!expanded)
+  const { accountPkh } = useSelector((state: State) => state.wallet)
 
   const isActiveProposal =
     !emergencyGovernance.executed &&
     !emergencyGovernance.dropped &&
     emergencyGovernance.expirationTimestamp > Date.now()
+
+  const handleProposalVote = (vote: string) => {
+    switch (vote) {
+      case VotingTypes.YES:
+        break
+      case VotingTypes.NO:
+        break
+      case VotingTypes.PASS:
+        break
+    }
+  }
 
   const status = isActiveProposal
     ? ProposalStatus.WAITING
@@ -47,17 +54,6 @@ export const EGovHistoryCard = ({ emergencyGovernance, dropProposalHandler }: EG
     : emergencyGovernance.dropped
     ? ProposalStatus.DROPPED
     : ProposalStatus.DEFEATED
-
-  const ref = useRef<HTMLDivElement | null>(null)
-
-  useEffect(() => {
-    if (expanded) {
-      // The function is called after 300ms because you first need to
-      // animate the opening of the card. Because the scroll is deducted
-      // based on the height of the element.
-      setTimeout(() => scrollToFullView(ref.current), 300)
-    }
-  }, [expanded])
 
   // TODO: clarify it with sam, cuz this data isn't right
   const votingStatistic = useMemo(
@@ -69,81 +65,85 @@ export const EGovHistoryCard = ({ emergencyGovernance, dropProposalHandler }: EG
     [emergencyGovernance?.sMvkPercentageRequired, emergencyGovernance.totalsMvkVotes, totalStakedMvk],
   )
 
-  return (
-    <EGovHistoryCardStyled
-      key={String(emergencyGovernance.title + emergencyGovernance.id)}
-      onClick={open}
-      className={expanded ? 'open' : ''}
-    >
-      <EGovHistoryCardTopSection className={expanded ? 'show' : 'hide'} ref={ref}>
-        {expanded ? (
-          <div className="expanded-top">
-            <BGPrimaryTitle>{emergencyGovernance.title}</BGPrimaryTitle>
-          </div>
-        ) : (
-          <>
-            <EGovHistoryCardTitleTextGroup>
-              <h3>Title</h3>
-              <p className="group-data">{emergencyGovernance.title}</p>
-            </EGovHistoryCardTitleTextGroup>
-            <EGovHistoryCardTitleTextGroup>
-              <h3>Date</h3>
-              <p className="group-data">
-                {parseDate({
-                  time: new Date(emergencyGovernance.startTimestamp).getTime(),
-                  timeFormat: 'MMM Do, YYYY, HH:mm:ss UTC',
-                })}
-              </p>
-            </EGovHistoryCardTitleTextGroup>
-            <EGovHistoryCardTitleTextGroup>
-              <h3>Proposer</h3>
-              <div className="group-data">
-                <TzAddress tzAddress={emergencyGovernance.proposerId} hasIcon={false} />
-              </div>
-            </EGovHistoryCardTitleTextGroup>
-            <EGovHistoryArrowButton>
-              <svg>
-                <use xlinkHref={`/icons/sprites.svg#arrow-down`} />
-              </svg>
-            </EGovHistoryArrowButton>
-            <EGovHistoryCardTitleTextGroup className={'statusFlag'}>
-              <StatusFlag status={status} text={status} />
-            </EGovHistoryCardTitleTextGroup>
-          </>
-        )}
-      </EGovHistoryCardTopSection>
+  console.log('emergencyGovernance', emergencyGovernance)
 
-      <EGovHistoryCardDropDown onClick={open} className={expanded ? 'show' : 'hide'} ref={ref}>
-        <div className={`accordion ${expanded}`} ref={ref}>
-          <div className="left">
-            <div>
-              <div className="voting-end">
-                Voting {isActiveProposal ? 'ending' : 'ended'} on{' '}
-                {parseDate({
-                  time: isActiveProposal
-                    ? emergencyGovernance.expirationTimestamp
-                    : emergencyGovernance.executionTimestamp,
-                  timeFormat: 'MMM DD, HH:mm:ss',
-                })}
-              </div>
-            </div>
-            <div className="descr">{emergencyGovernance.description}</div>
-            {isActiveProposal ? (
-              <Button
-                icon="close-stroke"
-                className="drop"
-                text="Drop Proposal"
-                kind={ACTION_SECONDARY}
-                onClick={() => dropProposalHandler(emergencyGovernance.id)}
-              />
-            ) : null}
-          </div>
-
-          <div>
-            <VotingArea voteStatistics={votingStatistic} isVotingActive={false} quorumText="Quorum" />
-          </div>
+  return true ? (
+    <EGovActiveCardStyled>
+      <h2>{emergencyGovernance.title}</h2>
+      <div className="voting-ends">
+        Voting ends in{' '}
+        {parseDate({
+          time: Date.now() - new Date(emergencyGovernance.expirationTimestamp).getTime(),
+          timeFormat: 'HH:mm',
+        })}{' '}
+        CEST
+      </div>
+      <div className="main-info">
+        <div className="left">
+          <div className="descr">{emergencyGovernance.description}</div>
+          <Button
+            text="Drop Proposal"
+            onClick={() => dropProposalHandler(emergencyGovernance.id)}
+            kind={ACTION_SECONDARY}
+          />
         </div>
-      </EGovHistoryCardDropDown>
-    </EGovHistoryCardStyled>
+        <VotingArea
+          voteStatistics={votingStatistic}
+          isVotingActive={true}
+          disableVotingButtons={Boolean(emergencyGovernance.voters.find((voter) => accountPkh === voter.voterId))}
+          handleVote={handleProposalVote}
+        />
+      </div>
+    </EGovActiveCardStyled>
+  ) : (
+    <Expand
+      className="expand-egov"
+      header={
+        <>
+          <SatelliteGovernanceCardTitleTextGroup>
+            <h3>Title</h3>
+            <p className="inner">{emergencyGovernance.title}</p>
+          </SatelliteGovernanceCardTitleTextGroup>
+          <SatelliteGovernanceCardTitleTextGroup>
+            <h3>Date</h3>
+            <p className="inner capitallize">
+              {parseDate({
+                time: new Date(emergencyGovernance.startTimestamp).getTime(),
+                timeFormat: 'MMM Do, YYYY, HH:mm:ss UTC',
+              })}
+            </p>
+          </SatelliteGovernanceCardTitleTextGroup>
+          <SatelliteGovernanceCardTitleTextGroup>
+            <h3>Proposer</h3>
+            <div className="inner">
+              <TzAddress tzAddress={emergencyGovernance.proposerId} hasIcon={true} />
+            </div>
+          </SatelliteGovernanceCardTitleTextGroup>
+        </>
+      }
+      sufix={<StatusFlag className="expand-gov-status" status={status} text={status} />}
+    >
+      <SatelliteGovernanceCardDropDown>
+        <div className="left">
+          <h3>Description</h3>
+          <p className="purpose">{emergencyGovernance.description}</p>
+        </div>
+        <div className="voting-block">
+          <h3>Vote Statistics</h3>
+          <b className="voting-ends">
+            Voting ended on{' '}
+            {parseDate({
+              time: emergencyGovernance.executed
+                ? emergencyGovernance.executionTimestamp
+                : emergencyGovernance.expirationTimestamp,
+              timeFormat: 'MMM DD, HH:mm',
+            })}{' '}
+            CEST
+          </b>
+
+          <VotingArea voteStatistics={votingStatistic} isVotingActive={false} />
+        </div>
+      </SatelliteGovernanceCardDropDown>
+    </Expand>
   )
 }
