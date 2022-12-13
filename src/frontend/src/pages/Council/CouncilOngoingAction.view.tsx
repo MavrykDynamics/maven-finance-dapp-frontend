@@ -48,7 +48,7 @@ export function CouncilOngoingAction(props: Props) {
     <>
       <div className='row two-columns'>
         <div className='column'>
-          <div className='column-name'>{isCouncilPage ? 'Council ID' : 'Break Glass Action ID'}</div>
+          <div className='column-name'>{isCouncilPage ? 'Council action ID' : 'Break Glass Action ID'}</div>
           <div className='column-value'>{id}</div>
         </div>
 
