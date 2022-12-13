@@ -146,6 +146,7 @@ export const CouncilOngoingActionStyled = styled(CardHover)<{ theme: MavrykTheme
       font-size: 14px;
       line-height: 21px;
 
+      text-transform: capitalize;
       color: ${({ theme }) => theme.textColor}
     }
 
