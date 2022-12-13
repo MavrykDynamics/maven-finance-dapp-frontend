@@ -38,6 +38,12 @@ export const FarmCardStyled = styled(Card)<{ theme: MavrykTheme }>`
       font-size: 22px;
       line-height: 22px;
       max-width: 200px;
+
+      display: -webkit-box;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
     }
 
     p {
