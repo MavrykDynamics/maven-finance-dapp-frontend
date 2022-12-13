@@ -11,6 +11,7 @@ import {
   StageThreeValidityItem,
 } from './ProposalSybmittion.types'
 import { State } from 'reducers'
+import { validateTzAddress, isValidLength } from 'utils/validatorFunctions'
 
 export const checkWhetherBytesIsValid = (proposalData: ProposalRecordType['proposalData']): boolean => {
   return proposalData.every(({ encoded_code, title }) => Boolean(encoded_code) && Boolean(title))
@@ -27,17 +28,16 @@ export const getBytesPairValidationStatus = (
   }
 }
 
-export const getValidityStageThreeTable = (valueName: StageThreeValidityItem, value: string | number): boolean => {
+export const getValidityStageThreeTable = (valueName: StageThreeValidityItem, value: string | number, maxLength?: number): boolean => {
   switch (valueName) {
     case 'token_amount':
       if (Number(value) < 0) return false
       break
     case 'to__id':
-      if (!value) return false
-      break
+      return validateTzAddress(value as string)
     case 'title':
-      if (!value) return false
-      break
+      const defaultMaxLength = 200;
+      return isValidLength(value as string, 1, maxLength || defaultMaxLength)
   }
   return true
 }

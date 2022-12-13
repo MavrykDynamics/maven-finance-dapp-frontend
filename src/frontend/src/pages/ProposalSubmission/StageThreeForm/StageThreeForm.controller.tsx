@@ -48,7 +48,7 @@ export const StageThreeForm = ({
   const {
     governanceStorage: {
       fee,
-      config: { successReward },
+      config: { successReward, proposalDescriptionMaxLength },
     },
     governancePhase,
   } = useSelector((state: State) => state.governance)
@@ -64,9 +64,9 @@ export const StageThreeForm = ({
 
   const [openDrop, setOpenDrop] = useState('')
 
-  const handleOnBlur = (e: React.ChangeEvent<HTMLInputElement>, itemId: number) => {
+  const handleOnBlur = (e: React.ChangeEvent<HTMLInputElement>, itemId: number, maxLength?: number) => {
     const { name, value } = e.target
-    const validationResult = getValidityStageThreeTable(name as StageThreeValidityItem, value)
+    const validationResult = getValidityStageThreeTable(name as StageThreeValidityItem, value, maxLength)
       ? INPUT_STATUS_SUCCESS
       : INPUT_STATUS_ERROR
     updateLocalProposalValidation(
@@ -233,7 +233,7 @@ export const StageThreeForm = ({
                         disabled={disabledInputs}
                         inputStatus={validationObj?.title}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange(e, i)}
-                        onBlur={(e: React.ChangeEvent<HTMLInputElement>) => handleOnBlur(e, rowItems.id)}
+                        onBlur={(e: React.ChangeEvent<HTMLInputElement>) => handleOnBlur(e, rowItems.id, proposalDescriptionMaxLength)}
                         className="submit-proposal-stage-3"
                       />
                     </td>
