@@ -35,8 +35,8 @@ export const EGovActiveCardStyled = styled.div<{ theme: MavrykTheme }>`
       display: flex;
       flex-direction: column;
       row-gap: 20px;
-      /* min-height: 100%;
-      justify-content: space-between; */
+      min-height: 100%;
+      justify-content: space-between;
 
       button {
         max-width: 200px;
