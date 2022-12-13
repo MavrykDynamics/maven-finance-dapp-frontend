@@ -17,6 +17,7 @@ type Props = {
   showCustomText?: string
   isExpandedByDefault?: boolean
   onClickCallback?: () => void
+  showText?: boolean
 }
 
 export default function Expand({
@@ -27,6 +28,7 @@ export default function Expand({
   sufix = null,
   isExpandedByDefault = false,
   onClickCallback,
+  showText = false,
 }: Props) {
   const [expanded, setExpanded] = useState<boolean>(false)
   const handleToggleExpand = () => setExpanded(!expanded)
@@ -49,6 +51,7 @@ export default function Expand({
       <header className="expand-header">
         {header}
         <div className={`arrow-wrap ${expanded ? 'top' : 'bottom'}`}>
+        {showText ? <span>{expanded ? 'Hide' : 'Show'}</span> : null}
           {showCustomText ? <span>{showCustomText}</span> : null}
           <div
             className="expand-btn"
