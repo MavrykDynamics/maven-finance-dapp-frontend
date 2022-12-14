@@ -1,9 +1,10 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
 // const
 import { ERROR } from '../../../app/App.components/Toaster/Toaster.constants'
+import { distinctRequestsByExecuting } from 'pages/FinacialRequests/FinancialRequests.helpers'
 
 // view
 import { Button } from '../../../app/App.components/Button/Button.controller'
@@ -13,6 +14,7 @@ import { DropDown, DropdownItemType } from '../../../app/App.components/DropDown
 // action
 import { dropFinancialRequest } from '../Council.actions'
 import { showToaster } from '../../../app/App.components/Toaster/Toaster.actions'
+import { getGovernanceStorage } from 'pages/Governance/Governance.actions'
 
 // style
 import { CouncilFormStyled } from './CouncilForms.style'
@@ -21,18 +23,19 @@ export const CouncilFormDropFinancialRequest = () => {
   const dispatch = useDispatch()
   const { governanceStorage } = useSelector((state: State) => state.governance)
   const { financialRequestLedger } = governanceStorage
-
+  const { ongoing } = distinctRequestsByExecuting(financialRequestLedger || [])
+  
   const itemsForDropDown = useMemo(
     () =>
-      financialRequestLedger?.length
-        ? financialRequestLedger.map((item, i: number) => {
+      ongoing?.length
+        ? ongoing.map((item, i: number) => {
               return {
-                text: `${i + 1}-${item.request_purpose}`,
+                text: `${item.request_type} ${item.request_purpose}`,
                 value: String(item.id),
               }
             })
         : [],
-    [financialRequestLedger],
+    [ongoing],
   )
 
   const [ddItems, _] = useState(itemsForDropDown.map(({ text }) => text))
@@ -80,6 +83,10 @@ export const CouncilFormDropFinancialRequest = () => {
     setDdIsOpen(!ddIsOpen)
     handleSelect(chosenItem)
   }
+
+  useEffect(() => {
+    dispatch(getGovernanceStorage())
+  }, [dispatch])
 
   return (
     <CouncilFormStyled onSubmit={handleSubmit}>
