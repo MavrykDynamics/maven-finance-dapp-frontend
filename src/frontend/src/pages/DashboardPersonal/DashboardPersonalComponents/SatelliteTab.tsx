@@ -62,7 +62,14 @@ const SatelliteTab = ({}: SatelliteTabProps) => {
         </GovRightContainerTitleArea>
         <div className="grid">
           <div className="grid-item info">
-            <Icon id="noImage" />
+            {satelliteRecord.image ? (
+              <div className="satellite-avatar">
+                <img src={satelliteRecord.image} alt={satelliteRecord.name + ' avatar'} />
+              </div>
+            ) : (
+              <Icon id="noImage" />
+            )}
+
             <div className="text">
               <div className="name">{satelliteRecord.name}</div>
               <div className="value">

@@ -108,7 +108,7 @@ const SatellitesSideBarView = ({
           </var>
         </SideBarItem>
         <SideBarItem>
-          <h3>Total Oracle</h3>
+          <h3>Total Oracles</h3>
           <var>
             <CommaNumber value={totalOracleNetworks} showDecimal={false} />
           </var>
@@ -120,7 +120,7 @@ const SatellitesSideBarView = ({
           </var>
         </SideBarItem>
         <SideBarItem>
-          <h3>Avg. Oracle Rewards MVK</h3>
+          <h3>Avg. Oracles Rewards MVK</h3>
           <var>{averageRevard ? <CommaNumber value={averageRevard} /> : '-'}</var>
         </SideBarItem>
       </SideBarSection>

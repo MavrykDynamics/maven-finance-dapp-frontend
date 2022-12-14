@@ -361,11 +361,18 @@ export const SatelliteStatusBlock = styled(MediumBlockBase)<{ theme: MavrykTheme
           flex-direction: column;
           row-gap: 5px;
 
-          svg {
+          svg,
+          .satellite-avatar {
             width: 16px;
             height: 16px;
             fill: unset;
             stroke: ${({ theme }) => theme.dataColor};
+
+            img {
+              width: 100%;
+              height: 100%;
+              object-fit: cover;
+            }
           }
         }
 
