@@ -10,7 +10,7 @@ import { Governance_Proposal } from 'utils/generated/graphqlTypes'
 import { checkPaymentExists, getValidityStageThreeTable, MAX_ROWS } from '../ProposalSubmition.helpers'
 
 // components
-import { StyledTooltip } from '../../../app/App.components/Tooltip/Tooltip.view'
+import { CustomTooltip } from '../../../app/App.components/Tooltip/Tooltip.view'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 import { StatusFlag } from '../../../app/App.components/StatusFlag/StatusFlag.controller'
 import { Input } from 'app/App.components/Input/Input.controller'
@@ -233,7 +233,9 @@ export const StageThreeForm = ({
                         disabled={disabledInputs}
                         inputStatus={validationObj?.title}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange(e, i)}
-                        onBlur={(e: React.ChangeEvent<HTMLInputElement>) => handleOnBlur(e, rowItems.id, proposalDescriptionMaxLength)}
+                        onBlur={(e: React.ChangeEvent<HTMLInputElement>) =>
+                          handleOnBlur(e, rowItems.id, proposalDescriptionMaxLength)
+                        }
                         className="submit-proposal-stage-3"
                       />
                     </td>
@@ -283,15 +285,11 @@ export const StageThreeForm = ({
                       </div>
 
                       <div className="delete-button-wrap">
-                        <StyledTooltip placement="top" title="Delete row">
-                          <button
-                            onClick={() => handleDeleteRow(rowItems.id)}
-                            disabled={locked || !isProposalRound}
-                            className="delete-button"
-                          >
+                        <CustomTooltip text="Delete row">
+                          <button onClick={() => handleDeleteRow(rowItems.id)} disabled={locked || !isProposalRound}>
                             <Icon id="delete" />
                           </button>
-                        </StyledTooltip>
+                        </CustomTooltip>
                       </div>
                     </td>
                   </tr>
@@ -300,11 +298,11 @@ export const StageThreeForm = ({
             </table>
           </div>
           {!isMaxRows ? (
-            <StyledTooltip placement="top" title="Insert 1 row bottom">
-              <button disabled={locked || !isProposalRound} className="btn-add-row" onClick={handleAddRow}>
+            <CustomTooltip text="Insert 1 row below" className="btn-add-row">
+              <button disabled={locked || !isProposalRound} onClick={handleAddRow}>
                 +
               </button>
-            </StyledTooltip>
+            </CustomTooltip>
           ) : null}
         </TableGridWrap>
       </FormTableGrid>

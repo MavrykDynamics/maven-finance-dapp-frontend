@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 // components
 import Icon from '../../../app/App.components/Icon/Icon.view'
-import { StyledTooltip } from '../../../app/App.components/Tooltip/Tooltip.view'
+import { CustomTooltip } from '../../../app/App.components/Tooltip/Tooltip.view'
 
 // const
 import { PAYMENTS_TYPES } from 'pages/ProposalSubmission/ProposalSubmition.helpers'
@@ -26,6 +26,7 @@ type Props = {
 const MAX_ROWS = 10
 const TOKEN_TYPES = ['FA12', 'FA2', 'TEZ']
 
+// TODO: remove this table make utility component for full table
 export default function TableGridFix({ tableData, setTableData }: Props) {
   const [openDrop, setOpenDrop] = useState('')
 
@@ -110,11 +111,11 @@ export default function TableGridFix({ tableData, setTableData }: Props) {
 
                     {isLastColumn && tableData.length > 2 ? (
                       <div className="delete-button-wrap">
-                        <StyledTooltip placement="top" title="Delete row">
-                          <button type="button" onClick={() => handleDeleteRow(i)} className="delete-button">
+                        <CustomTooltip text="Delete row">
+                          <button type="button" onClick={() => handleDeleteRow(i)}>
                             <Icon id="delete" />
                           </button>
-                        </StyledTooltip>
+                        </CustomTooltip>
                       </div>
                     ) : null}
                   </td>
@@ -125,11 +126,11 @@ export default function TableGridFix({ tableData, setTableData }: Props) {
         </table>
       </div>
       {!isMaxRows ? (
-        <StyledTooltip placement="top" title="Insert 1 row bottom">
+        <CustomTooltip text="Insert 1 row below" className="btn-add-row">
           <button type="button" className="btn-add-row" onClick={handleAddRow}>
             +
           </button>
-        </StyledTooltip>
+        </CustomTooltip>
       ) : null}
     </TableGridWrap>
   )

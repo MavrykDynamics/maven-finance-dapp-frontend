@@ -63,6 +63,16 @@ export const TableGridWrap = styled.div<{ theme: MavrykTheme }>`
     }
   }
 
+  .btn-add-row {
+    position: absolute;
+    left: -20px;
+    bottom: -6px;
+
+    .text {
+      bottom: 110%;
+    }
+  }
+
   button {
     color: ${headerColor};
     font-size: 24px;
@@ -136,35 +146,23 @@ export const TableGridWrap = styled.div<{ theme: MavrykTheme }>`
 
   .delete-button-wrap {
     height: 100%;
-    width: 0;
+    width: 25px;
     position: absolute;
-    top: 0;
-    right: 0;
-  }
-
-  .delete-button {
-    width: 40px;
-    margin-top: 0;
-    position: absolute;
-    right: -34px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 40%;
     transform: translateY(-50%);
-    top: 50%;
-    display: none;
+    right: -25px;
+    opacity: 0;
+    transition: opacity 0.2s;
 
-    svg {
-      width: 11px;
-      height: 11px;
-      fill: ${cyanColor};
-      margin-bottom: 4px;
-      display: inline-block;
+    .text {
+      bottom: 110%;
     }
 
-    &:disabled {
-      cursor: not-allowed;
-
-      svg {
-        color: ${headerColor};
-      }
+    &:hover {
+      opacity: 1;
     }
   }
 

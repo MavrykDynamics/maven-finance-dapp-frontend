@@ -16,9 +16,6 @@
   "dependencies": {
     "@airgap/beacon-sdk": "^3.3.0",
     "@graphql-codegen/cli": "2.11.6",
-    "@mui/material": "^5.10.17",
-    "@emotion/react": "^11.7.1",
-    "@emotion/styled": "^11.6.0",
     "@taquito/beacon-wallet": "^12.1.0",
     "@taquito/signer": "^12.1.0",
     "@taquito/taquito": "^12.1.0",

@@ -7,7 +7,7 @@ import { StageTwoFormProps, ProposalBytesType, ValidationResult } from '../Propo
 
 // components
 import Icon from '../../../app/App.components/Icon/Icon.view'
-import { StyledTooltip } from '../../../app/App.components/Tooltip/Tooltip.view'
+import { CustomTooltip } from '../../../app/App.components/Tooltip/Tooltip.view'
 import { Input } from '../../../app/App.components/Input/Input.controller'
 import { StatusFlag } from '../../../app/App.components/StatusFlag/StatusFlag.controller'
 import { TextArea } from '../../../app/App.components/TextArea/TextArea.controller'
@@ -294,20 +294,20 @@ export const StageTwoForm = ({
               />
 
               <div className={`remove-byte ${!isProposalPeriod || locked ? 'disabled' : ''}`}>
-                <StyledTooltip placement="top" title="Delete bytes pair">
-                  <button onClick={() => handleDeletePair(item.id)} className="delete-button">
+                <CustomTooltip text="Delete bytes pair" className="delete-bytes">
+                  <button onClick={() => handleDeletePair(item.id)}>
                     <Icon id="delete" />
                   </button>
-                </StyledTooltip>
+                </CustomTooltip>
               </div>
             </article>
           )
         })}
-        <StyledTooltip placement="top" title="Add bytes pair">
-          <button disabled={!isProposalPeriod || locked} onClick={handleCreateNewByte} className="step-plus-bytes">
+        <CustomTooltip text="Add bytes pair" className="add-bytes">
+          <button disabled={!isProposalPeriod || locked} onClick={handleCreateNewByte}>
             +
           </button>
-        </StyledTooltip>
+        </CustomTooltip>
       </div>
     </>
   )
