@@ -1,4 +1,4 @@
-import styled from 'styled-components/macro'
+import styled, { css } from 'styled-components/macro'
 import { cyanColor, royalPurpleColor } from 'styles'
 import { Button as ButtonBase } from '../Button/Button.controller'
 import { MavrykTheme } from '../../../styles/interfaces'
@@ -160,24 +160,26 @@ export const ChangeNodeNodesListItem = styled.div<{ isSelected?: boolean }>`
   }
 `
 
-export const PopupStyled = styled.div`
-  .popup-enter {
-    opacity: 0;
-  }
+export const PopupContainer = styled.div<{ show?: boolean }>`
+  width: 100vw;
+  height: 100vh;
+  background-color: #0000007a;
+  z-index: 100;
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.35s, visibility 0.35s;
 
-  .popup-enter-active {
-    opacity: 1;
-    transition: opacity 300ms;
-  }
-
-  .popup-exit {
-    opacity: 1;
-  }
-
-  .popup-exit-active {
-    opacity: 0;
-    transition: opacity 300ms;
-  }
+  ${({ show }) =>
+    show
+      ? css`
+          opacity: 1;
+          visibility: visible;
+        `
+      : ''}
 
   .close_modal {
     font-size: 50px;
@@ -188,22 +190,14 @@ export const PopupStyled = styled.div`
     transform: rotate(45deg);
     cursor: pointer;
     transition: color 300ms;
+    position: absolute;
+    top: 5px;
+    right: 10px;
 
     &:hover {
       color: ${({ theme }) => theme.textColorHovered};
     }
   }
-`
-
-export const PopupContainer = styled.div`
-  width: 100vw;
-  height: 100vh;
-  background-color: #0000007a;
-  z-index: 11;
-  position: fixed;
-  top: 0;
-  left: 0;
-  display: flex;
 
   .wert-io-wrapper {
     position: fixed;

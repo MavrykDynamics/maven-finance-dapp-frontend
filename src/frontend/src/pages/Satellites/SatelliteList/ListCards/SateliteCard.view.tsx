@@ -9,7 +9,6 @@ import { ACTION_PRIMARY, ACTION_SECONDARY } from 'app/App.components/Button/Butt
 // view
 import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { RoutingButton } from 'app/App.components/RoutingButton/RoutingButton.controller'
 import { StatusFlag } from 'app/App.components/StatusFlag/StatusFlag.controller'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 
@@ -37,6 +36,7 @@ import {
 } from './SatelliteCard.style'
 import { getSatelliteMetrics } from 'pages/Satellites/Satellites.helpers'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+import { Link } from 'react-router-dom'
 
 const renderVotingHistoryItem = (vote: number) => {
   switch (vote) {
@@ -188,12 +188,9 @@ export const SatelliteListItem = ({
           <SatelliteCardTopRow isExtendedListItem={isDetailsPage}>
             <SatelliteProfileDetails>
               {!isDetailsPage && (
-                <RoutingButton
-                  icon="man"
-                  text="Profile Details"
-                  kind="transparent"
-                  pathName={`/satellites/satellite-details/${satellite.address}`}
-                />
+                <Link to={`/satellites/satellite-details/${satellite.address}`}>
+                  <Button text={'Profile Details'} icon="man" kind="transparent" />
+                </Link>
               )}
             </SatelliteProfileDetails>
 

@@ -1,6 +1,8 @@
+import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { RoutingButton } from 'app/App.components/RoutingButton/RoutingButton.controller'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
+import { Link } from 'react-router-dom'
 import { SatelliteSideBarStyled, SideBarSection, SideBarItem, FAQLink, SideBarFaq } from './SatelliteSideBar.style'
 
 type OraclesSideBarProps = {
@@ -69,13 +71,14 @@ const SatellitesSideBarView = ({
     <SatelliteSideBarStyled>
       <SideBarSection>
         {isButton ? (
-          <RoutingButton
-            icon="satellite-stroke"
-            text={userIsSatellite ? 'Edit Satellite Profile' : 'Become a Satellite'}
-            pathName={`/become-satellite`}
-            pathParams={{ userIsSatellite: userIsSatellite }}
-            disabled={userIsSatellite ? !Boolean(accountPkh) : false}
-          />
+          <Link to="/become-satellite">
+            <Button
+              text={userIsSatellite ? 'Edit Satellite Profile' : 'Become a Satellite'}
+              icon="satellite-stroke"
+              kind={ACTION_PRIMARY}
+              disabled={userIsSatellite ? !Boolean(accountPkh) : false}
+            />
+          </Link>
         ) : null}
 
         <h2>Info</h2>
