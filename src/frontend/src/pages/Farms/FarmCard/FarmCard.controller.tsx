@@ -22,7 +22,6 @@ import { FARM_DEPOSIT, FARM_WITHDRAW } from '../../../app/App.components/Modal/M
 
 // helpers
 import { calculateAPY } from '../Farms.helpers'
-import { getLimitedString } from 'utils/getLimitedString'
 
 // styles
 import { FarmCardStyled, FarmHarvestStyled, FarmStakeStyled } from './FarmCard.style'
@@ -52,7 +51,7 @@ const LogoHeaderContent = ({
       secondAssetLogoSrc={secondToken.thumbnailUri ?? secondToken.address}
     />
     <div className="farm-card-section">
-      <h3>{getLimitedString(name, 23)}</h3>
+      <h3>{name}</h3>
       {subtitle && <div className="subtitle">{subtitle}</div>}
     </div>
   </div>
