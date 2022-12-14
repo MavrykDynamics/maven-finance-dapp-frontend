@@ -42,7 +42,7 @@ export const DataFeedCard = ({ feed }: { feed: FeedGQL }) => {
           </var>
         </div>
         <div className="item">
-          <h5>Contact address</h5>
+          <h5>Contract address</h5>
           <var>
             <TzAddress tzAddress={feed.address} hasIcon={true} type={BLUE} />
           </var>
