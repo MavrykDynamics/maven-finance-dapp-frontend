@@ -31,6 +31,14 @@ import { AvailableActionsStyle } from './SatelliteGovernance.style'
 import { validateFormField, validateFormAddress } from 'utils/validatorFunctions'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
+const handleComparingValue = (value: string) => {
+  return value.replaceAll(' ', '').toLowerCase()
+}
+
+const compareValues = (a: string, b: string) => {
+  return handleComparingValue(a) === handleComparingValue(b)
+}
+
 type MaxLength = {
   purposeMaxLength: number
   aggregatorNameMaxLength: number
@@ -142,28 +150,28 @@ export const SatelliteGovernanceForm = ({ variant, maxLength }: Props) => {
   const content = CONTENT_FORM.get(variant)
 
   const isFieldOracleAddress =
-    variant === 'removeFromAggregator' ||
-    variant === 'addToAggregator' ||
-    variant === 'setAggregatorMaintainer' ||
-    variant === 'updateAggregatorStatus'
+  compareValues(variant, 'removeFromAggregator') ||
+  compareValues(variant, 'addToAggregator') ||
+  compareValues(variant, 'setAggregatorMaintainer') ||
+  compareValues(variant, 'updateAggregatorStatus')
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     try {
-      if (variant === 'suspendSatellite') await dispatch(suspendSatellite(satelliteAddress, purpose))
-      if (variant === 'unsuspendSatellite') await dispatch(unsuspendSatellite(satelliteAddress, purpose))
-      if (variant === 'banSatellite') await dispatch(banSatellite(satelliteAddress, purpose))
-      if (variant === 'unbanSatellite') await dispatch(unbanSatellite(satelliteAddress, purpose))
-      if (variant === 'removeOracles') await dispatch(removeOracles(satelliteAddress, purpose))
-      if (variant === 'restoreSatellite') await dispatch(restoreSatellite(satelliteAddress, purpose))
-      if (variant === 'removeFromAggregator')
+      if (compareValues(variant, 'suspendSatellite')) await dispatch(suspendSatellite(satelliteAddress, purpose))
+      if (compareValues(variant, 'unsuspendSatellite')) await dispatch(unsuspendSatellite(satelliteAddress, purpose))
+      if (compareValues(variant, 'banSatellite')) await dispatch(banSatellite(satelliteAddress, purpose))
+      if (compareValues(variant, 'unbanSatellite')) await dispatch(unbanSatellite(satelliteAddress, purpose))
+      if (compareValues(variant, 'removeOracles')) await dispatch(removeOracles(satelliteAddress, purpose))
+      if (compareValues(variant, 'restoreSatellite')) await dispatch(restoreSatellite(satelliteAddress, purpose))
+      if (compareValues(variant, 'removeFromAggregator'))
         await dispatch(removeOracleInAggregator(oracleAddress, satelliteAddress, purpose))
-      if (variant === 'addToAggregator') await dispatch(addOracleToAggregator(oracleAddress, satelliteAddress, purpose))
-      if (variant === 'restoreSatellite')
+      if (compareValues(variant, 'addToAggregator')) await dispatch(addOracleToAggregator(oracleAddress, satelliteAddress, purpose))
+      if (compareValues(variant, 'restoreSatellite'))
         await dispatch(addOracleToAggregator(oracleAddress, satelliteAddress, purpose))
-      if (variant === 'setAggregatorMaintainer')
+      if (compareValues(variant, 'setAggregatorMaintainer'))
         await dispatch(setAggregatorMaintainer(oracleAddress, satelliteAddress, purpose))
-      if (variant === 'updateAggregatorStatus')
+      if (compareValues(variant, 'updateAggregatorStatus'))
         await dispatch(updateAggregatorStatus(oracleAddress, satelliteAddress, purpose))
       setForm({
         oracleAddress: '',
@@ -207,9 +215,9 @@ export const SatelliteGovernanceForm = ({ variant, maxLength }: Props) => {
           <fieldset>
             <div className="satellite-address">
               <label>
-                {variant === 'setAggregatorMaintainer'
+                {compareValues(variant, 'setAggregatorMaintainer')
                   ? 'Maintainer Address'
-                  : variant === 'updateAggregatorStatus'
+                  : compareValues(variant, 'updateAggregatorStatus')
                   ? 'Status'
                   : 'Satellite Address'}
               </label>
@@ -228,7 +236,7 @@ export const SatelliteGovernanceForm = ({ variant, maxLength }: Props) => {
             {isFieldOracleAddress ? (
               <div className="satellite-address">
                 <label>
-                  {variant === 'setAggregatorMaintainer' || variant === 'updateAggregatorStatus'
+                  {compareValues(variant, 'setAggregatorMaintainer') || compareValues(variant, 'updateAggregatorStatus')
                     ? 'Aggregator Address'
                     : 'Oracle Address'}
                 </label>
