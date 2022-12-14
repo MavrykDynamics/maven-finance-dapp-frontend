@@ -320,7 +320,7 @@ export function BreakGlassCouncil() {
               {sortedBreakGlassCouncilMembers.map((item) => (
                 <CouncilMemberView
                   key={item.id}
-                  image={item.image || item.name}
+                  image={item.image}
                   name={item.name}
                   userId={item.userId}
                   openModal={handleOpenleModal}

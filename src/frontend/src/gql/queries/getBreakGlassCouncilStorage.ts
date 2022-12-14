@@ -8,6 +8,7 @@ export const BREAK_GLASS_COUNCIL_MEMBER_QUERY = `
       name
       break_glass_id
       website
+      image
       id
     }
   }
