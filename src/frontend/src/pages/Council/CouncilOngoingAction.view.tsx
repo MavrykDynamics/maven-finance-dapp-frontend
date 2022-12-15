@@ -26,7 +26,7 @@ type Props = (BreakGlassActions[0] | CouncilActions[0]) & {
 }
 
 export function CouncilOngoingAction(props: Props) {
-  const { executionDatetime, actionType, signersCount, numCouncilMembers, id, parameters, handleDropAction, pageType } = props
+  const { startDatetime, actionType, signersCount, numCouncilMembers, id, parameters, handleDropAction, pageType } = props
   const [isOpen, setIsOpen] = useState(false)
   const ref = useRef<HTMLDivElement | null>(null)
   const isCouncilPage = pageType === 'council'
@@ -164,7 +164,7 @@ export function CouncilOngoingAction(props: Props) {
         <div className='row top-row'>
           <div className='column'>
             <div className='column-name'>Date</div>
-            <div className='column-value'>{parseDate({ time: executionDatetime, timeFormat: 'MMM Do, YYYY' })}</div>
+            <div className='column-value'>{parseDate({ time: startDatetime, timeFormat: 'MMM Do, YYYY' })}</div>
           </div>
 
           <div className='column'>

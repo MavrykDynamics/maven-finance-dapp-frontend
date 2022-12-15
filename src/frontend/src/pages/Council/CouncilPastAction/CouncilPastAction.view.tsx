@@ -9,7 +9,7 @@ import { getSeparateCamelCase } from '../../../utils/parse'
 import { CouncilPastActionStyled } from './CouncilPastAction.style'
 
 type Props = {
-  executionDatetime: string
+  startDatetime: string
   actionType: string
   signersCount: number
   numCouncilMembers: number
@@ -17,14 +17,14 @@ type Props = {
 }
 
 export const CouncilPastActionView = (props: Props) => {
-  const { executionDatetime, actionType, signersCount, numCouncilMembers, councilId } = props
+  const { startDatetime, actionType, signersCount, numCouncilMembers, councilId } = props
   const isMoreThanHalf = numCouncilMembers / 2 < signersCount
 
   return (
     <CouncilPastActionStyled>
       <div>
         <p>Date</p>
-        <h4>{parseDate({ time: executionDatetime, timeFormat: 'MMM Do, YYYY' })}</h4>
+        <h4>{parseDate({ time: startDatetime, timeFormat: 'MMM Do, YYYY' })}</h4>
       </div>
       <div>
         <p>Purpose</p>

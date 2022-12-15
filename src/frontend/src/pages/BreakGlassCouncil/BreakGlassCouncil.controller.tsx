@@ -251,7 +251,7 @@ export function BreakGlassCouncil() {
               <h1>{isReviewPage ? 'Past Break Glass Council Actions' : 'Pending Signature Council Actions'}</h1>
               {(isReviewPage ? paginatedPastBreakGlassCouncilActions : paginatedBreakGlassActionPendingAllSignature).map((item) => (
                 <CouncilPastActionView
-                  executionDatetime={String(item.executionDatetime)}
+                  startDatetime={String(item.startDatetime)}
                   key={item.id}
                   actionType={item.actionType}
                   signersCount={item.signersCount}

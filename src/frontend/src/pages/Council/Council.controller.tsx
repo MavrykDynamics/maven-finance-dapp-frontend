@@ -298,7 +298,7 @@ export const Council = () => {
                 </h1>
                 {(isReviewPage ? paginatedCouncilPastActions : paginatedCouncilAllPendingActions).map((item) => (
                   <CouncilPastActionView
-                    executionDatetime={String(item.executionDatetime)}
+                    startDatetime={String(item.startDatetime)}
                     key={item.id}
                     actionType={item.actionType}
                     signersCount={item.signersCount}
