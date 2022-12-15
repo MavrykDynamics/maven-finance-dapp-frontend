@@ -157,21 +157,39 @@ export const SatelliteGovernanceForm = ({ variant, maxLength }: Props) => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     try {
-      if (compareValues(variant, 'suspendSatellite')) await dispatch(suspendSatellite(satelliteAddress, purpose))
-      if (compareValues(variant, 'unsuspendSatellite')) await dispatch(unsuspendSatellite(satelliteAddress, purpose))
-      if (compareValues(variant, 'banSatellite')) await dispatch(banSatellite(satelliteAddress, purpose))
-      if (compareValues(variant, 'unbanSatellite')) await dispatch(unbanSatellite(satelliteAddress, purpose))
-      if (compareValues(variant, 'removeOracles')) await dispatch(removeOracles(satelliteAddress, purpose))
-      if (compareValues(variant, 'restoreSatellite')) await dispatch(restoreSatellite(satelliteAddress, purpose))
-      if (compareValues(variant, 'removeFromAggregator'))
-        await dispatch(removeOracleInAggregator(oracleAddress, satelliteAddress, purpose))
-      if (compareValues(variant, 'addToAggregator')) await dispatch(addOracleToAggregator(oracleAddress, satelliteAddress, purpose))
-      if (compareValues(variant, 'restoreSatellite'))
-        await dispatch(addOracleToAggregator(oracleAddress, satelliteAddress, purpose))
-      if (compareValues(variant, 'setAggregatorMaintainer'))
-        await dispatch(setAggregatorMaintainer(oracleAddress, satelliteAddress, purpose))
-      if (compareValues(variant, 'updateAggregatorStatus'))
-        await dispatch(updateAggregatorStatus(oracleAddress, satelliteAddress, purpose))
+      switch (handleComparingValue(variant)) {
+        case handleComparingValue('suspendSatellite'):
+          await dispatch(suspendSatellite(satelliteAddress, purpose))
+          break
+        case handleComparingValue('unsuspendSatellite'):
+          await dispatch(unsuspendSatellite(satelliteAddress, purpose))
+          break
+        case handleComparingValue('banSatellite'):
+          await dispatch(banSatellite(satelliteAddress, purpose))
+          break
+        case handleComparingValue('unbanSatellite'):
+          await dispatch(unbanSatellite(satelliteAddress, purpose))
+          break
+        case handleComparingValue('removeOracles'):
+          await dispatch(removeOracles(satelliteAddress, purpose))
+          break;
+        case handleComparingValue('restoreSatellite'):
+          await dispatch(restoreSatellite(satelliteAddress, purpose))
+          break;
+        case handleComparingValue('removeFromAggregator'):
+          await dispatch(removeOracleInAggregator(oracleAddress, satelliteAddress, purpose))
+          break;
+        case handleComparingValue('addToAggregator'):
+          await dispatch(addOracleToAggregator(oracleAddress, satelliteAddress, purpose))
+          break;
+        case handleComparingValue('setAggregatorMaintainer'):
+          await dispatch(setAggregatorMaintainer(oracleAddress, satelliteAddress, purpose))
+          break;
+        case handleComparingValue('updateAggregatorStatus'):
+          await dispatch(updateAggregatorStatus(oracleAddress, satelliteAddress, purpose))
+          break;
+      }
+
       setForm({
         oracleAddress: '',
         satelliteAddress: '',
