@@ -9,7 +9,7 @@ import {
   InputStyled,
 } from './Input.style'
 
-type InputViewProps = {
+export type InputViewProps = {
   id?: string
   icon?: string
   placeholder?: string

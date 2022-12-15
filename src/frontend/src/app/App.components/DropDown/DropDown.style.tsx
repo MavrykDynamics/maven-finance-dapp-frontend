@@ -19,6 +19,12 @@ export const DropDownStyled = styled.div<{ theme: MavrykTheme }>`
       overflow-y: auto;
     }
   }
+
+  &.stage-3-dropDown {
+    > div {
+      border: unset;
+    }
+  }
 `
 
 export const DropDownMenu = styled.div<{ theme: MavrykTheme }>`

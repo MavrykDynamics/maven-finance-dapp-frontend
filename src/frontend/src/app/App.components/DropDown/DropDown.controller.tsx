@@ -3,7 +3,7 @@ import { DropDownView } from './DropDown.view'
 type DropDownProps = {
   placeholder: string
   items: readonly string[]
-  clickOnDropDown: () => void
+  clickOnDropDown?: () => void
   clickOnItem: (value: string) => void
   isOpen: boolean
   setIsOpen: (arg: boolean) => void
@@ -23,7 +23,6 @@ export const DropDown = ({
   setIsOpen,
   itemSelected,
   clickOnItem,
-  clickOnDropDown,
   className,
 }: DropDownProps) => {
   return (
@@ -32,7 +31,6 @@ export const DropDown = ({
       isOpen={isOpen}
       items={items}
       itemSelected={itemSelected}
-      onClick={clickOnDropDown}
       clickItem={clickOnItem}
       setIsOpen={setIsOpen}
       className={className}
