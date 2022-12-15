@@ -9,6 +9,15 @@ import {
 import { calcWithoutMu, calcWithoutPrecision } from '../../utils/calcFunctions'
 import { DipDupTokensGraphQl } from 'utils/TypesAndInterfaces/DipDupTokens'
 
+// helpers
+import { 
+  defaultProposalInvoiceMaxLength,
+  defaultProposalMetadataTitleMaxLength,
+  defaultProposalDescriptionMaxLength,
+  defaultProposalTitleMaxLength,
+  defaultProposalSourceCodeMaxLength,
+} from 'app/App.components/Input/Input.constants'
+
 export const getProposalStatusInfo = (
   governancePhase: GovernancePhase,
   proposal: ProposalRecordType | undefined,
@@ -281,11 +290,11 @@ export const normalizeGovernanceStorage = (
       blocksPerProposalRound: currentGovernance?.blocks_per_proposal_round ?? 0,
       blocksPerVotingRound: currentGovernance?.blocks_per_voting_round ?? 0,
       blocksPerTimelockRound: currentGovernance?.blocks_per_timelock_round,
-      proposalDescriptionMaxLength: currentGovernance?.proposal_description_max_length || 500,
-      proposalInvoiceMaxLength: currentGovernance?.proposal_invoice_max_length || 500,
-      proposalMetadataTitleMaxLength: currentGovernance?.proposal_metadata_title_max_length || 400,
-      proposalSourceCodeMaxLength: currentGovernance?.proposal_source_code_max_length || 400,
-      proposalTitleMaxLength: currentGovernance?.proposal_title_max_length || 400,
+      proposalDescriptionMaxLength: currentGovernance?.proposal_description_max_length || defaultProposalDescriptionMaxLength,
+      proposalInvoiceMaxLength: currentGovernance?.proposal_invoice_max_length || defaultProposalInvoiceMaxLength,
+      proposalMetadataTitleMaxLength: currentGovernance?.proposal_metadata_title_max_length || defaultProposalMetadataTitleMaxLength,
+      proposalSourceCodeMaxLength: currentGovernance?.proposal_source_code_max_length || defaultProposalSourceCodeMaxLength,
+      proposalTitleMaxLength: currentGovernance?.proposal_title_max_length || defaultProposalTitleMaxLength,
     },
     currentCycleEndLevel: currentGovernance?.current_cycle_end_level ?? 0,
     currentRound: convertGovernanceRound(currentGovernance?.current_round ?? 0),
