@@ -2,12 +2,13 @@ import { CommaNumber } from '../CommaNumber/CommaNumber.controller'
 import { DropDown } from '../DropDown/DropDown.controller'
 import { InputStatusType } from '../Input/Input.constants'
 import { Input, InputOneChange } from '../Input/Input.controller'
+import { BLUE } from '../TzAddress/TzAddress.constants'
 import { TzAddress } from '../TzAddress/TzAddress.view'
 
 export type DropDownPropsType = {
   items: Array<string>
   isOpen: boolean
-  clickOnDropDown: (rowIdx: number) => () => void
+  disabled?: boolean
   clickOnItem: (rowIdx: number) => (value: string) => void
   setIsOpen: (newState: Array<boolean>) => void
 }
@@ -31,7 +32,7 @@ export type InputPropsType = {
   disabled?: boolean
 }
 
-export type CellType = 'input' | 'dropdown' | 'text' | 'commaNumber' | 'tzAddress'
+export type CellType = 'input' | 'dropDown' | 'text' | 'commaNumber' | 'tzAddress'
 
 type TableCellPropsType = {
   cellType: CellType
@@ -65,22 +66,24 @@ export const TableCell = ({
     )
   }
 
-  if (cellType === 'dropdown' && dropDownProps) {
+  if (cellType === 'dropDown' && dropDownProps) {
     return (
       <td className={className}>
-        {/* <DropDown
+        <DropDown
           placeholder={''}
-          items={dropDownProps.dropDownItems}
+          {...dropDownProps}
+          itemSelected={String(cellValue)}
           setIsOpen={(newDropDownState) =>
+            dropDownProps.setIsOpen(dropDownProps.items.map((_, idx) => (idx === rowIdx ? newDropDownState : false)))
+          }
+          clickOnItem={dropDownProps.clickOnItem(rowIdx)}
+          clickOnDropDown={() =>
             dropDownProps.setIsOpen(
-              Array.from({ length: rowsAmount }, (_, idx) => (idx === rowIdx - 2 ? newDropDownState : false)),
+              dropDownProps.items.map((isDropDownOpen, idx) => (idx === rowIdx ? !isDropDownOpen : false)),
             )
           }
-          clickOnItem={dropDownProps.clickOnItem(rowIdx - 2)}
-          isOpen={isOpen}
           className="stage-3-dropDown"
-          itemSelected={String(item[fieldName])}
-        /> */}
+        />
       </td>
     )
   }
@@ -96,7 +99,7 @@ export const TableCell = ({
   if (cellType === 'tzAddress') {
     return (
       <td className={className}>
-        <TzAddress tzAddress={cellValue.toString()} />
+        <TzAddress tzAddress={cellValue.toString()} type={BLUE} hasIcon={true} className="table-cell-tzAddress" />
       </td>
     )
   }

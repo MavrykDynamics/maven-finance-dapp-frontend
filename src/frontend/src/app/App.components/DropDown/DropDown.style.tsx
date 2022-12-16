@@ -13,6 +13,15 @@ export const DropDownStyled = styled.div<{ theme: MavrykTheme }>`
   line-height: 24px;
   color: ${({ theme }) => theme.colorText};
 
+  &.disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+
+    div {
+      pointer-events: none;
+    }
+  }
+
   &.cycle-dropdown {
     ul {
       max-height: 250px;

@@ -48,7 +48,7 @@ export const InputView = ({
   required,
   className,
 }: InputViewProps) => {
-  const classNames = `${kind} ${inputStatus !== undefined ? inputStatus : 'none'}`
+  const classNames = `${kind ?? ''} ${inputStatus !== undefined ? inputStatus : 'none'}`
 
   return (
     <InputStyled className={className} id={'inputStyled'}>

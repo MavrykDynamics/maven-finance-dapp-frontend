@@ -38,6 +38,7 @@ export const StageThreeForm = ({
   updateLocalProposalData,
 }: StageThreeFormProps) => {
   const { proposalPayments, locked, title } = currentProposal
+
   const {
     governanceStorage: {
       fee,
@@ -152,7 +153,7 @@ export const StageThreeForm = ({
     setProposalHasChange(true)
   }
 
-  const disabledInputs = useMemo(() => !isProposalRound || locked, [isProposalRound, locked])
+  const isTableDisabled = useMemo(() => !isProposalRound || locked, [isProposalRound, locked])
 
   const tableData = useMemo(() => {
     return proposalPayments.map<TableProps['data'][number]>((payment, idx) => {
@@ -172,6 +173,7 @@ export const StageThreeForm = ({
             onBlur: handleOnBlur,
             onFocus: () => setOpenDrop(DEFAULT_DROPDOWNS_STATE),
             name: 'to__id',
+            disabled: isTableDisabled,
             type: 'text',
           },
         },
@@ -182,6 +184,7 @@ export const StageThreeForm = ({
             inputStatus: validationObj?.title,
             onChange: handleChange,
             onBlur: handleOnBlur,
+            disabled: isTableDisabled,
             onFocus: () => setOpenDrop(DEFAULT_DROPDOWNS_STATE),
             name: 'title',
             type: 'text',
@@ -194,9 +197,13 @@ export const StageThreeForm = ({
             inputStatus: validationObj?.token_amount,
             onChange: handleChange,
             onBlur: handleOnBlur,
+            disabled: isTableDisabled,
             onFocus: () => setOpenDrop(DEFAULT_DROPDOWNS_STATE),
             name: 'token_amount',
             type: 'number',
+          },
+          commaNumberProps: {
+            endingText: selectedSymbol,
           },
         },
         {
@@ -205,9 +212,20 @@ export const StageThreeForm = ({
           dropDownProps: {
             items: paymentMethods.map(({ symbol }) => symbol),
             isOpen: openDrop[idx],
-            clickOnDropDown: (rowIdx: number) => () => {},
-            clickOnItem: (rowIdx: number) => (value: string) => {},
-            setIsOpen: (newState: Array<boolean>) => {},
+            disabled: isTableDisabled,
+            clickOnItem: (rowIdx: number) => (newSelectedSymbol: string) => {
+              const address = paymentMethods.find(({ symbol }) => newSelectedSymbol === symbol)?.address
+
+              if (address) {
+                handleChange(
+                  {
+                    target: { name: 'token_address', value: address },
+                  },
+                  rowIdx,
+                )
+              }
+            },
+            setIsOpen: (newState: Array<boolean>) => setOpenDrop(newState),
           },
         },
       ]
@@ -243,6 +261,7 @@ export const StageThreeForm = ({
       <label>4 - Enter Proposal Data</label>
       <Table
         data={tableData}
+        isTableDisabled={isTableDisabled}
         className="stage-3-table"
         colunmNames={['Address', 'Purpose', 'Amount', 'Payment Type (XTZ/MVK)']}
         addRowHandler={handleAddRow}
@@ -250,124 +269,4 @@ export const StageThreeForm = ({
       />
     </SubmissionStyled>
   )
-}
-
-// TODO: old table
-{
-  /* <FormTableGrid className={!isProposalRound ? 'disabled' : ''}>
-        <TableGridWrap>
-          <div className="table-wrap">
-            <table>
-              <tr key="row-names">
-                <td key="row-names-address">Address</td>
-                <td key="row-names-purpose">Purpose</td>
-                <td key="row-names-amount">Amount</td>
-                <td key="row-names-asset">Payment Type (XTZ/MVK)</td>
-              </tr>
-              {proposalPayments.map((rowItems, i) => {
-                const validationObj = currentProposalValidation.paymentsValidation?.find(
-                  ({ paymentId }) => paymentId === rowItems.id,
-                )
-                const { symbol: selectedSymbol = 'MVK' } =
-                  paymentMethods.find(({ address }) => address === rowItems.token_address) ?? paymentMethods?.[0] ?? {}
-
-                if (!rowItems || rowItems.title === null || rowItems.token_amount === null) return null
-
-                return (
-                  <tr key={i}>
-                    <td key={`${i}-address`} className="input-cell">
-                      <Input
-                        onFocus={() => setOpenDrop('')}
-                        value={rowItems.to__id ?? ''}
-                        type={'text'}
-                        name="to__id"
-                        disabled={disabledInputs}
-                        inputStatus={validationObj?.to__id}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange(e, i)}
-                        onBlur={(e: React.ChangeEvent<HTMLInputElement>) => handleOnBlur(e, rowItems.id)}
-                        className="submit-proposal-stage-3"
-                      />
-                    </td>
-                    <td key={`${i}-purpose`} className="input-cell">
-                      <Input
-                        onFocus={() => setOpenDrop('')}
-                        value={rowItems.title ?? ''}
-                        type={'text'}
-                        name="title"
-                        disabled={disabledInputs}
-                        inputStatus={validationObj?.title}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange(e, i)}
-                        onBlur={(e: React.ChangeEvent<HTMLInputElement>) =>
-                          handleOnBlur(e, rowItems.id, proposalDescriptionMaxLength)
-                        }
-                        className="submit-proposal-stage-3"
-                      />
-                    </td>
-                    <td key={`${i}-amount`} className="input-cell">
-                      <Input
-                        onFocus={() => setOpenDrop('')}
-                        value={rowItems.token_amount ?? ''}
-                        type={'number'}
-                        name="token_amount"
-                        disabled={disabledInputs}
-                        inputStatus={validationObj?.token_amount}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange(e, i)}
-                        onBlur={(e: React.ChangeEvent<HTMLInputElement>) => handleOnBlur(e, rowItems.id)}
-                        className="submit-proposal-stage-3"
-                      />
-                    </td>
-                    <td key={`${i}-asset`}>
-                      <div className="table-drop">
-                        <button
-                          onClick={() => handleToggleDrop(i)}
-                          disabled={locked || !isProposalRound}
-                          className="table-drop-btn-cur"
-                        >
-                          {selectedSymbol}
-                        </button>
-                        {openDrop === `${i}-asset` && (
-                          <DropDownListContainer>
-                            <DropDownList>
-                              {paymentMethods.map(({ symbol, address }) => (
-                                <DropDownListItem
-                                  onClick={() =>
-                                    handleChange(
-                                      {
-                                        target: { name: 'token_address', value: address },
-                                      },
-                                      i,
-                                    )
-                                  }
-                                  key={symbol}
-                                >
-                                  {symbol} {selectedSymbol === symbol ? <Icon id="check-stroke" /> : null}
-                                </DropDownListItem>
-                              ))}
-                            </DropDownList>
-                          </DropDownListContainer>
-                        )}
-                      </div>
-
-                      <div className="delete-button-wrap">
-                        <CustomTooltip text="Delete row">
-                          <button onClick={() => handleDeleteRow(rowItems.id)} disabled={locked || !isProposalRound}>
-                            <Icon id="delete" />
-                          </button>
-                        </CustomTooltip>
-                      </div>
-                    </td>
-                  </tr>
-                )
-              })}
-            </table>
-          </div>
-          {!isMaxRows ? (
-            <CustomTooltip text="Insert 1 row below" className="btn-add-row">
-              <button disabled={locked || !isProposalRound} onClick={handleAddRow}>
-                +
-              </button>
-            </CustomTooltip>
-          ) : null}
-        </TableGridWrap>
-      </FormTableGrid> */
 }

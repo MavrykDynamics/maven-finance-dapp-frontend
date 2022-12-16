@@ -14,6 +14,7 @@ type DropDownViewProps = {
   placeholder: string
   clickItem: (value: string) => void
   isOpen: boolean
+  disabled?: boolean
   setIsOpen: (arg: boolean) => void
   itemSelected: string | undefined
   items: readonly string[]
@@ -28,6 +29,7 @@ export const DropDownView = ({
   itemSelected,
   items,
   className,
+  disabled = false,
 }: DropDownViewProps) => {
   const ref = useRef<HTMLDivElement | null>(null)
   const refDropdownWrapper = useRef<HTMLDivElement | null>(null)
@@ -41,7 +43,7 @@ export const DropDownView = ({
     }
   }, [isOpen])
   return (
-    <DropDownStyled ref={refDropdownWrapper} className={`drop-down ${className}`}>
+    <DropDownStyled ref={refDropdownWrapper} className={`drop-down ${className} ${disabled ? 'disabled' : ''}`}>
       <DropDownMenu
         onClick={() => {
           setIsOpen(!isOpen)

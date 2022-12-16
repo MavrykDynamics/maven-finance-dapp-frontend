@@ -3,13 +3,14 @@ import { MavrykTheme } from 'styles/interfaces'
 
 export const TableStyled = styled.table<{ theme: MavrykTheme; columns: number }>`
   border: 1px solid ${({ theme }) => theme.cardBorderColor};
-  border-radius: 6px;
+  border-radius: 2px;
   position: relative;
   border-spacing: 0;
 
   tr {
     height: 42px;
     position: relative;
+    background-color: ${({ theme }) => theme.backgroundColor};
 
     &:not(.column-names) {
       td {
@@ -38,7 +39,14 @@ export const TableStyled = styled.table<{ theme: MavrykTheme; columns: number }>
 
   th,
   td {
+    text-align: center;
+    vertical-align: middle;
     width: ${({ columns }) => 100 / columns}%;
+
+    .table-cell-tzAddress {
+      margin: 0 auto;
+      width: fit-content;
+    }
 
     &.right-border {
       border-right: 1px solid ${({ theme }) => theme.cardBorderColor};
@@ -61,6 +69,10 @@ export const TableStyled = styled.table<{ theme: MavrykTheme; columns: number }>
       border: unset;
       border-radius: 0;
       box-shadow: none;
+    }
+
+    p {
+      margin: 0;
     }
   }
 
@@ -107,6 +119,10 @@ export const RemoveRowBtn = styled(TableActionsBtn)<{ theme: MavrykTheme }>`
     }
   }
 
+  &.disabled {
+    display: none;
+  }
+
   svg {
     width: 16px;
     height: 20px;
@@ -123,6 +139,11 @@ export const AddRowBtn = styled(TableActionsBtn)<{ theme: MavrykTheme }>`
     font-size: 25px;
     color: ${({ theme }) => theme.valueColor};
     font-weight: 500;
+  }
+
+  &.disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
   }
 
   &:hover {
