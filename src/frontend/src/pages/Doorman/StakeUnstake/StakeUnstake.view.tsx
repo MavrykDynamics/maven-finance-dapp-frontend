@@ -27,6 +27,7 @@ import {
   StakeUnstakeMin,
   StakeUnstakeRate,
   StakeUnstakeStyled,
+  StakeUnstakeCards,
 } from './StakeUnstake.style'
 import { rewardsCompound } from '../Doorman.actions'
 
@@ -209,6 +210,7 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback }: StakeUnstak
           </p>
         ) : null}
       </StakeUnstakeActionCard>
+      {/* // TODO: delete commented code after aproved new design [MAV-774]
       <StakeUnstakeCard>
         <StakeUnstakeBalance>
           <h3>My MVK Balance</h3>
@@ -230,7 +232,32 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback }: StakeUnstak
           <img src="/images/coin-bronze.svg" alt="coin" />
           <CommaNumber value={earnedValue} endingText={'MVK'} />
         </StakeUnstakeBalance>
-      </StakeUnstakeCard>
+      </StakeUnstakeCard> */}
+
+      <StakeUnstakeCards>
+        <StakeUnstakeCard>
+          <StakeUnstakeBalance>
+            {myMvkTokenBalance === 0 ? <StakeLabel>Not Staking</StakeLabel> : null}
+            <img src="/images/coin-gold.svg" alt="coin" />
+            <h3>My MVK Balance</h3>
+            <CommaNumber value={myMvkTokenBalance ?? 0} />
+          </StakeUnstakeBalance>
+        </StakeUnstakeCard>
+        <StakeUnstakeCard>
+          <StakeUnstakeBalance>
+            <img src="/images/coin-silver.svg" alt="coin" />
+            <h3>Total MVK Staked</h3>
+            <CommaNumber value={mySMvkTokenBalance ?? 0} />
+          </StakeUnstakeBalance>
+        </StakeUnstakeCard>
+        <StakeUnstakeCard>
+          <StakeUnstakeBalance>
+            <img src="/images/coin-bronze.svg" alt="coin" />
+            <h3>Total MVK Earned</h3>
+            <CommaNumber value={earnedValue} />
+          </StakeUnstakeBalance>
+        </StakeUnstakeCard>
+      </StakeUnstakeCards>
     </StakeUnstakeStyled>
   )
 }

@@ -13,18 +13,18 @@ import {
   calculateSlicePositions,
   getSatelliteGovernanceListName,
 } from 'pages/FinacialRequests/Pagination/pagination.consts'
+import { defaultGovPurposeMaxLength } from 'app/App.components/Input/Input.constants'
+import { defaultAggregatorNameMaxLength } from 'app/App.components/Input/Input.constants'
 
 // view
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
-import Icon from '../../app/App.components/Icon/Icon.view'
-import { DropDown, DropdownItemType } from '../../app/App.components/DropDown/DropDown.controller'
+import { DropDown } from '../../app/App.components/DropDown/DropDown.controller'
 import { FixMistakenTransferForm } from './FixMistakenTransfer.form'
 import { SatelliteGovernanceCard } from './SatelliteGovernanceCard/SatelliteGovernanceCard.controller'
 import { SatelliteGovernanceForm } from './SatelliteGovernance.form'
 import { CommaNumber } from '../../app/App.components/CommaNumber/CommaNumber.controller'
 import Pagination from 'pages/FinacialRequests/Pagination/Pagination.view'
-import { checkIfUserIsSatellite } from 'pages/Satellites/helpers/Satellites.consts'
-import { SlidingTabButtons, TabItem } from '../../app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
+import { TabItem } from '../../app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import { RegisterAggregatorForm } from './RegisterAggregator.form'
 
 // actions
@@ -32,9 +32,8 @@ import { getGovernanceSatelliteStorage } from './SatelliteGovernance.actions'
 import { getTotalDelegatedMVK } from 'pages/Satellites/helpers/Satellites.consts'
 
 // style
-import { SatelliteGovernanceStyled, SlidingTabButtonsWrap, SmallInfoBlock } from './SatelliteGovernance.style'
+import { SatelliteGovernanceStyled, SmallInfoBlock } from './SatelliteGovernance.style'
 import { DropdownCard, DropdownWrap } from '../../app/App.components/DropDown/DropDown.style'
-import { SatelliteStatus } from '../../utils/TypesAndInterfaces/Delegation'
 import { EmptyContainer } from '../../app/App.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { Button } from 'app/App.components/Button/Button.controller'
@@ -112,8 +111,8 @@ export const SatelliteGovernance = () => {
   const ongoingActionsAmount = getOngoingActionsList(governance_satellite_action)?.length
 
   const maxLength = {
-    purposeMaxLength: governance_satellite[0]?.gov_purpose_max_length,
-    aggregatorNameMaxLength: feedsFactory[0]?.aggregator_name_max_length,
+    purposeMaxLength: governance_satellite[0]?.gov_purpose_max_length || defaultGovPurposeMaxLength,
+    aggregatorNameMaxLength: feedsFactory[0]?.aggregator_name_max_length || defaultAggregatorNameMaxLength,
   }
 
   useEffect(() => {

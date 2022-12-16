@@ -65,14 +65,13 @@ export const DoormanList = styled.aside<{ theme: MavrykTheme }>`
     margin-bottom: 12px;
 
     h4 {
-      width: 47%;
+      width: max-content;
       color: ${({ theme }) => theme.textColor};
       font-weight: 500;
       font-size: 14px;
       line-height: 24px;
       display: flex;
       align-items: center;
-      font-weight: 600;
       white-space: nowrap;
 
       a {
@@ -95,7 +94,7 @@ export const DoormanList = styled.aside<{ theme: MavrykTheme }>`
 
     var {
       display: block;
-      width: 50%;
+      width: max-content;
       overflow: hidden;
       text-overflow: ellipsis;
       font-style: normal;

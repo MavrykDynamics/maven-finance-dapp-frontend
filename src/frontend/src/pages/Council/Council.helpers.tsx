@@ -1,6 +1,15 @@
 // types
 import { CouncilGraphQL, CouncilActionRecordhQL, CouncilStorage } from '../../utils/TypesAndInterfaces/Council'
 
+// helpers
+import { 
+  defaultCouncilMemberImageMaxLength,
+  defaultCouncilMemberNameMaxLength,
+  defaultCouncilMemberWebsiteMaxLength,
+  defaultRequestPurposeMaxLength,
+  defaultRequestTokenNameMaxLength,
+} from 'app/App.components/Input/Input.constants'
+
 export const noralizeCouncilStorage = (storage: CouncilGraphQL) => {
   const councilActionsLedger = storage?.actions?.length
     ? storage?.actions.map((actionRecord) => {
@@ -44,11 +53,11 @@ export const noralizeCouncilStorage = (storage: CouncilGraphQL) => {
       actionExpiryDays: storage?.action_expiry_days,
     },
     actionCounter: storage?.action_counter,
-    councilMemberImageMaxLength: storage?.council_member_image_max_length || 400,
-    councilMemberNameMaxLength: storage?.council_member_name_max_length || 400,
-    councilMemberWebsiteMaxLength: storage?.council_member_website_max_length || 400,
-    requestPurposeMaxLength: storage?.request_purpose_max_length || 500,
-    requestTokenNameMaxLength: storage?.request_token_name_max_length || 400,
+    councilMemberImageMaxLength: storage?.council_member_image_max_length || defaultCouncilMemberImageMaxLength,
+    councilMemberNameMaxLength: storage?.council_member_name_max_length || defaultCouncilMemberNameMaxLength,
+    councilMemberWebsiteMaxLength: storage?.council_member_website_max_length || defaultCouncilMemberWebsiteMaxLength,
+    requestPurposeMaxLength: storage?.request_purpose_max_length || defaultRequestPurposeMaxLength,
+    requestTokenNameMaxLength: storage?.request_token_name_max_length || defaultRequestTokenNameMaxLength,
     councilActionsLedger,
     councilMembers: storage?.members?.length ? councilMembers : [],
   }

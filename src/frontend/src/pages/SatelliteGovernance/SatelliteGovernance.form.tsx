@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { useDispatch } from 'react-redux'
 
 // view
-import Icon from '../../app/App.components/Icon/Icon.view'
 import { Input } from '../../app/App.components/Input/Input.controller'
 import { TextArea } from '../../app/App.components/TextArea/TextArea.controller'
 import { Button } from '../../app/App.components/Button/Button.controller'
@@ -30,6 +29,14 @@ import { AvailableActionsStyle } from './SatelliteGovernance.style'
 // helpers
 import { validateFormField, validateFormAddress } from 'utils/validatorFunctions'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+
+const handleComparingValue = (value: string) => {
+  return value.replaceAll(' ', '').toLowerCase()
+}
+
+const compareValues = (a: string, b: string) => {
+  return handleComparingValue(a) === handleComparingValue(b)
+}
 
 type MaxLength = {
   purposeMaxLength: number
@@ -142,29 +149,47 @@ export const SatelliteGovernanceForm = ({ variant, maxLength }: Props) => {
   const content = CONTENT_FORM.get(variant)
 
   const isFieldOracleAddress =
-    variant === 'removeFromAggregator' ||
-    variant === 'addToAggregator' ||
-    variant === 'setAggregatorMaintainer' ||
-    variant === 'updateAggregatorStatus'
+  compareValues(variant, 'removeFromAggregator') ||
+  compareValues(variant, 'addToAggregator') ||
+  compareValues(variant, 'setAggregatorMaintainer') ||
+  compareValues(variant, 'updateAggregatorStatus')
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     try {
-      if (variant === 'suspendSatellite') await dispatch(suspendSatellite(satelliteAddress, purpose))
-      if (variant === 'unsuspendSatellite') await dispatch(unsuspendSatellite(satelliteAddress, purpose))
-      if (variant === 'banSatellite') await dispatch(banSatellite(satelliteAddress, purpose))
-      if (variant === 'unbanSatellite') await dispatch(unbanSatellite(satelliteAddress, purpose))
-      if (variant === 'removeOracles') await dispatch(removeOracles(satelliteAddress, purpose))
-      if (variant === 'restoreSatellite') await dispatch(restoreSatellite(satelliteAddress, purpose))
-      if (variant === 'removeFromAggregator')
-        await dispatch(removeOracleInAggregator(oracleAddress, satelliteAddress, purpose))
-      if (variant === 'addToAggregator') await dispatch(addOracleToAggregator(oracleAddress, satelliteAddress, purpose))
-      if (variant === 'restoreSatellite')
-        await dispatch(addOracleToAggregator(oracleAddress, satelliteAddress, purpose))
-      if (variant === 'setAggregatorMaintainer')
-        await dispatch(setAggregatorMaintainer(oracleAddress, satelliteAddress, purpose))
-      if (variant === 'updateAggregatorStatus')
-        await dispatch(updateAggregatorStatus(oracleAddress, satelliteAddress, purpose))
+      switch (handleComparingValue(variant)) {
+        case handleComparingValue('suspendSatellite'):
+          await dispatch(suspendSatellite(satelliteAddress, purpose))
+          break
+        case handleComparingValue('unsuspendSatellite'):
+          await dispatch(unsuspendSatellite(satelliteAddress, purpose))
+          break
+        case handleComparingValue('banSatellite'):
+          await dispatch(banSatellite(satelliteAddress, purpose))
+          break
+        case handleComparingValue('unbanSatellite'):
+          await dispatch(unbanSatellite(satelliteAddress, purpose))
+          break
+        case handleComparingValue('removeOracles'):
+          await dispatch(removeOracles(satelliteAddress, purpose))
+          break;
+        case handleComparingValue('restoreSatellite'):
+          await dispatch(restoreSatellite(satelliteAddress, purpose))
+          break;
+        case handleComparingValue('removeFromAggregator'):
+          await dispatch(removeOracleInAggregator(oracleAddress, satelliteAddress, purpose))
+          break;
+        case handleComparingValue('addToAggregator'):
+          await dispatch(addOracleToAggregator(oracleAddress, satelliteAddress, purpose))
+          break;
+        case handleComparingValue('setAggregatorMaintainer'):
+          await dispatch(setAggregatorMaintainer(oracleAddress, satelliteAddress, purpose))
+          break;
+        case handleComparingValue('updateAggregatorStatus'):
+          await dispatch(updateAggregatorStatus(oracleAddress, satelliteAddress, purpose))
+          break;
+      }
+
       setForm({
         oracleAddress: '',
         satelliteAddress: '',
@@ -207,9 +232,9 @@ export const SatelliteGovernanceForm = ({ variant, maxLength }: Props) => {
           <fieldset>
             <div className="satellite-address">
               <label>
-                {variant === 'setAggregatorMaintainer'
+                {compareValues(variant, 'setAggregatorMaintainer')
                   ? 'Maintainer Address'
-                  : variant === 'updateAggregatorStatus'
+                  : compareValues(variant, 'updateAggregatorStatus')
                   ? 'Status'
                   : 'Satellite Address'}
               </label>
@@ -228,7 +253,7 @@ export const SatelliteGovernanceForm = ({ variant, maxLength }: Props) => {
             {isFieldOracleAddress ? (
               <div className="satellite-address">
                 <label>
-                  {variant === 'setAggregatorMaintainer' || variant === 'updateAggregatorStatus'
+                  {compareValues(variant, 'setAggregatorMaintainer') || compareValues(variant, 'updateAggregatorStatus')
                     ? 'Aggregator Address'
                     : 'Oracle Address'}
                 </label>

@@ -12,6 +12,12 @@ import { calcWithoutPrecision } from '../../utils/calcFunctions'
 import { symbolsAfterDecimalPoint } from '../../utils/symbolsAfterDecimalPoint'
 import { Aggregator, Aggregator_Oracle } from 'utils/generated/graphqlTypes'
 import { UTCTimestamp } from 'lightweight-charts'
+import { 
+  defaultSatelliteDescriptionMaxLength,
+  defaultSatelliteImageMaxLength,
+  defaultSatelliteNameMaxLength,
+  defaultSatelliteWebsiteMaxLength,
+ } from 'app/App.components/Input/Input.constants'
 
 export function normalizeSatelliteRecord(
   satelliteRecord: SatelliteRecordGraphQl,
@@ -181,10 +187,10 @@ export function normalizeDelegationStorage(delegationStorage: DelegationGraphQl)
       maxSatellites: delegationStorage?.max_satellites,
       delegationRatio: delegationStorage?.delegation_ratio,
       minimumStakedMvkBalance: calcWithoutPrecision(delegationStorage?.minimum_smvk_balance),
-      satelliteNameMaxLength: delegationStorage?.satellite_name_max_length || 400,
-      satelliteDescriptionMaxLength: delegationStorage?.satellite_description_max_length || 500,
-      satelliteImageMaxLength: delegationStorage?.satellite_image_max_length || 400,
-      satelliteWebsiteMaxLength: delegationStorage?.satellite_website_max_length || 400,
+      satelliteNameMaxLength: delegationStorage?.satellite_name_max_length || defaultSatelliteNameMaxLength,
+      satelliteDescriptionMaxLength: delegationStorage?.satellite_description_max_length || defaultSatelliteDescriptionMaxLength,
+      satelliteImageMaxLength: delegationStorage?.satellite_image_max_length || defaultSatelliteImageMaxLength,
+      satelliteWebsiteMaxLength: delegationStorage?.satellite_website_max_length || defaultSatelliteWebsiteMaxLength,
     },
     delegateLedger: new MichelsonMap<string, DelegateRecord>(),
     satelliteLedger: ledger,

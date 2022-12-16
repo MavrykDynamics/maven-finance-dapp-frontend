@@ -2,6 +2,10 @@ import { EmergencyGovernanceGraphQl } from '../../utils/TypesAndInterfaces/Emerg
 
 // helpers
 import { calcWithoutMu, calcWithoutPrecision } from '../../utils/calcFunctions'
+import { 
+  defaultProposalTitleMaxLength,
+  defaultProposalDescriptionMaxLength,
+} from 'app/App.components/Input/Input.constants'
 
 export function normalizeEmergencyGovernance(storage: EmergencyGovernanceGraphQl) {
   const eGovRecords = storage?.emergency_governance_records?.length
@@ -46,8 +50,8 @@ export function normalizeEmergencyGovernance(storage: EmergencyGovernanceGraphQl
       requiredFeeMutez: calcWithoutMu(storage?.required_fee_mutez),
       voteExpiryDays: storage?.vote_expiry_days,
       sMvkPercentageRequired: storage?.smvk_percentage_required / 100,
-      proposalTitleMaxLength: storage?.proposal_title_max_length || 400,
-      proposalDescMaxLength: storage?.proposal_desc_max_length || 500,
+      proposalTitleMaxLength: storage?.proposal_title_max_length || defaultProposalTitleMaxLength,
+      proposalDescMaxLength: storage?.proposal_desc_max_length || defaultProposalDescriptionMaxLength,
       decimals: storage?.decimals,
     },
     currentEmergencyGovernanceRecordId: storage?.current_emergency_record_id,

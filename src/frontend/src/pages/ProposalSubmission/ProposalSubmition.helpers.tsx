@@ -14,7 +14,7 @@ import { State } from 'reducers'
 
 // helpers
 import { validateTzAddress, isValidLength } from 'utils/validatorFunctions'
-import { defaultPurposeMaxLength } from 'app/App.components/Input/Input.constants'
+import { defaultProposalDescriptionMaxLength } from 'app/App.components/Input/Input.constants'
 
 export const checkWhetherBytesIsValid = (proposalData: ProposalRecordType['proposalData']): boolean => {
   return proposalData.every(({ encoded_code, title }) => Boolean(encoded_code) && Boolean(title))
@@ -40,7 +40,7 @@ export const getValidityStageThreeTable = (valueName: StageThreeValidityItem, va
       return validateTzAddress(value as string)
     case 'title':
    
-      return isValidLength(value as string, 1, maxLength || defaultPurposeMaxLength)
+      return isValidLength(value as string, 1, maxLength || defaultProposalDescriptionMaxLength)
   }
   return true
 }
