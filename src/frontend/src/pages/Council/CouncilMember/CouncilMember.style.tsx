@@ -1,7 +1,8 @@
 import styled from 'styled-components/macro'
 import { CardHover, cyanColor, downColor, upColor, skyColor, headerColor, royalPurpleColor } from 'styles'
+import { MavrykTheme } from 'styles/interfaces'
 
-export const CouncilMemberStyled = styled(CardHover)`
+export const CouncilMemberStyled = styled(CardHover)<{ theme: MavrykTheme }>`
   margin: 0;
   display: flex;
   flex-direction: column;
@@ -17,18 +18,17 @@ export const CouncilMemberStyled = styled(CardHover)`
       max-width: 100%;
       overflow: hidden;
       text-overflow: ellipsis;
-      font-weight: 700;
+      font-weight: 600;
       font-size: 14px;
-      line-height: 14px;
-      color: ${cyanColor};
-      margin-bottom: 3px;
+      line-height: 21px;
+      color: ${({ theme }) => theme.textColor};
     }
 
     div {
-      font-weight: 400;
-      font-size: 14px;
-      line-height: 21px;
-      color: ${headerColor};
+      font-weight: 600;
+      font-size: 16px;
+      line-height: 22px;
+      color: ${({ theme }) => theme.dataColor};
     }
   }
 
