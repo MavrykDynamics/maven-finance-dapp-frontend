@@ -100,7 +100,7 @@ export const CouncilStyled = styled.section`
   }
 `
 
-export const CouncilOngoingActionStyled = styled(CardHover)<{ theme: MavrykTheme }>`
+export const CouncilActionStyled = styled(CardHover)<{ theme: MavrykTheme }>`
   width: 751px;
   padding: 0;
   margin-top: 0;
@@ -127,7 +127,7 @@ export const CouncilOngoingActionStyled = styled(CardHover)<{ theme: MavrykTheme
   }
 
   .top-row {
-    grid-template-columns: 145px 245px 250px;
+    grid-template-columns: 145px 245px 145px 20px;
   }
 
   .two-columns {
@@ -203,6 +203,36 @@ export const CouncilOngoingActionStyled = styled(CardHover)<{ theme: MavrykTheme
         margin-top: 2px;
         height: 18px;
         width: 18px;
+      }
+    }
+
+    .is-green {
+      color: ${({ theme }) => theme.upColor};
+    }
+
+    .is-red {
+      color: ${({ theme }) => theme.downColor};
+    }
+  }
+
+  figure {
+    margin: 0;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    svg {
+      fill: none;
+      stroke: ${({ theme }) => theme.textColorHovered};
+      width: 16px;
+      height: 16px;
+    }
+
+    .icon-send {
+      &:hover {
+        svg {
+          opacity: 0.8;
+        }
       }
     }
   }

@@ -28,7 +28,7 @@ import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.contr
 import { CouncilPending } from 'pages/Council/CouncilPending/CouncilPending.controller'
 import { CouncilPendingReviewView } from './CouncilPending/CouncilPendingReview.view'
 import { CouncilMemberView } from './CouncilMember/CouncilMember.view'
-import { CouncilPastActionView } from './CouncilPastAction/CouncilPastAction.view'
+import { CouncilPastActionView } from './CouncilActions/CouncilPastAction.view'
 import { DropDown, DropdownItemType } from '../../app/App.components/DropDown/DropDown.controller'
 import { CouncilFormAddVestee } from './CouncilForms/CouncilFormAddVestee.view'
 import { CouncilFormAddCouncilMember } from './CouncilForms/CouncilFormAddCouncilMember.view'

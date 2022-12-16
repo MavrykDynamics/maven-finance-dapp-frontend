@@ -2,16 +2,16 @@ import React, { useState, useCallback, useEffect, useRef } from 'react'
 
 // components
 import { Button } from 'app/App.components/SettingsPopup/SettingsPopup.style'
-import { TzAddress } from '../../app/App.components/TzAddress/TzAddress.view'
+import { TzAddress } from '../../../app/App.components/TzAddress/TzAddress.view'
 
 // helpers
 import { ACTION_SECONDARY } from 'app/App.components/Button/Button.constants'
 import { parseDate } from 'utils/time'
-import { getSeparateCamelCase } from '../../utils/parse'
+import { getSeparateCamelCase } from '../../../utils/parse'
 import { scrollToFullView } from 'utils/scrollToFullView'
 
 // styles
-import { CouncilOngoingActionStyled } from './Council.style' 
+import { CouncilActionStyled } from '../Council.style' 
 
 // types
 import { BreakGlassActions } from "utils/TypesAndInterfaces/BreakGlass";
@@ -159,7 +159,7 @@ export function CouncilOngoingAction(props: Props) {
   }, [isOpen])
 
   return (
-    <CouncilOngoingActionStyled>
+    <CouncilActionStyled>
       <div className='top' onClick={handleClickCard}>
         <div className='row top-row'>
           <div className='column'>
@@ -182,6 +182,6 @@ export function CouncilOngoingAction(props: Props) {
       {isOpen && <div ref={ref} className='bottom'>
         {bottomSection}
       </div>}
-    </CouncilOngoingActionStyled>
+    </CouncilActionStyled>
   )
 }
