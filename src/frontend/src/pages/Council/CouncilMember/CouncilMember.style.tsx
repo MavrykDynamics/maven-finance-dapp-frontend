@@ -1,5 +1,5 @@
 import styled from 'styled-components/macro'
-import { CardHover, cyanColor, downColor, upColor, skyColor, headerColor, royalPurpleColor } from 'styles'
+import { CardHover, royalPurpleColor } from 'styles'
 import { MavrykTheme } from 'styles/interfaces'
 
 export const CouncilMemberStyled = styled(CardHover)<{ theme: MavrykTheme }>`
