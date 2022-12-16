@@ -230,7 +230,14 @@ export const StageThreeForm = ({
         },
       ]
     })
-  }, [proposalPayments, currentProposalValidation.paymentsValidation, paymentMethods, locked, openDrop])
+  }, [
+    proposalPayments,
+    currentProposalValidation.paymentsValidation,
+    paymentMethods,
+    locked,
+    isTableDisabled,
+    openDrop,
+  ])
 
   return (
     <SubmissionStyled>

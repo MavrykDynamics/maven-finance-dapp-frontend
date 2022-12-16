@@ -16,8 +16,8 @@ export type TableProps = {
       commaNumberProps?: CommaNumberPropsType
     }>
   >
-  addRowHandler: () => void
-  removeRowHandler: (rowId: number) => void
+  addRowHandler?: () => void
+  removeRowHandler?: (rowId: number) => void
 }
 
 const Table = ({
@@ -60,26 +60,30 @@ const Table = ({
               )
             })}
 
-            <RemoveRowBtn
-              className={`button-wrap remove ${isTableDisabled ? 'disabled' : ''}`}
-              {...(!isTableDisabled ? { onClick: () => removeRowHandler(rowIdx) } : {})}
-            >
-              <CustomTooltip text="Delete row">
-                <Icon id="delete" />
-              </CustomTooltip>
-            </RemoveRowBtn>
+            {removeRowHandler ? (
+              <RemoveRowBtn
+                className={`button-wrap remove ${isTableDisabled ? 'disabled' : ''}`}
+                {...(!isTableDisabled ? { onClick: () => removeRowHandler(rowIdx) } : {})}
+              >
+                <CustomTooltip text="Delete row">
+                  <Icon id="delete" />
+                </CustomTooltip>
+              </RemoveRowBtn>
+            ) : null}
           </tr>
         )
       })}
 
-      <AddRowBtn
-        className={`button-wrap add ${isTableDisabled ? 'disabled' : ''}`}
-        {...(!isTableDisabled ? { onClick: addRowHandler } : {})}
-      >
-        <CustomTooltip text="Insert 1 row below">
-          <span>+</span>
-        </CustomTooltip>
-      </AddRowBtn>
+      {addRowHandler ? (
+        <AddRowBtn
+          className={`button-wrap add ${isTableDisabled ? 'disabled' : ''}`}
+          {...(!isTableDisabled ? { onClick: addRowHandler } : {})}
+        >
+          <CustomTooltip text="Insert 1 row below">
+            <span>+</span>
+          </CustomTooltip>
+        </AddRowBtn>
+      ) : null}
     </TableStyled>
   )
 }

@@ -6,6 +6,7 @@ export const TableStyled = styled.table<{ theme: MavrykTheme; columns: number }>
   border-radius: 2px;
   position: relative;
   border-spacing: 0;
+  width: 100%;
 
   tr {
     height: 42px;
