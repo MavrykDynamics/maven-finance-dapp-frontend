@@ -26,6 +26,7 @@ import {
   SubmissionStyled,
 } from '../ProposalSubmission.style'
 import Table, { TableProps } from 'app/App.components/Table/Table.controller'
+import { CellType } from 'app/App.components/Table/TableCell'
 
 export const StageThreeForm = ({
   proposalId,
@@ -134,16 +135,16 @@ export const StageThreeForm = ({
     setProposalHasChange(true)
   }
 
-  const handleDeleteRow = (rowId: number) => {
+  const handleDeleteRow = (rowIdx: number) => {
     updateLocalProposalData(
       {
-        proposalPayments: proposalPayments.filter(({ id }) => id !== rowId),
+        proposalPayments: proposalPayments.filter((_, idx) => idx !== rowIdx),
       },
       proposalId,
     )
     updateLocalProposalValidation(
       {
-        paymentsValidation: currentProposalValidation.paymentsValidation.filter(({ paymentId }) => paymentId !== rowId),
+        paymentsValidation: currentProposalValidation.paymentsValidation.filter((_, idx) => idx !== rowIdx),
       },
       proposalId,
     )
@@ -153,95 +154,65 @@ export const StageThreeForm = ({
 
   const disabledInputs = useMemo(() => !isProposalRound || locked, [isProposalRound, locked])
 
-  const { tableData, fieldsMapper } = useMemo(() => {
-    const tableData = proposalPayments.map((payment, idx) => {
+  const tableData = useMemo(() => {
+    return proposalPayments.map<TableProps['data'][number]>((payment, idx) => {
       const validationObj = currentProposalValidation.paymentsValidation?.find(
         ({ paymentId }) => paymentId === payment.id,
       )
       const { symbol: selectedSymbol = 'MVK' } =
         paymentMethods.find(({ address }) => address === payment.token_address) ?? paymentMethods?.[0] ?? {}
 
-      return {
-        address: payment.to__id ?? '',
-        addressValidation: validationObj?.to__id,
-        purpose: payment.title ?? '',
-        purposeValidation: validationObj?.title,
-        amount: payment.token_amount ?? 0,
-        amountValidation: validationObj?.token_amount,
-        paymentType: selectedSymbol,
-        paymentTypeProps: {
-          dropDownItems: paymentMethods.map(({ symbol }) => symbol),
-          paymentMethods,
-          isDropOpen: openDrop[idx],
-        },
-      }
-    })
-
-    const fieldsMapper = [
-      {
-        fieldName: 'address',
-        isInput: !locked,
-        inputAttrs: {
-          onChange: handleChange,
-          onBlur: handleOnBlur,
-          onFocus: () => setOpenDrop(DEFAULT_DROPDOWNS_STATE),
-          name: 'to__id',
-          type: 'text',
-          disabled: disabledInputs,
-        },
-        needTzAddress: locked,
-        // propsToComponents: Record<string, unknown>,
-      },
-      {
-        fieldName: 'purpose',
-        isInput: !locked,
-        inputAttrs: {
-          onChange: handleChange,
-          onBlur: handleOnBlur,
-          onFocus: () => setOpenDrop(DEFAULT_DROPDOWNS_STATE),
-          name: 'title',
-          type: 'text',
-          disabled: disabledInputs,
-        },
-      },
-      {
-        fieldName: 'amount',
-        isInput: !locked,
-        inputAttrs: {
-          onChange: handleChange,
-          onBlur: handleOnBlur,
-          onFocus: () => setOpenDrop(DEFAULT_DROPDOWNS_STATE),
-          name: 'token_amount',
-          type: 'number',
-          disabled: disabledInputs,
-        },
-        needCommaNumber: locked,
-        // propsToComponents: Record<string, unknown>,
-      },
-      {
-        fieldName: 'paymentType',
-        isDropDown: !locked,
-        dropDownProps: {
-          clickOnItem: (rowIdx: number) => (newSelectedSymbol: string) => {
-            const assetAddress =
-              tableData[rowIdx]?.paymentTypeProps.paymentMethods.find(({ symbol }) => symbol === newSelectedSymbol)
-                ?.address ?? tableData[rowIdx].paymentTypeProps.paymentMethods[0].address
-
-            handleChange(
-              {
-                target: { name: 'token_address', value: assetAddress },
-              },
-              rowIdx,
-            )
+      return [
+        {
+          cellValue: payment.to__id ?? '',
+          cellType: (locked ? 'tzAddress' : 'input') as CellType,
+          inputProps: {
+            inputStatus: validationObj?.to__id,
+            onChange: handleChange,
+            onBlur: handleOnBlur,
+            onFocus: () => setOpenDrop(DEFAULT_DROPDOWNS_STATE),
+            name: 'to__id',
+            type: 'text',
           },
-          setIsOpen: (dropdownsState: Array<boolean>) => setOpenDrop(dropdownsState),
         },
-        needCommaNumber: locked,
-      },
-    ] as TableProps['fieldsMapper']
-
-    return { tableData, fieldsMapper }
-  }, [proposalPayments, openDrop])
+        {
+          cellValue: payment.title ?? '',
+          cellType: (locked ? 'text' : 'input') as CellType,
+          inputProps: {
+            inputStatus: validationObj?.title,
+            onChange: handleChange,
+            onBlur: handleOnBlur,
+            onFocus: () => setOpenDrop(DEFAULT_DROPDOWNS_STATE),
+            name: 'title',
+            type: 'text',
+          },
+        },
+        {
+          cellValue: payment.token_amount ?? 0,
+          cellType: (locked ? 'commaNumber' : 'input') as CellType,
+          inputProps: {
+            inputStatus: validationObj?.token_amount,
+            onChange: handleChange,
+            onBlur: handleOnBlur,
+            onFocus: () => setOpenDrop(DEFAULT_DROPDOWNS_STATE),
+            name: 'token_amount',
+            type: 'number',
+          },
+        },
+        {
+          cellValue: selectedSymbol,
+          cellType: (locked ? 'text' : 'dropDown') as CellType,
+          dropDownProps: {
+            items: paymentMethods.map(({ symbol }) => symbol),
+            isOpen: openDrop[idx],
+            clickOnDropDown: (rowIdx: number) => () => {},
+            clickOnItem: (rowIdx: number) => (value: string) => {},
+            setIsOpen: (newState: Array<boolean>) => {},
+          },
+        },
+      ]
+    })
+  }, [proposalPayments, currentProposalValidation.paymentsValidation, paymentMethods, locked, openDrop])
 
   return (
     <SubmissionStyled>
@@ -272,7 +243,6 @@ export const StageThreeForm = ({
       <label>4 - Enter Proposal Data</label>
       <Table
         data={tableData}
-        fieldsMapper={fieldsMapper}
         className="stage-3-table"
         colunmNames={['Address', 'Purpose', 'Amount', 'Payment Type (XTZ/MVK)']}
         addRowHandler={handleAddRow}

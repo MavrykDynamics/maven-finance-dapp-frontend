@@ -1,70 +1,24 @@
 import styled from 'styled-components'
-import { cyanColor, headerColor } from 'styles'
 import { MavrykTheme } from 'styles/interfaces'
 
-export const TableStyled = styled.div<{ theme: MavrykTheme; columns: number }>`
-  display: flex;
-  flex-direction: column;
+export const TableStyled = styled.table<{ theme: MavrykTheme; columns: number }>`
   border: 1px solid ${({ theme }) => theme.cardBorderColor};
-  border-radius: 10px;
+  border-radius: 6px;
   position: relative;
+  border-spacing: 0;
 
-  .row {
-    display: flex;
-    width: 100%;
-    justify-content: space-between;
+  tr {
+    height: 42px;
     position: relative;
 
-    &.column-names {
-      height: 42px;
-      > div {
-        color: ${({ theme }) => theme.textColor};
-        height: 100%;
-      }
-    }
-
-    > div:not(.button-wrap) {
-      font-weight: 600;
-      width: ${({ columns }) => 100 / columns}%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border: 1px solid ${({ theme }) => theme.cardBorderColor};
-      background-color: ${({ theme }) => theme.backgroundColor};
-
-      &.roundTopLeft {
-        border-top-left-radius: 10px;
-      }
-      &.roundTopRight {
-        border-top-right-radius: 10px;
-      }
-      &.roundBottomLeft {
-        border-bottom-left-radius: 10px;
-      }
-      &.roundBottomRight {
-        border-bottom-right-radius: 10px;
-      }
-
-      input {
-        border: unset;
-      }
-
-      p {
-        margin: 0;
-      }
-    }
-
     &:not(.column-names) {
-      > div {
+      td {
         color: ${({ theme }) => theme.dataColor};
-      }
-
-      > div:last-child {
-        padding-right: 5px;
       }
 
       &:hover {
         background-color: ${({ theme }) => theme.containerColor};
+
         > div:not(.button-wrap),
         input {
           background-color: ${({ theme }) => theme.containerColor};
@@ -74,6 +28,39 @@ export const TableStyled = styled.div<{ theme: MavrykTheme; columns: number }>`
           opacity: 1;
         }
       }
+    }
+  }
+
+  th {
+    color: ${({ theme }) => theme.textColor};
+    height: 100%;
+  }
+
+  th,
+  td {
+    width: ${({ columns }) => 100 / columns}%;
+
+    &.right-border {
+      border-right: 1px solid ${({ theme }) => theme.cardBorderColor};
+    }
+
+    &.top-border {
+      border-top: 1px solid ${({ theme }) => theme.cardBorderColor};
+    }
+
+    &.no-right-border {
+      border-right: unset;
+    }
+
+    input,
+    input.error,
+    input.success,
+    input.error:focus,
+    input.success:focus,
+    input:focus {
+      border: unset;
+      border-radius: 0;
+      box-shadow: none;
     }
   }
 
@@ -92,14 +79,10 @@ export const TableActionsBtn = styled.div`
   background-color: transparent;
   height: fit-content;
 
-  div {
-    background-color: transparent;
-  }
-
   &.remove {
     .text {
       bottom: 130%;
-      left: 80%;
+      left: 50%;
     }
   }
 
@@ -115,15 +98,11 @@ export const RemoveRowBtn = styled(TableActionsBtn)<{ theme: MavrykTheme }>`
   top: 40%;
   transform: translateY(-50%);
   right: -25px;
+  width: 25px;
+  height: 25px;
 
-  button {
-    width: 25px;
-    height: 25px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    &:hover {
+  &:hover {
+    svg {
       opacity: 0.8;
     }
   }
@@ -140,14 +119,14 @@ export const AddRowBtn = styled(TableActionsBtn)<{ theme: MavrykTheme }>`
   left: -25px;
   opacity: 1;
 
-  button {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  span {
     font-size: 25px;
     color: ${({ theme }) => theme.valueColor};
+    font-weight: 500;
+  }
 
-    &:hover {
+  &:hover {
+    span {
       opacity: 0.8;
     }
   }

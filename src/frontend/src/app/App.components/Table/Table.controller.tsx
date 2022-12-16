@@ -1,69 +1,67 @@
-import { TRANSPARENT } from '../Button/Button.constants'
-import { Button } from '../Button/Button.controller'
-import { CommaNumber } from '../CommaNumber/CommaNumber.controller'
-import { DropDown } from '../DropDown/DropDown.controller'
 import Icon from '../Icon/Icon.view'
-import { InputStatusType } from '../Input/Input.constants'
-import { Input, InputOneChange } from '../Input/Input.controller'
 import { CustomTooltip } from '../Tooltip/Tooltip.view'
-import { TzAddress } from '../TzAddress/TzAddress.view'
 import { AddRowBtn, RemoveRowBtn, TableStyled } from './Table.style'
-
-type DropDownPropsType = {
-  dropDownItems: Array<string>
-  isOpen: boolean
-  clickOnDropDown: (rowIdx: number) => () => void
-  clickOnItem: (rowIdx: number) => (value: string) => void
-  setIsOpen: (newState: Array<boolean>) => void
-}
-
-type InputPropsType = {
-  onChange: any
-  onBlur: any
-  onFocus?: InputOneChange
-  name: string
-  type: string
-  placeholder?: string
-  disabled?: boolean
-}
+import { CellType, CommaNumberPropsType, DropDownPropsType, InputPropsType, TableCell } from './TableCell'
 
 export type TableProps = {
   className?: string
   colunmNames: Array<string>
-  data: Array<Record<string, any>>
+  data: Array<
+    Array<{
+      cellValue: string | number
+      cellType: CellType
+      inputProps?: InputPropsType
+      dropDownProps?: DropDownPropsType
+      commaNumberProps?: CommaNumberPropsType
+    }>
+  >
   addRowHandler: () => void
   removeRowHandler: (rowId: number) => void
-  fieldsMapper: Array<{
-    fieldName: string
-    isDropDown?: boolean
-    dropDownProps?: DropDownPropsType
-    isInput?: boolean
-    inputAttrs?: InputPropsType
-    needCommaNumber?: boolean
-    needTzAddress?: boolean
-    propsToComponents?: Record<string, unknown>
-    callback?: (fieldName: string, arg: unknown) => JSX.Element
-  }>
 }
 
-const Table = ({ colunmNames, className, data, fieldsMapper }: TableProps) => {
-  const rowsAmount = Math.floor((fieldsMapper.length + data.length * fieldsMapper.length) / fieldsMapper.length)
+const Table = ({ colunmNames, className, data, addRowHandler, removeRowHandler }: TableProps) => {
+  const columnsAmount = data[0]?.length ?? 0
   return (
-    <TableStyled className={`full-table ${className}`} columns={fieldsMapper.length}>
-      <div className="row column-names">
-        {colunmNames.map((name, idx) => (
-          <div
-            className={`row-item ${
-              idx === 0 ? 'roundTopLeft' : idx === fieldsMapper.length - 1 ? 'roundTopRight' : ''
-            }`}
-            key={`${name}-${idx}`}
+    <TableStyled className={`full-table ${className}`} columns={columnsAmount}>
+      <tr className="column-names">
+        {colunmNames.map((name, columnIdx) => (
+          <th
+            className={`row-item ${columnIdx === columnsAmount - 1 ? 'no-right-border' : 'right-border'}`}
+            key={`${name}-${columnIdx}`}
           >
             {name}
-          </div>
+          </th>
         ))}
-      </div>
+      </tr>
 
-      <div className="table-content scroll-block">
+      {data.map((rowData, rowIdx) => {
+        return (
+          <tr>
+            {rowData.map((cellData, columnIdx) => {
+              return (
+                <TableCell
+                  key={`${cellData.cellType}-${rowIdx}-${columnIdx}`}
+                  cellType={cellData.cellType}
+                  cellValue={cellData.cellValue}
+                  inputProps={cellData.inputProps}
+                  dropDownProps={cellData.dropDownProps}
+                  commaNumberProps={cellData.commaNumberProps}
+                  rowIdx={rowIdx}
+                  className={`${columnIdx === columnsAmount - 1 ? 'no-right-border' : 'right-border'} ${'top-border'}`}
+                />
+              )
+            })}
+
+            <RemoveRowBtn className="button-wrap remove" onClick={() => removeRowHandler(rowIdx)}>
+              <CustomTooltip text="Delete row">
+                <Icon id="delete" />
+              </CustomTooltip>
+            </RemoveRowBtn>
+          </tr>
+        )
+      })}
+
+      {/* <div className="table-content scroll-block">
         {data.map((item, rowIdx) => {
           return (
             <div className="row" key={`${item.id}-${rowIdx}`}>
@@ -171,11 +169,11 @@ const Table = ({ colunmNames, className, data, fieldsMapper }: TableProps) => {
             </div>
           )
         })}
-      </div>
+      </div> */}
 
-      <AddRowBtn className="button-wrap add">
+      <AddRowBtn className="button-wrap add" onClick={addRowHandler}>
         <CustomTooltip text="Insert 1 row below">
-          <button type="button">+</button>
+          <span>+</span>
         </CustomTooltip>
       </AddRowBtn>
     </TableStyled>
