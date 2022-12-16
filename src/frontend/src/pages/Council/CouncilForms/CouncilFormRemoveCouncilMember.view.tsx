@@ -29,11 +29,11 @@ export const CouncilFormRemoveCouncilMember = () => {
     () =>
       councilMembers?.length
         ? councilMembers.map((item) => {
-              return {
-                text: getShortTzAddress(item.userId),
-                value: item.userId,
-              }
-            })
+            return {
+              text: getShortTzAddress(item.userId),
+              value: item.userId,
+            }
+          })
         : [],
     [councilMembers],
   )
@@ -67,10 +67,6 @@ export const CouncilFormRemoveCouncilMember = () => {
     }
   }
 
-  const handleClickDropdown = () => {
-    setDdIsOpen(!ddIsOpen)
-  }
-
   const handleSelect = (item: DropdownItemType) => {
     setForm((prev) => {
       return { ...prev, memberAddress: item.value }
@@ -95,8 +91,7 @@ export const CouncilFormRemoveCouncilMember = () => {
         <div>
           <label>Choose Council Member to remove</label>
           <DropDown
-            clickOnDropDown={handleClickDropdown}
-            placeholder='Chose Member Address'
+            placeholder="Chose Member Address"
             isOpen={ddIsOpen}
             setIsOpen={setDdIsOpen}
             itemSelected={chosenDdItem?.text}

@@ -8,7 +8,7 @@ import type { CouncilMemberMaxLength } from '../../../utils/TypesAndInterfaces/C
 
 // helpers
 import { getShortTzAddress } from '../../../utils/tzAdress'
-import { validateFormAddress, validateFormField } from 'utils/validatorFunctions' 
+import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
 
 // const
 import { ERROR } from '../../../app/App.components/Toaster/Toaster.constants'
@@ -29,8 +29,8 @@ import { CouncilFormStyled } from './CouncilForms.style'
 
 export const CouncilFormChangeCouncilMember = ({
   councilMemberNameMaxLength,
-  councilMemberWebsiteMaxLength
- }: CouncilMemberMaxLength) => {
+  councilMemberWebsiteMaxLength,
+}: CouncilMemberMaxLength) => {
   const dispatch = useDispatch()
   const { councilStorage } = useSelector((state: State) => state.council)
   const { councilMembers } = councilStorage
@@ -39,11 +39,11 @@ export const CouncilFormChangeCouncilMember = ({
     () =>
       councilMembers?.length
         ? councilMembers.map((item) => {
-              return {
-                text: getShortTzAddress(item.userId),
-                value: item.userId,
-              }
-            })
+            return {
+              text: getShortTzAddress(item.userId),
+              value: item.userId,
+            }
+          })
         : [],
     [councilMembers],
   )
@@ -118,10 +118,6 @@ export const CouncilFormChangeCouncilMember = ({
   const handleBlur = validateFormField(setFormInputStatus)
   const handleBlurAddress = validateFormAddress(setFormInputStatus)
 
-  const handleClickDropdown = () => {
-    setDdIsOpen(!ddIsOpen)
-  }
-
   const handleSelect = (item: DropdownItemType) => {
     setForm((prev) => {
       return { ...prev, oldCouncilMemberAddress: item.value }
@@ -146,8 +142,7 @@ export const CouncilFormChangeCouncilMember = ({
         <div>
           <label>Choose Council Member to change</label>
           <DropDown
-            clickOnDropDown={handleClickDropdown}
-            placeholder='Chose Member Address'
+            placeholder="Chose Member Address"
             isOpen={ddIsOpen}
             setIsOpen={setDdIsOpen}
             itemSelected={chosenDdItem?.text}

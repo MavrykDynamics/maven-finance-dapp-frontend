@@ -77,11 +77,6 @@ export const TableCell = ({
             dropDownProps.setIsOpen(dropDownProps.items.map((_, idx) => (idx === rowIdx ? newDropDownState : false)))
           }
           clickOnItem={dropDownProps.clickOnItem(rowIdx)}
-          clickOnDropDown={() =>
-            dropDownProps.setIsOpen(
-              dropDownProps.items.map((isDropDownOpen, idx) => (idx === rowIdx ? !isDropDownOpen : false)),
-            )
-          }
           className="stage-3-dropDown"
         />
       </td>

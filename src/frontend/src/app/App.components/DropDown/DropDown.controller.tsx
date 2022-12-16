@@ -3,7 +3,6 @@ import { DropDownView } from './DropDown.view'
 type DropDownProps = {
   placeholder: string
   items: readonly string[]
-  clickOnDropDown?: () => void
   clickOnItem: (value: string) => void
   isOpen: boolean
   disabled?: boolean

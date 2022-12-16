@@ -55,9 +55,6 @@ export const FarmTopBar = ({
   const [ddIsOpen, setDdIsOpen] = useState(false)
   const [chosenDdItem, setChosenDdItem] = useState<DropdownItemType | undefined>(undefined)
 
-  const handleClickDropdown = () => {
-    setDdIsOpen(!ddIsOpen)
-  }
   const handleOnClickDropdownItem = (e: string) => {
     const chosenItem = itemsForDropDown.filter((item) => item.text === e)[0]
     setChosenDdItem(chosenItem)
@@ -93,7 +90,6 @@ export const FarmTopBar = ({
       <DropdownContainer className="order-by">
         <h4>Order by:</h4>
         <DropDown
-          clickOnDropDown={handleClickDropdown}
           placeholder={'Choose order'}
           isOpen={ddIsOpen}
           setIsOpen={setDdIsOpen}

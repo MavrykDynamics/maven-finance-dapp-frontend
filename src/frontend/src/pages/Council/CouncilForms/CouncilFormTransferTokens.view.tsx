@@ -94,10 +94,6 @@ export const CouncilFormTransferTokens = ({ requestPurposeMaxLength }: RequestPu
   const handleBlur = validateFormField(setFormInputStatus)
   const handleBlurAddress = validateFormAddress(setFormInputStatus)
 
-  const handleClickDropdown = useCallback(() => {
-    setDdIsOpen(!ddIsOpen)
-  }, [ddIsOpen])
-
   const handleClickDropdownItem = useCallback(
     (e: string) => {
       const chosenItem = itemsForDropDown.filter((item) => item.text === e)[0]
@@ -168,7 +164,6 @@ export const CouncilFormTransferTokens = ({ requestPurposeMaxLength }: RequestPu
         <div>
           <label>Token Type (FA12, FA2, TEZ)</label>
           <DropDown
-            clickOnDropDown={handleClickDropdown}
             placeholder={'Choose token type'}
             isOpen={ddIsOpen}
             setIsOpen={setDdIsOpen}

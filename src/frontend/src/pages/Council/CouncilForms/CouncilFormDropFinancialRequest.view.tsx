@@ -24,16 +24,16 @@ export const CouncilFormDropFinancialRequest = () => {
   const { governanceStorage } = useSelector((state: State) => state.governance)
   const { financialRequestLedger } = governanceStorage
   const { ongoing } = distinctRequestsByExecuting(financialRequestLedger || [])
-  
+
   const itemsForDropDown = useMemo(
     () =>
       ongoing?.length
         ? ongoing.map((item, i: number) => {
-              return {
-                text: `${item.request_type} ${item.request_purpose}`,
-                value: String(item.id),
-              }
-            })
+            return {
+              text: `${item.request_type} ${item.request_purpose}`,
+              value: String(item.id),
+            }
+          })
         : [],
     [ongoing],
   )
@@ -67,10 +67,6 @@ export const CouncilFormDropFinancialRequest = () => {
     }
   }
 
-  const handleClickDropdown = () => {
-    setDdIsOpen(!ddIsOpen)
-  }
-
   const handleSelect = (item: DropdownItemType) => {
     setForm((prev) => {
       return { ...prev, financialReqID: item.value }
@@ -99,8 +95,7 @@ export const CouncilFormDropFinancialRequest = () => {
         <div>
           <label>Choose Financial Request to drop</label>
           <DropDown
-            clickOnDropDown={handleClickDropdown}
-            placeholder='Choose Financial Request'
+            placeholder="Choose Financial Request"
             isOpen={ddIsOpen}
             setIsOpen={setDdIsOpen}
             itemSelected={chosenDdItem?.text}

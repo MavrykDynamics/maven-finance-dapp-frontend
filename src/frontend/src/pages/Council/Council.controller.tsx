@@ -137,10 +137,6 @@ export const Council = () => {
     history.replace(queryParameters.pathname)
   }
 
-  const handleClickDropdown = () => {
-    setDdIsOpen(!ddIsOpen)
-  }
-
   const handleSelect = (item: DropdownItemType) => {}
 
   const handleOnClickDropdownItem = (e: string) => {
@@ -253,7 +249,6 @@ export const Council = () => {
                 <DropdownWrap>
                   <h2>Available Actions</h2>
                   <DropDown
-                    clickOnDropDown={handleClickDropdown}
                     placeholder="Choose action"
                     isOpen={ddIsOpen}
                     setIsOpen={setDdIsOpen}
@@ -326,7 +321,7 @@ export const Council = () => {
                 handleDropAction={handleDropAction}
                 listNameMyPastActions={COUNCIL_MY_PAST_ACTIONS_LIST_NAME}
                 listNameMyOngoingActions={COUNCIL_MY_ONGOING_ACTIONS_LIST_NAME}
-                pageType='council'
+                pageType="council"
               />
             )}
           </div>
