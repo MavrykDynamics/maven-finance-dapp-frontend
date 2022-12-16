@@ -1,4 +1,5 @@
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+import Toggle from 'app/App.components/Toggle/Toggle.view'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { useState } from 'react'
 import { EarnHistoryStyled } from './DashboardPersonalComponents.style'
@@ -32,16 +33,13 @@ const DashboardPersonalEarningsHistory = ({
         <GovRightContainerTitleArea>
           <h1>Earnings History</h1>
         </GovRightContainerTitleArea>
-        <div className="switcher">
-          <span className="usd">USD</span>
-          <div className="toggler">
-            <label>
-              <input type="checkbox" checked={switcherActive} onChange={() => setSwithcerActive(!switcherActive)} />
-              <span className="slider" />
-            </label>
-          </div>
-          <span className="mvk">MVK</span>
-        </div>
+        <Toggle
+          prefix={'USD'}
+          sufix={'MVK'}
+          className="personal-dashboard-toggler"
+          checked={switcherActive}
+          onChange={() => setSwithcerActive(!switcherActive)}
+        />
       </div>
       <div className="grid">
         <div className="stat-block">
