@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components/macro'
-import { cyanColor, royalPurpleColor } from 'styles'
+import { cyanColor, dropDownColor, royalPurpleColor } from 'styles'
 import { Button as ButtonBase } from '../Button/Button.controller'
 import { MavrykTheme } from '../../../styles/interfaces'
 
@@ -163,7 +163,7 @@ export const ChangeNodeNodesListItem = styled.div<{ isSelected?: boolean }>`
 export const PopupContainer = styled.div<{ show?: boolean }>`
   width: 100vw;
   height: 100vh;
-  background-color: #0000007a;
+  background-color: ${dropDownColor};
   z-index: 100;
   position: fixed;
   top: 0;

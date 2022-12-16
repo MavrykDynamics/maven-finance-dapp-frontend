@@ -8,7 +8,6 @@ export const ToggleStyle = styled.div<{ theme: MavrykTheme }>`
 
   &.disabled {
     opacity: 0.6;
-    pointer-events: none;
     cursor: not-allowed;
 
     .toggler {
@@ -69,7 +68,7 @@ export const ToggleStyle = styled.div<{ theme: MavrykTheme }>`
     width: 23px;
     height: 23px;
     border-radius: 50%;
-    background-color: ${cyanColor};
+    background-color: ${({ theme }) => theme.valueColor};
     transition: 0.3s;
   }
 

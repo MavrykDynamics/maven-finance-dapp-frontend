@@ -42,7 +42,6 @@ export const TextAreaView = ({
 
   useEffect(() => {
     if (textareaRef && textareaRef.current) {
-      textareaRef.current.style.height = '0px'
       const scrollHeight = textareaRef.current.scrollHeight
       textareaRef.current.style.height = Math.max(scrollHeight, 85) + 'px'
     }
