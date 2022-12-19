@@ -6,7 +6,7 @@ export const DashboardStyled = styled.div<{ theme: MavrykTheme }>`
     margin-top: 32px;
     display: flex;
     justify-content: space-between;
-    height: 240px;
+    height: 235px;
     column-gap: 20px;
 
     > div {
