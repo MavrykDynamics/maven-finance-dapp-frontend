@@ -125,8 +125,12 @@ export const TradingViewChart = ({
 
     // Setting the border color for the vertical axis
     chart.priceScale().applyOptions({
-      //TODO: add price formatter
+      //TODO: add price formatter if need
       borderColor,
+      scaleMargins: {
+        top: 0.1,
+        bottom: 0.01,
+      },
     })
 
     // Setting the border color for the horizontal axis
