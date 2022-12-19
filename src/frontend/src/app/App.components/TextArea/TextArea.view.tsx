@@ -1,6 +1,13 @@
-import { TextAreaStyled, TextAreaStatus, TextAreaIcon, TextAreaErrorMessage, TextAreaCounter } from './TextArea.style'
+import {
+  TextAreaStyled,
+  TextAreaStatus,
+  TextAreaIcon,
+  TextAreaErrorMessage,
+  TextAreaCounter,
+  TextareaStyled,
+} from './TextArea.style'
 import { TextAreaStatusType } from './TextArea.controller'
-import { TextareaAutosize } from '@mui/material'
+import React, { useLayoutEffect, useRef } from 'react'
 
 type TextAreaViewProps = {
   icon?: string
@@ -31,6 +38,15 @@ export const TextAreaView = ({
   required,
   textAreaMaxLimit,
 }: TextAreaViewProps) => {
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null)
+
+  useLayoutEffect(() => {
+    if (textareaRef && textareaRef.current) {
+      const scrollHeight = textareaRef.current.scrollHeight
+      textareaRef.current.style.height = Math.max(scrollHeight, 85) + 'px'
+    }
+  }, [value])
+
   let status = textAreaStatus !== undefined ? textAreaStatus : 'none'
   return (
     <TextAreaStyled className={className} id={'textAreaContainer'}>
@@ -40,9 +56,7 @@ export const TextAreaView = ({
         </TextAreaIcon>
       )}
       <div className={`textArea-wrapper ${status} ${disabled ? 'disabled' : ''}`}>
-        <TextareaAutosize
-          minRows={4}
-          aria-label="textArea"
+        <TextareaStyled
           placeholder={placeholder}
           value={value}
           onChange={onChange}
@@ -51,6 +65,7 @@ export const TextAreaView = ({
           onBlur={onBlur}
           autoComplete={name}
           disabled={disabled}
+          ref={textareaRef}
           required={required}
         />
       </div>

@@ -16,25 +16,10 @@ export type FetchedTreasuryType = {
 }
 
 export type FetchedTreasuryBalanceType = {
+  account: { address: string }
   balance: string
-  firstLevel: number
-  firstTime: string
-  id: number
-  lastLevel: number
-  lastTime: string
   token: {
-    contract: { address: string }
-    id: number
-    metadata: {
-      decimals: string
-      icon: string
-      name: string
-      shouldPreferSymbol: string
-      symbol: string
-      thumbnailUri: string
-    }
-    standard: string
-    tokenId: string
+    metadata: { symbol: string; name: string; decimals: string; thumbnailUri?: string }
   }
 }
 
@@ -45,7 +30,7 @@ export type TreasuryBalanceType = {
   decimals: number
   name: string
   symbol: string
-  thumbnail_uri: string
+  thumbnail_uri?: string
   usdValue: number
 }
 

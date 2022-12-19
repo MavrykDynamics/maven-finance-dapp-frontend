@@ -9,7 +9,7 @@ export const TextAreaStyled = styled.div`
     border-radius: 10px;
     background-color: ${({ theme }) => theme.backgroundColor};
     border: 1px solid ${({ theme }) => theme.cardBorderColor};
-    padding: 10px 20px;
+    padding: 10px 30px 10px 20px;
     position: relative;
     width: 100%;
 
@@ -50,25 +50,6 @@ export const TextAreaStyled = styled.div`
       .textarea {
         color: ${({ theme }) => theme.upColor};
       }
-    }
-  }
-
-  .textarea {
-    resize: none;
-    background-color: ${({ theme }) => theme.backgroundColor};
-    color: ${({ theme }) => theme.headerColor};
-    border: unset;
-    width: 100%;
-    hyphens: auto;
-    font-family: 'Metropolis', Helvetica, Arial, sans-serif;
-    font-weight: 500;
-    margin: 0;
-    display: block;
-    overflow: visible;
-    transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-
-    &::placeholder {
-      color: ${({ theme }) => theme.textColor};
     }
   }
 `
@@ -158,7 +139,6 @@ const slideDown = keyframes`
 export const TextAreaErrorMessage = styled.div<{ theme: MavrykTheme }>`
   color: ${({ theme }) => theme.downColor};
   line-height: 24px;
-  will-change: transform, opacity;
   animation: ${slideDown} 0.3s cubic-bezier(0.12, 0.4, 0.29, 1.46);
   white-space: nowrap;
   overflow: hidden;
@@ -171,4 +151,25 @@ export const TextAreaErrorMessage = styled.div<{ theme: MavrykTheme }>`
 
 export const TextAreaSpacer = styled.div`
   height: 10px;
+`
+
+export const TextareaStyled = styled.textarea`
+  line-height: 20px;
+  resize: none;
+  background-color: ${({ theme }) => theme.backgroundColor};
+  color: ${({ theme }) => theme.headerColor};
+  border: unset;
+  width: 100%;
+  min-height: 85px;
+  /* hyphens: auto; */
+  font-family: 'Metropolis', Helvetica, Arial, sans-serif;
+  font-weight: 500;
+  margin: 0;
+  display: block;
+  overflow: visible;
+  transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+
+  &::placeholder {
+    color: ${({ theme }) => theme.textColor};
+  }
 `

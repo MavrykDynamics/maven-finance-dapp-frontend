@@ -54,10 +54,6 @@ const OracleSatellitesView = ({
   const [inputSearch, setInputSearch] = useState('')
   const [chosenDdItem, setChosenDdItem] = useState<DropdownItemType | undefined>()
 
-  const handleClickDropdown = () => {
-    setDdIsOpen(!ddIsOpen)
-  }
-
   const handleOnClickDropdownItem = (e: string) => {
     const chosenItem = itemsForDropDown.filter((item) => item.text === e)[0]
     setChosenDdItem(chosenItem)
@@ -85,7 +81,6 @@ const OracleSatellitesView = ({
             <DropdownContainer>
               <h4>Order by:</h4>
               <DropDown
-                clickOnDropDown={handleClickDropdown}
                 placeholder="Choose option"
                 isOpen={ddIsOpen}
                 setIsOpen={setDdIsOpen}

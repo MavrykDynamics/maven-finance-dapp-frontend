@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux'
-import React, { useEffect, useMemo } from 'react'
+import React from 'react'
 import { State } from 'reducers'
 
 // view
@@ -22,7 +22,6 @@ import { StageOneFormProps, ValidationResult } from '../ProposalSybmittion.types
 import { isValidLength, isValidHttpUrl } from '../../../utils/validatorFunctions'
 
 import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
-import '@silevis/reactgrid/styles.css'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 
 export const StageOneForm = ({

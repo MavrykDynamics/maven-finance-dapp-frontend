@@ -10,7 +10,7 @@ import {
   CurrentRoundProposalsStorageType,
   GovPhases,
 } from '../../utils/TypesAndInterfaces/Governance'
-import type { Governance_Proposal_Payment, Maybe } from '../../utils/generated/graphqlTypes'
+import type { Governance_Proposal_Payment } from '../../utils/generated/graphqlTypes'
 import { VoteStatistics } from 'app/App.components/VotingArea/helpers/voting'
 
 // actions
@@ -20,7 +20,6 @@ import { VotingProposalsArea } from '../../app/App.components/VotingArea/VotingA
 
 // helpers
 import { getShortByte, getProposalStatusInfo } from './Governance.helpers'
-import { calcWithoutPrecision, calcWithoutMu } from '../../utils/calcFunctions'
 import {
   WAITING_PROPOSALS_LIST_NAME,
   WAITING_FOR_PAYMENT_PROPOSALS_LIST_NAME,
@@ -52,7 +51,8 @@ import {
   EmptyContainer,
 } from './Governance.style'
 import { InfoBlock } from '../../app/App.components/Info/info.style'
-import { TableGridWrap } from '../../app/App.components/TableGrid/TableGrid.style'
+import Table, { TableProps } from 'app/App.components/Table/Table.controller'
+import { CellType } from 'app/App.components/Table/TableCell'
 
 type GovernanceViewProps = {
   accountPkh: string | undefined
@@ -88,7 +88,7 @@ export const GovernanceView = ({
   const { pathname } = useLocation()
 
   const { governanceStorage, currentRoundProposals } = useSelector((state: State) => state.governance)
-  const { dipDupTokens } = useSelector((state: State) => state.tokens)
+  const { dipDupTokens, whitelistTokens } = useSelector((state: State) => state.tokens)
 
   const [votingEnding, setVotingEnding] = useState<string>('')
   const [visibleMeta, setVisibleMeta] = useState<string>('')
@@ -293,6 +293,50 @@ export const GovernanceView = ({
       await dispatch(dropProposal(rightSideContent?.id))
   }
 
+  const paymentMethods = useMemo(
+    () =>
+      whitelistTokens
+        .map((tokenInfo) => ({
+          symbol: tokenInfo.contract_name,
+          address: tokenInfo.contract_address,
+          shortSymbol: tokenInfo.token_contract_standard,
+          id: 0,
+        }))
+        .filter(({ shortSymbol }) => ['fa2', 'fa12', 'tez'].includes(shortSymbol)),
+    [whitelistTokens],
+  )
+
+  const paymentTableData = useMemo(
+    () =>
+      rightSideContent?.proposalPayments.map<TableProps['data'][number]>((payment) => {
+        const { symbol: selectedSymbol = 'MVK' } =
+          paymentMethods.find(({ address }) => address === payment.token_address) ?? paymentMethods?.[0] ?? {}
+
+        return [
+          {
+            cellValue: payment.to__id ?? '',
+            cellType: 'tzAddress' as CellType,
+          },
+          {
+            cellValue: payment.title ?? '',
+            cellType: 'text' as CellType,
+          },
+          {
+            cellValue: payment.token_amount ?? 0,
+            cellType: 'commaNumber' as CellType,
+            commaNumberProps: {
+              endingText: selectedSymbol,
+            },
+          },
+          {
+            cellValue: selectedSymbol,
+            cellType: 'text' as CellType,
+          },
+        ]
+      }),
+    [],
+  )
+
   return (
     <GovernanceStyled>
       {someVisible ? (
@@ -492,34 +536,8 @@ export const GovernanceView = ({
 
           <article className="payment-data">
             <RightSideSubHeader>Payment Data</RightSideSubHeader>
-            {rightSideContent.proposalPayments?.length ? (
-              <TableGridWrap>
-                <div className="table-wrap">
-                  <table>
-                    <tr>
-                      <td>Address</td>
-                      <td>Title</td>
-                      <td>Amount</td>
-                      <td>Payment Type (XTZ/MVK)</td>
-                    </tr>
-                    {rightSideContent.proposalPayments.map((item: Governance_Proposal_Payment, i: number) => {
-                      const paymentType = dipDupTokens.find(({ contract }) => contract === item.token_address)?.metadata
-                        .symbol
-
-                      return (
-                        <tr key={item.id}>
-                          <td>
-                            <TzAddress tzAddress={item.to__id || ''} hasIcon={false} isBold={true} />
-                          </td>
-                          <td>{item.title}</td>
-                          <td>{item.token_amount}</td>
-                          <td>{paymentType}</td>
-                        </tr>
-                      )
-                    })}
-                  </table>
-                </div>
-              </TableGridWrap>
+            {rightSideContent.proposalPayments?.length && paymentTableData ? (
+              <Table data={paymentTableData} colunmNames={['Address', 'Title', 'Amount', 'Payment Type (XTZ/MVK)']} />
             ) : (
               <RightSideSubContent>No payment data given</RightSideSubContent>
             )}

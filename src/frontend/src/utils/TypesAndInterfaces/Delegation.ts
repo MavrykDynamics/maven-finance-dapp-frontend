@@ -88,7 +88,7 @@ export interface DelegateRecord {
 }
 
 export type DelegationLedger = MichelsonMap<string, DelegateRecord>
-type TokenType = 'FA12' | 'FA2' | 'TEZ'
+export type TokenType = 'FA12' | 'FA2' | 'TEZ'
 
 export type SatelliteGovernanceTransfer = {
   to_: string //this is a contract address

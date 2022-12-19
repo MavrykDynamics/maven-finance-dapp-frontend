@@ -1,5 +1,5 @@
 import styled from 'styled-components/macro'
-import { headerColor, darkColor, royalPurpleColor } from 'styles'
+import { headerColor, darkColor, royalPurpleColor, cyanColor } from 'styles'
 import { MavrykTheme } from 'styles/interfaces'
 
 export const ToggleStyle = styled.div<{ theme: MavrykTheme }>`
@@ -8,37 +8,93 @@ export const ToggleStyle = styled.div<{ theme: MavrykTheme }>`
 
   &.disabled {
     opacity: 0.6;
-    pointer-events: none;
+    cursor: not-allowed;
+
+    .toggler {
+      pointer-events: none;
+    }
   }
 
-  .sufix {
-    margin-left: 14px;
+  span {
     font-weight: 600;
     font-size: 14px;
     line-height: 21px;
     color: ${({ theme }) => theme.textColor};
   }
 
-  .react-toggle-track {
-    box-shadow: 0px 0px 1px 2px ${royalPurpleColor};
+  .sufix {
+    margin-left: 14px;
   }
 
-  .react-toggle--focus .react-toggle-thumb {
-    box-shadow: none;
+  .prefix {
+    margin-right: 14px;
   }
 
-  .react-toggle:not(.react-toggle--checked) .react-toggle-track,
-  .react-toggle:hover:not(.react-toggle--disabled) .react-toggle-track {
-    background-color: ${darkColor};
+  .toggler {
+    position: relative;
+    width: 45px;
+    height: 25px;
   }
 
-  .react-toggle--checked .react-toggle-track,
-  .react-toggle--checked:hover:not(.react-toggle--disabled) .react-toggle-track {
-    background-color: ${royalPurpleColor};
+  label {
+    position: absolute;
+    top: 0;
+    width: 46px;
+    height: 25px;
+    background-color: ${({ theme }) => theme.containerColor};
+    border: 1px solid ${({ theme }) => theme.cardBorderColor};
+    border-radius: 50px;
+    cursor: pointer;
   }
 
-  .react-toggle-thumb {
-    background-color: ${headerColor};
-    border-color: ${darkColor};
+  input {
+    position: absolute;
+    display: none;
+  }
+
+  .slider {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50px;
+    transition: 0.3s;
+  }
+
+  .slider::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 3;
+    width: 23px;
+    height: 23px;
+    border-radius: 50%;
+    background-color: ${({ theme }) => theme.valueColor};
+    transition: 0.3s;
+  }
+
+  input:checked ~ .slider::before {
+    transform: translateX(21px);
+  }
+
+  &.farm-toggle {
+    .slider::before {
+      background-color: ${({ theme }) => theme.headerColor};
+    }
+
+    .checked {
+      background-color: ${({ theme }) => theme.cardBorderColor};
+    }
+  }
+
+  &.personal-dashboard-toggler {
+    .prefix {
+      color: ${({ theme }) => theme.valueColor};
+      margin-left: 10px;
+    }
+
+    .sufix {
+      color: ${({ theme }) => theme.lPurple_dPurple_lPuprple};
+      margin-right: 10px;
+    }
   }
 `

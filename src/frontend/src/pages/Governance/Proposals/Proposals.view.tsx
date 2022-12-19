@@ -138,7 +138,6 @@ export const ProposalsView = ({
           className="cycle-dropdown"
           placeholder={'Choose cycle number'}
           items={dropDownOptions}
-          clickOnDropDown={() => setDdIsOpen(!ddIsOpen)}
           clickOnItem={(value: string) => {
             setSelectedCycle(value)
             setDdIsOpen(false)

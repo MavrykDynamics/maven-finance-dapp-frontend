@@ -129,6 +129,7 @@ export const TreasuryViewStyle = styled(Card)<{ theme: MavrykTheme }>`
     display: flex;
     justify-content: space-between;
     align-items: center;
+    text-transform: uppercase;
   }
 
   .assets-map {

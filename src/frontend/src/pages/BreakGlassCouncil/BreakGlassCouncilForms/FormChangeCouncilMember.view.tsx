@@ -22,7 +22,7 @@ import { changeCouncilMember } from '../BreakGlassCouncil.actions'
 
 // helpers
 import { getShortTzAddress } from '../../../utils/tzAdress'
-import { validateFormAddress, validateFormField } from 'utils/validatorFunctions' 
+import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
 
 type Props = {
   councilMemberMaxLength: CouncilMemberMaxLength
@@ -102,10 +102,6 @@ export function FormChangeCouncilMemberView({ councilMemberMaxLength }: Props) {
   const handleBlur = validateFormField(setFormInputStatus)
   const handleBlurAddress = validateFormAddress(setFormInputStatus)
 
-  const handleClickDropdown = () => {
-    setDdIsOpen(!ddIsOpen)
-  }
-
   const handleClickDropdownItem = (e: string) => {
     const chosenItem = itemsForDropDown.filter((item) => item.text === e)[0]
     setChosenDdItem(chosenItem)
@@ -125,8 +121,7 @@ export function FormChangeCouncilMemberView({ councilMemberMaxLength }: Props) {
         <div className="form-fields input-size-secondary margin-bottom-20">
           <label>Choose Council Member to change</label>
           <DropDown
-            clickOnDropDown={handleClickDropdown}
-            placeholder='Choose member'
+            placeholder="Choose member"
             isOpen={ddIsOpen}
             setIsOpen={setDdIsOpen}
             itemSelected={chosenDdItem?.text}
@@ -163,7 +158,9 @@ export function FormChangeCouncilMemberView({ councilMemberMaxLength }: Props) {
                 handleChange(e)
                 handleBlur(e, councilMemberMaxLength.councilMemberNameMaxLength)
               }}
-              onBlur={(e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, councilMemberMaxLength.councilMemberNameMaxLength)}
+              onBlur={(e: React.ChangeEvent<HTMLInputElement>) =>
+                handleBlur(e, councilMemberMaxLength.councilMemberNameMaxLength)
+              }
               inputStatus={formInputStatus.newMemberName}
             />
           </div>
@@ -179,7 +176,9 @@ export function FormChangeCouncilMemberView({ councilMemberMaxLength }: Props) {
                 handleChange(e)
                 handleBlur(e, councilMemberMaxLength.councilMemberWebsiteMaxLength)
               }}
-              onBlur={(e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, councilMemberMaxLength.councilMemberWebsiteMaxLength)}
+              onBlur={(e: React.ChangeEvent<HTMLInputElement>) =>
+                handleBlur(e, councilMemberMaxLength.councilMemberWebsiteMaxLength)
+              }
               inputStatus={formInputStatus.newMemberWebsite}
             />
           </div>

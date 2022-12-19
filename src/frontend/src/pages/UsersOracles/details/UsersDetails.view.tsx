@@ -47,10 +47,6 @@ const UserDetailsView = ({
   const [ddIsOpen, setDdIsOpen] = useState(false)
   const [chosenDdItem, setChosenDdItem] = useState<string | undefined>()
 
-  const handleClickDropdown = () => {
-    setDdIsOpen(!ddIsOpen)
-  }
-
   const handleOnClickDropdownItem = (selectedItem: string) => {
     setDdIsOpen(!ddIsOpen)
     setChosenDdItem(selectedItem)
@@ -81,8 +77,7 @@ const UserDetailsView = ({
               <h5>Official website</h5>
               <a href={user.website}>
                 <var>
-                  {user.website}{' '}
-                  <Icon id="send" className='icon-send' />
+                  {user.website} <Icon id="send" className="icon-send" />
                 </var>
               </a>
             </div>
@@ -92,7 +87,7 @@ const UserDetailsView = ({
                 <h5>
                   Total value locked
                   <CustomTooltip
-                    className='info-icon'
+                    className="info-icon"
                     text={`Total value locked (TVL) according to defillama.com TVL represents the sum dollar value of crypto assets locked in a DeFi protocol.           `}
                     iconId={'info'}
                   />
@@ -113,8 +108,7 @@ const UserDetailsView = ({
         <DropdownContainer>
           <h4>Category:</h4>
           <DropDown
-            clickOnDropDown={handleClickDropdown}
-            placeholder='Choose category'
+            placeholder="Choose category"
             isOpen={ddIsOpen}
             setIsOpen={setDdIsOpen}
             itemSelected={chosenDdItem}

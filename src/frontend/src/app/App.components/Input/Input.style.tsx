@@ -50,7 +50,8 @@ export const InputComponentContainer = styled.div<{ theme: MavrykTheme }>`
     }
 
     &:disabled {
-      opacity: 0.4;
+      opacity: 0.6;
+      cursor: not-allowed;
     }
 
     &:hover:not(:disabled) {

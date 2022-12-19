@@ -42,10 +42,6 @@ export const Treasury = () => {
     dispatch(fillTreasuryStorage())
   }, [dispatch])
 
-  const handleClickDropdown = () => {
-    setDdIsOpen(!ddIsOpen)
-  }
-
   const handleSelect = (item: DropdownItemType) => {
     const foundTreasury = treasuryStorage.find(({ address }) => item.value === address) || null
     setSelectedTreasury(foundTreasury)
@@ -74,7 +70,6 @@ export const Treasury = () => {
         <TreasurySelectStyle isSelectedTreasury={Boolean(chosenDdItem?.value)}>
           <h2>Active Treasuries</h2>
           <DropDown
-            clickOnDropDown={handleClickDropdown}
             placeholder="Choose treasury"
             isOpen={ddIsOpen}
             setIsOpen={setDdIsOpen}

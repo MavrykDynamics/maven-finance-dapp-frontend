@@ -89,7 +89,6 @@ export const DataFeeds = () => {
           <DropdownContainer className="dropDown">
             <h4>Category:</h4>
             <DropDown
-              clickOnDropDown={() => setDdIsOpen(!ddIsOpen)}
               placeholder="Choose category"
               isOpen={ddIsOpen}
               setIsOpen={setDdIsOpen}

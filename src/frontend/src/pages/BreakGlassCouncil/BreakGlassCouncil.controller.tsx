@@ -112,7 +112,7 @@ export function BreakGlassCouncil() {
 
   const handleClickReview = (review: string) => {
     history.replace(`${queryParameters.pathname}${review}`)
-    setActiveActionTab((councilTabsList[0].text))
+    setActiveActionTab(councilTabsList[0].text)
     scrollUpPage()
   }
 
@@ -124,10 +124,6 @@ export function BreakGlassCouncil() {
     setIsUpdateCouncilMemberInfo(true)
   }
 
-  const handleClickDropdown = () => {
-    setDdIsOpen(!ddIsOpen)
-  }
-
   const handleClickDropdownItem = (e: string) => {
     const chosenItem = itemsForDropDown.filter((item) => item.text === e)[0]
     setChosenDdItem(chosenItem)
@@ -136,11 +132,11 @@ export function BreakGlassCouncil() {
 
   const currentPage = getPageNumber(
     search,
-    review 
-      ? BREAK_GLASS_COUNCIL_ACTIONS_LIST_NAME 
+    review
+      ? BREAK_GLASS_COUNCIL_ACTIONS_LIST_NAME
       : councilTabsList[0].text === activeActionTab
-        ? BREAK_GLASS_MY_ONGOING_ACTIONS_LIST_NAME
-        : BREAK_GLASS_MY_PAST_COUNCIL_ACTIONS_LIST_NAME,
+      ? BREAK_GLASS_MY_ONGOING_ACTIONS_LIST_NAME
+      : BREAK_GLASS_MY_PAST_COUNCIL_ACTIONS_LIST_NAME,
   )
 
   const paginatedBreakGlassActionPendingAllSignature = useMemo(() => {
@@ -167,7 +163,7 @@ export function BreakGlassCouncil() {
     dispatch(propagateBreakGlass())
   }
 
-  const handleDropAction = (id: number) => {    
+  const handleDropAction = (id: number) => {
     dispatch(dropBreakGlass(id))
   }
 
@@ -181,7 +177,7 @@ export function BreakGlassCouncil() {
       dispatch(getMyPastBreakGlassCouncilAction())
       dispatch(getBreakGlassActionPendingSignature())
     }
-    
+
     setSliderKey(sliderKey + 1)
   }, [dispatch, accountPkh])
 
@@ -249,7 +245,10 @@ export function BreakGlassCouncil() {
           {review ? (
             <>
               <h1>{isReviewPage ? 'Past Break Glass Council Actions' : 'Pending Signature Council Actions'}</h1>
-              {(isReviewPage ? paginatedPastBreakGlassCouncilActions : paginatedBreakGlassActionPendingAllSignature).map((item) => (
+              {(isReviewPage
+                ? paginatedPastBreakGlassCouncilActions
+                : paginatedBreakGlassActionPendingAllSignature
+              ).map((item) => (
                 <CouncilPastActionView
                   startDatetime={String(item.startDatetime)}
                   key={item.id}
@@ -261,7 +260,9 @@ export function BreakGlassCouncil() {
               ))}
 
               <Pagination
-                itemsCount={isReviewPage ? pastBreakGlassCouncilAction.length : breakGlassActionPendingAllSignature.length}
+                itemsCount={
+                  isReviewPage ? pastBreakGlassCouncilAction.length : breakGlassActionPendingAllSignature.length
+                }
                 listName={BREAK_GLASS_COUNCIL_ACTIONS_LIST_NAME}
               />
             </>
@@ -273,7 +274,6 @@ export function BreakGlassCouncil() {
 
                   <div className="dropdown-size">
                     <DropDown
-                      clickOnDropDown={handleClickDropdown}
                       placeholder="Choose action"
                       isOpen={ddIsOpen}
                       setIsOpen={setDdIsOpen}
@@ -299,7 +299,7 @@ export function BreakGlassCouncil() {
                 handleDropAction={handleDropAction}
                 listNameMyPastActions={BREAK_GLASS_MY_PAST_COUNCIL_ACTIONS_LIST_NAME}
                 listNameMyOngoingActions={BREAK_GLASS_MY_ONGOING_ACTIONS_LIST_NAME}
-                pageType='breakGlassCouncil'
+                pageType="breakGlassCouncil"
               />
             </>
           )}
@@ -308,8 +308,16 @@ export function BreakGlassCouncil() {
         <div className="right-block">
           {!review && (
             <ReviewPastCouncilActionsCard displayPendingSignature={displayPendingSignature}>
-              <Button text="Review Past Actions" kind={ACTION_SECONDARY} onClick={() => handleClickReview(queryParameters.review)} />
-              <Button text="Review Pending Actions" kind={ACTION_SECONDARY} onClick={() => handleClickReview(queryParameters.pendingReview)} />
+              <Button
+                text="Review Past Actions"
+                kind={ACTION_SECONDARY}
+                onClick={() => handleClickReview(queryParameters.review)}
+              />
+              <Button
+                text="Review Pending Actions"
+                kind={ACTION_SECONDARY}
+                onClick={() => handleClickReview(queryParameters.pendingReview)}
+              />
             </ReviewPastCouncilActionsCard>
           )}
 

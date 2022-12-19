@@ -134,10 +134,6 @@ export const SatelliteGovernance = () => {
     }
   }, [governance_satellite_action, isSatellite])
 
-  const handleClickDropdown = () => {
-    setDdIsOpen(!ddIsOpen)
-  }
-
   const handleOnClickDropdownItem = (e: string) => {
     const chosenItem = itemsForDropDown.find((item) => item === e)
     if (chosenItem) {
@@ -205,7 +201,6 @@ export const SatelliteGovernance = () => {
             <DropdownWrap>
               <h2>Available Actions</h2>
               <DropDown
-                clickOnDropDown={handleClickDropdown}
                 placeholder="Choose action"
                 isOpen={ddIsOpen}
                 setIsOpen={setDdIsOpen}

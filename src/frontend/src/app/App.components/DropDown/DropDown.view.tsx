@@ -12,9 +12,9 @@ import { scrollToFullView } from 'utils/scrollToFullView'
 
 type DropDownViewProps = {
   placeholder: string
-  onClick: () => void
   clickItem: (value: string) => void
   isOpen: boolean
+  disabled?: boolean
   setIsOpen: (arg: boolean) => void
   itemSelected: string | undefined
   items: readonly string[]
@@ -24,12 +24,12 @@ type DropDownViewProps = {
 export const DropDownView = ({
   placeholder,
   isOpen,
-  onClick,
   setIsOpen,
   clickItem,
   itemSelected,
   items,
   className,
+  disabled = false,
 }: DropDownViewProps) => {
   const ref = useRef<HTMLDivElement | null>(null)
   const refDropdownWrapper = useRef<HTMLDivElement | null>(null)
@@ -43,8 +43,12 @@ export const DropDownView = ({
     }
   }, [isOpen])
   return (
-    <DropDownStyled ref={refDropdownWrapper} className={`drop-down ${className}`}>
-      <DropDownMenu onClick={onClick}>
+    <DropDownStyled ref={refDropdownWrapper} className={`drop-down ${className} ${disabled ? 'disabled' : ''}`}>
+      <DropDownMenu
+        onClick={() => {
+          setIsOpen(!isOpen)
+        }}
+      >
         {itemSelected ?? placeholder}
         <span>
           <Icon className={isOpen ? 'open' : ''} id="arrow-down" />

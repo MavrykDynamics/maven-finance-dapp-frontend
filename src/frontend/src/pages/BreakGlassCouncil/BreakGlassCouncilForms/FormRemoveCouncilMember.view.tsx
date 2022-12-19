@@ -44,10 +44,6 @@ export function FormRemoveCouncilMemberView() {
     }
   }
 
-  const handleClickDropdown = () => {
-    setDdIsOpen(!ddIsOpen)
-  }
-
   const handleClickDropdownItem = (e: string) => {
     const chosenItem = itemsForDropDown.filter((item) => item.text === e)[0]
     setChosenDdItem(chosenItem)
@@ -68,8 +64,7 @@ export function FormRemoveCouncilMemberView() {
           <label>Choose Council Member to remove</label>
 
           <DropDown
-            clickOnDropDown={handleClickDropdown}
-            placeholder='Choose member'
+            placeholder="Choose member"
             isOpen={ddIsOpen}
             setIsOpen={setDdIsOpen}
             itemSelected={chosenDdItem?.text}

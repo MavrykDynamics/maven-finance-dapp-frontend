@@ -1,28 +1,19 @@
 import { useLockBodyScroll } from 'react-use'
-import { PopupContainer, PopupStyled } from '../../SettingsPopup/SettingsPopup.style'
+import { PopupContainer } from '../../SettingsPopup/SettingsPopup.style'
 import { WertIo } from '../ConnectWallet.style'
 
 const WertIoPopup = ({ closePopup, isOpened }: { closePopup: () => void; isOpened: boolean }) => {
   useLockBodyScroll(isOpened)
 
   return (
-    <PopupStyled
-      style={{
-        visibility: isOpened ? 'visible' : 'hidden',
-        transition: '1s all',
-        opacity: isOpened ? 1 : 0,
-        zIndex: 16,
-      }}
-    >
-      <PopupContainer onClick={closePopup}>
-        <div className="wert-io-wrapper">
-          <div onClick={closePopup} className="close_modal">
-            ×
-          </div>
-          <WertIo id="wert-io-popup-wrapper" />
+    <PopupContainer onClick={closePopup} show={isOpened}>
+      <div className="wert-io-wrapper">
+        <div onClick={closePopup} className="close_modal">
+          ×
         </div>
-      </PopupContainer>
-    </PopupStyled>
+        <WertIo id="wert-io-popup-wrapper" />
+      </div>
+    </PopupContainer>
   )
 }
 
