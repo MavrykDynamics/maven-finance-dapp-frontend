@@ -41,10 +41,10 @@ export function DoormanChart({ className }: Props) {
     setActiveTab(tabId === 1 ? tabsList[0].text : tabsList[1].text)
   }
 
-  const valueFormatter =
-    (label: string) =>
-    (value: number): string =>
-      `${formatNumber(true, DECIMALS_TO_SHOW, value)}${label}`
+  // const valueFormatter =
+  //   (label: string) =>
+  //   (value: number): string =>
+  //     `${formatNumber(true, DECIMALS_TO_SHOW, value)}${label}`
 
   const shownData = isStakingHistory ? smvkHistoryData : mvkMintHistoryData
 
@@ -64,7 +64,6 @@ export function DoormanChart({ className }: Props) {
           settings={{
             height: 370,
           }}
-          numberOfItemsToDisplay={10}
           className="dorman-chart"
         />
       </ChartCard>

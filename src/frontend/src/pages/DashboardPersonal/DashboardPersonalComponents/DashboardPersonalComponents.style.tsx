@@ -79,7 +79,7 @@ export const PortfolioChartStyled = styled(MediumBlockBase)<{ theme: MavrykTheme
   .last-seria {
     position: absolute;
     left: 30px;
-    top: 85px;
+    top: 75px;
     display: flex;
     flex-direction: column;
     color: ${({ theme }) => theme.dataColor};
