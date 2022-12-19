@@ -383,6 +383,7 @@ export const VaultsContentStyled = styled.div<{ theme: MavrykTheme }>`
         line-height: 30px;
         padding-left: 10px;
         background-color: ${({ theme }) => theme.containerColor};
+        text-transform: uppercase;
       }
     }
 
