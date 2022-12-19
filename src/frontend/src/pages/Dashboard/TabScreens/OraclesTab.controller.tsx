@@ -14,6 +14,7 @@ import { State } from 'reducers'
 import { parseDate } from 'utils/time'
 import { StatBlock } from '../Dashboard.style'
 import { OraclesContentStyled, TabWrapperStyled, PopularFeed } from './DashboardTabs.style'
+import { handleCoinName } from 'pages/Satellites/SatelliteList/ListCards/DataFeedCard.view'
 
 export const OraclesTab = () => {
   const dispatch = useDispatch()
@@ -74,7 +75,7 @@ export const OraclesTab = () => {
               <Link key={feed.address} to={`/satellites/feed-details/${feed.address}`}>
                 <PopularFeed className="row">
                   <StatBlock className="icon-first">
-                    <CoinsLogo imageLink={imageLink} />
+                  <CoinsLogo imageLink={imageLink} assetName={handleCoinName(feed.name)} />
                     <div className="name">Feed</div>
                     <div className="value">
                       <Trim title={feed.name} />
