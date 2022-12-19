@@ -33,7 +33,7 @@ export async function getTreasuryAssetsByAddress(treasuryAddress: string) {
       },
     }
 
-    return fetchedTreasuryAssets.concat(fetchedXtzTreasuryAsset ? [xtzAssetObject] : [])
+    return [...fetchedTreasuryAssets].concat(fetchedXtzTreasuryAsset ? [xtzAssetObject] : [])
   } catch (e) {
     console.error('getTreasuryAssetsByAddress error: ', e)
     return []
