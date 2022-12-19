@@ -1,5 +1,5 @@
 import styled from 'styled-components/macro'
-import { skyColor, headerColor, textsColor, upColor } from 'styles'
+import {  headerColor, textsColor, upColor } from 'styles'
 import { MavrykTheme } from '../../../styles/interfaces'
 
 export const FormStyled = styled.div<{ theme: MavrykTheme }>`
@@ -15,11 +15,11 @@ export const FormStyled = styled.div<{ theme: MavrykTheme }>`
     margin-top: 0;
     margin-bottom: 20px;
 
-    font-weight: 400;
+    font-weight: 600;
     font-size: 14px;
     line-height: 21px;
 
-    color: ${skyColor};
+    color: ${({ theme }) => theme.textColor};
   }
 
   h1,
@@ -63,12 +63,12 @@ export const FormStyled = styled.div<{ theme: MavrykTheme }>`
   .form-fields {
     label {
       display: block;
-      padding-bottom: 6px;
-      font-weight: 700;
+      padding-bottom: 5px;
+      font-weight: 600;
       font-size: 14px;
       line-height: 21px;
 
-      color: ${headerColor};
+      color: ${({ theme }) => theme.textColor};
     }
   }
 

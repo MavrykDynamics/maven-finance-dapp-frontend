@@ -1,8 +1,8 @@
 import React from "react";
-import { CouncilOngoingAction } from "./CouncilOngoingAction.view";
+import { CouncilOngoingAction } from "./CouncilActions/CouncilOngoingAction.view";
 
 // components
-import { CouncilPastActionView } from 'pages/Council/CouncilPastAction/CouncilPastAction.view'
+import { CouncilPastActionView } from 'pages/Council/CouncilActions/CouncilPastAction.view'
 import Pagination from 'pages/FinacialRequests/Pagination/Pagination.view'
 
 // styles
@@ -12,7 +12,7 @@ import { TabSwitcher } from './Council.style'
 import { BreakGlassActions } from "utils/TypesAndInterfaces/BreakGlass";
 import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 import { CouncilActions } from "utils/TypesAndInterfaces/Council";
-import { CouncilPageType } from "./CouncilOngoingAction.view";
+import { CouncilPageType } from "./CouncilActions/CouncilOngoingAction.view";
 
 type MyPastCouncilActionType = (BreakGlassActions[0] | CouncilActions[0]) & {
   councilId?: string,

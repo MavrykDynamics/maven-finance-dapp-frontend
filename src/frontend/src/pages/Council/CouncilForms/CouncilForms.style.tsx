@@ -1,5 +1,5 @@
 import styled from 'styled-components/macro'
-import { Card, downColor, upColor, skyColor, headerColor, cyanColor, royalPurpleColor, containerColor } from 'styles'
+import { upColor, headerColor, royalPurpleColor, containerColor } from 'styles'
 
 export const CouncilFormStyled = styled.form`
   padding: 24px 30px;
@@ -13,10 +13,10 @@ export const CouncilFormStyled = styled.form`
   }
 
   p {
-    font-weight: 400;
+    font-weight: 600;
     font-size: 14px;
     line-height: 21px;
-    color: ${skyColor};
+    color: ${({ theme }) => theme.textColor};
     margin-bottom: 16px;
     margin-top: 1px;
   }
@@ -40,10 +40,10 @@ export const CouncilFormStyled = styled.form`
   }
 
   label {
-    font-weight: 700;
+    font-weight: 600;
     font-size: 14px;
     line-height: 21px;
-    color: ${headerColor};
+    color: ${({ theme }) => theme.textColor};
     padding-left: 8px;
     padding-bottom: 5px;
     display: block;

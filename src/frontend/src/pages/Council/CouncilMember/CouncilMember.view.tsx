@@ -43,7 +43,7 @@ export const CouncilMemberView = (props: Props) => {
         </AvatarStyle>
         <figcaption>
           <h4>{name}</h4>
-          {userId ? <TzAddress tzAddress={userId} hasIcon={false} /> : null}
+          {userId ? <TzAddress type='blue' tzAddress={userId} hasIcon={true} /> : null}
         </figcaption>
       </div>
       {isMe && showUpdateInfo ? (
