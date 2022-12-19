@@ -1,5 +1,4 @@
 import styled from 'styled-components/macro'
-import { silverColor } from 'styles'
 import { MavrykTheme } from '../../styles/interfaces'
 
 export const DashboardStyled = styled.div<{ theme: MavrykTheme }>`
@@ -54,13 +53,13 @@ export const DashboardStyled = styled.div<{ theme: MavrykTheme }>`
 
   .dashboard-navigation {
     display: flex;
-    margin: 30px 0 15px 0;
+    margin: 30px 0 25px 0;
     column-gap: 15px;
 
     > a {
-      font-size: 14px;
-      line-height: 17px;
-      font-weight: 500;
+      font-weight: 600;
+      font-size: 16px;
+      line-height: 22px;
       position: relative;
       transition: 0.3s all;
       color: ${({ theme }) => theme.navTitleColor};

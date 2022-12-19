@@ -11,6 +11,7 @@ export const TabWrapperStyled = styled.div<{ theme: MavrykTheme; backgroundImage
   background-size: auto;
   background-repeat: no-repeat;
   background-position: right bottom;
+  border: 1px solid ${({ theme }) => theme.cardBorderColor};
   border-radius: 10px;
   height: 530px;
   display: flex;
@@ -178,6 +179,10 @@ export const TreasuryContentStyled = styled.div<{ theme: MavrykTheme }>`
   .top {
     width: fit-content;
     column-gap: 50px;
+
+    .name {
+      text-transform: capitalize;
+    }
 
     .value {
       height: 25px;
