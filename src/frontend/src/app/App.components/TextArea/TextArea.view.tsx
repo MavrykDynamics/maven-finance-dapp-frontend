@@ -7,7 +7,7 @@ import {
   TextareaStyled,
 } from './TextArea.style'
 import { TextAreaStatusType } from './TextArea.controller'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useLayoutEffect, useRef } from 'react'
 
 type TextAreaViewProps = {
   icon?: string
@@ -40,7 +40,7 @@ export const TextAreaView = ({
 }: TextAreaViewProps) => {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (textareaRef && textareaRef.current) {
       const scrollHeight = textareaRef.current.scrollHeight
       textareaRef.current.style.height = Math.max(scrollHeight, 85) + 'px'

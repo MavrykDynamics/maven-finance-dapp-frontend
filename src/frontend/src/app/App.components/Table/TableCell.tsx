@@ -1,3 +1,4 @@
+import React from 'react'
 import { CommaNumber } from '../CommaNumber/CommaNumber.controller'
 import { DropDown } from '../DropDown/DropDown.controller'
 import { InputStatusType } from '../Input/Input.constants'
@@ -22,8 +23,8 @@ export type CommaNumberPropsType = {
 }
 
 export type InputPropsType = {
-  onChange: any
-  onBlur: any
+  onChange: (e: React.ChangeEvent<HTMLInputElement>, rodIdx: number) => void
+  onBlur: (e: React.ChangeEvent<HTMLInputElement>, rodIdx: number) => void
   onFocus?: InputOneChange
   name: string
   type: string
@@ -59,8 +60,8 @@ export const TableCell = ({
         <Input
           value={cellValue}
           {...inputProps}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => inputProps.onChange(e, rowIdx)}
-          onBlur={(e: React.ChangeEvent<HTMLInputElement>) => inputProps.onBlur(e, rowIdx)}
+          onChange={(e) => inputProps.onChange(e, rowIdx)}
+          onBlur={(e) => inputProps.onBlur(e, rowIdx)}
         />
       </td>
     )
