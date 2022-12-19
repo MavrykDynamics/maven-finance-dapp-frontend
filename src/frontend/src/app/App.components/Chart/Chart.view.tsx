@@ -10,7 +10,7 @@ import { parseDate } from '../../../utils/time'
 // components
 import Icon from '../Icon/Icon.view'
 
-import { CommaNumber } from '../CommaNumber/CommaNumber.controller'
+import { CommaNumber, formatNumber } from '../CommaNumber/CommaNumber.controller'
 import { headerColor, lightTextColor, skyColor } from 'styles'
 
 type TradingViewChartProps = {
@@ -67,7 +67,7 @@ export const Chart = ({
           <Icon id="cow" className="icon-cow" />
         </div>
 
-        <p>There is not enough data to display the graph</p>
+        <p>There is not enough data to display the chart</p>
       </Plug>
     )
   }
@@ -125,8 +125,11 @@ export const TradingViewChart = ({
 
     // Setting the border color for the vertical axis
     chart.priceScale().applyOptions({
-      //TODO: add price formatter
       borderColor,
+      scaleMargins: {
+        top: 0.1,
+        bottom: 0.03,
+      },
     })
 
     // Setting the border color for the horizontal axis
@@ -138,11 +141,20 @@ export const TradingViewChart = ({
       },
     })
 
-    const series = chart.addAreaSeries({ lineColor, topColor: areaTopColor, bottomColor: areaBottomColor })
+    const series = chart.addAreaSeries({
+      lineColor,
+      topColor: areaTopColor,
+      bottomColor: areaBottomColor,
+    })
     series.setData(data)
     series.applyOptions({
       lastValueVisible: false,
       priceLineVisible: false,
+      priceFormat: {
+        type: 'custom',
+        minMove: 1,
+        formatter: (price: any) => formatNumber(true, 2, parseFloat(price)),
+      },
     })
 
     chart.subscribeCrosshairMove((param) => {
