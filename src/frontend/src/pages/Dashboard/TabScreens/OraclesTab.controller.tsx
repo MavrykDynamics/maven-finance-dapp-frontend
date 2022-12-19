@@ -15,6 +15,7 @@ import { parseDate } from 'utils/time'
 import { StatBlock } from '../Dashboard.style'
 import { OraclesContentStyled, TabWrapperStyled, PopularFeed } from './DashboardTabs.style'
 import { handleCoinName } from 'pages/Satellites/SatelliteList/ListCards/DataFeedCard.view'
+import { emptyContainer } from './LendingTab.controller'
 
 export const OraclesTab = () => {
   const dispatch = useDispatch()
@@ -25,6 +26,7 @@ export const OraclesTab = () => {
 
   const oracleFeeds = feeds.length
   const popularFeeds = feeds.slice(0, 3)
+
   useEffect(() => {
     dispatch(getOracleStorage())
   }, [dispatch])
@@ -68,7 +70,7 @@ export const OraclesTab = () => {
 
         <div className="block-name padding-left">Popular Feeds</div>
 
-        <div className="feeds-grid">
+        {popularFeeds.length ? <div className="feeds-grid">
           {popularFeeds.map((feed) => {
             const imageLink = dipDupTokens.find(({ contract }) => contract === feed.address)?.metadata?.icon
             return (
@@ -103,7 +105,7 @@ export const OraclesTab = () => {
               </Link>
             )
           })}
-        </div>
+        </div> : emptyContainer}
       </OraclesContentStyled>
 
       <div className="descr">

@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 import { CardHover, cyanColor } from 'styles'
 import { MavrykTheme } from 'styles/interfaces'
+import { EmptyContainer as EmptyContainerBase } from 'app/App.style'
 
 export const TabWrapperStyled = styled.div<{ theme: MavrykTheme; backgroundImage?: string }>`
   padding: 24px 32px 40px 32px;
@@ -439,10 +440,6 @@ export const FarmsContentStyled = styled.div<{ theme: MavrykTheme }>`
     }
   }
 
-  .empty-container {
-    margin-left: 150px;
-  }
-
   .card {
     width: 250px;
     flex: none;
@@ -520,4 +517,9 @@ export const PopularFeed = styled(CardHover)`
   margin-top: 0;
   padding: 12px 20px 12px 19px;
   border: 1px solid transparent;
+`
+
+export const EmptyContainer = styled(EmptyContainerBase)`
+  margin: auto;
+  padding: 0;
 `

@@ -5,7 +5,14 @@ import Icon from 'app/App.components/Icon/Icon.view'
 import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
 import { Link } from 'react-router-dom'
 import { StatBlock } from '../Dashboard.style'
-import { LendingContentStyled, TabWrapperStyled } from './DashboardTabs.style'
+import { LendingContentStyled, TabWrapperStyled, EmptyContainer } from './DashboardTabs.style'
+
+export const emptyContainer = (
+  <EmptyContainer>
+    <img src="/images/not-found.svg" alt=" No proposals to show" />
+    <figcaption> No data to show</figcaption>
+  </EmptyContainer>
+)
 
 export const LendingTab = () => {
   return (

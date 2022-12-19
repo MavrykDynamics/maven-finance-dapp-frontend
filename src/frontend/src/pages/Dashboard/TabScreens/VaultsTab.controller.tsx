@@ -13,6 +13,7 @@ import { State } from 'reducers'
 import { StatBlock, BlockName } from '../Dashboard.style'
 import { TabWrapperStyled, VaultsContentStyled } from './DashboardTabs.style'
 import { columnNames, fieldsMapper } from './TreasuryTab.controller'
+import { emptyContainer } from './LendingTab.controller'
 
 export const VaultsTab = () => {
   const [hoveredPath, setHoveredPath] = useState<null | string>(null)
@@ -34,7 +35,7 @@ export const VaultsTab = () => {
         </Link>
       </div>
 
-      <VaultsContentStyled>
+      {treasuryStorage.length ? <VaultsContentStyled>
         <div className="top">
           <StatBlock>
             <div className="name">Active Vaults</div>
@@ -100,7 +101,7 @@ export const VaultsTab = () => {
             </div>
           </div>
         </div>
-      </VaultsContentStyled>
+      </VaultsContentStyled> : emptyContainer}
 
       <div className="descr">
         <div className="title">What is a Vault?</div>
