@@ -10,6 +10,7 @@ import {
   getCouncilPendingActionsStorage,
   getCouncilStorage,
   dropRequest,
+  sign,
 } from './Council.actions'
 import { getPageNumber } from 'pages/FinacialRequests/FinancialRequests.helpers'
 import {
@@ -150,6 +151,10 @@ export const Council = () => {
     dispatch(dropRequest(id))
   }
 
+  const handleSignAction = (id: number) => {
+    dispatch(sign(id))
+  }
+
   useEffect(() => {
     dispatch(getCouncilPastActionsStorage())
     dispatch(getCouncilStorage())
@@ -236,6 +241,7 @@ export const Council = () => {
                           key={item.id}
                           numCouncilMembers={councilMembers.length}
                           councilPendingActionsLength={councilPendingActions.length}
+                          handleSignAction={handleSignAction}
                           index={index}
                         />
                       ))}
