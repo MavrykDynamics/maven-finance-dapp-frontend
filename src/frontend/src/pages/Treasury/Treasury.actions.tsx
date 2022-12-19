@@ -111,9 +111,9 @@ export const fillTreasuryStorage = () => async (dispatch: AppDispatch, getState:
         const tresuryTokensWithValidBalances = fetchedTheasuryData[idx]
           .map(
             ({
+              account: { address },
               token: {
                 metadata: { symbol, name, decimals, thumbnailUri },
-                contract,
               },
               balance,
             }: FetchedTreasuryBalanceType): TreasuryBalanceType => {
@@ -122,7 +122,7 @@ export const fillTreasuryStorage = () => async (dispatch: AppDispatch, getState:
               const usdValue = coinsAmount * (assetRate ?? 1)
 
               return {
-                contract: contract?.address,
+                contract: address,
                 usdValue: usdValue,
                 decimals: parseInt(decimals),
                 name: name,
