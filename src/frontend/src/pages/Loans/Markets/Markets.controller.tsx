@@ -1,18 +1,26 @@
+import { useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
+
+// const
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { CHART_TEST_DATA } from 'pages/DashboardPersonal/tabs.const'
+import { BORROW_TAB_ID, LEND_TAB_ID } from '../Loans.const'
+
+// view
 import { Button } from 'app/App.components/Button/Button.controller'
 import { Chart } from 'app/App.components/Chart/Chart.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import Icon from 'app/App.components/Icon/Icon.view'
-import { CHART_TEST_DATA } from 'pages/DashboardPersonal/tabs.const'
+
+// styles
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
-import { useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
-import { State } from 'reducers'
 import { skyColor } from 'styles'
 import { LoansStyled, MarketChartsContainer, MarketOverview, MarketsOverviewContainer } from '../Loans.style'
 
+// types
+import { State } from 'reducers'
+
 export const Markets = () => {
-  const { wallet, tezos, accountPkh } = useSelector((state: State) => state.wallet)
   const { loanAssets } = useSelector((state: State) => state.loans)
 
   return (
@@ -101,7 +109,7 @@ export const Markets = () => {
                     <div className="name">Utilization Rate</div>
                     <CommaNumber value={12414.2423} className="value" endingText="%" />
                   </div>
-                  <Link to={`/market/${loanAsset}/lendingTab`}>
+                  <Link to={`/market/${loanAsset}/${LEND_TAB_ID}`}>
                     <Button text="Lend" kind={ACTION_PRIMARY} iconAfter icon="arrowRight" />
                   </Link>
                 </div>
@@ -127,7 +135,7 @@ export const Markets = () => {
                     <div className="name">Total Collateral</div>
                     <CommaNumber value={12414.2423} className={`value ${true ? 'up' : 'down'}`} beginningText="$" />
                   </div>
-                  <Link to={`/market/${loanAsset}/borrowTab`}>
+                  <Link to={`/market/${loanAsset}/${BORROW_TAB_ID}`}>
                     <Button text="Borrow" kind={ACTION_PRIMARY} iconAfter icon="arrowRight" />
                   </Link>
                 </div>

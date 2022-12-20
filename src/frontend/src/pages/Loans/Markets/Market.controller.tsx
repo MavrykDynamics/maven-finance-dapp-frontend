@@ -1,36 +1,43 @@
+import { useMemo } from 'react'
+import { useSelector } from 'react-redux'
+import { useParams } from 'react-router'
+import { Link } from 'react-router-dom'
+
+// const
 import { ACTION_SIMPLE, TRANSPARENT } from 'app/App.components/Button/Button.constants'
+import { ASSETS_WE_HAVE_BG_TO, BORROW_TAB_ID, LEND_TAB_ID } from '../Loans.const'
+
+// view
 import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import ConnectWalletInfo from 'app/App.components/ConnectWallet/ConnectWalletInfo.view'
 import Icon from 'app/App.components/Icon/Icon.view'
+
+// styles
 import {
   PageHeaderStyled,
   PageHeaderTextArea,
   PageHeaderForegroundImageContainer,
   PageHeaderForegroundImage,
 } from 'app/App.components/PageHeader/PageHeader.style'
-import { useMemo } from 'react'
-import { useSelector } from 'react-redux'
-import { useParams } from 'react-router'
-import { Link } from 'react-router-dom'
-import { State } from 'reducers'
 import { Page } from 'styles'
 import { MarketPagination, MarketStyled } from '../Loans.style'
 
-const loansAssetsBg = ['XTZ', 'EURL', 'USDT']
+// types
+import { State } from 'reducers'
 
 export const Market = () => {
   const { assetId, tabId } = useParams<{ assetId: string; tabId: string }>()
   const { loanAssets } = useSelector((state: State) => state.loans)
-  const foregroundImageSrc = loansAssetsBg.includes(assetId)
+
+  const foregroundImageSrc = ASSETS_WE_HAVE_BG_TO.includes(assetId)
     ? `/images/lending-header-${assetId.toUpperCase()}.svg`
     : '/images/lending-header.svg'
 
   const [prevMarket, nextMarket] = useMemo(() => {
     const currentAssetIdx = loanAssets.findIndex((asset) => asset === assetId)
-
     return [loanAssets[currentAssetIdx - 1], loanAssets[currentAssetIdx + 1]]
-  }, [assetId])
+  }, [assetId, loanAssets])
 
   return (
     <Page>
@@ -125,11 +132,15 @@ export const Market = () => {
         </div>
 
         <div className="tabs-nav">
-          <Link to={`/market/${assetId}/lendingTab`}>
-            <Button text={'My Lending'} kind={ACTION_SIMPLE} className={`${tabId === 'lendingTab' ? 'active' : ''}`} />
+          <Link to={`/market/${assetId}/${LEND_TAB_ID}`}>
+            <Button text={'My Lending'} kind={ACTION_SIMPLE} className={`${tabId === LEND_TAB_ID ? 'active' : ''}`} />
           </Link>
-          <Link to={`/market/${assetId}/borrowTab`}>
-            <Button text={'My Borrowing'} kind={ACTION_SIMPLE} className={`${tabId === 'borrowTab' ? 'active' : ''}`} />
+          <Link to={`/market/${assetId}/${BORROW_TAB_ID}`}>
+            <Button
+              text={'My Borrowing'}
+              kind={ACTION_SIMPLE}
+              className={`${tabId === BORROW_TAB_ID ? 'active' : ''}`}
+            />
           </Link>
         </div>
       </MarketStyled>

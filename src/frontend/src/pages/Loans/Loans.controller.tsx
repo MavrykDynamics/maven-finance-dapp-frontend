@@ -1,14 +1,15 @@
-import { useDispatch, useSelector } from 'react-redux'
-import { State } from '../../reducers'
+import { useDispatch } from 'react-redux'
 import { useEffect } from 'react'
-import { Page } from 'styles'
+
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
-import { getLoansStorage } from './Loans.actions'
 import { Markets } from './Markets/Markets.controller'
+
+import { getLoansStorage } from './Loans.actions'
+
+import { Page } from 'styles'
 
 export const Loans = () => {
   const dispatch = useDispatch()
-  const { wallet, tezos, accountPkh } = useSelector((state: State) => state.wallet)
 
   useEffect(() => {
     ;(async () => {
