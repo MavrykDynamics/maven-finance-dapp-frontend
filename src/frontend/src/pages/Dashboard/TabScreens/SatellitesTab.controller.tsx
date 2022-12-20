@@ -10,6 +10,7 @@ import { State } from 'reducers'
 import { SatelliteRecord } from 'utils/TypesAndInterfaces/Delegation'
 import { StatBlock } from '../Dashboard.style'
 import { SatellitesContentStyled, TabWrapperStyled } from './DashboardTabs.style'
+import { emptyContainer } from './LendingTab.controller'
 
 export const SatellitesTab = () => {
   const { activeSatellites } = useSelector((state: State) => state.delegation.delegationStorage)
@@ -71,7 +72,7 @@ export const SatellitesTab = () => {
         </Link>
       </div>
 
-      <SatellitesContentStyled>
+      {activeSatellites.length ? <SatellitesContentStyled>
         <StatBlock>
           <div className="name">Active Satellites</div>
           <div className="value">
@@ -113,7 +114,7 @@ export const SatellitesTab = () => {
             <CommaNumber endingText="%" value={satellitesInfo.partisipationRate} />
           </div>
         </StatBlock>
-      </SatellitesContentStyled>
+      </SatellitesContentStyled> : emptyContainer}
 
       <div className="descr">
         <div className="title">What are Satellites?</div>
