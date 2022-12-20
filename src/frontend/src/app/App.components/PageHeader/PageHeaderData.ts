@@ -11,6 +11,15 @@ export const PAGE_HEADER_DATA = new Map<string, PageHeaderContent>([
     },
   ],
   [
+    'lending',
+    {
+      title: 'Lending and Borrow Markets',
+      subText: 'View all available markets and see details to lend and borrow assets.',
+      foregroundImageSrc: '/images/lending-header.svg',
+      backgroundImageSrc: '/images/dapp-header-bg.svg',
+    },
+  ],
+  [
     'dashboard',
     {
       title: 'Dashboard',

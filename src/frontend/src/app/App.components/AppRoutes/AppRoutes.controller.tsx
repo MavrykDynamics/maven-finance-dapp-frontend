@@ -33,6 +33,7 @@ import { scrollUpPage } from 'utils/scrollUpPage'
 import ProtectedRoute from './ProtectedRoute'
 import DashboardPersonal from 'pages/DashboardPersonal/DashboardPersonal.controller'
 import { LENDING_TAB_ID } from 'pages/Dashboard/Dashboard.utils'
+import { Market } from 'pages/Loans/Markets/Market.controller'
 
 export const AppRoutes = () => {
   const { pathname } = useLocation()
@@ -127,6 +128,9 @@ export const AppRoutes = () => {
       </Route>
       <Route exact path="/data-feeds">
         <DataFeeds />
+      </Route>
+      <Route exact path="/market/:assetId/:tabId">
+        <Market />
       </Route>
       <Route exact path="/loans">
         <Loans />

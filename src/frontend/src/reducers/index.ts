@@ -19,6 +19,7 @@ import { modal, ModalState } from './modal'
 import { contractAddresses, ContractAddressesState } from './contractAddresses'
 import { oracles, OraclesState } from './oracles'
 import { tokens, TokensType } from './tokens'
+import { loans, LoansState } from './loans'
 
 export const reducers = combineReducers({
   loading,
@@ -40,6 +41,7 @@ export const reducers = combineReducers({
   contractAddresses,
   oracles,
   tokens,
+  loans,
 })
 
 export interface State {
@@ -62,4 +64,5 @@ export interface State {
   contractAddresses: ContractAddressesState
   oracles: OraclesState
   tokens: TokensType
+  loans: LoansState
 }

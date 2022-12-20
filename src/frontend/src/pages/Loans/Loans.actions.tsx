@@ -1,30 +1,19 @@
-import { State } from '../../reducers'
-import councilAddress from '../../deployments/councilAddress.json'
-import { TezosToolkit } from '@taquito/taquito'
 import type { AppDispatch, GetState } from '../../app/App.controller'
+import { fetchFromIndexer } from 'gql/fetchGraphQL'
+import { LOANS_QUERY, LOANS_QUERY_NAME, LOANS_QUERY_VARIABLE } from 'gql/queries/getLoansStorage'
+import { normalizeLoans } from './Loans.helpers'
 
-/**
- * TODO: Placeholder function until work on the Loan pages starts
- */
-export const GET_TREASURY_STORAGE = 'GET_TREASURY_STORAGE'
-export const getTreasuryStorage = (accountPkh?: string) => async (dispatch: AppDispatch, getState: GetState) => {
-  const state: State = getState()
+export const GET_LOANS_STORAGE = 'GET_LOANS_STORAGE'
+export const getLoansStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
+  try {
+    const storage = await fetchFromIndexer(LOANS_QUERY, LOANS_QUERY_NAME, LOANS_QUERY_VARIABLE)
+    const normalizedLoans = normalizeLoans(storage)
 
-  // if (!accountPkh) {
-  //   dispatch(showToaster(ERROR, 'Public address not found', 'Make sure your wallet is connected'))
-  //   return
-  // }
-  const contract = accountPkh
-    ? await state.wallet.tezos?.wallet.at(councilAddress.address)
-    : await new TezosToolkit(
-        (state.preferences.REACT_APP_RPC_PROVIDER as string) || 'https://hangzhounet.api.tez.ie/',
-      ).contract.at(councilAddress.address)
-
-  const storage = await contract?.storage()
-  console.log('Printing out Loans storage:\n', storage)
-
-  dispatch({
-    type: GET_TREASURY_STORAGE,
-    treasuryStorage: storage,
-  })
+    dispatch({
+      type: GET_LOANS_STORAGE,
+      loansStorage: normalizedLoans,
+    })
+  } catch (e) {
+    console.error('getLoansStorage error: ', e)
+  }
 }

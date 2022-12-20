@@ -24,10 +24,13 @@ type TradingViewChartProps = {
   }
   settings: {
     height: number
+    width?: number
     tickDateFormatter?: (date: number) => string
     tickPriceFormatter?: (value: number) => string
     dateTooltipFormatter?: (date: number) => string
     valueTooltipFormatter?: (date: number) => string
+    hideXAxis?: boolean
+    hideYAxis?: boolean
   }
   className?: string
 }
@@ -84,7 +87,16 @@ export const TradingViewChart = ({
     textColor = lightTextColor,
     borderColor = headerColor,
   } = {},
-  settings: { height, dateTooltipFormatter, valueTooltipFormatter, tickPriceFormatter, tickDateFormatter },
+  settings: {
+    height,
+    width,
+    dateTooltipFormatter,
+    valueTooltipFormatter,
+    tickPriceFormatter,
+    tickDateFormatter,
+    hideXAxis,
+    hideYAxis,
+  },
   className,
 }: TradingViewChartProps) => {
   const chartContainerRef = useRef<HTMLDivElement | null>(null)
@@ -113,7 +125,7 @@ export const TradingViewChart = ({
           visible: false,
         },
       },
-      width: chartContainerRef?.current?.clientWidth ?? 0,
+      width: width ?? chartContainerRef?.current?.clientWidth ?? 0,
       height,
       localization: {
         locale: 'en-US',
@@ -121,6 +133,23 @@ export const TradingViewChart = ({
           return tickDateFormatter?.(Number(time)) ?? parseDate({ time: Number(time), timeFormat: 'HH:mm' }) ?? ''
         },
       },
+      ...(hideXAxis
+        ? {
+            timeScale: {
+              visible: false,
+            },
+          }
+        : {}),
+      ...(hideYAxis
+        ? {
+            rightPriceScale: {
+              visible: false,
+            },
+            leftPriceScale: {
+              visible: false,
+            },
+          }
+        : {}),
     })
 
     // Setting the border color for the vertical axis
@@ -135,7 +164,6 @@ export const TradingViewChart = ({
     // Setting the border color for the horizontal axis
     chart.timeScale().applyOptions({
       borderColor,
-      visible: true,
       tickMarkFormatter: (time: UTCTimestamp | BusinessDay) => {
         return tickDateFormatter?.(Number(time)) ?? parseDate({ time: Number(time), timeFormat: 'HH:mm' }) ?? ''
       },
