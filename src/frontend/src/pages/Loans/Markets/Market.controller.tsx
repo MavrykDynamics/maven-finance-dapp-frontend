@@ -1,5 +1,6 @@
-import { TRANSPARENT } from 'app/App.components/Button/Button.constants'
+import { ACTION_SIMPLE, TRANSPARENT } from 'app/App.components/Button/Button.constants'
 import { Button } from 'app/App.components/Button/Button.controller'
+import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import ConnectWalletInfo from 'app/App.components/ConnectWallet/ConnectWalletInfo.view'
 import Icon from 'app/App.components/Icon/Icon.view'
 import {
@@ -14,7 +15,7 @@ import { useParams } from 'react-router'
 import { Link } from 'react-router-dom'
 import { State } from 'reducers'
 import { Page } from 'styles'
-import { MarketPagination } from '../Loans.style'
+import { MarketPagination, MarketStyled } from '../Loans.style'
 
 const loansAssetsBg = ['XTZ', 'EURL', 'USDT']
 
@@ -75,6 +76,63 @@ export const Market = () => {
           ) : null}
         </div>
       </MarketPagination>
+
+      <MarketStyled>
+        <div className="gen-info">
+          <div className="asset-info">
+            <Icon id="xtzTezos" />
+            <div className="text-wrapper">
+              <div className="symbol">XTZ</div>
+              <div className="full-name">Tezos</div>
+            </div>
+          </div>
+          <div className="info-item">
+            <div className="name">Oracle Price</div>
+            <div className="value">
+              <CommaNumber value={1.4} beginningText="$" />
+            </div>
+          </div>
+          <div className="info-item">
+            <div className="name">Total Borrowed</div>
+            <div className="value">
+              <CommaNumber value={2.1} endingText="m" />
+            </div>
+          </div>
+          <div className="info-item">
+            <div className="name">Borrow APY</div>
+            <div className="value">
+              <CommaNumber value={22.2} endingText="%" />
+            </div>
+          </div>
+          <div className="info-item">
+            <div className="name">Available Liquidity</div>
+            <div className="value">
+              <CommaNumber value={22.2} endingText="m" />
+            </div>
+          </div>
+          <div className="info-item">
+            <div className="name">Total Lending</div>
+            <div className="value">
+              <CommaNumber value={2.2} endingText="m" />
+            </div>
+          </div>
+          <div className="info-item">
+            <div className="name">Lending APY</div>
+            <div className="value">
+              <CommaNumber value={22.2} endingText="%" />
+            </div>
+          </div>
+        </div>
+
+        <div className="tabs-nav">
+          <Link to={`/market/${assetId}/lendingTab`}>
+            <Button text={'My Lending'} kind={ACTION_SIMPLE} className={`${tabId === 'lendingTab' ? 'active' : ''}`} />
+          </Link>
+          <Link to={`/market/${assetId}/borrowTab`}>
+            <Button text={'My Borrowing'} kind={ACTION_SIMPLE} className={`${tabId === 'borrowTab' ? 'active' : ''}`} />
+          </Link>
+        </div>
+      </MarketStyled>
     </Page>
   )
 }

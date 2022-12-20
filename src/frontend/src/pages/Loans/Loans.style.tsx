@@ -199,3 +199,67 @@ export const MarketPagination = styled.div<{ theme: MavrykTheme }>`
     }
   }
 `
+
+export const MarketStyled = styled.div<{ theme: MavrykTheme }>`
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  row-gap: 25px;
+
+  .gen-info {
+    display: flex;
+    justify-content: space-between;
+
+    .asset-info {
+      display: flex;
+      column-gap: 8px;
+
+      svg {
+        width: 45px;
+        height: 45px;
+      }
+
+      .text-wrapper {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        color: ${({ theme }) => theme.dataColor};
+
+        .symbol {
+          font-weight: 600;
+          font-size: 14px;
+        }
+
+        .full-name {
+          font-weight: 700;
+          font-size: 25px;
+        }
+      }
+    }
+
+    .info-item {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      .name {
+        color: ${({ theme }) => theme.textColor};
+        font-weight: 600;
+        font-size: 14px;
+      }
+
+      .value {
+        color: ${({ theme }) => theme.dataColor};
+        font-weight: 600;
+        font-size: 22px;
+        p {
+          margin: 0;
+        }
+      }
+    }
+  }
+
+  .tabs-nav {
+    display: flex;
+    column-gap: 10px;
+  }
+`
