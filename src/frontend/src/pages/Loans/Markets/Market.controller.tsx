@@ -25,6 +25,8 @@ import { MarketPagination, MarketStyled } from '../Loans.style'
 
 // types
 import { State } from 'reducers'
+import { BorrowingTab } from '../Components/BorrowingTab'
+import { LendingTab } from '../Components/LendingTab'
 
 export const Market = () => {
   const { assetId, tabId } = useParams<{ assetId: string; tabId: string }>()
@@ -42,7 +44,7 @@ export const Market = () => {
   return (
     <Page>
       <PageHeaderStyled backgroundImageSrc={'/images/dapp-header-bg.svg'}>
-        <PageHeaderTextArea>
+        <PageHeaderTextArea className="loans">
           {assetId && (
             <div className="asset-wrapper">
               <Icon id={'xtzTezos'} />
@@ -143,6 +145,7 @@ export const Market = () => {
             />
           </Link>
         </div>
+        {tabId === LEND_TAB_ID ? <LendingTab lendingItems={[]} /> : <BorrowingTab borrowingItems={[]} />}
       </MarketStyled>
     </Page>
   )

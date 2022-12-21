@@ -45,8 +45,11 @@ export const PageHeaderTextArea = styled.div`
   width: max-content;
   overflow: visible;
   padding-top: 10px;
-  display: flex;
-  column-gap: 10px;
+
+  &.loans {
+    display: flex;
+    column-gap: 10px;
+  }
 
   h1 {
     color: ${whiteColor};
