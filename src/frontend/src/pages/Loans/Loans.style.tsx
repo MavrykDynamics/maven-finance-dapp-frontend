@@ -237,7 +237,7 @@ export const MarketStyled = styled.div<{ theme: MavrykTheme }>`
       }
     }
 
-    .info-item {
+    /* .info-item {
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -255,11 +255,72 @@ export const MarketStyled = styled.div<{ theme: MavrykTheme }>`
           margin: 0;
         }
       }
-    }
+    }*/
   }
 
   .tabs-nav {
     display: flex;
     column-gap: 10px;
+  }
+`
+
+export const ThreeLevelListItem = styled.div<{ theme: MavrykTheme }>`
+  /* display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  .name {
+    color: ${({ theme }) => theme.textColor};
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  .value {
+    color: ${({ theme }) => theme.dataColor};
+    font-weight: 600;
+    font-size: 22px;
+    p {
+      margin: 0;
+    }
+  } */
+
+  p {
+    margin: 0;
+  }
+
+  .name {
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 20px;
+    color: ${({ theme }) => theme.textColor};
+  }
+
+  .value {
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 20px;
+    color: ${({ theme }) => theme.dataColor};
+    display: flex;
+    align-items: center;
+
+    svg {
+      width: 24px;
+      height: 24px;
+      margin-right: 4px;
+    }
+
+    &.up {
+      color: ${({ theme }) => theme.upColor};
+    }
+
+    &.down {
+      color: ${({ theme }) => theme.downColor};
+    }
+  }
+
+  .rate {
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 14px;
+    color: ${({ theme }) => theme.dataColor};
   }
 `

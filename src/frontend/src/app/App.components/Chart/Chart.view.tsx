@@ -181,7 +181,14 @@ export const TradingViewChart = ({
       priceFormat: {
         type: 'custom',
         minMove: 1,
-        formatter: (price: any) => formatNumber(true, 2, parseFloat(price)),
+        formatter: (price: any) =>
+          formatNumber({
+            showDecimal: true,
+            showLetter: false,
+            decimalsToShow: 2,
+            number: parseFloat(price),
+            letterForNumber: null,
+          }),
       },
     })
 

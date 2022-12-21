@@ -21,7 +21,7 @@ import {
   PageHeaderForegroundImage,
 } from 'app/App.components/PageHeader/PageHeader.style'
 import { Page } from 'styles'
-import { MarketPagination, MarketStyled } from '../Loans.style'
+import { MarketPagination, MarketStyled, ThreeLevelListItem } from '../Loans.style'
 
 // types
 import { State } from 'reducers'
@@ -63,7 +63,7 @@ export const Market = () => {
 
       <MarketPagination>
         <Link to="/loans">
-          <Button text="Go Back" icon="arrowRight" kind={TRANSPARENT} className="go-back-btn" />
+          <Button text="Go Back" icon="arrowRight" kind={TRANSPARENT} className="go-back-btn loans" />
         </Link>
 
         <div className="right-side-wrapper">
@@ -95,42 +95,30 @@ export const Market = () => {
               <div className="full-name">Tezos</div>
             </div>
           </div>
-          <div className="info-item">
+          <ThreeLevelListItem>
             <div className="name">Oracle Price</div>
-            <div className="value">
-              <CommaNumber value={1.4} beginningText="$" />
-            </div>
-          </div>
-          <div className="info-item">
+            <CommaNumber value={1.4} beginningText="$" className="value" />
+          </ThreeLevelListItem>
+          <ThreeLevelListItem>
             <div className="name">Total Borrowed</div>
-            <div className="value">
-              <CommaNumber value={2.1} endingText="m" />
-            </div>
-          </div>
-          <div className="info-item">
+            <CommaNumber value={2.1} endingText="m" className="value" />
+          </ThreeLevelListItem>
+          <ThreeLevelListItem>
             <div className="name">Borrow APY</div>
-            <div className="value">
-              <CommaNumber value={22.2} endingText="%" />
-            </div>
-          </div>
-          <div className="info-item">
+            <CommaNumber value={22.2} endingText="%" className="value" />
+          </ThreeLevelListItem>
+          <ThreeLevelListItem>
             <div className="name">Available Liquidity</div>
-            <div className="value">
-              <CommaNumber value={22.2} endingText="m" />
-            </div>
-          </div>
-          <div className="info-item">
+            <CommaNumber value={22.2} endingText="m" className="value" />
+          </ThreeLevelListItem>
+          <ThreeLevelListItem>
             <div className="name">Total Lending</div>
-            <div className="value">
-              <CommaNumber value={2.2} endingText="m" />
-            </div>
-          </div>
-          <div className="info-item">
+            <CommaNumber value={2.2} endingText="m" className="value" />
+          </ThreeLevelListItem>
+          <ThreeLevelListItem>
             <div className="name">Lending APY</div>
-            <div className="value">
-              <CommaNumber value={22.2} endingText="%" />
-            </div>
-          </div>
+            <CommaNumber value={22.2} endingText="%" className="value" />
+          </ThreeLevelListItem>
         </div>
 
         <div className="tabs-nav">

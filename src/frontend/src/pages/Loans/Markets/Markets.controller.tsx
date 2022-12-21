@@ -15,7 +15,13 @@ import Icon from 'app/App.components/Icon/Icon.view'
 // styles
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { skyColor } from 'styles'
-import { LoansStyled, MarketChartsContainer, MarketOverview, MarketsOverviewContainer } from '../Loans.style'
+import {
+  LoansStyled,
+  MarketChartsContainer,
+  MarketOverview,
+  MarketsOverviewContainer,
+  ThreeLevelListItem,
+} from '../Loans.style'
 
 // types
 import { State } from 'reducers'
@@ -88,53 +94,58 @@ export const Markets = () => {
 
               <div className="content-wrapper">
                 <div className="row">
-                  <div className="row-item">
+                  <ThreeLevelListItem>
                     <div className="name">Total Lending</div>
-                    <CommaNumber value={12414.2423} className="value" />
-                    <CommaNumber value={12414.2423} beginningText="$" className="rate" />
-                  </div>
-                  <div className="row-item">
+                    <CommaNumber value={12414.2423} className="value" showLetter />
+                    <CommaNumber value={12414.2423} beginningText="$" className="rate" showLetter />
+                  </ThreeLevelListItem>
+                  <ThreeLevelListItem>
                     <div className="name">Lend APY</div>
-                    <CommaNumber value={22} className="value" endingText="%" />
-                  </div>
-                  <div className="row-item">
+                    <CommaNumber value={22} className="value" endingText="%" showLetter />
+                  </ThreeLevelListItem>
+                  <ThreeLevelListItem>
                     <div className="name">Total Fees Earned</div>
-                    <CommaNumber value={12414.2423} className="value" beginningText="$" />
-                  </div>
-                  <div className="row-item">
+                    <CommaNumber value={12414.2423} className="value" beginningText="$" showLetter />
+                  </ThreeLevelListItem>
+                  <ThreeLevelListItem>
                     <div className="name">Suppliers</div>
-                    <CommaNumber value={12414.2423} className="value" />
-                  </div>
-                  <div className="row-item">
+                    <CommaNumber value={12414.2423} className="value" showLetter />
+                  </ThreeLevelListItem>
+                  <ThreeLevelListItem>
                     <div className="name">Utilization Rate</div>
-                    <CommaNumber value={12414.2423} className="value" endingText="%" />
-                  </div>
+                    <CommaNumber value={12414.2423} className="value" endingText="%" showLetter />
+                  </ThreeLevelListItem>
                   <Link to={`/market/${loanAsset}/${LEND_TAB_ID}`}>
                     <Button text="Lend" kind={ACTION_PRIMARY} iconAfter icon="arrowRight" />
                   </Link>
                 </div>
                 <div className="row">
-                  <div className="row-item">
+                  <ThreeLevelListItem>
                     <div className="name">Total Borrowed</div>
-                    <CommaNumber value={12414.2423} className="value" />
-                    <CommaNumber value={12414.2423} beginningText="$" className="rate" />
-                  </div>
-                  <div className="row-item">
+                    <CommaNumber value={12414.2423} className="value" showLetter />
+                    <CommaNumber value={12414.2423} beginningText="$" showLetter className="rate" />
+                  </ThreeLevelListItem>
+                  <ThreeLevelListItem>
                     <div className="name">Borrow APR</div>
-                    <CommaNumber value={22} className="value" endingText="%" />
-                  </div>
-                  <div className="row-item">
+                    <CommaNumber value={22} className="value" showLetter endingText="%" />
+                  </ThreeLevelListItem>
+                  <ThreeLevelListItem>
                     <div className="name">Available Liquidity</div>
-                    <CommaNumber value={12414.2423} className="value" beginningText="$" />
-                  </div>
-                  <div className="row-item">
+                    <CommaNumber value={12414.2423} className="value" showLetter beginningText="$" />
+                  </ThreeLevelListItem>
+                  <ThreeLevelListItem>
                     <div className="name">Borrowers</div>
-                    <CommaNumber value={12414.2423} className="value" />
-                  </div>
-                  <div className="row-item">
+                    <CommaNumber value={12414.2423} className="value" showLetter />
+                  </ThreeLevelListItem>
+                  <ThreeLevelListItem>
                     <div className="name">Total Collateral</div>
-                    <CommaNumber value={12414.2423} className={`value ${true ? 'up' : 'down'}`} beginningText="$" />
-                  </div>
+                    <CommaNumber
+                      value={12414.2423}
+                      showLetter
+                      className={`value ${true ? 'up' : 'down'}`}
+                      beginningText="$"
+                    />
+                  </ThreeLevelListItem>
                   <Link to={`/market/${loanAsset}/${BORROW_TAB_ID}`}>
                     <Button text="Borrow" kind={ACTION_PRIMARY} iconAfter icon="arrowRight" />
                   </Link>

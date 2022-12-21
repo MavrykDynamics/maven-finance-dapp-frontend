@@ -11,11 +11,40 @@ const roundDecimalPart = (number: string, symbolsCount: number): string => {
   let formatterNumber = parseFloat(`0.${number}`)
   return formatterNumber.toFixed(symbolsCount).split('.')[1]
 }
-export const formatNumber = (showDecimal: boolean, decimalsToShow: number, number?: number): string | undefined => {
+
+const getNumberLetter = (value: number) => {
+  const divByThouth = Number(value) / 1_000
+  const divByMil = Number(value) / 1_000_000
+  const divByBil = Number(value) / 1_000_000_000
+  return divByThouth < 1_000 && divByThouth > 1
+    ? { letterToShow: 'k', divideAmount: 1_000 }
+    : divByMil < 1_000 && divByMil > 1
+    ? { letterToShow: 'm', divideAmount: 1_000_000 }
+    : divByBil < 1_000 && divByBil > 1
+    ? { letterToShow: 'b', divideAmount: 1_000_000_000 }
+    : null
+}
+
+export const formatNumber = ({
+  showDecimal,
+  decimalsToShow,
+  number,
+  letterForNumber,
+  showLetter,
+}: {
+  showDecimal: boolean
+  showLetter: boolean
+  decimalsToShow: number
+  number?: number
+  letterForNumber: {
+    letterToShow: string
+    divideAmount: number
+  } | null
+}): string | undefined => {
   if (showDecimal && !number) return '0.00'
-  return number?.toLocaleString('en-US', {
+  return `${Number(Number(number) / (letterForNumber?.divideAmount ?? 1))?.toLocaleString('en-US', {
     maximumFractionDigits: showDecimal ? decimalsToShow : 0,
-  })
+  })}${letterForNumber?.letterToShow ?? ''}`
 }
 export const CommaNumber = ({
   value,
@@ -24,6 +53,7 @@ export const CommaNumber = ({
   beginningText,
   className = '',
   showDecimal = true,
+  showLetter = false,
   decimalsToShow = DECIMALS_TO_SHOW,
   svgKind = SECONDARY_COMMA_NUMBER,
   useAccurateParsing = false,
@@ -35,10 +65,18 @@ export const CommaNumber = ({
   beginningText?: string
   className?: string
   showDecimal?: boolean
+  showLetter?: boolean
   useAccurateParsing?: boolean
   svgKind?: CommaNumberSvgKind
 }) => {
-  let numberWithCommas = formatNumber(showDecimal, decimalsToShow, value)
+  const letterToShow = getNumberLetter(value)
+  let numberWithCommas = formatNumber({
+    showDecimal,
+    showLetter,
+    decimalsToShow,
+    number: value,
+    letterForNumber: letterToShow,
+  })
   let titleForNumber = undefined
 
   // it's exponential number if e-7 it will scientific notation, every that are < -7 normal notation

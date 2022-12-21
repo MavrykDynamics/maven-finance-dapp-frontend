@@ -56,6 +56,11 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
     background-color: ${({ theme }) => theme.containerColor};
   }
 
+  &.loans {
+    border-color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.textColor};
+  }
+
   &.loading {
     pointer-events: none;
     opacity: 0.8;
