@@ -73,6 +73,14 @@ export const ExpandStyled = styled(CardHover)`
       grid-template-columns: 0.7fr 0.9fr 0.6fr 0.4fr 0.4fr;
     }
   }
+
+  &.expand-borrow-tab {
+    .expand-header {
+      padding: 23px 25px 13px 25px;
+      align-items: flex-start;
+      grid-template-columns: 0.7fr 0.7fr 0.7fr 0.9fr 0.4fr;
+    }
+  }
 `
 
 export const ExpandArticleStyled = styled.article<{ show?: boolean; theme: MavrykTheme }>`

@@ -236,26 +236,6 @@ export const MarketStyled = styled.div<{ theme: MavrykTheme }>`
         }
       }
     }
-
-    /* .info-item {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      .name {
-        color: ${({ theme }) => theme.textColor};
-        font-weight: 600;
-        font-size: 14px;
-      }
-
-      .value {
-        color: ${({ theme }) => theme.dataColor};
-        font-weight: 600;
-        font-size: 22px;
-        p {
-          margin: 0;
-        }
-      }
-    }*/
   }
 
   .tabs-nav {
@@ -265,24 +245,6 @@ export const MarketStyled = styled.div<{ theme: MavrykTheme }>`
 `
 
 export const ThreeLevelListItem = styled.div<{ theme: MavrykTheme }>`
-  /* display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  .name {
-    color: ${({ theme }) => theme.textColor};
-    font-weight: 600;
-    font-size: 14px;
-  }
-
-  .value {
-    color: ${({ theme }) => theme.dataColor};
-    font-weight: 600;
-    font-size: 22px;
-    p {
-      margin: 0;
-    }
-  } */
-
   p {
     margin: 0;
   }
@@ -322,5 +284,33 @@ export const ThreeLevelListItem = styled.div<{ theme: MavrykTheme }>`
     font-size: 12px;
     line-height: 14px;
     color: ${({ theme }) => theme.dataColor};
+  }
+
+  .info-tip {
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    font-size: 10px;
+    column-gap: 5px;
+
+    span {
+      color: ${({ theme }) => theme.dataColor};
+      font-weight: 600;
+      font-size: 14px;
+    }
+  }
+`
+
+export const FillBlock = styled.div<{ theme: MavrykTheme; width: number }>`
+  width: 220px;
+  height: 7px;
+  border-radius: 10px;
+  display: flex;
+  justify-content: flex-end;
+  margin: 3px 0 4px 0;
+  background: linear-gradient(90deg, rgba(3, 212, 99, 1) 0%, rgba(255, 78, 67, 1) 100%);
+  .colored {
+    width: ${({ width }) => 100 - width}%;
+    background-color: ${({ theme }) => theme.backgroundColor};
   }
 `
