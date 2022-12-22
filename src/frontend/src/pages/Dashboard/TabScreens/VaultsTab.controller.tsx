@@ -2,7 +2,14 @@ import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import PieChartView from 'app/App.components/PieСhart/PieСhart.view'
-import { SimpleTable } from 'app/App.components/SimpleTable/SimpleTable.controller'
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHeaderCell,
+  TableBody,
+  TableCell,
+} from 'app/App.components/Table/Table.style'
 import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
 import { getPieChartData } from 'pages/Treasury/helpers/calculateChartData'
 import { reduceTreasuryAssets } from 'pages/Treasury/Treasury.helpers'
@@ -12,7 +19,6 @@ import { Link } from 'react-router-dom'
 import { State } from 'reducers'
 import { StatBlock, BlockName } from '../Dashboard.style'
 import { TabWrapperStyled, VaultsContentStyled } from './DashboardTabs.style'
-import { columnNames, fieldsMapper } from './TreasuryTab.controller'
 
 export const VaultsTab = () => {
   const [hoveredPath, setHoveredPath] = useState<null | string>(null)
@@ -60,12 +66,31 @@ export const VaultsTab = () => {
           <div>
             <BlockName>Treasury Assets</BlockName>
 
-            <SimpleTable
-              colunmNames={columnNames}
-              data={assetsBalances}
-              fieldsMapper={fieldsMapper}
-              className="dashboard-st vaults"
-            />
+            <Table className="no-margin simple-table treasury-table">
+              <TableHeader className="treasury">
+                <TableRow>
+                  <TableHeaderCell>Asset</TableHeaderCell>
+                  <TableHeaderCell>Amount</TableHeaderCell>
+                  <TableHeaderCell className="right">USD Value</TableHeaderCell>
+                </TableRow>
+              </TableHeader>
+
+              <TableBody className="treasury">
+                {assetsBalances.concat(assetsBalances).map(({ symbol, balance, usdValue, rate }) => {
+                  return (
+                    <TableRow rowHeight={25} borderColor="dataColor" className="add-hover">
+                      <TableCell width="33%">{symbol}</TableCell>
+                      <TableCell width="33%">
+                        <CommaNumber value={balance} useAccurateParsing />
+                      </TableCell>
+                      <TableCell width="33%" className="right">
+                        <CommaNumber value={usdValue} endingText={rate ? '$' : symbol} useAccurateParsing />
+                      </TableCell>
+                    </TableRow>
+                  )
+                })}
+              </TableBody>
+            </Table>
 
             <div className="summary">
               <div className="name">Vault TVL</div>

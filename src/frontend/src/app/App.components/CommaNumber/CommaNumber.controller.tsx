@@ -69,7 +69,7 @@ export const CommaNumber = ({
   useAccurateParsing?: boolean
   svgKind?: CommaNumberSvgKind
 }) => {
-  const letterToShow = getNumberLetter(value)
+  const letterToShow = showLetter ? getNumberLetter(value) : null
   let numberWithCommas = formatNumber({
     showDecimal,
     showLetter,

@@ -10,7 +10,6 @@ import {
   CurrentRoundProposalsStorageType,
   GovPhases,
 } from '../../utils/TypesAndInterfaces/Governance'
-import type { Governance_Proposal_Payment } from '../../utils/generated/graphqlTypes'
 import { VoteStatistics } from 'app/App.components/VotingArea/helpers/voting'
 
 // actions
@@ -51,8 +50,16 @@ import {
   EmptyContainer,
 } from './Governance.style'
 import { InfoBlock } from '../../app/App.components/Info/info.style'
-import Table, { TableProps } from 'app/App.components/Table/Table.controller'
-import { CellType } from 'app/App.components/Table/TableCell'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHeader,
+  TableHeaderCell,
+  TableRow,
+} from 'app/App.components/Table/Table.style'
+import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 
 type GovernanceViewProps = {
   accountPkh: string | undefined
@@ -306,37 +313,6 @@ export const GovernanceView = ({
     [whitelistTokens],
   )
 
-  const paymentTableData = useMemo(
-    () =>
-      rightSideContent?.proposalPayments.map<TableProps['data'][number]>((payment) => {
-        const { symbol: selectedSymbol = 'MVK' } =
-          paymentMethods.find(({ address }) => address === payment.token_address) ?? paymentMethods?.[0] ?? {}
-
-        return [
-          {
-            cellValue: payment.to__id ?? '',
-            cellType: 'tzAddress' as CellType,
-          },
-          {
-            cellValue: payment.title ?? '',
-            cellType: 'text' as CellType,
-          },
-          {
-            cellValue: payment.token_amount ?? 0,
-            cellType: 'commaNumber' as CellType,
-            commaNumberProps: {
-              endingText: selectedSymbol,
-            },
-          },
-          {
-            cellValue: selectedSymbol,
-            cellType: 'text' as CellType,
-          },
-        ]
-      }),
-    [],
-  )
-
   return (
     <GovernanceStyled>
       {someVisible ? (
@@ -536,8 +512,45 @@ export const GovernanceView = ({
 
           <article className="payment-data">
             <RightSideSubHeader>Payment Data</RightSideSubHeader>
-            {rightSideContent.proposalPayments?.length && paymentTableData ? (
-              <Table data={paymentTableData} colunmNames={['Address', 'Title', 'Amount', 'Payment Type (XTZ/MVK)']} />
+            {rightSideContent.proposalPayments?.length ? (
+              <Table className="editable-table">
+                <TableHeader className="editable-head">
+                  <TableRow>
+                    <TableHeaderCell className="no-right-border">Address</TableHeaderCell>
+                    <TableHeaderCell>Purpose</TableHeaderCell>
+                    <TableHeaderCell>Amount</TableHeaderCell>
+                    <TableHeaderCell className="right-border">Payment Type (XTZ/MVK)</TableHeaderCell>
+                  </TableRow>
+                </TableHeader>
+                <TableBody className="editable-body">
+                  {rightSideContent.proposalPayments.map((payment) => {
+                    const { symbol: selectedSymbol = 'MVK' } =
+                      paymentMethods.find(({ address }) => address === payment.token_address) ??
+                      paymentMethods?.[0] ??
+                      {}
+
+                    return (
+                      <TableRow className="editable-row">
+                        <TableCell width="25%">
+                          <TzAddress
+                            tzAddress={String(payment.to__id)}
+                            type={BLUE}
+                            hasIcon={true}
+                            className="table-cell-tzAddress"
+                          />
+                        </TableCell>
+                        <TableCell width="25%">{String(payment.title)}</TableCell>
+                        <TableCell width="25%">
+                          <CommaNumber value={Number(payment.token_amount)} endingText={selectedSymbol} />
+                        </TableCell>
+                        <TableCell className="no-right-border" width="25%">
+                          {selectedSymbol}
+                        </TableCell>
+                      </TableRow>
+                    )
+                  })}
+                </TableBody>
+              </Table>
             ) : (
               <RightSideSubContent>No payment data given</RightSideSubContent>
             )}

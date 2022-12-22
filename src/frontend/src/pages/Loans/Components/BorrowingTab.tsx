@@ -3,9 +3,18 @@ import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import Expand from 'app/App.components/Expand/Expand.view'
 import Icon from 'app/App.components/Icon/Icon.view'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHeader,
+  TableHeaderCell,
+  TableRow,
+} from 'app/App.components/Table/Table.style'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
+import { BORROWIND_MOCK, COLLATERAL_MOCK } from '../Loans.const'
 import { FillBlock, ThreeLevelListItem } from '../Loans.style'
 import { BorrowingTabListItemExpanded, LoansTabStyled, NoItemsInTabStyled } from './LoansComponents.style'
 
@@ -65,92 +74,110 @@ export const BorrowingTab = ({ borrowingItems }: BorrowingTabPropsType) => {
               }
             >
               <BorrowingTabListItemExpanded>
-                <div className="block-name">Borrowed</div>
-                <div className="list borrow">
-                  <div className="list-item borrow">
-                    <ThreeLevelListItem>
-                      <div className="name">Borrowed Asset</div>
-                      <div className="value">
-                        <Icon id="xtzTezos" />
-                        XTZ
-                      </div>
-                    </ThreeLevelListItem>
-                    <ThreeLevelListItem>
-                      <div className="name">Amt Borrowed</div>
-                      <CommaNumber value={22.2} className="value" endingText="%" />
-                      <CommaNumber value={2343322.2} className="rate" beginningText="$" showLetter />
-                    </ThreeLevelListItem>
-                    <ThreeLevelListItem>
-                      <div className="name">Borrowing Fee</div>
-                      <CommaNumber value={22.2} className="value" endingText="%" />
-                      <CommaNumber value={234322.2} className="rate" beginningText="$" showLetter />
-                    </ThreeLevelListItem>
-                    <ThreeLevelListItem>
-                      <div className="name">Borrow APY</div>
-                      <CommaNumber value={22.2} className="value" endingText="%" />
-                    </ThreeLevelListItem>
+                {BORROWIND_MOCK ? (
+                  <>
+                    <div className="block-name">Borrowed</div>
+                    <Table className="simple-table borrowing-table">
+                      <TableHeader>
+                        <TableRow className="simple-header">
+                          <TableHeaderCell>Borrowed Asset</TableHeaderCell>
+                          <TableHeaderCell>Amt Borrowed</TableHeaderCell>
+                          <TableHeaderCell>Borrowing Fee</TableHeaderCell>
+                          <TableHeaderCell>Borrow APY</TableHeaderCell>
+                        </TableRow>
+                      </TableHeader>
 
-                    <Button text="Borrow" kind={TRANSPARENT} className="go-back-btn loans" />
-                  </div>
-                </div>
+                      <TableBody>
+                        {BORROWIND_MOCK.map(() => {
+                          return (
+                            <TableRow rowHeight={70}>
+                              <TableCell width={`15%`} className="vert-middle">
+                                <div className="cell-content row">
+                                  <Icon id="xtzTezos" />
+                                  XTZ
+                                </div>
+                              </TableCell>
+                              <TableCell width={`15%`}>
+                                <div className="cell-content">
+                                  <CommaNumber value={22.2} className="value" endingText="%" />
+                                  <CommaNumber value={2343322.2} className="rate" beginningText="$" showLetter />
+                                </div>
+                              </TableCell>
+                              <TableCell width={`15%`}>
+                                <div className="cell-content">
+                                  <CommaNumber value={22.2} className="value" endingText="%" />
+                                  <CommaNumber value={234322.2} className="rate" beginningText="$" showLetter />
+                                </div>
+                              </TableCell>
+                              <TableCell width={`15%`}>
+                                <div className="cell-content">
+                                  <CommaNumber value={22.2} className="value" endingText="%" />
+                                </div>
+                              </TableCell>
+                              <TableCell className="buttons">
+                                <div className="cell-content row">
+                                  <Button text="Borrow" kind={TRANSPARENT} className="go-back-btn loans" />
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          )
+                        })}
+                      </TableBody>
+                    </Table>
+                  </>
+                ) : null}
 
-                <div className="block-name">Collateral In Vault</div>
-                <div className="list collateral">
-                  <div className="list-item collateral">
-                    <ThreeLevelListItem>
-                      <div className="name">Vault Asset</div>
-                      <div className="value">
-                        <Icon id="xtzTezos" />
-                        XTZ
-                      </div>
-                    </ThreeLevelListItem>
-                    <ThreeLevelListItem>
-                      <div className="name">Vault Balance</div>
-                      <CommaNumber value={22.2} className="value" endingText="%" />
-                      <CommaNumber value={2322.2} className="rate" beginningText="$" showLetter />
-                    </ThreeLevelListItem>
-                    <ThreeLevelListItem>
-                      <div className="name">Withdraw Max</div>
-                      <CommaNumber value={22.2} className="value" endingText="%" />
-                      <CommaNumber value={23422.2} className="rate" beginningText="$" showLetter />
-                    </ThreeLevelListItem>
-                    <ThreeLevelListItem>
-                      <div className="name">Other Data</div>
-                      <CommaNumber value={22.2} className="value" endingText="%" />
-                      <CommaNumber value={222.2} className="rate" beginningText="$" showLetter />
-                    </ThreeLevelListItem>
+                {COLLATERAL_MOCK.length ? (
+                  <>
+                    <div className="block-name">Collateral In Vault</div>
+                    <Table className="no-margin simple-table borrowing-table">
+                      <TableHeader className="simple-header">
+                        <TableRow>
+                          <TableHeaderCell>Vault Asset</TableHeaderCell>
+                          <TableHeaderCell>Vault Balance</TableHeaderCell>
+                          <TableHeaderCell>Withdraw Max</TableHeaderCell>
+                          <TableHeaderCell>Other Data</TableHeaderCell>
+                        </TableRow>
+                      </TableHeader>
 
-                    <Button text="Add" icon="plus" kind={TRANSPARENT} className="go-back-btn loans" />
-                    <Button text="Remove" icon="minus" kind={TRANSPARENT} className="go-back-btn loans" />
-                  </div>
-                  <div className="list-item collateral">
-                    <ThreeLevelListItem>
-                      <div className="name">Vault Asset</div>
-                      <div className="value">
-                        <Icon id="xtzTezos" />
-                        XTZ
-                      </div>
-                    </ThreeLevelListItem>
-                    <ThreeLevelListItem>
-                      <div className="name">Vault Balance</div>
-                      <CommaNumber value={22.2} className="value" endingText="%" />
-                      <CommaNumber value={2322.2} className="rate" beginningText="$" showLetter />
-                    </ThreeLevelListItem>
-                    <ThreeLevelListItem>
-                      <div className="name">Withdraw Max</div>
-                      <CommaNumber value={22.2} className="value" endingText="%" />
-                      <CommaNumber value={23422.2} className="rate" beginningText="$" showLetter />
-                    </ThreeLevelListItem>
-                    <ThreeLevelListItem>
-                      <div className="name">Other Data</div>
-                      <CommaNumber value={22.2} className="value" endingText="%" />
-                      <CommaNumber value={222.2} className="rate" beginningText="$" showLetter />
-                    </ThreeLevelListItem>
-
-                    <Button text="Add" icon="plus" kind={TRANSPARENT} className="go-back-btn loans" />
-                    <Button text="Remove" icon="minus" kind={TRANSPARENT} className="go-back-btn loans" />
-                  </div>
-                </div>
+                      <TableBody>
+                        {COLLATERAL_MOCK.map(() => {
+                          return (
+                            <TableRow rowHeight={70}>
+                              <TableCell width={`15%`} className="vert-middle">
+                                <div className="cell-content row">
+                                  <Icon id="xtzTezos" />
+                                  XTZ
+                                </div>
+                              </TableCell>
+                              <TableCell width={`15%`}>
+                                <div className="cell-content">
+                                  <CommaNumber value={22.2} className="value" endingText="%" />
+                                  <CommaNumber value={2343322.2} className="rate" beginningText="$" showLetter />
+                                </div>
+                              </TableCell>
+                              <TableCell width={`15%`}>
+                                <div className="cell-content">
+                                  <CommaNumber value={22.2} className="value" endingText="%" />
+                                  <CommaNumber value={234322.2} className="rate" beginningText="$" showLetter />
+                                </div>
+                              </TableCell>
+                              <TableCell width={`15%`}>
+                                <CommaNumber value={22.2} className="value" endingText="%" />
+                              </TableCell>
+                              <TableCell className="buttons">
+                                <div className="cell-content row">
+                                  <Button text="Add" icon="plus" kind={TRANSPARENT} className="go-back-btn loans" />
+                                  <Button text="Remove" icon="minus" kind={TRANSPARENT} className="go-back-btn loans" />
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          )
+                        })}
+                      </TableBody>
+                    </Table>
+                  </>
+                ) : null}
               </BorrowingTabListItemExpanded>
             </Expand>
           </div>

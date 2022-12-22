@@ -12,10 +12,16 @@ import { TreasuryViewStyle, TzAddress } from './Treasury.style'
 import { getPieChartData } from './helpers/calculateChartData'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
-import { columnNames, fieldsMapper } from 'pages/Dashboard/TabScreens/TreasuryTab.controller'
-import { SimpleTable } from 'app/App.components/SimpleTable/SimpleTable.controller'
 import Checkbox from 'app/App.components/Checkbox/Checkbox.view'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHeaderCell,
+  TableBody,
+  TableCell,
+} from 'app/App.components/Table/Table.style'
 
 type Props = {
   treasury: TreasuryType
@@ -100,12 +106,31 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
             </>
           ) : null}
 
-          <SimpleTable
-            colunmNames={columnNames}
-            data={filteredBalance}
-            fieldsMapper={fieldsMapper}
-            className="treasury-st"
-          />
+          <Table className="no-margin simple-table treasury-table">
+            <TableHeader className="treasury">
+              <TableRow>
+                <TableHeaderCell>Asset</TableHeaderCell>
+                <TableHeaderCell>Amount</TableHeaderCell>
+                <TableHeaderCell className="right">USD Value</TableHeaderCell>
+              </TableRow>
+            </TableHeader>
+
+            <TableBody className="treasury">
+              {filteredBalance.map(({ symbol, balance, usdValue, rate }) => {
+                return (
+                  <TableRow rowHeight={25} borderColor="dataColor" className="add-hover">
+                    <TableCell width="33%">{symbol}</TableCell>
+                    <TableCell width="33%">
+                      <CommaNumber value={balance} useAccurateParsing />
+                    </TableCell>
+                    <TableCell width="33%" className="right">
+                      <CommaNumber value={usdValue} endingText={rate ? '$' : symbol} useAccurateParsing />
+                    </TableCell>
+                  </TableRow>
+                )
+              })}
+            </TableBody>
+          </Table>
         </div>
       </div>
       <div>
