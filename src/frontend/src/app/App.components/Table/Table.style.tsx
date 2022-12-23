@@ -101,6 +101,10 @@ export const Table = styled.table<{ theme: MavrykTheme }>`
     width: 100%;
     border-radius: 2px;
   }
+
+  &.transaction-history-table {
+    margin-top: 30px;
+  }
 `
 
 export const TableHeader = styled.thead<{ theme: MavrykTheme }>`
@@ -161,6 +165,12 @@ export const TableBody = styled.tbody<{ theme: MavrykTheme }>`
     tr {
       width: 100%;
     } */
+  }
+
+  &.transaction-history {
+    * {
+      font-size: 14px;
+    }
   }
 `
 export const TableRow = styled.tr<{ theme: MavrykTheme; borderColor?: string; rowHeight?: number }>`

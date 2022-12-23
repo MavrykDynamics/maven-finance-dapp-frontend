@@ -314,3 +314,16 @@ export const FillBlock = styled.div<{ theme: MavrykTheme; width: number }>`
     background-color: ${({ theme }) => theme.backgroundColor};
   }
 `
+
+export const TransactionHistory = styled.div<{ theme: MavrykTheme }>`
+  margin-top: 20px;
+  border: 1px solid ${({ theme }) => theme.cardBorderColor};
+  border-radius: 10px;
+  background-color: ${({ theme }) => theme.containerColor};
+  padding: 30px;
+
+  .top {
+    display: flex;
+    justify-content: space-between;
+  }
+`

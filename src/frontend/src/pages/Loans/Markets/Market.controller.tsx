@@ -1,11 +1,18 @@
 import { useMemo } from 'react'
 import { useSelector } from 'react-redux'
-import { useParams } from 'react-router'
+import { useLocation, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
 
 // const
 import { ACTION_SIMPLE, TRANSPARENT } from 'app/App.components/Button/Button.constants'
-import { ASSETS_WE_HAVE_BG_TO, BORROW_TAB_ID, LEND_TAB_ID } from '../Loans.const'
+import {
+  ASSETS_WE_HAVE_BG_TO,
+  BORROW_TAB_ID,
+  COLLATERAL_MOCK,
+  LEND_TAB_ID,
+  TRANSACTION_HISTORY_MOCK,
+  TRANSACTION_HISTORY_SLIDING_BUTTONS,
+} from '../Loans.const'
 
 // view
 import { Button } from 'app/App.components/Button/Button.controller'
@@ -21,14 +28,35 @@ import {
   PageHeaderForegroundImage,
 } from 'app/App.components/PageHeader/PageHeader.style'
 import { Page } from 'styles'
-import { MarketPagination, MarketStyled, ThreeLevelListItem } from '../Loans.style'
+import { MarketPagination, MarketStyled, ThreeLevelListItem, TransactionHistory } from '../Loans.style'
 
 // types
 import { State } from 'reducers'
 import { BorrowingTab } from '../Components/BorrowingTab'
 import { LendingTab } from '../Components/LendingTab'
+import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
+import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHeaderCell,
+  TableBody,
+  TableCell,
+} from 'app/App.components/Table/Table.style'
+import { parseDate } from 'utils/time'
+import { TzAddress } from 'pages/Treasury/Treasury.style'
+import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+import { Pagination } from 'pages/BreakGlass/BreakGlass.style'
+import {
+  calculateSlicePositions,
+  PAGINATION_SIDE_CENTER,
+  TRANSACTION_HISTORY_TABLE_NAME,
+} from 'pages/FinacialRequests/Pagination/pagination.consts'
+import { getPageNumber } from 'pages/FinacialRequests/FinancialRequests.helpers'
 
 export const Market = () => {
+  const { search } = useLocation()
   const { assetId, tabId } = useParams<{ assetId: string; tabId: string }>()
   const { loanAssets } = useSelector((state: State) => state.loans)
 
@@ -40,6 +68,13 @@ export const Market = () => {
     const currentAssetIdx = loanAssets.findIndex((asset) => asset === assetId)
     return [loanAssets[currentAssetIdx - 1], loanAssets[currentAssetIdx + 1]]
   }, [assetId, loanAssets])
+
+  const currentPage = getPageNumber(search, TRANSACTION_HISTORY_TABLE_NAME)
+
+  const paginatedTableRows = useMemo(() => {
+    const [from, to] = calculateSlicePositions(currentPage, TRANSACTION_HISTORY_TABLE_NAME)
+    return TRANSACTION_HISTORY_MOCK?.slice(from, to)
+  }, [currentPage, TRANSACTION_HISTORY_MOCK])
 
   return (
     <Page>
@@ -134,6 +169,64 @@ export const Market = () => {
           </Link>
         </div>
         {tabId === LEND_TAB_ID ? <LendingTab lendingItems={[]} /> : <BorrowingTab borrowingItems={[]} />}
+
+        <TransactionHistory>
+          <div className="top">
+            <GovRightContainerTitleArea>
+              <h2>Transaction History</h2>
+            </GovRightContainerTitleArea>
+
+            <SlidingTabButtons onClick={(tabId: number) => null} tabItems={TRANSACTION_HISTORY_SLIDING_BUTTONS} />
+          </div>
+
+          {TRANSACTION_HISTORY_MOCK.length ? (
+            <>
+              <Table className="no-margin simple-table treasury-table">
+                <TableHeader className="simple-header treasury">
+                  <TableRow>
+                    <TableHeaderCell>Description</TableHeaderCell>
+                    <TableHeaderCell>Amount</TableHeaderCell>
+                    <TableHeaderCell>Date</TableHeaderCell>
+                    <TableHeaderCell>User</TableHeaderCell>
+                    <TableHeaderCell className="right">View TX</TableHeaderCell>
+                  </TableRow>
+                </TableHeader>
+
+                <TableBody className="transaction-history">
+                  {paginatedTableRows.map(() => {
+                    return (
+                      <TableRow rowHeight={45}>
+                        <TableCell width={`20%`} className="vert-middle">
+                          <span>Liquidity Added</span>
+                        </TableCell>
+                        <TableCell width={`15%`}>
+                          <CommaNumber value={22.2} className="value" endingText="XTZ" />
+                        </TableCell>
+                        <TableCell width={`30%`}>
+                          {parseDate({ time: Date.now(), timeFormat: 'MMM Do, YYYY, HH:mm:ss UTC' })}
+                        </TableCell>
+                        <TableCell width={`15%`}>
+                          <TzAddress tzAddress="tz1ezDb77a9jaFMHDWs8QXrKEDkpgGdgsjPD" type={BLUE} />
+                        </TableCell>
+                        <TableCell className="buttons right">
+                          <div className="cell-content row">
+                            <Button text="View TX" kind={TRANSPARENT} className="link" />
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    )
+                  })}
+                </TableBody>
+              </Table>
+            </>
+          ) : null}
+
+          <Pagination
+            itemsCount={TRANSACTION_HISTORY_MOCK.length}
+            listName={TRANSACTION_HISTORY_TABLE_NAME}
+            side={PAGINATION_SIDE_CENTER}
+          />
+        </TransactionHistory>
       </MarketStyled>
     </Page>
   )

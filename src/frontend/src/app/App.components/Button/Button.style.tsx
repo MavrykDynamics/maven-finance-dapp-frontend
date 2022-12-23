@@ -200,6 +200,12 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
   &.dashboard-sectionLink {
     width: 220px;
   }
+
+  &.link {
+    width: fit-content;
+    background-color: transparent;
+    color: ${({ theme }) => theme.valueColor};
+  }
 `
 
 export const ButtonText = styled.div<{ theme: MavrykTheme }>`
