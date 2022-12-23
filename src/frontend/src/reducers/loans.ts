@@ -1,22 +1,14 @@
-
-import { ChartPlotType } from 'app/App.components/Chart/Chart.view'
 import { GET_LOANS_STORAGE } from 'pages/Loans/Loans.actions'
+import { LoansChartsDataType, LoansStorage } from 'utils/TypesAndInterfaces/Loans'
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
 
-export type LoansChartsDataType = {
-  totalBorrowed: number
-  borrowingChartData: Array<ChartPlotType>
-  totalLended: number
-  lendingChartData: Array<ChartPlotType>
-}
-
 export interface LoansState {
-  loanAssets: Array<string>
+  loanTokens: LoansStorage['loanTokens']
   chartsData: LoansChartsDataType
 }
 
 const loansDefaultState: LoansState = {
-  loanAssets: [],
+  loanTokens: [],
   chartsData: {
     totalBorrowed: 0,
     borrowingChartData: [],

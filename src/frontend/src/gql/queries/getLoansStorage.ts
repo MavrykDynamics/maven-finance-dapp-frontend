@@ -5,6 +5,12 @@ export const LOANS_QUERY = `query GetLoansStorage {
       amount
       timestamp
     }
+    loan_tokens {
+      lp_token_address
+      utilisation_rate
+      total_borrowed
+      total_remaining
+    }
   }
 }`
 

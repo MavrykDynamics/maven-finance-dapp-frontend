@@ -27,7 +27,7 @@ import {
 import { State } from 'reducers'
 
 export const Markets = () => {
-  const { loanAssets, chartsData } = useSelector((state: State) => state.loans)
+  const { loanTokens, chartsData } = useSelector((state: State) => state.loans)
 
   return (
     <LoansStyled>
@@ -81,23 +81,39 @@ export const Markets = () => {
         <GovRightContainerTitleArea>
           <h2>Markets</h2>
         </GovRightContainerTitleArea>
-        {loanAssets.map((loanAsset) => {
+        {loanTokens?.map((loanAsset) => {
+          const {
+            loanTokenData: { name, symbol, icon, rate },
+            utilisationRate,
+            totalBorrowed,
+            totalLended,
+          } = loanAsset ?? {}
           return (
             <MarketOverview>
               <div className="asset-info">
-                <Icon id={'xtzTezos'} />
-                <div className="name">{loanAsset}</div>
-                <div className="rate">
-                  <CommaNumber beginningText="$" value={1.342} />
-                </div>
+                {icon ? (
+                  <div className="icon">
+                    <img src={icon} alt={`${symbol} logo`} />
+                  </div>
+                ) : (
+                  <Icon id={'noIcon'} />
+                )}
+                <div className="name">{name}</div>
+                {rate ? (
+                  <div className="rate">
+                    <CommaNumber beginningText="$" value={rate} />{' '}
+                  </div>
+                ) : null}
               </div>
 
               <div className="content-wrapper">
                 <div className="row">
                   <ThreeLevelListItem>
                     <div className="name">Total Lending</div>
-                    <CommaNumber value={12414.2423} className="value" showLetter />
-                    <CommaNumber value={12414.2423} beginningText="$" className="rate" showLetter />
+                    <CommaNumber value={totalLended} className="value" showLetter />
+                    {rate ? (
+                      <CommaNumber value={totalLended * rate} beginningText="$" className="rate" showLetter />
+                    ) : null}
                   </ThreeLevelListItem>
                   <ThreeLevelListItem>
                     <div className="name">Lend APY</div>
@@ -113,17 +129,19 @@ export const Markets = () => {
                   </ThreeLevelListItem>
                   <ThreeLevelListItem>
                     <div className="name">Utilization Rate</div>
-                    <CommaNumber value={12414.2423} className="value" endingText="%" showLetter />
+                    <CommaNumber value={utilisationRate} className="value" endingText="%" showLetter />
                   </ThreeLevelListItem>
-                  <Link to={`/market/${loanAsset}/${LEND_TAB_ID}`}>
+                  <Link to={`/market/${symbol}/${LEND_TAB_ID}`}>
                     <Button text="Lend" kind={ACTION_PRIMARY} iconAfter icon="arrowRight" />
                   </Link>
                 </div>
                 <div className="row">
                   <ThreeLevelListItem>
                     <div className="name">Total Borrowed</div>
-                    <CommaNumber value={12414.2423} className="value" showLetter />
-                    <CommaNumber value={12414.2423} beginningText="$" showLetter className="rate" />
+                    <CommaNumber value={totalBorrowed} className="value" showLetter />
+                    {rate ? (
+                      <CommaNumber value={totalBorrowed * rate} beginningText="$" showLetter className="rate" />
+                    ) : null}
                   </ThreeLevelListItem>
                   <ThreeLevelListItem>
                     <div className="name">Borrow APR</div>
@@ -146,7 +164,7 @@ export const Markets = () => {
                       beginningText="$"
                     />
                   </ThreeLevelListItem>
-                  <Link to={`/market/${loanAsset}/${BORROW_TAB_ID}`}>
+                  <Link to={`/market/${symbol}/${BORROW_TAB_ID}`}>
                     <Button text="Borrow" kind={ACTION_PRIMARY} iconAfter icon="arrowRight" />
                   </Link>
                 </div>

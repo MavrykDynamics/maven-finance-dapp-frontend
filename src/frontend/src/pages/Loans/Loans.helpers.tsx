@@ -1,8 +1,14 @@
 import { UTCTimestamp } from 'lightweight-charts'
-import { LoansChartsDataType } from 'reducers/loans'
-import { LoansGQL } from 'utils/TypesAndInterfaces/Loans'
+import { State } from 'reducers'
+import { LoansChartsDataType, LoansGQL, LoanTokenType } from 'utils/TypesAndInterfaces/Loans'
 
-export const normalizeLoans = (storage?: LoansGQL) => {
+export const normalizeLoans = ({
+  storage,
+  dipDupTokens,
+}: {
+  storage: LoansGQL
+  dipDupTokens: State['tokens']['dipDupTokens']
+}) => {
   const chartsData = storage?.history_data?.reduce<LoansChartsDataType>(
     (acc, { type, amount, timestamp }) => {
       switch (type) {
@@ -28,10 +34,32 @@ export const normalizeLoans = (storage?: LoansGQL) => {
     },
   )
 
-  console.log('chartsData', chartsData)
+  const loanTokens = storage?.loan_tokens?.reduce<Array<LoanTokenType>>(
+    (acc, { lp_token_address, utilisation_rate, total_borrowed, total_remaining }) => {
+      const tokenInfo = dipDupTokens?.find(({ contract }) => contract === lp_token_address)
+
+      if (tokenInfo) {
+        const loanToken = {
+          loanTokenData: {
+            name: tokenInfo.metadata.name,
+            symbol: tokenInfo.metadata.symbol,
+            decimals: tokenInfo.metadata.decimals,
+            icon: tokenInfo.metadata.icon,
+          },
+          utilisationRate: utilisation_rate,
+          totalBorrowed: total_borrowed,
+          totalLended: total_remaining,
+        }
+
+        acc.push(loanToken)
+      }
+      return acc
+    },
+    [],
+  )
 
   return {
-    loanAssets: ['XTZ', 'EURL', 'USDT'],
+    loanTokens,
     chartsData,
   }
 }

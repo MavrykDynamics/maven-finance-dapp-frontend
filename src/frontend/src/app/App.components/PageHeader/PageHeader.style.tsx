@@ -65,9 +65,16 @@ export const PageHeaderTextArea = styled.div`
   .asset-wrapper {
     display: flex;
     align-items: center;
-    svg {
+    svg,
+    .icon {
       width: 45px;
       height: 45px;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
     }
   }
 

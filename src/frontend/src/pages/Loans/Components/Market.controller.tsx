@@ -58,16 +58,16 @@ import { getPageNumber } from 'pages/FinacialRequests/FinancialRequests.helpers'
 export const Market = () => {
   const { search } = useLocation()
   const { assetId, tabId } = useParams<{ assetId: string; tabId: string }>()
-  const { loanAssets } = useSelector((state: State) => state.loans)
+  const { loanTokens } = useSelector((state: State) => state.loans)
 
   const foregroundImageSrc = ASSETS_WE_HAVE_BG_TO.includes(assetId)
     ? `/images/lending-header-${assetId.toUpperCase()}.svg`
     : '/images/lending-header.svg'
 
-  const [prevMarket, nextMarket] = useMemo(() => {
-    const currentAssetIdx = loanAssets.findIndex((asset) => asset === assetId)
-    return [loanAssets[currentAssetIdx - 1], loanAssets[currentAssetIdx + 1]]
-  }, [assetId, loanAssets])
+  const [prevMarket, nextMarket, currentAsset] = useMemo(() => {
+    const currentAssetIdx = loanTokens.findIndex(({ loanTokenData: { symbol } }) => symbol === assetId)
+    return [loanTokens[currentAssetIdx - 1], loanTokens[currentAssetIdx + 1], loanTokens[currentAssetIdx]]
+  }, [assetId, loanTokens])
 
   const currentPage = getPageNumber(search, TRANSACTION_HISTORY_TABLE_NAME)
 
@@ -80,11 +80,15 @@ export const Market = () => {
     <Page>
       <PageHeaderStyled backgroundImageSrc={'/images/dapp-header-bg.svg'}>
         <PageHeaderTextArea className="loans">
-          {assetId && (
-            <div className="asset-wrapper">
-              <Icon id={'xtzTezos'} />
-            </div>
-          )}
+          <div className="asset-wrapper">
+            {currentAsset.loanTokenData.icon ? (
+              <div className="icon">
+                <img src={currentAsset.loanTokenData.icon} alt={`${currentAsset.loanTokenData.symbol} logo`} />
+              </div>
+            ) : (
+              <Icon id={'noIcon'} />
+            )}
+          </div>
           <div className="text-container">
             <h1>{assetId.toUpperCase()} Market</h1>
             <p>{`Lend and borrow ${assetId} and manage your current ${assetId} positions`}</p>
@@ -103,7 +107,7 @@ export const Market = () => {
 
         <div className="right-side-wrapper">
           {prevMarket ? (
-            <Link to={`/market/${prevMarket}/${tabId}`}>
+            <Link to={`/market/${prevMarket.loanTokenData.symbol}/${tabId}`}>
               <span className="left">
                 <Icon id="paginationArrowLeft" /> Previous Market
               </span>
@@ -111,7 +115,7 @@ export const Market = () => {
           ) : null}
 
           {nextMarket ? (
-            <Link to={`/market/${nextMarket}/${tabId}`}>
+            <Link to={`/market/${nextMarket.loanTokenData.symbol}/${tabId}`}>
               <span className="right">
                 Next Market
                 <Icon id="paginationArrowLeft" />
