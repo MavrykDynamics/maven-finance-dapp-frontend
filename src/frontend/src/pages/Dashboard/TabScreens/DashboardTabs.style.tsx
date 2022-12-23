@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 import { CardHover, cyanColor } from 'styles'
 import { MavrykTheme } from 'styles/interfaces'
+import { EmptyContainer as EmptyContainerBase } from 'app/App.style'
 
 export const TabWrapperStyled = styled.div<{ theme: MavrykTheme; backgroundImage?: string }>`
   padding: 24px 32px 40px 32px;
@@ -11,6 +12,7 @@ export const TabWrapperStyled = styled.div<{ theme: MavrykTheme; backgroundImage
   background-size: auto;
   background-repeat: no-repeat;
   background-position: right bottom;
+  border: 1px solid ${({ theme }) => theme.cardBorderColor};
   border-radius: 10px;
   height: 530px;
   display: flex;
@@ -178,6 +180,10 @@ export const TreasuryContentStyled = styled.div<{ theme: MavrykTheme }>`
   .top {
     width: fit-content;
     column-gap: 50px;
+
+    .name {
+      text-transform: capitalize;
+    }
 
     .value {
       height: 25px;
@@ -377,6 +383,7 @@ export const VaultsContentStyled = styled.div<{ theme: MavrykTheme }>`
         line-height: 30px;
         padding-left: 10px;
         background-color: ${({ theme }) => theme.containerColor};
+        text-transform: uppercase;
       }
     }
 
@@ -432,10 +439,6 @@ export const FarmsContentStyled = styled.div<{ theme: MavrykTheme }>`
         display: none;
       }
     }
-  }
-
-  .empty-container {
-    margin-left: 150px;
   }
 
   .card {
@@ -515,4 +518,9 @@ export const PopularFeed = styled(CardHover)`
   margin-top: 0;
   padding: 12px 20px 12px 19px;
   border: 1px solid transparent;
+`
+
+export const EmptyContainer = styled(EmptyContainerBase)`
+  margin: auto;
+  padding: 0;
 `

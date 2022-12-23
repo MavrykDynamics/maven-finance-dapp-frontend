@@ -14,6 +14,8 @@ import { State } from 'reducers'
 import { parseDate } from 'utils/time'
 import { StatBlock } from '../Dashboard.style'
 import { OraclesContentStyled, TabWrapperStyled, PopularFeed } from './DashboardTabs.style'
+import { handleCoinName } from 'pages/Satellites/SatelliteList/ListCards/DataFeedCard.view'
+import { emptyContainer } from './LendingTab.controller'
 
 export const OraclesTab = () => {
   const dispatch = useDispatch()
@@ -24,6 +26,7 @@ export const OraclesTab = () => {
 
   const oracleFeeds = feeds.length
   const popularFeeds = feeds.slice(0, 3)
+
   useEffect(() => {
     dispatch(getOracleStorage())
   }, [dispatch])
@@ -67,14 +70,14 @@ export const OraclesTab = () => {
 
         <div className="block-name padding-left">Popular Feeds</div>
 
-        <div className="feeds-grid">
+        {popularFeeds.length ? <div className="feeds-grid">
           {popularFeeds.map((feed) => {
             const imageLink = dipDupTokens.find(({ contract }) => contract === feed.address)?.metadata?.icon
             return (
               <Link key={feed.address} to={`/satellites/feed-details/${feed.address}`}>
                 <PopularFeed className="row">
                   <StatBlock className="icon-first">
-                    <CoinsLogo imageLink={imageLink} />
+                  <CoinsLogo imageLink={imageLink} assetName={handleCoinName(feed.name)} />
                     <div className="name">Feed</div>
                     <div className="value">
                       <Trim title={feed.name} />
@@ -102,7 +105,7 @@ export const OraclesTab = () => {
               </Link>
             )
           })}
-        </div>
+        </div> : emptyContainer}
       </OraclesContentStyled>
 
       <div className="descr">

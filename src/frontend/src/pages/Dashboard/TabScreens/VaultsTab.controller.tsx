@@ -20,6 +20,7 @@ import { Link } from 'react-router-dom'
 import { State } from 'reducers'
 import { StatBlock, BlockName } from '../Dashboard.style'
 import { TabWrapperStyled, VaultsContentStyled } from './DashboardTabs.style'
+import { emptyContainer } from './LendingTab.controller'
 
 export const VaultsTab = () => {
   const [hoveredPath, setHoveredPath] = useState<null | string>(null)
@@ -41,94 +42,98 @@ export const VaultsTab = () => {
         </Link>
       </div>
 
-      <VaultsContentStyled>
-        <div className="top">
-          <StatBlock>
-            <div className="name">Active Vaults</div>
-            <div className="value">
-              <CommaNumber value={1234} />
-            </div>
-          </StatBlock>
-          <StatBlock>
-            <div className="name">Collateral Ratio</div>
-            <div className="value">
-              <CommaNumber endingText="%" value={123} />
-            </div>
-          </StatBlock>
-          <StatBlock>
-            <div className="name">Avg. Collateral Ratio</div>
-            <div className="value">
-              <CommaNumber endingText="%" value={333} />
-            </div>
-          </StatBlock>
-        </div>
-
-        <div className="container">
-          <div>
-            <BlockName>Treasury Assets</BlockName>
-
-            <TableScrollable bodyHeight={90} className="treasury-table scroll-block">
-              <Table>
-                <TableHeader className="treasury">
-                  <TableRow>
-                    <TableHeaderCell>Asset</TableHeaderCell>
-                    <TableHeaderCell>Amount</TableHeaderCell>
-                    <TableHeaderCell className="right">USD Value</TableHeaderCell>
-                  </TableRow>
-                </TableHeader>
-
-                <TableBody className="treasury">
-                  {assetsBalances.concat(assetsBalances).map(({ symbol, balance, usdValue, rate }) => {
-                    return (
-                      <TableRow rowHeight={25} borderColor="dataColor" className="add-hover">
-                        <TableCell width="33%">{symbol}</TableCell>
-                        <TableCell width="33%">
-                          <CommaNumber value={balance} useAccurateParsing />
-                        </TableCell>
-                        <TableCell width="33%" className="right">
-                          <CommaNumber value={usdValue} endingText={rate ? '$' : symbol} useAccurateParsing />
-                        </TableCell>
-                      </TableRow>
-                    )
-                  })}
-                </TableBody>
-              </Table>
-            </TableScrollable>
-
-            <div className="summary">
-              <div className="name">Vault TVL</div>
+      {treasuryStorage.length ? (
+        <VaultsContentStyled>
+          <div className="top">
+            <StatBlock>
+              <div className="name">Active Vaults</div>
               <div className="value">
-                <CommaNumber beginningText="$" value={34324234234.02} />
+                <CommaNumber value={1234} />
+              </div>
+            </StatBlock>
+            <StatBlock>
+              <div className="name">Collateral Ratio</div>
+              <div className="value">
+                <CommaNumber endingText="%" value={123} />
+              </div>
+            </StatBlock>
+            <StatBlock>
+              <div className="name">Avg. Collateral Ratio</div>
+              <div className="value">
+                <CommaNumber endingText="%" value={333} />
+              </div>
+            </StatBlock>
+          </div>
+
+          <div className="container">
+            <div>
+              <BlockName>Treasury Assets</BlockName>
+
+              <TableScrollable bodyHeight={90} className="treasury-table scroll-block">
+                <Table>
+                  <TableHeader className="treasury">
+                    <TableRow>
+                      <TableHeaderCell>Asset</TableHeaderCell>
+                      <TableHeaderCell>Amount</TableHeaderCell>
+                      <TableHeaderCell className="right">USD Value</TableHeaderCell>
+                    </TableRow>
+                  </TableHeader>
+
+                  <TableBody className="treasury">
+                    {assetsBalances.concat(assetsBalances).map(({ symbol, balance, usdValue, rate }) => {
+                      return (
+                        <TableRow rowHeight={25} borderColor="dataColor" className="add-hover">
+                          <TableCell width="33%">{symbol}</TableCell>
+                          <TableCell width="33%">
+                            <CommaNumber value={balance} useAccurateParsing />
+                          </TableCell>
+                          <TableCell width="33%" className="right">
+                            <CommaNumber value={usdValue} endingText={rate ? '$' : symbol} useAccurateParsing />
+                          </TableCell>
+                        </TableRow>
+                      )
+                    })}
+                  </TableBody>
+                </Table>
+              </TableScrollable>
+
+              <div className="summary">
+                <div className="name">Vault TVL</div>
+                <div className="value">
+                  <CommaNumber beginningText="$" value={34324234234.02} />
+                </div>
+              </div>
+            </div>
+            <div className="chart-wrapper">
+              <PieChartView chartData={chartData} />
+
+              <div className="asset-lables scroll-block">
+                {assetsBalances.map((balanceValue) => (
+                  <div
+                    style={{
+                      background: `linear-gradient(90deg,${
+                        chartData.find(
+                          ({ title }) => title === balanceValue.symbol || title.includes(balanceValue.symbol),
+                        )?.color
+                      } 0%,rgba(255,255,255,0) 100%)`,
+                    }}
+                    className="asset-lable"
+                    onMouseEnter={() => {
+                      setHoveredPath(balanceValue.symbol)
+                    }}
+                    onMouseLeave={() => setHoveredPath(null)}
+                    key={balanceValue.contract}
+                  >
+                    <p className="asset-lable-text">{balanceValue.symbol}</p>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
-          <div className="chart-wrapper">
-            <PieChartView chartData={chartData} />
-
-            <div className="asset-lables scroll-block">
-              {assetsBalances.map((balanceValue) => (
-                <div
-                  style={{
-                    background: `linear-gradient(90deg,${
-                      chartData.find(
-                        ({ title }) => title === balanceValue.symbol || title.includes(balanceValue.symbol),
-                      )?.color
-                    } 0%,rgba(255,255,255,0) 100%)`,
-                  }}
-                  className="asset-lable"
-                  onMouseEnter={() => {
-                    setHoveredPath(balanceValue.symbol)
-                  }}
-                  onMouseLeave={() => setHoveredPath(null)}
-                  key={balanceValue.contract}
-                >
-                  <p className="asset-lable-text">{balanceValue.symbol}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </VaultsContentStyled>
+        </VaultsContentStyled>
+      ) : (
+        emptyContainer
+      )}
 
       <div className="descr">
         <div className="title">What is a Vault?</div>

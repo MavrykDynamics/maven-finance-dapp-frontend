@@ -52,6 +52,7 @@ import {
   getPastBreakGlassCouncilAction,
   getBreakGlassCouncilMember,
   dropBreakGlass,
+  signAction,
 } from './BreakGlassCouncil.actions'
 
 const queryParameters = {
@@ -128,6 +129,10 @@ export function BreakGlassCouncil() {
     const chosenItem = itemsForDropDown.filter((item) => item.text === e)[0]
     setChosenDdItem(chosenItem)
     setDdIsOpen(!ddIsOpen)
+  }
+
+  const handleSignAction = (id: number) => {
+    dispatch(signAction(id))
   }
 
   const currentPage = getPageNumber(
@@ -235,6 +240,7 @@ export function BreakGlassCouncil() {
                       numCouncilMembers={breakGlassCouncilMember.length}
                       councilPendingActionsLength={breakGlassActionPendingSignature.length}
                       index={index}
+                      handleSignAction={handleSignAction}
                     />
                   ))}
                 </Carousel>

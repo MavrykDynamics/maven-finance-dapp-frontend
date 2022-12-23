@@ -20,6 +20,7 @@ import { State } from 'reducers'
 import { TreasuryBalanceType } from 'utils/TypesAndInterfaces/Treasury'
 import { BlockName, StatBlock } from '../Dashboard.style'
 import { TabWrapperStyled, TreasuryContentStyled, TreasuryVesting } from './DashboardTabs.style'
+import { emptyContainer } from './LendingTab.controller'
 
 export const TreasuryTab = () => {
   const dispatch = useDispatch()
@@ -62,7 +63,7 @@ export const TreasuryTab = () => {
         </Link>
       </div>
 
-      <TreasuryContentStyled>
+      {treasuryStorage.length ? <TreasuryContentStyled>
         <div className="top">
           <StatBlock>
             <div className="name">Global Treasury</div>
@@ -152,7 +153,7 @@ export const TreasuryTab = () => {
             </TreasuryVesting>
           </div>
         </div>
-      </TreasuryContentStyled>
+      </TreasuryContentStyled> : emptyContainer}
 
       <div className="descr">
         <div className="title">What is the purpose of the Treasury?</div>

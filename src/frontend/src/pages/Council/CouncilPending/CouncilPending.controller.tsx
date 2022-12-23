@@ -1,5 +1,4 @@
 import { useState, useCallback, useRef, useMemo } from 'react'
-import { useDispatch } from 'react-redux'
 import { createPortal } from 'react-dom'
 import { ModalCard, ModalCardContent, ModalClose, ModalMask, ModalStyled } from 'styles'
 
@@ -17,9 +16,6 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { BreakGlassActions } from 'utils/TypesAndInterfaces/BreakGlass'
 import { CouncilActions } from "utils/TypesAndInterfaces/Council";
 
-// actions
-import { signAction } from '../../BreakGlassCouncil/BreakGlassCouncil.actions'
-
 // styles
 import { CouncilPendingStyled } from './CouncilPending.style'
 import { AvatarStyle } from '../../../app/App.components/Avatar/Avatar.style'
@@ -28,11 +24,11 @@ type Props = (BreakGlassActions[0] | CouncilActions[0]) & {
   numCouncilMembers: number
   councilPendingActionsLength: number
   index: number
+  handleSignAction: (id: number) => void
 }
 
 export const CouncilPending = (props: Props) => {
-  const { id, actionType, signersCount, numCouncilMembers, councilPendingActionsLength, parameters, index } = props
-  const dispatch = useDispatch()
+  const { id, actionType, signersCount, numCouncilMembers, councilPendingActionsLength, parameters, index, handleSignAction } = props
 
   const [showing, setShowing] = useState(false)
   const { name, value } = parameters?.[0] || {}
@@ -44,9 +40,9 @@ export const CouncilPending = (props: Props) => {
     ref.current?.scrollWidth
   ])
 
-  const handleSign = () => {
+  const onClickSign = () => {
     if (id) {
-      dispatch(signAction(id))
+      handleSignAction(id)
     }
   }
 
@@ -156,7 +152,7 @@ export const CouncilPending = (props: Props) => {
                 )}
               </article>
   
-              <Button text="Sign" className="sign-btn" kind={'actionPrimary'} icon="sign" onClick={handleSign} />
+              <Button text="Sign" className="sign-btn" kind={'actionPrimary'} icon="sign" onClick={onClickSign} />
             </div>
           </CouncilPendingStyled>
           {showing ? createPortal(modal, document?.body) : null}
@@ -225,7 +221,7 @@ export const CouncilPending = (props: Props) => {
               )}
             </article>
 
-            <Button text="Sign" className="sign-btn" kind={'actionPrimary'} icon="sign" onClick={handleSign} />
+            <Button text="Sign" className="sign-btn" kind={'actionPrimary'} icon="sign" onClick={onClickSign} />
           </div>
         </CouncilPendingStyled>
       </>
@@ -302,7 +298,7 @@ export const CouncilPending = (props: Props) => {
               )}
             </article>
 
-            <Button text="Sign" className="sign-btn" kind={'actionPrimary'} icon="sign" onClick={handleSign} />
+            <Button text="Sign" className="sign-btn" kind={'actionPrimary'} icon="sign" onClick={onClickSign} />
           </div>
         </CouncilPendingStyled>
       </>
@@ -345,7 +341,7 @@ export const CouncilPending = (props: Props) => {
             </div>
           </article>
 
-          <Button text="Sign" className="sign-btn" kind={'actionPrimary'} icon="sign" onClick={handleSign} />
+          <Button text="Sign" className="sign-btn" kind={'actionPrimary'} icon="sign" onClick={onClickSign} />
         </div>
       </CouncilPendingStyled>
     )
@@ -397,7 +393,7 @@ export const CouncilPending = (props: Props) => {
             <span className="parameters-value">{vestingInMonths} months</span>
           </article>
 
-          <Button text="Sign" className="sign-btn" kind={'actionPrimary'} icon="sign" onClick={handleSign} />
+          <Button text="Sign" className="sign-btn" kind={'actionPrimary'} icon="sign" onClick={onClickSign} />
         </div>
       </CouncilPendingStyled>
     )
@@ -449,7 +445,7 @@ export const CouncilPending = (props: Props) => {
             <span className="parameters-value">{newVestingInMonths} months</span>
           </article>
 
-          <Button text="Sign" className="sign-btn" kind={'actionPrimary'} icon="sign" onClick={handleSign} />
+          <Button text="Sign" className="sign-btn" kind={'actionPrimary'} icon="sign" onClick={onClickSign} />
         </div>
       </CouncilPendingStyled>
     )
@@ -519,7 +515,7 @@ export const CouncilPending = (props: Props) => {
               </article>
             )}
 
-            <Button text="Sign" className="sign-btn" kind={'actionPrimary'} icon="sign" onClick={handleSign} />
+            <Button text="Sign" className="sign-btn" kind={'actionPrimary'} icon="sign" onClick={onClickSign} />
           </div>
         </CouncilPendingStyled>
         {showing ? createPortal(modal, document?.body) : null}
@@ -591,7 +587,7 @@ export const CouncilPending = (props: Props) => {
               </article>
             )}
 
-            <Button text="Sign" className="sign-btn" kind={'actionPrimary'} icon="sign" onClick={handleSign} />
+            <Button text="Sign" className="sign-btn" kind={'actionPrimary'} icon="sign" onClick={onClickSign} />
           </div>
         </CouncilPendingStyled>
         {showing ? createPortal(modal, document?.body) : null}
@@ -644,7 +640,7 @@ export const CouncilPending = (props: Props) => {
 
           <article />
 
-          <Button text="Sign" className="sign-btn" kind={'actionPrimary'} icon="sign" onClick={handleSign} />
+          <Button text="Sign" className="sign-btn" kind={'actionPrimary'} icon="sign" onClick={onClickSign} />
         </div>
         {showing ? createPortal(modal, document?.body) : null}
       </CouncilPendingStyled>
@@ -672,7 +668,7 @@ export const CouncilPending = (props: Props) => {
               </span>
             </div>
           </div>
-        <Button text="Sign" className="sign-btn" kind={'actionPrimary'} icon="sign" onClick={handleSign} />
+        <Button text="Sign" className="sign-btn" kind={'actionPrimary'} icon="sign" onClick={onClickSign} />
       </CouncilPendingStyled>
     )
   }
@@ -695,7 +691,7 @@ export const CouncilPending = (props: Props) => {
           </span>
         </div>
       </div>
-      <Button text="Sign" className="sign-btn" kind={ACTION_PRIMARY} icon="sign" onClick={handleSign} />
+      <Button text="Sign" className="sign-btn" kind={ACTION_PRIMARY} icon="sign" onClick={onClickSign} />
     </CouncilPendingStyled>
   )
 }
