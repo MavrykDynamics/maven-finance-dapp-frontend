@@ -77,7 +77,7 @@ export const BorrowingTab = ({ borrowingItems }: BorrowingTabPropsType) => {
                 {BORROWIND_MOCK ? (
                   <>
                     <div className="block-name">Borrowed</div>
-                    <Table className="simple-table borrowing-table">
+                    <Table className="borrowing-table">
                       <TableHeader>
                         <TableRow className="simple-header">
                           <TableHeaderCell>Borrowed Asset</TableHeaderCell>
@@ -129,8 +129,8 @@ export const BorrowingTab = ({ borrowingItems }: BorrowingTabPropsType) => {
 
                 {COLLATERAL_MOCK.length ? (
                   <>
-                    <div className="block-name">Collateral In Vault</div>
-                    <Table className="no-margin simple-table borrowing-table">
+                    <div className="block-name margin-top">Collateral In Vault</div>
+                    <Table className="no-margin borrowing-table">
                       <TableHeader className="simple-header">
                         <TableRow>
                           <TableHeaderCell>Vault Asset</TableHeaderCell>

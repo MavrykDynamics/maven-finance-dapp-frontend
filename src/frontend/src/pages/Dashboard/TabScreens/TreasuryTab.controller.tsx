@@ -8,6 +8,7 @@ import {
   TableHeaderCell,
   TableBody,
   TableCell,
+  TableScrollable,
 } from 'app/App.components/Table/Table.style'
 import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
 import { getVestingStorage } from 'pages/Treasury/Treasury.actions'
@@ -82,31 +83,33 @@ export const TreasuryTab = () => {
           <div>
             <BlockName>Treasury Assets</BlockName>
 
-            <Table className="no-margin simple-table treasury-table">
-              <TableHeader className="treasury">
-                <TableRow>
-                  <TableHeaderCell>Asset</TableHeaderCell>
-                  <TableHeaderCell>Amount</TableHeaderCell>
-                  <TableHeaderCell className="right">USD Value</TableHeaderCell>
-                </TableRow>
-              </TableHeader>
+            <TableScrollable bodyHeight={90} className="treasury-table scroll-block">
+              <Table>
+                <TableHeader className="treasury">
+                  <TableRow>
+                    <TableHeaderCell>Asset</TableHeaderCell>
+                    <TableHeaderCell>Amount</TableHeaderCell>
+                    <TableHeaderCell className="right">USD Value</TableHeaderCell>
+                  </TableRow>
+                </TableHeader>
 
-              <TableBody className="treasury">
-                {assetsBalances.map(({ symbol, balance, usdValue, rate }) => {
-                  return (
-                    <TableRow rowHeight={25} borderColor="dataColor" className="add-hover">
-                      <TableCell width="33%">{symbol}</TableCell>
-                      <TableCell width="33%">
-                        <CommaNumber value={balance} useAccurateParsing />
-                      </TableCell>
-                      <TableCell width="33%" className="right">
-                        <CommaNumber value={usdValue} endingText={rate ? '$' : symbol} useAccurateParsing />
-                      </TableCell>
-                    </TableRow>
-                  )
-                })}
-              </TableBody>
-            </Table>
+                <TableBody className="treasury">
+                  {assetsBalances.concat(assetsBalances).map(({ symbol, balance, usdValue, rate }) => {
+                    return (
+                      <TableRow rowHeight={25} borderColor="dataColor" className="add-hover">
+                        <TableCell width="33%">{symbol}</TableCell>
+                        <TableCell width="33%">
+                          <CommaNumber value={balance} useAccurateParsing />
+                        </TableCell>
+                        <TableCell width="33%" className="right">
+                          <CommaNumber value={usdValue} endingText={rate ? '$' : symbol} useAccurateParsing />
+                        </TableCell>
+                      </TableRow>
+                    )
+                  })}
+                </TableBody>
+              </Table>
+            </TableScrollable>
           </div>
           <div>
             <BlockName>Token Vesting</BlockName>

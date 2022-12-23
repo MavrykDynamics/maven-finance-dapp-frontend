@@ -73,17 +73,29 @@ export const AddRowBtn = styled(TableActionsBtn)<{ theme: MavrykTheme }>`
   }
 `
 
+export const TableScrollable = styled.div<{ theme: MavrykTheme; bodyHeight: number }>`
+  overflow-y: auto;
+  padding-right: 8px;
+  overscroll-behavior: contain;
+  ${({ bodyHeight }) => css`
+    height: ${bodyHeight}px;
+  `}
+
+  thead {
+    position: sticky;
+    background-color: ${({ theme }) => theme.containerColor};
+    top: 0;
+  }
+
+  &.treasury-table {
+    margin-top: 30px;
+  }
+`
+
 export const Table = styled.table<{ theme: MavrykTheme }>`
   width: 100%;
-
-  &.simple-table {
-    margin-bottom: 30px;
-    border-collapse: collapse;
-  }
-
-  &.no-margin {
-    margin: 0;
-  }
+  position: relative;
+  border-collapse: collapse;
 
   &.borrowing-table {
     margin-top: 15px;
@@ -178,7 +190,7 @@ export const TableRow = styled.tr<{ theme: MavrykTheme; borderColor?: string; ro
   transition: border-bottom 0.4s;
 
   &:not(:last-child) {
-    border-bottom: 1px solid ${({ theme, borderColor = 'cardBorderColor' }) => theme[borderColor]};
+    border-bottom: 0.5px solid ${({ theme, borderColor = 'cardBorderColor' }) => theme[borderColor]};
   }
 
   td,
@@ -209,10 +221,17 @@ export const TableRow = styled.tr<{ theme: MavrykTheme; borderColor?: string; ro
     &:hover {
       > td {
         color: ${({ theme }) => theme.navTitleColor};
+        * {
+          color: ${({ theme }) => theme.navTitleColor};
+
+          svg {
+            stroke: ${({ theme }) => theme.navTitleColor};
+          }
+        }
       }
 
       &:not(:last-child) {
-        border-bottom: 1px solid ${({ theme }) => theme.navTitleColor};
+        border-bottom: 0.5px solid ${({ theme }) => theme.navTitleColor};
       }
     }
   }

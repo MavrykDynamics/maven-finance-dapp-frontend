@@ -88,6 +88,10 @@ export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
     font-size: 18px;
     color: ${({ theme }) => theme.textColor};
     margin-bottom: 10px;
+
+    &.margin-top {
+      margin-top: 30px;
+    }
   }
 
   .list {

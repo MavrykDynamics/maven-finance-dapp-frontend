@@ -181,7 +181,7 @@ export const Market = () => {
 
           {TRANSACTION_HISTORY_MOCK.length ? (
             <>
-              <Table className="no-margin simple-table treasury-table">
+              <Table className="treasury-table">
                 <TableHeader className="simple-header treasury">
                   <TableRow>
                     <TableHeaderCell>Description</TableHeaderCell>
@@ -195,7 +195,7 @@ export const Market = () => {
                 <TableBody className="transaction-history">
                   {paginatedTableRows.map(() => {
                     return (
-                      <TableRow rowHeight={45}>
+                      <TableRow rowHeight={45} className="add-hover" borderColor="dataColor">
                         <TableCell width={`20%`} className="vert-middle">
                           <span>Liquidity Added</span>
                         </TableCell>
