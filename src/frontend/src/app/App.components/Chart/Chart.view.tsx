@@ -13,8 +13,9 @@ import Icon from '../Icon/Icon.view'
 import { CommaNumber, formatNumber } from '../CommaNumber/CommaNumber.controller'
 import { headerColor, lightTextColor, skyColor } from 'styles'
 
+export type ChartPlotType = { time: UTCTimestamp; value: number }
 type TradingViewChartProps = {
-  data: { time: UTCTimestamp; value: number }[]
+  data: ChartPlotType[]
   colors?: {
     lineColor?: string
     areaTopColor?: string

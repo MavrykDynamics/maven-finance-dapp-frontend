@@ -27,7 +27,7 @@ import {
 import { State } from 'reducers'
 
 export const Markets = () => {
-  const { loanAssets } = useSelector((state: State) => state.loans)
+  const { loanAssets, chartsData } = useSelector((state: State) => state.loans)
 
   return (
     <LoansStyled>
@@ -35,10 +35,10 @@ export const Markets = () => {
         <div className="chart-wrapper">
           <div className="summary">
             <span>Total Lended:</span>
-            <CommaNumber value={109041.24} beginningText={'$'} />
+            <CommaNumber value={chartsData.totalLended} beginningText={'$'} />
           </div>
           <Chart
-            data={CHART_TEST_DATA}
+            data={chartsData.lendingChartData}
             colors={{
               lineColor: skyColor,
               areaTopColor: skyColor,
@@ -57,10 +57,10 @@ export const Markets = () => {
         <div className="chart-wrapper">
           <div className="summary">
             <span>Total Borrowed:</span>
-            <CommaNumber value={109041.24} beginningText={'$'} />
+            <CommaNumber value={chartsData.totalBorrowed} beginningText={'$'} />
           </div>
           <Chart
-            data={CHART_TEST_DATA}
+            data={chartsData.borrowingChartData}
             colors={{
               lineColor: skyColor,
               areaTopColor: skyColor,

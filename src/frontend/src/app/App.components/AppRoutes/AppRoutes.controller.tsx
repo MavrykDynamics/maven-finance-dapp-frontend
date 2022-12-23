@@ -33,7 +33,7 @@ import { scrollUpPage } from 'utils/scrollUpPage'
 import ProtectedRoute from './ProtectedRoute'
 import DashboardPersonal from 'pages/DashboardPersonal/DashboardPersonal.controller'
 import { LENDING_TAB_ID } from 'pages/Dashboard/Dashboard.utils'
-import { Market } from 'pages/Loans/Markets/Market.controller'
+import { Market } from 'pages/Loans/Components/Market.controller'
 
 export const AppRoutes = () => {
   const { pathname } = useLocation()

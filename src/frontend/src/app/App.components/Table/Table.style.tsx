@@ -168,15 +168,6 @@ export const TableBody = styled.tbody<{ theme: MavrykTheme }>`
     td:first-child {
       text-transform: uppercase;
     }
-
-    /* max-height: 80px;
-    display: block;
-    width: 100%;
-    overflow-y: auto;
-
-    tr {
-      width: 100%;
-    } */
   }
 
   &.transaction-history {

@@ -2,7 +2,7 @@ import { useDispatch } from 'react-redux'
 import { useEffect } from 'react'
 
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
-import { Markets } from './Markets/Markets.controller'
+import { Markets } from './Components/Markets.controller'
 
 import { getLoansStorage } from './Loans.actions'
 

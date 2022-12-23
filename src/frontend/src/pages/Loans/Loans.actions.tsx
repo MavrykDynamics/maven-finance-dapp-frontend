@@ -7,7 +7,7 @@ export const GET_LOANS_STORAGE = 'GET_LOANS_STORAGE'
 export const getLoansStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
   try {
     const storage = await fetchFromIndexer(LOANS_QUERY, LOANS_QUERY_NAME, LOANS_QUERY_VARIABLE)
-    const normalizedLoans = normalizeLoans(storage)
+    const normalizedLoans = normalizeLoans(storage?.lending_controller?.[0])
 
     dispatch({
       type: GET_LOANS_STORAGE,

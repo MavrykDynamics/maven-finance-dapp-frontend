@@ -32,8 +32,8 @@ import { MarketPagination, MarketStyled, ThreeLevelListItem, TransactionHistory 
 
 // types
 import { State } from 'reducers'
-import { BorrowingTab } from '../Components/BorrowingTab'
-import { LendingTab } from '../Components/LendingTab'
+import { BorrowingTab } from './BorrowingTab'
+import { LendingTab } from './LendingTab'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import {
