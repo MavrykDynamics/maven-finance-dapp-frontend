@@ -1,18 +1,11 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { useLocation, useParams } from 'react-router'
+import { Redirect, useLocation, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
 
 // const
 import { ACTION_SIMPLE, TRANSPARENT } from 'app/App.components/Button/Button.constants'
-import {
-  ASSETS_WE_HAVE_BG_TO,
-  BORROW_TAB_ID,
-  COLLATERAL_MOCK,
-  LEND_TAB_ID,
-  TRANSACTION_HISTORY_MOCK,
-  TRANSACTION_HISTORY_SLIDING_BUTTONS,
-} from '../Loans.const'
+import { ASSETS_WE_HAVE_BG_TO, BORROW_TAB_ID, LEND_TAB_ID, TRANSACTION_HISTORY_SLIDING_BUTTONS } from '../Loans.const'
 
 // view
 import { Button } from 'app/App.components/Button/Button.controller'
@@ -44,7 +37,6 @@ import {
   TableBody,
   TableCell,
 } from 'app/App.components/Table/Table.style'
-import { parseDate } from 'utils/time'
 import { TzAddress } from 'pages/Treasury/Treasury.style'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { Pagination } from 'pages/BreakGlass/BreakGlass.style'
@@ -54,11 +46,40 @@ import {
   TRANSACTION_HISTORY_TABLE_NAME,
 } from 'pages/FinacialRequests/Pagination/pagination.consts'
 import { getPageNumber } from 'pages/FinacialRequests/FinancialRequests.helpers'
+import { LoanTokenType } from 'utils/TypesAndInterfaces/Loans'
+import { EmptyContainer } from 'app/App.style'
+
+const transactionHistoryEmpty = (
+  <EmptyContainer
+    style={{
+      padding: '30px 0 20px 0',
+    }}
+  >
+    <img src="/images/not-found.svg" alt=" No Transaction History to show" />
+    <figcaption> No Transaction History to show</figcaption>
+  </EmptyContainer>
+)
 
 export const Market = () => {
   const { search } = useLocation()
   const { assetId, tabId } = useParams<{ assetId: string; tabId: string }>()
   const { loanTokens } = useSelector((state: State) => state.loans)
+  const { accountPkh } = useSelector((state: State) => state.wallet)
+
+  const currentToken = useMemo(() => loanTokens.find(({ loanTokenData: { symbol } }) => assetId === symbol), [assetId])
+
+  const [switcherState, setSwitcherState] = useState<'all' | 'personal'>('all')
+  const [transactionHistory, setTransactionHistory] = useState<LoanTokenType['transactionHistory'] | undefined>(
+    currentToken?.transactionHistory,
+  )
+
+  useEffect(() => {
+    setTransactionHistory(
+      switcherState === 'all'
+        ? currentToken?.transactionHistory
+        : currentToken?.transactionHistory.filter(({ userAddress }) => accountPkh === userAddress),
+    )
+  }, [switcherState])
 
   const foregroundImageSrc = ASSETS_WE_HAVE_BG_TO.includes(assetId)
     ? `/images/lending-header-${assetId.toUpperCase()}.svg`
@@ -73,8 +94,12 @@ export const Market = () => {
 
   const paginatedTableRows = useMemo(() => {
     const [from, to] = calculateSlicePositions(currentPage, TRANSACTION_HISTORY_TABLE_NAME)
-    return TRANSACTION_HISTORY_MOCK?.slice(from, to)
-  }, [currentPage, TRANSACTION_HISTORY_MOCK])
+    return transactionHistory?.slice(from, to)
+  }, [currentPage, currentToken])
+
+  if (!currentToken) {
+    return <Redirect to={'/loans'} />
+  }
 
   return (
     <Page>
@@ -128,10 +153,17 @@ export const Market = () => {
       <MarketStyled>
         <div className="gen-info">
           <div className="asset-info">
-            <Icon id="xtzTezos" />
+            {currentToken.loanTokenData.icon ? (
+              <div className="img-wrapper">
+                <img src={currentToken.loanTokenData.icon} alt={`${currentToken.loanTokenData.icon} icon`} />
+              </div>
+            ) : (
+              <Icon id="xtzTezos" />
+            )}
+
             <div className="text-wrapper">
-              <div className="symbol">XTZ</div>
-              <div className="full-name">Tezos</div>
+              <div className="symbol">{currentToken.loanTokenData.symbol}</div>
+              <div className="full-name">{currentToken.loanTokenData.name}</div>
             </div>
           </div>
           <ThreeLevelListItem>
@@ -140,7 +172,7 @@ export const Market = () => {
           </ThreeLevelListItem>
           <ThreeLevelListItem>
             <div className="name">Total Borrowed</div>
-            <CommaNumber value={2.1} endingText="m" className="value" />
+            <CommaNumber value={currentToken.totalBorrowed} showLetter className="value" />
           </ThreeLevelListItem>
           <ThreeLevelListItem>
             <div className="name">Borrow APY</div>
@@ -148,11 +180,11 @@ export const Market = () => {
           </ThreeLevelListItem>
           <ThreeLevelListItem>
             <div className="name">Available Liquidity</div>
-            <CommaNumber value={22.2} endingText="m" className="value" />
+            <CommaNumber value={22.2} showLetter className="value" />
           </ThreeLevelListItem>
           <ThreeLevelListItem>
             <div className="name">Total Lending</div>
-            <CommaNumber value={2.2} endingText="m" className="value" />
+            <CommaNumber value={currentToken.totalLended} showLetter className="value" />
           </ThreeLevelListItem>
           <ThreeLevelListItem>
             <div className="name">Lending APY</div>
@@ -180,10 +212,13 @@ export const Market = () => {
               <h2>Transaction History</h2>
             </GovRightContainerTitleArea>
 
-            <SlidingTabButtons onClick={(tabId: number) => null} tabItems={TRANSACTION_HISTORY_SLIDING_BUTTONS} />
+            <SlidingTabButtons
+              onClick={(tabId: number) => setSwitcherState(tabId === 0 ? 'all' : 'personal')}
+              tabItems={TRANSACTION_HISTORY_SLIDING_BUTTONS}
+            />
           </div>
 
-          {TRANSACTION_HISTORY_MOCK.length ? (
+          {transactionHistory?.length ? (
             <>
               <Table className="treasury-table">
                 <TableHeader className="simple-header treasury">
@@ -197,24 +232,26 @@ export const Market = () => {
                 </TableHeader>
 
                 <TableBody className="transaction-history">
-                  {paginatedTableRows.map(() => {
+                  {paginatedTableRows?.map(({ descr, amount, date, userAddress, operationHash }) => {
+                    if (!descr) return null
+
                     return (
                       <TableRow rowHeight={45} className="add-hover" borderColor="dataColor">
-                        <TableCell width={`20%`} className="vert-middle">
-                          <span>Liquidity Added</span>
+                        <TableCell width={`25%`} className="vert-middle">
+                          <span>{descr}</span>
                         </TableCell>
-                        <TableCell width={`15%`}>
-                          <CommaNumber value={22.2} className="value" endingText="XTZ" />
+                        <TableCell width={`18%`}>
+                          <CommaNumber value={amount} className="value" endingText="XTZ" />
                         </TableCell>
-                        <TableCell width={`30%`}>
-                          {parseDate({ time: Date.now(), timeFormat: 'MMM Do, YYYY, HH:mm:ss UTC' })}
-                        </TableCell>
-                        <TableCell width={`15%`}>
-                          <TzAddress tzAddress="tz1ezDb77a9jaFMHDWs8QXrKEDkpgGdgsjPD" type={BLUE} />
+                        <TableCell width={`28%`}>{date}</TableCell>
+                        <TableCell width={`10%`}>
+                          <TzAddress tzAddress={userAddress} type={BLUE} />
                         </TableCell>
                         <TableCell className="buttons right">
                           <div className="cell-content row">
-                            <Button text="View TX" kind={TRANSPARENT} className="link" />
+                            <Link to={{ pathname: `https://ghostnet.tzkt.io/${operationHash}` }}>
+                              <Button text="View TX" kind={TRANSPARENT} className="link" />
+                            </Link>
                           </div>
                         </TableCell>
                       </TableRow>
@@ -223,10 +260,12 @@ export const Market = () => {
                 </TableBody>
               </Table>
             </>
-          ) : null}
+          ) : (
+            transactionHistoryEmpty
+          )}
 
           <Pagination
-            itemsCount={TRANSACTION_HISTORY_MOCK.length}
+            itemsCount={transactionHistory?.length ?? 0}
             listName={TRANSACTION_HISTORY_TABLE_NAME}
             side={PAGINATION_SIDE_CENTER}
           />

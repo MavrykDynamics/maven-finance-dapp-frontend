@@ -30,10 +30,8 @@ export const formatNumber = ({
   decimalsToShow,
   number,
   letterForNumber,
-  showLetter,
 }: {
   showDecimal: boolean
-  showLetter: boolean
   decimalsToShow: number
   number?: number
   letterForNumber: {
@@ -41,7 +39,7 @@ export const formatNumber = ({
     divideAmount: number
   } | null
 }): string | undefined => {
-  if (showDecimal && !number) return '0.00'
+  if (showDecimal && !number) return '0'
   return `${Number(Number(number) / (letterForNumber?.divideAmount ?? 1))?.toLocaleString('en-US', {
     maximumFractionDigits: showDecimal ? decimalsToShow : 0,
   })}${letterForNumber?.letterToShow ?? ''}`
@@ -72,7 +70,6 @@ export const CommaNumber = ({
   const letterToShow = showLetter ? getNumberLetter(value) : null
   let numberWithCommas = formatNumber({
     showDecimal,
-    showLetter,
     decimalsToShow,
     number: value,
     letterForNumber: letterToShow,

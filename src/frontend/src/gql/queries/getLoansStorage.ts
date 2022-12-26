@@ -10,6 +10,13 @@ export const LOANS_QUERY = `query GetLoansStorage {
       utilisation_rate
       total_borrowed
       total_remaining
+      history_data {
+        type
+        amount
+        timestamp
+        operation_hash
+        sender_id
+      }
     }
   }
 }`

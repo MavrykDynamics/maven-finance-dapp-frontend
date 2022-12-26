@@ -13,6 +13,13 @@ export type LoanTokenType = {
     icon: string
     rate?: number
   }
+  transactionHistory: Array<{
+    descr: string | null
+    amount: number
+    date: string | null
+    userAddress: string
+    operationHash: string
+  }>
   utilisationRate: number
   totalBorrowed: number
   totalLended: number

@@ -221,9 +221,16 @@ export const MarketStyled = styled.div<{ theme: MavrykTheme }>`
       display: flex;
       column-gap: 8px;
 
-      svg {
+      svg,
+      .img-wrapper {
         width: 45px;
         height: 45px;
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
       }
 
       .text-wrapper {
