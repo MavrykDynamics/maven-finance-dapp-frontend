@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 
 // const
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
-import { CHART_TEST_DATA } from 'pages/DashboardPersonal/tabs.const'
 import { BORROW_TAB_ID, LEND_TAB_ID } from '../Loans.const'
 
 // view
@@ -29,53 +28,63 @@ import { State } from 'reducers'
 export const Markets = () => {
   const { loanTokens, chartsData } = useSelector((state: State) => state.loans)
 
+  // TODO: add loader to the page, if data is not loaded, need to create dataLoaderHook
+
+  const lendingPart = (
+    <div className="chart-wrapper">
+      <div className="summary">
+        <span>Total Lended:</span>
+        <CommaNumber value={chartsData.totalLended} beginningText={'$'} />
+      </div>
+      <Chart
+        data={chartsData.lendingChartData}
+        colors={{
+          lineColor: skyColor,
+          areaTopColor: skyColor,
+          areaBottomColor: 'rgba(119, 164, 242, 0)',
+          textColor: '#CDCDCD',
+        }}
+        className="loan-chart"
+        settings={{
+          width: 372,
+          height: 182,
+          hideXAxis: true,
+          hideYAxis: true,
+        }}
+      />
+    </div>
+  )
+
+  const borrowingPart = (
+    <div className="chart-wrapper">
+      <div className="summary">
+        <span>Total Borrowed:</span>
+        <CommaNumber value={chartsData.totalBorrowed} beginningText={'$'} />
+      </div>
+      <Chart
+        data={chartsData.borrowingChartData}
+        colors={{
+          lineColor: skyColor,
+          areaTopColor: skyColor,
+          areaBottomColor: 'rgba(119, 164, 242, 0)',
+          textColor: '#CDCDCD',
+        }}
+        className="loan-chart"
+        settings={{
+          width: 372,
+          height: 182,
+          hideXAxis: true,
+          hideYAxis: true,
+        }}
+      />
+    </div>
+  )
+
   return (
     <LoansStyled>
       <MarketChartsContainer>
-        <div className="chart-wrapper">
-          <div className="summary">
-            <span>Total Lended:</span>
-            <CommaNumber value={chartsData.totalLended} beginningText={'$'} />
-          </div>
-          <Chart
-            data={chartsData.lendingChartData}
-            colors={{
-              lineColor: skyColor,
-              areaTopColor: skyColor,
-              areaBottomColor: 'rgba(119, 164, 242, 0)',
-              textColor: '#CDCDCD',
-            }}
-            className="loan-chart"
-            settings={{
-              width: 372,
-              height: 182,
-              hideXAxis: true,
-              hideYAxis: true,
-            }}
-          />
-        </div>
-        <div className="chart-wrapper">
-          <div className="summary">
-            <span>Total Borrowed:</span>
-            <CommaNumber value={chartsData.totalBorrowed} beginningText={'$'} />
-          </div>
-          <Chart
-            data={chartsData.borrowingChartData}
-            colors={{
-              lineColor: skyColor,
-              areaTopColor: skyColor,
-              areaBottomColor: 'rgba(119, 164, 242, 0)',
-              textColor: '#CDCDCD',
-            }}
-            className="loan-chart"
-            settings={{
-              width: 372,
-              height: 182,
-              hideXAxis: true,
-              hideYAxis: true,
-            }}
-          />
-        </div>
+        {lendingPart}
+        {borrowingPart}
       </MarketChartsContainer>
       <MarketsOverviewContainer>
         <GovRightContainerTitleArea>
@@ -85,11 +94,15 @@ export const Markets = () => {
           const {
             loanTokenData: { name, symbol, icon, rate },
             utilisationRate,
+            avaliableLiquidity,
+            borrowers,
+            collateral,
             totalBorrowed,
+            suppliers,
             totalLended,
           } = loanAsset ?? {}
           return (
-            <MarketOverview>
+            <MarketOverview key={name}>
               <div className="asset-info">
                 {icon ? (
                   <div className="icon">
@@ -125,13 +138,13 @@ export const Markets = () => {
                   </ThreeLevelListItem>
                   <ThreeLevelListItem>
                     <div className="name">Suppliers</div>
-                    <CommaNumber value={12414.2423} className="value" showLetter />
+                    <CommaNumber value={suppliers} className="value" showLetter />
                   </ThreeLevelListItem>
                   <ThreeLevelListItem>
                     <div className="name">Utilization Rate</div>
                     <CommaNumber value={utilisationRate} className="value" endingText="%" showLetter />
                   </ThreeLevelListItem>
-                  <Link to={`/market/${symbol}/${LEND_TAB_ID}`}>
+                  <Link to={`/loans/${symbol}/${LEND_TAB_ID}`}>
                     <Button text="Lend" kind={ACTION_PRIMARY} iconAfter icon="arrowRight" />
                   </Link>
                 </div>
@@ -149,22 +162,22 @@ export const Markets = () => {
                   </ThreeLevelListItem>
                   <ThreeLevelListItem>
                     <div className="name">Available Liquidity</div>
-                    <CommaNumber value={12414.2423} className="value" showLetter beginningText="$" />
+                    <CommaNumber value={avaliableLiquidity} className="value" showLetter beginningText="$" />
                   </ThreeLevelListItem>
                   <ThreeLevelListItem>
                     <div className="name">Borrowers</div>
-                    <CommaNumber value={12414.2423} className="value" showLetter />
+                    <CommaNumber value={borrowers} className="value" showLetter />
                   </ThreeLevelListItem>
                   <ThreeLevelListItem>
                     <div className="name">Total Collateral</div>
                     <CommaNumber
-                      value={12414.2423}
+                      value={collateral}
                       showLetter
                       className={`value ${true ? 'up' : 'down'}`}
                       beginningText="$"
                     />
                   </ThreeLevelListItem>
-                  <Link to={`/market/${symbol}/${BORROW_TAB_ID}`}>
+                  <Link to={`/loans/${symbol}/${BORROW_TAB_ID}`}>
                     <Button text="Borrow" kind={ACTION_PRIMARY} iconAfter icon="arrowRight" />
                   </Link>
                 </div>

@@ -9,6 +9,7 @@ export const TRANSPARENT = 'transparent'
 export const ACTION_PRIMARY = 'actionPrimary'
 export const ACTION_SECONDARY = 'actionSecondary'
 export const ACTION_SIMPLE = 'actionSimple'
+
 export type ButtonStyle =
   | typeof PRIMARY
   | typeof SECONDARY

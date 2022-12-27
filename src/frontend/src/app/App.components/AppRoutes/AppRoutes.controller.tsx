@@ -129,7 +129,7 @@ export const AppRoutes = () => {
       <Route exact path="/data-feeds">
         <DataFeeds />
       </Route>
-      <Route exact path="/market/:assetId/:tabId">
+      <Route exact path="/loans/:assetId/:tabId">
         <Market />
       </Route>
       <Route exact path="/loans">

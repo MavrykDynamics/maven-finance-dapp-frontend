@@ -19,9 +19,15 @@ export type LoanTokenType = {
     date: string | null
     userAddress: string
     operationHash: string
+    tokenSymbol: string | undefined
   }>
   utilisationRate: number
+  borrowers: number
+  suppliers: number
+  collateral: number
+  reserveRatio: number
   totalBorrowed: number
+  avaliableLiquidity: number
   totalLended: number
 }
 

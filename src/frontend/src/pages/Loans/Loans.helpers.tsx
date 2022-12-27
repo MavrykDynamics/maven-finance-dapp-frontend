@@ -1,16 +1,61 @@
 import { UTCTimestamp } from 'lightweight-charts'
 import { State } from 'reducers'
+import { Lending_Controller_History_Data, Lending_Controller_Vault } from 'utils/generated/graphqlTypes'
 import { parseDate } from 'utils/time'
 import { LoansChartsDataType, LoansGQL, LoanTokenType } from 'utils/TypesAndInterfaces/Loans'
 
-export const normalizeLoans = ({
-  storage,
-  dipDupTokens,
-}: {
-  storage: LoansGQL
-  dipDupTokens: State['tokens']['dipDupTokens']
-}) => {
-  const chartsData = storage?.history_data?.reduce<LoansChartsDataType>(
+const corrateralCalc = (vaults: Lending_Controller_Vault[]) =>
+  vaults.reduce((acc, { collateral_balances }) => {
+    const vaultCorratealBalance = collateral_balances.reduce((vaultAcc, { balance, token }) => {
+      // TODO: add multipliying by rate of the asset
+      vaultAcc += balance
+      return vaultAcc
+    }, 0)
+
+    acc += vaultCorratealBalance
+    return acc
+  }, 0)
+
+const getTransactionHistory = (
+  history_data: Lending_Controller_History_Data[],
+  dipDupTokens: State['tokens']['dipDupTokens'],
+) =>
+  history_data.reduce<{
+    transactionHistory: LoanTokenType['transactionHistory']
+    totalBorrowed: number
+    totalLended: number
+  }>(
+    (acc, { type, amount, timestamp, sender_id, operation_hash, loan_token }) => {
+      const tokenSymbol = dipDupTokens?.find(({ contract }) => contract === loan_token?.loan_token_address)?.metadata
+        .symbol
+
+      const descrByType = getDescrByType(type)
+      if (descrByType) {
+        acc.transactionHistory.push({
+          amount,
+          date: parseDate({ time: new Date(timestamp).getTime(), timeFormat: 'MMM Do, YYYY, HH:mm:ss UTC' }),
+          userAddress: sender_id,
+          operationHash: operation_hash,
+          descr: getDescrByType(type),
+          tokenSymbol,
+        })
+      }
+
+      if (type === 1 || type === 0) {
+        acc.totalLended += amount
+      }
+
+      if (type === 3 || type === 2) {
+        acc.totalBorrowed += amount
+      }
+
+      return acc
+    },
+    { transactionHistory: [], totalBorrowed: 0, totalLended: 0 },
+  )
+
+const getChartData = (history_data: Lending_Controller_History_Data[]) =>
+  history_data?.reduce<LoansChartsDataType>(
     (acc, { type, amount, timestamp }) => {
       switch (type) {
         case 0:
@@ -35,32 +80,41 @@ export const normalizeLoans = ({
     },
   )
 
+export const normalizeLoans = ({
+  storage,
+  dipDupTokens,
+  mTokens,
+}: {
+  storage: LoansGQL
+  dipDupTokens: State['tokens']['dipDupTokens']
+  mTokens: State['tokens']['mTokens']
+}) => {
+  const chartsData = getChartData(storage?.history_data)
   const loanTokens = storage?.loan_tokens?.reduce<Array<LoanTokenType>>(
-    (acc, { lp_token_address, utilisation_rate, total_borrowed, total_remaining, history_data }) => {
+    (
+      acc,
+      { lp_token_address, loan_token_name, utilisation_rate, total_remaining, history_data, vaults, reserve_ratio },
+    ) => {
       const tokenInfo = dipDupTokens?.find(({ contract }) => contract === lp_token_address)
+      const { transactionHistory, totalBorrowed, totalLended } = getTransactionHistory(history_data, dipDupTokens)
 
       if (tokenInfo) {
         const loanToken = {
           loanTokenData: {
-            name: tokenInfo.metadata.name,
+            name: loan_token_name,
             symbol: tokenInfo.metadata.symbol,
             decimals: tokenInfo.metadata.decimals,
             icon: tokenInfo.metadata.icon,
           },
-          transactionHistory: history_data
-            .map(({ type, amount, timestamp, sender_id, operation_hash }) => {
-              return {
-                amount,
-                date: parseDate({ time: new Date(timestamp).getTime(), timeFormat: 'MMM Do, YYYY, HH:mm:ss UTC' }),
-                userAddress: sender_id,
-                operationHash: operation_hash,
-                descr: getDescrByType(type),
-              }
-            })
-            .filter(({ descr }) => Boolean(descr)),
+          transactionHistory,
           utilisationRate: utilisation_rate,
-          totalBorrowed: total_borrowed,
-          totalLended: total_remaining,
+          totalBorrowed,
+          borrowers: vaults.length,
+          suppliers: mTokens.filter(({ loan_token_name: m_token_name }) => loan_token_name === m_token_name).length,
+          collateral: corrateralCalc(vaults),
+          totalLended,
+          reserveRatio: reserve_ratio,
+          avaliableLiquidity: total_remaining,
         }
 
         acc.push(loanToken)

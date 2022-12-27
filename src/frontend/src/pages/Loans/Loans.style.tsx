@@ -329,7 +329,7 @@ export const FillBlock = styled.div<{ theme: MavrykTheme; width: number }>`
   }
 `
 
-export const TransactionHistory = styled.div<{ theme: MavrykTheme }>`
+export const TransactionHistoryStyled = styled.div<{ theme: MavrykTheme }>`
   margin-top: 20px;
   border: 1px solid ${({ theme }) => theme.cardBorderColor};
   border-radius: 10px;

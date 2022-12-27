@@ -126,6 +126,7 @@ export const TableHeader = styled.thead<{ theme: MavrykTheme }>`
 
     th {
       text-align: left;
+      font-weight: 600;
     }
   }
 

@@ -16,11 +16,11 @@ const getNumberLetter = (value: number) => {
   const divByThouth = Number(value) / 1_000
   const divByMil = Number(value) / 1_000_000
   const divByBil = Number(value) / 1_000_000_000
-  return divByThouth < 1_000 && divByThouth > 1
+  return divByThouth < 1_000 && divByThouth >= 1
     ? { letterToShow: 'k', divideAmount: 1_000 }
-    : divByMil < 1_000 && divByMil > 1
+    : divByMil < 1_000 && divByMil >= 1
     ? { letterToShow: 'm', divideAmount: 1_000_000 }
-    : divByBil < 1_000 && divByBil > 1
+    : divByBil < 1_000 && divByBil >= 1
     ? { letterToShow: 'b', divideAmount: 1_000_000_000 }
     : null
 }

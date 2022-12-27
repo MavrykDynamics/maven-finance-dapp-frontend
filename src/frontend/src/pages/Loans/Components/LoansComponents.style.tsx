@@ -79,9 +79,12 @@ export const LendingTabListItem = styled.div<{ theme: MavrykTheme }>`
 export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
   background-color: ${({ theme }) => theme.backgroundColor};
   border-radius: 10px;
+  border-top-right-radius: 0;
+  border-top-left-radius: 0;
   padding: 18px 20px;
   display: flex;
   flex-direction: column;
+  position: relative;
 
   .block-name {
     font-weight: 600;
@@ -129,6 +132,69 @@ export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
     }
   }
 
+  .borrowed-data {
+    display: flex;
+
+    > div:not(:last-child) {
+      width: 15%;
+    }
+
+    .buttons-wrapper {
+      margin-left: auto;
+      display: flex;
+      column-gap: 10px;
+
+      button {
+        max-height: 36px;
+        padding: 0 31px;
+      }
+    }
+  }
+
+  .bottom-info-row {
+    display: flex;
+    align-items: center;
+    width: 400px;
+    margin: 4px 0;
+
+    .name {
+      margin-right: 10px;
+    }
+
+    .value {
+      color: ${({ theme }) => theme.dataColor};
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    button {
+      margin-left: auto;
+      padding: 0;
+      height: fit-content;
+
+      &:hover {
+        opacity: 0.8;
+        color: ${({ theme }) => theme.valueColor};
+
+        svg {
+          opacity: 0.8;
+        }
+
+        &::before {
+          display: none;
+        }
+      }
+
+      svg {
+        height: 14px;
+        width: 8px;
+        transform: rotate(180deg);
+        stroke-width: 2px;
+        stroke: ${({ theme }) => theme.valueColor};
+      }
+    }
+  }
+
   .go-back-btn {
     background: transparent;
     max-width: 140px;
@@ -146,5 +212,13 @@ export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
       stroke: ${({ theme }) => theme.valueColor};
       fill: ${({ theme }) => theme.valueColor};
     }
+  }
+
+  .close-vault {
+    position: absolute;
+    right: 18px;
+    bottom: 20px;
+    width: 200px;
+    height: 50px;
   }
 `

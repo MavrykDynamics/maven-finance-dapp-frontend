@@ -20,7 +20,7 @@ export const Loans = () => {
         await dispatch(getLoansStorage())
       }
     })()
-  }, [isInitialDataloading, dipDupTokens])
+  }, [isInitialDataloading, dipDupTokens, dispatch])
 
   return (
     <Page>

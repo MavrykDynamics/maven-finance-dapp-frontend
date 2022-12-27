@@ -1,0 +1,192 @@
+import { BORROWIND_MOCK, COLLATERAL_MOCK } from '../Loans.const'
+import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+import { ACTION_PRIMARY, ACTION_SIMPLE, TRANSPARENT } from 'app/App.components/Button/Button.constants'
+
+import { Button } from 'app/App.components/Button/Button.controller'
+import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+import Expand from 'app/App.components/Expand/Expand.view'
+import Icon from 'app/App.components/Icon/Icon.view'
+
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHeaderCell,
+  TableBody,
+  TableCell,
+} from 'app/App.components/Table/Table.style'
+import { TzAddress } from 'pages/Treasury/Treasury.style'
+import { ThreeLevelListItem, FillBlock } from '../Loans.style'
+import { BorrowingTabListItemExpanded } from './LoansComponents.style'
+
+type BorrowingExpandCardPropsType = {
+  showFull?: boolean
+}
+
+export const BorrowingExpandCard = ({ showFull = false }: BorrowingExpandCardPropsType) => {
+  return (
+    <Expand
+      className="expand-borrow-tab"
+      header={
+        <>
+          <ThreeLevelListItem>
+            <div className="name">Borrowed Asset</div>
+            <div className="value">
+              <Icon id="xtzTezos" />
+              XTZ
+            </div>
+          </ThreeLevelListItem>
+          <ThreeLevelListItem>
+            <div className="name">Amt Borrowed</div>
+            <CommaNumber value={12414.2423} className="value" showLetter />
+            <CommaNumber value={12414.2423} beginningText="$" className="rate" showLetter />
+          </ThreeLevelListItem>
+          <ThreeLevelListItem>
+            <div className="name">Collateral Balance</div>
+            <CommaNumber value={22.2} className="value" endingText="%" />
+          </ThreeLevelListItem>
+          <ThreeLevelListItem>
+            <TzAddress tzAddress="tz1ezDb77a9jaFMHDWs8QXrKEDkpgGdgsjPD" type={BLUE} />
+            <FillBlock width={75}>
+              <div className="colored"></div>
+            </FillBlock>
+            <div className="info-tip">
+              Collateral Utilization:
+              <span>
+                <CommaNumber value={22.5} endingText="%" />
+              </span>
+            </div>
+          </ThreeLevelListItem>
+        </>
+      }
+    >
+      <BorrowingTabListItemExpanded>
+        {BORROWIND_MOCK ? (
+          <>
+            <div className="block-name">Borrowed</div>
+            <div className="borrowed-data">
+              <ThreeLevelListItem>
+                <div className="name">Borrowed Asset</div>
+                <div className="value">
+                  <Icon id="xtzTezos" />
+                  XTZ
+                </div>
+              </ThreeLevelListItem>
+              <ThreeLevelListItem>
+                <div className="name">Amt Borrowed</div>
+                <CommaNumber value={22.2} className="value" endingText="%" />
+                <CommaNumber value={2343322.2} className="rate" beginningText="$" showLetter />
+              </ThreeLevelListItem>
+              <ThreeLevelListItem>
+                <div className="name">Borrowing Fee</div>
+                <CommaNumber value={22.2} className="value" endingText="%" />
+                <CommaNumber value={234322.2} className="rate" beginningText="$" showLetter />
+              </ThreeLevelListItem>
+              <ThreeLevelListItem>
+                <div className="name">Borrow APY</div>
+                <CommaNumber value={22.2} className="value" endingText="%" />
+              </ThreeLevelListItem>
+              <div className="buttons-wrapper">
+                <Button text="Borrow" kind={ACTION_PRIMARY} className="" />
+                <Button text="Repay" kind={TRANSPARENT} className="go-back-btn loans" />
+              </div>
+            </div>
+          </>
+        ) : null}
+
+        {COLLATERAL_MOCK.length ? (
+          <>
+            <div className="block-name margin-top">Collateral In Vault</div>
+            <Table className="no-margin borrowing-table">
+              <TableHeader className="simple-header">
+                <TableRow>
+                  <TableHeaderCell>Vault Asset</TableHeaderCell>
+                  <TableHeaderCell>Vault Balance</TableHeaderCell>
+                  <TableHeaderCell>Withdraw Max</TableHeaderCell>
+                  <TableHeaderCell>Other Data</TableHeaderCell>
+                </TableRow>
+              </TableHeader>
+
+              <TableBody>
+                {COLLATERAL_MOCK.map(() => {
+                  return (
+                    <TableRow rowHeight={70}>
+                      <TableCell width={`15%`} className="vert-middle">
+                        <div className="cell-content row">
+                          <Icon id="xtzTezos" />
+                          XTZ
+                        </div>
+                      </TableCell>
+                      <TableCell width={`15%`}>
+                        <div className="cell-content">
+                          <CommaNumber value={22.2} className="value" endingText="%" />
+                          <CommaNumber value={2343322.2} className="rate" beginningText="$" showLetter />
+                        </div>
+                      </TableCell>
+                      <TableCell width={`15%`}>
+                        <div className="cell-content">
+                          <CommaNumber value={22.2} className="value" endingText="%" />
+                          <CommaNumber value={234322.2} className="rate" beginningText="$" showLetter />
+                        </div>
+                      </TableCell>
+                      <TableCell width={`15%`}>
+                        <CommaNumber value={22.2} className="value" endingText="%" />
+                      </TableCell>
+                      <TableCell className="buttons">
+                        <div className="cell-content row">
+                          <Button text="Add" icon="plus" kind={TRANSPARENT} className="go-back-btn loans" />
+                          <Button text="Remove" icon="minus" kind={TRANSPARENT} className="go-back-btn loans" />
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  )
+                })}
+              </TableBody>
+            </Table>
+
+            {showFull ? (
+              <>
+                <div className="block-name margin-top">Delegations</div>
+                <div className="bottom-info-row">
+                  <div className="name">XTZ Delegated to </div>
+                  <div className="value">
+                    <TzAddress tzAddress="tz1ezDb77a9jaFMHDWs8QXrKEDkpgGdgsjPD" type={BLUE} />
+                  </div>
+                  <Button kind={ACTION_SIMPLE} text="View Bakers" icon="paginationArrowLeft" iconAfter />
+                </div>
+                <div className="bottom-info-row">
+                  <div className="name">sMVKDelegated to </div>
+                  <div className="value">
+                    <TzAddress tzAddress="tz1ezDb77a9jaFMHDWs8QXrKEDkpgGdgsjPD" type={BLUE} />
+                  </div>
+                  <Button kind={ACTION_SIMPLE} text="View Satellite" icon="paginationArrowLeft" iconAfter />
+                </div>
+
+                <div className="block-name margin-top">Permissions</div>
+                <div className="bottom-info-row">
+                  <div className="name">Depositors </div>
+                  <div className="value">All allowed</div>
+                  <Button kind={ACTION_SIMPLE} text="View Bakers" icon="paginationArrowLeft" iconAfter />
+                </div>
+                <div className="bottom-info-row">
+                  <div className="name">MVK Operators </div>
+                  <div className="value">
+                    <TzAddress tzAddress="tz1ezDb77a9jaFMHDWs8QXrKEDkpgGdgsjPD" type={BLUE} />
+                  </div>
+                  <Button kind={ACTION_SIMPLE} text="View Satellite" icon="paginationArrowLeft" iconAfter />
+                </div>
+
+                <Button
+                  text="Close Vault"
+                  kind={TRANSPARENT}
+                  className="go-back-btn loans close-vault"
+                  icon="close-stroke"
+                />
+              </>
+            ) : null}
+          </>
+        ) : null}
+      </BorrowingTabListItemExpanded>
+    </Expand>
+  )
+}
