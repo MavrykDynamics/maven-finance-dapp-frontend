@@ -30,6 +30,10 @@ export const LOANS_QUERY = `query GetLoansStorage {
             token_address
           }
         }
+        history_data {
+          type
+          amount
+        }
       }
     }
   }

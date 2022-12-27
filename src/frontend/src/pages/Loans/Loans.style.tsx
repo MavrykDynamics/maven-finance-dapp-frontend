@@ -44,7 +44,7 @@ export const MarketChartsContainer = styled.div<{ theme: MavrykTheme }>`
 export const MarketsOverviewContainer = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   flex-direction: column;
-  margin-top: 20px;
+  margin-top: 30px;
   row-gap: 20px;
 `
 

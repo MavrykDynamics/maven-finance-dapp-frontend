@@ -16,7 +16,19 @@ export const PermissionVaults = ({ permissionVaults }: PermissionVaultsPropsType
 
       {permissionVaults.length || true ? (
         <div className="list-wrapper">
-          <BorrowingExpandCard />
+          <BorrowingExpandCard
+            borrowedAsset={{
+              assetSymbol: '',
+              assetIcon: undefined,
+              amtBorrowed: 0,
+              assetRate: 0,
+              collateralBalance: 0,
+              collateralUtilization: 0,
+              apy: 0,
+              fee: 0,
+            }}
+            collateralData={[]}
+          />
         </div>
       ) : (
         <EmptyContainer

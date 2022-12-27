@@ -24,6 +24,7 @@ import {
 
 // types
 import { State } from 'reducers'
+import { EmptyContainer } from 'app/App.style'
 
 export const Markets = () => {
   const { loanTokens, chartsData } = useSelector((state: State) => state.loans)
@@ -86,106 +87,121 @@ export const Markets = () => {
         {lendingPart}
         {borrowingPart}
       </MarketChartsContainer>
-      <MarketsOverviewContainer>
-        <GovRightContainerTitleArea>
-          <h2>Markets</h2>
-        </GovRightContainerTitleArea>
-        {loanTokens?.map((loanAsset) => {
-          const {
-            loanTokenData: { name, symbol, icon, rate },
-            utilisationRate,
-            avaliableLiquidity,
-            borrowers,
-            collateral,
-            totalBorrowed,
-            suppliers,
-            totalLended,
-          } = loanAsset ?? {}
-          return (
-            <MarketOverview key={name}>
-              <div className="asset-info">
-                {icon ? (
-                  <div className="icon">
-                    <img src={icon} alt={`${symbol} logo`} />
-                  </div>
-                ) : (
-                  <Icon id={'noIcon'} />
-                )}
-                <div className="name">{name}</div>
-                {rate ? (
-                  <div className="rate">
-                    <CommaNumber beginningText="$" value={rate} />{' '}
-                  </div>
-                ) : null}
-              </div>
 
-              <div className="content-wrapper">
-                <div className="row">
-                  <ThreeLevelListItem>
-                    <div className="name">Total Lending</div>
-                    <CommaNumber value={totalLended} className="value" showLetter />
-                    {rate ? (
-                      <CommaNumber value={totalLended * rate} beginningText="$" className="rate" showLetter />
-                    ) : null}
-                  </ThreeLevelListItem>
-                  <ThreeLevelListItem>
-                    <div className="name">Lend APY</div>
-                    <CommaNumber value={22} className="value" endingText="%" showLetter />
-                  </ThreeLevelListItem>
-                  <ThreeLevelListItem>
-                    <div className="name">Total Fees Earned</div>
-                    <CommaNumber value={12414.2423} className="value" beginningText="$" showLetter />
-                  </ThreeLevelListItem>
-                  <ThreeLevelListItem>
-                    <div className="name">Suppliers</div>
-                    <CommaNumber value={suppliers} className="value" showLetter />
-                  </ThreeLevelListItem>
-                  <ThreeLevelListItem>
-                    <div className="name">Utilization Rate</div>
-                    <CommaNumber value={utilisationRate} className="value" endingText="%" showLetter />
-                  </ThreeLevelListItem>
-                  <Link to={`/loans/${symbol}/${LEND_TAB_ID}`}>
-                    <Button text="Lend" kind={ACTION_PRIMARY} iconAfter icon="arrowRight" />
-                  </Link>
+      {loanTokens.length ? (
+        <MarketsOverviewContainer>
+          <GovRightContainerTitleArea>
+            <h2>Markets</h2>
+          </GovRightContainerTitleArea>
+          {loanTokens.map((loanAsset) => {
+            const {
+              loanTokenData: { name, symbol, icon, rate },
+              utilisationRate,
+              avaliableLiquidity,
+              borrowers,
+              collateral,
+              vaultsBorrowedAmount,
+              totalBorrowed,
+              suppliers,
+              totalLended,
+            } = loanAsset
+
+            const totalCorratealColor = collateral / vaultsBorrowedAmount > 2 ? 'up' : 'down'
+            return (
+              <MarketOverview key={name}>
+                <div className="asset-info">
+                  {icon ? (
+                    <div className="icon">
+                      <img src={icon} alt={`${symbol} logo`} />
+                    </div>
+                  ) : (
+                    <Icon id={'noIcon'} />
+                  )}
+                  <div className="name">{name}</div>
+                  {rate ? (
+                    <div className="rate">
+                      <CommaNumber beginningText="$" value={rate} />{' '}
+                    </div>
+                  ) : null}
                 </div>
-                <div className="row">
-                  <ThreeLevelListItem>
-                    <div className="name">Total Borrowed</div>
-                    <CommaNumber value={totalBorrowed} className="value" showLetter />
-                    {rate ? (
-                      <CommaNumber value={totalBorrowed * rate} beginningText="$" showLetter className="rate" />
-                    ) : null}
-                  </ThreeLevelListItem>
-                  <ThreeLevelListItem>
-                    <div className="name">Borrow APR</div>
-                    <CommaNumber value={22} className="value" showLetter endingText="%" />
-                  </ThreeLevelListItem>
-                  <ThreeLevelListItem>
-                    <div className="name">Available Liquidity</div>
-                    <CommaNumber value={avaliableLiquidity} className="value" showLetter beginningText="$" />
-                  </ThreeLevelListItem>
-                  <ThreeLevelListItem>
-                    <div className="name">Borrowers</div>
-                    <CommaNumber value={borrowers} className="value" showLetter />
-                  </ThreeLevelListItem>
-                  <ThreeLevelListItem>
-                    <div className="name">Total Collateral</div>
-                    <CommaNumber
-                      value={collateral}
-                      showLetter
-                      className={`value ${true ? 'up' : 'down'}`}
-                      beginningText="$"
-                    />
-                  </ThreeLevelListItem>
-                  <Link to={`/loans/${symbol}/${BORROW_TAB_ID}`}>
-                    <Button text="Borrow" kind={ACTION_PRIMARY} iconAfter icon="arrowRight" />
-                  </Link>
+
+                <div className="content-wrapper">
+                  <div className="row">
+                    <ThreeLevelListItem>
+                      <div className="name">Total Lending</div>
+                      <CommaNumber value={totalLended} className="value" showLetter />
+                      {rate ? (
+                        <CommaNumber value={totalLended * rate} beginningText="$" className="rate" showLetter />
+                      ) : null}
+                    </ThreeLevelListItem>
+                    <ThreeLevelListItem>
+                      <div className="name">Lend APY</div>
+                      <CommaNumber value={22} className="value" endingText="%" showLetter />
+                    </ThreeLevelListItem>
+                    <ThreeLevelListItem>
+                      <div className="name">Total Fees Earned</div>
+                      <CommaNumber value={12414.2423} className="value" beginningText="$" showLetter />
+                    </ThreeLevelListItem>
+                    <ThreeLevelListItem>
+                      <div className="name">Suppliers</div>
+                      <CommaNumber value={suppliers} className="value" showLetter />
+                    </ThreeLevelListItem>
+                    <ThreeLevelListItem>
+                      <div className="name">Utilization Rate</div>
+                      <CommaNumber value={utilisationRate} className="value" endingText="%" showLetter />
+                    </ThreeLevelListItem>
+                    <Link to={`/loans/${symbol}/${LEND_TAB_ID}`}>
+                      <Button text="Lend" kind={ACTION_PRIMARY} iconAfter icon="arrowRight" />
+                    </Link>
+                  </div>
+                  <div className="row">
+                    <ThreeLevelListItem>
+                      <div className="name">Total Borrowed</div>
+                      <CommaNumber value={totalBorrowed} className="value" showLetter />
+                      {rate ? (
+                        <CommaNumber value={totalBorrowed * rate} beginningText="$" showLetter className="rate" />
+                      ) : null}
+                    </ThreeLevelListItem>
+                    <ThreeLevelListItem>
+                      <div className="name">Borrow APR</div>
+                      <CommaNumber value={22} className="value" showLetter endingText="%" />
+                    </ThreeLevelListItem>
+                    <ThreeLevelListItem>
+                      <div className="name">Available Liquidity</div>
+                      <CommaNumber value={avaliableLiquidity} className="value" showLetter beginningText="$" />
+                    </ThreeLevelListItem>
+                    <ThreeLevelListItem>
+                      <div className="name">Borrowers</div>
+                      <CommaNumber value={borrowers} className="value" showLetter />
+                    </ThreeLevelListItem>
+                    <ThreeLevelListItem>
+                      <div className="name">Total Collateral</div>
+                      <CommaNumber
+                        value={collateral}
+                        showLetter
+                        className={`value ${totalCorratealColor}`}
+                        beginningText="$"
+                      />
+                    </ThreeLevelListItem>
+                    <Link to={`/loans/${symbol}/${BORROW_TAB_ID}`}>
+                      <Button text="Borrow" kind={ACTION_PRIMARY} iconAfter icon="arrowRight" />
+                    </Link>
+                  </div>
                 </div>
-              </div>
-            </MarketOverview>
-          )
-        })}
-      </MarketsOverviewContainer>
+              </MarketOverview>
+            )
+          })}
+        </MarketsOverviewContainer>
+      ) : (
+        <EmptyContainer
+          style={{
+            paddingTop: '80px',
+          }}
+        >
+          <img src="/images/not-found.svg" alt=" No active markets to show" />
+          <figcaption> No active markets to show</figcaption>
+        </EmptyContainer>
+      )}
     </LoansStyled>
   )
 }

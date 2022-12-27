@@ -18,12 +18,39 @@ import {
 import { TzAddress } from 'pages/Treasury/Treasury.style'
 import { ThreeLevelListItem, FillBlock } from '../Loans.style'
 import { BorrowingTabListItemExpanded } from './LoansComponents.style'
+import { useDispatch } from 'react-redux'
+import { BorrowingData } from 'utils/TypesAndInterfaces/Loans'
 
 type BorrowingExpandCardPropsType = {
   showFull?: boolean
+  borrowedAsset: BorrowingData['borrowedAsset']
+  collateralData: BorrowingData['collateralData']
+  xtzDelegatedTo?: string
+  operators?: Array<string>
+  sMVKDelegatedTo?: string
+  depositors?: string | Array<string>
 }
 
-export const BorrowingExpandCard = ({ showFull = false }: BorrowingExpandCardPropsType) => {
+export const BorrowingExpandCard = ({
+  showFull = false,
+  borrowedAsset,
+  collateralData,
+  xtzDelegatedTo,
+  operators,
+  sMVKDelegatedTo,
+  depositors,
+}: BorrowingExpandCardPropsType) => {
+  const dispatch = useDispatch()
+
+  const { assetSymbol, assetIcon, amtBorrowed, assetRate, collateralBalance, collateralUtilization, apy, fee } =
+    borrowedAsset
+
+  const borrowHandler = () => {}
+  const repayHandler = () => {}
+  const addCollateralHandler = () => {}
+  const removeCollateralHandler = () => {}
+  const closeVaultHandler = () => {}
+
   return (
     <Expand
       className="expand-borrow-tab"
@@ -32,18 +59,24 @@ export const BorrowingExpandCard = ({ showFull = false }: BorrowingExpandCardPro
           <ThreeLevelListItem>
             <div className="name">Borrowed Asset</div>
             <div className="value">
-              <Icon id="xtzTezos" />
-              XTZ
+              {assetIcon ? (
+                <div className="img-wrapper">
+                  <img src={assetIcon} alt={`${assetSymbol} logo`} />
+                </div>
+              ) : (
+                <Icon id="noIcon" />
+              )}
+              {assetSymbol}
             </div>
           </ThreeLevelListItem>
           <ThreeLevelListItem>
             <div className="name">Amt Borrowed</div>
-            <CommaNumber value={12414.2423} className="value" showLetter />
-            <CommaNumber value={12414.2423} beginningText="$" className="rate" showLetter />
+            <CommaNumber value={amtBorrowed} className="value" showLetter />
+            <CommaNumber value={amtBorrowed * assetRate} beginningText="$" className="rate" showLetter />
           </ThreeLevelListItem>
           <ThreeLevelListItem>
             <div className="name">Collateral Balance</div>
-            <CommaNumber value={22.2} className="value" endingText="%" />
+            <CommaNumber value={collateralBalance} className="value" endingText="%" />
           </ThreeLevelListItem>
           <ThreeLevelListItem>
             <TzAddress tzAddress="tz1ezDb77a9jaFMHDWs8QXrKEDkpgGdgsjPD" type={BLUE} />
@@ -53,7 +86,7 @@ export const BorrowingExpandCard = ({ showFull = false }: BorrowingExpandCardPro
             <div className="info-tip">
               Collateral Utilization:
               <span>
-                <CommaNumber value={22.5} endingText="%" />
+                <CommaNumber value={collateralUtilization} endingText="%" />
               </span>
             </div>
           </ThreeLevelListItem>
@@ -68,33 +101,38 @@ export const BorrowingExpandCard = ({ showFull = false }: BorrowingExpandCardPro
               <ThreeLevelListItem>
                 <div className="name">Borrowed Asset</div>
                 <div className="value">
-                  <Icon id="xtzTezos" />
-                  XTZ
+                  {assetIcon ? (
+                    <div className="img-wrapper">
+                      <img src={assetIcon} alt={`${assetSymbol} logo`} />
+                    </div>
+                  ) : (
+                    <Icon id="noIcon" />
+                  )}
+                  {assetSymbol}
                 </div>
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">Amt Borrowed</div>
-                <CommaNumber value={22.2} className="value" endingText="%" />
-                <CommaNumber value={2343322.2} className="rate" beginningText="$" showLetter />
+                <CommaNumber value={amtBorrowed} className="value" showLetter />
+                <CommaNumber value={amtBorrowed * assetRate} beginningText="$" className="rate" showLetter />
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">Borrowing Fee</div>
-                <CommaNumber value={22.2} className="value" endingText="%" />
-                <CommaNumber value={234322.2} className="rate" beginningText="$" showLetter />
+                <CommaNumber value={fee} className="value" endingText="%" />
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">Borrow APY</div>
-                <CommaNumber value={22.2} className="value" endingText="%" />
+                <CommaNumber value={apy} className="value" endingText="%" />
               </ThreeLevelListItem>
               <div className="buttons-wrapper">
-                <Button text="Borrow" kind={ACTION_PRIMARY} className="" />
-                <Button text="Repay" kind={TRANSPARENT} className="go-back-btn loans" />
+                <Button text="Borrow" onClick={borrowHandler} kind={ACTION_PRIMARY} className="" />
+                <Button text="Repay" onClick={repayHandler} kind={TRANSPARENT} className="go-back-btn loans" />
               </div>
             </div>
           </>
         ) : null}
 
-        {COLLATERAL_MOCK.length ? (
+        {collateralData.length ? (
           <>
             <div className="block-name margin-top">Collateral In Vault</div>
             <Table className="no-margin borrowing-table">
@@ -108,25 +146,31 @@ export const BorrowingExpandCard = ({ showFull = false }: BorrowingExpandCardPro
               </TableHeader>
 
               <TableBody>
-                {COLLATERAL_MOCK.map(() => {
+                {collateralData.map(({ assetSymbol, assetIcon, balance, assetRate, maxWithdraw }) => {
                   return (
                     <TableRow rowHeight={70}>
                       <TableCell width={`15%`} className="vert-middle">
                         <div className="cell-content row">
-                          <Icon id="xtzTezos" />
-                          XTZ
+                          {assetIcon ? (
+                            <div className="img-wrapper">
+                              <img src={assetIcon} alt={`${assetSymbol} logo`} />
+                            </div>
+                          ) : (
+                            <Icon id="noIcon" />
+                          )}
+                          {assetSymbol}
                         </div>
                       </TableCell>
                       <TableCell width={`15%`}>
                         <div className="cell-content">
-                          <CommaNumber value={22.2} className="value" endingText="%" />
-                          <CommaNumber value={2343322.2} className="rate" beginningText="$" showLetter />
+                          <CommaNumber value={balance} className="value" endingText="%" />
+                          <CommaNumber value={balance * assetRate} className="rate" beginningText="$" showLetter />
                         </div>
                       </TableCell>
                       <TableCell width={`15%`}>
                         <div className="cell-content">
-                          <CommaNumber value={22.2} className="value" endingText="%" />
-                          <CommaNumber value={234322.2} className="rate" beginningText="$" showLetter />
+                          <CommaNumber value={maxWithdraw} className="value" endingText="%" />
+                          <CommaNumber value={maxWithdraw * assetRate} className="rate" beginningText="$" showLetter />
                         </div>
                       </TableCell>
                       <TableCell width={`15%`}>
@@ -134,8 +178,20 @@ export const BorrowingExpandCard = ({ showFull = false }: BorrowingExpandCardPro
                       </TableCell>
                       <TableCell className="buttons">
                         <div className="cell-content row">
-                          <Button text="Add" icon="plus" kind={TRANSPARENT} className="go-back-btn loans" />
-                          <Button text="Remove" icon="minus" kind={TRANSPARENT} className="go-back-btn loans" />
+                          <Button
+                            text="Add"
+                            icon="plus"
+                            onClick={addCollateralHandler}
+                            kind={TRANSPARENT}
+                            className="go-back-btn loans"
+                          />
+                          <Button
+                            text="Remove"
+                            icon="minus"
+                            onClick={removeCollateralHandler}
+                            kind={TRANSPARENT}
+                            className="go-back-btn loans"
+                          />
                         </div>
                       </TableCell>
                     </TableRow>
@@ -147,30 +203,48 @@ export const BorrowingExpandCard = ({ showFull = false }: BorrowingExpandCardPro
             {showFull ? (
               <>
                 <div className="block-name margin-top">Delegations</div>
-                <div className="bottom-info-row">
-                  <div className="name">XTZ Delegated to </div>
-                  <div className="value">
-                    <TzAddress tzAddress="tz1ezDb77a9jaFMHDWs8QXrKEDkpgGdgsjPD" type={BLUE} />
+                {xtzDelegatedTo ? (
+                  <div className="bottom-info-row">
+                    <div className="name">XTZ Delegated to </div>
+                    <div className="value">
+                      <TzAddress tzAddress={xtzDelegatedTo} type={BLUE} />
+                    </div>
+                    <Button kind={ACTION_SIMPLE} text="View Bakers" icon="paginationArrowLeft" iconAfter />
                   </div>
-                  <Button kind={ACTION_SIMPLE} text="View Bakers" icon="paginationArrowLeft" iconAfter />
-                </div>
-                <div className="bottom-info-row">
-                  <div className="name">sMVKDelegated to </div>
-                  <div className="value">
-                    <TzAddress tzAddress="tz1ezDb77a9jaFMHDWs8QXrKEDkpgGdgsjPD" type={BLUE} />
+                ) : null}
+                {sMVKDelegatedTo ? (
+                  <div className="bottom-info-row">
+                    <div className="name">sMVKDelegated to </div>
+                    <div className="value">
+                      <TzAddress tzAddress={sMVKDelegatedTo} type={BLUE} />
+                    </div>
+                    <Button kind={ACTION_SIMPLE} text="View Satellite" icon="paginationArrowLeft" iconAfter />
                   </div>
-                  <Button kind={ACTION_SIMPLE} text="View Satellite" icon="paginationArrowLeft" iconAfter />
-                </div>
+                ) : null}
 
                 <div className="block-name margin-top">Permissions</div>
                 <div className="bottom-info-row">
                   <div className="name">Depositors </div>
-                  <div className="value">All allowed</div>
+                  <div className="value">
+                    {Array.isArray(depositors) && depositors.length === 1 ? (
+                      <TzAddress tzAddress={depositors[0]} type={BLUE} />
+                    ) : (
+                      ''
+                    )}
+                    {Array.isArray(depositors) && depositors.length > 1 ? depositors.length : ''}
+                    {Array.isArray(depositors) && depositors.length < 1 ? 'None' : ''}
+                    {!Array.isArray(depositors) ? depositors : ''}
+                  </div>
                   <Button kind={ACTION_SIMPLE} text="View Bakers" icon="paginationArrowLeft" iconAfter />
                 </div>
                 <div className="bottom-info-row">
                   <div className="name">MVK Operators </div>
                   <div className="value">
+                    {Array.isArray(operators) && operators.length >= 1
+                      ? <TzAddress tzAddress={operators[0]} type={BLUE} /> +
+                        (operators.length - 1 > 0 ? ` + ${operators.length - 1}` : '')
+                      : ''}
+                    {Array.isArray(operators) && operators.length < 1 ? 'None' : ''}
                     <TzAddress tzAddress="tz1ezDb77a9jaFMHDWs8QXrKEDkpgGdgsjPD" type={BLUE} />
                   </div>
                   <Button kind={ACTION_SIMPLE} text="View Satellite" icon="paginationArrowLeft" iconAfter />
@@ -179,6 +253,7 @@ export const BorrowingExpandCard = ({ showFull = false }: BorrowingExpandCardPro
                 <Button
                   text="Close Vault"
                   kind={TRANSPARENT}
+                  onClick={closeVaultHandler}
                   className="go-back-btn loans close-vault"
                   icon="close-stroke"
                 />

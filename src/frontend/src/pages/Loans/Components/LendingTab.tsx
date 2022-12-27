@@ -1,23 +1,43 @@
+import { useDispatch } from 'react-redux'
+
 import { ACTION_PRIMARY, TRANSPARENT } from 'app/App.components/Button/Button.constants'
+import { toggleLoansModal } from '../Loans.actions'
+import { ADD_COLLATERAL_MODAL_ID, REMOVE_COLLATERAL_MODAL_ID } from '../Loans.const'
+import { LoansState } from 'reducers/loans'
+
 import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import Icon from 'app/App.components/Icon/Icon.view'
-import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
+
 import { ThreeLevelListItem } from '../Loans.style'
 import { LendingTabListItem, LoansTabStyled, NoItemsInTabStyled } from './LoansComponents.style'
 
+import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
+
 type LendingTabPropsType = {
-  lendingItems: Array<any>
+  lendingItem: LoansState['lendingItem']
 }
 
-export const LendingTab = ({ lendingItems }: LendingTabPropsType) => {
+export const LendingTab = ({ lendingItem }: LendingTabPropsType) => {
+  const dispatch = useDispatch()
+
+  const addLendHandler = () => {
+    dispatch(toggleLoansModal(ADD_COLLATERAL_MODAL_ID))
+  }
+  const removeLendHandler = () => {
+    dispatch(toggleLoansModal(REMOVE_COLLATERAL_MODAL_ID))
+  }
+  const lendAssetHandler = () => {
+    dispatch(toggleLoansModal(REMOVE_COLLATERAL_MODAL_ID))
+  }
+
   return (
     <LoansTabStyled>
       <GovRightContainerTitleArea>
         <h2>My Lending</h2>
       </GovRightContainerTitleArea>
 
-      {lendingItems.length || true ? (
+      {lendingItem ? (
         <div className="list-wrapper">
           <LendingTabListItem>
             <ThreeLevelListItem>
@@ -29,35 +49,56 @@ export const LendingTab = ({ lendingItems }: LendingTabPropsType) => {
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Lending</div>
-              <CommaNumber value={12414.2423} className="value" showLetter />
-              <CommaNumber value={12414.2423} beginningText="$" className="rate" showLetter />
+              <CommaNumber value={lendingItem.lendValue} className="value" showLetter />
+              <CommaNumber
+                value={lendingItem.lendValue * lendingItem.lendAssetRate}
+                beginningText="$"
+                className="rate"
+                showLetter
+              />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Lend APY</div>
-              <CommaNumber value={22.2} className="value" endingText="%" />
+              <CommaNumber value={lendingItem.lendAPY} className="value" endingText="%" />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Interest Earned</div>
-              <CommaNumber value={12414.2423} className="value" showLetter />
-              <CommaNumber value={12414.2423} beginningText="$" className="rate" showLetter />
+              <CommaNumber value={lendingItem.interestEarned} className="value" showLetter />
+              <CommaNumber
+                value={lendingItem.interestEarned * lendingItem.lendAssetRate}
+                beginningText="$"
+                className="rate"
+                showLetter
+              />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Wallet Balance</div>
-              <CommaNumber value={1241334.2423} className="value" showLetter />
-              <CommaNumber value={12414.2423} beginningText="$" className="rate" showLetter />
+              <CommaNumber value={lendingItem.loanAssetWalletBalance} className="value" showLetter />
+              <CommaNumber
+                value={lendingItem.loanAssetWalletBalance * lendingItem.lendAssetRate}
+                beginningText="$"
+                className="rate"
+                showLetter
+              />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">mXTZ Balance</div>
-              <CommaNumber value={12414.2423} className="value" showLetter />
+              <CommaNumber value={lendingItem.mXTZBalance} className="value" showLetter />
             </ThreeLevelListItem>
-            <Button text="Add" icon="plus" kind={TRANSPARENT} className="go-back-btn" />
-            <Button text="Remove" icon="minus" kind={TRANSPARENT} className="go-back-btn" />
+            <Button text="Add" icon="plus" kind={TRANSPARENT} onClick={addLendHandler} className="go-back-btn" />
+            <Button text="Remove" icon="minus" kind={TRANSPARENT} onClick={removeLendHandler} className="go-back-btn" />
           </LendingTabListItem>
         </div>
       ) : (
         <NoItemsInTabStyled>
           <span>Lend assets to earn interest.</span>
-          <Button text="Lend Asset" icon="plus" kind={ACTION_PRIMARY} className="lending-tab-no-items-btn" />
+          <Button
+            text="Lend Asset"
+            icon="plus"
+            onClick={lendAssetHandler}
+            kind={ACTION_PRIMARY}
+            className="lending-tab-no-items-btn"
+          />
         </NoItemsInTabStyled>
       )}
     </LoansTabStyled>

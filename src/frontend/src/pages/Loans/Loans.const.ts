@@ -16,6 +16,13 @@ export const TRANSACTION_HISTORY_SLIDING_BUTTONS = [
   },
 ]
 
+export const UPDATE_MVK_OPERATORS_MODAL_ID = 'updateMVKoperatorsModal'
+export const MANAGE_PERMISSIONS_MODAL_ID = 'managePermissionsModal'
+export const ADD_COLLATERAL_MODAL_ID = 'addCollateralModal'
+export const REMOVE_COLLATERAL_MODAL_ID = 'removeCollateralModal'
+export const BORROW_ASSET_MODAL_ID = 'borrowAssetModal'
+export const REPAY_MODAL_ID = 'repayModal'
+export const CLOSE_VAULT_MODAL_ID = 'closeVaultModal'
+
 export const BORROWIND_MOCK = [{}, {}]
 export const COLLATERAL_MOCK = [{}, {}]
-export const TRANSACTION_HISTORY_MOCK = [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}]

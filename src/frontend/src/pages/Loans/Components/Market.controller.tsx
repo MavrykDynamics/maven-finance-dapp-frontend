@@ -28,7 +28,7 @@ import { PermissionVaults } from './PermissionVaultsTab'
 
 export const Market = () => {
   const { assetId, tabId } = useParams<{ assetId: string; tabId: string }>()
-  const { loanTokens } = useSelector((state: State) => state.loans)
+  const { loanTokens, lendingItem, borrowingsList } = useSelector((state: State) => state.loans)
   const { isInitialDataloading } = useSelector((state: State) => state.loading)
 
   const currentToken = useMemo(() => loanTokens.find(({ loanTokenData: { symbol } }) => assetId === symbol), [assetId])
@@ -143,8 +143,8 @@ export const Market = () => {
           </Link>
         </div>
 
-        {tabId === LEND_TAB_ID ? <LendingTab lendingItems={[]} /> : null}
-        {tabId === BORROW_TAB_ID ? <BorrowingTab borrowingItems={[]} /> : null}
+        {tabId === LEND_TAB_ID ? <LendingTab lendingItem={lendingItem} /> : null}
+        {tabId === BORROW_TAB_ID ? <BorrowingTab borrowingItems={borrowingsList} /> : null}
         {tabId === PERMISSIONS_VAULTS_TAB_ID ? <PermissionVaults permissionVaults={[]} /> : null}
 
         <TransactionHistory currentToken={currentToken} />

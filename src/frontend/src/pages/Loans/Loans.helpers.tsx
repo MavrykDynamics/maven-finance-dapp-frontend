@@ -5,16 +5,28 @@ import { parseDate } from 'utils/time'
 import { LoansChartsDataType, LoansGQL, LoanTokenType } from 'utils/TypesAndInterfaces/Loans'
 
 const corrateralCalc = (vaults: Lending_Controller_Vault[]) =>
-  vaults.reduce((acc, { collateral_balances }) => {
-    const vaultCorratealBalance = collateral_balances.reduce((vaultAcc, { balance, token }) => {
-      // TODO: add multipliying by rate of the asset
-      vaultAcc += balance
-      return vaultAcc
-    }, 0)
+  vaults.reduce(
+    (acc, { collateral_balances, history_data }) => {
+      const vaultCorratealBalance = collateral_balances.reduce((vaultAcc, { balance }) => {
+        // TODO: add multipliying by rate of the asset
+        vaultAcc += balance
+        return vaultAcc
+      }, 0)
 
-    acc += vaultCorratealBalance
-    return acc
-  }, 0)
+      const borrowedAmount = history_data.reduce((vaultAcc, { type, amount }) => {
+        // TODO: add multipliying by rate of the asset
+        if (type === 3 || type === 2) {
+          vaultAcc += amount
+        }
+        return vaultAcc
+      }, 0)
+
+      acc.corratealAmount += vaultCorratealBalance
+      acc.borrowedAmount += borrowedAmount
+      return acc
+    },
+    { corratealAmount: 0, borrowedAmount: 0 },
+  )
 
 const getTransactionHistory = (
   history_data: Lending_Controller_History_Data[],
@@ -97,6 +109,7 @@ export const normalizeLoans = ({
     ) => {
       const tokenInfo = dipDupTokens?.find(({ contract }) => contract === lp_token_address)
       const { transactionHistory, totalBorrowed, totalLended } = getTransactionHistory(history_data, dipDupTokens)
+      const { corratealAmount, borrowedAmount } = corrateralCalc(vaults)
 
       if (tokenInfo) {
         const loanToken = {
@@ -111,7 +124,8 @@ export const normalizeLoans = ({
           totalBorrowed,
           borrowers: vaults.length,
           suppliers: mTokens.filter(({ loan_token_name: m_token_name }) => loan_token_name === m_token_name).length,
-          collateral: corrateralCalc(vaults),
+          collateral: corratealAmount,
+          vaultsBorrowedAmount: borrowedAmount,
           totalLended,
           reserveRatio: reserve_ratio,
           avaliableLiquidity: total_remaining,
