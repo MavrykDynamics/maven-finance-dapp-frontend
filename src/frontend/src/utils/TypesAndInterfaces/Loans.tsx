@@ -9,7 +9,7 @@ import {
   REPAY_MODAL_ID,
 } from 'pages/Loans/Loans.const'
 import { normalizeLoans } from 'pages/Loans/Loans.helpers'
-import { Lending_Controller } from 'utils/generated/graphqlTypes'
+import { Lending_Controller, Lending_Controller_Vault } from 'utils/generated/graphqlTypes'
 
 export type LoansGQL = Omit<Lending_Controller, '__typename'>
 export type LoansStorage = ReturnType<typeof normalizeLoans>
@@ -30,6 +30,8 @@ export type LoanTokenType = {
     operationHash: string
     tokenSymbol: string | undefined
   }>
+  lendingItem: LendingItemType
+  borrowingList: Array<BorrowingData>
   utilisationRate: number
   borrowers: number
   suppliers: number
@@ -57,7 +59,7 @@ export type LendingItemType = {
   interestEarned: number
   loanAssetWalletBalance: number
   mXTZBalance: number
-}
+} | null
 
 export type ModalTypes =
   | typeof UPDATE_MVK_OPERATORS_MODAL_ID

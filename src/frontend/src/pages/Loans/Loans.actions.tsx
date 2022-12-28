@@ -8,10 +8,18 @@ export const GET_LOANS_STORAGE = 'GET_LOANS_STORAGE'
 export const getLoansStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
   const {
     tokens: { dipDupTokens, mTokens },
+    wallet: {
+      user: { mTokens: userMTokens },
+    },
   } = getState()
   try {
     const storage = await fetchFromIndexer(LOANS_QUERY, LOANS_QUERY_NAME, LOANS_QUERY_VARIABLE)
-    const normalizedLoans = normalizeLoans({ storage: storage?.lending_controller?.[0], dipDupTokens, mTokens })
+    const normalizedLoans = normalizeLoans({
+      storage: storage?.lending_controller?.[0],
+      dipDupTokens,
+      mTokens,
+      userMTokens,
+    })
 
     await dispatch({
       type: GET_LOANS_STORAGE,

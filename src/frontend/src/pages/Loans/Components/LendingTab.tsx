@@ -3,7 +3,6 @@ import { useDispatch } from 'react-redux'
 import { ACTION_PRIMARY, TRANSPARENT } from 'app/App.components/Button/Button.constants'
 import { toggleLoansModal } from '../Loans.actions'
 import { ADD_COLLATERAL_MODAL_ID, REMOVE_COLLATERAL_MODAL_ID } from '../Loans.const'
-import { LoansState } from 'reducers/loans'
 
 import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
@@ -13,9 +12,10 @@ import { ThreeLevelListItem } from '../Loans.style'
 import { LendingTabListItem, LoansTabStyled, NoItemsInTabStyled } from './LoansComponents.style'
 
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
+import { LendingItemType } from 'utils/TypesAndInterfaces/Loans'
 
 type LendingTabPropsType = {
-  lendingItem: LoansState['lendingItem']
+  lendingItem: LendingItemType
 }
 
 export const LendingTab = ({ lendingItem }: LendingTabPropsType) => {
@@ -43,8 +43,14 @@ export const LendingTab = ({ lendingItem }: LendingTabPropsType) => {
             <ThreeLevelListItem>
               <div className="name">Asset</div>
               <div className="value">
-                <Icon id="xtzTezos" />
-                XTZ
+                {lendingItem.assetIcon ? (
+                  <div className="img-wrapper">
+                    <img src={lendingItem.assetIcon} alt={`${lendingItem.assetName} logo`} />
+                  </div>
+                ) : (
+                  <Icon id="noIcon" />
+                )}
+                {lendingItem.assetName}
               </div>
             </ThreeLevelListItem>
             <ThreeLevelListItem>

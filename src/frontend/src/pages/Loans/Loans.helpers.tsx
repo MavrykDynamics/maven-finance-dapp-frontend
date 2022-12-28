@@ -1,8 +1,14 @@
 import { UTCTimestamp } from 'lightweight-charts'
 import { State } from 'reducers'
-import { Lending_Controller_History_Data, Lending_Controller_Vault } from 'utils/generated/graphqlTypes'
+import { UserState } from 'reducers/wallet'
+import {
+  Lending_Controller_Collateral_Token,
+  Lending_Controller_History_Data,
+  Lending_Controller_Loan_Token,
+  Lending_Controller_Vault,
+} from 'utils/generated/graphqlTypes'
 import { parseDate } from 'utils/time'
-import { LoansChartsDataType, LoansGQL, LoanTokenType } from 'utils/TypesAndInterfaces/Loans'
+import { LendingItemType, LoansChartsDataType, LoansGQL, LoanTokenType } from 'utils/TypesAndInterfaces/Loans'
 
 const corrateralCalc = (vaults: Lending_Controller_Vault[]) =>
   vaults.reduce(
@@ -92,55 +98,92 @@ const getChartData = (history_data: Lending_Controller_History_Data[]) =>
     },
   )
 
+const getLendingItem = (
+  loanToken: Lending_Controller_Loan_Token,
+  userMTokens: UserState['mTokens'],
+  loanTokenMetadata: Record<string, string>,
+): LendingItemType => {
+  if (userMTokens && loanToken) {
+    const mTokenAsset = userMTokens?.find(({ m_token_id }) => m_token_id === loanToken.lp_token_address)
+    if (mTokenAsset) {
+      return {
+        assetName: loanTokenMetadata.symbol,
+        assetIcon: loanTokenMetadata.icon,
+        lendValue: mTokenAsset.balance,
+        lendAssetRate: 1,
+        lendAPY: 1,
+        interestEarned: 1,
+        loanAssetWalletBalance: mTokenAsset.balance,
+        mXTZBalance: 0,
+      }
+    }
+  }
+  return null
+}
+
+const getBorrowings = (loanTokenVaults: Array<Lending_Controller_Vault>) => {
+  return []
+}
+
+const getCollateralTokens = (collateralTokens: Array<Lending_Controller_Collateral_Token>) => {
+  return []
+}
+
 export const normalizeLoans = ({
   storage,
   dipDupTokens,
   mTokens,
+  userMTokens,
 }: {
   storage: LoansGQL
   dipDupTokens: State['tokens']['dipDupTokens']
   mTokens: State['tokens']['mTokens']
+  userMTokens: UserState['mTokens']
 }) => {
-  const chartsData = getChartData(storage?.history_data)
-  const loanTokens = storage?.loan_tokens?.reduce<Array<LoanTokenType>>(
-    (
-      acc,
-      { lp_token_address, loan_token_name, utilisation_rate, total_remaining, history_data, vaults, reserve_ratio },
-    ) => {
-      const tokenInfo = dipDupTokens?.find(({ contract }) => contract === lp_token_address)
-      const { transactionHistory, totalBorrowed, totalLended } = getTransactionHistory(history_data, dipDupTokens)
-      const { corratealAmount, borrowedAmount } = corrateralCalc(vaults)
+  const loanTokens = storage?.loan_tokens?.reduce<Array<LoanTokenType>>((acc, loanToken) => {
+    const {
+      lp_token_address,
+      loan_token_name,
+      utilisation_rate,
+      total_remaining,
+      history_data,
+      vaults,
+      reserve_ratio,
+    } = loanToken
+    const tokenInfo = dipDupTokens?.find(({ contract }) => contract === lp_token_address)
+    const { transactionHistory, totalBorrowed, totalLended } = getTransactionHistory(history_data, dipDupTokens)
+    const { corratealAmount, borrowedAmount } = corrateralCalc(vaults)
 
-      if (tokenInfo) {
-        const loanToken = {
-          loanTokenData: {
-            name: loan_token_name,
-            symbol: tokenInfo.metadata.symbol,
-            decimals: tokenInfo.metadata.decimals,
-            icon: tokenInfo.metadata.icon,
-          },
-          transactionHistory,
-          utilisationRate: utilisation_rate,
-          totalBorrowed,
-          borrowers: vaults.length,
-          suppliers: mTokens.filter(({ loan_token_name: m_token_name }) => loan_token_name === m_token_name).length,
-          collateral: corratealAmount,
-          vaultsBorrowedAmount: borrowedAmount,
-          totalLended,
-          reserveRatio: reserve_ratio,
-          avaliableLiquidity: total_remaining,
-        }
-
-        acc.push(loanToken)
+    if (tokenInfo) {
+      const loanTokenMetadata = {
+        name: loan_token_name,
+        symbol: tokenInfo.metadata.symbol,
+        decimals: tokenInfo.metadata.decimals,
+        icon: tokenInfo.metadata.icon,
       }
-      return acc
-    },
-    [],
-  )
+      acc.push({
+        loanTokenData: loanTokenMetadata,
+        borrowingList: getBorrowings(vaults),
+        lendingItem: getLendingItem(loanToken, userMTokens, loanTokenMetadata),
+        transactionHistory,
+        utilisationRate: utilisation_rate,
+        totalBorrowed,
+        borrowers: vaults.length,
+        suppliers: mTokens.filter(({ loan_token_name: m_token_name }) => loan_token_name === m_token_name).length,
+        collateral: corratealAmount,
+        vaultsBorrowedAmount: borrowedAmount,
+        totalLended,
+        reserveRatio: reserve_ratio,
+        avaliableLiquidity: total_remaining,
+      })
+    }
+    return acc
+  }, [])
 
   return {
     loanTokens,
-    chartsData,
+    chartsData: getChartData(storage?.history_data),
+    collateralTokens: getCollateralTokens(storage.collateral_tokens),
   }
 }
 

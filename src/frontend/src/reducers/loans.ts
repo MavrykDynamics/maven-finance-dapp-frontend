@@ -1,4 +1,5 @@
 import { GET_LOANS_STORAGE, TOGGLE_LOANS_MODAL } from 'pages/Loans/Loans.actions'
+import { Lending_Controller_Vault } from 'utils/generated/graphqlTypes'
 import {
   BorrowingData,
   LendingItemType,
@@ -10,16 +11,12 @@ import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
 
 export interface LoansState {
   loanTokens: LoansStorage['loanTokens']
-  lendingItem: LendingItemType | null
   chartsData: LoansChartsDataType
   currentModalActive: ModalTypes
-  borrowingsList: Array<BorrowingData>
 }
 
 const loansDefaultState: LoansState = {
   loanTokens: [],
-  borrowingsList: [],
-  lendingItem: null,
   currentModalActive: null,
   chartsData: {
     totalBorrowed: 0,

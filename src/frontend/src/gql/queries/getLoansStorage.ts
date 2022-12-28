@@ -5,6 +5,33 @@ export const LOANS_QUERY = `query GetLoansStorage {
       amount
       timestamp
     }
+
+    collateral_tokens {
+      id
+      token_address
+      balances_aggregate {
+        aggregate {
+          sum {
+            balance
+          }
+        }
+      }
+    }
+
+    vaults {
+      owner_id
+      collateral_balances {
+        balance
+        token {
+          token_address
+        }
+      }
+      history_data {
+        type
+        amount
+      }
+    }
+
     loan_tokens {
       lp_token_address
       loan_token_name
@@ -36,6 +63,7 @@ export const LOANS_QUERY = `query GetLoansStorage {
         }
       }
     }
+    
   }
 }`
 

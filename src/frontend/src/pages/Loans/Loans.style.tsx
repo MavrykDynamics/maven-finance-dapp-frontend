@@ -278,10 +278,17 @@ export const ThreeLevelListItem = styled.div<{ theme: MavrykTheme }>`
     display: flex;
     align-items: center;
 
-    svg {
+    svg,
+    .img-wrapper {
       width: 24px;
       height: 24px;
       margin-right: 4px;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
     }
 
     &.up {
