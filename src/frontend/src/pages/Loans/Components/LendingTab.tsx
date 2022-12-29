@@ -1,6 +1,6 @@
 import { useDispatch } from 'react-redux'
 
-import { ACTION_PRIMARY, TRANSPARENT } from 'app/App.components/Button/Button.constants'
+import { ACTION_PRIMARY, TRANSPARENT, TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
 import { toggleLoansModal } from '../Loans.actions'
 import { ADD_COLLATERAL_MODAL_ID, REMOVE_COLLATERAL_MODAL_ID } from '../Loans.const'
 
@@ -91,8 +91,20 @@ export const LendingTab = ({ lendingItem }: LendingTabPropsType) => {
               <div className="name">mXTZ Balance</div>
               <CommaNumber value={lendingItem.mXTZBalance} className="value" showLetter />
             </ThreeLevelListItem>
-            <Button text="Add" icon="plus" kind={TRANSPARENT} onClick={addLendHandler} className="go-back-btn" />
-            <Button text="Remove" icon="minus" kind={TRANSPARENT} onClick={removeLendHandler} className="go-back-btn" />
+            <Button
+              text="Add"
+              icon="plus"
+              kind={TRANSPARENT_WITH_BORDER}
+              onClick={addLendHandler}
+              className="lending-btn"
+            />
+            <Button
+              text="Remove"
+              icon="minus"
+              kind={TRANSPARENT_WITH_BORDER}
+              onClick={removeLendHandler}
+              className="lending-btn"
+            />
           </LendingTabListItem>
         </div>
       ) : (

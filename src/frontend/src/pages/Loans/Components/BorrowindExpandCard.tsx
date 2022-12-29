@@ -1,6 +1,11 @@
 import { BORROWIND_MOCK, COLLATERAL_MOCK } from '../Loans.const'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
-import { ACTION_PRIMARY, ACTION_SIMPLE, TRANSPARENT } from 'app/App.components/Button/Button.constants'
+import {
+  ACTION_PRIMARY,
+  ACTION_SIMPLE,
+  TRANSPARENT,
+  TRANSPARENT_WITH_BORDER,
+} from 'app/App.components/Button/Button.constants'
 
 import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
@@ -125,8 +130,8 @@ export const BorrowingExpandCard = ({
                 <CommaNumber value={apy} className="value" endingText="%" />
               </ThreeLevelListItem>
               <div className="buttons-wrapper">
-                <Button text="Borrow" onClick={borrowHandler} kind={ACTION_PRIMARY} className="" />
-                <Button text="Repay" onClick={repayHandler} kind={TRANSPARENT} className="go-back-btn loans" />
+                <Button text="Borrow" onClick={borrowHandler} kind={ACTION_PRIMARY} />
+                <Button text="Repay" onClick={repayHandler} kind={TRANSPARENT_WITH_BORDER} />
               </div>
             </div>
           </>
@@ -182,15 +187,13 @@ export const BorrowingExpandCard = ({
                             text="Add"
                             icon="plus"
                             onClick={addCollateralHandler}
-                            kind={TRANSPARENT}
-                            className="go-back-btn loans"
+                            kind={TRANSPARENT_WITH_BORDER}
                           />
                           <Button
                             text="Remove"
                             icon="minus"
                             onClick={removeCollateralHandler}
-                            kind={TRANSPARENT}
-                            className="go-back-btn loans"
+                            kind={TRANSPARENT_WITH_BORDER}
                           />
                         </div>
                       </TableCell>
@@ -252,9 +255,9 @@ export const BorrowingExpandCard = ({
 
                 <Button
                   text="Close Vault"
-                  kind={TRANSPARENT}
+                  kind={TRANSPARENT_WITH_BORDER}
                   onClick={closeVaultHandler}
-                  className="go-back-btn loans close-vault"
+                  className="close-vault"
                   icon="close-stroke"
                 />
               </>

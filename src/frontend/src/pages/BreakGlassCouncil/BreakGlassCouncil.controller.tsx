@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
-import { useHistory, useLocation } from 'react-router-dom'
+import { Link, useHistory, useLocation } from 'react-router-dom'
 import { useParams } from 'react-router'
 
 // components
@@ -11,7 +11,6 @@ import { Button } from 'app/App.components/Button/Button.controller'
 import { CouncilPastActionView } from 'pages/Council/CouncilActions/CouncilPastAction.view'
 import Carousel from '../../app/App.components/Carousel/Carousel.view'
 import { CouncilMemberView } from 'pages/Council/CouncilMember/CouncilMember.view'
-import Icon from '../../app/App.components/Icon/Icon.view'
 import Pagination from 'pages/FinacialRequests/Pagination/Pagination.view'
 import { BreakGlassCouncilForm, actions } from './BreakGlassCouncilForms/BreakGlassCouncilForm.controller'
 import { FormUpdateCouncilMemberView } from './BreakGlassCouncilForms/FormUpdateCouncilMember.view'
@@ -19,7 +18,7 @@ import { CouncilPending } from '../Council/CouncilPending/CouncilPending.control
 import { MyCouncilActions } from '../Council/MyCouncilActions.view'
 
 // helpers
-import { ACTION_SECONDARY } from '../../app/App.components/Button/Button.constants'
+import { ACTION_SECONDARY, TRANSPARENT_WITH_BORDER } from '../../app/App.components/Button/Button.constants'
 import {
   BREAK_GLASS_COUNCIL_ACTIONS_LIST_NAME,
   BREAK_GLASS_MY_PAST_COUNCIL_ACTIONS_LIST_NAME,
@@ -117,10 +116,6 @@ export function BreakGlassCouncil() {
     scrollUpPage()
   }
 
-  const handleClickGoBack = () => {
-    history.replace(queryParameters.pathname)
-  }
-
   const handleOpenleModal = () => {
     setIsUpdateCouncilMemberInfo(true)
   }
@@ -204,10 +199,14 @@ export function BreakGlassCouncil() {
     <Page>
       <PageHeader page={'break glass council'} />
       {review && isUserInBreakCouncilMember && (
-        <GoBack onClick={handleClickGoBack}>
-          <Icon id="arrow-left-stroke" />
-          Back to Member Dashboard
-        </GoBack>
+        <Link to={`/break-glass-council`}>
+          <Button
+            text="Back to Member Dashboard"
+            icon="arrowRight"
+            kind={TRANSPARENT_WITH_BORDER}
+            className="margin-top-30"
+          />
+        </Link>
       )}
 
       {isUserInBreakCouncilMember && !review && (

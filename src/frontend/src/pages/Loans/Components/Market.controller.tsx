@@ -4,7 +4,7 @@ import { Redirect, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
 
 // const
-import { ACTION_SIMPLE, TRANSPARENT } from 'app/App.components/Button/Button.constants'
+import { ACTION_SIMPLE, TRANSPARENT, TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
 import { BORROW_TAB_ID, LEND_TAB_ID, PERMISSIONS_VAULTS_TAB_ID } from '../Loans.const'
 
 // view
@@ -58,7 +58,7 @@ export const Market = () => {
 
       <MarketPagination>
         <Link to="/loans">
-          <Button text="Go Back" icon="arrowRight" kind={TRANSPARENT} className="go-back-btn loans" />
+          <Button text="Go Back" icon="arrowRight" kind={TRANSPARENT_WITH_BORDER} />
         </Link>
 
         <div className="right-side-wrapper">
@@ -144,8 +144,10 @@ export const Market = () => {
         </div>
 
         {tabId === LEND_TAB_ID ? <LendingTab lendingItem={currentToken.lendingItem} /> : null}
-        {tabId === BORROW_TAB_ID ? <BorrowingTab borrowingItems={currentToken.borrowingList} /> : null}
-        {tabId === PERMISSIONS_VAULTS_TAB_ID ? <PermissionVaults permissionVaults={[]} /> : null}
+        {tabId === BORROW_TAB_ID ? <BorrowingTab borrowingItems={currentToken.myBorrowingList} /> : null}
+        {tabId === PERMISSIONS_VAULTS_TAB_ID ? (
+          <PermissionVaults permissionVaults={currentToken.permissinedBorrowingList} />
+        ) : null}
 
         <TransactionHistory currentToken={currentToken} />
       </MarketStyled>

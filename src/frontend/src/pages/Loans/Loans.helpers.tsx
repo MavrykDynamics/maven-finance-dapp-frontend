@@ -8,9 +8,15 @@ import {
   Lending_Controller_Vault,
 } from 'utils/generated/graphqlTypes'
 import { parseDate } from 'utils/time'
-import { LendingItemType, LoansChartsDataType, LoansGQL, LoanTokenType } from 'utils/TypesAndInterfaces/Loans'
+import {
+  BorrowingData,
+  LendingItemType,
+  LoansChartsDataType,
+  LoansGQL,
+  LoanTokenType,
+} from 'utils/TypesAndInterfaces/Loans'
 
-const corrateralCalc = (vaults: Lending_Controller_Vault[]) =>
+const getCollateralTotal = (vaults: Lending_Controller_Vault[]) =>
   vaults.reduce(
     (acc, { collateral_balances, history_data }) => {
       const vaultCorratealBalance = collateral_balances.reduce((vaultAcc, { balance }) => {
@@ -121,12 +127,67 @@ const getLendingItem = (
   return null
 }
 
-const getBorrowings = (loanTokenVaults: Array<Lending_Controller_Vault>) => {
-  return []
+const getBorrowings = (
+  loanTokenVaults: Array<Lending_Controller_Vault>,
+  dipDupTokens: State['tokens']['dipDupTokens'],
+  userAddress?: string,
+): { myBorrowingList: Array<BorrowingData>; permissinedBorrowingList: Array<BorrowingData> } => {
+  return loanTokenVaults.reduce<{
+    myBorrowingList: Array<BorrowingData>
+    permissinedBorrowingList: Array<BorrowingData>
+  }>(
+    (acc, vault) => {
+      const asset = dipDupTokens.find(({ contract }) => contract === vault.loan_token?.loan_token_address)
+
+      const normallizedVault = {
+        borrowedAsset: {
+          assetSymbol: asset?.metadata.symbol ?? '',
+          assetIcon: asset?.metadata.icon,
+          amtBorrowed: 0,
+          assetRate: 0,
+          collateralBalance: vault.collateral_balances_aggregate.aggregate?.sum?.balance ?? 0,
+          collateralUtilization: 0,
+          apy: 0,
+          fee: 0,
+        },
+        collateralData: vault.collateral_balances.map((collateral) => {
+          const asset = dipDupTokens.find(({ contract }) => contract === collateral.token?.token_address)
+          return {
+            assetSymbol: asset?.metadata.symbol ?? '',
+            assetIcon: asset?.metadata.icon,
+            balance: collateral.balance,
+            assetRate: 0,
+            maxWithdraw: 0,
+          }
+        }),
+        borrowedAmount: vault.loan_outstanding_total,
+        xtzDelegatedTo: '',
+        operators: [],
+        sMVKDelegatedTo: '',
+        depositors: vault.vault?.depositors.map(({ depositor_id }) => depositor_id) as Array<string> | undefined,
+      }
+
+      if (vault.owner_id === userAddress) {
+        acc.myBorrowingList.push(normallizedVault)
+      }
+
+      if (vault.vault?.depositors.find(({ depositor_id }) => depositor_id === userAddress)) {
+        acc.permissinedBorrowingList.push(normallizedVault)
+      }
+
+      return acc
+    },
+    { myBorrowingList: [], permissinedBorrowingList: [] },
+  )
 }
 
 const getCollateralTokens = (collateralTokens: Array<Lending_Controller_Collateral_Token>) => {
-  return []
+  return collateralTokens.map(({ token_address, balances_aggregate: { aggregate } }) => {
+    return {
+      tokenAddress: token_address,
+      ...(aggregate?.sum?.balance ? { balance: aggregate?.sum?.balance } : {}),
+    }
+  })
 }
 
 export const normalizeLoans = ({
@@ -134,11 +195,13 @@ export const normalizeLoans = ({
   dipDupTokens,
   mTokens,
   userMTokens,
+  userAddres,
 }: {
   storage: LoansGQL
   dipDupTokens: State['tokens']['dipDupTokens']
   mTokens: State['tokens']['mTokens']
   userMTokens: UserState['mTokens']
+  userAddres?: string
 }) => {
   const loanTokens = storage?.loan_tokens?.reduce<Array<LoanTokenType>>((acc, loanToken) => {
     const {
@@ -152,7 +215,7 @@ export const normalizeLoans = ({
     } = loanToken
     const tokenInfo = dipDupTokens?.find(({ contract }) => contract === lp_token_address)
     const { transactionHistory, totalBorrowed, totalLended } = getTransactionHistory(history_data, dipDupTokens)
-    const { corratealAmount, borrowedAmount } = corrateralCalc(vaults)
+    const { corratealAmount, borrowedAmount } = getCollateralTotal(vaults)
 
     if (tokenInfo) {
       const loanTokenMetadata = {
@@ -161,9 +224,13 @@ export const normalizeLoans = ({
         decimals: tokenInfo.metadata.decimals,
         icon: tokenInfo.metadata.icon,
       }
+
+      const { myBorrowingList, permissinedBorrowingList } = getBorrowings(vaults, dipDupTokens, userAddres)
+
       acc.push({
         loanTokenData: loanTokenMetadata,
-        borrowingList: getBorrowings(vaults),
+        myBorrowingList,
+        permissinedBorrowingList,
         lendingItem: getLendingItem(loanToken, userMTokens, loanTokenMetadata),
         transactionHistory,
         utilisationRate: utilisation_rate,

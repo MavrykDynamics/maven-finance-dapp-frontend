@@ -31,7 +31,8 @@ export type LoanTokenType = {
     tokenSymbol: string | undefined
   }>
   lendingItem: LendingItemType
-  borrowingList: Array<BorrowingData>
+  myBorrowingList: Array<BorrowingData>
+  permissinedBorrowingList: Array<BorrowingData>
   utilisationRate: number
   borrowers: number
   suppliers: number
@@ -92,5 +93,5 @@ export type BorrowingData = {
   xtzDelegatedTo?: string
   operators?: Array<string>
   sMVKDelegatedTo?: string
-  depositors?: string | Array<string>
+  depositors?: Array<string>
 }

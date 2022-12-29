@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
-import { useHistory, useLocation } from 'react-router-dom'
+import { Link, useHistory, useLocation } from 'react-router-dom'
 import { useParams } from 'react-router'
 
 // actions, consts
@@ -56,6 +56,8 @@ import { DropdownCard, DropdownWrap } from '../../app/App.components/DropDown/Dr
 
 // types
 import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
+import { Button } from 'app/App.components/Button/Button.controller'
+import { TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
 
 const queryParameters = {
   pathname: '/mavryk-council',
@@ -132,10 +134,6 @@ export const Council = () => {
     history.replace(`${queryParameters.pathname}${review}`)
     setActiveActionTab(councilTabsList[0].text)
     scrollUpPage()
-  }
-
-  const handleClickGoBack = () => {
-    history.replace(queryParameters.pathname)
   }
 
   const handleSelect = (item: DropdownItemType) => {}
@@ -217,10 +215,14 @@ export const Council = () => {
       <PageHeader page={'council'} />
       <CouncilStyled>
         {review && isUserInCouncilMembers ? (
-          <button onClick={handleClickGoBack} className="go-back">
-            <Icon id="arrow-left-stroke" />
-            Back to Member Dashboard
-          </button>
+          <Link to={`/council`}>
+            <Button
+              text="Back to Member Dashboard"
+              icon="arrowRight"
+              kind={TRANSPARENT_WITH_BORDER}
+              className="margin-top-30"
+            />
+          </Link>
         ) : null}
 
         <article

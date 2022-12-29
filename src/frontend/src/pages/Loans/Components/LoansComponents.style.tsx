@@ -56,23 +56,8 @@ export const LendingTabListItem = styled.div<{ theme: MavrykTheme }>`
   column-gap: 10px;
   border: 1px solid ${({ theme }) => theme.cardBorderColor};
 
-  .go-back-btn {
-    background: transparent;
-    max-width: 140px;
-    border: 1px solid ${({ theme }) => theme.valueColor};
-    color: ${({ theme }) => theme.valueColor};
-    font-weight: 600;
-    font-size: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    svg {
-      transform: rotate(180deg);
-      width: 18px;
-      stroke: ${({ theme }) => theme.valueColor};
-      fill: ${({ theme }) => theme.valueColor};
-    }
+  .lending-btn {
+    padding: 15px;
   }
 `
 
@@ -192,25 +177,6 @@ export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
         stroke-width: 2px;
         stroke: ${({ theme }) => theme.valueColor};
       }
-    }
-  }
-
-  .go-back-btn {
-    background: transparent;
-    max-width: 140px;
-    border: 1px solid ${({ theme }) => theme.valueColor};
-    color: ${({ theme }) => theme.valueColor};
-    font-weight: 600;
-    font-size: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    svg {
-      transform: rotate(180deg);
-      width: 18px;
-      stroke: ${({ theme }) => theme.valueColor};
-      fill: ${({ theme }) => theme.valueColor};
     }
   }
 

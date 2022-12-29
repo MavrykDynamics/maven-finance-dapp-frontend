@@ -158,23 +158,6 @@ export const MarketPagination = styled.div<{ theme: MavrykTheme }>`
   justify-content: space-between;
   margin-top: 45px;
 
-  .go-back-btn {
-    background: transparent;
-    border: 1px solid ${({ theme }) => theme.valueColor};
-    color: ${({ theme }) => theme.valueColor};
-    font-weight: 600;
-    font-size: 16px;
-    padding: 17px 30px;
-    display: flex;
-    align-items: center;
-
-    svg {
-      transform: rotate(180deg);
-      stroke: ${({ theme }) => theme.valueColor};
-      fill: ${({ theme }) => theme.valueColor};
-    }
-  }
-
   .right-side-wrapper {
     display: flex;
     column-gap: 30px;
