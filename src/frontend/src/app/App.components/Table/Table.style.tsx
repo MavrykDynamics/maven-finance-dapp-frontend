@@ -269,7 +269,7 @@ export const TableHeaderCell = styled.th<{ theme: MavrykTheme }>`
   color: ${({ theme }) => theme.textColor};
 `
 
-export const TableCell = styled.td<{ theme: MavrykTheme; width?: string }>`
+export const TableCell = styled.td<{ theme: MavrykTheme; width?: string; customStyles?: string }>`
   font-weight: 600;
   font-size: 16px;
   line-height: 20px;
@@ -296,6 +296,13 @@ export const TableCell = styled.td<{ theme: MavrykTheme; width?: string }>`
   p {
     margin: 0;
   }
+
+  ${({ customStyles }) =>
+    customStyles
+      ? css`
+          ${customStyles}
+        `
+      : ''}
 
   .rate {
     font-weight: 400;

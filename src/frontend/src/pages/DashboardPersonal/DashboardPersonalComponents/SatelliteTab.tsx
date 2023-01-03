@@ -2,28 +2,29 @@ import { useSelector } from 'react-redux'
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 
-import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
-import { borrowingData, historyData, lendingData } from '../tabs.const'
+import { historyData } from '../tabs.const'
 import { getOracleStatus, ORACLE_STATUSES_MAPPER } from 'pages/Satellites/helpers/Satellites.consts'
 import { DEFAULT_SATELLITE } from 'reducers/delegation'
 import { getSatelliteMetrics } from 'pages/Satellites/Satellites.helpers'
 
-import { Button } from 'app/App.components/Button/Button.controller'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import Icon from 'app/App.components/Icon/Icon.view'
 
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
-import {
-  DashboardPersonalTabStyled,
-  LBHInfoBlock,
-  SatelliteStatusBlock,
-  ListItem,
-  HistoryBlock,
-} from './DashboardPersonalComponents.style'
+import { DashboardPersonalTabStyled, SatelliteStatusBlock, HistoryBlock } from './DashboardPersonalComponents.style'
 import { SatelliteOracleStatusComponent } from 'pages/Satellites/SatelliteList/ListCards/SatelliteCard.style'
 
 import { State } from 'reducers'
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHeaderCell,
+  TableBody,
+  TableCell,
+} from 'app/App.components/Table/Table.style'
+import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 
 type SatelliteTabProps = {}
 
@@ -138,53 +139,33 @@ const SatelliteTab = ({}: SatelliteTabProps) => {
           <h2>History</h2>
         </GovRightContainerTitleArea>
         {historyData ? (
-          <div className="list scroll-block">
-            {historyData.map(({ action, amount, exitFee, totalAmount, user, id }) => {
-              return (
-                <ListItem columsTemplate={`25% 25% ${user ? '50%' : ' 25% 25%'}  `} key={id + action}>
-                  <div className="list-part">
-                    <div className="name">Action</div>
-                    <div className="value">{action}</div>
-                  </div>
-                  <div className="list-part">
-                    <div className="name">Amount</div>
-                    <div className="value">
-                      <CommaNumber value={amount} endingText="MVK" />
-                    </div>
-                  </div>
-                  {exitFee ? (
-                    <div className="list-part">
-                      <div className="name">Exit Fee</div>
-                      <div className="value">
-                        <CommaNumber value={exitFee} endingText="%" />
-                      </div>
-                    </div>
-                  ) : (
-                    !user && <div className="list-part" />
-                  )}
-                  {totalAmount ? (
-                    <div className="list-part">
-                      <div className="name">Total Amount</div>
-                      <div className="value">
-                        <CommaNumber value={totalAmount} endingText="MVK" />
-                      </div>
-                    </div>
-                  ) : (
-                    !user && <div className="list-part" />
-                  )}
-                  {user ? (
-                    <div className="list-part user">
-                      <Icon id={user.avatar || 'noImage'} />
-                      <div className="user-info">
-                        <div className="name">{user.name}</div>
-                        <TzAddress tzAddress={user.address} className="value user-address" hasIcon={true} />
-                      </div>
-                    </div>
-                  ) : null}
-                </ListItem>
-              )
-            })}
-          </div>
+          <Table className="treasury-table">
+            <TableHeader className="treasury">
+              <TableRow>
+                <TableHeaderCell>Action</TableHeaderCell>
+                <TableHeaderCell>Amount, MVK</TableHeaderCell>
+                <TableHeaderCell>Total, MVK</TableHeaderCell>
+                <TableHeaderCell>Fee</TableHeaderCell>
+                <TableHeaderCell>User</TableHeaderCell>
+              </TableRow>
+            </TableHeader>
+
+            <TableBody className="treasury">
+              {historyData.map(({ action, amount, exitFee, totalAmount, user, id }) => {
+                return (
+                  <TableRow rowHeight={50} borderColor="dataColor" className="add-hover">
+                    <TableCell width="25%">{action}</TableCell>
+                    <TableCell width="20%">{amount ? <CommaNumber value={amount} /> : '-'}</TableCell>
+                    <TableCell width="20%">{totalAmount ? <CommaNumber value={totalAmount} /> : '-'}</TableCell>
+                    <TableCell width="15%">{exitFee ? <CommaNumber value={exitFee} endingText="%" /> : '-'}</TableCell>
+                    <TableCell width="10%">
+                      {user?.address ? <TzAddress tzAddress={user.address} hasIcon={true} type={BLUE} /> : '-'}
+                    </TableCell>
+                  </TableRow>
+                )
+              })}
+            </TableBody>
+          </Table>
         ) : (
           <div className="no-data">
             <span>You do not have any previous delegation history</span>

@@ -213,6 +213,12 @@ export const LBHInfoBlock = styled(MediumBlockBase)<{ theme: MavrykTheme }>`
 
 export const HistoryBlock = styled(MediumBlockBase)<{ theme: MavrykTheme }>`
   width: 100%;
+  max-height: 712px;
+  height: fit-content;
+
+  .no-data {
+    margin-top: 20px;
+  }
 `
 
 export const ListItem = styled.div<{ theme: MavrykTheme; columsTemplate: string }>`
@@ -363,10 +369,9 @@ export const SatelliteStatusBlock = styled(MediumBlockBase)<{ theme: MavrykTheme
 `
 
 export const DelegationStatusBlock = styled(SatelliteStatusBlock)<{ theme: MavrykTheme }>`
-  .grid {
-    grid-template-rows: repeat(2, 50px);
-    column-gap: 15px;
-    row-gap: 20px;
+  height: 285px;
+  .top-row {
+    margin-top: 25px;
   }
 
   .delegated-to {
