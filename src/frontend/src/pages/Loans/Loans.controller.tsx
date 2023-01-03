@@ -1,35 +1,21 @@
+import * as React from 'react'
+import { LoansStyled } from './Loans.style'
 import { useDispatch, useSelector } from 'react-redux'
+import { State } from '../../reducers'
 import { useEffect } from 'react'
-
-import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
-import { Markets } from './Components/Markets.controller'
-
-import { getLoansStorage, toggleLoansModal } from './Loans.actions'
-
 import { Page } from 'styles'
-import { State } from 'reducers'
-import { LoansModals } from './Components/Modals/Modal.controller'
-import { UPDATE_MVK_OPERATORS_MODAL_ID } from './Loans.const'
+import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
 
 export const Loans = () => {
   const dispatch = useDispatch()
-  const { isInitialDataloading } = useSelector((state: State) => state.loading)
-  const { dipDupTokens } = useSelector((state: State) => state.tokens)
-  const { currentModalActive } = useSelector((state: State) => state.loans)
-
-  useEffect(() => {
-    ;(async () => {
-      if (!isInitialDataloading && dipDupTokens.length) {
-        await dispatch(getLoansStorage())
-      }
-    })()
-  }, [isInitialDataloading, dipDupTokens, dispatch])
+  const { wallet, tezos, accountPkh } = useSelector((state: State) => state.wallet)
 
   return (
     <Page>
-      <PageHeader page={'lending'} />
-      <Markets />
-      <LoansModals activeModal={currentModalActive} closePopup={() => dispatch(toggleLoansModal(null))} />
+      <PageHeader page={'loans'} />
+      <LoansStyled>
+        <div>Here on the Loans Page</div>
+      </LoansStyled>
     </Page>
   )
 }

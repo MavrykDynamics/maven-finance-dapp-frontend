@@ -27,7 +27,6 @@ import {
   getDipDupTokensStorage,
   getWhitelistTokensStorage,
   getTokensPrices,
-  getMTokensStorage,
 } from 'reducers/actions/dipDupActions.actions'
 
 // export const { store, persistor } = configureStore({})
@@ -69,7 +68,6 @@ const AppContainer = () => {
       await dispatch(getDipDupTokensStorage())
       await dispatch(getWhitelistTokensStorage())
       await dispatch(getTokensPrices())
-      await dispatch(getMTokensStorage())
       await dispatch(getMvkTokenStorage())
 
       await dispatch(toggleDataLoader(false))

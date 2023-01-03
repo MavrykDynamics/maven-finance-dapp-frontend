@@ -354,8 +354,6 @@ export const fetchUserData = async (
 
     const userInfoData = userInfoFromIndexer?.mavryk_user[0]
 
-    const mTokens = userInfoData?.m_token_accounts
-
     const userIsDelegatedToSatellite = userInfoData?.delegations.length > 0
     const userInfo: Partial<UserState> = {
       myMvkTokenBalance: calcWithoutPrecision(userInfoData?.mvk_balance),
@@ -377,7 +375,6 @@ export const fetchUserData = async (
       myDoormanRewardsData: userDoormanRewardsData,
       myFarmRewardsData: userFarmsRewardsData,
       mySatelliteRewardsData: userSatelliteRewardsData,
-      mTokens,
     }
 
     userInfo.myDoormanRewardsData = calcUsersDoormanRewards(userInfo)

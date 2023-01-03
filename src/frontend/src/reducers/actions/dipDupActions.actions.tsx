@@ -1,5 +1,5 @@
 import { AppDispatch, GetState } from 'app/App.controller'
-import { normalizeDipDupTokens, normalizeMTokens } from 'app/App.helpers'
+import { normalizeDipDupTokens } from 'app/App.helpers'
 import CoinGecko from 'coingecko-api'
 import { fetchFromIndexer } from 'gql/fetchGraphQL'
 import {
@@ -9,8 +9,6 @@ import {
   GOVERNANCE_CONTRACT_ADDRESS_NAME,
   GOVERNANCE_CONTRACT_ADDRESS_QUERY,
   GOVERNANCE_CONTRACT_ADDRESS_VARIABLE,
-  M_TOKENS_QUERY,
-  M_TOKENS_QUERY_NAME,
   WHITELIST_TOKENS_NAME,
   WHITELIST_TOKENS_QUERY,
   WHITELIST_TOKENS_VARIABLE,
@@ -78,20 +76,5 @@ export const getTokensPrices = () => async (dispatch: any) => {
     })
   } catch (e) {
     console.error('getTokensPrices error: ', e)
-  }
-}
-
-export const GET_M_TOKENS = 'GET_M_TOKENS'
-export const getMTokensStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
-  try {
-    const storage = await fetchFromIndexer(M_TOKENS_QUERY, M_TOKENS_QUERY_NAME, {})
-    const mTokens = normalizeMTokens(storage)
-
-    dispatch({
-      type: GET_M_TOKENS,
-      mTokens,
-    })
-  } catch (e) {
-    console.error('getDipDupTokensStorage error: ', e)
   }
 }
