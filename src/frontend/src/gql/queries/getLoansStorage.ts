@@ -1,5 +1,5 @@
 export const LOANS_QUERY = `query GetLoansStorage {
-  lending_controller {
+  lending_controller(where: {mock_time: {_eq: true}}) {
     history_data {
       type
       amount

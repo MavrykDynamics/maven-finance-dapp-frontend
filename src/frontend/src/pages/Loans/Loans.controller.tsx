@@ -29,7 +29,7 @@ export const Loans = () => {
     <Page>
       <PageHeader page={'lending'} />
       <Markets />
-      <LoansModals activeModal={UPDATE_MVK_OPERATORS_MODAL_ID} closePopup={() => dispatch(toggleLoansModal(null))} />
+      <LoansModals activeModal={currentModalActive} closePopup={() => dispatch(toggleLoansModal(null))} />
     </Page>
   )
 }
