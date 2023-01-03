@@ -19,6 +19,7 @@ import {
   LBHInfoBlock,
   SatelliteStatusBlock,
   ListItem,
+  HistoryBlock,
 } from './DashboardPersonalComponents.style'
 import { SatelliteOracleStatusComponent } from 'pages/Satellites/SatelliteList/ListCards/SatelliteCard.style'
 
@@ -60,7 +61,7 @@ const SatelliteTab = ({}: SatelliteTabProps) => {
         <GovRightContainerTitleArea>
           <h2>My Satellite Details</h2>
         </GovRightContainerTitleArea>
-        <div className="grid">
+        <div className="top-row">
           <div className="grid-item info">
             {satelliteRecord.image ? (
               <div className="satellite-avatar">
@@ -77,7 +78,7 @@ const SatelliteTab = ({}: SatelliteTabProps) => {
               </div>
             </div>
           </div>
-          <div className="grid-item space">
+          <div className="grid-item ">
             <div className="name">Free MVK Space</div>
             <div className="value">
               <CommaNumber
@@ -88,31 +89,33 @@ const SatelliteTab = ({}: SatelliteTabProps) => {
               />
             </div>
           </div>
-          <div className="grid-item participation">
+          <div className="grid-item ">
             <div className="name">Gov. Participation</div>
             <div className="value">
               <CommaNumber value={satelliteMetrics.votingPartisipation} endingText="%" />
             </div>
           </div>
-          <div className="grid-item delegated">
+          <div className="grid-item ">
             <div className="name">Delegated MVK</div>
             <div className="value">
               <CommaNumber value={satelliteRecord.totalDelegatedAmount} />
             </div>
           </div>
-          <div className="grid-item fee">
-            <div className="name">Fee</div>
-            <div className="value">
-              <CommaNumber value={satelliteRecord.satelliteFee} endingText="%" />
-            </div>
-          </div>
-          <div className="grid-item oraclePart">
+          <div className="grid-item ">
             <div className="name">Oracle Participation</div>
             <div className="value">
               <CommaNumber value={satelliteMetrics.oracleEfficiency} endingText="%" />
             </div>
           </div>
-          <div className="grid-item oracleStatus">
+        </div>
+        <div className="bottom-row">
+          <div className="grid-item ">
+            <div className="name">Fee</div>
+            <div className="value">
+              <CommaNumber value={satelliteRecord.satelliteFee} endingText="%" />
+            </div>
+          </div>
+          <div className="grid-item ">
             <div className="name">Oracle Status</div>
             <div className="value">
               <SatelliteOracleStatusComponent statusType={oracleStatusType}>
@@ -120,7 +123,7 @@ const SatelliteTab = ({}: SatelliteTabProps) => {
               </SatelliteOracleStatusComponent>
             </div>
           </div>
-          <div className="grid-item website">
+          <div className="grid-item ">
             <div className="name">Website</div>
             <div className="value">
               <a href={satelliteRecord.website}>{satelliteRecord.website}</a>
@@ -129,7 +132,8 @@ const SatelliteTab = ({}: SatelliteTabProps) => {
         </div>
         <Link to="/become-satellite">Edit My Profile</Link>
       </SatelliteStatusBlock>
-      <LBHInfoBlock>
+
+      <HistoryBlock>
         <GovRightContainerTitleArea>
           <h2>History</h2>
         </GovRightContainerTitleArea>
@@ -186,106 +190,7 @@ const SatelliteTab = ({}: SatelliteTabProps) => {
             <span>You do not have any previous delegation history</span>
           </div>
         )}
-      </LBHInfoBlock>
-      <LBHInfoBlock>
-        <GovRightContainerTitleArea>
-          <h2>Lending</h2>
-        </GovRightContainerTitleArea>
-        {lendingData ? (
-          <div className="list scroll-block">
-            {lendingData.map(({ assetImg, apy, supplied, earned, mvkBonus, id }) => {
-              return (
-                <ListItem columsTemplate="60px 0.9fr 0.7fr 0.8fr 0.7fr" key={id}>
-                  <Icon id={assetImg || 'noImage'} />
-                  <div className="list-part">
-                    <div className="name">Supplied</div>
-                    <div className="value">
-                      <CommaNumber value={supplied} beginningText="$" />
-                    </div>
-                  </div>
-                  <div className="list-part">
-                    <div className="name">APY</div>
-                    <div className="value">
-                      <CommaNumber value={apy} endingText="%" />
-                    </div>
-                  </div>
-                  <div className="list-part">
-                    <div className="name">Earned</div>
-                    <div className="value">
-                      <CommaNumber value={earned} />
-                    </div>
-                  </div>
-                  <div className="list-part">
-                    <div className="name">MVK Bonus</div>
-                    <div className="value">
-                      <CommaNumber value={mvkBonus} />
-                    </div>
-                  </div>
-                </ListItem>
-              )
-            })}
-          </div>
-        ) : (
-          <div className="no-data">
-            <span>Nothing supplied at this time</span>
-            <Link to="/yield-farms">
-              <Button text="Lend Asset" icon="lend" kind={ACTION_PRIMARY} className="noStroke dashboard-sectionLink" />
-            </Link>
-          </div>
-        )}
-      </LBHInfoBlock>
-      <LBHInfoBlock>
-        <GovRightContainerTitleArea>
-          <h2>Borrowing</h2>
-        </GovRightContainerTitleArea>
-        {borrowingData ? (
-          <div className="list scroll-block">
-            {borrowingData.map(({ assetImg, apy, supplied, earned, mvkBonus, id }) => {
-              return (
-                <ListItem columsTemplate="60px 0.9fr 0.7fr 0.8fr 0.7fr" key={id}>
-                  <Icon id={assetImg || 'noImage'} />
-                  <div className="list-part">
-                    <div className="name">Borrowed</div>
-                    <div className="value">
-                      <CommaNumber value={supplied} beginningText="$" />
-                    </div>
-                  </div>
-                  <div className="list-part">
-                    <div className="name">APY</div>
-                    <div className="value">
-                      <CommaNumber value={apy} endingText="%" />
-                    </div>
-                  </div>
-                  <div className="list-part">
-                    <div className="name">Earned</div>
-                    <div className="value">
-                      <CommaNumber value={earned} />
-                    </div>
-                  </div>
-                  <div className="list-part">
-                    <div className="name">MVK Bonus</div>
-                    <div className="value">
-                      <CommaNumber value={mvkBonus} />
-                    </div>
-                  </div>
-                </ListItem>
-              )
-            })}
-          </div>
-        ) : (
-          <div className="no-data">
-            <span>Nothing borrowed at this time</span>
-            <Link to="/yield-farms">
-              <Button
-                text="Borrow Asset"
-                icon="borrow"
-                kind={ACTION_PRIMARY}
-                className="noStroke dashboard-sectionLink"
-              />
-            </Link>
-          </div>
-        )}
-      </LBHInfoBlock>
+      </HistoryBlock>
     </DashboardPersonalTabStyled>
   )
 }
