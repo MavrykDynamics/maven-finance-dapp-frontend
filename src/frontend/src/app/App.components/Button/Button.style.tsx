@@ -288,11 +288,6 @@ export const ButtonIcon = styled.svg<{ theme: MavrykTheme; strokeWidth?: number 
     stroke: ${({ theme }) => theme.actionPrimaryBtnColor};
   }
 
-  &.after {
-    margin-right: 0px;
-    margin-left: 11px;
-  }
-
   ${({ strokeWidth }) =>
     strokeWidth
       ? css`
