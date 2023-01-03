@@ -6,6 +6,7 @@ export type ButtonTypes = typeof BUTTON | typeof SUBMIT | typeof RESET | undefin
 export const PRIMARY = 'primary'
 export const SECONDARY = 'secondary'
 export const TRANSPARENT = 'transparent'
+export const TRANSPARENT_WITH_BORDER = 'transparentWithBorder'
 export const ACTION_PRIMARY = 'actionPrimary'
 export const ACTION_SECONDARY = 'actionSecondary'
 export const ACTION_SIMPLE = 'actionSimple'
@@ -14,6 +15,7 @@ export type ButtonStyle =
   | typeof PRIMARY
   | typeof SECONDARY
   | typeof TRANSPARENT
+  | typeof TRANSPARENT_WITH_BORDER
   | 'votingFor'
   | 'votingAgainst'
   | 'votingAbstain'

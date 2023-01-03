@@ -57,15 +57,6 @@ export const Plug = styled.div`
     margin-top: auto;
     margin-bottom: auto;
   }
-
-  &.loan-chart {
-    max-height: 182px;
-    padding: 15px 10px 15px 10px;
-
-    p {
-      margin-top: 25px;
-    }
-  }
 `
 
 export const ChartStyled = styled.div<{ theme: MavrykTheme }>`
