@@ -160,30 +160,6 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
     }
   }
 
-  &.transparentWithBorder {
-    background: transparent;
-    border: 1px solid ${({ theme }) => theme.valueColor};
-    color: ${({ theme }) => theme.valueColor};
-    font-weight: 600;
-    font-size: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 31px;
-    width: fit-content;
-
-    &.margin-top-30 {
-      margin-top: 30px;
-    }
-
-    svg {
-      transform: rotate(180deg);
-      width: 16px;
-      stroke: ${({ theme }) => theme.valueColor};
-      fill: ${({ theme }) => theme.valueColor};
-    }
-  }
-
   &.connect-wallet-details {
     display: flex;
     align-items: center;
@@ -218,12 +194,6 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
 
   &.dashboard-sectionLink {
     width: 220px;
-  }
-
-  &.link {
-    width: fit-content;
-    background-color: transparent;
-    color: ${({ theme }) => theme.valueColor};
   }
 `
 
@@ -286,11 +256,6 @@ export const ButtonIcon = styled.svg<{ theme: MavrykTheme; strokeWidth?: number 
 
   &.actionSecondary {
     stroke: ${({ theme }) => theme.actionPrimaryBtnColor};
-  }
-
-  &.after {
-    margin-right: 0px;
-    margin-left: 11px;
   }
 
   ${({ strokeWidth }) =>
