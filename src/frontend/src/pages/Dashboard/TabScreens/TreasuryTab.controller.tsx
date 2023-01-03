@@ -1,7 +1,15 @@
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { SimpleTable } from 'app/App.components/SimpleTable/SimpleTable.controller'
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHeaderCell,
+  TableBody,
+  TableCell,
+  TableScrollable,
+} from 'app/App.components/Table/Table.style'
 import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
 import { getVestingStorage } from 'pages/Treasury/Treasury.actions'
 import { reduceTreasuryAssets } from 'pages/Treasury/Treasury.helpers'
@@ -13,30 +21,6 @@ import { TreasuryBalanceType } from 'utils/TypesAndInterfaces/Treasury'
 import { BlockName, StatBlock } from '../Dashboard.style'
 import { TabWrapperStyled, TreasuryContentStyled, TreasuryVesting } from './DashboardTabs.style'
 import { emptyContainer } from './LendingTab.controller'
-
-export const columnNames = ['Asset', 'Amount', 'USD Value']
-export const fieldsMapper = [
-  {
-    fieldName: 'symbol',
-  },
-  {
-    fieldName: 'balance',
-    needCommaNumber: true,
-    propsToComponents: {
-      useAccurateParsing: true,
-    },
-  },
-  {
-    fieldName: 'usdValue',
-    callback: (_: string, value: unknown) => {
-      const { rate, symbol, usdValue } = value as TreasuryBalanceType
-      const obj = {
-        ...(rate ? { beginningText: '$' } : { endingText: symbol }),
-      }
-      return <CommaNumber {...obj} value={Number(usdValue)} useAccurateParsing />
-    },
-  },
-]
 
 export const TreasuryTab = () => {
   const dispatch = useDispatch()
@@ -100,12 +84,33 @@ export const TreasuryTab = () => {
           <div>
             <BlockName>Treasury Assets</BlockName>
 
-            <SimpleTable
-              colunmNames={columnNames}
-              data={assetsBalances}
-              fieldsMapper={fieldsMapper}
-              className="dashboard-st"
-            />
+            <TableScrollable bodyHeight={90} className="treasury-table scroll-block">
+              <Table>
+                <TableHeader className="treasury">
+                  <TableRow>
+                    <TableHeaderCell>Asset</TableHeaderCell>
+                    <TableHeaderCell>Amount</TableHeaderCell>
+                    <TableHeaderCell className="right">USD Value</TableHeaderCell>
+                  </TableRow>
+                </TableHeader>
+
+                <TableBody className="treasury">
+                  {assetsBalances.concat(assetsBalances).map(({ symbol, balance, usdValue, rate }) => {
+                    return (
+                      <TableRow rowHeight={25} borderColor="dataColor" className="add-hover">
+                        <TableCell width="33%">{symbol}</TableCell>
+                        <TableCell width="33%">
+                          <CommaNumber value={balance} useAccurateParsing />
+                        </TableCell>
+                        <TableCell width="33%" className="right">
+                          <CommaNumber value={usdValue} endingText={rate ? '$' : symbol} useAccurateParsing />
+                        </TableCell>
+                      </TableRow>
+                    )
+                  })}
+                </TableBody>
+              </Table>
+            </TableScrollable>
           </div>
           <div>
             <BlockName>Token Vesting</BlockName>

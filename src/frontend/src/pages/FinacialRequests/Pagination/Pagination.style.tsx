@@ -1,6 +1,7 @@
 import styled, { css } from 'styled-components/macro'
 
 import { MavrykTheme } from '../../../styles/interfaces'
+import { PAGINATION_SIDE_CENTER, PAGINATION_SIDE_RIGHT } from './pagination.consts'
 
 export const PaginationWrapper = styled.div<{ theme: MavrykTheme; side?: string }>`
   display: flex;
@@ -15,8 +16,13 @@ export const PaginationWrapper = styled.div<{ theme: MavrykTheme; side?: string 
   margin-top: 20px;
 
   ${({ side }) =>
-    side === 'right'
+    side === PAGINATION_SIDE_RIGHT
       ? css`
+          margin-left: auto;
+        `
+      : side === PAGINATION_SIDE_CENTER
+      ? css`
+          margin-right: auto;
           margin-left: auto;
         `
       : ''}

@@ -11,6 +11,8 @@ import { usersData } from '../users.const'
 
 // style
 import { SatellitePaginationStyled } from 'pages/Satellites/SatellitePagination/SatellitePagination.style'
+import { TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
+import { Button } from 'app/App.components/Button/Button.controller'
 
 const UsersPagination = () => {
   let { userId = '' } = useParams<{ userId: string }>()
@@ -24,9 +26,8 @@ const UsersPagination = () => {
 
   return (
     <SatellitePaginationStyled>
-      <Link className="pagination-link back" to="/oracle-users">
-        <Icon id="arrow-left-stroke" />
-        Back to users
+      <Link to={`/oracle-users`} className="back">
+        <Button text="Back to users" icon="arrowRight" kind={TRANSPARENT_WITH_BORDER} />
       </Link>
       {prevFeed ? (
         <Link className="pagination-link prev" to={`/satellites/user-details/${prevFeed.id}`}>

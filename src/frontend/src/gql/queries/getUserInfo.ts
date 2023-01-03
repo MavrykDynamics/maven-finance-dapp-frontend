@@ -4,6 +4,7 @@ query GetUserInfo ($_eq: String = "") {
     address
     mvk_balance
     smvk_balance
+    
     delegations {
       satellite {
         user {
