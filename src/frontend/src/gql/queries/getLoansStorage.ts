@@ -51,7 +51,6 @@ export const LOANS_QUERY = `query GetLoansStorage {
         loan_outstanding_total
       }
     }
-
   }
 }`
 

@@ -18,7 +18,7 @@ import {
 
 const getCollateralTotal = (vaults: Lending_Controller_Vault[]) =>
   vaults.reduce(
-    (acc, { collateral_balances, history_data }) => {
+    (acc, { collateral_balances = [], history_data = [] }) => {
       const vaultCorratealBalance = collateral_balances.reduce((vaultAcc, { balance }) => {
         // TODO: add multipliying by rate of the asset
         vaultAcc += balance
@@ -33,8 +33,8 @@ const getCollateralTotal = (vaults: Lending_Controller_Vault[]) =>
         return vaultAcc
       }, 0)
 
-      acc.corratealAmount += vaultCorratealBalance
-      acc.borrowedAmount += borrowedAmount
+      acc.corratealAmount += Number(vaultCorratealBalance)
+      acc.borrowedAmount += Number(borrowedAmount)
       return acc
     },
     { corratealAmount: 0, borrowedAmount: 0 },
@@ -145,7 +145,7 @@ const getBorrowings = (
           assetIcon: asset?.metadata.icon,
           amtBorrowed: 0,
           assetRate: 0,
-          collateralBalance: vault.collateral_balances_aggregate.aggregate?.sum?.balance ?? 0,
+          collateralBalance: vault?.collateral_balances_aggregate?.aggregate?.sum?.balance ?? 0,
           collateralUtilization: 0,
           apy: 0,
           fee: 0,
