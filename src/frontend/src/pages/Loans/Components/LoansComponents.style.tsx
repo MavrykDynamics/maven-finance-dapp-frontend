@@ -29,6 +29,7 @@ export const LoansTabStyled = styled.div<{ theme: MavrykTheme }>`
   background-color: ${({ theme }) => theme.containerColor};
   border-radius: 10px;
   padding: 30px;
+  padding-bottom: 40px;
   position: relative;
 
   .has-items-borrow-btn {
@@ -45,19 +46,40 @@ export const LoansTabStyled = styled.div<{ theme: MavrykTheme }>`
   .list-wrapper {
     margin-top: 30px;
   }
+
+  .factory-info {
+    display: flex;
+    column-gap: 10px;
+    font-weight: 600;
+    font-size: 14px;
+    color: ${({ theme }) => theme.textColor};
+    position: absolute;
+    bottom: 10px;
+    right: 30px;
+  }
 `
 
 export const LendingTabListItem = styled.div<{ theme: MavrykTheme }>`
   background-color: ${({ theme }) => theme.containerColor};
   border-radius: 10px;
-  padding: 18px 20px;
+  padding: 18px 20px 8px 20px;
   display: grid;
   grid-template-columns: 0.8fr 0.8fr 0.8fr 1fr 1fr 1fr 125px 125px;
   column-gap: 10px;
   border: 1px solid ${({ theme }) => theme.cardBorderColor};
 
   .lending-btn {
-    padding: 15px;
+    width: 120px;
+    height: 36px;
+    font-weight: 600;
+    font-size: 16px;
+    padding: 0;
+    align-items: center;
+    display: flex;
+
+    svg {
+      stroke-width: 0.5px;
+    }
   }
 `
 

@@ -283,7 +283,7 @@ export const TableCell = styled.td<{ theme: MavrykTheme; width?: string }>`
         `
       : ''}
 
-  svg {
+  svg:not(.copyIcon) {
     width: 24px;
     height: 24px;
     margin-right: 4px;

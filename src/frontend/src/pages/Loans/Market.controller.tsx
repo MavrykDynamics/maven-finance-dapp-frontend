@@ -123,23 +123,23 @@ export const Market = () => {
           </div>
           <ThreeLevelListItem>
             <div className="name">Earn APY</div>
-            <CommaNumber value={1.4} beginningText="$" className="value" />
+            <CommaNumber value={0} endingText="%" className="value" />
           </ThreeLevelListItem>
           <ThreeLevelListItem>
             <div className="name">Total Lending</div>
-            <CommaNumber value={currentToken.totalBorrowed} showLetter className="value" />
+            <CommaNumber value={0} className="value" />
           </ThreeLevelListItem>
           <ThreeLevelListItem>
             <div className="name">Available Liquidity</div>
-            <CommaNumber value={22.2} endingText="%" className="value" />
+            <CommaNumber value={0} className="value" />
           </ThreeLevelListItem>
           <ThreeLevelListItem>
             <div className="name">Collateral Factor</div>
-            <CommaNumber value={currentToken.avaliableLiquidity} showLetter className="value" />
+            <CommaNumber value={0} endingText="%" className="value" />
           </ThreeLevelListItem>
           <ThreeLevelListItem>
             <div className="name">Suppliers</div>
-            <CommaNumber value={currentToken.totalLended} showLetter className="value" />
+            <CommaNumber value={0} className="value" />
           </ThreeLevelListItem>
 
           <Button
@@ -155,27 +155,27 @@ export const Market = () => {
         <div className={`hidden-items ${showHiddenItems ? 'show' : ''}`}>
           <ThreeLevelListItem>
             <div className="name">Oracle Price</div>
-            <CommaNumber value={22.2} endingText="%" className="value" />
+            <CommaNumber value={0} beginningText="$" className="value" />
           </ThreeLevelListItem>
           <ThreeLevelListItem>
             <div className="name">Borrow APY</div>
-            <CommaNumber value={currentToken.totalLended} showLetter className="value" />
+            <CommaNumber value={0} endingText="%" className="value" />
           </ThreeLevelListItem>
           <ThreeLevelListItem>
             <div className="name">Total Borrowed</div>
-            <CommaNumber value={currentToken.totalLended} showLetter className="value" />
+            <CommaNumber value={0} className="value" />
           </ThreeLevelListItem>
           <ThreeLevelListItem>
             <div className="name">Reserve Amount</div>
-            <CommaNumber value={currentToken.totalLended} showLetter className="value" />
+            <CommaNumber value={0} className="value" />
           </ThreeLevelListItem>
           <ThreeLevelListItem>
             <div className="name">Reserve Factor</div>
-            <CommaNumber value={currentToken.totalLended} showLetter className="value" />
+            <CommaNumber value={0} endingText="%" className="value" />
           </ThreeLevelListItem>
           <ThreeLevelListItem>
             <div className="name">Borrowers</div>
-            <CommaNumber value={currentToken.totalLended} showLetter className="value" />
+            <CommaNumber value={0} className="value" />
           </ThreeLevelListItem>
         </div>
 

@@ -13,6 +13,8 @@ import { LendingTabListItem, LoansTabStyled, NoItemsInTabStyled } from './LoansC
 
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { LendingItemType } from 'utils/TypesAndInterfaces/Loans'
+import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
+import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 
 type LendingTabPropsType = {
   lendingItem: LendingItemType
@@ -37,27 +39,27 @@ export const LendingTab = ({ lendingItem }: LendingTabPropsType) => {
         <h2>My Lending</h2>
       </GovRightContainerTitleArea>
 
-      {lendingItem ? (
+      {lendingItem || true ? (
         <div className="list-wrapper">
           <LendingTabListItem>
             <ThreeLevelListItem>
               <div className="name">Asset</div>
               <div className="value">
-                {lendingItem.assetIcon ? (
+                {lendingItem?.assetIcon ? (
                   <div className="img-wrapper">
                     <img src={lendingItem.assetIcon} alt={`${lendingItem.assetName} logo`} />
                   </div>
                 ) : (
                   <Icon id="noIcon" />
                 )}
-                {lendingItem.assetName}
+                {'xtz' ?? lendingItem?.assetName}
               </div>
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Lending</div>
-              <CommaNumber value={lendingItem.lendValue} className="value" showLetter />
+              <CommaNumber value={lendingItem?.lendValue ?? 11} className="value" showLetter />
               <CommaNumber
-                value={lendingItem.lendValue * lendingItem.lendAssetRate}
+                value={lendingItem?.lendValue ?? 1 * (lendingItem?.lendAssetRate ?? 1)}
                 beginningText="$"
                 className="rate"
                 showLetter
@@ -65,13 +67,13 @@ export const LendingTab = ({ lendingItem }: LendingTabPropsType) => {
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Lend APY</div>
-              <CommaNumber value={lendingItem.lendAPY} className="value" endingText="%" />
+              <CommaNumber value={lendingItem?.lendAPY ?? 1} className="value" endingText="%" />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Interest Earned</div>
-              <CommaNumber value={lendingItem.interestEarned} className="value" showLetter />
+              <CommaNumber value={lendingItem?.interestEarned ?? 1} className="value" showLetter />
               <CommaNumber
-                value={lendingItem.interestEarned * lendingItem.lendAssetRate}
+                value={lendingItem?.interestEarned ?? 1 * (lendingItem?.lendAssetRate ?? 1)}
                 beginningText="$"
                 className="rate"
                 showLetter
@@ -79,9 +81,9 @@ export const LendingTab = ({ lendingItem }: LendingTabPropsType) => {
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Wallet Balance</div>
-              <CommaNumber value={lendingItem.loanAssetWalletBalance} className="value" showLetter />
+              <CommaNumber value={lendingItem?.loanAssetWalletBalance ?? 1} className="value" showLetter />
               <CommaNumber
-                value={lendingItem.loanAssetWalletBalance * lendingItem.lendAssetRate}
+                value={lendingItem?.loanAssetWalletBalance ?? 1 * (lendingItem?.lendAssetRate ?? 1)}
                 beginningText="$"
                 className="rate"
                 showLetter
@@ -89,7 +91,7 @@ export const LendingTab = ({ lendingItem }: LendingTabPropsType) => {
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">mXTZ Balance</div>
-              <CommaNumber value={lendingItem.mXTZBalance} className="value" showLetter />
+              <CommaNumber value={lendingItem?.mXTZBalance ?? 1} className="value" showLetter />
             </ThreeLevelListItem>
             <Button
               text="Add"
@@ -119,6 +121,9 @@ export const LendingTab = ({ lendingItem }: LendingTabPropsType) => {
           />
         </NoItemsInTabStyled>
       )}
+      <div className="factory-info">
+        Lending Controller Address <TzAddress tzAddress="tz1ezDb77a9jaFMHDWs8QXrKEDkpgGdgsjPD" type={BLUE} />
+      </div>
     </LoansTabStyled>
   )
 }
