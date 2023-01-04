@@ -11,6 +11,7 @@ import Icon from '../../../app/App.components/Icon/Icon.view'
 // helpers
 import { getSeparateCamelCase } from '../../../utils/parse'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+import { bytesToString } from 'utils/bytesToString'
 
 // types
 import { BreakGlassActions } from 'utils/TypesAndInterfaces/BreakGlass'
@@ -47,8 +48,10 @@ export const CouncilPending = (props: Props) => {
   }
 
   const findActionByName = useCallback(
-    (name: string) => parameters.find((item) => item.name === name)?.value || '',
-    [parameters],
+    (name: string) => {
+      const foundField = parameters.find((item) => item.name === name)?.value
+      return foundField ? bytesToString(foundField) : ''
+    }, [parameters],
   )
 
   const isAddCouncilMember = actionType === 'addCouncilMember'
