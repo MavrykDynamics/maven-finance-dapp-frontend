@@ -24,13 +24,8 @@ export const Doorman = () => {
   const { totalSupply = 0 } = useSelector((state: State) => state.mvkToken.mvkTokenStorage)
   const { totalStakedMvk } = useSelector((state: State) => state.doorman)
 
-  useEffect(() => {
-    dispatch(getMvkTokenStorage())
-    dispatch(getDoormanStorage())
-  }, [dispatch])
-
-  const { isLoading: isMVKTokenStorageLoading } = useDataLoader(getMvkTokenStorage, [])
-  const { isLoading: isDormanStorageLoading } = useDataLoader(getDoormanStorage, [])
+  const { isLoading: isMVKTokenStorageLoading } = useDataLoader(async () => await dispatch(getMvkTokenStorage()), [])
+  const { isLoading: isDormanStorageLoading } = useDataLoader(async () => await dispatch(getDoormanStorage()), [])
 
   const stakeCallback = (amount: number) => {
     dispatch(stake(amount))
@@ -40,15 +35,24 @@ export const Doorman = () => {
     dispatch(showExitFeeModal(amount))
   }
 
+  console.log('isMVKTokenStorageLoading', isMVKTokenStorageLoading)
+  console.log('isDormanStorageLoading', isDormanStorageLoading)
+
   return (
     <Page>
-      <ExitFeeModal />
-      <PageHeader page={'doorman'} />
-      <StakeUnstakeView stakeCallback={stakeCallback} unstakeCallback={unstakeCallback} />
-      <DoormanInfoStyled>
-        <DoormanChart />
-        <DoormanStatsView mvkTotalSupply={totalSupply} totalStakedMvkSupply={totalStakedMvk} />
-      </DoormanInfoStyled>
+      {isDormanStorageLoading || isMVKTokenStorageLoading ? (
+        '... loading dorman data'
+      ) : (
+        <>
+          <ExitFeeModal />
+          <PageHeader page={'doorman'} />
+          <StakeUnstakeView stakeCallback={stakeCallback} unstakeCallback={unstakeCallback} />
+          <DoormanInfoStyled>
+            <DoormanChart />
+            <DoormanStatsView mvkTotalSupply={totalSupply} totalStakedMvkSupply={totalStakedMvk} />
+          </DoormanInfoStyled>
+        </>
+      )}
     </Page>
   )
 }
