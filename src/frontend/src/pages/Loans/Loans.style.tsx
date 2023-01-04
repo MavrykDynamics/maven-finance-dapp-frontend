@@ -196,9 +196,50 @@ export const MarketStyled = styled.div<{ theme: MavrykTheme }>`
   flex-direction: column;
   row-gap: 25px;
 
-  .gen-info {
-    display: flex;
+  .hidden-items {
+    margin-top: 12px;
+    display: none;
+    grid-template-columns: 130px 90px 130px 130px 115px 70px 115px;
     justify-content: space-between;
+
+    &.show {
+      display: grid;
+    }
+
+    > div {
+      height: 50px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+
+      .value {
+        font-weight: 600;
+        font-size: 18px;
+      }
+
+      div {
+        text-align: center;
+        margin: 0 auto;
+      }
+    }
+  }
+
+  .gen-info {
+    grid-template-columns: 130px 90px 130px 130px 115px 70px 115px;
+    display: grid;
+    justify-content: space-between;
+
+    .value {
+      font-weight: 700;
+      font-size: 25px;
+      line-height: 30px;
+      justify-content: center;
+    }
+
+    .name {
+      text-align: center;
+      line-height: 23px;
+    }
 
     .asset-info {
       display: flex;
@@ -206,8 +247,8 @@ export const MarketStyled = styled.div<{ theme: MavrykTheme }>`
 
       svg,
       .img-wrapper {
-        width: 45px;
-        height: 45px;
+        width: 53px;
+        height: 53px;
 
         img {
           width: 100%;
@@ -225,11 +266,13 @@ export const MarketStyled = styled.div<{ theme: MavrykTheme }>`
         .symbol {
           font-weight: 600;
           font-size: 14px;
+          line-height: 23px;
         }
 
         .full-name {
           font-weight: 700;
           font-size: 25px;
+          line-height: 30px;
         }
       }
     }
@@ -237,6 +280,7 @@ export const MarketStyled = styled.div<{ theme: MavrykTheme }>`
 
   .tabs-nav {
     display: flex;
+    margin-top: 20px;
     column-gap: 10px;
   }
 `

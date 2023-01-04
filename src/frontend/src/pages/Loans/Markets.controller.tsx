@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 
 // const
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
-import { BORROW_TAB_ID, LEND_TAB_ID } from '../Loans.const'
+import { BORROW_TAB_ID, LEND_TAB_ID } from './Loans.const'
 
 // view
 import { Button } from 'app/App.components/Button/Button.controller'
@@ -20,7 +20,7 @@ import {
   MarketOverview,
   MarketsOverviewContainer,
   ThreeLevelListItem,
-} from '../Loans.style'
+} from './Loans.style'
 
 // types
 import { State } from 'reducers'

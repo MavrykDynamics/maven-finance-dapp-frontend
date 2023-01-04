@@ -224,6 +224,26 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
     width: fit-content;
     background-color: transparent;
     color: ${({ theme }) => theme.valueColor};
+
+    svg {
+      stroke: ${({ theme }) => theme.valueColor};
+      fill: ${({ theme }) => theme.valueColor};
+      width: 14px;
+      height: 12px;
+      stroke-width: 2px;
+    }
+
+    &.arrow-down {
+      svg {
+        transform: rotate(270deg);
+      }
+    }
+
+    &.arrow-top {
+      svg {
+        transform: rotate(-270deg);
+      }
+    }
   }
 `
 
