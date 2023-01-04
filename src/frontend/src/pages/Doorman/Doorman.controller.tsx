@@ -16,17 +16,21 @@ import { DoormanStatsView } from './DoormanStats/DoormanStats.view'
 import { showExitFeeModal } from './ExitFeeModal/ExitFeeModal.actions'
 import { ExitFeeModal } from './ExitFeeModal/ExitFeeModal.controller'
 import { StakeUnstakeView } from './StakeUnstake/StakeUnstake.view'
+import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 
 export const Doorman = () => {
   const dispatch = useDispatch()
 
-  const { mvkTokenStorage } = useSelector((state: State) => state.mvkToken)
+  const { totalSupply = 0 } = useSelector((state: State) => state.mvkToken.mvkTokenStorage)
   const { totalStakedMvk } = useSelector((state: State) => state.doorman)
 
   useEffect(() => {
     dispatch(getMvkTokenStorage())
     dispatch(getDoormanStorage())
   }, [dispatch])
+
+  const { isLoading: isMVKTokenStorageLoading } = useDataLoader(getMvkTokenStorage, [])
+  const { isLoading: isDormanStorageLoading } = useDataLoader(getDoormanStorage, [])
 
   const stakeCallback = (amount: number) => {
     dispatch(stake(amount))
@@ -43,8 +47,7 @@ export const Doorman = () => {
       <StakeUnstakeView stakeCallback={stakeCallback} unstakeCallback={unstakeCallback} />
       <DoormanInfoStyled>
         <DoormanChart />
-
-        <DoormanStatsView mvkTotalSupply={mvkTokenStorage?.totalSupply} totalStakedMvkSupply={totalStakedMvk} />
+        <DoormanStatsView mvkTotalSupply={totalSupply} totalStakedMvkSupply={totalStakedMvk} />
       </DoormanInfoStyled>
     </Page>
   )

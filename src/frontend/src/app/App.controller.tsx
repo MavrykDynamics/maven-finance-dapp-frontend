@@ -48,7 +48,6 @@ const AppContainer = () => {
   useEffect(() => {
     ;(async () => {
       // Fetching initial data for DAPP
-      await dispatch(toggleInitialDataLoading(true))
       await dispatch(getDelegationStorage())
       // For using Temple wallet
       // return TempleWallet.onAvailabilityChange((available) => {

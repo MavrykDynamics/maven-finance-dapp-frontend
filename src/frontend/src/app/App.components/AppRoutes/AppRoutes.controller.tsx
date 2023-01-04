@@ -115,8 +115,8 @@ export const AppRoutes = () => {
         path="/submit-proposal"
         component={ProposalSubmission}
         isAuthorized={Boolean(accountPkh)}
-        hasAccess={Boolean(isSatellite)}
         canCheck={!isInitialDataLoading}
+        hasAccess={Boolean(isSatellite)}
         redirectPath={'/'}
       />
       <Route exact path="/treasury">

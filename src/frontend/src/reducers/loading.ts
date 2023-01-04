@@ -1,4 +1,4 @@
-import { TOGGLE_WERT_LOADER } from './../app/App.components/Loader/Loader.action';
+import { TOGGLE_WERT_LOADER } from './../app/App.components/Loader/Loader.action'
 import { TOGGLE_ACTION_LOADER, TOGGLE_INITIAL_DATA_LOADING } from 'app/App.components/Loader/Loader.action'
 
 export type LoadingState = {
@@ -10,7 +10,7 @@ export type LoadingState = {
 const loadingInitialState: LoadingState = {
   isWertLoading: false,
   isActionLoading: false,
-  isInitialDataLoading: false,
+  isInitialDataLoading: true,
 }
 
 export function loading(
