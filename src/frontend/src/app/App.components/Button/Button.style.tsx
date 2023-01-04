@@ -334,3 +334,39 @@ export const ButtonLoadingIcon = styled.svg<{ theme: MavrykTheme }>`
     stroke: ${({ theme }) => theme.primaryColor};
   }
 `
+
+export const GoBackBtn = styled.button`
+  height: 50px;
+  cursor: pointer;
+  border-radius: ${BUTTON_RADIUS};
+  user-select: none;
+  background: transparent;
+  border: 1px solid ${({ theme }) => theme.valueColor};
+  font-weight: 600;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 31px;
+  width: fit-content;
+
+  a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    column-gap: 10px;
+    color: ${({ theme }) => theme.valueColor};
+  }
+
+  &.margin-top-30 {
+    margin-top: 30px;
+  }
+
+  svg {
+    transform: rotate(180deg);
+    height: 18px;
+    width: 18px;
+    stroke: ${({ theme }) => theme.valueColor};
+    fill: ${({ theme }) => theme.valueColor};
+  }
+`
