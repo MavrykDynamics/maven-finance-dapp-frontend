@@ -19,7 +19,6 @@ export const formatNumber = (showDecimal: boolean, decimalsToShow: number, numbe
 }
 export const CommaNumber = ({
   value,
-  loading,
   endingText,
   beginningText,
   className = '',
@@ -30,7 +29,6 @@ export const CommaNumber = ({
 }: {
   value: number
   decimalsToShow?: number
-  loading?: boolean
   endingText?: string
   beginningText?: string
   className?: string
@@ -73,31 +71,17 @@ export const CommaNumber = ({
     numberWithCommas = `${splittedDigits.at(0)},${splittedDigits.at(1)}...${splittedDigits.at(-1)}`
   }
 
-  return (
-    <>
-      {loading ? (
-        <div className={className}>
-          <LoadingIcon className={svgKind}>
-            <use xlinkHref="/icons/sprites.svg#loading" />
-          </LoadingIcon>
-        </div>
-      ) : (
-        <>
-          {beginningText || endingText ? (
-            <div className={className} title={titleForNumber}>
-              <p>
-                {beginningText ? <span className="prefix">{beginningText + ' '}</span> : ''}
-                {numberWithCommas}
-                {endingText ? <span className="suffix">{' ' + endingText}</span> : ''}
-              </p>
-            </div>
-          ) : (
-            <div className={className} title={titleForNumber}>
-              {numberWithCommas}
-            </div>
-          )}
-        </>
-      )}
-    </>
+  return beginningText || endingText ? (
+    <div className={className} title={titleForNumber}>
+      <p>
+        {beginningText ? <span className="prefix">{beginningText + ' '}</span> : ''}
+        {numberWithCommas}
+        {endingText ? <span className="suffix">{' ' + endingText}</span> : ''}
+      </p>
+    </div>
+  ) : (
+    <div className={className} title={titleForNumber}>
+      {numberWithCommas}
+    </div>
   )
 }

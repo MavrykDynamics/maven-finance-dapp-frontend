@@ -7,7 +7,6 @@ import { DoormanStatsView } from './DoormanStats.view'
 
 export const DoormanStats = () => {
   const dispatch = useDispatch()
-  const loading = useSelector((state: State) => state.loading.isLoading)
   const { mvkTokenStorage, myMvkTokenBalance } = useSelector((state: State) => state.mvkToken)
   const { doormanStorage, totalStakedMvk } = useSelector((state: State) => state.doorman)
 
@@ -16,11 +15,5 @@ export const DoormanStats = () => {
     dispatch(getDoormanStorage())
   }, [dispatch, totalStakedMvk])
 
-  return (
-    <DoormanStatsView
-      loading={loading}
-      mvkTotalSupply={mvkTokenStorage?.totalSupply}
-      totalStakedMvkSupply={totalStakedMvk}
-    />
-  )
+  return <DoormanStatsView mvkTotalSupply={mvkTokenStorage?.totalSupply} totalStakedMvkSupply={totalStakedMvk} />
 }

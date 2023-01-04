@@ -7,15 +7,14 @@ import { useHistory } from 'react-router-dom'
 import { State } from '../../../reducers'
 import { changeWallet, connect, disconnect } from './ConnectWallet.actions'
 import { ConnectWalletStyled } from './ConnectWallet.style'
-import { ConnectedWalletBlock, CoinsInfoType, InstallWalletButton, NoWalletConnectedButton } from './ConnectWallet.view'
+import { ConnectedWalletBlock, CoinsInfoType, NoWalletConnectedButton } from './ConnectWallet.view'
 import { getWertOptions } from './Wert/WertIO.const'
 import { useCallback, useState } from 'react'
 import WertIoPopup from './Wert/WertIoPopup'
 import { toggleSidebarCollapsing } from '../Menu/Menu.actions'
 import { showToaster } from '../Toaster/Toaster.actions'
 import { ERROR } from '../Toaster/Toaster.constants'
-import { toggleLoader } from '../Loader/Loader.action'
-import { WERT_IO_LOADER } from 'utils/constants'
+import { toggleWertLoader } from '../Loader/Loader.action'
 
 type ConnectWalletProps = {
   className?: string
@@ -47,8 +46,8 @@ export const ConnectWallet = ({ className, closeMobileMenu }: ConnectWalletProps
     await dispatch(disconnect())
   }
 
-  const wertLoaderToogler = async (loader?: typeof WERT_IO_LOADER) => {
-    await dispatch(toggleLoader(loader))
+  const wertLoaderToogler = async (isLoadingWert: boolean) => {
+    await dispatch(toggleWertLoader(isLoadingWert))
   }
 
   const showWertIoErrorToaster = () => {
@@ -62,7 +61,7 @@ export const ConnectWallet = ({ className, closeMobileMenu }: ConnectWalletProps
   }
 
   const mountWertWiget = (commodity: string) => {
-    wertLoaderToogler(WERT_IO_LOADER)
+    wertLoaderToogler(true)
     const wertOptions = getWertOptions(commodity, setShowWertIoPopup, showWertIoErrorToaster, wertLoaderToogler)
     const wertWidgetInstance = new WertWidget(wertOptions)
     wertWidgetInstance.mount()

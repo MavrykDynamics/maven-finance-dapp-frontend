@@ -12,7 +12,6 @@ import { BecomeSatelliteView } from './BecomeSatellite.view'
 
 export const BecomeSatellite = () => {
   const dispatch = useDispatch()
-  const loading = useSelector((state: State) => state.loading.isLoading)
   const {
     accountPkh,
     user: { mySMvkTokenBalance },
@@ -59,7 +58,6 @@ export const BecomeSatellite = () => {
 
   return (
     <BecomeSatelliteView
-      loading={loading}
       registerCallback={registerCallback}
       updateSatelliteCallback={updateSatelliteCallback}
       accountPkh={accountPkh}

@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { State } from 'reducers'
 import { Page } from 'styles'
-import { Loader, SpinnerLoader } from 'app/App.components/Loader/Loader.view'
+import { SpinnerLoader } from 'app/App.components/Loader/Loader.view'
 import type {
   SatelliteProposalVotingHistory,
   SatelliteFinancialRequestVotingHistory,
@@ -30,7 +30,6 @@ import { parseDate } from 'utils/time'
 
 type SatelliteDetailsViewProps = {
   satellite: SatelliteRecord
-  loading: boolean
   delegateCallback: (address: string) => void
   undelegateCallback: (address: string) => void
   claimRewardsCallback: () => void
@@ -71,7 +70,6 @@ const emptyContainer = (
 
 export const SatelliteDetailsView = ({
   satellite,
-  loading,
   delegateCallback,
   undelegateCallback,
   claimRewardsCallback,
@@ -86,11 +84,12 @@ export const SatelliteDetailsView = ({
   const isSameId = satellite?.address === satelliteId
   const isSatellite = satellite && satellite.address && satellite.address !== 'None'
 
+  // TODO: add loader on fetching specific satellite
   return (
     <Page>
       <PageHeader page={'satellites'} />
       <SatellitePagination />
-      {loading || !isSameId ? (
+      {!isSameId ? (
         <SpinnerLoader />
       ) : isSatellite ? (
         <SatelliteListItem

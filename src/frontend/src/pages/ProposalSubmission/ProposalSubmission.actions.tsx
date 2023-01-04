@@ -8,7 +8,7 @@ import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import type { AppDispatch, GetState } from '../../app/App.controller'
 import { SubmitProposalForm } from '../../utils/TypesAndInterfaces/Forms'
 import { State } from 'reducers'
-import { toggleLoader } from 'app/App.components/Loader/Loader.action'
+import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 import { ROCKET_LOADER } from 'utils/constants'
 import { PaymentsDataChangesType, ProposalDataChangesType } from './ProposalSybmittion.types'
 import { ContractAbstraction, Wallet } from '@taquito/taquito'
@@ -22,7 +22,7 @@ export const submitProposal =
       return
     }
 
-    if (state.loading.isLoading) {
+    if (state.loading.isActionLoading) {
       await dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
@@ -32,7 +32,7 @@ export const submitProposal =
       const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.governanceAddress.address)
       const query = await contract?.methods.propose(title, description, ipfs, sourceCode).send({ amount })
 
-      await dispatch(toggleLoader(ROCKET_LOADER))
+      await dispatch(toggleActionLoader(true))
       await dispatch(showToaster(INFO, 'Submitting proposal...', 'Please wait 30s'))
 
       await query?.confirmation()
@@ -41,13 +41,13 @@ export const submitProposal =
       await dispatch(getGovernanceStorage())
       await dispatch(getDelegationStorage())
       await dispatch(getCurrentRoundProposals())
-      await dispatch(toggleLoader())
+      await dispatch(toggleActionLoader(false))
     } catch (error) {
       console.error('submitProposal error:', error)
       if (error instanceof Error) {
         dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      await dispatch(toggleLoader())
+      await dispatch(toggleActionLoader(false))
     }
   }
 
@@ -59,7 +59,7 @@ export const dropProposal = (proposalId: number) => async (dispatch: AppDispatch
     return
   }
 
-  if (state.loading.isLoading) {
+  if (state.loading.isActionLoading) {
     await dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
     return
   }
@@ -67,13 +67,13 @@ export const dropProposal = (proposalId: number) => async (dispatch: AppDispatch
   try {
     const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.governanceAddress.address)
 
-    await dispatch(toggleLoader(ROCKET_LOADER))
+    await dispatch(toggleActionLoader(true))
     await dispatch(showToaster(INFO, 'Drop proposal...', 'Please wait 30s'))
 
     await (await contract?.methods.dropProposal(proposalId).send())?.confirmation()
 
     dispatch(showToaster(SUCCESS, 'Proposal Droped.', 'All good :)'))
-    await dispatch(toggleLoader())
+    await dispatch(toggleActionLoader(false))
 
     await dispatch(getGovernanceStorage())
     await dispatch(getDelegationStorage())
@@ -83,7 +83,7 @@ export const dropProposal = (proposalId: number) => async (dispatch: AppDispatch
     if (error instanceof Error) {
       dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    await dispatch(toggleLoader())
+    await dispatch(toggleActionLoader(false))
   }
 }
 
@@ -95,7 +95,7 @@ export const lockProposal = (proposalId: number) => async (dispatch: AppDispatch
     return
   }
 
-  if (state.loading.isLoading) {
+  if (state.loading.isActionLoading) {
     await dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
     return
   }
@@ -103,12 +103,12 @@ export const lockProposal = (proposalId: number) => async (dispatch: AppDispatch
   try {
     const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.governanceAddress.address)
 
-    await dispatch(toggleLoader(ROCKET_LOADER))
+    await dispatch(toggleActionLoader(true))
     await dispatch(showToaster(INFO, 'Locking proposal...', 'Please wait 30s'))
 
     await (await contract?.methods.lockProposal(proposalId).send())?.confirmation()
 
-    await dispatch(toggleLoader())
+    await dispatch(toggleActionLoader(false))
     await dispatch(showToaster(SUCCESS, 'Proposal locked.', 'All good :)'))
 
     await dispatch(getGovernanceStorage())
@@ -119,7 +119,7 @@ export const lockProposal = (proposalId: number) => async (dispatch: AppDispatch
     if (error instanceof Error) {
       dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    await dispatch(toggleLoader())
+    await dispatch(toggleActionLoader(false))
   }
 }
 
@@ -138,7 +138,7 @@ export const updateProposalData =
       return
     }
 
-    if (state.loading.isLoading) {
+    if (state.loading.isActionLoading) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
@@ -166,13 +166,13 @@ export const updateProposalData =
       }
 
       await dispatch(showToaster(INFO, 'Updating proposal...', 'Please wait 30s'))
-      await dispatch(toggleLoader(ROCKET_LOADER))
+      await dispatch(toggleActionLoader(true))
 
       const query = await contract.methods.updateProposalData(proposalId, bytesChanges, paymentChanges).send()
       await query?.confirmation()
 
       await dispatch(showToaster(SUCCESS, 'Proposal updated.', 'All good :)'))
-      await dispatch(toggleLoader())
+      await dispatch(toggleActionLoader(false))
 
       await dispatch(getGovernanceStorage())
       await dispatch(getDelegationStorage())
@@ -182,6 +182,6 @@ export const updateProposalData =
         console.error(error)
         dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      await dispatch(toggleLoader())
+      await dispatch(toggleActionLoader(false))
     }
   }

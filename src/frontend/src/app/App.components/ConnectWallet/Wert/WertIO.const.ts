@@ -2,7 +2,7 @@ export const getWertOptions = (
   commodity: string,
   setPopupActive: (open: boolean) => void,
   showErrorToast: () => void,
-  hideLoader: () => void,
+  hideLoader: (isLoading: boolean) => void,
 ) => ({
   partner_id: '01G0MCBQFJE47YZ0SECRKM81CD',
   commodity,
@@ -25,11 +25,11 @@ export const getWertOptions = (
   width: 400,
   listeners: {
     loaded: () => {
-      hideLoader()
+      hideLoader(false)
       setPopupActive(true)
     },
     error: () => {
-      hideLoader()
+      hideLoader(false)
       showErrorToast()
     },
     close: () => setPopupActive(false),

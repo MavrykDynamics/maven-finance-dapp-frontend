@@ -1,16 +1,5 @@
 import { MichelsonMap } from '@taquito/taquito'
 import { GET_DELEGATION_STORAGE, REGISTER_FEED, REGISTER_FEED_ERROR } from 'pages/Satellites/Satellites.actions'
-import {
-  REGISTER_AS_SATELLITE_ERROR,
-  REGISTER_AS_SATELLITE_REQUEST,
-  REGISTER_AS_SATELLITE_RESULT,
-  UNREGISTER_AS_SATELLITE_ERROR,
-  UNREGISTER_AS_SATELLITE_REQUEST,
-  UNREGISTER_AS_SATELLITE_RESULT,
-  UPDATE_AS_SATELLITE_ERROR,
-  UPDATE_AS_SATELLITE_REQUEST,
-  UPDATE_AS_SATELLITE_RESULT,
-} from '../pages/BecomeSatellite/BecomeSatellite.actions'
 import { GET_SATELLITE_BY_ADDRESS } from '../pages/SatelliteDetails/SatelliteDetails.actions'
 import {
   DelegateRecord,
@@ -95,60 +84,6 @@ export function delegation(state = delegationDefaultState, action: Action) {
       return {
         ...state,
         delegationStorage: action.delegationStorage,
-      }
-    case REGISTER_AS_SATELLITE_REQUEST:
-      return {
-        ...state,
-        type: SATELLITE_ACTION,
-        error: undefined,
-      }
-    case REGISTER_AS_SATELLITE_RESULT:
-      return {
-        ...state,
-        type: SATELLITE_ACTION,
-        error: undefined,
-      }
-    case REGISTER_AS_SATELLITE_ERROR:
-      return {
-        ...state,
-        type: SATELLITE_ACTION,
-        error: action.error,
-      }
-    case UPDATE_AS_SATELLITE_REQUEST:
-      return {
-        ...state,
-        type: SATELLITE_ACTION,
-        error: undefined,
-      }
-    case UPDATE_AS_SATELLITE_RESULT:
-      return {
-        ...state,
-        type: SATELLITE_ACTION,
-        error: undefined,
-      }
-    case UPDATE_AS_SATELLITE_ERROR:
-      return {
-        ...state,
-        type: SATELLITE_ACTION,
-        error: action.error,
-      }
-    case UNREGISTER_AS_SATELLITE_REQUEST:
-      return {
-        ...state,
-        type: SATELLITE_ACTION,
-        error: undefined,
-      }
-    case UNREGISTER_AS_SATELLITE_RESULT:
-      return {
-        ...state,
-        type: SATELLITE_ACTION,
-        error: undefined,
-      }
-    case UNREGISTER_AS_SATELLITE_ERROR:
-      return {
-        ...state,
-        type: SATELLITE_ACTION,
-        error: action.error,
       }
     case GET_SATELLITE_BY_ADDRESS:
       return {

@@ -44,7 +44,7 @@ import {
   normalizeMvkMintHistoryData,
 } from './Doorman.converter'
 import { Farm } from 'utils/generated/graphqlTypes'
-import { toggleLoader } from 'app/App.components/Loader/Loader.action'
+import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 import { DEFAULT_USER, UserState } from 'reducers/wallet'
 import { SatelliteRecord } from 'utils/TypesAndInterfaces/Delegation'
 
@@ -118,7 +118,7 @@ export const stake = (amount: number) => async (dispatch: AppDispatch, getState:
     return
   }
 
-  if (state.loading.isLoading) {
+  if (state.loading.isActionLoading) {
     dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
     return
   }
@@ -156,13 +156,13 @@ export const stake = (amount: number) => async (dispatch: AppDispatch, getState:
         .withContractCall(mvkTokenContract.methods.update_operators(removeOperators)))
     const batchOp = await batch?.send()
 
-    dispatch(toggleLoader(ROCKET_LOADER))
+    dispatch(toggleActionLoader(true))
     dispatch(showToaster(INFO, 'Staking...', 'Please wait 30s'))
 
     await batchOp?.confirmation()
 
     dispatch(showToaster(SUCCESS, 'Staking done', 'All good :)'))
-    dispatch(toggleLoader())
+    dispatch(toggleActionLoader(false))
 
     if (state.wallet.accountPkh) await dispatch(updateUserData(state.wallet.accountPkh))
     await dispatch(getMvkTokenStorage())
@@ -172,7 +172,7 @@ export const stake = (amount: number) => async (dispatch: AppDispatch, getState:
       console.error(error)
       dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    dispatch(toggleLoader())
+    dispatch(toggleActionLoader(false))
   }
 }
 
@@ -189,7 +189,7 @@ export const unstake = (amount: number) => async (dispatch: AppDispatch, getStat
     return
   }
 
-  if (state.loading.isLoading) {
+  if (state.loading.isActionLoading) {
     dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
     return
   }
@@ -198,7 +198,7 @@ export const unstake = (amount: number) => async (dispatch: AppDispatch, getStat
     const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.doormanAddress.address)
     const transaction = await contract?.methods.unstake(amount * PRECISION_NUMBER).send()
 
-    dispatch(toggleLoader(ROCKET_LOADER))
+    dispatch(toggleActionLoader(true))
     dispatch(showToaster(INFO, 'Unstaking...', 'Please wait 30s'))
     dispatch({
       type: HIDE_EXIT_FEE_MODAL,
@@ -207,7 +207,7 @@ export const unstake = (amount: number) => async (dispatch: AppDispatch, getStat
     await transaction?.confirmation()
 
     dispatch(showToaster(SUCCESS, 'Unstaking done', 'All good :)'))
-    dispatch(toggleLoader())
+    dispatch(toggleActionLoader(false))
 
     if (state.wallet.accountPkh) await dispatch(updateUserData(state.wallet.accountPkh))
     await dispatch(getMvkTokenStorage())
@@ -217,7 +217,7 @@ export const unstake = (amount: number) => async (dispatch: AppDispatch, getStat
       console.error(error)
       dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    dispatch(toggleLoader())
+    dispatch(toggleActionLoader(false))
   }
 }
 
@@ -229,7 +229,7 @@ export const rewardsCompound = (address: string) => async (dispatch: AppDispatch
     return
   }
 
-  if (state.loading.isLoading) {
+  if (state.loading.isActionLoading) {
     dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
     return
   }
@@ -238,13 +238,13 @@ export const rewardsCompound = (address: string) => async (dispatch: AppDispatch
     const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.doormanAddress.address)
     const transaction = await contract?.methods.compound(address).send()
 
-    dispatch(toggleLoader(ROCKET_LOADER))
+    dispatch(toggleActionLoader(true))
     dispatch(showToaster(INFO, 'Compounding rewards...', 'Please wait 30s'))
 
     await transaction?.confirmation()
 
     dispatch(showToaster(SUCCESS, 'Compounding done', 'All good :)'))
-    dispatch(toggleLoader())
+    dispatch(toggleActionLoader(false))
 
     if (state.wallet.accountPkh) await dispatch(updateUserData(state.wallet.accountPkh))
     await dispatch(getMvkTokenStorage())
@@ -254,7 +254,7 @@ export const rewardsCompound = (address: string) => async (dispatch: AppDispatch
       console.error(error)
       dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    dispatch(toggleLoader())
+    dispatch(toggleActionLoader(false))
   }
 }
 

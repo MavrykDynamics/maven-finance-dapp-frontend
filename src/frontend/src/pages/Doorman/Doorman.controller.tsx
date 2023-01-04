@@ -44,11 +44,7 @@ export const Doorman = () => {
       <DoormanInfoStyled>
         <DoormanChart />
 
-        <DoormanStatsView
-          loading={false}
-          mvkTotalSupply={mvkTokenStorage?.totalSupply}
-          totalStakedMvkSupply={totalStakedMvk}
-        />
+        <DoormanStatsView mvkTotalSupply={mvkTokenStorage?.totalSupply} totalStakedMvkSupply={totalStakedMvk} />
       </DoormanInfoStyled>
     </Page>
   )

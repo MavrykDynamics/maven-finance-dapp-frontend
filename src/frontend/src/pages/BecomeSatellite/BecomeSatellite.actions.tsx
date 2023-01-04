@@ -2,13 +2,10 @@ import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { ERROR, INFO, SUCCESS } from 'app/App.components/Toaster/Toaster.constants'
 import { getDelegationStorage } from 'pages/Satellites/Satellites.actions'
 import { State } from 'reducers'
-import { PRECISION_NUMBER } from '../../utils/constants'
 import { RegisterAsSatelliteForm } from '../../utils/TypesAndInterfaces/Forms'
 import type { AppDispatch, GetState } from '../../app/App.controller'
+import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 
-export const REGISTER_AS_SATELLITE_REQUEST = 'REGISTER_AS_SATELLITE_REQUEST'
-export const REGISTER_AS_SATELLITE_RESULT = 'REGISTER_AS_SATELLITE_RESULT'
-export const REGISTER_AS_SATELLITE_ERROR = 'REGISTER_AS_SATELLITE_ERROR'
 export const registerAsSatellite =
   (form: RegisterAsSatelliteForm) => async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
@@ -18,7 +15,7 @@ export const registerAsSatellite =
       return
     }
 
-    if (state.loading.isLoading) {
+    if (state.loading.isActionLoading) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
@@ -33,34 +30,23 @@ export const registerAsSatellite =
         .send()
       console.log('transaction', transaction)
 
-      dispatch({
-        type: REGISTER_AS_SATELLITE_REQUEST,
-        form,
-      })
+      dispatch(toggleActionLoader(true))
       dispatch(showToaster(INFO, 'Registering...', 'Please wait 30s'))
 
       const done = await transaction?.confirmation()
       console.log('done', done)
       dispatch(showToaster(SUCCESS, 'Satellite Registered.', 'All good :)'))
 
-      dispatch({
-        type: REGISTER_AS_SATELLITE_RESULT,
-      })
       dispatch(getDelegationStorage())
+      dispatch(toggleActionLoader(false))
     } catch (error) {
       if (error instanceof Error) {
         dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      dispatch({
-        type: REGISTER_AS_SATELLITE_ERROR,
-        error,
-      })
+      dispatch(toggleActionLoader(false))
     }
   }
 
-export const UPDATE_AS_SATELLITE_REQUEST = 'UPDATE_AS_SATELLITE_REQUEST'
-export const UPDATE_AS_SATELLITE_RESULT = 'UPDATE_AS_SATELLITE_RESULT'
-export const UPDATE_AS_SATELLITE_ERROR = 'UPDATE_AS_SATELLITE_ERROR'
 export const updateSatelliteRecord =
   (form: RegisterAsSatelliteForm) => async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
@@ -70,7 +56,7 @@ export const updateSatelliteRecord =
       return
     }
 
-    if (state.loading.isLoading) {
+    if (state.loading.isActionLoading) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
@@ -84,34 +70,23 @@ export const updateSatelliteRecord =
         .send()
       console.log('transaction', transaction)
 
-      dispatch({
-        type: UPDATE_AS_SATELLITE_REQUEST,
-        form,
-      })
+      dispatch(toggleActionLoader(true))
       dispatch(showToaster(INFO, 'Registering...', 'Please wait 30s'))
 
       const done = await transaction?.confirmation()
       console.log('done', done)
       dispatch(showToaster(SUCCESS, 'Satellite Registered.', 'All good :)'))
 
-      dispatch({
-        type: UPDATE_AS_SATELLITE_RESULT,
-      })
       dispatch(getDelegationStorage())
+      dispatch(toggleActionLoader(false))
     } catch (error) {
       if (error instanceof Error) {
         dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      dispatch({
-        type: UPDATE_AS_SATELLITE_ERROR,
-        error,
-      })
+      dispatch(toggleActionLoader(false))
     }
   }
 
-export const UNREGISTER_AS_SATELLITE_REQUEST = 'UNREGISTER_AS_SATELLITE_REQUEST'
-export const UNREGISTER_AS_SATELLITE_RESULT = 'UNREGISTER_AS_SATELLITE_RESULT'
-export const UNREGISTER_AS_SATELLITE_ERROR = 'UNREGISTER_AS_SATELLITE_ERROR'
 export const unregisterAsSatellite = () => async (dispatch: AppDispatch, getState: GetState) => {
   const state: State = getState()
 
@@ -120,7 +95,7 @@ export const unregisterAsSatellite = () => async (dispatch: AppDispatch, getStat
     return
   }
 
-  if (state.loading.isLoading) {
+  if (state.loading.isActionLoading) {
     dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
     return
   }
@@ -132,26 +107,19 @@ export const unregisterAsSatellite = () => async (dispatch: AppDispatch, getStat
     const transaction = await contract?.methods.unregisterAsSatellite(state.wallet.accountPkh).send()
     console.log('transaction', transaction)
 
-    dispatch({
-      type: UNREGISTER_AS_SATELLITE_REQUEST,
-    })
+    dispatch(toggleActionLoader(true))
     dispatch(showToaster(INFO, 'Unregistering...', 'Please wait 30s'))
 
     const done = await transaction?.confirmation()
     console.log('done', done)
     dispatch(showToaster(SUCCESS, 'Satellite is no longer registered.', 'All good :)'))
 
-    dispatch({
-      type: UNREGISTER_AS_SATELLITE_RESULT,
-    })
     dispatch(getDelegationStorage())
+    dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {
       dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    dispatch({
-      type: UNREGISTER_AS_SATELLITE_ERROR,
-      error,
-    })
+    dispatch(toggleActionLoader(false))
   }
 }
