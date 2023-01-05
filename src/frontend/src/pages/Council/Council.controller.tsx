@@ -220,7 +220,7 @@ export const Council = () => {
               text="Back to Member Dashboard"
               icon="arrowRight"
               kind={TRANSPARENT_WITH_BORDER}
-              className="margin-top-30"
+              className="margin-top-30 arrow"
             />
           </Link>
         ) : null}

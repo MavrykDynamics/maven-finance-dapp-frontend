@@ -27,7 +27,7 @@ const UsersPagination = () => {
   return (
     <SatellitePaginationStyled>
       <Link to={`/oracle-users`} className="back">
-        <Button text="Back to users" icon="arrowRight" kind={TRANSPARENT_WITH_BORDER} />
+        <Button text="Back to users" icon="arrowRight" kind={TRANSPARENT_WITH_BORDER} className="arrow" />
       </Link>
       {prevFeed ? (
         <Link className="pagination-link prev" to={`/satellites/user-details/${prevFeed.id}`}>

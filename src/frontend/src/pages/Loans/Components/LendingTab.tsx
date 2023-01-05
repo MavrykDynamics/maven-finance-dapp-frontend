@@ -50,48 +50,35 @@ export const LendingTab = ({ lendingItem }: LendingTabPropsType) => {
                     <img src={lendingItem.assetIcon} alt={`${lendingItem.assetName} logo`} />
                   </div>
                 ) : (
-                  <Icon id="noIcon" />
+                  <div className="no-icon">
+                    <Icon id="noImage" />
+                  </div>
                 )}
-                {'xtz' ?? lendingItem?.assetName}
+                {'xtz'}
               </div>
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Lending</div>
-              <CommaNumber value={lendingItem?.lendValue ?? 11} className="value" showLetter />
-              <CommaNumber
-                value={lendingItem?.lendValue ?? 1 * (lendingItem?.lendAssetRate ?? 1)}
-                beginningText="$"
-                className="rate"
-                showLetter
-              />
+              <CommaNumber value={0} className="value" showLetter />
+              <CommaNumber value={0} beginningText="$" className="rate" showLetter />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Lend APY</div>
-              <CommaNumber value={lendingItem?.lendAPY ?? 1} className="value" endingText="%" />
+              <CommaNumber value={0} className="value" endingText="%" />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Interest Earned</div>
-              <CommaNumber value={lendingItem?.interestEarned ?? 1} className="value" showLetter />
-              <CommaNumber
-                value={lendingItem?.interestEarned ?? 1 * (lendingItem?.lendAssetRate ?? 1)}
-                beginningText="$"
-                className="rate"
-                showLetter
-              />
+              <CommaNumber value={0} className="value" showLetter />
+              <CommaNumber value={0} beginningText="$" className="rate" showLetter />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Wallet Balance</div>
-              <CommaNumber value={lendingItem?.loanAssetWalletBalance ?? 1} className="value" showLetter />
-              <CommaNumber
-                value={lendingItem?.loanAssetWalletBalance ?? 1 * (lendingItem?.lendAssetRate ?? 1)}
-                beginningText="$"
-                className="rate"
-                showLetter
-              />
+              <CommaNumber value={0} className="value" showLetter />
+              <CommaNumber value={0} beginningText="$" className="rate" showLetter />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">mXTZ Balance</div>
-              <CommaNumber value={lendingItem?.mXTZBalance ?? 1} className="value" showLetter />
+              <CommaNumber value={0} className="value" showLetter />
             </ThreeLevelListItem>
             <Button
               text="Add"

@@ -92,7 +92,7 @@ export const TransactionHistory = ({ currentToken }: TransactionHistoryPropsType
                 if (!descr) return null
 
                 return (
-                  <TableRow rowHeight={45} className="add-hover" borderColor="dataColor">
+                  <TableRow rowHeight={45} className="add-hover">
                     <TableCell width={`25%`} className="vert-middle">
                       <span>{descr}</span>
                     </TableCell>

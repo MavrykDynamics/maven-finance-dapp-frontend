@@ -142,6 +142,12 @@ export const TableHeader = styled.thead<{ theme: MavrykTheme }>`
     }
   }
 
+  &.collateral {
+    th {
+      padding-bottom: 0;
+    }
+  }
+
   &.editable-head {
     height: 42px;
     background-color: ${({ theme }) => theme.backgroundColor};
@@ -286,7 +292,6 @@ export const TableCell = styled.td<{ theme: MavrykTheme; width?: string }>`
   svg:not(.copyIcon) {
     width: 24px;
     height: 24px;
-    margin-right: 4px;
   }
 
   button {
@@ -314,6 +319,15 @@ export const TableCell = styled.td<{ theme: MavrykTheme; width?: string }>`
       flex-direction: row;
       justify-content: flex-start;
       align-items: center;
+    }
+
+    .no-icon {
+      width: 24px;
+      height: 24px;
+      margin-right: 5px;
+      svg {
+        fill: ${({ theme }) => theme.dataColor};
+      }
     }
   }
 

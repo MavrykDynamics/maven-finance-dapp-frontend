@@ -57,7 +57,7 @@ export const Market = () => {
   const marketPagination = (
     <MarketPagination>
       <Link to="/loans">
-        <Button text="Go Back" icon="arrowRight" kind={TRANSPARENT_WITH_BORDER} />
+        <Button text="Go Back" icon="arrowRight" className="arrow" kind={TRANSPARENT_WITH_BORDER} />
       </Link>
 
       <div className="right-side-wrapper">
@@ -113,7 +113,9 @@ export const Market = () => {
                 <img src={currentToken.loanTokenData.icon} alt={`${currentToken.loanTokenData.icon} icon`} />
               </div>
             ) : (
-              <Icon id="xtzTezos" />
+              <div className="no-icon">
+                <Icon id="noImage" />
+              </div>
             )}
 
             <div className="text-wrapper">

@@ -25,4 +25,8 @@ export const REPAY_MODAL_ID = 'repayModal'
 export const CLOSE_VAULT_MODAL_ID = 'closeVaultModal'
 
 export const BORROWIND_MOCK = [{}, {}]
-export const COLLATERAL_MOCK = [{}, {}]
+export const COLLATERAL_MOCK = [
+  { assetSymbol: 'xtz', balance: 1, assetRate: 1, maxWithdraw: 1, assetIcon: undefined },
+  { assetSymbol: 'xtz', balance: 1, assetRate: 1, maxWithdraw: 1, assetIcon: undefined },
+  { assetSymbol: 'Total', balance: 1, assetRate: 1, maxWithdraw: 1, assetIcon: undefined },
+]

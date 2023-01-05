@@ -100,60 +100,28 @@ export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
     margin-bottom: 10px;
 
     &.margin-top {
-      margin-top: 30px;
-    }
-  }
-
-  .list {
-    display: flex;
-    flex-direction: column;
-    row-gap: 20px;
-
-    &.borrow {
-      margin-bottom: 25px;
+      margin-top: 60px;
     }
 
-    .list-item {
-      display: grid;
-      grid-template-columns: 0.5fr 0.5fr 0.5fr 0.5fr 1fr;
-
-      &.collateral {
-        position: relative;
-        grid-template-columns: 0.5fr 0.5fr 0.5fr 0.5fr 160px 160px;
-
-        &:not(:first-child)::before {
-          position: absolute;
-          top: -12px;
-          content: '';
-          background-color: ${({ theme }) => theme.cardBorderColor};
-          left: -20px;
-          width: calc(100% + 40px);
-          height: 1px;
-        }
-      }
-
-      button {
-        margin-left: auto;
-        max-width: 140px;
-      }
+    &.margin-top-20 {
+      margin-top: 20px;
     }
   }
 
   .borrowed-data {
     display: flex;
 
-    > div:not(:last-child) {
-      width: 15%;
+    > div {
+      width: 17%;
     }
 
     .buttons-wrapper {
-      margin-left: auto;
       display: flex;
       column-gap: 10px;
+      margin-left: auto;
 
       button {
-        max-height: 36px;
-        padding: 0 31px;
+        width: 180px;
       }
     }
   }
@@ -206,7 +174,17 @@ export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
     position: absolute;
     right: 18px;
     bottom: 20px;
-    width: 200px;
-    height: 50px;
+    width: 250px;
+    height: 36px;
+
+    > div {
+      display: flex;
+      align-items: center;
+    }
+
+    svg {
+      width: 15px;
+      height: 15px;
+    }
   }
 `

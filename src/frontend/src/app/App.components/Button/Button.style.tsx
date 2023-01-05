@@ -176,9 +176,14 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
       margin-top: 30px;
     }
 
+    &.arrow {
+      svg {
+        transform: rotate(180deg);
+        width: 16px;
+      }
+    }
+
     svg {
-      transform: rotate(180deg);
-      width: 16px;
       stroke: ${({ theme }) => theme.valueColor};
       fill: ${({ theme }) => theme.valueColor};
     }

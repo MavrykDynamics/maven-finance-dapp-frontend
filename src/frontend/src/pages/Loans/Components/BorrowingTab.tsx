@@ -21,7 +21,7 @@ export const BorrowingTab = ({ borrowingItems }: BorrowingTabPropsType) => {
         <h2>My Boorrowing</h2>
       </GovRightContainerTitleArea>
 
-      {borrowingItems.length ? (
+      {borrowingItems.length || true ? (
         <>
           <Button
             text="New Vault"
@@ -31,8 +31,33 @@ export const BorrowingTab = ({ borrowingItems }: BorrowingTabPropsType) => {
             className="lending-tab-no-items-btn has-items-borrow-btn"
           />
           <div className="list-wrapper">
-            {borrowingItems.map((item) => {
-              return <BorrowingExpandCard showFull {...item} />
+            {[
+              {
+                assetSymbol: 'xtz',
+                amtBorrowed: 0,
+                assetRate: 1,
+                collateralBalance: 0,
+                collateralUtilization: 0,
+                apy: 0,
+                fee: 0,
+              },
+            ].map((item) => {
+              return (
+                <BorrowingExpandCard
+                  borrowedAsset={{
+                    assetSymbol: 'xtz',
+                    amtBorrowed: 0,
+                    assetRate: 0,
+                    collateralBalance: 0,
+                    collateralUtilization: 0,
+                    apy: 0,
+                    fee: 0,
+                  }}
+                  collateralData={[]}
+                  isOwner
+                  {...item}
+                />
+              )
             })}
           </div>
         </>

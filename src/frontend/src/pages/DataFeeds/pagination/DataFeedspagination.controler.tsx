@@ -26,7 +26,7 @@ const DataFeedsPagination = () => {
   return (
     <SatellitePaginationStyled>
       <Link to={`/data-feeds`}>
-        <Button text="Back to feeds" icon="arrowRight" kind={TRANSPARENT_WITH_BORDER} className="back" />
+        <Button text="Back to feeds" icon="arrowRight" kind={TRANSPARENT_WITH_BORDER} className="back arrow" />
       </Link>
       {prevFeed ? (
         <Link className="pagination-link prev" to={`/satellites/feed-details/${prevFeed.address}`}>
