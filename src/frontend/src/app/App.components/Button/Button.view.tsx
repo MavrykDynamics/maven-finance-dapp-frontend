@@ -12,6 +12,7 @@ type ButtonViewProps = {
   loading?: boolean
   disabled?: boolean
   strokeWidth?: number
+  children?: JSX.Element
 }
 
 export const ButtonView = ({

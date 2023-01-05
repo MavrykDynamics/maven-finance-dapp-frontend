@@ -192,5 +192,4 @@ p {
       fill: ${({ theme }) => theme.textColor};
     }
   }
-
 `

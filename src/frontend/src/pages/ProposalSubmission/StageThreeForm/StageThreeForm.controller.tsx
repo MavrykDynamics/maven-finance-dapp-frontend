@@ -25,8 +25,22 @@ import {
   FormTitleEntry,
   SubmissionStyled,
 } from '../ProposalSubmission.style'
-import Table, { TableProps } from 'app/App.components/Table/Table.controller'
-import { CellType } from 'app/App.components/Table/TableCell'
+import {
+  AddRowBtn,
+  RemoveRowBtn,
+  Table,
+  TableBody,
+  TableCell,
+  TableHeader,
+  TableHeaderCell,
+  TableRow,
+} from 'app/App.components/Table/Table.style'
+import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
+import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+import { Input } from 'app/App.components/Input/Input.controller'
+import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+import { DropDown } from 'app/App.components/DropDown/DropDown.controller'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 export const StageThreeForm = ({
   proposalId,
@@ -155,90 +169,6 @@ export const StageThreeForm = ({
 
   const isTableDisabled = useMemo(() => !isProposalRound || locked, [isProposalRound, locked])
 
-  const tableData = useMemo(() => {
-    return proposalPayments.map<TableProps['data'][number]>((payment, idx) => {
-      const validationObj = currentProposalValidation.paymentsValidation?.find(
-        ({ paymentId }) => paymentId === payment.id,
-      )
-      const { symbol: selectedSymbol = 'MVK' } =
-        paymentMethods.find(({ address }) => address === payment.token_address) ?? paymentMethods?.[0] ?? {}
-
-      return [
-        {
-          cellValue: payment.to__id ?? '',
-          cellType: (locked ? 'tzAddress' : 'input') as CellType,
-          inputProps: {
-            inputStatus: validationObj?.to__id,
-            onChange: handleChange,
-            onBlur: handleOnBlur,
-            onFocus: () => setOpenDrop(DEFAULT_DROPDOWNS_STATE),
-            name: 'to__id',
-            disabled: isTableDisabled,
-            type: 'text',
-          },
-        },
-        {
-          cellValue: payment.title ?? '',
-          cellType: (locked ? 'text' : 'input') as CellType,
-          inputProps: {
-            inputStatus: validationObj?.title,
-            onChange: handleChange,
-            onBlur: handleOnBlur,
-            disabled: isTableDisabled,
-            onFocus: () => setOpenDrop(DEFAULT_DROPDOWNS_STATE),
-            name: 'title',
-            type: 'text',
-          },
-        },
-        {
-          cellValue: payment.token_amount ?? 0,
-          cellType: (locked ? 'commaNumber' : 'input') as CellType,
-          inputProps: {
-            inputStatus: validationObj?.token_amount,
-            onChange: handleChange,
-            onBlur: handleOnBlur,
-            disabled: isTableDisabled,
-            onFocus: () => setOpenDrop(DEFAULT_DROPDOWNS_STATE),
-            name: 'token_amount',
-            type: 'number',
-          },
-          commaNumberProps: {
-            endingText: selectedSymbol,
-          },
-        },
-        {
-          cellValue: selectedSymbol,
-          cellType: (locked ? 'text' : 'dropDown') as CellType,
-          dropDownProps: {
-            items: paymentMethods.map(({ symbol }) => symbol),
-            isOpen: openDrop[idx],
-            disabled: isTableDisabled,
-            clickOnItem: (rowIdx: number) => (newSelectedSymbol: string) => {
-              const address = paymentMethods.find(({ symbol }) => newSelectedSymbol === symbol)?.address
-
-              if (address) {
-                handleChange(
-                  {
-                    target: { name: 'token_address', value: address },
-                  },
-                  rowIdx,
-                )
-              }
-            },
-            setIsOpen: (newState: Array<boolean>) => setOpenDrop(newState),
-          },
-        },
-      ]
-    })
-  }, [
-    proposalPayments,
-    currentProposalValidation.paymentsValidation,
-    paymentMethods,
-    locked,
-    isTableDisabled,
-    openDrop,
-  ])
-
   return (
     <SubmissionStyled>
       <FormHeaderGroup>
@@ -266,14 +196,127 @@ export const StageThreeForm = ({
         </div>
       </FormTitleAndFeeContainer>
       <label>4 - Enter Proposal Data</label>
-      <Table
-        data={tableData}
-        isTableDisabled={isTableDisabled}
-        className="stage-3-table"
-        colunmNames={['Address', 'Purpose', 'Amount', 'Payment Type (XTZ/MVK)']}
-        addRowHandler={handleAddRow}
-        removeRowHandler={handleDeleteRow}
-      />
+      <Table className="editable-table">
+        <TableHeader className="editable-head">
+          <TableRow>
+            <TableHeaderCell className="no-right-border">Address</TableHeaderCell>
+            <TableHeaderCell>Purpose</TableHeaderCell>
+            <TableHeaderCell>Amount</TableHeaderCell>
+            <TableHeaderCell className="right-border">Payment Type (XTZ/MVK)</TableHeaderCell>
+          </TableRow>
+        </TableHeader>
+        <TableBody className="editable-body">
+          {proposalPayments.map((payment, rowIdx) => {
+            const validationObj = currentProposalValidation.paymentsValidation?.find(
+              ({ paymentId }) => paymentId === payment.id,
+            )
+            const { symbol: selectedSymbol = 'MVK' } =
+              paymentMethods.find(({ address }) => address === payment.token_address) ?? paymentMethods?.[0] ?? {}
+
+            return (
+              <TableRow className="editable-row">
+                <TableCell width="25%">
+                  {isTableDisabled ? (
+                    <TzAddress
+                      tzAddress={String(payment.to__id)}
+                      type={BLUE}
+                      hasIcon={true}
+                      className="table-cell-tzAddress"
+                    />
+                  ) : (
+                    <Input
+                      value={String(payment.to__id)}
+                      inputStatus={validationObj?.to__id}
+                      onChange={(e) => handleChange(e, rowIdx)}
+                      onBlur={(e) => handleOnBlur(e, rowIdx)}
+                      onFocus={() => setOpenDrop(DEFAULT_DROPDOWNS_STATE)}
+                      name={'to__id'}
+                      type={'text'}
+                    />
+                  )}
+                </TableCell>
+                <TableCell width="25%">
+                  {isTableDisabled ? (
+                    String(payment.title)
+                  ) : (
+                    <Input
+                      value={String(payment.title)}
+                      inputStatus={validationObj?.title}
+                      onChange={(e) => handleChange(e, rowIdx)}
+                      onBlur={(e) => handleOnBlur(e, rowIdx)}
+                      onFocus={() => setOpenDrop(DEFAULT_DROPDOWNS_STATE)}
+                      name={'title'}
+                      type={'text'}
+                    />
+                  )}
+                </TableCell>
+                <TableCell width="25%">
+                  {isTableDisabled ? (
+                    <CommaNumber value={Number(payment.token_amount)} endingText={selectedSymbol} />
+                  ) : (
+                    <Input
+                      value={String(payment.token_amount)}
+                      inputStatus={validationObj?.token_amount}
+                      onChange={(e) => handleChange(e, rowIdx)}
+                      onBlur={(e) => handleOnBlur(e, rowIdx)}
+                      onFocus={() => setOpenDrop(DEFAULT_DROPDOWNS_STATE)}
+                      name={'token_amount'}
+                      type={'number'}
+                    />
+                  )}
+                </TableCell>
+                <TableCell className="no-right-border" width="25%">
+                  {isTableDisabled ? (
+                    selectedSymbol
+                  ) : (
+                    <DropDown
+                      placeholder={''}
+                      items={paymentMethods.map(({ symbol }) => symbol)}
+                      isOpen={openDrop[rowIdx]}
+                      itemSelected={String(selectedSymbol)}
+                      setIsOpen={(newDropDownState: boolean) => {
+                        console.log(rowIdx, newDropDownState, openDrop)
+
+                        setOpenDrop(openDrop.map((_, idx) => (idx === rowIdx ? newDropDownState : false)))
+                      }}
+                      clickOnItem={(newSelectedSymbol: string) => {
+                        const address = paymentMethods.find(({ symbol }) => newSelectedSymbol === symbol)?.address
+
+                        if (address) {
+                          handleChange(
+                            {
+                              target: { name: 'token_address', value: address },
+                            },
+                            rowIdx,
+                          )
+                        }
+                      }}
+                      className="stage-3-dropDown"
+                    />
+                  )}
+                </TableCell>
+
+                <RemoveRowBtn
+                  className={`button-wrap remove ${isTableDisabled ? 'disabled' : ''}`}
+                  {...(!isTableDisabled ? { onClick: () => handleDeleteRow(rowIdx) } : {})}
+                >
+                  <CustomTooltip text="Delete row">
+                    <Icon id="delete" />
+                  </CustomTooltip>
+                </RemoveRowBtn>
+              </TableRow>
+            )
+          })}
+        </TableBody>
+        <AddRowBtn
+          className={`button-wrap add ${isTableDisabled ? 'disabled' : ''}`}
+          {...(!isTableDisabled ? { onClick: handleAddRow } : {})}
+        >
+          <CustomTooltip text="Insert 1 row below">
+            <span>+</span>
+          </CustomTooltip>
+        </AddRowBtn>
+      </Table>
     </SubmissionStyled>
   )
 }

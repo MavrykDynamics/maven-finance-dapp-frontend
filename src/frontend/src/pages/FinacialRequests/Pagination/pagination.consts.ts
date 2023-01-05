@@ -11,6 +11,8 @@ export const ONGOING_ACTIONS_SATELLITE_GOVERNANCE_LIST = 'ongoingActionsSatellit
 export const PAST_ACTIONS_SATELLITE_GOVERNANCE_LIST = 'pastActionsSatellitesGov'
 export const MY_ACTIONS_SATELLITE_GOVERNANCE_LIST = 'myActionsSatellitesGov'
 
+export const TRANSACTION_HISTORY_TABLE_NAME = 'transactionHistoryTable'
+
 export const SATELITES_OVERVIEW_LIST_NAME = 'saletitesGov'
 export const SATELITES_TOP_LIST_NAME = 'topSatelitesOracle'
 export const FEEDS_TOP_LIST_NAME = 'topDataFeedsOracle'
@@ -42,6 +44,7 @@ export const LIST_NAMES_MAPPER: Record<string, number> = {
   [COUNCIL_MY_PAST_ACTIONS_LIST_NAME]: 8,
   [COUNCIL_MY_ONGOING_ACTIONS_LIST_NAME]: 8,
   [EMERGENCY_GOVERNANCE_HISTORY_LIST_NAME]: 5,
+  [TRANSACTION_HISTORY_TABLE_NAME]: 9,
   [PAST_REQUESTS_FINANCIAL_REQUESTS_LIST]: 8,
   [ONGOING_REQUESTS_FINANCIAL_REQUESTS_LIST]: 8,
   [ONGOING_ACTIONS_SATELLITE_GOVERNANCE_LIST]: 7,
@@ -87,4 +90,5 @@ export const getSatelliteGovernanceListName = (tabId: number) => {
 }
 
 export const PAGINATION_SIDE_RIGHT = 'right'
+export const PAGINATION_SIDE_CENTER = 'center'
 export const PAGINATION_SIDE_LEFT = 'left'

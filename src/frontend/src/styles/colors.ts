@@ -30,7 +30,8 @@ export const backdropColor = '#08062880'
 export const silverColor = '#C0DBFF'
 export const lightTextColor = '#D0CFD9'
 export const ffff = 'rgba(119, 164, 242, 0)'
-export const dropDownColor = '0000007a'
+export const dropDownColor = '#0000007a'
+export const modalsBackdropColor = 'rgba(0, 0, 0, 0.5); '
 
 export const dark = {
   backgroundColor: darkColor,

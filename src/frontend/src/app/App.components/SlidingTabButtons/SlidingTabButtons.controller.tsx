@@ -32,7 +32,7 @@ export const SlidingTabButtons = ({
 
   useEffect(() => {
     const foundActiveTabId = tabItems.find(({ active, isDisabled }) => active && !isDisabled)?.id
-    if (foundActiveTabId) {
+    if (typeof foundActiveTabId === 'number') {
       setActiveTab(foundActiveTabId)
     }
   }, [tabItems])

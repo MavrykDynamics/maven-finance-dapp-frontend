@@ -63,14 +63,14 @@ const AppContainer = () => {
         await dispatch(connect())
       }
 
-      await dispatch(toggleDataLoader(false))
-
       // common data across the DAPP
       await dispatch(getContractAddressesStorage())
       await dispatch(getDipDupTokensStorage())
       await dispatch(getWhitelistTokensStorage())
       await dispatch(getTokensPrices())
       await dispatch(getMvkTokenStorage())
+
+      await dispatch(toggleDataLoader(false))
     })()
 
     return () => {
