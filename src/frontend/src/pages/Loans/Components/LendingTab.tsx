@@ -59,8 +59,8 @@ export const LendingTab = ({ lendingItem }: LendingTabPropsType) => {
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Lending</div>
-              <CommaNumber value={0} className="value" showLetter />
-              <CommaNumber value={0} beginningText="$" className="rate" showLetter />
+              <CommaNumber value={0} className="value" />
+              <CommaNumber value={0} beginningText="$" className="rate" />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Lend APY</div>
@@ -68,17 +68,17 @@ export const LendingTab = ({ lendingItem }: LendingTabPropsType) => {
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Interest Earned</div>
-              <CommaNumber value={0} className="value" showLetter />
-              <CommaNumber value={0} beginningText="$" className="rate" showLetter />
+              <CommaNumber value={0} className="value" />
+              <CommaNumber value={0} beginningText="$" className="rate" />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Wallet Balance</div>
-              <CommaNumber value={0} className="value" showLetter />
-              <CommaNumber value={0} beginningText="$" className="rate" showLetter />
+              <CommaNumber value={0} className="value" />
+              <CommaNumber value={0} beginningText="$" className="rate" />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">mXTZ Balance</div>
-              <CommaNumber value={0} className="value" showLetter />
+              <CommaNumber value={0} className="value" />
             </ThreeLevelListItem>
             <Button
               text="Add"

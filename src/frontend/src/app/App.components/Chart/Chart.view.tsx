@@ -187,7 +187,6 @@ export const TradingViewChart = ({
             showDecimal: true,
             decimalsToShow: 2,
             number: parseFloat(price),
-            letterForNumber: null,
           }),
       },
     })

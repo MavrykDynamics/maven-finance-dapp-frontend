@@ -129,26 +129,24 @@ export const Markets = () => {
                   <div className="row">
                     <ThreeLevelListItem>
                       <div className="name">Total Lending</div>
-                      <CommaNumber value={totalLended} className="value" showLetter />
-                      {rate ? (
-                        <CommaNumber value={totalLended * rate} beginningText="$" className="rate" showLetter />
-                      ) : null}
+                      <CommaNumber value={totalLended} className="value" />
+                      {rate ? <CommaNumber value={totalLended * rate} beginningText="$" className="rate" /> : null}
                     </ThreeLevelListItem>
                     <ThreeLevelListItem>
                       <div className="name">Lend APY</div>
-                      <CommaNumber value={22} className="value" endingText="%" showLetter />
+                      <CommaNumber value={22} className="value" endingText="%" />
                     </ThreeLevelListItem>
                     <ThreeLevelListItem>
                       <div className="name">Total Fees Earned</div>
-                      <CommaNumber value={12414.2423} className="value" beginningText="$" showLetter />
+                      <CommaNumber value={12414.2423} className="value" beginningText="$" />
                     </ThreeLevelListItem>
                     <ThreeLevelListItem>
                       <div className="name">Suppliers</div>
-                      <CommaNumber value={suppliers} className="value" showLetter />
+                      <CommaNumber value={suppliers} className="value" />
                     </ThreeLevelListItem>
                     <ThreeLevelListItem>
                       <div className="name">Utilization Rate</div>
-                      <CommaNumber value={utilisationRate} className="value" endingText="%" showLetter />
+                      <CommaNumber value={utilisationRate} className="value" endingText="%" />
                     </ThreeLevelListItem>
                     <Link to={`/loans/${symbol}/${LEND_TAB_ID}`}>
                       <Button text="Lend" kind={ACTION_PRIMARY} iconAfter icon="arrowRight" />
@@ -157,31 +155,24 @@ export const Markets = () => {
                   <div className="row">
                     <ThreeLevelListItem>
                       <div className="name">Total Borrowed</div>
-                      <CommaNumber value={totalBorrowed} className="value" showLetter />
-                      {rate ? (
-                        <CommaNumber value={totalBorrowed * rate} beginningText="$" showLetter className="rate" />
-                      ) : null}
+                      <CommaNumber value={totalBorrowed} className="value" />
+                      {rate ? <CommaNumber value={totalBorrowed * rate} beginningText="$" className="rate" /> : null}
                     </ThreeLevelListItem>
                     <ThreeLevelListItem>
                       <div className="name">Borrow APR</div>
-                      <CommaNumber value={22} className="value" showLetter endingText="%" />
+                      <CommaNumber value={22} className="value" endingText="%" />
                     </ThreeLevelListItem>
                     <ThreeLevelListItem>
                       <div className="name">Available Liquidity</div>
-                      <CommaNumber value={avaliableLiquidity} className="value" showLetter beginningText="$" />
+                      <CommaNumber value={avaliableLiquidity} className="value" beginningText="$" />
                     </ThreeLevelListItem>
                     <ThreeLevelListItem>
                       <div className="name">Borrowers</div>
-                      <CommaNumber value={borrowers} className="value" showLetter />
+                      <CommaNumber value={borrowers} className="value" />
                     </ThreeLevelListItem>
                     <ThreeLevelListItem>
                       <div className="name">Total Collateral</div>
-                      <CommaNumber
-                        value={collateral}
-                        showLetter
-                        className={`value ${totalCorratealColor}`}
-                        beginningText="$"
-                      />
+                      <CommaNumber value={collateral} className={`value ${totalCorratealColor}`} beginningText="$" />
                     </ThreeLevelListItem>
                     <Link to={`/loans/${symbol}/${BORROW_TAB_ID}`}>
                       <Button text="Borrow" kind={ACTION_PRIMARY} iconAfter icon="arrowRight" />

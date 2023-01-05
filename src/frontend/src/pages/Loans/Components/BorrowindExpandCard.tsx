@@ -109,8 +109,8 @@ export const BorrowingExpandCard = ({
           </ThreeLevelListItem>
           <ThreeLevelListItem>
             <div className="name">Amount</div>
-            <CommaNumber value={amtBorrowed} className="value" showLetter />
-            <CommaNumber value={amtBorrowed * assetRate} beginningText="$" className="rate" showLetter />
+            <CommaNumber value={amtBorrowed} className="value" />
+            <CommaNumber value={amtBorrowed * assetRate} beginningText="$" className="rate" />
           </ThreeLevelListItem>
           <ThreeLevelListItem>
             <div className="name">Collateral Balance</div>
@@ -141,8 +141,8 @@ export const BorrowingExpandCard = ({
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">Amount</div>
-                <CommaNumber value={amtBorrowed} className="value" showLetter />
-                <CommaNumber value={amtBorrowed * assetRate} beginningText="$" className="rate" showLetter />
+                <CommaNumber value={amtBorrowed} className="value" />
+                <CommaNumber value={amtBorrowed * assetRate} beginningText="$" className="rate" />
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">Fee</div>
@@ -215,13 +215,13 @@ export const BorrowingExpandCard = ({
                       <TableCell width={`17%`}>
                         <div className="cell-content">
                           <CommaNumber value={balance} className="value" endingText="%" />
-                          <CommaNumber value={balance * assetRate} className="rate" beginningText="$" showLetter />
+                          <CommaNumber value={balance * assetRate} className="rate" beginningText="$" />
                         </div>
                       </TableCell>
                       <TableCell width={`17%`}>
                         <div className="cell-content">
                           <CommaNumber value={maxWithdraw} className="value" endingText="%" />
-                          <CommaNumber value={maxWithdraw * assetRate} className="rate" beginningText="$" showLetter />
+                          <CommaNumber value={maxWithdraw * assetRate} className="rate" beginningText="$" />
                         </div>
                       </TableCell>
                       <TableCell width={`17%`}>

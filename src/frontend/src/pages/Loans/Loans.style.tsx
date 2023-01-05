@@ -156,6 +156,7 @@ export const MarketOverview = styled.div<{ theme: MavrykTheme }>`
 export const MarketPagination = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin-top: 45px;
 
   .right-side-wrapper {
