@@ -8,7 +8,7 @@ import type {
   AggregatorOracleGraphQL,
   DipdupContractMetadataGraphQL,
 } from '../utils/TypesAndInterfaces/Aggregator'
-import { Dipdup_Token_Metadata } from 'utils/generated/graphqlTypes'
+import { Dipdup_Token_Metadata, M_Token } from 'utils/generated/graphqlTypes'
 
 export function normalizeAddressesStorage(storage: AddressesGraphQl): ContractAddressesState {
   return {
@@ -103,4 +103,8 @@ export function normalizeOracle(storage: {
 
 export function normalizeDipDupTokens(storage: { dipdup_token_metadata: Dipdup_Token_Metadata }) {
   return storage?.dipdup_token_metadata || []
+}
+
+export function normalizeMTokens(storage: { m_token: M_Token }) {
+  return storage?.m_token || []
 }

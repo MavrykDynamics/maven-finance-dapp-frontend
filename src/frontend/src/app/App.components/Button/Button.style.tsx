@@ -176,9 +176,14 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
       margin-top: 30px;
     }
 
+    &.arrow {
+      svg {
+        transform: rotate(180deg);
+        width: 16px;
+      }
+    }
+
     svg {
-      transform: rotate(180deg);
-      width: 16px;
       stroke: ${({ theme }) => theme.valueColor};
       fill: ${({ theme }) => theme.valueColor};
     }
@@ -224,6 +229,26 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
     width: fit-content;
     background-color: transparent;
     color: ${({ theme }) => theme.valueColor};
+
+    svg {
+      stroke: ${({ theme }) => theme.valueColor};
+      fill: ${({ theme }) => theme.valueColor};
+      width: 14px;
+      height: 12px;
+      stroke-width: 2px;
+    }
+
+    &.arrow-down {
+      svg {
+        transform: rotate(270deg);
+      }
+    }
+
+    &.arrow-top {
+      svg {
+        transform: rotate(-270deg);
+      }
+    }
   }
 `
 
@@ -288,6 +313,11 @@ export const ButtonIcon = styled.svg<{ theme: MavrykTheme; strokeWidth?: number 
     stroke: ${({ theme }) => theme.actionPrimaryBtnColor};
   }
 
+  &.after {
+    margin-right: 0px;
+    margin-left: 11px;
+  }
+
   ${({ strokeWidth }) =>
     strokeWidth
       ? css`
@@ -332,41 +362,5 @@ export const ButtonLoadingIcon = styled.svg<{ theme: MavrykTheme }>`
 
   &.actionSecondary {
     stroke: ${({ theme }) => theme.primaryColor};
-  }
-`
-
-export const GoBackBtn = styled.button`
-  height: 50px;
-  cursor: pointer;
-  border-radius: ${BUTTON_RADIUS};
-  user-select: none;
-  background: transparent;
-  border: 1px solid ${({ theme }) => theme.valueColor};
-  font-weight: 600;
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 31px;
-  width: fit-content;
-
-  a {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    column-gap: 10px;
-    color: ${({ theme }) => theme.valueColor};
-  }
-
-  &.margin-top-30 {
-    margin-top: 30px;
-  }
-
-  svg {
-    transform: rotate(180deg);
-    height: 18px;
-    width: 18px;
-    stroke: ${({ theme }) => theme.valueColor};
-    fill: ${({ theme }) => theme.valueColor};
   }
 `

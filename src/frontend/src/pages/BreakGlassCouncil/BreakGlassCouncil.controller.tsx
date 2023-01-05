@@ -54,7 +54,6 @@ import {
   signAction,
 } from './BreakGlassCouncil.actions'
 import Icon from 'app/App.components/Icon/Icon.view'
-import { GoBackBtn } from 'app/App.components/Button/Button.style'
 
 const queryParameters = {
   pathname: '/break-glass-council',

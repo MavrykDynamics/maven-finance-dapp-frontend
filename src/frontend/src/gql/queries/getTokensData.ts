@@ -42,3 +42,14 @@ export const WHITELIST_TOKENS_NAME = 'getWhiteListTokensForContract'
 export function WHITELIST_TOKENS_VARIABLE(address: string) {
   return { _contractAddress: address }
 }
+
+export const M_TOKENS_QUERY = `
+  query getMTokensForContract {
+    m_token {
+      address
+      admin
+      loan_token_name
+    }
+  }
+`
+export const M_TOKENS_QUERY_NAME = 'getMTokensForContract'

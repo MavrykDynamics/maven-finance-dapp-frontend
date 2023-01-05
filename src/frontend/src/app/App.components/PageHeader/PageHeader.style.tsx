@@ -46,6 +46,11 @@ export const PageHeaderTextArea = styled.div`
   overflow: visible;
   padding-top: 10px;
 
+  &.loans {
+    display: flex;
+    column-gap: 10px;
+  }
+
   h1 {
     color: ${whiteColor};
     font-size: 25px;
@@ -54,6 +59,22 @@ export const PageHeaderTextArea = styled.div`
 
     &::after {
       background-color: #ff8486;
+    }
+  }
+
+  .asset-wrapper {
+    display: flex;
+    align-items: center;
+    svg,
+    .icon {
+      width: 45px;
+      height: 45px;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
     }
   }
 
@@ -148,6 +169,8 @@ export const PageHeaderForegroundImage = styled.img<{ page: string; src: string 
     switch (page) {
       case 'satellites':
         return '-20px'
+      case 'lending':
+        return '-13px'
       case 'governance':
       case 'council':
       case 'financial requests':
