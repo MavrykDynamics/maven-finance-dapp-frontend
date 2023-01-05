@@ -8,6 +8,7 @@ import { useParams } from 'react-router'
 import { DropDown, DropdownItemType } from '../../app/App.components/DropDown/DropDown.controller'
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
 import { Button } from 'app/App.components/Button/Button.controller'
+import NewButton from 'app/App.components/Button/NewButton.controller'
 import { CouncilPastActionView } from 'pages/Council/CouncilActions/CouncilPastAction.view'
 import Carousel from '../../app/App.components/Carousel/Carousel.view'
 import { CouncilMemberView } from 'pages/Council/CouncilMember/CouncilMember.view'
@@ -37,7 +38,6 @@ import {
   Page,
   BreakGlassCouncilStyled,
   ReviewPastCouncilActionsCard,
-  GoBack,
   AvaliableActions,
   ModalPopup,
   PropagateBreakGlassCouncilCard,
@@ -53,6 +53,8 @@ import {
   dropBreakGlass,
   signAction,
 } from './BreakGlassCouncil.actions'
+import Icon from 'app/App.components/Icon/Icon.view'
+import { GoBackBtn } from 'app/App.components/Button/Button.style'
 
 const queryParameters = {
   pathname: '/break-glass-council',
@@ -199,14 +201,11 @@ export function BreakGlassCouncil() {
     <Page>
       <PageHeader page={'break glass council'} />
       {review && isUserInBreakCouncilMember && (
-        <Link to={`/break-glass-council`}>
-          <Button
-            text="Back to Member Dashboard"
-            icon="arrowRight"
-            kind={TRANSPARENT_WITH_BORDER}
-            className="margin-top-30"
-          />
-        </Link>
+        <NewButton kind={TRANSPARENT_WITH_BORDER} className="margin-top-30 go-back ">
+          <Link to={`/break-glass-council`}>
+            <Icon id="arrowRight" /> Back to Member Dashboard
+          </Link>
+        </NewButton>
       )}
 
       {isUserInBreakCouncilMember && !review && (

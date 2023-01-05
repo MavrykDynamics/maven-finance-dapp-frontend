@@ -271,11 +271,47 @@ export const TableRow = styled.tr<{ theme: MavrykTheme; borderColor?: string; ro
   }
 `
 
-export const TableHeaderCell = styled.th<{ theme: MavrykTheme }>`
+export const TableHeaderCell = styled.th<{ theme: MavrykTheme; contentPosition?: 'left' | 'center' | 'right' }>`
   color: ${({ theme }) => theme.textColor};
+
+  ${({ contentPosition }) => {
+    switch (contentPosition) {
+      case 'left':
+        return css`
+          text-align: left;
+
+          div {
+            margin-right: auto;
+          }
+        `
+      case 'center':
+        return css`
+          text-align: center;
+
+          div {
+            margin-left: auto;
+            margin-right: auto;
+          }
+        `
+      case 'right':
+        return css`
+          text-align: right;
+
+          div {
+            margin-left: auto;
+          }
+        `
+      default:
+        return ''
+    }
+  }}
 `
 
-export const TableCell = styled.td<{ theme: MavrykTheme; width?: string }>`
+export const TableCell = styled.td<{
+  theme: MavrykTheme
+  width?: string
+  contentPosition?: 'left' | 'center' | 'right'
+}>`
   font-weight: 600;
   font-size: 16px;
   line-height: 20px;
@@ -289,7 +325,39 @@ export const TableCell = styled.td<{ theme: MavrykTheme; width?: string }>`
         `
       : ''}
 
-  svg:not(.copyIcon) {
+  ${({ contentPosition }) => {
+    switch (contentPosition) {
+      case 'left':
+        return css`
+          text-align: left;
+
+          div {
+            margin-right: auto;
+          }
+        `
+      case 'center':
+        return css`
+          text-align: center;
+
+          div {
+            margin-left: auto;
+            margin-right: auto;
+          }
+        `
+      case 'right':
+        return css`
+          text-align: right;
+
+          div {
+            margin-left: auto;
+          }
+        `
+      default:
+        return ''
+    }
+  }}
+
+  svg {
     width: 24px;
     height: 24px;
   }

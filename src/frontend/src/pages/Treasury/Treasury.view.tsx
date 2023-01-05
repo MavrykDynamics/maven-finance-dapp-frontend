@@ -113,7 +113,7 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
                 <TableRow>
                   <TableHeaderCell>Asset</TableHeaderCell>
                   <TableHeaderCell>Amount</TableHeaderCell>
-                  <TableHeaderCell className="right">USD Value</TableHeaderCell>
+                  <TableHeaderCell contentPosition="right">USD Value</TableHeaderCell>
                 </TableRow>
               </TableHeader>
 
@@ -125,7 +125,7 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
                       <TableCell width="33%">
                         <CommaNumber value={balance} useAccurateParsing />
                       </TableCell>
-                      <TableCell width="33%" className="right">
+                      <TableCell width="33%" contentPosition="right">
                         <CommaNumber value={usdValue} endingText={rate ? '$' : symbol} useAccurateParsing />
                       </TableCell>
                     </TableRow>

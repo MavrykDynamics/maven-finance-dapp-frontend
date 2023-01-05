@@ -56,7 +56,7 @@ import { DropdownCard, DropdownWrap } from '../../app/App.components/DropDown/Dr
 
 // types
 import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
-import { Button } from 'app/App.components/Button/Button.controller'
+import NewButton from 'app/App.components/Button/NewButton.controller'
 import { TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
 
 const queryParameters = {
@@ -215,14 +215,11 @@ export const Council = () => {
       <PageHeader page={'council'} />
       <CouncilStyled>
         {review && isUserInCouncilMembers ? (
-          <Link to={`/council`}>
-            <Button
-              text="Back to Member Dashboard"
-              icon="arrowRight"
-              kind={TRANSPARENT_WITH_BORDER}
-              className="margin-top-30 arrow"
-            />
-          </Link>
+          <NewButton kind={TRANSPARENT_WITH_BORDER} className="margin-top-30 go-back ">
+            <Link to={`/mavryk-council`}>
+              <Icon id="arrowRight" /> Back to Member Dashboard
+            </Link>
+          </NewButton>
         ) : null}
 
         <article

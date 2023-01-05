@@ -76,28 +76,6 @@ export const CouncilStyled = styled.section`
       margin-top: 9px;
     }
   }
-
-  .go-back {
-    display: flex;
-    border: 1px solid ${royalPurpleColor};
-    margin: 30px 0;
-    padding: 26px 30px;
-    border-radius: 10px;
-    width: 100%;
-    color: ${headerColor};
-    font-weight: 400;
-    font-size: 14px;
-    line-height: 21px;
-    align-items: center;
-    background-color: ${containerColor};
-
-    svg {
-      width: 16px;
-      height: 16px;
-      stroke: ${headerColor};
-      margin-right: 8px;
-    }
-  }
 `
 
 export const CouncilActionStyled = styled(CardHover)<{ theme: MavrykTheme }>`
@@ -147,7 +125,7 @@ export const CouncilActionStyled = styled(CardHover)<{ theme: MavrykTheme }>`
       line-height: 21px;
 
       text-transform: capitalize;
-      color: ${({ theme }) => theme.textColor}
+      color: ${({ theme }) => theme.textColor};
     }
 
     .column-value {
