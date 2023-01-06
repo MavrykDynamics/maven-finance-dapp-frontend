@@ -12,15 +12,15 @@ import { normalizeLoans } from 'pages/Loans/Loans.helpers'
 import { Lending_Controller, Lending_Controller_Vault } from 'utils/generated/graphqlTypes'
 
 export type LoansGQL = Omit<Lending_Controller, '__typename'>
-export type LoansStorage = ReturnType<typeof normalizeLoans>
+export type LoansStorage = Awaited<ReturnType<typeof normalizeLoans>>
 
 export type LoanTokenType = {
   loanTokenData: {
     name: string
-    symbol: string
-    decimals: string
-    icon: string
-    rate?: number
+    symbol?: string
+    decimals?: string
+    icon?: string
+    rate: number | null
   }
   transactionHistory: Array<{
     descr: string | null
@@ -42,6 +42,9 @@ export type LoanTokenType = {
   totalBorrowed: number
   avaliableLiquidity: number
   totalLended: number
+  borrowAPR: number
+  totalFeesEarned: number
+  lendingAPY: number
 }
 
 export type LoansChartsDataType = {
@@ -55,7 +58,7 @@ export type LendingItemType = {
   assetName: string
   assetIcon?: string
   lendValue: number
-  lendAssetRate: number
+  lendAssetRate: number | null
   lendAPY: number
   interestEarned: number
   loanAssetWalletBalance: number
@@ -74,20 +77,20 @@ export type ModalTypes =
 
 export type BorrowingData = {
   borrowedAsset: {
-    assetSymbol: string
+    assetSymbol?: string
     assetIcon?: string
     amtBorrowed: number
-    assetRate: number
+    assetRate: number | null
     collateralBalance: number
     collateralUtilization: number
     apy: number
     fee: number
   }
   collateralData: Array<{
-    assetSymbol: string
+    assetSymbol?: string
     assetIcon?: string
     balance: number
-    assetRate: number
+    assetRate: number | null
     maxWithdraw: number
   }>
   xtzDelegatedTo?: string

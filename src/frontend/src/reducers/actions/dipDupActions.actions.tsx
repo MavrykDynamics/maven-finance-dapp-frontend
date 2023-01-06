@@ -1,4 +1,4 @@
-import { AppDispatch, GetState } from 'app/App.controller'
+import { AppDispatch, coinGeckoClient, GetState } from 'app/App.controller'
 import { normalizeDipDupTokens, normalizeMTokens } from 'app/App.helpers'
 import CoinGecko from 'coingecko-api'
 import { fetchFromIndexer } from 'gql/fetchGraphQL'
@@ -63,7 +63,6 @@ export const getWhitelistTokensStorage = () => async (dispatch: AppDispatch, get
   }
 }
 
-const coinGeckoClient = new CoinGecko()
 export const GET_TOKENS_PRICES = 'GET_TOKENS_PRICES'
 export const getTokensPrices = () => async (dispatch: any) => {
   try {
