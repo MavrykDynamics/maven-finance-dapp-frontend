@@ -101,13 +101,15 @@ export const Table = styled.table<{ theme: MavrykTheme }>`
     margin-top: 15px;
     margin-bottom: 10px;
 
-    &::before {
-      content: '';
-      position: absolute;
-      bottom: 0px;
-      height: 1px;
-      width: 100%;
-      background-color: ${({ theme }) => theme.cardBorderColor};
+    &.show-before {
+      &::before {
+        content: '';
+        position: absolute;
+        bottom: 0px;
+        height: 1px;
+        width: 100%;
+        background-color: ${({ theme }) => theme.cardBorderColor};
+      }
     }
   }
 

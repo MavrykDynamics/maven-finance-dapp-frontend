@@ -194,7 +194,7 @@ export const BorrowingExpandCard = ({
         {collateralData.length || true ? (
           <>
             <div className="block-name margin-top">Collateral In Vault</div>
-            <Table className="no-margin borrowing-table">
+            <Table className={`no-margin borrowing-table ${isOwner ? 'show-before' : ''}`}>
               <TableHeader className="simple-header collateral">
                 <TableRow>
                   <TableHeaderCell>Asset</TableHeaderCell>
@@ -244,45 +244,49 @@ export const BorrowingExpandCard = ({
                       <TableCell width={`17%`}>
                         <CommaNumber value={22.2} className="value" endingText="%" />
                       </TableCell>
-                      <TableCell className="buttons borrowing">
-                        <div className="cell-content row">
-                          {isTotalRow ? (
-                            <Button
-                              text="Add Collateral"
-                              icon="plus"
-                              strokeWidth={0.1}
-                              onClick={addNewCollateralHandler}
-                              kind={ACTION_PRIMARY}
-                              className="add-collateral"
-                            />
-                          ) : (
-                            <>
+                      {isTotalRow ? (
+                        <TableCell className="buttons borrowing">
+                          <div className="cell-content row">
+                            {isOwner ? (
                               <Button
-                                text="Add"
+                                text="Add Collateral"
                                 icon="plus"
                                 strokeWidth={0.1}
-                                onClick={addCollateralHandler}
+                                onClick={addNewCollateralHandler}
+                                kind={ACTION_PRIMARY}
+                                className="add-collateral"
+                              />
+                            ) : null}
+                          </div>
+                        </TableCell>
+                      ) : (
+                        <TableCell className="buttons borrowing">
+                          <div className="cell-content row">
+                            <Button
+                              text="Add"
+                              icon="plus"
+                              strokeWidth={0.1}
+                              onClick={addCollateralHandler}
+                              kind={TRANSPARENT_WITH_BORDER}
+                            />
+                            {isOwner ? (
+                              <Button
+                                text="Remove"
+                                icon="minus"
+                                strokeWidth={0.1}
+                                onClick={removeCollateralHandler}
                                 kind={TRANSPARENT_WITH_BORDER}
                               />
-                              {isOwner ? (
-                                <Button
-                                  text="Remove"
-                                  icon="minus"
-                                  strokeWidth={0.1}
-                                  onClick={removeCollateralHandler}
-                                  kind={TRANSPARENT_WITH_BORDER}
-                                />
-                              ) : null}
-                            </>
-                          )}
-                        </div>
-                      </TableCell>
+                            ) : null}
+                          </div>
+                        </TableCell>
+                      )}
                     </TableRow>
                   )
                 })}
               </TableBody>
             </Table>
-            {COLLATERAL_MOCK.length < 3 ? (
+            {COLLATERAL_MOCK.length < 3 && isOwner ? (
               <Button
                 text="Add Collateral"
                 icon="plus"
