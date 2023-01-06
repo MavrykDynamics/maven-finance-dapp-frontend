@@ -142,6 +142,12 @@ export const TableHeader = styled.thead<{ theme: MavrykTheme }>`
     }
   }
 
+  &.collateral {
+    th {
+      padding-bottom: 0;
+    }
+  }
+
   &.editable-head {
     height: 42px;
     background-color: ${({ theme }) => theme.backgroundColor};
@@ -265,11 +271,47 @@ export const TableRow = styled.tr<{ theme: MavrykTheme; borderColor?: string; ro
   }
 `
 
-export const TableHeaderCell = styled.th<{ theme: MavrykTheme }>`
+export const TableHeaderCell = styled.th<{ theme: MavrykTheme; contentPosition?: 'left' | 'center' | 'right' }>`
   color: ${({ theme }) => theme.textColor};
+
+  ${({ contentPosition }) => {
+    switch (contentPosition) {
+      case 'left':
+        return css`
+          text-align: left;
+
+          div {
+            margin-right: auto;
+          }
+        `
+      case 'center':
+        return css`
+          text-align: center;
+
+          div {
+            margin-left: auto;
+            margin-right: auto;
+          }
+        `
+      case 'right':
+        return css`
+          text-align: right;
+
+          div {
+            margin-left: auto;
+          }
+        `
+      default:
+        return ''
+    }
+  }}
 `
 
-export const TableCell = styled.td<{ theme: MavrykTheme; width?: string; customStyles?: string }>`
+export const TableCell = styled.td<{
+  theme: MavrykTheme
+  width?: string
+  contentPosition?: 'left' | 'center' | 'right'
+}>`
   font-weight: 600;
   font-size: 16px;
   line-height: 20px;
@@ -283,10 +325,41 @@ export const TableCell = styled.td<{ theme: MavrykTheme; width?: string; customS
         `
       : ''}
 
+  ${({ contentPosition }) => {
+    switch (contentPosition) {
+      case 'left':
+        return css`
+          text-align: left;
+
+          div {
+            margin-right: auto;
+          }
+        `
+      case 'center':
+        return css`
+          text-align: center;
+
+          div {
+            margin-left: auto;
+            margin-right: auto;
+          }
+        `
+      case 'right':
+        return css`
+          text-align: right;
+
+          div {
+            margin-left: auto;
+          }
+        `
+      default:
+        return ''
+    }
+  }}
+
   svg {
     width: 24px;
     height: 24px;
-    margin-right: 4px;
   }
 
   button {
@@ -296,13 +369,6 @@ export const TableCell = styled.td<{ theme: MavrykTheme; width?: string; customS
   p {
     margin: 0;
   }
-
-  ${({ customStyles }) =>
-    customStyles
-      ? css`
-          ${customStyles}
-        `
-      : ''}
 
   .rate {
     font-weight: 400;
@@ -321,6 +387,15 @@ export const TableCell = styled.td<{ theme: MavrykTheme; width?: string; customS
       flex-direction: row;
       justify-content: flex-start;
       align-items: center;
+    }
+
+    .no-icon {
+      width: 24px;
+      height: 24px;
+      margin-right: 5px;
+      svg {
+        fill: ${({ theme }) => theme.dataColor};
+      }
     }
   }
 

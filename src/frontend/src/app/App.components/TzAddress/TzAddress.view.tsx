@@ -26,7 +26,7 @@ export const TzAddress = ({
   isBold,
   shouldCopy = true,
 }: TzAddressProps) => {
-  const addrClasses = `${type} ${isBold ? 'bold' : ''}`
+  const addrClasses = `${type} ${isBold ? 'bold' : ''} copyIcon`
   const dispatch = useDispatch()
 
   const handleCopyToClipboard = () => {

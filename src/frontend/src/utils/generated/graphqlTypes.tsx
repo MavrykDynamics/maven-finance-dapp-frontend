@@ -1920,7 +1920,7 @@ export type Aggregator_History_Data = {
   aggregator_id: Scalars['String'];
   data: Scalars['float8'];
   epoch: Scalars['bigint'];
-  id: Scalars['Int'];
+  id: Scalars['bigint'];
   pct_oracle_resp: Scalars['smallint'];
   round: Scalars['bigint'];
   timestamp: Scalars['timestamptz'];
@@ -1999,7 +1999,7 @@ export type Aggregator_History_Data_Bool_Exp = {
   aggregator_id?: InputMaybe<String_Comparison_Exp>;
   data?: InputMaybe<Float8_Comparison_Exp>;
   epoch?: InputMaybe<Bigint_Comparison_Exp>;
-  id?: InputMaybe<Int_Comparison_Exp>;
+  id?: InputMaybe<Bigint_Comparison_Exp>;
   pct_oracle_resp?: InputMaybe<Smallint_Comparison_Exp>;
   round?: InputMaybe<Bigint_Comparison_Exp>;
   timestamp?: InputMaybe<Timestamptz_Comparison_Exp>;
@@ -2011,7 +2011,7 @@ export type Aggregator_History_Data_Max_Fields = {
   aggregator_id?: Maybe<Scalars['String']>;
   data?: Maybe<Scalars['float8']>;
   epoch?: Maybe<Scalars['bigint']>;
-  id?: Maybe<Scalars['Int']>;
+  id?: Maybe<Scalars['bigint']>;
   pct_oracle_resp?: Maybe<Scalars['smallint']>;
   round?: Maybe<Scalars['bigint']>;
   timestamp?: Maybe<Scalars['timestamptz']>;
@@ -2034,7 +2034,7 @@ export type Aggregator_History_Data_Min_Fields = {
   aggregator_id?: Maybe<Scalars['String']>;
   data?: Maybe<Scalars['float8']>;
   epoch?: Maybe<Scalars['bigint']>;
-  id?: Maybe<Scalars['Int']>;
+  id?: Maybe<Scalars['bigint']>;
   pct_oracle_resp?: Maybe<Scalars['smallint']>;
   round?: Maybe<Scalars['bigint']>;
   timestamp?: Maybe<Scalars['timestamptz']>;
@@ -2151,7 +2151,7 @@ export type Aggregator_History_Data_Stream_Cursor_Value_Input = {
   aggregator_id?: InputMaybe<Scalars['String']>;
   data?: InputMaybe<Scalars['float8']>;
   epoch?: InputMaybe<Scalars['bigint']>;
-  id?: InputMaybe<Scalars['Int']>;
+  id?: InputMaybe<Scalars['bigint']>;
   pct_oracle_resp?: InputMaybe<Scalars['smallint']>;
   round?: InputMaybe<Scalars['bigint']>;
   timestamp?: InputMaybe<Scalars['timestamptz']>;
@@ -2162,7 +2162,7 @@ export type Aggregator_History_Data_Sum_Fields = {
   __typename?: 'aggregator_history_data_sum_fields';
   data?: Maybe<Scalars['float8']>;
   epoch?: Maybe<Scalars['bigint']>;
-  id?: Maybe<Scalars['Int']>;
+  id?: Maybe<Scalars['bigint']>;
   pct_oracle_resp?: Maybe<Scalars['smallint']>;
   round?: Maybe<Scalars['bigint']>;
 };
@@ -2566,7 +2566,7 @@ export type Aggregator_Oracle = {
   /** An object relationship */
   aggregator: Aggregator;
   aggregator_id: Scalars['String'];
-  id: Scalars['Int'];
+  id: Scalars['bigint'];
   init_epoch: Scalars['bigint'];
   init_round: Scalars['bigint'];
   /** An array relationship */
@@ -2691,7 +2691,7 @@ export type Aggregator_Oracle_Bool_Exp = {
   _or?: InputMaybe<Array<Aggregator_Oracle_Bool_Exp>>;
   aggregator?: InputMaybe<Aggregator_Bool_Exp>;
   aggregator_id?: InputMaybe<String_Comparison_Exp>;
-  id?: InputMaybe<Int_Comparison_Exp>;
+  id?: InputMaybe<Bigint_Comparison_Exp>;
   init_epoch?: InputMaybe<Bigint_Comparison_Exp>;
   init_round?: InputMaybe<Bigint_Comparison_Exp>;
   observations?: InputMaybe<Aggregator_Oracle_Observation_Bool_Exp>;
@@ -2706,7 +2706,7 @@ export type Aggregator_Oracle_Bool_Exp = {
 export type Aggregator_Oracle_Max_Fields = {
   __typename?: 'aggregator_oracle_max_fields';
   aggregator_id?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['Int']>;
+  id?: Maybe<Scalars['bigint']>;
   init_epoch?: Maybe<Scalars['bigint']>;
   init_round?: Maybe<Scalars['bigint']>;
   peer_id?: Maybe<Scalars['String']>;
@@ -2729,7 +2729,7 @@ export type Aggregator_Oracle_Max_Order_By = {
 export type Aggregator_Oracle_Min_Fields = {
   __typename?: 'aggregator_oracle_min_fields';
   aggregator_id?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['Int']>;
+  id?: Maybe<Scalars['bigint']>;
   init_epoch?: Maybe<Scalars['bigint']>;
   init_round?: Maybe<Scalars['bigint']>;
   peer_id?: Maybe<Scalars['String']>;
@@ -2756,7 +2756,7 @@ export type Aggregator_Oracle_Observation = {
   id: Scalars['bigint'];
   /** An object relationship */
   oracle: Aggregator_Oracle;
-  oracle_id: Scalars['Int'];
+  oracle_id: Scalars['bigint'];
   round: Scalars['bigint'];
   timestamp: Scalars['timestamptz'];
 };
@@ -2834,7 +2834,7 @@ export type Aggregator_Oracle_Observation_Bool_Exp = {
   epoch?: InputMaybe<Bigint_Comparison_Exp>;
   id?: InputMaybe<Bigint_Comparison_Exp>;
   oracle?: InputMaybe<Aggregator_Oracle_Bool_Exp>;
-  oracle_id?: InputMaybe<Int_Comparison_Exp>;
+  oracle_id?: InputMaybe<Bigint_Comparison_Exp>;
   round?: InputMaybe<Bigint_Comparison_Exp>;
   timestamp?: InputMaybe<Timestamptz_Comparison_Exp>;
 };
@@ -2845,7 +2845,7 @@ export type Aggregator_Oracle_Observation_Max_Fields = {
   data?: Maybe<Scalars['float8']>;
   epoch?: Maybe<Scalars['bigint']>;
   id?: Maybe<Scalars['bigint']>;
-  oracle_id?: Maybe<Scalars['Int']>;
+  oracle_id?: Maybe<Scalars['bigint']>;
   round?: Maybe<Scalars['bigint']>;
   timestamp?: Maybe<Scalars['timestamptz']>;
 };
@@ -2866,7 +2866,7 @@ export type Aggregator_Oracle_Observation_Min_Fields = {
   data?: Maybe<Scalars['float8']>;
   epoch?: Maybe<Scalars['bigint']>;
   id?: Maybe<Scalars['bigint']>;
-  oracle_id?: Maybe<Scalars['Int']>;
+  oracle_id?: Maybe<Scalars['bigint']>;
   round?: Maybe<Scalars['bigint']>;
   timestamp?: Maybe<Scalars['timestamptz']>;
 };
@@ -2978,7 +2978,7 @@ export type Aggregator_Oracle_Observation_Stream_Cursor_Value_Input = {
   data?: InputMaybe<Scalars['float8']>;
   epoch?: InputMaybe<Scalars['bigint']>;
   id?: InputMaybe<Scalars['bigint']>;
-  oracle_id?: InputMaybe<Scalars['Int']>;
+  oracle_id?: InputMaybe<Scalars['bigint']>;
   round?: InputMaybe<Scalars['bigint']>;
   timestamp?: InputMaybe<Scalars['timestamptz']>;
 };
@@ -2989,7 +2989,7 @@ export type Aggregator_Oracle_Observation_Sum_Fields = {
   data?: Maybe<Scalars['float8']>;
   epoch?: Maybe<Scalars['bigint']>;
   id?: Maybe<Scalars['bigint']>;
-  oracle_id?: Maybe<Scalars['Int']>;
+  oracle_id?: Maybe<Scalars['bigint']>;
   round?: Maybe<Scalars['bigint']>;
 };
 
@@ -3080,7 +3080,7 @@ export type Aggregator_Oracle_Reward = {
   id: Scalars['bigint'];
   /** An object relationship */
   oracle: Aggregator_Oracle;
-  oracle_id: Scalars['Int'];
+  oracle_id: Scalars['bigint'];
   reward: Scalars['float8'];
   /** XTZ: 0\nSMVK: 1 */
   type: Scalars['smallint'];
@@ -3157,7 +3157,7 @@ export type Aggregator_Oracle_Reward_Bool_Exp = {
   _or?: InputMaybe<Array<Aggregator_Oracle_Reward_Bool_Exp>>;
   id?: InputMaybe<Bigint_Comparison_Exp>;
   oracle?: InputMaybe<Aggregator_Oracle_Bool_Exp>;
-  oracle_id?: InputMaybe<Int_Comparison_Exp>;
+  oracle_id?: InputMaybe<Bigint_Comparison_Exp>;
   reward?: InputMaybe<Float8_Comparison_Exp>;
   type?: InputMaybe<Smallint_Comparison_Exp>;
 };
@@ -3166,7 +3166,7 @@ export type Aggregator_Oracle_Reward_Bool_Exp = {
 export type Aggregator_Oracle_Reward_Max_Fields = {
   __typename?: 'aggregator_oracle_reward_max_fields';
   id?: Maybe<Scalars['bigint']>;
-  oracle_id?: Maybe<Scalars['Int']>;
+  oracle_id?: Maybe<Scalars['bigint']>;
   reward?: Maybe<Scalars['float8']>;
   /** XTZ: 0\nSMVK: 1 */
   type?: Maybe<Scalars['smallint']>;
@@ -3185,7 +3185,7 @@ export type Aggregator_Oracle_Reward_Max_Order_By = {
 export type Aggregator_Oracle_Reward_Min_Fields = {
   __typename?: 'aggregator_oracle_reward_min_fields';
   id?: Maybe<Scalars['bigint']>;
-  oracle_id?: Maybe<Scalars['Int']>;
+  oracle_id?: Maybe<Scalars['bigint']>;
   reward?: Maybe<Scalars['float8']>;
   /** XTZ: 0\nSMVK: 1 */
   type?: Maybe<Scalars['smallint']>;
@@ -3289,7 +3289,7 @@ export type Aggregator_Oracle_Reward_Stream_Cursor_Input = {
 /** Initial value of the column from where the streaming should start */
 export type Aggregator_Oracle_Reward_Stream_Cursor_Value_Input = {
   id?: InputMaybe<Scalars['bigint']>;
-  oracle_id?: InputMaybe<Scalars['Int']>;
+  oracle_id?: InputMaybe<Scalars['bigint']>;
   reward?: InputMaybe<Scalars['float8']>;
   /** XTZ: 0\nSMVK: 1 */
   type?: InputMaybe<Scalars['smallint']>;
@@ -3299,7 +3299,7 @@ export type Aggregator_Oracle_Reward_Stream_Cursor_Value_Input = {
 export type Aggregator_Oracle_Reward_Sum_Fields = {
   __typename?: 'aggregator_oracle_reward_sum_fields';
   id?: Maybe<Scalars['bigint']>;
-  oracle_id?: Maybe<Scalars['Int']>;
+  oracle_id?: Maybe<Scalars['bigint']>;
   reward?: Maybe<Scalars['float8']>;
   /** XTZ: 0\nSMVK: 1 */
   type?: Maybe<Scalars['smallint']>;
@@ -3445,7 +3445,7 @@ export type Aggregator_Oracle_Stream_Cursor_Input = {
 /** Initial value of the column from where the streaming should start */
 export type Aggregator_Oracle_Stream_Cursor_Value_Input = {
   aggregator_id?: InputMaybe<Scalars['String']>;
-  id?: InputMaybe<Scalars['Int']>;
+  id?: InputMaybe<Scalars['bigint']>;
   init_epoch?: InputMaybe<Scalars['bigint']>;
   init_round?: InputMaybe<Scalars['bigint']>;
   peer_id?: InputMaybe<Scalars['String']>;
@@ -3456,7 +3456,7 @@ export type Aggregator_Oracle_Stream_Cursor_Value_Input = {
 /** aggregate sum on columns */
 export type Aggregator_Oracle_Sum_Fields = {
   __typename?: 'aggregator_oracle_sum_fields';
-  id?: Maybe<Scalars['Int']>;
+  id?: Maybe<Scalars['bigint']>;
   init_epoch?: Maybe<Scalars['bigint']>;
   init_round?: Maybe<Scalars['bigint']>;
 };
@@ -34050,6 +34050,7 @@ export type M_Token_Account = {
   m_token: M_Token;
   m_token_id: Scalars['String'];
   reward_index: Scalars['float8'];
+  rewards_earned: Scalars['float8'];
   /** An object relationship */
   user: Mavryk_User;
   user_id: Scalars['String'];
@@ -34106,6 +34107,7 @@ export type M_Token_Account_Avg_Fields = {
   balance?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
   reward_index?: Maybe<Scalars['Float']>;
+  rewards_earned?: Maybe<Scalars['Float']>;
 };
 
 /** order by avg() on columns of table "m_token_account" */
@@ -34113,6 +34115,7 @@ export type M_Token_Account_Avg_Order_By = {
   balance?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   reward_index?: InputMaybe<Order_By>;
+  rewards_earned?: InputMaybe<Order_By>;
 };
 
 /** Boolean expression to filter rows from the table "m_token_account". All fields are combined with a logical 'AND'. */
@@ -34125,6 +34128,7 @@ export type M_Token_Account_Bool_Exp = {
   m_token?: InputMaybe<M_Token_Bool_Exp>;
   m_token_id?: InputMaybe<String_Comparison_Exp>;
   reward_index?: InputMaybe<Float8_Comparison_Exp>;
+  rewards_earned?: InputMaybe<Float8_Comparison_Exp>;
   user?: InputMaybe<Mavryk_User_Bool_Exp>;
   user_id?: InputMaybe<String_Comparison_Exp>;
 };
@@ -34136,6 +34140,7 @@ export type M_Token_Account_Max_Fields = {
   id?: Maybe<Scalars['bigint']>;
   m_token_id?: Maybe<Scalars['String']>;
   reward_index?: Maybe<Scalars['float8']>;
+  rewards_earned?: Maybe<Scalars['float8']>;
   user_id?: Maybe<Scalars['String']>;
 };
 
@@ -34145,6 +34150,7 @@ export type M_Token_Account_Max_Order_By = {
   id?: InputMaybe<Order_By>;
   m_token_id?: InputMaybe<Order_By>;
   reward_index?: InputMaybe<Order_By>;
+  rewards_earned?: InputMaybe<Order_By>;
   user_id?: InputMaybe<Order_By>;
 };
 
@@ -34155,6 +34161,7 @@ export type M_Token_Account_Min_Fields = {
   id?: Maybe<Scalars['bigint']>;
   m_token_id?: Maybe<Scalars['String']>;
   reward_index?: Maybe<Scalars['float8']>;
+  rewards_earned?: Maybe<Scalars['float8']>;
   user_id?: Maybe<Scalars['String']>;
 };
 
@@ -34164,6 +34171,7 @@ export type M_Token_Account_Min_Order_By = {
   id?: InputMaybe<Order_By>;
   m_token_id?: InputMaybe<Order_By>;
   reward_index?: InputMaybe<Order_By>;
+  rewards_earned?: InputMaybe<Order_By>;
   user_id?: InputMaybe<Order_By>;
 };
 
@@ -34174,6 +34182,7 @@ export type M_Token_Account_Order_By = {
   m_token?: InputMaybe<M_Token_Order_By>;
   m_token_id?: InputMaybe<Order_By>;
   reward_index?: InputMaybe<Order_By>;
+  rewards_earned?: InputMaybe<Order_By>;
   user?: InputMaybe<Mavryk_User_Order_By>;
   user_id?: InputMaybe<Order_By>;
 };
@@ -34189,6 +34198,8 @@ export enum M_Token_Account_Select_Column {
   /** column name */
   RewardIndex = 'reward_index',
   /** column name */
+  RewardsEarned = 'rewards_earned',
+  /** column name */
   UserId = 'user_id'
 }
 
@@ -34198,6 +34209,7 @@ export type M_Token_Account_Stddev_Fields = {
   balance?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
   reward_index?: Maybe<Scalars['Float']>;
+  rewards_earned?: Maybe<Scalars['Float']>;
 };
 
 /** order by stddev() on columns of table "m_token_account" */
@@ -34205,6 +34217,7 @@ export type M_Token_Account_Stddev_Order_By = {
   balance?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   reward_index?: InputMaybe<Order_By>;
+  rewards_earned?: InputMaybe<Order_By>;
 };
 
 /** aggregate stddev_pop on columns */
@@ -34213,6 +34226,7 @@ export type M_Token_Account_Stddev_Pop_Fields = {
   balance?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
   reward_index?: Maybe<Scalars['Float']>;
+  rewards_earned?: Maybe<Scalars['Float']>;
 };
 
 /** order by stddev_pop() on columns of table "m_token_account" */
@@ -34220,6 +34234,7 @@ export type M_Token_Account_Stddev_Pop_Order_By = {
   balance?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   reward_index?: InputMaybe<Order_By>;
+  rewards_earned?: InputMaybe<Order_By>;
 };
 
 /** aggregate stddev_samp on columns */
@@ -34228,6 +34243,7 @@ export type M_Token_Account_Stddev_Samp_Fields = {
   balance?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
   reward_index?: Maybe<Scalars['Float']>;
+  rewards_earned?: Maybe<Scalars['Float']>;
 };
 
 /** order by stddev_samp() on columns of table "m_token_account" */
@@ -34235,6 +34251,7 @@ export type M_Token_Account_Stddev_Samp_Order_By = {
   balance?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   reward_index?: InputMaybe<Order_By>;
+  rewards_earned?: InputMaybe<Order_By>;
 };
 
 /** Streaming cursor of the table "m_token_account" */
@@ -34251,6 +34268,7 @@ export type M_Token_Account_Stream_Cursor_Value_Input = {
   id?: InputMaybe<Scalars['bigint']>;
   m_token_id?: InputMaybe<Scalars['String']>;
   reward_index?: InputMaybe<Scalars['float8']>;
+  rewards_earned?: InputMaybe<Scalars['float8']>;
   user_id?: InputMaybe<Scalars['String']>;
 };
 
@@ -34260,6 +34278,7 @@ export type M_Token_Account_Sum_Fields = {
   balance?: Maybe<Scalars['float8']>;
   id?: Maybe<Scalars['bigint']>;
   reward_index?: Maybe<Scalars['float8']>;
+  rewards_earned?: Maybe<Scalars['float8']>;
 };
 
 /** order by sum() on columns of table "m_token_account" */
@@ -34267,6 +34286,7 @@ export type M_Token_Account_Sum_Order_By = {
   balance?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   reward_index?: InputMaybe<Order_By>;
+  rewards_earned?: InputMaybe<Order_By>;
 };
 
 /** aggregate var_pop on columns */
@@ -34275,6 +34295,7 @@ export type M_Token_Account_Var_Pop_Fields = {
   balance?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
   reward_index?: Maybe<Scalars['Float']>;
+  rewards_earned?: Maybe<Scalars['Float']>;
 };
 
 /** order by var_pop() on columns of table "m_token_account" */
@@ -34282,6 +34303,7 @@ export type M_Token_Account_Var_Pop_Order_By = {
   balance?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   reward_index?: InputMaybe<Order_By>;
+  rewards_earned?: InputMaybe<Order_By>;
 };
 
 /** aggregate var_samp on columns */
@@ -34290,6 +34312,7 @@ export type M_Token_Account_Var_Samp_Fields = {
   balance?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
   reward_index?: Maybe<Scalars['Float']>;
+  rewards_earned?: Maybe<Scalars['Float']>;
 };
 
 /** order by var_samp() on columns of table "m_token_account" */
@@ -34297,6 +34320,7 @@ export type M_Token_Account_Var_Samp_Order_By = {
   balance?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   reward_index?: InputMaybe<Order_By>;
+  rewards_earned?: InputMaybe<Order_By>;
 };
 
 /** aggregate variance on columns */
@@ -34305,6 +34329,7 @@ export type M_Token_Account_Variance_Fields = {
   balance?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
   reward_index?: Maybe<Scalars['Float']>;
+  rewards_earned?: Maybe<Scalars['Float']>;
 };
 
 /** order by variance() on columns of table "m_token_account" */
@@ -34312,6 +34337,7 @@ export type M_Token_Account_Variance_Order_By = {
   balance?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   reward_index?: InputMaybe<Order_By>;
+  rewards_earned?: InputMaybe<Order_By>;
 };
 
 /** aggregated selection of "m_token" */
@@ -39106,7 +39132,7 @@ export type Query_RootAggregator_History_Data_AggregateArgs = {
 
 
 export type Query_RootAggregator_History_Data_By_PkArgs = {
-  id: Scalars['Int'];
+  id: Scalars['bigint'];
 };
 
 
@@ -39152,7 +39178,7 @@ export type Query_RootAggregator_Oracle_AggregateArgs = {
 
 
 export type Query_RootAggregator_Oracle_By_PkArgs = {
-  id: Scalars['Int'];
+  id: Scalars['bigint'];
 };
 
 
@@ -45269,7 +45295,7 @@ export type Subscription_RootAggregator_History_Data_AggregateArgs = {
 
 
 export type Subscription_RootAggregator_History_Data_By_PkArgs = {
-  id: Scalars['Int'];
+  id: Scalars['bigint'];
 };
 
 
@@ -45329,7 +45355,7 @@ export type Subscription_RootAggregator_Oracle_AggregateArgs = {
 
 
 export type Subscription_RootAggregator_Oracle_By_PkArgs = {
-  id: Scalars['Int'];
+  id: Scalars['bigint'];
 };
 
 

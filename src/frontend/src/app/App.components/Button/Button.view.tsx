@@ -11,6 +11,7 @@ type ButtonViewProps = {
   type?: ButtonTypes
   loading?: boolean
   disabled?: boolean
+  iconAfter: boolean
   strokeWidth?: number
 }
 
@@ -22,6 +23,7 @@ export const ButtonView = ({
   type,
   loading,
   disabled,
+  iconAfter,
   strokeWidth,
   className = '',
 }: ButtonViewProps) => {
@@ -40,12 +42,17 @@ export const ButtonView = ({
           </>
         ) : (
           <>
-            {icon && (
+            {icon && !iconAfter && (
               <ButtonIcon className={fullKind} strokeWidth={strokeWidth}>
                 <use xlinkHref={`/icons/sprites.svg#${icon}`} />
               </ButtonIcon>
             )}
             <div>{text}</div>
+            {!loading && icon && iconAfter && (
+              <ButtonIcon className={`${fullKind} ${iconAfter ? 'after' : ''}`} strokeWidth={strokeWidth}>
+                <use xlinkHref={`/icons/sprites.svg#${icon}`} />
+              </ButtonIcon>
+            )}
           </>
         )}
       </ButtonText>

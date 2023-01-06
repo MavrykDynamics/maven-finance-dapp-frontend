@@ -1,3 +1,4 @@
+import { M_Token_Account } from './../utils/generated/graphqlTypes'
 import { CONNECT, DISCONNECT, SET_WALLET } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 import { TempleWallet } from '@temple-wallet/dapp'
 import { TezosToolkit } from '@taquito/taquito'
@@ -33,6 +34,7 @@ export interface UserState {
   myDoormanRewardsData: UserDoormanRewardsData
   myFarmRewardsData: Record<string, UserFarmRewardsData>
   mySatelliteRewardsData: UserSatelliteRewardsData
+  mTokens?: Array<M_Token_Account>
 }
 
 const RpcNetwork = preferencesDefaultState.REACT_APP_RPC_PROVIDER

@@ -176,9 +176,14 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
       margin-top: 30px;
     }
 
+    &.arrow {
+      svg {
+        transform: rotate(180deg);
+        width: 16px;
+      }
+    }
+
     svg {
-      transform: rotate(180deg);
-      width: 16px;
       stroke: ${({ theme }) => theme.valueColor};
       fill: ${({ theme }) => theme.valueColor};
     }
@@ -224,6 +229,26 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
     width: fit-content;
     background-color: transparent;
     color: ${({ theme }) => theme.valueColor};
+
+    svg {
+      stroke: ${({ theme }) => theme.valueColor};
+      fill: ${({ theme }) => theme.valueColor};
+      width: 14px;
+      height: 12px;
+      stroke-width: 2px;
+    }
+
+    &.arrow-down {
+      svg {
+        transform: rotate(270deg);
+      }
+    }
+
+    &.arrow-top {
+      svg {
+        transform: rotate(-270deg);
+      }
+    }
   }
 `
 
@@ -286,6 +311,11 @@ export const ButtonIcon = styled.svg<{ theme: MavrykTheme; strokeWidth?: number 
 
   &.actionSecondary {
     stroke: ${({ theme }) => theme.actionPrimaryBtnColor};
+  }
+
+  &.after {
+    margin-right: 0px;
+    margin-left: 11px;
   }
 
   ${({ strokeWidth }) =>

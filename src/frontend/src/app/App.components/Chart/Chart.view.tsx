@@ -13,8 +13,9 @@ import Icon from '../Icon/Icon.view'
 import { CommaNumber, formatNumber } from '../CommaNumber/CommaNumber.controller'
 import { headerColor, lightTextColor, skyColor } from 'styles'
 
+export type ChartPlotType = { time: UTCTimestamp; value: number }
 type TradingViewChartProps = {
-  data: { time: UTCTimestamp; value: number }[]
+  data: ChartPlotType[]
   colors?: {
     lineColor?: string
     areaTopColor?: string
@@ -24,10 +25,13 @@ type TradingViewChartProps = {
   }
   settings: {
     height: number
+    width?: number
     tickDateFormatter?: (date: number) => string
     tickPriceFormatter?: (value: number) => string
     dateTooltipFormatter?: (date: number) => string
     valueTooltipFormatter?: (date: number) => string
+    hideXAxis?: boolean
+    hideYAxis?: boolean
   }
   className?: string
 }
@@ -84,7 +88,16 @@ export const TradingViewChart = ({
     textColor = lightTextColor,
     borderColor = headerColor,
   } = {},
-  settings: { height, dateTooltipFormatter, valueTooltipFormatter, tickPriceFormatter, tickDateFormatter },
+  settings: {
+    height,
+    width,
+    dateTooltipFormatter,
+    valueTooltipFormatter,
+    tickPriceFormatter,
+    tickDateFormatter,
+    hideXAxis,
+    hideYAxis,
+  },
   className,
 }: TradingViewChartProps) => {
   const chartContainerRef = useRef<HTMLDivElement | null>(null)
@@ -113,7 +126,7 @@ export const TradingViewChart = ({
           visible: false,
         },
       },
-      width: chartContainerRef?.current?.clientWidth ?? 0,
+      width: width ?? chartContainerRef?.current?.clientWidth ?? 0,
       height,
       localization: {
         locale: 'en-US',
@@ -121,6 +134,23 @@ export const TradingViewChart = ({
           return tickDateFormatter?.(Number(time)) ?? parseDate({ time: Number(time), timeFormat: 'HH:mm' }) ?? ''
         },
       },
+      ...(hideXAxis
+        ? {
+            timeScale: {
+              visible: false,
+            },
+          }
+        : {}),
+      ...(hideYAxis
+        ? {
+            rightPriceScale: {
+              visible: false,
+            },
+            leftPriceScale: {
+              visible: false,
+            },
+          }
+        : {}),
     })
 
     // Setting the border color for the vertical axis
@@ -135,7 +165,6 @@ export const TradingViewChart = ({
     // Setting the border color for the horizontal axis
     chart.timeScale().applyOptions({
       borderColor,
-      visible: true,
       tickMarkFormatter: (time: UTCTimestamp | BusinessDay) => {
         return tickDateFormatter?.(Number(time)) ?? parseDate({ time: Number(time), timeFormat: 'HH:mm' }) ?? ''
       },
@@ -153,7 +182,12 @@ export const TradingViewChart = ({
       priceFormat: {
         type: 'custom',
         minMove: 1,
-        formatter: (price: any) => formatNumber(true, 2, parseFloat(price)),
+        formatter: (price: any) =>
+          formatNumber({
+            showDecimal: true,
+            decimalsToShow: 2,
+            number: parseFloat(price),
+          }),
       },
     })
 

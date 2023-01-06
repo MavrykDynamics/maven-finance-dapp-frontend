@@ -9,7 +9,7 @@ import Icon from '../../../app/App.components/Icon/Icon.view'
 
 // style
 import { SatellitePaginationStyled } from 'pages/Satellites/SatellitePagination/SatellitePagination.style'
-import { Button } from 'app/App.components/Button/Button.controller'
+import NewButton from 'app/App.components/Button/NewButton.controller'
 import { TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
 
 const DataFeedsPagination = () => {
@@ -25,9 +25,11 @@ const DataFeedsPagination = () => {
 
   return (
     <SatellitePaginationStyled>
-      <Link to={`/data-feeds`}>
-        <Button text="Back to feeds" icon="arrowRight" kind={TRANSPARENT_WITH_BORDER} className="back" />
-      </Link>
+      <NewButton kind={TRANSPARENT_WITH_BORDER} className="go-back">
+        <Link to={`/data-feeds`}>
+          <Icon id="arrowRight" /> Back to feeds
+        </Link>
+      </NewButton>
       {prevFeed ? (
         <Link className="pagination-link prev" to={`/satellites/feed-details/${prevFeed.address}`}>
           <Icon id="arrow-obtuse-angle" />
