@@ -1,13 +1,13 @@
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { LoansModalBase } from './Modals.style'
 
-export const AddCollateral = ({ closePopup }: { closePopup: () => void }) => {
+export const ChangeBaker = ({ closePopup }: { closePopup: () => void }) => {
   return (
     <LoansModalBase>
       <GovRightContainerTitleArea>
-        <h2>Add Collateral To Vault</h2>
+        <h2>Change Baker</h2>
       </GovRightContainerTitleArea>
-      <div className="modalDescr">Select one or multiple assets to add as collateral to the vault.</div>
+      <div className="modalDescr">Please choose the Bakery to delegate your XTZ.</div>
       <button onClick={closePopup} className="close-modal" />
     </LoansModalBase>
   )

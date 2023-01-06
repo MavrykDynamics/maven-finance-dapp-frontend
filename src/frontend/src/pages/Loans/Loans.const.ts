@@ -16,13 +16,18 @@ export const TRANSACTION_HISTORY_SLIDING_BUTTONS = [
   },
 ]
 
-export const UPDATE_MVK_OPERATORS_MODAL_ID = 'updateMVKoperatorsModal'
-export const MANAGE_PERMISSIONS_MODAL_ID = 'managePermissionsModal'
-export const ADD_COLLATERAL_MODAL_ID = 'addCollateralModal'
-export const REMOVE_COLLATERAL_MODAL_ID = 'removeCollateralModal'
-export const BORROW_ASSET_MODAL_ID = 'borrowAssetModal'
-export const REPAY_MODAL_ID = 'repayModal'
-export const CLOSE_VAULT_MODAL_ID = 'closeVaultModal'
+export const ADD_COLLATERAL_MODAL_ID = 'addCollateral'
+export const ADD_NEW_COLLATERAL_MODAL_ID = 'addNewCollateral'
+export const ADD_LENDING_ASSET_MODAL_ID = 'addLendingAsset'
+export const BORROW_ASSET_MODAL_ID = 'borrowAsset'
+export const CHANGE_BAKER_MODAL_ID = 'changeBaker'
+export const CREATE_NEW_VAULT_MODAL_ID = 'createNewVault'
+export const MANAGE_PERMISSIONS_MODAL_ID = 'managePermissions'
+export const REMOVE_ASSET_LENDING_MODAL_ID = 'removeAssetsFromLending'
+export const REPAY_MODAL_ID = 'repayVault'
+export const REPAY_AND_CLOSE_MODAL_ID = 'repayAndCloseVault'
+export const UPDATE_MVK_OPERATORS_MODAL_ID = 'updateMVKOperators'
+export const WITHDRAW_COLLATERAL_MODAL_ID = 'withdrawCollateral'
 
 export const BORROWIND_MOCK = [{}, {}]
 export const COLLATERAL_MOCK = [

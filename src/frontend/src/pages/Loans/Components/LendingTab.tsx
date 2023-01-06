@@ -1,8 +1,8 @@
 import { useDispatch } from 'react-redux'
 
-import { ACTION_PRIMARY, TRANSPARENT, TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
+import { ACTION_PRIMARY, TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
 import { toggleLoansModal } from '../Loans.actions'
-import { ADD_COLLATERAL_MODAL_ID, REMOVE_COLLATERAL_MODAL_ID } from '../Loans.const'
+import { ADD_LENDING_ASSET_MODAL_ID, REMOVE_ASSET_LENDING_MODAL_ID } from '../Loans.const'
 
 import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
@@ -23,15 +23,8 @@ type LendingTabPropsType = {
 export const LendingTab = ({ lendingItem }: LendingTabPropsType) => {
   const dispatch = useDispatch()
 
-  const addLendHandler = () => {
-    dispatch(toggleLoansModal(ADD_COLLATERAL_MODAL_ID))
-  }
-  const removeLendHandler = () => {
-    dispatch(toggleLoansModal(REMOVE_COLLATERAL_MODAL_ID))
-  }
-  const lendAssetHandler = () => {
-    dispatch(toggleLoansModal(REMOVE_COLLATERAL_MODAL_ID))
-  }
+  const addLendHandler = () => dispatch(toggleLoansModal(ADD_LENDING_ASSET_MODAL_ID))
+  const removeLendHandler = () => dispatch(toggleLoansModal(REMOVE_ASSET_LENDING_MODAL_ID))
 
   return (
     <LoansTabStyled>
@@ -102,7 +95,7 @@ export const LendingTab = ({ lendingItem }: LendingTabPropsType) => {
           <Button
             text="Lend Asset"
             icon="plus"
-            onClick={lendAssetHandler}
+            onClick={addLendHandler}
             kind={ACTION_PRIMARY}
             className="lending-tab-no-items-btn"
           />

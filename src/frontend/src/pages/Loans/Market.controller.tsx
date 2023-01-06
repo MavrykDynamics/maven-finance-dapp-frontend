@@ -4,7 +4,7 @@ import { Redirect, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
 
 // const
-import { ACTION_SIMPLE, TRANSPARENT, TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
+import { ACTION_SIMPLE, TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
 import { BORROW_TAB_ID, LEND_TAB_ID, PERMISSIONS_VAULTS_TAB_ID } from './Loans.const'
 
 // view
@@ -25,6 +25,7 @@ import { MarketPagination, MarketStyled, ThreeLevelListItem } from './Loans.styl
 import { State } from 'reducers'
 import { MarketPageHeader } from './Components/LoansPageHeader'
 import { PermissionVaults } from './Components/PermissionVaultsTab'
+import { LoansModals } from './Components/Modals/Modal.controller'
 
 export const Market = () => {
   const { assetId, tabId } = useParams<{ assetId: string; tabId: string }>()
@@ -101,6 +102,8 @@ export const Market = () => {
 
   return (
     <Page>
+      <LoansModals />
+
       <MarketPageHeader assetId={assetId} currentAsset={currentAsset} />
 
       {marketPagination}

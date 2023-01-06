@@ -1,4 +1,16 @@
-import { BORROWIND_MOCK, COLLATERAL_MOCK } from '../Loans.const'
+import {
+  ADD_COLLATERAL_MODAL_ID,
+  ADD_NEW_COLLATERAL_MODAL_ID,
+  BORROWIND_MOCK,
+  BORROW_ASSET_MODAL_ID,
+  CHANGE_BAKER_MODAL_ID,
+  COLLATERAL_MOCK,
+  MANAGE_PERMISSIONS_MODAL_ID,
+  REPAY_AND_CLOSE_MODAL_ID,
+  REPAY_MODAL_ID,
+  UPDATE_MVK_OPERATORS_MODAL_ID,
+  WITHDRAW_COLLATERAL_MODAL_ID,
+} from '../Loans.const'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import {
   ACTION_PRIMARY,
@@ -25,6 +37,7 @@ import { ThreeLevelListItem, FillBlock } from '../Loans.style'
 import { BorrowingTabListItemExpanded } from './LoansComponents.style'
 import { useDispatch } from 'react-redux'
 import { BorrowingData } from 'utils/TypesAndInterfaces/Loans'
+import { toggleLoansModal } from '../Loans.actions'
 
 type BorrowingExpandCardPropsType = {
   isOwner?: boolean
@@ -58,11 +71,15 @@ export const BorrowingExpandCard = ({
     fee = 0,
   } = borrowedAsset
 
-  const borrowHandler = () => {}
-  const repayHandler = () => {}
-  const addCollateralHandler = () => {}
-  const removeCollateralHandler = () => {}
-  const closeVaultHandler = () => {}
+  const borrowHandler = () => dispatch(toggleLoansModal(BORROW_ASSET_MODAL_ID))
+  const repayHandler = () => dispatch(toggleLoansModal(REPAY_MODAL_ID))
+  const addCollateralHandler = () => dispatch(toggleLoansModal(ADD_COLLATERAL_MODAL_ID))
+  const addNewCollateralHandler = () => dispatch(toggleLoansModal(ADD_NEW_COLLATERAL_MODAL_ID))
+  const removeCollateralHandler = () => dispatch(toggleLoansModal(WITHDRAW_COLLATERAL_MODAL_ID))
+  const repayFullHandler = () => dispatch(toggleLoansModal(REPAY_AND_CLOSE_MODAL_ID))
+  const changeBakerHandler = () => dispatch(toggleLoansModal(CHANGE_BAKER_MODAL_ID))
+  const updateOperatorsHandler = () => dispatch(toggleLoansModal(UPDATE_MVK_OPERATORS_MODAL_ID))
+  const managePermissionsHandler = () => dispatch(toggleLoansModal(MANAGE_PERMISSIONS_MODAL_ID))
 
   const mappedDepositors = {
     isAll: depositors?.[0] === 'all',
@@ -190,7 +207,7 @@ export const BorrowingExpandCard = ({
               <TableBody>
                 {COLLATERAL_MOCK.map(({ assetSymbol, assetIcon, balance, assetRate, maxWithdraw }, idx) => {
                   const isTotalRow = COLLATERAL_MOCK.length - 1 === idx
-                  if (isTotalRow && COLLATERAL_MOCK.length < 2) return null
+                  if (isTotalRow && COLLATERAL_MOCK.length < 3) return null
 
                   return (
                     <TableRow rowHeight={60}>
@@ -227,33 +244,54 @@ export const BorrowingExpandCard = ({
                       <TableCell width={`17%`}>
                         <CommaNumber value={22.2} className="value" endingText="%" />
                       </TableCell>
-                      {!isTotalRow ? (
-                        <TableCell className="buttons">
-                          <div className="cell-content row">
+                      <TableCell className="buttons borrowing">
+                        <div className="cell-content row">
+                          {isTotalRow ? (
                             <Button
-                              text="Add"
+                              text="Add Collateral"
                               icon="plus"
                               strokeWidth={0.1}
-                              onClick={addCollateralHandler}
-                              kind={TRANSPARENT_WITH_BORDER}
+                              onClick={addNewCollateralHandler}
+                              kind={ACTION_PRIMARY}
+                              className="add-collateral"
                             />
-                            {isOwner ? (
+                          ) : (
+                            <>
                               <Button
-                                text="Remove"
-                                icon="minus"
+                                text="Add"
+                                icon="plus"
                                 strokeWidth={0.1}
-                                onClick={removeCollateralHandler}
+                                onClick={addCollateralHandler}
                                 kind={TRANSPARENT_WITH_BORDER}
                               />
-                            ) : null}
-                          </div>
-                        </TableCell>
-                      ) : null}
+                              {isOwner ? (
+                                <Button
+                                  text="Remove"
+                                  icon="minus"
+                                  strokeWidth={0.1}
+                                  onClick={removeCollateralHandler}
+                                  kind={TRANSPARENT_WITH_BORDER}
+                                />
+                              ) : null}
+                            </>
+                          )}
+                        </div>
+                      </TableCell>
                     </TableRow>
                   )
                 })}
               </TableBody>
             </Table>
+            {COLLATERAL_MOCK.length < 3 ? (
+              <Button
+                text="Add Collateral"
+                icon="plus"
+                strokeWidth={0.1}
+                onClick={addNewCollateralHandler}
+                kind={ACTION_PRIMARY}
+                className="add-collateral"
+              />
+            ) : null}
 
             {isOwner ? (
               <>
@@ -263,7 +301,13 @@ export const BorrowingExpandCard = ({
                   <div className="value">
                     {xtzDelegatedTo ? <TzAddress tzAddress={xtzDelegatedTo} type={BLUE} /> : 'None'}
                   </div>
-                  <Button kind={ACTION_SIMPLE} text="Change Baker" icon="paginationArrowLeft" iconAfter />
+                  <Button
+                    kind={ACTION_SIMPLE}
+                    text="Change Baker"
+                    icon="paginationArrowLeft"
+                    iconAfter
+                    onClick={changeBakerHandler}
+                  />
                 </div>
                 <div className="bottom-info-row">
                   <div className="name">sMVKDelegated to </div>
@@ -283,7 +327,13 @@ export const BorrowingExpandCard = ({
                         ` ${mappedDepositors.amount ?? ''}`
                       : 'None Allowed'}
                   </div>
-                  <Button kind={ACTION_SIMPLE} text="Update" icon="paginationArrowLeft" iconAfter />
+                  <Button
+                    kind={ACTION_SIMPLE}
+                    text="Update"
+                    icon="paginationArrowLeft"
+                    iconAfter
+                    onClick={managePermissionsHandler}
+                  />
                 </div>
                 <div className="bottom-info-row">
                   <div className="name">MVK Operators </div>
@@ -293,13 +343,19 @@ export const BorrowingExpandCard = ({
                         ` ${mappedMVKOperators.amount ?? ''}`
                       : 'None'}
                   </div>
-                  <Button kind={ACTION_SIMPLE} text="Update" icon="paginationArrowLeft" iconAfter />
+                  <Button
+                    kind={ACTION_SIMPLE}
+                    text="Update"
+                    icon="paginationArrowLeft"
+                    iconAfter
+                    onClick={updateOperatorsHandler}
+                  />
                 </div>
 
                 <Button
                   text="Repay Loan in Full"
                   kind={TRANSPARENT_WITH_BORDER}
-                  onClick={closeVaultHandler}
+                  onClick={repayFullHandler}
                   className="close-vault"
                   icon="close-stroke"
                 />

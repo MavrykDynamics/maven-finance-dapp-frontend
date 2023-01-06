@@ -43,4 +43,12 @@ export const LoansModalBase = styled.div<{ theme: MavrykTheme }>`
       opacity: 0.7;
     }
   }
+
+  .modalDescr {
+    margin-top: 7px;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 21px;
+    color: ${({ theme }) => theme.textColor};
+  }
 `

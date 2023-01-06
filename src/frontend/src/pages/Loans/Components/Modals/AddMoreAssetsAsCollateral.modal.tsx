@@ -1,11 +1,11 @@
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { LoansModalBase } from './Modals.style'
 
-export const CloseVault = ({ closePopup }: { closePopup: () => void }) => {
+export const AddMoreAssetsAsCollateral = ({ closePopup }: { closePopup: () => void }) => {
   return (
     <LoansModalBase>
       <GovRightContainerTitleArea>
-        <h2>CloseVault</h2>
+        <h2>Add More Assets As Collateral</h2>
       </GovRightContainerTitleArea>
       <button onClick={closePopup} className="close-modal" />
     </LoansModalBase>
