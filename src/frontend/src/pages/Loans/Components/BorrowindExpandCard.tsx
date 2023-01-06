@@ -110,7 +110,7 @@ export const BorrowingExpandCard = ({
           <ThreeLevelListItem>
             <div className="name">Amount</div>
             <CommaNumber value={amtBorrowed} className="value" />
-            <CommaNumber value={amtBorrowed * assetRate} beginningText="$" className="rate" />
+            {assetRate ? <CommaNumber value={amtBorrowed * assetRate} beginningText="$" className="rate" /> : null}
           </ThreeLevelListItem>
           <ThreeLevelListItem>
             <div className="name">Collateral Balance</div>
@@ -142,7 +142,7 @@ export const BorrowingExpandCard = ({
               <ThreeLevelListItem>
                 <div className="name">Amount</div>
                 <CommaNumber value={amtBorrowed} className="value" />
-                <CommaNumber value={amtBorrowed * assetRate} beginningText="$" className="rate" />
+                {assetRate ? <CommaNumber value={amtBorrowed * assetRate} beginningText="$" className="rate" /> : null}
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">Fee</div>

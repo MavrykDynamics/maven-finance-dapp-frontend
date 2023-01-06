@@ -29,8 +29,6 @@ import { EmptyContainer } from 'app/App.style'
 export const Markets = () => {
   const { loanTokens, chartsData } = useSelector((state: State) => state.loans)
 
-  // TODO: add loader to the page, if data is not loaded, need to create dataLoaderHook
-
   const lendingPart = (
     <div className="chart-wrapper">
       <div className="summary">
@@ -104,6 +102,9 @@ export const Markets = () => {
               totalBorrowed,
               suppliers,
               totalLended,
+              borrowAPR,
+              totalFeesEarned,
+              lendingAPY,
             } = loanAsset
 
             const totalCorratealColor = collateral / vaultsBorrowedAmount > 2 ? 'up' : 'down'
@@ -120,7 +121,7 @@ export const Markets = () => {
                   <div className="name">{name}</div>
                   {rate ? (
                     <div className="rate">
-                      <CommaNumber beginningText="$" value={rate} />{' '}
+                      <CommaNumber beginningText="$" value={rate} />
                     </div>
                   ) : null}
                 </div>
@@ -134,11 +135,11 @@ export const Markets = () => {
                     </ThreeLevelListItem>
                     <ThreeLevelListItem>
                       <div className="name">Lend APY</div>
-                      <CommaNumber value={22} className="value" endingText="%" />
+                      <CommaNumber value={lendingAPY} className="value" endingText="%" />
                     </ThreeLevelListItem>
                     <ThreeLevelListItem>
                       <div className="name">Total Fees Earned</div>
-                      <CommaNumber value={12414.2423} className="value" beginningText="$" />
+                      <CommaNumber value={totalFeesEarned} className="value" beginningText="$" />
                     </ThreeLevelListItem>
                     <ThreeLevelListItem>
                       <div className="name">Suppliers</div>
@@ -160,7 +161,7 @@ export const Markets = () => {
                     </ThreeLevelListItem>
                     <ThreeLevelListItem>
                       <div className="name">Borrow APR</div>
-                      <CommaNumber value={22} className="value" endingText="%" />
+                      <CommaNumber value={borrowAPR} className="value" endingText="%" />
                     </ThreeLevelListItem>
                     <ThreeLevelListItem>
                       <div className="name">Available Liquidity</div>

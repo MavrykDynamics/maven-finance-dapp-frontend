@@ -20,7 +20,7 @@ export const formatNumber = ({
   decimalsToShow: number
   number?: number
 }): string | undefined => {
-  if (showDecimal && !number) return '0.00'
+  if (showDecimal && !number) return '0'
   return number?.toLocaleString('en-US', {
     maximumFractionDigits: showDecimal ? decimalsToShow : 0,
   })
