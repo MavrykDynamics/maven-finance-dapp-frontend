@@ -26,6 +26,7 @@ import {
   getDipDupTokensStorage,
   getWhitelistTokensStorage,
   getTokensPrices,
+  getMTokensStorage,
 } from 'reducers/actions/dipDupActions.actions'
 import { toggleInitialDataLoading } from './App.components/Loader/Loader.action'
 
@@ -67,6 +68,7 @@ const AppContainer = () => {
       await dispatch(getDipDupTokensStorage())
       await dispatch(getWhitelistTokensStorage())
       await dispatch(getTokensPrices())
+      await dispatch(getMTokensStorage())
       await dispatch(getMvkTokenStorage())
 
       await dispatch(toggleInitialDataLoading(false))

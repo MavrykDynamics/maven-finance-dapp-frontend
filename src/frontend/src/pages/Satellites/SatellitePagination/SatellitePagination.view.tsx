@@ -1,3 +1,5 @@
+import { TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
+import NewButton from 'app/App.components/Button/NewButton.controller'
 import { useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, useParams } from 'react-router-dom'
@@ -22,10 +24,11 @@ const SatellitePagination = () => {
 
   return (
     <SatellitePaginationStyled>
-      <Link className="pagination-link back" to="/satellite-nodes">
-        <Icon id="arrow-left-stroke" />
-        Back to satellites
-      </Link>
+      <NewButton kind={TRANSPARENT_WITH_BORDER} className="go-back">
+        <Link to={`/satellite-nodes`}>
+          <Icon id="arrowRight" /> Back to satellites
+        </Link>
+      </NewButton>
       {prevSatellite ? (
         <Link className="pagination-link prev" to={`/satellites/satellite-details/${prevSatellite.address}`}>
           <Icon id="arrow-obtuse-angle" />

@@ -1,21 +1,32 @@
-import * as React from 'react'
-import { LoansStyled } from './Loans.style'
 import { useDispatch, useSelector } from 'react-redux'
-import { State } from '../../reducers'
 import { useEffect } from 'react'
-import { Page } from 'styles'
+
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
+import { Markets } from './Markets.controller'
+
+import { getLoansStorage, toggleLoansModal } from './Loans.actions'
+
+import { Page } from 'styles'
+import { State } from 'reducers'
+import { LoansModals } from './Components/Modals/Modal.controller'
 
 export const Loans = () => {
   const dispatch = useDispatch()
-  const { wallet, tezos, accountPkh } = useSelector((state: State) => state.wallet)
+  const { isInitialDataloading } = useSelector((state: State) => state.loading)
+  const { dipDupTokens } = useSelector((state: State) => state.tokens)
+
+  useEffect(() => {
+    ;(async () => {
+      if (!isInitialDataloading && dipDupTokens.length) {
+        await dispatch(getLoansStorage())
+      }
+    })()
+  }, [isInitialDataloading, dipDupTokens, dispatch])
 
   return (
     <Page>
-      <PageHeader page={'loans'} />
-      <LoansStyled>
-        <div>Here on the Loans Page</div>
-      </LoansStyled>
+      <PageHeader page={'lending'} />
+      <Markets />
     </Page>
   )
 }

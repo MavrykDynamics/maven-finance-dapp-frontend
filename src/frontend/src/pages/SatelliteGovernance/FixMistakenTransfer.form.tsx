@@ -22,10 +22,20 @@ import { fixMistakenTransfer } from './SatelliteGovernance.actions'
 
 // style
 import { AvailableActionsStyle } from './SatelliteGovernance.style'
-import Table, { TableProps } from 'app/App.components/Table/Table.controller'
 import { ValidationResult } from 'pages/ProposalSubmission/ProposalSybmittion.types'
-import { CellType } from 'app/App.components/Table/TableCell'
 import { ACTION_PRIMARY, SUBMIT } from 'app/App.components/Button/Button.constants'
+import { DropDown } from 'app/App.components/DropDown/DropDown.controller'
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHeaderCell,
+  TableBody,
+  TableCell,
+  RemoveRowBtn,
+  AddRowBtn,
+} from 'app/App.components/Table/Table.style'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 const TOKEN_TYPES: Array<TokenType> = ['FA12', 'FA2', 'TEZ']
 
@@ -128,54 +138,6 @@ export const FixMistakenTransferForm = ({ maxLength }: Props) => {
     }
   }
 
-  const mappedTableData = useMemo(() => {
-    return tableData.map<TableProps['data'][number]>(({ to_, amount, token }, idx) => {
-      return [
-        {
-          cellValue: to_,
-          cellType: 'input' as CellType,
-          inputProps: {
-            inputStatus: tableValidation[idx].to_,
-            onChange: updateTableDataState,
-            onBlur: handleTableOnBlur,
-            onFocus: () => setOpenDrop(DEFAULT_DROPDOWNS_STATE),
-            name: 'to_',
-            type: 'text',
-          },
-        },
-        {
-          cellValue: amount,
-          cellType: 'input' as CellType,
-          inputProps: {
-            inputStatus: tableValidation[idx].amount,
-            onChange: updateTableDataState,
-            onBlur: handleTableOnBlur,
-            onFocus: () => setOpenDrop(DEFAULT_DROPDOWNS_STATE),
-            name: 'amount',
-            type: 'number',
-          },
-        },
-        {
-          cellValue: token,
-          cellType: 'dropDown' as CellType,
-          dropDownProps: {
-            items: TOKEN_TYPES,
-            isOpen: openDrop[idx],
-            clickOnItem: (rowIdx: number) => (newSelectedSymbol: string) => {
-              updateTableDataState(
-                {
-                  target: { name: 'token', value: newSelectedSymbol },
-                },
-                rowIdx,
-              )
-            },
-            setIsOpen: (newState: Array<boolean>) => setOpenDrop(newState),
-          },
-        },
-      ]
-    })
-  }, [openDrop, tableData, tableValidation])
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
     setForm((prev) => {
       return { ...prev, [e.target.name]: e.target.value }
@@ -229,12 +191,76 @@ export const FixMistakenTransferForm = ({ maxLength }: Props) => {
           </fieldset>
           <label>Transfer List</label>
         </div>
-        <Table
-          data={mappedTableData}
-          colunmNames={['Address', 'Amount', 'Token Type (FA12/FA2/TEZ)']}
-          addRowHandler={handleAddRow}
-          removeRowHandler={handleDeleteRow}
-        />
+        <Table className="editable-table">
+          <TableHeader className="editable-head">
+            <TableRow>
+              <TableHeaderCell className="no-right-border">Address</TableHeaderCell>
+              <TableHeaderCell>Purpose</TableHeaderCell>
+              <TableHeaderCell className="right-border">Token Type (FA12/FA2/TEZ)</TableHeaderCell>
+            </TableRow>
+          </TableHeader>
+          <TableBody className="editable-body">
+            {tableData.map(({ to_, token, amount }, rowIdx) => {
+              return (
+                <TableRow className="editable-row">
+                  <TableCell width="33.3%">
+                    <Input
+                      value={String(to_)}
+                      inputStatus={tableValidation[rowIdx]?.to_}
+                      onChange={(e) => updateTableDataState(e, rowIdx)}
+                      onBlur={(e) => handleTableOnBlur(e, rowIdx)}
+                      onFocus={() => setOpenDrop(DEFAULT_DROPDOWNS_STATE)}
+                      name={'to_'}
+                      type={'text'}
+                    />
+                  </TableCell>
+                  <TableCell width="33.3%">
+                    <Input
+                      value={Number(amount)}
+                      inputStatus={tableValidation[rowIdx]?.amount}
+                      onChange={(e) => updateTableDataState(e, rowIdx)}
+                      onBlur={(e) => handleTableOnBlur(e, rowIdx)}
+                      onFocus={() => setOpenDrop(DEFAULT_DROPDOWNS_STATE)}
+                      name={'amount'}
+                      type={'number'}
+                    />
+                  </TableCell>
+                  <TableCell className="no-right-border" width="33.3%">
+                    <DropDown
+                      placeholder={''}
+                      items={TOKEN_TYPES}
+                      isOpen={openDrop[rowIdx]}
+                      itemSelected={String(token)}
+                      setIsOpen={(newDropDownState: boolean) => {
+                        setOpenDrop(openDrop.map((_, idx) => (idx === rowIdx ? newDropDownState : false)))
+                      }}
+                      clickOnItem={(newSelectedSymbol: string) => {
+                        updateTableDataState(
+                          {
+                            target: { name: 'token', value: newSelectedSymbol },
+                          },
+                          rowIdx,
+                        )
+                      }}
+                      className="stage-3-dropDown"
+                    />
+                  </TableCell>
+
+                  <RemoveRowBtn className={`button-wrap remove`} onClick={() => handleDeleteRow(rowIdx)}>
+                    <CustomTooltip text="Delete row">
+                      <Icon id="delete" />
+                    </CustomTooltip>
+                  </RemoveRowBtn>
+                </TableRow>
+              )
+            })}
+          </TableBody>
+          <AddRowBtn className={`button-wrap add `} onClick={handleAddRow}>
+            <CustomTooltip text="Insert 1 row below">
+              <span>+</span>
+            </CustomTooltip>
+          </AddRowBtn>
+        </Table>
         <div className="suspend-satellite-group">
           <Button icon="plus" kind={ACTION_PRIMARY} text={'Fix Mistaken Transfer'} type={SUBMIT} />
         </div>

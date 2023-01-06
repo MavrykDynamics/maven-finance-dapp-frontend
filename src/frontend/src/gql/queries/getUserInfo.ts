@@ -4,11 +4,29 @@ query GetUserInfo ($_eq: String = "") {
     address
     mvk_balance
     smvk_balance
+    
     delegations {
       satellite {
         user {
           address
         }
+      }
+    }
+
+    m_token_accounts {
+      balance
+      id
+      m_token_id
+      reward_index
+      user_id
+      m_token {
+        address
+        admin
+        governance_id
+        is_scaled_token
+        last_updated_at
+        loan_token_name
+        token_reward_index
       }
     }
   }

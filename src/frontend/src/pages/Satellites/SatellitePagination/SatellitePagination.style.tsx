@@ -11,6 +11,10 @@ export const SatellitePaginationStyled = styled(Card)<{ theme: MavrykTheme }>`
   padding-right: 24px;
   height: 74px;
 
+  .back {
+    margin-right: auto;
+  }
+
   .pagination-link {
     display: flex;
     color: ${({ theme }) => theme.valueColor};
@@ -28,10 +32,6 @@ export const SatellitePaginationStyled = styled(Card)<{ theme: MavrykTheme }>`
 
     &:hover {
       opacity: 0.8;
-    }
-
-    &.back {
-      margin-right: auto;
     }
 
     &.prev {

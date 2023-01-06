@@ -1,5 +1,5 @@
 import { ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
-import { PAGINATION_SIDE_LEFT, PAGINATION_SIDE_RIGHT } from './Pagination/pagination.consts'
+import { PAGINATION_SIDE_CENTER, PAGINATION_SIDE_LEFT, PAGINATION_SIDE_RIGHT } from './Pagination/pagination.consts'
 
 import { GovernanceFinancialRequestGraphQL } from '../../utils/TypesAndInterfaces/Governance'
 
@@ -22,7 +22,10 @@ export type FRListItemProps = {
   status: ProposalStatus
 }
 
-export type PaginationPlacementVariants = typeof PAGINATION_SIDE_RIGHT | typeof PAGINATION_SIDE_LEFT
+export type PaginationPlacementVariants =
+  | typeof PAGINATION_SIDE_RIGHT
+  | typeof PAGINATION_SIDE_LEFT
+  | typeof PAGINATION_SIDE_CENTER
 
 export type PaginationProps = {
   itemsCount: number

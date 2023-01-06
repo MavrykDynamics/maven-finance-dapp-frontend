@@ -12,6 +12,7 @@ export type ButtonProps = {
   type?: ButtonTypes
   loading?: boolean
   disabled?: boolean
+  iconAfter?: boolean
   strokeWidth?: number
 }
 
@@ -22,6 +23,7 @@ export const Button = ({
   onClick,
   type = BUTTON,
   loading,
+  iconAfter = false,
   disabled,
   className,
   strokeWidth,
@@ -36,6 +38,7 @@ export const Button = ({
       type={type}
       loading={loading}
       disabled={disabled}
+      iconAfter={iconAfter}
       strokeWidth={strokeWidth}
     />
   )

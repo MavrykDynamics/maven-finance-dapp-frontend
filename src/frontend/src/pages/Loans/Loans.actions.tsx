@@ -1,30 +1,63 @@
-import { State } from '../../reducers'
-import councilAddress from '../../deployments/councilAddress.json'
-import { TezosToolkit } from '@taquito/taquito'
-import type { AppDispatch, GetState } from '../../app/App.controller'
+import { AppDispatch, coinGeckoClient, GetState } from '../../app/App.controller'
+import { fetchFromIndexer } from 'gql/fetchGraphQL'
+import { LOANS_QUERY, LOANS_QUERY_NAME, LOANS_QUERY_VARIABLE } from 'gql/queries/getLoansStorage'
+import { getLoanTokensSymbols, normalizeLoans } from './Loans.helpers'
+import { ModalTypes } from 'utils/TypesAndInterfaces/Loans'
 
-/**
- * TODO: Placeholder function until work on the Loan pages starts
- */
-export const GET_TREASURY_STORAGE = 'GET_TREASURY_STORAGE'
-export const getTreasuryStorage = (accountPkh?: string) => async (dispatch: AppDispatch, getState: GetState) => {
-  const state: State = getState()
+export const GET_LOANS_STORAGE = 'GET_LOANS_STORAGE'
+export const getLoansStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
+  const {
+    tokens: { dipDupTokens, mTokens },
+    wallet: {
+      user: { mTokens: userMTokens },
+    },
+  } = getState()
+  try {
+    const storage = await fetchFromIndexer(LOANS_QUERY, LOANS_QUERY_NAME, LOANS_QUERY_VARIABLE)
 
-  // if (!accountPkh) {
-  //   dispatch(showToaster(ERROR, 'Public address not found', 'Make sure your wallet is connected'))
-  //   return
-  // }
-  const contract = accountPkh
-    ? await state.wallet.tezos?.wallet.at(councilAddress.address)
-    : await new TezosToolkit(
-        (state.preferences.REACT_APP_RPC_PROVIDER as string) || 'https://hangzhounet.api.tez.ie/',
-      ).contract.at(councilAddress.address)
+    // fetching rate of the presented tokens insisde loans
+    const loanTokensRate = (
+      await Promise.allSettled(
+        getLoanTokensSymbols({ storage, dipDupTokens }).map((symbol) => coinGeckoClient.coins.fetch(symbol, {})),
+      )
+    ).reduce<Record<string, number>>((acc, promiseResult) => {
+      const {
+        value: { data, success },
+      } = promiseResult as any
+      if (success) {
+        const symbol = data.symbol
+        const rate = data.market_data.current_price.usd
+        acc[symbol] = rate
+      }
 
-  const storage = await contract?.storage()
-  console.log('Printing out Loans storage:\n', storage)
+      return acc
+    }, {})
 
+    const { chartsData, loanTokens, collateralTokens } = normalizeLoans({
+      storage: storage?.lending_controller?.[0],
+      dipDupTokens,
+      mTokens,
+      userMTokens,
+      tokensRate: loanTokensRate,
+    })
+
+    await dispatch({
+      type: GET_LOANS_STORAGE,
+      loansStorage: {
+        chartsData,
+        loanTokens,
+        collateralTokens,
+      },
+    })
+  } catch (e) {
+    console.error('getLoansStorage error: ', e)
+  }
+}
+
+export const TOGGLE_LOANS_MODAL = 'TOGGLE_LOANS_MODAL'
+export const toggleLoansModal = (modalToShow: ModalTypes) => async (dispatch: AppDispatch) => {
   dispatch({
-    type: GET_TREASURY_STORAGE,
-    treasuryStorage: storage,
+    type: TOGGLE_LOANS_MODAL,
+    payload: { currentModalActive: modalToShow },
   })
 }
