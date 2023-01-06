@@ -111,7 +111,7 @@ export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
   .borrowed-data {
     display: flex;
 
-    > div {
+    > div:not(.buttons-wrapper) {
       width: 17%;
     }
 

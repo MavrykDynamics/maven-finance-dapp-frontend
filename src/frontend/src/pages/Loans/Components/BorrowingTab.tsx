@@ -3,6 +3,8 @@ import { Button } from 'app/App.components/Button/Button.controller'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { useDispatch } from 'react-redux'
 import { BorrowingData } from 'utils/TypesAndInterfaces/Loans'
+import { toggleLoansModal } from '../Loans.actions'
+import { CREATE_NEW_VAULT_MODAL_ID } from '../Loans.const'
 import { BorrowingExpandCard } from './BorrowindExpandCard'
 import { LoansTabStyled, NoItemsInTabStyled } from './LoansComponents.style'
 
@@ -13,7 +15,7 @@ type BorrowingTabPropsType = {
 export const BorrowingTab = ({ borrowingItems }: BorrowingTabPropsType) => {
   const dispatch = useDispatch()
 
-  const createVaultHandler = () => {}
+  const createVaultHandler = () => dispatch(toggleLoansModal(CREATE_NEW_VAULT_MODAL_ID))
 
   return (
     <LoansTabStyled>

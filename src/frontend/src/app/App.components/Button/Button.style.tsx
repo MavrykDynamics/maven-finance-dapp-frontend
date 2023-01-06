@@ -250,6 +250,12 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
       }
     }
   }
+
+  &.add-collateral {
+    max-width: 180px;
+    max-height: 36px;
+    margin-left: auto;
+  }
 `
 
 export const ButtonText = styled.div<{ theme: MavrykTheme }>`

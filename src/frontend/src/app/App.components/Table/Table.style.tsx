@@ -99,6 +99,18 @@ export const Table = styled.table<{ theme: MavrykTheme }>`
 
   &.borrowing-table {
     margin-top: 15px;
+    margin-bottom: 10px;
+
+    &.show-before {
+      &::before {
+        content: '';
+        position: absolute;
+        bottom: 0px;
+        height: 1px;
+        width: 100%;
+        background-color: ${({ theme }) => theme.cardBorderColor};
+      }
+    }
   }
 
   &.treasury-table {
@@ -407,6 +419,12 @@ export const TableCell = styled.td<{
     .cell-content {
       justify-content: flex-end;
       column-gap: 10px;
+    }
+
+    &.borrowing {
+      button {
+        max-width: 180px;
+      }
     }
   }
 
