@@ -1,7 +1,8 @@
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { LoansModalBase } from './Modals.style'
 
-export const RemoveAssetsFromLend = ({ closePopup }: { closePopup: () => void }) => {
+// TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A238846&t=Sx2aEpp3ifrGxBtQ-0
+export const RemoveAssetsFromLending = ({ closePopup }: { closePopup: () => void }) => {
   return (
     <LoansModalBase>
       <GovRightContainerTitleArea>

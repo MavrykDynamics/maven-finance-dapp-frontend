@@ -1,6 +1,7 @@
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { LoansModalBase } from './Modals.style'
 
+// TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17953%3A224221&t=Sx2aEpp3ifrGxBtQ-0
 export const RepayAndCloseVault = ({ closePopup }: { closePopup: () => void }) => {
   return (
     <LoansModalBase>

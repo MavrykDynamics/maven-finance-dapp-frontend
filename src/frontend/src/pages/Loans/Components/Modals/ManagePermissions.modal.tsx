@@ -1,6 +1,7 @@
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { LoansModalBase } from './Modals.style'
 
+// TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17307%3A226126&t=Sx2aEpp3ifrGxBtQ-0
 export const ManagePermissions = ({ closePopup }: { closePopup: () => void }) => {
   return (
     <LoansModalBase>

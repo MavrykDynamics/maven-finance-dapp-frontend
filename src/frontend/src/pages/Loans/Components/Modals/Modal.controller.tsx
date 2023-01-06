@@ -25,7 +25,7 @@ import { WithdrawCollateral } from './WithdrawCollateral.modal'
 import { AddCollateral } from './AddCollateral.modal'
 import { AddLendingAsset } from './AddLendingAsset.modal'
 import { ChangeBaker } from './ChangeBaker'
-import { RemoveAssetsFromLend } from './RemoveAssetsFromLend.modal'
+import { RemoveAssetsFromLending } from './RemoveAssetsFromLending.modal'
 import { useDispatch, useSelector } from 'react-redux'
 import { toggleLoansModal } from 'pages/Loans/Loans.actions'
 import { State } from 'reducers'
@@ -45,7 +45,9 @@ export const LoansModals = () => {
       {currentModalActive === CREATE_NEW_VAULT_MODAL_ID ? <CreateNewVault closePopup={closePopup} /> : null}
       {currentModalActive === ADD_COLLATERAL_MODAL_ID ? <AddCollateral closePopup={closePopup} /> : null}
       {currentModalActive === ADD_LENDING_ASSET_MODAL_ID ? <AddLendingAsset closePopup={closePopup} /> : null}
-      {currentModalActive === REMOVE_ASSET_LENDING_MODAL_ID ? <RemoveAssetsFromLend closePopup={closePopup} /> : null}
+      {currentModalActive === REMOVE_ASSET_LENDING_MODAL_ID ? (
+        <RemoveAssetsFromLending closePopup={closePopup} />
+      ) : null}
 
       {currentModalActive === CHANGE_BAKER_MODAL_ID ? <ChangeBaker closePopup={closePopup} /> : null}
       {currentModalActive === UPDATE_MVK_OPERATORS_MODAL_ID ? <UpdateMVKOperator closePopup={closePopup} /> : null}
