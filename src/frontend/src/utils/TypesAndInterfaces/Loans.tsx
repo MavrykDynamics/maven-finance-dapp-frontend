@@ -1,12 +1,17 @@
 import { ChartPlotType } from 'app/App.components/Chart/Chart.view'
 import {
-  UPDATE_MVK_OPERATORS_MODAL_ID,
-  MANAGE_PERMISSIONS_MODAL_ID,
-  BORROW_ASSET_MODAL_ID,
   ADD_COLLATERAL_MODAL_ID,
-  CLOSE_VAULT_MODAL_ID,
-  REMOVE_COLLATERAL_MODAL_ID,
+  ADD_LENDING_ASSET_MODAL_ID,
+  BORROW_ASSET_MODAL_ID,
+  CHANGE_BAKER_MODAL_ID,
+  CREATE_NEW_VAULT_MODAL_ID,
+  MANAGE_PERMISSIONS_MODAL_ID,
+  REMOVE_ASSET_LENDING_MODAL_ID,
+  WITHDRAW_COLLATERAL_MODAL_ID,
+  UPDATE_MVK_OPERATORS_MODAL_ID,
+  REPAY_AND_CLOSE_MODAL_ID,
   REPAY_MODAL_ID,
+  ADD_NEW_COLLATERAL_MODAL_ID,
 } from 'pages/Loans/Loans.const'
 import { normalizeLoans } from 'pages/Loans/Loans.helpers'
 import { Lending_Controller, Lending_Controller_Vault } from 'utils/generated/graphqlTypes'
@@ -66,13 +71,18 @@ export type LendingItemType = {
 } | null
 
 export type ModalTypes =
-  | typeof UPDATE_MVK_OPERATORS_MODAL_ID
-  | typeof MANAGE_PERMISSIONS_MODAL_ID
   | typeof ADD_COLLATERAL_MODAL_ID
-  | typeof REMOVE_COLLATERAL_MODAL_ID
+  | typeof ADD_LENDING_ASSET_MODAL_ID
+  | typeof ADD_NEW_COLLATERAL_MODAL_ID
   | typeof BORROW_ASSET_MODAL_ID
+  | typeof CHANGE_BAKER_MODAL_ID
+  | typeof CREATE_NEW_VAULT_MODAL_ID
+  | typeof MANAGE_PERMISSIONS_MODAL_ID
+  | typeof REMOVE_ASSET_LENDING_MODAL_ID
+  | typeof WITHDRAW_COLLATERAL_MODAL_ID
+  | typeof UPDATE_MVK_OPERATORS_MODAL_ID
+  | typeof REPAY_AND_CLOSE_MODAL_ID
   | typeof REPAY_MODAL_ID
-  | typeof CLOSE_VAULT_MODAL_ID
   | null
 
 export type BorrowingData = {

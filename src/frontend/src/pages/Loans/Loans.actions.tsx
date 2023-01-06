@@ -55,9 +55,9 @@ export const getLoansStorage = () => async (dispatch: AppDispatch, getState: Get
 }
 
 export const TOGGLE_LOANS_MODAL = 'TOGGLE_LOANS_MODAL'
-export const toggleLoansModal = (modalToShow: ModalTypes) => async (dispatch: AppDispatch, getState: GetState) => {
-  await dispatch({
+export const toggleLoansModal = (modalToShow: ModalTypes) => async (dispatch: AppDispatch) => {
+  dispatch({
     type: TOGGLE_LOANS_MODAL,
-    modalToShow,
+    payload: { currentModalActive: modalToShow },
   })
 }

@@ -36,7 +36,7 @@ export function loans(state = loansDefaultState, action: Action) {
     case TOGGLE_LOANS_MODAL:
       return {
         ...state,
-        currentModalActive: action.modalToShow,
+        ...action.payload,
       }
     default:
       return state

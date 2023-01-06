@@ -9,13 +9,11 @@ import { getLoansStorage, toggleLoansModal } from './Loans.actions'
 import { Page } from 'styles'
 import { State } from 'reducers'
 import { LoansModals } from './Components/Modals/Modal.controller'
-import { UPDATE_MVK_OPERATORS_MODAL_ID } from './Loans.const'
 
 export const Loans = () => {
   const dispatch = useDispatch()
   const { isInitialDataloading } = useSelector((state: State) => state.loading)
   const { dipDupTokens } = useSelector((state: State) => state.tokens)
-  const { currentModalActive } = useSelector((state: State) => state.loans)
 
   useEffect(() => {
     ;(async () => {
@@ -29,7 +27,6 @@ export const Loans = () => {
     <Page>
       <PageHeader page={'lending'} />
       <Markets />
-      <LoansModals activeModal={currentModalActive} closePopup={() => dispatch(toggleLoansModal(null))} />
     </Page>
   )
 }
