@@ -1,5 +1,6 @@
 import styled from 'styled-components/macro'
 import { MavrykTheme } from '../../styles/interfaces'
+import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
 
 export const DashboardStyled = styled.div<{ theme: MavrykTheme }>`
   > .top {
@@ -167,4 +168,7 @@ export const BlockName = styled.div`
   font-size: 18px;
   line-height: 18px;
   color: ${({ theme }) => theme.textColor};
+`
+export const BGPrimaryTitleStyled = styled(BGPrimaryTitle)`
+  font-size: 22px;
 `
