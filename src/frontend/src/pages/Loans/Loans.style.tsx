@@ -69,6 +69,7 @@ export const MarketOverview = styled.div<{ theme: MavrykTheme }>`
     .icon {
       width: 36px;
       height: 36px;
+      fill: ${({ theme }) => theme.dataColor};
 
       img {
         width: 100%;
@@ -250,6 +251,7 @@ export const MarketStyled = styled.div<{ theme: MavrykTheme }>`
       .img-wrapper {
         width: 53px;
         height: 53px;
+        fill: ${({ theme }) => theme.dataColor};
 
         img {
           width: 100%;

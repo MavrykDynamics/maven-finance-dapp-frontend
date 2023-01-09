@@ -23,7 +23,7 @@ export type LoanTokenType = {
   loanTokenData: {
     name: string
     symbol?: string
-    decimals?: string
+    decimals: number
     icon?: string
     rate: number | null
   }
@@ -60,10 +60,7 @@ export type LoansChartsDataType = {
 }
 
 export type LendingItemType = {
-  assetName: string
-  assetIcon?: string
   lendValue: number
-  lendAssetRate: number | null
   lendAPY: number
   interestEarned: number
   loanAssetWalletBalance: number
@@ -88,6 +85,7 @@ export type ModalTypes =
 export type BorrowingData = {
   borrowedAsset: {
     assetSymbol?: string
+    assetName?: string
     assetIcon?: string
     amtBorrowed: number
     assetRate: number | null

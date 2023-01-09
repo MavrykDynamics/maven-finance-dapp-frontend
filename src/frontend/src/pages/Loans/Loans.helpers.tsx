@@ -115,20 +115,15 @@ const getChartData = (history_data: Lending_Controller_History_Data[]) =>
 const getLendingItem = (
   loanToken: Lending_Controller_Loan_Token,
   userMTokens: UserState['mTokens'],
-  loanTokenMetadata: LoanTokenType['loanTokenData'],
-  tokensRates: Record<string, number>,
 ): LendingItemType => {
   if (userMTokens && loanToken) {
     const mTokenAsset = userMTokens?.find(({ m_token_id }) => m_token_id === loanToken.lp_token_address)
     if (mTokenAsset) {
       return {
-        assetName: loanTokenMetadata.symbol ?? loanTokenMetadata.name,
-        assetIcon: loanTokenMetadata.icon,
         lendValue: mTokenAsset.balance,
-        lendAssetRate: tokensRates[loanTokenMetadata.symbol ?? loanTokenMetadata.name] ?? null,
-        lendAPY: 1,
-        interestEarned: 1,
-        loanAssetWalletBalance: mTokenAsset.balance,
+        lendAPY: 0,
+        interestEarned: 0,
+        loanAssetWalletBalance: 0,
         mXTZBalance: 0,
       }
     }
@@ -149,27 +144,53 @@ const getBorrowings = (
     (acc, vault) => {
       const asset = dipDupTokens.find(({ contract }) => contract === vault.loan_token?.loan_token_address)
 
-      const normallizedVault = {
-        borrowedAsset: {
-          assetSymbol: asset?.metadata.symbol,
-          assetIcon: asset?.metadata.icon,
-          amtBorrowed: 0,
-          ...(asset?.metadata.symbol ? { assetRate: tokensRates[asset.metadata.symbol] } : { assetRate: null }),
-          collateralBalance: vault?.collateral_balances_aggregate?.aggregate?.sum?.balance ?? 0,
-          collateralUtilization: 0,
-          apy: 0,
-          fee: 0,
-        },
-        collateralData: vault.collateral_balances.map((collateral) => {
+      const vaultCollateral = vault.collateral_balances.reduce<{
+        normalizedCollaterals: BorrowingData['collateralData']
+        totalRow: BorrowingData['collateralData'][number]
+      }>(
+        (acc, collateral) => {
           const asset = dipDupTokens.find(({ contract }) => contract === collateral.token?.token_address)
-          return {
+          acc.normalizedCollaterals.push({
             assetSymbol: asset?.metadata.symbol,
             assetIcon: asset?.metadata.icon,
             balance: collateral.balance,
             ...(asset?.metadata.symbol ? { assetRate: tokensRates[asset.metadata.symbol] } : { assetRate: null }),
             maxWithdraw: 0,
-          }
-        }),
+          })
+
+          acc.totalRow.balance += collateral.balance
+          acc.totalRow.maxWithdraw += 0
+
+          return acc
+        },
+        {
+          normalizedCollaterals: [],
+          totalRow: {
+            assetSymbol: 'total',
+            balance: 0,
+            assetRate: null,
+            maxWithdraw: 0,
+          },
+        },
+      )
+
+      const normallizedVault = {
+        borrowedAsset: {
+          assetSymbol: asset?.metadata.symbol ?? vault.loan_token?.loan_token_name,
+          ...(asset?.metadata.name ? { assetName: asset?.metadata.name } : {}),
+          assetIcon: asset?.metadata.icon,
+          amtBorrowed: 0,
+          ...(asset?.metadata.symbol
+            ? { assetRate: tokensRates[vault.loan_token?.loan_token_name === 'tez' ? 'tezos' : asset.metadata.symbol] }
+            : { assetRate: null }),
+          collateralBalance: vault?.collateral_balances_aggregate?.aggregate?.sum?.balance ?? 0,
+          collateralUtilization: 0,
+          apy: 0,
+          fee: 0,
+        },
+        collateralData: vaultCollateral.normalizedCollaterals.concat(
+          vaultCollateral.normalizedCollaterals.length > 1 ? [vaultCollateral.totalRow] : [],
+        ),
         borrowedAmount: vault.loan_outstanding_total,
         xtzDelegatedTo: '',
         operators: [],
@@ -201,17 +222,21 @@ const getCollateralTokens = (collateralTokens: Array<Lending_Controller_Collater
 }
 
 export const getLoanTokensSymbols = ({
-  storage,
+  loan_tokens,
   dipDupTokens,
 }: {
-  storage: LoansGQL
+  loan_tokens: LoansGQL['loan_tokens']
   dipDupTokens: State['tokens']['dipDupTokens']
 }) => {
   return Array.from(
-    storage?.loan_tokens?.reduce((acc, { lp_token_address, loan_token_name, vaults }) => {
+    loan_tokens?.reduce((acc, { lp_token_address, loan_token_name, vaults }) => {
       // Getting symbol metadata of loanToken
       const tokenInfo = dipDupTokens?.find(({ contract }) => contract === lp_token_address)
-      acc.add(tokenInfo?.metadata.symbol ?? loan_token_name)
+      if (loan_token_name === 'tez') {
+        acc.add('tezos')
+      } else {
+        acc.add(tokenInfo?.metadata.symbol ?? loan_token_name)
+      }
 
       // mapping througt vaults to get symbol of each collateral asset
       vaults.forEach(({ collateral_balances }) => {
@@ -253,20 +278,22 @@ export const normalizeLoans = ({
       vaults,
       reserve_ratio,
     } = loanToken
-    const tokenInfo = dipDupTokens?.find(({ contract }) => contract === lp_token_address)
+    const isXTZ = loan_token_name === 'tez'
+    const tokenInfo = dipDupTokens?.find(({ contract }) => contract === lp_token_address && !isXTZ)
+    const assetRate = tokensRate[isXTZ ? 'tez' : tokenInfo?.metadata.symbol ?? loan_token_name] ?? null
 
     const loanTokenMetadata = {
-      name: loan_token_name,
-      symbol: tokenInfo?.metadata.symbol,
-      decimals: tokenInfo?.metadata.decimals,
-      icon: tokenInfo?.metadata.icon,
-      rate: tokensRate[tokenInfo?.metadata.symbol ?? loan_token_name] ?? null,
+      name: isXTZ ? 'XTZ' : loan_token_name,
+      symbol: isXTZ ? 'tezos' : tokenInfo?.metadata.symbol,
+      decimals: isXTZ ? 6 : Number(tokenInfo?.metadata.decimals ?? 1),
+      icon: isXTZ ? '/images/tezos.png' : tokenInfo?.metadata.icon,
+      rate: assetRate,
     }
 
     const { transactionHistory, totalBorrowed, totalLended } = getTransactionHistory(history_data, dipDupTokens)
     const { corratealAmount, borrowedAmount } = getCollateralTotal(vaults, dipDupTokens, tokensRate)
     const { myBorrowingList, permissinedBorrowingList } = getBorrowings(vaults, dipDupTokens, tokensRate, userAddres)
-    const lendingItem = getLendingItem(loanToken, userMTokens, loanTokenMetadata, tokensRate)
+    const lendingItem = getLendingItem(loanToken, userMTokens)
 
     acc.push({
       loanTokenData: loanTokenMetadata,
@@ -288,10 +315,12 @@ export const normalizeLoans = ({
       borrowAPR: 0,
       lendingAPY: 0,
     })
+
     return acc
   }, [])
 
   return {
+    loansControllerAddress: storage?.address,
     loanTokens,
     chartsData: getChartData(storage?.history_data),
     collateralTokens: getCollateralTokens(storage.collateral_tokens),

@@ -60,8 +60,11 @@ export const BorrowingExpandCard = ({
 }: BorrowingExpandCardPropsType) => {
   const dispatch = useDispatch()
 
+  console.log(isOwner, borrowedAsset, collateralData, xtzDelegatedTo, operators, sMVKDelegatedTo, depositors)
+
   const {
-    assetSymbol = 'xtz',
+    assetSymbol,
+    assetName,
     assetIcon,
     amtBorrowed = 0,
     assetRate = 1,
@@ -114,14 +117,14 @@ export const BorrowingExpandCard = ({
             <div className="value">
               {assetIcon ? (
                 <div className="img-wrapper">
-                  <img src={assetIcon} alt={`${assetSymbol} logo`} />
+                  <img src={assetIcon} alt={`${assetName ?? assetSymbol} logo`} />
                 </div>
               ) : (
                 <div className="no-icon">
                   <Icon id="noImage" />
                 </div>
               )}
-              {assetSymbol}
+              {assetName ?? assetSymbol}
             </div>
           </ThreeLevelListItem>
           <ThreeLevelListItem>
@@ -137,234 +140,224 @@ export const BorrowingExpandCard = ({
       }
     >
       <BorrowingTabListItemExpanded>
-        {BORROWIND_MOCK ? (
-          <>
-            <div className="block-name">Borrowed</div>
-            <div className="borrowed-data">
-              <ThreeLevelListItem>
-                <div className="name">Asset</div>
-                <div className="value">
-                  {assetIcon ? (
-                    <div className="img-wrapper">
-                      <img src={assetIcon} alt={`${assetSymbol} logo`} />
-                    </div>
-                  ) : (
-                    <div className="no-icon">
-                      <Icon id="noImage" />
-                    </div>
-                  )}
-                  {assetSymbol}
+        <div className="block-name">Borrowed</div>
+        <div className="borrowed-data">
+          <ThreeLevelListItem>
+            <div className="name">Asset</div>
+            <div className="value">
+              {assetIcon ? (
+                <div className="img-wrapper">
+                  <img src={assetIcon} alt={`${assetName ?? assetSymbol} logo`} />
                 </div>
-              </ThreeLevelListItem>
-              <ThreeLevelListItem>
-                <div className="name">Amount</div>
-                <CommaNumber value={amtBorrowed} className="value" />
-                {assetRate ? <CommaNumber value={amtBorrowed * assetRate} beginningText="$" className="rate" /> : null}
-              </ThreeLevelListItem>
-              <ThreeLevelListItem>
-                <div className="name">Fee</div>
-                <CommaNumber value={fee} className="value" endingText="%" />
-              </ThreeLevelListItem>
-              <ThreeLevelListItem>
-                <div className="name">APY</div>
-                <CommaNumber value={apy} className="value" endingText="%" />
-              </ThreeLevelListItem>
-              {isOwner ? (
-                <div className="buttons-wrapper">
-                  <Button
-                    text="Borrow"
-                    icon="coin-loan"
-                    strokeWidth={0.5}
-                    onClick={borrowHandler}
-                    kind={ACTION_PRIMARY}
-                  />
-                  <Button
-                    text="Repay"
-                    icon="okIcon"
-                    strokeWidth={0.5}
-                    onClick={repayHandler}
-                    kind={TRANSPARENT_WITH_BORDER}
-                  />
+              ) : (
+                <div className="no-icon">
+                  <Icon id="noImage" />
                 </div>
-              ) : null}
+              )}
+              {assetName ?? assetSymbol}
             </div>
-          </>
-        ) : null}
+          </ThreeLevelListItem>
+          <ThreeLevelListItem>
+            <div className="name">Amount</div>
+            <CommaNumber value={amtBorrowed} className="value" />
+            {assetRate ? <CommaNumber value={amtBorrowed * assetRate} beginningText="$" className="rate" /> : null}
+          </ThreeLevelListItem>
+          <ThreeLevelListItem>
+            <div className="name">Fee</div>
+            <CommaNumber value={fee} className="value" endingText="%" />
+          </ThreeLevelListItem>
+          <ThreeLevelListItem>
+            <div className="name">APY</div>
+            <CommaNumber value={apy} className="value" endingText="%" />
+          </ThreeLevelListItem>
+          {isOwner ? (
+            <div className="buttons-wrapper">
+              <Button text="Borrow" icon="coin-loan" strokeWidth={0.5} onClick={borrowHandler} kind={ACTION_PRIMARY} />
+              <Button
+                text="Repay"
+                icon="okIcon"
+                strokeWidth={0.5}
+                onClick={repayHandler}
+                kind={TRANSPARENT_WITH_BORDER}
+              />
+            </div>
+          ) : null}
+        </div>
 
-        {collateralData.length || true ? (
-          <>
-            <div className="block-name margin-top">Collateral In Vault</div>
-            <Table className={`no-margin borrowing-table ${isOwner ? 'show-before' : ''}`}>
-              <TableHeader className="simple-header collateral">
-                <TableRow>
-                  <TableHeaderCell>Asset</TableHeaderCell>
-                  <TableHeaderCell>Balance</TableHeaderCell>
-                  <TableHeaderCell>Withdraw Max</TableHeaderCell>
-                  <TableHeaderCell>Other Data</TableHeaderCell>
-                </TableRow>
-              </TableHeader>
+        <div className="block-name margin-top">Collateral In Vault</div>
+        <Table className={`no-margin borrowing-table ${isOwner ? 'show-before' : ''}`}>
+          <TableHeader className={`simple-header collateral ${collateralData.length === 0 ? 'empty' : ''}`}>
+            <TableRow>
+              <TableHeaderCell>Asset</TableHeaderCell>
+              <TableHeaderCell>Balance</TableHeaderCell>
+              <TableHeaderCell>Withdraw Max</TableHeaderCell>
+              <TableHeaderCell>Other Data</TableHeaderCell>
+            </TableRow>
+          </TableHeader>
 
-              <TableBody>
-                {COLLATERAL_MOCK.map(({ assetSymbol, assetIcon, balance, assetRate, maxWithdraw }, idx) => {
-                  const isTotalRow = COLLATERAL_MOCK.length - 1 === idx
-                  if (isTotalRow && COLLATERAL_MOCK.length < 3) return null
+          <TableBody>
+            {collateralData.map(({ assetSymbol, assetIcon, balance, assetRate = 1, maxWithdraw }, idx) => {
+              const isTotalRow = collateralData.length - 1 === idx
+              if (isTotalRow && collateralData.length < 3) return null
 
-                  return (
-                    <TableRow rowHeight={60}>
-                      <TableCell width={`17%`} className="vert-middle">
-                        {isTotalRow ? (
-                          'Total'
+              return (
+                <TableRow rowHeight={60} key={assetSymbol + '-' + idx}>
+                  <TableCell width={`17%`} className="vert-middle">
+                    {isTotalRow ? (
+                      'Total'
+                    ) : (
+                      <div className="cell-content row">
+                        {assetIcon ? (
+                          <div className="img-wrapper">
+                            <img src={assetIcon} alt={`${assetSymbol} logo`} />
+                          </div>
                         ) : (
-                          <div className="cell-content row">
-                            {assetIcon ? (
-                              <div className="img-wrapper">
-                                <img src={assetIcon} alt={`${assetSymbol} logo`} />
-                              </div>
-                            ) : (
-                              <div className="no-icon">
-                                <Icon id="noImage" />
-                              </div>
-                            )}
-                            {assetSymbol}
+                          <div className="no-icon">
+                            <Icon id="noImage" />
                           </div>
                         )}
-                      </TableCell>
-                      <TableCell width={`17%`}>
-                        <div className="cell-content">
-                          <CommaNumber value={balance} className="value" endingText="%" />
-                          <CommaNumber value={balance * assetRate} className="rate" beginningText="$" />
-                        </div>
-                      </TableCell>
-                      <TableCell width={`17%`}>
-                        <div className="cell-content">
-                          <CommaNumber value={maxWithdraw} className="value" endingText="%" />
-                          <CommaNumber value={maxWithdraw * assetRate} className="rate" beginningText="$" />
-                        </div>
-                      </TableCell>
-                      <TableCell width={`17%`}>
-                        <CommaNumber value={22.2} className="value" endingText="%" />
-                      </TableCell>
-                      {isTotalRow ? (
-                        <TableCell className="buttons borrowing">
-                          <div className="cell-content row">
-                            {isOwner ? (
-                              <Button
-                                text="Add Collateral"
-                                icon="plus"
-                                strokeWidth={0.1}
-                                onClick={addNewCollateralHandler}
-                                kind={ACTION_PRIMARY}
-                                className="add-collateral"
-                              />
-                            ) : null}
-                          </div>
-                        </TableCell>
-                      ) : (
-                        <TableCell className="buttons borrowing">
-                          <div className="cell-content row">
-                            <Button
-                              text="Add"
-                              icon="plus"
-                              strokeWidth={0.1}
-                              onClick={addCollateralHandler}
-                              kind={TRANSPARENT_WITH_BORDER}
-                            />
-                            {isOwner ? (
-                              <Button
-                                text="Remove"
-                                icon="minus"
-                                strokeWidth={0.1}
-                                onClick={removeCollateralHandler}
-                                kind={TRANSPARENT_WITH_BORDER}
-                              />
-                            ) : null}
-                          </div>
-                        </TableCell>
-                      )}
-                    </TableRow>
-                  )
-                })}
-              </TableBody>
-            </Table>
-            {COLLATERAL_MOCK.length < 3 && isOwner ? (
+                        {assetSymbol}
+                      </div>
+                    )}
+                  </TableCell>
+                  <TableCell width={`17%`}>
+                    <div className="cell-content">
+                      <CommaNumber value={balance} className="value" />
+                      {assetRate ? (
+                        <CommaNumber value={balance * assetRate} className="rate" beginningText="$" />
+                      ) : null}
+                    </div>
+                  </TableCell>
+                  <TableCell width={`17%`}>
+                    <div className="cell-content">
+                      <CommaNumber value={maxWithdraw} className="value" />
+                      {assetRate ? (
+                        <CommaNumber value={maxWithdraw * assetRate} className="rate" beginningText="$" />
+                      ) : null}
+                    </div>
+                  </TableCell>
+                  <TableCell width={`17%`}>
+                    <CommaNumber value={22.2} className="value" />
+                  </TableCell>
+                  {isTotalRow ? (
+                    <TableCell className="buttons borrowing">
+                      <div className="cell-content row">
+                        {isOwner ? (
+                          <Button
+                            text="Add Collateral"
+                            icon="plus"
+                            strokeWidth={0.1}
+                            onClick={addNewCollateralHandler}
+                            kind={ACTION_PRIMARY}
+                            className="add-collateral"
+                          />
+                        ) : null}
+                      </div>
+                    </TableCell>
+                  ) : (
+                    <TableCell className="buttons borrowing">
+                      <div className="cell-content row">
+                        <Button
+                          text="Add"
+                          icon="plus"
+                          strokeWidth={0.1}
+                          onClick={addCollateralHandler}
+                          kind={TRANSPARENT_WITH_BORDER}
+                        />
+                        {isOwner ? (
+                          <Button
+                            text="Remove"
+                            icon="minus"
+                            strokeWidth={0.1}
+                            onClick={removeCollateralHandler}
+                            kind={TRANSPARENT_WITH_BORDER}
+                          />
+                        ) : null}
+                      </div>
+                    </TableCell>
+                  )}
+                </TableRow>
+              )
+            })}
+          </TableBody>
+        </Table>
+        {collateralData.length < 3 && isOwner ? (
+          <Button
+            text="Add Collateral"
+            icon="plus"
+            strokeWidth={0.1}
+            onClick={addNewCollateralHandler}
+            kind={ACTION_PRIMARY}
+            className="add-collateral"
+          />
+        ) : null}
+
+        {isOwner ? (
+          <>
+            <div className="block-name margin-top">Delegations</div>
+            <div className="bottom-info-row">
+              <div className="name">XTZ Delegated to </div>
+              <div className="value">
+                {xtzDelegatedTo ? <TzAddress tzAddress={xtzDelegatedTo} type={BLUE} /> : 'None'}
+              </div>
               <Button
-                text="Add Collateral"
-                icon="plus"
-                strokeWidth={0.1}
-                onClick={addNewCollateralHandler}
-                kind={ACTION_PRIMARY}
-                className="add-collateral"
+                kind={ACTION_SIMPLE}
+                text="Change Baker"
+                icon="paginationArrowLeft"
+                iconAfter
+                onClick={changeBakerHandler}
               />
-            ) : null}
+            </div>
+            <div className="bottom-info-row">
+              <div className="name">sMVKDelegated to </div>
+              <div className="value">
+                {sMVKDelegatedTo ? <TzAddress tzAddress={sMVKDelegatedTo} type={BLUE} /> : 'None'}
+              </div>
+              <Button kind={ACTION_SIMPLE} text="View Satellite" icon="paginationArrowLeft" iconAfter />
+            </div>
 
-            {isOwner ? (
-              <>
-                <div className="block-name margin-top">Delegations</div>
-                <div className="bottom-info-row">
-                  <div className="name">XTZ Delegated to </div>
-                  <div className="value">
-                    {xtzDelegatedTo ? <TzAddress tzAddress={xtzDelegatedTo} type={BLUE} /> : 'None'}
-                  </div>
-                  <Button
-                    kind={ACTION_SIMPLE}
-                    text="Change Baker"
-                    icon="paginationArrowLeft"
-                    iconAfter
-                    onClick={changeBakerHandler}
-                  />
-                </div>
-                <div className="bottom-info-row">
-                  <div className="name">sMVKDelegated to </div>
-                  <div className="value">
-                    {sMVKDelegatedTo ? <TzAddress tzAddress={sMVKDelegatedTo} type={BLUE} /> : 'None'}
-                  </div>
-                  <Button kind={ACTION_SIMPLE} text="View Satellite" icon="paginationArrowLeft" iconAfter />
-                </div>
+            <div className="block-name margin-top-20">Permissions</div>
+            <div className="bottom-info-row">
+              <div className="name">Depositors </div>
+              <div className="value">
+                {mappedDepositors.isAll ? 'All Alowed' : null}
+                {mappedDepositors.firstAddress
+                  ? <TzAddress tzAddress={mappedDepositors.firstAddress} type={BLUE} /> +
+                    ` ${mappedDepositors.amount ?? ''}`
+                  : 'None Allowed'}
+              </div>
+              <Button
+                kind={ACTION_SIMPLE}
+                text="Update"
+                icon="paginationArrowLeft"
+                iconAfter
+                onClick={managePermissionsHandler}
+              />
+            </div>
+            <div className="bottom-info-row">
+              <div className="name">MVK Operators </div>
+              <div className="value">
+                {mappedMVKOperators.firstAddress
+                  ? <TzAddress tzAddress={mappedMVKOperators.firstAddress} type={BLUE} /> +
+                    ` ${mappedMVKOperators.amount ?? ''}`
+                  : 'None'}
+              </div>
+              <Button
+                kind={ACTION_SIMPLE}
+                text="Update"
+                icon="paginationArrowLeft"
+                iconAfter
+                onClick={updateOperatorsHandler}
+              />
+            </div>
 
-                <div className="block-name margin-top-20">Permissions</div>
-                <div className="bottom-info-row">
-                  <div className="name">Depositors </div>
-                  <div className="value">
-                    {mappedDepositors.isAll ? 'All Alowed' : null}
-                    {mappedDepositors.firstAddress
-                      ? <TzAddress tzAddress={mappedDepositors.firstAddress} type={BLUE} /> +
-                        ` ${mappedDepositors.amount ?? ''}`
-                      : 'None Allowed'}
-                  </div>
-                  <Button
-                    kind={ACTION_SIMPLE}
-                    text="Update"
-                    icon="paginationArrowLeft"
-                    iconAfter
-                    onClick={managePermissionsHandler}
-                  />
-                </div>
-                <div className="bottom-info-row">
-                  <div className="name">MVK Operators </div>
-                  <div className="value">
-                    {mappedMVKOperators.firstAddress
-                      ? <TzAddress tzAddress={mappedMVKOperators.firstAddress} type={BLUE} /> +
-                        ` ${mappedMVKOperators.amount ?? ''}`
-                      : 'None'}
-                  </div>
-                  <Button
-                    kind={ACTION_SIMPLE}
-                    text="Update"
-                    icon="paginationArrowLeft"
-                    iconAfter
-                    onClick={updateOperatorsHandler}
-                  />
-                </div>
-
-                <Button
-                  text="Repay Loan in Full"
-                  kind={TRANSPARENT_WITH_BORDER}
-                  onClick={repayFullHandler}
-                  className="close-vault"
-                  icon="close-stroke"
-                />
-              </>
-            ) : null}
+            <Button
+              text="Repay Loan in Full"
+              kind={TRANSPARENT_WITH_BORDER}
+              onClick={repayFullHandler}
+              className="close-vault"
+              icon="close-stroke"
+            />
           </>
         ) : null}
       </BorrowingTabListItemExpanded>

@@ -116,7 +116,7 @@ export const Markets = () => {
                       <img src={icon} alt={`${symbol} logo`} />
                     </div>
                   ) : (
-                    <Icon id={'noIcon'} />
+                    <Icon id={'noImage'} />
                   )}
                   <div className="name">{name}</div>
                   {rate ? (
