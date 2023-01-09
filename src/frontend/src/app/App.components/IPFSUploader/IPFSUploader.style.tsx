@@ -49,7 +49,7 @@ export const UploaderFileSelector = styled.div<{ isUploaded: boolean; theme: Mav
 
   .delete-icon {
     position: absolute;
-    fill: ${({ theme }) => theme.headerColor};
+    fill: ${({ theme }) => theme.textColor};
     width: 16px;
     height: 16px;
     display: block;
@@ -157,7 +157,7 @@ export const UploadIconContainer = styled.div<{
     svg {
       width: 10px;
       height: 10px;
-      stroke: ${({ theme }) => theme.textColor};
+      stroke: ${({ theme }) => theme.containerColor};
     }
   }
 `
