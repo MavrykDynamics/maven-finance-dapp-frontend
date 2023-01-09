@@ -58,6 +58,8 @@ const FORM_VALID_DEFAULT = {
   image: false,
 }
 
+const defaultAvatar = '/images/default-avatar.png'
+
 export const BecomeSatelliteView = ({
   loading,
   myTotalStakeBalance,
@@ -192,7 +194,10 @@ export const BecomeSatelliteView = ({
 
   return (
     <Page>
-      <PageHeader page={updateSatellite && !isSutelliteRegistered ? 'my satellite profile' : 'satellites'} />
+      <PageHeader
+        page={updateSatellite && isSutelliteRegistered ? 'my satellite profile' : 'satellites'}
+        avatar={form.image || defaultAvatar} 
+      />
       <PageContent>
         <div>
           {!accountPkh || !balanceOk ? (
