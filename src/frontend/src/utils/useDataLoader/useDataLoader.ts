@@ -34,17 +34,15 @@ export const useDataLoader = (callback: () => void, deps: DepsType) => {
 
   const [isLoading, setLoading] = useState(isDepsChanged)
 
-  const asyncLoadData = async () => {
-    if (!isInitialDataLoading) {
-      setLoading(true)
-      await callback()
-      setLoading(false)
-    }
-  }
-
   useEffect(() => {
-    asyncLoadData()
-  }, [isInitialDataLoading])
+    ;(async () => {
+      if (!isInitialDataLoading) {
+        setLoading(true)
+        await callback()
+        setLoading(false)
+      }
+    })()
+  }, [isInitialDataLoading, isDepsChanged])
 
   return { isLoading }
 }
