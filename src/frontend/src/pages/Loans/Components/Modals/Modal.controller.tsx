@@ -34,10 +34,7 @@ import { AddNewCollateral } from './AddNewCollateral.modal'
 export const LoansModals = () => {
   const dispatch = useDispatch()
   const { currentModalActive } = useSelector((state: State) => state.loans)
-  const closePopup = () => {
-    console.log('click on close modal loans')
-    dispatch(toggleLoansModal(null))
-  }
+  const closePopup = () => dispatch(toggleLoansModal(null))
 
   return (
     <PopupContainer onClick={closePopup} show={currentModalActive !== null}>
