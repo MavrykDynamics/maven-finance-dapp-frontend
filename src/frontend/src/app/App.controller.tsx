@@ -86,7 +86,11 @@ const AppContainer = () => {
 
   useLockBodyScroll(isLoading)
 
-  const closeModalHandler = useCallback(() => dispatch(toggleRPCNodePopup(false)), [])
+  const closeModalHandler = useCallback(() => {
+    console.log('click on change node')
+
+    dispatch(toggleRPCNodePopup(false))
+  }, [])
 
   return (
     <Router>

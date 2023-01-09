@@ -2,19 +2,6 @@ import styled from 'styled-components'
 import { MavrykTheme } from 'styles/interfaces'
 
 export const LoansModalBase = styled.div<{ theme: MavrykTheme }>`
-  display: flex;
-  flex-direction: column;
-  width: 586px;
-  padding: 30px 40px 40px;
-  position: relative;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  border-radius: 10px;
-  background: ${({ theme }) => theme.containerColor};
-  border: 1px solid ${({ theme }) => theme.valueColor};
-
   .close-modal {
     position: absolute;
     top: 15px;
