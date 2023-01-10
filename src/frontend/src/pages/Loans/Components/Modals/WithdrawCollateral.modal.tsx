@@ -1,15 +1,18 @@
+import { useState } from 'react'
+
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+
+import { Input } from 'app/App.components/Input/NewInput'
+import Icon from 'app/App.components/Icon/Icon.view'
 import NewButton from 'app/App.components/Button/NewButton.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import Icon from 'app/App.components/Icon/Icon.view'
-import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
-import { Input } from 'app/App.components/Input/NewInput'
-import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+
+import { LoansModalBase, VaultModalOverview } from './Modals.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
+import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import { ThreeLevelListItem, FillBlock } from 'pages/Loans/Loans.style'
 import { TzAddress } from 'pages/Treasury/Treasury.style'
-import { useState } from 'react'
-import { LoansModalBase, VaultModalOverview } from './Modals.style'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239234&t=Sx2aEpp3ifrGxBtQ-0
 export const WithdrawCollateral = ({ closePopup }: { closePopup: () => void }) => {
