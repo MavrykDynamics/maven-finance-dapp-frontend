@@ -1,4 +1,4 @@
-import { PopupContainer } from 'app/App.components/SettingsPopup/SettingsPopup.style'
+import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
 import {
   ADD_COLLATERAL_MODAL_ID,
   ADD_LENDING_ASSET_MODAL_ID,
@@ -38,21 +38,22 @@ export const LoansModals = () => {
 
   return (
     <PopupContainer onClick={closePopup} show={currentModalActive !== null}>
-      {currentModalActive === ADD_NEW_COLLATERAL_MODAL_ID ? <AddNewCollateral closePopup={closePopup} /> : null}
-      {currentModalActive === REPAY_MODAL_ID ? <Repay closePopup={closePopup} /> : null}
-      {currentModalActive === BORROW_ASSET_MODAL_ID ? <BorrowAsset closePopup={closePopup} /> : null}
-      {currentModalActive === WITHDRAW_COLLATERAL_MODAL_ID ? <WithdrawCollateral closePopup={closePopup} /> : null}
-      {currentModalActive === CREATE_NEW_VAULT_MODAL_ID ? <CreateNewVault closePopup={closePopup} /> : null}
-      {currentModalActive === ADD_COLLATERAL_MODAL_ID ? <AddCollateral closePopup={closePopup} /> : null}
-      {currentModalActive === ADD_LENDING_ASSET_MODAL_ID ? <AddLendingAsset closePopup={closePopup} /> : null}
-      {currentModalActive === REMOVE_ASSET_LENDING_MODAL_ID ? (
-        <RemoveAssetsFromLending closePopup={closePopup} />
-      ) : null}
-
-      {currentModalActive === CHANGE_BAKER_MODAL_ID ? <ChangeBaker closePopup={closePopup} /> : null}
-      {currentModalActive === UPDATE_MVK_OPERATORS_MODAL_ID ? <UpdateMVKOperator closePopup={closePopup} /> : null}
-      {currentModalActive === MANAGE_PERMISSIONS_MODAL_ID ? <ManagePermissions closePopup={closePopup} /> : null}
-      {currentModalActive === REPAY_AND_CLOSE_MODAL_ID ? <RepayAndCloseVault closePopup={closePopup} /> : null}
+      <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="loans">
+        {currentModalActive === ADD_NEW_COLLATERAL_MODAL_ID ? <AddNewCollateral closePopup={closePopup} /> : null}
+        {currentModalActive === REPAY_MODAL_ID ? <Repay closePopup={closePopup} /> : null}
+        {currentModalActive === BORROW_ASSET_MODAL_ID ? <BorrowAsset closePopup={closePopup} /> : null}
+        {currentModalActive === WITHDRAW_COLLATERAL_MODAL_ID ? <WithdrawCollateral closePopup={closePopup} /> : null}
+        {currentModalActive === CREATE_NEW_VAULT_MODAL_ID ? <CreateNewVault closePopup={closePopup} /> : null}
+        {currentModalActive === ADD_COLLATERAL_MODAL_ID ? <AddCollateral closePopup={closePopup} /> : null}
+        {currentModalActive === ADD_LENDING_ASSET_MODAL_ID ? <AddLendingAsset closePopup={closePopup} /> : null}
+        {currentModalActive === REMOVE_ASSET_LENDING_MODAL_ID ? (
+          <RemoveAssetsFromLending closePopup={closePopup} />
+        ) : null}
+        {currentModalActive === CHANGE_BAKER_MODAL_ID ? <ChangeBaker closePopup={closePopup} /> : null}
+        {currentModalActive === UPDATE_MVK_OPERATORS_MODAL_ID ? <UpdateMVKOperator closePopup={closePopup} /> : null}
+        {currentModalActive === MANAGE_PERMISSIONS_MODAL_ID ? <ManagePermissions closePopup={closePopup} /> : null}
+        {currentModalActive === REPAY_AND_CLOSE_MODAL_ID ? <RepayAndCloseVault closePopup={closePopup} /> : null}
+      </PopupContainerWrapper>
     </PopupContainer>
   )
 }

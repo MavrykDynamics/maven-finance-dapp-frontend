@@ -9,6 +9,7 @@ export const getLoansStorage = () => async (dispatch: AppDispatch, getState: Get
   const {
     tokens: { dipDupTokens, mTokens },
     wallet: {
+      accountPkh,
       user: { mTokens: userMTokens },
     },
   } = getState()
@@ -18,14 +19,16 @@ export const getLoansStorage = () => async (dispatch: AppDispatch, getState: Get
     // fetching rate of the presented tokens insisde loans
     const loanTokensRate = (
       await Promise.allSettled(
-        getLoanTokensSymbols({ storage, dipDupTokens }).map((symbol) => coinGeckoClient.coins.fetch(symbol, {})),
+        getLoanTokensSymbols({ loan_tokens: storage?.lending_controller?.[0]?.loan_tokens, dipDupTokens }).map(
+          (symbol) => coinGeckoClient.coins.fetch(symbol, {}),
+        ),
       )
     ).reduce<Record<string, number>>((acc, promiseResult) => {
       const {
         value: { data, success },
       } = promiseResult as any
       if (success) {
-        const symbol = data.symbol
+        const symbol = data.symbol === 'xtz' ? 'tez' : data.symbol
         const rate = data.market_data.current_price.usd
         acc[symbol] = rate
       }
@@ -33,17 +36,19 @@ export const getLoansStorage = () => async (dispatch: AppDispatch, getState: Get
       return acc
     }, {})
 
-    const { chartsData, loanTokens, collateralTokens } = normalizeLoans({
+    const { chartsData, loanTokens, collateralTokens, loansControllerAddress } = normalizeLoans({
       storage: storage?.lending_controller?.[0],
       dipDupTokens,
       mTokens,
       userMTokens,
+      userAddres: accountPkh,
       tokensRate: loanTokensRate,
     })
 
     await dispatch({
       type: GET_LOANS_STORAGE,
       loansStorage: {
+        loansControllerAddress,
         chartsData,
         loanTokens,
         collateralTokens,

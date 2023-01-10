@@ -158,6 +158,12 @@ export const TableHeader = styled.thead<{ theme: MavrykTheme }>`
     th {
       padding-bottom: 0;
     }
+
+    &.empty {
+      th {
+        padding-bottom: 10px;
+      }
+    }
   }
 
   &.editable-head {
@@ -369,9 +375,15 @@ export const TableCell = styled.td<{
     }
   }}
 
-  svg {
+  svg, .img-wrapper {
     width: 24px;
     height: 24px;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
   }
 
   button {
@@ -399,6 +411,7 @@ export const TableCell = styled.td<{
       flex-direction: row;
       justify-content: flex-start;
       align-items: center;
+      column-gap: 5px;
     }
 
     .no-icon {
