@@ -37,5 +37,20 @@ export const LoansModalBase = styled.div<{ theme: MavrykTheme }>`
     font-size: 14px;
     line-height: 21px;
     color: ${({ theme }) => theme.textColor};
+    margin-bottom: 25px;
+  }
+
+  .dropdown-name {
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 21px;
+    color: ${({ theme }) => theme.textColor};
+    padding-left: 7px;
+    padding-bottom: 3px;
+  }
+
+  .modal-manage-btn {
+    margin: 60px auto 0 auto;
+    width: 250px;
   }
 `

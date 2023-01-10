@@ -123,7 +123,7 @@ export const Table = styled.table<{ theme: MavrykTheme }>`
     position: relative;
     border-spacing: 0;
     width: 100%;
-    border-radius: 2px;
+    border-radius: 10px;
   }
 
   &.transaction-history-table {

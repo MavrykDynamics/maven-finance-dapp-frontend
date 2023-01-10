@@ -1,7 +1,14 @@
 import styled from 'styled-components'
 import { BUTTON_RADIUS } from 'styles/constants'
 import { MavrykTheme } from 'styles/interfaces'
-import { ACTION_SIMPLE, PRIMARY, SECONDARY, TRANSPARENT_WITH_BORDER } from './Button.constants'
+import {
+  ACTION_PRIMARY,
+  ACTION_SECONDARY,
+  ACTION_SIMPLE,
+  PRIMARY,
+  SECONDARY,
+  TRANSPARENT_WITH_BORDER,
+} from './Button.constants'
 
 export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
   padding: 0 31px;
@@ -13,6 +20,9 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
   cursor: pointer;
   border-radius: ${BUTTON_RADIUS};
   user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   &:hover {
     opacity: 0.8;
@@ -23,15 +33,41 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
     cursor: not-allowed;
   }
 
-  &.${PRIMARY} {
+  &.${ACTION_PRIMARY} {
     color: ${({ theme }) => theme.containerColor};
-    background-color: ${({ theme }) => theme.primaryColor};
+    background-color: ${({ theme }) => theme.actionPrimaryBtnColor};
+
+    &.fill {
+      svg {
+        fill: ${({ theme }) => theme.containerColor};
+        stroke: none;
+      }
+    }
+
+    &.noStroke {
+      svg {
+        stroke: none;
+      }
+    }
   }
 
-  &.${SECONDARY} {
-    color: ${({ theme }) => theme.primaryColor};
-    background-color: ${({ theme }) => theme.containerColor};
-    border: 1.5px solid ${({ theme }) => theme.primaryColor};
+  &.${ACTION_SECONDARY} {
+    color: ${({ theme }) => theme.actionPrimaryBtnColor};
+    background-color: transparent;
+    border: 2px solid ${({ theme }) => theme.actionPrimaryBtnColor};
+
+    &.close {
+      svg {
+        stroke: ${({ theme }) => theme.downColor};
+      }
+    }
+
+    &.fill {
+      svg {
+        stroke: none;
+        fill: ${({ theme }) => theme.actionPrimaryBtnColor};
+      }
+    }
   }
 
   &.${ACTION_SIMPLE} {
