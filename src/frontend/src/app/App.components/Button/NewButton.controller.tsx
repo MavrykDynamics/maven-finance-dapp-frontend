@@ -9,7 +9,7 @@ export type ButtonProps = {
   onClick?: (e: React.MouseEvent<HTMLElement>) => void
   type?: ButtonTypes
   disabled?: boolean
-  children?: JSX.Element | string
+  children?: React.ReactNode
 }
 
 const NewButton = ({

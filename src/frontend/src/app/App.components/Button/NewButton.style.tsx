@@ -1,14 +1,7 @@
 import styled from 'styled-components'
 import { BUTTON_RADIUS } from 'styles/constants'
 import { MavrykTheme } from 'styles/interfaces'
-import {
-  ACTION_PRIMARY,
-  ACTION_SECONDARY,
-  ACTION_SIMPLE,
-  PRIMARY,
-  SECONDARY,
-  TRANSPARENT_WITH_BORDER,
-} from './Button.constants'
+import { ACTION_PRIMARY, ACTION_SECONDARY, ACTION_SIMPLE, TRANSPARENT_WITH_BORDER } from './Button.constants'
 
 export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
   padding: 0 31px;
@@ -23,6 +16,12 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
   display: flex;
   align-items: center;
   justify-content: center;
+  column-gap: 5px;
+
+  svg {
+    width: 24px;
+    height: 24px;
+  }
 
   &:hover {
     opacity: 0.8;

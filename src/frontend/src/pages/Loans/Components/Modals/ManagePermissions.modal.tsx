@@ -79,7 +79,7 @@ export const ManagePermissions = ({ closePopup }: { closePopup: () => void }) =>
         <br />- Allow Any: Any user may deposit collateral
       </div>
 
-      <div className="dropdown-name">Select Depositors</div>
+      <div className="block-name">Select Depositors</div>
 
       <DropDown
         placeholder="Choose Permissions"

@@ -40,7 +40,7 @@ export const LoansModalBase = styled.div<{ theme: MavrykTheme }>`
     margin-bottom: 25px;
   }
 
-  .dropdown-name {
+  .block-name {
     font-weight: 600;
     font-size: 14px;
     line-height: 21px;
@@ -52,5 +52,30 @@ export const LoansModalBase = styled.div<{ theme: MavrykTheme }>`
   .modal-manage-btn {
     margin: 60px auto 0 auto;
     width: 250px;
+  }
+
+  hr {
+    background: ${({ theme }) => theme.cardBorderColor};
+    margin: 40px 0;
+    height: 0.5px;
+    border: none;
+  }
+`
+
+export const VaultModalOverview = styled.div<{ theme: MavrykTheme }>`
+  display: flex;
+  justify-content: space-between;
+  border: 1px solid ${({ theme }) => theme.cardBorderColor};
+  padding: 14px 15px;
+  border-radius: 10px;
+
+  .collateral-diagram {
+    .diagram {
+      max-width: 140px;
+    }
+
+    .copyIcon {
+      font-weight: 600;
+    }
   }
 `

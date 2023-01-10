@@ -10,43 +10,35 @@ import {
 } from './Input.style'
 
 type InputViewProps = {
-  id?: string
   icon?: string
-  placeholder?: string
-  name?: string
-  value: string | number
-  onChange: InputOneChange
-  onBlur?: InputOneChange
-  onKeyDown?: React.KeyboardEventHandler<HTMLInputElement>
-  onFocus?: InputOneChange
   inputStatus?: InputStatusType
-  type?: string
   errorMessage?: string
-  disabled?: boolean
   pinnedText?: string
-  required?: boolean
   kind?: InputKind
   className?: string
+  inputProps: {
+    disabled?: boolean
+    value: string | number
+    type?: string
+    placeholder?: string
+    name?: string
+    id?: string
+    onChange: InputOneChange
+    onBlur?: InputOneChange
+    onKeyDown?: React.KeyboardEventHandler<HTMLInputElement>
+    onFocus?: InputOneChange
+    required?: boolean
+  }
 }
 
 export const InputView = ({
-  id,
   icon,
-  placeholder,
-  name,
-  value,
-  onChange,
-  onBlur,
-  onKeyDown,
-  onFocus,
   inputStatus,
-  type,
   errorMessage,
-  disabled,
   pinnedText,
   kind,
-  required,
   className,
+  inputProps,
 }: InputViewProps) => {
   const classNames = `${kind ?? ''} ${inputStatus !== undefined ? inputStatus : 'none'}`
 
@@ -58,21 +50,7 @@ export const InputView = ({
         </InputIcon>
       )}
       <InputComponentContainer>
-        <input
-          id={id}
-          type={type}
-          name={name}
-          required={required}
-          className={classNames}
-          placeholder={placeholder}
-          value={value}
-          onChange={onChange}
-          onBlur={onBlur}
-          onKeyDown={onKeyDown}
-          onFocus={onFocus}
-          autoComplete={name}
-          disabled={disabled}
-        />
+        <input {...inputProps} className={classNames} autoComplete={inputProps.name} />
         <InputStatus className={`${classNames} ${pinnedText ? 'with-text' : ''}`} />
         {pinnedText && <InputLabel className={`${classNames} pinned-text`}>{pinnedText}</InputLabel>}
       </InputComponentContainer>
