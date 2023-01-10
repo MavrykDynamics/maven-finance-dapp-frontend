@@ -14,7 +14,6 @@ import { getGovernanceStorage } from 'pages/Governance/Governance.actions'
 
 export const SatelliteDetails = () => {
   const dispatch = useDispatch()
-  const loading = useSelector((state: State) => state.loading.isLoading)
   const { currentSatellite } = useSelector((state: State) => state.delegation)
   const { feeds } = useSelector((state: State) => state.oracles.oraclesStorage)
   const {
@@ -69,7 +68,6 @@ export const SatelliteDetails = () => {
     <SatelliteDetailsView
       satellite={currentSatellite}
       userSatelliteReward={mySatelliteRewardsData}
-      loading={loading}
       delegateCallback={delegateCallback}
       undelegateCallback={undelegateCallback}
       claimRewardsCallback={handleClaimRewards}

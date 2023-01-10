@@ -48,7 +48,6 @@ import { TabItem } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.
 
 type FeedDetailsProps = {
   feed: FeedGQL | null
-  isLoading: boolean
   oracles: Array<SatelliteRecord>
   registerFeedHandler: () => void
   dataFeedsHistory: DataFeedsHistory
@@ -75,7 +74,6 @@ const tabsList = [
 
 const DataFeedDetailsView = ({
   feed,
-  isLoading,
   oracles,
   registerFeedHandler,
   dataFeedsHistory,
@@ -265,7 +263,6 @@ const DataFeedDetailsView = ({
                 <Button
                   text="Register"
                   kind={ACTION_PRIMARY}
-                  loading={isLoading}
                   onClick={() => {
                     setClickedRegister(true)
                     registerFeedHandler()
@@ -301,7 +298,6 @@ const DataFeedDetailsView = ({
       {oraclesForFeed.length ? (
         <SatelliteList
           listTitle={'Oracles data'}
-          loading={isLoading}
           items={oraclesForFeed}
           listType={'oracles'}
           name={ORACLES_DATA_IN_FEED_LIST_NAME}

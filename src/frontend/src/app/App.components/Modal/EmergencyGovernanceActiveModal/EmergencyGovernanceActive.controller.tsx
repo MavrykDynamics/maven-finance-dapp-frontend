@@ -7,10 +7,8 @@ import { EGovModalHeader } from './EmergencyGovernanceActiveModal.style'
 export type ModalDataType = { title: string; subTitle: string; content: string }
 
 export const EmergencyGovernanceActiveModal = ({
-  loading,
   cancelCallback,
 }: {
-  loading: boolean
   cancelCallback: (e: React.MouseEvent<HTMLElement>) => void
 }) => {
   const { title, subTitle, content } = MODAL_DATA.get('emergency-governance') as ModalDataType
@@ -20,7 +18,7 @@ export const EmergencyGovernanceActiveModal = ({
         <EGovModalHeader>{title}</EGovModalHeader>
         <div>{subTitle}</div>
         <div>{content}</div>
-        <Button text="Acknowledge" kind="primary" icon="check" loading={loading} onClick={cancelCallback} />
+        <Button text="Acknowledge" kind="primary" icon="check" onClick={cancelCallback} />
       </ModalCardContent>
     </ModalCard>
   )

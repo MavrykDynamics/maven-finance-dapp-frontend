@@ -21,7 +21,6 @@ const DataFeedDetails = () => {
     dataFeedsVolatility,
   } = useSelector((state: State) => state.oracles)
   const { satelliteLedger } = useSelector((state: State) => state.delegation.delegationStorage)
-  const isLoading = useSelector((state: State) => state.loading.isLoading)
 
   let { feedId } = useParams<{ feedId: string }>()
 
@@ -40,7 +39,6 @@ const DataFeedDetails = () => {
   return (
     <DataFeedDetailsView
       feed={selectedFeed}
-      isLoading={isLoading}
       oracles={satelliteLedger}
       registerFeedHandler={() => dispatch(registerFeedAction())}
       dataFeedsHistory={dataFeedsHistory}

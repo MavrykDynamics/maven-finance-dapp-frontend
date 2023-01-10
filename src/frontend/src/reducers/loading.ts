@@ -1,41 +1,39 @@
-import { TOGGLE_LOADER, TOGGLE_DATA_LOADER } from 'app/App.components/Loader/Loader.action'
-import { ROCKET_LOADER, WERT_IO_LOADER } from 'utils/constants'
+import { TOGGLE_WERT_LOADER } from './../app/App.components/Loader/Loader.action'
+import { TOGGLE_ACTION_LOADER, TOGGLE_INITIAL_DATA_LOADING } from 'app/App.components/Loader/Loader.action'
 
 export type LoadingState = {
-  viewLoading: null | typeof ROCKET_LOADER | typeof WERT_IO_LOADER
-  isInitialDataloading: boolean
-  isLoading: boolean
+  isActionLoading: boolean
+  isWertLoading: boolean
+  isInitialDataLoading: boolean
 }
+
+// TODO: add docs for loading
 const loadingInitialState: LoadingState = {
-  viewLoading: null,
-  isInitialDataloading: true,
-  isLoading: true,
+  isWertLoading: false,
+  isActionLoading: false,
+  isInitialDataLoading: true,
 }
 
 export function loading(
   state = loadingInitialState,
-  action: { type: string; newLoader: LoadingState['viewLoading']; dataLoadingState: boolean },
+  action: { type: string; showLoader: boolean; isWertLoading: boolean; isInitialDataLoading: boolean },
 ): LoadingState {
-  switch (true) {
-    case TOGGLE_LOADER === action.type:
+  switch (action.type) {
+    case TOGGLE_ACTION_LOADER:
       return {
         ...state,
-        viewLoading: action.newLoader,
-        isLoading: Boolean(action.newLoader) || state.isInitialDataloading,
+        isActionLoading: action.showLoader,
       }
-    case TOGGLE_DATA_LOADER === action.type:
+    case TOGGLE_WERT_LOADER:
       return {
         ...state,
-        isInitialDataloading: action.dataLoadingState,
-        isLoading: action.dataLoadingState || Boolean(state.viewLoading),
+        isWertLoading: action.isWertLoading,
       }
-    case /_REQUEST/.test(action.type):
-      return { ...state, viewLoading: ROCKET_LOADER }
-    case /_RESULT/.test(action.type):
-      return { ...state, viewLoading: null }
-    case /_ERROR/.test(action.type):
-      return { ...state, viewLoading: null }
-
+    case TOGGLE_INITIAL_DATA_LOADING:
+      return {
+        ...state,
+        isInitialDataLoading: action.isInitialDataLoading,
+      }
     default:
       return state
   }

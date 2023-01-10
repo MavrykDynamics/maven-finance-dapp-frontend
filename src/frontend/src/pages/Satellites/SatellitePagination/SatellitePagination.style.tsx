@@ -11,7 +11,7 @@ export const SatellitePaginationStyled = styled(Card)<{ theme: MavrykTheme }>`
   padding-right: 24px;
   height: 74px;
 
-  .back {
+  .go-back {
     margin-right: auto;
   }
 

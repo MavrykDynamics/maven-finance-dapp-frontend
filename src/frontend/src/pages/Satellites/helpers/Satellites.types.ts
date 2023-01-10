@@ -11,7 +11,6 @@ export type SatellitesListProps = {
   listType: 'satellites' | 'feeds' | 'oracles' | 'userFeeds'
   name: string
   onClickHandler?: (arg0: string) => void
-  loading: boolean
   additionaldata?: Record<string, boolean | number | callbackFunction | string | object>
   pagination?: boolean
   className?: string

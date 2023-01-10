@@ -13,7 +13,7 @@ import {
 } from '../../gql/queries/getGovernanceStorage'
 import { State } from '../../reducers'
 import { ProposalRecordType } from 'utils/TypesAndInterfaces/Governance'
-import { toggleLoader } from 'app/App.components/Loader/Loader.action'
+import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 import { ROCKET_LOADER } from 'utils/constants'
 
 export const SET_GOVERNANCE_PHASE = 'SET_GOVERNANCE_PHASE'
@@ -82,7 +82,7 @@ export const proposalRoundVote = (proposalId: number) => async (dispatch: AppDis
       return
     }
 
-    if (state.loading.isLoading) {
+    if (state.loading.isActionLoading) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
@@ -90,7 +90,7 @@ export const proposalRoundVote = (proposalId: number) => async (dispatch: AppDis
     const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.governanceAddress.address)
     const transaction = await contract?.methods.proposalRoundVote(proposalId).send()
 
-    await dispatch(toggleLoader(ROCKET_LOADER))
+    await dispatch(toggleActionLoader(true))
     await dispatch(showToaster(INFO, 'Proposal Vote executing...', 'Please wait 30s'))
 
     await transaction?.confirmation()
@@ -98,13 +98,13 @@ export const proposalRoundVote = (proposalId: number) => async (dispatch: AppDis
     await dispatch(showToaster(SUCCESS, 'Voting done', 'All good :)'))
     await dispatch(getGovernanceStorage())
     await dispatch(getCurrentRoundProposals())
-    await dispatch(toggleLoader())
+    await dispatch(toggleActionLoader(false))
   } catch (error) {
     console.error('proposalRoundVote error: ', error)
     if (error instanceof Error) {
       await dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    await dispatch(toggleLoader())
+    await dispatch(toggleActionLoader(false))
   }
 }
 
@@ -147,7 +147,7 @@ export const votingRinancialRequestVote =
         return
       }
 
-      if (state.loading.isLoading) {
+      if (state.loading.isActionLoading) {
         dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
         return
       }
@@ -155,20 +155,20 @@ export const votingRinancialRequestVote =
       const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.governanceFinancialAddress.address)
       const transaction = await contract?.methods.voteForRequest(requestId, vote).send()
 
-      await dispatch(toggleLoader(ROCKET_LOADER))
+      await dispatch(toggleActionLoader(true))
       await dispatch(showToaster(INFO, 'Voting...', 'Please wait 30s'))
 
       await transaction?.confirmation()
 
       await dispatch(showToaster(SUCCESS, 'Voting done', 'All good :)'))
       await dispatch(getGovernanceStorage())
-      await dispatch(toggleLoader())
+      await dispatch(toggleActionLoader(false))
     } catch (error) {
       if (error instanceof Error) {
         console.error(error)
         await dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      await dispatch(toggleLoader())
+      await dispatch(toggleActionLoader(false))
     }
   }
 
@@ -181,7 +181,7 @@ export const votingRoundVote = (vote: string) => async (dispatch: AppDispatch, g
       return
     }
 
-    if (state.loading.isLoading) {
+    if (state.loading.isActionLoading) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
@@ -189,7 +189,7 @@ export const votingRoundVote = (vote: string) => async (dispatch: AppDispatch, g
     const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.governanceAddress.address)
     const transaction = await contract?.methods.votingRoundVote(vote).send()
 
-    await dispatch(toggleLoader(ROCKET_LOADER))
+    await dispatch(toggleActionLoader(true))
     await dispatch(showToaster(INFO, 'Voting...', 'Please wait 30s'))
 
     await transaction?.confirmation()
@@ -197,13 +197,13 @@ export const votingRoundVote = (vote: string) => async (dispatch: AppDispatch, g
     await dispatch(showToaster(SUCCESS, 'Voting done', 'All good :)'))
     await dispatch(getGovernanceStorage())
     await dispatch(getCurrentRoundProposals())
-    await dispatch(toggleLoader())
+    await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
       await dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    await dispatch(toggleLoader())
+    await dispatch(toggleActionLoader(false))
   }
 }
 
@@ -216,7 +216,7 @@ export const startProposalRound = () => async (dispatch: AppDispatch, getState: 
       return
     }
 
-    if (state.loading.isLoading) {
+    if (state.loading.isActionLoading) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
@@ -224,7 +224,7 @@ export const startProposalRound = () => async (dispatch: AppDispatch, getState: 
     const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.governanceAddress.address)
     const transaction = await contract?.methods.startProposalRound().send()
 
-    await dispatch(toggleLoader(ROCKET_LOADER))
+    await dispatch(toggleActionLoader(true))
     await dispatch(showToaster(INFO, 'Request Proposal round start...', 'Please wait 30s'))
 
     await transaction?.confirmation()
@@ -232,13 +232,13 @@ export const startProposalRound = () => async (dispatch: AppDispatch, getState: 
     await dispatch(showToaster(SUCCESS, 'Request confirmed', 'All good :)'))
     await dispatch(getGovernanceStorage())
     await dispatch(getCurrentRoundProposals())
-    await dispatch(toggleLoader())
+    await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
       await dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    await dispatch(toggleLoader())
+    await dispatch(toggleActionLoader(false))
   }
 }
 
@@ -251,7 +251,7 @@ export const startVotingRound = () => async (dispatch: AppDispatch, getState: Ge
       return
     }
 
-    if (state.loading.isLoading) {
+    if (state.loading.isActionLoading) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
@@ -259,7 +259,7 @@ export const startVotingRound = () => async (dispatch: AppDispatch, getState: Ge
     const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.governanceAddress.address)
     const transaction = await contract?.methods.startProposalRound().send()
 
-    await dispatch(toggleLoader(ROCKET_LOADER))
+    await dispatch(toggleActionLoader(true))
     await dispatch(showToaster(INFO, 'Request Voting round start...', 'Please wait 30s'))
 
     await transaction?.confirmation()
@@ -267,13 +267,13 @@ export const startVotingRound = () => async (dispatch: AppDispatch, getState: Ge
     await dispatch(showToaster(SUCCESS, 'Request confirmed', 'All good :)'))
     await dispatch(getGovernanceStorage())
     await dispatch(getCurrentRoundProposals())
-    await dispatch(toggleLoader())
+    await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
       await dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    await dispatch(toggleLoader())
+    await dispatch(toggleActionLoader(false))
   }
 }
 
@@ -306,7 +306,7 @@ export const startNextRound = (executePastProposal: boolean) => async (dispatch:
       return
     }
 
-    if (state.loading.isLoading) {
+    if (state.loading.isActionLoading) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
@@ -314,7 +314,7 @@ export const startNextRound = (executePastProposal: boolean) => async (dispatch:
     const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.governanceAddress.address)
     const transaction = await contract?.methods.startNextRound(executePastProposal).send()
 
-    await dispatch(toggleLoader(ROCKET_LOADER))
+    await dispatch(toggleActionLoader(true))
     await dispatch(showToaster(INFO, 'Request Next round start...', 'Please wait 30s'))
 
     await transaction?.confirmation()
@@ -322,13 +322,13 @@ export const startNextRound = (executePastProposal: boolean) => async (dispatch:
     await dispatch(showToaster(SUCCESS, 'Request confirmed', 'All good :)'))
     await dispatch(getGovernanceStorage())
     await dispatch(getCurrentRoundProposals())
-    await dispatch(toggleLoader())
+    await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
       dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    await dispatch(toggleLoader())
+    await dispatch(toggleActionLoader(false))
   }
 }
 
@@ -338,7 +338,7 @@ export const executeProposal = (proposalId: number) => async (dispatch: AppDispa
     const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.governanceAddress.address)
     const transaction = await contract?.methods.executeProposal(proposalId).send()
 
-    await dispatch(toggleLoader(ROCKET_LOADER))
+    await dispatch(toggleActionLoader(true))
     await dispatch(showToaster(INFO, 'Request Execute Proposal round start...', 'Please wait 30s'))
 
     await transaction?.confirmation()
@@ -346,13 +346,13 @@ export const executeProposal = (proposalId: number) => async (dispatch: AppDispa
     await dispatch(showToaster(SUCCESS, 'Request confirmed', 'All good :)'))
     await dispatch(getGovernanceStorage())
     await dispatch(getCurrentRoundProposals())
-    await dispatch(toggleLoader())
+    await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
       dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    await dispatch(toggleLoader())
+    await dispatch(toggleActionLoader(false))
   }
 }
 
@@ -362,7 +362,7 @@ export const processProposalPayment = (proposalId: number) => async (dispatch: A
     const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.governanceAddress.address)
     const transaction = await contract?.methods.processProposalPayment(proposalId).send()
 
-    await dispatch(toggleLoader(ROCKET_LOADER))
+    await dispatch(toggleActionLoader(true))
     await dispatch(showToaster(INFO, 'Process Proposal Payment round start...', 'Please wait 30s'))
 
     await transaction?.confirmation()
@@ -370,12 +370,12 @@ export const processProposalPayment = (proposalId: number) => async (dispatch: A
     await dispatch(showToaster(SUCCESS, 'Process Proposal Payment confirmed', 'All good :)'))
     await dispatch(getGovernanceStorage())
     await dispatch(getCurrentRoundProposals())
-    await dispatch(toggleLoader())
+    await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
       dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    await dispatch(toggleLoader())
+    await dispatch(toggleActionLoader(false))
   }
 }

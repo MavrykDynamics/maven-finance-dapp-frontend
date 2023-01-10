@@ -46,7 +46,6 @@ const OracleSatellitesView = ({
   delegateCallback,
   undelegateCallback,
 }: OracleSatellitesViewProps) => {
-  const loading = useSelector((state: State) => state.loading.isLoading)
   const { satelliteMvkIsDelegatedTo } = useSelector((state: State) => state.wallet.user)
 
   const [ddItems, _] = useState(itemsForDropDown.map(({ text }) => text))
@@ -93,7 +92,6 @@ const OracleSatellitesView = ({
 
           {satellitesList.length ? (
             <SatteliteList
-              loading={loading}
               items={satellitesList}
               listType={'satellites'}
               name={SATELITES_NODES_LIST_NAME}

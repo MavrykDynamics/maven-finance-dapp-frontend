@@ -38,7 +38,7 @@ import { Market } from 'pages/Loans/Market.controller'
 export const AppRoutes = () => {
   const { pathname } = useLocation()
   const { accountPkh, user: { isSatellite } = {} } = useSelector((state: State) => state.wallet)
-  const { isInitialDataloading } = useSelector((state: State) => state.loading)
+  const { isInitialDataLoading } = useSelector((state: State) => state.loading)
 
   // get origin pathname
   const [, path] = pathname.split('/')
@@ -48,6 +48,7 @@ export const AppRoutes = () => {
     scrollUpPage()
   }, [path])
 
+  // TODO: add error boundaries
   return (
     <Switch>
       <Route exact path="/">
@@ -61,7 +62,7 @@ export const AppRoutes = () => {
         component={DashboardPersonal}
         hasAccess={Boolean(accountPkh)}
         isAuthorized={Boolean(accountPkh)}
-        canCheck={!isInitialDataloading}
+        canCheck={!isInitialDataLoading}
         redirectPath={`/dashboard/${LENDING_TAB_ID}`}
       />
       <Route exact path="/your-vesting">
@@ -116,8 +117,8 @@ export const AppRoutes = () => {
         path="/submit-proposal"
         component={ProposalSubmission}
         isAuthorized={Boolean(accountPkh)}
+        canCheck={!isInitialDataLoading}
         hasAccess={Boolean(isSatellite)}
-        canCheck={!isInitialDataloading}
         redirectPath={'/'}
       />
       <Route exact path="/treasury">

@@ -16,7 +16,7 @@ import { fetchFromIndexer } from '../../gql/fetchGraphQL'
 import { showToaster } from '../../app/App.components/Toaster/Toaster.actions'
 import { getDoormanStorage, getMvkTokenStorage, updateUserData } from '../Doorman/Doorman.actions'
 import { hideModal } from '../../app/App.components/Modal/Modal.actions'
-import { toggleLoader } from 'app/App.components/Loader/Loader.action'
+import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 
 export const SELECT_FARM_ADDRESS = 'SELECT_FARM_ADDRESS'
 export const GET_FARM_STORAGE = 'GET_FARM_STORAGE'
@@ -95,7 +95,7 @@ export const harvest = (farmAddress: string) => async (dispatch: AppDispatch, ge
     return
   }
 
-  if (state.loading.isLoading) {
+  if (state.loading.isActionLoading) {
     dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
     return
   }
@@ -104,13 +104,13 @@ export const harvest = (farmAddress: string) => async (dispatch: AppDispatch, ge
     const contract = await state.wallet.tezos?.wallet.at(farmAddress)
     const transaction = await contract?.methods.claim(farmAddress).send()
 
-    await dispatch(toggleLoader(ROCKET_LOADER))
+    await dispatch(toggleActionLoader(true))
     await dispatch(showToaster(INFO, 'Harvesting...', 'Please wait 30s'))
 
     await transaction?.confirmation()
 
     await dispatch(showToaster(SUCCESS, 'Harvesting done', 'All good :)'))
-    await dispatch(toggleLoader())
+    await dispatch(toggleActionLoader(false))
 
     if (state.wallet.accountPkh) {
       dispatch(updateUserData(state.wallet.accountPkh))
@@ -123,7 +123,7 @@ export const harvest = (farmAddress: string) => async (dispatch: AppDispatch, ge
       console.error(error)
       await dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    await dispatch(toggleLoader())
+    await dispatch(toggleActionLoader(false))
   }
 }
 
@@ -138,7 +138,7 @@ export const deposit = (farmAddress: string, amount: number) => async (dispatch:
     dispatch(showToaster(ERROR, 'Incorrect amount', 'Please enter an amount superior to zero'))
     return
   }
-  if (state.loading.isLoading) {
+  if (state.loading.isActionLoading) {
     dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
     return
   }
@@ -147,13 +147,13 @@ export const deposit = (farmAddress: string, amount: number) => async (dispatch:
     const contract = await state.wallet.tezos?.wallet.at(farmAddress)
     const transaction = await contract?.methods.deposit(amount * PRECISION_NUMBER).send()
 
-    await dispatch(toggleLoader(ROCKET_LOADER))
+    await dispatch(toggleActionLoader(true))
     await dispatch(showToaster(INFO, 'Depositing...', 'Please wait 30s'))
 
     await transaction?.confirmation()
 
     await dispatch(showToaster(SUCCESS, 'Depositing done', 'All good :)'))
-    await dispatch(toggleLoader())
+    await dispatch(toggleActionLoader(false))
 
     if (state.wallet.accountPkh) await dispatch(updateUserData(state.wallet.accountPkh))
     await dispatch(getFarmStorage())
@@ -164,7 +164,7 @@ export const deposit = (farmAddress: string, amount: number) => async (dispatch:
       console.error(error)
       await dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    await dispatch(toggleLoader())
+    await dispatch(toggleActionLoader(false))
   }
 }
 
@@ -179,7 +179,7 @@ export const withdraw = (farmAddress: string, amount: number) => async (dispatch
     dispatch(showToaster(ERROR, 'Incorrect amount', 'Please enter an amount superior to zero'))
     return
   }
-  if (state.loading.isLoading) {
+  if (state.loading.isActionLoading) {
     dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
     return
   }
@@ -188,13 +188,13 @@ export const withdraw = (farmAddress: string, amount: number) => async (dispatch
     const contract = await state.wallet.tezos?.wallet.at(farmAddress)
     const transaction = await contract?.methods.withdraw(amount * PRECISION_NUMBER).send()
 
-    await dispatch(toggleLoader(ROCKET_LOADER))
+    await dispatch(toggleActionLoader(true))
     await dispatch(showToaster(INFO, 'Withdrawing...', 'Please wait 30s'))
 
     await transaction?.confirmation()
 
     await dispatch(showToaster(SUCCESS, 'Withdrawing done', 'All good :)'))
-    await dispatch(toggleLoader())
+    await dispatch(toggleActionLoader(false))
     await dispatch(hideModal())
 
     if (state.wallet.accountPkh) await dispatch(updateUserData(state.wallet.accountPkh))
@@ -206,6 +206,6 @@ export const withdraw = (farmAddress: string, amount: number) => async (dispatch
       console.error(error)
       dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    dispatch(toggleLoader())
+    dispatch(toggleActionLoader(false))
   }
 }

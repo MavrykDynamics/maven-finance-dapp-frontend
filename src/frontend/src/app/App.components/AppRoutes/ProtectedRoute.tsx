@@ -8,19 +8,15 @@ export type ProtectedRouteProps = {
 } & RouteProps
 
 export default function ProtectedRoute({
-  canCheck,
   redirectPath,
   hasAccess,
+  canCheck,
   isAuthorized,
   ...routeProps
 }: ProtectedRouteProps) {
-  if (!canCheck) {
-    return null
-  }
+  if (!canCheck) return null
 
-  if (hasAccess) {
-    return <Route {...routeProps} />
-  }
+  if (hasAccess) return <Route {...routeProps} />
 
   return <Redirect to={{ pathname: redirectPath }} />
 }

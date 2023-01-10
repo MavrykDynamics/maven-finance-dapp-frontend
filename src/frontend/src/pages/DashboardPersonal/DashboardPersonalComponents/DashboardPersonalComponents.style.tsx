@@ -211,6 +211,16 @@ export const LBHInfoBlock = styled(MediumBlockBase)<{ theme: MavrykTheme }>`
   }
 `
 
+export const HistoryBlock = styled(MediumBlockBase)<{ theme: MavrykTheme }>`
+  width: 100%;
+  max-height: 712px;
+  height: fit-content;
+
+  .no-data {
+    margin-top: 20px;
+  }
+`
+
 export const ListItem = styled.div<{ theme: MavrykTheme; columsTemplate: string }>`
   display: grid;
   grid-template-columns: ${({ columsTemplate }) => columsTemplate};
@@ -265,61 +275,53 @@ export const ListItem = styled.div<{ theme: MavrykTheme; columsTemplate: string 
 
 export const SatelliteStatusBlock = styled(MediumBlockBase)<{ theme: MavrykTheme }>`
   padding-bottom: 20px;
+  width: 100%;
+  height: 315px;
 
-  .grid {
+  .top-row {
     margin-top: 40px;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(3, 50px);
-    column-gap: 20px;
-    row-gap: 25px;
-    grid-template:
-      'info space participation'
-      'delegated fee oraclePart'
-      'oracleStatus website website';
+    display: flex;
+    justify-content: space-between;
+  }
 
-    .grid-item {
-      display: flex;
-      flex-direction: column;
-      row-gap: 5px;
+  .bottom-row {
+    margin-top: 25px;
+    display: flex;
+    column-gap: 80px;
+    justify-content: center;
+  }
 
-      p {
-        margin: 0;
-      }
+  .grid-item {
+    display: flex;
+    flex-direction: column;
+    row-gap: 5px;
 
-      &.info {
-        grid-area: info;
-        flex-direction: row;
+    p {
+      margin: 0;
+    }
 
-        .text {
-          display: flex;
-          flex-direction: column;
-          row-gap: 5px;
+    a {
+      font-weight: 500;
+      font-size: 16px;
+      color: ${({ theme }) => theme.valueColor};
+    }
 
-          svg,
-          .satellite-avatar {
-            width: 16px;
-            height: 16px;
-            fill: unset;
-            stroke: ${({ theme }) => theme.dataColor};
+    &.info {
+      flex-direction: row;
 
-            img {
-              width: 100%;
-              height: 100%;
-              object-fit: cover;
-            }
-          }
-        }
+      .text {
+        display: flex;
+        flex-direction: column;
+        row-gap: 5px;
 
-        > svg,
+        svg,
         .satellite-avatar {
-          height: 40px;
-          width: 40px;
-          fill: ${({ theme }) => theme.lPurple_dPurple_lPuprple};
-          margin-right: 10px;
+          width: 16px;
+          height: 16px;
+          fill: unset;
+          stroke: ${({ theme }) => theme.dataColor};
 
           img {
-            border-radius: 50%;
             width: 100%;
             height: 100%;
             object-fit: cover;
@@ -327,37 +329,18 @@ export const SatelliteStatusBlock = styled(MediumBlockBase)<{ theme: MavrykTheme
         }
       }
 
-      &.space {
-        grid-area: space;
-      }
+      > svg,
+      .satellite-avatar {
+        height: 40px;
+        width: 40px;
+        fill: ${({ theme }) => theme.lPurple_dPurple_lPuprple};
+        margin-right: 10px;
 
-      &.participation {
-        grid-area: participation;
-      }
-
-      &.delegated {
-        grid-area: delegated;
-      }
-
-      &.fee {
-        grid-area: fee;
-      }
-
-      &.oraclePart {
-        grid-area: oraclePart;
-      }
-
-      &.oracleStatus {
-        grid-area: oracleStatus;
-      }
-
-      &.website {
-        grid-area: website;
-
-        a {
-          font-weight: 500;
-          font-size: 14px;
-          color: ${({ theme }) => theme.valueColor};
+        img {
+          border-radius: 50%;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
         }
       }
     }
@@ -374,7 +357,7 @@ export const SatelliteStatusBlock = styled(MediumBlockBase)<{ theme: MavrykTheme
     &::before {
       position: absolute;
       content: '';
-      width: 475px;
+      width: 1000px;
       top: -25px;
       left: 50%;
       transform: translateX(-50%);
@@ -386,10 +369,9 @@ export const SatelliteStatusBlock = styled(MediumBlockBase)<{ theme: MavrykTheme
 `
 
 export const DelegationStatusBlock = styled(SatelliteStatusBlock)<{ theme: MavrykTheme }>`
-  .grid {
-    grid-template-rows: repeat(2, 50px);
-    column-gap: 15px;
-    row-gap: 20px;
+  height: 285px;
+  .top-row {
+    margin-top: 25px;
   }
 
   .delegated-to {

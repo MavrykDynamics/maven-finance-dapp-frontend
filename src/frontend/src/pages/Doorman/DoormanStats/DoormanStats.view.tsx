@@ -10,12 +10,11 @@ import { calcExitFee, calcMLI } from '../../../utils/calcFunctions'
 import { DoormanList, DoormanStatsHeader, DoormanStatsStyled } from './DoormanStats.style'
 
 type DoormanStatsViewProps = {
-  loading: boolean
   mvkTotalSupply?: number
   totalStakedMvkSupply?: number
 }
 
-export const DoormanStatsView = ({ loading, mvkTotalSupply, totalStakedMvkSupply }: DoormanStatsViewProps) => {
+export const DoormanStatsView = ({ mvkTotalSupply, totalStakedMvkSupply }: DoormanStatsViewProps) => {
   const stakedMvkTokens = totalStakedMvkSupply ?? 0
   const mli = calcMLI(mvkTotalSupply, totalStakedMvkSupply)
   const fee = calcExitFee(mvkTotalSupply, totalStakedMvkSupply)
@@ -42,7 +41,7 @@ export const DoormanStatsView = ({ loading, mvkTotalSupply, totalStakedMvkSupply
             </a>
           </h4>
           <var>
-            <CommaNumber value={exchangeRate} loading={loading} beginningText={'$'} />
+            <CommaNumber value={exchangeRate} beginningText={'$'} />
           </var>
         </div>
 
@@ -50,7 +49,7 @@ export const DoormanStatsView = ({ loading, mvkTotalSupply, totalStakedMvkSupply
           <div>
             <h4>MVK Token Address</h4>
             <var className="click-address">
-              <TzAddress type='blue' tzAddress={mvkTokenAddress?.address} hasIcon={true} />
+              <TzAddress type="blue" tzAddress={mvkTokenAddress?.address} hasIcon={true} />
             </var>
           </div>
         ) : null}
@@ -59,7 +58,7 @@ export const DoormanStatsView = ({ loading, mvkTotalSupply, totalStakedMvkSupply
           <div>
             <h4>Doorman Address</h4>
             <var className="click-address">
-              <TzAddress type='blue' tzAddress={doormanAddress?.address} hasIcon={true} />
+              <TzAddress type="blue" tzAddress={doormanAddress?.address} hasIcon={true} />
             </var>
           </div>
         ) : null}
@@ -76,7 +75,7 @@ export const DoormanStatsView = ({ loading, mvkTotalSupply, totalStakedMvkSupply
             </a>
           </h4>
           <var>
-            <CommaNumber value={mli} loading={loading} endingText={' '} />
+            <CommaNumber value={mli} endingText={' '} />
           </var>
         </div>
 
@@ -92,42 +91,42 @@ export const DoormanStatsView = ({ loading, mvkTotalSupply, totalStakedMvkSupply
             </a>
           </h4>
           <var>
-            <CommaNumber value={fee} loading={loading} endingText={'%'} />
+            <CommaNumber value={fee} endingText={'%'} />
           </var>
         </div>
 
         <div>
           <h4>Total Staked MVK</h4>
           <var>
-            <CommaNumber value={stakedMvkTokens} loading={loading} endingText={'MVK'} />
+            <CommaNumber value={stakedMvkTokens} endingText={'MVK'} />
           </var>
         </div>
 
         <div>
           <h4>Total Circulating</h4>
           <var>
-            <CommaNumber value={totalSupply} loading={loading} endingText={'MVK'} />
+            <CommaNumber value={totalSupply} endingText={'MVK'} />
           </var>
         </div>
 
         <div>
           <h4>Max Supply</h4>
           <var>
-            <CommaNumber value={maximumTotalSupply} loading={loading} endingText={'MVK'} />
+            <CommaNumber value={maximumTotalSupply} endingText={'MVK'} />
           </var>
         </div>
 
         <div>
           <h4>Market Cap</h4>
           <var>
-            <CommaNumber value={marketCapValue} loading={loading} endingText={'USD'} />
+            <CommaNumber value={marketCapValue} endingText={'USD'} />
           </var>
         </div>
 
         {/* <div>
           <h4>Total supply</h4>
           <var>
-            <CommaNumber value={maximumTotalSupply} loading={loading} endingText={'MVK'} />
+            <CommaNumber value={maximumTotalSupply}  endingText={'MVK'} />
           </var>
         </div> */}
       </DoormanList>

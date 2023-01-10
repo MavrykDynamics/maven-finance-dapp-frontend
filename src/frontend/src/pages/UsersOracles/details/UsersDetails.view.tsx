@@ -33,13 +33,11 @@ const emptyContainer = (
 
 const UserDetailsView = ({
   user,
-  isLoading,
   feeds,
   handleSelect,
   categories,
 }: {
   user: UserType | null
-  isLoading: boolean
   feeds: FeedGQL[]
   handleSelect: (e: string) => void
   categories: string[]
@@ -118,11 +116,7 @@ const UserDetailsView = ({
         </DropdownContainer>
       </SatelliteSearchFilter>
 
-      {feeds ? (
-        <SatelliteList items={feeds} listType={'userFeeds'} name={USER_DATA_FEEDS_LIST_NAME} loading={isLoading} />
-      ) : (
-        emptyContainer
-      )}
+      {feeds ? <SatelliteList items={feeds} listType={'userFeeds'} name={USER_DATA_FEEDS_LIST_NAME} /> : emptyContainer}
     </Page>
   ) : null
 }
