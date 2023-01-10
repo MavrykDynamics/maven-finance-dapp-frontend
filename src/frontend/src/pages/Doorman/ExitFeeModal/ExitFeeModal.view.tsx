@@ -22,7 +22,6 @@ import { setExitFeeAmount } from './ExitFeeModal.actions'
 import { ExitFeeModalButtons, ExitFeeModalContent, ExitFeeModalFee, ExitFeeModalGrid } from './ExitFeeModal.style'
 
 type ExitFeeModalViewProps = {
-  loading: boolean
   showing: boolean
   unstakeCallback: (amount: number) => void
   cancelCallback: () => void
@@ -32,7 +31,6 @@ type ExitFeeModalViewProps = {
 }
 
 export const ExitFeeModalView = ({
-  loading,
   showing,
   unstakeCallback,
   cancelCallback,
@@ -127,7 +125,7 @@ export const ExitFeeModalView = ({
                   errorMessage={stakeUnstakeValueError}
                 />
                 <DoormanList>
-                  <div className='info-section'>
+                  <div className="info-section">
                     <h4>
                       MVK Loyalty Index
                       <a
@@ -139,7 +137,7 @@ export const ExitFeeModalView = ({
                       </a>
                     </h4>
                     <var>
-                      <CommaNumber value={mli} loading={loading} endingText={' '} />
+                      <CommaNumber value={mli} endingText={' '} />
                     </var>
                   </div>
                   <div>
@@ -154,7 +152,7 @@ export const ExitFeeModalView = ({
                       </a>
                     </h4>
                     <var>
-                      <CommaNumber value={fee} loading={loading} endingText={'%'} />
+                      <CommaNumber value={fee} endingText={'%'} />
                     </var>
                   </div>
                 </DoormanList>
@@ -165,7 +163,6 @@ export const ExitFeeModalView = ({
                     icon="success"
                     disabled={!stakeUnstakeValueOK.amount}
                     kind={ACTION_PRIMARY}
-                    loading={loading}
                     onClick={() => {
                       dispatch(setExitFeeAmount(inputAmountValue))
                       unstakeCallback(inputAmountValue)
@@ -176,7 +173,6 @@ export const ExitFeeModalView = ({
                     text="Cancel"
                     kind={ACTION_SECONDARY}
                     icon="error"
-                    loading={loading}
                     onClick={() => {
                       dispatch(setExitFeeAmount(inputAmountValue))
                       cancelCallback()

@@ -33,7 +33,6 @@ import SatellitesSideBar from 'pages/Satellites/SatellitesSideBar/SatellitesSide
 import type { DelegationStorage } from '../../utils/TypesAndInterfaces/Delegation'
 
 type BecomeSatelliteViewProps = {
-  loading: boolean
   myTotalStakeBalance: number
   satelliteConfig: DelegationStorage['config']
   accountPkh?: string
@@ -61,7 +60,6 @@ const FORM_VALID_DEFAULT = {
 const defaultAvatar = '/images/default-avatar.png'
 
 export const BecomeSatelliteView = ({
-  loading,
   myTotalStakeBalance,
   satelliteConfig,
   accountPkh,
@@ -332,7 +330,6 @@ export const BecomeSatelliteView = ({
                   kind={ACTION_SECONDARY}
                   disabled={disabled}
                   text={'Unregister Satellite'}
-                  loading={loading}
                   onClick={handleUnregisterSatellite}
                 />
               )}
@@ -345,7 +342,6 @@ export const BecomeSatelliteView = ({
                       : 'Register Satellite'
                     : 'Become a Satellite'
                 }
-                loading={loading}
                 disabled={disabled}
                 kind={ACTION_PRIMARY}
                 onClick={handleSubmit}

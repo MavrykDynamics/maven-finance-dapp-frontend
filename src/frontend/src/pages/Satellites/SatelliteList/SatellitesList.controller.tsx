@@ -12,7 +12,6 @@ const SatelliteList = ({
   name,
   listType,
   additionaldata,
-  loading,
   pagination = true,
   className,
 }: SatellitesListProps) => {
@@ -32,7 +31,6 @@ const SatelliteList = ({
       name={name}
       listTitle={listTitle}
       onClickHandler={onClickHandler}
-      loading={loading}
       pagination={pagination}
       className={className}
     />

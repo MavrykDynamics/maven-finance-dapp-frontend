@@ -14,7 +14,6 @@ type BorrowingTabPropsType = {
 
 export const BorrowingTab = ({ borrowingItems }: BorrowingTabPropsType) => {
   const dispatch = useDispatch()
-
   const createVaultHandler = () => dispatch(toggleLoansModal(CREATE_NEW_VAULT_MODAL_ID))
 
   return (
@@ -23,7 +22,7 @@ export const BorrowingTab = ({ borrowingItems }: BorrowingTabPropsType) => {
         <h2>My Boorrowing</h2>
       </GovRightContainerTitleArea>
 
-      {borrowingItems.length || true ? (
+      {borrowingItems.length ? (
         <>
           <Button
             text="New Vault"
@@ -33,33 +32,8 @@ export const BorrowingTab = ({ borrowingItems }: BorrowingTabPropsType) => {
             className="lending-tab-no-items-btn has-items-borrow-btn"
           />
           <div className="list-wrapper">
-            {[
-              {
-                assetSymbol: 'xtz',
-                amtBorrowed: 0,
-                assetRate: 1,
-                collateralBalance: 0,
-                collateralUtilization: 0,
-                apy: 0,
-                fee: 0,
-              },
-            ].map((item) => {
-              return (
-                <BorrowingExpandCard
-                  borrowedAsset={{
-                    assetSymbol: 'xtz',
-                    amtBorrowed: 0,
-                    assetRate: 0,
-                    collateralBalance: 0,
-                    collateralUtilization: 0,
-                    apy: 0,
-                    fee: 0,
-                  }}
-                  collateralData={[]}
-                  isOwner
-                  {...item}
-                />
-              )
+            {borrowingItems.map((item, idx) => {
+              return <BorrowingExpandCard isOwner {...item} key={item.borrowedAsset.assetSymbol + '-' + idx} />
             })}
           </div>
         </>

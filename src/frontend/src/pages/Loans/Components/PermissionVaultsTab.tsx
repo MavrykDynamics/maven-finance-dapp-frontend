@@ -1,10 +1,11 @@
 import { EmptyContainer } from 'app/App.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
+import { BorrowingData } from 'utils/TypesAndInterfaces/Loans'
 import { BorrowingExpandCard } from './BorrowindExpandCard'
 import { LoansTabStyled } from './LoansComponents.style'
 
 type PermissionVaultsPropsType = {
-  permissionVaults: Array<any>
+  permissionVaults: Array<BorrowingData>
 }
 
 export const PermissionVaults = ({ permissionVaults }: PermissionVaultsPropsType) => {
@@ -14,21 +15,11 @@ export const PermissionVaults = ({ permissionVaults }: PermissionVaultsPropsType
         <h2>Permissions Vaults</h2>
       </GovRightContainerTitleArea>
 
-      {permissionVaults.length || true ? (
+      {permissionVaults.length ? (
         <div className="list-wrapper">
-          <BorrowingExpandCard
-            borrowedAsset={{
-              assetSymbol: '',
-              assetIcon: undefined,
-              amtBorrowed: 0,
-              assetRate: 0,
-              collateralBalance: 0,
-              collateralUtilization: 0,
-              apy: 0,
-              fee: 0,
-            }}
-            collateralData={[]}
-          />
+          {permissionVaults.map((item) => {
+            return <BorrowingExpandCard {...item} />
+          })}
         </div>
       ) : (
         <EmptyContainer

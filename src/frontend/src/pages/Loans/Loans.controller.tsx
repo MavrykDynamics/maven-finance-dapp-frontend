@@ -12,16 +12,17 @@ import { LoansModals } from './Components/Modals/Modal.controller'
 
 export const Loans = () => {
   const dispatch = useDispatch()
-  const { isInitialDataloading } = useSelector((state: State) => state.loading)
+  const { isInitialDataLoading } = useSelector((state: State) => state.loading)
   const { dipDupTokens } = useSelector((state: State) => state.tokens)
+  const { accountPkh } = useSelector((state: State) => state.wallet)
 
   useEffect(() => {
     ;(async () => {
-      if (!isInitialDataloading && dipDupTokens.length) {
+      if (!isInitialDataLoading && dipDupTokens.length) {
         await dispatch(getLoansStorage())
       }
     })()
-  }, [isInitialDataloading, dipDupTokens, dispatch])
+  }, [isInitialDataLoading, dipDupTokens, accountPkh])
 
   return (
     <Page>

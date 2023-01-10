@@ -19,7 +19,7 @@ import {
   COUNCIL_STORAGE_QUERY_VARIABLE,
 } from '../../gql/queries/getCouncilStorage'
 import { noralizeCouncilStorage, normalizeCouncilActions } from './Council.helpers'
-import { toggleLoader } from 'app/App.components/Loader/Loader.action'
+import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 import { ROCKET_LOADER } from 'utils/constants'
 
 const time = String(new Date())
@@ -116,7 +116,7 @@ export const sign = (actionID: number) => async (dispatch: AppDispatch, getState
     return
   }
 
-  if (state.loading.isLoading) {
+  if (state.loading.isActionLoading) {
     dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
     return
   }
@@ -124,7 +124,7 @@ export const sign = (actionID: number) => async (dispatch: AppDispatch, getState
   try {
     const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.councilAddress.address)
     const transaction = await contract?.methods.signAction(actionID).send()
-    await dispatch(toggleLoader(ROCKET_LOADER))
+    await dispatch(toggleActionLoader(true))
 
     dispatch(showToaster(INFO, 'Sign...', 'Please wait 30s'))
     await transaction?.confirmation()
@@ -132,12 +132,12 @@ export const sign = (actionID: number) => async (dispatch: AppDispatch, getState
 
     await dispatch(getCouncilPastActionsStorage())
     await dispatch(getCouncilPendingActionsStorage())
-    await dispatch(toggleLoader())
+    await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {
       dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    await dispatch(toggleLoader())
+    await dispatch(toggleActionLoader(false))
   }
 }
 
@@ -152,7 +152,7 @@ export const addVestee =
       return
     }
 
-    if (state.loading.isLoading) {
+    if (state.loading.isActionLoading) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
@@ -162,7 +162,7 @@ export const addVestee =
       const transaction = await contract?.methods
         .councilActionAddVestee(vesteeAddress, totalAllocated, cliffInMonths, vestingInMonths)
         .send()
-      await dispatch(toggleLoader(ROCKET_LOADER))
+      await dispatch(toggleActionLoader(true))
 
       dispatch(showToaster(INFO, 'Add Vestee...', 'Please wait 30s'))
       await transaction?.confirmation()
@@ -170,12 +170,12 @@ export const addVestee =
 
       await dispatch(getCouncilPastActionsStorage())
       await dispatch(getCouncilPendingActionsStorage())
-      await dispatch(toggleLoader())
+      await dispatch(toggleActionLoader(false))
     } catch (error) {
       if (error instanceof Error) {
         dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      await dispatch(toggleLoader())
+      await dispatch(toggleActionLoader(false))
     }
   }
 
@@ -190,7 +190,7 @@ export const addCouncilMember =
       return
     }
 
-    if (state.loading.isLoading) {
+    if (state.loading.isActionLoading) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
@@ -200,7 +200,7 @@ export const addCouncilMember =
       const transaction = await contract?.methods
         .councilActionAddMember(newMemberAddress, newMemberName, newMemberWebsite, newMemberImage)
         .send()
-      await dispatch(toggleLoader(ROCKET_LOADER))
+      await dispatch(toggleActionLoader(true))
 
       dispatch(showToaster(INFO, 'Add Council Member...', 'Please wait 30s'))
       await transaction?.confirmation()
@@ -209,12 +209,12 @@ export const addCouncilMember =
       await dispatch(getCouncilPastActionsStorage())
       await dispatch(getCouncilPendingActionsStorage())
       await dispatch(getCouncilStorage())
-      await dispatch(toggleLoader())
+      await dispatch(toggleActionLoader(false))
     } catch (error) {
       if (error instanceof Error) {
         dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      await dispatch(toggleLoader())
+      await dispatch(toggleActionLoader(false))
     }
   }
 
@@ -229,7 +229,7 @@ export const updateVestee =
       return
     }
 
-    if (state.loading.isLoading) {
+    if (state.loading.isActionLoading) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
@@ -239,7 +239,7 @@ export const updateVestee =
       const transaction = await contract?.methods
         .councilActionUpdateVestee(vesteeAddress, totalAllocated, cliffInMonths, vestingInMonths)
         .send()
-      await dispatch(toggleLoader(ROCKET_LOADER))
+      await dispatch(toggleActionLoader(true))
 
       dispatch(showToaster(INFO, 'Update Vestee...', 'Please wait 30s'))
       await transaction?.confirmation()
@@ -247,13 +247,13 @@ export const updateVestee =
 
       await dispatch(getCouncilPastActionsStorage())
       await dispatch(getCouncilPendingActionsStorage())
-      await dispatch(toggleLoader())
+      await dispatch(toggleActionLoader(false))
     } catch (error) {
       if (error instanceof Error) {
         console.error(error)
         dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      await dispatch(toggleLoader())
+      await dispatch(toggleActionLoader(false))
     }
   }
 
@@ -266,7 +266,7 @@ export const toggleVesteeLock = (vesteeAddress: string) => async (dispatch: AppD
     return
   }
 
-  if (state.loading.isLoading) {
+  if (state.loading.isActionLoading) {
     dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
     return
   }
@@ -274,7 +274,7 @@ export const toggleVesteeLock = (vesteeAddress: string) => async (dispatch: AppD
   try {
     const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.councilAddress.address)
     const transaction = await contract?.methods.councilActionToggleVesteeLock(vesteeAddress).send()
-    await dispatch(toggleLoader(ROCKET_LOADER))
+    await dispatch(toggleActionLoader(true))
 
     dispatch(showToaster(INFO, 'Toggle Vestee Lock...', 'Please wait 30s'))
     await transaction?.confirmation()
@@ -282,13 +282,13 @@ export const toggleVesteeLock = (vesteeAddress: string) => async (dispatch: AppD
 
     await dispatch(getCouncilPastActionsStorage())
     await dispatch(getCouncilPendingActionsStorage())
-    await dispatch(toggleLoader())
+    await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
       dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    await dispatch(toggleLoader())
+    await dispatch(toggleActionLoader(false))
   }
 }
 
@@ -309,7 +309,7 @@ export const changeCouncilMember =
       return
     }
 
-    if (state.loading.isLoading) {
+    if (state.loading.isActionLoading) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
@@ -325,7 +325,7 @@ export const changeCouncilMember =
           newMemberImage,
         )
         .send()
-      await dispatch(toggleLoader(ROCKET_LOADER))
+      await dispatch(toggleActionLoader(true))
 
       dispatch(showToaster(INFO, 'Change Council Member...', 'Please wait 30s'))
       await transaction?.confirmation()
@@ -334,13 +334,13 @@ export const changeCouncilMember =
       await dispatch(getCouncilStorage())
       await dispatch(getCouncilPastActionsStorage())
       await dispatch(getCouncilPendingActionsStorage())
-      await dispatch(toggleLoader())
+      await dispatch(toggleActionLoader(false))
     } catch (error) {
       if (error instanceof Error) {
         console.error(error)
         dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      await dispatch(toggleLoader())
+      await dispatch(toggleActionLoader(false))
     }
   }
 
@@ -353,7 +353,7 @@ export const removeCouncilMember = (memberAddress: string) => async (dispatch: A
     return
   }
 
-  if (state.loading.isLoading) {
+  if (state.loading.isActionLoading) {
     dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
     return
   }
@@ -361,7 +361,7 @@ export const removeCouncilMember = (memberAddress: string) => async (dispatch: A
   try {
     const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.councilAddress.address)
     const transaction = await contract?.methods.councilActionRemoveMember(memberAddress).send()
-    await dispatch(toggleLoader(ROCKET_LOADER))
+    await dispatch(toggleActionLoader(true))
 
     dispatch(showToaster(INFO, 'Remove Council Member...', 'Please wait 30s'))
     await transaction?.confirmation()
@@ -370,13 +370,13 @@ export const removeCouncilMember = (memberAddress: string) => async (dispatch: A
     await dispatch(getCouncilStorage())
     await dispatch(getCouncilPastActionsStorage())
     await dispatch(getCouncilPendingActionsStorage())
-    await dispatch(toggleLoader())
+    await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
       dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    await dispatch(toggleLoader())
+    await dispatch(toggleActionLoader(false))
   }
 }
 
@@ -391,7 +391,7 @@ export const updateCouncilMemberInfo =
       return
     }
 
-    if (state.loading.isLoading) {
+    if (state.loading.isActionLoading) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
@@ -401,7 +401,7 @@ export const updateCouncilMemberInfo =
       const transaction = await contract?.methods
         .updateCouncilMemberInfo(newMemberName, newMemberWebsite, newMemberImage)
         .send()
-      await dispatch(toggleLoader(ROCKET_LOADER))
+      await dispatch(toggleActionLoader(true))
 
       await dispatch(showToaster(INFO, 'Update Council Member Info...', 'Please wait 30s'))
       await transaction?.confirmation()
@@ -410,13 +410,13 @@ export const updateCouncilMemberInfo =
       await dispatch(getCouncilStorage())
       await dispatch(getCouncilPastActionsStorage())
       await dispatch(getCouncilPendingActionsStorage())
-      await dispatch(toggleLoader())
+      await dispatch(toggleActionLoader(false))
     } catch (error) {
       if (error instanceof Error) {
         console.error(error)
         dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      await dispatch(toggleLoader())
+      await dispatch(toggleActionLoader(false))
     }
   }
 
@@ -438,7 +438,7 @@ export const transferTokens =
       return
     }
 
-    if (state.loading.isLoading) {
+    if (state.loading.isActionLoading) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
@@ -448,7 +448,7 @@ export const transferTokens =
       const transaction = await contract?.methods
         .councilActionTransfer(receiverAddress, tokenContractAddress, tokenAmount, tokenType, tokenId, purpose)
         .send()
-      await dispatch(toggleLoader(ROCKET_LOADER))
+      await dispatch(toggleActionLoader(true))
 
       dispatch(showToaster(INFO, 'Transfer Tokens...', 'Please wait 30s'))
       await transaction?.confirmation()
@@ -457,13 +457,13 @@ export const transferTokens =
       await dispatch(getCouncilStorage())
       await dispatch(getCouncilPastActionsStorage())
       await dispatch(getCouncilPendingActionsStorage())
-      await dispatch(toggleLoader())
+      await dispatch(toggleActionLoader(false))
     } catch (error) {
       if (error instanceof Error) {
         console.error(error)
         await dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      await dispatch(toggleLoader())
+      await dispatch(toggleActionLoader(false))
     }
   }
 
@@ -486,7 +486,7 @@ export const requestTokens =
       return
     }
 
-    if (state.loading.isLoading) {
+    if (state.loading.isActionLoading) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
@@ -504,7 +504,7 @@ export const requestTokens =
           purpose,
         )
         .send()
-      await dispatch(toggleLoader(ROCKET_LOADER))
+      await dispatch(toggleActionLoader(true))
 
       dispatch(showToaster(INFO, 'Request Tokens...', 'Please wait 30s'))
       await transaction?.confirmation()
@@ -513,13 +513,13 @@ export const requestTokens =
       await dispatch(getCouncilStorage())
       await dispatch(getCouncilPastActionsStorage())
       await dispatch(getCouncilPendingActionsStorage())
-      await dispatch(toggleLoader())
+      await dispatch(toggleActionLoader(false))
     } catch (error) {
       if (error instanceof Error) {
         console.error(error)
         await dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      await dispatch(toggleLoader())
+      await dispatch(toggleActionLoader(false))
     }
   }
 
@@ -534,7 +534,7 @@ export const requestTokenMint =
       return
     }
 
-    if (state.loading.isLoading) {
+    if (state.loading.isActionLoading) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
@@ -542,7 +542,7 @@ export const requestTokenMint =
     try {
       const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.councilAddress.address)
       const transaction = await contract?.methods.councilActionRequestMint(treasuryAddress, tokenAmount, purpose).send()
-      await dispatch(toggleLoader(ROCKET_LOADER))
+      await dispatch(toggleActionLoader(true))
 
       dispatch(showToaster(INFO, 'Request Tokens...', 'Please wait 30s'))
       await transaction?.confirmation()
@@ -551,13 +551,13 @@ export const requestTokenMint =
       await dispatch(getCouncilStorage())
       await dispatch(getCouncilPastActionsStorage())
       await dispatch(getCouncilPendingActionsStorage())
-      await dispatch(toggleLoader())
+      await dispatch(toggleActionLoader(false))
     } catch (error) {
       if (error instanceof Error) {
         console.error(error)
         dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      await dispatch(toggleLoader())
+      await dispatch(toggleActionLoader(false))
     }
   }
 
@@ -570,7 +570,7 @@ export const dropFinancialRequest = (financialReqID: number) => async (dispatch:
     return
   }
 
-  if (state.loading.isLoading) {
+  if (state.loading.isActionLoading) {
     dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
     return
   }
@@ -578,7 +578,7 @@ export const dropFinancialRequest = (financialReqID: number) => async (dispatch:
   try {
     const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.councilAddress.address)
     const transaction = await contract?.methods.councilActionDropFinancialReq(financialReqID).send()
-    await dispatch(toggleLoader(ROCKET_LOADER))
+    await dispatch(toggleActionLoader(true))
 
     dispatch(showToaster(INFO, 'Drop Financial Request...', 'Please wait 30s'))
     await transaction?.confirmation()
@@ -587,13 +587,13 @@ export const dropFinancialRequest = (financialReqID: number) => async (dispatch:
     await dispatch(getCouncilStorage())
     await dispatch(getCouncilPastActionsStorage())
     await dispatch(getCouncilPendingActionsStorage())
-    await dispatch(toggleLoader())
+    await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
       dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    await dispatch(toggleLoader())
+    await dispatch(toggleActionLoader(false))
   }
 }
 
@@ -606,7 +606,7 @@ export const removeVesteeRequest = (vesteeAddress: string) => async (dispatch: A
     return
   }
 
-  if (state.loading.isLoading) {
+  if (state.loading.isActionLoading) {
     dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
     return
   }
@@ -614,7 +614,7 @@ export const removeVesteeRequest = (vesteeAddress: string) => async (dispatch: A
   try {
     const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.councilAddress.address)
     const transaction = await contract?.methods.councilActionRemoveVestee(vesteeAddress).send()
-    await dispatch(toggleLoader(ROCKET_LOADER))
+    await dispatch(toggleActionLoader(true))
 
     dispatch(showToaster(INFO, 'Remove Vestee Request...', 'Please wait 30s'))
     await transaction?.confirmation()
@@ -623,13 +623,13 @@ export const removeVesteeRequest = (vesteeAddress: string) => async (dispatch: A
     await dispatch(getCouncilStorage())
     await dispatch(getCouncilPastActionsStorage())
     await dispatch(getCouncilPendingActionsStorage())
-    await dispatch(toggleLoader())
+    await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
       dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    await dispatch(toggleLoader())
+    await dispatch(toggleActionLoader(false))
   }
 }
 
@@ -642,7 +642,7 @@ export const setBakerRequest = (bakerHash: string) => async (dispatch: AppDispat
     return
   }
 
-  if (state.loading.isLoading) {
+  if (state.loading.isActionLoading) {
     dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
     return
   }
@@ -650,7 +650,7 @@ export const setBakerRequest = (bakerHash: string) => async (dispatch: AppDispat
   try {
     const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.councilAddress.address)
     const transaction = await contract?.methods.councilActionSetBaker(bakerHash).send()
-    await dispatch(toggleLoader(ROCKET_LOADER))
+    await dispatch(toggleActionLoader(true))
 
     dispatch(showToaster(INFO, 'Set Baker Request...', 'Please wait 30s'))
     await transaction?.confirmation()
@@ -659,13 +659,13 @@ export const setBakerRequest = (bakerHash: string) => async (dispatch: AppDispat
     await dispatch(getCouncilStorage())
     await dispatch(getCouncilPastActionsStorage())
     await dispatch(getCouncilPendingActionsStorage())
-    await dispatch(toggleLoader())
+    await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
       dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    await dispatch(toggleLoader())
+    await dispatch(toggleActionLoader(false))
   }
 }
 
@@ -679,7 +679,7 @@ export const setContractBakerRequest =
       return
     }
 
-    if (state.loading.isLoading) {
+    if (state.loading.isActionLoading) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
@@ -687,7 +687,7 @@ export const setContractBakerRequest =
     try {
       const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.councilAddress.address)
       const transaction = await contract?.methods.councilActionSetContractBaker(targetContractAddress, keyHash).send()
-      await dispatch(toggleLoader(ROCKET_LOADER))
+      await dispatch(toggleActionLoader(true))
 
       dispatch(showToaster(INFO, 'Set Contract Baker Request...', 'Please wait 30s'))
       await transaction?.confirmation()
@@ -696,20 +696,17 @@ export const setContractBakerRequest =
       await dispatch(getCouncilStorage())
       await dispatch(getCouncilPastActionsStorage())
       await dispatch(getCouncilPendingActionsStorage())
-      await dispatch(toggleLoader())
+      await dispatch(toggleActionLoader(false))
     } catch (error) {
       if (error instanceof Error) {
         console.error(error)
         dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      await dispatch(toggleLoader())
+      await dispatch(toggleActionLoader(false))
     }
   }
 
 // Drop Request
-export const DROP_REQUEST = 'DROP_REQUEST'
-export const DROP_RESULT = 'DROP_RESULT'
-export const DROP_ERROR = 'DROP_ERROR'
 export const dropRequest = (actionID: number) => async (dispatch: AppDispatch, getState: GetState) => {
   const state: State = getState()
 
@@ -718,15 +715,13 @@ export const dropRequest = (actionID: number) => async (dispatch: AppDispatch, g
     return
   }
 
-  if (state.loading.isLoading) {
+  if (state.loading.isActionLoading) {
     dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
     return
   }
 
   try {
-    dispatch({
-      type: DROP_REQUEST,
-    })
+    await dispatch(toggleActionLoader(true))
     const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.councilAddress.address)
     console.log('contract', contract)
     const transaction = await contract?.methods.flushAction(actionID).send()
@@ -741,13 +736,12 @@ export const dropRequest = (actionID: number) => async (dispatch: AppDispatch, g
     await dispatch(getCouncilStorage())
     await dispatch(getCouncilPastActionsStorage())
     await dispatch(getCouncilPendingActionsStorage())
-    await dispatch({
-      type: DROP_RESULT,
-    })
+    await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
       dispatch(showToaster(ERROR, 'Error', error.message))
     }
+    await dispatch(toggleActionLoader(false))
   }
 }

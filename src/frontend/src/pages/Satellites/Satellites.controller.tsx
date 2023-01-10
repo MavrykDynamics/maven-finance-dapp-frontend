@@ -20,7 +20,6 @@ const Satellites = () => {
     delegationStorage: { activeSatellites = [] },
   } = useSelector((state: State) => state.delegation)
   const { oraclesStorage } = useSelector((state: State) => state.oracles)
-  const loading = useSelector((state: State) => state.loading.isLoading)
   const {
     user: { mySMvkTokenBalance, satelliteMvkIsDelegatedTo },
   } = useSelector((state: State) => state.wallet)
@@ -61,7 +60,6 @@ const Satellites = () => {
 
   return (
     <SatellitesView
-      isLoading={loading}
       tabsInfo={tabsInfo}
       delegateCallback={delegateCallback}
       oracleSatellitesData={{

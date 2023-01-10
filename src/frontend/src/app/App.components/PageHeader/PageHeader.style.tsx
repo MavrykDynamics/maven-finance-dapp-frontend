@@ -69,6 +69,7 @@ export const PageHeaderTextArea = styled.div`
     .icon {
       width: 45px;
       height: 45px;
+      fill: ${({ theme }) => theme.textColor};
 
       img {
         width: 100%;

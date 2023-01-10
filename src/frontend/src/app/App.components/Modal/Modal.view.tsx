@@ -6,20 +6,17 @@ import { FarmWithdrawModal } from './FarmWithdrawModal/FarmWithdrawModal.control
 
 type ModalViewProps = {
   kind?: ModalKind
-  loading: boolean
   showing: boolean
   cancelCallback: () => void
 }
 
-export const ModalView = ({ kind = PRIMARY, loading, showing, cancelCallback }: ModalViewProps) => {
+export const ModalView = ({ kind = PRIMARY, showing, cancelCallback }: ModalViewProps) => {
   return (
     <ModalStyled showing={showing}>
       {showing && (
         <>
           <ModalMask showing={showing} onClick={() => cancelCallback()} />
-          {kind === REQUIRES_ACKNOWLEDGEMENT && (
-            <EmergencyGovernanceActiveModal loading={loading} cancelCallback={cancelCallback} />
-          )}
+          {kind === REQUIRES_ACKNOWLEDGEMENT && <EmergencyGovernanceActiveModal cancelCallback={cancelCallback} />}
           {kind === FARM_DEPOSIT && <FarmDepositModal />}
           {kind === FARM_WITHDRAW && <FarmWithdrawModal />}
         </>

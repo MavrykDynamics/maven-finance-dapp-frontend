@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
@@ -16,17 +15,21 @@ import { DoormanStatsView } from './DoormanStats/DoormanStats.view'
 import { showExitFeeModal } from './ExitFeeModal/ExitFeeModal.actions'
 import { ExitFeeModal } from './ExitFeeModal/ExitFeeModal.controller'
 import { StakeUnstakeView } from './StakeUnstake/StakeUnstake.view'
+import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 
 export const Doorman = () => {
   const dispatch = useDispatch()
 
-  const { mvkTokenStorage } = useSelector((state: State) => state.mvkToken)
+  const { totalSupply = 0 } = useSelector((state: State) => state.mvkToken.mvkTokenStorage)
   const { totalStakedMvk } = useSelector((state: State) => state.doorman)
 
-  useEffect(() => {
-    dispatch(getMvkTokenStorage())
-    dispatch(getDoormanStorage())
-  }, [dispatch])
+  const { isLoading } = useDataLoader(async () => {
+    try {
+      await Promise.all([dispatch(getMvkTokenStorage()), dispatch(getDoormanStorage())])
+    } catch (e) {
+      //TODO: handle fetch error
+    }
+  }, [])
 
   const stakeCallback = (amount: number) => {
     dispatch(stake(amount))
@@ -38,18 +41,19 @@ export const Doorman = () => {
 
   return (
     <Page>
-      <ExitFeeModal />
-      <PageHeader page={'doorman'} />
-      <StakeUnstakeView stakeCallback={stakeCallback} unstakeCallback={unstakeCallback} />
-      <DoormanInfoStyled>
-        <DoormanChart />
-
-        <DoormanStatsView
-          loading={false}
-          mvkTotalSupply={mvkTokenStorage?.totalSupply}
-          totalStakedMvkSupply={totalStakedMvk}
-        />
-      </DoormanInfoStyled>
+      {isLoading ? (
+        '... loading dorman data'
+      ) : (
+        <>
+          <ExitFeeModal />
+          <PageHeader page={'doorman'} />
+          <StakeUnstakeView stakeCallback={stakeCallback} unstakeCallback={unstakeCallback} />
+          <DoormanInfoStyled>
+            <DoormanChart />
+            <DoormanStatsView mvkTotalSupply={totalSupply} totalStakedMvkSupply={totalStakedMvk} />
+          </DoormanInfoStyled>
+        </>
+      )}
     </Page>
   )
 }

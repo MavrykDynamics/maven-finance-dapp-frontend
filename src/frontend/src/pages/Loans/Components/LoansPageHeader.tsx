@@ -17,7 +17,8 @@ type MarketPageHeaderPropsType = {
 }
 
 export const MarketPageHeader = ({ currentAsset, assetId }: MarketPageHeaderPropsType) => {
-  const foregroundImageSrc = ASSETS_WE_HAVE_BG_TO.includes(assetId)
+  // TODO: handle images we can display in header, by name
+  const foregroundImageSrc = ASSETS_WE_HAVE_BG_TO.includes(assetId.toUpperCase())
     ? `/images/lending-header-${assetId.toUpperCase()}.svg`
     : '/images/lending-header.svg'
 
@@ -31,7 +32,7 @@ export const MarketPageHeader = ({ currentAsset, assetId }: MarketPageHeaderProp
                 <img src={currentAsset.loanTokenData.icon} alt={`${currentAsset.loanTokenData.symbol} logo`} />
               </div>
             ) : (
-              <Icon id={'noIcon'} />
+              <Icon id={'noImage'} />
             )}
           </div>
           <div className="text-container">

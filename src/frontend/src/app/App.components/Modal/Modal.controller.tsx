@@ -5,7 +5,6 @@ import { hideModal } from './Modal.actions'
 
 export const Modal = () => {
   const dispatch = useDispatch()
-  const loading = useSelector((state: State) => state.loading.isLoading)
   const { kind } = useSelector((state: State) => state.modal)
   const { showing } = useSelector((state: State) => state.modal)
 
@@ -13,5 +12,5 @@ export const Modal = () => {
     dispatch(hideModal())
   }
 
-  return <ModalView kind={kind} loading={loading} cancelCallback={cancelCallback} showing={showing} />
+  return <ModalView kind={kind} cancelCallback={cancelCallback} showing={showing} />
 }

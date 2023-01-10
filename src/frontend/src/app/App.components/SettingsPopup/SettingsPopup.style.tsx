@@ -50,6 +50,11 @@ export const PopupContainerWrapper = styled.div`
     }
   }
 
+  &.loans {
+    max-width: 586px;
+    padding: 30px 40px 40px;
+  }
+
   @media (max-width: 500px) {
     &.settings {
       .theme-switcher-block {
@@ -169,15 +174,25 @@ export const PopupContainer = styled.div<{ show?: boolean }>`
   top: 0;
   left: 0;
   display: flex;
+  justify-content: center;
+  align-items: center;
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.35s, visibility 0.35s;
+
+  > div {
+    display: none;
+  }
 
   ${({ show }) =>
     show
       ? css`
           opacity: 1;
           visibility: visible;
+
+          > div {
+            display: flex;
+          }
         `
       : ''}
 

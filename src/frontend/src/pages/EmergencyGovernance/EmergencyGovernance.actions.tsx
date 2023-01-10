@@ -12,7 +12,7 @@ import { getDoormanStorage, getMvkTokenStorage } from '../Doorman/Doorman.action
 import { HIDE_EXIT_FEE_MODAL } from '../Doorman/ExitFeeModal/ExitFeeModal.actions'
 import { normalizeEmergencyGovernance } from '../EmergencyGovernance/EmergencyGovernance.helpers'
 import { EmergencyGovernanceProposalForm } from '../../utils/TypesAndInterfaces/Forms'
-import { toggleLoader } from 'app/App.components/Loader/Loader.action'
+import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 import { ROCKET_LOADER } from 'utils/constants'
 
 export const GET_EMERGENCY_GOVERNANCE_STORAGE = 'GET_EMERGENCY_GOVERNANCE_STORAGE'
@@ -48,7 +48,7 @@ export const submitEmergencyGovernanceProposal =
       return
     }
 
-    if (state.loading.isLoading) {
+    if (state.loading.isActionLoading) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
@@ -59,7 +59,7 @@ export const submitEmergencyGovernanceProposal =
         .triggerEmergencyControl(form.title, form.description)
         .send({ amount: state.emergencyGovernance.emergencyGovernanceStorage.config.requiredFeeMutez || 0 })
 
-      await dispatch(toggleLoader(ROCKET_LOADER))
+      await dispatch(toggleActionLoader(true))
       await dispatch(showToaster(INFO, 'Submitting emergency proposal...', 'Please wait 30s'))
       await dispatch({
         type: HIDE_EXIT_FEE_MODAL,
@@ -70,13 +70,13 @@ export const submitEmergencyGovernanceProposal =
       await dispatch(showToaster(SUCCESS, 'Emergency Proposal Submitted', 'All good :)'))
       await dispatch(getMvkTokenStorage())
       await dispatch(getDoormanStorage())
-      await dispatch(toggleLoader())
+      await dispatch(toggleActionLoader(false))
     } catch (error) {
       if (error instanceof Error) {
         console.error(error)
         await dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      await dispatch(toggleLoader())
+      await dispatch(toggleActionLoader(false))
     }
   }
 
@@ -88,7 +88,7 @@ export const voteEmergencyGovernanceProposal = () => async (dispatch: AppDispatc
     return
   }
 
-  if (state.loading.isLoading) {
+  if (state.loading.isActionLoading) {
     dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
     return
   }
@@ -97,7 +97,7 @@ export const voteEmergencyGovernanceProposal = () => async (dispatch: AppDispatc
     const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.emergencyGovernanceAddress.address)
     const transaction = await contract?.methods.voteForEmergencyControl().send()
 
-    await dispatch(toggleLoader(ROCKET_LOADER))
+    await dispatch(toggleActionLoader(true))
     await dispatch(showToaster(INFO, 'Voting for emergency proposal...', 'Please wait 30s'))
 
     await transaction?.confirmation()
@@ -105,12 +105,12 @@ export const voteEmergencyGovernanceProposal = () => async (dispatch: AppDispatc
     await dispatch(showToaster(SUCCESS, 'Emergency Proposal voted', 'All good :)'))
     await dispatch(getMvkTokenStorage())
     await dispatch(getDoormanStorage())
-    await dispatch(toggleLoader())
+    await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
       await dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    await dispatch(toggleLoader())
+    await dispatch(toggleActionLoader(false))
   }
 }
