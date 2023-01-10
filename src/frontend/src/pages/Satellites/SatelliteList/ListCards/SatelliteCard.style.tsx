@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components/macro'
 import { Card, upColor, downColor, warningColor } from 'styles'
 import { MavrykTheme } from 'styles/interfaces'
 
-export const SatelliteItemStyle = styled(Card)<{ oracle?: boolean; theme: MavrykTheme }>`
+export const SatelliteItemStyle = styled(Card)<{ isDataFeeds?: boolean; oracle?: boolean; theme: MavrykTheme }>`
   margin-top: 0;
   margin-bottom: 10px;
   display: grid;
@@ -20,8 +20,8 @@ export const SatelliteItemStyle = styled(Card)<{ oracle?: boolean; theme: Mavryk
   }
 
   &.feed {
-    grid-template-columns: 1.1fr 1fr 1.3fr 1.3fr 0.9fr;
-    column-gap: 70px;
+    grid-template-columns: ${({isDataFeeds}) => isDataFeeds ? '1.1fr 1fr 1.3fr 1.3fr 0.9fr' : '0.9fr 1.2fr 1fr 1fr'};
+    column-gap: 50px;
   }
 
   .item {

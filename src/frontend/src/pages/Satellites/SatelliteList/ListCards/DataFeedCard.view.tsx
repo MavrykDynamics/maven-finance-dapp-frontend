@@ -5,6 +5,7 @@ import { Trim } from 'app/App.components/Trim/Trim.view'
 import { FeedGQL } from 'pages/Satellites/helpers/Satellites.types'
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import { State } from 'reducers'
 import { parseDate } from 'utils/time'
 
@@ -24,12 +25,14 @@ export const handleCoinName = (name: string) => {
 const defaultCategoryText = 'No Category'
 
 export const DataFeedCard = ({ feed }: { feed: FeedGQL }) => {
+  const { pathname } = useLocation()
   const { dipDupTokens } = useSelector((state: State) => state.tokens)
   const imageLink = dipDupTokens.find(({ contract }) => contract === feed.address)?.metadata?.icon
+  const isDataFeedsPage = pathname === '/data-feeds'
 
   return (
     <Link to={`/satellites/feed-details/${feed.address}`}>
-      <SatelliteItemStyle className="feed">
+      <SatelliteItemStyle className="feed" isDataFeeds={isDataFeedsPage}>
         <div className="item with-img">
           <CoinsLogo imageLink={imageLink} assetName={handleCoinName(feed.name)} />
           <h5>Feed</h5>
@@ -49,12 +52,13 @@ export const DataFeedCard = ({ feed }: { feed: FeedGQL }) => {
             <TzAddress tzAddress={feed.address} hasIcon={true} type={BLUE} />
           </var>
         </div>
+        {isDataFeedsPage && (
         <div className="item">
           <h5>Category</h5>
           <var>
             {feed.category || defaultCategoryText}
           </var>
-        </div>
+        </div>)}
         <div className="item feed-last">
           <h5>Date</h5>
           <var>{parseDate({ time: feed.last_completed_data_last_updated_at, timeFormat: 'MMM DD, YYYY' })}</var>
