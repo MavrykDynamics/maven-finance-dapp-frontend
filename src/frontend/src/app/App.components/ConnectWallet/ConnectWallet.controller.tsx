@@ -46,10 +46,6 @@ export const ConnectWallet = ({ className, closeMobileMenu }: ConnectWalletProps
     await dispatch(disconnect())
   }
 
-  const wertLoaderToogler = async (isLoadingWert: boolean) => {
-    await dispatch(toggleWertLoader(isLoadingWert))
-  }
-
   const showWertIoErrorToaster = () => {
     dispatch(
       showToaster(
@@ -60,9 +56,11 @@ export const ConnectWallet = ({ className, closeMobileMenu }: ConnectWalletProps
     )
   }
 
-  const mountWertWiget = (commodity: string) => {
-    wertLoaderToogler(true)
-    const wertOptions = getWertOptions(commodity, setShowWertIoPopup, showWertIoErrorToaster, wertLoaderToogler)
+  const mountWertWiget = async (commodity: string) => {
+    dispatch(toggleWertLoader(true))
+    const wertOptions = getWertOptions(commodity, setShowWertIoPopup, showWertIoErrorToaster, () =>
+      dispatch(toggleWertLoader(false)),
+    )
     const wertWidgetInstance = new WertWidget(wertOptions)
     wertWidgetInstance.mount()
   }

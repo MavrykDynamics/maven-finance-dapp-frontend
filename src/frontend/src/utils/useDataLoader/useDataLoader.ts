@@ -2,47 +2,27 @@ import { useSelector } from 'react-redux'
 import { useEffect, useRef, useState } from 'react'
 import { State } from 'reducers'
 
-type DepsType = Array<string | number | boolean | null | undefined>
-
-export function areHookDepsEqual(prevDeps: DepsType | null, nextDeps: DepsType) {
-  if (prevDeps === null || prevDeps.length !== nextDeps.length) {
-    return false
-  }
-
-  for (let i = 0; i < prevDeps.length && i < nextDeps.length; i++) {
-    if (!Object.is(nextDeps[i], prevDeps[i])) {
-      return false
-    }
-  }
-
-  return true
-}
-
-export const useDataLoader = (callback: () => void, deps: DepsType) => {
-  const state = useRef<{
-    deps: DepsType | null
-  }>({
-    deps: null,
-  })
-
+// TODO: add docs for this hook
+export const useDataLoader = (callback: () => Promise<void>, deps: React.DependencyList) => {
+  const isComponentMounted = useRef(true)
   const { isInitialDataLoading } = useSelector((state: State) => state.loading)
-
-  const nextDeps = deps === undefined ? null : deps
-  const prevDeps = state.current.deps
-
-  const isDepsChanged = nextDeps === null || !areHookDepsEqual(prevDeps, nextDeps)
-
-  const [isLoading, setLoading] = useState(isDepsChanged)
-
+  const [isLoading, setLoading] = useState(false)
+  // TODO:  test with layoutEffect
   useEffect(() => {
-    ;(async () => {
-      if (!isInitialDataLoading) {
-        setLoading(true)
-        await callback()
-        setLoading(false)
-      }
-    })()
-  }, [isInitialDataLoading, isDepsChanged])
+    if (isInitialDataLoading === false) {
+      setLoading(true)
+      callback().finally(() => {
+        if (isComponentMounted.current) {
+          setLoading(false)
+        }
+      })
+    }
+
+    return () => {
+      isComponentMounted.current = false
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [...deps, isInitialDataLoading, callback])
 
   return { isLoading }
 }

@@ -64,12 +64,14 @@ const AppContainer = () => {
       }
 
       // common data across the DAPP
-      await dispatch(getContractAddressesStorage())
-      await dispatch(getDipDupTokensStorage())
-      await dispatch(getWhitelistTokensStorage())
-      await dispatch(getTokensPrices())
-      await dispatch(getMTokensStorage())
-      await dispatch(getMvkTokenStorage())
+      await Promise.all([
+        await dispatch(getContractAddressesStorage()),
+        await dispatch(getDipDupTokensStorage()),
+        await dispatch(getWhitelistTokensStorage()),
+        await dispatch(getTokensPrices()),
+        await dispatch(getMTokensStorage()),
+        await dispatch(getMvkTokenStorage()),
+      ])
 
       await dispatch(toggleInitialDataLoading(false))
     })()

@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
@@ -24,8 +23,13 @@ export const Doorman = () => {
   const { totalSupply = 0 } = useSelector((state: State) => state.mvkToken.mvkTokenStorage)
   const { totalStakedMvk } = useSelector((state: State) => state.doorman)
 
-  const { isLoading: isMVKTokenStorageLoading } = useDataLoader(async () => await dispatch(getMvkTokenStorage()), [])
-  const { isLoading: isDormanStorageLoading } = useDataLoader(async () => await dispatch(getDoormanStorage()), [])
+  const { isLoading } = useDataLoader(async () => {
+    try {
+      await Promise.all([dispatch(getMvkTokenStorage()), dispatch(getDoormanStorage())])
+    } catch (e) {
+      //TODO: handle fetch error
+    }
+  }, [])
 
   const stakeCallback = (amount: number) => {
     dispatch(stake(amount))
@@ -35,12 +39,9 @@ export const Doorman = () => {
     dispatch(showExitFeeModal(amount))
   }
 
-  console.log('isMVKTokenStorageLoading', isMVKTokenStorageLoading)
-  console.log('isDormanStorageLoading', isDormanStorageLoading)
-
   return (
     <Page>
-      {isDormanStorageLoading || isMVKTokenStorageLoading ? (
+      {isLoading ? (
         '... loading dorman data'
       ) : (
         <>

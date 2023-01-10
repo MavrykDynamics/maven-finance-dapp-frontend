@@ -48,6 +48,7 @@ export const AppRoutes = () => {
     scrollUpPage()
   }, [path])
 
+  // TODO: add error boundaries
   return (
     <Switch>
       <Route exact path="/">

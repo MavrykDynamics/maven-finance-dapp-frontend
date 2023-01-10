@@ -7,6 +7,7 @@ export type LoadingState = {
   isInitialDataLoading: boolean
 }
 
+// TODO: add docs for loading
 const loadingInitialState: LoadingState = {
   isWertLoading: false,
   isActionLoading: false,
