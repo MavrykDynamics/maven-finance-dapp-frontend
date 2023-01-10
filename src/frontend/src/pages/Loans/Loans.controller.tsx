@@ -14,6 +14,7 @@ export const Loans = () => {
   const dispatch = useDispatch()
   const { isInitialDataLoading } = useSelector((state: State) => state.loading)
   const { dipDupTokens } = useSelector((state: State) => state.tokens)
+  const { accountPkh } = useSelector((state: State) => state.wallet)
 
   useEffect(() => {
     ;(async () => {
@@ -21,7 +22,7 @@ export const Loans = () => {
         await dispatch(getLoansStorage())
       }
     })()
-  }, [isInitialDataLoading, dipDupTokens, dispatch])
+  }, [isInitialDataLoading, dipDupTokens, accountPkh])
 
   return (
     <Page>

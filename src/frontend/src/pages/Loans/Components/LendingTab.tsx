@@ -12,17 +12,18 @@ import { ThreeLevelListItem } from '../Loans.style'
 import { LendingTabListItem, LoansTabStyled, NoItemsInTabStyled } from './LoansComponents.style'
 
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
-import { LendingItemType } from 'utils/TypesAndInterfaces/Loans'
+import { LendingItemType, LoanTokenType } from 'utils/TypesAndInterfaces/Loans'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 
 type LendingTabPropsType = {
   lendingItem: LendingItemType
+  lendingControllerAddress: string
+  assetData: LoanTokenType['loanTokenData']
 }
 
-export const LendingTab = ({ lendingItem }: LendingTabPropsType) => {
+export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData }: LendingTabPropsType) => {
   const dispatch = useDispatch()
-
   const addLendHandler = () => dispatch(toggleLoansModal(ADD_LENDING_ASSET_MODAL_ID))
   const removeLendHandler = () => dispatch(toggleLoansModal(REMOVE_ASSET_LENDING_MODAL_ID))
 
@@ -32,46 +33,56 @@ export const LendingTab = ({ lendingItem }: LendingTabPropsType) => {
         <h2>My Lending</h2>
       </GovRightContainerTitleArea>
 
-      {lendingItem || true ? (
+      {lendingItem ? (
         <div className="list-wrapper">
           <LendingTabListItem>
             <ThreeLevelListItem>
               <div className="name">Asset</div>
               <div className="value">
-                {lendingItem?.assetIcon ? (
+                {assetData.icon ? (
                   <div className="img-wrapper">
-                    <img src={lendingItem.assetIcon} alt={`${lendingItem.assetName} logo`} />
+                    <img src={assetData.icon} alt={`${assetData.name} logo`} />
                   </div>
                 ) : (
                   <div className="no-icon">
                     <Icon id="noImage" />
                   </div>
                 )}
-                {'xtz'}
+                {assetData.symbol ?? assetData.name}
               </div>
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Lending</div>
-              <CommaNumber value={0} className="value" />
-              <CommaNumber value={0} beginningText="$" className="rate" />
+              <CommaNumber value={lendingItem.lendValue / assetData.decimals} className="value" />
+              {assetData.rate ? (
+                <CommaNumber value={lendingItem.lendValue * assetData.rate} beginningText="$" className="rate" />
+              ) : null}
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Lend APY</div>
-              <CommaNumber value={0} className="value" endingText="%" />
+              <CommaNumber value={lendingItem.lendAPY} className="value" endingText="%" />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Interest Earned</div>
-              <CommaNumber value={0} className="value" />
-              <CommaNumber value={0} beginningText="$" className="rate" />
+              <CommaNumber value={lendingItem.interestEarned} className="value" />
+              {assetData.rate ? (
+                <CommaNumber value={lendingItem.interestEarned * assetData.rate} beginningText="$" className="rate" />
+              ) : null}
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Wallet Balance</div>
-              <CommaNumber value={0} className="value" />
-              <CommaNumber value={0} beginningText="$" className="rate" />
+              <CommaNumber value={lendingItem.loanAssetWalletBalance} className="value" />
+              {assetData.rate ? (
+                <CommaNumber
+                  value={lendingItem.loanAssetWalletBalance * assetData.rate}
+                  beginningText="$"
+                  className="rate"
+                />
+              ) : null}
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">mXTZ Balance</div>
-              <CommaNumber value={0} className="value" />
+              <CommaNumber value={lendingItem.mXTZBalance} className="value" />
             </ThreeLevelListItem>
             <Button
               text="Add"
@@ -102,7 +113,7 @@ export const LendingTab = ({ lendingItem }: LendingTabPropsType) => {
         </NoItemsInTabStyled>
       )}
       <div className="factory-info">
-        Lending Controller Address <TzAddress tzAddress="tz1ezDb77a9jaFMHDWs8QXrKEDkpgGdgsjPD" type={BLUE} />
+        Lending Controller Address <TzAddress tzAddress={lendingControllerAddress} type={BLUE} />
       </div>
     </LoansTabStyled>
   )

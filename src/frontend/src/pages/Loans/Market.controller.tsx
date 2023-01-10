@@ -29,12 +29,15 @@ import { LoansModals } from './Components/Modals/Modal.controller'
 
 export const Market = () => {
   const { assetId, tabId } = useParams<{ assetId: string; tabId: string }>()
-  const { loanTokens } = useSelector((state: State) => state.loans)
+  const { loanTokens, loansControllerAddress } = useSelector((state: State) => state.loans)
   const { isInitialDataLoading } = useSelector((state: State) => state.loading)
 
   const [showHiddenItems, setShowHiddenItems] = useState(false)
 
-  const currentToken = useMemo(() => loanTokens.find(({ loanTokenData: { symbol } }) => assetId === symbol), [assetId])
+  const currentToken = useMemo(
+    () => loanTokens.find(({ loanTokenData: { symbol } }) => assetId === symbol),
+    [assetId, loanTokens],
+  )
 
   const [prevMarket, nextMarket, currentAsset] = useMemo(() => {
     const currentAssetIdx = loanTokens.findIndex(({ loanTokenData: { symbol } }) => symbol === assetId)
@@ -128,23 +131,23 @@ export const Market = () => {
           </div>
           <ThreeLevelListItem>
             <div className="name">Earn APY</div>
-            <CommaNumber value={0} endingText="%" className="value" />
+            <CommaNumber value={currentToken.lendingAPY} endingText="%" className="value" />
           </ThreeLevelListItem>
           <ThreeLevelListItem>
             <div className="name">Total Lending</div>
-            <CommaNumber value={0} className="value" />
+            <CommaNumber value={currentToken.totalLended} className="value" />
           </ThreeLevelListItem>
           <ThreeLevelListItem>
             <div className="name">Available Liquidity</div>
-            <CommaNumber value={0} className="value" />
+            <CommaNumber value={currentToken.avaliableLiquidity} className="value" />
           </ThreeLevelListItem>
           <ThreeLevelListItem>
             <div className="name">Collateral Factor</div>
-            <CommaNumber value={0} endingText="%" className="value" />
+            <CommaNumber value={currentToken.collateralFactor} endingText="%" className="value" />
           </ThreeLevelListItem>
           <ThreeLevelListItem>
             <div className="name">Suppliers</div>
-            <CommaNumber value={0} className="value" />
+            <CommaNumber value={currentToken.suppliers} className="value" />
           </ThreeLevelListItem>
 
           <Button
@@ -163,30 +166,36 @@ export const Market = () => {
             <CommaNumber value={0} beginningText="$" className="value" />
           </ThreeLevelListItem>
           <ThreeLevelListItem>
-            <div className="name">Borrow APY</div>
-            <CommaNumber value={0} endingText="%" className="value" />
+            <div className="name">Borrow APR</div>
+            <CommaNumber value={currentToken.borrowAPR} endingText="%" className="value" />
           </ThreeLevelListItem>
           <ThreeLevelListItem>
             <div className="name">Total Borrowed</div>
-            <CommaNumber value={0} className="value" />
+            <CommaNumber value={currentToken.totalBorrowed} className="value" />
           </ThreeLevelListItem>
           <ThreeLevelListItem>
             <div className="name">Reserve Amount</div>
-            <CommaNumber value={0} className="value" />
+            <CommaNumber value={currentToken.reserveAmount} className="value" />
           </ThreeLevelListItem>
           <ThreeLevelListItem>
             <div className="name">Reserve Factor</div>
-            <CommaNumber value={0} endingText="%" className="value" />
+            <CommaNumber value={currentToken.reserveFactor} endingText="%" className="value" />
           </ThreeLevelListItem>
           <ThreeLevelListItem>
             <div className="name">Borrowers</div>
-            <CommaNumber value={0} className="value" />
+            <CommaNumber value={currentToken.borrowers} className="value" />
           </ThreeLevelListItem>
         </div>
 
         {tabsNav}
 
-        {tabId === LEND_TAB_ID ? <LendingTab lendingItem={currentToken.lendingItem} /> : null}
+        {tabId === LEND_TAB_ID ? (
+          <LendingTab
+            lendingItem={currentToken.lendingItem}
+            lendingControllerAddress={loansControllerAddress}
+            assetData={currentToken.loanTokenData}
+          />
+        ) : null}
         {tabId === BORROW_TAB_ID ? <BorrowingTab borrowingItems={currentToken.myBorrowingList} /> : null}
         {tabId === PERMISSIONS_VAULTS_TAB_ID ? (
           <PermissionVaults permissionVaults={currentToken.permissinedBorrowingList} />

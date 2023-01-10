@@ -13,11 +13,13 @@ export interface LoansState {
   loanTokens: LoansStorage['loanTokens']
   chartsData: LoansChartsDataType
   currentModalActive: ModalTypes
+  loansControllerAddress: string
 }
 
 const loansDefaultState: LoansState = {
   loanTokens: [],
   currentModalActive: null,
+  loansControllerAddress: '',
   chartsData: {
     totalBorrowed: 0,
     borrowingChartData: [],

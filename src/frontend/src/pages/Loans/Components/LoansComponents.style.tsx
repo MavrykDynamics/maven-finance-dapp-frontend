@@ -45,6 +45,9 @@ export const LoansTabStyled = styled.div<{ theme: MavrykTheme }>`
 
   .list-wrapper {
     margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    row-gap: 20px;
   }
 
   .factory-info {
