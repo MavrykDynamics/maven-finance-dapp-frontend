@@ -1,4 +1,3 @@
-import { MANAGE_PERMISSIONS_MODAL_ID } from './../pages/Loans/Loans.const';
 import { GET_LOANS_STORAGE, TOGGLE_LOANS_MODAL } from 'pages/Loans/Loans.actions'
 import { Lending_Controller_Vault } from 'utils/generated/graphqlTypes'
 import {
@@ -19,7 +18,7 @@ export interface LoansState {
 
 const loansDefaultState: LoansState = {
   loanTokens: [],
-  currentModalActive: MANAGE_PERMISSIONS_MODAL_ID,
+  currentModalActive: null,
   loansControllerAddress: '',
   chartsData: {
     totalBorrowed: 0,
