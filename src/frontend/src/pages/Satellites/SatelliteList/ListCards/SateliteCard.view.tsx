@@ -147,7 +147,7 @@ export const SatelliteListItem = ({
     <SatelliteCard className={className} key={String(`satellite${satellite.address}`)}>
       <SatelliteCardInner>
         <div className="rows-wrapper">
-          <SatelliteCardTopRow isExtendedListItem={isDetailsPage}>
+          <div>
             <SideBySideImageAndText>
               <SatelliteProfileImageContainer>
                 <AvatarStyle>
@@ -161,6 +161,16 @@ export const SatelliteListItem = ({
               </SatelliteTextGroup>
             </SideBySideImageAndText>
 
+            {!isDetailsPage ? (
+                <SatelliteProfileDetails>
+                  <Link to={`/satellites/satellite-details/${satellite.address}`}>
+                    <Button text={'Profile Details'} icon="man" kind="transparent" />
+                  </Link>
+                </SatelliteProfileDetails>
+            ) : null}
+          </div>
+
+          <SatelliteCardTopRow isExtendedListItem={isDetailsPage}>
             <SatelliteTextGroup>
               <SatelliteMainText>Delegated MVK</SatelliteMainText>
               <SatelliteSubText>
@@ -183,23 +193,6 @@ export const SatelliteListItem = ({
                 <CommaNumber value={freesMVKSpace} />
               </SatelliteSubText>
             </SatelliteTextGroup>
-          </SatelliteCardTopRow>
-
-          <SatelliteCardTopRow isExtendedListItem={isDetailsPage}>
-            <SatelliteProfileDetails>
-              {!isDetailsPage && (
-                <Link to={`/satellites/satellite-details/${satellite.address}`}>
-                  <Button text={'Profile Details'} icon="man" kind="transparent" />
-                </Link>
-              )}
-            </SatelliteProfileDetails>
-
-            <SatelliteTextGroup>
-              <SatelliteMainText>Participation</SatelliteMainText>
-              <SatelliteSubText>
-                <CommaNumber value={participation} endingText="%" />
-              </SatelliteSubText>
-            </SatelliteTextGroup>
 
             {isDetailsPage ? (
               <SatelliteTextGroup>
@@ -209,6 +202,13 @@ export const SatelliteListItem = ({
                 </SatelliteSubText>
               </SatelliteTextGroup>
             ) : null}
+
+            <SatelliteTextGroup>
+              <SatelliteMainText>Participation</SatelliteMainText>
+              <SatelliteSubText>
+                <CommaNumber value={participation} endingText="%" />
+              </SatelliteSubText>
+            </SatelliteTextGroup>
 
             {!isSatelliteOracle ? (
               <SatelliteTextGroup>
