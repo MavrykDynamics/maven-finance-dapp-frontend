@@ -22,7 +22,7 @@ export const useDataLoader = (callback: () => Promise<void>, deps: React.Depende
       isComponentMounted.current = false
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [...deps, isInitialDataLoading, callback])
+  }, [...deps, isInitialDataLoading])
 
   return { isLoading }
 }
