@@ -17,24 +17,25 @@ export const getLoansStorage = () => async (dispatch: AppDispatch, getState: Get
     const storage = await fetchFromIndexer(LOANS_QUERY, LOANS_QUERY_NAME, LOANS_QUERY_VARIABLE)
 
     // fetching rate of the presented tokens insisde loans
-    const loanTokensRate = (
-      await Promise.allSettled(
-        getLoanTokensSymbols({ loan_tokens: storage?.lending_controller?.[0]?.loan_tokens, dipDupTokens }).map(
-          (symbol) => coinGeckoClient.coins.fetch(symbol, {}),
-        ),
-      )
-    ).reduce<Record<string, number>>((acc, promiseResult) => {
-      const {
-        value: { data, success },
-      } = promiseResult as any
-      if (success) {
-        const symbol = data.symbol === 'xtz' ? 'tez' : data.symbol
-        const rate = data.market_data.current_price.usd
-        acc[symbol] = rate
-      }
+    const loanTokensRate = {}
+    // (
+    //   await Promise.all(
+    //     getLoanTokensSymbols({ loan_tokens: storage?.lending_controller?.[0]?.loan_tokens, dipDupTokens }).map(
+    //       (symbol) => coinGeckoClient.coins.fetch(symbol, {}),
+    //     ),
+    //   )
+    // ).reduce<Record<string, number>>((acc, promiseResult) => {
+    //   const data = (promiseResult as any)?.value?.data
+    //   console.log('data', data, promiseResult.data)
 
-      return acc
-    }, {})
+    //   if (false) {
+    //     const symbol = data.symbol === 'xtz' ? 'tez' : data.symbol
+    //     const rate = data.market_data.current_price.usd
+    //     acc[symbol] = rate
+    //   }
+
+    //   return acc
+    // }, {})
 
     const { chartsData, loanTokens, collateralTokens, loansControllerAddress } = normalizeLoans({
       storage: storage?.lending_controller?.[0],
