@@ -1,6 +1,7 @@
 export const LOANS_QUERY = `query GetLoansStorage {
   lending_controller(where: {mock_time: {_eq: true}}) {
     address
+    collateral_ratio
 
     history_data {
       type
@@ -24,6 +25,7 @@ export const LOANS_QUERY = `query GetLoansStorage {
       loan_token_name
       utilisation_rate
       total_borrowed
+      token_pool_total
       total_remaining
       reserve_ratio
       history_data {

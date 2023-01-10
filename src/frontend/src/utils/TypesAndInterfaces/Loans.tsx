@@ -43,13 +43,15 @@ export type LoanTokenType = {
   suppliers: number
   collateral: number
   vaultsBorrowedAmount: number
-  reserveRatio: number
   totalBorrowed: number
   avaliableLiquidity: number
   totalLended: number
   borrowAPR: number
   totalFeesEarned: number
   lendingAPY: number
+  collateralFactor: number
+  reserveFactor: number
+  reserveAmount: number
 }
 
 export type LoansChartsDataType = {

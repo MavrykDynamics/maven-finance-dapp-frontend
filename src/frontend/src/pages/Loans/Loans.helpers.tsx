@@ -121,10 +121,11 @@ const getLendingItem = (
     if (mTokenAsset) {
       return {
         lendValue: mTokenAsset.balance,
-        lendAPY: 0,
-        interestEarned: 0,
+        interestEarned: mTokenAsset.rewards_earned,
+        mXTZBalance: mTokenAsset.balance + mTokenAsset.rewards_earned,
+        // TODO: implement these values later
         loanAssetWalletBalance: 0,
-        mXTZBalance: 0,
+        lendAPY: 0,
       }
     }
   }
@@ -149,7 +150,13 @@ const getBorrowings = (
         totalRow: BorrowingData['collateralData'][number]
       }>(
         (acc, collateral) => {
-          const asset = dipDupTokens.find(({ contract }) => contract === collateral.token?.token_address)
+          const asset = dipDupTokens.find(({ contract }) => contract === collateral.token?.token_address) ?? {
+            metadata: {
+              symbol: 'tez',
+              icon: '/images/tezos.png',
+            },
+          }
+
           acc.normalizedCollaterals.push({
             assetSymbol: asset?.metadata.symbol,
             assetIcon: asset?.metadata.icon,
@@ -181,9 +188,9 @@ const getBorrowings = (
           assetIcon: asset?.metadata.icon,
           amtBorrowed: 0,
           ...(asset?.metadata.symbol
-            ? { assetRate: tokensRates[vault.loan_token?.loan_token_name === 'tez' ? 'tezos' : asset.metadata.symbol] }
+            ? { assetRate: tokensRates[vault.loan_token?.loan_token_name === 'tez' ? 'tez' : asset.metadata.symbol] }
             : { assetRate: null }),
-          collateralBalance: vault?.collateral_balances_aggregate?.aggregate?.sum?.balance ?? 0,
+          collateralBalance: vaultCollateral.totalRow?.balance ?? 0,
           collateralUtilization: 0,
           apy: 0,
           fee: 0,
@@ -277,6 +284,7 @@ export const normalizeLoans = ({
       history_data,
       vaults,
       reserve_ratio,
+      token_pool_total,
     } = loanToken
     const isXTZ = loan_token_name === 'tez'
     const tokenInfo = dipDupTokens?.find(({ contract }) => contract === lp_token_address && !isXTZ)
@@ -308,9 +316,11 @@ export const normalizeLoans = ({
       collateral: corratealAmount,
       vaultsBorrowedAmount: borrowedAmount,
       totalLended,
-      reserveRatio: reserve_ratio,
       avaliableLiquidity: total_remaining,
       totalFeesEarned: userMTokens?.reduce((acc, { rewards_earned }) => acc + rewards_earned, 0) ?? 0,
+      collateralFactor: storage.collateral_ratio / 10,
+      reserveFactor: reserve_ratio / 100,
+      reserveAmount: (token_pool_total * reserve_ratio) / 100,
       // TODO: implement later, when sam will give the equations for it
       borrowAPR: 0,
       lendingAPY: 0,

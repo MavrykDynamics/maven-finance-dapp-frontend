@@ -109,7 +109,7 @@ export const Markets = () => {
 
             const totalCorratealColor = collateral / vaultsBorrowedAmount > 2 ? 'up' : 'down'
             return (
-              <MarketOverview key={name}>
+              <MarketOverview key={`${name}-${symbol}`}>
                 <div className="asset-info">
                   {icon ? (
                     <div className="icon">

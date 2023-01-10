@@ -143,7 +143,7 @@ export const Market = () => {
           </ThreeLevelListItem>
           <ThreeLevelListItem>
             <div className="name">Collateral Factor</div>
-            <CommaNumber value={0} endingText="%" className="value" />
+            <CommaNumber value={currentToken.collateralFactor} endingText="%" className="value" />
           </ThreeLevelListItem>
           <ThreeLevelListItem>
             <div className="name">Suppliers</div>
@@ -175,11 +175,11 @@ export const Market = () => {
           </ThreeLevelListItem>
           <ThreeLevelListItem>
             <div className="name">Reserve Amount</div>
-            <CommaNumber value={0} className="value" />
+            <CommaNumber value={currentToken.reserveAmount} className="value" />
           </ThreeLevelListItem>
           <ThreeLevelListItem>
             <div className="name">Reserve Factor</div>
-            <CommaNumber value={0} endingText="%" className="value" />
+            <CommaNumber value={currentToken.reserveFactor} endingText="%" className="value" />
           </ThreeLevelListItem>
           <ThreeLevelListItem>
             <div className="name">Borrowers</div>

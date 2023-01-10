@@ -60,11 +60,8 @@ export const BorrowingExpandCard = ({
 }: BorrowingExpandCardPropsType) => {
   const dispatch = useDispatch()
 
-  console.log(isOwner, borrowedAsset, collateralData, xtzDelegatedTo, operators, sMVKDelegatedTo, depositors)
-
   const {
     assetSymbol,
-    assetName,
     assetIcon,
     amtBorrowed = 0,
     assetRate = 1,
@@ -117,14 +114,14 @@ export const BorrowingExpandCard = ({
             <div className="value">
               {assetIcon ? (
                 <div className="img-wrapper">
-                  <img src={assetIcon} alt={`${assetName ?? assetSymbol} logo`} />
+                  <img src={assetIcon} alt={`${assetSymbol} logo`} />
                 </div>
               ) : (
                 <div className="no-icon">
                   <Icon id="noImage" />
                 </div>
               )}
-              {assetName ?? assetSymbol}
+              {assetSymbol}
             </div>
           </ThreeLevelListItem>
           <ThreeLevelListItem>
@@ -134,7 +131,7 @@ export const BorrowingExpandCard = ({
           </ThreeLevelListItem>
           <ThreeLevelListItem>
             <div className="name">Collateral Balance</div>
-            <CommaNumber value={collateralBalance} className="value" endingText="%" />
+            <CommaNumber value={collateralBalance} className="value" />
           </ThreeLevelListItem>
         </>
       }
@@ -147,14 +144,14 @@ export const BorrowingExpandCard = ({
             <div className="value">
               {assetIcon ? (
                 <div className="img-wrapper">
-                  <img src={assetIcon} alt={`${assetName ?? assetSymbol} logo`} />
+                  <img src={assetIcon} alt={`${assetSymbol} logo`} />
                 </div>
               ) : (
                 <div className="no-icon">
                   <Icon id="noImage" />
                 </div>
               )}
-              {assetName ?? assetSymbol}
+              {assetSymbol}
             </div>
           </ThreeLevelListItem>
           <ThreeLevelListItem>
