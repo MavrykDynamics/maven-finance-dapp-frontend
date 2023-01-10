@@ -16,7 +16,6 @@ import { usersData } from '../users.const'
 
 const UserDetails = () => {
   const dispatch = useDispatch()
-  const isLoading = useSelector((state: State) => state.loading.isLoading)
   const {
     oraclesStorage: { feedCategories },
   } = useSelector((state: State) => state.oracles)
@@ -44,13 +43,7 @@ const UserDetails = () => {
   }, [dispatch, userId])
 
   return (
-    <UserDetailsView
-      user={selectedUser}
-      isLoading={isLoading}
-      feeds={sortedFeeds}
-      handleSelect={handleSelect}
-      categories={feedCategories}
-    />
+    <UserDetailsView user={selectedUser} feeds={sortedFeeds} handleSelect={handleSelect} categories={feedCategories} />
   )
 }
 

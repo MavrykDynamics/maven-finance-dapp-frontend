@@ -36,7 +36,6 @@ export const DataFeeds = () => {
   const dispatch = useDispatch()
   const { oraclesStorage } = useSelector((state: State) => state.oracles)
   const { feedCategories } = oraclesStorage
-  const loading = useSelector((state: State) => state.loading.isLoading)
 
   const [ddIsOpen, setDdIsOpen] = useState(false)
   const [searchInputValue, setSearchInput] = useState('')
@@ -110,7 +109,6 @@ export const DataFeeds = () => {
           text="Request data feed"
           icon="requestFeed"
           kind={ACTION_PRIMARY}
-          loading={loading}
           onClick={() => {
             // TODO: implement request data feed ORACLE_SI
           }}
@@ -118,7 +116,7 @@ export const DataFeeds = () => {
       </SatelliteSearchFilter>
       <DataFeedsStyled>
         {sortedFeeds.length ? (
-          <SatelliteList loading={loading} items={sortedFeeds} listType={'feeds'} name={FEEDS_ALL_LIST_NAME} />
+          <SatelliteList items={sortedFeeds} listType={'feeds'} name={FEEDS_ALL_LIST_NAME} />
         ) : (
           emptyContainer
         )}

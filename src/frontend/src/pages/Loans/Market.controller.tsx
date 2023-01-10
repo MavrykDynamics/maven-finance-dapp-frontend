@@ -30,7 +30,7 @@ import { LoansModals } from './Components/Modals/Modal.controller'
 export const Market = () => {
   const { assetId, tabId } = useParams<{ assetId: string; tabId: string }>()
   const { loanTokens, loansControllerAddress } = useSelector((state: State) => state.loans)
-  const { isInitialDataloading } = useSelector((state: State) => state.loading)
+  const { isInitialDataLoading } = useSelector((state: State) => state.loading)
 
   const [showHiddenItems, setShowHiddenItems] = useState(false)
 
@@ -45,7 +45,7 @@ export const Market = () => {
   }, [assetId, loanTokens])
 
   // TODO: add loader to the page, if data is not loaded, need to create dataLoaderHook
-  if (isInitialDataloading) {
+  if (isInitialDataLoading) {
     return (
       <Page>
         <PageHeader page={'lending'} />

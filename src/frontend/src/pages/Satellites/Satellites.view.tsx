@@ -18,7 +18,6 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { SmallInfoBlock } from 'pages/SatelliteGovernance/SatelliteGovernance.style'
 
 type OraclesViewProps = {
-  isLoading: boolean
   tabsInfo: {
     totalDelegetedMVK: string | number | JSX.Element
     totalSatelliteOracles: string | number | JSX.Element
@@ -57,13 +56,7 @@ const EmptyContainer = ({ showSatellite, showFeeds }: EmptyContainerType) => {
   )
 }
 
-const SatellitesView = ({
-  isLoading,
-  tabsInfo,
-  oracleSatellitesData,
-  dataFeedsData,
-  delegateCallback,
-}: OraclesViewProps) => {
+const SatellitesView = ({ tabsInfo, oracleSatellitesData, dataFeedsData, delegateCallback }: OraclesViewProps) => {
   const isShowSatellites = Boolean(oracleSatellitesData.items.length)
   const isShowFeeds = Boolean(dataFeedsData.items.length)
 
@@ -103,7 +96,6 @@ const SatellitesView = ({
               </Link>
               <SatelliteList
                 listTitle={'Top Satellites'}
-                loading={isLoading}
                 items={satellites}
                 listType={'satellites'}
                 name={SATELITES_TOP_LIST_NAME}
@@ -123,7 +115,6 @@ const SatellitesView = ({
               </Link>
               <SatelliteListStyled
                 listTitle={'Popular Feeds'}
-                loading={isLoading}
                 items={feeds}
                 listType={'feeds'}
                 name={FEEDS_TOP_LIST_NAME}

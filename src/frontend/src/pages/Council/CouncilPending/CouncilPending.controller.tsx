@@ -14,7 +14,7 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 
 // types
 import { BreakGlassActions } from 'utils/TypesAndInterfaces/BreakGlass'
-import { CouncilActions } from "utils/TypesAndInterfaces/Council";
+import { CouncilActions } from 'utils/TypesAndInterfaces/Council'
 
 // styles
 import { CouncilPendingStyled } from './CouncilPending.style'
@@ -28,17 +28,26 @@ type Props = (BreakGlassActions[0] | CouncilActions[0]) & {
 }
 
 export const CouncilPending = (props: Props) => {
-  const { id, actionType, signersCount, numCouncilMembers, councilPendingActionsLength, parameters, index, handleSignAction } = props
+  const {
+    id,
+    actionType,
+    signersCount,
+    numCouncilMembers,
+    councilPendingActionsLength,
+    parameters,
+    index,
+    handleSignAction,
+  } = props
 
   const [showing, setShowing] = useState(false)
   const { name, value } = parameters?.[0] || {}
   const cardNumber = index + 1
 
   const ref = useRef<HTMLDivElement | null>(null)
-  const showScrollInModal = useMemo(() => ref.current?.offsetHeight !== ref.current?.scrollHeight, [
-    ref.current?.offsetHeight,
-    ref.current?.scrollWidth
-  ])
+  const showScrollInModal = useMemo(
+    () => ref.current?.offsetHeight !== ref.current?.scrollHeight,
+    [ref.current?.offsetHeight, ref.current?.scrollWidth],
+  )
 
   const onClickSign = () => {
     if (id) {
@@ -85,80 +94,82 @@ export const CouncilPending = (props: Props) => {
         </ModalClose>
         <ModalCardContent style={{ width: 586 }}>
           <h1>Purpose for Request</h1>
-          <div ref={ref} className='text-box'>{purpose}</div>
-          <div style={{ display: showScrollInModal ? 'block' : 'none' }} className='shadow-box'></div>
+          <div ref={ref} className="text-box">
+            {purpose}
+          </div>
+          <div style={{ display: showScrollInModal ? 'block' : 'none' }} className="shadow-box"></div>
         </ModalCardContent>
       </ModalCard>
     </ModalStyled>
   )
 
-    // 2/3
-    if (isAddCouncilMember) {
-      const councilMemberName = findActionByName('councilMemberName')
-      const councilMemberWebsite = findActionByName('councilMemberWebsite')
-      const councilMemberImage = findActionByName('councilMemberImage')
-      return (
-        <>
-          <CouncilPendingStyled className={`${actionType} ${councilPendingActionsLength > 1 ? 'more' : ''}`}>
-            <span className='number'>{cardNumber}</span>
-            <h3>{getSeparateCamelCase(actionType)}</h3>
-            <div className="parameters">
+  // 2/3
+  if (isAddCouncilMember) {
+    const councilMemberName = findActionByName('councilMemberName')
+    const councilMemberWebsite = findActionByName('councilMemberWebsite')
+    const councilMemberImage = findActionByName('councilMemberImage')
+    return (
+      <>
+        <CouncilPendingStyled className={`${actionType} ${councilPendingActionsLength > 1 ? 'more' : ''}`}>
+          <span className="number">{cardNumber}</span>
+          <h3>{getSeparateCamelCase(actionType)}</h3>
+          <div className="parameters">
+            <article>
+              <p className="without-margin">Council Member Address</p>
+              <span className="parameters-value">
+                <TzAddress tzAddress={findActionByName('councilMemberAddress')} hasIcon={false} />
+              </span>
+            </article>
+            {councilMemberName ? (
               <article>
-                <p className="without-margin">Council Member Address</p>
+                <p>Council Member Name</p>
+                <span className="parameters-value">{councilMemberName}</span>
+              </article>
+            ) : null}
+            <article className="signed-article">
+              <div>
+                <p>Signed</p>
                 <span className="parameters-value">
-                  <TzAddress tzAddress={findActionByName('councilMemberAddress')} hasIcon={false} />
+                  {signersCount}/{numCouncilMembers}
                 </span>
-              </article>
-              {councilMemberName ? (
-                <article>
-                  <p>Council Member Name</p>
-                  <span className="parameters-value">{councilMemberName}</span>
-                </article>
-              ) : null}
-              <article className="signed-article">
-                <div>
-                  <p>Signed</p>
-                  <span className="parameters-value">
-                    {signersCount}/{numCouncilMembers}
-                  </span>
-                </div>
-              </article>
-            </div>
-  
-            <div className="parameters">
-              <article>
-                {councilMemberImage ? (
-                  <article className="parameters-img">
-                    <AvatarStyle>
-                      <img src={councilMemberImage} />
-                    </AvatarStyle>
-                  </article>
-                ) : (
-                  <>
-                    <p>Profile Pic</p>
-                    <span className="parameters-value">-</span>
-                  </>
-                )}
-              </article>
+              </div>
+            </article>
+          </div>
 
-              <article>
-                <p>Council Member Website</p>
-                {councilMemberWebsite ? (
-                  <a className="parameters-link" href={councilMemberWebsite} target="_blank" rel="noreferrer">
-                    {councilMemberWebsite}
-                  </a>
-                ) : (
+          <div className="parameters">
+            <article>
+              {councilMemberImage ? (
+                <article className="parameters-img">
+                  <AvatarStyle>
+                    <img src={councilMemberImage} />
+                  </AvatarStyle>
+                </article>
+              ) : (
+                <>
+                  <p>Profile Pic</p>
                   <span className="parameters-value">-</span>
-                )}
-              </article>
-  
-              <Button text="Sign" className="sign-btn" kind={'actionPrimary'} icon="sign" onClick={onClickSign} />
-            </div>
-          </CouncilPendingStyled>
-          {showing ? createPortal(modal, document?.body) : null}
-        </>
-      )
-    }
+                </>
+              )}
+            </article>
+
+            <article>
+              <p>Council Member Website</p>
+              {councilMemberWebsite ? (
+                <a className="parameters-link" href={councilMemberWebsite} target="_blank" rel="noreferrer">
+                  {councilMemberWebsite}
+                </a>
+              ) : (
+                <span className="parameters-value">-</span>
+              )}
+            </article>
+
+            <Button text="Sign" className="sign-btn" kind={'actionPrimary'} icon="sign" onClick={onClickSign} />
+          </div>
+        </CouncilPendingStyled>
+        {showing ? createPortal(modal, document?.body) : null}
+      </>
+    )
+  }
 
   // 2/3
   if (isUpdateChangeCouncilMember) {
@@ -169,7 +180,7 @@ export const CouncilPending = (props: Props) => {
     return (
       <>
         <CouncilPendingStyled className={`${actionType} ${councilPendingActionsLength > 1 ? 'more' : ''}`}>
-          <span className='number'>{cardNumber}</span>
+          <span className="number">{cardNumber}</span>
           <h3>{getSeparateCamelCase(actionType)}</h3>
           <div className="parameters grid">
             <article>
@@ -238,7 +249,7 @@ export const CouncilPending = (props: Props) => {
     return (
       <>
         <CouncilPendingStyled className={`${actionType} ${councilPendingActionsLength > 1 ? 'more' : ''}`}>
-          <span className='number'>{cardNumber}</span>
+          <span className="number">{cardNumber}</span>
           <h3>{getSeparateCamelCase(actionType)}</h3>
           <div className="parameters grid">
             <article>
@@ -311,7 +322,7 @@ export const CouncilPending = (props: Props) => {
     const targetContractAddress = findActionByName('targetContractAddress')
     return (
       <CouncilPendingStyled className={`${actionType} ${councilPendingActionsLength > 1 ? 'more' : ''}`}>
-        <span className='number'>{cardNumber}</span>
+        <span className="number">{cardNumber}</span>
         <h3>{getSeparateCamelCase(actionType)}</h3>
         <div className="parameters">
           <article>
@@ -347,15 +358,15 @@ export const CouncilPending = (props: Props) => {
     )
   }
 
-   // 2/3
-   if (isAddVestee) {
+  // 2/3
+  if (isAddVestee) {
     const cliffInMonths = findActionByName('cliffInMonths')
     const vestingInMonths = findActionByName('vestingInMonths')
     const totalAllocatedAmount = findActionByName('totalAllocatedAmount')
 
     return (
       <CouncilPendingStyled className={`${actionType} ${councilPendingActionsLength > 1 ? 'more' : ''}`}>
-        <span className='number'>{cardNumber}</span>
+        <span className="number">{cardNumber}</span>
         <h3>{getSeparateCamelCase(actionType)}</h3>
         <div className="parameters">
           <article>
@@ -368,7 +379,7 @@ export const CouncilPending = (props: Props) => {
           <article>
             <p>Total Allocated Amount</p>
             <span className="parameters-value">
-              <CommaNumber value={+totalAllocatedAmount} loading={false} endingText={'MVK'} />
+              <CommaNumber value={+totalAllocatedAmount} endingText={'MVK'} />
             </span>
           </article>
 
@@ -407,7 +418,7 @@ export const CouncilPending = (props: Props) => {
 
     return (
       <CouncilPendingStyled className={`${actionType} ${councilPendingActionsLength > 1 ? 'more' : ''}`}>
-        <span className='number'>{cardNumber}</span>
+        <span className="number">{cardNumber}</span>
         <h3>{getSeparateCamelCase(actionType)}</h3>
         <div className="parameters">
           <article>
@@ -420,7 +431,7 @@ export const CouncilPending = (props: Props) => {
           <article>
             <p>New Total Allocated Amount</p>
             <span className="parameters-value">
-              <CommaNumber value={+newTotalAllocatedAmount} loading={false} endingText={'MVK'} />
+              <CommaNumber value={+newTotalAllocatedAmount} endingText={'MVK'} />
             </span>
           </article>
 
@@ -462,7 +473,7 @@ export const CouncilPending = (props: Props) => {
     return (
       <>
         <CouncilPendingStyled className={`${actionType} ${councilPendingActionsLength > 1 ? 'more' : ''}`}>
-          <span className='number'>{cardNumber}</span>
+          <span className="number">{cardNumber}</span>
           <h3>{getSeparateCamelCase(actionType)}</h3>
           <div className="parameters grid">
             <article>
@@ -481,7 +492,7 @@ export const CouncilPending = (props: Props) => {
             <article>
               <p>Token Amount</p>
               <span className="parameters-value">
-                <CommaNumber value={+tokenAmount} loading={false} endingText={'MVK'} />
+                <CommaNumber value={+tokenAmount} endingText={'MVK'} />
               </span>
             </article>
 
@@ -534,7 +545,7 @@ export const CouncilPending = (props: Props) => {
     return (
       <>
         <CouncilPendingStyled className={`${actionType} ${councilPendingActionsLength > 1 ? 'more' : ''}`}>
-          <span className='number'>{cardNumber}</span>
+          <span className="number">{cardNumber}</span>
           <h3>{getSeparateCamelCase(actionType)}</h3>
           <div className="parameters grid">
             <article>
@@ -553,7 +564,7 @@ export const CouncilPending = (props: Props) => {
             <article>
               <p>Total Amount</p>
               <span className="parameters-value">
-                <CommaNumber value={+tokenAmount} loading={false} endingText={'MVK'} />
+                <CommaNumber value={+tokenAmount} endingText={'MVK'} />
               </span>
             </article>
 
@@ -601,7 +612,7 @@ export const CouncilPending = (props: Props) => {
 
     return (
       <CouncilPendingStyled className={`${actionType} ${councilPendingActionsLength > 1 ? 'more' : ''}`}>
-        <span className='number'>{cardNumber}</span>
+        <span className="number">{cardNumber}</span>
         <h3>{getSeparateCamelCase(actionType)}</h3>
         <div className="parameters">
           <article>
@@ -614,7 +625,7 @@ export const CouncilPending = (props: Props) => {
           <article>
             <p>Token Amount</p>
             <span className="parameters-value">
-              <CommaNumber value={+tokenAmount} loading={false} endingText={'MVK'} />
+              <CommaNumber value={+tokenAmount} endingText={'MVK'} />
             </span>
           </article>
 
@@ -647,27 +658,27 @@ export const CouncilPending = (props: Props) => {
     )
   }
 
-  // 1/3 
+  // 1/3
   // for general card with only address field
   if (isRemoveVestee || isToggleVesteeLock || isRemoveCouncilMember || isSignAction || isSetAllContractsAdmin) {
     return (
       <CouncilPendingStyled className={`${actionType} ${councilPendingActionsLength > 1 ? 'more' : ''}`}>
-        <span className='number'>{cardNumber}</span>
+        <span className="number">{cardNumber}</span>
         <h3>{getSeparateCamelCase(actionType)}</h3>
-          <div className="parameters">
-            <div>
-              <p className='parameters-name'>{getSeparateCamelCase(name)}</p>
-              <span className="parameters-value">
-                <TzAddress tzAddress={value} hasIcon={false} />
-              </span>
-            </div>
-            <div>
-              <p>Signed</p>
-              <span className="parameters-value">
-                {signersCount}/{numCouncilMembers}
-              </span>
-            </div>
+        <div className="parameters">
+          <div>
+            <p className="parameters-name">{getSeparateCamelCase(name)}</p>
+            <span className="parameters-value">
+              <TzAddress tzAddress={value} hasIcon={false} />
+            </span>
           </div>
+          <div>
+            <p>Signed</p>
+            <span className="parameters-value">
+              {signersCount}/{numCouncilMembers}
+            </span>
+          </div>
+        </div>
         <Button text="Sign" className="sign-btn" kind={'actionPrimary'} icon="sign" onClick={onClickSign} />
       </CouncilPendingStyled>
     )
@@ -675,14 +686,12 @@ export const CouncilPending = (props: Props) => {
 
   return (
     <CouncilPendingStyled className={`${actionType} ${councilPendingActionsLength > 1 ? 'more' : ''}`}>
-      <span className='number'>{cardNumber}</span>
+      <span className="number">{cardNumber}</span>
       <h3>{getSeparateCamelCase(actionType)}</h3>
       <div className="parameters">
         <div>
-          <p className='parameters-name no-wrap'>{getSeparateCamelCase(name)}</p>
-          <span className="parameters-value">
-            {value}
-          </span>
+          <p className="parameters-name no-wrap">{getSeparateCamelCase(name)}</p>
+          <span className="parameters-value">{value}</span>
         </div>
         <div>
           <p>Signed</p>

@@ -1,5 +1,5 @@
 import { TempleWallet } from '@temple-wallet/dapp'
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { BrowserRouter as Router } from 'react-router-dom'
 import { AnyAction } from 'redux'
 import { useDispatch, useSelector } from 'react-redux'
@@ -16,10 +16,9 @@ import { AppStyled } from './App.style'
 import { PopupChangeNode } from './App.components/SettingsPopup/SettingsPopup.controller'
 import { toggleRPCNodePopup } from './App.components/SettingsPopup/SettingsPopup.actions'
 import { toggleSidebarCollapsing } from './App.components/Menu/Menu.actions'
-import { useLockBodyScroll, useMedia } from 'react-use'
+import { useMedia } from 'react-use'
 import CoinGecko from 'coingecko-api'
-import Loader from './App.components/Loader/Loader.view'
-import { toggleDataLoader } from './App.components/Loader/Loader.action'
+import { ActionLoader, LoaderRocket, WertLoader } from './App.components/Loader/Loader.view'
 import { getMvkTokenStorage } from 'pages/Doorman/Doorman.actions'
 import { getDelegationStorage } from 'pages/Satellites/Satellites.actions'
 import { getContractAddressesStorage } from 'reducers/actions/contractAddresses.actions'
@@ -29,6 +28,7 @@ import {
   getTokensPrices,
   getMTokensStorage,
 } from 'reducers/actions/dipDupActions.actions'
+import { toggleInitialDataLoading } from './App.components/Loader/Loader.action'
 
 // export const { store, persistor } = configureStore({})
 export const { store } = configureStore({})
@@ -38,8 +38,8 @@ export const coinGeckoClient = new CoinGecko()
 
 const AppContainer = () => {
   const dispatch = useDispatch()
-  const { isLoading } = useSelector((state: State) => state.loading)
   const { changeNodePopupOpen, sidebarOpened } = useSelector((state: State) => state.preferences)
+  const { isInitialDataLoading } = useSelector((state: State) => state.loading)
   const showSidebarOpened = useMedia('(min-width: 1400px)')
 
   useEffect(() => {
@@ -49,7 +49,6 @@ const AppContainer = () => {
   useEffect(() => {
     ;(async () => {
       // Fetching initial data for DAPP
-      await dispatch(toggleDataLoader(true))
       await dispatch(getDelegationStorage())
       // For using Temple wallet
       // return TempleWallet.onAvailabilityChange((available) => {
@@ -65,14 +64,16 @@ const AppContainer = () => {
       }
 
       // common data across the DAPP
-      await dispatch(getContractAddressesStorage())
-      await dispatch(getDipDupTokensStorage())
-      await dispatch(getWhitelistTokensStorage())
-      await dispatch(getTokensPrices())
-      await dispatch(getMTokensStorage())
-      await dispatch(getMvkTokenStorage())
+      await Promise.all([
+        await dispatch(getContractAddressesStorage()),
+        await dispatch(getDipDupTokensStorage()),
+        await dispatch(getWhitelistTokensStorage()),
+        await dispatch(getTokensPrices()),
+        await dispatch(getMTokensStorage()),
+        await dispatch(getMvkTokenStorage()),
+      ])
 
-      await dispatch(toggleDataLoader(false))
+      await dispatch(toggleInitialDataLoading(false))
     })()
 
     return () => {
@@ -84,15 +85,15 @@ const AppContainer = () => {
     dispatch(toggleSidebarCollapsing(showSidebarOpened))
   }, [showSidebarOpened])
 
-  useLockBodyScroll(isLoading)
-
   const closeModalHandler = useCallback(() => dispatch(toggleRPCNodePopup(false)), [])
 
-  return (
+  return isInitialDataLoading ? (
+    <LoaderRocket />
+  ) : (
     <Router>
-      <ProgressBar />
       <AppStyled isExpandedMenu={sidebarOpened}>
-        <Loader />
+        <ActionLoader />
+        <WertLoader />
         <Menu />
         <PopupChangeNode isModalOpened={changeNodePopupOpen} closeModal={closeModalHandler} />
         <AppRoutes />

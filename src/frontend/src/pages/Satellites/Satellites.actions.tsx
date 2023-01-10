@@ -21,7 +21,7 @@ import {
   normalizeDataFeedsVolatility,
 } from './Satellites.helpers'
 import { normalizeOracle } from 'app/App.helpers'
-import { toggleLoader } from 'app/App.components/Loader/Loader.action'
+import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 import { ROCKET_LOADER } from 'utils/constants'
 
 export const GET_DELEGATION_STORAGE = 'GET_DELEGATION_STORAGE'
@@ -55,7 +55,7 @@ export const delegate = (satelliteAddress: string) => async (dispatch: AppDispat
     return
   }
 
-  if (state.loading.isLoading) {
+  if (state.loading.isActionLoading) {
     dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
     return
   }
@@ -74,13 +74,13 @@ export const delegate = (satelliteAddress: string) => async (dispatch: AppDispat
     const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.delegationAddress.address)
     const transaction = await contract?.methods.delegateToSatellite(state.wallet.accountPkh, satelliteAddress).send()
 
-    dispatch(toggleLoader(ROCKET_LOADER))
+    dispatch(toggleActionLoader(true))
     dispatch(showToaster(INFO, 'Delegating...', 'Please wait 30s'))
 
     await transaction?.confirmation()
 
     dispatch(showToaster(SUCCESS, 'Delegation done', 'All good :)'))
-    dispatch(toggleLoader())
+    dispatch(toggleActionLoader(false))
 
     await dispatch(getMvkTokenStorage())
     await dispatch(getDelegationStorage())
@@ -91,7 +91,7 @@ export const delegate = (satelliteAddress: string) => async (dispatch: AppDispat
       console.error(error)
       dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    dispatch(toggleLoader())
+    dispatch(toggleActionLoader(false))
   }
 }
 
@@ -103,7 +103,7 @@ export const undelegate = (delegateAddress: string) => async (dispatch: AppDispa
     return
   }
 
-  if (state.loading.isLoading) {
+  if (state.loading.isActionLoading) {
     dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
     return
   }
@@ -112,13 +112,13 @@ export const undelegate = (delegateAddress: string) => async (dispatch: AppDispa
     const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.delegationAddress.address)
     const transaction = await contract?.methods.undelegateFromSatellite(state.wallet.accountPkh, delegateAddress).send()
 
-    dispatch(toggleLoader(ROCKET_LOADER))
+    dispatch(toggleActionLoader(true))
     dispatch(showToaster(INFO, 'Undelegating...', 'Please wait 30s'))
 
     await transaction?.confirmation()
 
     dispatch(showToaster(SUCCESS, 'Undelegating done', 'All good :)'))
-    dispatch(toggleLoader())
+    dispatch(toggleActionLoader(false))
 
     await dispatch(getMvkTokenStorage())
     await dispatch(getDelegationStorage())
@@ -129,7 +129,7 @@ export const undelegate = (delegateAddress: string) => async (dispatch: AppDispa
       console.error(error)
       dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    dispatch(toggleLoader())
+    dispatch(toggleActionLoader(false))
   }
 }
 
@@ -159,7 +159,7 @@ export const registerFeedAction = () => async (dispatch: AppDispatch, getState: 
     return
   }
 
-  if (state.loading.isLoading) {
+  if (state.loading.isActionLoading) {
     dispatch(showToaster(ERROR, 'Cannot register feed', ''))
     return
   }

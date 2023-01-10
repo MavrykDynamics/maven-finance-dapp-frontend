@@ -1,7 +1,7 @@
-import { ROCKET_LOADER, WERT_IO_LOADER } from 'utils/constants'
 import { LoaderShineTextAnimation, LoaderStyled, LoaderStyledWithBackdrop } from './Loader.style'
 import { useSelector } from 'react-redux'
 import { State } from 'reducers'
+import { useLockBodyScroll } from 'react-use'
 
 export const LoaderRocket = () => (
   <LoaderStyledWithBackdrop>
@@ -13,7 +13,7 @@ export const LoaderRocket = () => (
   </LoaderStyledWithBackdrop>
 )
 
-export const LoaderWertIo = () => (
+const LoaderWertIo = () => (
   <LoaderStyledWithBackdrop backdropAlpha={0.8}>
     <LoaderShineTextAnimation>Initializating Wert IO widget...</LoaderShineTextAnimation>
   </LoaderStyledWithBackdrop>
@@ -33,17 +33,14 @@ export const SpinnerLoader = () => (
   </LoaderStyled>
 )
 
-export const Loader = () => {
-  const { viewLoading: loaderType } = useSelector((state: State) => state.loading)
-
-  switch (loaderType) {
-    case ROCKET_LOADER:
-      return <LoaderRocket />
-    case WERT_IO_LOADER:
-      return <LoaderWertIo />
-    default:
-      return null
-  }
+export const ActionLoader = () => {
+  const { isActionLoading } = useSelector((state: State) => state.loading)
+  useLockBodyScroll(isActionLoading)
+  return isActionLoading ? <LoaderRocket /> : null
 }
 
-export default Loader
+export const WertLoader = () => {
+  const { isWertLoading } = useSelector((state: State) => state.loading)
+  useLockBodyScroll(isWertLoading)
+  return isWertLoading ? <LoaderWertIo /> : null
+}
