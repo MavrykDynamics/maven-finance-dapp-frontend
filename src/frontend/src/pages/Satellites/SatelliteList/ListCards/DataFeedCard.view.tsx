@@ -21,6 +21,8 @@ export const handleCoinName = (name: string) => {
   return updatedName
 }
 
+const defaultCategoryText = 'No Category'
+
 export const DataFeedCard = ({ feed }: { feed: FeedGQL }) => {
   const { dipDupTokens } = useSelector((state: State) => state.tokens)
   const imageLink = dipDupTokens.find(({ contract }) => contract === feed.address)?.metadata?.icon
@@ -45,6 +47,12 @@ export const DataFeedCard = ({ feed }: { feed: FeedGQL }) => {
           <h5>Contract address</h5>
           <var>
             <TzAddress tzAddress={feed.address} hasIcon={true} type={BLUE} />
+          </var>
+        </div>
+        <div className="item">
+          <h5>Category</h5>
+          <var>
+            {feed.category || defaultCategoryText}
           </var>
         </div>
         <div className="item feed-last">

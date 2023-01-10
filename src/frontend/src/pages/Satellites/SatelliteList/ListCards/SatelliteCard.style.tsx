@@ -20,7 +20,8 @@ export const SatelliteItemStyle = styled(Card)<{ oracle?: boolean; theme: Mavryk
   }
 
   &.feed {
-    grid-template-columns: 1.1fr 1fr 1.3fr 0.9fr;
+    grid-template-columns: 1.1fr 1fr 1.3fr 1.3fr 0.9fr;
+    column-gap: 70px;
   }
 
   .item {
