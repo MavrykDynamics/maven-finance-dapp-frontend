@@ -42,17 +42,8 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
     color: ${({ theme }) => theme.containerColor};
     background-color: ${({ theme }) => theme.actionPrimaryBtnColor};
 
-    &.fill {
-      svg {
-        fill: ${({ theme }) => theme.containerColor};
-        stroke: none;
-      }
-    }
-
-    &.noStroke {
-      svg {
-        stroke: none;
-      }
+    svg {
+      fill: ${({ theme }) => theme.containerColor};
     }
   }
 

@@ -37,7 +37,7 @@ export const RemoveAssetsFromLending = ({ closePopup }: { closePopup: () => void
 
       {screenShown === 'initial' ? (
         <>
-          <div className="lending-stats">
+          <div className="lending-stats" style={{ marginBottom: '25px' }}>
             <ThreeLevelListItem>
               <div className="name">mXTZ Balance</div>
               <CommaNumber value={2412} className="value" endingText="mXTZ" />

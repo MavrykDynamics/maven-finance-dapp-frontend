@@ -91,7 +91,20 @@ export const LoansModalBase = styled.div<{ theme: MavrykTheme }>`
   .lending-stats {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 25px;
+
+    .left-divider {
+      position: relative;
+      &::before {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        left: -25px;
+        content: '';
+        height: 100%;
+        width: 1px;
+        background: ${({ theme }) => theme.cardBorderColor};
+      }
+    }
 
     .name {
       .tooltip {
