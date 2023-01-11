@@ -54,11 +54,53 @@ export const LoansModalBase = styled.div<{ theme: MavrykTheme }>`
     width: 250px;
   }
 
+  .buttons-wrapper {
+    display: flex;
+    justify-content: center;
+    column-gap: 10px;
+    margin-top: 60px;
+
+    button {
+      margin-top: 0;
+      width: calc(50% - 5px);
+    }
+  }
+
   hr {
     background: ${({ theme }) => theme.cardBorderColor};
     margin: 40px 0;
     height: 0.5px;
     border: none;
+  }
+
+  .loans-confirmation-info {
+    display: flex;
+    flex-direction: column;
+    row-gap: 15px;
+    padding: 0 20px;
+
+    > div {
+      margin: 0;
+    }
+
+    hr {
+      margin: 0;
+    }
+  }
+
+  .lending-stats {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 25px;
+
+    .name {
+      .tooltip {
+        svg {
+          height: 14px;
+          width: 14px;
+        }
+      }
+    }
   }
 `
 

@@ -1,5 +1,5 @@
 import { GET_LOANS_STORAGE, TOGGLE_LOANS_MODAL } from 'pages/Loans/Loans.actions'
-import { WITHDRAW_COLLATERAL_MODAL_ID } from 'pages/Loans/Loans.const'
+import { REMOVE_ASSET_LENDING_MODAL_ID } from 'pages/Loans/Loans.const'
 import { LoansChartsDataType, LoansStorage, ModalTypes } from 'utils/TypesAndInterfaces/Loans'
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
 
@@ -12,7 +12,7 @@ export interface LoansState {
 
 const loansDefaultState: LoansState = {
   loanTokens: [],
-  currentModalActive: WITHDRAW_COLLATERAL_MODAL_ID,
+  currentModalActive: null,
   loansControllerAddress: '',
   chartsData: {
     totalBorrowed: 0,

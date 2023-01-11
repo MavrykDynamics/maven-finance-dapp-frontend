@@ -293,6 +293,17 @@ export const ThreeLevelListItem = styled.div<{ theme: MavrykTheme }>`
     margin: 0;
   }
 
+  &.right {
+    .name {
+      text-align: right;
+    }
+
+    .value {
+      text-align: right;
+      justify-content: flex-end;
+    }
+  }
+
   .name {
     font-weight: 600;
     font-size: 14px;

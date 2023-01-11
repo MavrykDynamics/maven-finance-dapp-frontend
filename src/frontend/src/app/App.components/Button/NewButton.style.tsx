@@ -1,7 +1,13 @@
 import styled from 'styled-components'
 import { BUTTON_RADIUS } from 'styles/constants'
 import { MavrykTheme } from 'styles/interfaces'
-import { ACTION_PRIMARY, ACTION_SECONDARY, ACTION_SIMPLE, TRANSPARENT_WITH_BORDER } from './Button.constants'
+import {
+  ACTION_PRIMARY,
+  ACTION_SECONDARY,
+  ACTION_SIMPLE,
+  NAV_SIMPLE,
+  TRANSPARENT_WITH_BORDER,
+} from './Button.constants'
 
 export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
   padding: 0 31px;
@@ -16,7 +22,7 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  column-gap: 5px;
+  column-gap: 10px;
 
   svg {
     width: 24px;
@@ -73,27 +79,38 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
     width: fit-content;
     height: fit-content;
     padding: 3px 7px;
+    transition: 0.3s all;
+    color: ${({ theme }) => theme.valueColor};
+    max-width: unset;
+
+    &.use-max-btn {
+      color: ${({ theme }) => theme.dataColor};
+    }
+  }
+
+  &.${NAV_SIMPLE} {
+    width: fit-content;
+    height: fit-content;
+    padding: 3px 7px;
     position: relative;
     transition: 0.3s all;
     color: ${({ theme }) => theme.navTitleColor};
     max-width: unset;
 
-    &.selecting {
-      &.active,
-      &:hover {
-        &:not(.no-before)::before {
-          position: absolute;
-          bottom: -3px;
-          left: 50%;
-          transform: translateX(-50%);
-          transition: 0.3s all;
-          content: '';
-          width: 30px;
-          height: 1px;
-          background-color: ${({ theme }) => theme.navLinkSubTitleActive};
-        }
-        color: ${({ theme }) => theme.navLinkSubTitleActive};
+    &.active,
+    &:hover {
+      &:not(.no-before)::before {
+        position: absolute;
+        bottom: -3px;
+        left: 50%;
+        transform: translateX(-50%);
+        transition: 0.3s all;
+        content: '';
+        width: 30px;
+        height: 1px;
+        background-color: ${({ theme }) => theme.navLinkSubTitleActive};
       }
+      color: ${({ theme }) => theme.navLinkSubTitleActive};
     }
   }
 
@@ -105,6 +122,10 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
     align-items: center;
     justify-content: center;
     width: fit-content;
+
+    svg {
+      fill: ${({ theme }) => theme.valueColor};
+    }
   }
 
   &.go-back {

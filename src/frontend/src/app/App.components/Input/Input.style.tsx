@@ -103,13 +103,13 @@ export const InputLabel = styled.div<{ theme: MavrykTheme }>`
   font-size: 18px;
   font-weight: 600;
 
-  /* &.error {
+  &.error {
     color: ${({ theme }) => theme.downColor};
   }
 
   &.success {
     color: ${({ theme }) => theme.upColor};
-  } */
+  }
 `
 
 const zoomIn = keyframes`
