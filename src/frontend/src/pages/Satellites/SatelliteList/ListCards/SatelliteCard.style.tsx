@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components/macro'
 import { Card, upColor, downColor, warningColor } from 'styles'
 import { MavrykTheme } from 'styles/interfaces'
 
-export const SatelliteItemStyle = styled(Card)<{ oracle?: boolean; theme: MavrykTheme }>`
+export const SatelliteItemStyle = styled(Card)<{ isDataFeeds?: boolean; oracle?: boolean; theme: MavrykTheme }>`
   margin-top: 0;
   margin-bottom: 10px;
   display: grid;
@@ -20,7 +20,8 @@ export const SatelliteItemStyle = styled(Card)<{ oracle?: boolean; theme: Mavryk
   }
 
   &.feed {
-    grid-template-columns: 1.1fr 1fr 1.3fr 0.9fr;
+    grid-template-columns: ${({isDataFeeds}) => isDataFeeds ? '1.1fr 1fr 1.3fr 1.3fr 0.9fr' : '0.9fr 1.2fr 1fr 1fr'};
+    column-gap: 50px;
   }
 
   .item {
@@ -147,21 +148,22 @@ export const SatelliteCard = styled(Card)<{ theme: MavrykTheme }>`
 `
 
 export const SatelliteCardTopRow = styled.div<{ isExtendedListItem?: boolean }>`
-  width: 100%;
-  column-gap: 20px;
+  margin-top: 8px;
+  column-gap: 30px;
+  row-gap: 20px;
   display: grid;
-  grid-template-columns: ${({ isExtendedListItem }) => (isExtendedListItem ? '1fr 1fr 1fr 1fr' : '1.75fr 1fr 1.3fr')};
+  grid-template-columns: ${({ isExtendedListItem }) => (isExtendedListItem ? '121px 142px' : '121px 133px')};
 `
 
 export const SatelliteCardInner = styled.div`
   display: flex;
-  padding: 25px 0 17px 25px;
+  padding: 25px;
+  padding-right: 0;
 
   .rows-wrapper {
-    display: flex;
-    flex-direction: column;
-    width: 80%;
-    row-gap: 17px;
+    display: grid;
+    grid-template-columns: 190px auto;
+    column-gap: 30px;
   }
 `
 
@@ -171,8 +173,8 @@ export const SatelliteCardButtons = styled.div`
   align-items: center;
   justify-content: center;
   margin-left: auto;
-  padding-right: 24px;
-  width: 204px;
+  margin-left: 15px;
+  width: 180px;
   flex-shrink: 0;
   justify-content: space-around;
 `
@@ -225,7 +227,7 @@ export const SideBySideImageAndText = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   flex-direction: row;
   align-items: center;
-  margin-right: 10px;
+  margin-bottom: auto;
 `
 
 export const SatelliteTextGroup = styled.div<{ theme: MavrykTheme }>`
@@ -278,7 +280,8 @@ export const SatelliteSubText = styled.div<{ theme: MavrykTheme }>`
 
 export const SatelliteProfileDetails = styled.div<{ theme: MavrykTheme }>`
   display: flex;
-  margin-left: 7px;
+  margin-top: 7px;
+  margin-left: 20px;
   button.transparent {
     color: ${({ theme }) => theme.valueColor};
     font-weight: 600;

@@ -43,7 +43,7 @@ export const ListItemLeftSide = styled.div<{ theme: MavrykTheme }>`
 
   &.financial-request {
     h4 {
-      max-width: 335px;
+      max-width: 280px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;

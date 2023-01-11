@@ -92,7 +92,7 @@ export const mainNavigationLinks: MainNavigationRoute[] = [
       },
       {
         id: 55614,
-        subTitle: 'Edit Profile',
+        subTitle: 'Edit my Profile',
         subPath: 'become-satellite',
         routeSubPath: '/become-satellite',
         requires: {

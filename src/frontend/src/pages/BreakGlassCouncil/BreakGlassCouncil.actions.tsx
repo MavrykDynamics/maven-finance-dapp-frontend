@@ -161,10 +161,10 @@ export const setAllContractsAdmin = (newAdminAddress: string) => async (dispatch
     dispatch(toggleActionLoader(true))
     const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.breakGlassAddress.address)
     const transaction = await contract?.methods.setSingleContractAdmin(newAdminAddress).send()
-    dispatch(showToaster(INFO, 'Propagate Break Glass...', 'Please wait 30s'))
+    dispatch(showToaster(INFO, 'Set All Contracts Admin...', 'Please wait 30s'))
 
     await transaction?.confirmation()
-    dispatch(showToaster(SUCCESS, 'Propagate Break Glass done', 'All good :)'))
+    dispatch(showToaster(SUCCESS, 'Set All Contracts Admin is done', 'All good :)'))
     dispatch(getBreakGlassActionPendingSignature())
     dispatch(toggleActionLoader(false))
   } catch (error) {
@@ -195,10 +195,10 @@ export const setSingleContractAdmin =
       dispatch(toggleActionLoader(true))
       const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.breakGlassAddress.address)
       const transaction = await contract?.methods.setSingleContractAdmin(newAdminAddress, targetContract).send()
-      dispatch(showToaster(INFO, 'Propagate Break Glass...', 'Please wait 30s'))
+      dispatch(showToaster(INFO, 'Set Single Contract Admin...', 'Please wait 30s'))
 
       await transaction?.confirmation()
-      dispatch(showToaster(SUCCESS, 'Propagate Break Glass done', 'All good :)'))
+      dispatch(showToaster(SUCCESS, 'Set Single Contract Admin is done', 'All good :)'))
       dispatch(getBreakGlassActionPendingSignature())
       dispatch(toggleActionLoader(false))
     } catch (error) {
@@ -228,10 +228,10 @@ export const signAction = (breakGlassActionID: number) => async (dispatch: AppDi
     dispatch(toggleActionLoader(true))
     const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.breakGlassAddress.address)
     const transaction = await contract?.methods.signAction(breakGlassActionID).send()
-    dispatch(showToaster(INFO, 'Signing action...', 'Please wait 30s'))
+    dispatch(showToaster(INFO, 'Sign action...', 'Please wait 30s'))
 
     await transaction?.confirmation()
-    dispatch(showToaster(SUCCESS, 'Action signed', 'All good :)'))
+    dispatch(showToaster(SUCCESS, 'Sign Action is done', 'All good :)'))
     dispatch(getBreakGlassActionPendingSignature())
     dispatch(toggleActionLoader(false))
   } catch (error) {
@@ -265,10 +265,10 @@ export const addCouncilMember =
       const transaction = await contract?.methods
         .addCouncilMember(memberAddress, newMemberName, newMemberWebsite, newMemberImage)
         .send()
-      dispatch(showToaster(INFO, 'Propagate Break Glass...', 'Please wait 30s'))
+      dispatch(showToaster(INFO, 'Add Council Members...', 'Please wait 30s'))
 
       await transaction?.confirmation()
-      dispatch(showToaster(SUCCESS, 'Propagate Break Glass done', 'All good :)'))
+      dispatch(showToaster(SUCCESS, 'Add Council Members is done', 'All good :)'))
       dispatch(getBreakGlassActionPendingSignature())
       dispatch(toggleActionLoader(false))
     } catch (error) {
@@ -302,10 +302,10 @@ export const updateCouncilMember =
       const transaction = await contract?.methods
         .updateCouncilMemberInfo(newMemberName, newMemberWebsite, newMemberImage)
         .send()
-      dispatch(showToaster(INFO, 'Propagate Break Glass...', 'Please wait 30s'))
+      dispatch(showToaster(INFO, 'Update Council Member...', 'Please wait 30s'))
 
       await transaction?.confirmation()
-      dispatch(showToaster(SUCCESS, 'Propagate Break Glass done', 'All good :)'))
+      dispatch(showToaster(SUCCESS, 'Update Council Member is done', 'All good :)'))
       dispatch(getBreakGlassActionPendingSignature())
       dispatch(toggleActionLoader(false))
     } catch (error) {
@@ -351,10 +351,10 @@ export const changeCouncilMember =
           newMemberImage,
         )
         .send()
-      dispatch(showToaster(INFO, 'Propagate Break Glass...', 'Please wait 30s'))
+      dispatch(showToaster(INFO, 'Change Council Member...', 'Please wait 30s'))
 
       await transaction?.confirmation()
-      dispatch(showToaster(SUCCESS, 'Propagate Break Glass done', 'All good :)'))
+      dispatch(showToaster(SUCCESS, 'Change Council Member is done', 'All good :)'))
       dispatch(getBreakGlassActionPendingSignature())
       dispatch(toggleActionLoader(false))
     } catch (error) {
@@ -384,10 +384,10 @@ export const removeCouncilMember = (memberAddress: string) => async (dispatch: A
     dispatch(toggleActionLoader(true))
     const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.breakGlassAddress.address)
     const transaction = await contract?.methods.removeCouncilMember(memberAddress).send()
-    dispatch(showToaster(INFO, 'Propagate Break Glass...', 'Please wait 30s'))
+    dispatch(showToaster(INFO, 'Remove Council Member...', 'Please wait 30s'))
 
     await transaction?.confirmation()
-    dispatch(showToaster(SUCCESS, 'Propagate Break Glass done', 'All good :)'))
+    dispatch(showToaster(SUCCESS, 'Remove Council Member is done', 'All good :)'))
     dispatch(getBreakGlassActionPendingSignature())
     dispatch(toggleActionLoader(false))
   } catch (error) {
@@ -420,8 +420,7 @@ export const propagateBreakGlass = () => async (dispatch: AppDispatch, getState:
     dispatch(showToaster(INFO, 'Propagate Break Glass...', 'Please wait 30s'))
 
     await transaction?.confirmation()
-    dispatch(showToaster(SUCCESS, 'Propagate Break Glass done', 'All good :)'))
-
+    dispatch(showToaster(SUCCESS, 'Propagate Break Glass is done', 'All good :)'))
     dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {
@@ -450,10 +449,10 @@ export const dropBreakGlass = (breakGlassActionID: number) => async (dispatch: A
     dispatch(toggleActionLoader(true))
     const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.breakGlassAddress.address)
     const transaction = await contract?.methods.flushAction(breakGlassActionID).send()
-    dispatch(showToaster(INFO, 'Propagate Break Glass...', 'Please wait 30s'))
+    dispatch(showToaster(INFO, 'Drop Action...', 'Please wait 30s'))
 
     await transaction?.confirmation()
-    dispatch(showToaster(SUCCESS, 'Propagate Break Glass done', 'All good :)'))
+    dispatch(showToaster(SUCCESS, 'Drop Action is done', 'All good :)'))
 
     dispatch(getPastBreakGlassCouncilAction())
     dispatch(getMyPastBreakGlassCouncilAction())

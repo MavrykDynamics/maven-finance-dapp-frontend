@@ -128,7 +128,7 @@ export const sign = (actionID: number) => async (dispatch: AppDispatch, getState
 
     dispatch(showToaster(INFO, 'Sign...', 'Please wait 30s'))
     await transaction?.confirmation()
-    dispatch(showToaster(SUCCESS, 'Sign done', 'All good :)'))
+    dispatch(showToaster(SUCCESS, 'Sign is done', 'All good :)'))
 
     await dispatch(getCouncilPastActionsStorage())
     await dispatch(getCouncilPendingActionsStorage())
@@ -166,7 +166,7 @@ export const addVestee =
 
       dispatch(showToaster(INFO, 'Add Vestee...', 'Please wait 30s'))
       await transaction?.confirmation()
-      dispatch(showToaster(SUCCESS, 'Add Vestee done', 'All good :)'))
+      dispatch(showToaster(SUCCESS, 'Add Vestee is done', 'All good :)'))
 
       await dispatch(getCouncilPastActionsStorage())
       await dispatch(getCouncilPendingActionsStorage())
@@ -204,7 +204,7 @@ export const addCouncilMember =
 
       dispatch(showToaster(INFO, 'Add Council Member...', 'Please wait 30s'))
       await transaction?.confirmation()
-      dispatch(showToaster(SUCCESS, 'Add Council Member done', 'All good :)'))
+      dispatch(showToaster(SUCCESS, 'Add Council Member is done', 'All good :)'))
 
       await dispatch(getCouncilPastActionsStorage())
       await dispatch(getCouncilPendingActionsStorage())
@@ -243,7 +243,7 @@ export const updateVestee =
 
       dispatch(showToaster(INFO, 'Update Vestee...', 'Please wait 30s'))
       await transaction?.confirmation()
-      dispatch(showToaster(SUCCESS, 'Update Vestee done', 'All good :)'))
+      dispatch(showToaster(SUCCESS, 'Update Vestee is done', 'All good :)'))
 
       await dispatch(getCouncilPastActionsStorage())
       await dispatch(getCouncilPendingActionsStorage())
@@ -278,7 +278,7 @@ export const toggleVesteeLock = (vesteeAddress: string) => async (dispatch: AppD
 
     dispatch(showToaster(INFO, 'Toggle Vestee Lock...', 'Please wait 30s'))
     await transaction?.confirmation()
-    dispatch(showToaster(SUCCESS, 'Toggle Vestee Lock done', 'All good :)'))
+    dispatch(showToaster(SUCCESS, 'Toggle Vestee Lock is done', 'All good :)'))
 
     await dispatch(getCouncilPastActionsStorage())
     await dispatch(getCouncilPendingActionsStorage())
@@ -329,7 +329,7 @@ export const changeCouncilMember =
 
       dispatch(showToaster(INFO, 'Change Council Member...', 'Please wait 30s'))
       await transaction?.confirmation()
-      dispatch(showToaster(SUCCESS, 'Change Council Member done', 'All good :)'))
+      dispatch(showToaster(SUCCESS, 'Change Council Member is done', 'All good :)'))
 
       await dispatch(getCouncilStorage())
       await dispatch(getCouncilPastActionsStorage())
@@ -365,7 +365,7 @@ export const removeCouncilMember = (memberAddress: string) => async (dispatch: A
 
     dispatch(showToaster(INFO, 'Remove Council Member...', 'Please wait 30s'))
     await transaction?.confirmation()
-    dispatch(showToaster(SUCCESS, 'Remove Council Member done', 'All good :)'))
+    dispatch(showToaster(SUCCESS, 'Remove Council Member is done', 'All good :)'))
 
     await dispatch(getCouncilStorage())
     await dispatch(getCouncilPastActionsStorage())
@@ -405,7 +405,7 @@ export const updateCouncilMemberInfo =
 
       await dispatch(showToaster(INFO, 'Update Council Member Info...', 'Please wait 30s'))
       await transaction?.confirmation()
-      await dispatch(showToaster(SUCCESS, 'Update Council Member Info done', 'All good :)'))
+      await dispatch(showToaster(SUCCESS, 'Update Council Member Info is done', 'All good :)'))
 
       await dispatch(getCouncilStorage())
       await dispatch(getCouncilPastActionsStorage())
@@ -452,7 +452,7 @@ export const transferTokens =
 
       dispatch(showToaster(INFO, 'Transfer Tokens...', 'Please wait 30s'))
       await transaction?.confirmation()
-      dispatch(showToaster(SUCCESS, 'Transfer Tokens done', 'All good :)'))
+      dispatch(showToaster(SUCCESS, 'Transfer Tokens is done', 'All good :)'))
 
       await dispatch(getCouncilStorage())
       await dispatch(getCouncilPastActionsStorage())
@@ -508,7 +508,7 @@ export const requestTokens =
 
       dispatch(showToaster(INFO, 'Request Tokens...', 'Please wait 30s'))
       await transaction?.confirmation()
-      dispatch(showToaster(SUCCESS, 'Request Tokens done', 'All good :)'))
+      dispatch(showToaster(SUCCESS, 'Request Tokens is done', 'All good :)'))
 
       await dispatch(getCouncilStorage())
       await dispatch(getCouncilPastActionsStorage())
@@ -546,7 +546,7 @@ export const requestTokenMint =
 
       dispatch(showToaster(INFO, 'Request Tokens...', 'Please wait 30s'))
       await transaction?.confirmation()
-      dispatch(showToaster(SUCCESS, 'Request Tokens done', 'All good :)'))
+      dispatch(showToaster(SUCCESS, 'Request Tokens is done', 'All good :)'))
 
       await dispatch(getCouncilStorage())
       await dispatch(getCouncilPastActionsStorage())
@@ -582,7 +582,7 @@ export const dropFinancialRequest = (financialReqID: number) => async (dispatch:
 
     dispatch(showToaster(INFO, 'Drop Financial Request...', 'Please wait 30s'))
     await transaction?.confirmation()
-    dispatch(showToaster(SUCCESS, 'Drop Financial Request done', 'All good :)'))
+    dispatch(showToaster(SUCCESS, 'Drop Financial Request is done', 'All good :)'))
 
     await dispatch(getCouncilStorage())
     await dispatch(getCouncilPastActionsStorage())
@@ -618,7 +618,7 @@ export const removeVesteeRequest = (vesteeAddress: string) => async (dispatch: A
 
     dispatch(showToaster(INFO, 'Remove Vestee Request...', 'Please wait 30s'))
     await transaction?.confirmation()
-    dispatch(showToaster(SUCCESS, 'Remove Vestee Request done', 'All good :)'))
+    dispatch(showToaster(SUCCESS, 'Remove Vestee Request is done', 'All good :)'))
 
     await dispatch(getCouncilStorage())
     await dispatch(getCouncilPastActionsStorage())
@@ -654,7 +654,7 @@ export const setBakerRequest = (bakerHash: string) => async (dispatch: AppDispat
 
     dispatch(showToaster(INFO, 'Set Baker Request...', 'Please wait 30s'))
     await transaction?.confirmation()
-    dispatch(showToaster(SUCCESS, 'Set Baker Request done', 'All good :)'))
+    dispatch(showToaster(SUCCESS, 'Set Baker Request is done', 'All good :)'))
 
     await dispatch(getCouncilStorage())
     await dispatch(getCouncilPastActionsStorage())
@@ -691,7 +691,7 @@ export const setContractBakerRequest =
 
       dispatch(showToaster(INFO, 'Set Contract Baker Request...', 'Please wait 30s'))
       await transaction?.confirmation()
-      dispatch(showToaster(SUCCESS, 'Set Contract Baker Request done', 'All good :)'))
+      dispatch(showToaster(SUCCESS, 'Set Contract Baker Request is done', 'All good :)'))
 
       await dispatch(getCouncilStorage())
       await dispatch(getCouncilPastActionsStorage())
@@ -731,7 +731,7 @@ export const dropRequest = (actionID: number) => async (dispatch: AppDispatch, g
 
     const done = await transaction?.confirmation()
     console.log('done', done)
-    dispatch(showToaster(SUCCESS, 'Set Contract Baker Request done', 'All good :)'))
+    dispatch(showToaster(SUCCESS, 'Set Contract Baker Request is done', 'All good :)'))
 
     await dispatch(getCouncilStorage())
     await dispatch(getCouncilPastActionsStorage())

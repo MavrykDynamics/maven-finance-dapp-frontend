@@ -3,7 +3,7 @@ import { Card } from 'styles'
 import { MavrykTheme } from 'styles/interfaces'
 
 export const SatellitePaginationStyled = styled(Card)<{ theme: MavrykTheme }>`
-  margin-top: 30px;
+  margin-top: 0;
   margin-bottom: 20px;
   display: flex;
   align-items: center;

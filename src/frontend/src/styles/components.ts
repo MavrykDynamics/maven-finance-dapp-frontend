@@ -111,7 +111,7 @@ export const CardHeader = styled.h2<{ theme: MavrykTheme }>`
 
 export const PageContent = styled.section`
   display: grid;
-  grid-template-columns: 1fr 310px;
+  grid-template-columns: 750px 310px;
   grid-gap: 30px;
   align-items: baseline;
   align-items: start;
