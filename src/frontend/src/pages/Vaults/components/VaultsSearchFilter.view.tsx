@@ -15,14 +15,21 @@ import { sortByCategory } from 'utils/sortByCategory'
 // types
 import { State } from '../../../reducers'
 
+const dropdowns = {
+  statuses: 'STATUSES',
+  sizes: 'SIZES',
+  assets: 'ASSETS',
+}
+
 export const VaultsSearchFilter = () => {
   const dispatch = useDispatch()
   const { wallet, tezos, accountPkh } = useSelector((state: State) => state.wallet)
 
   const [searchInputValue, setSearchInput] = useState('')
   const [sortedData, setSortedData] = useState<unknown[]>([])
-  const [ddIsOpen, setDdIsOpen] = useState(false)
-  const [chosenDdItem, setChosenDdItem] = useState<string | undefined>()
+
+  const [dropdownStatus, setDropdownStatus] = useState<{[key:string]: boolean}>({})
+  const [chosenDdItem, setChosenDdItem] = useState<{[key:string]: string}>({})
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const searchQuery = e.target.value
@@ -39,16 +46,30 @@ export const VaultsSearchFilter = () => {
     setSortedData(searchResult)
   }
 
-  const handleSelect = (selectedOption: string) => {
-    setDdIsOpen(!ddIsOpen)
-    setChosenDdItem(selectedOption)
+  const handleDropdownSelect = (name: string) => (selectedOption: string) => {
+    setDropdownStatus((prev) => ({
+      ...prev,
+      [name]: !prev[name]
+    }))
 
-    if (selectedOption !== '' && selectedOption !== chosenDdItem) {
+    setChosenDdItem((prev) => ({
+      ...prev,
+      [name]: selectedOption
+    }))
+
+    if (selectedOption !== '' && selectedOption !== chosenDdItem[name]) {
       setSortedData((data: unknown[]) => {
         // return sortByCategory(data, selectedOption)
         return data
       })
     }
+  }
+
+  const handleDropdownStatus = (name: string) => (status: boolean) => {
+    setDropdownStatus((prev) => ({
+      ...prev,
+      [name]: status
+    }))
   }
 
   return (
@@ -67,31 +88,31 @@ export const VaultsSearchFilter = () => {
         <DropDown
           className="dd-item"
           placeholder="Statuses"
-          isOpen={ddIsOpen}
-          setIsOpen={setDdIsOpen}
-          itemSelected={chosenDdItem}
-          items={[]}
-          clickOnItem={handleSelect}
+          isOpen={dropdownStatus[dropdowns.statuses]}
+          setIsOpen={handleDropdownStatus(dropdowns.statuses)}
+          itemSelected={chosenDdItem[dropdowns.statuses]}
+          items={['one st', 'two st']}
+          clickOnItem={handleDropdownSelect(dropdowns.statuses)}
         />
 
         <DropDown
           className="dd-item"
           placeholder="All Sizes"
-          isOpen={ddIsOpen}
-          setIsOpen={setDdIsOpen}
-          itemSelected={chosenDdItem}
-          items={[]}
-          clickOnItem={handleSelect}
+          isOpen={dropdownStatus[dropdowns.sizes]}
+          setIsOpen={handleDropdownStatus(dropdowns.sizes)}
+          itemSelected={chosenDdItem[dropdowns.sizes]}
+          items={['one size', 'two size']}
+          clickOnItem={handleDropdownSelect(dropdowns.sizes)}
         />
 
         <DropDown
           className="dd-item"
           placeholder="All Assets"
-          isOpen={ddIsOpen}
-          setIsOpen={setDdIsOpen}
-          itemSelected={chosenDdItem}
-          items={[]}
-          clickOnItem={handleSelect}
+          isOpen={dropdownStatus[dropdowns.assets]}
+          setIsOpen={handleDropdownStatus(dropdowns.assets)}
+          itemSelected={chosenDdItem[dropdowns.assets]}
+          items={['one asset', 'two asset']}
+          clickOnItem={handleDropdownSelect(dropdowns.assets)}
         />
       </DropdownContainer>
     </VaultsSearchFilterStyled>
