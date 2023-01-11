@@ -38,6 +38,7 @@ import { BorrowingTabListItemExpanded } from './LoansComponents.style'
 import { useDispatch } from 'react-redux'
 import { BorrowingData } from 'utils/TypesAndInterfaces/Loans'
 import { toggleLoansModal } from '../Loans.actions'
+import NewButton from 'app/App.components/Button/NewButton.controller'
 
 type BorrowingExpandCardPropsType = {
   isOwner?: boolean
@@ -156,12 +157,12 @@ export const BorrowingExpandCard = ({
           </ThreeLevelListItem>
           <ThreeLevelListItem>
             <div className="name">Amount</div>
-            <CommaNumber value={amtBorrowed} className="value" />
+            <CommaNumber value={amtBorrowed} className="value" endingText="$" />
             {assetRate ? <CommaNumber value={amtBorrowed * assetRate} beginningText="$" className="rate" /> : null}
           </ThreeLevelListItem>
           <ThreeLevelListItem>
             <div className="name">Fee</div>
-            <CommaNumber value={fee} className="value" endingText="%" />
+            <CommaNumber value={fee} className="value" endingText="$" />
           </ThreeLevelListItem>
           <ThreeLevelListItem>
             <div className="name">APY</div>
@@ -170,13 +171,9 @@ export const BorrowingExpandCard = ({
           {isOwner ? (
             <div className="buttons-wrapper">
               <Button text="Borrow" icon="coin-loan" strokeWidth={0.5} onClick={borrowHandler} kind={ACTION_PRIMARY} />
-              <Button
-                text="Repay"
-                icon="okIcon"
-                strokeWidth={0.5}
-                onClick={repayHandler}
-                kind={TRANSPARENT_WITH_BORDER}
-              />
+              <NewButton onClick={repayHandler} kind={TRANSPARENT_WITH_BORDER} className="repay">
+                <Icon id="okIcon" /> Repay
+              </NewButton>
             </div>
           ) : null}
         </div>
@@ -188,7 +185,7 @@ export const BorrowingExpandCard = ({
               <TableHeaderCell>Asset</TableHeaderCell>
               <TableHeaderCell>Balance</TableHeaderCell>
               <TableHeaderCell>Withdraw Max</TableHeaderCell>
-              <TableHeaderCell>Other Data</TableHeaderCell>
+              {/* <TableHeaderCell>Other Data</TableHeaderCell> */}
             </TableRow>
           </TableHeader>
 
@@ -233,9 +230,9 @@ export const BorrowingExpandCard = ({
                       ) : null}
                     </div>
                   </TableCell>
-                  <TableCell width={`17%`}>
-                    <CommaNumber value={22.2} className="value" />
-                  </TableCell>
+                  {/* <TableCell width={`17%`}>
+                    <CommaNumber value={22.2} className="value" endingText='$' />
+                  </TableCell> */}
                   {isTotalRow ? (
                     <TableCell className="buttons borrowing">
                       <div className="cell-content row">
@@ -254,21 +251,13 @@ export const BorrowingExpandCard = ({
                   ) : (
                     <TableCell className="buttons borrowing">
                       <div className="cell-content row">
-                        <Button
-                          text="Add"
-                          icon="plus"
-                          strokeWidth={0.1}
-                          onClick={addCollateralHandler}
-                          kind={TRANSPARENT_WITH_BORDER}
-                        />
+                        <NewButton onClick={addCollateralHandler} kind={TRANSPARENT_WITH_BORDER}>
+                          <Icon id="plus" /> Add
+                        </NewButton>
                         {isOwner ? (
-                          <Button
-                            text="Remove"
-                            icon="minus"
-                            strokeWidth={0.1}
-                            onClick={removeCollateralHandler}
-                            kind={TRANSPARENT_WITH_BORDER}
-                          />
+                          <NewButton onClick={removeCollateralHandler} kind={TRANSPARENT_WITH_BORDER}>
+                            <Icon id="minus" /> Remove
+                          </NewButton>
                         ) : null}
                       </div>
                     </TableCell>
@@ -306,7 +295,7 @@ export const BorrowingExpandCard = ({
               />
             </div>
             <div className="bottom-info-row">
-              <div className="name">sMVKDelegated to </div>
+              <div className="name">sMVK Delegated to </div>
               <div className="value">
                 {sMVKDelegatedTo ? <TzAddress tzAddress={sMVKDelegatedTo} type={BLUE} /> : 'None'}
               </div>

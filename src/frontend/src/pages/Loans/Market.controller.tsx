@@ -82,7 +82,7 @@ export const Market = () => {
         ) : null}
 
         {nextMarket ? (
-          <Link to={`/loansudated data ka/${nextMarket.loanTokenData.symbol}/${tabId}`}>
+          <Link to={`/loans/${nextMarket.loanTokenData.symbol}/${tabId}`}>
             <span className="right">
               Next Market
               <Icon id="paginationArrowLeft" />
@@ -103,7 +103,7 @@ export const Market = () => {
       </Link>
       <Link to={`/loans/${assetId}/${PERMISSIONS_VAULTS_TAB_ID}`}>
         <Button
-          text={'Permissions Vaults'}
+          text={'Permissioned Vaults'}
           kind={ACTION_SIMPLE}
           className={`${tabId === PERMISSIONS_VAULTS_TAB_ID ? 'active' : ''}`}
         />
@@ -204,9 +204,17 @@ export const Market = () => {
             assetData={currentToken.loanTokenData}
           />
         ) : null}
-        {tabId === BORROW_TAB_ID ? <BorrowingTab borrowingItems={currentToken.myBorrowingList} /> : null}
+        {tabId === BORROW_TAB_ID ? (
+          <BorrowingTab
+            borrowingItems={currentToken.myBorrowingList}
+            lendingControllerAddress={loansControllerAddress}
+          />
+        ) : null}
         {tabId === PERMISSIONS_VAULTS_TAB_ID ? (
-          <PermissionVaults permissionVaults={currentToken.permissinedBorrowingList} />
+          <PermissionVaults
+            permissionVaults={currentToken.permissinedBorrowingList}
+            lendingControllerAddress={loansControllerAddress}
+          />
         ) : null}
 
         <TransactionHistory currentToken={currentToken} />

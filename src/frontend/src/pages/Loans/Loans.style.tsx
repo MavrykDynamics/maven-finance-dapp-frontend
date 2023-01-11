@@ -352,6 +352,10 @@ export const ThreeLevelListItem = styled.div<{ theme: MavrykTheme }>`
       font-size: 14px;
     }
   }
+
+  .tooltip {
+    margin-left: 7px;
+  }
 `
 
 export const FillBlock = styled.div<{ theme: MavrykTheme; width: number }>`

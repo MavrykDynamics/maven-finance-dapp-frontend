@@ -26,6 +26,7 @@ import {
   ThreeLevelListItem,
 } from './Loans.style'
 import { EmptyContainer } from 'app/App.style'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 export const Loans = () => {
   const dispatch = useDispatch()
@@ -41,7 +42,7 @@ export const Loans = () => {
   const lendingPart = (
     <div className="chart-wrapper">
       <div className="summary">
-        <span>Total Lended:</span>
+        <span>Total Lending</span>
         <CommaNumber value={chartsData.totalLended} beginningText={'$'} />
       </div>
       <Chart
@@ -66,7 +67,7 @@ export const Loans = () => {
   const borrowingPart = (
     <div className="chart-wrapper">
       <div className="summary">
-        <span>Total Borrowed:</span>
+        <span>Total Borrowing</span>
         <CommaNumber value={chartsData.totalBorrowed} beginningText={'$'} />
       </div>
       <Chart
@@ -147,7 +148,15 @@ export const Loans = () => {
                       </ThreeLevelListItem>
                       <ThreeLevelListItem>
                         <div className="name">Lend APY</div>
-                        <CommaNumber value={lendingAPY} className="value" endingText="%" />
+                        <div className="value">
+                          <CommaNumber value={lendingAPY} className="value" endingText="%" />{' '}
+                          <CustomTooltip
+                            iconId="info"
+                            defaultStrokeColor={skyColor}
+                            text="wgsgfdgdfg"
+                            className="tooltip"
+                          />
+                        </div>
                       </ThreeLevelListItem>
                       <ThreeLevelListItem>
                         <div className="name">Total Fees Earned</div>
@@ -173,7 +182,15 @@ export const Loans = () => {
                       </ThreeLevelListItem>
                       <ThreeLevelListItem>
                         <div className="name">Borrow APR</div>
-                        <CommaNumber value={borrowAPR} className="value" endingText="%" />
+                        <div className="value">
+                          <CommaNumber value={borrowAPR} className="value" endingText="%" />{' '}
+                          <CustomTooltip
+                            iconId="info"
+                            defaultStrokeColor={skyColor}
+                            text="wgsgfdgdfg"
+                            className="tooltip"
+                          />
+                        </div>
                       </ThreeLevelListItem>
                       <ThreeLevelListItem>
                         <div className="name">Available Liquidity</div>
