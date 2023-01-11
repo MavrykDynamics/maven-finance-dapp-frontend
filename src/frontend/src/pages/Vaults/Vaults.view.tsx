@@ -2,24 +2,21 @@ import * as React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 // components
-import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
-import { VaultsView } from './Vaults.view'
+import { VaultsSearchFilter } from './components/VaultsSearchFilter.view'
 
 // styles
-import { Page } from 'styles'
+import { VaultsStyled } from './Vaults.style'
 
 // types
 import { State } from '../../reducers'
 
-
-export const Vaults = () => {
+export const VaultsView = () => {
   const dispatch = useDispatch()
   const { wallet, tezos, accountPkh } = useSelector((state: State) => state.wallet)
 
   return (
-    <Page>
-      <PageHeader page={'vaults'} />
-      <VaultsView />
-    </Page>
+    <VaultsStyled>
+      <VaultsSearchFilter />
+    </VaultsStyled>
   )
 }
