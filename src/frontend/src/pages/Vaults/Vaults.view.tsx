@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 
 // components
 import { VaultsSearchFilter } from './components/VaultsSearchFilter.view'
+import { VaultsCard } from './components/VaultsCard.view'
 
 // styles
 import { VaultsStyled } from './Vaults.style'
@@ -17,6 +18,7 @@ export const VaultsView = () => {
   return (
     <VaultsStyled>
       <VaultsSearchFilter />
+      <VaultsCard></VaultsCard>
     </VaultsStyled>
   )
 }

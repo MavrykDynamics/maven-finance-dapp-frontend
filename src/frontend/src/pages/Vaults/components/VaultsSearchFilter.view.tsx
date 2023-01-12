@@ -77,7 +77,7 @@ export const VaultsSearchFilter = () => {
       <Input
         type="text"
         kind={'search'}
-        placeholder="Search data feed..."
+        placeholder="Search by..."
         onChange={handleSearch}
         value={searchInputValue}
       />
