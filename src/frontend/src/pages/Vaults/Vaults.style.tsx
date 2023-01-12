@@ -7,8 +7,6 @@ import { Card } from 'styles'
 import { MavrykTheme } from '../../styles/interfaces'
 
 export const VaultsStyled = styled.div<{ theme: MavrykTheme }>`
-  background-color: ${({ theme }) => theme.containerColor};
-
   .group-with-icon {
     display: flex;
 
