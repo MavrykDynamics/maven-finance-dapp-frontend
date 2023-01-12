@@ -134,3 +134,33 @@ export const VaultModalOverview = styled.div<{ theme: MavrykTheme }>`
     }
   }
 `
+
+export const DropDownJsxChild = styled.div`
+  width: 95%;
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+
+  .baker-name {
+    align-items: center;
+    display: flex;
+    column-gap: 10px;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 24px;
+    color: ${({ theme }) => theme.textColor};
+
+    svg {
+      width: 20px;
+      height: 20px;
+      fill: ${({ theme }) => theme.cardBorderColor};
+    }
+  }
+
+  .baker-fee {
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 21px;
+    color: ${({ theme }) => theme.dataColor};
+  }
+`

@@ -34,6 +34,10 @@ export const DropDownStyled = styled.div<{ theme: MavrykTheme }>`
       border: unset;
     }
   }
+
+  &.change-bakery {
+    margin: 50px 0 30px 0;
+  }
 `
 
 export const DropDownMenu = styled.div<{ theme: MavrykTheme }>`
@@ -55,7 +59,7 @@ export const DropDownMenu = styled.div<{ theme: MavrykTheme }>`
   cursor: pointer;
   text-transform: capitalize;
 
-  span {
+  > span {
     width: 50px;
     border-left: 2px solid ${({ theme }) => theme.headerColor};
     display: flex;
@@ -114,7 +118,37 @@ export const DropDownListItem = styled.li`
   justify-content: space-between;
   text-transform: capitalize;
 
-  svg {
+  .jsx-content {
+    width: 95%;
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+
+    .baker-name {
+      align-items: center;
+      display: flex;
+      column-gap: 10px;
+      font-weight: 500;
+      font-size: 16px;
+      line-height: 24px;
+      color: ${({ theme }) => theme.textColor};
+
+      svg {
+        width: 20px;
+        height: 20px;
+        fill: ${({ theme }) => theme.cardBorderColor};
+      }
+    }
+
+    .baker-fee {
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 21px;
+      color: ${({ theme }) => theme.dataColor};
+    }
+  }
+
+  > svg {
     stroke: ${({ theme }) => theme.textColor};
     width: 10px;
     height: 10px;

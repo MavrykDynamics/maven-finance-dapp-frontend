@@ -54,7 +54,7 @@ export const ButtonStyled = styled.button<{ disabled: boolean; theme: MavrykThem
   border: none;
   cursor: pointer;
   height: 36px;
-  width: max-content;
+  width: -webkit-fill-available;
   padding: 0 22px;
   border-radius: ${BUTTON_RADIUS};
   user-select: none;

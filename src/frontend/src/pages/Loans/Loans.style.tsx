@@ -319,6 +319,13 @@ export const ThreeLevelListItem = styled.div<{ theme: MavrykTheme }>`
     display: flex;
     align-items: center;
 
+    &.tzAddressToClick {
+      svg {
+        width: 16px;
+        height: 16px;
+      }
+    }
+
     .img-wrapper,
     .no-icon {
       width: 24px;
