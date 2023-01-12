@@ -137,6 +137,29 @@ export const VaultsCardDropDown = styled.div<{ theme: MavrykTheme }>`
     .right-part {
       padding-left: 30px;
       border-left: 1px solid ${({ theme }) => theme.cardBorderColor};
+
+      h1 {
+        margin-bottom: 20px;
+      }
+
+      .table-size {
+        height: 155px;
+        overflow-y: auto;
+
+        &::-webkit-scrollbar {
+          width: 15px;
+          background-color: transparent;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          background-clip: padding-box;
+          border-left: 5px solid rgba(0, 0, 0, 0);
+          border-right: 5px solid rgba(0, 0, 0, 0);
+          border-radius: 6px;
+          -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+          background-color: ${({ theme }) => theme.cardBorderColor};
+        }
+      }
     }
 
     .value {
@@ -175,5 +198,54 @@ export const VaultsCardDropDown = styled.div<{ theme: MavrykTheme }>`
     button {
       width: 250px;
     }
+  }
+`
+
+export const VaultsAssest = styled.table`
+  width: 100%;
+  border-collapse: collapse;
+
+  thead {
+    th {
+      text-align: start;
+    }
+  }
+
+  tbody {
+    tr {
+      border-bottom: 1px solid ${({ theme }) => theme.cardBorderColor};
+
+      &:last-of-type {
+        border: none;
+      }
+
+      td {
+        padding-top: 6px;
+
+        font-weight: 600;
+        font-size: 16px;
+        line-height: 22px;
+
+        color: ${({ theme }) => theme.dataColor};
+
+        div {
+          display: flex;
+          align-items: center;
+          height: 16px;
+        }
+
+        span {
+          font-weight: 400;
+          font-size: 12px;
+          line-height: 18px;
+        }
+      }
+    }
+  }
+
+  svg {
+    margin-right: 4px;
+    width: 24px;
+    height: 24px;
   }
 `
