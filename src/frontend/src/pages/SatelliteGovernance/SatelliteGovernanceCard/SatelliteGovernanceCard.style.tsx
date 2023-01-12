@@ -52,6 +52,7 @@ export const SatelliteGovernanceCardDropDown = styled.div<{ theme: MavrykTheme }
     word-break: break-all;
     color: ${({ theme }) => theme.textColor};
     font-weight: 500;
+    max-width: 520px;
   }
 
   .description {

@@ -143,27 +143,27 @@ export const GovernanceView = ({
     switch (vote) {
       case 'yay':
         voteType = 'yay'
-        // setVoteStatistics({
-        //   ...voteStatistics,
-        //   forVotesMVKTotal: +voteStatistics.forVotesMVKTotal + 1,
-        //   unusedVotesMVKTotal: Math.max(+voteStatistics.unusedVotesMVKTotal - 1, 0),
-        // })
+        setVoteStatistics({
+          ...voteStatistics,
+          forVotesMVKTotal: +voteStatistics.forVotesMVKTotal + 1,
+          unusedVotesMVKTotal: Math.max(+voteStatistics.unusedVotesMVKTotal - 1, 0),
+        })
         break
       case 'nay':
         voteType = 'nay'
-        // setVoteStatistics({
-        //   ...voteStatistics,
-        //   againstVotesMVKTotal: Number(voteStatistics.againstVotesMVKTotal) + 1,
-        //   unusedVotesMVKTotal: Math.max(+voteStatistics.unusedVotesMVKTotal - 1, 0),
-        // })
+        setVoteStatistics({
+          ...voteStatistics,
+          againstVotesMVKTotal: Number(voteStatistics.againstVotesMVKTotal) + 1,
+          unusedVotesMVKTotal: Math.max(+voteStatistics.unusedVotesMVKTotal - 1, 0),
+        })
         break
       case 'pass':
-        voteType = 'abstain'
-        // setVoteStatistics({
-        //   ...voteStatistics,
-        //   abstainVotesMVKTotal: Number(voteStatistics.abstainVotesMVKTotal) + 1,
-        //   unusedVotesMVKTotal: Math.max(+voteStatistics.unusedVotesMVKTotal - 1, 0),
-        // })
+        voteType = 'pass'
+        setVoteStatistics({
+          ...voteStatistics,
+          abstainVotesMVKTotal: Number(voteStatistics.abstainVotesMVKTotal) + 1,
+          unusedVotesMVKTotal: Math.max(+voteStatistics.unusedVotesMVKTotal - 1, 0),
+        })
         break
       default:
         return

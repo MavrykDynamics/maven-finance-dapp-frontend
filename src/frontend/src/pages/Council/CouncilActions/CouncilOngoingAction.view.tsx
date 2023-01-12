@@ -9,6 +9,7 @@ import { ACTION_SECONDARY } from 'app/App.components/Button/Button.constants'
 import { parseDate } from 'utils/time'
 import { getSeparateCamelCase } from '../../../utils/parse'
 import { scrollToFullView } from 'utils/scrollToFullView'
+import { bytesToString } from 'utils/bytesToString'
 
 // styles
 import { CouncilActionStyled } from '../Council.style' 
@@ -36,8 +37,10 @@ export function CouncilOngoingAction(props: Props) {
   }
 
   const findActionByName = useCallback(
-    (name: string) => parameters.find((item) => item.name === name)?.value || '',
-    [parameters],
+    (name: string) => {
+      const foundField = parameters.find((item) => item.name === name)?.value
+      return foundField ? bytesToString(foundField) : ''
+    }, [parameters],
   )
 
   const isChangeCouncilMember = actionType === 'changeCouncilMember'

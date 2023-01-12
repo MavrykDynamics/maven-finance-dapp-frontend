@@ -48,7 +48,7 @@ export const VotingArea = ({
         {passBtn && (
           <Button
             text={passBtn.text ?? 'Vote PASS'}
-            onClick={() => handleVote(VotingTypes.NO)}
+            onClick={() => handleVote(VotingTypes.PASS)}
             kind={'votingAbstain'}
             disabled={disableVotingButtons}
           />
@@ -56,7 +56,7 @@ export const VotingArea = ({
         {againsBtn && (
           <Button
             text={againsBtn.text ?? 'Vote NO'}
-            onClick={() => handleVote(VotingTypes.PASS)}
+            onClick={() => handleVote(VotingTypes.NO)}
             kind={'votingAgainst'}
             disabled={disableVotingButtons}
           />

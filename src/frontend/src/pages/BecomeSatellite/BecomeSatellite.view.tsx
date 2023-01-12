@@ -39,7 +39,7 @@ type BecomeSatelliteViewProps = {
   registerCallback: (form: RegisterAsSatelliteForm) => void
   updateSatelliteCallback: (form: RegisterAsSatelliteForm) => void
   usersSatellite: SatelliteRecord
-  isSutelliteRegistered: boolean
+  isSatelliteRegistered: boolean
 }
 
 const FORM_DEFAULT = {
@@ -57,6 +57,8 @@ const FORM_VALID_DEFAULT = {
   image: false,
 }
 
+const defaultAvatar = '/images/default-avatar.png'
+
 export const BecomeSatelliteView = ({
   myTotalStakeBalance,
   satelliteConfig,
@@ -64,7 +66,7 @@ export const BecomeSatelliteView = ({
   registerCallback,
   updateSatelliteCallback,
   usersSatellite,
-  isSutelliteRegistered,
+  isSatelliteRegistered,
 }: BecomeSatelliteViewProps) => {
   const dispatch = useDispatch()
   const [balanceOk, setBalanceOk] = useState(false)
@@ -176,7 +178,7 @@ export const BecomeSatelliteView = ({
   const handleSubmit = () => {
     const formIsValid = validateFormAndThrowErrors(dispatch, validForm)
     if (formIsValid) {
-      if (updateSatellite && isSutelliteRegistered) {
+      if (updateSatellite && isSatelliteRegistered) {
         updateSatelliteCallback(form)
       } else {
         registerCallback(form)
@@ -190,7 +192,10 @@ export const BecomeSatelliteView = ({
 
   return (
     <Page>
-      <PageHeader page={updateSatellite && !isSutelliteRegistered ? 'my satellite profile' : 'satellites'} />
+      <PageHeader
+        page={updateSatellite && isSatelliteRegistered ? 'my satellite profile' : 'satellites'}
+        avatar={isSatelliteRegistered ? form.image || defaultAvatar : ''} 
+      />
       <PageContent>
         <div>
           {!accountPkh || !balanceOk ? (
@@ -319,7 +324,7 @@ export const BecomeSatelliteView = ({
               listNumber={6}
             />
             <BecomeSatelliteButttons>
-              {updateSatellite && isSutelliteRegistered && (
+              {updateSatellite && isSatelliteRegistered && (
                 <Button
                   icon="close-stroke"
                   kind={ACTION_SECONDARY}
@@ -332,7 +337,7 @@ export const BecomeSatelliteView = ({
                 icon="satellite-stroke"
                 text={
                   updateSatellite
-                    ? isSutelliteRegistered
+                    ? isSatelliteRegistered
                       ? 'Update Satellite Info'
                       : 'Register Satellite'
                     : 'Become a Satellite'

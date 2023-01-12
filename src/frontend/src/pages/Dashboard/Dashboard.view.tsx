@@ -1,7 +1,6 @@
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
 import { Link, Redirect, Route, Switch } from 'react-router-dom'
-import { DashboardStyled, StatBlock } from './Dashboard.style'
+import { DashboardStyled, StatBlock, BGPrimaryTitleStyled } from './Dashboard.style'
 import {
   FARMS_TAB_ID,
   LENDING_TAB_ID,
@@ -32,12 +31,12 @@ export const DashboardView = ({
     <DashboardStyled>
       <div className="top">
         <div className="tvlBlock">
-          <BGPrimaryTitle>Mavryk TVL</BGPrimaryTitle>
+          <BGPrimaryTitleStyled>Mavryk TVL</BGPrimaryTitleStyled>
           <CommaNumber beginningText="$" value={tvl} />
         </div>
 
         <div className="mvkStats">
-          <BGPrimaryTitle>MVK</BGPrimaryTitle>
+          <BGPrimaryTitleStyled>MVK</BGPrimaryTitleStyled>
           <div className="statsWrapper">
             <StatBlock>
               <div className="name">Market Cap</div>

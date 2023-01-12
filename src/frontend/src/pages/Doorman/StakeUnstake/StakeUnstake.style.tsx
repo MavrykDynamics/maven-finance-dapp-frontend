@@ -262,6 +262,7 @@ export const StakeUnstakeButtonGrid = styled.div`
 // `
 
 export const StakeUnstakeBalance = styled.div<{ theme: MavrykTheme }>`
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -276,7 +277,7 @@ export const StakeUnstakeBalance = styled.div<{ theme: MavrykTheme }>`
   }
 
   img {
-    margin-bottom: 30px;
+    margin-bottom: 40px;
   }
 
   div {
@@ -289,6 +290,8 @@ export const StakeUnstakeBalance = styled.div<{ theme: MavrykTheme }>`
 `
 
 export const StakeLabel = styled.blockquote`
+  position: absolute;
+  bottom: 50px;
   color: ${downColor};
   margin: 0;
   line-height: 19px;
@@ -297,7 +300,6 @@ export const StakeLabel = styled.blockquote`
   font-size: 10px;
   border-radius: 10px;
   padding: 0 11px;
-  margin-top: 9px;
 `
 
 export const StakeCompound = styled.button<{ theme: MavrykTheme }>`
