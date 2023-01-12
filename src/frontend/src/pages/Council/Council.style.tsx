@@ -29,6 +29,10 @@ export const CouncilStyled = styled.section`
     }
   }
 
+  .go-back {
+    margin-bottom: 30px;
+  }
+
   .council-details {
     display: flex;
     padding-top: 30px;
