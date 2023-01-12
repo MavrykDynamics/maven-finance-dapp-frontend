@@ -20,7 +20,7 @@ export const getVaultsStorage = () => async (dispatch: AppDispatch, getState: Ge
 
     dispatch({
       type: GET_VAULTS_STORAGE,
-      vaultsList: normallaziedVaultsStorage.vaultsList,
+      vaultsList: normallaziedVaultsStorage,
     })
   } catch (e) {
     console.error('getVaultsStorage error: ', e)

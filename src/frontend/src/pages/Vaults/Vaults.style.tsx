@@ -22,7 +22,7 @@ export const VaultsStyled = styled.div<{ theme: MavrykTheme }>`
 
     .expand-header {
       padding: 0 35px;
-      grid-template-columns: 0.6fr 1fr 0.6fr 0.6fr 0.4fr 0.4fr;
+      grid-template-columns: 185px 210px 120px 120px 0.4fr 0.4fr;
       column-gap: 40px;
     }
   }

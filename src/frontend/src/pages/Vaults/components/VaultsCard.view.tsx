@@ -13,7 +13,11 @@ import { VaultsCardTitleTextGroup } from './../Vaults.style'
 // helpers
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 
-export const VaultsCard = () => {
+type Props = {
+  address: string
+}
+
+export const VaultsCard = ({ address }: Props) => {
   return (
     <Expand
       className="expand"
@@ -23,7 +27,7 @@ export const VaultsCard = () => {
             <Icon id="xtzTezos" />
             <VaultsCardTitleTextGroup>
               <h2>Tezos</h2>
-              <TzAddress type={BLUE} tzAddress='tz1ezDb77a9jaFMHDWs8QXrKEDkpgGdgsjPD' />
+              <TzAddress type={BLUE} tzAddress={address} />
             </VaultsCardTitleTextGroup>
           </div>
           <VaultsCardTitleTextGroup>

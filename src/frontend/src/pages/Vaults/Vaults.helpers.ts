@@ -1,7 +1,17 @@
 import { VaultGQL } from 'utils/TypesAndInterfaces/Vaults'
 
-export const normalizeVaults = (storage: Array<VaultGQL>) => {
-  return {
-    vaultsList: [],
-  }
+type VaultProps = {
+  vault: Array<VaultGQL>
+}
+
+export const normalizeVaults = (storage: VaultProps) => {
+  const { vault = [] } = storage
+
+  if (!vault.length) return []
+
+  return vault.map((item) => {
+    return {
+      ...item
+    }
+  })
 }
