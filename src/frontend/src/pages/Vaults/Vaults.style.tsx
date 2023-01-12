@@ -143,7 +143,7 @@ export const VaultsCardDropDown = styled.div<{ theme: MavrykTheme }>`
       }
 
       .table-size {
-        height: 155px;
+        height: 160px;
         overflow-y: auto;
 
         &::-webkit-scrollbar {
@@ -220,8 +220,6 @@ export const VaultsAssest = styled.table`
       }
 
       td {
-        padding-top: 6px;
-
         font-weight: 600;
         font-size: 16px;
         line-height: 22px;
@@ -231,13 +229,17 @@ export const VaultsAssest = styled.table`
         div {
           display: flex;
           align-items: center;
-          height: 16px;
         }
 
-        span {
+        span {       
           font-weight: 400;
           font-size: 12px;
           line-height: 18px;
+        }
+
+        .balance {
+          position: relative;
+          top: 7px;
         }
       }
     }

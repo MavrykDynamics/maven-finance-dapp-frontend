@@ -148,7 +148,7 @@ export const VaultsCard = ({ address }: Props) => {
                       </td>
 
                       <td>
-                        <div>{item.balance[0]}</div>
+                        <div className='balance'>{item.balance[0]}</div>
                         <span>~{item.balance[1]}</span>
                       </td>
 
