@@ -27,9 +27,14 @@ export const VaultsStyled = styled.div<{ theme: MavrykTheme }>`
     }
   }
 
+  .tabSwitcher {
+    margin-bottom: 0;
+    width: 175px; 
+  }
 `
 
 export const VaultsSearchFilterStyled = styled(Card)`
+  margin: 20px 0;
   display: flex;
 
   input {
@@ -91,4 +96,8 @@ export const VaultsCardTitleTextGroup = styled.div<{ theme: MavrykTheme }>`
   .ratio {
     height: 14px;
   }
+`
+
+export const VaultsSwitcher = styled.div`
+  
 `
