@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useLocation, useHistory } from 'react-router'
+import { useLocation, useHistory, useParams } from 'react-router'
 
 // components
 import { VaultsSearchFilter } from './components/VaultsSearchFilter.view'
@@ -12,7 +12,7 @@ import { Pagination } from 'pages/BreakGlass/BreakGlass.style'
 import { VaultsStyled } from './Vaults.style'
 
 // helpers
-import { VAULTS_LIST_NAME } from 'pages/FinacialRequests/Pagination/pagination.consts'
+import { VAULTS_LIST_NAME, MY_VAULTS_LIST_NAME } from 'pages/FinacialRequests/Pagination/pagination.consts'
 import { getPageNumber } from 'pages/FinacialRequests/FinancialRequests.helpers'
 import { calculateSlicePositions } from 'pages/FinacialRequests/Pagination/pagination.consts'
 
@@ -24,49 +24,66 @@ import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 // actions
 import { getVaultsStorage } from './Vaults.actions'
 
+const pathname = '/vaults'
+
+const tabsId = {
+  ALL: 'all',
+  MY: 'my'
+}
+
 const tabsList: TabItem[] = [
   {
     text: 'All Vaults',
     id: 1,
     active: true,
+    path: tabsId.ALL
   },
   {
     text: 'My Vaults',
     id: 2,
     active: false,
+    path: tabsId.MY
   },
 ]
-
 
 export const VaultsView = () => {
   const dispatch = useDispatch()
   const history = useHistory()
-  const { search, pathname } = useLocation()
+  const { search } = useLocation()
 
   const { wallet, tezos, accountPkh } = useSelector((state: State) => state.wallet)
   const { vaultsList } = useSelector((state: State) => state.vaults)
+  const { tabId } = useParams<{ tabId: string }>()
 
   const [filteredData, setFilteredData] = useState<VaultGQL[]>([])
 
-  const handleChangeTabs = (tabId?: number) => {
-    history.replace(pathname)
-  }
+  const currentListName = tabId === tabsId.ALL ? VAULTS_LIST_NAME : MY_VAULTS_LIST_NAME
 
   const currentPage = getPageNumber(
     search,
-    VAULTS_LIST_NAME
+    currentListName
   )
+  const handleChangeTabs = (id: number) => {
+    const foundTab = tabsList.find((item) => item.id === id)
+    history.replace(`${pathname}/${foundTab?.path}`)
+  }
 
   const paginatedVaultsList = useMemo(() => {
-    const [from, to] = calculateSlicePositions(currentPage, VAULTS_LIST_NAME)
+    const [from, to] = calculateSlicePositions(currentPage, currentListName)
     return filteredData?.slice(from, to)
-  }, [currentPage, filteredData])
+  }, [currentListName, currentPage, filteredData])
 
   useEffect(() => {
     if (vaultsList) {
-      setFilteredData(vaultsList)
+      setFilteredData(
+        tabId === tabsId.ALL
+        ? vaultsList
+        // TODO: add filtered vaults by accountPkh
+        // : vaultsList.filter((item) => item.owner_id === accountPkh)
+        : []
+      )
     }
-  }, [vaultsList])
+  }, [tabId, vaultsList])
 
   useEffect(() => {
     dispatch(getVaultsStorage())
@@ -88,7 +105,7 @@ export const VaultsView = () => {
 
       <Pagination
         itemsCount={filteredData.length}
-        listName={VAULTS_LIST_NAME}
+        listName={currentListName}
       />
     </VaultsStyled>
   )
