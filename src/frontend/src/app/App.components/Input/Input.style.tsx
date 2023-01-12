@@ -298,6 +298,12 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
     }
   }
 
+  &.pinned-dropdown {
+    .pinned-child {
+      z-index: 5;
+    }
+  }
+
   .input-balance {
     position: absolute;
     bottom: -35px;
@@ -375,4 +381,16 @@ export const InputPinnedTokenInfo = styled.div<{ theme: MavrykTheme }>`
     width: 24px;
     height: 24px;
   }
+`
+
+export const InputPinnedDropDown = styled.div<{ theme: MavrykTheme }>`
+  display: flex;
+  max-width: 135px;
+  align-items: center;
+  padding: 0 7px;
+  height: 100%;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 20px;
+  color: ${({ theme }) => theme.textColor};
 `

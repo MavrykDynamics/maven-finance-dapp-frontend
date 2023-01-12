@@ -153,7 +153,7 @@ export const DropDownJsxChild = styled.div`
     svg {
       width: 20px;
       height: 20px;
-      fill: ${({ theme }) => theme.cardBorderColor};
+      fill: ${({ theme }) => theme.textColor};
     }
   }
 

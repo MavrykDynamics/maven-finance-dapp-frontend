@@ -51,6 +51,7 @@ export const DropDown = ({
   return (
     <DropDownStyled ref={refDropdownWrapper} className={`drop-down ${className} ${disabled ? 'disabled' : ''}`}>
       <DropDownMenu
+        id={'selected-option'}
         onClick={() => {
           setIsOpen(!isOpen)
         }}

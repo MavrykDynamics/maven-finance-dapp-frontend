@@ -56,7 +56,7 @@ export const Input = ({
         <CommaNumber value={convertedValue} beginningText={'= '} endingText="$" className={'input-converted-amount'} />
       ) : null}
 
-      {children && <InputPinnedChild>{children}</InputPinnedChild>}
+      {children && <InputPinnedChild className="pinned-child">{children}</InputPinnedChild>}
     </InputWrapper>
   )
 }

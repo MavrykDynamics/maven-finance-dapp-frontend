@@ -12,7 +12,7 @@ export interface LoansState {
 
 const loansDefaultState: LoansState = {
   loanTokens: [],
-  currentModalActive: ADD_NEW_COLLATERAL_MODAL_ID,
+  currentModalActive: null,
   loansControllerAddress: '',
   chartsData: {
     totalBorrowed: 0,

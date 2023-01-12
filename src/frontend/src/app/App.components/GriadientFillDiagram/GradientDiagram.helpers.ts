@@ -2,7 +2,7 @@ import { GradientDiagramPropsType } from './GradientDiagram'
 
 const getMixedColorPart = (prevColorNumber: number, nextColorNumber: number, intervalPersent: number) => {
   return (
-    (intervalPersent < 0.6 ? prevColorNumber : nextColorNumber) -
+    (intervalPersent < 0.5 ? prevColorNumber : nextColorNumber) -
     Math.abs((prevColorNumber - nextColorNumber) * intervalPersent)
   )
 }
@@ -29,5 +29,6 @@ export const getGradient = ({ colorBreakpoints, currentPersentage }: GradientDia
     }
     return acc
   }, [])
+  
   return `linear-gradient(to right, ${gradientColorsFillling.join(',')})`
 }
