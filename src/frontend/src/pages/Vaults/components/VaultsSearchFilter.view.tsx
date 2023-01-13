@@ -21,7 +21,11 @@ const dropdowns = {
   assets: 'ASSETS',
 }
 
-export const VaultsSearchFilter = () => {
+type Props = {
+  statuses: string[]
+}
+
+export const VaultsSearchFilter = ({ statuses }: Props) => {
   const dispatch = useDispatch()
   const { wallet, tezos, accountPkh } = useSelector((state: State) => state.wallet)
 
@@ -91,7 +95,7 @@ export const VaultsSearchFilter = () => {
           isOpen={dropdownStatus[dropdowns.statuses]}
           setIsOpen={handleDropdownStatus(dropdowns.statuses)}
           itemSelected={chosenDdItem[dropdowns.statuses]}
-          items={['one st', 'two st']}
+          items={statuses}
           clickOnItem={handleDropdownSelect(dropdowns.statuses)}
         />
 

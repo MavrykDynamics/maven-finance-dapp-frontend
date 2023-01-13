@@ -46,6 +46,17 @@ const tabsList: TabItem[] = [
   },
 ]
 
+export const VaultsStatuses = {
+  LIQUIDATABLE: 'LIQUIDATABLE',
+  GRACE_PERIOD: 'GRACE PERIOD',
+  MARK: 'MARK',
+  AT_RISK: 'AT RISK',
+  ACTIVE: 'ACTIVE',
+}
+
+const ListOfStatuses = Object.values(VaultsStatuses)
+console.log("🚀 ~ file: Vaults.view.tsx:58 ~ ListOfStatuses", ListOfStatuses)
+
 export const VaultsView = () => {
   const dispatch = useDispatch()
   const history = useHistory()
@@ -97,7 +108,7 @@ export const VaultsView = () => {
         className="tabSwitcher"
       />
 
-      <VaultsSearchFilter />
+      <VaultsSearchFilter statuses={ListOfStatuses} />
 
       {paginatedVaultsList.map((item, index) => (
         <VaultsCard key={index} address={item.address} />

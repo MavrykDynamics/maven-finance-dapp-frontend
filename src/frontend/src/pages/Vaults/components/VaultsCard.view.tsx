@@ -14,10 +14,7 @@ import { VaultsCardTitleTextGroup, VaultsCardDropDown, VaultsAssest } from './..
 
 // helpers
 import { BLUE, CYAN } from 'app/App.components/TzAddress/TzAddress.constants'
-
-type Props = {
-  address: string
-}
+import { VaultsStatuses } from '../Vaults.view'
 
 const mock = [
   {
@@ -52,7 +49,46 @@ const mock = [
   },
 ]
 
+const findStatusColor = (status: string) => {
+  switch (status) {
+    case VaultsStatuses.LIQUIDATABLE:
+      return 'down'
+    case VaultsStatuses.GRACE_PERIOD:
+      return 'darkWarning'
+    case VaultsStatuses.MARK:
+      return 'warning'
+    case VaultsStatuses.AT_RISK:
+      return 'waiting'
+    case VaultsStatuses.ACTIVE:
+      return 'up'
+
+    default:
+      return 'info'
+  }
+}
+
+const findFooterText = (status: string, statusColor: string, timer: string) => {
+  switch (status) {
+    case VaultsStatuses.LIQUIDATABLE:
+      return <p>This vault is <span className={statusColor}>armed for liquidation</span> and can be liquidated for the next <span className='timer'>{timer}</span></p>
+    case VaultsStatuses.GRACE_PERIOD:
+      return <p>This vault is in a <span className={statusColor}>grace period</span>. The vault owner has <span className='timer'>{timer}</span> before liquidation is possible.</p>
+    case VaultsStatuses.MARK:
+      return <p>This vault is <span className={statusColor}>ready to arm</span> and can be marked for the next <span className='timer'>{timer}</span></p>
+
+    default:
+      return ''
+  }
+}
+
+type Props = {
+  address: string
+}
+
 export const VaultsCard = ({ address }: Props) => {
+  const statusColor = findStatusColor(VaultsStatuses.LIQUIDATABLE)
+  const status = VaultsStatuses.LIQUIDATABLE
+
   return (
     <Expand
       className="expand"
@@ -81,7 +117,7 @@ export const VaultsCard = ({ address }: Props) => {
           </VaultsCardTitleTextGroup>
         </>
       }
-      sufix={<StatusFlag status={'primary'} text={'status'} />}
+      sufix={<StatusFlag status={statusColor} text={status} />}
     >
       <VaultsCardDropDown>
         <div className='body'>
@@ -99,7 +135,7 @@ export const VaultsCard = ({ address }: Props) => {
                   <Icon id='info' className='info-icon' />
                 </div>
 
-                <div>Liquidation Armed</div> 
+                <div className={statusColor}>Liquidation Armed</div> 
               </div>
             </div>
 
@@ -162,7 +198,7 @@ export const VaultsCard = ({ address }: Props) => {
         </div>
 
         <div className='footer'>
-          <p>This vault is armed for liquidation and can be liquidated for the next 20hr 15m 22s</p>
+          {findFooterText(status, statusColor, '20hr 15m 22s')}
           <Button text="Liquidate Vault" kind={ACTION_PRIMARY} onClick={() => {}} />
         </div>
       </VaultsCardDropDown>

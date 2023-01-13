@@ -3,6 +3,9 @@ import styled from 'styled-components/macro'
 // components
 import { Card } from 'styles'
 
+// helpers
+import { DOWN, INFO, PRIMARY, UP, WAITING, WARNING, DARK_WARNING } from 'app/App.components/StatusFlag/StatusFlag.constants'
+
 // types
 import { MavrykTheme } from '../../styles/interfaces'
 
@@ -127,10 +130,6 @@ export const VaultsCardDropDown = styled.div<{ theme: MavrykTheme }>`
         > div {
           min-width: 130px;
         }
-
-        &:last-of-type {
-          margin-bottom: 10px;
-        }
       }
     }
 
@@ -198,6 +197,38 @@ export const VaultsCardDropDown = styled.div<{ theme: MavrykTheme }>`
     button {
       width: 250px;
     }
+
+    .timer {
+      color: ${({ theme }) => theme.dataColor};
+    }
+  }
+
+  .${PRIMARY} {
+    color: ${({ theme }) => theme.infoColor};
+  }
+
+  .${UP} {
+    color: ${({ theme }) => theme.upColor};
+  }
+
+  .${DOWN} {
+    color: ${({ theme }) => theme.downColor};
+  }
+
+  .${INFO} {
+    color: ${({ theme }) => theme.infoColor};
+  }
+
+  .${WARNING} {
+    color: ${({ theme }) => theme.warningColor};
+  }
+
+  .${DARK_WARNING} {
+    color: ${({ theme }) => theme.darkWarningColor};
+  }
+
+  .${WAITING} {
+    color: ${({ theme }) => theme.awaitingColor};
   }
 `
 
@@ -221,7 +252,7 @@ export const VaultsAssest = styled.table`
 
       td {
         width: 40%;
-        
+
         font-weight: 600;
         font-size: 16px;
         line-height: 22px;
