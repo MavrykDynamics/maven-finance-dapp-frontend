@@ -1,5 +1,7 @@
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { Button } from 'app/App.components/Button/Button.controller'
+import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { useDispatch } from 'react-redux'
 import { BorrowingData } from 'utils/TypesAndInterfaces/Loans'
@@ -10,9 +12,10 @@ import { LoansTabStyled, NoItemsInTabStyled } from './LoansComponents.style'
 
 type BorrowingTabPropsType = {
   borrowingItems: Array<BorrowingData>
+  lendingControllerAddress: string
 }
 
-export const BorrowingTab = ({ borrowingItems }: BorrowingTabPropsType) => {
+export const BorrowingTab = ({ borrowingItems, lendingControllerAddress }: BorrowingTabPropsType) => {
   const dispatch = useDispatch()
   const createVaultHandler = () => dispatch(toggleLoansModal(CREATE_NEW_VAULT_MODAL_ID))
 
@@ -49,6 +52,9 @@ export const BorrowingTab = ({ borrowingItems }: BorrowingTabPropsType) => {
           />
         </NoItemsInTabStyled>
       )}
+      <div className="factory-info">
+        Lending Controller Address <TzAddress tzAddress={lendingControllerAddress} type={BLUE} />
+      </div>
     </LoansTabStyled>
   )
 }

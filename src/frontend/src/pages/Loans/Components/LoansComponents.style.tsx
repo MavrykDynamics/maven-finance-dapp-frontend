@@ -125,6 +125,12 @@ export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
 
       button {
         width: 180px;
+
+        &.repay {
+          svg {
+            height: 27px;
+          }
+        }
       }
     }
   }

@@ -293,6 +293,17 @@ export const ThreeLevelListItem = styled.div<{ theme: MavrykTheme }>`
     margin: 0;
   }
 
+  &.right {
+    .name {
+      text-align: right;
+    }
+
+    .value {
+      text-align: right;
+      justify-content: flex-end;
+    }
+  }
+
   .name {
     font-weight: 600;
     font-size: 14px;
@@ -307,6 +318,13 @@ export const ThreeLevelListItem = styled.div<{ theme: MavrykTheme }>`
     color: ${({ theme }) => theme.dataColor};
     display: flex;
     align-items: center;
+
+    &.tzAddressToClick {
+      svg {
+        width: 16px;
+        height: 16px;
+      }
+    }
 
     .img-wrapper,
     .no-icon {
@@ -352,19 +370,31 @@ export const ThreeLevelListItem = styled.div<{ theme: MavrykTheme }>`
       font-size: 14px;
     }
   }
+
+  .tooltip {
+    margin-left: 7px;
+  }
 `
 
 export const FillBlock = styled.div<{ theme: MavrykTheme; width: number }>`
   width: 220px;
-  height: 7px;
+  height: 8px;
   border-radius: 10px;
   display: flex;
   justify-content: flex-end;
+  position: relative;
   margin: 3px 0 4px 0;
-  background: linear-gradient(90deg, rgba(3, 212, 99, 1) 0%, rgba(255, 78, 67, 1) 100%);
+  background-color: rgba(80, 62, 170, 0.5);
+
   .colored {
+    position: absolute;
+    border-radius: 10px;
+    left: -1px;
+    top: 50%;
+    transform: translateY(-50%);
     width: ${({ width }) => 100 - width}%;
-    background-color: ${({ theme }) => theme.backgroundColor};
+    height: 8px;
+    background: linear-gradient(90deg, rgba(3, 212, 99, 1) 0%, rgba(255, 78, 67, 1) 100%);
   }
 `
 

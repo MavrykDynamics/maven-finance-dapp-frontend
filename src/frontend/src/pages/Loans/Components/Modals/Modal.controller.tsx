@@ -30,11 +30,14 @@ import { useDispatch, useSelector } from 'react-redux'
 import { toggleLoansModal } from 'pages/Loans/Loans.actions'
 import { State } from 'reducers'
 import { AddNewCollateral } from './AddNewCollateral.modal'
+import { useLockBodyScroll } from 'react-use'
 
 export const LoansModals = () => {
   const dispatch = useDispatch()
   const { currentModalActive } = useSelector((state: State) => state.loans)
   const closePopup = () => dispatch(toggleLoansModal(null))
+
+  useLockBodyScroll(currentModalActive !== null)
 
   return (
     <PopupContainer onClick={closePopup} show={currentModalActive !== null}>

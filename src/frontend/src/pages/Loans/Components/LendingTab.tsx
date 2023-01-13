@@ -81,7 +81,7 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData }:
               ) : null}
             </ThreeLevelListItem>
             <ThreeLevelListItem>
-              <div className="name">mXTZ Balance</div>
+              <div className="name">m{assetData.symbol ?? assetData.name} Balance</div>
               <CommaNumber value={lendingItem.mXTZBalance} className="value" />
             </ThreeLevelListItem>
             <Button

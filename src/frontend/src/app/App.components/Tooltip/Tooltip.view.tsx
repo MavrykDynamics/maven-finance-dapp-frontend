@@ -14,7 +14,7 @@ export const TooltipStyled = styled.div<{ defaultStrokeColor?: string; theme: Ma
   svg {
     width: 16px;
     height: 16px;
-    fill: ${({ theme }) => theme.dataColor};
+    fill: ${({ theme, defaultStrokeColor }) => defaultStrokeColor ?? theme.dataColor};
   }
 
   .text {

@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { Redirect, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
 
@@ -26,11 +26,20 @@ import { State } from 'reducers'
 import { MarketPageHeader } from './Components/LoansPageHeader'
 import { PermissionVaults } from './Components/PermissionVaultsTab'
 import { LoansModals } from './Components/Modals/Modal.controller'
+import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
+import { getLoansStorage } from './Loans.actions'
 
 export const Market = () => {
+  const dispatch = useDispatch()
   const { assetId, tabId } = useParams<{ assetId: string; tabId: string }>()
   const { loanTokens, loansControllerAddress } = useSelector((state: State) => state.loans)
-  const { isInitialDataLoading } = useSelector((state: State) => state.loading)
+  const { accountPkh } = useSelector((state: State) => state.wallet)
+
+  const { isLoading } = useDataLoader(async () => {
+    try {
+      await dispatch(getLoansStorage())
+    } catch (e) {}
+  }, [accountPkh])
 
   const [showHiddenItems, setShowHiddenItems] = useState(false)
 
@@ -44,8 +53,7 @@ export const Market = () => {
     return [loanTokens[currentAssetIdx - 1], loanTokens[currentAssetIdx + 1], loanTokens[currentAssetIdx]]
   }, [assetId, loanTokens])
 
-  // TODO: add loader to the page, if data is not loaded, need to create dataLoaderHook
-  if (isInitialDataLoading) {
+  if (isLoading) {
     return (
       <Page>
         <PageHeader page={'lending'} />
@@ -66,7 +74,7 @@ export const Market = () => {
 
       <div className="right-side-wrapper">
         {prevMarket ? (
-          <Link to={`/market/${prevMarket.loanTokenData.symbol}/${tabId}`}>
+          <Link to={`/loans/${prevMarket.loanTokenData.symbol}/${tabId}`}>
             <span className="left">
               <Icon id="paginationArrowLeft" /> Previous Market
             </span>
@@ -74,7 +82,7 @@ export const Market = () => {
         ) : null}
 
         {nextMarket ? (
-          <Link to={`/market/${nextMarket.loanTokenData.symbol}/${tabId}`}>
+          <Link to={`/loans/${nextMarket.loanTokenData.symbol}/${tabId}`}>
             <span className="right">
               Next Market
               <Icon id="paginationArrowLeft" />
@@ -95,7 +103,7 @@ export const Market = () => {
       </Link>
       <Link to={`/loans/${assetId}/${PERMISSIONS_VAULTS_TAB_ID}`}>
         <Button
-          text={'Permissions Vaults'}
+          text={'Permissioned Vaults'}
           kind={ACTION_SIMPLE}
           className={`${tabId === PERMISSIONS_VAULTS_TAB_ID ? 'active' : ''}`}
         />
@@ -196,9 +204,17 @@ export const Market = () => {
             assetData={currentToken.loanTokenData}
           />
         ) : null}
-        {tabId === BORROW_TAB_ID ? <BorrowingTab borrowingItems={currentToken.myBorrowingList} /> : null}
+        {tabId === BORROW_TAB_ID ? (
+          <BorrowingTab
+            borrowingItems={currentToken.myBorrowingList}
+            lendingControllerAddress={loansControllerAddress}
+          />
+        ) : null}
         {tabId === PERMISSIONS_VAULTS_TAB_ID ? (
-          <PermissionVaults permissionVaults={currentToken.permissinedBorrowingList} />
+          <PermissionVaults
+            permissionVaults={currentToken.permissinedBorrowingList}
+            lendingControllerAddress={loansControllerAddress}
+          />
         ) : null}
 
         <TransactionHistory currentToken={currentToken} />
