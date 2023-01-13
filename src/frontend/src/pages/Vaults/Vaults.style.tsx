@@ -220,6 +220,8 @@ export const VaultsAssest = styled.table`
       }
 
       td {
+        width: 40%;
+        
         font-weight: 600;
         font-size: 16px;
         line-height: 22px;
