@@ -83,9 +83,11 @@ const findFooterText = (status: string, statusColor: string, timer: string) => {
 
 type Props = {
   address: string
+  handleLiquidateVault: (vaultId: string, vaultOwner: string, liquidateAmount: number) => void
+  handleMarkForLiquidation: (vaultId: string, vaultOwner: string) => void
 }
 
-export const VaultsCard = ({ address }: Props) => {
+export const VaultsCard = ({ address, handleLiquidateVault, handleMarkForLiquidation }: Props) => {
   const statusColor = findStatusColor(VaultsStatuses.LIQUIDATABLE)
   const status = VaultsStatuses.LIQUIDATABLE
   const footerText = findFooterText(status, statusColor, '20hr 15m 22s')
@@ -210,6 +212,7 @@ export const VaultsCard = ({ address }: Props) => {
             <Button
               text={VaultsStatuses.MARK === status ? "Mark for Liquidation" : "Liquidate Vault"}
               kind={ACTION_PRIMARY}
+              // TODO: add handlers
               onClick={() => {}}
               disabled={VaultsStatuses.GRACE_PERIOD === status}
             />

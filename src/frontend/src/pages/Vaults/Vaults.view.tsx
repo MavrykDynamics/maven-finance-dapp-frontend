@@ -22,7 +22,7 @@ import { VaultGQL } from 'utils/TypesAndInterfaces/Vaults'
 import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 
 // actions
-import { getVaultsStorage } from './Vaults.actions'
+import { getVaultsStorage, liquidateVault, markForLiquidation } from './Vaults.actions'
 
 const pathname = '/vaults'
 
@@ -55,7 +55,6 @@ export const VaultsStatuses = {
 }
 
 const ListOfStatuses = Object.values(VaultsStatuses)
-console.log("🚀 ~ file: Vaults.view.tsx:58 ~ ListOfStatuses", ListOfStatuses)
 
 export const VaultsView = () => {
   const dispatch = useDispatch()
@@ -84,6 +83,14 @@ export const VaultsView = () => {
     return filteredData?.slice(from, to)
   }, [currentListName, currentPage, filteredData])
 
+  const handleLiquidateVault = (vaultId: string, vaultOwner: string, liquidateAmount: number) => {
+    dispatch(liquidateVault(vaultId, vaultOwner, liquidateAmount))
+  }
+
+  const handleMarkForLiquidation = (vaultId: string, vaultOwner: string) => {
+    dispatch(markForLiquidation(vaultId, vaultOwner))
+  }
+
   useEffect(() => {
     if (vaultsList) {
       setFilteredData(
@@ -111,7 +118,12 @@ export const VaultsView = () => {
       <VaultsSearchFilter statuses={ListOfStatuses} />
 
       {paginatedVaultsList.map((item, index) => (
-        <VaultsCard key={index} address={item.address} />
+        <VaultsCard
+          key={index}
+          address={item.address}
+          handleLiquidateVault={handleLiquidateVault}
+          handleMarkForLiquidation={handleMarkForLiquidation}
+        />
       ))}
 
       <Pagination
