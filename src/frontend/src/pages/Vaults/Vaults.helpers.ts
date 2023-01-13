@@ -1,4 +1,4 @@
-import { VaultGQL, VaultsGQL, VaultType, CollateralType } from 'utils/TypesAndInterfaces/Vaults'
+import { VaultGQL, VaultType, CollateralType } from 'utils/TypesAndInterfaces/Vaults'
 import { State } from 'reducers'
 
 type VaultsStorageProps = {
@@ -104,20 +104,6 @@ export const normalizeVaultsStorage = (storage: VaultsStorageProps) => {
     allVaultsIds: [],
     vaultsMapper: {},
   })
-}
-
-type VaultsProps = {
-  vaults: Array<VaultsGQL>
-}
-
-export const normalizeVaults = (storage: VaultsProps) => {
-  const { vaults } = storage
-
-  if (!vaults.length) return []
-
-  const result = vaults
-
-  return []
 }
 
 export const getVaultTokensSymbols = ({
