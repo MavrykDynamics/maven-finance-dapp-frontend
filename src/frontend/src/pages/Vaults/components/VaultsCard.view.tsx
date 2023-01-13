@@ -90,6 +90,11 @@ export const VaultsCard = ({ address }: Props) => {
   const status = VaultsStatuses.LIQUIDATABLE
   const footerText = findFooterText(status, statusColor, '20hr 15m 22s')
 
+  const isActiveFooter = 
+    status === VaultsStatuses.LIQUIDATABLE ||
+    status === VaultsStatuses.GRACE_PERIOD ||
+    status === VaultsStatuses.MARK
+
   return (
     <Expand
       className="expand"
@@ -198,10 +203,16 @@ export const VaultsCard = ({ address }: Props) => {
           </div>
         </div>
 
-        {footerText && (
+        {(footerText && isActiveFooter) && (
           <div className='footer'>
             {footerText}
-            <Button text="Liquidate Vault" kind={ACTION_PRIMARY} onClick={() => {}} />
+
+            <Button
+              text={VaultsStatuses.MARK === status ? "Mark for Liquidation" : "Liquidate Vault"}
+              kind={ACTION_PRIMARY}
+              onClick={() => {}}
+              disabled={VaultsStatuses.GRACE_PERIOD === status}
+            />
           </div>
         )}
       </VaultsCardDropDown>
