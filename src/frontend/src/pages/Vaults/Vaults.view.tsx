@@ -15,6 +15,7 @@ import { VaultsStyled } from './Vaults.style'
 import { VAULTS_LIST_NAME, MY_VAULTS_LIST_NAME } from 'pages/FinacialRequests/Pagination/pagination.consts'
 import { getPageNumber } from 'pages/FinacialRequests/FinancialRequests.helpers'
 import { calculateSlicePositions } from 'pages/FinacialRequests/Pagination/pagination.consts'
+import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 
 // types
 import { State } from '../../reducers'
@@ -22,7 +23,7 @@ import { VaultGQL } from 'utils/TypesAndInterfaces/Vaults'
 import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 
 // actions
-import { getVaultsStorage, getVaults } from './Vaults.actions'
+import { getVaultsStorage } from './Vaults.actions'
 
 const pathname = '/vaults'
 
@@ -65,6 +66,14 @@ export const VaultsView = () => {
   const { vaultsList } = useSelector((state: State) => state.vaults)
   const { tabId } = useParams<{ tabId: string }>()
 
+    const { isLoading } = useDataLoader(async () => {
+    try {
+      await Promise.all([dispatch(getVaultsStorage())])
+    } catch (e) {
+      //TODO: handle fetch error
+    }
+  }, [])
+
   const [filteredData, setFilteredData] = useState<VaultGQL[]>([])
 
   const currentListName = tabId === tabsId.ALL ? VAULTS_LIST_NAME : MY_VAULTS_LIST_NAME
@@ -73,6 +82,8 @@ export const VaultsView = () => {
     search,
     currentListName
   )
+
+  // TODO: handle my vaults tab if user disconnect
   const handleChangeTabs = (id: number) => {
     const foundTab = tabsList.find((item) => item.id === id)
     history.replace(`${pathname}/${foundTab?.path}`)
@@ -87,18 +98,13 @@ export const VaultsView = () => {
     if (vaultsList) {
       setFilteredData(
         tabId === tabsId.ALL
-        ? vaultsList
+        ? []
         // TODO: add filtered vaults by accountPkh
         // : vaultsList.filter((item) => item.owner_id === accountPkh)
         : []
       )
     }
   }, [tabId, vaultsList])
-
-  useEffect(() => {
-    dispatch(getVaultsStorage())
-    dispatch(getVaults())
-  }, [dispatch])
 
   return (
     <VaultsStyled>
