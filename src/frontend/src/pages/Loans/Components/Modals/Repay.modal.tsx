@@ -36,6 +36,7 @@ export const Repay = ({ closePopup }: { closePopup: () => void }) => {
             <h2>Repay Borrowed Funds</h2>
           </GovRightContainerTitleArea>
           <div className="modalDescr">Repay the loan to withdraw your vault collateral.</div>
+
           <div className="lending-stats" style={{ marginBottom: '25px' }}>
             <ThreeLevelListItem>
               <div className="name">Borrowed</div>
