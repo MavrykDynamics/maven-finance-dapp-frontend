@@ -22,7 +22,7 @@ import { VaultGQL } from 'utils/TypesAndInterfaces/Vaults'
 import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 
 // actions
-import { getVaultsStorage } from './Vaults.actions'
+import { getVaultsStorage, getVaults } from './Vaults.actions'
 
 const pathname = '/vaults'
 
@@ -55,7 +55,6 @@ export const VaultsStatuses = {
 }
 
 const ListOfStatuses = Object.values(VaultsStatuses)
-console.log("🚀 ~ file: Vaults.view.tsx:58 ~ ListOfStatuses", ListOfStatuses)
 
 export const VaultsView = () => {
   const dispatch = useDispatch()
@@ -98,6 +97,7 @@ export const VaultsView = () => {
 
   useEffect(() => {
     dispatch(getVaultsStorage())
+    dispatch(getVaults())
   }, [dispatch])
 
   return (
