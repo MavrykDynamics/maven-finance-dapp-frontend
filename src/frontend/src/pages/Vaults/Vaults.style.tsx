@@ -113,6 +113,7 @@ export const VaultsCardDropDown = styled.div<{ theme: MavrykTheme }>`
   .body {
     display: grid;
     grid-template-columns: 50% 50%;
+    margin-bottom: 30px;
 
     h1 {
       margin: 0;
@@ -191,7 +192,6 @@ export const VaultsCardDropDown = styled.div<{ theme: MavrykTheme }>`
     justify-content: space-between;
     align-items: center;
     padding: 15px 0;
-    margin-top: 30px;
     border-top: 1px solid ${({ theme }) => theme.cardBorderColor};
 
     button {

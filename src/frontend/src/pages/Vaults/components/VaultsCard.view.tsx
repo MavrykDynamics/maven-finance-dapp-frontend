@@ -88,6 +88,7 @@ type Props = {
 export const VaultsCard = ({ address }: Props) => {
   const statusColor = findStatusColor(VaultsStatuses.LIQUIDATABLE)
   const status = VaultsStatuses.LIQUIDATABLE
+  const footerText = findFooterText(status, statusColor, '20hr 15m 22s')
 
   return (
     <Expand
@@ -197,10 +198,12 @@ export const VaultsCard = ({ address }: Props) => {
           </div>
         </div>
 
-        <div className='footer'>
-          {findFooterText(status, statusColor, '20hr 15m 22s')}
-          <Button text="Liquidate Vault" kind={ACTION_PRIMARY} onClick={() => {}} />
-        </div>
+        {footerText && (
+          <div className='footer'>
+            {footerText}
+            <Button text="Liquidate Vault" kind={ACTION_PRIMARY} onClick={() => {}} />
+          </div>
+        )}
       </VaultsCardDropDown>
     </Expand>
   )
