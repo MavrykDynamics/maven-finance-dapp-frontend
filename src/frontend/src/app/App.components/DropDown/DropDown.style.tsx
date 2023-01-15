@@ -1,4 +1,4 @@
-import styled from 'styled-components/macro'
+import styled, { css } from 'styled-components/macro'
 import { Card } from 'styles'
 import { MavrykTheme } from '../../../styles/interfaces'
 
@@ -54,7 +54,7 @@ export const DropDownStyled = styled.div<{ theme: MavrykTheme }>`
     }
 
     #dropDownListContainer {
-      width: 135px;
+      width: max-content;
       left: -6px;
       top: 85%;
 
@@ -135,10 +135,11 @@ export const DropDownList = styled.ul<{ theme: MavrykTheme }>`
   z-index: 2;
 `
 
-export const DropDownListItem = styled.li`
+export const DropDownListItem = styled.li<{ disabled?: boolean }>`
   list-style: none;
   height: 33px;
   display: flex;
+  column-gap: 10px;
   align-items: center;
   width: 100%;
   color: ${({ theme }) => theme.textColor};
@@ -157,6 +158,18 @@ export const DropDownListItem = styled.li`
   &:hover {
     background-color: ${({ theme }) => theme.cardBorderColor};
   }
+
+  ${({ disabled }) =>
+    disabled
+      ? css`
+          opacity: 0.6;
+          cursor: not-allowed;
+
+          > div {
+            pointer-events: none;
+          }
+        `
+      : ''}
 `
 
 export const DropdownContainer = styled.div<{ theme: MavrykTheme }>`

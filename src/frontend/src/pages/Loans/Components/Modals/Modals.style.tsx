@@ -88,6 +88,28 @@ export const LoansModalBase = styled.div<{ theme: MavrykTheme }>`
     }
   }
 
+  .collateral-list {
+    /* max-height: 450px;
+    overflow-y: auto; */
+    overscroll-behavior: contain;
+    display: flex;
+    flex-direction: column;
+    row-gap: 45px;
+  }
+
+  .creating-vault-loader-wrapper {
+    margin: 0 auto;
+    margin-top: 10px;
+    margin-bottom: -30px;
+    display: flex;
+    justify-content: center;
+    column-gap: 15px;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 21px;
+    color: ${({ theme }) => theme.textColor};
+  }
+
   .lending-stats {
     display: flex;
     justify-content: space-between;
@@ -115,6 +137,13 @@ export const LoansModalBase = styled.div<{ theme: MavrykTheme }>`
       }
     }
   }
+
+  .add-collateral-inline {
+    margin-top: 20px;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 20px;
+  }
 `
 
 export const VaultModalOverview = styled.div<{ theme: MavrykTheme }>`
@@ -141,7 +170,7 @@ export const DropDownJsxChild = styled.div`
   display: flex;
   justify-content: space-between;
 
-  .baker-name {
+  .flex-row {
     align-items: center;
     display: flex;
     column-gap: 10px;
@@ -150,10 +179,19 @@ export const DropDownJsxChild = styled.div`
     line-height: 24px;
     color: ${({ theme }) => theme.textColor};
 
-    svg {
-      width: 20px;
-      height: 20px;
-      fill: ${({ theme }) => theme.textColor};
+    &.with-image {
+      svg,
+      .image-wrapper {
+        width: 20px;
+        height: 20px;
+        fill: ${({ theme }) => theme.textColor};
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+      }
     }
   }
 

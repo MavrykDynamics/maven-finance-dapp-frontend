@@ -55,7 +55,7 @@ export const AddNewCollateral = ({ closePopup }: { closePopup: () => void }) => 
       {
         content: (
           <DropDownJsxChild>
-            <div className="baker-name">
+            <div className="flex-row with-image">
               <Icon id="xtzTezos" /> XTZ
             </div>
           </DropDownJsxChild>
@@ -66,7 +66,7 @@ export const AddNewCollateral = ({ closePopup }: { closePopup: () => void }) => 
       {
         content: (
           <DropDownJsxChild>
-            <div className="baker-name">
+            <div className="flex-row with-image">
               <Icon id="noImage" /> EURL
             </div>
           </DropDownJsxChild>
@@ -78,7 +78,7 @@ export const AddNewCollateral = ({ closePopup }: { closePopup: () => void }) => 
       {
         content: (
           <DropDownJsxChild>
-            <div className="baker-name">
+            <div className="flex-row with-image">
               <Icon id="noImage" /> USDT
             </div>
           </DropDownJsxChild>
@@ -90,14 +90,12 @@ export const AddNewCollateral = ({ closePopup }: { closePopup: () => void }) => 
     [],
   )
 
-  const [collateralDDIsOpen, setCollateralDDIsOpen] = useState(false)
   const [collateralChosenDdItem, setCollateralChosenDdItem] = useState<
     (DropDownItemType & { asset: string }) | undefined
   >(collateralItemsForDropDown[0])
 
   const handleOnClickDropdownCollateralItem = (itemId: number) => {
     setCollateralChosenDdItem(collateralItemsForDropDown.find(({ id }) => id === itemId))
-    setCollateralDDIsOpen(!collateralDDIsOpen)
   }
 
   const bakerItemsForDropDown = useMemo<DropDownItemType[]>(
@@ -105,7 +103,7 @@ export const AddNewCollateral = ({ closePopup }: { closePopup: () => void }) => 
       {
         content: (
           <DropDownJsxChild>
-            <div className="baker-name">
+            <div className="flex-row with-image">
               <Icon id="noImage" /> 1111
             </div>
             <div className="baker-fee">
@@ -118,7 +116,7 @@ export const AddNewCollateral = ({ closePopup }: { closePopup: () => void }) => 
       {
         content: (
           <DropDownJsxChild>
-            <div className="baker-name">
+            <div className="flex-row with-image">
               <Icon id="noImage" /> 22222
             </div>
             <div className="baker-fee">
@@ -131,7 +129,7 @@ export const AddNewCollateral = ({ closePopup }: { closePopup: () => void }) => 
       {
         content: (
           <DropDownJsxChild>
-            <div className="baker-name">
+            <div className="flex-row with-image">
               <Icon id="noImage" /> 33333
             </div>
             <div className="baker-fee">
@@ -145,12 +143,10 @@ export const AddNewCollateral = ({ closePopup }: { closePopup: () => void }) => 
     [],
   )
 
-  const [bakerDDIsOpen, setBakerDDIsOpen] = useState(false)
   const [bakerChosenDdItem, setAssetChosenDdItem] = useState<DropDownItemType | undefined>()
 
   const handleOnClickDropdownBakerItem = (itemId: number) => {
     setAssetChosenDdItem(bakerItemsForDropDown.find(({ id }) => id === itemId))
-    setBakerDDIsOpen(!bakerDDIsOpen)
   }
 
   return (
@@ -202,8 +198,6 @@ export const AddNewCollateral = ({ closePopup }: { closePopup: () => void }) => 
         <InputPinnedDropDown>
           <DropDown
             placeholder="Select Bakery"
-            isOpen={collateralDDIsOpen}
-            setIsOpen={setCollateralDDIsOpen}
             activeItem={collateralChosenDdItem}
             items={collateralItemsForDropDown}
             clickItem={handleOnClickDropdownCollateralItem}
@@ -217,8 +211,6 @@ export const AddNewCollateral = ({ closePopup }: { closePopup: () => void }) => 
           <div className="block-name">Select Baker</div>
           <DropDown
             placeholder="Select Bakery"
-            isOpen={bakerDDIsOpen}
-            setIsOpen={setBakerDDIsOpen}
             activeItem={bakerChosenDdItem}
             items={bakerItemsForDropDown}
             clickItem={handleOnClickDropdownBakerItem}

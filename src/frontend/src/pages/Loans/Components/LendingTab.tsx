@@ -15,6 +15,9 @@ import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { LendingItemType, LoanTokenType } from 'utils/TypesAndInterfaces/Loans'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+import { useState } from 'react'
+import { AddLendingAsset } from './Modals/AddLendingAsset.modal'
+import { RemoveAssetsFromLending } from './Modals/RemoveAssetsFromLending.modal'
 
 type LendingTabPropsType = {
   lendingItem: LendingItemType
@@ -23,12 +26,14 @@ type LendingTabPropsType = {
 }
 
 export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData }: LendingTabPropsType) => {
-  const dispatch = useDispatch()
-  const addLendHandler = () => dispatch(toggleLoansModal(ADD_LENDING_ASSET_MODAL_ID))
-  const removeLendHandler = () => dispatch(toggleLoansModal(REMOVE_ASSET_LENDING_MODAL_ID))
+  const [showAddModal, setAddModal] = useState(false)
+  const [showRemoveModal, setRemoveModal] = useState(false)
 
   return (
     <LoansTabStyled>
+      <AddLendingAsset closePopup={() => setAddModal(false)} show={showAddModal} />
+      <RemoveAssetsFromLending closePopup={() => setRemoveModal(false)} show={showRemoveModal} />
+
       <GovRightContainerTitleArea>
         <h2>My Lending</h2>
       </GovRightContainerTitleArea>
@@ -88,14 +93,14 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData }:
               text="Add"
               icon="plus"
               kind={TRANSPARENT_WITH_BORDER}
-              onClick={addLendHandler}
+              onClick={() => setAddModal(true)}
               className="lending-btn"
             />
             <Button
               text="Remove"
               icon="minus"
               kind={TRANSPARENT_WITH_BORDER}
-              onClick={removeLendHandler}
+              onClick={() => setRemoveModal(true)}
               className="lending-btn"
             />
           </LendingTabListItem>
@@ -106,7 +111,7 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData }:
           <Button
             text="Lend Asset"
             icon="plus"
-            onClick={addLendHandler}
+            onClick={() => setAddModal(true)}
             kind={ACTION_PRIMARY}
             className="lending-tab-no-items-btn"
           />

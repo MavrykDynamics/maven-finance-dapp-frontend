@@ -11,13 +11,7 @@ export const LOANS_QUERY = `query GetLoansStorage {
 
     collateral_tokens {
       token_address
-      balances_aggregate {
-        aggregate {
-          sum {
-            balance
-          }
-        }
-      }
+      id
     }
 
     loan_tokens {

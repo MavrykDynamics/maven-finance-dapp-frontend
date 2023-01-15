@@ -290,8 +290,13 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
 
   &.withdrawCollateralInput {
     margin-bottom: 45px;
-    height: 56px;
+  }
 
+  &.large-input {
+    height: 56px;
+  }
+
+  &.input-with-rate {
     input {
       padding-top: 0px;
       padding-bottom: 13px;
@@ -385,7 +390,7 @@ export const InputPinnedTokenInfo = styled.div<{ theme: MavrykTheme }>`
 
 export const InputPinnedDropDown = styled.div<{ theme: MavrykTheme }>`
   display: flex;
-  max-width: 135px;
+  min-width: max-content;
   align-items: center;
   padding: 0 7px;
   height: 100%;

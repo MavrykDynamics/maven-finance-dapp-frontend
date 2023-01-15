@@ -9,6 +9,7 @@ import {
 } from 'utils/generated/graphqlTypes'
 import { parseDate } from 'utils/time'
 import {
+  AvaliableCollateralType,
   BorrowingData,
   LendingItemType,
   LoansChartsDataType,
@@ -150,9 +151,10 @@ const getBorrowings = (
         totalRow: BorrowingData['collateralData'][number]
       }>(
         (acc, collateral) => {
+          // const isXTZ = collateral.token?.token_address.includes('tz')
           const asset = dipDupTokens.find(({ contract }) => contract === collateral.token?.token_address) ?? {
             metadata: {
-              symbol: 'tez',
+              symbol: 'tezos',
               icon: '/images/tezos.png',
             },
           }
@@ -188,7 +190,9 @@ const getBorrowings = (
           assetIcon: asset?.metadata.icon,
           amtBorrowed: 0,
           ...(asset?.metadata.symbol
-            ? { assetRate: tokensRates[vault.loan_token?.loan_token_name === 'tez' ? 'tez' : asset.metadata.symbol] }
+            ? {
+                assetRate: tokensRates[vault.loan_token?.loan_token_name === 'tezos' ? 'tezos' : asset.metadata.symbol],
+              }
             : { assetRate: null }),
           collateralBalance: vaultCollateral.totalRow?.balance ?? 0,
           collateralUtilization: 0,
@@ -219,13 +223,39 @@ const getBorrowings = (
   )
 }
 
-const getCollateralTokens = (collateralTokens: Array<Lending_Controller_Collateral_Token>) => {
-  return collateralTokens.map(({ token_address, balances_aggregate: { aggregate } }) => {
-    return {
-      tokenAddress: token_address,
-      ...(aggregate?.sum?.balance ? { balance: aggregate?.sum?.balance } : {}),
+const getCollateralTokens = (
+  collateralTokens: Array<Lending_Controller_Collateral_Token>,
+  dipDupTokens: State['tokens']['dipDupTokens'],
+  tokensRate: Record<string, number>,
+): Array<AvaliableCollateralType> => {
+  return collateralTokens.reduce<Array<AvaliableCollateralType>>((acc, { id, token_address }) => {
+    const isXTZ = token_address.includes('tz')
+    const assetMetadata = dipDupTokens?.find(({ contract }) => contract === token_address)?.metadata
+
+    if (isXTZ) {
+      acc.push({
+        id,
+        assetName: 'XTZ',
+        assetSymbol: 'tezos',
+        assetRate: tokensRate['tezos'] ?? null,
+        userBalance: 0,
+        assetIcon: '/images/tezos.png',
+      })
     }
-  })
+
+    if (assetMetadata) {
+      acc.push({
+        id,
+        assetName: assetMetadata.name,
+        assetSymbol: assetMetadata.symbol,
+        assetRate: tokensRate[assetMetadata.symbol] ?? null,
+        userBalance: 0,
+        assetIcon: assetMetadata.icon,
+      })
+    }
+
+    return acc
+  }, [])
 }
 
 export const getLoanTokensSymbols = ({
@@ -286,9 +316,9 @@ export const normalizeLoans = ({
       reserve_ratio,
       token_pool_total,
     } = loanToken
-    const isXTZ = loan_token_name === 'tez'
+    const isXTZ = loan_token_name === 'tezos'
     const tokenInfo = dipDupTokens?.find(({ contract }) => contract === lp_token_address && !isXTZ)
-    const assetRate = tokensRate[isXTZ ? 'tez' : tokenInfo?.metadata.symbol ?? loan_token_name] ?? null
+    const assetRate = tokensRate[isXTZ ? 'tezos' : tokenInfo?.metadata.symbol ?? loan_token_name] ?? null
 
     const loanTokenMetadata = {
       name: isXTZ ? 'XTZ' : loan_token_name,
@@ -333,7 +363,7 @@ export const normalizeLoans = ({
     loansControllerAddress: storage?.address,
     loanTokens,
     chartsData: getChartData(storage?.history_data),
-    collateralTokens: getCollateralTokens(storage.collateral_tokens),
+    avaliableCollaterals: getCollateralTokens(storage.collateral_tokens, dipDupTokens, tokensRate),
   }
 }
 

@@ -17,27 +17,24 @@ export const getLoansStorage = () => async (dispatch: AppDispatch, getState: Get
     const storage = await fetchFromIndexer(LOANS_QUERY, LOANS_QUERY_NAME, LOANS_QUERY_VARIABLE)
 
     // fetching rate of the presented tokens insisde loans
-    const loanTokensRate = {}
-    // (
-    //   await Promise.all(
-    //     getLoanTokensSymbols({ loan_tokens: storage?.lending_controller?.[0]?.loan_tokens, dipDupTokens }).map(
-    //       (symbol) => coinGeckoClient.coins.fetch(symbol, {}),
-    //     ),
-    //   )
-    // ).reduce<Record<string, number>>((acc, promiseResult) => {
-    //   const data = (promiseResult as any)?.value?.data
-    //   console.log('data', data, promiseResult.data)
+    const loanTokensRate = await (
+      await Promise.all(
+        getLoanTokensSymbols({ loan_tokens: storage?.lending_controller?.[0]?.loan_tokens, dipDupTokens }).map(
+          (symbol) => coinGeckoClient.coins.fetch(symbol, {}),
+        ),
+      )
+    ).reduce<Record<string, number>>((acc, promiseResult) => {
+      if (promiseResult?.success && promiseResult?.code === 200) {
+        // TODO: extract this, and consider use id instead of symbol
+        const symbol = promiseResult.data.symbol === 'xtz' ? 'tezos' : promiseResult.data.symbol
+        const rate = promiseResult.data.market_data.current_price.usd
+        acc[symbol] = rate
+      }
 
-    //   if (false) {
-    //     const symbol = data.symbol === 'xtz' ? 'tez' : data.symbol
-    //     const rate = data.market_data.current_price.usd
-    //     acc[symbol] = rate
-    //   }
+      return acc
+    }, {})
 
-    //   return acc
-    // }, {})
-
-    const { chartsData, loanTokens, collateralTokens, loansControllerAddress } = normalizeLoans({
+    const { chartsData, loanTokens, avaliableCollaterals, loansControllerAddress } = normalizeLoans({
       storage: storage?.lending_controller?.[0],
       dipDupTokens,
       mTokens,
@@ -52,7 +49,7 @@ export const getLoansStorage = () => async (dispatch: AppDispatch, getState: Get
         loansControllerAddress,
         chartsData,
         loanTokens,
-        collateralTokens,
+        avaliableCollaterals,
       },
     })
   } catch (e) {
@@ -67,3 +64,5 @@ export const toggleLoansModal = (modalToShow: ModalTypes) => async (dispatch: Ap
     payload: { currentModalActive: modalToShow },
   })
 }
+
+export const depositCollateralAction = async () => {}

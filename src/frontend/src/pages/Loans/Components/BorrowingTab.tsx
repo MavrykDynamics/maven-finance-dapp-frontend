@@ -3,12 +3,12 @@ import { Button } from 'app/App.components/Button/Button.controller'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
+import { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { BorrowingData } from 'utils/TypesAndInterfaces/Loans'
-import { toggleLoansModal } from '../Loans.actions'
-import { CREATE_NEW_VAULT_MODAL_ID } from '../Loans.const'
 import { BorrowingExpandCard } from './BorrowindExpandCard'
 import { LoansTabStyled, NoItemsInTabStyled } from './LoansComponents.style'
+import { CreateNewVault } from './Modals/CreateNewVault.modal'
 
 type BorrowingTabPropsType = {
   borrowingItems: Array<BorrowingData>
@@ -16,8 +16,8 @@ type BorrowingTabPropsType = {
 }
 
 export const BorrowingTab = ({ borrowingItems, lendingControllerAddress }: BorrowingTabPropsType) => {
+  const [showCreateVaultModal, setCreateVaultModal] = useState(false)
   const dispatch = useDispatch()
-  const createVaultHandler = () => dispatch(toggleLoansModal(CREATE_NEW_VAULT_MODAL_ID))
 
   return (
     <LoansTabStyled>
@@ -25,12 +25,14 @@ export const BorrowingTab = ({ borrowingItems, lendingControllerAddress }: Borro
         <h2>My Boorrowing</h2>
       </GovRightContainerTitleArea>
 
+      <CreateNewVault closePopup={() => setCreateVaultModal(false)} show={showCreateVaultModal} />
+
       {borrowingItems.length ? (
         <>
           <Button
             text="New Vault"
             icon="plus"
-            onClick={createVaultHandler}
+            onClick={() => setCreateVaultModal(true)}
             kind={ACTION_PRIMARY}
             className="lending-tab-no-items-btn has-items-borrow-btn"
           />
@@ -47,7 +49,7 @@ export const BorrowingTab = ({ borrowingItems, lendingControllerAddress }: Borro
             text="New Vault"
             icon="plus"
             kind={ACTION_PRIMARY}
-            onClick={createVaultHandler}
+            onClick={() => setCreateVaultModal(true)}
             className="lending-tab-no-items-btn"
           />
         </NoItemsInTabStyled>

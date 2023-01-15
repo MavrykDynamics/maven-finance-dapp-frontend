@@ -52,7 +52,7 @@ export const Input = ({
         </NewButton>
       ) : null}
 
-      {convertedValue ? (
+      {convertedValue !== undefined ? (
         <CommaNumber value={convertedValue} beginningText={'= '} endingText="$" className={'input-converted-amount'} />
       ) : null}
 

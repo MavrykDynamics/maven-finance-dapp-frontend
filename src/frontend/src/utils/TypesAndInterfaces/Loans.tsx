@@ -69,6 +69,15 @@ export type LendingItemType = {
   mXTZBalance: number
 } | null
 
+export type AvaliableCollateralType = {
+  id: number
+  userBalance: number
+  assetRate: number | null
+  assetName: string
+  assetSymbol: string
+  assetIcon: string
+}
+
 export type ModalTypes =
   | typeof ADD_COLLATERAL_MODAL_ID
   | typeof ADD_LENDING_ASSET_MODAL_ID

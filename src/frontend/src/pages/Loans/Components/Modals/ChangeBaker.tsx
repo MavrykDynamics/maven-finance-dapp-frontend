@@ -37,7 +37,7 @@ export const ChangeBaker = ({ closePopup }: { closePopup: () => void }) => {
       {
         content: (
           <DropDownJsxChild>
-            <div className="baker-name">
+            <div className="flex-row with-image">
               <Icon id="noImage" /> 1111
             </div>
             <div className="baker-fee">
@@ -50,7 +50,7 @@ export const ChangeBaker = ({ closePopup }: { closePopup: () => void }) => {
       {
         content: (
           <DropDownJsxChild>
-            <div className="baker-name">
+            <div className="flex-row with-image">
               <Icon id="noImage" /> 22222
             </div>
             <div className="baker-fee">
@@ -63,7 +63,7 @@ export const ChangeBaker = ({ closePopup }: { closePopup: () => void }) => {
       {
         content: (
           <DropDownJsxChild>
-            <div className="baker-name">
+            <div className="flex-row with-image">
               <Icon id="noImage" /> 33333
             </div>
             <div className="baker-fee">
@@ -77,12 +77,10 @@ export const ChangeBaker = ({ closePopup }: { closePopup: () => void }) => {
     [],
   )
 
-  const [ddIsOpen, setDdIsOpen] = useState(false)
   const [chosenDdItem, setChosenDdItem] = useState<DropDownItemType | undefined>()
 
   const handleOnClickDropdownItem = (itemId: number) => {
     setChosenDdItem(itemsForDropDown.find(({ id }) => id === itemId))
-    setDdIsOpen(!ddIsOpen)
   }
   const updateBakerHandler = () => {}
 
@@ -119,8 +117,6 @@ export const ChangeBaker = ({ closePopup }: { closePopup: () => void }) => {
       {activeTab === 3 ? (
         <DropDown
           placeholder="Select Bakery"
-          isOpen={ddIsOpen}
-          setIsOpen={setDdIsOpen}
           activeItem={chosenDdItem}
           items={itemsForDropDown}
           clickItem={handleOnClickDropdownItem}

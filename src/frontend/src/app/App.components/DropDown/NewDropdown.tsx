@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import { useClickAway } from 'react-use'
 
 // styles
@@ -9,64 +9,60 @@ import Icon from '../Icon/Icon.view'
 
 // helpers
 import { scrollToFullView } from 'utils/scrollToFullView'
+import { DropDownJsxChild } from 'pages/Loans/Components/Modals/Modals.style'
 
 export type DropDownItemType = {
   content: React.ReactNode
   id: number
+  disabled?: boolean
 }
 
 type DropDownProps = {
   clickItem: (id: number) => void
-  setIsOpen: (arg: boolean) => void
   placeholder: string
-  isOpen: boolean
   disabled?: boolean
   activeItem?: DropDownItemType
   items: readonly DropDownItemType[]
   className?: string
 }
 
-export const DropDown = ({
-  placeholder,
-  isOpen,
-  setIsOpen,
-  clickItem,
-  items,
-  activeItem,
-  className,
-  disabled = false,
-}: DropDownProps) => {
+export const DropDown = ({ placeholder, clickItem, items, activeItem, className, disabled = false }: DropDownProps) => {
+  const [isDropDownOpen, setIsDropDownOpen] = useState(false)
   const ref = useRef<HTMLDivElement | null>(null)
   const refDropdownWrapper = useRef<HTMLDivElement | null>(null)
-  useClickAway(refDropdownWrapper, () => setIsOpen(false))
+  useClickAway(refDropdownWrapper, () => setIsDropDownOpen(false))
 
   // if the dropdown is not fully visible in the window,
   // move the scroll to fix it
   useEffect(() => {
-    if (isOpen) {
+    if (isDropDownOpen) {
       scrollToFullView(ref.current)
     }
-  }, [isOpen])
+  }, [isDropDownOpen])
 
   return (
     <DropDownStyled ref={refDropdownWrapper} className={`drop-down ${className} ${disabled ? 'disabled' : ''}`}>
-      <DropDownMenu
-        id={'selected-option'}
-        onClick={() => {
-          setIsOpen(!isOpen)
-        }}
-      >
+      <DropDownMenu id={'selected-option'} onClick={() => setIsDropDownOpen(!isDropDownOpen)}>
         {activeItem?.content ?? placeholder}
         <span>
-          <Icon className={isOpen ? 'open' : ''} id="arrow-down" />
+          <Icon className={isDropDownOpen ? 'open' : ''} id="arrow-down" />
         </span>
       </DropDownMenu>
-      {isOpen && (
+      {isDropDownOpen && (
         <DropDownListContainer ref={ref} id={'dropDownListContainer'}>
           <DropDownList className="scroll-block">
-            {items.map(({ id, content }) => {
+            {items.map(({ id, content, disabled }) => {
               return (
-                <DropDownListItem onClick={() => clickItem(id)} key={id}>
+                <DropDownListItem
+                  onClick={() => {
+                    if (!disabled) {
+                      clickItem(id)
+                      setIsDropDownOpen(false)
+                    }
+                  }}
+                  key={id}
+                  disabled={disabled}
+                >
                   {content} {activeItem?.id === id ? <Icon id="check-stroke" /> : null}
                 </DropDownListItem>
               )
@@ -77,3 +73,18 @@ export const DropDown = ({
     </DropDownStyled>
   )
 }
+
+export const DropdownInputCustomChild = ({ iconSrc, symbol }: { iconSrc: string; symbol: string }) => (
+  <DropDownJsxChild>
+    <div className="flex-row with-image">
+      {iconSrc ? (
+        <div className="image-wrapper">
+          <img src={iconSrc} alt={symbol + '-logo'} />
+        </div>
+      ) : (
+        <Icon id="noImage" />
+      )}
+      {symbol}
+    </div>
+  </DropDownJsxChild>
+)
