@@ -15,6 +15,7 @@ import {
   LoansGQL,
   LoanTokenType,
 } from 'utils/TypesAndInterfaces/Loans'
+import {calcWithoutDecimals, calcWithoutMu} from "../../utils/calcFunctions";
 
 const getCollateralTotal = (
   vaults: Lending_Controller_Vault[],
@@ -112,12 +113,27 @@ const getChartData = (history_data: Lending_Controller_History_Data[]) =>
     },
   )
 
+const calcLendingAPY = (currentInterestRate: number, treasuryShare: number): number => {
+  // ((1 + (currentInterestRate - treasuryShare)/secondsPerYear)^secondsPerYear - 1) * 100
+  const secondsPerYear = 60*60*24*365
+
+  const top = currentInterestRate - treasuryShare
+  const firstTerm = 1 + (top / secondsPerYear)
+  const power = firstTerm ** secondsPerYear
+  return (power - 1) * 100
+}
 const getLendingItem = (
   loanToken: Lending_Controller_Loan_Token,
   userMTokens: UserState['mTokens'],
+  interestTreasuryShare: number,
+  interestRateDecimals: number
 ): LendingItemType => {
+
   if (userMTokens && loanToken) {
     const mTokenAsset = userMTokens?.find(({ m_token_id }) => m_token_id === loanToken.lp_token_address)
+    const tokenCurrentInterestRate = calcWithoutDecimals(loanToken.current_interest_rate, interestRateDecimals)
+    const borrowAPR = calcWithoutDecimals(loanToken.current_interest_rate, interestRateDecimals)
+    console.log(calcLendingAPY(tokenCurrentInterestRate, interestTreasuryShare), borrowAPR)
     if (mTokenAsset) {
       return {
         lendValue: mTokenAsset.balance,
@@ -125,7 +141,8 @@ const getLendingItem = (
         mXTZBalance: mTokenAsset.balance + mTokenAsset.rewards_earned,
         // TODO: implement these values later
         loanAssetWalletBalance: 0,
-        lendAPY: 0,
+        lendAPY: calcLendingAPY(tokenCurrentInterestRate, interestTreasuryShare),
+        borrowAPR: calcWithoutDecimals(loanToken.current_interest_rate, interestRateDecimals) * 100
       }
     }
   }
@@ -245,7 +262,7 @@ export const getLoanTokensSymbols = ({
         acc.add(tokenInfo?.metadata.symbol ?? loan_token_name)
       }
 
-      // mapping througt vaults to get symbol of each collateral asset
+      // mapping through vaults to get symbol of each collateral asset
       vaults.forEach(({ collateral_balances }) => {
         collateral_balances.forEach(({ token }) => {
           const collaretalTokenInfo = dipDupTokens?.find(({ contract }) => contract === token?.token_address)
@@ -275,6 +292,7 @@ export const normalizeLoans = ({
   userAddres?: string
   tokensRate: Record<string, number>
 }) => {
+  const interestTreasuryShare = calcWithoutDecimals(storage?.interest_treasury_share, storage.decimals)
   const loanTokens = storage?.loan_tokens?.reduce<Array<LoanTokenType>>((acc, loanToken) => {
     const {
       lp_token_address,
@@ -301,12 +319,13 @@ export const normalizeLoans = ({
     const { transactionHistory, totalBorrowed, totalLended } = getTransactionHistory(history_data, dipDupTokens)
     const { corratealAmount, borrowedAmount } = getCollateralTotal(vaults, dipDupTokens, tokensRate)
     const { myBorrowingList, permissinedBorrowingList } = getBorrowings(vaults, dipDupTokens, tokensRate, userAddres)
-    const lendingItem = getLendingItem(loanToken, userMTokens)
-
+    const lendingItem = getLendingItem(loanToken, userMTokens, interestTreasuryShare, storage.interest_rate_decimals)
+    const totalLending = isXTZ ? calcWithoutMu(totalLended) : calcWithoutDecimals(totalLended, Number(tokenInfo?.metadata.decimals ?? 1))
+    const availableLiquidity = isXTZ ? calcWithoutMu(total_remaining) : calcWithoutDecimals(total_remaining, Number(tokenInfo?.metadata.decimals ?? 1))
     acc.push({
       loanTokenData: loanTokenMetadata,
       myBorrowingList,
-      permissinedBorrowingList,
+      permissionedBorrowingList: permissinedBorrowingList,
       lendingItem,
       transactionHistory,
       utilisationRate: utilisation_rate,
@@ -315,15 +334,15 @@ export const normalizeLoans = ({
       suppliers: mTokens.filter(({ loan_token_name: m_token_name }) => loan_token_name === m_token_name).length,
       collateral: corratealAmount,
       vaultsBorrowedAmount: borrowedAmount,
-      totalLended,
-      avaliableLiquidity: total_remaining,
+      totalLending,
+      availableLiquidity,
       totalFeesEarned: userMTokens?.reduce((acc, { rewards_earned }) => acc + rewards_earned, 0) ?? 0,
       collateralFactor: storage.collateral_ratio / 10,
       reserveFactor: reserve_ratio / 100,
       reserveAmount: (token_pool_total * reserve_ratio) / 100,
-      // TODO: implement later, when sam will give the equations for it
-      borrowAPR: 0,
-      lendingAPY: 0,
+      // TODO: implement later, when sam will give the equations for it - DONE by Sam
+      borrowAPR: lendingItem?.borrowAPR ?? 0,
+      lendingAPY: lendingItem?.lendAPY ?? 0,
     })
 
     return acc

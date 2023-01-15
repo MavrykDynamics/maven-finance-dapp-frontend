@@ -41,6 +41,10 @@ export function calcWithoutMu(amount: string | number): number {
   return numberMu > 0 ? numberMu / 1000000 : 0
 }
 
+export function calcWithoutDecimals(amount: string | number, decimals: number): number {
+  const numberWithDecimals = parseFloat(amount?.toString()) || 0
+  return numberWithDecimals > 0 ? numberWithDecimals / (10 ** decimals) : 0
+}
 // TODO: remove mutations in these 3 fns
 export function calcUsersDoormanRewards(userInfo: Partial<UserState>): UserDoormanRewardsData | undefined {
   const { mySMvkTokenBalance = 0, myDoormanRewardsData } = userInfo
