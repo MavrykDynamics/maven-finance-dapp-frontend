@@ -3,6 +3,10 @@ import { fetchFromIndexer } from 'gql/fetchGraphQL'
 import { LOANS_QUERY, LOANS_QUERY_NAME, LOANS_QUERY_VARIABLE } from 'gql/queries/getLoansStorage'
 import { getLoanTokensSymbols, normalizeLoans } from './Loans.helpers'
 import { ModalTypes } from 'utils/TypesAndInterfaces/Loans'
+import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
+import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
+import { State } from 'reducers'
+import { ERROR, INFO, SUCCESS } from 'app/App.components/Toaster/Toaster.constants'
 
 export const GET_LOANS_STORAGE = 'GET_LOANS_STORAGE'
 export const getLoansStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
@@ -65,5 +69,68 @@ export const toggleLoansModal = (modalToShow: ModalTypes) => async (dispatch: Ap
   })
 }
 
-export const depositCollateralAction = async () => {}
-export const depositLendingAssetAction = async () => {}
+export const depositCollateralAction = () => async (dispatch: AppDispatch, getState: GetState) => {
+  const state: State = getState()
+
+  if (!state.wallet.accountPkh) {
+    await dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
+    return
+  }
+
+  if (state.loading.isActionLoading) {
+    await dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
+    return
+  }
+
+  try {
+    // prepare and send query
+
+    await dispatch(toggleActionLoader(true))
+    await dispatch(showToaster(INFO, 'Submitting proposal...', 'Please wait 30s'))
+
+    // confirm query completion
+
+    await dispatch(showToaster(SUCCESS, 'Proposal Submitted.', 'All good :)'))
+    // refetch data we need
+    await dispatch(toggleActionLoader(false))
+  } catch (error) {
+    console.error('submitProposal error:', error)
+    if (error instanceof Error) {
+      dispatch(showToaster(ERROR, 'Error', error.message))
+    }
+    await dispatch(toggleActionLoader(false))
+  }
+}
+
+export const depositLendingAssetAction = () => async (dispatch: AppDispatch, getState: GetState) => {
+  const state: State = getState()
+
+  if (!state.wallet.accountPkh) {
+    await dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
+    return
+  }
+
+  if (state.loading.isActionLoading) {
+    await dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
+    return
+  }
+
+  try {
+    // prepare and send query
+
+    await dispatch(toggleActionLoader(true))
+    await dispatch(showToaster(INFO, 'Submitting proposal...', 'Please wait 30s'))
+
+    // confirm query completion
+
+    await dispatch(showToaster(SUCCESS, 'Proposal Submitted.', 'All good :)'))
+    // refetch data we need
+    await dispatch(toggleActionLoader(false))
+  } catch (error) {
+    console.error('submitProposal error:', error)
+    if (error instanceof Error) {
+      dispatch(showToaster(ERROR, 'Error', error.message))
+    }
+    await dispatch(toggleActionLoader(false))
+  }
+}

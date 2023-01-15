@@ -1,3 +1,4 @@
+import { useDispatch } from 'react-redux'
 import { useState } from 'react'
 
 import NewButton from 'app/App.components/Button/NewButton.controller'
@@ -6,6 +7,8 @@ import Icon from 'app/App.components/Icon/Icon.view'
 import { Input } from 'app/App.components/Input/NewInput'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
+import { InputStatusType, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import { depositLendingAssetAction } from 'pages/Loans/Loans.actions'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
@@ -14,8 +17,6 @@ import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { silverColor } from 'styles'
 import { LoansModalBase } from './Modals.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
-import { depositLendingAssetAction } from 'pages/Loans/Loans.actions'
-import { InputStatusType, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 
 export type AddLendingAssetDataType = {
   userBalance: number
@@ -30,6 +31,7 @@ type AddLendingAssetModalProps = { closePopup: () => void; show: boolean; modalD
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239981&t=Sx2aEpp3ifrGxBtQ-0
 export const AddLendingAsset = ({ closePopup, show, modalData }: AddLendingAssetModalProps) => {
+  const dispatch = useDispatch()
   const {
     userBalance = 0,
     mBalance = 0,
@@ -46,6 +48,7 @@ export const AddLendingAsset = ({ closePopup, show, modalData }: AddLendingAsset
       Number(inputAmount) > 0 && Number(inputAmount) <= userBalance ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
     )
   }
+  const depositHandler = () => dispatch(depositLendingAssetAction())
 
   return (
     <PopupContainer onClick={closePopup} show={show}>
@@ -106,7 +109,7 @@ export const AddLendingAsset = ({ closePopup, show, modalData }: AddLendingAsset
             </ThreeLevelListItem>
           </div>
 
-          <NewButton kind={ACTION_PRIMARY} onClick={depositLendingAssetAction} className="modal-manage-btn">
+          <NewButton kind={ACTION_PRIMARY} onClick={depositHandler} className="modal-manage-btn">
             <Icon id="plus" />
             Deposit
           </NewButton>

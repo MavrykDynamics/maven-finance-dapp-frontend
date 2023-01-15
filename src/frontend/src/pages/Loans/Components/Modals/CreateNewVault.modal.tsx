@@ -1,21 +1,23 @@
+import { useDispatch, useSelector } from 'react-redux'
 import { useEffect, useMemo, useState } from 'react'
 
+import { depositCollateralAction } from 'pages/Loans/Loans.actions'
+import { InputStatusType, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { ACTION_PRIMARY, ACTION_SIMPLE, TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
 
 import NewButton from 'app/App.components/Button/NewButton.controller'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import { SimpleCircleSpinnerLoader } from 'app/App.components/Loader/Loader.view'
+import { DropDown, DropdownInputCustomChild, DropDownItemType } from 'app/App.components/DropDown/NewDropdown'
+import { Input } from 'app/App.components/Input/NewInput'
+import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import Icon from 'app/App.components/Icon/Icon.view'
 
 import { DropDownJsxChild, LoansModalBase } from './Modals.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
-import { InputStatusType, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
-import { DropDown, DropdownInputCustomChild, DropDownItemType } from 'app/App.components/DropDown/NewDropdown'
-import { Input } from 'app/App.components/Input/NewInput'
 import { InputPinnedDropDown } from 'app/App.components/Input/Input.style'
-import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { useSelector } from 'react-redux'
 import { State } from 'reducers'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { silverColor } from 'styles'
 import {
@@ -26,8 +28,6 @@ import {
   TableBody,
   TableCell,
 } from 'app/App.components/Table/Table.style'
-import { depositCollateralAction } from 'pages/Loans/Loans.actions'
-import { SimpleCircleSpinnerLoader } from 'app/App.components/Loader/Loader.view'
 
 type DropDownCollateralAssetType = DropDownItemType & {
   assetName: string
@@ -39,6 +39,17 @@ type DropDownCollateralAssetType = DropDownItemType & {
 
 type DropDownXTZBakerType = DropDownItemType & {
   bakerName: string
+}
+
+type CurrentActiveModalScreen =
+  | typeof INITIAL_SCREEN_ID
+  | typeof ADD_COLLATERAL_SCREEN_ID
+  | typeof CONFIRMATION_SCREEN_ID
+
+type InputCollateral = {
+  id: number
+  inputAmount: string
+  validationField: InputStatusType
 }
 
 const MOCKED_BAKERS_DROPDOWN = [
@@ -89,20 +100,12 @@ const MOCKED_BAKERS_DROPDOWN = [
 const INITIAL_SCREEN_ID = 'initial'
 const ADD_COLLATERAL_SCREEN_ID = 'addCollateral'
 const CONFIRMATION_SCREEN_ID = 'confirmation'
-type CurrentActiveModalScreen =
-  | typeof INITIAL_SCREEN_ID
-  | typeof ADD_COLLATERAL_SCREEN_ID
-  | typeof CONFIRMATION_SCREEN_ID
-
-type InputCollateral = {
-  id: number
-  inputAmount: string
-  validationField: InputStatusType
-}
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17480%3A229353&t=Sx2aEpp3ifrGxBtQ-0
 export const CreateNewVault = ({ closePopup, show }: { closePopup: () => void; show: boolean }) => {
+  const dispatch = useDispatch()
   const { avaliableCollaterals } = useSelector((state: State) => state.loans)
+
   const [shownScreen, setShownScreen] = useState<CurrentActiveModalScreen>(INITIAL_SCREEN_ID)
   const [collateralsToSelect, setCollateralsToSelect] = useState<Array<DropDownCollateralAssetType>>([])
   const [collaterals, setCollaterals] = useState<Array<InputCollateral>>([])
@@ -261,6 +264,8 @@ export const CreateNewVault = ({ closePopup, show }: { closePopup: () => void; s
       setVaultCreating(false)
     }, 2000)
   }
+
+  const depositCollateralHandler = () => dispatch(depositCollateralAction())
 
   const titleText =
     shownScreen === 'initial'
@@ -510,7 +515,7 @@ export const CreateNewVault = ({ closePopup, show }: { closePopup: () => void; s
                   <Icon id="arrowLeft" />
                   Back
                 </NewButton>
-                <NewButton kind={ACTION_PRIMARY} onClick={depositCollateralAction} className="modal-manage-btn">
+                <NewButton kind={ACTION_PRIMARY} onClick={depositCollateralHandler} className="modal-manage-btn">
                   <Icon id="Plus" />
                   Deposit
                 </NewButton>
