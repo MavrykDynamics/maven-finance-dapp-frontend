@@ -374,6 +374,7 @@ export const InputStyledStatus = styled.div<{ theme: MavrykTheme }>`
 export const InputPinnedTokenInfo = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   column-gap: 10px;
+  min-width: max-content;
   align-items: center;
   padding: 0 15px;
   height: 100%;
@@ -382,9 +383,16 @@ export const InputPinnedTokenInfo = styled.div<{ theme: MavrykTheme }>`
   line-height: 20px;
   color: ${({ theme }) => theme.textColor};
 
-  svg {
+  svg,
+  .image-wrapper {
     width: 24px;
     height: 24px;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
   }
 `
 

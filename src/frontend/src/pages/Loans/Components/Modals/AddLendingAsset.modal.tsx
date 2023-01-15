@@ -14,12 +14,38 @@ import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { silverColor } from 'styles'
 import { LoansModalBase } from './Modals.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
+import { depositLendingAssetAction } from 'pages/Loans/Loans.actions'
+import { InputStatusType, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+
+export type AddLendingAssetDataType = {
+  userBalance: number
+  mBalance: number
+  lendingAPY: number
+  assetRate: number | null
+  assetName: string
+  assetIcon?: string
+}
+
+type AddLendingAssetModalProps = { closePopup: () => void; show: boolean; modalData?: AddLendingAssetDataType }
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239981&t=Sx2aEpp3ifrGxBtQ-0
-export const AddLendingAsset = ({ closePopup, show }: { closePopup: () => void; show: boolean }) => {
+export const AddLendingAsset = ({ closePopup, show, modalData }: AddLendingAssetModalProps) => {
+  const {
+    userBalance = 0,
+    mBalance = 0,
+    assetRate = null,
+    assetName = '',
+    lendingAPY = 0,
+    assetIcon = '',
+  } = modalData ?? {}
   const [inputAmount, setInputAmount] = useState('0')
+  const [inputValidationStatus, setInputValidationStatus] = useState<InputStatusType>('')
 
-  const continueBtnHandler = () => {}
+  const onBlurHandler = (inputAmount: string, userBalance: number) => {
+    setInputValidationStatus(
+      Number(inputAmount) > 0 && Number(inputAmount) <= userBalance ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
+    )
+  }
 
   return (
     <PopupContainer onClick={closePopup} show={show}>
@@ -41,44 +67,46 @@ export const AddLendingAsset = ({ closePopup, show }: { closePopup: () => void; 
               value: inputAmount,
               type: 'number',
               onChange: (e) => setInputAmount(e.target.value),
+              onBlur: (e) => onBlurHandler(e.target.value, userBalance),
             }}
             settings={{
-              balance: 1,
-              balanceAsset: 'XTZ',
-              useMaxHandler: () => setInputAmount('1000'),
-              inputStatus: '',
-              convertedValue: 1,
+              balance: userBalance,
+              balanceAsset: assetName,
+              useMaxHandler: () => setInputAmount(String(userBalance)),
+              inputStatus: inputValidationStatus,
+              ...(assetRate ? { convertedValue: assetRate * Number(inputAmount) } : {}),
             }}
           >
             <InputPinnedTokenInfo>
-              <Icon id="xtzTezos" /> XTZ
+              {assetIcon ? (
+                <div className="image-wrapper">
+                  <img src={assetIcon} alt={`${assetName}-logo`} />
+                </div>
+              ) : (
+                <Icon id="xtzTezos" />
+              )}
+              {assetName}
             </InputPinnedTokenInfo>
           </Input>
 
           <div className="lending-stats">
             <ThreeLevelListItem>
-              <div className="name">mXTZ Balance</div>
-              <CommaNumber value={2412} className="value" endingText="mXTZ" />
+              <div className="name">m{assetName} Balance</div>
+              <CommaNumber value={mBalance} className="value" endingText={`m${assetName}`} />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">
-                Lending APY{' '}
-                <CustomTooltip
-                  iconId="info"
-                  defaultStrokeColor={silverColor}
-                  text="gdfgdfgdfgdfg"
-                  className="tooltip"
-                />
+                Lending APY <CustomTooltip iconId="info" defaultStrokeColor={silverColor} text="" className="tooltip" />
               </div>
-              <CommaNumber value={2.13} className="value" endingText="%" />
+              <CommaNumber value={lendingAPY} className="value" endingText="%" />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Wallet Balance</div>
-              <CommaNumber value={2412} className="value" beginningText="$" />
+              <CommaNumber value={userBalance} className="value" beginningText="$" />
             </ThreeLevelListItem>
           </div>
 
-          <NewButton kind={ACTION_PRIMARY} onClick={continueBtnHandler} className="modal-manage-btn">
+          <NewButton kind={ACTION_PRIMARY} onClick={depositLendingAssetAction} className="modal-manage-btn">
             <Icon id="plus" />
             Deposit
           </NewButton>

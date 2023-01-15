@@ -42,7 +42,7 @@ export const Input = ({
       <StyledInput {...inputProps} className={inputStatus} autoComplete={inputProps.name} />
       {/* <InputStyledStatus className={`${inputStatus} ${children ? 'hasChild' : ''}`} /> */}
 
-      {balance && balanceAsset ? (
+      {balance !== undefined && balanceAsset ? (
         <CommaNumber value={balance} beginningText="Balance:" endingText={balanceAsset} className={'input-balance'} />
       ) : null}
 

@@ -123,7 +123,7 @@ const getLendingItem = (
       return {
         lendValue: mTokenAsset.balance,
         interestEarned: mTokenAsset.rewards_earned,
-        mXTZBalance: mTokenAsset.balance + mTokenAsset.rewards_earned,
+        mBalance: mTokenAsset.balance + mTokenAsset.rewards_earned,
         // TODO: implement these values later
         loanAssetWalletBalance: 0,
         lendAPY: 0,

@@ -66,7 +66,7 @@ export type LendingItemType = {
   lendAPY: number
   interestEarned: number
   loanAssetWalletBalance: number
-  mXTZBalance: number
+  mBalance: number
 } | null
 
 export type AvaliableCollateralType = {

@@ -66,3 +66,4 @@ export const toggleLoansModal = (modalToShow: ModalTypes) => async (dispatch: Ap
 }
 
 export const depositCollateralAction = async () => {}
+export const depositLendingAssetAction = async () => {}
