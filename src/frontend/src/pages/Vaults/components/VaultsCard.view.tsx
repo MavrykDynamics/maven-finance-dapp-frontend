@@ -12,6 +12,9 @@ import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 // styles
 import { VaultsCardTitleTextGroup, VaultsCardDropDown, VaultsAssest } from './../Vaults.style'
 
+// types
+import { VaultType } from 'utils/TypesAndInterfaces/Vaults' 
+
 // helpers
 import { BLUE, CYAN } from 'app/App.components/TzAddress/TzAddress.constants'
 import { VaultsStatuses } from '../Vaults.view'
@@ -81,11 +84,17 @@ const findFooterText = (status: string, statusColor: string, timer: string) => {
   }
 }
 
-type Props = {
-  address: string
+type Props = VaultType & {
+  ktAddress: string
 }
 
-export const VaultsCard = ({ address }: Props) => {
+export const VaultsCard = (props: Props) => {
+  console.log("🚀 ~ file: VaultsCard.view.tsx:88 ~ VaultsCard ~ props", props)
+  const {
+    ktAddress,
+    borrowedAsset: { assetIcon, assetName, assetSymbol, collateralBalance, amtBorrowed }
+  } = props
+
   const statusColor = findStatusColor(VaultsStatuses.LIQUIDATABLE)
   const status = VaultsStatuses.LIQUIDATABLE
   const footerText = findFooterText(status, statusColor, '20hr 15m 22s')
@@ -96,10 +105,10 @@ export const VaultsCard = ({ address }: Props) => {
       header={
         <>
           <div className='group-with-icon'>
-            <Icon id="xtzTezos" />
+            <Icon id='xtzTezos' />
             <VaultsCardTitleTextGroup>
               <h2>Tezos</h2>
-              <TzAddress type={BLUE} tzAddress={address} />
+              <TzAddress type={BLUE} tzAddress={ktAddress} />
             </VaultsCardTitleTextGroup>
           </div>
           <VaultsCardTitleTextGroup>
@@ -110,11 +119,11 @@ export const VaultsCard = ({ address }: Props) => {
           </VaultsCardTitleTextGroup>
           <VaultsCardTitleTextGroup>
             <h3>Collateral Value</h3>
-            <CommaNumber value={400_999_000} beginningText='$' className='header-value' />
+            <CommaNumber value={collateralBalance} beginningText='$' className='header-value' />
           </VaultsCardTitleTextGroup>
           <VaultsCardTitleTextGroup>
             <h3>Borrowed Value</h3>
-            <CommaNumber value={400_999_000} beginningText='$' className='header-value' />
+            <CommaNumber value={amtBorrowed} beginningText='$' className='header-value' />
           </VaultsCardTitleTextGroup>
         </>
       }
@@ -128,7 +137,7 @@ export const VaultsCard = ({ address }: Props) => {
             <div className='group'>
               <div>
                 Vault Owner
-                <TzAddress type={CYAN} tzAddress={address} />
+                <TzAddress type={CYAN} tzAddress={ktAddress} />
               </div>
               <div>
                 <div className='title'>

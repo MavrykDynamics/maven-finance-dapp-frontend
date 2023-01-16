@@ -19,8 +19,8 @@ import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 
 // types
 import { State } from '../../reducers'
-import { VaultGQL } from 'utils/TypesAndInterfaces/Vaults'
 import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
+import { BorrowingData } from 'utils/TypesAndInterfaces/Loans'
 
 // actions
 import { getVaultsStorage } from './Vaults.actions'
@@ -66,6 +66,13 @@ export const VaultsView = () => {
   const { vaultsList } = useSelector((state: State) => state.vaults)
   const { tabId } = useParams<{ tabId: string }>()
 
+  // @ts-ignore
+  const myVaultsIds = vaultsList?.myVaultsIds as string[]
+  // @ts-ignore
+  const allVaultsIds = vaultsList?.allVaultsIds as string[]
+  // @ts-ignore
+  const vaultsMapper = vaultsList?.vaultsMapper as Record<string, BorrowingData>
+
     const { isLoading } = useDataLoader(async () => {
     try {
       await Promise.all([dispatch(getVaultsStorage())])
@@ -74,7 +81,7 @@ export const VaultsView = () => {
     }
   }, [])
 
-  const [filteredData, setFilteredData] = useState<VaultGQL[]>([])
+  const [filteredData, setFilteredData] = useState<string[]>([])
 
   const currentListName = tabId === tabsId.ALL ? VAULTS_LIST_NAME : MY_VAULTS_LIST_NAME
 
@@ -95,16 +102,12 @@ export const VaultsView = () => {
   }, [currentListName, currentPage, filteredData])
 
   useEffect(() => {
-    if (vaultsList) {
-      setFilteredData(
-        tabId === tabsId.ALL
-        ? []
-        // TODO: add filtered vaults by accountPkh
-        // : vaultsList.filter((item) => item.owner_id === accountPkh)
-        : []
-      )
-    }
-  }, [tabId, vaultsList])
+    setFilteredData(
+      tabId === tabsId.ALL
+      ? allVaultsIds
+      : myVaultsIds
+    )
+  }, [allVaultsIds, myVaultsIds, tabId])
 
   return (
     <VaultsStyled>
@@ -117,7 +120,11 @@ export const VaultsView = () => {
       <VaultsSearchFilter statuses={ListOfStatuses} />
 
       {paginatedVaultsList.map((item, index) => (
-        <VaultsCard key={index} address={item.address} />
+        <VaultsCard
+          key={item}
+          ktAddress={item}
+          {...vaultsMapper[item]}
+        />
       ))}
 
       <Pagination
