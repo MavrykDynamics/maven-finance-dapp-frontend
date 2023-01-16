@@ -277,6 +277,7 @@ export const VaultsAssest = styled.table`
       }
 
       td {
+        position: relative;
         width: 40%;
 
         font-weight: 600;
@@ -290,15 +291,34 @@ export const VaultsAssest = styled.table`
           align-items: center;
         }
 
-        span {       
+        .rate {
+          position: absolute;
+          top: 27px;
+
           font-weight: 400;
           font-size: 12px;
           line-height: 18px;
+
+          color: ${({ theme }) => theme.dataColor};
+
+          p {
+            margin: 0;
+          }
         }
 
-        .balance {
-          position: relative;
-          top: 7px;
+        .img-wrapper,
+        .no-icon {
+          width: 24px;
+          height: 24px;
+          margin-right: 5px;
+
+          img,
+          svg {
+            fill: ${({ theme }) => theme.dataColor};
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
         }
       }
     }

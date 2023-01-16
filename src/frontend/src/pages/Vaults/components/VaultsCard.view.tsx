@@ -90,7 +90,8 @@ export const VaultsCard = (props: Props) => {
   const {
     address,
     ownerId,
-    borrowedAsset: { assetIcon, assetSymbol, collateralBalance, amtBorrowed, assetRate = 1 }
+    borrowedAsset: { assetIcon, assetSymbol, collateralBalance, amtBorrowed, assetRate = 1 },
+    collateralData,
   } = props
 
   const statusColor = findStatusColor(VaultsStatuses.LIQUIDATABLE)
@@ -191,21 +192,30 @@ export const VaultsCard = (props: Props) => {
                 </thead>
 
                 <tbody>
-                  {mock.map((item, index) => (
+                  {collateralData.map((item, index) => (
                     <tr key={index}>
                       <td>
                         <div>
-                          <Icon id={item.asset} />
-                          {item.assetName}
+                          {assetIcon ? (
+                            <div className="img-wrapper">
+                              <img src={assetIcon} alt={`${assetSymbol} logo`} />
+                            </div>
+                          ) : (
+                            <div className="no-icon">
+                              <Icon id="noImage" />
+                            </div>
+                          )}
+
+                          {item.assetSymbol}
                         </div>
                       </td>
 
-                      <td>
-                        <div className='balance'>{item.balance[0]}</div>
-                        <span>~{item.balance[1]}</span>
+                      <td >
+                        <CommaNumber value={collateralBalance} beginningText='$' className='balance' />
+                        {assetRate ? <CommaNumber value={amtBorrowed * assetRate} beginningText="~$" className="rate" /> : null}
                       </td>
 
-                      <td>{item.collateral}%</td>
+                      <td>{item.collateralShare}%</td>
                     </tr>
                   ))}
                 </tbody>

@@ -66,6 +66,7 @@ export const VaultsView = () => {
   const { vaultsList } = useSelector((state: State) => state.vaults)
   const { tabId } = useParams<{ tabId: string }>()
 
+  // TODO: deleted ts-ignores
   // @ts-ignore
   const myVaultsIds = vaultsList?.myVaultsIds as string[]
   // @ts-ignore
