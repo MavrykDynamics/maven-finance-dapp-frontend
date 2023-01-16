@@ -50,7 +50,7 @@ export const LoansModalBase = styled.div<{ theme: MavrykTheme }>`
   }
 
   .modal-manage-btn {
-    margin: 60px auto 0 auto;
+    margin: 45px auto 0 auto;
     width: 250px;
   }
 
@@ -89,8 +89,7 @@ export const LoansModalBase = styled.div<{ theme: MavrykTheme }>`
   }
 
   .collateral-list {
-    /* max-height: 450px;
-    overflow-y: auto; */
+    padding-bottom: 20px;
     overscroll-behavior: contain;
     display: flex;
     flex-direction: column;
@@ -171,12 +170,11 @@ export const DropDownJsxChild = styled.div`
   justify-content: space-between;
 
   .flex-row {
-    align-items: center;
     display: flex;
+    align-items: center;
     column-gap: 10px;
     font-weight: 500;
     font-size: 16px;
-    line-height: 24px;
     color: ${({ theme }) => theme.textColor};
 
     &.with-image {

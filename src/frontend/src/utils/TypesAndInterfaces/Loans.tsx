@@ -72,6 +72,7 @@ export type LendingItemType = {
 export type AvaliableCollateralType = {
   id: number
   userBalance: number
+  assetDecimals: number
   assetRate: number | null
   assetName: string
   assetSymbol: string

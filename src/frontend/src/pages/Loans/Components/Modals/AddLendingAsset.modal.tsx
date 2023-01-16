@@ -1,5 +1,5 @@
 import { useDispatch } from 'react-redux'
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import NewButton from 'app/App.components/Button/NewButton.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
@@ -47,8 +47,23 @@ export const AddLendingAsset = ({ closePopup, show, modalData }: AddLendingAsset
     setInputValidationStatus(
       Number(inputAmount) > 0 && Number(inputAmount) <= userBalance ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
     )
+    setInputAmount(inputAmount === '' ? '0' : inputAmount)
   }
-  const depositHandler = () => dispatch(depositLendingAssetAction())
+
+  console.log('inputAmount', inputAmount, mBalance + Number(inputAmount), mBalance, Number(inputAmount), modalData)
+
+  useEffect(() => {
+    if (!show) {
+      setInputValidationStatus('')
+      setInputAmount('0')
+    }
+  }, [show])
+
+  const isDepositDisabled = useMemo(() => {
+    return inputValidationStatus !== INPUT_STATUS_SUCCESS
+  }, [inputValidationStatus])
+
+  const depositHandler = () => dispatch(depositLendingAssetAction(assetName, Number(inputAmount)))
 
   return (
     <PopupContainer onClick={closePopup} show={show}>
@@ -65,12 +80,13 @@ export const AddLendingAsset = ({ closePopup, show, modalData }: AddLendingAsset
           </div>
 
           <Input
-            className="withdrawCollateralInput"
+            className={`${assetRate ? 'input-with-rate' : ''} large-input pinned-dropdown`}
             inputProps={{
               value: inputAmount,
               type: 'number',
               onChange: (e) => setInputAmount(e.target.value),
               onBlur: (e) => onBlurHandler(e.target.value, userBalance),
+              onFocus: () => setInputAmount(inputAmount === '0' ? '' : inputAmount),
             }}
             settings={{
               balance: userBalance,
@@ -92,24 +108,35 @@ export const AddLendingAsset = ({ closePopup, show, modalData }: AddLendingAsset
             </InputPinnedTokenInfo>
           </Input>
 
-          <div className="lending-stats">
-            <ThreeLevelListItem>
-              <div className="name">m{assetName} Balance</div>
-              <CommaNumber value={mBalance} className="value" endingText={`m${assetName}`} />
-            </ThreeLevelListItem>
+          <div className="lending-stats" style={{ marginTop: '45px' }}>
             <ThreeLevelListItem>
               <div className="name">
-                Lending APY <CustomTooltip iconId="info" defaultStrokeColor={silverColor} text="" className="tooltip" />
+                Lending APY{' '}
+                <CustomTooltip
+                  iconId="info"
+                  defaultStrokeColor={silverColor}
+                  text={`You will receive m${assetName} instead of your ${assetName}`}
+                  className="tooltip"
+                />
               </div>
               <CommaNumber value={lendingAPY} className="value" endingText="%" />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
-              <div className="name">Wallet Balance</div>
-              <CommaNumber value={userBalance} className="value" beginningText="$" />
+              <div className="name">m{assetName} Received</div>
+              <CommaNumber value={Number(inputAmount)} className="value" />
+            </ThreeLevelListItem>
+            <ThreeLevelListItem>
+              <div className="name">New m{assetName} Balance</div>
+              <CommaNumber value={mBalance + Number(inputAmount)} className="value" />
             </ThreeLevelListItem>
           </div>
 
-          <NewButton kind={ACTION_PRIMARY} onClick={depositHandler} className="modal-manage-btn">
+          <NewButton
+            kind={ACTION_PRIMARY}
+            onClick={depositHandler}
+            className="modal-manage-btn"
+            disabled={isDepositDisabled}
+          >
             <Icon id="plus" />
             Deposit
           </NewButton>

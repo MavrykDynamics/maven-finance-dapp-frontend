@@ -33,6 +33,7 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData }:
         show={Boolean(showAddModal && addLendingAssetModalData)}
         modalData={addLendingAssetModalData}
       />
+
       <RemoveAssetsFromLending closePopup={() => setRemoveModal(false)} show={showRemoveModal} />
 
       <GovRightContainerTitleArea>
@@ -99,8 +100,8 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData }:
                   userBalance: lendingItem.loanAssetWalletBalance,
                   mBalance: lendingItem.mBalance,
                   lendingAPY: lendingItem.lendAPY,
-                  assetRate: null,
-                  assetName: assetData.symbol ?? assetData.name,
+                  assetRate: assetData.rate,
+                  assetName: assetData.name,
                   assetIcon: assetData.icon,
                 })
                 setAddModal(true)

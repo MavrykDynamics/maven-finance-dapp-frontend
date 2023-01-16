@@ -27,7 +27,7 @@ export const MarketPageHeader = ({ currentAsset, assetId }: MarketPageHeaderProp
       <PageHeaderStyled backgroundImageSrc={'/images/dapp-header-bg.svg'}>
         <PageHeaderTextArea className="loans">
           <div className="asset-wrapper">
-            {currentAsset.loanTokenData.icon ? (
+            {currentAsset?.loanTokenData?.icon ? (
               <div className="icon">
                 <img src={currentAsset.loanTokenData.icon} alt={`${currentAsset.loanTokenData.symbol} logo`} />
               </div>

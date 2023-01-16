@@ -17,6 +17,7 @@ export const LOANS_QUERY = `query GetLoansStorage {
     loan_tokens {
       lp_token_address
       loan_token_name
+      id
       utilisation_rate
       total_borrowed
       token_pool_total

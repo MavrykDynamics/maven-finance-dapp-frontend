@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect, useMemo, useState } from 'react'
 
-import { depositCollateralAction } from 'pages/Loans/Loans.actions'
+import { depositCollateralAction, triggerInitialVaultCreation } from 'pages/Loans/Loans.actions'
 import { InputStatusType, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { ACTION_PRIMARY, ACTION_SIMPLE, TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
 
@@ -33,6 +33,7 @@ type DropDownCollateralAssetType = DropDownItemType & {
   assetName: string
   assetSymbol: string
   userBalance: number
+  assetDecimals: number
   assetIcon: string
   assetRate: number | null
 }
@@ -102,7 +103,15 @@ const ADD_COLLATERAL_SCREEN_ID = 'addCollateral'
 const CONFIRMATION_SCREEN_ID = 'confirmation'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17480%3A229353&t=Sx2aEpp3ifrGxBtQ-0
-export const CreateNewVault = ({ closePopup, show }: { closePopup: () => void; show: boolean }) => {
+export const CreateNewVault = ({
+  closePopup,
+  show,
+  currentMarketAsset,
+}: {
+  closePopup: () => void
+  show: boolean
+  currentMarketAsset: string
+}) => {
   const dispatch = useDispatch()
   const { avaliableCollaterals } = useSelector((state: State) => state.loans)
 
@@ -110,6 +119,7 @@ export const CreateNewVault = ({ closePopup, show }: { closePopup: () => void; s
   const [collateralsToSelect, setCollateralsToSelect] = useState<Array<DropDownCollateralAssetType>>([])
   const [collaterals, setCollaterals] = useState<Array<InputCollateral>>([])
   const [isVaultCreating, setVaultCreating] = useState(false)
+  const [newVaultAddress, setNewVaultAddress] = useState('')
 
   useEffect(() => {
     const mappedAvaliableCollaterals = avaliableCollaterals.map((collateralData, idx) => ({
@@ -126,10 +136,26 @@ export const CreateNewVault = ({ closePopup, show }: { closePopup: () => void; s
         validationField: '',
       },
     ])
-  }, [avaliableCollaterals])
+
+    if (!show) {
+      setShownScreen(INITIAL_SCREEN_ID)
+      setAssetChosenDdItem(undefined)
+      setVaultCreating(false)
+      setNewVaultAddress('')
+    }
+  }, [avaliableCollaterals, show])
 
   // Data for 3rd screen, in case we have only 1 collateral to add
-  const firstCollateralMetadata = useMemo(() => collateralsToSelect.find(({ id }) => collaterals?.[0]?.id === id), [])
+  const firstCollateralMetadata = useMemo(
+    () => collateralsToSelect.find(({ id }) => collaterals?.[0]?.id === id),
+    [collateralsToSelect, collaterals],
+  )
+
+  // select baker for an xtz collateral, used only when we selected one collateral XTZ
+  const bakerItemsForDropDown = useMemo<DropDownXTZBakerType[]>(() => MOCKED_BAKERS_DROPDOWN, [])
+  const [bakerChosenDdItem, setAssetChosenDdItem] = useState<DropDownXTZBakerType | undefined>()
+  const handleOnClickDropdownBakerItem = (itemId: number) =>
+    setAssetChosenDdItem(bakerItemsForDropDown.find(({ id }) => id === itemId))
 
   const isAddCollateralContinueDisabled = useMemo(() => {
     const needBakerForXTZ = collaterals.find(
@@ -145,21 +171,25 @@ export const CreateNewVault = ({ closePopup, show }: { closePopup: () => void; s
         // when we have invalid data in some inputs
         !collaterals.every(({ validationField }) => validationField === INPUT_STATUS_SUCCESS) ||
         // when we have selected xtz collateral and we haven't selected a baker for it
-        (needBakerForXTZ && bakerChosenDdItem),
+        (needBakerForXTZ && !bakerChosenDdItem),
     )
-  }, [])
-
-  // select baker for an xtz collateral, used only when we selected one collateral XTZ
-  const bakerItemsForDropDown = useMemo<DropDownXTZBakerType[]>(() => MOCKED_BAKERS_DROPDOWN, [])
-  const [bakerChosenDdItem, setAssetChosenDdItem] = useState<DropDownXTZBakerType | undefined>()
-  const handleOnClickDropdownBakerItem = (itemId: number) =>
-    setAssetChosenDdItem(bakerItemsForDropDown.find(({ id }) => id === itemId))
+  }, [bakerChosenDdItem, collaterals, collateralsToSelect, isVaultCreating])
 
   // stuff to handle add collateral btn
   const nextAvaliableCollateralToAdd = useMemo(
     () => collateralsToSelect.find(({ disabled }) => disabled === false),
     [collateralsToSelect],
   )
+
+  const borrowingCapacity = useMemo(() => {
+    const collateralsDeposited = collaterals.reduce((acc, { id, inputAmount }) => {
+      const collateralRate = collateralsToSelect.find((toSelect) => toSelect.id === id)?.assetRate
+      if (collateralRate) acc += Number(inputAmount) * Number(collateralRate)
+
+      return acc
+    }, 0)
+    return collateralsDeposited / 2
+  }, [collaterals, collateralsToSelect])
 
   const addNewCollateralHandler = () => {
     if (nextAvaliableCollateralToAdd) {
@@ -252,20 +282,63 @@ export const CreateNewVault = ({ closePopup, show }: { closePopup: () => void; s
           : {
               ...collateral,
               validationField: validationStatus,
+              inputAmount: newInputAmount === '' ? '0' : newInputAmount,
+            },
+      ),
+    )
+  }
+
+  const onFocusHandler = (inputIdx: number) => {
+    setCollaterals(
+      collaterals.map((collateral, updateCollateralIdx) =>
+        updateCollateralIdx !== inputIdx
+          ? collateral
+          : {
+              ...collateral,
+              inputAmount: collateral.inputAmount === '0' ? '' : collateral.inputAmount,
             },
       ),
     )
   }
 
   const createVaultAction = async () => {
-    setVaultCreating(true)
-
-    setTimeout(() => {
+    try {
+      setVaultCreating(true)
+      const newVaultData = await dispatch(triggerInitialVaultCreation(currentMarketAsset))
+      setNewVaultAddress(String(newVaultData))
+      console.log('createVaultAction newVaultData', newVaultData)
+    } catch (e) {
+      setShownScreen(INITIAL_SCREEN_ID)
+      console.log('fetching new vault data error')
+    } finally {
       setVaultCreating(false)
-    }, 2000)
+    }
   }
 
-  const depositCollateralHandler = () => dispatch(depositCollateralAction())
+  const depositCollateralHandler = () => {
+    const collaretalToDeposit = collaterals.reduce<
+      Array<{
+        collateralName: string
+        amount: number
+      }>
+    >((acc, { id, inputAmount }) => {
+      const { assetName, assetDecimals } =
+        collateralsToSelect.find(({ id: collateralToSelectId }) => id === collateralToSelectId) ?? {}
+
+      if (assetName && assetDecimals) {
+        acc.push({
+          collateralName: assetName,
+          amount: Math.floor(Number(inputAmount) * 10 ** assetDecimals),
+        })
+      }
+
+      return acc
+    }, [])
+
+    if (newVaultAddress && !isAddCollateralContinueDisabled && collaretalToDeposit.length > 0) {
+      dispatch(depositCollateralAction(newVaultAddress, collaretalToDeposit))
+    }
+  }
 
   const titleText =
     shownScreen === 'initial'
@@ -342,6 +415,7 @@ export const CreateNewVault = ({ closePopup, show }: { closePopup: () => void; s
                           type: 'number',
                           onChange: (e) => inputOnChangeHandle(e.target.value, idx),
                           onBlur: (e) => inputOnBlurHandle(e.target.value, idx, collaterallMetadata.userBalance),
+                          onFocus: () => onFocusHandler(idx),
                         }}
                         settings={{
                           balanceAsset: collaterallMetadata.assetName,
@@ -433,7 +507,6 @@ export const CreateNewVault = ({ closePopup, show }: { closePopup: () => void; s
                   <ThreeLevelListItem>
                     <div className="name">Asset</div>
                     <div className="value">{firstCollateralMetadata?.assetName}</div>
-                    <CommaNumber value={2412} className="value" endingText="mXTZ" />
                   </ThreeLevelListItem>
                   <ThreeLevelListItem>
                     <div className="name">Amount</div>
@@ -468,7 +541,12 @@ export const CreateNewVault = ({ closePopup, show }: { closePopup: () => void; s
                       if (!collateralMetadata) return null
 
                       return (
-                        <TableRow rowHeight={40} borderColor="dataColor" className="add-hover">
+                        <TableRow
+                          rowHeight={40}
+                          borderColor="dataColor"
+                          className="add-hover"
+                          key={collateralId + collateralMetadata.assetName}
+                        >
                           <TableCell width="42%">{collateralMetadata.assetName}</TableCell>
                           <TableCell width="28%">
                             <CommaNumber value={Number(inputAmount)} />
@@ -503,7 +581,7 @@ export const CreateNewVault = ({ closePopup, show }: { closePopup: () => void; s
                     Borrowing Capacity{' '}
                     <CustomTooltip iconId="info" defaultStrokeColor={silverColor} text="" className="tooltip" />
                   </div>
-                  <CommaNumber value={0} className="value" beginningText="$" />
+                  <CommaNumber value={borrowingCapacity} className="value" beginningText="$" />
                 </ThreeLevelListItem>
               </div>
               <div className="buttons-wrapper" style={{ marginTop: '30px' }}>

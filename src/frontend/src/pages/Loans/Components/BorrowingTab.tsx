@@ -1,23 +1,31 @@
-import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
-import { Button } from 'app/App.components/Button/Button.controller'
-import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
-import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
-import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { BorrowingData } from 'utils/TypesAndInterfaces/Loans'
-import { BorrowingExpandCard } from './BorrowindExpandCard'
-import { LoansTabStyled, NoItemsInTabStyled } from './LoansComponents.style'
+
+import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { CreateNewVault } from './Modals/CreateNewVault.modal'
+
+import { Button } from 'app/App.components/Button/Button.controller'
+import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
+import { BorrowingExpandCard } from './BorrowindExpandCard'
+
+import { BorrowingData } from 'utils/TypesAndInterfaces/Loans'
+
+import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
+import { LoansTabStyled, NoItemsInTabStyled } from './LoansComponents.style'
 
 type BorrowingTabPropsType = {
   borrowingItems: Array<BorrowingData>
   lendingControllerAddress: string
+  currentMarketAsset: string
 }
 
-export const BorrowingTab = ({ borrowingItems, lendingControllerAddress }: BorrowingTabPropsType) => {
+export const BorrowingTab = ({
+  borrowingItems,
+  lendingControllerAddress,
+  currentMarketAsset,
+}: BorrowingTabPropsType) => {
   const [showCreateVaultModal, setCreateVaultModal] = useState(false)
-  const dispatch = useDispatch()
 
   return (
     <LoansTabStyled>
@@ -25,7 +33,11 @@ export const BorrowingTab = ({ borrowingItems, lendingControllerAddress }: Borro
         <h2>My Boorrowing</h2>
       </GovRightContainerTitleArea>
 
-      <CreateNewVault closePopup={() => setCreateVaultModal(false)} show={showCreateVaultModal} />
+      <CreateNewVault
+        closePopup={() => setCreateVaultModal(false)}
+        show={showCreateVaultModal}
+        currentMarketAsset={currentMarketAsset}
+      />
 
       {borrowingItems.length ? (
         <>

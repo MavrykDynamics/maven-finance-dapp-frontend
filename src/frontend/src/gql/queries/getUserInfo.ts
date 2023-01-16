@@ -17,6 +17,7 @@ query GetUserInfo ($_eq: String = "") {
       balance
       id
       m_token_id
+      rewards_earned
       reward_index
       user_id
       m_token {

@@ -7,7 +7,6 @@ export const DropDownStyled = styled.div<{ theme: MavrykTheme }>`
   min-width: 226px;
   margin: 0 auto;
   position: relative;
-
   font-weight: 500;
   font-size: 14px;
   line-height: 24px;
@@ -55,7 +54,7 @@ export const DropDownStyled = styled.div<{ theme: MavrykTheme }>`
 
     #dropDownListContainer {
       width: max-content;
-      left: -6px;
+      right: -8px;
       top: 85%;
 
       > div {
@@ -117,7 +116,7 @@ export const DropDownListContainer = styled.div`
   position: absolute;
   width: 100%;
   top: 36px;
-  left: 0;
+  right: 0;
   z-index: 11;
 `
 

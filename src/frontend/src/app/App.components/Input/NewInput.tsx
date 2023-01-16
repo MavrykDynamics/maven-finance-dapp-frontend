@@ -38,7 +38,7 @@ export const Input = ({
   settings: { balance, balanceAsset, useMaxHandler, convertedValue, errorMessage, inputStatus },
 }: InputViewProps) => {
   return (
-    <InputWrapper className={className} id={'inputStyled'}>
+    <InputWrapper className={`${className} ${inputStatus}`} id={'inputStyled'}>
       <StyledInput {...inputProps} className={inputStatus} autoComplete={inputProps.name} />
       {/* <InputStyledStatus className={`${inputStatus} ${children ? 'hasChild' : ''}`} /> */}
 
