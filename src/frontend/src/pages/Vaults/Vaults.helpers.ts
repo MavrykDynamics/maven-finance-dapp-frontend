@@ -88,6 +88,8 @@ export const normalizeVaultsStorage = (storage: VaultsStorageProps) => {
       xtzDelegatedTo: '',
       operators: [],
       sMVKDelegatedTo: '',
+      address: item.address,
+      ownerId: item.lending_controller_vaults[0]?.owner_id || '',
       depositors: item.lending_controller_vaults[0]?.vault?.depositors.map(({ depositor_id }) => depositor_id) as Array<string> | undefined,
     }
 

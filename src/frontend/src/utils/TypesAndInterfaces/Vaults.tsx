@@ -5,7 +5,10 @@ import { BorrowingData } from './Loans'
 export type VaultGQL = Omit<Vault, '__typename'>
 export type VaultsStorage = ReturnType<typeof normalizeVaultsStorage>
 
-export type VaultType = BorrowingData & {}
+export type VaultType = BorrowingData & {
+  address: string
+  ownerId: string
+}
 
 export type CollateralType = {
   assetSymbol?: string

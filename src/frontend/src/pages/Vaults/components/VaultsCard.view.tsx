@@ -84,13 +84,12 @@ const findFooterText = (status: string, statusColor: string, timer: string) => {
   }
 }
 
-type Props = VaultType & {
-  ktAddress: string
-}
+type Props = VaultType & {}
 
 export const VaultsCard = (props: Props) => {
   const {
-    ktAddress,
+    address,
+    ownerId,
     borrowedAsset: { assetIcon, assetSymbol, collateralBalance, amtBorrowed, assetRate = 1 }
   } = props
 
@@ -115,7 +114,7 @@ export const VaultsCard = (props: Props) => {
             )}
             <VaultsCardTitleTextGroup>
               <h2>{assetSymbol}</h2>
-              <TzAddress type={BLUE} tzAddress={ktAddress} />
+              <TzAddress type={BLUE} tzAddress={address} />
             </VaultsCardTitleTextGroup>
           </div>
           <VaultsCardTitleTextGroup>
@@ -145,7 +144,7 @@ export const VaultsCard = (props: Props) => {
             <div className='group'>
               <div>
                 Vault Owner
-                <TzAddress type={CYAN} tzAddress={ktAddress} />
+                <TzAddress type={CYAN} tzAddress={ownerId} />
               </div>
               <div>
                 <div className='title'>

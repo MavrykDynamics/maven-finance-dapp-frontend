@@ -20,7 +20,7 @@ import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 // types
 import { State } from '../../reducers'
 import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
-import { BorrowingData } from 'utils/TypesAndInterfaces/Loans'
+import { VaultType } from 'utils/TypesAndInterfaces/Vaults'
 
 // actions
 import { getVaultsStorage, getVaults } from './Vaults.actions'
@@ -71,7 +71,7 @@ export const VaultsView = () => {
   // @ts-ignore
   const allVaultsIds = vaultsList?.allVaultsIds as string[]
   // @ts-ignore
-  const vaultsMapper = vaultsList?.vaultsMapper as Record<string, BorrowingData>
+  const vaultsMapper = vaultsList?.vaultsMapper as Record<string, VaultType>
 
     const { isLoading } = useDataLoader(async () => {
     try {
@@ -119,10 +119,9 @@ export const VaultsView = () => {
 
       <VaultsSearchFilter statuses={ListOfStatuses} />
 
-      {paginatedVaultsList.map((item, index) => (
+      {paginatedVaultsList.map((item) => (
         <VaultsCard
           key={item}
-          ktAddress={item}
           {...vaultsMapper[item]}
         />
       ))}
