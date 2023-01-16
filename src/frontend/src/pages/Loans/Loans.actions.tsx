@@ -149,7 +149,10 @@ export const depositCollateralAction =
     newVaultAddress: string,
     collateralAssets: Array<{
       collateralName: string
+      assetAddress: string
       amount: number
+      assetId: number
+      tokenType: 'tez' | 'fa2' | 'fa12'
     }>,
   ) =>
   async (dispatch: AppDispatch, getState: GetState) => {
@@ -170,23 +173,80 @@ export const depositCollateralAction =
 
       // prepare and send query
       const contract = await state.wallet.tezos?.wallet.at(newVaultAddress)
+
       let transaction = null
 
       if (collateralAssets.length === 1) {
-        transaction = await contract.methods
-          .deposit(collateralAssets[0].amount, collateralAssets[0].collateralName)
-          .send()
-      } else {
-        const batch = await state.wallet.tezos?.wallet.batch(
-          collateralAssets.map(({ collateralName, amount }) => {
-            return {
-              kind: OpKind.TRANSACTION,
-              ...contract.methods.deposit(amount, collateralName).toTransferParams(),
-            }
-          }),
-        )
+        const { amount, assetAddress, assetId, collateralName, tokenType } = collateralAssets[0]
+        const assetContract = await state.wallet.tezos?.wallet.at(assetAddress)
 
-        transaction = await batch.send()
+        if (tokenType === 'tez') {
+          const batch = await state.wallet.tezos?.wallet.batch([
+            {
+              kind: OpKind.TRANSACTION,
+              ...contract.methods.deposit('tez', amount).toTransferParams(),
+              amount,
+              mutez: true,
+            },
+          ])
+
+          transaction = await batch.send()
+        }
+
+        if (tokenType === 'fa12') {
+          const batch = await state.wallet.tezos?.wallet.batch([
+            {
+              kind: OpKind.TRANSACTION,
+              ...assetContract.methods.approve(newVaultAddress, 0).toTransferParams(),
+            },
+            {
+              kind: OpKind.TRANSACTION,
+              ...assetContract.methods.approve(newVaultAddress, amount).toTransferParams(),
+            },
+            {
+              kind: OpKind.TRANSACTION,
+              ...contract.methods.deposit(collateralName, amount).toTransferParams(),
+            },
+          ])
+
+          transaction = await batch.send()
+        }
+
+        if (tokenType === 'fa2') {
+          const fa2AddOperators = [
+            {
+              add_operator: {
+                owner: state.wallet.accountPkh,
+                operator: newVaultAddress,
+                token_id: assetId, // Should be a number, usually 0
+              },
+            },
+          ]
+
+          const batch = await state.wallet.tezos?.wallet.batch([
+            {
+              kind: OpKind.TRANSACTION,
+              ...assetContract.methods.update_operators(fa2AddOperators).toTransferParams(),
+            },
+            {
+              kind: OpKind.TRANSACTION,
+              ...contract.methods.deposit(collateralName, amount).toTransferParams(),
+            },
+          ])
+
+          transaction = await batch.send()
+        }
+      } else {
+        // TODO: handle case of adding multiple collaterals, for now disabled in view
+        // const batch = await state.wallet.tezos?.wallet.batch(
+        //   collateralAssets.map(({ collateralName, amount }) => {
+        //     return {
+        //       kind: OpKind.TRANSACTION,
+        //       ...contract.methods.deposit(amount, collateralName).toTransferParams(),
+        //     }
+        //   }),
+        // )
+        // transaction = await batch.send()
       }
 
       await dispatch(toggleActionLoader(true))

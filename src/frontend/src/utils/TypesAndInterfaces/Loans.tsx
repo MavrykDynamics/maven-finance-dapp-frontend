@@ -78,6 +78,7 @@ export type AvaliableCollateralType = {
   assetName: string
   assetSymbol: string
   assetIcon: string
+  assetAddress: string
 }
 
 export type ModalTypes =

@@ -32,6 +32,7 @@ import {
 type DropDownCollateralAssetType = DropDownItemType & {
   assetName: string
   assetSymbol: string
+  assetAddress: string
   userBalance: number
   assetDecimals: number
   assetIcon: string
@@ -304,14 +305,20 @@ export const CreateNewVault = ({
       Array<{
         collateralName: string
         amount: number
+        assetId: number
+        assetAddress: string
+        tokenType: 'tez' | 'fa2' | 'fa12'
       }>
     >((acc, { id, inputAmount }) => {
-      const { assetName, assetDecimals } = collateralsToSelect[id] ?? {}
+      const { assetName, assetDecimals, assetAddress } = collateralsToSelect[id] ?? {}
 
       if (assetName && assetDecimals) {
         acc.push({
           collateralName: assetName,
+          assetId: id,
+          tokenType: assetName === 'tez' ? 'tez' : 'fa2',
           amount: Math.floor(Number(inputAmount) * 10 ** assetDecimals),
+          assetAddress,
         })
       }
 
@@ -454,14 +461,15 @@ export const CreateNewVault = ({
                 })}
               </div>
 
-              <NewButton
+              {/* button for despositting more than 1 collateral */}
+              {/* <NewButton
                 kind={ACTION_SIMPLE}
                 disabled={!Boolean(nextAvaliableCollateralToAdd)}
                 onClick={addNewCollateralHandler}
                 className="add-collateral-inline"
               >
                 + Add more assets as collateral
-              </NewButton>
+              </NewButton> */}
 
               <NewButton
                 kind={ACTION_PRIMARY}

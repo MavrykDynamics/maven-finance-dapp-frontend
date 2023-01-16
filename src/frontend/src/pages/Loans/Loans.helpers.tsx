@@ -285,6 +285,7 @@ export const getCollateralTokens = async (
         userBalance: userAssetData && typeof userAssetData === 'number' ? userAssetData : 0,
         assetIcon: '/images/tezos.png',
         assetDecimals: assetMetadata?.decimals ? Number(assetMetadata.decimals) : 6,
+        assetAddress: token_address,
       })
     }
 
@@ -300,6 +301,7 @@ export const getCollateralTokens = async (
             : 0,
         assetIcon: assetMetadata.icon,
         assetDecimals: assetMetadata?.decimals ? Number(assetMetadata.decimals) : 6,
+        assetAddress: token_address,
       })
     }
 
