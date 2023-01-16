@@ -120,12 +120,16 @@ export const VaultsView = () => {
 
       <VaultsSearchFilter statuses={ListOfStatuses} />
 
-      {paginatedVaultsList.map((item) => (
-        <VaultsCard
-          key={item}
-          {...vaultsMapper[item]}
-        />
-      ))}
+      {paginatedVaultsList.map((item) => {
+        const isOwner = vaultsMapper[item].ownerId === accountPkh
+        
+        return (
+          <VaultsCard
+            key={item}
+            isOwner={isOwner}
+            {...vaultsMapper[item]}
+          />
+      )})}
 
       <Pagination
         itemsCount={filteredData.length}

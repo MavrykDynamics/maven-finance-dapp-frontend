@@ -47,6 +47,10 @@ type BorrowingExpandCardPropsType = {
   operators?: Array<string>
   sMVKDelegatedTo?: string
   depositors?: string | Array<string>
+  header?: React.ReactNode
+  headerSufix?: React.ReactNode
+  isVaultsPage?: boolean
+  className?: string
 }
 
 export const BorrowingExpandCard = ({
@@ -57,6 +61,10 @@ export const BorrowingExpandCard = ({
   operators,
   sMVKDelegatedTo,
   depositors,
+  header,
+  headerSufix,
+  isVaultsPage,
+  className,
 }: BorrowingExpandCardPropsType) => {
   const dispatch = useDispatch()
 
@@ -94,8 +102,9 @@ export const BorrowingExpandCard = ({
 
   return (
     <Expand
-      className="expand-borrow-tab"
-      header={
+      className={className || 'expand-borrow-tab'}
+      sufix={headerSufix}
+      header={header || (
         <>
           <ThreeLevelListItem>
             <TzAddress tzAddress="tz1ezDb77a9jaFMHDWs8QXrKEDkpgGdgsjPD" type={BLUE} />
@@ -134,9 +143,9 @@ export const BorrowingExpandCard = ({
             <CommaNumber value={collateralBalance} className="value" />
           </ThreeLevelListItem>
         </>
-      }
+      )}
     >
-      <BorrowingTabListItemExpanded>
+      <BorrowingTabListItemExpanded className='expand-borrow-tab-container'>
         <div className="block-name">Borrowed</div>
         <div className="borrowed-data">
           <ThreeLevelListItem>
@@ -188,13 +197,16 @@ export const BorrowingExpandCard = ({
               <TableHeaderCell>Asset</TableHeaderCell>
               <TableHeaderCell>Balance</TableHeaderCell>
               <TableHeaderCell>Withdraw Max</TableHeaderCell>
-              <TableHeaderCell>Other Data</TableHeaderCell>
+              <TableHeaderCell>{isVaultsPage ? 'Collateral Share' : 'Other Data'}</TableHeaderCell>
             </TableRow>
           </TableHeader>
 
           <TableBody>
-            {collateralData.map(({ assetSymbol, assetIcon, balance, assetRate = 1, maxWithdraw }, idx) => {
+            {collateralData.map(({ assetSymbol, assetIcon, balance, assetRate = 1, maxWithdraw, collateralShare = 0 }, idx) => {
+              const defaultOtherData = 22.2
+              const otherData = isVaultsPage ? collateralShare : defaultOtherData
               const isTotalRow = collateralData.length - 1 === idx
+              
               if (isTotalRow && collateralData.length < 3) return null
 
               return (
@@ -234,7 +246,7 @@ export const BorrowingExpandCard = ({
                     </div>
                   </TableCell>
                   <TableCell width={`17%`}>
-                    <CommaNumber value={22.2} className="value" />
+                    <CommaNumber value={otherData} className="value" />
                   </TableCell>
                   {isTotalRow ? (
                     <TableCell className="buttons borrowing">

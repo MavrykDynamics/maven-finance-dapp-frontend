@@ -34,13 +34,17 @@ export const VaultsStyled = styled.div<{ theme: MavrykTheme }>`
     }
   }
 
-  .expand {
+  .expand-vault {
     margin-top: 10px;
 
     .expand-header {
       padding: 0 30px;
       grid-template-columns: 185px 210px 120px 120px 0.4fr 0.4fr;
       column-gap: 40px;
+    }
+
+    .expand-borrow-tab-container {
+      background-color: ${({ theme }) => theme.containerColor};;
     }
   }
 

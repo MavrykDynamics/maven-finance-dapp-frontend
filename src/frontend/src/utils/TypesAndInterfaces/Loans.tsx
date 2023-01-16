@@ -102,6 +102,7 @@ export type BorrowingData = {
     balance: number
     assetRate: number | null
     maxWithdraw: number
+    collateralShare?: number
   }>
   xtzDelegatedTo?: string
   operators?: Array<string>
