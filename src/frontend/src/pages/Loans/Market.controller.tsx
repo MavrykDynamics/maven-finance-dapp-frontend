@@ -143,11 +143,11 @@ export const Market = () => {
           </ThreeLevelListItem>
           <ThreeLevelListItem>
             <div className="name">Total Lending</div>
-            <CommaNumber value={currentToken.totalLended} className="value" />
+            <CommaNumber value={currentToken.totalLending} className="value" />
           </ThreeLevelListItem>
           <ThreeLevelListItem>
             <div className="name">Available Liquidity</div>
-            <CommaNumber value={currentToken.avaliableLiquidity} className="value" />
+            <CommaNumber value={currentToken.availableLiquidity} className="value" />
           </ThreeLevelListItem>
           <ThreeLevelListItem>
             <div className="name">Collateral Factor</div>
@@ -213,7 +213,7 @@ export const Market = () => {
         ) : null}
         {tabId === PERMISSIONS_VAULTS_TAB_ID ? (
           <PermissionVaults
-            permissionVaults={currentToken.permissinedBorrowingList}
+            permissionVaults={currentToken.permissionedBorrowingList}
             lendingControllerAddress={loansControllerAddress}
           />
         ) : null}

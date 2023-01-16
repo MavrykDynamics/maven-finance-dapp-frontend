@@ -55,14 +55,18 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData }:
                     <Icon id="noImage" />
                   </div>
                 )}
-                {assetData.symbol ?? assetData.name}
+                {assetData.name}
               </div>
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Lending</div>
-              <CommaNumber value={lendingItem.lendValue / assetData.decimals} className="value" />
+              <CommaNumber value={lendingItem.lendValue / 10 ** assetData.decimals} className="value" />
               {assetData.rate ? (
-                <CommaNumber value={lendingItem.lendValue * assetData.rate} beginningText="$" className="rate" />
+                <CommaNumber
+                  value={(lendingItem.lendValue / 10 ** assetData.decimals) * assetData.rate}
+                  beginningText="$"
+                  className="rate"
+                />
               ) : null}
             </ThreeLevelListItem>
             <ThreeLevelListItem>
@@ -78,17 +82,17 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData }:
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Wallet Balance</div>
-              <CommaNumber value={lendingItem.loanAssetWalletBalance} className="value" />
+              <CommaNumber value={lendingItem.loanAssetWalletBalance / 10 ** assetData.decimals} className="value" />
               {assetData.rate ? (
                 <CommaNumber
-                  value={lendingItem.loanAssetWalletBalance * assetData.rate}
+                  value={(lendingItem.loanAssetWalletBalance / 10 ** assetData.decimals) * assetData.rate}
                   beginningText="$"
                   className="rate"
                 />
               ) : null}
             </ThreeLevelListItem>
             <ThreeLevelListItem>
-              <div className="name">m{assetData.symbol ?? assetData.name} Balance</div>
+              <div className="name">m{assetData.name} Balance</div>
               <CommaNumber value={lendingItem.mBalance} className="value" />
             </ThreeLevelListItem>
             <Button

@@ -108,13 +108,13 @@ export const Loans = () => {
               const {
                 loanTokenData: { name, symbol, icon, rate },
                 utilisationRate,
-                avaliableLiquidity,
+                availableLiquidity,
                 borrowers,
                 collateral,
                 vaultsBorrowedAmount,
                 totalBorrowed,
                 suppliers,
-                totalLended,
+                totalLending,
                 borrowAPR,
                 totalFeesEarned,
                 lendingAPY,
@@ -143,8 +143,8 @@ export const Loans = () => {
                     <div className="row">
                       <ThreeLevelListItem>
                         <div className="name">Total Lending</div>
-                        <CommaNumber value={totalLended} className="value" />
-                        {rate ? <CommaNumber value={totalLended * rate} beginningText="$" className="rate" /> : null}
+                        <CommaNumber value={totalLending} className="value" />
+                        {rate ? <CommaNumber value={totalLending * rate} beginningText="$" className="rate" /> : null}
                       </ThreeLevelListItem>
                       <ThreeLevelListItem>
                         <div className="name">Lend APY</div>
@@ -194,7 +194,7 @@ export const Loans = () => {
                       </ThreeLevelListItem>
                       <ThreeLevelListItem>
                         <div className="name">Available Liquidity</div>
-                        <CommaNumber value={avaliableLiquidity} className="value" beginningText="$" />
+                        <CommaNumber value={availableLiquidity} className="value" beginningText="$" />
                       </ThreeLevelListItem>
                       <ThreeLevelListItem>
                         <div className="name">Borrowers</div>

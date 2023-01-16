@@ -37,15 +37,15 @@ export type LoanTokenType = {
   }>
   lendingItem: LendingItemType
   myBorrowingList: Array<BorrowingData>
-  permissinedBorrowingList: Array<BorrowingData>
+  permissionedBorrowingList: Array<BorrowingData>
   utilisationRate: number
   borrowers: number
   suppliers: number
   collateral: number
   vaultsBorrowedAmount: number
   totalBorrowed: number
-  avaliableLiquidity: number
-  totalLended: number
+  availableLiquidity: number
+  totalLending: number
   borrowAPR: number
   totalFeesEarned: number
   lendingAPY: number
@@ -64,6 +64,7 @@ export type LoansChartsDataType = {
 export type LendingItemType = {
   lendValue: number
   lendAPY: number
+  borrowAPR: number
   interestEarned: number
   loanAssetWalletBalance: number
   mBalance: number

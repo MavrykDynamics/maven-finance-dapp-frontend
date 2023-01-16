@@ -116,7 +116,7 @@ export const CreateNewVault = ({
   const { avaliableCollaterals } = useSelector((state: State) => state.loans)
 
   const [shownScreen, setShownScreen] = useState<CurrentActiveModalScreen>(INITIAL_SCREEN_ID)
-  const [collateralsToSelect, setCollateralsToSelect] = useState<Array<DropDownCollateralAssetType>>([])
+  const [collateralsToSelect, setCollateralsToSelect] = useState<Record<number, DropDownCollateralAssetType>>({})
   const [collaterals, setCollaterals] = useState<Array<InputCollateral>>([])
   const [isVaultCreating, setVaultCreating] = useState(false)
   const [newVaultAddress, setNewVaultAddress] = useState('')
@@ -147,7 +147,7 @@ export const CreateNewVault = ({
 
   // Data for 3rd screen, in case we have only 1 collateral to add
   const firstCollateralMetadata = useMemo(
-    () => collateralsToSelect.find(({ id }) => collaterals?.[0]?.id === id),
+    () => (collaterals?.[0]?.id ? collateralsToSelect[collaterals[0].id] : undefined),
     [collateralsToSelect, collaterals],
   )
 
@@ -158,12 +158,7 @@ export const CreateNewVault = ({
     setAssetChosenDdItem(bakerItemsForDropDown.find(({ id }) => id === itemId))
 
   const isAddCollateralContinueDisabled = useMemo(() => {
-    const needBakerForXTZ = collaterals.find(
-      ({ id }) =>
-        collateralsToSelect
-          .find(({ id: collateralToSelectId }) => id === collateralToSelectId)
-          ?.assetName?.toLowerCase() === 'xtz',
-    )
+    const needBakerForXTZ = collaterals.find(({ id }) => collateralsToSelect[id]?.assetName?.toLowerCase() === 'xtz')
     // Continue button to confirmation is disabled when:
     return Boolean(
       // async operation of creating vault instance on backend is not finished
@@ -177,13 +172,13 @@ export const CreateNewVault = ({
 
   // stuff to handle add collateral btn
   const nextAvaliableCollateralToAdd = useMemo(
-    () => collateralsToSelect.find(({ disabled }) => disabled === false),
+    () => Object.values(collateralsToSelect).find(({ disabled }) => disabled === false),
     [collateralsToSelect],
   )
 
   const borrowingCapacity = useMemo(() => {
     const collateralsDeposited = collaterals.reduce((acc, { id, inputAmount }) => {
-      const collateralRate = collateralsToSelect.find((toSelect) => toSelect.id === id)?.assetRate
+      const collateralRate = collateralsToSelect[id]?.assetRate
       if (collateralRate) acc += Number(inputAmount) * Number(collateralRate)
 
       return acc
@@ -203,22 +198,19 @@ export const CreateNewVault = ({
         ]),
       )
 
-      setCollateralsToSelect(
-        collateralsToSelect.map((collateral) =>
-          collateral.id === nextAvaliableCollateralToAdd?.id
-            ? {
-                ...collateral,
-                disabled: true,
-              }
-            : collateral,
-        ),
-      )
+      setCollateralsToSelect({
+        ...collateralsToSelect,
+        [nextAvaliableCollateralToAdd.id]: {
+          ...collateralsToSelect[nextAvaliableCollateralToAdd.id],
+          disabled: true,
+        },
+      })
     }
   }
 
   // stuff to handle collateral input dropdown
   const handleCollateralInputDdClick = (collateralIdx: number, listItemId: number, currentInputId: number) => {
-    const selectedItem = collateralsToSelect.find(({ id }) => id === listItemId)
+    const selectedItem = collateralsToSelect[listItemId]
 
     if (!selectedItem) return
 
@@ -234,25 +226,17 @@ export const CreateNewVault = ({
       ),
     )
 
-    setCollateralsToSelect(
-      collateralsToSelect.map((collateral) => {
-        if (collateral.id === selectedItem?.id) {
-          return {
-            ...collateral,
-            disabled: true,
-          }
-        }
-
-        if (collateral.id === currentInputId) {
-          return {
-            ...collateral,
-            disabled: false,
-          }
-        }
-
-        return collateral
-      }),
-    )
+    setCollateralsToSelect({
+      ...collateralsToSelect,
+      [selectedItem.id]: {
+        ...collateralsToSelect[selectedItem.id],
+        disabled: true,
+      },
+      [currentInputId]: {
+        ...collateralsToSelect[currentInputId],
+        disabled: false,
+      },
+    })
   }
 
   // stuff to handle inputs
@@ -322,8 +306,7 @@ export const CreateNewVault = ({
         amount: number
       }>
     >((acc, { id, inputAmount }) => {
-      const { assetName, assetDecimals } =
-        collateralsToSelect.find(({ id: collateralToSelectId }) => id === collateralToSelectId) ?? {}
+      const { assetName, assetDecimals } = collateralsToSelect[id] ?? {}
 
       if (assetName && assetDecimals) {
         acc.push({
@@ -399,7 +382,7 @@ export const CreateNewVault = ({
             <>
               <div className="collateral-list">
                 {collaterals.map(({ inputAmount, validationField, id: inputCollateralId }, idx) => {
-                  const collaterallMetadata = collateralsToSelect?.find(({ id }) => id === inputCollateralId)
+                  const collaterallMetadata = collateralsToSelect[inputCollateralId]
                   if (!collaterallMetadata) return null
                   const isXTZCollateral = collaterallMetadata?.assetName.toLocaleLowerCase() === 'xtz'
 
@@ -446,7 +429,7 @@ export const CreateNewVault = ({
                               ),
                               id: inputCollateralId,
                             }}
-                            items={collateralsToSelect}
+                            items={Object.values(collateralsToSelect)}
                             clickItem={(itemId: number) => handleCollateralInputDdClick(idx, itemId, inputCollateralId)}
                             className="input-dropdown"
                           />
@@ -537,7 +520,7 @@ export const CreateNewVault = ({
 
                   <TableBody className="treasury">
                     {collaterals.map(({ inputAmount, id: collateralId }) => {
-                      const collateralMetadata = collateralsToSelect.find(({ id }) => id === collateralId)
+                      const collateralMetadata = collateralsToSelect[collateralId]
                       if (!collateralMetadata) return null
 
                       return (
