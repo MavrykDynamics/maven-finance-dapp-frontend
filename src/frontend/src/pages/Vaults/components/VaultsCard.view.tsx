@@ -91,7 +91,7 @@ type Props = VaultType & {
 export const VaultsCard = (props: Props) => {
   const {
     ktAddress,
-    borrowedAsset: { assetIcon, assetName, assetSymbol, collateralBalance, amtBorrowed }
+    borrowedAsset: { assetIcon, assetSymbol, collateralBalance, amtBorrowed, assetRate = 1 }
   } = props
 
   const statusColor = findStatusColor(VaultsStatuses.LIQUIDATABLE)
@@ -104,9 +104,17 @@ export const VaultsCard = (props: Props) => {
       header={
         <>
           <div className='group-with-icon'>
-            <Icon id='xtzTezos' />
+            {assetIcon ? (
+              <div className="img-wrapper">
+                <img src={assetIcon} alt={`${assetSymbol} logo`} />
+              </div>
+            ) : (
+              <div className="no-icon">
+                <Icon id="noImage" />
+              </div>
+            )}
             <VaultsCardTitleTextGroup>
-              <h2>Tezos</h2>
+              <h2>{assetSymbol}</h2>
               <TzAddress type={BLUE} tzAddress={ktAddress} />
             </VaultsCardTitleTextGroup>
           </div>
@@ -123,6 +131,7 @@ export const VaultsCard = (props: Props) => {
           <VaultsCardTitleTextGroup>
             <h3>Borrowed Value</h3>
             <CommaNumber value={amtBorrowed} beginningText='$' className='header-value' />
+            {assetRate ? <CommaNumber value={amtBorrowed * assetRate} beginningText="$" className="rate" /> : null}
           </VaultsCardTitleTextGroup>
         </>
       }

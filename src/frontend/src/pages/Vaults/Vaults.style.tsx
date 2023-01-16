@@ -18,6 +18,20 @@ export const VaultsStyled = styled.div<{ theme: MavrykTheme }>`
       width: 36px;
       height: 36px;
     }
+
+    .img-wrapper, .no-icon {
+      margin-right: 10px;
+      width: 36px;
+      height: 36px;
+
+      img,
+      svg {
+        fill: ${({ theme }) => theme.dataColor};
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
   }
 
   .expand {
@@ -63,6 +77,7 @@ export const VaultsSearchFilterStyled = styled(Card)`
 `
 
 export const VaultsCardTitleTextGroup = styled.div<{ theme: MavrykTheme }>`
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -99,6 +114,17 @@ export const VaultsCardTitleTextGroup = styled.div<{ theme: MavrykTheme }>`
 
   .ratio {
     height: 14px;
+  }
+
+  .rate {
+    position: absolute;
+    top: 27px;
+
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 18px;
+
+    color: ${({ theme }) => theme.dataColor};
   }
 `
 
