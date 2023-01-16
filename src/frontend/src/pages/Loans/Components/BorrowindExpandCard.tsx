@@ -246,7 +246,7 @@ export const BorrowingExpandCard = ({
                     </div>
                   </TableCell>
                   <TableCell width={`17%`}>
-                    <CommaNumber value={otherData} className="value" />
+                    <CommaNumber value={otherData} endingText={isVaultsPage ? '%' : ''} className="value" />
                   </TableCell>
                   {isTotalRow ? (
                     <TableCell className="buttons borrowing">
