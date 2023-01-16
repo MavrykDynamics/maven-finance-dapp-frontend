@@ -8,7 +8,8 @@ import {
   VAULTS_QUERY_NAME,
   VAULTS_QUERY_VARIABLE,
 } from 'gql/queries/getVaultsStorage'
-import { normalizeVaultsStorage, getVaultTokensSymbols } from './Vaults.helpers'
+import { normalizeVaultsStorage, normalizeVaults, getVaultTokensSymbols, getVaultTokensSymbolsOld } from './Vaults.helpers'
+import { Lending_Controller } from 'utils/generated/graphqlTypes'
 
 export const GET_VAULTS_STORAGE = 'GET_VAULTS_STORAGE'
 export const getVaultsStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
@@ -28,7 +29,7 @@ export const getVaultsStorage = () => async (dispatch: AppDispatch, getState: Ge
     // fetching rate of the presented tokens insisde loans
     const vaultsTokensRate = (
       await Promise.allSettled(
-        getVaultTokensSymbols({ vaults: vault, dipDupTokens }).map(
+        getVaultTokensSymbolsOld({ vaults: vault, dipDupTokens }).map(
           (symbol) => coinGeckoClient.coins.fetch(symbol, {}),
         ),
       )
@@ -58,6 +59,11 @@ export const getVaultsStorage = () => async (dispatch: AppDispatch, getState: Ge
 
 export const GET_VAULTS = 'GET_VAULTS'
 export const getVaults = () => async (dispatch: AppDispatch, getState: GetState) => {
+  const {
+    tokens: { dipDupTokens },
+    wallet: { accountPkh },
+  } = getState()
+
   try {
     const storage = await fetchFromIndexer(
       VAULTS_QUERY,
@@ -65,11 +71,33 @@ export const getVaults = () => async (dispatch: AppDispatch, getState: GetState)
       VAULTS_QUERY_VARIABLE,
     )
 
-    const vaults = storage?.lending_controller?.[0] || {}
+    const vaults: Lending_Controller  = storage?.lending_controller[0] || {}
 
+    // fetching rate of the presented tokens insisde loans
+    const vaultsTokensRate = (
+      await Promise.allSettled(
+        getVaultTokensSymbols({ vaults: vaults.vaults, dipDupTokens }).map(
+          (symbol) => coinGeckoClient.coins.fetch(symbol, {}),
+        ),
+      )
+    ).reduce<Record<string, number>>((acc, promiseResult) => {
+      const {
+        value: { data, success },
+      } = promiseResult as any
+      if (success) {
+        const symbol = data.symbol === 'xtz' ? 'tez' : data.symbol
+        const rate = data.market_data.current_price.usd
+        acc[symbol] = rate
+      }
+
+      return acc
+    }, {})
+    
+    const normallaziedVaultsStorage = normalizeVaults({ vault: vaults.vaults, accountPkh, vaultsTokensRate, dipDupTokens })
+    
     dispatch({
       type: GET_VAULTS,
-      vaults,
+      vaults: normallaziedVaultsStorage,
     })
   } catch (e) {
     console.error('getVaults error: ', e)

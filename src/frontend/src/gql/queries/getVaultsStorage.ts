@@ -64,6 +64,9 @@ query GetAllVaultsStorage {
         id
         lending_controller_vault_id
         token_id
+        token {
+          token_address
+        }
       }
       vault {
         last_updated_at
@@ -73,6 +76,9 @@ query GetAllVaultsStorage {
         allowance
         admin
         address
+        depositors {
+          depositor_id
+        }
       }
       owner_id
       open
@@ -88,6 +94,10 @@ query GetAllVaultsStorage {
       last_updated_block_level
       internal_id
       id
+      loan_token {
+        lp_token_address
+        loan_token_name
+      }
     }
   }
 }`
