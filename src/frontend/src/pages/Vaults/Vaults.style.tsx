@@ -44,7 +44,8 @@ export const VaultsStyled = styled.div<{ theme: MavrykTheme }>`
     }
 
     .expand-borrow-tab-container {
-      background-color: ${({ theme }) => theme.containerColor};;
+      background-color: ${({ theme }) => theme.containerColor};
+      border-top: 1px solid ${({ theme }) => theme.cardBorderColor};
     }
   }
 
