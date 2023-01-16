@@ -585,7 +585,7 @@ export const CreateNewVault = ({
                   Back
                 </NewButton>
                 <NewButton kind={ACTION_PRIMARY} onClick={depositCollateralHandler} className="modal-manage-btn">
-                  <Icon id="Plus" />
+                  <Icon id="plus" />
                   Deposit
                 </NewButton>
               </div>
