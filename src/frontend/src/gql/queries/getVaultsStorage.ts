@@ -92,5 +92,5 @@ query GetAllVaultsStorage {
   }
 }`
 
-export const VAULTS_QUERY_NAME = 'GetVaultsStorageQuery'
+export const VAULTS_QUERY_NAME = 'GetAllVaultsStorage'
 export const VAULTS_QUERY_VARIABLE = {}

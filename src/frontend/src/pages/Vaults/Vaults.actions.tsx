@@ -4,6 +4,9 @@ import {
   VAULTS_STORAGE_QUERY_NAME,
   VAULTS_STORAGE_QUERY_VARIABLE,
   VAULTS_STORAGE_QUERY,
+  VAULTS_QUERY,
+  VAULTS_QUERY_NAME,
+  VAULTS_QUERY_VARIABLE,
 } from 'gql/queries/getVaultsStorage'
 import { normalizeVaultsStorage, getVaultTokensSymbols } from './Vaults.helpers'
 
@@ -21,8 +24,6 @@ export const getVaultsStorage = () => async (dispatch: AppDispatch, getState: Ge
     )
 
     const { vault = [] } = storage
-
-    // const test = getVaultTokensSymbols({ vaults: vault, dipDupTokens })
 
     // fetching rate of the presented tokens insisde loans
     const vaultsTokensRate = (
@@ -52,5 +53,25 @@ export const getVaultsStorage = () => async (dispatch: AppDispatch, getState: Ge
     })
   } catch (e) {
     console.error('getVaultsStorage error: ', e)
+  }
+}
+
+export const GET_VAULTS = 'GET_VAULTS'
+export const getVaults = () => async (dispatch: AppDispatch, getState: GetState) => {
+  try {
+    const storage = await fetchFromIndexer(
+      VAULTS_QUERY,
+      VAULTS_QUERY_NAME,
+      VAULTS_QUERY_VARIABLE,
+    )
+
+    const vaults = storage?.lending_controller?.[0] || {}
+
+    dispatch({
+      type: GET_VAULTS,
+      vaults,
+    })
+  } catch (e) {
+    console.error('getVaults error: ', e)
   }
 }

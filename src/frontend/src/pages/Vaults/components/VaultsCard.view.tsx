@@ -89,7 +89,6 @@ type Props = VaultType & {
 }
 
 export const VaultsCard = (props: Props) => {
-  console.log("🚀 ~ file: VaultsCard.view.tsx:88 ~ VaultsCard ~ props", props)
   const {
     ktAddress,
     borrowedAsset: { assetIcon, assetName, assetSymbol, collateralBalance, amtBorrowed }
