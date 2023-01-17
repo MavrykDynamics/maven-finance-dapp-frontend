@@ -12,7 +12,7 @@ export const LoaderRocket = () => (
   <LoaderStyledWithBackdrop>
     <figure>
       <div>
-        <img src="icons/lottie_rocket.gif" />
+        <img src={`/icons/lottie-rocket.gif?v=0`} alt={`Loader Image`} />
       </div>
     </figure>
   </LoaderStyledWithBackdrop>

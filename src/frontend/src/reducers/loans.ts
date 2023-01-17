@@ -1,5 +1,10 @@
 import { GET_LOANS_STORAGE } from 'pages/Loans/Loans.actions'
-import { AvaliableCollateralType, LoansChartsDataType, LoansStorage } from 'utils/TypesAndInterfaces/Loans'
+import {
+  AvaliableCollateralType,
+  LoansChartsDataType,
+  LoansStorage,
+  XtzBakerType,
+} from 'utils/TypesAndInterfaces/Loans'
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
 
 export interface LoansState {
@@ -7,6 +12,7 @@ export interface LoansState {
   chartsData: LoansChartsDataType
   loansControllerAddress: string
   avaliableCollaterals: Array<AvaliableCollateralType>
+  xtzBakers: Array<XtzBakerType>
 }
 
 const loansDefaultState: LoansState = {
@@ -19,6 +25,7 @@ const loansDefaultState: LoansState = {
     totalLended: 0,
     lendingChartData: [],
   },
+  xtzBakers: [],
 }
 
 export function loans(state = loansDefaultState, action: Action) {

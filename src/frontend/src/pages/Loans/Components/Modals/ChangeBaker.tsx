@@ -1,14 +1,18 @@
+import { useState, useMemo } from 'react'
+
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
+
 import NewButton from 'app/App.components/Button/NewButton.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
+import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { DropDown, DropDownItemType } from 'app/App.components/DropDown/NewDropdown'
 import Icon from 'app/App.components/Icon/Icon.view'
-import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
+
+import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
-import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
-import { useState, useMemo } from 'react'
 import { DropDownJsxChild, LoansModalBase } from './Modals.style'
 
 const MAVRYK_DYNAMICS_BAKERY = 1
@@ -16,7 +20,7 @@ const DAO_BAKERY = 2
 const OTHER_BAKERY = 3
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A238629&t=Sx2aEpp3ifrGxBtQ-0
-export const ChangeBaker = ({ closePopup }: { closePopup: () => void }) => {
+export const ChangeBaker = ({ closePopup, show }: { closePopup: () => void; show: boolean }) => {
   const [activeTab, setActiveSliding] = useState(MAVRYK_DYNAMICS_BAKERY)
 
   const bakerySlidingButtons = useMemo(
@@ -85,63 +89,67 @@ export const ChangeBaker = ({ closePopup }: { closePopup: () => void }) => {
   const updateBakerHandler = () => {}
 
   return (
-    <LoansModalBase>
-      <button onClick={closePopup} className="close-modal" />
+    <PopupContainer onClick={closePopup} show={show}>
+      <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="loans">
+        <LoansModalBase>
+          <button onClick={closePopup} className="close-modal" />
 
-      <GovRightContainerTitleArea>
-        <h2>Change Baker</h2>
-      </GovRightContainerTitleArea>
-      <div className="modalDescr">Please choose the Bakery to delegate your XTZ.</div>
+          <GovRightContainerTitleArea>
+            <h2>Change Baker</h2>
+          </GovRightContainerTitleArea>
+          <div className="modalDescr">Please choose the Bakery to delegate your XTZ.</div>
 
-      <SlidingTabButtons tabItems={bakerySlidingButtons} className="tab-bar" onClick={handleSlidingButtonClick} />
+          <SlidingTabButtons tabItems={bakerySlidingButtons} className="tab-bar" onClick={handleSlidingButtonClick} />
 
-      {activeTab === 1 ? (
-        <div className="modalDescr" style={{ marginTop: '30px' }}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec euismod tincidunt felis, ac vehicula tellus
-          auctor id. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Vestibulum
-          ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Morbi et ligula fringilla, tempus
-          sapien eget, pellentesque orci. Donec finibus quam rhoncus, fringilla ex ut, feugiat nulla. Curabitur
-          tristique augue non ante hendrerit ultrices
-        </div>
-      ) : null}
+          {activeTab === 1 ? (
+            <div className="modalDescr" style={{ marginTop: '30px' }}>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec euismod tincidunt felis, ac vehicula tellus
+              auctor id. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;
+              Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Morbi et ligula
+              fringilla, tempus sapien eget, pellentesque orci. Donec finibus quam rhoncus, fringilla ex ut, feugiat
+              nulla. Curabitur tristique augue non ante hendrerit ultrices
+            </div>
+          ) : null}
 
-      {activeTab === 2 ? (
-        <div className="modalDescr" style={{ marginTop: '30px' }}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec euismod tincidunt felis, ac vehicula tellus
-          auctor id. Vestibfgnsijfdn gihdfbh gbfdgbdfish bgdfios bgoshdfbhousfdb ghbsd ughfdbgodsfb guhbdf gubds ugbds
-          ubgyd gfdngjisfdngjsndig fbd gbdfsihgb dfs hoidfbgh bdsfgho dbfgh bhfdbgihdsb gds uohbdfgb dfhsb gbdfs]g sdf
-          sgnjfdgnpisfdngidfbgd
-        </div>
-      ) : null}
+          {activeTab === 2 ? (
+            <div className="modalDescr" style={{ marginTop: '30px' }}>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec euismod tincidunt felis, ac vehicula tellus
+              auctor id. Vestibfgnsijfdn gihdfbh gbfdgbdfish bgdfios bgoshdfbhousfdb ghbsd ughfdbgodsfb guhbdf gubds
+              ugbds ubgyd gfdngjisfdngjsndig fbd gbdfsihgb dfs hoidfbgh bdsfgho dbfgh bhfdbgihdsb gds uohbdfgb dfhsb
+              gbdfs]g sdf sgnjfdgnpisfdngidfbgd
+            </div>
+          ) : null}
 
-      {activeTab === 3 ? (
-        <DropDown
-          placeholder="Select Bakery"
-          activeItem={chosenDdItem}
-          items={itemsForDropDown}
-          clickItem={handleOnClickDropdownItem}
-          className="change-bakery "
-        />
-      ) : null}
+          {activeTab === 3 ? (
+            <DropDown
+              placeholder="Select Bakery"
+              activeItem={chosenDdItem}
+              items={itemsForDropDown}
+              clickItem={handleOnClickDropdownItem}
+              className="change-bakery "
+            />
+          ) : null}
 
-      <div className="lending-stats">
-        <ThreeLevelListItem>
-          <div className="name">Bakery Address</div>
-          <TzAddress className="value" tzAddress="tz1ezDb77a9jaFMHDWs8QXrKEDkpgGdgsjPD" type={BLUE} />
-        </ThreeLevelListItem>
-        <ThreeLevelListItem>
-          <div className="name">Yield</div>
-          <CommaNumber value={2.13} className="value" endingText="%" />
-        </ThreeLevelListItem>
-        <ThreeLevelListItem>
-          <div className="name">Free Capacity</div>
-          <CommaNumber value={2412} className="value" endingText="XTZ" />
-        </ThreeLevelListItem>
-      </div>
+          <div className="lending-stats">
+            <ThreeLevelListItem>
+              <div className="name">Bakery Address</div>
+              <TzAddress className="value" tzAddress="tz1ezDb77a9jaFMHDWs8QXrKEDkpgGdgsjPD" type={BLUE} />
+            </ThreeLevelListItem>
+            <ThreeLevelListItem>
+              <div className="name">Yield</div>
+              <CommaNumber value={2.13} className="value" endingText="%" />
+            </ThreeLevelListItem>
+            <ThreeLevelListItem>
+              <div className="name">Free Capacity</div>
+              <CommaNumber value={2412} className="value" endingText="XTZ" />
+            </ThreeLevelListItem>
+          </div>
 
-      <NewButton kind={ACTION_PRIMARY} onClick={updateBakerHandler} className="modal-manage-btn">
-        Update Baker
-      </NewButton>
-    </LoansModalBase>
+          <NewButton kind={ACTION_PRIMARY} onClick={updateBakerHandler} className="modal-manage-btn">
+            Update Baker
+          </NewButton>
+        </LoansModalBase>
+      </PopupContainerWrapper>
+    </PopupContainer>
   )
 }

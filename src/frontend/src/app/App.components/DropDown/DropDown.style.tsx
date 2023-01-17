@@ -67,6 +67,13 @@ export const DropDownStyled = styled.div<{ theme: MavrykTheme }>`
       }
     }
   }
+
+  &.select-xtz-baker {
+    ul {
+      overflow: auto;
+      max-height: 400px;
+    }
+  }
 `
 
 export const DropDownMenu = styled.div<{ theme: MavrykTheme }>`

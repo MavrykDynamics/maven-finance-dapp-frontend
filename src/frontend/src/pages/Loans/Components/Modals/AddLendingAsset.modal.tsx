@@ -50,8 +50,6 @@ export const AddLendingAsset = ({ closePopup, show, modalData }: AddLendingAsset
     setInputAmount(inputAmount === '' ? '0' : inputAmount)
   }
 
-  console.log('inputAmount', inputAmount, mBalance + Number(inputAmount), mBalance, Number(inputAmount), modalData)
-
   useEffect(() => {
     if (!show) {
       setInputValidationStatus('')

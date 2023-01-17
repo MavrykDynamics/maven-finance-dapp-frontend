@@ -25,7 +25,6 @@ import { MarketPagination, MarketStyled, ThreeLevelListItem } from './Loans.styl
 import { State } from 'reducers'
 import { MarketPageHeader } from './Components/LoansPageHeader'
 import { PermissionVaults } from './Components/PermissionVaultsTab'
-import { LoansModals } from './Components/Modals/Modal.controller'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { getLoansStorage } from './Loans.actions'
 
@@ -113,8 +112,6 @@ export const Market = () => {
 
   return (
     <Page>
-      <LoansModals />
-
       <MarketPageHeader assetId={assetId} currentAsset={currentAsset} />
 
       {marketPagination}

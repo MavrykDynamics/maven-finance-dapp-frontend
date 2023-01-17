@@ -28,6 +28,7 @@ import {
   TableBody,
   TableCell,
 } from 'app/App.components/Table/Table.style'
+import { Wrapper } from 'pages/Doorman/DoormanChart/DoormanChart.style'
 
 type DropDownCollateralAssetType = DropDownItemType & {
   assetName: string
@@ -41,6 +42,7 @@ type DropDownCollateralAssetType = DropDownItemType & {
 
 type DropDownXTZBakerType = DropDownItemType & {
   bakerName: string
+  bakerAddress: string
 }
 
 type CurrentActiveModalScreen =
@@ -53,51 +55,6 @@ type InputCollateral = {
   inputAmount: string
   validationField: InputStatusType
 }
-
-const MOCKED_BAKERS_DROPDOWN = [
-  {
-    content: (
-      <DropDownJsxChild>
-        <div className="flex-row with-image">
-          <Icon id="noImage" /> 1111
-        </div>
-        <div className="baker-fee">
-          <CommaNumber value={3.32} endingText="%" />
-        </div>
-      </DropDownJsxChild>
-    ),
-    bakerName: '1111',
-    id: 1,
-  },
-  {
-    content: (
-      <DropDownJsxChild>
-        <div className="flex-row with-image">
-          <Icon id="noImage" /> 22222
-        </div>
-        <div className="baker-fee">
-          <CommaNumber value={3.32} endingText="%" />
-        </div>
-      </DropDownJsxChild>
-    ),
-    bakerName: '2222',
-    id: 2,
-  },
-  {
-    content: (
-      <DropDownJsxChild>
-        <div className="flex-row with-image">
-          <Icon id="noImage" /> 33333
-        </div>
-        <div className="baker-fee">
-          <CommaNumber value={3.32} endingText="%" />
-        </div>
-      </DropDownJsxChild>
-    ),
-    bakerName: '3333',
-    id: 3,
-  },
-]
 
 const INITIAL_SCREEN_ID = 'initial'
 const ADD_COLLATERAL_SCREEN_ID = 'addCollateral'
@@ -114,7 +71,7 @@ export const CreateNewVault = ({
   currentMarketAsset: string
 }) => {
   const dispatch = useDispatch()
-  const { avaliableCollaterals } = useSelector((state: State) => state.loans)
+  const { avaliableCollaterals, xtzBakers } = useSelector((state: State) => state.loans)
 
   const [shownScreen, setShownScreen] = useState<CurrentActiveModalScreen>(INITIAL_SCREEN_ID)
   const [collateralsToSelect, setCollateralsToSelect] = useState<Record<number, DropDownCollateralAssetType>>({})
@@ -123,16 +80,22 @@ export const CreateNewVault = ({
   const [newVaultAddress, setNewVaultAddress] = useState('')
 
   useEffect(() => {
-    const mappedAvaliableCollaterals = avaliableCollaterals.map((collateralData, idx) => ({
-      ...collateralData,
-      content: <DropdownInputCustomChild iconSrc={collateralData.assetIcon} symbol={collateralData.assetName} />,
-      disabled: idx === 0,
-    }))
+    const mappedAvaliableCollaterals = avaliableCollaterals.reduce<Record<number, DropDownCollateralAssetType>>(
+      (acc, collateralData, idx) => {
+        acc[collateralData.id] = {
+          ...collateralData,
+          content: <DropdownInputCustomChild iconSrc={collateralData.assetIcon} symbol={collateralData.assetName} />,
+          disabled: idx === 0,
+        }
+        return acc
+      },
+      {},
+    )
 
     setCollateralsToSelect(mappedAvaliableCollaterals)
     setCollaterals([
       {
-        id: mappedAvaliableCollaterals[0].id,
+        id: mappedAvaliableCollaterals[Number(Object.keys(mappedAvaliableCollaterals)[0])].id,
         inputAmount: '0',
         validationField: '',
       },
@@ -153,7 +116,32 @@ export const CreateNewVault = ({
   )
 
   // select baker for an xtz collateral, used only when we selected one collateral XTZ
-  const bakerItemsForDropDown = useMemo<DropDownXTZBakerType[]>(() => MOCKED_BAKERS_DROPDOWN, [])
+  const bakerItemsForDropDown = useMemo<DropDownXTZBakerType[]>(
+    () =>
+      xtzBakers.map(({ name, fee, logo, address }, idx) => ({
+        content: (
+          <DropDownJsxChild>
+            <div className="flex-row with-image">
+              {logo ? (
+                <div className="image-wrapper">
+                  <img src={logo} alt={name + '-logo'} />
+                </div>
+              ) : (
+                <Icon id="noImage" />
+              )}{' '}
+              {name}
+            </div>
+            <div className="baker-fee">
+              <CommaNumber value={fee} endingText="%" />
+            </div>
+          </DropDownJsxChild>
+        ),
+        bakerName: name,
+        id: idx,
+        bakerAddress: address,
+      })),
+    [xtzBakers],
+  )
   const [bakerChosenDdItem, setAssetChosenDdItem] = useState<DropDownXTZBakerType | undefined>()
   const handleOnClickDropdownBakerItem = (itemId: number) =>
     setAssetChosenDdItem(bakerItemsForDropDown.find(({ id }) => id === itemId))
@@ -291,10 +279,9 @@ export const CreateNewVault = ({
       setVaultCreating(true)
       const newVaultData = await dispatch(triggerInitialVaultCreation(currentMarketAsset))
       setNewVaultAddress(String(newVaultData))
-      console.log('createVaultAction newVaultData', newVaultData)
     } catch (e) {
       setShownScreen(INITIAL_SCREEN_ID)
-      console.log('fetching new vault data error')
+      console.log('fetching new vault data error', e)
     } finally {
       setVaultCreating(false)
     }
@@ -326,7 +313,7 @@ export const CreateNewVault = ({
     }, [])
 
     if (newVaultAddress && !isAddCollateralContinueDisabled && collaretalToDeposit.length > 0) {
-      dispatch(depositCollateralAction(newVaultAddress, collaretalToDeposit))
+      dispatch(depositCollateralAction(newVaultAddress, collaretalToDeposit, bakerChosenDdItem?.bakerAddress))
     }
   }
 
@@ -390,6 +377,8 @@ export const CreateNewVault = ({
               <div className="collateral-list">
                 {collaterals.map(({ inputAmount, validationField, id: inputCollateralId }, idx) => {
                   const collaterallMetadata = collateralsToSelect[inputCollateralId]
+                  console.log('collateralsToSelect', collateralsToSelect, inputCollateralId)
+
                   if (!collaterallMetadata) return null
                   const isXTZCollateral = collaterallMetadata?.assetName.toLocaleLowerCase() === 'xtz'
 
@@ -452,6 +441,7 @@ export const CreateNewVault = ({
                             placeholder="Select Bakery"
                             activeItem={bakerChosenDdItem}
                             items={bakerItemsForDropDown}
+                            className="select-xtz-baker"
                             clickItem={handleOnClickDropdownBakerItem}
                           />
                         </>

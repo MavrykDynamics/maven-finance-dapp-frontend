@@ -65,3 +65,17 @@ export const LOANS_QUERY = `query GetLoansStorage {
 
 export const LOANS_QUERY_NAME = 'GetLoansStorage'
 export const LOANS_QUERY_VARIABLE = {}
+
+export const NEW_VAULT_QUERY = `
+query GetNewVault {
+  vault {
+    lending_controller_vaults(order_by: {last_updated_timestamp: asc}, where: {lending_controller: {mock_time: {_eq: true}}}) {
+      last_updated_timestamp
+      vault_id
+    }
+  }
+}
+`
+
+export const NEW_VAULT_QUERY_NAME = 'GetNewVault'
+export const NEW_VAULT_QUERY_VARIABLE = {}
