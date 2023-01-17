@@ -1,15 +1,28 @@
 import { LendingControllerVaultGQL, VaultType, CollateralType } from 'utils/TypesAndInterfaces/Vaults'
 import { State } from 'reducers'
+import {
+  checkVaultIsInGracePeriod,
+} from './calcFunctionsForVaultStatuses'
+import { VaultsStatuses } from './Vaults.view'
 
 type VaultsStorageProps = {
   vaults: Array<LendingControllerVaultGQL>
   vaultsTokensRate: Record<string, number>
   accountPkh?: string
   dipDupTokens: State['tokens']['dipDupTokens']
+  currentBlockLevel?: number
+  liquidationDelayInMinutes?: number
 }
 
 export const normalizeVaultsStorage = (storage: VaultsStorageProps) => {
-  const { vaults = [], vaultsTokensRate, accountPkh, dipDupTokens } = storage
+  const {
+    vaults = [],
+    vaultsTokensRate,
+    accountPkh,
+    dipDupTokens,
+    currentBlockLevel,
+    liquidationDelayInMinutes
+  } = storage
 
   if (!vaults.length) return []
   
@@ -68,6 +81,13 @@ export const normalizeVaultsStorage = (storage: VaultsStorageProps) => {
     }
     
     if (item.vault?.address) {
+      const status = currentBlockLevel && liquidationDelayInMinutes ? vaultStatusChecker({
+        currentBlockLevel,
+        liquidationEndLevel: item.liquidation_end_level,
+        markedForLiquidationLevel: item.marked_for_liquidation_level,
+        liquidationDelayInMinutes,
+      }) : ''
+
       const normallizedVault = {
         borrowedAsset: {
           assetSymbol: asset?.metadata.symbol ?? item.loan_token?.loan_token_name,
@@ -92,6 +112,7 @@ export const normalizeVaultsStorage = (storage: VaultsStorageProps) => {
         address: item.vault?.address,
         ownerId: item.owner_id || '',
         vaultId: item.internal_id,
+        status,
         depositors: item.vault?.depositors.map(({ depositor_id }) => depositor_id) as Array<string> | undefined,
       }
 
@@ -137,4 +158,28 @@ export const getVaultTokensSymbols = ({
       return acc
     }, new Set<string>()) ?? new Set(),
   )
+}
+
+type VaultStatusCheckerType = {
+  currentBlockLevel: number
+  liquidationEndLevel: number
+  markedForLiquidationLevel: number
+  liquidationDelayInMinutes: number
+}
+
+const vaultStatusChecker = ({
+  currentBlockLevel,
+  liquidationEndLevel,
+  markedForLiquidationLevel,
+  liquidationDelayInMinutes,
+}: VaultStatusCheckerType) => {
+  if (checkVaultIsInGracePeriod(
+    currentBlockLevel,
+    markedForLiquidationLevel,
+    liquidationDelayInMinutes,
+  )){
+    return VaultsStatuses.GRACE_PERIOD
+  }
+
+  return VaultsStatuses.ACTIVE
 }

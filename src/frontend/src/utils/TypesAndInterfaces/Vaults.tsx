@@ -11,6 +11,7 @@ export type VaultType = Omit<BorrowingData, 'collateralData'> & {
   address: string
   ownerId: string
   vaultId: number
+  status: string
   
   collateralData: CollateralType[]
 }

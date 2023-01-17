@@ -12,21 +12,25 @@ import {
 import { normalizeVaultsStorage, getVaultTokensSymbols } from './Vaults.helpers'
 import { LendingControllerGQL } from 'utils/TypesAndInterfaces/Vaults'
 import { setContractAddress } from 'reducers/actions/contractAddresses.actions'
+import { getHeadData } from 'app/App.components/Menu/Menu.actions'
 
 // Vaults Store
 export const GET_VAULTS_STORAGE = 'GET_VAULTS_STORAGE'
 export const getVaultsStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
-  const {
-    tokens: { dipDupTokens },
-    wallet: { accountPkh },
-  } = getState()
-
   try {
     const storage = await fetchFromIndexer(
       VAULTS_STORAGE_QUERY,
       VAULTS_STORAGE_QUERY_NAME,
       VAULTS_STORAGE_QUERY_VARIABLE,
     )
+
+    await dispatch(getHeadData())
+
+    const {
+      tokens: { dipDupTokens },
+      wallet: { accountPkh },
+      preferences: { headData }
+    } = getState()
 
     const lendingController: LendingControllerGQL = storage?.lending_controller[0] || {}
 
@@ -50,7 +54,14 @@ export const getVaultsStorage = () => async (dispatch: AppDispatch, getState: Ge
       return acc
     }, {})
     
-    const normallaziedVaultsStorage = normalizeVaultsStorage({ vaults: lendingController.vaults, accountPkh, vaultsTokensRate, dipDupTokens })
+    const normallaziedVaultsStorage = normalizeVaultsStorage({
+      vaults: lendingController.vaults,
+      accountPkh,
+      vaultsTokensRate,
+      dipDupTokens,
+      currentBlockLevel: headData?.level,
+      liquidationDelayInMinutes: lendingController.liquidation_delay_in_minutes,
+    })
  
     dispatch(setContractAddress('vaultAddress', lendingController.address))  
 

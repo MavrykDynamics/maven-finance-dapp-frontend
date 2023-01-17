@@ -64,15 +64,15 @@ export const VaultsCard = (props: Props) => {
     address,
     ownerId,
     vaultId,
+    status,
     borrowedAsset: { assetIcon, assetSymbol, collateralBalance, amtBorrowed, assetRate = 1 },
     collateralData,
     isOwner,
     handleLiquidateVault,
     handleMarkForLiquidation,
   } = props
-  const statusColor = findStatusInfo(VaultsStatuses.LIQUIDATABLE).color as StatusFlagStyle
-  const statusText = findStatusInfo(VaultsStatuses.LIQUIDATABLE).text
-  const status = VaultsStatuses.LIQUIDATABLE
+  const statusColor = findStatusInfo(status).color as StatusFlagStyle
+  const statusText = findStatusInfo(status).text
   const footerText = findFooterText(status, statusColor, '20hr 15m 22s')
 
   const isActiveFooter = 
