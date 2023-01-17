@@ -32,21 +32,6 @@ const tabsId = {
   MY: 'my'
 }
 
-const tabsList: TabItem[] = [
-  {
-    text: 'All Vaults',
-    id: 1,
-    active: true,
-    path: tabsId.ALL
-  },
-  {
-    text: 'My Vaults',
-    id: 2,
-    active: false,
-    path: tabsId.MY
-  },
-]
-
 export const VaultsStatuses = {
   LIQUIDATABLE: 'LIQUIDATABLE',
   GRACE_PERIOD: 'GRACE PERIOD',
@@ -66,6 +51,22 @@ export const VaultsView = () => {
   const { vaultsList } = useSelector((state: State) => state.vaults)
   const { tabId } = useParams<{ tabId: string }>()
 
+  const tabsList: TabItem[] = useMemo(() => ([
+    {
+      text: 'All Vaults',
+      id: 1,
+      active: true,
+      path: tabsId.ALL
+    },
+    {
+      text: 'My Vaults',
+      id: 2,
+      active: false,
+      path: tabsId.MY,
+      isDisabled: !accountPkh
+    },
+  ]), [accountPkh])
+
   // TODO: deleted ts-ignores
   // @ts-ignore
   const myVaultsIds = vaultsList?.myVaultsIds as string[]
@@ -74,7 +75,7 @@ export const VaultsView = () => {
   // @ts-ignore
   const vaultsMapper = vaultsList?.vaultsMapper as Record<string, VaultType>
 
-    const { isLoading } = useDataLoader(async () => {
+  const { isLoading } = useDataLoader(async () => {
     try {
       await Promise.all([dispatch(getVaultsStorage())])
     } catch (e) {
@@ -91,7 +92,6 @@ export const VaultsView = () => {
     currentListName
   )
 
-  // TODO: handle my vaults tab if user disconnect
   const handleChangeTabs = (id: number) => {
     const foundTab = tabsList.find((item) => item.id === id)
     history.replace(`${pathname}/${foundTab?.path}`)
