@@ -15,11 +15,12 @@ import { VaultsStyled } from './Vaults.style'
 import { VAULTS_LIST_NAME, MY_VAULTS_LIST_NAME } from 'pages/FinacialRequests/Pagination/pagination.consts'
 import { getPageNumber } from 'pages/FinacialRequests/FinancialRequests.helpers'
 import { calculateSlicePositions } from 'pages/FinacialRequests/Pagination/pagination.consts'
+import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 
 // types
 import { State } from '../../reducers'
-import { VaultGQL } from 'utils/TypesAndInterfaces/Vaults'
 import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
+import { VaultType } from 'utils/TypesAndInterfaces/Vaults'
 
 // actions
 import { getVaultsStorage, liquidateVault, markForLiquidation } from './Vaults.actions'
@@ -65,7 +66,23 @@ export const VaultsView = () => {
   const { vaultsList } = useSelector((state: State) => state.vaults)
   const { tabId } = useParams<{ tabId: string }>()
 
-  const [filteredData, setFilteredData] = useState<VaultGQL[]>([])
+  // TODO: deleted ts-ignores
+  // @ts-ignore
+  const myVaultsIds = vaultsList?.myVaultsIds as string[]
+  // @ts-ignore
+  const allVaultsIds = vaultsList?.allVaultsIds as string[]
+  // @ts-ignore
+  const vaultsMapper = vaultsList?.vaultsMapper as Record<string, VaultType>
+
+    const { isLoading } = useDataLoader(async () => {
+    try {
+      await Promise.all([dispatch(getVaultsStorage())])
+    } catch (e) {
+      //TODO: handle fetch error
+    }
+  }, [])
+
+  const [filteredData, setFilteredData] = useState<string[]>([])
 
   const currentListName = tabId === tabsId.ALL ? VAULTS_LIST_NAME : MY_VAULTS_LIST_NAME
 
@@ -73,6 +90,8 @@ export const VaultsView = () => {
     search,
     currentListName
   )
+
+  // TODO: handle my vaults tab if user disconnect
   const handleChangeTabs = (id: number) => {
     const foundTab = tabsList.find((item) => item.id === id)
     history.replace(`${pathname}/${foundTab?.path}`)
@@ -92,20 +111,12 @@ export const VaultsView = () => {
   }
 
   useEffect(() => {
-    if (vaultsList) {
-      setFilteredData(
-        tabId === tabsId.ALL
-        ? vaultsList
-        // TODO: add filtered vaults by accountPkh
-        // : vaultsList.filter((item) => item.owner_id === accountPkh)
-        : []
-      )
-    }
-  }, [tabId, vaultsList])
-
-  useEffect(() => {
-    dispatch(getVaultsStorage())
-  }, [dispatch])
+    setFilteredData(
+      tabId === tabsId.ALL
+      ? allVaultsIds
+      : myVaultsIds
+    )
+  }, [allVaultsIds, myVaultsIds, tabId])
 
   return (
     <VaultsStyled>
@@ -117,14 +128,16 @@ export const VaultsView = () => {
 
       <VaultsSearchFilter statuses={ListOfStatuses} />
 
-      {paginatedVaultsList.map((item, index) => (
-        <VaultsCard
-          key={index}
-          address={item.address}
-          handleLiquidateVault={handleLiquidateVault}
-          handleMarkForLiquidation={handleMarkForLiquidation}
-        />
-      ))}
+      {paginatedVaultsList.map((item) => {
+        const isOwner = vaultsMapper[item].ownerId === accountPkh
+        
+        return (
+          <VaultsCard
+            key={item}
+            isOwner={isOwner}
+            {...vaultsMapper[item]}
+          />
+      )})}
 
       <Pagination
         itemsCount={filteredData.length}

@@ -8,66 +8,38 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import Icon from 'app/App.components/Icon/Icon.view'
 import { Button } from 'app/App.components/SettingsPopup/SettingsPopup.style'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { BorrowingExpandCard } from 'pages/Loans/Components/BorrowindExpandCard'
 
 // styles
 import { VaultsCardTitleTextGroup, VaultsCardDropDown, VaultsAssest } from './../Vaults.style'
+
+// types
+import { VaultType } from 'utils/TypesAndInterfaces/Vaults'
+import { StatusFlagStyle } from '../../../app/App.components/StatusFlag/StatusFlag.constants'
 
 // helpers
 import { BLUE, CYAN } from 'app/App.components/TzAddress/TzAddress.constants'
 import { VaultsStatuses } from '../Vaults.view'
 
-const mock = [
-  {
-    asset: 'xtzTezos',
-    assetName: 'EURL',
-    balance: [1423, 1245.12],
-    collateral: 15
-  },
-  {
-    asset: 'mvkTokenGold',
-    assetName: 'sMVK',
-    balance: [1122, 1245.12],
-    collateral: 12
-  },
-  {
-    asset: 'xtzTezos',
-    assetName: 'EURL',
-    balance: [1000, 1245.12],
-    collateral: 34
-  },
-  {
-    asset: 'mvkTokenGold',
-    assetName: 'sMVK',
-    balance: [1220, 1245.12],
-    collateral: 21
-  },
-  {
-    asset: 'xtzTezos',
-    assetName: 'EURL',
-    balance: [1320, 1245.12],
-    collateral: 19
-  },
-]
-
-const findStatusColor = (status: string) => {
+const findStatusInfo = (status: string) => {
   switch (status) {
     case VaultsStatuses.LIQUIDATABLE:
-      return 'down'
+      return { color: 'down', text: 'Liquidation Armed' }
     case VaultsStatuses.GRACE_PERIOD:
-      return 'darkWarning'
+      return { color: 'darkWarning', text: 'Grace Period' }
     case VaultsStatuses.MARK:
-      return 'warning'
+      return { color: 'warning', text: 'Ready to Arm' }
     case VaultsStatuses.AT_RISK:
-      return 'waiting'
+      return { color: 'waiting', text: 'At Risk' }
     case VaultsStatuses.ACTIVE:
-      return 'up'
+      return { color: 'up', text: 'Low Risk' }
 
     default:
-      return 'info'
+      return { color: 'info', text: 'no data'}
   }
 }
 
-const findFooterText = (status: string, statusColor: string, timer: string) => {
+const findFooterText = (status: string, statusColor: StatusFlagStyle, timer: string) => {
   switch (status) {
     case VaultsStatuses.LIQUIDATABLE:
       return <p>This vault is <span className={statusColor}>armed for liquidation</span> and can be liquidated for the next <span className='timer'>{timer}</span></p>
@@ -81,51 +53,73 @@ const findFooterText = (status: string, statusColor: string, timer: string) => {
   }
 }
 
-type Props = {
-  address: string
-  handleLiquidateVault: (vaultId: string, vaultOwner: string, liquidateAmount: number) => void
-  handleMarkForLiquidation: (vaultId: string, vaultOwner: string) => void
+type Props = VaultType & {
+  isOwner: boolean
 }
 
-export const VaultsCard = ({ address, handleLiquidateVault, handleMarkForLiquidation }: Props) => {
-  const statusColor = findStatusColor(VaultsStatuses.LIQUIDATABLE)
-  const status = VaultsStatuses.LIQUIDATABLE
+export const VaultsCard = (props: Props) => {
+  const {
+    address,
+    ownerId,
+    borrowedAsset: { assetIcon, assetSymbol, collateralBalance, amtBorrowed, assetRate = 1 },
+    collateralData,
+    isOwner,
+  } = props
+
+  const statusColor = findStatusInfo(VaultsStatuses.AT_RISK).color as StatusFlagStyle
+  const statusText = findStatusInfo(VaultsStatuses.AT_RISK).text
+  const status = VaultsStatuses.AT_RISK
   const footerText = findFooterText(status, statusColor, '20hr 15m 22s')
 
   const isActiveFooter = 
-    status === VaultsStatuses.LIQUIDATABLE ||
-    status === VaultsStatuses.GRACE_PERIOD ||
-    status === VaultsStatuses.MARK
+  status === VaultsStatuses.LIQUIDATABLE ||
+  status === VaultsStatuses.GRACE_PERIOD ||
+  status === VaultsStatuses.MARK
 
-  return (
-    <Expand
-      className="expand"
-      header={
-        <>
-          <div className='group-with-icon'>
-            <Icon id="xtzTezos" />
-            <VaultsCardTitleTextGroup>
-              <h2>Tezos</h2>
-              <TzAddress type={BLUE} tzAddress={address} />
-            </VaultsCardTitleTextGroup>
+  const header = (
+    <>
+      <div className='group-with-icon'>
+        {assetIcon ? (
+          <div className="img-wrapper">
+            <img src={assetIcon} alt={`${assetSymbol} logo`} />
           </div>
-          <VaultsCardTitleTextGroup>
-            <h3>Collateral Ratio</h3>
-            <div className='ratio'>
-              in progress...
-            </div>
-          </VaultsCardTitleTextGroup>
-          <VaultsCardTitleTextGroup>
-            <h3>Collateral Value</h3>
-            <CommaNumber value={400_999_000} beginningText='$' className='header-value' />
-          </VaultsCardTitleTextGroup>
-          <VaultsCardTitleTextGroup>
-            <h3>Borrowed Value</h3>
-            <CommaNumber value={400_999_000} beginningText='$' className='header-value' />
-          </VaultsCardTitleTextGroup>
-        </>
-      }
-      sufix={<StatusFlag status={statusColor} text={status} />}
+        ) : (
+          <div className="no-icon">
+            <Icon id="noImage" />
+          </div>
+        )}
+        <VaultsCardTitleTextGroup>
+          <h2>{assetSymbol}</h2>
+          <TzAddress type={BLUE} tzAddress={address} />
+        </VaultsCardTitleTextGroup>
+      </div>
+      <VaultsCardTitleTextGroup>
+        <h3>Collateral Ratio</h3>
+        <div className='ratio'>
+          in progress...
+        </div>
+      </VaultsCardTitleTextGroup>
+      <VaultsCardTitleTextGroup>
+        <h3>Collateral Value</h3>
+        <CommaNumber value={collateralBalance} beginningText='$' className='header-value' />
+      </VaultsCardTitleTextGroup>
+      <VaultsCardTitleTextGroup>
+        <h3>Borrowed Value</h3>
+        <CommaNumber value={amtBorrowed} beginningText='$' className='header-value' />
+        {assetRate ? <CommaNumber value={amtBorrowed * assetRate} beginningText="$" className="rate" /> : null}
+      </VaultsCardTitleTextGroup>
+    </>
+  )
+
+  const headerSufix = (
+    <StatusFlag status={statusColor} text={status} />
+  )
+
+  const generalExpand = (
+    <Expand
+      className="expand-vault"
+      header={header}
+      sufix={headerSufix}
     >
       <VaultsCardDropDown>
         <div className='body'>
@@ -135,7 +129,7 @@ export const VaultsCard = ({ address, handleLiquidateVault, handleMarkForLiquida
             <div className='group'>
               <div>
                 Vault Owner
-                <TzAddress type={CYAN} tzAddress={address} />
+                <TzAddress type={CYAN} tzAddress={ownerId} />
               </div>
               <div>
                 <div className='title'>
@@ -143,7 +137,7 @@ export const VaultsCard = ({ address, handleLiquidateVault, handleMarkForLiquida
                   <Icon id='info' className='info-icon' />
                 </div>
 
-                <div className={statusColor}>Liquidation Armed</div> 
+                <div className={statusColor}>{statusText}</div> 
               </div>
             </div>
 
@@ -182,21 +176,30 @@ export const VaultsCard = ({ address, handleLiquidateVault, handleMarkForLiquida
                 </thead>
 
                 <tbody>
-                  {mock.map((item, index) => (
+                  {collateralData.map((item, index) => (
                     <tr key={index}>
                       <td>
                         <div>
-                          <Icon id={item.asset} />
-                          {item.assetName}
+                          {assetIcon ? (
+                            <div className="img-wrapper">
+                              <img src={assetIcon} alt={`${assetSymbol} logo`} />
+                            </div>
+                          ) : (
+                            <div className="no-icon">
+                              <Icon id="noImage" />
+                            </div>
+                          )}
+
+                          {item.assetSymbol}
                         </div>
                       </td>
 
-                      <td>
-                        <div className='balance'>{item.balance[0]}</div>
-                        <span>~{item.balance[1]}</span>
+                      <td >
+                        <CommaNumber value={collateralBalance} beginningText='$' className='balance' />
+                        {assetRate ? <CommaNumber value={amtBorrowed * assetRate} beginningText="~$" className="rate" /> : null}
                       </td>
 
-                      <td>{item.collateral}%</td>
+                      <td>{item.collateralShare}%</td>
                     </tr>
                   ))}
                 </tbody>
@@ -220,5 +223,22 @@ export const VaultsCard = ({ address, handleLiquidateVault, handleMarkForLiquida
         )}
       </VaultsCardDropDown>
     </Expand>
+  )
+
+  return (
+    <>
+      {isOwner ? (
+        <BorrowingExpandCard
+          {...props}
+          header={header}
+          headerSufix={headerSufix}
+          className="expand-vault"
+          isVaultsPage
+          isOwner
+        />
+      ) : (
+        <>{generalExpand}</>
+      )}
+    </>
   )
 }

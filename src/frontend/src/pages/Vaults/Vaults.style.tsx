@@ -18,15 +18,34 @@ export const VaultsStyled = styled.div<{ theme: MavrykTheme }>`
       width: 36px;
       height: 36px;
     }
+
+    .img-wrapper, .no-icon {
+      margin-right: 10px;
+      width: 36px;
+      height: 36px;
+
+      img,
+      svg {
+        fill: ${({ theme }) => theme.dataColor};
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
   }
 
-  .expand {
+  .expand-vault {
     margin-top: 10px;
 
     .expand-header {
       padding: 0 30px;
       grid-template-columns: 185px 210px 120px 120px 0.4fr 0.4fr;
       column-gap: 40px;
+    }
+
+    .expand-borrow-tab-container {
+      background-color: ${({ theme }) => theme.containerColor};
+      border-top: 1px solid ${({ theme }) => theme.cardBorderColor};
     }
   }
 
@@ -63,6 +82,7 @@ export const VaultsSearchFilterStyled = styled(Card)`
 `
 
 export const VaultsCardTitleTextGroup = styled.div<{ theme: MavrykTheme }>`
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -99,6 +119,17 @@ export const VaultsCardTitleTextGroup = styled.div<{ theme: MavrykTheme }>`
 
   .ratio {
     height: 14px;
+  }
+
+  .rate {
+    position: absolute;
+    top: 27px;
+
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 18px;
+
+    color: ${({ theme }) => theme.dataColor};
   }
 `
 
@@ -251,6 +282,7 @@ export const VaultsAssest = styled.table`
       }
 
       td {
+        position: relative;
         width: 40%;
 
         font-weight: 600;
@@ -264,15 +296,34 @@ export const VaultsAssest = styled.table`
           align-items: center;
         }
 
-        span {       
+        .rate {
+          position: absolute;
+          top: 27px;
+
           font-weight: 400;
           font-size: 12px;
           line-height: 18px;
+
+          color: ${({ theme }) => theme.dataColor};
+
+          p {
+            margin: 0;
+          }
         }
 
-        .balance {
-          position: relative;
-          top: 7px;
+        .img-wrapper,
+        .no-icon {
+          width: 24px;
+          height: 24px;
+          margin-right: 5px;
+
+          img,
+          svg {
+            fill: ${({ theme }) => theme.dataColor};
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
         }
       }
     }

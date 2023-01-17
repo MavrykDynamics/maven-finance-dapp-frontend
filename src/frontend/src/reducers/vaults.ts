@@ -1,12 +1,17 @@
 import { GET_VAULTS_STORAGE } from 'pages/Vaults/Vaults.actions'
-import { VaultGQL } from 'utils/TypesAndInterfaces/Vaults'
+import { VaultsStorage } from 'utils/TypesAndInterfaces/Vaults'
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
 
 export type VaultsStateType = {
-  vaultsList: Array<VaultGQL>
+  vaultsList: VaultsStorage
 }
+
 const defaultVaultsState: VaultsStateType = {
-  vaultsList: [],
+  vaultsList: {
+    myVaultsIds: [],
+    allVaultsIds: [],
+    vaultsMapper: {}
+  },
 }
 
 export function vaults(state = defaultVaultsState, action: Action) {
