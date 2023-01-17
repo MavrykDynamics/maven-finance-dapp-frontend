@@ -71,6 +71,7 @@ export const TransactionHistory = ({ currentToken }: TransactionHistoryPropsType
         <SlidingTabButtons
           onClick={(tabId: number) => setSwitcherState(tabId === 0 ? 'all' : 'personal')}
           tabItems={TRANSACTION_HISTORY_SLIDING_BUTTONS}
+          className="transaction-history"
         />
       </div>
 
