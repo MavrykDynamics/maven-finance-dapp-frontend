@@ -292,27 +292,30 @@ export const normalizeLoans = ({
       ? calcWithoutMu(total_remaining)
       : calcWithoutDecimals(total_remaining, Number(tokenInfo?.metadata.decimals ?? 1))
 
-    acc.push({
-      loanTokenData: loanTokenMetadata,
-      myBorrowingList,
-      permissionedBorrowingList: permissinedBorrowingList,
-      lendingItem,
-      transactionHistory,
-      utilisationRate: utilisation_rate,
-      totalBorrowed,
-      borrowers: vaults.length,
-      suppliers: mTokens.filter(({ loan_token_name: m_token_name }) => loan_token_name === m_token_name).length,
-      collateral: totalCollateral,
-      vaultsBorrowedAmount: vaultsBorrowedAmount,
-      totalLending,
-      availableLiquidity,
-      totalFeesEarned: userMTokens?.reduce((acc, { rewards_earned }) => acc + rewards_earned, 0) ?? 0,
-      collateralFactor: storage.collateral_ratio / 10,
-      reserveFactor: reserve_ratio / 100,
-      reserveAmount: (token_pool_total * reserve_ratio) / 100,
-      borrowAPR: lendingItem?.borrowAPR ?? 0,
-      lendingAPY: lendingItem?.lendAPY ?? 0,
-    })
+    // Temporary solution, cuz no data for no lended asset
+    if (lendingItem) {
+      acc.push({
+        loanTokenData: loanTokenMetadata,
+        myBorrowingList,
+        permissionedBorrowingList: permissinedBorrowingList,
+        lendingItem,
+        transactionHistory,
+        utilisationRate: utilisation_rate,
+        totalBorrowed,
+        borrowers: vaults.length,
+        suppliers: mTokens.filter(({ loan_token_name: m_token_name }) => loan_token_name === m_token_name).length,
+        collateral: totalCollateral,
+        vaultsBorrowedAmount: vaultsBorrowedAmount,
+        totalLending,
+        availableLiquidity,
+        totalFeesEarned: userMTokens?.reduce((acc, { rewards_earned }) => acc + rewards_earned, 0) ?? 0,
+        collateralFactor: storage.collateral_ratio / 10,
+        reserveFactor: reserve_ratio / 100,
+        reserveAmount: (token_pool_total * reserve_ratio) / 100,
+        borrowAPR: lendingItem?.borrowAPR ?? 0,
+        lendingAPY: lendingItem?.lendAPY ?? 0,
+      })
+    }
 
     return acc
   }, [])

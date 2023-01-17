@@ -127,7 +127,11 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData }:
           <Button
             text="Lend Asset"
             icon="plus"
-            onClick={() => setAddModal(true)}
+            onClick={() => {
+              console.log('add lend click')
+
+              setAddModal(true)
+            }}
             kind={ACTION_PRIMARY}
             className="lending-tab-no-items-btn"
           />

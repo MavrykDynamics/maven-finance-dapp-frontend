@@ -87,6 +87,7 @@ export const AddLendingAsset = ({ closePopup, show, modalData }: AddLendingAsset
               onFocus: () => setInputAmount(inputAmount === '0' ? '' : inputAmount),
             }}
             settings={{
+              balanceName: 'Lend Balance',
               balance: userBalance,
               balanceAsset: assetName,
               useMaxHandler: () => setInputAmount(String(userBalance)),
