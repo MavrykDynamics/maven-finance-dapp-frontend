@@ -28,17 +28,10 @@ import {
   TableBody,
   TableCell,
 } from 'app/App.components/Table/Table.style'
-import { Wrapper } from 'pages/Doorman/DoormanChart/DoormanChart.style'
+import { AvaliableCollateralType } from 'utils/TypesAndInterfaces/Loans'
+import { isTezosAsset } from 'pages/Loans/Loans.helpers'
 
-type DropDownCollateralAssetType = DropDownItemType & {
-  assetName: string
-  assetSymbol: string
-  assetAddress: string
-  userBalance: number
-  assetDecimals: number
-  assetIcon: string
-  assetRate: number | null
-}
+type DropDownCollateralAssetType = DropDownItemType & AvaliableCollateralType
 
 type DropDownXTZBakerType = DropDownItemType & {
   bakerName: string
@@ -77,20 +70,22 @@ export const CreateNewVault = ({
   const [collateralsToSelect, setCollateralsToSelect] = useState<Record<number, DropDownCollateralAssetType>>({})
   const [collaterals, setCollaterals] = useState<Array<InputCollateral>>([])
   const [isVaultCreating, setVaultCreating] = useState(false)
+  const [disabledDepositBtn, setDIsablingDepositBtn] = useState(false)
   const [newVaultAddress, setNewVaultAddress] = useState('')
 
   useEffect(() => {
     const mappedAvaliableCollaterals = avaliableCollaterals.reduce<Record<number, DropDownCollateralAssetType>>(
-      (acc, collateralData, idx) => {
+      (acc, collateralData) => {
         acc[collateralData.id] = {
           ...collateralData,
           content: <DropdownInputCustomChild iconSrc={collateralData.assetIcon} symbol={collateralData.assetName} />,
-          disabled: idx === 0,
+          disabled: collateralData.isProtected,
         }
         return acc
       },
       {},
     )
+    mappedAvaliableCollaterals[Number(Object.keys(mappedAvaliableCollaterals)[0])].disabled = true
 
     setCollateralsToSelect(mappedAvaliableCollaterals)
     setCollaterals([
@@ -143,6 +138,11 @@ export const CreateNewVault = ({
     [xtzBakers],
   )
   const [bakerChosenDdItem, setAssetChosenDdItem] = useState<DropDownXTZBakerType | undefined>()
+  const showBakerAddress = useMemo(
+    () =>
+      bakerChosenDdItem?.bakerName && collaterals.find(({ id }) => isTezosAsset(collateralsToSelect[id]?.assetAddress)),
+    [collaterals, bakerChosenDdItem],
+  )
   const handleOnClickDropdownBakerItem = (itemId: number) =>
     setAssetChosenDdItem(bakerItemsForDropDown.find(({ id }) => id === itemId))
 
@@ -223,26 +223,15 @@ export const CreateNewVault = ({
       },
       [currentInputId]: {
         ...collateralsToSelect[currentInputId],
-        disabled: false,
+        disabled: collateralsToSelect[currentInputId].isProtected
+          ? collateralsToSelect[currentInputId].disabled
+          : false,
       },
     })
   }
 
   // stuff to handle inputs
-  const inputOnChangeHandle = (newInputAmount: string, inputIdx: number) => {
-    setCollaterals(
-      collaterals.map((collateral, updateCollateralIdx) =>
-        updateCollateralIdx !== inputIdx
-          ? collateral
-          : {
-              ...collateral,
-              inputAmount: newInputAmount,
-            },
-      ),
-    )
-  }
-
-  const inputOnBlurHandle = (newInputAmount: string, inputIdx: number, userAssetBalance: number) => {
+  const inputOnChangeHandle = (newInputAmount: string, inputIdx: number, userAssetBalance: number) => {
     const validationStatus =
       Number(newInputAmount) > 0 && Number(newInputAmount) <= userAssetBalance
         ? INPUT_STATUS_SUCCESS
@@ -255,6 +244,19 @@ export const CreateNewVault = ({
           : {
               ...collateral,
               validationField: validationStatus,
+              inputAmount: newInputAmount,
+            },
+      ),
+    )
+  }
+
+  const inputOnBlurHandle = (newInputAmount: string, inputIdx: number) => {
+    setCollaterals(
+      collaterals.map((collateral, updateCollateralIdx) =>
+        updateCollateralIdx !== inputIdx
+          ? collateral
+          : {
+              ...collateral,
               inputAmount: newInputAmount === '' ? '0' : newInputAmount,
             },
       ),
@@ -297,13 +299,13 @@ export const CreateNewVault = ({
         tokenType: 'tez' | 'fa2' | 'fa12'
       }>
     >((acc, { id, inputAmount }) => {
-      const { assetName, assetDecimals, assetAddress } = collateralsToSelect[id] ?? {}
+      const { assetName, assetDecimals, assetAddress, tokenType } = collateralsToSelect[id] ?? {}
 
       if (assetName && assetDecimals) {
         acc.push({
           collateralName: assetName,
           assetId: id,
-          tokenType: assetName === 'tez' ? 'tez' : 'fa2',
+          tokenType,
           amount: Math.floor(Number(inputAmount) * 10 ** assetDecimals),
           assetAddress,
         })
@@ -313,7 +315,11 @@ export const CreateNewVault = ({
     }, [])
 
     if (newVaultAddress && !isAddCollateralContinueDisabled && collaretalToDeposit.length > 0) {
-      dispatch(depositCollateralAction(newVaultAddress, collaretalToDeposit, bakerChosenDdItem?.bakerAddress))
+      setDIsablingDepositBtn(true)
+      dispatch(
+        depositCollateralAction(newVaultAddress, collaretalToDeposit, closePopup, bakerChosenDdItem?.bakerAddress),
+      )
+      setDIsablingDepositBtn(false)
     }
   }
 
@@ -380,7 +386,7 @@ export const CreateNewVault = ({
                   console.log('collateralsToSelect', collateralsToSelect, inputCollateralId)
 
                   if (!collaterallMetadata) return null
-                  const isXTZCollateral = collaterallMetadata?.assetName.toLocaleLowerCase() === 'xtz'
+                  const isXTZCollateral = isTezosAsset(collaterallMetadata.assetAddress)
 
                   return (
                     <div className="collateral-block" key={inputCollateralId}>
@@ -392,20 +398,18 @@ export const CreateNewVault = ({
                         inputProps={{
                           value: inputAmount,
                           type: 'number',
-                          onChange: (e) => inputOnChangeHandle(e.target.value, idx),
-                          onBlur: (e) => inputOnBlurHandle(e.target.value, idx, collaterallMetadata.userBalance),
+                          onChange: (e) => inputOnChangeHandle(e.target.value, idx, collaterallMetadata.userBalance),
+                          onBlur: (e) => inputOnBlurHandle(e.target.value, idx),
                           onFocus: () => onFocusHandler(idx),
                         }}
                         settings={{
                           balanceAsset: collaterallMetadata.assetName,
-                          useMaxHandler: () => {
-                            inputOnChangeHandle(String(collaterallMetadata.userBalance), idx)
-                            inputOnBlurHandle(
+                          useMaxHandler: () =>
+                            inputOnChangeHandle(
                               String(collaterallMetadata.userBalance),
                               idx,
                               collaterallMetadata.userBalance,
-                            )
-                          },
+                            ),
                           inputStatus: validationField,
                           ...(collaterallMetadata.assetRate
                             ? { convertedValue: Number(collaterallMetadata.assetRate) * Number(inputAmount) }
@@ -550,7 +554,7 @@ export const CreateNewVault = ({
                 </Table>
               )}
               <div className="lending-stats" style={{ marginTop: '20px', justifyContent: 'space-around' }}>
-                {bakerChosenDdItem ? (
+                {showBakerAddress && bakerChosenDdItem ? (
                   <ThreeLevelListItem>
                     <div className="name">Selected Baker</div>
                     <div className="value">{bakerChosenDdItem.bakerName}</div>
@@ -574,7 +578,12 @@ export const CreateNewVault = ({
                   <Icon id="arrowLeft" />
                   Back
                 </NewButton>
-                <NewButton kind={ACTION_PRIMARY} onClick={depositCollateralHandler} className="modal-manage-btn">
+                <NewButton
+                  kind={ACTION_PRIMARY}
+                  onClick={depositCollateralHandler}
+                  className="modal-manage-btn"
+                  disabled={disabledDepositBtn}
+                >
                   <Icon id="plus" />
                   Deposit
                 </NewButton>

@@ -18,7 +18,7 @@ import {
 } from 'utils/TypesAndInterfaces/Loans'
 import { calcWithoutDecimals, calcWithoutMu } from '../../utils/calcFunctions'
 
-const isTezosAsset = (assetAddress?: string) => assetAddress?.startsWith('tz')
+export const isTezosAsset = (assetAddress?: string) => assetAddress?.startsWith('tz')
 
 // Normalizing transaction history
 const getTransactionHistory = (
@@ -145,6 +145,8 @@ const getBorrowings = (
     (acc, vault) => {
       const asset = dipDupTokens.find(({ contract }) => contract === vault.loan_token?.loan_token_address)
 
+      console.log('vault', vault)
+
       const vaultCollateral = vault.collateral_balances.reduce<{
         normalizedCollaterals: BorrowingData['collateralData']
         totalRow: BorrowingData['collateralData'][number]
@@ -164,7 +166,9 @@ const getBorrowings = (
             assetSymbol: asset?.metadata.symbol,
             assetIcon: asset?.metadata.icon,
             balance: collateral.balance,
-            ...(asset?.metadata.symbol ? { assetRate: tokensRates[asset.metadata.symbol] } : { assetRate: 0.25 }),
+            ...(asset?.metadata.symbol && tokensRates[asset.metadata.symbol]
+              ? { assetRate: tokensRates[asset.metadata.symbol] }
+              : { assetRate: 0.25 }),
             maxWithdraw: 0,
           })
 
@@ -199,9 +203,7 @@ const getBorrowings = (
           apy: 0,
           fee: 0,
         },
-        collateralData: vaultCollateral.normalizedCollaterals.concat(
-          vaultCollateral.normalizedCollaterals.length > 1 ? [vaultCollateral.totalRow] : [],
-        ),
+        collateralData: vaultCollateral.normalizedCollaterals.concat([vaultCollateral.totalRow]),
         borrowedAmount: vault.loan_outstanding_total,
         xtzDelegatedTo: '',
         operators: [],
@@ -255,6 +257,7 @@ export const normalizeLoans = ({
       vaults,
       reserve_ratio,
       token_pool_total,
+      loan_token_contract_standard,
     } = loanToken
 
     const isXTZ = isTezosAsset(lp_token_address)
@@ -268,6 +271,7 @@ export const normalizeLoans = ({
       decimals: isXTZ ? 6 : Number(tokenInfo?.metadata.decimals ?? 1),
       icon: isXTZ ? '/images/tezos.png' : tokenInfo?.metadata.icon,
       rate: assetRate,
+      tokenType: loan_token_contract_standard as 'tez' | 'fa12' | 'fa2',
     }
 
     const { transactionHistory, totalBorrowed, totalLended } = getTransactionHistory(history_data, dipDupTokens)

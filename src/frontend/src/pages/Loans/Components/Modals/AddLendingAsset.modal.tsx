@@ -43,10 +43,14 @@ export const AddLendingAsset = ({ closePopup, show, modalData }: AddLendingAsset
   const [inputAmount, setInputAmount] = useState('0')
   const [inputValidationStatus, setInputValidationStatus] = useState<InputStatusType>('')
 
-  const onBlurHandler = (inputAmount: string, userBalance: number) => {
+  const onChangeHandler = (inputAmount: string, userBalance: number) => {
+    setInputAmount(inputAmount)
     setInputValidationStatus(
       Number(inputAmount) > 0 && Number(inputAmount) <= userBalance ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
     )
+  }
+
+  const onBlurHandler = (inputAmount: string) => {
     setInputAmount(inputAmount === '' ? '0' : inputAmount)
   }
 
@@ -61,7 +65,7 @@ export const AddLendingAsset = ({ closePopup, show, modalData }: AddLendingAsset
     return inputValidationStatus !== INPUT_STATUS_SUCCESS
   }, [inputValidationStatus])
 
-  const depositHandler = () => dispatch(depositLendingAssetAction(assetName, Number(inputAmount)))
+  const depositHandler = () => dispatch(depositLendingAssetAction(assetName, Number(inputAmount), closePopup))
 
   return (
     <PopupContainer onClick={closePopup} show={show}>
@@ -82,8 +86,8 @@ export const AddLendingAsset = ({ closePopup, show, modalData }: AddLendingAsset
             inputProps={{
               value: inputAmount,
               type: 'number',
-              onChange: (e) => setInputAmount(e.target.value),
-              onBlur: (e) => onBlurHandler(e.target.value, userBalance),
+              onChange: (e) => onChangeHandler(e.target.value, userBalance),
+              onBlur: (e) => onBlurHandler(e.target.value),
               onFocus: () => setInputAmount(inputAmount === '0' ? '' : inputAmount),
             }}
             settings={{

@@ -74,7 +74,7 @@ const getNewVaultData = async () => {
 
     return newVaultData.vault.at(-1)?.lending_controller_vaults[0].vault_id
   } catch (e) {
-    console.log('e', e)
+    console.log('getNewVaultData error: ', e)
   }
 }
 
@@ -106,7 +106,7 @@ export const triggerInitialVaultCreation =
       // refetch data we need
       return await getNewVaultData()
     } catch (error) {
-      console.error('submitProposal error:', error)
+      console.error('triggerInitialVaultCreation error:', error)
       if (error instanceof Error) {
         dispatch(showToaster(ERROR, 'Error', error.message))
       }
@@ -125,6 +125,7 @@ export const depositCollateralAction =
       assetId: number
       tokenType: 'tez' | 'fa2' | 'fa12'
     }>,
+    callback: () => void,
     bakerAddress?: string,
   ) =>
   async (dispatch: AppDispatch, getState: GetState) => {
@@ -140,11 +141,6 @@ export const depositCollateralAction =
       return
     }
 
-    if (bakerAddress) {
-      await dispatch(showToaster(ERROR, 'Cannot send transaction', 'Please choose a XTZ baker...'))
-      return
-    }
-
     try {
       // prepare and send query
       const contract = await state.wallet.tezos?.wallet.at(newVaultAddress)
@@ -153,15 +149,18 @@ export const depositCollateralAction =
 
       if (collateralAssets.length === 1) {
         const { amount, assetAddress, assetId, collateralName, tokenType } = collateralAssets[0]
-        const assetContract = await state.wallet.tezos?.wallet.at(assetAddress)
 
         if (tokenType === 'tez' && bakerAddress) {
           const batch = await state.wallet.tezos?.wallet.batch([
             {
               kind: OpKind.TRANSACTION,
-              ...contract.methods.deposit(bakerAddress).toTransferParams(),
+              ...contract.methods.deposit(amount, 'tez').toTransferParams(),
               amount,
               mutez: true,
+            },
+            {
+              kind: OpKind.TRANSACTION,
+              ...contract.methods.delegateTezToBaker(bakerAddress).toTransferParams(),
             },
           ])
 
@@ -169,6 +168,7 @@ export const depositCollateralAction =
         }
 
         if (tokenType === 'fa12') {
+          const assetContract = await state.wallet.tezos?.wallet.at(assetAddress)
           const batch = await state.wallet.tezos?.wallet.batch([
             {
               kind: OpKind.TRANSACTION,
@@ -180,7 +180,7 @@ export const depositCollateralAction =
             },
             {
               kind: OpKind.TRANSACTION,
-              ...contract.methods.deposit(collateralName, amount).toTransferParams(),
+              ...contract.methods.deposit(amount, collateralName).toTransferParams(),
             },
           ])
 
@@ -188,6 +188,7 @@ export const depositCollateralAction =
         }
 
         if (tokenType === 'fa2') {
+          const assetContract = await state.wallet.tezos?.wallet.at(assetAddress)
           const fa2AddOperators = [
             {
               add_operator: {
@@ -205,7 +206,7 @@ export const depositCollateralAction =
             },
             {
               kind: OpKind.TRANSACTION,
-              ...contract.methods.deposit(collateralName, amount).toTransferParams(),
+              ...contract.methods.deposit(amount, collateralName).toTransferParams(),
             },
           ])
 
@@ -224,17 +225,22 @@ export const depositCollateralAction =
         // transaction = await batch.send()
       }
 
+      callback()
       await dispatch(toggleActionLoader(true))
       await dispatch(showToaster(INFO, 'Creating Vault...', 'Please wait 30s'))
 
       // confirm query completion
       await transaction?.confirmation()
 
-      await dispatch(showToaster(SUCCESS, 'Proposal Submitted.', 'All good :)'))
+      await dispatch(showToaster(SUCCESS, 'Vault Created.', 'All good :)'))
+
       // refetch data we need
+      await dispatch(getLoansStorage())
+
       await dispatch(toggleActionLoader(false))
     } catch (error) {
-      console.error('submitProposal error:', error)
+      console.error('depositCollateralAction error:', error)
+      callback()
       if (error instanceof Error) {
         dispatch(showToaster(ERROR, 'Error', error.message))
       }
@@ -243,7 +249,8 @@ export const depositCollateralAction =
   }
 
 export const depositLendingAssetAction =
-  (loanTokenName: string, addLiquidityAmount: number) => async (dispatch: AppDispatch, getState: GetState) => {
+  (loanTokenName: string, addLiquidityAmount: number, callback: () => void) =>
+  async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
 
     if (!state.wallet.accountPkh) {
@@ -261,6 +268,7 @@ export const depositLendingAssetAction =
       const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.lendingController.address)
       const transaction = await contract?.methods.addLiquidity(loanTokenName, addLiquidityAmount).send()
 
+      callback()
       await dispatch(toggleActionLoader(true))
       await dispatch(showToaster(INFO, 'Adding Liquidity...', 'Please wait 30s'))
 
@@ -275,6 +283,7 @@ export const depositLendingAssetAction =
       console.error('submitProposal error:', error)
       if (error instanceof Error) {
         dispatch(showToaster(ERROR, 'Error', error.message))
+        callback()
       }
       await dispatch(toggleActionLoader(false))
     }

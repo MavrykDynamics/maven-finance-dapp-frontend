@@ -14,9 +14,13 @@ export const LOANS_QUERY = `query GetLoansStorage {
     collateral_tokens {
       token_address
       id
+      token_name
+      token_contract_standard
+      protected
     }
 
     loan_tokens {
+      loan_token_contract_standard
       lp_token_address
       loan_token_name
       id

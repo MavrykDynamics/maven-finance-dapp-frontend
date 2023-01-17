@@ -9,7 +9,27 @@ export const getXTZBakers = async () => {
     // TODO: add dynamic fetching
     // const bakers = await fetch('https://api.tezos-nodes.com/v1/bakers')
 
-    return BakersMocked
+    return process.env.REACT_APP_NETWORK === 'ghostnet'
+      ? [
+          {
+            rank: 1,
+            logo: 'https://tezos-nodes.com/storage/images/BBOZYYLQpLfTzbXzu0jvk4CublJzMgLM8GNz152M.png',
+            logo_min: 'https://tezos-nodes.com/storage/images/U8vdnpeU0LwtQCLge5KjVMBheLBUhNBi2v7lc4zy.png',
+            name: 'MyTezosBaking',
+            address: 'tz1bQMn5xYFbX6geRxqvuAiTywsCtNywawxH',
+            fee: 0.14,
+            lifetime: 500,
+            yield: 4.91,
+            efficiency: 99.56,
+            efficiency_last10cycle: 99.93,
+            freespace: 115494,
+            total_points: 75,
+            deletation_status: true,
+            freespace_min: '115.49 k XTZ',
+            pro_status: true,
+          },
+        ]
+      : BakersMocked
   } catch (e) {
     console.log('getXTZBakers fething error', e)
     return []
@@ -36,52 +56,59 @@ export const getCollateralTokens = async (
           )
   })
 
-  const mappedLoanTokens = loanTokens.reduce<Record<number, string>>((acc, { id, loan_token_name }) => {
-    acc[id] = loan_token_name
-    return acc
-  }, {})
+  // const mappedLoanTokens = loanTokens.reduce<Record<number, string>>((acc, { id, loan_token_name }) => {
+  //   acc[id] = loan_token_name
+  //   return acc
+  // }, {})
 
   const userBalances = (await Promise.all(
     (await Promise.all(userBalancesCallbacks.map((fn) => fn()))).map((item) => item.json()),
   )) as Array<undefined | number | [{ balance: string; token: { metadata: { decimals: string } } }]>
 
-  return collateralTokens.reduce<Array<AvaliableCollateralType>>((acc, { id, token_address }, idx) => {
-    const isXTZ = token_address.includes('tz')
-    const assetMetadata = dipDupTokens?.find(({ contract }) => contract === token_address)?.metadata
+  return collateralTokens.reduce<Array<AvaliableCollateralType>>(
+    (acc, { id, token_address, token_contract_standard, token_name, protected: isProtected }, idx) => {
+      const isXTZ = token_address.includes('tz')
+      const assetMetadata = dipDupTokens?.find(({ contract }) => contract === token_address)?.metadata
 
-    const userAssetData = userBalances?.[idx]
+      const userAssetData = userBalances?.[idx]
 
-    if (isXTZ) {
-      acc.push({
-        id,
-        assetName: mappedLoanTokens[id] ?? 'XTZ',
-        assetSymbol: 'tezos',
-        assetRate: tokensRate['tezos'] ?? 0.25,
-        userBalance: userAssetData && typeof userAssetData === 'number' ? userAssetData : 0,
-        assetIcon: '/images/tezos.png',
-        assetDecimals: assetMetadata?.decimals ? Number(assetMetadata.decimals) : 6,
-        assetAddress: token_address,
-      })
-    }
+      if (isXTZ) {
+        acc.push({
+          id,
+          assetName: token_name,
+          assetSymbol: 'tezos',
+          assetRate: tokensRate['tezos'] ?? 0.25,
+          userBalance: userAssetData && typeof userAssetData === 'number' ? userAssetData : 0,
+          assetIcon: '/images/tezos.png',
+          assetDecimals: assetMetadata?.decimals ? Number(assetMetadata.decimals) : 6,
+          assetAddress: token_address,
+          tokenType: token_contract_standard as 'tez' | 'fa12' | 'fa2',
+          isProtected,
+        })
+      }
 
-    if (assetMetadata) {
-      acc.push({
-        id,
-        assetName: mappedLoanTokens[id] ?? assetMetadata.name,
-        assetSymbol: assetMetadata.symbol,
-        assetRate: tokensRate[assetMetadata.symbol] ?? 0.25,
-        userBalance:
-          userAssetData && typeof userAssetData === 'object'
-            ? Number(userAssetData?.[0]?.balance ?? 0) / Number(userAssetData?.[0]?.token?.metadata?.decimals ?? 1)
-            : 0,
-        assetIcon: assetMetadata.icon,
-        assetDecimals: assetMetadata?.decimals ? Number(assetMetadata.decimals) : 6,
-        assetAddress: token_address,
-      })
-    }
+      if (assetMetadata) {
+        acc.push({
+          id,
+          assetName: token_name,
+          assetSymbol: assetMetadata.symbol,
+          assetRate: tokensRate[assetMetadata.symbol] ?? 0.25,
+          userBalance:
+            userAssetData && typeof userAssetData === 'object'
+              ? Number(userAssetData?.[0]?.balance ?? 0) / Number(userAssetData?.[0]?.token?.metadata?.decimals ?? 1)
+              : 0,
+          assetIcon: assetMetadata.icon,
+          assetDecimals: assetMetadata?.decimals ? Number(assetMetadata.decimals) : 6,
+          assetAddress: token_address,
+          tokenType: token_contract_standard as 'tez' | 'fa12' | 'fa2',
+          isProtected,
+        })
+      }
 
-    return acc
-  }, [])
+      return acc
+    },
+    [],
+  )
 }
 
 export const getLoansTokensRates = async (

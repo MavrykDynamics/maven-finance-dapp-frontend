@@ -26,6 +26,7 @@ export type LoanTokenType = {
     decimals: number
     icon?: string
     rate: number | null
+    tokenType: 'tez' | 'fa12' | 'fa2'
   }
   transactionHistory: Array<{
     descr: string | null
@@ -79,6 +80,8 @@ export type AvaliableCollateralType = {
   assetSymbol: string
   assetIcon: string
   assetAddress: string
+  isProtected: boolean
+  tokenType: 'tez' | 'fa12' | 'fa2'
 }
 
 export type XtzBakerType = {
