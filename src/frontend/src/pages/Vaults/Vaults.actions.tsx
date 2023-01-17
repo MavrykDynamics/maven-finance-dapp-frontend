@@ -11,6 +11,7 @@ import {
 } from 'gql/queries/getVaultsStorage'
 import { normalizeVaultsStorage, getVaultTokensSymbols } from './Vaults.helpers'
 import { LendingControllerGQL } from 'utils/TypesAndInterfaces/Vaults'
+import { setContractAddress } from 'reducers/actions/contractAddresses.actions'
 
 export const GET_VAULTS_STORAGE = 'GET_VAULTS_STORAGE'
 export const getVaultsStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
@@ -26,7 +27,7 @@ export const getVaultsStorage = () => async (dispatch: AppDispatch, getState: Ge
       VAULTS_STORAGE_QUERY_VARIABLE,
     )
 
-    const vaults: LendingControllerGQL  = storage?.lending_controller[0] || {}
+    const vaults: LendingControllerGQL = storage?.lending_controller[0] || {}
 
     // fetching rate of the presented tokens insisde loans
     const vaultsTokensRate = (
@@ -50,6 +51,10 @@ export const getVaultsStorage = () => async (dispatch: AppDispatch, getState: Ge
     
     const normallaziedVaultsStorage = normalizeVaultsStorage({ vault: vaults.vaults, accountPkh, vaultsTokensRate, dipDupTokens })
     
+    if (vaults.governance_id) {
+      dispatch(setContractAddress('vaultAddress', vaults.governance_id))  
+    }
+
     dispatch({
       type: GET_VAULTS_STORAGE,
       vaultsList: normallaziedVaultsStorage,
@@ -75,8 +80,7 @@ export const liquidateVault = (vaultId: string, vaultOwner: string, liquidateAmo
 
   try {
     dispatch(toggleActionLoader(true))
-    // TODO: add valid contract address
-    const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.vaultsAddress.address)
+    const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.vaultAddress.address)
     const transaction = await contract?.methods.liquidateVault(vaultId, vaultOwner, liquidateAmount).send()
     dispatch(showToaster(INFO, 'Liqudation...', 'Please wait 30s'))
 
@@ -109,8 +113,7 @@ export const markForLiquidation = (vaultId: string, vaultOwner: string) => async
 
   try {
     dispatch(toggleActionLoader(true))
-    // TODO: add valid contract address
-    const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.vaultsAddress.address)
+    const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.vaultAddress.address)
     const transaction = await contract?.methods.markForLiquidation(vaultId, vaultOwner).send()
     dispatch(showToaster(INFO, 'Mark for Liquidation...', 'Please wait 30s'))
 
