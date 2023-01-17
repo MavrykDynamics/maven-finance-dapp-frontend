@@ -29193,6 +29193,8 @@ export type Lending_Controller_Collateral_Token = {
   oracle_id?: Maybe<Scalars['String']>;
   protected: Scalars['Boolean'];
   token_address: Scalars['String'];
+  token_contract_standard: Scalars['String'];
+  token_name: Scalars['String'];
 };
 
 
@@ -29285,6 +29287,8 @@ export type Lending_Controller_Collateral_Token_Bool_Exp = {
   oracle_id?: InputMaybe<String_Comparison_Exp>;
   protected?: InputMaybe<Boolean_Comparison_Exp>;
   token_address?: InputMaybe<String_Comparison_Exp>;
+  token_contract_standard?: InputMaybe<String_Comparison_Exp>;
+  token_name?: InputMaybe<String_Comparison_Exp>;
 };
 
 /** aggregate max on columns */
@@ -29294,6 +29298,8 @@ export type Lending_Controller_Collateral_Token_Max_Fields = {
   lending_controller_id?: Maybe<Scalars['String']>;
   oracle_id?: Maybe<Scalars['String']>;
   token_address?: Maybe<Scalars['String']>;
+  token_contract_standard?: Maybe<Scalars['String']>;
+  token_name?: Maybe<Scalars['String']>;
 };
 
 /** order by max() on columns of table "lending_controller_collateral_token" */
@@ -29302,6 +29308,8 @@ export type Lending_Controller_Collateral_Token_Max_Order_By = {
   lending_controller_id?: InputMaybe<Order_By>;
   oracle_id?: InputMaybe<Order_By>;
   token_address?: InputMaybe<Order_By>;
+  token_contract_standard?: InputMaybe<Order_By>;
+  token_name?: InputMaybe<Order_By>;
 };
 
 /** aggregate min on columns */
@@ -29311,6 +29319,8 @@ export type Lending_Controller_Collateral_Token_Min_Fields = {
   lending_controller_id?: Maybe<Scalars['String']>;
   oracle_id?: Maybe<Scalars['String']>;
   token_address?: Maybe<Scalars['String']>;
+  token_contract_standard?: Maybe<Scalars['String']>;
+  token_name?: Maybe<Scalars['String']>;
 };
 
 /** order by min() on columns of table "lending_controller_collateral_token" */
@@ -29319,6 +29329,8 @@ export type Lending_Controller_Collateral_Token_Min_Order_By = {
   lending_controller_id?: InputMaybe<Order_By>;
   oracle_id?: InputMaybe<Order_By>;
   token_address?: InputMaybe<Order_By>;
+  token_contract_standard?: InputMaybe<Order_By>;
+  token_name?: InputMaybe<Order_By>;
 };
 
 /** Ordering options when selecting data from "lending_controller_collateral_token". */
@@ -29332,6 +29344,8 @@ export type Lending_Controller_Collateral_Token_Order_By = {
   oracle_id?: InputMaybe<Order_By>;
   protected?: InputMaybe<Order_By>;
   token_address?: InputMaybe<Order_By>;
+  token_contract_standard?: InputMaybe<Order_By>;
+  token_name?: InputMaybe<Order_By>;
 };
 
 /** select columns of table "lending_controller_collateral_token" */
@@ -29347,7 +29361,11 @@ export enum Lending_Controller_Collateral_Token_Select_Column {
   /** column name */
   Protected = 'protected',
   /** column name */
-  TokenAddress = 'token_address'
+  TokenAddress = 'token_address',
+  /** column name */
+  TokenContractStandard = 'token_contract_standard',
+  /** column name */
+  TokenName = 'token_name'
 }
 
 /** aggregate stddev on columns */
@@ -29399,6 +29417,8 @@ export type Lending_Controller_Collateral_Token_Stream_Cursor_Value_Input = {
   oracle_id?: InputMaybe<Scalars['String']>;
   protected?: InputMaybe<Scalars['Boolean']>;
   token_address?: InputMaybe<Scalars['String']>;
+  token_contract_standard?: InputMaybe<Scalars['String']>;
+  token_name?: InputMaybe<Scalars['String']>;
 };
 
 /** aggregate sum on columns */
@@ -30329,6 +30349,7 @@ export type Lending_Controller_Loan_Token = {
   lending_controller?: Maybe<Lending_Controller>;
   lending_controller_id?: Maybe<Scalars['String']>;
   loan_token_address: Scalars['String'];
+  loan_token_contract_standard: Scalars['String'];
   loan_token_name: Scalars['String'];
   lp_token_address: Scalars['String'];
   lp_token_total: Scalars['float8'];
@@ -30494,6 +30515,7 @@ export type Lending_Controller_Loan_Token_Bool_Exp = {
   lending_controller?: InputMaybe<Lending_Controller_Bool_Exp>;
   lending_controller_id?: InputMaybe<String_Comparison_Exp>;
   loan_token_address?: InputMaybe<String_Comparison_Exp>;
+  loan_token_contract_standard?: InputMaybe<String_Comparison_Exp>;
   loan_token_name?: InputMaybe<String_Comparison_Exp>;
   lp_token_address?: InputMaybe<String_Comparison_Exp>;
   lp_token_total?: InputMaybe<Float8_Comparison_Exp>;
@@ -30523,6 +30545,7 @@ export type Lending_Controller_Loan_Token_Max_Fields = {
   last_updated_block_level?: Maybe<Scalars['bigint']>;
   lending_controller_id?: Maybe<Scalars['String']>;
   loan_token_address?: Maybe<Scalars['String']>;
+  loan_token_contract_standard?: Maybe<Scalars['String']>;
   loan_token_name?: Maybe<Scalars['String']>;
   lp_token_address?: Maybe<Scalars['String']>;
   lp_token_total?: Maybe<Scalars['float8']>;
@@ -30549,6 +30572,7 @@ export type Lending_Controller_Loan_Token_Max_Order_By = {
   last_updated_block_level?: InputMaybe<Order_By>;
   lending_controller_id?: InputMaybe<Order_By>;
   loan_token_address?: InputMaybe<Order_By>;
+  loan_token_contract_standard?: InputMaybe<Order_By>;
   loan_token_name?: InputMaybe<Order_By>;
   lp_token_address?: InputMaybe<Order_By>;
   lp_token_total?: InputMaybe<Order_By>;
@@ -30576,6 +30600,7 @@ export type Lending_Controller_Loan_Token_Min_Fields = {
   last_updated_block_level?: Maybe<Scalars['bigint']>;
   lending_controller_id?: Maybe<Scalars['String']>;
   loan_token_address?: Maybe<Scalars['String']>;
+  loan_token_contract_standard?: Maybe<Scalars['String']>;
   loan_token_name?: Maybe<Scalars['String']>;
   lp_token_address?: Maybe<Scalars['String']>;
   lp_token_total?: Maybe<Scalars['float8']>;
@@ -30602,6 +30627,7 @@ export type Lending_Controller_Loan_Token_Min_Order_By = {
   last_updated_block_level?: InputMaybe<Order_By>;
   lending_controller_id?: InputMaybe<Order_By>;
   loan_token_address?: InputMaybe<Order_By>;
+  loan_token_contract_standard?: InputMaybe<Order_By>;
   loan_token_name?: InputMaybe<Order_By>;
   lp_token_address?: InputMaybe<Order_By>;
   lp_token_total?: InputMaybe<Order_By>;
@@ -30630,6 +30656,7 @@ export type Lending_Controller_Loan_Token_Order_By = {
   lending_controller?: InputMaybe<Lending_Controller_Order_By>;
   lending_controller_id?: InputMaybe<Order_By>;
   loan_token_address?: InputMaybe<Order_By>;
+  loan_token_contract_standard?: InputMaybe<Order_By>;
   loan_token_name?: InputMaybe<Order_By>;
   lp_token_address?: InputMaybe<Order_By>;
   lp_token_total?: InputMaybe<Order_By>;
@@ -30668,6 +30695,8 @@ export enum Lending_Controller_Loan_Token_Select_Column {
   LendingControllerId = 'lending_controller_id',
   /** column name */
   LoanTokenAddress = 'loan_token_address',
+  /** column name */
+  LoanTokenContractStandard = 'loan_token_contract_standard',
   /** column name */
   LoanTokenName = 'loan_token_name',
   /** column name */
@@ -30843,6 +30872,7 @@ export type Lending_Controller_Loan_Token_Stream_Cursor_Value_Input = {
   last_updated_block_level?: InputMaybe<Scalars['bigint']>;
   lending_controller_id?: InputMaybe<Scalars['String']>;
   loan_token_address?: InputMaybe<Scalars['String']>;
+  loan_token_contract_standard?: InputMaybe<Scalars['String']>;
   loan_token_name?: InputMaybe<Scalars['String']>;
   lp_token_address?: InputMaybe<Scalars['String']>;
   lp_token_total?: InputMaybe<Scalars['float8']>;

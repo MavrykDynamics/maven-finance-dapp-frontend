@@ -25,7 +25,6 @@ import { MarketPagination, MarketStyled, ThreeLevelListItem } from './Loans.styl
 import { State } from 'reducers'
 import { MarketPageHeader } from './Components/LoansPageHeader'
 import { PermissionVaults } from './Components/PermissionVaultsTab'
-import { LoansModals } from './Components/Modals/Modal.controller'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { getLoansStorage } from './Loans.actions'
 
@@ -44,12 +43,12 @@ export const Market = () => {
   const [showHiddenItems, setShowHiddenItems] = useState(false)
 
   const currentToken = useMemo(
-    () => loanTokens.find(({ loanTokenData: { symbol } }) => assetId === symbol),
+    () => loanTokens.find(({ loanTokenData: { name } }) => assetId === name),
     [assetId, loanTokens],
   )
 
   const [prevMarket, nextMarket, currentAsset] = useMemo(() => {
-    const currentAssetIdx = loanTokens.findIndex(({ loanTokenData: { symbol } }) => symbol === assetId)
+    const currentAssetIdx = loanTokens.findIndex(({ loanTokenData: { name } }) => name === assetId)
     return [loanTokens[currentAssetIdx - 1], loanTokens[currentAssetIdx + 1], loanTokens[currentAssetIdx]]
   }, [assetId, loanTokens])
 
@@ -74,7 +73,7 @@ export const Market = () => {
 
       <div className="right-side-wrapper">
         {prevMarket ? (
-          <Link to={`/loans/${prevMarket.loanTokenData.symbol}/${tabId}`}>
+          <Link to={`/loans/${prevMarket.loanTokenData.name}/${tabId}`}>
             <span className="left">
               <Icon id="paginationArrowLeft" /> Previous Market
             </span>
@@ -82,7 +81,7 @@ export const Market = () => {
         ) : null}
 
         {nextMarket ? (
-          <Link to={`/loans/${nextMarket.loanTokenData.symbol}/${tabId}`}>
+          <Link to={`/loans/${nextMarket.loanTokenData.name}/${tabId}`}>
             <span className="right">
               Next Market
               <Icon id="paginationArrowLeft" />
@@ -113,8 +112,6 @@ export const Market = () => {
 
   return (
     <Page>
-      <LoansModals />
-
       <MarketPageHeader assetId={assetId} currentAsset={currentAsset} />
 
       {marketPagination}
@@ -208,6 +205,7 @@ export const Market = () => {
           <BorrowingTab
             borrowingItems={currentToken.myBorrowingList}
             lendingControllerAddress={loansControllerAddress}
+            currentMarketAsset={assetId}
           />
         ) : null}
         {tabId === PERMISSIONS_VAULTS_TAB_ID ? (

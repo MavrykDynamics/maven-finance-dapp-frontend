@@ -11,6 +11,7 @@ type InputViewProps = {
   settings: {
     balance?: number
     balanceAsset?: string
+    balanceName?: string
     useMaxHandler?: () => void
     errorMessage?: string
     inputStatus: InputStatusType
@@ -35,15 +36,28 @@ export const Input = ({
   children,
   className,
   inputProps,
-  settings: { balance, balanceAsset, useMaxHandler, convertedValue, errorMessage, inputStatus },
+  settings: {
+    balance,
+    balanceAsset,
+    useMaxHandler,
+    convertedValue,
+    errorMessage,
+    balanceName = 'Balance',
+    inputStatus,
+  },
 }: InputViewProps) => {
   return (
-    <InputWrapper className={className} id={'inputStyled'}>
+    <InputWrapper className={`${className} ${inputStatus}`} id={'inputStyled'}>
       <StyledInput {...inputProps} className={inputStatus} autoComplete={inputProps.name} />
       {/* <InputStyledStatus className={`${inputStatus} ${children ? 'hasChild' : ''}`} /> */}
 
-      {balance && balanceAsset ? (
-        <CommaNumber value={balance} beginningText="Balance:" endingText={balanceAsset} className={'input-balance'} />
+      {balance !== undefined && balanceAsset ? (
+        <CommaNumber
+          value={balance}
+          beginningText={`${balanceName}: `}
+          endingText={balanceAsset}
+          className={'input-balance'}
+        />
       ) : null}
 
       {useMaxHandler ? (
@@ -52,7 +66,7 @@ export const Input = ({
         </NewButton>
       ) : null}
 
-      {convertedValue ? (
+      {convertedValue !== undefined ? (
         <CommaNumber value={convertedValue} beginningText={'= '} endingText="$" className={'input-converted-amount'} />
       ) : null}
 

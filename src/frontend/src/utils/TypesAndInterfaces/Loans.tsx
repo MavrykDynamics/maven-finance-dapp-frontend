@@ -26,6 +26,7 @@ export type LoanTokenType = {
     decimals: number
     icon?: string
     rate: number | null
+    tokenType: 'tez' | 'fa12' | 'fa2'
   }
   transactionHistory: Array<{
     descr: string | null
@@ -67,23 +68,35 @@ export type LendingItemType = {
   borrowAPR: number
   interestEarned: number
   loanAssetWalletBalance: number
-  mXTZBalance: number
+  mBalance: number
 } | null
 
-export type ModalTypes =
-  | typeof ADD_COLLATERAL_MODAL_ID
-  | typeof ADD_LENDING_ASSET_MODAL_ID
-  | typeof ADD_NEW_COLLATERAL_MODAL_ID
-  | typeof BORROW_ASSET_MODAL_ID
-  | typeof CHANGE_BAKER_MODAL_ID
-  | typeof CREATE_NEW_VAULT_MODAL_ID
-  | typeof MANAGE_PERMISSIONS_MODAL_ID
-  | typeof REMOVE_ASSET_LENDING_MODAL_ID
-  | typeof WITHDRAW_COLLATERAL_MODAL_ID
-  | typeof UPDATE_MVK_OPERATORS_MODAL_ID
-  | typeof REPAY_AND_CLOSE_MODAL_ID
-  | typeof REPAY_MODAL_ID
-  | null
+export type AvaliableCollateralType = {
+  id: number
+  userBalance: number
+  assetDecimals: number
+  assetRate: number | null
+  assetName: string
+  assetSymbol: string
+  assetIcon: string
+  assetAddress: string
+  isProtected: boolean
+  tokenType: 'tez' | 'fa12' | 'fa2'
+}
+
+export type XtzBakerType = {
+  rank: number
+  logo: string
+  name: string
+  address: string
+  fee: number
+  lifetime: number
+  yield: number
+  efficiency: number
+  efficiency_last10cycle: number
+  freespace: number
+  reliability_points: number
+}
 
 export type BorrowingData = {
   borrowedAsset: {

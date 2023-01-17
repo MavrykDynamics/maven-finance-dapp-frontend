@@ -14,7 +14,9 @@ import type {
   Aggregator,
   Aggregator_Factory,
   Governance_Financial,
-  Governance_Proxy
+  Governance_Proxy,
+  Lending_Controller,
+  Vault_Factory,
 } from '../generated/graphqlTypes'
 
 export type AddressesGraphQl = {
@@ -33,5 +35,7 @@ export type AddressesGraphQl = {
   governance_satellite: { address: Governance_Satellite['address'] }[]
   aggregator: { address: Aggregator['address'] }[]
   aggregator_factory: { address: Aggregator_Factory['address'] }[]
-  governance_proxy: { address: Governance_Proxy['address'] }[];
+  governance_proxy: { address: Governance_Proxy['address'] }[]
+  lending_controller: { address: Lending_Controller['address'] }[]
+  vault_factory: { address: Vault_Factory['address'] }[]
 }

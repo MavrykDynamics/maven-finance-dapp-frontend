@@ -1,4 +1,9 @@
-import { LoaderShineTextAnimation, LoaderStyled, LoaderStyledWithBackdrop } from './Loader.style'
+import {
+  LoaderShineTextAnimation,
+  LoaderStyled,
+  LoaderStyledWithBackdrop,
+  SpinnerCircleLoaderStyled,
+} from './Loader.style'
 import { useSelector } from 'react-redux'
 import { State } from 'reducers'
 import { useLockBodyScroll } from 'react-use'
@@ -7,7 +12,7 @@ export const LoaderRocket = () => (
   <LoaderStyledWithBackdrop>
     <figure>
       <div>
-        <img src="icons/lottie_rocket.gif" />
+        <img src={`/icons/lottie-rocket.gif?v=0`} alt={`Loader Image`} />
       </div>
     </figure>
   </LoaderStyledWithBackdrop>
@@ -32,6 +37,10 @@ export const SpinnerLoader = () => (
     </div>
   </LoaderStyled>
 )
+
+export const SimpleCircleSpinnerLoader = () => {
+  return <SpinnerCircleLoaderStyled></SpinnerCircleLoaderStyled>
+}
 
 export const ActionLoader = () => {
   const { isActionLoading } = useSelector((state: State) => state.loading)

@@ -37,6 +37,8 @@ export function normalizeAddressesStorage(storage: AddressesGraphQl): ContractAd
     },
     aggregatorAddress: { address: storage?.aggregator?.[0]?.address },
     governanceProxyAddress: { address: storage?.governance_proxy?.[0]?.address },
+    lendingController: { address: storage?.lending_controller?.[0]?.address },
+    vaultFactory: { address: storage?.vault_factory?.[0]?.address },
   }
 }
 

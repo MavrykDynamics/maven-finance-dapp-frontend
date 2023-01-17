@@ -48,6 +48,13 @@ export const SlidingTabButtonsStyled = styled.div<{ theme: MavrykTheme }>`
       cursor: not-allowed;
     }
   }
+
+  &.transaction-history {
+    button {
+      white-space: nowrap;
+      margin: 0;
+    }
+  }
 `
 
 export const ButtonStyled = styled.button<{ disabled: boolean; theme: MavrykTheme }>`

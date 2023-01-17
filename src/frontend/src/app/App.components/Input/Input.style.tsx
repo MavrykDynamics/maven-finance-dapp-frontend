@@ -204,26 +204,15 @@ export const StyledInput = styled.input<{ theme: MavrykTheme }>`
   width: 100%;
   height: 100%;
   background-color: ${({ theme }) => theme.backgroundColor};
-  border: 1px solid ${({ theme }) => theme.cardBorderColor};
+  border: none;
   border-radius: 10px;
   font-weight: 600;
   font-size: 22px;
   line-height: 22px;
   margin: 0;
   color: ${({ theme }) => theme.textColor};
-  -webkit-appearance: none;
-  appearance: none;
   display: block;
   padding: 13px 45px 13px 20px;
-  transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-  will-change: border-color, box-shadow;
-
-  &:-webkit-autofill,
-  &:-webkit-autofill:hover,
-  &:-webkit-autofill:focus {
-    -webkit-text-fill-color: ${({ theme }) => theme.textColor};
-    -webkit-box-shadow: 0 0 0px 1000px ${({ theme }) => theme.backgroundColor} inset;
-  }
 
   &::placeholder {
     color: ${({ theme }) => theme.textColor};
@@ -237,70 +226,53 @@ export const StyledInput = styled.input<{ theme: MavrykTheme }>`
   &:hover:not(:disabled) {
     background-color: ${({ theme }) => theme.containerColor};
   }
+`
 
-  &:focus {
+export const InputPinnedChild = styled.div<{ theme: MavrykTheme }>`
+  height: 100%;
+  border-left: 1px solid ${({ theme }) => theme.dataColor};
+`
+
+export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
+  position: relative;
+  display: flex;
+  border: 1px solid ${({ theme }) => theme.cardBorderColor};
+  border-radius: 10px;
+  width: 100%;
+  height: 40px;
+  transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+
+  &:focus-within {
     box-shadow: 0 0 0 2px ${({ theme }) => theme.primaryColor}19;
     border-color: ${({ theme }) => theme.primaryColor}7F;
   }
 
   &.error {
     border: 1px solid ${({ theme }) => theme.downColor};
-    color: ${({ theme }) => theme.downColor};
-
-    &:-webkit-autofill,
-    &:-webkit-autofill:hover,
-    &:-webkit-autofill:focus {
-      -webkit-text-fill-color: ${({ theme }) => theme.downColor};
-      -webkit-box-shadow: 0 0 0px 1000px ${({ theme }) => theme.backgroundColor} inset;
-    }
-    &:focus {
-      box-shadow: 0 0 0 2px ${({ theme }) => theme.downColor}7F;
+    input {
+      color: ${({ theme }) => theme.downColor};
     }
   }
 
   &.success {
     border: 1px solid ${({ theme }) => theme.upColor};
-    color: ${({ theme }) => theme.upColor};
-
-    &:-webkit-autofill,
-    &:-webkit-autofill:hover,
-    &:-webkit-autofill:focus {
-      -webkit-text-fill-color: ${({ theme }) => theme.upColor};
-      -webkit-box-shadow: 0 0 0px 1000px ${({ theme }) => theme.backgroundColor} inset;
-    }
-    &:focus {
-      box-shadow: 0 0 0 2px ${({ theme }) => theme.upColor}7F;
+    input {
+      color: ${({ theme }) => theme.upColor};
     }
   }
-`
-
-export const InputPinnedChild = styled.div<{ theme: MavrykTheme }>`
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  height: 100%;
-  right: 0;
-  border-left: 1px solid ${({ theme }) => theme.dataColor};
-`
-
-export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
-  position: relative;
-  width: 100%;
-  height: 40px;
 
   &.withdrawCollateralInput {
     margin-bottom: 45px;
-    height: 56px;
+  }
 
+  &.large-input {
+    height: 56px;
+  }
+
+  &.input-with-rate {
     input {
       padding-top: 0px;
       padding-bottom: 13px;
-    }
-  }
-
-  &.pinned-dropdown {
-    .pinned-child {
-      z-index: 5;
     }
   }
 
@@ -369,6 +341,7 @@ export const InputStyledStatus = styled.div<{ theme: MavrykTheme }>`
 export const InputPinnedTokenInfo = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   column-gap: 10px;
+  min-width: max-content;
   align-items: center;
   padding: 0 15px;
   height: 100%;
@@ -377,15 +350,22 @@ export const InputPinnedTokenInfo = styled.div<{ theme: MavrykTheme }>`
   line-height: 20px;
   color: ${({ theme }) => theme.textColor};
 
-  svg {
+  svg,
+  .image-wrapper {
     width: 24px;
     height: 24px;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
   }
 `
 
 export const InputPinnedDropDown = styled.div<{ theme: MavrykTheme }>`
   display: flex;
-  max-width: 135px;
+  min-width: max-content;
   align-items: center;
   padding: 0 7px;
   height: 100%;

@@ -1,18 +1,23 @@
-import { GET_LOANS_STORAGE, TOGGLE_LOANS_MODAL } from 'pages/Loans/Loans.actions'
-import { ADD_NEW_COLLATERAL_MODAL_ID } from 'pages/Loans/Loans.const'
-import { LoansChartsDataType, LoansStorage, ModalTypes } from 'utils/TypesAndInterfaces/Loans'
+import { GET_LOANS_STORAGE } from 'pages/Loans/Loans.actions'
+import {
+  AvaliableCollateralType,
+  LoansChartsDataType,
+  LoansStorage,
+  XtzBakerType,
+} from 'utils/TypesAndInterfaces/Loans'
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
 
 export interface LoansState {
   loanTokens: LoansStorage['loanTokens']
   chartsData: LoansChartsDataType
-  currentModalActive: ModalTypes
   loansControllerAddress: string
+  avaliableCollaterals: Array<AvaliableCollateralType>
+  xtzBakers: Array<XtzBakerType>
 }
 
 const loansDefaultState: LoansState = {
   loanTokens: [],
-  currentModalActive: null,
+  avaliableCollaterals: [],
   loansControllerAddress: '',
   chartsData: {
     totalBorrowed: 0,
@@ -20,6 +25,7 @@ const loansDefaultState: LoansState = {
     totalLended: 0,
     lendingChartData: [],
   },
+  xtzBakers: [],
 }
 
 export function loans(state = loansDefaultState, action: Action) {
@@ -28,11 +34,6 @@ export function loans(state = loansDefaultState, action: Action) {
       return {
         ...state,
         ...action.loansStorage,
-      }
-    case TOGGLE_LOANS_MODAL:
-      return {
-        ...state,
-        ...action.payload,
       }
     default:
       return state

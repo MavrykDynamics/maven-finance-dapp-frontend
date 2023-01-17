@@ -13,18 +13,17 @@ export const LOANS_QUERY = `query GetLoansStorage {
 
     collateral_tokens {
       token_address
-      balances_aggregate {
-        aggregate {
-          sum {
-            balance
-          }
-        }
-      }
+      id
+      token_name
+      token_contract_standard
+      protected
     }
 
     loan_tokens {
+      loan_token_contract_standard
       lp_token_address
       loan_token_name
+      id
       utilisation_rate
       total_borrowed
       token_pool_total
@@ -70,3 +69,17 @@ export const LOANS_QUERY = `query GetLoansStorage {
 
 export const LOANS_QUERY_NAME = 'GetLoansStorage'
 export const LOANS_QUERY_VARIABLE = {}
+
+export const NEW_VAULT_QUERY = `
+query GetNewVault {
+  vault {
+    lending_controller_vaults(order_by: {last_updated_timestamp: asc}, where: {lending_controller: {mock_time: {_eq: true}}}) {
+      last_updated_timestamp
+      vault_id
+    }
+  }
+}
+`
+
+export const NEW_VAULT_QUERY_NAME = 'GetNewVault'
+export const NEW_VAULT_QUERY_VARIABLE = {}

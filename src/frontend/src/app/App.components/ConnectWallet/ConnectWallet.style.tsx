@@ -477,6 +477,29 @@ export const ConnectWalletInfoStyled = styled.blockquote<{ theme: MavrykTheme }>
       margin: 0;
     }
   }
+
+  &.info {
+    display: flex;
+    column-gap: 20px;
+    height: unset;
+    padding: 10px 20px;
+
+    p {
+      width: unset;
+      font-weight: 500;
+      line-height: 24px;
+      color: ${({ theme }) => theme.textColor};
+    }
+  }
+
+  &.error {
+    border: 1px solid ${({ theme }) => theme.downColor};
+    svg {
+      width: 32px;
+      height: 32px;
+      fill: ${({ theme }) => theme.downColor};
+    }
+  }
 `
 
 export const ButtonBar = styled.div`

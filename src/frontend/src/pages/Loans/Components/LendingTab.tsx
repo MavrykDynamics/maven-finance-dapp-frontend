@@ -1,8 +1,4 @@
-import { useDispatch } from 'react-redux'
-
 import { ACTION_PRIMARY, TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
-import { toggleLoansModal } from '../Loans.actions'
-import { ADD_LENDING_ASSET_MODAL_ID, REMOVE_ASSET_LENDING_MODAL_ID } from '../Loans.const'
 
 import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
@@ -15,6 +11,9 @@ import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { LendingItemType, LoanTokenType } from 'utils/TypesAndInterfaces/Loans'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+import { useState } from 'react'
+import { AddLendingAsset, AddLendingAssetDataType } from './Modals/AddLendingAsset.modal'
+import { RemoveAssetsFromLending } from './Modals/RemoveAssetsFromLending.modal'
 
 type LendingTabPropsType = {
   lendingItem: LendingItemType
@@ -23,12 +22,20 @@ type LendingTabPropsType = {
 }
 
 export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData }: LendingTabPropsType) => {
-  const dispatch = useDispatch()
-  const addLendHandler = () => dispatch(toggleLoansModal(ADD_LENDING_ASSET_MODAL_ID))
-  const removeLendHandler = () => dispatch(toggleLoansModal(REMOVE_ASSET_LENDING_MODAL_ID))
+  const [showAddModal, setAddModal] = useState(false)
+  const [showRemoveModal, setRemoveModal] = useState(false)
+  const [addLendingAssetModalData, setAddLendingAssetModalData] = useState<undefined | AddLendingAssetDataType>()
 
   return (
     <LoansTabStyled>
+      <AddLendingAsset
+        closePopup={() => setAddModal(false)}
+        show={Boolean(showAddModal && addLendingAssetModalData)}
+        modalData={addLendingAssetModalData}
+      />
+
+      <RemoveAssetsFromLending closePopup={() => setRemoveModal(false)} show={showRemoveModal} />
+
       <GovRightContainerTitleArea>
         <h2>My Lending</h2>
       </GovRightContainerTitleArea>
@@ -48,14 +55,18 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData }:
                     <Icon id="noImage" />
                   </div>
                 )}
-                {assetData.symbol ?? assetData.name}
+                {assetData.name}
               </div>
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Lending</div>
-              <CommaNumber value={lendingItem.lendValue / assetData.decimals} className="value" />
+              <CommaNumber value={lendingItem.lendValue / 10 ** assetData.decimals} className="value" />
               {assetData.rate ? (
-                <CommaNumber value={lendingItem.lendValue * assetData.rate} beginningText="$" className="rate" />
+                <CommaNumber
+                  value={(lendingItem.lendValue / 10 ** assetData.decimals) * assetData.rate}
+                  beginningText="$"
+                  className="rate"
+                />
               ) : null}
             </ThreeLevelListItem>
             <ThreeLevelListItem>
@@ -71,31 +82,41 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData }:
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Wallet Balance</div>
-              <CommaNumber value={lendingItem.loanAssetWalletBalance} className="value" />
+              <CommaNumber value={lendingItem.loanAssetWalletBalance / 10 ** assetData.decimals} className="value" />
               {assetData.rate ? (
                 <CommaNumber
-                  value={lendingItem.loanAssetWalletBalance * assetData.rate}
+                  value={(lendingItem.loanAssetWalletBalance / 10 ** assetData.decimals) * assetData.rate}
                   beginningText="$"
                   className="rate"
                 />
               ) : null}
             </ThreeLevelListItem>
             <ThreeLevelListItem>
-              <div className="name">m{assetData.symbol ?? assetData.name} Balance</div>
-              <CommaNumber value={lendingItem.mXTZBalance} className="value" />
+              <div className="name">m{assetData.name} Balance</div>
+              <CommaNumber value={lendingItem.mBalance} className="value" />
             </ThreeLevelListItem>
             <Button
               text="Add"
               icon="plus"
               kind={TRANSPARENT_WITH_BORDER}
-              onClick={addLendHandler}
+              onClick={() => {
+                setAddLendingAssetModalData({
+                  userBalance: lendingItem.loanAssetWalletBalance,
+                  mBalance: lendingItem.mBalance,
+                  lendingAPY: lendingItem.lendAPY,
+                  assetRate: assetData.rate,
+                  assetName: assetData.name,
+                  assetIcon: assetData.icon,
+                })
+                setAddModal(true)
+              }}
               className="lending-btn"
             />
             <Button
               text="Remove"
               icon="minus"
               kind={TRANSPARENT_WITH_BORDER}
-              onClick={removeLendHandler}
+              onClick={() => setRemoveModal(true)}
               className="lending-btn"
             />
           </LendingTabListItem>
@@ -106,7 +127,11 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData }:
           <Button
             text="Lend Asset"
             icon="plus"
-            onClick={addLendHandler}
+            onClick={() => {
+              console.log('add lend click')
+
+              setAddModal(true)
+            }}
             kind={ACTION_PRIMARY}
             className="lending-tab-no-items-btn"
           />
