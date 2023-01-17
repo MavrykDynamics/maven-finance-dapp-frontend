@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { useDispatch } from 'react-redux'
 
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'

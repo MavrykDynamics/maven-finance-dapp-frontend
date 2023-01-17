@@ -139,8 +139,7 @@ export const CreateNewVault = ({
   )
   const [bakerChosenDdItem, setAssetChosenDdItem] = useState<DropDownXTZBakerType | undefined>()
   const showBakerAddress = useMemo(
-    () =>
-      bakerChosenDdItem?.bakerName && collaterals.find(({ id }) => isTezosAsset(collateralsToSelect[id]?.assetAddress)),
+    () => bakerChosenDdItem?.bakerName && collaterals.find(({ id }) => isTezosAsset(collateralsToSelect[id].assetName)),
     [collaterals, bakerChosenDdItem],
   )
   const handleOnClickDropdownBakerItem = (itemId: number) =>
@@ -383,10 +382,9 @@ export const CreateNewVault = ({
               <div className="collateral-list">
                 {collaterals.map(({ inputAmount, validationField, id: inputCollateralId }, idx) => {
                   const collaterallMetadata = collateralsToSelect[inputCollateralId]
-                  console.log('collateralsToSelect', collateralsToSelect, inputCollateralId)
 
                   if (!collaterallMetadata) return null
-                  const isXTZCollateral = isTezosAsset(collaterallMetadata.assetAddress)
+                  const isXTZCollateral = isTezosAsset(collaterallMetadata.assetName)
 
                   return (
                     <div className="collateral-block" key={inputCollateralId}>
