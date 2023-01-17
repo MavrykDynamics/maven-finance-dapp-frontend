@@ -55,26 +55,32 @@ const findFooterText = (status: string, statusColor: StatusFlagStyle, timer: str
 
 type Props = VaultType & {
   isOwner: boolean
+  handleLiquidateVault: (vaultId: number, vaultOwner: string, liquidateAmount: number) => void
+  handleMarkForLiquidation: (vaultId: number, vaultOwner: string) => void
 }
 
 export const VaultsCard = (props: Props) => {
   const {
     address,
     ownerId,
+    vaultId,
     borrowedAsset: { assetIcon, assetSymbol, collateralBalance, amtBorrowed, assetRate = 1 },
     collateralData,
     isOwner,
+    handleLiquidateVault,
+    handleMarkForLiquidation,
   } = props
-
-  const statusColor = findStatusInfo(VaultsStatuses.AT_RISK).color as StatusFlagStyle
-  const statusText = findStatusInfo(VaultsStatuses.AT_RISK).text
-  const status = VaultsStatuses.AT_RISK
+  const statusColor = findStatusInfo(VaultsStatuses.LIQUIDATABLE).color as StatusFlagStyle
+  const statusText = findStatusInfo(VaultsStatuses.LIQUIDATABLE).text
+  const status = VaultsStatuses.LIQUIDATABLE
   const footerText = findFooterText(status, statusColor, '20hr 15m 22s')
 
   const isActiveFooter = 
   status === VaultsStatuses.LIQUIDATABLE ||
   status === VaultsStatuses.GRACE_PERIOD ||
   status === VaultsStatuses.MARK
+
+  const isMarkStatus = VaultsStatuses.MARK === status
 
   const header = (
     <>
@@ -213,10 +219,14 @@ export const VaultsCard = (props: Props) => {
             {footerText}
 
             <Button
-              text={VaultsStatuses.MARK === status ? "Mark for Liquidation" : "Liquidate Vault"}
+              text={isMarkStatus ? "Mark for Liquidation" : "Liquidate Vault"}
               kind={ACTION_PRIMARY}
-              // TODO: add handlers
-              onClick={() => {}}
+              onClick={() => {
+                return isMarkStatus
+                  ? handleMarkForLiquidation(vaultId, ownerId)
+                  // TODO: add valid arg3
+                  : handleLiquidateVault(vaultId, ownerId, 1)
+              }}
               disabled={VaultsStatuses.GRACE_PERIOD === status}
             />
           </div>

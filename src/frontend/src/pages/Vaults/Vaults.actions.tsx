@@ -13,6 +13,7 @@ import { normalizeVaultsStorage, getVaultTokensSymbols } from './Vaults.helpers'
 import { LendingControllerGQL } from 'utils/TypesAndInterfaces/Vaults'
 import { setContractAddress } from 'reducers/actions/contractAddresses.actions'
 
+// Vaults Store
 export const GET_VAULTS_STORAGE = 'GET_VAULTS_STORAGE'
 export const getVaultsStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
   const {
@@ -50,10 +51,8 @@ export const getVaultsStorage = () => async (dispatch: AppDispatch, getState: Ge
     }, {})
     
     const normallaziedVaultsStorage = normalizeVaultsStorage({ vaults: lendingController.vaults, accountPkh, vaultsTokensRate, dipDupTokens })
-    
-    if (lendingController.governance_id) {
-      dispatch(setContractAddress('vaultAddress', lendingController.governance_id))  
-    }
+ 
+    dispatch(setContractAddress('vaultAddress', lendingController.address))  
 
     dispatch({
       type: GET_VAULTS_STORAGE,
@@ -65,7 +64,7 @@ export const getVaultsStorage = () => async (dispatch: AppDispatch, getState: Ge
 }
 
 // Liquidate Vault
-export const liquidateVault = (vaultId: string, vaultOwner: string, liquidateAmount: number) => async (dispatch: AppDispatch, getState: GetState) => {
+export const liquidateVault = (vaultId: number, vaultOwner: string, liquidateAmount: number) => async (dispatch: AppDispatch, getState: GetState) => {
   const state: State = getState()
 
   if (!state.wallet.accountPkh) {
@@ -98,7 +97,7 @@ export const liquidateVault = (vaultId: string, vaultOwner: string, liquidateAmo
 }
 
 // Mark for Liquidation
-export const markForLiquidation = (vaultId: string, vaultOwner: string) => async (dispatch: AppDispatch, getState: GetState) => {
+export const markForLiquidation = (vaultId: number, vaultOwner: string) => async (dispatch: AppDispatch, getState: GetState) => {
   const state: State = getState()
 
   if (!state.wallet.accountPkh) {

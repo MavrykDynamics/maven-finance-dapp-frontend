@@ -10,7 +10,8 @@ export type VaultsStorage = ReturnType<typeof normalizeVaultsStorage>
 export type VaultType = Omit<BorrowingData, 'collateralData'> & {
   address: string
   ownerId: string
-
+  vaultId: number
+  
   collateralData: CollateralType[]
 }
 

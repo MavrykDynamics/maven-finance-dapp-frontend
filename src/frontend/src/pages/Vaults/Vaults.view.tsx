@@ -103,11 +103,11 @@ export const VaultsView = () => {
     return filteredData?.slice(from, to)
   }, [currentListName, currentPage, filteredData])
 
-  const handleLiquidateVault = (vaultId: string, vaultOwner: string, liquidateAmount: number) => {
+  const handleLiquidateVault = (vaultId: number, vaultOwner: string, liquidateAmount: number) => {
     dispatch(liquidateVault(vaultId, vaultOwner, liquidateAmount))
   }
 
-  const handleMarkForLiquidation = (vaultId: string, vaultOwner: string) => {
+  const handleMarkForLiquidation = (vaultId: number, vaultOwner: string) => {
     dispatch(markForLiquidation(vaultId, vaultOwner))
   }
 
@@ -136,6 +136,8 @@ export const VaultsView = () => {
           <VaultsCard
             key={item}
             isOwner={isOwner}
+            handleLiquidateVault={handleLiquidateVault}
+            handleMarkForLiquidation={handleMarkForLiquidation}
             {...vaultsMapper[item]}
           />
       )})}
