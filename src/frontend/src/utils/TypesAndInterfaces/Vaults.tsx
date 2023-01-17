@@ -1,8 +1,10 @@
 import { normalizeVaultsStorage } from 'pages/Vaults/Vaults.helpers'
-import { Vault, Lending_Controller } from 'utils/generated/graphqlTypes'
+import { Lending_Controller, Lending_Controller_Vault } from 'utils/generated/graphqlTypes'
 import { BorrowingData } from './Loans'
 
-export type VaultGQL = Omit<Vault, '__typename'>
+export type LendingControllerGQL = Omit<Lending_Controller, '__typename'>
+export type LendingControllerVaultGQL = Omit<Lending_Controller_Vault, '__typename'>
+
 export type VaultsStorage = ReturnType<typeof normalizeVaultsStorage>
 
 export type VaultType = Omit<BorrowingData, 'collateralData'> & {
@@ -20,5 +22,3 @@ export type CollateralType = {
   maxWithdraw: number
   collateralShare: number
 }
-
-export type VaultsGQL = Omit<Lending_Controller, '__typename'>

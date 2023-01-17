@@ -23,7 +23,7 @@ import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 import { VaultType } from 'utils/TypesAndInterfaces/Vaults'
 
 // actions
-import { getVaultsStorage, getVaults } from './Vaults.actions'
+import { getVaultsStorage } from './Vaults.actions'
 
 const pathname = '/vaults'
 
@@ -76,7 +76,7 @@ export const VaultsView = () => {
 
     const { isLoading } = useDataLoader(async () => {
     try {
-      await Promise.all([dispatch(getVaults()), dispatch(getVaultsStorage())])
+      await Promise.all([dispatch(getVaultsStorage())])
     } catch (e) {
       //TODO: handle fetch error
     }
