@@ -2,14 +2,12 @@ import { UTCTimestamp } from 'lightweight-charts'
 import { State } from 'reducers'
 import { UserState } from 'reducers/wallet'
 import {
-  Lending_Controller_Collateral_Token,
   Lending_Controller_History_Data,
   Lending_Controller_Loan_Token,
   Lending_Controller_Vault,
 } from 'utils/generated/graphqlTypes'
 import { parseDate } from 'utils/time'
 import {
-  AvaliableCollateralType,
   BorrowingData,
   LendingItemType,
   LoansChartsDataType,
@@ -18,7 +16,7 @@ import {
 } from 'utils/TypesAndInterfaces/Loans'
 import { calcWithoutDecimals, calcWithoutMu } from '../../utils/calcFunctions'
 
-export const isTezosAsset = (assetAddress?: string) => assetAddress?.startsWith('tz')
+export const isTezosAsset = (tokenName: string) => tokenName === 'tez'
 
 // Normalizing transaction history
 const getTransactionHistory = (
@@ -143,9 +141,9 @@ const getBorrowings = (
     totalBorrowed: number
   }>(
     (acc, vault) => {
-      const asset = dipDupTokens.find(({ contract }) => contract === vault.loan_token?.loan_token_address)
+      if (!vault.loan_token) return acc
 
-      console.log('vault', vault)
+      const asset = dipDupTokens.find(({ contract }) => contract === vault.loan_token?.loan_token_address)
 
       const vaultCollateral = vault.collateral_balances.reduce<{
         normalizedCollaterals: BorrowingData['collateralData']
@@ -153,7 +151,7 @@ const getBorrowings = (
       }>(
         (acc, collateral) => {
           if (!collateral.token) return acc
-          const asset = isTezosAsset(collateral.token.token_address)
+          const asset = isTezosAsset(collateral.token.token_name)
             ? {
                 metadata: {
                   symbol: 'tezos',
@@ -188,7 +186,7 @@ const getBorrowings = (
         },
       )
 
-      const isXTZ = isTezosAsset(vault.loan_token?.lp_token_address)
+      const isXTZ = isTezosAsset(vault.loan_token.loan_token_name)
       const vaultAssetRate = tokensRates[isXTZ ? 'tezos' : asset?.metadata?.symbol ?? ''] ?? 0.25
 
       const normallizedVault = {
@@ -260,7 +258,7 @@ export const normalizeLoans = ({
       loan_token_contract_standard,
     } = loanToken
 
-    const isXTZ = isTezosAsset(lp_token_address)
+    const isXTZ = isTezosAsset(loan_token_name)
     const tokenInfo = dipDupTokens?.find(({ contract }) => contract === lp_token_address && !isXTZ)
     // TODO: add valid rate instead of 0.25
     const assetRate = tokensRate[isXTZ ? 'tezos' : tokenInfo?.metadata.symbol ?? loan_token_name] ?? 0.25
