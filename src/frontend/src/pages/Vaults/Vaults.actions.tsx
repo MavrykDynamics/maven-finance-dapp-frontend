@@ -27,12 +27,12 @@ export const getVaultsStorage = () => async (dispatch: AppDispatch, getState: Ge
       VAULTS_STORAGE_QUERY_VARIABLE,
     )
 
-    const vaults: LendingControllerGQL = storage?.lending_controller[0] || {}
+    const lendingController: LendingControllerGQL = storage?.lending_controller[0] || {}
 
     // fetching rate of the presented tokens insisde loans
     const vaultsTokensRate = (
       await Promise.allSettled(
-        getVaultTokensSymbols({ vaults: vaults.vaults, dipDupTokens }).map(
+        getVaultTokensSymbols({ vaults: lendingController.vaults, dipDupTokens }).map(
           (symbol) => coinGeckoClient.coins.fetch(symbol, {}),
         ),
       )
@@ -49,10 +49,10 @@ export const getVaultsStorage = () => async (dispatch: AppDispatch, getState: Ge
       return acc
     }, {})
     
-    const normallaziedVaultsStorage = normalizeVaultsStorage({ vault: vaults.vaults, accountPkh, vaultsTokensRate, dipDupTokens })
+    const normallaziedVaultsStorage = normalizeVaultsStorage({ vaults: lendingController.vaults, accountPkh, vaultsTokensRate, dipDupTokens })
     
-    if (vaults.governance_id) {
-      dispatch(setContractAddress('vaultAddress', vaults.governance_id))  
+    if (lendingController.governance_id) {
+      dispatch(setContractAddress('vaultAddress', lendingController.governance_id))  
     }
 
     dispatch({

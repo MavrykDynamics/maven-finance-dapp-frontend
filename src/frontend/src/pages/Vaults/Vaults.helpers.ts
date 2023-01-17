@@ -2,18 +2,18 @@ import { LendingControllerVaultGQL, VaultType, CollateralType } from 'utils/Type
 import { State } from 'reducers'
 
 type VaultsStorageProps = {
-  vault: Array<LendingControllerVaultGQL>
+  vaults: Array<LendingControllerVaultGQL>
   vaultsTokensRate: Record<string, number>
   accountPkh?: string
   dipDupTokens: State['tokens']['dipDupTokens']
 }
 
 export const normalizeVaultsStorage = (storage: VaultsStorageProps) => {
-  const { vault = [], vaultsTokensRate, accountPkh, dipDupTokens } = storage
+  const { vaults = [], vaultsTokensRate, accountPkh, dipDupTokens } = storage
 
-  if (!vault.length) return []
-
-  return vault.reduce<{
+  if (!vaults.length) return []
+  
+  return vaults.reduce<{
     myVaultsIds: string[], allVaultsIds: string[], vaultsMapper: Record<string, VaultType> 
   }>((acc, item) => {
 
