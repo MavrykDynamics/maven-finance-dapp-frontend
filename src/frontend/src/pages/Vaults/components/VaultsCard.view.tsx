@@ -14,31 +14,32 @@ import { BorrowingExpandCard } from 'pages/Loans/Components/BorrowindExpandCard'
 import { VaultsCardTitleTextGroup, VaultsCardDropDown, VaultsAssest } from './../Vaults.style'
 
 // types
-import { VaultType } from 'utils/TypesAndInterfaces/Vaults' 
+import { VaultType } from 'utils/TypesAndInterfaces/Vaults'
+import { StatusFlagStyle } from '../../../app/App.components/StatusFlag/StatusFlag.constants'
 
 // helpers
 import { BLUE, CYAN } from 'app/App.components/TzAddress/TzAddress.constants'
 import { VaultsStatuses } from '../Vaults.view'
 
-const findStatusColor = (status: string) => {
+const findStatusInfo = (status: string) => {
   switch (status) {
     case VaultsStatuses.LIQUIDATABLE:
-      return 'down'
+      return { color: 'down', text: 'Liquidation Armed' }
     case VaultsStatuses.GRACE_PERIOD:
-      return 'darkWarning'
+      return { color: 'darkWarning', text: 'Grace Period' }
     case VaultsStatuses.MARK:
-      return 'warning'
+      return { color: 'warning', text: 'Ready to Arm' }
     case VaultsStatuses.AT_RISK:
-      return 'waiting'
+      return { color: 'waiting', text: 'At Risk' }
     case VaultsStatuses.ACTIVE:
-      return 'up'
+      return { color: 'up', text: 'Low Risk' }
 
     default:
-      return 'info'
+      return { color: 'info', text: 'no data'}
   }
 }
 
-const findFooterText = (status: string, statusColor: string, timer: string) => {
+const findFooterText = (status: string, statusColor: StatusFlagStyle, timer: string) => {
   switch (status) {
     case VaultsStatuses.LIQUIDATABLE:
       return <p>This vault is <span className={statusColor}>armed for liquidation</span> and can be liquidated for the next <span className='timer'>{timer}</span></p>
@@ -65,8 +66,9 @@ export const VaultsCard = (props: Props) => {
     isOwner,
   } = props
 
-  const statusColor = findStatusColor(VaultsStatuses.LIQUIDATABLE)
-  const status = VaultsStatuses.LIQUIDATABLE
+  const statusColor = findStatusInfo(VaultsStatuses.AT_RISK).color as StatusFlagStyle
+  const statusText = findStatusInfo(VaultsStatuses.AT_RISK).text
+  const status = VaultsStatuses.AT_RISK
   const footerText = findFooterText(status, statusColor, '20hr 15m 22s')
 
   const header = (
@@ -130,7 +132,7 @@ export const VaultsCard = (props: Props) => {
                   <Icon id='info' className='info-icon' />
                 </div>
 
-                <div className={statusColor}>Liquidation Armed</div> 
+                <div className={statusColor}>{statusText}</div> 
               </div>
             </div>
 
