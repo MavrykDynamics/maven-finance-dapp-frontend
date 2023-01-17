@@ -17,3 +17,4 @@ export const LEGACY_PRECISION_NUMBER = 1_000_000 // (10^6)
 
 export const ROCKET_LOADER = 'rocket'
 export const WERT_IO_LOADER = 'wert-loader'
+export const BLOCKS_PER_MINUTE = 2

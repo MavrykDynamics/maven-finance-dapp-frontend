@@ -24,6 +24,7 @@ import { VaultType } from 'utils/TypesAndInterfaces/Vaults'
 
 // actions
 import { getVaultsStorage, liquidateVault, markForLiquidation } from './Vaults.actions'
+import { getHeadData } from 'app/App.components/Menu/Menu.actions'
 
 const pathname = '/vaults'
 
@@ -77,7 +78,7 @@ export const VaultsView = () => {
 
   const { isLoading } = useDataLoader(async () => {
     try {
-      await Promise.all([dispatch(getVaultsStorage())])
+      await Promise.all([dispatch(getVaultsStorage()), dispatch(getHeadData())])
     } catch (e) {
       //TODO: handle fetch error
     }
