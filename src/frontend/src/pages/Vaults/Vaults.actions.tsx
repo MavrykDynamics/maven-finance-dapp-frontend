@@ -25,7 +25,7 @@ export const getVaultsStorage = () => async (dispatch: AppDispatch, getState: Ge
       VAULTS_STORAGE_QUERY_VARIABLE,
     )
 
-    Promise.all([dispatch(getHeadData()), dispatch(getOracleAggregatorLatestPrice())])
+    Promise.all([await dispatch(getHeadData()), await dispatch(getOracleAggregatorLatestPrice())])
 
 
     const {
