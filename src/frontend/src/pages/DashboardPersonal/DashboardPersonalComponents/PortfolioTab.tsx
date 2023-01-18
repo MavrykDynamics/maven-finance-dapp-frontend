@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 
 import { State } from 'reducers'
 
-import { borrowingData, CHART_TEST_DATA, lendingData } from '../tabs.const'
+import { CHART_TEST_DATA } from '../tabs.const'
 import { ACTION_PRIMARY, ACTION_SIMPLE } from 'app/App.components/Button/Button.constants'
 
 import { Button } from 'app/App.components/Button/Button.controller'
@@ -39,6 +39,12 @@ const TOGGLE_VALUES: TabItem[] = [
 
 const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount }: PortfolioTabProps) => {
   const { exchangeRate } = useSelector((state: State) => state.mvkToken)
+  const {
+    user: {
+      userLoansData: { userBorrowing, userLendings },
+    },
+  } = useSelector((state: State) => state.wallet)
+
   const [toggleItems, setToggleItems] = useState<TabItem[]>(TOGGLE_VALUES)
   const lastSeria = CHART_TEST_DATA.at(-1)?.value ?? 0
 
@@ -131,16 +137,22 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount }: Por
         <GovRightContainerTitleArea>
           <h2>Lending</h2>
         </GovRightContainerTitleArea>
-        {lendingData ? (
+        {userLendings.length ? (
           <div className="list scroll-block">
-            {lendingData.map(({ assetImg, apy, supplied, earned, mvkBonus, id }) => {
+            {userLendings.map(({ assetIcon, amount, assetName, apy, earned, mvkBonus, id }) => {
               return (
                 <ListItem columsTemplate="60px 0.9fr 0.7fr 0.8fr 0.7fr" key={id}>
-                  <Icon id={assetImg || 'noImage'} />
+                  {assetIcon ? (
+                    <div className="image-wrapper">
+                      <img src={assetIcon} alt="" />
+                    </div>
+                  ) : (
+                    <Icon id={'noImage'} />
+                  )}
                   <div className="list-part">
                     <div className="name">Supplied</div>
                     <div className="value">
-                      <CommaNumber value={supplied} beginningText="$" />
+                      <CommaNumber value={amount} beginningText="$" />
                     </div>
                   </div>
                   <div className="list-part">
@@ -178,16 +190,23 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount }: Por
         <GovRightContainerTitleArea>
           <h2>Borrowing</h2>
         </GovRightContainerTitleArea>
-        {borrowingData ? (
+        {userBorrowing.length ? (
           <div className="list scroll-block">
-            {borrowingData.map(({ assetImg, apy, supplied, earned, mvkBonus, id }) => {
+            {userBorrowing.map(({ assetIcon, assetName, amount, apy, earned, mvkBonus, id }, idx) => {
               return (
                 <ListItem columsTemplate="60px 0.9fr 0.7fr 0.8fr 0.7fr" key={id}>
-                  <Icon id={assetImg || 'noImage'} />
+                  {assetIcon ? (
+                    <div className="image-wrapper">
+                      <img src={assetIcon} alt="" />
+                    </div>
+                  ) : (
+                    <Icon id={'noImage'} />
+                  )}
+
                   <div className="list-part">
                     <div className="name">Borrowed</div>
                     <div className="value">
-                      <CommaNumber value={supplied} beginningText="$" />
+                      <CommaNumber value={amount} beginningText="$" />
                     </div>
                   </div>
                   <div className="list-part">

@@ -1,8 +1,7 @@
 import { useParams } from 'react-router'
 import { useCallback, useEffect } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
-import { calcWithoutPrecision } from 'utils/calcFunctions'
 import { getGovernanceStorage } from 'pages/Governance/Governance.actions'
 import { getDelegationStorage, getOracleStorage } from 'pages/Satellites/Satellites.actions'
 import { getEmergencyGovernanceStorage } from 'pages/EmergencyGovernance/EmergencyGovernance.actions'
@@ -13,14 +12,18 @@ import { Page } from 'styles/components'
 import DashboardPersonalView from './DashboardPersonal.view'
 
 import { State } from 'reducers'
+import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
+import { updateUserData } from 'pages/Doorman/Doorman.actions'
 
 const DashboardPersonal = () => {
+  const dispatch = useDispatch()
   const { tabId } = useParams<{ tabId: string }>()
 
   const {
     tokensPrices: { tezos },
   } = useSelector((state: State) => state.tokens)
   const { exchangeRate: mvkRate } = useSelector((state: State) => state.mvkToken)
+  const { accountPkh } = useSelector((state: State) => state.wallet)
   const {
     user: {
       myDoormanRewardsData,
@@ -44,6 +47,16 @@ const DashboardPersonal = () => {
     getDelegationStorage()
     getEmergencyGovernanceStorage()
   }, [])
+
+  const { isLoading } = useDataLoader(async () => {
+    try {
+      await dispatch(getGovernanceStorage())
+      await dispatch(getOracleStorage())
+      await dispatch(getDelegationStorage())
+      await dispatch(getEmergencyGovernanceStorage())
+      await dispatch(updateUserData())
+    } catch (e) {}
+  }, [accountPkh])
 
   return (
     <Page>

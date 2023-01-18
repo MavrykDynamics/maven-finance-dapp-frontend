@@ -113,7 +113,7 @@ export const harvest = (farmAddress: string) => async (dispatch: AppDispatch, ge
     await dispatch(toggleActionLoader(false))
 
     if (state.wallet.accountPkh) {
-      dispatch(updateUserData(state.wallet.accountPkh))
+      dispatch(updateUserData())
     }
     await dispatch(getFarmStorage())
     await dispatch(getMvkTokenStorage())
@@ -153,12 +153,12 @@ export const deposit = (farmAddress: string, amount: number) => async (dispatch:
     await transaction?.confirmation()
 
     await dispatch(showToaster(SUCCESS, 'Depositing done', 'All good :)'))
-    await dispatch(toggleActionLoader(false))
 
-    if (state.wallet.accountPkh) await dispatch(updateUserData(state.wallet.accountPkh))
+    await dispatch(updateUserData())
     await dispatch(getFarmStorage())
     await dispatch(getMvkTokenStorage())
     await dispatch(getDoormanStorage())
+    await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
@@ -194,13 +194,13 @@ export const withdraw = (farmAddress: string, amount: number) => async (dispatch
     await transaction?.confirmation()
 
     await dispatch(showToaster(SUCCESS, 'Withdrawing done', 'All good :)'))
-    await dispatch(toggleActionLoader(false))
     await dispatch(hideModal())
 
-    if (state.wallet.accountPkh) await dispatch(updateUserData(state.wallet.accountPkh))
+    await dispatch(updateUserData())
     await dispatch(getFarmStorage())
     await dispatch(getMvkTokenStorage())
     await dispatch(getDoormanStorage())
+    await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)

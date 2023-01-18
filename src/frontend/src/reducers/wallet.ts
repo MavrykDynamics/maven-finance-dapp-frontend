@@ -7,6 +7,7 @@ import { BeaconWallet } from '@taquito/beacon-wallet'
 import { preferencesDefaultState } from './preferences'
 import { UserDoormanRewardsData, UserFarmRewardsData, UserSatelliteRewardsData } from 'utils/TypesAndInterfaces/User'
 import { UPDATE_USER_DATA } from 'pages/Doorman/Doorman.actions'
+import { UserLendObjType } from 'utils/TypesAndInterfaces/Loans'
 
 // Temple wallet types
 // export interface WalletState {
@@ -35,6 +36,10 @@ export interface UserState {
   myFarmRewardsData: Record<string, UserFarmRewardsData>
   mySatelliteRewardsData: UserSatelliteRewardsData
   mTokens?: Array<M_Token_Account>
+  userLoansData: {
+    userLendings: Array<UserLendObjType>
+    userBorrowing: Array<UserLendObjType>
+  }
 }
 
 const RpcNetwork = preferencesDefaultState.REACT_APP_RPC_PROVIDER
@@ -67,6 +72,10 @@ export const DEFAULT_USER: UserState = {
     participationRewardsPerShare: 0,
     satelliteAccumulatedRewardPerShare: 0,
     unpaid: 0,
+  },
+  userLoansData: {
+    userLendings: [],
+    userBorrowing: [],
   },
 }
 

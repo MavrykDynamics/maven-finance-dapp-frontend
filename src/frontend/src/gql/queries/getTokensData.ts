@@ -46,6 +46,10 @@ export function WHITELIST_TOKENS_VARIABLE(address: string) {
 export const M_TOKENS_QUERY = `
   query getMTokensForContract {
     m_token {
+      accounts {
+        user_id
+        m_token_id
+      }
       address
       admin
       loan_token_name

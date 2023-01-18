@@ -140,7 +140,7 @@ export const Market = () => {
           </ThreeLevelListItem>
           <ThreeLevelListItem>
             <div className="name">Total Lending</div>
-            <CommaNumber value={currentToken.totalLending} className="value" />
+            <CommaNumber value={currentToken.totalLended} className="value" />
           </ThreeLevelListItem>
           <ThreeLevelListItem>
             <div className="name">Available Liquidity</div>

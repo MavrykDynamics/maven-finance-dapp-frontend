@@ -1,4 +1,5 @@
 import { ChartPlotType } from 'app/App.components/Chart/Chart.view'
+import { assertName } from 'graphql'
 import {
   ADD_COLLATERAL_MODAL_ID,
   ADD_LENDING_ASSET_MODAL_ID,
@@ -42,11 +43,11 @@ export type LoanTokenType = {
   utilisationRate: number
   borrowers: number
   suppliers: number
-  collateral: number
-  vaultsBorrowedAmount: number
+  loanTokenTotalCollaterals: number
+  loanTokenVaultsTotalBorrowed: number
   totalBorrowed: number
   availableLiquidity: number
-  totalLending: number
+  totalLended: number
   borrowAPR: number
   totalFeesEarned: number
   lendingAPY: number
@@ -117,8 +118,19 @@ export type BorrowingData = {
     assetRate: number | null
     maxWithdraw: number
   }>
+  uniqueBorrowers: Array<string>
   xtzDelegatedTo?: string
   operators?: Array<string>
   sMVKDelegatedTo?: string
   depositors?: Array<string>
+}
+
+export type UserLendObjType = {
+  assetIcon: string
+  assetName: string
+  amount: number
+  id: number
+  apy: number
+  earned: number
+  mvkBonus: number
 }

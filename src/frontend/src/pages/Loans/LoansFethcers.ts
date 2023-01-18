@@ -1,6 +1,6 @@
 import { coinGeckoClient } from 'app/App.controller'
 import { State } from 'reducers'
-import { Lending_Controller_Collateral_Token } from 'utils/generated/graphqlTypes'
+import { Lending_Controller_Collateral_Token, Mavryk_User } from 'utils/generated/graphqlTypes'
 import { LoansGQL, AvaliableCollateralType } from 'utils/TypesAndInterfaces/Loans'
 import BakersMocked from './bakers.json'
 
@@ -136,6 +136,45 @@ export const getLoansTokensRates = async (
             }
           })
         })
+        return acc
+      }, new Set<string>()) ?? new Set(),
+    )
+
+    return await (
+      await Promise.all(loanTokenSymbols.map((symbol) => coinGeckoClient.coins.fetch(symbol, {})))
+    ).reduce<Record<string, number>>((acc, promiseResult) => {
+      if (promiseResult?.success && promiseResult?.code === 200) {
+        // TODO: extract this, and consider use id instead of symbol
+        const symbol = promiseResult.data.symbol === 'xtz' ? 'tezos' : promiseResult.data.symbol
+        const rate = promiseResult.data.market_data.current_price.usd
+        acc[symbol] = rate
+      }
+
+      return acc
+    }, {})
+  } catch (e) {
+    console.log('getLoansRates error: ', e)
+    return {}
+  }
+}
+
+export const getUserLoansDataTokensRates = async (
+  loan_tokens: Mavryk_User['lending_controller_history_data_sender'],
+  dipDupTokens: State['tokens']['dipDupTokens'],
+) => {
+  try {
+    const loanTokenSymbols = Array.from(
+      loan_tokens?.reduce((acc, { loan_token }) => {
+        // Getting symbol metadata of loanToken
+
+        if (!loan_token) return acc
+        const tokenInfo = dipDupTokens?.find(({ contract }) => contract === loan_token.loan_token_address)
+        if (loan_token.loan_token_name === 'tez') {
+          acc.add('tezos')
+        } else {
+          acc.add(tokenInfo?.metadata.symbol ?? loan_token.loan_token_name)
+        }
+
         return acc
       }, new Set<string>()) ?? new Set(),
     )

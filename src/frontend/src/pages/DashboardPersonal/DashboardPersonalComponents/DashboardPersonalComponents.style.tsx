@@ -226,10 +226,17 @@ export const ListItem = styled.div<{ theme: MavrykTheme; columsTemplate: string 
   grid-template-columns: ${({ columsTemplate }) => columsTemplate};
   position: relative;
 
-  svg {
+  svg,
+  .image-wrapper {
     height: 40px;
     width: 40px;
     fill: ${({ theme }) => theme.lPurple_dPurple_lPuprple};
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
   }
 
   .list-part {
