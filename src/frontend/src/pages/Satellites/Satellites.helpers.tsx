@@ -288,3 +288,17 @@ export const getSatelliteMetrics = (
     oracleEfficiency,
   }
 }
+
+type OracleLatestProps = {
+  aggregator: Aggregator[]
+}
+
+export const normalizeOracleLatestPrice = (storage: OracleLatestProps) => {
+  const { aggregator = [] } = storage
+
+  if (!aggregator.length) return []
+
+  const [ item ] = aggregator
+
+  return symbolsAfterDecimalPoint(item.last_completed_data / 10 ** item.decimals)
+}

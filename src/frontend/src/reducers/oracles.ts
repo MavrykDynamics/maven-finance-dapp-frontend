@@ -1,11 +1,13 @@
 import { InitialOracleStorageType, DataFeedsHistory, DataFeedsVolatility } from 'pages/Satellites/helpers/Satellites.types'
 import { GET_ORACLES_STORAGE, GET_DATA_FEEDS_HISTORY } from 'pages/Satellites/Satellites.actions'
+import { GET_ORACLE_AGGREGATOR_LATEST_PRICE } from 'pages/Satellites/Satellites.actions'
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
 
 export interface OraclesState {
   oraclesStorage: {} & InitialOracleStorageType
   dataFeedsHistory: DataFeedsHistory
   dataFeedsVolatility: DataFeedsVolatility
+  oracleLatestPrice: number
 }
 
 const oraclesDefaultState: OraclesState = {
@@ -16,6 +18,7 @@ const oraclesDefaultState: OraclesState = {
   },
   dataFeedsHistory: [],
   dataFeedsVolatility: [],
+  oracleLatestPrice: 0,
 }
 
 export function oracles(state = oraclesDefaultState, action: Action) {
@@ -33,6 +36,11 @@ export function oracles(state = oraclesDefaultState, action: Action) {
         ...state,
         dataFeedsHistory: action.dataFeedsHistory,
         dataFeedsVolatility: action.dataFeedsVolatility,
+      }
+    case GET_ORACLE_AGGREGATOR_LATEST_PRICE:
+      return {
+        ...state,
+        oracleLatestPrice: action.oracleLatestPrice,
       }
     default:
       return state

@@ -13,6 +13,7 @@ import { normalizeVaultsStorage, getVaultTokensSymbols } from './Vaults.helpers'
 import { LendingControllerGQL } from 'utils/TypesAndInterfaces/Vaults'
 import { setContractAddress } from 'reducers/actions/contractAddresses.actions'
 import { getHeadData } from 'app/App.components/Menu/Menu.actions'
+import { getOracleAggregatorLatestPrice } from 'pages/Satellites/Satellites.actions'
 
 // Vaults Store
 export const GET_VAULTS_STORAGE = 'GET_VAULTS_STORAGE'
@@ -24,7 +25,8 @@ export const getVaultsStorage = () => async (dispatch: AppDispatch, getState: Ge
       VAULTS_STORAGE_QUERY_VARIABLE,
     )
 
-    await dispatch(getHeadData())
+    Promise.all([dispatch(getHeadData()), dispatch(getOracleAggregatorLatestPrice())])
+
 
     const {
       tokens: { dipDupTokens },
