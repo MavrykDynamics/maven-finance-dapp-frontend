@@ -3,6 +3,7 @@ import { State } from 'reducers'
 import {
   checkVaultIsInGracePeriod,
   checkVaultIsAbleToMarkedForLiquidation,
+  checkVaultLiquidatableStatus,
 } from './calcFunctionsForVaultStatuses'
 import { VaultsStatuses } from './Vaults.view'
 
@@ -229,6 +230,18 @@ const vaultStatusChecker = ({
     oracleLatestPrice,
   )){
     return VaultsStatuses.MARK
+  } else if (checkVaultLiquidatableStatus(
+    loanOutstandingTotal,
+    loanTokenOracleAddress,
+    liquidationRatio,
+    vaultCollateralTokens,
+    currentBlockLevel,
+    liquidationEndLevel,
+    markedForLiquidationLevel,
+    liquidationDelayInMinutes,
+    oracleLatestPrice,
+  )){
+    return VaultsStatuses.LIQUIDATABLE
   }
 
   return VaultsStatuses.ACTIVE

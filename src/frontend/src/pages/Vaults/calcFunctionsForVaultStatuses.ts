@@ -79,23 +79,23 @@ export function checkVaultIsAbleToMarkedForLiquidation(loanOutstandingTotal: num
   return canBeRemarked || (isLiquidatableValue && !canBeRemarked)
 }
 
-// /**
-//  * This function checks if the vault can currently be liquidated. Using if it's been marked and the collateral to loan value meets the criteria for liquidation
-//  * For the LIQUIDATABLE status
-//  * @param loanOutstandingTotal
-//  * @param loanTokenOracleAddress
-//  * @param liquidationRatio
-//  * @param vaultCollateralTokens
-//  * @param currentBlockLevel
-//  * @param liquidationEndLevel
-//  * @param markedForLiquidationLevel
-//  * @param liquidationDelayInMinutes
-//  */
-// export function checkVaultLiquidatableStatus(loanOutstandingTotal: number, loanTokenOracleAddress: string, liquidationRatio: number, vaultCollateralTokens: any[], currentBlockLevel: number, liquidationEndLevel: number, markedForLiquidationLevel: number, liquidationDelayInMinutes: number): boolean {
-//   const isLiquidatableByValue = isLiquidatableByRatio(loanOutstandingTotal, loanTokenOracleAddress, liquidationRatio, vaultCollateralTokens)
-//   const isLiquidatableByConfig = checkVaultIsLiquidatable(currentBlockLevel, liquidationEndLevel, markedForLiquidationLevel, liquidationDelayInMinutes)
-//   return isLiquidatableByValue && isLiquidatableByConfig
-// }
+/**
+ * This function checks if the vault can currently be liquidated. Using if it's been marked and the collateral to loan value meets the criteria for liquidation
+ * For the LIQUIDATABLE status
+ * @param loanOutstandingTotal
+ * @param loanTokenOracleAddress
+ * @param liquidationRatio
+ * @param vaultCollateralTokens
+ * @param currentBlockLevel
+ * @param liquidationEndLevel
+ * @param markedForLiquidationLevel
+ * @param liquidationDelayInMinutes
+ */
+export function checkVaultLiquidatableStatus(loanOutstandingTotal: number, loanTokenOracleAddress: string, liquidationRatio: number, vaultCollateralTokens: any[], currentBlockLevel: number, liquidationEndLevel: number, markedForLiquidationLevel: number, liquidationDelayInMinutes: number, oracleLatestPrice: number): boolean {
+  const isLiquidatableByValue = isLiquidatableByRatio(loanOutstandingTotal, loanTokenOracleAddress, liquidationRatio, vaultCollateralTokens, oracleLatestPrice)
+  const isLiquidatableByConfig = checkVaultIsLiquidatable(currentBlockLevel, liquidationEndLevel, markedForLiquidationLevel, liquidationDelayInMinutes)
+  return isLiquidatableByValue && isLiquidatableByConfig
+}
 
 // /**
 //  * The status flag AT RISK

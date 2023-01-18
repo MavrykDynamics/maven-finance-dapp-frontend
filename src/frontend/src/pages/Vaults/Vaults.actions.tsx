@@ -56,7 +56,7 @@ export const getVaultsStorage = () => async (dispatch: AppDispatch, getState: Ge
 
       return acc
     }, {})
-    
+    // TODO: refactor, remove vaults, use lendingController.vaults instead of this
     const normallaziedVaultsStorage = normalizeVaultsStorage({
       vaults: lendingController.vaults,
       accountPkh,
