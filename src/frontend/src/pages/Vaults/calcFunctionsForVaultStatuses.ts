@@ -97,31 +97,33 @@ export function checkVaultLiquidatableStatus(loanOutstandingTotal: number, loanT
   return isLiquidatableByValue && isLiquidatableByConfig
 }
 
-// /**
-//  * The status flag AT RISK
-//  * @param loanOutstandingTotal
-//  * @param loanTokenOracleAddress
-//  * @param liquidationRatio
-//  * @param collateralRatio
-//  * @param vaultCollateralTokens
-//  */
-// export function checkIfVaultIsAtRisk(loanOutstandingTotal: number, loanTokenOracleAddress: string, liquidationRatio: number, collateralRatio: number, vaultCollateralTokens: any[]): boolean {
+/**
+ * The status flag AT RISK
+ * @param loanOutstandingTotal
+ * @param loanTokenOracleAddress
+ * @param liquidationRatio
+ * @param collateralRatio
+ * @param vaultCollateralTokens
+ */
+export function checkIfVaultIsAtRisk(loanOutstandingTotal: number, loanTokenOracleAddress: string, liquidationRatio: number, collateralRatio: number, vaultCollateralTokens: any[], oracleLatestPrice: number): boolean {
 
-//   const vaultCollateralTokenBalances = vaultCollateralTokens.map((collateralToken: any) => {
+  const vaultCollateralTokenBalances = vaultCollateralTokens.map((collateralToken: any) => {
 
-//     const oracleId = collateralToken.token.oracleId
-//     //TODO: You have to build this function which query's the indexer to get the latest price of the datafeed with this address
-//     const collateralTokenLatestPrice = getLatestPriceFromOracleAggregatorDataFeed(oracleId)
-//     const balanceInUSD = collateralToken.balance * collateralTokenLatestPrice
+    const oracleId = collateralToken.token.oracleId
+    //TODO: You have to build this function which query's the indexer to get the latest price of the datafeed with this address
+    // const collateralTokenLatestPrice = getLatestPriceFromOracleAggregatorDataFeed(oracleId)
+    const collateralTokenLatestPrice = oracleLatestPrice
+    const balanceInUSD = collateralToken.balance * collateralTokenLatestPrice
 
-//     return balanceInUSD
-//   })
-//   const totalCollateralValueInUSD = vaultCollateralTokenBalances.reduce((accumulator, tokenBalance) => {
-//     return accumulator + tokenBalance
-//   })
-//   const loanTokenLatestPrice = getLatestPriceFromOracleAggregatorDataFeed(loanTokenOracleAddress)
-//   const loanOutstandingInUSD = (loanOutstandingTotal) * loanTokenLatestPrice
-//   const isBelowCollateralRatio  = loanOutstandingInUSD < (collateralRatio * totalCollateralValueInUSD) / 1000
-//   const isAboveLiquidationRatio = loanOutstandingInUSD > (liquidationRatio * loanOutstandingInUSD) / 1000
-//   return isBelowCollateralRatio && isAboveLiquidationRatio
-// }
+    return balanceInUSD
+  })
+  const totalCollateralValueInUSD = vaultCollateralTokenBalances.reduce((accumulator, tokenBalance) => {
+    return accumulator + tokenBalance
+  })
+  // const loanTokenLatestPrice = getLatestPriceFromOracleAggregatorDataFeed(loanTokenOracleAddress)
+  const loanTokenLatestPrice = oracleLatestPrice
+  const loanOutstandingInUSD = (loanOutstandingTotal) * loanTokenLatestPrice
+  const isBelowCollateralRatio  = loanOutstandingInUSD < (collateralRatio * totalCollateralValueInUSD) / 1000
+  const isAboveLiquidationRatio = loanOutstandingInUSD > (liquidationRatio * loanOutstandingInUSD) / 1000
+  return isBelowCollateralRatio && isAboveLiquidationRatio
+}

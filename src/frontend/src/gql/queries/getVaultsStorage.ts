@@ -20,6 +20,7 @@ query GetAllVaultsStorage {
     liquidation_delay_in_minutes
     liquidation_fee_pct
     liquidation_ratio
+    collateral_ratio
     collateral_tokens {
       id
       is_scaled_token

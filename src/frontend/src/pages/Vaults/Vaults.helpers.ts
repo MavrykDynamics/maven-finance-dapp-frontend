@@ -4,6 +4,7 @@ import {
   checkVaultIsInGracePeriod,
   checkVaultIsAbleToMarkedForLiquidation,
   checkVaultLiquidatableStatus,
+  checkIfVaultIsAtRisk,
 } from './calcFunctionsForVaultStatuses'
 import { VaultsStatuses } from './Vaults.view'
 
@@ -102,6 +103,7 @@ export const normalizeVaultsStorage = (storage: VaultsStorageProps) => {
         loanTokenOracleAddress: item.loan_token?.oracle_id || '',
         liquidationRatio: lendingController.liquidation_ratio,
         vaultCollateralTokens: normalizeCollateralTokens,
+        collateralRatio: lendingController.collateral_ratio,
         oracleLatestPrice,
       }) : ''
 
@@ -114,6 +116,7 @@ export const normalizeVaultsStorage = (storage: VaultsStorageProps) => {
         loanTokenOracleAddress: item.loan_token?.oracle_id || '',
         liquidationRatio: lendingController.liquidation_ratio,
         vaultCollateralTokens: normalizeCollateralTokens,
+        collateralRatio: lendingController.collateral_ratio,
         oracleLatestPrice,
       });
 
@@ -198,6 +201,7 @@ type VaultStatusCheckerType = {
   loanTokenOracleAddress: string
   liquidationRatio: number
   vaultCollateralTokens: any[]
+  collateralRatio: number
   oracleLatestPrice: number
 }
 
@@ -210,6 +214,7 @@ const vaultStatusChecker = ({
   loanTokenOracleAddress,
   liquidationRatio,
   vaultCollateralTokens,
+  collateralRatio,
   oracleLatestPrice,
 }: VaultStatusCheckerType) => {
   if (checkVaultIsInGracePeriod(
@@ -242,6 +247,15 @@ const vaultStatusChecker = ({
     oracleLatestPrice,
   )){
     return VaultsStatuses.LIQUIDATABLE
+  } else if (checkIfVaultIsAtRisk(
+    loanOutstandingTotal,
+    loanTokenOracleAddress,
+    liquidationRatio,
+    collateralRatio,
+    vaultCollateralTokens,
+    oracleLatestPrice,
+  )){
+    return VaultsStatuses.AT_RISK
   }
 
   return VaultsStatuses.ACTIVE
