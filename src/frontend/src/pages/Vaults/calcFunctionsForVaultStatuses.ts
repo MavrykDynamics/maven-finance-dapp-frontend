@@ -51,9 +51,11 @@ export function isLiquidatableByRatio(loanOutstandingTotal: number, loanTokenOra
 
     return balanceInUSD
   })
-  const totalCollateralValueInUSD = vaultCollateralTokenBalances.reduce((accumulator, tokenBalance) => {
+  const totalCollateralValueInUSD = vaultCollateralTokenBalances.length 
+    ? vaultCollateralTokenBalances.reduce((accumulator, tokenBalance) => {
     return accumulator + tokenBalance
-  })
+  }) : 0
+  
   // const loanTokenLatestPrice = getLatestPriceFromOracleAggregatorDataFeed(loanTokenOracleAddress)
   const loanTokenLatestPrice = oracleLatestPrice
   const loanOutstandingInUSD = (loanOutstandingTotal) * loanTokenLatestPrice
@@ -117,9 +119,12 @@ export function checkIfVaultIsAtRisk(loanOutstandingTotal: number, loanTokenOrac
 
     return balanceInUSD
   })
-  const totalCollateralValueInUSD = vaultCollateralTokenBalances.reduce((accumulator, tokenBalance) => {
+  
+  const totalCollateralValueInUSD = vaultCollateralTokenBalances.length
+    ? vaultCollateralTokenBalances.reduce((accumulator, tokenBalance) => {
     return accumulator + tokenBalance
-  })
+  }) : 0
+
   // const loanTokenLatestPrice = getLatestPriceFromOracleAggregatorDataFeed(loanTokenOracleAddress)
   const loanTokenLatestPrice = oracleLatestPrice
   const loanOutstandingInUSD = (loanOutstandingTotal) * loanTokenLatestPrice

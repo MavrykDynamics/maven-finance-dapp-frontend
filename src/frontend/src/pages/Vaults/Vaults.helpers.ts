@@ -88,12 +88,15 @@ export const normalizeVaultsStorage = (storage: VaultsStorageProps) => {
     }
     
     if (item.vault?.address) {
+      const normalizeCollateralTokens = item.collateral_balances.length ? item.collateral_balances.map((collateralToken) => {
+        return {
+          balance: collateralToken.balance,
+          token: {
+            oracleId: collateralToken.token_id
+          }
+        }
+      }) : []
 
-      const normalizeCollateralTokens = lendingController.collateral_tokens.map((collateralToken) => {
-        return collateralToken.balances.length ? { ...collateralToken.balances[0] } : {}
-      })
-
-    
       const status = currentBlockLevel && liquidationDelayInMinutes ? vaultStatusChecker({
         currentBlockLevel,
         liquidationEndLevel: item.liquidation_end_level,

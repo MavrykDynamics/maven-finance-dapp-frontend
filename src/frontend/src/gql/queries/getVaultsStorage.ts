@@ -44,6 +44,7 @@ query GetAllVaultsStorage {
         token_id
         token {
           token_address
+          oracle_id
         }
       }
       vault {
@@ -75,6 +76,7 @@ query GetAllVaultsStorage {
       loan_token {
         lp_token_address
         loan_token_name
+        oracle_id
       }
     }
   }
