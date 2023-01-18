@@ -1,27 +1,32 @@
-import { LendingControllerVaultGQL, VaultType, CollateralType } from 'utils/TypesAndInterfaces/Vaults'
+import { LendingControllerVaultGQL, VaultType, CollateralType, LendingControllerGQL } from 'utils/TypesAndInterfaces/Vaults'
 import { State } from 'reducers'
 import {
   checkVaultIsInGracePeriod,
+  checkVaultIsAbleToMarkedForLiquidation,
 } from './calcFunctionsForVaultStatuses'
 import { VaultsStatuses } from './Vaults.view'
 
 type VaultsStorageProps = {
+  lendingController: LendingControllerGQL
   vaults: Array<LendingControllerVaultGQL>
   vaultsTokensRate: Record<string, number>
   accountPkh?: string
   dipDupTokens: State['tokens']['dipDupTokens']
   currentBlockLevel?: number
   liquidationDelayInMinutes?: number
+  oracleLatestPrice: number
 }
 
 export const normalizeVaultsStorage = (storage: VaultsStorageProps) => {
   const {
+    lendingController,
     vaults = [],
     vaultsTokensRate,
     accountPkh,
     dipDupTokens,
     currentBlockLevel,
-    liquidationDelayInMinutes
+    liquidationDelayInMinutes,
+    oracleLatestPrice,
   } = storage
 
   if (!vaults.length) return []
@@ -81,12 +86,35 @@ export const normalizeVaultsStorage = (storage: VaultsStorageProps) => {
     }
     
     if (item.vault?.address) {
+
+      const normalizeCollateralTokens = lendingController.collateral_tokens.map((collateralToken) => {
+        return collateralToken.balances.length ? { ...collateralToken.balances[0] } : {}
+      })
+
+    
       const status = currentBlockLevel && liquidationDelayInMinutes ? vaultStatusChecker({
         currentBlockLevel,
         liquidationEndLevel: item.liquidation_end_level,
         markedForLiquidationLevel: item.marked_for_liquidation_level,
         liquidationDelayInMinutes,
+        loanOutstandingTotal: item.loan_outstanding_total / 10 ** item.loan_decimals,
+        loanTokenOracleAddress: item.loan_token?.oracle_id || '',
+        liquidationRatio: lendingController.liquidation_ratio,
+        vaultCollateralTokens: normalizeCollateralTokens,
+        oracleLatestPrice,
       }) : ''
+
+      console.log({
+        currentBlockLevel,
+        liquidationEndLevel: item.liquidation_end_level,
+        markedForLiquidationLevel: item.marked_for_liquidation_level,
+        liquidationDelayInMinutes,
+        loanOutstandingTotal: item.loan_outstanding_total / 10 ** item.loan_decimals,
+        loanTokenOracleAddress: item.loan_token?.oracle_id || '',
+        liquidationRatio: lendingController.liquidation_ratio,
+        vaultCollateralTokens: normalizeCollateralTokens,
+        oracleLatestPrice,
+      });
 
       const normallizedVault = {
         borrowedAsset: {
@@ -165,6 +193,11 @@ type VaultStatusCheckerType = {
   liquidationEndLevel: number
   markedForLiquidationLevel: number
   liquidationDelayInMinutes: number
+  loanOutstandingTotal: number
+  loanTokenOracleAddress: string
+  liquidationRatio: number
+  vaultCollateralTokens: any[]
+  oracleLatestPrice: number
 }
 
 const vaultStatusChecker = ({
@@ -172,6 +205,11 @@ const vaultStatusChecker = ({
   liquidationEndLevel,
   markedForLiquidationLevel,
   liquidationDelayInMinutes,
+  loanOutstandingTotal,
+  loanTokenOracleAddress,
+  liquidationRatio,
+  vaultCollateralTokens,
+  oracleLatestPrice,
 }: VaultStatusCheckerType) => {
   if (checkVaultIsInGracePeriod(
     currentBlockLevel,
@@ -179,6 +217,18 @@ const vaultStatusChecker = ({
     liquidationDelayInMinutes,
   )){
     return VaultsStatuses.GRACE_PERIOD
+  } else if (checkVaultIsAbleToMarkedForLiquidation(
+    loanOutstandingTotal,
+    loanTokenOracleAddress,
+    liquidationRatio,
+    vaultCollateralTokens,
+    currentBlockLevel,
+    liquidationEndLevel,
+    markedForLiquidationLevel,
+    liquidationDelayInMinutes,
+    oracleLatestPrice,
+  )){
+    return VaultsStatuses.MARK
   }
 
   return VaultsStatuses.ACTIVE

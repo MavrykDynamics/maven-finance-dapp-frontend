@@ -296,7 +296,7 @@ type OracleLatestProps = {
 export const normalizeOracleLatestPrice = (storage: OracleLatestProps) => {
   const { aggregator = [] } = storage
 
-  if (!aggregator.length) return []
+  if (!aggregator.length) return 0
 
   const [ item ] = aggregator
 

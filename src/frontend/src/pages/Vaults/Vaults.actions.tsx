@@ -31,7 +31,8 @@ export const getVaultsStorage = () => async (dispatch: AppDispatch, getState: Ge
     const {
       tokens: { dipDupTokens },
       wallet: { accountPkh },
-      preferences: { headData }
+      preferences: { headData },
+      oracles: { oracleLatestPrice }
     } = getState()
 
     const lendingController: LendingControllerGQL = storage?.lending_controller[0] || {}
@@ -63,6 +64,8 @@ export const getVaultsStorage = () => async (dispatch: AppDispatch, getState: Ge
       dipDupTokens,
       currentBlockLevel: headData?.level,
       liquidationDelayInMinutes: lendingController.liquidation_delay_in_minutes,
+      lendingController,
+      oracleLatestPrice,
     })
  
     dispatch(setContractAddress('vaultAddress', lendingController.address))  

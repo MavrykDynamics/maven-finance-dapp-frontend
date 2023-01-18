@@ -27,6 +27,12 @@ query GetAllVaultsStorage {
       oracle_id
       protected
       token_address
+      balances {
+        balance
+        token {
+          oracle_id
+        }
+      }
     }
     vaults {
       borrow_index

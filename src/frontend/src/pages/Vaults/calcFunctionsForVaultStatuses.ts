@@ -33,49 +33,51 @@ export function checkVaultCanBeRemarkedForLiquidation(currentBlockLevel:number, 
   return currentBlockLevel > liquidationEndLevel && liquidationEndLevel !== 0 && markedForLiquidationLevel !== 0 && !checkVaultIsInGracePeriod(currentBlockLevel, markedForLiquidationLevel, liquidationDelayInMinutes)
 }
 
-// /**
-//  *
-//  * @param loanOutstandingTotal    - This should already be after dividing the indexer value by the loan_tokens decimal places
-//  * @param loanTokenOracleAddress  - loan_token.oracle_id
-//  * @param liquidationRatio        - liquidation_ratio
-//  * @param vaultCollateralTokens   - collateral_tokens array after normalizing it and prepping the data (after dividing the balances by the token decimals)
-//  */
-// export function isLiquidatableByRatio(loanOutstandingTotal: number, loanTokenOracleAddress: string, liquidationRatio: number, vaultCollateralTokens: any[]): boolean {
+/**
+ *
+ * @param loanOutstandingTotal    - This should already be after dividing the indexer value by the loan_tokens decimal places
+ * @param loanTokenOracleAddress  - loan_token.oracle_id
+ * @param liquidationRatio        - liquidation_ratio
+ * @param vaultCollateralTokens   - collateral_tokens array after normalizing it and prepping the data (after dividing the balances by the token decimals)
+ */
+export function isLiquidatableByRatio(loanOutstandingTotal: number, loanTokenOracleAddress: string, liquidationRatio: number, vaultCollateralTokens: any[], oracleLatestPrice: number): boolean {
 
-//   const vaultCollateralTokenBalances = vaultCollateralTokens.map((collateralToken: any) => {
+  const vaultCollateralTokenBalances = vaultCollateralTokens.map((collateralToken: any) => {
+    const oracleId = collateralToken.token.oracleId
+    //TODO: You have to build this function which query's the indexer to get the latest price of the datafeed with this address
+    // const collateralTokenLatestPrice = getLatestPriceFromOracleAggregatorDataFeed(oracleId)
+    const collateralTokenLatestPrice = oracleLatestPrice
+    const balanceInUSD = collateralToken.balance * collateralTokenLatestPrice
 
-//     const oracleId = collateralToken.token.oracleId
-//     //TODO: You have to build this function which query's the indexer to get the latest price of the datafeed with this address
-//     const collateralTokenLatestPrice = getLatestPriceFromOracleAggregatorDataFeed(oracleId)
-//     const balanceInUSD = collateralToken.balance * collateralTokenLatestPrice
+    return balanceInUSD
+  })
+  const totalCollateralValueInUSD = vaultCollateralTokenBalances.reduce((accumulator, tokenBalance) => {
+    return accumulator + tokenBalance
+  })
+  // const loanTokenLatestPrice = getLatestPriceFromOracleAggregatorDataFeed(loanTokenOracleAddress)
+  const loanTokenLatestPrice = oracleLatestPrice
+  const loanOutstandingInUSD = (loanOutstandingTotal) * loanTokenLatestPrice
 
-//     return balanceInUSD
-//   })
-//   const totalCollateralValueInUSD = vaultCollateralTokenBalances.reduce((accumulator, tokenBalance) => {
-//     return accumulator + tokenBalance
-//   })
-//   const loanTokenLatestPrice = getLatestPriceFromOracleAggregatorDataFeed(loanTokenOracleAddress)
-//   const loanOutstandingInUSD = (loanOutstandingTotal) * loanTokenLatestPrice
+  return totalCollateralValueInUSD < (liquidationRatio * loanOutstandingInUSD) / 1000
+}
 
-//   return totalCollateralValueInUSD < (liquidationRatio * loanOutstandingInUSD) / 1000
-// }
+/**
+ *  Use this to check if a vault can be marked for liquidation. The status flag MARK
+ * @param loanOutstandingTotal
+ * @param loanTokenOracleAddress
+ * @param liquidationRatio
+ * @param vaultCollateralTokens
+ * @param currentBlockLevel
+ * @param liquidationEndLevel
+ * @param markedForLiquidationLevel
+ * @param liquidationDelayInMinutes
+ */
+export function checkVaultIsAbleToMarkedForLiquidation(loanOutstandingTotal: number, loanTokenOracleAddress: string, liquidationRatio: number, vaultCollateralTokens: any[], currentBlockLevel: number, liquidationEndLevel: number, markedForLiquidationLevel: number, liquidationDelayInMinutes: number, oracleLatestPrice: number): boolean {
+  const isLiquidatableValue = isLiquidatableByRatio(loanOutstandingTotal, loanTokenOracleAddress, liquidationRatio, vaultCollateralTokens, oracleLatestPrice)
+  const canBeRemarked = checkVaultCanBeRemarkedForLiquidation(currentBlockLevel, liquidationEndLevel, markedForLiquidationLevel, liquidationDelayInMinutes)
 
-// /**
-//  *  Use this to check if a vault can be marked for liquidation. The status flag MARK
-//  * @param loanOutstandingTotal
-//  * @param loanTokenOracleAddress
-//  * @param liquidationRatio
-//  * @param vaultCollateralTokens
-//  * @param currentBlockLevel
-//  * @param liquidationEndLevel
-//  * @param markedForLiquidationLevel
-//  * @param liquidationDelayInMinutes
-//  */
-// export function checkVaultIsAbleToMarkedForLiquidation(loanOutstandingTotal: number, loanTokenOracleAddress: string, liquidationRatio: number, vaultCollateralTokens: any[], currentBlockLevel: number, liquidationEndLevel: number, markedForLiquidationLevel: number, liquidationDelayInMinutes: number): boolean {
-//   const isLiquidatableValue = isLiquidatableByRatio(loanOutstandingTotal, loanTokenOracleAddress, liquidationRatio, vaultCollateralTokens)
-//   const canBeRemarked = checkVaultCanBeRemarkedForLiquidation(currentBlockLevel, liquidationEndLevel, markedForLiquidationLevel, liquidationDelayInMinutes)
-//   return canBeRemarked || (isLiquidatableValue && !canBeRemarked)
-// }
+  return canBeRemarked || (isLiquidatableValue && !canBeRemarked)
+}
 
 // /**
 //  * This function checks if the vault can currently be liquidated. Using if it's been marked and the collateral to loan value meets the criteria for liquidation
