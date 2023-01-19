@@ -58,6 +58,7 @@ export const LOANS_QUERY = `query GetLoansStorage {
         collateral_balances {
           token {
             token_address
+            token_name
           }
           balance
         }

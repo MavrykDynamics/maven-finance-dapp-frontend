@@ -299,7 +299,9 @@ const getBorrowings = (
           apy: 0,
           fee: 0,
         },
-        collateralData: vaultCollateral.normalizedCollaterals.concat([vaultCollateral.totalRow]),
+        collateralData: vaultCollateral.normalizedCollaterals.length
+          ? [...vaultCollateral.normalizedCollaterals, vaultCollateral.totalRow]
+          : [],
         borrowedAmount: vault.loan_outstanding_total,
         uniqueBorrowers,
         xtzDelegatedTo: '',
