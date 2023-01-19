@@ -279,7 +279,7 @@ export const getOracleLatestPrices = async (vaults: Lending_Controller_Vault[]) 
 
     const arrayUniqueOracleAddresses = [...uniqueOracleAddresses]
 
-    const prices = await Promise.all([...arrayUniqueOracleAddresses].map((item) => getOracleAggregatorLatestPrice(item)))
+    const prices = await Promise.all(arrayUniqueOracleAddresses.map((item) => getOracleAggregatorLatestPrice(item)))
 
     const result: Record<string, number> = {}
 
