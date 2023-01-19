@@ -187,6 +187,7 @@ const getLendingItem = (
   userAssetBalances: Record<string, number>,
   interestTreasuryShare: number,
   interestRateDecimals: number,
+  loanTokenDecimals: number,
 ): LendingItemType => {
   if (userMTokens && loanToken) {
     const mTokenAsset = userMTokens?.find(({ m_token_id }) => m_token_id === loanToken.lp_token_address)
@@ -195,9 +196,11 @@ const getLendingItem = (
 
     if (mTokenAsset) {
       return {
-        lendValue: mTokenAsset.balance,
-        interestEarned: mTokenAsset.rewards_earned,
-        mBalance: Number(mTokenAsset.balance) + Number(mTokenAsset.rewards_earned),
+        lendValue: Number(mTokenAsset.balance) / 10 ** loanTokenDecimals,
+        interestEarned: mTokenAsset.rewards_earned / 10 ** loanTokenDecimals,
+        mBalance:
+          Number(mTokenAsset.balance) / 10 ** loanTokenDecimals +
+          Number(mTokenAsset.rewards_earned) / 10 ** loanTokenDecimals,
         loanAssetWalletBalance: userAssetBalances[loanToken.lp_token_address],
         lendAPY: calcLendingAPY(tokenCurrentInterestRate, interestTreasuryShare),
         borrowAPR: calcWithoutDecimals(loanToken.current_interest_rate, interestRateDecimals) * 100,
@@ -376,13 +379,14 @@ export const normalizeLoans = ({
       userAssetBalances,
       interestTreasuryShare,
       storage.interest_rate_decimals,
+      loanTokenMetadata.decimals,
     )
 
     const availableLiquidity = isXTZ
       ? calcWithoutMu(total_remaining)
       : calcWithoutDecimals(total_remaining, Number(loanTokenMetadata.decimals ?? 1))
 
-    // Temporary solution, cuz no data for no lended asset
+    // TODO: Temporary solution, cuz no data for no lended asset
     if (lendingItem) {
       acc.push({
         loanTokenData: {
@@ -452,11 +456,11 @@ const getDescrByType = (type: number) => {
     case 4:
       return 'Deposited'
     case 5:
-      return 'WITHDRAW DEF'
+      return 'Withdrawed'
     case 6:
-      return 'DEPOSIT_SMVK DEF'
+      return 'Deposited SMVK'
     case 7:
-      return 'WITHDRAW_SMVK DEF'
+      return 'Withdrawed SMVK'
     case 8:
       return 'Vault Created'
     case 9:

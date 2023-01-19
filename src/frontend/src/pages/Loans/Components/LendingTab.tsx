@@ -60,13 +60,9 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData }:
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Lending</div>
-              <CommaNumber value={lendingItem.lendValue / 10 ** assetData.decimals} className="value" />
+              <CommaNumber value={lendingItem.lendValue} className="value" />
               {assetData.rate ? (
-                <CommaNumber
-                  value={(lendingItem.lendValue / 10 ** assetData.decimals) * assetData.rate}
-                  beginningText="$"
-                  className="rate"
-                />
+                <CommaNumber value={lendingItem.lendValue * assetData.rate} beginningText="$" className="rate" />
               ) : null}
             </ThreeLevelListItem>
             <ThreeLevelListItem>
@@ -82,10 +78,10 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData }:
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Wallet Balance</div>
-              <CommaNumber value={lendingItem.loanAssetWalletBalance / 10 ** assetData.decimals} className="value" />
+              <CommaNumber value={lendingItem.loanAssetWalletBalance} className="value" />
               {assetData.rate ? (
                 <CommaNumber
-                  value={(lendingItem.loanAssetWalletBalance / 10 ** assetData.decimals) * assetData.rate}
+                  value={lendingItem.loanAssetWalletBalance * assetData.rate}
                   beginningText="$"
                   className="rate"
                 />

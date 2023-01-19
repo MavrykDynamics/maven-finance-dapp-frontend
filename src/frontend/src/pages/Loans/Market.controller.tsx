@@ -130,66 +130,65 @@ export const Market = () => {
             )}
 
             <div className="text-wrapper">
-              <div className="symbol">{currentToken.loanTokenData.symbol}</div>
-              <div className="full-name">{currentToken.loanTokenData.name}</div>
+              <div className="symbol">{currentToken.loanTokenData.name}</div>
+              <div className="full-name">{currentToken.loanTokenData.symbol}</div>
             </div>
           </div>
-          <ThreeLevelListItem>
-            <div className="name">Earn APY</div>
-            <CommaNumber value={currentToken.lendingAPY} endingText="%" className="value" />
-          </ThreeLevelListItem>
-          <ThreeLevelListItem>
-            <div className="name">Total Lending</div>
-            <CommaNumber value={currentToken.totalLended} className="value" />
-          </ThreeLevelListItem>
-          <ThreeLevelListItem>
-            <div className="name">Available Liquidity</div>
-            <CommaNumber value={currentToken.availableLiquidity} className="value" />
-          </ThreeLevelListItem>
-          <ThreeLevelListItem>
-            <div className="name">Collateral Factor</div>
-            <CommaNumber value={currentToken.collateralFactor} endingText="%" className="value" />
-          </ThreeLevelListItem>
-          <ThreeLevelListItem>
-            <div className="name">Suppliers</div>
-            <CommaNumber value={currentToken.suppliers} className="value" />
-          </ThreeLevelListItem>
-
-          <Button
-            text="Show More"
-            icon="paginationArrowLeft"
-            iconAfter
-            kind={'transparent'}
-            className={`link ${showHiddenItems ? 'arrow-top' : 'arrow-down'}`}
-            onClick={() => setShowHiddenItems(!showHiddenItems)}
-          />
-        </div>
-
-        <div className={`hidden-items ${showHiddenItems ? 'show' : ''}`}>
-          <ThreeLevelListItem>
-            <div className="name">Oracle Price</div>
-            <CommaNumber value={0} beginningText="$" className="value" />
-          </ThreeLevelListItem>
-          <ThreeLevelListItem>
-            <div className="name">Borrow APR</div>
-            <CommaNumber value={currentToken.borrowAPR} endingText="%" className="value" />
-          </ThreeLevelListItem>
-          <ThreeLevelListItem>
-            <div className="name">Total Borrowed</div>
-            <CommaNumber value={currentToken.totalBorrowed} className="value" />
-          </ThreeLevelListItem>
-          <ThreeLevelListItem>
-            <div className="name">Reserve Amount</div>
-            <CommaNumber value={currentToken.reserveAmount} className="value" />
-          </ThreeLevelListItem>
-          <ThreeLevelListItem>
-            <div className="name">Reserve Factor</div>
-            <CommaNumber value={currentToken.reserveFactor} endingText="%" className="value" />
-          </ThreeLevelListItem>
-          <ThreeLevelListItem>
-            <div className="name">Borrowers</div>
-            <CommaNumber value={currentToken.borrowers} className="value" />
-          </ThreeLevelListItem>
+          {tabId === LEND_TAB_ID ? (
+            <>
+              <ThreeLevelListItem>
+                <div className="name">Oracle Price</div>
+                <CommaNumber value={0} beginningText="$" className="value" />
+              </ThreeLevelListItem>
+              <ThreeLevelListItem>
+                <div className="name">Earn APY</div>
+                <CommaNumber value={currentToken.lendingAPY} endingText="%" className="value" />
+              </ThreeLevelListItem>
+              <ThreeLevelListItem>
+                <div className="name">Total Lending</div>
+                <CommaNumber value={currentToken.totalLended} className="value" />
+              </ThreeLevelListItem>
+              <ThreeLevelListItem>
+                <div className="name">Available Liquidity</div>
+                <CommaNumber value={currentToken.availableLiquidity} className="value" />
+              </ThreeLevelListItem>
+              <ThreeLevelListItem>
+                <div className="name">Collateral Factor</div>
+                <CommaNumber value={currentToken.collateralFactor} endingText="%" className="value" />
+              </ThreeLevelListItem>
+              <ThreeLevelListItem>
+                <div className="name">Suppliers</div>
+                <CommaNumber value={currentToken.suppliers} className="value" />
+              </ThreeLevelListItem>
+            </>
+          ) : (
+            <>
+              <ThreeLevelListItem>
+                <div className="name">Oracle Price</div>
+                <CommaNumber value={0} beginningText="$" className="value" />
+              </ThreeLevelListItem>
+              <ThreeLevelListItem>
+                <div className="name">Borrow APR</div>
+                <CommaNumber value={currentToken.borrowAPR} endingText="%" className="value" />
+              </ThreeLevelListItem>
+              <ThreeLevelListItem>
+                <div className="name">Total Borrowed</div>
+                <CommaNumber value={currentToken.totalBorrowed} className="value" />
+              </ThreeLevelListItem>
+              <ThreeLevelListItem>
+                <div className="name">Reserve Amount</div>
+                <CommaNumber value={currentToken.reserveAmount} className="value" />
+              </ThreeLevelListItem>
+              <ThreeLevelListItem>
+                <div className="name">Reserve Factor</div>
+                <CommaNumber value={currentToken.reserveFactor} endingText="%" className="value" />
+              </ThreeLevelListItem>
+              <ThreeLevelListItem>
+                <div className="name">Borrowers</div>
+                <CommaNumber value={currentToken.borrowers} className="value" />
+              </ThreeLevelListItem>
+            </>
+          )}
         </div>
 
         {tabsNav}
