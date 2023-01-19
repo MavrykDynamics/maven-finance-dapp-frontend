@@ -7,6 +7,8 @@ import {
   checkIfVaultIsAtRisk,
 } from './calcFunctionsForVaultStatuses'
 import { VaultsStatuses } from './Vaults.view'
+import { Lending_Controller_Vault } from 'utils/generated/graphqlTypes'
+import { getOracleAggregatorLatestPrice } from 'pages/Satellites/Satellites.actions'
 
 type VaultsStorageProps = {
   lendingController: LendingControllerGQL
@@ -16,7 +18,7 @@ type VaultsStorageProps = {
   dipDupTokens: State['tokens']['dipDupTokens']
   currentBlockLevel?: number
   liquidationDelayInMinutes?: number
-  oracleLatestPrice: number
+  oracleLatestPrices: Record<string, number>
 }
 
 export const normalizeVaultsStorage = (storage: VaultsStorageProps) => {
@@ -28,9 +30,8 @@ export const normalizeVaultsStorage = (storage: VaultsStorageProps) => {
     dipDupTokens,
     currentBlockLevel,
     liquidationDelayInMinutes,
-    oracleLatestPrice,
+    oracleLatestPrices,
   } = storage
-
   if (!vaults.length) return []
   
   return vaults.reduce<{
@@ -97,31 +98,22 @@ export const normalizeVaultsStorage = (storage: VaultsStorageProps) => {
         }
       }) : []
 
-      const status = currentBlockLevel && liquidationDelayInMinutes ? vaultStatusChecker({
+      const status = (
+        currentBlockLevel && 
+        liquidationDelayInMinutes && 
+        item.loan_token?.oracle_id
+      ) ? vaultStatusChecker({
         currentBlockLevel,
         liquidationEndLevel: item.liquidation_end_level,
         markedForLiquidationLevel: item.marked_for_liquidation_level,
         liquidationDelayInMinutes,
         loanOutstandingTotal: item.loan_outstanding_total / 10 ** item.loan_decimals,
-        loanTokenOracleAddress: item.loan_token?.oracle_id || '',
+        loanTokenOracleAddress: item.loan_token.oracle_id,
         liquidationRatio: lendingController.liquidation_ratio,
         vaultCollateralTokens: normalizeCollateralTokens,
         collateralRatio: lendingController.collateral_ratio,
-        oracleLatestPrice,
+        oracleLatestPrices,
       }) : ''
-
-      console.log({
-        currentBlockLevel,
-        liquidationEndLevel: item.liquidation_end_level,
-        markedForLiquidationLevel: item.marked_for_liquidation_level,
-        liquidationDelayInMinutes,
-        loanOutstandingTotal: item.loan_outstanding_total / 10 ** item.loan_decimals,
-        loanTokenOracleAddress: item.loan_token?.oracle_id || '',
-        liquidationRatio: lendingController.liquidation_ratio,
-        vaultCollateralTokens: normalizeCollateralTokens,
-        collateralRatio: lendingController.collateral_ratio,
-        oracleLatestPrice,
-      });
 
       const normallizedVault = {
         borrowedAsset: {
@@ -205,7 +197,7 @@ type VaultStatusCheckerType = {
   liquidationRatio: number
   vaultCollateralTokens: any[]
   collateralRatio: number
-  oracleLatestPrice: number
+  oracleLatestPrices: Record<string, number>
 }
 
 const vaultStatusChecker = ({
@@ -218,7 +210,7 @@ const vaultStatusChecker = ({
   liquidationRatio,
   vaultCollateralTokens,
   collateralRatio,
-  oracleLatestPrice,
+  oracleLatestPrices,
 }: VaultStatusCheckerType) => {
   if (checkVaultIsInGracePeriod(
     currentBlockLevel,
@@ -235,7 +227,7 @@ const vaultStatusChecker = ({
     liquidationEndLevel,
     markedForLiquidationLevel,
     liquidationDelayInMinutes,
-    oracleLatestPrice,
+    oracleLatestPrices,
   )){
     return VaultsStatuses.MARK
   } else if (checkVaultLiquidatableStatus(
@@ -247,7 +239,7 @@ const vaultStatusChecker = ({
     liquidationEndLevel,
     markedForLiquidationLevel,
     liquidationDelayInMinutes,
-    oracleLatestPrice,
+    oracleLatestPrices,
   )){
     return VaultsStatuses.LIQUIDATABLE
   } else if (checkIfVaultIsAtRisk(
@@ -256,10 +248,46 @@ const vaultStatusChecker = ({
     liquidationRatio,
     collateralRatio,
     vaultCollateralTokens,
-    oracleLatestPrice,
+    oracleLatestPrices,
   )){
     return VaultsStatuses.AT_RISK
   }
 
   return VaultsStatuses.ACTIVE
+}
+
+export const getOracleLatestPrices = async (vaults: Lending_Controller_Vault[]) => {
+    const uniqueOracleAddresses= new Set<string> ()
+
+    vaults.map((item) => {
+      const loanTokenOracleAddress = item.loan_token?.oracle_id
+      const collateralBalances = item.collateral_balances
+
+      if (loanTokenOracleAddress) {
+        uniqueOracleAddresses.add(loanTokenOracleAddress)
+      }
+
+      if (collateralBalances.length) {
+        collateralBalances.map((collateral) => {
+
+          if (collateral.token?.oracle_id) {
+            uniqueOracleAddresses.add(collateral.token.oracle_id)
+          }
+        })
+      }
+    })
+
+    const arrayUniqueOracleAddresses = [...uniqueOracleAddresses]
+
+    const prices = await Promise.all([...arrayUniqueOracleAddresses].map((item) => getOracleAggregatorLatestPrice(item)))
+
+    const result: Record<string, number> = {}
+
+    prices.map((item, index) => {
+      if (typeof item === 'number') {
+        result[arrayUniqueOracleAddresses[index]] = item
+      }
+    })
+
+    return result
 }

@@ -34,19 +34,16 @@ export function checkVaultCanBeRemarkedForLiquidation(currentBlockLevel:number, 
 }
 
 /**
- *
  * @param loanOutstandingTotal    - This should already be after dividing the indexer value by the loan_tokens decimal places
  * @param loanTokenOracleAddress  - loan_token.oracle_id
  * @param liquidationRatio        - liquidation_ratio
  * @param vaultCollateralTokens   - collateral_tokens array after normalizing it and prepping the data (after dividing the balances by the token decimals)
  */
-export function isLiquidatableByRatio(loanOutstandingTotal: number, loanTokenOracleAddress: string, liquidationRatio: number, vaultCollateralTokens: any[], oracleLatestPrice: number): boolean {
+export function isLiquidatableByRatio(loanOutstandingTotal: number, loanTokenOracleAddress: string, liquidationRatio: number, vaultCollateralTokens: any[], oracleLatestPrices: Record<string, number>): boolean {
 
   const vaultCollateralTokenBalances = vaultCollateralTokens.map((collateralToken: any) => {
     const oracleId = collateralToken.token.oracleId
-    //TODO: You have to build this function which query's the indexer to get the latest price of the datafeed with this address
-    // const collateralTokenLatestPrice = getLatestPriceFromOracleAggregatorDataFeed(oracleId)
-    const collateralTokenLatestPrice = oracleLatestPrice
+    const collateralTokenLatestPrice = oracleLatestPrices[oracleId]
     const balanceInUSD = collateralToken.balance * collateralTokenLatestPrice
 
     return balanceInUSD
@@ -55,9 +52,8 @@ export function isLiquidatableByRatio(loanOutstandingTotal: number, loanTokenOra
     ? vaultCollateralTokenBalances.reduce((accumulator, tokenBalance) => {
     return accumulator + tokenBalance
   }) : 0
-  
-  // const loanTokenLatestPrice = getLatestPriceFromOracleAggregatorDataFeed(loanTokenOracleAddress)
-  const loanTokenLatestPrice = oracleLatestPrice
+
+  const loanTokenLatestPrice = oracleLatestPrices[loanTokenOracleAddress]
   const loanOutstandingInUSD = (loanOutstandingTotal) * loanTokenLatestPrice
 
   return totalCollateralValueInUSD < (liquidationRatio * loanOutstandingInUSD) / 1000
@@ -74,8 +70,8 @@ export function isLiquidatableByRatio(loanOutstandingTotal: number, loanTokenOra
  * @param markedForLiquidationLevel
  * @param liquidationDelayInMinutes
  */
-export function checkVaultIsAbleToMarkedForLiquidation(loanOutstandingTotal: number, loanTokenOracleAddress: string, liquidationRatio: number, vaultCollateralTokens: any[], currentBlockLevel: number, liquidationEndLevel: number, markedForLiquidationLevel: number, liquidationDelayInMinutes: number, oracleLatestPrice: number): boolean {
-  const isLiquidatableValue = isLiquidatableByRatio(loanOutstandingTotal, loanTokenOracleAddress, liquidationRatio, vaultCollateralTokens, oracleLatestPrice)
+export function checkVaultIsAbleToMarkedForLiquidation(loanOutstandingTotal: number, loanTokenOracleAddress: string, liquidationRatio: number, vaultCollateralTokens: any[], currentBlockLevel: number, liquidationEndLevel: number, markedForLiquidationLevel: number, liquidationDelayInMinutes: number, oracleLatestPrices: Record<string, number>): boolean {
+  const isLiquidatableValue = isLiquidatableByRatio(loanOutstandingTotal, loanTokenOracleAddress, liquidationRatio, vaultCollateralTokens, oracleLatestPrices)
   const canBeRemarked = checkVaultCanBeRemarkedForLiquidation(currentBlockLevel, liquidationEndLevel, markedForLiquidationLevel, liquidationDelayInMinutes)
 
   return canBeRemarked || (isLiquidatableValue && !canBeRemarked)
@@ -93,8 +89,8 @@ export function checkVaultIsAbleToMarkedForLiquidation(loanOutstandingTotal: num
  * @param markedForLiquidationLevel
  * @param liquidationDelayInMinutes
  */
-export function checkVaultLiquidatableStatus(loanOutstandingTotal: number, loanTokenOracleAddress: string, liquidationRatio: number, vaultCollateralTokens: any[], currentBlockLevel: number, liquidationEndLevel: number, markedForLiquidationLevel: number, liquidationDelayInMinutes: number, oracleLatestPrice: number): boolean {
-  const isLiquidatableByValue = isLiquidatableByRatio(loanOutstandingTotal, loanTokenOracleAddress, liquidationRatio, vaultCollateralTokens, oracleLatestPrice)
+export function checkVaultLiquidatableStatus(loanOutstandingTotal: number, loanTokenOracleAddress: string, liquidationRatio: number, vaultCollateralTokens: any[], currentBlockLevel: number, liquidationEndLevel: number, markedForLiquidationLevel: number, liquidationDelayInMinutes: number, oracleLatestPrices: Record<string, number>): boolean {
+  const isLiquidatableByValue = isLiquidatableByRatio(loanOutstandingTotal, loanTokenOracleAddress, liquidationRatio, vaultCollateralTokens, oracleLatestPrices)
   const isLiquidatableByConfig = checkVaultIsLiquidatable(currentBlockLevel, liquidationEndLevel, markedForLiquidationLevel, liquidationDelayInMinutes)
   return isLiquidatableByValue && isLiquidatableByConfig
 }
@@ -107,14 +103,12 @@ export function checkVaultLiquidatableStatus(loanOutstandingTotal: number, loanT
  * @param collateralRatio
  * @param vaultCollateralTokens
  */
-export function checkIfVaultIsAtRisk(loanOutstandingTotal: number, loanTokenOracleAddress: string, liquidationRatio: number, collateralRatio: number, vaultCollateralTokens: any[], oracleLatestPrice: number): boolean {
+export function checkIfVaultIsAtRisk(loanOutstandingTotal: number, loanTokenOracleAddress: string, liquidationRatio: number, collateralRatio: number, vaultCollateralTokens: any[], oracleLatestPrices: Record<string, number>): boolean {
 
   const vaultCollateralTokenBalances = vaultCollateralTokens.map((collateralToken: any) => {
 
     const oracleId = collateralToken.token.oracleId
-    //TODO: You have to build this function which query's the indexer to get the latest price of the datafeed with this address
-    // const collateralTokenLatestPrice = getLatestPriceFromOracleAggregatorDataFeed(oracleId)
-    const collateralTokenLatestPrice = oracleLatestPrice
+    const collateralTokenLatestPrice = oracleLatestPrices[oracleId]
     const balanceInUSD = collateralToken.balance * collateralTokenLatestPrice
 
     return balanceInUSD
@@ -125,8 +119,7 @@ export function checkIfVaultIsAtRisk(loanOutstandingTotal: number, loanTokenOrac
     return accumulator + tokenBalance
   }) : 0
 
-  // const loanTokenLatestPrice = getLatestPriceFromOracleAggregatorDataFeed(loanTokenOracleAddress)
-  const loanTokenLatestPrice = oracleLatestPrice
+  const loanTokenLatestPrice = oracleLatestPrices[loanTokenOracleAddress]
   const loanOutstandingInUSD = (loanOutstandingTotal) * loanTokenLatestPrice
   const isBelowCollateralRatio  = loanOutstandingInUSD < (collateralRatio * totalCollateralValueInUSD) / 1000
   const isAboveLiquidationRatio = loanOutstandingInUSD > (liquidationRatio * loanOutstandingInUSD) / 1000

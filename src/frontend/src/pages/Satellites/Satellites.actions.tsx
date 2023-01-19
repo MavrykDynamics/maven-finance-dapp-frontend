@@ -213,8 +213,7 @@ export const getDataFeedsHistory = () => async (dispatch: AppDispatch, getState:
 }
 
 // Oracle Latest Price
-export const GET_ORACLE_AGGREGATOR_LATEST_PRICE = 'GET_ORACLE_AGGREGATOR_LATEST_PRICE'
-export const getOracleAggregatorLatestPrice = () => async (dispatch: AppDispatch, getState: GetState) => {
+export const getOracleAggregatorLatestPrice = async (oracleId: string) => {
   try {
     const storage = await fetchFromIndexer(
       ORACLE_AGGREGATOR_LATEST_PRICE_QUERY,
@@ -223,12 +222,9 @@ export const getOracleAggregatorLatestPrice = () => async (dispatch: AppDispatch
     )
 
     const oracleLatestPrice = normalizeOracleLatestPrice(storage)
-
-    dispatch({
-      type: GET_ORACLE_AGGREGATOR_LATEST_PRICE,
-      oracleLatestPrice,
-    })
+    return oracleLatestPrice
   } catch (e) {
     console.error('getOracleAggregatorLatestPrice error: ', e)
+    return null
   }
 }

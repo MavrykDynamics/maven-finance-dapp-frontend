@@ -13,7 +13,7 @@ import { normalizeVaultsStorage, getVaultTokensSymbols } from './Vaults.helpers'
 import { LendingControllerGQL } from 'utils/TypesAndInterfaces/Vaults'
 import { setContractAddress } from 'reducers/actions/contractAddresses.actions'
 import { getHeadData } from 'app/App.components/Menu/Menu.actions'
-import { getOracleAggregatorLatestPrice } from 'pages/Satellites/Satellites.actions'
+import { getOracleLatestPrices } from './Vaults.helpers'
 
 // Vaults Store
 export const GET_VAULTS_STORAGE = 'GET_VAULTS_STORAGE'
@@ -24,18 +24,18 @@ export const getVaultsStorage = () => async (dispatch: AppDispatch, getState: Ge
       VAULTS_STORAGE_QUERY_NAME,
       VAULTS_STORAGE_QUERY_VARIABLE,
     )
+    const lendingController: LendingControllerGQL = storage?.lending_controller[0] || {}
 
-    Promise.all([await dispatch(getHeadData()), await dispatch(getOracleAggregatorLatestPrice())])
-
+    const [ , oracleLatestPrices ] = await Promise.all([
+      dispatch(getHeadData()),
+      getOracleLatestPrices(lendingController.vaults)
+    ])
 
     const {
       tokens: { dipDupTokens },
       wallet: { accountPkh },
       preferences: { headData },
-      oracles: { oracleLatestPrice }
     } = getState()
-
-    const lendingController: LendingControllerGQL = storage?.lending_controller[0] || {}
 
     // fetching rate of the presented tokens insisde loans
     const vaultsTokensRate = (
@@ -65,7 +65,7 @@ export const getVaultsStorage = () => async (dispatch: AppDispatch, getState: Ge
       currentBlockLevel: headData?.level,
       liquidationDelayInMinutes: lendingController.liquidation_delay_in_minutes,
       lendingController,
-      oracleLatestPrice,
+      oracleLatestPrices,
     })
  
     dispatch(setContractAddress('vaultAddress', lendingController.address))  
