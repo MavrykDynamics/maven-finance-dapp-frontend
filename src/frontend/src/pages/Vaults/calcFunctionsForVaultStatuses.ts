@@ -121,6 +121,13 @@ export function checkIfVaultIsAtRisk(loanOutstandingTotal: number, loanTokenOrac
 
   const loanTokenLatestPrice = oracleLatestPrices[loanTokenOracleAddress]
   const loanOutstandingInUSD = (loanOutstandingTotal) * loanTokenLatestPrice
+
+  if (totalCollateralValueInUSD === 0 && loanOutstandingInUSD > 0) {
+    return true
+  } else  if (totalCollateralValueInUSD === 0 && loanOutstandingInUSD === 0) {
+    return false
+  }
+
   const isBelowCollateralRatio  = loanOutstandingInUSD < (collateralRatio * totalCollateralValueInUSD) / 1000
   const isAboveLiquidationRatio = loanOutstandingInUSD > (liquidationRatio * loanOutstandingInUSD) / 1000
   return isBelowCollateralRatio && isAboveLiquidationRatio
