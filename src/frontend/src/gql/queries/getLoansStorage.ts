@@ -75,6 +75,7 @@ export const LOANS_QUERY = `query GetLoansStorage {
         loan_token {
           loan_token_address
           loan_token_name
+          lp_token_address
         }
         
         loan_principal_total

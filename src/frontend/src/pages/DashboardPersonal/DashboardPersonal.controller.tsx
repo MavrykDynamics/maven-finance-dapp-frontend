@@ -1,10 +1,12 @@
 import { useParams } from 'react-router'
-import { useCallback, useEffect, useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, Redirect, Route, Switch } from 'react-router-dom'
 
+import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { getGovernanceStorage } from 'pages/Governance/Governance.actions'
 import { getDelegationStorage, getOracleStorage } from 'pages/Satellites/Satellites.actions'
+import { updateUserData } from 'pages/Doorman/Doorman.actions'
 import { getEmergencyGovernanceStorage } from 'pages/EmergencyGovernance/EmergencyGovernance.actions'
 import { isValidId, PORTFOLIO_TAB_ID, DELEGATION_TAB_ID, SATELLITE_TAB_ID } from './DashboardPersonal.utils'
 
@@ -14,12 +16,10 @@ import DashboardPersonalEarningsHistory from './DashboardPersonalComponents/Dash
 import DashboardPersonalMyRewards from './DashboardPersonalComponents/DashboardPersonalMyRewards'
 import DelegationTab from './DashboardPersonalComponents/DelegationTab'
 import PortfolioTab from './DashboardPersonalComponents/PortfolioTab'
+import { DashboardPersonalStyled } from './DashboardPersonal.style'
 import SatelliteTab from './DashboardPersonalComponents/SatelliteTab'
 
 import { State } from 'reducers'
-import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
-import { updateUserData } from 'pages/Doorman/Doorman.actions'
-import { DashboardPersonalStyled } from './DashboardPersonal.style'
 
 const DashboardPersonal = () => {
   const dispatch = useDispatch()
@@ -31,23 +31,14 @@ const DashboardPersonal = () => {
   const { exchangeRate: mvkRate } = useSelector((state: State) => state.mvkToken)
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const {
-    user: {
-      myDoormanRewardsData,
-      myFarmRewardsData,
-      mySatelliteRewardsData,
-      myMvkTokenBalance,
-      mySMvkTokenBalance,
-      myXTZTokenBalance,
-      mytzBTCTokenBalance,
-      isSatellite,
-    },
+    user: { myMvkTokenBalance, mySMvkTokenBalance, myXTZTokenBalance, mytzBTCTokenBalance, isSatellite },
   } = useSelector((state: State) => state.wallet)
 
   const claimRewards = useCallback(() => {
     console.log('claim rewards in DashboardPersonal')
   }, [])
 
-  const { isLoading: isGenDataLoading } = useDataLoader(async () => {
+  useDataLoader(async () => {
     try {
       await dispatch(getGovernanceStorage())
       await dispatch(getOracleStorage())

@@ -10,6 +10,7 @@ import { ACTION_PRIMARY, ACTION_SIMPLE, TRANSPARENT } from 'app/App.components/B
 import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { Chart } from 'app/App.components/Chart/Chart.view'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { SlidingTabButtons, TabItem } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import Icon from 'app/App.components/Icon/Icon.view'
 
@@ -21,7 +22,6 @@ import {
   PortfolioWalletStyled,
   PortfolioChartStyled,
 } from './DashboardPersonalComponents.style'
-import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 
 type PortfolioTabProps = {
   xtzAmount: number

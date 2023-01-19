@@ -1,18 +1,21 @@
-import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
-import { Button } from 'app/App.components/Button/Button.controller'
-import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import Icon from 'app/App.components/Icon/Icon.view'
-import dayjs from 'dayjs'
-import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
-import { getLoansStorage } from 'pages/Loans/Loans.actions'
 import { useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
+
 import { State } from 'reducers'
 import { LoanTokenType } from 'utils/TypesAndInterfaces/Loans'
+
+import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { getLoansStorage } from 'pages/Loans/Loans.actions'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
+
+import Icon from 'app/App.components/Icon/Icon.view'
+import { Button } from 'app/App.components/Button/Button.controller'
+import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+
 import { StatBlock } from '../Dashboard.style'
 import { LendingContentStyled, TabWrapperStyled, EmptyContainer } from './DashboardTabs.style'
+import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
 
 export const emptyContainer = (
   <EmptyContainer>
@@ -44,15 +47,16 @@ export const LendingTab = () => {
         ) => {
           acc.lendingSuppliers += suppliers
           acc.borrowers += borrowers
+          acc.borrowing24hVolume += borrowing24hVolume
+          acc.lending24hVolume += lending24hVolume
+
           if (acc.prevMostBorrowed < totalBorrowed) {
             acc.prevMostBorrowed = totalBorrowed
-            acc.borrowing24hVolume += borrowing24hVolume
             acc.mostBorrowedAsset = loanTokenData as LoanTokenType['loanTokenData']
           }
 
           if (acc.prevMostLended < totalLended) {
             acc.prevMostLended = totalLended
-            acc.lending24hVolume += lending24hVolume
             acc.mostLendedAsset = loanTokenData as LoanTokenType['loanTokenData']
           }
           return acc

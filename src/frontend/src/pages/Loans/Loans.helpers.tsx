@@ -137,7 +137,7 @@ const getChartData = (
       if (!loan_token) return acc
       const assetMetadata = getAssetMetadata(
         loan_token.loan_token_name,
-        loan_token.loan_token_address,
+        loan_token.lp_token_address,
         dipDupTokens,
         tokensRates,
       )
@@ -281,7 +281,7 @@ const getBorrowings = (
 
       const vaultAsset = getAssetMetadata(
         vault.loan_token.loan_token_name,
-        vault.loan_token.loan_token_address,
+        vault.loan_token.lp_token_address,
         dipDupTokens,
         tokensRates,
       )
@@ -347,6 +347,7 @@ export const normalizeLoans = ({
   const interestRateDecimals = storage?.interest_rate_decimals ?? 0
   const loanTokens = storage?.loan_tokens?.reduce<Array<LoanTokenType>>((acc, loanToken) => {
     const {
+      lp_token_address,
       loan_token_address,
       loan_token_name,
       utilisation_rate,
@@ -360,7 +361,7 @@ export const normalizeLoans = ({
     } = loanToken
 
     const isXTZ = isTezosAsset(loan_token_name)
-    const loanTokenMetadata = getAssetMetadata(loan_token_name, loan_token_address, dipDupTokens, tokensRate)
+    const loanTokenMetadata = getAssetMetadata(loan_token_name, lp_token_address, dipDupTokens, tokensRate)
     const appropriateMtokenData = mTokens.find(({ loan_token_name: m_token_name }) => loan_token_name === m_token_name)
     if (!loanTokenMetadata) return acc
 

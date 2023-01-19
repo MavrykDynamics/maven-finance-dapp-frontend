@@ -1,5 +1,5 @@
 import {
-  DotsLoaderWrapper,
+  ClockLoaderWrapper,
   LoaderShineTextAnimation,
   LoaderStyled,
   LoaderStyledWithBackdrop,
@@ -50,7 +50,7 @@ export const ClockLoader = ({
   fillColor?: string
 }) => {
   return (
-    <DotsLoaderWrapper
+    <ClockLoaderWrapper
       width={width}
       height={height}
       version="1.1"
@@ -101,7 +101,7 @@ export const ClockLoader = ({
           repeatCount="indefinite"
         />
       </line>
-    </DotsLoaderWrapper>
+    </ClockLoaderWrapper>
   )
 }
 

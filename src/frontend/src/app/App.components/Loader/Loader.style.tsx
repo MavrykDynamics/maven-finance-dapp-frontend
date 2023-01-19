@@ -275,7 +275,7 @@ export const SpinnerCircleLoaderStyled = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const DotsLoaderWrapper = styled.svg<{ width: number; height: number }>`
+export const ClockLoaderWrapper = styled.svg<{ width: number; height: number }>`
   width: ${({ width }) => width}px;
   height: ${({ height }) => height}px;
   display: inline-block;
