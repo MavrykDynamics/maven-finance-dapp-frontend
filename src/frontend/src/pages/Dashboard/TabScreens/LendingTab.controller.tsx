@@ -2,6 +2,7 @@ import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import Icon from 'app/App.components/Icon/Icon.view'
+import dayjs from 'dayjs'
 import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
 import { getLoansStorage } from 'pages/Loans/Loans.actions'
 import { useMemo } from 'react'
@@ -25,39 +26,49 @@ export const LendingTab = () => {
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const { loanTokens, chartsData } = useSelector((state: State) => state.loans)
 
-  const { lendingSuppliers, borrowers, mostBorrowedAsset, mostLendedAsset } = useMemo(() => {
-    return loanTokens.reduce<{
-      lendingSuppliers: number
-      borrowers: number
-      mostBorrowedAsset: LoanTokenType['loanTokenData'] | null
-      mostLendedAsset: LoanTokenType['loanTokenData'] | null
-      prevMostBorrowed: number
-      prevMostLended: number
-    }>(
-      (acc, { suppliers, borrowers, totalBorrowed, totalLended, loanTokenData }) => {
-        acc.lendingSuppliers += suppliers
-        acc.borrowers += borrowers
-        if (acc.prevMostBorrowed < totalBorrowed) {
-          acc.prevMostBorrowed = totalBorrowed
-          acc.mostBorrowedAsset = loanTokenData as LoanTokenType['loanTokenData']
-        }
+  const { lendingSuppliers, borrowers, mostBorrowedAsset, mostLendedAsset, lending24hVolume, borrowing24hVolume } =
+    useMemo(() => {
+      return loanTokens.reduce<{
+        lendingSuppliers: number
+        borrowers: number
+        mostBorrowedAsset: LoanTokenType['loanTokenData'] | null
+        mostLendedAsset: LoanTokenType['loanTokenData'] | null
+        prevMostBorrowed: number
+        borrowing24hVolume: number
+        lending24hVolume: number
+        prevMostLended: number
+      }>(
+        (
+          acc,
+          { suppliers, borrowers, totalBorrowed, totalLended, loanTokenData, lending24hVolume, borrowing24hVolume },
+        ) => {
+          acc.lendingSuppliers += suppliers
+          acc.borrowers += borrowers
+          if (acc.prevMostBorrowed < totalBorrowed) {
+            acc.prevMostBorrowed = totalBorrowed
+            acc.borrowing24hVolume += borrowing24hVolume
+            acc.mostBorrowedAsset = loanTokenData as LoanTokenType['loanTokenData']
+          }
 
-        if (acc.prevMostLended < totalLended) {
-          acc.prevMostLended = totalLended
-          acc.mostLendedAsset = loanTokenData as LoanTokenType['loanTokenData']
-        }
-        return acc
-      },
-      {
-        lendingSuppliers: 0,
-        borrowers: 0,
-        prevMostBorrowed: 0,
-        prevMostLended: 0,
-        mostBorrowedAsset: null,
-        mostLendedAsset: null,
-      },
-    )
-  }, [loanTokens])
+          if (acc.prevMostLended < totalLended) {
+            acc.prevMostLended = totalLended
+            acc.lending24hVolume += lending24hVolume
+            acc.mostLendedAsset = loanTokenData as LoanTokenType['loanTokenData']
+          }
+          return acc
+        },
+        {
+          lendingSuppliers: 0,
+          borrowers: 0,
+          lending24hVolume: 0,
+          borrowing24hVolume: 0,
+          prevMostBorrowed: 0,
+          prevMostLended: 0,
+          mostBorrowedAsset: null,
+          mostLendedAsset: null,
+        },
+      )
+    }, [loanTokens])
 
   const { isLoading } = useDataLoader(async () => {
     try {
@@ -94,7 +105,7 @@ export const LendingTab = () => {
             <StatBlock>
               <div className="name">24H Supply Vol</div>
               <div className="value">
-                <CommaNumber beginningText="$" value={23452342342} />
+                <CommaNumber beginningText="$" value={lending24hVolume} />
               </div>
             </StatBlock>
             <StatBlock>
@@ -133,7 +144,7 @@ export const LendingTab = () => {
             <StatBlock>
               <div className="name">24H Borrow Vol</div>
               <div className="value">
-                <CommaNumber beginningText="$" value={23452342342} />
+                <CommaNumber beginningText="$" value={borrowing24hVolume} />
               </div>
             </StatBlock>
             <StatBlock>

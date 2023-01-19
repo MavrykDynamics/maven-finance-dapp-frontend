@@ -1,3 +1,4 @@
+import dayjs from 'dayjs'
 import { UTCTimestamp } from 'lightweight-charts'
 import { State } from 'reducers'
 import { UserState } from 'reducers/wallet'
@@ -66,6 +67,7 @@ export const getAssetMetadata = (
 }
 
 // Normalizing transaction history
+const DAY_IN_MS = 86400000
 const getTransactionHistory = (
   history_data: Lending_Controller_History_Data[],
   dipDupTokens: State['tokens']['dipDupTokens'],
@@ -75,13 +77,15 @@ const getTransactionHistory = (
     transactionHistory: LoanTokenType['transactionHistory']
     totalBorrowed: number
     totalLended: number
+    lending24hVolume: number
+    borrowing24hVolume: number
   }>(
     (acc, { type, amount, timestamp, sender_id, operation_hash, loan_token }) => {
       if (!loan_token) return acc
 
       const assetMetadata = getAssetMetadata(
         loan_token.loan_token_name,
-        loan_token.loan_token_address,
+        loan_token.lp_token_address,
         dipDupTokens,
         tokensRates,
       )
@@ -102,16 +106,24 @@ const getTransactionHistory = (
 
         if (type === 1 || type === 0) {
           acc.totalLended += transformedAmount
+
+          if (dayjs().diff(timestamp) <= DAY_IN_MS) {
+            acc.lending24hVolume += transformedAmount
+          }
         }
 
         if (type === 3 || type === 2) {
           acc.totalBorrowed += transformedAmount
+
+          if (dayjs().diff(timestamp) <= DAY_IN_MS) {
+            acc.borrowing24hVolume += transformedAmount
+          }
         }
       }
 
       return acc
     },
-    { transactionHistory: [], totalBorrowed: 0, totalLended: 0 },
+    { transactionHistory: [], totalBorrowed: 0, totalLended: 0, lending24hVolume: 0, borrowing24hVolume: 0 },
   )
 
 // Normalizing chart data
@@ -329,6 +341,7 @@ export const normalizeLoans = ({
   userAssetBalances: Record<string, number>
 }) => {
   const interestTreasuryShare = calcWithoutDecimals(storage?.interest_treasury_share, storage.decimals)
+  const interestRateDecimals = storage?.interest_rate_decimals ?? 0
   const loanTokens = storage?.loan_tokens?.reduce<Array<LoanTokenType>>((acc, loanToken) => {
     const {
       loan_token_address,
@@ -348,11 +361,8 @@ export const normalizeLoans = ({
     const appropriateMtokenData = mTokens.find(({ loan_token_name: m_token_name }) => loan_token_name === m_token_name)
     if (!loanTokenMetadata) return acc
 
-    const { transactionHistory, totalBorrowed, totalLended } = getTransactionHistory(
-      history_data,
-      dipDupTokens,
-      tokensRate,
-    )
+    const { transactionHistory, totalBorrowed, totalLended, lending24hVolume, borrowing24hVolume } =
+      getTransactionHistory(history_data, dipDupTokens, tokensRate)
     const {
       myBorrowingList,
       permissinedBorrowingList,
@@ -383,7 +393,7 @@ export const normalizeLoans = ({
         permissionedBorrowingList: permissinedBorrowingList,
         lendingItem,
         transactionHistory,
-        utilisationRate: utilisation_rate,
+        utilisationRate: utilisation_rate / 10 ** interestRateDecimals,
 
         availableLiquidity,
         totalLended: totalLended,
@@ -393,6 +403,8 @@ export const normalizeLoans = ({
 
         borrowers: aggregate?.count ?? 0,
         suppliers: appropriateMtokenData?.accounts.length ?? 0,
+        lending24hVolume,
+        borrowing24hVolume,
 
         totalFeesEarned: userMTokens?.reduce((acc, { rewards_earned }) => acc + rewards_earned, 0) ?? 0,
         collateralFactor: storage.collateral_ratio / 10,
@@ -471,7 +483,17 @@ export const normalizeUserLending = ({
     userLendings: Array<UserLendObjType>
     userBorrowing: Array<UserLendObjType>
   }>(
-    (acc, { type, loan_token, id, amount }) => {
+    (
+      acc,
+      {
+        type,
+        loan_token,
+        id,
+        amount,
+        operation_hash,
+        lending_controller: { interest_rate_decimals, interest_treasury_share, decimals },
+      },
+    ) => {
       if (!loan_token) return acc
       const assetData = getAssetMetadata(
         loan_token.loan_token_name,
@@ -490,9 +512,12 @@ export const normalizeUserLending = ({
             assetName: assetData.name,
             id,
             amount: (amount / 10 ** assetData.decimals) * assetData.rate,
-            apy: 0,
+            annualPecentage: calcLendingAPY(
+              calcWithoutDecimals(loan_token.current_interest_rate, interest_rate_decimals),
+              calcWithoutDecimals(interest_treasury_share, decimals),
+            ),
             earned: 0,
-            mvkBonus: 0,
+            operationHash: operation_hash,
           })
           break
         case 2:
@@ -502,12 +527,13 @@ export const normalizeUserLending = ({
             assetName: assetData.name,
             id,
             amount: (amount / 10 ** assetData.decimals) * assetData.rate,
-            apy: 0,
+            annualPecentage: calcWithoutDecimals(loan_token.current_interest_rate, interest_rate_decimals) * 100,
             earned: 0,
-            mvkBonus: 0,
+            operationHash: operation_hash,
           })
           break
       }
+
       return acc
     },
     { userLendings: [], userBorrowing: [] },

@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 import { State } from 'reducers'
 
 import { CHART_TEST_DATA } from '../tabs.const'
-import { ACTION_PRIMARY, ACTION_SIMPLE } from 'app/App.components/Button/Button.constants'
+import { ACTION_PRIMARY, ACTION_SIMPLE, TRANSPARENT } from 'app/App.components/Button/Button.constants'
 
 import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
@@ -21,12 +21,14 @@ import {
   PortfolioWalletStyled,
   PortfolioChartStyled,
 } from './DashboardPersonalComponents.style'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 
 type PortfolioTabProps = {
   xtzAmount: number
   tzBTCAmount: number
   sMVKAmount: number
   notsMVKAmount: number
+  isUserLoansLoading: boolean
 }
 
 const TOGGLE_VALUES: TabItem[] = [
@@ -37,7 +39,7 @@ const TOGGLE_VALUES: TabItem[] = [
   { id: 6, text: 'All', active: false },
 ]
 
-const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount }: PortfolioTabProps) => {
+const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUserLoansLoading }: PortfolioTabProps) => {
   const { exchangeRate } = useSelector((state: State) => state.mvkToken)
   const {
     user: {
@@ -137,11 +139,15 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount }: Por
         <GovRightContainerTitleArea>
           <h2>Lending</h2>
         </GovRightContainerTitleArea>
-        {userLendings.length ? (
+        {isUserLoansLoading ? (
+          <div className="loader-wrapper">
+            <ClockLoader />
+          </div>
+        ) : userLendings.length ? (
           <div className="list scroll-block">
-            {userLendings.map(({ assetIcon, amount, assetName, apy, earned, mvkBonus, id }) => {
+            {userLendings.map(({ assetIcon, amount, assetName, annualPecentage, earned, operationHash, id }) => {
               return (
-                <ListItem columsTemplate="60px 0.9fr 0.7fr 0.8fr 0.7fr" key={id}>
+                <ListItem columsTemplate="60px 0.9fr 0.7fr 0.8fr 0.7fr" key={id + operationHash}>
                   {assetIcon ? (
                     <div className="image-wrapper">
                       <img src={assetIcon} alt="" />
@@ -158,7 +164,7 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount }: Por
                   <div className="list-part">
                     <div className="name">APY</div>
                     <div className="value">
-                      <CommaNumber value={apy} endingText="%" />
+                      <CommaNumber value={annualPecentage} endingText="%" />
                     </div>
                   </div>
                   <div className="list-part">
@@ -167,11 +173,10 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount }: Por
                       <CommaNumber value={earned} />
                     </div>
                   </div>
-                  <div className="list-part">
-                    <div className="name">MVK Bonus</div>
-                    <div className="value">
-                      <CommaNumber value={mvkBonus} />
-                    </div>
+                  <div className="list-part  view-tx-link">
+                    <Link to={{ pathname: `https://ghostnet.tzkt.io/${operationHash}` }} target="_blank">
+                      <Button text="View TX" kind={TRANSPARENT} className="link" />
+                    </Link>
                   </div>
                 </ListItem>
               )
@@ -190,11 +195,15 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount }: Por
         <GovRightContainerTitleArea>
           <h2>Borrowing</h2>
         </GovRightContainerTitleArea>
-        {userBorrowing.length ? (
+        {isUserLoansLoading ? (
+          <div className="loader-wrapper">
+            <ClockLoader />
+          </div>
+        ) : userBorrowing.length ? (
           <div className="list scroll-block">
-            {userBorrowing.map(({ assetIcon, assetName, amount, apy, earned, mvkBonus, id }, idx) => {
+            {userBorrowing.map(({ assetIcon, assetName, amount, annualPecentage, earned, operationHash, id }) => {
               return (
-                <ListItem columsTemplate="60px 0.9fr 0.7fr 0.8fr 0.7fr" key={id}>
+                <ListItem columsTemplate="60px 0.9fr 0.7fr 0.8fr 0.7fr" key={id + operationHash}>
                   {assetIcon ? (
                     <div className="image-wrapper">
                       <img src={assetIcon} alt="" />
@@ -210,9 +219,9 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount }: Por
                     </div>
                   </div>
                   <div className="list-part">
-                    <div className="name">APY</div>
+                    <div className="name">APR</div>
                     <div className="value">
-                      <CommaNumber value={apy} endingText="%" />
+                      <CommaNumber value={annualPecentage} endingText="%" />
                     </div>
                   </div>
                   <div className="list-part">
@@ -221,11 +230,10 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount }: Por
                       <CommaNumber value={earned} />
                     </div>
                   </div>
-                  <div className="list-part">
-                    <div className="name">MVK Bonus</div>
-                    <div className="value">
-                      <CommaNumber value={mvkBonus} />
-                    </div>
+                  <div className="list-part view-tx-link">
+                    <Link to={{ pathname: `https://ghostnet.tzkt.io/${operationHash}` }} target="_blank">
+                      <Button text="View TX" kind={TRANSPARENT} className="link" />
+                    </Link>
                   </div>
                 </ListItem>
               )

@@ -1,21 +1,6 @@
 import { ChartPlotType } from 'app/App.components/Chart/Chart.view'
-import { assertName } from 'graphql'
-import {
-  ADD_COLLATERAL_MODAL_ID,
-  ADD_LENDING_ASSET_MODAL_ID,
-  BORROW_ASSET_MODAL_ID,
-  CHANGE_BAKER_MODAL_ID,
-  CREATE_NEW_VAULT_MODAL_ID,
-  MANAGE_PERMISSIONS_MODAL_ID,
-  REMOVE_ASSET_LENDING_MODAL_ID,
-  WITHDRAW_COLLATERAL_MODAL_ID,
-  UPDATE_MVK_OPERATORS_MODAL_ID,
-  REPAY_AND_CLOSE_MODAL_ID,
-  REPAY_MODAL_ID,
-  ADD_NEW_COLLATERAL_MODAL_ID,
-} from 'pages/Loans/Loans.const'
 import { normalizeLoans } from 'pages/Loans/Loans.helpers'
-import { Lending_Controller, Lending_Controller_Vault } from 'utils/generated/graphqlTypes'
+import { Lending_Controller } from 'utils/generated/graphqlTypes'
 
 export type LoansGQL = Omit<Lending_Controller, '__typename'>
 export type LoansStorage = Awaited<ReturnType<typeof normalizeLoans>>
@@ -54,6 +39,8 @@ export type LoanTokenType = {
   collateralFactor: number
   reserveFactor: number
   reserveAmount: number
+  lending24hVolume: number
+  borrowing24hVolume: number
 }
 
 export type LoansChartsDataType = {
@@ -130,7 +117,7 @@ export type UserLendObjType = {
   assetName: string
   amount: number
   id: number
-  apy: number
+  annualPecentage: number
   earned: number
-  mvkBonus: number
+  operationHash: string
 }

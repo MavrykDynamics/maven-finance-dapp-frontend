@@ -5,7 +5,7 @@ export const LOANS_QUERY = `query GetLoansStorage {
     interest_treasury_share
     interest_rate_decimals
     decimals
-    history_data {
+    history_data(where: {type: {_in: ["0", "1", "2", "3"]}}) {
       type
       amount
       timestamp
@@ -35,14 +35,16 @@ export const LOANS_QUERY = `query GetLoansStorage {
       reserve_ratio
       current_interest_rate
 
-      history_data {
+      history_data(where: {type: {_in: ["0", "1", "2", "3"]}}) {
         type
         amount
         timestamp
         operation_hash
         sender_id
         loan_token {
+          loan_token_name
           loan_token_address
+          lp_token_address
         }
       }
 
@@ -107,19 +109,19 @@ query GetLendBorrowHistoryPerUser($userAddress: String = "", $_in: [smallint!] =
     lending_controller_history_data_sender(where: {lending_controller: {mock_time: {_eq: true}}, type: {_in: $_in}}, order_by: {type: asc, timestamp: asc}) {
       type
       timestamp
-      sender_id
       operation_hash
-      loan_token_id
-      level
-      lending_controller_id
-      id
       amount
-      vault_id
       loan_token {
         lp_token_address
         loan_token_name
         loan_token_address
         loan_token_contract_standard
+        current_interest_rate
+      }
+      lending_controller {
+        interest_rate_decimals
+        interest_treasury_share
+        decimals
       }
     }
   }

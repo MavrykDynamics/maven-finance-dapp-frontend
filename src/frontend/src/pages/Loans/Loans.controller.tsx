@@ -60,6 +60,7 @@ export const Loans = () => {
           hideXAxis: true,
           hideYAxis: true,
         }}
+        numberOfItemsToDisplay={3}
       />
     </div>
   )
@@ -82,9 +83,11 @@ export const Loans = () => {
         settings={{
           width: 372,
           height: 182,
+
           hideXAxis: true,
           hideYAxis: true,
         }}
+        numberOfItemsToDisplay={3}
       />
     </div>
   )
@@ -92,7 +95,6 @@ export const Loans = () => {
   return (
     <Page>
       <PageHeader page={'lending'} />
-      {isLoading ? 'loadigng' : null}
       <LoansStyled>
         <MarketChartsContainer>
           {lendingPart}
