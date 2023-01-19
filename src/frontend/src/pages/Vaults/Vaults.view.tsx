@@ -84,7 +84,7 @@ export const VaultsView = () => {
     }
   }, [])
 
-  const [filteredData, setFilteredData] = useState<string[]>([])
+  const [vaultIds, setVaultIds] = useState<string[]>([])
   const assets = useMemo(() => getVaultAssets(vaultsMapper), [vaultsMapper])
 
   const currentListName = tabId === tabsId.ALL ? VAULTS_LIST_NAME : MY_VAULTS_LIST_NAME
@@ -101,8 +101,8 @@ export const VaultsView = () => {
 
   const paginatedVaultsList = useMemo(() => {
     const [from, to] = calculateSlicePositions(currentPage, currentListName)
-    return filteredData?.slice(from, to)
-  }, [currentListName, currentPage, filteredData])
+    return vaultIds?.slice(from, to)
+  }, [currentListName, currentPage, vaultIds])
 
   const handleLiquidateVault = (vaultId: number, vaultOwner: string, liquidateAmount: number) => {
     dispatch(liquidateVault(vaultId, vaultOwner, liquidateAmount))
@@ -113,7 +113,7 @@ export const VaultsView = () => {
   }
 
   useEffect(() => {
-    setFilteredData(
+    setVaultIds(
       tabId === tabsId.ALL
       ? allVaultsIds
       : myVaultsIds
@@ -128,7 +128,13 @@ export const VaultsView = () => {
         className="tabSwitcher"
       />
 
-      <VaultsSearchFilter assets={assets} statuses={ListOfStatuses} />
+      <VaultsSearchFilter
+        assets={assets}
+        statuses={ListOfStatuses}
+        vaultsMapper={vaultsMapper}
+        vaultIds={allVaultsIds}
+        setVaultIds={setVaultIds}
+      />
 
       {paginatedVaultsList.map((item) => {
         const isOwner = vaultsMapper[item].ownerId === accountPkh
@@ -144,7 +150,7 @@ export const VaultsView = () => {
       )})}
 
       <Pagination
-        itemsCount={filteredData.length}
+        itemsCount={vaultIds.length}
         listName={currentListName}
       />
     </VaultsStyled>

@@ -14,6 +14,7 @@ import { sortByCategory } from 'utils/sortByCategory'
 
 // types
 import { State } from '../../../reducers'
+import { VaultType } from 'utils/TypesAndInterfaces/Vaults'
 
 const dropdowns = {
   STATUSES: 'STATUSES',
@@ -26,9 +27,12 @@ type AssetCategory = 'loanAssets' | 'collateralAssets'
 type Props = {
   statuses: string[]
   assets: Record<AssetCategory, string[]>
+  vaultsMapper: Record<string, VaultType>
+  vaultIds: string[]
+  setVaultIds: (arg: string[]) => void
 }
 
-export const VaultsSearchFilter = ({ statuses, assets }: Props) => {
+export const VaultsSearchFilter = ({ statuses, assets, vaultsMapper, vaultIds, setVaultIds }: Props) => {
   const dispatch = useDispatch()
   const { wallet, tezos, accountPkh } = useSelector((state: State) => state.wallet)
 
@@ -36,6 +40,9 @@ export const VaultsSearchFilter = ({ statuses, assets }: Props) => {
   const [sortedData, setSortedData] = useState<unknown[]>([])
 
   const [dropdownStatus, setDropdownStatus] = useState<{[key:string]: boolean}>({})
+  // const [status, setStatus] = useState('')
+  // const [collateralAsset, sesCollateralAsset] = useState('')
+  // const [loanAsset, setLoanAsset] = useState('')
   const [chosenDdItem, setChosenDdItem] = useState<{[key:string]: string}>({})
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -59,16 +66,49 @@ export const VaultsSearchFilter = ({ statuses, assets }: Props) => {
       [name]: !prev[name]
     }))
 
-    setChosenDdItem((prev) => ({
-      ...prev,
+    const updatedChosenDdItem = {
+      ...chosenDdItem,
       [name]: selectedOption
-    }))
+    }
+
+    setChosenDdItem(updatedChosenDdItem)
 
     if (selectedOption !== '' && selectedOption !== chosenDdItem[name]) {
-      setSortedData((data: unknown[]) => {
-        // return sortByCategory(data, selectedOption)
-        return data
-      })
+      let filteredVaultIds: string[] = [...vaultIds]
+
+      // filter by collateral asset
+      if (updatedChosenDdItem[dropdowns.COLLATERAL]) {
+        filteredVaultIds = vaultIds.filter((vaultId) => {
+          const vault = vaultsMapper[vaultId]
+  
+          if (vault.collateralData.length) {
+            const isFound = vault.collateralData.some(({ assetSymbol }) => {
+              return assetSymbol?.toLowerCase() === updatedChosenDdItem[dropdowns.COLLATERAL].toLowerCase()
+            })
+  
+            return isFound
+          }
+  
+          return false
+        })
+      }
+
+      // filter by loan asset
+      if (updatedChosenDdItem[dropdowns.LOAN]) {
+        filteredVaultIds = filteredVaultIds.filter((vaultId) => {
+          const vault = vaultsMapper[vaultId]
+
+          if (vault.borrowedAsset.assetSymbol) {
+            const isFound = vault.borrowedAsset.assetSymbol?.toLowerCase() === updatedChosenDdItem[dropdowns.LOAN].toLowerCase()
+  
+            return isFound
+          }
+  
+          return false
+        })
+      }
+  
+      setVaultIds(filteredVaultIds)
     }
   }
 
