@@ -16,16 +16,19 @@ import { sortByCategory } from 'utils/sortByCategory'
 import { State } from '../../../reducers'
 
 const dropdowns = {
-  statuses: 'STATUSES',
-  sizes: 'SIZES',
-  assets: 'ASSETS',
+  STATUSES: 'STATUSES',
+  COLLATERAL: 'COLLATERAL',
+  LOAN: 'LOAN',
 }
+
+type AssetCategory = 'loanAssets' | 'collateralAssets'
 
 type Props = {
   statuses: string[]
+  assets: Record<AssetCategory, string[]>
 }
 
-export const VaultsSearchFilter = ({ statuses }: Props) => {
+export const VaultsSearchFilter = ({ statuses, assets }: Props) => {
   const dispatch = useDispatch()
   const { wallet, tezos, accountPkh } = useSelector((state: State) => state.wallet)
 
@@ -92,31 +95,31 @@ export const VaultsSearchFilter = ({ statuses }: Props) => {
         <DropDown
           className="dd-item"
           placeholder="Statuses"
-          isOpen={dropdownStatus[dropdowns.statuses]}
-          setIsOpen={handleDropdownStatus(dropdowns.statuses)}
-          itemSelected={chosenDdItem[dropdowns.statuses]}
+          isOpen={dropdownStatus[dropdowns.STATUSES]}
+          setIsOpen={handleDropdownStatus(dropdowns.STATUSES)}
+          itemSelected={chosenDdItem[dropdowns.STATUSES]}
           items={statuses}
-          clickOnItem={handleDropdownSelect(dropdowns.statuses)}
+          clickOnItem={handleDropdownSelect(dropdowns.STATUSES)}
         />
 
         <DropDown
           className="dd-item"
-          placeholder="All Sizes"
-          isOpen={dropdownStatus[dropdowns.sizes]}
-          setIsOpen={handleDropdownStatus(dropdowns.sizes)}
-          itemSelected={chosenDdItem[dropdowns.sizes]}
-          items={['one size', 'two size']}
-          clickOnItem={handleDropdownSelect(dropdowns.sizes)}
+          placeholder="Сollateral Asset"
+          isOpen={dropdownStatus[dropdowns.COLLATERAL]}
+          setIsOpen={handleDropdownStatus(dropdowns.COLLATERAL)}
+          itemSelected={chosenDdItem[dropdowns.COLLATERAL]}
+          items={assets.collateralAssets}
+          clickOnItem={handleDropdownSelect(dropdowns.COLLATERAL)}
         />
 
         <DropDown
           className="dd-item"
-          placeholder="All Assets"
-          isOpen={dropdownStatus[dropdowns.assets]}
-          setIsOpen={handleDropdownStatus(dropdowns.assets)}
-          itemSelected={chosenDdItem[dropdowns.assets]}
-          items={['one asset', 'two asset']}
-          clickOnItem={handleDropdownSelect(dropdowns.assets)}
+          placeholder="Loan Asset"
+          isOpen={dropdownStatus[dropdowns.LOAN]}
+          setIsOpen={handleDropdownStatus(dropdowns.LOAN)}
+          itemSelected={chosenDdItem[dropdowns.LOAN]}
+          items={assets.loanAssets}
+          clickOnItem={handleDropdownSelect(dropdowns.LOAN)}
         />
       </DropdownContainer>
     </VaultsSearchFilterStyled>

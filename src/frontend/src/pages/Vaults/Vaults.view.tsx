@@ -16,6 +16,7 @@ import { VAULTS_LIST_NAME, MY_VAULTS_LIST_NAME } from 'pages/FinacialRequests/Pa
 import { getPageNumber } from 'pages/FinacialRequests/FinancialRequests.helpers'
 import { calculateSlicePositions } from 'pages/FinacialRequests/Pagination/pagination.consts'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
+import { getVaultAssets } from './Vaults.helpers'
 
 // types
 import { State } from '../../reducers'
@@ -84,6 +85,7 @@ export const VaultsView = () => {
   }, [])
 
   const [filteredData, setFilteredData] = useState<string[]>([])
+  const assets = useMemo(() => getVaultAssets(vaultsMapper), [vaultsMapper])
 
   const currentListName = tabId === tabsId.ALL ? VAULTS_LIST_NAME : MY_VAULTS_LIST_NAME
 
@@ -126,7 +128,7 @@ export const VaultsView = () => {
         className="tabSwitcher"
       />
 
-      <VaultsSearchFilter statuses={ListOfStatuses} />
+      <VaultsSearchFilter assets={assets} statuses={ListOfStatuses} />
 
       {paginatedVaultsList.map((item) => {
         const isOwner = vaultsMapper[item].ownerId === accountPkh

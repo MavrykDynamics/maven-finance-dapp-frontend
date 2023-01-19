@@ -93,7 +93,7 @@ export const normalizeVaultsStorage = (storage: VaultsStorageProps) => {
         return {
           balance: collateralToken.balance,
           token: {
-            oracleId: collateralToken.token_id
+            oracleId: collateralToken.token?.oracle_id
           }
         }
       }) : []
@@ -290,4 +290,33 @@ export const getOracleLatestPrices = async (vaults: Lending_Controller_Vault[]) 
     })
 
     return result
+}
+
+export const getVaultAssets = (vaultsMapper: Record<string, VaultType>) => {
+  const list = Object.values(vaultsMapper)
+
+  const collateralAssets = new Set<string>()
+  const loanAssets = new Set<string>()
+
+  list.map(({ borrowedAsset, collateralData }) => {
+    const { assetSymbol = '' } = borrowedAsset
+    
+    if (assetSymbol){
+      loanAssets.add(assetSymbol)
+    }
+
+    if (collateralData.length){
+      collateralData.map(({ assetSymbol }) => {
+
+        if (assetSymbol) {
+          collateralAssets.add(assetSymbol)
+        }
+      })
+    }
+  })
+
+  return {
+    collateralAssets: [...collateralAssets],
+    loanAssets: [...loanAssets],
+  }
 }
