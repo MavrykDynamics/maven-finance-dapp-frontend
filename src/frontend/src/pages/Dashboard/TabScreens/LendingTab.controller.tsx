@@ -1,11 +1,21 @@
+import { useMemo } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
+
+import { State } from 'reducers'
+import { LoanTokenType } from 'utils/TypesAndInterfaces/Loans'
+
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { getLoansStorage } from 'pages/Loans/Loans.actions'
+import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
+
+import Icon from 'app/App.components/Icon/Icon.view'
 import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import Icon from 'app/App.components/Icon/Icon.view'
-import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
-import { Link } from 'react-router-dom'
+
 import { StatBlock } from '../Dashboard.style'
 import { LendingContentStyled, TabWrapperStyled, EmptyContainer } from './DashboardTabs.style'
+import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
 
 export const emptyContainer = (
   <EmptyContainer>
@@ -15,6 +25,61 @@ export const emptyContainer = (
 )
 
 export const LendingTab = () => {
+  const dispatch = useDispatch()
+  const { accountPkh } = useSelector((state: State) => state.wallet)
+  const { loanTokens, chartsData } = useSelector((state: State) => state.loans)
+
+  const { lendingSuppliers, borrowers, mostBorrowedAsset, mostLendedAsset, lending24hVolume, borrowing24hVolume } =
+    useMemo(() => {
+      return loanTokens.reduce<{
+        lendingSuppliers: number
+        borrowers: number
+        mostBorrowedAsset: LoanTokenType['loanTokenData'] | null
+        mostLendedAsset: LoanTokenType['loanTokenData'] | null
+        prevMostBorrowed: number
+        borrowing24hVolume: number
+        lending24hVolume: number
+        prevMostLended: number
+      }>(
+        (
+          acc,
+          { suppliers, borrowers, totalBorrowed, totalLended, loanTokenData, lending24hVolume, borrowing24hVolume },
+        ) => {
+          acc.lendingSuppliers += suppliers
+          acc.borrowers += borrowers
+          acc.borrowing24hVolume += borrowing24hVolume
+          acc.lending24hVolume += lending24hVolume
+
+          if (acc.prevMostBorrowed < totalBorrowed) {
+            acc.prevMostBorrowed = totalBorrowed
+            acc.mostBorrowedAsset = loanTokenData as LoanTokenType['loanTokenData']
+          }
+
+          if (acc.prevMostLended < totalLended) {
+            acc.prevMostLended = totalLended
+            acc.mostLendedAsset = loanTokenData as LoanTokenType['loanTokenData']
+          }
+          return acc
+        },
+        {
+          lendingSuppliers: 0,
+          borrowers: 0,
+          lending24hVolume: 0,
+          borrowing24hVolume: 0,
+          prevMostBorrowed: 0,
+          prevMostLended: 0,
+          mostBorrowedAsset: null,
+          mostLendedAsset: null,
+        },
+      )
+    }, [loanTokens])
+
+  const { isLoading } = useDataLoader(async () => {
+    try {
+      await dispatch(getLoansStorage())
+    } catch (e) {}
+  }, [accountPkh])
+
   return (
     <TabWrapperStyled backgroundImage="dashboard_lendingTab_bg.png">
       <div className="top">
@@ -29,7 +94,7 @@ export const LendingTab = () => {
           <StatBlock className="large">
             <div className="name">Total Supplied</div>
             <div className="value">
-              <CommaNumber beginningText="$" value={23452342342} />
+              <CommaNumber beginningText="$" value={chartsData.totalLended} />
               <div className={`impact ${false ? 'up' : 'down'}`}>{false ? '+' : '-'} 27%</div>
             </div>
           </StatBlock>
@@ -38,19 +103,27 @@ export const LendingTab = () => {
             <StatBlock>
               <div className="name">Suppliers</div>
               <div className="value">
-                <CommaNumber value={12432} />
+                <CommaNumber value={lendingSuppliers} />
               </div>
             </StatBlock>
             <StatBlock>
               <div className="name">24H Supply Vol</div>
               <div className="value">
-                <CommaNumber beginningText="$" value={23452342342} />
+                <CommaNumber beginningText="$" value={lending24hVolume} />
               </div>
             </StatBlock>
             <StatBlock>
               <div className="name">Most Supplied Asset</div>
               <div className="value">
-                <Icon id="mvkTokenGold" /> EUR
+                {mostLendedAsset?.icon ? (
+                  <div className="image-wrapper">
+                    <img src={mostLendedAsset.icon} alt="" />
+                  </div>
+                ) : (
+                  <Icon id="noImage" />
+                )}
+
+                {mostLendedAsset?.name ?? ''}
               </div>
             </StatBlock>
           </div>
@@ -60,7 +133,7 @@ export const LendingTab = () => {
           <StatBlock className="large">
             <div className="name">Total Borrowed</div>
             <div className="value">
-              <CommaNumber beginningText="$" value={23452342342} />
+              <CommaNumber beginningText="$" value={chartsData.totalBorrowed} />
               <div className={`impact ${true ? 'up' : 'down'}`}>{true ? '+' : '-'} 27%</div>
             </div>
           </StatBlock>
@@ -69,19 +142,27 @@ export const LendingTab = () => {
             <StatBlock>
               <div className="name">Borrowers</div>
               <div className="value">
-                <CommaNumber value={12432} />
+                <CommaNumber value={borrowers} />
               </div>
             </StatBlock>
             <StatBlock>
               <div className="name">24H Borrow Vol</div>
               <div className="value">
-                <CommaNumber beginningText="$" value={23452342342} />
+                <CommaNumber beginningText="$" value={borrowing24hVolume} />
               </div>
             </StatBlock>
             <StatBlock>
               <div className="name">Most Borrowed Asset</div>
               <div className="value">
-                <Icon id="mvkTokenGold" /> EUR
+                {mostBorrowedAsset?.icon ? (
+                  <div className="image-wrapper">
+                    <img src={mostBorrowedAsset.icon} alt="" />
+                  </div>
+                ) : (
+                  <Icon id="noImage" />
+                )}
+
+                {mostBorrowedAsset?.name ?? ''}
               </div>
             </StatBlock>
           </div>

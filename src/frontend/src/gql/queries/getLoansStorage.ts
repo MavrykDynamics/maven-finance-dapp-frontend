@@ -5,10 +5,13 @@ export const LOANS_QUERY = `query GetLoansStorage {
     interest_treasury_share
     interest_rate_decimals
     decimals
-    history_data {
+    history_data(where: {type: {_in: ["0", "1", "2", "3"]}}) {
       type
       amount
       timestamp
+      loan_token {
+        loan_token_name
+      }
     }
 
     collateral_tokens {
@@ -21,6 +24,7 @@ export const LOANS_QUERY = `query GetLoansStorage {
 
     loan_tokens {
       loan_token_contract_standard
+      loan_token_address
       lp_token_address
       loan_token_name
       id
@@ -30,14 +34,23 @@ export const LOANS_QUERY = `query GetLoansStorage {
       total_remaining
       reserve_ratio
       current_interest_rate
-      history_data {
+
+      history_data(where: {type: {_in: ["0", "1", "2", "3"]}}) {
         type
         amount
         timestamp
         operation_hash
         sender_id
         loan_token {
+          loan_token_name
           loan_token_address
+          lp_token_address
+        }
+      }
+
+      vaults_aggregate(where: {loan_outstanding_total: {_neq: "0"}}) {
+        aggregate {
+          count(distinct: true, columns: owner_id)
         }
       }
 
@@ -45,6 +58,7 @@ export const LOANS_QUERY = `query GetLoansStorage {
         collateral_balances {
           token {
             token_address
+            token_name
           }
           balance
         }
@@ -52,10 +66,17 @@ export const LOANS_QUERY = `query GetLoansStorage {
           depositors {
             depositor_id
           }
+          lending_controller_vaults {
+            history_data(where: {type: {_eq: "2"}}) {
+              type
+              sender_id
+            }
+          }
         }
         loan_token {
           loan_token_address
           loan_token_name
+          lp_token_address
         }
         
         loan_principal_total
@@ -83,3 +104,33 @@ query GetNewVault {
 
 export const NEW_VAULT_QUERY_NAME = 'GetNewVault'
 export const NEW_VAULT_QUERY_VARIABLE = {}
+
+export const USER_LENDING_DATA_QUERY = `
+query GetLendBorrowHistoryPerUser($userAddress: String = "", $_in: [smallint!] = ["0", "1", "2", "3"]) {
+  mavryk_user(where: {address: {_eq: $userAddress}}) {
+    lending_controller_history_data_sender(where: {lending_controller: {mock_time: {_eq: true}}, type: {_in: $_in}}, order_by: {type: asc, timestamp: asc}) {
+      type
+      timestamp
+      operation_hash
+      amount
+      loan_token {
+        lp_token_address
+        loan_token_name
+        loan_token_address
+        loan_token_contract_standard
+        current_interest_rate
+      }
+      lending_controller {
+        interest_rate_decimals
+        interest_treasury_share
+        decimals
+      }
+    }
+  }
+}
+`
+
+export const USER_LENDING_DATA_QUERY_NAME = 'GetLendBorrowHistoryPerUser'
+export const USER_LENDING_DATA_QUERY_VARIABLE = (userAddress?: string) => {
+  return { userAddress: userAddress ?? '' }
+}

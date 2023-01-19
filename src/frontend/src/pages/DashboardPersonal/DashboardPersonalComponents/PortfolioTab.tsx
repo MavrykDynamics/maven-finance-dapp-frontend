@@ -4,12 +4,13 @@ import { Link } from 'react-router-dom'
 
 import { State } from 'reducers'
 
-import { borrowingData, CHART_TEST_DATA, lendingData } from '../tabs.const'
-import { ACTION_PRIMARY, ACTION_SIMPLE } from 'app/App.components/Button/Button.constants'
+import { CHART_TEST_DATA } from '../tabs.const'
+import { ACTION_PRIMARY, ACTION_SIMPLE, TRANSPARENT } from 'app/App.components/Button/Button.constants'
 
 import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { Chart } from 'app/App.components/Chart/Chart.view'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { SlidingTabButtons, TabItem } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import Icon from 'app/App.components/Icon/Icon.view'
 
@@ -27,6 +28,7 @@ type PortfolioTabProps = {
   tzBTCAmount: number
   sMVKAmount: number
   notsMVKAmount: number
+  isUserLoansLoading: boolean
 }
 
 const TOGGLE_VALUES: TabItem[] = [
@@ -37,8 +39,14 @@ const TOGGLE_VALUES: TabItem[] = [
   { id: 6, text: 'All', active: false },
 ]
 
-const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount }: PortfolioTabProps) => {
+const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUserLoansLoading }: PortfolioTabProps) => {
   const { exchangeRate } = useSelector((state: State) => state.mvkToken)
+  const {
+    user: {
+      userLoansData: { userBorrowing, userLendings },
+    },
+  } = useSelector((state: State) => state.wallet)
+
   const [toggleItems, setToggleItems] = useState<TabItem[]>(TOGGLE_VALUES)
   const lastSeria = CHART_TEST_DATA.at(-1)?.value ?? 0
 
@@ -131,22 +139,32 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount }: Por
         <GovRightContainerTitleArea>
           <h2>Lending</h2>
         </GovRightContainerTitleArea>
-        {lendingData ? (
+        {isUserLoansLoading ? (
+          <div className="loader-wrapper">
+            <ClockLoader />
+          </div>
+        ) : userLendings.length ? (
           <div className="list scroll-block">
-            {lendingData.map(({ assetImg, apy, supplied, earned, mvkBonus, id }) => {
+            {userLendings.map(({ assetIcon, amount, assetName, annualPecentage, earned, operationHash, id }) => {
               return (
-                <ListItem columsTemplate="60px 0.9fr 0.7fr 0.8fr 0.7fr" key={id}>
-                  <Icon id={assetImg || 'noImage'} />
+                <ListItem columsTemplate="60px 0.9fr 0.7fr 0.8fr 0.7fr" key={id + operationHash}>
+                  {assetIcon ? (
+                    <div className="image-wrapper">
+                      <img src={assetIcon} alt="" />
+                    </div>
+                  ) : (
+                    <Icon id={'noImage'} />
+                  )}
                   <div className="list-part">
                     <div className="name">Supplied</div>
                     <div className="value">
-                      <CommaNumber value={supplied} beginningText="$" />
+                      <CommaNumber value={amount} beginningText="$" />
                     </div>
                   </div>
                   <div className="list-part">
                     <div className="name">APY</div>
                     <div className="value">
-                      <CommaNumber value={apy} endingText="%" />
+                      <CommaNumber value={annualPecentage} endingText="%" />
                     </div>
                   </div>
                   <div className="list-part">
@@ -155,11 +173,10 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount }: Por
                       <CommaNumber value={earned} />
                     </div>
                   </div>
-                  <div className="list-part">
-                    <div className="name">MVK Bonus</div>
-                    <div className="value">
-                      <CommaNumber value={mvkBonus} />
-                    </div>
+                  <div className="list-part  view-tx-link">
+                    <Link to={{ pathname: `https://ghostnet.tzkt.io/${operationHash}` }} target="_blank">
+                      <Button text="View TX" kind={TRANSPARENT} className="link" />
+                    </Link>
                   </div>
                 </ListItem>
               )
@@ -178,22 +195,33 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount }: Por
         <GovRightContainerTitleArea>
           <h2>Borrowing</h2>
         </GovRightContainerTitleArea>
-        {borrowingData ? (
+        {isUserLoansLoading ? (
+          <div className="loader-wrapper">
+            <ClockLoader />
+          </div>
+        ) : userBorrowing.length ? (
           <div className="list scroll-block">
-            {borrowingData.map(({ assetImg, apy, supplied, earned, mvkBonus, id }) => {
+            {userBorrowing.map(({ assetIcon, assetName, amount, annualPecentage, earned, operationHash, id }) => {
               return (
-                <ListItem columsTemplate="60px 0.9fr 0.7fr 0.8fr 0.7fr" key={id}>
-                  <Icon id={assetImg || 'noImage'} />
+                <ListItem columsTemplate="60px 0.9fr 0.7fr 0.8fr 0.7fr" key={id + operationHash}>
+                  {assetIcon ? (
+                    <div className="image-wrapper">
+                      <img src={assetIcon} alt="" />
+                    </div>
+                  ) : (
+                    <Icon id={'noImage'} />
+                  )}
+
                   <div className="list-part">
                     <div className="name">Borrowed</div>
                     <div className="value">
-                      <CommaNumber value={supplied} beginningText="$" />
+                      <CommaNumber value={amount} beginningText="$" />
                     </div>
                   </div>
                   <div className="list-part">
-                    <div className="name">APY</div>
+                    <div className="name">APR</div>
                     <div className="value">
-                      <CommaNumber value={apy} endingText="%" />
+                      <CommaNumber value={annualPecentage} endingText="%" />
                     </div>
                   </div>
                   <div className="list-part">
@@ -202,11 +230,10 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount }: Por
                       <CommaNumber value={earned} />
                     </div>
                   </div>
-                  <div className="list-part">
-                    <div className="name">MVK Bonus</div>
-                    <div className="value">
-                      <CommaNumber value={mvkBonus} />
-                    </div>
+                  <div className="list-part view-tx-link">
+                    <Link to={{ pathname: `https://ghostnet.tzkt.io/${operationHash}` }} target="_blank">
+                      <Button text="View TX" kind={TRANSPARENT} className="link" />
+                    </Link>
                   </div>
                 </ListItem>
               )

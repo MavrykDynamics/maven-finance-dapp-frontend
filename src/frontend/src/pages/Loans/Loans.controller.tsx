@@ -60,6 +60,7 @@ export const Loans = () => {
           hideXAxis: true,
           hideYAxis: true,
         }}
+        numberOfItemsToDisplay={3}
       />
     </div>
   )
@@ -82,9 +83,11 @@ export const Loans = () => {
         settings={{
           width: 372,
           height: 182,
+
           hideXAxis: true,
           hideYAxis: true,
         }}
+        numberOfItemsToDisplay={3}
       />
     </div>
   )
@@ -92,7 +95,6 @@ export const Loans = () => {
   return (
     <Page>
       <PageHeader page={'lending'} />
-      {isLoading ? 'loadigng' : null}
       <LoansStyled>
         <MarketChartsContainer>
           {lendingPart}
@@ -110,17 +112,17 @@ export const Loans = () => {
                 utilisationRate,
                 availableLiquidity,
                 borrowers,
-                collateral,
-                vaultsBorrowedAmount,
+                loanTokenTotalCollaterals,
+                loanTokenVaultsTotalBorrowed,
                 totalBorrowed,
                 suppliers,
-                totalLending,
+                totalLended,
                 borrowAPR,
                 totalFeesEarned,
                 lendingAPY,
               } = loanAsset
 
-              const totalCorratealColor = collateral / vaultsBorrowedAmount > 2 ? 'up' : 'down'
+              const totalCorratealColor = loanTokenTotalCollaterals / loanTokenVaultsTotalBorrowed > 2 ? 'up' : 'down'
               return (
                 <MarketOverview key={`${name}-${symbol}`}>
                   <div className="asset-info">
@@ -143,8 +145,8 @@ export const Loans = () => {
                     <div className="row">
                       <ThreeLevelListItem>
                         <div className="name">Total Lending</div>
-                        <CommaNumber value={totalLending} className="value" />
-                        {rate ? <CommaNumber value={totalLending * rate} beginningText="$" className="rate" /> : null}
+                        <CommaNumber value={totalLended} className="value" />
+                        {rate ? <CommaNumber value={totalLended * rate} beginningText="$" className="rate" /> : null}
                       </ThreeLevelListItem>
                       <ThreeLevelListItem>
                         <div className="name">Lend APY</div>
@@ -202,7 +204,11 @@ export const Loans = () => {
                       </ThreeLevelListItem>
                       <ThreeLevelListItem>
                         <div className="name">Total Collateral</div>
-                        <CommaNumber value={collateral} className={`value ${totalCorratealColor}`} beginningText="$" />
+                        <CommaNumber
+                          value={loanTokenTotalCollaterals}
+                          className={`value ${totalCorratealColor}`}
+                          beginningText="$"
+                        />
                       </ThreeLevelListItem>
                       <Link to={`/loans/${name}/${BORROW_TAB_ID}`}>
                         <Button text="Borrow" kind={ACTION_PRIMARY} iconAfter icon="arrowRight" />

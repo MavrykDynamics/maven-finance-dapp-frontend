@@ -80,12 +80,12 @@ export const delegate = (satelliteAddress: string) => async (dispatch: AppDispat
     await transaction?.confirmation()
 
     dispatch(showToaster(SUCCESS, 'Delegation done', 'All good :)'))
-    dispatch(toggleActionLoader(false))
 
     await dispatch(getMvkTokenStorage())
     await dispatch(getDelegationStorage())
     await dispatch(getDoormanStorage())
-    if (state.wallet.accountPkh) await dispatch(updateUserData(state.wallet.accountPkh))
+    await dispatch(updateUserData())
+    await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
@@ -118,12 +118,12 @@ export const undelegate = (delegateAddress: string) => async (dispatch: AppDispa
     await transaction?.confirmation()
 
     dispatch(showToaster(SUCCESS, 'Undelegating done', 'All good :)'))
-    dispatch(toggleActionLoader(false))
 
     await dispatch(getMvkTokenStorage())
     await dispatch(getDelegationStorage())
     await dispatch(getDoormanStorage())
-    if (state.wallet.accountPkh) await dispatch(updateUserData(state.wallet.accountPkh))
+    await dispatch(updateUserData())
+    await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)

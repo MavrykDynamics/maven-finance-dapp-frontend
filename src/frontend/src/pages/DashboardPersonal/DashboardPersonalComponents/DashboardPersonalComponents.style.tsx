@@ -209,6 +209,13 @@ export const LBHInfoBlock = styled(MediumBlockBase)<{ theme: MavrykTheme }>`
     width: calc(100% + 30px);
     padding-right: 30px;
   }
+
+  .loader-wrapper {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 `
 
 export const HistoryBlock = styled(MediumBlockBase)<{ theme: MavrykTheme }>`
@@ -226,10 +233,17 @@ export const ListItem = styled.div<{ theme: MavrykTheme; columsTemplate: string 
   grid-template-columns: ${({ columsTemplate }) => columsTemplate};
   position: relative;
 
-  svg {
+  svg,
+  .image-wrapper {
     height: 40px;
     width: 40px;
     fill: ${({ theme }) => theme.lPurple_dPurple_lPuprple};
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
   }
 
   .list-part {
@@ -261,12 +275,20 @@ export const ListItem = styled.div<{ theme: MavrykTheme; columsTemplate: string 
         }
       }
     }
+
+    &.view-tx-link {
+      align-items: center;
+      justify-content: center;
+      button {
+        height: fit-content;
+      }
+    }
   }
 
   &:not(:last-child)::before {
     content: '';
     position: absolute;
-    bottom: -10px;
+    bottom: -12px;
     width: 100%;
     height: 1px;
     background-color: ${({ theme }) => theme.cardBorderColor};

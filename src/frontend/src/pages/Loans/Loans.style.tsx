@@ -198,38 +198,10 @@ export const MarketStyled = styled.div<{ theme: MavrykTheme }>`
   flex-direction: column;
   row-gap: 25px;
 
-  .hidden-items {
-    margin-top: 12px;
-    display: none;
-    grid-template-columns: 130px 90px 130px 130px 115px 70px 115px;
-    justify-content: space-between;
-
-    &.show {
-      display: grid;
-    }
-
-    > div {
-      height: 50px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-
-      .value {
-        font-weight: 600;
-        font-size: 18px;
-      }
-
-      div {
-        text-align: center;
-        margin: 0 auto;
-      }
-    }
-  }
-
   .gen-info {
-    grid-template-columns: 130px 90px 130px 130px 115px 70px 115px;
-    display: grid;
+    display: flex;
     justify-content: space-between;
+    align-items: center;
 
     .value {
       font-weight: 700;
@@ -276,6 +248,7 @@ export const MarketStyled = styled.div<{ theme: MavrykTheme }>`
           font-weight: 700;
           font-size: 25px;
           line-height: 30px;
+          text-transform: capitalize;
         }
       }
     }

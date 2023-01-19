@@ -83,6 +83,7 @@ export const connect = () => async (dispatch: AppDispatch, getState: GetState) =
         ? await fetchUserData(
             accountPkh,
             state.delegation.delegationStorage.activeSatellites,
+            state.tokens.dipDupTokens,
             state.preferences.headData?.level,
           )
         : DEFAULT_USER
