@@ -214,6 +214,7 @@ export const getDataFeedsHistory = () => async (dispatch: AppDispatch, getState:
 
 // Oracle Latest Price
 export const getOracleAggregatorLatestPrice = async (oracleId: string) => {
+  // TODO: use oracleID in ORACLE_AGGREGATOR_LATEST_PRICE_QUERY_VARIABLE
   try {
     const storage = await fetchFromIndexer(
       ORACLE_AGGREGATOR_LATEST_PRICE_QUERY,
