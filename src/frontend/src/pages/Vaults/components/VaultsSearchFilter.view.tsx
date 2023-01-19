@@ -28,36 +28,49 @@ type Props = {
   statuses: string[]
   assets: Record<AssetCategory, string[]>
   vaultsMapper: Record<string, VaultType>
-  vaultIds: string[]
+  allVaultIds: string[]
   setVaultIds: (arg: string[]) => void
 }
 
-export const VaultsSearchFilter = ({ statuses, assets, vaultsMapper, vaultIds, setVaultIds }: Props) => {
+export const VaultsSearchFilter = ({ statuses, assets, vaultsMapper, allVaultIds, setVaultIds }: Props) => {
   const dispatch = useDispatch()
   const { wallet, tezos, accountPkh } = useSelector((state: State) => state.wallet)
 
   const [searchInputValue, setSearchInput] = useState('')
-  const [sortedData, setSortedData] = useState<unknown[]>([])
 
   const [dropdownStatus, setDropdownStatus] = useState<{[key:string]: boolean}>({})
-  // const [status, setStatus] = useState('')
-  // const [collateralAsset, sesCollateralAsset] = useState('')
-  // const [loanAsset, setLoanAsset] = useState('')
   const [chosenDdItem, setChosenDdItem] = useState<{[key:string]: string}>({})
 
+  // TODO: should work with selected filters
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const searchQuery = e.target.value
-  
-    let searchResult: unknown[] = []
+    const searchQuery = e.target.value.toLowerCase()
+
+    let filteredVaultIds: string[] = []
 
     if (searchQuery !== '') {
-      searchResult = []
+      filteredVaultIds = allVaultIds.filter((vaultId) => {
+        const vault = vaultsMapper[vaultId]
+
+        const isFoundCollateralAsset = vault.collateralData.some(({ assetSymbol }) => {
+          return assetSymbol?.toLowerCase().includes(searchQuery)
+        })
+
+        if (
+          vault.address.toLowerCase().includes(searchQuery) ||
+          vault.borrowedAsset.assetSymbol?.toLowerCase().includes(searchQuery) || 
+          isFoundCollateralAsset
+        ) {
+          return true
+        }
+        
+        return false
+      })
     } else {
-      searchResult = []
+      filteredVaultIds = allVaultIds
     }
 
     setSearchInput(e.target.value)
-    setSortedData(searchResult)
+    setVaultIds(filteredVaultIds)
   }
 
   const handleDropdownSelect = (name: string) => (selectedOption: string) => {
@@ -74,11 +87,11 @@ export const VaultsSearchFilter = ({ statuses, assets, vaultsMapper, vaultIds, s
     setChosenDdItem(updatedChosenDdItem)
 
     if (selectedOption !== '' && selectedOption !== chosenDdItem[name]) {
-      let filteredVaultIds: string[] = [...vaultIds]
+      let filteredVaultIds: string[] = [...allVaultIds]
 
       // filter by collateral asset
       if (updatedChosenDdItem[dropdowns.COLLATERAL]) {
-        filteredVaultIds = vaultIds.filter((vaultId) => {
+        filteredVaultIds = allVaultIds.filter((vaultId) => {
           const vault = vaultsMapper[vaultId]
   
           if (vault.collateralData.length) {

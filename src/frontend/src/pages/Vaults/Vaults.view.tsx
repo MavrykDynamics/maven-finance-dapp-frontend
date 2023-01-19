@@ -132,7 +132,7 @@ export const VaultsView = () => {
         assets={assets}
         statuses={ListOfStatuses}
         vaultsMapper={vaultsMapper}
-        vaultIds={allVaultsIds}
+        allVaultIds={allVaultsIds}
         setVaultIds={setVaultIds}
       />
 
