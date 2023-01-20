@@ -40,8 +40,6 @@ export const Market = () => {
     } catch (e) {}
   }, [accountPkh])
 
-  const [showHiddenItems, setShowHiddenItems] = useState(false)
-
   const currentToken = useMemo(
     () => loanTokens.find(({ loanTokenData: { name } }) => assetId === name),
     [assetId, loanTokens],
@@ -100,13 +98,15 @@ export const Market = () => {
       <Link to={`/loans/${assetId}/${BORROW_TAB_ID}`}>
         <Button text={'My Borrowing'} kind={ACTION_SIMPLE} className={`${tabId === BORROW_TAB_ID ? 'active' : ''}`} />
       </Link>
-      <Link to={`/loans/${assetId}/${PERMISSIONS_VAULTS_TAB_ID}`}>
-        <Button
-          text={'Permissioned Vaults'}
-          kind={ACTION_SIMPLE}
-          className={`${tabId === PERMISSIONS_VAULTS_TAB_ID ? 'active' : ''}`}
-        />
-      </Link>
+      {currentToken.permissionedBorrowingList.length ? (
+        <Link to={`/loans/${assetId}/${PERMISSIONS_VAULTS_TAB_ID}`}>
+          <Button
+            text={'Permissioned Vaults'}
+            kind={ACTION_SIMPLE}
+            className={`${tabId === PERMISSIONS_VAULTS_TAB_ID ? 'active' : ''}`}
+          />
+        </Link>
+      ) : null}
     </div>
   )
 

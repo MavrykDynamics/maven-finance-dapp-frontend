@@ -63,14 +63,14 @@ export const LOANS_QUERY = `query GetLoansStorage {
           balance
         }
         vault {
+          address
           depositors {
             depositor_id
           }
           lending_controller_vaults {
-            history_data(where: {type: {_eq: "2"}}) {
-              type
-              sender_id
-            }
+            loan_principal_total
+            loan_outstanding_total
+            loan_interest_total
           }
         }
         loan_token {

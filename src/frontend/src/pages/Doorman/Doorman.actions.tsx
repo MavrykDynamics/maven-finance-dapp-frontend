@@ -294,6 +294,7 @@ export const fetchUserData = async (
   accountPkh: string,
   activeSatellites: Array<SatelliteRecord>,
   dipDupTokens: State['tokens']['dipDupTokens'],
+  tokensRates: State['tokens']['tokensPrices'],
   currentBlockLevel?: number,
 ) => {
   try {
@@ -400,11 +401,12 @@ export const fetchUserData = async (
     const tokensRate = await getUserLoansDataTokensRates(
       userLendingData.mavryk_user[0].lending_controller_history_data_sender,
       dipDupTokens,
+      tokensRates,
     )
 
     const { userBorrowing, userLendings } = normalizeUserLending({
       dipDupTokens,
-      tokensRate,
+      tokensRate: { ...tokensRate, ...tokensRate },
       userDataFromIndexer: userLendingData.mavryk_user[0].lending_controller_history_data_sender,
     })
 
@@ -436,12 +438,12 @@ export const updateUserData = () => async (dispatch: AppDispatch, getState: GetS
       delegationStorage: { activeSatellites },
     },
     wallet: { accountPkh },
-    tokens: { dipDupTokens },
+    tokens: { dipDupTokens, tokensPrices },
   } = getState()
 
   try {
     if (accountPkh) {
-      const userData = await fetchUserData(accountPkh, activeSatellites, dipDupTokens, level)
+      const userData = await fetchUserData(accountPkh, activeSatellites, dipDupTokens, tokensPrices, level)
 
       dispatch({
         type: UPDATE_USER_DATA,

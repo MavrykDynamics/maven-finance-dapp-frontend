@@ -11,7 +11,7 @@ export type LoanTokenType = {
     symbol?: string
     decimals: number
     icon?: string
-    rate: number | null
+    rate: number
     tokenType: 'tez' | 'fa12' | 'fa2'
   }
   transactionHistory: Array<{
@@ -95,7 +95,7 @@ export type BorrowingData = {
     assetRate: number | null
     collateralBalance: number
     collateralUtilization: number
-    apy: number
+    apr: number
     fee: number
   }
   collateralData: Array<{
@@ -105,8 +105,7 @@ export type BorrowingData = {
     assetRate: number | null
     maxWithdraw: number
   }>
-  uniqueBorrowers: Array<string>
-  xtzDelegatedTo?: string
+  xtzDelegatedTo: string | null
   operators?: Array<string>
   sMVKDelegatedTo?: string
   depositors?: Array<string>

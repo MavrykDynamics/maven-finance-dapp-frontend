@@ -14,12 +14,13 @@ import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { State } from 'reducers'
 import { ERROR, INFO, SUCCESS } from 'app/App.components/Toaster/Toaster.constants'
 import { OpKind } from '@taquito/taquito'
-import { getXTZBakers, getCollateralTokens, getLoansTokensRates, getUserBalances } from './LoansFethcers'
+import { getXTZBakers, getCollateralTokens, getLoansTokensRates } from './LoansFethcers'
+import { updateTokensPrices } from 'reducers/actions/dipDupActions.actions'
 
 export const GET_LOANS_STORAGE = 'GET_LOANS_STORAGE'
 export const getLoansStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
   const {
-    tokens: { dipDupTokens, mTokens },
+    tokens: { dipDupTokens, mTokens, tokensPrices },
     wallet: {
       accountPkh,
       user: { mTokens: userMTokens },
@@ -28,29 +29,28 @@ export const getLoansStorage = () => async (dispatch: AppDispatch, getState: Get
   try {
     const storage = await fetchFromIndexer(LOANS_QUERY, LOANS_QUERY_NAME, LOANS_QUERY_VARIABLE)
 
-    const loanTokensRate = await getLoansTokensRates(storage?.lending_controller?.[0]?.loan_tokens, dipDupTokens)
+    const loanTokensRate = await getLoansTokensRates(
+      storage?.lending_controller?.[0]?.loan_tokens,
+      dipDupTokens,
+      tokensPrices,
+    )
+
     const xtzBakers = await getXTZBakers()
-    const userAssetBalances = await getUserBalances({
-      storage: storage?.lending_controller?.[0],
-      accountPkh,
-    })
 
     const avaliableCollaterals = await getCollateralTokens(
       storage?.lending_controller?.[0].collateral_tokens,
-      storage?.lending_controller?.[0].loan_tokens,
       dipDupTokens,
-      loanTokensRate,
+      { ...tokensPrices, ...loanTokensRate },
       accountPkh,
     )
 
-    const { chartsData, loanTokens, loansControllerAddress } = normalizeLoans({
+    const { chartsData, loanTokens, loansControllerAddress } = await normalizeLoans({
       storage: storage?.lending_controller?.[0],
       dipDupTokens,
       mTokens,
       userMTokens,
       userAddres: accountPkh,
-      tokensRate: loanTokensRate,
-      userAssetBalances,
+      tokensRate: { ...tokensPrices, ...loanTokensRate },
     })
 
     await dispatch({
@@ -63,6 +63,7 @@ export const getLoansStorage = () => async (dispatch: AppDispatch, getState: Get
         xtzBakers,
       },
     })
+    await dispatch(updateTokensPrices(loanTokensRate))
   } catch (e) {
     console.error('getLoansStorage error: ', e)
   }

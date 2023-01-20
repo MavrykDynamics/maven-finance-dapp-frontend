@@ -24,7 +24,7 @@ const DataFeedsPagination = () => {
   const nextFeed = feeds?.[prevIndex + 1]
 
   return (
-    <SatellitePaginationStyled>
+    <SatellitePaginationStyled className="data-feeds-pagination">
       <NewButton kind={TRANSPARENT_WITH_BORDER} className="go-back">
         <Link to={`/data-feeds`}>
           <Icon id="arrowRight" /> Back to feeds

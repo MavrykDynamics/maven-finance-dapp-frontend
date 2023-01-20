@@ -1,3 +1,4 @@
+import { CommaNumber } from '../CommaNumber/CommaNumber.controller'
 import { getGradient } from './GradientDiagram.helpers'
 import { GradientBreakpoint, GradientDiagramStyled } from './GradientDiagram.style'
 
@@ -8,6 +9,7 @@ export type ColorBreakpoint = {
     g: number
     b: number
   }
+  value: number
 }
 
 export type GradientDiagramPropsType = {
@@ -21,8 +23,12 @@ export const GradientDiagram = ({ colorBreakpoints, currentPersentage, className
 
   return (
     <GradientDiagramStyled gradient={gradient} gradientWidth={currentPersentage} className={className}>
-      {colorBreakpoints.map(({ color }) => (
-        <GradientBreakpoint background={`rgb(${color.r}, ${color.g}, ${color.b})`} />
+      {colorBreakpoints.map(({ color, value }) => (
+        <GradientBreakpoint background={`rgb(${color.r}, ${color.g}, ${color.b})`}>
+          <div className="text">
+            <CommaNumber value={value} endingText="%" />
+          </div>
+        </GradientBreakpoint>
       ))}
     </GradientDiagramStyled>
   )

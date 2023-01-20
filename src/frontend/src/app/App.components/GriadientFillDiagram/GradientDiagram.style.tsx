@@ -32,9 +32,26 @@ export const GradientBreakpoint = styled.div<{ theme: MavrykTheme; background: s
   width: 8px;
   border-radius: 50%;
   z-index: 10;
+  position: relative;
 
   ${({ background }) =>
     css`
       background: ${background};
     `}
+
+  .text {
+    font-weight: 600;
+    font-size: 10px;
+    line-height: 10px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 145%;
+
+    div {
+      p {
+        white-space: nowrap;
+      }
+    }
+  }
 `

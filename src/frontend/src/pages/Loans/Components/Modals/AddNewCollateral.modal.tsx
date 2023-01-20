@@ -14,41 +14,7 @@ import { PopupContainer, PopupContainerWrapper } from 'app/App.components/Settin
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { DropDownJsxChild, LoansModalBase, VaultModalOverview } from './Modals.style'
-
-const COLORS_BREAKPOINTS = [
-  {
-    persentage: 0,
-    color: {
-      r: 255,
-      g: 67,
-      b: 67,
-    },
-  },
-  {
-    persentage: 33,
-    color: {
-      r: 255,
-      g: 129,
-      b: 67,
-    },
-  },
-  {
-    persentage: 66,
-    color: {
-      r: 251,
-      g: 255,
-      b: 67,
-    },
-  },
-  {
-    persentage: 100,
-    color: {
-      r: 52,
-      g: 246,
-      b: 106,
-    },
-  },
-]
+import { COLLATERAL_RATIO_GRADIENT } from 'pages/Loans/Loans.const'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239633&t=Sx2aEpp3ifrGxBtQ-0
 export const AddNewCollateral = ({ closePopup, show }: { closePopup: () => void; show: boolean }) => {
@@ -167,7 +133,11 @@ export const AddNewCollateral = ({ closePopup, show }: { closePopup: () => void;
           <VaultModalOverview style={{ marginBottom: '45px' }}>
             <ThreeLevelListItem className="collateral-diagram">
               <TzAddress tzAddress="tz1ezDb77a9jaFMHDWs8QXrKEDkpgGdgsjPD" type={BLUE} />
-              <GradientDiagram className="loansModals" colorBreakpoints={COLORS_BREAKPOINTS} currentPersentage={50} />
+              <GradientDiagram
+                className="loansModals"
+                colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
+                currentPersentage={50}
+              />
               <div className="info-tip">
                 Collateral Value:
                 <span>
@@ -242,7 +212,11 @@ export const AddNewCollateral = ({ closePopup, show }: { closePopup: () => void;
           <VaultModalOverview>
             <ThreeLevelListItem className="collateral-diagram">
               <TzAddress tzAddress="tz1ezDb77a9jaFMHDWs8QXrKEDkpgGdgsjPD" type={BLUE} />
-              <GradientDiagram className="loansModals" colorBreakpoints={COLORS_BREAKPOINTS} currentPersentage={50} />
+              <GradientDiagram
+                className="loansModals"
+                colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
+                currentPersentage={50}
+              />
               <div className="info-tip">
                 Collateral Value:
                 <span>

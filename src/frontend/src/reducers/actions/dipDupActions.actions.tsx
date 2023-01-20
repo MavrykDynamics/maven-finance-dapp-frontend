@@ -1,6 +1,5 @@
 import { AppDispatch, coinGeckoClient, GetState } from 'app/App.controller'
 import { normalizeDipDupTokens, normalizeMTokens } from 'app/App.helpers'
-import CoinGecko from 'coingecko-api'
 import { fetchFromIndexer } from 'gql/fetchGraphQL'
 import {
   DIPDUP_TOKENS_QUERY,
@@ -15,6 +14,7 @@ import {
   WHITELIST_TOKENS_QUERY,
   WHITELIST_TOKENS_VARIABLE,
 } from 'gql/queries/getTokensData'
+import { State } from 'reducers'
 
 export const GET_DIP_DUP_TOKENS = 'GET_DIP_DUP_TOKENS'
 export const getDipDupTokensStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
@@ -68,7 +68,7 @@ export const getTokensPrices = () => async (dispatch: any) => {
   try {
     const tokensInfoFromCoingecko = await coinGeckoClient.simple.price({
       ids: ['tezos', 'tzbtc'],
-      vs_currencies: ['usd', 'eur'],
+      vs_currencies: ['usd'],
     })
 
     dispatch({
@@ -79,6 +79,19 @@ export const getTokensPrices = () => async (dispatch: any) => {
     console.error('getTokensPrices error: ', e)
   }
 }
+
+export const ADD_TOKENS_PRICES = 'ADD_TOKENS_PRICES'
+export const updateTokensPrices =
+  (additionalTokensSrices: State['tokens']['tokensPrices']) => async (dispatch: any) => {
+    try {
+      dispatch({
+        type: ADD_TOKENS_PRICES,
+        tokensPrices: additionalTokensSrices,
+      })
+    } catch (e) {
+      console.error('getTokensPrices error: ', e)
+    }
+  }
 
 export const GET_M_TOKENS = 'GET_M_TOKENS'
 export const getMTokensStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
@@ -92,5 +105,27 @@ export const getMTokensStorage = () => async (dispatch: AppDispatch, getState: G
     })
   } catch (e) {
     console.error('getDipDupTokensStorage error: ', e)
+  }
+}
+
+export const fetchRateBySymbols = async (tokensSymbols: Array<string>) => {
+  try {
+    return await (
+      await Promise.all(tokensSymbols.map((symbol) => coinGeckoClient.coins.fetch(symbol, {})))
+    ).reduce<Record<string, { usd: number }>>((acc, promiseResult, idx) => {
+      if (promiseResult?.success && promiseResult?.code === 200) {
+        // TODO: extract this, and consider use id instead of symbol
+        const symbol = promiseResult.data.symbol === 'xtz' ? 'tezos' : promiseResult.data.symbol
+        const rate = promiseResult.data.market_data.current_price.usd
+        acc[symbol] = { usd: rate }
+      } else {
+        acc[tokensSymbols[idx]] = { usd: 0.25 }
+      }
+
+      return acc
+    }, {})
+  } catch (e) {
+    console.log('getLoansRates error: ', e)
+    return {}
   }
 }

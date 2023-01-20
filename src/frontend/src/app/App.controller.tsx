@@ -1,4 +1,3 @@
-import { TempleWallet } from '@temple-wallet/dapp'
 import { useCallback, useEffect, useState } from 'react'
 import { BrowserRouter as Router } from 'react-router-dom'
 import { AnyAction } from 'redux'
@@ -7,9 +6,8 @@ import { ThunkDispatch } from 'redux-thunk'
 
 import { State } from '../reducers'
 import { AppRoutes } from './App.components/AppRoutes/AppRoutes.controller'
-import { connect, setWallet } from './App.components/ConnectWallet/ConnectWallet.actions'
+import { connect } from './App.components/ConnectWallet/ConnectWallet.actions'
 import { Menu } from './App.components/Menu/Menu.controller'
-import { ProgressBar } from './App.components/ProgressBar/ProgressBar.controller'
 import { Toaster } from './App.components/Toaster/Toaster.controller'
 import { configureStore } from './App.store'
 import { AppStyled } from './App.style'
@@ -50,10 +48,6 @@ const AppContainer = () => {
     ;(async () => {
       // Fetching initial data for DAPP
       await dispatch(getDelegationStorage())
-      // For using Temple wallet
-      // return TempleWallet.onAvailabilityChange((available) => {
-      //   if (available) dispatch(setWallet(new TempleWallet(process.env.REACT_APP_NAME || 'MAVRYK')))
-      // })
 
       // For using Beacon wallet
       if (
@@ -75,10 +69,6 @@ const AppContainer = () => {
 
       await dispatch(toggleInitialDataLoading(false))
     })()
-
-    return () => {
-      dispatch(setWallet())
-    }
   }, [dispatch])
 
   useEffect(() => {

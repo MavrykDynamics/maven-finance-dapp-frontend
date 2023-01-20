@@ -25,7 +25,7 @@ export const getAssetMetadata = (
   tokenName: string,
   tokenAddress: string,
   dipDupTokens: State['tokens']['dipDupTokens'],
-  tokensRates: Record<string, number>,
+  tokensRates: State['tokens']['tokensPrices'],
 ):
   | {
       decimals: number
@@ -47,7 +47,7 @@ export const getAssetMetadata = (
       name: 'XTZ',
       symbol: 'tezos',
       icon: '/images/tezos.png',
-      rate: tokensRates['tezos'],
+      rate: tokensRates['tezos']?.usd,
       address: tokenAddress,
     }
   }
@@ -58,7 +58,7 @@ export const getAssetMetadata = (
       name: tokenName,
       symbol: foundAssetInDipDup.metadata.symbol,
       icon: foundAssetInDipDup.metadata.icon,
-      rate: tokensRates[foundAssetInDipDup.metadata.symbol] ?? 0.25,
+      rate: tokensRates[foundAssetInDipDup.metadata.symbol]?.usd ?? 0.25,
       address: tokenAddress,
     }
   }
@@ -71,7 +71,7 @@ const DAY_IN_MS = 86400000
 const getTransactionHistory = (
   history_data: Lending_Controller_History_Data[],
   dipDupTokens: State['tokens']['dipDupTokens'],
-  tokensRates: Record<string, number>,
+  tokensRates: State['tokens']['tokensPrices'],
 ) =>
   history_data.reduce<{
     transactionHistory: LoanTokenType['transactionHistory']
@@ -91,11 +91,11 @@ const getTransactionHistory = (
       )
 
       if (assetMetadata) {
-        const transformedAmount = (amount / 10 ** assetMetadata.decimals) * assetMetadata.rate
+        const transformedAmount = amount / 10 ** assetMetadata.decimals
         const descrByType = getDescrByType(type)
         if (descrByType) {
           acc.transactionHistory.push({
-            amount: transformedAmount,
+            amount: transformedAmount * assetMetadata.rate,
             date: parseDate({ time: new Date(timestamp).getTime(), timeFormat: 'MMM Do, YYYY, HH:mm:ss UTC' }),
             userAddress: sender_id,
             operationHash: operation_hash,
@@ -108,7 +108,7 @@ const getTransactionHistory = (
           acc.totalLended += transformedAmount
 
           if (dayjs().diff(timestamp) <= DAY_IN_MS) {
-            acc.lending24hVolume += transformedAmount
+            acc.lending24hVolume += transformedAmount * assetMetadata.rate
           }
         }
 
@@ -116,7 +116,7 @@ const getTransactionHistory = (
           acc.totalBorrowed += transformedAmount
 
           if (dayjs().diff(timestamp) <= DAY_IN_MS) {
-            acc.borrowing24hVolume += transformedAmount
+            acc.borrowing24hVolume += transformedAmount * assetMetadata.rate
           }
         }
       }
@@ -130,7 +130,7 @@ const getTransactionHistory = (
 const getChartData = (
   history_data: Lending_Controller_History_Data[],
   dipDupTokens: State['tokens']['dipDupTokens'],
-  tokensRates: Record<string, number>,
+  tokensRates: State['tokens']['tokensPrices'],
 ) =>
   history_data?.reduce<LoansChartsDataType>(
     (acc, { type, amount, timestamp, loan_token }) => {
@@ -181,249 +181,273 @@ const calcLendingAPY = (currentInterestRate: number, treasuryShare: number): num
   return (power - 1) * 100
 }
 
-const getLendingItem = (
+const getLendingItem = async (
   loanToken: Lending_Controller_Loan_Token,
   userMTokens: UserState['mTokens'],
-  userAssetBalances: Record<string, number>,
   interestTreasuryShare: number,
   interestRateDecimals: number,
   loanTokenDecimals: number,
-): LendingItemType => {
-  if (userMTokens && loanToken) {
-    const mTokenAsset = userMTokens?.find(({ m_token_id }) => m_token_id === loanToken.lp_token_address)
+  accountPkh?: string,
+): Promise<LendingItemType> => {
+  try {
+    if (userMTokens && loanToken && accountPkh) {
+      const mTokenAsset = userMTokens?.find(({ m_token_id }) => m_token_id === loanToken.lp_token_address)
+      const isXTZ = isTezosAsset(loanToken.loan_token_name)
+      const tokenCurrentInterestRate = calcWithoutDecimals(loanToken.current_interest_rate, interestRateDecimals)
 
-    const tokenCurrentInterestRate = calcWithoutDecimals(loanToken.current_interest_rate, interestRateDecimals)
+      const lendingAssetBalance = isXTZ
+        ? await (
+            await fetch(`https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/accounts/${accountPkh}/balance`)
+          ).json()
+        : await (
+            await fetch(
+              `https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/tokens/balances?account.eq=${accountPkh}&token.contract.in=${loanToken.loan_token_address}`,
+            )
+          ).json()
 
-    if (mTokenAsset) {
-      return {
-        lendValue: Number(mTokenAsset.balance) / 10 ** loanTokenDecimals,
-        interestEarned: mTokenAsset.rewards_earned / 10 ** loanTokenDecimals,
-        mBalance:
-          Number(mTokenAsset.balance) / 10 ** loanTokenDecimals +
-          Number(mTokenAsset.rewards_earned) / 10 ** loanTokenDecimals,
-        loanAssetWalletBalance: userAssetBalances[loanToken.lp_token_address],
-        lendAPY: calcLendingAPY(tokenCurrentInterestRate, interestTreasuryShare),
-        borrowAPR: calcWithoutDecimals(loanToken.current_interest_rate, interestRateDecimals) * 100,
+      const userBalance =
+        (typeof lendingAssetBalance === 'number'
+          ? lendingAssetBalance / 10 ** 6
+          : Number(lendingAssetBalance?.[0]?.balance ?? 0) /
+            10 ** Number(lendingAssetBalance?.[0]?.token?.metadata?.decimals ?? 0)) ?? 0
+
+      if (mTokenAsset) {
+        return {
+          lendValue: Number(mTokenAsset.balance) / 10 ** loanTokenDecimals,
+          interestEarned: mTokenAsset.rewards_earned / 10 ** loanTokenDecimals,
+          mBalance:
+            Number(mTokenAsset.balance) / 10 ** loanTokenDecimals +
+            Number(mTokenAsset.rewards_earned) / 10 ** loanTokenDecimals,
+          loanAssetWalletBalance: userBalance,
+          lendAPY: calcLendingAPY(tokenCurrentInterestRate, interestTreasuryShare),
+          borrowAPR: calcWithoutDecimals(loanToken.current_interest_rate, interestRateDecimals) * 100,
+        }
       }
     }
+    return null
+  } catch (e) {
+    console.log('getLendingItem error: ', e)
+    return null
   }
-  return null
 }
 
 // Normalizing borrowed items for loan asset
-const getBorrowings = (
-  loanTokenVaults: Array<Lending_Controller_Vault>,
-  dipDupTokens: State['tokens']['dipDupTokens'],
-  tokensRates: Record<string, number>,
-  userAddress?: string,
-): {
+type BorrowingNormalizerReturnType = {
   myBorrowingList: Array<BorrowingData>
   permissinedBorrowingList: Array<BorrowingData>
   totalCollateral: number
-  totalBorrowed: number
-} => {
-  return loanTokenVaults.reduce<{
-    myBorrowingList: Array<BorrowingData>
-    permissinedBorrowingList: Array<BorrowingData>
-    totalCollateral: number
-    totalBorrowed: number
-  }>(
-    (acc, vault) => {
-      if (!vault.loan_token) return acc
+  vaultsBorrowedAmount: number
+}
 
-      const vaultCollateral = vault.collateral_balances.reduce<{
-        normalizedCollaterals: BorrowingData['collateralData']
-        totalRow: BorrowingData['collateralData'][number]
-      }>(
-        (acc, collateral) => {
-          if (!collateral.token) return acc
-          const collateralAsset = getAssetMetadata(
-            collateral.token.token_name,
-            collateral.token.token_address,
-            dipDupTokens,
-            tokensRates,
-          )
+const getBorrowings = async (
+  loanTokenVaults: Array<Lending_Controller_Vault>,
+  dipDupTokens: State['tokens']['dipDupTokens'],
+  tokensRates: State['tokens']['tokensPrices'],
+  interestRateDecimals: number,
+  userAddress?: string,
+): Promise<BorrowingNormalizerReturnType> => {
+  return await loanTokenVaults.reduce<Promise<BorrowingNormalizerReturnType>>(async (promiseAcc, vault) => {
+    const acc = await promiseAcc
+    if (!vault.loan_token || !vault.vault) return acc
 
-          if (!collateralAsset) return acc
+    const vaultCollateral = vault.collateral_balances.reduce<{
+      normalizedCollaterals: BorrowingData['collateralData']
+      totalRow: BorrowingData['collateralData'][number]
+    }>(
+      (acc, collateral) => {
+        if (!collateral.token) return acc
+        const collateralAsset = getAssetMetadata(
+          collateral.token.token_name,
+          collateral.token.token_address,
+          dipDupTokens,
+          tokensRates,
+        )
 
-          const collateralBalance = (collateral.balance / 10 ** collateralAsset.decimals) * collateralAsset.rate
+        if (!collateralAsset) return acc
 
-          acc.normalizedCollaterals.push({
-            assetSymbol: collateralAsset.symbol,
-            assetIcon: collateralAsset.icon,
-            balance: collateralBalance,
-            assetRate: collateralAsset.rate,
-            maxWithdraw: 0,
-          })
+        const collateralBalance = (collateral.balance / 10 ** collateralAsset.decimals) * collateralAsset.rate
 
-          acc.totalRow.balance += collateralBalance
-          acc.totalRow.maxWithdraw += 0
+        acc.normalizedCollaterals.push({
+          assetSymbol: collateralAsset.symbol,
+          assetIcon: collateralAsset.icon,
+          balance: collateralBalance,
+          assetRate: collateralAsset.rate,
+          maxWithdraw: 0,
+        })
 
-          return acc
+        acc.totalRow.balance += collateralBalance
+        acc.totalRow.maxWithdraw += 0
+
+        return acc
+      },
+      {
+        normalizedCollaterals: [],
+        totalRow: {
+          assetSymbol: 'total',
+          balance: 0,
+          assetRate: null,
+          maxWithdraw: 0,
         },
-        {
-          normalizedCollaterals: [],
-          totalRow: {
-            assetSymbol: 'total',
-            balance: 0,
-            assetRate: null,
-            maxWithdraw: 0,
-          },
-        },
-      )
+      },
+    )
 
-      const uniqueBorrowers = Array.from(
-        vault.vault?.lending_controller_vaults[0].history_data.reduce((acc, { sender_id }) => {
-          acc.add(sender_id)
-          return acc
-        }, new Set<string>()) ?? [],
-      )
+    const vaultXtzDelegatedTo = await (
+      await fetch(`https://api.ghostnet.tzkt.io/v1/accounts/${vault.vault.address}`)
+    ).json()
 
-      const vaultAsset = getAssetMetadata(
-        vault.loan_token.loan_token_name,
-        vault.loan_token.lp_token_address,
-        dipDupTokens,
-        tokensRates,
-      )
-      if (!vaultAsset) return acc
+    const vaultAsset = getAssetMetadata(
+      vault.loan_token.loan_token_name,
+      vault.loan_token.lp_token_address,
+      dipDupTokens,
+      tokensRates,
+    )
+    if (!vaultAsset) return acc
 
-      const normallizedVault = {
-        borrowedAsset: {
-          assetSymbol: vaultAsset.symbol,
-          assetName: vaultAsset.name,
-          assetIcon: vaultAsset.icon,
-          amtBorrowed: 0,
-          assetRate: vaultAsset.rate,
-          collateralBalance: vaultCollateral.totalRow.balance,
-          collateralUtilization: 0,
-          apy: 0,
-          fee: 0,
-        },
-        collateralData: vaultCollateral.normalizedCollaterals.length
-          ? [...vaultCollateral.normalizedCollaterals, vaultCollateral.totalRow]
-          : [],
-        borrowedAmount: vault.loan_outstanding_total,
-        uniqueBorrowers,
-        xtzDelegatedTo: '',
-        operators: [],
-        sMVKDelegatedTo: '',
-        depositors: vault.vault?.depositors.map(({ depositor_id }) => depositor_id) as Array<string> | undefined,
-      }
+    const borrowedAmount = vault.vault.lending_controller_vaults[0].loan_outstanding_total / 10 ** vaultAsset.decimals
 
-      if (vault.owner_id === userAddress) {
-        acc.myBorrowingList.push(normallizedVault)
-      }
+    const normallizedVault = {
+      borrowedAsset: {
+        assetSymbol: vaultAsset.symbol,
+        assetName: vaultAsset.name,
+        assetIcon: vaultAsset.icon,
+        amtBorrowed: borrowedAmount,
+        assetRate: vaultAsset.rate,
+        collateralBalance: vaultCollateral.totalRow.balance,
+        collateralUtilization: vaultCollateral.totalRow.balance / (borrowedAmount * vaultAsset.rate),
+        apr:
+          calcWithoutDecimals(
+            vault.vault.lending_controller_vaults[0].loan_token?.current_interest_rate ?? 0,
+            interestRateDecimals,
+          ) * 100,
+        fee: 0,
+      },
+      collateralData: vaultCollateral.normalizedCollaterals.length
+        ? [...vaultCollateral.normalizedCollaterals, vaultCollateral.totalRow]
+        : [],
+      borrowedAmount: vault.loan_outstanding_total,
+      xtzDelegatedTo: vaultXtzDelegatedTo?.delegate?.address ?? null,
+      operators: [],
+      sMVKDelegatedTo: '',
+      depositors: vault.vault?.depositors.map(({ depositor_id }) => depositor_id) as Array<string> | undefined,
+    }
 
-      if (vault.vault?.depositors.find(({ depositor_id }) => depositor_id === userAddress)) {
-        acc.permissinedBorrowingList.push(normallizedVault)
-      }
+    if (vault.owner_id === userAddress) {
+      acc.myBorrowingList.push(normallizedVault)
+    }
 
-      acc.totalCollateral += vaultCollateral.totalRow.balance
-      acc.totalBorrowed += normallizedVault.borrowedAmount * normallizedVault.borrowedAsset.assetRate
+    if (vault.vault?.depositors.find(({ depositor_id }) => depositor_id === userAddress)) {
+      acc.permissinedBorrowingList.push(normallizedVault)
+    }
 
-      return acc
-    },
-    { myBorrowingList: [], permissinedBorrowingList: [], totalCollateral: 0, totalBorrowed: 0 },
-  )
+    acc.totalCollateral += vaultCollateral.totalRow.balance
+    acc.vaultsBorrowedAmount += normallizedVault.borrowedAmount * normallizedVault.borrowedAsset.assetRate
+
+    return acc
+  }, Promise.resolve({ myBorrowingList: [], permissinedBorrowingList: [], totalCollateral: 0, vaultsBorrowedAmount: 0 }))
 }
 
 // Normalizing loan asset
-export const normalizeLoans = ({
+export const normalizeLoans = async ({
   storage,
   dipDupTokens,
   mTokens,
   userMTokens,
   userAddres,
   tokensRate,
-  userAssetBalances,
 }: {
   storage: LoansGQL
   dipDupTokens: State['tokens']['dipDupTokens']
   mTokens: State['tokens']['mTokens']
   userMTokens: UserState['mTokens']
   userAddres?: string
-  tokensRate: Record<string, number>
-  userAssetBalances: Record<string, number>
+  tokensRate: State['tokens']['tokensPrices']
 }) => {
   const interestTreasuryShare = calcWithoutDecimals(storage?.interest_treasury_share, storage.decimals)
   const interestRateDecimals = storage?.interest_rate_decimals ?? 0
-  const loanTokens = storage?.loan_tokens?.reduce<Array<LoanTokenType>>((acc, loanToken) => {
-    const {
-      lp_token_address,
-      loan_token_address,
-      loan_token_name,
-      utilisation_rate,
-      total_remaining,
-      history_data,
-      vaults,
-      reserve_ratio,
-      token_pool_total,
-      loan_token_contract_standard,
-      vaults_aggregate: { aggregate },
-    } = loanToken
+  const loanTokens = await storage?.loan_tokens?.reduce<Promise<Array<LoanTokenType>>>(
+    async (promiseAcc, loanToken) => {
+      const acc = await promiseAcc
 
-    const isXTZ = isTezosAsset(loan_token_name)
-    const loanTokenMetadata = getAssetMetadata(loan_token_name, lp_token_address, dipDupTokens, tokensRate)
-    const appropriateMtokenData = mTokens.find(({ loan_token_name: m_token_name }) => loan_token_name === m_token_name)
-    if (!loanTokenMetadata) return acc
+      const {
+        lp_token_address,
+        loan_token_name,
+        utilisation_rate,
+        total_remaining,
+        history_data,
+        vaults,
+        reserve_ratio,
+        token_pool_total,
+        loan_token_contract_standard,
+        vaults_aggregate: { aggregate },
+      } = loanToken
 
-    const { transactionHistory, totalBorrowed, totalLended, lending24hVolume, borrowing24hVolume } =
-      getTransactionHistory(history_data, dipDupTokens, tokensRate)
-    const {
-      myBorrowingList,
-      permissinedBorrowingList,
-      totalCollateral,
-      totalBorrowed: vaultsBorrowedAmount,
-    } = getBorrowings(vaults, dipDupTokens, tokensRate, userAddres)
+      const isXTZ = isTezosAsset(loan_token_name)
+      const loanTokenMetadata = getAssetMetadata(loan_token_name, lp_token_address, dipDupTokens, tokensRate)
+      const appropriateMtokenData = mTokens.find(
+        ({ loan_token_name: m_token_name }) => loan_token_name === m_token_name,
+      )
+      if (!loanTokenMetadata) return acc
 
-    const lendingItem = getLendingItem(
-      loanToken,
-      userMTokens,
-      userAssetBalances,
-      interestTreasuryShare,
-      storage.interest_rate_decimals,
-      loanTokenMetadata.decimals,
-    )
+      const { transactionHistory, totalBorrowed, totalLended, lending24hVolume, borrowing24hVolume } =
+        getTransactionHistory(history_data, dipDupTokens, tokensRate)
+      const { myBorrowingList, permissinedBorrowingList, totalCollateral, vaultsBorrowedAmount } = await getBorrowings(
+        vaults,
+        dipDupTokens,
+        tokensRate,
+        interestRateDecimals,
+        userAddres,
+      )
 
-    const availableLiquidity = isXTZ
-      ? calcWithoutMu(total_remaining)
-      : calcWithoutDecimals(total_remaining, Number(loanTokenMetadata.decimals ?? 1))
+      const lendingItem = await getLendingItem(
+        loanToken,
+        userMTokens,
+        interestTreasuryShare,
+        storage.interest_rate_decimals,
+        loanTokenMetadata.decimals,
+        userAddres,
+      )
 
-    // TODO: Temporary solution, cuz no data for no lended asset
-    if (lendingItem) {
-      acc.push({
-        loanTokenData: {
-          ...loanTokenMetadata,
-          tokenType: loan_token_contract_standard as 'tez' | 'fa12' | 'fa2',
-        },
-        myBorrowingList,
-        permissionedBorrowingList: permissinedBorrowingList,
-        lendingItem,
-        transactionHistory,
-        utilisationRate: utilisation_rate / 10 ** interestRateDecimals,
+      const availableLiquidity = isXTZ
+        ? calcWithoutMu(total_remaining)
+        : calcWithoutDecimals(total_remaining, Number(loanTokenMetadata.decimals ?? 1))
 
-        availableLiquidity,
-        totalLended: totalLended,
-        totalBorrowed,
-        loanTokenTotalCollaterals: totalCollateral,
-        loanTokenVaultsTotalBorrowed: vaultsBorrowedAmount,
+      // TODO: Temporary solution, cuz no data for no lended asset
+      if (lendingItem) {
+        acc.push({
+          loanTokenData: {
+            ...loanTokenMetadata,
+            tokenType: loan_token_contract_standard as 'tez' | 'fa12' | 'fa2',
+          },
+          myBorrowingList,
+          permissionedBorrowingList: permissinedBorrowingList,
+          lendingItem,
+          transactionHistory,
+          utilisationRate: utilisation_rate / 10 ** interestRateDecimals,
 
-        borrowers: aggregate?.count ?? 0,
-        suppliers: appropriateMtokenData?.accounts.length ?? 0,
-        lending24hVolume,
-        borrowing24hVolume,
+          availableLiquidity,
+          totalLended: totalLended,
+          totalBorrowed,
+          loanTokenTotalCollaterals: totalCollateral,
+          loanTokenVaultsTotalBorrowed: vaultsBorrowedAmount,
 
-        totalFeesEarned: userMTokens?.reduce((acc, { rewards_earned }) => acc + rewards_earned, 0) ?? 0,
-        collateralFactor: storage.collateral_ratio / 10,
-        reserveFactor: reserve_ratio / 100,
-        reserveAmount: (token_pool_total * reserve_ratio) / 100,
-        borrowAPR: lendingItem?.borrowAPR ?? 0,
-        lendingAPY: lendingItem?.lendAPY ?? 0,
-      })
-    }
+          borrowers: aggregate?.count ?? 0,
+          suppliers: appropriateMtokenData?.accounts.length ?? 0,
+          lending24hVolume,
+          borrowing24hVolume,
 
-    return acc
-  }, [])
+          totalFeesEarned: userMTokens?.reduce((acc, { rewards_earned }) => acc + rewards_earned, 0) ?? 0,
+          collateralFactor: storage.collateral_ratio / 10,
+          reserveFactor: reserve_ratio / 100,
+          reserveAmount: (token_pool_total * reserve_ratio) / 100,
+          borrowAPR: lendingItem?.borrowAPR ?? 0,
+          lendingAPY: lendingItem?.lendAPY ?? 0,
+        })
+      }
+
+      return acc
+    },
+    Promise.resolve([]),
+  )
 
   return {
     loansControllerAddress: storage?.address,
@@ -483,7 +507,7 @@ export const normalizeUserLending = ({
   tokensRate,
 }: {
   dipDupTokens: State['tokens']['dipDupTokens']
-  tokensRate: Record<string, number>
+  tokensRate: State['tokens']['tokensPrices']
   userDataFromIndexer: Mavryk_User['lending_controller_history_data_sender']
 }) => {
   return userDataFromIndexer.reduce<{
