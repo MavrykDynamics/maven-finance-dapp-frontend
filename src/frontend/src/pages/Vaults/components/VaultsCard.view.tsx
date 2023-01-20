@@ -275,6 +275,7 @@ export const VaultsCard = (props: Props) => {
           {...props}
           className="expand-vault"
           headerSufix={headerSufix}
+          getExpandedStatus={setExpanded}
           isVaultsPage
           isOwner
         />
