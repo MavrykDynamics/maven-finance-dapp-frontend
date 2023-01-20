@@ -17,6 +17,7 @@ import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { silverColor } from 'styles'
 import { LoansModalBase } from './Modals.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
+import { useLockBodyScroll } from 'react-use'
 
 export type AddLendingAssetDataType = {
   userBalance: number
@@ -43,11 +44,16 @@ export const AddLendingAsset = ({ closePopup, show, modalData }: AddLendingAsset
   const [inputAmount, setInputAmount] = useState('0')
   const [inputValidationStatus, setInputValidationStatus] = useState<InputStatusType>('')
 
+  useLockBodyScroll(show)
+
   const onChangeHandler = (inputAmount: string, userBalance: number) => {
+    const validationStatus =
+      Number(inputAmount) > 0 && Number(inputAmount) <= userBalance ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
+
+    if (validationStatus === INPUT_STATUS_ERROR && inputAmount !== '' && inputAmount !== '0') return
+
     setInputAmount(inputAmount)
-    setInputValidationStatus(
-      Number(inputAmount) > 0 && Number(inputAmount) <= userBalance ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
-    )
+    setInputValidationStatus(validationStatus)
   }
 
   const onBlurHandler = (inputAmount: string) => {
@@ -94,7 +100,7 @@ export const AddLendingAsset = ({ closePopup, show, modalData }: AddLendingAsset
               balanceName: 'Lend Balance',
               balance: userBalance,
               balanceAsset: assetName,
-              useMaxHandler: () => setInputAmount(String(userBalance)),
+              useMaxHandler: () => onChangeHandler(String(userBalance), userBalance),
               inputStatus: inputValidationStatus,
               ...(assetRate ? { convertedValue: assetRate * Number(inputAmount) } : {}),
             }}

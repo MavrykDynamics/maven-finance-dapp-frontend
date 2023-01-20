@@ -30,6 +30,7 @@ import {
 } from 'app/App.components/Table/Table.style'
 import { AvaliableCollateralType } from 'utils/TypesAndInterfaces/Loans'
 import { isTezosAsset } from 'pages/Loans/Loans.helpers'
+import { useLockBodyScroll } from 'react-use'
 
 type DropDownCollateralAssetType = DropDownItemType & AvaliableCollateralType
 
@@ -72,6 +73,8 @@ export const CreateNewVault = ({
   const [isVaultCreating, setVaultCreating] = useState(false)
   const [disabledDepositBtn, setDIsablingDepositBtn] = useState(false)
   const [newVaultAddress, setNewVaultAddress] = useState('')
+
+  useLockBodyScroll(show)
 
   useEffect(() => {
     const mappedAvaliableCollaterals = avaliableCollaterals.reduce<Record<number, DropDownCollateralAssetType>>(
@@ -235,6 +238,8 @@ export const CreateNewVault = ({
       Number(newInputAmount) > 0 && Number(newInputAmount) <= userAssetBalance
         ? INPUT_STATUS_SUCCESS
         : INPUT_STATUS_ERROR
+
+    if (validationStatus === INPUT_STATUS_ERROR && newInputAmount !== '' && newInputAmount !== '0') return
 
     setCollaterals(
       collaterals.map((collateral, updateCollateralIdx) =>
@@ -493,7 +498,7 @@ export const CreateNewVault = ({
                   </ThreeLevelListItem>
                   <ThreeLevelListItem>
                     <div className="name">Amount</div>
-                    <CommaNumber value={Number(collaterals[0].inputAmount)} className="value" endingText="%" />
+                    <CommaNumber value={Number(collaterals[0].inputAmount)} className="value" />
                   </ThreeLevelListItem>
                   <ThreeLevelListItem>
                     <div className="name">USD Value</div>

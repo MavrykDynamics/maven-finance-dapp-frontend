@@ -67,7 +67,7 @@ export const Input = ({
       ) : null}
 
       {convertedValue !== undefined ? (
-        <CommaNumber value={convertedValue} beginningText={'= '} endingText="$" className={'input-converted-amount'} />
+        <CommaNumber value={convertedValue} beginningText={'= $'} className={'input-converted-amount'} />
       ) : null}
 
       {children && <InputPinnedChild className="pinned-child">{children}</InputPinnedChild>}
