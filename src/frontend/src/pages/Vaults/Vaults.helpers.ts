@@ -34,7 +34,7 @@ export const normalizeVaultsStorage = (storage: VaultsStorageProps) => {
   } = storage
   if (!vaults.length) return []
   
-  return vaults.reduce<{
+  const data = vaults.reduce<{
     myVaultsIds: string[], allVaultsIds: string[], vaultsMapper: Record<string, VaultType> 
   }>((acc, item) => {
 
@@ -157,6 +157,21 @@ export const normalizeVaultsStorage = (storage: VaultsStorageProps) => {
     allVaultsIds: [],
     vaultsMapper: {},
   })
+
+  // sort data by statuses
+  const dataWithSortedIds = {
+    myVaultsIds: sortByVaultCategory({ 
+      vaultIds: data.myVaultsIds,
+      vaultsMapper: data.vaultsMapper,
+     }),
+    allVaultsIds: sortByVaultCategory({ 
+      vaultIds: data.allVaultsIds,
+      vaultsMapper: data.vaultsMapper,
+     }),
+    vaultsMapper: data.vaultsMapper
+  }
+
+  return dataWithSortedIds
 }
 
 export const getVaultTokensSymbols = ({
@@ -319,4 +334,34 @@ export const getVaultAssets = (vaultsMapper: Record<string, VaultType>) => {
     collateralAssets: [...collateralAssets],
     loanAssets: [...loanAssets],
   }
+}
+// TODO: add consts
+const priority = {
+  'LIQUIDATABLE': 1,
+  'GRACE PERIOD': 2,
+  'MARK': 3,
+  'AT RISK': 4,
+  'ACTIVE': 5,
+};
+
+type SortByVaultCategoryProps = {
+  vaultsMapper: Record<string, VaultType>
+  vaultIds: string[]
+  status?: string
+}
+
+export const sortByVaultCategory = ({vaultsMapper, vaultIds, status}: SortByVaultCategoryProps) => {
+  const dataToSort = vaultIds ? [...vaultIds] : []
+
+  const updatedPriority = status 
+    ? { ...priority, [status]: 0 }
+    : priority
+
+  return dataToSort.sort((a, b) => {
+    const firstItem = vaultsMapper[a].status
+    const secondItem = vaultsMapper[b].status
+    // TODO: delete ts-ignore
+    // @ts-ignore
+    return updatedPriority[firstItem.status] - updatedPriority[secondItem.status]
+  });
 }

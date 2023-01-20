@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
 
 // components
 import { Input } from 'app/App.components/Input/Input.controller'
@@ -10,10 +9,9 @@ import { DropDown } from 'app/App.components/DropDown/DropDown.controller'
 import { VaultsSearchFilterStyled } from './../Vaults.style'
 
 // helpers
-import { sortByCategory } from 'utils/sortByCategory'
+import { sortByVaultCategory } from '../Vaults.helpers'
 
 // types
-import { State } from '../../../reducers'
 import { VaultType } from 'utils/TypesAndInterfaces/Vaults'
 
 const dropdowns = {
@@ -33,9 +31,6 @@ type Props = {
 }
 
 export const VaultsSearchFilter = ({ statuses, assets, vaultsMapper, allVaultIds, setVaultIds }: Props) => {
-  const dispatch = useDispatch()
-  const { wallet, tezos, accountPkh } = useSelector((state: State) => state.wallet)
-
   const [searchInputValue, setSearchInput] = useState('')
 
   const [dropdownStatus, setDropdownStatus] = useState<{[key:string]: boolean}>({})
@@ -70,6 +65,7 @@ export const VaultsSearchFilter = ({ statuses, assets, vaultsMapper, allVaultIds
     }
 
     setSearchInput(e.target.value)
+    // TODO: rename from vaultIds to vaultsIds
     setVaultIds(filteredVaultIds)
   }
 
@@ -89,9 +85,18 @@ export const VaultsSearchFilter = ({ statuses, assets, vaultsMapper, allVaultIds
     if (selectedOption !== '' && selectedOption !== chosenDdItem[name]) {
       let filteredVaultIds: string[] = [...allVaultIds]
 
+      // sort by statuses
+      if (updatedChosenDdItem[dropdowns.STATUSES]) {
+        filteredVaultIds = sortByVaultCategory({
+          vaultIds: allVaultIds,
+          vaultsMapper,
+          status: updatedChosenDdItem[dropdowns.STATUSES]
+        })
+      }
+
       // filter by collateral asset
       if (updatedChosenDdItem[dropdowns.COLLATERAL]) {
-        filteredVaultIds = allVaultIds.filter((vaultId) => {
+        filteredVaultIds = filteredVaultIds.filter((vaultId) => {
           const vault = vaultsMapper[vaultId]
   
           if (vault.collateralData.length) {
