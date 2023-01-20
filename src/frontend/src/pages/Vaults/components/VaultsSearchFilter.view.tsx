@@ -36,14 +36,18 @@ export const VaultsSearchFilter = ({ statuses, assets, vaultsMapper, allVaultsId
   const [dropdownStatus, setDropdownStatus] = useState<{[key:string]: boolean}>({})
   const [chosenDdItem, setChosenDdItem] = useState<{[key:string]: string}>({})
 
-  // TODO: should work with selected filters
+  const [filteredData, setFilteredData] = useState<string[]>([])
+  const [searchedData, setSearchedData] = useState<string[]>([])
+
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const data = Object.values(chosenDdItem).length ? filteredData : allVaultsIds
+
     const searchQuery = e.target.value.toLowerCase()
 
     let filteredVaultsIds: string[] = []
 
     if (searchQuery !== '') {
-      filteredVaultsIds = allVaultsIds.filter((vaultId) => {
+      filteredVaultsIds = data.filter((vaultId) => {
         const vault = vaultsMapper[vaultId]
 
         const isFoundCollateralAsset = vault.collateralData.some(({ assetSymbol }) => {
@@ -61,10 +65,11 @@ export const VaultsSearchFilter = ({ statuses, assets, vaultsMapper, allVaultsId
         return false
       })
     } else {
-      filteredVaultsIds = allVaultsIds
+      filteredVaultsIds = data
     }
 
     setSearchInput(e.target.value)
+    setSearchedData(filteredVaultsIds)
     setVaultsIds(filteredVaultsIds)
   }
 
@@ -82,12 +87,13 @@ export const VaultsSearchFilter = ({ statuses, assets, vaultsMapper, allVaultsId
     setChosenDdItem(updatedChosenDdItem)
 
     if (selectedOption !== '' && selectedOption !== chosenDdItem[name]) {
-      let filteredVaultsIds: string[] = [...allVaultsIds]
+      const data = searchInputValue ? searchedData : [...allVaultsIds]
+      let filteredVaultsIds: string[] = data
 
       // sort by statuses
       if (updatedChosenDdItem[dropdowns.STATUSES]) {
         filteredVaultsIds = sortByVaultCategory({
-          vaultsIds: allVaultsIds,
+          vaultsIds: data,
           vaultsMapper,
           status: updatedChosenDdItem[dropdowns.STATUSES]
         })
@@ -125,6 +131,7 @@ export const VaultsSearchFilter = ({ statuses, assets, vaultsMapper, allVaultsId
         })
       }
   
+      setFilteredData(filteredVaultsIds)
       setVaultsIds(filteredVaultsIds)
     }
   }
