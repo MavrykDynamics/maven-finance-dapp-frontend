@@ -30,7 +30,7 @@ export const CouncilFormRemoveCouncilMember = () => {
       councilMembers?.length
         ? councilMembers.map((item) => {
             return {
-              text: getShortTzAddress(item.userId),
+              text: getShortTzAddress({ tzAddress: item.userId }),
               value: item.userId,
             }
           })

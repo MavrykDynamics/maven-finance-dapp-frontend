@@ -50,13 +50,13 @@ export const LendingTab = () => {
           acc.borrowing24hVolume += borrowing24hVolume
           acc.lending24hVolume += lending24hVolume
 
-          if (acc.prevMostBorrowed < totalBorrowed) {
-            acc.prevMostBorrowed = totalBorrowed
+          if (acc.prevMostBorrowed < totalBorrowed * loanTokenData.rate) {
+            acc.prevMostBorrowed = totalBorrowed * loanTokenData.rate
             acc.mostBorrowedAsset = loanTokenData as LoanTokenType['loanTokenData']
           }
 
-          if (acc.prevMostLended < totalLended) {
-            acc.prevMostLended = totalLended
+          if (acc.prevMostLended < totalLended * loanTokenData.rate) {
+            acc.prevMostLended = totalLended * loanTokenData.rate
             acc.mostLendedAsset = loanTokenData as LoanTokenType['loanTokenData']
           }
           return acc

@@ -5,6 +5,7 @@ import {
   ADD_NEW_COLLATERAL_MODAL_ID,
   BORROW_ASSET_MODAL_ID,
   CHANGE_BAKER_MODAL_ID,
+  COLLATERAL_RATIO_GRADIENT,
   MANAGE_PERMISSIONS_MODAL_ID,
   REPAY_AND_CLOSE_MODAL_ID,
   REPAY_MODAL_ID,
@@ -29,8 +30,7 @@ import {
   TableBody,
   TableCell,
 } from 'app/App.components/Table/Table.style'
-import { TzAddress } from 'pages/Treasury/Treasury.style'
-import { ThreeLevelListItem, FillBlock } from '../Loans.style'
+import { ThreeLevelListItem } from '../Loans.style'
 import { BorrowingTabListItemExpanded } from './LoansComponents.style'
 
 // popups
@@ -43,16 +43,12 @@ import { UpdateMVKOperator } from './Modals/UpdateMVKOperator.modal'
 import { ManagePermissions } from './Modals/ManagePermissions.modal'
 import { RepayAndCloseVault } from './Modals/RepayAndCloseVault.modal'
 import { Repay } from './Modals/Repay.modal'
+import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
+import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 
 type BorrowingExpandCardPropsType = {
   isOwner?: boolean
-  borrowedAsset: BorrowingData['borrowedAsset']
-  collateralData: BorrowingData['collateralData']
-  xtzDelegatedTo?: string
-  operators?: Array<string>
-  sMVKDelegatedTo?: string
-  depositors?: string | Array<string>
-}
+} & BorrowingData
 
 export const BorrowingExpandCard = ({
   isOwner = false,
@@ -62,6 +58,7 @@ export const BorrowingExpandCard = ({
   operators,
   sMVKDelegatedTo,
   depositors,
+  address,
 }: BorrowingExpandCardPropsType) => {
   const [shownModal, setShownModal] = useState<
     | typeof BORROW_ASSET_MODAL_ID
@@ -87,7 +84,7 @@ export const BorrowingExpandCard = ({
     assetRate = 1,
     collateralBalance = 0,
     collateralUtilization = 0,
-    apy,
+    apr,
     fee = 0,
   } = borrowedAsset
 
@@ -128,32 +125,31 @@ export const BorrowingExpandCard = ({
         className="expand-borrow-tab"
         header={
           <>
-            <ThreeLevelListItem>
-              <TzAddress tzAddress="tz1ezDb77a9jaFMHDWs8QXrKEDkpgGdgsjPD" type={BLUE} />
-              <FillBlock width={75}>
-                <div className="colored"></div>
-              </FillBlock>
-              <div className="info-tip">
-                Collateral Utilization:
-                <span>
-                  <CommaNumber value={collateralUtilization} endingText="%" />
-                </span>
+            <ThreeLevelListItem className="borrow-asset-header">
+              {assetIcon ? (
+                <div className="img-wrapper">
+                  <img src={assetIcon} alt={`${assetSymbol} logo`} />
+                </div>
+              ) : (
+                <Icon id="noImage" />
+              )}
+              <div className="data">
+                <div className="value">{assetSymbol}</div>
+                <div className="value">
+                  <TzAddress tzAddress={address} shouldCopy hasIcon amountFromStart={4} amountFromEnd={4} />
+                </div>
               </div>
             </ThreeLevelListItem>
-            <ThreeLevelListItem>
-              <div className="name">Asset</div>
-              <div className="value">
-                {assetIcon ? (
-                  <div className="img-wrapper">
-                    <img src={assetIcon} alt={`${assetSymbol} logo`} />
-                  </div>
-                ) : (
-                  <div className="no-icon">
-                    <Icon id="noImage" />
-                  </div>
-                )}
-                {assetSymbol}
+            <ThreeLevelListItem className="collateral-diagram">
+              <div className={`percentage ${Number(collateralUtilization) / 100 > 2.5 ? 'up' : 'down'}`}>
+                Collateral Ratio:
+                <CommaNumber value={collateralUtilization} endingText="%" />
               </div>
+              <GradientDiagram
+                className="diagram"
+                colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
+                currentPersentage={50}
+              />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Amount</div>
@@ -162,7 +158,7 @@ export const BorrowingExpandCard = ({
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Collateral Balance</div>
-              <CommaNumber value={collateralBalance} className="value" />
+              <CommaNumber value={collateralBalance} className="value" beginningText="$" />
             </ThreeLevelListItem>
           </>
         }
@@ -187,16 +183,17 @@ export const BorrowingExpandCard = ({
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Amount</div>
-              <CommaNumber value={amtBorrowed} className="value" endingText="$" />
+              <CommaNumber value={amtBorrowed} className="value" />
               {assetRate ? <CommaNumber value={amtBorrowed * assetRate} beginningText="$" className="rate" /> : null}
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Fee</div>
-              <CommaNumber value={fee} className="value" endingText="$" />
+              <CommaNumber value={fee} className="value" />
+              {assetRate ? <CommaNumber value={fee * assetRate} beginningText="$" className="rate" /> : null}
             </ThreeLevelListItem>
             <ThreeLevelListItem>
-              <div className="name">APY</div>
-              <CommaNumber value={apy} className="value" endingText="%" />
+              <div className="name">APR</div>
+              <CommaNumber value={apr} className="value" endingText="%" />
             </ThreeLevelListItem>
             {isOwner ? (
               <div className="buttons-wrapper">
@@ -221,7 +218,6 @@ export const BorrowingExpandCard = ({
                 <TableHeaderCell>Asset</TableHeaderCell>
                 <TableHeaderCell>Balance</TableHeaderCell>
                 <TableHeaderCell>Withdraw Max</TableHeaderCell>
-                {/* <TableHeaderCell>Other Data</TableHeaderCell> */}
               </TableRow>
             </TableHeader>
 
@@ -232,7 +228,7 @@ export const BorrowingExpandCard = ({
 
                 return (
                   <TableRow rowHeight={60} key={assetSymbol + '-' + idx}>
-                    <TableCell width={`17%`} className="vert-middle">
+                    <TableCell width={`22%`} className="vert-middle">
                       {isTotalRow ? (
                         'Total'
                       ) : (
@@ -250,7 +246,7 @@ export const BorrowingExpandCard = ({
                         </div>
                       )}
                     </TableCell>
-                    <TableCell width={`17%`}>
+                    <TableCell width={`22%`}>
                       <div className="cell-content">
                         <CommaNumber value={balance} className="value" />
                         {assetRate ? (
@@ -258,7 +254,7 @@ export const BorrowingExpandCard = ({
                         ) : null}
                       </div>
                     </TableCell>
-                    <TableCell width={`17%`}>
+                    <TableCell width={`22%`}>
                       <div className="cell-content">
                         <CommaNumber value={maxWithdraw} className="value" />
                         {assetRate ? (
@@ -266,9 +262,6 @@ export const BorrowingExpandCard = ({
                         ) : null}
                       </div>
                     </TableCell>
-                    {/* <TableCell width={`17%`}>
-                    <CommaNumber value={22.2} className="value" endingText='$' />
-                  </TableCell> */}
                     {isTotalRow ? (
                       <TableCell className="buttons borrowing">
                         <div className="cell-content row">

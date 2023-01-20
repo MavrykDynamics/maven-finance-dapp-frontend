@@ -16,6 +16,8 @@ type TzAddressProps = {
   isBold?: boolean
   shouldCopy?: boolean
   className?: string
+  amountFromStart?: number
+  amountFromEnd?: number
 }
 export const TzAddress = ({
   className,
@@ -25,6 +27,8 @@ export const TzAddress = ({
   iconToLeft,
   isBold,
   shouldCopy = true,
+  amountFromStart = 7,
+  amountFromEnd = 4,
 }: TzAddressProps) => {
   const addrClasses = `${type} ${isBold ? 'bold' : ''} copyIcon`
   const dispatch = useDispatch()
@@ -43,7 +47,9 @@ export const TzAddress = ({
           <use xlinkHref="/icons/sprites.svg#copyToClipboard" />
         </TzAddressIcon>
       )}
-      <TzAddressStyled className={addrClasses}>{getShortTzAddress(tzAddress)}</TzAddressStyled>
+      <TzAddressStyled className={addrClasses}>
+        {getShortTzAddress({ tzAddress, amountFromEnd, amountFromStart })}
+      </TzAddressStyled>
       {hasIcon && !iconToLeft && (
         <TzAddressIcon className={addrClasses}>
           <use xlinkHref="/icons/sprites.svg#copyToClipboard" />

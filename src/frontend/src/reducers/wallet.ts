@@ -1,6 +1,5 @@
 import { M_Token_Account } from './../utils/generated/graphqlTypes'
-import { CONNECT, DISCONNECT, SET_WALLET } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
-import { TempleWallet } from '@temple-wallet/dapp'
+import { CONNECT, DISCONNECT } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 import { TezosToolkit } from '@taquito/taquito'
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
 import { BeaconWallet } from '@taquito/beacon-wallet'
@@ -8,21 +7,6 @@ import { preferencesDefaultState } from './preferences'
 import { UserDoormanRewardsData, UserFarmRewardsData, UserSatelliteRewardsData } from 'utils/TypesAndInterfaces/User'
 import { UPDATE_USER_DATA } from 'pages/Doorman/Doorman.actions'
 import { UserLendObjType } from 'utils/TypesAndInterfaces/Loans'
-
-// Temple wallet types
-// export interface WalletState {
-//   wallet?: TempleWallet
-//   tezos?: TezosToolkit
-//   accountPkh?: string
-//   ready: boolean
-// }
-
-// const walletDefaultState: WalletState = {
-//   wallet: undefined,
-//   tezos: undefined,
-//   accountPkh: undefined,
-//   ready: false,
-// }
 
 export interface UserState {
   myMvkTokenBalance: number
@@ -88,19 +72,13 @@ export const walletDefaultState: WalletState = {
 
 export function wallet(state = walletDefaultState, action: Action) {
   switch (action.type) {
-    case SET_WALLET:
-      return {
-        ...state,
-        wallet: action.wallet,
-        isDefaultWallet: false,
-      }
     case CONNECT:
       return {
         ...state,
+        wallet: action.wallet,
         tezos: action.tezos,
         accountPkh: action.accountPkh,
         user: action.userData,
-        isDefaultWallet: false,
       }
     case UPDATE_USER_DATA:
       return {
@@ -109,7 +87,11 @@ export function wallet(state = walletDefaultState, action: Action) {
       }
     case DISCONNECT:
       return {
-        ...walletDefaultState,
+        ...state,
+        user: {
+          ...walletDefaultState.user,
+        },
+        accountPkh: undefined,
       }
     default:
       return state

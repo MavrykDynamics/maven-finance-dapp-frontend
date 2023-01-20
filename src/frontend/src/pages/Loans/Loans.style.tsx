@@ -277,6 +277,54 @@ export const ThreeLevelListItem = styled.div<{ theme: MavrykTheme }>`
     }
   }
 
+  &.borrow-asset-header {
+    display: flex;
+    height: fit-content;
+    column-gap: 7px;
+
+    > svg,
+    .img-wrapper {
+      width: 38px;
+      height: 38px;
+      fill: ${({ theme }) => theme.dataColor};
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+
+    .data {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+
+      > .value {
+        &:first-child {
+          text-transform: capitalize;
+        }
+
+        font-weight: 600;
+        font-size: 16px;
+
+        .tzAddressToClick {
+          font-size: 14px;
+        }
+
+        p {
+          margin: 0;
+        }
+
+        svg {
+          width: 14px;
+          height: 14px;
+          stroke: ${({ theme }) => theme.dataColor};
+        }
+      }
+    }
+  }
+
   .name {
     font-weight: 600;
     font-size: 14px;
@@ -291,13 +339,6 @@ export const ThreeLevelListItem = styled.div<{ theme: MavrykTheme }>`
     color: ${({ theme }) => theme.dataColor};
     display: flex;
     align-items: center;
-
-    &.tzAddressToClick {
-      svg {
-        width: 16px;
-        height: 16px;
-      }
-    }
 
     .img-wrapper,
     .no-icon {
@@ -330,22 +371,39 @@ export const ThreeLevelListItem = styled.div<{ theme: MavrykTheme }>`
     color: ${({ theme }) => theme.dataColor};
   }
 
-  .info-tip {
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    font-size: 10px;
-    column-gap: 5px;
-
-    span {
-      color: ${({ theme }) => theme.dataColor};
-      font-weight: 600;
-      font-size: 14px;
-    }
-  }
-
   .tooltip {
     margin-left: 7px;
+  }
+
+  &.collateral-diagram {
+    max-width: 200px;
+
+    .percentage {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 21px;
+      margin-bottom: 7px;
+      color: ${({ theme }) => theme.textColor};
+
+      &.up {
+        p {
+          color: ${({ theme }) => theme.upColor};
+        }
+      }
+
+      &.down {
+        p {
+          color: ${({ theme }) => theme.downColor};
+        }
+      }
+    }
+
+    .copyIcon {
+      font-weight: 600;
+    }
   }
 `
 
