@@ -15,6 +15,7 @@ type TimerProps = {
     timerView?: typeof LETTER_VIEW | typeof COLON_VIEW
     shownParts?: ('d' | 'h' | 'm' | 's')[]
   }
+  className?: string
 }
 
 const toSecond = 1000,
@@ -22,7 +23,7 @@ const toSecond = 1000,
   toHour = toMinute * 60,
   toDay = toHour * 24
 
-export const Timer = ({ deadline, timestamp, options }: TimerProps) => {
+export const Timer = ({ deadline, timestamp, options, className }: TimerProps) => {
   const [strings, setStrings] = useState({
     days: 0,
     hours: 0,
@@ -54,7 +55,7 @@ export const Timer = ({ deadline, timestamp, options }: TimerProps) => {
   return (
     <>
       {toShowShortVariant ? (
-        <ShortTimer>{'> 1d'}</ShortTimer>
+        <ShortTimer className={className}>{'> 1d'}</ShortTimer>
       ) : (
         <TimerView
           seconds={strings.seconds}
@@ -62,6 +63,7 @@ export const Timer = ({ deadline, timestamp, options }: TimerProps) => {
           hours={strings.hours}
           days={strings.days}
           options={options || {}}
+          className={className}
         />
       )}
     </>

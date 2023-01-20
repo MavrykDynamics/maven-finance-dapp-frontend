@@ -12,6 +12,10 @@ export type VaultType = Omit<BorrowingData, 'collateralData'> & {
   ownerId: string
   vaultId: number
   status: string
+  currentBlockLevel?: number
+  liquidationEndLevel: number,
+  markedForLiquidationLevel: number
+  liquidationDelayInMinutes: number
   
   collateralData: CollateralType[]
 }

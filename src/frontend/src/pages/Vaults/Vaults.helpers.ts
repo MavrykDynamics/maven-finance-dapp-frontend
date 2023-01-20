@@ -140,6 +140,10 @@ export const normalizeVaultsStorage = (storage: VaultsStorageProps) => {
         ownerId: item.owner_id || '',
         vaultId: item.internal_id,
         status,
+        currentBlockLevel,
+        liquidationEndLevel: item.liquidation_end_level,
+        markedForLiquidationLevel: item.marked_for_liquidation_level,
+        liquidationDelayInMinutes: lendingController.liquidation_delay_in_minutes,
         depositors: item.vault?.depositors.map(({ depositor_id }) => depositor_id) as Array<string> | undefined,
       }
 
