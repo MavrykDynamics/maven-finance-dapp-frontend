@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import dayjs from 'dayjs'
 
 // components
-import Expand from 'app/App.components/Expand/Expand.view'
 import { StatusFlag } from '../../../app/App.components/StatusFlag/StatusFlag.controller'
 import { TzAddress } from '../../../app/App.components/TzAddress/TzAddress.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
@@ -11,7 +10,6 @@ import { Button } from 'app/App.components/SettingsPopup/SettingsPopup.style'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { BorrowingExpandCard } from 'pages/Loans/Components/BorrowindExpandCard'
 import { Timer } from 'app/App.components/Timer/Timer.controller'
-import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
 
 // styles
 import { VaultsCardDropDown, VaultsAssest } from './../Vaults.style'
@@ -21,23 +19,22 @@ import { VaultType } from 'utils/TypesAndInterfaces/Vaults'
 import { StatusFlagStyle } from '../../../app/App.components/StatusFlag/StatusFlag.constants'
 
 // helpers
-import { BLUE, CYAN } from 'app/App.components/TzAddress/TzAddress.constants'
-import { VaultsStatuses } from '../Vaults.view'
+import { CYAN } from 'app/App.components/TzAddress/TzAddress.constants'
+import { vaultsStatuses } from '../Vaults.helpers' 
 import { getTimestampByLevel } from 'pages/Governance/Governance.actions'
 import { BLOCKS_PER_MINUTE } from 'utils/constants'
-import { COLLATERAL_RATIO_GRADIENT } from 'pages/Loans/Loans.const'
 
 const findStatusInfo = (status: string) => {
   switch (status) {
-    case VaultsStatuses.LIQUIDATABLE:
+    case vaultsStatuses.LIQUIDATABLE:
       return { color: 'down', text: 'Liquidation Armed' }
-    case VaultsStatuses.GRACE_PERIOD:
+    case vaultsStatuses.GRACE_PERIOD:
       return { color: 'darkWarning', text: 'Grace Period' }
-    case VaultsStatuses.MARK:
+    case vaultsStatuses.MARK:
       return { color: 'warning', text: 'Ready to Arm' }
-    case VaultsStatuses.AT_RISK:
+    case vaultsStatuses.AT_RISK:
       return { color: 'waiting', text: 'At Risk' }
-    case VaultsStatuses.ACTIVE:
+    case vaultsStatuses.ACTIVE:
       return { color: 'up', text: 'Low Risk' }
 
     default:
@@ -57,11 +54,11 @@ const findFooterText = (status: string, statusColor: StatusFlagStyle, timestamp:
     : <span className='timer'>no data</span>
 
   switch (status) {
-    case VaultsStatuses.LIQUIDATABLE:
+    case vaultsStatuses.LIQUIDATABLE:
       return <p>This vault is <span className={statusColor}>armed for liquidation</span> and can be liquidated for the next {timer}</p>
-    case VaultsStatuses.GRACE_PERIOD:
+    case vaultsStatuses.GRACE_PERIOD:
       return <p>This vault is in a <span className={statusColor}>grace period</span>. The vault owner has {timer}before liquidation is possible.</p>
-    case VaultsStatuses.MARK:
+    case vaultsStatuses.MARK:
       return <p>This vault is <span className={statusColor}>ready to arm</span> and can be marked for the next {timer}</p>
 
     default:
@@ -99,11 +96,11 @@ export const VaultsCard = (props: Props) => {
   const footerText = findFooterText(status, statusColor, countdownTimer)
 
   const isActiveFooter = 
-  status === VaultsStatuses.LIQUIDATABLE ||
-  status === VaultsStatuses.GRACE_PERIOD ||
-  status === VaultsStatuses.MARK
+  status === vaultsStatuses.LIQUIDATABLE ||
+  status === vaultsStatuses.GRACE_PERIOD ||
+  status === vaultsStatuses.MARK
 
-  const isMarkStatus = VaultsStatuses.MARK === status
+  const isMarkStatus = vaultsStatuses.MARK === status
 
   const getCountdownTimestamp = async (levelOfEarly: number, levelOfLate: number) => {
     const [timestampOfEarly, timestampOfLate] = await Promise.all([getTimestampByLevel(levelOfEarly), getTimestampByLevel(levelOfLate)])
@@ -117,7 +114,7 @@ export const VaultsCard = (props: Props) => {
   useEffect(() => {
     if (!expanded) return
 
-    if (status === VaultsStatuses.GRACE_PERIOD) {
+    if (status === vaultsStatuses.GRACE_PERIOD) {
       const fetchData = async () => {
         if (!currentBlockLevel) {
           setCountdownTimer(null)
@@ -142,7 +139,7 @@ export const VaultsCard = (props: Props) => {
       }
 
       fetchData()
-    } else if (status === VaultsStatuses.LIQUIDATABLE) {
+    } else if (status === vaultsStatuses.LIQUIDATABLE) {
       const fetchData = async () => {
         if (!currentBlockLevel || !liquidationEndLevel) {
           setCountdownTimer(null)
@@ -264,7 +261,7 @@ export const VaultsCard = (props: Props) => {
                   // TODO: add valid arg3
                   : handleLiquidateVault(vaultId, ownerId, 1)
               }}
-              disabled={VaultsStatuses.GRACE_PERIOD === status}
+              disabled={vaultsStatuses.GRACE_PERIOD === status}
             />
           </div>
         )}

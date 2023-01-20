@@ -6,35 +6,34 @@ import {
   checkVaultLiquidatableStatus,
   checkIfVaultIsAtRisk,
 } from './calcFunctionsForVaultStatuses'
-import { VaultsStatuses } from './Vaults.view'
 import { Lending_Controller_Vault } from 'utils/generated/graphqlTypes'
 import { getOracleAggregatorLatestPrice } from 'pages/Satellites/Satellites.actions'
 
 type VaultsStorageProps = {
   lendingController: LendingControllerGQL
-  vaults: Array<LendingControllerVaultGQL>
   vaultsTokensRate: Record<string, number>
   accountPkh?: string
   dipDupTokens: State['tokens']['dipDupTokens']
   currentBlockLevel?: number
-  liquidationDelayInMinutes?: number
   oracleLatestPrices: Record<string, number>
 }
 
 export const normalizeVaultsStorage = (storage: VaultsStorageProps) => {
   const {
     lendingController,
-    vaults = [],
     vaultsTokensRate,
     accountPkh,
     dipDupTokens,
     currentBlockLevel,
-    liquidationDelayInMinutes,
     oracleLatestPrices,
   } = storage
-  if (!vaults.length) return []
+  if (!lendingController.vaults.length) return {
+    myVaultsIds: [],
+    allVaultsIds: [],
+    vaultsMapper: {},
+  }
   
-  const data = vaults.reduce<{
+  const data = lendingController.vaults.reduce<{
     myVaultsIds: string[], allVaultsIds: string[], vaultsMapper: Record<string, VaultType> 
   }>((acc, item) => {
 
@@ -100,13 +99,13 @@ export const normalizeVaultsStorage = (storage: VaultsStorageProps) => {
 
       const status = (
         currentBlockLevel && 
-        liquidationDelayInMinutes && 
+        lendingController?.liquidation_delay_in_minutes && 
         item.loan_token?.oracle_id
       ) ? vaultStatusChecker({
         currentBlockLevel,
         liquidationEndLevel: item.liquidation_end_level,
         markedForLiquidationLevel: item.marked_for_liquidation_level,
-        liquidationDelayInMinutes,
+        liquidationDelayInMinutes: lendingController.liquidation_delay_in_minutes,
         loanOutstandingTotal: item.loan_outstanding_total / 10 ** item.loan_decimals,
         loanTokenOracleAddress: item.loan_token.oracle_id,
         liquidationRatio: lendingController.liquidation_ratio,
@@ -236,7 +235,7 @@ const vaultStatusChecker = ({
     markedForLiquidationLevel,
     liquidationDelayInMinutes,
   )){
-    return VaultsStatuses.GRACE_PERIOD
+    return vaultsStatuses.GRACE_PERIOD
   } else if (checkVaultIsAbleToMarkedForLiquidation(
     loanOutstandingTotal,
     loanTokenOracleAddress,
@@ -248,7 +247,7 @@ const vaultStatusChecker = ({
     liquidationDelayInMinutes,
     oracleLatestPrices,
   )){
-    return VaultsStatuses.MARK
+    return vaultsStatuses.MARK
   } else if (checkVaultLiquidatableStatus(
     loanOutstandingTotal,
     loanTokenOracleAddress,
@@ -260,7 +259,7 @@ const vaultStatusChecker = ({
     liquidationDelayInMinutes,
     oracleLatestPrices,
   )){
-    return VaultsStatuses.LIQUIDATABLE
+    return vaultsStatuses.LIQUIDATABLE
   } else if (checkIfVaultIsAtRisk(
     loanOutstandingTotal,
     loanTokenOracleAddress,
@@ -269,10 +268,10 @@ const vaultStatusChecker = ({
     vaultCollateralTokens,
     oracleLatestPrices,
   )){
-    return VaultsStatuses.AT_RISK
+    return vaultsStatuses.AT_RISK
   }
 
-  return VaultsStatuses.ACTIVE
+  return vaultsStatuses.ACTIVE
 }
 
 export const getOracleLatestPrices = async (vaults: Lending_Controller_Vault[]) => {
@@ -339,13 +338,21 @@ export const getVaultAssets = (vaultsMapper: Record<string, VaultType>) => {
     loanAssets: [...loanAssets],
   }
 }
-// TODO: add consts
+
+export const vaultsStatuses = {
+  LIQUIDATABLE: 'LIQUIDATABLE',
+  GRACE_PERIOD: 'GRACE PERIOD',
+  MARK: 'MARK',
+  AT_RISK: 'AT RISK',
+  ACTIVE: 'ACTIVE',
+}
+
 const priority = {
-  'LIQUIDATABLE': 1,
-  'GRACE PERIOD': 2,
-  'MARK': 3,
-  'AT RISK': 4,
-  'ACTIVE': 5,
+  [vaultsStatuses.LIQUIDATABLE]: 1,
+  [vaultsStatuses.GRACE_PERIOD]: 2,
+  [vaultsStatuses.MARK]: 3,
+  [vaultsStatuses.AT_RISK]: 4,
+  [vaultsStatuses.ACTIVE]: 5,
 };
 
 type SortByVaultCategoryProps = {
@@ -364,8 +371,7 @@ export const sortByVaultCategory = ({vaultsMapper, vaultsIds, status}: SortByVau
   return dataToSort.sort((a, b) => {
     const firstItem = vaultsMapper[a].status
     const secondItem = vaultsMapper[b].status
-    // TODO: delete ts-ignore
-    // @ts-ignore
-    return updatedPriority[firstItem.status] - updatedPriority[secondItem.status]
+
+    return updatedPriority[firstItem] - updatedPriority[secondItem]
   });
 }

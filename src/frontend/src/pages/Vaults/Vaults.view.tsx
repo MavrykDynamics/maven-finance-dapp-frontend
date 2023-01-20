@@ -16,7 +16,7 @@ import { VAULTS_LIST_NAME, MY_VAULTS_LIST_NAME } from 'pages/FinacialRequests/Pa
 import { getPageNumber } from 'pages/FinacialRequests/FinancialRequests.helpers'
 import { calculateSlicePositions } from 'pages/FinacialRequests/Pagination/pagination.consts'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
-import { getVaultAssets } from './Vaults.helpers'
+import { getVaultAssets, vaultsStatuses } from './Vaults.helpers'
 
 // types
 import { State } from '../../reducers'
@@ -33,23 +33,15 @@ const tabsId = {
   MY: 'my'
 }
 
-export const VaultsStatuses = {
-  LIQUIDATABLE: 'LIQUIDATABLE',
-  GRACE_PERIOD: 'GRACE PERIOD',
-  MARK: 'MARK',
-  AT_RISK: 'AT RISK',
-  ACTIVE: 'ACTIVE',
-}
-
-const ListOfStatuses = Object.values(VaultsStatuses)
+const ListOfStatuses = Object.values(vaultsStatuses)
 
 export const VaultsView = () => {
   const dispatch = useDispatch()
   const history = useHistory()
   const { search } = useLocation()
 
-  const { wallet, tezos, accountPkh } = useSelector((state: State) => state.wallet)
-  const { vaultsList } = useSelector((state: State) => state.vaults)
+  const { accountPkh } = useSelector((state: State) => state.wallet)
+  const { vaultsList: { myVaultsIds, allVaultsIds, vaultsMapper } } = useSelector((state: State) => state.vaults)
   const { tabId } = useParams<{ tabId: string }>()
 
   const tabsList: TabItem[] = useMemo(() => ([
@@ -67,14 +59,6 @@ export const VaultsView = () => {
       isDisabled: !accountPkh
     },
   ]), [accountPkh])
-
-  // TODO: deleted ts-ignores
-  // @ts-ignore
-  const myVaultsIds = vaultsList?.myVaultsIds as string[]
-  // @ts-ignore
-  const allVaultsIds = vaultsList?.allVaultsIds as string[]
-  // @ts-ignore
-  const vaultsMapper = vaultsList?.vaultsMapper as Record<string, VaultType>
 
   const { isLoading } = useDataLoader(async () => {
     try {

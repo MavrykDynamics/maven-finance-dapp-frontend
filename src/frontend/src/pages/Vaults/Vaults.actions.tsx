@@ -56,16 +56,14 @@ export const getVaultsStorage = () => async (dispatch: AppDispatch, getState: Ge
 
       return acc
     }, {})
-    // TODO: refactor, remove vaults, use lendingController.vaults instead of this
+
     const normallaziedVaultsStorage = normalizeVaultsStorage({
-      vaults: lendingController.vaults,
       accountPkh,
-      vaultsTokensRate,
       dipDupTokens,
-      currentBlockLevel: headData?.level,
-      liquidationDelayInMinutes: lendingController.liquidation_delay_in_minutes,
-      lendingController,
+      vaultsTokensRate,
       oracleLatestPrices,
+      currentBlockLevel: headData?.level,
+      lendingController,
     })
  
     dispatch(setContractAddress('vaultAddress', lendingController.address))  
