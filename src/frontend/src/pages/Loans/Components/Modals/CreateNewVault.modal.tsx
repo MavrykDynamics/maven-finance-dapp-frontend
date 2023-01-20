@@ -67,7 +67,7 @@ export const CreateNewVault = ({
   const dispatch = useDispatch()
   const { avaliableCollaterals, xtzBakers } = useSelector((state: State) => state.loans)
 
-  const [shownScreen, setShownScreen] = useState<CurrentActiveModalScreen>(ADD_COLLATERAL_SCREEN_ID)
+  const [shownScreen, setShownScreen] = useState<CurrentActiveModalScreen>(INITIAL_SCREEN_ID)
   const [collateralsToSelect, setCollateralsToSelect] = useState<Record<number, DropDownCollateralAssetType>>({})
   const [collaterals, setCollaterals] = useState<Array<InputCollateral>>([])
   const [isVaultCreating, setVaultCreating] = useState(false)
@@ -100,7 +100,7 @@ export const CreateNewVault = ({
     ])
 
     if (!show) {
-      setShownScreen(ADD_COLLATERAL_SCREEN_ID)
+      setShownScreen(INITIAL_SCREEN_ID)
       setAssetChosenDdItem(undefined)
       setVaultCreating(false)
       setNewVaultAddress('')
