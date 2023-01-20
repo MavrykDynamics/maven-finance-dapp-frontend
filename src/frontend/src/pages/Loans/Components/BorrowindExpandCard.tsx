@@ -165,19 +165,25 @@ export const BorrowingExpandCard = ({
                 currentPersentage={50}
               />
             </ThreeLevelListItem>
+            {isVaultsPage && (
             <ThreeLevelListItem>
-              <div className="name">Amount</div>
+              <div className="name">Collateral Value</div>
+              <CommaNumber value={collateralBalance} className="value" beginningText="$" />
+            </ThreeLevelListItem>)}
+            <ThreeLevelListItem>
+              <div className="name">{isVaultsPage ? 'Borrowed Amount' : 'Amount'}</div>
               <CommaNumber value={amtBorrowed} className="value" />
               {assetRate ? <CommaNumber value={amtBorrowed * assetRate} beginningText="$" className="rate" /> : null}
             </ThreeLevelListItem>
+            {!isVaultsPage && (
             <ThreeLevelListItem>
               <div className="name">Collateral Balance</div>
               <CommaNumber value={collateralBalance} className="value" beginningText="$" />
-            </ThreeLevelListItem>
+            </ThreeLevelListItem>)}
           </>
         )}
       >
-        <BorrowingTabListItemExpanded>
+        <BorrowingTabListItemExpanded className='expand-borrow-tab-container'>
           <div className="block-name">Borrowed</div>
           <div className="borrowed-data">
             <ThreeLevelListItem>

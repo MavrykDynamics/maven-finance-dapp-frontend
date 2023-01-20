@@ -38,9 +38,17 @@ export const VaultsStyled = styled.div<{ theme: MavrykTheme }>`
     margin-top: 10px;
 
     .expand-header {
-      padding: 0 30px;
-      grid-template-columns: 185px 210px 120px 120px 0.4fr 0.4fr;
-      column-gap: 40px;
+      padding: 23px 30px 13px 30px;
+      align-items: flex-start;
+      grid-template-columns: 0.7fr 1fr 0.6fr 0.5fr 0.6fr 0.4fr;
+
+      .sufix {
+        margin-top: 8px;
+      }
+
+      .arrow-wrap {
+        padding-bottom: 10px;
+      }
     }
 
     .expand-borrow-tab-container {
@@ -137,6 +145,37 @@ export const VaultsCardTitleTextGroup = styled.div<{ theme: MavrykTheme }>`
     line-height: 18px;
 
     color: ${({ theme }) => theme.dataColor};
+  }
+
+  &.collateral-diagram {
+    max-width: 200px;
+    height: min-content;
+    .percentage {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 21px;
+      margin-bottom: 7px;
+      color: ${({ theme }) => theme.textColor};
+
+      &.up {
+        p {
+          color: ${({ theme }) => theme.upColor};
+        }
+      }
+
+      &.down {
+        p {
+          color: ${({ theme }) => theme.downColor};
+        }
+      }
+    }
+
+    .copyIcon {
+      font-weight: 600;
+    }
   }
 `
 

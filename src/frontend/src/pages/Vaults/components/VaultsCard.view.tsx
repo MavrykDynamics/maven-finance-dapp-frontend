@@ -11,6 +11,7 @@ import { Button } from 'app/App.components/SettingsPopup/SettingsPopup.style'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { BorrowingExpandCard } from 'pages/Loans/Components/BorrowindExpandCard'
 import { Timer } from 'app/App.components/Timer/Timer.controller'
+import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
 
 // styles
 import { VaultsCardTitleTextGroup, VaultsCardDropDown, VaultsAssest } from './../Vaults.style'
@@ -24,6 +25,7 @@ import { BLUE, CYAN } from 'app/App.components/TzAddress/TzAddress.constants'
 import { VaultsStatuses } from '../Vaults.view'
 import { getTimestampByLevel } from 'pages/Governance/Governance.actions'
 import { BLOCKS_PER_MINUTE } from 'utils/constants'
+import { COLLATERAL_RATIO_GRADIENT } from 'pages/Loans/Loans.const'
 
 const findStatusInfo = (status: string) => {
   switch (status) {
@@ -42,6 +44,8 @@ const findStatusInfo = (status: string) => {
       return { color: 'info', text: 'no data'}
   }
 }
+
+const collateralUtilization = 0 // TODO add data from indexer
 
 const findFooterText = (status: string, statusColor: StatusFlagStyle, timestamp: number | null) => {
   const timer = timestamp 
@@ -172,11 +176,16 @@ export const VaultsCard = (props: Props) => {
           <TzAddress type={BLUE} tzAddress={address} />
         </VaultsCardTitleTextGroup>
       </div>
-      <VaultsCardTitleTextGroup>
-        <h3>Collateral Ratio</h3>
-        <div className='ratio'>
-          in progress...
+      <VaultsCardTitleTextGroup className="collateral-diagram">
+        <div className={`percentage ${Number(collateralUtilization) / 100 > 2.5 ? 'up' : 'down'}`}>
+          Collateral Ratio
+          {/* <CommaNumber value={collateralUtilization} endingText="%" /> */}
         </div>
+        <GradientDiagram
+          className="diagram"
+          colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
+          currentPersentage={50}
+        />
       </VaultsCardTitleTextGroup>
       <VaultsCardTitleTextGroup>
         <h3>Collateral Value</h3>
@@ -191,7 +200,7 @@ export const VaultsCard = (props: Props) => {
   )
 
   const headerSufix = (
-    <StatusFlag status={statusColor} text={status} />
+    <StatusFlag status={statusColor} text={status} className="sufix" />
   )
 
   const generalExpand = (
@@ -314,7 +323,7 @@ export const VaultsCard = (props: Props) => {
       {isOwner ? (
         <BorrowingExpandCard
           {...props}
-          header={header}
+          // header={header}
           headerSufix={headerSufix}
           className="expand-vault"
           isVaultsPage
