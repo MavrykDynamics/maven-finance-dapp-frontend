@@ -121,10 +121,17 @@ export const StatBlock = styled.div`
       margin: 0;
     }
 
-    svg {
+    svg,
+    .image-wrapper {
       width: 24px;
       height: 24px;
       margin-right: 7px;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
     }
 
     .impact {

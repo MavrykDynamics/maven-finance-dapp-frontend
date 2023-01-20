@@ -1,4 +1,4 @@
-import styled from 'styled-components/macro'
+import styled, { css } from 'styled-components/macro'
 import { Card } from 'styles'
 import { MavrykTheme } from '../../../styles/interfaces'
 
@@ -7,7 +7,6 @@ export const DropDownStyled = styled.div<{ theme: MavrykTheme }>`
   min-width: 226px;
   margin: 0 auto;
   position: relative;
-
   font-weight: 500;
   font-size: 14px;
   line-height: 24px;
@@ -34,6 +33,47 @@ export const DropDownStyled = styled.div<{ theme: MavrykTheme }>`
       border: unset;
     }
   }
+
+  &.change-bakery {
+    margin: 50px 0 30px 0;
+  }
+
+  &.input-dropdown {
+    min-width: unset;
+    div {
+      border: none;
+
+      span {
+        border: none;
+      }
+    }
+
+    #selected-option {
+      padding-left: 3px;
+    }
+
+    #dropDownListContainer {
+      width: max-content;
+      right: -8px;
+      top: 85%;
+
+      > div {
+        background: ${({ theme }) => theme.containerColor};
+        z-index: 10;
+      }
+
+      li {
+        padding-left: 10px;
+      }
+    }
+  }
+
+  &.select-xtz-baker {
+    ul {
+      overflow: auto;
+      max-height: 400px;
+    }
+  }
 `
 
 export const DropDownMenu = styled.div<{ theme: MavrykTheme }>`
@@ -55,7 +95,7 @@ export const DropDownMenu = styled.div<{ theme: MavrykTheme }>`
   cursor: pointer;
   text-transform: capitalize;
 
-  span {
+  > span {
     width: 50px;
     border-left: 2px solid ${({ theme }) => theme.headerColor};
     display: flex;
@@ -83,7 +123,7 @@ export const DropDownListContainer = styled.div`
   position: absolute;
   width: 100%;
   top: 36px;
-  left: 0;
+  right: 0;
   z-index: 11;
 `
 
@@ -101,10 +141,11 @@ export const DropDownList = styled.ul<{ theme: MavrykTheme }>`
   z-index: 2;
 `
 
-export const DropDownListItem = styled.li`
+export const DropDownListItem = styled.li<{ disabled?: boolean }>`
   list-style: none;
   height: 33px;
   display: flex;
+  column-gap: 10px;
   align-items: center;
   width: 100%;
   color: ${({ theme }) => theme.textColor};
@@ -114,7 +155,7 @@ export const DropDownListItem = styled.li`
   justify-content: space-between;
   text-transform: capitalize;
 
-  svg {
+  > svg {
     stroke: ${({ theme }) => theme.textColor};
     width: 10px;
     height: 10px;
@@ -123,6 +164,18 @@ export const DropDownListItem = styled.li`
   &:hover {
     background-color: ${({ theme }) => theme.cardBorderColor};
   }
+
+  ${({ disabled }) =>
+    disabled
+      ? css`
+          opacity: 0.6;
+          cursor: not-allowed;
+
+          > div {
+            pointer-events: none;
+          }
+        `
+      : ''}
 `
 
 export const DropdownContainer = styled.div<{ theme: MavrykTheme }>`

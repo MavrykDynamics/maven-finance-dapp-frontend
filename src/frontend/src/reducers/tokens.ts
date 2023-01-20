@@ -3,6 +3,7 @@ import { Governance_Financial_Whitelist_Token_Contract } from 'utils/generated/g
 import { DipDupTokensGraphQl } from 'utils/TypesAndInterfaces/DipDupTokens'
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
 import {
+  ADD_TOKENS_PRICES,
   GET_DIP_DUP_TOKENS,
   GET_M_TOKENS,
   GET_TOKENS_PRICES,
@@ -11,7 +12,7 @@ import {
 
 export type TokensType = {
   dipDupTokens: Array<DipDupTokensGraphQl>
-  tokensPrices: Record<string, { usd: number; eur: number }>
+  tokensPrices: Record<string, { usd: number }>
   whitelistTokens: Array<Governance_Financial_Whitelist_Token_Contract>
   mTokens: Array<M_Token>
 }
@@ -33,7 +34,15 @@ export function tokens(state = defaultTokensInfoState, action: Action) {
     case GET_TOKENS_PRICES:
       return {
         ...state,
-        tokensPrices: action.tokensPrices,
+        tokensPrices: state.tokensPrices,
+      }
+    case ADD_TOKENS_PRICES:
+      return {
+        ...state,
+        tokensPrices: {
+          ...state.tokensPrices,
+          ...action.tokensPrices,
+        },
       }
     default:
       return state

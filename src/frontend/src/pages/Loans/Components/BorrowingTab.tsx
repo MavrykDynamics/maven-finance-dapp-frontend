@@ -1,20 +1,30 @@
+import { useState } from 'react'
+
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+import { CreateNewVault } from './Modals/CreateNewVault.modal'
+
 import { Button } from 'app/App.components/Button/Button.controller'
-import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
-import { useDispatch } from 'react-redux'
-import { BorrowingData } from 'utils/TypesAndInterfaces/Loans'
-import { toggleLoansModal } from '../Loans.actions'
-import { CREATE_NEW_VAULT_MODAL_ID } from '../Loans.const'
+import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { BorrowingExpandCard } from './BorrowindExpandCard'
+
+import { BorrowingData } from 'utils/TypesAndInterfaces/Loans'
+
+import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { LoansTabStyled, NoItemsInTabStyled } from './LoansComponents.style'
 
 type BorrowingTabPropsType = {
   borrowingItems: Array<BorrowingData>
+  lendingControllerAddress: string
+  currentMarketAsset: string
 }
 
-export const BorrowingTab = ({ borrowingItems }: BorrowingTabPropsType) => {
-  const dispatch = useDispatch()
-  const createVaultHandler = () => dispatch(toggleLoansModal(CREATE_NEW_VAULT_MODAL_ID))
+export const BorrowingTab = ({
+  borrowingItems,
+  lendingControllerAddress,
+  currentMarketAsset,
+}: BorrowingTabPropsType) => {
+  const [showCreateVaultModal, setCreateVaultModal] = useState(false)
 
   return (
     <LoansTabStyled>
@@ -22,12 +32,18 @@ export const BorrowingTab = ({ borrowingItems }: BorrowingTabPropsType) => {
         <h2>My Boorrowing</h2>
       </GovRightContainerTitleArea>
 
+      <CreateNewVault
+        closePopup={() => setCreateVaultModal(false)}
+        show={showCreateVaultModal}
+        currentMarketAsset={currentMarketAsset}
+      />
+
       {borrowingItems.length ? (
         <>
           <Button
             text="New Vault"
             icon="plus"
-            onClick={createVaultHandler}
+            onClick={() => setCreateVaultModal(true)}
             kind={ACTION_PRIMARY}
             className="lending-tab-no-items-btn has-items-borrow-btn"
           />
@@ -44,11 +60,14 @@ export const BorrowingTab = ({ borrowingItems }: BorrowingTabPropsType) => {
             text="New Vault"
             icon="plus"
             kind={ACTION_PRIMARY}
-            onClick={createVaultHandler}
+            onClick={() => setCreateVaultModal(true)}
             className="lending-tab-no-items-btn"
           />
         </NoItemsInTabStyled>
       )}
+      <div className="factory-info">
+        Lending Controller Address <TzAddress tzAddress={lendingControllerAddress} type={BLUE} />
+      </div>
     </LoansTabStyled>
   )
 }

@@ -22,23 +22,6 @@ export const WalletOptions = {
   preferredNetwork: network.type,
 }
 
-export const SET_WALLET = 'SET_WALLET'
-export const setWallet = () => (dispatch: AppDispatch) => {
-  try {
-    // @ts-ignore
-    const wallet = new BeaconWallet(WalletOptions)
-    dispatch({
-      type: SET_WALLET,
-      wallet,
-    })
-  } catch (e) {
-    console.error(`Failed to initiate wallet: `, e)
-    if (e instanceof Error) {
-      dispatch(showToaster(ERROR, 'Failed to initiate wallet', e.message))
-    }
-  }
-}
-
 export const changeWallet = () => async (dispatch: AppDispatch) => {
   try {
     await dispatch(disconnect())
@@ -59,7 +42,7 @@ export const connect = () => async (dispatch: AppDispatch, getState: GetState) =
     // getting userWallet data
     const rpcNetwork = state.preferences.REACT_APP_RPC_PROVIDER
     // @ts-ignore
-    const wallet = new BeaconWallet(WalletOptions)
+    const wallet = state.wallet.wallet ?? new BeaconWallet(WalletOptions)
     const walletResponse = await checkIfWalletIsConnected(wallet)
 
     if (walletResponse.success) {
@@ -83,6 +66,8 @@ export const connect = () => async (dispatch: AppDispatch, getState: GetState) =
         ? await fetchUserData(
             accountPkh,
             state.delegation.delegationStorage.activeSatellites,
+            state.tokens.dipDupTokens,
+            state.tokens.tokensPrices,
             state.preferences.headData?.level,
           )
         : DEFAULT_USER
@@ -112,7 +97,6 @@ export const disconnect = () => async (dispatch: AppDispatch, getState: GetState
     Beacon_localStorage_keys.forEach((key) => localStorage.removeItem(key))
 
     dispatch({ type: DISCONNECT })
-    dispatch(setWallet())
   } catch (e) {
     console.error(`Failed to disconnect TempleWallet: `, e)
     if (e instanceof Error) {

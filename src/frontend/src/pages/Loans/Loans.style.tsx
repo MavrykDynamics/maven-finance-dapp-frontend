@@ -198,38 +198,10 @@ export const MarketStyled = styled.div<{ theme: MavrykTheme }>`
   flex-direction: column;
   row-gap: 25px;
 
-  .hidden-items {
-    margin-top: 12px;
-    display: none;
-    grid-template-columns: 130px 90px 130px 130px 115px 70px 115px;
-    justify-content: space-between;
-
-    &.show {
-      display: grid;
-    }
-
-    > div {
-      height: 50px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-
-      .value {
-        font-weight: 600;
-        font-size: 18px;
-      }
-
-      div {
-        text-align: center;
-        margin: 0 auto;
-      }
-    }
-  }
-
   .gen-info {
-    grid-template-columns: 130px 90px 130px 130px 115px 70px 115px;
-    display: grid;
+    display: flex;
     justify-content: space-between;
+    align-items: center;
 
     .value {
       font-weight: 700;
@@ -276,6 +248,7 @@ export const MarketStyled = styled.div<{ theme: MavrykTheme }>`
           font-weight: 700;
           font-size: 25px;
           line-height: 30px;
+          text-transform: capitalize;
         }
       }
     }
@@ -291,6 +264,65 @@ export const MarketStyled = styled.div<{ theme: MavrykTheme }>`
 export const ThreeLevelListItem = styled.div<{ theme: MavrykTheme }>`
   p {
     margin: 0;
+  }
+
+  &.right {
+    .name {
+      text-align: right;
+    }
+
+    .value {
+      text-align: right;
+      justify-content: flex-end;
+    }
+  }
+
+  &.borrow-asset-header {
+    display: flex;
+    height: fit-content;
+    column-gap: 7px;
+
+    > svg,
+    .img-wrapper {
+      width: 38px;
+      height: 38px;
+      fill: ${({ theme }) => theme.dataColor};
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+
+    .data {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+
+      > .value {
+        &:first-child {
+          text-transform: capitalize;
+        }
+
+        font-weight: 600;
+        font-size: 16px;
+
+        .tzAddressToClick {
+          font-size: 14px;
+        }
+
+        p {
+          margin: 0;
+        }
+
+        svg {
+          width: 14px;
+          height: 14px;
+          stroke: ${({ theme }) => theme.dataColor};
+        }
+      }
+    }
   }
 
   .name {
@@ -339,32 +371,61 @@ export const ThreeLevelListItem = styled.div<{ theme: MavrykTheme }>`
     color: ${({ theme }) => theme.dataColor};
   }
 
-  .info-tip {
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    font-size: 10px;
-    column-gap: 5px;
+  .tooltip {
+    margin-left: 7px;
+  }
 
-    span {
-      color: ${({ theme }) => theme.dataColor};
+  &.collateral-diagram {
+    max-width: 200px;
+
+    .percentage {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
       font-weight: 600;
       font-size: 14px;
+      line-height: 21px;
+      margin-bottom: 7px;
+      color: ${({ theme }) => theme.textColor};
+
+      &.up {
+        p {
+          color: ${({ theme }) => theme.upColor};
+        }
+      }
+
+      &.down {
+        p {
+          color: ${({ theme }) => theme.downColor};
+        }
+      }
+    }
+
+    .copyIcon {
+      font-weight: 600;
     }
   }
 `
 
 export const FillBlock = styled.div<{ theme: MavrykTheme; width: number }>`
   width: 220px;
-  height: 7px;
+  height: 8px;
   border-radius: 10px;
   display: flex;
   justify-content: flex-end;
+  position: relative;
   margin: 3px 0 4px 0;
-  background: linear-gradient(90deg, rgba(3, 212, 99, 1) 0%, rgba(255, 78, 67, 1) 100%);
+  background-color: rgba(80, 62, 170, 0.5);
+
   .colored {
+    position: absolute;
+    border-radius: 10px;
+    left: -1px;
+    top: 50%;
+    transform: translateY(-50%);
     width: ${({ width }) => 100 - width}%;
-    background-color: ${({ theme }) => theme.backgroundColor};
+    height: 8px;
+    background: linear-gradient(90deg, rgba(3, 212, 99, 1) 0%, rgba(255, 78, 67, 1) 100%);
   }
 `
 

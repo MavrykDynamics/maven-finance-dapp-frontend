@@ -103,13 +103,13 @@ export const InputLabel = styled.div<{ theme: MavrykTheme }>`
   font-size: 18px;
   font-weight: 600;
 
-  /* &.error {
+  &.error {
     color: ${({ theme }) => theme.downColor};
   }
 
   &.success {
     color: ${({ theme }) => theme.upColor};
-  } */
+  }
 `
 
 const zoomIn = keyframes`
@@ -198,4 +198,179 @@ export const InputErrorMessage = styled.div<{ theme: MavrykTheme }>`
 
 export const InputSpacer = styled.div`
   height: 10px;
+`
+
+export const StyledInput = styled.input<{ theme: MavrykTheme }>`
+  width: 100%;
+  height: 100%;
+  background-color: ${({ theme }) => theme.backgroundColor};
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 22px;
+  line-height: 22px;
+  margin: 0;
+  color: ${({ theme }) => theme.textColor};
+  display: block;
+  padding: 13px 45px 13px 20px;
+
+  &::placeholder {
+    color: ${({ theme }) => theme.textColor};
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &:hover:not(:disabled) {
+    background-color: ${({ theme }) => theme.containerColor};
+  }
+`
+
+export const InputPinnedChild = styled.div<{ theme: MavrykTheme }>`
+  height: 100%;
+  border-left: 1px solid ${({ theme }) => theme.dataColor};
+`
+
+export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
+  position: relative;
+  display: flex;
+  border: 1px solid ${({ theme }) => theme.cardBorderColor};
+  border-radius: 10px;
+  width: 100%;
+  height: 40px;
+  transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+
+  &:focus-within {
+    box-shadow: 0 0 0 2px ${({ theme }) => theme.primaryColor}19;
+    border-color: ${({ theme }) => theme.primaryColor}7F;
+  }
+
+  &.error {
+    border: 1px solid ${({ theme }) => theme.downColor};
+    input {
+      color: ${({ theme }) => theme.downColor};
+    }
+  }
+
+  &.success {
+    border: 1px solid ${({ theme }) => theme.upColor};
+    input {
+      color: ${({ theme }) => theme.upColor};
+    }
+  }
+
+  &.withdrawCollateralInput {
+    margin-bottom: 45px;
+  }
+
+  &.large-input {
+    height: 56px;
+  }
+
+  &.input-with-rate {
+    input {
+      padding-top: 0px;
+      padding-bottom: 13px;
+    }
+  }
+
+  .input-balance {
+    position: absolute;
+    bottom: -35px;
+    right: 15px;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 21px;
+    color: ${({ theme }) => theme.dataColor};
+  }
+
+  .input-converted-amount {
+    position: absolute;
+    bottom: -2px;
+    left: 25px;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 12px;
+    color: ${({ theme }) => theme.textColor};
+  }
+
+  .use-max-btn {
+    position: absolute;
+    top: -25px;
+    right: 15px;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 21px;
+    color: ${({ theme }) => theme.dataColor};
+  }
+`
+
+export const InputStyledStatus = styled.div<{ theme: MavrykTheme }>`
+  display: block;
+  position: absolute;
+  top: 13px;
+  right: 16px;
+  z-index: 1;
+  line-height: 13px;
+  text-align: center;
+  visibility: visible;
+  pointer-events: none;
+  will-change: transform, opacity;
+
+  &.hasChild {
+    right: px;
+  }
+
+  &.error {
+    background-image: url('/icons/input-error.svg');
+    animation: ${zoomIn} 0.3s cubic-bezier(0.12, 0.4, 0.29, 1.46);
+    height: 15px;
+    width: 15px;
+  }
+
+  &.success {
+    background-image: url('/icons/input-success.svg');
+    animation: ${zoomIn} 0.3s cubic-bezier(0.12, 0.4, 0.29, 1.46);
+    height: 12px;
+    width: 17px;
+  }
+`
+
+export const InputPinnedTokenInfo = styled.div<{ theme: MavrykTheme }>`
+  display: flex;
+  column-gap: 10px;
+  min-width: max-content;
+  align-items: center;
+  padding: 0 15px;
+  height: 100%;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 20px;
+  color: ${({ theme }) => theme.textColor};
+
+  svg,
+  .image-wrapper {
+    width: 24px;
+    height: 24px;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+`
+
+export const InputPinnedDropDown = styled.div<{ theme: MavrykTheme }>`
+  display: flex;
+  min-width: max-content;
+  align-items: center;
+  padding: 0 7px;
+  height: 100%;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 20px;
+  color: ${({ theme }) => theme.textColor};
 `

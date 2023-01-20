@@ -2,7 +2,7 @@ import styled from 'styled-components/macro'
 import { Card } from 'styles'
 import { MavrykTheme } from 'styles/interfaces'
 
-export const SatellitePaginationStyled = styled(Card)<{ theme: MavrykTheme }>`
+export const SatellitePaginationStyled = styled.div<{ theme: MavrykTheme }>`
   margin-top: 0;
   margin-bottom: 20px;
   display: flex;
@@ -13,6 +13,10 @@ export const SatellitePaginationStyled = styled(Card)<{ theme: MavrykTheme }>`
 
   .go-back {
     margin-right: auto;
+  }
+
+  &.data-feeds-pagination {
+    margin-top: 20px;
   }
 
   .pagination-link {

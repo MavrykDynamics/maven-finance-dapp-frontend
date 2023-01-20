@@ -123,7 +123,7 @@ export const Table = styled.table<{ theme: MavrykTheme }>`
     position: relative;
     border-spacing: 0;
     width: 100%;
-    border-radius: 2px;
+    border-radius: 10px;
   }
 
   &.transaction-history-table {
@@ -435,7 +435,18 @@ export const TableCell = styled.td<{
     }
 
     &.borrowing {
-      button {
+      button:not(.add-collateral) {
+        width: 130px;
+        padding: 0;
+
+        svg {
+          fill: ${({ theme }) => theme.valueColor};
+          width: 18px;
+          height: 18px;
+        }
+      }
+
+      .add-collateral {
         max-width: 180px;
       }
     }

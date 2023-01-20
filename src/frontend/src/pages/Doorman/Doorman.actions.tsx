@@ -30,7 +30,7 @@ import {
   calcWithoutMu,
   calcWithoutPrecision,
 } from '../../utils/calcFunctions'
-import { PRECISION_NUMBER, ROCKET_LOADER } from '../../utils/constants'
+import { PRECISION_NUMBER } from '../../utils/constants'
 import {
   UserDoormanRewardsData,
   UserFarmRewardsData,
@@ -47,6 +47,13 @@ import { Farm } from 'utils/generated/graphqlTypes'
 import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 import { DEFAULT_USER, UserState } from 'reducers/wallet'
 import { SatelliteRecord } from 'utils/TypesAndInterfaces/Delegation'
+import {
+  USER_LENDING_DATA_QUERY,
+  USER_LENDING_DATA_QUERY_NAME,
+  USER_LENDING_DATA_QUERY_VARIABLE,
+} from 'gql/queries/getLoansStorage'
+import { normalizeUserLending } from 'pages/Loans/Loans.helpers'
+import { getUserLoansDataTokensRates } from 'pages/Loans/LoansFethcers'
 
 export const GET_SMVK_HISTORY_DATA = 'GET_SMVK_HISTORY_DATA'
 export const GET_MVK_MINT_HISTORY_DATA = 'GET_MVK_MINT_HISTORY_DATA'
@@ -162,11 +169,10 @@ export const stake = (amount: number) => async (dispatch: AppDispatch, getState:
     await batchOp?.confirmation()
 
     dispatch(showToaster(SUCCESS, 'Staking done', 'All good :)'))
-    dispatch(toggleActionLoader(false))
-
-    if (state.wallet.accountPkh) await dispatch(updateUserData(state.wallet.accountPkh))
+    await dispatch(updateUserData())
     await dispatch(getMvkTokenStorage())
     await dispatch(getDoormanStorage())
+    await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
@@ -207,11 +213,11 @@ export const unstake = (amount: number) => async (dispatch: AppDispatch, getStat
     await transaction?.confirmation()
 
     dispatch(showToaster(SUCCESS, 'Unstaking done', 'All good :)'))
-    dispatch(toggleActionLoader(false))
 
-    if (state.wallet.accountPkh) await dispatch(updateUserData(state.wallet.accountPkh))
+    await dispatch(updateUserData())
     await dispatch(getMvkTokenStorage())
     await dispatch(getDoormanStorage())
+    await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
@@ -244,11 +250,11 @@ export const rewardsCompound = (address: string) => async (dispatch: AppDispatch
     await transaction?.confirmation()
 
     dispatch(showToaster(SUCCESS, 'Compounding done', 'All good :)'))
-    dispatch(toggleActionLoader(false))
 
-    if (state.wallet.accountPkh) await dispatch(updateUserData(state.wallet.accountPkh))
+    await dispatch(updateUserData())
     await dispatch(getMvkTokenStorage())
     await dispatch(getDoormanStorage())
+    await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
@@ -287,6 +293,8 @@ export const getDoormanStorage = () => async (dispatch: AppDispatch) => {
 export const fetchUserData = async (
   accountPkh: string,
   activeSatellites: Array<SatelliteRecord>,
+  dipDupTokens: State['tokens']['dipDupTokens'],
+  tokensRates: State['tokens']['tokensPrices'],
   currentBlockLevel?: number,
 ) => {
   try {
@@ -384,6 +392,29 @@ export const fetchUserData = async (
     userInfo.mySatelliteRewardsData = calcUsersSatelliteRewards(userInfo)
     userInfo.myFarmRewardsData = calcUsersFarmRewards(userInfo, currentBlockLevel ?? 0)
 
+    const userLendingData = await fetchFromIndexer(
+      USER_LENDING_DATA_QUERY,
+      USER_LENDING_DATA_QUERY_NAME,
+      USER_LENDING_DATA_QUERY_VARIABLE(accountPkh),
+    )
+
+    const tokensRate = await getUserLoansDataTokensRates(
+      userLendingData.mavryk_user[0].lending_controller_history_data_sender,
+      dipDupTokens,
+      tokensRates,
+    )
+
+    const { userBorrowing, userLendings } = normalizeUserLending({
+      dipDupTokens,
+      tokensRate: { ...tokensRate, ...tokensRate },
+      userDataFromIndexer: userLendingData.mavryk_user[0].lending_controller_history_data_sender,
+    })
+
+    userInfo.userLoansData = {
+      userBorrowing,
+      userLendings,
+    }
+
     // TODO: ask Sam about it
     // const estimatedRewardsForNextCompound =
     //   userInfo.myDoormanRewardsData.myAvailableDoormanRewards +
@@ -400,21 +431,25 @@ export const fetchUserData = async (
 }
 
 export const UPDATE_USER_DATA = 'UPDATE_USER_DATA'
-export const updateUserData = (accountPkh: string) => async (dispatch: AppDispatch, getState: GetState) => {
+export const updateUserData = () => async (dispatch: AppDispatch, getState: GetState) => {
   const {
     preferences: { headData: { level = 0 } = {} },
     delegation: {
       delegationStorage: { activeSatellites },
     },
+    wallet: { accountPkh },
+    tokens: { dipDupTokens, tokensPrices },
   } = getState()
 
   try {
-    const userData = await fetchUserData(accountPkh, activeSatellites, level)
+    if (accountPkh) {
+      const userData = await fetchUserData(accountPkh, activeSatellites, dipDupTokens, tokensPrices, level)
 
-    dispatch({
-      type: UPDATE_USER_DATA,
-      userData,
-    })
+      dispatch({
+        type: UPDATE_USER_DATA,
+        userData: userData,
+      })
+    }
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)

@@ -23,7 +23,7 @@ export function FormRemoveCouncilMemberView() {
 
   const itemsForDropDown = breakGlassCouncilMember.map((item) => {
     return {
-      text: `${item.name} - ${getShortTzAddress(item.userId)}`,
+      text: `${item.name} - ${getShortTzAddress({ tzAddress: item.userId })}`,
       value: item.userId,
     }
   })

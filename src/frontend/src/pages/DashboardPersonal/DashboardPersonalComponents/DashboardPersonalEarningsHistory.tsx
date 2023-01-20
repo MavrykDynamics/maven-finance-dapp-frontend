@@ -8,20 +8,16 @@ export type DashboardPersonalEarningsHistoryProps = {
   mvkRate: number
   xtzRate: number
   satelliteRewards: number
-  governanceRewards: number
   farmsRewards: number
   exitRewards: number
-  maxSupply: number
   lendingIncome: number
 }
 
 const DashboardPersonalEarningsHistory = ({
   mvkRate,
   xtzRate,
-  maxSupply,
   lendingIncome,
   satelliteRewards,
-  governanceRewards,
   farmsRewards,
   exitRewards,
 }: DashboardPersonalEarningsHistoryProps) => {
@@ -52,15 +48,6 @@ const DashboardPersonalEarningsHistory = ({
           </div>
         </div>
         <div className="stat-block">
-          <div className="name">Gov. Rewards</div>
-          <div className="value">
-            <CommaNumber
-              value={switcherActive ? governanceRewards : governanceRewards * mvkRate}
-              endingText={switcherActive ? 'MVK' : 'USD'}
-            />
-          </div>
-        </div>
-        <div className="stat-block">
           <div className="name">Farming Rewards</div>
           <div className="value">
             <CommaNumber
@@ -74,15 +61,6 @@ const DashboardPersonalEarningsHistory = ({
           <div className="value">
             <CommaNumber
               value={switcherActive ? exitRewards : exitRewards * mvkRate}
-              endingText={switcherActive ? 'MVK' : 'USD'}
-            />
-          </div>
-        </div>
-        <div className="stat-block">
-          <div className="name">Max Supply</div>
-          <div className="value">
-            <CommaNumber
-              value={switcherActive ? maxSupply : maxSupply * mvkRate}
               endingText={switcherActive ? 'MVK' : 'USD'}
             />
           </div>

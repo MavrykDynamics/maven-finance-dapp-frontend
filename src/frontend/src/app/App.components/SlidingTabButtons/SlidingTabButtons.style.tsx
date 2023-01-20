@@ -48,13 +48,20 @@ export const SlidingTabButtonsStyled = styled.div<{ theme: MavrykTheme }>`
       cursor: not-allowed;
     }
   }
+
+  &.transaction-history {
+    button {
+      white-space: nowrap;
+      margin: 0;
+    }
+  }
 `
 
 export const ButtonStyled = styled.button<{ disabled: boolean; theme: MavrykTheme }>`
   border: none;
   cursor: pointer;
   height: 36px;
-  width: max-content;
+  width: -webkit-fill-available;
   padding: 0 22px;
   border-radius: ${BUTTON_RADIUS};
   user-select: none;

@@ -22,6 +22,24 @@ type InputProps = {
   className?: string
 }
 
-export const Input = ({ id = '', ...restIputProps }: InputProps) => {
-  return <InputView {...restIputProps} id={id} />
+export const Input = ({
+  id = '',
+  onChange,
+  value,
+  onBlur,
+  onFocus,
+  onKeyDown,
+  placeholder,
+  name,
+  type,
+  disabled,
+  required,
+  ...restIputProps
+}: InputProps) => {
+  return (
+    <InputView
+      {...restIputProps}
+      inputProps={{ id, onChange, value, onBlur, onFocus, onKeyDown, placeholder, name, type, disabled, required }}
+    />
+  )
 }

@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { BUTTON, ButtonStyle, ButtonTypes, PRIMARY } from './Button.constants'
+import { ACTION_PRIMARY, BUTTON, ButtonStyle, ButtonTypes, PRIMARY } from './Button.constants'
 import { ButtonStyled } from './NewButton.style'
 
 export type ButtonProps = {
@@ -9,13 +9,13 @@ export type ButtonProps = {
   onClick?: (e: React.MouseEvent<HTMLElement>) => void
   type?: ButtonTypes
   disabled?: boolean
-  children?: JSX.Element
+  children?: React.ReactNode
 }
 
 const NewButton = ({
   onClick,
   disabled = false,
-  kind = PRIMARY,
+  kind = ACTION_PRIMARY,
   type = BUTTON,
   className = '',
   children,

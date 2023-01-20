@@ -1,7 +1,13 @@
 import styled from 'styled-components'
 import { BUTTON_RADIUS } from 'styles/constants'
 import { MavrykTheme } from 'styles/interfaces'
-import { ACTION_SIMPLE, PRIMARY, SECONDARY, TRANSPARENT_WITH_BORDER } from './Button.constants'
+import {
+  ACTION_PRIMARY,
+  ACTION_SECONDARY,
+  ACTION_SIMPLE,
+  NAV_SIMPLE,
+  TRANSPARENT_WITH_BORDER,
+} from './Button.constants'
 
 export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
   padding: 0 31px;
@@ -13,6 +19,15 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
   cursor: pointer;
   border-radius: ${BUTTON_RADIUS};
   user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  column-gap: 10px;
+
+  svg {
+    width: 24px;
+    height: 24px;
+  }
 
   &:hover {
     opacity: 0.8;
@@ -23,18 +38,48 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
     cursor: not-allowed;
   }
 
-  &.${PRIMARY} {
+  &.${ACTION_PRIMARY} {
     color: ${({ theme }) => theme.containerColor};
-    background-color: ${({ theme }) => theme.primaryColor};
+    background-color: ${({ theme }) => theme.actionPrimaryBtnColor};
+
+    svg {
+      fill: ${({ theme }) => theme.containerColor};
+    }
   }
 
-  &.${SECONDARY} {
-    color: ${({ theme }) => theme.primaryColor};
-    background-color: ${({ theme }) => theme.containerColor};
-    border: 1.5px solid ${({ theme }) => theme.primaryColor};
+  &.${ACTION_SECONDARY} {
+    color: ${({ theme }) => theme.actionPrimaryBtnColor};
+    background-color: transparent;
+    border: 2px solid ${({ theme }) => theme.actionPrimaryBtnColor};
+
+    &.close {
+      svg {
+        stroke: ${({ theme }) => theme.downColor};
+      }
+    }
+
+    &.fill {
+      svg {
+        stroke: none;
+        fill: ${({ theme }) => theme.actionPrimaryBtnColor};
+      }
+    }
   }
 
   &.${ACTION_SIMPLE} {
+    width: fit-content;
+    height: fit-content;
+    padding: 3px 7px;
+    transition: 0.3s all;
+    color: ${({ theme }) => theme.valueColor};
+    max-width: unset;
+
+    &.use-max-btn {
+      color: ${({ theme }) => theme.dataColor};
+    }
+  }
+
+  &.${NAV_SIMPLE} {
     width: fit-content;
     height: fit-content;
     padding: 3px 7px;
@@ -43,22 +88,20 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
     color: ${({ theme }) => theme.navTitleColor};
     max-width: unset;
 
-    &.selecting {
-      &.active,
-      &:hover {
-        &:not(.no-before)::before {
-          position: absolute;
-          bottom: -3px;
-          left: 50%;
-          transform: translateX(-50%);
-          transition: 0.3s all;
-          content: '';
-          width: 30px;
-          height: 1px;
-          background-color: ${({ theme }) => theme.navLinkSubTitleActive};
-        }
-        color: ${({ theme }) => theme.navLinkSubTitleActive};
+    &.active,
+    &:hover {
+      &:not(.no-before)::before {
+        position: absolute;
+        bottom: -3px;
+        left: 50%;
+        transform: translateX(-50%);
+        transition: 0.3s all;
+        content: '';
+        width: 30px;
+        height: 1px;
+        background-color: ${({ theme }) => theme.navLinkSubTitleActive};
       }
+      color: ${({ theme }) => theme.navLinkSubTitleActive};
     }
   }
 
@@ -70,6 +113,10 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
     align-items: center;
     justify-content: center;
     width: fit-content;
+
+    svg {
+      fill: ${({ theme }) => theme.valueColor};
+    }
   }
 
   &.go-back {

@@ -179,6 +179,7 @@ export const PopupContainer = styled.div<{ show?: boolean }>`
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.35s, visibility 0.35s;
+  overscroll-behavior: contain;
 
   > div {
     display: none;

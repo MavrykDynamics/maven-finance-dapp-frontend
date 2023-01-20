@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { Redirect, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
 
@@ -25,27 +25,32 @@ import { MarketPagination, MarketStyled, ThreeLevelListItem } from './Loans.styl
 import { State } from 'reducers'
 import { MarketPageHeader } from './Components/LoansPageHeader'
 import { PermissionVaults } from './Components/PermissionVaultsTab'
-import { LoansModals } from './Components/Modals/Modal.controller'
+import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
+import { getLoansStorage } from './Loans.actions'
 
 export const Market = () => {
+  const dispatch = useDispatch()
   const { assetId, tabId } = useParams<{ assetId: string; tabId: string }>()
   const { loanTokens, loansControllerAddress } = useSelector((state: State) => state.loans)
-  const { isInitialDataLoading } = useSelector((state: State) => state.loading)
+  const { accountPkh } = useSelector((state: State) => state.wallet)
 
-  const [showHiddenItems, setShowHiddenItems] = useState(false)
+  const { isLoading } = useDataLoader(async () => {
+    try {
+      await dispatch(getLoansStorage())
+    } catch (e) {}
+  }, [accountPkh])
 
   const currentToken = useMemo(
-    () => loanTokens.find(({ loanTokenData: { symbol } }) => assetId === symbol),
+    () => loanTokens.find(({ loanTokenData: { name } }) => assetId === name),
     [assetId, loanTokens],
   )
 
   const [prevMarket, nextMarket, currentAsset] = useMemo(() => {
-    const currentAssetIdx = loanTokens.findIndex(({ loanTokenData: { symbol } }) => symbol === assetId)
+    const currentAssetIdx = loanTokens.findIndex(({ loanTokenData: { name } }) => name === assetId)
     return [loanTokens[currentAssetIdx - 1], loanTokens[currentAssetIdx + 1], loanTokens[currentAssetIdx]]
   }, [assetId, loanTokens])
 
-  // TODO: add loader to the page, if data is not loaded, need to create dataLoaderHook
-  if (isInitialDataLoading) {
+  if (isLoading) {
     return (
       <Page>
         <PageHeader page={'lending'} />
@@ -66,7 +71,7 @@ export const Market = () => {
 
       <div className="right-side-wrapper">
         {prevMarket ? (
-          <Link to={`/market/${prevMarket.loanTokenData.symbol}/${tabId}`}>
+          <Link to={`/loans/${prevMarket.loanTokenData.name}/${tabId}`}>
             <span className="left">
               <Icon id="paginationArrowLeft" /> Previous Market
             </span>
@@ -74,7 +79,7 @@ export const Market = () => {
         ) : null}
 
         {nextMarket ? (
-          <Link to={`/market/${nextMarket.loanTokenData.symbol}/${tabId}`}>
+          <Link to={`/loans/${nextMarket.loanTokenData.name}/${tabId}`}>
             <span className="right">
               Next Market
               <Icon id="paginationArrowLeft" />
@@ -93,20 +98,20 @@ export const Market = () => {
       <Link to={`/loans/${assetId}/${BORROW_TAB_ID}`}>
         <Button text={'My Borrowing'} kind={ACTION_SIMPLE} className={`${tabId === BORROW_TAB_ID ? 'active' : ''}`} />
       </Link>
-      <Link to={`/loans/${assetId}/${PERMISSIONS_VAULTS_TAB_ID}`}>
-        <Button
-          text={'Permissions Vaults'}
-          kind={ACTION_SIMPLE}
-          className={`${tabId === PERMISSIONS_VAULTS_TAB_ID ? 'active' : ''}`}
-        />
-      </Link>
+      {currentToken.permissionedBorrowingList.length ? (
+        <Link to={`/loans/${assetId}/${PERMISSIONS_VAULTS_TAB_ID}`}>
+          <Button
+            text={'Permissioned Vaults'}
+            kind={ACTION_SIMPLE}
+            className={`${tabId === PERMISSIONS_VAULTS_TAB_ID ? 'active' : ''}`}
+          />
+        </Link>
+      ) : null}
     </div>
   )
 
   return (
     <Page>
-      <LoansModals />
-
       <MarketPageHeader assetId={assetId} currentAsset={currentAsset} />
 
       {marketPagination}
@@ -125,66 +130,65 @@ export const Market = () => {
             )}
 
             <div className="text-wrapper">
-              <div className="symbol">{currentToken.loanTokenData.symbol}</div>
-              <div className="full-name">{currentToken.loanTokenData.name}</div>
+              <div className="symbol">{currentToken.loanTokenData.name}</div>
+              <div className="full-name">{currentToken.loanTokenData.symbol}</div>
             </div>
           </div>
-          <ThreeLevelListItem>
-            <div className="name">Earn APY</div>
-            <CommaNumber value={currentToken.lendingAPY} endingText="%" className="value" />
-          </ThreeLevelListItem>
-          <ThreeLevelListItem>
-            <div className="name">Total Lending</div>
-            <CommaNumber value={currentToken.totalLended} className="value" />
-          </ThreeLevelListItem>
-          <ThreeLevelListItem>
-            <div className="name">Available Liquidity</div>
-            <CommaNumber value={currentToken.avaliableLiquidity} className="value" />
-          </ThreeLevelListItem>
-          <ThreeLevelListItem>
-            <div className="name">Collateral Factor</div>
-            <CommaNumber value={currentToken.collateralFactor} endingText="%" className="value" />
-          </ThreeLevelListItem>
-          <ThreeLevelListItem>
-            <div className="name">Suppliers</div>
-            <CommaNumber value={currentToken.suppliers} className="value" />
-          </ThreeLevelListItem>
-
-          <Button
-            text="Show More"
-            icon="paginationArrowLeft"
-            iconAfter
-            kind={'transparent'}
-            className={`link ${showHiddenItems ? 'arrow-top' : 'arrow-down'}`}
-            onClick={() => setShowHiddenItems(!showHiddenItems)}
-          />
-        </div>
-
-        <div className={`hidden-items ${showHiddenItems ? 'show' : ''}`}>
-          <ThreeLevelListItem>
-            <div className="name">Oracle Price</div>
-            <CommaNumber value={0} beginningText="$" className="value" />
-          </ThreeLevelListItem>
-          <ThreeLevelListItem>
-            <div className="name">Borrow APR</div>
-            <CommaNumber value={currentToken.borrowAPR} endingText="%" className="value" />
-          </ThreeLevelListItem>
-          <ThreeLevelListItem>
-            <div className="name">Total Borrowed</div>
-            <CommaNumber value={currentToken.totalBorrowed} className="value" />
-          </ThreeLevelListItem>
-          <ThreeLevelListItem>
-            <div className="name">Reserve Amount</div>
-            <CommaNumber value={currentToken.reserveAmount} className="value" />
-          </ThreeLevelListItem>
-          <ThreeLevelListItem>
-            <div className="name">Reserve Factor</div>
-            <CommaNumber value={currentToken.reserveFactor} endingText="%" className="value" />
-          </ThreeLevelListItem>
-          <ThreeLevelListItem>
-            <div className="name">Borrowers</div>
-            <CommaNumber value={currentToken.borrowers} className="value" />
-          </ThreeLevelListItem>
+          {tabId === LEND_TAB_ID ? (
+            <>
+              <ThreeLevelListItem>
+                <div className="name">Oracle Price</div>
+                <CommaNumber value={0} beginningText="$" className="value" />
+              </ThreeLevelListItem>
+              <ThreeLevelListItem>
+                <div className="name">Earn APY</div>
+                <CommaNumber value={currentToken.lendingAPY} endingText="%" className="value" />
+              </ThreeLevelListItem>
+              <ThreeLevelListItem>
+                <div className="name">Total Lending</div>
+                <CommaNumber value={currentToken.totalLended} className="value" />
+              </ThreeLevelListItem>
+              <ThreeLevelListItem>
+                <div className="name">Available Liquidity</div>
+                <CommaNumber value={currentToken.availableLiquidity} className="value" />
+              </ThreeLevelListItem>
+              <ThreeLevelListItem>
+                <div className="name">Collateral Factor</div>
+                <CommaNumber value={currentToken.collateralFactor} endingText="%" className="value" />
+              </ThreeLevelListItem>
+              <ThreeLevelListItem>
+                <div className="name">Suppliers</div>
+                <CommaNumber value={currentToken.suppliers} className="value" />
+              </ThreeLevelListItem>
+            </>
+          ) : (
+            <>
+              <ThreeLevelListItem>
+                <div className="name">Oracle Price</div>
+                <CommaNumber value={0} beginningText="$" className="value" />
+              </ThreeLevelListItem>
+              <ThreeLevelListItem>
+                <div className="name">Borrow APR</div>
+                <CommaNumber value={currentToken.borrowAPR} endingText="%" className="value" />
+              </ThreeLevelListItem>
+              <ThreeLevelListItem>
+                <div className="name">Total Borrowed</div>
+                <CommaNumber value={currentToken.totalBorrowed} className="value" />
+              </ThreeLevelListItem>
+              <ThreeLevelListItem>
+                <div className="name">Reserve Amount</div>
+                <CommaNumber value={currentToken.reserveAmount} className="value" />
+              </ThreeLevelListItem>
+              <ThreeLevelListItem>
+                <div className="name">Reserve Factor</div>
+                <CommaNumber value={currentToken.reserveFactor} endingText="%" className="value" />
+              </ThreeLevelListItem>
+              <ThreeLevelListItem>
+                <div className="name">Borrowers</div>
+                <CommaNumber value={currentToken.borrowers} className="value" />
+              </ThreeLevelListItem>
+            </>
+          )}
         </div>
 
         {tabsNav}
@@ -196,9 +200,18 @@ export const Market = () => {
             assetData={currentToken.loanTokenData}
           />
         ) : null}
-        {tabId === BORROW_TAB_ID ? <BorrowingTab borrowingItems={currentToken.myBorrowingList} /> : null}
+        {tabId === BORROW_TAB_ID ? (
+          <BorrowingTab
+            borrowingItems={currentToken.myBorrowingList}
+            lendingControllerAddress={loansControllerAddress}
+            currentMarketAsset={assetId}
+          />
+        ) : null}
         {tabId === PERMISSIONS_VAULTS_TAB_ID ? (
-          <PermissionVaults permissionVaults={currentToken.permissinedBorrowingList} />
+          <PermissionVaults
+            permissionVaults={currentToken.permissionedBorrowingList}
+            lendingControllerAddress={loansControllerAddress}
+          />
         ) : null}
 
         <TransactionHistory currentToken={currentToken} />

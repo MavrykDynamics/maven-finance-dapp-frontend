@@ -52,14 +52,14 @@ export const TransactionHistory = ({ currentToken }: TransactionHistoryPropsType
         ? currentToken?.transactionHistory
         : currentToken?.transactionHistory.filter(({ userAddress }) => accountPkh === userAddress),
     )
-  }, [switcherState])
+  }, [accountPkh, currentToken?.transactionHistory, switcherState])
 
   const currentPage = getPageNumber(search, TRANSACTION_HISTORY_TABLE_NAME)
 
   const paginatedTableRows = useMemo(() => {
     const [from, to] = calculateSlicePositions(currentPage, TRANSACTION_HISTORY_TABLE_NAME)
     return transactionHistory?.slice(from, to)
-  }, [currentPage, currentToken])
+  }, [currentPage, transactionHistory])
 
   return (
     <TransactionHistoryStyled>
@@ -71,6 +71,7 @@ export const TransactionHistory = ({ currentToken }: TransactionHistoryPropsType
         <SlidingTabButtons
           onClick={(tabId: number) => setSwitcherState(tabId === 0 ? 'all' : 'personal')}
           tabItems={TRANSACTION_HISTORY_SLIDING_BUTTONS}
+          className="transaction-history"
         />
       </div>
 
