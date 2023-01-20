@@ -113,7 +113,7 @@ export const normalizeVaultsStorage = (storage: VaultsStorageProps) => {
         vaultCollateralTokens: normalizeCollateralTokens,
         collateralRatio: lendingController.collateral_ratio,
         oracleLatestPrices,
-      }) : ''
+      }) : 'no status'
 
       const normallizedVault = {
         borrowedAsset: {
@@ -126,7 +126,7 @@ export const normalizeVaultsStorage = (storage: VaultsStorageProps) => {
             : { assetRate: null }),
           collateralBalance: vaultCollateral.totalRow?.balance ?? 0,
           collateralUtilization: 0,
-          apy: 0,
+          apr: 0,
           fee: 0,
         },
         collateralData: vaultCollateral.normalizedCollaterals.concat(

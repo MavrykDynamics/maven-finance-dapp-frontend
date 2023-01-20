@@ -46,11 +46,10 @@ import { Repay } from './Modals/Repay.modal'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 
-type BorrowingExpandCardPropsType = {
+type BorrowingExpandCardPropsType = BorrowingData & {
   isOwner?: boolean
   borrowedAsset: BorrowingData['borrowedAsset']
   collateralData: BorrowingData['collateralData']
-  xtzDelegatedTo?: string
   operators?: Array<string>
   sMVKDelegatedTo?: string
   depositors?: string | Array<string>
@@ -59,7 +58,6 @@ type BorrowingExpandCardPropsType = {
   isVaultsPage?: boolean
   className?: string
 }
- & BorrowingData
 
 export const BorrowingExpandCard = ({
   isOwner = false,
@@ -234,17 +232,19 @@ export const BorrowingExpandCard = ({
                 <TableHeaderCell>Asset</TableHeaderCell>
                 <TableHeaderCell>Balance</TableHeaderCell>
                 <TableHeaderCell>Withdraw Max</TableHeaderCell>
+                {isVaultsPage && <TableHeaderCell>Collateral Share</TableHeaderCell>}
               </TableRow>
             </TableHeader>
 
             <TableBody>
-              {collateralData.map(({ assetSymbol, assetIcon, balance, assetRate = 1, maxWithdraw }, idx) => {
+              {collateralData.map(({ assetSymbol, assetIcon, balance, assetRate = 1, maxWithdraw, collateralShare = 0 }, idx) => {
+                const columnWidth = isVaultsPage ? '18%' : '22%'
                 const isTotalRow = collateralData.length - 1 === idx
                 if (isTotalRow && collateralData.length < 3) return null
 
                 return (
                   <TableRow rowHeight={60} key={assetSymbol + '-' + idx}>
-                    <TableCell width={`22%`} className="vert-middle">
+                    <TableCell width={columnWidth} className="vert-middle">
                       {isTotalRow ? (
                         'Total'
                       ) : (
@@ -262,7 +262,7 @@ export const BorrowingExpandCard = ({
                         </div>
                       )}
                     </TableCell>
-                    <TableCell width={`22%`}>
+                    <TableCell width={columnWidth}>
                       <div className="cell-content">
                         <CommaNumber value={balance} className="value" />
                         {assetRate ? (
@@ -270,7 +270,7 @@ export const BorrowingExpandCard = ({
                         ) : null}
                       </div>
                     </TableCell>
-                    <TableCell width={`22%`}>
+                    <TableCell width={columnWidth}>
                       <div className="cell-content">
                         <CommaNumber value={maxWithdraw} className="value" />
                         {assetRate ? (
@@ -278,6 +278,12 @@ export const BorrowingExpandCard = ({
                         ) : null}
                       </div>
                     </TableCell>
+                    {isVaultsPage && (
+                    <TableCell width={columnWidth}>
+                      <div className="cell-content">
+                         <CommaNumber value={collateralShare} className="value" endingText="%" />
+                      </div>
+                    </TableCell>)}
                     {isTotalRow ? (
                       <TableCell className="buttons borrowing">
                         <div className="cell-content row">
