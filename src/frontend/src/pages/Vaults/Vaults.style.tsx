@@ -237,6 +237,7 @@ export const VaultsCardDropDown = styled.div<{ theme: MavrykTheme }>`
     }
 
     .timer {
+      display: inline-block;
       color: ${({ theme }) => theme.dataColor};
     }
   }

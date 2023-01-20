@@ -44,13 +44,21 @@ const findStatusInfo = (status: string) => {
 }
 
 const findFooterText = (status: string, statusColor: StatusFlagStyle, timestamp: number | null) => {
+  const timer = timestamp 
+    ? (<Timer
+      timestamp={timestamp}
+      className='timer'
+      options={{ defaultColor: '#77A4F2', negativeColor: '#77A4F2' }}
+    />)
+    : <span className='timer'>no data</span>
+
   switch (status) {
     case VaultsStatuses.LIQUIDATABLE:
-      return <p>This vault is <span className={statusColor}>armed for liquidation</span> and can be liquidated for the next <span className='timer'>{timestamp}</span></p>
+      return <p>This vault is <span className={statusColor}>armed for liquidation</span> and can be liquidated for the next {timer}</p>
     case VaultsStatuses.GRACE_PERIOD:
-      return <p>This vault is in a <span className={statusColor}>grace period</span>. The vault owner has <span className='timer'>{timestamp}</span> before liquidation is possible.</p>
+      return <p>This vault is in a <span className={statusColor}>grace period</span>. The vault owner has {timer}before liquidation is possible.</p>
     case VaultsStatuses.MARK:
-      return <p>This vault is <span className={statusColor}>ready to arm</span> and can be marked for the next <span className='timer'>{timestamp}</span></p>
+      return <p>This vault is <span className={statusColor}>ready to arm</span> and can be marked for the next {timer}</p>
 
     default:
       return ''
@@ -68,7 +76,7 @@ export const VaultsCard = (props: Props) => {
     address,
     ownerId,
     vaultId,
-    status: xxx, // TODO
+    status,
     currentBlockLevel,
     liquidationEndLevel,
     markedForLiquidationLevel,
@@ -79,7 +87,6 @@ export const VaultsCard = (props: Props) => {
     handleLiquidateVault,
     handleMarkForLiquidation,
   } = props
-  const status = VaultsStatuses.GRACE_PERIOD
   const [expanded, setExpanded] = useState(false)
   const [countdownTimer, setCountdownTimer] = useState<number | null>(null)
 
@@ -109,6 +116,7 @@ export const VaultsCard = (props: Props) => {
     if (status === VaultsStatuses.GRACE_PERIOD) {
       const fetchData = async () => {
         if (!currentBlockLevel) {
+          setCountdownTimer(null)
           return 
         }
         
@@ -119,7 +127,11 @@ export const VaultsCard = (props: Props) => {
         const timestamp = dayjs(response.timestampOfEarly).unix() - dayjs(response.timestampOfLate).unix()
 
         console.log({
-          timestamp
+          timestamp,
+          dataFirst: response.timestampOfEarly,
+          dataSecond: response.timestampOfLate,
+          unixFirst: dayjs(response.timestampOfEarly).unix(),
+          unixSecond: dayjs(response.timestampOfLate).unix()
         });
         
         setCountdownTimer(timestamp)
@@ -129,19 +141,13 @@ export const VaultsCard = (props: Props) => {
     } else if (status === VaultsStatuses.LIQUIDATABLE) {
       const fetchData = async () => {
         if (!currentBlockLevel || !liquidationEndLevel) {
+          setCountdownTimer(null)
           return 
         }
         
         const response = await getCountdownTimestamp(currentBlockLevel, liquidationEndLevel)
         const timestamp = dayjs(response.timestampOfEarly).unix() - dayjs(response.timestampOfLate).unix()
 
-        console.log({
-          currentBlockLevel,
-          liquidationEndLevel,
-          response,
-          status
-        })
-        
         setCountdownTimer(timestamp)
       }
 
