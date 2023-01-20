@@ -53,10 +53,11 @@ type BorrowingExpandCardPropsType = BorrowingData & {
   operators?: Array<string>
   sMVKDelegatedTo?: string
   depositors?: string | Array<string>
-  header?: React.ReactNode
   headerSufix?: React.ReactNode
   isVaultsPage?: boolean
+  getExpandedStatus?: (arg: boolean) => void
   className?: string
+  children?: React.ReactNode
 }
 
 export const BorrowingExpandCard = ({
@@ -67,11 +68,12 @@ export const BorrowingExpandCard = ({
   operators,
   sMVKDelegatedTo,
   depositors,
-  header,
   headerSufix,
   isVaultsPage,
+  getExpandedStatus,
   className,
   address,
+  children,
 }: BorrowingExpandCardPropsType) => {
   const [shownModal, setShownModal] = useState<
     | typeof BORROW_ASSET_MODAL_ID
@@ -135,9 +137,10 @@ export const BorrowingExpandCard = ({
       <Repay closePopup={closePopup} show={shownModal === REPAY_MODAL_ID} />
 
       <Expand
+        getExpandedStatus={getExpandedStatus}
         className={className || "expand-borrow-tab"}
         sufix={headerSufix}
-        header={header || (
+        header={
           <>
             <ThreeLevelListItem className="borrow-asset-header">
               {assetIcon ? (
@@ -181,8 +184,9 @@ export const BorrowingExpandCard = ({
               <CommaNumber value={collateralBalance} className="value" beginningText="$" />
             </ThreeLevelListItem>)}
           </>
-        )}
+        }
       >
+        {children || (
         <BorrowingTabListItemExpanded className='expand-borrow-tab-container'>
           <div className="block-name">Borrowed</div>
           <div className="borrowed-data">
@@ -403,7 +407,7 @@ export const BorrowingExpandCard = ({
               />
             </>
           ) : null}
-        </BorrowingTabListItemExpanded>
+        </BorrowingTabListItemExpanded>)}
       </Expand>
     </>
   )

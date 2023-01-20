@@ -10,30 +10,6 @@ import { DOWN, INFO, PRIMARY, UP, WAITING, WARNING, DARK_WARNING } from 'app/App
 import { MavrykTheme } from '../../styles/interfaces'
 
 export const VaultsStyled = styled.div<{ theme: MavrykTheme }>`
-  .group-with-icon {
-    display: flex;
-
-    > svg {
-      margin-right: 10px;
-      width: 36px;
-      height: 36px;
-    }
-
-    .img-wrapper, .no-icon {
-      margin-right: 10px;
-      width: 36px;
-      height: 36px;
-
-      img,
-      svg {
-        fill: ${({ theme }) => theme.dataColor};
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-    }
-  }
-
   .expand-vault {
     margin-top: 10px;
 
@@ -92,89 +68,6 @@ export const VaultsSearchFilterStyled = styled(Card)`
           text-transform: uppercase;
         }
       }
-    }
-  }
-`
-
-export const VaultsCardTitleTextGroup = styled.div<{ theme: MavrykTheme }>`
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-  row-gap: 5px;
-
-  > h2 {
-    height: 18px;
-    font-weight: 600;
-    font-size: 18px;
-    color: ${({ theme }) => theme.dataColor};
-    text-transform: capitalize;
-
-    &::after {
-      height: 0;
-    }
-  }
-
-  > h3 {
-    font-weight: 600;
-    font-size: 14px;
-    line-height: 21px;
-    color: ${({ theme }) => theme.textColor};
-    text-transform: capitalize;
-  }
-
-  .header-value {
-    color: ${({ theme }) => theme.dataColor};
-
-    p {
-      margin: 0;
-    }
-  }
-
-  .ratio {
-    height: 14px;
-  }
-
-  .rate {
-    position: absolute;
-    top: 27px;
-
-    font-weight: 400;
-    font-size: 12px;
-    line-height: 18px;
-
-    color: ${({ theme }) => theme.dataColor};
-  }
-
-  &.collateral-diagram {
-    max-width: 200px;
-    height: min-content;
-    .percentage {
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-      font-weight: 600;
-      font-size: 14px;
-      line-height: 21px;
-      margin-bottom: 7px;
-      color: ${({ theme }) => theme.textColor};
-
-      &.up {
-        p {
-          color: ${({ theme }) => theme.upColor};
-        }
-      }
-
-      &.down {
-        p {
-          color: ${({ theme }) => theme.downColor};
-        }
-      }
-    }
-
-    .copyIcon {
-      font-weight: 600;
     }
   }
 `

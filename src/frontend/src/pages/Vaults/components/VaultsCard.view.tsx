@@ -14,7 +14,7 @@ import { Timer } from 'app/App.components/Timer/Timer.controller'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
 
 // styles
-import { VaultsCardTitleTextGroup, VaultsCardDropDown, VaultsAssest } from './../Vaults.style'
+import { VaultsCardDropDown, VaultsAssest } from './../Vaults.style'
 
 // types
 import { VaultType } from 'utils/TypesAndInterfaces/Vaults'
@@ -159,57 +159,11 @@ export const VaultsCard = (props: Props) => {
     } 
   }, [status, expanded])
 
-  const header = (
-    <>
-      <div className='group-with-icon'>
-        {assetIcon ? (
-          <div className="img-wrapper">
-            <img src={assetIcon} alt={`${assetSymbol} logo`} />
-          </div>
-        ) : (
-          <div className="no-icon">
-            <Icon id="noImage" />
-          </div>
-        )}
-        <VaultsCardTitleTextGroup>
-          <h2>{assetSymbol}</h2>
-          <TzAddress type={BLUE} tzAddress={address} />
-        </VaultsCardTitleTextGroup>
-      </div>
-      <VaultsCardTitleTextGroup className="collateral-diagram">
-        <div className={`percentage ${Number(collateralUtilization) / 100 > 2.5 ? 'up' : 'down'}`}>
-          Collateral Ratio
-          {/* <CommaNumber value={collateralUtilization} endingText="%" /> */}
-        </div>
-        <GradientDiagram
-          className="diagram"
-          colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
-          currentPersentage={50}
-        />
-      </VaultsCardTitleTextGroup>
-      <VaultsCardTitleTextGroup>
-        <h3>Collateral Value</h3>
-        <CommaNumber value={collateralBalance} beginningText='$' className='header-value' />
-      </VaultsCardTitleTextGroup>
-      <VaultsCardTitleTextGroup>
-        <h3>Borrowed Value</h3>
-        <CommaNumber value={amtBorrowed} beginningText='$' className='header-value' />
-        {assetRate ? <CommaNumber value={amtBorrowed * assetRate} beginningText="$" className="rate" /> : null}
-      </VaultsCardTitleTextGroup>
-    </>
-  )
-
   const headerSufix = (
     <StatusFlag status={statusColor} text={status} className="sufix" />
   )
 
   const generalExpand = (
-    <Expand
-      className="expand-vault"
-      header={header}
-      sufix={headerSufix}
-      getExpandedStatus={setExpanded}
-    >
       <VaultsCardDropDown>
         <div className='body'>
           <div className='left-part'>
@@ -315,7 +269,6 @@ export const VaultsCard = (props: Props) => {
           </div>
         )}
       </VaultsCardDropDown>
-    </Expand>
   )
 
   return (
@@ -323,14 +276,21 @@ export const VaultsCard = (props: Props) => {
       {isOwner ? (
         <BorrowingExpandCard
           {...props}
-          // header={header}
-          headerSufix={headerSufix}
           className="expand-vault"
+          headerSufix={headerSufix}
           isVaultsPage
           isOwner
         />
       ) : (
-        <>{generalExpand}</>
+        <BorrowingExpandCard
+          {...props}
+          className="expand-vault"
+          headerSufix={headerSufix}
+          getExpandedStatus={setExpanded}
+          isVaultsPage
+        >
+          {generalExpand}
+        </BorrowingExpandCard>
       )}
     </>
   )
