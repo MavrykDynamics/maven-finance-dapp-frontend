@@ -105,6 +105,7 @@ export type BorrowingData = {
     assetRate: number | null
     maxWithdraw: number
   }>
+  address: string
   xtzDelegatedTo: string | null
   operators?: Array<string>
   sMVKDelegatedTo?: string

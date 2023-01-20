@@ -182,7 +182,7 @@ export const EarnHistoryStyled = styled(SmallBlockBase)<{ theme: MavrykTheme }>`
   .grid {
     display: grid;
     grid-template-rows: 47px 47px;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 0.55fr 0.45fr;
     margin-top: 25px;
     row-gap: 18px;
   }

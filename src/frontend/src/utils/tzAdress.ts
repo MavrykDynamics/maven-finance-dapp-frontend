@@ -1,2 +1,2 @@
-export const getShortTzAddress = (tzAddress: string): string =>
-  `${tzAddress.slice(0, 7)}...${tzAddress.slice(tzAddress.length - 4, tzAddress.length)}`
+export const getShortTzAddress = ({tzAddress, amountFromStart = 7, amountFromEnd = 4}:{tzAddress: string, amountFromStart?: number, amountFromEnd?: number}): string =>
+  `${tzAddress.slice(0, amountFromStart)}...${tzAddress.slice(tzAddress.length - amountFromEnd, tzAddress.length)}`

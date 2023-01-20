@@ -11,7 +11,7 @@ import Icon from '../../../app/App.components/Icon/Icon.view'
 
 // helpers
 import { getShortTzAddress } from '../../../utils/tzAdress'
-import { validateFormField } from 'utils/validatorFunctions' 
+import { validateFormField } from 'utils/validatorFunctions'
 
 // types
 import { InputStatusType } from 'app/App.components/Input/Input.constants'
@@ -108,7 +108,7 @@ export function FormUpdateCouncilMemberView({ councilMemberMaxLength }: Props) {
         <div className="form-fields in-two-columns">
           <div className="input-size-secondary margin-bottom-20">
             <label>Council Member Address</label>
-            <div className="address">{getShortTzAddress(accountPkh || '')}</div>
+            <div className="address">{getShortTzAddress({ tzAddress: accountPkh ?? '' })}</div>
           </div>
 
           <div className="input-size-tertiary">
@@ -122,7 +122,9 @@ export function FormUpdateCouncilMemberView({ councilMemberMaxLength }: Props) {
                 handleChange(e)
                 handleBlur(e, councilMemberMaxLength.councilMemberNameMaxLength)
               }}
-              onBlur={(e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, councilMemberMaxLength.councilMemberNameMaxLength)}
+              onBlur={(e: React.ChangeEvent<HTMLInputElement>) =>
+                handleBlur(e, councilMemberMaxLength.councilMemberNameMaxLength)
+              }
               inputStatus={formInputStatus.newMemberName}
             />
           </div>
@@ -138,7 +140,9 @@ export function FormUpdateCouncilMemberView({ councilMemberMaxLength }: Props) {
                 handleChange(e)
                 handleBlur(e, councilMemberMaxLength.councilMemberWebsiteMaxLength)
               }}
-              onBlur={(e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, councilMemberMaxLength.councilMemberWebsiteMaxLength)}
+              onBlur={(e: React.ChangeEvent<HTMLInputElement>) =>
+                handleBlur(e, councilMemberMaxLength.councilMemberWebsiteMaxLength)
+              }
               inputStatus={formInputStatus.newMemberWebsite}
             />
           </div>

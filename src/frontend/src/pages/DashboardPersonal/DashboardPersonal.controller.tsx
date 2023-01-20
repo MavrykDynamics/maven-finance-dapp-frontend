@@ -66,10 +66,8 @@ const DashboardPersonal = () => {
     mvkRate,
     xtzRate: tezos?.usd ?? 1,
     satelliteRewards: 232323,
-    governanceRewards: 313,
     farmsRewards: 3131.31,
     exitRewards: 131,
-    maxSupply: 31.13123,
     lendingIncome: 3131.31,
   }
 

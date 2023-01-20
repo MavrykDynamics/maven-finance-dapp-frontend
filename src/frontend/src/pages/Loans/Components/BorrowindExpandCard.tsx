@@ -30,7 +30,6 @@ import {
   TableBody,
   TableCell,
 } from 'app/App.components/Table/Table.style'
-import { TzAddress } from 'pages/Treasury/Treasury.style'
 import { ThreeLevelListItem } from '../Loans.style'
 import { BorrowingTabListItemExpanded } from './LoansComponents.style'
 
@@ -45,6 +44,7 @@ import { ManagePermissions } from './Modals/ManagePermissions.modal'
 import { RepayAndCloseVault } from './Modals/RepayAndCloseVault.modal'
 import { Repay } from './Modals/Repay.modal'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
+import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 
 type BorrowingExpandCardPropsType = {
   isOwner?: boolean
@@ -58,6 +58,7 @@ export const BorrowingExpandCard = ({
   operators,
   sMVKDelegatedTo,
   depositors,
+  address,
 }: BorrowingExpandCardPropsType) => {
   const [shownModal, setShownModal] = useState<
     | typeof BORROW_ASSET_MODAL_ID
@@ -135,7 +136,7 @@ export const BorrowingExpandCard = ({
               <div className="data">
                 <div className="value">{assetSymbol}</div>
                 <div className="value">
-                  <TzAddress tzAddress="tz1ezDb77a9jaFMHDWs8QXrKEDkpgGdgsjPD" shouldCopy hasIcon />
+                  <TzAddress tzAddress={address} shouldCopy hasIcon amountFromStart={4} amountFromEnd={4} />
                 </div>
               </div>
             </ThreeLevelListItem>
@@ -187,7 +188,8 @@ export const BorrowingExpandCard = ({
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Fee</div>
-              <CommaNumber value={fee} className="value" endingText="$" />
+              <CommaNumber value={fee} className="value" />
+              {assetRate ? <CommaNumber value={fee * assetRate} beginningText="$" className="rate" /> : null}
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">APR</div>

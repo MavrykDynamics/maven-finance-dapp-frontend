@@ -304,14 +304,21 @@ export const ThreeLevelListItem = styled.div<{ theme: MavrykTheme }>`
         &:first-child {
           text-transform: capitalize;
         }
+
         font-weight: 600;
         font-size: 16px;
+
+        .tzAddressToClick {
+          font-size: 14px;
+        }
+
         p {
           margin: 0;
         }
+
         svg {
-          width: 16px;
-          height: 16px;
+          width: 14px;
+          height: 14px;
           stroke: ${({ theme }) => theme.dataColor};
         }
       }

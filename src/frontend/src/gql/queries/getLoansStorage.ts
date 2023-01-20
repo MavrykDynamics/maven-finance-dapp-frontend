@@ -77,8 +77,10 @@ export const LOANS_QUERY = `query GetLoansStorage {
           loan_token_address
           loan_token_name
           lp_token_address
+          current_interest_rate
         }
         
+        last_updated_block_level
         loan_principal_total
         loan_interest_total
         owner_id

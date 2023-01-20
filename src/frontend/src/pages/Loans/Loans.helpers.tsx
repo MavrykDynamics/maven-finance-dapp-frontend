@@ -239,6 +239,29 @@ type BorrowingNormalizerReturnType = {
   vaultsBorrowedAmount: number
 }
 
+export const calculateCompoundedInterest = (
+  interestRate: number,
+  lastUpdatedBlockLevel: number,
+  blockLevel: number,
+) => {
+  let interestRateOverSecondsInYear = Math.trunc(interestRate / 31536000)
+  let exp = blockLevel - lastUpdatedBlockLevel
+
+  let expMinusOne = exp - 1
+  let expMinusTwo = exp - 2
+
+  let basePowerTwo = Math.trunc(interestRateOverSecondsInYear ** 2 / 31536000 ** 2)
+  let basePowerThree = Math.trunc(interestRateOverSecondsInYear ** 3 / 31536000 ** 3)
+
+  let firstTerm = Math.trunc(exp * interestRateOverSecondsInYear)
+  let secondTerm = Math.trunc((exp * expMinusOne * basePowerTwo) / 2)
+  let thirdTerm = Math.trunc((exp * expMinusOne * expMinusTwo * basePowerThree) / 6)
+
+  let compoundedInterest = 10 ** 27 + firstTerm + secondTerm + thirdTerm
+
+  return compoundedInterest
+}
+
 const getBorrowings = async (
   loanTokenVaults: Array<Lending_Controller_Vault>,
   dipDupTokens: State['tokens']['dipDupTokens'],
@@ -291,9 +314,18 @@ const getBorrowings = async (
       },
     )
 
+    const currentInterestRate = calcWithoutDecimals(vault.loan_token?.current_interest_rate ?? 0, interestRateDecimals)
     const vaultXtzDelegatedTo = await (
-      await fetch(`https://api.ghostnet.tzkt.io/v1/accounts/${vault.vault.address}`)
+      await fetch(`https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/accounts/${vault.vault.address}`)
     ).json()
+
+    const currentBlock = await (
+      await fetch(`https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/blocks/${dayjs().toISOString()}`)
+    ).json()
+
+    const fee =
+      calculateCompoundedInterest(currentInterestRate, vault.last_updated_block_level, currentBlock?.level ?? 0) /
+      10 ** interestRateDecimals
 
     const vaultAsset = getAssetMetadata(
       vault.loan_token.loan_token_name,
@@ -314,13 +346,10 @@ const getBorrowings = async (
         assetRate: vaultAsset.rate,
         collateralBalance: vaultCollateral.totalRow.balance,
         collateralUtilization: vaultCollateral.totalRow.balance / (borrowedAmount * vaultAsset.rate),
-        apr:
-          calcWithoutDecimals(
-            vault.vault.lending_controller_vaults[0].loan_token?.current_interest_rate ?? 0,
-            interestRateDecimals,
-          ) * 100,
-        fee: 0,
+        apr: currentInterestRate * 100,
+        fee,
       },
+      address: vault.vault.address,
       collateralData: vaultCollateral.normalizedCollaterals.length
         ? [...vaultCollateral.normalizedCollaterals, vaultCollateral.totalRow]
         : [],
