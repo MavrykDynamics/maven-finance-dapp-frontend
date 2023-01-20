@@ -26,11 +26,11 @@ type Props = {
   statuses: string[]
   assets: Record<AssetCategory, string[]>
   vaultsMapper: Record<string, VaultType>
-  allVaultIds: string[]
-  setVaultIds: (arg: string[]) => void
+  allVaultsIds: string[]
+  setVaultsIds: (arg: string[]) => void
 }
 
-export const VaultsSearchFilter = ({ statuses, assets, vaultsMapper, allVaultIds, setVaultIds }: Props) => {
+export const VaultsSearchFilter = ({ statuses, assets, vaultsMapper, allVaultsIds, setVaultsIds }: Props) => {
   const [searchInputValue, setSearchInput] = useState('')
 
   const [dropdownStatus, setDropdownStatus] = useState<{[key:string]: boolean}>({})
@@ -40,10 +40,10 @@ export const VaultsSearchFilter = ({ statuses, assets, vaultsMapper, allVaultIds
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const searchQuery = e.target.value.toLowerCase()
 
-    let filteredVaultIds: string[] = []
+    let filteredVaultsIds: string[] = []
 
     if (searchQuery !== '') {
-      filteredVaultIds = allVaultIds.filter((vaultId) => {
+      filteredVaultsIds = allVaultsIds.filter((vaultId) => {
         const vault = vaultsMapper[vaultId]
 
         const isFoundCollateralAsset = vault.collateralData.some(({ assetSymbol }) => {
@@ -61,12 +61,11 @@ export const VaultsSearchFilter = ({ statuses, assets, vaultsMapper, allVaultIds
         return false
       })
     } else {
-      filteredVaultIds = allVaultIds
+      filteredVaultsIds = allVaultsIds
     }
 
     setSearchInput(e.target.value)
-    // TODO: rename from vaultIds to vaultsIds
-    setVaultIds(filteredVaultIds)
+    setVaultsIds(filteredVaultsIds)
   }
 
   const handleDropdownSelect = (name: string) => (selectedOption: string) => {
@@ -83,12 +82,12 @@ export const VaultsSearchFilter = ({ statuses, assets, vaultsMapper, allVaultIds
     setChosenDdItem(updatedChosenDdItem)
 
     if (selectedOption !== '' && selectedOption !== chosenDdItem[name]) {
-      let filteredVaultIds: string[] = [...allVaultIds]
+      let filteredVaultsIds: string[] = [...allVaultsIds]
 
       // sort by statuses
       if (updatedChosenDdItem[dropdowns.STATUSES]) {
-        filteredVaultIds = sortByVaultCategory({
-          vaultIds: allVaultIds,
+        filteredVaultsIds = sortByVaultCategory({
+          vaultsIds: allVaultsIds,
           vaultsMapper,
           status: updatedChosenDdItem[dropdowns.STATUSES]
         })
@@ -96,7 +95,7 @@ export const VaultsSearchFilter = ({ statuses, assets, vaultsMapper, allVaultIds
 
       // filter by collateral asset
       if (updatedChosenDdItem[dropdowns.COLLATERAL]) {
-        filteredVaultIds = filteredVaultIds.filter((vaultId) => {
+        filteredVaultsIds = filteredVaultsIds.filter((vaultId) => {
           const vault = vaultsMapper[vaultId]
   
           if (vault.collateralData.length) {
@@ -113,7 +112,7 @@ export const VaultsSearchFilter = ({ statuses, assets, vaultsMapper, allVaultIds
 
       // filter by loan asset
       if (updatedChosenDdItem[dropdowns.LOAN]) {
-        filteredVaultIds = filteredVaultIds.filter((vaultId) => {
+        filteredVaultsIds = filteredVaultsIds.filter((vaultId) => {
           const vault = vaultsMapper[vaultId]
 
           if (vault.borrowedAsset.assetSymbol) {
@@ -126,7 +125,7 @@ export const VaultsSearchFilter = ({ statuses, assets, vaultsMapper, allVaultIds
         })
       }
   
-      setVaultIds(filteredVaultIds)
+      setVaultsIds(filteredVaultsIds)
     }
   }
 

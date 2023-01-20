@@ -165,11 +165,11 @@ export const normalizeVaultsStorage = (storage: VaultsStorageProps) => {
   // sort data by statuses
   const dataWithSortedIds = {
     myVaultsIds: sortByVaultCategory({ 
-      vaultIds: data.myVaultsIds,
+      vaultsIds: data.myVaultsIds,
       vaultsMapper: data.vaultsMapper,
      }),
     allVaultsIds: sortByVaultCategory({ 
-      vaultIds: data.allVaultsIds,
+      vaultsIds: data.allVaultsIds,
       vaultsMapper: data.vaultsMapper,
      }),
     vaultsMapper: data.vaultsMapper
@@ -350,12 +350,12 @@ const priority = {
 
 type SortByVaultCategoryProps = {
   vaultsMapper: Record<string, VaultType>
-  vaultIds: string[]
+  vaultsIds: string[]
   status?: string
 }
 
-export const sortByVaultCategory = ({vaultsMapper, vaultIds, status}: SortByVaultCategoryProps) => {
-  const dataToSort = vaultIds ? [...vaultIds] : []
+export const sortByVaultCategory = ({vaultsMapper, vaultsIds, status}: SortByVaultCategoryProps) => {
+  const dataToSort = vaultsIds ? [...vaultsIds] : []
 
   const updatedPriority = status 
     ? { ...priority, [status]: 0 }
