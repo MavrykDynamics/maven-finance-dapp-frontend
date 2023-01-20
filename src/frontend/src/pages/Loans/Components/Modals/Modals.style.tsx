@@ -130,8 +130,8 @@ export const LoansModalBase = styled.div<{ theme: MavrykTheme }>`
     .name {
       .tooltip {
         svg {
-          height: 14px;
-          width: 14px;
+          height: 12px;
+          width: 12px;
         }
       }
     }
@@ -180,8 +180,8 @@ export const DropDownJsxChild = styled.div`
     &.with-image {
       svg,
       .image-wrapper {
-        width: 20px;
-        height: 20px;
+        width: 24px;
+        height: 24px;
         fill: ${({ theme }) => theme.textColor};
 
         img {

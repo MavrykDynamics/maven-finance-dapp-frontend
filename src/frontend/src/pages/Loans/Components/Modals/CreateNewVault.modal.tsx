@@ -30,6 +30,7 @@ import {
 } from 'app/App.components/Table/Table.style'
 import { AvaliableCollateralType } from 'utils/TypesAndInterfaces/Loans'
 import { isTezosAsset } from 'pages/Loans/Loans.helpers'
+import { useLockBodyScroll } from 'react-use'
 
 type DropDownCollateralAssetType = DropDownItemType & AvaliableCollateralType
 
@@ -66,12 +67,14 @@ export const CreateNewVault = ({
   const dispatch = useDispatch()
   const { avaliableCollaterals, xtzBakers } = useSelector((state: State) => state.loans)
 
-  const [shownScreen, setShownScreen] = useState<CurrentActiveModalScreen>(INITIAL_SCREEN_ID)
+  const [shownScreen, setShownScreen] = useState<CurrentActiveModalScreen>(ADD_COLLATERAL_SCREEN_ID)
   const [collateralsToSelect, setCollateralsToSelect] = useState<Record<number, DropDownCollateralAssetType>>({})
   const [collaterals, setCollaterals] = useState<Array<InputCollateral>>([])
   const [isVaultCreating, setVaultCreating] = useState(false)
   const [disabledDepositBtn, setDIsablingDepositBtn] = useState(false)
   const [newVaultAddress, setNewVaultAddress] = useState('')
+
+  useLockBodyScroll(show)
 
   useEffect(() => {
     const mappedAvaliableCollaterals = avaliableCollaterals.reduce<Record<number, DropDownCollateralAssetType>>(
@@ -97,7 +100,7 @@ export const CreateNewVault = ({
     ])
 
     if (!show) {
-      setShownScreen(INITIAL_SCREEN_ID)
+      setShownScreen(ADD_COLLATERAL_SCREEN_ID)
       setAssetChosenDdItem(undefined)
       setVaultCreating(false)
       setNewVaultAddress('')
@@ -235,6 +238,8 @@ export const CreateNewVault = ({
       Number(newInputAmount) > 0 && Number(newInputAmount) <= userAssetBalance
         ? INPUT_STATUS_SUCCESS
         : INPUT_STATUS_ERROR
+
+    if (validationStatus === INPUT_STATUS_ERROR && newInputAmount !== '' && newInputAmount !== '0') return
 
     setCollaterals(
       collaterals.map((collateral, updateCollateralIdx) =>
@@ -493,7 +498,7 @@ export const CreateNewVault = ({
                   </ThreeLevelListItem>
                   <ThreeLevelListItem>
                     <div className="name">Amount</div>
-                    <CommaNumber value={Number(collaterals[0].inputAmount)} className="value" endingText="%" />
+                    <CommaNumber value={Number(collaterals[0].inputAmount)} className="value" />
                   </ThreeLevelListItem>
                   <ThreeLevelListItem>
                     <div className="name">USD Value</div>
