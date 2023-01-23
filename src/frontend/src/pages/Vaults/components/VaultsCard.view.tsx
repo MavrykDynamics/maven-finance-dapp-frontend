@@ -19,7 +19,7 @@ import { StatusFlagStyle } from '../../../app/App.components/StatusFlag/StatusFl
 
 // helpers
 import { CYAN } from 'app/App.components/TzAddress/TzAddress.constants'
-import { vaultsStatuses } from '../Vaults.helpers' 
+import { vaultsStatuses } from '../Vaults.consts' 
 import { getTimestampByLevel } from 'pages/Governance/Governance.actions'
 import { BLOCKS_PER_MINUTE } from 'utils/constants'
 

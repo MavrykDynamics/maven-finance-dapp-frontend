@@ -57,10 +57,6 @@ export const VaultsSearchFilterStyled = styled(Card)`
       margin: 0;
     }
 
-    .dd-item-size {
-      width: 150px;
-    }
-
     .dd-item {
       div {
         width: 190px;
@@ -74,7 +70,7 @@ export const VaultsSearchFilterStyled = styled(Card)`
 
       .scroll-block {
         li {
-          text-transform: uppercase;
+          text-transform: capitalize;
         }
       }
     }

@@ -16,7 +16,7 @@ import { VAULTS_LIST_NAME, MY_VAULTS_LIST_NAME } from 'pages/FinacialRequests/Pa
 import { getPageNumber } from 'pages/FinacialRequests/FinancialRequests.helpers'
 import { calculateSlicePositions } from 'pages/FinacialRequests/Pagination/pagination.consts'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
-import { getVaultAssets, vaultsStatuses } from './Vaults.helpers'
+import { getVaultAssets } from './Vaults.helpers'
 
 // types
 import { State } from '../../reducers'
@@ -31,8 +31,6 @@ const tabsId = {
   ALL: 'all',
   MY: 'my'
 }
-
-const ListOfStatuses = Object.values(vaultsStatuses)
 
 export const VaultsView = () => {
   const dispatch = useDispatch()
@@ -113,7 +111,6 @@ export const VaultsView = () => {
 
       <VaultsSearchFilter
         assets={assets}
-        statuses={ListOfStatuses}
         vaultsMapper={vaultsMapper}
         allVaultsIds={allVaultsIds}
         setVaultsIds={setVaultsIds}

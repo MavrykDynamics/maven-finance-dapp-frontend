@@ -10,6 +10,7 @@ import {
 import { Lending_Controller_Vault } from 'utils/generated/graphqlTypes'
 import { symbolsAfterDecimalPoint } from 'utils/symbolsAfterDecimalPoint'
 import { getOracleAggregatorLatestPrice } from './Vaults.actions'
+import { statusSortPriority, vaultsStatuses } from './Vaults.consts'
 
 type VaultsStorageProps = {
   lendingController: LendingControllerGQL
@@ -286,22 +287,6 @@ export const getVaultAssets = (vaultsMapper: Record<string, VaultType>) => {
   }
 }
 
-export const vaultsStatuses = {
-  LIQUIDATABLE: 'LIQUIDATABLE',
-  GRACE_PERIOD: 'GRACE_PERIOD',
-  MARK: 'MARK',
-  AT_RISK: 'AT_RISK',
-  ACTIVE: 'ACTIVE',
-}
-
-const priority = {
-  [vaultsStatuses.LIQUIDATABLE]: 1,
-  [vaultsStatuses.GRACE_PERIOD]: 2,
-  [vaultsStatuses.MARK]: 3,
-  [vaultsStatuses.AT_RISK]: 4,
-  [vaultsStatuses.ACTIVE]: 5,
-};
-
 type SortByVaultCategoryProps = {
   vaultsMapper: Record<string, VaultType>
   vaultsIds: string[]
@@ -312,8 +297,8 @@ export const sortByVaultCategory = ({vaultsMapper, vaultsIds, status}: SortByVau
   const dataToSort = vaultsIds ? [...vaultsIds] : []
 
   const updatedPriority = status 
-    ? { ...priority, [status]: 0 }
-    : priority
+    ? { ...statusSortPriority, [status]: 0 }
+    : statusSortPriority
 
   return dataToSort.sort((a, b) => {
     const firstItem = vaultsMapper[a].status

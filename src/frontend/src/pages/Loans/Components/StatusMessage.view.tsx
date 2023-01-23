@@ -2,7 +2,7 @@ import React from 'react'
 
 import { Timer } from 'app/App.components/Timer/Timer.controller'
 import { StatusMessageStyled } from './LoansComponents.style'
-import { vaultsStatuses } from 'pages/Vaults/Vaults.helpers'
+import { vaultsStatuses } from 'pages/Vaults/Vaults.consts' 
 import Icon from 'app/App.components/Icon/Icon.view'
 
 const findStatusMessage = (status: string, timestamp?: number) => {

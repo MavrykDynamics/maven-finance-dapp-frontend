@@ -10,27 +10,29 @@ import { VaultsSearchFilterStyled } from './../Vaults.style'
 
 // helpers
 import { sortByVaultCategory } from '../Vaults.helpers'
+import { sortVaultItems } from '../Vaults.consts'
 
 // types
 import { VaultType } from 'utils/TypesAndInterfaces/Vaults'
 
 const dropdowns = {
-  STATUSES: 'STATUSES',
+  SORT: 'SORT',
   COLLATERAL: 'COLLATERAL',
   LOAN: 'LOAN',
 }
 
+const sortingList = Object.values(sortVaultItems)
+
 type AssetCategory = 'loanAssets' | 'collateralAssets'
 
 type Props = {
-  statuses: string[]
   assets: Record<AssetCategory, string[]>
   vaultsMapper: Record<string, VaultType>
   allVaultsIds: string[]
   setVaultsIds: (arg: string[]) => void
 }
 
-export const VaultsSearchFilter = ({ statuses, assets, vaultsMapper, allVaultsIds, setVaultsIds }: Props) => {
+export const VaultsSearchFilter = ({ assets, vaultsMapper, allVaultsIds, setVaultsIds }: Props) => {
   const [searchInputValue, setSearchInput] = useState('')
 
   const [dropdownStatus, setDropdownStatus] = useState<{[key:string]: boolean}>({})
@@ -91,13 +93,25 @@ export const VaultsSearchFilter = ({ statuses, assets, vaultsMapper, allVaultsId
       let filteredVaultsIds: string[] = data
 
       // sort by statuses
-      if (updatedChosenDdItem[dropdowns.STATUSES]) {
+      if (updatedChosenDdItem[dropdowns.SORT]) {
         filteredVaultsIds = sortByVaultCategory({
           vaultsIds: data,
           vaultsMapper,
-          status: updatedChosenDdItem[dropdowns.STATUSES]
+          status: updatedChosenDdItem[dropdowns.SORT]
         })
       }
+
+      console.log(updatedChosenDdItem[dropdowns.SORT]);
+      
+
+      // // sort by collateral value
+      // if (updatedChosenDdItem[dropdowns.SORT]) {
+      //   filteredVaultsIds = sortByVaultCategory({
+      //     vaultsIds: data,
+      //     vaultsMapper,
+      //     status: updatedChosenDdItem[dropdowns.SORT]
+      //   })
+      // }
 
       // filter by collateral asset
       if (updatedChosenDdItem[dropdowns.COLLATERAL]) {
@@ -158,12 +172,12 @@ export const VaultsSearchFilter = ({ statuses, assets, vaultsMapper, allVaultsId
 
         <DropDown
           className="dd-item"
-          placeholder="Statuses"
-          isOpen={dropdownStatus[dropdowns.STATUSES]}
-          setIsOpen={handleDropdownStatus(dropdowns.STATUSES)}
-          itemSelected={chosenDdItem[dropdowns.STATUSES]}
-          items={statuses}
-          clickOnItem={handleDropdownSelect(dropdowns.STATUSES)}
+          placeholder="Sort"
+          isOpen={dropdownStatus[dropdowns.SORT]}
+          setIsOpen={handleDropdownStatus(dropdowns.SORT)}
+          itemSelected={chosenDdItem[dropdowns.SORT]}
+          items={sortingList}
+          clickOnItem={handleDropdownSelect(dropdowns.SORT)}
         />
 
         <DropDown

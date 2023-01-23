@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { MavrykTheme } from 'styles/interfaces'
-import { vaultsStatuses } from 'pages/Vaults/Vaults.helpers'
+import { vaultsStatuses } from 'pages/Vaults/Vaults.consts' 
 
 export const NoItemsInTabStyled = styled.div<{ theme: MavrykTheme }>`
   display: flex;
