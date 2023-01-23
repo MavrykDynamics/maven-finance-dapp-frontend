@@ -12,9 +12,6 @@ import {
   DATA_FEEDS_HISTORY_QUERY,
   DATA_FEEDS_HISTORY_QUERY_NAME,
   DATA_FEEDS_HISTORY_QUERY_VARIABLE,
-  ORACLE_AGGREGATOR_LATEST_PRICE_QUERY,
-  ORACLE_AGGREGATOR_LATEST_PRICE_QUERY_NAME,
-  ORACLE_AGGREGATOR_LATEST_PRICE_QUERY_VARIABLE
 } from 'gql/queries'
 import { fetchFromIndexer, fetchFromIndexerWithPromise } from '../../gql/fetchGraphQL'
 import type { AppDispatch, GetState } from '../../app/App.controller'
@@ -22,7 +19,6 @@ import {
   normalizeDelegationStorage,
   normalizeDataFeedsHistory,
   normalizeDataFeedsVolatility,
-  normalizeOracleLatestPrice,
 } from './Satellites.helpers'
 import { normalizeOracle } from 'app/App.helpers'
 import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
@@ -209,23 +205,5 @@ export const getDataFeedsHistory = () => async (dispatch: AppDispatch, getState:
         error,
       })
     }
-  }
-}
-
-// Oracle Latest Price
-export const getOracleAggregatorLatestPrice = async (oracleId: string) => {
-  // TODO: use oracleID in ORACLE_AGGREGATOR_LATEST_PRICE_QUERY_VARIABLE
-  try {
-    const storage = await fetchFromIndexer(
-      ORACLE_AGGREGATOR_LATEST_PRICE_QUERY,
-      ORACLE_AGGREGATOR_LATEST_PRICE_QUERY_NAME,
-      ORACLE_AGGREGATOR_LATEST_PRICE_QUERY_VARIABLE
-    )
-
-    const oracleLatestPrice = normalizeOracleLatestPrice(storage)
-    return oracleLatestPrice
-  } catch (e) {
-    console.error('getOracleAggregatorLatestPrice error: ', e)
-    return null
   }
 }

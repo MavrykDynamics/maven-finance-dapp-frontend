@@ -1,4 +1,5 @@
 import { LendingControllerVaultGQL, VaultType, CollateralType, LendingControllerGQL } from 'utils/TypesAndInterfaces/Vaults'
+import { Aggregator } from 'utils/generated/graphqlTypes'
 import { State } from 'reducers'
 import {
   checkVaultIsInGracePeriod,
@@ -7,7 +8,8 @@ import {
   checkIfVaultIsAtRisk,
 } from './calcFunctionsForVaultStatuses'
 import { Lending_Controller_Vault } from 'utils/generated/graphqlTypes'
-import { getOracleAggregatorLatestPrice } from 'pages/Satellites/Satellites.actions'
+import { symbolsAfterDecimalPoint } from 'utils/symbolsAfterDecimalPoint'
+import { getOracleAggregatorLatestPrice } from './Vaults.actions'
 
 type VaultsStorageProps = {
   lendingController: LendingControllerGQL
@@ -205,73 +207,18 @@ export const getVaultTokensSymbols = ({
   )
 }
 
-type VaultStatusCheckerType = {
-  currentBlockLevel: number
-  liquidationEndLevel: number
-  markedForLiquidationLevel: number
-  liquidationDelayInMinutes: number
-  loanOutstandingTotal: number
-  loanTokenOracleAddress: string
-  liquidationRatio: number
-  vaultCollateralTokens: any[]
-  collateralRatio: number
-  oracleLatestPrices: Record<string, number>
+type OracleLatestProps = {
+  aggregator: Aggregator[]
 }
 
-const vaultStatusChecker = ({
-  currentBlockLevel,
-  liquidationEndLevel,
-  markedForLiquidationLevel,
-  liquidationDelayInMinutes,
-  loanOutstandingTotal,
-  loanTokenOracleAddress,
-  liquidationRatio,
-  vaultCollateralTokens,
-  collateralRatio,
-  oracleLatestPrices,
-}: VaultStatusCheckerType) => {
-  if (checkVaultIsInGracePeriod(
-    currentBlockLevel,
-    markedForLiquidationLevel,
-    liquidationDelayInMinutes,
-  )){
-    return vaultsStatuses.GRACE_PERIOD
-  } else if (checkVaultIsAbleToMarkedForLiquidation(
-    loanOutstandingTotal,
-    loanTokenOracleAddress,
-    liquidationRatio,
-    vaultCollateralTokens,
-    currentBlockLevel,
-    liquidationEndLevel,
-    markedForLiquidationLevel,
-    liquidationDelayInMinutes,
-    oracleLatestPrices,
-  )){
-    return vaultsStatuses.MARK
-  } else if (checkVaultLiquidatableStatus(
-    loanOutstandingTotal,
-    loanTokenOracleAddress,
-    liquidationRatio,
-    vaultCollateralTokens,
-    currentBlockLevel,
-    liquidationEndLevel,
-    markedForLiquidationLevel,
-    liquidationDelayInMinutes,
-    oracleLatestPrices,
-  )){
-    return vaultsStatuses.LIQUIDATABLE
-  } else if (checkIfVaultIsAtRisk(
-    loanOutstandingTotal,
-    loanTokenOracleAddress,
-    liquidationRatio,
-    collateralRatio,
-    vaultCollateralTokens,
-    oracleLatestPrices,
-  )){
-    return vaultsStatuses.AT_RISK
-  }
+export const normalizeOracleLatestPrice = (storage: OracleLatestProps) => {
+  const { aggregator = [] } = storage
 
-  return vaultsStatuses.ACTIVE
+  if (!aggregator.length) return 0
+
+  const [ item ] = aggregator
+
+  return symbolsAfterDecimalPoint(item.last_completed_data / 10 ** item.decimals)
 }
 
 export const getOracleLatestPrices = async (vaults: Lending_Controller_Vault[]) => {
@@ -374,4 +321,73 @@ export const sortByVaultCategory = ({vaultsMapper, vaultsIds, status}: SortByVau
 
     return updatedPriority[firstItem] - updatedPriority[secondItem]
   });
+}
+
+type VaultStatusCheckerType = {
+  currentBlockLevel: number
+  liquidationEndLevel: number
+  markedForLiquidationLevel: number
+  liquidationDelayInMinutes: number
+  loanOutstandingTotal: number
+  loanTokenOracleAddress: string
+  liquidationRatio: number
+  vaultCollateralTokens: any[]
+  collateralRatio: number
+  oracleLatestPrices: Record<string, number>
+}
+
+const vaultStatusChecker = ({
+  currentBlockLevel,
+  liquidationEndLevel,
+  markedForLiquidationLevel,
+  liquidationDelayInMinutes,
+  loanOutstandingTotal,
+  loanTokenOracleAddress,
+  liquidationRatio,
+  vaultCollateralTokens,
+  collateralRatio,
+  oracleLatestPrices,
+}: VaultStatusCheckerType) => {
+  if (checkVaultIsInGracePeriod(
+    currentBlockLevel,
+    markedForLiquidationLevel,
+    liquidationDelayInMinutes,
+  )){
+    return vaultsStatuses.GRACE_PERIOD
+  } else if (checkVaultIsAbleToMarkedForLiquidation(
+    loanOutstandingTotal,
+    loanTokenOracleAddress,
+    liquidationRatio,
+    vaultCollateralTokens,
+    currentBlockLevel,
+    liquidationEndLevel,
+    markedForLiquidationLevel,
+    liquidationDelayInMinutes,
+    oracleLatestPrices,
+  )){
+    return vaultsStatuses.MARK
+  } else if (checkVaultLiquidatableStatus(
+    loanOutstandingTotal,
+    loanTokenOracleAddress,
+    liquidationRatio,
+    vaultCollateralTokens,
+    currentBlockLevel,
+    liquidationEndLevel,
+    markedForLiquidationLevel,
+    liquidationDelayInMinutes,
+    oracleLatestPrices,
+  )){
+    return vaultsStatuses.LIQUIDATABLE
+  } else if (checkIfVaultIsAtRisk(
+    loanOutstandingTotal,
+    loanTokenOracleAddress,
+    liquidationRatio,
+    collateralRatio,
+    vaultCollateralTokens,
+    oracleLatestPrices,
+  )){
+    return vaultsStatuses.AT_RISK
+  }
+
+  return vaultsStatuses.ACTIVE
 }

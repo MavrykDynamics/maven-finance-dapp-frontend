@@ -56,25 +56,6 @@ export const ORACLE_STORAGE_QUERY = `
 export const ORACLE_STORAGE_QUERY_NAME = 'GetOracleDataFeeds'
 export const ORACLE_STORAGE_QUERY_VARIABLE = {}
 
-// TODO: add variable for eq
-export const ORACLE_AGGREGATOR_LATEST_PRICE_QUERY = `
-  query GetOracleAggregatorLatestPrice($_eq: String = "KT1JgBX8LRJ7AmVhTk64niDZxfXH8UBXyiDv") {
-    aggregator(where: {address: {_eq: $_eq}}) {
-    address
-    decimals
-    last_completed_data
-    last_completed_data_epoch
-    last_completed_data_last_updated_at
-    last_completed_data_pct_oracle_resp
-    last_completed_data_round
-    last_updated_at
-    name
-    }
-  }
-`
-export const ORACLE_AGGREGATOR_LATEST_PRICE_QUERY_NAME = 'GetOracleAggregatorLatestPrice'
-export const ORACLE_AGGREGATOR_LATEST_PRICE_QUERY_VARIABLE = {}
-
 export const DATA_FEEDS_HISTORY_QUERY = `
   query GetDataFeedHistory {
     aggregator_history_data {

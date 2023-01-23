@@ -8,8 +8,11 @@ import {
   VAULTS_STORAGE_QUERY_NAME,
   VAULTS_STORAGE_QUERY_VARIABLE,
   VAULTS_STORAGE_QUERY,
+  ORACLE_AGGREGATOR_LATEST_PRICE_QUERY,
+  ORACLE_AGGREGATOR_LATEST_PRICE_QUERY_NAME,
+  ORACLE_AGGREGATOR_LATEST_PRICE_QUERY_VARIABLE,
 } from 'gql/queries/getVaultsStorage'
-import { normalizeVaultsStorage, getVaultTokensSymbols } from './Vaults.helpers'
+import { normalizeVaultsStorage, getVaultTokensSymbols, normalizeOracleLatestPrice } from './Vaults.helpers'
 import { LendingControllerGQL } from 'utils/TypesAndInterfaces/Vaults'
 import { setContractAddress } from 'reducers/actions/contractAddresses.actions'
 import { getHeadData } from 'app/App.components/Menu/Menu.actions'
@@ -140,5 +143,23 @@ export const markForLiquidation = (vaultId: number, vaultOwner: string) => async
       dispatch(showToaster(ERROR, 'Error', error.message))
     }
     dispatch(toggleActionLoader(false))
+  }
+}
+
+// Oracle Latest Price
+export const getOracleAggregatorLatestPrice = async (oracleId: string) => {
+  // TODO: use oracleID in ORACLE_AGGREGATOR_LATEST_PRICE_QUERY_VARIABLE
+  try {
+    const storage = await fetchFromIndexer(
+      ORACLE_AGGREGATOR_LATEST_PRICE_QUERY,
+      ORACLE_AGGREGATOR_LATEST_PRICE_QUERY_NAME,
+      ORACLE_AGGREGATOR_LATEST_PRICE_QUERY_VARIABLE
+    )
+
+    const oracleLatestPrice = normalizeOracleLatestPrice(storage)
+    return oracleLatestPrice
+  } catch (e) {
+    console.error('getOracleAggregatorLatestPrice error: ', e)
+    return null
   }
 }

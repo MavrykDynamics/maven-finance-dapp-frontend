@@ -37,3 +37,15 @@ query GetAllVaultsStorage {
 
 export const VAULTS_STORAGE_QUERY_NAME = 'GetAllVaultsStorage'
 export const VAULTS_STORAGE_QUERY_VARIABLE = {}
+
+// TODO: add variable for $eq
+export const ORACLE_AGGREGATOR_LATEST_PRICE_QUERY = `
+  query GetOracleAggregatorLatestPrice($_eq: String = "KT1JgBX8LRJ7AmVhTk64niDZxfXH8UBXyiDv") {
+    aggregator(where: {address: {_eq: $_eq}}) {
+      decimals
+      last_completed_data
+    }
+  }
+`
+export const ORACLE_AGGREGATOR_LATEST_PRICE_QUERY_NAME = 'GetOracleAggregatorLatestPrice'
+export const ORACLE_AGGREGATOR_LATEST_PRICE_QUERY_VARIABLE = {}
