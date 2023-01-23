@@ -57,10 +57,19 @@ export const VaultsSearchFilterStyled = styled(Card)`
       margin: 0;
     }
 
+    .dd-item-size {
+      width: 150px;
+    }
+
     .dd-item {
       div {
         width: 190px;
         white-space: nowrap;
+      }
+
+      ul {
+        position: relative;
+        right: 35px;
       }
 
       .scroll-block {
