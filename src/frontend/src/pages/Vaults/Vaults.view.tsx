@@ -21,7 +21,6 @@ import { getVaultAssets, vaultsStatuses } from './Vaults.helpers'
 // types
 import { State } from '../../reducers'
 import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
-import { VaultType } from 'utils/TypesAndInterfaces/Vaults'
 
 // actions
 import { getVaultsStorage, liquidateVault, markForLiquidation } from './Vaults.actions'

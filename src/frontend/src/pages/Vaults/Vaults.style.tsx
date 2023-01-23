@@ -166,6 +166,13 @@ export const VaultsCardDropDown = styled.div<{ theme: MavrykTheme }>`
 
     button {
       width: 250px;
+
+      &.disabled {
+        &:hover {
+          border: none;
+          color: ${({ theme }) => theme.containerColor};
+        }
+      }
     }
 
     .timer {
