@@ -141,6 +141,7 @@ export const normalizeVaultsStorage = (storage: VaultsStorageProps) => {
         address: item.vault?.address,
         ownerId: item.owner_id || '',
         vaultId: item.internal_id,
+        creationDate: '',
         status,
         currentBlockLevel,
         liquidationEndLevel: item.liquidation_end_level,

@@ -103,9 +103,10 @@ export const VaultsSearchFilter = ({ assets, vaultsMapper, allVaultsIds, setVaul
 
       const sortIsCollateralValue = updatedChosenDdItem[dropdowns.SORT] === sortVaultItems.COLLATERAL_VALUE
       const sortIsBorrowedAmount = updatedChosenDdItem[dropdowns.SORT] === sortVaultItems.BORROWED_AMOUNT
+      const sortIsMostRecent = updatedChosenDdItem[dropdowns.SORT] === sortVaultItems.MOST_RECENT
 
-      // sort by collateral value or borrowed amount
-      if (sortIsCollateralValue || sortIsBorrowedAmount) {
+      // sort by: collateral value | borrowed amount | date
+      if (sortIsCollateralValue || sortIsBorrowedAmount || sortIsMostRecent) {
         filteredVaultsIds = data.sort((a, b) => {
 
           // by collateral value
@@ -120,6 +121,12 @@ export const VaultsSearchFilter = ({ assets, vaultsMapper, allVaultsIds, setVaul
             const vaultB = vaultsMapper[b].borrowedAsset.amtBorrowed
   
             return vaultB - vaultA
+          // by date
+          } else if (sortIsMostRecent) {
+            const vaultA = vaultsMapper[a].creationDate
+            const vaultB = vaultsMapper[b].creationDate
+  
+            return new Date(vaultB).getTime() - new Date(vaultA).getTime()
           }
           
           return 0

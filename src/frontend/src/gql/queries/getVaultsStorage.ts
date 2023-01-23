@@ -14,7 +14,6 @@ query GetAllVaultsStorage {
         }
       }
       vault {
-        creation_timestamp
         address
         depositors {
           depositor_id
