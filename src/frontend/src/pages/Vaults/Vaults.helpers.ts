@@ -341,9 +341,9 @@ export const getVaultAssets = (vaultsMapper: Record<string, VaultType>) => {
 
 export const vaultsStatuses = {
   LIQUIDATABLE: 'LIQUIDATABLE',
-  GRACE_PERIOD: 'GRACE PERIOD',
+  GRACE_PERIOD: 'GRACE_PERIOD',
   MARK: 'MARK',
-  AT_RISK: 'AT RISK',
+  AT_RISK: 'AT_RISK',
   ACTIVE: 'ACTIVE',
 }
 

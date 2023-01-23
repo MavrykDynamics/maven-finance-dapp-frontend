@@ -21,6 +21,7 @@ import { BorrowingData } from 'utils/TypesAndInterfaces/Loans'
 import Expand from 'app/App.components/Expand/Expand.view'
 import NewButton from 'app/App.components/Button/NewButton.controller'
 import Icon from 'app/App.components/Icon/Icon.view'
+import { StatusMessage } from './StatusMessage.view'
 
 import {
   Table,
@@ -58,6 +59,8 @@ type BorrowingExpandCardPropsType = BorrowingData & {
   getExpandedStatus?: (arg: boolean) => void
   className?: string
   children?: React.ReactNode
+  status?: string
+  timestamp?: number
 }
 
 export const BorrowingExpandCard = ({
@@ -74,6 +77,8 @@ export const BorrowingExpandCard = ({
   className,
   address,
   children,
+  status,
+  timestamp,
 }: BorrowingExpandCardPropsType) => {
   const [shownModal, setShownModal] = useState<
     | typeof BORROW_ASSET_MODAL_ID
@@ -188,6 +193,7 @@ export const BorrowingExpandCard = ({
       >
         {children || (
         <BorrowingTabListItemExpanded className='expand-borrow-tab-container'>
+          {(isVaultsPage && status) && <StatusMessage status={status} timestamp={timestamp} />}
           <div className="block-name">Borrowed</div>
           <div className="borrowed-data">
             <ThreeLevelListItem>

@@ -44,7 +44,7 @@ const findStatusInfo = (status: string) => {
 
 const collateralUtilization = 0 // TODO add data from indexer
 
-const findFooterText = (status: string, statusColor: StatusFlagStyle, timestamp: number | null) => {
+const findFooterText = (status: string, statusColor: StatusFlagStyle, timestamp?: number) => {
   const timer = timestamp 
     ? (<Timer
       timestamp={timestamp}
@@ -74,7 +74,6 @@ type Props = VaultType & {
 
 export const VaultsCard = (props: Props) => {
   const {
-    address,
     ownerId,
     vaultId,
     status,
@@ -89,7 +88,7 @@ export const VaultsCard = (props: Props) => {
     handleMarkForLiquidation,
   } = props
   const [expanded, setExpanded] = useState(false)
-  const [countdownTimer, setCountdownTimer] = useState<number | null>(null)
+  const [countdownTimer, setCountdownTimer] = useState<number | undefined>(undefined)
 
   const statusColor = findStatusInfo(status).color as StatusFlagStyle
   const statusText = findStatusInfo(status).text
@@ -117,7 +116,7 @@ export const VaultsCard = (props: Props) => {
     if (status === vaultsStatuses.GRACE_PERIOD) {
       const fetchData = async () => {
         if (!currentBlockLevel) {
-          setCountdownTimer(null)
+          setCountdownTimer(undefined)
           return 
         }
         
@@ -126,14 +125,6 @@ export const VaultsCard = (props: Props) => {
 
         const response = await getCountdownTimestamp(levelOfEarly, levelOfLate)
         const timestamp = dayjs(response.timestampOfEarly).unix() - dayjs(response.timestampOfLate).unix()
-
-        console.log({
-          timestamp,
-          dataFirst: response.timestampOfEarly,
-          dataSecond: response.timestampOfLate,
-          unixFirst: dayjs(response.timestampOfEarly).unix(),
-          unixSecond: dayjs(response.timestampOfLate).unix()
-        });
         
         setCountdownTimer(timestamp)
       }
@@ -142,7 +133,7 @@ export const VaultsCard = (props: Props) => {
     } else if (status === vaultsStatuses.LIQUIDATABLE) {
       const fetchData = async () => {
         if (!currentBlockLevel || !liquidationEndLevel) {
-          setCountdownTimer(null)
+          setCountdownTimer(undefined)
           return 
         }
         
@@ -154,7 +145,7 @@ export const VaultsCard = (props: Props) => {
 
       fetchData()
     } 
-  }, [status, expanded])
+  }, [status, expanded, currentBlockLevel, markedForLiquidationLevel, liquidationDelayInMinutes, liquidationEndLevel])
 
   const headerSufix = (
     <StatusFlag status={statusColor} text={status} className="sufix" />
@@ -276,6 +267,7 @@ export const VaultsCard = (props: Props) => {
           className="expand-vault"
           headerSufix={headerSufix}
           getExpandedStatus={setExpanded}
+          timestamp={countdownTimer}
           isVaultsPage
           isOwner
         />
