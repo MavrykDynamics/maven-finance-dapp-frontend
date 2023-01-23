@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import dayjs from 'dayjs'
 
 // components
 import { StatusFlag } from '../../../app/App.components/StatusFlag/StatusFlag.controller'
@@ -42,8 +41,6 @@ const findStatusInfo = (status: string) => {
   }
 }
 
-const collateralUtilization = 0 // TODO add data from indexer
-
 const findFooterText = (status: string, statusColor: StatusFlagStyle, timestamp?: number) => {
   const timer = timestamp 
     ? (<Timer
@@ -57,7 +54,7 @@ const findFooterText = (status: string, statusColor: StatusFlagStyle, timestamp?
     case vaultsStatuses.LIQUIDATABLE:
       return <p>This vault is <span className={statusColor}>armed for liquidation</span> and can be liquidated for the next {timer}</p>
     case vaultsStatuses.GRACE_PERIOD:
-      return <p>This vault is in a <span className={statusColor}>grace period</span>. The vault owner has {timer}before liquidation is possible.</p>
+      return <p>This vault is in a <span className={statusColor}>grace period</span>. The vault owner has {timer} before liquidation is possible.</p>
     case vaultsStatuses.MARK:
       return <p>This vault is <span className={statusColor}>ready to arm</span> and can be marked for the next {timer}</p>
 
@@ -88,11 +85,11 @@ export const VaultsCard = (props: Props) => {
     handleMarkForLiquidation,
   } = props
   const [expanded, setExpanded] = useState(false)
-  const [countdownTimer, setCountdownTimer] = useState<number | undefined>(undefined)
+  const [timerTimestamp, setTimerTimestamp] = useState<number | undefined>(undefined)
 
   const statusColor = findStatusInfo(status).color as StatusFlagStyle
   const statusText = findStatusInfo(status).text
-  const footerText = findFooterText(status, statusColor, countdownTimer)
+  const footerText = findFooterText(status, statusColor, timerTimestamp)
 
   const isActiveFooter = 
   status === vaultsStatuses.LIQUIDATABLE ||
@@ -114,9 +111,9 @@ export const VaultsCard = (props: Props) => {
     if (!expanded) return
 
     if (status === vaultsStatuses.GRACE_PERIOD) {
-      const fetchData = async () => {
+      ;(async () => {
         if (!currentBlockLevel) {
-          setCountdownTimer(undefined)
+          setTimerTimestamp(undefined)
           return 
         }
         
@@ -124,26 +121,22 @@ export const VaultsCard = (props: Props) => {
         const levelOfLate = markedForLiquidationLevel + (liquidationDelayInMinutes * BLOCKS_PER_MINUTE)
 
         const response = await getCountdownTimestamp(levelOfEarly, levelOfLate)
-        const timestamp = dayjs(response.timestampOfEarly).unix() - dayjs(response.timestampOfLate).unix()
+        const timestamp =  new Date(response.timestampOfEarly).getTime() - new Date(response.timestampOfLate).getTime() + new Date().getTime()
         
-        setCountdownTimer(timestamp)
-      }
-
-      fetchData()
+        setTimerTimestamp(timestamp)
+      })()
     } else if (status === vaultsStatuses.LIQUIDATABLE) {
-      const fetchData = async () => {
+      ;(async () => {
         if (!currentBlockLevel || !liquidationEndLevel) {
-          setCountdownTimer(undefined)
+          setTimerTimestamp(undefined)
           return 
         }
         
         const response = await getCountdownTimestamp(currentBlockLevel, liquidationEndLevel)
-        const timestamp = dayjs(response.timestampOfEarly).unix() - dayjs(response.timestampOfLate).unix()
+        const timestamp =  new Date(response.timestampOfEarly).getTime() - new Date(response.timestampOfLate).getTime() + new Date().getTime()
 
-        setCountdownTimer(timestamp)
-      }
-
-      fetchData()
+        setTimerTimestamp(timestamp)
+      })()
     } 
   }, [status, expanded, currentBlockLevel, markedForLiquidationLevel, liquidationDelayInMinutes, liquidationEndLevel])
 
@@ -267,7 +260,7 @@ export const VaultsCard = (props: Props) => {
           className="expand-vault"
           headerSufix={headerSufix}
           getExpandedStatus={setExpanded}
-          timestamp={countdownTimer}
+          timestamp={timerTimestamp}
           isVaultsPage
           isOwner
         />
