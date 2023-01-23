@@ -69,7 +69,7 @@ export const VaultsSearchFilterStyled = styled(Card)`
 
       ul {
         position: relative;
-        right: 35px;
+        right: 36px;
       }
 
       .scroll-block {
