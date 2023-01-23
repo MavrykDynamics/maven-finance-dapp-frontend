@@ -290,3 +290,44 @@ export const depositLendingAssetAction =
       await dispatch(toggleActionLoader(false))
     }
   }
+
+export const withdrawLendingAssetAction =
+  (loanTokenName: string, addLiquidityAmount: number, callback: () => void) =>
+  async (dispatch: AppDispatch, getState: GetState) => {
+    const state: State = getState()
+
+    if (!state.wallet.accountPkh) {
+      await dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
+      return
+    }
+
+    if (state.loading.isActionLoading) {
+      await dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
+      return
+    }
+
+    try {
+      // prepare and send query
+      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.lendingController.address)
+      const transaction = await contract?.methods.removeLiquidity(loanTokenName, addLiquidityAmount).send()
+
+      callback()
+      await dispatch(toggleActionLoader(true))
+      await dispatch(showToaster(INFO, 'Adding Liquidity...', 'Please wait 30s'))
+
+      // confirm query completion
+      await transaction?.confirmation()
+
+      await dispatch(showToaster(SUCCESS, 'Liquidity Added.', 'All good :)'))
+      // refetch data we need
+      await dispatch(getLoansStorage())
+      await dispatch(toggleActionLoader(false))
+    } catch (error) {
+      console.error('submitProposal error:', error)
+      if (error instanceof Error) {
+        dispatch(showToaster(ERROR, 'Error', error.message))
+        callback()
+      }
+      await dispatch(toggleActionLoader(false))
+    }
+  }

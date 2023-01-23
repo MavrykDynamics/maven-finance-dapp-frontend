@@ -13,7 +13,7 @@ import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { useState } from 'react'
 import { AddLendingAsset, AddLendingAssetDataType } from './Modals/AddLendingAsset.modal'
-import { RemoveAssetsFromLending } from './Modals/RemoveAssetsFromLending.modal'
+import { RemoveAssetsFromLending, RemoveLendingAssetDataType } from './Modals/RemoveAssetsFromLending.modal'
 
 type LendingTabPropsType = {
   lendingItem: LendingItemType
@@ -25,6 +25,9 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData }:
   const [showAddModal, setAddModal] = useState(false)
   const [showRemoveModal, setRemoveModal] = useState(false)
   const [addLendingAssetModalData, setAddLendingAssetModalData] = useState<undefined | AddLendingAssetDataType>()
+  const [removeLendingAssetModalData, setRemoveLendingAssetModalData] = useState<
+    undefined | RemoveLendingAssetDataType
+  >()
 
   return (
     <LoansTabStyled>
@@ -34,7 +37,11 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData }:
         modalData={addLendingAssetModalData}
       />
 
-      <RemoveAssetsFromLending closePopup={() => setRemoveModal(false)} show={showRemoveModal} />
+      <RemoveAssetsFromLending
+        closePopup={() => setRemoveModal(false)}
+        show={showRemoveModal}
+        data={removeLendingAssetModalData}
+      />
 
       <GovRightContainerTitleArea>
         <h2>My Lending</h2>
@@ -112,7 +119,18 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData }:
               text="Remove"
               icon="minus"
               kind={TRANSPARENT_WITH_BORDER}
-              onClick={() => setRemoveModal(true)}
+              onClick={() => {
+                setRemoveLendingAssetModalData({
+                  userBalance: lendingItem.loanAssetWalletBalance,
+                  mBalance: lendingItem.mBalance,
+                  lendingAPY: lendingItem.lendAPY,
+                  assetRate: assetData.rate,
+                  assetName: assetData.name,
+                  assetIcon: assetData.icon,
+                  currentLendedAmount: lendingItem.lendValue,
+                })
+                setRemoveModal(true)
+              }}
               className="lending-btn"
             />
           </LendingTabListItem>
@@ -124,8 +142,6 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData }:
             text="Lend Asset"
             icon="plus"
             onClick={() => {
-              console.log('add lend click')
-
               setAddModal(true)
             }}
             kind={ACTION_PRIMARY}

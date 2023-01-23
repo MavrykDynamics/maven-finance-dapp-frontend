@@ -172,7 +172,7 @@ export const Loans = () => {
                         <div className="name">Utilization Rate</div>
                         <CommaNumber value={utilisationRate} className="value" endingText="%" />
                       </ThreeLevelListItem>
-                      <Link to={`/loans/${name}/${LEND_TAB_ID}`}>
+                      <Link to={`/loans/${symbol}/${LEND_TAB_ID}`}>
                         <Button text="Lend" kind={ACTION_PRIMARY} iconAfter icon="arrowRight" />
                       </Link>
                     </div>
@@ -210,7 +210,7 @@ export const Loans = () => {
                           beginningText="$"
                         />
                       </ThreeLevelListItem>
-                      <Link to={`/loans/${name}/${BORROW_TAB_ID}`}>
+                      <Link to={`/loans/${symbol}/${BORROW_TAB_ID}`}>
                         <Button text="Borrow" kind={ACTION_PRIMARY} iconAfter icon="arrowRight" />
                       </Link>
                     </div>

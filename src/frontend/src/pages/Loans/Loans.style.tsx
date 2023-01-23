@@ -388,6 +388,10 @@ export const ThreeLevelListItem = styled.div<{ theme: MavrykTheme }>`
       margin-bottom: 7px;
       color: ${({ theme }) => theme.textColor};
 
+      p {
+        margin-left: 5px;
+      }
+
       &.up {
         p {
           color: ${({ theme }) => theme.upColor};

@@ -32,11 +32,13 @@ import { AvaliableCollateralType } from 'utils/TypesAndInterfaces/Loans'
 import { isTezosAsset } from 'pages/Loans/Loans.helpers'
 import { useLockBodyScroll } from 'react-use'
 
-type DropDownCollateralAssetType = DropDownItemType & AvaliableCollateralType
+export type DropDownCollateralAssetType = DropDownItemType & AvaliableCollateralType
 
-type DropDownXTZBakerType = DropDownItemType & {
+export type DropDownXTZBakerType = DropDownItemType & {
   bakerName: string
   bakerAddress: string
+  bakerYield: number
+  bakerFreeSpace: number
 }
 
 type CurrentActiveModalScreen =
@@ -116,7 +118,7 @@ export const CreateNewVault = ({
   // select baker for an xtz collateral, used only when we selected one collateral XTZ
   const bakerItemsForDropDown = useMemo<DropDownXTZBakerType[]>(
     () =>
-      xtzBakers.map(({ name, fee, logo, address }, idx) => ({
+      xtzBakers.map(({ name, fee, logo, address, yield: bakerYield, freespace }, idx) => ({
         content: (
           <DropDownJsxChild>
             <div className="flex-row with-image">
@@ -137,13 +139,15 @@ export const CreateNewVault = ({
         bakerName: name,
         id: idx,
         bakerAddress: address,
+        bakerYield,
+        bakerFreeSpace: freespace,
       })),
     [xtzBakers],
   )
   const [bakerChosenDdItem, setAssetChosenDdItem] = useState<DropDownXTZBakerType | undefined>()
   const showBakerAddress = useMemo(
     () => bakerChosenDdItem?.bakerName && collaterals.find(({ id }) => isTezosAsset(collateralsToSelect[id].assetName)),
-    [collaterals, bakerChosenDdItem],
+    [bakerChosenDdItem?.bakerName, collaterals, collateralsToSelect],
   )
   const handleOnClickDropdownBakerItem = (itemId: number) =>
     setAssetChosenDdItem(bakerItemsForDropDown.find(({ id }) => id === itemId))

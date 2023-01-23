@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 
@@ -14,6 +14,9 @@ import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { DropDownJsxChild, LoansModalBase } from './Modals.style'
+import { DropDownXTZBakerType } from './CreateNewVault.modal'
+import { useSelector } from 'react-redux'
+import { State } from 'reducers'
 
 const MAVRYK_DYNAMICS_BAKERY = 1
 const DAO_BAKERY = 2
@@ -21,6 +24,7 @@ const OTHER_BAKERY = 3
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A238629&t=Sx2aEpp3ifrGxBtQ-0
 export const ChangeBaker = ({ closePopup, show }: { closePopup: () => void; show: boolean }) => {
+  const { xtzBakers } = useSelector((state: State) => state.loans)
   const [activeTab, setActiveSliding] = useState(MAVRYK_DYNAMICS_BAKERY)
 
   const bakerySlidingButtons = useMemo(
@@ -36,57 +40,46 @@ export const ChangeBaker = ({ closePopup, show }: { closePopup: () => void; show
     setActiveSliding(bakerySlidingButtons.find(({ id }) => id === tabId)?.id ?? MAVRYK_DYNAMICS_BAKERY)
   }
 
-  const itemsForDropDown = useMemo<DropDownItemType[]>(
-    () => [
-      {
+  // select baker for an xtz collateral, used only when we selected one collateral XTZ
+  const bakerItemsForDropDown = useMemo<DropDownXTZBakerType[]>(
+    () =>
+      xtzBakers.map(({ name, fee, logo, address, yield: bakerYield, freespace }, idx) => ({
         content: (
           <DropDownJsxChild>
             <div className="flex-row with-image">
-              <Icon id="noImage" /> 1111
+              {logo ? (
+                <div className="image-wrapper">
+                  <img src={logo} alt={name + '-logo'} />
+                </div>
+              ) : (
+                <Icon id="noImage" />
+              )}{' '}
+              {name}
             </div>
             <div className="baker-fee">
-              <CommaNumber value={3.32} endingText="%" />
+              <CommaNumber value={fee} endingText="%" />
             </div>
           </DropDownJsxChild>
         ),
-        id: 1,
-      },
-      {
-        content: (
-          <DropDownJsxChild>
-            <div className="flex-row with-image">
-              <Icon id="noImage" /> 22222
-            </div>
-            <div className="baker-fee">
-              <CommaNumber value={3.32} endingText="%" />
-            </div>
-          </DropDownJsxChild>
-        ),
-        id: 2,
-      },
-      {
-        content: (
-          <DropDownJsxChild>
-            <div className="flex-row with-image">
-              <Icon id="noImage" /> 33333
-            </div>
-            <div className="baker-fee">
-              <CommaNumber value={3.32} endingText="%" />
-            </div>
-          </DropDownJsxChild>
-        ),
-        id: 3,
-      },
-    ],
-    [],
+        bakerName: name,
+        id: idx,
+        bakerAddress: address,
+        bakerYield,
+        bakerFreeSpace: freespace,
+      })),
+    [xtzBakers],
   )
+  const [bakerChosenDdItem, setBakerChosenDdItem] = useState<DropDownXTZBakerType | undefined>()
+  const handleOnClickDropdownBakerItem = (itemId: number) =>
+    setBakerChosenDdItem(bakerItemsForDropDown.find(({ id }) => id === itemId))
 
-  const [chosenDdItem, setChosenDdItem] = useState<DropDownItemType | undefined>()
-
-  const handleOnClickDropdownItem = (itemId: number) => {
-    setChosenDdItem(itemsForDropDown.find(({ id }) => id === itemId))
-  }
   const updateBakerHandler = () => {}
+
+  useEffect(() => {
+    if (!show) {
+      setBakerChosenDdItem(undefined)
+    }
+  }, [show])
 
   return (
     <PopupContainer onClick={closePopup} show={show}>
@@ -123,9 +116,9 @@ export const ChangeBaker = ({ closePopup, show }: { closePopup: () => void; show
           {activeTab === 3 ? (
             <DropDown
               placeholder="Select Bakery"
-              activeItem={chosenDdItem}
-              items={itemsForDropDown}
-              clickItem={handleOnClickDropdownItem}
+              activeItem={bakerChosenDdItem}
+              items={bakerItemsForDropDown}
+              clickItem={handleOnClickDropdownBakerItem}
               className="change-bakery "
             />
           ) : null}
@@ -133,15 +126,43 @@ export const ChangeBaker = ({ closePopup, show }: { closePopup: () => void; show
           <div className="lending-stats">
             <ThreeLevelListItem>
               <div className="name">Bakery Address</div>
-              <TzAddress className="value" tzAddress="tz1ezDb77a9jaFMHDWs8QXrKEDkpgGdgsjPD" type={BLUE} />
+              {activeTab === 3 ? (
+                bakerChosenDdItem?.bakerAddress ? (
+                  <TzAddress className="value" tzAddress={bakerChosenDdItem.bakerAddress} type={BLUE} />
+                ) : (
+                  <div className="value">-</div>
+                )
+              ) : null}
+              {activeTab === 1 ? (
+                <TzAddress className="value" tzAddress={'hihibhyvyvuyvuyvuyvuyvuvuuvugug'} type={BLUE} />
+              ) : null}
+              {activeTab === 2 ? (
+                <TzAddress className="value" tzAddress={'jkgugufftyfccvgvgvchgvvytvtgcchgchgc'} type={BLUE} />
+              ) : null}
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Yield</div>
-              <CommaNumber value={2.13} className="value" endingText="%" />
+              {activeTab === 3 ? (
+                bakerChosenDdItem?.bakerYield ? (
+                  <CommaNumber value={bakerChosenDdItem.bakerYield} className="value" endingText="%" />
+                ) : (
+                  <div className="value">-</div>
+                )
+              ) : null}
+              {activeTab === 1 ? <CommaNumber value={11} className="value" endingText="%" /> : null}
+              {activeTab === 2 ? <CommaNumber value={22} className="value" endingText="%" /> : null}
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Free Capacity</div>
-              <CommaNumber value={2412} className="value" endingText="XTZ" />
+              {activeTab === 3 ? (
+                bakerChosenDdItem?.bakerFreeSpace ? (
+                  <CommaNumber value={bakerChosenDdItem.bakerFreeSpace} className="value" endingText="XTZ" />
+                ) : (
+                  <div className="value">-</div>
+                )
+              ) : null}
+              {activeTab === 1 ? <CommaNumber value={1111} className="value" endingText="XTZ" /> : null}
+              {activeTab === 2 ? <CommaNumber value={2222} className="value" endingText="XTZ" /> : null}
             </ThreeLevelListItem>
           </div>
 

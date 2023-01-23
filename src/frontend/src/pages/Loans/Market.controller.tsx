@@ -36,17 +36,19 @@ export const Market = () => {
 
   const { isLoading } = useDataLoader(async () => {
     try {
-      await dispatch(getLoansStorage())
+      if (loanTokens?.length === 0) {
+        await dispatch(getLoansStorage())
+      }
     } catch (e) {}
   }, [accountPkh])
 
   const currentToken = useMemo(
-    () => loanTokens.find(({ loanTokenData: { name } }) => assetId === name),
+    () => loanTokens.find(({ loanTokenData: { symbol } }) => assetId === symbol),
     [assetId, loanTokens],
   )
 
   const [prevMarket, nextMarket, currentAsset] = useMemo(() => {
-    const currentAssetIdx = loanTokens.findIndex(({ loanTokenData: { name } }) => name === assetId)
+    const currentAssetIdx = loanTokens.findIndex(({ loanTokenData: { symbol } }) => symbol === assetId)
     return [loanTokens[currentAssetIdx - 1], loanTokens[currentAssetIdx + 1], loanTokens[currentAssetIdx]]
   }, [assetId, loanTokens])
 
@@ -71,7 +73,7 @@ export const Market = () => {
 
       <div className="right-side-wrapper">
         {prevMarket ? (
-          <Link to={`/loans/${prevMarket.loanTokenData.name}/${tabId}`}>
+          <Link to={`/loans/${prevMarket.loanTokenData.symbol}/${tabId}`}>
             <span className="left">
               <Icon id="paginationArrowLeft" /> Previous Market
             </span>
@@ -79,7 +81,7 @@ export const Market = () => {
         ) : null}
 
         {nextMarket ? (
-          <Link to={`/loans/${nextMarket.loanTokenData.name}/${tabId}`}>
+          <Link to={`/loans/${nextMarket.loanTokenData.symbol}/${tabId}`}>
             <span className="right">
               Next Market
               <Icon id="paginationArrowLeft" />

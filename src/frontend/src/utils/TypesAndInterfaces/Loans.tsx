@@ -63,7 +63,7 @@ export type AvaliableCollateralType = {
   id: number
   userBalance: number
   assetDecimals: number
-  assetRate: number | null
+  assetRate: number
   assetName: string
   assetSymbol: string
   assetIcon: string
@@ -92,7 +92,7 @@ export type BorrowingData = {
     assetName?: string
     assetIcon?: string
     amtBorrowed: number
-    assetRate: number | null
+    assetRate: number
     collateralBalance: number
     collateralUtilization: number
     apr: number
@@ -102,7 +102,7 @@ export type BorrowingData = {
     assetSymbol?: string
     assetIcon?: string
     balance: number
-    assetRate: number | null
+    assetRate: number
     maxWithdraw: number
   }>
   address: string

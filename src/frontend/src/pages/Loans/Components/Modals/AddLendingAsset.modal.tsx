@@ -23,7 +23,7 @@ export type AddLendingAssetDataType = {
   userBalance: number
   mBalance: number
   lendingAPY: number
-  assetRate: number | null
+  assetRate: number
   assetName: string
   assetIcon?: string
 }
@@ -60,6 +60,10 @@ export const AddLendingAsset = ({ closePopup, show, modalData }: AddLendingAsset
     setInputAmount(inputAmount === '' ? '0' : inputAmount)
   }
 
+  const onFocusHandler = (inputAmount: string) => {
+    setInputAmount(inputAmount === '0' ? '' : inputAmount)
+  }
+
   useEffect(() => {
     if (!show) {
       setInputValidationStatus('')
@@ -94,7 +98,7 @@ export const AddLendingAsset = ({ closePopup, show, modalData }: AddLendingAsset
               type: 'number',
               onChange: (e) => onChangeHandler(e.target.value, userBalance),
               onBlur: (e) => onBlurHandler(e.target.value),
-              onFocus: () => setInputAmount(inputAmount === '0' ? '' : inputAmount),
+              onFocus: (e) => onFocusHandler(e.target.value),
             }}
             settings={{
               balanceName: 'Lend Balance',
@@ -111,7 +115,7 @@ export const AddLendingAsset = ({ closePopup, show, modalData }: AddLendingAsset
                   <img src={assetIcon} alt={`${assetName}-logo`} />
                 </div>
               ) : (
-                <Icon id="xtzTezos" />
+                <Icon id="noImage" />
               )}
               {assetName}
             </InputPinnedTokenInfo>

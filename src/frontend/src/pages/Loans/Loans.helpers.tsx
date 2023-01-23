@@ -20,6 +20,7 @@ import {
 import { calcWithoutDecimals, calcWithoutMu } from '../../utils/calcFunctions'
 
 export const isTezosAsset = (tokenName: string) => tokenName === 'tez'
+export const getAssetName = (tokenName: string) => (tokenName === 'tez' ? 'XTZ' : tokenName)
 
 export const getAssetMetadata = (
   tokenName: string,
@@ -308,7 +309,7 @@ const getBorrowings = async (
         totalRow: {
           assetSymbol: 'total',
           balance: 0,
-          assetRate: null,
+          assetRate: 0,
           maxWithdraw: 0,
         },
       },
@@ -440,38 +441,35 @@ export const normalizeLoans = async ({
         ? calcWithoutMu(total_remaining)
         : calcWithoutDecimals(total_remaining, Number(loanTokenMetadata.decimals ?? 1))
 
-      // TODO: Temporary solution, cuz no data for no lended asset
-      if (lendingItem) {
-        acc.push({
-          loanTokenData: {
-            ...loanTokenMetadata,
-            tokenType: loan_token_contract_standard as 'tez' | 'fa12' | 'fa2',
-          },
-          myBorrowingList,
-          permissionedBorrowingList: permissinedBorrowingList,
-          lendingItem,
-          transactionHistory,
-          utilisationRate: utilisation_rate / 10 ** interestRateDecimals,
+      acc.push({
+        loanTokenData: {
+          ...loanTokenMetadata,
+          tokenType: loan_token_contract_standard as 'tez' | 'fa12' | 'fa2',
+        },
+        myBorrowingList,
+        permissionedBorrowingList: permissinedBorrowingList,
+        lendingItem,
+        transactionHistory,
+        utilisationRate: utilisation_rate / 10 ** interestRateDecimals,
 
-          availableLiquidity,
-          totalLended: totalLended,
-          totalBorrowed,
-          loanTokenTotalCollaterals: totalCollateral,
-          loanTokenVaultsTotalBorrowed: vaultsBorrowedAmount,
+        availableLiquidity,
+        totalLended: totalLended,
+        totalBorrowed,
+        loanTokenTotalCollaterals: totalCollateral,
+        loanTokenVaultsTotalBorrowed: vaultsBorrowedAmount,
 
-          borrowers: aggregate?.count ?? 0,
-          suppliers: appropriateMtokenData?.accounts.length ?? 0,
-          lending24hVolume,
-          borrowing24hVolume,
+        borrowers: aggregate?.count ?? 0,
+        suppliers: appropriateMtokenData?.accounts.length ?? 0,
+        lending24hVolume,
+        borrowing24hVolume,
 
-          totalFeesEarned: userMTokens?.reduce((acc, { rewards_earned }) => acc + rewards_earned, 0) ?? 0,
-          collateralFactor: storage.collateral_ratio / 10,
-          reserveFactor: reserve_ratio / 100,
-          reserveAmount: (token_pool_total * reserve_ratio) / 100,
-          borrowAPR: lendingItem?.borrowAPR ?? 0,
-          lendingAPY: lendingItem?.lendAPY ?? 0,
-        })
-      }
+        totalFeesEarned: userMTokens?.reduce((acc, { rewards_earned }) => acc + rewards_earned, 0) ?? 0,
+        collateralFactor: storage.collateral_ratio / 10,
+        reserveFactor: reserve_ratio / 100,
+        reserveAmount: (token_pool_total * reserve_ratio) / 100,
+        borrowAPR: lendingItem?.borrowAPR ?? 0,
+        lendingAPY: lendingItem?.lendAPY ?? 0,
+      })
 
       return acc
     },
