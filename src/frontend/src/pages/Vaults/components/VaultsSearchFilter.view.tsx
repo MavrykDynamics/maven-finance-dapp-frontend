@@ -89,11 +89,11 @@ export const VaultsSearchFilter = ({ assets, vaultsMapper, allVaultsIds, setVaul
     setChosenDdItem(updatedChosenDdItem)
 
     if (selectedOption !== '' && selectedOption !== chosenDdItem[name]) {
-      const data = searchInputValue ? searchedData : [...allVaultsIds]
+      const data = searchInputValue ? [...searchedData] : [...allVaultsIds]
       let filteredVaultsIds: string[] = data
 
       // sort by statuses
-      if (updatedChosenDdItem[dropdowns.SORT]) {
+      if (updatedChosenDdItem[dropdowns.SORT] === sortVaultItems.STATUSES) {
         filteredVaultsIds = sortByVaultCategory({
           vaultsIds: data,
           vaultsMapper,
@@ -101,17 +101,30 @@ export const VaultsSearchFilter = ({ assets, vaultsMapper, allVaultsIds, setVaul
         })
       }
 
-      console.log(updatedChosenDdItem[dropdowns.SORT]);
-      
+      const sortIsCollateralValue = updatedChosenDdItem[dropdowns.SORT] === sortVaultItems.COLLATERAL_VALUE
+      const sortIsBorrowedAmount = updatedChosenDdItem[dropdowns.SORT] === sortVaultItems.BORROWED_AMOUNT
 
-      // // sort by collateral value
-      // if (updatedChosenDdItem[dropdowns.SORT]) {
-      //   filteredVaultsIds = sortByVaultCategory({
-      //     vaultsIds: data,
-      //     vaultsMapper,
-      //     status: updatedChosenDdItem[dropdowns.SORT]
-      //   })
-      // }
+      // sort by collateral value or borrowed amount
+      if (sortIsCollateralValue || sortIsBorrowedAmount) {
+        filteredVaultsIds = data.sort((a, b) => {
+
+          // by collateral value
+          if (sortIsCollateralValue) {
+            const vaultA = vaultsMapper[a].borrowedAsset.collateralBalance
+            const vaultB = vaultsMapper[b].borrowedAsset.collateralBalance
+  
+            return vaultB - vaultA
+          // by borrowed amount
+          } else if (sortIsBorrowedAmount) {
+            const vaultA = vaultsMapper[a].borrowedAsset.amtBorrowed
+            const vaultB = vaultsMapper[b].borrowedAsset.amtBorrowed
+  
+            return vaultB - vaultA
+          }
+          
+          return 0
+        })
+      }
 
       // filter by collateral asset
       if (updatedChosenDdItem[dropdowns.COLLATERAL]) {
