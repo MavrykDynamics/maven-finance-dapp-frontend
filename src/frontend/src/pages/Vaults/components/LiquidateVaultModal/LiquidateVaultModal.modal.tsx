@@ -11,6 +11,33 @@ import Toggle from "app/App.components/Toggle/Toggle.view";
 import { LiquidateVaultModalStyled } from "./LiquidateVaultModal.styles";
 import { PopupContainer, PopupContainerWrapper } from "app/App.components/SettingsPopup/SettingsPopup.style";
 
+const mock = [
+  {
+    asset: 'USDt',
+    amount: {
+      perc: 12,
+      sum: 21323434,
+    },
+    usd: 235676784
+  },
+  {
+    asset: 'XTZ',
+    amount: {
+      perc: 139,
+      sum: 4543,
+    },
+    usd: 235676784
+  },
+  {
+    asset: 'tzBTC',
+    amount: {
+      perc: 82,
+      sum: 42523454534,
+    },
+    usd: 235676784
+  },
+]
+
 type Props = {
   closePopup: () => void
   show: boolean 
@@ -20,6 +47,7 @@ export const LiquidateVaultModal = ({ closePopup, show }: Props) => {
   const [inputAmount, setInputAmount] = useState('0')
   const [showAsPercentage, setShowAsPercentage] = useState(true)
   const profit = 1234.44
+  const total = 23164243.34
 
   return (
     <PopupContainer onClick={closePopup} show={show}>
@@ -98,7 +126,7 @@ export const LiquidateVaultModal = ({ closePopup, show }: Props) => {
           <div className="grid-group">
             <div>
               Cost to Liquidate
-              <CommaNumber value={50000.00} decimalsToShow={2} showDecimal beginningText='$' className='numberColor'/>
+              <CommaNumber value={50000.00} decimalsToShow={2} showDecimal beginningText='$' className='numberColor '/>
             </div>
             <div>
               Liquidation Reward
@@ -124,6 +152,43 @@ export const LiquidateVaultModal = ({ closePopup, show }: Props) => {
               <CommaNumber value={50000.00} decimalsToShow={2} showDecimal beginningText='$' className='numberColor'/>
             </div>
           </div>
+
+          <h2>Assets Received</h2>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Asset</th>
+                <th>Amount</th>
+                <th>USD Value</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {mock.map((item, index) => (
+                <tr key={index}>
+                  <td>{item.asset}</td>
+
+                  <td className="grid-group">
+                    <div>{item.amount.perc}%</div>
+                    <div>{item.amount.sum}</div>
+                  </td>
+
+                  <td>
+                    <CommaNumber value={item.usd} decimalsToShow={2} showDecimal beginningText='$'/>
+                  </td>
+                </tr>
+              ))}
+
+              <tr>
+                <td>Total</td>
+                <td></td>
+                <td>
+                  <CommaNumber value={total} decimalsToShow={2} showDecimal beginningText='$' className={total > 0 ? 'upColor' : 'downColor'}/>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </LiquidateVaultModalStyled>
       </PopupContainerWrapper>
     </PopupContainer>

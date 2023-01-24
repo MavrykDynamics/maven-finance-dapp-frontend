@@ -19,6 +19,19 @@ export const LiquidateVaultModalStyled = styled.div<{ showAsPercentage: boolean;
     }
   }
 
+  & > h2 {
+    margin: 30px 0 10px 0;
+
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 27px;
+
+    &::after {
+      content: '';
+      height: 0;
+    }
+  }
+
   & > p {
     margin: 0;
     margin-bottom: 30px;
@@ -30,6 +43,52 @@ export const LiquidateVaultModalStyled = styled.div<{ showAsPercentage: boolean;
     height: 1px;
     background-color: ${({ theme }) => theme.cardBorderColor};
     border: none;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 22px;
+
+    th {
+      width: 33%;
+      text-align: start;
+
+      &:last-of-type {
+        text-align: end;
+      }
+    }
+
+    tbody {
+      tr {
+        border-bottom: 1px solid ${({ theme }) => theme.dataColor};
+
+        &:last-of-type {
+          border-bottom: none;
+        }
+
+        td {
+          color: ${({ theme }) => theme.dataColor};
+
+          p {
+            margin: 0;
+          }
+
+          &:last-of-type {
+            text-align: end;
+          }
+        }
+      }
+    }
+
+    .grid-group {
+      display: grid;
+      grid-template-columns: 40px auto;
+      column-gap: 8px;
+    }
   }
 
   .flex-group {
@@ -78,8 +137,16 @@ export const LiquidateVaultModalStyled = styled.div<{ showAsPercentage: boolean;
     fill: ${({ theme }) => theme.textColor};
   }
 
+  .numberColor,
+  .upColor,
+  .downColor {
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 22px;
+  }
+
   .numberColor {
-    color: ${({ theme }) => theme.dataColor}
+    color: ${({ theme }) => theme.dataColor};
   }
 
   .upColor {

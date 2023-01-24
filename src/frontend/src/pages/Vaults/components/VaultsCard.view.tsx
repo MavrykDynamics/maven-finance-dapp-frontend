@@ -9,7 +9,7 @@ import { Button } from 'app/App.components/SettingsPopup/SettingsPopup.style'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { BorrowingExpandCard } from 'pages/Loans/Components/BorrowindExpandCard'
 import { Timer } from 'app/App.components/Timer/Timer.controller'
-import { LiquidateVaultModal } from './LiquidateVaultModal/LiquidateVaultModal.view'
+import { LiquidateVaultModal } from './LiquidateVaultModal/LiquidateVaultModal.modal'
 
 // styles
 import { VaultsCardDropDown, VaultsAssest } from './../Vaults.style'
