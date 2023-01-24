@@ -22,17 +22,27 @@ export const LiquidateVaultModalStyled = styled.div<{ theme: MavrykTheme }>`
     p {
       margin: 0;
     }
+  }
 
-    .info-icon {
-      margin-left: 4px;
-      width: 12px;
-      height: 12px;
-      fill: ${({ theme }) => theme.textColor};
-    }
+  .group-with-icon {
+    display: flex;
+    align-items: center;
+  }
+
+  .info-icon {
+    margin-left: 4px;
+    width: 12px;
+    height: 12px;
+    fill: ${({ theme }) => theme.textColor};
   }
 
   .numberColor {
     color: ${({ theme }) => theme.dataColor}
+  }
+
+  .input-title {
+    margin-top: 20px;
+    padding-left: 7px;
   }
 
   .close-modal {

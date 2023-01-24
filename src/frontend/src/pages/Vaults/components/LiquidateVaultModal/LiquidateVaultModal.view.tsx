@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 
 // components
 import { CommaNumber } from "app/App.components/CommaNumber/CommaNumber.controller";
 import Icon from "app/App.components/Icon/Icon.view";
+import { Input } from "app/App.components/Input/NewInput";
+import { InputPinnedTokenInfo } from "app/App.components/Input/Input.style";
 
 // styles
 import { LiquidateVaultModalStyled } from "./LiquidateVaultModal.styles";
@@ -14,6 +16,9 @@ type Props = {
 }
 
 export const LiquidateVaultModal = ({ closePopup, show }: Props) => {
+  const [inputAmount, setInputAmount] = useState('0')
+  const [showAsPercentage, setShowAsPercentage] = useState(true)
+
   return (
     <PopupContainer onClick={closePopup} show={show}>
       <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="loans">
@@ -30,7 +35,7 @@ export const LiquidateVaultModal = ({ closePopup, show }: Props) => {
 
           <div className="flex-group">
             <div>
-              <div>
+              <div className="group-with-icon">
                 Liquidation Max
                 <Icon id='info' className='info-icon' /> 
               </div>
@@ -47,6 +52,30 @@ export const LiquidateVaultModal = ({ closePopup, show }: Props) => {
               <CommaNumber value={500.00} beginningText='$' className='numberColor'/>
             </div>
           </div>
+
+          <div className="input-title">{showAsPercentage ? 'Input percent you want to liquidate' : 'Input Liquidation Amount'}</div>
+          <Input
+            inputProps={{
+              value: inputAmount,
+              type: 'number',
+              onChange: (e) => setInputAmount(e.target.value),
+            }}
+            settings={{
+              balance: 1,
+              balanceAsset: showAsPercentage ? '%' : 'USDt',
+              useMaxHandler: () => setInputAmount('1000'),
+              inputStatus: '',
+              convertedValue: 1,
+            }}
+          >
+            <InputPinnedTokenInfo>
+              {showAsPercentage
+                ? '%' 
+                : <>
+                    <Icon id="usedt-tether" /> USDt
+                  </>}
+            </InputPinnedTokenInfo>
+          </Input>
         </LiquidateVaultModalStyled>
       </PopupContainerWrapper>
     </PopupContainer>

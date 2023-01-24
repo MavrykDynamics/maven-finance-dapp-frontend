@@ -198,7 +198,7 @@ export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
     }
   }
 `
-export const StatusMessageStyled = styled.div`
+export const StatusMessageStyled = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   padding: 15px 25px;
   margin-bottom: 20px;
@@ -208,6 +208,7 @@ export const StatusMessageStyled = styled.div`
   line-height: 21px;
 
   border-radius: 10px;
+  background-color: ${({ theme }) => theme.darkPurpleColor};
 
   .timer {
     display: inline-block;

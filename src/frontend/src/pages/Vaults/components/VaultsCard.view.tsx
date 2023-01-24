@@ -74,6 +74,7 @@ export const VaultsCard = (props: Props) => {
   const {
     ownerId,
     vaultId,
+    // TODO: remove x
     status: x,
     currentBlockLevel,
     liquidationEndLevel,
