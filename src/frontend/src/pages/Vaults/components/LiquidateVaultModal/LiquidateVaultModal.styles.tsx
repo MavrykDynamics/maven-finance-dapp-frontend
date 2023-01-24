@@ -15,6 +15,14 @@ export const LiquidateVaultModalStyled = styled.div<{ theme: MavrykTheme }>`
     margin-bottom: 30px;
   }
 
+  hr {
+    margin: 25px 0 30px 0;
+
+    height: 1px;
+    background-color: ${({ theme }) => theme.cardBorderColor};
+    border: none;
+  }
+
   .flex-group {
     display: flex;
     justify-content: space-between;
@@ -24,9 +32,19 @@ export const LiquidateVaultModalStyled = styled.div<{ theme: MavrykTheme }>`
     }
   }
 
-  .group-with-icon {
+  .centering-group {
     display: flex;
     align-items: center;
+  }
+
+  .group-with-toggle {
+    span {
+      color: ${({ theme }) => theme.headerColor};
+    }
+
+    .active {
+      color: ${({ theme }) => theme.valueColor};
+    }
   }
 
   .info-icon {
@@ -38,6 +56,10 @@ export const LiquidateVaultModalStyled = styled.div<{ theme: MavrykTheme }>`
 
   .numberColor {
     color: ${({ theme }) => theme.dataColor}
+  }
+
+  .input {
+    margin: 3px 0;
   }
 
   .input-title {

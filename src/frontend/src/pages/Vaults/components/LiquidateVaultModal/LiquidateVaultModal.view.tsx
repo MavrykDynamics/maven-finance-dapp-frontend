@@ -35,7 +35,7 @@ export const LiquidateVaultModal = ({ closePopup, show }: Props) => {
 
           <div className="flex-group">
             <div>
-              <div className="group-with-icon">
+              <div className="centering-group">
                 Liquidation Max
                 <Icon id='info' className='info-icon' /> 
               </div>
@@ -53,8 +53,12 @@ export const LiquidateVaultModal = ({ closePopup, show }: Props) => {
             </div>
           </div>
 
-          <div className="input-title">{showAsPercentage ? 'Input percent you want to liquidate' : 'Input Liquidation Amount'}</div>
+          <div className="input-title">
+            {showAsPercentage ? 'Input percent you want to liquidate' : 'Input Liquidation Amount'}
+          </div>
+
           <Input
+            className='input'
             inputProps={{
               value: inputAmount,
               type: 'number',
@@ -76,6 +80,20 @@ export const LiquidateVaultModal = ({ closePopup, show }: Props) => {
                   </>}
             </InputPinnedTokenInfo>
           </Input>
+
+          <div className="centering-group group-with-toggle">
+            <span className={showAsPercentage ? '' : 'active'}>USDt</span>
+
+            <input
+              value={showAsPercentage ? 'on' : 'off'}
+              onChange={() => setShowAsPercentage(!showAsPercentage)}
+              type="checkbox"
+            />
+
+            <span className={showAsPercentage ? 'active' : ''}>Percent</span>
+          </div>
+
+          <hr />
         </LiquidateVaultModalStyled>
       </PopupContainerWrapper>
     </PopupContainer>
