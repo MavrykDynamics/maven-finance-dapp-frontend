@@ -1,5 +1,9 @@
 import React from "react";
 
+// components
+import { CommaNumber } from "app/App.components/CommaNumber/CommaNumber.controller";
+import Icon from "app/App.components/Icon/Icon.view";
+
 // styles
 import { LiquidateVaultModalStyled } from "./LiquidateVaultModal.styles";
 import { PopupContainer, PopupContainerWrapper } from "app/App.components/SettingsPopup/SettingsPopup.style";
@@ -24,6 +28,25 @@ export const LiquidateVaultModal = ({ closePopup, show }: Props) => {
             Input a percentage and then review your liquidation details below.
           </p>
 
+          <div className="flex-group">
+            <div>
+              <div>
+                Liquidation Max
+                <Icon id='info' className='info-icon' /> 
+              </div>
+              <CommaNumber value={5_000.00} beginningText='$' className='numberColor'/>
+            </div>
+
+            <div>
+              <div>Liquidation Reward</div>
+              <CommaNumber value={10} endingText='%' className='numberColor'/>
+            </div>
+            
+            <div>
+              <div>Max Profit</div>
+              <CommaNumber value={500.00} beginningText='$' className='numberColor'/>
+            </div>
+          </div>
         </LiquidateVaultModalStyled>
       </PopupContainerWrapper>
     </PopupContainer>

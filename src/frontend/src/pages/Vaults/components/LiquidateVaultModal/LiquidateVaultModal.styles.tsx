@@ -2,6 +2,10 @@ import styled from "styled-components";
 import { MavrykTheme } from "styles/interfaces";
 
 export const LiquidateVaultModalStyled = styled.div<{ theme: MavrykTheme }>`
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 21px;
+
   & > h1 {
     margin: 0;
   }
@@ -9,6 +13,26 @@ export const LiquidateVaultModalStyled = styled.div<{ theme: MavrykTheme }>`
   & > p {
     margin: 0;
     margin-bottom: 30px;
+  }
+
+  .flex-group {
+    display: flex;
+    justify-content: space-between;
+
+    p {
+      margin: 0;
+    }
+
+    .info-icon {
+      margin-left: 4px;
+      width: 12px;
+      height: 12px;
+      fill: ${({ theme }) => theme.textColor};
+    }
+  }
+
+  .numberColor {
+    color: ${({ theme }) => theme.dataColor}
   }
 
   .close-modal {
