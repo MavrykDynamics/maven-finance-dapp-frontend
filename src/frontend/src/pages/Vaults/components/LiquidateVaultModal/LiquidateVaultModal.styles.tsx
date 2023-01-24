@@ -6,17 +6,8 @@ export const LiquidateVaultModalStyled = styled.div<{ showAsPercentage: boolean;
   font-size: 14px;
   line-height: 21px;
 
-  .first-title,
-  .second-title {
+  & > h1 {
     margin: 0;
-  }
-
-  .second-title {
-    margin-bottom: 20px;
-    &::after {
-      content: '';
-      height: 0;
-    }
   }
 
   & > h2 {
@@ -32,9 +23,23 @@ export const LiquidateVaultModalStyled = styled.div<{ showAsPercentage: boolean;
     }
   }
 
+  .without-underscore {
+    margin-bottom: 20px;
+
+    &::after {
+      content: '';
+      height: 0;
+    }
+  }
+
   & > p {
     margin: 0;
     margin-bottom: 30px;
+  }
+
+  div[class="g-centering-group"] > button {
+    margin-top: 40px;
+    width: 250px;
   }
 
   hr {
@@ -89,10 +94,6 @@ export const LiquidateVaultModalStyled = styled.div<{ showAsPercentage: boolean;
       grid-template-columns: 40px auto;
       column-gap: 8px;
     }
-  }
-
-  button {
-    width: 250px;
   }
 
   .flex-group {

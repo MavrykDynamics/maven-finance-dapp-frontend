@@ -66,7 +66,7 @@ export const LiquidateVaultModal = ({ handleLiquidateVault, closePopup, show }: 
       <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="loans">
         <LiquidateVaultModalStyled showAsPercentage={showAsPercentage}>
           <button onClick={closePopup} className="close-modal" />
-          <h1 className="first-title">Liquidate Vault</h1>
+          <h1>Liquidate Vault</h1>
           <p>
             Foreclosing (liquidating) a vault repays the vault’s debt, by purchasing the vault’s collateral.
             Liquidators earn an additional 10% yield on top of the debt repaid for helping to secure Mavryk’s lending.
@@ -133,7 +133,7 @@ export const LiquidateVaultModal = ({ handleLiquidateVault, closePopup, show }: 
 
           <hr />
 
-          <h1 className="second-title">Your Liquidation Summary</h1>
+          <h1 className="without-underscore">Your Liquidation Summary</h1>
 
           <div className="grid-group">
             <div>
@@ -212,6 +212,5 @@ export const LiquidateVaultModal = ({ handleLiquidateVault, closePopup, show }: 
         </LiquidateVaultModalStyled>
       </PopupContainerWrapper>
     </PopupContainer>
-
   )
 }
