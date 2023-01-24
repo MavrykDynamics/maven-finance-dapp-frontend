@@ -6,11 +6,17 @@ import Icon from "app/App.components/Icon/Icon.view";
 import { Input } from "app/App.components/Input/NewInput";
 import { InputPinnedTokenInfo } from "app/App.components/Input/Input.style";
 import Toggle from "app/App.components/Toggle/Toggle.view";
+import { Button } from "app/App.components/SettingsPopup/SettingsPopup.style";
 
 // styles
 import { LiquidateVaultModalStyled } from "./LiquidateVaultModal.styles";
 import { PopupContainer, PopupContainerWrapper } from "app/App.components/SettingsPopup/SettingsPopup.style";
 
+// helpers
+import { ACTION_PRIMARY } from "app/App.components/Button/Button.constants";
+
+//===================================
+// TODO: hardcode data
 const mock = [
   {
     asset: 'USDt',
@@ -38,16 +44,22 @@ const mock = [
   },
 ]
 
+const profit = 1234.44
+const total = 23164243.34
+const vaultId = 1
+const vaultOwner = 'tzAddress'
+const liquidateAmount = 1
+//===================================
+
 type Props = {
+  handleLiquidateVault: (vaultId: number, vaultOwner: string, liquidateAmount: number) => void
   closePopup: () => void
   show: boolean 
 }
 
-export const LiquidateVaultModal = ({ closePopup, show }: Props) => {
+export const LiquidateVaultModal = ({ handleLiquidateVault, closePopup, show }: Props) => {
   const [inputAmount, setInputAmount] = useState('0')
   const [showAsPercentage, setShowAsPercentage] = useState(true)
-  const profit = 1234.44
-  const total = 23164243.34
 
   return (
     <PopupContainer onClick={closePopup} show={show}>
@@ -65,7 +77,7 @@ export const LiquidateVaultModal = ({ closePopup, show }: Props) => {
 
           <div className="flex-group">
             <div>
-              <div className="centering-group">
+              <div className="v-centering-group">
                 Liquidation Max
                 <Icon id='info' className='info-icon' /> 
               </div>
@@ -141,7 +153,7 @@ export const LiquidateVaultModal = ({ closePopup, show }: Props) => {
               <CommaNumber value={profit} decimalsToShow={2} showDecimal beginningText='$' className={profit > 0 ? 'upColor' : 'downColor'}/>
             </div>
             <div>
-              <div className="centering-group">
+              <div className="v-centering-group">
                 Treasury Fee
                 <Icon id='info' className='info-icon' /> 
               </div>
@@ -189,6 +201,14 @@ export const LiquidateVaultModal = ({ closePopup, show }: Props) => {
               </tr>
             </tbody>
           </table>
+
+          <div className="g-centering-group">
+            <Button
+              text='Liquidate'
+              kind={ACTION_PRIMARY}
+              onClick={() => handleLiquidateVault(vaultId, vaultOwner, liquidateAmount)}
+            />
+          </div>
         </LiquidateVaultModalStyled>
       </PopupContainerWrapper>
     </PopupContainer>

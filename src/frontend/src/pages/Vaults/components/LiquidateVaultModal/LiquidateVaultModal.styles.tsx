@@ -91,6 +91,10 @@ export const LiquidateVaultModalStyled = styled.div<{ showAsPercentage: boolean;
     }
   }
 
+  button {
+    width: 250px;
+  }
+
   .flex-group {
     display: flex;
     justify-content: space-between;
@@ -111,9 +115,14 @@ export const LiquidateVaultModalStyled = styled.div<{ showAsPercentage: boolean;
     }
   }
 
-  .centering-group {
+  .v-centering-group {
     display: flex;
     align-items: center;
+  }
+
+  .g-centering-group {
+    display: flex;
+    justify-content: center;
   }
 
   .toggle {
