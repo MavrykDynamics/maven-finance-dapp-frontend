@@ -23,6 +23,7 @@ export const placeholderColor = '#F7F9FD'
 export const secondaryColor = '#73d7c3'
 export const upColor = '#27AE60'
 export const downColor = '#FF4343'
+export const newUpColor = '#34F66A'
 export const dangerColor = '#FF8486'
 export const warningColor = '#FF7A00'
 export const selectedColor = '#aea3ff3d'
@@ -61,6 +62,7 @@ export const dark = {
   textColor: '#D0CFD9',
   upColor,
   downColor,
+  newUpColor,
   warningColor,
   darkWarningColor: '#FE630C',
   awaitingColor,
@@ -106,6 +108,7 @@ export const light = {
   secondaryColor: '#73d7c3',
   upColor: '#27AE60',
   downColor: '#FF4343',
+  newUpColor,
   warningColor: '#FF7A00',
   darkWarningColor: '#FE630C',
   awaitingColor,

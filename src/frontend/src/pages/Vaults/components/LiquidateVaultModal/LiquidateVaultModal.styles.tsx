@@ -1,13 +1,22 @@
 import styled from "styled-components";
 import { MavrykTheme } from "styles/interfaces";
 
-export const LiquidateVaultModalStyled = styled.div<{ theme: MavrykTheme }>`
+export const LiquidateVaultModalStyled = styled.div<{ showAsPercentage: boolean; theme: MavrykTheme }>`
   font-weight: 600;
   font-size: 14px;
   line-height: 21px;
 
-  & > h1 {
+  .first-title,
+  .second-title {
     margin: 0;
+  }
+
+  .second-title {
+    margin-bottom: 20px;
+    &::after {
+      content: '';
+      height: 0;
+    }
   }
 
   & > p {
@@ -32,19 +41,34 @@ export const LiquidateVaultModalStyled = styled.div<{ theme: MavrykTheme }>`
     }
   }
 
+  .grid-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    column-gap: 15px;
+    row-gap: 20px;
+
+    p {
+      margin: 0;
+    }
+  }
+
   .centering-group {
     display: flex;
     align-items: center;
   }
 
-  .group-with-toggle {
+  .toggle {
     span {
-      color: ${({ theme }) => theme.headerColor};
-    }
-
-    .active {
       color: ${({ theme }) => theme.valueColor};
     }
+
+    ${({ showAsPercentage, theme }) => showAsPercentage
+      ? `.sufix {
+          color: ${theme.headerColor};
+        }`
+      : `.prefix {
+          color: ${theme.headerColor};
+        }`}
   }
 
   .info-icon {
@@ -56,6 +80,14 @@ export const LiquidateVaultModalStyled = styled.div<{ theme: MavrykTheme }>`
 
   .numberColor {
     color: ${({ theme }) => theme.dataColor}
+  }
+
+  .upColor {
+    color: ${({ theme }) => theme.newUpColor}
+  }
+
+  .downColor {
+    color: ${({ theme }) => theme.downColor}
   }
 
   .input {

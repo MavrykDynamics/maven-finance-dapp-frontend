@@ -5,6 +5,7 @@ import { CommaNumber } from "app/App.components/CommaNumber/CommaNumber.controll
 import Icon from "app/App.components/Icon/Icon.view";
 import { Input } from "app/App.components/Input/NewInput";
 import { InputPinnedTokenInfo } from "app/App.components/Input/Input.style";
+import Toggle from "app/App.components/Toggle/Toggle.view";
 
 // styles
 import { LiquidateVaultModalStyled } from "./LiquidateVaultModal.styles";
@@ -18,13 +19,14 @@ type Props = {
 export const LiquidateVaultModal = ({ closePopup, show }: Props) => {
   const [inputAmount, setInputAmount] = useState('0')
   const [showAsPercentage, setShowAsPercentage] = useState(true)
+  const profit = 1234.44
 
   return (
     <PopupContainer onClick={closePopup} show={show}>
       <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="loans">
-        <LiquidateVaultModalStyled>
+        <LiquidateVaultModalStyled showAsPercentage={showAsPercentage}>
           <button onClick={closePopup} className="close-modal" />
-          <h1>Liquidate Vault</h1>
+          <h1 className="first-title">Liquidate Vault</h1>
           <p>
             Foreclosing (liquidating) a vault repays the vault’s debt, by purchasing the vault’s collateral.
             Liquidators earn an additional 10% yield on top of the debt repaid for helping to secure Mavryk’s lending.
@@ -39,7 +41,7 @@ export const LiquidateVaultModal = ({ closePopup, show }: Props) => {
                 Liquidation Max
                 <Icon id='info' className='info-icon' /> 
               </div>
-              <CommaNumber value={5_000.00} beginningText='$' className='numberColor'/>
+              <CommaNumber value={5_000.00} decimalsToShow={2} showDecimal beginningText='$' className='numberColor'/>
             </div>
 
             <div>
@@ -49,7 +51,7 @@ export const LiquidateVaultModal = ({ closePopup, show }: Props) => {
             
             <div>
               <div>Max Profit</div>
-              <CommaNumber value={500.00} beginningText='$' className='numberColor'/>
+              <CommaNumber value={500.00} decimalsToShow={2} showDecimal beginningText='$' className='numberColor'/>
             </div>
           </div>
 
@@ -81,19 +83,47 @@ export const LiquidateVaultModal = ({ closePopup, show }: Props) => {
             </InputPinnedTokenInfo>
           </Input>
 
-          <div className="centering-group group-with-toggle">
-            <span className={showAsPercentage ? '' : 'active'}>USDt</span>
-
-            <input
-              value={showAsPercentage ? 'on' : 'off'}
-              onChange={() => setShowAsPercentage(!showAsPercentage)}
-              type="checkbox"
-            />
-
-            <span className={showAsPercentage ? 'active' : ''}>Percent</span>
-          </div>
+          <Toggle
+            className="toggle"
+            prefix={'USDt'}
+            sufix={'Percent'}
+            checked={showAsPercentage}
+            onChange={() => setShowAsPercentage(!showAsPercentage)}
+          />
 
           <hr />
+
+          <h1 className="second-title">Your Liquidation Summary</h1>
+
+          <div className="grid-group">
+            <div>
+              Cost to Liquidate
+              <CommaNumber value={50000.00} decimalsToShow={2} showDecimal beginningText='$' className='numberColor'/>
+            </div>
+            <div>
+              Liquidation Reward
+              <CommaNumber value={500.00} decimalsToShow={2} showDecimal beginningText='$' className='numberColor'/>
+            </div>
+            <div>
+              Returned to Liquidator
+              <CommaNumber value={3000.00} decimalsToShow={2} showDecimal beginningText='$' className='numberColor'/>
+            </div>
+            <div>
+              Profit
+              <CommaNumber value={profit} decimalsToShow={2} showDecimal beginningText='$' className={profit > 0 ? 'upColor' : 'downColor'}/>
+            </div>
+            <div>
+              <div className="centering-group">
+                Treasury Fee
+                <Icon id='info' className='info-icon' /> 
+              </div>
+              <CommaNumber value={500.00} decimalsToShow={2} showDecimal beginningText='$' className='numberColor'/>
+            </div>
+            <div>
+              Collateral Withdrawn
+              <CommaNumber value={50000.00} decimalsToShow={2} showDecimal beginningText='$' className='numberColor'/>
+            </div>
+          </div>
         </LiquidateVaultModalStyled>
       </PopupContainerWrapper>
     </PopupContainer>
