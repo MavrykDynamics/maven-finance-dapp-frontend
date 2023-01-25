@@ -50,10 +50,10 @@ const mock = [
 
 const balance = 20000
 const profit = 1234.44
-const total = 23164243.34
 const vaultId = 1
 const vaultOwner = 'tzAddress'
 const liquidateAmount = 1
+const usdtRate = 1
 //===================================
 
 type Props = VaultType & {
@@ -68,6 +68,7 @@ export const LiquidateVaultModal = (props: Props) => {
     closePopup,
     show,
     borrowedAsset: { amtBorrowed },
+    collateralData,
   } = props
   const [inputAmount, setInputAmount] = useState('0')
   const [showAsPercentage, setShowAsPercentage] = useState(true)
@@ -81,7 +82,7 @@ export const LiquidateVaultModal = (props: Props) => {
   const returnedToLiquidator = costToLiquidate + liquidationRewardResult
 
   const useMaxBalance = balance >= liquidationMax ? liquidationMax : balance
-  const convertedValueToUsd = costToLiquidate
+  const convertedValueToUsd = costToLiquidate * usdtRate
 
   const handleInputStatus = (inputValue: number, maxValue: number) => {
     if (inputValue === 0) return ''
@@ -183,7 +184,7 @@ export const LiquidateVaultModal = (props: Props) => {
             </div>
             <div>
               Profit
-              <CommaNumber value={profit} decimalsToShow={2} showDecimal beginningText='$' className={profit > 0 ? 'upColor' : 'downColor'}/>
+              <CommaNumber value={profit} decimalsToShow={2} showDecimal beginningText='$' className='upColor' />
             </div>
             <div>
               <div className="v-centering-group">
@@ -200,6 +201,7 @@ export const LiquidateVaultModal = (props: Props) => {
 
           <h2>Assets Received</h2>
 
+          {collateralData.length && (
           <table>
             <thead>
               <tr>
@@ -210,17 +212,17 @@ export const LiquidateVaultModal = (props: Props) => {
             </thead>
 
             <tbody>
-              {mock.map((item, index) => (
+              {collateralData.slice(0, -1).map(({ assetSymbol, collateralShare, balance, assetRate }, index) => (
                 <tr key={index}>
-                  <td>{item.asset}</td>
+                  <td>{assetSymbol}</td>
 
                   <td className="grid-group">
-                    <div>{item.amount.perc}%</div>
-                    <div>{item.amount.sum}</div>
+                    <div>{collateralShare}%</div>
+                    <CommaNumber value={balance} decimalsToShow={2} showDecimal />
                   </td>
 
                   <td>
-                    <CommaNumber value={item.usd} decimalsToShow={2} showDecimal beginningText='$'/>
+                    <CommaNumber value={assetRate ? balance * assetRate : 0} decimalsToShow={2} showDecimal beginningText='$'/>
                   </td>
                 </tr>
               ))}
@@ -229,11 +231,11 @@ export const LiquidateVaultModal = (props: Props) => {
                 <td>Total</td>
                 <td></td>
                 <td>
-                  <CommaNumber value={total} decimalsToShow={2} showDecimal beginningText='$' className={total > 0 ? 'upColor' : 'downColor'}/>
+                  <CommaNumber value={collateralData[collateralData.length - 1].balance} decimalsToShow={2} showDecimal beginningText='$' className='upColor' />
                 </td>
               </tr>
             </tbody>
-          </table>
+          </table>)}
 
           <div className="g-centering-group">
             <Button

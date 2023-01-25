@@ -249,9 +249,6 @@ export const VaultsAssest = styled.table`
         }
 
         .rate {
-          position: absolute;
-          top: 27px;
-
           font-weight: 400;
           font-size: 12px;
           line-height: 18px;

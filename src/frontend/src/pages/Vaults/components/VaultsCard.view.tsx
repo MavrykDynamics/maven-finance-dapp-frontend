@@ -80,7 +80,6 @@ export const VaultsCard = (props: Props) => {
     liquidationEndLevel,
     markedForLiquidationLevel,
     liquidationDelayInMinutes,
-    borrowedAsset: { assetIcon, assetSymbol, collateralBalance, amtBorrowed, assetRate = 1 },
     collateralData,
     isOwner,
     handleLiquidateVault,
@@ -209,7 +208,7 @@ export const VaultsCard = (props: Props) => {
                 </thead>
 
                 <tbody>
-                  {collateralData.map((item, index) => (
+                  {collateralData.slice(0, -1).map(({ assetIcon, assetSymbol, balance, assetRate, collateralShare }, index) => (
                     <tr key={index}>
                       <td>
                         <div>
@@ -223,16 +222,16 @@ export const VaultsCard = (props: Props) => {
                             </div>
                           )}
 
-                          {item.assetSymbol}
+                          {assetSymbol}
                         </div>
                       </td>
 
                       <td >
-                        <CommaNumber value={collateralBalance} beginningText='$' className='balance' />
-                        {assetRate ? <CommaNumber value={amtBorrowed * assetRate} beginningText="~$" className="rate" /> : null}
+                        <CommaNumber value={balance} />
+                        <CommaNumber value={assetRate ? balance * assetRate : 0} beginningText="~$" className="rate" />
                       </td>
 
-                      <td>{item.collateralShare}%</td>
+                      <td>{collateralShare}%</td>
                     </tr>
                   ))}
                 </tbody>

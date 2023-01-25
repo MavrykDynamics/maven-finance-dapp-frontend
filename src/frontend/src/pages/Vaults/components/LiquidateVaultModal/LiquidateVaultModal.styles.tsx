@@ -70,6 +70,7 @@ export const LiquidateVaultModalStyled = styled.div<{ showAsPercentage: boolean;
     tbody {
       tr {
         border-bottom: 1px solid ${({ theme }) => theme.dataColor};
+        text-transform: capitalize;
 
         &:last-of-type {
           border-bottom: none;
