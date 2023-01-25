@@ -11,6 +11,7 @@ import { Lending_Controller_Vault } from 'utils/generated/graphqlTypes'
 import { symbolsAfterDecimalPoint } from 'utils/symbolsAfterDecimalPoint'
 import { getOracleAggregatorLatestPrice } from './Vaults.actions'
 import { statusSortPriority, vaultsStatuses } from './Vaults.consts'
+import { getTimestampByLevel } from 'pages/Governance/Governance.actions'
 
 type VaultsStorageProps = {
   lendingController: LendingControllerGQL
@@ -117,6 +118,10 @@ export const normalizeVaultsStorage = (storage: VaultsStorageProps) => {
         oracleLatestPrices,
       }) : 'no status'
 
+      const creationTimestamp = item.vault.creation_timestamp 
+        ? String(item.vault.creation_timestamp)
+        : undefined
+
       const normallizedVault = {
         borrowedAsset: {
           assetSymbol: asset?.metadata.symbol ?? item.loan_token?.loan_token_name,
@@ -141,7 +146,7 @@ export const normalizeVaultsStorage = (storage: VaultsStorageProps) => {
         address: item.vault?.address,
         ownerId: item.owner_id || '',
         vaultId: item.internal_id,
-        creationDate: '',
+        creationTimestamp,
         status,
         currentBlockLevel,
         liquidationEndLevel: item.liquidation_end_level,
