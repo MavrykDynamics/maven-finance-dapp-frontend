@@ -169,6 +169,11 @@ export const LiquidateVaultModalStyled = styled.div<{ showAsPercentage: boolean;
 
   .input {
     margin: 3px 0;
+    height: 56px;
+
+    input {
+      padding-top: 3px;
+    }
   }
 
   .input-title {
