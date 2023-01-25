@@ -262,7 +262,12 @@ export const VaultsCard = (props: Props) => {
 
   return (
     <>
-      <LiquidateVaultModal handleLiquidateVault={handleLiquidateVault} closePopup={closePopup} show={shownModal === LIQUIDATE_MODAL_ID} />
+      <LiquidateVaultModal
+        {...props}
+        handleLiquidateVault={handleLiquidateVault}
+        closePopup={closePopup}
+        show={shownModal === LIQUIDATE_MODAL_ID}
+      />
 
       {isOwner ? (
         <BorrowingExpandCard

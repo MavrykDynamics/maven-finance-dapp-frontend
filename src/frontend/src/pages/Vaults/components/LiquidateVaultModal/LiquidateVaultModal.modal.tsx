@@ -14,6 +14,10 @@ import { PopupContainer, PopupContainerWrapper } from "app/App.components/Settin
 
 // helpers
 import { ACTION_PRIMARY } from "app/App.components/Button/Button.constants";
+import { INPUT_STATUS_SUCCESS, INPUT_STATUS_ERROR } from "app/App.components/Input/Input.constants";
+
+// types
+import { VaultType } from "utils/TypesAndInterfaces/Vaults";
 
 //===================================
 // TODO: hardcode data
@@ -44,6 +48,7 @@ const mock = [
   },
 ]
 
+const balance = 20000
 const profit = 1234.44
 const total = 23164243.34
 const vaultId = 1
@@ -51,15 +56,43 @@ const vaultOwner = 'tzAddress'
 const liquidateAmount = 1
 //===================================
 
-type Props = {
+type Props = VaultType & {
   handleLiquidateVault: (vaultId: number, vaultOwner: string, liquidateAmount: number) => void
   closePopup: () => void
   show: boolean 
 }
 
-export const LiquidateVaultModal = ({ handleLiquidateVault, closePopup, show }: Props) => {
+export const LiquidateVaultModal = (props: Props) => {
+  const {
+    handleLiquidateVault,
+    closePopup,
+    show,
+    borrowedAsset: { amtBorrowed },
+  } = props
   const [inputAmount, setInputAmount] = useState('0')
   const [showAsPercentage, setShowAsPercentage] = useState(true)
+
+  const liquidationMax = 8000 / 2
+  const liquidationReward = 10
+  const maxProfit = liquidationMax / 100 * liquidationReward
+
+  const costToLiquidate = Number(inputAmount)
+  const liquidationRewardResult = costToLiquidate / 100 * liquidationReward
+  const returnedToLiquidator = costToLiquidate + liquidationRewardResult
+
+  const useMaxBalance = balance >= liquidationMax ? liquidationMax : balance
+  const convertedValueToUsd = costToLiquidate
+
+  const handleInputStatus = (inputValue: number, maxValue: number) => {
+    if (inputValue === 0) return ''
+
+    return inputValue > maxValue ? INPUT_STATUS_ERROR : INPUT_STATUS_SUCCESS
+  }
+
+  const handleToggle = () => {
+    setInputAmount('0')
+    setShowAsPercentage(!showAsPercentage)
+  }
 
   return (
     <PopupContainer onClick={closePopup} show={show}>
@@ -81,17 +114,17 @@ export const LiquidateVaultModal = ({ handleLiquidateVault, closePopup, show }: 
                 Liquidation Max
                 <Icon id='info' className='info-icon' /> 
               </div>
-              <CommaNumber value={5_000.00} decimalsToShow={2} showDecimal beginningText='$' className='numberColor'/>
+              <CommaNumber value={liquidationMax} decimalsToShow={2} showDecimal beginningText='$' className='numberColor'/>
             </div>
 
             <div>
               <div>Liquidation Reward</div>
-              <CommaNumber value={10} endingText='%' className='numberColor'/>
+              <CommaNumber value={liquidationReward} endingText='%' className='numberColor'/>
             </div>
             
             <div>
               <div>Max Profit</div>
-              <CommaNumber value={500.00} decimalsToShow={2} showDecimal beginningText='$' className='numberColor'/>
+              <CommaNumber value={maxProfit} decimalsToShow={2} showDecimal beginningText='$' className='numberColor'/>
             </div>
           </div>
 
@@ -107,11 +140,11 @@ export const LiquidateVaultModal = ({ handleLiquidateVault, closePopup, show }: 
               onChange: (e) => setInputAmount(e.target.value),
             }}
             settings={{
-              balance: 1,
-              balanceAsset: showAsPercentage ? '%' : 'USDt',
-              useMaxHandler: () => setInputAmount('1000'),
-              inputStatus: '',
-              convertedValue: 1,
+              balance: balance,
+              balanceAsset: 'USDt',
+              useMaxHandler: () => setInputAmount(String(useMaxBalance)),
+              inputStatus: handleInputStatus(convertedValueToUsd, liquidationMax),
+              convertedValue: convertedValueToUsd,
             }}
           >
             <InputPinnedTokenInfo>
@@ -128,7 +161,7 @@ export const LiquidateVaultModal = ({ handleLiquidateVault, closePopup, show }: 
             prefix={'USDt'}
             sufix={'Percent'}
             checked={showAsPercentage}
-            onChange={() => setShowAsPercentage(!showAsPercentage)}
+            onChange={handleToggle}
           />
 
           <hr />
@@ -138,15 +171,15 @@ export const LiquidateVaultModal = ({ handleLiquidateVault, closePopup, show }: 
           <div className="grid-group">
             <div>
               Cost to Liquidate
-              <CommaNumber value={50000.00} decimalsToShow={2} showDecimal beginningText='$' className='numberColor '/>
+              <CommaNumber value={costToLiquidate} decimalsToShow={2} showDecimal beginningText='$' className='numberColor '/>
             </div>
             <div>
               Liquidation Reward
-              <CommaNumber value={500.00} decimalsToShow={2} showDecimal beginningText='$' className='numberColor'/>
+              <CommaNumber value={liquidationRewardResult} decimalsToShow={2} showDecimal beginningText='$' className='numberColor'/>
             </div>
             <div>
               Returned to Liquidator
-              <CommaNumber value={3000.00} decimalsToShow={2} showDecimal beginningText='$' className='numberColor'/>
+              <CommaNumber value={returnedToLiquidator} decimalsToShow={2} showDecimal beginningText='$' className='numberColor'/>
             </div>
             <div>
               Profit
