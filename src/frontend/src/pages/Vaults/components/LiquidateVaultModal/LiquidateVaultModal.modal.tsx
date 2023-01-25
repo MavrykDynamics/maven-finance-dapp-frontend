@@ -50,7 +50,9 @@ export const LiquidateVaultModal = (props: Props) => {
   const maxProfit = liquidationMax / 100 * liquidationReward
 
   const amount = Number(inputAmount)
-  const useMaxBalance = balance >= liquidationMax ? liquidationMax : balance
+  const useMaxBalance = showAsPercentage 
+    ? 100
+    : balance >= liquidationMax ? liquidationMax : balance
 
   const costToLiquidate = showAsPercentage
     ? liquidationMax / 100 * amount * assetRate
