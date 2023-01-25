@@ -1,41 +1,44 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { State } from 'reducers'
+import { useDispatch, useSelector } from 'react-redux'
 
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { getAssetName } from 'pages/Loans/Loans.helpers'
+import { BorrowingData } from 'utils/TypesAndInterfaces/Loans'
+import { COLLATERAL_RATIO_GRADIENT } from 'pages/Loans/Loans.const'
+import { InputStatusType, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import { depositCollateralAction } from 'pages/Loans/Loans.actions'
 
 import { Input } from 'app/App.components/Input/NewInput'
 import Icon from 'app/App.components/Icon/Icon.view'
 import NewButton from 'app/App.components/Button/NewButton.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
 
 import { LoansModalBase, VaultModalOverview } from './Modals.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
-import { BorrowingData } from 'utils/TypesAndInterfaces/Loans'
-import { getAssetName, isTezosAsset } from 'pages/Loans/Loans.helpers'
-import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
-import { COLLATERAL_RATIO_GRADIENT } from 'pages/Loans/Loans.const'
-import { useDispatch, useSelector } from 'react-redux'
-import { State } from 'reducers'
-import { InputStatusType, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
-import { depositCollateralAction } from 'pages/Loans/Loans.actions'
+
+export type AddCollateralPopupDataType = {
+  vaultAddress: string
+  currentCollateralValue: number
+  currentAvaliableToWithdraw: number
+  selectedAsset?: BorrowingData['collateralData'][number]
+} | null
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239476&t=Sx2aEpp3ifrGxBtQ-0
 export const AddCollateral = ({
   closePopup,
   show,
-  data: { selectedAsset, currentCollateralValue, currentAvaliableToWithdraw, vaultAddress },
+  data,
 }: {
   closePopup: () => void
   show: boolean
-  data: {
-    vaultAddress: string
-    currentCollateralValue: number
-    currentAvaliableToWithdraw: number
-    selectedAsset?: BorrowingData['collateralData'][number]
-  }
+  data: AddCollateralPopupDataType
 }) => {
+  const { selectedAsset, currentCollateralValue = 0, currentAvaliableToWithdraw = 0, vaultAddress } = data ?? {}
   const dispatch = useDispatch()
   const { avaliableCollaterals } = useSelector((state: State) => state.loans)
   const collateralData = useMemo(
@@ -53,6 +56,16 @@ export const AddCollateral = ({
     () => isDepositting || inputData?.validationStatus === INPUT_STATUS_ERROR,
     [inputData?.validationStatus, isDepositting],
   )
+
+  useEffect(() => {
+    if (!show) {
+      setInputData({
+        amount: '0',
+        validationStatus: '',
+      })
+      setIsDepositting(false)
+    }
+  }, [show])
 
   // stuff to handle inputs
   const inputOnChangeHandle = (newInputAmount: string, userAssetBalance: number) => {
@@ -76,7 +89,7 @@ export const AddCollateral = ({
     if (inputData) {
       setInputData({
         ...inputData,
-        amount: (inputData?.amount === '' ? '0' : inputData?.amount) ?? '',
+        amount: inputData.amount === '' ? '0' : inputData.amount,
       })
     }
   }
@@ -85,12 +98,12 @@ export const AddCollateral = ({
     if (inputData) {
       setInputData({
         ...inputData,
-        amount: (inputData?.amount === '0' ? '' : inputData?.amount) ?? '',
+        amount: inputData.amount === '0' ? '' : inputData.amount,
       })
     }
   }
 
-  const depositCollateralHandler = () => {
+  const depositCollateralHandler = async () => {
     if (collateralData) {
       const collaretalToDeposit = [
         {
@@ -104,7 +117,7 @@ export const AddCollateral = ({
 
       if (vaultAddress) {
         setIsDepositting(true)
-        dispatch(
+        await dispatch(
           depositCollateralAction(vaultAddress, collaretalToDeposit, closePopup),
           // depositCollateralAction(vaultAddress, collaretalToDeposit, closePopup, bakerChosenDdItem?.bakerAddress),
         )

@@ -5,6 +5,7 @@ import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { BorrowingData } from 'utils/TypesAndInterfaces/Loans'
 import { BorrowingExpandCard } from './BorrowindExpandCard'
 import { LoansTabStyled } from './LoansComponents.style'
+import { AddCollateralPopupDataType } from './Modals/AddCollateral.modal'
 
 type PermissionVaultsPropsType = {
   permissionVaults: Array<BorrowingData>
@@ -21,7 +22,7 @@ export const PermissionVaults = ({ permissionVaults, lendingControllerAddress }:
       {permissionVaults.length ? (
         <div className="list-wrapper">
           {permissionVaults.map((item) => {
-            return <BorrowingExpandCard {...item} />
+            return <BorrowingExpandCard openAddCollateral={(data: AddCollateralPopupDataType) => null} {...item} />
           })}
         </div>
       ) : (

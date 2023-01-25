@@ -18,6 +18,7 @@ import {
   UserLendObjType,
 } from 'utils/TypesAndInterfaces/Loans'
 import { calcWithoutDecimals, calcWithoutMu } from '../../utils/calcFunctions'
+import { getUserBalanceForLoanAsset } from './LoansFethcers'
 
 export const isTezosAsset = (tokenName: string) => tokenName === 'tez'
 export const getAssetName = (tokenName: string) => (tokenName === 'tez' ? 'XTZ' : tokenName)
@@ -193,24 +194,13 @@ const getLendingItem = async (
   try {
     if (userMTokens && loanToken && accountPkh) {
       const mTokenAsset = userMTokens?.find(({ m_token_id }) => m_token_id === loanToken.lp_token_address)
-      const isXTZ = isTezosAsset(loanToken.loan_token_name)
       const tokenCurrentInterestRate = calcWithoutDecimals(loanToken.current_interest_rate, interestRateDecimals)
 
-      const lendingAssetBalance = isXTZ
-        ? await (
-            await fetch(`https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/accounts/${accountPkh}/balance`)
-          ).json()
-        : await (
-            await fetch(
-              `https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/tokens/balances?account.eq=${accountPkh}&token.contract.in=${loanToken.loan_token_address}`,
-            )
-          ).json()
-
-      const userBalance =
-        (typeof lendingAssetBalance === 'number'
-          ? lendingAssetBalance / 10 ** 6
-          : Number(lendingAssetBalance?.[0]?.balance ?? 0) /
-            10 ** Number(lendingAssetBalance?.[0]?.token?.metadata?.decimals ?? 0)) ?? 0
+      const userBalance = await getUserBalanceForLoanAsset(
+        loanToken.loan_token_address,
+        loanToken.loan_token_name,
+        accountPkh,
+      )
 
       if (mTokenAsset) {
         return {
@@ -272,7 +262,7 @@ const getBorrowings = async (
 ): Promise<BorrowingNormalizerReturnType> => {
   return await loanTokenVaults.reduce<Promise<BorrowingNormalizerReturnType>>(async (promiseAcc, vault) => {
     const acc = await promiseAcc
-    if (!vault.loan_token || !vault.vault) return acc
+    if (!vault.loan_token || !vault.vault || !userAddress) return acc
 
     const vaultCollateral = vault.collateral_balances.reduce<{
       normalizedCollaterals: BorrowingData['collateralData']
@@ -334,6 +324,12 @@ const getBorrowings = async (
       dipDupTokens,
       tokensRates,
     )
+
+    const userBalance = await getUserBalanceForLoanAsset(
+      vault.loan_token.lp_token_address,
+      vault.loan_token.loan_token_name,
+      userAddress,
+    )
     if (!vaultAsset) return acc
 
     const borrowedAmount = vault.vault.lending_controller_vaults[0].loan_outstanding_total / 10 ** vaultAsset.decimals
@@ -343,6 +339,7 @@ const getBorrowings = async (
         assetSymbol: vaultAsset.symbol,
         assetName: vaultAsset.name,
         assetIcon: vaultAsset.icon,
+        userBalance,
         amtBorrowed: borrowedAmount,
         assetRate: vaultAsset.rate,
         collateralBalance: vaultCollateral.totalRow.balance,

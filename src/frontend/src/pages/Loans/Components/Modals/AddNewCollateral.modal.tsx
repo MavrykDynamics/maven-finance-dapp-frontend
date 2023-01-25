@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
+import { State } from 'reducers'
+import { useDispatch, useSelector } from 'react-redux'
 
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { DropDown, DropdownInputCustomChild } from 'app/App.components/DropDown/NewDropdown'
@@ -6,36 +8,40 @@ import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/Gradien
 import Icon from 'app/App.components/Icon/Icon.view'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { Input } from 'app/App.components/Input/NewInput'
+import { DropDownCollateralAssetType, DropDownXTZBakerType } from './CreateNewVault.modal'
+import NewButton from 'app/App.components/Button/NewButton.controller'
 
+import { getAssetName, isTezosAsset } from 'pages/Loans/Loans.helpers'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { COLLATERAL_RATIO_GRADIENT } from 'pages/Loans/Loans.const'
+import { depositCollateralAction } from 'pages/Loans/Loans.actions'
+import { InputStatusType, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 
 import { InputPinnedDropDown } from 'app/App.components/Input/Input.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { DropDownJsxChild, LoansModalBase, VaultModalOverview } from './Modals.style'
-import { COLLATERAL_RATIO_GRADIENT } from 'pages/Loans/Loans.const'
-import { depositCollateralAction } from 'pages/Loans/Loans.actions'
-import { useDispatch, useSelector } from 'react-redux'
-import { State } from 'reducers'
-import { InputStatusType, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
-import { DropDownCollateralAssetType, DropDownXTZBakerType } from './CreateNewVault.modal'
-import { getAssetName, isTezosAsset } from 'pages/Loans/Loans.helpers'
-import NewButton from 'app/App.components/Button/NewButton.controller'
-import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
+
+export type AddNewCollateralDataProps = {
+  vaultAddress: string
+  currentCollateralValue: number
+  currentAvaliableToWithdraw: number
+} | null
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239633&t=Sx2aEpp3ifrGxBtQ-0
 export const AddNewCollateral = ({
   closePopup,
   show,
-  data: { vaultAddress, currentCollateralValue, currentAvaliableToWithdraw },
+  data,
 }: {
   closePopup: () => void
   show: boolean
-  data: { vaultAddress: string; currentCollateralValue: number; currentAvaliableToWithdraw: number }
+  data: AddNewCollateralDataProps
 }) => {
+  const { currentCollateralValue = 0, currentAvaliableToWithdraw = 0, vaultAddress } = data ?? {}
   const dispatch = useDispatch()
-
   const [inputData, setInputData] = useState<
     | {
         amount: string
@@ -171,7 +177,7 @@ export const AddNewCollateral = ({
     if (inputData) {
       setInputData({
         ...inputData,
-        amount: (inputData?.amount === '' ? '0' : inputData?.amount) ?? '',
+        amount: inputData.amount === '' ? '0' : inputData.amount,
       })
     }
   }
@@ -180,7 +186,7 @@ export const AddNewCollateral = ({
     if (inputData) {
       setInputData({
         ...inputData,
-        amount: (inputData?.amount === '0' ? '' : inputData?.amount) ?? '',
+        amount: inputData.amount === '0' ? '' : inputData.amount,
       })
     }
   }
@@ -224,7 +230,7 @@ export const AddNewCollateral = ({
                   inputData.selectedDdItem?.assetRate ? 'input-with-rate' : ''
                 } large-input pinned-dropdown withdrawCollateralInput`}
                 inputProps={{
-                  value: inputData?.amount,
+                  value: inputData.amount,
                   type: 'number',
                   onBlur: inputOnBlurHandle,
                   onFocus: onFocusHandler,

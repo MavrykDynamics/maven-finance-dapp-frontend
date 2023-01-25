@@ -90,6 +90,7 @@ export type BorrowingData = {
   borrowedAsset: {
     assetSymbol?: string
     assetName?: string
+    userBalance: number
     assetIcon?: string
     amtBorrowed: number
     assetRate: number

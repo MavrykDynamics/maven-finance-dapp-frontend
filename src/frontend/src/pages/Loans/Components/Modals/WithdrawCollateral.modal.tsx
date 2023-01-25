@@ -1,25 +1,119 @@
-import { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useLockBodyScroll } from 'react-use'
+import { useEffect, useMemo, useState } from 'react'
 
+import { getAssetName } from 'pages/Loans/Loans.helpers'
+import { BorrowingData } from 'utils/TypesAndInterfaces/Loans'
+import { InputStatusType, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import { COLLATERAL_RATIO_GRADIENT } from 'pages/Loans/Loans.const'
+import { State } from 'reducers'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
-import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 
 import { Input } from 'app/App.components/Input/NewInput'
 import Icon from 'app/App.components/Icon/Icon.view'
+import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
 import NewButton from 'app/App.components/Button/NewButton.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 
 import { LoansModalBase, VaultModalOverview } from './Modals.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
-import { ThreeLevelListItem, FillBlock } from 'pages/Loans/Loans.style'
-import { TzAddress } from 'pages/Treasury/Treasury.style'
+import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
+import { withdrawCollateralAction } from 'pages/Loans/Loans.actions'
+
+export type WithdrawCollateralPopupDataType = {
+  vaultAddress: string
+  currentCollateralValue: number
+  currentAvaliableToWithdraw: number
+  selectedAsset?: BorrowingData['collateralData'][number]
+} | null
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239234&t=Sx2aEpp3ifrGxBtQ-0
-export const WithdrawCollateral = ({ closePopup, show }: { closePopup: () => void; show: boolean }) => {
-  const withdrawHandler = () => {}
+export const WithdrawCollateral = ({
+  closePopup,
+  show,
+  data,
+}: {
+  closePopup: () => void
+  show: boolean
+  data: WithdrawCollateralPopupDataType
+}) => {
+  const { selectedAsset, currentCollateralValue = 0, currentAvaliableToWithdraw = 0, vaultAddress } = data ?? {}
+  const dispatch = useDispatch()
+  useLockBodyScroll(show)
+  const { avaliableCollaterals } = useSelector((state: State) => state.loans)
 
-  const [inputAmount, setInputAmount] = useState('0')
+  const [inputData, setInputData] = useState<{ amount: string; validationStatus: InputStatusType }>({
+    amount: '0',
+    validationStatus: '',
+  })
+  const [isActionPerforming, setIsActionPerforming] = useState(false)
+
+  const isActionBtnDisabled = useMemo(
+    () => isActionPerforming || inputData.validationStatus !== INPUT_STATUS_SUCCESS,
+    [isActionPerforming, inputData.validationStatus],
+  )
+  const collateralData = useMemo(
+    () => avaliableCollaterals.find(({ assetSymbol }) => selectedAsset?.assetSymbol === assetSymbol),
+    [avaliableCollaterals, selectedAsset],
+  )
+
+  const assetName = getAssetName(collateralData?.assetName ?? '')
+
+  useEffect(() => {
+    if (!show) {
+      setInputData({
+        amount: '0',
+        validationStatus: '',
+      })
+      setIsActionPerforming(false)
+    }
+  }, [show])
+
+  // stuff to handle inputs
+  const inputOnChangeHandle = (newInputAmount: string, userAssetBalance: number) => {
+    const validationStatus =
+      Number(newInputAmount) > 0 && Number(newInputAmount) <= userAssetBalance
+        ? INPUT_STATUS_SUCCESS
+        : INPUT_STATUS_ERROR
+
+    if (validationStatus === INPUT_STATUS_ERROR && newInputAmount !== '' && newInputAmount !== '0') return
+
+    if (inputData) {
+      setInputData({
+        ...inputData,
+        amount: newInputAmount,
+        validationStatus: validationStatus,
+      })
+    }
+  }
+
+  const inputOnBlurHandle = () => {
+    if (inputData) {
+      setInputData({
+        ...inputData,
+        amount: inputData.amount === '' ? '0' : inputData.amount,
+      })
+    }
+  }
+
+  const onFocusHandler = () => {
+    if (inputData) {
+      setInputData({
+        ...inputData,
+        amount: inputData.amount === '0' ? '' : inputData.amount,
+      })
+    }
+  }
+
+  const withdrawHandler = async () => {
+    if (vaultAddress) {
+      setIsActionPerforming(true)
+      await dispatch(withdrawCollateralAction(closePopup))
+      setIsActionPerforming(false)
+    }
+  }
 
   return (
     <PopupContainer onClick={closePopup} show={show}>
@@ -34,76 +128,87 @@ export const WithdrawCollateral = ({ closePopup, show }: { closePopup: () => voi
 
           <VaultModalOverview>
             <ThreeLevelListItem className="collateral-diagram">
-              <TzAddress tzAddress="tz1ezDb77a9jaFMHDWs8QXrKEDkpgGdgsjPD" type={BLUE} />
-              <FillBlock width={75} className={'diagram'}>
-                <div className="colored"></div>
-              </FillBlock>
-              <div className="info-tip">
-                Collateral Utilization:
-                <span>
-                  <CommaNumber value={0} endingText="%" />
-                </span>
+              <div className={`percentage ${Number(154) / 100 > 2.5 ? 'up' : 'down'}`}>
+                Collateral Ratio: <CommaNumber value={154} endingText="%" />
               </div>
+              <GradientDiagram
+                className="diagram"
+                colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
+                currentPersentage={50}
+              />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Collateral Value</div>
-              <CommaNumber value={0} className="value" />
-              {false ? <CommaNumber value={0} beginningText="$" className="rate" /> : null}
+              <CommaNumber value={currentCollateralValue} className="value" beginningText="$" />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Available To Withdraw</div>
-              <CommaNumber value={0} className="value" />
+              <CommaNumber value={currentAvaliableToWithdraw} className="value" />
             </ThreeLevelListItem>
           </VaultModalOverview>
 
           <hr />
-
-          <Input
-            className="withdrawCollateralInput"
-            inputProps={{
-              value: inputAmount,
-              type: 'number',
-              onChange: (e) => setInputAmount(e.target.value),
-            }}
-            settings={{
-              balance: 1,
-              balanceAsset: 'XTZ',
-              useMaxHandler: () => setInputAmount('1000'),
-              inputStatus: '',
-              convertedValue: 1,
-            }}
-          >
-            <InputPinnedTokenInfo>
-              <Icon id="xtzTezos" /> XTZ
-            </InputPinnedTokenInfo>
-          </Input>
-
+          {collateralData ? (
+            <Input
+              className={`${
+                collateralData?.assetRate ? 'input-with-rate' : ''
+              } large-input pinned-dropdown withdrawCollateralInput`}
+              inputProps={{
+                value: inputData.amount,
+                type: 'number',
+                onBlur: inputOnBlurHandle,
+                onFocus: onFocusHandler,
+                onChange: (e) => inputOnChangeHandle(e.target.value, collateralData.userBalance),
+              }}
+              settings={{
+                balance: collateralData.userBalance,
+                balanceAsset: assetName,
+                useMaxHandler: () =>
+                  inputOnChangeHandle(String(collateralData.userBalance), collateralData.userBalance),
+                inputStatus: inputData.validationStatus,
+                convertedValue: Number(inputData.amount) * collateralData.assetRate,
+              }}
+            >
+              <InputPinnedTokenInfo>
+                {collateralData?.assetIcon ? (
+                  <div className="image-wrapper">
+                    <img src={collateralData.assetIcon} alt={collateralData.assetName + '-logo'} />
+                  </div>
+                ) : (
+                  <Icon id="noImage" />
+                )}{' '}
+                {assetName}
+              </InputPinnedTokenInfo>
+            </Input>
+          ) : null}
           <div className="block-name">New Vault Status</div>
           <VaultModalOverview>
             <ThreeLevelListItem className="collateral-diagram">
-              <TzAddress tzAddress="tz1ezDb77a9jaFMHDWs8QXrKEDkpgGdgsjPD" type={BLUE} />
-              <FillBlock width={75} className={'diagram'}>
-                <div className="colored"></div>
-              </FillBlock>
-              <div className="info-tip">
-                Collateral Utilization:
-                <span>
-                  <CommaNumber value={0} endingText="%" />
-                </span>
+              <div className={`percentage ${Number(154) / 100 > 2.5 ? 'up' : 'down'}`}>
+                Collateral Ratio: <CommaNumber value={154} endingText="%" />
               </div>
+              <GradientDiagram
+                className="diagram"
+                colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
+                currentPersentage={50}
+              />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Collateral Value</div>
-              <CommaNumber value={0} className="value" />
-              {false ? <CommaNumber value={0} beginningText="$" className="rate" /> : null}
+              <CommaNumber value={currentCollateralValue} className="value" beginningText="$" />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Available To Withdraw</div>
-              <CommaNumber value={0} className="value" />
+              <CommaNumber value={currentAvaliableToWithdraw} className="value" />
             </ThreeLevelListItem>
           </VaultModalOverview>
 
-          <NewButton kind={ACTION_PRIMARY} onClick={withdrawHandler} className="modal-manage-btn">
+          <NewButton
+            kind={ACTION_PRIMARY}
+            onClick={withdrawHandler}
+            disabled={isActionBtnDisabled}
+            className="modal-manage-btn"
+          >
             <Icon id="minus" />
             Remove
           </NewButton>

@@ -1,18 +1,7 @@
 import { useCallback, useState } from 'react'
 
-import {
-  ADD_COLLATERAL_MODAL_ID,
-  ADD_NEW_COLLATERAL_MODAL_ID,
-  BORROW_ASSET_MODAL_ID,
-  CHANGE_BAKER_MODAL_ID,
-  COLLATERAL_RATIO_GRADIENT,
-  MANAGE_PERMISSIONS_MODAL_ID,
-  REPAY_AND_CLOSE_MODAL_ID,
-  REPAY_MODAL_ID,
-  UPDATE_MVK_OPERATORS_MODAL_ID,
-  WITHDRAW_COLLATERAL_MODAL_ID,
-} from '../Loans.const'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+import { COLLATERAL_RATIO_GRADIENT } from '../Loans.const'
 import { ACTION_PRIMARY, ACTION_SIMPLE, TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
 
 import { Button } from 'app/App.components/Button/Button.controller'
@@ -33,21 +22,25 @@ import {
 import { ThreeLevelListItem } from '../Loans.style'
 import { BorrowingTabListItemExpanded } from './LoansComponents.style'
 
-// popups
-import { BorrowAsset } from './Modals/BorrowAsset.modal'
-import { AddCollateral } from './Modals/AddCollateral.modal'
-import { AddNewCollateral } from './Modals/AddNewCollateral.modal'
-import { WithdrawCollateral } from './Modals/WithdrawCollateral.modal'
-import { ChangeBaker } from './Modals/ChangeBaker'
-import { UpdateMVKOperator } from './Modals/UpdateMVKOperator.modal'
-import { ManagePermissions } from './Modals/ManagePermissions.modal'
-import { RepayAndCloseVault } from './Modals/RepayAndCloseVault.modal'
-import { Repay } from './Modals/Repay.modal'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
+import { AddNewCollateralDataProps } from './Modals/AddNewCollateral.modal'
+import { AddCollateralPopupDataType } from './Modals/AddCollateral.modal'
+import { BorrowPopupDataType } from './Modals/BorrowAsset.modal'
+import { RepayPartPopupDataType } from './Modals/Repay.modal'
+import { WithdrawCollateralPopupDataType } from './Modals/WithdrawCollateral.modal'
 
 type BorrowingExpandCardPropsType = {
   isOwner?: boolean
+  openAddNewCollateral?: (data: AddNewCollateralDataProps) => void
+  openAddCollateral: (data: AddCollateralPopupDataType) => void
+  openRepay?: (data: RepayPartPopupDataType) => void
+  openRepayFull?: (data: {}) => void
+  openBorrow?: (data: BorrowPopupDataType) => void
+  openWithdrawCollateral?: (data: WithdrawCollateralPopupDataType) => void
+  openChangeBaker?: (data: {}) => void
+  openUpdateOperators?: (data: {}) => void
+  openManagePermissions?: (data: {}) => void
 } & BorrowingData
 
 export const BorrowingExpandCard = ({
@@ -59,107 +52,17 @@ export const BorrowingExpandCard = ({
   sMVKDelegatedTo,
   depositors,
   address,
+  // popup handers
+  openAddNewCollateral,
+  openAddCollateral,
+  openRepay,
+  openRepayFull,
+  openBorrow,
+  openWithdrawCollateral,
+  openChangeBaker,
+  openUpdateOperators,
+  openManagePermissions,
 }: BorrowingExpandCardPropsType) => {
-  // Add new collateral modal data and hanlders
-  const [addNewCollateralModalInfo, setAddNewCollateralModalInfo] = useState({
-    showModal: false,
-    data: {
-      vaultAddress: address,
-      currentCollateralValue: collateralData.at(-1)?.balance ?? 0,
-      currentAvaliableToWithdraw: 0,
-    },
-  })
-  const openAddNewCollateral = () => setAddNewCollateralModalInfo({ ...addNewCollateralModalInfo, showModal: true })
-  const closeAddNewCollateral = () => setAddNewCollateralModalInfo({ ...addNewCollateralModalInfo, showModal: false })
-
-  // Add new collateral modal data and hanlders
-  const [repayModalInfo, setRepayModalInfo] = useState({
-    showModal: false,
-    data: {
-      vaultAddress: address,
-    },
-  })
-  const openRepay = () => setRepayModalInfo({ ...repayModalInfo, showModal: true })
-  const closeRepay = () => setRepayModalInfo({ ...repayModalInfo, showModal: false })
-
-  // Add new collateral modal data and hanlders
-  const [repayFullModalInfo, setRepayFullModalInfo] = useState({
-    showModal: false,
-    data: {
-      vaultAddress: address,
-    },
-  })
-  const openRepayFull = () => setRepayFullModalInfo({ ...repayModalInfo, showModal: true })
-  const closeRepayFull = () => setRepayFullModalInfo({ ...repayModalInfo, showModal: false })
-
-  // Add new collateral modal data and hanlders
-  const [borrowModalInfo, setBorrowModalInfo] = useState({
-    showModal: false,
-    data: {
-      vaultAddress: address,
-    },
-  })
-  const openBorrow = () => setBorrowModalInfo({ ...repayModalInfo, showModal: true })
-  const closeBorrow = () => setBorrowModalInfo({ ...repayModalInfo, showModal: false })
-
-  // Add new collateral modal data and hanlders
-  const [removeCollateralModalInfo, setRemoveCollateralModalInfo] = useState({
-    showModal: false,
-    data: {
-      vaultAddress: address,
-    },
-  })
-  const openRemoveCollateral = () => setRemoveCollateralModalInfo({ ...repayModalInfo, showModal: true })
-  const closeRemoveCollateral = () => setRemoveCollateralModalInfo({ ...repayModalInfo, showModal: false })
-
-  // Add new collateral modal data and hanlders
-  const [changeBakerModalInfo, setChangeBakerModalInfo] = useState({
-    showModal: false,
-    data: {
-      vaultAddress: address,
-    },
-  })
-  const openChangeBaker = () => setChangeBakerModalInfo({ ...repayModalInfo, showModal: true })
-  const closeChangeBaker = () => setChangeBakerModalInfo({ ...repayModalInfo, showModal: false })
-
-  // Add new collateral modal data and hanlders
-  const [updateOperatorModalInfo, setUpdateOperatorModalInfo] = useState({
-    showModal: false,
-    data: {
-      vaultAddress: address,
-    },
-  })
-  const openUpdateOperators = () => setUpdateOperatorModalInfo({ ...repayModalInfo, showModal: true })
-  const closeUpdateOperators = () => setUpdateOperatorModalInfo({ ...repayModalInfo, showModal: false })
-
-  // Add new collateral modal data and hanlders
-  const [managePermissionsModalInfo, setManagePermissionsModalInfo] = useState({
-    showModal: false,
-    data: {
-      vaultAddress: address,
-    },
-  })
-  const openManagePermissions = () => setManagePermissionsModalInfo({ ...repayModalInfo, showModal: true })
-  const closeManagePermissions = () => setManagePermissionsModalInfo({ ...repayModalInfo, showModal: false })
-
-  // Add existing collateral modal data and hanlders
-  const [addExistingCollateralModalInfo, setAddExistingCollateralModalInfo] = useState({
-    showModal: false,
-    data: {
-      vaultAddress: address,
-      currentCollateralValue: collateralData.at(-1)?.balance ?? 0,
-      currentAvaliableToWithdraw: 0,
-      selectedAsset: collateralData?.[0],
-    },
-  })
-  const addCollateralHandler = (idx: number) =>
-    setAddExistingCollateralModalInfo({
-      showModal: true,
-      data: { ...addExistingCollateralModalInfo.data, selectedAsset: collateralData[idx] },
-    })
-  const closeAddCollateralPopupHandler = () =>
-    setAddExistingCollateralModalInfo({ ...addExistingCollateralModalInfo, showModal: false })
-
   const {
     assetSymbol,
     assetIcon,
@@ -184,24 +87,6 @@ export const BorrowingExpandCard = ({
 
   return (
     <>
-      <BorrowAsset closePopup={closeBorrow} show={borrowModalInfo.showModal} />
-      <AddCollateral
-        closePopup={closeAddCollateralPopupHandler}
-        show={addExistingCollateralModalInfo.showModal}
-        data={addExistingCollateralModalInfo.data}
-      />
-      <AddNewCollateral
-        closePopup={closeAddNewCollateral}
-        show={addNewCollateralModalInfo.showModal}
-        data={addNewCollateralModalInfo.data}
-      />
-      <WithdrawCollateral closePopup={closeRemoveCollateral} show={removeCollateralModalInfo.showModal} />
-      <ChangeBaker closePopup={closeChangeBaker} show={changeBakerModalInfo.showModal} />
-      <UpdateMVKOperator closePopup={closeUpdateOperators} show={updateOperatorModalInfo.showModal} />
-      <ManagePermissions closePopup={closeManagePermissions} show={managePermissionsModalInfo.showModal} />
-      <RepayAndCloseVault closePopup={closeRepayFull} show={repayFullModalInfo.showModal} />
-      <Repay closePopup={closeRepay} show={repayModalInfo.showModal} />
-
       <Expand
         className="expand-borrow-tab"
         header={
@@ -275,10 +160,42 @@ export const BorrowingExpandCard = ({
               <div className="name">APR</div>
               <CommaNumber value={apr} className="value" endingText="%" />
             </ThreeLevelListItem>
-            {isOwner ? (
+            {isOwner && openBorrow && openRepay ? (
               <div className="buttons-wrapper">
-                <Button text="Borrow" icon="coin-loan" strokeWidth={0.5} onClick={openBorrow} kind={ACTION_PRIMARY} />
-                <NewButton onClick={openRepay} kind={TRANSPARENT_WITH_BORDER} className="repay">
+                <Button
+                  text="Borrow"
+                  icon="coin-loan"
+                  strokeWidth={0.5}
+                  onClick={() =>
+                    openBorrow({
+                      vaultAddress: address,
+                      borrowedAsset: borrowedAsset,
+                      borowCapacity: 0,
+                      collateralUtilization: 0,
+                      borrowAPR: apr,
+                      fee: fee,
+                      hasUserBorrowed: false,
+                      currentCollateralBalance: collateralData.at(-1)?.balance ?? 0,
+                      currentAvaliableToBorrow: 0,
+                    })
+                  }
+                  kind={ACTION_PRIMARY}
+                />
+                <NewButton
+                  onClick={() =>
+                    openRepay({
+                      vaultAddress: address,
+                      borrowedAsset: borrowedAsset,
+                      borrowedAmount: borrowedAsset.amtBorrowed,
+                      feesAmount: 0,
+                      totalOutstanding: 0,
+                      currentCollateralBalance: collateralData.at(-1)?.balance ?? 0,
+                      currentAvaliableToBorrow: 0,
+                    })
+                  }
+                  kind={TRANSPARENT_WITH_BORDER}
+                  className="repay"
+                >
                   <Icon id="okIcon" /> Repay
                 </NewButton>
               </div>
@@ -339,12 +256,18 @@ export const BorrowingExpandCard = ({
                     {isTotalRow ? (
                       <TableCell className="buttons borrowing">
                         <div className="cell-content row">
-                          {isOwner ? (
+                          {isOwner && openAddNewCollateral ? (
                             <Button
                               text="Add Collateral"
                               icon="plus"
                               strokeWidth={0.1}
-                              onClick={openAddNewCollateral}
+                              onClick={() =>
+                                openAddNewCollateral({
+                                  vaultAddress: address,
+                                  currentCollateralValue: collateralData.at(-1)?.balance ?? 0,
+                                  currentAvaliableToWithdraw: 0,
+                                })
+                              }
                               kind={ACTION_PRIMARY}
                               className="add-collateral"
                             />
@@ -354,11 +277,31 @@ export const BorrowingExpandCard = ({
                     ) : (
                       <TableCell className="buttons borrowing">
                         <div className="cell-content row">
-                          <NewButton onClick={() => addCollateralHandler(idx)} kind={TRANSPARENT_WITH_BORDER}>
+                          <NewButton
+                            onClick={() =>
+                              openAddCollateral({
+                                vaultAddress: address,
+                                currentCollateralValue: collateralData.at(-1)?.balance ?? 0,
+                                currentAvaliableToWithdraw: 0,
+                                selectedAsset: collateralData[idx],
+                              })
+                            }
+                            kind={TRANSPARENT_WITH_BORDER}
+                          >
                             <Icon id="plus" /> Add
                           </NewButton>
-                          {isOwner ? (
-                            <NewButton onClick={openRemoveCollateral} kind={TRANSPARENT_WITH_BORDER}>
+                          {isOwner && openWithdrawCollateral ? (
+                            <NewButton
+                              onClick={() =>
+                                openWithdrawCollateral({
+                                  vaultAddress: address,
+                                  currentCollateralValue: collateralData.at(-1)?.balance ?? 0,
+                                  currentAvaliableToWithdraw: 0,
+                                  selectedAsset: collateralData[idx],
+                                })
+                              }
+                              kind={TRANSPARENT_WITH_BORDER}
+                            >
                               <Icon id="minus" /> Remove
                             </NewButton>
                           ) : null}
@@ -370,18 +313,24 @@ export const BorrowingExpandCard = ({
               })}
             </TableBody>
           </Table>
-          {collateralData.length < 3 && isOwner ? (
+          {collateralData.length < 3 && isOwner && openAddNewCollateral ? (
             <Button
               text="Add Collateral"
               icon="plus"
               strokeWidth={0.1}
-              onClick={openAddNewCollateral}
+              onClick={() =>
+                openAddNewCollateral({
+                  vaultAddress: address,
+                  currentCollateralValue: collateralData.at(-1)?.balance ?? 0,
+                  currentAvaliableToWithdraw: 0,
+                })
+              }
               kind={ACTION_PRIMARY}
               className="add-collateral"
             />
           ) : null}
 
-          {isOwner ? (
+          {isOwner && openChangeBaker ? (
             <>
               <div className="block-name margin-top">Delegations</div>
               <div className="bottom-info-row">
