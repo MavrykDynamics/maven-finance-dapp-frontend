@@ -21,38 +21,8 @@ import { VaultType } from "utils/TypesAndInterfaces/Vaults";
 
 //===================================
 // TODO: hardcode data
-const mock = [
-  {
-    asset: 'USDt',
-    amount: {
-      perc: 12,
-      sum: 21323434,
-    },
-    usd: 235676784
-  },
-  {
-    asset: 'XTZ',
-    amount: {
-      perc: 139,
-      sum: 4543,
-    },
-    usd: 235676784
-  },
-  {
-    asset: 'tzBTC',
-    amount: {
-      perc: 82,
-      sum: 42523454534,
-    },
-    usd: 235676784
-  },
-]
-
 const balance = 20000
 const profit = 1234.44
-const vaultId = 1
-const vaultOwner = 'tzAddress'
-const liquidateAmount = 1
 const usdtRate = 1
 //===================================
 
@@ -64,6 +34,8 @@ type Props = VaultType & {
 
 export const LiquidateVaultModal = (props: Props) => {
   const {
+    vaultId,
+    ownerId,
     handleLiquidateVault,
     closePopup,
     show,
@@ -77,12 +49,15 @@ export const LiquidateVaultModal = (props: Props) => {
   const liquidationReward = 10
   const maxProfit = liquidationMax / 100 * liquidationReward
 
-  const costToLiquidate = Number(inputAmount)
+  const amount = Number(inputAmount)
+  const useMaxBalance = balance >= liquidationMax ? liquidationMax : balance
+
+  const costToLiquidate = showAsPercentage
+    ? liquidationMax / 100 * amount * usdtRate
+    : amount * usdtRate
+
   const liquidationRewardResult = costToLiquidate / 100 * liquidationReward
   const returnedToLiquidator = costToLiquidate + liquidationRewardResult
-
-  const useMaxBalance = balance >= liquidationMax ? liquidationMax : balance
-  const convertedValueToUsd = costToLiquidate * usdtRate
 
   const handleInputStatus = (inputValue: number, maxValue: number) => {
     if (inputValue === 0) return ''
@@ -144,8 +119,8 @@ export const LiquidateVaultModal = (props: Props) => {
               balance: balance,
               balanceAsset: 'USDt',
               useMaxHandler: () => setInputAmount(String(useMaxBalance)),
-              inputStatus: handleInputStatus(convertedValueToUsd, liquidationMax),
-              convertedValue: convertedValueToUsd,
+              inputStatus: handleInputStatus(costToLiquidate, liquidationMax),
+              convertedValue: costToLiquidate,
             }}
           >
             <InputPinnedTokenInfo>
@@ -199,49 +174,51 @@ export const LiquidateVaultModal = (props: Props) => {
             </div>
           </div>
 
-          <h2>Assets Received</h2>
+          {Boolean(collateralData.length) && (
+          <>
+            <h2>Assets Received</h2>
 
-          {collateralData.length && (
-          <table>
-            <thead>
-              <tr>
-                <th>Asset</th>
-                <th>Amount</th>
-                <th>USD Value</th>
-              </tr>
-            </thead>
+            <table>
+              <thead>
+                <tr>
+                  <th>Asset</th>
+                  <th>Amount</th>
+                  <th>USD Value</th>
+                </tr>
+              </thead>
 
-            <tbody>
-              {collateralData.slice(0, -1).map(({ assetSymbol, collateralShare, balance, assetRate }, index) => (
-                <tr key={index}>
-                  <td>{assetSymbol}</td>
+              <tbody>
+                {collateralData.slice(0, -1).map(({ assetSymbol, collateralShare, balance, assetRate }, index) => (
+                  <tr key={index}>
+                    <td>{assetSymbol}</td>
 
-                  <td className="grid-group">
-                    <div>{collateralShare}%</div>
-                    <CommaNumber value={balance} decimalsToShow={2} showDecimal />
-                  </td>
+                    <td className="grid-group">
+                      <div>{collateralShare}%</div>
+                      <CommaNumber value={balance} decimalsToShow={2} showDecimal />
+                    </td>
 
+                    <td>
+                      <CommaNumber value={assetRate ? balance * assetRate : 0} decimalsToShow={2} showDecimal beginningText='$'/>
+                    </td>
+                  </tr>
+                ))}
+
+                <tr>
+                  <td>Total</td>
+                  <td></td>
                   <td>
-                    <CommaNumber value={assetRate ? balance * assetRate : 0} decimalsToShow={2} showDecimal beginningText='$'/>
+                    <CommaNumber value={collateralData[collateralData.length - 1].balance} decimalsToShow={2} showDecimal beginningText='$' className='upColor' />
                   </td>
                 </tr>
-              ))}
-
-              <tr>
-                <td>Total</td>
-                <td></td>
-                <td>
-                  <CommaNumber value={collateralData[collateralData.length - 1].balance} decimalsToShow={2} showDecimal beginningText='$' className='upColor' />
-                </td>
-              </tr>
-            </tbody>
-          </table>)}
+              </tbody>
+            </table>
+          </>)}
 
           <div className="g-centering-group">
             <Button
               text='Liquidate'
               kind={ACTION_PRIMARY}
-              onClick={() => handleLiquidateVault(vaultId, vaultOwner, liquidateAmount)}
+              onClick={() => handleLiquidateVault(vaultId, ownerId, costToLiquidate)}
             />
           </div>
         </LiquidateVaultModalStyled>
