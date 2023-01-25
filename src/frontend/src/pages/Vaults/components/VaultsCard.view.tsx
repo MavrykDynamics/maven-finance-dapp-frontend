@@ -66,6 +66,7 @@ const findFooterText = (status: string, statusColor: StatusFlagStyle, timestamp?
 
 type Props = VaultType & {
   isOwner: boolean
+  accountPkh?: string
   handleLiquidateVault: (vaultId: number, vaultOwner: string, liquidateAmount: number) => void
   handleMarkForLiquidation: (vaultId: number, vaultOwner: string) => void
 }
@@ -82,6 +83,7 @@ export const VaultsCard = (props: Props) => {
     liquidationDelayInMinutes,
     collateralData,
     isOwner,
+    accountPkh,
     handleLiquidateVault,
     handleMarkForLiquidation,
   } = props
@@ -252,7 +254,7 @@ export const VaultsCard = (props: Props) => {
                   ? handleMarkForLiquidation(vaultId, ownerId)
                   : liquidateModalHandler()
               }}
-              disabled={vaultsStatuses.GRACE_PERIOD === status}
+              disabled={!accountPkh || vaultsStatuses.GRACE_PERIOD === status}
             />
           </div>
         )}

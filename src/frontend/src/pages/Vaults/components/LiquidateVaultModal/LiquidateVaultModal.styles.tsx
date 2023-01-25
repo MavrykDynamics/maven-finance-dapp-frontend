@@ -182,6 +182,21 @@ export const LiquidateVaultModalStyled = styled.div<{ showAsPercentage: boolean;
     padding-left: 7px;
   }
 
+  .img-wrapper,
+  .no-icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 5px;
+
+    img,
+    svg {
+      fill: ${({ theme }) => theme.dataColor};
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
   .close-modal {
     position: absolute;
     top: 15px;

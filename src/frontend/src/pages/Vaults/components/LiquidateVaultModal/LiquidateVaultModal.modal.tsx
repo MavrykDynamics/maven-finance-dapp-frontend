@@ -23,7 +23,6 @@ import { VaultType } from "utils/TypesAndInterfaces/Vaults";
 // TODO: hardcode data
 const balance = 20000
 const profit = 1234.44
-const usdtRate = 1
 //===================================
 
 type Props = VaultType & {
@@ -39,13 +38,14 @@ export const LiquidateVaultModal = (props: Props) => {
     handleLiquidateVault,
     closePopup,
     show,
-    borrowedAsset: { amtBorrowed },
+    borrowedAsset: { amtBorrowed, assetSymbol, assetIcon, assetRate: rate },
     collateralData,
   } = props
   const [inputAmount, setInputAmount] = useState('0')
   const [showAsPercentage, setShowAsPercentage] = useState(true)
+  const assetRate = rate || 1
 
-  const liquidationMax = 8000 / 2
+  const liquidationMax = 8000 / 2 // TODO: use amtBorrowed intead of 8000
   const liquidationReward = 10
   const maxProfit = liquidationMax / 100 * liquidationReward
 
@@ -53,8 +53,8 @@ export const LiquidateVaultModal = (props: Props) => {
   const useMaxBalance = balance >= liquidationMax ? liquidationMax : balance
 
   const costToLiquidate = showAsPercentage
-    ? liquidationMax / 100 * amount * usdtRate
-    : amount * usdtRate
+    ? liquidationMax / 100 * amount * assetRate
+    : amount * assetRate
 
   const liquidationRewardResult = costToLiquidate / 100 * liquidationReward
   const returnedToLiquidator = costToLiquidate + liquidationRewardResult
@@ -117,7 +117,7 @@ export const LiquidateVaultModal = (props: Props) => {
             }}
             settings={{
               balance: balance,
-              balanceAsset: 'USDt',
+              balanceAsset: assetSymbol,
               useMaxHandler: () => setInputAmount(String(useMaxBalance)),
               inputStatus: handleInputStatus(costToLiquidate, liquidationMax),
               convertedValue: costToLiquidate,
@@ -127,7 +127,15 @@ export const LiquidateVaultModal = (props: Props) => {
               {showAsPercentage
                 ? '%' 
                 : <>
-                    <Icon id="usedt-tether" /> USDt
+                    {assetIcon ? (
+                      <div className="img-wrapper">
+                        <img src={assetIcon} alt={`${assetSymbol} logo`} />
+                      </div>
+                    ) : (
+                      <div className="no-icon">
+                        <Icon id="noImage" />
+                      </div>
+                    )}
                   </>}
             </InputPinnedTokenInfo>
           </Input>
