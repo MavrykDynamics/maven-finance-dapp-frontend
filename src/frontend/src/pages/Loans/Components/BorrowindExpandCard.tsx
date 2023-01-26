@@ -10,6 +10,8 @@ import { BorrowingData } from 'utils/TypesAndInterfaces/Loans'
 import Expand from 'app/App.components/Expand/Expand.view'
 import NewButton from 'app/App.components/Button/NewButton.controller'
 import Icon from 'app/App.components/Icon/Icon.view'
+import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
+import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 
 import {
   Table,
@@ -22,20 +24,21 @@ import {
 import { ThreeLevelListItem } from '../Loans.style'
 import { BorrowingTabListItemExpanded } from './LoansComponents.style'
 
-import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
-import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
-import { AddNewCollateralDataProps } from './Modals/AddNewCollateral.modal'
-import { AddCollateralPopupDataType } from './Modals/AddCollateral.modal'
-import { BorrowPopupDataType } from './Modals/BorrowAsset.modal'
-import { RepayPartPopupDataType } from './Modals/Repay.modal'
-import { WithdrawCollateralPopupDataType } from './Modals/WithdrawCollateral.modal'
+import {
+  AddCollateralPopupDataType,
+  RepayPartPopupDataType,
+  AddNewCollateralDataProps,
+  RepayFullPopupDataType,
+  BorrowPopupDataType,
+  WithdrawCollateralPopupDataType,
+} from './Modals/Modals.helpers'
 
 type BorrowingExpandCardPropsType = {
   isOwner?: boolean
   openAddNewCollateral?: (data: AddNewCollateralDataProps) => void
   openAddCollateral: (data: AddCollateralPopupDataType) => void
   openRepay?: (data: RepayPartPopupDataType) => void
-  openRepayFull?: (data: {}) => void
+  openRepayFull?: (data: RepayFullPopupDataType) => void
   openBorrow?: (data: BorrowPopupDataType) => void
   openWithdrawCollateral?: (data: WithdrawCollateralPopupDataType) => void
   openChangeBaker?: (data: {}) => void
@@ -160,20 +163,19 @@ export const BorrowingExpandCard = ({
               <div className="name">APR</div>
               <CommaNumber value={apr} className="value" endingText="%" />
             </ThreeLevelListItem>
-            {isOwner && openBorrow && openRepay ? (
+            {isOwner ? (
               <div className="buttons-wrapper">
                 <Button
                   text="Borrow"
                   icon="coin-loan"
                   strokeWidth={0.5}
                   onClick={() =>
-                    openBorrow({
+                    openBorrow?.({
                       vaultAddress: address,
                       borrowedAsset: borrowedAsset,
                       borowCapacity: 0,
                       collateralUtilization: 0,
                       borrowAPR: apr,
-                      fee: fee,
                       hasUserBorrowed: false,
                       currentCollateralBalance: collateralData.at(-1)?.balance ?? 0,
                       currentAvaliableToBorrow: 0,
@@ -183,10 +185,9 @@ export const BorrowingExpandCard = ({
                 />
                 <NewButton
                   onClick={() =>
-                    openRepay({
+                    openRepay?.({
                       vaultAddress: address,
                       borrowedAsset: borrowedAsset,
-                      borrowedAmount: borrowedAsset.amtBorrowed,
                       feesAmount: 0,
                       totalOutstanding: 0,
                       currentCollateralBalance: collateralData.at(-1)?.balance ?? 0,
@@ -256,13 +257,13 @@ export const BorrowingExpandCard = ({
                     {isTotalRow ? (
                       <TableCell className="buttons borrowing">
                         <div className="cell-content row">
-                          {isOwner && openAddNewCollateral ? (
+                          {isOwner ? (
                             <Button
                               text="Add Collateral"
                               icon="plus"
                               strokeWidth={0.1}
                               onClick={() =>
-                                openAddNewCollateral({
+                                openAddNewCollateral?.({
                                   vaultAddress: address,
                                   currentCollateralValue: collateralData.at(-1)?.balance ?? 0,
                                   currentAvaliableToWithdraw: 0,
@@ -279,7 +280,7 @@ export const BorrowingExpandCard = ({
                         <div className="cell-content row">
                           <NewButton
                             onClick={() =>
-                              openAddCollateral({
+                              openAddCollateral?.({
                                 vaultAddress: address,
                                 currentCollateralValue: collateralData.at(-1)?.balance ?? 0,
                                 currentAvaliableToWithdraw: 0,
@@ -290,10 +291,10 @@ export const BorrowingExpandCard = ({
                           >
                             <Icon id="plus" /> Add
                           </NewButton>
-                          {isOwner && openWithdrawCollateral ? (
+                          {isOwner ? (
                             <NewButton
                               onClick={() =>
-                                openWithdrawCollateral({
+                                openWithdrawCollateral?.({
                                   vaultAddress: address,
                                   currentCollateralValue: collateralData.at(-1)?.balance ?? 0,
                                   currentAvaliableToWithdraw: 0,
@@ -313,13 +314,13 @@ export const BorrowingExpandCard = ({
               })}
             </TableBody>
           </Table>
-          {collateralData.length < 3 && isOwner && openAddNewCollateral ? (
+          {collateralData.length < 3 && isOwner ? (
             <Button
               text="Add Collateral"
               icon="plus"
               strokeWidth={0.1}
               onClick={() =>
-                openAddNewCollateral({
+                openAddNewCollateral?.({
                   vaultAddress: address,
                   currentCollateralValue: collateralData.at(-1)?.balance ?? 0,
                   currentAvaliableToWithdraw: 0,
@@ -330,7 +331,7 @@ export const BorrowingExpandCard = ({
             />
           ) : null}
 
-          {isOwner && openChangeBaker ? (
+          {isOwner ? (
             <>
               <div className="block-name margin-top">Delegations</div>
               <div className="bottom-info-row">
@@ -392,7 +393,16 @@ export const BorrowingExpandCard = ({
               <Button
                 text="Repay Loan in Full"
                 kind={TRANSPARENT_WITH_BORDER}
-                onClick={openRepayFull}
+                onClick={() =>
+                  openRepayFull?.({
+                    vaultAddress: address,
+                    borrowedAsset: borrowedAsset,
+                    feesAmount: 0,
+                    totalOutstanding: 0,
+                    currentCollateralBalance: collateralData.at(-1)?.balance ?? 0,
+                    currentAvaliableToBorrow: 0,
+                  })
+                }
                 className="close-vault"
                 icon="close-stroke"
               />

@@ -8,19 +8,29 @@ import { Button } from 'app/App.components/Button/Button.controller'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { BorrowingExpandCard } from './BorrowindExpandCard'
 
+import {
+  AddCollateralPopupDataType,
+  RepayPartPopupDataType,
+  RepayFullPopupDataType,
+  BorrowPopupDataType,
+  WithdrawCollateralPopupDataType,
+  AddNewCollateralDataProps,
+} from './Modals/Modals.helpers'
 import { BorrowingData } from 'utils/TypesAndInterfaces/Loans'
 
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { LoansTabStyled, NoItemsInTabStyled } from './LoansComponents.style'
-import { AddCollateral, AddCollateralPopupDataType } from './Modals/AddCollateral.modal'
-import { AddNewCollateral, AddNewCollateralDataProps } from './Modals/AddNewCollateral.modal'
-import { BorrowAsset, BorrowPopupDataType } from './Modals/BorrowAsset.modal'
+
+// popups
+import { AddCollateral } from './Modals/AddCollateral.modal'
+import { AddNewCollateral } from './Modals/AddNewCollateral.modal'
+import { BorrowAsset } from './Modals/BorrowAsset.modal'
 import { ChangeBaker } from './Modals/ChangeBaker'
 import { ManagePermissions } from './Modals/ManagePermissions.modal'
-import { Repay, RepayPartPopupDataType } from './Modals/Repay.modal'
-import { RepayAndCloseVault } from './Modals/RepayAndCloseVault.modal'
+import { Repay } from './Modals/Repay.modal'
+import { RepayFull } from './Modals/RepayFull.modal'
 import { UpdateMVKOperator } from './Modals/UpdateMVKOperator.modal'
-import { WithdrawCollateral, WithdrawCollateralPopupDataType } from './Modals/WithdrawCollateral.modal'
+import { WithdrawCollateral } from './Modals/WithdrawCollateral.modal'
 
 type BorrowingTabPropsType = {
   borrowingItems: Array<BorrowingData>
@@ -76,11 +86,12 @@ export const BorrowingTab = ({
   const closeRepay = () => setRepayModalInfo({ ...repayModalInfo, showModal: false })
 
   // Refay and close vault modal data and hanlders
-  const [repayFullModalInfo, setRepayFullModalInfo] = useState({
+  const [repayFullModalInfo, setRepayFullModalInfo] = useState<ModalStateType<RepayFullPopupDataType>>({
     showModal: false,
     data: null,
   })
-  const openRepayFull = () => setRepayFullModalInfo({ ...repayFullModalInfo, showModal: true })
+  const openRepayFull = (popupData: RepayFullPopupDataType) =>
+    setRepayFullModalInfo({ showModal: true, data: popupData ? { ...popupData } : null })
   const closeRepayFull = () => setRepayFullModalInfo({ ...repayFullModalInfo, showModal: false })
 
   // Borrow vault asset modal data and hanlders
@@ -151,11 +162,11 @@ export const BorrowingTab = ({
         show={withdrawCollateralModalInfo.showModal}
         data={withdrawCollateralModalInfo.data}
       />
+      <Repay closePopup={closeRepay} show={repayModalInfo.showModal} data={repayModalInfo.data} />
+      <RepayFull closePopup={closeRepayFull} show={repayFullModalInfo.showModal} data={repayFullModalInfo.data} />
       <ChangeBaker closePopup={closeChangeBaker} show={changeBakerModalInfo.showModal} />
       <UpdateMVKOperator closePopup={closeUpdateOperators} show={updateOperatorModalInfo.showModal} />
       <ManagePermissions closePopup={closeManagePermissions} show={managePermissionsModalInfo.showModal} />
-      <RepayAndCloseVault closePopup={closeRepayFull} show={repayFullModalInfo.showModal} />
-      <Repay closePopup={closeRepay} show={repayModalInfo.showModal} data={repayModalInfo.data} />
 
       <CreateNewVault
         closePopup={() => setCreateVaultModal(false)}

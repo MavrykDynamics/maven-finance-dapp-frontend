@@ -16,6 +16,7 @@ import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { COLLATERAL_RATIO_GRADIENT } from 'pages/Loans/Loans.const'
 import { depositCollateralAction } from 'pages/Loans/Loans.actions'
+import { AddNewCollateralDataProps, getOnBlurValue, getOnFocusValue } from './Modals.helpers'
 import { InputStatusType, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 
 import { InputPinnedDropDown } from 'app/App.components/Input/Input.style'
@@ -24,11 +25,17 @@ import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { DropDownJsxChild, LoansModalBase, VaultModalOverview } from './Modals.style'
 
-export type AddNewCollateralDataProps = {
-  vaultAddress: string
-  currentCollateralValue: number
-  currentAvaliableToWithdraw: number
-} | null
+type InputState =
+  | {
+      amount: string
+      assetName: string
+      userBalance: number
+      id: number
+      validationStatus: InputStatusType
+      ddItems: Record<number, DropDownCollateralAssetType>
+      selectedDdItem: DropDownCollateralAssetType
+    }
+  | undefined
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239633&t=Sx2aEpp3ifrGxBtQ-0
 export const AddNewCollateral = ({
@@ -41,20 +48,47 @@ export const AddNewCollateral = ({
   data: AddNewCollateralDataProps
 }) => {
   const { currentCollateralValue = 0, currentAvaliableToWithdraw = 0, vaultAddress } = data ?? {}
+
   const dispatch = useDispatch()
-  const [inputData, setInputData] = useState<
-    | {
-        amount: string
-        assetName: string
-        userBalance: number
-        id: number
-        validationStatus: InputStatusType
-        ddItems: Record<number, DropDownCollateralAssetType>
-        selectedDdItem: DropDownCollateralAssetType
-      }
-    | undefined
-  >()
   const { avaliableCollaterals, xtzBakers } = useSelector((state: State) => state.loans)
+  const { isActionLoading } = useSelector((state: State) => state.loading)
+
+  const [inputData, setInputData] = useState<InputState>()
+
+  // resetting popup state, when toggling it off, and updating input data, when collaterals updated in redux
+  useEffect(() => {
+    const mappedAvaliableCollaterals = avaliableCollaterals.reduce<Record<number, DropDownCollateralAssetType>>(
+      (acc, collateralData) => {
+        acc[collateralData.id] = {
+          ...collateralData,
+          content: (
+            <DropdownInputCustomChild
+              iconSrc={collateralData.assetIcon}
+              symbol={getAssetName(collateralData.assetName)}
+            />
+          ),
+          disabled: collateralData.isProtected,
+        }
+        return acc
+      },
+      {},
+    )
+    mappedAvaliableCollaterals[Number(Object.keys(mappedAvaliableCollaterals)[0])].disabled = true
+
+    setInputData({
+      amount: '0',
+      assetName: mappedAvaliableCollaterals[Number(Object.keys(mappedAvaliableCollaterals)[0])].assetName,
+      userBalance: mappedAvaliableCollaterals[Number(Object.keys(mappedAvaliableCollaterals)[0])].userBalance,
+      validationStatus: '',
+      id: mappedAvaliableCollaterals[Number(Object.keys(mappedAvaliableCollaterals)[0])].id,
+      ddItems: mappedAvaliableCollaterals,
+      selectedDdItem: mappedAvaliableCollaterals[Number(Object.keys(mappedAvaliableCollaterals)[0])],
+    })
+
+    if (!show) {
+      setInputData(undefined)
+    }
+  }, [avaliableCollaterals, show])
 
   // select baker for an xtz collateral, used only when we selected one collateral XTZ
   const bakerItemsForDropDown = useMemo<DropDownXTZBakerType[]>(
@@ -90,71 +124,6 @@ export const AddNewCollateral = ({
   const handleOnClickDropdownBakerItem = (itemId: number) =>
     setAssetChosenDdItem(bakerItemsForDropDown.find(({ id }) => id === itemId))
 
-  const [isDepositting, setIsDepositting] = useState(false)
-  const isDepositBtnDisabled = useMemo(
-    () =>
-      isDepositting ||
-      (isTezosAsset(inputData?.assetName ?? '') && !bakerChosenDdItem) ||
-      inputData?.validationStatus === INPUT_STATUS_ERROR,
-    [bakerChosenDdItem, inputData?.assetName, inputData?.validationStatus, isDepositting],
-  )
-
-  useEffect(() => {
-    const mappedAvaliableCollaterals = avaliableCollaterals.reduce<Record<number, DropDownCollateralAssetType>>(
-      (acc, collateralData) => {
-        acc[collateralData.id] = {
-          ...collateralData,
-          content: (
-            <DropdownInputCustomChild
-              iconSrc={collateralData.assetIcon}
-              symbol={getAssetName(collateralData.assetName)}
-            />
-          ),
-          disabled: collateralData.isProtected,
-        }
-        return acc
-      },
-      {},
-    )
-    mappedAvaliableCollaterals[Number(Object.keys(mappedAvaliableCollaterals)[0])].disabled = true
-
-    setInputData({
-      amount: '0',
-      assetName: mappedAvaliableCollaterals[Number(Object.keys(mappedAvaliableCollaterals)[0])].assetName,
-      userBalance: mappedAvaliableCollaterals[Number(Object.keys(mappedAvaliableCollaterals)[0])].userBalance,
-      validationStatus: '',
-      id: mappedAvaliableCollaterals[Number(Object.keys(mappedAvaliableCollaterals)[0])].id,
-      ddItems: mappedAvaliableCollaterals,
-      selectedDdItem: mappedAvaliableCollaterals[Number(Object.keys(mappedAvaliableCollaterals)[0])],
-    })
-
-    if (!show) {
-      setInputData(undefined)
-    }
-  }, [avaliableCollaterals, show])
-
-  const depositCollateralHandler = () => {
-    if (inputData) {
-      const collaretalToDeposit = [
-        {
-          collateralName: inputData.assetName,
-          assetId: inputData.selectedDdItem.id,
-          tokenType: inputData.selectedDdItem.tokenType,
-          amount: Math.floor(Number(inputData.amount) * 10 ** inputData.selectedDdItem.assetDecimals),
-          assetAddress: inputData.selectedDdItem.assetAddress,
-        },
-      ]
-
-      if (vaultAddress) {
-        setIsDepositting(true)
-        dispatch(
-          depositCollateralAction(vaultAddress, collaretalToDeposit, closePopup, bakerChosenDdItem?.bakerAddress),
-        )
-        setIsDepositting(false)
-      }
-    }
-  }
-
   // stuff to handle inputs
   const inputOnChangeHandle = (newInputAmount: string, userAssetBalance: number) => {
     const validationStatus =
@@ -177,7 +146,7 @@ export const AddNewCollateral = ({
     if (inputData) {
       setInputData({
         ...inputData,
-        amount: inputData.amount === '' ? '0' : inputData.amount,
+        amount: getOnBlurValue(inputData.amount),
       })
     }
   }
@@ -186,8 +155,61 @@ export const AddNewCollateral = ({
     if (inputData) {
       setInputData({
         ...inputData,
-        amount: inputData.amount === '0' ? '' : inputData.amount,
+        amount: getOnFocusValue(inputData.amount),
       })
+    }
+  }
+
+  const clickOnInputDDItem = (id: number) => {
+    if (inputData) {
+      // resetting disabled flags for item we had selected before, and enabling disabled, we have selected now
+      const newDDItems = {
+        ...inputData.ddItems,
+        [inputData.id]: {
+          ...inputData.ddItems[inputData.id],
+          disabled: false,
+        },
+        [id]: {
+          ...inputData.ddItems[id],
+          disabled: true,
+        },
+      }
+
+      setInputData({
+        ...inputData,
+        assetName: inputData.ddItems[id].assetName,
+        selectedDdItem: inputData.ddItems[id],
+        ddItems: newDDItems,
+        id,
+      })
+    }
+  }
+
+  const isDepositBtnDisabled = useMemo(
+    () =>
+      isActionLoading ||
+      (isTezosAsset(inputData?.assetName ?? '') && !bakerChosenDdItem) ||
+      inputData?.validationStatus === INPUT_STATUS_ERROR,
+    [bakerChosenDdItem, inputData?.assetName, inputData?.validationStatus, isActionLoading],
+  )
+
+  const depositCollateralHandler = () => {
+    if (inputData) {
+      const collaretalToDeposit = [
+        {
+          collateralName: inputData.assetName,
+          assetId: inputData.selectedDdItem.id,
+          tokenType: inputData.selectedDdItem.tokenType,
+          amount: Math.floor(Number(inputData.amount) * 10 ** inputData.selectedDdItem.assetDecimals),
+          assetAddress: inputData.selectedDdItem.assetAddress,
+        },
+      ]
+
+      if (vaultAddress) {
+        dispatch(
+          depositCollateralAction(vaultAddress, collaretalToDeposit, closePopup, bakerChosenDdItem?.bakerAddress),
+        )
+      }
     }
   }
 
@@ -254,26 +276,7 @@ export const AddNewCollateral = ({
                     placeholder="Select Bakery"
                     activeItem={inputData.selectedDdItem}
                     items={Object.values(inputData.ddItems)}
-                    clickItem={(id: number) => {
-                      const newDDItems = {
-                        ...inputData.ddItems,
-                        [inputData.id]: {
-                          ...inputData.ddItems[inputData.id],
-                          disabled: false,
-                        },
-                        [id]: {
-                          ...inputData.ddItems[id],
-                          disabled: true,
-                        },
-                      }
-                      setInputData({
-                        ...inputData,
-                        assetName: inputData.ddItems[id].assetName,
-                        selectedDdItem: inputData.ddItems[id],
-                        ddItems: newDDItems,
-                        id,
-                      })
-                    }}
+                    clickItem={clickOnInputDDItem}
                     className="input-dropdown"
                   />
                 </InputPinnedDropDown>

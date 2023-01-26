@@ -1,11 +1,12 @@
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useLockBodyScroll } from 'react-use'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 
-import { InputStatusType, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { COLLATERAL_RATIO_GRADIENT } from 'pages/Loans/Loans.const'
-import { BorrowingData } from 'utils/TypesAndInterfaces/Loans'
 import { getAssetName } from 'pages/Loans/Loans.helpers'
+import { BorrowPopupDataType, DEFAULT_LOANS_INPUT_VALUE, getOnBlurValue, getOnFocusValue } from './Modals.helpers'
+import { State } from 'reducers'
 import { ACTION_PRIMARY, TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
 
 import NewButton from 'app/App.components/Button/NewButton.controller'
@@ -20,18 +21,6 @@ import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase, VaultModalOverview } from './Modals.style'
 import { borrowVaultAssetAction } from 'pages/Loans/Loans.actions'
-
-export type BorrowPopupDataType = {
-  vaultAddress: string
-  borrowedAsset: BorrowingData['borrowedAsset']
-  borowCapacity: number
-  collateralUtilization: number
-  borrowAPR: number
-  fee: number
-  hasUserBorrowed: boolean
-  currentCollateralBalance: number
-  currentAvaliableToBorrow: number
-} | null
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A240058&t=Sx2aEpp3ifrGxBtQ-0
 export const BorrowAsset = ({
@@ -49,32 +38,23 @@ export const BorrowAsset = ({
     borowCapacity = 0,
     collateralUtilization = 0,
     borrowAPR = 0,
-    fee = 0,
     hasUserBorrowed,
     currentCollateralBalance = 0,
     currentAvaliableToBorrow = 0,
   } = data ?? {}
 
-  const dispatch = useDispatch()
   useLockBodyScroll(show)
+  const dispatch = useDispatch()
+  const { isActionLoading } = useSelector((state: State) => state.loading)
+
   const assetName = getAssetName(borrowedAsset?.assetName ?? '')
 
-  const [inputData, setInputData] = useState<{ amount: string; validationStatus: InputStatusType }>({
-    amount: '0',
-    validationStatus: '',
-  })
+  const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
   const [screenShown, setShownScreen] = useState<'initial' | 'confitmation'>('initial')
-  const [isBorrowing, setIsBorrowing] = useState(false)
-
-  const isActionBtnDisabled = useMemo(() => isBorrowing, [isBorrowing])
 
   useEffect(() => {
     if (!show) {
-      setInputData({
-        amount: '0',
-        validationStatus: '',
-      })
-      setIsBorrowing(false)
+      setInputData(DEFAULT_LOANS_INPUT_VALUE)
       setShownScreen('initial')
     }
   }, [show])
@@ -88,46 +68,33 @@ export const BorrowAsset = ({
 
     if (validationStatus === INPUT_STATUS_ERROR && newInputAmount !== '' && newInputAmount !== '0') return
 
-    if (inputData) {
-      setInputData({
-        ...inputData,
-        amount: newInputAmount,
-        validationStatus: validationStatus,
-      })
-    }
+    setInputData({
+      ...inputData,
+      amount: newInputAmount,
+      validationStatus: validationStatus,
+    })
   }
 
   const inputOnBlurHandle = () => {
-    if (inputData) {
-      setInputData({
-        ...inputData,
-        amount: inputData.amount === '' ? '0' : inputData.amount,
-      })
-    }
+    setInputData({
+      ...inputData,
+      amount: getOnBlurValue(inputData.amount),
+    })
   }
 
   const onFocusHandler = () => {
-    if (inputData) {
-      setInputData({
-        ...inputData,
-        amount: inputData.amount === '0' ? '' : inputData.amount,
-      })
-    }
+    setInputData({
+      ...inputData,
+      amount: getOnFocusValue(inputData.amount),
+    })
   }
 
-  const continueBtnHandler = () => {
-    setShownScreen('confitmation')
-  }
-
-  const backBtnHandler = () => {
-    setShownScreen('initial')
-  }
+  const continueBtnHandler = () => setShownScreen('confitmation')
+  const backBtnHandler = () => setShownScreen('initial')
 
   const borrowAsserHandler = async () => {
     if (vaultAddress) {
-      setIsBorrowing(true)
       await dispatch(borrowVaultAssetAction(vaultAddress, Number(inputData.amount), closePopup))
-      setIsBorrowing(false)
     }
   }
 
@@ -293,7 +260,7 @@ export const BorrowAsset = ({
                 <NewButton
                   kind={ACTION_PRIMARY}
                   onClick={borrowAsserHandler}
-                  disabled={isActionBtnDisabled}
+                  disabled={isActionLoading}
                   className="modal-manage-btn"
                 >
                   <Icon id="coin-loan" />

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useLockBodyScroll } from 'react-use'
 
 import NewButton from 'app/App.components/Button/NewButton.controller'
@@ -9,21 +9,23 @@ import { Input } from 'app/App.components/Input/NewInput'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 import { ACTION_PRIMARY, TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
-import { InputStatusType, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { silverColor } from 'styles'
 import { getAssetName } from 'pages/Loans/Loans.helpers'
-import { AddLendingAssetDataType } from './AddLendingAsset.modal'
+import { withdrawLendingAssetAction } from 'pages/Loans/Loans.actions'
+import {
+  DEFAULT_LOANS_INPUT_VALUE,
+  getOnBlurValue,
+  getOnFocusValue,
+  RemoveLendingAssetDataType,
+} from './Modals.helpers'
+import { State } from 'reducers'
 
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase } from './Modals.style'
-import { withdrawLendingAssetAction } from 'pages/Loans/Loans.actions'
-
-export type RemoveLendingAssetDataType = AddLendingAssetDataType & {
-  currentLendedAmount: number
-}
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A238846&t=Sx2aEpp3ifrGxBtQ-0
 export const RemoveAssetsFromLending = ({
@@ -35,19 +37,6 @@ export const RemoveAssetsFromLending = ({
   show: boolean
   data?: RemoveLendingAssetDataType
 }) => {
-  const dispatch = useDispatch()
-  const [screenShown, setShownScreen] = useState<'initial' | 'confitmation'>('initial')
-  const [inputAmount, setInputAmount] = useState('0')
-  const [inputValidationStatus, setInputValidationStatus] = useState<InputStatusType>('')
-
-  const continueBtnHandler = () => {
-    setShownScreen('confitmation')
-  }
-
-  const backBtnHandler = () => {
-    setShownScreen('initial')
-  }
-
   const {
     userBalance = 0,
     mBalance = 0,
@@ -60,6 +49,14 @@ export const RemoveAssetsFromLending = ({
 
   useLockBodyScroll(show)
 
+  const dispatch = useDispatch()
+  const { isActionLoading } = useSelector((state: State) => state.loading)
+  const [screenShown, setShownScreen] = useState<'initial' | 'confitmation'>('initial')
+  const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
+
+  const continueBtnHandler = () => setShownScreen('confitmation')
+  const backBtnHandler = () => setShownScreen('initial')
+
   const onChangeHandler = (inputAmount: string, userBalance: number) => {
     const validationStatus =
       Number(inputAmount) > 0 && Number(inputAmount) <= userBalance && Number(inputAmount) <= currentLendedAmount
@@ -68,30 +65,39 @@ export const RemoveAssetsFromLending = ({
 
     if (validationStatus === INPUT_STATUS_ERROR && inputAmount !== '' && inputAmount !== '0') return
 
-    setInputAmount(inputAmount)
-    setInputValidationStatus(validationStatus)
+    setInputData({
+      ...inputData,
+      amount: inputAmount,
+      validationStatus: validationStatus,
+    })
   }
 
-  const onBlurHandler = (inputAmount: string) => {
-    setInputAmount(inputAmount === '' ? '0' : inputAmount)
+  const inputOnBlurHandle = () => {
+    setInputData({
+      ...inputData,
+      amount: getOnBlurValue(inputData.amount),
+    })
   }
 
-  const onFocusHandler = (inputAmount: string) => {
-    setInputAmount(inputAmount === '0' ? '' : inputAmount)
+  const onFocusHandler = () => {
+    setInputData({
+      ...inputData,
+      amount: getOnFocusValue(inputData.amount),
+    })
   }
 
   useEffect(() => {
     if (!show) {
-      setInputValidationStatus('')
-      setInputAmount('0')
+      setInputData(DEFAULT_LOANS_INPUT_VALUE)
+      setShownScreen('initial')
     }
   }, [show])
 
   const isWithdrawDisabled = useMemo(() => {
-    return inputValidationStatus !== INPUT_STATUS_SUCCESS
-  }, [inputValidationStatus])
+    return inputData.validationStatus !== INPUT_STATUS_SUCCESS || isActionLoading
+  }, [inputData.validationStatus])
 
-  const withdrawHandler = () => dispatch(withdrawLendingAssetAction(assetName, Number(inputAmount), closePopup))
+  const withdrawHandler = () => dispatch(withdrawLendingAssetAction(assetName, Number(inputData.amount), closePopup))
 
   return (
     <PopupContainer onClick={closePopup} show={show}>
@@ -130,18 +136,18 @@ export const RemoveAssetsFromLending = ({
               <Input
                 className={`${assetRate ? 'input-with-rate' : ''} large-input pinned-dropdown withdrawCollateralInput`}
                 inputProps={{
-                  value: inputAmount,
+                  value: inputData.amount,
                   type: 'number',
-                  onBlur: (e) => onBlurHandler(e.target.value),
-                  onFocus: (e) => onFocusHandler(e.target.value),
+                  onBlur: inputOnBlurHandle,
+                  onFocus: onFocusHandler,
                   onChange: (e) => onChangeHandler(e.target.value, userBalance),
                 }}
                 settings={{
                   balance: userBalance,
                   balanceAsset: assetName,
                   useMaxHandler: () => onChangeHandler(String(userBalance), userBalance),
-                  inputStatus: inputValidationStatus,
-                  convertedValue: Number(inputAmount) * assetRate,
+                  inputStatus: inputData.validationStatus,
+                  convertedValue: Number(inputData.amount) * assetRate,
                 }}
               >
                 <InputPinnedTokenInfo>
@@ -167,11 +173,15 @@ export const RemoveAssetsFromLending = ({
                 <div className="lending-stats">
                   <ThreeLevelListItem>
                     <div className="name">Amount Removed</div>
-                    <CommaNumber value={Number(inputAmount)} className="value" endingText={getAssetName(assetName)} />
+                    <CommaNumber
+                      value={Number(inputData.amount)}
+                      className="value"
+                      endingText={getAssetName(assetName)}
+                    />
                   </ThreeLevelListItem>
                   <ThreeLevelListItem className="right">
                     <div className="name">USD Value</div>
-                    <CommaNumber value={Number(inputAmount) * assetRate} className="value" beginningText="$" />
+                    <CommaNumber value={Number(inputData.amount) * assetRate} className="value" beginningText="$" />
                   </ThreeLevelListItem>
                 </div>
                 <hr />
@@ -179,7 +189,7 @@ export const RemoveAssetsFromLending = ({
                   <ThreeLevelListItem>
                     <div className="name">New Lending Amount</div>
                     <CommaNumber
-                      value={currentLendedAmount - Number(inputAmount)}
+                      value={currentLendedAmount - Number(inputData.amount)}
                       className="value"
                       endingText={getAssetName(assetName)}
                     />
@@ -187,7 +197,7 @@ export const RemoveAssetsFromLending = ({
                   <ThreeLevelListItem className="right">
                     <div className="name">New USD Value</div>
                     <CommaNumber
-                      value={(currentLendedAmount - Number(inputAmount)) * assetRate}
+                      value={(currentLendedAmount - Number(inputData.amount)) * assetRate}
                       className="value"
                       beginningText="$"
                     />

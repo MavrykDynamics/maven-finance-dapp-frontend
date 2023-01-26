@@ -1,4 +1,5 @@
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { useLockBodyScroll } from 'react-use'
 import { useEffect, useMemo, useState } from 'react'
 
 import NewButton from 'app/App.components/Button/NewButton.controller'
@@ -7,8 +8,10 @@ import Icon from 'app/App.components/Icon/Icon.view'
 import { Input } from 'app/App.components/Input/NewInput'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
-import { InputStatusType, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { depositLendingAssetAction } from 'pages/Loans/Loans.actions'
+import { State } from 'reducers'
+import { AddLendingAssetDataType, DEFAULT_LOANS_INPUT_VALUE, getOnBlurValue, getOnFocusValue } from './Modals.helpers'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
@@ -17,22 +20,17 @@ import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { silverColor } from 'styles'
 import { LoansModalBase } from './Modals.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
-import { useLockBodyScroll } from 'react-use'
-
-export type AddLendingAssetDataType = {
-  userBalance: number
-  mBalance: number
-  lendingAPY: number
-  assetRate: number
-  assetName: string
-  assetIcon?: string
-}
-
-type AddLendingAssetModalProps = { closePopup: () => void; show: boolean; modalData?: AddLendingAssetDataType }
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239981&t=Sx2aEpp3ifrGxBtQ-0
-export const AddLendingAsset = ({ closePopup, show, modalData }: AddLendingAssetModalProps) => {
-  const dispatch = useDispatch()
+export const AddLendingAsset = ({
+  closePopup,
+  show,
+  modalData,
+}: {
+  closePopup: () => void
+  show: boolean
+  modalData?: AddLendingAssetDataType
+}) => {
   const {
     userBalance = 0,
     mBalance = 0,
@@ -41,10 +39,12 @@ export const AddLendingAsset = ({ closePopup, show, modalData }: AddLendingAsset
     lendingAPY = 0,
     assetIcon = '',
   } = modalData ?? {}
-  const [inputAmount, setInputAmount] = useState('0')
-  const [inputValidationStatus, setInputValidationStatus] = useState<InputStatusType>('')
 
   useLockBodyScroll(show)
+
+  const dispatch = useDispatch()
+  const { isActionLoading } = useSelector((state: State) => state.loading)
+  const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
 
   const onChangeHandler = (inputAmount: string, userBalance: number) => {
     const validationStatus =
@@ -52,30 +52,38 @@ export const AddLendingAsset = ({ closePopup, show, modalData }: AddLendingAsset
 
     if (validationStatus === INPUT_STATUS_ERROR && inputAmount !== '' && inputAmount !== '0') return
 
-    setInputAmount(inputAmount)
-    setInputValidationStatus(validationStatus)
+    setInputData({
+      ...inputData,
+      amount: inputAmount,
+      validationStatus: validationStatus,
+    })
   }
 
-  const onBlurHandler = (inputAmount: string) => {
-    setInputAmount(inputAmount === '' ? '0' : inputAmount)
+  const inputOnBlurHandle = () => {
+    setInputData({
+      ...inputData,
+      amount: getOnBlurValue(inputData.amount),
+    })
   }
 
-  const onFocusHandler = (inputAmount: string) => {
-    setInputAmount(inputAmount === '0' ? '' : inputAmount)
+  const onFocusHandler = () => {
+    setInputData({
+      ...inputData,
+      amount: getOnFocusValue(inputData.amount),
+    })
   }
 
   useEffect(() => {
     if (!show) {
-      setInputValidationStatus('')
-      setInputAmount('0')
+      setInputData(DEFAULT_LOANS_INPUT_VALUE)
     }
   }, [show])
 
   const isDepositDisabled = useMemo(() => {
-    return inputValidationStatus !== INPUT_STATUS_SUCCESS
-  }, [inputValidationStatus])
+    return inputData.validationStatus !== INPUT_STATUS_SUCCESS || isActionLoading
+  }, [inputData.validationStatus])
 
-  const depositHandler = () => dispatch(depositLendingAssetAction(assetName, Number(inputAmount), closePopup))
+  const depositHandler = () => dispatch(depositLendingAssetAction(assetName, Number(inputData.amount), closePopup))
 
   return (
     <PopupContainer onClick={closePopup} show={show}>
@@ -94,19 +102,19 @@ export const AddLendingAsset = ({ closePopup, show, modalData }: AddLendingAsset
           <Input
             className={`${assetRate ? 'input-with-rate' : ''} large-input pinned-dropdown`}
             inputProps={{
-              value: inputAmount,
+              value: inputData.amount,
               type: 'number',
               onChange: (e) => onChangeHandler(e.target.value, userBalance),
-              onBlur: (e) => onBlurHandler(e.target.value),
-              onFocus: (e) => onFocusHandler(e.target.value),
+              onBlur: inputOnBlurHandle,
+              onFocus: onFocusHandler,
             }}
             settings={{
               balanceName: 'Lend Balance',
               balance: userBalance,
               balanceAsset: assetName,
               useMaxHandler: () => onChangeHandler(String(userBalance), userBalance),
-              inputStatus: inputValidationStatus,
-              ...(assetRate ? { convertedValue: assetRate * Number(inputAmount) } : {}),
+              inputStatus: inputData.validationStatus,
+              ...(assetRate ? { convertedValue: assetRate * Number(inputData.amount) } : {}),
             }}
           >
             <InputPinnedTokenInfo>
@@ -136,11 +144,11 @@ export const AddLendingAsset = ({ closePopup, show, modalData }: AddLendingAsset
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">m{assetName} Received</div>
-              <CommaNumber value={Number(inputAmount)} className="value" />
+              <CommaNumber value={Number(inputData.amount)} className="value" />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">New m{assetName} Balance</div>
-              <CommaNumber value={mBalance + Number(inputAmount)} className="value" />
+              <CommaNumber value={mBalance + Number(inputData.amount)} className="value" />
             </ThreeLevelListItem>
           </div>
 

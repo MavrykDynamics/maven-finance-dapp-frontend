@@ -3,11 +3,17 @@ import { useLockBodyScroll } from 'react-use'
 import { useEffect, useMemo, useState } from 'react'
 
 import { getAssetName } from 'pages/Loans/Loans.helpers'
-import { BorrowingData } from 'utils/TypesAndInterfaces/Loans'
-import { InputStatusType, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { COLLATERAL_RATIO_GRADIENT } from 'pages/Loans/Loans.const'
+import { withdrawCollateralAction } from 'pages/Loans/Loans.actions'
 import { State } from 'reducers'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
+import {
+  DEFAULT_LOANS_INPUT_VALUE,
+  getOnBlurValue,
+  getOnFocusValue,
+  WithdrawCollateralPopupDataType,
+} from './Modals.helpers'
 
 import { Input } from 'app/App.components/Input/NewInput'
 import Icon from 'app/App.components/Icon/Icon.view'
@@ -20,14 +26,6 @@ import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
-import { withdrawCollateralAction } from 'pages/Loans/Loans.actions'
-
-export type WithdrawCollateralPopupDataType = {
-  vaultAddress: string
-  currentCollateralValue: number
-  currentAvaliableToWithdraw: number
-  selectedAsset?: BorrowingData['collateralData'][number]
-} | null
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239234&t=Sx2aEpp3ifrGxBtQ-0
 export const WithdrawCollateral = ({
@@ -40,14 +38,12 @@ export const WithdrawCollateral = ({
   data: WithdrawCollateralPopupDataType
 }) => {
   const { selectedAsset, currentCollateralValue = 0, currentAvaliableToWithdraw = 0, vaultAddress } = data ?? {}
-  const dispatch = useDispatch()
+
   useLockBodyScroll(show)
+  const dispatch = useDispatch()
   const { avaliableCollaterals } = useSelector((state: State) => state.loans)
 
-  const [inputData, setInputData] = useState<{ amount: string; validationStatus: InputStatusType }>({
-    amount: '0',
-    validationStatus: '',
-  })
+  const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
   const [isActionPerforming, setIsActionPerforming] = useState(false)
 
   const isActionBtnDisabled = useMemo(
@@ -58,20 +54,15 @@ export const WithdrawCollateral = ({
     () => avaliableCollaterals.find(({ assetSymbol }) => selectedAsset?.assetSymbol === assetSymbol),
     [avaliableCollaterals, selectedAsset],
   )
-
   const assetName = getAssetName(collateralData?.assetName ?? '')
 
   useEffect(() => {
     if (!show) {
-      setInputData({
-        amount: '0',
-        validationStatus: '',
-      })
+      setInputData(DEFAULT_LOANS_INPUT_VALUE)
       setIsActionPerforming(false)
     }
   }, [show])
 
-  // stuff to handle inputs
   const inputOnChangeHandle = (newInputAmount: string, userAssetBalance: number) => {
     const validationStatus =
       Number(newInputAmount) > 0 && Number(newInputAmount) <= userAssetBalance
@@ -80,31 +71,25 @@ export const WithdrawCollateral = ({
 
     if (validationStatus === INPUT_STATUS_ERROR && newInputAmount !== '' && newInputAmount !== '0') return
 
-    if (inputData) {
-      setInputData({
-        ...inputData,
-        amount: newInputAmount,
-        validationStatus: validationStatus,
-      })
-    }
+    setInputData({
+      ...inputData,
+      amount: newInputAmount,
+      validationStatus: validationStatus,
+    })
   }
 
   const inputOnBlurHandle = () => {
-    if (inputData) {
-      setInputData({
-        ...inputData,
-        amount: inputData.amount === '' ? '0' : inputData.amount,
-      })
-    }
+    setInputData({
+      ...inputData,
+      amount: getOnBlurValue(inputData.amount),
+    })
   }
 
   const onFocusHandler = () => {
-    if (inputData) {
-      setInputData({
-        ...inputData,
-        amount: inputData.amount === '0' ? '' : inputData.amount,
-      })
-    }
+    setInputData({
+      ...inputData,
+      amount: getOnFocusValue(inputData.amount),
+    })
   }
 
   const withdrawHandler = async () => {
