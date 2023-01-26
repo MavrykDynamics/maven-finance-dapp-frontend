@@ -48,14 +48,15 @@ import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/Gradien
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 
 const defaultOptions = { 
-  columnNames: {
+  headerColumnNames: {
     collateralBalance: 'Collateral Balance',
     borrowedAmount: 'Amount'
-  }
+  },
 }
 
-export type HeaderOptions = typeof defaultOptions & {
+export type BorrowingCardOptions = typeof defaultOptions & {
   reverseColumns?: boolean
+  customTableColumn?: keyof BorrowingData['collateralData'][0]
 }
 
 type BorrowingExpandCardPropsType = BorrowingData & {
@@ -66,13 +67,12 @@ type BorrowingExpandCardPropsType = BorrowingData & {
   sMVKDelegatedTo?: string
   depositors?: string | Array<string>
   headerSufix?: React.ReactNode
-  isVaultsPage?: boolean
   getExpandedStatus?: (arg: boolean) => void
   className?: string
   children?: React.ReactNode
   status?: string
   timestamp?: number
-  options?: HeaderOptions
+  options?: BorrowingCardOptions
 }
 
 export const BorrowingExpandCard = ({
@@ -84,7 +84,6 @@ export const BorrowingExpandCard = ({
   sMVKDelegatedTo,
   depositors,
   headerSufix,
-  isVaultsPage,
   getExpandedStatus,
   className,
   address,
@@ -110,7 +109,7 @@ export const BorrowingExpandCard = ({
     setShownModal(null)
   }, [])
 
-  const { columnNames, reverseColumns } = options
+  const { headerColumnNames, reverseColumns, customTableColumn } = options
 
   const {
     assetSymbol,
@@ -190,17 +189,17 @@ export const BorrowingExpandCard = ({
             </ThreeLevelListItem>
             {reverseColumns && (
             <ThreeLevelListItem>
-              <div className="name">{columnNames.collateralBalance}</div>
+              <div className="name">{headerColumnNames.collateralBalance}</div>
               <CommaNumber value={collateralBalance} className="value" beginningText="$" />
             </ThreeLevelListItem>)}
             <ThreeLevelListItem>
-              <div className="name">{columnNames.borrowedAmount}</div>
+              <div className="name">{headerColumnNames.borrowedAmount}</div>
               <CommaNumber value={amtBorrowed} className="value" />
               {assetRate ? <CommaNumber value={amtBorrowed * assetRate} beginningText="$" className="rate" /> : null}
             </ThreeLevelListItem>
             {!reverseColumns && (
             <ThreeLevelListItem>
-              <div className="name">{columnNames.collateralBalance}</div>
+              <div className="name">{headerColumnNames.collateralBalance}</div>
               <CommaNumber value={collateralBalance} className="value" beginningText="$" />
             </ThreeLevelListItem>)}
           </>
@@ -208,7 +207,7 @@ export const BorrowingExpandCard = ({
       >
         {children || (
         <BorrowingTabListItemExpanded className='expand-borrow-tab-container'>
-          {(isVaultsPage && status) && <StatusMessage status={status} timestamp={timestamp} />}
+          {status && <StatusMessage status={status} timestamp={timestamp} />}
           <div className="block-name">Borrowed</div>
           <div className="borrowed-data">
             <ThreeLevelListItem>
@@ -263,13 +262,14 @@ export const BorrowingExpandCard = ({
                 <TableHeaderCell>Asset</TableHeaderCell>
                 <TableHeaderCell>Balance</TableHeaderCell>
                 <TableHeaderCell>Withdraw Max</TableHeaderCell>
-                {isVaultsPage && <TableHeaderCell>Collateral Share</TableHeaderCell>}
+                {customTableColumn && <TableHeaderCell>Collateral Share</TableHeaderCell>}
               </TableRow>
             </TableHeader>
 
             <TableBody>
-              {collateralData.map(({ assetSymbol, assetIcon, balance, assetRate = 1, maxWithdraw, collateralShare = 0 }, idx) => {
-                const columnWidth = isVaultsPage ? '18%' : '22%'
+              {collateralData.map(({ assetSymbol, assetIcon, balance, assetRate = 1, maxWithdraw }, idx, array) => {                
+                const customColumnValue = customTableColumn ? array[idx][customTableColumn] : undefined               
+                const columnWidth = customTableColumn ? '18%' : '22%'
                 const isTotalRow = collateralData.length - 1 === idx
                 if (isTotalRow && collateralData.length < 3) return null
 
@@ -309,12 +309,12 @@ export const BorrowingExpandCard = ({
                         ) : null}
                       </div>
                     </TableCell>
-                    {isVaultsPage && (
+                    {(typeof customColumnValue === 'number') ? (
                     <TableCell width={columnWidth}>
                       <div className="cell-content">
-                         <CommaNumber value={collateralShare} className="value" endingText="%" />
+                         <CommaNumber value={customColumnValue} className="value" endingText="%" />
                       </div>
-                    </TableCell>)}
+                    </TableCell>) : null}
                     {isTotalRow ? (
                       <TableCell className="buttons borrowing">
                         <div className="cell-content row">
