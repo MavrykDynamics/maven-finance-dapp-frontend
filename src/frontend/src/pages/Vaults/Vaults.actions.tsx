@@ -50,6 +50,7 @@ export const getVaultsStorage = () => async (dispatch: AppDispatch, getState: Ge
     ).reduce<Record<string, number>>((acc, promiseResult) => {
       const {
         value: { data, success },
+        // TODO: remove any
       } = promiseResult as any
       if (success) {
         const symbol = data.symbol === 'xtz' ? 'tez' : data.symbol
