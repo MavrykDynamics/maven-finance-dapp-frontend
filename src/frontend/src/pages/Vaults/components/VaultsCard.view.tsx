@@ -43,11 +43,13 @@ const findStatusInfo = (status: string) => {
 
 const findFooterText = (status: string, statusColor: StatusFlagStyle, timestamp?: number) => {
   const timer = timestamp 
-    ? (<Timer
-      timestamp={timestamp}
-      className='timer'
-      options={{ defaultColor: '#77A4F2', negativeColor: '#77A4F2' }}
-    />)
+    ? (
+    <div className='timer'>
+      <Timer
+        timestamp={timestamp}
+        options={{ defaultColor: '#77A4F2', negativeColor: '#77A4F2' }}
+      />
+    </div>)
     : <span className='timer'>no data</span>
 
   switch (status) {

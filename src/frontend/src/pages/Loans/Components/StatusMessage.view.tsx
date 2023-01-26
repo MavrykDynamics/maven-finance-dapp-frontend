@@ -7,11 +7,13 @@ import Icon from 'app/App.components/Icon/Icon.view'
 
 const findStatusMessage = (status: string, timestamp?: number) => {
   const timer = timestamp 
-  ? (<Timer
-    timestamp={timestamp}
-    className='timer'
-    options={{ defaultColor: '#D0CFD9', negativeColor: '#D0CFD9' }}
-  />)
+  ? (
+  <div className='timer'>
+    <Timer
+      timestamp={timestamp}
+      options={{ defaultColor: '#D0CFD9', negativeColor: '#D0CFD9' }}
+    />
+  </div>)
   : <span className='timer'>no data</span>
 
   switch (status) {
