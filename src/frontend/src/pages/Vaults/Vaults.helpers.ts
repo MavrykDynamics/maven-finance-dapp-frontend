@@ -65,6 +65,7 @@ export const normalizeVaultsStorage = (storage: VaultsStorageProps) => {
         })
 
         acc.totalRow.balance += collateral.balance
+        // TODO: add a valid result in the field below
         acc.totalRow.maxWithdraw += 0
 
         return acc
