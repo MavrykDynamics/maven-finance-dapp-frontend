@@ -15,6 +15,7 @@ import {
   BorrowPopupDataType,
   WithdrawCollateralPopupDataType,
   AddNewCollateralDataProps,
+  ChangeBakerPopupDataType,
 } from './Modals/Modals.helpers'
 import { BorrowingData } from 'utils/TypesAndInterfaces/Loans'
 
@@ -116,11 +117,12 @@ export const BorrowingTab = ({
     setWithdrawCollateralModalInfo({ ...withdrawCollateralModalInfo, showModal: false })
 
   // Change baker modal data and hanlders
-  const [changeBakerModalInfo, setChangeBakerModalInfo] = useState({
+  const [changeBakerModalInfo, setChangeBakerModalInfo] = useState<ModalStateType<ChangeBakerPopupDataType>>({
     showModal: false,
-    data: {},
+    data: null,
   })
-  const openChangeBaker = () => setChangeBakerModalInfo({ ...changeBakerModalInfo, showModal: true })
+  const openChangeBaker = (popupData: ChangeBakerPopupDataType) =>
+    setChangeBakerModalInfo({ showModal: true, data: popupData ? { ...popupData } : null })
   const closeChangeBaker = () => setChangeBakerModalInfo({ ...changeBakerModalInfo, showModal: false })
 
   // Update operators modal data and hanlders
@@ -164,7 +166,11 @@ export const BorrowingTab = ({
       />
       <Repay closePopup={closeRepay} show={repayModalInfo.showModal} data={repayModalInfo.data} />
       <RepayFull closePopup={closeRepayFull} show={repayFullModalInfo.showModal} data={repayFullModalInfo.data} />
-      <ChangeBaker closePopup={closeChangeBaker} show={changeBakerModalInfo.showModal} />
+      <ChangeBaker
+        closePopup={closeChangeBaker}
+        show={changeBakerModalInfo.showModal}
+        data={changeBakerModalInfo.data}
+      />
       <UpdateMVKOperator closePopup={closeUpdateOperators} show={updateOperatorModalInfo.showModal} />
       <ManagePermissions closePopup={closeManagePermissions} show={managePermissionsModalInfo.showModal} />
 

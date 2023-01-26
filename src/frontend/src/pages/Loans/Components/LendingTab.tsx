@@ -12,8 +12,9 @@ import { LendingItemType, LoanTokenType } from 'utils/TypesAndInterfaces/Loans'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { useState } from 'react'
-import { AddLendingAsset, AddLendingAssetDataType } from './Modals/AddLendingAsset.modal'
-import { RemoveAssetsFromLending, RemoveLendingAssetDataType } from './Modals/RemoveAssetsFromLending.modal'
+import { AddLendingAsset } from './Modals/AddLendingAsset.modal'
+import { RemoveAssetsFromLending } from './Modals/RemoveAssetsFromLending.modal'
+import { AddLendingAssetDataType, RemoveLendingAssetDataType } from './Modals/Modals.helpers'
 
 type LendingTabPropsType = {
   lendingItem: LendingItemType

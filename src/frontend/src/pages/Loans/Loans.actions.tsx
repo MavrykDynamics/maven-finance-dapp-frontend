@@ -451,3 +451,44 @@ export const repayPartOfVaultAction =
       await dispatch(toggleActionLoader(false))
     }
   }
+
+export const changeBakerAction =
+  (bakerAddress: string, callback: () => void) => async (dispatch: AppDispatch, getState: GetState) => {
+    const state: State = getState()
+
+    if (!state.wallet.accountPkh) {
+      await dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
+      return
+    }
+
+    if (state.loading.isActionLoading) {
+      await dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
+      return
+    }
+
+    try {
+      // prepare and send query
+      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.vaultFactory.address)
+
+      const transaction = await contract?.methods.delegateTezToBaker(bakerAddress).send()
+
+      callback()
+      await dispatch(toggleActionLoader(true))
+      await dispatch(showToaster(INFO, 'Borrowing from the vault...', 'Please wait 30s'))
+
+      // confirm query completion
+      await transaction?.confirmation()
+
+      await dispatch(showToaster(SUCCESS, 'Asset borrowed.', 'All good :)'))
+      // refetch data we need
+      await dispatch(getLoansStorage())
+      await dispatch(toggleActionLoader(false))
+    } catch (error) {
+      console.error('changeBakerAction error:', error)
+      if (error instanceof Error) {
+        dispatch(showToaster(ERROR, 'Error', error.message))
+        callback()
+      }
+      await dispatch(toggleActionLoader(false))
+    }
+  }

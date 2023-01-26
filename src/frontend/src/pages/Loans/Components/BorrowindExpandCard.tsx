@@ -31,6 +31,7 @@ import {
   RepayFullPopupDataType,
   BorrowPopupDataType,
   WithdrawCollateralPopupDataType,
+  ChangeBakerPopupDataType,
 } from './Modals/Modals.helpers'
 
 type BorrowingExpandCardPropsType = {
@@ -41,7 +42,7 @@ type BorrowingExpandCardPropsType = {
   openRepayFull?: (data: RepayFullPopupDataType) => void
   openBorrow?: (data: BorrowPopupDataType) => void
   openWithdrawCollateral?: (data: WithdrawCollateralPopupDataType) => void
-  openChangeBaker?: (data: {}) => void
+  openChangeBaker?: (data: ChangeBakerPopupDataType) => void
   openUpdateOperators?: (data: {}) => void
   openManagePermissions?: (data: {}) => void
 } & BorrowingData
@@ -344,7 +345,11 @@ export const BorrowingExpandCard = ({
                   text="Change Baker"
                   icon="paginationArrowLeft"
                   iconAfter
-                  onClick={openChangeBaker}
+                  onClick={() =>
+                    openChangeBaker?.({
+                      bakerAddress: xtzDelegatedTo,
+                    })
+                  }
                 />
               </div>
               <div className="bottom-info-row">

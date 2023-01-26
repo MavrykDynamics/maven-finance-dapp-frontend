@@ -71,3 +71,7 @@ export type AddNewCollateralDataProps = {
   currentCollateralValue: number
   currentAvaliableToWithdraw: number
 } | null
+
+export type ChangeBakerPopupDataType = {
+  bakerAddress: string | null
+} | null
