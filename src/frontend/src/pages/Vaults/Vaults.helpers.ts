@@ -11,7 +11,6 @@ import { Lending_Controller_Vault } from 'utils/generated/graphqlTypes'
 import { symbolsAfterDecimalPoint } from 'utils/symbolsAfterDecimalPoint'
 import { getOracleAggregatorLatestPrice } from './Vaults.actions'
 import { statusSortPriority, vaultsStatuses } from './Vaults.consts'
-import { getTimestampByLevel } from 'pages/Governance/Governance.actions'
 
 type VaultsStorageProps = {
   lendingController: LendingControllerGQL

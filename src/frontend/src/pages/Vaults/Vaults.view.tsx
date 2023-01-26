@@ -77,7 +77,9 @@ export const VaultsView = () => {
 
   const handleChangeTabs = (id: number) => {
     const foundTab = tabsList.find((item) => item.id === id)
-    history.replace(`${pathname}/${foundTab?.path}`)
+    if (!foundTab?.path) return 
+
+    history.replace(`${pathname}/${foundTab.path}`)
   }
 
   const paginatedVaultsList = useMemo(() => {
