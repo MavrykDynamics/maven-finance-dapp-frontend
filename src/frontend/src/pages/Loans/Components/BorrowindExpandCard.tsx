@@ -47,6 +47,17 @@ import { Repay } from './Modals/Repay.modal'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 
+const defaultOptions = { 
+  columnNames: {
+    collateralBalance: 'Collateral Balance',
+    borrowedAmount: 'Amount'
+  }
+}
+
+export type HeaderOptions = typeof defaultOptions & {
+  reverseColumns?: boolean
+}
+
 type BorrowingExpandCardPropsType = BorrowingData & {
   isOwner?: boolean
   borrowedAsset: BorrowingData['borrowedAsset']
@@ -61,6 +72,7 @@ type BorrowingExpandCardPropsType = BorrowingData & {
   children?: React.ReactNode
   status?: string
   timestamp?: number
+  options?: HeaderOptions
 }
 
 export const BorrowingExpandCard = ({
@@ -79,6 +91,7 @@ export const BorrowingExpandCard = ({
   children,
   status,
   timestamp,
+  options = defaultOptions,
 }: BorrowingExpandCardPropsType) => {
   const [shownModal, setShownModal] = useState<
     | typeof BORROW_ASSET_MODAL_ID
@@ -96,6 +109,8 @@ export const BorrowingExpandCard = ({
   const closePopup = useCallback(() => {
     setShownModal(null)
   }, [])
+
+  const { columnNames, reverseColumns } = options
 
   const {
     assetSymbol,
@@ -173,19 +188,19 @@ export const BorrowingExpandCard = ({
                 currentPersentage={50}
               />
             </ThreeLevelListItem>
-            {isVaultsPage && (
+            {reverseColumns && (
             <ThreeLevelListItem>
-              <div className="name">Collateral Value</div>
+              <div className="name">{columnNames.collateralBalance}</div>
               <CommaNumber value={collateralBalance} className="value" beginningText="$" />
             </ThreeLevelListItem>)}
             <ThreeLevelListItem>
-              <div className="name">{isVaultsPage ? 'Borrowed Amount' : 'Amount'}</div>
+              <div className="name">{columnNames.borrowedAmount}</div>
               <CommaNumber value={amtBorrowed} className="value" />
               {assetRate ? <CommaNumber value={amtBorrowed * assetRate} beginningText="$" className="rate" /> : null}
             </ThreeLevelListItem>
-            {!isVaultsPage && (
+            {!reverseColumns && (
             <ThreeLevelListItem>
-              <div className="name">Collateral Balance</div>
+              <div className="name">{columnNames.collateralBalance}</div>
               <CommaNumber value={collateralBalance} className="value" beginningText="$" />
             </ThreeLevelListItem>)}
           </>
