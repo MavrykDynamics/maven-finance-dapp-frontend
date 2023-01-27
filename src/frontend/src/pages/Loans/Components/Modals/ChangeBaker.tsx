@@ -188,16 +188,26 @@ export const ChangeBaker = ({
               <div className="name">Bakery Address</div>
               {activeTab === 3 ? (
                 bakerChosenDdItem?.bakerAddress ? (
-                  <TzAddress className="value" tzAddress={bakerChosenDdItem.bakerAddress} type={BLUE} />
+                  <TzAddress className="value" tzAddress={bakerChosenDdItem.bakerAddress} type={BLUE} hasIcon={false} />
                 ) : (
                   <div className="value">-</div>
                 )
               ) : null}
               {activeTab === 1 ? (
-                <TzAddress className="value" tzAddress={'hihibhyvyvuyvuyvuyvuyvuvuuvugug'} type={BLUE} />
+                <TzAddress
+                  className="value"
+                  tzAddress={'hihibhyvyvuyvuyvuyvuyvuvuuvugug'}
+                  type={BLUE}
+                  hasIcon={false}
+                />
               ) : null}
               {activeTab === 2 ? (
-                <TzAddress className="value" tzAddress={'jkgugufftyfccvgvgvchgvvytvtgcchgchgc'} type={BLUE} />
+                <TzAddress
+                  className="value"
+                  tzAddress={'jkgugufftyfccvgvgvchgvvytvtgcchgchgc'}
+                  type={BLUE}
+                  hasIcon={false}
+                />
               ) : null}
             </ThreeLevelListItem>
             <ThreeLevelListItem>

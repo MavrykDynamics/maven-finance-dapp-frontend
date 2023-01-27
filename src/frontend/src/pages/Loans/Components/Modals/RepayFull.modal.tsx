@@ -162,29 +162,18 @@ export const RepayFull = ({
             <>
               <div className="lending-stats" style={{ marginBottom: '25px' }}>
                 <ThreeLevelListItem>
-                  <div className="name">Borrowed</div>
-                  <CommaNumber value={borrowedAsset?.amtBorrowed ?? 0} className="value" endingText={assetName} />
+                  <div className="name">Asset</div>
+                  <div className="value">{assetName}</div>
+                </ThreeLevelListItem>
+                <ThreeLevelListItem>
+                  <div className="name">Amount</div>
+                  <CommaNumber value={Number(borrowedAsset?.amtBorrowed)} className="value" />
+                </ThreeLevelListItem>
+                <ThreeLevelListItem className="right">
+                  <div className="name">USD Value</div>
                   <CommaNumber
                     value={Number(borrowedAsset?.amtBorrowed) * Number(borrowedAsset?.assetRate)}
-                    className="rate"
-                    beginningText="$"
-                  />
-                </ThreeLevelListItem>
-                <ThreeLevelListItem>
-                  <div className="name">Fees Due</div>
-                  <CommaNumber value={feesAmount} className="value" endingText={assetName} />
-                  <CommaNumber
-                    value={feesAmount * Number(borrowedAsset?.assetRate)}
-                    className="rate"
-                    beginningText="$"
-                  />
-                </ThreeLevelListItem>
-                <ThreeLevelListItem>
-                  <div className="name">Total Outstanding</div>
-                  <CommaNumber value={totalOutstanding} className="value" endingText={assetName} />
-                  <CommaNumber
-                    value={totalOutstanding * Number(borrowedAsset?.assetRate)}
-                    className="rate"
+                    className="value"
                     beginningText="$"
                   />
                 </ThreeLevelListItem>

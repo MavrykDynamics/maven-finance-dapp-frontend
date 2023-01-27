@@ -265,6 +265,24 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
     margin-bottom: 45px;
   }
 
+  &.table-input {
+    border: none;
+    padding: 0;
+    input {
+      padding: 0 10px;
+      background: transparent;
+
+      &::placeholder {
+        color: ${({ theme }) => theme.dataColor};
+      }
+    }
+
+    &:focus-within {
+      box-shadow: unset;
+      border-color: unset;
+    }
+  }
+
   &.large-input {
     height: 56px;
   }

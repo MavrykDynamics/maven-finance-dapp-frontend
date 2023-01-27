@@ -1,14 +1,17 @@
-import { useState } from 'react'
-
-import { ValidationResult } from 'pages/ProposalSubmission/ProposalSybmittion.types'
+import { useDispatch, useSelector } from 'react-redux'
+import { useEffect, useMemo, useState } from 'react'
+import { useLockBodyScroll } from 'react-use'
 
 import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { validateTzAddress } from 'utils/validatorFunctions'
+import { LoansPopupsAddressInputStateType, UpdateOperatorsPopupDataType } from './Modals.helpers'
+import { State } from 'reducers'
+import { updateOperatorsAction } from 'pages/Loans/Loans.actions'
 
 import Icon from 'app/App.components/Icon/Icon.view'
 import NewButton from 'app/App.components/Button/NewButton.controller'
-import { Input } from 'app/App.components/Input/Input.controller'
+import { Input } from 'app/App.components/Input/NewInput'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
@@ -17,36 +20,46 @@ import { LoansModalBase } from './Modals.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17307%3A226700&t=Sx2aEpp3ifrGxBtQ-0
-export const UpdateMVKOperator = ({ closePopup, show }: { closePopup: () => void; show: boolean }) => {
-  const [tableData, setTableData] = useState<Array<string>>([''])
-  const [tableValidation, setTableValidation] = useState<Array<ValidationResult>>([''])
+export const UpdateMVKOperator = ({
+  closePopup,
+  show,
+  data,
+}: {
+  closePopup: () => void
+  show: boolean
+  data: UpdateOperatorsPopupDataType
+}) => {
+  const {} = data ?? {}
 
-  const updateHandler = () => {}
+  useLockBodyScroll(show)
+  const dispatch = useDispatch()
+  const { isActionLoading } = useSelector((state: State) => state.loading)
 
-  const handleAddRow = () => {
-    setTableData(tableData.concat(['']))
-    setTableValidation(tableValidation.concat(['']))
-  }
+  const [tableData, setTableData] = useState<Array<LoansPopupsAddressInputStateType>>([
+    { address: '', validationStatus: '' },
+  ])
 
-  const handleDeleteRow = (rowId: number) => {
-    setTableData(tableData.filter((_, idx) => idx !== rowId))
-    setTableValidation(tableValidation.filter((_, idx) => idx !== rowId))
-  }
+  useEffect(() => {
+    if (!show) {
+      setTableData([{ address: '', validationStatus: '' }])
+    }
+  }, [show])
 
-  const updateTableDataState = (e: React.ChangeEvent<HTMLInputElement>, rowIdx: number) => {
-    const { value } = e.target
+  const isActionDisabled = useMemo(() => {
+    return isActionLoading || tableData.some(({ validationStatus }) => validationStatus !== INPUT_STATUS_SUCCESS)
+  }, [isActionLoading, tableData])
 
-    setTableData(tableData.map((item, idx) => (idx === rowIdx ? String(value) : item)))
-  }
+  const handleAddRow = () => setTableData(tableData.concat([{ address: '', validationStatus: '' }]))
+  const handleDeleteRow = (rowId: number) => setTableData(tableData.filter((_, idx) => idx !== rowId))
 
-  const handleTableOnBlur = (e: React.ChangeEvent<HTMLInputElement>, rowIdx: number) => {
-    const { value } = e.target
-    setTableValidation(
-      tableValidation.map((item, idx) =>
-        idx === rowIdx ? (validateTzAddress(value as string) ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR) : item,
-      ),
+  const updateTableDataState = (newValue: string, rowIdx: number) => {
+    const validationStatus = validateTzAddress(newValue) ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
+    setTableData(
+      tableData.map((item, idx) => (idx === rowIdx ? { address: String(newValue), validationStatus } : item)),
     )
   }
+
+  const updateHandler = () => dispatch(updateOperatorsAction(closePopup))
 
   return (
     <PopupContainer onClick={closePopup} show={show}>
@@ -66,18 +79,23 @@ export const UpdateMVKOperator = ({ closePopup, show }: { closePopup: () => void
             <br />- Allow Any: Any user may deposit collateral
           </div>
 
-          <Table className="editable-table">
+          <Table className="editable-table one-column">
             <TableBody className="editable-body">
-              {tableData.map((permissionAddress, rowIdx) => {
+              {tableData.map(({ address, validationStatus }, rowIdx) => {
                 return (
                   <TableRow className="editable-row">
                     <TableCell width="100%">
                       <Input
-                        value={String(permissionAddress)}
-                        inputStatus={tableValidation[rowIdx]}
-                        onChange={(e) => updateTableDataState(e, rowIdx)}
-                        onBlur={(e) => handleTableOnBlur(e, rowIdx)}
-                        type={'text'}
+                        className={`table-input`}
+                        inputProps={{
+                          value: address,
+                          placeholder: 'Enter tz1 address',
+                          type: 'text',
+                          onChange: (e) => updateTableDataState(e.target.value, rowIdx),
+                        }}
+                        settings={{
+                          inputStatus: validationStatus,
+                        }}
                       />
                     </TableCell>
 
@@ -100,7 +118,12 @@ export const UpdateMVKOperator = ({ closePopup, show }: { closePopup: () => void
             </AddRowBtn>
           </Table>
 
-          <NewButton kind={ACTION_PRIMARY} onClick={updateHandler} className="modal-manage-btn">
+          <NewButton
+            kind={ACTION_PRIMARY}
+            onClick={updateHandler}
+            disabled={isActionDisabled}
+            className="modal-manage-btn"
+          >
             Update
           </NewButton>
         </LoansModalBase>

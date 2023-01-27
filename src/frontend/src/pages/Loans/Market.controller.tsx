@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Redirect, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
@@ -27,16 +27,17 @@ import { MarketPageHeader } from './Components/LoansPageHeader'
 import { PermissionVaults } from './Components/PermissionVaultsTab'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { getLoansStorage } from './Loans.actions'
+import LoansPopupsProvider from './Components/Modals/LoansModals.provider'
 
 export const Market = () => {
   const dispatch = useDispatch()
   const { assetId, tabId } = useParams<{ assetId: string; tabId: string }>()
-  const { loanTokens, loansControllerAddress } = useSelector((state: State) => state.loans)
+  const { loanTokens, loansControllerAddress, isFetched } = useSelector((state: State) => state.loans)
   const { accountPkh } = useSelector((state: State) => state.wallet)
 
   const { isLoading } = useDataLoader(async () => {
     try {
-      if (loanTokens?.length === 0) {
+      if (!isFetched) {
         await dispatch(getLoansStorage())
       }
     } catch (e) {}
@@ -113,111 +114,113 @@ export const Market = () => {
   )
 
   return (
-    <Page>
-      <MarketPageHeader assetId={assetId} currentAsset={currentAsset} />
+    <LoansPopupsProvider>
+      <Page>
+        <MarketPageHeader assetId={assetId} currentAsset={currentAsset} />
 
-      {marketPagination}
+        {marketPagination}
 
-      <MarketStyled>
-        <div className="gen-info">
-          <div className="asset-info">
-            {currentToken.loanTokenData.icon ? (
-              <div className="img-wrapper">
-                <img src={currentToken.loanTokenData.icon} alt={`${currentToken.loanTokenData.icon} icon`} />
+        <MarketStyled>
+          <div className="gen-info">
+            <div className="asset-info">
+              {currentToken.loanTokenData.icon ? (
+                <div className="img-wrapper">
+                  <img src={currentToken.loanTokenData.icon} alt={`${currentToken.loanTokenData.icon} icon`} />
+                </div>
+              ) : (
+                <div className="no-icon">
+                  <Icon id="noImage" />
+                </div>
+              )}
+
+              <div className="text-wrapper">
+                <div className="symbol">{currentToken.loanTokenData.name}</div>
+                <div className="full-name">{currentToken.loanTokenData.symbol}</div>
               </div>
-            ) : (
-              <div className="no-icon">
-                <Icon id="noImage" />
-              </div>
-            )}
-
-            <div className="text-wrapper">
-              <div className="symbol">{currentToken.loanTokenData.name}</div>
-              <div className="full-name">{currentToken.loanTokenData.symbol}</div>
             </div>
+            {tabId === LEND_TAB_ID ? (
+              <>
+                <ThreeLevelListItem>
+                  <div className="name">Oracle Price</div>
+                  <CommaNumber value={0} beginningText="$" className="value" />
+                </ThreeLevelListItem>
+                <ThreeLevelListItem>
+                  <div className="name">Earn APY</div>
+                  <CommaNumber value={currentToken.lendingAPY} endingText="%" className="value" />
+                </ThreeLevelListItem>
+                <ThreeLevelListItem>
+                  <div className="name">Total Lending</div>
+                  <CommaNumber value={currentToken.totalLended} className="value" />
+                </ThreeLevelListItem>
+                <ThreeLevelListItem>
+                  <div className="name">Available Liquidity</div>
+                  <CommaNumber value={currentToken.availableLiquidity} className="value" />
+                </ThreeLevelListItem>
+                <ThreeLevelListItem>
+                  <div className="name">Collateral Factor</div>
+                  <CommaNumber value={currentToken.collateralFactor} endingText="%" className="value" />
+                </ThreeLevelListItem>
+                <ThreeLevelListItem>
+                  <div className="name">Suppliers</div>
+                  <CommaNumber value={currentToken.suppliers} className="value" />
+                </ThreeLevelListItem>
+              </>
+            ) : (
+              <>
+                <ThreeLevelListItem>
+                  <div className="name">Oracle Price</div>
+                  <CommaNumber value={0} beginningText="$" className="value" />
+                </ThreeLevelListItem>
+                <ThreeLevelListItem>
+                  <div className="name">Borrow APR</div>
+                  <CommaNumber value={currentToken.borrowAPR} endingText="%" className="value" />
+                </ThreeLevelListItem>
+                <ThreeLevelListItem>
+                  <div className="name">Total Borrowed</div>
+                  <CommaNumber value={currentToken.totalBorrowed} className="value" />
+                </ThreeLevelListItem>
+                <ThreeLevelListItem>
+                  <div className="name">Reserve Amount</div>
+                  <CommaNumber value={currentToken.reserveAmount} className="value" />
+                </ThreeLevelListItem>
+                <ThreeLevelListItem>
+                  <div className="name">Reserve Factor</div>
+                  <CommaNumber value={currentToken.reserveFactor} endingText="%" className="value" />
+                </ThreeLevelListItem>
+                <ThreeLevelListItem>
+                  <div className="name">Borrowers</div>
+                  <CommaNumber value={currentToken.borrowers} className="value" />
+                </ThreeLevelListItem>
+              </>
+            )}
           </div>
+
+          {tabsNav}
+
           {tabId === LEND_TAB_ID ? (
-            <>
-              <ThreeLevelListItem>
-                <div className="name">Oracle Price</div>
-                <CommaNumber value={0} beginningText="$" className="value" />
-              </ThreeLevelListItem>
-              <ThreeLevelListItem>
-                <div className="name">Earn APY</div>
-                <CommaNumber value={currentToken.lendingAPY} endingText="%" className="value" />
-              </ThreeLevelListItem>
-              <ThreeLevelListItem>
-                <div className="name">Total Lending</div>
-                <CommaNumber value={currentToken.totalLended} className="value" />
-              </ThreeLevelListItem>
-              <ThreeLevelListItem>
-                <div className="name">Available Liquidity</div>
-                <CommaNumber value={currentToken.availableLiquidity} className="value" />
-              </ThreeLevelListItem>
-              <ThreeLevelListItem>
-                <div className="name">Collateral Factor</div>
-                <CommaNumber value={currentToken.collateralFactor} endingText="%" className="value" />
-              </ThreeLevelListItem>
-              <ThreeLevelListItem>
-                <div className="name">Suppliers</div>
-                <CommaNumber value={currentToken.suppliers} className="value" />
-              </ThreeLevelListItem>
-            </>
-          ) : (
-            <>
-              <ThreeLevelListItem>
-                <div className="name">Oracle Price</div>
-                <CommaNumber value={0} beginningText="$" className="value" />
-              </ThreeLevelListItem>
-              <ThreeLevelListItem>
-                <div className="name">Borrow APR</div>
-                <CommaNumber value={currentToken.borrowAPR} endingText="%" className="value" />
-              </ThreeLevelListItem>
-              <ThreeLevelListItem>
-                <div className="name">Total Borrowed</div>
-                <CommaNumber value={currentToken.totalBorrowed} className="value" />
-              </ThreeLevelListItem>
-              <ThreeLevelListItem>
-                <div className="name">Reserve Amount</div>
-                <CommaNumber value={currentToken.reserveAmount} className="value" />
-              </ThreeLevelListItem>
-              <ThreeLevelListItem>
-                <div className="name">Reserve Factor</div>
-                <CommaNumber value={currentToken.reserveFactor} endingText="%" className="value" />
-              </ThreeLevelListItem>
-              <ThreeLevelListItem>
-                <div className="name">Borrowers</div>
-                <CommaNumber value={currentToken.borrowers} className="value" />
-              </ThreeLevelListItem>
-            </>
-          )}
-        </div>
+            <LendingTab
+              lendingItem={currentToken.lendingItem}
+              lendingControllerAddress={loansControllerAddress}
+              assetData={currentToken.loanTokenData}
+            />
+          ) : null}
+          {tabId === BORROW_TAB_ID ? (
+            <BorrowingTab
+              borrowingItems={currentToken.myBorrowingList}
+              lendingControllerAddress={loansControllerAddress}
+              currentMarketAsset={assetId}
+            />
+          ) : null}
+          {tabId === PERMISSIONS_VAULTS_TAB_ID ? (
+            <PermissionVaults
+              permissionVaults={currentToken.permissionedBorrowingList}
+              lendingControllerAddress={loansControllerAddress}
+            />
+          ) : null}
 
-        {tabsNav}
-
-        {tabId === LEND_TAB_ID ? (
-          <LendingTab
-            lendingItem={currentToken.lendingItem}
-            lendingControllerAddress={loansControllerAddress}
-            assetData={currentToken.loanTokenData}
-          />
-        ) : null}
-        {tabId === BORROW_TAB_ID ? (
-          <BorrowingTab
-            borrowingItems={currentToken.myBorrowingList}
-            lendingControllerAddress={loansControllerAddress}
-            currentMarketAsset={assetId}
-          />
-        ) : null}
-        {tabId === PERMISSIONS_VAULTS_TAB_ID ? (
-          <PermissionVaults
-            permissionVaults={currentToken.permissionedBorrowingList}
-            lendingControllerAddress={loansControllerAddress}
-          />
-        ) : null}
-
-        <TransactionHistory currentToken={currentToken} />
-      </MarketStyled>
-    </Page>
+          <TransactionHistory currentToken={currentToken} />
+        </MarketStyled>
+      </Page>
+    </LoansPopupsProvider>
   )
 }

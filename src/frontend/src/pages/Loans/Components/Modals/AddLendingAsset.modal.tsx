@@ -25,20 +25,13 @@ import { PopupContainer, PopupContainerWrapper } from 'app/App.components/Settin
 export const AddLendingAsset = ({
   closePopup,
   show,
-  modalData,
+  data,
 }: {
   closePopup: () => void
   show: boolean
-  modalData?: AddLendingAssetDataType
+  data: AddLendingAssetDataType
 }) => {
-  const {
-    userBalance = 0,
-    mBalance = 0,
-    assetRate = null,
-    assetName = '',
-    lendingAPY = 0,
-    assetIcon = '',
-  } = modalData ?? {}
+  const { userBalance = 0, mBalance = 0, assetRate = null, assetName = '', lendingAPY = 0, assetIcon = '' } = data ?? {}
 
   useLockBodyScroll(show)
 

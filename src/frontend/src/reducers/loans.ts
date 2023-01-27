@@ -13,6 +13,7 @@ export interface LoansState {
   loansControllerAddress: string
   avaliableCollaterals: Array<AvaliableCollateralType>
   xtzBakers: Array<XtzBakerType>
+  isFetched: boolean
 }
 
 const loansDefaultState: LoansState = {
@@ -26,6 +27,7 @@ const loansDefaultState: LoansState = {
     lendingChartData: [],
   },
   xtzBakers: [],
+  isFetched: false,
 }
 
 export function loans(state = loansDefaultState, action: Action) {
@@ -34,6 +36,7 @@ export function loans(state = loansDefaultState, action: Action) {
       return {
         ...state,
         ...action.loansStorage,
+        isFetched: true,
       }
     default:
       return state

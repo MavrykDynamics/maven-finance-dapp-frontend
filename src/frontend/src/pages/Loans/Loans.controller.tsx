@@ -31,10 +31,13 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 export const Loans = () => {
   const dispatch = useDispatch()
   const { accountPkh } = useSelector((state: State) => state.wallet)
+  const { isFetched } = useSelector((state: State) => state.loans)
 
   const { isLoading } = useDataLoader(async () => {
     try {
-      await dispatch(getLoansStorage())
+      if (!isFetched) {
+        await dispatch(getLoansStorage())
+      }
     } catch (e) {}
   }, [accountPkh])
   const { loanTokens, chartsData } = useSelector((state: State) => state.loans)

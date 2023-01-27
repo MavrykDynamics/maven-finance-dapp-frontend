@@ -1,17 +1,15 @@
-import { useState } from 'react'
+import { useContext } from 'react'
 
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { BorrowingData } from 'utils/TypesAndInterfaces/Loans'
-import { ModalStateType } from './BorrowingTab'
-import { AddCollateralPopupDataType } from './Modals/Modals.helpers'
 
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { BorrowingExpandCard } from './BorrowindExpandCard'
-import { AddCollateral } from './Modals/AddCollateral.modal'
 
 import { EmptyContainer } from 'app/App.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { LoansTabStyled } from './LoansComponents.style'
+import { loansPopupsContext } from './Modals/LoansModals.provider'
 
 type PermissionVaultsPropsType = {
   permissionVaults: Array<BorrowingData>
@@ -19,20 +17,7 @@ type PermissionVaultsPropsType = {
 }
 
 export const PermissionVaults = ({ permissionVaults, lendingControllerAddress }: PermissionVaultsPropsType) => {
-  // Add existing collateral modal data and hanlders
-  const [addExistingCollateralModalInfo, setAddExistingCollateralModalInfo] = useState<
-    ModalStateType<AddCollateralPopupDataType>
-  >({
-    showModal: false,
-    data: null,
-  })
-  const openAddCollateral = (popupData: AddCollateralPopupDataType) =>
-    setAddExistingCollateralModalInfo({
-      showModal: true,
-      data: popupData ? { ...popupData } : null,
-    })
-  const closeAddCollateralPopupHandler = () =>
-    setAddExistingCollateralModalInfo({ ...addExistingCollateralModalInfo, showModal: false })
+  const { openAddExistingCollateralPopup } = useContext(loansPopupsContext)
 
   return (
     <LoansTabStyled>
@@ -40,16 +25,10 @@ export const PermissionVaults = ({ permissionVaults, lendingControllerAddress }:
         <h2>Permissioned Vaults</h2>
       </GovRightContainerTitleArea>
 
-      <AddCollateral
-        closePopup={closeAddCollateralPopupHandler}
-        show={addExistingCollateralModalInfo.showModal}
-        data={addExistingCollateralModalInfo.data}
-      />
-
       {permissionVaults.length ? (
         <div className="list-wrapper">
           {permissionVaults.map((item) => {
-            return <BorrowingExpandCard openAddCollateral={openAddCollateral} {...item} />
+            return <BorrowingExpandCard openAddCollateral={openAddExistingCollateralPopup} {...item} />
           })}
         </div>
       ) : (

@@ -1,9 +1,13 @@
 import { useDispatch, useSelector } from 'react-redux'
+import { useLockBodyScroll } from 'react-use'
 import { useEffect, useMemo, useState } from 'react'
 
 import { depositCollateralAction, triggerInitialVaultCreation } from 'pages/Loans/Loans.actions'
 import { InputStatusType, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
-import { ACTION_PRIMARY, ACTION_SIMPLE, TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
+import { CreateVaultPopupDataType } from './Modals.helpers'
+import { isTezosAsset } from 'pages/Loans/Loans.helpers'
+import { AvaliableCollateralType } from 'utils/TypesAndInterfaces/Loans'
+import { ACTION_PRIMARY, TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
 
 import NewButton from 'app/App.components/Button/NewButton.controller'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
@@ -28,9 +32,6 @@ import {
   TableBody,
   TableCell,
 } from 'app/App.components/Table/Table.style'
-import { AvaliableCollateralType } from 'utils/TypesAndInterfaces/Loans'
-import { isTezosAsset } from 'pages/Loans/Loans.helpers'
-import { useLockBodyScroll } from 'react-use'
 
 export type DropDownCollateralAssetType = DropDownItemType & AvaliableCollateralType
 
@@ -60,20 +61,21 @@ const CONFIRMATION_SCREEN_ID = 'confirmation'
 export const CreateNewVault = ({
   closePopup,
   show,
-  currentMarketAsset,
+  data,
 }: {
   closePopup: () => void
   show: boolean
-  currentMarketAsset: string
+  data: CreateVaultPopupDataType
 }) => {
+  const { currentMarketAsset } = data ?? {}
   const dispatch = useDispatch()
   const { avaliableCollaterals, xtzBakers } = useSelector((state: State) => state.loans)
+  const { isActionLoading } = useSelector((state: State) => state.loading)
 
   const [shownScreen, setShownScreen] = useState<CurrentActiveModalScreen>(INITIAL_SCREEN_ID)
   const [collateralsToSelect, setCollateralsToSelect] = useState<Record<number, DropDownCollateralAssetType>>({})
   const [collaterals, setCollaterals] = useState<Array<InputCollateral>>([])
   const [isVaultCreating, setVaultCreating] = useState(false)
-  const [disabledDepositBtn, setDIsablingDepositBtn] = useState(false)
   const [newVaultAddress, setNewVaultAddress] = useState('')
 
   useLockBodyScroll(show)
@@ -285,15 +287,17 @@ export const CreateNewVault = ({
   }
 
   const createVaultAction = async () => {
-    try {
-      setVaultCreating(true)
-      const newVaultData = await dispatch(triggerInitialVaultCreation(currentMarketAsset))
-      setNewVaultAddress(String(newVaultData))
-    } catch (e) {
-      setShownScreen(INITIAL_SCREEN_ID)
-      console.log('fetching new vault data error', e)
-    } finally {
-      setVaultCreating(false)
+    if (currentMarketAsset) {
+      try {
+        setVaultCreating(true)
+        const newVaultData = await dispatch(triggerInitialVaultCreation(currentMarketAsset))
+        setNewVaultAddress(String(newVaultData))
+      } catch (e) {
+        setShownScreen(INITIAL_SCREEN_ID)
+        console.log('fetching new vault data error', e)
+      } finally {
+        setVaultCreating(false)
+      }
     }
   }
 
@@ -323,11 +327,9 @@ export const CreateNewVault = ({
     }, [])
 
     if (newVaultAddress && !isAddCollateralContinueDisabled && collaretalToDeposit.length > 0) {
-      setDIsablingDepositBtn(true)
       dispatch(
         depositCollateralAction(newVaultAddress, collaretalToDeposit, closePopup, bakerChosenDdItem?.bakerAddress),
       )
-      setDIsablingDepositBtn(false)
     }
   }
 
@@ -589,7 +591,7 @@ export const CreateNewVault = ({
                   kind={ACTION_PRIMARY}
                   onClick={depositCollateralHandler}
                   className="modal-manage-btn"
-                  disabled={disabledDepositBtn}
+                  disabled={isActionLoading}
                 >
                   <Icon id="plus" />
                   Deposit
