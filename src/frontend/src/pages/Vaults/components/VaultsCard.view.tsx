@@ -86,10 +86,8 @@ export const VaultsCard = (props: Props) => {
     ownerId,
     vaultId,
     status,
-    currentBlockLevel,
-    liquidationEndLevel,
-    markedForLiquidationLevel,
-    liquidationDelayInMinutes,
+    levelOfEarly,
+    levelOfLate,
     borrowedAsset: { assetIcon, assetSymbol, collateralBalance, amtBorrowed, assetRate = 1 },
     collateralData,
     isOwner,
@@ -122,35 +120,20 @@ export const VaultsCard = (props: Props) => {
   useEffect(() => {
     if (!expanded) return
 
-    if (status === vaultsStatuses.GRACE_PERIOD) {
+    if (status === vaultsStatuses.GRACE_PERIOD || status === vaultsStatuses.LIQUIDATABLE) {
       ;(async () => {
-        if (!currentBlockLevel) {
+        if (!levelOfEarly || !levelOfLate) {
           setTimerTimestamp(undefined)
           return 
         }
-        
-        const levelOfEarly = currentBlockLevel
-        const levelOfLate = markedForLiquidationLevel + (liquidationDelayInMinutes * BLOCKS_PER_MINUTE)
 
         const response = await getCountdownTimestamp(levelOfEarly, levelOfLate)
         const timestamp =  new Date(response.timestampOfEarly).getTime() - new Date(response.timestampOfLate).getTime() + new Date().getTime()
         
         setTimerTimestamp(timestamp)
       })()
-    } else if (status === vaultsStatuses.LIQUIDATABLE) {
-      ;(async () => {
-        if (!currentBlockLevel || !liquidationEndLevel) {
-          setTimerTimestamp(undefined)
-          return 
-        }
-        
-        const response = await getCountdownTimestamp(currentBlockLevel, liquidationEndLevel)
-        const timestamp =  new Date(response.timestampOfEarly).getTime() - new Date(response.timestampOfLate).getTime() + new Date().getTime()
-
-        setTimerTimestamp(timestamp)
-      })()
     } 
-  }, [status, expanded, currentBlockLevel, markedForLiquidationLevel, liquidationDelayInMinutes, liquidationEndLevel])
+  }, [status, expanded, levelOfEarly, levelOfLate])
 
   const headerSufix = (
     <StatusFlag status={statusColor} text={status} className="sufix" />

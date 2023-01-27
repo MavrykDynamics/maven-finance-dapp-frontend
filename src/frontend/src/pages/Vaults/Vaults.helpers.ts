@@ -1,3 +1,4 @@
+import dayjs from 'dayjs'
 import { VaultType, CollateralType, LendingControllerGQL } from 'utils/TypesAndInterfaces/Vaults'
 import { Aggregator } from 'utils/generated/graphqlTypes'
 import { State } from 'reducers'
@@ -14,7 +15,7 @@ import { statusSortPriority, vaultsStatuses } from './Vaults.consts'
 import { fetchRateBySymbols } from 'reducers/actions/dipDupActions.actions'
 import { calculateCompoundedInterest, getAssetMetadata } from 'pages/Loans/Loans.helpers'
 import { calcWithoutDecimals } from 'utils/calcFunctions'
-import dayjs from 'dayjs'
+import { BLOCKS_PER_MINUTE } from 'utils/constants'
 
 type VaultsStorageProps = {
   lendingController: LendingControllerGQL
@@ -131,6 +132,17 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
     const creationTimestamp = item.vault.creation_timestamp 
       ? String(item.vault.creation_timestamp)
       : undefined
+    
+    let levelOfEarly = 0
+    let levelOfLate = 0
+  
+    if (status === vaultsStatuses.GRACE_PERIOD && currentBlockLevel) {
+      levelOfEarly = currentBlockLevel
+      levelOfLate = item.marked_for_liquidation_level + (lendingController.liquidation_delay_in_minutes * BLOCKS_PER_MINUTE)
+    } else if (status === vaultsStatuses.LIQUIDATABLE && currentBlockLevel && item.liquidation_end_level) {
+      levelOfEarly = currentBlockLevel
+      levelOfLate = item.liquidation_end_level
+    }
 
     const currentInterestRate = calcWithoutDecimals(item.loan_token?.current_interest_rate ?? 0, interestRateDecimals)
 
@@ -180,10 +192,8 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
       vaultId: item.internal_id,
       creationTimestamp,
       status,
-      currentBlockLevel,
-      liquidationEndLevel: item.liquidation_end_level,
-      markedForLiquidationLevel: item.marked_for_liquidation_level,
-      liquidationDelayInMinutes: lendingController.liquidation_delay_in_minutes,
+      levelOfEarly,
+      levelOfLate,
       depositors: item.vault?.depositors.map(({ depositor_id }) => depositor_id) as Array<string> | undefined,
     }
 
