@@ -21,6 +21,8 @@ import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase, VaultModalOverview } from './Modals.style'
 import { borrowVaultAssetAction } from 'pages/Loans/Loans.actions'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import { silverColor } from 'styles'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A240058&t=Sx2aEpp3ifrGxBtQ-0
 export const BorrowAsset = ({
@@ -127,7 +129,10 @@ export const BorrowAsset = ({
                   <CommaNumber value={borrowAPR} className="value" endingText="%" />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
-                  <div className="name">DAO Fee</div>
+                  <div className="name">
+                    DAO Fee{' '}
+                    <CustomTooltip iconId="info" defaultStrokeColor={silverColor} text={``} className="tooltip" />
+                  </div>
                   <CommaNumber value={1} className="value" endingText="%" />
                 </ThreeLevelListItem>
               </div>
@@ -213,7 +218,10 @@ export const BorrowAsset = ({
                   <div className="value">{assetName}</div>
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
-                  <div className="name">Total Amount</div>
+                  <div className="name">
+                    Total Amount{' '}
+                    <CustomTooltip iconId="info" defaultStrokeColor={silverColor} text={``} className="tooltip" />
+                  </div>
                   <CommaNumber value={Number(inputData.amount)} className="value" />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>

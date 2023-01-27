@@ -12,7 +12,7 @@ import { TRANSPARENT_WITH_BORDER, ACTION_PRIMARY } from 'app/App.components/Butt
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
 import NewButton from 'app/App.components/Button/NewButton.controller'
 import Icon from 'app/App.components/Icon/Icon.view'
-import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+import { CommaNumber, formatNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 
 import { ConnectWalletInfoStyled } from 'app/App.components/ConnectWallet/ConnectWallet.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
@@ -125,7 +125,15 @@ export const RepayFull = ({
                 <>
                   <ConnectWalletInfoStyled className="info error">
                     <Icon id="info" />{' '}
-                    <p>To Repay in Full & Close Vault you need at least 1389.84 XTZ on your Ballance</p>
+                    <p>
+                      To Repay in Full & Close Vault you need at least{' '}
+                      {formatNumber({
+                        showDecimal: true,
+                        decimalsToShow: 2,
+                        number: Number(borrowedAsset?.amtBorrowed) - Number(borrowedAsset?.userBalance),
+                      })}{' '}
+                      {assetName} on your Ballance
+                    </p>
                   </ConnectWalletInfoStyled>
 
                   <div className="block-name" style={{ marginTop: '30px' }}>
@@ -147,7 +155,7 @@ export const RepayFull = ({
                       <CommaNumber value={currentCollateralBalance} className="value" beginningText="$" />
                     </ThreeLevelListItem>
                     <ThreeLevelListItem>
-                      <div className="name">Available To Borrow</div>
+                      <div className="name">Borrow Capacity</div>
                       <CommaNumber value={currentAvaliableToBorrow} className="value" beginningText="$" />
                     </ThreeLevelListItem>
                   </VaultModalOverview>
