@@ -1,5 +1,3 @@
-import { useContext } from 'react'
-
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { BorrowingData } from 'utils/TypesAndInterfaces/Loans'
 
@@ -9,7 +7,6 @@ import { BorrowingExpandCard } from './BorrowindExpandCard'
 import { EmptyContainer } from 'app/App.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { LoansTabStyled } from './LoansComponents.style'
-import { loansPopupsContext } from './Modals/LoansModals.provider'
 
 type PermissionVaultsPropsType = {
   permissionVaults: Array<BorrowingData>
@@ -17,8 +14,6 @@ type PermissionVaultsPropsType = {
 }
 
 export const PermissionVaults = ({ permissionVaults, lendingControllerAddress }: PermissionVaultsPropsType) => {
-  const { openAddExistingCollateralPopup } = useContext(loansPopupsContext)
-
   return (
     <LoansTabStyled>
       <GovRightContainerTitleArea>
@@ -28,7 +23,7 @@ export const PermissionVaults = ({ permissionVaults, lendingControllerAddress }:
       {permissionVaults.length ? (
         <div className="list-wrapper">
           {permissionVaults.map((item) => {
-            return <BorrowingExpandCard openAddCollateral={openAddExistingCollateralPopup} {...item} />
+            return <BorrowingExpandCard {...item} />
           })}
         </div>
       ) : (

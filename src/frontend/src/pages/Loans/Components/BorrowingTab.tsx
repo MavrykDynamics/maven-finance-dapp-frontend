@@ -23,18 +23,7 @@ export const BorrowingTab = ({
   lendingControllerAddress,
   currentMarketAsset,
 }: BorrowingTabPropsType) => {
-  const {
-    openChangeBakerPopup,
-    openAddExistingCollateralPopup,
-    openAddNewCollateralPopup,
-    openBorrowPopup,
-    openManagePermissionsPopup,
-    openRepayFullPopup,
-    openRepayPopup,
-    openUpdateMvkOperatorsPopup,
-    openWithdrawCollateralPopup,
-    openCreateVaultPopup,
-  } = useContext(loansPopupsContext)
+  const { openCreateVaultPopup } = useContext(loansPopupsContext)
 
   return (
     <LoansTabStyled>
@@ -53,22 +42,7 @@ export const BorrowingTab = ({
           />
           <div className="list-wrapper">
             {borrowingItems.map((item, idx) => {
-              return (
-                <BorrowingExpandCard
-                  isOwner
-                  {...item}
-                  key={item.borrowedAsset.assetSymbol + '-' + idx}
-                  openAddNewCollateral={openAddNewCollateralPopup}
-                  openAddCollateral={openAddExistingCollateralPopup}
-                  openRepay={openRepayPopup}
-                  openRepayFull={openRepayFullPopup}
-                  openBorrow={openBorrowPopup}
-                  openChangeBaker={openChangeBakerPopup}
-                  openWithdrawCollateral={openWithdrawCollateralPopup}
-                  openUpdateOperators={openUpdateMvkOperatorsPopup}
-                  openManagePermissions={openManagePermissionsPopup}
-                />
-              )
+              return <BorrowingExpandCard isOwner {...item} key={item.borrowedAsset.assetSymbol + '-' + idx} />
             })}
           </div>
         </>
