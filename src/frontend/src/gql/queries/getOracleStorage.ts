@@ -7,6 +7,13 @@ export const ORACLE_STORAGE_QUERY = `
       factory {
         address
       }
+      history_data(distinct_on: timestamp) {
+        data
+        timestamp
+        aggregator {
+          decimals
+        }
+      }
       creation_timestamp
       governance_id
       last_completed_data

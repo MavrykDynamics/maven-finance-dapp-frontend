@@ -177,33 +177,3 @@ export const registerFeedAction = () => async (dispatch: AppDispatch, getState: 
     }
   }
 }
-
-// get Data Feeds History and Volatility
-export const GET_DATA_FEEDS_HISTORY = 'GET_DATA_FEEDS_HISTORY'
-export const getDataFeedsHistory = () => async (dispatch: AppDispatch, getState: GetState) => {
-  try {
-    const storage = await fetchFromIndexerWithPromise(
-      DATA_FEEDS_HISTORY_QUERY,
-      DATA_FEEDS_HISTORY_QUERY_NAME,
-      DATA_FEEDS_HISTORY_QUERY_VARIABLE,
-    )
-
-    const dataFeedsHistory = normalizeDataFeedsHistory(storage)
-    const dataFeedsVolatility = normalizeDataFeedsVolatility(storage)
-
-    dispatch({
-      type: GET_DATA_FEEDS_HISTORY,
-      dataFeedsHistory,
-      dataFeedsVolatility,
-    })
-  } catch (error) {
-    console.error('getDataFeedsHistory error: ', error)
-    if (error instanceof Error) {
-      dispatch(showToaster(ERROR, 'Error', error.message))
-      dispatch({
-        type: GET_DATA_FEEDS_HISTORY,
-        error,
-      })
-    }
-  }
-}
