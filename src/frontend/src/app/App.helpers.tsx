@@ -9,6 +9,7 @@ import type {
   DipdupContractMetadataGraphQL,
 } from '../utils/TypesAndInterfaces/Aggregator'
 import { Dipdup_Token_Metadata, M_Token } from 'utils/generated/graphqlTypes'
+import { normalizeDataFeedsHistory, normalizeDataFeedsVolatility } from 'pages/Satellites/Satellites.helpers'
 
 export function normalizeAddressesStorage(storage: AddressesGraphQl): ContractAddressesState {
   return {
@@ -90,8 +91,13 @@ export function normalizeOracle(storage: {
   }
 
   const feeds = storage?.aggregator.map((item) => {
+    const dataFeedsHistory = normalizeDataFeedsHistory(item.history_data)
+    const dataFeedsVolatility = normalizeDataFeedsVolatility(item.history_data)
+
     return {
       ...item,
+      dataFeedsHistory,
+      dataFeedsVolatility,
       ...getCategoryAndNetwork(item.address),
     }
   })

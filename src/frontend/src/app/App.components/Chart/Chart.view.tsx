@@ -44,7 +44,7 @@ type TooltipPropsType = {
 }
 
 const TradingViewTooltip = ({ amount, date, tooltipAsset }: TooltipPropsType) => {
-  if (!amount || !date) {
+  if (amount === undefined || date === undefined) {
     return null
   }
 
@@ -99,7 +99,7 @@ export const TradingViewChart = ({
     tickDateFormatter,
     hideXAxis,
     hideYAxis,
-    tooltipAsset = 'MVK',
+    tooltipAsset = 'USD',
   },
   className,
 }: TradingViewChartProps) => {

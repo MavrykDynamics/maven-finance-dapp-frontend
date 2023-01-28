@@ -7,6 +7,13 @@ export const ORACLE_STORAGE_QUERY = `
       factory {
         address
       }
+      history_data(distinct_on: timestamp) {
+        data
+        timestamp
+        aggregator {
+          decimals
+        }
+      }
       creation_timestamp
       governance_id
       last_completed_data
@@ -55,17 +62,3 @@ export const ORACLE_STORAGE_QUERY = `
 
 export const ORACLE_STORAGE_QUERY_NAME = 'GetOracleDataFeeds'
 export const ORACLE_STORAGE_QUERY_VARIABLE = {}
-
-export const DATA_FEEDS_HISTORY_QUERY = `
-  query GetDataFeedHistory {
-    aggregator_history_data(distinct_on: timestamp) {
-      data
-      timestamp
-      aggregator {
-        decimals
-      }
-    }
-  }
-`
-export const DATA_FEEDS_HISTORY_QUERY_NAME = 'GetDataFeedHistory'
-export const DATA_FEEDS_HISTORY_QUERY_VARIABLE = {}
