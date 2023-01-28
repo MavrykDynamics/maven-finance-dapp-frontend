@@ -9,15 +9,18 @@ import { DataFeedsHistory, DataFeedsVolatility } from '../../Satellites/helpers/
 import { formatNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { cyanColor } from 'styles'
 import { DECIMALS_TO_SHOW } from 'utils/constants'
+import { parseDate } from 'utils/time'
+import dayjs from 'dayjs'
 
 type Props = {
   dataFeedsHistory: DataFeedsHistory
   dataFeedsVolatility: DataFeedsVolatility
   className?: string
+  tooltipAsset: string
   activeTab: number
 }
 
-export function DataFeedsChart({ className, dataFeedsHistory, dataFeedsVolatility, activeTab }: Props) {
+export function DataFeedsChart({ className, dataFeedsHistory, dataFeedsVolatility, activeTab, tooltipAsset }: Props) {
   // const tickFormater = (value: number): string => {
   //   return activeTab === 1
   //     ? `$${formatNumber(true, DECIMALS_TO_SHOW, value)}`
@@ -38,6 +41,7 @@ export function DataFeedsChart({ className, dataFeedsHistory, dataFeedsVolatilit
         }}
         settings={{
           height: 300,
+          tooltipAsset,
         }}
         className="data-feeds-chart"
       />

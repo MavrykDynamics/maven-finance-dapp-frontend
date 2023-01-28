@@ -1,4 +1,10 @@
+import { useContext } from 'react'
+
 import { ACTION_PRIMARY, TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
+import { LendingItemType, LoanTokenType } from 'utils/TypesAndInterfaces/Loans'
+import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
+import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+import { loansPopupsContext } from './Modals/LoansModals.provider'
 
 import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
@@ -6,14 +12,7 @@ import Icon from 'app/App.components/Icon/Icon.view'
 
 import { ThreeLevelListItem } from '../Loans.style'
 import { LendingTabListItem, LoansTabStyled, NoItemsInTabStyled } from './LoansComponents.style'
-
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
-import { LendingItemType, LoanTokenType } from 'utils/TypesAndInterfaces/Loans'
-import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
-import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
-import { useState } from 'react'
-import { AddLendingAsset, AddLendingAssetDataType } from './Modals/AddLendingAsset.modal'
-import { RemoveAssetsFromLending } from './Modals/RemoveAssetsFromLending.modal'
 
 type LendingTabPropsType = {
   lendingItem: LendingItemType
@@ -22,20 +21,10 @@ type LendingTabPropsType = {
 }
 
 export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData }: LendingTabPropsType) => {
-  const [showAddModal, setAddModal] = useState(false)
-  const [showRemoveModal, setRemoveModal] = useState(false)
-  const [addLendingAssetModalData, setAddLendingAssetModalData] = useState<undefined | AddLendingAssetDataType>()
+  const { openAddLendingAssetPopup, openRemoveLendingAssetPopup } = useContext(loansPopupsContext)
 
   return (
     <LoansTabStyled>
-      <AddLendingAsset
-        closePopup={() => setAddModal(false)}
-        show={Boolean(showAddModal && addLendingAssetModalData)}
-        modalData={addLendingAssetModalData}
-      />
-
-      <RemoveAssetsFromLending closePopup={() => setRemoveModal(false)} show={showRemoveModal} />
-
       <GovRightContainerTitleArea>
         <h2>My Lending</h2>
       </GovRightContainerTitleArea>
@@ -96,7 +85,7 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData }:
               icon="plus"
               kind={TRANSPARENT_WITH_BORDER}
               onClick={() => {
-                setAddLendingAssetModalData({
+                openAddLendingAssetPopup({
                   userBalance: lendingItem.loanAssetWalletBalance,
                   mBalance: lendingItem.mBalance,
                   lendingAPY: lendingItem.lendAPY,
@@ -104,7 +93,6 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData }:
                   assetName: assetData.name,
                   assetIcon: assetData.icon,
                 })
-                setAddModal(true)
               }}
               className="lending-btn"
             />
@@ -112,7 +100,17 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData }:
               text="Remove"
               icon="minus"
               kind={TRANSPARENT_WITH_BORDER}
-              onClick={() => setRemoveModal(true)}
+              onClick={() => {
+                openRemoveLendingAssetPopup({
+                  userBalance: lendingItem.loanAssetWalletBalance,
+                  mBalance: lendingItem.mBalance,
+                  lendingAPY: lendingItem.lendAPY,
+                  assetRate: assetData.rate,
+                  assetName: assetData.name,
+                  assetIcon: assetData.icon,
+                  currentLendedAmount: lendingItem.lendValue,
+                })
+              }}
               className="lending-btn"
             />
           </LendingTabListItem>
@@ -120,17 +118,7 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData }:
       ) : (
         <NoItemsInTabStyled>
           <span>Lend assets to earn interest.</span>
-          <Button
-            text="Lend Asset"
-            icon="plus"
-            onClick={() => {
-              console.log('add lend click')
-
-              setAddModal(true)
-            }}
-            kind={ACTION_PRIMARY}
-            className="lending-tab-no-items-btn"
-          />
+          <Button text="Lend Asset" icon="plus" kind={ACTION_PRIMARY} className="lending-tab-no-items-btn" />
         </NoItemsInTabStyled>
       )}
       <div className="factory-info">

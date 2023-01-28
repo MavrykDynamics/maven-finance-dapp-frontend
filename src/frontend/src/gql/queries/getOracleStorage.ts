@@ -58,7 +58,7 @@ export const ORACLE_STORAGE_QUERY_VARIABLE = {}
 
 export const DATA_FEEDS_HISTORY_QUERY = `
   query GetDataFeedHistory {
-    aggregator_history_data {
+    aggregator_history_data(distinct_on: timestamp) {
       data
       timestamp
       aggregator {
