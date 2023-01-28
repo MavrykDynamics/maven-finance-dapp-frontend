@@ -9,20 +9,12 @@ import {
   ORACLE_STORAGE_QUERY,
   ORACLE_STORAGE_QUERY_NAME,
   ORACLE_STORAGE_QUERY_VARIABLE,
-  DATA_FEEDS_HISTORY_QUERY,
-  DATA_FEEDS_HISTORY_QUERY_NAME,
-  DATA_FEEDS_HISTORY_QUERY_VARIABLE,
 } from 'gql/queries'
 import { fetchFromIndexer, fetchFromIndexerWithPromise } from '../../gql/fetchGraphQL'
 import type { AppDispatch, GetState } from '../../app/App.controller'
-import {
-  normalizeDelegationStorage,
-  normalizeDataFeedsHistory,
-  normalizeDataFeedsVolatility,
-} from './Satellites.helpers'
+import { normalizeDelegationStorage } from './Satellites.helpers'
 import { normalizeOracle } from 'app/App.helpers'
 import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
-import { ROCKET_LOADER } from 'utils/constants'
 
 export const GET_DELEGATION_STORAGE = 'GET_DELEGATION_STORAGE'
 export const getDelegationStorage = () => async (dispatch: AppDispatch) => {

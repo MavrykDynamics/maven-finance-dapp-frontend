@@ -4,7 +4,7 @@ import { Chart, ChartPlotType } from '../../../app/App.components/Chart/Chart.vi
 // styles
 import { ChartCard } from './DataFeedsChart.style'
 
-// types
+// types;
 import { cyanColor } from 'styles'
 
 type Props = {
