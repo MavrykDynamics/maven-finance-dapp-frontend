@@ -291,6 +291,7 @@ const DataFeedDetailsView = ({
             activeTab={activeTab}
             dataFeedsHistory={dataFeedsHistory}
             dataFeedsVolatility={dataFeedsVolatility}
+            tooltipAsset={feed.name.split('/')?.[0]}
           />
         </div>
       </DataFeedsStyled>
