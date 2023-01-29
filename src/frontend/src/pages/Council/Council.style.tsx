@@ -35,7 +35,6 @@ export const CouncilStyled = styled.section`
 
   .council-details {
     display: flex;
-    padding-top: 30px;
 
     &.is-user-member,
     &.is-pending-signature {
