@@ -38,15 +38,6 @@ const DashboardPersonal = () => {
     console.log('claim rewards in DashboardPersonal')
   }, [])
 
-  useDataLoader(async () => {
-    try {
-      await dispatch(getGovernanceStorage())
-      await dispatch(getOracleStorage())
-      await dispatch(getDelegationStorage())
-      await dispatch(getEmergencyGovernanceStorage())
-    } catch (e) {}
-  }, [accountPkh])
-
   const { isLoading: isUserLoansLoading } = useDataLoader(async () => {
     try {
       await dispatch(getGovernanceStorage())
