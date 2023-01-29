@@ -25,6 +25,7 @@ import { ThreeLevelListItem } from '../Loans.style'
 import { BorrowingTabListItemExpanded } from './LoansComponents.style'
 
 import { loansPopupsContext } from './Modals/LoansModals.provider'
+import { Link } from 'react-router-dom'
 
 type BorrowingExpandCardPropsType = {
   isOwner?: boolean
@@ -175,7 +176,6 @@ export const BorrowingExpandCard = ({
                       vaultAddress: address,
                       borrowedAsset: borrowedAsset,
                       feesAmount: 0,
-                      totalOutstanding: 0,
                       currentCollateralBalance: collateralData.at(-1)?.balance ?? 0,
                       currentAvaliableToBorrow: 0,
                     })
@@ -342,7 +342,9 @@ export const BorrowingExpandCard = ({
                 <div className="value">
                   {sMVKDelegatedTo ? <TzAddress tzAddress={sMVKDelegatedTo} type={BLUE} /> : 'None'}
                 </div>
-                <Button kind={ACTION_SIMPLE} text="View Satellite" icon="paginationArrowLeft" iconAfter />
+                <Link to={sMVKDelegatedTo ? `/satellites/satellite-details/${sMVKDelegatedTo}` : '/satellite-nodes'}>
+                  <Button kind={ACTION_SIMPLE} text="View Satellite" icon="paginationArrowLeft" iconAfter />
+                </Link>
               </div>
 
               <div className="block-name margin-top-20">Permissions</div>
@@ -388,7 +390,6 @@ export const BorrowingExpandCard = ({
                     vaultAddress: address,
                     borrowedAsset: borrowedAsset,
                     feesAmount: 0,
-                    totalOutstanding: 0,
                     currentCollateralBalance: collateralData.at(-1)?.balance ?? 0,
                     currentAvaliableToBorrow: 0,
                   })

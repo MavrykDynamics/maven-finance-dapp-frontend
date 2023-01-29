@@ -36,10 +36,11 @@ export const Repay = ({
     vaultAddress,
     borrowedAsset,
     feesAmount = 0,
-    totalOutstanding = 0,
     currentCollateralBalance = 0,
     currentAvaliableToBorrow = 0,
   } = data ?? {}
+
+  const totalOutstanding = feesAmount + Number(borrowedAsset?.amtBorrowed)
 
   useLockBodyScroll(show)
   const dispatch = useDispatch()
@@ -57,11 +58,9 @@ export const Repay = ({
     }
   }, [show])
 
-  const inputOnChangeHandle = (newInputAmount: string, userAssetBalance: number) => {
+  const inputOnChangeHandle = (newInputAmount: string, maxAmount: number) => {
     const validationStatus =
-      Number(newInputAmount) > 0 && Number(newInputAmount) <= userAssetBalance
-        ? INPUT_STATUS_SUCCESS
-        : INPUT_STATUS_ERROR
+      Number(newInputAmount) > 0 && Number(newInputAmount) <= maxAmount ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
 
     if (validationStatus === INPUT_STATUS_ERROR && newInputAmount !== '' && newInputAmount !== '0') return
 
@@ -149,13 +148,17 @@ export const Repay = ({
                     type: 'number',
                     onBlur: inputOnBlurHandle,
                     onFocus: onFocusHandler,
-                    onChange: (e) => inputOnChangeHandle(e.target.value, borrowedAsset.userBalance),
+                    onChange: (e) =>
+                      inputOnChangeHandle(e.target.value, Math.min(borrowedAsset.userBalance, totalOutstanding)),
                   }}
                   settings={{
                     balance: borrowedAsset.userBalance,
                     balanceAsset: assetName,
                     useMaxHandler: () =>
-                      inputOnChangeHandle(String(borrowedAsset.userBalance), borrowedAsset.userBalance),
+                      inputOnChangeHandle(
+                        String(Math.min(borrowedAsset.userBalance, totalOutstanding)),
+                        Math.min(borrowedAsset.userBalance, totalOutstanding),
+                      ),
                     inputStatus: inputData.validationStatus,
                     convertedValue: Number(inputData.amount) * borrowedAsset.assetRate,
                   }}

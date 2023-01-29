@@ -434,6 +434,8 @@ export const normalizeLoans = async ({
         userAddres,
       )
 
+      const loanTokenUserBalance = await getUserBalanceForLoanAsset(lp_token_address, loan_token_name, userAddres)
+
       const availableLiquidity = isXTZ
         ? calcWithoutMu(total_remaining)
         : calcWithoutDecimals(total_remaining, Number(loanTokenMetadata.decimals ?? 1))
@@ -442,6 +444,7 @@ export const normalizeLoans = async ({
         loanTokenData: {
           ...loanTokenMetadata,
           tokenType: loan_token_contract_standard as 'tez' | 'fa12' | 'fa2',
+          userBalance: loanTokenUserBalance,
         },
         myBorrowingList,
         permissionedBorrowingList: permissinedBorrowingList,

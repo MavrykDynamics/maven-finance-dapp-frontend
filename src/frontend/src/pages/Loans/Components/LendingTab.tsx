@@ -118,7 +118,22 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData }:
       ) : (
         <NoItemsInTabStyled>
           <span>Lend assets to earn interest.</span>
-          <Button text="Lend Asset" icon="plus" kind={ACTION_PRIMARY} className="lending-tab-no-items-btn" />
+          <Button
+            text="Lend Asset"
+            icon="plus"
+            kind={ACTION_PRIMARY}
+            onClick={() =>
+              openAddLendingAssetPopup({
+                userBalance: assetData.userBalance,
+                mBalance: 0,
+                lendingAPY: 0,
+                assetRate: assetData.rate,
+                assetName: assetData.name,
+                assetIcon: assetData.icon,
+              })
+            }
+            className="lending-tab-no-items-btn"
+          />
         </NoItemsInTabStyled>
       )}
       <div className="factory-info">

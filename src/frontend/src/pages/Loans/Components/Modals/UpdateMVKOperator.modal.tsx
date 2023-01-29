@@ -34,6 +34,7 @@ export const UpdateMVKOperator = ({
   useLockBodyScroll(show)
   const dispatch = useDispatch()
   const { isActionLoading } = useSelector((state: State) => state.loading)
+  const { accountPkh } = useSelector((state: State) => state.wallet)
 
   const [tableData, setTableData] = useState<Array<LoansPopupsAddressInputStateType>>([
     { address: '', validationStatus: '' },
@@ -53,7 +54,10 @@ export const UpdateMVKOperator = ({
   const handleDeleteRow = (rowId: number) => setTableData(tableData.filter((_, idx) => idx !== rowId))
 
   const updateTableDataState = (newValue: string, rowIdx: number) => {
-    const validationStatus = validateTzAddress(newValue) ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
+    const validationStatus =
+      validateTzAddress(newValue) && !tableData.some(({ address }) => address === newValue) && newValue !== accountPkh
+        ? INPUT_STATUS_SUCCESS
+        : INPUT_STATUS_ERROR
     setTableData(
       tableData.map((item, idx) => (idx === rowIdx ? { address: String(newValue), validationStatus } : item)),
     )

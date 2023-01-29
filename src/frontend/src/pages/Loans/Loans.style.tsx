@@ -32,6 +32,19 @@ export const MarketChartsContainer = styled.div<{ theme: MavrykTheme }>`
         font-size: 25px;
       }
     }
+
+    .chart-interval {
+      position: absolute;
+      top: 5px;
+      left: 10px;
+      font-weight: 600;
+      font-size: 10px;
+      line-height: 18px;
+      font-weight: 600;
+      font-size: 10px;
+      line-height: 18px;
+      color: ${({ theme }) => theme.textColor};
+    }
   }
 
   .loan-chart {

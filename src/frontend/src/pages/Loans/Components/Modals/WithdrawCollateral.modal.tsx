@@ -63,11 +63,9 @@ export const WithdrawCollateral = ({
     }
   }, [show])
 
-  const inputOnChangeHandle = (newInputAmount: string, userAssetBalance: number) => {
+  const inputOnChangeHandle = (newInputAmount: string, maxAmount: number) => {
     const validationStatus =
-      Number(newInputAmount) > 0 && Number(newInputAmount) <= userAssetBalance
-        ? INPUT_STATUS_SUCCESS
-        : INPUT_STATUS_ERROR
+      Number(newInputAmount) > 0 && Number(newInputAmount) <= maxAmount ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
 
     if (validationStatus === INPUT_STATUS_ERROR && newInputAmount !== '' && newInputAmount !== '0') return
 
@@ -124,7 +122,11 @@ export const WithdrawCollateral = ({
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Collateral Value</div>
-              <CommaNumber value={currentCollateralValue} className="value" beginningText="$" />
+              <CommaNumber
+                value={currentCollateralValue * Number(collateralData?.assetRate)}
+                className="value"
+                beginningText="$"
+              />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Available To Withdraw</div>
@@ -143,13 +145,17 @@ export const WithdrawCollateral = ({
                 type: 'number',
                 onBlur: inputOnBlurHandle,
                 onFocus: onFocusHandler,
-                onChange: (e) => inputOnChangeHandle(e.target.value, collateralData.userBalance),
+                onChange: (e) =>
+                  inputOnChangeHandle(e.target.value, Math.min(collateralData.userBalance, currentCollateralValue)),
               }}
               settings={{
                 balance: collateralData.userBalance,
                 balanceAsset: assetName,
                 useMaxHandler: () =>
-                  inputOnChangeHandle(String(collateralData.userBalance), collateralData.userBalance),
+                  inputOnChangeHandle(
+                    String(Math.min(collateralData.userBalance, currentCollateralValue)),
+                    Math.min(collateralData.userBalance, currentCollateralValue),
+                  ),
                 inputStatus: inputData.validationStatus,
                 convertedValue: Number(inputData.amount) * collateralData.assetRate,
               }}
@@ -180,7 +186,11 @@ export const WithdrawCollateral = ({
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Collateral Value</div>
-              <CommaNumber value={currentCollateralValue} className="value" beginningText="$" />
+              <CommaNumber
+                value={currentCollateralValue * Number(collateralData?.assetRate)}
+                className="value"
+                beginningText="$"
+              />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Available To Withdraw</div>

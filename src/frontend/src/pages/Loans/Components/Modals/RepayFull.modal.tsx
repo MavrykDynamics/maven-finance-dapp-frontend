@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useLockBodyScroll } from 'react-use'
 
-import { repayPartOfVaultAction } from 'pages/Loans/Loans.actions'
+import { repayFullAndCloseVaultAction } from 'pages/Loans/Loans.actions'
 import { COLLATERAL_RATIO_GRADIENT } from 'pages/Loans/Loans.const'
 import { RepayFullPopupDataType } from './Modals.helpers'
 import { getAssetName } from 'pages/Loans/Loans.helpers'
@@ -34,17 +34,18 @@ export const RepayFull = ({
     vaultAddress,
     borrowedAsset,
     feesAmount = 0,
-    totalOutstanding = 0,
     currentCollateralBalance = 0,
     currentAvaliableToBorrow = 0,
   } = data ?? {}
+
+  const totalOutstanding = feesAmount + Number(borrowedAsset?.amtBorrowed)
 
   useLockBodyScroll(show)
   const dispatch = useDispatch()
   const { isActionLoading } = useSelector((state: State) => state.loading)
 
   const assetName = getAssetName(borrowedAsset?.assetName ?? '')
-  const canRepay = useMemo(() => (borrowedAsset?.amtBorrowed ?? 0) < (borrowedAsset?.userBalance ?? 0), [borrowedAsset])
+  const canRepay = useMemo(() => totalOutstanding <= (borrowedAsset?.userBalance ?? 0), [borrowedAsset])
   const [screenShown, setShownScreen] = useState<'initial' | 'confitmation'>('initial')
 
   useEffect(() => {
@@ -57,8 +58,8 @@ export const RepayFull = ({
   const backBtnHandler = () => setShownScreen('initial')
 
   const repayBtnHandler = async () => {
-    if (vaultAddress && borrowedAsset) {
-      await dispatch(repayPartOfVaultAction(vaultAddress, Number(borrowedAsset.amtBorrowed), closePopup))
+    if (vaultAddress) {
+      await dispatch(repayFullAndCloseVaultAction(vaultAddress, totalOutstanding, closePopup))
     }
   }
 
@@ -130,7 +131,7 @@ export const RepayFull = ({
                       {formatNumber({
                         showDecimal: true,
                         decimalsToShow: 2,
-                        number: Number(borrowedAsset?.amtBorrowed) - Number(borrowedAsset?.userBalance),
+                        number: totalOutstanding - Number(borrowedAsset?.userBalance),
                       })}{' '}
                       {assetName} on your Ballance
                     </p>
@@ -175,12 +176,12 @@ export const RepayFull = ({
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">Amount</div>
-                  <CommaNumber value={Number(borrowedAsset?.amtBorrowed)} className="value" />
+                  <CommaNumber value={totalOutstanding} className="value" />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem className="right">
                   <div className="name">USD Value</div>
                   <CommaNumber
-                    value={Number(borrowedAsset?.amtBorrowed) * Number(borrowedAsset?.assetRate)}
+                    value={totalOutstanding * Number(borrowedAsset?.assetRate)}
                     className="value"
                     beginningText="$"
                   />
