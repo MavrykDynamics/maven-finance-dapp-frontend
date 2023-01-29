@@ -44,6 +44,10 @@ export const Page = styled.div<{ theme: MavrykTheme }>`
       }
     }
   }
+
+  a.disabled-link {
+    pointer-events: none;
+  }
 `
 
 export const GridPage = styled.div`

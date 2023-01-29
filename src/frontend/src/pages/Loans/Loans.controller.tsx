@@ -64,7 +64,9 @@ export const Loans = () => {
           hideYAxis: true,
         }}
         numberOfItemsToDisplay={3}
-      />
+      >
+        <div className="chart-interval">7 Days</div>
+      </Chart>
     </div>
   )
 
@@ -91,7 +93,9 @@ export const Loans = () => {
           hideYAxis: true,
         }}
         numberOfItemsToDisplay={3}
-      />
+      >
+        <div className="chart-interval">7 Days</div>
+      </Chart>
     </div>
   )
 
@@ -175,8 +179,14 @@ export const Loans = () => {
                         <div className="name">Utilization Rate</div>
                         <CommaNumber value={utilisationRate} className="value" endingText="%" />
                       </ThreeLevelListItem>
-                      <Link to={`/loans/${symbol}/${LEND_TAB_ID}`}>
-                        <Button text="Lend" kind={ACTION_PRIMARY} iconAfter icon="arrowRight" />
+                      <Link to={`/loans/${symbol}/${LEND_TAB_ID}`} className={`${accountPkh ? '' : 'disabled-link'}`}>
+                        <Button
+                          text="Lend"
+                          kind={ACTION_PRIMARY}
+                          iconAfter
+                          disabled={Boolean(!accountPkh)}
+                          icon="arrowRight"
+                        />
                       </Link>
                     </div>
                     <div className="row">
@@ -213,8 +223,14 @@ export const Loans = () => {
                           beginningText="$"
                         />
                       </ThreeLevelListItem>
-                      <Link to={`/loans/${symbol}/${BORROW_TAB_ID}`}>
-                        <Button text="Borrow" kind={ACTION_PRIMARY} iconAfter icon="arrowRight" />
+                      <Link to={`/loans/${symbol}/${BORROW_TAB_ID}`} className={`${accountPkh ? '' : 'disabled-link'}`}>
+                        <Button
+                          text="Borrow"
+                          kind={ACTION_PRIMARY}
+                          disabled={Boolean(!accountPkh)}
+                          iconAfter
+                          icon="arrowRight"
+                        />
                       </Link>
                     </div>
                   </div>

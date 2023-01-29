@@ -35,6 +35,7 @@ type TradingViewChartProps = {
     tooltipAsset?: string
   }
   className?: string
+  children?: React.ReactNode
 }
 
 type TooltipPropsType = {
@@ -64,7 +65,8 @@ export const Chart = ({
   settings,
   numberOfItemsToDisplay = 15,
   className,
-}: TradingViewChartProps & { numberOfItemsToDisplay?: number }) => {
+  children = null,
+}: TradingViewChartProps & { numberOfItemsToDisplay?: number; children?: React.ReactNode }) => {
   if (data.length < numberOfItemsToDisplay) {
     return (
       <Plug className={className}>
@@ -78,7 +80,11 @@ export const Chart = ({
     )
   }
 
-  return <TradingViewChart data={data} settings={settings} colors={colors} className={className} />
+  return (
+    <TradingViewChart data={data} settings={settings} colors={colors} className={className}>
+      {children}
+    </TradingViewChart>
+  )
 }
 
 export const TradingViewChart = ({
@@ -102,6 +108,7 @@ export const TradingViewChart = ({
     tooltipAsset = 'USD',
   },
   className,
+  children,
 }: TradingViewChartProps) => {
   const chartContainerRef = useRef<HTMLDivElement | null>(null)
   const mainChartWrapperRef = useRef<HTMLDivElement | null>(null)
@@ -252,6 +259,7 @@ export const TradingViewChart = ({
     <ChartStyled className={className} ref={mainChartWrapperRef}>
       <div ref={chartContainerRef} />
       <TradingViewTooltip amount={tooltipValue?.amount} date={tooltipValue?.date} tooltipAsset={tooltipAsset} />
+      {children}
     </ChartStyled>
   )
 }

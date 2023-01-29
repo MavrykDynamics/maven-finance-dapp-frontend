@@ -40,9 +40,10 @@ export const getXTZBakers = async () => {
 export const getUserBalanceForLoanAsset = async (
   assetAddress: string,
   assetName: string,
-  userAddress: string,
+  userAddress?: string,
 ): Promise<number> => {
   try {
+    if (!userAddress) return 0
     const isXTZ = isTezosAsset(assetName)
     const assetBalance = isXTZ
       ? await (

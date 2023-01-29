@@ -13,6 +13,7 @@ export type LoanTokenType = {
     icon?: string
     rate: number
     tokenType: 'tez' | 'fa12' | 'fa2'
+    userBalance: number
   }
   transactionHistory: Array<{
     descr: string | null

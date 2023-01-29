@@ -42,6 +42,7 @@ export const ManagePermissions = ({
   useLockBodyScroll(show)
   const dispatch = useDispatch()
   const { isActionLoading } = useSelector((state: State) => state.loading)
+  const { accountPkh } = useSelector((state: State) => state.wallet)
 
   const [ddIsOpen, setDdIsOpen] = useState(false)
   const [chosenDdItem, setChosenDdItem] = useState<DropdownItemType | undefined>()
@@ -76,7 +77,11 @@ export const ManagePermissions = ({
   }
 
   const updateTableDataState = (newValue: string, rowIdx: number) => {
-    const validationStatus = validateTzAddress(newValue) ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
+    const validationStatus =
+      validateTzAddress(newValue) && !tableData.some(({ address }) => address === newValue) && newValue !== accountPkh
+        ? INPUT_STATUS_SUCCESS
+        : INPUT_STATUS_ERROR
+
     setTableData(
       tableData.map((item, idx) => (idx === rowIdx ? { address: String(newValue), validationStatus } : item)),
     )

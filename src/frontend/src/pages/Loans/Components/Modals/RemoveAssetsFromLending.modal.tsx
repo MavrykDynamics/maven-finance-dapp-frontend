@@ -54,14 +54,17 @@ export const RemoveAssetsFromLending = ({
   const [screenShown, setShownScreen] = useState<'initial' | 'confitmation'>('initial')
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
 
+  const continueBtnDisabled = useMemo(
+    () => inputData.validationStatus !== INPUT_STATUS_SUCCESS,
+    [inputData.validationStatus],
+  )
+
   const continueBtnHandler = () => setShownScreen('confitmation')
   const backBtnHandler = () => setShownScreen('initial')
 
-  const onChangeHandler = (inputAmount: string, userBalance: number) => {
+  const onChangeHandler = (inputAmount: string, maxAmount: number) => {
     const validationStatus =
-      Number(inputAmount) > 0 && Number(inputAmount) <= userBalance && Number(inputAmount) <= currentLendedAmount
-        ? INPUT_STATUS_SUCCESS
-        : INPUT_STATUS_ERROR
+      Number(inputAmount) > 0 && Number(inputAmount) <= maxAmount ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
 
     if (validationStatus === INPUT_STATUS_ERROR && inputAmount !== '' && inputAmount !== '0') return
 
@@ -140,12 +143,16 @@ export const RemoveAssetsFromLending = ({
                   type: 'number',
                   onBlur: inputOnBlurHandle,
                   onFocus: onFocusHandler,
-                  onChange: (e) => onChangeHandler(e.target.value, userBalance),
+                  onChange: (e) => onChangeHandler(e.target.value, Math.min(mBalance, currentLendedAmount)),
                 }}
                 settings={{
                   balance: userBalance,
                   balanceAsset: assetName,
-                  useMaxHandler: () => onChangeHandler(String(userBalance), userBalance),
+                  useMaxHandler: () =>
+                    onChangeHandler(
+                      String(Math.min(mBalance, currentLendedAmount)),
+                      Math.min(mBalance, currentLendedAmount),
+                    ),
                   inputStatus: inputData.validationStatus,
                   convertedValue: Number(inputData.amount) * assetRate,
                 }}
@@ -162,7 +169,12 @@ export const RemoveAssetsFromLending = ({
                 </InputPinnedTokenInfo>
               </Input>
 
-              <NewButton kind={ACTION_PRIMARY} onClick={continueBtnHandler} className="modal-manage-btn">
+              <NewButton
+                kind={ACTION_PRIMARY}
+                onClick={continueBtnHandler}
+                disabled={continueBtnDisabled}
+                className="modal-manage-btn"
+              >
                 Continue
                 <Icon id="arrowRight" />
               </NewButton>

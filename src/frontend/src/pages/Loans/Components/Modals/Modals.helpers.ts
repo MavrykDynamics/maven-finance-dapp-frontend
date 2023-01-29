@@ -23,7 +23,6 @@ export type RepayPartPopupDataType = {
   vaultAddress: string
   borrowedAsset: BorrowingData['borrowedAsset']
   feesAmount: number
-  totalOutstanding: number
   currentCollateralBalance: number
   currentAvaliableToBorrow: number
 } | null
@@ -32,7 +31,6 @@ export type RepayFullPopupDataType = {
   vaultAddress: string
   borrowedAsset: BorrowingData['borrowedAsset']
   feesAmount: number
-  totalOutstanding: number
   currentCollateralBalance: number
   currentAvaliableToBorrow: number
 } | null
