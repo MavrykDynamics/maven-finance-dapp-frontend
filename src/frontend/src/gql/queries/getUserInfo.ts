@@ -30,6 +30,11 @@ query GetUserInfo ($_eq: String = "") {
         token_reward_index
       }
     }
+
+    stakes_history_data(where: {from__id: {_eq: $_eq}, _and: {type: {_in: ["2", "3", "4"]}}}) {
+      type
+      final_amount
+    }
   }
 }
 `

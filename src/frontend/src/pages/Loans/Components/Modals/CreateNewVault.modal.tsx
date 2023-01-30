@@ -82,6 +82,8 @@ export const CreateNewVault = ({
   useLockBodyScroll(show)
 
   useEffect(() => {
+    if (!avaliableCollaterals.length) return
+
     const mappedAvaliableCollaterals = avaliableCollaterals.reduce<Record<number, DropDownCollateralAssetType>>(
       (acc, collateralData) => {
         acc[collateralData.id] = {

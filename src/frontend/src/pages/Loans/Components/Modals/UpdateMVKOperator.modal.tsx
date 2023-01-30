@@ -87,7 +87,7 @@ export const UpdateMVKOperator = ({
             <TableBody className="editable-body">
               {tableData.map(({ address, validationStatus }, rowIdx) => {
                 return (
-                  <TableRow className="editable-row">
+                  <TableRow className="editable-row" key={`${rowIdx}-${address}`}>
                     <TableCell width="100%">
                       <Input
                         className={`table-input`}

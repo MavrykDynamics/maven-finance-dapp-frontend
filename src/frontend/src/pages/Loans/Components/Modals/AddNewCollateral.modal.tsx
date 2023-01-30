@@ -58,6 +58,8 @@ export const AddNewCollateral = ({
 
   // resetting popup state, when toggling it off, and updating input data, when collaterals updated in redux
   useEffect(() => {
+    if (!avaliableCollaterals.length) return
+
     const mappedAvaliableCollaterals = avaliableCollaterals.reduce<Record<number, DropDownCollateralAssetType>>(
       (acc, collateralData) => {
         acc[collateralData.id] = {

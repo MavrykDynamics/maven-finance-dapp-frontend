@@ -49,10 +49,6 @@ export const getLoansStorage = () => async (dispatch: AppDispatch, getState: Get
       tokensRate: { ...tokensPrices, ...loanTokensRate },
     })
 
-    await dispatch(updateTokensPrices(loanTokensRate))
-
-    await dispatch(getAvaliableCollaterals())
-
     await dispatch({
       type: GET_LOANS_STORAGE,
       loansStorage: {
@@ -62,6 +58,7 @@ export const getLoansStorage = () => async (dispatch: AppDispatch, getState: Get
         xtzBakers,
       },
     })
+    await dispatch(updateTokensPrices(loanTokensRate))
   } catch (e) {
     console.error('getLoansStorage error: ', e)
   }
@@ -78,7 +75,7 @@ const getNewVaultData = async () => {
 }
 
 export const GET_AVALIABLE_COLLATERALS = 'GET_AVALIABLE_COLLATERALS'
-const getAvaliableCollaterals = () => async (dispatch: AppDispatch, getState: GetState) => {
+export const getAvaliableCollaterals = () => async (dispatch: AppDispatch, getState: GetState) => {
   const {
     tokens: { dipDupTokens, tokensPrices },
     wallet: { accountPkh },
@@ -107,6 +104,8 @@ const getAvaliableCollaterals = () => async (dispatch: AppDispatch, getState: Ge
       type: GET_AVALIABLE_COLLATERALS,
       avaliableCollaterals,
     })
+
+    await dispatch(updateTokensPrices(loanTokensRate))
   } catch (e) {
     console.log('getNewVaultData error: ', e)
   }
