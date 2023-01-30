@@ -77,7 +77,6 @@ const DataFeedDetailsView = ({ feed, oracles, registerFeedHandler }: FeedDetails
   )
 
   const isTrustedAnswer = feed && feed.last_completed_data_pct_oracle_resp >= feed.pct_oracle_threshold
-  console.log('feed', feed, isTrustedAnswer)
 
   // const heartbeatUpdateInfo =
   //   dayjs(Date.now()).diff(dayjs(feed?.last_completed_data_last_updated_at), 'minutes') >= 30

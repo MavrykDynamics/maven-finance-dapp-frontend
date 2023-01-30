@@ -29,9 +29,16 @@ export type FeedFactory = {
   aggregator_name_max_length: number
 }
 
-export type FeedGQL = Omit<Aggregator, '__typename'> & { category: string | null; network: string | null }
+export type FeedGQL = Omit<Aggregator, '__typename' | 'history_data'> & {
+  category: string | null
+  network: string | null
+}
 
-export type Feed = FeedGQL & { dataFeedsHistory: Array<ChartPlotType>; dataFeedsVolatility: Array<ChartPlotType>, amount: number }
+export type Feed = FeedGQL & {
+  dataFeedsHistory: Array<ChartPlotType>
+  dataFeedsVolatility: Array<ChartPlotType>
+  amount: number
+}
 
 export type InitialOracleStorageType = {
   feeds: Array<Feed>
