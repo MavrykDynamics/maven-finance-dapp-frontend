@@ -82,13 +82,8 @@ export const SatelliteListItem = ({
   const userIsDelegatedToThisSatellite = satellite.address === satelliteUserIsDelegatedTo
   const isSatelliteOracle = satellite.oracleRecords.length
 
-  const currentlySupportingProposalVote = satellite.proposalVotingHistory?.length
-    ? satellite.proposalVotingHistory[0].vote
-    : null
-
-  const currentlySupportingProposalId = satellite.proposalVotingHistory?.length
-    ? satellite.proposalVotingHistory[0].proposalId
-    : null
+  const currentlySupportingProposalVote = satellite.proposalVotingHistory?.at(0)?.vote ?? null
+  const currentlySupportingProposalId = satellite.proposalVotingHistory?.at(0)?.proposalId ?? null
 
   const currentlySupportingProposal = proposalLedger?.length
     ? proposalLedger.find((proposal) => proposal.id === currentlySupportingProposalId)
@@ -162,11 +157,11 @@ export const SatelliteListItem = ({
             </SideBySideImageAndText>
 
             {!isDetailsPage ? (
-                <SatelliteProfileDetails>
-                  <Link to={`/satellites/satellite-details/${satellite.address}`}>
-                    <Button text={'Profile Details'} icon="man" kind="transparent" />
-                  </Link>
-                </SatelliteProfileDetails>
+              <SatelliteProfileDetails>
+                <Link to={`/satellites/satellite-details/${satellite.address}`}>
+                  <Button text={'Profile Details'} icon="man" kind="transparent" />
+                </Link>
+              </SatelliteProfileDetails>
             ) : null}
           </div>
 
@@ -245,8 +240,8 @@ export const SatelliteListItem = ({
 
       {children
         ? children
-        : currentlySupportingProposal?.id &&
-          currentlySupportingProposalVote && (
+        : currentlySupportingProposal?.id !== undefined &&
+          currentlySupportingProposalVote !== null && (
             <SatelliteCardRow>
               <div>
                 Voted {renderVotingHistoryItem(currentlySupportingProposalVote)} on current Proposal{' '}
