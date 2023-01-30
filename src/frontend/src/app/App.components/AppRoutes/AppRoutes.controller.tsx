@@ -139,7 +139,7 @@ export const AppRoutes = () => {
       <Route exact path="/yield-farms">
         <Farms />
       </Route>
-      <Route exact path="/vaults">
+      <Route exact path="/vaults/:tabId">
         <Vaults />
       </Route>
       <Route exact path="/admin">

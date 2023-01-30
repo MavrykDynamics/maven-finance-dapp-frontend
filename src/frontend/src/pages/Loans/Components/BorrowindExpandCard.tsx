@@ -10,6 +10,7 @@ import { BorrowingData } from 'utils/TypesAndInterfaces/Loans'
 import Expand from 'app/App.components/Expand/Expand.view'
 import NewButton from 'app/App.components/Button/NewButton.controller'
 import Icon from 'app/App.components/Icon/Icon.view'
+import { StatusMessage } from './StatusMessage.view'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 
@@ -29,9 +30,28 @@ import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { State } from 'reducers'
 
-type BorrowingExpandCardPropsType = {
+const defaultOptions = { 
+  headerColumnNames: {
+    collateralBalance: 'Collateral Balance',
+    borrowedAmount: 'Amount'
+  },
+}
+
+export type BorrowingCardOptions = typeof defaultOptions & {
+  reverseColumns?: boolean
+  customTableColumn?: keyof BorrowingData['collateralData'][0]
+}
+
+type BorrowingExpandCardPropsType = BorrowingData & {
   isOwner?: boolean
-} & BorrowingData
+  headerSufix?: React.ReactNode
+  getExpandedStatus?: (arg: boolean) => void
+  className?: string
+  children?: React.ReactNode
+  status?: string
+  timestamp?: number
+  options?: BorrowingCardOptions
+}
 
 export const BorrowingExpandCard = ({
   isOwner = false,
@@ -41,8 +61,17 @@ export const BorrowingExpandCard = ({
   operators,
   sMVKDelegatedTo,
   depositors,
+  headerSufix,
+  getExpandedStatus,
+  className,
   address,
+  children,
+  status,
+  timestamp,
+  options = defaultOptions,
 }: BorrowingExpandCardPropsType) => {
+  const { headerColumnNames, reverseColumns, customTableColumn } = options
+
   const {
     assetSymbol,
     assetIcon,
@@ -82,7 +111,9 @@ export const BorrowingExpandCard = ({
   return (
     <>
       <Expand
-        className="expand-borrow-tab"
+        getExpandedStatus={getExpandedStatus}
+        className={className || "expand-borrow-tab"}
+        sufix={headerSufix}
         header={
           <>
             <ThreeLevelListItem className="borrow-asset-header">
@@ -110,19 +141,27 @@ export const BorrowingExpandCard = ({
                 currentPersentage={50}
               />
             </ThreeLevelListItem>
+            {reverseColumns && (
             <ThreeLevelListItem>
-              <div className="name">Amount</div>
+              <div className="name">{headerColumnNames.collateralBalance}</div>
+              <CommaNumber value={collateralBalance} className="value" beginningText="$" />
+            </ThreeLevelListItem>)}
+            <ThreeLevelListItem>
+              <div className="name">{headerColumnNames.borrowedAmount}</div>
               <CommaNumber value={amtBorrowed} className="value" />
               {assetRate ? <CommaNumber value={amtBorrowed * assetRate} beginningText="$" className="rate" /> : null}
             </ThreeLevelListItem>
+            {!reverseColumns && (
             <ThreeLevelListItem>
-              <div className="name">Collateral Balance</div>
+              <div className="name">{headerColumnNames.collateralBalance}</div>
               <CommaNumber value={collateralBalance} className="value" beginningText="$" />
-            </ThreeLevelListItem>
+            </ThreeLevelListItem>)}
           </>
         }
       >
-        <BorrowingTabListItemExpanded>
+        {children || (
+        <BorrowingTabListItemExpanded className='expand-borrow-tab-container'>
+          {status && <StatusMessage status={status} timestamp={timestamp} />}
           <div className="block-name">Borrowed</div>
           <div className="borrowed-data">
             <ThreeLevelListItem>
@@ -200,17 +239,20 @@ export const BorrowingExpandCard = ({
                 <TableHeaderCell>Asset</TableHeaderCell>
                 <TableHeaderCell>Balance</TableHeaderCell>
                 <TableHeaderCell>Withdraw Max</TableHeaderCell>
+                {customTableColumn && <TableHeaderCell>Collateral Share</TableHeaderCell>}
               </TableRow>
             </TableHeader>
 
             <TableBody>
-              {collateralData.map(({ assetSymbol, assetIcon, balance, assetRate = 1, maxWithdraw }, idx) => {
+              {collateralData.map(({ assetSymbol, assetIcon, balance, assetRate, maxWithdraw }, idx, array) => {                
+                const customColumnValue = customTableColumn ? array[idx][customTableColumn] : undefined               
+                const columnWidth = customTableColumn ? '18%' : '22%'
                 const isTotalRow = collateralData.length - 1 === idx
                 if (isTotalRow && collateralData.length < 3) return null
 
                 return (
                   <TableRow rowHeight={60} key={assetSymbol + '-' + idx}>
-                    <TableCell width={`22%`} className="vert-middle">
+                    <TableCell width={columnWidth} className="vert-middle">
                       {isTotalRow ? (
                         'Total'
                       ) : (
@@ -228,7 +270,7 @@ export const BorrowingExpandCard = ({
                         </div>
                       )}
                     </TableCell>
-                    <TableCell width={`22%`}>
+                    <TableCell width={columnWidth}>
                       <div className="cell-content">
                         <CommaNumber value={balance} className="value" />
                         {assetRate ? (
@@ -236,7 +278,7 @@ export const BorrowingExpandCard = ({
                         ) : null}
                       </div>
                     </TableCell>
-                    <TableCell width={`22%`}>
+                    <TableCell width={columnWidth}>
                       <div className="cell-content">
                         <CommaNumber value={maxWithdraw} className="value" />
                         {assetRate ? (
@@ -244,6 +286,12 @@ export const BorrowingExpandCard = ({
                         ) : null}
                       </div>
                     </TableCell>
+                    {(typeof customColumnValue === 'number') ? (
+                    <TableCell width={columnWidth}>
+                      <div className="cell-content">
+                         <CommaNumber value={customColumnValue} className="value" endingText="%" />
+                      </div>
+                    </TableCell>) : null}
                     {isTotalRow ? (
                       <TableCell className="buttons borrowing">
                         <div className="cell-content row">
@@ -404,7 +452,7 @@ export const BorrowingExpandCard = ({
               />
             </>
           ) : null}
-        </BorrowingTabListItemExpanded>
+        </BorrowingTabListItemExpanded>)}
       </Expand>
     </>
   )

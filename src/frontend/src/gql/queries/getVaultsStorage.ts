@@ -1,13 +1,59 @@
 export const VAULTS_STORAGE_QUERY = `
-  query GetVaultsStorageQuery {
-    vault {
-      address
-      admin
-      allowance
-      creation_timestamp
+query GetAllVaultsStorage {
+  lending_controller(where: {mock_time: {_eq: true}}) {
+    address
+    interest_rate_decimals
+    liquidation_delay_in_minutes
+    liquidation_ratio
+    collateral_ratio
+
+    loan_tokens {
+      current_interest_rate
+    }
+
+    vaults {
+      collateral_balances {
+        balance
+        token {
+          token_name
+          token_address
+          oracle_id
+        }
+      }
+      vault {
+        creation_timestamp
+        address
+        depositors {
+          depositor_id
+        }
+      }
+      last_updated_block_level
+      owner_id
+      marked_for_liquidation_level
+      loan_outstanding_total
+      loan_decimals
+      liquidation_end_level
+      internal_id
+      loan_token {
+        lp_token_address
+        loan_token_name
+        oracle_id
+      }
+    }
+  }
+}`
+
+export const VAULTS_STORAGE_QUERY_NAME = 'GetAllVaultsStorage'
+export const VAULTS_STORAGE_QUERY_VARIABLE = {}
+
+// TODO: add variable for $eq
+export const ORACLE_AGGREGATOR_LATEST_PRICE_QUERY = `
+  query GetOracleAggregatorLatestPrice($_eq: String = "KT1JgBX8LRJ7AmVhTk64niDZxfXH8UBXyiDv") {
+    aggregator(where: {address: {_eq: $_eq}}) {
+      decimals
+      last_completed_data
     }
   }
 `
-
-export const VAULTS_STORAGE_QUERY_NAME = 'GetVaultsStorageQuery'
-export const VAULTS_STORAGE_QUERY_VARIABLE = {}
+export const ORACLE_AGGREGATOR_LATEST_PRICE_QUERY_NAME = 'GetOracleAggregatorLatestPrice'
+export const ORACLE_AGGREGATOR_LATEST_PRICE_QUERY_VARIABLE = {}

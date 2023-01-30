@@ -19,3 +19,9 @@ export const getContractAddressesStorage = () => async (dispatch: AppDispatch) =
     console.error('getDipDupTokensStorage error: ', e)
   }
 }
+
+export const SET_CONTRACT_ADDRESS = 'SET_CONTRACT_ADDRESS'
+export const setContractAddress = (name: string, address: string) => async (dispatch: AppDispatch) => {
+  const addressInfo = { [name]: { address } }
+  dispatch({ type: SET_CONTRACT_ADDRESS, addressInfo })
+}

@@ -1,7 +1,7 @@
 import styled from 'styled-components/macro'
 import { awaitingColor } from 'styles'
 import { MavrykTheme } from '../../../styles/interfaces'
-import { DOWN, INFO, PRIMARY, UP, WAITING, WARNING } from './StatusFlag.constants'
+import { DOWN, INFO, PRIMARY, UP, WAITING, WARNING, DARK_WARNING } from './StatusFlag.constants'
 
 export const StatusFlagStyled = styled.div<{ theme: MavrykTheme }>`
   border-radius: 10px;
@@ -46,8 +46,13 @@ export const StatusFlagStyled = styled.div<{ theme: MavrykTheme }>`
     border-color: ${({ theme }) => theme.warningColor};
   }
 
+  &.${DARK_WARNING} {
+    color: ${({ theme }) => theme.darkWarningColor};
+    border-color: ${({ theme }) => theme.darkWarningColor};
+  }
+
   &.${WAITING} {
-    color: ${awaitingColor};
-    border-color: ${awaitingColor};
+    color:  ${({ theme }) => theme.awaitingColor};
+    border-color:  ${({ theme }) => theme.awaitingColor};
   }
 `
