@@ -149,7 +149,7 @@ export const VaultModalOverview = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   justify-content: space-between;
   border: 1px solid ${({ theme }) => theme.cardBorderColor};
-  padding: 14px 15px;
+  padding: 14px 15px 24px 20px;
   border-radius: 10px;
 
   .collateral-diagram {

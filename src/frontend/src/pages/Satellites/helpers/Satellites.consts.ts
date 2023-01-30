@@ -1,5 +1,5 @@
 import { SatelliteRecord } from 'utils/TypesAndInterfaces/Delegation'
-import { FeedGQL } from './Satellites.types'
+import { Feed } from './Satellites.types'
 
 export const ORACLE_STATUSES_MAPPER = {
   responded: 'Responded',
@@ -16,7 +16,7 @@ export function getTotalDelegatedMVK(satelliteLedger: SatelliteRecord[]): number
   return satelliteLedger.reduce((sum, current) => sum + Number(current.totalDelegatedAmount + current.sMvkBalance), 0)
 }
 
-export const getOracleStatus = (oracle: SatelliteRecord, feeds: FeedGQL[]): 'responded' | 'noResponse' | 'awaiting' => {
+export const getOracleStatus = (oracle: SatelliteRecord, feeds: Feed[]): 'responded' | 'noResponse' | 'awaiting' => {
   let status: 'responded' | 'noResponse' | 'awaiting' = 'noResponse'
 
   // check if satellite is an oracle

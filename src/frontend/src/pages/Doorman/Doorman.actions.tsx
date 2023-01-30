@@ -26,6 +26,7 @@ import {
 import {
   calcUsersDoormanRewards,
   calcUsersFarmRewards,
+  calcUsersRewardsToDate,
   calcUsersSatelliteRewards,
   calcWithoutMu,
   calcWithoutPrecision,
@@ -388,6 +389,8 @@ export const fetchUserData = async (
       mTokens,
     }
 
+    const userRewardsToDate = calcUsersRewardsToDate(userInfoData.stakes_history_data)
+
     userInfo.myDoormanRewardsData = calcUsersDoormanRewards(userInfo)
     userInfo.mySatelliteRewardsData = calcUsersSatelliteRewards(userInfo)
     userInfo.myFarmRewardsData = calcUsersFarmRewards(userInfo, currentBlockLevel ?? 0)
@@ -414,6 +417,8 @@ export const fetchUserData = async (
       userBorrowing,
       userLendings,
     }
+
+    userInfo.userRewardsToDate = userRewardsToDate
 
     // TODO: ask Sam about it
     // const estimatedRewardsForNextCompound =

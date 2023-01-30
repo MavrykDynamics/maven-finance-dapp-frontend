@@ -67,7 +67,7 @@ export const VaultsTab = () => {
 
           <div className="container">
             <div>
-              <BlockName>Treasury Assets</BlockName>
+              <BlockName>Vaults Assets</BlockName>
 
               <TableScrollable bodyHeight={90} className="treasury-table scroll-block">
                 <Table>

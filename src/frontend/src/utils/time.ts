@@ -14,6 +14,7 @@ export function toHHMMSS(sec: number): string {
 type TimeFormatTypes =
   | 'MMM DD, HH:mm:ss'
   | 'MMM Do, YYYY, HH:mm:ss UTC'
+  | 'MMM Do, YYYY, HH:mm:ss'
   | 'DD MMM YYYY / HH:mm'
   | 'MMMM DD HH:mm Z'
   | 'MMM DD, YYYY'

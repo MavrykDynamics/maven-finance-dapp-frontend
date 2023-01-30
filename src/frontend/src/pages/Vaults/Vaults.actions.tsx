@@ -1,4 +1,4 @@
-import { AppDispatch, coinGeckoClient, GetState } from '../../app/App.controller'
+import { AppDispatch, GetState } from '../../app/App.controller'
 import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { ERROR, INFO, SUCCESS } from 'app/App.components/Toaster/Toaster.constants'
 import { State } from 'reducers'
@@ -12,11 +12,12 @@ import {
   ORACLE_AGGREGATOR_LATEST_PRICE_QUERY_NAME,
   ORACLE_AGGREGATOR_LATEST_PRICE_QUERY_VARIABLE,
 } from 'gql/queries/getVaultsStorage'
-import { normalizeVaultsStorage, getVaultTokensSymbols, normalizeOracleLatestPrice } from './Vaults.helpers'
+import { normalizeVaultsStorage, normalizeOracleLatestPrice, getVaultsTokensRates } from './Vaults.helpers'
 import { LendingControllerGQL } from 'utils/TypesAndInterfaces/Vaults'
 import { setContractAddress } from 'reducers/actions/contractAddresses.actions'
 import { getHeadData } from 'app/App.components/Menu/Menu.actions'
 import { getOracleLatestPrices } from './Vaults.helpers'
+import { updateTokensPrices } from 'reducers/actions/dipDupActions.actions'
 
 // Vaults Store
 export const GET_VAULTS_STORAGE = 'GET_VAULTS_STORAGE'
@@ -35,32 +36,18 @@ export const getVaultsStorage = () => async (dispatch: AppDispatch, getState: Ge
     ])
 
     const {
-      tokens: { dipDupTokens },
+      tokens: { dipDupTokens, tokensPrices },
       wallet: { accountPkh },
       preferences: { headData },
     } = getState()
 
-    // fetching rate of the presented tokens insisde loans
-    const vaultsTokensRate = (
-      await Promise.allSettled(
-        getVaultTokensSymbols({ vaults: lendingController.vaults, dipDupTokens }).map(
-          (symbol) => coinGeckoClient.coins.fetch(symbol, {}),
-        ),
-      )
-    ).reduce<Record<string, number>>((acc, promiseResult) => {
-      const {
-        value: { data, success },
-      } = promiseResult as any
-      if (success) {
-        const symbol = data.symbol === 'xtz' ? 'tez' : data.symbol
-        const rate = data.market_data.current_price.usd
-        acc[symbol] = rate
-      }
+    const vaultsTokensRate = await getVaultsTokensRates(
+      lendingController.vaults,
+      dipDupTokens,
+      tokensPrices,
+    )
 
-      return acc
-    }, {})
-
-    const normallaziedVaultsStorage = normalizeVaultsStorage({
+    const normallaziedVaultsStorage = await normalizeVaultsStorage({
       accountPkh,
       dipDupTokens,
       vaultsTokensRate,
@@ -70,11 +57,13 @@ export const getVaultsStorage = () => async (dispatch: AppDispatch, getState: Ge
     })
  
     dispatch(setContractAddress('vaultAddress', lendingController.address))  
+    dispatch(updateTokensPrices(vaultsTokensRate))
 
     dispatch({
       type: GET_VAULTS_STORAGE,
       vaultsList: normallaziedVaultsStorage,
     })
+    
   } catch (e) {
     console.error('getVaultsStorage error: ', e)
   }

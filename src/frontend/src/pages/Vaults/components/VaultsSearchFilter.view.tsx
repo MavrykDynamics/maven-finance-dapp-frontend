@@ -123,8 +123,12 @@ export const VaultsSearchFilter = ({ assets, vaultsMapper, allVaultsIds, setVaul
             return vaultB - vaultA
           // by date
           } else if (sortIsMostRecent) {
-            const vaultA = vaultsMapper[a].creationDate
-            const vaultB = vaultsMapper[b].creationDate
+            const vaultA = vaultsMapper[a].creationTimestamp
+            const vaultB = vaultsMapper[b].creationTimestamp
+
+            if (!vaultA || !vaultB) {
+              return 0
+            }
   
             return new Date(vaultB).getTime() - new Date(vaultA).getTime()
           }

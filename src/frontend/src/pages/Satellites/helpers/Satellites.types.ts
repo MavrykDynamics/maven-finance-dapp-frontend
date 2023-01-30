@@ -1,3 +1,4 @@
+import { ChartPlotType } from 'app/App.components/Chart/Chart.view'
 import type { Aggregator, Aggregator_History_Data } from 'utils/generated/graphqlTypes'
 import { SatelliteRecord } from 'utils/TypesAndInterfaces/Delegation'
 import { normalizeDataFeedsHistory } from '../Satellites.helpers'
@@ -7,7 +8,7 @@ type callbackFunction = (arg0: string) => void
 // TODO: IDK how to type additional data, maybe revrite logic in future
 export type SatellitesListProps = {
   listTitle?: string
-  items: Array<FeedGQL> | Array<SatelliteRecord>
+  items: Array<Feed> | Array<SatelliteRecord>
   listType: 'satellites' | 'feeds' | 'oracles' | 'userFeeds'
   name: string
   onClickHandler?: (arg0: string) => void
@@ -28,10 +29,19 @@ export type FeedFactory = {
   aggregator_name_max_length: number
 }
 
-export type FeedGQL = Omit<Aggregator, '__typename'> & { category: string | null, network: string | null }
+export type FeedGQL = Omit<Aggregator, '__typename' | 'history_data'> & {
+  category: string | null
+  network: string | null
+}
+
+export type Feed = FeedGQL & {
+  dataFeedsHistory: Array<ChartPlotType>
+  dataFeedsVolatility: Array<ChartPlotType>
+  amount: number
+}
 
 export type InitialOracleStorageType = {
-  feeds: Array<FeedGQL>
+  feeds: Array<Feed>
   feedsFactory: Array<FeedFactory>
   feedCategories: Array<string>
 }
@@ -49,7 +59,4 @@ export type SatelliteListItemProps = {
   children?: JSX.Element
 }
 
-export type DataFeedsHistory = ReturnType<typeof normalizeDataFeedsHistory>
 export type DataFeedsHistoryGraphQL = Omit<Aggregator_History_Data, '__typename'>
-
-export type DataFeedsVolatility = ReturnType<typeof normalizeDataFeedsHistory>

@@ -152,7 +152,8 @@ export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
       font-size: 14px;
     }
 
-    button {
+    button,
+    a {
       margin-left: auto;
       padding: 0;
       height: fit-content;

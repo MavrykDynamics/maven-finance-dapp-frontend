@@ -23,6 +23,9 @@ export const Dashboard = () => {
   const { totalStakedMvk = 0 } = useSelector((state: State) => state.doorman)
   const { treasuryStorage } = useSelector((state: State) => state.treasury)
   const { farmStorage } = useSelector((state: State) => state.farm)
+  const {
+    chartsData: { totalBorrowed, totalLended },
+  } = useSelector((state: State) => state.loans)
 
   const marketCapValue = exchangeRate ? exchangeRate * totalSupply : 0
   const treasuryTVL = treasuryStorage.reduce((acc, { balances }) => {
@@ -36,8 +39,10 @@ export const Dashboard = () => {
     return (acc += farm.lpBalance)
   }, 0)
 
+  const lendingTvl = totalBorrowed + totalLended
+
   //TODO: add calculation for tvl value (loans, vaults)
-  const tvlValue = totalStakedMvk * exchangeRate + treasuryTVL + farmsTVL
+  const tvlValue = totalStakedMvk * exchangeRate + treasuryTVL + farmsTVL + lendingTvl
 
   useEffect(() => {
     dispatch(fillTreasuryStorage())

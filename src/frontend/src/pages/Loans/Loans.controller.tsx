@@ -31,10 +31,13 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 export const Loans = () => {
   const dispatch = useDispatch()
   const { accountPkh } = useSelector((state: State) => state.wallet)
+  const { isFetched } = useSelector((state: State) => state.loans)
 
   const { isLoading } = useDataLoader(async () => {
     try {
-      await dispatch(getLoansStorage())
+      if (!isFetched) {
+        await dispatch(getLoansStorage())
+      }
     } catch (e) {}
   }, [accountPkh])
   const { loanTokens, chartsData } = useSelector((state: State) => state.loans)
@@ -61,7 +64,9 @@ export const Loans = () => {
           hideYAxis: true,
         }}
         numberOfItemsToDisplay={3}
-      />
+      >
+        <div className="chart-interval">7 Days</div>
+      </Chart>
     </div>
   )
 
@@ -88,7 +93,9 @@ export const Loans = () => {
           hideYAxis: true,
         }}
         numberOfItemsToDisplay={3}
-      />
+      >
+        <div className="chart-interval">7 Days</div>
+      </Chart>
     </div>
   )
 
@@ -172,8 +179,14 @@ export const Loans = () => {
                         <div className="name">Utilization Rate</div>
                         <CommaNumber value={utilisationRate} className="value" endingText="%" />
                       </ThreeLevelListItem>
-                      <Link to={`/loans/${name}/${LEND_TAB_ID}`}>
-                        <Button text="Lend" kind={ACTION_PRIMARY} iconAfter icon="arrowRight" />
+                      <Link to={`/loans/${symbol}/${LEND_TAB_ID}`} className={`${accountPkh ? '' : 'disabled-link'}`}>
+                        <Button
+                          text="Lend"
+                          kind={ACTION_PRIMARY}
+                          iconAfter
+                          disabled={Boolean(!accountPkh)}
+                          icon="arrowRight"
+                        />
                       </Link>
                     </div>
                     <div className="row">
@@ -210,8 +223,14 @@ export const Loans = () => {
                           beginningText="$"
                         />
                       </ThreeLevelListItem>
-                      <Link to={`/loans/${name}/${BORROW_TAB_ID}`}>
-                        <Button text="Borrow" kind={ACTION_PRIMARY} iconAfter icon="arrowRight" />
+                      <Link to={`/loans/${symbol}/${BORROW_TAB_ID}`} className={`${accountPkh ? '' : 'disabled-link'}`}>
+                        <Button
+                          text="Borrow"
+                          kind={ACTION_PRIMARY}
+                          disabled={Boolean(!accountPkh)}
+                          iconAfter
+                          icon="arrowRight"
+                        />
                       </Link>
                     </div>
                   </div>

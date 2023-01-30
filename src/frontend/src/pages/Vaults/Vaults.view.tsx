@@ -24,6 +24,7 @@ import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 
 // actions
 import { getVaultsStorage, liquidateVault, markForLiquidation } from './Vaults.actions'
+import { getLoansStorage } from 'pages/Loans/Loans.actions'
 
 const pathname = '/vaults'
 
@@ -59,11 +60,11 @@ export const VaultsView = () => {
 
   const { isLoading } = useDataLoader(async () => {
     try {
-      await Promise.all([dispatch(getVaultsStorage())])
+      await dispatch(getVaultsStorage())
     } catch (e) {
       //TODO: handle fetch error
     }
-  }, [])
+  }, [accountPkh])
 
   const [vaultsIds, setVaultsIds] = useState<string[]>([])
   const assets = useMemo(() => getVaultAssets(vaultsMapper), [vaultsMapper])
@@ -77,7 +78,9 @@ export const VaultsView = () => {
 
   const handleChangeTabs = (id: number) => {
     const foundTab = tabsList.find((item) => item.id === id)
-    history.replace(`${pathname}/${foundTab?.path}`)
+    if (!foundTab?.path) return 
+
+    history.replace(`${pathname}/${foundTab.path}`)
   }
 
   const paginatedVaultsList = useMemo(() => {

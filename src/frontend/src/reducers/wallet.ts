@@ -24,6 +24,11 @@ export interface UserState {
     userLendings: Array<UserLendObjType>
     userBorrowing: Array<UserLendObjType>
   }
+  userRewardsToDate: {
+    farmRewards: number
+    satelliteRewards: number
+    doormanRewards: number
+  }
 }
 
 const RpcNetwork = preferencesDefaultState.REACT_APP_RPC_PROVIDER
@@ -60,6 +65,11 @@ export const DEFAULT_USER: UserState = {
   userLoansData: {
     userLendings: [],
     userBorrowing: [],
+  },
+  userRewardsToDate: {
+    farmRewards: 0,
+    satelliteRewards: 0,
+    doormanRewards: 0,
   },
 }
 

@@ -17,9 +17,12 @@ import {
   LoanTokenType,
   UserLendObjType,
 } from 'utils/TypesAndInterfaces/Loans'
+import { validateTzAddress } from 'utils/validatorFunctions'
 import { calcWithoutDecimals, calcWithoutMu } from '../../utils/calcFunctions'
+import { getUserBalanceForLoanAsset } from './LoansFethcers'
 
 export const isTezosAsset = (tokenName: string) => tokenName === 'tez'
+export const getAssetName = (tokenName: string) => (tokenName === 'tez' ? 'XTZ' : tokenName)
 
 export const getAssetMetadata = (
   tokenName: string,
@@ -192,24 +195,13 @@ const getLendingItem = async (
   try {
     if (userMTokens && loanToken && accountPkh) {
       const mTokenAsset = userMTokens?.find(({ m_token_id }) => m_token_id === loanToken.lp_token_address)
-      const isXTZ = isTezosAsset(loanToken.loan_token_name)
       const tokenCurrentInterestRate = calcWithoutDecimals(loanToken.current_interest_rate, interestRateDecimals)
 
-      const lendingAssetBalance = isXTZ
-        ? await (
-            await fetch(`https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/accounts/${accountPkh}/balance`)
-          ).json()
-        : await (
-            await fetch(
-              `https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/tokens/balances?account.eq=${accountPkh}&token.contract.in=${loanToken.loan_token_address}`,
-            )
-          ).json()
-
-      const userBalance =
-        (typeof lendingAssetBalance === 'number'
-          ? lendingAssetBalance / 10 ** 6
-          : Number(lendingAssetBalance?.[0]?.balance ?? 0) /
-            10 ** Number(lendingAssetBalance?.[0]?.token?.metadata?.decimals ?? 0)) ?? 0
+      const userBalance = await getUserBalanceForLoanAsset(
+        loanToken.lp_token_address,
+        loanToken.loan_token_name,
+        accountPkh,
+      )
 
       if (mTokenAsset) {
         return {
@@ -271,7 +263,7 @@ const getBorrowings = async (
 ): Promise<BorrowingNormalizerReturnType> => {
   return await loanTokenVaults.reduce<Promise<BorrowingNormalizerReturnType>>(async (promiseAcc, vault) => {
     const acc = await promiseAcc
-    if (!vault.loan_token || !vault.vault) return acc
+    if (!vault.loan_token || !vault.vault || !userAddress) return acc
 
     const vaultCollateral = vault.collateral_balances.reduce<{
       normalizedCollaterals: BorrowingData['collateralData']
@@ -308,7 +300,7 @@ const getBorrowings = async (
         totalRow: {
           assetSymbol: 'total',
           balance: 0,
-          assetRate: null,
+          assetRate: 0,
           maxWithdraw: 0,
         },
       },
@@ -316,7 +308,7 @@ const getBorrowings = async (
 
     const currentInterestRate = calcWithoutDecimals(vault.loan_token?.current_interest_rate ?? 0, interestRateDecimals)
     const vaultXtzDelegatedTo = await (
-      await fetch(`https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/accounts/${vault.vault.address}`)
+      await fetch(`https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/contracts/${vault.vault.address}`)
     ).json()
 
     const currentBlock = await (
@@ -333,6 +325,12 @@ const getBorrowings = async (
       dipDupTokens,
       tokensRates,
     )
+
+    const userBalance = await getUserBalanceForLoanAsset(
+      vault.loan_token.lp_token_address,
+      vault.loan_token.loan_token_name,
+      userAddress,
+    )
     if (!vaultAsset) return acc
 
     const borrowedAmount = vault.vault.lending_controller_vaults[0].loan_outstanding_total / 10 ** vaultAsset.decimals
@@ -342,6 +340,7 @@ const getBorrowings = async (
         assetSymbol: vaultAsset.symbol,
         assetName: vaultAsset.name,
         assetIcon: vaultAsset.icon,
+        userBalance,
         amtBorrowed: borrowedAmount,
         assetRate: vaultAsset.rate,
         collateralBalance: vaultCollateral.totalRow.balance,
@@ -436,42 +435,42 @@ export const normalizeLoans = async ({
         userAddres,
       )
 
+      const loanTokenUserBalance = await getUserBalanceForLoanAsset(lp_token_address, loan_token_name, userAddres)
+
       const availableLiquidity = isXTZ
         ? calcWithoutMu(total_remaining)
         : calcWithoutDecimals(total_remaining, Number(loanTokenMetadata.decimals ?? 1))
 
-      // TODO: Temporary solution, cuz no data for no lended asset
-      if (lendingItem) {
-        acc.push({
-          loanTokenData: {
-            ...loanTokenMetadata,
-            tokenType: loan_token_contract_standard as 'tez' | 'fa12' | 'fa2',
-          },
-          myBorrowingList,
-          permissionedBorrowingList: permissinedBorrowingList,
-          lendingItem,
-          transactionHistory,
-          utilisationRate: utilisation_rate / 10 ** interestRateDecimals,
+      acc.push({
+        loanTokenData: {
+          ...loanTokenMetadata,
+          tokenType: loan_token_contract_standard as 'tez' | 'fa12' | 'fa2',
+          userBalance: loanTokenUserBalance,
+        },
+        myBorrowingList,
+        permissionedBorrowingList: permissinedBorrowingList,
+        lendingItem,
+        transactionHistory,
+        utilisationRate: utilisation_rate / 10 ** interestRateDecimals,
 
-          availableLiquidity,
-          totalLended: totalLended,
-          totalBorrowed,
-          loanTokenTotalCollaterals: totalCollateral,
-          loanTokenVaultsTotalBorrowed: vaultsBorrowedAmount,
+        availableLiquidity,
+        totalLended: totalLended,
+        totalBorrowed,
+        loanTokenTotalCollaterals: totalCollateral,
+        loanTokenVaultsTotalBorrowed: vaultsBorrowedAmount,
 
-          borrowers: aggregate?.count ?? 0,
-          suppliers: appropriateMtokenData?.accounts.length ?? 0,
-          lending24hVolume,
-          borrowing24hVolume,
+        borrowers: aggregate?.count ?? 0,
+        suppliers: appropriateMtokenData?.accounts.length ?? 0,
+        lending24hVolume,
+        borrowing24hVolume,
 
-          totalFeesEarned: userMTokens?.reduce((acc, { rewards_earned }) => acc + rewards_earned, 0) ?? 0,
-          collateralFactor: storage.collateral_ratio / 10,
-          reserveFactor: reserve_ratio / 100,
-          reserveAmount: (token_pool_total * reserve_ratio) / 100,
-          borrowAPR: lendingItem?.borrowAPR ?? 0,
-          lendingAPY: lendingItem?.lendAPY ?? 0,
-        })
-      }
+        totalFeesEarned: userMTokens?.reduce((acc, { rewards_earned }) => acc + rewards_earned, 0) ?? 0,
+        collateralFactor: storage.collateral_ratio / 10,
+        reserveFactor: reserve_ratio / 100,
+        reserveAmount: (token_pool_total * reserve_ratio) / 100,
+        borrowAPR: lendingItem?.borrowAPR ?? 0,
+        lendingAPY: lendingItem?.lendAPY ?? 0,
+      })
 
       return acc
     },

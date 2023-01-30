@@ -1,23 +1,21 @@
 // components
-import { Chart } from '../../../app/App.components/Chart/Chart.view'
+import { Chart, ChartPlotType } from '../../../app/App.components/Chart/Chart.view'
 
 // styles
 import { ChartCard } from './DataFeedsChart.style'
 
-// types
-import { DataFeedsHistory, DataFeedsVolatility } from '../../Satellites/helpers/Satellites.types'
-import { formatNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+// types;
 import { cyanColor } from 'styles'
-import { DECIMALS_TO_SHOW } from 'utils/constants'
 
 type Props = {
-  dataFeedsHistory: DataFeedsHistory
-  dataFeedsVolatility: DataFeedsVolatility
+  dataFeedsHistory: ChartPlotType[]
+  dataFeedsVolatility: ChartPlotType[]
   className?: string
+  tooltipAsset: string
   activeTab: number
 }
 
-export function DataFeedsChart({ className, dataFeedsHistory, dataFeedsVolatility, activeTab }: Props) {
+export function DataFeedsChart({ className, dataFeedsHistory, dataFeedsVolatility, activeTab, tooltipAsset }: Props) {
   // const tickFormater = (value: number): string => {
   //   return activeTab === 1
   //     ? `$${formatNumber(true, DECIMALS_TO_SHOW, value)}`
@@ -38,6 +36,7 @@ export function DataFeedsChart({ className, dataFeedsHistory, dataFeedsVolatilit
         }}
         settings={{
           height: 300,
+          tooltipAsset: activeTab === 1 ? tooltipAsset : '%',
         }}
         className="data-feeds-chart"
       />

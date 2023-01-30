@@ -12,17 +12,25 @@ import { Timer } from 'app/App.components/Timer/Timer.controller'
 import { LiquidateVaultModal } from './LiquidateVaultModal/LiquidateVaultModal.modal'
 
 // styles
-import { VaultsCardDropDown, VaultsAssest } from './../Vaults.style'
+import { VaultsCardDropDown } from './../Vaults.style'
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHeaderCell,
+  TableBody,
+  TableCell,
+} from 'app/App.components/Table/Table.style'
 
 // types
 import { VaultType } from 'utils/TypesAndInterfaces/Vaults'
 import { StatusFlagStyle } from '../../../app/App.components/StatusFlag/StatusFlag.constants'
+import { BorrowingCardOptions } from 'pages/Loans/Components/BorrowindExpandCard'
 
 // helpers
 import { CYAN } from 'app/App.components/TzAddress/TzAddress.constants'
 import { vaultsStatuses, LIQUIDATE_MODAL_ID } from '../Vaults.consts' 
 import { getTimestampByLevel } from 'pages/Governance/Governance.actions'
-import { BLOCKS_PER_MINUTE } from 'utils/constants'
 
 const findStatusInfo = (status: string) => {
   switch (status) {
@@ -44,11 +52,13 @@ const findStatusInfo = (status: string) => {
 
 const findFooterText = (status: string, statusColor: StatusFlagStyle, timestamp?: number) => {
   const timer = timestamp 
-    ? (<Timer
-      timestamp={timestamp}
-      className='timer'
-      options={{ defaultColor: '#77A4F2', negativeColor: '#77A4F2' }}
-    />)
+    ? (
+    <div className='timer'>
+      <Timer
+        timestamp={timestamp}
+        options={{ defaultColor: '#77A4F2', negativeColor: '#77A4F2' }}
+      />
+    </div>)
     : <span className='timer'>no data</span>
 
   switch (status) {
@@ -64,6 +74,15 @@ const findFooterText = (status: string, statusColor: StatusFlagStyle, timestamp?
   }
 }
 
+const borrowingCardOptions: BorrowingCardOptions = {
+  headerColumnNames: {
+    collateralBalance: 'Collateral Value',
+    borrowedAmount: 'Borrowed Amount',
+  },
+  reverseColumns: true,
+  customTableColumn: 'collateralShare'
+}
+
 type Props = VaultType & {
   isOwner: boolean
   accountPkh?: string
@@ -75,12 +94,9 @@ export const VaultsCard = (props: Props) => {
   const {
     ownerId,
     vaultId,
-    // TODO: remove x
-    status: x,
-    currentBlockLevel,
-    liquidationEndLevel,
-    markedForLiquidationLevel,
-    liquidationDelayInMinutes,
+    status,
+    levelOfEarly,
+    levelOfLate,
     collateralData,
     isOwner,
     accountPkh,
@@ -90,7 +106,7 @@ export const VaultsCard = (props: Props) => {
   const [expanded, setExpanded] = useState(false)
   const [timerTimestamp, setTimerTimestamp] = useState<number | undefined>(undefined)
   const [shownModal, setShownModal] = useState<typeof LIQUIDATE_MODAL_ID | null>(null)
-  const status = vaultsStatuses.LIQUIDATABLE
+
   const statusColor = findStatusInfo(status).color as StatusFlagStyle
   const statusText = findStatusInfo(status).text
   const footerText = findFooterText(status, statusColor, timerTimestamp)
@@ -120,35 +136,20 @@ export const VaultsCard = (props: Props) => {
   useEffect(() => {
     if (!expanded) return
 
-    if (status === vaultsStatuses.GRACE_PERIOD) {
+    if (status === vaultsStatuses.GRACE_PERIOD || status === vaultsStatuses.LIQUIDATABLE) {
       ;(async () => {
-        if (!currentBlockLevel) {
+        if (!levelOfEarly || !levelOfLate) {
           setTimerTimestamp(undefined)
           return 
         }
-        
-        const levelOfEarly = currentBlockLevel
-        const levelOfLate = markedForLiquidationLevel + (liquidationDelayInMinutes * BLOCKS_PER_MINUTE)
 
         const response = await getCountdownTimestamp(levelOfEarly, levelOfLate)
         const timestamp =  new Date(response.timestampOfEarly).getTime() - new Date(response.timestampOfLate).getTime() + new Date().getTime()
         
         setTimerTimestamp(timestamp)
       })()
-    } else if (status === vaultsStatuses.LIQUIDATABLE) {
-      ;(async () => {
-        if (!currentBlockLevel || !liquidationEndLevel) {
-          setTimerTimestamp(undefined)
-          return 
-        }
-        
-        const response = await getCountdownTimestamp(currentBlockLevel, liquidationEndLevel)
-        const timestamp =  new Date(response.timestampOfEarly).getTime() - new Date(response.timestampOfLate).getTime() + new Date().getTime()
-
-        setTimerTimestamp(timestamp)
-      })()
     } 
-  }, [status, expanded, currentBlockLevel, markedForLiquidationLevel, liquidationDelayInMinutes, liquidationEndLevel])
+  }, [status, expanded, levelOfEarly, levelOfLate])
 
   const headerSufix = (
     <StatusFlag status={statusColor} text={status} className="sufix" />
@@ -200,44 +201,58 @@ export const VaultsCard = (props: Props) => {
             <h1>Vault Assets</h1>
             
             <div className='table-size'>
-              <VaultsAssest>
-                <thead>
-                  <tr>
-                    <th>Asset</th>
-                    <th>Balance</th>
-                    <th>Collateral %</th>
-                  </tr>
-                </thead>
+              <Table className={`no-margin borrowing-table ${isOwner ? 'show-before' : ''}`}>
+                <TableHeader className={`simple-header collateral ${collateralData.length === 0 ? 'empty' : ''}`}>
+                  <TableRow>
+                    <TableHeaderCell>Asset</TableHeaderCell>
+                    <TableHeaderCell>Balance</TableHeaderCell>
+                    <TableHeaderCell>Collateral %</TableHeaderCell>
+                  </TableRow>
+                </TableHeader>
 
-                <tbody>
-                  {collateralData.slice(0, -1).map(({ assetIcon, assetSymbol, balance, assetRate, collateralShare }, index) => (
-                    <tr key={index}>
-                      <td>
-                        <div>
-                          {assetIcon ? (
-                            <div className="img-wrapper">
-                              <img src={assetIcon} alt={`${assetSymbol} logo`} />
-                            </div>
-                          ) : (
-                            <div className="no-icon">
-                              <Icon id="noImage" />
-                            </div>
-                          )}
+                <TableBody>
+                  {collateralData.map(({ assetIcon, assetSymbol, balance, assetRate, collateralShare }, index) => {
+                    const columnWidth = '33%'
+                    const isTotalRow = collateralData.length - 1 === index
+                    if (isTotalRow && collateralData.length < 3) return null
 
-                          {assetSymbol}
-                        </div>
-                      </td>
+                    return (
+                      <TableRow rowHeight={44} key={assetSymbol + '-' + index}>
+                        <TableCell width={columnWidth} className="vert-middle">
+                        {isTotalRow ? (
+                          'Total'
+                        ) : (
+                          <div className="cell-content row">
+                            {assetIcon ? (
+                              <div className="img-wrapper">
+                                <img src={assetIcon} alt={`${assetSymbol} logo`} />
+                              </div>
+                            ) : (
+                              <div className="no-icon">
+                                <Icon id="noImage" />
+                              </div>
+                            )}
+                            {assetSymbol}
+                          </div>
+                        )}
+                        </TableCell>
 
-                      <td >
-                        <CommaNumber value={balance} />
-                        <CommaNumber value={assetRate ? balance * assetRate : 0} beginningText="~$" className="rate" />
-                      </td>
+                        <TableCell width={columnWidth}>
+                          <div className="cell-content">
+                            <CommaNumber value={balance} beginningText='$' className='balance' />
+                            <CommaNumber value={assetRate ? balance * assetRate : 0} beginningText="~$" className="rate" />
+                          </div>
+                        </TableCell>
 
-                      <td>{collateralShare}%</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </VaultsAssest>
+                        <TableCell width={columnWidth}>
+                          <div className="cell-content">
+                            {collateralShare}%
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                  )})}
+                </TableBody>
+              </Table>
             </div>
           </div>
         </div>
@@ -277,8 +292,8 @@ export const VaultsCard = (props: Props) => {
           headerSufix={headerSufix}
           getExpandedStatus={setExpanded}
           timestamp={timerTimestamp}
-          isVaultsPage
           isOwner
+          options={borrowingCardOptions}
         />
       ) : (
         <BorrowingExpandCard
@@ -286,7 +301,7 @@ export const VaultsCard = (props: Props) => {
           className="expand-vault"
           headerSufix={headerSufix}
           getExpandedStatus={setExpanded}
-          isVaultsPage
+          options={borrowingCardOptions}
         >
           {generalExpand}
         </BorrowingExpandCard>

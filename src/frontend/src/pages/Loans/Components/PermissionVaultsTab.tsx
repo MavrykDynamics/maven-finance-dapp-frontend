@@ -1,9 +1,11 @@
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+import { BorrowingData } from 'utils/TypesAndInterfaces/Loans'
+
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
+import { BorrowingExpandCard } from './BorrowindExpandCard'
+
 import { EmptyContainer } from 'app/App.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
-import { BorrowingData } from 'utils/TypesAndInterfaces/Loans'
-import { BorrowingExpandCard } from './BorrowindExpandCard'
 import { LoansTabStyled } from './LoansComponents.style'
 
 type PermissionVaultsPropsType = {

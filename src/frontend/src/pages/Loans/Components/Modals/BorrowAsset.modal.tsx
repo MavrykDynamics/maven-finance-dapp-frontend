@@ -1,35 +1,104 @@
-import { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useLockBodyScroll } from 'react-use'
+import { useEffect, useState } from 'react'
 
-import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import { COLLATERAL_RATIO_GRADIENT } from 'pages/Loans/Loans.const'
+import { getAssetName } from 'pages/Loans/Loans.helpers'
+import { BorrowPopupDataType, DEFAULT_LOANS_INPUT_VALUE, getOnBlurValue, getOnFocusValue } from './Modals.helpers'
+import { State } from 'reducers'
 import { ACTION_PRIMARY, TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
 
 import NewButton from 'app/App.components/Button/NewButton.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { Input } from 'app/App.components/Input/NewInput'
+import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
 import Icon from 'app/App.components/Icon/Icon.view'
 
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
-import { FillBlock, ThreeLevelListItem } from 'pages/Loans/Loans.style'
+import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase, VaultModalOverview } from './Modals.style'
+import { borrowVaultAssetAction } from 'pages/Loans/Loans.actions'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import { silverColor } from 'styles'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A240058&t=Sx2aEpp3ifrGxBtQ-0
-export const BorrowAsset = ({ closePopup, show }: { closePopup: () => void; show: boolean }) => {
-  const [inputAmount, setInputAmount] = useState('0')
+export const BorrowAsset = ({
+  closePopup,
+  show,
+  data,
+}: {
+  closePopup: () => void
+  show: boolean
+  data: BorrowPopupDataType
+}) => {
+  const {
+    vaultAddress,
+    borrowedAsset,
+    borowCapacity = 0,
+    collateralUtilization = 0,
+    borrowAPR = 0,
+    hasUserBorrowed,
+    currentCollateralBalance = 0,
+    currentAvaliableToBorrow = 0,
+  } = data ?? {}
+
+  useLockBodyScroll(show)
+  const dispatch = useDispatch()
+  const { isActionLoading } = useSelector((state: State) => state.loading)
+
+  const assetName = getAssetName(borrowedAsset?.assetName ?? '')
+
+  const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
   const [screenShown, setShownScreen] = useState<'initial' | 'confitmation'>('initial')
-  const isBorrowedAlready = false
 
-  const continueBtnHandler = () => {
-    setShownScreen('confitmation')
+  useEffect(() => {
+    if (!show) {
+      setInputData(DEFAULT_LOANS_INPUT_VALUE)
+      setShownScreen('initial')
+    }
+  }, [show])
+
+  // stuff to handle inputs
+  const inputOnChangeHandle = (newInputAmount: string, userAssetBalance: number) => {
+    const validationStatus =
+      Number(newInputAmount) > 0 && Number(newInputAmount) <= userAssetBalance
+        ? INPUT_STATUS_SUCCESS
+        : INPUT_STATUS_ERROR
+
+    if (validationStatus === INPUT_STATUS_ERROR && newInputAmount !== '' && newInputAmount !== '0') return
+
+    setInputData({
+      ...inputData,
+      amount: newInputAmount,
+      validationStatus: validationStatus,
+    })
   }
 
-  const backBtnHandler = () => {
-    setShownScreen('initial')
+  const inputOnBlurHandle = () => {
+    setInputData({
+      ...inputData,
+      amount: getOnBlurValue(inputData.amount),
+    })
   }
 
-  const borrowAsserHandler = () => {}
+  const onFocusHandler = () => {
+    setInputData({
+      ...inputData,
+      amount: getOnFocusValue(inputData.amount),
+    })
+  }
+
+  const continueBtnHandler = () => setShownScreen('confitmation')
+  const backBtnHandler = () => setShownScreen('initial')
+
+  const borrowAsserHandler = async () => {
+    if (vaultAddress) {
+      await dispatch(borrowVaultAssetAction(vaultAddress, Number(inputData.amount), closePopup))
+    }
+  }
 
   return (
     <PopupContainer onClick={closePopup} show={show}>
@@ -40,7 +109,7 @@ export const BorrowAsset = ({ closePopup, show }: { closePopup: () => void; show
           {screenShown === 'initial' ? (
             <>
               <GovRightContainerTitleArea>
-                {isBorrowedAlready ? <h2>Borrow Additional Asset</h2> : <h2>Borrow Asset</h2>}
+                {hasUserBorrowed ? <h2>Borrow Additional {assetName}</h2> : <h2>Borrow {assetName}</h2>}
               </GovRightContainerTitleArea>
               <div className="modalDescr">
                 Select the asset you would like to borrow. You cannot borrow more than your borrow capacity.
@@ -49,55 +118,95 @@ export const BorrowAsset = ({ closePopup, show }: { closePopup: () => void; show
               <div className="lending-stats" style={{ marginBottom: '30px' }}>
                 <ThreeLevelListItem>
                   <div className="name">Borrow Capacity</div>
-                  <CommaNumber value={0} className="value" endingText="mXTZ" />
+                  <CommaNumber value={borowCapacity} className="value" />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">Collateral Utilization</div>
-                  <CommaNumber value={0} className="value" endingText="%" />
+                  <CommaNumber value={collateralUtilization} className="value" endingText="%" />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">Borrow APR</div>
-                  <CommaNumber value={0} className="value" endingText="%" />
+                  <CommaNumber value={borrowAPR} className="value" endingText="%" />
+                </ThreeLevelListItem>
+                <ThreeLevelListItem>
+                  <div className="name">
+                    DAO Fee{' '}
+                    <CustomTooltip iconId="info" defaultStrokeColor={silverColor} text={``} className="tooltip" />
+                  </div>
+                  <CommaNumber value={1} className="value" endingText="%" />
                 </ThreeLevelListItem>
               </div>
 
               <div className="block-name">Select asset and amount to borrow</div>
-              <Input
-                className="withdrawCollateralInput"
-                inputProps={{
-                  value: inputAmount,
-                  type: 'number',
-                  onChange: (e) => setInputAmount(e.target.value),
-                }}
-                settings={{
-                  balance: 1,
-                  balanceAsset: 'XTZ',
-                  useMaxHandler: () => setInputAmount('1000'),
-                  inputStatus: '',
-                  convertedValue: 1,
-                }}
-              >
-                <InputPinnedTokenInfo>
-                  <Icon id="xtzTezos" /> XTZ
-                </InputPinnedTokenInfo>
-              </Input>
+              {borrowedAsset ? (
+                <Input
+                  className={`${
+                    borrowedAsset.assetRate ? 'input-with-rate' : ''
+                  } large-input pinned-dropdown withdrawCollateralInput`}
+                  inputProps={{
+                    value: inputData.amount,
+                    type: 'number',
+                    onBlur: inputOnBlurHandle,
+                    onFocus: onFocusHandler,
+                    onChange: (e) => inputOnChangeHandle(e.target.value, borrowedAsset.userBalance),
+                  }}
+                  settings={{
+                    balance: borrowedAsset.userBalance,
+                    balanceAsset: assetName,
+                    useMaxHandler: () =>
+                      inputOnChangeHandle(String(borrowedAsset.userBalance), borrowedAsset.userBalance),
+                    inputStatus: inputData.validationStatus,
+                    convertedValue: Number(inputData.amount) * borrowedAsset.assetRate,
+                  }}
+                >
+                  <InputPinnedTokenInfo>
+                    {borrowedAsset.assetIcon ? (
+                      <div className="image-wrapper">
+                        <img src={borrowedAsset.assetIcon} alt={borrowedAsset.assetName + '-logo'} />
+                      </div>
+                    ) : (
+                      <Icon id="noImage" />
+                    )}{' '}
+                    {assetName}
+                  </InputPinnedTokenInfo>
+                </Input>
+              ) : null}
 
-              {isBorrowedAlready ? (
-                <NewButton kind={ACTION_PRIMARY} onClick={borrowAsserHandler} className="modal-manage-btn">
-                  <Icon id="coin-loan" />
-                  Borrow Asset
-                </NewButton>
-              ) : (
-                <NewButton kind={ACTION_PRIMARY} onClick={continueBtnHandler} className="modal-manage-btn">
-                  Continue
-                  <Icon id="arrowRight" />
-                </NewButton>
-              )}
+              <VaultModalOverview>
+                <ThreeLevelListItem className="collateral-diagram">
+                  <div className={`percentage ${Number(154) / 100 > 2.5 ? 'up' : 'down'}`}>
+                    Collateral Ratio: <CommaNumber value={154} endingText="%" />
+                  </div>
+                  <GradientDiagram
+                    className="diagram"
+                    colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
+                    currentPersentage={50}
+                  />
+                </ThreeLevelListItem>
+                <ThreeLevelListItem>
+                  <div className="name">Collateral Value</div>
+                  <CommaNumber value={currentCollateralBalance} className="value" beginningText="$" />
+                </ThreeLevelListItem>
+                <ThreeLevelListItem>
+                  <div className="name">Available To Borrow</div>
+                  <CommaNumber value={currentAvaliableToBorrow} className="value" beginningText="$" />
+                </ThreeLevelListItem>
+              </VaultModalOverview>
+
+              <NewButton
+                kind={ACTION_PRIMARY}
+                onClick={continueBtnHandler}
+                disabled={inputData.validationStatus !== INPUT_STATUS_SUCCESS}
+                className="modal-manage-btn"
+              >
+                Continue
+                <Icon id="arrowRight" />
+              </NewButton>
             </>
           ) : (
             <>
               <GovRightContainerTitleArea>
-                <h2>Confirm Borrow XTZ</h2>
+                <h2>Confirm Borrow {assetName}</h2>
               </GovRightContainerTitleArea>
               <div className="modalDescr">
                 Select the asset you would like to borrow. You cannot borrow more than your borrow capacity.
@@ -106,40 +215,48 @@ export const BorrowAsset = ({ closePopup, show }: { closePopup: () => void; show
               <div className="lending-stats" style={{ marginBottom: '30px' }}>
                 <ThreeLevelListItem>
                   <div className="name">Asset</div>
-                  <div className="value">XTZ</div>
+                  <div className="value">{assetName}</div>
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
-                  <div className="name">Amount</div>
-                  <CommaNumber value={2.13} className="value" endingText="%" />
+                  <div className="name">
+                    Total Amount{' '}
+                    <CustomTooltip iconId="info" defaultStrokeColor={silverColor} text={``} className="tooltip" />
+                  </div>
+                  <CommaNumber value={Number(inputData.amount)} className="value" />
+                </ThreeLevelListItem>
+                <ThreeLevelListItem>
+                  <div className="name">Amount Received</div>
+                  <CommaNumber value={Number(inputData.amount)} className="value" />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">USD Value</div>
-                  <CommaNumber value={2412} className="value" beginningText="$" />
+                  <CommaNumber
+                    value={Number(inputData.amount) * Number(borrowedAsset?.assetRate)}
+                    className="value"
+                    beginningText="$"
+                  />
                 </ThreeLevelListItem>
               </div>
 
               <div className="block-name">New Vault Stats</div>
               <VaultModalOverview>
                 <ThreeLevelListItem className="collateral-diagram">
-                  <TzAddress tzAddress="tz1ezDb77a9jaFMHDWs8QXrKEDkpgGdgsjPD" type={BLUE} />
-                  <FillBlock width={75} className={'diagram'}>
-                    <div className="colored"></div>
-                  </FillBlock>
-                  <div className="info-tip">
-                    Collateral Utilization:
-                    <span>
-                      <CommaNumber value={0} endingText="%" />
-                    </span>
+                  <div className={`percentage ${Number(154) / 100 > 2.5 ? 'up' : 'down'}`}>
+                    Collateral Ratio: <CommaNumber value={154} endingText="%" />
                   </div>
+                  <GradientDiagram
+                    className="diagram"
+                    colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
+                    currentPersentage={50}
+                  />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">Collateral Value</div>
-                  <CommaNumber value={0} className="value" />
-                  {false ? <CommaNumber value={0} beginningText="$" className="rate" /> : null}
+                  <CommaNumber value={currentCollateralBalance} className="value" beginningText="$" />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
-                  <div className="name">Available To Borrow</div>
-                  <CommaNumber value={0} className="value" />
+                  <div className="name">Available To Withdraw</div>
+                  <CommaNumber value={currentAvaliableToBorrow} className="value" beginningText="$" />
                 </ThreeLevelListItem>
               </VaultModalOverview>
 
@@ -148,7 +265,12 @@ export const BorrowAsset = ({ closePopup, show }: { closePopup: () => void; show
                   <Icon id="arrowLeft" />
                   Back
                 </NewButton>
-                <NewButton kind={ACTION_PRIMARY} onClick={borrowAsserHandler} className="modal-manage-btn">
+                <NewButton
+                  kind={ACTION_PRIMARY}
+                  onClick={borrowAsserHandler}
+                  disabled={isActionLoading}
+                  className="modal-manage-btn"
+                >
                   <Icon id="coin-loan" />
                   Borrow XTZ
                 </NewButton>

@@ -93,6 +93,42 @@ export const LOANS_QUERY = `query GetLoansStorage {
 export const LOANS_QUERY_NAME = 'GetLoansStorage'
 export const LOANS_QUERY_VARIABLE = {}
 
+export const AVALIABLE_COLLATERALS_QUERY = `
+query GetAvaliableCollaterals {
+  lending_controller(where: {mock_time: {_eq: true}}) {
+    collateral_tokens {
+      token_address
+      id
+      token_name
+      token_contract_standard
+      protected
+    }
+
+    loan_tokens {
+      lp_token_address
+      loan_token_name
+
+      vaults {
+        collateral_balances {
+          token {
+            token_address
+            token_name
+          }
+        }
+        loan_token {
+          loan_token_address
+          loan_token_name
+          lp_token_address
+        }
+      }
+    }
+  }
+}
+`
+
+export const AVALIABLE_COLLATERALS_QUERY_NAME = 'GetAvaliableCollaterals'
+export const AVALIABLE_COLLATERALS_QUERY_VARIABLE = {}
+
 export const NEW_VAULT_QUERY = `
 query GetNewVault {
   vault {

@@ -121,9 +121,75 @@ export const Table = styled.table<{ theme: MavrykTheme }>`
     margin-top: 15px;
     border: 1px solid ${({ theme }) => theme.cardBorderColor};
     position: relative;
-    border-spacing: 0;
     width: 100%;
+    border-spacing: 0;
+    border-collapse: separate;
     border-radius: 10px;
+
+    &.with-header {
+      thead {
+        th:first-child {
+          border-top: unset;
+          border-left: unset;
+          border-top-left-radius: 10px;
+        }
+
+        th:last-child {
+          border-top: unset;
+          border-right: unset;
+          border-top-right-radius: 10px;
+        }
+      }
+
+      tr {
+        td {
+          border: unset;
+          border-top: 1px solid ${({ theme }) => theme.cardBorderColor};
+          border-right: 1px solid ${({ theme }) => theme.cardBorderColor};
+        }
+
+        td:last-of-type {
+          border: unset;
+          border-right: unset;
+          border-top: 1px solid ${({ theme }) => theme.cardBorderColor};
+        }
+      }
+    }
+
+    &.one-column {
+      td {
+        border-top: 1px solid ${({ theme }) => theme.cardBorderColor};
+      }
+
+      tr:first-child {
+        td {
+          border-right: unset;
+          border-top: unset;
+          border-top-left-radius: 10px;
+          border-top-right-radius: 10px;
+        }
+      }
+    }
+
+    tr:last-child {
+      td:first-child {
+        border-bottom: unset;
+        border-left: unset;
+        border-bottom-left-radius: 10px;
+      }
+
+      td:last-child {
+        border-bottom: unset;
+        border-right: unset;
+        border-bottom-right-radius: 10px;
+      }
+    }
+
+    td {
+      input {
+        background: transparent;
+      }
+    }
   }
 
   &.transaction-history-table {
@@ -255,17 +321,9 @@ export const TableRow = styled.tr<{ theme: MavrykTheme; borderColor?: string; ro
   &.editable-row {
     height: 42px;
     position: relative;
-    background-color: ${({ theme }) => theme.backgroundColor};
 
     td {
-      border-top: 1px solid ${({ theme }) => theme.cardBorderColor};
-      border-right: 1px solid ${({ theme }) => theme.cardBorderColor};
       color: ${({ theme }) => theme.dataColor};
-
-      &.no-right-border {
-        border-right: none;
-      }
-
       vertical-align: middle;
       text-align: center;
 
@@ -275,11 +333,10 @@ export const TableRow = styled.tr<{ theme: MavrykTheme; borderColor?: string; ro
     }
 
     &:hover {
-      background-color: ${({ theme }) => theme.containerColor};
-
       > div:not(.button-wrap),
       input {
-        background-color: ${({ theme }) => theme.containerColor};
+        background-color: transparent;
+        border-color: transparent;
       }
 
       .remove {

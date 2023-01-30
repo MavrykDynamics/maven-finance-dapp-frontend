@@ -13,6 +13,7 @@ export type LoanTokenType = {
     icon?: string
     rate: number
     tokenType: 'tez' | 'fa12' | 'fa2'
+    userBalance: number
   }
   transactionHistory: Array<{
     descr: string | null
@@ -63,7 +64,7 @@ export type AvaliableCollateralType = {
   id: number
   userBalance: number
   assetDecimals: number
-  assetRate: number | null
+  assetRate: number
   assetName: string
   assetSymbol: string
   assetIcon: string
@@ -90,9 +91,10 @@ export type BorrowingData = {
   borrowedAsset: {
     assetSymbol?: string
     assetName?: string
+    userBalance: number
     assetIcon?: string
     amtBorrowed: number
-    assetRate: number | null
+    assetRate: number
     collateralBalance: number
     collateralUtilization: number
     apr: number
@@ -102,7 +104,7 @@ export type BorrowingData = {
     assetSymbol?: string
     assetIcon?: string
     balance: number
-    assetRate: number | null
+    assetRate: number
     maxWithdraw: number
     collateralShare?: number
   }>

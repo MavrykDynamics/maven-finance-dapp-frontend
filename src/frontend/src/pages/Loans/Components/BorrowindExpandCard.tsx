@@ -1,18 +1,7 @@
-import { useCallback, useState } from 'react'
+import { useContext } from 'react'
 
-import {
-  ADD_COLLATERAL_MODAL_ID,
-  ADD_NEW_COLLATERAL_MODAL_ID,
-  BORROW_ASSET_MODAL_ID,
-  CHANGE_BAKER_MODAL_ID,
-  COLLATERAL_RATIO_GRADIENT,
-  MANAGE_PERMISSIONS_MODAL_ID,
-  REPAY_AND_CLOSE_MODAL_ID,
-  REPAY_MODAL_ID,
-  UPDATE_MVK_OPERATORS_MODAL_ID,
-  WITHDRAW_COLLATERAL_MODAL_ID,
-} from '../Loans.const'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+import { COLLATERAL_RATIO_GRADIENT } from '../Loans.const'
 import { ACTION_PRIMARY, ACTION_SIMPLE, TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
 
 import { Button } from 'app/App.components/Button/Button.controller'
@@ -22,6 +11,8 @@ import Expand from 'app/App.components/Expand/Expand.view'
 import NewButton from 'app/App.components/Button/NewButton.controller'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { StatusMessage } from './StatusMessage.view'
+import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
+import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 
 import {
   Table,
@@ -34,33 +25,32 @@ import {
 import { ThreeLevelListItem } from '../Loans.style'
 import { BorrowingTabListItemExpanded } from './LoansComponents.style'
 
-// popups
-import { BorrowAsset } from './Modals/BorrowAsset.modal'
-import { AddCollateral } from './Modals/AddCollateral.modal'
-import { AddNewCollateral } from './Modals/AddNewCollateral.modal'
-import { WithdrawCollateral } from './Modals/WithdrawCollateral.modal'
-import { ChangeBaker } from './Modals/ChangeBaker'
-import { UpdateMVKOperator } from './Modals/UpdateMVKOperator.modal'
-import { ManagePermissions } from './Modals/ManagePermissions.modal'
-import { RepayAndCloseVault } from './Modals/RepayAndCloseVault.modal'
-import { Repay } from './Modals/Repay.modal'
-import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
-import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
+import { loansPopupsContext } from './Modals/LoansModals.provider'
+import { Link } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+import { State } from 'reducers'
+
+const defaultOptions = { 
+  headerColumnNames: {
+    collateralBalance: 'Collateral Balance',
+    borrowedAmount: 'Amount'
+  },
+}
+
+export type BorrowingCardOptions = typeof defaultOptions & {
+  reverseColumns?: boolean
+  customTableColumn?: keyof BorrowingData['collateralData'][0]
+}
 
 type BorrowingExpandCardPropsType = BorrowingData & {
   isOwner?: boolean
-  borrowedAsset: BorrowingData['borrowedAsset']
-  collateralData: BorrowingData['collateralData']
-  operators?: Array<string>
-  sMVKDelegatedTo?: string
-  depositors?: string | Array<string>
   headerSufix?: React.ReactNode
-  isVaultsPage?: boolean
   getExpandedStatus?: (arg: boolean) => void
   className?: string
   children?: React.ReactNode
   status?: string
   timestamp?: number
+  options?: BorrowingCardOptions
 }
 
 export const BorrowingExpandCard = ({
@@ -72,30 +62,15 @@ export const BorrowingExpandCard = ({
   sMVKDelegatedTo,
   depositors,
   headerSufix,
-  isVaultsPage,
   getExpandedStatus,
   className,
   address,
   children,
   status,
   timestamp,
+  options = defaultOptions,
 }: BorrowingExpandCardPropsType) => {
-  const [shownModal, setShownModal] = useState<
-    | typeof BORROW_ASSET_MODAL_ID
-    | typeof REPAY_MODAL_ID
-    | typeof ADD_COLLATERAL_MODAL_ID
-    | typeof ADD_NEW_COLLATERAL_MODAL_ID
-    | typeof WITHDRAW_COLLATERAL_MODAL_ID
-    | typeof REPAY_AND_CLOSE_MODAL_ID
-    | typeof CHANGE_BAKER_MODAL_ID
-    | typeof UPDATE_MVK_OPERATORS_MODAL_ID
-    | typeof MANAGE_PERMISSIONS_MODAL_ID
-    | null
-  >(null)
-
-  const closePopup = useCallback(() => {
-    setShownModal(null)
-  }, [])
+  const { headerColumnNames, reverseColumns, customTableColumn } = options
 
   const {
     assetSymbol,
@@ -108,15 +83,19 @@ export const BorrowingExpandCard = ({
     fee = 0,
   } = borrowedAsset
 
-  const borrowHandler = () => setShownModal(BORROW_ASSET_MODAL_ID)
-  const repayHandler = () => setShownModal(REPAY_MODAL_ID)
-  const addCollateralHandler = () => setShownModal(ADD_COLLATERAL_MODAL_ID)
-  const addNewCollateralHandler = () => setShownModal(ADD_NEW_COLLATERAL_MODAL_ID)
-  const removeCollateralHandler = () => setShownModal(WITHDRAW_COLLATERAL_MODAL_ID)
-  const repayFullHandler = () => setShownModal(REPAY_AND_CLOSE_MODAL_ID)
-  const changeBakerHandler = () => setShownModal(CHANGE_BAKER_MODAL_ID)
-  const updateOperatorsHandler = () => setShownModal(UPDATE_MVK_OPERATORS_MODAL_ID)
-  const managePermissionsHandler = () => setShownModal(MANAGE_PERMISSIONS_MODAL_ID)
+  const { avaliableCollaterals } = useSelector((state: State) => state.tokens)
+
+  const {
+    openChangeBakerPopup,
+    openAddExistingCollateralPopup,
+    openAddNewCollateralPopup,
+    openBorrowPopup,
+    openManagePermissionsPopup,
+    openRepayFullPopup,
+    openRepayPopup,
+    openUpdateMvkOperatorsPopup,
+    openWithdrawCollateralPopup,
+  } = useContext(loansPopupsContext)
 
   const mappedDepositors = {
     isAll: depositors?.[0] === 'all',
@@ -131,16 +110,6 @@ export const BorrowingExpandCard = ({
 
   return (
     <>
-      <BorrowAsset closePopup={closePopup} show={shownModal === BORROW_ASSET_MODAL_ID} />
-      <AddCollateral closePopup={closePopup} show={shownModal === ADD_COLLATERAL_MODAL_ID} />
-      <AddNewCollateral closePopup={closePopup} show={shownModal === ADD_NEW_COLLATERAL_MODAL_ID} />
-      <WithdrawCollateral closePopup={closePopup} show={shownModal === WITHDRAW_COLLATERAL_MODAL_ID} />
-      <ChangeBaker closePopup={closePopup} show={shownModal === CHANGE_BAKER_MODAL_ID} />
-      <UpdateMVKOperator closePopup={closePopup} show={shownModal === UPDATE_MVK_OPERATORS_MODAL_ID} />
-      <ManagePermissions closePopup={closePopup} show={shownModal === MANAGE_PERMISSIONS_MODAL_ID} />
-      <RepayAndCloseVault closePopup={closePopup} show={shownModal === REPAY_AND_CLOSE_MODAL_ID} />
-      <Repay closePopup={closePopup} show={shownModal === REPAY_MODAL_ID} />
-
       <Expand
         getExpandedStatus={getExpandedStatus}
         className={className || "expand-borrow-tab"}
@@ -164,8 +133,7 @@ export const BorrowingExpandCard = ({
             </ThreeLevelListItem>
             <ThreeLevelListItem className="collateral-diagram">
               <div className={`percentage ${Number(collateralUtilization) / 100 > 2.5 ? 'up' : 'down'}`}>
-                Collateral Ratio:
-                <CommaNumber value={collateralUtilization} endingText="%" />
+                Collateral Ratio: <CommaNumber value={collateralUtilization} endingText="%" />
               </div>
               <GradientDiagram
                 className="diagram"
@@ -173,19 +141,19 @@ export const BorrowingExpandCard = ({
                 currentPersentage={50}
               />
             </ThreeLevelListItem>
-            {isVaultsPage && (
+            {reverseColumns && (
             <ThreeLevelListItem>
-              <div className="name">Collateral Value</div>
+              <div className="name">{headerColumnNames.collateralBalance}</div>
               <CommaNumber value={collateralBalance} className="value" beginningText="$" />
             </ThreeLevelListItem>)}
             <ThreeLevelListItem>
-              <div className="name">{isVaultsPage ? 'Borrowed Amount' : 'Amount'}</div>
+              <div className="name">{headerColumnNames.borrowedAmount}</div>
               <CommaNumber value={amtBorrowed} className="value" />
               {assetRate ? <CommaNumber value={amtBorrowed * assetRate} beginningText="$" className="rate" /> : null}
             </ThreeLevelListItem>
-            {!isVaultsPage && (
+            {!reverseColumns && (
             <ThreeLevelListItem>
-              <div className="name">Collateral Balance</div>
+              <div className="name">{headerColumnNames.collateralBalance}</div>
               <CommaNumber value={collateralBalance} className="value" beginningText="$" />
             </ThreeLevelListItem>)}
           </>
@@ -193,7 +161,7 @@ export const BorrowingExpandCard = ({
       >
         {children || (
         <BorrowingTabListItemExpanded className='expand-borrow-tab-container'>
-          {(isVaultsPage && status) && <StatusMessage status={status} timestamp={timestamp} />}
+          {status && <StatusMessage status={status} timestamp={timestamp} />}
           <div className="block-name">Borrowed</div>
           <div className="borrowed-data">
             <ThreeLevelListItem>
@@ -231,10 +199,33 @@ export const BorrowingExpandCard = ({
                   text="Borrow"
                   icon="coin-loan"
                   strokeWidth={0.5}
-                  onClick={borrowHandler}
+                  onClick={() =>
+                    openBorrowPopup?.({
+                      vaultAddress: address,
+                      borrowedAsset: borrowedAsset,
+                      borowCapacity: 0,
+                      collateralUtilization: 0,
+                      borrowAPR: apr,
+                      hasUserBorrowed: false,
+                      currentCollateralBalance: collateralData.at(-1)?.balance ?? 0,
+                      currentAvaliableToBorrow: 0,
+                    })
+                  }
                   kind={ACTION_PRIMARY}
                 />
-                <NewButton onClick={repayHandler} kind={TRANSPARENT_WITH_BORDER} className="repay">
+                <NewButton
+                  onClick={() =>
+                    openRepayPopup?.({
+                      vaultAddress: address,
+                      borrowedAsset: borrowedAsset,
+                      feesAmount: 0,
+                      currentCollateralBalance: collateralData.at(-1)?.balance ?? 0,
+                      currentAvaliableToBorrow: 0,
+                    })
+                  }
+                  kind={TRANSPARENT_WITH_BORDER}
+                  className="repay"
+                >
                   <Icon id="okIcon" /> Repay
                 </NewButton>
               </div>
@@ -248,13 +239,14 @@ export const BorrowingExpandCard = ({
                 <TableHeaderCell>Asset</TableHeaderCell>
                 <TableHeaderCell>Balance</TableHeaderCell>
                 <TableHeaderCell>Withdraw Max</TableHeaderCell>
-                {isVaultsPage && <TableHeaderCell>Collateral Share</TableHeaderCell>}
+                {customTableColumn && <TableHeaderCell>Collateral Share</TableHeaderCell>}
               </TableRow>
             </TableHeader>
 
             <TableBody>
-              {collateralData.map(({ assetSymbol, assetIcon, balance, assetRate = 1, maxWithdraw, collateralShare = 0 }, idx) => {
-                const columnWidth = isVaultsPage ? '18%' : '22%'
+              {collateralData.map(({ assetSymbol, assetIcon, balance, assetRate, maxWithdraw }, idx, array) => {                
+                const customColumnValue = customTableColumn ? array[idx][customTableColumn] : undefined               
+                const columnWidth = customTableColumn ? '18%' : '22%'
                 const isTotalRow = collateralData.length - 1 === idx
                 if (isTotalRow && collateralData.length < 3) return null
 
@@ -294,12 +286,12 @@ export const BorrowingExpandCard = ({
                         ) : null}
                       </div>
                     </TableCell>
-                    {isVaultsPage && (
+                    {(typeof customColumnValue === 'number') ? (
                     <TableCell width={columnWidth}>
                       <div className="cell-content">
-                         <CommaNumber value={collateralShare} className="value" endingText="%" />
+                         <CommaNumber value={customColumnValue} className="value" endingText="%" />
                       </div>
-                    </TableCell>)}
+                    </TableCell>) : null}
                     {isTotalRow ? (
                       <TableCell className="buttons borrowing">
                         <div className="cell-content row">
@@ -308,8 +300,15 @@ export const BorrowingExpandCard = ({
                               text="Add Collateral"
                               icon="plus"
                               strokeWidth={0.1}
-                              onClick={addNewCollateralHandler}
+                              onClick={() =>
+                                openAddNewCollateralPopup?.({
+                                  vaultAddress: address,
+                                  currentCollateralValue: collateralData.at(-1)?.balance ?? 0,
+                                  currentAvaliableToWithdraw: 0,
+                                })
+                              }
                               kind={ACTION_PRIMARY}
+                              disabled={avaliableCollaterals.length === 0}
                               className="add-collateral"
                             />
                           ) : null}
@@ -318,11 +317,31 @@ export const BorrowingExpandCard = ({
                     ) : (
                       <TableCell className="buttons borrowing">
                         <div className="cell-content row">
-                          <NewButton onClick={addCollateralHandler} kind={TRANSPARENT_WITH_BORDER}>
+                          <NewButton
+                            onClick={() =>
+                              openAddExistingCollateralPopup?.({
+                                vaultAddress: address,
+                                currentCollateralValue: collateralData.at(-1)?.balance ?? 0,
+                                currentAvaliableToWithdraw: 0,
+                                selectedAsset: collateralData[idx],
+                              })
+                            }
+                            kind={TRANSPARENT_WITH_BORDER}
+                          >
                             <Icon id="plus" /> Add
                           </NewButton>
                           {isOwner ? (
-                            <NewButton onClick={removeCollateralHandler} kind={TRANSPARENT_WITH_BORDER}>
+                            <NewButton
+                              onClick={() =>
+                                openWithdrawCollateralPopup?.({
+                                  vaultAddress: address,
+                                  currentCollateralValue: collateralData.at(-1)?.balance ?? 0,
+                                  currentAvaliableToWithdraw: 0,
+                                  selectedAsset: collateralData[idx],
+                                })
+                              }
+                              kind={TRANSPARENT_WITH_BORDER}
+                            >
                               <Icon id="minus" /> Remove
                             </NewButton>
                           ) : null}
@@ -339,7 +358,13 @@ export const BorrowingExpandCard = ({
               text="Add Collateral"
               icon="plus"
               strokeWidth={0.1}
-              onClick={addNewCollateralHandler}
+              onClick={() =>
+                openAddNewCollateralPopup?.({
+                  vaultAddress: address,
+                  currentCollateralValue: collateralData.at(-1)?.balance ?? 0,
+                  currentAvaliableToWithdraw: 0,
+                })
+              }
               kind={ACTION_PRIMARY}
               className="add-collateral"
             />
@@ -358,7 +383,11 @@ export const BorrowingExpandCard = ({
                   text="Change Baker"
                   icon="paginationArrowLeft"
                   iconAfter
-                  onClick={changeBakerHandler}
+                  onClick={() =>
+                    openChangeBakerPopup?.({
+                      bakerAddress: xtzDelegatedTo,
+                    })
+                  }
                 />
               </div>
               <div className="bottom-info-row">
@@ -366,7 +395,9 @@ export const BorrowingExpandCard = ({
                 <div className="value">
                   {sMVKDelegatedTo ? <TzAddress tzAddress={sMVKDelegatedTo} type={BLUE} /> : 'None'}
                 </div>
-                <Button kind={ACTION_SIMPLE} text="View Satellite" icon="paginationArrowLeft" iconAfter />
+                <Link to={sMVKDelegatedTo ? `/satellites/satellite-details/${sMVKDelegatedTo}` : '/satellite-nodes'}>
+                  <Button kind={ACTION_SIMPLE} text="View Satellite" icon="paginationArrowLeft" iconAfter />
+                </Link>
               </div>
 
               <div className="block-name margin-top-20">Permissions</div>
@@ -384,7 +415,7 @@ export const BorrowingExpandCard = ({
                   text="Update"
                   icon="paginationArrowLeft"
                   iconAfter
-                  onClick={managePermissionsHandler}
+                  onClick={() => openManagePermissionsPopup?.({})}
                 />
               </div>
               <div className="bottom-info-row">
@@ -400,14 +431,22 @@ export const BorrowingExpandCard = ({
                   text="Update"
                   icon="paginationArrowLeft"
                   iconAfter
-                  onClick={updateOperatorsHandler}
+                  onClick={() => openUpdateMvkOperatorsPopup?.({})}
                 />
               </div>
 
               <Button
                 text="Repay Loan in Full"
                 kind={TRANSPARENT_WITH_BORDER}
-                onClick={repayFullHandler}
+                onClick={() =>
+                  openRepayFullPopup?.({
+                    vaultAddress: address,
+                    borrowedAsset: borrowedAsset,
+                    feesAmount: 0,
+                    currentCollateralBalance: collateralData.at(-1)?.balance ?? 0,
+                    currentAvaliableToBorrow: 0,
+                  })
+                }
                 className="close-vault"
                 icon="close-stroke"
               />

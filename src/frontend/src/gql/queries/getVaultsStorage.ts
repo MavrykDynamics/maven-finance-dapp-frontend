@@ -2,23 +2,32 @@ export const VAULTS_STORAGE_QUERY = `
 query GetAllVaultsStorage {
   lending_controller(where: {mock_time: {_eq: true}}) {
     address
+    interest_rate_decimals
     liquidation_delay_in_minutes
     liquidation_ratio
     collateral_ratio
+
+    loan_tokens {
+      current_interest_rate
+    }
+
     vaults {
       collateral_balances {
         balance
         token {
+          token_name
           token_address
           oracle_id
         }
       }
       vault {
+        creation_timestamp
         address
         depositors {
           depositor_id
         }
       }
+      last_updated_block_level
       owner_id
       marked_for_liquidation_level
       loan_outstanding_total

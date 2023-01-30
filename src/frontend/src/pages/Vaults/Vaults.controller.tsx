@@ -1,25 +1,22 @@
 import * as React from 'react'
-import { useDispatch, useSelector } from 'react-redux'
 
 // components
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
 import { VaultsView } from './Vaults.view'
 
+// helpers
+import LoansPopupsProvider from '../Loans/Components/Modals/LoansModals.provider'
+
 // styles
 import { Page } from 'styles'
 
-// types
-import { State } from '../../reducers'
-
-
 export const Vaults = () => {
-  const dispatch = useDispatch()
-  const { wallet, tezos, accountPkh } = useSelector((state: State) => state.wallet)
-
   return (
-    <Page>
-      <PageHeader page={'vaults'} />
-      <VaultsView />
-    </Page>
+    <LoansPopupsProvider>
+      <Page>
+        <PageHeader page={'vaults'} />
+        <VaultsView />
+      </Page>
+    </LoansPopupsProvider>
   )
 }

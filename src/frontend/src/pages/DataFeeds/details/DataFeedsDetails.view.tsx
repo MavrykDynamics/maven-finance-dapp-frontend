@@ -19,8 +19,7 @@ import { DataFeedsChart } from '../chart/DataFeedsChart.controller'
 
 // types
 import { SatelliteRecord } from 'utils/TypesAndInterfaces/Delegation'
-import { FeedGQL } from 'pages/Satellites/helpers/Satellites.types'
-import { DataFeedsHistory, DataFeedsVolatility } from '../../Satellites/helpers/Satellites.types'
+import { Feed } from 'pages/Satellites/helpers/Satellites.types'
 
 import DataFeedsPagination from '../pagination/DataFeedspagination.controler'
 // styles
@@ -36,22 +35,18 @@ import {
 } from './DataFeedsDetails.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { EmptyContainer } from 'app/App.style'
-import { cyanColor, downColor, Page } from 'styles'
+import { cyanColor, downColor, Page, skyColor } from 'styles'
 import { CoinsLogo } from 'app/App.components/Icon/CoinsIcons.view'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { parseDate } from 'utils/time'
-import dayjs from 'dayjs'
 import { useSelector } from 'react-redux'
 import { State } from 'reducers'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
-import { TabItem } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 
 type FeedDetailsProps = {
-  feed: FeedGQL | null
+  feed: Feed | null
   oracles: Array<SatelliteRecord>
   registerFeedHandler: () => void
-  dataFeedsHistory: DataFeedsHistory
-  dataFeedsVolatility: DataFeedsVolatility
 }
 
 const emptyContainer = (
@@ -72,22 +67,17 @@ const tabsList = [
   },
 ]
 
-const DataFeedDetailsView = ({
-  feed,
-  oracles,
-  registerFeedHandler,
-  dataFeedsHistory,
-  dataFeedsVolatility,
-}: FeedDetailsProps) => {
+const DataFeedDetailsView = ({ feed, oracles, registerFeedHandler }: FeedDetailsProps) => {
   const { dipDupTokens } = useSelector((state: State) => state.tokens)
   const [isClickedRegister, setClickedRegister] = useState(false)
   const [activeTab, setActiveTab] = useState(tabsList[0].id)
   const oraclesForFeed = useMemo(
     () => oracles.filter(({ oracleRecords }) => oracleRecords.find(({ feedAddress }) => feed?.address === feedAddress)),
-    [oracles],
+    [feed?.address, oracles],
   )
 
   const isTrustedAnswer = feed && feed.last_completed_data_pct_oracle_resp >= feed.pct_oracle_threshold
+
   // const heartbeatUpdateInfo =
   //   dayjs(Date.now()).diff(dayjs(feed?.last_completed_data_last_updated_at), 'minutes') >= 30
   //     ? `
@@ -128,7 +118,7 @@ const DataFeedDetailsView = ({
               <div className="price-part">
                 <DataFeedValueText fontSize={22} fontWeidth={600} className="shield">
                   <Icon id={isTrustedAnswer ? 'trustShield' : 'notTrustedShield'} />
-                  <CommaNumber beginningText="$" value={feed.last_completed_data} />
+                  <CommaNumber beginningText="$" value={feed.amount} showDecimal decimalsToShow={6} />
                 </DataFeedValueText>
                 <DataFeedsTitle fontSize={14} fontWeidth={500}>
                   {isTrustedAnswer ? 'Trusted Answer' : 'Not Trusted Answer'}
@@ -177,7 +167,7 @@ const DataFeedDetailsView = ({
                           short: true,
                           showZeros: false,
                           negativeColor: isTrustedAnswer ? cyanColor : downColor,
-                          defaultColor: cyanColor,
+                          defaultColor: skyColor,
                         }}
                         timestamp={new Date(feed.last_completed_data_last_updated_at).getTime() + 1000 * 60 * 30}
                       />
@@ -212,23 +202,8 @@ const DataFeedDetailsView = ({
                     className="info-icon"
                   />
                 </DataFeedsTitle>
-                <DataFeedSubTitleText fontSize={14} fontWeidth={500}>
-                  {parseDate({ time: feed.last_completed_data_last_updated_at, timeFormat: 'MMM DD, YYYY' })}
-                </DataFeedSubTitleText>
-                <DataFeedValueText fontSize={16} fontWeidth={600}>
-                  {feed.last_completed_data_last_updated_at ? (
-                    <div className="timer">
-                      <Timer
-                        options={{
-                          short: true,
-                          showZeros: false,
-                          negativeColor: cyanColor,
-                          defaultColor: cyanColor,
-                        }}
-                        timestamp={new Date(feed.last_completed_data_last_updated_at).getTime() + 1000 * 60 * 30}
-                      />
-                    </div>
-                  ) : null}
+                <DataFeedValueText fontSize={14} fontWeidth={500} style={{ padding: '2px 0' }}>
+                  {parseDate({ time: feed.last_completed_data_last_updated_at, timeFormat: 'MMM Do, YYYY, HH:mm:ss' })}
                 </DataFeedValueText>
               </DataFeedInfoBlock>
             </div>
@@ -289,8 +264,9 @@ const DataFeedDetailsView = ({
 
           <DataFeedsChart
             activeTab={activeTab}
-            dataFeedsHistory={dataFeedsHistory}
-            dataFeedsVolatility={dataFeedsVolatility}
+            dataFeedsHistory={feed.dataFeedsHistory}
+            dataFeedsVolatility={feed.dataFeedsVolatility}
+            tooltipAsset={feed.name.split('/')?.[0]}
           />
         </div>
       </DataFeedsStyled>
@@ -306,7 +282,7 @@ const DataFeedDetailsView = ({
         emptyContainer
       )}
 
-      <UsersListWrapper className="oracle-list-wrapper">
+      {/* <UsersListWrapper className="oracle-list-wrapper">
         <GovRightContainerTitleArea>
           <h1>Users</h1>
         </GovRightContainerTitleArea>
@@ -328,7 +304,7 @@ const DataFeedDetailsView = ({
             </Link>
           ))}
         </UsersListCardsWrapper>
-      </UsersListWrapper>
+      </UsersListWrapper> */}
     </Page>
   ) : null
 }

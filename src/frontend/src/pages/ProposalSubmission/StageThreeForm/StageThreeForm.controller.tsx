@@ -196,7 +196,7 @@ export const StageThreeForm = ({
         </div>
       </FormTitleAndFeeContainer>
       <label>4 - Enter Proposal Data</label>
-      <Table className="editable-table">
+      <Table className="editable-table with-header">
         <TableHeader className="editable-head">
           <TableRow>
             <TableHeaderCell className="no-right-border">Address</TableHeaderCell>

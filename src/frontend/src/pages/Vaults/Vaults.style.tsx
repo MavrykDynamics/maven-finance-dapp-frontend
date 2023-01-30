@@ -103,6 +103,10 @@ export const VaultsCardDropDown = styled.div<{ theme: MavrykTheme }>`
         justify-content: space-between;
         margin-bottom: 30px;
 
+        &:last-of-type {
+          margin-bottom: 0;
+        }
+
         > div {
           min-width: 130px;
         }
@@ -114,7 +118,7 @@ export const VaultsCardDropDown = styled.div<{ theme: MavrykTheme }>`
       border-left: 1px solid ${({ theme }) => theme.cardBorderColor};
 
       h1 {
-        margin-bottom: 20px;
+        margin-bottom: 14px;
       }
 
       .table-size {
@@ -212,75 +216,5 @@ export const VaultsCardDropDown = styled.div<{ theme: MavrykTheme }>`
 
   .${WAITING} {
     color: ${({ theme }) => theme.awaitingColor};
-  }
-`
-
-export const VaultsAssest = styled.table`
-  width: 100%;
-  border-collapse: collapse;
-
-  thead {
-    th {
-      text-align: start;
-    }
-  }
-
-  tbody {
-    tr {
-      border-bottom: 1px solid ${({ theme }) => theme.cardBorderColor};
-
-      &:last-of-type {
-        border: none;
-      }
-
-      td {
-        position: relative;
-        width: 40%;
-
-        font-weight: 600;
-        font-size: 16px;
-        line-height: 22px;
-
-        color: ${({ theme }) => theme.dataColor};
-
-        div {
-          display: flex;
-          align-items: center;
-        }
-
-        .rate {
-          font-weight: 400;
-          font-size: 12px;
-          line-height: 18px;
-
-          color: ${({ theme }) => theme.dataColor};
-
-          p {
-            margin: 0;
-          }
-        }
-
-        .img-wrapper,
-        .no-icon {
-          width: 24px;
-          height: 24px;
-          margin-right: 5px;
-
-          img,
-          svg {
-            fill: ${({ theme }) => theme.dataColor};
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-          }
-        }
-      }
-    }
-  }
-
-  svg {
-    margin-right: 4px;
-    width: 24px;
-    height: 24px;
   }
 `

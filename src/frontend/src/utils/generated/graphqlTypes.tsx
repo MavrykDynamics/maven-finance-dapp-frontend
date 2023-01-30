@@ -34075,6 +34075,10 @@ export type M_TokenWhitelist_Contracts_AggregateArgs = {
 export type M_Token_Account = {
   __typename?: 'm_token_account';
   balance: Scalars['float8'];
+  /** An array relationship */
+  history_data: Array<M_Token_Account_History_Data>;
+  /** An aggregate relationship */
+  history_data_aggregate: M_Token_Account_History_Data_Aggregate;
   id: Scalars['bigint'];
   /** An object relationship */
   m_token: M_Token;
@@ -34084,6 +34088,26 @@ export type M_Token_Account = {
   /** An object relationship */
   user: Mavryk_User;
   user_id: Scalars['String'];
+};
+
+
+/** columns and relationships of "m_token_account" */
+export type M_Token_AccountHistory_DataArgs = {
+  distinct_on?: InputMaybe<Array<M_Token_Account_History_Data_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<M_Token_Account_History_Data_Order_By>>;
+  where?: InputMaybe<M_Token_Account_History_Data_Bool_Exp>;
+};
+
+
+/** columns and relationships of "m_token_account" */
+export type M_Token_AccountHistory_Data_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<M_Token_Account_History_Data_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<M_Token_Account_History_Data_Order_By>>;
+  where?: InputMaybe<M_Token_Account_History_Data_Bool_Exp>;
 };
 
 /** aggregated selection of "m_token_account" */
@@ -34154,6 +34178,7 @@ export type M_Token_Account_Bool_Exp = {
   _not?: InputMaybe<M_Token_Account_Bool_Exp>;
   _or?: InputMaybe<Array<M_Token_Account_Bool_Exp>>;
   balance?: InputMaybe<Float8_Comparison_Exp>;
+  history_data?: InputMaybe<M_Token_Account_History_Data_Bool_Exp>;
   id?: InputMaybe<Bigint_Comparison_Exp>;
   m_token?: InputMaybe<M_Token_Bool_Exp>;
   m_token_id?: InputMaybe<String_Comparison_Exp>;
@@ -34161,6 +34186,401 @@ export type M_Token_Account_Bool_Exp = {
   rewards_earned?: InputMaybe<Float8_Comparison_Exp>;
   user?: InputMaybe<Mavryk_User_Bool_Exp>;
   user_id?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** columns and relationships of "m_token_account_history_data" */
+export type M_Token_Account_History_Data = {
+  __typename?: 'm_token_account_history_data';
+  balance: Scalars['float8'];
+  id: Scalars['bigint'];
+  level: Scalars['bigint'];
+  /** An object relationship */
+  m_token_account: M_Token_Account;
+  m_token_account_id: Scalars['bigint'];
+  operation_hash: Scalars['String'];
+  reward_index: Scalars['float8'];
+  rewards_earned: Scalars['float8'];
+  timestamp: Scalars['timestamptz'];
+  /** TRANSFER: 0\nMINT_OR_BURN: 1 */
+  type: Scalars['smallint'];
+};
+
+/** aggregated selection of "m_token_account_history_data" */
+export type M_Token_Account_History_Data_Aggregate = {
+  __typename?: 'm_token_account_history_data_aggregate';
+  aggregate?: Maybe<M_Token_Account_History_Data_Aggregate_Fields>;
+  nodes: Array<M_Token_Account_History_Data>;
+};
+
+/** aggregate fields of "m_token_account_history_data" */
+export type M_Token_Account_History_Data_Aggregate_Fields = {
+  __typename?: 'm_token_account_history_data_aggregate_fields';
+  avg?: Maybe<M_Token_Account_History_Data_Avg_Fields>;
+  count: Scalars['Int'];
+  max?: Maybe<M_Token_Account_History_Data_Max_Fields>;
+  min?: Maybe<M_Token_Account_History_Data_Min_Fields>;
+  stddev?: Maybe<M_Token_Account_History_Data_Stddev_Fields>;
+  stddev_pop?: Maybe<M_Token_Account_History_Data_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<M_Token_Account_History_Data_Stddev_Samp_Fields>;
+  sum?: Maybe<M_Token_Account_History_Data_Sum_Fields>;
+  var_pop?: Maybe<M_Token_Account_History_Data_Var_Pop_Fields>;
+  var_samp?: Maybe<M_Token_Account_History_Data_Var_Samp_Fields>;
+  variance?: Maybe<M_Token_Account_History_Data_Variance_Fields>;
+};
+
+
+/** aggregate fields of "m_token_account_history_data" */
+export type M_Token_Account_History_Data_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<M_Token_Account_History_Data_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "m_token_account_history_data" */
+export type M_Token_Account_History_Data_Aggregate_Order_By = {
+  avg?: InputMaybe<M_Token_Account_History_Data_Avg_Order_By>;
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<M_Token_Account_History_Data_Max_Order_By>;
+  min?: InputMaybe<M_Token_Account_History_Data_Min_Order_By>;
+  stddev?: InputMaybe<M_Token_Account_History_Data_Stddev_Order_By>;
+  stddev_pop?: InputMaybe<M_Token_Account_History_Data_Stddev_Pop_Order_By>;
+  stddev_samp?: InputMaybe<M_Token_Account_History_Data_Stddev_Samp_Order_By>;
+  sum?: InputMaybe<M_Token_Account_History_Data_Sum_Order_By>;
+  var_pop?: InputMaybe<M_Token_Account_History_Data_Var_Pop_Order_By>;
+  var_samp?: InputMaybe<M_Token_Account_History_Data_Var_Samp_Order_By>;
+  variance?: InputMaybe<M_Token_Account_History_Data_Variance_Order_By>;
+};
+
+/** aggregate avg on columns */
+export type M_Token_Account_History_Data_Avg_Fields = {
+  __typename?: 'm_token_account_history_data_avg_fields';
+  balance?: Maybe<Scalars['Float']>;
+  id?: Maybe<Scalars['Float']>;
+  level?: Maybe<Scalars['Float']>;
+  m_token_account_id?: Maybe<Scalars['Float']>;
+  reward_index?: Maybe<Scalars['Float']>;
+  rewards_earned?: Maybe<Scalars['Float']>;
+  /** TRANSFER: 0\nMINT_OR_BURN: 1 */
+  type?: Maybe<Scalars['Float']>;
+};
+
+/** order by avg() on columns of table "m_token_account_history_data" */
+export type M_Token_Account_History_Data_Avg_Order_By = {
+  balance?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  level?: InputMaybe<Order_By>;
+  m_token_account_id?: InputMaybe<Order_By>;
+  reward_index?: InputMaybe<Order_By>;
+  rewards_earned?: InputMaybe<Order_By>;
+  /** TRANSFER: 0\nMINT_OR_BURN: 1 */
+  type?: InputMaybe<Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "m_token_account_history_data". All fields are combined with a logical 'AND'. */
+export type M_Token_Account_History_Data_Bool_Exp = {
+  _and?: InputMaybe<Array<M_Token_Account_History_Data_Bool_Exp>>;
+  _not?: InputMaybe<M_Token_Account_History_Data_Bool_Exp>;
+  _or?: InputMaybe<Array<M_Token_Account_History_Data_Bool_Exp>>;
+  balance?: InputMaybe<Float8_Comparison_Exp>;
+  id?: InputMaybe<Bigint_Comparison_Exp>;
+  level?: InputMaybe<Bigint_Comparison_Exp>;
+  m_token_account?: InputMaybe<M_Token_Account_Bool_Exp>;
+  m_token_account_id?: InputMaybe<Bigint_Comparison_Exp>;
+  operation_hash?: InputMaybe<String_Comparison_Exp>;
+  reward_index?: InputMaybe<Float8_Comparison_Exp>;
+  rewards_earned?: InputMaybe<Float8_Comparison_Exp>;
+  timestamp?: InputMaybe<Timestamptz_Comparison_Exp>;
+  type?: InputMaybe<Smallint_Comparison_Exp>;
+};
+
+/** aggregate max on columns */
+export type M_Token_Account_History_Data_Max_Fields = {
+  __typename?: 'm_token_account_history_data_max_fields';
+  balance?: Maybe<Scalars['float8']>;
+  id?: Maybe<Scalars['bigint']>;
+  level?: Maybe<Scalars['bigint']>;
+  m_token_account_id?: Maybe<Scalars['bigint']>;
+  operation_hash?: Maybe<Scalars['String']>;
+  reward_index?: Maybe<Scalars['float8']>;
+  rewards_earned?: Maybe<Scalars['float8']>;
+  timestamp?: Maybe<Scalars['timestamptz']>;
+  /** TRANSFER: 0\nMINT_OR_BURN: 1 */
+  type?: Maybe<Scalars['smallint']>;
+};
+
+/** order by max() on columns of table "m_token_account_history_data" */
+export type M_Token_Account_History_Data_Max_Order_By = {
+  balance?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  level?: InputMaybe<Order_By>;
+  m_token_account_id?: InputMaybe<Order_By>;
+  operation_hash?: InputMaybe<Order_By>;
+  reward_index?: InputMaybe<Order_By>;
+  rewards_earned?: InputMaybe<Order_By>;
+  timestamp?: InputMaybe<Order_By>;
+  /** TRANSFER: 0\nMINT_OR_BURN: 1 */
+  type?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type M_Token_Account_History_Data_Min_Fields = {
+  __typename?: 'm_token_account_history_data_min_fields';
+  balance?: Maybe<Scalars['float8']>;
+  id?: Maybe<Scalars['bigint']>;
+  level?: Maybe<Scalars['bigint']>;
+  m_token_account_id?: Maybe<Scalars['bigint']>;
+  operation_hash?: Maybe<Scalars['String']>;
+  reward_index?: Maybe<Scalars['float8']>;
+  rewards_earned?: Maybe<Scalars['float8']>;
+  timestamp?: Maybe<Scalars['timestamptz']>;
+  /** TRANSFER: 0\nMINT_OR_BURN: 1 */
+  type?: Maybe<Scalars['smallint']>;
+};
+
+/** order by min() on columns of table "m_token_account_history_data" */
+export type M_Token_Account_History_Data_Min_Order_By = {
+  balance?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  level?: InputMaybe<Order_By>;
+  m_token_account_id?: InputMaybe<Order_By>;
+  operation_hash?: InputMaybe<Order_By>;
+  reward_index?: InputMaybe<Order_By>;
+  rewards_earned?: InputMaybe<Order_By>;
+  timestamp?: InputMaybe<Order_By>;
+  /** TRANSFER: 0\nMINT_OR_BURN: 1 */
+  type?: InputMaybe<Order_By>;
+};
+
+/** Ordering options when selecting data from "m_token_account_history_data". */
+export type M_Token_Account_History_Data_Order_By = {
+  balance?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  level?: InputMaybe<Order_By>;
+  m_token_account?: InputMaybe<M_Token_Account_Order_By>;
+  m_token_account_id?: InputMaybe<Order_By>;
+  operation_hash?: InputMaybe<Order_By>;
+  reward_index?: InputMaybe<Order_By>;
+  rewards_earned?: InputMaybe<Order_By>;
+  timestamp?: InputMaybe<Order_By>;
+  type?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "m_token_account_history_data" */
+export enum M_Token_Account_History_Data_Select_Column {
+  /** column name */
+  Balance = 'balance',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Level = 'level',
+  /** column name */
+  MTokenAccountId = 'm_token_account_id',
+  /** column name */
+  OperationHash = 'operation_hash',
+  /** column name */
+  RewardIndex = 'reward_index',
+  /** column name */
+  RewardsEarned = 'rewards_earned',
+  /** column name */
+  Timestamp = 'timestamp',
+  /** column name */
+  Type = 'type'
+}
+
+/** aggregate stddev on columns */
+export type M_Token_Account_History_Data_Stddev_Fields = {
+  __typename?: 'm_token_account_history_data_stddev_fields';
+  balance?: Maybe<Scalars['Float']>;
+  id?: Maybe<Scalars['Float']>;
+  level?: Maybe<Scalars['Float']>;
+  m_token_account_id?: Maybe<Scalars['Float']>;
+  reward_index?: Maybe<Scalars['Float']>;
+  rewards_earned?: Maybe<Scalars['Float']>;
+  /** TRANSFER: 0\nMINT_OR_BURN: 1 */
+  type?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev() on columns of table "m_token_account_history_data" */
+export type M_Token_Account_History_Data_Stddev_Order_By = {
+  balance?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  level?: InputMaybe<Order_By>;
+  m_token_account_id?: InputMaybe<Order_By>;
+  reward_index?: InputMaybe<Order_By>;
+  rewards_earned?: InputMaybe<Order_By>;
+  /** TRANSFER: 0\nMINT_OR_BURN: 1 */
+  type?: InputMaybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type M_Token_Account_History_Data_Stddev_Pop_Fields = {
+  __typename?: 'm_token_account_history_data_stddev_pop_fields';
+  balance?: Maybe<Scalars['Float']>;
+  id?: Maybe<Scalars['Float']>;
+  level?: Maybe<Scalars['Float']>;
+  m_token_account_id?: Maybe<Scalars['Float']>;
+  reward_index?: Maybe<Scalars['Float']>;
+  rewards_earned?: Maybe<Scalars['Float']>;
+  /** TRANSFER: 0\nMINT_OR_BURN: 1 */
+  type?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_pop() on columns of table "m_token_account_history_data" */
+export type M_Token_Account_History_Data_Stddev_Pop_Order_By = {
+  balance?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  level?: InputMaybe<Order_By>;
+  m_token_account_id?: InputMaybe<Order_By>;
+  reward_index?: InputMaybe<Order_By>;
+  rewards_earned?: InputMaybe<Order_By>;
+  /** TRANSFER: 0\nMINT_OR_BURN: 1 */
+  type?: InputMaybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type M_Token_Account_History_Data_Stddev_Samp_Fields = {
+  __typename?: 'm_token_account_history_data_stddev_samp_fields';
+  balance?: Maybe<Scalars['Float']>;
+  id?: Maybe<Scalars['Float']>;
+  level?: Maybe<Scalars['Float']>;
+  m_token_account_id?: Maybe<Scalars['Float']>;
+  reward_index?: Maybe<Scalars['Float']>;
+  rewards_earned?: Maybe<Scalars['Float']>;
+  /** TRANSFER: 0\nMINT_OR_BURN: 1 */
+  type?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_samp() on columns of table "m_token_account_history_data" */
+export type M_Token_Account_History_Data_Stddev_Samp_Order_By = {
+  balance?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  level?: InputMaybe<Order_By>;
+  m_token_account_id?: InputMaybe<Order_By>;
+  reward_index?: InputMaybe<Order_By>;
+  rewards_earned?: InputMaybe<Order_By>;
+  /** TRANSFER: 0\nMINT_OR_BURN: 1 */
+  type?: InputMaybe<Order_By>;
+};
+
+/** Streaming cursor of the table "m_token_account_history_data" */
+export type M_Token_Account_History_Data_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: M_Token_Account_History_Data_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type M_Token_Account_History_Data_Stream_Cursor_Value_Input = {
+  balance?: InputMaybe<Scalars['float8']>;
+  id?: InputMaybe<Scalars['bigint']>;
+  level?: InputMaybe<Scalars['bigint']>;
+  m_token_account_id?: InputMaybe<Scalars['bigint']>;
+  operation_hash?: InputMaybe<Scalars['String']>;
+  reward_index?: InputMaybe<Scalars['float8']>;
+  rewards_earned?: InputMaybe<Scalars['float8']>;
+  timestamp?: InputMaybe<Scalars['timestamptz']>;
+  /** TRANSFER: 0\nMINT_OR_BURN: 1 */
+  type?: InputMaybe<Scalars['smallint']>;
+};
+
+/** aggregate sum on columns */
+export type M_Token_Account_History_Data_Sum_Fields = {
+  __typename?: 'm_token_account_history_data_sum_fields';
+  balance?: Maybe<Scalars['float8']>;
+  id?: Maybe<Scalars['bigint']>;
+  level?: Maybe<Scalars['bigint']>;
+  m_token_account_id?: Maybe<Scalars['bigint']>;
+  reward_index?: Maybe<Scalars['float8']>;
+  rewards_earned?: Maybe<Scalars['float8']>;
+  /** TRANSFER: 0\nMINT_OR_BURN: 1 */
+  type?: Maybe<Scalars['smallint']>;
+};
+
+/** order by sum() on columns of table "m_token_account_history_data" */
+export type M_Token_Account_History_Data_Sum_Order_By = {
+  balance?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  level?: InputMaybe<Order_By>;
+  m_token_account_id?: InputMaybe<Order_By>;
+  reward_index?: InputMaybe<Order_By>;
+  rewards_earned?: InputMaybe<Order_By>;
+  /** TRANSFER: 0\nMINT_OR_BURN: 1 */
+  type?: InputMaybe<Order_By>;
+};
+
+/** aggregate var_pop on columns */
+export type M_Token_Account_History_Data_Var_Pop_Fields = {
+  __typename?: 'm_token_account_history_data_var_pop_fields';
+  balance?: Maybe<Scalars['Float']>;
+  id?: Maybe<Scalars['Float']>;
+  level?: Maybe<Scalars['Float']>;
+  m_token_account_id?: Maybe<Scalars['Float']>;
+  reward_index?: Maybe<Scalars['Float']>;
+  rewards_earned?: Maybe<Scalars['Float']>;
+  /** TRANSFER: 0\nMINT_OR_BURN: 1 */
+  type?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_pop() on columns of table "m_token_account_history_data" */
+export type M_Token_Account_History_Data_Var_Pop_Order_By = {
+  balance?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  level?: InputMaybe<Order_By>;
+  m_token_account_id?: InputMaybe<Order_By>;
+  reward_index?: InputMaybe<Order_By>;
+  rewards_earned?: InputMaybe<Order_By>;
+  /** TRANSFER: 0\nMINT_OR_BURN: 1 */
+  type?: InputMaybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type M_Token_Account_History_Data_Var_Samp_Fields = {
+  __typename?: 'm_token_account_history_data_var_samp_fields';
+  balance?: Maybe<Scalars['Float']>;
+  id?: Maybe<Scalars['Float']>;
+  level?: Maybe<Scalars['Float']>;
+  m_token_account_id?: Maybe<Scalars['Float']>;
+  reward_index?: Maybe<Scalars['Float']>;
+  rewards_earned?: Maybe<Scalars['Float']>;
+  /** TRANSFER: 0\nMINT_OR_BURN: 1 */
+  type?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_samp() on columns of table "m_token_account_history_data" */
+export type M_Token_Account_History_Data_Var_Samp_Order_By = {
+  balance?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  level?: InputMaybe<Order_By>;
+  m_token_account_id?: InputMaybe<Order_By>;
+  reward_index?: InputMaybe<Order_By>;
+  rewards_earned?: InputMaybe<Order_By>;
+  /** TRANSFER: 0\nMINT_OR_BURN: 1 */
+  type?: InputMaybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type M_Token_Account_History_Data_Variance_Fields = {
+  __typename?: 'm_token_account_history_data_variance_fields';
+  balance?: Maybe<Scalars['Float']>;
+  id?: Maybe<Scalars['Float']>;
+  level?: Maybe<Scalars['Float']>;
+  m_token_account_id?: Maybe<Scalars['Float']>;
+  reward_index?: Maybe<Scalars['Float']>;
+  rewards_earned?: Maybe<Scalars['Float']>;
+  /** TRANSFER: 0\nMINT_OR_BURN: 1 */
+  type?: Maybe<Scalars['Float']>;
+};
+
+/** order by variance() on columns of table "m_token_account_history_data" */
+export type M_Token_Account_History_Data_Variance_Order_By = {
+  balance?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  level?: InputMaybe<Order_By>;
+  m_token_account_id?: InputMaybe<Order_By>;
+  reward_index?: InputMaybe<Order_By>;
+  rewards_earned?: InputMaybe<Order_By>;
+  /** TRANSFER: 0\nMINT_OR_BURN: 1 */
+  type?: InputMaybe<Order_By>;
 };
 
 /** aggregate max on columns */
@@ -34208,6 +34628,7 @@ export type M_Token_Account_Min_Order_By = {
 /** Ordering options when selecting data from "m_token_account". */
 export type M_Token_Account_Order_By = {
   balance?: InputMaybe<Order_By>;
+  history_data_aggregate?: InputMaybe<M_Token_Account_History_Data_Aggregate_Order_By>;
   id?: InputMaybe<Order_By>;
   m_token?: InputMaybe<M_Token_Order_By>;
   m_token_id?: InputMaybe<Order_By>;
@@ -38711,6 +39132,12 @@ export type Query_Root = {
   m_token_account_aggregate: M_Token_Account_Aggregate;
   /** fetch data from the table: "m_token_account" using primary key columns */
   m_token_account_by_pk?: Maybe<M_Token_Account>;
+  /** fetch data from the table: "m_token_account_history_data" */
+  m_token_account_history_data: Array<M_Token_Account_History_Data>;
+  /** fetch aggregated fields from the table: "m_token_account_history_data" */
+  m_token_account_history_data_aggregate: M_Token_Account_History_Data_Aggregate;
+  /** fetch data from the table: "m_token_account_history_data" using primary key columns */
+  m_token_account_history_data_by_pk?: Maybe<M_Token_Account_History_Data>;
   /** fetch aggregated fields from the table: "m_token" */
   m_token_aggregate: M_Token_Aggregate;
   /** fetch data from the table: "m_token" using primary key columns */
@@ -41466,6 +41893,29 @@ export type Query_RootM_Token_Account_AggregateArgs = {
 
 
 export type Query_RootM_Token_Account_By_PkArgs = {
+  id: Scalars['bigint'];
+};
+
+
+export type Query_RootM_Token_Account_History_DataArgs = {
+  distinct_on?: InputMaybe<Array<M_Token_Account_History_Data_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<M_Token_Account_History_Data_Order_By>>;
+  where?: InputMaybe<M_Token_Account_History_Data_Bool_Exp>;
+};
+
+
+export type Query_RootM_Token_Account_History_Data_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<M_Token_Account_History_Data_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<M_Token_Account_History_Data_Order_By>>;
+  where?: InputMaybe<M_Token_Account_History_Data_Bool_Exp>;
+};
+
+
+export type Query_RootM_Token_Account_History_Data_By_PkArgs = {
   id: Scalars['bigint'];
 };
 
@@ -44740,6 +45190,14 @@ export type Subscription_Root = {
   m_token_account_aggregate: M_Token_Account_Aggregate;
   /** fetch data from the table: "m_token_account" using primary key columns */
   m_token_account_by_pk?: Maybe<M_Token_Account>;
+  /** fetch data from the table: "m_token_account_history_data" */
+  m_token_account_history_data: Array<M_Token_Account_History_Data>;
+  /** fetch aggregated fields from the table: "m_token_account_history_data" */
+  m_token_account_history_data_aggregate: M_Token_Account_History_Data_Aggregate;
+  /** fetch data from the table: "m_token_account_history_data" using primary key columns */
+  m_token_account_history_data_by_pk?: Maybe<M_Token_Account_History_Data>;
+  /** fetch data from the table in a streaming manner : "m_token_account_history_data" */
+  m_token_account_history_data_stream: Array<M_Token_Account_History_Data>;
   /** fetch data from the table in a streaming manner : "m_token_account" */
   m_token_account_stream: Array<M_Token_Account>;
   /** fetch aggregated fields from the table: "m_token" */
@@ -48337,6 +48795,36 @@ export type Subscription_RootM_Token_Account_AggregateArgs = {
 
 export type Subscription_RootM_Token_Account_By_PkArgs = {
   id: Scalars['bigint'];
+};
+
+
+export type Subscription_RootM_Token_Account_History_DataArgs = {
+  distinct_on?: InputMaybe<Array<M_Token_Account_History_Data_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<M_Token_Account_History_Data_Order_By>>;
+  where?: InputMaybe<M_Token_Account_History_Data_Bool_Exp>;
+};
+
+
+export type Subscription_RootM_Token_Account_History_Data_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<M_Token_Account_History_Data_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<M_Token_Account_History_Data_Order_By>>;
+  where?: InputMaybe<M_Token_Account_History_Data_Bool_Exp>;
+};
+
+
+export type Subscription_RootM_Token_Account_History_Data_By_PkArgs = {
+  id: Scalars['bigint'];
+};
+
+
+export type Subscription_RootM_Token_Account_History_Data_StreamArgs = {
+  batch_size: Scalars['Int'];
+  cursor: Array<InputMaybe<M_Token_Account_History_Data_Stream_Cursor_Input>>;
+  where?: InputMaybe<M_Token_Account_History_Data_Bool_Exp>;
 };
 
 

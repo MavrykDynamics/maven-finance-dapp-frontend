@@ -32,24 +32,27 @@ type TradingViewChartProps = {
     valueTooltipFormatter?: (date: number) => string
     hideXAxis?: boolean
     hideYAxis?: boolean
+    tooltipAsset?: string
   }
   className?: string
+  children?: React.ReactNode
 }
 
 type TooltipPropsType = {
-  mvkAmount?: number
+  amount?: number
   date?: string | number
+  tooltipAsset: string
 }
 
-const TradingViewTooltip = ({ mvkAmount, date }: TooltipPropsType) => {
-  if (!mvkAmount || !date) {
+const TradingViewTooltip = ({ amount, date, tooltipAsset }: TooltipPropsType) => {
+  if (amount === undefined || date === undefined) {
     return null
   }
 
   return (
     <TradingViewTooltipStyled>
       <div className="value">
-        <CommaNumber endingText="MVK" value={mvkAmount} />
+        <CommaNumber endingText={tooltipAsset} value={amount} showDecimal decimalsToShow={6} />
       </div>
       <div className="date">{date}</div>
     </TradingViewTooltipStyled>
@@ -62,7 +65,8 @@ export const Chart = ({
   settings,
   numberOfItemsToDisplay = 15,
   className,
-}: TradingViewChartProps & { numberOfItemsToDisplay?: number }) => {
+  children = null,
+}: TradingViewChartProps & { numberOfItemsToDisplay?: number; children?: React.ReactNode }) => {
   if (data.length < numberOfItemsToDisplay) {
     return (
       <Plug className={className}>
@@ -76,7 +80,11 @@ export const Chart = ({
     )
   }
 
-  return <TradingViewChart data={data} settings={settings} colors={colors} className={className} />
+  return (
+    <TradingViewChart data={data} settings={settings} colors={colors} className={className}>
+      {children}
+    </TradingViewChart>
+  )
 }
 
 export const TradingViewChart = ({
@@ -97,13 +105,15 @@ export const TradingViewChart = ({
     tickDateFormatter,
     hideXAxis,
     hideYAxis,
+    tooltipAsset = 'USD',
   },
   className,
+  children,
 }: TradingViewChartProps) => {
   const chartContainerRef = useRef<HTMLDivElement | null>(null)
   const mainChartWrapperRef = useRef<HTMLDivElement | null>(null)
-  const [tooltipValue, setTooltipValue] = useState<TooltipPropsType>({
-    mvkAmount: data.at(-1)?.value,
+  const [tooltipValue, setTooltipValue] = useState<Omit<TooltipPropsType, 'tooltipAsset'>>({
+    amount: data.at(-1)?.value,
     date: data.at(-1)?.time,
   })
 
@@ -158,7 +168,7 @@ export const TradingViewChart = ({
       borderColor,
       scaleMargins: {
         top: 0.1,
-        bottom: 0.03,
+        bottom: 0.1,
       },
     })
 
@@ -181,11 +191,11 @@ export const TradingViewChart = ({
       priceLineVisible: false,
       priceFormat: {
         type: 'custom',
-        minMove: 1,
+        minMove: 0.000001,
         formatter: (price: any) =>
           formatNumber({
             showDecimal: true,
-            decimalsToShow: 2,
+            decimalsToShow: 6,
             number: parseFloat(price),
           }),
       },
@@ -214,7 +224,7 @@ export const TradingViewChart = ({
             dateTooltipFormatter?.(Number(param.time)) ??
             parseDate({ time: Number(param.time), timeFormat: 'MMM DD, HH:mm Z' }) ??
             '',
-          mvkAmount: Number(param.seriesPrices.get(series)),
+          amount: parseFloat(String(param.seriesPrices.get(series))),
         })
         if (mainChartWrapperRef.current) {
           mainChartWrapperRef.current.style.setProperty('--translateX', `${param.point.x + 15}`)
@@ -230,12 +240,26 @@ export const TradingViewChart = ({
       window.removeEventListener('resize', handleResize)
       chart.remove()
     }
-  }, [])
+  }, [
+    areaBottomColor,
+    areaTopColor,
+    borderColor,
+    data,
+    dateTooltipFormatter,
+    height,
+    hideXAxis,
+    hideYAxis,
+    lineColor,
+    textColor,
+    tickDateFormatter,
+    width,
+  ])
 
   return (
     <ChartStyled className={className} ref={mainChartWrapperRef}>
       <div ref={chartContainerRef} />
-      <TradingViewTooltip mvkAmount={tooltipValue?.mvkAmount} date={tooltipValue?.date} />
+      <TradingViewTooltip amount={tooltipValue?.amount} date={tooltipValue?.date} tooltipAsset={tooltipAsset} />
+      {children}
     </ChartStyled>
   )
 }

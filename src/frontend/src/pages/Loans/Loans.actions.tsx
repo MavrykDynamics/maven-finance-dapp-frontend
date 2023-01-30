@@ -1,6 +1,9 @@
 import { AppDispatch, GetState } from '../../app/App.controller'
 import { fetchFromIndexer } from 'gql/fetchGraphQL'
 import {
+  AVALIABLE_COLLATERALS_QUERY,
+  AVALIABLE_COLLATERALS_QUERY_NAME,
+  AVALIABLE_COLLATERALS_QUERY_VARIABLE,
   LOANS_QUERY,
   LOANS_QUERY_NAME,
   LOANS_QUERY_VARIABLE,
@@ -37,13 +40,6 @@ export const getLoansStorage = () => async (dispatch: AppDispatch, getState: Get
 
     const xtzBakers = await getXTZBakers()
 
-    const avaliableCollaterals = await getCollateralTokens(
-      storage?.lending_controller?.[0].collateral_tokens,
-      dipDupTokens,
-      { ...tokensPrices, ...loanTokensRate },
-      accountPkh,
-    )
-
     const { chartsData, loanTokens, loansControllerAddress } = await normalizeLoans({
       storage: storage?.lending_controller?.[0],
       dipDupTokens,
@@ -59,7 +55,6 @@ export const getLoansStorage = () => async (dispatch: AppDispatch, getState: Get
         loansControllerAddress,
         chartsData,
         loanTokens,
-        avaliableCollaterals,
         xtzBakers,
       },
     })
@@ -74,6 +69,43 @@ const getNewVaultData = async () => {
     const newVaultData = await fetchFromIndexer(NEW_VAULT_QUERY, NEW_VAULT_QUERY_NAME, NEW_VAULT_QUERY_VARIABLE)
 
     return newVaultData.vault.at(-1)?.lending_controller_vaults[0].vault_id
+  } catch (e) {
+    console.log('getNewVaultData error: ', e)
+  }
+}
+
+export const GET_AVALIABLE_COLLATERALS = 'GET_AVALIABLE_COLLATERALS'
+export const getAvaliableCollaterals = () => async (dispatch: AppDispatch, getState: GetState) => {
+  const {
+    tokens: { dipDupTokens, tokensPrices },
+    wallet: { accountPkh },
+  } = getState()
+  try {
+    const storage = await fetchFromIndexer(
+      AVALIABLE_COLLATERALS_QUERY,
+      AVALIABLE_COLLATERALS_QUERY_NAME,
+      AVALIABLE_COLLATERALS_QUERY_VARIABLE,
+    )
+
+    const loanTokensRate = await getLoansTokensRates(
+      storage?.lending_controller?.[0]?.loan_tokens,
+      dipDupTokens,
+      tokensPrices,
+    )
+
+    const avaliableCollaterals = await getCollateralTokens(
+      storage?.lending_controller?.[0]?.collateral_tokens,
+      dipDupTokens,
+      { ...tokensPrices, ...loanTokensRate },
+      accountPkh,
+    )
+
+    await dispatch({
+      type: GET_AVALIABLE_COLLATERALS,
+      avaliableCollaterals,
+    })
+
+    await dispatch(updateTokensPrices(loanTokensRate))
   } catch (e) {
     console.log('getNewVaultData error: ', e)
   }
@@ -282,7 +314,7 @@ export const depositLendingAssetAction =
       await dispatch(getLoansStorage())
       await dispatch(toggleActionLoader(false))
     } catch (error) {
-      console.error('submitProposal error:', error)
+      console.error('depositLendingAssetAction error:', error)
       if (error instanceof Error) {
         dispatch(showToaster(ERROR, 'Error', error.message))
         callback()
@@ -290,3 +322,334 @@ export const depositLendingAssetAction =
       await dispatch(toggleActionLoader(false))
     }
   }
+
+export const withdrawLendingAssetAction =
+  (loanTokenName: string, addLiquidityAmount: number, callback: () => void) =>
+  async (dispatch: AppDispatch, getState: GetState) => {
+    const state: State = getState()
+
+    if (!state.wallet.accountPkh) {
+      await dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
+      return
+    }
+
+    if (state.loading.isActionLoading) {
+      await dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
+      return
+    }
+
+    try {
+      // prepare and send query
+      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.lendingController.address)
+      const transaction = await contract?.methods.removeLiquidity(loanTokenName, addLiquidityAmount).send()
+
+      callback()
+      await dispatch(toggleActionLoader(true))
+      await dispatch(showToaster(INFO, 'Adding Liquidity...', 'Please wait 30s'))
+
+      // confirm query completion
+      await transaction?.confirmation()
+
+      await dispatch(showToaster(SUCCESS, 'Liquidity Added.', 'All good :)'))
+      // refetch data we need
+      await dispatch(getLoansStorage())
+      await dispatch(toggleActionLoader(false))
+    } catch (error) {
+      console.error('withdrawLendingAssetAction error:', error)
+      if (error instanceof Error) {
+        dispatch(showToaster(ERROR, 'Error', error.message))
+        callback()
+      }
+      await dispatch(toggleActionLoader(false))
+    }
+  }
+
+export const borrowVaultAssetAction =
+  (vaultId: string, amountToBorrow: number, callback: () => void) =>
+  async (dispatch: AppDispatch, getState: GetState) => {
+    const state: State = getState()
+
+    if (!state.wallet.accountPkh) {
+      await dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
+      return
+    }
+
+    if (state.loading.isActionLoading) {
+      await dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
+      return
+    }
+
+    try {
+      // prepare and send query
+      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.lendingController.address)
+      const transaction = await contract?.methods.borrow(vaultId, amountToBorrow).send()
+
+      callback()
+      await dispatch(toggleActionLoader(true))
+      await dispatch(showToaster(INFO, 'Borrowing from the vault...', 'Please wait 30s'))
+
+      // confirm query completion
+      await transaction?.confirmation()
+
+      await dispatch(showToaster(SUCCESS, 'Asset borrowed.', 'All good :)'))
+      // refetch data we need
+      await dispatch(getLoansStorage())
+      await dispatch(toggleActionLoader(false))
+    } catch (error) {
+      console.error('borrowVaultAssetAction error:', error)
+      if (error instanceof Error) {
+        dispatch(showToaster(ERROR, 'Error', error.message))
+        callback()
+      }
+      await dispatch(toggleActionLoader(false))
+    }
+  }
+
+export const withdrawCollateralAction = (callback: () => void) => async (dispatch: AppDispatch, getState: GetState) => {
+  const state: State = getState()
+
+  if (!state.wallet.accountPkh) {
+    await dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
+    return
+  }
+
+  if (state.loading.isActionLoading) {
+    await dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
+    return
+  }
+
+  try {
+    // prepare and send query
+    const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.lendingController.address)
+    // const transaction  = await contract?.methods.any.send()
+
+    callback()
+    await dispatch(toggleActionLoader(true))
+    await dispatch(showToaster(INFO, 'Borrowing from the vault...', 'Please wait 30s'))
+
+    // confirm query completion
+    // await transaction?.confirmation()
+
+    await dispatch(showToaster(SUCCESS, 'Asset borrowed.', 'All good :)'))
+    // refetch data we need
+    await dispatch(getLoansStorage())
+    await dispatch(toggleActionLoader(false))
+  } catch (error) {
+    console.error('borrowVaultAssetAction error:', error)
+    if (error instanceof Error) {
+      dispatch(showToaster(ERROR, 'Error', error.message))
+      callback()
+    }
+    await dispatch(toggleActionLoader(false))
+  }
+}
+
+export const repayPartOfVaultAction =
+  (vaultId: string, repayAmount: number, callback: () => void) => async (dispatch: AppDispatch, getState: GetState) => {
+    const state: State = getState()
+
+    if (!state.wallet.accountPkh) {
+      await dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
+      return
+    }
+
+    if (state.loading.isActionLoading) {
+      await dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
+      return
+    }
+
+    try {
+      // prepare and send query
+      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.lendingController.address)
+      const transaction = await contract?.methods.repay(vaultId, repayAmount).send()
+
+      callback()
+      await dispatch(toggleActionLoader(true))
+      await dispatch(showToaster(INFO, 'Borrowing from the vault...', 'Please wait 30s'))
+
+      // confirm query completion
+      await transaction?.confirmation()
+
+      await dispatch(showToaster(SUCCESS, 'Asset borrowed.', 'All good :)'))
+      // refetch data we need
+      await dispatch(getLoansStorage())
+      await dispatch(toggleActionLoader(false))
+    } catch (error) {
+      console.error('borrowVaultAssetAction error:', error)
+      if (error instanceof Error) {
+        dispatch(showToaster(ERROR, 'Error', error.message))
+        callback()
+      }
+      await dispatch(toggleActionLoader(false))
+    }
+  }
+
+export const repayFullAndCloseVaultAction =
+  (vaultId: string, repayAmount: number, callback: () => void) => async (dispatch: AppDispatch, getState: GetState) => {
+    const state: State = getState()
+
+    if (!state.wallet.accountPkh) {
+      await dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
+      return
+    }
+
+    if (state.loading.isActionLoading) {
+      await dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
+      return
+    }
+
+    try {
+      // prepare and send query
+      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.lendingController.address)
+      const batch = await state.wallet.tezos?.wallet
+        .batch([
+          {
+            kind: OpKind.TRANSACTION,
+            ...contract?.methods.repay(vaultId, repayAmount).toTransferParams(),
+          },
+          {
+            kind: OpKind.TRANSACTION,
+            ...contract.methods.closeVault(vaultId).toTransferParams(),
+          },
+        ])
+        .send()
+
+      callback()
+      await dispatch(toggleActionLoader(true))
+      await dispatch(showToaster(INFO, 'Borrowing from the vault...', 'Please wait 30s'))
+
+      // confirm query completion
+      await batch?.confirmation()
+
+      await dispatch(showToaster(SUCCESS, 'Asset borrowed.', 'All good :)'))
+      // refetch data we need
+      await dispatch(getLoansStorage())
+      await dispatch(toggleActionLoader(false))
+    } catch (error) {
+      console.error('borrowVaultAssetAction error:', error)
+      if (error instanceof Error) {
+        dispatch(showToaster(ERROR, 'Error', error.message))
+        callback()
+      }
+      await dispatch(toggleActionLoader(false))
+    }
+  }
+
+export const changeBakerAction =
+  (bakerAddress: string, callback: () => void) => async (dispatch: AppDispatch, getState: GetState) => {
+    const state: State = getState()
+
+    if (!state.wallet.accountPkh) {
+      await dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
+      return
+    }
+
+    if (state.loading.isActionLoading) {
+      await dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
+      return
+    }
+
+    try {
+      // prepare and send query
+      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.vaultFactory.address)
+
+      const transaction = await contract?.methods.delegateTezToBaker(bakerAddress).send()
+
+      callback()
+      await dispatch(toggleActionLoader(true))
+      await dispatch(showToaster(INFO, 'Borrowing from the vault...', 'Please wait 30s'))
+
+      // confirm query completion
+      await transaction?.confirmation()
+
+      await dispatch(showToaster(SUCCESS, 'Asset borrowed.', 'All good :)'))
+      // refetch data we need
+      await dispatch(getLoansStorage())
+      await dispatch(toggleActionLoader(false))
+    } catch (error) {
+      console.error('changeBakerAction error:', error)
+      if (error instanceof Error) {
+        dispatch(showToaster(ERROR, 'Error', error.message))
+        callback()
+      }
+      await dispatch(toggleActionLoader(false))
+    }
+  }
+
+export const managePermissionsAction = (callback: () => void) => async (dispatch: AppDispatch, getState: GetState) => {
+  const state: State = getState()
+
+  if (!state.wallet.accountPkh) {
+    await dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
+    return
+  }
+
+  if (state.loading.isActionLoading) {
+    await dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
+    return
+  }
+
+  try {
+    // prepare and send query
+    const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.lendingController.address)
+    // const transaction  = await contract?.methods.any.send()
+
+    callback()
+    await dispatch(toggleActionLoader(true))
+    await dispatch(showToaster(INFO, 'Borrowing from the vault...', 'Please wait 30s'))
+
+    // confirm query completion
+    // await transaction?.confirmation()
+
+    await dispatch(showToaster(SUCCESS, 'Asset borrowed.', 'All good :)'))
+    // refetch data we need
+    await dispatch(getLoansStorage())
+    await dispatch(toggleActionLoader(false))
+  } catch (error) {
+    console.error('borrowVaultAssetAction error:', error)
+    if (error instanceof Error) {
+      dispatch(showToaster(ERROR, 'Error', error.message))
+      callback()
+    }
+    await dispatch(toggleActionLoader(false))
+  }
+}
+
+export const updateOperatorsAction = (callback: () => void) => async (dispatch: AppDispatch, getState: GetState) => {
+  const state: State = getState()
+
+  if (!state.wallet.accountPkh) {
+    await dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
+    return
+  }
+
+  if (state.loading.isActionLoading) {
+    await dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
+    return
+  }
+
+  try {
+    // prepare and send query
+    const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.lendingController.address)
+    // const transaction  = await contract?.methods.any.send()
+
+    callback()
+    await dispatch(toggleActionLoader(true))
+    await dispatch(showToaster(INFO, 'Borrowing from the vault...', 'Please wait 30s'))
+
+    // confirm query completion
+    // await transaction?.confirmation()
+
+    await dispatch(showToaster(SUCCESS, 'Asset borrowed.', 'All good :)'))
+    // refetch data we need
+    await dispatch(getLoansStorage())
+    await dispatch(toggleActionLoader(false))
+  } catch (error) {
+    console.error('borrowVaultAssetAction error:', error)
+    if (error instanceof Error) {
+      dispatch(showToaster(ERROR, 'Error', error.message))
+      callback()
+    }
+    await dispatch(toggleActionLoader(false))
+  }
+}

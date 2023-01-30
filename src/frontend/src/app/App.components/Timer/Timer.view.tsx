@@ -19,7 +19,6 @@ type TimerViewProps = {
     timerView?: typeof LETTER_VIEW | typeof COLON_VIEW
     shownParts?: ('d' | 'h' | 'm' | 's')[]
   }
-  className?: string
 }
 
 export const TimerView = ({
@@ -36,10 +35,9 @@ export const TimerView = ({
     shownParts = ['d', 'h', 'm', 's'],
     showFullDay = false,
   },
-  className
 }: TimerViewProps) => {
   return (
-    <TimerStyled negativeColor={negativeColor} defaultColor={defaultColor} timerType={timerView} className={className}>
+    <TimerStyled negativeColor={negativeColor} defaultColor={defaultColor} timerType={timerView}>
       {showFullDay && days >= 1 ? (
         <span>{`${days} ${days === 1 ? 'day' : 'days'} ${endText}`}</span>
       ) : (

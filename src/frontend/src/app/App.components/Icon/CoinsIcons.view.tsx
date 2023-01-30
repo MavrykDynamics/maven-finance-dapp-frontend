@@ -51,11 +51,14 @@ export default function CoinsIcons({
   const withoutValidLogos = !firstAssetLogoSrc && !secondAssetLogoSrc
   return (
     <FarmCardTokenLogoContainer className={className}>
-      {withoutValidLogos
-        ? <FarmCardOneTokenIcon src='/images/coin-gold.svg' />
-        : <>
+      {withoutValidLogos ? (
+        <FarmCardOneTokenIcon src="/images/coin-gold.svg" />
+      ) : (
+        <>
           <FarmCardFirstTokenIcon
-            src={firstAssetLogoSrc ? `https://services.tzkt.io/v1/avatars/${firstAssetLogoSrc}` : '/images/coin-gold.svg'}
+            src={
+              firstAssetLogoSrc ? `https://services.tzkt.io/v1/avatars/${firstAssetLogoSrc}` : '/images/coin-gold.svg'
+            }
             onError={({ currentTarget }) => {
               currentTarget.onerror = null
               currentTarget.src = '/images/coin-gold.svg'
@@ -63,14 +66,17 @@ export default function CoinsIcons({
           />
           <FarmCardSecondTokenIcon
             src={
-              secondAssetLogoSrc ? `https://services.tzkt.io/v1/avatars/${secondAssetLogoSrc}` : '/images/coin-silver.svg'
+              secondAssetLogoSrc
+                ? `https://services.tzkt.io/v1/avatars/${secondAssetLogoSrc}`
+                : '/images/coin-silver.svg'
             }
             onError={({ currentTarget }) => {
               currentTarget.onerror = null
               currentTarget.src = '/images/coin-silver.svg'
             }}
           />
-        </>}
+        </>
+      )}
     </FarmCardTokenLogoContainer>
   )
 }
@@ -91,10 +97,10 @@ const AssetLogoStyled = styled.div<{ theme: MavrykTheme }>`
 // General Assets logo component
 export const CoinsLogo = ({ imageLink, assetName }: { imageLink?: string; assetName?: string }) => {
   const [imageExists, setImageExists] = useState(true)
-  if (imageLink && imageExists) {
+  if (imageLink) {
     return (
       <AssetLogoStyled className="icon">
-        <img src={imageLink} alt={`logo`} loading="lazy" onError={() => setImageExists(false)} />
+        <img src={imageLink} alt={`logo`} loading="lazy" />
       </AssetLogoStyled>
     )
   }
@@ -107,7 +113,7 @@ export const CoinsLogo = ({ imageLink, assetName }: { imageLink?: string; assetN
     ) : (
       <AssetLogoStyled className="icon">
         <img
-          src={`//logo.chainbit.xyz/${assetName.toLowerCase()}`}
+          src={`https://logo.chainbit.xyz/${assetName.toLowerCase()}`}
           onError={() => setImageExists(false)}
           alt={`logo`}
           loading="lazy"

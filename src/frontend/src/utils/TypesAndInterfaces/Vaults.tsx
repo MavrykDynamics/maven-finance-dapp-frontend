@@ -1,23 +1,19 @@
 import { normalizeVaultsStorage } from 'pages/Vaults/Vaults.helpers'
-import { Lending_Controller, Lending_Controller_Vault } from 'utils/generated/graphqlTypes'
+import { Lending_Controller } from 'utils/generated/graphqlTypes'
 import { BorrowingData } from './Loans'
 
 export type LendingControllerGQL = Omit<Lending_Controller, '__typename'>
-export type LendingControllerVaultGQL = Omit<Lending_Controller_Vault, '__typename'>
 
-export type VaultsStorage = ReturnType<typeof normalizeVaultsStorage>
+export type VaultsStorage = Awaited<ReturnType<typeof normalizeVaultsStorage>>
 
 export type VaultType = Omit<BorrowingData, 'collateralData'> & {
   address: string
   ownerId: string
   vaultId: number
   status: string
-  creationDate: string
-  currentBlockLevel?: number
-  liquidationEndLevel: number,
-  markedForLiquidationLevel: number
-  liquidationDelayInMinutes: number
-  
+  levelOfEarly: number
+  levelOfLate: number
+  creationTimestamp?: string  
   collateralData: CollateralType[]
 }
 
@@ -25,7 +21,7 @@ export type CollateralType = {
   assetSymbol?: string
   assetIcon?: string
   balance: number
-  assetRate: number | null
+  assetRate: number
   maxWithdraw: number
   collateralShare: number
 }

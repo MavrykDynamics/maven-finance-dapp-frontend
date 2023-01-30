@@ -4,7 +4,7 @@ import { SatelliteListItem } from './ListCards/SateliteCard.view'
 import { DataFeedCard } from './ListCards/DataFeedCard.view'
 
 // types
-import { FeedGQL, SatellitesListProps } from '../helpers/Satellites.types'
+import { Feed, SatellitesListProps } from '../helpers/Satellites.types'
 
 // styles
 import { FRListWrapper } from 'pages/FinacialRequests/FRList/FRList.styles'
@@ -14,7 +14,15 @@ import { OracleCard } from './ListCards/DataFeedOracleCard.view'
 import { UserDataFeedCard } from './ListCards/UsersFeedCard.view'
 import { SatelliteRecord } from 'utils/TypesAndInterfaces/Delegation'
 
-function SatteliteListView({ listTitle, items, name, listType, additionaldata, pagination, className }: SatellitesListProps) {
+function SatteliteListView({
+  listTitle,
+  items,
+  name,
+  listType,
+  additionaldata,
+  pagination,
+  className,
+}: SatellitesListProps) {
   return items.length ? (
     <FRListWrapper className={`${className} oracle`}>
       {listTitle ? (
@@ -38,9 +46,9 @@ function SatteliteListView({ listTitle, items, name, listType, additionaldata, p
               />
             )
           case 'feeds':
-            return <DataFeedCard feed={item as FeedGQL} key={item.address} />
+            return <DataFeedCard feed={item as Feed} key={item.address} />
           case 'userFeeds':
-            return <UserDataFeedCard feed={item as FeedGQL} key={item.address} />
+            return <UserDataFeedCard feed={item as Feed} key={item.address} />
           case 'oracles':
             return <OracleCard oracle={item as SatelliteRecord} key={item.address} />
           default:
@@ -48,12 +56,13 @@ function SatteliteListView({ listTitle, items, name, listType, additionaldata, p
         }
       })}
 
-      {pagination && 
+      {pagination && (
         <Pagination
           itemsCount={(additionaldata?.fullItemsCount as number) || 0}
           side={PAGINATION_SIDE_RIGHT}
           listName={name}
-        />}
+        />
+      )}
     </FRListWrapper>
   ) : null
 }

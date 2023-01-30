@@ -25,16 +25,16 @@ export const mainNavigationLinks: MainNavigationRoute[] = [
           isAuth: true,
         },
       },
-      {
-        id: 59526,
-        subTitle: 'Vestee Info',
-        subPath: 'your-vesting',
-        routeSubPath: '/your-vesting',
-        disabled: true,
-        requires: {
-          isVestee: true,
-        },
-      },
+      // {
+      //   id: 59526,
+      //   subTitle: 'Vestee Info',
+      //   subPath: 'your-vesting',
+      //   routeSubPath: '/your-vesting',
+      //   disabled: true,
+      //   requires: {
+      //     isVestee: true,
+      //   },
+      // },
     ],
   },
   {
@@ -113,13 +113,13 @@ export const mainNavigationLinks: MainNavigationRoute[] = [
         subPath: 'data-feeds',
         routeSubPath: ['/data-feeds', '/satellites/feed-details/:tabId'],
       },
-      {
-        id: 15757,
-        subTitle: 'Users',
-        subPath: 'oracle-users',
-        disabled: true,
-        routeSubPath: ['/oracle-users', '/satellites/user-details/:tabId'],
-      },
+      // {
+      //   id: 15757,
+      //   subTitle: 'Users',
+      //   subPath: 'oracle-users',
+      //   disabled: true,
+      //   routeSubPath: ['/oracle-users', '/satellites/user-details/:tabId'],
+      // },
     ],
   },
   {
@@ -199,11 +199,11 @@ export const mainNavigationLinks: MainNavigationRoute[] = [
     routePath: '/treasury',
     icon: 'treasury',
   },
-  {
-    title: 'Admin',
-    id: 9,
-    path: 'admin',
-    routePath: '/admin',
-    icon: 'settings',
-  },
+  // {
+  //   title: 'Admin',
+  //   id: 9,
+  //   path: 'admin',
+  //   routePath: '/admin',
+  //   icon: 'settings',
+  // },
 ]

@@ -3,7 +3,7 @@ import { MichelsonMap } from '@taquito/taquito'
 import type { DelegateRecord, SatelliteRecord } from '../../utils/TypesAndInterfaces/Delegation'
 import type { MavrykUserGraphQl } from '../../utils/TypesAndInterfaces/User'
 import type { SatelliteRecordGraphQl, DelegationGraphQl } from '../../utils/TypesAndInterfaces/Delegation'
-import type { DataFeedsHistoryGraphQL, DataFeedsVolatility } from './helpers/Satellites.types'
+import type { DataFeedsHistoryGraphQL, Feed } from './helpers/Satellites.types'
 import { GovernanceFinancialRequestGraphQL, ProposalRecordType } from 'utils/TypesAndInterfaces/Governance'
 import { EmergergencyGovernanceItem } from 'utils/TypesAndInterfaces/EmergencyGovernance'
 
@@ -12,12 +12,13 @@ import { calcWithoutPrecision } from '../../utils/calcFunctions'
 import { symbolsAfterDecimalPoint } from '../../utils/symbolsAfterDecimalPoint'
 import { Aggregator, Aggregator_Oracle } from 'utils/generated/graphqlTypes'
 import { UTCTimestamp } from 'lightweight-charts'
-import { 
+import {
   defaultSatelliteDescriptionMaxLength,
   defaultSatelliteImageMaxLength,
   defaultSatelliteNameMaxLength,
   defaultSatelliteWebsiteMaxLength,
- } from 'app/App.components/Input/Input.constants'
+} from 'app/App.components/Input/Input.constants'
+import { ChartPlotType } from 'app/App.components/Chart/Chart.view'
 
 export function normalizeSatelliteRecord(
   satelliteRecord: SatelliteRecordGraphQl,
@@ -188,7 +189,8 @@ export function normalizeDelegationStorage(delegationStorage: DelegationGraphQl)
       delegationRatio: delegationStorage?.delegation_ratio,
       minimumStakedMvkBalance: calcWithoutPrecision(delegationStorage?.minimum_smvk_balance),
       satelliteNameMaxLength: delegationStorage?.satellite_name_max_length || defaultSatelliteNameMaxLength,
-      satelliteDescriptionMaxLength: delegationStorage?.satellite_description_max_length || defaultSatelliteDescriptionMaxLength,
+      satelliteDescriptionMaxLength:
+        delegationStorage?.satellite_description_max_length || defaultSatelliteDescriptionMaxLength,
       satelliteImageMaxLength: delegationStorage?.satellite_image_max_length || defaultSatelliteImageMaxLength,
       satelliteWebsiteMaxLength: delegationStorage?.satellite_website_max_length || defaultSatelliteWebsiteMaxLength,
     },
@@ -201,16 +203,9 @@ export function normalizeDelegationStorage(delegationStorage: DelegationGraphQl)
   }
 }
 
-// Data Feeds History Normalizer
-type DataFeedsHistoryProps = {
-  aggregator_history_data: DataFeedsHistoryGraphQL[]
-}
-
-export function normalizeDataFeedsHistory(storage: DataFeedsHistoryProps) {
-  const { aggregator_history_data = [] } = storage
-
-  return aggregator_history_data?.length
-    ? aggregator_history_data.map((item) => {
+export function normalizeDataFeedsHistory(historyData: DataFeedsHistoryGraphQL[]) {
+  return historyData?.length
+    ? historyData.map((item) => {
         return {
           time: new Date(item.timestamp).getTime() as UTCTimestamp,
           // TODO: ask Sam if the decimal is right we use?
@@ -220,19 +215,19 @@ export function normalizeDataFeedsHistory(storage: DataFeedsHistoryProps) {
     : []
 }
 
-export function normalizeDataFeedsVolatility(storage: DataFeedsHistoryProps): DataFeedsVolatility {
-  const { aggregator_history_data = [] } = storage
-
-  return aggregator_history_data?.length >= 2
-    ? aggregator_history_data.map(({ data, aggregator: { decimals }, timestamp }, idx, arr) => {
-        return {
+export function normalizeDataFeedsVolatility(historyData: DataFeedsHistoryGraphQL[]) {
+  return historyData?.length >= 2
+    ? historyData.reduce<Array<ChartPlotType>>((acc, { data, aggregator: { decimals }, timestamp }, idx, arr) => {
+        if (!arr?.[idx - 1]) return acc
+        acc.push({
           time: new Date(timestamp).getTime() as UTCTimestamp,
           value: percentageDifference(
             symbolsAfterDecimalPoint(data / 10 ** decimals),
             symbolsAfterDecimalPoint(arr[idx - 1]?.data / 10 ** decimals),
           ),
-        }
-      })
+        })
+        return acc
+      }, [])
     : []
 }
 
@@ -247,7 +242,7 @@ export const getSatelliteMetrics = (
   proposalLedger: Array<ProposalRecordType>,
   emergencyGovernanceLedger: Array<EmergergencyGovernanceItem>,
   satellite: SatelliteRecord,
-  feeds?: Array<Aggregator>,
+  feeds?: Array<Feed>,
   financialRequestLedger?: Array<GovernanceFinancialRequestGraphQL>,
 ) => {
   const submittedProposalsCount = pastProposals
