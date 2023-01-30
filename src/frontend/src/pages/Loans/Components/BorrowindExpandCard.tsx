@@ -42,11 +42,6 @@ export type BorrowingCardOptions = typeof defaultOptions & {
 
 type BorrowingExpandCardPropsType = BorrowingData & {
   isOwner?: boolean
-  borrowedAsset: BorrowingData['borrowedAsset']
-  collateralData: BorrowingData['collateralData']
-  operators?: Array<string>
-  sMVKDelegatedTo?: string
-  depositors?: string | Array<string>
   headerSufix?: React.ReactNode
   getExpandedStatus?: (arg: boolean) => void
   className?: string
@@ -245,7 +240,7 @@ export const BorrowingExpandCard = ({
             </TableHeader>
 
             <TableBody>
-              {collateralData.map(({ assetSymbol, assetIcon, balance, assetRate = 1, maxWithdraw }, idx, array) => {                
+              {collateralData.map(({ assetSymbol, assetIcon, balance, assetRate, maxWithdraw }, idx, array) => {                
                 const customColumnValue = customTableColumn ? array[idx][customTableColumn] : undefined               
                 const columnWidth = customTableColumn ? '18%' : '22%'
                 const isTotalRow = collateralData.length - 1 === idx
