@@ -1,6 +1,9 @@
 import { AppDispatch, GetState } from '../../app/App.controller'
 import { fetchFromIndexer } from 'gql/fetchGraphQL'
 import {
+  AVALIABLE_COLLATERALS_QUERY,
+  AVALIABLE_COLLATERALS_QUERY_NAME,
+  AVALIABLE_COLLATERALS_QUERY_VARIABLE,
   LOANS_QUERY,
   LOANS_QUERY_NAME,
   LOANS_QUERY_VARIABLE,
@@ -37,13 +40,6 @@ export const getLoansStorage = () => async (dispatch: AppDispatch, getState: Get
 
     const xtzBakers = await getXTZBakers()
 
-    const avaliableCollaterals = await getCollateralTokens(
-      storage?.lending_controller?.[0].collateral_tokens,
-      dipDupTokens,
-      { ...tokensPrices, ...loanTokensRate },
-      accountPkh,
-    )
-
     const { chartsData, loanTokens, loansControllerAddress } = await normalizeLoans({
       storage: storage?.lending_controller?.[0],
       dipDupTokens,
@@ -53,17 +49,19 @@ export const getLoansStorage = () => async (dispatch: AppDispatch, getState: Get
       tokensRate: { ...tokensPrices, ...loanTokensRate },
     })
 
+    await dispatch(updateTokensPrices(loanTokensRate))
+
+    await dispatch(getAvaliableCollaterals())
+
     await dispatch({
       type: GET_LOANS_STORAGE,
       loansStorage: {
         loansControllerAddress,
         chartsData,
         loanTokens,
-        avaliableCollaterals,
         xtzBakers,
       },
     })
-    await dispatch(updateTokensPrices(loanTokensRate))
   } catch (e) {
     console.error('getLoansStorage error: ', e)
   }
@@ -74,6 +72,41 @@ const getNewVaultData = async () => {
     const newVaultData = await fetchFromIndexer(NEW_VAULT_QUERY, NEW_VAULT_QUERY_NAME, NEW_VAULT_QUERY_VARIABLE)
 
     return newVaultData.vault.at(-1)?.lending_controller_vaults[0].vault_id
+  } catch (e) {
+    console.log('getNewVaultData error: ', e)
+  }
+}
+
+export const GET_AVALIABLE_COLLATERALS = 'GET_AVALIABLE_COLLATERALS'
+const getAvaliableCollaterals = () => async (dispatch: AppDispatch, getState: GetState) => {
+  const {
+    tokens: { dipDupTokens, tokensPrices },
+    wallet: { accountPkh },
+  } = getState()
+  try {
+    const storage = await fetchFromIndexer(
+      AVALIABLE_COLLATERALS_QUERY,
+      AVALIABLE_COLLATERALS_QUERY_NAME,
+      AVALIABLE_COLLATERALS_QUERY_VARIABLE,
+    )
+
+    const loanTokensRate = await getLoansTokensRates(
+      storage?.lending_controller?.[0]?.loan_tokens,
+      dipDupTokens,
+      tokensPrices,
+    )
+
+    const avaliableCollaterals = await getCollateralTokens(
+      storage?.lending_controller?.[0]?.collateral_tokens,
+      dipDupTokens,
+      { ...tokensPrices, ...loanTokensRate },
+      accountPkh,
+    )
+
+    await dispatch({
+      type: GET_AVALIABLE_COLLATERALS,
+      avaliableCollaterals,
+    })
   } catch (e) {
     console.log('getNewVaultData error: ', e)
   }

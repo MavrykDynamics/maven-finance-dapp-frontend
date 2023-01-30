@@ -11,14 +11,12 @@ export interface LoansState {
   loanTokens: LoansStorage['loanTokens']
   chartsData: LoansChartsDataType
   loansControllerAddress: string
-  avaliableCollaterals: Array<AvaliableCollateralType>
   xtzBakers: Array<XtzBakerType>
   isFetched: boolean
 }
 
 const loansDefaultState: LoansState = {
   loanTokens: [],
-  avaliableCollaterals: [],
   loansControllerAddress: '',
   chartsData: {
     totalBorrowed: 0,

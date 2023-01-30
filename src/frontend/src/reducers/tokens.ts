@@ -9,16 +9,20 @@ import {
   GET_TOKENS_PRICES,
   GET_WHITELIST_TOKENS,
 } from './actions/dipDupActions.actions'
+import { GET_AVALIABLE_COLLATERALS } from 'pages/Loans/Loans.actions'
+import { AvaliableCollateralType } from 'utils/TypesAndInterfaces/Loans'
 
 export type TokensType = {
   dipDupTokens: Array<DipDupTokensGraphQl>
   tokensPrices: Record<string, { usd: number }>
+  avaliableCollaterals: Array<AvaliableCollateralType>
   whitelistTokens: Array<Governance_Financial_Whitelist_Token_Contract>
   mTokens: Array<M_Token>
 }
 const defaultTokensInfoState: TokensType = {
   dipDupTokens: [],
   whitelistTokens: [],
+  avaliableCollaterals: [],
   tokensPrices: {},
   mTokens: [],
 }
@@ -29,6 +33,8 @@ export function tokens(state = defaultTokensInfoState, action: Action) {
       return { ...state, dipDupTokens: action.dipDupTokens }
     case GET_WHITELIST_TOKENS:
       return { ...state, whitelistTokens: action.whitelistTokens }
+    case GET_AVALIABLE_COLLATERALS:
+      return { ...state, avaliableCollaterals: action.avaliableCollaterals }
     case GET_M_TOKENS:
       return { ...state, mTokens: action.mTokens }
     case GET_TOKENS_PRICES:

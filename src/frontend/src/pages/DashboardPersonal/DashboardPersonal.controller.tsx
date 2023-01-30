@@ -55,7 +55,7 @@ const DashboardPersonal = () => {
 
   const earnings = {
     mvkRate,
-    xtzRate: tezos?.usd ?? 1,
+    xtzRate: tezos?.usd ?? 0,
     satelliteRewards: 232323,
     farmsRewards: 3131.31,
     exitRewards: 131,
