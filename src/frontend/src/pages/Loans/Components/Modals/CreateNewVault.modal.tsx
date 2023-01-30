@@ -69,7 +69,8 @@ export const CreateNewVault = ({
 }) => {
   const { currentMarketAsset } = data ?? {}
   const dispatch = useDispatch()
-  const { avaliableCollaterals, xtzBakers } = useSelector((state: State) => state.loans)
+  const { xtzBakers } = useSelector((state: State) => state.loans)
+  const { avaliableCollaterals } = useSelector((state: State) => state.tokens)
   const { isActionLoading } = useSelector((state: State) => state.loading)
 
   const [shownScreen, setShownScreen] = useState<CurrentActiveModalScreen>(INITIAL_SCREEN_ID)

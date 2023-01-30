@@ -41,7 +41,7 @@ export const WithdrawCollateral = ({
 
   useLockBodyScroll(show)
   const dispatch = useDispatch()
-  const { avaliableCollaterals } = useSelector((state: State) => state.loans)
+  const { avaliableCollaterals } = useSelector((state: State) => state.tokens)
 
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
   const [isActionPerforming, setIsActionPerforming] = useState(false)

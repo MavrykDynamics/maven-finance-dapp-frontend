@@ -24,7 +24,10 @@ export const GradientDiagram = ({ colorBreakpoints, currentPersentage, className
   return (
     <GradientDiagramStyled gradient={gradient} gradientWidth={currentPersentage} className={className}>
       {colorBreakpoints.map(({ color, value }) => (
-        <GradientBreakpoint background={`rgb(${color.r}, ${color.g}, ${color.b})`}>
+        <GradientBreakpoint
+          background={`rgb(${color.r}, ${color.g}, ${color.b})`}
+          key={`rgb(${color.r}, ${color.g}, ${color.b})`}
+        >
           <div className="text">
             <CommaNumber value={value} endingText="%" />
           </div>

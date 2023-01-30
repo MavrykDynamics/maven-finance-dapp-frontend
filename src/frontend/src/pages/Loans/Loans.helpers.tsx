@@ -307,7 +307,7 @@ const getBorrowings = async (
 
     const currentInterestRate = calcWithoutDecimals(vault.loan_token?.current_interest_rate ?? 0, interestRateDecimals)
     const vaultXtzDelegatedTo = await (
-      await fetch(`https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/accounts/${vault.vault.address}`)
+      await fetch(`https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/contracts/${vault.vault.address}`)
     ).json()
 
     const currentBlock = await (

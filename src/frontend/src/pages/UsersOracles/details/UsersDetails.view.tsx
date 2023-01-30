@@ -5,7 +5,7 @@ import { USER_DATA_FEEDS_LIST_NAME } from 'pages/FinacialRequests/Pagination/pag
 import { parseDate } from 'utils/time'
 
 // types
-import { FeedGQL } from 'pages/Satellites/helpers/Satellites.types'
+import { Feed } from 'pages/Satellites/helpers/Satellites.types'
 import { UserType } from '../../../utils/TypesAndInterfaces/User'
 
 // view
@@ -38,7 +38,7 @@ const UserDetailsView = ({
   categories,
 }: {
   user: UserType | null
-  feeds: FeedGQL[]
+  feeds: Feed[]
   handleSelect: (e: string) => void
   categories: string[]
 }) => {

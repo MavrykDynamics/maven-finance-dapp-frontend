@@ -4,7 +4,7 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { CoinsLogo } from 'app/App.components/Icon/CoinsIcons.view'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
-import { Trim } from 'app/App.components/Trim/Trim.view' 
+import { Trim } from 'app/App.components/Trim/Trim.view'
 import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
 import { getOracleStorage } from 'pages/Satellites/Satellites.actions'
 import { useEffect, useMemo } from 'react'
@@ -70,42 +70,49 @@ export const OraclesTab = () => {
 
         <div className="block-name padding-left">Popular Feeds</div>
 
-        {popularFeeds.length ? <div className="feeds-grid">
-          {popularFeeds.map((feed) => {
-            const imageLink = dipDupTokens.find(({ contract }) => contract === feed.address)?.metadata?.icon
-            return (
-              <Link key={feed.address} to={`/satellites/feed-details/${feed.address}`}>
-                <PopularFeed className="row">
-                  <StatBlock className="icon-first">
-                  <CoinsLogo imageLink={imageLink} assetName={handleCoinName(feed.name)} />
-                    <div className="name">Feed</div>
-                    <div className="value">
-                      <Trim title={feed.name} />
-                    </div>
-                  </StatBlock>
-                  <StatBlock>
-                    <div className="name">Answer</div>
-                    <div className="value">
-                      <CommaNumber beginningText="$" value={feed.last_completed_data} />
-                    </div>
-                  </StatBlock>
-                  <StatBlock>
-                    <div className="name">Contract Address</div>
-                    <div className="value">
-                      <TzAddress type={BLUE} tzAddress={feed.address} hasIcon />
-                    </div>
-                  </StatBlock>
-                  <StatBlock>
-                    <div className="name">Date/Time</div>
-                    <div className="value">
-                      {parseDate({ time: feed.last_completed_data_last_updated_at, timeFormat: 'DD MMM YYYY / HH:mm' })}
-                    </div>
-                  </StatBlock>
-                </PopularFeed>
-              </Link>
-            )
-          })}
-        </div> : emptyContainer}
+        {popularFeeds.length ? (
+          <div className="feeds-grid">
+            {popularFeeds.map((feed) => {
+              const imageLink = dipDupTokens.find(({ contract }) => contract === feed.address)?.metadata?.icon
+              return (
+                <Link key={feed.address} to={`/satellites/feed-details/${feed.address}`}>
+                  <PopularFeed className="row">
+                    <StatBlock className="icon-first">
+                      <CoinsLogo imageLink={imageLink} assetName={handleCoinName(feed.name)} />
+                      <div className="name">Feed</div>
+                      <div className="value">
+                        <Trim title={feed.name} />
+                      </div>
+                    </StatBlock>
+                    <StatBlock>
+                      <div className="name">Answer</div>
+                      <div className="value">
+                        <CommaNumber beginningText="$" value={feed.amount} />
+                      </div>
+                    </StatBlock>
+                    <StatBlock>
+                      <div className="name">Contract Address</div>
+                      <div className="value">
+                        <TzAddress type={BLUE} tzAddress={feed.address} hasIcon />
+                      </div>
+                    </StatBlock>
+                    <StatBlock>
+                      <div className="name">Date/Time</div>
+                      <div className="value">
+                        {parseDate({
+                          time: feed.last_completed_data_last_updated_at,
+                          timeFormat: 'DD MMM YYYY / HH:mm',
+                        })}
+                      </div>
+                    </StatBlock>
+                  </PopularFeed>
+                </Link>
+              )
+            })}
+          </div>
+        ) : (
+          emptyContainer
+        )}
       </OraclesContentStyled>
 
       <div className="descr">

@@ -27,6 +27,8 @@ import { BorrowingTabListItemExpanded } from './LoansComponents.style'
 
 import { loansPopupsContext } from './Modals/LoansModals.provider'
 import { Link } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+import { State } from 'reducers'
 
 const defaultOptions = { 
   headerColumnNames: {
@@ -80,6 +82,8 @@ export const BorrowingExpandCard = ({
     apr,
     fee = 0,
   } = borrowedAsset
+
+  const { avaliableCollaterals } = useSelector((state: State) => state.tokens)
 
   const {
     openChangeBakerPopup,
@@ -304,6 +308,7 @@ export const BorrowingExpandCard = ({
                                 })
                               }
                               kind={ACTION_PRIMARY}
+                              disabled={avaliableCollaterals.length === 0}
                               className="add-collateral"
                             />
                           ) : null}

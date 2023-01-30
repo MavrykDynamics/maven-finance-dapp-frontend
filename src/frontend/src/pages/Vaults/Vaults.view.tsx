@@ -60,7 +60,7 @@ export const VaultsView = () => {
 
   const { isLoading } = useDataLoader(async () => {
     try {
-      await Promise.all([dispatch(getLoansStorage()), dispatch(getVaultsStorage())])
+      await dispatch(getVaultsStorage())
     } catch (e) {
       //TODO: handle fetch error
     }

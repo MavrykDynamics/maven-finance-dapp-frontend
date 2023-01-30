@@ -1,5 +1,6 @@
 import { UserState } from 'reducers/wallet'
 import { FIXED_POINT_ACCURACY, PRECISION_NUMBER, SECONDS_PER_BLOCK } from './constants'
+import { Stake_History_Data } from './generated/graphqlTypes'
 import { UserDoormanRewardsData, UserFarmRewardsData, UserSatelliteRewardsData } from './TypesAndInterfaces/User'
 
 /**
@@ -43,7 +44,7 @@ export function calcWithoutMu(amount: string | number): number {
 
 export function calcWithoutDecimals(amount: string | number, decimals: number): number {
   const numberWithDecimals = parseFloat(amount?.toString()) || 0
-  return numberWithDecimals > 0 ? numberWithDecimals / (10 ** decimals) : 0
+  return numberWithDecimals > 0 ? numberWithDecimals / 10 ** decimals : 0
 }
 // TODO: remove mutations in these 3 fns
 export function calcUsersDoormanRewards(userInfo: Partial<UserState>): UserDoormanRewardsData | undefined {
@@ -107,4 +108,28 @@ export function calcUsersSatelliteRewards(userInfo: Partial<UserState>): UserSat
     String(Math.trunc(usersAvailableSatelliteRewards)),
   )
   return mySatelliteRewardsData
+}
+
+export function calcUsersRewardsToDate(usetStakesData: Array<Stake_History_Data>): {
+  farmRewards: number
+  satelliteRewards: number
+  doormanRewards: number
+} {
+  return usetStakesData.reduce(
+    (acc, { type, final_amount }) => {
+      if (type === 2) {
+        acc.farmRewards += calcWithoutPrecision(final_amount)
+      }
+
+      if (type === 3) {
+        acc.doormanRewards += calcWithoutPrecision(final_amount)
+      }
+
+      if (type === 4) {
+        acc.satelliteRewards += calcWithoutPrecision(final_amount)
+      }
+      return acc
+    },
+    { farmRewards: 0, satelliteRewards: 0, doormanRewards: 0 },
+  )
 }

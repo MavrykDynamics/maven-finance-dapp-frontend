@@ -11,6 +11,9 @@ import { BorrowingExpandCard } from './BorrowindExpandCard'
 
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { LoansTabStyled, NoItemsInTabStyled } from './LoansComponents.style'
+import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
+import { useDispatch } from 'react-redux'
+import { getAvaliableCollaterals } from '../Loans.actions'
 
 type BorrowingTabPropsType = {
   borrowingItems: Array<BorrowingData>
@@ -23,7 +26,14 @@ export const BorrowingTab = ({
   lendingControllerAddress,
   currentMarketAsset,
 }: BorrowingTabPropsType) => {
+  const dispatch = useDispatch()
   const { openCreateVaultPopup } = useContext(loansPopupsContext)
+
+  const { isLoading: loadingAvaliableCollaterals } = useDataLoader(async () => {
+    try {
+      await dispatch(getAvaliableCollaterals())
+    } catch (e) {}
+  }, [])
 
   return (
     <LoansTabStyled>

@@ -20,6 +20,7 @@ import { DashboardPersonalStyled } from './DashboardPersonal.style'
 import SatelliteTab from './DashboardPersonalComponents/SatelliteTab'
 
 import { State } from 'reducers'
+import { claimAllRewardsAction } from './DashboardPersonal.actions'
 
 const DashboardPersonal = () => {
   const dispatch = useDispatch()
@@ -31,12 +32,23 @@ const DashboardPersonal = () => {
   const { exchangeRate: mvkRate } = useSelector((state: State) => state.mvkToken)
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const {
-    user: { myMvkTokenBalance, mySMvkTokenBalance, myXTZTokenBalance, mytzBTCTokenBalance, isSatellite },
+    user: {
+      myMvkTokenBalance,
+      mySMvkTokenBalance,
+      myXTZTokenBalance,
+      mytzBTCTokenBalance,
+      isSatellite,
+      myDoormanRewardsData: { myAvailableDoormanRewards },
+      myFarmRewardsData,
+      mySatelliteRewardsData: { myAvailableSatelliteRewards },
+      userRewardsToDate: { satelliteRewards, farmRewards, doormanRewards },
+    },
   } = useSelector((state: State) => state.wallet)
 
-  const claimRewards = useCallback(() => {
+  const claimRewards = async () => {
+    await claimAllRewardsAction()
     console.log('claim rewards in DashboardPersonal')
-  }, [])
+  }
 
   const { isLoading: isUserLoansLoading } = useDataLoader(async () => {
     try {
@@ -49,16 +61,19 @@ const DashboardPersonal = () => {
   }, [accountPkh])
 
   const rewards = {
-    rewardsToClaim: 234234,
-    earnedRewards: 23324,
+    rewardsToClaim:
+      myAvailableDoormanRewards +
+      myAvailableSatelliteRewards +
+      Object.values(myFarmRewardsData).reduce((acc, { myAvailableFarmRewards }) => (acc += myAvailableFarmRewards), 0),
+    earnedRewards: satelliteRewards + farmRewards + doormanRewards,
   }
 
   const earnings = {
     mvkRate,
-    xtzRate: tezos?.usd ?? 1,
-    satelliteRewards: 232323,
-    farmsRewards: 3131.31,
-    exitRewards: 131,
+    xtzRate: tezos?.usd ?? 0,
+    satelliteRewards: satelliteRewards,
+    farmsRewards: farmRewards,
+    exitRewards: doormanRewards,
     lendingIncome: 3131.31,
   }
 

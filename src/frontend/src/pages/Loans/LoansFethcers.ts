@@ -117,7 +117,7 @@ export const getCollateralTokens = async (
           id,
           assetName: token_name,
           assetSymbol: assetMetadata.symbol,
-          assetRate: tokensRate[assetMetadata.symbol].usd ?? 0.25,
+          assetRate: tokensRate[assetMetadata.symbol]?.usd ?? 0.25,
           userBalance,
           assetIcon: assetMetadata.icon,
           assetDecimals: assetMetadata?.decimals ? Number(assetMetadata.decimals) : 6,

@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom'
 // types
 import { State } from 'reducers'
 import { UserType } from '../../../utils/TypesAndInterfaces/User'
-import { FeedGQL } from 'pages/Satellites/helpers/Satellites.types'
+import { Feed } from 'pages/Satellites/helpers/Satellites.types'
 
 // view
 import UserDetailsView from './UsersDetails.view'
@@ -28,11 +28,11 @@ const UserDetails = () => {
     () => feeds.filter(({ address }) => !selectedUser?.feeds.contains(address)),
     [selectedUser, feeds],
   )
-  const [sortedFeeds, setSortedFeeds] = useState<FeedGQL[]>(feedsForUser)
+  const [sortedFeeds, setSortedFeeds] = useState<Feed[]>(feedsForUser)
 
   const handleSelect = (selectedOption: string) => {
     if (selectedOption !== '') {
-      setSortedFeeds((data: FeedGQL[]) => {
+      setSortedFeeds((data: Feed[]) => {
         return sortByCategory(data, selectedOption)
       })
     }
