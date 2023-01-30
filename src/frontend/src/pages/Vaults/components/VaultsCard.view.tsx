@@ -11,7 +11,15 @@ import { BorrowingExpandCard } from 'pages/Loans/Components/BorrowindExpandCard'
 import { Timer } from 'app/App.components/Timer/Timer.controller'
 
 // styles
-import { VaultsCardDropDown, VaultsAssest } from './../Vaults.style'
+import { VaultsCardDropDown } from './../Vaults.style'
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHeaderCell,
+  TableBody,
+  TableCell,
+} from 'app/App.components/Table/Table.style'
 
 // types
 import { VaultType } from 'utils/TypesAndInterfaces/Vaults'
@@ -22,7 +30,6 @@ import { BorrowingCardOptions } from 'pages/Loans/Components/BorrowindExpandCard
 import { CYAN } from 'app/App.components/TzAddress/TzAddress.constants'
 import { vaultsStatuses } from '../Vaults.consts' 
 import { getTimestampByLevel } from 'pages/Governance/Governance.actions'
-import { BLOCKS_PER_MINUTE } from 'utils/constants'
 
 const findStatusInfo = (status: string) => {
   switch (status) {
@@ -185,20 +192,28 @@ export const VaultsCard = (props: Props) => {
             <h1>Vault Assets</h1>
             
             <div className='table-size'>
-              <VaultsAssest>
-                <thead>
-                  <tr>
-                    <th>Asset</th>
-                    <th>Balance</th>
-                    <th>Collateral %</th>
-                  </tr>
-                </thead>
+              <Table className={`no-margin borrowing-table ${isOwner ? 'show-before' : ''}`}>
+                <TableHeader className={`simple-header collateral ${collateralData.length === 0 ? 'empty' : ''}`}>
+                  <TableRow>
+                    <TableHeaderCell>Asset</TableHeaderCell>
+                    <TableHeaderCell>Balance</TableHeaderCell>
+                    <TableHeaderCell>Collateral %</TableHeaderCell>
+                  </TableRow>
+                </TableHeader>
 
-                <tbody>
-                  {collateralData.map((item, index) => (
-                    <tr key={index}>
-                      <td>
-                        <div>
+                <TableBody>
+                  {collateralData.map((item, index) => {
+                    const columnWidth = '33%'
+                    const isTotalRow = collateralData.length - 1 === index
+                    if (isTotalRow && collateralData.length < 3) return null
+
+                    return (
+                    <TableRow rowHeight={44} key={assetSymbol + '-' + index}>
+                      <TableCell width={columnWidth} className="vert-middle">
+                      {isTotalRow ? (
+                        'Total'
+                      ) : (
+                        <div className="cell-content row">
                           {assetIcon ? (
                             <div className="img-wrapper">
                               <img src={assetIcon} alt={`${assetSymbol} logo`} />
@@ -208,21 +223,27 @@ export const VaultsCard = (props: Props) => {
                               <Icon id="noImage" />
                             </div>
                           )}
-
-                          {item.assetSymbol}
+                          {assetSymbol}
                         </div>
-                      </td>
+                      )}
+                      </TableCell>
 
-                      <td >
-                        <CommaNumber value={collateralBalance} beginningText='$' className='balance' />
-                        {assetRate ? <CommaNumber value={amtBorrowed * assetRate} beginningText="~$" className="rate" /> : null}
-                      </td>
+                      <TableCell width={columnWidth}>
+                        <div className="cell-content">
+                          <CommaNumber value={collateralBalance} beginningText='$' className='balance' />
+                          {assetRate ? <CommaNumber value={amtBorrowed * assetRate} beginningText="~$" className="rate" /> : null}
+                        </div>
+                      </TableCell>
 
-                      <td>{item.collateralShare}%</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </VaultsAssest>
+                      <TableCell width={columnWidth}>
+                        <div className="cell-content">
+                          {item.collateralShare}%
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  )})}
+                </TableBody>
+              </Table>
             </div>
           </div>
         </div>
