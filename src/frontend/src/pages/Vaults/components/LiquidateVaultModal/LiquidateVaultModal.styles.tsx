@@ -50,53 +50,6 @@ export const LiquidateVaultModalStyled = styled.div<{ showAsPercentage: boolean;
     border: none;
   }
 
-  table {
-    width: 100%;
-    border-collapse: collapse;
-
-    font-weight: 600;
-    font-size: 16px;
-    line-height: 22px;
-
-    th {
-      width: 33%;
-      text-align: start;
-
-      &:last-of-type {
-        text-align: end;
-      }
-    }
-
-    tbody {
-      tr {
-        border-bottom: 1px solid ${({ theme }) => theme.dataColor};
-        text-transform: capitalize;
-
-        &:last-of-type {
-          border-bottom: none;
-        }
-
-        td {
-          color: ${({ theme }) => theme.dataColor};
-
-          p {
-            margin: 0;
-          }
-
-          &:last-of-type {
-            text-align: end;
-          }
-        }
-      }
-    }
-
-    .grid-group {
-      display: grid;
-      grid-template-columns: 40px auto;
-      column-gap: 8px;
-    }
-  }
-
   .flex-group {
     display: flex;
     justify-content: space-between;
@@ -115,6 +68,12 @@ export const LiquidateVaultModalStyled = styled.div<{ showAsPercentage: boolean;
     p {
       margin: 0;
     }
+  }
+
+  .table-amount-group {
+    display: grid;
+    grid-template-columns: 40px auto;
+    column-gap: 8px;
   }
 
   .v-centering-group {

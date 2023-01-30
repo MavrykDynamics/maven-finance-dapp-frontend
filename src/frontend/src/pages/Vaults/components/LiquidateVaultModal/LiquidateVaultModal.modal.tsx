@@ -11,6 +11,14 @@ import { Button } from "app/App.components/SettingsPopup/SettingsPopup.style";
 // styles
 import { LiquidateVaultModalStyled } from "./LiquidateVaultModal.styles";
 import { PopupContainer, PopupContainerWrapper } from "app/App.components/SettingsPopup/SettingsPopup.style";
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHeaderCell,
+  TableBody,
+  TableCell,
+} from 'app/App.components/Table/Table.style'
 
 // helpers
 import { ACTION_PRIMARY } from "app/App.components/Button/Button.constants";
@@ -24,6 +32,9 @@ import { VaultType } from "utils/TypesAndInterfaces/Vaults";
 const balance = 20000
 const profit = 1234.44
 //===================================
+
+const columnWidth = '33%'
+const rowHeight = 30
 
 type Props = VaultType & {
   handleLiquidateVault: (vaultId: number, vaultOwner: string, liquidateAmount: number) => void
@@ -45,7 +56,7 @@ export const LiquidateVaultModal = (props: Props) => {
   const [showAsPercentage, setShowAsPercentage] = useState(true)
   const assetRate = rate || 1
 
-  const liquidationMax = 8000 / 2 // TODO: use amtBorrowed intead of 8000
+  const liquidationMax = amtBorrowed / 2
   const liquidationReward = 10
   const maxProfit = liquidationMax / 100 * liquidationReward
 
@@ -144,7 +155,7 @@ export const LiquidateVaultModal = (props: Props) => {
 
           <Toggle
             className="toggle"
-            prefix={'USDt'}
+            prefix={assetSymbol}
             sufix={'Percent'}
             checked={showAsPercentage}
             onChange={handleToggle}
@@ -188,40 +199,43 @@ export const LiquidateVaultModal = (props: Props) => {
           <>
             <h2>Assets Received</h2>
 
-            <table>
-              <thead>
-                <tr>
-                  <th>Asset</th>
-                  <th>Amount</th>
-                  <th>USD Value</th>
-                </tr>
-              </thead>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHeaderCell>Asset</TableHeaderCell>
+                  <TableHeaderCell>Amount</TableHeaderCell>
+                  <TableHeaderCell contentPosition="right">USD Value</TableHeaderCell>
+                </TableRow>
+              </TableHeader>
 
-              <tbody>
-                {collateralData.slice(0, -1).map(({ assetSymbol, collateralShare, balance, assetRate }, index) => (
-                  <tr key={index}>
-                    <td>{assetSymbol}</td>
+              <TableBody>
+                {collateralData.slice(0, -1).map(({ assetSymbol, collateralShare, balance, assetRate }, index) => {
+                  return (
+                    <TableRow rowHeight={rowHeight} key={assetSymbol + '-' + index}>
+                      <TableCell width={columnWidth}>{assetSymbol}</TableCell>
 
-                    <td className="grid-group">
-                      <div>{collateralShare}%</div>
-                      <CommaNumber value={balance} decimalsToShow={2} showDecimal />
-                    </td>
+                      <TableCell width={columnWidth}>
+                        <div className="table-amount-group">
+                          <div>{collateralShare}%</div>
+                          <CommaNumber value={balance} decimalsToShow={2} showDecimal />
+                        </div>
+                      </TableCell>
 
-                    <td>
-                      <CommaNumber value={assetRate ? balance * assetRate : 0} decimalsToShow={2} showDecimal beginningText='$'/>
-                    </td>
-                  </tr>
-                ))}
+                      <TableCell width={columnWidth} contentPosition="right">
+                        <CommaNumber value={assetRate ? balance * assetRate : 0} decimalsToShow={2} showDecimal beginningText='$'/>
+                      </TableCell>
+                    </TableRow>
+                )})}
 
-                <tr>
-                  <td>Total</td>
-                  <td></td>
-                  <td>
+                <TableRow rowHeight={rowHeight}>
+                  <TableCell width={columnWidth}>Total</TableCell>
+                  <TableCell width={columnWidth}></TableCell>
+                  <TableCell width={columnWidth} contentPosition="right">
                     <CommaNumber value={collateralData[collateralData.length - 1].balance} decimalsToShow={2} showDecimal beginningText='$' className='upColor' />
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
           </>)}
 
           <div className="g-centering-group">
