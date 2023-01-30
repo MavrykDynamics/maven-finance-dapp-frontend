@@ -17,6 +17,7 @@ import {
   LoanTokenType,
   UserLendObjType,
 } from 'utils/TypesAndInterfaces/Loans'
+import { validateTzAddress } from 'utils/validatorFunctions'
 import { calcWithoutDecimals, calcWithoutMu } from '../../utils/calcFunctions'
 import { getUserBalanceForLoanAsset } from './LoansFethcers'
 
@@ -197,7 +198,7 @@ const getLendingItem = async (
       const tokenCurrentInterestRate = calcWithoutDecimals(loanToken.current_interest_rate, interestRateDecimals)
 
       const userBalance = await getUserBalanceForLoanAsset(
-        loanToken.loan_token_address,
+        loanToken.lp_token_address,
         loanToken.loan_token_name,
         accountPkh,
       )
