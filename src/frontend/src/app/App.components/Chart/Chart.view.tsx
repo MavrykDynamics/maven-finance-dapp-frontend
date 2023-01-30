@@ -168,7 +168,7 @@ export const TradingViewChart = ({
       borderColor,
       scaleMargins: {
         top: 0.1,
-        bottom: 0.03,
+        bottom: 0.1,
       },
     })
 

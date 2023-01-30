@@ -50,13 +50,16 @@ export const AddNewCollateral = ({
   const { currentCollateralValue = 0, currentAvaliableToWithdraw = 0, vaultAddress } = data ?? {}
 
   const dispatch = useDispatch()
-  const { avaliableCollaterals, xtzBakers } = useSelector((state: State) => state.loans)
+  const { xtzBakers } = useSelector((state: State) => state.loans)
+  const { avaliableCollaterals } = useSelector((state: State) => state.tokens)
   const { isActionLoading } = useSelector((state: State) => state.loading)
 
   const [inputData, setInputData] = useState<InputState>()
 
   // resetting popup state, when toggling it off, and updating input data, when collaterals updated in redux
   useEffect(() => {
+    if (!avaliableCollaterals.length) return
+
     const mappedAvaliableCollaterals = avaliableCollaterals.reduce<Record<number, DropDownCollateralAssetType>>(
       (acc, collateralData) => {
         acc[collateralData.id] = {

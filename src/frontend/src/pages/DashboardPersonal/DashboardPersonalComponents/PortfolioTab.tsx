@@ -128,8 +128,8 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
           <div className="name">tzBTC in Wallet</div>
           <div className="value">
             <CommaNumber value={tzBTCAmount} />
-            <Link to="/lending" style={{ pointerEvents: 'none' }}>
-              <Button text="Borrow" className="no-before" kind={ACTION_SIMPLE} disabled />
+            <Link to="/loans">
+              <Button text="Borrow" className="no-before" kind={ACTION_SIMPLE} />
             </Link>
           </div>
         </div>

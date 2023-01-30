@@ -117,7 +117,7 @@ const DataFeedDetailsView = ({ feed, oracles, registerFeedHandler }: FeedDetails
               <div className="price-part">
                 <DataFeedValueText fontSize={22} fontWeidth={600} className="shield">
                   <Icon id={isTrustedAnswer ? 'trustShield' : 'notTrustedShield'} />
-                  <CommaNumber beginningText="$" value={feed.last_completed_data} />
+                  <CommaNumber beginningText="$" value={feed.amount} />
                 </DataFeedValueText>
                 <DataFeedsTitle fontSize={14} fontWeidth={500}>
                   {isTrustedAnswer ? 'Trusted Answer' : 'Not Trusted Answer'}
