@@ -74,7 +74,7 @@ export const DELEGATION_STORAGE_QUERY = `
               request_type
             }
           }
-          governance_proposals_votes {
+          governance_proposals_votes (order_by: {timestamp: desc}) {
             governance_proposal_id
             id
             round
