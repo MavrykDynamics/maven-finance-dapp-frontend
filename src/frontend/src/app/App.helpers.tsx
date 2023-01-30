@@ -95,13 +95,15 @@ export function normalizeOracle(storage: {
     const dataFeedsHistory = normalizeDataFeedsHistory(item.history_data)
     const dataFeedsVolatility = normalizeDataFeedsVolatility(item.history_data)
 
-    return {
+    const feed = {
       ...item,
-      dataFeedsHistory,
-      dataFeedsVolatility,
-      amount: item.last_completed_data / 10 ** item.decimals,
       ...getCategoryAndNetwork(item.address),
+      amount: item.last_completed_data / 10 ** item.decimals,
+      dataFeedsHistory: dataFeedsHistory,
+      dataFeedsVolatility: dataFeedsVolatility,
     }
+
+    return feed
   })
 
   return {
