@@ -105,8 +105,6 @@ export const CoinsLogo = ({ imageLink, assetName }: { imageLink?: string; assetN
     )
   }
 
-  console.log('assetName', assetName, imageLink, imageExists)
-
   if (assetName && imageExists) {
     return assetName.toLowerCase() === 'mvk' ? (
       <AssetLogoStyled className="icon">
