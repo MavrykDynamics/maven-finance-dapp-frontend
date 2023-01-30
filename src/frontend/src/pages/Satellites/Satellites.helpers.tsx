@@ -3,7 +3,7 @@ import { MichelsonMap } from '@taquito/taquito'
 import type { DelegateRecord, SatelliteRecord } from '../../utils/TypesAndInterfaces/Delegation'
 import type { MavrykUserGraphQl } from '../../utils/TypesAndInterfaces/User'
 import type { SatelliteRecordGraphQl, DelegationGraphQl } from '../../utils/TypesAndInterfaces/Delegation'
-import type { DataFeedsHistoryGraphQL } from './helpers/Satellites.types'
+import type { DataFeedsHistoryGraphQL, Feed } from './helpers/Satellites.types'
 import { GovernanceFinancialRequestGraphQL, ProposalRecordType } from 'utils/TypesAndInterfaces/Governance'
 import { EmergergencyGovernanceItem } from 'utils/TypesAndInterfaces/EmergencyGovernance'
 
@@ -242,7 +242,7 @@ export const getSatelliteMetrics = (
   proposalLedger: Array<ProposalRecordType>,
   emergencyGovernanceLedger: Array<EmergergencyGovernanceItem>,
   satellite: SatelliteRecord,
-  feeds?: Array<Aggregator>,
+  feeds?: Array<Feed>,
   financialRequestLedger?: Array<GovernanceFinancialRequestGraphQL>,
 ) => {
   const submittedProposalsCount = pastProposals
