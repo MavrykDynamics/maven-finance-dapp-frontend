@@ -55,10 +55,9 @@ export const mainNavigationLinks: MainNavigationRoute[] = [
   {
     title: 'Vaults',
     id: 8,
-    path: 'vaults',
-    routePath: '/vaults',
+    path: 'vaults/all',
+    routePath: '/vaults/:tabId',
     icon: 'vaults',
-    disabled: true,
   },
   {
     title: 'Staking',

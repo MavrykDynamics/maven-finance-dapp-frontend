@@ -8,6 +8,7 @@ export type TabItem = {
   id: number
   active: boolean
   isDisabled?: boolean
+  path?: string
 }
 
 type Props = {

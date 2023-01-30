@@ -3,6 +3,7 @@ export const UP = 'up'
 export const DOWN = 'down'
 export const INFO = 'info'
 export const WARNING = 'warning'
+export const DARK_WARNING = 'darkWarning'
 export const WAITING = 'waiting'
 export type StatusFlagStyle =
   | typeof PRIMARY
@@ -10,5 +11,6 @@ export type StatusFlagStyle =
   | typeof DOWN
   | typeof INFO
   | typeof WARNING
+  | typeof DARK_WARNING
   | typeof WAITING
   | undefined

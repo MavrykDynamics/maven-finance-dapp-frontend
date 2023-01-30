@@ -1,5 +1,6 @@
 import styled from 'styled-components'
 import { MavrykTheme } from 'styles/interfaces'
+import { vaultsStatuses } from 'pages/Vaults/Vaults.consts' 
 
 export const NoItemsInTabStyled = styled.div<{ theme: MavrykTheme }>`
   display: flex;
@@ -195,6 +196,65 @@ export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
     svg {
       width: 15px;
       height: 15px;
+    }
+  }
+`
+export const StatusMessageStyled = styled.div`
+  display: flex;
+  padding: 15px 25px;
+  margin-bottom: 20px;
+
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 21px;
+
+  border-radius: 10px;
+
+  .timer {
+    display: inline-block;
+  }
+
+  svg {
+    display: block;
+    margin: auto 0;
+    margin-right: 20px;
+
+    width: 20px;
+    height: 20px;
+  }
+
+  & > div {
+    p {
+      margin: 0;
+    }
+
+    p:first-of-type {
+      white-space: nowrap;
+    }
+
+  }
+
+  &.${vaultsStatuses.LIQUIDATABLE} {
+    border: 1px solid ${({ theme }) => theme.downColor};
+
+    svg {
+      fill: ${({ theme }) => theme.downColor};
+    }
+  }
+
+  &.${vaultsStatuses.GRACE_PERIOD} {
+    border: 1px solid ${({ theme }) => theme.darkWarningColor};
+
+    svg {
+      fill: ${({ theme }) => theme.darkWarningColor};
+    }
+  }
+
+  &.${vaultsStatuses.AT_RISK} {
+    border: 1px solid ${({ theme }) => theme.awaitingColor};
+
+    svg {
+      fill: ${({ theme }) => theme.awaitingColor};
     }
   }
 `

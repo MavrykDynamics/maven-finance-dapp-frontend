@@ -18,6 +18,7 @@ type Props = {
   isExpandedByDefault?: boolean
   onClickCallback?: () => void
   showText?: boolean
+  getExpandedStatus?: (arg: boolean) => void
 }
 
 export default function Expand({
@@ -29,9 +30,16 @@ export default function Expand({
   isExpandedByDefault = false,
   onClickCallback,
   showText = false,
+  getExpandedStatus,
 }: Props) {
   const [expanded, setExpanded] = useState<boolean>(false)
-  const handleToggleExpand = () => setExpanded(!expanded)
+  const handleToggleExpand = () => {
+    setExpanded(!expanded)
+
+    if (getExpandedStatus) {
+      getExpandedStatus(!expanded)
+    }
+  }
   const ref = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
