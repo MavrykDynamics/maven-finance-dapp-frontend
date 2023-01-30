@@ -8,7 +8,7 @@ type callbackFunction = (arg0: string) => void
 // TODO: IDK how to type additional data, maybe revrite logic in future
 export type SatellitesListProps = {
   listTitle?: string
-  items: Array<FeedGQL> | Array<SatelliteRecord>
+  items: Array<Feed> | Array<SatelliteRecord>
   listType: 'satellites' | 'feeds' | 'oracles' | 'userFeeds'
   name: string
   onClickHandler?: (arg0: string) => void
@@ -31,7 +31,7 @@ export type FeedFactory = {
 
 export type FeedGQL = Omit<Aggregator, '__typename'> & { category: string | null; network: string | null }
 
-export type Feed = FeedGQL & { dataFeedsHistory: Array<ChartPlotType>; dataFeedsVolatility: Array<ChartPlotType> }
+export type Feed = FeedGQL & { dataFeedsHistory: Array<ChartPlotType>; dataFeedsVolatility: Array<ChartPlotType>, amount: number }
 
 export type InitialOracleStorageType = {
   feeds: Array<Feed>

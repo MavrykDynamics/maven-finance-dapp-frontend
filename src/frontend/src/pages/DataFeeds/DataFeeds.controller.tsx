@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
@@ -12,10 +12,9 @@ import { DropDown } from 'app/App.components/DropDown/DropDown.controller'
 // const
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { FEEDS_ALL_LIST_NAME } from 'pages/FinacialRequests/Pagination/pagination.consts'
-import { sortByCategory } from 'utils/sortByCategory'
 
 // types
-import { FeedGQL } from 'pages/Satellites/helpers/Satellites.types'
+import { Feed } from 'pages/Satellites/helpers/Satellites.types'
 
 // styles
 import { Page } from 'styles'
@@ -24,6 +23,7 @@ import { EmptyContainer } from 'app/App.style'
 import { DropdownContainer } from 'app/App.components/DropDown/DropDown.style'
 import { SatelliteSearchFilter } from 'pages/Satellites/SatelliteList/SatelliteList.style'
 import { getOracleStorage } from 'pages/Satellites/Satellites.actions'
+import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 
 const emptyContainer = (
   <EmptyContainer>
@@ -37,29 +37,34 @@ export const DataFeeds = () => {
   const { oraclesStorage } = useSelector((state: State) => state.oracles)
   const { feedCategories } = oraclesStorage
 
+  const ddItems = useMemo(() => ['All', ...feedCategories], [feedCategories])
+
   const [ddIsOpen, setDdIsOpen] = useState(false)
   const [searchInputValue, setSearchInput] = useState('')
-  const [chosenDdItem, setChosenDdItem] = useState<string | undefined>()
-  const [allSatellites, setAllSatellites] = useState<FeedGQL[]>(oraclesStorage.feeds)
-  const [sortedFeeds, setSortedFeeds] = useState<FeedGQL[]>(oraclesStorage.feeds)
+  const [chosenDdItem, setChosenDdItem] = useState<string>('All')
+  const [allSatellites, setAllSatellites] = useState<Feed[]>(oraclesStorage.feeds)
+  const [filteredFeeds, setFilteredFeeds] = useState<Feed[]>(oraclesStorage.feeds)
 
   const handleSelect = (selectedOption: string) => {
     setDdIsOpen(!ddIsOpen)
     setChosenDdItem(selectedOption)
 
+    const newFilteredItems =
+      selectedOption === 'All'
+        ? oraclesStorage.feeds
+        : oraclesStorage.feeds.filter(({ category }) => category?.toLowerCase() === selectedOption.toLowerCase())
+
     if (selectedOption !== '' && selectedOption !== chosenDdItem) {
-      setSortedFeeds((data: FeedGQL[]) => {
-        return sortByCategory(data, selectedOption)
-      })
+      setFilteredFeeds(newFilteredItems)
     }
   }
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const searchQuery = e.target.value
-    let searchResult: FeedGQL[] = []
+    let searchResult: Feed[] = []
     if (searchQuery !== '') {
       searchResult = allSatellites.filter(
-        (item: FeedGQL) =>
+        (item: Feed) =>
           item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
           item.address.toLowerCase().includes(searchQuery.toLowerCase()),
       )
@@ -68,16 +73,20 @@ export const DataFeeds = () => {
     }
 
     setSearchInput(e.target.value)
-    setSortedFeeds(searchResult)
+    setFilteredFeeds(searchResult)
   }
 
   useEffect(() => {
     setAllSatellites(oraclesStorage.feeds)
-    setSortedFeeds(oraclesStorage.feeds)
+    setFilteredFeeds(oraclesStorage.feeds)
   }, [oraclesStorage.feeds])
 
-  useEffect(() => {
-    dispatch(getOracleStorage())
+  const { isLoading } = useDataLoader(async () => {
+    try {
+      await dispatch(getOracleStorage())
+    } catch (e) {
+      //TODO: handle fetch error
+    }
   }, [])
 
   return (
@@ -92,7 +101,7 @@ export const DataFeeds = () => {
               isOpen={ddIsOpen}
               setIsOpen={setDdIsOpen}
               itemSelected={chosenDdItem}
-              items={feedCategories}
+              items={ddItems}
               clickOnItem={handleSelect}
             />
           </DropdownContainer>
@@ -115,8 +124,8 @@ export const DataFeeds = () => {
         />
       </SatelliteSearchFilter>
       <DataFeedsStyled>
-        {sortedFeeds.length ? (
-          <SatelliteList items={sortedFeeds} listType={'feeds'} name={FEEDS_ALL_LIST_NAME} />
+        {filteredFeeds.length ? (
+          <SatelliteList items={filteredFeeds} listType={'feeds'} name={FEEDS_ALL_LIST_NAME} />
         ) : (
           emptyContainer
         )}

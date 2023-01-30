@@ -20,7 +20,8 @@ export const SatelliteItemStyle = styled(Card)<{ isDataFeeds?: boolean; oracle?:
   }
 
   &.feed {
-    grid-template-columns: ${({isDataFeeds}) => isDataFeeds ? '1.1fr 1fr 1.3fr 1.3fr 0.9fr' : '0.9fr 1.2fr 1fr 1fr'};
+    grid-template-columns: ${({ isDataFeeds }) =>
+      isDataFeeds ? '1.1fr 1.4fr 1.3fr 1fr 0.9fr' : '0.9fr 1.2fr 1fr 1fr'};
     column-gap: 50px;
   }
 

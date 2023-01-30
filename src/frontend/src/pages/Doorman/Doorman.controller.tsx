@@ -42,7 +42,7 @@ export const Doorman = () => {
   return (
     <Page>
       {isLoading ? (
-        '... loading dorman data'
+        '... loading doorman data'
       ) : (
         <>
           <ExitFeeModal />
