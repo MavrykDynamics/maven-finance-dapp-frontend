@@ -19,8 +19,7 @@ import { DataFeedsChart } from '../chart/DataFeedsChart.controller'
 
 // types
 import { SatelliteRecord } from 'utils/TypesAndInterfaces/Delegation'
-import { FeedGQL } from 'pages/Satellites/helpers/Satellites.types'
-import { DataFeedsHistory, DataFeedsVolatility } from '../../Satellites/helpers/Satellites.types'
+import { Feed } from 'pages/Satellites/helpers/Satellites.types'
 
 import DataFeedsPagination from '../pagination/DataFeedspagination.controler'
 // styles
@@ -40,18 +39,14 @@ import { cyanColor, downColor, Page } from 'styles'
 import { CoinsLogo } from 'app/App.components/Icon/CoinsIcons.view'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { parseDate } from 'utils/time'
-import dayjs from 'dayjs'
 import { useSelector } from 'react-redux'
 import { State } from 'reducers'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
-import { TabItem } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 
 type FeedDetailsProps = {
-  feed: FeedGQL | null
+  feed: Feed | null
   oracles: Array<SatelliteRecord>
   registerFeedHandler: () => void
-  dataFeedsHistory: DataFeedsHistory
-  dataFeedsVolatility: DataFeedsVolatility
 }
 
 const emptyContainer = (
@@ -72,13 +67,7 @@ const tabsList = [
   },
 ]
 
-const DataFeedDetailsView = ({
-  feed,
-  oracles,
-  registerFeedHandler,
-  dataFeedsHistory,
-  dataFeedsVolatility,
-}: FeedDetailsProps) => {
+const DataFeedDetailsView = ({ feed, oracles, registerFeedHandler }: FeedDetailsProps) => {
   const { dipDupTokens } = useSelector((state: State) => state.tokens)
   const [isClickedRegister, setClickedRegister] = useState(false)
   const [activeTab, setActiveTab] = useState(tabsList[0].id)
@@ -289,8 +278,9 @@ const DataFeedDetailsView = ({
 
           <DataFeedsChart
             activeTab={activeTab}
-            dataFeedsHistory={dataFeedsHistory}
-            dataFeedsVolatility={dataFeedsVolatility}
+            dataFeedsHistory={feed.dataFeedsHistory}
+            dataFeedsVolatility={feed.dataFeedsVolatility}
+            tooltipAsset={feed.name.split('/')?.[0]}
           />
         </div>
       </DataFeedsStyled>

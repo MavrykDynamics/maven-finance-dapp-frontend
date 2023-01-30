@@ -16,6 +16,7 @@ import { fetchRateBySymbols } from 'reducers/actions/dipDupActions.actions'
 import { calculateCompoundedInterest, getAssetMetadata } from 'pages/Loans/Loans.helpers'
 import { calcWithoutDecimals } from 'utils/calcFunctions'
 import { BLOCKS_PER_MINUTE } from 'utils/constants'
+import { getUserBalanceForLoanAsset } from 'pages/Loans/LoansFethcers'
 
 type VaultsStorageProps = {
   lendingController: LendingControllerGQL
@@ -154,6 +155,12 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
       await fetch(`https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/blocks/${dayjs().toISOString()}`)
     ).json()
 
+    const userBalance = await getUserBalanceForLoanAsset(
+      item.loan_token.lp_token_address,
+      item.loan_token.loan_token_name,
+      accountPkh,
+    )
+
     const fee =
       calculateCompoundedInterest(currentInterestRate, item.last_updated_block_level, currentBlock?.level ?? 0) /
       10 ** interestRateDecimals
@@ -175,6 +182,7 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
         assetIcon: vaultAsset.icon,
         amtBorrowed: borrowedAmount,
         assetRate: vaultAsset.rate,
+        userBalance,
         collateralBalance: vaultCollateral.totalRow.balance,
         collateralUtilization: vaultCollateral.totalRow.balance / (borrowedAmount * vaultAsset.rate),
         apr: currentInterestRate * 100,

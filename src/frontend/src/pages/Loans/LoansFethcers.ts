@@ -37,6 +37,36 @@ export const getXTZBakers = async () => {
   }
 }
 
+export const getUserBalanceForLoanAsset = async (
+  assetAddress: string,
+  assetName: string,
+  userAddress?: string,
+): Promise<number> => {
+  try {
+    if (!userAddress) return 0
+    const isXTZ = isTezosAsset(assetName)
+    const assetBalance = isXTZ
+      ? await (
+          await fetch(`https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/accounts/${userAddress}/balance`)
+        ).json()
+      : await (
+          await fetch(
+            `https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/tokens/balances?account.eq=${userAddress}&token.contract.in=${assetAddress}`,
+          )
+        ).json()
+
+    return (
+      (typeof assetBalance === 'number'
+        ? assetBalance / 10 ** 6
+        : Number(assetBalance?.[0]?.balance ?? 0) / 10 ** Number(assetBalance?.[0]?.token?.metadata?.decimals ?? 0)) ??
+      0
+    )
+  } catch (e) {
+    console.log('getUserBalanceForLoanAsset fetching error', e)
+    return 0
+  }
+}
+
 export const getCollateralTokens = async (
   collateralTokens: Array<Lending_Controller_Collateral_Token>,
   dipDupTokens: State['tokens']['dipDupTokens'],

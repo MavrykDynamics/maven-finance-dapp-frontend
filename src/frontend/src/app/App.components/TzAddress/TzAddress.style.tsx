@@ -42,8 +42,9 @@ export const TzAddressStyled = styled.div<{ theme: MavrykTheme }>`
 `
 
 export const TzAddressIcon = styled.svg<{ theme: MavrykTheme }>`
-  width: 12px;
-  height: 12px;
+  // TODO: remove important after clearing all cases of usage for this icon
+  width: 13px !important;
+  height: 13px !important;
   display: inline-block;
   vertical-align: sub;
   margin-left: 6px;
