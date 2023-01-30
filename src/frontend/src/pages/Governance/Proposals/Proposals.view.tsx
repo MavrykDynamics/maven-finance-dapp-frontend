@@ -202,8 +202,8 @@ export const ProposalsView = ({
             <h1>Satellite Voting History</h1>
           </GovRightContainerTitleArea>
           {votersList.map(({ vote, address, name, avatar }) => {
-            const status = vote === 1 ? ProposalStatus.EXECUTED : vote === -1 ? ProposalStatus.DEFEATED : undefined
-            const statusText = vote === 1 ? 'YES' : vote === -1 ? 'NO' : 'PASS'
+            const status = vote === 1 ? ProposalStatus.EXECUTED : vote === 2 ? ProposalStatus.DEFEATED : undefined
+            const statusText = vote === 1 ? 'YES' : vote === 2 ? 'NO' : 'PASS'
             return (
               <VoterListItem>
                 <div className="left">
