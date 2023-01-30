@@ -35,7 +35,7 @@ import {
 } from './DataFeedsDetails.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { EmptyContainer } from 'app/App.style'
-import { cyanColor, downColor, Page } from 'styles'
+import { cyanColor, downColor, Page, skyColor } from 'styles'
 import { CoinsLogo } from 'app/App.components/Icon/CoinsIcons.view'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { parseDate } from 'utils/time'
@@ -73,10 +73,11 @@ const DataFeedDetailsView = ({ feed, oracles, registerFeedHandler }: FeedDetails
   const [activeTab, setActiveTab] = useState(tabsList[0].id)
   const oraclesForFeed = useMemo(
     () => oracles.filter(({ oracleRecords }) => oracleRecords.find(({ feedAddress }) => feed?.address === feedAddress)),
-    [oracles],
+    [feed?.address, oracles],
   )
 
   const isTrustedAnswer = feed && feed.last_completed_data_pct_oracle_resp >= feed.pct_oracle_threshold
+
   // const heartbeatUpdateInfo =
   //   dayjs(Date.now()).diff(dayjs(feed?.last_completed_data_last_updated_at), 'minutes') >= 30
   //     ? `
@@ -117,7 +118,7 @@ const DataFeedDetailsView = ({ feed, oracles, registerFeedHandler }: FeedDetails
               <div className="price-part">
                 <DataFeedValueText fontSize={22} fontWeidth={600} className="shield">
                   <Icon id={isTrustedAnswer ? 'trustShield' : 'notTrustedShield'} />
-                  <CommaNumber beginningText="$" value={feed.amount} />
+                  <CommaNumber beginningText="$" value={feed.amount} showDecimal decimalsToShow={6} />
                 </DataFeedValueText>
                 <DataFeedsTitle fontSize={14} fontWeidth={500}>
                   {isTrustedAnswer ? 'Trusted Answer' : 'Not Trusted Answer'}
@@ -166,7 +167,7 @@ const DataFeedDetailsView = ({ feed, oracles, registerFeedHandler }: FeedDetails
                           short: true,
                           showZeros: false,
                           negativeColor: isTrustedAnswer ? cyanColor : downColor,
-                          defaultColor: cyanColor,
+                          defaultColor: skyColor,
                         }}
                         timestamp={new Date(feed.last_completed_data_last_updated_at).getTime() + 1000 * 60 * 30}
                       />
@@ -201,23 +202,8 @@ const DataFeedDetailsView = ({ feed, oracles, registerFeedHandler }: FeedDetails
                     className="info-icon"
                   />
                 </DataFeedsTitle>
-                <DataFeedSubTitleText fontSize={14} fontWeidth={500}>
-                  {parseDate({ time: feed.last_completed_data_last_updated_at, timeFormat: 'MMM DD, YYYY' })}
-                </DataFeedSubTitleText>
-                <DataFeedValueText fontSize={16} fontWeidth={600}>
-                  {feed.last_completed_data_last_updated_at ? (
-                    <div className="timer">
-                      <Timer
-                        options={{
-                          short: true,
-                          showZeros: false,
-                          negativeColor: cyanColor,
-                          defaultColor: cyanColor,
-                        }}
-                        timestamp={new Date(feed.last_completed_data_last_updated_at).getTime() + 1000 * 60 * 30}
-                      />
-                    </div>
-                  ) : null}
+                <DataFeedValueText fontSize={14} fontWeidth={500} style={{ padding: '2px 0' }}>
+                  {parseDate({ time: feed.last_completed_data_last_updated_at, timeFormat: 'MMM Do, YYYY, HH:mm:ss' })}
                 </DataFeedValueText>
               </DataFeedInfoBlock>
             </div>
@@ -296,7 +282,7 @@ const DataFeedDetailsView = ({ feed, oracles, registerFeedHandler }: FeedDetails
         emptyContainer
       )}
 
-      <UsersListWrapper className="oracle-list-wrapper">
+      {/* <UsersListWrapper className="oracle-list-wrapper">
         <GovRightContainerTitleArea>
           <h1>Users</h1>
         </GovRightContainerTitleArea>
@@ -318,7 +304,7 @@ const DataFeedDetailsView = ({ feed, oracles, registerFeedHandler }: FeedDetails
             </Link>
           ))}
         </UsersListCardsWrapper>
-      </UsersListWrapper>
+      </UsersListWrapper> */}
     </Page>
   ) : null
 }

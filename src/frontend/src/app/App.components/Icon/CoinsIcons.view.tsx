@@ -113,7 +113,7 @@ export const CoinsLogo = ({ imageLink, assetName }: { imageLink?: string; assetN
     ) : (
       <AssetLogoStyled className="icon">
         <img
-          src={`https//logo.chainbit.xyz/${assetName.toLowerCase()}`}
+          src={`https://logo.chainbit.xyz/${assetName.toLowerCase()}`}
           onError={() => setImageExists(false)}
           alt={`logo`}
           loading="lazy"

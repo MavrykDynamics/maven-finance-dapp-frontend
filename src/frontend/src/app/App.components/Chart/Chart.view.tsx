@@ -52,7 +52,7 @@ const TradingViewTooltip = ({ amount, date, tooltipAsset }: TooltipPropsType) =>
   return (
     <TradingViewTooltipStyled>
       <div className="value">
-        <CommaNumber endingText={tooltipAsset} value={amount} />
+        <CommaNumber endingText={tooltipAsset} value={amount} showDecimal decimalsToShow={6} />
       </div>
       <div className="date">{date}</div>
     </TradingViewTooltipStyled>
@@ -191,11 +191,11 @@ export const TradingViewChart = ({
       priceLineVisible: false,
       priceFormat: {
         type: 'custom',
-        minMove: 1,
+        minMove: 0.000001,
         formatter: (price: any) =>
           formatNumber({
             showDecimal: true,
-            decimalsToShow: 2,
+            decimalsToShow: 6,
             number: parseFloat(price),
           }),
       },
@@ -224,7 +224,7 @@ export const TradingViewChart = ({
             dateTooltipFormatter?.(Number(param.time)) ??
             parseDate({ time: Number(param.time), timeFormat: 'MMM DD, HH:mm Z' }) ??
             '',
-          amount: Number(param.seriesPrices.get(series)),
+          amount: parseFloat(String(param.seriesPrices.get(series))),
         })
         if (mainChartWrapperRef.current) {
           mainChartWrapperRef.current.style.setProperty('--translateX', `${param.point.x + 15}`)
