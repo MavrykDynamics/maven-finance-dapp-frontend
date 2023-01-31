@@ -257,6 +257,107 @@ export type Aggregator_Aggregate = {
   nodes: Array<Aggregator>;
 };
 
+export type Aggregator_Aggregate_Bool_Exp = {
+  avg?: InputMaybe<Aggregator_Aggregate_Bool_Exp_Avg>;
+  bool_and?: InputMaybe<Aggregator_Aggregate_Bool_Exp_Bool_And>;
+  bool_or?: InputMaybe<Aggregator_Aggregate_Bool_Exp_Bool_Or>;
+  corr?: InputMaybe<Aggregator_Aggregate_Bool_Exp_Corr>;
+  count?: InputMaybe<Aggregator_Aggregate_Bool_Exp_Count>;
+  covar_samp?: InputMaybe<Aggregator_Aggregate_Bool_Exp_Covar_Samp>;
+  max?: InputMaybe<Aggregator_Aggregate_Bool_Exp_Max>;
+  min?: InputMaybe<Aggregator_Aggregate_Bool_Exp_Min>;
+  stddev_samp?: InputMaybe<Aggregator_Aggregate_Bool_Exp_Stddev_Samp>;
+  sum?: InputMaybe<Aggregator_Aggregate_Bool_Exp_Sum>;
+  var_samp?: InputMaybe<Aggregator_Aggregate_Bool_Exp_Var_Samp>;
+};
+
+export type Aggregator_Aggregate_Bool_Exp_Avg = {
+  arguments: Aggregator_Select_Column_Aggregator_Aggregate_Bool_Exp_Avg_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Aggregator_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Aggregator_Aggregate_Bool_Exp_Bool_And = {
+  arguments: Aggregator_Select_Column_Aggregator_Aggregate_Bool_Exp_Bool_And_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Aggregator_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Aggregator_Aggregate_Bool_Exp_Bool_Or = {
+  arguments: Aggregator_Select_Column_Aggregator_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Aggregator_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Aggregator_Aggregate_Bool_Exp_Corr = {
+  arguments: Aggregator_Aggregate_Bool_Exp_Corr_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Aggregator_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Aggregator_Aggregate_Bool_Exp_Corr_Arguments = {
+  X: Aggregator_Select_Column_Aggregator_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+  Y: Aggregator_Select_Column_Aggregator_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+};
+
+export type Aggregator_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Aggregator_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Aggregator_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+export type Aggregator_Aggregate_Bool_Exp_Covar_Samp = {
+  arguments: Aggregator_Aggregate_Bool_Exp_Covar_Samp_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Aggregator_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Aggregator_Aggregate_Bool_Exp_Covar_Samp_Arguments = {
+  X: Aggregator_Select_Column_Aggregator_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+  Y: Aggregator_Select_Column_Aggregator_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+};
+
+export type Aggregator_Aggregate_Bool_Exp_Max = {
+  arguments: Aggregator_Select_Column_Aggregator_Aggregate_Bool_Exp_Max_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Aggregator_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Aggregator_Aggregate_Bool_Exp_Min = {
+  arguments: Aggregator_Select_Column_Aggregator_Aggregate_Bool_Exp_Min_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Aggregator_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Aggregator_Aggregate_Bool_Exp_Stddev_Samp = {
+  arguments: Aggregator_Select_Column_Aggregator_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Aggregator_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Aggregator_Aggregate_Bool_Exp_Sum = {
+  arguments: Aggregator_Select_Column_Aggregator_Aggregate_Bool_Exp_Sum_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Aggregator_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Aggregator_Aggregate_Bool_Exp_Var_Samp = {
+  arguments: Aggregator_Select_Column_Aggregator_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Aggregator_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
 /** aggregate fields of "aggregator" */
 export type Aggregator_Aggregate_Fields = {
   __typename?: 'aggregator_aggregate_fields';
@@ -337,12 +438,16 @@ export type Aggregator_Bool_Exp = {
   factory?: InputMaybe<Aggregator_Factory_Bool_Exp>;
   factory_id?: InputMaybe<String_Comparison_Exp>;
   general_contracts?: InputMaybe<Aggregator_General_Contract_Bool_Exp>;
+  general_contracts_aggregate?: InputMaybe<Aggregator_General_Contract_Aggregate_Bool_Exp>;
   governance?: InputMaybe<Governance_Bool_Exp>;
   governance_id?: InputMaybe<String_Comparison_Exp>;
   governance_satellite_oracle_aggregators?: InputMaybe<Governance_Satellite_Oracle_Aggregator_Bool_Exp>;
+  governance_satellite_oracle_aggregators_aggregate?: InputMaybe<Governance_Satellite_Oracle_Aggregator_Aggregate_Bool_Exp>;
   heart_beat_seconds?: InputMaybe<Bigint_Comparison_Exp>;
   history_data?: InputMaybe<Aggregator_History_Data_Bool_Exp>;
+  history_data_aggregate?: InputMaybe<Aggregator_History_Data_Aggregate_Bool_Exp>;
   lambdas?: InputMaybe<Aggregator_Lambda_Bool_Exp>;
+  lambdas_aggregate?: InputMaybe<Aggregator_Lambda_Aggregate_Bool_Exp>;
   last_completed_data?: InputMaybe<Float8_Comparison_Exp>;
   last_completed_data_epoch?: InputMaybe<Bigint_Comparison_Exp>;
   last_completed_data_last_updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
@@ -351,11 +456,13 @@ export type Aggregator_Bool_Exp = {
   last_updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   name?: InputMaybe<String_Comparison_Exp>;
   oracles?: InputMaybe<Aggregator_Oracle_Bool_Exp>;
+  oracles_aggregate?: InputMaybe<Aggregator_Oracle_Aggregate_Bool_Exp>;
   pct_oracle_threshold?: InputMaybe<Smallint_Comparison_Exp>;
   reward_amount_smvk?: InputMaybe<Float8_Comparison_Exp>;
   reward_amount_xtz?: InputMaybe<Float8_Comparison_Exp>;
   update_data_paused?: InputMaybe<Boolean_Comparison_Exp>;
   whitelist_contracts?: InputMaybe<Aggregator_Whitelist_Contract_Bool_Exp>;
+  whitelist_contracts_aggregate?: InputMaybe<Aggregator_Whitelist_Contract_Aggregate_Bool_Exp>;
   withdraw_reward_smvk_paused?: InputMaybe<Boolean_Comparison_Exp>;
   withdraw_reward_xtz_paused?: InputMaybe<Boolean_Comparison_Exp>;
 };
@@ -504,6 +611,33 @@ export type Aggregator_Factory_Aggregate = {
   nodes: Array<Aggregator_Factory>;
 };
 
+export type Aggregator_Factory_Aggregate_Bool_Exp = {
+  bool_and?: InputMaybe<Aggregator_Factory_Aggregate_Bool_Exp_Bool_And>;
+  bool_or?: InputMaybe<Aggregator_Factory_Aggregate_Bool_Exp_Bool_Or>;
+  count?: InputMaybe<Aggregator_Factory_Aggregate_Bool_Exp_Count>;
+};
+
+export type Aggregator_Factory_Aggregate_Bool_Exp_Bool_And = {
+  arguments: Aggregator_Factory_Select_Column_Aggregator_Factory_Aggregate_Bool_Exp_Bool_And_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Aggregator_Factory_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Aggregator_Factory_Aggregate_Bool_Exp_Bool_Or = {
+  arguments: Aggregator_Factory_Select_Column_Aggregator_Factory_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Aggregator_Factory_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Aggregator_Factory_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Aggregator_Factory_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Aggregator_Factory_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
 /** aggregate fields of "aggregator_factory" */
 export type Aggregator_Factory_Aggregate_Fields = {
   __typename?: 'aggregator_factory_aggregate_fields';
@@ -562,18 +696,23 @@ export type Aggregator_Factory_Bool_Exp = {
   admin?: InputMaybe<String_Comparison_Exp>;
   aggregator_name_max_length?: InputMaybe<Smallint_Comparison_Exp>;
   aggregators?: InputMaybe<Aggregator_Bool_Exp>;
+  aggregators_aggregate?: InputMaybe<Aggregator_Aggregate_Bool_Exp>;
   create_aggregator_paused?: InputMaybe<Boolean_Comparison_Exp>;
   distribute_reward_smvk_paused?: InputMaybe<Boolean_Comparison_Exp>;
   distribute_reward_xtz_paused?: InputMaybe<Boolean_Comparison_Exp>;
   general_contracts?: InputMaybe<Aggregator_Factory_General_Contract_Bool_Exp>;
+  general_contracts_aggregate?: InputMaybe<Aggregator_Factory_General_Contract_Aggregate_Bool_Exp>;
   governance?: InputMaybe<Governance_Bool_Exp>;
   governance_id?: InputMaybe<String_Comparison_Exp>;
   lambdas?: InputMaybe<Aggregator_Factory_Lambda_Bool_Exp>;
+  lambdas_aggregate?: InputMaybe<Aggregator_Factory_Lambda_Aggregate_Bool_Exp>;
   last_updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   product_lambdas?: InputMaybe<Aggregator_Factory_Product_Lambda_Bool_Exp>;
+  product_lambdas_aggregate?: InputMaybe<Aggregator_Factory_Product_Lambda_Aggregate_Bool_Exp>;
   track_aggregator_paused?: InputMaybe<Boolean_Comparison_Exp>;
   untrack_aggregator_paused?: InputMaybe<Boolean_Comparison_Exp>;
   whitelist_contracts?: InputMaybe<Aggregator_Factory_Whitelist_Contract_Bool_Exp>;
+  whitelist_contracts_aggregate?: InputMaybe<Aggregator_Factory_Whitelist_Contract_Aggregate_Bool_Exp>;
 };
 
 /** columns and relationships of "aggregator_factory_general_contract" */
@@ -592,6 +731,17 @@ export type Aggregator_Factory_General_Contract_Aggregate = {
   __typename?: 'aggregator_factory_general_contract_aggregate';
   aggregate?: Maybe<Aggregator_Factory_General_Contract_Aggregate_Fields>;
   nodes: Array<Aggregator_Factory_General_Contract>;
+};
+
+export type Aggregator_Factory_General_Contract_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Aggregator_Factory_General_Contract_Aggregate_Bool_Exp_Count>;
+};
+
+export type Aggregator_Factory_General_Contract_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Aggregator_Factory_General_Contract_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Aggregator_Factory_General_Contract_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "aggregator_factory_general_contract" */
@@ -820,6 +970,17 @@ export type Aggregator_Factory_Lambda_Aggregate = {
   __typename?: 'aggregator_factory_lambda_aggregate';
   aggregate?: Maybe<Aggregator_Factory_Lambda_Aggregate_Fields>;
   nodes: Array<Aggregator_Factory_Lambda>;
+};
+
+export type Aggregator_Factory_Lambda_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Aggregator_Factory_Lambda_Aggregate_Bool_Exp_Count>;
+};
+
+export type Aggregator_Factory_Lambda_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Aggregator_Factory_Lambda_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Aggregator_Factory_Lambda_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "aggregator_factory_lambda" */
@@ -1117,6 +1278,17 @@ export type Aggregator_Factory_Product_Lambda_Aggregate = {
   nodes: Array<Aggregator_Factory_Product_Lambda>;
 };
 
+export type Aggregator_Factory_Product_Lambda_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Aggregator_Factory_Product_Lambda_Aggregate_Bool_Exp_Count>;
+};
+
+export type Aggregator_Factory_Product_Lambda_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Aggregator_Factory_Product_Lambda_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Aggregator_Factory_Product_Lambda_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
 /** aggregate fields of "aggregator_factory_product_lambda" */
 export type Aggregator_Factory_Product_Lambda_Aggregate_Fields = {
   __typename?: 'aggregator_factory_product_lambda_aggregate_fields';
@@ -1359,6 +1531,34 @@ export enum Aggregator_Factory_Select_Column {
   UntrackAggregatorPaused = 'untrack_aggregator_paused'
 }
 
+/** select "aggregator_factory_aggregate_bool_exp_bool_and_arguments_columns" columns of table "aggregator_factory" */
+export enum Aggregator_Factory_Select_Column_Aggregator_Factory_Aggregate_Bool_Exp_Bool_And_Arguments_Columns {
+  /** column name */
+  CreateAggregatorPaused = 'create_aggregator_paused',
+  /** column name */
+  DistributeRewardSmvkPaused = 'distribute_reward_smvk_paused',
+  /** column name */
+  DistributeRewardXtzPaused = 'distribute_reward_xtz_paused',
+  /** column name */
+  TrackAggregatorPaused = 'track_aggregator_paused',
+  /** column name */
+  UntrackAggregatorPaused = 'untrack_aggregator_paused'
+}
+
+/** select "aggregator_factory_aggregate_bool_exp_bool_or_arguments_columns" columns of table "aggregator_factory" */
+export enum Aggregator_Factory_Select_Column_Aggregator_Factory_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns {
+  /** column name */
+  CreateAggregatorPaused = 'create_aggregator_paused',
+  /** column name */
+  DistributeRewardSmvkPaused = 'distribute_reward_smvk_paused',
+  /** column name */
+  DistributeRewardXtzPaused = 'distribute_reward_xtz_paused',
+  /** column name */
+  TrackAggregatorPaused = 'track_aggregator_paused',
+  /** column name */
+  UntrackAggregatorPaused = 'untrack_aggregator_paused'
+}
+
 /** aggregate stddev on columns */
 export type Aggregator_Factory_Stddev_Fields = {
   __typename?: 'aggregator_factory_stddev_fields';
@@ -1474,6 +1674,17 @@ export type Aggregator_Factory_Whitelist_Contract_Aggregate = {
   __typename?: 'aggregator_factory_whitelist_contract_aggregate';
   aggregate?: Maybe<Aggregator_Factory_Whitelist_Contract_Aggregate_Fields>;
   nodes: Array<Aggregator_Factory_Whitelist_Contract>;
+};
+
+export type Aggregator_Factory_Whitelist_Contract_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Aggregator_Factory_Whitelist_Contract_Aggregate_Bool_Exp_Count>;
+};
+
+export type Aggregator_Factory_Whitelist_Contract_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Aggregator_Factory_Whitelist_Contract_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Aggregator_Factory_Whitelist_Contract_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "aggregator_factory_whitelist_contract" */
@@ -1701,6 +1912,17 @@ export type Aggregator_General_Contract_Aggregate = {
   __typename?: 'aggregator_general_contract_aggregate';
   aggregate?: Maybe<Aggregator_General_Contract_Aggregate_Fields>;
   nodes: Array<Aggregator_General_Contract>;
+};
+
+export type Aggregator_General_Contract_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Aggregator_General_Contract_Aggregate_Bool_Exp_Count>;
+};
+
+export type Aggregator_General_Contract_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Aggregator_General_Contract_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Aggregator_General_Contract_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "aggregator_general_contract" */
@@ -1933,6 +2155,91 @@ export type Aggregator_History_Data_Aggregate = {
   nodes: Array<Aggregator_History_Data>;
 };
 
+export type Aggregator_History_Data_Aggregate_Bool_Exp = {
+  avg?: InputMaybe<Aggregator_History_Data_Aggregate_Bool_Exp_Avg>;
+  corr?: InputMaybe<Aggregator_History_Data_Aggregate_Bool_Exp_Corr>;
+  count?: InputMaybe<Aggregator_History_Data_Aggregate_Bool_Exp_Count>;
+  covar_samp?: InputMaybe<Aggregator_History_Data_Aggregate_Bool_Exp_Covar_Samp>;
+  max?: InputMaybe<Aggregator_History_Data_Aggregate_Bool_Exp_Max>;
+  min?: InputMaybe<Aggregator_History_Data_Aggregate_Bool_Exp_Min>;
+  stddev_samp?: InputMaybe<Aggregator_History_Data_Aggregate_Bool_Exp_Stddev_Samp>;
+  sum?: InputMaybe<Aggregator_History_Data_Aggregate_Bool_Exp_Sum>;
+  var_samp?: InputMaybe<Aggregator_History_Data_Aggregate_Bool_Exp_Var_Samp>;
+};
+
+export type Aggregator_History_Data_Aggregate_Bool_Exp_Avg = {
+  arguments: Aggregator_History_Data_Select_Column_Aggregator_History_Data_Aggregate_Bool_Exp_Avg_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Aggregator_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Aggregator_History_Data_Aggregate_Bool_Exp_Corr = {
+  arguments: Aggregator_History_Data_Aggregate_Bool_Exp_Corr_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Aggregator_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Aggregator_History_Data_Aggregate_Bool_Exp_Corr_Arguments = {
+  X: Aggregator_History_Data_Select_Column_Aggregator_History_Data_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+  Y: Aggregator_History_Data_Select_Column_Aggregator_History_Data_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+};
+
+export type Aggregator_History_Data_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Aggregator_History_Data_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Aggregator_History_Data_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+export type Aggregator_History_Data_Aggregate_Bool_Exp_Covar_Samp = {
+  arguments: Aggregator_History_Data_Aggregate_Bool_Exp_Covar_Samp_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Aggregator_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Aggregator_History_Data_Aggregate_Bool_Exp_Covar_Samp_Arguments = {
+  X: Aggregator_History_Data_Select_Column_Aggregator_History_Data_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+  Y: Aggregator_History_Data_Select_Column_Aggregator_History_Data_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+};
+
+export type Aggregator_History_Data_Aggregate_Bool_Exp_Max = {
+  arguments: Aggregator_History_Data_Select_Column_Aggregator_History_Data_Aggregate_Bool_Exp_Max_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Aggregator_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Aggregator_History_Data_Aggregate_Bool_Exp_Min = {
+  arguments: Aggregator_History_Data_Select_Column_Aggregator_History_Data_Aggregate_Bool_Exp_Min_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Aggregator_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Aggregator_History_Data_Aggregate_Bool_Exp_Stddev_Samp = {
+  arguments: Aggregator_History_Data_Select_Column_Aggregator_History_Data_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Aggregator_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Aggregator_History_Data_Aggregate_Bool_Exp_Sum = {
+  arguments: Aggregator_History_Data_Select_Column_Aggregator_History_Data_Aggregate_Bool_Exp_Sum_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Aggregator_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Aggregator_History_Data_Aggregate_Bool_Exp_Var_Samp = {
+  arguments: Aggregator_History_Data_Select_Column_Aggregator_History_Data_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Aggregator_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
 /** aggregate fields of "aggregator_history_data" */
 export type Aggregator_History_Data_Aggregate_Fields = {
   __typename?: 'aggregator_history_data_aggregate_fields';
@@ -2079,6 +2386,54 @@ export enum Aggregator_History_Data_Select_Column {
   Round = 'round',
   /** column name */
   Timestamp = 'timestamp'
+}
+
+/** select "aggregator_history_data_aggregate_bool_exp_avg_arguments_columns" columns of table "aggregator_history_data" */
+export enum Aggregator_History_Data_Select_Column_Aggregator_History_Data_Aggregate_Bool_Exp_Avg_Arguments_Columns {
+  /** column name */
+  Data = 'data'
+}
+
+/** select "aggregator_history_data_aggregate_bool_exp_corr_arguments_columns" columns of table "aggregator_history_data" */
+export enum Aggregator_History_Data_Select_Column_Aggregator_History_Data_Aggregate_Bool_Exp_Corr_Arguments_Columns {
+  /** column name */
+  Data = 'data'
+}
+
+/** select "aggregator_history_data_aggregate_bool_exp_covar_samp_arguments_columns" columns of table "aggregator_history_data" */
+export enum Aggregator_History_Data_Select_Column_Aggregator_History_Data_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns {
+  /** column name */
+  Data = 'data'
+}
+
+/** select "aggregator_history_data_aggregate_bool_exp_max_arguments_columns" columns of table "aggregator_history_data" */
+export enum Aggregator_History_Data_Select_Column_Aggregator_History_Data_Aggregate_Bool_Exp_Max_Arguments_Columns {
+  /** column name */
+  Data = 'data'
+}
+
+/** select "aggregator_history_data_aggregate_bool_exp_min_arguments_columns" columns of table "aggregator_history_data" */
+export enum Aggregator_History_Data_Select_Column_Aggregator_History_Data_Aggregate_Bool_Exp_Min_Arguments_Columns {
+  /** column name */
+  Data = 'data'
+}
+
+/** select "aggregator_history_data_aggregate_bool_exp_stddev_samp_arguments_columns" columns of table "aggregator_history_data" */
+export enum Aggregator_History_Data_Select_Column_Aggregator_History_Data_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns {
+  /** column name */
+  Data = 'data'
+}
+
+/** select "aggregator_history_data_aggregate_bool_exp_sum_arguments_columns" columns of table "aggregator_history_data" */
+export enum Aggregator_History_Data_Select_Column_Aggregator_History_Data_Aggregate_Bool_Exp_Sum_Arguments_Columns {
+  /** column name */
+  Data = 'data'
+}
+
+/** select "aggregator_history_data_aggregate_bool_exp_var_samp_arguments_columns" columns of table "aggregator_history_data" */
+export enum Aggregator_History_Data_Select_Column_Aggregator_History_Data_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns {
+  /** column name */
+  Data = 'data'
 }
 
 /** aggregate stddev on columns */
@@ -2250,6 +2605,17 @@ export type Aggregator_Lambda_Aggregate = {
   __typename?: 'aggregator_lambda_aggregate';
   aggregate?: Maybe<Aggregator_Lambda_Aggregate_Fields>;
   nodes: Array<Aggregator_Lambda>;
+};
+
+export type Aggregator_Lambda_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Aggregator_Lambda_Aggregate_Bool_Exp_Count>;
+};
+
+export type Aggregator_Lambda_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Aggregator_Lambda_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Aggregator_Lambda_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "aggregator_lambda" */
@@ -2631,6 +2997,17 @@ export type Aggregator_Oracle_Aggregate = {
   nodes: Array<Aggregator_Oracle>;
 };
 
+export type Aggregator_Oracle_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Aggregator_Oracle_Aggregate_Bool_Exp_Count>;
+};
+
+export type Aggregator_Oracle_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Aggregator_Oracle_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Aggregator_Oracle_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
 /** aggregate fields of "aggregator_oracle" */
 export type Aggregator_Oracle_Aggregate_Fields = {
   __typename?: 'aggregator_oracle_aggregate_fields';
@@ -2695,9 +3072,11 @@ export type Aggregator_Oracle_Bool_Exp = {
   init_epoch?: InputMaybe<Bigint_Comparison_Exp>;
   init_round?: InputMaybe<Bigint_Comparison_Exp>;
   observations?: InputMaybe<Aggregator_Oracle_Observation_Bool_Exp>;
+  observations_aggregate?: InputMaybe<Aggregator_Oracle_Observation_Aggregate_Bool_Exp>;
   peer_id?: InputMaybe<String_Comparison_Exp>;
   public_key?: InputMaybe<String_Comparison_Exp>;
   rewards?: InputMaybe<Aggregator_Oracle_Reward_Bool_Exp>;
+  rewards_aggregate?: InputMaybe<Aggregator_Oracle_Reward_Aggregate_Bool_Exp>;
   user?: InputMaybe<Mavryk_User_Bool_Exp>;
   user_id?: InputMaybe<String_Comparison_Exp>;
 };
@@ -2766,6 +3145,91 @@ export type Aggregator_Oracle_Observation_Aggregate = {
   __typename?: 'aggregator_oracle_observation_aggregate';
   aggregate?: Maybe<Aggregator_Oracle_Observation_Aggregate_Fields>;
   nodes: Array<Aggregator_Oracle_Observation>;
+};
+
+export type Aggregator_Oracle_Observation_Aggregate_Bool_Exp = {
+  avg?: InputMaybe<Aggregator_Oracle_Observation_Aggregate_Bool_Exp_Avg>;
+  corr?: InputMaybe<Aggregator_Oracle_Observation_Aggregate_Bool_Exp_Corr>;
+  count?: InputMaybe<Aggregator_Oracle_Observation_Aggregate_Bool_Exp_Count>;
+  covar_samp?: InputMaybe<Aggregator_Oracle_Observation_Aggregate_Bool_Exp_Covar_Samp>;
+  max?: InputMaybe<Aggregator_Oracle_Observation_Aggregate_Bool_Exp_Max>;
+  min?: InputMaybe<Aggregator_Oracle_Observation_Aggregate_Bool_Exp_Min>;
+  stddev_samp?: InputMaybe<Aggregator_Oracle_Observation_Aggregate_Bool_Exp_Stddev_Samp>;
+  sum?: InputMaybe<Aggregator_Oracle_Observation_Aggregate_Bool_Exp_Sum>;
+  var_samp?: InputMaybe<Aggregator_Oracle_Observation_Aggregate_Bool_Exp_Var_Samp>;
+};
+
+export type Aggregator_Oracle_Observation_Aggregate_Bool_Exp_Avg = {
+  arguments: Aggregator_Oracle_Observation_Select_Column_Aggregator_Oracle_Observation_Aggregate_Bool_Exp_Avg_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Aggregator_Oracle_Observation_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Aggregator_Oracle_Observation_Aggregate_Bool_Exp_Corr = {
+  arguments: Aggregator_Oracle_Observation_Aggregate_Bool_Exp_Corr_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Aggregator_Oracle_Observation_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Aggregator_Oracle_Observation_Aggregate_Bool_Exp_Corr_Arguments = {
+  X: Aggregator_Oracle_Observation_Select_Column_Aggregator_Oracle_Observation_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+  Y: Aggregator_Oracle_Observation_Select_Column_Aggregator_Oracle_Observation_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+};
+
+export type Aggregator_Oracle_Observation_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Aggregator_Oracle_Observation_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Aggregator_Oracle_Observation_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+export type Aggregator_Oracle_Observation_Aggregate_Bool_Exp_Covar_Samp = {
+  arguments: Aggregator_Oracle_Observation_Aggregate_Bool_Exp_Covar_Samp_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Aggregator_Oracle_Observation_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Aggregator_Oracle_Observation_Aggregate_Bool_Exp_Covar_Samp_Arguments = {
+  X: Aggregator_Oracle_Observation_Select_Column_Aggregator_Oracle_Observation_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+  Y: Aggregator_Oracle_Observation_Select_Column_Aggregator_Oracle_Observation_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+};
+
+export type Aggregator_Oracle_Observation_Aggregate_Bool_Exp_Max = {
+  arguments: Aggregator_Oracle_Observation_Select_Column_Aggregator_Oracle_Observation_Aggregate_Bool_Exp_Max_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Aggregator_Oracle_Observation_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Aggregator_Oracle_Observation_Aggregate_Bool_Exp_Min = {
+  arguments: Aggregator_Oracle_Observation_Select_Column_Aggregator_Oracle_Observation_Aggregate_Bool_Exp_Min_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Aggregator_Oracle_Observation_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Aggregator_Oracle_Observation_Aggregate_Bool_Exp_Stddev_Samp = {
+  arguments: Aggregator_Oracle_Observation_Select_Column_Aggregator_Oracle_Observation_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Aggregator_Oracle_Observation_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Aggregator_Oracle_Observation_Aggregate_Bool_Exp_Sum = {
+  arguments: Aggregator_Oracle_Observation_Select_Column_Aggregator_Oracle_Observation_Aggregate_Bool_Exp_Sum_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Aggregator_Oracle_Observation_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Aggregator_Oracle_Observation_Aggregate_Bool_Exp_Var_Samp = {
+  arguments: Aggregator_Oracle_Observation_Select_Column_Aggregator_Oracle_Observation_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Aggregator_Oracle_Observation_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
 };
 
 /** aggregate fields of "aggregator_oracle_observation" */
@@ -2906,6 +3370,54 @@ export enum Aggregator_Oracle_Observation_Select_Column {
   Round = 'round',
   /** column name */
   Timestamp = 'timestamp'
+}
+
+/** select "aggregator_oracle_observation_aggregate_bool_exp_avg_arguments_columns" columns of table "aggregator_oracle_observation" */
+export enum Aggregator_Oracle_Observation_Select_Column_Aggregator_Oracle_Observation_Aggregate_Bool_Exp_Avg_Arguments_Columns {
+  /** column name */
+  Data = 'data'
+}
+
+/** select "aggregator_oracle_observation_aggregate_bool_exp_corr_arguments_columns" columns of table "aggregator_oracle_observation" */
+export enum Aggregator_Oracle_Observation_Select_Column_Aggregator_Oracle_Observation_Aggregate_Bool_Exp_Corr_Arguments_Columns {
+  /** column name */
+  Data = 'data'
+}
+
+/** select "aggregator_oracle_observation_aggregate_bool_exp_covar_samp_arguments_columns" columns of table "aggregator_oracle_observation" */
+export enum Aggregator_Oracle_Observation_Select_Column_Aggregator_Oracle_Observation_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns {
+  /** column name */
+  Data = 'data'
+}
+
+/** select "aggregator_oracle_observation_aggregate_bool_exp_max_arguments_columns" columns of table "aggregator_oracle_observation" */
+export enum Aggregator_Oracle_Observation_Select_Column_Aggregator_Oracle_Observation_Aggregate_Bool_Exp_Max_Arguments_Columns {
+  /** column name */
+  Data = 'data'
+}
+
+/** select "aggregator_oracle_observation_aggregate_bool_exp_min_arguments_columns" columns of table "aggregator_oracle_observation" */
+export enum Aggregator_Oracle_Observation_Select_Column_Aggregator_Oracle_Observation_Aggregate_Bool_Exp_Min_Arguments_Columns {
+  /** column name */
+  Data = 'data'
+}
+
+/** select "aggregator_oracle_observation_aggregate_bool_exp_stddev_samp_arguments_columns" columns of table "aggregator_oracle_observation" */
+export enum Aggregator_Oracle_Observation_Select_Column_Aggregator_Oracle_Observation_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns {
+  /** column name */
+  Data = 'data'
+}
+
+/** select "aggregator_oracle_observation_aggregate_bool_exp_sum_arguments_columns" columns of table "aggregator_oracle_observation" */
+export enum Aggregator_Oracle_Observation_Select_Column_Aggregator_Oracle_Observation_Aggregate_Bool_Exp_Sum_Arguments_Columns {
+  /** column name */
+  Data = 'data'
+}
+
+/** select "aggregator_oracle_observation_aggregate_bool_exp_var_samp_arguments_columns" columns of table "aggregator_oracle_observation" */
+export enum Aggregator_Oracle_Observation_Select_Column_Aggregator_Oracle_Observation_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns {
+  /** column name */
+  Data = 'data'
 }
 
 /** aggregate stddev on columns */
@@ -3093,6 +3605,91 @@ export type Aggregator_Oracle_Reward_Aggregate = {
   nodes: Array<Aggregator_Oracle_Reward>;
 };
 
+export type Aggregator_Oracle_Reward_Aggregate_Bool_Exp = {
+  avg?: InputMaybe<Aggregator_Oracle_Reward_Aggregate_Bool_Exp_Avg>;
+  corr?: InputMaybe<Aggregator_Oracle_Reward_Aggregate_Bool_Exp_Corr>;
+  count?: InputMaybe<Aggregator_Oracle_Reward_Aggregate_Bool_Exp_Count>;
+  covar_samp?: InputMaybe<Aggregator_Oracle_Reward_Aggregate_Bool_Exp_Covar_Samp>;
+  max?: InputMaybe<Aggregator_Oracle_Reward_Aggregate_Bool_Exp_Max>;
+  min?: InputMaybe<Aggregator_Oracle_Reward_Aggregate_Bool_Exp_Min>;
+  stddev_samp?: InputMaybe<Aggregator_Oracle_Reward_Aggregate_Bool_Exp_Stddev_Samp>;
+  sum?: InputMaybe<Aggregator_Oracle_Reward_Aggregate_Bool_Exp_Sum>;
+  var_samp?: InputMaybe<Aggregator_Oracle_Reward_Aggregate_Bool_Exp_Var_Samp>;
+};
+
+export type Aggregator_Oracle_Reward_Aggregate_Bool_Exp_Avg = {
+  arguments: Aggregator_Oracle_Reward_Select_Column_Aggregator_Oracle_Reward_Aggregate_Bool_Exp_Avg_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Aggregator_Oracle_Reward_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Aggregator_Oracle_Reward_Aggregate_Bool_Exp_Corr = {
+  arguments: Aggregator_Oracle_Reward_Aggregate_Bool_Exp_Corr_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Aggregator_Oracle_Reward_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Aggregator_Oracle_Reward_Aggregate_Bool_Exp_Corr_Arguments = {
+  X: Aggregator_Oracle_Reward_Select_Column_Aggregator_Oracle_Reward_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+  Y: Aggregator_Oracle_Reward_Select_Column_Aggregator_Oracle_Reward_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+};
+
+export type Aggregator_Oracle_Reward_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Aggregator_Oracle_Reward_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Aggregator_Oracle_Reward_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+export type Aggregator_Oracle_Reward_Aggregate_Bool_Exp_Covar_Samp = {
+  arguments: Aggregator_Oracle_Reward_Aggregate_Bool_Exp_Covar_Samp_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Aggregator_Oracle_Reward_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Aggregator_Oracle_Reward_Aggregate_Bool_Exp_Covar_Samp_Arguments = {
+  X: Aggregator_Oracle_Reward_Select_Column_Aggregator_Oracle_Reward_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+  Y: Aggregator_Oracle_Reward_Select_Column_Aggregator_Oracle_Reward_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+};
+
+export type Aggregator_Oracle_Reward_Aggregate_Bool_Exp_Max = {
+  arguments: Aggregator_Oracle_Reward_Select_Column_Aggregator_Oracle_Reward_Aggregate_Bool_Exp_Max_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Aggregator_Oracle_Reward_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Aggregator_Oracle_Reward_Aggregate_Bool_Exp_Min = {
+  arguments: Aggregator_Oracle_Reward_Select_Column_Aggregator_Oracle_Reward_Aggregate_Bool_Exp_Min_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Aggregator_Oracle_Reward_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Aggregator_Oracle_Reward_Aggregate_Bool_Exp_Stddev_Samp = {
+  arguments: Aggregator_Oracle_Reward_Select_Column_Aggregator_Oracle_Reward_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Aggregator_Oracle_Reward_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Aggregator_Oracle_Reward_Aggregate_Bool_Exp_Sum = {
+  arguments: Aggregator_Oracle_Reward_Select_Column_Aggregator_Oracle_Reward_Aggregate_Bool_Exp_Sum_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Aggregator_Oracle_Reward_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Aggregator_Oracle_Reward_Aggregate_Bool_Exp_Var_Samp = {
+  arguments: Aggregator_Oracle_Reward_Select_Column_Aggregator_Oracle_Reward_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Aggregator_Oracle_Reward_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
 /** aggregate fields of "aggregator_oracle_reward" */
 export type Aggregator_Oracle_Reward_Aggregate_Fields = {
   __typename?: 'aggregator_oracle_reward_aggregate_fields';
@@ -3219,6 +3816,54 @@ export enum Aggregator_Oracle_Reward_Select_Column {
   Reward = 'reward',
   /** column name */
   Type = 'type'
+}
+
+/** select "aggregator_oracle_reward_aggregate_bool_exp_avg_arguments_columns" columns of table "aggregator_oracle_reward" */
+export enum Aggregator_Oracle_Reward_Select_Column_Aggregator_Oracle_Reward_Aggregate_Bool_Exp_Avg_Arguments_Columns {
+  /** column name */
+  Reward = 'reward'
+}
+
+/** select "aggregator_oracle_reward_aggregate_bool_exp_corr_arguments_columns" columns of table "aggregator_oracle_reward" */
+export enum Aggregator_Oracle_Reward_Select_Column_Aggregator_Oracle_Reward_Aggregate_Bool_Exp_Corr_Arguments_Columns {
+  /** column name */
+  Reward = 'reward'
+}
+
+/** select "aggregator_oracle_reward_aggregate_bool_exp_covar_samp_arguments_columns" columns of table "aggregator_oracle_reward" */
+export enum Aggregator_Oracle_Reward_Select_Column_Aggregator_Oracle_Reward_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns {
+  /** column name */
+  Reward = 'reward'
+}
+
+/** select "aggregator_oracle_reward_aggregate_bool_exp_max_arguments_columns" columns of table "aggregator_oracle_reward" */
+export enum Aggregator_Oracle_Reward_Select_Column_Aggregator_Oracle_Reward_Aggregate_Bool_Exp_Max_Arguments_Columns {
+  /** column name */
+  Reward = 'reward'
+}
+
+/** select "aggregator_oracle_reward_aggregate_bool_exp_min_arguments_columns" columns of table "aggregator_oracle_reward" */
+export enum Aggregator_Oracle_Reward_Select_Column_Aggregator_Oracle_Reward_Aggregate_Bool_Exp_Min_Arguments_Columns {
+  /** column name */
+  Reward = 'reward'
+}
+
+/** select "aggregator_oracle_reward_aggregate_bool_exp_stddev_samp_arguments_columns" columns of table "aggregator_oracle_reward" */
+export enum Aggregator_Oracle_Reward_Select_Column_Aggregator_Oracle_Reward_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns {
+  /** column name */
+  Reward = 'reward'
+}
+
+/** select "aggregator_oracle_reward_aggregate_bool_exp_sum_arguments_columns" columns of table "aggregator_oracle_reward" */
+export enum Aggregator_Oracle_Reward_Select_Column_Aggregator_Oracle_Reward_Aggregate_Bool_Exp_Sum_Arguments_Columns {
+  /** column name */
+  Reward = 'reward'
+}
+
+/** select "aggregator_oracle_reward_aggregate_bool_exp_var_samp_arguments_columns" columns of table "aggregator_oracle_reward" */
+export enum Aggregator_Oracle_Reward_Select_Column_Aggregator_Oracle_Reward_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns {
+  /** column name */
+  Reward = 'reward'
 }
 
 /** aggregate stddev on columns */
@@ -3592,6 +4237,106 @@ export enum Aggregator_Select_Column {
   WithdrawRewardXtzPaused = 'withdraw_reward_xtz_paused'
 }
 
+/** select "aggregator_aggregate_bool_exp_avg_arguments_columns" columns of table "aggregator" */
+export enum Aggregator_Select_Column_Aggregator_Aggregate_Bool_Exp_Avg_Arguments_Columns {
+  /** column name */
+  LastCompletedData = 'last_completed_data',
+  /** column name */
+  RewardAmountSmvk = 'reward_amount_smvk',
+  /** column name */
+  RewardAmountXtz = 'reward_amount_xtz'
+}
+
+/** select "aggregator_aggregate_bool_exp_bool_and_arguments_columns" columns of table "aggregator" */
+export enum Aggregator_Select_Column_Aggregator_Aggregate_Bool_Exp_Bool_And_Arguments_Columns {
+  /** column name */
+  UpdateDataPaused = 'update_data_paused',
+  /** column name */
+  WithdrawRewardSmvkPaused = 'withdraw_reward_smvk_paused',
+  /** column name */
+  WithdrawRewardXtzPaused = 'withdraw_reward_xtz_paused'
+}
+
+/** select "aggregator_aggregate_bool_exp_bool_or_arguments_columns" columns of table "aggregator" */
+export enum Aggregator_Select_Column_Aggregator_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns {
+  /** column name */
+  UpdateDataPaused = 'update_data_paused',
+  /** column name */
+  WithdrawRewardSmvkPaused = 'withdraw_reward_smvk_paused',
+  /** column name */
+  WithdrawRewardXtzPaused = 'withdraw_reward_xtz_paused'
+}
+
+/** select "aggregator_aggregate_bool_exp_corr_arguments_columns" columns of table "aggregator" */
+export enum Aggregator_Select_Column_Aggregator_Aggregate_Bool_Exp_Corr_Arguments_Columns {
+  /** column name */
+  LastCompletedData = 'last_completed_data',
+  /** column name */
+  RewardAmountSmvk = 'reward_amount_smvk',
+  /** column name */
+  RewardAmountXtz = 'reward_amount_xtz'
+}
+
+/** select "aggregator_aggregate_bool_exp_covar_samp_arguments_columns" columns of table "aggregator" */
+export enum Aggregator_Select_Column_Aggregator_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns {
+  /** column name */
+  LastCompletedData = 'last_completed_data',
+  /** column name */
+  RewardAmountSmvk = 'reward_amount_smvk',
+  /** column name */
+  RewardAmountXtz = 'reward_amount_xtz'
+}
+
+/** select "aggregator_aggregate_bool_exp_max_arguments_columns" columns of table "aggregator" */
+export enum Aggregator_Select_Column_Aggregator_Aggregate_Bool_Exp_Max_Arguments_Columns {
+  /** column name */
+  LastCompletedData = 'last_completed_data',
+  /** column name */
+  RewardAmountSmvk = 'reward_amount_smvk',
+  /** column name */
+  RewardAmountXtz = 'reward_amount_xtz'
+}
+
+/** select "aggregator_aggregate_bool_exp_min_arguments_columns" columns of table "aggregator" */
+export enum Aggregator_Select_Column_Aggregator_Aggregate_Bool_Exp_Min_Arguments_Columns {
+  /** column name */
+  LastCompletedData = 'last_completed_data',
+  /** column name */
+  RewardAmountSmvk = 'reward_amount_smvk',
+  /** column name */
+  RewardAmountXtz = 'reward_amount_xtz'
+}
+
+/** select "aggregator_aggregate_bool_exp_stddev_samp_arguments_columns" columns of table "aggregator" */
+export enum Aggregator_Select_Column_Aggregator_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns {
+  /** column name */
+  LastCompletedData = 'last_completed_data',
+  /** column name */
+  RewardAmountSmvk = 'reward_amount_smvk',
+  /** column name */
+  RewardAmountXtz = 'reward_amount_xtz'
+}
+
+/** select "aggregator_aggregate_bool_exp_sum_arguments_columns" columns of table "aggregator" */
+export enum Aggregator_Select_Column_Aggregator_Aggregate_Bool_Exp_Sum_Arguments_Columns {
+  /** column name */
+  LastCompletedData = 'last_completed_data',
+  /** column name */
+  RewardAmountSmvk = 'reward_amount_smvk',
+  /** column name */
+  RewardAmountXtz = 'reward_amount_xtz'
+}
+
+/** select "aggregator_aggregate_bool_exp_var_samp_arguments_columns" columns of table "aggregator" */
+export enum Aggregator_Select_Column_Aggregator_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns {
+  /** column name */
+  LastCompletedData = 'last_completed_data',
+  /** column name */
+  RewardAmountSmvk = 'reward_amount_smvk',
+  /** column name */
+  RewardAmountXtz = 'reward_amount_xtz'
+}
+
 /** aggregate stddev on columns */
 export type Aggregator_Stddev_Fields = {
   __typename?: 'aggregator_stddev_fields';
@@ -3844,6 +4589,17 @@ export type Aggregator_Whitelist_Contract_Aggregate = {
   __typename?: 'aggregator_whitelist_contract_aggregate';
   aggregate?: Maybe<Aggregator_Whitelist_Contract_Aggregate_Fields>;
   nodes: Array<Aggregator_Whitelist_Contract>;
+};
+
+export type Aggregator_Whitelist_Contract_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Aggregator_Whitelist_Contract_Aggregate_Bool_Exp_Count>;
+};
+
+export type Aggregator_Whitelist_Contract_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Aggregator_Whitelist_Contract_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Aggregator_Whitelist_Contract_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "aggregator_whitelist_contract" */
@@ -4282,6 +5038,33 @@ export type Break_Glass_Action_Aggregate = {
   nodes: Array<Break_Glass_Action>;
 };
 
+export type Break_Glass_Action_Aggregate_Bool_Exp = {
+  bool_and?: InputMaybe<Break_Glass_Action_Aggregate_Bool_Exp_Bool_And>;
+  bool_or?: InputMaybe<Break_Glass_Action_Aggregate_Bool_Exp_Bool_Or>;
+  count?: InputMaybe<Break_Glass_Action_Aggregate_Bool_Exp_Count>;
+};
+
+export type Break_Glass_Action_Aggregate_Bool_Exp_Bool_And = {
+  arguments: Break_Glass_Action_Select_Column_Break_Glass_Action_Aggregate_Bool_Exp_Bool_And_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Break_Glass_Action_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Break_Glass_Action_Aggregate_Bool_Exp_Bool_Or = {
+  arguments: Break_Glass_Action_Select_Column_Break_Glass_Action_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Break_Glass_Action_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Break_Glass_Action_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Break_Glass_Action_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Break_Glass_Action_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
 /** aggregate fields of "break_glass_action" */
 export type Break_Glass_Action_Aggregate_Fields = {
   __typename?: 'break_glass_action_aggregate_fields';
@@ -4355,7 +5138,9 @@ export type Break_Glass_Action_Bool_Exp = {
   initiator?: InputMaybe<Mavryk_User_Bool_Exp>;
   initiator_id?: InputMaybe<String_Comparison_Exp>;
   parameters?: InputMaybe<Break_Glass_Action_Parameter_Bool_Exp>;
+  parameters_aggregate?: InputMaybe<Break_Glass_Action_Parameter_Aggregate_Bool_Exp>;
   signers?: InputMaybe<Break_Glass_Action_Signer_Bool_Exp>;
+  signers_aggregate?: InputMaybe<Break_Glass_Action_Signer_Aggregate_Bool_Exp>;
   signers_count?: InputMaybe<Smallint_Comparison_Exp>;
   start_datetime?: InputMaybe<Timestamptz_Comparison_Exp>;
   status?: InputMaybe<Smallint_Comparison_Exp>;
@@ -4458,6 +5243,17 @@ export type Break_Glass_Action_Parameter_Aggregate = {
   __typename?: 'break_glass_action_parameter_aggregate';
   aggregate?: Maybe<Break_Glass_Action_Parameter_Aggregate_Fields>;
   nodes: Array<Break_Glass_Action_Parameter>;
+};
+
+export type Break_Glass_Action_Parameter_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Break_Glass_Action_Parameter_Aggregate_Bool_Exp_Count>;
+};
+
+export type Break_Glass_Action_Parameter_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Break_Glass_Action_Parameter_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Break_Glass_Action_Parameter_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "break_glass_action_parameter" */
@@ -4711,6 +5507,18 @@ export enum Break_Glass_Action_Select_Column {
   Status = 'status'
 }
 
+/** select "break_glass_action_aggregate_bool_exp_bool_and_arguments_columns" columns of table "break_glass_action" */
+export enum Break_Glass_Action_Select_Column_Break_Glass_Action_Aggregate_Bool_Exp_Bool_And_Arguments_Columns {
+  /** column name */
+  Executed = 'executed'
+}
+
+/** select "break_glass_action_aggregate_bool_exp_bool_or_arguments_columns" columns of table "break_glass_action" */
+export enum Break_Glass_Action_Select_Column_Break_Glass_Action_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns {
+  /** column name */
+  Executed = 'executed'
+}
+
 /** columns and relationships of "break_glass_action_signer" */
 export type Break_Glass_Action_Signer = {
   __typename?: 'break_glass_action_signer';
@@ -4728,6 +5536,17 @@ export type Break_Glass_Action_Signer_Aggregate = {
   __typename?: 'break_glass_action_signer_aggregate';
   aggregate?: Maybe<Break_Glass_Action_Signer_Aggregate_Fields>;
   nodes: Array<Break_Glass_Action_Signer>;
+};
+
+export type Break_Glass_Action_Signer_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Break_Glass_Action_Signer_Aggregate_Bool_Exp_Count>;
+};
+
+export type Break_Glass_Action_Signer_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Break_Glass_Action_Signer_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Break_Glass_Action_Signer_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "break_glass_action_signer" */
@@ -5112,6 +5931,33 @@ export type Break_Glass_Aggregate = {
   nodes: Array<Break_Glass>;
 };
 
+export type Break_Glass_Aggregate_Bool_Exp = {
+  bool_and?: InputMaybe<Break_Glass_Aggregate_Bool_Exp_Bool_And>;
+  bool_or?: InputMaybe<Break_Glass_Aggregate_Bool_Exp_Bool_Or>;
+  count?: InputMaybe<Break_Glass_Aggregate_Bool_Exp_Count>;
+};
+
+export type Break_Glass_Aggregate_Bool_Exp_Bool_And = {
+  arguments: Break_Glass_Select_Column_Break_Glass_Aggregate_Bool_Exp_Bool_And_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Break_Glass_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Break_Glass_Aggregate_Bool_Exp_Bool_Or = {
+  arguments: Break_Glass_Select_Column_Break_Glass_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Break_Glass_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Break_Glass_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Break_Glass_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Break_Glass_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
 /** aggregate fields of "break_glass" */
 export type Break_Glass_Aggregate_Fields = {
   __typename?: 'break_glass_aggregate_fields';
@@ -5179,20 +6025,25 @@ export type Break_Glass_Bool_Exp = {
   action_counter?: InputMaybe<Bigint_Comparison_Exp>;
   action_expiry_days?: InputMaybe<Smallint_Comparison_Exp>;
   actions?: InputMaybe<Break_Glass_Action_Bool_Exp>;
+  actions_aggregate?: InputMaybe<Break_Glass_Action_Aggregate_Bool_Exp>;
   address?: InputMaybe<String_Comparison_Exp>;
   admin?: InputMaybe<String_Comparison_Exp>;
   council_member_image_max_length?: InputMaybe<Smallint_Comparison_Exp>;
   council_member_name_max_length?: InputMaybe<Smallint_Comparison_Exp>;
   council_member_website_max_length?: InputMaybe<Smallint_Comparison_Exp>;
   council_members?: InputMaybe<Break_Glass_Council_Member_Bool_Exp>;
+  council_members_aggregate?: InputMaybe<Break_Glass_Council_Member_Aggregate_Bool_Exp>;
   general_contracts?: InputMaybe<Break_Glass_General_Contract_Bool_Exp>;
+  general_contracts_aggregate?: InputMaybe<Break_Glass_General_Contract_Aggregate_Bool_Exp>;
   glass_broken?: InputMaybe<Boolean_Comparison_Exp>;
   governance?: InputMaybe<Governance_Bool_Exp>;
   governance_id?: InputMaybe<String_Comparison_Exp>;
   lambdas?: InputMaybe<Break_Glass_Lambda_Bool_Exp>;
+  lambdas_aggregate?: InputMaybe<Break_Glass_Lambda_Aggregate_Bool_Exp>;
   last_updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   threshold?: InputMaybe<Smallint_Comparison_Exp>;
   whitelist_contracts?: InputMaybe<Break_Glass_Whitelist_Contract_Bool_Exp>;
+  whitelist_contracts_aggregate?: InputMaybe<Break_Glass_Whitelist_Contract_Aggregate_Bool_Exp>;
 };
 
 /** columns and relationships of "break_glass_council_member" */
@@ -5215,6 +6066,17 @@ export type Break_Glass_Council_Member_Aggregate = {
   __typename?: 'break_glass_council_member_aggregate';
   aggregate?: Maybe<Break_Glass_Council_Member_Aggregate_Fields>;
   nodes: Array<Break_Glass_Council_Member>;
+};
+
+export type Break_Glass_Council_Member_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Break_Glass_Council_Member_Aggregate_Bool_Exp_Count>;
+};
+
+export type Break_Glass_Council_Member_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Break_Glass_Council_Member_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Break_Glass_Council_Member_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "break_glass_council_member" */
@@ -5464,6 +6326,17 @@ export type Break_Glass_General_Contract_Aggregate = {
   nodes: Array<Break_Glass_General_Contract>;
 };
 
+export type Break_Glass_General_Contract_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Break_Glass_General_Contract_Aggregate_Bool_Exp_Count>;
+};
+
+export type Break_Glass_General_Contract_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Break_Glass_General_Contract_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Break_Glass_General_Contract_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
 /** aggregate fields of "break_glass_general_contract" */
 export type Break_Glass_General_Contract_Aggregate_Fields = {
   __typename?: 'break_glass_general_contract_aggregate_fields';
@@ -5690,6 +6563,17 @@ export type Break_Glass_Lambda_Aggregate = {
   __typename?: 'break_glass_lambda_aggregate';
   aggregate?: Maybe<Break_Glass_Lambda_Aggregate_Fields>;
   nodes: Array<Break_Glass_Lambda>;
+};
+
+export type Break_Glass_Lambda_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Break_Glass_Lambda_Aggregate_Bool_Exp_Count>;
+};
+
+export type Break_Glass_Lambda_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Break_Glass_Lambda_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Break_Glass_Lambda_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "break_glass_lambda" */
@@ -6015,6 +6899,18 @@ export enum Break_Glass_Select_Column {
   Threshold = 'threshold'
 }
 
+/** select "break_glass_aggregate_bool_exp_bool_and_arguments_columns" columns of table "break_glass" */
+export enum Break_Glass_Select_Column_Break_Glass_Aggregate_Bool_Exp_Bool_And_Arguments_Columns {
+  /** column name */
+  GlassBroken = 'glass_broken'
+}
+
+/** select "break_glass_aggregate_bool_exp_bool_or_arguments_columns" columns of table "break_glass" */
+export enum Break_Glass_Select_Column_Break_Glass_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns {
+  /** column name */
+  GlassBroken = 'glass_broken'
+}
+
 /** aggregate stddev on columns */
 export type Break_Glass_Stddev_Fields = {
   __typename?: 'break_glass_stddev_fields';
@@ -6201,6 +7097,17 @@ export type Break_Glass_Whitelist_Contract_Aggregate = {
   __typename?: 'break_glass_whitelist_contract_aggregate';
   aggregate?: Maybe<Break_Glass_Whitelist_Contract_Aggregate_Fields>;
   nodes: Array<Break_Glass_Whitelist_Contract>;
+};
+
+export type Break_Glass_Whitelist_Contract_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Break_Glass_Whitelist_Contract_Aggregate_Bool_Exp_Count>;
+};
+
+export type Break_Glass_Whitelist_Contract_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Break_Glass_Whitelist_Contract_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Break_Glass_Whitelist_Contract_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "break_glass_whitelist_contract" */
@@ -6627,6 +7534,33 @@ export type Council_Action_Aggregate = {
   nodes: Array<Council_Action>;
 };
 
+export type Council_Action_Aggregate_Bool_Exp = {
+  bool_and?: InputMaybe<Council_Action_Aggregate_Bool_Exp_Bool_And>;
+  bool_or?: InputMaybe<Council_Action_Aggregate_Bool_Exp_Bool_Or>;
+  count?: InputMaybe<Council_Action_Aggregate_Bool_Exp_Count>;
+};
+
+export type Council_Action_Aggregate_Bool_Exp_Bool_And = {
+  arguments: Council_Action_Select_Column_Council_Action_Aggregate_Bool_Exp_Bool_And_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Council_Action_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Council_Action_Aggregate_Bool_Exp_Bool_Or = {
+  arguments: Council_Action_Select_Column_Council_Action_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Council_Action_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Council_Action_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Council_Action_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Council_Action_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
 /** aggregate fields of "council_action" */
 export type Council_Action_Aggregate_Fields = {
   __typename?: 'council_action_aggregate_fields';
@@ -6700,7 +7634,9 @@ export type Council_Action_Bool_Exp = {
   initiator?: InputMaybe<Mavryk_User_Bool_Exp>;
   initiator_id?: InputMaybe<String_Comparison_Exp>;
   parameters?: InputMaybe<Council_Action_Parameter_Bool_Exp>;
+  parameters_aggregate?: InputMaybe<Council_Action_Parameter_Aggregate_Bool_Exp>;
   signers?: InputMaybe<Council_Action_Signer_Bool_Exp>;
+  signers_aggregate?: InputMaybe<Council_Action_Signer_Aggregate_Bool_Exp>;
   signers_count?: InputMaybe<Smallint_Comparison_Exp>;
   start_datetime?: InputMaybe<Timestamptz_Comparison_Exp>;
   status?: InputMaybe<Smallint_Comparison_Exp>;
@@ -6803,6 +7739,17 @@ export type Council_Action_Parameter_Aggregate = {
   __typename?: 'council_action_parameter_aggregate';
   aggregate?: Maybe<Council_Action_Parameter_Aggregate_Fields>;
   nodes: Array<Council_Action_Parameter>;
+};
+
+export type Council_Action_Parameter_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Council_Action_Parameter_Aggregate_Bool_Exp_Count>;
+};
+
+export type Council_Action_Parameter_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Council_Action_Parameter_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Council_Action_Parameter_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "council_action_parameter" */
@@ -7056,6 +8003,18 @@ export enum Council_Action_Select_Column {
   Status = 'status'
 }
 
+/** select "council_action_aggregate_bool_exp_bool_and_arguments_columns" columns of table "council_action" */
+export enum Council_Action_Select_Column_Council_Action_Aggregate_Bool_Exp_Bool_And_Arguments_Columns {
+  /** column name */
+  Executed = 'executed'
+}
+
+/** select "council_action_aggregate_bool_exp_bool_or_arguments_columns" columns of table "council_action" */
+export enum Council_Action_Select_Column_Council_Action_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns {
+  /** column name */
+  Executed = 'executed'
+}
+
 /** columns and relationships of "council_action_signer" */
 export type Council_Action_Signer = {
   __typename?: 'council_action_signer';
@@ -7073,6 +8032,17 @@ export type Council_Action_Signer_Aggregate = {
   __typename?: 'council_action_signer_aggregate';
   aggregate?: Maybe<Council_Action_Signer_Aggregate_Fields>;
   nodes: Array<Council_Action_Signer>;
+};
+
+export type Council_Action_Signer_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Council_Action_Signer_Aggregate_Bool_Exp_Count>;
+};
+
+export type Council_Action_Signer_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Council_Action_Signer_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Council_Action_Signer_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "council_action_signer" */
@@ -7457,6 +8427,17 @@ export type Council_Aggregate = {
   nodes: Array<Council>;
 };
 
+export type Council_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Council_Aggregate_Bool_Exp_Count>;
+};
+
+export type Council_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Council_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Council_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
 /** aggregate fields of "council" */
 export type Council_Aggregate_Fields = {
   __typename?: 'council_aggregate_fields';
@@ -7528,21 +8509,26 @@ export type Council_Bool_Exp = {
   action_counter?: InputMaybe<Bigint_Comparison_Exp>;
   action_expiry_days?: InputMaybe<Bigint_Comparison_Exp>;
   actions?: InputMaybe<Council_Action_Bool_Exp>;
+  actions_aggregate?: InputMaybe<Council_Action_Aggregate_Bool_Exp>;
   address?: InputMaybe<String_Comparison_Exp>;
   admin?: InputMaybe<String_Comparison_Exp>;
   council_member_image_max_length?: InputMaybe<Smallint_Comparison_Exp>;
   council_member_name_max_length?: InputMaybe<Smallint_Comparison_Exp>;
   council_member_website_max_length?: InputMaybe<Smallint_Comparison_Exp>;
   general_contracts?: InputMaybe<Council_General_Contract_Bool_Exp>;
+  general_contracts_aggregate?: InputMaybe<Council_General_Contract_Aggregate_Bool_Exp>;
   governance?: InputMaybe<Governance_Bool_Exp>;
   governance_id?: InputMaybe<String_Comparison_Exp>;
   lambdas?: InputMaybe<Council_Lambda_Bool_Exp>;
+  lambdas_aggregate?: InputMaybe<Council_Lambda_Aggregate_Bool_Exp>;
   last_updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   members?: InputMaybe<Council_Council_Member_Bool_Exp>;
+  members_aggregate?: InputMaybe<Council_Council_Member_Aggregate_Bool_Exp>;
   request_purpose_max_length?: InputMaybe<Smallint_Comparison_Exp>;
   request_token_name_max_length?: InputMaybe<Smallint_Comparison_Exp>;
   threshold?: InputMaybe<Bigint_Comparison_Exp>;
   whitelist_contracts?: InputMaybe<Council_Whitelist_Contract_Bool_Exp>;
+  whitelist_contracts_aggregate?: InputMaybe<Council_Whitelist_Contract_Aggregate_Bool_Exp>;
 };
 
 /** columns and relationships of "council_council_member" */
@@ -7565,6 +8551,17 @@ export type Council_Council_Member_Aggregate = {
   __typename?: 'council_council_member_aggregate';
   aggregate?: Maybe<Council_Council_Member_Aggregate_Fields>;
   nodes: Array<Council_Council_Member>;
+};
+
+export type Council_Council_Member_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Council_Council_Member_Aggregate_Bool_Exp_Count>;
+};
+
+export type Council_Council_Member_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Council_Council_Member_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Council_Council_Member_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "council_council_member" */
@@ -7814,6 +8811,17 @@ export type Council_General_Contract_Aggregate = {
   nodes: Array<Council_General_Contract>;
 };
 
+export type Council_General_Contract_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Council_General_Contract_Aggregate_Bool_Exp_Count>;
+};
+
+export type Council_General_Contract_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Council_General_Contract_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Council_General_Contract_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
 /** aggregate fields of "council_general_contract" */
 export type Council_General_Contract_Aggregate_Fields = {
   __typename?: 'council_general_contract_aggregate_fields';
@@ -8040,6 +9048,17 @@ export type Council_Lambda_Aggregate = {
   __typename?: 'council_lambda_aggregate';
   aggregate?: Maybe<Council_Lambda_Aggregate_Fields>;
   nodes: Array<Council_Lambda>;
+};
+
+export type Council_Lambda_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Council_Lambda_Aggregate_Bool_Exp_Count>;
+};
+
+export type Council_Lambda_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Council_Lambda_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Council_Lambda_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "council_lambda" */
@@ -8593,6 +9612,17 @@ export type Council_Whitelist_Contract_Aggregate = {
   nodes: Array<Council_Whitelist_Contract>;
 };
 
+export type Council_Whitelist_Contract_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Council_Whitelist_Contract_Aggregate_Bool_Exp_Count>;
+};
+
+export type Council_Whitelist_Contract_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Council_Whitelist_Contract_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Council_Whitelist_Contract_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
 /** aggregate fields of "council_whitelist_contract" */
 export type Council_Whitelist_Contract_Aggregate_Fields = {
   __typename?: 'council_whitelist_contract_aggregate_fields';
@@ -8985,6 +10015,107 @@ export type Delegation_Aggregate = {
   nodes: Array<Delegation>;
 };
 
+export type Delegation_Aggregate_Bool_Exp = {
+  avg?: InputMaybe<Delegation_Aggregate_Bool_Exp_Avg>;
+  bool_and?: InputMaybe<Delegation_Aggregate_Bool_Exp_Bool_And>;
+  bool_or?: InputMaybe<Delegation_Aggregate_Bool_Exp_Bool_Or>;
+  corr?: InputMaybe<Delegation_Aggregate_Bool_Exp_Corr>;
+  count?: InputMaybe<Delegation_Aggregate_Bool_Exp_Count>;
+  covar_samp?: InputMaybe<Delegation_Aggregate_Bool_Exp_Covar_Samp>;
+  max?: InputMaybe<Delegation_Aggregate_Bool_Exp_Max>;
+  min?: InputMaybe<Delegation_Aggregate_Bool_Exp_Min>;
+  stddev_samp?: InputMaybe<Delegation_Aggregate_Bool_Exp_Stddev_Samp>;
+  sum?: InputMaybe<Delegation_Aggregate_Bool_Exp_Sum>;
+  var_samp?: InputMaybe<Delegation_Aggregate_Bool_Exp_Var_Samp>;
+};
+
+export type Delegation_Aggregate_Bool_Exp_Avg = {
+  arguments: Delegation_Select_Column_Delegation_Aggregate_Bool_Exp_Avg_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Delegation_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Delegation_Aggregate_Bool_Exp_Bool_And = {
+  arguments: Delegation_Select_Column_Delegation_Aggregate_Bool_Exp_Bool_And_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Delegation_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Delegation_Aggregate_Bool_Exp_Bool_Or = {
+  arguments: Delegation_Select_Column_Delegation_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Delegation_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Delegation_Aggregate_Bool_Exp_Corr = {
+  arguments: Delegation_Aggregate_Bool_Exp_Corr_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Delegation_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Delegation_Aggregate_Bool_Exp_Corr_Arguments = {
+  X: Delegation_Select_Column_Delegation_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+  Y: Delegation_Select_Column_Delegation_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+};
+
+export type Delegation_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Delegation_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Delegation_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+export type Delegation_Aggregate_Bool_Exp_Covar_Samp = {
+  arguments: Delegation_Aggregate_Bool_Exp_Covar_Samp_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Delegation_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Delegation_Aggregate_Bool_Exp_Covar_Samp_Arguments = {
+  X: Delegation_Select_Column_Delegation_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+  Y: Delegation_Select_Column_Delegation_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+};
+
+export type Delegation_Aggregate_Bool_Exp_Max = {
+  arguments: Delegation_Select_Column_Delegation_Aggregate_Bool_Exp_Max_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Delegation_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Delegation_Aggregate_Bool_Exp_Min = {
+  arguments: Delegation_Select_Column_Delegation_Aggregate_Bool_Exp_Min_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Delegation_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Delegation_Aggregate_Bool_Exp_Stddev_Samp = {
+  arguments: Delegation_Select_Column_Delegation_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Delegation_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Delegation_Aggregate_Bool_Exp_Sum = {
+  arguments: Delegation_Select_Column_Delegation_Aggregate_Bool_Exp_Sum_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Delegation_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Delegation_Aggregate_Bool_Exp_Var_Samp = {
+  arguments: Delegation_Select_Column_Delegation_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Delegation_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
 /** aggregate fields of "delegation" */
 export type Delegation_Aggregate_Fields = {
   __typename?: 'delegation_aggregate_fields';
@@ -9056,11 +10187,14 @@ export type Delegation_Bool_Exp = {
   delegate_to_satellite_paused?: InputMaybe<Boolean_Comparison_Exp>;
   delegation_ratio?: InputMaybe<Smallint_Comparison_Exp>;
   delegations?: InputMaybe<Delegation_Record_Bool_Exp>;
+  delegations_aggregate?: InputMaybe<Delegation_Record_Aggregate_Bool_Exp>;
   distribute_reward_paused?: InputMaybe<Boolean_Comparison_Exp>;
   general_contracts?: InputMaybe<Delegation_General_Contract_Bool_Exp>;
+  general_contracts_aggregate?: InputMaybe<Delegation_General_Contract_Aggregate_Bool_Exp>;
   governance?: InputMaybe<Governance_Bool_Exp>;
   governance_id?: InputMaybe<String_Comparison_Exp>;
   lambdas?: InputMaybe<Delegation_Lambda_Bool_Exp>;
+  lambdas_aggregate?: InputMaybe<Delegation_Lambda_Aggregate_Bool_Exp>;
   last_updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   max_satellites?: InputMaybe<Smallint_Comparison_Exp>;
   minimum_smvk_balance?: InputMaybe<Float8_Comparison_Exp>;
@@ -9069,12 +10203,15 @@ export type Delegation_Bool_Exp = {
   satellite_image_max_length?: InputMaybe<Smallint_Comparison_Exp>;
   satellite_name_max_length?: InputMaybe<Smallint_Comparison_Exp>;
   satellite_rewardss?: InputMaybe<Satellite_Rewards_Bool_Exp>;
+  satellite_rewardss_aggregate?: InputMaybe<Satellite_Rewards_Aggregate_Bool_Exp>;
   satellite_website_max_length?: InputMaybe<Smallint_Comparison_Exp>;
   satellites?: InputMaybe<Satellite_Bool_Exp>;
+  satellites_aggregate?: InputMaybe<Satellite_Aggregate_Bool_Exp>;
   undelegate_from_satellite_paused?: InputMaybe<Boolean_Comparison_Exp>;
   unregister_as_satellite_paused?: InputMaybe<Boolean_Comparison_Exp>;
   update_satellite_record_paused?: InputMaybe<Boolean_Comparison_Exp>;
   whitelist_contracts?: InputMaybe<Delegation_Whitelist_Contract_Bool_Exp>;
+  whitelist_contracts_aggregate?: InputMaybe<Delegation_Whitelist_Contract_Aggregate_Bool_Exp>;
 };
 
 /** columns and relationships of "delegation_general_contract" */
@@ -9093,6 +10230,17 @@ export type Delegation_General_Contract_Aggregate = {
   __typename?: 'delegation_general_contract_aggregate';
   aggregate?: Maybe<Delegation_General_Contract_Aggregate_Fields>;
   nodes: Array<Delegation_General_Contract>;
+};
+
+export type Delegation_General_Contract_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Delegation_General_Contract_Aggregate_Bool_Exp_Count>;
+};
+
+export type Delegation_General_Contract_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Delegation_General_Contract_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Delegation_General_Contract_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "delegation_general_contract" */
@@ -9321,6 +10469,17 @@ export type Delegation_Lambda_Aggregate = {
   __typename?: 'delegation_lambda_aggregate';
   aggregate?: Maybe<Delegation_Lambda_Aggregate_Fields>;
   nodes: Array<Delegation_Lambda>;
+};
+
+export type Delegation_Lambda_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Delegation_Lambda_Aggregate_Bool_Exp_Count>;
+};
+
+export type Delegation_Lambda_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Delegation_Lambda_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Delegation_Lambda_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "delegation_lambda" */
@@ -9653,6 +10812,17 @@ export type Delegation_Record_Aggregate = {
   nodes: Array<Delegation_Record>;
 };
 
+export type Delegation_Record_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Delegation_Record_Aggregate_Bool_Exp_Count>;
+};
+
+export type Delegation_Record_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Delegation_Record_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Delegation_Record_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
 /** aggregate fields of "delegation_record" */
 export type Delegation_Record_Aggregate_Fields = {
   __typename?: 'delegation_record_aggregate_fields';
@@ -9920,6 +11090,86 @@ export enum Delegation_Select_Column {
   UpdateSatelliteRecordPaused = 'update_satellite_record_paused'
 }
 
+/** select "delegation_aggregate_bool_exp_avg_arguments_columns" columns of table "delegation" */
+export enum Delegation_Select_Column_Delegation_Aggregate_Bool_Exp_Avg_Arguments_Columns {
+  /** column name */
+  MinimumSmvkBalance = 'minimum_smvk_balance'
+}
+
+/** select "delegation_aggregate_bool_exp_bool_and_arguments_columns" columns of table "delegation" */
+export enum Delegation_Select_Column_Delegation_Aggregate_Bool_Exp_Bool_And_Arguments_Columns {
+  /** column name */
+  DelegateToSatellitePaused = 'delegate_to_satellite_paused',
+  /** column name */
+  DistributeRewardPaused = 'distribute_reward_paused',
+  /** column name */
+  RegisterAsSatellitePaused = 'register_as_satellite_paused',
+  /** column name */
+  UndelegateFromSatellitePaused = 'undelegate_from_satellite_paused',
+  /** column name */
+  UnregisterAsSatellitePaused = 'unregister_as_satellite_paused',
+  /** column name */
+  UpdateSatelliteRecordPaused = 'update_satellite_record_paused'
+}
+
+/** select "delegation_aggregate_bool_exp_bool_or_arguments_columns" columns of table "delegation" */
+export enum Delegation_Select_Column_Delegation_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns {
+  /** column name */
+  DelegateToSatellitePaused = 'delegate_to_satellite_paused',
+  /** column name */
+  DistributeRewardPaused = 'distribute_reward_paused',
+  /** column name */
+  RegisterAsSatellitePaused = 'register_as_satellite_paused',
+  /** column name */
+  UndelegateFromSatellitePaused = 'undelegate_from_satellite_paused',
+  /** column name */
+  UnregisterAsSatellitePaused = 'unregister_as_satellite_paused',
+  /** column name */
+  UpdateSatelliteRecordPaused = 'update_satellite_record_paused'
+}
+
+/** select "delegation_aggregate_bool_exp_corr_arguments_columns" columns of table "delegation" */
+export enum Delegation_Select_Column_Delegation_Aggregate_Bool_Exp_Corr_Arguments_Columns {
+  /** column name */
+  MinimumSmvkBalance = 'minimum_smvk_balance'
+}
+
+/** select "delegation_aggregate_bool_exp_covar_samp_arguments_columns" columns of table "delegation" */
+export enum Delegation_Select_Column_Delegation_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns {
+  /** column name */
+  MinimumSmvkBalance = 'minimum_smvk_balance'
+}
+
+/** select "delegation_aggregate_bool_exp_max_arguments_columns" columns of table "delegation" */
+export enum Delegation_Select_Column_Delegation_Aggregate_Bool_Exp_Max_Arguments_Columns {
+  /** column name */
+  MinimumSmvkBalance = 'minimum_smvk_balance'
+}
+
+/** select "delegation_aggregate_bool_exp_min_arguments_columns" columns of table "delegation" */
+export enum Delegation_Select_Column_Delegation_Aggregate_Bool_Exp_Min_Arguments_Columns {
+  /** column name */
+  MinimumSmvkBalance = 'minimum_smvk_balance'
+}
+
+/** select "delegation_aggregate_bool_exp_stddev_samp_arguments_columns" columns of table "delegation" */
+export enum Delegation_Select_Column_Delegation_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns {
+  /** column name */
+  MinimumSmvkBalance = 'minimum_smvk_balance'
+}
+
+/** select "delegation_aggregate_bool_exp_sum_arguments_columns" columns of table "delegation" */
+export enum Delegation_Select_Column_Delegation_Aggregate_Bool_Exp_Sum_Arguments_Columns {
+  /** column name */
+  MinimumSmvkBalance = 'minimum_smvk_balance'
+}
+
+/** select "delegation_aggregate_bool_exp_var_samp_arguments_columns" columns of table "delegation" */
+export enum Delegation_Select_Column_Delegation_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns {
+  /** column name */
+  MinimumSmvkBalance = 'minimum_smvk_balance'
+}
+
 /** aggregate stddev on columns */
 export type Delegation_Stddev_Fields = {
   __typename?: 'delegation_stddev_fields';
@@ -10126,6 +11376,17 @@ export type Delegation_Whitelist_Contract_Aggregate = {
   __typename?: 'delegation_whitelist_contract_aggregate';
   aggregate?: Maybe<Delegation_Whitelist_Contract_Aggregate_Fields>;
   nodes: Array<Delegation_Whitelist_Contract>;
+};
+
+export type Delegation_Whitelist_Contract_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Delegation_Whitelist_Contract_Aggregate_Bool_Exp_Count>;
+};
+
+export type Delegation_Whitelist_Contract_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Delegation_Whitelist_Contract_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Delegation_Whitelist_Contract_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "delegation_whitelist_contract" */
@@ -11614,9 +12875,9 @@ export type Doorman = {
   lambdas_aggregate: Doorman_Lambda_Aggregate;
   last_updated_at?: Maybe<Scalars['timestamptz']>;
   min_mvk_amount: Scalars['float8'];
-  on_vault_deposit_smvk_paused: Scalars['Boolean'];
-  on_vault_liquidate_smvk_paused: Scalars['Boolean'];
-  on_vault_withdraw_smvk_paused: Scalars['Boolean'];
+  on_vault_deposit_stake_paused: Scalars['Boolean'];
+  on_vault_liquidate_stake_paused: Scalars['Boolean'];
+  on_vault_withdraw_stake_paused: Scalars['Boolean'];
   /** An array relationship */
   stake_accounts: Array<Doorman_Stake_Account>;
   /** An aggregate relationship */
@@ -11765,6 +13026,107 @@ export type Doorman_Aggregate = {
   nodes: Array<Doorman>;
 };
 
+export type Doorman_Aggregate_Bool_Exp = {
+  avg?: InputMaybe<Doorman_Aggregate_Bool_Exp_Avg>;
+  bool_and?: InputMaybe<Doorman_Aggregate_Bool_Exp_Bool_And>;
+  bool_or?: InputMaybe<Doorman_Aggregate_Bool_Exp_Bool_Or>;
+  corr?: InputMaybe<Doorman_Aggregate_Bool_Exp_Corr>;
+  count?: InputMaybe<Doorman_Aggregate_Bool_Exp_Count>;
+  covar_samp?: InputMaybe<Doorman_Aggregate_Bool_Exp_Covar_Samp>;
+  max?: InputMaybe<Doorman_Aggregate_Bool_Exp_Max>;
+  min?: InputMaybe<Doorman_Aggregate_Bool_Exp_Min>;
+  stddev_samp?: InputMaybe<Doorman_Aggregate_Bool_Exp_Stddev_Samp>;
+  sum?: InputMaybe<Doorman_Aggregate_Bool_Exp_Sum>;
+  var_samp?: InputMaybe<Doorman_Aggregate_Bool_Exp_Var_Samp>;
+};
+
+export type Doorman_Aggregate_Bool_Exp_Avg = {
+  arguments: Doorman_Select_Column_Doorman_Aggregate_Bool_Exp_Avg_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Doorman_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Doorman_Aggregate_Bool_Exp_Bool_And = {
+  arguments: Doorman_Select_Column_Doorman_Aggregate_Bool_Exp_Bool_And_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Doorman_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Doorman_Aggregate_Bool_Exp_Bool_Or = {
+  arguments: Doorman_Select_Column_Doorman_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Doorman_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Doorman_Aggregate_Bool_Exp_Corr = {
+  arguments: Doorman_Aggregate_Bool_Exp_Corr_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Doorman_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Doorman_Aggregate_Bool_Exp_Corr_Arguments = {
+  X: Doorman_Select_Column_Doorman_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+  Y: Doorman_Select_Column_Doorman_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+};
+
+export type Doorman_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Doorman_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Doorman_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+export type Doorman_Aggregate_Bool_Exp_Covar_Samp = {
+  arguments: Doorman_Aggregate_Bool_Exp_Covar_Samp_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Doorman_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Doorman_Aggregate_Bool_Exp_Covar_Samp_Arguments = {
+  X: Doorman_Select_Column_Doorman_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+  Y: Doorman_Select_Column_Doorman_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+};
+
+export type Doorman_Aggregate_Bool_Exp_Max = {
+  arguments: Doorman_Select_Column_Doorman_Aggregate_Bool_Exp_Max_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Doorman_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Doorman_Aggregate_Bool_Exp_Min = {
+  arguments: Doorman_Select_Column_Doorman_Aggregate_Bool_Exp_Min_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Doorman_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Doorman_Aggregate_Bool_Exp_Stddev_Samp = {
+  arguments: Doorman_Select_Column_Doorman_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Doorman_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Doorman_Aggregate_Bool_Exp_Sum = {
+  arguments: Doorman_Select_Column_Doorman_Aggregate_Bool_Exp_Sum_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Doorman_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Doorman_Aggregate_Bool_Exp_Var_Samp = {
+  arguments: Doorman_Select_Column_Doorman_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Doorman_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
 /** aggregate fields of "doorman" */
 export type Doorman_Aggregate_Fields = {
   __typename?: 'doorman_aggregate_fields';
@@ -11829,21 +13191,27 @@ export type Doorman_Bool_Exp = {
   compound_paused?: InputMaybe<Boolean_Comparison_Exp>;
   farm_claimed_paused?: InputMaybe<Boolean_Comparison_Exp>;
   general_contracts?: InputMaybe<Doorman_General_Contract_Bool_Exp>;
+  general_contracts_aggregate?: InputMaybe<Doorman_General_Contract_Aggregate_Bool_Exp>;
   governance?: InputMaybe<Governance_Bool_Exp>;
   governance_id?: InputMaybe<String_Comparison_Exp>;
   lambdas?: InputMaybe<Doorman_Lambda_Bool_Exp>;
+  lambdas_aggregate?: InputMaybe<Doorman_Lambda_Aggregate_Bool_Exp>;
   last_updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   min_mvk_amount?: InputMaybe<Float8_Comparison_Exp>;
-  on_vault_deposit_smvk_paused?: InputMaybe<Boolean_Comparison_Exp>;
-  on_vault_liquidate_smvk_paused?: InputMaybe<Boolean_Comparison_Exp>;
-  on_vault_withdraw_smvk_paused?: InputMaybe<Boolean_Comparison_Exp>;
+  on_vault_deposit_stake_paused?: InputMaybe<Boolean_Comparison_Exp>;
+  on_vault_liquidate_stake_paused?: InputMaybe<Boolean_Comparison_Exp>;
+  on_vault_withdraw_stake_paused?: InputMaybe<Boolean_Comparison_Exp>;
   stake_accounts?: InputMaybe<Doorman_Stake_Account_Bool_Exp>;
+  stake_accounts_aggregate?: InputMaybe<Doorman_Stake_Account_Aggregate_Bool_Exp>;
   stake_paused?: InputMaybe<Boolean_Comparison_Exp>;
   stakes_history_data?: InputMaybe<Stake_History_Data_Bool_Exp>;
+  stakes_history_data_aggregate?: InputMaybe<Stake_History_Data_Aggregate_Bool_Exp>;
   stakes_mvk_history_data?: InputMaybe<Smvk_History_Data_Bool_Exp>;
+  stakes_mvk_history_data_aggregate?: InputMaybe<Smvk_History_Data_Aggregate_Bool_Exp>;
   unclaimed_rewards?: InputMaybe<Float8_Comparison_Exp>;
   unstake_paused?: InputMaybe<Boolean_Comparison_Exp>;
   whitelist_contracts?: InputMaybe<Doorman_Whitelist_Contract_Bool_Exp>;
+  whitelist_contracts_aggregate?: InputMaybe<Doorman_Whitelist_Contract_Aggregate_Bool_Exp>;
 };
 
 /** columns and relationships of "doorman_general_contract" */
@@ -11862,6 +13230,17 @@ export type Doorman_General_Contract_Aggregate = {
   __typename?: 'doorman_general_contract_aggregate';
   aggregate?: Maybe<Doorman_General_Contract_Aggregate_Fields>;
   nodes: Array<Doorman_General_Contract>;
+};
+
+export type Doorman_General_Contract_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Doorman_General_Contract_Aggregate_Bool_Exp_Count>;
+};
+
+export type Doorman_General_Contract_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Doorman_General_Contract_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Doorman_General_Contract_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "doorman_general_contract" */
@@ -12090,6 +13469,17 @@ export type Doorman_Lambda_Aggregate = {
   __typename?: 'doorman_lambda_aggregate';
   aggregate?: Maybe<Doorman_Lambda_Aggregate_Fields>;
   nodes: Array<Doorman_Lambda>;
+};
+
+export type Doorman_Lambda_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Doorman_Lambda_Aggregate_Bool_Exp_Count>;
+};
+
+export type Doorman_Lambda_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Doorman_Lambda_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Doorman_Lambda_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "doorman_lambda" */
@@ -12369,9 +13759,9 @@ export type Doorman_Order_By = {
   lambdas_aggregate?: InputMaybe<Doorman_Lambda_Aggregate_Order_By>;
   last_updated_at?: InputMaybe<Order_By>;
   min_mvk_amount?: InputMaybe<Order_By>;
-  on_vault_deposit_smvk_paused?: InputMaybe<Order_By>;
-  on_vault_liquidate_smvk_paused?: InputMaybe<Order_By>;
-  on_vault_withdraw_smvk_paused?: InputMaybe<Order_By>;
+  on_vault_deposit_stake_paused?: InputMaybe<Order_By>;
+  on_vault_liquidate_stake_paused?: InputMaybe<Order_By>;
+  on_vault_withdraw_stake_paused?: InputMaybe<Order_By>;
   stake_accounts_aggregate?: InputMaybe<Doorman_Stake_Account_Aggregate_Order_By>;
   stake_paused?: InputMaybe<Order_By>;
   stakes_history_data_aggregate?: InputMaybe<Stake_History_Data_Aggregate_Order_By>;
@@ -12400,17 +13790,133 @@ export enum Doorman_Select_Column {
   /** column name */
   MinMvkAmount = 'min_mvk_amount',
   /** column name */
-  OnVaultDepositSmvkPaused = 'on_vault_deposit_smvk_paused',
+  OnVaultDepositStakePaused = 'on_vault_deposit_stake_paused',
   /** column name */
-  OnVaultLiquidateSmvkPaused = 'on_vault_liquidate_smvk_paused',
+  OnVaultLiquidateStakePaused = 'on_vault_liquidate_stake_paused',
   /** column name */
-  OnVaultWithdrawSmvkPaused = 'on_vault_withdraw_smvk_paused',
+  OnVaultWithdrawStakePaused = 'on_vault_withdraw_stake_paused',
   /** column name */
   StakePaused = 'stake_paused',
   /** column name */
   UnclaimedRewards = 'unclaimed_rewards',
   /** column name */
   UnstakePaused = 'unstake_paused'
+}
+
+/** select "doorman_aggregate_bool_exp_avg_arguments_columns" columns of table "doorman" */
+export enum Doorman_Select_Column_Doorman_Aggregate_Bool_Exp_Avg_Arguments_Columns {
+  /** column name */
+  AccumulatedFeesPerShare = 'accumulated_fees_per_share',
+  /** column name */
+  MinMvkAmount = 'min_mvk_amount',
+  /** column name */
+  UnclaimedRewards = 'unclaimed_rewards'
+}
+
+/** select "doorman_aggregate_bool_exp_bool_and_arguments_columns" columns of table "doorman" */
+export enum Doorman_Select_Column_Doorman_Aggregate_Bool_Exp_Bool_And_Arguments_Columns {
+  /** column name */
+  CompoundPaused = 'compound_paused',
+  /** column name */
+  FarmClaimedPaused = 'farm_claimed_paused',
+  /** column name */
+  OnVaultDepositStakePaused = 'on_vault_deposit_stake_paused',
+  /** column name */
+  OnVaultLiquidateStakePaused = 'on_vault_liquidate_stake_paused',
+  /** column name */
+  OnVaultWithdrawStakePaused = 'on_vault_withdraw_stake_paused',
+  /** column name */
+  StakePaused = 'stake_paused',
+  /** column name */
+  UnstakePaused = 'unstake_paused'
+}
+
+/** select "doorman_aggregate_bool_exp_bool_or_arguments_columns" columns of table "doorman" */
+export enum Doorman_Select_Column_Doorman_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns {
+  /** column name */
+  CompoundPaused = 'compound_paused',
+  /** column name */
+  FarmClaimedPaused = 'farm_claimed_paused',
+  /** column name */
+  OnVaultDepositStakePaused = 'on_vault_deposit_stake_paused',
+  /** column name */
+  OnVaultLiquidateStakePaused = 'on_vault_liquidate_stake_paused',
+  /** column name */
+  OnVaultWithdrawStakePaused = 'on_vault_withdraw_stake_paused',
+  /** column name */
+  StakePaused = 'stake_paused',
+  /** column name */
+  UnstakePaused = 'unstake_paused'
+}
+
+/** select "doorman_aggregate_bool_exp_corr_arguments_columns" columns of table "doorman" */
+export enum Doorman_Select_Column_Doorman_Aggregate_Bool_Exp_Corr_Arguments_Columns {
+  /** column name */
+  AccumulatedFeesPerShare = 'accumulated_fees_per_share',
+  /** column name */
+  MinMvkAmount = 'min_mvk_amount',
+  /** column name */
+  UnclaimedRewards = 'unclaimed_rewards'
+}
+
+/** select "doorman_aggregate_bool_exp_covar_samp_arguments_columns" columns of table "doorman" */
+export enum Doorman_Select_Column_Doorman_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns {
+  /** column name */
+  AccumulatedFeesPerShare = 'accumulated_fees_per_share',
+  /** column name */
+  MinMvkAmount = 'min_mvk_amount',
+  /** column name */
+  UnclaimedRewards = 'unclaimed_rewards'
+}
+
+/** select "doorman_aggregate_bool_exp_max_arguments_columns" columns of table "doorman" */
+export enum Doorman_Select_Column_Doorman_Aggregate_Bool_Exp_Max_Arguments_Columns {
+  /** column name */
+  AccumulatedFeesPerShare = 'accumulated_fees_per_share',
+  /** column name */
+  MinMvkAmount = 'min_mvk_amount',
+  /** column name */
+  UnclaimedRewards = 'unclaimed_rewards'
+}
+
+/** select "doorman_aggregate_bool_exp_min_arguments_columns" columns of table "doorman" */
+export enum Doorman_Select_Column_Doorman_Aggregate_Bool_Exp_Min_Arguments_Columns {
+  /** column name */
+  AccumulatedFeesPerShare = 'accumulated_fees_per_share',
+  /** column name */
+  MinMvkAmount = 'min_mvk_amount',
+  /** column name */
+  UnclaimedRewards = 'unclaimed_rewards'
+}
+
+/** select "doorman_aggregate_bool_exp_stddev_samp_arguments_columns" columns of table "doorman" */
+export enum Doorman_Select_Column_Doorman_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns {
+  /** column name */
+  AccumulatedFeesPerShare = 'accumulated_fees_per_share',
+  /** column name */
+  MinMvkAmount = 'min_mvk_amount',
+  /** column name */
+  UnclaimedRewards = 'unclaimed_rewards'
+}
+
+/** select "doorman_aggregate_bool_exp_sum_arguments_columns" columns of table "doorman" */
+export enum Doorman_Select_Column_Doorman_Aggregate_Bool_Exp_Sum_Arguments_Columns {
+  /** column name */
+  AccumulatedFeesPerShare = 'accumulated_fees_per_share',
+  /** column name */
+  MinMvkAmount = 'min_mvk_amount',
+  /** column name */
+  UnclaimedRewards = 'unclaimed_rewards'
+}
+
+/** select "doorman_aggregate_bool_exp_var_samp_arguments_columns" columns of table "doorman" */
+export enum Doorman_Select_Column_Doorman_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns {
+  /** column name */
+  AccumulatedFeesPerShare = 'accumulated_fees_per_share',
+  /** column name */
+  MinMvkAmount = 'min_mvk_amount',
+  /** column name */
+  UnclaimedRewards = 'unclaimed_rewards'
 }
 
 /** columns and relationships of "doorman_stake_account" */
@@ -12432,6 +13938,91 @@ export type Doorman_Stake_Account_Aggregate = {
   __typename?: 'doorman_stake_account_aggregate';
   aggregate?: Maybe<Doorman_Stake_Account_Aggregate_Fields>;
   nodes: Array<Doorman_Stake_Account>;
+};
+
+export type Doorman_Stake_Account_Aggregate_Bool_Exp = {
+  avg?: InputMaybe<Doorman_Stake_Account_Aggregate_Bool_Exp_Avg>;
+  corr?: InputMaybe<Doorman_Stake_Account_Aggregate_Bool_Exp_Corr>;
+  count?: InputMaybe<Doorman_Stake_Account_Aggregate_Bool_Exp_Count>;
+  covar_samp?: InputMaybe<Doorman_Stake_Account_Aggregate_Bool_Exp_Covar_Samp>;
+  max?: InputMaybe<Doorman_Stake_Account_Aggregate_Bool_Exp_Max>;
+  min?: InputMaybe<Doorman_Stake_Account_Aggregate_Bool_Exp_Min>;
+  stddev_samp?: InputMaybe<Doorman_Stake_Account_Aggregate_Bool_Exp_Stddev_Samp>;
+  sum?: InputMaybe<Doorman_Stake_Account_Aggregate_Bool_Exp_Sum>;
+  var_samp?: InputMaybe<Doorman_Stake_Account_Aggregate_Bool_Exp_Var_Samp>;
+};
+
+export type Doorman_Stake_Account_Aggregate_Bool_Exp_Avg = {
+  arguments: Doorman_Stake_Account_Select_Column_Doorman_Stake_Account_Aggregate_Bool_Exp_Avg_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Doorman_Stake_Account_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Doorman_Stake_Account_Aggregate_Bool_Exp_Corr = {
+  arguments: Doorman_Stake_Account_Aggregate_Bool_Exp_Corr_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Doorman_Stake_Account_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Doorman_Stake_Account_Aggregate_Bool_Exp_Corr_Arguments = {
+  X: Doorman_Stake_Account_Select_Column_Doorman_Stake_Account_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+  Y: Doorman_Stake_Account_Select_Column_Doorman_Stake_Account_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+};
+
+export type Doorman_Stake_Account_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Doorman_Stake_Account_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Doorman_Stake_Account_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+export type Doorman_Stake_Account_Aggregate_Bool_Exp_Covar_Samp = {
+  arguments: Doorman_Stake_Account_Aggregate_Bool_Exp_Covar_Samp_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Doorman_Stake_Account_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Doorman_Stake_Account_Aggregate_Bool_Exp_Covar_Samp_Arguments = {
+  X: Doorman_Stake_Account_Select_Column_Doorman_Stake_Account_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+  Y: Doorman_Stake_Account_Select_Column_Doorman_Stake_Account_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+};
+
+export type Doorman_Stake_Account_Aggregate_Bool_Exp_Max = {
+  arguments: Doorman_Stake_Account_Select_Column_Doorman_Stake_Account_Aggregate_Bool_Exp_Max_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Doorman_Stake_Account_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Doorman_Stake_Account_Aggregate_Bool_Exp_Min = {
+  arguments: Doorman_Stake_Account_Select_Column_Doorman_Stake_Account_Aggregate_Bool_Exp_Min_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Doorman_Stake_Account_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Doorman_Stake_Account_Aggregate_Bool_Exp_Stddev_Samp = {
+  arguments: Doorman_Stake_Account_Select_Column_Doorman_Stake_Account_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Doorman_Stake_Account_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Doorman_Stake_Account_Aggregate_Bool_Exp_Sum = {
+  arguments: Doorman_Stake_Account_Select_Column_Doorman_Stake_Account_Aggregate_Bool_Exp_Sum_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Doorman_Stake_Account_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Doorman_Stake_Account_Aggregate_Bool_Exp_Var_Samp = {
+  arguments: Doorman_Stake_Account_Select_Column_Doorman_Stake_Account_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Doorman_Stake_Account_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
 };
 
 /** aggregate fields of "doorman_stake_account" */
@@ -12562,6 +14153,70 @@ export enum Doorman_Stake_Account_Select_Column {
   SmvkBalance = 'smvk_balance',
   /** column name */
   UserId = 'user_id'
+}
+
+/** select "doorman_stake_account_aggregate_bool_exp_avg_arguments_columns" columns of table "doorman_stake_account" */
+export enum Doorman_Stake_Account_Select_Column_Doorman_Stake_Account_Aggregate_Bool_Exp_Avg_Arguments_Columns {
+  /** column name */
+  ParticipationFeesPerShare = 'participation_fees_per_share',
+  /** column name */
+  SmvkBalance = 'smvk_balance'
+}
+
+/** select "doorman_stake_account_aggregate_bool_exp_corr_arguments_columns" columns of table "doorman_stake_account" */
+export enum Doorman_Stake_Account_Select_Column_Doorman_Stake_Account_Aggregate_Bool_Exp_Corr_Arguments_Columns {
+  /** column name */
+  ParticipationFeesPerShare = 'participation_fees_per_share',
+  /** column name */
+  SmvkBalance = 'smvk_balance'
+}
+
+/** select "doorman_stake_account_aggregate_bool_exp_covar_samp_arguments_columns" columns of table "doorman_stake_account" */
+export enum Doorman_Stake_Account_Select_Column_Doorman_Stake_Account_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns {
+  /** column name */
+  ParticipationFeesPerShare = 'participation_fees_per_share',
+  /** column name */
+  SmvkBalance = 'smvk_balance'
+}
+
+/** select "doorman_stake_account_aggregate_bool_exp_max_arguments_columns" columns of table "doorman_stake_account" */
+export enum Doorman_Stake_Account_Select_Column_Doorman_Stake_Account_Aggregate_Bool_Exp_Max_Arguments_Columns {
+  /** column name */
+  ParticipationFeesPerShare = 'participation_fees_per_share',
+  /** column name */
+  SmvkBalance = 'smvk_balance'
+}
+
+/** select "doorman_stake_account_aggregate_bool_exp_min_arguments_columns" columns of table "doorman_stake_account" */
+export enum Doorman_Stake_Account_Select_Column_Doorman_Stake_Account_Aggregate_Bool_Exp_Min_Arguments_Columns {
+  /** column name */
+  ParticipationFeesPerShare = 'participation_fees_per_share',
+  /** column name */
+  SmvkBalance = 'smvk_balance'
+}
+
+/** select "doorman_stake_account_aggregate_bool_exp_stddev_samp_arguments_columns" columns of table "doorman_stake_account" */
+export enum Doorman_Stake_Account_Select_Column_Doorman_Stake_Account_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns {
+  /** column name */
+  ParticipationFeesPerShare = 'participation_fees_per_share',
+  /** column name */
+  SmvkBalance = 'smvk_balance'
+}
+
+/** select "doorman_stake_account_aggregate_bool_exp_sum_arguments_columns" columns of table "doorman_stake_account" */
+export enum Doorman_Stake_Account_Select_Column_Doorman_Stake_Account_Aggregate_Bool_Exp_Sum_Arguments_Columns {
+  /** column name */
+  ParticipationFeesPerShare = 'participation_fees_per_share',
+  /** column name */
+  SmvkBalance = 'smvk_balance'
+}
+
+/** select "doorman_stake_account_aggregate_bool_exp_var_samp_arguments_columns" columns of table "doorman_stake_account" */
+export enum Doorman_Stake_Account_Select_Column_Doorman_Stake_Account_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns {
+  /** column name */
+  ParticipationFeesPerShare = 'participation_fees_per_share',
+  /** column name */
+  SmvkBalance = 'smvk_balance'
 }
 
 /** aggregate stddev on columns */
@@ -12749,9 +14404,9 @@ export type Doorman_Stream_Cursor_Value_Input = {
   governance_id?: InputMaybe<Scalars['String']>;
   last_updated_at?: InputMaybe<Scalars['timestamptz']>;
   min_mvk_amount?: InputMaybe<Scalars['float8']>;
-  on_vault_deposit_smvk_paused?: InputMaybe<Scalars['Boolean']>;
-  on_vault_liquidate_smvk_paused?: InputMaybe<Scalars['Boolean']>;
-  on_vault_withdraw_smvk_paused?: InputMaybe<Scalars['Boolean']>;
+  on_vault_deposit_stake_paused?: InputMaybe<Scalars['Boolean']>;
+  on_vault_liquidate_stake_paused?: InputMaybe<Scalars['Boolean']>;
+  on_vault_withdraw_stake_paused?: InputMaybe<Scalars['Boolean']>;
   stake_paused?: InputMaybe<Scalars['Boolean']>;
   unclaimed_rewards?: InputMaybe<Scalars['float8']>;
   unstake_paused?: InputMaybe<Scalars['Boolean']>;
@@ -12833,6 +14488,17 @@ export type Doorman_Whitelist_Contract_Aggregate = {
   __typename?: 'doorman_whitelist_contract_aggregate';
   aggregate?: Maybe<Doorman_Whitelist_Contract_Aggregate_Fields>;
   nodes: Array<Doorman_Whitelist_Contract>;
+};
+
+export type Doorman_Whitelist_Contract_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Doorman_Whitelist_Contract_Aggregate_Bool_Exp_Count>;
+};
+
+export type Doorman_Whitelist_Contract_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Doorman_Whitelist_Contract_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Doorman_Whitelist_Contract_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "doorman_whitelist_contract" */
@@ -13168,6 +14834,91 @@ export type Emergency_Governance_Aggregate = {
   nodes: Array<Emergency_Governance>;
 };
 
+export type Emergency_Governance_Aggregate_Bool_Exp = {
+  avg?: InputMaybe<Emergency_Governance_Aggregate_Bool_Exp_Avg>;
+  corr?: InputMaybe<Emergency_Governance_Aggregate_Bool_Exp_Corr>;
+  count?: InputMaybe<Emergency_Governance_Aggregate_Bool_Exp_Count>;
+  covar_samp?: InputMaybe<Emergency_Governance_Aggregate_Bool_Exp_Covar_Samp>;
+  max?: InputMaybe<Emergency_Governance_Aggregate_Bool_Exp_Max>;
+  min?: InputMaybe<Emergency_Governance_Aggregate_Bool_Exp_Min>;
+  stddev_samp?: InputMaybe<Emergency_Governance_Aggregate_Bool_Exp_Stddev_Samp>;
+  sum?: InputMaybe<Emergency_Governance_Aggregate_Bool_Exp_Sum>;
+  var_samp?: InputMaybe<Emergency_Governance_Aggregate_Bool_Exp_Var_Samp>;
+};
+
+export type Emergency_Governance_Aggregate_Bool_Exp_Avg = {
+  arguments: Emergency_Governance_Select_Column_Emergency_Governance_Aggregate_Bool_Exp_Avg_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Emergency_Governance_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Emergency_Governance_Aggregate_Bool_Exp_Corr = {
+  arguments: Emergency_Governance_Aggregate_Bool_Exp_Corr_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Emergency_Governance_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Emergency_Governance_Aggregate_Bool_Exp_Corr_Arguments = {
+  X: Emergency_Governance_Select_Column_Emergency_Governance_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+  Y: Emergency_Governance_Select_Column_Emergency_Governance_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+};
+
+export type Emergency_Governance_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Emergency_Governance_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Emergency_Governance_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+export type Emergency_Governance_Aggregate_Bool_Exp_Covar_Samp = {
+  arguments: Emergency_Governance_Aggregate_Bool_Exp_Covar_Samp_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Emergency_Governance_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Emergency_Governance_Aggregate_Bool_Exp_Covar_Samp_Arguments = {
+  X: Emergency_Governance_Select_Column_Emergency_Governance_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+  Y: Emergency_Governance_Select_Column_Emergency_Governance_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+};
+
+export type Emergency_Governance_Aggregate_Bool_Exp_Max = {
+  arguments: Emergency_Governance_Select_Column_Emergency_Governance_Aggregate_Bool_Exp_Max_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Emergency_Governance_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Emergency_Governance_Aggregate_Bool_Exp_Min = {
+  arguments: Emergency_Governance_Select_Column_Emergency_Governance_Aggregate_Bool_Exp_Min_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Emergency_Governance_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Emergency_Governance_Aggregate_Bool_Exp_Stddev_Samp = {
+  arguments: Emergency_Governance_Select_Column_Emergency_Governance_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Emergency_Governance_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Emergency_Governance_Aggregate_Bool_Exp_Sum = {
+  arguments: Emergency_Governance_Select_Column_Emergency_Governance_Aggregate_Bool_Exp_Sum_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Emergency_Governance_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Emergency_Governance_Aggregate_Bool_Exp_Var_Samp = {
+  arguments: Emergency_Governance_Select_Column_Emergency_Governance_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Emergency_Governance_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
 /** aggregate fields of "emergency_governance" */
 export type Emergency_Governance_Aggregate_Fields = {
   __typename?: 'emergency_governance_aggregate_fields';
@@ -13245,10 +14996,13 @@ export type Emergency_Governance_Bool_Exp = {
   current_emergency_record_id?: InputMaybe<Bigint_Comparison_Exp>;
   decimals?: InputMaybe<Smallint_Comparison_Exp>;
   emergency_governance_records?: InputMaybe<Emergency_Governance_Record_Bool_Exp>;
+  emergency_governance_records_aggregate?: InputMaybe<Emergency_Governance_Record_Aggregate_Bool_Exp>;
   general_contracts?: InputMaybe<Emergency_Governance_General_Contract_Bool_Exp>;
+  general_contracts_aggregate?: InputMaybe<Emergency_Governance_General_Contract_Aggregate_Bool_Exp>;
   governance?: InputMaybe<Governance_Bool_Exp>;
   governance_id?: InputMaybe<String_Comparison_Exp>;
   lambdas?: InputMaybe<Emergency_Governance_Lambda_Bool_Exp>;
+  lambdas_aggregate?: InputMaybe<Emergency_Governance_Lambda_Aggregate_Bool_Exp>;
   last_updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   min_smvk_required_to_trigger?: InputMaybe<Float8_Comparison_Exp>;
   min_smvk_required_to_vote?: InputMaybe<Float8_Comparison_Exp>;
@@ -13259,6 +15013,7 @@ export type Emergency_Governance_Bool_Exp = {
   smvk_percentage_required?: InputMaybe<Smallint_Comparison_Exp>;
   vote_expiry_days?: InputMaybe<Smallint_Comparison_Exp>;
   whitelist_contracts?: InputMaybe<Emergency_Governance_Whitelist_Contract_Bool_Exp>;
+  whitelist_contracts_aggregate?: InputMaybe<Emergency_Governance_Whitelist_Contract_Aggregate_Bool_Exp>;
 };
 
 /** columns and relationships of "emergency_governance_general_contract" */
@@ -13277,6 +15032,17 @@ export type Emergency_Governance_General_Contract_Aggregate = {
   __typename?: 'emergency_governance_general_contract_aggregate';
   aggregate?: Maybe<Emergency_Governance_General_Contract_Aggregate_Fields>;
   nodes: Array<Emergency_Governance_General_Contract>;
+};
+
+export type Emergency_Governance_General_Contract_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Emergency_Governance_General_Contract_Aggregate_Bool_Exp_Count>;
+};
+
+export type Emergency_Governance_General_Contract_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Emergency_Governance_General_Contract_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Emergency_Governance_General_Contract_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "emergency_governance_general_contract" */
@@ -13505,6 +15271,17 @@ export type Emergency_Governance_Lambda_Aggregate = {
   __typename?: 'emergency_governance_lambda_aggregate';
   aggregate?: Maybe<Emergency_Governance_Lambda_Aggregate_Fields>;
   nodes: Array<Emergency_Governance_Lambda>;
+};
+
+export type Emergency_Governance_Lambda_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Emergency_Governance_Lambda_Aggregate_Bool_Exp_Count>;
+};
+
+export type Emergency_Governance_Lambda_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Emergency_Governance_Lambda_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Emergency_Governance_Lambda_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "emergency_governance_lambda" */
@@ -13877,6 +15654,107 @@ export type Emergency_Governance_Record_Aggregate = {
   nodes: Array<Emergency_Governance_Record>;
 };
 
+export type Emergency_Governance_Record_Aggregate_Bool_Exp = {
+  avg?: InputMaybe<Emergency_Governance_Record_Aggregate_Bool_Exp_Avg>;
+  bool_and?: InputMaybe<Emergency_Governance_Record_Aggregate_Bool_Exp_Bool_And>;
+  bool_or?: InputMaybe<Emergency_Governance_Record_Aggregate_Bool_Exp_Bool_Or>;
+  corr?: InputMaybe<Emergency_Governance_Record_Aggregate_Bool_Exp_Corr>;
+  count?: InputMaybe<Emergency_Governance_Record_Aggregate_Bool_Exp_Count>;
+  covar_samp?: InputMaybe<Emergency_Governance_Record_Aggregate_Bool_Exp_Covar_Samp>;
+  max?: InputMaybe<Emergency_Governance_Record_Aggregate_Bool_Exp_Max>;
+  min?: InputMaybe<Emergency_Governance_Record_Aggregate_Bool_Exp_Min>;
+  stddev_samp?: InputMaybe<Emergency_Governance_Record_Aggregate_Bool_Exp_Stddev_Samp>;
+  sum?: InputMaybe<Emergency_Governance_Record_Aggregate_Bool_Exp_Sum>;
+  var_samp?: InputMaybe<Emergency_Governance_Record_Aggregate_Bool_Exp_Var_Samp>;
+};
+
+export type Emergency_Governance_Record_Aggregate_Bool_Exp_Avg = {
+  arguments: Emergency_Governance_Record_Select_Column_Emergency_Governance_Record_Aggregate_Bool_Exp_Avg_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Emergency_Governance_Record_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Emergency_Governance_Record_Aggregate_Bool_Exp_Bool_And = {
+  arguments: Emergency_Governance_Record_Select_Column_Emergency_Governance_Record_Aggregate_Bool_Exp_Bool_And_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Emergency_Governance_Record_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Emergency_Governance_Record_Aggregate_Bool_Exp_Bool_Or = {
+  arguments: Emergency_Governance_Record_Select_Column_Emergency_Governance_Record_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Emergency_Governance_Record_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Emergency_Governance_Record_Aggregate_Bool_Exp_Corr = {
+  arguments: Emergency_Governance_Record_Aggregate_Bool_Exp_Corr_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Emergency_Governance_Record_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Emergency_Governance_Record_Aggregate_Bool_Exp_Corr_Arguments = {
+  X: Emergency_Governance_Record_Select_Column_Emergency_Governance_Record_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+  Y: Emergency_Governance_Record_Select_Column_Emergency_Governance_Record_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+};
+
+export type Emergency_Governance_Record_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Emergency_Governance_Record_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Emergency_Governance_Record_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+export type Emergency_Governance_Record_Aggregate_Bool_Exp_Covar_Samp = {
+  arguments: Emergency_Governance_Record_Aggregate_Bool_Exp_Covar_Samp_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Emergency_Governance_Record_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Emergency_Governance_Record_Aggregate_Bool_Exp_Covar_Samp_Arguments = {
+  X: Emergency_Governance_Record_Select_Column_Emergency_Governance_Record_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+  Y: Emergency_Governance_Record_Select_Column_Emergency_Governance_Record_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+};
+
+export type Emergency_Governance_Record_Aggregate_Bool_Exp_Max = {
+  arguments: Emergency_Governance_Record_Select_Column_Emergency_Governance_Record_Aggregate_Bool_Exp_Max_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Emergency_Governance_Record_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Emergency_Governance_Record_Aggregate_Bool_Exp_Min = {
+  arguments: Emergency_Governance_Record_Select_Column_Emergency_Governance_Record_Aggregate_Bool_Exp_Min_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Emergency_Governance_Record_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Emergency_Governance_Record_Aggregate_Bool_Exp_Stddev_Samp = {
+  arguments: Emergency_Governance_Record_Select_Column_Emergency_Governance_Record_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Emergency_Governance_Record_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Emergency_Governance_Record_Aggregate_Bool_Exp_Sum = {
+  arguments: Emergency_Governance_Record_Select_Column_Emergency_Governance_Record_Aggregate_Bool_Exp_Sum_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Emergency_Governance_Record_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Emergency_Governance_Record_Aggregate_Bool_Exp_Var_Samp = {
+  arguments: Emergency_Governance_Record_Select_Column_Emergency_Governance_Record_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Emergency_Governance_Record_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
 /** aggregate fields of "emergency_governance_record" */
 export type Emergency_Governance_Record_Aggregate_Fields = {
   __typename?: 'emergency_governance_record_aggregate_fields';
@@ -13959,6 +15837,7 @@ export type Emergency_Governance_Record_Bool_Exp = {
   title?: InputMaybe<String_Comparison_Exp>;
   total_smvk_votes?: InputMaybe<Float8_Comparison_Exp>;
   voters?: InputMaybe<Emergency_Governance_Vote_Bool_Exp>;
+  voters_aggregate?: InputMaybe<Emergency_Governance_Vote_Aggregate_Bool_Exp>;
 };
 
 /** aggregate max on columns */
@@ -14083,6 +15962,102 @@ export enum Emergency_Governance_Record_Select_Column {
   StartTimestamp = 'start_timestamp',
   /** column name */
   Title = 'title',
+  /** column name */
+  TotalSmvkVotes = 'total_smvk_votes'
+}
+
+/** select "emergency_governance_record_aggregate_bool_exp_avg_arguments_columns" columns of table "emergency_governance_record" */
+export enum Emergency_Governance_Record_Select_Column_Emergency_Governance_Record_Aggregate_Bool_Exp_Avg_Arguments_Columns {
+  /** column name */
+  SmvkPercentageRequired = 'smvk_percentage_required',
+  /** column name */
+  SmvkRequiredForTrigger = 'smvk_required_for_trigger',
+  /** column name */
+  TotalSmvkVotes = 'total_smvk_votes'
+}
+
+/** select "emergency_governance_record_aggregate_bool_exp_bool_and_arguments_columns" columns of table "emergency_governance_record" */
+export enum Emergency_Governance_Record_Select_Column_Emergency_Governance_Record_Aggregate_Bool_Exp_Bool_And_Arguments_Columns {
+  /** column name */
+  Dropped = 'dropped',
+  /** column name */
+  Executed = 'executed'
+}
+
+/** select "emergency_governance_record_aggregate_bool_exp_bool_or_arguments_columns" columns of table "emergency_governance_record" */
+export enum Emergency_Governance_Record_Select_Column_Emergency_Governance_Record_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns {
+  /** column name */
+  Dropped = 'dropped',
+  /** column name */
+  Executed = 'executed'
+}
+
+/** select "emergency_governance_record_aggregate_bool_exp_corr_arguments_columns" columns of table "emergency_governance_record" */
+export enum Emergency_Governance_Record_Select_Column_Emergency_Governance_Record_Aggregate_Bool_Exp_Corr_Arguments_Columns {
+  /** column name */
+  SmvkPercentageRequired = 'smvk_percentage_required',
+  /** column name */
+  SmvkRequiredForTrigger = 'smvk_required_for_trigger',
+  /** column name */
+  TotalSmvkVotes = 'total_smvk_votes'
+}
+
+/** select "emergency_governance_record_aggregate_bool_exp_covar_samp_arguments_columns" columns of table "emergency_governance_record" */
+export enum Emergency_Governance_Record_Select_Column_Emergency_Governance_Record_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns {
+  /** column name */
+  SmvkPercentageRequired = 'smvk_percentage_required',
+  /** column name */
+  SmvkRequiredForTrigger = 'smvk_required_for_trigger',
+  /** column name */
+  TotalSmvkVotes = 'total_smvk_votes'
+}
+
+/** select "emergency_governance_record_aggregate_bool_exp_max_arguments_columns" columns of table "emergency_governance_record" */
+export enum Emergency_Governance_Record_Select_Column_Emergency_Governance_Record_Aggregate_Bool_Exp_Max_Arguments_Columns {
+  /** column name */
+  SmvkPercentageRequired = 'smvk_percentage_required',
+  /** column name */
+  SmvkRequiredForTrigger = 'smvk_required_for_trigger',
+  /** column name */
+  TotalSmvkVotes = 'total_smvk_votes'
+}
+
+/** select "emergency_governance_record_aggregate_bool_exp_min_arguments_columns" columns of table "emergency_governance_record" */
+export enum Emergency_Governance_Record_Select_Column_Emergency_Governance_Record_Aggregate_Bool_Exp_Min_Arguments_Columns {
+  /** column name */
+  SmvkPercentageRequired = 'smvk_percentage_required',
+  /** column name */
+  SmvkRequiredForTrigger = 'smvk_required_for_trigger',
+  /** column name */
+  TotalSmvkVotes = 'total_smvk_votes'
+}
+
+/** select "emergency_governance_record_aggregate_bool_exp_stddev_samp_arguments_columns" columns of table "emergency_governance_record" */
+export enum Emergency_Governance_Record_Select_Column_Emergency_Governance_Record_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns {
+  /** column name */
+  SmvkPercentageRequired = 'smvk_percentage_required',
+  /** column name */
+  SmvkRequiredForTrigger = 'smvk_required_for_trigger',
+  /** column name */
+  TotalSmvkVotes = 'total_smvk_votes'
+}
+
+/** select "emergency_governance_record_aggregate_bool_exp_sum_arguments_columns" columns of table "emergency_governance_record" */
+export enum Emergency_Governance_Record_Select_Column_Emergency_Governance_Record_Aggregate_Bool_Exp_Sum_Arguments_Columns {
+  /** column name */
+  SmvkPercentageRequired = 'smvk_percentage_required',
+  /** column name */
+  SmvkRequiredForTrigger = 'smvk_required_for_trigger',
+  /** column name */
+  TotalSmvkVotes = 'total_smvk_votes'
+}
+
+/** select "emergency_governance_record_aggregate_bool_exp_var_samp_arguments_columns" columns of table "emergency_governance_record" */
+export enum Emergency_Governance_Record_Select_Column_Emergency_Governance_Record_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns {
+  /** column name */
+  SmvkPercentageRequired = 'smvk_percentage_required',
+  /** column name */
+  SmvkRequiredForTrigger = 'smvk_required_for_trigger',
   /** column name */
   TotalSmvkVotes = 'total_smvk_votes'
 }
@@ -14291,6 +16266,70 @@ export enum Emergency_Governance_Select_Column {
   SmvkPercentageRequired = 'smvk_percentage_required',
   /** column name */
   VoteExpiryDays = 'vote_expiry_days'
+}
+
+/** select "emergency_governance_aggregate_bool_exp_avg_arguments_columns" columns of table "emergency_governance" */
+export enum Emergency_Governance_Select_Column_Emergency_Governance_Aggregate_Bool_Exp_Avg_Arguments_Columns {
+  /** column name */
+  MinSmvkRequiredToTrigger = 'min_smvk_required_to_trigger',
+  /** column name */
+  MinSmvkRequiredToVote = 'min_smvk_required_to_vote'
+}
+
+/** select "emergency_governance_aggregate_bool_exp_corr_arguments_columns" columns of table "emergency_governance" */
+export enum Emergency_Governance_Select_Column_Emergency_Governance_Aggregate_Bool_Exp_Corr_Arguments_Columns {
+  /** column name */
+  MinSmvkRequiredToTrigger = 'min_smvk_required_to_trigger',
+  /** column name */
+  MinSmvkRequiredToVote = 'min_smvk_required_to_vote'
+}
+
+/** select "emergency_governance_aggregate_bool_exp_covar_samp_arguments_columns" columns of table "emergency_governance" */
+export enum Emergency_Governance_Select_Column_Emergency_Governance_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns {
+  /** column name */
+  MinSmvkRequiredToTrigger = 'min_smvk_required_to_trigger',
+  /** column name */
+  MinSmvkRequiredToVote = 'min_smvk_required_to_vote'
+}
+
+/** select "emergency_governance_aggregate_bool_exp_max_arguments_columns" columns of table "emergency_governance" */
+export enum Emergency_Governance_Select_Column_Emergency_Governance_Aggregate_Bool_Exp_Max_Arguments_Columns {
+  /** column name */
+  MinSmvkRequiredToTrigger = 'min_smvk_required_to_trigger',
+  /** column name */
+  MinSmvkRequiredToVote = 'min_smvk_required_to_vote'
+}
+
+/** select "emergency_governance_aggregate_bool_exp_min_arguments_columns" columns of table "emergency_governance" */
+export enum Emergency_Governance_Select_Column_Emergency_Governance_Aggregate_Bool_Exp_Min_Arguments_Columns {
+  /** column name */
+  MinSmvkRequiredToTrigger = 'min_smvk_required_to_trigger',
+  /** column name */
+  MinSmvkRequiredToVote = 'min_smvk_required_to_vote'
+}
+
+/** select "emergency_governance_aggregate_bool_exp_stddev_samp_arguments_columns" columns of table "emergency_governance" */
+export enum Emergency_Governance_Select_Column_Emergency_Governance_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns {
+  /** column name */
+  MinSmvkRequiredToTrigger = 'min_smvk_required_to_trigger',
+  /** column name */
+  MinSmvkRequiredToVote = 'min_smvk_required_to_vote'
+}
+
+/** select "emergency_governance_aggregate_bool_exp_sum_arguments_columns" columns of table "emergency_governance" */
+export enum Emergency_Governance_Select_Column_Emergency_Governance_Aggregate_Bool_Exp_Sum_Arguments_Columns {
+  /** column name */
+  MinSmvkRequiredToTrigger = 'min_smvk_required_to_trigger',
+  /** column name */
+  MinSmvkRequiredToVote = 'min_smvk_required_to_vote'
+}
+
+/** select "emergency_governance_aggregate_bool_exp_var_samp_arguments_columns" columns of table "emergency_governance" */
+export enum Emergency_Governance_Select_Column_Emergency_Governance_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns {
+  /** column name */
+  MinSmvkRequiredToTrigger = 'min_smvk_required_to_trigger',
+  /** column name */
+  MinSmvkRequiredToVote = 'min_smvk_required_to_vote'
 }
 
 /** aggregate stddev on columns */
@@ -14543,6 +16582,91 @@ export type Emergency_Governance_Vote_Aggregate = {
   nodes: Array<Emergency_Governance_Vote>;
 };
 
+export type Emergency_Governance_Vote_Aggregate_Bool_Exp = {
+  avg?: InputMaybe<Emergency_Governance_Vote_Aggregate_Bool_Exp_Avg>;
+  corr?: InputMaybe<Emergency_Governance_Vote_Aggregate_Bool_Exp_Corr>;
+  count?: InputMaybe<Emergency_Governance_Vote_Aggregate_Bool_Exp_Count>;
+  covar_samp?: InputMaybe<Emergency_Governance_Vote_Aggregate_Bool_Exp_Covar_Samp>;
+  max?: InputMaybe<Emergency_Governance_Vote_Aggregate_Bool_Exp_Max>;
+  min?: InputMaybe<Emergency_Governance_Vote_Aggregate_Bool_Exp_Min>;
+  stddev_samp?: InputMaybe<Emergency_Governance_Vote_Aggregate_Bool_Exp_Stddev_Samp>;
+  sum?: InputMaybe<Emergency_Governance_Vote_Aggregate_Bool_Exp_Sum>;
+  var_samp?: InputMaybe<Emergency_Governance_Vote_Aggregate_Bool_Exp_Var_Samp>;
+};
+
+export type Emergency_Governance_Vote_Aggregate_Bool_Exp_Avg = {
+  arguments: Emergency_Governance_Vote_Select_Column_Emergency_Governance_Vote_Aggregate_Bool_Exp_Avg_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Emergency_Governance_Vote_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Emergency_Governance_Vote_Aggregate_Bool_Exp_Corr = {
+  arguments: Emergency_Governance_Vote_Aggregate_Bool_Exp_Corr_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Emergency_Governance_Vote_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Emergency_Governance_Vote_Aggregate_Bool_Exp_Corr_Arguments = {
+  X: Emergency_Governance_Vote_Select_Column_Emergency_Governance_Vote_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+  Y: Emergency_Governance_Vote_Select_Column_Emergency_Governance_Vote_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+};
+
+export type Emergency_Governance_Vote_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Emergency_Governance_Vote_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Emergency_Governance_Vote_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+export type Emergency_Governance_Vote_Aggregate_Bool_Exp_Covar_Samp = {
+  arguments: Emergency_Governance_Vote_Aggregate_Bool_Exp_Covar_Samp_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Emergency_Governance_Vote_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Emergency_Governance_Vote_Aggregate_Bool_Exp_Covar_Samp_Arguments = {
+  X: Emergency_Governance_Vote_Select_Column_Emergency_Governance_Vote_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+  Y: Emergency_Governance_Vote_Select_Column_Emergency_Governance_Vote_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+};
+
+export type Emergency_Governance_Vote_Aggregate_Bool_Exp_Max = {
+  arguments: Emergency_Governance_Vote_Select_Column_Emergency_Governance_Vote_Aggregate_Bool_Exp_Max_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Emergency_Governance_Vote_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Emergency_Governance_Vote_Aggregate_Bool_Exp_Min = {
+  arguments: Emergency_Governance_Vote_Select_Column_Emergency_Governance_Vote_Aggregate_Bool_Exp_Min_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Emergency_Governance_Vote_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Emergency_Governance_Vote_Aggregate_Bool_Exp_Stddev_Samp = {
+  arguments: Emergency_Governance_Vote_Select_Column_Emergency_Governance_Vote_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Emergency_Governance_Vote_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Emergency_Governance_Vote_Aggregate_Bool_Exp_Sum = {
+  arguments: Emergency_Governance_Vote_Select_Column_Emergency_Governance_Vote_Aggregate_Bool_Exp_Sum_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Emergency_Governance_Vote_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Emergency_Governance_Vote_Aggregate_Bool_Exp_Var_Samp = {
+  arguments: Emergency_Governance_Vote_Select_Column_Emergency_Governance_Vote_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Emergency_Governance_Vote_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
 /** aggregate fields of "emergency_governance_vote" */
 export type Emergency_Governance_Vote_Aggregate_Fields = {
   __typename?: 'emergency_governance_vote_aggregate_fields';
@@ -14671,6 +16795,54 @@ export enum Emergency_Governance_Vote_Select_Column {
   Timestamp = 'timestamp',
   /** column name */
   VoterId = 'voter_id'
+}
+
+/** select "emergency_governance_vote_aggregate_bool_exp_avg_arguments_columns" columns of table "emergency_governance_vote" */
+export enum Emergency_Governance_Vote_Select_Column_Emergency_Governance_Vote_Aggregate_Bool_Exp_Avg_Arguments_Columns {
+  /** column name */
+  SmvkAmount = 'smvk_amount'
+}
+
+/** select "emergency_governance_vote_aggregate_bool_exp_corr_arguments_columns" columns of table "emergency_governance_vote" */
+export enum Emergency_Governance_Vote_Select_Column_Emergency_Governance_Vote_Aggregate_Bool_Exp_Corr_Arguments_Columns {
+  /** column name */
+  SmvkAmount = 'smvk_amount'
+}
+
+/** select "emergency_governance_vote_aggregate_bool_exp_covar_samp_arguments_columns" columns of table "emergency_governance_vote" */
+export enum Emergency_Governance_Vote_Select_Column_Emergency_Governance_Vote_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns {
+  /** column name */
+  SmvkAmount = 'smvk_amount'
+}
+
+/** select "emergency_governance_vote_aggregate_bool_exp_max_arguments_columns" columns of table "emergency_governance_vote" */
+export enum Emergency_Governance_Vote_Select_Column_Emergency_Governance_Vote_Aggregate_Bool_Exp_Max_Arguments_Columns {
+  /** column name */
+  SmvkAmount = 'smvk_amount'
+}
+
+/** select "emergency_governance_vote_aggregate_bool_exp_min_arguments_columns" columns of table "emergency_governance_vote" */
+export enum Emergency_Governance_Vote_Select_Column_Emergency_Governance_Vote_Aggregate_Bool_Exp_Min_Arguments_Columns {
+  /** column name */
+  SmvkAmount = 'smvk_amount'
+}
+
+/** select "emergency_governance_vote_aggregate_bool_exp_stddev_samp_arguments_columns" columns of table "emergency_governance_vote" */
+export enum Emergency_Governance_Vote_Select_Column_Emergency_Governance_Vote_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns {
+  /** column name */
+  SmvkAmount = 'smvk_amount'
+}
+
+/** select "emergency_governance_vote_aggregate_bool_exp_sum_arguments_columns" columns of table "emergency_governance_vote" */
+export enum Emergency_Governance_Vote_Select_Column_Emergency_Governance_Vote_Aggregate_Bool_Exp_Sum_Arguments_Columns {
+  /** column name */
+  SmvkAmount = 'smvk_amount'
+}
+
+/** select "emergency_governance_vote_aggregate_bool_exp_var_samp_arguments_columns" columns of table "emergency_governance_vote" */
+export enum Emergency_Governance_Vote_Select_Column_Emergency_Governance_Vote_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns {
+  /** column name */
+  SmvkAmount = 'smvk_amount'
 }
 
 /** aggregate stddev on columns */
@@ -14811,6 +16983,17 @@ export type Emergency_Governance_Whitelist_Contract_Aggregate = {
   __typename?: 'emergency_governance_whitelist_contract_aggregate';
   aggregate?: Maybe<Emergency_Governance_Whitelist_Contract_Aggregate_Fields>;
   nodes: Array<Emergency_Governance_Whitelist_Contract>;
+};
+
+export type Emergency_Governance_Whitelist_Contract_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Emergency_Governance_Whitelist_Contract_Aggregate_Bool_Exp_Count>;
+};
+
+export type Emergency_Governance_Whitelist_Contract_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Emergency_Governance_Whitelist_Contract_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Emergency_Governance_Whitelist_Contract_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "emergency_governance_whitelist_contract" */
@@ -15177,6 +17360,91 @@ export type Farm_Account_Aggregate = {
   nodes: Array<Farm_Account>;
 };
 
+export type Farm_Account_Aggregate_Bool_Exp = {
+  avg?: InputMaybe<Farm_Account_Aggregate_Bool_Exp_Avg>;
+  corr?: InputMaybe<Farm_Account_Aggregate_Bool_Exp_Corr>;
+  count?: InputMaybe<Farm_Account_Aggregate_Bool_Exp_Count>;
+  covar_samp?: InputMaybe<Farm_Account_Aggregate_Bool_Exp_Covar_Samp>;
+  max?: InputMaybe<Farm_Account_Aggregate_Bool_Exp_Max>;
+  min?: InputMaybe<Farm_Account_Aggregate_Bool_Exp_Min>;
+  stddev_samp?: InputMaybe<Farm_Account_Aggregate_Bool_Exp_Stddev_Samp>;
+  sum?: InputMaybe<Farm_Account_Aggregate_Bool_Exp_Sum>;
+  var_samp?: InputMaybe<Farm_Account_Aggregate_Bool_Exp_Var_Samp>;
+};
+
+export type Farm_Account_Aggregate_Bool_Exp_Avg = {
+  arguments: Farm_Account_Select_Column_Farm_Account_Aggregate_Bool_Exp_Avg_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Farm_Account_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Farm_Account_Aggregate_Bool_Exp_Corr = {
+  arguments: Farm_Account_Aggregate_Bool_Exp_Corr_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Farm_Account_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Farm_Account_Aggregate_Bool_Exp_Corr_Arguments = {
+  X: Farm_Account_Select_Column_Farm_Account_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+  Y: Farm_Account_Select_Column_Farm_Account_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+};
+
+export type Farm_Account_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Farm_Account_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Farm_Account_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+export type Farm_Account_Aggregate_Bool_Exp_Covar_Samp = {
+  arguments: Farm_Account_Aggregate_Bool_Exp_Covar_Samp_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Farm_Account_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Farm_Account_Aggregate_Bool_Exp_Covar_Samp_Arguments = {
+  X: Farm_Account_Select_Column_Farm_Account_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+  Y: Farm_Account_Select_Column_Farm_Account_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+};
+
+export type Farm_Account_Aggregate_Bool_Exp_Max = {
+  arguments: Farm_Account_Select_Column_Farm_Account_Aggregate_Bool_Exp_Max_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Farm_Account_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Farm_Account_Aggregate_Bool_Exp_Min = {
+  arguments: Farm_Account_Select_Column_Farm_Account_Aggregate_Bool_Exp_Min_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Farm_Account_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Farm_Account_Aggregate_Bool_Exp_Stddev_Samp = {
+  arguments: Farm_Account_Select_Column_Farm_Account_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Farm_Account_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Farm_Account_Aggregate_Bool_Exp_Sum = {
+  arguments: Farm_Account_Select_Column_Farm_Account_Aggregate_Bool_Exp_Sum_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Farm_Account_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Farm_Account_Aggregate_Bool_Exp_Var_Samp = {
+  arguments: Farm_Account_Select_Column_Farm_Account_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Farm_Account_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
 /** aggregate fields of "farm_account" */
 export type Farm_Account_Aggregate_Fields = {
   __typename?: 'farm_account_aggregate_fields';
@@ -15325,6 +17593,86 @@ export enum Farm_Account_Select_Column {
   UnclaimedRewards = 'unclaimed_rewards',
   /** column name */
   UserId = 'user_id'
+}
+
+/** select "farm_account_aggregate_bool_exp_avg_arguments_columns" columns of table "farm_account" */
+export enum Farm_Account_Select_Column_Farm_Account_Aggregate_Bool_Exp_Avg_Arguments_Columns {
+  /** column name */
+  ClaimedRewards = 'claimed_rewards',
+  /** column name */
+  ParticipationRewardsPerShare = 'participation_rewards_per_share',
+  /** column name */
+  UnclaimedRewards = 'unclaimed_rewards'
+}
+
+/** select "farm_account_aggregate_bool_exp_corr_arguments_columns" columns of table "farm_account" */
+export enum Farm_Account_Select_Column_Farm_Account_Aggregate_Bool_Exp_Corr_Arguments_Columns {
+  /** column name */
+  ClaimedRewards = 'claimed_rewards',
+  /** column name */
+  ParticipationRewardsPerShare = 'participation_rewards_per_share',
+  /** column name */
+  UnclaimedRewards = 'unclaimed_rewards'
+}
+
+/** select "farm_account_aggregate_bool_exp_covar_samp_arguments_columns" columns of table "farm_account" */
+export enum Farm_Account_Select_Column_Farm_Account_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns {
+  /** column name */
+  ClaimedRewards = 'claimed_rewards',
+  /** column name */
+  ParticipationRewardsPerShare = 'participation_rewards_per_share',
+  /** column name */
+  UnclaimedRewards = 'unclaimed_rewards'
+}
+
+/** select "farm_account_aggregate_bool_exp_max_arguments_columns" columns of table "farm_account" */
+export enum Farm_Account_Select_Column_Farm_Account_Aggregate_Bool_Exp_Max_Arguments_Columns {
+  /** column name */
+  ClaimedRewards = 'claimed_rewards',
+  /** column name */
+  ParticipationRewardsPerShare = 'participation_rewards_per_share',
+  /** column name */
+  UnclaimedRewards = 'unclaimed_rewards'
+}
+
+/** select "farm_account_aggregate_bool_exp_min_arguments_columns" columns of table "farm_account" */
+export enum Farm_Account_Select_Column_Farm_Account_Aggregate_Bool_Exp_Min_Arguments_Columns {
+  /** column name */
+  ClaimedRewards = 'claimed_rewards',
+  /** column name */
+  ParticipationRewardsPerShare = 'participation_rewards_per_share',
+  /** column name */
+  UnclaimedRewards = 'unclaimed_rewards'
+}
+
+/** select "farm_account_aggregate_bool_exp_stddev_samp_arguments_columns" columns of table "farm_account" */
+export enum Farm_Account_Select_Column_Farm_Account_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns {
+  /** column name */
+  ClaimedRewards = 'claimed_rewards',
+  /** column name */
+  ParticipationRewardsPerShare = 'participation_rewards_per_share',
+  /** column name */
+  UnclaimedRewards = 'unclaimed_rewards'
+}
+
+/** select "farm_account_aggregate_bool_exp_sum_arguments_columns" columns of table "farm_account" */
+export enum Farm_Account_Select_Column_Farm_Account_Aggregate_Bool_Exp_Sum_Arguments_Columns {
+  /** column name */
+  ClaimedRewards = 'claimed_rewards',
+  /** column name */
+  ParticipationRewardsPerShare = 'participation_rewards_per_share',
+  /** column name */
+  UnclaimedRewards = 'unclaimed_rewards'
+}
+
+/** select "farm_account_aggregate_bool_exp_var_samp_arguments_columns" columns of table "farm_account" */
+export enum Farm_Account_Select_Column_Farm_Account_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns {
+  /** column name */
+  ClaimedRewards = 'claimed_rewards',
+  /** column name */
+  ParticipationRewardsPerShare = 'participation_rewards_per_share',
+  /** column name */
+  UnclaimedRewards = 'unclaimed_rewards'
 }
 
 /** aggregate stddev on columns */
@@ -15486,6 +17834,107 @@ export type Farm_Aggregate = {
   nodes: Array<Farm>;
 };
 
+export type Farm_Aggregate_Bool_Exp = {
+  avg?: InputMaybe<Farm_Aggregate_Bool_Exp_Avg>;
+  bool_and?: InputMaybe<Farm_Aggregate_Bool_Exp_Bool_And>;
+  bool_or?: InputMaybe<Farm_Aggregate_Bool_Exp_Bool_Or>;
+  corr?: InputMaybe<Farm_Aggregate_Bool_Exp_Corr>;
+  count?: InputMaybe<Farm_Aggregate_Bool_Exp_Count>;
+  covar_samp?: InputMaybe<Farm_Aggregate_Bool_Exp_Covar_Samp>;
+  max?: InputMaybe<Farm_Aggregate_Bool_Exp_Max>;
+  min?: InputMaybe<Farm_Aggregate_Bool_Exp_Min>;
+  stddev_samp?: InputMaybe<Farm_Aggregate_Bool_Exp_Stddev_Samp>;
+  sum?: InputMaybe<Farm_Aggregate_Bool_Exp_Sum>;
+  var_samp?: InputMaybe<Farm_Aggregate_Bool_Exp_Var_Samp>;
+};
+
+export type Farm_Aggregate_Bool_Exp_Avg = {
+  arguments: Farm_Select_Column_Farm_Aggregate_Bool_Exp_Avg_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Farm_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Farm_Aggregate_Bool_Exp_Bool_And = {
+  arguments: Farm_Select_Column_Farm_Aggregate_Bool_Exp_Bool_And_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Farm_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Farm_Aggregate_Bool_Exp_Bool_Or = {
+  arguments: Farm_Select_Column_Farm_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Farm_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Farm_Aggregate_Bool_Exp_Corr = {
+  arguments: Farm_Aggregate_Bool_Exp_Corr_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Farm_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Farm_Aggregate_Bool_Exp_Corr_Arguments = {
+  X: Farm_Select_Column_Farm_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+  Y: Farm_Select_Column_Farm_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+};
+
+export type Farm_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Farm_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Farm_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+export type Farm_Aggregate_Bool_Exp_Covar_Samp = {
+  arguments: Farm_Aggregate_Bool_Exp_Covar_Samp_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Farm_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Farm_Aggregate_Bool_Exp_Covar_Samp_Arguments = {
+  X: Farm_Select_Column_Farm_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+  Y: Farm_Select_Column_Farm_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+};
+
+export type Farm_Aggregate_Bool_Exp_Max = {
+  arguments: Farm_Select_Column_Farm_Aggregate_Bool_Exp_Max_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Farm_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Farm_Aggregate_Bool_Exp_Min = {
+  arguments: Farm_Select_Column_Farm_Aggregate_Bool_Exp_Min_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Farm_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Farm_Aggregate_Bool_Exp_Stddev_Samp = {
+  arguments: Farm_Select_Column_Farm_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Farm_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Farm_Aggregate_Bool_Exp_Sum = {
+  arguments: Farm_Select_Column_Farm_Aggregate_Bool_Exp_Sum_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Farm_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Farm_Aggregate_Bool_Exp_Var_Samp = {
+  arguments: Farm_Select_Column_Farm_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Farm_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
 /** aggregate fields of "farm" */
 export type Farm_Aggregate_Fields = {
   __typename?: 'farm_aggregate_fields';
@@ -15568,14 +18017,17 @@ export type Farm_Bool_Exp = {
   factory?: InputMaybe<Farm_Factory_Bool_Exp>;
   factory_id?: InputMaybe<String_Comparison_Exp>;
   farm_accounts?: InputMaybe<Farm_Account_Bool_Exp>;
+  farm_accounts_aggregate?: InputMaybe<Farm_Account_Aggregate_Bool_Exp>;
   force_rewards_from_transfer?: InputMaybe<Boolean_Comparison_Exp>;
   general_contracts?: InputMaybe<Farm_General_Contract_Bool_Exp>;
+  general_contracts_aggregate?: InputMaybe<Farm_General_Contract_Aggregate_Bool_Exp>;
   governance?: InputMaybe<Governance_Bool_Exp>;
   governance_id?: InputMaybe<String_Comparison_Exp>;
   infinite?: InputMaybe<Boolean_Comparison_Exp>;
   init?: InputMaybe<Boolean_Comparison_Exp>;
   init_block?: InputMaybe<Bigint_Comparison_Exp>;
   lambdas?: InputMaybe<Farm_Lambda_Bool_Exp>;
+  lambdas_aggregate?: InputMaybe<Farm_Lambda_Aggregate_Bool_Exp>;
   last_block_update?: InputMaybe<Bigint_Comparison_Exp>;
   last_updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   lp_token_address?: InputMaybe<String_Comparison_Exp>;
@@ -15590,6 +18042,7 @@ export type Farm_Bool_Exp = {
   total_rewards?: InputMaybe<Float8_Comparison_Exp>;
   unpaid_rewards?: InputMaybe<Float8_Comparison_Exp>;
   whitelist_contracts?: InputMaybe<Farm_Whitelist_Contract_Bool_Exp>;
+  whitelist_contracts_aggregate?: InputMaybe<Farm_Whitelist_Contract_Aggregate_Bool_Exp>;
   withdraw_paused?: InputMaybe<Boolean_Comparison_Exp>;
 };
 
@@ -15735,6 +18188,33 @@ export type Farm_Factory_Aggregate = {
   nodes: Array<Farm_Factory>;
 };
 
+export type Farm_Factory_Aggregate_Bool_Exp = {
+  bool_and?: InputMaybe<Farm_Factory_Aggregate_Bool_Exp_Bool_And>;
+  bool_or?: InputMaybe<Farm_Factory_Aggregate_Bool_Exp_Bool_Or>;
+  count?: InputMaybe<Farm_Factory_Aggregate_Bool_Exp_Count>;
+};
+
+export type Farm_Factory_Aggregate_Bool_Exp_Bool_And = {
+  arguments: Farm_Factory_Select_Column_Farm_Factory_Aggregate_Bool_Exp_Bool_And_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Farm_Factory_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Farm_Factory_Aggregate_Bool_Exp_Bool_Or = {
+  arguments: Farm_Factory_Select_Column_Farm_Factory_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Farm_Factory_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Farm_Factory_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Farm_Factory_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Farm_Factory_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
 /** aggregate fields of "farm_factory" */
 export type Farm_Factory_Aggregate_Fields = {
   __typename?: 'farm_factory_aggregate_fields';
@@ -15794,15 +18274,20 @@ export type Farm_Factory_Bool_Exp = {
   create_farm_paused?: InputMaybe<Boolean_Comparison_Exp>;
   farm_name_max_length?: InputMaybe<Smallint_Comparison_Exp>;
   farms?: InputMaybe<Farm_Bool_Exp>;
+  farms_aggregate?: InputMaybe<Farm_Aggregate_Bool_Exp>;
   general_contracts?: InputMaybe<Farm_Factory_General_Contract_Bool_Exp>;
+  general_contracts_aggregate?: InputMaybe<Farm_Factory_General_Contract_Aggregate_Bool_Exp>;
   governance?: InputMaybe<Governance_Bool_Exp>;
   governance_id?: InputMaybe<String_Comparison_Exp>;
   lambdas?: InputMaybe<Farm_Factory_Lambda_Bool_Exp>;
+  lambdas_aggregate?: InputMaybe<Farm_Factory_Lambda_Aggregate_Bool_Exp>;
   last_updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   product_lambdas?: InputMaybe<Farm_Factory_Product_Lambda_Bool_Exp>;
+  product_lambdas_aggregate?: InputMaybe<Farm_Factory_Product_Lambda_Aggregate_Bool_Exp>;
   track_farm_paused?: InputMaybe<Boolean_Comparison_Exp>;
   untrack_farm_paused?: InputMaybe<Boolean_Comparison_Exp>;
   whitelist_contracts?: InputMaybe<Farm_Factory_Whitelist_Contract_Bool_Exp>;
+  whitelist_contracts_aggregate?: InputMaybe<Farm_Factory_Whitelist_Contract_Aggregate_Bool_Exp>;
 };
 
 /** columns and relationships of "farm_factory_general_contract" */
@@ -15821,6 +18306,17 @@ export type Farm_Factory_General_Contract_Aggregate = {
   __typename?: 'farm_factory_general_contract_aggregate';
   aggregate?: Maybe<Farm_Factory_General_Contract_Aggregate_Fields>;
   nodes: Array<Farm_Factory_General_Contract>;
+};
+
+export type Farm_Factory_General_Contract_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Farm_Factory_General_Contract_Aggregate_Bool_Exp_Count>;
+};
+
+export type Farm_Factory_General_Contract_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Farm_Factory_General_Contract_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Farm_Factory_General_Contract_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "farm_factory_general_contract" */
@@ -16049,6 +18545,17 @@ export type Farm_Factory_Lambda_Aggregate = {
   __typename?: 'farm_factory_lambda_aggregate';
   aggregate?: Maybe<Farm_Factory_Lambda_Aggregate_Fields>;
   nodes: Array<Farm_Factory_Lambda>;
+};
+
+export type Farm_Factory_Lambda_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Farm_Factory_Lambda_Aggregate_Bool_Exp_Count>;
+};
+
+export type Farm_Factory_Lambda_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Farm_Factory_Lambda_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Farm_Factory_Lambda_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "farm_factory_lambda" */
@@ -16344,6 +18851,17 @@ export type Farm_Factory_Product_Lambda_Aggregate = {
   nodes: Array<Farm_Factory_Product_Lambda>;
 };
 
+export type Farm_Factory_Product_Lambda_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Farm_Factory_Product_Lambda_Aggregate_Bool_Exp_Count>;
+};
+
+export type Farm_Factory_Product_Lambda_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Farm_Factory_Product_Lambda_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Farm_Factory_Product_Lambda_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
 /** aggregate fields of "farm_factory_product_lambda" */
 export type Farm_Factory_Product_Lambda_Aggregate_Fields = {
   __typename?: 'farm_factory_product_lambda_aggregate_fields';
@@ -16582,6 +19100,26 @@ export enum Farm_Factory_Select_Column {
   UntrackFarmPaused = 'untrack_farm_paused'
 }
 
+/** select "farm_factory_aggregate_bool_exp_bool_and_arguments_columns" columns of table "farm_factory" */
+export enum Farm_Factory_Select_Column_Farm_Factory_Aggregate_Bool_Exp_Bool_And_Arguments_Columns {
+  /** column name */
+  CreateFarmPaused = 'create_farm_paused',
+  /** column name */
+  TrackFarmPaused = 'track_farm_paused',
+  /** column name */
+  UntrackFarmPaused = 'untrack_farm_paused'
+}
+
+/** select "farm_factory_aggregate_bool_exp_bool_or_arguments_columns" columns of table "farm_factory" */
+export enum Farm_Factory_Select_Column_Farm_Factory_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns {
+  /** column name */
+  CreateFarmPaused = 'create_farm_paused',
+  /** column name */
+  TrackFarmPaused = 'track_farm_paused',
+  /** column name */
+  UntrackFarmPaused = 'untrack_farm_paused'
+}
+
 /** aggregate stddev on columns */
 export type Farm_Factory_Stddev_Fields = {
   __typename?: 'farm_factory_stddev_fields';
@@ -16695,6 +19233,17 @@ export type Farm_Factory_Whitelist_Contract_Aggregate = {
   __typename?: 'farm_factory_whitelist_contract_aggregate';
   aggregate?: Maybe<Farm_Factory_Whitelist_Contract_Aggregate_Fields>;
   nodes: Array<Farm_Factory_Whitelist_Contract>;
+};
+
+export type Farm_Factory_Whitelist_Contract_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Farm_Factory_Whitelist_Contract_Aggregate_Bool_Exp_Count>;
+};
+
+export type Farm_Factory_Whitelist_Contract_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Farm_Factory_Whitelist_Contract_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Farm_Factory_Whitelist_Contract_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "farm_factory_whitelist_contract" */
@@ -16924,6 +19473,17 @@ export type Farm_General_Contract_Aggregate = {
   nodes: Array<Farm_General_Contract>;
 };
 
+export type Farm_General_Contract_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Farm_General_Contract_Aggregate_Bool_Exp_Count>;
+};
+
+export type Farm_General_Contract_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Farm_General_Contract_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Farm_General_Contract_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
 /** aggregate fields of "farm_general_contract" */
 export type Farm_General_Contract_Aggregate_Fields = {
   __typename?: 'farm_general_contract_aggregate_fields';
@@ -17150,6 +19710,17 @@ export type Farm_Lambda_Aggregate = {
   __typename?: 'farm_lambda_aggregate';
   aggregate?: Maybe<Farm_Lambda_Aggregate_Fields>;
   nodes: Array<Farm_Lambda>;
+};
+
+export type Farm_Lambda_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Farm_Lambda_Aggregate_Bool_Exp_Count>;
+};
+
+export type Farm_Lambda_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Farm_Lambda_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Farm_Lambda_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "farm_lambda" */
@@ -17563,6 +20134,154 @@ export enum Farm_Select_Column {
   WithdrawPaused = 'withdraw_paused'
 }
 
+/** select "farm_aggregate_bool_exp_avg_arguments_columns" columns of table "farm" */
+export enum Farm_Select_Column_Farm_Aggregate_Bool_Exp_Avg_Arguments_Columns {
+  /** column name */
+  AccumulatedRewardsPerShare = 'accumulated_rewards_per_share',
+  /** column name */
+  CurrentRewardPerBlock = 'current_reward_per_block',
+  /** column name */
+  PaidRewards = 'paid_rewards',
+  /** column name */
+  TotalRewards = 'total_rewards',
+  /** column name */
+  UnpaidRewards = 'unpaid_rewards'
+}
+
+/** select "farm_aggregate_bool_exp_bool_and_arguments_columns" columns of table "farm" */
+export enum Farm_Select_Column_Farm_Aggregate_Bool_Exp_Bool_And_Arguments_Columns {
+  /** column name */
+  ClaimPaused = 'claim_paused',
+  /** column name */
+  DepositPaused = 'deposit_paused',
+  /** column name */
+  ForceRewardsFromTransfer = 'force_rewards_from_transfer',
+  /** column name */
+  Infinite = 'infinite',
+  /** column name */
+  Init = 'init',
+  /** column name */
+  Open = 'open',
+  /** column name */
+  WithdrawPaused = 'withdraw_paused'
+}
+
+/** select "farm_aggregate_bool_exp_bool_or_arguments_columns" columns of table "farm" */
+export enum Farm_Select_Column_Farm_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns {
+  /** column name */
+  ClaimPaused = 'claim_paused',
+  /** column name */
+  DepositPaused = 'deposit_paused',
+  /** column name */
+  ForceRewardsFromTransfer = 'force_rewards_from_transfer',
+  /** column name */
+  Infinite = 'infinite',
+  /** column name */
+  Init = 'init',
+  /** column name */
+  Open = 'open',
+  /** column name */
+  WithdrawPaused = 'withdraw_paused'
+}
+
+/** select "farm_aggregate_bool_exp_corr_arguments_columns" columns of table "farm" */
+export enum Farm_Select_Column_Farm_Aggregate_Bool_Exp_Corr_Arguments_Columns {
+  /** column name */
+  AccumulatedRewardsPerShare = 'accumulated_rewards_per_share',
+  /** column name */
+  CurrentRewardPerBlock = 'current_reward_per_block',
+  /** column name */
+  PaidRewards = 'paid_rewards',
+  /** column name */
+  TotalRewards = 'total_rewards',
+  /** column name */
+  UnpaidRewards = 'unpaid_rewards'
+}
+
+/** select "farm_aggregate_bool_exp_covar_samp_arguments_columns" columns of table "farm" */
+export enum Farm_Select_Column_Farm_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns {
+  /** column name */
+  AccumulatedRewardsPerShare = 'accumulated_rewards_per_share',
+  /** column name */
+  CurrentRewardPerBlock = 'current_reward_per_block',
+  /** column name */
+  PaidRewards = 'paid_rewards',
+  /** column name */
+  TotalRewards = 'total_rewards',
+  /** column name */
+  UnpaidRewards = 'unpaid_rewards'
+}
+
+/** select "farm_aggregate_bool_exp_max_arguments_columns" columns of table "farm" */
+export enum Farm_Select_Column_Farm_Aggregate_Bool_Exp_Max_Arguments_Columns {
+  /** column name */
+  AccumulatedRewardsPerShare = 'accumulated_rewards_per_share',
+  /** column name */
+  CurrentRewardPerBlock = 'current_reward_per_block',
+  /** column name */
+  PaidRewards = 'paid_rewards',
+  /** column name */
+  TotalRewards = 'total_rewards',
+  /** column name */
+  UnpaidRewards = 'unpaid_rewards'
+}
+
+/** select "farm_aggregate_bool_exp_min_arguments_columns" columns of table "farm" */
+export enum Farm_Select_Column_Farm_Aggregate_Bool_Exp_Min_Arguments_Columns {
+  /** column name */
+  AccumulatedRewardsPerShare = 'accumulated_rewards_per_share',
+  /** column name */
+  CurrentRewardPerBlock = 'current_reward_per_block',
+  /** column name */
+  PaidRewards = 'paid_rewards',
+  /** column name */
+  TotalRewards = 'total_rewards',
+  /** column name */
+  UnpaidRewards = 'unpaid_rewards'
+}
+
+/** select "farm_aggregate_bool_exp_stddev_samp_arguments_columns" columns of table "farm" */
+export enum Farm_Select_Column_Farm_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns {
+  /** column name */
+  AccumulatedRewardsPerShare = 'accumulated_rewards_per_share',
+  /** column name */
+  CurrentRewardPerBlock = 'current_reward_per_block',
+  /** column name */
+  PaidRewards = 'paid_rewards',
+  /** column name */
+  TotalRewards = 'total_rewards',
+  /** column name */
+  UnpaidRewards = 'unpaid_rewards'
+}
+
+/** select "farm_aggregate_bool_exp_sum_arguments_columns" columns of table "farm" */
+export enum Farm_Select_Column_Farm_Aggregate_Bool_Exp_Sum_Arguments_Columns {
+  /** column name */
+  AccumulatedRewardsPerShare = 'accumulated_rewards_per_share',
+  /** column name */
+  CurrentRewardPerBlock = 'current_reward_per_block',
+  /** column name */
+  PaidRewards = 'paid_rewards',
+  /** column name */
+  TotalRewards = 'total_rewards',
+  /** column name */
+  UnpaidRewards = 'unpaid_rewards'
+}
+
+/** select "farm_aggregate_bool_exp_var_samp_arguments_columns" columns of table "farm" */
+export enum Farm_Select_Column_Farm_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns {
+  /** column name */
+  AccumulatedRewardsPerShare = 'accumulated_rewards_per_share',
+  /** column name */
+  CurrentRewardPerBlock = 'current_reward_per_block',
+  /** column name */
+  PaidRewards = 'paid_rewards',
+  /** column name */
+  TotalRewards = 'total_rewards',
+  /** column name */
+  UnpaidRewards = 'unpaid_rewards'
+}
+
 /** aggregate stddev on columns */
 export type Farm_Stddev_Fields = {
   __typename?: 'farm_stddev_fields';
@@ -17821,6 +20540,17 @@ export type Farm_Whitelist_Contract_Aggregate = {
   __typename?: 'farm_whitelist_contract_aggregate';
   aggregate?: Maybe<Farm_Whitelist_Contract_Aggregate_Fields>;
   nodes: Array<Farm_Whitelist_Contract>;
+};
+
+export type Farm_Whitelist_Contract_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Farm_Whitelist_Contract_Aggregate_Bool_Exp_Count>;
+};
+
+export type Farm_Whitelist_Contract_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Farm_Whitelist_Contract_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Farm_Whitelist_Contract_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "farm_whitelist_contract" */
@@ -18805,12 +21535,16 @@ export type Governance_Bool_Exp = {
   address?: InputMaybe<String_Comparison_Exp>;
   admin?: InputMaybe<String_Comparison_Exp>;
   aggregator_factories?: InputMaybe<Aggregator_Factory_Bool_Exp>;
+  aggregator_factories_aggregate?: InputMaybe<Aggregator_Factory_Aggregate_Bool_Exp>;
   aggregators?: InputMaybe<Aggregator_Bool_Exp>;
+  aggregators_aggregate?: InputMaybe<Aggregator_Aggregate_Bool_Exp>;
   blocks_per_proposal_round?: InputMaybe<Bigint_Comparison_Exp>;
   blocks_per_timelock_round?: InputMaybe<Bigint_Comparison_Exp>;
   blocks_per_voting_round?: InputMaybe<Bigint_Comparison_Exp>;
   break_glasses?: InputMaybe<Break_Glass_Bool_Exp>;
+  break_glasses_aggregate?: InputMaybe<Break_Glass_Aggregate_Bool_Exp>;
   councils?: InputMaybe<Council_Bool_Exp>;
+  councils_aggregate?: InputMaybe<Council_Aggregate_Bool_Exp>;
   current_blocks_per_proposal_round?: InputMaybe<Bigint_Comparison_Exp>;
   current_blocks_per_timelock_round?: InputMaybe<Bigint_Comparison_Exp>;
   current_blocks_per_voting_round?: InputMaybe<Bigint_Comparison_Exp>;
@@ -18823,23 +21557,36 @@ export type Governance_Bool_Exp = {
   cycle_id?: InputMaybe<Bigint_Comparison_Exp>;
   cycle_voters_reward?: InputMaybe<Float8_Comparison_Exp>;
   delegations?: InputMaybe<Delegation_Bool_Exp>;
+  delegations_aggregate?: InputMaybe<Delegation_Aggregate_Bool_Exp>;
   doormans?: InputMaybe<Doorman_Bool_Exp>;
+  doormans_aggregate?: InputMaybe<Doorman_Aggregate_Bool_Exp>;
   emergency_governances?: InputMaybe<Emergency_Governance_Bool_Exp>;
+  emergency_governances_aggregate?: InputMaybe<Emergency_Governance_Aggregate_Bool_Exp>;
   farm_factories?: InputMaybe<Farm_Factory_Bool_Exp>;
+  farm_factories_aggregate?: InputMaybe<Farm_Factory_Aggregate_Bool_Exp>;
   farms?: InputMaybe<Farm_Bool_Exp>;
+  farms_aggregate?: InputMaybe<Farm_Aggregate_Bool_Exp>;
   general_contracts?: InputMaybe<Governance_General_Contract_Bool_Exp>;
+  general_contracts_aggregate?: InputMaybe<Governance_General_Contract_Aggregate_Bool_Exp>;
   governance_financials?: InputMaybe<Governance_Financial_Bool_Exp>;
+  governance_financials_aggregate?: InputMaybe<Governance_Financial_Aggregate_Bool_Exp>;
   governance_proxies?: InputMaybe<Governance_Proxy_Bool_Exp>;
+  governance_proxies_aggregate?: InputMaybe<Governance_Proxy_Aggregate_Bool_Exp>;
   governance_proxy_address?: InputMaybe<String_Comparison_Exp>;
   governance_satellites?: InputMaybe<Governance_Satellite_Bool_Exp>;
+  governance_satellites_aggregate?: InputMaybe<Governance_Satellite_Aggregate_Bool_Exp>;
   lambdas?: InputMaybe<Governance_Lambda_Bool_Exp>;
+  lambdas_aggregate?: InputMaybe<Governance_Lambda_Aggregate_Bool_Exp>;
   last_updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   lending_controllers?: InputMaybe<Lending_Controller_Bool_Exp>;
+  lending_controllers_aggregate?: InputMaybe<Lending_Controller_Aggregate_Bool_Exp>;
   m_tokens?: InputMaybe<M_Token_Bool_Exp>;
+  m_tokens_aggregate?: InputMaybe<M_Token_Aggregate_Bool_Exp>;
   max_proposal_per_satellite?: InputMaybe<Smallint_Comparison_Exp>;
   min_quorum_percentage?: InputMaybe<Smallint_Comparison_Exp>;
   min_yay_vote_percentage?: InputMaybe<Smallint_Comparison_Exp>;
   mvk_tokens?: InputMaybe<Mvk_Token_Bool_Exp>;
+  mvk_tokens_aggregate?: InputMaybe<Mvk_Token_Aggregate_Bool_Exp>;
   next_proposal_id?: InputMaybe<Bigint_Comparison_Exp>;
   proposal_description_max_length?: InputMaybe<Bigint_Comparison_Exp>;
   proposal_invoice_max_length?: InputMaybe<Bigint_Comparison_Exp>;
@@ -18850,17 +21597,27 @@ export type Governance_Bool_Exp = {
   proposal_submission_fee_mutez?: InputMaybe<Bigint_Comparison_Exp>;
   proposal_title_max_length?: InputMaybe<Bigint_Comparison_Exp>;
   proposals?: InputMaybe<Governance_Proposal_Bool_Exp>;
+  proposals_aggregate?: InputMaybe<Governance_Proposal_Aggregate_Bool_Exp>;
   satellite_snapshots?: InputMaybe<Governance_Satellite_Snapshot_Bool_Exp>;
+  satellite_snapshots_aggregate?: InputMaybe<Governance_Satellite_Snapshot_Aggregate_Bool_Exp>;
   success_reward?: InputMaybe<Float8_Comparison_Exp>;
   timelock_proposal_id?: InputMaybe<Bigint_Comparison_Exp>;
   token_sales?: InputMaybe<Token_Sale_Bool_Exp>;
+  token_sales_aggregate?: InputMaybe<Token_Sale_Aggregate_Bool_Exp>;
   treasuries?: InputMaybe<Treasury_Bool_Exp>;
+  treasuries_aggregate?: InputMaybe<Treasury_Aggregate_Bool_Exp>;
   treasury_factories?: InputMaybe<Treasury_Factory_Bool_Exp>;
+  treasury_factories_aggregate?: InputMaybe<Treasury_Factory_Aggregate_Bool_Exp>;
   vault_factories?: InputMaybe<Vault_Factory_Bool_Exp>;
+  vault_factories_aggregate?: InputMaybe<Vault_Factory_Aggregate_Bool_Exp>;
   vaults?: InputMaybe<Vault_Bool_Exp>;
+  vaults_aggregate?: InputMaybe<Vault_Aggregate_Bool_Exp>;
   vestings?: InputMaybe<Vesting_Bool_Exp>;
+  vestings_aggregate?: InputMaybe<Vesting_Aggregate_Bool_Exp>;
   whitelist_contracts?: InputMaybe<Governance_Whitelist_Contract_Bool_Exp>;
+  whitelist_contracts_aggregate?: InputMaybe<Governance_Whitelist_Contract_Aggregate_Bool_Exp>;
   whitelist_developers?: InputMaybe<Whitelist_Developer_Bool_Exp>;
+  whitelist_developers_aggregate?: InputMaybe<Whitelist_Developer_Aggregate_Bool_Exp>;
 };
 
 /** columns and relationships of "governance_financial" */
@@ -19004,6 +21761,17 @@ export type Governance_Financial_Aggregate = {
   nodes: Array<Governance_Financial>;
 };
 
+export type Governance_Financial_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Governance_Financial_Aggregate_Bool_Exp_Count>;
+};
+
+export type Governance_Financial_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Governance_Financial_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Financial_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
 /** aggregate fields of "governance_financial" */
 export type Governance_Financial_Aggregate_Fields = {
   __typename?: 'governance_financial_aggregate_fields';
@@ -19068,13 +21836,18 @@ export type Governance_Financial_Bool_Exp = {
   fin_req_counter?: InputMaybe<Bigint_Comparison_Exp>;
   fin_req_duration_in_days?: InputMaybe<Smallint_Comparison_Exp>;
   general_contracts?: InputMaybe<Governance_Financial_General_Contract_Bool_Exp>;
+  general_contracts_aggregate?: InputMaybe<Governance_Financial_General_Contract_Aggregate_Bool_Exp>;
   governance?: InputMaybe<Governance_Bool_Exp>;
   governance_id?: InputMaybe<String_Comparison_Exp>;
   lambdas?: InputMaybe<Governance_Financial_Lambda_Bool_Exp>;
+  lambdas_aggregate?: InputMaybe<Governance_Financial_Lambda_Aggregate_Bool_Exp>;
   last_updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   requests?: InputMaybe<Governance_Financial_Request_Bool_Exp>;
+  requests_aggregate?: InputMaybe<Governance_Financial_Request_Aggregate_Bool_Exp>;
   whitelist_contracts?: InputMaybe<Governance_Financial_Whitelist_Contract_Bool_Exp>;
+  whitelist_contracts_aggregate?: InputMaybe<Governance_Financial_Whitelist_Contract_Aggregate_Bool_Exp>;
   whitelist_token_contracts?: InputMaybe<Governance_Financial_Whitelist_Token_Contract_Bool_Exp>;
+  whitelist_token_contracts_aggregate?: InputMaybe<Governance_Financial_Whitelist_Token_Contract_Aggregate_Bool_Exp>;
 };
 
 /** columns and relationships of "governance_financial_general_contract" */
@@ -19093,6 +21866,17 @@ export type Governance_Financial_General_Contract_Aggregate = {
   __typename?: 'governance_financial_general_contract_aggregate';
   aggregate?: Maybe<Governance_Financial_General_Contract_Aggregate_Fields>;
   nodes: Array<Governance_Financial_General_Contract>;
+};
+
+export type Governance_Financial_General_Contract_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Governance_Financial_General_Contract_Aggregate_Bool_Exp_Count>;
+};
+
+export type Governance_Financial_General_Contract_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Governance_Financial_General_Contract_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Financial_General_Contract_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "governance_financial_general_contract" */
@@ -19321,6 +22105,17 @@ export type Governance_Financial_Lambda_Aggregate = {
   __typename?: 'governance_financial_lambda_aggregate';
   aggregate?: Maybe<Governance_Financial_Lambda_Aggregate_Fields>;
   nodes: Array<Governance_Financial_Lambda>;
+};
+
+export type Governance_Financial_Lambda_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Governance_Financial_Lambda_Aggregate_Bool_Exp_Count>;
+};
+
+export type Governance_Financial_Lambda_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Governance_Financial_Lambda_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Financial_Lambda_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "governance_financial_lambda" */
@@ -19666,6 +22461,107 @@ export type Governance_Financial_Request_Aggregate = {
   nodes: Array<Governance_Financial_Request>;
 };
 
+export type Governance_Financial_Request_Aggregate_Bool_Exp = {
+  avg?: InputMaybe<Governance_Financial_Request_Aggregate_Bool_Exp_Avg>;
+  bool_and?: InputMaybe<Governance_Financial_Request_Aggregate_Bool_Exp_Bool_And>;
+  bool_or?: InputMaybe<Governance_Financial_Request_Aggregate_Bool_Exp_Bool_Or>;
+  corr?: InputMaybe<Governance_Financial_Request_Aggregate_Bool_Exp_Corr>;
+  count?: InputMaybe<Governance_Financial_Request_Aggregate_Bool_Exp_Count>;
+  covar_samp?: InputMaybe<Governance_Financial_Request_Aggregate_Bool_Exp_Covar_Samp>;
+  max?: InputMaybe<Governance_Financial_Request_Aggregate_Bool_Exp_Max>;
+  min?: InputMaybe<Governance_Financial_Request_Aggregate_Bool_Exp_Min>;
+  stddev_samp?: InputMaybe<Governance_Financial_Request_Aggregate_Bool_Exp_Stddev_Samp>;
+  sum?: InputMaybe<Governance_Financial_Request_Aggregate_Bool_Exp_Sum>;
+  var_samp?: InputMaybe<Governance_Financial_Request_Aggregate_Bool_Exp_Var_Samp>;
+};
+
+export type Governance_Financial_Request_Aggregate_Bool_Exp_Avg = {
+  arguments: Governance_Financial_Request_Select_Column_Governance_Financial_Request_Aggregate_Bool_Exp_Avg_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Financial_Request_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Governance_Financial_Request_Aggregate_Bool_Exp_Bool_And = {
+  arguments: Governance_Financial_Request_Select_Column_Governance_Financial_Request_Aggregate_Bool_Exp_Bool_And_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Financial_Request_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Governance_Financial_Request_Aggregate_Bool_Exp_Bool_Or = {
+  arguments: Governance_Financial_Request_Select_Column_Governance_Financial_Request_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Financial_Request_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Governance_Financial_Request_Aggregate_Bool_Exp_Corr = {
+  arguments: Governance_Financial_Request_Aggregate_Bool_Exp_Corr_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Financial_Request_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Governance_Financial_Request_Aggregate_Bool_Exp_Corr_Arguments = {
+  X: Governance_Financial_Request_Select_Column_Governance_Financial_Request_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+  Y: Governance_Financial_Request_Select_Column_Governance_Financial_Request_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+};
+
+export type Governance_Financial_Request_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Governance_Financial_Request_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Financial_Request_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+export type Governance_Financial_Request_Aggregate_Bool_Exp_Covar_Samp = {
+  arguments: Governance_Financial_Request_Aggregate_Bool_Exp_Covar_Samp_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Financial_Request_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Governance_Financial_Request_Aggregate_Bool_Exp_Covar_Samp_Arguments = {
+  X: Governance_Financial_Request_Select_Column_Governance_Financial_Request_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+  Y: Governance_Financial_Request_Select_Column_Governance_Financial_Request_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+};
+
+export type Governance_Financial_Request_Aggregate_Bool_Exp_Max = {
+  arguments: Governance_Financial_Request_Select_Column_Governance_Financial_Request_Aggregate_Bool_Exp_Max_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Financial_Request_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Governance_Financial_Request_Aggregate_Bool_Exp_Min = {
+  arguments: Governance_Financial_Request_Select_Column_Governance_Financial_Request_Aggregate_Bool_Exp_Min_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Financial_Request_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Governance_Financial_Request_Aggregate_Bool_Exp_Stddev_Samp = {
+  arguments: Governance_Financial_Request_Select_Column_Governance_Financial_Request_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Financial_Request_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Governance_Financial_Request_Aggregate_Bool_Exp_Sum = {
+  arguments: Governance_Financial_Request_Select_Column_Governance_Financial_Request_Aggregate_Bool_Exp_Sum_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Financial_Request_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Governance_Financial_Request_Aggregate_Bool_Exp_Var_Samp = {
+  arguments: Governance_Financial_Request_Select_Column_Governance_Financial_Request_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Financial_Request_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
 /** aggregate fields of "governance_financial_request" */
 export type Governance_Financial_Request_Aggregate_Fields = {
   __typename?: 'governance_financial_request_aggregate_fields';
@@ -19760,6 +22656,7 @@ export type Governance_Financial_Request_Bool_Exp = {
   treasury?: InputMaybe<Treasury_Bool_Exp>;
   treasury_id?: InputMaybe<String_Comparison_Exp>;
   votes?: InputMaybe<Governance_Financial_Request_Vote_Bool_Exp>;
+  votes_aggregate?: InputMaybe<Governance_Financial_Request_Vote_Aggregate_Bool_Exp>;
   yay_vote_smvk_total?: InputMaybe<Float8_Comparison_Exp>;
 };
 
@@ -19922,6 +22819,146 @@ export enum Governance_Financial_Request_Select_Column {
   TokenAmount = 'token_amount',
   /** column name */
   TreasuryId = 'treasury_id',
+  /** column name */
+  YayVoteSmvkTotal = 'yay_vote_smvk_total'
+}
+
+/** select "governance_financial_request_aggregate_bool_exp_avg_arguments_columns" columns of table "governance_financial_request" */
+export enum Governance_Financial_Request_Select_Column_Governance_Financial_Request_Aggregate_Bool_Exp_Avg_Arguments_Columns {
+  /** column name */
+  NayVoteSmvkTotal = 'nay_vote_smvk_total',
+  /** column name */
+  PassVoteSmvkTotal = 'pass_vote_smvk_total',
+  /** column name */
+  SmvkRequiredForApproval = 'smvk_required_for_approval',
+  /** column name */
+  SnapshotSmvkTotalSupply = 'snapshot_smvk_total_supply',
+  /** column name */
+  TokenAmount = 'token_amount',
+  /** column name */
+  YayVoteSmvkTotal = 'yay_vote_smvk_total'
+}
+
+/** select "governance_financial_request_aggregate_bool_exp_bool_and_arguments_columns" columns of table "governance_financial_request" */
+export enum Governance_Financial_Request_Select_Column_Governance_Financial_Request_Aggregate_Bool_Exp_Bool_And_Arguments_Columns {
+  /** column name */
+  Executed = 'executed'
+}
+
+/** select "governance_financial_request_aggregate_bool_exp_bool_or_arguments_columns" columns of table "governance_financial_request" */
+export enum Governance_Financial_Request_Select_Column_Governance_Financial_Request_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns {
+  /** column name */
+  Executed = 'executed'
+}
+
+/** select "governance_financial_request_aggregate_bool_exp_corr_arguments_columns" columns of table "governance_financial_request" */
+export enum Governance_Financial_Request_Select_Column_Governance_Financial_Request_Aggregate_Bool_Exp_Corr_Arguments_Columns {
+  /** column name */
+  NayVoteSmvkTotal = 'nay_vote_smvk_total',
+  /** column name */
+  PassVoteSmvkTotal = 'pass_vote_smvk_total',
+  /** column name */
+  SmvkRequiredForApproval = 'smvk_required_for_approval',
+  /** column name */
+  SnapshotSmvkTotalSupply = 'snapshot_smvk_total_supply',
+  /** column name */
+  TokenAmount = 'token_amount',
+  /** column name */
+  YayVoteSmvkTotal = 'yay_vote_smvk_total'
+}
+
+/** select "governance_financial_request_aggregate_bool_exp_covar_samp_arguments_columns" columns of table "governance_financial_request" */
+export enum Governance_Financial_Request_Select_Column_Governance_Financial_Request_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns {
+  /** column name */
+  NayVoteSmvkTotal = 'nay_vote_smvk_total',
+  /** column name */
+  PassVoteSmvkTotal = 'pass_vote_smvk_total',
+  /** column name */
+  SmvkRequiredForApproval = 'smvk_required_for_approval',
+  /** column name */
+  SnapshotSmvkTotalSupply = 'snapshot_smvk_total_supply',
+  /** column name */
+  TokenAmount = 'token_amount',
+  /** column name */
+  YayVoteSmvkTotal = 'yay_vote_smvk_total'
+}
+
+/** select "governance_financial_request_aggregate_bool_exp_max_arguments_columns" columns of table "governance_financial_request" */
+export enum Governance_Financial_Request_Select_Column_Governance_Financial_Request_Aggregate_Bool_Exp_Max_Arguments_Columns {
+  /** column name */
+  NayVoteSmvkTotal = 'nay_vote_smvk_total',
+  /** column name */
+  PassVoteSmvkTotal = 'pass_vote_smvk_total',
+  /** column name */
+  SmvkRequiredForApproval = 'smvk_required_for_approval',
+  /** column name */
+  SnapshotSmvkTotalSupply = 'snapshot_smvk_total_supply',
+  /** column name */
+  TokenAmount = 'token_amount',
+  /** column name */
+  YayVoteSmvkTotal = 'yay_vote_smvk_total'
+}
+
+/** select "governance_financial_request_aggregate_bool_exp_min_arguments_columns" columns of table "governance_financial_request" */
+export enum Governance_Financial_Request_Select_Column_Governance_Financial_Request_Aggregate_Bool_Exp_Min_Arguments_Columns {
+  /** column name */
+  NayVoteSmvkTotal = 'nay_vote_smvk_total',
+  /** column name */
+  PassVoteSmvkTotal = 'pass_vote_smvk_total',
+  /** column name */
+  SmvkRequiredForApproval = 'smvk_required_for_approval',
+  /** column name */
+  SnapshotSmvkTotalSupply = 'snapshot_smvk_total_supply',
+  /** column name */
+  TokenAmount = 'token_amount',
+  /** column name */
+  YayVoteSmvkTotal = 'yay_vote_smvk_total'
+}
+
+/** select "governance_financial_request_aggregate_bool_exp_stddev_samp_arguments_columns" columns of table "governance_financial_request" */
+export enum Governance_Financial_Request_Select_Column_Governance_Financial_Request_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns {
+  /** column name */
+  NayVoteSmvkTotal = 'nay_vote_smvk_total',
+  /** column name */
+  PassVoteSmvkTotal = 'pass_vote_smvk_total',
+  /** column name */
+  SmvkRequiredForApproval = 'smvk_required_for_approval',
+  /** column name */
+  SnapshotSmvkTotalSupply = 'snapshot_smvk_total_supply',
+  /** column name */
+  TokenAmount = 'token_amount',
+  /** column name */
+  YayVoteSmvkTotal = 'yay_vote_smvk_total'
+}
+
+/** select "governance_financial_request_aggregate_bool_exp_sum_arguments_columns" columns of table "governance_financial_request" */
+export enum Governance_Financial_Request_Select_Column_Governance_Financial_Request_Aggregate_Bool_Exp_Sum_Arguments_Columns {
+  /** column name */
+  NayVoteSmvkTotal = 'nay_vote_smvk_total',
+  /** column name */
+  PassVoteSmvkTotal = 'pass_vote_smvk_total',
+  /** column name */
+  SmvkRequiredForApproval = 'smvk_required_for_approval',
+  /** column name */
+  SnapshotSmvkTotalSupply = 'snapshot_smvk_total_supply',
+  /** column name */
+  TokenAmount = 'token_amount',
+  /** column name */
+  YayVoteSmvkTotal = 'yay_vote_smvk_total'
+}
+
+/** select "governance_financial_request_aggregate_bool_exp_var_samp_arguments_columns" columns of table "governance_financial_request" */
+export enum Governance_Financial_Request_Select_Column_Governance_Financial_Request_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns {
+  /** column name */
+  NayVoteSmvkTotal = 'nay_vote_smvk_total',
+  /** column name */
+  PassVoteSmvkTotal = 'pass_vote_smvk_total',
+  /** column name */
+  SmvkRequiredForApproval = 'smvk_required_for_approval',
+  /** column name */
+  SnapshotSmvkTotalSupply = 'snapshot_smvk_total_supply',
+  /** column name */
+  TokenAmount = 'token_amount',
   /** column name */
   YayVoteSmvkTotal = 'yay_vote_smvk_total'
 }
@@ -20184,6 +23221,17 @@ export type Governance_Financial_Request_Vote_Aggregate = {
   __typename?: 'governance_financial_request_vote_aggregate';
   aggregate?: Maybe<Governance_Financial_Request_Vote_Aggregate_Fields>;
   nodes: Array<Governance_Financial_Request_Vote>;
+};
+
+export type Governance_Financial_Request_Vote_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Governance_Financial_Request_Vote_Aggregate_Bool_Exp_Count>;
+};
+
+export type Governance_Financial_Request_Vote_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Governance_Financial_Request_Vote_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Financial_Request_Vote_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "governance_financial_request_vote" */
@@ -20646,6 +23694,17 @@ export type Governance_Financial_Whitelist_Contract_Aggregate = {
   nodes: Array<Governance_Financial_Whitelist_Contract>;
 };
 
+export type Governance_Financial_Whitelist_Contract_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Governance_Financial_Whitelist_Contract_Aggregate_Bool_Exp_Count>;
+};
+
+export type Governance_Financial_Whitelist_Contract_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Governance_Financial_Whitelist_Contract_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Financial_Whitelist_Contract_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
 /** aggregate fields of "governance_financial_whitelist_contract" */
 export type Governance_Financial_Whitelist_Contract_Aggregate_Fields = {
   __typename?: 'governance_financial_whitelist_contract_aggregate_fields';
@@ -20872,6 +23931,17 @@ export type Governance_Financial_Whitelist_Token_Contract_Aggregate = {
   __typename?: 'governance_financial_whitelist_token_contract_aggregate';
   aggregate?: Maybe<Governance_Financial_Whitelist_Token_Contract_Aggregate_Fields>;
   nodes: Array<Governance_Financial_Whitelist_Token_Contract>;
+};
+
+export type Governance_Financial_Whitelist_Token_Contract_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Governance_Financial_Whitelist_Token_Contract_Aggregate_Bool_Exp_Count>;
+};
+
+export type Governance_Financial_Whitelist_Token_Contract_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Governance_Financial_Whitelist_Token_Contract_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Financial_Whitelist_Token_Contract_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "governance_financial_whitelist_token_contract" */
@@ -21110,6 +24180,17 @@ export type Governance_General_Contract_Aggregate = {
   nodes: Array<Governance_General_Contract>;
 };
 
+export type Governance_General_Contract_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Governance_General_Contract_Aggregate_Bool_Exp_Count>;
+};
+
+export type Governance_General_Contract_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Governance_General_Contract_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_General_Contract_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
 /** aggregate fields of "governance_general_contract" */
 export type Governance_General_Contract_Aggregate_Fields = {
   __typename?: 'governance_general_contract_aggregate_fields';
@@ -21336,6 +24417,17 @@ export type Governance_Lambda_Aggregate = {
   __typename?: 'governance_lambda_aggregate';
   aggregate?: Maybe<Governance_Lambda_Aggregate_Fields>;
   nodes: Array<Governance_Lambda>;
+};
+
+export type Governance_Lambda_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Governance_Lambda_Aggregate_Bool_Exp_Count>;
+};
+
+export type Governance_Lambda_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Governance_Lambda_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Lambda_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "governance_lambda" */
@@ -21821,6 +24913,107 @@ export type Governance_Proposal_Aggregate = {
   nodes: Array<Governance_Proposal>;
 };
 
+export type Governance_Proposal_Aggregate_Bool_Exp = {
+  avg?: InputMaybe<Governance_Proposal_Aggregate_Bool_Exp_Avg>;
+  bool_and?: InputMaybe<Governance_Proposal_Aggregate_Bool_Exp_Bool_And>;
+  bool_or?: InputMaybe<Governance_Proposal_Aggregate_Bool_Exp_Bool_Or>;
+  corr?: InputMaybe<Governance_Proposal_Aggregate_Bool_Exp_Corr>;
+  count?: InputMaybe<Governance_Proposal_Aggregate_Bool_Exp_Count>;
+  covar_samp?: InputMaybe<Governance_Proposal_Aggregate_Bool_Exp_Covar_Samp>;
+  max?: InputMaybe<Governance_Proposal_Aggregate_Bool_Exp_Max>;
+  min?: InputMaybe<Governance_Proposal_Aggregate_Bool_Exp_Min>;
+  stddev_samp?: InputMaybe<Governance_Proposal_Aggregate_Bool_Exp_Stddev_Samp>;
+  sum?: InputMaybe<Governance_Proposal_Aggregate_Bool_Exp_Sum>;
+  var_samp?: InputMaybe<Governance_Proposal_Aggregate_Bool_Exp_Var_Samp>;
+};
+
+export type Governance_Proposal_Aggregate_Bool_Exp_Avg = {
+  arguments: Governance_Proposal_Select_Column_Governance_Proposal_Aggregate_Bool_Exp_Avg_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Proposal_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Governance_Proposal_Aggregate_Bool_Exp_Bool_And = {
+  arguments: Governance_Proposal_Select_Column_Governance_Proposal_Aggregate_Bool_Exp_Bool_And_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Proposal_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Governance_Proposal_Aggregate_Bool_Exp_Bool_Or = {
+  arguments: Governance_Proposal_Select_Column_Governance_Proposal_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Proposal_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Governance_Proposal_Aggregate_Bool_Exp_Corr = {
+  arguments: Governance_Proposal_Aggregate_Bool_Exp_Corr_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Proposal_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Governance_Proposal_Aggregate_Bool_Exp_Corr_Arguments = {
+  X: Governance_Proposal_Select_Column_Governance_Proposal_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+  Y: Governance_Proposal_Select_Column_Governance_Proposal_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+};
+
+export type Governance_Proposal_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Governance_Proposal_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Proposal_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+export type Governance_Proposal_Aggregate_Bool_Exp_Covar_Samp = {
+  arguments: Governance_Proposal_Aggregate_Bool_Exp_Covar_Samp_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Proposal_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Governance_Proposal_Aggregate_Bool_Exp_Covar_Samp_Arguments = {
+  X: Governance_Proposal_Select_Column_Governance_Proposal_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+  Y: Governance_Proposal_Select_Column_Governance_Proposal_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+};
+
+export type Governance_Proposal_Aggregate_Bool_Exp_Max = {
+  arguments: Governance_Proposal_Select_Column_Governance_Proposal_Aggregate_Bool_Exp_Max_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Proposal_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Governance_Proposal_Aggregate_Bool_Exp_Min = {
+  arguments: Governance_Proposal_Select_Column_Governance_Proposal_Aggregate_Bool_Exp_Min_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Proposal_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Governance_Proposal_Aggregate_Bool_Exp_Stddev_Samp = {
+  arguments: Governance_Proposal_Select_Column_Governance_Proposal_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Proposal_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Governance_Proposal_Aggregate_Bool_Exp_Sum = {
+  arguments: Governance_Proposal_Select_Column_Governance_Proposal_Aggregate_Bool_Exp_Sum_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Proposal_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Governance_Proposal_Aggregate_Bool_Exp_Var_Samp = {
+  arguments: Governance_Proposal_Select_Column_Governance_Proposal_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Proposal_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
 /** aggregate fields of "governance_proposal" */
 export type Governance_Proposal_Aggregate_Fields = {
   __typename?: 'governance_proposal_aggregate_fields';
@@ -21924,6 +25117,7 @@ export type Governance_Proposal_Bool_Exp = {
   current_round_proposal?: InputMaybe<Boolean_Comparison_Exp>;
   cycle?: InputMaybe<Bigint_Comparison_Exp>;
   data?: InputMaybe<Governance_Proposal_Data_Bool_Exp>;
+  data_aggregate?: InputMaybe<Governance_Proposal_Data_Aggregate_Bool_Exp>;
   description?: InputMaybe<String_Comparison_Exp>;
   executed?: InputMaybe<Boolean_Comparison_Exp>;
   execution_counter?: InputMaybe<Smallint_Comparison_Exp>;
@@ -21944,6 +25138,7 @@ export type Governance_Proposal_Bool_Exp = {
   pass_vote_smvk_total?: InputMaybe<Float8_Comparison_Exp>;
   payment_processed?: InputMaybe<Boolean_Comparison_Exp>;
   payments?: InputMaybe<Governance_Proposal_Payment_Bool_Exp>;
+  payments_aggregate?: InputMaybe<Governance_Proposal_Payment_Aggregate_Bool_Exp>;
   proposal_vote_count?: InputMaybe<Bigint_Comparison_Exp>;
   proposal_vote_smvk_total?: InputMaybe<Float8_Comparison_Exp>;
   proposer?: InputMaybe<Mavryk_User_Bool_Exp>;
@@ -21958,6 +25153,7 @@ export type Governance_Proposal_Bool_Exp = {
   title?: InputMaybe<String_Comparison_Exp>;
   total_voters_reward?: InputMaybe<Float8_Comparison_Exp>;
   votes?: InputMaybe<Governance_Proposal_Vote_Bool_Exp>;
+  votes_aggregate?: InputMaybe<Governance_Proposal_Vote_Aggregate_Bool_Exp>;
   yay_vote_count?: InputMaybe<Bigint_Comparison_Exp>;
   yay_vote_smvk_total?: InputMaybe<Float8_Comparison_Exp>;
 };
@@ -21980,6 +25176,17 @@ export type Governance_Proposal_Data_Aggregate = {
   __typename?: 'governance_proposal_data_aggregate';
   aggregate?: Maybe<Governance_Proposal_Data_Aggregate_Fields>;
   nodes: Array<Governance_Proposal_Data>;
+};
+
+export type Governance_Proposal_Data_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Governance_Proposal_Data_Aggregate_Bool_Exp_Count>;
+};
+
+export type Governance_Proposal_Data_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Governance_Proposal_Data_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Proposal_Data_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "governance_proposal_data" */
@@ -22452,6 +25659,91 @@ export type Governance_Proposal_Payment_Aggregate = {
   nodes: Array<Governance_Proposal_Payment>;
 };
 
+export type Governance_Proposal_Payment_Aggregate_Bool_Exp = {
+  avg?: InputMaybe<Governance_Proposal_Payment_Aggregate_Bool_Exp_Avg>;
+  corr?: InputMaybe<Governance_Proposal_Payment_Aggregate_Bool_Exp_Corr>;
+  count?: InputMaybe<Governance_Proposal_Payment_Aggregate_Bool_Exp_Count>;
+  covar_samp?: InputMaybe<Governance_Proposal_Payment_Aggregate_Bool_Exp_Covar_Samp>;
+  max?: InputMaybe<Governance_Proposal_Payment_Aggregate_Bool_Exp_Max>;
+  min?: InputMaybe<Governance_Proposal_Payment_Aggregate_Bool_Exp_Min>;
+  stddev_samp?: InputMaybe<Governance_Proposal_Payment_Aggregate_Bool_Exp_Stddev_Samp>;
+  sum?: InputMaybe<Governance_Proposal_Payment_Aggregate_Bool_Exp_Sum>;
+  var_samp?: InputMaybe<Governance_Proposal_Payment_Aggregate_Bool_Exp_Var_Samp>;
+};
+
+export type Governance_Proposal_Payment_Aggregate_Bool_Exp_Avg = {
+  arguments: Governance_Proposal_Payment_Select_Column_Governance_Proposal_Payment_Aggregate_Bool_Exp_Avg_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Proposal_Payment_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Governance_Proposal_Payment_Aggregate_Bool_Exp_Corr = {
+  arguments: Governance_Proposal_Payment_Aggregate_Bool_Exp_Corr_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Proposal_Payment_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Governance_Proposal_Payment_Aggregate_Bool_Exp_Corr_Arguments = {
+  X: Governance_Proposal_Payment_Select_Column_Governance_Proposal_Payment_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+  Y: Governance_Proposal_Payment_Select_Column_Governance_Proposal_Payment_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+};
+
+export type Governance_Proposal_Payment_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Governance_Proposal_Payment_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Proposal_Payment_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+export type Governance_Proposal_Payment_Aggregate_Bool_Exp_Covar_Samp = {
+  arguments: Governance_Proposal_Payment_Aggregate_Bool_Exp_Covar_Samp_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Proposal_Payment_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Governance_Proposal_Payment_Aggregate_Bool_Exp_Covar_Samp_Arguments = {
+  X: Governance_Proposal_Payment_Select_Column_Governance_Proposal_Payment_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+  Y: Governance_Proposal_Payment_Select_Column_Governance_Proposal_Payment_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+};
+
+export type Governance_Proposal_Payment_Aggregate_Bool_Exp_Max = {
+  arguments: Governance_Proposal_Payment_Select_Column_Governance_Proposal_Payment_Aggregate_Bool_Exp_Max_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Proposal_Payment_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Governance_Proposal_Payment_Aggregate_Bool_Exp_Min = {
+  arguments: Governance_Proposal_Payment_Select_Column_Governance_Proposal_Payment_Aggregate_Bool_Exp_Min_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Proposal_Payment_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Governance_Proposal_Payment_Aggregate_Bool_Exp_Stddev_Samp = {
+  arguments: Governance_Proposal_Payment_Select_Column_Governance_Proposal_Payment_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Proposal_Payment_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Governance_Proposal_Payment_Aggregate_Bool_Exp_Sum = {
+  arguments: Governance_Proposal_Payment_Select_Column_Governance_Proposal_Payment_Aggregate_Bool_Exp_Sum_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Proposal_Payment_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Governance_Proposal_Payment_Aggregate_Bool_Exp_Var_Samp = {
+  arguments: Governance_Proposal_Payment_Select_Column_Governance_Proposal_Payment_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Proposal_Payment_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
 /** aggregate fields of "governance_proposal_payment" */
 export type Governance_Proposal_Payment_Aggregate_Fields = {
   __typename?: 'governance_proposal_payment_aggregate_fields';
@@ -22608,6 +25900,54 @@ export enum Governance_Proposal_Payment_Select_Column {
   TokenAmount = 'token_amount',
   /** column name */
   TokenId = 'token_id'
+}
+
+/** select "governance_proposal_payment_aggregate_bool_exp_avg_arguments_columns" columns of table "governance_proposal_payment" */
+export enum Governance_Proposal_Payment_Select_Column_Governance_Proposal_Payment_Aggregate_Bool_Exp_Avg_Arguments_Columns {
+  /** column name */
+  TokenAmount = 'token_amount'
+}
+
+/** select "governance_proposal_payment_aggregate_bool_exp_corr_arguments_columns" columns of table "governance_proposal_payment" */
+export enum Governance_Proposal_Payment_Select_Column_Governance_Proposal_Payment_Aggregate_Bool_Exp_Corr_Arguments_Columns {
+  /** column name */
+  TokenAmount = 'token_amount'
+}
+
+/** select "governance_proposal_payment_aggregate_bool_exp_covar_samp_arguments_columns" columns of table "governance_proposal_payment" */
+export enum Governance_Proposal_Payment_Select_Column_Governance_Proposal_Payment_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns {
+  /** column name */
+  TokenAmount = 'token_amount'
+}
+
+/** select "governance_proposal_payment_aggregate_bool_exp_max_arguments_columns" columns of table "governance_proposal_payment" */
+export enum Governance_Proposal_Payment_Select_Column_Governance_Proposal_Payment_Aggregate_Bool_Exp_Max_Arguments_Columns {
+  /** column name */
+  TokenAmount = 'token_amount'
+}
+
+/** select "governance_proposal_payment_aggregate_bool_exp_min_arguments_columns" columns of table "governance_proposal_payment" */
+export enum Governance_Proposal_Payment_Select_Column_Governance_Proposal_Payment_Aggregate_Bool_Exp_Min_Arguments_Columns {
+  /** column name */
+  TokenAmount = 'token_amount'
+}
+
+/** select "governance_proposal_payment_aggregate_bool_exp_stddev_samp_arguments_columns" columns of table "governance_proposal_payment" */
+export enum Governance_Proposal_Payment_Select_Column_Governance_Proposal_Payment_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns {
+  /** column name */
+  TokenAmount = 'token_amount'
+}
+
+/** select "governance_proposal_payment_aggregate_bool_exp_sum_arguments_columns" columns of table "governance_proposal_payment" */
+export enum Governance_Proposal_Payment_Select_Column_Governance_Proposal_Payment_Aggregate_Bool_Exp_Sum_Arguments_Columns {
+  /** column name */
+  TokenAmount = 'token_amount'
+}
+
+/** select "governance_proposal_payment_aggregate_bool_exp_var_samp_arguments_columns" columns of table "governance_proposal_payment" */
+export enum Governance_Proposal_Payment_Select_Column_Governance_Proposal_Payment_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns {
+  /** column name */
+  TokenAmount = 'token_amount'
 }
 
 /** aggregate stddev on columns */
@@ -22835,6 +26175,198 @@ export enum Governance_Proposal_Select_Column {
   TotalVotersReward = 'total_voters_reward',
   /** column name */
   YayVoteCount = 'yay_vote_count',
+  /** column name */
+  YayVoteSmvkTotal = 'yay_vote_smvk_total'
+}
+
+/** select "governance_proposal_aggregate_bool_exp_avg_arguments_columns" columns of table "governance_proposal" */
+export enum Governance_Proposal_Select_Column_Governance_Proposal_Aggregate_Bool_Exp_Avg_Arguments_Columns {
+  /** column name */
+  MinYayVotePercentage = 'min_yay_vote_percentage',
+  /** column name */
+  NayVoteSmvkTotal = 'nay_vote_smvk_total',
+  /** column name */
+  PassVoteSmvkTotal = 'pass_vote_smvk_total',
+  /** column name */
+  ProposalVoteSmvkTotal = 'proposal_vote_smvk_total',
+  /** column name */
+  QuorumSmvkTotal = 'quorum_smvk_total',
+  /** column name */
+  SuccessReward = 'success_reward',
+  /** column name */
+  TotalVotersReward = 'total_voters_reward',
+  /** column name */
+  YayVoteSmvkTotal = 'yay_vote_smvk_total'
+}
+
+/** select "governance_proposal_aggregate_bool_exp_bool_and_arguments_columns" columns of table "governance_proposal" */
+export enum Governance_Proposal_Select_Column_Governance_Proposal_Aggregate_Bool_Exp_Bool_And_Arguments_Columns {
+  /** column name */
+  CurrentRoundProposal = 'current_round_proposal',
+  /** column name */
+  Executed = 'executed',
+  /** column name */
+  ExecutionReady = 'execution_ready',
+  /** column name */
+  Locked = 'locked',
+  /** column name */
+  PaymentProcessed = 'payment_processed',
+  /** column name */
+  RewardClaimReady = 'reward_claim_ready'
+}
+
+/** select "governance_proposal_aggregate_bool_exp_bool_or_arguments_columns" columns of table "governance_proposal" */
+export enum Governance_Proposal_Select_Column_Governance_Proposal_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns {
+  /** column name */
+  CurrentRoundProposal = 'current_round_proposal',
+  /** column name */
+  Executed = 'executed',
+  /** column name */
+  ExecutionReady = 'execution_ready',
+  /** column name */
+  Locked = 'locked',
+  /** column name */
+  PaymentProcessed = 'payment_processed',
+  /** column name */
+  RewardClaimReady = 'reward_claim_ready'
+}
+
+/** select "governance_proposal_aggregate_bool_exp_corr_arguments_columns" columns of table "governance_proposal" */
+export enum Governance_Proposal_Select_Column_Governance_Proposal_Aggregate_Bool_Exp_Corr_Arguments_Columns {
+  /** column name */
+  MinYayVotePercentage = 'min_yay_vote_percentage',
+  /** column name */
+  NayVoteSmvkTotal = 'nay_vote_smvk_total',
+  /** column name */
+  PassVoteSmvkTotal = 'pass_vote_smvk_total',
+  /** column name */
+  ProposalVoteSmvkTotal = 'proposal_vote_smvk_total',
+  /** column name */
+  QuorumSmvkTotal = 'quorum_smvk_total',
+  /** column name */
+  SuccessReward = 'success_reward',
+  /** column name */
+  TotalVotersReward = 'total_voters_reward',
+  /** column name */
+  YayVoteSmvkTotal = 'yay_vote_smvk_total'
+}
+
+/** select "governance_proposal_aggregate_bool_exp_covar_samp_arguments_columns" columns of table "governance_proposal" */
+export enum Governance_Proposal_Select_Column_Governance_Proposal_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns {
+  /** column name */
+  MinYayVotePercentage = 'min_yay_vote_percentage',
+  /** column name */
+  NayVoteSmvkTotal = 'nay_vote_smvk_total',
+  /** column name */
+  PassVoteSmvkTotal = 'pass_vote_smvk_total',
+  /** column name */
+  ProposalVoteSmvkTotal = 'proposal_vote_smvk_total',
+  /** column name */
+  QuorumSmvkTotal = 'quorum_smvk_total',
+  /** column name */
+  SuccessReward = 'success_reward',
+  /** column name */
+  TotalVotersReward = 'total_voters_reward',
+  /** column name */
+  YayVoteSmvkTotal = 'yay_vote_smvk_total'
+}
+
+/** select "governance_proposal_aggregate_bool_exp_max_arguments_columns" columns of table "governance_proposal" */
+export enum Governance_Proposal_Select_Column_Governance_Proposal_Aggregate_Bool_Exp_Max_Arguments_Columns {
+  /** column name */
+  MinYayVotePercentage = 'min_yay_vote_percentage',
+  /** column name */
+  NayVoteSmvkTotal = 'nay_vote_smvk_total',
+  /** column name */
+  PassVoteSmvkTotal = 'pass_vote_smvk_total',
+  /** column name */
+  ProposalVoteSmvkTotal = 'proposal_vote_smvk_total',
+  /** column name */
+  QuorumSmvkTotal = 'quorum_smvk_total',
+  /** column name */
+  SuccessReward = 'success_reward',
+  /** column name */
+  TotalVotersReward = 'total_voters_reward',
+  /** column name */
+  YayVoteSmvkTotal = 'yay_vote_smvk_total'
+}
+
+/** select "governance_proposal_aggregate_bool_exp_min_arguments_columns" columns of table "governance_proposal" */
+export enum Governance_Proposal_Select_Column_Governance_Proposal_Aggregate_Bool_Exp_Min_Arguments_Columns {
+  /** column name */
+  MinYayVotePercentage = 'min_yay_vote_percentage',
+  /** column name */
+  NayVoteSmvkTotal = 'nay_vote_smvk_total',
+  /** column name */
+  PassVoteSmvkTotal = 'pass_vote_smvk_total',
+  /** column name */
+  ProposalVoteSmvkTotal = 'proposal_vote_smvk_total',
+  /** column name */
+  QuorumSmvkTotal = 'quorum_smvk_total',
+  /** column name */
+  SuccessReward = 'success_reward',
+  /** column name */
+  TotalVotersReward = 'total_voters_reward',
+  /** column name */
+  YayVoteSmvkTotal = 'yay_vote_smvk_total'
+}
+
+/** select "governance_proposal_aggregate_bool_exp_stddev_samp_arguments_columns" columns of table "governance_proposal" */
+export enum Governance_Proposal_Select_Column_Governance_Proposal_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns {
+  /** column name */
+  MinYayVotePercentage = 'min_yay_vote_percentage',
+  /** column name */
+  NayVoteSmvkTotal = 'nay_vote_smvk_total',
+  /** column name */
+  PassVoteSmvkTotal = 'pass_vote_smvk_total',
+  /** column name */
+  ProposalVoteSmvkTotal = 'proposal_vote_smvk_total',
+  /** column name */
+  QuorumSmvkTotal = 'quorum_smvk_total',
+  /** column name */
+  SuccessReward = 'success_reward',
+  /** column name */
+  TotalVotersReward = 'total_voters_reward',
+  /** column name */
+  YayVoteSmvkTotal = 'yay_vote_smvk_total'
+}
+
+/** select "governance_proposal_aggregate_bool_exp_sum_arguments_columns" columns of table "governance_proposal" */
+export enum Governance_Proposal_Select_Column_Governance_Proposal_Aggregate_Bool_Exp_Sum_Arguments_Columns {
+  /** column name */
+  MinYayVotePercentage = 'min_yay_vote_percentage',
+  /** column name */
+  NayVoteSmvkTotal = 'nay_vote_smvk_total',
+  /** column name */
+  PassVoteSmvkTotal = 'pass_vote_smvk_total',
+  /** column name */
+  ProposalVoteSmvkTotal = 'proposal_vote_smvk_total',
+  /** column name */
+  QuorumSmvkTotal = 'quorum_smvk_total',
+  /** column name */
+  SuccessReward = 'success_reward',
+  /** column name */
+  TotalVotersReward = 'total_voters_reward',
+  /** column name */
+  YayVoteSmvkTotal = 'yay_vote_smvk_total'
+}
+
+/** select "governance_proposal_aggregate_bool_exp_var_samp_arguments_columns" columns of table "governance_proposal" */
+export enum Governance_Proposal_Select_Column_Governance_Proposal_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns {
+  /** column name */
+  MinYayVotePercentage = 'min_yay_vote_percentage',
+  /** column name */
+  NayVoteSmvkTotal = 'nay_vote_smvk_total',
+  /** column name */
+  PassVoteSmvkTotal = 'pass_vote_smvk_total',
+  /** column name */
+  ProposalVoteSmvkTotal = 'proposal_vote_smvk_total',
+  /** column name */
+  QuorumSmvkTotal = 'quorum_smvk_total',
+  /** column name */
+  SuccessReward = 'success_reward',
+  /** column name */
+  TotalVotersReward = 'total_voters_reward',
   /** column name */
   YayVoteSmvkTotal = 'yay_vote_smvk_total'
 }
@@ -23299,6 +26831,107 @@ export type Governance_Proposal_Vote_Aggregate = {
   nodes: Array<Governance_Proposal_Vote>;
 };
 
+export type Governance_Proposal_Vote_Aggregate_Bool_Exp = {
+  avg?: InputMaybe<Governance_Proposal_Vote_Aggregate_Bool_Exp_Avg>;
+  bool_and?: InputMaybe<Governance_Proposal_Vote_Aggregate_Bool_Exp_Bool_And>;
+  bool_or?: InputMaybe<Governance_Proposal_Vote_Aggregate_Bool_Exp_Bool_Or>;
+  corr?: InputMaybe<Governance_Proposal_Vote_Aggregate_Bool_Exp_Corr>;
+  count?: InputMaybe<Governance_Proposal_Vote_Aggregate_Bool_Exp_Count>;
+  covar_samp?: InputMaybe<Governance_Proposal_Vote_Aggregate_Bool_Exp_Covar_Samp>;
+  max?: InputMaybe<Governance_Proposal_Vote_Aggregate_Bool_Exp_Max>;
+  min?: InputMaybe<Governance_Proposal_Vote_Aggregate_Bool_Exp_Min>;
+  stddev_samp?: InputMaybe<Governance_Proposal_Vote_Aggregate_Bool_Exp_Stddev_Samp>;
+  sum?: InputMaybe<Governance_Proposal_Vote_Aggregate_Bool_Exp_Sum>;
+  var_samp?: InputMaybe<Governance_Proposal_Vote_Aggregate_Bool_Exp_Var_Samp>;
+};
+
+export type Governance_Proposal_Vote_Aggregate_Bool_Exp_Avg = {
+  arguments: Governance_Proposal_Vote_Select_Column_Governance_Proposal_Vote_Aggregate_Bool_Exp_Avg_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Proposal_Vote_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Governance_Proposal_Vote_Aggregate_Bool_Exp_Bool_And = {
+  arguments: Governance_Proposal_Vote_Select_Column_Governance_Proposal_Vote_Aggregate_Bool_Exp_Bool_And_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Proposal_Vote_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Governance_Proposal_Vote_Aggregate_Bool_Exp_Bool_Or = {
+  arguments: Governance_Proposal_Vote_Select_Column_Governance_Proposal_Vote_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Proposal_Vote_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Governance_Proposal_Vote_Aggregate_Bool_Exp_Corr = {
+  arguments: Governance_Proposal_Vote_Aggregate_Bool_Exp_Corr_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Proposal_Vote_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Governance_Proposal_Vote_Aggregate_Bool_Exp_Corr_Arguments = {
+  X: Governance_Proposal_Vote_Select_Column_Governance_Proposal_Vote_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+  Y: Governance_Proposal_Vote_Select_Column_Governance_Proposal_Vote_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+};
+
+export type Governance_Proposal_Vote_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Governance_Proposal_Vote_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Proposal_Vote_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+export type Governance_Proposal_Vote_Aggregate_Bool_Exp_Covar_Samp = {
+  arguments: Governance_Proposal_Vote_Aggregate_Bool_Exp_Covar_Samp_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Proposal_Vote_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Governance_Proposal_Vote_Aggregate_Bool_Exp_Covar_Samp_Arguments = {
+  X: Governance_Proposal_Vote_Select_Column_Governance_Proposal_Vote_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+  Y: Governance_Proposal_Vote_Select_Column_Governance_Proposal_Vote_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+};
+
+export type Governance_Proposal_Vote_Aggregate_Bool_Exp_Max = {
+  arguments: Governance_Proposal_Vote_Select_Column_Governance_Proposal_Vote_Aggregate_Bool_Exp_Max_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Proposal_Vote_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Governance_Proposal_Vote_Aggregate_Bool_Exp_Min = {
+  arguments: Governance_Proposal_Vote_Select_Column_Governance_Proposal_Vote_Aggregate_Bool_Exp_Min_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Proposal_Vote_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Governance_Proposal_Vote_Aggregate_Bool_Exp_Stddev_Samp = {
+  arguments: Governance_Proposal_Vote_Select_Column_Governance_Proposal_Vote_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Proposal_Vote_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Governance_Proposal_Vote_Aggregate_Bool_Exp_Sum = {
+  arguments: Governance_Proposal_Vote_Select_Column_Governance_Proposal_Vote_Aggregate_Bool_Exp_Sum_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Proposal_Vote_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Governance_Proposal_Vote_Aggregate_Bool_Exp_Var_Samp = {
+  arguments: Governance_Proposal_Vote_Select_Column_Governance_Proposal_Vote_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Proposal_Vote_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
 /** aggregate fields of "governance_proposal_vote" */
 export type Governance_Proposal_Vote_Aggregate_Fields = {
   __typename?: 'governance_proposal_vote_aggregate_fields';
@@ -23461,6 +27094,66 @@ export enum Governance_Proposal_Vote_Select_Column {
   Vote = 'vote',
   /** column name */
   VoterId = 'voter_id',
+  /** column name */
+  VotingPower = 'voting_power'
+}
+
+/** select "governance_proposal_vote_aggregate_bool_exp_avg_arguments_columns" columns of table "governance_proposal_vote" */
+export enum Governance_Proposal_Vote_Select_Column_Governance_Proposal_Vote_Aggregate_Bool_Exp_Avg_Arguments_Columns {
+  /** column name */
+  VotingPower = 'voting_power'
+}
+
+/** select "governance_proposal_vote_aggregate_bool_exp_bool_and_arguments_columns" columns of table "governance_proposal_vote" */
+export enum Governance_Proposal_Vote_Select_Column_Governance_Proposal_Vote_Aggregate_Bool_Exp_Bool_And_Arguments_Columns {
+  /** column name */
+  CurrentRoundVote = 'current_round_vote'
+}
+
+/** select "governance_proposal_vote_aggregate_bool_exp_bool_or_arguments_columns" columns of table "governance_proposal_vote" */
+export enum Governance_Proposal_Vote_Select_Column_Governance_Proposal_Vote_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns {
+  /** column name */
+  CurrentRoundVote = 'current_round_vote'
+}
+
+/** select "governance_proposal_vote_aggregate_bool_exp_corr_arguments_columns" columns of table "governance_proposal_vote" */
+export enum Governance_Proposal_Vote_Select_Column_Governance_Proposal_Vote_Aggregate_Bool_Exp_Corr_Arguments_Columns {
+  /** column name */
+  VotingPower = 'voting_power'
+}
+
+/** select "governance_proposal_vote_aggregate_bool_exp_covar_samp_arguments_columns" columns of table "governance_proposal_vote" */
+export enum Governance_Proposal_Vote_Select_Column_Governance_Proposal_Vote_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns {
+  /** column name */
+  VotingPower = 'voting_power'
+}
+
+/** select "governance_proposal_vote_aggregate_bool_exp_max_arguments_columns" columns of table "governance_proposal_vote" */
+export enum Governance_Proposal_Vote_Select_Column_Governance_Proposal_Vote_Aggregate_Bool_Exp_Max_Arguments_Columns {
+  /** column name */
+  VotingPower = 'voting_power'
+}
+
+/** select "governance_proposal_vote_aggregate_bool_exp_min_arguments_columns" columns of table "governance_proposal_vote" */
+export enum Governance_Proposal_Vote_Select_Column_Governance_Proposal_Vote_Aggregate_Bool_Exp_Min_Arguments_Columns {
+  /** column name */
+  VotingPower = 'voting_power'
+}
+
+/** select "governance_proposal_vote_aggregate_bool_exp_stddev_samp_arguments_columns" columns of table "governance_proposal_vote" */
+export enum Governance_Proposal_Vote_Select_Column_Governance_Proposal_Vote_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns {
+  /** column name */
+  VotingPower = 'voting_power'
+}
+
+/** select "governance_proposal_vote_aggregate_bool_exp_sum_arguments_columns" columns of table "governance_proposal_vote" */
+export enum Governance_Proposal_Vote_Select_Column_Governance_Proposal_Vote_Aggregate_Bool_Exp_Sum_Arguments_Columns {
+  /** column name */
+  VotingPower = 'voting_power'
+}
+
+/** select "governance_proposal_vote_aggregate_bool_exp_var_samp_arguments_columns" columns of table "governance_proposal_vote" */
+export enum Governance_Proposal_Vote_Select_Column_Governance_Proposal_Vote_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns {
   /** column name */
   VotingPower = 'voting_power'
 }
@@ -23786,6 +27479,17 @@ export type Governance_Proxy_Aggregate = {
   nodes: Array<Governance_Proxy>;
 };
 
+export type Governance_Proxy_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Governance_Proxy_Aggregate_Bool_Exp_Count>;
+};
+
+export type Governance_Proxy_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Governance_Proxy_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Proxy_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
 /** aggregate fields of "governance_proxy" */
 export type Governance_Proxy_Aggregate_Fields = {
   __typename?: 'governance_proxy_aggregate_fields';
@@ -23816,13 +27520,18 @@ export type Governance_Proxy_Bool_Exp = {
   address?: InputMaybe<String_Comparison_Exp>;
   admin?: InputMaybe<String_Comparison_Exp>;
   general_contracts?: InputMaybe<Governance_Proxy_General_Contract_Bool_Exp>;
+  general_contracts_aggregate?: InputMaybe<Governance_Proxy_General_Contract_Aggregate_Bool_Exp>;
   governance?: InputMaybe<Governance_Bool_Exp>;
   governance_id?: InputMaybe<String_Comparison_Exp>;
   lambdas?: InputMaybe<Governance_Proxy_Lambda_Bool_Exp>;
+  lambdas_aggregate?: InputMaybe<Governance_Proxy_Lambda_Aggregate_Bool_Exp>;
   last_updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   proxy_lambdas?: InputMaybe<Governance_Proxy_Proxy_Lambda_Bool_Exp>;
+  proxy_lambdas_aggregate?: InputMaybe<Governance_Proxy_Proxy_Lambda_Aggregate_Bool_Exp>;
   whitelist_contracts?: InputMaybe<Governance_Proxy_Whitelist_Contract_Bool_Exp>;
+  whitelist_contracts_aggregate?: InputMaybe<Governance_Proxy_Whitelist_Contract_Aggregate_Bool_Exp>;
   whitelist_token_contracts?: InputMaybe<Governance_Proxy_Whitelist_Token_Contract_Bool_Exp>;
+  whitelist_token_contracts_aggregate?: InputMaybe<Governance_Proxy_Whitelist_Token_Contract_Aggregate_Bool_Exp>;
 };
 
 /** columns and relationships of "governance_proxy_general_contract" */
@@ -23841,6 +27550,17 @@ export type Governance_Proxy_General_Contract_Aggregate = {
   __typename?: 'governance_proxy_general_contract_aggregate';
   aggregate?: Maybe<Governance_Proxy_General_Contract_Aggregate_Fields>;
   nodes: Array<Governance_Proxy_General_Contract>;
+};
+
+export type Governance_Proxy_General_Contract_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Governance_Proxy_General_Contract_Aggregate_Bool_Exp_Count>;
+};
+
+export type Governance_Proxy_General_Contract_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Governance_Proxy_General_Contract_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Proxy_General_Contract_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "governance_proxy_general_contract" */
@@ -24069,6 +27789,17 @@ export type Governance_Proxy_Lambda_Aggregate = {
   __typename?: 'governance_proxy_lambda_aggregate';
   aggregate?: Maybe<Governance_Proxy_Lambda_Aggregate_Fields>;
   nodes: Array<Governance_Proxy_Lambda>;
+};
+
+export type Governance_Proxy_Lambda_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Governance_Proxy_Lambda_Aggregate_Bool_Exp_Count>;
+};
+
+export type Governance_Proxy_Lambda_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Governance_Proxy_Lambda_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Proxy_Lambda_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "governance_proxy_lambda" */
@@ -24356,6 +28087,17 @@ export type Governance_Proxy_Proxy_Lambda_Aggregate = {
   nodes: Array<Governance_Proxy_Proxy_Lambda>;
 };
 
+export type Governance_Proxy_Proxy_Lambda_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Governance_Proxy_Proxy_Lambda_Aggregate_Bool_Exp_Count>;
+};
+
+export type Governance_Proxy_Proxy_Lambda_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Governance_Proxy_Proxy_Lambda_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Proxy_Proxy_Lambda_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
 /** aggregate fields of "governance_proxy_proxy_lambda" */
 export type Governance_Proxy_Proxy_Lambda_Aggregate_Fields = {
   __typename?: 'governance_proxy_proxy_lambda_aggregate_fields';
@@ -24620,6 +28362,17 @@ export type Governance_Proxy_Whitelist_Contract_Aggregate = {
   nodes: Array<Governance_Proxy_Whitelist_Contract>;
 };
 
+export type Governance_Proxy_Whitelist_Contract_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Governance_Proxy_Whitelist_Contract_Aggregate_Bool_Exp_Count>;
+};
+
+export type Governance_Proxy_Whitelist_Contract_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Governance_Proxy_Whitelist_Contract_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Proxy_Whitelist_Contract_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
 /** aggregate fields of "governance_proxy_whitelist_contract" */
 export type Governance_Proxy_Whitelist_Contract_Aggregate_Fields = {
   __typename?: 'governance_proxy_whitelist_contract_aggregate_fields';
@@ -24846,6 +28599,17 @@ export type Governance_Proxy_Whitelist_Token_Contract_Aggregate = {
   __typename?: 'governance_proxy_whitelist_token_contract_aggregate';
   aggregate?: Maybe<Governance_Proxy_Whitelist_Token_Contract_Aggregate_Fields>;
   nodes: Array<Governance_Proxy_Whitelist_Token_Contract>;
+};
+
+export type Governance_Proxy_Whitelist_Token_Contract_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Governance_Proxy_Whitelist_Token_Contract_Aggregate_Bool_Exp_Count>;
+};
+
+export type Governance_Proxy_Whitelist_Token_Contract_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Governance_Proxy_Whitelist_Token_Contract_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Proxy_Whitelist_Token_Contract_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "governance_proxy_whitelist_token_contract" */
@@ -25283,6 +29047,107 @@ export type Governance_Satellite_Action_Aggregate = {
   nodes: Array<Governance_Satellite_Action>;
 };
 
+export type Governance_Satellite_Action_Aggregate_Bool_Exp = {
+  avg?: InputMaybe<Governance_Satellite_Action_Aggregate_Bool_Exp_Avg>;
+  bool_and?: InputMaybe<Governance_Satellite_Action_Aggregate_Bool_Exp_Bool_And>;
+  bool_or?: InputMaybe<Governance_Satellite_Action_Aggregate_Bool_Exp_Bool_Or>;
+  corr?: InputMaybe<Governance_Satellite_Action_Aggregate_Bool_Exp_Corr>;
+  count?: InputMaybe<Governance_Satellite_Action_Aggregate_Bool_Exp_Count>;
+  covar_samp?: InputMaybe<Governance_Satellite_Action_Aggregate_Bool_Exp_Covar_Samp>;
+  max?: InputMaybe<Governance_Satellite_Action_Aggregate_Bool_Exp_Max>;
+  min?: InputMaybe<Governance_Satellite_Action_Aggregate_Bool_Exp_Min>;
+  stddev_samp?: InputMaybe<Governance_Satellite_Action_Aggregate_Bool_Exp_Stddev_Samp>;
+  sum?: InputMaybe<Governance_Satellite_Action_Aggregate_Bool_Exp_Sum>;
+  var_samp?: InputMaybe<Governance_Satellite_Action_Aggregate_Bool_Exp_Var_Samp>;
+};
+
+export type Governance_Satellite_Action_Aggregate_Bool_Exp_Avg = {
+  arguments: Governance_Satellite_Action_Select_Column_Governance_Satellite_Action_Aggregate_Bool_Exp_Avg_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Satellite_Action_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Governance_Satellite_Action_Aggregate_Bool_Exp_Bool_And = {
+  arguments: Governance_Satellite_Action_Select_Column_Governance_Satellite_Action_Aggregate_Bool_Exp_Bool_And_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Satellite_Action_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Governance_Satellite_Action_Aggregate_Bool_Exp_Bool_Or = {
+  arguments: Governance_Satellite_Action_Select_Column_Governance_Satellite_Action_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Satellite_Action_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Governance_Satellite_Action_Aggregate_Bool_Exp_Corr = {
+  arguments: Governance_Satellite_Action_Aggregate_Bool_Exp_Corr_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Satellite_Action_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Governance_Satellite_Action_Aggregate_Bool_Exp_Corr_Arguments = {
+  X: Governance_Satellite_Action_Select_Column_Governance_Satellite_Action_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+  Y: Governance_Satellite_Action_Select_Column_Governance_Satellite_Action_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+};
+
+export type Governance_Satellite_Action_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Governance_Satellite_Action_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Satellite_Action_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+export type Governance_Satellite_Action_Aggregate_Bool_Exp_Covar_Samp = {
+  arguments: Governance_Satellite_Action_Aggregate_Bool_Exp_Covar_Samp_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Satellite_Action_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Governance_Satellite_Action_Aggregate_Bool_Exp_Covar_Samp_Arguments = {
+  X: Governance_Satellite_Action_Select_Column_Governance_Satellite_Action_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+  Y: Governance_Satellite_Action_Select_Column_Governance_Satellite_Action_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+};
+
+export type Governance_Satellite_Action_Aggregate_Bool_Exp_Max = {
+  arguments: Governance_Satellite_Action_Select_Column_Governance_Satellite_Action_Aggregate_Bool_Exp_Max_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Satellite_Action_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Governance_Satellite_Action_Aggregate_Bool_Exp_Min = {
+  arguments: Governance_Satellite_Action_Select_Column_Governance_Satellite_Action_Aggregate_Bool_Exp_Min_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Satellite_Action_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Governance_Satellite_Action_Aggregate_Bool_Exp_Stddev_Samp = {
+  arguments: Governance_Satellite_Action_Select_Column_Governance_Satellite_Action_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Satellite_Action_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Governance_Satellite_Action_Aggregate_Bool_Exp_Sum = {
+  arguments: Governance_Satellite_Action_Select_Column_Governance_Satellite_Action_Aggregate_Bool_Exp_Sum_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Satellite_Action_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Governance_Satellite_Action_Aggregate_Bool_Exp_Var_Samp = {
+  arguments: Governance_Satellite_Action_Select_Column_Governance_Satellite_Action_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Satellite_Action_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
 /** aggregate fields of "governance_satellite_action" */
 export type Governance_Satellite_Action_Aggregate_Fields = {
   __typename?: 'governance_satellite_action_aggregate_fields';
@@ -25365,6 +29230,7 @@ export type Governance_Satellite_Action_Bool_Exp = {
   initiator_id?: InputMaybe<String_Comparison_Exp>;
   nay_vote_smvk_total?: InputMaybe<Float8_Comparison_Exp>;
   parameters?: InputMaybe<Governance_Satellite_Action_Parameter_Bool_Exp>;
+  parameters_aggregate?: InputMaybe<Governance_Satellite_Action_Parameter_Aggregate_Bool_Exp>;
   pass_vote_smvk_total?: InputMaybe<Float8_Comparison_Exp>;
   smvk_percentage_for_approval?: InputMaybe<Smallint_Comparison_Exp>;
   smvk_required_for_approval?: InputMaybe<Float8_Comparison_Exp>;
@@ -25372,6 +29238,7 @@ export type Governance_Satellite_Action_Bool_Exp = {
   start_datetime?: InputMaybe<Timestamptz_Comparison_Exp>;
   status?: InputMaybe<Smallint_Comparison_Exp>;
   votes?: InputMaybe<Governance_Satellite_Action_Vote_Bool_Exp>;
+  votes_aggregate?: InputMaybe<Governance_Satellite_Action_Vote_Aggregate_Bool_Exp>;
   yay_vote_smvk_total?: InputMaybe<Float8_Comparison_Exp>;
 };
 
@@ -25497,6 +29364,17 @@ export type Governance_Satellite_Action_Parameter_Aggregate = {
   __typename?: 'governance_satellite_action_parameter_aggregate';
   aggregate?: Maybe<Governance_Satellite_Action_Parameter_Aggregate_Fields>;
   nodes: Array<Governance_Satellite_Action_Parameter>;
+};
+
+export type Governance_Satellite_Action_Parameter_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Governance_Satellite_Action_Parameter_Aggregate_Bool_Exp_Count>;
+};
+
+export type Governance_Satellite_Action_Parameter_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Governance_Satellite_Action_Parameter_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Satellite_Action_Parameter_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "governance_satellite_action_parameter" */
@@ -25760,6 +29638,130 @@ export enum Governance_Satellite_Action_Select_Column {
   YayVoteSmvkTotal = 'yay_vote_smvk_total'
 }
 
+/** select "governance_satellite_action_aggregate_bool_exp_avg_arguments_columns" columns of table "governance_satellite_action" */
+export enum Governance_Satellite_Action_Select_Column_Governance_Satellite_Action_Aggregate_Bool_Exp_Avg_Arguments_Columns {
+  /** column name */
+  NayVoteSmvkTotal = 'nay_vote_smvk_total',
+  /** column name */
+  PassVoteSmvkTotal = 'pass_vote_smvk_total',
+  /** column name */
+  SmvkRequiredForApproval = 'smvk_required_for_approval',
+  /** column name */
+  SnapshotSmvkTotalSupply = 'snapshot_smvk_total_supply',
+  /** column name */
+  YayVoteSmvkTotal = 'yay_vote_smvk_total'
+}
+
+/** select "governance_satellite_action_aggregate_bool_exp_bool_and_arguments_columns" columns of table "governance_satellite_action" */
+export enum Governance_Satellite_Action_Select_Column_Governance_Satellite_Action_Aggregate_Bool_Exp_Bool_And_Arguments_Columns {
+  /** column name */
+  Executed = 'executed'
+}
+
+/** select "governance_satellite_action_aggregate_bool_exp_bool_or_arguments_columns" columns of table "governance_satellite_action" */
+export enum Governance_Satellite_Action_Select_Column_Governance_Satellite_Action_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns {
+  /** column name */
+  Executed = 'executed'
+}
+
+/** select "governance_satellite_action_aggregate_bool_exp_corr_arguments_columns" columns of table "governance_satellite_action" */
+export enum Governance_Satellite_Action_Select_Column_Governance_Satellite_Action_Aggregate_Bool_Exp_Corr_Arguments_Columns {
+  /** column name */
+  NayVoteSmvkTotal = 'nay_vote_smvk_total',
+  /** column name */
+  PassVoteSmvkTotal = 'pass_vote_smvk_total',
+  /** column name */
+  SmvkRequiredForApproval = 'smvk_required_for_approval',
+  /** column name */
+  SnapshotSmvkTotalSupply = 'snapshot_smvk_total_supply',
+  /** column name */
+  YayVoteSmvkTotal = 'yay_vote_smvk_total'
+}
+
+/** select "governance_satellite_action_aggregate_bool_exp_covar_samp_arguments_columns" columns of table "governance_satellite_action" */
+export enum Governance_Satellite_Action_Select_Column_Governance_Satellite_Action_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns {
+  /** column name */
+  NayVoteSmvkTotal = 'nay_vote_smvk_total',
+  /** column name */
+  PassVoteSmvkTotal = 'pass_vote_smvk_total',
+  /** column name */
+  SmvkRequiredForApproval = 'smvk_required_for_approval',
+  /** column name */
+  SnapshotSmvkTotalSupply = 'snapshot_smvk_total_supply',
+  /** column name */
+  YayVoteSmvkTotal = 'yay_vote_smvk_total'
+}
+
+/** select "governance_satellite_action_aggregate_bool_exp_max_arguments_columns" columns of table "governance_satellite_action" */
+export enum Governance_Satellite_Action_Select_Column_Governance_Satellite_Action_Aggregate_Bool_Exp_Max_Arguments_Columns {
+  /** column name */
+  NayVoteSmvkTotal = 'nay_vote_smvk_total',
+  /** column name */
+  PassVoteSmvkTotal = 'pass_vote_smvk_total',
+  /** column name */
+  SmvkRequiredForApproval = 'smvk_required_for_approval',
+  /** column name */
+  SnapshotSmvkTotalSupply = 'snapshot_smvk_total_supply',
+  /** column name */
+  YayVoteSmvkTotal = 'yay_vote_smvk_total'
+}
+
+/** select "governance_satellite_action_aggregate_bool_exp_min_arguments_columns" columns of table "governance_satellite_action" */
+export enum Governance_Satellite_Action_Select_Column_Governance_Satellite_Action_Aggregate_Bool_Exp_Min_Arguments_Columns {
+  /** column name */
+  NayVoteSmvkTotal = 'nay_vote_smvk_total',
+  /** column name */
+  PassVoteSmvkTotal = 'pass_vote_smvk_total',
+  /** column name */
+  SmvkRequiredForApproval = 'smvk_required_for_approval',
+  /** column name */
+  SnapshotSmvkTotalSupply = 'snapshot_smvk_total_supply',
+  /** column name */
+  YayVoteSmvkTotal = 'yay_vote_smvk_total'
+}
+
+/** select "governance_satellite_action_aggregate_bool_exp_stddev_samp_arguments_columns" columns of table "governance_satellite_action" */
+export enum Governance_Satellite_Action_Select_Column_Governance_Satellite_Action_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns {
+  /** column name */
+  NayVoteSmvkTotal = 'nay_vote_smvk_total',
+  /** column name */
+  PassVoteSmvkTotal = 'pass_vote_smvk_total',
+  /** column name */
+  SmvkRequiredForApproval = 'smvk_required_for_approval',
+  /** column name */
+  SnapshotSmvkTotalSupply = 'snapshot_smvk_total_supply',
+  /** column name */
+  YayVoteSmvkTotal = 'yay_vote_smvk_total'
+}
+
+/** select "governance_satellite_action_aggregate_bool_exp_sum_arguments_columns" columns of table "governance_satellite_action" */
+export enum Governance_Satellite_Action_Select_Column_Governance_Satellite_Action_Aggregate_Bool_Exp_Sum_Arguments_Columns {
+  /** column name */
+  NayVoteSmvkTotal = 'nay_vote_smvk_total',
+  /** column name */
+  PassVoteSmvkTotal = 'pass_vote_smvk_total',
+  /** column name */
+  SmvkRequiredForApproval = 'smvk_required_for_approval',
+  /** column name */
+  SnapshotSmvkTotalSupply = 'snapshot_smvk_total_supply',
+  /** column name */
+  YayVoteSmvkTotal = 'yay_vote_smvk_total'
+}
+
+/** select "governance_satellite_action_aggregate_bool_exp_var_samp_arguments_columns" columns of table "governance_satellite_action" */
+export enum Governance_Satellite_Action_Select_Column_Governance_Satellite_Action_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns {
+  /** column name */
+  NayVoteSmvkTotal = 'nay_vote_smvk_total',
+  /** column name */
+  PassVoteSmvkTotal = 'pass_vote_smvk_total',
+  /** column name */
+  SmvkRequiredForApproval = 'smvk_required_for_approval',
+  /** column name */
+  SnapshotSmvkTotalSupply = 'snapshot_smvk_total_supply',
+  /** column name */
+  YayVoteSmvkTotal = 'yay_vote_smvk_total'
+}
+
 /** aggregate stddev on columns */
 export type Governance_Satellite_Action_Stddev_Fields = {
   __typename?: 'governance_satellite_action_stddev_fields';
@@ -26001,6 +30003,17 @@ export type Governance_Satellite_Action_Vote_Aggregate = {
   __typename?: 'governance_satellite_action_vote_aggregate';
   aggregate?: Maybe<Governance_Satellite_Action_Vote_Aggregate_Fields>;
   nodes: Array<Governance_Satellite_Action_Vote>;
+};
+
+export type Governance_Satellite_Action_Vote_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Governance_Satellite_Action_Vote_Aggregate_Bool_Exp_Count>;
+};
+
+export type Governance_Satellite_Action_Vote_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Governance_Satellite_Action_Vote_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Satellite_Action_Vote_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "governance_satellite_action_vote" */
@@ -26310,6 +30323,17 @@ export type Governance_Satellite_Aggregate = {
   nodes: Array<Governance_Satellite>;
 };
 
+export type Governance_Satellite_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Governance_Satellite_Aggregate_Bool_Exp_Count>;
+};
+
+export type Governance_Satellite_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Governance_Satellite_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Satellite_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
 /** aggregate fields of "governance_satellite" */
 export type Governance_Satellite_Aggregate_Fields = {
   __typename?: 'governance_satellite_aggregate_fields';
@@ -26373,9 +30397,11 @@ export type Governance_Satellite_Bool_Exp = {
   _not?: InputMaybe<Governance_Satellite_Bool_Exp>;
   _or?: InputMaybe<Array<Governance_Satellite_Bool_Exp>>;
   actions?: InputMaybe<Governance_Satellite_Action_Bool_Exp>;
+  actions_aggregate?: InputMaybe<Governance_Satellite_Action_Aggregate_Bool_Exp>;
   address?: InputMaybe<String_Comparison_Exp>;
   admin?: InputMaybe<String_Comparison_Exp>;
   general_contracts?: InputMaybe<Governance_Satellite_General_Contract_Bool_Exp>;
+  general_contracts_aggregate?: InputMaybe<Governance_Satellite_General_Contract_Aggregate_Bool_Exp>;
   gov_purpose_max_length?: InputMaybe<Smallint_Comparison_Exp>;
   gov_sat_approval_percentage?: InputMaybe<Smallint_Comparison_Exp>;
   gov_sat_duration_in_days?: InputMaybe<Smallint_Comparison_Exp>;
@@ -26383,10 +30409,13 @@ export type Governance_Satellite_Bool_Exp = {
   governance_id?: InputMaybe<String_Comparison_Exp>;
   governance_satellite_counter?: InputMaybe<Bigint_Comparison_Exp>;
   lambdas?: InputMaybe<Governance_Satellite_Lambda_Bool_Exp>;
+  lambdas_aggregate?: InputMaybe<Governance_Satellite_Lambda_Aggregate_Bool_Exp>;
   last_updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   max_actions_per_satellite?: InputMaybe<Smallint_Comparison_Exp>;
   oracles?: InputMaybe<Governance_Satellite_Oracle_Bool_Exp>;
+  oracles_aggregate?: InputMaybe<Governance_Satellite_Oracle_Aggregate_Bool_Exp>;
   whitelist_contracts?: InputMaybe<Governance_Satellite_Whitelist_Contract_Bool_Exp>;
+  whitelist_contracts_aggregate?: InputMaybe<Governance_Satellite_Whitelist_Contract_Aggregate_Bool_Exp>;
 };
 
 /** columns and relationships of "governance_satellite_general_contract" */
@@ -26405,6 +30434,17 @@ export type Governance_Satellite_General_Contract_Aggregate = {
   __typename?: 'governance_satellite_general_contract_aggregate';
   aggregate?: Maybe<Governance_Satellite_General_Contract_Aggregate_Fields>;
   nodes: Array<Governance_Satellite_General_Contract>;
+};
+
+export type Governance_Satellite_General_Contract_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Governance_Satellite_General_Contract_Aggregate_Bool_Exp_Count>;
+};
+
+export type Governance_Satellite_General_Contract_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Governance_Satellite_General_Contract_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Satellite_General_Contract_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "governance_satellite_general_contract" */
@@ -26633,6 +30673,17 @@ export type Governance_Satellite_Lambda_Aggregate = {
   __typename?: 'governance_satellite_lambda_aggregate';
   aggregate?: Maybe<Governance_Satellite_Lambda_Aggregate_Fields>;
   nodes: Array<Governance_Satellite_Lambda>;
+};
+
+export type Governance_Satellite_Lambda_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Governance_Satellite_Lambda_Aggregate_Bool_Exp_Count>;
+};
+
+export type Governance_Satellite_Lambda_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Governance_Satellite_Lambda_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Satellite_Lambda_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "governance_satellite_lambda" */
@@ -26950,6 +31001,17 @@ export type Governance_Satellite_Oracle_Aggregate = {
   nodes: Array<Governance_Satellite_Oracle>;
 };
 
+export type Governance_Satellite_Oracle_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Governance_Satellite_Oracle_Aggregate_Bool_Exp_Count>;
+};
+
+export type Governance_Satellite_Oracle_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Governance_Satellite_Oracle_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Satellite_Oracle_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
 /** aggregate fields of "governance_satellite_oracle" */
 export type Governance_Satellite_Oracle_Aggregate_Fields = {
   __typename?: 'governance_satellite_oracle_aggregate_fields';
@@ -27006,6 +31068,17 @@ export type Governance_Satellite_Oracle_Aggregator_Aggregate = {
   __typename?: 'governance_satellite_oracle_aggregator_aggregate';
   aggregate?: Maybe<Governance_Satellite_Oracle_Aggregator_Aggregate_Fields>;
   nodes: Array<Governance_Satellite_Oracle_Aggregator>;
+};
+
+export type Governance_Satellite_Oracle_Aggregator_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Governance_Satellite_Oracle_Aggregator_Aggregate_Bool_Exp_Count>;
+};
+
+export type Governance_Satellite_Oracle_Aggregator_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Governance_Satellite_Oracle_Aggregator_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Satellite_Oracle_Aggregator_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "governance_satellite_oracle_aggregator" */
@@ -27252,6 +31325,7 @@ export type Governance_Satellite_Oracle_Bool_Exp = {
   _not?: InputMaybe<Governance_Satellite_Oracle_Bool_Exp>;
   _or?: InputMaybe<Array<Governance_Satellite_Oracle_Bool_Exp>>;
   aggregators?: InputMaybe<Governance_Satellite_Oracle_Aggregator_Bool_Exp>;
+  aggregators_aggregate?: InputMaybe<Governance_Satellite_Oracle_Aggregator_Aggregate_Bool_Exp>;
   governance_satellite?: InputMaybe<Governance_Satellite_Bool_Exp>;
   governance_satellite_id?: InputMaybe<String_Comparison_Exp>;
   id?: InputMaybe<Bigint_Comparison_Exp>;
@@ -27514,6 +31588,107 @@ export type Governance_Satellite_Snapshot_Aggregate = {
   nodes: Array<Governance_Satellite_Snapshot>;
 };
 
+export type Governance_Satellite_Snapshot_Aggregate_Bool_Exp = {
+  avg?: InputMaybe<Governance_Satellite_Snapshot_Aggregate_Bool_Exp_Avg>;
+  bool_and?: InputMaybe<Governance_Satellite_Snapshot_Aggregate_Bool_Exp_Bool_And>;
+  bool_or?: InputMaybe<Governance_Satellite_Snapshot_Aggregate_Bool_Exp_Bool_Or>;
+  corr?: InputMaybe<Governance_Satellite_Snapshot_Aggregate_Bool_Exp_Corr>;
+  count?: InputMaybe<Governance_Satellite_Snapshot_Aggregate_Bool_Exp_Count>;
+  covar_samp?: InputMaybe<Governance_Satellite_Snapshot_Aggregate_Bool_Exp_Covar_Samp>;
+  max?: InputMaybe<Governance_Satellite_Snapshot_Aggregate_Bool_Exp_Max>;
+  min?: InputMaybe<Governance_Satellite_Snapshot_Aggregate_Bool_Exp_Min>;
+  stddev_samp?: InputMaybe<Governance_Satellite_Snapshot_Aggregate_Bool_Exp_Stddev_Samp>;
+  sum?: InputMaybe<Governance_Satellite_Snapshot_Aggregate_Bool_Exp_Sum>;
+  var_samp?: InputMaybe<Governance_Satellite_Snapshot_Aggregate_Bool_Exp_Var_Samp>;
+};
+
+export type Governance_Satellite_Snapshot_Aggregate_Bool_Exp_Avg = {
+  arguments: Governance_Satellite_Snapshot_Select_Column_Governance_Satellite_Snapshot_Aggregate_Bool_Exp_Avg_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Satellite_Snapshot_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Governance_Satellite_Snapshot_Aggregate_Bool_Exp_Bool_And = {
+  arguments: Governance_Satellite_Snapshot_Select_Column_Governance_Satellite_Snapshot_Aggregate_Bool_Exp_Bool_And_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Satellite_Snapshot_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Governance_Satellite_Snapshot_Aggregate_Bool_Exp_Bool_Or = {
+  arguments: Governance_Satellite_Snapshot_Select_Column_Governance_Satellite_Snapshot_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Satellite_Snapshot_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Governance_Satellite_Snapshot_Aggregate_Bool_Exp_Corr = {
+  arguments: Governance_Satellite_Snapshot_Aggregate_Bool_Exp_Corr_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Satellite_Snapshot_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Governance_Satellite_Snapshot_Aggregate_Bool_Exp_Corr_Arguments = {
+  X: Governance_Satellite_Snapshot_Select_Column_Governance_Satellite_Snapshot_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+  Y: Governance_Satellite_Snapshot_Select_Column_Governance_Satellite_Snapshot_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+};
+
+export type Governance_Satellite_Snapshot_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Governance_Satellite_Snapshot_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Satellite_Snapshot_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+export type Governance_Satellite_Snapshot_Aggregate_Bool_Exp_Covar_Samp = {
+  arguments: Governance_Satellite_Snapshot_Aggregate_Bool_Exp_Covar_Samp_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Satellite_Snapshot_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Governance_Satellite_Snapshot_Aggregate_Bool_Exp_Covar_Samp_Arguments = {
+  X: Governance_Satellite_Snapshot_Select_Column_Governance_Satellite_Snapshot_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+  Y: Governance_Satellite_Snapshot_Select_Column_Governance_Satellite_Snapshot_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+};
+
+export type Governance_Satellite_Snapshot_Aggregate_Bool_Exp_Max = {
+  arguments: Governance_Satellite_Snapshot_Select_Column_Governance_Satellite_Snapshot_Aggregate_Bool_Exp_Max_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Satellite_Snapshot_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Governance_Satellite_Snapshot_Aggregate_Bool_Exp_Min = {
+  arguments: Governance_Satellite_Snapshot_Select_Column_Governance_Satellite_Snapshot_Aggregate_Bool_Exp_Min_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Satellite_Snapshot_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Governance_Satellite_Snapshot_Aggregate_Bool_Exp_Stddev_Samp = {
+  arguments: Governance_Satellite_Snapshot_Select_Column_Governance_Satellite_Snapshot_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Satellite_Snapshot_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Governance_Satellite_Snapshot_Aggregate_Bool_Exp_Sum = {
+  arguments: Governance_Satellite_Snapshot_Select_Column_Governance_Satellite_Snapshot_Aggregate_Bool_Exp_Sum_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Satellite_Snapshot_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Governance_Satellite_Snapshot_Aggregate_Bool_Exp_Var_Samp = {
+  arguments: Governance_Satellite_Snapshot_Select_Column_Governance_Satellite_Snapshot_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Satellite_Snapshot_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
 /** aggregate fields of "governance_satellite_snapshot" */
 export type Governance_Satellite_Snapshot_Aggregate_Fields = {
   __typename?: 'governance_satellite_snapshot_aggregate_fields';
@@ -27579,8 +31754,10 @@ export type Governance_Satellite_Snapshot_Bool_Exp = {
   cycle?: InputMaybe<Bigint_Comparison_Exp>;
   governance?: InputMaybe<Governance_Bool_Exp>;
   governance_financial_requests_votes?: InputMaybe<Governance_Financial_Request_Vote_Bool_Exp>;
+  governance_financial_requests_votes_aggregate?: InputMaybe<Governance_Financial_Request_Vote_Aggregate_Bool_Exp>;
   governance_id?: InputMaybe<String_Comparison_Exp>;
   governance_satellite_actions_votes?: InputMaybe<Governance_Satellite_Action_Vote_Bool_Exp>;
+  governance_satellite_actions_votes_aggregate?: InputMaybe<Governance_Satellite_Action_Vote_Aggregate_Bool_Exp>;
   id?: InputMaybe<Bigint_Comparison_Exp>;
   ready?: InputMaybe<Boolean_Comparison_Exp>;
   total_delegated_amount?: InputMaybe<Float8_Comparison_Exp>;
@@ -27670,6 +31847,98 @@ export enum Governance_Satellite_Snapshot_Select_Column {
   TotalVotingPower = 'total_voting_power',
   /** column name */
   UserId = 'user_id'
+}
+
+/** select "governance_satellite_snapshot_aggregate_bool_exp_avg_arguments_columns" columns of table "governance_satellite_snapshot" */
+export enum Governance_Satellite_Snapshot_Select_Column_Governance_Satellite_Snapshot_Aggregate_Bool_Exp_Avg_Arguments_Columns {
+  /** column name */
+  TotalDelegatedAmount = 'total_delegated_amount',
+  /** column name */
+  TotalSmvkBalance = 'total_smvk_balance',
+  /** column name */
+  TotalVotingPower = 'total_voting_power'
+}
+
+/** select "governance_satellite_snapshot_aggregate_bool_exp_bool_and_arguments_columns" columns of table "governance_satellite_snapshot" */
+export enum Governance_Satellite_Snapshot_Select_Column_Governance_Satellite_Snapshot_Aggregate_Bool_Exp_Bool_And_Arguments_Columns {
+  /** column name */
+  Ready = 'ready'
+}
+
+/** select "governance_satellite_snapshot_aggregate_bool_exp_bool_or_arguments_columns" columns of table "governance_satellite_snapshot" */
+export enum Governance_Satellite_Snapshot_Select_Column_Governance_Satellite_Snapshot_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns {
+  /** column name */
+  Ready = 'ready'
+}
+
+/** select "governance_satellite_snapshot_aggregate_bool_exp_corr_arguments_columns" columns of table "governance_satellite_snapshot" */
+export enum Governance_Satellite_Snapshot_Select_Column_Governance_Satellite_Snapshot_Aggregate_Bool_Exp_Corr_Arguments_Columns {
+  /** column name */
+  TotalDelegatedAmount = 'total_delegated_amount',
+  /** column name */
+  TotalSmvkBalance = 'total_smvk_balance',
+  /** column name */
+  TotalVotingPower = 'total_voting_power'
+}
+
+/** select "governance_satellite_snapshot_aggregate_bool_exp_covar_samp_arguments_columns" columns of table "governance_satellite_snapshot" */
+export enum Governance_Satellite_Snapshot_Select_Column_Governance_Satellite_Snapshot_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns {
+  /** column name */
+  TotalDelegatedAmount = 'total_delegated_amount',
+  /** column name */
+  TotalSmvkBalance = 'total_smvk_balance',
+  /** column name */
+  TotalVotingPower = 'total_voting_power'
+}
+
+/** select "governance_satellite_snapshot_aggregate_bool_exp_max_arguments_columns" columns of table "governance_satellite_snapshot" */
+export enum Governance_Satellite_Snapshot_Select_Column_Governance_Satellite_Snapshot_Aggregate_Bool_Exp_Max_Arguments_Columns {
+  /** column name */
+  TotalDelegatedAmount = 'total_delegated_amount',
+  /** column name */
+  TotalSmvkBalance = 'total_smvk_balance',
+  /** column name */
+  TotalVotingPower = 'total_voting_power'
+}
+
+/** select "governance_satellite_snapshot_aggregate_bool_exp_min_arguments_columns" columns of table "governance_satellite_snapshot" */
+export enum Governance_Satellite_Snapshot_Select_Column_Governance_Satellite_Snapshot_Aggregate_Bool_Exp_Min_Arguments_Columns {
+  /** column name */
+  TotalDelegatedAmount = 'total_delegated_amount',
+  /** column name */
+  TotalSmvkBalance = 'total_smvk_balance',
+  /** column name */
+  TotalVotingPower = 'total_voting_power'
+}
+
+/** select "governance_satellite_snapshot_aggregate_bool_exp_stddev_samp_arguments_columns" columns of table "governance_satellite_snapshot" */
+export enum Governance_Satellite_Snapshot_Select_Column_Governance_Satellite_Snapshot_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns {
+  /** column name */
+  TotalDelegatedAmount = 'total_delegated_amount',
+  /** column name */
+  TotalSmvkBalance = 'total_smvk_balance',
+  /** column name */
+  TotalVotingPower = 'total_voting_power'
+}
+
+/** select "governance_satellite_snapshot_aggregate_bool_exp_sum_arguments_columns" columns of table "governance_satellite_snapshot" */
+export enum Governance_Satellite_Snapshot_Select_Column_Governance_Satellite_Snapshot_Aggregate_Bool_Exp_Sum_Arguments_Columns {
+  /** column name */
+  TotalDelegatedAmount = 'total_delegated_amount',
+  /** column name */
+  TotalSmvkBalance = 'total_smvk_balance',
+  /** column name */
+  TotalVotingPower = 'total_voting_power'
+}
+
+/** select "governance_satellite_snapshot_aggregate_bool_exp_var_samp_arguments_columns" columns of table "governance_satellite_snapshot" */
+export enum Governance_Satellite_Snapshot_Select_Column_Governance_Satellite_Snapshot_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns {
+  /** column name */
+  TotalDelegatedAmount = 'total_delegated_amount',
+  /** column name */
+  TotalSmvkBalance = 'total_smvk_balance',
+  /** column name */
+  TotalVotingPower = 'total_voting_power'
 }
 
 /** aggregate stddev on columns */
@@ -27995,6 +32264,17 @@ export type Governance_Satellite_Whitelist_Contract_Aggregate = {
   __typename?: 'governance_satellite_whitelist_contract_aggregate';
   aggregate?: Maybe<Governance_Satellite_Whitelist_Contract_Aggregate_Fields>;
   nodes: Array<Governance_Satellite_Whitelist_Contract>;
+};
+
+export type Governance_Satellite_Whitelist_Contract_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Governance_Satellite_Whitelist_Contract_Aggregate_Bool_Exp_Count>;
+};
+
+export type Governance_Satellite_Whitelist_Contract_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Governance_Satellite_Whitelist_Contract_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Satellite_Whitelist_Contract_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "governance_satellite_whitelist_contract" */
@@ -28578,6 +32858,17 @@ export type Governance_Whitelist_Contract_Aggregate = {
   nodes: Array<Governance_Whitelist_Contract>;
 };
 
+export type Governance_Whitelist_Contract_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Governance_Whitelist_Contract_Aggregate_Bool_Exp_Count>;
+};
+
+export type Governance_Whitelist_Contract_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Governance_Whitelist_Contract_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Governance_Whitelist_Contract_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
 /** aggregate fields of "governance_whitelist_contract" */
 export type Governance_Whitelist_Contract_Aggregate_Fields = {
   __typename?: 'governance_whitelist_contract_aggregate_fields';
@@ -28870,10 +33161,10 @@ export type Lending_Controller = {
   set_collateral_token_paused: Scalars['Boolean'];
   set_loan_token_paused: Scalars['Boolean'];
   vault_deposit_paused: Scalars['Boolean'];
-  vault_deposit_smvk_paused: Scalars['Boolean'];
+  vault_deposit_staked_token_paused: Scalars['Boolean'];
   vault_on_liquidate_paused: Scalars['Boolean'];
   vault_withdraw_paused: Scalars['Boolean'];
-  vault_withdraw_smvk_paused: Scalars['Boolean'];
+  vault_withdraw_staked_token_paused: Scalars['Boolean'];
   /** An array relationship */
   vaults: Array<Lending_Controller_Vault>;
   /** An aggregate relationship */
@@ -29055,6 +33346,33 @@ export type Lending_Controller_Aggregate = {
   nodes: Array<Lending_Controller>;
 };
 
+export type Lending_Controller_Aggregate_Bool_Exp = {
+  bool_and?: InputMaybe<Lending_Controller_Aggregate_Bool_Exp_Bool_And>;
+  bool_or?: InputMaybe<Lending_Controller_Aggregate_Bool_Exp_Bool_Or>;
+  count?: InputMaybe<Lending_Controller_Aggregate_Bool_Exp_Count>;
+};
+
+export type Lending_Controller_Aggregate_Bool_Exp_Bool_And = {
+  arguments: Lending_Controller_Select_Column_Lending_Controller_Aggregate_Bool_Exp_Bool_And_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Lending_Controller_Aggregate_Bool_Exp_Bool_Or = {
+  arguments: Lending_Controller_Select_Column_Lending_Controller_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Lending_Controller_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Lending_Controller_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
 /** aggregate fields of "lending_controller" */
 export type Lending_Controller_Aggregate_Fields = {
   __typename?: 'lending_controller_aggregate_fields';
@@ -29139,20 +33457,25 @@ export type Lending_Controller_Bool_Exp = {
   close_vault_paused?: InputMaybe<Boolean_Comparison_Exp>;
   collateral_ratio?: InputMaybe<Smallint_Comparison_Exp>;
   collateral_tokens?: InputMaybe<Lending_Controller_Collateral_Token_Bool_Exp>;
+  collateral_tokens_aggregate?: InputMaybe<Lending_Controller_Collateral_Token_Aggregate_Bool_Exp>;
   decimals?: InputMaybe<Smallint_Comparison_Exp>;
   general_contracts?: InputMaybe<Lending_Controller_General_Contract_Bool_Exp>;
+  general_contracts_aggregate?: InputMaybe<Lending_Controller_General_Contract_Aggregate_Bool_Exp>;
   governance?: InputMaybe<Governance_Bool_Exp>;
   governance_id?: InputMaybe<String_Comparison_Exp>;
   history_data?: InputMaybe<Lending_Controller_History_Data_Bool_Exp>;
+  history_data_aggregate?: InputMaybe<Lending_Controller_History_Data_Aggregate_Bool_Exp>;
   interest_rate_decimals?: InputMaybe<Smallint_Comparison_Exp>;
   interest_treasury_share?: InputMaybe<Smallint_Comparison_Exp>;
   lambdas?: InputMaybe<Lending_Controller_Lambda_Bool_Exp>;
+  lambdas_aggregate?: InputMaybe<Lending_Controller_Lambda_Aggregate_Bool_Exp>;
   last_updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   liquidate_vault_paused?: InputMaybe<Boolean_Comparison_Exp>;
   liquidation_delay_in_minutes?: InputMaybe<Bigint_Comparison_Exp>;
   liquidation_fee_pct?: InputMaybe<Smallint_Comparison_Exp>;
   liquidation_ratio?: InputMaybe<Smallint_Comparison_Exp>;
   loan_tokens?: InputMaybe<Lending_Controller_Loan_Token_Bool_Exp>;
+  loan_tokens_aggregate?: InputMaybe<Lending_Controller_Loan_Token_Aggregate_Bool_Exp>;
   mark_for_liquidation_paused?: InputMaybe<Boolean_Comparison_Exp>;
   max_decimals_for_calculation?: InputMaybe<Smallint_Comparison_Exp>;
   max_vault_liquidation_pct?: InputMaybe<Smallint_Comparison_Exp>;
@@ -29167,13 +33490,16 @@ export type Lending_Controller_Bool_Exp = {
   set_collateral_token_paused?: InputMaybe<Boolean_Comparison_Exp>;
   set_loan_token_paused?: InputMaybe<Boolean_Comparison_Exp>;
   vault_deposit_paused?: InputMaybe<Boolean_Comparison_Exp>;
-  vault_deposit_smvk_paused?: InputMaybe<Boolean_Comparison_Exp>;
+  vault_deposit_staked_token_paused?: InputMaybe<Boolean_Comparison_Exp>;
   vault_on_liquidate_paused?: InputMaybe<Boolean_Comparison_Exp>;
   vault_withdraw_paused?: InputMaybe<Boolean_Comparison_Exp>;
-  vault_withdraw_smvk_paused?: InputMaybe<Boolean_Comparison_Exp>;
+  vault_withdraw_staked_token_paused?: InputMaybe<Boolean_Comparison_Exp>;
   vaults?: InputMaybe<Lending_Controller_Vault_Bool_Exp>;
+  vaults_aggregate?: InputMaybe<Lending_Controller_Vault_Aggregate_Bool_Exp>;
   whitelist_contracts?: InputMaybe<Lending_Controller_Whitelist_Contract_Bool_Exp>;
+  whitelist_contracts_aggregate?: InputMaybe<Lending_Controller_Whitelist_Contract_Aggregate_Bool_Exp>;
   whitelist_token_contracts?: InputMaybe<Lending_Controller_Whitelist_Token_Contract_Bool_Exp>;
+  whitelist_token_contracts_aggregate?: InputMaybe<Lending_Controller_Whitelist_Token_Contract_Aggregate_Bool_Exp>;
 };
 
 /** columns and relationships of "lending_controller_collateral_token" */
@@ -29185,16 +33511,21 @@ export type Lending_Controller_Collateral_Token = {
   balances_aggregate: Lending_Controller_Vault_Collateral_Balance_Aggregate;
   id: Scalars['bigint'];
   is_scaled_token: Scalars['Boolean'];
+  is_staked_token: Scalars['Boolean'];
   /** An object relationship */
   lending_controller?: Maybe<Lending_Controller>;
   lending_controller_id?: Maybe<Scalars['String']>;
+  max_deposited_amount?: Maybe<Scalars['float8']>;
   /** An object relationship */
   oracle?: Maybe<Mavryk_User>;
   oracle_id?: Maybe<Scalars['String']>;
+  paused: Scalars['Boolean'];
   protected: Scalars['Boolean'];
+  staking_contract_address?: Maybe<Scalars['String']>;
   token_address: Scalars['String'];
   token_contract_standard: Scalars['String'];
   token_name: Scalars['String'];
+  total_deposited: Scalars['float8'];
 };
 
 
@@ -29222,6 +33553,107 @@ export type Lending_Controller_Collateral_Token_Aggregate = {
   __typename?: 'lending_controller_collateral_token_aggregate';
   aggregate?: Maybe<Lending_Controller_Collateral_Token_Aggregate_Fields>;
   nodes: Array<Lending_Controller_Collateral_Token>;
+};
+
+export type Lending_Controller_Collateral_Token_Aggregate_Bool_Exp = {
+  avg?: InputMaybe<Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Avg>;
+  bool_and?: InputMaybe<Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Bool_And>;
+  bool_or?: InputMaybe<Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Bool_Or>;
+  corr?: InputMaybe<Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Corr>;
+  count?: InputMaybe<Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Count>;
+  covar_samp?: InputMaybe<Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Covar_Samp>;
+  max?: InputMaybe<Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Max>;
+  min?: InputMaybe<Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Min>;
+  stddev_samp?: InputMaybe<Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Stddev_Samp>;
+  sum?: InputMaybe<Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Sum>;
+  var_samp?: InputMaybe<Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Var_Samp>;
+};
+
+export type Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Avg = {
+  arguments: Lending_Controller_Collateral_Token_Select_Column_Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Avg_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_Collateral_Token_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Bool_And = {
+  arguments: Lending_Controller_Collateral_Token_Select_Column_Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Bool_And_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_Collateral_Token_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Bool_Or = {
+  arguments: Lending_Controller_Collateral_Token_Select_Column_Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_Collateral_Token_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Corr = {
+  arguments: Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Corr_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_Collateral_Token_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Corr_Arguments = {
+  X: Lending_Controller_Collateral_Token_Select_Column_Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+  Y: Lending_Controller_Collateral_Token_Select_Column_Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+};
+
+export type Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Lending_Controller_Collateral_Token_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_Collateral_Token_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+export type Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Covar_Samp = {
+  arguments: Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Covar_Samp_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_Collateral_Token_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Covar_Samp_Arguments = {
+  X: Lending_Controller_Collateral_Token_Select_Column_Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+  Y: Lending_Controller_Collateral_Token_Select_Column_Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+};
+
+export type Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Max = {
+  arguments: Lending_Controller_Collateral_Token_Select_Column_Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Max_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_Collateral_Token_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Min = {
+  arguments: Lending_Controller_Collateral_Token_Select_Column_Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Min_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_Collateral_Token_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Stddev_Samp = {
+  arguments: Lending_Controller_Collateral_Token_Select_Column_Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_Collateral_Token_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Sum = {
+  arguments: Lending_Controller_Collateral_Token_Select_Column_Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Sum_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_Collateral_Token_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Var_Samp = {
+  arguments: Lending_Controller_Collateral_Token_Select_Column_Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_Collateral_Token_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
 };
 
 /** aggregate fields of "lending_controller_collateral_token" */
@@ -29266,11 +33698,15 @@ export type Lending_Controller_Collateral_Token_Aggregate_Order_By = {
 export type Lending_Controller_Collateral_Token_Avg_Fields = {
   __typename?: 'lending_controller_collateral_token_avg_fields';
   id?: Maybe<Scalars['Float']>;
+  max_deposited_amount?: Maybe<Scalars['Float']>;
+  total_deposited?: Maybe<Scalars['Float']>;
 };
 
 /** order by avg() on columns of table "lending_controller_collateral_token" */
 export type Lending_Controller_Collateral_Token_Avg_Order_By = {
   id?: InputMaybe<Order_By>;
+  max_deposited_amount?: InputMaybe<Order_By>;
+  total_deposited?: InputMaybe<Order_By>;
 };
 
 /** Boolean expression to filter rows from the table "lending_controller_collateral_token". All fields are combined with a logical 'AND'. */
@@ -29279,16 +33715,22 @@ export type Lending_Controller_Collateral_Token_Bool_Exp = {
   _not?: InputMaybe<Lending_Controller_Collateral_Token_Bool_Exp>;
   _or?: InputMaybe<Array<Lending_Controller_Collateral_Token_Bool_Exp>>;
   balances?: InputMaybe<Lending_Controller_Vault_Collateral_Balance_Bool_Exp>;
+  balances_aggregate?: InputMaybe<Lending_Controller_Vault_Collateral_Balance_Aggregate_Bool_Exp>;
   id?: InputMaybe<Bigint_Comparison_Exp>;
   is_scaled_token?: InputMaybe<Boolean_Comparison_Exp>;
+  is_staked_token?: InputMaybe<Boolean_Comparison_Exp>;
   lending_controller?: InputMaybe<Lending_Controller_Bool_Exp>;
   lending_controller_id?: InputMaybe<String_Comparison_Exp>;
+  max_deposited_amount?: InputMaybe<Float8_Comparison_Exp>;
   oracle?: InputMaybe<Mavryk_User_Bool_Exp>;
   oracle_id?: InputMaybe<String_Comparison_Exp>;
+  paused?: InputMaybe<Boolean_Comparison_Exp>;
   protected?: InputMaybe<Boolean_Comparison_Exp>;
+  staking_contract_address?: InputMaybe<String_Comparison_Exp>;
   token_address?: InputMaybe<String_Comparison_Exp>;
   token_contract_standard?: InputMaybe<String_Comparison_Exp>;
   token_name?: InputMaybe<String_Comparison_Exp>;
+  total_deposited?: InputMaybe<Float8_Comparison_Exp>;
 };
 
 /** aggregate max on columns */
@@ -29296,20 +33738,26 @@ export type Lending_Controller_Collateral_Token_Max_Fields = {
   __typename?: 'lending_controller_collateral_token_max_fields';
   id?: Maybe<Scalars['bigint']>;
   lending_controller_id?: Maybe<Scalars['String']>;
+  max_deposited_amount?: Maybe<Scalars['float8']>;
   oracle_id?: Maybe<Scalars['String']>;
+  staking_contract_address?: Maybe<Scalars['String']>;
   token_address?: Maybe<Scalars['String']>;
   token_contract_standard?: Maybe<Scalars['String']>;
   token_name?: Maybe<Scalars['String']>;
+  total_deposited?: Maybe<Scalars['float8']>;
 };
 
 /** order by max() on columns of table "lending_controller_collateral_token" */
 export type Lending_Controller_Collateral_Token_Max_Order_By = {
   id?: InputMaybe<Order_By>;
   lending_controller_id?: InputMaybe<Order_By>;
+  max_deposited_amount?: InputMaybe<Order_By>;
   oracle_id?: InputMaybe<Order_By>;
+  staking_contract_address?: InputMaybe<Order_By>;
   token_address?: InputMaybe<Order_By>;
   token_contract_standard?: InputMaybe<Order_By>;
   token_name?: InputMaybe<Order_By>;
+  total_deposited?: InputMaybe<Order_By>;
 };
 
 /** aggregate min on columns */
@@ -29317,20 +33765,26 @@ export type Lending_Controller_Collateral_Token_Min_Fields = {
   __typename?: 'lending_controller_collateral_token_min_fields';
   id?: Maybe<Scalars['bigint']>;
   lending_controller_id?: Maybe<Scalars['String']>;
+  max_deposited_amount?: Maybe<Scalars['float8']>;
   oracle_id?: Maybe<Scalars['String']>;
+  staking_contract_address?: Maybe<Scalars['String']>;
   token_address?: Maybe<Scalars['String']>;
   token_contract_standard?: Maybe<Scalars['String']>;
   token_name?: Maybe<Scalars['String']>;
+  total_deposited?: Maybe<Scalars['float8']>;
 };
 
 /** order by min() on columns of table "lending_controller_collateral_token" */
 export type Lending_Controller_Collateral_Token_Min_Order_By = {
   id?: InputMaybe<Order_By>;
   lending_controller_id?: InputMaybe<Order_By>;
+  max_deposited_amount?: InputMaybe<Order_By>;
   oracle_id?: InputMaybe<Order_By>;
+  staking_contract_address?: InputMaybe<Order_By>;
   token_address?: InputMaybe<Order_By>;
   token_contract_standard?: InputMaybe<Order_By>;
   token_name?: InputMaybe<Order_By>;
+  total_deposited?: InputMaybe<Order_By>;
 };
 
 /** Ordering options when selecting data from "lending_controller_collateral_token". */
@@ -29338,14 +33792,19 @@ export type Lending_Controller_Collateral_Token_Order_By = {
   balances_aggregate?: InputMaybe<Lending_Controller_Vault_Collateral_Balance_Aggregate_Order_By>;
   id?: InputMaybe<Order_By>;
   is_scaled_token?: InputMaybe<Order_By>;
+  is_staked_token?: InputMaybe<Order_By>;
   lending_controller?: InputMaybe<Lending_Controller_Order_By>;
   lending_controller_id?: InputMaybe<Order_By>;
+  max_deposited_amount?: InputMaybe<Order_By>;
   oracle?: InputMaybe<Mavryk_User_Order_By>;
   oracle_id?: InputMaybe<Order_By>;
+  paused?: InputMaybe<Order_By>;
   protected?: InputMaybe<Order_By>;
+  staking_contract_address?: InputMaybe<Order_By>;
   token_address?: InputMaybe<Order_By>;
   token_contract_standard?: InputMaybe<Order_By>;
   token_name?: InputMaybe<Order_By>;
+  total_deposited?: InputMaybe<Order_By>;
 };
 
 /** select columns of table "lending_controller_collateral_token" */
@@ -29355,50 +33814,160 @@ export enum Lending_Controller_Collateral_Token_Select_Column {
   /** column name */
   IsScaledToken = 'is_scaled_token',
   /** column name */
+  IsStakedToken = 'is_staked_token',
+  /** column name */
   LendingControllerId = 'lending_controller_id',
+  /** column name */
+  MaxDepositedAmount = 'max_deposited_amount',
   /** column name */
   OracleId = 'oracle_id',
   /** column name */
+  Paused = 'paused',
+  /** column name */
   Protected = 'protected',
+  /** column name */
+  StakingContractAddress = 'staking_contract_address',
   /** column name */
   TokenAddress = 'token_address',
   /** column name */
   TokenContractStandard = 'token_contract_standard',
   /** column name */
-  TokenName = 'token_name'
+  TokenName = 'token_name',
+  /** column name */
+  TotalDeposited = 'total_deposited'
+}
+
+/** select "lending_controller_collateral_token_aggregate_bool_exp_avg_arguments_columns" columns of table "lending_controller_collateral_token" */
+export enum Lending_Controller_Collateral_Token_Select_Column_Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Avg_Arguments_Columns {
+  /** column name */
+  MaxDepositedAmount = 'max_deposited_amount',
+  /** column name */
+  TotalDeposited = 'total_deposited'
+}
+
+/** select "lending_controller_collateral_token_aggregate_bool_exp_bool_and_arguments_columns" columns of table "lending_controller_collateral_token" */
+export enum Lending_Controller_Collateral_Token_Select_Column_Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Bool_And_Arguments_Columns {
+  /** column name */
+  IsScaledToken = 'is_scaled_token',
+  /** column name */
+  IsStakedToken = 'is_staked_token',
+  /** column name */
+  Paused = 'paused',
+  /** column name */
+  Protected = 'protected'
+}
+
+/** select "lending_controller_collateral_token_aggregate_bool_exp_bool_or_arguments_columns" columns of table "lending_controller_collateral_token" */
+export enum Lending_Controller_Collateral_Token_Select_Column_Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns {
+  /** column name */
+  IsScaledToken = 'is_scaled_token',
+  /** column name */
+  IsStakedToken = 'is_staked_token',
+  /** column name */
+  Paused = 'paused',
+  /** column name */
+  Protected = 'protected'
+}
+
+/** select "lending_controller_collateral_token_aggregate_bool_exp_corr_arguments_columns" columns of table "lending_controller_collateral_token" */
+export enum Lending_Controller_Collateral_Token_Select_Column_Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Corr_Arguments_Columns {
+  /** column name */
+  MaxDepositedAmount = 'max_deposited_amount',
+  /** column name */
+  TotalDeposited = 'total_deposited'
+}
+
+/** select "lending_controller_collateral_token_aggregate_bool_exp_covar_samp_arguments_columns" columns of table "lending_controller_collateral_token" */
+export enum Lending_Controller_Collateral_Token_Select_Column_Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns {
+  /** column name */
+  MaxDepositedAmount = 'max_deposited_amount',
+  /** column name */
+  TotalDeposited = 'total_deposited'
+}
+
+/** select "lending_controller_collateral_token_aggregate_bool_exp_max_arguments_columns" columns of table "lending_controller_collateral_token" */
+export enum Lending_Controller_Collateral_Token_Select_Column_Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Max_Arguments_Columns {
+  /** column name */
+  MaxDepositedAmount = 'max_deposited_amount',
+  /** column name */
+  TotalDeposited = 'total_deposited'
+}
+
+/** select "lending_controller_collateral_token_aggregate_bool_exp_min_arguments_columns" columns of table "lending_controller_collateral_token" */
+export enum Lending_Controller_Collateral_Token_Select_Column_Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Min_Arguments_Columns {
+  /** column name */
+  MaxDepositedAmount = 'max_deposited_amount',
+  /** column name */
+  TotalDeposited = 'total_deposited'
+}
+
+/** select "lending_controller_collateral_token_aggregate_bool_exp_stddev_samp_arguments_columns" columns of table "lending_controller_collateral_token" */
+export enum Lending_Controller_Collateral_Token_Select_Column_Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns {
+  /** column name */
+  MaxDepositedAmount = 'max_deposited_amount',
+  /** column name */
+  TotalDeposited = 'total_deposited'
+}
+
+/** select "lending_controller_collateral_token_aggregate_bool_exp_sum_arguments_columns" columns of table "lending_controller_collateral_token" */
+export enum Lending_Controller_Collateral_Token_Select_Column_Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Sum_Arguments_Columns {
+  /** column name */
+  MaxDepositedAmount = 'max_deposited_amount',
+  /** column name */
+  TotalDeposited = 'total_deposited'
+}
+
+/** select "lending_controller_collateral_token_aggregate_bool_exp_var_samp_arguments_columns" columns of table "lending_controller_collateral_token" */
+export enum Lending_Controller_Collateral_Token_Select_Column_Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns {
+  /** column name */
+  MaxDepositedAmount = 'max_deposited_amount',
+  /** column name */
+  TotalDeposited = 'total_deposited'
 }
 
 /** aggregate stddev on columns */
 export type Lending_Controller_Collateral_Token_Stddev_Fields = {
   __typename?: 'lending_controller_collateral_token_stddev_fields';
   id?: Maybe<Scalars['Float']>;
+  max_deposited_amount?: Maybe<Scalars['Float']>;
+  total_deposited?: Maybe<Scalars['Float']>;
 };
 
 /** order by stddev() on columns of table "lending_controller_collateral_token" */
 export type Lending_Controller_Collateral_Token_Stddev_Order_By = {
   id?: InputMaybe<Order_By>;
+  max_deposited_amount?: InputMaybe<Order_By>;
+  total_deposited?: InputMaybe<Order_By>;
 };
 
 /** aggregate stddev_pop on columns */
 export type Lending_Controller_Collateral_Token_Stddev_Pop_Fields = {
   __typename?: 'lending_controller_collateral_token_stddev_pop_fields';
   id?: Maybe<Scalars['Float']>;
+  max_deposited_amount?: Maybe<Scalars['Float']>;
+  total_deposited?: Maybe<Scalars['Float']>;
 };
 
 /** order by stddev_pop() on columns of table "lending_controller_collateral_token" */
 export type Lending_Controller_Collateral_Token_Stddev_Pop_Order_By = {
   id?: InputMaybe<Order_By>;
+  max_deposited_amount?: InputMaybe<Order_By>;
+  total_deposited?: InputMaybe<Order_By>;
 };
 
 /** aggregate stddev_samp on columns */
 export type Lending_Controller_Collateral_Token_Stddev_Samp_Fields = {
   __typename?: 'lending_controller_collateral_token_stddev_samp_fields';
   id?: Maybe<Scalars['Float']>;
+  max_deposited_amount?: Maybe<Scalars['Float']>;
+  total_deposited?: Maybe<Scalars['Float']>;
 };
 
 /** order by stddev_samp() on columns of table "lending_controller_collateral_token" */
 export type Lending_Controller_Collateral_Token_Stddev_Samp_Order_By = {
   id?: InputMaybe<Order_By>;
+  max_deposited_amount?: InputMaybe<Order_By>;
+  total_deposited?: InputMaybe<Order_By>;
 };
 
 /** Streaming cursor of the table "lending_controller_collateral_token" */
@@ -29413,56 +33982,77 @@ export type Lending_Controller_Collateral_Token_Stream_Cursor_Input = {
 export type Lending_Controller_Collateral_Token_Stream_Cursor_Value_Input = {
   id?: InputMaybe<Scalars['bigint']>;
   is_scaled_token?: InputMaybe<Scalars['Boolean']>;
+  is_staked_token?: InputMaybe<Scalars['Boolean']>;
   lending_controller_id?: InputMaybe<Scalars['String']>;
+  max_deposited_amount?: InputMaybe<Scalars['float8']>;
   oracle_id?: InputMaybe<Scalars['String']>;
+  paused?: InputMaybe<Scalars['Boolean']>;
   protected?: InputMaybe<Scalars['Boolean']>;
+  staking_contract_address?: InputMaybe<Scalars['String']>;
   token_address?: InputMaybe<Scalars['String']>;
   token_contract_standard?: InputMaybe<Scalars['String']>;
   token_name?: InputMaybe<Scalars['String']>;
+  total_deposited?: InputMaybe<Scalars['float8']>;
 };
 
 /** aggregate sum on columns */
 export type Lending_Controller_Collateral_Token_Sum_Fields = {
   __typename?: 'lending_controller_collateral_token_sum_fields';
   id?: Maybe<Scalars['bigint']>;
+  max_deposited_amount?: Maybe<Scalars['float8']>;
+  total_deposited?: Maybe<Scalars['float8']>;
 };
 
 /** order by sum() on columns of table "lending_controller_collateral_token" */
 export type Lending_Controller_Collateral_Token_Sum_Order_By = {
   id?: InputMaybe<Order_By>;
+  max_deposited_amount?: InputMaybe<Order_By>;
+  total_deposited?: InputMaybe<Order_By>;
 };
 
 /** aggregate var_pop on columns */
 export type Lending_Controller_Collateral_Token_Var_Pop_Fields = {
   __typename?: 'lending_controller_collateral_token_var_pop_fields';
   id?: Maybe<Scalars['Float']>;
+  max_deposited_amount?: Maybe<Scalars['Float']>;
+  total_deposited?: Maybe<Scalars['Float']>;
 };
 
 /** order by var_pop() on columns of table "lending_controller_collateral_token" */
 export type Lending_Controller_Collateral_Token_Var_Pop_Order_By = {
   id?: InputMaybe<Order_By>;
+  max_deposited_amount?: InputMaybe<Order_By>;
+  total_deposited?: InputMaybe<Order_By>;
 };
 
 /** aggregate var_samp on columns */
 export type Lending_Controller_Collateral_Token_Var_Samp_Fields = {
   __typename?: 'lending_controller_collateral_token_var_samp_fields';
   id?: Maybe<Scalars['Float']>;
+  max_deposited_amount?: Maybe<Scalars['Float']>;
+  total_deposited?: Maybe<Scalars['Float']>;
 };
 
 /** order by var_samp() on columns of table "lending_controller_collateral_token" */
 export type Lending_Controller_Collateral_Token_Var_Samp_Order_By = {
   id?: InputMaybe<Order_By>;
+  max_deposited_amount?: InputMaybe<Order_By>;
+  total_deposited?: InputMaybe<Order_By>;
 };
 
 /** aggregate variance on columns */
 export type Lending_Controller_Collateral_Token_Variance_Fields = {
   __typename?: 'lending_controller_collateral_token_variance_fields';
   id?: Maybe<Scalars['Float']>;
+  max_deposited_amount?: Maybe<Scalars['Float']>;
+  total_deposited?: Maybe<Scalars['Float']>;
 };
 
 /** order by variance() on columns of table "lending_controller_collateral_token" */
 export type Lending_Controller_Collateral_Token_Variance_Order_By = {
   id?: InputMaybe<Order_By>;
+  max_deposited_amount?: InputMaybe<Order_By>;
+  total_deposited?: InputMaybe<Order_By>;
 };
 
 /** columns and relationships of "lending_controller_general_contract" */
@@ -29481,6 +34071,17 @@ export type Lending_Controller_General_Contract_Aggregate = {
   __typename?: 'lending_controller_general_contract_aggregate';
   aggregate?: Maybe<Lending_Controller_General_Contract_Aggregate_Fields>;
   nodes: Array<Lending_Controller_General_Contract>;
+};
+
+export type Lending_Controller_General_Contract_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Lending_Controller_General_Contract_Aggregate_Bool_Exp_Count>;
+};
+
+export type Lending_Controller_General_Contract_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Lending_Controller_General_Contract_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_General_Contract_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "lending_controller_general_contract" */
@@ -29709,7 +34310,7 @@ export type Lending_Controller_History_Data = {
   sender: Mavryk_User;
   sender_id: Scalars['String'];
   timestamp: Scalars['timestamptz'];
-  /** ADD_LIQUIDITY: 0\nREMOVE_LIQUIDITY: 1\nBORROW: 2\nREPAY: 3\nDEPOSIT: 4\nWITHDRAW: 5\nDEPOSIT_SMVK: 6\nWITHDRAW_SMVK: 7\nVAULT_CREATION: 8\nMARK_FOR_LIQUIDATION: 9\nLIQUIDATE_VAULT: 10\nCLOSE_VAULT: 11 */
+  /** ADD_LIQUIDITY: 0\nREMOVE_LIQUIDITY: 1\nBORROW: 2\nREPAY: 3\nDEPOSIT: 4\nWITHDRAW: 5\nDEPOSIT_STAKED_TOKEN: 6\nWITHDRAW_STAKED_TOKEN: 7\nVAULT_CREATION: 8\nMARK_FOR_LIQUIDATION: 9\nLIQUIDATE_VAULT: 10\nCLOSE_VAULT: 11 */
   type: Scalars['smallint'];
   /** An object relationship */
   vault?: Maybe<Lending_Controller_Vault>;
@@ -29721,6 +34322,91 @@ export type Lending_Controller_History_Data_Aggregate = {
   __typename?: 'lending_controller_history_data_aggregate';
   aggregate?: Maybe<Lending_Controller_History_Data_Aggregate_Fields>;
   nodes: Array<Lending_Controller_History_Data>;
+};
+
+export type Lending_Controller_History_Data_Aggregate_Bool_Exp = {
+  avg?: InputMaybe<Lending_Controller_History_Data_Aggregate_Bool_Exp_Avg>;
+  corr?: InputMaybe<Lending_Controller_History_Data_Aggregate_Bool_Exp_Corr>;
+  count?: InputMaybe<Lending_Controller_History_Data_Aggregate_Bool_Exp_Count>;
+  covar_samp?: InputMaybe<Lending_Controller_History_Data_Aggregate_Bool_Exp_Covar_Samp>;
+  max?: InputMaybe<Lending_Controller_History_Data_Aggregate_Bool_Exp_Max>;
+  min?: InputMaybe<Lending_Controller_History_Data_Aggregate_Bool_Exp_Min>;
+  stddev_samp?: InputMaybe<Lending_Controller_History_Data_Aggregate_Bool_Exp_Stddev_Samp>;
+  sum?: InputMaybe<Lending_Controller_History_Data_Aggregate_Bool_Exp_Sum>;
+  var_samp?: InputMaybe<Lending_Controller_History_Data_Aggregate_Bool_Exp_Var_Samp>;
+};
+
+export type Lending_Controller_History_Data_Aggregate_Bool_Exp_Avg = {
+  arguments: Lending_Controller_History_Data_Select_Column_Lending_Controller_History_Data_Aggregate_Bool_Exp_Avg_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Lending_Controller_History_Data_Aggregate_Bool_Exp_Corr = {
+  arguments: Lending_Controller_History_Data_Aggregate_Bool_Exp_Corr_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Lending_Controller_History_Data_Aggregate_Bool_Exp_Corr_Arguments = {
+  X: Lending_Controller_History_Data_Select_Column_Lending_Controller_History_Data_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+  Y: Lending_Controller_History_Data_Select_Column_Lending_Controller_History_Data_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+};
+
+export type Lending_Controller_History_Data_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Lending_Controller_History_Data_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_History_Data_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+export type Lending_Controller_History_Data_Aggregate_Bool_Exp_Covar_Samp = {
+  arguments: Lending_Controller_History_Data_Aggregate_Bool_Exp_Covar_Samp_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Lending_Controller_History_Data_Aggregate_Bool_Exp_Covar_Samp_Arguments = {
+  X: Lending_Controller_History_Data_Select_Column_Lending_Controller_History_Data_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+  Y: Lending_Controller_History_Data_Select_Column_Lending_Controller_History_Data_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+};
+
+export type Lending_Controller_History_Data_Aggregate_Bool_Exp_Max = {
+  arguments: Lending_Controller_History_Data_Select_Column_Lending_Controller_History_Data_Aggregate_Bool_Exp_Max_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Lending_Controller_History_Data_Aggregate_Bool_Exp_Min = {
+  arguments: Lending_Controller_History_Data_Select_Column_Lending_Controller_History_Data_Aggregate_Bool_Exp_Min_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Lending_Controller_History_Data_Aggregate_Bool_Exp_Stddev_Samp = {
+  arguments: Lending_Controller_History_Data_Select_Column_Lending_Controller_History_Data_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Lending_Controller_History_Data_Aggregate_Bool_Exp_Sum = {
+  arguments: Lending_Controller_History_Data_Select_Column_Lending_Controller_History_Data_Aggregate_Bool_Exp_Sum_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Lending_Controller_History_Data_Aggregate_Bool_Exp_Var_Samp = {
+  arguments: Lending_Controller_History_Data_Select_Column_Lending_Controller_History_Data_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
 };
 
 /** aggregate fields of "lending_controller_history_data" */
@@ -29768,7 +34454,7 @@ export type Lending_Controller_History_Data_Avg_Fields = {
   id?: Maybe<Scalars['Float']>;
   level?: Maybe<Scalars['Float']>;
   loan_token_id?: Maybe<Scalars['Float']>;
-  /** ADD_LIQUIDITY: 0\nREMOVE_LIQUIDITY: 1\nBORROW: 2\nREPAY: 3\nDEPOSIT: 4\nWITHDRAW: 5\nDEPOSIT_SMVK: 6\nWITHDRAW_SMVK: 7\nVAULT_CREATION: 8\nMARK_FOR_LIQUIDATION: 9\nLIQUIDATE_VAULT: 10\nCLOSE_VAULT: 11 */
+  /** ADD_LIQUIDITY: 0\nREMOVE_LIQUIDITY: 1\nBORROW: 2\nREPAY: 3\nDEPOSIT: 4\nWITHDRAW: 5\nDEPOSIT_STAKED_TOKEN: 6\nWITHDRAW_STAKED_TOKEN: 7\nVAULT_CREATION: 8\nMARK_FOR_LIQUIDATION: 9\nLIQUIDATE_VAULT: 10\nCLOSE_VAULT: 11 */
   type?: Maybe<Scalars['Float']>;
   vault_id?: Maybe<Scalars['Float']>;
 };
@@ -29779,7 +34465,7 @@ export type Lending_Controller_History_Data_Avg_Order_By = {
   id?: InputMaybe<Order_By>;
   level?: InputMaybe<Order_By>;
   loan_token_id?: InputMaybe<Order_By>;
-  /** ADD_LIQUIDITY: 0\nREMOVE_LIQUIDITY: 1\nBORROW: 2\nREPAY: 3\nDEPOSIT: 4\nWITHDRAW: 5\nDEPOSIT_SMVK: 6\nWITHDRAW_SMVK: 7\nVAULT_CREATION: 8\nMARK_FOR_LIQUIDATION: 9\nLIQUIDATE_VAULT: 10\nCLOSE_VAULT: 11 */
+  /** ADD_LIQUIDITY: 0\nREMOVE_LIQUIDITY: 1\nBORROW: 2\nREPAY: 3\nDEPOSIT: 4\nWITHDRAW: 5\nDEPOSIT_STAKED_TOKEN: 6\nWITHDRAW_STAKED_TOKEN: 7\nVAULT_CREATION: 8\nMARK_FOR_LIQUIDATION: 9\nLIQUIDATE_VAULT: 10\nCLOSE_VAULT: 11 */
   type?: InputMaybe<Order_By>;
   vault_id?: InputMaybe<Order_By>;
 };
@@ -29816,7 +34502,7 @@ export type Lending_Controller_History_Data_Max_Fields = {
   operation_hash?: Maybe<Scalars['String']>;
   sender_id?: Maybe<Scalars['String']>;
   timestamp?: Maybe<Scalars['timestamptz']>;
-  /** ADD_LIQUIDITY: 0\nREMOVE_LIQUIDITY: 1\nBORROW: 2\nREPAY: 3\nDEPOSIT: 4\nWITHDRAW: 5\nDEPOSIT_SMVK: 6\nWITHDRAW_SMVK: 7\nVAULT_CREATION: 8\nMARK_FOR_LIQUIDATION: 9\nLIQUIDATE_VAULT: 10\nCLOSE_VAULT: 11 */
+  /** ADD_LIQUIDITY: 0\nREMOVE_LIQUIDITY: 1\nBORROW: 2\nREPAY: 3\nDEPOSIT: 4\nWITHDRAW: 5\nDEPOSIT_STAKED_TOKEN: 6\nWITHDRAW_STAKED_TOKEN: 7\nVAULT_CREATION: 8\nMARK_FOR_LIQUIDATION: 9\nLIQUIDATE_VAULT: 10\nCLOSE_VAULT: 11 */
   type?: Maybe<Scalars['smallint']>;
   vault_id?: Maybe<Scalars['bigint']>;
 };
@@ -29831,7 +34517,7 @@ export type Lending_Controller_History_Data_Max_Order_By = {
   operation_hash?: InputMaybe<Order_By>;
   sender_id?: InputMaybe<Order_By>;
   timestamp?: InputMaybe<Order_By>;
-  /** ADD_LIQUIDITY: 0\nREMOVE_LIQUIDITY: 1\nBORROW: 2\nREPAY: 3\nDEPOSIT: 4\nWITHDRAW: 5\nDEPOSIT_SMVK: 6\nWITHDRAW_SMVK: 7\nVAULT_CREATION: 8\nMARK_FOR_LIQUIDATION: 9\nLIQUIDATE_VAULT: 10\nCLOSE_VAULT: 11 */
+  /** ADD_LIQUIDITY: 0\nREMOVE_LIQUIDITY: 1\nBORROW: 2\nREPAY: 3\nDEPOSIT: 4\nWITHDRAW: 5\nDEPOSIT_STAKED_TOKEN: 6\nWITHDRAW_STAKED_TOKEN: 7\nVAULT_CREATION: 8\nMARK_FOR_LIQUIDATION: 9\nLIQUIDATE_VAULT: 10\nCLOSE_VAULT: 11 */
   type?: InputMaybe<Order_By>;
   vault_id?: InputMaybe<Order_By>;
 };
@@ -29847,7 +34533,7 @@ export type Lending_Controller_History_Data_Min_Fields = {
   operation_hash?: Maybe<Scalars['String']>;
   sender_id?: Maybe<Scalars['String']>;
   timestamp?: Maybe<Scalars['timestamptz']>;
-  /** ADD_LIQUIDITY: 0\nREMOVE_LIQUIDITY: 1\nBORROW: 2\nREPAY: 3\nDEPOSIT: 4\nWITHDRAW: 5\nDEPOSIT_SMVK: 6\nWITHDRAW_SMVK: 7\nVAULT_CREATION: 8\nMARK_FOR_LIQUIDATION: 9\nLIQUIDATE_VAULT: 10\nCLOSE_VAULT: 11 */
+  /** ADD_LIQUIDITY: 0\nREMOVE_LIQUIDITY: 1\nBORROW: 2\nREPAY: 3\nDEPOSIT: 4\nWITHDRAW: 5\nDEPOSIT_STAKED_TOKEN: 6\nWITHDRAW_STAKED_TOKEN: 7\nVAULT_CREATION: 8\nMARK_FOR_LIQUIDATION: 9\nLIQUIDATE_VAULT: 10\nCLOSE_VAULT: 11 */
   type?: Maybe<Scalars['smallint']>;
   vault_id?: Maybe<Scalars['bigint']>;
 };
@@ -29862,7 +34548,7 @@ export type Lending_Controller_History_Data_Min_Order_By = {
   operation_hash?: InputMaybe<Order_By>;
   sender_id?: InputMaybe<Order_By>;
   timestamp?: InputMaybe<Order_By>;
-  /** ADD_LIQUIDITY: 0\nREMOVE_LIQUIDITY: 1\nBORROW: 2\nREPAY: 3\nDEPOSIT: 4\nWITHDRAW: 5\nDEPOSIT_SMVK: 6\nWITHDRAW_SMVK: 7\nVAULT_CREATION: 8\nMARK_FOR_LIQUIDATION: 9\nLIQUIDATE_VAULT: 10\nCLOSE_VAULT: 11 */
+  /** ADD_LIQUIDITY: 0\nREMOVE_LIQUIDITY: 1\nBORROW: 2\nREPAY: 3\nDEPOSIT: 4\nWITHDRAW: 5\nDEPOSIT_STAKED_TOKEN: 6\nWITHDRAW_STAKED_TOKEN: 7\nVAULT_CREATION: 8\nMARK_FOR_LIQUIDATION: 9\nLIQUIDATE_VAULT: 10\nCLOSE_VAULT: 11 */
   type?: InputMaybe<Order_By>;
   vault_id?: InputMaybe<Order_By>;
 };
@@ -29909,6 +34595,54 @@ export enum Lending_Controller_History_Data_Select_Column {
   VaultId = 'vault_id'
 }
 
+/** select "lending_controller_history_data_aggregate_bool_exp_avg_arguments_columns" columns of table "lending_controller_history_data" */
+export enum Lending_Controller_History_Data_Select_Column_Lending_Controller_History_Data_Aggregate_Bool_Exp_Avg_Arguments_Columns {
+  /** column name */
+  Amount = 'amount'
+}
+
+/** select "lending_controller_history_data_aggregate_bool_exp_corr_arguments_columns" columns of table "lending_controller_history_data" */
+export enum Lending_Controller_History_Data_Select_Column_Lending_Controller_History_Data_Aggregate_Bool_Exp_Corr_Arguments_Columns {
+  /** column name */
+  Amount = 'amount'
+}
+
+/** select "lending_controller_history_data_aggregate_bool_exp_covar_samp_arguments_columns" columns of table "lending_controller_history_data" */
+export enum Lending_Controller_History_Data_Select_Column_Lending_Controller_History_Data_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns {
+  /** column name */
+  Amount = 'amount'
+}
+
+/** select "lending_controller_history_data_aggregate_bool_exp_max_arguments_columns" columns of table "lending_controller_history_data" */
+export enum Lending_Controller_History_Data_Select_Column_Lending_Controller_History_Data_Aggregate_Bool_Exp_Max_Arguments_Columns {
+  /** column name */
+  Amount = 'amount'
+}
+
+/** select "lending_controller_history_data_aggregate_bool_exp_min_arguments_columns" columns of table "lending_controller_history_data" */
+export enum Lending_Controller_History_Data_Select_Column_Lending_Controller_History_Data_Aggregate_Bool_Exp_Min_Arguments_Columns {
+  /** column name */
+  Amount = 'amount'
+}
+
+/** select "lending_controller_history_data_aggregate_bool_exp_stddev_samp_arguments_columns" columns of table "lending_controller_history_data" */
+export enum Lending_Controller_History_Data_Select_Column_Lending_Controller_History_Data_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns {
+  /** column name */
+  Amount = 'amount'
+}
+
+/** select "lending_controller_history_data_aggregate_bool_exp_sum_arguments_columns" columns of table "lending_controller_history_data" */
+export enum Lending_Controller_History_Data_Select_Column_Lending_Controller_History_Data_Aggregate_Bool_Exp_Sum_Arguments_Columns {
+  /** column name */
+  Amount = 'amount'
+}
+
+/** select "lending_controller_history_data_aggregate_bool_exp_var_samp_arguments_columns" columns of table "lending_controller_history_data" */
+export enum Lending_Controller_History_Data_Select_Column_Lending_Controller_History_Data_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns {
+  /** column name */
+  Amount = 'amount'
+}
+
 /** aggregate stddev on columns */
 export type Lending_Controller_History_Data_Stddev_Fields = {
   __typename?: 'lending_controller_history_data_stddev_fields';
@@ -29916,7 +34650,7 @@ export type Lending_Controller_History_Data_Stddev_Fields = {
   id?: Maybe<Scalars['Float']>;
   level?: Maybe<Scalars['Float']>;
   loan_token_id?: Maybe<Scalars['Float']>;
-  /** ADD_LIQUIDITY: 0\nREMOVE_LIQUIDITY: 1\nBORROW: 2\nREPAY: 3\nDEPOSIT: 4\nWITHDRAW: 5\nDEPOSIT_SMVK: 6\nWITHDRAW_SMVK: 7\nVAULT_CREATION: 8\nMARK_FOR_LIQUIDATION: 9\nLIQUIDATE_VAULT: 10\nCLOSE_VAULT: 11 */
+  /** ADD_LIQUIDITY: 0\nREMOVE_LIQUIDITY: 1\nBORROW: 2\nREPAY: 3\nDEPOSIT: 4\nWITHDRAW: 5\nDEPOSIT_STAKED_TOKEN: 6\nWITHDRAW_STAKED_TOKEN: 7\nVAULT_CREATION: 8\nMARK_FOR_LIQUIDATION: 9\nLIQUIDATE_VAULT: 10\nCLOSE_VAULT: 11 */
   type?: Maybe<Scalars['Float']>;
   vault_id?: Maybe<Scalars['Float']>;
 };
@@ -29927,7 +34661,7 @@ export type Lending_Controller_History_Data_Stddev_Order_By = {
   id?: InputMaybe<Order_By>;
   level?: InputMaybe<Order_By>;
   loan_token_id?: InputMaybe<Order_By>;
-  /** ADD_LIQUIDITY: 0\nREMOVE_LIQUIDITY: 1\nBORROW: 2\nREPAY: 3\nDEPOSIT: 4\nWITHDRAW: 5\nDEPOSIT_SMVK: 6\nWITHDRAW_SMVK: 7\nVAULT_CREATION: 8\nMARK_FOR_LIQUIDATION: 9\nLIQUIDATE_VAULT: 10\nCLOSE_VAULT: 11 */
+  /** ADD_LIQUIDITY: 0\nREMOVE_LIQUIDITY: 1\nBORROW: 2\nREPAY: 3\nDEPOSIT: 4\nWITHDRAW: 5\nDEPOSIT_STAKED_TOKEN: 6\nWITHDRAW_STAKED_TOKEN: 7\nVAULT_CREATION: 8\nMARK_FOR_LIQUIDATION: 9\nLIQUIDATE_VAULT: 10\nCLOSE_VAULT: 11 */
   type?: InputMaybe<Order_By>;
   vault_id?: InputMaybe<Order_By>;
 };
@@ -29939,7 +34673,7 @@ export type Lending_Controller_History_Data_Stddev_Pop_Fields = {
   id?: Maybe<Scalars['Float']>;
   level?: Maybe<Scalars['Float']>;
   loan_token_id?: Maybe<Scalars['Float']>;
-  /** ADD_LIQUIDITY: 0\nREMOVE_LIQUIDITY: 1\nBORROW: 2\nREPAY: 3\nDEPOSIT: 4\nWITHDRAW: 5\nDEPOSIT_SMVK: 6\nWITHDRAW_SMVK: 7\nVAULT_CREATION: 8\nMARK_FOR_LIQUIDATION: 9\nLIQUIDATE_VAULT: 10\nCLOSE_VAULT: 11 */
+  /** ADD_LIQUIDITY: 0\nREMOVE_LIQUIDITY: 1\nBORROW: 2\nREPAY: 3\nDEPOSIT: 4\nWITHDRAW: 5\nDEPOSIT_STAKED_TOKEN: 6\nWITHDRAW_STAKED_TOKEN: 7\nVAULT_CREATION: 8\nMARK_FOR_LIQUIDATION: 9\nLIQUIDATE_VAULT: 10\nCLOSE_VAULT: 11 */
   type?: Maybe<Scalars['Float']>;
   vault_id?: Maybe<Scalars['Float']>;
 };
@@ -29950,7 +34684,7 @@ export type Lending_Controller_History_Data_Stddev_Pop_Order_By = {
   id?: InputMaybe<Order_By>;
   level?: InputMaybe<Order_By>;
   loan_token_id?: InputMaybe<Order_By>;
-  /** ADD_LIQUIDITY: 0\nREMOVE_LIQUIDITY: 1\nBORROW: 2\nREPAY: 3\nDEPOSIT: 4\nWITHDRAW: 5\nDEPOSIT_SMVK: 6\nWITHDRAW_SMVK: 7\nVAULT_CREATION: 8\nMARK_FOR_LIQUIDATION: 9\nLIQUIDATE_VAULT: 10\nCLOSE_VAULT: 11 */
+  /** ADD_LIQUIDITY: 0\nREMOVE_LIQUIDITY: 1\nBORROW: 2\nREPAY: 3\nDEPOSIT: 4\nWITHDRAW: 5\nDEPOSIT_STAKED_TOKEN: 6\nWITHDRAW_STAKED_TOKEN: 7\nVAULT_CREATION: 8\nMARK_FOR_LIQUIDATION: 9\nLIQUIDATE_VAULT: 10\nCLOSE_VAULT: 11 */
   type?: InputMaybe<Order_By>;
   vault_id?: InputMaybe<Order_By>;
 };
@@ -29962,7 +34696,7 @@ export type Lending_Controller_History_Data_Stddev_Samp_Fields = {
   id?: Maybe<Scalars['Float']>;
   level?: Maybe<Scalars['Float']>;
   loan_token_id?: Maybe<Scalars['Float']>;
-  /** ADD_LIQUIDITY: 0\nREMOVE_LIQUIDITY: 1\nBORROW: 2\nREPAY: 3\nDEPOSIT: 4\nWITHDRAW: 5\nDEPOSIT_SMVK: 6\nWITHDRAW_SMVK: 7\nVAULT_CREATION: 8\nMARK_FOR_LIQUIDATION: 9\nLIQUIDATE_VAULT: 10\nCLOSE_VAULT: 11 */
+  /** ADD_LIQUIDITY: 0\nREMOVE_LIQUIDITY: 1\nBORROW: 2\nREPAY: 3\nDEPOSIT: 4\nWITHDRAW: 5\nDEPOSIT_STAKED_TOKEN: 6\nWITHDRAW_STAKED_TOKEN: 7\nVAULT_CREATION: 8\nMARK_FOR_LIQUIDATION: 9\nLIQUIDATE_VAULT: 10\nCLOSE_VAULT: 11 */
   type?: Maybe<Scalars['Float']>;
   vault_id?: Maybe<Scalars['Float']>;
 };
@@ -29973,7 +34707,7 @@ export type Lending_Controller_History_Data_Stddev_Samp_Order_By = {
   id?: InputMaybe<Order_By>;
   level?: InputMaybe<Order_By>;
   loan_token_id?: InputMaybe<Order_By>;
-  /** ADD_LIQUIDITY: 0\nREMOVE_LIQUIDITY: 1\nBORROW: 2\nREPAY: 3\nDEPOSIT: 4\nWITHDRAW: 5\nDEPOSIT_SMVK: 6\nWITHDRAW_SMVK: 7\nVAULT_CREATION: 8\nMARK_FOR_LIQUIDATION: 9\nLIQUIDATE_VAULT: 10\nCLOSE_VAULT: 11 */
+  /** ADD_LIQUIDITY: 0\nREMOVE_LIQUIDITY: 1\nBORROW: 2\nREPAY: 3\nDEPOSIT: 4\nWITHDRAW: 5\nDEPOSIT_STAKED_TOKEN: 6\nWITHDRAW_STAKED_TOKEN: 7\nVAULT_CREATION: 8\nMARK_FOR_LIQUIDATION: 9\nLIQUIDATE_VAULT: 10\nCLOSE_VAULT: 11 */
   type?: InputMaybe<Order_By>;
   vault_id?: InputMaybe<Order_By>;
 };
@@ -29996,7 +34730,7 @@ export type Lending_Controller_History_Data_Stream_Cursor_Value_Input = {
   operation_hash?: InputMaybe<Scalars['String']>;
   sender_id?: InputMaybe<Scalars['String']>;
   timestamp?: InputMaybe<Scalars['timestamptz']>;
-  /** ADD_LIQUIDITY: 0\nREMOVE_LIQUIDITY: 1\nBORROW: 2\nREPAY: 3\nDEPOSIT: 4\nWITHDRAW: 5\nDEPOSIT_SMVK: 6\nWITHDRAW_SMVK: 7\nVAULT_CREATION: 8\nMARK_FOR_LIQUIDATION: 9\nLIQUIDATE_VAULT: 10\nCLOSE_VAULT: 11 */
+  /** ADD_LIQUIDITY: 0\nREMOVE_LIQUIDITY: 1\nBORROW: 2\nREPAY: 3\nDEPOSIT: 4\nWITHDRAW: 5\nDEPOSIT_STAKED_TOKEN: 6\nWITHDRAW_STAKED_TOKEN: 7\nVAULT_CREATION: 8\nMARK_FOR_LIQUIDATION: 9\nLIQUIDATE_VAULT: 10\nCLOSE_VAULT: 11 */
   type?: InputMaybe<Scalars['smallint']>;
   vault_id?: InputMaybe<Scalars['bigint']>;
 };
@@ -30008,7 +34742,7 @@ export type Lending_Controller_History_Data_Sum_Fields = {
   id?: Maybe<Scalars['bigint']>;
   level?: Maybe<Scalars['bigint']>;
   loan_token_id?: Maybe<Scalars['bigint']>;
-  /** ADD_LIQUIDITY: 0\nREMOVE_LIQUIDITY: 1\nBORROW: 2\nREPAY: 3\nDEPOSIT: 4\nWITHDRAW: 5\nDEPOSIT_SMVK: 6\nWITHDRAW_SMVK: 7\nVAULT_CREATION: 8\nMARK_FOR_LIQUIDATION: 9\nLIQUIDATE_VAULT: 10\nCLOSE_VAULT: 11 */
+  /** ADD_LIQUIDITY: 0\nREMOVE_LIQUIDITY: 1\nBORROW: 2\nREPAY: 3\nDEPOSIT: 4\nWITHDRAW: 5\nDEPOSIT_STAKED_TOKEN: 6\nWITHDRAW_STAKED_TOKEN: 7\nVAULT_CREATION: 8\nMARK_FOR_LIQUIDATION: 9\nLIQUIDATE_VAULT: 10\nCLOSE_VAULT: 11 */
   type?: Maybe<Scalars['smallint']>;
   vault_id?: Maybe<Scalars['bigint']>;
 };
@@ -30019,7 +34753,7 @@ export type Lending_Controller_History_Data_Sum_Order_By = {
   id?: InputMaybe<Order_By>;
   level?: InputMaybe<Order_By>;
   loan_token_id?: InputMaybe<Order_By>;
-  /** ADD_LIQUIDITY: 0\nREMOVE_LIQUIDITY: 1\nBORROW: 2\nREPAY: 3\nDEPOSIT: 4\nWITHDRAW: 5\nDEPOSIT_SMVK: 6\nWITHDRAW_SMVK: 7\nVAULT_CREATION: 8\nMARK_FOR_LIQUIDATION: 9\nLIQUIDATE_VAULT: 10\nCLOSE_VAULT: 11 */
+  /** ADD_LIQUIDITY: 0\nREMOVE_LIQUIDITY: 1\nBORROW: 2\nREPAY: 3\nDEPOSIT: 4\nWITHDRAW: 5\nDEPOSIT_STAKED_TOKEN: 6\nWITHDRAW_STAKED_TOKEN: 7\nVAULT_CREATION: 8\nMARK_FOR_LIQUIDATION: 9\nLIQUIDATE_VAULT: 10\nCLOSE_VAULT: 11 */
   type?: InputMaybe<Order_By>;
   vault_id?: InputMaybe<Order_By>;
 };
@@ -30031,7 +34765,7 @@ export type Lending_Controller_History_Data_Var_Pop_Fields = {
   id?: Maybe<Scalars['Float']>;
   level?: Maybe<Scalars['Float']>;
   loan_token_id?: Maybe<Scalars['Float']>;
-  /** ADD_LIQUIDITY: 0\nREMOVE_LIQUIDITY: 1\nBORROW: 2\nREPAY: 3\nDEPOSIT: 4\nWITHDRAW: 5\nDEPOSIT_SMVK: 6\nWITHDRAW_SMVK: 7\nVAULT_CREATION: 8\nMARK_FOR_LIQUIDATION: 9\nLIQUIDATE_VAULT: 10\nCLOSE_VAULT: 11 */
+  /** ADD_LIQUIDITY: 0\nREMOVE_LIQUIDITY: 1\nBORROW: 2\nREPAY: 3\nDEPOSIT: 4\nWITHDRAW: 5\nDEPOSIT_STAKED_TOKEN: 6\nWITHDRAW_STAKED_TOKEN: 7\nVAULT_CREATION: 8\nMARK_FOR_LIQUIDATION: 9\nLIQUIDATE_VAULT: 10\nCLOSE_VAULT: 11 */
   type?: Maybe<Scalars['Float']>;
   vault_id?: Maybe<Scalars['Float']>;
 };
@@ -30042,7 +34776,7 @@ export type Lending_Controller_History_Data_Var_Pop_Order_By = {
   id?: InputMaybe<Order_By>;
   level?: InputMaybe<Order_By>;
   loan_token_id?: InputMaybe<Order_By>;
-  /** ADD_LIQUIDITY: 0\nREMOVE_LIQUIDITY: 1\nBORROW: 2\nREPAY: 3\nDEPOSIT: 4\nWITHDRAW: 5\nDEPOSIT_SMVK: 6\nWITHDRAW_SMVK: 7\nVAULT_CREATION: 8\nMARK_FOR_LIQUIDATION: 9\nLIQUIDATE_VAULT: 10\nCLOSE_VAULT: 11 */
+  /** ADD_LIQUIDITY: 0\nREMOVE_LIQUIDITY: 1\nBORROW: 2\nREPAY: 3\nDEPOSIT: 4\nWITHDRAW: 5\nDEPOSIT_STAKED_TOKEN: 6\nWITHDRAW_STAKED_TOKEN: 7\nVAULT_CREATION: 8\nMARK_FOR_LIQUIDATION: 9\nLIQUIDATE_VAULT: 10\nCLOSE_VAULT: 11 */
   type?: InputMaybe<Order_By>;
   vault_id?: InputMaybe<Order_By>;
 };
@@ -30054,7 +34788,7 @@ export type Lending_Controller_History_Data_Var_Samp_Fields = {
   id?: Maybe<Scalars['Float']>;
   level?: Maybe<Scalars['Float']>;
   loan_token_id?: Maybe<Scalars['Float']>;
-  /** ADD_LIQUIDITY: 0\nREMOVE_LIQUIDITY: 1\nBORROW: 2\nREPAY: 3\nDEPOSIT: 4\nWITHDRAW: 5\nDEPOSIT_SMVK: 6\nWITHDRAW_SMVK: 7\nVAULT_CREATION: 8\nMARK_FOR_LIQUIDATION: 9\nLIQUIDATE_VAULT: 10\nCLOSE_VAULT: 11 */
+  /** ADD_LIQUIDITY: 0\nREMOVE_LIQUIDITY: 1\nBORROW: 2\nREPAY: 3\nDEPOSIT: 4\nWITHDRAW: 5\nDEPOSIT_STAKED_TOKEN: 6\nWITHDRAW_STAKED_TOKEN: 7\nVAULT_CREATION: 8\nMARK_FOR_LIQUIDATION: 9\nLIQUIDATE_VAULT: 10\nCLOSE_VAULT: 11 */
   type?: Maybe<Scalars['Float']>;
   vault_id?: Maybe<Scalars['Float']>;
 };
@@ -30065,7 +34799,7 @@ export type Lending_Controller_History_Data_Var_Samp_Order_By = {
   id?: InputMaybe<Order_By>;
   level?: InputMaybe<Order_By>;
   loan_token_id?: InputMaybe<Order_By>;
-  /** ADD_LIQUIDITY: 0\nREMOVE_LIQUIDITY: 1\nBORROW: 2\nREPAY: 3\nDEPOSIT: 4\nWITHDRAW: 5\nDEPOSIT_SMVK: 6\nWITHDRAW_SMVK: 7\nVAULT_CREATION: 8\nMARK_FOR_LIQUIDATION: 9\nLIQUIDATE_VAULT: 10\nCLOSE_VAULT: 11 */
+  /** ADD_LIQUIDITY: 0\nREMOVE_LIQUIDITY: 1\nBORROW: 2\nREPAY: 3\nDEPOSIT: 4\nWITHDRAW: 5\nDEPOSIT_STAKED_TOKEN: 6\nWITHDRAW_STAKED_TOKEN: 7\nVAULT_CREATION: 8\nMARK_FOR_LIQUIDATION: 9\nLIQUIDATE_VAULT: 10\nCLOSE_VAULT: 11 */
   type?: InputMaybe<Order_By>;
   vault_id?: InputMaybe<Order_By>;
 };
@@ -30077,7 +34811,7 @@ export type Lending_Controller_History_Data_Variance_Fields = {
   id?: Maybe<Scalars['Float']>;
   level?: Maybe<Scalars['Float']>;
   loan_token_id?: Maybe<Scalars['Float']>;
-  /** ADD_LIQUIDITY: 0\nREMOVE_LIQUIDITY: 1\nBORROW: 2\nREPAY: 3\nDEPOSIT: 4\nWITHDRAW: 5\nDEPOSIT_SMVK: 6\nWITHDRAW_SMVK: 7\nVAULT_CREATION: 8\nMARK_FOR_LIQUIDATION: 9\nLIQUIDATE_VAULT: 10\nCLOSE_VAULT: 11 */
+  /** ADD_LIQUIDITY: 0\nREMOVE_LIQUIDITY: 1\nBORROW: 2\nREPAY: 3\nDEPOSIT: 4\nWITHDRAW: 5\nDEPOSIT_STAKED_TOKEN: 6\nWITHDRAW_STAKED_TOKEN: 7\nVAULT_CREATION: 8\nMARK_FOR_LIQUIDATION: 9\nLIQUIDATE_VAULT: 10\nCLOSE_VAULT: 11 */
   type?: Maybe<Scalars['Float']>;
   vault_id?: Maybe<Scalars['Float']>;
 };
@@ -30088,7 +34822,7 @@ export type Lending_Controller_History_Data_Variance_Order_By = {
   id?: InputMaybe<Order_By>;
   level?: InputMaybe<Order_By>;
   loan_token_id?: InputMaybe<Order_By>;
-  /** ADD_LIQUIDITY: 0\nREMOVE_LIQUIDITY: 1\nBORROW: 2\nREPAY: 3\nDEPOSIT: 4\nWITHDRAW: 5\nDEPOSIT_SMVK: 6\nWITHDRAW_SMVK: 7\nVAULT_CREATION: 8\nMARK_FOR_LIQUIDATION: 9\nLIQUIDATE_VAULT: 10\nCLOSE_VAULT: 11 */
+  /** ADD_LIQUIDITY: 0\nREMOVE_LIQUIDITY: 1\nBORROW: 2\nREPAY: 3\nDEPOSIT: 4\nWITHDRAW: 5\nDEPOSIT_STAKED_TOKEN: 6\nWITHDRAW_STAKED_TOKEN: 7\nVAULT_CREATION: 8\nMARK_FOR_LIQUIDATION: 9\nLIQUIDATE_VAULT: 10\nCLOSE_VAULT: 11 */
   type?: InputMaybe<Order_By>;
   vault_id?: InputMaybe<Order_By>;
 };
@@ -30110,6 +34844,17 @@ export type Lending_Controller_Lambda_Aggregate = {
   __typename?: 'lending_controller_lambda_aggregate';
   aggregate?: Maybe<Lending_Controller_Lambda_Aggregate_Fields>;
   nodes: Array<Lending_Controller_Lambda>;
+};
+
+export type Lending_Controller_Lambda_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Lending_Controller_Lambda_Aggregate_Bool_Exp_Count>;
+};
+
+export type Lending_Controller_Lambda_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Lending_Controller_Lambda_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_Lambda_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "lending_controller_lambda" */
@@ -30359,6 +35104,7 @@ export type Lending_Controller_Loan_Token = {
   /** An object relationship */
   oracle?: Maybe<Mavryk_User>;
   oracle_id?: Maybe<Scalars['String']>;
+  paused: Scalars['Boolean'];
   reserve_ratio: Scalars['smallint'];
   token_pool_total: Scalars['float8'];
   total_borrowed: Scalars['float8'];
@@ -30415,6 +35161,107 @@ export type Lending_Controller_Loan_Token_Aggregate = {
   __typename?: 'lending_controller_loan_token_aggregate';
   aggregate?: Maybe<Lending_Controller_Loan_Token_Aggregate_Fields>;
   nodes: Array<Lending_Controller_Loan_Token>;
+};
+
+export type Lending_Controller_Loan_Token_Aggregate_Bool_Exp = {
+  avg?: InputMaybe<Lending_Controller_Loan_Token_Aggregate_Bool_Exp_Avg>;
+  bool_and?: InputMaybe<Lending_Controller_Loan_Token_Aggregate_Bool_Exp_Bool_And>;
+  bool_or?: InputMaybe<Lending_Controller_Loan_Token_Aggregate_Bool_Exp_Bool_Or>;
+  corr?: InputMaybe<Lending_Controller_Loan_Token_Aggregate_Bool_Exp_Corr>;
+  count?: InputMaybe<Lending_Controller_Loan_Token_Aggregate_Bool_Exp_Count>;
+  covar_samp?: InputMaybe<Lending_Controller_Loan_Token_Aggregate_Bool_Exp_Covar_Samp>;
+  max?: InputMaybe<Lending_Controller_Loan_Token_Aggregate_Bool_Exp_Max>;
+  min?: InputMaybe<Lending_Controller_Loan_Token_Aggregate_Bool_Exp_Min>;
+  stddev_samp?: InputMaybe<Lending_Controller_Loan_Token_Aggregate_Bool_Exp_Stddev_Samp>;
+  sum?: InputMaybe<Lending_Controller_Loan_Token_Aggregate_Bool_Exp_Sum>;
+  var_samp?: InputMaybe<Lending_Controller_Loan_Token_Aggregate_Bool_Exp_Var_Samp>;
+};
+
+export type Lending_Controller_Loan_Token_Aggregate_Bool_Exp_Avg = {
+  arguments: Lending_Controller_Loan_Token_Select_Column_Lending_Controller_Loan_Token_Aggregate_Bool_Exp_Avg_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_Loan_Token_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Lending_Controller_Loan_Token_Aggregate_Bool_Exp_Bool_And = {
+  arguments: Lending_Controller_Loan_Token_Select_Column_Lending_Controller_Loan_Token_Aggregate_Bool_Exp_Bool_And_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_Loan_Token_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Lending_Controller_Loan_Token_Aggregate_Bool_Exp_Bool_Or = {
+  arguments: Lending_Controller_Loan_Token_Select_Column_Lending_Controller_Loan_Token_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_Loan_Token_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Lending_Controller_Loan_Token_Aggregate_Bool_Exp_Corr = {
+  arguments: Lending_Controller_Loan_Token_Aggregate_Bool_Exp_Corr_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_Loan_Token_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Lending_Controller_Loan_Token_Aggregate_Bool_Exp_Corr_Arguments = {
+  X: Lending_Controller_Loan_Token_Select_Column_Lending_Controller_Loan_Token_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+  Y: Lending_Controller_Loan_Token_Select_Column_Lending_Controller_Loan_Token_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+};
+
+export type Lending_Controller_Loan_Token_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Lending_Controller_Loan_Token_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_Loan_Token_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+export type Lending_Controller_Loan_Token_Aggregate_Bool_Exp_Covar_Samp = {
+  arguments: Lending_Controller_Loan_Token_Aggregate_Bool_Exp_Covar_Samp_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_Loan_Token_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Lending_Controller_Loan_Token_Aggregate_Bool_Exp_Covar_Samp_Arguments = {
+  X: Lending_Controller_Loan_Token_Select_Column_Lending_Controller_Loan_Token_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+  Y: Lending_Controller_Loan_Token_Select_Column_Lending_Controller_Loan_Token_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+};
+
+export type Lending_Controller_Loan_Token_Aggregate_Bool_Exp_Max = {
+  arguments: Lending_Controller_Loan_Token_Select_Column_Lending_Controller_Loan_Token_Aggregate_Bool_Exp_Max_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_Loan_Token_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Lending_Controller_Loan_Token_Aggregate_Bool_Exp_Min = {
+  arguments: Lending_Controller_Loan_Token_Select_Column_Lending_Controller_Loan_Token_Aggregate_Bool_Exp_Min_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_Loan_Token_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Lending_Controller_Loan_Token_Aggregate_Bool_Exp_Stddev_Samp = {
+  arguments: Lending_Controller_Loan_Token_Select_Column_Lending_Controller_Loan_Token_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_Loan_Token_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Lending_Controller_Loan_Token_Aggregate_Bool_Exp_Sum = {
+  arguments: Lending_Controller_Loan_Token_Select_Column_Lending_Controller_Loan_Token_Aggregate_Bool_Exp_Sum_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_Loan_Token_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Lending_Controller_Loan_Token_Aggregate_Bool_Exp_Var_Samp = {
+  arguments: Lending_Controller_Loan_Token_Select_Column_Lending_Controller_Loan_Token_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_Loan_Token_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
 };
 
 /** aggregate fields of "lending_controller_loan_token" */
@@ -30508,6 +35355,7 @@ export type Lending_Controller_Loan_Token_Bool_Exp = {
   borrow_index?: InputMaybe<Float8_Comparison_Exp>;
   current_interest_rate?: InputMaybe<Float8_Comparison_Exp>;
   history_data?: InputMaybe<Lending_Controller_History_Data_Bool_Exp>;
+  history_data_aggregate?: InputMaybe<Lending_Controller_History_Data_Aggregate_Bool_Exp>;
   id?: InputMaybe<Bigint_Comparison_Exp>;
   interest_rate_above_optimal_utilisation?: InputMaybe<Float8_Comparison_Exp>;
   interest_rate_below_optimal_utilisation?: InputMaybe<Float8_Comparison_Exp>;
@@ -30524,12 +35372,14 @@ export type Lending_Controller_Loan_Token_Bool_Exp = {
   optimal_utilisation_rate?: InputMaybe<Float8_Comparison_Exp>;
   oracle?: InputMaybe<Mavryk_User_Bool_Exp>;
   oracle_id?: InputMaybe<String_Comparison_Exp>;
+  paused?: InputMaybe<Boolean_Comparison_Exp>;
   reserve_ratio?: InputMaybe<Smallint_Comparison_Exp>;
   token_pool_total?: InputMaybe<Float8_Comparison_Exp>;
   total_borrowed?: InputMaybe<Float8_Comparison_Exp>;
   total_remaining?: InputMaybe<Float8_Comparison_Exp>;
   utilisation_rate?: InputMaybe<Float8_Comparison_Exp>;
   vaults?: InputMaybe<Lending_Controller_Vault_Bool_Exp>;
+  vaults_aggregate?: InputMaybe<Lending_Controller_Vault_Aggregate_Bool_Exp>;
 };
 
 /** aggregate max on columns */
@@ -30665,6 +35515,7 @@ export type Lending_Controller_Loan_Token_Order_By = {
   optimal_utilisation_rate?: InputMaybe<Order_By>;
   oracle?: InputMaybe<Mavryk_User_Order_By>;
   oracle_id?: InputMaybe<Order_By>;
+  paused?: InputMaybe<Order_By>;
   reserve_ratio?: InputMaybe<Order_By>;
   token_pool_total?: InputMaybe<Order_By>;
   total_borrowed?: InputMaybe<Order_By>;
@@ -30712,7 +35563,277 @@ export enum Lending_Controller_Loan_Token_Select_Column {
   /** column name */
   OracleId = 'oracle_id',
   /** column name */
+  Paused = 'paused',
+  /** column name */
   ReserveRatio = 'reserve_ratio',
+  /** column name */
+  TokenPoolTotal = 'token_pool_total',
+  /** column name */
+  TotalBorrowed = 'total_borrowed',
+  /** column name */
+  TotalRemaining = 'total_remaining',
+  /** column name */
+  UtilisationRate = 'utilisation_rate'
+}
+
+/** select "lending_controller_loan_token_aggregate_bool_exp_avg_arguments_columns" columns of table "lending_controller_loan_token" */
+export enum Lending_Controller_Loan_Token_Select_Column_Lending_Controller_Loan_Token_Aggregate_Bool_Exp_Avg_Arguments_Columns {
+  /** column name */
+  AccumulatedRewardsPerShare = 'accumulated_rewards_per_share',
+  /** column name */
+  BaseInterestRate = 'base_interest_rate',
+  /** column name */
+  BorrowIndex = 'borrow_index',
+  /** column name */
+  CurrentInterestRate = 'current_interest_rate',
+  /** column name */
+  InterestRateAboveOptimalUtilisation = 'interest_rate_above_optimal_utilisation',
+  /** column name */
+  InterestRateBelowOptimalUtilisation = 'interest_rate_below_optimal_utilisation',
+  /** column name */
+  LpTokenTotal = 'lp_token_total',
+  /** column name */
+  MaxInterestRate = 'max_interest_rate',
+  /** column name */
+  MinRepaymentAmount = 'min_repayment_amount',
+  /** column name */
+  OptimalUtilisationRate = 'optimal_utilisation_rate',
+  /** column name */
+  TokenPoolTotal = 'token_pool_total',
+  /** column name */
+  TotalBorrowed = 'total_borrowed',
+  /** column name */
+  TotalRemaining = 'total_remaining',
+  /** column name */
+  UtilisationRate = 'utilisation_rate'
+}
+
+/** select "lending_controller_loan_token_aggregate_bool_exp_bool_and_arguments_columns" columns of table "lending_controller_loan_token" */
+export enum Lending_Controller_Loan_Token_Select_Column_Lending_Controller_Loan_Token_Aggregate_Bool_Exp_Bool_And_Arguments_Columns {
+  /** column name */
+  Paused = 'paused'
+}
+
+/** select "lending_controller_loan_token_aggregate_bool_exp_bool_or_arguments_columns" columns of table "lending_controller_loan_token" */
+export enum Lending_Controller_Loan_Token_Select_Column_Lending_Controller_Loan_Token_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns {
+  /** column name */
+  Paused = 'paused'
+}
+
+/** select "lending_controller_loan_token_aggregate_bool_exp_corr_arguments_columns" columns of table "lending_controller_loan_token" */
+export enum Lending_Controller_Loan_Token_Select_Column_Lending_Controller_Loan_Token_Aggregate_Bool_Exp_Corr_Arguments_Columns {
+  /** column name */
+  AccumulatedRewardsPerShare = 'accumulated_rewards_per_share',
+  /** column name */
+  BaseInterestRate = 'base_interest_rate',
+  /** column name */
+  BorrowIndex = 'borrow_index',
+  /** column name */
+  CurrentInterestRate = 'current_interest_rate',
+  /** column name */
+  InterestRateAboveOptimalUtilisation = 'interest_rate_above_optimal_utilisation',
+  /** column name */
+  InterestRateBelowOptimalUtilisation = 'interest_rate_below_optimal_utilisation',
+  /** column name */
+  LpTokenTotal = 'lp_token_total',
+  /** column name */
+  MaxInterestRate = 'max_interest_rate',
+  /** column name */
+  MinRepaymentAmount = 'min_repayment_amount',
+  /** column name */
+  OptimalUtilisationRate = 'optimal_utilisation_rate',
+  /** column name */
+  TokenPoolTotal = 'token_pool_total',
+  /** column name */
+  TotalBorrowed = 'total_borrowed',
+  /** column name */
+  TotalRemaining = 'total_remaining',
+  /** column name */
+  UtilisationRate = 'utilisation_rate'
+}
+
+/** select "lending_controller_loan_token_aggregate_bool_exp_covar_samp_arguments_columns" columns of table "lending_controller_loan_token" */
+export enum Lending_Controller_Loan_Token_Select_Column_Lending_Controller_Loan_Token_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns {
+  /** column name */
+  AccumulatedRewardsPerShare = 'accumulated_rewards_per_share',
+  /** column name */
+  BaseInterestRate = 'base_interest_rate',
+  /** column name */
+  BorrowIndex = 'borrow_index',
+  /** column name */
+  CurrentInterestRate = 'current_interest_rate',
+  /** column name */
+  InterestRateAboveOptimalUtilisation = 'interest_rate_above_optimal_utilisation',
+  /** column name */
+  InterestRateBelowOptimalUtilisation = 'interest_rate_below_optimal_utilisation',
+  /** column name */
+  LpTokenTotal = 'lp_token_total',
+  /** column name */
+  MaxInterestRate = 'max_interest_rate',
+  /** column name */
+  MinRepaymentAmount = 'min_repayment_amount',
+  /** column name */
+  OptimalUtilisationRate = 'optimal_utilisation_rate',
+  /** column name */
+  TokenPoolTotal = 'token_pool_total',
+  /** column name */
+  TotalBorrowed = 'total_borrowed',
+  /** column name */
+  TotalRemaining = 'total_remaining',
+  /** column name */
+  UtilisationRate = 'utilisation_rate'
+}
+
+/** select "lending_controller_loan_token_aggregate_bool_exp_max_arguments_columns" columns of table "lending_controller_loan_token" */
+export enum Lending_Controller_Loan_Token_Select_Column_Lending_Controller_Loan_Token_Aggregate_Bool_Exp_Max_Arguments_Columns {
+  /** column name */
+  AccumulatedRewardsPerShare = 'accumulated_rewards_per_share',
+  /** column name */
+  BaseInterestRate = 'base_interest_rate',
+  /** column name */
+  BorrowIndex = 'borrow_index',
+  /** column name */
+  CurrentInterestRate = 'current_interest_rate',
+  /** column name */
+  InterestRateAboveOptimalUtilisation = 'interest_rate_above_optimal_utilisation',
+  /** column name */
+  InterestRateBelowOptimalUtilisation = 'interest_rate_below_optimal_utilisation',
+  /** column name */
+  LpTokenTotal = 'lp_token_total',
+  /** column name */
+  MaxInterestRate = 'max_interest_rate',
+  /** column name */
+  MinRepaymentAmount = 'min_repayment_amount',
+  /** column name */
+  OptimalUtilisationRate = 'optimal_utilisation_rate',
+  /** column name */
+  TokenPoolTotal = 'token_pool_total',
+  /** column name */
+  TotalBorrowed = 'total_borrowed',
+  /** column name */
+  TotalRemaining = 'total_remaining',
+  /** column name */
+  UtilisationRate = 'utilisation_rate'
+}
+
+/** select "lending_controller_loan_token_aggregate_bool_exp_min_arguments_columns" columns of table "lending_controller_loan_token" */
+export enum Lending_Controller_Loan_Token_Select_Column_Lending_Controller_Loan_Token_Aggregate_Bool_Exp_Min_Arguments_Columns {
+  /** column name */
+  AccumulatedRewardsPerShare = 'accumulated_rewards_per_share',
+  /** column name */
+  BaseInterestRate = 'base_interest_rate',
+  /** column name */
+  BorrowIndex = 'borrow_index',
+  /** column name */
+  CurrentInterestRate = 'current_interest_rate',
+  /** column name */
+  InterestRateAboveOptimalUtilisation = 'interest_rate_above_optimal_utilisation',
+  /** column name */
+  InterestRateBelowOptimalUtilisation = 'interest_rate_below_optimal_utilisation',
+  /** column name */
+  LpTokenTotal = 'lp_token_total',
+  /** column name */
+  MaxInterestRate = 'max_interest_rate',
+  /** column name */
+  MinRepaymentAmount = 'min_repayment_amount',
+  /** column name */
+  OptimalUtilisationRate = 'optimal_utilisation_rate',
+  /** column name */
+  TokenPoolTotal = 'token_pool_total',
+  /** column name */
+  TotalBorrowed = 'total_borrowed',
+  /** column name */
+  TotalRemaining = 'total_remaining',
+  /** column name */
+  UtilisationRate = 'utilisation_rate'
+}
+
+/** select "lending_controller_loan_token_aggregate_bool_exp_stddev_samp_arguments_columns" columns of table "lending_controller_loan_token" */
+export enum Lending_Controller_Loan_Token_Select_Column_Lending_Controller_Loan_Token_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns {
+  /** column name */
+  AccumulatedRewardsPerShare = 'accumulated_rewards_per_share',
+  /** column name */
+  BaseInterestRate = 'base_interest_rate',
+  /** column name */
+  BorrowIndex = 'borrow_index',
+  /** column name */
+  CurrentInterestRate = 'current_interest_rate',
+  /** column name */
+  InterestRateAboveOptimalUtilisation = 'interest_rate_above_optimal_utilisation',
+  /** column name */
+  InterestRateBelowOptimalUtilisation = 'interest_rate_below_optimal_utilisation',
+  /** column name */
+  LpTokenTotal = 'lp_token_total',
+  /** column name */
+  MaxInterestRate = 'max_interest_rate',
+  /** column name */
+  MinRepaymentAmount = 'min_repayment_amount',
+  /** column name */
+  OptimalUtilisationRate = 'optimal_utilisation_rate',
+  /** column name */
+  TokenPoolTotal = 'token_pool_total',
+  /** column name */
+  TotalBorrowed = 'total_borrowed',
+  /** column name */
+  TotalRemaining = 'total_remaining',
+  /** column name */
+  UtilisationRate = 'utilisation_rate'
+}
+
+/** select "lending_controller_loan_token_aggregate_bool_exp_sum_arguments_columns" columns of table "lending_controller_loan_token" */
+export enum Lending_Controller_Loan_Token_Select_Column_Lending_Controller_Loan_Token_Aggregate_Bool_Exp_Sum_Arguments_Columns {
+  /** column name */
+  AccumulatedRewardsPerShare = 'accumulated_rewards_per_share',
+  /** column name */
+  BaseInterestRate = 'base_interest_rate',
+  /** column name */
+  BorrowIndex = 'borrow_index',
+  /** column name */
+  CurrentInterestRate = 'current_interest_rate',
+  /** column name */
+  InterestRateAboveOptimalUtilisation = 'interest_rate_above_optimal_utilisation',
+  /** column name */
+  InterestRateBelowOptimalUtilisation = 'interest_rate_below_optimal_utilisation',
+  /** column name */
+  LpTokenTotal = 'lp_token_total',
+  /** column name */
+  MaxInterestRate = 'max_interest_rate',
+  /** column name */
+  MinRepaymentAmount = 'min_repayment_amount',
+  /** column name */
+  OptimalUtilisationRate = 'optimal_utilisation_rate',
+  /** column name */
+  TokenPoolTotal = 'token_pool_total',
+  /** column name */
+  TotalBorrowed = 'total_borrowed',
+  /** column name */
+  TotalRemaining = 'total_remaining',
+  /** column name */
+  UtilisationRate = 'utilisation_rate'
+}
+
+/** select "lending_controller_loan_token_aggregate_bool_exp_var_samp_arguments_columns" columns of table "lending_controller_loan_token" */
+export enum Lending_Controller_Loan_Token_Select_Column_Lending_Controller_Loan_Token_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns {
+  /** column name */
+  AccumulatedRewardsPerShare = 'accumulated_rewards_per_share',
+  /** column name */
+  BaseInterestRate = 'base_interest_rate',
+  /** column name */
+  BorrowIndex = 'borrow_index',
+  /** column name */
+  CurrentInterestRate = 'current_interest_rate',
+  /** column name */
+  InterestRateAboveOptimalUtilisation = 'interest_rate_above_optimal_utilisation',
+  /** column name */
+  InterestRateBelowOptimalUtilisation = 'interest_rate_below_optimal_utilisation',
+  /** column name */
+  LpTokenTotal = 'lp_token_total',
+  /** column name */
+  MaxInterestRate = 'max_interest_rate',
+  /** column name */
+  MinRepaymentAmount = 'min_repayment_amount',
+  /** column name */
+  OptimalUtilisationRate = 'optimal_utilisation_rate',
   /** column name */
   TokenPoolTotal = 'token_pool_total',
   /** column name */
@@ -30880,6 +36001,7 @@ export type Lending_Controller_Loan_Token_Stream_Cursor_Value_Input = {
   min_repayment_amount?: InputMaybe<Scalars['float8']>;
   optimal_utilisation_rate?: InputMaybe<Scalars['float8']>;
   oracle_id?: InputMaybe<Scalars['String']>;
+  paused?: InputMaybe<Scalars['Boolean']>;
   reserve_ratio?: InputMaybe<Scalars['smallint']>;
   token_pool_total?: InputMaybe<Scalars['float8']>;
   total_borrowed?: InputMaybe<Scalars['float8']>;
@@ -31179,10 +36301,10 @@ export type Lending_Controller_Order_By = {
   set_collateral_token_paused?: InputMaybe<Order_By>;
   set_loan_token_paused?: InputMaybe<Order_By>;
   vault_deposit_paused?: InputMaybe<Order_By>;
-  vault_deposit_smvk_paused?: InputMaybe<Order_By>;
+  vault_deposit_staked_token_paused?: InputMaybe<Order_By>;
   vault_on_liquidate_paused?: InputMaybe<Order_By>;
   vault_withdraw_paused?: InputMaybe<Order_By>;
-  vault_withdraw_smvk_paused?: InputMaybe<Order_By>;
+  vault_withdraw_staked_token_paused?: InputMaybe<Order_By>;
   vaults_aggregate?: InputMaybe<Lending_Controller_Vault_Aggregate_Order_By>;
   whitelist_contracts_aggregate?: InputMaybe<Lending_Controller_Whitelist_Contract_Aggregate_Order_By>;
   whitelist_token_contracts_aggregate?: InputMaybe<Lending_Controller_Whitelist_Token_Contract_Aggregate_Order_By>;
@@ -31251,13 +36373,93 @@ export enum Lending_Controller_Select_Column {
   /** column name */
   VaultDepositPaused = 'vault_deposit_paused',
   /** column name */
-  VaultDepositSmvkPaused = 'vault_deposit_smvk_paused',
+  VaultDepositStakedTokenPaused = 'vault_deposit_staked_token_paused',
   /** column name */
   VaultOnLiquidatePaused = 'vault_on_liquidate_paused',
   /** column name */
   VaultWithdrawPaused = 'vault_withdraw_paused',
   /** column name */
-  VaultWithdrawSmvkPaused = 'vault_withdraw_smvk_paused'
+  VaultWithdrawStakedTokenPaused = 'vault_withdraw_staked_token_paused'
+}
+
+/** select "lending_controller_aggregate_bool_exp_bool_and_arguments_columns" columns of table "lending_controller" */
+export enum Lending_Controller_Select_Column_Lending_Controller_Aggregate_Bool_Exp_Bool_And_Arguments_Columns {
+  /** column name */
+  AddLiquidityPaused = 'add_liquidity_paused',
+  /** column name */
+  BorrowPaused = 'borrow_paused',
+  /** column name */
+  CloseVaultPaused = 'close_vault_paused',
+  /** column name */
+  LiquidateVaultPaused = 'liquidate_vault_paused',
+  /** column name */
+  MarkForLiquidationPaused = 'mark_for_liquidation_paused',
+  /** column name */
+  MockTime = 'mock_time',
+  /** column name */
+  RegisterDepositPaused = 'register_deposit_paused',
+  /** column name */
+  RegisterVaultCreationPaused = 'register_vault_creation_paused',
+  /** column name */
+  RegisterWithdrawalPaused = 'register_withdrawal_paused',
+  /** column name */
+  RemoveLiquidityPaused = 'remove_liquidity_paused',
+  /** column name */
+  RepayPaused = 'repay_paused',
+  /** column name */
+  SetCollateralTokenPaused = 'set_collateral_token_paused',
+  /** column name */
+  SetLoanTokenPaused = 'set_loan_token_paused',
+  /** column name */
+  VaultDepositPaused = 'vault_deposit_paused',
+  /** column name */
+  VaultDepositStakedTokenPaused = 'vault_deposit_staked_token_paused',
+  /** column name */
+  VaultOnLiquidatePaused = 'vault_on_liquidate_paused',
+  /** column name */
+  VaultWithdrawPaused = 'vault_withdraw_paused',
+  /** column name */
+  VaultWithdrawStakedTokenPaused = 'vault_withdraw_staked_token_paused'
+}
+
+/** select "lending_controller_aggregate_bool_exp_bool_or_arguments_columns" columns of table "lending_controller" */
+export enum Lending_Controller_Select_Column_Lending_Controller_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns {
+  /** column name */
+  AddLiquidityPaused = 'add_liquidity_paused',
+  /** column name */
+  BorrowPaused = 'borrow_paused',
+  /** column name */
+  CloseVaultPaused = 'close_vault_paused',
+  /** column name */
+  LiquidateVaultPaused = 'liquidate_vault_paused',
+  /** column name */
+  MarkForLiquidationPaused = 'mark_for_liquidation_paused',
+  /** column name */
+  MockTime = 'mock_time',
+  /** column name */
+  RegisterDepositPaused = 'register_deposit_paused',
+  /** column name */
+  RegisterVaultCreationPaused = 'register_vault_creation_paused',
+  /** column name */
+  RegisterWithdrawalPaused = 'register_withdrawal_paused',
+  /** column name */
+  RemoveLiquidityPaused = 'remove_liquidity_paused',
+  /** column name */
+  RepayPaused = 'repay_paused',
+  /** column name */
+  SetCollateralTokenPaused = 'set_collateral_token_paused',
+  /** column name */
+  SetLoanTokenPaused = 'set_loan_token_paused',
+  /** column name */
+  VaultDepositPaused = 'vault_deposit_paused',
+  /** column name */
+  VaultDepositStakedTokenPaused = 'vault_deposit_staked_token_paused',
+  /** column name */
+  VaultOnLiquidatePaused = 'vault_on_liquidate_paused',
+  /** column name */
+  VaultWithdrawPaused = 'vault_withdraw_paused',
+  /** column name */
+  VaultWithdrawStakedTokenPaused = 'vault_withdraw_staked_token_paused'
 }
 
 /** aggregate stddev on columns */
@@ -31399,10 +36601,10 @@ export type Lending_Controller_Stream_Cursor_Value_Input = {
   set_collateral_token_paused?: InputMaybe<Scalars['Boolean']>;
   set_loan_token_paused?: InputMaybe<Scalars['Boolean']>;
   vault_deposit_paused?: InputMaybe<Scalars['Boolean']>;
-  vault_deposit_smvk_paused?: InputMaybe<Scalars['Boolean']>;
+  vault_deposit_staked_token_paused?: InputMaybe<Scalars['Boolean']>;
   vault_on_liquidate_paused?: InputMaybe<Scalars['Boolean']>;
   vault_withdraw_paused?: InputMaybe<Scalars['Boolean']>;
-  vault_withdraw_smvk_paused?: InputMaybe<Scalars['Boolean']>;
+  vault_withdraw_staked_token_paused?: InputMaybe<Scalars['Boolean']>;
 };
 
 /** aggregate sum on columns */
@@ -31621,6 +36823,107 @@ export type Lending_Controller_Vault_Aggregate = {
   nodes: Array<Lending_Controller_Vault>;
 };
 
+export type Lending_Controller_Vault_Aggregate_Bool_Exp = {
+  avg?: InputMaybe<Lending_Controller_Vault_Aggregate_Bool_Exp_Avg>;
+  bool_and?: InputMaybe<Lending_Controller_Vault_Aggregate_Bool_Exp_Bool_And>;
+  bool_or?: InputMaybe<Lending_Controller_Vault_Aggregate_Bool_Exp_Bool_Or>;
+  corr?: InputMaybe<Lending_Controller_Vault_Aggregate_Bool_Exp_Corr>;
+  count?: InputMaybe<Lending_Controller_Vault_Aggregate_Bool_Exp_Count>;
+  covar_samp?: InputMaybe<Lending_Controller_Vault_Aggregate_Bool_Exp_Covar_Samp>;
+  max?: InputMaybe<Lending_Controller_Vault_Aggregate_Bool_Exp_Max>;
+  min?: InputMaybe<Lending_Controller_Vault_Aggregate_Bool_Exp_Min>;
+  stddev_samp?: InputMaybe<Lending_Controller_Vault_Aggregate_Bool_Exp_Stddev_Samp>;
+  sum?: InputMaybe<Lending_Controller_Vault_Aggregate_Bool_Exp_Sum>;
+  var_samp?: InputMaybe<Lending_Controller_Vault_Aggregate_Bool_Exp_Var_Samp>;
+};
+
+export type Lending_Controller_Vault_Aggregate_Bool_Exp_Avg = {
+  arguments: Lending_Controller_Vault_Select_Column_Lending_Controller_Vault_Aggregate_Bool_Exp_Avg_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_Vault_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Lending_Controller_Vault_Aggregate_Bool_Exp_Bool_And = {
+  arguments: Lending_Controller_Vault_Select_Column_Lending_Controller_Vault_Aggregate_Bool_Exp_Bool_And_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_Vault_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Lending_Controller_Vault_Aggregate_Bool_Exp_Bool_Or = {
+  arguments: Lending_Controller_Vault_Select_Column_Lending_Controller_Vault_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_Vault_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Lending_Controller_Vault_Aggregate_Bool_Exp_Corr = {
+  arguments: Lending_Controller_Vault_Aggregate_Bool_Exp_Corr_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_Vault_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Lending_Controller_Vault_Aggregate_Bool_Exp_Corr_Arguments = {
+  X: Lending_Controller_Vault_Select_Column_Lending_Controller_Vault_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+  Y: Lending_Controller_Vault_Select_Column_Lending_Controller_Vault_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+};
+
+export type Lending_Controller_Vault_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Lending_Controller_Vault_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_Vault_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+export type Lending_Controller_Vault_Aggregate_Bool_Exp_Covar_Samp = {
+  arguments: Lending_Controller_Vault_Aggregate_Bool_Exp_Covar_Samp_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_Vault_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Lending_Controller_Vault_Aggregate_Bool_Exp_Covar_Samp_Arguments = {
+  X: Lending_Controller_Vault_Select_Column_Lending_Controller_Vault_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+  Y: Lending_Controller_Vault_Select_Column_Lending_Controller_Vault_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+};
+
+export type Lending_Controller_Vault_Aggregate_Bool_Exp_Max = {
+  arguments: Lending_Controller_Vault_Select_Column_Lending_Controller_Vault_Aggregate_Bool_Exp_Max_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_Vault_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Lending_Controller_Vault_Aggregate_Bool_Exp_Min = {
+  arguments: Lending_Controller_Vault_Select_Column_Lending_Controller_Vault_Aggregate_Bool_Exp_Min_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_Vault_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Lending_Controller_Vault_Aggregate_Bool_Exp_Stddev_Samp = {
+  arguments: Lending_Controller_Vault_Select_Column_Lending_Controller_Vault_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_Vault_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Lending_Controller_Vault_Aggregate_Bool_Exp_Sum = {
+  arguments: Lending_Controller_Vault_Select_Column_Lending_Controller_Vault_Aggregate_Bool_Exp_Sum_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_Vault_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Lending_Controller_Vault_Aggregate_Bool_Exp_Var_Samp = {
+  arguments: Lending_Controller_Vault_Select_Column_Lending_Controller_Vault_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_Vault_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
 /** aggregate fields of "lending_controller_vault" */
 export type Lending_Controller_Vault_Aggregate_Fields = {
   __typename?: 'lending_controller_vault_aggregate_fields';
@@ -31697,7 +37000,9 @@ export type Lending_Controller_Vault_Bool_Exp = {
   _or?: InputMaybe<Array<Lending_Controller_Vault_Bool_Exp>>;
   borrow_index?: InputMaybe<Float8_Comparison_Exp>;
   collateral_balances?: InputMaybe<Lending_Controller_Vault_Collateral_Balance_Bool_Exp>;
+  collateral_balances_aggregate?: InputMaybe<Lending_Controller_Vault_Collateral_Balance_Aggregate_Bool_Exp>;
   history_data?: InputMaybe<Lending_Controller_History_Data_Bool_Exp>;
+  history_data_aggregate?: InputMaybe<Lending_Controller_History_Data_Aggregate_Bool_Exp>;
   id?: InputMaybe<Bigint_Comparison_Exp>;
   internal_id?: InputMaybe<Bigint_Comparison_Exp>;
   last_updated_block_level?: InputMaybe<Bigint_Comparison_Exp>;
@@ -31737,6 +37042,91 @@ export type Lending_Controller_Vault_Collateral_Balance_Aggregate = {
   __typename?: 'lending_controller_vault_collateral_balance_aggregate';
   aggregate?: Maybe<Lending_Controller_Vault_Collateral_Balance_Aggregate_Fields>;
   nodes: Array<Lending_Controller_Vault_Collateral_Balance>;
+};
+
+export type Lending_Controller_Vault_Collateral_Balance_Aggregate_Bool_Exp = {
+  avg?: InputMaybe<Lending_Controller_Vault_Collateral_Balance_Aggregate_Bool_Exp_Avg>;
+  corr?: InputMaybe<Lending_Controller_Vault_Collateral_Balance_Aggregate_Bool_Exp_Corr>;
+  count?: InputMaybe<Lending_Controller_Vault_Collateral_Balance_Aggregate_Bool_Exp_Count>;
+  covar_samp?: InputMaybe<Lending_Controller_Vault_Collateral_Balance_Aggregate_Bool_Exp_Covar_Samp>;
+  max?: InputMaybe<Lending_Controller_Vault_Collateral_Balance_Aggregate_Bool_Exp_Max>;
+  min?: InputMaybe<Lending_Controller_Vault_Collateral_Balance_Aggregate_Bool_Exp_Min>;
+  stddev_samp?: InputMaybe<Lending_Controller_Vault_Collateral_Balance_Aggregate_Bool_Exp_Stddev_Samp>;
+  sum?: InputMaybe<Lending_Controller_Vault_Collateral_Balance_Aggregate_Bool_Exp_Sum>;
+  var_samp?: InputMaybe<Lending_Controller_Vault_Collateral_Balance_Aggregate_Bool_Exp_Var_Samp>;
+};
+
+export type Lending_Controller_Vault_Collateral_Balance_Aggregate_Bool_Exp_Avg = {
+  arguments: Lending_Controller_Vault_Collateral_Balance_Select_Column_Lending_Controller_Vault_Collateral_Balance_Aggregate_Bool_Exp_Avg_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_Vault_Collateral_Balance_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Lending_Controller_Vault_Collateral_Balance_Aggregate_Bool_Exp_Corr = {
+  arguments: Lending_Controller_Vault_Collateral_Balance_Aggregate_Bool_Exp_Corr_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_Vault_Collateral_Balance_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Lending_Controller_Vault_Collateral_Balance_Aggregate_Bool_Exp_Corr_Arguments = {
+  X: Lending_Controller_Vault_Collateral_Balance_Select_Column_Lending_Controller_Vault_Collateral_Balance_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+  Y: Lending_Controller_Vault_Collateral_Balance_Select_Column_Lending_Controller_Vault_Collateral_Balance_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+};
+
+export type Lending_Controller_Vault_Collateral_Balance_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Lending_Controller_Vault_Collateral_Balance_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_Vault_Collateral_Balance_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+export type Lending_Controller_Vault_Collateral_Balance_Aggregate_Bool_Exp_Covar_Samp = {
+  arguments: Lending_Controller_Vault_Collateral_Balance_Aggregate_Bool_Exp_Covar_Samp_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_Vault_Collateral_Balance_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Lending_Controller_Vault_Collateral_Balance_Aggregate_Bool_Exp_Covar_Samp_Arguments = {
+  X: Lending_Controller_Vault_Collateral_Balance_Select_Column_Lending_Controller_Vault_Collateral_Balance_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+  Y: Lending_Controller_Vault_Collateral_Balance_Select_Column_Lending_Controller_Vault_Collateral_Balance_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+};
+
+export type Lending_Controller_Vault_Collateral_Balance_Aggregate_Bool_Exp_Max = {
+  arguments: Lending_Controller_Vault_Collateral_Balance_Select_Column_Lending_Controller_Vault_Collateral_Balance_Aggregate_Bool_Exp_Max_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_Vault_Collateral_Balance_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Lending_Controller_Vault_Collateral_Balance_Aggregate_Bool_Exp_Min = {
+  arguments: Lending_Controller_Vault_Collateral_Balance_Select_Column_Lending_Controller_Vault_Collateral_Balance_Aggregate_Bool_Exp_Min_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_Vault_Collateral_Balance_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Lending_Controller_Vault_Collateral_Balance_Aggregate_Bool_Exp_Stddev_Samp = {
+  arguments: Lending_Controller_Vault_Collateral_Balance_Select_Column_Lending_Controller_Vault_Collateral_Balance_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_Vault_Collateral_Balance_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Lending_Controller_Vault_Collateral_Balance_Aggregate_Bool_Exp_Sum = {
+  arguments: Lending_Controller_Vault_Collateral_Balance_Select_Column_Lending_Controller_Vault_Collateral_Balance_Aggregate_Bool_Exp_Sum_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_Vault_Collateral_Balance_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Lending_Controller_Vault_Collateral_Balance_Aggregate_Bool_Exp_Var_Samp = {
+  arguments: Lending_Controller_Vault_Collateral_Balance_Select_Column_Lending_Controller_Vault_Collateral_Balance_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_Vault_Collateral_Balance_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
 };
 
 /** aggregate fields of "lending_controller_vault_collateral_balance" */
@@ -31861,6 +37251,54 @@ export enum Lending_Controller_Vault_Collateral_Balance_Select_Column {
   LendingControllerVaultId = 'lending_controller_vault_id',
   /** column name */
   TokenId = 'token_id'
+}
+
+/** select "lending_controller_vault_collateral_balance_aggregate_bool_exp_avg_arguments_columns" columns of table "lending_controller_vault_collateral_balance" */
+export enum Lending_Controller_Vault_Collateral_Balance_Select_Column_Lending_Controller_Vault_Collateral_Balance_Aggregate_Bool_Exp_Avg_Arguments_Columns {
+  /** column name */
+  Balance = 'balance'
+}
+
+/** select "lending_controller_vault_collateral_balance_aggregate_bool_exp_corr_arguments_columns" columns of table "lending_controller_vault_collateral_balance" */
+export enum Lending_Controller_Vault_Collateral_Balance_Select_Column_Lending_Controller_Vault_Collateral_Balance_Aggregate_Bool_Exp_Corr_Arguments_Columns {
+  /** column name */
+  Balance = 'balance'
+}
+
+/** select "lending_controller_vault_collateral_balance_aggregate_bool_exp_covar_samp_arguments_columns" columns of table "lending_controller_vault_collateral_balance" */
+export enum Lending_Controller_Vault_Collateral_Balance_Select_Column_Lending_Controller_Vault_Collateral_Balance_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns {
+  /** column name */
+  Balance = 'balance'
+}
+
+/** select "lending_controller_vault_collateral_balance_aggregate_bool_exp_max_arguments_columns" columns of table "lending_controller_vault_collateral_balance" */
+export enum Lending_Controller_Vault_Collateral_Balance_Select_Column_Lending_Controller_Vault_Collateral_Balance_Aggregate_Bool_Exp_Max_Arguments_Columns {
+  /** column name */
+  Balance = 'balance'
+}
+
+/** select "lending_controller_vault_collateral_balance_aggregate_bool_exp_min_arguments_columns" columns of table "lending_controller_vault_collateral_balance" */
+export enum Lending_Controller_Vault_Collateral_Balance_Select_Column_Lending_Controller_Vault_Collateral_Balance_Aggregate_Bool_Exp_Min_Arguments_Columns {
+  /** column name */
+  Balance = 'balance'
+}
+
+/** select "lending_controller_vault_collateral_balance_aggregate_bool_exp_stddev_samp_arguments_columns" columns of table "lending_controller_vault_collateral_balance" */
+export enum Lending_Controller_Vault_Collateral_Balance_Select_Column_Lending_Controller_Vault_Collateral_Balance_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns {
+  /** column name */
+  Balance = 'balance'
+}
+
+/** select "lending_controller_vault_collateral_balance_aggregate_bool_exp_sum_arguments_columns" columns of table "lending_controller_vault_collateral_balance" */
+export enum Lending_Controller_Vault_Collateral_Balance_Select_Column_Lending_Controller_Vault_Collateral_Balance_Aggregate_Bool_Exp_Sum_Arguments_Columns {
+  /** column name */
+  Balance = 'balance'
+}
+
+/** select "lending_controller_vault_collateral_balance_aggregate_bool_exp_var_samp_arguments_columns" columns of table "lending_controller_vault_collateral_balance" */
+export enum Lending_Controller_Vault_Collateral_Balance_Select_Column_Lending_Controller_Vault_Collateral_Balance_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns {
+  /** column name */
+  Balance = 'balance'
 }
 
 /** aggregate stddev on columns */
@@ -32138,6 +37576,114 @@ export enum Lending_Controller_Vault_Select_Column {
   VaultId = 'vault_id'
 }
 
+/** select "lending_controller_vault_aggregate_bool_exp_avg_arguments_columns" columns of table "lending_controller_vault" */
+export enum Lending_Controller_Vault_Select_Column_Lending_Controller_Vault_Aggregate_Bool_Exp_Avg_Arguments_Columns {
+  /** column name */
+  BorrowIndex = 'borrow_index',
+  /** column name */
+  LoanInterestTotal = 'loan_interest_total',
+  /** column name */
+  LoanOutstandingTotal = 'loan_outstanding_total',
+  /** column name */
+  LoanPrincipalTotal = 'loan_principal_total'
+}
+
+/** select "lending_controller_vault_aggregate_bool_exp_bool_and_arguments_columns" columns of table "lending_controller_vault" */
+export enum Lending_Controller_Vault_Select_Column_Lending_Controller_Vault_Aggregate_Bool_Exp_Bool_And_Arguments_Columns {
+  /** column name */
+  Open = 'open'
+}
+
+/** select "lending_controller_vault_aggregate_bool_exp_bool_or_arguments_columns" columns of table "lending_controller_vault" */
+export enum Lending_Controller_Vault_Select_Column_Lending_Controller_Vault_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns {
+  /** column name */
+  Open = 'open'
+}
+
+/** select "lending_controller_vault_aggregate_bool_exp_corr_arguments_columns" columns of table "lending_controller_vault" */
+export enum Lending_Controller_Vault_Select_Column_Lending_Controller_Vault_Aggregate_Bool_Exp_Corr_Arguments_Columns {
+  /** column name */
+  BorrowIndex = 'borrow_index',
+  /** column name */
+  LoanInterestTotal = 'loan_interest_total',
+  /** column name */
+  LoanOutstandingTotal = 'loan_outstanding_total',
+  /** column name */
+  LoanPrincipalTotal = 'loan_principal_total'
+}
+
+/** select "lending_controller_vault_aggregate_bool_exp_covar_samp_arguments_columns" columns of table "lending_controller_vault" */
+export enum Lending_Controller_Vault_Select_Column_Lending_Controller_Vault_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns {
+  /** column name */
+  BorrowIndex = 'borrow_index',
+  /** column name */
+  LoanInterestTotal = 'loan_interest_total',
+  /** column name */
+  LoanOutstandingTotal = 'loan_outstanding_total',
+  /** column name */
+  LoanPrincipalTotal = 'loan_principal_total'
+}
+
+/** select "lending_controller_vault_aggregate_bool_exp_max_arguments_columns" columns of table "lending_controller_vault" */
+export enum Lending_Controller_Vault_Select_Column_Lending_Controller_Vault_Aggregate_Bool_Exp_Max_Arguments_Columns {
+  /** column name */
+  BorrowIndex = 'borrow_index',
+  /** column name */
+  LoanInterestTotal = 'loan_interest_total',
+  /** column name */
+  LoanOutstandingTotal = 'loan_outstanding_total',
+  /** column name */
+  LoanPrincipalTotal = 'loan_principal_total'
+}
+
+/** select "lending_controller_vault_aggregate_bool_exp_min_arguments_columns" columns of table "lending_controller_vault" */
+export enum Lending_Controller_Vault_Select_Column_Lending_Controller_Vault_Aggregate_Bool_Exp_Min_Arguments_Columns {
+  /** column name */
+  BorrowIndex = 'borrow_index',
+  /** column name */
+  LoanInterestTotal = 'loan_interest_total',
+  /** column name */
+  LoanOutstandingTotal = 'loan_outstanding_total',
+  /** column name */
+  LoanPrincipalTotal = 'loan_principal_total'
+}
+
+/** select "lending_controller_vault_aggregate_bool_exp_stddev_samp_arguments_columns" columns of table "lending_controller_vault" */
+export enum Lending_Controller_Vault_Select_Column_Lending_Controller_Vault_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns {
+  /** column name */
+  BorrowIndex = 'borrow_index',
+  /** column name */
+  LoanInterestTotal = 'loan_interest_total',
+  /** column name */
+  LoanOutstandingTotal = 'loan_outstanding_total',
+  /** column name */
+  LoanPrincipalTotal = 'loan_principal_total'
+}
+
+/** select "lending_controller_vault_aggregate_bool_exp_sum_arguments_columns" columns of table "lending_controller_vault" */
+export enum Lending_Controller_Vault_Select_Column_Lending_Controller_Vault_Aggregate_Bool_Exp_Sum_Arguments_Columns {
+  /** column name */
+  BorrowIndex = 'borrow_index',
+  /** column name */
+  LoanInterestTotal = 'loan_interest_total',
+  /** column name */
+  LoanOutstandingTotal = 'loan_outstanding_total',
+  /** column name */
+  LoanPrincipalTotal = 'loan_principal_total'
+}
+
+/** select "lending_controller_vault_aggregate_bool_exp_var_samp_arguments_columns" columns of table "lending_controller_vault" */
+export enum Lending_Controller_Vault_Select_Column_Lending_Controller_Vault_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns {
+  /** column name */
+  BorrowIndex = 'borrow_index',
+  /** column name */
+  LoanInterestTotal = 'loan_interest_total',
+  /** column name */
+  LoanOutstandingTotal = 'loan_outstanding_total',
+  /** column name */
+  LoanPrincipalTotal = 'loan_principal_total'
+}
+
 /** aggregate stddev on columns */
 export type Lending_Controller_Vault_Stddev_Fields = {
   __typename?: 'lending_controller_vault_stddev_fields';
@@ -32401,6 +37947,17 @@ export type Lending_Controller_Whitelist_Contract_Aggregate = {
   nodes: Array<Lending_Controller_Whitelist_Contract>;
 };
 
+export type Lending_Controller_Whitelist_Contract_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Lending_Controller_Whitelist_Contract_Aggregate_Bool_Exp_Count>;
+};
+
+export type Lending_Controller_Whitelist_Contract_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Lending_Controller_Whitelist_Contract_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_Whitelist_Contract_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
 /** aggregate fields of "lending_controller_whitelist_contract" */
 export type Lending_Controller_Whitelist_Contract_Aggregate_Fields = {
   __typename?: 'lending_controller_whitelist_contract_aggregate_fields';
@@ -32627,6 +38184,17 @@ export type Lending_Controller_Whitelist_Token_Contract_Aggregate = {
   __typename?: 'lending_controller_whitelist_token_contract_aggregate';
   aggregate?: Maybe<Lending_Controller_Whitelist_Token_Contract_Aggregate_Fields>;
   nodes: Array<Lending_Controller_Whitelist_Token_Contract>;
+};
+
+export type Lending_Controller_Whitelist_Token_Contract_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Lending_Controller_Whitelist_Token_Contract_Aggregate_Bool_Exp_Count>;
+};
+
+export type Lending_Controller_Whitelist_Token_Contract_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Lending_Controller_Whitelist_Token_Contract_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Lending_Controller_Whitelist_Token_Contract_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "lending_controller_whitelist_token_contract" */
@@ -32960,10 +38528,12 @@ export type Liquidity_Baking_Bool_Exp = {
   address?: InputMaybe<String_Comparison_Exp>;
   admin?: InputMaybe<String_Comparison_Exp>;
   history_data?: InputMaybe<Liquidity_Baking_History_Data_Bool_Exp>;
+  history_data_aggregate?: InputMaybe<Liquidity_Baking_History_Data_Aggregate_Bool_Exp>;
   last_updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   lqt_address?: InputMaybe<String_Comparison_Exp>;
   lqt_total?: InputMaybe<Bigint_Comparison_Exp>;
   positions?: InputMaybe<Liquidity_Baking_Position_Bool_Exp>;
+  positions_aggregate?: InputMaybe<Liquidity_Baking_Position_Aggregate_Bool_Exp>;
   share_price?: InputMaybe<Float8_Comparison_Exp>;
   token_address?: InputMaybe<String_Comparison_Exp>;
   token_decimals?: InputMaybe<Smallint_Comparison_Exp>;
@@ -33002,6 +38572,91 @@ export type Liquidity_Baking_History_Data_Aggregate = {
   __typename?: 'liquidity_baking_history_data_aggregate';
   aggregate?: Maybe<Liquidity_Baking_History_Data_Aggregate_Fields>;
   nodes: Array<Liquidity_Baking_History_Data>;
+};
+
+export type Liquidity_Baking_History_Data_Aggregate_Bool_Exp = {
+  avg?: InputMaybe<Liquidity_Baking_History_Data_Aggregate_Bool_Exp_Avg>;
+  corr?: InputMaybe<Liquidity_Baking_History_Data_Aggregate_Bool_Exp_Corr>;
+  count?: InputMaybe<Liquidity_Baking_History_Data_Aggregate_Bool_Exp_Count>;
+  covar_samp?: InputMaybe<Liquidity_Baking_History_Data_Aggregate_Bool_Exp_Covar_Samp>;
+  max?: InputMaybe<Liquidity_Baking_History_Data_Aggregate_Bool_Exp_Max>;
+  min?: InputMaybe<Liquidity_Baking_History_Data_Aggregate_Bool_Exp_Min>;
+  stddev_samp?: InputMaybe<Liquidity_Baking_History_Data_Aggregate_Bool_Exp_Stddev_Samp>;
+  sum?: InputMaybe<Liquidity_Baking_History_Data_Aggregate_Bool_Exp_Sum>;
+  var_samp?: InputMaybe<Liquidity_Baking_History_Data_Aggregate_Bool_Exp_Var_Samp>;
+};
+
+export type Liquidity_Baking_History_Data_Aggregate_Bool_Exp_Avg = {
+  arguments: Liquidity_Baking_History_Data_Select_Column_Liquidity_Baking_History_Data_Aggregate_Bool_Exp_Avg_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Liquidity_Baking_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Liquidity_Baking_History_Data_Aggregate_Bool_Exp_Corr = {
+  arguments: Liquidity_Baking_History_Data_Aggregate_Bool_Exp_Corr_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Liquidity_Baking_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Liquidity_Baking_History_Data_Aggregate_Bool_Exp_Corr_Arguments = {
+  X: Liquidity_Baking_History_Data_Select_Column_Liquidity_Baking_History_Data_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+  Y: Liquidity_Baking_History_Data_Select_Column_Liquidity_Baking_History_Data_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+};
+
+export type Liquidity_Baking_History_Data_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Liquidity_Baking_History_Data_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Liquidity_Baking_History_Data_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+export type Liquidity_Baking_History_Data_Aggregate_Bool_Exp_Covar_Samp = {
+  arguments: Liquidity_Baking_History_Data_Aggregate_Bool_Exp_Covar_Samp_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Liquidity_Baking_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Liquidity_Baking_History_Data_Aggregate_Bool_Exp_Covar_Samp_Arguments = {
+  X: Liquidity_Baking_History_Data_Select_Column_Liquidity_Baking_History_Data_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+  Y: Liquidity_Baking_History_Data_Select_Column_Liquidity_Baking_History_Data_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+};
+
+export type Liquidity_Baking_History_Data_Aggregate_Bool_Exp_Max = {
+  arguments: Liquidity_Baking_History_Data_Select_Column_Liquidity_Baking_History_Data_Aggregate_Bool_Exp_Max_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Liquidity_Baking_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Liquidity_Baking_History_Data_Aggregate_Bool_Exp_Min = {
+  arguments: Liquidity_Baking_History_Data_Select_Column_Liquidity_Baking_History_Data_Aggregate_Bool_Exp_Min_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Liquidity_Baking_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Liquidity_Baking_History_Data_Aggregate_Bool_Exp_Stddev_Samp = {
+  arguments: Liquidity_Baking_History_Data_Select_Column_Liquidity_Baking_History_Data_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Liquidity_Baking_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Liquidity_Baking_History_Data_Aggregate_Bool_Exp_Sum = {
+  arguments: Liquidity_Baking_History_Data_Select_Column_Liquidity_Baking_History_Data_Aggregate_Bool_Exp_Sum_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Liquidity_Baking_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Liquidity_Baking_History_Data_Aggregate_Bool_Exp_Var_Samp = {
+  arguments: Liquidity_Baking_History_Data_Select_Column_Liquidity_Baking_History_Data_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Liquidity_Baking_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
 };
 
 /** aggregate fields of "liquidity_baking_history_data" */
@@ -33234,6 +38889,134 @@ export enum Liquidity_Baking_History_Data_Select_Column {
   Type = 'type',
   /** column name */
   XtzPool = 'xtz_pool',
+  /** column name */
+  XtzQty = 'xtz_qty'
+}
+
+/** select "liquidity_baking_history_data_aggregate_bool_exp_avg_arguments_columns" columns of table "liquidity_baking_history_data" */
+export enum Liquidity_Baking_History_Data_Select_Column_Liquidity_Baking_History_Data_Aggregate_Bool_Exp_Avg_Arguments_Columns {
+  /** column name */
+  LqtQty = 'lqt_qty',
+  /** column name */
+  Slippage = 'slippage',
+  /** column name */
+  TokenPrice = 'token_price',
+  /** column name */
+  TokenPriceUsd = 'token_price_usd',
+  /** column name */
+  TokenQty = 'token_qty',
+  /** column name */
+  XtzQty = 'xtz_qty'
+}
+
+/** select "liquidity_baking_history_data_aggregate_bool_exp_corr_arguments_columns" columns of table "liquidity_baking_history_data" */
+export enum Liquidity_Baking_History_Data_Select_Column_Liquidity_Baking_History_Data_Aggregate_Bool_Exp_Corr_Arguments_Columns {
+  /** column name */
+  LqtQty = 'lqt_qty',
+  /** column name */
+  Slippage = 'slippage',
+  /** column name */
+  TokenPrice = 'token_price',
+  /** column name */
+  TokenPriceUsd = 'token_price_usd',
+  /** column name */
+  TokenQty = 'token_qty',
+  /** column name */
+  XtzQty = 'xtz_qty'
+}
+
+/** select "liquidity_baking_history_data_aggregate_bool_exp_covar_samp_arguments_columns" columns of table "liquidity_baking_history_data" */
+export enum Liquidity_Baking_History_Data_Select_Column_Liquidity_Baking_History_Data_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns {
+  /** column name */
+  LqtQty = 'lqt_qty',
+  /** column name */
+  Slippage = 'slippage',
+  /** column name */
+  TokenPrice = 'token_price',
+  /** column name */
+  TokenPriceUsd = 'token_price_usd',
+  /** column name */
+  TokenQty = 'token_qty',
+  /** column name */
+  XtzQty = 'xtz_qty'
+}
+
+/** select "liquidity_baking_history_data_aggregate_bool_exp_max_arguments_columns" columns of table "liquidity_baking_history_data" */
+export enum Liquidity_Baking_History_Data_Select_Column_Liquidity_Baking_History_Data_Aggregate_Bool_Exp_Max_Arguments_Columns {
+  /** column name */
+  LqtQty = 'lqt_qty',
+  /** column name */
+  Slippage = 'slippage',
+  /** column name */
+  TokenPrice = 'token_price',
+  /** column name */
+  TokenPriceUsd = 'token_price_usd',
+  /** column name */
+  TokenQty = 'token_qty',
+  /** column name */
+  XtzQty = 'xtz_qty'
+}
+
+/** select "liquidity_baking_history_data_aggregate_bool_exp_min_arguments_columns" columns of table "liquidity_baking_history_data" */
+export enum Liquidity_Baking_History_Data_Select_Column_Liquidity_Baking_History_Data_Aggregate_Bool_Exp_Min_Arguments_Columns {
+  /** column name */
+  LqtQty = 'lqt_qty',
+  /** column name */
+  Slippage = 'slippage',
+  /** column name */
+  TokenPrice = 'token_price',
+  /** column name */
+  TokenPriceUsd = 'token_price_usd',
+  /** column name */
+  TokenQty = 'token_qty',
+  /** column name */
+  XtzQty = 'xtz_qty'
+}
+
+/** select "liquidity_baking_history_data_aggregate_bool_exp_stddev_samp_arguments_columns" columns of table "liquidity_baking_history_data" */
+export enum Liquidity_Baking_History_Data_Select_Column_Liquidity_Baking_History_Data_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns {
+  /** column name */
+  LqtQty = 'lqt_qty',
+  /** column name */
+  Slippage = 'slippage',
+  /** column name */
+  TokenPrice = 'token_price',
+  /** column name */
+  TokenPriceUsd = 'token_price_usd',
+  /** column name */
+  TokenQty = 'token_qty',
+  /** column name */
+  XtzQty = 'xtz_qty'
+}
+
+/** select "liquidity_baking_history_data_aggregate_bool_exp_sum_arguments_columns" columns of table "liquidity_baking_history_data" */
+export enum Liquidity_Baking_History_Data_Select_Column_Liquidity_Baking_History_Data_Aggregate_Bool_Exp_Sum_Arguments_Columns {
+  /** column name */
+  LqtQty = 'lqt_qty',
+  /** column name */
+  Slippage = 'slippage',
+  /** column name */
+  TokenPrice = 'token_price',
+  /** column name */
+  TokenPriceUsd = 'token_price_usd',
+  /** column name */
+  TokenQty = 'token_qty',
+  /** column name */
+  XtzQty = 'xtz_qty'
+}
+
+/** select "liquidity_baking_history_data_aggregate_bool_exp_var_samp_arguments_columns" columns of table "liquidity_baking_history_data" */
+export enum Liquidity_Baking_History_Data_Select_Column_Liquidity_Baking_History_Data_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns {
+  /** column name */
+  LqtQty = 'lqt_qty',
+  /** column name */
+  Slippage = 'slippage',
+  /** column name */
+  TokenPrice = 'token_price',
+  /** column name */
+  TokenPriceUsd = 'token_price_usd',
+  /** column name */
+  TokenQty = 'token_qty',
   /** column name */
   XtzQty = 'xtz_qty'
 }
@@ -33582,6 +39365,91 @@ export type Liquidity_Baking_Position_Aggregate = {
   nodes: Array<Liquidity_Baking_Position>;
 };
 
+export type Liquidity_Baking_Position_Aggregate_Bool_Exp = {
+  avg?: InputMaybe<Liquidity_Baking_Position_Aggregate_Bool_Exp_Avg>;
+  corr?: InputMaybe<Liquidity_Baking_Position_Aggregate_Bool_Exp_Corr>;
+  count?: InputMaybe<Liquidity_Baking_Position_Aggregate_Bool_Exp_Count>;
+  covar_samp?: InputMaybe<Liquidity_Baking_Position_Aggregate_Bool_Exp_Covar_Samp>;
+  max?: InputMaybe<Liquidity_Baking_Position_Aggregate_Bool_Exp_Max>;
+  min?: InputMaybe<Liquidity_Baking_Position_Aggregate_Bool_Exp_Min>;
+  stddev_samp?: InputMaybe<Liquidity_Baking_Position_Aggregate_Bool_Exp_Stddev_Samp>;
+  sum?: InputMaybe<Liquidity_Baking_Position_Aggregate_Bool_Exp_Sum>;
+  var_samp?: InputMaybe<Liquidity_Baking_Position_Aggregate_Bool_Exp_Var_Samp>;
+};
+
+export type Liquidity_Baking_Position_Aggregate_Bool_Exp_Avg = {
+  arguments: Liquidity_Baking_Position_Select_Column_Liquidity_Baking_Position_Aggregate_Bool_Exp_Avg_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Liquidity_Baking_Position_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Liquidity_Baking_Position_Aggregate_Bool_Exp_Corr = {
+  arguments: Liquidity_Baking_Position_Aggregate_Bool_Exp_Corr_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Liquidity_Baking_Position_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Liquidity_Baking_Position_Aggregate_Bool_Exp_Corr_Arguments = {
+  X: Liquidity_Baking_Position_Select_Column_Liquidity_Baking_Position_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+  Y: Liquidity_Baking_Position_Select_Column_Liquidity_Baking_Position_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+};
+
+export type Liquidity_Baking_Position_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Liquidity_Baking_Position_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Liquidity_Baking_Position_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+export type Liquidity_Baking_Position_Aggregate_Bool_Exp_Covar_Samp = {
+  arguments: Liquidity_Baking_Position_Aggregate_Bool_Exp_Covar_Samp_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Liquidity_Baking_Position_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Liquidity_Baking_Position_Aggregate_Bool_Exp_Covar_Samp_Arguments = {
+  X: Liquidity_Baking_Position_Select_Column_Liquidity_Baking_Position_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+  Y: Liquidity_Baking_Position_Select_Column_Liquidity_Baking_Position_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+};
+
+export type Liquidity_Baking_Position_Aggregate_Bool_Exp_Max = {
+  arguments: Liquidity_Baking_Position_Select_Column_Liquidity_Baking_Position_Aggregate_Bool_Exp_Max_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Liquidity_Baking_Position_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Liquidity_Baking_Position_Aggregate_Bool_Exp_Min = {
+  arguments: Liquidity_Baking_Position_Select_Column_Liquidity_Baking_Position_Aggregate_Bool_Exp_Min_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Liquidity_Baking_Position_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Liquidity_Baking_Position_Aggregate_Bool_Exp_Stddev_Samp = {
+  arguments: Liquidity_Baking_Position_Select_Column_Liquidity_Baking_Position_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Liquidity_Baking_Position_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Liquidity_Baking_Position_Aggregate_Bool_Exp_Sum = {
+  arguments: Liquidity_Baking_Position_Select_Column_Liquidity_Baking_Position_Aggregate_Bool_Exp_Sum_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Liquidity_Baking_Position_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Liquidity_Baking_Position_Aggregate_Bool_Exp_Var_Samp = {
+  arguments: Liquidity_Baking_Position_Select_Column_Liquidity_Baking_Position_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Liquidity_Baking_Position_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
 /** aggregate fields of "liquidity_baking_position" */
 export type Liquidity_Baking_Position_Aggregate_Fields = {
   __typename?: 'liquidity_baking_position_aggregate_fields';
@@ -33720,6 +39588,86 @@ export enum Liquidity_Baking_Position_Select_Column {
   SharesQty = 'shares_qty',
   /** column name */
   TraderId = 'trader_id'
+}
+
+/** select "liquidity_baking_position_aggregate_bool_exp_avg_arguments_columns" columns of table "liquidity_baking_position" */
+export enum Liquidity_Baking_Position_Select_Column_Liquidity_Baking_Position_Aggregate_Bool_Exp_Avg_Arguments_Columns {
+  /** column name */
+  AvgSharePrice = 'avg_share_price',
+  /** column name */
+  RealizedPl = 'realized_pl',
+  /** column name */
+  SharesQty = 'shares_qty'
+}
+
+/** select "liquidity_baking_position_aggregate_bool_exp_corr_arguments_columns" columns of table "liquidity_baking_position" */
+export enum Liquidity_Baking_Position_Select_Column_Liquidity_Baking_Position_Aggregate_Bool_Exp_Corr_Arguments_Columns {
+  /** column name */
+  AvgSharePrice = 'avg_share_price',
+  /** column name */
+  RealizedPl = 'realized_pl',
+  /** column name */
+  SharesQty = 'shares_qty'
+}
+
+/** select "liquidity_baking_position_aggregate_bool_exp_covar_samp_arguments_columns" columns of table "liquidity_baking_position" */
+export enum Liquidity_Baking_Position_Select_Column_Liquidity_Baking_Position_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns {
+  /** column name */
+  AvgSharePrice = 'avg_share_price',
+  /** column name */
+  RealizedPl = 'realized_pl',
+  /** column name */
+  SharesQty = 'shares_qty'
+}
+
+/** select "liquidity_baking_position_aggregate_bool_exp_max_arguments_columns" columns of table "liquidity_baking_position" */
+export enum Liquidity_Baking_Position_Select_Column_Liquidity_Baking_Position_Aggregate_Bool_Exp_Max_Arguments_Columns {
+  /** column name */
+  AvgSharePrice = 'avg_share_price',
+  /** column name */
+  RealizedPl = 'realized_pl',
+  /** column name */
+  SharesQty = 'shares_qty'
+}
+
+/** select "liquidity_baking_position_aggregate_bool_exp_min_arguments_columns" columns of table "liquidity_baking_position" */
+export enum Liquidity_Baking_Position_Select_Column_Liquidity_Baking_Position_Aggregate_Bool_Exp_Min_Arguments_Columns {
+  /** column name */
+  AvgSharePrice = 'avg_share_price',
+  /** column name */
+  RealizedPl = 'realized_pl',
+  /** column name */
+  SharesQty = 'shares_qty'
+}
+
+/** select "liquidity_baking_position_aggregate_bool_exp_stddev_samp_arguments_columns" columns of table "liquidity_baking_position" */
+export enum Liquidity_Baking_Position_Select_Column_Liquidity_Baking_Position_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns {
+  /** column name */
+  AvgSharePrice = 'avg_share_price',
+  /** column name */
+  RealizedPl = 'realized_pl',
+  /** column name */
+  SharesQty = 'shares_qty'
+}
+
+/** select "liquidity_baking_position_aggregate_bool_exp_sum_arguments_columns" columns of table "liquidity_baking_position" */
+export enum Liquidity_Baking_Position_Select_Column_Liquidity_Baking_Position_Aggregate_Bool_Exp_Sum_Arguments_Columns {
+  /** column name */
+  AvgSharePrice = 'avg_share_price',
+  /** column name */
+  RealizedPl = 'realized_pl',
+  /** column name */
+  SharesQty = 'shares_qty'
+}
+
+/** select "liquidity_baking_position_aggregate_bool_exp_var_samp_arguments_columns" columns of table "liquidity_baking_position" */
+export enum Liquidity_Baking_Position_Select_Column_Liquidity_Baking_Position_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns {
+  /** column name */
+  AvgSharePrice = 'avg_share_price',
+  /** column name */
+  RealizedPl = 'realized_pl',
+  /** column name */
+  SharesQty = 'shares_qty'
 }
 
 /** aggregate stddev on columns */
@@ -34117,6 +40065,91 @@ export type M_Token_Account_Aggregate = {
   nodes: Array<M_Token_Account>;
 };
 
+export type M_Token_Account_Aggregate_Bool_Exp = {
+  avg?: InputMaybe<M_Token_Account_Aggregate_Bool_Exp_Avg>;
+  corr?: InputMaybe<M_Token_Account_Aggregate_Bool_Exp_Corr>;
+  count?: InputMaybe<M_Token_Account_Aggregate_Bool_Exp_Count>;
+  covar_samp?: InputMaybe<M_Token_Account_Aggregate_Bool_Exp_Covar_Samp>;
+  max?: InputMaybe<M_Token_Account_Aggregate_Bool_Exp_Max>;
+  min?: InputMaybe<M_Token_Account_Aggregate_Bool_Exp_Min>;
+  stddev_samp?: InputMaybe<M_Token_Account_Aggregate_Bool_Exp_Stddev_Samp>;
+  sum?: InputMaybe<M_Token_Account_Aggregate_Bool_Exp_Sum>;
+  var_samp?: InputMaybe<M_Token_Account_Aggregate_Bool_Exp_Var_Samp>;
+};
+
+export type M_Token_Account_Aggregate_Bool_Exp_Avg = {
+  arguments: M_Token_Account_Select_Column_M_Token_Account_Aggregate_Bool_Exp_Avg_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<M_Token_Account_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type M_Token_Account_Aggregate_Bool_Exp_Corr = {
+  arguments: M_Token_Account_Aggregate_Bool_Exp_Corr_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<M_Token_Account_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type M_Token_Account_Aggregate_Bool_Exp_Corr_Arguments = {
+  X: M_Token_Account_Select_Column_M_Token_Account_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+  Y: M_Token_Account_Select_Column_M_Token_Account_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+};
+
+export type M_Token_Account_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<M_Token_Account_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<M_Token_Account_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+export type M_Token_Account_Aggregate_Bool_Exp_Covar_Samp = {
+  arguments: M_Token_Account_Aggregate_Bool_Exp_Covar_Samp_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<M_Token_Account_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type M_Token_Account_Aggregate_Bool_Exp_Covar_Samp_Arguments = {
+  X: M_Token_Account_Select_Column_M_Token_Account_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+  Y: M_Token_Account_Select_Column_M_Token_Account_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+};
+
+export type M_Token_Account_Aggregate_Bool_Exp_Max = {
+  arguments: M_Token_Account_Select_Column_M_Token_Account_Aggregate_Bool_Exp_Max_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<M_Token_Account_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type M_Token_Account_Aggregate_Bool_Exp_Min = {
+  arguments: M_Token_Account_Select_Column_M_Token_Account_Aggregate_Bool_Exp_Min_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<M_Token_Account_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type M_Token_Account_Aggregate_Bool_Exp_Stddev_Samp = {
+  arguments: M_Token_Account_Select_Column_M_Token_Account_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<M_Token_Account_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type M_Token_Account_Aggregate_Bool_Exp_Sum = {
+  arguments: M_Token_Account_Select_Column_M_Token_Account_Aggregate_Bool_Exp_Sum_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<M_Token_Account_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type M_Token_Account_Aggregate_Bool_Exp_Var_Samp = {
+  arguments: M_Token_Account_Select_Column_M_Token_Account_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<M_Token_Account_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
 /** aggregate fields of "m_token_account" */
 export type M_Token_Account_Aggregate_Fields = {
   __typename?: 'm_token_account_aggregate_fields';
@@ -34179,6 +40212,7 @@ export type M_Token_Account_Bool_Exp = {
   _or?: InputMaybe<Array<M_Token_Account_Bool_Exp>>;
   balance?: InputMaybe<Float8_Comparison_Exp>;
   history_data?: InputMaybe<M_Token_Account_History_Data_Bool_Exp>;
+  history_data_aggregate?: InputMaybe<M_Token_Account_History_Data_Aggregate_Bool_Exp>;
   id?: InputMaybe<Bigint_Comparison_Exp>;
   m_token?: InputMaybe<M_Token_Bool_Exp>;
   m_token_id?: InputMaybe<String_Comparison_Exp>;
@@ -34210,6 +40244,91 @@ export type M_Token_Account_History_Data_Aggregate = {
   __typename?: 'm_token_account_history_data_aggregate';
   aggregate?: Maybe<M_Token_Account_History_Data_Aggregate_Fields>;
   nodes: Array<M_Token_Account_History_Data>;
+};
+
+export type M_Token_Account_History_Data_Aggregate_Bool_Exp = {
+  avg?: InputMaybe<M_Token_Account_History_Data_Aggregate_Bool_Exp_Avg>;
+  corr?: InputMaybe<M_Token_Account_History_Data_Aggregate_Bool_Exp_Corr>;
+  count?: InputMaybe<M_Token_Account_History_Data_Aggregate_Bool_Exp_Count>;
+  covar_samp?: InputMaybe<M_Token_Account_History_Data_Aggregate_Bool_Exp_Covar_Samp>;
+  max?: InputMaybe<M_Token_Account_History_Data_Aggregate_Bool_Exp_Max>;
+  min?: InputMaybe<M_Token_Account_History_Data_Aggregate_Bool_Exp_Min>;
+  stddev_samp?: InputMaybe<M_Token_Account_History_Data_Aggregate_Bool_Exp_Stddev_Samp>;
+  sum?: InputMaybe<M_Token_Account_History_Data_Aggregate_Bool_Exp_Sum>;
+  var_samp?: InputMaybe<M_Token_Account_History_Data_Aggregate_Bool_Exp_Var_Samp>;
+};
+
+export type M_Token_Account_History_Data_Aggregate_Bool_Exp_Avg = {
+  arguments: M_Token_Account_History_Data_Select_Column_M_Token_Account_History_Data_Aggregate_Bool_Exp_Avg_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<M_Token_Account_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type M_Token_Account_History_Data_Aggregate_Bool_Exp_Corr = {
+  arguments: M_Token_Account_History_Data_Aggregate_Bool_Exp_Corr_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<M_Token_Account_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type M_Token_Account_History_Data_Aggregate_Bool_Exp_Corr_Arguments = {
+  X: M_Token_Account_History_Data_Select_Column_M_Token_Account_History_Data_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+  Y: M_Token_Account_History_Data_Select_Column_M_Token_Account_History_Data_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+};
+
+export type M_Token_Account_History_Data_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<M_Token_Account_History_Data_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<M_Token_Account_History_Data_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+export type M_Token_Account_History_Data_Aggregate_Bool_Exp_Covar_Samp = {
+  arguments: M_Token_Account_History_Data_Aggregate_Bool_Exp_Covar_Samp_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<M_Token_Account_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type M_Token_Account_History_Data_Aggregate_Bool_Exp_Covar_Samp_Arguments = {
+  X: M_Token_Account_History_Data_Select_Column_M_Token_Account_History_Data_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+  Y: M_Token_Account_History_Data_Select_Column_M_Token_Account_History_Data_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+};
+
+export type M_Token_Account_History_Data_Aggregate_Bool_Exp_Max = {
+  arguments: M_Token_Account_History_Data_Select_Column_M_Token_Account_History_Data_Aggregate_Bool_Exp_Max_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<M_Token_Account_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type M_Token_Account_History_Data_Aggregate_Bool_Exp_Min = {
+  arguments: M_Token_Account_History_Data_Select_Column_M_Token_Account_History_Data_Aggregate_Bool_Exp_Min_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<M_Token_Account_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type M_Token_Account_History_Data_Aggregate_Bool_Exp_Stddev_Samp = {
+  arguments: M_Token_Account_History_Data_Select_Column_M_Token_Account_History_Data_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<M_Token_Account_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type M_Token_Account_History_Data_Aggregate_Bool_Exp_Sum = {
+  arguments: M_Token_Account_History_Data_Select_Column_M_Token_Account_History_Data_Aggregate_Bool_Exp_Sum_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<M_Token_Account_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type M_Token_Account_History_Data_Aggregate_Bool_Exp_Var_Samp = {
+  arguments: M_Token_Account_History_Data_Select_Column_M_Token_Account_History_Data_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<M_Token_Account_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
 };
 
 /** aggregate fields of "m_token_account_history_data" */
@@ -34384,6 +40503,86 @@ export enum M_Token_Account_History_Data_Select_Column {
   Timestamp = 'timestamp',
   /** column name */
   Type = 'type'
+}
+
+/** select "m_token_account_history_data_aggregate_bool_exp_avg_arguments_columns" columns of table "m_token_account_history_data" */
+export enum M_Token_Account_History_Data_Select_Column_M_Token_Account_History_Data_Aggregate_Bool_Exp_Avg_Arguments_Columns {
+  /** column name */
+  Balance = 'balance',
+  /** column name */
+  RewardIndex = 'reward_index',
+  /** column name */
+  RewardsEarned = 'rewards_earned'
+}
+
+/** select "m_token_account_history_data_aggregate_bool_exp_corr_arguments_columns" columns of table "m_token_account_history_data" */
+export enum M_Token_Account_History_Data_Select_Column_M_Token_Account_History_Data_Aggregate_Bool_Exp_Corr_Arguments_Columns {
+  /** column name */
+  Balance = 'balance',
+  /** column name */
+  RewardIndex = 'reward_index',
+  /** column name */
+  RewardsEarned = 'rewards_earned'
+}
+
+/** select "m_token_account_history_data_aggregate_bool_exp_covar_samp_arguments_columns" columns of table "m_token_account_history_data" */
+export enum M_Token_Account_History_Data_Select_Column_M_Token_Account_History_Data_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns {
+  /** column name */
+  Balance = 'balance',
+  /** column name */
+  RewardIndex = 'reward_index',
+  /** column name */
+  RewardsEarned = 'rewards_earned'
+}
+
+/** select "m_token_account_history_data_aggregate_bool_exp_max_arguments_columns" columns of table "m_token_account_history_data" */
+export enum M_Token_Account_History_Data_Select_Column_M_Token_Account_History_Data_Aggregate_Bool_Exp_Max_Arguments_Columns {
+  /** column name */
+  Balance = 'balance',
+  /** column name */
+  RewardIndex = 'reward_index',
+  /** column name */
+  RewardsEarned = 'rewards_earned'
+}
+
+/** select "m_token_account_history_data_aggregate_bool_exp_min_arguments_columns" columns of table "m_token_account_history_data" */
+export enum M_Token_Account_History_Data_Select_Column_M_Token_Account_History_Data_Aggregate_Bool_Exp_Min_Arguments_Columns {
+  /** column name */
+  Balance = 'balance',
+  /** column name */
+  RewardIndex = 'reward_index',
+  /** column name */
+  RewardsEarned = 'rewards_earned'
+}
+
+/** select "m_token_account_history_data_aggregate_bool_exp_stddev_samp_arguments_columns" columns of table "m_token_account_history_data" */
+export enum M_Token_Account_History_Data_Select_Column_M_Token_Account_History_Data_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns {
+  /** column name */
+  Balance = 'balance',
+  /** column name */
+  RewardIndex = 'reward_index',
+  /** column name */
+  RewardsEarned = 'rewards_earned'
+}
+
+/** select "m_token_account_history_data_aggregate_bool_exp_sum_arguments_columns" columns of table "m_token_account_history_data" */
+export enum M_Token_Account_History_Data_Select_Column_M_Token_Account_History_Data_Aggregate_Bool_Exp_Sum_Arguments_Columns {
+  /** column name */
+  Balance = 'balance',
+  /** column name */
+  RewardIndex = 'reward_index',
+  /** column name */
+  RewardsEarned = 'rewards_earned'
+}
+
+/** select "m_token_account_history_data_aggregate_bool_exp_var_samp_arguments_columns" columns of table "m_token_account_history_data" */
+export enum M_Token_Account_History_Data_Select_Column_M_Token_Account_History_Data_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns {
+  /** column name */
+  Balance = 'balance',
+  /** column name */
+  RewardIndex = 'reward_index',
+  /** column name */
+  RewardsEarned = 'rewards_earned'
 }
 
 /** aggregate stddev on columns */
@@ -34654,6 +40853,86 @@ export enum M_Token_Account_Select_Column {
   UserId = 'user_id'
 }
 
+/** select "m_token_account_aggregate_bool_exp_avg_arguments_columns" columns of table "m_token_account" */
+export enum M_Token_Account_Select_Column_M_Token_Account_Aggregate_Bool_Exp_Avg_Arguments_Columns {
+  /** column name */
+  Balance = 'balance',
+  /** column name */
+  RewardIndex = 'reward_index',
+  /** column name */
+  RewardsEarned = 'rewards_earned'
+}
+
+/** select "m_token_account_aggregate_bool_exp_corr_arguments_columns" columns of table "m_token_account" */
+export enum M_Token_Account_Select_Column_M_Token_Account_Aggregate_Bool_Exp_Corr_Arguments_Columns {
+  /** column name */
+  Balance = 'balance',
+  /** column name */
+  RewardIndex = 'reward_index',
+  /** column name */
+  RewardsEarned = 'rewards_earned'
+}
+
+/** select "m_token_account_aggregate_bool_exp_covar_samp_arguments_columns" columns of table "m_token_account" */
+export enum M_Token_Account_Select_Column_M_Token_Account_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns {
+  /** column name */
+  Balance = 'balance',
+  /** column name */
+  RewardIndex = 'reward_index',
+  /** column name */
+  RewardsEarned = 'rewards_earned'
+}
+
+/** select "m_token_account_aggregate_bool_exp_max_arguments_columns" columns of table "m_token_account" */
+export enum M_Token_Account_Select_Column_M_Token_Account_Aggregate_Bool_Exp_Max_Arguments_Columns {
+  /** column name */
+  Balance = 'balance',
+  /** column name */
+  RewardIndex = 'reward_index',
+  /** column name */
+  RewardsEarned = 'rewards_earned'
+}
+
+/** select "m_token_account_aggregate_bool_exp_min_arguments_columns" columns of table "m_token_account" */
+export enum M_Token_Account_Select_Column_M_Token_Account_Aggregate_Bool_Exp_Min_Arguments_Columns {
+  /** column name */
+  Balance = 'balance',
+  /** column name */
+  RewardIndex = 'reward_index',
+  /** column name */
+  RewardsEarned = 'rewards_earned'
+}
+
+/** select "m_token_account_aggregate_bool_exp_stddev_samp_arguments_columns" columns of table "m_token_account" */
+export enum M_Token_Account_Select_Column_M_Token_Account_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns {
+  /** column name */
+  Balance = 'balance',
+  /** column name */
+  RewardIndex = 'reward_index',
+  /** column name */
+  RewardsEarned = 'rewards_earned'
+}
+
+/** select "m_token_account_aggregate_bool_exp_sum_arguments_columns" columns of table "m_token_account" */
+export enum M_Token_Account_Select_Column_M_Token_Account_Aggregate_Bool_Exp_Sum_Arguments_Columns {
+  /** column name */
+  Balance = 'balance',
+  /** column name */
+  RewardIndex = 'reward_index',
+  /** column name */
+  RewardsEarned = 'rewards_earned'
+}
+
+/** select "m_token_account_aggregate_bool_exp_var_samp_arguments_columns" columns of table "m_token_account" */
+export enum M_Token_Account_Select_Column_M_Token_Account_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns {
+  /** column name */
+  Balance = 'balance',
+  /** column name */
+  RewardIndex = 'reward_index',
+  /** column name */
+  RewardsEarned = 'rewards_earned'
+}
+
 /** aggregate stddev on columns */
 export type M_Token_Account_Stddev_Fields = {
   __typename?: 'm_token_account_stddev_fields';
@@ -34798,6 +41077,107 @@ export type M_Token_Aggregate = {
   nodes: Array<M_Token>;
 };
 
+export type M_Token_Aggregate_Bool_Exp = {
+  avg?: InputMaybe<M_Token_Aggregate_Bool_Exp_Avg>;
+  bool_and?: InputMaybe<M_Token_Aggregate_Bool_Exp_Bool_And>;
+  bool_or?: InputMaybe<M_Token_Aggregate_Bool_Exp_Bool_Or>;
+  corr?: InputMaybe<M_Token_Aggregate_Bool_Exp_Corr>;
+  count?: InputMaybe<M_Token_Aggregate_Bool_Exp_Count>;
+  covar_samp?: InputMaybe<M_Token_Aggregate_Bool_Exp_Covar_Samp>;
+  max?: InputMaybe<M_Token_Aggregate_Bool_Exp_Max>;
+  min?: InputMaybe<M_Token_Aggregate_Bool_Exp_Min>;
+  stddev_samp?: InputMaybe<M_Token_Aggregate_Bool_Exp_Stddev_Samp>;
+  sum?: InputMaybe<M_Token_Aggregate_Bool_Exp_Sum>;
+  var_samp?: InputMaybe<M_Token_Aggregate_Bool_Exp_Var_Samp>;
+};
+
+export type M_Token_Aggregate_Bool_Exp_Avg = {
+  arguments: M_Token_Select_Column_M_Token_Aggregate_Bool_Exp_Avg_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<M_Token_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type M_Token_Aggregate_Bool_Exp_Bool_And = {
+  arguments: M_Token_Select_Column_M_Token_Aggregate_Bool_Exp_Bool_And_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<M_Token_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type M_Token_Aggregate_Bool_Exp_Bool_Or = {
+  arguments: M_Token_Select_Column_M_Token_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<M_Token_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type M_Token_Aggregate_Bool_Exp_Corr = {
+  arguments: M_Token_Aggregate_Bool_Exp_Corr_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<M_Token_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type M_Token_Aggregate_Bool_Exp_Corr_Arguments = {
+  X: M_Token_Select_Column_M_Token_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+  Y: M_Token_Select_Column_M_Token_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+};
+
+export type M_Token_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<M_Token_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<M_Token_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+export type M_Token_Aggregate_Bool_Exp_Covar_Samp = {
+  arguments: M_Token_Aggregate_Bool_Exp_Covar_Samp_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<M_Token_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type M_Token_Aggregate_Bool_Exp_Covar_Samp_Arguments = {
+  X: M_Token_Select_Column_M_Token_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+  Y: M_Token_Select_Column_M_Token_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+};
+
+export type M_Token_Aggregate_Bool_Exp_Max = {
+  arguments: M_Token_Select_Column_M_Token_Aggregate_Bool_Exp_Max_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<M_Token_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type M_Token_Aggregate_Bool_Exp_Min = {
+  arguments: M_Token_Select_Column_M_Token_Aggregate_Bool_Exp_Min_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<M_Token_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type M_Token_Aggregate_Bool_Exp_Stddev_Samp = {
+  arguments: M_Token_Select_Column_M_Token_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<M_Token_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type M_Token_Aggregate_Bool_Exp_Sum = {
+  arguments: M_Token_Select_Column_M_Token_Aggregate_Bool_Exp_Sum_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<M_Token_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type M_Token_Aggregate_Bool_Exp_Var_Samp = {
+  arguments: M_Token_Select_Column_M_Token_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<M_Token_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
 /** aggregate fields of "m_token" */
 export type M_Token_Aggregate_Fields = {
   __typename?: 'm_token_aggregate_fields';
@@ -34853,6 +41233,7 @@ export type M_Token_Bool_Exp = {
   _not?: InputMaybe<M_Token_Bool_Exp>;
   _or?: InputMaybe<Array<M_Token_Bool_Exp>>;
   accounts?: InputMaybe<M_Token_Account_Bool_Exp>;
+  accounts_aggregate?: InputMaybe<M_Token_Account_Aggregate_Bool_Exp>;
   address?: InputMaybe<String_Comparison_Exp>;
   admin?: InputMaybe<String_Comparison_Exp>;
   governance?: InputMaybe<Governance_Bool_Exp>;
@@ -34861,8 +41242,10 @@ export type M_Token_Bool_Exp = {
   last_updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   loan_token_name?: InputMaybe<String_Comparison_Exp>;
   operators?: InputMaybe<M_Token_Operator_Bool_Exp>;
+  operators_aggregate?: InputMaybe<M_Token_Operator_Aggregate_Bool_Exp>;
   token_reward_index?: InputMaybe<Float8_Comparison_Exp>;
   whitelist_contracts?: InputMaybe<M_Token_Whitelist_Contract_Bool_Exp>;
+  whitelist_contracts_aggregate?: InputMaybe<M_Token_Whitelist_Contract_Aggregate_Bool_Exp>;
 };
 
 /** aggregate max on columns */
@@ -34927,6 +41310,17 @@ export type M_Token_Operator_Aggregate = {
   __typename?: 'm_token_operator_aggregate';
   aggregate?: Maybe<M_Token_Operator_Aggregate_Fields>;
   nodes: Array<M_Token_Operator>;
+};
+
+export type M_Token_Operator_Aggregate_Bool_Exp = {
+  count?: InputMaybe<M_Token_Operator_Aggregate_Bool_Exp_Count>;
+};
+
+export type M_Token_Operator_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<M_Token_Operator_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<M_Token_Operator_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "m_token_operator" */
@@ -35175,6 +41569,66 @@ export enum M_Token_Select_Column {
   TokenRewardIndex = 'token_reward_index'
 }
 
+/** select "m_token_aggregate_bool_exp_avg_arguments_columns" columns of table "m_token" */
+export enum M_Token_Select_Column_M_Token_Aggregate_Bool_Exp_Avg_Arguments_Columns {
+  /** column name */
+  TokenRewardIndex = 'token_reward_index'
+}
+
+/** select "m_token_aggregate_bool_exp_bool_and_arguments_columns" columns of table "m_token" */
+export enum M_Token_Select_Column_M_Token_Aggregate_Bool_Exp_Bool_And_Arguments_Columns {
+  /** column name */
+  IsScaledToken = 'is_scaled_token'
+}
+
+/** select "m_token_aggregate_bool_exp_bool_or_arguments_columns" columns of table "m_token" */
+export enum M_Token_Select_Column_M_Token_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns {
+  /** column name */
+  IsScaledToken = 'is_scaled_token'
+}
+
+/** select "m_token_aggregate_bool_exp_corr_arguments_columns" columns of table "m_token" */
+export enum M_Token_Select_Column_M_Token_Aggregate_Bool_Exp_Corr_Arguments_Columns {
+  /** column name */
+  TokenRewardIndex = 'token_reward_index'
+}
+
+/** select "m_token_aggregate_bool_exp_covar_samp_arguments_columns" columns of table "m_token" */
+export enum M_Token_Select_Column_M_Token_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns {
+  /** column name */
+  TokenRewardIndex = 'token_reward_index'
+}
+
+/** select "m_token_aggregate_bool_exp_max_arguments_columns" columns of table "m_token" */
+export enum M_Token_Select_Column_M_Token_Aggregate_Bool_Exp_Max_Arguments_Columns {
+  /** column name */
+  TokenRewardIndex = 'token_reward_index'
+}
+
+/** select "m_token_aggregate_bool_exp_min_arguments_columns" columns of table "m_token" */
+export enum M_Token_Select_Column_M_Token_Aggregate_Bool_Exp_Min_Arguments_Columns {
+  /** column name */
+  TokenRewardIndex = 'token_reward_index'
+}
+
+/** select "m_token_aggregate_bool_exp_stddev_samp_arguments_columns" columns of table "m_token" */
+export enum M_Token_Select_Column_M_Token_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns {
+  /** column name */
+  TokenRewardIndex = 'token_reward_index'
+}
+
+/** select "m_token_aggregate_bool_exp_sum_arguments_columns" columns of table "m_token" */
+export enum M_Token_Select_Column_M_Token_Aggregate_Bool_Exp_Sum_Arguments_Columns {
+  /** column name */
+  TokenRewardIndex = 'token_reward_index'
+}
+
+/** select "m_token_aggregate_bool_exp_var_samp_arguments_columns" columns of table "m_token" */
+export enum M_Token_Select_Column_M_Token_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns {
+  /** column name */
+  TokenRewardIndex = 'token_reward_index'
+}
+
 /** aggregate stddev on columns */
 export type M_Token_Stddev_Fields = {
   __typename?: 'm_token_stddev_fields';
@@ -35287,6 +41741,17 @@ export type M_Token_Whitelist_Contract_Aggregate = {
   __typename?: 'm_token_whitelist_contract_aggregate';
   aggregate?: Maybe<M_Token_Whitelist_Contract_Aggregate_Fields>;
   nodes: Array<M_Token_Whitelist_Contract>;
+};
+
+export type M_Token_Whitelist_Contract_Aggregate_Bool_Exp = {
+  count?: InputMaybe<M_Token_Whitelist_Contract_Aggregate_Bool_Exp_Count>;
+};
+
+export type M_Token_Whitelist_Contract_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<M_Token_Whitelist_Contract_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<M_Token_Whitelist_Contract_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "m_token_whitelist_contract" */
@@ -36606,51 +43071,95 @@ export type Mavryk_User_Bool_Exp = {
   _or?: InputMaybe<Array<Mavryk_User_Bool_Exp>>;
   address?: InputMaybe<String_Comparison_Exp>;
   aggregator_oracles?: InputMaybe<Aggregator_Oracle_Bool_Exp>;
+  aggregator_oracles_aggregate?: InputMaybe<Aggregator_Oracle_Aggregate_Bool_Exp>;
   break_glass_action_signers?: InputMaybe<Break_Glass_Action_Signer_Bool_Exp>;
+  break_glass_action_signers_aggregate?: InputMaybe<Break_Glass_Action_Signer_Aggregate_Bool_Exp>;
   break_glass_actions_initiator?: InputMaybe<Break_Glass_Action_Bool_Exp>;
+  break_glass_actions_initiator_aggregate?: InputMaybe<Break_Glass_Action_Aggregate_Bool_Exp>;
   break_glass_council_members?: InputMaybe<Break_Glass_Council_Member_Bool_Exp>;
+  break_glass_council_members_aggregate?: InputMaybe<Break_Glass_Council_Member_Aggregate_Bool_Exp>;
   council_actions_initiator?: InputMaybe<Council_Action_Bool_Exp>;
+  council_actions_initiator_aggregate?: InputMaybe<Council_Action_Aggregate_Bool_Exp>;
   council_actions_signer?: InputMaybe<Council_Action_Signer_Bool_Exp>;
+  council_actions_signer_aggregate?: InputMaybe<Council_Action_Signer_Aggregate_Bool_Exp>;
   council_council_members?: InputMaybe<Council_Council_Member_Bool_Exp>;
+  council_council_members_aggregate?: InputMaybe<Council_Council_Member_Aggregate_Bool_Exp>;
   delegations?: InputMaybe<Delegation_Record_Bool_Exp>;
+  delegations_aggregate?: InputMaybe<Delegation_Record_Aggregate_Bool_Exp>;
   doorman_stake_accounts?: InputMaybe<Doorman_Stake_Account_Bool_Exp>;
+  doorman_stake_accounts_aggregate?: InputMaybe<Doorman_Stake_Account_Aggregate_Bool_Exp>;
   emergency_governance_proposer?: InputMaybe<Emergency_Governance_Record_Bool_Exp>;
+  emergency_governance_proposer_aggregate?: InputMaybe<Emergency_Governance_Record_Aggregate_Bool_Exp>;
   emergency_governance_votes?: InputMaybe<Emergency_Governance_Vote_Bool_Exp>;
+  emergency_governance_votes_aggregate?: InputMaybe<Emergency_Governance_Vote_Aggregate_Bool_Exp>;
   farm_accounts?: InputMaybe<Farm_Account_Bool_Exp>;
+  farm_accounts_aggregate?: InputMaybe<Farm_Account_Aggregate_Bool_Exp>;
   governance_financial_requests_requester?: InputMaybe<Governance_Financial_Request_Bool_Exp>;
+  governance_financial_requests_requester_aggregate?: InputMaybe<Governance_Financial_Request_Aggregate_Bool_Exp>;
   governance_financial_requests_votes?: InputMaybe<Governance_Financial_Request_Vote_Bool_Exp>;
+  governance_financial_requests_votes_aggregate?: InputMaybe<Governance_Financial_Request_Vote_Aggregate_Bool_Exp>;
   governance_proposals_payments?: InputMaybe<Governance_Proposal_Payment_Bool_Exp>;
+  governance_proposals_payments_aggregate?: InputMaybe<Governance_Proposal_Payment_Aggregate_Bool_Exp>;
   governance_proposals_proposer?: InputMaybe<Governance_Proposal_Bool_Exp>;
+  governance_proposals_proposer_aggregate?: InputMaybe<Governance_Proposal_Aggregate_Bool_Exp>;
   governance_proposals_votes?: InputMaybe<Governance_Proposal_Vote_Bool_Exp>;
+  governance_proposals_votes_aggregate?: InputMaybe<Governance_Proposal_Vote_Aggregate_Bool_Exp>;
   governance_satellite_action_initiators?: InputMaybe<Governance_Satellite_Action_Bool_Exp>;
+  governance_satellite_action_initiators_aggregate?: InputMaybe<Governance_Satellite_Action_Aggregate_Bool_Exp>;
   governance_satellite_actions_votes?: InputMaybe<Governance_Satellite_Action_Vote_Bool_Exp>;
+  governance_satellite_actions_votes_aggregate?: InputMaybe<Governance_Satellite_Action_Vote_Aggregate_Bool_Exp>;
   governance_satellite_oracles?: InputMaybe<Governance_Satellite_Oracle_Bool_Exp>;
+  governance_satellite_oracles_aggregate?: InputMaybe<Governance_Satellite_Oracle_Aggregate_Bool_Exp>;
   governance_satellite_snapshots?: InputMaybe<Governance_Satellite_Snapshot_Bool_Exp>;
+  governance_satellite_snapshots_aggregate?: InputMaybe<Governance_Satellite_Snapshot_Aggregate_Bool_Exp>;
   lending_controller_collateral_token_oracles?: InputMaybe<Lending_Controller_Collateral_Token_Bool_Exp>;
+  lending_controller_collateral_token_oracles_aggregate?: InputMaybe<Lending_Controller_Collateral_Token_Aggregate_Bool_Exp>;
   lending_controller_history_data_sender?: InputMaybe<Lending_Controller_History_Data_Bool_Exp>;
+  lending_controller_history_data_sender_aggregate?: InputMaybe<Lending_Controller_History_Data_Aggregate_Bool_Exp>;
   lending_controller_loan_token_oracles?: InputMaybe<Lending_Controller_Loan_Token_Bool_Exp>;
+  lending_controller_loan_token_oracles_aggregate?: InputMaybe<Lending_Controller_Loan_Token_Aggregate_Bool_Exp>;
   lending_controller_vaults?: InputMaybe<Lending_Controller_Vault_Bool_Exp>;
+  lending_controller_vaults_aggregate?: InputMaybe<Lending_Controller_Vault_Aggregate_Bool_Exp>;
   liquidity_baking_positions?: InputMaybe<Liquidity_Baking_Position_Bool_Exp>;
+  liquidity_baking_positions_aggregate?: InputMaybe<Liquidity_Baking_Position_Aggregate_Bool_Exp>;
   liquidity_baking_trades?: InputMaybe<Liquidity_Baking_History_Data_Bool_Exp>;
+  liquidity_baking_trades_aggregate?: InputMaybe<Liquidity_Baking_History_Data_Aggregate_Bool_Exp>;
   m_token_accounts?: InputMaybe<M_Token_Account_Bool_Exp>;
+  m_token_accounts_aggregate?: InputMaybe<M_Token_Account_Aggregate_Bool_Exp>;
   m_token_user_operators?: InputMaybe<M_Token_Operator_Bool_Exp>;
+  m_token_user_operators_aggregate?: InputMaybe<M_Token_Operator_Aggregate_Bool_Exp>;
   m_token_user_owners?: InputMaybe<M_Token_Operator_Bool_Exp>;
+  m_token_user_owners_aggregate?: InputMaybe<M_Token_Operator_Aggregate_Bool_Exp>;
   mint_history_data?: InputMaybe<Mvk_Mint_History_Data_Bool_Exp>;
+  mint_history_data_aggregate?: InputMaybe<Mvk_Mint_History_Data_Aggregate_Bool_Exp>;
   mvk_balance?: InputMaybe<Float8_Comparison_Exp>;
   mvk_token_user_operators?: InputMaybe<Mvk_Token_Operator_Bool_Exp>;
+  mvk_token_user_operators_aggregate?: InputMaybe<Mvk_Token_Operator_Aggregate_Bool_Exp>;
   mvk_token_user_owners?: InputMaybe<Mvk_Token_Operator_Bool_Exp>;
+  mvk_token_user_owners_aggregate?: InputMaybe<Mvk_Token_Operator_Aggregate_Bool_Exp>;
   mvk_transfer_receiver?: InputMaybe<Mvk_Transfer_History_Data_Bool_Exp>;
+  mvk_transfer_receiver_aggregate?: InputMaybe<Mvk_Transfer_History_Data_Aggregate_Bool_Exp>;
   mvk_transfer_sender?: InputMaybe<Mvk_Transfer_History_Data_Bool_Exp>;
+  mvk_transfer_sender_aggregate?: InputMaybe<Mvk_Transfer_History_Data_Aggregate_Bool_Exp>;
   satellite_rewardss?: InputMaybe<Satellite_Rewards_Bool_Exp>;
+  satellite_rewardss_aggregate?: InputMaybe<Satellite_Rewards_Aggregate_Bool_Exp>;
   satellites?: InputMaybe<Satellite_Bool_Exp>;
+  satellites_aggregate?: InputMaybe<Satellite_Aggregate_Bool_Exp>;
   smvk_balance?: InputMaybe<Float8_Comparison_Exp>;
   stakes_history_data?: InputMaybe<Stake_History_Data_Bool_Exp>;
+  stakes_history_data_aggregate?: InputMaybe<Stake_History_Data_Aggregate_Bool_Exp>;
   token_sale_buyers?: InputMaybe<Token_Sale_Buyer_Bool_Exp>;
+  token_sale_buyers_aggregate?: InputMaybe<Token_Sale_Buyer_Aggregate_Bool_Exp>;
   token_sale_whitelist_accounts?: InputMaybe<Token_Sale_Whitelisted_Account_Bool_Exp>;
+  token_sale_whitelist_accounts_aggregate?: InputMaybe<Token_Sale_Whitelisted_Account_Aggregate_Bool_Exp>;
   treasury_transfer_receiver?: InputMaybe<Treasury_Transfer_History_Data_Bool_Exp>;
+  treasury_transfer_receiver_aggregate?: InputMaybe<Treasury_Transfer_History_Data_Aggregate_Bool_Exp>;
   vault_depositors?: InputMaybe<Vault_Depositor_Bool_Exp>;
+  vault_depositors_aggregate?: InputMaybe<Vault_Depositor_Aggregate_Bool_Exp>;
   vesting_vestees?: InputMaybe<Vesting_Vestee_Bool_Exp>;
+  vesting_vestees_aggregate?: InputMaybe<Vesting_Vestee_Aggregate_Bool_Exp>;
   whitelist_developers?: InputMaybe<Whitelist_Developer_Bool_Exp>;
+  whitelist_developers_aggregate?: InputMaybe<Whitelist_Developer_Aggregate_Bool_Exp>;
 };
 
 /** aggregate max on columns */
@@ -36816,6 +43325,91 @@ export type Mvk_Mint_History_Data_Aggregate = {
   nodes: Array<Mvk_Mint_History_Data>;
 };
 
+export type Mvk_Mint_History_Data_Aggregate_Bool_Exp = {
+  avg?: InputMaybe<Mvk_Mint_History_Data_Aggregate_Bool_Exp_Avg>;
+  corr?: InputMaybe<Mvk_Mint_History_Data_Aggregate_Bool_Exp_Corr>;
+  count?: InputMaybe<Mvk_Mint_History_Data_Aggregate_Bool_Exp_Count>;
+  covar_samp?: InputMaybe<Mvk_Mint_History_Data_Aggregate_Bool_Exp_Covar_Samp>;
+  max?: InputMaybe<Mvk_Mint_History_Data_Aggregate_Bool_Exp_Max>;
+  min?: InputMaybe<Mvk_Mint_History_Data_Aggregate_Bool_Exp_Min>;
+  stddev_samp?: InputMaybe<Mvk_Mint_History_Data_Aggregate_Bool_Exp_Stddev_Samp>;
+  sum?: InputMaybe<Mvk_Mint_History_Data_Aggregate_Bool_Exp_Sum>;
+  var_samp?: InputMaybe<Mvk_Mint_History_Data_Aggregate_Bool_Exp_Var_Samp>;
+};
+
+export type Mvk_Mint_History_Data_Aggregate_Bool_Exp_Avg = {
+  arguments: Mvk_Mint_History_Data_Select_Column_Mvk_Mint_History_Data_Aggregate_Bool_Exp_Avg_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Mvk_Mint_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Mvk_Mint_History_Data_Aggregate_Bool_Exp_Corr = {
+  arguments: Mvk_Mint_History_Data_Aggregate_Bool_Exp_Corr_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Mvk_Mint_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Mvk_Mint_History_Data_Aggregate_Bool_Exp_Corr_Arguments = {
+  X: Mvk_Mint_History_Data_Select_Column_Mvk_Mint_History_Data_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+  Y: Mvk_Mint_History_Data_Select_Column_Mvk_Mint_History_Data_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+};
+
+export type Mvk_Mint_History_Data_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Mvk_Mint_History_Data_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Mvk_Mint_History_Data_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+export type Mvk_Mint_History_Data_Aggregate_Bool_Exp_Covar_Samp = {
+  arguments: Mvk_Mint_History_Data_Aggregate_Bool_Exp_Covar_Samp_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Mvk_Mint_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Mvk_Mint_History_Data_Aggregate_Bool_Exp_Covar_Samp_Arguments = {
+  X: Mvk_Mint_History_Data_Select_Column_Mvk_Mint_History_Data_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+  Y: Mvk_Mint_History_Data_Select_Column_Mvk_Mint_History_Data_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+};
+
+export type Mvk_Mint_History_Data_Aggregate_Bool_Exp_Max = {
+  arguments: Mvk_Mint_History_Data_Select_Column_Mvk_Mint_History_Data_Aggregate_Bool_Exp_Max_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Mvk_Mint_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Mvk_Mint_History_Data_Aggregate_Bool_Exp_Min = {
+  arguments: Mvk_Mint_History_Data_Select_Column_Mvk_Mint_History_Data_Aggregate_Bool_Exp_Min_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Mvk_Mint_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Mvk_Mint_History_Data_Aggregate_Bool_Exp_Stddev_Samp = {
+  arguments: Mvk_Mint_History_Data_Select_Column_Mvk_Mint_History_Data_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Mvk_Mint_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Mvk_Mint_History_Data_Aggregate_Bool_Exp_Sum = {
+  arguments: Mvk_Mint_History_Data_Select_Column_Mvk_Mint_History_Data_Aggregate_Bool_Exp_Sum_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Mvk_Mint_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Mvk_Mint_History_Data_Aggregate_Bool_Exp_Var_Samp = {
+  arguments: Mvk_Mint_History_Data_Select_Column_Mvk_Mint_History_Data_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Mvk_Mint_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
 /** aggregate fields of "mvk_mint_history_data" */
 export type Mvk_Mint_History_Data_Aggregate_Fields = {
   __typename?: 'mvk_mint_history_data_aggregate_fields';
@@ -36952,6 +43546,70 @@ export enum Mvk_Mint_History_Data_Select_Column {
   Timestamp = 'timestamp',
   /** column name */
   UserId = 'user_id'
+}
+
+/** select "mvk_mint_history_data_aggregate_bool_exp_avg_arguments_columns" columns of table "mvk_mint_history_data" */
+export enum Mvk_Mint_History_Data_Select_Column_Mvk_Mint_History_Data_Aggregate_Bool_Exp_Avg_Arguments_Columns {
+  /** column name */
+  MintedAmount = 'minted_amount',
+  /** column name */
+  MvkTotalSupply = 'mvk_total_supply'
+}
+
+/** select "mvk_mint_history_data_aggregate_bool_exp_corr_arguments_columns" columns of table "mvk_mint_history_data" */
+export enum Mvk_Mint_History_Data_Select_Column_Mvk_Mint_History_Data_Aggregate_Bool_Exp_Corr_Arguments_Columns {
+  /** column name */
+  MintedAmount = 'minted_amount',
+  /** column name */
+  MvkTotalSupply = 'mvk_total_supply'
+}
+
+/** select "mvk_mint_history_data_aggregate_bool_exp_covar_samp_arguments_columns" columns of table "mvk_mint_history_data" */
+export enum Mvk_Mint_History_Data_Select_Column_Mvk_Mint_History_Data_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns {
+  /** column name */
+  MintedAmount = 'minted_amount',
+  /** column name */
+  MvkTotalSupply = 'mvk_total_supply'
+}
+
+/** select "mvk_mint_history_data_aggregate_bool_exp_max_arguments_columns" columns of table "mvk_mint_history_data" */
+export enum Mvk_Mint_History_Data_Select_Column_Mvk_Mint_History_Data_Aggregate_Bool_Exp_Max_Arguments_Columns {
+  /** column name */
+  MintedAmount = 'minted_amount',
+  /** column name */
+  MvkTotalSupply = 'mvk_total_supply'
+}
+
+/** select "mvk_mint_history_data_aggregate_bool_exp_min_arguments_columns" columns of table "mvk_mint_history_data" */
+export enum Mvk_Mint_History_Data_Select_Column_Mvk_Mint_History_Data_Aggregate_Bool_Exp_Min_Arguments_Columns {
+  /** column name */
+  MintedAmount = 'minted_amount',
+  /** column name */
+  MvkTotalSupply = 'mvk_total_supply'
+}
+
+/** select "mvk_mint_history_data_aggregate_bool_exp_stddev_samp_arguments_columns" columns of table "mvk_mint_history_data" */
+export enum Mvk_Mint_History_Data_Select_Column_Mvk_Mint_History_Data_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns {
+  /** column name */
+  MintedAmount = 'minted_amount',
+  /** column name */
+  MvkTotalSupply = 'mvk_total_supply'
+}
+
+/** select "mvk_mint_history_data_aggregate_bool_exp_sum_arguments_columns" columns of table "mvk_mint_history_data" */
+export enum Mvk_Mint_History_Data_Select_Column_Mvk_Mint_History_Data_Aggregate_Bool_Exp_Sum_Arguments_Columns {
+  /** column name */
+  MintedAmount = 'minted_amount',
+  /** column name */
+  MvkTotalSupply = 'mvk_total_supply'
+}
+
+/** select "mvk_mint_history_data_aggregate_bool_exp_var_samp_arguments_columns" columns of table "mvk_mint_history_data" */
+export enum Mvk_Mint_History_Data_Select_Column_Mvk_Mint_History_Data_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns {
+  /** column name */
+  MintedAmount = 'minted_amount',
+  /** column name */
+  MvkTotalSupply = 'mvk_total_supply'
 }
 
 /** aggregate stddev on columns */
@@ -37219,6 +43877,91 @@ export type Mvk_Token_Aggregate = {
   nodes: Array<Mvk_Token>;
 };
 
+export type Mvk_Token_Aggregate_Bool_Exp = {
+  avg?: InputMaybe<Mvk_Token_Aggregate_Bool_Exp_Avg>;
+  corr?: InputMaybe<Mvk_Token_Aggregate_Bool_Exp_Corr>;
+  count?: InputMaybe<Mvk_Token_Aggregate_Bool_Exp_Count>;
+  covar_samp?: InputMaybe<Mvk_Token_Aggregate_Bool_Exp_Covar_Samp>;
+  max?: InputMaybe<Mvk_Token_Aggregate_Bool_Exp_Max>;
+  min?: InputMaybe<Mvk_Token_Aggregate_Bool_Exp_Min>;
+  stddev_samp?: InputMaybe<Mvk_Token_Aggregate_Bool_Exp_Stddev_Samp>;
+  sum?: InputMaybe<Mvk_Token_Aggregate_Bool_Exp_Sum>;
+  var_samp?: InputMaybe<Mvk_Token_Aggregate_Bool_Exp_Var_Samp>;
+};
+
+export type Mvk_Token_Aggregate_Bool_Exp_Avg = {
+  arguments: Mvk_Token_Select_Column_Mvk_Token_Aggregate_Bool_Exp_Avg_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Mvk_Token_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Mvk_Token_Aggregate_Bool_Exp_Corr = {
+  arguments: Mvk_Token_Aggregate_Bool_Exp_Corr_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Mvk_Token_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Mvk_Token_Aggregate_Bool_Exp_Corr_Arguments = {
+  X: Mvk_Token_Select_Column_Mvk_Token_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+  Y: Mvk_Token_Select_Column_Mvk_Token_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+};
+
+export type Mvk_Token_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Mvk_Token_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Mvk_Token_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+export type Mvk_Token_Aggregate_Bool_Exp_Covar_Samp = {
+  arguments: Mvk_Token_Aggregate_Bool_Exp_Covar_Samp_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Mvk_Token_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Mvk_Token_Aggregate_Bool_Exp_Covar_Samp_Arguments = {
+  X: Mvk_Token_Select_Column_Mvk_Token_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+  Y: Mvk_Token_Select_Column_Mvk_Token_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+};
+
+export type Mvk_Token_Aggregate_Bool_Exp_Max = {
+  arguments: Mvk_Token_Select_Column_Mvk_Token_Aggregate_Bool_Exp_Max_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Mvk_Token_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Mvk_Token_Aggregate_Bool_Exp_Min = {
+  arguments: Mvk_Token_Select_Column_Mvk_Token_Aggregate_Bool_Exp_Min_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Mvk_Token_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Mvk_Token_Aggregate_Bool_Exp_Stddev_Samp = {
+  arguments: Mvk_Token_Select_Column_Mvk_Token_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Mvk_Token_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Mvk_Token_Aggregate_Bool_Exp_Sum = {
+  arguments: Mvk_Token_Select_Column_Mvk_Token_Aggregate_Bool_Exp_Sum_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Mvk_Token_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Mvk_Token_Aggregate_Bool_Exp_Var_Samp = {
+  arguments: Mvk_Token_Select_Column_Mvk_Token_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Mvk_Token_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
 /** aggregate fields of "mvk_token" */
 export type Mvk_Token_Aggregate_Fields = {
   __typename?: 'mvk_token_aggregate_fields';
@@ -37280,17 +44023,22 @@ export type Mvk_Token_Bool_Exp = {
   address?: InputMaybe<String_Comparison_Exp>;
   admin?: InputMaybe<String_Comparison_Exp>;
   general_contracts?: InputMaybe<Mvk_Token_General_Contract_Bool_Exp>;
+  general_contracts_aggregate?: InputMaybe<Mvk_Token_General_Contract_Aggregate_Bool_Exp>;
   governance?: InputMaybe<Governance_Bool_Exp>;
   governance_id?: InputMaybe<String_Comparison_Exp>;
   inflation_rate?: InputMaybe<Smallint_Comparison_Exp>;
   last_updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   maximum_supply?: InputMaybe<Float8_Comparison_Exp>;
   mint_history_data?: InputMaybe<Mvk_Mint_History_Data_Bool_Exp>;
+  mint_history_data_aggregate?: InputMaybe<Mvk_Mint_History_Data_Aggregate_Bool_Exp>;
   next_inflation_timestamp?: InputMaybe<Timestamptz_Comparison_Exp>;
   operators?: InputMaybe<Mvk_Token_Operator_Bool_Exp>;
+  operators_aggregate?: InputMaybe<Mvk_Token_Operator_Aggregate_Bool_Exp>;
   total_supply?: InputMaybe<Float8_Comparison_Exp>;
   transfer_history_data?: InputMaybe<Mvk_Transfer_History_Data_Bool_Exp>;
+  transfer_history_data_aggregate?: InputMaybe<Mvk_Transfer_History_Data_Aggregate_Bool_Exp>;
   whitelist_contracts?: InputMaybe<Mvk_Token_Whitelist_Contract_Bool_Exp>;
+  whitelist_contracts_aggregate?: InputMaybe<Mvk_Token_Whitelist_Contract_Aggregate_Bool_Exp>;
 };
 
 /** columns and relationships of "mvk_token_general_contract" */
@@ -37309,6 +44057,17 @@ export type Mvk_Token_General_Contract_Aggregate = {
   __typename?: 'mvk_token_general_contract_aggregate';
   aggregate?: Maybe<Mvk_Token_General_Contract_Aggregate_Fields>;
   nodes: Array<Mvk_Token_General_Contract>;
+};
+
+export type Mvk_Token_General_Contract_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Mvk_Token_General_Contract_Aggregate_Bool_Exp_Count>;
+};
+
+export type Mvk_Token_General_Contract_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Mvk_Token_General_Contract_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Mvk_Token_General_Contract_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "mvk_token_general_contract" */
@@ -37592,6 +44351,17 @@ export type Mvk_Token_Operator_Aggregate = {
   nodes: Array<Mvk_Token_Operator>;
 };
 
+export type Mvk_Token_Operator_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Mvk_Token_Operator_Aggregate_Bool_Exp_Count>;
+};
+
+export type Mvk_Token_Operator_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Mvk_Token_Operator_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Mvk_Token_Operator_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
 /** aggregate fields of "mvk_token_operator" */
 export type Mvk_Token_Operator_Aggregate_Fields = {
   __typename?: 'mvk_token_operator_aggregate_fields';
@@ -37843,6 +44613,70 @@ export enum Mvk_Token_Select_Column {
   TotalSupply = 'total_supply'
 }
 
+/** select "mvk_token_aggregate_bool_exp_avg_arguments_columns" columns of table "mvk_token" */
+export enum Mvk_Token_Select_Column_Mvk_Token_Aggregate_Bool_Exp_Avg_Arguments_Columns {
+  /** column name */
+  MaximumSupply = 'maximum_supply',
+  /** column name */
+  TotalSupply = 'total_supply'
+}
+
+/** select "mvk_token_aggregate_bool_exp_corr_arguments_columns" columns of table "mvk_token" */
+export enum Mvk_Token_Select_Column_Mvk_Token_Aggregate_Bool_Exp_Corr_Arguments_Columns {
+  /** column name */
+  MaximumSupply = 'maximum_supply',
+  /** column name */
+  TotalSupply = 'total_supply'
+}
+
+/** select "mvk_token_aggregate_bool_exp_covar_samp_arguments_columns" columns of table "mvk_token" */
+export enum Mvk_Token_Select_Column_Mvk_Token_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns {
+  /** column name */
+  MaximumSupply = 'maximum_supply',
+  /** column name */
+  TotalSupply = 'total_supply'
+}
+
+/** select "mvk_token_aggregate_bool_exp_max_arguments_columns" columns of table "mvk_token" */
+export enum Mvk_Token_Select_Column_Mvk_Token_Aggregate_Bool_Exp_Max_Arguments_Columns {
+  /** column name */
+  MaximumSupply = 'maximum_supply',
+  /** column name */
+  TotalSupply = 'total_supply'
+}
+
+/** select "mvk_token_aggregate_bool_exp_min_arguments_columns" columns of table "mvk_token" */
+export enum Mvk_Token_Select_Column_Mvk_Token_Aggregate_Bool_Exp_Min_Arguments_Columns {
+  /** column name */
+  MaximumSupply = 'maximum_supply',
+  /** column name */
+  TotalSupply = 'total_supply'
+}
+
+/** select "mvk_token_aggregate_bool_exp_stddev_samp_arguments_columns" columns of table "mvk_token" */
+export enum Mvk_Token_Select_Column_Mvk_Token_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns {
+  /** column name */
+  MaximumSupply = 'maximum_supply',
+  /** column name */
+  TotalSupply = 'total_supply'
+}
+
+/** select "mvk_token_aggregate_bool_exp_sum_arguments_columns" columns of table "mvk_token" */
+export enum Mvk_Token_Select_Column_Mvk_Token_Aggregate_Bool_Exp_Sum_Arguments_Columns {
+  /** column name */
+  MaximumSupply = 'maximum_supply',
+  /** column name */
+  TotalSupply = 'total_supply'
+}
+
+/** select "mvk_token_aggregate_bool_exp_var_samp_arguments_columns" columns of table "mvk_token" */
+export enum Mvk_Token_Select_Column_Mvk_Token_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns {
+  /** column name */
+  MaximumSupply = 'maximum_supply',
+  /** column name */
+  TotalSupply = 'total_supply'
+}
+
 /** aggregate stddev on columns */
 export type Mvk_Token_Stddev_Fields = {
   __typename?: 'mvk_token_stddev_fields';
@@ -37984,6 +44818,17 @@ export type Mvk_Token_Whitelist_Contract_Aggregate = {
   __typename?: 'mvk_token_whitelist_contract_aggregate';
   aggregate?: Maybe<Mvk_Token_Whitelist_Contract_Aggregate_Fields>;
   nodes: Array<Mvk_Token_Whitelist_Contract>;
+};
+
+export type Mvk_Token_Whitelist_Contract_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Mvk_Token_Whitelist_Contract_Aggregate_Bool_Exp_Count>;
+};
+
+export type Mvk_Token_Whitelist_Contract_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Mvk_Token_Whitelist_Contract_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Mvk_Token_Whitelist_Contract_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "mvk_token_whitelist_contract" */
@@ -38217,6 +45062,17 @@ export type Mvk_Transfer_History_Data_Aggregate = {
   __typename?: 'mvk_transfer_history_data_aggregate';
   aggregate?: Maybe<Mvk_Transfer_History_Data_Aggregate_Fields>;
   nodes: Array<Mvk_Transfer_History_Data>;
+};
+
+export type Mvk_Transfer_History_Data_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Mvk_Transfer_History_Data_Aggregate_Bool_Exp_Count>;
+};
+
+export type Mvk_Transfer_History_Data_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Mvk_Transfer_History_Data_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Mvk_Transfer_History_Data_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "mvk_transfer_history_data" */
@@ -42998,6 +49854,33 @@ export type Satellite_Aggregate = {
   nodes: Array<Satellite>;
 };
 
+export type Satellite_Aggregate_Bool_Exp = {
+  bool_and?: InputMaybe<Satellite_Aggregate_Bool_Exp_Bool_And>;
+  bool_or?: InputMaybe<Satellite_Aggregate_Bool_Exp_Bool_Or>;
+  count?: InputMaybe<Satellite_Aggregate_Bool_Exp_Count>;
+};
+
+export type Satellite_Aggregate_Bool_Exp_Bool_And = {
+  arguments: Satellite_Select_Column_Satellite_Aggregate_Bool_Exp_Bool_And_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Satellite_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Satellite_Aggregate_Bool_Exp_Bool_Or = {
+  arguments: Satellite_Select_Column_Satellite_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Satellite_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Satellite_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Satellite_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Satellite_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
 /** aggregate fields of "satellite" */
 export type Satellite_Aggregate_Fields = {
   __typename?: 'satellite_aggregate_fields';
@@ -43062,6 +49945,7 @@ export type Satellite_Bool_Exp = {
   delegation?: InputMaybe<Delegation_Bool_Exp>;
   delegation_id?: InputMaybe<String_Comparison_Exp>;
   delegations?: InputMaybe<Delegation_Record_Bool_Exp>;
+  delegations_aggregate?: InputMaybe<Delegation_Record_Aggregate_Bool_Exp>;
   description?: InputMaybe<String_Comparison_Exp>;
   fee?: InputMaybe<Smallint_Comparison_Exp>;
   id?: InputMaybe<Bigint_Comparison_Exp>;
@@ -43210,6 +50094,91 @@ export type Satellite_Rewards_Aggregate = {
   nodes: Array<Satellite_Rewards>;
 };
 
+export type Satellite_Rewards_Aggregate_Bool_Exp = {
+  avg?: InputMaybe<Satellite_Rewards_Aggregate_Bool_Exp_Avg>;
+  corr?: InputMaybe<Satellite_Rewards_Aggregate_Bool_Exp_Corr>;
+  count?: InputMaybe<Satellite_Rewards_Aggregate_Bool_Exp_Count>;
+  covar_samp?: InputMaybe<Satellite_Rewards_Aggregate_Bool_Exp_Covar_Samp>;
+  max?: InputMaybe<Satellite_Rewards_Aggregate_Bool_Exp_Max>;
+  min?: InputMaybe<Satellite_Rewards_Aggregate_Bool_Exp_Min>;
+  stddev_samp?: InputMaybe<Satellite_Rewards_Aggregate_Bool_Exp_Stddev_Samp>;
+  sum?: InputMaybe<Satellite_Rewards_Aggregate_Bool_Exp_Sum>;
+  var_samp?: InputMaybe<Satellite_Rewards_Aggregate_Bool_Exp_Var_Samp>;
+};
+
+export type Satellite_Rewards_Aggregate_Bool_Exp_Avg = {
+  arguments: Satellite_Rewards_Select_Column_Satellite_Rewards_Aggregate_Bool_Exp_Avg_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Satellite_Rewards_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Satellite_Rewards_Aggregate_Bool_Exp_Corr = {
+  arguments: Satellite_Rewards_Aggregate_Bool_Exp_Corr_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Satellite_Rewards_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Satellite_Rewards_Aggregate_Bool_Exp_Corr_Arguments = {
+  X: Satellite_Rewards_Select_Column_Satellite_Rewards_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+  Y: Satellite_Rewards_Select_Column_Satellite_Rewards_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+};
+
+export type Satellite_Rewards_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Satellite_Rewards_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Satellite_Rewards_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+export type Satellite_Rewards_Aggregate_Bool_Exp_Covar_Samp = {
+  arguments: Satellite_Rewards_Aggregate_Bool_Exp_Covar_Samp_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Satellite_Rewards_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Satellite_Rewards_Aggregate_Bool_Exp_Covar_Samp_Arguments = {
+  X: Satellite_Rewards_Select_Column_Satellite_Rewards_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+  Y: Satellite_Rewards_Select_Column_Satellite_Rewards_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+};
+
+export type Satellite_Rewards_Aggregate_Bool_Exp_Max = {
+  arguments: Satellite_Rewards_Select_Column_Satellite_Rewards_Aggregate_Bool_Exp_Max_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Satellite_Rewards_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Satellite_Rewards_Aggregate_Bool_Exp_Min = {
+  arguments: Satellite_Rewards_Select_Column_Satellite_Rewards_Aggregate_Bool_Exp_Min_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Satellite_Rewards_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Satellite_Rewards_Aggregate_Bool_Exp_Stddev_Samp = {
+  arguments: Satellite_Rewards_Select_Column_Satellite_Rewards_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Satellite_Rewards_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Satellite_Rewards_Aggregate_Bool_Exp_Sum = {
+  arguments: Satellite_Rewards_Select_Column_Satellite_Rewards_Aggregate_Bool_Exp_Sum_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Satellite_Rewards_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Satellite_Rewards_Aggregate_Bool_Exp_Var_Samp = {
+  arguments: Satellite_Rewards_Select_Column_Satellite_Rewards_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Satellite_Rewards_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
 /** aggregate fields of "satellite_rewards" */
 export type Satellite_Rewards_Aggregate_Fields = {
   __typename?: 'satellite_rewards_aggregate_fields';
@@ -43283,6 +50252,7 @@ export type Satellite_Rewards_Bool_Exp = {
   reference_id?: InputMaybe<Bigint_Comparison_Exp>;
   satellite_accumulated_reward_per_share?: InputMaybe<Float8_Comparison_Exp>;
   satellite_references?: InputMaybe<Satellite_Rewards_Bool_Exp>;
+  satellite_references_aggregate?: InputMaybe<Satellite_Rewards_Aggregate_Bool_Exp>;
   unpaid?: InputMaybe<Float8_Comparison_Exp>;
   user?: InputMaybe<Mavryk_User_Bool_Exp>;
   user_id?: InputMaybe<String_Comparison_Exp>;
@@ -43372,6 +50342,102 @@ export enum Satellite_Rewards_Select_Column {
   Unpaid = 'unpaid',
   /** column name */
   UserId = 'user_id'
+}
+
+/** select "satellite_rewards_aggregate_bool_exp_avg_arguments_columns" columns of table "satellite_rewards" */
+export enum Satellite_Rewards_Select_Column_Satellite_Rewards_Aggregate_Bool_Exp_Avg_Arguments_Columns {
+  /** column name */
+  Paid = 'paid',
+  /** column name */
+  ParticipationRewardsPerShare = 'participation_rewards_per_share',
+  /** column name */
+  SatelliteAccumulatedRewardPerShare = 'satellite_accumulated_reward_per_share',
+  /** column name */
+  Unpaid = 'unpaid'
+}
+
+/** select "satellite_rewards_aggregate_bool_exp_corr_arguments_columns" columns of table "satellite_rewards" */
+export enum Satellite_Rewards_Select_Column_Satellite_Rewards_Aggregate_Bool_Exp_Corr_Arguments_Columns {
+  /** column name */
+  Paid = 'paid',
+  /** column name */
+  ParticipationRewardsPerShare = 'participation_rewards_per_share',
+  /** column name */
+  SatelliteAccumulatedRewardPerShare = 'satellite_accumulated_reward_per_share',
+  /** column name */
+  Unpaid = 'unpaid'
+}
+
+/** select "satellite_rewards_aggregate_bool_exp_covar_samp_arguments_columns" columns of table "satellite_rewards" */
+export enum Satellite_Rewards_Select_Column_Satellite_Rewards_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns {
+  /** column name */
+  Paid = 'paid',
+  /** column name */
+  ParticipationRewardsPerShare = 'participation_rewards_per_share',
+  /** column name */
+  SatelliteAccumulatedRewardPerShare = 'satellite_accumulated_reward_per_share',
+  /** column name */
+  Unpaid = 'unpaid'
+}
+
+/** select "satellite_rewards_aggregate_bool_exp_max_arguments_columns" columns of table "satellite_rewards" */
+export enum Satellite_Rewards_Select_Column_Satellite_Rewards_Aggregate_Bool_Exp_Max_Arguments_Columns {
+  /** column name */
+  Paid = 'paid',
+  /** column name */
+  ParticipationRewardsPerShare = 'participation_rewards_per_share',
+  /** column name */
+  SatelliteAccumulatedRewardPerShare = 'satellite_accumulated_reward_per_share',
+  /** column name */
+  Unpaid = 'unpaid'
+}
+
+/** select "satellite_rewards_aggregate_bool_exp_min_arguments_columns" columns of table "satellite_rewards" */
+export enum Satellite_Rewards_Select_Column_Satellite_Rewards_Aggregate_Bool_Exp_Min_Arguments_Columns {
+  /** column name */
+  Paid = 'paid',
+  /** column name */
+  ParticipationRewardsPerShare = 'participation_rewards_per_share',
+  /** column name */
+  SatelliteAccumulatedRewardPerShare = 'satellite_accumulated_reward_per_share',
+  /** column name */
+  Unpaid = 'unpaid'
+}
+
+/** select "satellite_rewards_aggregate_bool_exp_stddev_samp_arguments_columns" columns of table "satellite_rewards" */
+export enum Satellite_Rewards_Select_Column_Satellite_Rewards_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns {
+  /** column name */
+  Paid = 'paid',
+  /** column name */
+  ParticipationRewardsPerShare = 'participation_rewards_per_share',
+  /** column name */
+  SatelliteAccumulatedRewardPerShare = 'satellite_accumulated_reward_per_share',
+  /** column name */
+  Unpaid = 'unpaid'
+}
+
+/** select "satellite_rewards_aggregate_bool_exp_sum_arguments_columns" columns of table "satellite_rewards" */
+export enum Satellite_Rewards_Select_Column_Satellite_Rewards_Aggregate_Bool_Exp_Sum_Arguments_Columns {
+  /** column name */
+  Paid = 'paid',
+  /** column name */
+  ParticipationRewardsPerShare = 'participation_rewards_per_share',
+  /** column name */
+  SatelliteAccumulatedRewardPerShare = 'satellite_accumulated_reward_per_share',
+  /** column name */
+  Unpaid = 'unpaid'
+}
+
+/** select "satellite_rewards_aggregate_bool_exp_var_samp_arguments_columns" columns of table "satellite_rewards" */
+export enum Satellite_Rewards_Select_Column_Satellite_Rewards_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns {
+  /** column name */
+  Paid = 'paid',
+  /** column name */
+  ParticipationRewardsPerShare = 'participation_rewards_per_share',
+  /** column name */
+  SatelliteAccumulatedRewardPerShare = 'satellite_accumulated_reward_per_share',
+  /** column name */
+  Unpaid = 'unpaid'
 }
 
 /** aggregate stddev on columns */
@@ -43569,6 +50635,18 @@ export enum Satellite_Select_Column {
   Website = 'website'
 }
 
+/** select "satellite_aggregate_bool_exp_bool_and_arguments_columns" columns of table "satellite" */
+export enum Satellite_Select_Column_Satellite_Aggregate_Bool_Exp_Bool_And_Arguments_Columns {
+  /** column name */
+  CurrentlyRegistered = 'currently_registered'
+}
+
+/** select "satellite_aggregate_bool_exp_bool_or_arguments_columns" columns of table "satellite" */
+export enum Satellite_Select_Column_Satellite_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns {
+  /** column name */
+  CurrentlyRegistered = 'currently_registered'
+}
+
 /** aggregate stddev on columns */
 export type Satellite_Stddev_Fields = {
   __typename?: 'satellite_stddev_fields';
@@ -43745,6 +50823,91 @@ export type Smvk_History_Data_Aggregate = {
   nodes: Array<Smvk_History_Data>;
 };
 
+export type Smvk_History_Data_Aggregate_Bool_Exp = {
+  avg?: InputMaybe<Smvk_History_Data_Aggregate_Bool_Exp_Avg>;
+  corr?: InputMaybe<Smvk_History_Data_Aggregate_Bool_Exp_Corr>;
+  count?: InputMaybe<Smvk_History_Data_Aggregate_Bool_Exp_Count>;
+  covar_samp?: InputMaybe<Smvk_History_Data_Aggregate_Bool_Exp_Covar_Samp>;
+  max?: InputMaybe<Smvk_History_Data_Aggregate_Bool_Exp_Max>;
+  min?: InputMaybe<Smvk_History_Data_Aggregate_Bool_Exp_Min>;
+  stddev_samp?: InputMaybe<Smvk_History_Data_Aggregate_Bool_Exp_Stddev_Samp>;
+  sum?: InputMaybe<Smvk_History_Data_Aggregate_Bool_Exp_Sum>;
+  var_samp?: InputMaybe<Smvk_History_Data_Aggregate_Bool_Exp_Var_Samp>;
+};
+
+export type Smvk_History_Data_Aggregate_Bool_Exp_Avg = {
+  arguments: Smvk_History_Data_Select_Column_Smvk_History_Data_Aggregate_Bool_Exp_Avg_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Smvk_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Smvk_History_Data_Aggregate_Bool_Exp_Corr = {
+  arguments: Smvk_History_Data_Aggregate_Bool_Exp_Corr_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Smvk_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Smvk_History_Data_Aggregate_Bool_Exp_Corr_Arguments = {
+  X: Smvk_History_Data_Select_Column_Smvk_History_Data_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+  Y: Smvk_History_Data_Select_Column_Smvk_History_Data_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+};
+
+export type Smvk_History_Data_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Smvk_History_Data_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Smvk_History_Data_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+export type Smvk_History_Data_Aggregate_Bool_Exp_Covar_Samp = {
+  arguments: Smvk_History_Data_Aggregate_Bool_Exp_Covar_Samp_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Smvk_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Smvk_History_Data_Aggregate_Bool_Exp_Covar_Samp_Arguments = {
+  X: Smvk_History_Data_Select_Column_Smvk_History_Data_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+  Y: Smvk_History_Data_Select_Column_Smvk_History_Data_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+};
+
+export type Smvk_History_Data_Aggregate_Bool_Exp_Max = {
+  arguments: Smvk_History_Data_Select_Column_Smvk_History_Data_Aggregate_Bool_Exp_Max_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Smvk_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Smvk_History_Data_Aggregate_Bool_Exp_Min = {
+  arguments: Smvk_History_Data_Select_Column_Smvk_History_Data_Aggregate_Bool_Exp_Min_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Smvk_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Smvk_History_Data_Aggregate_Bool_Exp_Stddev_Samp = {
+  arguments: Smvk_History_Data_Select_Column_Smvk_History_Data_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Smvk_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Smvk_History_Data_Aggregate_Bool_Exp_Sum = {
+  arguments: Smvk_History_Data_Select_Column_Smvk_History_Data_Aggregate_Bool_Exp_Sum_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Smvk_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Smvk_History_Data_Aggregate_Bool_Exp_Var_Samp = {
+  arguments: Smvk_History_Data_Select_Column_Smvk_History_Data_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Smvk_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
 /** aggregate fields of "smvk_history_data" */
 export type Smvk_History_Data_Aggregate_Fields = {
   __typename?: 'smvk_history_data_aggregate_fields';
@@ -43871,6 +51034,70 @@ export enum Smvk_History_Data_Select_Column {
   SmvkTotalSupply = 'smvk_total_supply',
   /** column name */
   Timestamp = 'timestamp'
+}
+
+/** select "smvk_history_data_aggregate_bool_exp_avg_arguments_columns" columns of table "smvk_history_data" */
+export enum Smvk_History_Data_Select_Column_Smvk_History_Data_Aggregate_Bool_Exp_Avg_Arguments_Columns {
+  /** column name */
+  AvgSmvkByUser = 'avg_smvk_by_user',
+  /** column name */
+  SmvkTotalSupply = 'smvk_total_supply'
+}
+
+/** select "smvk_history_data_aggregate_bool_exp_corr_arguments_columns" columns of table "smvk_history_data" */
+export enum Smvk_History_Data_Select_Column_Smvk_History_Data_Aggregate_Bool_Exp_Corr_Arguments_Columns {
+  /** column name */
+  AvgSmvkByUser = 'avg_smvk_by_user',
+  /** column name */
+  SmvkTotalSupply = 'smvk_total_supply'
+}
+
+/** select "smvk_history_data_aggregate_bool_exp_covar_samp_arguments_columns" columns of table "smvk_history_data" */
+export enum Smvk_History_Data_Select_Column_Smvk_History_Data_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns {
+  /** column name */
+  AvgSmvkByUser = 'avg_smvk_by_user',
+  /** column name */
+  SmvkTotalSupply = 'smvk_total_supply'
+}
+
+/** select "smvk_history_data_aggregate_bool_exp_max_arguments_columns" columns of table "smvk_history_data" */
+export enum Smvk_History_Data_Select_Column_Smvk_History_Data_Aggregate_Bool_Exp_Max_Arguments_Columns {
+  /** column name */
+  AvgSmvkByUser = 'avg_smvk_by_user',
+  /** column name */
+  SmvkTotalSupply = 'smvk_total_supply'
+}
+
+/** select "smvk_history_data_aggregate_bool_exp_min_arguments_columns" columns of table "smvk_history_data" */
+export enum Smvk_History_Data_Select_Column_Smvk_History_Data_Aggregate_Bool_Exp_Min_Arguments_Columns {
+  /** column name */
+  AvgSmvkByUser = 'avg_smvk_by_user',
+  /** column name */
+  SmvkTotalSupply = 'smvk_total_supply'
+}
+
+/** select "smvk_history_data_aggregate_bool_exp_stddev_samp_arguments_columns" columns of table "smvk_history_data" */
+export enum Smvk_History_Data_Select_Column_Smvk_History_Data_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns {
+  /** column name */
+  AvgSmvkByUser = 'avg_smvk_by_user',
+  /** column name */
+  SmvkTotalSupply = 'smvk_total_supply'
+}
+
+/** select "smvk_history_data_aggregate_bool_exp_sum_arguments_columns" columns of table "smvk_history_data" */
+export enum Smvk_History_Data_Select_Column_Smvk_History_Data_Aggregate_Bool_Exp_Sum_Arguments_Columns {
+  /** column name */
+  AvgSmvkByUser = 'avg_smvk_by_user',
+  /** column name */
+  SmvkTotalSupply = 'smvk_total_supply'
+}
+
+/** select "smvk_history_data_aggregate_bool_exp_var_samp_arguments_columns" columns of table "smvk_history_data" */
+export enum Smvk_History_Data_Select_Column_Smvk_History_Data_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns {
+  /** column name */
+  AvgSmvkByUser = 'avg_smvk_by_user',
+  /** column name */
+  SmvkTotalSupply = 'smvk_total_supply'
 }
 
 /** aggregate stddev on columns */
@@ -44008,7 +51235,7 @@ export type Stake_History_Data = {
   from__id: Scalars['String'];
   id: Scalars['bigint'];
   timestamp: Scalars['timestamptz'];
-  /** STAKE: 0\nUNSTAKE: 1\nFARM_CLAIM: 2\nCOMPOUND: 3\nSATELLITE_REWARD: 4\nVAULT_DEPOSIT_SMVK: 5\nVAULT_WITHDRAW_SMVK: 6\nVAULT_LIQUIDATE_SMVK: 7 */
+  /** STAKE: 0\nUNSTAKE: 1\nFARM_CLAIM: 2\nCOMPOUND: 3\nSATELLITE_REWARD: 4\nVAULT_DEPOSIT_STAKED_TOKEN: 5\nVAULT_WITHDRAW_STAKED_TOKEN: 6\nVAULT_LIQUIDATE_STAKED_TOKEN: 7 */
   type: Scalars['smallint'];
 };
 
@@ -44017,6 +51244,91 @@ export type Stake_History_Data_Aggregate = {
   __typename?: 'stake_history_data_aggregate';
   aggregate?: Maybe<Stake_History_Data_Aggregate_Fields>;
   nodes: Array<Stake_History_Data>;
+};
+
+export type Stake_History_Data_Aggregate_Bool_Exp = {
+  avg?: InputMaybe<Stake_History_Data_Aggregate_Bool_Exp_Avg>;
+  corr?: InputMaybe<Stake_History_Data_Aggregate_Bool_Exp_Corr>;
+  count?: InputMaybe<Stake_History_Data_Aggregate_Bool_Exp_Count>;
+  covar_samp?: InputMaybe<Stake_History_Data_Aggregate_Bool_Exp_Covar_Samp>;
+  max?: InputMaybe<Stake_History_Data_Aggregate_Bool_Exp_Max>;
+  min?: InputMaybe<Stake_History_Data_Aggregate_Bool_Exp_Min>;
+  stddev_samp?: InputMaybe<Stake_History_Data_Aggregate_Bool_Exp_Stddev_Samp>;
+  sum?: InputMaybe<Stake_History_Data_Aggregate_Bool_Exp_Sum>;
+  var_samp?: InputMaybe<Stake_History_Data_Aggregate_Bool_Exp_Var_Samp>;
+};
+
+export type Stake_History_Data_Aggregate_Bool_Exp_Avg = {
+  arguments: Stake_History_Data_Select_Column_Stake_History_Data_Aggregate_Bool_Exp_Avg_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Stake_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Stake_History_Data_Aggregate_Bool_Exp_Corr = {
+  arguments: Stake_History_Data_Aggregate_Bool_Exp_Corr_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Stake_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Stake_History_Data_Aggregate_Bool_Exp_Corr_Arguments = {
+  X: Stake_History_Data_Select_Column_Stake_History_Data_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+  Y: Stake_History_Data_Select_Column_Stake_History_Data_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+};
+
+export type Stake_History_Data_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Stake_History_Data_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Stake_History_Data_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+export type Stake_History_Data_Aggregate_Bool_Exp_Covar_Samp = {
+  arguments: Stake_History_Data_Aggregate_Bool_Exp_Covar_Samp_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Stake_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Stake_History_Data_Aggregate_Bool_Exp_Covar_Samp_Arguments = {
+  X: Stake_History_Data_Select_Column_Stake_History_Data_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+  Y: Stake_History_Data_Select_Column_Stake_History_Data_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+};
+
+export type Stake_History_Data_Aggregate_Bool_Exp_Max = {
+  arguments: Stake_History_Data_Select_Column_Stake_History_Data_Aggregate_Bool_Exp_Max_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Stake_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Stake_History_Data_Aggregate_Bool_Exp_Min = {
+  arguments: Stake_History_Data_Select_Column_Stake_History_Data_Aggregate_Bool_Exp_Min_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Stake_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Stake_History_Data_Aggregate_Bool_Exp_Stddev_Samp = {
+  arguments: Stake_History_Data_Select_Column_Stake_History_Data_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Stake_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Stake_History_Data_Aggregate_Bool_Exp_Sum = {
+  arguments: Stake_History_Data_Select_Column_Stake_History_Data_Aggregate_Bool_Exp_Sum_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Stake_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Stake_History_Data_Aggregate_Bool_Exp_Var_Samp = {
+  arguments: Stake_History_Data_Select_Column_Stake_History_Data_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Stake_History_Data_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
 };
 
 /** aggregate fields of "stake_history_data" */
@@ -44063,7 +51375,7 @@ export type Stake_History_Data_Avg_Fields = {
   desired_amount?: Maybe<Scalars['Float']>;
   final_amount?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
-  /** STAKE: 0\nUNSTAKE: 1\nFARM_CLAIM: 2\nCOMPOUND: 3\nSATELLITE_REWARD: 4\nVAULT_DEPOSIT_SMVK: 5\nVAULT_WITHDRAW_SMVK: 6\nVAULT_LIQUIDATE_SMVK: 7 */
+  /** STAKE: 0\nUNSTAKE: 1\nFARM_CLAIM: 2\nCOMPOUND: 3\nSATELLITE_REWARD: 4\nVAULT_DEPOSIT_STAKED_TOKEN: 5\nVAULT_WITHDRAW_STAKED_TOKEN: 6\nVAULT_LIQUIDATE_STAKED_TOKEN: 7 */
   type?: Maybe<Scalars['Float']>;
 };
 
@@ -44072,7 +51384,7 @@ export type Stake_History_Data_Avg_Order_By = {
   desired_amount?: InputMaybe<Order_By>;
   final_amount?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
-  /** STAKE: 0\nUNSTAKE: 1\nFARM_CLAIM: 2\nCOMPOUND: 3\nSATELLITE_REWARD: 4\nVAULT_DEPOSIT_SMVK: 5\nVAULT_WITHDRAW_SMVK: 6\nVAULT_LIQUIDATE_SMVK: 7 */
+  /** STAKE: 0\nUNSTAKE: 1\nFARM_CLAIM: 2\nCOMPOUND: 3\nSATELLITE_REWARD: 4\nVAULT_DEPOSIT_STAKED_TOKEN: 5\nVAULT_WITHDRAW_STAKED_TOKEN: 6\nVAULT_LIQUIDATE_STAKED_TOKEN: 7 */
   type?: InputMaybe<Order_By>;
 };
 
@@ -44101,7 +51413,7 @@ export type Stake_History_Data_Max_Fields = {
   from__id?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['bigint']>;
   timestamp?: Maybe<Scalars['timestamptz']>;
-  /** STAKE: 0\nUNSTAKE: 1\nFARM_CLAIM: 2\nCOMPOUND: 3\nSATELLITE_REWARD: 4\nVAULT_DEPOSIT_SMVK: 5\nVAULT_WITHDRAW_SMVK: 6\nVAULT_LIQUIDATE_SMVK: 7 */
+  /** STAKE: 0\nUNSTAKE: 1\nFARM_CLAIM: 2\nCOMPOUND: 3\nSATELLITE_REWARD: 4\nVAULT_DEPOSIT_STAKED_TOKEN: 5\nVAULT_WITHDRAW_STAKED_TOKEN: 6\nVAULT_LIQUIDATE_STAKED_TOKEN: 7 */
   type?: Maybe<Scalars['smallint']>;
 };
 
@@ -44113,7 +51425,7 @@ export type Stake_History_Data_Max_Order_By = {
   from__id?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   timestamp?: InputMaybe<Order_By>;
-  /** STAKE: 0\nUNSTAKE: 1\nFARM_CLAIM: 2\nCOMPOUND: 3\nSATELLITE_REWARD: 4\nVAULT_DEPOSIT_SMVK: 5\nVAULT_WITHDRAW_SMVK: 6\nVAULT_LIQUIDATE_SMVK: 7 */
+  /** STAKE: 0\nUNSTAKE: 1\nFARM_CLAIM: 2\nCOMPOUND: 3\nSATELLITE_REWARD: 4\nVAULT_DEPOSIT_STAKED_TOKEN: 5\nVAULT_WITHDRAW_STAKED_TOKEN: 6\nVAULT_LIQUIDATE_STAKED_TOKEN: 7 */
   type?: InputMaybe<Order_By>;
 };
 
@@ -44126,7 +51438,7 @@ export type Stake_History_Data_Min_Fields = {
   from__id?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['bigint']>;
   timestamp?: Maybe<Scalars['timestamptz']>;
-  /** STAKE: 0\nUNSTAKE: 1\nFARM_CLAIM: 2\nCOMPOUND: 3\nSATELLITE_REWARD: 4\nVAULT_DEPOSIT_SMVK: 5\nVAULT_WITHDRAW_SMVK: 6\nVAULT_LIQUIDATE_SMVK: 7 */
+  /** STAKE: 0\nUNSTAKE: 1\nFARM_CLAIM: 2\nCOMPOUND: 3\nSATELLITE_REWARD: 4\nVAULT_DEPOSIT_STAKED_TOKEN: 5\nVAULT_WITHDRAW_STAKED_TOKEN: 6\nVAULT_LIQUIDATE_STAKED_TOKEN: 7 */
   type?: Maybe<Scalars['smallint']>;
 };
 
@@ -44138,7 +51450,7 @@ export type Stake_History_Data_Min_Order_By = {
   from__id?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   timestamp?: InputMaybe<Order_By>;
-  /** STAKE: 0\nUNSTAKE: 1\nFARM_CLAIM: 2\nCOMPOUND: 3\nSATELLITE_REWARD: 4\nVAULT_DEPOSIT_SMVK: 5\nVAULT_WITHDRAW_SMVK: 6\nVAULT_LIQUIDATE_SMVK: 7 */
+  /** STAKE: 0\nUNSTAKE: 1\nFARM_CLAIM: 2\nCOMPOUND: 3\nSATELLITE_REWARD: 4\nVAULT_DEPOSIT_STAKED_TOKEN: 5\nVAULT_WITHDRAW_STAKED_TOKEN: 6\nVAULT_LIQUIDATE_STAKED_TOKEN: 7 */
   type?: InputMaybe<Order_By>;
 };
 
@@ -44173,13 +51485,77 @@ export enum Stake_History_Data_Select_Column {
   Type = 'type'
 }
 
+/** select "stake_history_data_aggregate_bool_exp_avg_arguments_columns" columns of table "stake_history_data" */
+export enum Stake_History_Data_Select_Column_Stake_History_Data_Aggregate_Bool_Exp_Avg_Arguments_Columns {
+  /** column name */
+  DesiredAmount = 'desired_amount',
+  /** column name */
+  FinalAmount = 'final_amount'
+}
+
+/** select "stake_history_data_aggregate_bool_exp_corr_arguments_columns" columns of table "stake_history_data" */
+export enum Stake_History_Data_Select_Column_Stake_History_Data_Aggregate_Bool_Exp_Corr_Arguments_Columns {
+  /** column name */
+  DesiredAmount = 'desired_amount',
+  /** column name */
+  FinalAmount = 'final_amount'
+}
+
+/** select "stake_history_data_aggregate_bool_exp_covar_samp_arguments_columns" columns of table "stake_history_data" */
+export enum Stake_History_Data_Select_Column_Stake_History_Data_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns {
+  /** column name */
+  DesiredAmount = 'desired_amount',
+  /** column name */
+  FinalAmount = 'final_amount'
+}
+
+/** select "stake_history_data_aggregate_bool_exp_max_arguments_columns" columns of table "stake_history_data" */
+export enum Stake_History_Data_Select_Column_Stake_History_Data_Aggregate_Bool_Exp_Max_Arguments_Columns {
+  /** column name */
+  DesiredAmount = 'desired_amount',
+  /** column name */
+  FinalAmount = 'final_amount'
+}
+
+/** select "stake_history_data_aggregate_bool_exp_min_arguments_columns" columns of table "stake_history_data" */
+export enum Stake_History_Data_Select_Column_Stake_History_Data_Aggregate_Bool_Exp_Min_Arguments_Columns {
+  /** column name */
+  DesiredAmount = 'desired_amount',
+  /** column name */
+  FinalAmount = 'final_amount'
+}
+
+/** select "stake_history_data_aggregate_bool_exp_stddev_samp_arguments_columns" columns of table "stake_history_data" */
+export enum Stake_History_Data_Select_Column_Stake_History_Data_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns {
+  /** column name */
+  DesiredAmount = 'desired_amount',
+  /** column name */
+  FinalAmount = 'final_amount'
+}
+
+/** select "stake_history_data_aggregate_bool_exp_sum_arguments_columns" columns of table "stake_history_data" */
+export enum Stake_History_Data_Select_Column_Stake_History_Data_Aggregate_Bool_Exp_Sum_Arguments_Columns {
+  /** column name */
+  DesiredAmount = 'desired_amount',
+  /** column name */
+  FinalAmount = 'final_amount'
+}
+
+/** select "stake_history_data_aggregate_bool_exp_var_samp_arguments_columns" columns of table "stake_history_data" */
+export enum Stake_History_Data_Select_Column_Stake_History_Data_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns {
+  /** column name */
+  DesiredAmount = 'desired_amount',
+  /** column name */
+  FinalAmount = 'final_amount'
+}
+
 /** aggregate stddev on columns */
 export type Stake_History_Data_Stddev_Fields = {
   __typename?: 'stake_history_data_stddev_fields';
   desired_amount?: Maybe<Scalars['Float']>;
   final_amount?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
-  /** STAKE: 0\nUNSTAKE: 1\nFARM_CLAIM: 2\nCOMPOUND: 3\nSATELLITE_REWARD: 4\nVAULT_DEPOSIT_SMVK: 5\nVAULT_WITHDRAW_SMVK: 6\nVAULT_LIQUIDATE_SMVK: 7 */
+  /** STAKE: 0\nUNSTAKE: 1\nFARM_CLAIM: 2\nCOMPOUND: 3\nSATELLITE_REWARD: 4\nVAULT_DEPOSIT_STAKED_TOKEN: 5\nVAULT_WITHDRAW_STAKED_TOKEN: 6\nVAULT_LIQUIDATE_STAKED_TOKEN: 7 */
   type?: Maybe<Scalars['Float']>;
 };
 
@@ -44188,7 +51564,7 @@ export type Stake_History_Data_Stddev_Order_By = {
   desired_amount?: InputMaybe<Order_By>;
   final_amount?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
-  /** STAKE: 0\nUNSTAKE: 1\nFARM_CLAIM: 2\nCOMPOUND: 3\nSATELLITE_REWARD: 4\nVAULT_DEPOSIT_SMVK: 5\nVAULT_WITHDRAW_SMVK: 6\nVAULT_LIQUIDATE_SMVK: 7 */
+  /** STAKE: 0\nUNSTAKE: 1\nFARM_CLAIM: 2\nCOMPOUND: 3\nSATELLITE_REWARD: 4\nVAULT_DEPOSIT_STAKED_TOKEN: 5\nVAULT_WITHDRAW_STAKED_TOKEN: 6\nVAULT_LIQUIDATE_STAKED_TOKEN: 7 */
   type?: InputMaybe<Order_By>;
 };
 
@@ -44198,7 +51574,7 @@ export type Stake_History_Data_Stddev_Pop_Fields = {
   desired_amount?: Maybe<Scalars['Float']>;
   final_amount?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
-  /** STAKE: 0\nUNSTAKE: 1\nFARM_CLAIM: 2\nCOMPOUND: 3\nSATELLITE_REWARD: 4\nVAULT_DEPOSIT_SMVK: 5\nVAULT_WITHDRAW_SMVK: 6\nVAULT_LIQUIDATE_SMVK: 7 */
+  /** STAKE: 0\nUNSTAKE: 1\nFARM_CLAIM: 2\nCOMPOUND: 3\nSATELLITE_REWARD: 4\nVAULT_DEPOSIT_STAKED_TOKEN: 5\nVAULT_WITHDRAW_STAKED_TOKEN: 6\nVAULT_LIQUIDATE_STAKED_TOKEN: 7 */
   type?: Maybe<Scalars['Float']>;
 };
 
@@ -44207,7 +51583,7 @@ export type Stake_History_Data_Stddev_Pop_Order_By = {
   desired_amount?: InputMaybe<Order_By>;
   final_amount?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
-  /** STAKE: 0\nUNSTAKE: 1\nFARM_CLAIM: 2\nCOMPOUND: 3\nSATELLITE_REWARD: 4\nVAULT_DEPOSIT_SMVK: 5\nVAULT_WITHDRAW_SMVK: 6\nVAULT_LIQUIDATE_SMVK: 7 */
+  /** STAKE: 0\nUNSTAKE: 1\nFARM_CLAIM: 2\nCOMPOUND: 3\nSATELLITE_REWARD: 4\nVAULT_DEPOSIT_STAKED_TOKEN: 5\nVAULT_WITHDRAW_STAKED_TOKEN: 6\nVAULT_LIQUIDATE_STAKED_TOKEN: 7 */
   type?: InputMaybe<Order_By>;
 };
 
@@ -44217,7 +51593,7 @@ export type Stake_History_Data_Stddev_Samp_Fields = {
   desired_amount?: Maybe<Scalars['Float']>;
   final_amount?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
-  /** STAKE: 0\nUNSTAKE: 1\nFARM_CLAIM: 2\nCOMPOUND: 3\nSATELLITE_REWARD: 4\nVAULT_DEPOSIT_SMVK: 5\nVAULT_WITHDRAW_SMVK: 6\nVAULT_LIQUIDATE_SMVK: 7 */
+  /** STAKE: 0\nUNSTAKE: 1\nFARM_CLAIM: 2\nCOMPOUND: 3\nSATELLITE_REWARD: 4\nVAULT_DEPOSIT_STAKED_TOKEN: 5\nVAULT_WITHDRAW_STAKED_TOKEN: 6\nVAULT_LIQUIDATE_STAKED_TOKEN: 7 */
   type?: Maybe<Scalars['Float']>;
 };
 
@@ -44226,7 +51602,7 @@ export type Stake_History_Data_Stddev_Samp_Order_By = {
   desired_amount?: InputMaybe<Order_By>;
   final_amount?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
-  /** STAKE: 0\nUNSTAKE: 1\nFARM_CLAIM: 2\nCOMPOUND: 3\nSATELLITE_REWARD: 4\nVAULT_DEPOSIT_SMVK: 5\nVAULT_WITHDRAW_SMVK: 6\nVAULT_LIQUIDATE_SMVK: 7 */
+  /** STAKE: 0\nUNSTAKE: 1\nFARM_CLAIM: 2\nCOMPOUND: 3\nSATELLITE_REWARD: 4\nVAULT_DEPOSIT_STAKED_TOKEN: 5\nVAULT_WITHDRAW_STAKED_TOKEN: 6\nVAULT_LIQUIDATE_STAKED_TOKEN: 7 */
   type?: InputMaybe<Order_By>;
 };
 
@@ -44246,7 +51622,7 @@ export type Stake_History_Data_Stream_Cursor_Value_Input = {
   from__id?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['bigint']>;
   timestamp?: InputMaybe<Scalars['timestamptz']>;
-  /** STAKE: 0\nUNSTAKE: 1\nFARM_CLAIM: 2\nCOMPOUND: 3\nSATELLITE_REWARD: 4\nVAULT_DEPOSIT_SMVK: 5\nVAULT_WITHDRAW_SMVK: 6\nVAULT_LIQUIDATE_SMVK: 7 */
+  /** STAKE: 0\nUNSTAKE: 1\nFARM_CLAIM: 2\nCOMPOUND: 3\nSATELLITE_REWARD: 4\nVAULT_DEPOSIT_STAKED_TOKEN: 5\nVAULT_WITHDRAW_STAKED_TOKEN: 6\nVAULT_LIQUIDATE_STAKED_TOKEN: 7 */
   type?: InputMaybe<Scalars['smallint']>;
 };
 
@@ -44256,7 +51632,7 @@ export type Stake_History_Data_Sum_Fields = {
   desired_amount?: Maybe<Scalars['float8']>;
   final_amount?: Maybe<Scalars['float8']>;
   id?: Maybe<Scalars['bigint']>;
-  /** STAKE: 0\nUNSTAKE: 1\nFARM_CLAIM: 2\nCOMPOUND: 3\nSATELLITE_REWARD: 4\nVAULT_DEPOSIT_SMVK: 5\nVAULT_WITHDRAW_SMVK: 6\nVAULT_LIQUIDATE_SMVK: 7 */
+  /** STAKE: 0\nUNSTAKE: 1\nFARM_CLAIM: 2\nCOMPOUND: 3\nSATELLITE_REWARD: 4\nVAULT_DEPOSIT_STAKED_TOKEN: 5\nVAULT_WITHDRAW_STAKED_TOKEN: 6\nVAULT_LIQUIDATE_STAKED_TOKEN: 7 */
   type?: Maybe<Scalars['smallint']>;
 };
 
@@ -44265,7 +51641,7 @@ export type Stake_History_Data_Sum_Order_By = {
   desired_amount?: InputMaybe<Order_By>;
   final_amount?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
-  /** STAKE: 0\nUNSTAKE: 1\nFARM_CLAIM: 2\nCOMPOUND: 3\nSATELLITE_REWARD: 4\nVAULT_DEPOSIT_SMVK: 5\nVAULT_WITHDRAW_SMVK: 6\nVAULT_LIQUIDATE_SMVK: 7 */
+  /** STAKE: 0\nUNSTAKE: 1\nFARM_CLAIM: 2\nCOMPOUND: 3\nSATELLITE_REWARD: 4\nVAULT_DEPOSIT_STAKED_TOKEN: 5\nVAULT_WITHDRAW_STAKED_TOKEN: 6\nVAULT_LIQUIDATE_STAKED_TOKEN: 7 */
   type?: InputMaybe<Order_By>;
 };
 
@@ -44275,7 +51651,7 @@ export type Stake_History_Data_Var_Pop_Fields = {
   desired_amount?: Maybe<Scalars['Float']>;
   final_amount?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
-  /** STAKE: 0\nUNSTAKE: 1\nFARM_CLAIM: 2\nCOMPOUND: 3\nSATELLITE_REWARD: 4\nVAULT_DEPOSIT_SMVK: 5\nVAULT_WITHDRAW_SMVK: 6\nVAULT_LIQUIDATE_SMVK: 7 */
+  /** STAKE: 0\nUNSTAKE: 1\nFARM_CLAIM: 2\nCOMPOUND: 3\nSATELLITE_REWARD: 4\nVAULT_DEPOSIT_STAKED_TOKEN: 5\nVAULT_WITHDRAW_STAKED_TOKEN: 6\nVAULT_LIQUIDATE_STAKED_TOKEN: 7 */
   type?: Maybe<Scalars['Float']>;
 };
 
@@ -44284,7 +51660,7 @@ export type Stake_History_Data_Var_Pop_Order_By = {
   desired_amount?: InputMaybe<Order_By>;
   final_amount?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
-  /** STAKE: 0\nUNSTAKE: 1\nFARM_CLAIM: 2\nCOMPOUND: 3\nSATELLITE_REWARD: 4\nVAULT_DEPOSIT_SMVK: 5\nVAULT_WITHDRAW_SMVK: 6\nVAULT_LIQUIDATE_SMVK: 7 */
+  /** STAKE: 0\nUNSTAKE: 1\nFARM_CLAIM: 2\nCOMPOUND: 3\nSATELLITE_REWARD: 4\nVAULT_DEPOSIT_STAKED_TOKEN: 5\nVAULT_WITHDRAW_STAKED_TOKEN: 6\nVAULT_LIQUIDATE_STAKED_TOKEN: 7 */
   type?: InputMaybe<Order_By>;
 };
 
@@ -44294,7 +51670,7 @@ export type Stake_History_Data_Var_Samp_Fields = {
   desired_amount?: Maybe<Scalars['Float']>;
   final_amount?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
-  /** STAKE: 0\nUNSTAKE: 1\nFARM_CLAIM: 2\nCOMPOUND: 3\nSATELLITE_REWARD: 4\nVAULT_DEPOSIT_SMVK: 5\nVAULT_WITHDRAW_SMVK: 6\nVAULT_LIQUIDATE_SMVK: 7 */
+  /** STAKE: 0\nUNSTAKE: 1\nFARM_CLAIM: 2\nCOMPOUND: 3\nSATELLITE_REWARD: 4\nVAULT_DEPOSIT_STAKED_TOKEN: 5\nVAULT_WITHDRAW_STAKED_TOKEN: 6\nVAULT_LIQUIDATE_STAKED_TOKEN: 7 */
   type?: Maybe<Scalars['Float']>;
 };
 
@@ -44303,7 +51679,7 @@ export type Stake_History_Data_Var_Samp_Order_By = {
   desired_amount?: InputMaybe<Order_By>;
   final_amount?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
-  /** STAKE: 0\nUNSTAKE: 1\nFARM_CLAIM: 2\nCOMPOUND: 3\nSATELLITE_REWARD: 4\nVAULT_DEPOSIT_SMVK: 5\nVAULT_WITHDRAW_SMVK: 6\nVAULT_LIQUIDATE_SMVK: 7 */
+  /** STAKE: 0\nUNSTAKE: 1\nFARM_CLAIM: 2\nCOMPOUND: 3\nSATELLITE_REWARD: 4\nVAULT_DEPOSIT_STAKED_TOKEN: 5\nVAULT_WITHDRAW_STAKED_TOKEN: 6\nVAULT_LIQUIDATE_STAKED_TOKEN: 7 */
   type?: InputMaybe<Order_By>;
 };
 
@@ -44313,7 +51689,7 @@ export type Stake_History_Data_Variance_Fields = {
   desired_amount?: Maybe<Scalars['Float']>;
   final_amount?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
-  /** STAKE: 0\nUNSTAKE: 1\nFARM_CLAIM: 2\nCOMPOUND: 3\nSATELLITE_REWARD: 4\nVAULT_DEPOSIT_SMVK: 5\nVAULT_WITHDRAW_SMVK: 6\nVAULT_LIQUIDATE_SMVK: 7 */
+  /** STAKE: 0\nUNSTAKE: 1\nFARM_CLAIM: 2\nCOMPOUND: 3\nSATELLITE_REWARD: 4\nVAULT_DEPOSIT_STAKED_TOKEN: 5\nVAULT_WITHDRAW_STAKED_TOKEN: 6\nVAULT_LIQUIDATE_STAKED_TOKEN: 7 */
   type?: Maybe<Scalars['Float']>;
 };
 
@@ -44322,7 +51698,7 @@ export type Stake_History_Data_Variance_Order_By = {
   desired_amount?: InputMaybe<Order_By>;
   final_amount?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
-  /** STAKE: 0\nUNSTAKE: 1\nFARM_CLAIM: 2\nCOMPOUND: 3\nSATELLITE_REWARD: 4\nVAULT_DEPOSIT_SMVK: 5\nVAULT_WITHDRAW_SMVK: 6\nVAULT_LIQUIDATE_SMVK: 7 */
+  /** STAKE: 0\nUNSTAKE: 1\nFARM_CLAIM: 2\nCOMPOUND: 3\nSATELLITE_REWARD: 4\nVAULT_DEPOSIT_STAKED_TOKEN: 5\nVAULT_WITHDRAW_STAKED_TOKEN: 6\nVAULT_LIQUIDATE_STAKED_TOKEN: 7 */
   type?: InputMaybe<Order_By>;
 };
 
@@ -44346,7 +51722,7 @@ export type Subscription_Root = {
   aggregator_factory_general_contract_aggregate: Aggregator_Factory_General_Contract_Aggregate;
   /** fetch data from the table: "aggregator_factory_general_contract" using primary key columns */
   aggregator_factory_general_contract_by_pk?: Maybe<Aggregator_Factory_General_Contract>;
-  /** fetch data from the table in a streaming manner : "aggregator_factory_general_contract" */
+  /** fetch data from the table in a streaming manner: "aggregator_factory_general_contract" */
   aggregator_factory_general_contract_stream: Array<Aggregator_Factory_General_Contract>;
   /** fetch data from the table: "aggregator_factory_lambda" */
   aggregator_factory_lambda: Array<Aggregator_Factory_Lambda>;
@@ -44354,7 +51730,7 @@ export type Subscription_Root = {
   aggregator_factory_lambda_aggregate: Aggregator_Factory_Lambda_Aggregate;
   /** fetch data from the table: "aggregator_factory_lambda" using primary key columns */
   aggregator_factory_lambda_by_pk?: Maybe<Aggregator_Factory_Lambda>;
-  /** fetch data from the table in a streaming manner : "aggregator_factory_lambda" */
+  /** fetch data from the table in a streaming manner: "aggregator_factory_lambda" */
   aggregator_factory_lambda_stream: Array<Aggregator_Factory_Lambda>;
   /** fetch data from the table: "aggregator_factory_product_lambda" */
   aggregator_factory_product_lambda: Array<Aggregator_Factory_Product_Lambda>;
@@ -44362,9 +51738,9 @@ export type Subscription_Root = {
   aggregator_factory_product_lambda_aggregate: Aggregator_Factory_Product_Lambda_Aggregate;
   /** fetch data from the table: "aggregator_factory_product_lambda" using primary key columns */
   aggregator_factory_product_lambda_by_pk?: Maybe<Aggregator_Factory_Product_Lambda>;
-  /** fetch data from the table in a streaming manner : "aggregator_factory_product_lambda" */
+  /** fetch data from the table in a streaming manner: "aggregator_factory_product_lambda" */
   aggregator_factory_product_lambda_stream: Array<Aggregator_Factory_Product_Lambda>;
-  /** fetch data from the table in a streaming manner : "aggregator_factory" */
+  /** fetch data from the table in a streaming manner: "aggregator_factory" */
   aggregator_factory_stream: Array<Aggregator_Factory>;
   /** fetch data from the table: "aggregator_factory_whitelist_contract" */
   aggregator_factory_whitelist_contract: Array<Aggregator_Factory_Whitelist_Contract>;
@@ -44372,7 +51748,7 @@ export type Subscription_Root = {
   aggregator_factory_whitelist_contract_aggregate: Aggregator_Factory_Whitelist_Contract_Aggregate;
   /** fetch data from the table: "aggregator_factory_whitelist_contract" using primary key columns */
   aggregator_factory_whitelist_contract_by_pk?: Maybe<Aggregator_Factory_Whitelist_Contract>;
-  /** fetch data from the table in a streaming manner : "aggregator_factory_whitelist_contract" */
+  /** fetch data from the table in a streaming manner: "aggregator_factory_whitelist_contract" */
   aggregator_factory_whitelist_contract_stream: Array<Aggregator_Factory_Whitelist_Contract>;
   /** fetch data from the table: "aggregator_general_contract" */
   aggregator_general_contract: Array<Aggregator_General_Contract>;
@@ -44380,7 +51756,7 @@ export type Subscription_Root = {
   aggregator_general_contract_aggregate: Aggregator_General_Contract_Aggregate;
   /** fetch data from the table: "aggregator_general_contract" using primary key columns */
   aggregator_general_contract_by_pk?: Maybe<Aggregator_General_Contract>;
-  /** fetch data from the table in a streaming manner : "aggregator_general_contract" */
+  /** fetch data from the table in a streaming manner: "aggregator_general_contract" */
   aggregator_general_contract_stream: Array<Aggregator_General_Contract>;
   /** fetch data from the table: "aggregator_history_data" */
   aggregator_history_data: Array<Aggregator_History_Data>;
@@ -44388,7 +51764,7 @@ export type Subscription_Root = {
   aggregator_history_data_aggregate: Aggregator_History_Data_Aggregate;
   /** fetch data from the table: "aggregator_history_data" using primary key columns */
   aggregator_history_data_by_pk?: Maybe<Aggregator_History_Data>;
-  /** fetch data from the table in a streaming manner : "aggregator_history_data" */
+  /** fetch data from the table in a streaming manner: "aggregator_history_data" */
   aggregator_history_data_stream: Array<Aggregator_History_Data>;
   /** fetch data from the table: "aggregator_lambda" */
   aggregator_lambda: Array<Aggregator_Lambda>;
@@ -44396,7 +51772,7 @@ export type Subscription_Root = {
   aggregator_lambda_aggregate: Aggregator_Lambda_Aggregate;
   /** fetch data from the table: "aggregator_lambda" using primary key columns */
   aggregator_lambda_by_pk?: Maybe<Aggregator_Lambda>;
-  /** fetch data from the table in a streaming manner : "aggregator_lambda" */
+  /** fetch data from the table in a streaming manner: "aggregator_lambda" */
   aggregator_lambda_stream: Array<Aggregator_Lambda>;
   /** fetch data from the table: "aggregator_oracle" */
   aggregator_oracle: Array<Aggregator_Oracle>;
@@ -44410,7 +51786,7 @@ export type Subscription_Root = {
   aggregator_oracle_observation_aggregate: Aggregator_Oracle_Observation_Aggregate;
   /** fetch data from the table: "aggregator_oracle_observation" using primary key columns */
   aggregator_oracle_observation_by_pk?: Maybe<Aggregator_Oracle_Observation>;
-  /** fetch data from the table in a streaming manner : "aggregator_oracle_observation" */
+  /** fetch data from the table in a streaming manner: "aggregator_oracle_observation" */
   aggregator_oracle_observation_stream: Array<Aggregator_Oracle_Observation>;
   /** fetch data from the table: "aggregator_oracle_reward" */
   aggregator_oracle_reward: Array<Aggregator_Oracle_Reward>;
@@ -44418,11 +51794,11 @@ export type Subscription_Root = {
   aggregator_oracle_reward_aggregate: Aggregator_Oracle_Reward_Aggregate;
   /** fetch data from the table: "aggregator_oracle_reward" using primary key columns */
   aggregator_oracle_reward_by_pk?: Maybe<Aggregator_Oracle_Reward>;
-  /** fetch data from the table in a streaming manner : "aggregator_oracle_reward" */
+  /** fetch data from the table in a streaming manner: "aggregator_oracle_reward" */
   aggregator_oracle_reward_stream: Array<Aggregator_Oracle_Reward>;
-  /** fetch data from the table in a streaming manner : "aggregator_oracle" */
+  /** fetch data from the table in a streaming manner: "aggregator_oracle" */
   aggregator_oracle_stream: Array<Aggregator_Oracle>;
-  /** fetch data from the table in a streaming manner : "aggregator" */
+  /** fetch data from the table in a streaming manner: "aggregator" */
   aggregator_stream: Array<Aggregator>;
   /** fetch data from the table: "aggregator_whitelist_contract" */
   aggregator_whitelist_contract: Array<Aggregator_Whitelist_Contract>;
@@ -44430,7 +51806,7 @@ export type Subscription_Root = {
   aggregator_whitelist_contract_aggregate: Aggregator_Whitelist_Contract_Aggregate;
   /** fetch data from the table: "aggregator_whitelist_contract" using primary key columns */
   aggregator_whitelist_contract_by_pk?: Maybe<Aggregator_Whitelist_Contract>;
-  /** fetch data from the table in a streaming manner : "aggregator_whitelist_contract" */
+  /** fetch data from the table in a streaming manner: "aggregator_whitelist_contract" */
   aggregator_whitelist_contract_stream: Array<Aggregator_Whitelist_Contract>;
   /** fetch data from the table: "break_glass" */
   break_glass: Array<Break_Glass>;
@@ -44446,7 +51822,7 @@ export type Subscription_Root = {
   break_glass_action_parameter_aggregate: Break_Glass_Action_Parameter_Aggregate;
   /** fetch data from the table: "break_glass_action_parameter" using primary key columns */
   break_glass_action_parameter_by_pk?: Maybe<Break_Glass_Action_Parameter>;
-  /** fetch data from the table in a streaming manner : "break_glass_action_parameter" */
+  /** fetch data from the table in a streaming manner: "break_glass_action_parameter" */
   break_glass_action_parameter_stream: Array<Break_Glass_Action_Parameter>;
   /** fetch data from the table: "break_glass_action_signer" */
   break_glass_action_signer: Array<Break_Glass_Action_Signer>;
@@ -44454,9 +51830,9 @@ export type Subscription_Root = {
   break_glass_action_signer_aggregate: Break_Glass_Action_Signer_Aggregate;
   /** fetch data from the table: "break_glass_action_signer" using primary key columns */
   break_glass_action_signer_by_pk?: Maybe<Break_Glass_Action_Signer>;
-  /** fetch data from the table in a streaming manner : "break_glass_action_signer" */
+  /** fetch data from the table in a streaming manner: "break_glass_action_signer" */
   break_glass_action_signer_stream: Array<Break_Glass_Action_Signer>;
-  /** fetch data from the table in a streaming manner : "break_glass_action" */
+  /** fetch data from the table in a streaming manner: "break_glass_action" */
   break_glass_action_stream: Array<Break_Glass_Action>;
   /** fetch aggregated fields from the table: "break_glass" */
   break_glass_aggregate: Break_Glass_Aggregate;
@@ -44468,7 +51844,7 @@ export type Subscription_Root = {
   break_glass_council_member_aggregate: Break_Glass_Council_Member_Aggregate;
   /** fetch data from the table: "break_glass_council_member" using primary key columns */
   break_glass_council_member_by_pk?: Maybe<Break_Glass_Council_Member>;
-  /** fetch data from the table in a streaming manner : "break_glass_council_member" */
+  /** fetch data from the table in a streaming manner: "break_glass_council_member" */
   break_glass_council_member_stream: Array<Break_Glass_Council_Member>;
   /** fetch data from the table: "break_glass_general_contract" */
   break_glass_general_contract: Array<Break_Glass_General_Contract>;
@@ -44476,7 +51852,7 @@ export type Subscription_Root = {
   break_glass_general_contract_aggregate: Break_Glass_General_Contract_Aggregate;
   /** fetch data from the table: "break_glass_general_contract" using primary key columns */
   break_glass_general_contract_by_pk?: Maybe<Break_Glass_General_Contract>;
-  /** fetch data from the table in a streaming manner : "break_glass_general_contract" */
+  /** fetch data from the table in a streaming manner: "break_glass_general_contract" */
   break_glass_general_contract_stream: Array<Break_Glass_General_Contract>;
   /** fetch data from the table: "break_glass_lambda" */
   break_glass_lambda: Array<Break_Glass_Lambda>;
@@ -44484,9 +51860,9 @@ export type Subscription_Root = {
   break_glass_lambda_aggregate: Break_Glass_Lambda_Aggregate;
   /** fetch data from the table: "break_glass_lambda" using primary key columns */
   break_glass_lambda_by_pk?: Maybe<Break_Glass_Lambda>;
-  /** fetch data from the table in a streaming manner : "break_glass_lambda" */
+  /** fetch data from the table in a streaming manner: "break_glass_lambda" */
   break_glass_lambda_stream: Array<Break_Glass_Lambda>;
-  /** fetch data from the table in a streaming manner : "break_glass" */
+  /** fetch data from the table in a streaming manner: "break_glass" */
   break_glass_stream: Array<Break_Glass>;
   /** fetch data from the table: "break_glass_whitelist_contract" */
   break_glass_whitelist_contract: Array<Break_Glass_Whitelist_Contract>;
@@ -44494,7 +51870,7 @@ export type Subscription_Root = {
   break_glass_whitelist_contract_aggregate: Break_Glass_Whitelist_Contract_Aggregate;
   /** fetch data from the table: "break_glass_whitelist_contract" using primary key columns */
   break_glass_whitelist_contract_by_pk?: Maybe<Break_Glass_Whitelist_Contract>;
-  /** fetch data from the table in a streaming manner : "break_glass_whitelist_contract" */
+  /** fetch data from the table in a streaming manner: "break_glass_whitelist_contract" */
   break_glass_whitelist_contract_stream: Array<Break_Glass_Whitelist_Contract>;
   /** fetch data from the table: "council" */
   council: Array<Council>;
@@ -44510,7 +51886,7 @@ export type Subscription_Root = {
   council_action_parameter_aggregate: Council_Action_Parameter_Aggregate;
   /** fetch data from the table: "council_action_parameter" using primary key columns */
   council_action_parameter_by_pk?: Maybe<Council_Action_Parameter>;
-  /** fetch data from the table in a streaming manner : "council_action_parameter" */
+  /** fetch data from the table in a streaming manner: "council_action_parameter" */
   council_action_parameter_stream: Array<Council_Action_Parameter>;
   /** fetch data from the table: "council_action_signer" */
   council_action_signer: Array<Council_Action_Signer>;
@@ -44518,9 +51894,9 @@ export type Subscription_Root = {
   council_action_signer_aggregate: Council_Action_Signer_Aggregate;
   /** fetch data from the table: "council_action_signer" using primary key columns */
   council_action_signer_by_pk?: Maybe<Council_Action_Signer>;
-  /** fetch data from the table in a streaming manner : "council_action_signer" */
+  /** fetch data from the table in a streaming manner: "council_action_signer" */
   council_action_signer_stream: Array<Council_Action_Signer>;
-  /** fetch data from the table in a streaming manner : "council_action" */
+  /** fetch data from the table in a streaming manner: "council_action" */
   council_action_stream: Array<Council_Action>;
   /** fetch aggregated fields from the table: "council" */
   council_aggregate: Council_Aggregate;
@@ -44532,7 +51908,7 @@ export type Subscription_Root = {
   council_council_member_aggregate: Council_Council_Member_Aggregate;
   /** fetch data from the table: "council_council_member" using primary key columns */
   council_council_member_by_pk?: Maybe<Council_Council_Member>;
-  /** fetch data from the table in a streaming manner : "council_council_member" */
+  /** fetch data from the table in a streaming manner: "council_council_member" */
   council_council_member_stream: Array<Council_Council_Member>;
   /** fetch data from the table: "council_general_contract" */
   council_general_contract: Array<Council_General_Contract>;
@@ -44540,7 +51916,7 @@ export type Subscription_Root = {
   council_general_contract_aggregate: Council_General_Contract_Aggregate;
   /** fetch data from the table: "council_general_contract" using primary key columns */
   council_general_contract_by_pk?: Maybe<Council_General_Contract>;
-  /** fetch data from the table in a streaming manner : "council_general_contract" */
+  /** fetch data from the table in a streaming manner: "council_general_contract" */
   council_general_contract_stream: Array<Council_General_Contract>;
   /** fetch data from the table: "council_lambda" */
   council_lambda: Array<Council_Lambda>;
@@ -44548,9 +51924,9 @@ export type Subscription_Root = {
   council_lambda_aggregate: Council_Lambda_Aggregate;
   /** fetch data from the table: "council_lambda" using primary key columns */
   council_lambda_by_pk?: Maybe<Council_Lambda>;
-  /** fetch data from the table in a streaming manner : "council_lambda" */
+  /** fetch data from the table in a streaming manner: "council_lambda" */
   council_lambda_stream: Array<Council_Lambda>;
-  /** fetch data from the table in a streaming manner : "council" */
+  /** fetch data from the table in a streaming manner: "council" */
   council_stream: Array<Council>;
   /** fetch data from the table: "council_whitelist_contract" */
   council_whitelist_contract: Array<Council_Whitelist_Contract>;
@@ -44558,7 +51934,7 @@ export type Subscription_Root = {
   council_whitelist_contract_aggregate: Council_Whitelist_Contract_Aggregate;
   /** fetch data from the table: "council_whitelist_contract" using primary key columns */
   council_whitelist_contract_by_pk?: Maybe<Council_Whitelist_Contract>;
-  /** fetch data from the table in a streaming manner : "council_whitelist_contract" */
+  /** fetch data from the table in a streaming manner: "council_whitelist_contract" */
   council_whitelist_contract_stream: Array<Council_Whitelist_Contract>;
   /** fetch data from the table: "delegation" */
   delegation: Array<Delegation>;
@@ -44572,7 +51948,7 @@ export type Subscription_Root = {
   delegation_general_contract_aggregate: Delegation_General_Contract_Aggregate;
   /** fetch data from the table: "delegation_general_contract" using primary key columns */
   delegation_general_contract_by_pk?: Maybe<Delegation_General_Contract>;
-  /** fetch data from the table in a streaming manner : "delegation_general_contract" */
+  /** fetch data from the table in a streaming manner: "delegation_general_contract" */
   delegation_general_contract_stream: Array<Delegation_General_Contract>;
   /** fetch data from the table: "delegation_lambda" */
   delegation_lambda: Array<Delegation_Lambda>;
@@ -44580,7 +51956,7 @@ export type Subscription_Root = {
   delegation_lambda_aggregate: Delegation_Lambda_Aggregate;
   /** fetch data from the table: "delegation_lambda" using primary key columns */
   delegation_lambda_by_pk?: Maybe<Delegation_Lambda>;
-  /** fetch data from the table in a streaming manner : "delegation_lambda" */
+  /** fetch data from the table in a streaming manner: "delegation_lambda" */
   delegation_lambda_stream: Array<Delegation_Lambda>;
   /** fetch data from the table: "delegation_record" */
   delegation_record: Array<Delegation_Record>;
@@ -44588,9 +51964,9 @@ export type Subscription_Root = {
   delegation_record_aggregate: Delegation_Record_Aggregate;
   /** fetch data from the table: "delegation_record" using primary key columns */
   delegation_record_by_pk?: Maybe<Delegation_Record>;
-  /** fetch data from the table in a streaming manner : "delegation_record" */
+  /** fetch data from the table in a streaming manner: "delegation_record" */
   delegation_record_stream: Array<Delegation_Record>;
-  /** fetch data from the table in a streaming manner : "delegation" */
+  /** fetch data from the table in a streaming manner: "delegation" */
   delegation_stream: Array<Delegation>;
   /** fetch data from the table: "delegation_whitelist_contract" */
   delegation_whitelist_contract: Array<Delegation_Whitelist_Contract>;
@@ -44598,7 +51974,7 @@ export type Subscription_Root = {
   delegation_whitelist_contract_aggregate: Delegation_Whitelist_Contract_Aggregate;
   /** fetch data from the table: "delegation_whitelist_contract" using primary key columns */
   delegation_whitelist_contract_by_pk?: Maybe<Delegation_Whitelist_Contract>;
-  /** fetch data from the table in a streaming manner : "delegation_whitelist_contract" */
+  /** fetch data from the table in a streaming manner: "delegation_whitelist_contract" */
   delegation_whitelist_contract_stream: Array<Delegation_Whitelist_Contract>;
   /** fetch data from the table: "dipdup_contract" */
   dipdup_contract: Array<Dipdup_Contract>;
@@ -44612,9 +51988,9 @@ export type Subscription_Root = {
   dipdup_contract_metadata_aggregate: Dipdup_Contract_Metadata_Aggregate;
   /** fetch data from the table: "dipdup_contract_metadata" using primary key columns */
   dipdup_contract_metadata_by_pk?: Maybe<Dipdup_Contract_Metadata>;
-  /** fetch data from the table in a streaming manner : "dipdup_contract_metadata" */
+  /** fetch data from the table in a streaming manner: "dipdup_contract_metadata" */
   dipdup_contract_metadata_stream: Array<Dipdup_Contract_Metadata>;
-  /** fetch data from the table in a streaming manner : "dipdup_contract" */
+  /** fetch data from the table in a streaming manner: "dipdup_contract" */
   dipdup_contract_stream: Array<Dipdup_Contract>;
   /** fetch data from the table: "dipdup_head" */
   dipdup_head: Array<Dipdup_Head>;
@@ -44626,9 +52002,9 @@ export type Subscription_Root = {
   dipdup_head_status: Array<Dipdup_Head_Status>;
   /** fetch aggregated fields from the table: "dipdup_head_status" */
   dipdup_head_status_aggregate: Dipdup_Head_Status_Aggregate;
-  /** fetch data from the table in a streaming manner : "dipdup_head_status" */
+  /** fetch data from the table in a streaming manner: "dipdup_head_status" */
   dipdup_head_status_stream: Array<Dipdup_Head_Status>;
-  /** fetch data from the table in a streaming manner : "dipdup_head" */
+  /** fetch data from the table in a streaming manner: "dipdup_head" */
   dipdup_head_stream: Array<Dipdup_Head>;
   /** fetch data from the table: "dipdup_index" */
   dipdup_index: Array<Dipdup_Index>;
@@ -44636,7 +52012,7 @@ export type Subscription_Root = {
   dipdup_index_aggregate: Dipdup_Index_Aggregate;
   /** fetch data from the table: "dipdup_index" using primary key columns */
   dipdup_index_by_pk?: Maybe<Dipdup_Index>;
-  /** fetch data from the table in a streaming manner : "dipdup_index" */
+  /** fetch data from the table in a streaming manner: "dipdup_index" */
   dipdup_index_stream: Array<Dipdup_Index>;
   /** fetch data from the table: "dipdup_model_update" */
   dipdup_model_update: Array<Dipdup_Model_Update>;
@@ -44644,7 +52020,7 @@ export type Subscription_Root = {
   dipdup_model_update_aggregate: Dipdup_Model_Update_Aggregate;
   /** fetch data from the table: "dipdup_model_update" using primary key columns */
   dipdup_model_update_by_pk?: Maybe<Dipdup_Model_Update>;
-  /** fetch data from the table in a streaming manner : "dipdup_model_update" */
+  /** fetch data from the table in a streaming manner: "dipdup_model_update" */
   dipdup_model_update_stream: Array<Dipdup_Model_Update>;
   /** fetch data from the table: "dipdup_schema" */
   dipdup_schema: Array<Dipdup_Schema>;
@@ -44652,7 +52028,7 @@ export type Subscription_Root = {
   dipdup_schema_aggregate: Dipdup_Schema_Aggregate;
   /** fetch data from the table: "dipdup_schema" using primary key columns */
   dipdup_schema_by_pk?: Maybe<Dipdup_Schema>;
-  /** fetch data from the table in a streaming manner : "dipdup_schema" */
+  /** fetch data from the table in a streaming manner: "dipdup_schema" */
   dipdup_schema_stream: Array<Dipdup_Schema>;
   /** fetch data from the table: "dipdup_token_metadata" */
   dipdup_token_metadata: Array<Dipdup_Token_Metadata>;
@@ -44660,7 +52036,7 @@ export type Subscription_Root = {
   dipdup_token_metadata_aggregate: Dipdup_Token_Metadata_Aggregate;
   /** fetch data from the table: "dipdup_token_metadata" using primary key columns */
   dipdup_token_metadata_by_pk?: Maybe<Dipdup_Token_Metadata>;
-  /** fetch data from the table in a streaming manner : "dipdup_token_metadata" */
+  /** fetch data from the table in a streaming manner: "dipdup_token_metadata" */
   dipdup_token_metadata_stream: Array<Dipdup_Token_Metadata>;
   /** fetch data from the table: "doorman" */
   doorman: Array<Doorman>;
@@ -44674,7 +52050,7 @@ export type Subscription_Root = {
   doorman_general_contract_aggregate: Doorman_General_Contract_Aggregate;
   /** fetch data from the table: "doorman_general_contract" using primary key columns */
   doorman_general_contract_by_pk?: Maybe<Doorman_General_Contract>;
-  /** fetch data from the table in a streaming manner : "doorman_general_contract" */
+  /** fetch data from the table in a streaming manner: "doorman_general_contract" */
   doorman_general_contract_stream: Array<Doorman_General_Contract>;
   /** fetch data from the table: "doorman_lambda" */
   doorman_lambda: Array<Doorman_Lambda>;
@@ -44682,7 +52058,7 @@ export type Subscription_Root = {
   doorman_lambda_aggregate: Doorman_Lambda_Aggregate;
   /** fetch data from the table: "doorman_lambda" using primary key columns */
   doorman_lambda_by_pk?: Maybe<Doorman_Lambda>;
-  /** fetch data from the table in a streaming manner : "doorman_lambda" */
+  /** fetch data from the table in a streaming manner: "doorman_lambda" */
   doorman_lambda_stream: Array<Doorman_Lambda>;
   /** fetch data from the table: "doorman_stake_account" */
   doorman_stake_account: Array<Doorman_Stake_Account>;
@@ -44690,9 +52066,9 @@ export type Subscription_Root = {
   doorman_stake_account_aggregate: Doorman_Stake_Account_Aggregate;
   /** fetch data from the table: "doorman_stake_account" using primary key columns */
   doorman_stake_account_by_pk?: Maybe<Doorman_Stake_Account>;
-  /** fetch data from the table in a streaming manner : "doorman_stake_account" */
+  /** fetch data from the table in a streaming manner: "doorman_stake_account" */
   doorman_stake_account_stream: Array<Doorman_Stake_Account>;
-  /** fetch data from the table in a streaming manner : "doorman" */
+  /** fetch data from the table in a streaming manner: "doorman" */
   doorman_stream: Array<Doorman>;
   /** fetch data from the table: "doorman_whitelist_contract" */
   doorman_whitelist_contract: Array<Doorman_Whitelist_Contract>;
@@ -44700,7 +52076,7 @@ export type Subscription_Root = {
   doorman_whitelist_contract_aggregate: Doorman_Whitelist_Contract_Aggregate;
   /** fetch data from the table: "doorman_whitelist_contract" using primary key columns */
   doorman_whitelist_contract_by_pk?: Maybe<Doorman_Whitelist_Contract>;
-  /** fetch data from the table in a streaming manner : "doorman_whitelist_contract" */
+  /** fetch data from the table in a streaming manner: "doorman_whitelist_contract" */
   doorman_whitelist_contract_stream: Array<Doorman_Whitelist_Contract>;
   /** fetch data from the table: "emergency_governance" */
   emergency_governance: Array<Emergency_Governance>;
@@ -44714,7 +52090,7 @@ export type Subscription_Root = {
   emergency_governance_general_contract_aggregate: Emergency_Governance_General_Contract_Aggregate;
   /** fetch data from the table: "emergency_governance_general_contract" using primary key columns */
   emergency_governance_general_contract_by_pk?: Maybe<Emergency_Governance_General_Contract>;
-  /** fetch data from the table in a streaming manner : "emergency_governance_general_contract" */
+  /** fetch data from the table in a streaming manner: "emergency_governance_general_contract" */
   emergency_governance_general_contract_stream: Array<Emergency_Governance_General_Contract>;
   /** fetch data from the table: "emergency_governance_lambda" */
   emergency_governance_lambda: Array<Emergency_Governance_Lambda>;
@@ -44722,7 +52098,7 @@ export type Subscription_Root = {
   emergency_governance_lambda_aggregate: Emergency_Governance_Lambda_Aggregate;
   /** fetch data from the table: "emergency_governance_lambda" using primary key columns */
   emergency_governance_lambda_by_pk?: Maybe<Emergency_Governance_Lambda>;
-  /** fetch data from the table in a streaming manner : "emergency_governance_lambda" */
+  /** fetch data from the table in a streaming manner: "emergency_governance_lambda" */
   emergency_governance_lambda_stream: Array<Emergency_Governance_Lambda>;
   /** fetch data from the table: "emergency_governance_record" */
   emergency_governance_record: Array<Emergency_Governance_Record>;
@@ -44730,9 +52106,9 @@ export type Subscription_Root = {
   emergency_governance_record_aggregate: Emergency_Governance_Record_Aggregate;
   /** fetch data from the table: "emergency_governance_record" using primary key columns */
   emergency_governance_record_by_pk?: Maybe<Emergency_Governance_Record>;
-  /** fetch data from the table in a streaming manner : "emergency_governance_record" */
+  /** fetch data from the table in a streaming manner: "emergency_governance_record" */
   emergency_governance_record_stream: Array<Emergency_Governance_Record>;
-  /** fetch data from the table in a streaming manner : "emergency_governance" */
+  /** fetch data from the table in a streaming manner: "emergency_governance" */
   emergency_governance_stream: Array<Emergency_Governance>;
   /** fetch data from the table: "emergency_governance_vote" */
   emergency_governance_vote: Array<Emergency_Governance_Vote>;
@@ -44740,7 +52116,7 @@ export type Subscription_Root = {
   emergency_governance_vote_aggregate: Emergency_Governance_Vote_Aggregate;
   /** fetch data from the table: "emergency_governance_vote" using primary key columns */
   emergency_governance_vote_by_pk?: Maybe<Emergency_Governance_Vote>;
-  /** fetch data from the table in a streaming manner : "emergency_governance_vote" */
+  /** fetch data from the table in a streaming manner: "emergency_governance_vote" */
   emergency_governance_vote_stream: Array<Emergency_Governance_Vote>;
   /** fetch data from the table: "emergency_governance_whitelist_contract" */
   emergency_governance_whitelist_contract: Array<Emergency_Governance_Whitelist_Contract>;
@@ -44748,7 +52124,7 @@ export type Subscription_Root = {
   emergency_governance_whitelist_contract_aggregate: Emergency_Governance_Whitelist_Contract_Aggregate;
   /** fetch data from the table: "emergency_governance_whitelist_contract" using primary key columns */
   emergency_governance_whitelist_contract_by_pk?: Maybe<Emergency_Governance_Whitelist_Contract>;
-  /** fetch data from the table in a streaming manner : "emergency_governance_whitelist_contract" */
+  /** fetch data from the table in a streaming manner: "emergency_governance_whitelist_contract" */
   emergency_governance_whitelist_contract_stream: Array<Emergency_Governance_Whitelist_Contract>;
   /** fetch data from the table: "farm" */
   farm: Array<Farm>;
@@ -44758,7 +52134,7 @@ export type Subscription_Root = {
   farm_account_aggregate: Farm_Account_Aggregate;
   /** fetch data from the table: "farm_account" using primary key columns */
   farm_account_by_pk?: Maybe<Farm_Account>;
-  /** fetch data from the table in a streaming manner : "farm_account" */
+  /** fetch data from the table in a streaming manner: "farm_account" */
   farm_account_stream: Array<Farm_Account>;
   /** fetch aggregated fields from the table: "farm" */
   farm_aggregate: Farm_Aggregate;
@@ -44776,7 +52152,7 @@ export type Subscription_Root = {
   farm_factory_general_contract_aggregate: Farm_Factory_General_Contract_Aggregate;
   /** fetch data from the table: "farm_factory_general_contract" using primary key columns */
   farm_factory_general_contract_by_pk?: Maybe<Farm_Factory_General_Contract>;
-  /** fetch data from the table in a streaming manner : "farm_factory_general_contract" */
+  /** fetch data from the table in a streaming manner: "farm_factory_general_contract" */
   farm_factory_general_contract_stream: Array<Farm_Factory_General_Contract>;
   /** fetch data from the table: "farm_factory_lambda" */
   farm_factory_lambda: Array<Farm_Factory_Lambda>;
@@ -44784,7 +52160,7 @@ export type Subscription_Root = {
   farm_factory_lambda_aggregate: Farm_Factory_Lambda_Aggregate;
   /** fetch data from the table: "farm_factory_lambda" using primary key columns */
   farm_factory_lambda_by_pk?: Maybe<Farm_Factory_Lambda>;
-  /** fetch data from the table in a streaming manner : "farm_factory_lambda" */
+  /** fetch data from the table in a streaming manner: "farm_factory_lambda" */
   farm_factory_lambda_stream: Array<Farm_Factory_Lambda>;
   /** fetch data from the table: "farm_factory_product_lambda" */
   farm_factory_product_lambda: Array<Farm_Factory_Product_Lambda>;
@@ -44792,9 +52168,9 @@ export type Subscription_Root = {
   farm_factory_product_lambda_aggregate: Farm_Factory_Product_Lambda_Aggregate;
   /** fetch data from the table: "farm_factory_product_lambda" using primary key columns */
   farm_factory_product_lambda_by_pk?: Maybe<Farm_Factory_Product_Lambda>;
-  /** fetch data from the table in a streaming manner : "farm_factory_product_lambda" */
+  /** fetch data from the table in a streaming manner: "farm_factory_product_lambda" */
   farm_factory_product_lambda_stream: Array<Farm_Factory_Product_Lambda>;
-  /** fetch data from the table in a streaming manner : "farm_factory" */
+  /** fetch data from the table in a streaming manner: "farm_factory" */
   farm_factory_stream: Array<Farm_Factory>;
   /** fetch data from the table: "farm_factory_whitelist_contract" */
   farm_factory_whitelist_contract: Array<Farm_Factory_Whitelist_Contract>;
@@ -44802,7 +52178,7 @@ export type Subscription_Root = {
   farm_factory_whitelist_contract_aggregate: Farm_Factory_Whitelist_Contract_Aggregate;
   /** fetch data from the table: "farm_factory_whitelist_contract" using primary key columns */
   farm_factory_whitelist_contract_by_pk?: Maybe<Farm_Factory_Whitelist_Contract>;
-  /** fetch data from the table in a streaming manner : "farm_factory_whitelist_contract" */
+  /** fetch data from the table in a streaming manner: "farm_factory_whitelist_contract" */
   farm_factory_whitelist_contract_stream: Array<Farm_Factory_Whitelist_Contract>;
   /** fetch data from the table: "farm_general_contract" */
   farm_general_contract: Array<Farm_General_Contract>;
@@ -44810,7 +52186,7 @@ export type Subscription_Root = {
   farm_general_contract_aggregate: Farm_General_Contract_Aggregate;
   /** fetch data from the table: "farm_general_contract" using primary key columns */
   farm_general_contract_by_pk?: Maybe<Farm_General_Contract>;
-  /** fetch data from the table in a streaming manner : "farm_general_contract" */
+  /** fetch data from the table in a streaming manner: "farm_general_contract" */
   farm_general_contract_stream: Array<Farm_General_Contract>;
   /** fetch data from the table: "farm_lambda" */
   farm_lambda: Array<Farm_Lambda>;
@@ -44818,9 +52194,9 @@ export type Subscription_Root = {
   farm_lambda_aggregate: Farm_Lambda_Aggregate;
   /** fetch data from the table: "farm_lambda" using primary key columns */
   farm_lambda_by_pk?: Maybe<Farm_Lambda>;
-  /** fetch data from the table in a streaming manner : "farm_lambda" */
+  /** fetch data from the table in a streaming manner: "farm_lambda" */
   farm_lambda_stream: Array<Farm_Lambda>;
-  /** fetch data from the table in a streaming manner : "farm" */
+  /** fetch data from the table in a streaming manner: "farm" */
   farm_stream: Array<Farm>;
   /** fetch data from the table: "farm_whitelist_contract" */
   farm_whitelist_contract: Array<Farm_Whitelist_Contract>;
@@ -44828,7 +52204,7 @@ export type Subscription_Root = {
   farm_whitelist_contract_aggregate: Farm_Whitelist_Contract_Aggregate;
   /** fetch data from the table: "farm_whitelist_contract" using primary key columns */
   farm_whitelist_contract_by_pk?: Maybe<Farm_Whitelist_Contract>;
-  /** fetch data from the table in a streaming manner : "farm_whitelist_contract" */
+  /** fetch data from the table in a streaming manner: "farm_whitelist_contract" */
   farm_whitelist_contract_stream: Array<Farm_Whitelist_Contract>;
   /** fetch data from the table: "governance" */
   governance: Array<Governance>;
@@ -44848,7 +52224,7 @@ export type Subscription_Root = {
   governance_financial_general_contract_aggregate: Governance_Financial_General_Contract_Aggregate;
   /** fetch data from the table: "governance_financial_general_contract" using primary key columns */
   governance_financial_general_contract_by_pk?: Maybe<Governance_Financial_General_Contract>;
-  /** fetch data from the table in a streaming manner : "governance_financial_general_contract" */
+  /** fetch data from the table in a streaming manner: "governance_financial_general_contract" */
   governance_financial_general_contract_stream: Array<Governance_Financial_General_Contract>;
   /** fetch data from the table: "governance_financial_lambda" */
   governance_financial_lambda: Array<Governance_Financial_Lambda>;
@@ -44856,7 +52232,7 @@ export type Subscription_Root = {
   governance_financial_lambda_aggregate: Governance_Financial_Lambda_Aggregate;
   /** fetch data from the table: "governance_financial_lambda" using primary key columns */
   governance_financial_lambda_by_pk?: Maybe<Governance_Financial_Lambda>;
-  /** fetch data from the table in a streaming manner : "governance_financial_lambda" */
+  /** fetch data from the table in a streaming manner: "governance_financial_lambda" */
   governance_financial_lambda_stream: Array<Governance_Financial_Lambda>;
   /** fetch data from the table: "governance_financial_request" */
   governance_financial_request: Array<Governance_Financial_Request>;
@@ -44864,7 +52240,7 @@ export type Subscription_Root = {
   governance_financial_request_aggregate: Governance_Financial_Request_Aggregate;
   /** fetch data from the table: "governance_financial_request" using primary key columns */
   governance_financial_request_by_pk?: Maybe<Governance_Financial_Request>;
-  /** fetch data from the table in a streaming manner : "governance_financial_request" */
+  /** fetch data from the table in a streaming manner: "governance_financial_request" */
   governance_financial_request_stream: Array<Governance_Financial_Request>;
   /** fetch data from the table: "governance_financial_request_vote" */
   governance_financial_request_vote: Array<Governance_Financial_Request_Vote>;
@@ -44872,9 +52248,9 @@ export type Subscription_Root = {
   governance_financial_request_vote_aggregate: Governance_Financial_Request_Vote_Aggregate;
   /** fetch data from the table: "governance_financial_request_vote" using primary key columns */
   governance_financial_request_vote_by_pk?: Maybe<Governance_Financial_Request_Vote>;
-  /** fetch data from the table in a streaming manner : "governance_financial_request_vote" */
+  /** fetch data from the table in a streaming manner: "governance_financial_request_vote" */
   governance_financial_request_vote_stream: Array<Governance_Financial_Request_Vote>;
-  /** fetch data from the table in a streaming manner : "governance_financial" */
+  /** fetch data from the table in a streaming manner: "governance_financial" */
   governance_financial_stream: Array<Governance_Financial>;
   /** fetch data from the table: "governance_financial_whitelist_contract" */
   governance_financial_whitelist_contract: Array<Governance_Financial_Whitelist_Contract>;
@@ -44882,7 +52258,7 @@ export type Subscription_Root = {
   governance_financial_whitelist_contract_aggregate: Governance_Financial_Whitelist_Contract_Aggregate;
   /** fetch data from the table: "governance_financial_whitelist_contract" using primary key columns */
   governance_financial_whitelist_contract_by_pk?: Maybe<Governance_Financial_Whitelist_Contract>;
-  /** fetch data from the table in a streaming manner : "governance_financial_whitelist_contract" */
+  /** fetch data from the table in a streaming manner: "governance_financial_whitelist_contract" */
   governance_financial_whitelist_contract_stream: Array<Governance_Financial_Whitelist_Contract>;
   /** fetch data from the table: "governance_financial_whitelist_token_contract" */
   governance_financial_whitelist_token_contract: Array<Governance_Financial_Whitelist_Token_Contract>;
@@ -44890,7 +52266,7 @@ export type Subscription_Root = {
   governance_financial_whitelist_token_contract_aggregate: Governance_Financial_Whitelist_Token_Contract_Aggregate;
   /** fetch data from the table: "governance_financial_whitelist_token_contract" using primary key columns */
   governance_financial_whitelist_token_contract_by_pk?: Maybe<Governance_Financial_Whitelist_Token_Contract>;
-  /** fetch data from the table in a streaming manner : "governance_financial_whitelist_token_contract" */
+  /** fetch data from the table in a streaming manner: "governance_financial_whitelist_token_contract" */
   governance_financial_whitelist_token_contract_stream: Array<Governance_Financial_Whitelist_Token_Contract>;
   /** fetch data from the table: "governance_general_contract" */
   governance_general_contract: Array<Governance_General_Contract>;
@@ -44898,7 +52274,7 @@ export type Subscription_Root = {
   governance_general_contract_aggregate: Governance_General_Contract_Aggregate;
   /** fetch data from the table: "governance_general_contract" using primary key columns */
   governance_general_contract_by_pk?: Maybe<Governance_General_Contract>;
-  /** fetch data from the table in a streaming manner : "governance_general_contract" */
+  /** fetch data from the table in a streaming manner: "governance_general_contract" */
   governance_general_contract_stream: Array<Governance_General_Contract>;
   /** fetch data from the table: "governance_lambda" */
   governance_lambda: Array<Governance_Lambda>;
@@ -44906,7 +52282,7 @@ export type Subscription_Root = {
   governance_lambda_aggregate: Governance_Lambda_Aggregate;
   /** fetch data from the table: "governance_lambda" using primary key columns */
   governance_lambda_by_pk?: Maybe<Governance_Lambda>;
-  /** fetch data from the table in a streaming manner : "governance_lambda" */
+  /** fetch data from the table in a streaming manner: "governance_lambda" */
   governance_lambda_stream: Array<Governance_Lambda>;
   /** fetch data from the table: "governance_proposal" */
   governance_proposal: Array<Governance_Proposal>;
@@ -44920,7 +52296,7 @@ export type Subscription_Root = {
   governance_proposal_data_aggregate: Governance_Proposal_Data_Aggregate;
   /** fetch data from the table: "governance_proposal_data" using primary key columns */
   governance_proposal_data_by_pk?: Maybe<Governance_Proposal_Data>;
-  /** fetch data from the table in a streaming manner : "governance_proposal_data" */
+  /** fetch data from the table in a streaming manner: "governance_proposal_data" */
   governance_proposal_data_stream: Array<Governance_Proposal_Data>;
   /** fetch data from the table: "governance_proposal_payment" */
   governance_proposal_payment: Array<Governance_Proposal_Payment>;
@@ -44928,9 +52304,9 @@ export type Subscription_Root = {
   governance_proposal_payment_aggregate: Governance_Proposal_Payment_Aggregate;
   /** fetch data from the table: "governance_proposal_payment" using primary key columns */
   governance_proposal_payment_by_pk?: Maybe<Governance_Proposal_Payment>;
-  /** fetch data from the table in a streaming manner : "governance_proposal_payment" */
+  /** fetch data from the table in a streaming manner: "governance_proposal_payment" */
   governance_proposal_payment_stream: Array<Governance_Proposal_Payment>;
-  /** fetch data from the table in a streaming manner : "governance_proposal" */
+  /** fetch data from the table in a streaming manner: "governance_proposal" */
   governance_proposal_stream: Array<Governance_Proposal>;
   /** fetch data from the table: "governance_proposal_vote" */
   governance_proposal_vote: Array<Governance_Proposal_Vote>;
@@ -44938,7 +52314,7 @@ export type Subscription_Root = {
   governance_proposal_vote_aggregate: Governance_Proposal_Vote_Aggregate;
   /** fetch data from the table: "governance_proposal_vote" using primary key columns */
   governance_proposal_vote_by_pk?: Maybe<Governance_Proposal_Vote>;
-  /** fetch data from the table in a streaming manner : "governance_proposal_vote" */
+  /** fetch data from the table in a streaming manner: "governance_proposal_vote" */
   governance_proposal_vote_stream: Array<Governance_Proposal_Vote>;
   /** fetch data from the table: "governance_proxy" */
   governance_proxy: Array<Governance_Proxy>;
@@ -44952,7 +52328,7 @@ export type Subscription_Root = {
   governance_proxy_general_contract_aggregate: Governance_Proxy_General_Contract_Aggregate;
   /** fetch data from the table: "governance_proxy_general_contract" using primary key columns */
   governance_proxy_general_contract_by_pk?: Maybe<Governance_Proxy_General_Contract>;
-  /** fetch data from the table in a streaming manner : "governance_proxy_general_contract" */
+  /** fetch data from the table in a streaming manner: "governance_proxy_general_contract" */
   governance_proxy_general_contract_stream: Array<Governance_Proxy_General_Contract>;
   /** fetch data from the table: "governance_proxy_lambda" */
   governance_proxy_lambda: Array<Governance_Proxy_Lambda>;
@@ -44960,7 +52336,7 @@ export type Subscription_Root = {
   governance_proxy_lambda_aggregate: Governance_Proxy_Lambda_Aggregate;
   /** fetch data from the table: "governance_proxy_lambda" using primary key columns */
   governance_proxy_lambda_by_pk?: Maybe<Governance_Proxy_Lambda>;
-  /** fetch data from the table in a streaming manner : "governance_proxy_lambda" */
+  /** fetch data from the table in a streaming manner: "governance_proxy_lambda" */
   governance_proxy_lambda_stream: Array<Governance_Proxy_Lambda>;
   /** fetch data from the table: "governance_proxy_proxy_lambda" */
   governance_proxy_proxy_lambda: Array<Governance_Proxy_Proxy_Lambda>;
@@ -44968,9 +52344,9 @@ export type Subscription_Root = {
   governance_proxy_proxy_lambda_aggregate: Governance_Proxy_Proxy_Lambda_Aggregate;
   /** fetch data from the table: "governance_proxy_proxy_lambda" using primary key columns */
   governance_proxy_proxy_lambda_by_pk?: Maybe<Governance_Proxy_Proxy_Lambda>;
-  /** fetch data from the table in a streaming manner : "governance_proxy_proxy_lambda" */
+  /** fetch data from the table in a streaming manner: "governance_proxy_proxy_lambda" */
   governance_proxy_proxy_lambda_stream: Array<Governance_Proxy_Proxy_Lambda>;
-  /** fetch data from the table in a streaming manner : "governance_proxy" */
+  /** fetch data from the table in a streaming manner: "governance_proxy" */
   governance_proxy_stream: Array<Governance_Proxy>;
   /** fetch data from the table: "governance_proxy_whitelist_contract" */
   governance_proxy_whitelist_contract: Array<Governance_Proxy_Whitelist_Contract>;
@@ -44978,7 +52354,7 @@ export type Subscription_Root = {
   governance_proxy_whitelist_contract_aggregate: Governance_Proxy_Whitelist_Contract_Aggregate;
   /** fetch data from the table: "governance_proxy_whitelist_contract" using primary key columns */
   governance_proxy_whitelist_contract_by_pk?: Maybe<Governance_Proxy_Whitelist_Contract>;
-  /** fetch data from the table in a streaming manner : "governance_proxy_whitelist_contract" */
+  /** fetch data from the table in a streaming manner: "governance_proxy_whitelist_contract" */
   governance_proxy_whitelist_contract_stream: Array<Governance_Proxy_Whitelist_Contract>;
   /** fetch data from the table: "governance_proxy_whitelist_token_contract" */
   governance_proxy_whitelist_token_contract: Array<Governance_Proxy_Whitelist_Token_Contract>;
@@ -44986,7 +52362,7 @@ export type Subscription_Root = {
   governance_proxy_whitelist_token_contract_aggregate: Governance_Proxy_Whitelist_Token_Contract_Aggregate;
   /** fetch data from the table: "governance_proxy_whitelist_token_contract" using primary key columns */
   governance_proxy_whitelist_token_contract_by_pk?: Maybe<Governance_Proxy_Whitelist_Token_Contract>;
-  /** fetch data from the table in a streaming manner : "governance_proxy_whitelist_token_contract" */
+  /** fetch data from the table in a streaming manner: "governance_proxy_whitelist_token_contract" */
   governance_proxy_whitelist_token_contract_stream: Array<Governance_Proxy_Whitelist_Token_Contract>;
   /** fetch data from the table: "governance_satellite" */
   governance_satellite: Array<Governance_Satellite>;
@@ -45002,9 +52378,9 @@ export type Subscription_Root = {
   governance_satellite_action_parameter_aggregate: Governance_Satellite_Action_Parameter_Aggregate;
   /** fetch data from the table: "governance_satellite_action_parameter" using primary key columns */
   governance_satellite_action_parameter_by_pk?: Maybe<Governance_Satellite_Action_Parameter>;
-  /** fetch data from the table in a streaming manner : "governance_satellite_action_parameter" */
+  /** fetch data from the table in a streaming manner: "governance_satellite_action_parameter" */
   governance_satellite_action_parameter_stream: Array<Governance_Satellite_Action_Parameter>;
-  /** fetch data from the table in a streaming manner : "governance_satellite_action" */
+  /** fetch data from the table in a streaming manner: "governance_satellite_action" */
   governance_satellite_action_stream: Array<Governance_Satellite_Action>;
   /** fetch data from the table: "governance_satellite_action_vote" */
   governance_satellite_action_vote: Array<Governance_Satellite_Action_Vote>;
@@ -45012,7 +52388,7 @@ export type Subscription_Root = {
   governance_satellite_action_vote_aggregate: Governance_Satellite_Action_Vote_Aggregate;
   /** fetch data from the table: "governance_satellite_action_vote" using primary key columns */
   governance_satellite_action_vote_by_pk?: Maybe<Governance_Satellite_Action_Vote>;
-  /** fetch data from the table in a streaming manner : "governance_satellite_action_vote" */
+  /** fetch data from the table in a streaming manner: "governance_satellite_action_vote" */
   governance_satellite_action_vote_stream: Array<Governance_Satellite_Action_Vote>;
   /** fetch aggregated fields from the table: "governance_satellite" */
   governance_satellite_aggregate: Governance_Satellite_Aggregate;
@@ -45024,7 +52400,7 @@ export type Subscription_Root = {
   governance_satellite_general_contract_aggregate: Governance_Satellite_General_Contract_Aggregate;
   /** fetch data from the table: "governance_satellite_general_contract" using primary key columns */
   governance_satellite_general_contract_by_pk?: Maybe<Governance_Satellite_General_Contract>;
-  /** fetch data from the table in a streaming manner : "governance_satellite_general_contract" */
+  /** fetch data from the table in a streaming manner: "governance_satellite_general_contract" */
   governance_satellite_general_contract_stream: Array<Governance_Satellite_General_Contract>;
   /** fetch data from the table: "governance_satellite_lambda" */
   governance_satellite_lambda: Array<Governance_Satellite_Lambda>;
@@ -45032,7 +52408,7 @@ export type Subscription_Root = {
   governance_satellite_lambda_aggregate: Governance_Satellite_Lambda_Aggregate;
   /** fetch data from the table: "governance_satellite_lambda" using primary key columns */
   governance_satellite_lambda_by_pk?: Maybe<Governance_Satellite_Lambda>;
-  /** fetch data from the table in a streaming manner : "governance_satellite_lambda" */
+  /** fetch data from the table in a streaming manner: "governance_satellite_lambda" */
   governance_satellite_lambda_stream: Array<Governance_Satellite_Lambda>;
   /** fetch data from the table: "governance_satellite_oracle" */
   governance_satellite_oracle: Array<Governance_Satellite_Oracle>;
@@ -45044,11 +52420,11 @@ export type Subscription_Root = {
   governance_satellite_oracle_aggregator_aggregate: Governance_Satellite_Oracle_Aggregator_Aggregate;
   /** fetch data from the table: "governance_satellite_oracle_aggregator" using primary key columns */
   governance_satellite_oracle_aggregator_by_pk?: Maybe<Governance_Satellite_Oracle_Aggregator>;
-  /** fetch data from the table in a streaming manner : "governance_satellite_oracle_aggregator" */
+  /** fetch data from the table in a streaming manner: "governance_satellite_oracle_aggregator" */
   governance_satellite_oracle_aggregator_stream: Array<Governance_Satellite_Oracle_Aggregator>;
   /** fetch data from the table: "governance_satellite_oracle" using primary key columns */
   governance_satellite_oracle_by_pk?: Maybe<Governance_Satellite_Oracle>;
-  /** fetch data from the table in a streaming manner : "governance_satellite_oracle" */
+  /** fetch data from the table in a streaming manner: "governance_satellite_oracle" */
   governance_satellite_oracle_stream: Array<Governance_Satellite_Oracle>;
   /** fetch data from the table: "governance_satellite_snapshot" */
   governance_satellite_snapshot: Array<Governance_Satellite_Snapshot>;
@@ -45056,9 +52432,9 @@ export type Subscription_Root = {
   governance_satellite_snapshot_aggregate: Governance_Satellite_Snapshot_Aggregate;
   /** fetch data from the table: "governance_satellite_snapshot" using primary key columns */
   governance_satellite_snapshot_by_pk?: Maybe<Governance_Satellite_Snapshot>;
-  /** fetch data from the table in a streaming manner : "governance_satellite_snapshot" */
+  /** fetch data from the table in a streaming manner: "governance_satellite_snapshot" */
   governance_satellite_snapshot_stream: Array<Governance_Satellite_Snapshot>;
-  /** fetch data from the table in a streaming manner : "governance_satellite" */
+  /** fetch data from the table in a streaming manner: "governance_satellite" */
   governance_satellite_stream: Array<Governance_Satellite>;
   /** fetch data from the table: "governance_satellite_whitelist_contract" */
   governance_satellite_whitelist_contract: Array<Governance_Satellite_Whitelist_Contract>;
@@ -45066,9 +52442,9 @@ export type Subscription_Root = {
   governance_satellite_whitelist_contract_aggregate: Governance_Satellite_Whitelist_Contract_Aggregate;
   /** fetch data from the table: "governance_satellite_whitelist_contract" using primary key columns */
   governance_satellite_whitelist_contract_by_pk?: Maybe<Governance_Satellite_Whitelist_Contract>;
-  /** fetch data from the table in a streaming manner : "governance_satellite_whitelist_contract" */
+  /** fetch data from the table in a streaming manner: "governance_satellite_whitelist_contract" */
   governance_satellite_whitelist_contract_stream: Array<Governance_Satellite_Whitelist_Contract>;
-  /** fetch data from the table in a streaming manner : "governance" */
+  /** fetch data from the table in a streaming manner: "governance" */
   governance_stream: Array<Governance>;
   /** fetch data from the table: "governance_whitelist_contract" */
   governance_whitelist_contract: Array<Governance_Whitelist_Contract>;
@@ -45076,7 +52452,7 @@ export type Subscription_Root = {
   governance_whitelist_contract_aggregate: Governance_Whitelist_Contract_Aggregate;
   /** fetch data from the table: "governance_whitelist_contract" using primary key columns */
   governance_whitelist_contract_by_pk?: Maybe<Governance_Whitelist_Contract>;
-  /** fetch data from the table in a streaming manner : "governance_whitelist_contract" */
+  /** fetch data from the table in a streaming manner: "governance_whitelist_contract" */
   governance_whitelist_contract_stream: Array<Governance_Whitelist_Contract>;
   /** fetch data from the table: "lending_controller" */
   lending_controller: Array<Lending_Controller>;
@@ -45090,7 +52466,7 @@ export type Subscription_Root = {
   lending_controller_collateral_token_aggregate: Lending_Controller_Collateral_Token_Aggregate;
   /** fetch data from the table: "lending_controller_collateral_token" using primary key columns */
   lending_controller_collateral_token_by_pk?: Maybe<Lending_Controller_Collateral_Token>;
-  /** fetch data from the table in a streaming manner : "lending_controller_collateral_token" */
+  /** fetch data from the table in a streaming manner: "lending_controller_collateral_token" */
   lending_controller_collateral_token_stream: Array<Lending_Controller_Collateral_Token>;
   /** fetch data from the table: "lending_controller_general_contract" */
   lending_controller_general_contract: Array<Lending_Controller_General_Contract>;
@@ -45098,7 +52474,7 @@ export type Subscription_Root = {
   lending_controller_general_contract_aggregate: Lending_Controller_General_Contract_Aggregate;
   /** fetch data from the table: "lending_controller_general_contract" using primary key columns */
   lending_controller_general_contract_by_pk?: Maybe<Lending_Controller_General_Contract>;
-  /** fetch data from the table in a streaming manner : "lending_controller_general_contract" */
+  /** fetch data from the table in a streaming manner: "lending_controller_general_contract" */
   lending_controller_general_contract_stream: Array<Lending_Controller_General_Contract>;
   /** fetch data from the table: "lending_controller_history_data" */
   lending_controller_history_data: Array<Lending_Controller_History_Data>;
@@ -45106,7 +52482,7 @@ export type Subscription_Root = {
   lending_controller_history_data_aggregate: Lending_Controller_History_Data_Aggregate;
   /** fetch data from the table: "lending_controller_history_data" using primary key columns */
   lending_controller_history_data_by_pk?: Maybe<Lending_Controller_History_Data>;
-  /** fetch data from the table in a streaming manner : "lending_controller_history_data" */
+  /** fetch data from the table in a streaming manner: "lending_controller_history_data" */
   lending_controller_history_data_stream: Array<Lending_Controller_History_Data>;
   /** fetch data from the table: "lending_controller_lambda" */
   lending_controller_lambda: Array<Lending_Controller_Lambda>;
@@ -45114,7 +52490,7 @@ export type Subscription_Root = {
   lending_controller_lambda_aggregate: Lending_Controller_Lambda_Aggregate;
   /** fetch data from the table: "lending_controller_lambda" using primary key columns */
   lending_controller_lambda_by_pk?: Maybe<Lending_Controller_Lambda>;
-  /** fetch data from the table in a streaming manner : "lending_controller_lambda" */
+  /** fetch data from the table in a streaming manner: "lending_controller_lambda" */
   lending_controller_lambda_stream: Array<Lending_Controller_Lambda>;
   /** fetch data from the table: "lending_controller_loan_token" */
   lending_controller_loan_token: Array<Lending_Controller_Loan_Token>;
@@ -45122,9 +52498,9 @@ export type Subscription_Root = {
   lending_controller_loan_token_aggregate: Lending_Controller_Loan_Token_Aggregate;
   /** fetch data from the table: "lending_controller_loan_token" using primary key columns */
   lending_controller_loan_token_by_pk?: Maybe<Lending_Controller_Loan_Token>;
-  /** fetch data from the table in a streaming manner : "lending_controller_loan_token" */
+  /** fetch data from the table in a streaming manner: "lending_controller_loan_token" */
   lending_controller_loan_token_stream: Array<Lending_Controller_Loan_Token>;
-  /** fetch data from the table in a streaming manner : "lending_controller" */
+  /** fetch data from the table in a streaming manner: "lending_controller" */
   lending_controller_stream: Array<Lending_Controller>;
   /** fetch data from the table: "lending_controller_vault" */
   lending_controller_vault: Array<Lending_Controller_Vault>;
@@ -45138,9 +52514,9 @@ export type Subscription_Root = {
   lending_controller_vault_collateral_balance_aggregate: Lending_Controller_Vault_Collateral_Balance_Aggregate;
   /** fetch data from the table: "lending_controller_vault_collateral_balance" using primary key columns */
   lending_controller_vault_collateral_balance_by_pk?: Maybe<Lending_Controller_Vault_Collateral_Balance>;
-  /** fetch data from the table in a streaming manner : "lending_controller_vault_collateral_balance" */
+  /** fetch data from the table in a streaming manner: "lending_controller_vault_collateral_balance" */
   lending_controller_vault_collateral_balance_stream: Array<Lending_Controller_Vault_Collateral_Balance>;
-  /** fetch data from the table in a streaming manner : "lending_controller_vault" */
+  /** fetch data from the table in a streaming manner: "lending_controller_vault" */
   lending_controller_vault_stream: Array<Lending_Controller_Vault>;
   /** fetch data from the table: "lending_controller_whitelist_contract" */
   lending_controller_whitelist_contract: Array<Lending_Controller_Whitelist_Contract>;
@@ -45148,7 +52524,7 @@ export type Subscription_Root = {
   lending_controller_whitelist_contract_aggregate: Lending_Controller_Whitelist_Contract_Aggregate;
   /** fetch data from the table: "lending_controller_whitelist_contract" using primary key columns */
   lending_controller_whitelist_contract_by_pk?: Maybe<Lending_Controller_Whitelist_Contract>;
-  /** fetch data from the table in a streaming manner : "lending_controller_whitelist_contract" */
+  /** fetch data from the table in a streaming manner: "lending_controller_whitelist_contract" */
   lending_controller_whitelist_contract_stream: Array<Lending_Controller_Whitelist_Contract>;
   /** fetch data from the table: "lending_controller_whitelist_token_contract" */
   lending_controller_whitelist_token_contract: Array<Lending_Controller_Whitelist_Token_Contract>;
@@ -45156,7 +52532,7 @@ export type Subscription_Root = {
   lending_controller_whitelist_token_contract_aggregate: Lending_Controller_Whitelist_Token_Contract_Aggregate;
   /** fetch data from the table: "lending_controller_whitelist_token_contract" using primary key columns */
   lending_controller_whitelist_token_contract_by_pk?: Maybe<Lending_Controller_Whitelist_Token_Contract>;
-  /** fetch data from the table in a streaming manner : "lending_controller_whitelist_token_contract" */
+  /** fetch data from the table in a streaming manner: "lending_controller_whitelist_token_contract" */
   lending_controller_whitelist_token_contract_stream: Array<Lending_Controller_Whitelist_Token_Contract>;
   /** fetch data from the table: "liquidity_baking" */
   liquidity_baking: Array<Liquidity_Baking>;
@@ -45170,7 +52546,7 @@ export type Subscription_Root = {
   liquidity_baking_history_data_aggregate: Liquidity_Baking_History_Data_Aggregate;
   /** fetch data from the table: "liquidity_baking_history_data" using primary key columns */
   liquidity_baking_history_data_by_pk?: Maybe<Liquidity_Baking_History_Data>;
-  /** fetch data from the table in a streaming manner : "liquidity_baking_history_data" */
+  /** fetch data from the table in a streaming manner: "liquidity_baking_history_data" */
   liquidity_baking_history_data_stream: Array<Liquidity_Baking_History_Data>;
   /** fetch data from the table: "liquidity_baking_position" */
   liquidity_baking_position: Array<Liquidity_Baking_Position>;
@@ -45178,9 +52554,9 @@ export type Subscription_Root = {
   liquidity_baking_position_aggregate: Liquidity_Baking_Position_Aggregate;
   /** fetch data from the table: "liquidity_baking_position" using primary key columns */
   liquidity_baking_position_by_pk?: Maybe<Liquidity_Baking_Position>;
-  /** fetch data from the table in a streaming manner : "liquidity_baking_position" */
+  /** fetch data from the table in a streaming manner: "liquidity_baking_position" */
   liquidity_baking_position_stream: Array<Liquidity_Baking_Position>;
-  /** fetch data from the table in a streaming manner : "liquidity_baking" */
+  /** fetch data from the table in a streaming manner: "liquidity_baking" */
   liquidity_baking_stream: Array<Liquidity_Baking>;
   /** fetch data from the table: "m_token" */
   m_token: Array<M_Token>;
@@ -45196,9 +52572,9 @@ export type Subscription_Root = {
   m_token_account_history_data_aggregate: M_Token_Account_History_Data_Aggregate;
   /** fetch data from the table: "m_token_account_history_data" using primary key columns */
   m_token_account_history_data_by_pk?: Maybe<M_Token_Account_History_Data>;
-  /** fetch data from the table in a streaming manner : "m_token_account_history_data" */
+  /** fetch data from the table in a streaming manner: "m_token_account_history_data" */
   m_token_account_history_data_stream: Array<M_Token_Account_History_Data>;
-  /** fetch data from the table in a streaming manner : "m_token_account" */
+  /** fetch data from the table in a streaming manner: "m_token_account" */
   m_token_account_stream: Array<M_Token_Account>;
   /** fetch aggregated fields from the table: "m_token" */
   m_token_aggregate: M_Token_Aggregate;
@@ -45210,9 +52586,9 @@ export type Subscription_Root = {
   m_token_operator_aggregate: M_Token_Operator_Aggregate;
   /** fetch data from the table: "m_token_operator" using primary key columns */
   m_token_operator_by_pk?: Maybe<M_Token_Operator>;
-  /** fetch data from the table in a streaming manner : "m_token_operator" */
+  /** fetch data from the table in a streaming manner: "m_token_operator" */
   m_token_operator_stream: Array<M_Token_Operator>;
-  /** fetch data from the table in a streaming manner : "m_token" */
+  /** fetch data from the table in a streaming manner: "m_token" */
   m_token_stream: Array<M_Token>;
   /** fetch data from the table: "m_token_whitelist_contract" */
   m_token_whitelist_contract: Array<M_Token_Whitelist_Contract>;
@@ -45220,7 +52596,7 @@ export type Subscription_Root = {
   m_token_whitelist_contract_aggregate: M_Token_Whitelist_Contract_Aggregate;
   /** fetch data from the table: "m_token_whitelist_contract" using primary key columns */
   m_token_whitelist_contract_by_pk?: Maybe<M_Token_Whitelist_Contract>;
-  /** fetch data from the table in a streaming manner : "m_token_whitelist_contract" */
+  /** fetch data from the table in a streaming manner: "m_token_whitelist_contract" */
   m_token_whitelist_contract_stream: Array<M_Token_Whitelist_Contract>;
   /** fetch data from the table: "mavryk_user" */
   mavryk_user: Array<Mavryk_User>;
@@ -45228,7 +52604,7 @@ export type Subscription_Root = {
   mavryk_user_aggregate: Mavryk_User_Aggregate;
   /** fetch data from the table: "mavryk_user" using primary key columns */
   mavryk_user_by_pk?: Maybe<Mavryk_User>;
-  /** fetch data from the table in a streaming manner : "mavryk_user" */
+  /** fetch data from the table in a streaming manner: "mavryk_user" */
   mavryk_user_stream: Array<Mavryk_User>;
   /** fetch data from the table: "mvk_mint_history_data" */
   mvk_mint_history_data: Array<Mvk_Mint_History_Data>;
@@ -45236,7 +52612,7 @@ export type Subscription_Root = {
   mvk_mint_history_data_aggregate: Mvk_Mint_History_Data_Aggregate;
   /** fetch data from the table: "mvk_mint_history_data" using primary key columns */
   mvk_mint_history_data_by_pk?: Maybe<Mvk_Mint_History_Data>;
-  /** fetch data from the table in a streaming manner : "mvk_mint_history_data" */
+  /** fetch data from the table in a streaming manner: "mvk_mint_history_data" */
   mvk_mint_history_data_stream: Array<Mvk_Mint_History_Data>;
   /** fetch data from the table: "mvk_token" */
   mvk_token: Array<Mvk_Token>;
@@ -45250,7 +52626,7 @@ export type Subscription_Root = {
   mvk_token_general_contract_aggregate: Mvk_Token_General_Contract_Aggregate;
   /** fetch data from the table: "mvk_token_general_contract" using primary key columns */
   mvk_token_general_contract_by_pk?: Maybe<Mvk_Token_General_Contract>;
-  /** fetch data from the table in a streaming manner : "mvk_token_general_contract" */
+  /** fetch data from the table in a streaming manner: "mvk_token_general_contract" */
   mvk_token_general_contract_stream: Array<Mvk_Token_General_Contract>;
   /** fetch data from the table: "mvk_token_operator" */
   mvk_token_operator: Array<Mvk_Token_Operator>;
@@ -45258,9 +52634,9 @@ export type Subscription_Root = {
   mvk_token_operator_aggregate: Mvk_Token_Operator_Aggregate;
   /** fetch data from the table: "mvk_token_operator" using primary key columns */
   mvk_token_operator_by_pk?: Maybe<Mvk_Token_Operator>;
-  /** fetch data from the table in a streaming manner : "mvk_token_operator" */
+  /** fetch data from the table in a streaming manner: "mvk_token_operator" */
   mvk_token_operator_stream: Array<Mvk_Token_Operator>;
-  /** fetch data from the table in a streaming manner : "mvk_token" */
+  /** fetch data from the table in a streaming manner: "mvk_token" */
   mvk_token_stream: Array<Mvk_Token>;
   /** fetch data from the table: "mvk_token_whitelist_contract" */
   mvk_token_whitelist_contract: Array<Mvk_Token_Whitelist_Contract>;
@@ -45268,7 +52644,7 @@ export type Subscription_Root = {
   mvk_token_whitelist_contract_aggregate: Mvk_Token_Whitelist_Contract_Aggregate;
   /** fetch data from the table: "mvk_token_whitelist_contract" using primary key columns */
   mvk_token_whitelist_contract_by_pk?: Maybe<Mvk_Token_Whitelist_Contract>;
-  /** fetch data from the table in a streaming manner : "mvk_token_whitelist_contract" */
+  /** fetch data from the table in a streaming manner: "mvk_token_whitelist_contract" */
   mvk_token_whitelist_contract_stream: Array<Mvk_Token_Whitelist_Contract>;
   /** fetch data from the table: "mvk_transfer_history_data" */
   mvk_transfer_history_data: Array<Mvk_Transfer_History_Data>;
@@ -45276,7 +52652,7 @@ export type Subscription_Root = {
   mvk_transfer_history_data_aggregate: Mvk_Transfer_History_Data_Aggregate;
   /** fetch data from the table: "mvk_transfer_history_data" using primary key columns */
   mvk_transfer_history_data_by_pk?: Maybe<Mvk_Transfer_History_Data>;
-  /** fetch data from the table in a streaming manner : "mvk_transfer_history_data" */
+  /** fetch data from the table in a streaming manner: "mvk_transfer_history_data" */
   mvk_transfer_history_data_stream: Array<Mvk_Transfer_History_Data>;
   /** fetch data from the table: "satellite" */
   satellite: Array<Satellite>;
@@ -45290,9 +52666,9 @@ export type Subscription_Root = {
   satellite_rewards_aggregate: Satellite_Rewards_Aggregate;
   /** fetch data from the table: "satellite_rewards" using primary key columns */
   satellite_rewards_by_pk?: Maybe<Satellite_Rewards>;
-  /** fetch data from the table in a streaming manner : "satellite_rewards" */
+  /** fetch data from the table in a streaming manner: "satellite_rewards" */
   satellite_rewards_stream: Array<Satellite_Rewards>;
-  /** fetch data from the table in a streaming manner : "satellite" */
+  /** fetch data from the table in a streaming manner: "satellite" */
   satellite_stream: Array<Satellite>;
   /** fetch data from the table: "smvk_history_data" */
   smvk_history_data: Array<Smvk_History_Data>;
@@ -45300,7 +52676,7 @@ export type Subscription_Root = {
   smvk_history_data_aggregate: Smvk_History_Data_Aggregate;
   /** fetch data from the table: "smvk_history_data" using primary key columns */
   smvk_history_data_by_pk?: Maybe<Smvk_History_Data>;
-  /** fetch data from the table in a streaming manner : "smvk_history_data" */
+  /** fetch data from the table in a streaming manner: "smvk_history_data" */
   smvk_history_data_stream: Array<Smvk_History_Data>;
   /** fetch data from the table: "stake_history_data" */
   stake_history_data: Array<Stake_History_Data>;
@@ -45308,7 +52684,7 @@ export type Subscription_Root = {
   stake_history_data_aggregate: Stake_History_Data_Aggregate;
   /** fetch data from the table: "stake_history_data" using primary key columns */
   stake_history_data_by_pk?: Maybe<Stake_History_Data>;
-  /** fetch data from the table in a streaming manner : "stake_history_data" */
+  /** fetch data from the table in a streaming manner: "stake_history_data" */
   stake_history_data_stream: Array<Stake_History_Data>;
   /** fetch data from the table: "token_sale" */
   token_sale: Array<Token_Sale>;
@@ -45320,7 +52696,7 @@ export type Subscription_Root = {
   token_sale_buy_option_aggregate: Token_Sale_Buy_Option_Aggregate;
   /** fetch data from the table: "token_sale_buy_option" using primary key columns */
   token_sale_buy_option_by_pk?: Maybe<Token_Sale_Buy_Option>;
-  /** fetch data from the table in a streaming manner : "token_sale_buy_option" */
+  /** fetch data from the table in a streaming manner: "token_sale_buy_option" */
   token_sale_buy_option_stream: Array<Token_Sale_Buy_Option>;
   /** fetch data from the table: "token_sale_buyer" */
   token_sale_buyer: Array<Token_Sale_Buyer>;
@@ -45334,13 +52710,13 @@ export type Subscription_Root = {
   token_sale_buyer_option_aggregate: Token_Sale_Buyer_Option_Aggregate;
   /** fetch data from the table: "token_sale_buyer_option" using primary key columns */
   token_sale_buyer_option_by_pk?: Maybe<Token_Sale_Buyer_Option>;
-  /** fetch data from the table in a streaming manner : "token_sale_buyer_option" */
+  /** fetch data from the table in a streaming manner: "token_sale_buyer_option" */
   token_sale_buyer_option_stream: Array<Token_Sale_Buyer_Option>;
-  /** fetch data from the table in a streaming manner : "token_sale_buyer" */
+  /** fetch data from the table in a streaming manner: "token_sale_buyer" */
   token_sale_buyer_stream: Array<Token_Sale_Buyer>;
   /** fetch data from the table: "token_sale" using primary key columns */
   token_sale_by_pk?: Maybe<Token_Sale>;
-  /** fetch data from the table in a streaming manner : "token_sale" */
+  /** fetch data from the table in a streaming manner: "token_sale" */
   token_sale_stream: Array<Token_Sale>;
   /** fetch data from the table: "token_sale_whitelisted_account" */
   token_sale_whitelisted_account: Array<Token_Sale_Whitelisted_Account>;
@@ -45348,7 +52724,7 @@ export type Subscription_Root = {
   token_sale_whitelisted_account_aggregate: Token_Sale_Whitelisted_Account_Aggregate;
   /** fetch data from the table: "token_sale_whitelisted_account" using primary key columns */
   token_sale_whitelisted_account_by_pk?: Maybe<Token_Sale_Whitelisted_Account>;
-  /** fetch data from the table in a streaming manner : "token_sale_whitelisted_account" */
+  /** fetch data from the table in a streaming manner: "token_sale_whitelisted_account" */
   token_sale_whitelisted_account_stream: Array<Token_Sale_Whitelisted_Account>;
   /** fetch data from the table: "treasury" */
   treasury: Array<Treasury>;
@@ -45368,7 +52744,7 @@ export type Subscription_Root = {
   treasury_factory_general_contract_aggregate: Treasury_Factory_General_Contract_Aggregate;
   /** fetch data from the table: "treasury_factory_general_contract" using primary key columns */
   treasury_factory_general_contract_by_pk?: Maybe<Treasury_Factory_General_Contract>;
-  /** fetch data from the table in a streaming manner : "treasury_factory_general_contract" */
+  /** fetch data from the table in a streaming manner: "treasury_factory_general_contract" */
   treasury_factory_general_contract_stream: Array<Treasury_Factory_General_Contract>;
   /** fetch data from the table: "treasury_factory_lambda" */
   treasury_factory_lambda: Array<Treasury_Factory_Lambda>;
@@ -45376,7 +52752,7 @@ export type Subscription_Root = {
   treasury_factory_lambda_aggregate: Treasury_Factory_Lambda_Aggregate;
   /** fetch data from the table: "treasury_factory_lambda" using primary key columns */
   treasury_factory_lambda_by_pk?: Maybe<Treasury_Factory_Lambda>;
-  /** fetch data from the table in a streaming manner : "treasury_factory_lambda" */
+  /** fetch data from the table in a streaming manner: "treasury_factory_lambda" */
   treasury_factory_lambda_stream: Array<Treasury_Factory_Lambda>;
   /** fetch data from the table: "treasury_factory_product_lambda" */
   treasury_factory_product_lambda: Array<Treasury_Factory_Product_Lambda>;
@@ -45384,9 +52760,9 @@ export type Subscription_Root = {
   treasury_factory_product_lambda_aggregate: Treasury_Factory_Product_Lambda_Aggregate;
   /** fetch data from the table: "treasury_factory_product_lambda" using primary key columns */
   treasury_factory_product_lambda_by_pk?: Maybe<Treasury_Factory_Product_Lambda>;
-  /** fetch data from the table in a streaming manner : "treasury_factory_product_lambda" */
+  /** fetch data from the table in a streaming manner: "treasury_factory_product_lambda" */
   treasury_factory_product_lambda_stream: Array<Treasury_Factory_Product_Lambda>;
-  /** fetch data from the table in a streaming manner : "treasury_factory" */
+  /** fetch data from the table in a streaming manner: "treasury_factory" */
   treasury_factory_stream: Array<Treasury_Factory>;
   /** fetch data from the table: "treasury_factory_whitelist_contract" */
   treasury_factory_whitelist_contract: Array<Treasury_Factory_Whitelist_Contract>;
@@ -45394,7 +52770,7 @@ export type Subscription_Root = {
   treasury_factory_whitelist_contract_aggregate: Treasury_Factory_Whitelist_Contract_Aggregate;
   /** fetch data from the table: "treasury_factory_whitelist_contract" using primary key columns */
   treasury_factory_whitelist_contract_by_pk?: Maybe<Treasury_Factory_Whitelist_Contract>;
-  /** fetch data from the table in a streaming manner : "treasury_factory_whitelist_contract" */
+  /** fetch data from the table in a streaming manner: "treasury_factory_whitelist_contract" */
   treasury_factory_whitelist_contract_stream: Array<Treasury_Factory_Whitelist_Contract>;
   /** fetch data from the table: "treasury_factory_whitelist_token_contract" */
   treasury_factory_whitelist_token_contract: Array<Treasury_Factory_Whitelist_Token_Contract>;
@@ -45402,7 +52778,7 @@ export type Subscription_Root = {
   treasury_factory_whitelist_token_contract_aggregate: Treasury_Factory_Whitelist_Token_Contract_Aggregate;
   /** fetch data from the table: "treasury_factory_whitelist_token_contract" using primary key columns */
   treasury_factory_whitelist_token_contract_by_pk?: Maybe<Treasury_Factory_Whitelist_Token_Contract>;
-  /** fetch data from the table in a streaming manner : "treasury_factory_whitelist_token_contract" */
+  /** fetch data from the table in a streaming manner: "treasury_factory_whitelist_token_contract" */
   treasury_factory_whitelist_token_contract_stream: Array<Treasury_Factory_Whitelist_Token_Contract>;
   /** fetch data from the table: "treasury_general_contract" */
   treasury_general_contract: Array<Treasury_General_Contract>;
@@ -45410,7 +52786,7 @@ export type Subscription_Root = {
   treasury_general_contract_aggregate: Treasury_General_Contract_Aggregate;
   /** fetch data from the table: "treasury_general_contract" using primary key columns */
   treasury_general_contract_by_pk?: Maybe<Treasury_General_Contract>;
-  /** fetch data from the table in a streaming manner : "treasury_general_contract" */
+  /** fetch data from the table in a streaming manner: "treasury_general_contract" */
   treasury_general_contract_stream: Array<Treasury_General_Contract>;
   /** fetch data from the table: "treasury_lambda" */
   treasury_lambda: Array<Treasury_Lambda>;
@@ -45418,9 +52794,9 @@ export type Subscription_Root = {
   treasury_lambda_aggregate: Treasury_Lambda_Aggregate;
   /** fetch data from the table: "treasury_lambda" using primary key columns */
   treasury_lambda_by_pk?: Maybe<Treasury_Lambda>;
-  /** fetch data from the table in a streaming manner : "treasury_lambda" */
+  /** fetch data from the table in a streaming manner: "treasury_lambda" */
   treasury_lambda_stream: Array<Treasury_Lambda>;
-  /** fetch data from the table in a streaming manner : "treasury" */
+  /** fetch data from the table in a streaming manner: "treasury" */
   treasury_stream: Array<Treasury>;
   /** fetch data from the table: "treasury_transfer_history_data" */
   treasury_transfer_history_data: Array<Treasury_Transfer_History_Data>;
@@ -45428,7 +52804,7 @@ export type Subscription_Root = {
   treasury_transfer_history_data_aggregate: Treasury_Transfer_History_Data_Aggregate;
   /** fetch data from the table: "treasury_transfer_history_data" using primary key columns */
   treasury_transfer_history_data_by_pk?: Maybe<Treasury_Transfer_History_Data>;
-  /** fetch data from the table in a streaming manner : "treasury_transfer_history_data" */
+  /** fetch data from the table in a streaming manner: "treasury_transfer_history_data" */
   treasury_transfer_history_data_stream: Array<Treasury_Transfer_History_Data>;
   /** fetch data from the table: "treasury_whitelist_contract" */
   treasury_whitelist_contract: Array<Treasury_Whitelist_Contract>;
@@ -45436,7 +52812,7 @@ export type Subscription_Root = {
   treasury_whitelist_contract_aggregate: Treasury_Whitelist_Contract_Aggregate;
   /** fetch data from the table: "treasury_whitelist_contract" using primary key columns */
   treasury_whitelist_contract_by_pk?: Maybe<Treasury_Whitelist_Contract>;
-  /** fetch data from the table in a streaming manner : "treasury_whitelist_contract" */
+  /** fetch data from the table in a streaming manner: "treasury_whitelist_contract" */
   treasury_whitelist_contract_stream: Array<Treasury_Whitelist_Contract>;
   /** fetch data from the table: "treasury_whitelist_token_contract" */
   treasury_whitelist_token_contract: Array<Treasury_Whitelist_Token_Contract>;
@@ -45444,7 +52820,7 @@ export type Subscription_Root = {
   treasury_whitelist_token_contract_aggregate: Treasury_Whitelist_Token_Contract_Aggregate;
   /** fetch data from the table: "treasury_whitelist_token_contract" using primary key columns */
   treasury_whitelist_token_contract_by_pk?: Maybe<Treasury_Whitelist_Token_Contract>;
-  /** fetch data from the table in a streaming manner : "treasury_whitelist_token_contract" */
+  /** fetch data from the table in a streaming manner: "treasury_whitelist_token_contract" */
   treasury_whitelist_token_contract_stream: Array<Treasury_Whitelist_Token_Contract>;
   /** fetch data from the table: "vault" */
   vault: Array<Vault>;
@@ -45458,7 +52834,7 @@ export type Subscription_Root = {
   vault_depositor_aggregate: Vault_Depositor_Aggregate;
   /** fetch data from the table: "vault_depositor" using primary key columns */
   vault_depositor_by_pk?: Maybe<Vault_Depositor>;
-  /** fetch data from the table in a streaming manner : "vault_depositor" */
+  /** fetch data from the table in a streaming manner: "vault_depositor" */
   vault_depositor_stream: Array<Vault_Depositor>;
   /** fetch data from the table: "vault_factory" */
   vault_factory: Array<Vault_Factory>;
@@ -45472,7 +52848,7 @@ export type Subscription_Root = {
   vault_factory_general_contract_aggregate: Vault_Factory_General_Contract_Aggregate;
   /** fetch data from the table: "vault_factory_general_contract" using primary key columns */
   vault_factory_general_contract_by_pk?: Maybe<Vault_Factory_General_Contract>;
-  /** fetch data from the table in a streaming manner : "vault_factory_general_contract" */
+  /** fetch data from the table in a streaming manner: "vault_factory_general_contract" */
   vault_factory_general_contract_stream: Array<Vault_Factory_General_Contract>;
   /** fetch data from the table: "vault_factory_lambda" */
   vault_factory_lambda: Array<Vault_Factory_Lambda>;
@@ -45480,7 +52856,7 @@ export type Subscription_Root = {
   vault_factory_lambda_aggregate: Vault_Factory_Lambda_Aggregate;
   /** fetch data from the table: "vault_factory_lambda" using primary key columns */
   vault_factory_lambda_by_pk?: Maybe<Vault_Factory_Lambda>;
-  /** fetch data from the table in a streaming manner : "vault_factory_lambda" */
+  /** fetch data from the table in a streaming manner: "vault_factory_lambda" */
   vault_factory_lambda_stream: Array<Vault_Factory_Lambda>;
   /** fetch data from the table: "vault_factory_product_lambda" */
   vault_factory_product_lambda: Array<Vault_Factory_Product_Lambda>;
@@ -45488,9 +52864,9 @@ export type Subscription_Root = {
   vault_factory_product_lambda_aggregate: Vault_Factory_Product_Lambda_Aggregate;
   /** fetch data from the table: "vault_factory_product_lambda" using primary key columns */
   vault_factory_product_lambda_by_pk?: Maybe<Vault_Factory_Product_Lambda>;
-  /** fetch data from the table in a streaming manner : "vault_factory_product_lambda" */
+  /** fetch data from the table in a streaming manner: "vault_factory_product_lambda" */
   vault_factory_product_lambda_stream: Array<Vault_Factory_Product_Lambda>;
-  /** fetch data from the table in a streaming manner : "vault_factory" */
+  /** fetch data from the table in a streaming manner: "vault_factory" */
   vault_factory_stream: Array<Vault_Factory>;
   /** fetch data from the table: "vault_factory_whitelist_contract" */
   vault_factory_whitelist_contract: Array<Vault_Factory_Whitelist_Contract>;
@@ -45498,7 +52874,7 @@ export type Subscription_Root = {
   vault_factory_whitelist_contract_aggregate: Vault_Factory_Whitelist_Contract_Aggregate;
   /** fetch data from the table: "vault_factory_whitelist_contract" using primary key columns */
   vault_factory_whitelist_contract_by_pk?: Maybe<Vault_Factory_Whitelist_Contract>;
-  /** fetch data from the table in a streaming manner : "vault_factory_whitelist_contract" */
+  /** fetch data from the table in a streaming manner: "vault_factory_whitelist_contract" */
   vault_factory_whitelist_contract_stream: Array<Vault_Factory_Whitelist_Contract>;
   /** fetch data from the table: "vault_lambda" */
   vault_lambda: Array<Vault_Lambda>;
@@ -45506,9 +52882,9 @@ export type Subscription_Root = {
   vault_lambda_aggregate: Vault_Lambda_Aggregate;
   /** fetch data from the table: "vault_lambda" using primary key columns */
   vault_lambda_by_pk?: Maybe<Vault_Lambda>;
-  /** fetch data from the table in a streaming manner : "vault_lambda" */
+  /** fetch data from the table in a streaming manner: "vault_lambda" */
   vault_lambda_stream: Array<Vault_Lambda>;
-  /** fetch data from the table in a streaming manner : "vault" */
+  /** fetch data from the table in a streaming manner: "vault" */
   vault_stream: Array<Vault>;
   /** fetch data from the table: "vesting" */
   vesting: Array<Vesting>;
@@ -45522,7 +52898,7 @@ export type Subscription_Root = {
   vesting_general_contract_aggregate: Vesting_General_Contract_Aggregate;
   /** fetch data from the table: "vesting_general_contract" using primary key columns */
   vesting_general_contract_by_pk?: Maybe<Vesting_General_Contract>;
-  /** fetch data from the table in a streaming manner : "vesting_general_contract" */
+  /** fetch data from the table in a streaming manner: "vesting_general_contract" */
   vesting_general_contract_stream: Array<Vesting_General_Contract>;
   /** fetch data from the table: "vesting_lambda" */
   vesting_lambda: Array<Vesting_Lambda>;
@@ -45530,9 +52906,9 @@ export type Subscription_Root = {
   vesting_lambda_aggregate: Vesting_Lambda_Aggregate;
   /** fetch data from the table: "vesting_lambda" using primary key columns */
   vesting_lambda_by_pk?: Maybe<Vesting_Lambda>;
-  /** fetch data from the table in a streaming manner : "vesting_lambda" */
+  /** fetch data from the table in a streaming manner: "vesting_lambda" */
   vesting_lambda_stream: Array<Vesting_Lambda>;
-  /** fetch data from the table in a streaming manner : "vesting" */
+  /** fetch data from the table in a streaming manner: "vesting" */
   vesting_stream: Array<Vesting>;
   /** fetch data from the table: "vesting_vestee" */
   vesting_vestee: Array<Vesting_Vestee>;
@@ -45540,7 +52916,7 @@ export type Subscription_Root = {
   vesting_vestee_aggregate: Vesting_Vestee_Aggregate;
   /** fetch data from the table: "vesting_vestee" using primary key columns */
   vesting_vestee_by_pk?: Maybe<Vesting_Vestee>;
-  /** fetch data from the table in a streaming manner : "vesting_vestee" */
+  /** fetch data from the table in a streaming manner: "vesting_vestee" */
   vesting_vestee_stream: Array<Vesting_Vestee>;
   /** fetch data from the table: "vesting_whitelist_contract" */
   vesting_whitelist_contract: Array<Vesting_Whitelist_Contract>;
@@ -45548,7 +52924,7 @@ export type Subscription_Root = {
   vesting_whitelist_contract_aggregate: Vesting_Whitelist_Contract_Aggregate;
   /** fetch data from the table: "vesting_whitelist_contract" using primary key columns */
   vesting_whitelist_contract_by_pk?: Maybe<Vesting_Whitelist_Contract>;
-  /** fetch data from the table in a streaming manner : "vesting_whitelist_contract" */
+  /** fetch data from the table in a streaming manner: "vesting_whitelist_contract" */
   vesting_whitelist_contract_stream: Array<Vesting_Whitelist_Contract>;
   /** fetch data from the table: "whitelist_developer" */
   whitelist_developer: Array<Whitelist_Developer>;
@@ -45556,7 +52932,7 @@ export type Subscription_Root = {
   whitelist_developer_aggregate: Whitelist_Developer_Aggregate;
   /** fetch data from the table: "whitelist_developer" using primary key columns */
   whitelist_developer_by_pk?: Maybe<Whitelist_Developer>;
-  /** fetch data from the table in a streaming manner : "whitelist_developer" */
+  /** fetch data from the table in a streaming manner: "whitelist_developer" */
   whitelist_developer_stream: Array<Whitelist_Developer>;
 };
 
@@ -50286,6 +57662,33 @@ export type Token_Sale_Aggregate = {
   nodes: Array<Token_Sale>;
 };
 
+export type Token_Sale_Aggregate_Bool_Exp = {
+  bool_and?: InputMaybe<Token_Sale_Aggregate_Bool_Exp_Bool_And>;
+  bool_or?: InputMaybe<Token_Sale_Aggregate_Bool_Exp_Bool_Or>;
+  count?: InputMaybe<Token_Sale_Aggregate_Bool_Exp_Count>;
+};
+
+export type Token_Sale_Aggregate_Bool_Exp_Bool_And = {
+  arguments: Token_Sale_Select_Column_Token_Sale_Aggregate_Bool_Exp_Bool_And_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Token_Sale_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Token_Sale_Aggregate_Bool_Exp_Bool_Or = {
+  arguments: Token_Sale_Select_Column_Token_Sale_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Token_Sale_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Token_Sale_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Token_Sale_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Token_Sale_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
 /** aggregate fields of "token_sale" */
 export type Token_Sale_Aggregate_Fields = {
   __typename?: 'token_sale_aggregate_fields';
@@ -50353,8 +57756,11 @@ export type Token_Sale_Bool_Exp = {
   paused?: InputMaybe<Boolean_Comparison_Exp>;
   started?: InputMaybe<Boolean_Comparison_Exp>;
   token_sale_buy_options?: InputMaybe<Token_Sale_Buy_Option_Bool_Exp>;
+  token_sale_buy_options_aggregate?: InputMaybe<Token_Sale_Buy_Option_Aggregate_Bool_Exp>;
   token_sale_buyers?: InputMaybe<Token_Sale_Buyer_Bool_Exp>;
+  token_sale_buyers_aggregate?: InputMaybe<Token_Sale_Buyer_Aggregate_Bool_Exp>;
   token_sale_whitelist_accounts?: InputMaybe<Token_Sale_Whitelisted_Account_Bool_Exp>;
+  token_sale_whitelist_accounts_aggregate?: InputMaybe<Token_Sale_Whitelisted_Account_Aggregate_Bool_Exp>;
   vesting_period_duration_sec?: InputMaybe<Bigint_Comparison_Exp>;
   whitelist_end_timestamp?: InputMaybe<Timestamptz_Comparison_Exp>;
   whitelist_start_timestamp?: InputMaybe<Timestamptz_Comparison_Exp>;
@@ -50406,6 +57812,91 @@ export type Token_Sale_Buy_Option_Aggregate = {
   __typename?: 'token_sale_buy_option_aggregate';
   aggregate?: Maybe<Token_Sale_Buy_Option_Aggregate_Fields>;
   nodes: Array<Token_Sale_Buy_Option>;
+};
+
+export type Token_Sale_Buy_Option_Aggregate_Bool_Exp = {
+  avg?: InputMaybe<Token_Sale_Buy_Option_Aggregate_Bool_Exp_Avg>;
+  corr?: InputMaybe<Token_Sale_Buy_Option_Aggregate_Bool_Exp_Corr>;
+  count?: InputMaybe<Token_Sale_Buy_Option_Aggregate_Bool_Exp_Count>;
+  covar_samp?: InputMaybe<Token_Sale_Buy_Option_Aggregate_Bool_Exp_Covar_Samp>;
+  max?: InputMaybe<Token_Sale_Buy_Option_Aggregate_Bool_Exp_Max>;
+  min?: InputMaybe<Token_Sale_Buy_Option_Aggregate_Bool_Exp_Min>;
+  stddev_samp?: InputMaybe<Token_Sale_Buy_Option_Aggregate_Bool_Exp_Stddev_Samp>;
+  sum?: InputMaybe<Token_Sale_Buy_Option_Aggregate_Bool_Exp_Sum>;
+  var_samp?: InputMaybe<Token_Sale_Buy_Option_Aggregate_Bool_Exp_Var_Samp>;
+};
+
+export type Token_Sale_Buy_Option_Aggregate_Bool_Exp_Avg = {
+  arguments: Token_Sale_Buy_Option_Select_Column_Token_Sale_Buy_Option_Aggregate_Bool_Exp_Avg_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Token_Sale_Buy_Option_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Token_Sale_Buy_Option_Aggregate_Bool_Exp_Corr = {
+  arguments: Token_Sale_Buy_Option_Aggregate_Bool_Exp_Corr_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Token_Sale_Buy_Option_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Token_Sale_Buy_Option_Aggregate_Bool_Exp_Corr_Arguments = {
+  X: Token_Sale_Buy_Option_Select_Column_Token_Sale_Buy_Option_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+  Y: Token_Sale_Buy_Option_Select_Column_Token_Sale_Buy_Option_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+};
+
+export type Token_Sale_Buy_Option_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Token_Sale_Buy_Option_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Token_Sale_Buy_Option_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+export type Token_Sale_Buy_Option_Aggregate_Bool_Exp_Covar_Samp = {
+  arguments: Token_Sale_Buy_Option_Aggregate_Bool_Exp_Covar_Samp_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Token_Sale_Buy_Option_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Token_Sale_Buy_Option_Aggregate_Bool_Exp_Covar_Samp_Arguments = {
+  X: Token_Sale_Buy_Option_Select_Column_Token_Sale_Buy_Option_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+  Y: Token_Sale_Buy_Option_Select_Column_Token_Sale_Buy_Option_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+};
+
+export type Token_Sale_Buy_Option_Aggregate_Bool_Exp_Max = {
+  arguments: Token_Sale_Buy_Option_Select_Column_Token_Sale_Buy_Option_Aggregate_Bool_Exp_Max_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Token_Sale_Buy_Option_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Token_Sale_Buy_Option_Aggregate_Bool_Exp_Min = {
+  arguments: Token_Sale_Buy_Option_Select_Column_Token_Sale_Buy_Option_Aggregate_Bool_Exp_Min_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Token_Sale_Buy_Option_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Token_Sale_Buy_Option_Aggregate_Bool_Exp_Stddev_Samp = {
+  arguments: Token_Sale_Buy_Option_Select_Column_Token_Sale_Buy_Option_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Token_Sale_Buy_Option_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Token_Sale_Buy_Option_Aggregate_Bool_Exp_Sum = {
+  arguments: Token_Sale_Buy_Option_Select_Column_Token_Sale_Buy_Option_Aggregate_Bool_Exp_Sum_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Token_Sale_Buy_Option_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Token_Sale_Buy_Option_Aggregate_Bool_Exp_Var_Samp = {
+  arguments: Token_Sale_Buy_Option_Select_Column_Token_Sale_Buy_Option_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Token_Sale_Buy_Option_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
 };
 
 /** aggregate fields of "token_sale_buy_option" */
@@ -50479,6 +57970,7 @@ export type Token_Sale_Buy_Option_Bool_Exp = {
   _not?: InputMaybe<Token_Sale_Buy_Option_Bool_Exp>;
   _or?: InputMaybe<Array<Token_Sale_Buy_Option_Bool_Exp>>;
   buyer_options?: InputMaybe<Token_Sale_Buyer_Option_Bool_Exp>;
+  buyer_options_aggregate?: InputMaybe<Token_Sale_Buyer_Option_Aggregate_Bool_Exp>;
   id?: InputMaybe<Bigint_Comparison_Exp>;
   internal_id?: InputMaybe<Smallint_Comparison_Exp>;
   max_amount_cap?: InputMaybe<Float8_Comparison_Exp>;
@@ -50586,6 +58078,118 @@ export enum Token_Sale_Buy_Option_Select_Column {
   TotalBought = 'total_bought',
   /** column name */
   VestingPeriods = 'vesting_periods',
+  /** column name */
+  WhitelistMaxAmountTotal = 'whitelist_max_amount_total'
+}
+
+/** select "token_sale_buy_option_aggregate_bool_exp_avg_arguments_columns" columns of table "token_sale_buy_option" */
+export enum Token_Sale_Buy_Option_Select_Column_Token_Sale_Buy_Option_Aggregate_Bool_Exp_Avg_Arguments_Columns {
+  /** column name */
+  MaxAmountCap = 'max_amount_cap',
+  /** column name */
+  MaxAmountPerWalletTotal = 'max_amount_per_wallet_total',
+  /** column name */
+  MinMvkAmount = 'min_mvk_amount',
+  /** column name */
+  TotalBought = 'total_bought',
+  /** column name */
+  WhitelistMaxAmountTotal = 'whitelist_max_amount_total'
+}
+
+/** select "token_sale_buy_option_aggregate_bool_exp_corr_arguments_columns" columns of table "token_sale_buy_option" */
+export enum Token_Sale_Buy_Option_Select_Column_Token_Sale_Buy_Option_Aggregate_Bool_Exp_Corr_Arguments_Columns {
+  /** column name */
+  MaxAmountCap = 'max_amount_cap',
+  /** column name */
+  MaxAmountPerWalletTotal = 'max_amount_per_wallet_total',
+  /** column name */
+  MinMvkAmount = 'min_mvk_amount',
+  /** column name */
+  TotalBought = 'total_bought',
+  /** column name */
+  WhitelistMaxAmountTotal = 'whitelist_max_amount_total'
+}
+
+/** select "token_sale_buy_option_aggregate_bool_exp_covar_samp_arguments_columns" columns of table "token_sale_buy_option" */
+export enum Token_Sale_Buy_Option_Select_Column_Token_Sale_Buy_Option_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns {
+  /** column name */
+  MaxAmountCap = 'max_amount_cap',
+  /** column name */
+  MaxAmountPerWalletTotal = 'max_amount_per_wallet_total',
+  /** column name */
+  MinMvkAmount = 'min_mvk_amount',
+  /** column name */
+  TotalBought = 'total_bought',
+  /** column name */
+  WhitelistMaxAmountTotal = 'whitelist_max_amount_total'
+}
+
+/** select "token_sale_buy_option_aggregate_bool_exp_max_arguments_columns" columns of table "token_sale_buy_option" */
+export enum Token_Sale_Buy_Option_Select_Column_Token_Sale_Buy_Option_Aggregate_Bool_Exp_Max_Arguments_Columns {
+  /** column name */
+  MaxAmountCap = 'max_amount_cap',
+  /** column name */
+  MaxAmountPerWalletTotal = 'max_amount_per_wallet_total',
+  /** column name */
+  MinMvkAmount = 'min_mvk_amount',
+  /** column name */
+  TotalBought = 'total_bought',
+  /** column name */
+  WhitelistMaxAmountTotal = 'whitelist_max_amount_total'
+}
+
+/** select "token_sale_buy_option_aggregate_bool_exp_min_arguments_columns" columns of table "token_sale_buy_option" */
+export enum Token_Sale_Buy_Option_Select_Column_Token_Sale_Buy_Option_Aggregate_Bool_Exp_Min_Arguments_Columns {
+  /** column name */
+  MaxAmountCap = 'max_amount_cap',
+  /** column name */
+  MaxAmountPerWalletTotal = 'max_amount_per_wallet_total',
+  /** column name */
+  MinMvkAmount = 'min_mvk_amount',
+  /** column name */
+  TotalBought = 'total_bought',
+  /** column name */
+  WhitelistMaxAmountTotal = 'whitelist_max_amount_total'
+}
+
+/** select "token_sale_buy_option_aggregate_bool_exp_stddev_samp_arguments_columns" columns of table "token_sale_buy_option" */
+export enum Token_Sale_Buy_Option_Select_Column_Token_Sale_Buy_Option_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns {
+  /** column name */
+  MaxAmountCap = 'max_amount_cap',
+  /** column name */
+  MaxAmountPerWalletTotal = 'max_amount_per_wallet_total',
+  /** column name */
+  MinMvkAmount = 'min_mvk_amount',
+  /** column name */
+  TotalBought = 'total_bought',
+  /** column name */
+  WhitelistMaxAmountTotal = 'whitelist_max_amount_total'
+}
+
+/** select "token_sale_buy_option_aggregate_bool_exp_sum_arguments_columns" columns of table "token_sale_buy_option" */
+export enum Token_Sale_Buy_Option_Select_Column_Token_Sale_Buy_Option_Aggregate_Bool_Exp_Sum_Arguments_Columns {
+  /** column name */
+  MaxAmountCap = 'max_amount_cap',
+  /** column name */
+  MaxAmountPerWalletTotal = 'max_amount_per_wallet_total',
+  /** column name */
+  MinMvkAmount = 'min_mvk_amount',
+  /** column name */
+  TotalBought = 'total_bought',
+  /** column name */
+  WhitelistMaxAmountTotal = 'whitelist_max_amount_total'
+}
+
+/** select "token_sale_buy_option_aggregate_bool_exp_var_samp_arguments_columns" columns of table "token_sale_buy_option" */
+export enum Token_Sale_Buy_Option_Select_Column_Token_Sale_Buy_Option_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns {
+  /** column name */
+  MaxAmountCap = 'max_amount_cap',
+  /** column name */
+  MaxAmountPerWalletTotal = 'max_amount_per_wallet_total',
+  /** column name */
+  MinMvkAmount = 'min_mvk_amount',
+  /** column name */
+  TotalBought = 'total_bought',
   /** column name */
   WhitelistMaxAmountTotal = 'whitelist_max_amount_total'
 }
@@ -50844,6 +58448,17 @@ export type Token_Sale_Buyer_Aggregate = {
   nodes: Array<Token_Sale_Buyer>;
 };
 
+export type Token_Sale_Buyer_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Token_Sale_Buyer_Aggregate_Bool_Exp_Count>;
+};
+
+export type Token_Sale_Buyer_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Token_Sale_Buyer_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Token_Sale_Buyer_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
 /** aggregate fields of "token_sale_buyer" */
 export type Token_Sale_Buyer_Aggregate_Fields = {
   __typename?: 'token_sale_buyer_aggregate_fields';
@@ -50902,6 +58517,7 @@ export type Token_Sale_Buyer_Bool_Exp = {
   buyer_id?: InputMaybe<String_Comparison_Exp>;
   id?: InputMaybe<Bigint_Comparison_Exp>;
   options?: InputMaybe<Token_Sale_Buyer_Option_Bool_Exp>;
+  options_aggregate?: InputMaybe<Token_Sale_Buyer_Option_Aggregate_Bool_Exp>;
   token_sale?: InputMaybe<Token_Sale_Bool_Exp>;
   token_sale_id?: InputMaybe<String_Comparison_Exp>;
 };
@@ -50958,6 +58574,91 @@ export type Token_Sale_Buyer_Option_Aggregate = {
   __typename?: 'token_sale_buyer_option_aggregate';
   aggregate?: Maybe<Token_Sale_Buyer_Option_Aggregate_Fields>;
   nodes: Array<Token_Sale_Buyer_Option>;
+};
+
+export type Token_Sale_Buyer_Option_Aggregate_Bool_Exp = {
+  avg?: InputMaybe<Token_Sale_Buyer_Option_Aggregate_Bool_Exp_Avg>;
+  corr?: InputMaybe<Token_Sale_Buyer_Option_Aggregate_Bool_Exp_Corr>;
+  count?: InputMaybe<Token_Sale_Buyer_Option_Aggregate_Bool_Exp_Count>;
+  covar_samp?: InputMaybe<Token_Sale_Buyer_Option_Aggregate_Bool_Exp_Covar_Samp>;
+  max?: InputMaybe<Token_Sale_Buyer_Option_Aggregate_Bool_Exp_Max>;
+  min?: InputMaybe<Token_Sale_Buyer_Option_Aggregate_Bool_Exp_Min>;
+  stddev_samp?: InputMaybe<Token_Sale_Buyer_Option_Aggregate_Bool_Exp_Stddev_Samp>;
+  sum?: InputMaybe<Token_Sale_Buyer_Option_Aggregate_Bool_Exp_Sum>;
+  var_samp?: InputMaybe<Token_Sale_Buyer_Option_Aggregate_Bool_Exp_Var_Samp>;
+};
+
+export type Token_Sale_Buyer_Option_Aggregate_Bool_Exp_Avg = {
+  arguments: Token_Sale_Buyer_Option_Select_Column_Token_Sale_Buyer_Option_Aggregate_Bool_Exp_Avg_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Token_Sale_Buyer_Option_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Token_Sale_Buyer_Option_Aggregate_Bool_Exp_Corr = {
+  arguments: Token_Sale_Buyer_Option_Aggregate_Bool_Exp_Corr_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Token_Sale_Buyer_Option_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Token_Sale_Buyer_Option_Aggregate_Bool_Exp_Corr_Arguments = {
+  X: Token_Sale_Buyer_Option_Select_Column_Token_Sale_Buyer_Option_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+  Y: Token_Sale_Buyer_Option_Select_Column_Token_Sale_Buyer_Option_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+};
+
+export type Token_Sale_Buyer_Option_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Token_Sale_Buyer_Option_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Token_Sale_Buyer_Option_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+export type Token_Sale_Buyer_Option_Aggregate_Bool_Exp_Covar_Samp = {
+  arguments: Token_Sale_Buyer_Option_Aggregate_Bool_Exp_Covar_Samp_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Token_Sale_Buyer_Option_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Token_Sale_Buyer_Option_Aggregate_Bool_Exp_Covar_Samp_Arguments = {
+  X: Token_Sale_Buyer_Option_Select_Column_Token_Sale_Buyer_Option_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+  Y: Token_Sale_Buyer_Option_Select_Column_Token_Sale_Buyer_Option_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+};
+
+export type Token_Sale_Buyer_Option_Aggregate_Bool_Exp_Max = {
+  arguments: Token_Sale_Buyer_Option_Select_Column_Token_Sale_Buyer_Option_Aggregate_Bool_Exp_Max_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Token_Sale_Buyer_Option_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Token_Sale_Buyer_Option_Aggregate_Bool_Exp_Min = {
+  arguments: Token_Sale_Buyer_Option_Select_Column_Token_Sale_Buyer_Option_Aggregate_Bool_Exp_Min_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Token_Sale_Buyer_Option_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Token_Sale_Buyer_Option_Aggregate_Bool_Exp_Stddev_Samp = {
+  arguments: Token_Sale_Buyer_Option_Select_Column_Token_Sale_Buyer_Option_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Token_Sale_Buyer_Option_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Token_Sale_Buyer_Option_Aggregate_Bool_Exp_Sum = {
+  arguments: Token_Sale_Buyer_Option_Select_Column_Token_Sale_Buyer_Option_Aggregate_Bool_Exp_Sum_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Token_Sale_Buyer_Option_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Token_Sale_Buyer_Option_Aggregate_Bool_Exp_Var_Samp = {
+  arguments: Token_Sale_Buyer_Option_Select_Column_Token_Sale_Buyer_Option_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Token_Sale_Buyer_Option_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
 };
 
 /** aggregate fields of "token_sale_buyer_option" */
@@ -51116,6 +58817,70 @@ export enum Token_Sale_Buyer_Option_Select_Column {
   LastClaimLevel = 'last_claim_level',
   /** column name */
   LastClaimTimestamp = 'last_claim_timestamp',
+  /** column name */
+  TokenBought = 'token_bought',
+  /** column name */
+  TokenClaimed = 'token_claimed'
+}
+
+/** select "token_sale_buyer_option_aggregate_bool_exp_avg_arguments_columns" columns of table "token_sale_buyer_option" */
+export enum Token_Sale_Buyer_Option_Select_Column_Token_Sale_Buyer_Option_Aggregate_Bool_Exp_Avg_Arguments_Columns {
+  /** column name */
+  TokenBought = 'token_bought',
+  /** column name */
+  TokenClaimed = 'token_claimed'
+}
+
+/** select "token_sale_buyer_option_aggregate_bool_exp_corr_arguments_columns" columns of table "token_sale_buyer_option" */
+export enum Token_Sale_Buyer_Option_Select_Column_Token_Sale_Buyer_Option_Aggregate_Bool_Exp_Corr_Arguments_Columns {
+  /** column name */
+  TokenBought = 'token_bought',
+  /** column name */
+  TokenClaimed = 'token_claimed'
+}
+
+/** select "token_sale_buyer_option_aggregate_bool_exp_covar_samp_arguments_columns" columns of table "token_sale_buyer_option" */
+export enum Token_Sale_Buyer_Option_Select_Column_Token_Sale_Buyer_Option_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns {
+  /** column name */
+  TokenBought = 'token_bought',
+  /** column name */
+  TokenClaimed = 'token_claimed'
+}
+
+/** select "token_sale_buyer_option_aggregate_bool_exp_max_arguments_columns" columns of table "token_sale_buyer_option" */
+export enum Token_Sale_Buyer_Option_Select_Column_Token_Sale_Buyer_Option_Aggregate_Bool_Exp_Max_Arguments_Columns {
+  /** column name */
+  TokenBought = 'token_bought',
+  /** column name */
+  TokenClaimed = 'token_claimed'
+}
+
+/** select "token_sale_buyer_option_aggregate_bool_exp_min_arguments_columns" columns of table "token_sale_buyer_option" */
+export enum Token_Sale_Buyer_Option_Select_Column_Token_Sale_Buyer_Option_Aggregate_Bool_Exp_Min_Arguments_Columns {
+  /** column name */
+  TokenBought = 'token_bought',
+  /** column name */
+  TokenClaimed = 'token_claimed'
+}
+
+/** select "token_sale_buyer_option_aggregate_bool_exp_stddev_samp_arguments_columns" columns of table "token_sale_buyer_option" */
+export enum Token_Sale_Buyer_Option_Select_Column_Token_Sale_Buyer_Option_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns {
+  /** column name */
+  TokenBought = 'token_bought',
+  /** column name */
+  TokenClaimed = 'token_claimed'
+}
+
+/** select "token_sale_buyer_option_aggregate_bool_exp_sum_arguments_columns" columns of table "token_sale_buyer_option" */
+export enum Token_Sale_Buyer_Option_Select_Column_Token_Sale_Buyer_Option_Aggregate_Bool_Exp_Sum_Arguments_Columns {
+  /** column name */
+  TokenBought = 'token_bought',
+  /** column name */
+  TokenClaimed = 'token_claimed'
+}
+
+/** select "token_sale_buyer_option_aggregate_bool_exp_var_samp_arguments_columns" columns of table "token_sale_buyer_option" */
+export enum Token_Sale_Buyer_Option_Select_Column_Token_Sale_Buyer_Option_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns {
   /** column name */
   TokenBought = 'token_bought',
   /** column name */
@@ -51517,6 +59282,26 @@ export enum Token_Sale_Select_Column {
   WhitelistStartTimestamp = 'whitelist_start_timestamp'
 }
 
+/** select "token_sale_aggregate_bool_exp_bool_and_arguments_columns" columns of table "token_sale" */
+export enum Token_Sale_Select_Column_Token_Sale_Aggregate_Bool_Exp_Bool_And_Arguments_Columns {
+  /** column name */
+  Ended = 'ended',
+  /** column name */
+  Paused = 'paused',
+  /** column name */
+  Started = 'started'
+}
+
+/** select "token_sale_aggregate_bool_exp_bool_or_arguments_columns" columns of table "token_sale" */
+export enum Token_Sale_Select_Column_Token_Sale_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns {
+  /** column name */
+  Ended = 'ended',
+  /** column name */
+  Paused = 'paused',
+  /** column name */
+  Started = 'started'
+}
+
 /** aggregate stddev on columns */
 export type Token_Sale_Stddev_Fields = {
   __typename?: 'token_sale_stddev_fields';
@@ -51649,6 +59434,17 @@ export type Token_Sale_Whitelisted_Account_Aggregate = {
   __typename?: 'token_sale_whitelisted_account_aggregate';
   aggregate?: Maybe<Token_Sale_Whitelisted_Account_Aggregate_Fields>;
   nodes: Array<Token_Sale_Whitelisted_Account>;
+};
+
+export type Token_Sale_Whitelisted_Account_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Token_Sale_Whitelisted_Account_Aggregate_Bool_Exp_Count>;
+};
+
+export type Token_Sale_Whitelisted_Account_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Token_Sale_Whitelisted_Account_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Token_Sale_Whitelisted_Account_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "token_sale_whitelisted_account" */
@@ -52024,6 +59820,33 @@ export type Treasury_Aggregate = {
   nodes: Array<Treasury>;
 };
 
+export type Treasury_Aggregate_Bool_Exp = {
+  bool_and?: InputMaybe<Treasury_Aggregate_Bool_Exp_Bool_And>;
+  bool_or?: InputMaybe<Treasury_Aggregate_Bool_Exp_Bool_Or>;
+  count?: InputMaybe<Treasury_Aggregate_Bool_Exp_Count>;
+};
+
+export type Treasury_Aggregate_Bool_Exp_Bool_And = {
+  arguments: Treasury_Select_Column_Treasury_Aggregate_Bool_Exp_Bool_And_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Treasury_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Treasury_Aggregate_Bool_Exp_Bool_Or = {
+  arguments: Treasury_Select_Column_Treasury_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Treasury_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Treasury_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Treasury_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Treasury_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
 /** aggregate fields of "treasury" */
 export type Treasury_Aggregate_Fields = {
   __typename?: 'treasury_aggregate_fields';
@@ -52057,19 +59880,25 @@ export type Treasury_Bool_Exp = {
   factory?: InputMaybe<Treasury_Factory_Bool_Exp>;
   factory_id?: InputMaybe<String_Comparison_Exp>;
   general_contracts?: InputMaybe<Treasury_General_Contract_Bool_Exp>;
+  general_contracts_aggregate?: InputMaybe<Treasury_General_Contract_Aggregate_Bool_Exp>;
   governance?: InputMaybe<Governance_Bool_Exp>;
   governance_financial_requests?: InputMaybe<Governance_Financial_Request_Bool_Exp>;
+  governance_financial_requests_aggregate?: InputMaybe<Governance_Financial_Request_Aggregate_Bool_Exp>;
   governance_id?: InputMaybe<String_Comparison_Exp>;
   lambdas?: InputMaybe<Treasury_Lambda_Bool_Exp>;
+  lambdas_aggregate?: InputMaybe<Treasury_Lambda_Aggregate_Bool_Exp>;
   last_updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   mint_mvk_and_transfer_paused?: InputMaybe<Boolean_Comparison_Exp>;
   name?: InputMaybe<String_Comparison_Exp>;
   stake_mvk_paused?: InputMaybe<Boolean_Comparison_Exp>;
   transfer_history_data?: InputMaybe<Treasury_Transfer_History_Data_Bool_Exp>;
+  transfer_history_data_aggregate?: InputMaybe<Treasury_Transfer_History_Data_Aggregate_Bool_Exp>;
   transfer_paused?: InputMaybe<Boolean_Comparison_Exp>;
   unstake_mvk_paused?: InputMaybe<Boolean_Comparison_Exp>;
   whitelist_contracts?: InputMaybe<Treasury_Whitelist_Contract_Bool_Exp>;
+  whitelist_contracts_aggregate?: InputMaybe<Treasury_Whitelist_Contract_Aggregate_Bool_Exp>;
   whitelist_token_contracts?: InputMaybe<Treasury_Whitelist_Token_Contract_Bool_Exp>;
+  whitelist_token_contracts_aggregate?: InputMaybe<Treasury_Whitelist_Token_Contract_Aggregate_Bool_Exp>;
 };
 
 /** columns and relationships of "treasury_factory" */
@@ -52238,6 +60067,33 @@ export type Treasury_Factory_Aggregate = {
   nodes: Array<Treasury_Factory>;
 };
 
+export type Treasury_Factory_Aggregate_Bool_Exp = {
+  bool_and?: InputMaybe<Treasury_Factory_Aggregate_Bool_Exp_Bool_And>;
+  bool_or?: InputMaybe<Treasury_Factory_Aggregate_Bool_Exp_Bool_Or>;
+  count?: InputMaybe<Treasury_Factory_Aggregate_Bool_Exp_Count>;
+};
+
+export type Treasury_Factory_Aggregate_Bool_Exp_Bool_And = {
+  arguments: Treasury_Factory_Select_Column_Treasury_Factory_Aggregate_Bool_Exp_Bool_And_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Treasury_Factory_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Treasury_Factory_Aggregate_Bool_Exp_Bool_Or = {
+  arguments: Treasury_Factory_Select_Column_Treasury_Factory_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Treasury_Factory_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Treasury_Factory_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Treasury_Factory_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Treasury_Factory_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
 /** aggregate fields of "treasury_factory" */
 export type Treasury_Factory_Aggregate_Fields = {
   __typename?: 'treasury_factory_aggregate_fields';
@@ -52296,17 +60152,23 @@ export type Treasury_Factory_Bool_Exp = {
   admin?: InputMaybe<String_Comparison_Exp>;
   create_treasury_paused?: InputMaybe<Boolean_Comparison_Exp>;
   general_contracts?: InputMaybe<Treasury_Factory_General_Contract_Bool_Exp>;
+  general_contracts_aggregate?: InputMaybe<Treasury_Factory_General_Contract_Aggregate_Bool_Exp>;
   governance?: InputMaybe<Governance_Bool_Exp>;
   governance_id?: InputMaybe<String_Comparison_Exp>;
   lambdas?: InputMaybe<Treasury_Factory_Lambda_Bool_Exp>;
+  lambdas_aggregate?: InputMaybe<Treasury_Factory_Lambda_Aggregate_Bool_Exp>;
   last_updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   product_lambdas?: InputMaybe<Treasury_Factory_Product_Lambda_Bool_Exp>;
+  product_lambdas_aggregate?: InputMaybe<Treasury_Factory_Product_Lambda_Aggregate_Bool_Exp>;
   track_treasury_paused?: InputMaybe<Boolean_Comparison_Exp>;
   treasuries?: InputMaybe<Treasury_Bool_Exp>;
+  treasuries_aggregate?: InputMaybe<Treasury_Aggregate_Bool_Exp>;
   treasury_name_max_length?: InputMaybe<Smallint_Comparison_Exp>;
   untrack_treasury_paused?: InputMaybe<Boolean_Comparison_Exp>;
   whitelist_contracts?: InputMaybe<Treasury_Factory_Whitelist_Contract_Bool_Exp>;
+  whitelist_contracts_aggregate?: InputMaybe<Treasury_Factory_Whitelist_Contract_Aggregate_Bool_Exp>;
   whitelist_token_contracts?: InputMaybe<Treasury_Factory_Whitelist_Token_Contract_Bool_Exp>;
+  whitelist_token_contracts_aggregate?: InputMaybe<Treasury_Factory_Whitelist_Token_Contract_Aggregate_Bool_Exp>;
 };
 
 /** columns and relationships of "treasury_factory_general_contract" */
@@ -52325,6 +60187,17 @@ export type Treasury_Factory_General_Contract_Aggregate = {
   __typename?: 'treasury_factory_general_contract_aggregate';
   aggregate?: Maybe<Treasury_Factory_General_Contract_Aggregate_Fields>;
   nodes: Array<Treasury_Factory_General_Contract>;
+};
+
+export type Treasury_Factory_General_Contract_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Treasury_Factory_General_Contract_Aggregate_Bool_Exp_Count>;
+};
+
+export type Treasury_Factory_General_Contract_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Treasury_Factory_General_Contract_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Treasury_Factory_General_Contract_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "treasury_factory_general_contract" */
@@ -52553,6 +60426,17 @@ export type Treasury_Factory_Lambda_Aggregate = {
   __typename?: 'treasury_factory_lambda_aggregate';
   aggregate?: Maybe<Treasury_Factory_Lambda_Aggregate_Fields>;
   nodes: Array<Treasury_Factory_Lambda>;
+};
+
+export type Treasury_Factory_Lambda_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Treasury_Factory_Lambda_Aggregate_Bool_Exp_Count>;
+};
+
+export type Treasury_Factory_Lambda_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Treasury_Factory_Lambda_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Treasury_Factory_Lambda_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "treasury_factory_lambda" */
@@ -52849,6 +60733,17 @@ export type Treasury_Factory_Product_Lambda_Aggregate = {
   nodes: Array<Treasury_Factory_Product_Lambda>;
 };
 
+export type Treasury_Factory_Product_Lambda_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Treasury_Factory_Product_Lambda_Aggregate_Bool_Exp_Count>;
+};
+
+export type Treasury_Factory_Product_Lambda_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Treasury_Factory_Product_Lambda_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Treasury_Factory_Product_Lambda_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
 /** aggregate fields of "treasury_factory_product_lambda" */
 export type Treasury_Factory_Product_Lambda_Aggregate_Fields = {
   __typename?: 'treasury_factory_product_lambda_aggregate_fields';
@@ -53087,6 +60982,26 @@ export enum Treasury_Factory_Select_Column {
   UntrackTreasuryPaused = 'untrack_treasury_paused'
 }
 
+/** select "treasury_factory_aggregate_bool_exp_bool_and_arguments_columns" columns of table "treasury_factory" */
+export enum Treasury_Factory_Select_Column_Treasury_Factory_Aggregate_Bool_Exp_Bool_And_Arguments_Columns {
+  /** column name */
+  CreateTreasuryPaused = 'create_treasury_paused',
+  /** column name */
+  TrackTreasuryPaused = 'track_treasury_paused',
+  /** column name */
+  UntrackTreasuryPaused = 'untrack_treasury_paused'
+}
+
+/** select "treasury_factory_aggregate_bool_exp_bool_or_arguments_columns" columns of table "treasury_factory" */
+export enum Treasury_Factory_Select_Column_Treasury_Factory_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns {
+  /** column name */
+  CreateTreasuryPaused = 'create_treasury_paused',
+  /** column name */
+  TrackTreasuryPaused = 'track_treasury_paused',
+  /** column name */
+  UntrackTreasuryPaused = 'untrack_treasury_paused'
+}
+
 /** aggregate stddev on columns */
 export type Treasury_Factory_Stddev_Fields = {
   __typename?: 'treasury_factory_stddev_fields';
@@ -53200,6 +61115,17 @@ export type Treasury_Factory_Whitelist_Contract_Aggregate = {
   __typename?: 'treasury_factory_whitelist_contract_aggregate';
   aggregate?: Maybe<Treasury_Factory_Whitelist_Contract_Aggregate_Fields>;
   nodes: Array<Treasury_Factory_Whitelist_Contract>;
+};
+
+export type Treasury_Factory_Whitelist_Contract_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Treasury_Factory_Whitelist_Contract_Aggregate_Bool_Exp_Count>;
+};
+
+export type Treasury_Factory_Whitelist_Contract_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Treasury_Factory_Whitelist_Contract_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Treasury_Factory_Whitelist_Contract_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "treasury_factory_whitelist_contract" */
@@ -53428,6 +61354,17 @@ export type Treasury_Factory_Whitelist_Token_Contract_Aggregate = {
   __typename?: 'treasury_factory_whitelist_token_contract_aggregate';
   aggregate?: Maybe<Treasury_Factory_Whitelist_Token_Contract_Aggregate_Fields>;
   nodes: Array<Treasury_Factory_Whitelist_Token_Contract>;
+};
+
+export type Treasury_Factory_Whitelist_Token_Contract_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Treasury_Factory_Whitelist_Token_Contract_Aggregate_Bool_Exp_Count>;
+};
+
+export type Treasury_Factory_Whitelist_Token_Contract_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Treasury_Factory_Whitelist_Token_Contract_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Treasury_Factory_Whitelist_Token_Contract_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "treasury_factory_whitelist_token_contract" */
@@ -53666,6 +61603,17 @@ export type Treasury_General_Contract_Aggregate = {
   nodes: Array<Treasury_General_Contract>;
 };
 
+export type Treasury_General_Contract_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Treasury_General_Contract_Aggregate_Bool_Exp_Count>;
+};
+
+export type Treasury_General_Contract_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Treasury_General_Contract_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Treasury_General_Contract_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
 /** aggregate fields of "treasury_general_contract" */
 export type Treasury_General_Contract_Aggregate_Fields = {
   __typename?: 'treasury_general_contract_aggregate_fields';
@@ -53892,6 +61840,17 @@ export type Treasury_Lambda_Aggregate = {
   __typename?: 'treasury_lambda_aggregate';
   aggregate?: Maybe<Treasury_Lambda_Aggregate_Fields>;
   nodes: Array<Treasury_Lambda>;
+};
+
+export type Treasury_Lambda_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Treasury_Lambda_Aggregate_Bool_Exp_Count>;
+};
+
+export type Treasury_Lambda_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Treasury_Lambda_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Treasury_Lambda_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "treasury_lambda" */
@@ -54207,6 +62166,30 @@ export enum Treasury_Select_Column {
   UnstakeMvkPaused = 'unstake_mvk_paused'
 }
 
+/** select "treasury_aggregate_bool_exp_bool_and_arguments_columns" columns of table "treasury" */
+export enum Treasury_Select_Column_Treasury_Aggregate_Bool_Exp_Bool_And_Arguments_Columns {
+  /** column name */
+  MintMvkAndTransferPaused = 'mint_mvk_and_transfer_paused',
+  /** column name */
+  StakeMvkPaused = 'stake_mvk_paused',
+  /** column name */
+  TransferPaused = 'transfer_paused',
+  /** column name */
+  UnstakeMvkPaused = 'unstake_mvk_paused'
+}
+
+/** select "treasury_aggregate_bool_exp_bool_or_arguments_columns" columns of table "treasury" */
+export enum Treasury_Select_Column_Treasury_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns {
+  /** column name */
+  MintMvkAndTransferPaused = 'mint_mvk_and_transfer_paused',
+  /** column name */
+  StakeMvkPaused = 'stake_mvk_paused',
+  /** column name */
+  TransferPaused = 'transfer_paused',
+  /** column name */
+  UnstakeMvkPaused = 'unstake_mvk_paused'
+}
+
 /** Streaming cursor of the table "treasury" */
 export type Treasury_Stream_Cursor_Input = {
   /** Stream column input with initial value */
@@ -54250,6 +62233,17 @@ export type Treasury_Transfer_History_Data_Aggregate = {
   __typename?: 'treasury_transfer_history_data_aggregate';
   aggregate?: Maybe<Treasury_Transfer_History_Data_Aggregate_Fields>;
   nodes: Array<Treasury_Transfer_History_Data>;
+};
+
+export type Treasury_Transfer_History_Data_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Treasury_Transfer_History_Data_Aggregate_Bool_Exp_Count>;
+};
+
+export type Treasury_Transfer_History_Data_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Treasury_Transfer_History_Data_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Treasury_Transfer_History_Data_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "treasury_transfer_history_data" */
@@ -54515,6 +62509,17 @@ export type Treasury_Whitelist_Contract_Aggregate = {
   nodes: Array<Treasury_Whitelist_Contract>;
 };
 
+export type Treasury_Whitelist_Contract_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Treasury_Whitelist_Contract_Aggregate_Bool_Exp_Count>;
+};
+
+export type Treasury_Whitelist_Contract_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Treasury_Whitelist_Contract_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Treasury_Whitelist_Contract_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
 /** aggregate fields of "treasury_whitelist_contract" */
 export type Treasury_Whitelist_Contract_Aggregate_Fields = {
   __typename?: 'treasury_whitelist_contract_aggregate_fields';
@@ -54741,6 +62746,17 @@ export type Treasury_Whitelist_Token_Contract_Aggregate = {
   __typename?: 'treasury_whitelist_token_contract_aggregate';
   aggregate?: Maybe<Treasury_Whitelist_Token_Contract_Aggregate_Fields>;
   nodes: Array<Treasury_Whitelist_Token_Contract>;
+};
+
+export type Treasury_Whitelist_Token_Contract_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Treasury_Whitelist_Token_Contract_Aggregate_Bool_Exp_Count>;
+};
+
+export type Treasury_Whitelist_Token_Contract_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Treasury_Whitelist_Token_Contract_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Treasury_Whitelist_Token_Contract_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "treasury_whitelist_token_contract" */
@@ -55057,6 +63073,17 @@ export type Vault_Aggregate = {
   nodes: Array<Vault>;
 };
 
+export type Vault_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Vault_Aggregate_Bool_Exp_Count>;
+};
+
+export type Vault_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Vault_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Vault_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
 /** aggregate fields of "vault" */
 export type Vault_Aggregate_Fields = {
   __typename?: 'vault_aggregate_fields';
@@ -55118,13 +63145,16 @@ export type Vault_Bool_Exp = {
   allowance?: InputMaybe<Smallint_Comparison_Exp>;
   creation_timestamp?: InputMaybe<Timestamptz_Comparison_Exp>;
   depositors?: InputMaybe<Vault_Depositor_Bool_Exp>;
+  depositors_aggregate?: InputMaybe<Vault_Depositor_Aggregate_Bool_Exp>;
   factory?: InputMaybe<Vault_Factory_Bool_Exp>;
   factory_id?: InputMaybe<String_Comparison_Exp>;
   governance?: InputMaybe<Governance_Bool_Exp>;
   governance_id?: InputMaybe<String_Comparison_Exp>;
   lambdas?: InputMaybe<Vault_Lambda_Bool_Exp>;
+  lambdas_aggregate?: InputMaybe<Vault_Lambda_Aggregate_Bool_Exp>;
   last_updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   lending_controller_vaults?: InputMaybe<Lending_Controller_Vault_Bool_Exp>;
+  lending_controller_vaults_aggregate?: InputMaybe<Lending_Controller_Vault_Aggregate_Bool_Exp>;
 };
 
 /** columns and relationships of "vault_depositor" */
@@ -55144,6 +63174,17 @@ export type Vault_Depositor_Aggregate = {
   __typename?: 'vault_depositor_aggregate';
   aggregate?: Maybe<Vault_Depositor_Aggregate_Fields>;
   nodes: Array<Vault_Depositor>;
+};
+
+export type Vault_Depositor_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Vault_Depositor_Aggregate_Bool_Exp_Count>;
+};
+
+export type Vault_Depositor_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Vault_Depositor_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Vault_Depositor_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "vault_depositor" */
@@ -55488,6 +63529,33 @@ export type Vault_Factory_Aggregate = {
   nodes: Array<Vault_Factory>;
 };
 
+export type Vault_Factory_Aggregate_Bool_Exp = {
+  bool_and?: InputMaybe<Vault_Factory_Aggregate_Bool_Exp_Bool_And>;
+  bool_or?: InputMaybe<Vault_Factory_Aggregate_Bool_Exp_Bool_Or>;
+  count?: InputMaybe<Vault_Factory_Aggregate_Bool_Exp_Count>;
+};
+
+export type Vault_Factory_Aggregate_Bool_Exp_Bool_And = {
+  arguments: Vault_Factory_Select_Column_Vault_Factory_Aggregate_Bool_Exp_Bool_And_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Vault_Factory_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Vault_Factory_Aggregate_Bool_Exp_Bool_Or = {
+  arguments: Vault_Factory_Select_Column_Vault_Factory_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Vault_Factory_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Vault_Factory_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Vault_Factory_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Vault_Factory_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
 /** aggregate fields of "vault_factory" */
 export type Vault_Factory_Aggregate_Fields = {
   __typename?: 'vault_factory_aggregate_fields';
@@ -55546,14 +63614,19 @@ export type Vault_Factory_Bool_Exp = {
   admin?: InputMaybe<String_Comparison_Exp>;
   create_vault_paused?: InputMaybe<Boolean_Comparison_Exp>;
   general_contracts?: InputMaybe<Vault_Factory_General_Contract_Bool_Exp>;
+  general_contracts_aggregate?: InputMaybe<Vault_Factory_General_Contract_Aggregate_Bool_Exp>;
   governance?: InputMaybe<Governance_Bool_Exp>;
   governance_id?: InputMaybe<String_Comparison_Exp>;
   lambdas?: InputMaybe<Vault_Factory_Lambda_Bool_Exp>;
+  lambdas_aggregate?: InputMaybe<Vault_Factory_Lambda_Aggregate_Bool_Exp>;
   last_updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   product_lambdas?: InputMaybe<Vault_Factory_Product_Lambda_Bool_Exp>;
+  product_lambdas_aggregate?: InputMaybe<Vault_Factory_Product_Lambda_Aggregate_Bool_Exp>;
   vault_name_max_length?: InputMaybe<Smallint_Comparison_Exp>;
   vaults?: InputMaybe<Vault_Bool_Exp>;
+  vaults_aggregate?: InputMaybe<Vault_Aggregate_Bool_Exp>;
   whitelist_contracts?: InputMaybe<Vault_Factory_Whitelist_Contract_Bool_Exp>;
+  whitelist_contracts_aggregate?: InputMaybe<Vault_Factory_Whitelist_Contract_Aggregate_Bool_Exp>;
 };
 
 /** columns and relationships of "vault_factory_general_contract" */
@@ -55572,6 +63645,17 @@ export type Vault_Factory_General_Contract_Aggregate = {
   __typename?: 'vault_factory_general_contract_aggregate';
   aggregate?: Maybe<Vault_Factory_General_Contract_Aggregate_Fields>;
   nodes: Array<Vault_Factory_General_Contract>;
+};
+
+export type Vault_Factory_General_Contract_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Vault_Factory_General_Contract_Aggregate_Bool_Exp_Count>;
+};
+
+export type Vault_Factory_General_Contract_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Vault_Factory_General_Contract_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Vault_Factory_General_Contract_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "vault_factory_general_contract" */
@@ -55800,6 +63884,17 @@ export type Vault_Factory_Lambda_Aggregate = {
   __typename?: 'vault_factory_lambda_aggregate';
   aggregate?: Maybe<Vault_Factory_Lambda_Aggregate_Fields>;
   nodes: Array<Vault_Factory_Lambda>;
+};
+
+export type Vault_Factory_Lambda_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Vault_Factory_Lambda_Aggregate_Bool_Exp_Count>;
+};
+
+export type Vault_Factory_Lambda_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Vault_Factory_Lambda_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Vault_Factory_Lambda_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "vault_factory_lambda" */
@@ -56093,6 +64188,17 @@ export type Vault_Factory_Product_Lambda_Aggregate = {
   nodes: Array<Vault_Factory_Product_Lambda>;
 };
 
+export type Vault_Factory_Product_Lambda_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Vault_Factory_Product_Lambda_Aggregate_Bool_Exp_Count>;
+};
+
+export type Vault_Factory_Product_Lambda_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Vault_Factory_Product_Lambda_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Vault_Factory_Product_Lambda_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
 /** aggregate fields of "vault_factory_product_lambda" */
 export type Vault_Factory_Product_Lambda_Aggregate_Fields = {
   __typename?: 'vault_factory_product_lambda_aggregate_fields';
@@ -56327,6 +64433,18 @@ export enum Vault_Factory_Select_Column {
   VaultNameMaxLength = 'vault_name_max_length'
 }
 
+/** select "vault_factory_aggregate_bool_exp_bool_and_arguments_columns" columns of table "vault_factory" */
+export enum Vault_Factory_Select_Column_Vault_Factory_Aggregate_Bool_Exp_Bool_And_Arguments_Columns {
+  /** column name */
+  CreateVaultPaused = 'create_vault_paused'
+}
+
+/** select "vault_factory_aggregate_bool_exp_bool_or_arguments_columns" columns of table "vault_factory" */
+export enum Vault_Factory_Select_Column_Vault_Factory_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns {
+  /** column name */
+  CreateVaultPaused = 'create_vault_paused'
+}
+
 /** aggregate stddev on columns */
 export type Vault_Factory_Stddev_Fields = {
   __typename?: 'vault_factory_stddev_fields';
@@ -56438,6 +64556,17 @@ export type Vault_Factory_Whitelist_Contract_Aggregate = {
   __typename?: 'vault_factory_whitelist_contract_aggregate';
   aggregate?: Maybe<Vault_Factory_Whitelist_Contract_Aggregate_Fields>;
   nodes: Array<Vault_Factory_Whitelist_Contract>;
+};
+
+export type Vault_Factory_Whitelist_Contract_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Vault_Factory_Whitelist_Contract_Aggregate_Bool_Exp_Count>;
+};
+
+export type Vault_Factory_Whitelist_Contract_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Vault_Factory_Whitelist_Contract_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Vault_Factory_Whitelist_Contract_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "vault_factory_whitelist_contract" */
@@ -56666,6 +64795,17 @@ export type Vault_Lambda_Aggregate = {
   __typename?: 'vault_lambda_aggregate';
   aggregate?: Maybe<Vault_Lambda_Aggregate_Fields>;
   nodes: Array<Vault_Lambda>;
+};
+
+export type Vault_Lambda_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Vault_Lambda_Aggregate_Bool_Exp_Count>;
+};
+
+export type Vault_Lambda_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Vault_Lambda_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Vault_Lambda_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "vault_lambda" */
@@ -57196,6 +65336,17 @@ export type Vesting_Aggregate = {
   nodes: Array<Vesting>;
 };
 
+export type Vesting_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Vesting_Aggregate_Bool_Exp_Count>;
+};
+
+export type Vesting_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Vesting_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Vesting_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
 /** aggregate fields of "vesting" */
 export type Vesting_Aggregate_Fields = {
   __typename?: 'vesting_aggregate_fields';
@@ -57253,13 +65404,17 @@ export type Vesting_Bool_Exp = {
   address?: InputMaybe<String_Comparison_Exp>;
   admin?: InputMaybe<String_Comparison_Exp>;
   general_contracts?: InputMaybe<Vesting_General_Contract_Bool_Exp>;
+  general_contracts_aggregate?: InputMaybe<Vesting_General_Contract_Aggregate_Bool_Exp>;
   governance?: InputMaybe<Governance_Bool_Exp>;
   governance_id?: InputMaybe<String_Comparison_Exp>;
   lambdas?: InputMaybe<Vesting_Lambda_Bool_Exp>;
+  lambdas_aggregate?: InputMaybe<Vesting_Lambda_Aggregate_Bool_Exp>;
   last_updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   total_vested_amount?: InputMaybe<Bigint_Comparison_Exp>;
   vestees?: InputMaybe<Vesting_Vestee_Bool_Exp>;
+  vestees_aggregate?: InputMaybe<Vesting_Vestee_Aggregate_Bool_Exp>;
   whitelist_contracts?: InputMaybe<Vesting_Whitelist_Contract_Bool_Exp>;
+  whitelist_contracts_aggregate?: InputMaybe<Vesting_Whitelist_Contract_Aggregate_Bool_Exp>;
 };
 
 /** columns and relationships of "vesting_general_contract" */
@@ -57278,6 +65433,17 @@ export type Vesting_General_Contract_Aggregate = {
   __typename?: 'vesting_general_contract_aggregate';
   aggregate?: Maybe<Vesting_General_Contract_Aggregate_Fields>;
   nodes: Array<Vesting_General_Contract>;
+};
+
+export type Vesting_General_Contract_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Vesting_General_Contract_Aggregate_Bool_Exp_Count>;
+};
+
+export type Vesting_General_Contract_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Vesting_General_Contract_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Vesting_General_Contract_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "vesting_general_contract" */
@@ -57506,6 +65672,17 @@ export type Vesting_Lambda_Aggregate = {
   __typename?: 'vesting_lambda_aggregate';
   aggregate?: Maybe<Vesting_Lambda_Aggregate_Fields>;
   nodes: Array<Vesting_Lambda>;
+};
+
+export type Vesting_Lambda_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Vesting_Lambda_Aggregate_Bool_Exp_Count>;
+};
+
+export type Vesting_Lambda_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Vesting_Lambda_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Vesting_Lambda_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "vesting_lambda" */
@@ -57919,6 +66096,107 @@ export type Vesting_Vestee_Aggregate = {
   nodes: Array<Vesting_Vestee>;
 };
 
+export type Vesting_Vestee_Aggregate_Bool_Exp = {
+  avg?: InputMaybe<Vesting_Vestee_Aggregate_Bool_Exp_Avg>;
+  bool_and?: InputMaybe<Vesting_Vestee_Aggregate_Bool_Exp_Bool_And>;
+  bool_or?: InputMaybe<Vesting_Vestee_Aggregate_Bool_Exp_Bool_Or>;
+  corr?: InputMaybe<Vesting_Vestee_Aggregate_Bool_Exp_Corr>;
+  count?: InputMaybe<Vesting_Vestee_Aggregate_Bool_Exp_Count>;
+  covar_samp?: InputMaybe<Vesting_Vestee_Aggregate_Bool_Exp_Covar_Samp>;
+  max?: InputMaybe<Vesting_Vestee_Aggregate_Bool_Exp_Max>;
+  min?: InputMaybe<Vesting_Vestee_Aggregate_Bool_Exp_Min>;
+  stddev_samp?: InputMaybe<Vesting_Vestee_Aggregate_Bool_Exp_Stddev_Samp>;
+  sum?: InputMaybe<Vesting_Vestee_Aggregate_Bool_Exp_Sum>;
+  var_samp?: InputMaybe<Vesting_Vestee_Aggregate_Bool_Exp_Var_Samp>;
+};
+
+export type Vesting_Vestee_Aggregate_Bool_Exp_Avg = {
+  arguments: Vesting_Vestee_Select_Column_Vesting_Vestee_Aggregate_Bool_Exp_Avg_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Vesting_Vestee_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Vesting_Vestee_Aggregate_Bool_Exp_Bool_And = {
+  arguments: Vesting_Vestee_Select_Column_Vesting_Vestee_Aggregate_Bool_Exp_Bool_And_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Vesting_Vestee_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Vesting_Vestee_Aggregate_Bool_Exp_Bool_Or = {
+  arguments: Vesting_Vestee_Select_Column_Vesting_Vestee_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Vesting_Vestee_Bool_Exp>;
+  predicate: Boolean_Comparison_Exp;
+};
+
+export type Vesting_Vestee_Aggregate_Bool_Exp_Corr = {
+  arguments: Vesting_Vestee_Aggregate_Bool_Exp_Corr_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Vesting_Vestee_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Vesting_Vestee_Aggregate_Bool_Exp_Corr_Arguments = {
+  X: Vesting_Vestee_Select_Column_Vesting_Vestee_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+  Y: Vesting_Vestee_Select_Column_Vesting_Vestee_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+};
+
+export type Vesting_Vestee_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Vesting_Vestee_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Vesting_Vestee_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+export type Vesting_Vestee_Aggregate_Bool_Exp_Covar_Samp = {
+  arguments: Vesting_Vestee_Aggregate_Bool_Exp_Covar_Samp_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Vesting_Vestee_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Vesting_Vestee_Aggregate_Bool_Exp_Covar_Samp_Arguments = {
+  X: Vesting_Vestee_Select_Column_Vesting_Vestee_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+  Y: Vesting_Vestee_Select_Column_Vesting_Vestee_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+};
+
+export type Vesting_Vestee_Aggregate_Bool_Exp_Max = {
+  arguments: Vesting_Vestee_Select_Column_Vesting_Vestee_Aggregate_Bool_Exp_Max_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Vesting_Vestee_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Vesting_Vestee_Aggregate_Bool_Exp_Min = {
+  arguments: Vesting_Vestee_Select_Column_Vesting_Vestee_Aggregate_Bool_Exp_Min_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Vesting_Vestee_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Vesting_Vestee_Aggregate_Bool_Exp_Stddev_Samp = {
+  arguments: Vesting_Vestee_Select_Column_Vesting_Vestee_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Vesting_Vestee_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Vesting_Vestee_Aggregate_Bool_Exp_Sum = {
+  arguments: Vesting_Vestee_Select_Column_Vesting_Vestee_Aggregate_Bool_Exp_Sum_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Vesting_Vestee_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Vesting_Vestee_Aggregate_Bool_Exp_Var_Samp = {
+  arguments: Vesting_Vestee_Select_Column_Vesting_Vestee_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Vesting_Vestee_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
 /** aggregate fields of "vesting_vestee" */
 export type Vesting_Vestee_Aggregate_Fields = {
   __typename?: 'vesting_vestee_aggregate_fields';
@@ -58151,6 +66429,114 @@ export enum Vesting_Vestee_Select_Column {
   VestingId = 'vesting_id',
   /** column name */
   VestingMonths = 'vesting_months'
+}
+
+/** select "vesting_vestee_aggregate_bool_exp_avg_arguments_columns" columns of table "vesting_vestee" */
+export enum Vesting_Vestee_Select_Column_Vesting_Vestee_Aggregate_Bool_Exp_Avg_Arguments_Columns {
+  /** column name */
+  ClaimAmountPerMonth = 'claim_amount_per_month',
+  /** column name */
+  TotalAllocatedAmount = 'total_allocated_amount',
+  /** column name */
+  TotalClaimed = 'total_claimed',
+  /** column name */
+  TotalRemainder = 'total_remainder'
+}
+
+/** select "vesting_vestee_aggregate_bool_exp_bool_and_arguments_columns" columns of table "vesting_vestee" */
+export enum Vesting_Vestee_Select_Column_Vesting_Vestee_Aggregate_Bool_Exp_Bool_And_Arguments_Columns {
+  /** column name */
+  Locked = 'locked'
+}
+
+/** select "vesting_vestee_aggregate_bool_exp_bool_or_arguments_columns" columns of table "vesting_vestee" */
+export enum Vesting_Vestee_Select_Column_Vesting_Vestee_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns {
+  /** column name */
+  Locked = 'locked'
+}
+
+/** select "vesting_vestee_aggregate_bool_exp_corr_arguments_columns" columns of table "vesting_vestee" */
+export enum Vesting_Vestee_Select_Column_Vesting_Vestee_Aggregate_Bool_Exp_Corr_Arguments_Columns {
+  /** column name */
+  ClaimAmountPerMonth = 'claim_amount_per_month',
+  /** column name */
+  TotalAllocatedAmount = 'total_allocated_amount',
+  /** column name */
+  TotalClaimed = 'total_claimed',
+  /** column name */
+  TotalRemainder = 'total_remainder'
+}
+
+/** select "vesting_vestee_aggregate_bool_exp_covar_samp_arguments_columns" columns of table "vesting_vestee" */
+export enum Vesting_Vestee_Select_Column_Vesting_Vestee_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns {
+  /** column name */
+  ClaimAmountPerMonth = 'claim_amount_per_month',
+  /** column name */
+  TotalAllocatedAmount = 'total_allocated_amount',
+  /** column name */
+  TotalClaimed = 'total_claimed',
+  /** column name */
+  TotalRemainder = 'total_remainder'
+}
+
+/** select "vesting_vestee_aggregate_bool_exp_max_arguments_columns" columns of table "vesting_vestee" */
+export enum Vesting_Vestee_Select_Column_Vesting_Vestee_Aggregate_Bool_Exp_Max_Arguments_Columns {
+  /** column name */
+  ClaimAmountPerMonth = 'claim_amount_per_month',
+  /** column name */
+  TotalAllocatedAmount = 'total_allocated_amount',
+  /** column name */
+  TotalClaimed = 'total_claimed',
+  /** column name */
+  TotalRemainder = 'total_remainder'
+}
+
+/** select "vesting_vestee_aggregate_bool_exp_min_arguments_columns" columns of table "vesting_vestee" */
+export enum Vesting_Vestee_Select_Column_Vesting_Vestee_Aggregate_Bool_Exp_Min_Arguments_Columns {
+  /** column name */
+  ClaimAmountPerMonth = 'claim_amount_per_month',
+  /** column name */
+  TotalAllocatedAmount = 'total_allocated_amount',
+  /** column name */
+  TotalClaimed = 'total_claimed',
+  /** column name */
+  TotalRemainder = 'total_remainder'
+}
+
+/** select "vesting_vestee_aggregate_bool_exp_stddev_samp_arguments_columns" columns of table "vesting_vestee" */
+export enum Vesting_Vestee_Select_Column_Vesting_Vestee_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns {
+  /** column name */
+  ClaimAmountPerMonth = 'claim_amount_per_month',
+  /** column name */
+  TotalAllocatedAmount = 'total_allocated_amount',
+  /** column name */
+  TotalClaimed = 'total_claimed',
+  /** column name */
+  TotalRemainder = 'total_remainder'
+}
+
+/** select "vesting_vestee_aggregate_bool_exp_sum_arguments_columns" columns of table "vesting_vestee" */
+export enum Vesting_Vestee_Select_Column_Vesting_Vestee_Aggregate_Bool_Exp_Sum_Arguments_Columns {
+  /** column name */
+  ClaimAmountPerMonth = 'claim_amount_per_month',
+  /** column name */
+  TotalAllocatedAmount = 'total_allocated_amount',
+  /** column name */
+  TotalClaimed = 'total_claimed',
+  /** column name */
+  TotalRemainder = 'total_remainder'
+}
+
+/** select "vesting_vestee_aggregate_bool_exp_var_samp_arguments_columns" columns of table "vesting_vestee" */
+export enum Vesting_Vestee_Select_Column_Vesting_Vestee_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns {
+  /** column name */
+  ClaimAmountPerMonth = 'claim_amount_per_month',
+  /** column name */
+  TotalAllocatedAmount = 'total_allocated_amount',
+  /** column name */
+  TotalClaimed = 'total_claimed',
+  /** column name */
+  TotalRemainder = 'total_remainder'
 }
 
 /** aggregate stddev on columns */
@@ -58389,6 +66775,17 @@ export type Vesting_Whitelist_Contract_Aggregate = {
   nodes: Array<Vesting_Whitelist_Contract>;
 };
 
+export type Vesting_Whitelist_Contract_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Vesting_Whitelist_Contract_Aggregate_Bool_Exp_Count>;
+};
+
+export type Vesting_Whitelist_Contract_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Vesting_Whitelist_Contract_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Vesting_Whitelist_Contract_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
 /** aggregate fields of "vesting_whitelist_contract" */
 export type Vesting_Whitelist_Contract_Aggregate_Fields = {
   __typename?: 'vesting_whitelist_contract_aggregate_fields';
@@ -58615,6 +67012,17 @@ export type Whitelist_Developer_Aggregate = {
   __typename?: 'whitelist_developer_aggregate';
   aggregate?: Maybe<Whitelist_Developer_Aggregate_Fields>;
   nodes: Array<Whitelist_Developer>;
+};
+
+export type Whitelist_Developer_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Whitelist_Developer_Aggregate_Bool_Exp_Count>;
+};
+
+export type Whitelist_Developer_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Whitelist_Developer_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Whitelist_Developer_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
 };
 
 /** aggregate fields of "whitelist_developer" */
