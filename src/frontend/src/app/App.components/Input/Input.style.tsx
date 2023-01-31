@@ -378,6 +378,8 @@ export const InputPinnedTokenInfo = styled.div<{ theme: MavrykTheme }>`
       height: 100%;
       object-fit: cover;
     }
+
+    fill: ${({ theme }) => theme.textColor};
   }
 `
 

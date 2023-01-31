@@ -208,7 +208,7 @@ export const Market = () => {
             <BorrowingTab
               borrowingItems={currentToken.myBorrowingList}
               lendingControllerAddress={loansControllerAddress}
-              currentMarketAsset={assetId}
+              currentMarketAsset={assetId.toLowerCase()}
             />
           ) : null}
           {tabId === PERMISSIONS_VAULTS_TAB_ID ? (

@@ -40,12 +40,14 @@ export const RemoveAssetsFromLending = ({
   const {
     userBalance = 0,
     mBalance = 0,
-    assetRate = 1,
+    assetRate = 0,
     assetName = '',
     currentLendedAmount = 0,
     lendingAPY = 0,
     assetIcon = '',
+    originalName = '',
   } = data ?? {}
+  const assetSymbol = assetName ?? originalName.toUpperCase()
 
   useLockBodyScroll(show)
 
@@ -100,7 +102,7 @@ export const RemoveAssetsFromLending = ({
     return inputData.validationStatus !== INPUT_STATUS_SUCCESS || isActionLoading
   }, [inputData.validationStatus])
 
-  const withdrawHandler = () => dispatch(withdrawLendingAssetAction(assetName, Number(inputData.amount), closePopup))
+  const withdrawHandler = () => dispatch(withdrawLendingAssetAction(originalName, Number(inputData.amount), closePopup))
 
   return (
     <PopupContainer onClick={closePopup} show={show}>
@@ -119,8 +121,8 @@ export const RemoveAssetsFromLending = ({
             <>
               <div className="lending-stats" style={{ marginBottom: '25px' }}>
                 <ThreeLevelListItem>
-                  <div className="name">m{getAssetName(assetName)} Balance</div>
-                  <CommaNumber value={mBalance} className="value" endingText={`m${getAssetName(assetName)}`} />
+                  <div className="name">m{assetSymbol} Balance</div>
+                  <CommaNumber value={mBalance} className="value" endingText={`m${assetSymbol}`} />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">
@@ -147,7 +149,7 @@ export const RemoveAssetsFromLending = ({
                 }}
                 settings={{
                   balance: userBalance,
-                  balanceAsset: assetName,
+                  balanceAsset: assetSymbol,
                   useMaxHandler: () =>
                     onChangeHandler(
                       String(Math.min(mBalance, currentLendedAmount)),
@@ -160,12 +162,12 @@ export const RemoveAssetsFromLending = ({
                 <InputPinnedTokenInfo>
                   {assetIcon ? (
                     <div className="image-wrapper">
-                      <img src={assetIcon} alt={`${assetName}-logo`} />
+                      <img src={assetIcon} alt={`${assetSymbol}-logo`} />
                     </div>
                   ) : (
                     <Icon id="noImage" />
                   )}{' '}
-                  {getAssetName(assetName)}
+                  {assetSymbol}
                 </InputPinnedTokenInfo>
               </Input>
 
@@ -185,11 +187,7 @@ export const RemoveAssetsFromLending = ({
                 <div className="lending-stats">
                   <ThreeLevelListItem>
                     <div className="name">Amount Removed</div>
-                    <CommaNumber
-                      value={Number(inputData.amount)}
-                      className="value"
-                      endingText={getAssetName(assetName)}
-                    />
+                    <CommaNumber value={Number(inputData.amount)} className="value" endingText={assetSymbol} />
                   </ThreeLevelListItem>
                   <ThreeLevelListItem className="right">
                     <div className="name">USD Value</div>
@@ -203,7 +201,7 @@ export const RemoveAssetsFromLending = ({
                     <CommaNumber
                       value={currentLendedAmount - Number(inputData.amount)}
                       className="value"
-                      endingText={getAssetName(assetName)}
+                      endingText={assetSymbol}
                     />
                   </ThreeLevelListItem>
                   <ThreeLevelListItem className="right">

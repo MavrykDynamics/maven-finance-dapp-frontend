@@ -8,6 +8,7 @@ export type LoansStorage = Awaited<ReturnType<typeof normalizeLoans>>
 export type LoanTokenType = {
   loanTokenData: {
     name: string
+    originalName: string
     symbol?: string
     decimals: number
     icon?: string

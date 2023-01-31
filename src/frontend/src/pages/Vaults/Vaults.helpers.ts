@@ -20,7 +20,7 @@ import { getUserBalanceForLoanAsset } from 'pages/Loans/LoansFethcers'
 
 type VaultsStorageProps = {
   lendingController: LendingControllerGQL
-  vaultsTokensRate: State['tokens']['tokensPrices']
+  feeds: State['oracles']['oraclesStorage']['feeds']
   accountPkh?: string
   dipDupTokens: State['tokens']['dipDupTokens']
   currentBlockLevel?: number
@@ -28,8 +28,7 @@ type VaultsStorageProps = {
 }
 
 export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
-  const { lendingController, vaultsTokensRate, accountPkh, dipDupTokens, currentBlockLevel, oracleLatestPrices } =
-    storage
+  const { lendingController, feeds, accountPkh, dipDupTokens, currentBlockLevel, oracleLatestPrices } = storage
   if (!lendingController.vaults.length)
     return {
       myVaultsIds: [],
@@ -57,12 +56,13 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
         (acc, collateral) => {
           if (!collateral.token) return acc
 
-          const collateralAsset = getAssetMetadata(
-            collateral.token.token_name,
-            collateral.token.token_address,
+          const collateralAsset = getAssetMetadata({
+            tokenName: collateral.token.token_name,
+            tokenAddress: collateral.token.token_address,
             dipDupTokens,
-            vaultsTokensRate,
-          )
+            feeds,
+            oracleId: String(collateral.token.oracle_id),
+          })
 
           if (!collateralAsset) return acc
 
@@ -156,7 +156,7 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
       ).json()
 
       const userBalance = await getUserBalanceForLoanAsset(
-        item.loan_token.lp_token_address,
+        item.loan_token.loan_token_address,
         item.loan_token.loan_token_name,
         accountPkh,
       )
@@ -165,12 +165,13 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
         calculateCompoundedInterest(currentInterestRate, item.last_updated_block_level, currentBlock?.level ?? 0) /
         10 ** interestRateDecimals
 
-      const vaultAsset = getAssetMetadata(
-        item.loan_token.loan_token_name,
-        item.loan_token.lp_token_address,
+      const vaultAsset = getAssetMetadata({
+        tokenName: item.loan_token.loan_token_name,
+        tokenAddress: item.loan_token.loan_token_address,
         dipDupTokens,
-        vaultsTokensRate,
-      )
+        feeds,
+        oracleId: String(item.loan_token.oracle_id),
+      })
 
       if (!vaultAsset) return acc
 
@@ -252,10 +253,10 @@ export const getVaultsTokensRates = async (
   try {
     const loanTokenSymbols = Array.from(
       vaults?.reduce((acc, { loan_token, collateral_balances }) => {
-        const { loan_token_name = '', lp_token_address = '' } = loan_token ?? {}
+        const { loan_token_name = '', loan_token_address = '' } = loan_token ?? {}
 
         // Getting symbol metadata of loanToken
-        const tokenInfo = dipDupTokens?.find(({ contract }) => contract === lp_token_address)
+        const tokenInfo = dipDupTokens?.find(({ contract }) => contract === loan_token_address)
         let tokenSymbolToFetch = null
         if (loan_token_name === 'tez') {
           tokenSymbolToFetch = 'tezos'

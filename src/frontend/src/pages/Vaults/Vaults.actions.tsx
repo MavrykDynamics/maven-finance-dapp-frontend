@@ -30,110 +30,111 @@ export const getVaultsStorage = () => async (dispatch: AppDispatch, getState: Ge
     )
     const lendingController: LendingControllerGQL = storage?.lending_controller[0] || {}
 
-    const [ , oracleLatestPrices ] = await Promise.all([
+    const [, oracleLatestPrices] = await Promise.all([
       dispatch(getHeadData()),
-      getOracleLatestPrices(lendingController.vaults)
+      getOracleLatestPrices(lendingController.vaults),
     ])
 
     const {
       tokens: { dipDupTokens, tokensPrices },
       wallet: { accountPkh },
       preferences: { headData },
+      oracles: {
+        oraclesStorage: { feeds },
+      },
     } = getState()
 
-    const vaultsTokensRate = await getVaultsTokensRates(
-      lendingController.vaults,
-      dipDupTokens,
-      tokensPrices,
-    )
+    const vaultsTokensRate = await getVaultsTokensRates(lendingController.vaults, dipDupTokens, tokensPrices)
 
     const normallaziedVaultsStorage = await normalizeVaultsStorage({
       accountPkh,
       dipDupTokens,
-      vaultsTokensRate,
+      feeds,
       oracleLatestPrices,
       currentBlockLevel: headData?.level,
       lendingController,
     })
- 
-    dispatch(setContractAddress('vaultAddress', lendingController.address))  
+
+    dispatch(setContractAddress('vaultAddress', lendingController.address))
     dispatch(updateTokensPrices(vaultsTokensRate))
 
     dispatch({
       type: GET_VAULTS_STORAGE,
       vaultsList: normallaziedVaultsStorage,
     })
-    
   } catch (e) {
     console.error('getVaultsStorage error: ', e)
   }
 }
 
 // Liquidate Vault
-export const liquidateVault = (vaultId: number, vaultOwner: string, liquidateAmount: number) => async (dispatch: AppDispatch, getState: GetState) => {
-  const state: State = getState()
+export const liquidateVault =
+  (vaultId: number, vaultOwner: string, liquidateAmount: number) =>
+  async (dispatch: AppDispatch, getState: GetState) => {
+    const state: State = getState()
 
-  if (!state.wallet.accountPkh) {
-    dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
-    return
-  }
-
-  if (state.loading.isActionLoading) {
-    dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
-    return
-  }
-
-  try {
-    dispatch(toggleActionLoader(true))
-    const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.vaultAddress.address)
-    const transaction = await contract?.methods.liquidateVault(vaultId, vaultOwner, liquidateAmount).send()
-    dispatch(showToaster(INFO, 'Liqudation...', 'Please wait 30s'))
-
-    await transaction?.confirmation()
-
-    dispatch(showToaster(SUCCESS, 'Liqudation is done', 'All good :)'))
-    dispatch(toggleActionLoader(false))
-  } catch (error) {
-    if (error instanceof Error) {
-      console.error('liquidateVault - ERROR ', error)
-      dispatch(showToaster(ERROR, 'Error', error.message))
+    if (!state.wallet.accountPkh) {
+      dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
+      return
     }
-    dispatch(toggleActionLoader(false))
+
+    if (state.loading.isActionLoading) {
+      dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
+      return
+    }
+
+    try {
+      dispatch(toggleActionLoader(true))
+      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.vaultAddress.address)
+      const transaction = await contract?.methods.liquidateVault(vaultId, vaultOwner, liquidateAmount).send()
+      dispatch(showToaster(INFO, 'Liqudation...', 'Please wait 30s'))
+
+      await transaction?.confirmation()
+
+      dispatch(showToaster(SUCCESS, 'Liqudation is done', 'All good :)'))
+      dispatch(toggleActionLoader(false))
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error('liquidateVault - ERROR ', error)
+        dispatch(showToaster(ERROR, 'Error', error.message))
+      }
+      dispatch(toggleActionLoader(false))
+    }
   }
-}
 
 // Mark for Liquidation
-export const markForLiquidation = (vaultId: number, vaultOwner: string) => async (dispatch: AppDispatch, getState: GetState) => {
-  const state: State = getState()
+export const markForLiquidation =
+  (vaultId: number, vaultOwner: string) => async (dispatch: AppDispatch, getState: GetState) => {
+    const state: State = getState()
 
-  if (!state.wallet.accountPkh) {
-    dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
-    return
-  }
-
-  if (state.loading.isActionLoading) {
-    dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
-    return
-  }
-
-  try {
-    dispatch(toggleActionLoader(true))
-    const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.vaultAddress.address)
-    const transaction = await contract?.methods.markForLiquidation(vaultId, vaultOwner).send()
-    dispatch(showToaster(INFO, 'Mark for Liquidation...', 'Please wait 30s'))
-
-    await transaction?.confirmation()
-
-    dispatch(showToaster(SUCCESS, 'Mark for Liquidation is done', 'All good :)'))
-    dispatch(toggleActionLoader(false))
-  } catch (error) {
-    if (error instanceof Error) {
-      console.error('markForLiquidation - ERROR ', error)
-      dispatch(showToaster(ERROR, 'Error', error.message))
+    if (!state.wallet.accountPkh) {
+      dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
+      return
     }
-    dispatch(toggleActionLoader(false))
+
+    if (state.loading.isActionLoading) {
+      dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
+      return
+    }
+
+    try {
+      dispatch(toggleActionLoader(true))
+      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.vaultAddress.address)
+      const transaction = await contract?.methods.markForLiquidation(vaultId, vaultOwner).send()
+      dispatch(showToaster(INFO, 'Mark for Liquidation...', 'Please wait 30s'))
+
+      await transaction?.confirmation()
+
+      dispatch(showToaster(SUCCESS, 'Mark for Liquidation is done', 'All good :)'))
+      dispatch(toggleActionLoader(false))
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error('markForLiquidation - ERROR ', error)
+        dispatch(showToaster(ERROR, 'Error', error.message))
+      }
+      dispatch(toggleActionLoader(false))
+    }
   }
-}
 
 // Oracle Latest Price
 export const getOracleAggregatorLatestPrice = async (oracleId: string) => {
@@ -142,7 +143,7 @@ export const getOracleAggregatorLatestPrice = async (oracleId: string) => {
     const storage = await fetchFromIndexer(
       ORACLE_AGGREGATOR_LATEST_PRICE_QUERY,
       ORACLE_AGGREGATOR_LATEST_PRICE_QUERY_NAME,
-      ORACLE_AGGREGATOR_LATEST_PRICE_QUERY_VARIABLE
+      ORACLE_AGGREGATOR_LATEST_PRICE_QUERY_VARIABLE,
     )
 
     const oracleLatestPrice = normalizeOracleLatestPrice(storage)

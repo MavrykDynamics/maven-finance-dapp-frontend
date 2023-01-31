@@ -20,6 +20,7 @@ export const LOANS_QUERY = `query GetLoansStorage {
       token_name
       token_contract_standard
       protected
+      oracle_id
     }
 
     loan_tokens {
@@ -34,6 +35,7 @@ export const LOANS_QUERY = `query GetLoansStorage {
       total_remaining
       reserve_ratio
       current_interest_rate
+      oracle_id
 
       history_data(where: {type: {_in: ["0", "1", "2", "3"]}}) {
         type
@@ -59,6 +61,7 @@ export const LOANS_QUERY = `query GetLoansStorage {
           token {
             token_address
             token_name
+            oracle_id
           }
           balance
         }
@@ -76,6 +79,7 @@ export const LOANS_QUERY = `query GetLoansStorage {
         loan_token {
           loan_token_address
           loan_token_name
+          oracle_id
           lp_token_address
           current_interest_rate
         }
@@ -110,6 +114,7 @@ query GetAvaliableCollaterals {
     loan_tokens {
       lp_token_address
       loan_token_name
+      oracle_id
 
       vaults {
         collateral_balances {
@@ -122,6 +127,7 @@ query GetAvaliableCollaterals {
           loan_token_address
           loan_token_name
           lp_token_address
+          oracle_id
         }
       }
     }
@@ -156,6 +162,7 @@ query GetLendBorrowHistoryPerUser($userAddress: String = "", $_in: [smallint!] =
       amount
       loan_token {
         lp_token_address
+        oracle_id
         loan_token_name
         loan_token_address
         loan_token_contract_standard

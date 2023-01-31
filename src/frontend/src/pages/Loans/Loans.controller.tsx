@@ -48,7 +48,7 @@ export const Loans = () => {
     <div className="chart-wrapper">
       <div className="summary">
         <span>Total Lending</span>
-        <CommaNumber value={chartsData.totalLended} beginningText={'$'} />
+        <CommaNumber value={chartsData?.totalLended ?? 0} beginningText={'$'} />
       </div>
       <Chart
         data={chartsData.lendingChartData}
@@ -76,7 +76,7 @@ export const Loans = () => {
     <div className="chart-wrapper">
       <div className="summary">
         <span>Total Borrowing</span>
-        <CommaNumber value={chartsData.totalBorrowed} beginningText={'$'} />
+        <CommaNumber value={chartsData?.totalBorrowed ?? 0} beginningText={'$'} />
       </div>
       <Chart
         data={chartsData.borrowingChartData}
@@ -147,10 +147,10 @@ export const Loans = () => {
                     ) : (
                       <Icon id={'noImage'} />
                     )}
-                    <div className="name">{name}</div>
+                    <div className="name">{symbol?.toUpperCase()}</div>
                     {rate ? (
                       <div className="rate">
-                        <CommaNumber beginningText="$" value={rate} />
+                        <CommaNumber beginningText="$" value={rate} decimalsToShow={4} showDecimal />
                       </div>
                     ) : null}
                   </div>

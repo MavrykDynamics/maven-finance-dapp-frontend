@@ -68,7 +68,7 @@ const tabsList = [
 ]
 
 const DataFeedDetailsView = ({ feed, oracles, registerFeedHandler }: FeedDetailsProps) => {
-  const { dipDupTokens } = useSelector((state: State) => state.tokens)
+  const { dipDupContracts } = useSelector((state: State) => state.tokens)
   const [isClickedRegister, setClickedRegister] = useState(false)
   const [activeTab, setActiveTab] = useState(tabsList[0].id)
   const oraclesForFeed = useMemo(
@@ -90,7 +90,7 @@ const DataFeedDetailsView = ({ feed, oracles, registerFeedHandler }: FeedDetails
   // Price feed updated every 30 mins, starting from latest time it was updated
   // `
 
-  const imageLink = dipDupTokens.find(({ contract }) => contract === feed?.address)?.metadata?.icon
+  const imageLink = dipDupContracts.find(({ contract }) => contract === feed?.address)?.metadata?.icon
 
   return feed ? (
     <Page>

@@ -26,8 +26,8 @@ const defaultCategoryText = 'No Category'
 
 export const DataFeedCard = ({ feed }: { feed: Feed }) => {
   const { pathname } = useLocation()
-  const { dipDupTokens } = useSelector((state: State) => state.tokens)
-  const imageLink = dipDupTokens.find(({ contract }) => contract === feed.address)?.metadata?.icon
+  const { dipDupContracts } = useSelector((state: State) => state.tokens)
+  const imageLink = dipDupContracts.find(({ contract }) => contract === feed.address)?.metadata?.icon
   const isDataFeedsPage = pathname === '/data-feeds'
 
   return (

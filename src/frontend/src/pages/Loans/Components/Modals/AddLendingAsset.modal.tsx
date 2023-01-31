@@ -31,8 +31,17 @@ export const AddLendingAsset = ({
   show: boolean
   data: AddLendingAssetDataType
 }) => {
-  const { userBalance = 0, mBalance = 0, assetRate = null, assetName = '', lendingAPY = 0, assetIcon = '' } = data ?? {}
-
+  const {
+    userBalance = 0,
+    mBalance = 0,
+    assetRate = 0,
+    decimals = 0,
+    assetName = '',
+    lendingAPY = 0,
+    assetIcon = '',
+    originalName = '',
+  } = data ?? {}
+  const assetSymbol = assetName ?? originalName.toUpperCase()
   useLockBodyScroll(show)
 
   const dispatch = useDispatch()
@@ -74,9 +83,11 @@ export const AddLendingAsset = ({
 
   const isDepositDisabled = useMemo(() => {
     return inputData.validationStatus !== INPUT_STATUS_SUCCESS || isActionLoading
-  }, [inputData.validationStatus])
+  }, [inputData.validationStatus, isActionLoading])
 
-  const depositHandler = () => dispatch(depositLendingAssetAction(assetName, Number(inputData.amount), closePopup))
+  const depositHandler = () => {
+    dispatch(depositLendingAssetAction(originalName, Number(inputData.amount) * 10 ** decimals, closePopup))
+  }
 
   return (
     <PopupContainer onClick={closePopup} show={show}>
@@ -104,7 +115,7 @@ export const AddLendingAsset = ({
             settings={{
               balanceName: 'Lend Balance',
               balance: userBalance,
-              balanceAsset: assetName,
+              balanceAsset: assetSymbol,
               useMaxHandler: () => onChangeHandler(String(userBalance), userBalance),
               inputStatus: inputData.validationStatus,
               ...(assetRate ? { convertedValue: assetRate * Number(inputData.amount) } : {}),
@@ -118,7 +129,7 @@ export const AddLendingAsset = ({
               ) : (
                 <Icon id="noImage" />
               )}
-              {assetName}
+              {assetSymbol}
             </InputPinnedTokenInfo>
           </Input>
 
@@ -129,18 +140,18 @@ export const AddLendingAsset = ({
                 <CustomTooltip
                   iconId="info"
                   defaultStrokeColor={silverColor}
-                  text={`You will receive m${assetName} instead of your ${assetName}`}
+                  text={`You will receive m${assetSymbol} instead of your ${assetSymbol}`}
                   className="tooltip"
                 />
               </div>
               <CommaNumber value={lendingAPY} className="value" endingText="%" />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
-              <div className="name">m{assetName} Received</div>
+              <div className="name">m{assetSymbol} Received</div>
               <CommaNumber value={Number(inputData.amount)} className="value" />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
-              <div className="name">New m{assetName} Balance</div>
+              <div className="name">New m{assetSymbol} Balance</div>
               <CommaNumber value={mBalance + Number(inputData.amount)} className="value" />
             </ThreeLevelListItem>
           </div>
