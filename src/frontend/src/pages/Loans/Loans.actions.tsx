@@ -19,6 +19,7 @@ import { ERROR, INFO, SUCCESS } from 'app/App.components/Toaster/Toaster.constan
 import { OpKind } from '@taquito/taquito'
 import { getXTZBakers, getCollateralTokens, getLoansTokensRates } from './LoansFethcers'
 import { updateTokensPrices } from 'reducers/actions/dipDupActions.actions'
+import { updateUserData } from 'pages/Doorman/Doorman.actions'
 
 export const GET_LOANS_STORAGE = 'GET_LOANS_STORAGE'
 export const getLoansStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
@@ -319,6 +320,7 @@ export const depositLendingAssetAction =
 
       await dispatch(showToaster(SUCCESS, 'Liquidity Added.', 'All good :)'))
       // refetch data we need
+      await dispatch(updateUserData())
       await dispatch(getLoansStorage())
       await dispatch(toggleActionLoader(false))
     } catch (error) {
@@ -360,6 +362,7 @@ export const withdrawLendingAssetAction =
 
       await dispatch(showToaster(SUCCESS, 'Liquidity Added.', 'All good :)'))
       // refetch data we need
+      await dispatch(updateUserData())
       await dispatch(getLoansStorage())
       await dispatch(toggleActionLoader(false))
     } catch (error) {

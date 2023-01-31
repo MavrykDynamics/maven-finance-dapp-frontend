@@ -36,8 +36,6 @@ export const getDipDupTokensStorage = () => async (dispatch: AppDispatch, getSta
     )
     const dipDupContracts = normalizeDipDupContracts(storageContracts)
 
-    console.log({ dipDupContracts, dipDupTokens })
-
     dispatch({
       type: GET_DIP_DUP_TOKENS,
       dipDupTokens,
