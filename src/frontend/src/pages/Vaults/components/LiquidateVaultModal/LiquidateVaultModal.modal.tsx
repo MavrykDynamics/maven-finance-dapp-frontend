@@ -27,12 +27,6 @@ import { INPUT_STATUS_SUCCESS, INPUT_STATUS_ERROR } from "app/App.components/Inp
 // types
 import { VaultType } from "utils/TypesAndInterfaces/Vaults";
 
-//===================================
-// TODO: hardcode data
-const balance = 20000
-const profit = 1234.44
-//===================================
-
 const columnWidth = '33%'
 const rowHeight = 30
 
@@ -49,28 +43,36 @@ export const LiquidateVaultModal = (props: Props) => {
     handleLiquidateVault,
     closePopup,
     show,
-    borrowedAsset: { amtBorrowed, assetSymbol, assetIcon, assetRate: rate },
+    borrowedAsset,
     collateralData,
   } = props
+  const { amtBorrowed, assetSymbol, assetIcon, assetRate, userBalance } = borrowedAsset
+
   const [inputAmount, setInputAmount] = useState('0')
   const [showAsPercentage, setShowAsPercentage] = useState(true)
-  const assetRate = rate || 1
-
-  const liquidationMax = amtBorrowed / 2
-  const liquidationReward = 10
-  const maxProfit = liquidationMax / 100 * liquidationReward
 
   const amount = Number(inputAmount)
+  const liquidationMaxAsset = amtBorrowed / 2
+  const liquidationMaxUsd = amtBorrowed / 2 * assetRate
+
+  const liquidationReward = 10
+  const maxProfit = liquidationMaxUsd / 100 * liquidationReward
+
   const useMaxBalance = showAsPercentage 
     ? 100
-    : balance >= liquidationMax ? liquidationMax : balance
+    : userBalance >= liquidationMaxAsset ? liquidationMaxAsset : userBalance
+  
+  const costToLiquidatePercentage = liquidationMaxUsd / 100 * amount 
+  const costToLiquidateAsset = amount * assetRate
 
   const costToLiquidate = showAsPercentage
-    ? liquidationMax / 100 * amount * assetRate
-    : amount * assetRate
+    ? costToLiquidatePercentage
+    : costToLiquidateAsset
 
   const liquidationRewardResult = costToLiquidate / 100 * liquidationReward
   const returnedToLiquidator = costToLiquidate + liquidationRewardResult
+
+  const profit = 1234.44 // TODO: use valid data
 
   const handleInputStatus = (inputValue: number, maxValue: number) => {
     if (inputValue === 0) return ''
@@ -103,7 +105,7 @@ export const LiquidateVaultModal = (props: Props) => {
                 Liquidation Max
                 <Icon id='info' className='info-icon' /> 
               </div>
-              <CommaNumber value={liquidationMax} decimalsToShow={2} showDecimal beginningText='$' className='numberColor'/>
+              <CommaNumber value={liquidationMaxUsd} decimalsToShow={2} showDecimal beginningText='$' className='numberColor'/>
             </div>
 
             <div>
@@ -129,10 +131,10 @@ export const LiquidateVaultModal = (props: Props) => {
               onChange: (e) => setInputAmount(e.target.value),
             }}
             settings={{
-              balance: balance,
+              balance: userBalance,
               balanceAsset: assetSymbol,
               useMaxHandler: () => setInputAmount(String(useMaxBalance)),
-              inputStatus: handleInputStatus(costToLiquidate, liquidationMax),
+              inputStatus: handleInputStatus(costToLiquidate, liquidationMaxUsd),
               convertedValue: costToLiquidate,
             }}
           >
