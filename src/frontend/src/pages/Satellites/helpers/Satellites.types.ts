@@ -38,6 +38,7 @@ export type Feed = FeedGQL & {
   dataFeedsHistory: Array<ChartPlotType>
   dataFeedsVolatility: Array<ChartPlotType>
   amount: number
+  icon?: string
 }
 
 export type InitialOracleStorageType = {

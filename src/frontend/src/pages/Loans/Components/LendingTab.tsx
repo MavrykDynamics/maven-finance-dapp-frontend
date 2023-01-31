@@ -44,7 +44,7 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData }:
                     <Icon id="noImage" />
                   </div>
                 )}
-                {assetData.name}
+                {assetData.symbol}
               </div>
             </ThreeLevelListItem>
             <ThreeLevelListItem>
@@ -77,7 +77,7 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData }:
               ) : null}
             </ThreeLevelListItem>
             <ThreeLevelListItem>
-              <div className="name">m{assetData.name} Balance</div>
+              <div className="name">m{assetData.symbol} Balance</div>
               <CommaNumber value={lendingItem.mBalance} className="value" />
             </ThreeLevelListItem>
             <Button
@@ -90,7 +90,9 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData }:
                   mBalance: lendingItem.mBalance,
                   lendingAPY: lendingItem.lendAPY,
                   assetRate: assetData.rate,
-                  assetName: assetData.name,
+                  decimals: assetData.decimals,
+                  originalName: assetData.originalName,
+                  assetName: assetData.symbol,
                   assetIcon: assetData.icon,
                 })
               }}
@@ -106,7 +108,9 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData }:
                   mBalance: lendingItem.mBalance,
                   lendingAPY: lendingItem.lendAPY,
                   assetRate: assetData.rate,
-                  assetName: assetData.name,
+                  decimals: assetData.decimals,
+                  originalName: assetData.originalName,
+                  assetName: assetData.symbol,
                   assetIcon: assetData.icon,
                   currentLendedAmount: lendingItem.lendValue,
                 })
@@ -127,8 +131,10 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData }:
                 userBalance: assetData.userBalance,
                 mBalance: 0,
                 lendingAPY: 0,
+                decimals: assetData.decimals,
                 assetRate: assetData.rate,
-                assetName: assetData.name,
+                originalName: assetData.originalName,
+                assetName: assetData.symbol,
                 assetIcon: assetData.icon,
               })
             }

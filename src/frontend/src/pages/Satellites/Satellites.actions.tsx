@@ -126,7 +126,7 @@ export const undelegate = (delegateAddress: string) => async (dispatch: AppDispa
 }
 
 export const GET_ORACLES_STORAGE = 'GET_ORACLES_STORAGE'
-export const getOracleStorage = () => async (dispatch: AppDispatch) => {
+export const getOracleStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
   try {
     const oracleData = await fetchFromIndexer(
       ORACLE_STORAGE_QUERY,

@@ -28,6 +28,9 @@ export const getLoansStorage = () => async (dispatch: AppDispatch, getState: Get
       accountPkh,
       user: { mTokens: userMTokens },
     },
+    oracles: {
+      oraclesStorage: { feeds },
+    },
   } = getState()
   try {
     const storage = await fetchFromIndexer(LOANS_QUERY, LOANS_QUERY_NAME, LOANS_QUERY_VARIABLE)
@@ -42,10 +45,11 @@ export const getLoansStorage = () => async (dispatch: AppDispatch, getState: Get
 
     const { chartsData, loanTokens, loansControllerAddress } = await normalizeLoans({
       storage: storage?.lending_controller?.[0],
-      dipDupTokens,
+      dipDupData: dipDupTokens,
       mTokens,
       userMTokens,
       userAddres: accountPkh,
+      feeds,
       tokensRate: { ...tokensPrices, ...loanTokensRate },
     })
 
@@ -99,6 +103,8 @@ export const getAvaliableCollaterals = () => async (dispatch: AppDispatch, getSt
       { ...tokensPrices, ...loanTokensRate },
       accountPkh,
     )
+
+    console.log('storage', storage)
 
     await dispatch({
       type: GET_AVALIABLE_COLLATERALS,
@@ -298,6 +304,8 @@ export const depositLendingAssetAction =
     }
 
     try {
+      console.log(loanTokenName, addLiquidityAmount, state.contractAddresses)
+
       // prepare and send query
       const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.lendingController.address)
       const transaction = await contract?.methods.addLiquidity(loanTokenName, addLiquidityAmount).send()

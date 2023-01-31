@@ -1,19 +1,36 @@
 export const DIPDUP_TOKENS_QUERY = `
    query GetDipDupTokens {
     dipdup_token_metadata {
-      token_id
-      metadata
       contract
       created_at
+      metadata
       id
-      update_id
       network
+      update_id
       updated_at
     }
+  
   }
 `
 export const DIPDUP_TOKENS_QUERY_NAME = 'GetDipDupTokens'
 export const DIPDUP_TOKENS_QUERY_VARIABLE = {}
+
+export const DIPDUP_CONTRACTS_QUERY = `
+   query GetDipDupContracts{
+    dipdup_contract_metadata {
+      contract
+      created_at
+      metadata
+      id
+      network
+      update_id
+      updated_at
+    }
+  
+  }
+`
+export const DIPDUP_CONTRACTS_QUERY_NAME = 'GetDipDupContracts'
+export const DIPDUP_CONTRACTS_QUERY_VARIABLE = {}
 
 export const GOVERNANCE_CONTRACT_ADDRESS_QUERY = `
   query GetContractAddress {

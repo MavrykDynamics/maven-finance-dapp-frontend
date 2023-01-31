@@ -14,6 +14,7 @@ import { AvaliableCollateralType } from 'utils/TypesAndInterfaces/Loans'
 
 export type TokensType = {
   dipDupTokens: Array<DipDupTokensGraphQl>
+  dipDupContracts: Array<DipDupTokensGraphQl>
   tokensPrices: Record<string, { usd: number }>
   avaliableCollaterals: Array<AvaliableCollateralType>
   whitelistTokens: Array<Governance_Financial_Whitelist_Token_Contract>
@@ -21,6 +22,7 @@ export type TokensType = {
 }
 const defaultTokensInfoState: TokensType = {
   dipDupTokens: [],
+  dipDupContracts: [],
   whitelistTokens: [],
   avaliableCollaterals: [],
   tokensPrices: {},
@@ -30,7 +32,7 @@ const defaultTokensInfoState: TokensType = {
 export function tokens(state = defaultTokensInfoState, action: Action) {
   switch (action.type) {
     case GET_DIP_DUP_TOKENS:
-      return { ...state, dipDupTokens: action.dipDupTokens }
+      return { ...state, dipDupTokens: action.dipDupTokens, dipDupContracts: action.dipDupContracts }
     case GET_WHITELIST_TOKENS:
       return { ...state, whitelistTokens: action.whitelistTokens }
     case GET_AVALIABLE_COLLATERALS:

@@ -57,10 +57,12 @@ export type AddCollateralPopupDataType = {
 export type AddLendingAssetDataType = {
   userBalance: number
   mBalance: number
+  decimals: number
   lendingAPY: number
   assetRate: number
-  assetName: string
+  assetName?: string
   assetIcon?: string
+  originalName: string
 } | null
 
 export type RemoveLendingAssetDataType =
