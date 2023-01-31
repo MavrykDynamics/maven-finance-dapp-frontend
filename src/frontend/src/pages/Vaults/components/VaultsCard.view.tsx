@@ -94,7 +94,7 @@ export const VaultsCard = (props: Props) => {
   const {
     ownerId,
     vaultId,
-    status: x,
+    status,
     levelOfEarly,
     levelOfLate,
     collateralData,
@@ -106,7 +106,7 @@ export const VaultsCard = (props: Props) => {
   const [expanded, setExpanded] = useState(false)
   const [timerTimestamp, setTimerTimestamp] = useState<number | undefined>(undefined)
   const [shownModal, setShownModal] = useState<typeof LIQUIDATE_MODAL_ID | null>(null)
-  const status = vaultsStatuses.LIQUIDATABLE
+
   const statusColor = findStatusInfo(status).color as StatusFlagStyle
   const statusText = findStatusInfo(status).text
   const footerText = findFooterText(status, statusColor, timerTimestamp)

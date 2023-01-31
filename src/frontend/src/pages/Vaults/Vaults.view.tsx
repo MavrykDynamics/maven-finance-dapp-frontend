@@ -24,7 +24,6 @@ import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 
 // actions
 import { getVaultsStorage, liquidateVault, markForLiquidation } from './Vaults.actions'
-import { getLoansStorage } from 'pages/Loans/Loans.actions'
 
 const pathname = '/vaults'
 
