@@ -60,6 +60,7 @@ import {
 } from 'app/App.components/Table/Table.style'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+import { VotingTypes } from 'app/App.components/VotingArea/helpers/voting.const'
 
 type GovernanceViewProps = {
   accountPkh: string | undefined
@@ -141,24 +142,24 @@ export const GovernanceView = ({
   const handleVotingRoundVote = async (vote: string) => {
     let voteType
     switch (vote) {
-      case 'yay':
-        voteType = 'yay'
+      case VotingTypes.YES:
+        voteType = VotingTypes.YES
         setVoteStatistics({
           ...voteStatistics,
           forVotesMVKTotal: +voteStatistics.forVotesMVKTotal + 1,
           unusedVotesMVKTotal: Math.max(+voteStatistics.unusedVotesMVKTotal - 1, 0),
         })
         break
-      case 'nay':
-        voteType = 'nay'
+      case VotingTypes.NO:
+        voteType = VotingTypes.NO
         setVoteStatistics({
           ...voteStatistics,
           againstVotesMVKTotal: Number(voteStatistics.againstVotesMVKTotal) + 1,
           unusedVotesMVKTotal: Math.max(+voteStatistics.unusedVotesMVKTotal - 1, 0),
         })
         break
-      case 'pass':
-        voteType = 'pass'
+      case VotingTypes.PASS:
+        voteType = VotingTypes.PASS
         setVoteStatistics({
           ...voteStatistics,
           abstainVotesMVKTotal: Number(voteStatistics.abstainVotesMVKTotal) + 1,

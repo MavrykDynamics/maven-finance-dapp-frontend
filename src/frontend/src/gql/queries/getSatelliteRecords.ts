@@ -69,7 +69,7 @@ export const SATELLITE_RECORDS_QUERY = `
             governance_type
           }
         }
-        governance_proposals_votes {
+        governance_proposals_votes(order_by: {timestamp: desc}) {
           governance_proposal_id
           id
           current_round_vote
@@ -150,7 +150,7 @@ export const USER_VOTING_HYSTORY_QUERY = `
           request_type
         }
       }
-      governance_proposals_votes {
+      governance_proposals_votes(order_by: {timestamp: desc}) {
         governance_proposal_id
         current_round_vote
         round
