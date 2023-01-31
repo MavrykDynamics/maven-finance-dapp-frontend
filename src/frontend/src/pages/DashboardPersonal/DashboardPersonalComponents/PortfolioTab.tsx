@@ -242,7 +242,7 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
         ) : (
           <div className="no-data">
             <span>Nothing borrowed at this time</span>
-            <Link to="/yield-farms">
+            <Link to="/loans">
               <Button
                 text="Borrow Asset"
                 icon="borrow"

@@ -19,6 +19,7 @@ import { ERROR, INFO, SUCCESS } from 'app/App.components/Toaster/Toaster.constan
 import { OpKind } from '@taquito/taquito'
 import { getXTZBakers, getCollateralTokens, getLoansTokensRates } from './LoansFethcers'
 import { updateTokensPrices } from 'reducers/actions/dipDupActions.actions'
+import { updateUserData } from 'pages/Doorman/Doorman.actions'
 
 export const GET_LOANS_STORAGE = 'GET_LOANS_STORAGE'
 export const getLoansStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
@@ -27,6 +28,9 @@ export const getLoansStorage = () => async (dispatch: AppDispatch, getState: Get
     wallet: {
       accountPkh,
       user: { mTokens: userMTokens },
+    },
+    oracles: {
+      oraclesStorage: { feeds },
     },
   } = getState()
   try {
@@ -42,10 +46,11 @@ export const getLoansStorage = () => async (dispatch: AppDispatch, getState: Get
 
     const { chartsData, loanTokens, loansControllerAddress } = await normalizeLoans({
       storage: storage?.lending_controller?.[0],
-      dipDupTokens,
+      dipDupData: dipDupTokens,
       mTokens,
       userMTokens,
       userAddres: accountPkh,
+      feeds,
       tokensRate: { ...tokensPrices, ...loanTokensRate },
     })
 
@@ -77,8 +82,11 @@ const getNewVaultData = async () => {
 export const GET_AVALIABLE_COLLATERALS = 'GET_AVALIABLE_COLLATERALS'
 export const getAvaliableCollaterals = () => async (dispatch: AppDispatch, getState: GetState) => {
   const {
-    tokens: { dipDupTokens, tokensPrices },
+    tokens: { dipDupTokens },
     wallet: { accountPkh },
+    oracles: {
+      oraclesStorage: { feeds },
+    },
   } = getState()
   try {
     const storage = await fetchFromIndexer(
@@ -87,16 +95,10 @@ export const getAvaliableCollaterals = () => async (dispatch: AppDispatch, getSt
       AVALIABLE_COLLATERALS_QUERY_VARIABLE,
     )
 
-    const loanTokensRate = await getLoansTokensRates(
-      storage?.lending_controller?.[0]?.loan_tokens,
-      dipDupTokens,
-      tokensPrices,
-    )
-
     const avaliableCollaterals = await getCollateralTokens(
       storage?.lending_controller?.[0]?.collateral_tokens,
       dipDupTokens,
-      { ...tokensPrices, ...loanTokensRate },
+      feeds,
       accountPkh,
     )
 
@@ -104,8 +106,6 @@ export const getAvaliableCollaterals = () => async (dispatch: AppDispatch, getSt
       type: GET_AVALIABLE_COLLATERALS,
       avaliableCollaterals,
     })
-
-    await dispatch(updateTokensPrices(loanTokensRate))
   } catch (e) {
     console.log('getNewVaultData error: ', e)
   }
@@ -129,10 +129,7 @@ export const triggerInitialVaultCreation =
     try {
       // prepare and send query
       const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.vaultFactory.address)
-
-      const transaction = await contract?.methods
-        .createVault(state.wallet.accountPkh, loanTokenName, 'whitelist', [])
-        .send()
+      const transaction = await contract?.methods.createVault(undefined, loanTokenName, [], 'any').send()
 
       // confirm query completion
       await transaction?.confirmation()
@@ -152,13 +149,13 @@ export const triggerInitialVaultCreation =
 export const depositCollateralAction =
   (
     newVaultAddress: string,
-    collateralAssets: Array<{
+    collateralAssets: {
       collateralName: string
       assetAddress: string
       amount: number
       assetId: number
       tokenType: 'tez' | 'fa2' | 'fa12'
-    }>,
+    },
     callback: () => void,
     bakerAddress?: string,
   ) =>
@@ -181,82 +178,69 @@ export const depositCollateralAction =
 
       let transaction = null
 
-      if (collateralAssets.length === 1) {
-        const { amount, assetAddress, assetId, collateralName, tokenType } = collateralAssets[0]
+      const { amount, assetAddress, assetId, collateralName, tokenType } = collateralAssets
 
-        if (tokenType === 'tez' && bakerAddress) {
-          const batch = await state.wallet.tezos?.wallet.batch([
-            {
-              kind: OpKind.TRANSACTION,
-              ...contract.methods.deposit(amount, 'tez').toTransferParams(),
-              amount,
-              mutez: true,
-            },
-            {
-              kind: OpKind.TRANSACTION,
-              ...contract.methods.delegateTezToBaker(bakerAddress).toTransferParams(),
-            },
-          ])
+      if (tokenType === 'tez' && bakerAddress) {
+        const batch = await state.wallet.tezos?.wallet.batch([
+          {
+            kind: OpKind.TRANSACTION,
+            ...contract.methods.deposit(amount, 'tez').toTransferParams(),
+            amount,
+            mutez: true,
+          },
+          {
+            kind: OpKind.TRANSACTION,
+            ...contract.methods.delegateTezToBaker(bakerAddress).toTransferParams(),
+          },
+        ])
 
-          transaction = await batch.send()
-        }
+        transaction = await batch.send()
+      }
 
-        if (tokenType === 'fa12') {
-          const assetContract = await state.wallet.tezos?.wallet.at(assetAddress)
-          const batch = await state.wallet.tezos?.wallet.batch([
-            {
-              kind: OpKind.TRANSACTION,
-              ...assetContract.methods.approve(newVaultAddress, 0).toTransferParams(),
-            },
-            {
-              kind: OpKind.TRANSACTION,
-              ...assetContract.methods.approve(newVaultAddress, amount).toTransferParams(),
-            },
-            {
-              kind: OpKind.TRANSACTION,
-              ...contract.methods.deposit(amount, collateralName).toTransferParams(),
-            },
-          ])
+      if (tokenType === 'fa12') {
+        const assetContract = await state.wallet.tezos?.wallet.at(assetAddress)
+        const batch = await state.wallet.tezos?.wallet.batch([
+          {
+            kind: OpKind.TRANSACTION,
+            ...assetContract.methods.approve(newVaultAddress, 0).toTransferParams(),
+          },
+          {
+            kind: OpKind.TRANSACTION,
+            ...assetContract.methods.approve(newVaultAddress, amount).toTransferParams(),
+          },
+          {
+            kind: OpKind.TRANSACTION,
+            ...contract.methods.deposit(amount, collateralName).toTransferParams(),
+          },
+        ])
 
-          transaction = await batch.send()
-        }
+        transaction = await batch.send()
+      }
 
-        if (tokenType === 'fa2') {
-          const assetContract = await state.wallet.tezos?.wallet.at(assetAddress)
-          const fa2AddOperators = [
-            {
-              add_operator: {
-                owner: state.wallet.accountPkh,
-                operator: newVaultAddress,
-                token_id: assetId, // Should be a number, usually 0
-              },
+      if (tokenType === 'fa2') {
+        const assetContract = await state.wallet.tezos?.wallet.at(assetAddress)
+        const fa2AddOperators = [
+          {
+            add_operator: {
+              owner: state.wallet.accountPkh,
+              operator: newVaultAddress,
+              token_id: assetId, // Should be a number, usually 0
             },
-          ]
+          },
+        ]
 
-          const batch = await state.wallet.tezos?.wallet.batch([
-            {
-              kind: OpKind.TRANSACTION,
-              ...assetContract.methods.update_operators(fa2AddOperators).toTransferParams(),
-            },
-            {
-              kind: OpKind.TRANSACTION,
-              ...contract.methods.deposit(amount, collateralName).toTransferParams(),
-            },
-          ])
+        const batch = await state.wallet.tezos?.wallet.batch([
+          {
+            kind: OpKind.TRANSACTION,
+            ...assetContract.methods.update_operators(fa2AddOperators).toTransferParams(),
+          },
+          {
+            kind: OpKind.TRANSACTION,
+            ...contract.methods.deposit(amount, collateralName).toTransferParams(),
+          },
+        ])
 
-          transaction = await batch.send()
-        }
-      } else {
-        // TODO: handle case of adding multiple collaterals, for now disabled in view
-        // const batch = await state.wallet.tezos?.wallet.batch(
-        //   collateralAssets.map(({ collateralName, amount }) => {
-        //     return {
-        //       kind: OpKind.TRANSACTION,
-        //       ...contract.methods.deposit(amount, collateralName).toTransferParams(),
-        //     }
-        //   }),
-        // )
-        // transaction = await batch.send()
+        transaction = await batch.send()
       }
 
       callback()
@@ -269,8 +253,8 @@ export const depositCollateralAction =
       await dispatch(showToaster(SUCCESS, 'Vault Created.', 'All good :)'))
 
       // refetch data we need
+      await dispatch(updateUserData())
       await dispatch(getLoansStorage())
-
       await dispatch(toggleActionLoader(false))
     } catch (error) {
       console.error('depositCollateralAction error:', error)
@@ -311,6 +295,7 @@ export const depositLendingAssetAction =
 
       await dispatch(showToaster(SUCCESS, 'Liquidity Added.', 'All good :)'))
       // refetch data we need
+      await dispatch(updateUserData())
       await dispatch(getLoansStorage())
       await dispatch(toggleActionLoader(false))
     } catch (error) {
@@ -352,6 +337,7 @@ export const withdrawLendingAssetAction =
 
       await dispatch(showToaster(SUCCESS, 'Liquidity Added.', 'All good :)'))
       // refetch data we need
+      await dispatch(updateUserData())
       await dispatch(getLoansStorage())
       await dispatch(toggleActionLoader(false))
     } catch (error) {

@@ -88,7 +88,12 @@ export const CreateNewVault = ({
       (acc, collateralData) => {
         acc[collateralData.id] = {
           ...collateralData,
-          content: <DropdownInputCustomChild iconSrc={collateralData.assetIcon} symbol={collateralData.assetName} />,
+          content: (
+            <DropdownInputCustomChild
+              iconSrc={collateralData.assetIcon}
+              symbol={collateralData.originalName === 'tez' ? 'XTZ' : collateralData.originalName.toUpperCase()}
+            />
+          ),
           disabled: collateralData.isProtected,
         }
         return acc
@@ -305,31 +310,41 @@ export const CreateNewVault = ({
   }
 
   const depositCollateralHandler = () => {
-    const collaretalToDeposit = collaterals.reduce<
-      Array<{
-        collateralName: string
-        amount: number
-        assetId: number
-        assetAddress: string
-        tokenType: 'tez' | 'fa2' | 'fa12'
-      }>
-    >((acc, { id, inputAmount }) => {
-      const { assetName, assetDecimals, assetAddress, tokenType } = collateralsToSelect[id] ?? {}
+    // const collaretalToDeposit = collaterals.reduce<
+    //   Array<{
+    //     collateralName: string
+    //     amount: number
+    //     assetId: number
+    //     assetAddress: string
+    //     tokenType: 'tez' | 'fa2' | 'fa12'
+    //   }>
+    // >((acc, { id, inputAmount }) => {
+    //   const { assetDecimals, assetAddress, tokenType, originalName } = collateralsToSelect[id] ?? {}
 
-      if (assetName && assetDecimals) {
-        acc.push({
-          collateralName: assetName,
-          assetId: id,
-          tokenType,
-          amount: Math.floor(Number(inputAmount) * 10 ** assetDecimals),
-          assetAddress,
-        })
-      }
+    //   if (originalName && assetDecimals) {
+    //     acc.push({
+    //       collateralName: originalName,
+    //       assetId: id,
+    //       tokenType,
+    //       amount: Math.floor(Number(inputAmount) * 10 ** assetDecimals),
+    //       assetAddress,
+    //     })
+    //   }
 
-      return acc
-    }, [])
+    //   return acc
+    // }, [])
 
-    if (newVaultAddress && !isAddCollateralContinueDisabled && collaretalToDeposit.length > 0) {
+    const { assetDecimals, assetAddress, tokenType, originalName } = collateralsToSelect[collaterals[0].id]
+
+    const collaretalToDeposit = {
+      collateralName: originalName,
+      assetId: collaterals[0].id,
+      tokenType,
+      amount: Math.floor(Number(collaterals[0].inputAmount) * 10 ** assetDecimals),
+      assetAddress,
+    }
+
+    if (newVaultAddress && !isAddCollateralContinueDisabled) {
       dispatch(
         depositCollateralAction(newVaultAddress, collaretalToDeposit, closePopup, bakerChosenDdItem?.bakerAddress),
       )
@@ -398,7 +413,7 @@ export const CreateNewVault = ({
                   const collaterallMetadata = collateralsToSelect[inputCollateralId]
 
                   if (!collaterallMetadata) return null
-                  const isXTZCollateral = isTezosAsset(collaterallMetadata.assetName)
+                  const isXTZCollateral = isTezosAsset(collaterallMetadata.originalName)
 
                   return (
                     <div className="collateral-block" key={inputCollateralId}>
@@ -415,7 +430,10 @@ export const CreateNewVault = ({
                           onFocus: () => onFocusHandler(idx),
                         }}
                         settings={{
-                          balanceAsset: collaterallMetadata.assetName,
+                          balanceAsset:
+                            collaterallMetadata.originalName === 'tez'
+                              ? 'XTZ'
+                              : collaterallMetadata.originalName.toUpperCase(),
                           useMaxHandler: () =>
                             inputOnChangeHandle(
                               String(collaterallMetadata.userBalance),
@@ -436,7 +454,11 @@ export const CreateNewVault = ({
                               content: (
                                 <DropdownInputCustomChild
                                   iconSrc={collaterallMetadata.assetIcon}
-                                  symbol={collaterallMetadata.assetName}
+                                  symbol={
+                                    collaterallMetadata.originalName === 'tez'
+                                      ? 'XTZ'
+                                      : collaterallMetadata.originalName.toUpperCase()
+                                  }
                                 />
                               ),
                               id: inputCollateralId,
@@ -503,7 +525,11 @@ export const CreateNewVault = ({
                 <div className="lending-stats" style={{ marginBottom: '30px' }}>
                   <ThreeLevelListItem>
                     <div className="name">Asset</div>
-                    <div className="value">{firstCollateralMetadata?.assetName}</div>
+                    <div className="value">
+                      {firstCollateralMetadata?.originalName === 'tez'
+                        ? 'XTZ'
+                        : firstCollateralMetadata?.originalName?.toUpperCase()}
+                    </div>
                   </ThreeLevelListItem>
                   <ThreeLevelListItem>
                     <div className="name">Amount</div>
@@ -544,7 +570,11 @@ export const CreateNewVault = ({
                           className="add-hover"
                           key={collateralId + collateralMetadata.assetName}
                         >
-                          <TableCell width="42%">{collateralMetadata.assetName}</TableCell>
+                          <TableCell width="42%">
+                            {collateralMetadata.originalName === 'tez'
+                              ? 'XTZ'
+                              : collateralMetadata.originalName.toUpperCase()}
+                          </TableCell>
                           <TableCell width="28%">
                             <CommaNumber value={Number(inputAmount)} />
                           </TableCell>

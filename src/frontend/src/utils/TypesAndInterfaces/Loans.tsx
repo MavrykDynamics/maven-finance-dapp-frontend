@@ -8,6 +8,7 @@ export type LoansStorage = Awaited<ReturnType<typeof normalizeLoans>>
 export type LoanTokenType = {
   loanTokenData: {
     name: string
+    originalName: string
     symbol?: string
     decimals: number
     icon?: string
@@ -66,6 +67,7 @@ export type AvaliableCollateralType = {
   assetDecimals: number
   assetRate: number
   assetName: string
+  originalName: string
   assetSymbol: string
   assetIcon: string
   assetAddress: string
@@ -112,6 +114,8 @@ export type BorrowingData = {
   xtzDelegatedTo: string | null
   operators?: Array<string>
   sMVKDelegatedTo?: string
+  levelOfEarly?: number
+  levelOfLate?: number
   depositors?: Array<string>
 }
 

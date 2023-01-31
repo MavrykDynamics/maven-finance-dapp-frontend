@@ -14,7 +14,8 @@ export const getGradient = ({ colorBreakpoints, currentPersentage }: GradientDia
       if (persentage <= currentPersentage) {
         acc.push(` ${`rgb(${color.r}, ${color.g}, ${color.b})`} ${persentage}%`)
       } else {
-        const { color: prevColor, persentage: prevPersentage } = arr[idx - 1]
+        if (!arr?.[idx - 1]) return acc
+        const { color: prevColor, persentage: prevPersentage } = arr?.[idx - 1]
         const currentIntervalPersentage = (currentPersentage - prevPersentage) / (persentage - prevPersentage)
 
         const mixedColor = {
@@ -29,6 +30,6 @@ export const getGradient = ({ colorBreakpoints, currentPersentage }: GradientDia
     }
     return acc
   }, [])
-  
+
   return `linear-gradient(to right, ${gradientColorsFillling.join(',')})`
 }

@@ -62,7 +62,7 @@ export const getUserBalanceForLoanAsset = async (
       0
     )
   } catch (e) {
-    console.log('getUserBalanceForLoanAsset fetching error', e)
+    console.log('getUserBalanceForLoanAsset error:', e)
     return 0
   }
 }
@@ -70,67 +70,82 @@ export const getUserBalanceForLoanAsset = async (
 export const getCollateralTokens = async (
   collateralTokens: Array<Lending_Controller_Collateral_Token>,
   dipDupTokens: State['tokens']['dipDupTokens'],
-  tokensRate: State['tokens']['tokensPrices'],
+  feeds: State['oracles']['oraclesStorage']['feeds'],
   accountPkh?: string,
 ): Promise<Array<AvaliableCollateralType>> => {
   if (!accountPkh) return []
 
-  return await collateralTokens.reduce<Promise<AvaliableCollateralType[]>>(
-    async (promiseAcc, { id, token_address, token_contract_standard, token_name, protected: isProtected }) => {
-      const acc = await promiseAcc
-      const isXTZ = isTezosAsset(token_name)
-      const assetMetadata = dipDupTokens?.find(({ contract }) => contract === token_address)?.metadata
+  try {
+    return await collateralTokens.reduce<Promise<AvaliableCollateralType[]>>(
+      async (
+        promiseAcc,
+        { id, token_address, token_contract_standard, token_name, protected: isProtected, oracle_id },
+      ) => {
+        const acc = await promiseAcc
+        const isXTZ = isTezosAsset(token_name)
+        const assetMetadata = dipDupTokens?.find(({ contract }) => contract === token_address)?.metadata
 
-      const lendingAssetBalance = isXTZ
-        ? await (
-            await fetch(`https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/accounts/${accountPkh}/balance`)
-          ).json()
-        : await (
-            await fetch(
-              `https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/tokens/balances?account.eq=${accountPkh}&token.contract.in=${token_address}`,
-            )
-          ).json()
+        const dataFromFeed = feeds.find(({ address }) => address === oracle_id)
 
-      const userBalance =
-        (typeof lendingAssetBalance === 'number'
-          ? lendingAssetBalance / 10 ** 6
-          : Number(lendingAssetBalance?.[0]?.balance ?? 0) /
-            10 ** Number(lendingAssetBalance?.[0]?.token?.metadata?.decimals ?? 0)) ?? 0
+        const lendingAssetBalance = isXTZ
+          ? await (
+              await fetch(`https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/accounts/${accountPkh}/balance`)
+            ).json()
+          : await (
+              await fetch(
+                `https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/tokens/balances?account.eq=${accountPkh}&token.contract.in=${token_address}`,
+              )
+            ).json()
 
-      if (isXTZ) {
-        acc.push({
-          id,
-          assetName: token_name,
-          assetSymbol: 'tezos',
-          assetRate: tokensRate['tezos']?.usd ?? 0.25,
-          userBalance,
-          assetIcon: '/images/tezos.png',
-          assetDecimals: assetMetadata?.decimals ? Number(assetMetadata.decimals) : 6,
-          assetAddress: token_address,
-          tokenType: token_contract_standard as 'tez' | 'fa12' | 'fa2',
-          isProtected,
-        })
-      }
+        const userBalance =
+          (typeof lendingAssetBalance === 'number'
+            ? lendingAssetBalance / 10 ** 6
+            : Number(lendingAssetBalance?.[0]?.balance ?? 0) /
+              10 ** Number(lendingAssetBalance?.[0]?.token?.metadata?.decimals ?? 0)) ?? 0
 
-      if (assetMetadata) {
-        acc.push({
-          id,
-          assetName: token_name,
-          assetSymbol: assetMetadata.symbol,
-          assetRate: tokensRate[assetMetadata.symbol]?.usd ?? 0.25,
-          userBalance,
-          assetIcon: assetMetadata.icon,
-          assetDecimals: assetMetadata?.decimals ? Number(assetMetadata.decimals) : 6,
-          assetAddress: token_address,
-          tokenType: token_contract_standard as 'tez' | 'fa12' | 'fa2',
-          isProtected,
-        })
-      }
+        const rate = Number(dataFromFeed?.last_completed_data) / 10 ** Number(dataFromFeed?.decimals)
 
-      return acc
-    },
-    Promise.resolve([]),
-  )
+        if (isXTZ) {
+          acc.push({
+            id,
+            assetName: 'XTZ',
+            originalName: token_name,
+            assetSymbol: 'tez',
+            assetRate: rate ?? 0.25,
+            userBalance,
+            assetIcon: '/images/tezos.png',
+            assetDecimals: assetMetadata?.decimals ? Number(assetMetadata.decimals) : 6,
+            assetAddress: token_address,
+            tokenType: token_contract_standard as 'tez' | 'fa12' | 'fa2',
+            isProtected,
+          })
+        }
+
+        if (assetMetadata) {
+          acc.push({
+            id,
+            assetName: assetMetadata.name,
+            originalName: token_name,
+            assetSymbol: assetMetadata.symbol,
+            assetRate: rate ?? 0.25,
+            userBalance,
+            assetIcon: token_name === 'eurl' ? '/images/eurl.png' : assetMetadata.icon ?? dataFromFeed?.icon,
+            assetDecimals: assetMetadata?.decimals ? Number(assetMetadata.decimals) : 6,
+            assetAddress: token_address,
+            tokenType: token_contract_standard as 'tez' | 'fa12' | 'fa2',
+            isProtected,
+          })
+        }
+
+        return acc
+      },
+      Promise.resolve([]),
+    )
+  } catch (e) {
+    console.log('getCollateralTokens error:', e)
+
+    return []
+  }
 }
 
 export const getLoansTokensRates = async (
@@ -170,7 +185,7 @@ export const getLoansTokensRates = async (
 
     return await fetchRateBySymbols(loanTokenSymbols)
   } catch (e) {
-    console.log('getLoansRates error: ', e)
+    console.log('getLoansTokensRates error: ', e)
     return {}
   }
 }
@@ -204,7 +219,7 @@ export const getUserLoansDataTokensRates = async (
 
     return await fetchRateBySymbols(loanTokenSymbols)
   } catch (e) {
-    console.log('getLoansRates error: ', e)
+    console.log('getUserLoansDataTokensRates error: ', e)
     return {}
   }
 }

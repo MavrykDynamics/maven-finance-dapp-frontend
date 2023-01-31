@@ -1,7 +1,10 @@
 import { AppDispatch, coinGeckoClient, GetState } from 'app/App.controller'
-import { normalizeDipDupTokens, normalizeMTokens } from 'app/App.helpers'
+import { normalizeDipDupContracts, normalizeDipDupTokens, normalizeMTokens } from 'app/App.helpers'
 import { fetchFromIndexer } from 'gql/fetchGraphQL'
 import {
+  DIPDUP_CONTRACTS_QUERY,
+  DIPDUP_CONTRACTS_QUERY_NAME,
+  DIPDUP_CONTRACTS_QUERY_VARIABLE,
   DIPDUP_TOKENS_QUERY,
   DIPDUP_TOKENS_QUERY_NAME,
   DIPDUP_TOKENS_QUERY_VARIABLE,
@@ -19,12 +22,24 @@ import { State } from 'reducers'
 export const GET_DIP_DUP_TOKENS = 'GET_DIP_DUP_TOKENS'
 export const getDipDupTokensStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
   try {
-    const storage = await fetchFromIndexer(DIPDUP_TOKENS_QUERY, DIPDUP_TOKENS_QUERY_NAME, DIPDUP_TOKENS_QUERY_VARIABLE)
-    const dipDupTokens = normalizeDipDupTokens(storage)
+    const storageTokens = await fetchFromIndexer(
+      DIPDUP_TOKENS_QUERY,
+      DIPDUP_TOKENS_QUERY_NAME,
+      DIPDUP_TOKENS_QUERY_VARIABLE,
+    )
+    const dipDupTokens = normalizeDipDupTokens(storageTokens)
+
+    const storageContracts = await fetchFromIndexer(
+      DIPDUP_CONTRACTS_QUERY,
+      DIPDUP_CONTRACTS_QUERY_NAME,
+      DIPDUP_CONTRACTS_QUERY_VARIABLE,
+    )
+    const dipDupContracts = normalizeDipDupContracts(storageContracts)
 
     dispatch({
       type: GET_DIP_DUP_TOKENS,
       dipDupTokens,
+      dipDupContracts,
     })
   } catch (e) {
     console.error('getDipDupTokensStorage error: ', e)
@@ -89,7 +104,7 @@ export const updateTokensPrices =
         tokensPrices: additionalTokensSrices,
       })
     } catch (e) {
-      console.error('getTokensPrices error: ', e)
+      console.error('updateTokensPrices error: ', e)
     }
   }
 
@@ -104,7 +119,7 @@ export const getMTokensStorage = () => async (dispatch: AppDispatch, getState: G
       mTokens,
     })
   } catch (e) {
-    console.error('getDipDupTokensStorage error: ', e)
+    console.error('getMTokensStorage error: ', e)
   }
 }
 
@@ -125,7 +140,7 @@ export const fetchRateBySymbols = async (tokensSymbols: Array<string>) => {
       return acc
     }, {})
   } catch (e) {
-    console.log('getLoansRates error: ', e)
+    console.log('fetchRateBySymbols error: ', e)
     return {}
   }
 }

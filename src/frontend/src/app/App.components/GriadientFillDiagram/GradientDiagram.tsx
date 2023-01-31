@@ -1,3 +1,4 @@
+import { lightTextColor } from 'styles'
 import { CommaNumber } from '../CommaNumber/CommaNumber.controller'
 import { getGradient } from './GradientDiagram.helpers'
 import { GradientBreakpoint, GradientDiagramStyled } from './GradientDiagram.style'

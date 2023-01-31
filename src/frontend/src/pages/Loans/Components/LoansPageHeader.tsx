@@ -36,7 +36,13 @@ export const MarketPageHeader = ({ currentAsset, assetId }: MarketPageHeaderProp
             )}
           </div>
           <div className="text-container">
-            <h1>{assetId.toUpperCase()} Market</h1>
+            <h1>
+              {(currentAsset.loanTokenData.originalName === 'tez'
+                ? 'xtz'
+                : currentAsset.loanTokenData.originalName
+              ).toUpperCase()}{' '}
+              Market
+            </h1>
             <p>{`Lend and borrow ${assetId} and manage your current ${assetId} positions`}</p>
           </div>
         </PageHeaderTextArea>

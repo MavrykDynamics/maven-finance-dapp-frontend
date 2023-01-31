@@ -11,6 +11,7 @@ import type {
 import { Dipdup_Token_Metadata, M_Token } from 'utils/generated/graphqlTypes'
 import { normalizeDataFeedsHistory, normalizeDataFeedsVolatility } from 'pages/Satellites/Satellites.helpers'
 import { Feed } from 'pages/Satellites/helpers/Satellites.types'
+import { State } from 'reducers'
 
 export function normalizeAddressesStorage(storage: AddressesGraphQl): ContractAddressesState {
   return {
@@ -95,6 +96,10 @@ export function normalizeOracle(storage: {
     const dataFeedsHistory = normalizeDataFeedsHistory(item.history_data)
     const dataFeedsVolatility = normalizeDataFeedsVolatility(item.history_data)
 
+    const { icon } = storage?.dipdup_contract_metadata?.find(({ contract }) => contract === item.address)?.metadata as {
+      icon?: string
+    }
+
     const { history_data, ...restOfTheItem } = item
 
     const feed = {
@@ -103,8 +108,8 @@ export function normalizeOracle(storage: {
       amount: item.last_completed_data / 10 ** item.decimals,
       dataFeedsHistory: dataFeedsHistory,
       dataFeedsVolatility: dataFeedsVolatility,
+      icon,
     }
-
     return feed
   })
 
@@ -115,8 +120,12 @@ export function normalizeOracle(storage: {
   }
 }
 
-export function normalizeDipDupTokens(storage: { dipdup_token_metadata: Dipdup_Token_Metadata }) {
-  return storage?.dipdup_token_metadata || []
+export function normalizeDipDupTokens(storage: { dipdup_token_metadata?: Array<Dipdup_Token_Metadata> }) {
+  return storage?.dipdup_token_metadata ?? []
+}
+
+export function normalizeDipDupContracts(storage: { dipdup_contract_metadata?: Array<Dipdup_Token_Metadata> }) {
+  return storage?.dipdup_contract_metadata ?? []
 }
 
 export function normalizeMTokens(storage: { m_token: M_Token }) {

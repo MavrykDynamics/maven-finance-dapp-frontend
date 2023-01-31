@@ -25,12 +25,14 @@ import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 // actions
 import { getVaultsStorage, liquidateVault, markForLiquidation } from './Vaults.actions'
 import { getLoansStorage } from 'pages/Loans/Loans.actions'
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 
 const pathname = '/vaults'
 
 const tabsId = {
   ALL: 'all',
-  MY: 'my'
+  MY: 'my',
 }
 
 export const VaultsView = () => {
@@ -39,24 +41,29 @@ export const VaultsView = () => {
   const { search } = useLocation()
 
   const { accountPkh } = useSelector((state: State) => state.wallet)
-  const { vaultsList: { myVaultsIds, allVaultsIds, vaultsMapper } } = useSelector((state: State) => state.vaults)
+  const {
+    vaultsList: { myVaultsIds, allVaultsIds, vaultsMapper },
+  } = useSelector((state: State) => state.vaults)
   const { tabId } = useParams<{ tabId: string }>()
 
-  const tabsList: TabItem[] = useMemo(() => ([
-    {
-      text: 'All Vaults',
-      id: 1,
-      active: true,
-      path: tabsId.ALL
-    },
-    {
-      text: 'My Vaults',
-      id: 2,
-      active: false,
-      path: tabsId.MY,
-      isDisabled: !accountPkh
-    },
-  ]), [accountPkh])
+  const tabsList: TabItem[] = useMemo(
+    () => [
+      {
+        text: 'All Vaults',
+        id: 1,
+        active: true,
+        path: tabsId.ALL,
+      },
+      {
+        text: 'My Vaults',
+        id: 2,
+        active: false,
+        path: tabsId.MY,
+        isDisabled: !accountPkh,
+      },
+    ],
+    [accountPkh],
+  )
 
   const { isLoading } = useDataLoader(async () => {
     try {
@@ -71,14 +78,11 @@ export const VaultsView = () => {
 
   const currentListName = tabId === tabsId.ALL ? VAULTS_LIST_NAME : MY_VAULTS_LIST_NAME
 
-  const currentPage = getPageNumber(
-    search,
-    currentListName
-  )
+  const currentPage = getPageNumber(search, currentListName)
 
   const handleChangeTabs = (id: number) => {
     const foundTab = tabsList.find((item) => item.id === id)
-    if (!foundTab?.path) return 
+    if (!foundTab?.path) return
 
     history.replace(`${pathname}/${foundTab.path}`)
   }
@@ -97,20 +101,12 @@ export const VaultsView = () => {
   }
 
   useEffect(() => {
-    setVaultsIds(
-      tabId === tabsId.ALL
-      ? allVaultsIds
-      : myVaultsIds
-    )
+    setVaultsIds(tabId === tabsId.ALL ? allVaultsIds : myVaultsIds)
   }, [allVaultsIds, myVaultsIds, tabId])
 
   return (
     <VaultsStyled>
-      <TabSwitcher
-        tabItems={tabsList}
-        onClick={handleChangeTabs}
-        className="tabSwitcher"
-      />
+      <TabSwitcher tabItems={tabsList} onClick={handleChangeTabs} className="tabSwitcher" />
 
       <VaultsSearchFilter
         assets={assets}
@@ -119,23 +115,30 @@ export const VaultsView = () => {
         setVaultsIds={setVaultsIds}
       />
 
-      {paginatedVaultsList.map((item) => {
-        const isOwner = vaultsMapper[item].ownerId === accountPkh
-        
-        return (
-          <VaultsCard
-            key={item}
-            isOwner={isOwner}
-            handleLiquidateVault={handleLiquidateVault}
-            handleMarkForLiquidation={handleMarkForLiquidation}
-            {...vaultsMapper[item]}
-          />
-      )})}
+      {isLoading ? (
+        <DataLoaderWrapper>
+          <ClockLoader width={150} height={150} />
+          <div className="text">Loading vaults</div>
+        </DataLoaderWrapper>
+      ) : (
+        <>
+          {paginatedVaultsList.map((item) => {
+            const isOwner = vaultsMapper[item].ownerId === accountPkh
 
-      <Pagination
-        itemsCount={vaultsIds.length}
-        listName={currentListName}
-      />
+            return (
+              <VaultsCard
+                key={item}
+                isOwner={isOwner}
+                handleLiquidateVault={handleLiquidateVault}
+                handleMarkForLiquidation={handleMarkForLiquidation}
+                {...vaultsMapper[item]}
+              />
+            )
+          })}
+
+          <Pagination itemsCount={vaultsIds.length} listName={currentListName} />
+        </>
+      )}
     </VaultsStyled>
   )
 }

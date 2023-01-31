@@ -1,4 +1,6 @@
 import { ColorBreakpoint } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
+import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
+import { lightTextColor, placeholderColor } from 'styles'
 
 export const LEND_TAB_ID = 'lendingTab'
 export const BORROW_TAB_ID = 'borrowTab'
@@ -37,6 +39,32 @@ export const COLLATERAL_MOCK = [
   // { assetSymbol: 'xtz', balance: 1, assetRate: 1, maxWithdraw: 1, assetIcon: undefined },
   { assetSymbol: 'Total', balance: 1, assetRate: 1, maxWithdraw: 1, assetIcon: undefined },
 ]
+
+export const getCollateralRationPersent = (persentage: number) => {
+  if (persentage === 0) return lightTextColor
+
+  const color = COLLATERAL_RATIO_GRADIENT.find(({ value }) => {
+    if (persentage < 100) {
+      return value === 100
+    }
+
+    if (persentage > 250) {
+      return value === 250
+    }
+
+    return value + 50 > persentage && value - 50 < persentage
+  })?.color
+
+  return color ? `rgb(${color.r}, ${color.g}, ${color.b})` : placeholderColor
+}
+
+export const getStatusByCollateralRatio = (collateralRatio: number) => {
+  if(collateralRatio === 0) return 'no status'
+  if (collateralRatio <= 200 && collateralRatio > 150) return vaultsStatuses.AT_RISK
+  if (collateralRatio <= 150) return vaultsStatuses.GRACE_PERIOD
+
+  return vaultsStatuses.ACTIVE
+}
 
 export const COLLATERAL_RATIO_GRADIENT: Array<ColorBreakpoint> = [
   {

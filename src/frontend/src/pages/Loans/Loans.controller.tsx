@@ -27,6 +27,8 @@ import {
 } from './Loans.style'
 import { EmptyContainer } from 'app/App.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 
 export const Loans = () => {
   const dispatch = useDispatch()
@@ -46,7 +48,7 @@ export const Loans = () => {
     <div className="chart-wrapper">
       <div className="summary">
         <span>Total Lending</span>
-        <CommaNumber value={chartsData.totalLended} beginningText={'$'} />
+        <CommaNumber value={chartsData?.totalLended ?? 0} beginningText={'$'} />
       </div>
       <Chart
         data={chartsData.lendingChartData}
@@ -74,7 +76,7 @@ export const Loans = () => {
     <div className="chart-wrapper">
       <div className="summary">
         <span>Total Borrowing</span>
-        <CommaNumber value={chartsData.totalBorrowed} beginningText={'$'} />
+        <CommaNumber value={chartsData?.totalBorrowed ?? 0} beginningText={'$'} />
       </div>
       <Chart
         data={chartsData.borrowingChartData}
@@ -108,7 +110,12 @@ export const Loans = () => {
           {borrowingPart}
         </MarketChartsContainer>
 
-        {loanTokens.length ? (
+        {isLoading ? (
+          <DataLoaderWrapper>
+            <ClockLoader width={150} height={150} />
+            <div className="text">Loading loans markets</div>
+          </DataLoaderWrapper>
+        ) : loanTokens.length ? (
           <MarketsOverviewContainer>
             <GovRightContainerTitleArea>
               <h2>Markets</h2>
@@ -140,10 +147,10 @@ export const Loans = () => {
                     ) : (
                       <Icon id={'noImage'} />
                     )}
-                    <div className="name">{name}</div>
+                    <div className="name">{symbol?.toUpperCase()}</div>
                     {rate ? (
                       <div className="rate">
-                        <CommaNumber beginningText="$" value={rate} />
+                        <CommaNumber beginningText="$" value={rate} decimalsToShow={4} showDecimal />
                       </div>
                     ) : null}
                   </div>
