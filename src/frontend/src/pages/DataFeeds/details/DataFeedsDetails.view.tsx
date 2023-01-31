@@ -90,7 +90,9 @@ const DataFeedDetailsView = ({ feed, oracles, registerFeedHandler }: FeedDetails
   // Price feed updated every 30 mins, starting from latest time it was updated
   // `
 
-  const imageLink = dipDupContracts.find(({ contract }) => contract === feed?.address)?.metadata?.icon
+  const imageLink = feed?.name.includes('EUROC')
+    ? '/images/eurl.png'
+    : dipDupContracts.find(({ contract }) => contract === feed?.address)?.metadata?.icon
 
   return feed ? (
     <Page>

@@ -142,7 +142,13 @@ export const Market = () => {
               <>
                 <ThreeLevelListItem>
                   <div className="name">Oracle Price</div>
-                  <CommaNumber value={0} beginningText="$" className="value" />
+                  <CommaNumber
+                    value={currentToken.loanTokenData.rate}
+                    beginningText="$"
+                    className="value"
+                    showDecimal
+                    decimalsToShow={4}
+                  />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">Earn APY</div>

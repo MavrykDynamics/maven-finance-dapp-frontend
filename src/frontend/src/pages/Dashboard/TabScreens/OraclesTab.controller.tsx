@@ -20,7 +20,7 @@ import { emptyContainer } from './LendingTab.controller'
 export const OraclesTab = () => {
   const dispatch = useDispatch()
   const { feeds } = useSelector((state: State) => state.oracles.oraclesStorage)
-  const { dipDupTokens } = useSelector((state: State) => state.tokens)
+  const { dipDupContracts } = useSelector((state: State) => state.tokens)
   const { exchangeRate } = useSelector((state: State) => state.mvkToken)
   const { satelliteLedger = [] } = useSelector((state: State) => state.delegation.delegationStorage)
 
@@ -73,7 +73,9 @@ export const OraclesTab = () => {
         {popularFeeds.length ? (
           <div className="feeds-grid">
             {popularFeeds.map((feed) => {
-              const imageLink = dipDupTokens.find(({ contract }) => contract === feed.address)?.metadata?.icon
+              const imageLink = feed.name.includes('EUROC')
+                ? '/images/eurl.png'
+                : dipDupContracts.find(({ contract }) => contract === feed.address)?.metadata?.icon
               return (
                 <Link key={feed.address} to={`/satellites/feed-details/${feed.address}`}>
                   <PopularFeed className="row">

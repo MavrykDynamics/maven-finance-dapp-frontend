@@ -14,7 +14,7 @@ import NewButton from 'app/App.components/Button/NewButton.controller'
 import { getAssetName, isTezosAsset } from 'pages/Loans/Loans.helpers'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
-import { COLLATERAL_RATIO_GRADIENT } from 'pages/Loans/Loans.const'
+import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { depositCollateralAction } from 'pages/Loans/Loans.actions'
 import { AddNewCollateralDataProps, getOnBlurValue, getOnFocusValue } from './Modals.helpers'
 import { InputStatusType, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
@@ -67,7 +67,7 @@ export const AddNewCollateral = ({
           content: (
             <DropdownInputCustomChild
               iconSrc={collateralData.assetIcon}
-              symbol={getAssetName(collateralData.assetName)}
+              symbol={collateralData.originalName === 'tez' ? 'XTZ' : collateralData.originalName.toUpperCase()}
             />
           ),
           disabled: collateralData.isProtected,
@@ -80,7 +80,7 @@ export const AddNewCollateral = ({
 
     setInputData({
       amount: '0',
-      assetName: mappedAvaliableCollaterals[Number(Object.keys(mappedAvaliableCollaterals)[0])].assetName,
+      assetName: mappedAvaliableCollaterals[Number(Object.keys(mappedAvaliableCollaterals)[0])].originalName,
       userBalance: mappedAvaliableCollaterals[Number(Object.keys(mappedAvaliableCollaterals)[0])].userBalance,
       validationStatus: '',
       id: mappedAvaliableCollaterals[Number(Object.keys(mappedAvaliableCollaterals)[0])].id,
@@ -180,7 +180,7 @@ export const AddNewCollateral = ({
 
       setInputData({
         ...inputData,
-        assetName: inputData.ddItems[id].assetName,
+        assetName: inputData.ddItems[id].originalName,
         selectedDdItem: inputData.ddItems[id],
         ddItems: newDDItems,
         id,
@@ -198,15 +198,13 @@ export const AddNewCollateral = ({
 
   const depositCollateralHandler = () => {
     if (inputData) {
-      const collaretalToDeposit = [
-        {
-          collateralName: inputData.assetName,
-          assetId: inputData.selectedDdItem.id,
-          tokenType: inputData.selectedDdItem.tokenType,
-          amount: Math.floor(Number(inputData.amount) * 10 ** inputData.selectedDdItem.assetDecimals),
-          assetAddress: inputData.selectedDdItem.assetAddress,
-        },
-      ]
+      const collaretalToDeposit = {
+        collateralName: inputData.assetName,
+        assetId: inputData.selectedDdItem.id,
+        tokenType: inputData.selectedDdItem.tokenType,
+        amount: Math.floor(Number(inputData.amount) * 10 ** inputData.selectedDdItem.assetDecimals),
+        assetAddress: inputData.selectedDdItem.assetAddress,
+      }
 
       if (vaultAddress) {
         dispatch(
@@ -228,14 +226,24 @@ export const AddNewCollateral = ({
           <div className="modalDescr">Select an assets to add as collateral to an existing vault.</div>
 
           <VaultModalOverview style={{ marginBottom: '45px' }}>
-            <ThreeLevelListItem className="collateral-diagram">
-              <div className={`percentage ${Number(154) / 100 > 2.5 ? 'up' : 'down'}`}>
-                Collateral Ratio: <CommaNumber value={154} endingText="%" />
+            <ThreeLevelListItem
+              className="collateral-diagram"
+              customColor={getCollateralRationPersent(currentCollateralValue)}
+            >
+              <div className={`percentage`}>
+                Collateral Ratio:{' '}
+                <CommaNumber
+                  beginningText={`${currentCollateralValue > 250 ? '+' : ''}`}
+                  value={Math.max(0, Math.min(currentCollateralValue, 250))}
+                  endingText="%"
+                  showDecimal
+                  decimalsToShow={2}
+                />
               </div>
               <GradientDiagram
                 className="diagram"
                 colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
-                currentPersentage={50}
+                currentPersentage={Math.max(0, Math.min(((currentCollateralValue - 100) / 150) * 100, 100))}
               />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
@@ -263,7 +271,7 @@ export const AddNewCollateral = ({
                 }}
                 settings={{
                   balance: inputData.userBalance,
-                  balanceAsset: getAssetName(inputData.assetName),
+                  balanceAsset: inputData.assetName === 'tez' ? 'XTZ' : inputData.assetName.toUpperCase(),
                   useMaxHandler: () =>
                     setInputData({
                       ...inputData,
@@ -327,14 +335,24 @@ export const AddNewCollateral = ({
 
           <div className="block-name">New Vault Status</div>
           <VaultModalOverview>
-            <ThreeLevelListItem className="collateral-diagram">
-              <div className={`percentage ${Number(154) / 100 > 2.5 ? 'up' : 'down'}`}>
-                Collateral Ratio: <CommaNumber value={154} endingText="%" />
+            <ThreeLevelListItem
+              className="collateral-diagram"
+              customColor={getCollateralRationPersent(currentCollateralValue)}
+            >
+              <div className={`percentage`}>
+                Collateral Ratio:{' '}
+                <CommaNumber
+                  beginningText={`${currentCollateralValue > 250 ? '+' : ''}`}
+                  value={Math.max(0, Math.min(currentCollateralValue, 250))}
+                  endingText="%"
+                  showDecimal
+                  decimalsToShow={2}
+                />
               </div>
               <GradientDiagram
                 className="diagram"
                 colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
-                currentPersentage={50}
+                currentPersentage={Math.max(0, Math.min(((currentCollateralValue - 100) / 150) * 100, 100))}
               />
             </ThreeLevelListItem>
             <ThreeLevelListItem>

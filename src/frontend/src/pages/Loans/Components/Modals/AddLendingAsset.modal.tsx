@@ -41,7 +41,7 @@ export const AddLendingAsset = ({
     assetIcon = '',
     originalName = '',
   } = data ?? {}
-  const assetSymbol = assetName ?? originalName.toUpperCase()
+  const assetSymbol = originalName === 'tez' ? 'XTZ' : assetName ?? originalName.toUpperCase()
   useLockBodyScroll(show)
 
   const dispatch = useDispatch()

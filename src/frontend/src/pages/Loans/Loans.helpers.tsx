@@ -73,7 +73,7 @@ export const getAssetMetadata = ({
       originalName: tokenName,
       name: foundAssetInDipDup.metadata.name,
       symbol: foundAssetInDipDup.metadata.symbol,
-      icon: foundAssetInDipDup.metadata.icon ?? icon,
+      icon: tokenName === 'eurl' ? '/images/eurl.png' : foundAssetInDipDup.metadata.icon ?? icon,
       rate: last_completed_data / 10 ** decimals,
       address: tokenAddress,
     }
@@ -307,7 +307,7 @@ const getBorrowings = async (
 
           if (!collateralAsset) return acc
 
-          const collateralBalance = (collateral.balance / 10 ** collateralAsset.decimals) * collateralAsset.rate
+          const collateralBalance = collateral.balance / 10 ** collateralAsset.decimals
 
           acc.normalizedCollaterals.push({
             assetSymbol: collateralAsset.symbol,
@@ -317,7 +317,7 @@ const getBorrowings = async (
             maxWithdraw: 0,
           })
 
-          acc.totalRow.balance += collateralBalance
+          acc.totalRow.balance += collateralBalance * collateralAsset.rate
           acc.totalRow.maxWithdraw += 0
 
           return acc
@@ -332,6 +332,7 @@ const getBorrowings = async (
           },
         },
       )
+      console.log('vaultCollateral', vaultCollateral)
 
       const currentInterestRate = calcWithoutDecimals(
         vault.loan_token?.current_interest_rate ?? 0,

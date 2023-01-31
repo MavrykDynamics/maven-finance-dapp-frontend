@@ -4,8 +4,7 @@ import { State } from 'reducers'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
-import { getAssetName } from 'pages/Loans/Loans.helpers'
-import { COLLATERAL_RATIO_GRADIENT } from 'pages/Loans/Loans.const'
+import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { depositCollateralAction } from 'pages/Loans/Loans.actions'
 import {
@@ -90,15 +89,13 @@ export const AddCollateral = ({
 
   const depositCollateralHandler = async () => {
     if (collateralData) {
-      const collaretalToDeposit = [
-        {
-          collateralName: collateralData.assetName,
-          assetId: collateralData.id,
-          tokenType: collateralData.tokenType,
-          amount: Math.floor(Number(inputData.amount) * 10 ** collateralData.assetDecimals),
-          assetAddress: collateralData.assetAddress,
-        },
-      ]
+      const collaretalToDeposit = {
+        collateralName: collateralData.originalName,
+        assetId: collateralData.id,
+        tokenType: collateralData.tokenType,
+        amount: Math.floor(Number(inputData.amount) * 10 ** collateralData.assetDecimals),
+        assetAddress: collateralData.assetAddress,
+      }
 
       if (vaultAddress) {
         await dispatch(
@@ -120,14 +117,24 @@ export const AddCollateral = ({
           <div className="modalDescr">Select one or multiple assets to add as collateral to the vault.</div>
 
           <VaultModalOverview>
-            <ThreeLevelListItem className="collateral-diagram">
-              <div className={`percentage ${Number(154) / 100 > 2.5 ? 'up' : 'down'}`}>
-                Collateral Ratio: <CommaNumber value={154} endingText="%" />
+            <ThreeLevelListItem
+              className="collateral-diagram"
+              customColor={getCollateralRationPersent(currentCollateralValue)}
+            >
+              <div className={`percentage`}>
+                Collateral Ratio:{' '}
+                <CommaNumber
+                  beginningText={`${currentCollateralValue > 250 ? '+' : ''}`}
+                  value={Math.max(0, Math.min(currentCollateralValue, 250))}
+                  endingText="%"
+                  showDecimal
+                  decimalsToShow={2}
+                />
               </div>
               <GradientDiagram
                 className="diagram"
                 colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
-                currentPersentage={50}
+                currentPersentage={Math.max(0, Math.min(((currentCollateralValue - 100) / 150) * 100, 100))}
               />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
@@ -155,7 +162,8 @@ export const AddCollateral = ({
             }}
             settings={{
               balance: collateralData?.userBalance ?? 0,
-              balanceAsset: getAssetName(collateralData?.assetName ?? ''),
+              balanceAsset:
+                collateralData?.originalName === 'tez' ? 'XTZ' : collateralData?.originalName?.toUpperCase(),
               useMaxHandler: () =>
                 inputOnChangeHandle(
                   collateralData?.userBalance ? String(collateralData.userBalance) : '0',
@@ -173,20 +181,30 @@ export const AddCollateral = ({
               ) : (
                 <Icon id="noImage" />
               )}{' '}
-              {getAssetName(collateralData?.assetName ?? '')}
+              {collateralData?.originalName === 'tez' ? 'XTZ' : collateralData?.originalName?.toUpperCase()}
             </InputPinnedTokenInfo>
           </Input>
 
           <div className="block-name">New Vault Status</div>
           <VaultModalOverview>
-            <ThreeLevelListItem className="collateral-diagram">
-              <div className={`percentage ${Number(154) / 100 > 2.5 ? 'up' : 'down'}`}>
-                Collateral Ratio: <CommaNumber value={154} endingText="%" />
+            <ThreeLevelListItem
+              className="collateral-diagram"
+              customColor={getCollateralRationPersent(currentCollateralValue)}
+            >
+              <div className={`percentage`}>
+                Collateral Ratio:{' '}
+                <CommaNumber
+                  beginningText={`${currentCollateralValue > 250 ? '+' : ''}`}
+                  value={Math.max(0, Math.min(currentCollateralValue, 250))}
+                  endingText="%"
+                  showDecimal
+                  decimalsToShow={2}
+                />
               </div>
               <GradientDiagram
                 className="diagram"
                 colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
-                currentPersentage={50}
+                currentPersentage={Math.max(0, Math.min(((currentCollateralValue - 100) / 150) * 100, 100))}
               />
             </ThreeLevelListItem>
             <ThreeLevelListItem>

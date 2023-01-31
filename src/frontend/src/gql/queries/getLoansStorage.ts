@@ -109,6 +109,7 @@ query GetAvaliableCollaterals {
       token_name
       token_contract_standard
       protected
+      oracle_id
     }
 
     loan_tokens {

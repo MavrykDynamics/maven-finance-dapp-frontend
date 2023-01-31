@@ -67,6 +67,7 @@ export type AvaliableCollateralType = {
   assetDecimals: number
   assetRate: number
   assetName: string
+  originalName: string
   assetSymbol: string
   assetIcon: string
   assetAddress: string

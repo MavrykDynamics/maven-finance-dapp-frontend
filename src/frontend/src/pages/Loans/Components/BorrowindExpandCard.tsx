@@ -264,6 +264,7 @@ export const BorrowingExpandCard = ({
                         currentAvaliableToBorrow: 0,
                       })
                     }
+                    disabled
                     kind={ACTION_PRIMARY}
                   />
                   <NewButton
@@ -278,6 +279,7 @@ export const BorrowingExpandCard = ({
                     }
                     kind={TRANSPARENT_WITH_BORDER}
                     className="repay"
+                    disabled
                   >
                     <Icon id="okIcon" /> Repay
                   </NewButton>
@@ -325,7 +327,13 @@ export const BorrowingExpandCard = ({
                       </TableCell>
                       <TableCell width={columnWidth}>
                         <div className="cell-content">
-                          <CommaNumber value={balance} className="value" showDecimal decimalsToShow={4} />
+                          <CommaNumber
+                            value={balance}
+                            className="value"
+                            showDecimal
+                            decimalsToShow={4}
+                            beginningText={isTotalRow ? '$' : ''}
+                          />
                           {assetRate ? (
                             <CommaNumber
                               value={balance * assetRate}
@@ -400,6 +408,7 @@ export const BorrowingExpandCard = ({
                                     selectedAsset: collateralData[idx],
                                   })
                                 }
+                                disabled
                                 kind={TRANSPARENT_WITH_BORDER}
                               >
                                 <Icon id="minus" /> Remove
@@ -443,6 +452,7 @@ export const BorrowingExpandCard = ({
                     text="Change Baker"
                     icon="paginationArrowLeft"
                     iconAfter
+                    disabled
                     onClick={() =>
                       openChangeBakerPopup?.({
                         bakerAddress: xtzDelegatedTo,
@@ -475,6 +485,7 @@ export const BorrowingExpandCard = ({
                     text="Update"
                     icon="paginationArrowLeft"
                     iconAfter
+                    disabled
                     onClick={() => openManagePermissionsPopup?.({})}
                   />
                 </div>
@@ -491,12 +502,14 @@ export const BorrowingExpandCard = ({
                     text="Update"
                     icon="paginationArrowLeft"
                     iconAfter
+                    disabled
                     onClick={() => openUpdateMvkOperatorsPopup?.({})}
                   />
                 </div>
 
                 <Button
                   text="Repay Loan in Full"
+                  disabled
                   kind={TRANSPARENT_WITH_BORDER}
                   onClick={() =>
                     openRepayFullPopup?.({
