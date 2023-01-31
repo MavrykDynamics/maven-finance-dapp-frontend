@@ -28,7 +28,7 @@ import { BorrowingCardOptions } from 'pages/Loans/Components/BorrowindExpandCard
 
 // helpers
 import { CYAN } from 'app/App.components/TzAddress/TzAddress.constants'
-import { vaultsStatuses } from '../Vaults.consts' 
+import { vaultsStatuses } from '../Vaults.consts'
 import { getTimestampByLevel } from 'pages/Governance/Governance.actions'
 
 const findStatusInfo = (status: string) => {
@@ -45,28 +45,40 @@ const findStatusInfo = (status: string) => {
       return { color: 'up', text: 'Low Risk' }
 
     default:
-      return { color: 'info', text: 'no data'}
+      return { color: 'info', text: 'no data' }
   }
 }
 
 const findFooterText = (status: string, statusColor: StatusFlagStyle, timestamp?: number) => {
-  const timer = timestamp 
-    ? (
-    <div className='timer'>
-      <Timer
-        timestamp={timestamp}
-        options={{ defaultColor: '#77A4F2', negativeColor: '#77A4F2' }}
-      />
-    </div>)
-    : <span className='timer'>no data</span>
+  const timer = timestamp ? (
+    <div className="timer">
+      <Timer timestamp={timestamp} options={{ defaultColor: '#77A4F2', negativeColor: '#77A4F2' }} />
+    </div>
+  ) : (
+    <span className="timer">no data</span>
+  )
 
   switch (status) {
     case vaultsStatuses.LIQUIDATABLE:
-      return <p>This vault is <span className={statusColor}>armed for liquidation</span> and can be liquidated for the next {timer}</p>
+      return (
+        <p>
+          This vault is <span className={statusColor}>armed for liquidation</span> and can be liquidated for the next{' '}
+          {timer}
+        </p>
+      )
     case vaultsStatuses.GRACE_PERIOD:
-      return <p>This vault is in a <span className={statusColor}>grace period</span>. The vault owner has {timer} before liquidation is possible.</p>
+      return (
+        <p>
+          This vault is in a <span className={statusColor}>grace period</span>. The vault owner has {timer} before
+          liquidation is possible.
+        </p>
+      )
     case vaultsStatuses.MARK:
-      return <p>This vault is <span className={statusColor}>ready to arm</span> and can be marked for the next {timer}</p>
+      return (
+        <p>
+          This vault is <span className={statusColor}>ready to arm</span> and can be marked for the next {timer}
+        </p>
+      )
 
     default:
       return ''
@@ -74,12 +86,8 @@ const findFooterText = (status: string, statusColor: StatusFlagStyle, timestamp?
 }
 
 const borrowingCardOptions: BorrowingCardOptions = {
-  headerColumnNames: {
-    collateralBalance: 'Collateral Value',
-    borrowedAmount: 'Borrowed Amount',
-  },
   reverseColumns: true,
-  customTableColumn: 'collateralShare'
+  customTableColumn: 'collateralShare',
 }
 
 type Props = VaultType & {
@@ -108,15 +116,16 @@ export const VaultsCard = (props: Props) => {
   const statusText = findStatusInfo(status).text
   const footerText = findFooterText(status, statusColor, timerTimestamp)
 
-  const isActiveFooter = 
-  status === vaultsStatuses.LIQUIDATABLE ||
-  status === vaultsStatuses.GRACE_PERIOD ||
-  status === vaultsStatuses.MARK
+  const isActiveFooter =
+    status === vaultsStatuses.LIQUIDATABLE || status === vaultsStatuses.GRACE_PERIOD || status === vaultsStatuses.MARK
 
   const isMarkStatus = vaultsStatuses.MARK === status
 
   const getCountdownTimestamp = async (levelOfEarly: number, levelOfLate: number) => {
-    const [timestampOfEarly, timestampOfLate] = await Promise.all([getTimestampByLevel(levelOfEarly), getTimestampByLevel(levelOfLate)])
+    const [timestampOfEarly, timestampOfLate] = await Promise.all([
+      getTimestampByLevel(levelOfEarly),
+      getTimestampByLevel(levelOfLate),
+    ])
 
     return {
       timestampOfEarly,
@@ -131,141 +140,143 @@ export const VaultsCard = (props: Props) => {
       ;(async () => {
         if (!levelOfEarly || !levelOfLate) {
           setTimerTimestamp(undefined)
-          return 
+          return
         }
 
         const response = await getCountdownTimestamp(levelOfEarly, levelOfLate)
-        const timestamp =  new Date(response.timestampOfEarly).getTime() - new Date(response.timestampOfLate).getTime() + new Date().getTime()
-        
+        const timestamp =
+          new Date(response.timestampOfEarly).getTime() -
+          new Date(response.timestampOfLate).getTime() +
+          new Date().getTime()
+
         setTimerTimestamp(timestamp)
       })()
-    } 
+    }
   }, [status, expanded, levelOfEarly, levelOfLate])
 
-  const headerSufix = (
-    <StatusFlag status={statusColor} text={status} className="sufix" />
-  )
+  const headerSufix = <StatusFlag status={statusColor} text={status} className="sufix" />
 
   const generalExpand = (
-      <VaultsCardDropDown>
-        <div className='body'>
-          <div className='left-part'>
-            <h1>Vault Overview</h1>
+    <VaultsCardDropDown>
+      <div className="body">
+        <div className="left-part">
+          <h1>Vault Overview</h1>
 
-            <div className='group'>
-              <div>
-                Vault Owner
-                <TzAddress type={CYAN} tzAddress={ownerId} />
-              </div>
-              <div>
-                <div className='title'>
-                  Vault Risk
-                  <Icon id='info' className='info-icon' />
-                </div>
-
-                <div className={statusColor}>{statusText}</div> 
-              </div>
+          <div className="group">
+            <div>
+              Vault Owner
+              <TzAddress type={CYAN} tzAddress={ownerId} />
             </div>
-
-            <div className='group'>
-              <div>
-                <div className='title'>
-                  Liquidation Price
-                  <Icon id='info' className='info-icon' /> 
-                </div>
-
-                <CommaNumber value={400_999_000} beginningText='$' className='value' />
+            <div>
+              <div className="title">
+                Vault Risk
+                <Icon id="info" className="info-icon" />
               </div>
 
-              <div>
-                <div className='title'>
-                  Liquidation Cost
-                  <Icon id='info' className='info-icon' /> 
-                </div>
-
-                <CommaNumber value={400_999_000} beginningText='$' className='value' />
-              </div>
+              <div className={statusColor}>{statusText}</div>
             </div>
           </div>
-          
-          <div className='right-part'>
-            <h1>Vault Assets</h1>
-            
-            <div className='table-size'>
-              <Table className={`no-margin borrowing-table ${isOwner ? 'show-before' : ''}`}>
-                <TableHeader className={`simple-header collateral ${collateralData.length === 0 ? 'empty' : ''}`}>
-                  <TableRow>
-                    <TableHeaderCell>Asset</TableHeaderCell>
-                    <TableHeaderCell>Balance</TableHeaderCell>
-                    <TableHeaderCell>Collateral %</TableHeaderCell>
-                  </TableRow>
-                </TableHeader>
 
-                <TableBody>
-                  {collateralData.map((item, index) => {
-                    const columnWidth = '33%'
-                    const isTotalRow = collateralData.length - 1 === index
-                    if (isTotalRow && collateralData.length < 3) return null
+          <div className="group">
+            <div>
+              <div className="title">
+                Liquidation Price
+                <Icon id="info" className="info-icon" />
+              </div>
 
-                    return (
-                    <TableRow rowHeight={44} key={assetSymbol + '-' + index}>
-                      <TableCell width={columnWidth} className="vert-middle">
-                      {isTotalRow ? (
-                        'Total'
-                      ) : (
-                        <div className="cell-content row">
-                          {assetIcon ? (
-                            <div className="img-wrapper">
-                              <img src={assetIcon} alt={`${assetSymbol} logo`} />
-                            </div>
-                          ) : (
-                            <div className="no-icon">
-                              <Icon id="noImage" />
-                            </div>
-                          )}
-                          {assetSymbol}
-                        </div>
-                      )}
-                      </TableCell>
+              <CommaNumber value={400_999_000} beginningText="$" className="value" />
+            </div>
 
-                      <TableCell width={columnWidth}>
-                        <div className="cell-content">
-                          <CommaNumber value={collateralBalance} beginningText='$' className='balance' />
-                          {assetRate ? <CommaNumber value={amtBorrowed * assetRate} beginningText="~$" className="rate" /> : null}
-                        </div>
-                      </TableCell>
+            <div>
+              <div className="title">
+                Liquidation Cost
+                <Icon id="info" className="info-icon" />
+              </div>
 
-                      <TableCell width={columnWidth}>
-                        <div className="cell-content">
-                          {item.collateralShare}%
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  )})}
-                </TableBody>
-              </Table>
+              <CommaNumber value={400_999_000} beginningText="$" className="value" />
             </div>
           </div>
         </div>
 
-        {(footerText && isActiveFooter) && (
-          <div className='footer'>
-            {footerText}
+        <div className="right-part">
+          <h1>Vault Assets</h1>
 
-            <Button
-              text={isMarkStatus ? "Mark for Liquidation" : "Liquidate Vault"}
-              kind={ACTION_PRIMARY}
-              onClick={() => {
-                return isMarkStatus
-                  ? handleMarkForLiquidation(vaultId, ownerId)
-                  // TODO: add valid arg3
-                  : handleLiquidateVault(vaultId, ownerId, 1)
-              }}
-              disabled={vaultsStatuses.GRACE_PERIOD === status}
-            />
+          <div className="table-size">
+            <Table className={`no-margin borrowing-table ${isOwner ? 'show-before' : ''}`}>
+              <TableHeader className={`simple-header collateral ${collateralData.length === 0 ? 'empty' : ''}`}>
+                <TableRow>
+                  <TableHeaderCell>Asset</TableHeaderCell>
+                  <TableHeaderCell>Balance</TableHeaderCell>
+                  <TableHeaderCell>Collateral %</TableHeaderCell>
+                </TableRow>
+              </TableHeader>
+
+              <TableBody>
+                {collateralData.map((item, index) => {
+                  const columnWidth = '33%'
+                  const isTotalRow = collateralData.length - 1 === index
+                  if (isTotalRow && collateralData.length < 3) return null
+
+                  return (
+                    <TableRow rowHeight={44} key={assetSymbol + '-' + index}>
+                      <TableCell width={columnWidth} className="vert-middle">
+                        {isTotalRow ? (
+                          'Total'
+                        ) : (
+                          <div className="cell-content row">
+                            {assetIcon ? (
+                              <div className="img-wrapper">
+                                <img src={assetIcon} alt={`${assetSymbol} logo`} />
+                              </div>
+                            ) : (
+                              <div className="no-icon">
+                                <Icon id="noImage" />
+                              </div>
+                            )}
+                            {assetSymbol}
+                          </div>
+                        )}
+                      </TableCell>
+
+                      <TableCell width={columnWidth}>
+                        <div className="cell-content">
+                          <CommaNumber value={collateralBalance} beginningText="$" className="balance" />
+                          {assetRate ? (
+                            <CommaNumber value={amtBorrowed * assetRate} beginningText="~$" className="rate" />
+                          ) : null}
+                        </div>
+                      </TableCell>
+
+                      <TableCell width={columnWidth}>
+                        <div className="cell-content">{item.collateralShare}%</div>
+                      </TableCell>
+                    </TableRow>
+                  )
+                })}
+              </TableBody>
+            </Table>
           </div>
-        )}
-      </VaultsCardDropDown>
+        </div>
+      </div>
+
+      {footerText && isActiveFooter && (
+        <div className="footer">
+          {footerText}
+
+          <Button
+            text={isMarkStatus ? 'Mark for Liquidation' : 'Liquidate Vault'}
+            kind={ACTION_PRIMARY}
+            onClick={() => {
+              return isMarkStatus
+                ? handleMarkForLiquidation(vaultId, ownerId)
+                : // TODO: add valid arg3
+                  handleLiquidateVault(vaultId, ownerId, 1)
+            }}
+            disabled={vaultsStatuses.GRACE_PERIOD === status}
+          />
+        </div>
+      )}
+    </VaultsCardDropDown>
   )
 
   return (
@@ -276,7 +287,6 @@ export const VaultsCard = (props: Props) => {
           className="expand-vault"
           headerSufix={headerSufix}
           getExpandedStatus={setExpanded}
-          timestamp={timerTimestamp}
           isOwner
           options={borrowingCardOptions}
         />

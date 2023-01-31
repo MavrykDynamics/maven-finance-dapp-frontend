@@ -274,7 +274,7 @@ export const MarketStyled = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const ThreeLevelListItem = styled.div<{ theme: MavrykTheme }>`
+export const ThreeLevelListItem = styled.div<{ theme: MavrykTheme; customColor?: string }>`
   p {
     margin: 0;
   }
@@ -399,22 +399,10 @@ export const ThreeLevelListItem = styled.div<{ theme: MavrykTheme }>`
       font-size: 14px;
       line-height: 21px;
       margin-bottom: 7px;
-      color: ${({ theme }) => theme.textColor};
+      color: ${({ theme, customColor }) => customColor ?? theme.textColor};
 
       p {
         margin-left: 5px;
-      }
-
-      &.up {
-        p {
-          color: ${({ theme }) => theme.upColor};
-        }
-      }
-
-      &.down {
-        p {
-          color: ${({ theme }) => theme.downColor};
-        }
       }
     }
 
