@@ -102,8 +102,6 @@ export const getAvaliableCollaterals = () => async (dispatch: AppDispatch, getSt
       accountPkh,
     )
 
-    console.log('avaliableCollaterals', avaliableCollaterals)
-
     await dispatch({
       type: GET_AVALIABLE_COLLATERALS,
       avaliableCollaterals,
@@ -175,8 +173,6 @@ export const depositCollateralAction =
     }
 
     try {
-      console.log('collateralAssets', collateralAssets)
-
       // prepare and send query
       const contract = await state.wallet.tezos?.wallet.at(newVaultAddress)
 
@@ -257,8 +253,8 @@ export const depositCollateralAction =
       await dispatch(showToaster(SUCCESS, 'Vault Created.', 'All good :)'))
 
       // refetch data we need
+      await dispatch(updateUserData())
       await dispatch(getLoansStorage())
-
       await dispatch(toggleActionLoader(false))
     } catch (error) {
       console.error('depositCollateralAction error:', error)
@@ -286,8 +282,6 @@ export const depositLendingAssetAction =
     }
 
     try {
-      console.log(loanTokenName, addLiquidityAmount, state.contractAddresses)
-
       // prepare and send query
       const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.lendingController.address)
       const transaction = await contract?.methods.addLiquidity(loanTokenName, addLiquidityAmount).send()

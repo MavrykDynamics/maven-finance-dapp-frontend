@@ -87,9 +87,6 @@ export const getCollateralTokens = async (
 
         const dataFromFeed = feeds.find(({ address }) => address === oracle_id)
 
-        console.log('oracle_id', oracle_id, token_name);
-        
-
         const lendingAssetBalance = isXTZ
           ? await (
               await fetch(`https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/accounts/${accountPkh}/balance`)
