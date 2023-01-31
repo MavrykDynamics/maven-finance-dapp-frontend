@@ -20,5 +20,3 @@ export const statusSortPriority = {
   [vaultsStatuses.AT_RISK]: 4,
   [vaultsStatuses.ACTIVE]: 5,
 };
-
-export const LIQUIDATE_MODAL_ID = 'liqudate'

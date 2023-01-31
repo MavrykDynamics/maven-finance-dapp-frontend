@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 
 // components
 import { CommaNumber } from "app/App.components/CommaNumber/CommaNumber.controller";
@@ -25,28 +26,37 @@ import { ACTION_PRIMARY } from "app/App.components/Button/Button.constants";
 import { INPUT_STATUS_SUCCESS, INPUT_STATUS_ERROR } from "app/App.components/Input/Input.constants";
 
 // types
-import { VaultType } from "utils/TypesAndInterfaces/Vaults";
+import { LiquidateVaultDataType } from "pages/Loans/Components/Modals/Modals.helpers";
+
+// actions
+import { liquidateVault } from "pages/Vaults/Vaults.actions";
 
 const columnWidth = '33%'
 const rowHeight = 30
 
-type Props = VaultType & {
-  handleLiquidateVault: (vaultId: number, vaultOwner: string, liquidateAmount: number) => void
+type Props = {
+  data: LiquidateVaultDataType
   closePopup: () => void
   show: boolean 
 }
 
-export const LiquidateVaultModal = (props: Props) => {
-  const {
+export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
+  const dispatch = useDispatch()
+
+  const { 
     vaultId,
     ownerId,
-    handleLiquidateVault,
-    closePopup,
-    show,
     borrowedAsset,
-    collateralData,
-  } = props
-  const { amtBorrowed, assetSymbol, assetIcon, assetRate, userBalance } = borrowedAsset
+    collateralData = [],
+  } = data ?? {}
+
+  const { 
+    amtBorrowed = 0,
+    assetSymbol = '',
+    assetIcon = '',
+    assetRate = 0,
+    userBalance = 0
+  } = borrowedAsset ?? {}
 
   const [inputAmount, setInputAmount] = useState('0')
   const [showAsPercentage, setShowAsPercentage] = useState(true)
@@ -83,6 +93,14 @@ export const LiquidateVaultModal = (props: Props) => {
   const handleToggle = () => {
     setInputAmount('0')
     setShowAsPercentage(!showAsPercentage)
+  }
+
+  const handleLiquidateVault = (data: { vaultId?: number; ownerId?: string; costToLiquidate: number }) => {
+    const { vaultId, ownerId, costToLiquidate } = data
+
+    if (!vaultId || !ownerId) return
+
+    dispatch(liquidateVault(vaultId, ownerId, costToLiquidate))
   }
 
   return (
@@ -244,7 +262,7 @@ export const LiquidateVaultModal = (props: Props) => {
             <Button
               text='Liquidate'
               kind={ACTION_PRIMARY}
-              onClick={() => handleLiquidateVault(vaultId, ownerId, costToLiquidate)}
+              onClick={() => handleLiquidateVault({vaultId, ownerId, costToLiquidate})}
             />
           </div>
         </LiquidateVaultModalStyled>

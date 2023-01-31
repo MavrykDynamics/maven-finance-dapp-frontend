@@ -22,12 +22,14 @@ import {
   RepayPartPopupDataType,
   UpdateOperatorsPopupDataType,
   WithdrawCollateralPopupDataType,
+  LiquidateVaultDataType,
 } from './Modals.helpers'
 import { RemoveAssetsFromLending } from './RemoveAssetsFromLending.modal'
 import { Repay } from './Repay.modal'
 import { RepayFull } from './RepayFull.modal'
 import { UpdateMVKOperator } from './UpdateMVKOperator.modal'
 import { WithdrawCollateral } from './WithdrawCollateral.modal'
+import { LiquidateVaultModal } from 'pages/Vaults/components/LiquidateVaultModal/LiquidateVaultModal.modal'
 
 export const loansPopupsContext = createContext<LoansPopupsContextStateType>(undefined!)
 
@@ -72,6 +74,9 @@ export default class LoansPopupsProvider extends React.Component<{}, LoansPopups
 
       openRemoveLendingAssetPopup: this.openRemoveLendingAssetPopup,
       closeRemoveLendingAssetPopup: this.closeRemoveLendingAssetPopup,
+
+      openLiquidateVaultPopup: this.openLiquidateVaultPopup,
+      closeLiquidateVaultPopup: this.closeLiquidateVaultPopup,
     }
   }
 
@@ -315,6 +320,26 @@ export default class LoansPopupsProvider extends React.Component<{}, LoansPopups
     })
   }
 
+  openLiquidateVaultPopup = (popupData: LiquidateVaultDataType) => {
+    this.setState({
+      ...this.state,
+      liquidateVaultPopup: {
+        showModal: true,
+        data: popupData,
+      },
+    })
+  }
+
+  closeLiquidateVaultPopup = () => {
+    this.setState({
+      ...this.state,
+      liquidateVaultPopup: {
+        ...this.state.liquidateVaultPopup,
+        showModal: false,
+      },
+    })
+  }
+
   render() {
     const {
       changeBakerPopup,
@@ -329,6 +354,7 @@ export default class LoansPopupsProvider extends React.Component<{}, LoansPopups
       createVaultPopup,
       addLendingAssetPopup,
       removeLendingAssetPopup,
+      liquidateVaultPopup,
     } = this.state
 
     const {
@@ -344,6 +370,7 @@ export default class LoansPopupsProvider extends React.Component<{}, LoansPopups
       closeCreateVaultPopup,
       closeAddLendingAssetPopup,
       closeRemoveLendingAssetPopup,
+      closeLiquidateVaultPopup,
     } = this.state
     return (
       <loansPopupsContext.Provider value={this.state}>
@@ -400,6 +427,12 @@ export default class LoansPopupsProvider extends React.Component<{}, LoansPopups
           closePopup={closeRemoveLendingAssetPopup}
           show={removeLendingAssetPopup.showModal}
           data={removeLendingAssetPopup.data}
+        />
+
+        <LiquidateVaultModal
+          closePopup={closeLiquidateVaultPopup}
+          show={liquidateVaultPopup.showModal}
+          data={liquidateVaultPopup.data}
         />
 
         {this.props.children}

@@ -125,9 +125,8 @@ export const VaultsView = () => {
           <VaultsCard
             key={item}
             isOwner={isOwner}
-            handleLiquidateVault={handleLiquidateVault}
-            handleMarkForLiquidation={handleMarkForLiquidation}
             accountPkh={accountPkh}
+            handleMarkForLiquidation={handleMarkForLiquidation}
             {...vaultsMapper[item]}
           />
       )})}

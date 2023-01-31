@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 
 // components
 import { StatusFlag } from '../../../app/App.components/StatusFlag/StatusFlag.controller'
@@ -9,7 +9,6 @@ import { Button } from 'app/App.components/SettingsPopup/SettingsPopup.style'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { BorrowingExpandCard } from 'pages/Loans/Components/BorrowindExpandCard'
 import { Timer } from 'app/App.components/Timer/Timer.controller'
-import { LiquidateVaultModal } from './LiquidateVaultModal/LiquidateVaultModal.modal'
 
 // styles
 import { VaultsCardDropDown } from './../Vaults.style'
@@ -29,8 +28,9 @@ import { BorrowingCardOptions } from 'pages/Loans/Components/BorrowindExpandCard
 
 // helpers
 import { CYAN } from 'app/App.components/TzAddress/TzAddress.constants'
-import { vaultsStatuses, LIQUIDATE_MODAL_ID } from '../Vaults.consts' 
+import { vaultsStatuses } from '../Vaults.consts' 
 import { getTimestampByLevel } from 'pages/Governance/Governance.actions'
+import { loansPopupsContext } from 'pages/Loans/Components/Modals/LoansModals.provider'
 
 const findStatusInfo = (status: string) => {
   switch (status) {
@@ -86,7 +86,6 @@ const borrowingCardOptions: BorrowingCardOptions = {
 type Props = VaultType & {
   isOwner: boolean
   accountPkh?: string
-  handleLiquidateVault: (vaultId: number, vaultOwner: string, liquidateAmount: number) => void
   handleMarkForLiquidation: (vaultId: number, vaultOwner: string) => void
 }
 
@@ -94,19 +93,20 @@ export const VaultsCard = (props: Props) => {
   const {
     ownerId,
     vaultId,
-    status,
+    status:x, // TODO: delete :x
     levelOfEarly,
     levelOfLate,
     collateralData,
     isOwner,
     accountPkh,
-    handleLiquidateVault,
     handleMarkForLiquidation,
   } = props
+
+  const { openLiquidateVaultPopup } = useContext(loansPopupsContext)
+
   const [expanded, setExpanded] = useState(false)
   const [timerTimestamp, setTimerTimestamp] = useState<number | undefined>(undefined)
-  const [shownModal, setShownModal] = useState<typeof LIQUIDATE_MODAL_ID | null>(null)
-
+  const status = vaultsStatuses.GRACE_PERIOD
   const statusColor = findStatusInfo(status).color as StatusFlagStyle
   const statusText = findStatusInfo(status).text
   const footerText = findFooterText(status, statusColor, timerTimestamp)
@@ -127,11 +127,9 @@ export const VaultsCard = (props: Props) => {
     }
   }
 
-  const closePopup = useCallback(() => {
-    setShownModal(null)
-  }, [])
-
-  const liquidateModalHandler = () => setShownModal(LIQUIDATE_MODAL_ID)
+  const liquidateModalHandler = () => {
+    openLiquidateVaultPopup({...props})
+  }
 
   useEffect(() => {
     if (!expanded) return
@@ -278,13 +276,6 @@ export const VaultsCard = (props: Props) => {
 
   return (
     <>
-      <LiquidateVaultModal
-        {...props}
-        handleLiquidateVault={handleLiquidateVault}
-        closePopup={closePopup}
-        show={shownModal === LIQUIDATE_MODAL_ID}
-      />
-
       {isOwner ? (
         <BorrowingExpandCard
           {...props}

@@ -1,6 +1,7 @@
 import { InputStatusType } from 'app/App.components/Input/Input.constants'
 import { BorrowingData } from 'utils/TypesAndInterfaces/Loans'
 import LoansPopupsProvider from './LoansModals.provider'
+import { VaultType } from 'utils/TypesAndInterfaces/Vaults'
 
 export type LoansPopupsInputStateType = { amount: string; validationStatus: InputStatusType }
 export type LoansPopupsAddressInputStateType = { address: string; validationStatus: InputStatusType }
@@ -82,6 +83,8 @@ export type CreateVaultPopupDataType = {
   currentMarketAsset: string
 } | null
 
+export type LiquidateVaultDataType = VaultType | null
+
 export type ManagePermissionsPopupDataType = {} | null
 export type UpdateOperatorsPopupDataType = {} | null
 
@@ -103,6 +106,7 @@ export type LoansPopupsContextStateType = {
   createVaultPopup: ModalStateType<CreateVaultPopupDataType>
   addLendingAssetPopup: ModalStateType<AddLendingAssetDataType>
   removeLendingAssetPopup: ModalStateType<RemoveLendingAssetDataType>
+  liquidateVaultPopup: ModalStateType<LiquidateVaultDataType>
 
   openChangeBakerPopup: InstanceType<typeof LoansPopupsProvider>['openChangeBakerPopup']
   closeChangeBakerPopup: InstanceType<typeof LoansPopupsProvider>['closeChangeBakerPopup']
@@ -128,6 +132,8 @@ export type LoansPopupsContextStateType = {
   closeAddLendingAssetPopup: InstanceType<typeof LoansPopupsProvider>['closeAddLendingAssetPopup']
   openRemoveLendingAssetPopup: InstanceType<typeof LoansPopupsProvider>['openRemoveLendingAssetPopup']
   closeRemoveLendingAssetPopup: InstanceType<typeof LoansPopupsProvider>['closeRemoveLendingAssetPopup']
+  openLiquidateVaultPopup: InstanceType<typeof LoansPopupsProvider>['openLiquidateVaultPopup']
+  closeLiquidateVaultPopup: InstanceType<typeof LoansPopupsProvider>['closeLiquidateVaultPopup']
 }
 
 const DEFAULT_LOANS_POPUP_STATE = {
@@ -148,4 +154,5 @@ export const DEFAULT_LOANS_POPUPS_STATE = {
   createVaultPopup: DEFAULT_LOANS_POPUP_STATE,
   addLendingAssetPopup: DEFAULT_LOANS_POPUP_STATE,
   removeLendingAssetPopup: DEFAULT_LOANS_POPUP_STATE,
+  liquidateVaultPopup: DEFAULT_LOANS_POPUP_STATE,
 }
