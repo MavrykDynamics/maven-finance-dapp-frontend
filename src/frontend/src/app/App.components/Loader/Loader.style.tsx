@@ -280,3 +280,34 @@ export const ClockLoaderWrapper = styled.svg<{ width: number; height: number }>`
   height: ${({ height }) => height}px;
   display: inline-block;
 `
+
+const ellipsis = keyframes`
+  to {
+    width: 18px;
+  }
+`
+
+export const DataLoaderWrapper = styled.div<{ theme: MavrykTheme }>`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  row-gap: 20px;
+  align-items: center;
+  margin: 150px 0 0 0;
+
+  .text {
+    font-size: 18px;
+    font-weight: 500;
+
+    &::after {
+      overflow: hidden;
+      display: inline-block;
+      vertical-align: bottom;
+      -webkit-animation: ${ellipsis} steps(4, end) 1500ms infinite;
+      animation: ${ellipsis} steps(4, end) 1500ms infinite;
+      content: '...';
+      width: 0px;
+      color: ${({ theme }) => theme.textColor};
+    }
+  }
+`

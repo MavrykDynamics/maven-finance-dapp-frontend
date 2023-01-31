@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { MavrykTheme } from 'styles/interfaces'
-import { vaultsStatuses } from 'pages/Vaults/Vaults.consts' 
+import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 
 export const NoItemsInTabStyled = styled.div<{ theme: MavrykTheme }>`
   display: flex;
@@ -202,8 +202,8 @@ export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
 export const StatusMessageStyled = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   padding: 15px 25px;
-  margin-bottom: 20px;
-
+  margin: 15px 0 25px 0;
+  background-color: ${({ theme }) => theme.dPurple_container_dPurple};
   font-weight: 600;
   font-size: 14px;
   line-height: 21px;
@@ -232,7 +232,6 @@ export const StatusMessageStyled = styled.div<{ theme: MavrykTheme }>`
     p:first-of-type {
       white-space: nowrap;
     }
-
   }
 
   &.${vaultsStatuses.LIQUIDATABLE} {
@@ -248,6 +247,10 @@ export const StatusMessageStyled = styled.div<{ theme: MavrykTheme }>`
 
     svg {
       fill: ${({ theme }) => theme.darkWarningColor};
+    }
+
+    span {
+      color: ${({ theme }) => theme.darkWarningColor};
     }
   }
 

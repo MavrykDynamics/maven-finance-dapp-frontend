@@ -27,6 +27,8 @@ import {
 } from './Loans.style'
 import { EmptyContainer } from 'app/App.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 
 export const Loans = () => {
   const dispatch = useDispatch()
@@ -108,7 +110,12 @@ export const Loans = () => {
           {borrowingPart}
         </MarketChartsContainer>
 
-        {loanTokens.length ? (
+        {isLoading ? (
+          <DataLoaderWrapper>
+            <ClockLoader width={150} height={150} />
+            <div className="text">Loading loans markets</div>
+          </DataLoaderWrapper>
+        ) : loanTokens.length ? (
           <MarketsOverviewContainer>
             <GovRightContainerTitleArea>
               <h2>Markets</h2>
