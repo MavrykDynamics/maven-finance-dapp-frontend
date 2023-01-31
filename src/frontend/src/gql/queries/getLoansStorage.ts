@@ -79,7 +79,10 @@ export const LOANS_QUERY = `query GetLoansStorage {
           lp_token_address
           current_interest_rate
         }
-        
+        lending_controller {
+          liquidation_delay_in_minutes
+        }
+        marked_for_liquidation_level
         last_updated_block_level
         loan_principal_total
         loan_interest_total

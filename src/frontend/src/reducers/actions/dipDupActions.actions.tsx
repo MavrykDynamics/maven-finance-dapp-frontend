@@ -89,7 +89,7 @@ export const updateTokensPrices =
         tokensPrices: additionalTokensSrices,
       })
     } catch (e) {
-      console.error('getTokensPrices error: ', e)
+      console.error('updateTokensPrices error: ', e)
     }
   }
 
@@ -104,7 +104,7 @@ export const getMTokensStorage = () => async (dispatch: AppDispatch, getState: G
       mTokens,
     })
   } catch (e) {
-    console.error('getDipDupTokensStorage error: ', e)
+    console.error('getMTokensStorage error: ', e)
   }
 }
 
@@ -125,7 +125,7 @@ export const fetchRateBySymbols = async (tokensSymbols: Array<string>) => {
       return acc
     }, {})
   } catch (e) {
-    console.log('getLoansRates error: ', e)
+    console.log('fetchRateBySymbols error: ', e)
     return {}
   }
 }

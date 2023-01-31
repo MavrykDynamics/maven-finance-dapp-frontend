@@ -112,6 +112,8 @@ export type BorrowingData = {
   xtzDelegatedTo: string | null
   operators?: Array<string>
   sMVKDelegatedTo?: string
+  levelOfEarly?: number
+  levelOfLate?: number
   depositors?: Array<string>
 }
 
