@@ -262,6 +262,7 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
             <Button
               text='Liquidate'
               kind={ACTION_PRIMARY}
+              disabled={!costToLiquidate}
               onClick={() => handleLiquidateVault({vaultId, ownerId, costToLiquidate})}
             />
           </div>

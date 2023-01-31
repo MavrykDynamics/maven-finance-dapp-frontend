@@ -50,6 +50,13 @@ export const LiquidateVaultModalStyled = styled.div<{ showAsPercentage: boolean;
     border: none;
   }
 
+  button:disabled {
+    &:hover {
+      border: none;
+      color: ${({ theme }) => theme.containerColor};
+    }
+  }
+
   .flex-group {
     display: flex;
     justify-content: space-between;

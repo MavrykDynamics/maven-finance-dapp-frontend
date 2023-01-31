@@ -93,7 +93,7 @@ export const VaultsCard = (props: Props) => {
   const {
     ownerId,
     vaultId,
-    status:x, // TODO: delete :x
+    status,
     levelOfEarly,
     levelOfLate,
     collateralData,
@@ -106,7 +106,7 @@ export const VaultsCard = (props: Props) => {
 
   const [expanded, setExpanded] = useState(false)
   const [timerTimestamp, setTimerTimestamp] = useState<number | undefined>(undefined)
-  const status = vaultsStatuses.GRACE_PERIOD
+
   const statusColor = findStatusInfo(status).color as StatusFlagStyle
   const statusText = findStatusInfo(status).text
   const footerText = findFooterText(status, statusColor, timerTimestamp)
