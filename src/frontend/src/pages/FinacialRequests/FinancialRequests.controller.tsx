@@ -13,6 +13,7 @@ import { FinancialRequestsView } from './FinancialRequests.view'
 
 //styles
 import { Page } from 'styles'
+import { EmptyContainer } from 'app/App.style'
 
 export const FinancialRequests = () => {
   const dispatch = useDispatch()
@@ -28,7 +29,14 @@ export const FinancialRequests = () => {
   return (
     <Page>
       <PageHeader page={'financial requests'} />
-      {financialRequestLedger?.length ? <FinancialRequestsView financialRequestsList={financialRequestLedger} /> : null}
+      {financialRequestLedger?.length ? (
+        <FinancialRequestsView financialRequestsList={financialRequestLedger} />
+      ) : (
+        <EmptyContainer className="centered">
+          <img src="/images/not-found.svg" alt=" No financial requests to show" />
+          <figcaption>No Requests to show</figcaption>
+        </EmptyContainer>
+      )}
     </Page>
   )
 }

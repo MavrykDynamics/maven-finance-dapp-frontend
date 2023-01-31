@@ -22,6 +22,7 @@ import { updateTokensPrices } from 'reducers/actions/dipDupActions.actions'
 import { updateUserData } from 'pages/Doorman/Doorman.actions'
 
 export const GET_LOANS_STORAGE = 'GET_LOANS_STORAGE'
+export const RESET_FETCHED = 'RESET_FETCHED'
 export const getLoansStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
   const {
     tokens: { dipDupTokens, mTokens, tokensPrices },

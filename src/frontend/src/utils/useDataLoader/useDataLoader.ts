@@ -12,9 +12,9 @@ export const useDataLoader = (callback: () => Promise<void>, deps: React.Depende
     if (isInitialDataLoading === false) {
       setLoading(true)
       callback().finally(() => {
-        if (isComponentMounted.current) {
-          setLoading(false)
-        }
+        // if (isComponentMounted.current) {
+        setLoading(false)
+        // }
       })
     }
 
