@@ -145,7 +145,7 @@ export const BorrowingExpandCard = ({
                 <Icon id="noImage" />
               )}
               <div className="data">
-                <div className="value">{assetSymbol}</div>
+                <div className="value">{assetSymbol === 'tez' ? 'XTZ' : assetSymbol?.toUpperCase()}</div>
                 <div className="value">
                   <TzAddress tzAddress={address} shouldCopy hasIcon amountFromStart={4} amountFromEnd={4} />
                 </div>
@@ -229,7 +229,7 @@ export const BorrowingExpandCard = ({
                       <Icon id="noImage" />
                     </div>
                   )}
-                  {assetSymbol}
+                  {assetSymbol === 'tez' ? 'XTZ' : assetSymbol?.toUpperCase()}
                 </div>
               </ThreeLevelListItem>
               <ThreeLevelListItem>
@@ -321,7 +321,7 @@ export const BorrowingExpandCard = ({
                                 <Icon id="noImage" />
                               </div>
                             )}
-                            {assetSymbol}
+                            {assetSymbol === 'tez' ? 'XTZ' : assetSymbol?.toUpperCase()}
                           </div>
                         )}
                       </TableCell>

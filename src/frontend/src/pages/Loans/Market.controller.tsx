@@ -138,8 +138,12 @@ export const Market = () => {
               )}
 
               <div className="text-wrapper">
-                <div className="symbol">{currentToken.loanTokenData.name}</div>
-                <div className="full-name">{currentToken.loanTokenData.symbol}</div>
+                <div className="symbol">
+                  {currentToken.loanTokenData.originalName === 'tez' ? 'Tezos' : currentToken.loanTokenData.name}
+                </div>
+                <div className="full-name">
+                  {currentToken.loanTokenData.originalName === 'tez' ? 'XTZ' : currentToken.loanTokenData.symbol}
+                </div>
               </div>
             </div>
             {tabId === LEND_TAB_ID ? (

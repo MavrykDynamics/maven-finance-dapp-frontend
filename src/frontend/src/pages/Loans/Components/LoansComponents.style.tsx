@@ -209,6 +209,7 @@ export const StatusMessageStyled = styled.div<{ theme: MavrykTheme }>`
   line-height: 21px;
 
   border-radius: 10px;
+  background-color: ${({ theme }) => theme.darkPurpleColor};
 
   .timer {
     display: inline-block;

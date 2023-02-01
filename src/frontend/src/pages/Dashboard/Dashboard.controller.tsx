@@ -1,16 +1,18 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from '../../reducers'
-import { useEffect } from 'react'
-import { fillTreasuryStorage } from '../Treasury/Treasury.actions'
+import { fillTreasuryStorage, getVestingStorage } from '../Treasury/Treasury.actions'
 import { Page } from 'styles'
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
 import { DashboardView } from './Dashboard.view'
 import { useParams } from 'react-router'
-import { getFarmStorage } from 'pages/Farms/Farms.actions'
 import { getDelegationStorage, getOracleStorage } from 'pages/Satellites/Satellites.actions'
 import { mvkStatsType, isValidId, LENDING_TAB_ID } from './Dashboard.utils'
 import { getGovernanceStorage } from 'pages/Governance/Governance.actions'
 import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
+import { getVaultsStorage } from 'pages/Vaults/Vaults.actions'
+import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
+import { getLoansStorage } from 'pages/Loans/Loans.actions'
+import { getFarmStorage } from 'pages/Farms/Farms.actions'
 
 export const Dashboard = () => {
   const dispatch = useDispatch()
@@ -44,13 +46,57 @@ export const Dashboard = () => {
   //TODO: add calculation for tvl value (loans, vaults)
   const tvlValue = totalStakedMvk * exchangeRate + treasuryTVL + farmsTVL + lendingTvl
 
-  useEffect(() => {
-    dispatch(fillTreasuryStorage())
-    dispatch(getDelegationStorage())
-    dispatch(getGovernanceStorage())
-    dispatch(getDoormanStorage())
-    dispatch(getOracleStorage())
-  }, [dispatch])
+  const { isLoading: isVaultsLoading } = useDataLoader(async () => {
+    try {
+      await dispatch(getVaultsStorage())
+    } catch (e) {}
+  }, [])
+
+  const { isLoading: isOraclesLoading } = useDataLoader(async () => {
+    try {
+      await dispatch(getOracleStorage())
+    } catch (e) {}
+  }, [])
+
+  const { isLoading: isDelegationLoading } = useDataLoader(async () => {
+    try {
+      await dispatch(getDelegationStorage())
+    } catch (e) {}
+  }, [])
+
+  const { isLoading: isTreasuryLoading } = useDataLoader(async () => {
+    try {
+      await Promise.all([dispatch(getVestingStorage()), dispatch(fillTreasuryStorage())]) 
+    } catch (e) {}
+  }, [])
+
+  const { isLoading: isLendingLoading } = useDataLoader(async () => {
+    try {
+      await dispatch(getLoansStorage())
+    } catch (e) {}
+  }, [])
+
+  const { isLoading: isFarmsLoading } = useDataLoader(async () => {
+    try {
+      await dispatch(getFarmStorage())
+    } catch (e) {}
+  }, [])
+
+  const { isLoading } = useDataLoader(async () => {
+    try {
+      await Promise.all([dispatch(getGovernanceStorage()), dispatch(getDoormanStorage())])
+    } catch (e) {}
+  }, [])
+
+  const tabLoadings = {
+    isVaultsLoading,
+    isOraclesLoading,
+    isDelegationLoading,
+    isTreasuryLoading,
+    isLendingLoading,
+    isFarmsLoading,
+    isLoading,
+  }
 
   const mvkStatsBlock: mvkStatsType = {
     marketCap: marketCapValue,
@@ -68,6 +114,7 @@ export const Dashboard = () => {
         tvl={tvlValue}
         mvkStatsBlock={mvkStatsBlock}
         activeTab={isValidId(tabId) ? tabId : LENDING_TAB_ID}
+        tabLoadings={tabLoadings}
       />
     </Page>
   )

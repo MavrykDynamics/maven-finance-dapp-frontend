@@ -2,7 +2,7 @@ import { ToggleStyle } from './Toggle.style'
 
 type Props = {
   onChange: () => void
-  className: string
+  className?: string
   sufix?: string
   prefix?: string
   disabled?: boolean

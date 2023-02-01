@@ -389,7 +389,7 @@ export const fetchUserData = async (
       mTokens,
     }
 
-    const userRewardsToDate = calcUsersRewardsToDate(userInfoData.stakes_history_data)
+    const userRewardsToDate = calcUsersRewardsToDate(userInfoData?.stakes_history_data)
 
     userInfo.myDoormanRewardsData = calcUsersDoormanRewards(userInfo)
     userInfo.mySatelliteRewardsData = calcUsersSatelliteRewards(userInfo)
@@ -410,7 +410,7 @@ export const fetchUserData = async (
     const { userBorrowing, userLendings } = normalizeUserLending({
       dipDupTokens,
       feeds,
-      userDataFromIndexer: userLendingData.mavryk_user[0].lending_controller_history_data_sender,
+      userDataFromIndexer: userLendingData.mavryk_user?.[0]?.lending_controller_history_data_sender,
     })
 
     userInfo.userLoansData = {

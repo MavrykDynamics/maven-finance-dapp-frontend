@@ -138,12 +138,11 @@ export const markForLiquidation =
 
 // Oracle Latest Price
 export const getOracleAggregatorLatestPrice = async (oracleId: string) => {
-  // TODO: use oracleID in ORACLE_AGGREGATOR_LATEST_PRICE_QUERY_VARIABLE
   try {
     const storage = await fetchFromIndexer(
       ORACLE_AGGREGATOR_LATEST_PRICE_QUERY,
       ORACLE_AGGREGATOR_LATEST_PRICE_QUERY_NAME,
-      ORACLE_AGGREGATOR_LATEST_PRICE_QUERY_VARIABLE,
+      ORACLE_AGGREGATOR_LATEST_PRICE_QUERY_VARIABLE(oracleId)
     )
 
     const oracleLatestPrice = normalizeOracleLatestPrice(storage)
