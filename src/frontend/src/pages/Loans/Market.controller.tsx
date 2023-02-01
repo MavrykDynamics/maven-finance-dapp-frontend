@@ -38,9 +38,9 @@ export const Market = () => {
 
   const { isLoading } = useDataLoader(async () => {
     try {
-      if (!isFetched) {
-        await dispatch(getLoansStorage())
-      }
+      // if (!isFetched) {
+      await dispatch(getLoansStorage())
+      // }
     } catch (e) {}
   }, [accountPkh])
 

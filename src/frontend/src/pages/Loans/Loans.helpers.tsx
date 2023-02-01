@@ -46,6 +46,7 @@ export const getAssetMetadata = ({
       icon: string
       address: string
       rate: number
+      id: number
     }
   | undefined => {
   const isXTZ = isTezosAsset(tokenName)
@@ -64,6 +65,8 @@ export const getAssetMetadata = ({
       icon: '/images/tezos.png',
       rate: last_completed_data / 10 ** decimals,
       address: tokenAddress,
+      // TODO: ensure it's really 3
+      id: 3,
     }
   }
 
@@ -76,6 +79,7 @@ export const getAssetMetadata = ({
       icon: tokenName === 'eurl' ? '/images/eurl.png' : foundAssetInDipDup.metadata.icon ?? icon,
       rate: last_completed_data / 10 ** decimals,
       address: tokenAddress,
+      id: foundAssetInDipDup.id,
     }
   }
 

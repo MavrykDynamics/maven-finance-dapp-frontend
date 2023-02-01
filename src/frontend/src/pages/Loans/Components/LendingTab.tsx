@@ -95,6 +95,9 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
                   originalName: assetData.originalName,
                   assetName: assetData.symbol,
                   assetIcon: assetData.icon,
+                  tokenType: assetData.tokenType,
+                  assetId: assetData.id,
+                  assetAddress: assetData.address,
                 })
               }}
               className="lending-btn"
@@ -114,6 +117,9 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
                   assetName: assetData.symbol,
                   assetIcon: assetData.icon,
                   currentLendedAmount: lendingItem.lendValue,
+                  tokenType: assetData.tokenType,
+                  assetId: assetData.id,
+                  assetAddress: assetData.address,
                 })
               }}
               className="lending-btn"
@@ -137,6 +143,9 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
                 originalName: assetData.originalName,
                 assetName: assetData.symbol,
                 assetIcon: assetData.icon,
+                tokenType: assetData.tokenType,
+                assetId: assetData.id,
+                assetAddress: assetData.address,
               })
             }
             className="lending-tab-no-items-btn"
