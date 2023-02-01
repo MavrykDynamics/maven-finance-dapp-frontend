@@ -6,11 +6,11 @@ import { Page } from 'styles'
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
 import { DashboardView } from './Dashboard.view'
 import { useParams } from 'react-router'
-import { getFarmStorage } from 'pages/Farms/Farms.actions'
 import { getDelegationStorage, getOracleStorage } from 'pages/Satellites/Satellites.actions'
 import { mvkStatsType, isValidId, LENDING_TAB_ID } from './Dashboard.utils'
 import { getGovernanceStorage } from 'pages/Governance/Governance.actions'
 import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
+import { getVaultsStorage } from 'pages/Vaults/Vaults.actions'
 
 export const Dashboard = () => {
   const dispatch = useDispatch()
@@ -50,6 +50,7 @@ export const Dashboard = () => {
     dispatch(getGovernanceStorage())
     dispatch(getDoormanStorage())
     dispatch(getOracleStorage())
+    dispatch(getVaultsStorage())
   }, [dispatch])
 
   const mvkStatsBlock: mvkStatsType = {

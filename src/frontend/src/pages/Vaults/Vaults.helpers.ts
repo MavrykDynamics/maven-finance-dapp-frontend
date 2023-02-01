@@ -384,6 +384,82 @@ export const sortByVaultCategory = ({ vaultsMapper, vaultsIds, status }: SortByV
   })
 }
 
+type VaultAssetBalances = {
+  globalVaultTVL: number
+  avgCollateralRatio: number
+  assets: Record<string, { 
+    balance: number
+    usdValue: number
+    rate: number
+    decimals: number
+    name: string
+    symbol: string
+  }>
+}
+
+export const reduceVaultsAssets = (
+  vaultIds: string[],
+  vaultsMapper: Record<string, VaultType>,
+) => {
+  const { assets, globalVaultTVL, avgCollateralRatio } = vaultIds.reduce<VaultAssetBalances>((acc, vaultId) => {
+    const { assets } = acc
+    const { collateralData, borrowedAsset } = vaultsMapper[vaultId]
+
+    if (borrowedAsset.assetSymbol && assets[borrowedAsset.assetSymbol]) {
+      assets[borrowedAsset.assetSymbol].balance += (borrowedAsset.collateralBalance / borrowedAsset.assetRate)
+      assets[borrowedAsset.assetSymbol].usdValue += borrowedAsset.collateralBalance
+
+      acc.avgCollateralRatio += borrowedAsset.collateralUtilization
+      acc.globalVaultTVL += borrowedAsset.collateralBalance
+    } else if (borrowedAsset.assetSymbol ) {  
+      assets[borrowedAsset.assetSymbol] = {
+        balance: borrowedAsset.collateralBalance / borrowedAsset.assetRate,
+        usdValue: borrowedAsset.collateralBalance,
+        rate: borrowedAsset.assetRate,
+        name: borrowedAsset.assetSymbol,
+        symbol: borrowedAsset.assetSymbol,
+        decimals: 0
+      }
+      
+      acc.avgCollateralRatio += borrowedAsset.collateralUtilization
+      acc.globalVaultTVL += borrowedAsset.collateralBalance
+    }
+
+    if (collateralData.length !== 0) {
+      collateralData.slice(0, -1).forEach((collateral) => {
+        if (collateral.assetSymbol && assets[collateral.assetSymbol]) {
+          assets[collateral.assetSymbol].balance += collateral.balance
+          assets[collateral.assetSymbol].usdValue += collateral.balance * collateral.assetRate
+          acc.globalVaultTVL += collateral.balance * collateral.assetRate
+        } else if (collateral.assetSymbol) {
+          assets[collateral.assetSymbol] = {
+            balance: collateral.balance,
+            usdValue: collateral.balance * collateral.assetRate,
+            rate: collateral.assetRate,
+            name: collateral.assetSymbol,
+            symbol: collateral.assetSymbol,
+            decimals: 0
+          }
+
+          acc.globalVaultTVL += collateral.balance * collateral.assetRate
+        }
+      })
+    }
+
+    return acc
+  }, {
+    assets: {},
+    globalVaultTVL: 0,
+    avgCollateralRatio: 0,
+  })
+  
+  return {
+    assetsBalances: Object.values(assets),
+    avgCollateralRatio: avgCollateralRatio / vaultIds.length,
+    globalVaultTVL,
+  }
+}
+
 type VaultStatusCheckerType = {
   currentBlockLevel: number
   liquidationEndLevel: number
