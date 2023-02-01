@@ -27,6 +27,7 @@ import { INPUT_STATUS_SUCCESS, INPUT_STATUS_ERROR } from "app/App.components/Inp
 
 // types
 import { LiquidateVaultDataType } from "pages/Loans/Components/Modals/Modals.helpers";
+import { InputStatusType } from "app/App.components/Input/Input.constants";
 
 // actions
 import { liquidateVault } from "pages/Vaults/Vaults.actions";
@@ -84,7 +85,7 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
 
   const profit = 1234.44 // TODO: use valid data
 
-  const handleInputStatus = (inputValue: number, maxValue: number) => {
+  const handleInputStatus = (inputValue: number, maxValue: number): InputStatusType => {
     if (inputValue === 0) return ''
 
     return inputValue > maxValue ? INPUT_STATUS_ERROR : INPUT_STATUS_SUCCESS
@@ -101,6 +102,20 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
     if (!vaultId || !ownerId) return
 
     dispatch(liquidateVault(vaultId, ownerId, costToLiquidate))
+  }
+
+  const inputProps = {
+    value: inputAmount,
+    type: 'number',
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => setInputAmount(e.target.value),
+  }
+
+  const inputSettings = {
+    balance: userBalance,
+    balanceAsset: assetSymbol,
+    useMaxHandler: () => setInputAmount(String(useMaxBalance)),
+    inputStatus: handleInputStatus(costToLiquidate, liquidationMaxUsd),
+    convertedValue: costToLiquidate,
   }
 
   return (
@@ -143,18 +158,8 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
 
           <Input
             className='input'
-            inputProps={{
-              value: inputAmount,
-              type: 'number',
-              onChange: (e) => setInputAmount(e.target.value),
-            }}
-            settings={{
-              balance: userBalance,
-              balanceAsset: assetSymbol,
-              useMaxHandler: () => setInputAmount(String(useMaxBalance)),
-              inputStatus: handleInputStatus(costToLiquidate, liquidationMaxUsd),
-              convertedValue: costToLiquidate,
-            }}
+            inputProps={inputProps}
+            settings={inputSettings}
           >
             <InputPinnedTokenInfo>
               {showAsPercentage
