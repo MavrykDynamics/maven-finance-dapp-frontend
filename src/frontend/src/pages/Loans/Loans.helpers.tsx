@@ -478,7 +478,6 @@ export const normalizeLoans = async ({
           getTransactionHistory(history_data, dipDupData, feeds)
         const { myBorrowingList, permissinedBorrowingList, totalCollateral, vaultsBorrowedAmount } =
           await getBorrowings(vaults, dipDupData, feeds, interestRateDecimals, userAddres)
-
         const lendingItem = await getLendingItem(
           loanToken,
           userMTokens,
@@ -489,10 +488,15 @@ export const normalizeLoans = async ({
         )
 
         const loanTokenUserBalance = await getUserBalanceForLoanAsset(loan_token_address, loan_token_name, userAddres)
-
+        const reservePercent =  reserve_ratio / 10000
+        const reserveAmountMu = token_pool_total * reservePercent
+        const reserveAmount = isXTZ
+            ? calcWithoutMu(reserveAmountMu)
+            : calcWithoutDecimals(reserveAmountMu, Number(loanTokenMetadata.decimals ?? 1))
         const availableLiquidity = isXTZ
-          ? calcWithoutMu(total_remaining)
-          : calcWithoutDecimals(total_remaining, Number(loanTokenMetadata.decimals ?? 1))
+          ? calcWithoutMu(total_remaining - reserveAmountMu)
+          : calcWithoutDecimals(total_remaining - reserveAmountMu, Number(loanTokenMetadata.decimals ?? 1))
+        console.log(reservePercent, reserveAmountMu, availableLiquidity, reserveAmount)
 
         acc.push({
           loanTokenData: {
@@ -520,7 +524,7 @@ export const normalizeLoans = async ({
           totalFeesEarned: userMTokens?.reduce((acc, { rewards_earned }) => acc + rewards_earned, 0) ?? 0,
           collateralFactor: storage.collateral_ratio / 10,
           reserveFactor: reserve_ratio / 100,
-          reserveAmount: (token_pool_total * reserve_ratio) / 100,
+          reserveAmount: reserveAmount,
           borrowAPR: lendingItem?.borrowAPR ?? 0,
           lendingAPY: lendingItem?.lendAPY ?? 0,
         })
