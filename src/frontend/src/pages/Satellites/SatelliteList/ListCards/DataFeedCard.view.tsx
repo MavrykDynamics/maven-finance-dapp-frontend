@@ -27,7 +27,9 @@ const defaultCategoryText = 'No Category'
 export const DataFeedCard = ({ feed }: { feed: Feed }) => {
   const { pathname } = useLocation()
   const { dipDupContracts } = useSelector((state: State) => state.tokens)
-  const imageLink = dipDupContracts.find(({ contract }) => contract === feed.address)?.metadata?.icon
+  const imageLink = feed?.name.includes('EUROC')
+    ? '/images/eurl.png'
+    : dipDupContracts.find(({ contract }) => contract === feed?.address)?.metadata?.icon
   const isDataFeedsPage = pathname === '/data-feeds'
 
   return (
@@ -60,7 +62,9 @@ export const DataFeedCard = ({ feed }: { feed: Feed }) => {
         )}
         <div className="item feed-last">
           <h5>Date</h5>
-          <var>{parseDate({ time: feed.last_completed_data_last_updated_at, timeFormat: 'MMM DD, YYYY' })}</var>
+          <var>
+            {parseDate({ time: feed.last_completed_data_last_updated_at, timeFormat: 'MMM Do, YYYY, HH:mm:ss' })}
+          </var>
         </div>
       </SatelliteItemStyle>
     </Link>

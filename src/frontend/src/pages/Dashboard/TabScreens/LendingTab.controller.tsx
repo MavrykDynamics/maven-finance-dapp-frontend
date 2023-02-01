@@ -120,7 +120,7 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
                   <Icon id="noImage" />
                 )}
 
-                {mostLendedAsset?.name ?? ''}
+                {mostLendedAsset?.name || '-'}
               </div>
             </StatBlock>
           </div>

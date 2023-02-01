@@ -1,9 +1,7 @@
 import { useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
 
 // consts, helpers
 import { ACTION_PRIMARY, ACTION_SIMPLE } from 'app/App.components/Button/Button.constants'
-import { usersData } from 'pages/UsersOracles/users.const'
 import { ORACLES_DATA_IN_FEED_LIST_NAME } from 'pages/FinacialRequests/Pagination/pagination.consts'
 import { handleCoinName } from 'pages/Satellites/SatelliteList/ListCards/DataFeedCard.view'
 
@@ -29,19 +27,17 @@ import {
   DataFeedsTitle,
   DataFeedSubTitleText,
   DataFeedValueText,
-  UsersListCardsWrapper,
-  UsersListWrapper,
-  UserSmallCard,
 } from './DataFeedsDetails.style'
-import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { EmptyContainer } from 'app/App.style'
 import { cyanColor, downColor, Page, skyColor } from 'styles'
 import { CoinsLogo } from 'app/App.components/Icon/CoinsIcons.view'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { parseDate } from 'utils/time'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
+import { INFO } from 'app/App.components/Toaster/Toaster.constants'
 
 type FeedDetailsProps = {
   feed: Feed | null
@@ -77,6 +73,8 @@ const DataFeedDetailsView = ({ feed, oracles, registerFeedHandler }: FeedDetails
   )
 
   const isTrustedAnswer = feed && feed.last_completed_data_pct_oracle_resp >= feed.pct_oracle_threshold
+
+  const dispatch = useDispatch()
 
   // const heartbeatUpdateInfo =
   //   dayjs(Date.now()).diff(dayjs(feed?.last_completed_data_last_updated_at), 'minutes') >= 30
@@ -125,7 +123,9 @@ const DataFeedDetailsView = ({ feed, oracles, registerFeedHandler }: FeedDetails
                 <DataFeedsTitle fontSize={14} fontWeidth={500}>
                   {isTrustedAnswer ? 'Trusted Answer' : 'Not Trusted Answer'}
                   <CustomTooltip
-                    text={`The current price is trusted and approved by a majority of the oracles`}
+                    text={`The current price is ${
+                      isTrustedAnswer ? 'trusted' : 'not trusted'
+                    } and approved by a majority of the oracles`}
                     iconId={'info'}
                     className="info-icon"
                   />
@@ -148,7 +148,7 @@ const DataFeedDetailsView = ({ feed, oracles, registerFeedHandler }: FeedDetails
                 </DataFeedSubTitleText>
 
                 <DataFeedValueText fontSize={16} fontWeidth={600}>
-                  {feed.pct_oracle_threshold}%
+                  {feed.alpha_pct_per_thousand}%
                 </DataFeedValueText>
               </DataFeedInfoBlock>
 
@@ -171,7 +171,10 @@ const DataFeedDetailsView = ({ feed, oracles, registerFeedHandler }: FeedDetails
                           negativeColor: isTrustedAnswer ? cyanColor : downColor,
                           defaultColor: skyColor,
                         }}
-                        timestamp={new Date(feed.last_completed_data_last_updated_at).getTime() + 1000 * 60 * 30}
+                        timestamp={
+                          new Date(feed.last_completed_data_last_updated_at).getTime() +
+                          new Date(feed.heart_beat_seconds).getTime() * 1000
+                        }
                       />
                     </div>
                   ) : null}
@@ -241,8 +244,9 @@ const DataFeedDetailsView = ({ feed, oracles, registerFeedHandler }: FeedDetails
                   text="Register"
                   kind={ACTION_PRIMARY}
                   onClick={() => {
-                    setClickedRegister(true)
-                    registerFeedHandler()
+                    // setClickedRegister(true)
+                    // registerFeedHandler()
+                    dispatch(showToaster(INFO, 'Coming soon', 'Register to Oracle Feature coming soon'))
                   }}
                 />
               </div>
@@ -255,6 +259,7 @@ const DataFeedDetailsView = ({ feed, oracles, registerFeedHandler }: FeedDetails
             {tabsList.length
               ? tabsList.map(({ text, id }) => (
                   <Button
+                    key={id}
                     text={text}
                     kind={ACTION_SIMPLE}
                     className={id === activeTab ? 'active' : ''}
@@ -268,7 +273,7 @@ const DataFeedDetailsView = ({ feed, oracles, registerFeedHandler }: FeedDetails
             activeTab={activeTab}
             dataFeedsHistory={feed.dataFeedsHistory}
             dataFeedsVolatility={feed.dataFeedsVolatility}
-            tooltipAsset={feed.name.split('/')?.[0]}
+            tooltipAsset={feed.name.split('/')?.[1]}
           />
         </div>
       </DataFeedsStyled>

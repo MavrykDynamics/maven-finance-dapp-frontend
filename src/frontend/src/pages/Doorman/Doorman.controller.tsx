@@ -16,6 +16,8 @@ import { showExitFeeModal } from './ExitFeeModal/ExitFeeModal.actions'
 import { ExitFeeModal } from './ExitFeeModal/ExitFeeModal.controller'
 import { StakeUnstakeView } from './StakeUnstake/StakeUnstake.view'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 
 export const Doorman = () => {
   const dispatch = useDispatch()
@@ -41,12 +43,16 @@ export const Doorman = () => {
 
   return (
     <Page>
+      <PageHeader page={'doorman'} />
+
       {isLoading ? (
-        '... loading doorman data'
+        <DataLoaderWrapper>
+          <ClockLoader width={150} height={150} />
+          <div className="text">Loading doorman data</div>
+        </DataLoaderWrapper>
       ) : (
         <>
           <ExitFeeModal />
-          <PageHeader page={'doorman'} />
           <StakeUnstakeView stakeCallback={stakeCallback} unstakeCallback={unstakeCallback} />
           <DoormanInfoStyled>
             <DoormanChart />

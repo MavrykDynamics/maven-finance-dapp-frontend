@@ -13,7 +13,7 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import Icon from 'app/App.components/Icon/Icon.view'
 import { BorrowingTab } from './Components/BorrowingTab'
 import { LendingTab } from './Components/LendingTab'
-import { SpinnerLoader } from 'app/App.components/Loader/Loader.view'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
 import { TransactionHistory } from './Components/TransactionHistory'
 
@@ -28,6 +28,7 @@ import { PermissionVaults } from './Components/PermissionVaultsTab'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { getLoansStorage } from './Loans.actions'
 import LoansPopupsProvider from './Components/Modals/LoansModals.provider'
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 
 export const Market = () => {
   const dispatch = useDispatch()
@@ -37,9 +38,9 @@ export const Market = () => {
 
   const { isLoading } = useDataLoader(async () => {
     try {
-      if (!isFetched) {
-        await dispatch(getLoansStorage())
-      }
+      // if (!isFetched) {
+      await dispatch(getLoansStorage())
+      // }
     } catch (e) {}
   }, [accountPkh])
 
@@ -57,7 +58,10 @@ export const Market = () => {
     return (
       <Page>
         <PageHeader page={'lending'} />
-        <SpinnerLoader />
+        <DataLoaderWrapper>
+          <ClockLoader width={150} height={150} />
+          <div className="text">Loading {assetId.toUpperCase} market</div>
+        </DataLoaderWrapper>
       </Page>
     )
   }
@@ -134,8 +138,12 @@ export const Market = () => {
               )}
 
               <div className="text-wrapper">
-                <div className="symbol">{currentToken.loanTokenData.name}</div>
-                <div className="full-name">{currentToken.loanTokenData.symbol}</div>
+                <div className="symbol">
+                  {currentToken.loanTokenData.originalName === 'tez' ? 'Tezos' : currentToken.loanTokenData.name}
+                </div>
+                <div className="full-name">
+                  {currentToken.loanTokenData.originalName === 'tez' ? 'XTZ' : currentToken.loanTokenData.symbol}
+                </div>
               </div>
             </div>
             {tabId === LEND_TAB_ID ? (
@@ -175,7 +183,13 @@ export const Market = () => {
               <>
                 <ThreeLevelListItem>
                   <div className="name">Oracle Price</div>
-                  <CommaNumber value={0} beginningText="$" className="value" />
+                  <CommaNumber
+                    value={currentToken.loanTokenData.rate}
+                    beginningText="$"
+                    className="value"
+                    showDecimal
+                    decimalsToShow={4}
+                  />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">Borrow APR</div>
@@ -208,6 +222,7 @@ export const Market = () => {
               lendingItem={currentToken.lendingItem}
               lendingControllerAddress={loansControllerAddress}
               assetData={currentToken.loanTokenData}
+              lendAPY={currentToken.lendingAPY}
             />
           ) : null}
           {tabId === BORROW_TAB_ID ? (

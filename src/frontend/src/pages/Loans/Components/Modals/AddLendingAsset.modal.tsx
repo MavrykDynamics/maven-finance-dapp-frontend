@@ -37,9 +37,12 @@ export const AddLendingAsset = ({
     assetRate = 0,
     decimals = 0,
     assetName = '',
+    assetAddress = '',
     lendingAPY = 0,
     assetIcon = '',
     originalName = '',
+    tokenType = '',
+    assetId = 0,
   } = data ?? {}
   const assetSymbol = originalName === 'tez' ? 'XTZ' : assetName ?? originalName.toUpperCase()
   useLockBodyScroll(show)
@@ -80,13 +83,23 @@ export const AddLendingAsset = ({
       setInputData(DEFAULT_LOANS_INPUT_VALUE)
     }
   }, [show])
-
   const isDepositDisabled = useMemo(() => {
     return inputData.validationStatus !== INPUT_STATUS_SUCCESS || isActionLoading
   }, [inputData.validationStatus, isActionLoading])
 
   const depositHandler = () => {
-    dispatch(depositLendingAssetAction(originalName, Number(inputData.amount) * 10 ** decimals, closePopup))
+    if (tokenType && assetAddress) {
+      dispatch(
+        depositLendingAssetAction(
+          originalName,
+          Number(inputData.amount) * 10 ** decimals,
+          assetAddress,
+          assetId,
+          tokenType,
+          closePopup,
+        ),
+      )
+    }
   }
 
   return (
@@ -113,7 +126,6 @@ export const AddLendingAsset = ({
               onFocus: onFocusHandler,
             }}
             settings={{
-              balanceName: 'Lend Balance',
               balance: userBalance,
               balanceAsset: assetSymbol,
               useMaxHandler: () => onChangeHandler(String(userBalance), userBalance),

@@ -20,7 +20,7 @@ export const SatelliteCardBottomRow = styled.div<{ theme: MavrykTheme }>`
   p {
     font-weight: 600;
     font-size: 14px;
-    line-height: 14px;
+    line-height: 18px;
     color: ${cyanColor};
   }
 `

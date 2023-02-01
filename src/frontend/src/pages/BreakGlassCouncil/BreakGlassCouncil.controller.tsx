@@ -200,11 +200,11 @@ export function BreakGlassCouncil() {
     <Page>
       <PageHeader page={'break glass council'} />
       {review && isUserInBreakCouncilMember && (
-        <NewButton kind={TRANSPARENT_WITH_BORDER} className="margin-top-30 go-back ">
-          <Link to={`/break-glass-council`}>
+        <Link to={`/break-glass-council`}>
+          <NewButton kind={TRANSPARENT_WITH_BORDER} className="margin-top-30 go-back ">
             <Icon id="arrowRight" /> Back to Member Dashboard
-          </Link>
-        </NewButton>
+          </NewButton>
+        </Link>
       )}
 
       {isUserInBreakCouncilMember && !review && (

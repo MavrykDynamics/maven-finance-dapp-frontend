@@ -36,6 +36,7 @@ export interface SatelliteRecord {
   description: string
   website: string
   participation: number
+  accuracy: number
   satelliteFee: number
   delegatorCount: number
   status: SatelliteStatus
@@ -50,7 +51,6 @@ export interface SatelliteRecord {
   emergencyGovernanceVotes?: SatelliteFinancialRequestVotingHistory[]
   satelliteActionVotes?: SatelliteFinancialRequestVotingHistory[]
   oracleRecords: Array<{
-    active: boolean
     oracleAddress: string
     sMVKReward: number
     XTZReward: number

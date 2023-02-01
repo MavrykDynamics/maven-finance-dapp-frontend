@@ -178,6 +178,8 @@ export const TradingViewChart = ({
       tickMarkFormatter: (time: UTCTimestamp | BusinessDay) => {
         return tickDateFormatter?.(Number(time)) ?? parseDate({ time: Number(time), timeFormat: 'HH:mm' }) ?? ''
       },
+      fixRightEdge: true,
+      fixLeftEdge: true,
     })
 
     const series = chart.addAreaSeries({

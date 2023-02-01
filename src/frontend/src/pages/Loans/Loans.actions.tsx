@@ -220,12 +220,22 @@ export const depositCollateralAction =
 
       if (tokenType === 'fa2') {
         const assetContract = await state.wallet.tezos?.wallet.at(assetAddress)
-        const fa2AddOperators = [
+        const fa2AddOperator = [
           {
             add_operator: {
               owner: state.wallet.accountPkh,
               operator: newVaultAddress,
-              token_id: assetId, // Should be a number, usually 0
+              token_id: 0, // Should be a number, usually 0
+            },
+          },
+        ]
+
+        const fa2RemoveOperator = [
+          {
+            remove_operator: {
+              owner: state.wallet.accountPkh,
+              operator: newVaultAddress,
+              token_id: 0, // Should be a number, usually 0
             },
           },
         ]
@@ -233,11 +243,15 @@ export const depositCollateralAction =
         const batch = await state.wallet.tezos?.wallet.batch([
           {
             kind: OpKind.TRANSACTION,
-            ...assetContract.methods.update_operators(fa2AddOperators).toTransferParams(),
+            ...assetContract.methods.update_operators(fa2AddOperator).toTransferParams(),
           },
           {
             kind: OpKind.TRANSACTION,
             ...contract.methods.deposit(amount, collateralName).toTransferParams(),
+          },
+          {
+            kind: OpKind.TRANSACTION,
+            ...assetContract.methods.update_operators(fa2RemoveOperator).toTransferParams(),
           },
         ])
 
@@ -268,7 +282,14 @@ export const depositCollateralAction =
   }
 
 export const depositLendingAssetAction =
-  (loanTokenName: string, addLiquidityAmount: number, callback: () => void) =>
+  (
+    loanTokenName: string,
+    addLiquidityAmount: number,
+    tokenAddress: string,
+    assetId: number,
+    tokenType: 'tez' | 'fa2' | 'fa12',
+    callback: () => void,
+  ) =>
   async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
 
@@ -285,7 +306,73 @@ export const depositLendingAssetAction =
     try {
       // prepare and send query
       const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.lendingController.address)
-      const transaction = await contract?.methods.addLiquidity(loanTokenName, addLiquidityAmount).send()
+
+      let transaction = null
+
+      if (tokenType === 'tez') {
+        transaction = await contract?.methods
+          .addLiquidity(loanTokenName, addLiquidityAmount)
+          .send({ amount: addLiquidityAmount, mutez: true })
+      } else if (tokenType === 'fa12') {
+        const tokenContract = await state.wallet.tezos?.wallet.at(tokenAddress)
+
+        const batch = await state.wallet.tezos?.wallet.batch([
+          {
+            kind: OpKind.TRANSACTION,
+            ...tokenContract.methods.approve(state.contractAddresses.lendingController.address, 0).toTransferParams(),
+          },
+          {
+            kind: OpKind.TRANSACTION,
+            ...tokenContract.methods
+              .approve(state.contractAddresses.lendingController.address, addLiquidityAmount)
+              .toTransferParams(),
+          },
+          {
+            kind: OpKind.TRANSACTION,
+            ...contract?.methods.addLiquidity(loanTokenName, addLiquidityAmount).toTransferParams(),
+          },
+        ])
+        transaction = await batch.send()
+      } else {
+        const tokenContract = await state.wallet.tezos?.wallet.at(tokenAddress)
+
+        const fa2AddOperator = [
+            {
+              add_operator: {
+                owner: state.wallet.accountPkh,
+                operator: state.contractAddresses.lendingController.address,
+                token_id: 0, // Should be a number, usually 0
+              },
+            },
+          ],
+          fa2RemoveOperator = [
+            {
+              remove_operator: {
+                owner: state.wallet.accountPkh,
+                operator: state.contractAddresses.lendingController.address,
+                token_id: 0, // Should be a number, usually 0
+              },
+            },
+          ]
+
+        const batch = await state.wallet.tezos?.wallet.batch([
+          {
+            kind: OpKind.TRANSACTION,
+            ...tokenContract.methods.update_operators(fa2AddOperator).toTransferParams(),
+          },
+          {
+            kind: OpKind.TRANSACTION,
+            ...contract?.methods.addLiquidity(loanTokenName, addLiquidityAmount).toTransferParams(),
+          },
+          {
+            kind: OpKind.TRANSACTION,
+            ...tokenContract.methods.update_operators(fa2RemoveOperator).toTransferParams(),
+          },
+        ])
+        transaction = await batch.send()
+      }
+      // const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.lendingController.address)
+      // const transaction = await contract?.methods.addLiquidity(loanTokenName, addLiquidityAmount).send()
 
       callback()
       await dispatch(toggleActionLoader(true))

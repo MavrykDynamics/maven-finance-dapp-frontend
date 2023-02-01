@@ -12,8 +12,10 @@ export type LoanTokenType = {
     symbol?: string
     decimals: number
     icon?: string
+    address: string
     rate: number
     tokenType: 'tez' | 'fa12' | 'fa2'
+    id: number
     userBalance: number
   }
   transactionHistory: Array<{
@@ -54,8 +56,6 @@ export type LoansChartsDataType = {
 
 export type LendingItemType = {
   lendValue: number
-  lendAPY: number
-  borrowAPR: number
   interestEarned: number
   loanAssetWalletBalance: number
   mBalance: number
