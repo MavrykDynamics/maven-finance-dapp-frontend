@@ -37,7 +37,7 @@ export const VaultsTab = () => {
     <TabWrapperStyled className="vaults">
       <div className="top">
         <BGPrimaryTitle>Vaults</BGPrimaryTitle>
-        <Link to="/vaults">
+        <Link to="/vaults/all">
           <Button text="Vaults" icon="vaults" kind={ACTION_PRIMARY} className="noStroke dashboard-sectionLink" />
         </Link>
       </div>
