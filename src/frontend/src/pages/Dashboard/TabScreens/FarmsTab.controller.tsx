@@ -1,28 +1,24 @@
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { Button } from 'app/App.components/Button/Button.controller'
 import CoinsIcons from 'app/App.components/Icon/CoinsIcons.view'
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { Timer } from 'app/App.components/Timer/Timer.controller'
 import { CYAN } from 'app/App.components/TzAddress/TzAddress.constants'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
-import { getFarmStorage } from 'pages/Farms/Farms.actions'
 import { calculateAPY } from 'pages/Farms/Farms.helpers'
 import qs from 'qs'
-import { useEffect, useMemo } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useMemo } from 'react'
+import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { State } from 'reducers'
 import { FarmsContentStyled, TabWrapperStyled } from './DashboardTabs.style'
 import { emptyContainer } from './LendingTab.controller'
 
-export const FarmsTab = () => {
-  const dispatch = useDispatch()
+export const FarmsTab = ({ isLoading }: { isLoading: boolean }) => {
   const { farmStorage } = useSelector((state: State) => state.farm)
   const hasLiveFarms = useMemo(() => farmStorage.some(({ isLive }) => isLive), [farmStorage])
-
-  useEffect(() => {
-    dispatch(getFarmStorage())
-  }, [])
 
   return (
     <TabWrapperStyled backgroundImage="dashboard_farmsTab_bg.png">
@@ -34,7 +30,12 @@ export const FarmsTab = () => {
       </div>
 
       <FarmsContentStyled className="scroll-block">
-        {hasLiveFarms
+        {isLoading ? (
+        <DataLoaderWrapper className='tabLoader'>
+          <ClockLoader width={150} height={150} />
+          <div className="text">Loading farms</div>
+        </DataLoaderWrapper>
+      ) : hasLiveFarms
           ? farmStorage.map((farmCardData) => {
               if (!farmCardData.isLive) return null
 

@@ -1,13 +1,11 @@
 import { useMemo } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
 import { State } from 'reducers'
 import { LoanTokenType } from 'utils/TypesAndInterfaces/Loans'
 
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
-import { getLoansStorage } from 'pages/Loans/Loans.actions'
-import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 
 import Icon from 'app/App.components/Icon/Icon.view'
 import { Button } from 'app/App.components/Button/Button.controller'
@@ -16,6 +14,8 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { StatBlock } from '../Dashboard.style'
 import { LendingContentStyled, TabWrapperStyled, EmptyContainer } from './DashboardTabs.style'
 import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 
 export const emptyContainer = (
   <EmptyContainer>
@@ -24,9 +24,7 @@ export const emptyContainer = (
   </EmptyContainer>
 )
 
-export const LendingTab = () => {
-  const dispatch = useDispatch()
-  const { accountPkh } = useSelector((state: State) => state.wallet)
+export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
   const { loanTokens, chartsData } = useSelector((state: State) => state.loans)
 
   const { lendingSuppliers, borrowers, mostBorrowedAsset, mostLendedAsset, lending24hVolume, borrowing24hVolume } =
@@ -74,12 +72,6 @@ export const LendingTab = () => {
       )
     }, [loanTokens])
 
-  const { isLoading } = useDataLoader(async () => {
-    try {
-      await dispatch(getLoansStorage())
-    } catch (e) {}
-  }, [accountPkh])
-
   return (
     <TabWrapperStyled backgroundImage="dashboard_lendingTab_bg.png">
       <div className="top">
@@ -89,7 +81,12 @@ export const LendingTab = () => {
         </Link>
       </div>
 
-      <LendingContentStyled>
+      {isLoading ? (
+        <DataLoaderWrapper className='tabLoader'>
+          <ClockLoader width={150} height={150} />
+          <div className="text">Loading lending</div>
+        </DataLoaderWrapper>
+      ) : <LendingContentStyled>
         <div className="left">
           <StatBlock className="large">
             <div className="name">Total Supplied</div>
@@ -167,7 +164,7 @@ export const LendingTab = () => {
             </StatBlock>
           </div>
         </div>
-      </LendingContentStyled>
+      </LendingContentStyled>}
 
       <div className="descr">
         <div className="title">How does Lending work on Mavyrk?</div>

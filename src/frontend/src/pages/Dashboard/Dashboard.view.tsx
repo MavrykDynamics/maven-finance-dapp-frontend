@@ -22,10 +22,12 @@ export const DashboardView = ({
   tvl,
   mvkStatsBlock,
   activeTab,
+  tabLoadings,
 }: {
   tvl: number
   mvkStatsBlock: mvkStatsType
   activeTab: TabId
+  tabLoadings: Record<string, boolean>
 }) => {
   return (
     <DashboardStyled>
@@ -103,22 +105,22 @@ export const DashboardView = ({
 
       <Switch>
         <Route exact path={`/dashboard/${FARMS_TAB_ID}`}>
-          <FarmsTab />
+          <FarmsTab isLoading={tabLoadings.isFarmsLoading} />
         </Route>
         <Route exact path={`/dashboard/${VAULTS_TAB_ID}`}>
-          <VaultsTab />
+          <VaultsTab isLoading={tabLoadings.isVaultsLoading} />
         </Route>
         <Route exact path={`/dashboard/${SATELLITES_TAB_ID}`}>
-          <SatellitesTab />
+          <SatellitesTab isLoading={tabLoadings.isDelegationLoading} />
         </Route>
         <Route exact path={`/dashboard/${ORACLES_TAB_ID}`}>
-          <OraclesTab />
+          <OraclesTab isLoading={tabLoadings.isOraclesLoading} />
         </Route>
         <Route exact path={`/dashboard/${TREASURY_TAB_ID}`}>
-          <TreasuryTab />
+          <TreasuryTab isLoading={tabLoadings.isTreasuryLoading} />
         </Route>
         <Route path={`/dashboard/${LENDING_TAB_ID}`}>
-          <LendingTab />
+          <LendingTab isLoading={tabLoadings.isLendingLoading} />
         </Route>
         <Redirect to={`/dashboard/${LENDING_TAB_ID}`} />
       </Switch>

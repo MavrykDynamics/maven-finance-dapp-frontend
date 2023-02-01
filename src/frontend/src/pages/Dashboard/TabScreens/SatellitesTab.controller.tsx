@@ -1,6 +1,8 @@
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
 import { getSatelliteMetrics } from 'pages/Satellites/Satellites.helpers'
 import React from 'react'
@@ -12,7 +14,7 @@ import { StatBlock } from '../Dashboard.style'
 import { SatellitesContentStyled, TabWrapperStyled } from './DashboardTabs.style'
 import { emptyContainer } from './LendingTab.controller'
 
-export const SatellitesTab = () => {
+export const SatellitesTab = ({ isLoading }: { isLoading: boolean }) => {
   const { activeSatellites } = useSelector((state: State) => state.delegation.delegationStorage)
   const { feeds } = useSelector((state: State) => state.oracles.oraclesStorage)
   const {
@@ -72,7 +74,12 @@ export const SatellitesTab = () => {
         </Link>
       </div>
 
-      {activeSatellites.length ? <SatellitesContentStyled>
+      {isLoading ? (
+        <DataLoaderWrapper className='tabLoader'>
+          <ClockLoader width={150} height={150} />
+          <div className="text">Loading satellites</div>
+        </DataLoaderWrapper>
+      ) : activeSatellites.length ? <SatellitesContentStyled>
         <StatBlock>
           <div className="name">Active Satellites</div>
           <div className="value">
