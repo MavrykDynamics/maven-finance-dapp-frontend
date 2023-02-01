@@ -350,7 +350,7 @@ export const VaultsContentStyled = styled.div<{ theme: MavrykTheme }>`
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        top: 50%;
+        top: 55%;
         transform: translateY(-63%);
       }
 
