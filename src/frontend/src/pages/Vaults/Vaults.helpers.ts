@@ -66,7 +66,7 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
 
           if (!collateralAsset) return acc
 
-          const collateralBalance = (collateral.balance / 10 ** collateralAsset.decimals) * collateralAsset.rate
+          const collateralBalance = (collateral.balance / 10 ** collateralAsset.decimals)
 
           acc.normalizedCollaterals.push({
             assetSymbol: collateralAsset.symbol,
@@ -402,37 +402,22 @@ export const reduceVaultsAssets = (
   vaultIds: string[],
   vaultsMapper: Record<string, VaultType>,
 ) => {
+  let notEmptyCollateral = 0
+
   const { assets, globalVaultTVL, collateralRatio } = vaultIds.reduce<VaultAssetBalances>((acc, vaultId) => {
     const { assets } = acc
     const { collateralData, borrowedAsset } = vaultsMapper[vaultId]
 
-    if (borrowedAsset.assetSymbol && assets[borrowedAsset.assetSymbol]) {
-      assets[borrowedAsset.assetSymbol].balance += (borrowedAsset.collateralBalance / borrowedAsset.assetRate)
-      assets[borrowedAsset.assetSymbol].usdValue += borrowedAsset.collateralBalance
-
-      acc.collateralRatio += borrowedAsset.collateralUtilization
-      acc.globalVaultTVL += borrowedAsset.collateralBalance
-    } else if (borrowedAsset.assetSymbol ) {  
-      assets[borrowedAsset.assetSymbol] = {
-        balance: borrowedAsset.collateralBalance / borrowedAsset.assetRate,
-        usdValue: borrowedAsset.collateralBalance,
-        rate: borrowedAsset.assetRate,
-        name: borrowedAsset.assetSymbol,
-        symbol: borrowedAsset.assetSymbol,
-        decimals: 0
-      }
-      
-      acc.collateralRatio += borrowedAsset.collateralUtilization
-      acc.globalVaultTVL += borrowedAsset.collateralBalance
-    }
-
     if (collateralData.length !== 0) {
+      notEmptyCollateral++
+      acc.collateralRatio += borrowedAsset.collateralUtilization
+
       collateralData.slice(0, -1).forEach((collateral) => {
+        acc.globalVaultTVL += collateral.balance * collateral.assetRate
+
         if (collateral.assetSymbol && assets[collateral.assetSymbol]) {
           assets[collateral.assetSymbol].balance += collateral.balance
           assets[collateral.assetSymbol].usdValue += collateral.balance * collateral.assetRate
-          
-          acc.globalVaultTVL += collateral.balance * collateral.assetRate
         } else if (collateral.assetSymbol) {
           assets[collateral.assetSymbol] = {
             balance: collateral.balance,
@@ -442,8 +427,6 @@ export const reduceVaultsAssets = (
             symbol: collateral.assetSymbol,
             decimals: 0
           }
-
-          acc.globalVaultTVL += collateral.balance * collateral.assetRate
         }
       })
     }
@@ -460,7 +443,7 @@ export const reduceVaultsAssets = (
     assetsBalances: Object.values(assets),
     globalVaultTVL,
     collateralRatio,
-    avgCollateralRatio: collateralRatio / vaultIds.length,
+    avgCollateralRatio: collateralRatio / notEmptyCollateral,
   }
 }
 

@@ -21,8 +21,10 @@ import { StatBlock, BlockName } from '../Dashboard.style'
 import { TabWrapperStyled, VaultsContentStyled } from './DashboardTabs.style'
 import { emptyContainer } from './LendingTab.controller'
 import { reduceVaultsAssets } from 'pages/Vaults/Vaults.helpers'
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 
-export const VaultsTab = () => {
+export const VaultsTab = ({ isLoading }: { isLoading: boolean }) => {
   const [hoveredPath, setHoveredPath] = useState<null | string>(null)
 
   const { vaultsList: { allVaultsIds, vaultsMapper } } = useSelector((state: State) => state.vaults)
@@ -40,7 +42,12 @@ export const VaultsTab = () => {
           <Button text="Vaults" icon="vaults" kind={ACTION_PRIMARY} className="noStroke dashboard-sectionLink" />
         </Link>
       </div>
-      {assetsBalances.length ? (
+      {isLoading ? (
+        <DataLoaderWrapper>
+          <ClockLoader width={150} height={150} />
+          <div className="text">Loading vaults</div>
+        </DataLoaderWrapper>
+      ) : (assetsBalances.length ? (
         <VaultsContentStyled>
           <div className="top">
             <StatBlock>
@@ -131,7 +138,7 @@ export const VaultsTab = () => {
         </VaultsContentStyled>
       ) : (
         emptyContainer
-      )}
+      ))}
 
       <div className="descr">
         <div className="title">What is a Vault?</div>

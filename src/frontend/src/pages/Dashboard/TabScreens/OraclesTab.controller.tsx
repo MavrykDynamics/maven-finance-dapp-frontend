@@ -16,8 +16,10 @@ import { StatBlock } from '../Dashboard.style'
 import { OraclesContentStyled, TabWrapperStyled, PopularFeed } from './DashboardTabs.style'
 import { handleCoinName } from 'pages/Satellites/SatelliteList/ListCards/DataFeedCard.view'
 import { emptyContainer } from './LendingTab.controller'
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 
-export const OraclesTab = () => {
+export const OraclesTab = ({ isLoading }: { isLoading: boolean }) => {
   const dispatch = useDispatch()
   const { feeds } = useSelector((state: State) => state.oracles.oraclesStorage)
   const { dipDupContracts } = useSelector((state: State) => state.tokens)
@@ -52,7 +54,12 @@ export const OraclesTab = () => {
         </Link>
       </div>
 
-      <OraclesContentStyled>
+      {isLoading ? (
+        <DataLoaderWrapper>
+          <ClockLoader width={150} height={150} />
+          <div className="text">Loading oracles</div>
+        </DataLoaderWrapper>
+      ) : <OraclesContentStyled>
         <div className="top padding-left">
           <StatBlock>
             <div className="name">Total Oracle Rewards Paid</div>
@@ -115,7 +122,7 @@ export const OraclesTab = () => {
         ) : (
           emptyContainer
         )}
-      </OraclesContentStyled>
+      </OraclesContentStyled>}
 
       <div className="descr">
         <div className="title">What are Oracles?</div>

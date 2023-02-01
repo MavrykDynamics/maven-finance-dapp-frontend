@@ -1,6 +1,8 @@
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import {
   Table,
   TableHeader,
@@ -11,27 +13,20 @@ import {
   TableScrollable,
 } from 'app/App.components/Table/Table.style'
 import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
-import { getVestingStorage } from 'pages/Treasury/Treasury.actions'
 import { reduceTreasuryAssets } from 'pages/Treasury/Treasury.helpers'
-import { useEffect, useMemo } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useMemo } from 'react'
+import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { State } from 'reducers'
-import { TreasuryBalanceType } from 'utils/TypesAndInterfaces/Treasury'
 import { BlockName, StatBlock } from '../Dashboard.style'
 import { TabWrapperStyled, TreasuryContentStyled, TreasuryVesting } from './DashboardTabs.style'
 import { emptyContainer } from './LendingTab.controller'
 
-export const TreasuryTab = () => {
-  const dispatch = useDispatch()
+export const TreasuryTab = ({ isLoading }: { isLoading: boolean }) => {
   const { treasuryStorage } = useSelector((state: State) => state.treasury)
   const {
     vestingStorage: { totalVestedAmount, totalClaimedAmount },
   } = useSelector((state: State) => state.vesting)
-
-  useEffect(() => {
-    dispatch(getVestingStorage())
-  }, [])
 
   const amountOfTokens = totalVestedAmount + totalClaimedAmount
 
@@ -63,7 +58,12 @@ export const TreasuryTab = () => {
         </Link>
       </div>
 
-      {treasuryStorage.length ? (
+      {       isLoading ? (
+        <DataLoaderWrapper>
+          <ClockLoader width={150} height={150} />
+          <div className="text">Loading treasury</div>
+        </DataLoaderWrapper>
+      ) : treasuryStorage.length ? (
         <TreasuryContentStyled>
           <div className="top">
             <StatBlock>
