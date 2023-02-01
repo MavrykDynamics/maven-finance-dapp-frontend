@@ -95,11 +95,11 @@ export function normalizeSatelliteRecord(
         (acc, { rewards, user_id: rewardUserId }) => {
           rewards.forEach(({ type, reward }) => {
             if (type === 0 && rewardUserId === oracleAddress) {
-              acc.XTZReward += reward
+              acc.XTZReward += reward / 10 ** 6
             }
 
             if (type === 1 && rewardUserId === oracleAddress) {
-              acc.sMVKReward += reward
+              acc.sMVKReward += reward / 10 ** 9
             }
           })
 
@@ -111,18 +111,16 @@ export function normalizeSatelliteRecord(
         },
       )
 
-      // TODO: add calculation for oracle status
-      const isActive = false //last_updated_at ? Date.now() - new Date(last_updated_at).getTime() < 24 * 60 * 60 * 1000 : false
-
       return {
         feedAddress,
         oracleAddress,
-        active: isActive,
         sMVKReward,
         XTZReward,
       }
     },
   )
+
+  // const accuracy = 100 -  satelliteRecord?.user?.aggregator_oracles
 
   const newSatelliteRecord: SatelliteRecord = {
     address: satelliteRecord?.user_id || '',
@@ -145,6 +143,7 @@ export function normalizeSatelliteRecord(
     satelliteActionVotes,
     currentlyRegistered: satelliteRecord.currently_registered,
     isSatelliteReady: satelliteRecord.currently_registered && satelliteRecord.status === 0,
+    // accuracy: satelliteRecord.
   }
 
   return newSatelliteRecord

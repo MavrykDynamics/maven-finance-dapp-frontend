@@ -50,7 +50,6 @@ export interface SatelliteRecord {
   emergencyGovernanceVotes?: SatelliteFinancialRequestVotingHistory[]
   satelliteActionVotes?: SatelliteFinancialRequestVotingHistory[]
   oracleRecords: Array<{
-    active: boolean
     oracleAddress: string
     sMVKReward: number
     XTZReward: number

@@ -20,6 +20,7 @@ export const ORACLE_STORAGE_QUERY = `
       last_completed_data_last_updated_at
       last_completed_data_pct_oracle_resp
       last_updated_at
+      heart_beat_seconds
       name
       reward_amount_xtz
       reward_amount_smvk

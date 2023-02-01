@@ -39,9 +39,11 @@ import { cyanColor, downColor, Page, skyColor } from 'styles'
 import { CoinsLogo } from 'app/App.components/Icon/CoinsIcons.view'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { parseDate } from 'utils/time'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
+import { INFO } from 'app/App.components/Toaster/Toaster.constants'
 
 type FeedDetailsProps = {
   feed: Feed | null
@@ -77,6 +79,8 @@ const DataFeedDetailsView = ({ feed, oracles, registerFeedHandler }: FeedDetails
   )
 
   const isTrustedAnswer = feed && feed.last_completed_data_pct_oracle_resp >= feed.pct_oracle_threshold
+
+  const dispatch = useDispatch()
 
   // const heartbeatUpdateInfo =
   //   dayjs(Date.now()).diff(dayjs(feed?.last_completed_data_last_updated_at), 'minutes') >= 30
@@ -241,8 +245,9 @@ const DataFeedDetailsView = ({ feed, oracles, registerFeedHandler }: FeedDetails
                   text="Register"
                   kind={ACTION_PRIMARY}
                   onClick={() => {
-                    setClickedRegister(true)
-                    registerFeedHandler()
+                    // setClickedRegister(true)
+                    // registerFeedHandler()
+                    dispatch(showToaster(INFO, 'Coming soon', 'Register to Oracle Feature coming soon'))
                   }}
                 />
               </div>
@@ -268,7 +273,7 @@ const DataFeedDetailsView = ({ feed, oracles, registerFeedHandler }: FeedDetails
             activeTab={activeTab}
             dataFeedsHistory={feed.dataFeedsHistory}
             dataFeedsVolatility={feed.dataFeedsVolatility}
-            tooltipAsset={feed.name.split('/')?.[0]}
+            tooltipAsset={feed.name.split('/')?.[1]}
           />
         </div>
       </DataFeedsStyled>

@@ -215,11 +215,11 @@ export const Council = () => {
       <PageHeader page={'council'} />
       <CouncilStyled>
         {review && isUserInCouncilMembers ? (
-          <NewButton kind={TRANSPARENT_WITH_BORDER} className="margin-top-30 go-back ">
-            <Link to={`/mavryk-council`}>
+          <Link to={`/mavryk-council`}>
+            <NewButton kind={TRANSPARENT_WITH_BORDER} className="margin-top-30 go-back ">
               <Icon id="arrowRight" /> Back to Member Dashboard
-            </Link>
-          </NewButton>
+            </NewButton>
+          </Link>
         ) : null}
 
         <article

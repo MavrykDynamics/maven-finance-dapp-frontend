@@ -35,6 +35,13 @@ export const SATELLITE_RECORDS_QUERY = `
                 type
               }
               user_id
+              init_round
+              init_epoch
+              observations {
+                epoch
+                data
+                round
+              }
             }
           }
         }
