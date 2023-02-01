@@ -26,7 +26,7 @@ export const VaultsTab = () => {
   const [hoveredPath, setHoveredPath] = useState<null | string>(null)
 
   const { vaultsList: { allVaultsIds, vaultsMapper } } = useSelector((state: State) => state.vaults)
-  const { assetsBalances, globalVaultTVL, avgCollateralRatio } = useMemo(() => reduceVaultsAssets(allVaultsIds, vaultsMapper), [allVaultsIds, vaultsMapper])
+  const { assetsBalances, globalVaultTVL, collateralRatio, avgCollateralRatio } = useMemo(() => reduceVaultsAssets(allVaultsIds, vaultsMapper), [allVaultsIds, vaultsMapper])
   
   const chartData = useMemo(() => {
     return getPieChartData(assetsBalances, globalVaultTVL, hoveredPath)
@@ -52,7 +52,7 @@ export const VaultsTab = () => {
             <StatBlock>
               <div className="name">Collateral Ratio</div>
               <div className="value">
-                <CommaNumber endingText="%" value={123} />
+                <CommaNumber endingText="%" value={collateralRatio} />
               </div>
             </StatBlock>
             <StatBlock>

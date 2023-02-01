@@ -386,6 +386,7 @@ export const sortByVaultCategory = ({ vaultsMapper, vaultsIds, status }: SortByV
 
 type VaultAssetBalances = {
   globalVaultTVL: number
+  collateralRatio: number
   avgCollateralRatio: number
   assets: Record<string, { 
     balance: number
@@ -401,7 +402,7 @@ export const reduceVaultsAssets = (
   vaultIds: string[],
   vaultsMapper: Record<string, VaultType>,
 ) => {
-  const { assets, globalVaultTVL, avgCollateralRatio } = vaultIds.reduce<VaultAssetBalances>((acc, vaultId) => {
+  const { assets, globalVaultTVL, collateralRatio } = vaultIds.reduce<VaultAssetBalances>((acc, vaultId) => {
     const { assets } = acc
     const { collateralData, borrowedAsset } = vaultsMapper[vaultId]
 
@@ -409,7 +410,7 @@ export const reduceVaultsAssets = (
       assets[borrowedAsset.assetSymbol].balance += (borrowedAsset.collateralBalance / borrowedAsset.assetRate)
       assets[borrowedAsset.assetSymbol].usdValue += borrowedAsset.collateralBalance
 
-      acc.avgCollateralRatio += borrowedAsset.collateralUtilization
+      acc.collateralRatio += borrowedAsset.collateralUtilization
       acc.globalVaultTVL += borrowedAsset.collateralBalance
     } else if (borrowedAsset.assetSymbol ) {  
       assets[borrowedAsset.assetSymbol] = {
@@ -421,7 +422,7 @@ export const reduceVaultsAssets = (
         decimals: 0
       }
       
-      acc.avgCollateralRatio += borrowedAsset.collateralUtilization
+      acc.collateralRatio += borrowedAsset.collateralUtilization
       acc.globalVaultTVL += borrowedAsset.collateralBalance
     }
 
@@ -430,6 +431,7 @@ export const reduceVaultsAssets = (
         if (collateral.assetSymbol && assets[collateral.assetSymbol]) {
           assets[collateral.assetSymbol].balance += collateral.balance
           assets[collateral.assetSymbol].usdValue += collateral.balance * collateral.assetRate
+          
           acc.globalVaultTVL += collateral.balance * collateral.assetRate
         } else if (collateral.assetSymbol) {
           assets[collateral.assetSymbol] = {
@@ -450,13 +452,15 @@ export const reduceVaultsAssets = (
   }, {
     assets: {},
     globalVaultTVL: 0,
+    collateralRatio: 0,
     avgCollateralRatio: 0,
   })
   
   return {
     assetsBalances: Object.values(assets),
-    avgCollateralRatio: avgCollateralRatio / vaultIds.length,
     globalVaultTVL,
+    collateralRatio,
+    avgCollateralRatio: collateralRatio / vaultIds.length,
   }
 }
 
