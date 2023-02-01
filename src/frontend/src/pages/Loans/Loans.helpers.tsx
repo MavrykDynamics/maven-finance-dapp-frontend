@@ -205,15 +205,12 @@ const calcLendingAPY = (currentInterestRate: number, treasuryShare: number): num
 const getLendingItem = async (
   loanToken: Lending_Controller_Loan_Token,
   userMTokens: UserState['mTokens'],
-  interestTreasuryShare: number,
-  interestRateDecimals: number,
   loanTokenDecimals: number,
   accountPkh?: string,
 ): Promise<LendingItemType> => {
   try {
     if (userMTokens && loanToken && accountPkh) {
       const mTokenAsset = userMTokens?.find(({ m_token_id }) => m_token_id === loanToken.lp_token_address)
-      const tokenCurrentInterestRate = calcWithoutDecimals(loanToken.current_interest_rate, interestRateDecimals)
 
       const userBalance = await getUserBalanceForLoanAsset(
         loanToken.loan_token_address,
@@ -229,8 +226,6 @@ const getLendingItem = async (
             Number(mTokenAsset.balance) / 10 ** loanTokenDecimals +
             Number(mTokenAsset.rewards_earned) / 10 ** loanTokenDecimals,
           loanAssetWalletBalance: userBalance,
-          lendAPY: calcLendingAPY(tokenCurrentInterestRate, interestTreasuryShare),
-          borrowAPR: calcWithoutDecimals(loanToken.current_interest_rate, interestRateDecimals) * 100,
         }
       }
     }
@@ -478,33 +473,29 @@ export const normalizeLoans = async ({
           getTransactionHistory(history_data, dipDupData, feeds)
         const { myBorrowingList, permissinedBorrowingList, totalCollateral, vaultsBorrowedAmount } =
           await getBorrowings(vaults, dipDupData, feeds, interestRateDecimals, userAddres)
-        const lendingItem = await getLendingItem(
-          loanToken,
-          userMTokens,
-          interestTreasuryShare,
-          storage.interest_rate_decimals,
-          loanTokenMetadata.decimals,
-          userAddres,
-        )
+        const lendingItem = await getLendingItem(loanToken, userMTokens, loanTokenMetadata.decimals, userAddres)
 
         const loanTokenUserBalance = await getUserBalanceForLoanAsset(loan_token_address, loan_token_name, userAddres)
-        const reservePercent =  reserve_ratio / 10000
+        const reservePercent = reserve_ratio / 10000
         const reserveAmountMu = token_pool_total * reservePercent
         const reserveAmount = isXTZ
-            ? calcWithoutMu(reserveAmountMu)
-            : calcWithoutDecimals(reserveAmountMu, Number(loanTokenMetadata.decimals ?? 1))
+          ? calcWithoutMu(reserveAmountMu)
+          : calcWithoutDecimals(reserveAmountMu, Number(loanTokenMetadata.decimals ?? 1))
         const availableLiquidity = isXTZ
           ? calcWithoutMu(total_remaining - reserveAmountMu)
           : calcWithoutDecimals(total_remaining - reserveAmountMu, Number(loanTokenMetadata.decimals ?? 1))
 
         const totalSupplied = isXTZ
-            ? calcWithoutMu(token_pool_total)
-            : calcWithoutDecimals(token_pool_total, Number(loanTokenMetadata.decimals ?? 1))
+          ? calcWithoutMu(token_pool_total)
+          : calcWithoutDecimals(token_pool_total, Number(loanTokenMetadata.decimals ?? 1))
         const totalBorrowedCurrent = isXTZ
-            ? calcWithoutMu(token_pool_total - total_remaining)
-            : calcWithoutDecimals(token_pool_total - total_remaining, Number(loanTokenMetadata.decimals ?? 1))
+          ? calcWithoutMu(token_pool_total - total_remaining)
+          : calcWithoutDecimals(token_pool_total - total_remaining, Number(loanTokenMetadata.decimals ?? 1))
 
-        console.log(lendingItem, loanToken.loan_token_name, lendingItem?.borrowAPR, lendingItem?.lendAPY)
+        const tokenCurrentInterestRate = calcWithoutDecimals(loanToken.current_interest_rate, interestRateDecimals)
+        const lendAPY = calcLendingAPY(tokenCurrentInterestRate, interestTreasuryShare)
+        const borrowAPR = tokenCurrentInterestRate * 100
+
         acc.push({
           loanTokenData: {
             ...loanTokenMetadata,
@@ -532,8 +523,8 @@ export const normalizeLoans = async ({
           collateralFactor: storage.collateral_ratio / 10,
           reserveFactor: reserve_ratio / 100,
           reserveAmount: reserveAmount,
-          borrowAPR: lendingItem?.borrowAPR ?? 0,
-          lendingAPY: lendingItem?.lendAPY ?? 0,
+          borrowAPR: borrowAPR,
+          lendingAPY: lendAPY,
         })
 
         return acc

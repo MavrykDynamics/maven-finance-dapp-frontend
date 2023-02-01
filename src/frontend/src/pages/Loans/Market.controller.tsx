@@ -180,11 +180,11 @@ export const Market = () => {
                 <ThreeLevelListItem>
                   <div className="name">Oracle Price</div>
                   <CommaNumber
-                      value={currentToken.loanTokenData.rate}
-                       beginningText="$"
-                       className="value"
-                       showDecimal
-                       decimalsToShow={4}
+                    value={currentToken.loanTokenData.rate}
+                    beginningText="$"
+                    className="value"
+                    showDecimal
+                    decimalsToShow={4}
                   />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
@@ -218,6 +218,7 @@ export const Market = () => {
               lendingItem={currentToken.lendingItem}
               lendingControllerAddress={loansControllerAddress}
               assetData={currentToken.loanTokenData}
+              lendAPY={currentToken.lendingAPY}
             />
           ) : null}
           {tabId === BORROW_TAB_ID ? (

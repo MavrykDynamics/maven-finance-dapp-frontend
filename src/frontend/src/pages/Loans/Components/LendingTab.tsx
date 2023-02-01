@@ -18,9 +18,10 @@ type LendingTabPropsType = {
   lendingItem: LendingItemType
   lendingControllerAddress: string
   assetData: LoanTokenType['loanTokenData']
+  lendAPY: number
 }
 
-export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData }: LendingTabPropsType) => {
+export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, lendAPY }: LendingTabPropsType) => {
   const { openAddLendingAssetPopup, openRemoveLendingAssetPopup } = useContext(loansPopupsContext)
 
   return (
@@ -56,7 +57,7 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData }:
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Lend APY</div>
-              <CommaNumber value={lendingItem.lendAPY} className="value" endingText="%" />
+              <CommaNumber value={lendAPY} className="value" endingText="%" />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Interest Earned</div>
@@ -88,7 +89,7 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData }:
                 openAddLendingAssetPopup({
                   userBalance: lendingItem.loanAssetWalletBalance,
                   mBalance: lendingItem.mBalance,
-                  lendingAPY: lendingItem.lendAPY,
+                  lendingAPY: lendAPY,
                   assetRate: assetData.rate,
                   decimals: assetData.decimals,
                   originalName: assetData.originalName,
@@ -106,7 +107,7 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData }:
                 openRemoveLendingAssetPopup({
                   userBalance: lendingItem.loanAssetWalletBalance,
                   mBalance: lendingItem.mBalance,
-                  lendingAPY: lendingItem.lendAPY,
+                  lendingAPY: lendAPY,
                   assetRate: assetData.rate,
                   decimals: assetData.decimals,
                   originalName: assetData.originalName,

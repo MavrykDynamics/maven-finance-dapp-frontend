@@ -54,8 +54,6 @@ export type LoansChartsDataType = {
 
 export type LendingItemType = {
   lendValue: number
-  lendAPY: number
-  borrowAPR: number
   interestEarned: number
   loanAssetWalletBalance: number
   mBalance: number
