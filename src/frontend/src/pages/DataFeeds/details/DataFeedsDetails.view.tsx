@@ -1,9 +1,7 @@
 import { useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
 
 // consts, helpers
 import { ACTION_PRIMARY, ACTION_SIMPLE } from 'app/App.components/Button/Button.constants'
-import { usersData } from 'pages/UsersOracles/users.const'
 import { ORACLES_DATA_IN_FEED_LIST_NAME } from 'pages/FinacialRequests/Pagination/pagination.consts'
 import { handleCoinName } from 'pages/Satellites/SatelliteList/ListCards/DataFeedCard.view'
 
@@ -29,11 +27,7 @@ import {
   DataFeedsTitle,
   DataFeedSubTitleText,
   DataFeedValueText,
-  UsersListCardsWrapper,
-  UsersListWrapper,
-  UserSmallCard,
 } from './DataFeedsDetails.style'
-import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { EmptyContainer } from 'app/App.style'
 import { cyanColor, downColor, Page, skyColor } from 'styles'
 import { CoinsLogo } from 'app/App.components/Icon/CoinsIcons.view'
@@ -129,7 +123,9 @@ const DataFeedDetailsView = ({ feed, oracles, registerFeedHandler }: FeedDetails
                 <DataFeedsTitle fontSize={14} fontWeidth={500}>
                   {isTrustedAnswer ? 'Trusted Answer' : 'Not Trusted Answer'}
                   <CustomTooltip
-                    text={`The current price is trusted and approved by a majority of the oracles`}
+                    text={`The current price is ${
+                      isTrustedAnswer ? 'trusted' : 'not trusted'
+                    } and approved by a majority of the oracles`}
                     iconId={'info'}
                     className="info-icon"
                   />
@@ -152,7 +148,7 @@ const DataFeedDetailsView = ({ feed, oracles, registerFeedHandler }: FeedDetails
                 </DataFeedSubTitleText>
 
                 <DataFeedValueText fontSize={16} fontWeidth={600}>
-                  {feed.pct_oracle_threshold}%
+                  {feed.alpha_pct_per_thousand}%
                 </DataFeedValueText>
               </DataFeedInfoBlock>
 
@@ -175,7 +171,10 @@ const DataFeedDetailsView = ({ feed, oracles, registerFeedHandler }: FeedDetails
                           negativeColor: isTrustedAnswer ? cyanColor : downColor,
                           defaultColor: skyColor,
                         }}
-                        timestamp={new Date(feed.last_completed_data_last_updated_at).getTime() + 1000 * 60 * 30}
+                        timestamp={
+                          new Date(feed.last_completed_data_last_updated_at).getTime() +
+                          new Date(feed.heart_beat_seconds).getTime() * 1000
+                        }
                       />
                     </div>
                   ) : null}
@@ -260,6 +259,7 @@ const DataFeedDetailsView = ({ feed, oracles, registerFeedHandler }: FeedDetails
             {tabsList.length
               ? tabsList.map(({ text, id }) => (
                   <Button
+                    key={id}
                     text={text}
                     kind={ACTION_SIMPLE}
                     className={id === activeTab ? 'active' : ''}

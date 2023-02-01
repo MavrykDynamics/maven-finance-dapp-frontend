@@ -25,6 +25,8 @@ export const ORACLE_STORAGE_QUERY = `
       reward_amount_xtz
       reward_amount_smvk
       pct_oracle_threshold
+      alpha_pct_per_thousand
+      heart_beat_seconds
       oracles {
         observations {
           epoch

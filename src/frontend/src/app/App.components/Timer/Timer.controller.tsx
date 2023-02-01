@@ -42,14 +42,15 @@ export const Timer = ({ deadline, timestamp, options }: TimerProps) => {
       const distance = countDown - now
 
       setStrings({
-        days: Math.floor(distance / toDay),
-        hours: Math.floor((distance % toDay) / toHour),
-        minutes: Math.floor((distance % toHour) / toMinute),
-        seconds: Math.floor((distance % toMinute) / toSecond),
+        days: distance > 0 ? Math.floor(distance / toDay) : Math.ceil(distance / toDay),
+        hours: distance > 0 ? Math.floor((distance % toDay) / toHour) : Math.ceil((distance % toDay) / toHour),
+        minutes: distance > 0 ? Math.floor((distance % toHour) / toMinute) : Math.ceil((distance % toHour) / toMinute),
+        seconds:
+          distance > 0 ? Math.floor((distance % toMinute) / toSecond) : Math.ceil((distance % toMinute) / toSecond),
       })
     }, 1000)
     return () => clearInterval(interval)
-  }, [])
+  }, [countDown])
 
   return (
     <>
