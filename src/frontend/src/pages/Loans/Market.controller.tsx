@@ -13,7 +13,7 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import Icon from 'app/App.components/Icon/Icon.view'
 import { BorrowingTab } from './Components/BorrowingTab'
 import { LendingTab } from './Components/LendingTab'
-import { SpinnerLoader } from 'app/App.components/Loader/Loader.view'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
 import { TransactionHistory } from './Components/TransactionHistory'
 
@@ -28,6 +28,7 @@ import { PermissionVaults } from './Components/PermissionVaultsTab'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { getLoansStorage } from './Loans.actions'
 import LoansPopupsProvider from './Components/Modals/LoansModals.provider'
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 
 export const Market = () => {
   const dispatch = useDispatch()
@@ -57,7 +58,10 @@ export const Market = () => {
     return (
       <Page>
         <PageHeader page={'lending'} />
-        <SpinnerLoader />
+        <DataLoaderWrapper>
+          <ClockLoader width={150} height={150} />
+          <div className="text">Loading {assetId.toUpperCase} market</div>
+        </DataLoaderWrapper>
       </Page>
     )
   }

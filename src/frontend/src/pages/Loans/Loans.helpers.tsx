@@ -166,14 +166,17 @@ const getChartData = (
           case 1:
             const lendedAmount = (amount / 10 ** assetMetadata.decimals) * assetMetadata.rate
             acc.totalLended += lendedAmount
-            acc.lendingChartData.push({ time: new Date(timestamp).getTime() as UTCTimestamp, value: lendedAmount })
+            acc.lendingChartData.push({ time: new Date(timestamp).getTime() as UTCTimestamp, value: acc.totalLended })
             break
 
           case 2:
           case 3:
             const borrowedAmount = (amount / 10 ** assetMetadata.decimals) * assetMetadata.rate
             acc.totalBorrowed += borrowedAmount
-            acc.borrowingChartData.push({ time: new Date(timestamp).getTime() as UTCTimestamp, value: borrowedAmount })
+            acc.borrowingChartData.push({
+              time: new Date(timestamp).getTime() as UTCTimestamp,
+              value: acc.totalBorrowed,
+            })
             break
         }
       }
@@ -332,7 +335,6 @@ const getBorrowings = async (
           },
         },
       )
-      console.log('vaultCollateral', vaultCollateral)
 
       const currentInterestRate = calcWithoutDecimals(
         vault.loan_token?.current_interest_rate ?? 0,

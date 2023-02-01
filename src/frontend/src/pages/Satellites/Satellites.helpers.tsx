@@ -279,8 +279,12 @@ export const getSatelliteMetrics = (
   const oracleEfficiency = (numberOfObservations / Math.max(epochRoundRatio, 1)) * 100
 
   return {
-    proposalParticipation: (votedProposalSubmitted / submittedProposalsCount) * 100,
-    votingPartisipation: (satelliteVotes / totalVotingPeriods) * 100,
-    oracleEfficiency,
+    proposalParticipation: submittedProposalsCount
+      ? Math.max(0, Math.min(100, Number((votedProposalSubmitted / submittedProposalsCount) * 100)))
+      : 0,
+    votingPartisipation: totalVotingPeriods
+      ? Math.max(0, Math.min(100, Number((satelliteVotes / totalVotingPeriods) * 100)))
+      : 0,
+    oracleEfficiency: Math.max(0, Math.min(100, Number(oracleEfficiency))),
   }
 }

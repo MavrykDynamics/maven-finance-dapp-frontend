@@ -113,7 +113,6 @@ export const AddLendingAsset = ({
               onFocus: onFocusHandler,
             }}
             settings={{
-              balanceName: 'Lend Balance',
               balance: userBalance,
               balanceAsset: assetSymbol,
               useMaxHandler: () => onChangeHandler(String(userBalance), userBalance),
