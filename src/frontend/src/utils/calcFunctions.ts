@@ -110,11 +110,12 @@ export function calcUsersSatelliteRewards(userInfo: Partial<UserState>): UserSat
   return mySatelliteRewardsData
 }
 
-export function calcUsersRewardsToDate(usetStakesData: Array<Stake_History_Data>): {
+export function calcUsersRewardsToDate(usetStakesData?: Array<Stake_History_Data>): {
   farmRewards: number
   satelliteRewards: number
   doormanRewards: number
 } {
+  if (!usetStakesData) return { farmRewards: 0, satelliteRewards: 0, doormanRewards: 0 }
   return usetStakesData.reduce(
     (acc, { type, final_amount }) => {
       if (type === 2) {

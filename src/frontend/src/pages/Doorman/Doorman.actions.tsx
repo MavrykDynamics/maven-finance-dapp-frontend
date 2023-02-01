@@ -389,7 +389,7 @@ export const fetchUserData = async (
       mTokens,
     }
 
-    const userRewardsToDate = calcUsersRewardsToDate(userInfoData.stakes_history_data)
+    const userRewardsToDate = calcUsersRewardsToDate(userInfoData?.stakes_history_data)
 
     userInfo.myDoormanRewardsData = calcUsersDoormanRewards(userInfo)
     userInfo.mySatelliteRewardsData = calcUsersSatelliteRewards(userInfo)
