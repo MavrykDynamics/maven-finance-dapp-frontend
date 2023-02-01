@@ -47,7 +47,7 @@ export const OraclesTab = () => {
     <TabWrapperStyled className="oracles" backgroundImage="dashboard_oraclesTab_bg.png">
       <div className="top">
         <BGPrimaryTitle>Oracles</BGPrimaryTitle>
-        <Link to="/satellites">
+        <Link to="/data-feeds">
           <Button text="Oracle Feeds" icon="plant" kind={ACTION_PRIMARY} className="noStroke dashboard-sectionLink" />
         </Link>
       </div>
