@@ -496,8 +496,15 @@ export const normalizeLoans = async ({
         const availableLiquidity = isXTZ
           ? calcWithoutMu(total_remaining - reserveAmountMu)
           : calcWithoutDecimals(total_remaining - reserveAmountMu, Number(loanTokenMetadata.decimals ?? 1))
-        console.log(reservePercent, reserveAmountMu, availableLiquidity, reserveAmount)
 
+        const totalSupplied = isXTZ
+            ? calcWithoutMu(token_pool_total)
+            : calcWithoutDecimals(token_pool_total, Number(loanTokenMetadata.decimals ?? 1))
+        const totalBorrowedCurrent = isXTZ
+            ? calcWithoutMu(token_pool_total - total_remaining)
+            : calcWithoutDecimals(token_pool_total - total_remaining, Number(loanTokenMetadata.decimals ?? 1))
+
+        console.log(loanToken.loan_token_name, lendingItem?.borrowAPR ?? 0, lendingItem?.lendAPY ?? 0)
         acc.push({
           loanTokenData: {
             ...loanTokenMetadata,
@@ -511,8 +518,8 @@ export const normalizeLoans = async ({
           utilisationRate: utilisation_rate / 10 ** interestRateDecimals,
 
           availableLiquidity,
-          totalLended: totalLended,
-          totalBorrowed,
+          totalLended: totalSupplied,
+          totalBorrowed: totalBorrowedCurrent,
           loanTokenTotalCollaterals: totalCollateral,
           loanTokenVaultsTotalBorrowed: vaultsBorrowedAmount,
 
