@@ -504,7 +504,7 @@ export const normalizeLoans = async ({
             ? calcWithoutMu(token_pool_total - total_remaining)
             : calcWithoutDecimals(token_pool_total - total_remaining, Number(loanTokenMetadata.decimals ?? 1))
 
-        console.log(loanToken.loan_token_name, lendingItem?.borrowAPR ?? 0, lendingItem?.lendAPY ?? 0)
+        console.log(lendingItem, loanToken.loan_token_name, lendingItem?.borrowAPR, lendingItem?.lendAPY)
         acc.push({
           loanTokenData: {
             ...loanTokenMetadata,
