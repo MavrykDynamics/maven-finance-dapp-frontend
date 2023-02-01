@@ -30,8 +30,8 @@ export const FarmsTab = ({ isLoading }: { isLoading: boolean }) => {
       </div>
 
       <FarmsContentStyled className="scroll-block">
-        {isLoading ? (
-        <DataLoaderWrapper>
+        {true ? (
+        <DataLoaderWrapper className='tabLoader'>
           <ClockLoader width={150} height={150} />
           <div className="text">Loading farms</div>
         </DataLoaderWrapper>

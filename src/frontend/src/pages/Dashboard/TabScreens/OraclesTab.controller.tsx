@@ -55,7 +55,7 @@ export const OraclesTab = ({ isLoading }: { isLoading: boolean }) => {
       </div>
 
       {isLoading ? (
-        <DataLoaderWrapper>
+        <DataLoaderWrapper className='tabLoader'>
           <ClockLoader width={150} height={150} />
           <div className="text">Loading oracles</div>
         </DataLoaderWrapper>

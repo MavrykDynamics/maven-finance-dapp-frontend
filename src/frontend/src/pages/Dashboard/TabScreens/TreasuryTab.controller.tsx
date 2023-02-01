@@ -58,8 +58,8 @@ export const TreasuryTab = ({ isLoading }: { isLoading: boolean }) => {
         </Link>
       </div>
 
-      {       isLoading ? (
-        <DataLoaderWrapper>
+      {isLoading ? (
+        <DataLoaderWrapper className='tabLoader'>
           <ClockLoader width={150} height={150} />
           <div className="text">Loading treasury</div>
         </DataLoaderWrapper>

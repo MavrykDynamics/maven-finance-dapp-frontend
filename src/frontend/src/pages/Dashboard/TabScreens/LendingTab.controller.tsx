@@ -82,7 +82,7 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
       </div>
 
       {isLoading ? (
-        <DataLoaderWrapper>
+        <DataLoaderWrapper className='tabLoader'>
           <ClockLoader width={150} height={150} />
           <div className="text">Loading lending</div>
         </DataLoaderWrapper>

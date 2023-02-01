@@ -43,7 +43,7 @@ export const VaultsTab = ({ isLoading }: { isLoading: boolean }) => {
         </Link>
       </div>
       {isLoading ? (
-        <DataLoaderWrapper>
+        <DataLoaderWrapper className='tabLoader'>
           <ClockLoader width={150} height={150} />
           <div className="text">Loading vaults</div>
         </DataLoaderWrapper>

@@ -24,6 +24,10 @@ export const TabWrapperStyled = styled.div<{ theme: MavrykTheme; backgroundImage
     fill: ${({ theme }) => theme.containerColor};
   }
 
+  .tabLoader {
+    margin-top: 50px;
+  }
+
   .top {
     display: flex;
     width: 100%;
@@ -439,6 +443,10 @@ export const FarmsContentStyled = styled.div<{ theme: MavrykTheme }>`
         display: none;
       }
     }
+  }
+
+  .tabLoader {
+    margin-top: 0;
   }
 
   .card {
