@@ -312,7 +312,7 @@ const getBorrowings = async (
           const collateralBalance = collateral.balance / 10 ** collateralAsset.decimals
 
           acc.normalizedCollaterals.push({
-            assetSymbol: collateralAsset.symbol,
+            assetSymbol: collateralAsset.originalName,
             assetIcon: collateralAsset.icon,
             balance: collateralBalance,
             assetRate: collateralAsset.rate,
@@ -605,64 +605,66 @@ export const normalizeUserLending = ({
   feeds: State['oracles']['oraclesStorage']['feeds']
   userDataFromIndexer: Mavryk_User['lending_controller_history_data_sender']
 }) => {
-  return userDataFromIndexer.reduce<{
-    userLendings: Array<UserLendObjType>
-    userBorrowing: Array<UserLendObjType>
-  }>(
-    (
-      acc,
-      {
-        type,
-        loan_token,
-        id,
-        amount,
-        operation_hash,
-        lending_controller: { interest_rate_decimals, interest_treasury_share, decimals },
+  return (
+    userDataFromIndexer?.reduce<{
+      userLendings: Array<UserLendObjType>
+      userBorrowing: Array<UserLendObjType>
+    }>(
+      (
+        acc,
+        {
+          type,
+          loan_token,
+          id,
+          amount,
+          operation_hash,
+          lending_controller: { interest_rate_decimals, interest_treasury_share, decimals },
+        },
+      ) => {
+        if (!loan_token) return acc
+        const assetData = getAssetMetadata({
+          tokenAddress: loan_token.loan_token_address,
+          tokenName: loan_token.loan_token_name,
+          dipDupTokens,
+          feeds,
+          oracleId: String(loan_token.oracle_id),
+        })
+
+        if (!assetData) return acc
+
+        switch (type) {
+          case 0:
+          case 1:
+            acc.userLendings.push({
+              assetIcon: assetData.icon,
+              assetName: assetData.name,
+              id,
+              amount: (amount / 10 ** assetData.decimals) * assetData.rate,
+              annualPecentage: calcLendingAPY(
+                calcWithoutDecimals(loan_token.current_interest_rate, interest_rate_decimals),
+                calcWithoutDecimals(interest_treasury_share, decimals),
+              ),
+              earned: 0,
+              operationHash: operation_hash,
+            })
+            break
+          case 2:
+          case 3:
+            acc.userBorrowing.push({
+              assetIcon: assetData.icon,
+              assetName: assetData.name,
+              id,
+              amount: (amount / 10 ** assetData.decimals) * assetData.rate,
+              annualPecentage: calcWithoutDecimals(loan_token.current_interest_rate, interest_rate_decimals) * 100,
+              earned: 0,
+              operationHash: operation_hash,
+            })
+            break
+        }
+
+        return acc
       },
-    ) => {
-      if (!loan_token) return acc
-      const assetData = getAssetMetadata({
-        tokenAddress: loan_token.loan_token_address,
-        tokenName: loan_token.loan_token_name,
-        dipDupTokens,
-        feeds,
-        oracleId: String(loan_token.oracle_id),
-      })
-
-      if (!assetData) return acc
-
-      switch (type) {
-        case 0:
-        case 1:
-          acc.userLendings.push({
-            assetIcon: assetData.icon,
-            assetName: assetData.name,
-            id,
-            amount: (amount / 10 ** assetData.decimals) * assetData.rate,
-            annualPecentage: calcLendingAPY(
-              calcWithoutDecimals(loan_token.current_interest_rate, interest_rate_decimals),
-              calcWithoutDecimals(interest_treasury_share, decimals),
-            ),
-            earned: 0,
-            operationHash: operation_hash,
-          })
-          break
-        case 2:
-        case 3:
-          acc.userBorrowing.push({
-            assetIcon: assetData.icon,
-            assetName: assetData.name,
-            id,
-            amount: (amount / 10 ** assetData.decimals) * assetData.rate,
-            annualPecentage: calcWithoutDecimals(loan_token.current_interest_rate, interest_rate_decimals) * 100,
-            earned: 0,
-            operationHash: operation_hash,
-          })
-          break
-      }
-
-      return acc
-    },
-    { userLendings: [], userBorrowing: [] },
+      { userLendings: [], userBorrowing: [] },
+    ) ?? { userLendings: [], userBorrowing: [] }
   )
 }

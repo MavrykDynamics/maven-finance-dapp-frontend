@@ -45,7 +45,7 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
                     <Icon id="noImage" />
                   </div>
                 )}
-                {assetData.symbol}
+                {assetData.originalName === 'tez' ? 'XTZ' : assetData.originalName.toUpperCase()}
               </div>
             </ThreeLevelListItem>
             <ThreeLevelListItem>

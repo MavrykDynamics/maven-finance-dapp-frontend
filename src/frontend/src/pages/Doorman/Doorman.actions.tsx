@@ -410,7 +410,7 @@ export const fetchUserData = async (
     const { userBorrowing, userLendings } = normalizeUserLending({
       dipDupTokens,
       feeds,
-      userDataFromIndexer: userLendingData.mavryk_user[0].lending_controller_history_data_sender,
+      userDataFromIndexer: userLendingData.mavryk_user?.[0]?.lending_controller_history_data_sender,
     })
 
     userInfo.userLoansData = {

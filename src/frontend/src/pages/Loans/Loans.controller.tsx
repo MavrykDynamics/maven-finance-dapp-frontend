@@ -122,7 +122,7 @@ export const Loans = () => {
             </GovRightContainerTitleArea>
             {loanTokens.map((loanAsset) => {
               const {
-                loanTokenData: { name, symbol, icon, rate },
+                loanTokenData: { name, symbol, icon, rate, originalName },
                 utilisationRate,
                 availableLiquidity,
                 borrowers,
@@ -147,7 +147,7 @@ export const Loans = () => {
                     ) : (
                       <Icon id={'noImage'} />
                     )}
-                    <div className="name">{symbol?.toUpperCase()}</div>
+                    <div className="name">{originalName === 'tez' ? 'XTZ' : originalName.toUpperCase()}</div>
                     {rate ? (
                       <div className="rate">
                         <CommaNumber beginningText="$" value={rate} decimalsToShow={4} showDecimal />
