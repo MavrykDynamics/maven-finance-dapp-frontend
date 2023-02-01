@@ -20,10 +20,13 @@ export const ORACLE_STORAGE_QUERY = `
       last_completed_data_last_updated_at
       last_completed_data_pct_oracle_resp
       last_updated_at
+      heart_beat_seconds
       name
       reward_amount_xtz
       reward_amount_smvk
       pct_oracle_threshold
+      alpha_pct_per_thousand
+      heart_beat_seconds
       oracles {
         observations {
           epoch

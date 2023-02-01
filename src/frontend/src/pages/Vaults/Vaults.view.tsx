@@ -26,6 +26,7 @@ import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 import { getVaultsStorage, markForLiquidation } from './Vaults.actions'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
+import { EmptyContainer } from 'app/App.style'
 
 const pathname = '/vaults'
 
@@ -115,7 +116,7 @@ export const VaultsView = () => {
           <ClockLoader width={150} height={150} />
           <div className="text">Loading vaults</div>
         </DataLoaderWrapper>
-      ) : (
+      ) : paginatedVaultsList.length ? (
         <>
           {paginatedVaultsList.map((item) => {
             const isOwner = vaultsMapper[item].ownerId === accountPkh
@@ -132,6 +133,11 @@ export const VaultsView = () => {
 
           <Pagination itemsCount={vaultsIds.length} listName={currentListName} />
         </>
+      ) : (
+        <EmptyContainer className="centered">
+          <img src="/images/not-found.svg" alt=" No financial requests to show" />
+          <figcaption>No Vaults to show</figcaption>
+        </EmptyContainer>
       )}
     </VaultsStyled>
   )

@@ -59,6 +59,7 @@ export const getCollateralRationPersent = (persentage: number) => {
 }
 
 export const getStatusByCollateralRatio = (collateralRatio: number) => {
+  if(collateralRatio === 0) return 'no status'
   if (collateralRatio <= 200 && collateralRatio > 150) return vaultsStatuses.AT_RISK
   if (collateralRatio <= 150) return vaultsStatuses.GRACE_PERIOD
 

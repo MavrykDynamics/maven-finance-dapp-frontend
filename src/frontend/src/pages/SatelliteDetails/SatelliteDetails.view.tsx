@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { State } from 'reducers'
 import { Page } from 'styles'
-import { SpinnerLoader } from 'app/App.components/Loader/Loader.view'
+import { ClockLoader, SpinnerLoader } from 'app/App.components/Loader/Loader.view'
 import type {
   SatelliteProposalVotingHistory,
   SatelliteFinancialRequestVotingHistory,
@@ -28,7 +28,8 @@ import { SatelliteListItem } from 'pages/Satellites/SatelliteList/ListCards/Sate
 import { UserSatelliteRewardsData } from 'utils/TypesAndInterfaces/User'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { parseDate } from 'utils/time'
-import { PageContent } from 'styles' 
+import { PageContent } from 'styles'
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 
 type SatelliteDetailsViewProps = {
   satellite: SatelliteRecord
@@ -94,7 +95,10 @@ export const SatelliteDetailsView = ({
         <div>
           <SatellitePagination />
           {!isSameId ? (
-            <SpinnerLoader />
+            <DataLoaderWrapper>
+              <ClockLoader width={150} height={150} />
+              <div className="text">Loading satellite info</div>
+            </DataLoaderWrapper>
           ) : isSatellite ? (
             <SatelliteListItem
               satellite={satellite}
@@ -109,7 +113,7 @@ export const SatelliteDetailsView = ({
               <SatelliteCardBottomRow>
                 <SatelliteDescrBlock>
                   <BlockName>Description</BlockName>
-                  <p>{satellite.description}</p>
+                  <p className="descr">{satellite.description}</p>
                   {satellite.website ? (
                     <a className="satellite-website" href={satellite.website} target="_blank" rel="noreferrer">
                       Website

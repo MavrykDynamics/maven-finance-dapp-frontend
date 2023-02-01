@@ -70,17 +70,22 @@ export const getUserBalanceForLoanAsset = async (
 export const getCollateralTokens = async (
   collateralTokens: Array<Lending_Controller_Collateral_Token>,
   dipDupTokens: State['tokens']['dipDupTokens'],
-  tokensRate: State['tokens']['tokensPrices'],
+  feeds: State['oracles']['oraclesStorage']['feeds'],
   accountPkh?: string,
 ): Promise<Array<AvaliableCollateralType>> => {
   if (!accountPkh) return []
 
   try {
     return await collateralTokens.reduce<Promise<AvaliableCollateralType[]>>(
-      async (promiseAcc, { id, token_address, token_contract_standard, token_name, protected: isProtected }) => {
+      async (
+        promiseAcc,
+        { id, token_address, token_contract_standard, token_name, protected: isProtected, oracle_id },
+      ) => {
         const acc = await promiseAcc
         const isXTZ = isTezosAsset(token_name)
         const assetMetadata = dipDupTokens?.find(({ contract }) => contract === token_address)?.metadata
+
+        const dataFromFeed = feeds.find(({ address }) => address === oracle_id)
 
         const lendingAssetBalance = isXTZ
           ? await (
@@ -98,12 +103,15 @@ export const getCollateralTokens = async (
             : Number(lendingAssetBalance?.[0]?.balance ?? 0) /
               10 ** Number(lendingAssetBalance?.[0]?.token?.metadata?.decimals ?? 0)) ?? 0
 
+        const rate = Number(dataFromFeed?.last_completed_data) / 10 ** Number(dataFromFeed?.decimals)
+
         if (isXTZ) {
           acc.push({
             id,
-            assetName: token_name,
-            assetSymbol: 'tezos',
-            assetRate: tokensRate['tezos']?.usd ?? 0.25,
+            assetName: 'XTZ',
+            originalName: token_name,
+            assetSymbol: 'tez',
+            assetRate: rate ?? 0.25,
             userBalance,
             assetIcon: '/images/tezos.png',
             assetDecimals: assetMetadata?.decimals ? Number(assetMetadata.decimals) : 6,
@@ -116,11 +124,12 @@ export const getCollateralTokens = async (
         if (assetMetadata) {
           acc.push({
             id,
-            assetName: token_name,
+            assetName: assetMetadata.name,
+            originalName: token_name,
             assetSymbol: assetMetadata.symbol,
-            assetRate: tokensRate[assetMetadata.symbol]?.usd ?? 0.25,
+            assetRate: rate ?? 0.25,
             userBalance,
-            assetIcon: assetMetadata.icon,
+            assetIcon: token_name === 'eurl' ? '/images/eurl.png' : assetMetadata.icon ?? dataFromFeed?.icon,
             assetDecimals: assetMetadata?.decimals ? Number(assetMetadata.decimals) : 6,
             assetAddress: token_address,
             tokenType: token_contract_standard as 'tez' | 'fa12' | 'fa2',
@@ -133,8 +142,8 @@ export const getCollateralTokens = async (
       Promise.resolve([]),
     )
   } catch (e) {
-    console.log('getCollateralTokens error:', e);
-    
+    console.log('getCollateralTokens error:', e)
+
     return []
   }
 }

@@ -43,11 +43,12 @@ export const RemoveAssetsFromLending = ({
     assetRate = 0,
     assetName = '',
     currentLendedAmount = 0,
+    decimals = 0,
     lendingAPY = 0,
     assetIcon = '',
     originalName = '',
   } = data ?? {}
-  const assetSymbol = assetName ?? originalName.toUpperCase()
+  const assetSymbol = originalName === 'tez' ? 'XTZ' : assetName ?? originalName.toUpperCase()
 
   useLockBodyScroll(show)
 
@@ -100,9 +101,10 @@ export const RemoveAssetsFromLending = ({
 
   const isWithdrawDisabled = useMemo(() => {
     return inputData.validationStatus !== INPUT_STATUS_SUCCESS || isActionLoading
-  }, [inputData.validationStatus])
+  }, [inputData.validationStatus, isActionLoading])
 
-  const withdrawHandler = () => dispatch(withdrawLendingAssetAction(originalName, Number(inputData.amount), closePopup))
+  const withdrawHandler = () =>
+    dispatch(withdrawLendingAssetAction(originalName, Number(inputData.amount) * 10 ** decimals, closePopup))
 
   return (
     <PopupContainer onClick={closePopup} show={show}>

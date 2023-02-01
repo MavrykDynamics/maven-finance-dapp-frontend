@@ -1,4 +1,4 @@
-import { GET_LOANS_STORAGE } from 'pages/Loans/Loans.actions'
+import { GET_LOANS_STORAGE, RESET_FETCHED } from 'pages/Loans/Loans.actions'
 import {
   AvaliableCollateralType,
   LoansChartsDataType,
@@ -35,6 +35,11 @@ export function loans(state = loansDefaultState, action: Action) {
         ...state,
         ...action.loansStorage,
         isFetched: true,
+      }
+    case RESET_FETCHED:
+      return {
+        ...state,
+        isFetched: false,
       }
     default:
       return state

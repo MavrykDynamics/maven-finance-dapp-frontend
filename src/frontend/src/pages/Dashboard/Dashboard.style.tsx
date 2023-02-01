@@ -132,6 +132,8 @@ export const StatBlock = styled.div`
         height: 100%;
         object-fit: cover;
       }
+
+      fill: ${({ theme }) => theme.dataColor};
     }
 
     .impact {

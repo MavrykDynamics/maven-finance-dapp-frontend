@@ -11,6 +11,8 @@ export const LOANS_QUERY = `query GetLoansStorage {
       timestamp
       loan_token {
         loan_token_name
+        oracle_id
+        loan_token_address
       }
     }
 
@@ -47,6 +49,7 @@ export const LOANS_QUERY = `query GetLoansStorage {
           loan_token_name
           loan_token_address
           lp_token_address
+          oracle_id
         }
       }
 
@@ -109,6 +112,7 @@ query GetAvaliableCollaterals {
       token_name
       token_contract_standard
       protected
+      oracle_id
     }
 
     loan_tokens {

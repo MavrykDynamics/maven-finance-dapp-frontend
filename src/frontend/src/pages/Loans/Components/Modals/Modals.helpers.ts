@@ -63,6 +63,9 @@ export type AddLendingAssetDataType = {
   assetName?: string
   assetIcon?: string
   originalName: string
+  assetAddress: string
+  assetId: number
+  tokenType: 'tez' | 'fa2' | 'fa12'
 } | null
 
 export type RemoveLendingAssetDataType =

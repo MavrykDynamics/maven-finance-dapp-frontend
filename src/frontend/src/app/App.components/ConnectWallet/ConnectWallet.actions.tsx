@@ -6,6 +6,7 @@ import { showToaster } from '../Toaster/Toaster.actions'
 import { ERROR } from '../Toaster/Toaster.constants'
 import { fetchUserData } from 'pages/Doorman/Doorman.actions'
 import { DEFAULT_USER } from 'reducers/wallet'
+import { RESET_FETCHED } from 'pages/Loans/Loans.actions'
 
 // TODO: check ts-ignores, here NetworkType is not compatible with  NetworkType | undefined
 
@@ -25,6 +26,7 @@ export const WalletOptions = {
 export const changeWallet = () => async (dispatch: AppDispatch) => {
   try {
     await dispatch(disconnect())
+    await dispatch({ type: RESET_FETCHED })
     await dispatch(connect())
   } catch (e) {
     console.error(`Failed to change wallet: `, e)

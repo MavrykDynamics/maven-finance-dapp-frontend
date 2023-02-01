@@ -123,7 +123,7 @@ export const LendingTab = () => {
                   <Icon id="noImage" />
                 )}
 
-                {mostLendedAsset?.name ?? ''}
+                {mostLendedAsset?.name || '-'}
               </div>
             </StatBlock>
           </div>
