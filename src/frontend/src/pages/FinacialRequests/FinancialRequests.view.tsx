@@ -35,7 +35,6 @@ import {
   VotingArea,
   InfoBlockName,
 } from './FinancialRequests.style'
-import { EmptyContainer } from 'app/App.style'
 
 type FinancialRequestsViewProps = {
   financialRequestsList: GovernanceFinancialRequestGraphQL[]
@@ -214,32 +213,23 @@ export const FinancialRequestsView = ({ financialRequestsList = [] }: FinancialR
 
   return (
     <FinancialRequestsStyled>
-      {financialRequestsList.length ? (
-        <>
-          <FinancialRequestsContainer>
-            <FRList
-              listTitle="Ongoing Requests"
-              items={ongoing}
-              handleItemSelect={handleItemSelect}
-              name={ONGOING_REQUESTS_FINANCIAL_REQUESTS_LIST}
-              selectedItem={rightSideContent}
-            />
-            <FRList
-              listTitle="Past Requests"
-              items={past}
-              name={PAST_REQUESTS_FINANCIAL_REQUESTS_LIST}
-              handleItemSelect={handleItemSelect}
-              selectedItem={rightSideContent}
-            />
-          </FinancialRequestsContainer>
-          <RightSideBlock />
-        </>
-      ) : (
-        <EmptyContainer className="centered">
-          <img src="/images/not-found.svg" alt=" No financial requests to show" />
-          <figcaption>No requests to show</figcaption>
-        </EmptyContainer>
-      )}
+      <FinancialRequestsContainer>
+        <FRList
+          listTitle="Ongoing Requests"
+          items={ongoing}
+          handleItemSelect={handleItemSelect}
+          name={ONGOING_REQUESTS_FINANCIAL_REQUESTS_LIST}
+          selectedItem={rightSideContent}
+        />
+        <FRList
+          listTitle="Past Requests"
+          items={past}
+          name={PAST_REQUESTS_FINANCIAL_REQUESTS_LIST}
+          handleItemSelect={handleItemSelect}
+          selectedItem={rightSideContent}
+        />
+      </FinancialRequestsContainer>
+      <RightSideBlock />
     </FinancialRequestsStyled>
   )
 }

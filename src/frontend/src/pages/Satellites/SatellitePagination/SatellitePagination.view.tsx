@@ -24,11 +24,11 @@ const SatellitePagination = () => {
 
   return (
     <SatellitePaginationStyled>
-      <NewButton kind={TRANSPARENT_WITH_BORDER} className="go-back">
-        <Link to={`/satellite-nodes`}>
+      <Link to={`/satellite-nodes`} className="go-back">
+        <NewButton kind={TRANSPARENT_WITH_BORDER} className="go-back">
           <Icon id="arrowRight" /> Back to satellites
-        </Link>
-      </NewButton>
+        </NewButton>
+      </Link>
       {prevSatellite ? (
         <Link className="pagination-link prev" to={`/satellites/satellite-details/${prevSatellite.address}`}>
           <Icon id="arrow-obtuse-angle" />

@@ -57,7 +57,7 @@ export const OracleCard = ({ oracle }: { oracle: SatelliteRecord }) => {
           Accuracy
         </DataFeedSubTitleText>
         <var>
-          <CommaNumber showDecimal value={0.08} endingText="%" />
+          <CommaNumber showDecimal value={Math.max(0, Math.min(oracle.accuracy, 100))} endingText="%" />
         </var>
       </div>
       <div className="item center-v">

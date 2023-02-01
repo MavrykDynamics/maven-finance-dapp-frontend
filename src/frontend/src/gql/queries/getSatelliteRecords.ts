@@ -27,14 +27,24 @@ export const SATELLITE_RECORDS_QUERY = `
         aggregator_oracles {
           aggregator_id
           user_id
+          observations(order_by: {epoch: desc_nulls_last}, limit: 5) {
+            oracle_id
+            epoch
+            data
+            round
+            timestamp
+          }
           aggregator {
             address
+            last_completed_data
+            last_completed_data_epoch
+            last_completed_data_round
             oracles {
+              user_id
               rewards {
                 reward
                 type
               }
-              user_id
             }
           }
         }
