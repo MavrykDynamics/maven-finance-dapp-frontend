@@ -323,8 +323,9 @@ export const getOracleLatestPrices = async (vaults: Lending_Controller_Vault[]) 
   })
 
   const arrayUniqueOracleAddresses = [...uniqueOracleAddresses]
-
-  const prices = await Promise.all(arrayUniqueOracleAddresses.map((item) => getOracleAggregatorLatestPrice(item)))
+  // TODO: remove testOracleId and use item 
+  const testOracleId = 'KT1JgBX8LRJ7AmVhTk64niDZxfXH8UBXyiDv'
+  const prices = await Promise.all(arrayUniqueOracleAddresses.map((item) => getOracleAggregatorLatestPrice(testOracleId)))
 
   const result: Record<string, number> = {}
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 
 // components
 import { StatusFlag } from '../../../app/App.components/StatusFlag/StatusFlag.controller'
@@ -30,6 +30,7 @@ import { BorrowingCardOptions } from 'pages/Loans/Components/BorrowindExpandCard
 import { CYAN } from 'app/App.components/TzAddress/TzAddress.constants'
 import { vaultsStatuses } from '../Vaults.consts'
 import { getTimestampByLevel } from 'pages/Governance/Governance.actions'
+import { loansPopupsContext } from 'pages/Loans/Components/Modals/LoansModals.provider'
 
 const findStatusInfo = (status: string) => {
   switch (status) {
@@ -92,7 +93,6 @@ const borrowingCardOptions: BorrowingCardOptions = {
 
 type Props = VaultType & {
   isOwner: boolean
-  handleLiquidateVault: (vaultId: number, vaultOwner: string, liquidateAmount: number) => void
   handleMarkForLiquidation: (vaultId: number, vaultOwner: string) => void
 }
 
@@ -103,12 +103,12 @@ export const VaultsCard = (props: Props) => {
     status,
     levelOfEarly,
     levelOfLate,
-    borrowedAsset: { assetIcon, assetSymbol, collateralBalance, amtBorrowed, assetRate = 1 },
     collateralData,
     isOwner,
-    handleLiquidateVault,
     handleMarkForLiquidation,
   } = props
+
+  const { openLiquidateVaultPopup } = useContext(loansPopupsContext)
   const [expanded, setExpanded] = useState(false)
   const [timerTimestamp, setTimerTimestamp] = useState<number | undefined>(undefined)
 
@@ -131,6 +131,10 @@ export const VaultsCard = (props: Props) => {
       timestampOfEarly,
       timestampOfLate,
     }
+  }
+
+  const liquidateModalHandler = () => {
+    openLiquidateVaultPopup({...props})
   }
 
   useEffect(() => {
@@ -212,7 +216,7 @@ export const VaultsCard = (props: Props) => {
               </TableHeader>
 
               <TableBody>
-                {collateralData.map((item, index) => {
+                {collateralData.map(({ assetSymbol, assetIcon, assetRate, collateralShare, balance }, index) => {
                   const columnWidth = '33%'
                   const isTotalRow = collateralData.length - 1 === index
                   if (isTotalRow && collateralData.length < 3) return null
@@ -240,19 +244,18 @@ export const VaultsCard = (props: Props) => {
 
                       <TableCell width={columnWidth}>
                         <div className="cell-content">
-                          <CommaNumber value={collateralBalance} beginningText="$" className="balance" />
+                          <CommaNumber value={balance} className="balance" />
                           {assetRate ? (
-                            <CommaNumber value={amtBorrowed * assetRate} beginningText="~$" className="rate" />
+                            <CommaNumber value={balance * assetRate} beginningText="~$" className="rate" />
                           ) : null}
                         </div>
                       </TableCell>
 
                       <TableCell width={columnWidth}>
-                        <div className="cell-content">{item.collateralShare}%</div>
+                        <div className="cell-content">{collateralShare}%</div>
                       </TableCell>
                     </TableRow>
-                  )
-                })}
+                )})}
               </TableBody>
             </Table>
           </div>
@@ -269,8 +272,7 @@ export const VaultsCard = (props: Props) => {
             onClick={() => {
               return isMarkStatus
                 ? handleMarkForLiquidation(vaultId, ownerId)
-                : // TODO: add valid arg3
-                  handleLiquidateVault(vaultId, ownerId, 1)
+                : liquidateModalHandler()
             }}
             disabled={vaultsStatuses.GRACE_PERIOD === status}
           />

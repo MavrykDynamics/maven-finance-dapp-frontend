@@ -23,8 +23,7 @@ import { State } from '../../reducers'
 import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 
 // actions
-import { getVaultsStorage, liquidateVault, markForLiquidation } from './Vaults.actions'
-import { getLoansStorage } from 'pages/Loans/Loans.actions'
+import { getVaultsStorage, markForLiquidation } from './Vaults.actions'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { EmptyContainer } from 'app/App.style'
@@ -93,10 +92,6 @@ export const VaultsView = () => {
     return vaultsIds?.slice(from, to)
   }, [currentListName, currentPage, vaultsIds])
 
-  const handleLiquidateVault = (vaultId: number, vaultOwner: string, liquidateAmount: number) => {
-    dispatch(liquidateVault(vaultId, vaultOwner, liquidateAmount))
-  }
-
   const handleMarkForLiquidation = (vaultId: number, vaultOwner: string) => {
     dispatch(markForLiquidation(vaultId, vaultOwner))
   }
@@ -130,7 +125,6 @@ export const VaultsView = () => {
               <VaultsCard
                 key={item}
                 isOwner={isOwner}
-                handleLiquidateVault={handleLiquidateVault}
                 handleMarkForLiquidation={handleMarkForLiquidation}
                 {...vaultsMapper[item]}
               />
