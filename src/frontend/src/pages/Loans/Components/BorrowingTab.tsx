@@ -38,7 +38,7 @@ export const BorrowingTab = ({
   return (
     <LoansTabStyled>
       <GovRightContainerTitleArea>
-        <h2>My Boorrowing</h2>
+        <h2>My Borrowing</h2>
       </GovRightContainerTitleArea>
 
       {borrowingItems.length ? (
