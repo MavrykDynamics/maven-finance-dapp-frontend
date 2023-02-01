@@ -52,6 +52,7 @@ const defaultDelegationStorage: DelegationStorage = {
 export const DEFAULT_SATELLITE = {
   status: SatelliteStatus.SUSPENDED,
   delegationRatio: 0,
+  accuracy: 0,
   address: '',
   description: '',
   website: '',

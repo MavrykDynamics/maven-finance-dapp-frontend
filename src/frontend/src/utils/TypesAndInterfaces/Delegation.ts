@@ -36,6 +36,7 @@ export interface SatelliteRecord {
   description: string
   website: string
   participation: number
+  accuracy: number
   satelliteFee: number
   delegatorCount: number
   status: SatelliteStatus

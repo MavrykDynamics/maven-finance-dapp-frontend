@@ -38,6 +38,7 @@ export const BecomeSatellite = () => {
           totalDelegatedAmount: 0,
           delegationRatio: 0,
           delegatorCount: 0,
+          accuracy: 0,
           oracleRecords: [],
           isSatelliteReady: false,
           currentlyRegistered: false,

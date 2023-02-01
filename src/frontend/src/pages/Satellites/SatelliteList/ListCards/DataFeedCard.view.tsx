@@ -62,7 +62,9 @@ export const DataFeedCard = ({ feed }: { feed: Feed }) => {
         )}
         <div className="item feed-last">
           <h5>Date</h5>
-          <var>{parseDate({ time: feed.last_completed_data_last_updated_at, timeFormat: 'MMM DD, YYYY' })}</var>
+          <var>
+            {parseDate({ time: feed.last_completed_data_last_updated_at, timeFormat: 'MMM Do, YYYY, HH:mm:ss' })}
+          </var>
         </div>
       </SatelliteItemStyle>
     </Link>
