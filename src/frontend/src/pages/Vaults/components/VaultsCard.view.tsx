@@ -31,7 +31,7 @@ import { CYAN } from 'app/App.components/TzAddress/TzAddress.constants'
 import { vaultsStatuses } from '../Vaults.consts'
 import { getTimestampByLevel } from 'pages/Governance/Governance.actions'
 import { loansPopupsContext } from 'pages/Loans/Components/Modals/LoansModals.provider'
-import { calculateCollateralShare } from '../calcFunctionsForVaultStatuses'
+import { calculateCollateralShare } from '../calcFunctionsForVault'
 
 const findStatusInfo = (status: string) => {
   switch (status) {

@@ -24,7 +24,7 @@ import {
 // helpers
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { INPUT_STATUS_SUCCESS, INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
-import { calculateAdminLiquidationFee, calculateCollateralShare } from 'pages/Vaults/calcFunctionsForVaultStatuses'
+import { calculateAdminLiquidationFee, calculateCollateralShare } from 'pages/Vaults/calcFunctionsForVault'
 
 // types
 import { LiquidateVaultDataType } from 'pages/Loans/Components/Modals/Modals.helpers'

@@ -8,7 +8,7 @@ import {
   checkVaultLiquidatableStatus,
   checkIfVaultIsAtRisk,
   calculateVaultMaxLiquidationAmount,
-} from './calcFunctionsForVaultStatuses'
+} from './calcFunctionsForVault'
 import { Lending_Controller_Vault } from 'utils/generated/graphqlTypes'
 import { symbolsAfterDecimalPoint } from 'utils/symbolsAfterDecimalPoint'
 import { getOracleAggregatorLatestPrice } from './Vaults.actions'

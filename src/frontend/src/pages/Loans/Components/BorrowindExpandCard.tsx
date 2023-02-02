@@ -31,7 +31,7 @@ import { useSelector } from 'react-redux'
 import { State } from 'reducers'
 import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 import { getTimestampByLevel } from 'pages/Governance/Governance.actions'
-import { calculateCollateralShare } from 'pages/Vaults/calcFunctionsForVaultStatuses'
+import { calculateCollateralShare } from 'pages/Vaults/calcFunctionsForVault'
 
 export type BorrowingCardOptions = {
   reverseColumns?: boolean
