@@ -13,7 +13,6 @@ import {
   WithdrawCollateralPopupDataType,
 } from './Modals.helpers'
 import { withdrawCollateralAction } from 'pages/Loans/Actions/vaultCollateral.actions'
-import { getAssetDisplayName } from 'pages/Loans/Loans.helpers'
 
 import { Input } from 'app/App.components/Input/NewInput'
 import Icon from 'app/App.components/Icon/Icon.view'
@@ -54,7 +53,6 @@ export const WithdrawCollateral = ({
     () => avaliableCollaterals.find(({ gqlName }) => selectedAsset?.gqlName === gqlName),
     [avaliableCollaterals, selectedAsset],
   )
-  const assetName = getAssetDisplayName(collateralData?.gqlName)
 
   useEffect(() => {
     if (!show) {
@@ -155,7 +153,7 @@ export const WithdrawCollateral = ({
               }}
               settings={{
                 balance: collateralData.userBalance,
-                balanceAsset: assetName,
+                balanceAsset: collateralData.symbol,
                 useMaxHandler: () =>
                   inputOnChangeHandle(
                     String(Math.min(collateralData.userBalance, currentCollateralValue)),
@@ -173,7 +171,7 @@ export const WithdrawCollateral = ({
                 ) : (
                   <Icon id="noImage" />
                 )}{' '}
-                {assetName}
+                {collateralData.symbol}
               </InputPinnedTokenInfo>
             </Input>
           ) : null}

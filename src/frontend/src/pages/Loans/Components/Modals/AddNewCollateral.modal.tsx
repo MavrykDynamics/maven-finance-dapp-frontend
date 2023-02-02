@@ -11,7 +11,7 @@ import { Input } from 'app/App.components/Input/NewInput'
 import { DropDownCollateralAssetType, DropDownXTZBakerType } from './CreateNewVault.modal'
 import NewButton from 'app/App.components/Button/NewButton.controller'
 
-import { getAssetDisplayName, isTezosAsset } from 'pages/Loans/Loans.helpers'
+import { isTezosAsset } from 'pages/Loans/Loans.helpers'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
@@ -64,12 +64,7 @@ export const AddNewCollateral = ({
       (acc, collateralData) => {
         acc[collateralData.id] = {
           ...collateralData,
-          content: (
-            <DropdownInputCustomChild
-              iconSrc={collateralData.icon}
-              symbol={getAssetDisplayName(collateralData.gqlName)}
-            />
-          ),
+          content: <DropdownInputCustomChild iconSrc={collateralData.icon} symbol={collateralData.symbol} />,
           disabled: collateralData.isProtected,
         }
         return acc

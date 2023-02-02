@@ -13,7 +13,6 @@ import Icon from 'app/App.components/Icon/Icon.view'
 import { ThreeLevelListItem } from '../Loans.style'
 import { LendingTabListItem, LoansTabStyled, NoItemsInTabStyled } from './LoansComponents.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
-import { getAssetDisplayName } from '../Loans.helpers'
 
 type LendingTabPropsType = {
   lendingItem: LendingItemType
@@ -39,14 +38,14 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
               <div className="value">
                 {assetData.icon ? (
                   <div className="img-wrapper">
-                    <img src={assetData.icon} alt={`${assetData.name} logo`} />
+                    <img src={assetData.icon} alt={`${assetData.symbol}-logo`} />
                   </div>
                 ) : (
                   <div className="no-icon">
                     <Icon id="noImage" />
                   </div>
                 )}
-                {getAssetDisplayName(assetData.gqlName)}
+                {assetData.symbol}
               </div>
             </ThreeLevelListItem>
             <ThreeLevelListItem>

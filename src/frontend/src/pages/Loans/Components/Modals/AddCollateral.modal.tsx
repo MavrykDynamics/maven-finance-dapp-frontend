@@ -25,7 +25,6 @@ import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { depositCollateralAction } from 'pages/Loans/Actions/vaultCollateral.actions'
-import { getAssetDisplayName } from 'pages/Loans/Loans.helpers'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239476&t=Sx2aEpp3ifrGxBtQ-0
 export const AddCollateral = ({
@@ -38,8 +37,6 @@ export const AddCollateral = ({
   data: AddCollateralPopupDataType
 }) => {
   const { selectedAsset, currentCollateralValue = 0, currentAvaliableToWithdraw = 0, vaultAddress } = data ?? {}
-
-  const assetNameToDisplay = getAssetDisplayName(selectedAsset?.gqlName)
 
   useLockBodyScroll(show)
 
@@ -162,7 +159,7 @@ export const AddCollateral = ({
             }}
             settings={{
               balance: collateralData?.userBalance ?? 0,
-              balanceAsset: assetNameToDisplay,
+              balanceAsset: selectedAsset?.name,
               useMaxHandler: () =>
                 inputOnChangeHandle(
                   collateralData?.userBalance ? String(collateralData.userBalance) : '0',
@@ -180,7 +177,7 @@ export const AddCollateral = ({
               ) : (
                 <Icon id="noImage" />
               )}{' '}
-              {assetNameToDisplay}
+              {selectedAsset?.name}
             </InputPinnedTokenInfo>
           </Input>
 

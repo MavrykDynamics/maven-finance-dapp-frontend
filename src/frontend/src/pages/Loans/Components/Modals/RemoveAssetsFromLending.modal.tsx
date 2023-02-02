@@ -25,7 +25,6 @@ import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase } from './Modals.style'
 import { withdrawLendingAssetAction } from 'pages/Loans/Actions/lendingAsset.actions'
-import { getAssetDisplayName } from 'pages/Loans/Loans.helpers'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A238846&t=Sx2aEpp3ifrGxBtQ-0
 export const RemoveAssetsFromLending = ({
@@ -48,7 +47,6 @@ export const RemoveAssetsFromLending = ({
     assetIcon = '',
     originalName = '',
   } = data ?? {}
-  const assetSymbol = getAssetDisplayName(originalName)
 
   useLockBodyScroll(show)
 
@@ -123,8 +121,8 @@ export const RemoveAssetsFromLending = ({
             <>
               <div className="lending-stats" style={{ marginBottom: '25px' }}>
                 <ThreeLevelListItem>
-                  <div className="name">m{assetSymbol} Balance</div>
-                  <CommaNumber value={mBalance} className="value" endingText={`m${assetSymbol}`} />
+                  <div className="name">m{assetName} Balance</div>
+                  <CommaNumber value={mBalance} className="value" endingText={`m${assetName}`} />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">
@@ -151,7 +149,7 @@ export const RemoveAssetsFromLending = ({
                 }}
                 settings={{
                   balance: userBalance,
-                  balanceAsset: assetSymbol,
+                  balanceAsset: assetName,
                   useMaxHandler: () =>
                     onChangeHandler(
                       String(Math.min(mBalance, currentLendedAmount)),
@@ -164,12 +162,12 @@ export const RemoveAssetsFromLending = ({
                 <InputPinnedTokenInfo>
                   {assetIcon ? (
                     <div className="image-wrapper">
-                      <img src={assetIcon} alt={`${assetSymbol}-logo`} />
+                      <img src={assetIcon} alt={`${assetName}-logo`} />
                     </div>
                   ) : (
                     <Icon id="noImage" />
                   )}{' '}
-                  {assetSymbol}
+                  {assetName}
                 </InputPinnedTokenInfo>
               </Input>
 
@@ -189,7 +187,7 @@ export const RemoveAssetsFromLending = ({
                 <div className="lending-stats">
                   <ThreeLevelListItem>
                     <div className="name">Amount Removed</div>
-                    <CommaNumber value={Number(inputData.amount)} className="value" endingText={assetSymbol} />
+                    <CommaNumber value={Number(inputData.amount)} className="value" endingText={assetName} />
                   </ThreeLevelListItem>
                   <ThreeLevelListItem className="right">
                     <div className="name">USD Value</div>
@@ -203,7 +201,7 @@ export const RemoveAssetsFromLending = ({
                     <CommaNumber
                       value={currentLendedAmount - Number(inputData.amount)}
                       className="value"
-                      endingText={assetSymbol}
+                      endingText={assetName}
                     />
                   </ThreeLevelListItem>
                   <ThreeLevelListItem className="right">

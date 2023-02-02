@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 
 import { InputStatusType, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { CreateVaultPopupDataType } from './Modals.helpers'
-import { getAssetDisplayName, isTezosAsset } from 'pages/Loans/Loans.helpers'
+import { isTezosAsset } from 'pages/Loans/Loans.helpers'
 import { AvaliableCollateralType } from 'utils/TypesAndInterfaces/Loans'
 import { ACTION_PRIMARY, TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
 
@@ -89,12 +89,7 @@ export const CreateNewVault = ({
       (acc, collateralData) => {
         acc[collateralData.id] = {
           ...collateralData,
-          content: (
-            <DropdownInputCustomChild
-              iconSrc={collateralData.icon}
-              symbol={getAssetDisplayName(collateralData.gqlName)}
-            />
-          ),
+          content: <DropdownInputCustomChild iconSrc={collateralData.icon} symbol={collateralData.symbol} />,
           disabled: collateralData.isProtected,
         }
         return acc
@@ -412,38 +407,36 @@ export const CreateNewVault = ({
             <>
               <div className="collateral-list">
                 {collaterals.map(({ inputAmount, validationField, id: inputCollateralId }, idx) => {
-                  const collaterallMetadata = collateralsToSelect[inputCollateralId]
+                  const collateralMetadata = collateralsToSelect[inputCollateralId]
 
-                  if (!collaterallMetadata) return null
-                  const isXTZCollateral = isTezosAsset(collaterallMetadata.gqlName)
-
-                  const collateralDisplayName = getAssetDisplayName(collaterallMetadata.gqlName)
+                  if (!collateralMetadata) return null
+                  const isXTZCollateral = isTezosAsset(collateralMetadata.gqlName)
 
                   return (
                     <div className="collateral-block" key={inputCollateralId}>
                       <div className="block-name">Select Collateral Asset and Amount</div>
                       <Input
-                        className={`${collaterallMetadata.rate ? 'input-with-rate' : ''} large-input pinned-dropdown`}
+                        className={`${collateralMetadata.rate ? 'input-with-rate' : ''} large-input pinned-dropdown`}
                         inputProps={{
                           value: inputAmount,
                           type: 'number',
-                          onChange: (e) => inputOnChangeHandle(e.target.value, idx, collaterallMetadata.userBalance),
+                          onChange: (e) => inputOnChangeHandle(e.target.value, idx, collateralMetadata.userBalance),
                           onBlur: (e) => inputOnBlurHandle(e.target.value, idx),
                           onFocus: () => onFocusHandler(idx),
                         }}
                         settings={{
-                          balanceAsset: collateralDisplayName,
+                          balanceAsset: collateralMetadata.symbol,
                           useMaxHandler: () =>
                             inputOnChangeHandle(
-                              String(collaterallMetadata.userBalance),
+                              String(collateralMetadata.userBalance),
                               idx,
-                              collaterallMetadata.userBalance,
+                              collateralMetadata.userBalance,
                             ),
                           inputStatus: validationField,
-                          ...(collaterallMetadata.rate
-                            ? { convertedValue: Number(collaterallMetadata.rate) * Number(inputAmount) }
+                          ...(collateralMetadata.rate
+                            ? { convertedValue: Number(collateralMetadata.rate) * Number(inputAmount) }
                             : {}),
-                          balance: collaterallMetadata.userBalance,
+                          balance: collateralMetadata.userBalance,
                         }}
                       >
                         <InputPinnedDropDown>
@@ -452,8 +445,8 @@ export const CreateNewVault = ({
                             activeItem={{
                               content: (
                                 <DropdownInputCustomChild
-                                  iconSrc={collaterallMetadata.icon}
-                                  symbol={collateralDisplayName}
+                                  iconSrc={collateralMetadata.icon}
+                                  symbol={collateralMetadata.symbol}
                                 />
                               ),
                               id: inputCollateralId,
@@ -520,7 +513,7 @@ export const CreateNewVault = ({
                 <div className="lending-stats" style={{ marginBottom: '30px' }}>
                   <ThreeLevelListItem>
                     <div className="name">Asset</div>
-                    <div className="value">{getAssetDisplayName(firstCollateralMetadata?.gqlName)}</div>
+                    <div className="value">{firstCollateralMetadata?.symbol}</div>
                   </ThreeLevelListItem>
                   <ThreeLevelListItem>
                     <div className="name">Amount</div>
@@ -561,7 +554,7 @@ export const CreateNewVault = ({
                           className="add-hover"
                           key={collateralId + collateralMetadata.name}
                         >
-                          <TableCell width="42%">{getAssetDisplayName(collateralMetadata.gqlName)}</TableCell>
+                          <TableCell width="42%">{collateralMetadata.symbol}</TableCell>
                           <TableCell width="28%">
                             <CommaNumber value={Number(inputAmount)} />
                           </TableCell>

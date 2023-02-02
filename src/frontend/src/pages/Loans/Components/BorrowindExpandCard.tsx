@@ -31,7 +31,6 @@ import { useSelector } from 'react-redux'
 import { State } from 'reducers'
 import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 import { getTimestampByLevel } from 'pages/Governance/Governance.actions'
-import { getAssetDisplayName } from '../Loans.helpers'
 
 export type BorrowingCardOptions = {
   reverseColumns?: boolean
@@ -128,8 +127,6 @@ export const BorrowingExpandCard = ({
     }
   }, [vaultStatus, levelOfEarly, levelOfLate])
 
-  const borrowedAssetDisplayName = getAssetDisplayName(borrowedAsset.gqlName)
-
   return (
     <>
       <Expand
@@ -148,7 +145,7 @@ export const BorrowingExpandCard = ({
                 <Icon id="noImage" />
               )}
               <div className="data">
-                <div className="value">{borrowedAssetDisplayName}</div>
+                <div className="value">{borrowedAsset.symbol}</div>
                 <div className="value">
                   <TzAddress tzAddress={address} shouldCopy hasIcon amountFromStart={4} amountFromEnd={4} />
                 </div>
@@ -232,7 +229,7 @@ export const BorrowingExpandCard = ({
                       <Icon id="noImage" />
                     </div>
                   )}
-                  {borrowedAssetDisplayName}
+                  {borrowedAsset.symbol}
                 </div>
               </ThreeLevelListItem>
               <ThreeLevelListItem>
@@ -304,12 +301,11 @@ export const BorrowingExpandCard = ({
               ) : null}
 
               <TableBody>
-                {collateralData.map(({ icon, amount, rate, maxWithdraw, gqlName }, idx, array) => {
+                {collateralData.map(({ icon, amount, rate, maxWithdraw, gqlName, symbol }, idx, array) => {
                   const customColumnValue = customTableColumn ? array[idx][customTableColumn] : undefined
                   const columnWidth = customTableColumn ? '18%' : '22%'
                   const isTotalRow = collateralData.length - 1 === idx
                   if (isTotalRow && collateralData.length < 3) return null
-                  const collateralDisplayAsset = getAssetDisplayName(gqlName)
 
                   return (
                     <TableRow rowHeight={60} key={gqlName + '-' + idx}>
@@ -327,7 +323,7 @@ export const BorrowingExpandCard = ({
                                 <Icon id="noImage" />
                               </div>
                             )}
-                            {collateralDisplayAsset}
+                            {symbol}
                           </div>
                         )}
                       </TableCell>

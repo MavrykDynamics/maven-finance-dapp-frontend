@@ -31,7 +31,6 @@ import { InputStatusType } from 'app/App.components/Input/Input.constants'
 
 // actions
 import { liquidateVault } from 'pages/Vaults/Vaults.actions'
-import { getAssetDisplayName } from 'pages/Loans/Loans.helpers'
 
 const columnWidth = '33%'
 const rowHeight = 30
@@ -241,10 +240,10 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
                 </TableHeader>
 
                 <TableBody>
-                  {collateralData.slice(0, -1).map(({ gqlName, collateralShare, amount, rate }, index) => {
+                  {collateralData.slice(0, -1).map(({ gqlName, collateralShare, amount, rate, symbol }, index) => {
                     return (
                       <TableRow rowHeight={rowHeight} key={gqlName + '-' + index}>
-                        <TableCell width={columnWidth}>{getAssetDisplayName(gqlName)}</TableCell>
+                        <TableCell width={columnWidth}>{symbol}</TableCell>
 
                         <TableCell width={columnWidth}>
                           <div className="table-amount-group">

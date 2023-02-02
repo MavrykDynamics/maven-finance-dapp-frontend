@@ -124,9 +124,9 @@ export const getCollateralTokens = async (
         if (assetMetadata) {
           acc.push({
             id,
-            name: assetMetadata.name,
+            name: token_name.toUpperCase(),
             gqlName: token_name,
-            symbol: assetMetadata.symbol,
+            symbol: assetMetadata.name,
             rate: rate ?? 0.25,
             userBalance,
             icon: token_name === 'eurl' ? '/images/eurl.png' : assetMetadata.icon ?? dataFromFeed?.icon,

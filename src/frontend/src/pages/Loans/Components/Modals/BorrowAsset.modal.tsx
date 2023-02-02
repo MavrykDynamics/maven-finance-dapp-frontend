@@ -22,7 +22,6 @@ import { LoansModalBase, VaultModalOverview } from './Modals.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { silverColor } from 'styles'
 import { borrowVaultAssetAction } from 'pages/Loans/Actions/vault.actions'
-import { getAssetDisplayName } from 'pages/Loans/Loans.helpers'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A240058&t=Sx2aEpp3ifrGxBtQ-0
 export const BorrowAsset = ({
@@ -51,8 +50,6 @@ export const BorrowAsset = ({
 
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
   const [screenShown, setShownScreen] = useState<'initial' | 'confitmation'>('initial')
-
-  const assetNameToDisplay = getAssetDisplayName(borrowedAsset?.gqlName)
 
   useEffect(() => {
     if (!show) {
@@ -112,9 +109,9 @@ export const BorrowAsset = ({
             <>
               <GovRightContainerTitleArea>
                 {hasUserBorrowed ? (
-                  <h2>Borrow Additional {assetNameToDisplay}</h2>
+                  <h2>Borrow Additional {borrowedAsset?.symbol}</h2>
                 ) : (
-                  <h2>Borrow {assetNameToDisplay}</h2>
+                  <h2>Borrow {borrowedAsset?.symbol}</h2>
                 )}
               </GovRightContainerTitleArea>
               <div className="modalDescr">
@@ -158,7 +155,7 @@ export const BorrowAsset = ({
                   }}
                   settings={{
                     balance: borrowedAsset.userBalance,
-                    balanceAsset: assetNameToDisplay,
+                    balanceAsset: borrowedAsset?.symbol,
                     useMaxHandler: () =>
                       inputOnChangeHandle(String(borrowedAsset.userBalance), borrowedAsset.userBalance),
                     inputStatus: inputData.validationStatus,
@@ -173,7 +170,7 @@ export const BorrowAsset = ({
                     ) : (
                       <Icon id="noImage" />
                     )}{' '}
-                    {assetNameToDisplay}
+                    {borrowedAsset?.symbol}
                   </InputPinnedTokenInfo>
                 </Input>
               ) : null}
@@ -212,7 +209,7 @@ export const BorrowAsset = ({
           ) : (
             <>
               <GovRightContainerTitleArea>
-                <h2>Confirm Borrow {assetNameToDisplay}</h2>
+                <h2>Confirm Borrow {borrowedAsset?.symbol}</h2>
               </GovRightContainerTitleArea>
               <div className="modalDescr">
                 Select the asset you would like to borrow. You cannot borrow more than your borrow capacity.
@@ -221,7 +218,7 @@ export const BorrowAsset = ({
               <div className="lending-stats" style={{ marginBottom: '30px' }}>
                 <ThreeLevelListItem>
                   <div className="name">Asset</div>
-                  <div className="value">{assetNameToDisplay}</div>
+                  <div className="value">{borrowedAsset?.symbol}</div>
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">

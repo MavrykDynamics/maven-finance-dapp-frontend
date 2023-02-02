@@ -8,7 +8,6 @@ import { DEFAULT_LOANS_INPUT_VALUE, getOnBlurValue, getOnFocusValue, RepayPartPo
 import { State } from 'reducers'
 import { ACTION_PRIMARY, TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
 import { repayPartOfVaultAction } from 'pages/Loans/Actions/vault.actions'
-import { getAssetDisplayName } from 'pages/Loans/Loans.helpers'
 
 import NewButton from 'app/App.components/Button/NewButton.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
@@ -46,8 +45,6 @@ export const Repay = ({
   useLockBodyScroll(show)
   const dispatch = useDispatch()
   const { isActionLoading } = useSelector((state: State) => state.loading)
-
-  const assetToDisplayName = getAssetDisplayName(borrowedAsset?.gqlName)
 
   const [screenShown, setShownScreen] = useState<'initial' | 'confitmation'>('initial')
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
@@ -111,7 +108,7 @@ export const Repay = ({
               <div className="lending-stats" style={{ marginBottom: '25px' }}>
                 <ThreeLevelListItem>
                   <div className="name">Borrowed</div>
-                  <CommaNumber value={Number(borrowedAmount)} className="value" endingText={assetToDisplayName} />
+                  <CommaNumber value={Number(borrowedAmount)} className="value" endingText={borrowedAsset?.symbol} />
                   <CommaNumber
                     value={Number(borrowedAmount) * Number(borrowedAsset?.rate)}
                     className="rate"
@@ -120,12 +117,12 @@ export const Repay = ({
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">Fees Due</div>
-                  <CommaNumber value={feesAmount} className="value" endingText={assetToDisplayName} />
+                  <CommaNumber value={feesAmount} className="value" endingText={borrowedAsset?.symbol} />
                   <CommaNumber value={feesAmount * Number(borrowedAsset?.rate)} className="rate" beginningText="$" />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem className="left-divider">
                   <div className="name">Total Outstanding</div>
-                  <CommaNumber value={totalOutstanding} className="value" endingText={assetToDisplayName} />
+                  <CommaNumber value={totalOutstanding} className="value" endingText={borrowedAsset?.symbol} />
                   <CommaNumber
                     value={totalOutstanding * Number(borrowedAsset?.rate)}
                     className="rate"
@@ -150,7 +147,7 @@ export const Repay = ({
                   }}
                   settings={{
                     balance: borrowedAsset.userBalance,
-                    balanceAsset: assetToDisplayName,
+                    balanceAsset: borrowedAsset?.symbol,
                     useMaxHandler: () =>
                       inputOnChangeHandle(
                         String(Math.min(borrowedAsset.userBalance, totalOutstanding)),
@@ -163,12 +160,12 @@ export const Repay = ({
                   <InputPinnedTokenInfo>
                     {borrowedAsset.icon ? (
                       <div className="image-wrapper">
-                        <img src={borrowedAsset.icon} alt={assetToDisplayName + '-logo'} />
+                        <img src={borrowedAsset.icon} alt={borrowedAsset?.symbol + '-logo'} />
                       </div>
                     ) : (
                       <Icon id="noImage" />
                     )}{' '}
-                    {assetToDisplayName}
+                    {borrowedAsset?.symbol}
                   </InputPinnedTokenInfo>
                 </Input>
               ) : null}
@@ -193,7 +190,7 @@ export const Repay = ({
               <div className="lending-stats" style={{ marginBottom: '25px' }}>
                 <ThreeLevelListItem>
                   <div className="name">Asset</div>
-                  <div className="value">{assetToDisplayName}</div>
+                  <div className="value">{borrowedAsset?.symbol}</div>
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">Amount</div>

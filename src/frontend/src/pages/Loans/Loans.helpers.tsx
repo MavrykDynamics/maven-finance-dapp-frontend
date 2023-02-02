@@ -25,18 +25,18 @@ import { getUserBalanceForLoanAsset } from './LoansFethcers'
 
 export const isTezosAsset = (tokenName: string) => tokenName === 'tez'
 
-export const getAssetDisplayName = (tokenGqlName?: string) => {
+export const getAssetDisplaySymbol = (tokenGqlName?: string) => {
   if (!tokenGqlName) return ''
   const isXTZ = isTezosAsset(tokenGqlName)
 
   return isXTZ ? 'XTZ' : tokenGqlName.toUpperCase()
 }
 
-export const getAssetDisplaySymbol = (tokenGqlName?: string, assetSymbol?: string) => {
-  if (!tokenGqlName || !assetSymbol) return ''
+export const getAssetDisplayName = (tokenGqlName?: string, assetName?: string) => {
+  if (!tokenGqlName || !assetName) return ''
   const isXTZ = isTezosAsset(tokenGqlName)
 
-  return isXTZ ? 'Tezos' : assetSymbol.toUpperCase()
+  return isXTZ ? 'Tezos' : assetName.toUpperCase()
 }
 
 export const getAssetMetadata = ({
@@ -135,7 +135,7 @@ const getTransactionHistory = (
             userAddress: sender_id,
             operationHash: operation_hash,
             descr: getDescrByType(type),
-            tokenSymbol: assetMetadata.symbol,
+            tokenSymbol: getAssetDisplaySymbol(assetMetadata.originalName),
           })
         }
 
@@ -326,8 +326,8 @@ const getBorrowings = async (
           const collateralBalance = collateral.balance / 10 ** collateralAsset.decimals
 
           acc.normalizedCollaterals.push({
-            symbol: collateralAsset.symbol,
-            name: collateralAsset.name,
+            symbol: getAssetDisplaySymbol(collateralAsset.originalName), //collateralAsset.symbol,
+            name: getAssetDisplayName(collateralAsset.originalName, collateralAsset.name), // collateralAsset.name,
             gqlName: collateralAsset.originalName,
             icon: collateralAsset.icon,
             id: collateralAsset.id,
@@ -398,8 +398,8 @@ const getBorrowings = async (
 
       const normallizedVault = {
         borrowedAsset: {
-          symbol: vaultAsset.symbol,
-          name: vaultAsset.name,
+          symbol: getAssetDisplaySymbol(vaultAsset.originalName), // vaultAsset.symbol,
+          name: getAssetDisplayName(vaultAsset.originalName, vaultAsset.name), // vaultAsset.name,
           icon: vaultAsset.icon,
           decimals: vaultAsset.decimals,
           gqlName: vaultAsset.originalName,
@@ -533,11 +533,11 @@ export const normalizeLoans = async ({
             tokenType: loan_token_contract_standard as LoanTokenType,
             userBalance: loanTokenUserBalance,
             gqlName: loanTokenMetadata.originalName,
-            name: loanTokenMetadata.name,
+            symbol: getAssetDisplaySymbol(loanTokenMetadata.originalName), // loanTokenMetadata.symbol,
+            name: getAssetDisplayName(loanTokenMetadata.originalName, loanTokenMetadata.name), // loanTokenMetadata.name,
             rate: loanTokenMetadata.rate,
             decimals: loanTokenMetadata.decimals,
             id: loanTokenMetadata.id,
-            symbol: loanTokenMetadata.symbol,
             icon: loanTokenMetadata.icon,
           },
           myBorrowingList,

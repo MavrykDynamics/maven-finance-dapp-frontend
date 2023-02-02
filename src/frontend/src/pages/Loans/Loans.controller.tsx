@@ -29,7 +29,6 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { getLoansStorage } from './Actions/getLoansData.actions'
-import { getAssetDisplayName } from './Loans.helpers'
 
 export const Loans = () => {
   const dispatch = useDispatch()
@@ -123,7 +122,7 @@ export const Loans = () => {
             </GovRightContainerTitleArea>
             {loanTokens.map((loanAsset) => {
               const {
-                loanTokenData: { name, symbol, icon, rate, gqlName },
+                loanTokenData: { name, symbol, icon, rate },
                 utilisationRate,
                 availableLiquidity,
                 borrowers,
@@ -148,7 +147,7 @@ export const Loans = () => {
                     ) : (
                       <Icon id={'noImage'} />
                     )}
-                    <div className="name">{getAssetDisplayName(gqlName)}</div>
+                    <div className="name">{symbol}</div>
                     {rate ? (
                       <div className="rate">
                         <CommaNumber beginningText="$" value={rate} decimalsToShow={4} showDecimal />
