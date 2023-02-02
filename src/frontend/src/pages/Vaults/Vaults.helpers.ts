@@ -75,7 +75,6 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
             balance: collateralBalance,
             assetRate: collateralAsset.rate,
             maxWithdraw: 0,
-            collateralShare: 0,
           })
 
           acc.totalRow.balance += collateralBalance * collateralAsset.rate
@@ -91,7 +90,6 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
             balance: 0,
             assetRate: 0,
             maxWithdraw: 0,
-            collateralShare: 100,
           },
         },
       ) ?? {

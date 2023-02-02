@@ -108,7 +108,6 @@ export type BorrowingData = {
     balance: number
     assetRate: number
     maxWithdraw: number
-    collateralShare?: number
   }>
   address: string
   xtzDelegatedTo: string | null

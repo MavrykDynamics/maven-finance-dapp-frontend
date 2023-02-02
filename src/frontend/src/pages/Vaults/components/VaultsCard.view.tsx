@@ -89,7 +89,7 @@ const findFooterText = (status: string, statusColor: StatusFlagStyle, timestamp?
 
 const borrowingCardOptions: BorrowingCardOptions = {
   reverseColumns: true,
-  customTableColumn: 'collateralShare',
+  showOtherColumns: true,
 }
 
 type Props = VaultType & {
@@ -222,8 +222,8 @@ export const VaultsCard = (props: Props) => {
                 {collateralData.map(({ assetSymbol, assetIcon, assetRate, balance }, index) => {
                   const columnWidth = '33%'
                   const isTotalRow = collateralData.length - 1 === index
-                  
-                  const collateralShare = isTotalRow 
+
+                  const collateralShare = isTotalRow
                     ? 100
                     : calculateCollateralShare(balance * assetRate, collateralTotalBalance)
 

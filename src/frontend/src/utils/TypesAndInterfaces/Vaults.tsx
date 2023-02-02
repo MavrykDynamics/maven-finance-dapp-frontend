@@ -26,5 +26,4 @@ export type CollateralType = {
   balance: number
   assetRate: number
   maxWithdraw: number
-  collateralShare: number
 }

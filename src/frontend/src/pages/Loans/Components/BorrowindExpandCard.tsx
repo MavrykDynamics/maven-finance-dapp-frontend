@@ -35,7 +35,7 @@ import { calculateCollateralShare } from 'pages/Vaults/calcFunctionsForVaultStat
 
 export type BorrowingCardOptions = {
   reverseColumns?: boolean
-  customTableColumn?: keyof BorrowingData['collateralData'][0]
+  showOtherColumns?: boolean
 }
 
 type BorrowingExpandCardPropsType = BorrowingData & {
@@ -66,7 +66,7 @@ export const BorrowingExpandCard = ({
   levelOfEarly,
   levelOfLate,
 }: BorrowingExpandCardPropsType) => {
-  const { reverseColumns, customTableColumn } = options ?? {}
+  const { reverseColumns, showOtherColumns } = options ?? {}
 
   const {
     assetSymbol,
@@ -105,7 +105,7 @@ export const BorrowingExpandCard = ({
   }
 
   const vaultStatus = status ?? getStatusByCollateralRatio(collateralUtilization)
-  
+
   const [timerTimestamp, setTimerTimestamp] = useState<number | undefined>(undefined)
 
   const collateralTotalBalance = collateralData[collateralData.length - 1]?.balance
@@ -297,18 +297,16 @@ export const BorrowingExpandCard = ({
                   <TableHeaderCell>Asset</TableHeaderCell>
                   <TableHeaderCell>Balance</TableHeaderCell>
                   <TableHeaderCell>Withdraw Max</TableHeaderCell>
-                  {customTableColumn && <TableHeaderCell>Collateral Share</TableHeaderCell>}
+                  {showOtherColumns && <TableHeaderCell>Collateral Share</TableHeaderCell>}
                 </TableRow>
               </TableHeader>
 
               <TableBody>
                 {collateralData.map(({ assetSymbol, assetIcon, balance, assetRate, maxWithdraw }, idx, array) => {
-                  const customColumnValue = customTableColumn ? array[idx][customTableColumn] : undefined
-
-                  const columnWidth = customTableColumn ? '18%' : '22%'
+                  const columnWidth = showOtherColumns ? '18%' : '22%'
                   const isTotalRow = collateralData.length - 1 === idx
 
-                  const collateralShare = isTotalRow 
+                  const collateralShare = isTotalRow
                     ? 100
                     : calculateCollateralShare(balance * assetRate, collateralTotalBalance)
 
@@ -362,7 +360,7 @@ export const BorrowingExpandCard = ({
                           ) : null}
                         </div>
                       </TableCell>
-                      {typeof customColumnValue === 'number' ? (
+                      {showOtherColumns ? (
                         <TableCell width={columnWidth}>
                           <div className="cell-content">
                             <CommaNumber value={collateralShare} className="value" endingText="%" />
