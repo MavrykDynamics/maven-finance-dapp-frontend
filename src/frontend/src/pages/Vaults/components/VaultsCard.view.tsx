@@ -78,7 +78,7 @@ const findFooterText = (status: string, statusColor: StatusFlagStyle, timestamp?
     case vaultsStatuses.MARK:
       return (
         <p>
-          This vault is <span className={statusColor}>ready to arm</span> and can be marked for the next {timer}
+          This vault is <span className={statusColor}>ready to arm</span> and can be marked for liquidation.
         </p>
       )
 
