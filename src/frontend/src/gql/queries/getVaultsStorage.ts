@@ -6,6 +6,10 @@ query GetAllVaultsStorage {
     liquidation_delay_in_minutes
     liquidation_ratio
     collateral_ratio
+    max_vault_liquidation_pct
+    admin_liquidation_fee_pct
+    liquidation_fee_pct
+    decimals
 
     loan_tokens {
       current_interest_rate
@@ -20,6 +24,7 @@ query GetAllVaultsStorage {
           oracle_id
         }
       }
+
       vault {
         creation_timestamp
         address
@@ -27,6 +32,7 @@ query GetAllVaultsStorage {
           depositor_id
         }
       }
+
       last_updated_block_level
       owner_id
       marked_for_liquidation_level
@@ -56,6 +62,6 @@ export const ORACLE_AGGREGATOR_LATEST_PRICE_QUERY = `
   }
 `
 export const ORACLE_AGGREGATOR_LATEST_PRICE_QUERY_NAME = 'GetOracleAggregatorLatestPrice'
-export function ORACLE_AGGREGATOR_LATEST_PRICE_QUERY_VARIABLE (_eq: string) {
+export function ORACLE_AGGREGATOR_LATEST_PRICE_QUERY_VARIABLE(_eq: string) {
   return { _eq }
 }

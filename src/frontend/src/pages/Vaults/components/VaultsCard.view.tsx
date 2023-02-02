@@ -100,7 +100,7 @@ export const VaultsCard = (props: Props) => {
   const {
     ownerId,
     vaultId,
-    status,
+    status: x,
     levelOfEarly,
     levelOfLate,
     collateralData,
@@ -111,7 +111,7 @@ export const VaultsCard = (props: Props) => {
   const { openLiquidateVaultPopup } = useContext(loansPopupsContext)
   const [expanded, setExpanded] = useState(false)
   const [timerTimestamp, setTimerTimestamp] = useState<number | undefined>(undefined)
-
+  const status = vaultsStatuses.LIQUIDATABLE // TODO: delete
   const statusColor = findStatusInfo(status).color as StatusFlagStyle
   const statusText = findStatusInfo(status).text
   const footerText = findFooterText(status, statusColor, timerTimestamp)
@@ -134,7 +134,7 @@ export const VaultsCard = (props: Props) => {
   }
 
   const liquidateModalHandler = () => {
-    openLiquidateVaultPopup({...props})
+    openLiquidateVaultPopup({ ...props })
   }
 
   useEffect(() => {
@@ -255,7 +255,8 @@ export const VaultsCard = (props: Props) => {
                         <div className="cell-content">{collateralShare}%</div>
                       </TableCell>
                     </TableRow>
-                )})}
+                  )
+                })}
               </TableBody>
             </Table>
           </div>
@@ -270,9 +271,7 @@ export const VaultsCard = (props: Props) => {
             text={isMarkStatus ? 'Mark for Liquidation' : 'Liquidate Vault'}
             kind={ACTION_PRIMARY}
             onClick={() => {
-              return isMarkStatus
-                ? handleMarkForLiquidation(vaultId, ownerId)
-                : liquidateModalHandler()
+              return isMarkStatus ? handleMarkForLiquidation(vaultId, ownerId) : liquidateModalHandler()
             }}
             disabled={vaultsStatuses.GRACE_PERIOD === status}
           />

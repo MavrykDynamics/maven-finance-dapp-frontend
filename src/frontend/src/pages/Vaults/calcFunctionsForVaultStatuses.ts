@@ -1,4 +1,4 @@
-import { BLOCKS_PER_MINUTE } from "utils/constants"
+import { BLOCKS_PER_MINUTE } from 'utils/constants'
 
 /**
  * This function is after the vault would be marked so the liquidation_end_level != 0 and no longer in the grace period
@@ -7,8 +7,16 @@ import { BLOCKS_PER_MINUTE } from "utils/constants"
  * @param markedForLiquidationLevel - marked_for_liquidation_level
  * @param liquidationDelayInMinutes - liquidation_delay_in_minutes
  */
-export function checkVaultIsLiquidatable(currentBlockLevel:number, liquidationEndLevel: number, markedForLiquidationLevel: number, liquidationDelayInMinutes: number): boolean {
-  return currentBlockLevel <= liquidationEndLevel && !checkVaultIsInGracePeriod(currentBlockLevel, markedForLiquidationLevel, liquidationDelayInMinutes)
+export function checkVaultIsLiquidatable(
+  currentBlockLevel: number,
+  liquidationEndLevel: number,
+  markedForLiquidationLevel: number,
+  liquidationDelayInMinutes: number,
+): boolean {
+  return (
+    currentBlockLevel <= liquidationEndLevel &&
+    !checkVaultIsInGracePeriod(currentBlockLevel, markedForLiquidationLevel, liquidationDelayInMinutes)
+  )
 }
 
 /**
@@ -17,9 +25,13 @@ export function checkVaultIsLiquidatable(currentBlockLevel:number, liquidationEn
  * @param markedForLiquidationLevel - marked_for_liquidation_level
  * @param liquidationDelayInMinutes - liquidation_delay_in_minutes
  */
-export function checkVaultIsInGracePeriod(currentBlockLevel: number, markedForLiquidationLevel: number, liquidationDelayInMinutes: number): boolean {
+export function checkVaultIsInGracePeriod(
+  currentBlockLevel: number,
+  markedForLiquidationLevel: number,
+  liquidationDelayInMinutes: number,
+): boolean {
   const liquidationDelayInBlocks = liquidationDelayInMinutes * BLOCKS_PER_MINUTE // this constant should exist in the utils/constants. If not, create it and set it to 2
-  return currentBlockLevel <= (markedForLiquidationLevel + liquidationDelayInBlocks)
+  return currentBlockLevel <= markedForLiquidationLevel + liquidationDelayInBlocks
 }
 
 /**
@@ -29,8 +41,18 @@ export function checkVaultIsInGracePeriod(currentBlockLevel: number, markedForLi
  * @param markedForLiquidationLevel - marked_for_liquidation_level
  * @param liquidationDelayInMinutes - liquidation_delay_in_minutes
  */
-export function checkVaultCanBeRemarkedForLiquidation(currentBlockLevel:number, liquidationEndLevel: number, markedForLiquidationLevel: number, liquidationDelayInMinutes: number): boolean {
-  return currentBlockLevel > liquidationEndLevel && liquidationEndLevel !== 0 && markedForLiquidationLevel !== 0 && !checkVaultIsInGracePeriod(currentBlockLevel, markedForLiquidationLevel, liquidationDelayInMinutes)
+export function checkVaultCanBeRemarkedForLiquidation(
+  currentBlockLevel: number,
+  liquidationEndLevel: number,
+  markedForLiquidationLevel: number,
+  liquidationDelayInMinutes: number,
+): boolean {
+  return (
+    currentBlockLevel > liquidationEndLevel &&
+    liquidationEndLevel !== 0 &&
+    markedForLiquidationLevel !== 0 &&
+    !checkVaultIsInGracePeriod(currentBlockLevel, markedForLiquidationLevel, liquidationDelayInMinutes)
+  )
 }
 
 /**
@@ -39,8 +61,13 @@ export function checkVaultCanBeRemarkedForLiquidation(currentBlockLevel:number, 
  * @param liquidationRatio        - liquidation_ratio
  * @param vaultCollateralTokens   - collateral_tokens array after normalizing it and prepping the data (after dividing the balances by the token decimals)
  */
-export function isLiquidatableByRatio(loanOutstandingTotal: number, loanTokenOracleAddress: string, liquidationRatio: number, vaultCollateralTokens: any[], oracleLatestPrices: Record<string, number>): boolean {
-
+export function isLiquidatableByRatio(
+  loanOutstandingTotal: number,
+  loanTokenOracleAddress: string,
+  liquidationRatio: number,
+  vaultCollateralTokens: any[],
+  oracleLatestPrices: Record<string, number>,
+): boolean {
   const vaultCollateralTokenBalances = vaultCollateralTokens.map((collateralToken: any) => {
     const oracleId = collateralToken.token.oracleId
     const collateralTokenLatestPrice = oracleLatestPrices[oracleId]
@@ -48,13 +75,14 @@ export function isLiquidatableByRatio(loanOutstandingTotal: number, loanTokenOra
 
     return balanceInUSD
   })
-  const totalCollateralValueInUSD = vaultCollateralTokenBalances.length 
+  const totalCollateralValueInUSD = vaultCollateralTokenBalances.length
     ? vaultCollateralTokenBalances.reduce((accumulator, tokenBalance) => {
-    return accumulator + tokenBalance
-  }) : 0
+        return accumulator + tokenBalance
+      })
+    : 0
 
   const loanTokenLatestPrice = oracleLatestPrices[loanTokenOracleAddress]
-  const loanOutstandingInUSD = (loanOutstandingTotal) * loanTokenLatestPrice
+  const loanOutstandingInUSD = loanOutstandingTotal * loanTokenLatestPrice
 
   return totalCollateralValueInUSD < (liquidationRatio * loanOutstandingInUSD) / 1000
 }
@@ -70,9 +98,30 @@ export function isLiquidatableByRatio(loanOutstandingTotal: number, loanTokenOra
  * @param markedForLiquidationLevel
  * @param liquidationDelayInMinutes
  */
-export function checkVaultIsAbleToMarkedForLiquidation(loanOutstandingTotal: number, loanTokenOracleAddress: string, liquidationRatio: number, vaultCollateralTokens: any[], currentBlockLevel: number, liquidationEndLevel: number, markedForLiquidationLevel: number, liquidationDelayInMinutes: number, oracleLatestPrices: Record<string, number>): boolean {
-  const isLiquidatableValue = isLiquidatableByRatio(loanOutstandingTotal, loanTokenOracleAddress, liquidationRatio, vaultCollateralTokens, oracleLatestPrices)
-  const canBeRemarked = checkVaultCanBeRemarkedForLiquidation(currentBlockLevel, liquidationEndLevel, markedForLiquidationLevel, liquidationDelayInMinutes)
+export function checkVaultIsAbleToMarkedForLiquidation(
+  loanOutstandingTotal: number,
+  loanTokenOracleAddress: string,
+  liquidationRatio: number,
+  vaultCollateralTokens: any[],
+  currentBlockLevel: number,
+  liquidationEndLevel: number,
+  markedForLiquidationLevel: number,
+  liquidationDelayInMinutes: number,
+  oracleLatestPrices: Record<string, number>,
+): boolean {
+  const isLiquidatableValue = isLiquidatableByRatio(
+    loanOutstandingTotal,
+    loanTokenOracleAddress,
+    liquidationRatio,
+    vaultCollateralTokens,
+    oracleLatestPrices,
+  )
+  const canBeRemarked = checkVaultCanBeRemarkedForLiquidation(
+    currentBlockLevel,
+    liquidationEndLevel,
+    markedForLiquidationLevel,
+    liquidationDelayInMinutes,
+  )
 
   return canBeRemarked || (isLiquidatableValue && !canBeRemarked)
 }
@@ -89,9 +138,30 @@ export function checkVaultIsAbleToMarkedForLiquidation(loanOutstandingTotal: num
  * @param markedForLiquidationLevel
  * @param liquidationDelayInMinutes
  */
-export function checkVaultLiquidatableStatus(loanOutstandingTotal: number, loanTokenOracleAddress: string, liquidationRatio: number, vaultCollateralTokens: any[], currentBlockLevel: number, liquidationEndLevel: number, markedForLiquidationLevel: number, liquidationDelayInMinutes: number, oracleLatestPrices: Record<string, number>): boolean {
-  const isLiquidatableByValue = isLiquidatableByRatio(loanOutstandingTotal, loanTokenOracleAddress, liquidationRatio, vaultCollateralTokens, oracleLatestPrices)
-  const isLiquidatableByConfig = checkVaultIsLiquidatable(currentBlockLevel, liquidationEndLevel, markedForLiquidationLevel, liquidationDelayInMinutes)
+export function checkVaultLiquidatableStatus(
+  loanOutstandingTotal: number,
+  loanTokenOracleAddress: string,
+  liquidationRatio: number,
+  vaultCollateralTokens: any[],
+  currentBlockLevel: number,
+  liquidationEndLevel: number,
+  markedForLiquidationLevel: number,
+  liquidationDelayInMinutes: number,
+  oracleLatestPrices: Record<string, number>,
+): boolean {
+  const isLiquidatableByValue = isLiquidatableByRatio(
+    loanOutstandingTotal,
+    loanTokenOracleAddress,
+    liquidationRatio,
+    vaultCollateralTokens,
+    oracleLatestPrices,
+  )
+  const isLiquidatableByConfig = checkVaultIsLiquidatable(
+    currentBlockLevel,
+    liquidationEndLevel,
+    markedForLiquidationLevel,
+    liquidationDelayInMinutes,
+  )
   return isLiquidatableByValue && isLiquidatableByConfig
 }
 
@@ -103,32 +173,49 @@ export function checkVaultLiquidatableStatus(loanOutstandingTotal: number, loanT
  * @param collateralRatio
  * @param vaultCollateralTokens
  */
-export function checkIfVaultIsAtRisk(loanOutstandingTotal: number, loanTokenOracleAddress: string, liquidationRatio: number, collateralRatio: number, vaultCollateralTokens: any[], oracleLatestPrices: Record<string, number>): boolean {
-
+export function checkIfVaultIsAtRisk(
+  loanOutstandingTotal: number,
+  loanTokenOracleAddress: string,
+  liquidationRatio: number,
+  collateralRatio: number,
+  vaultCollateralTokens: any[],
+  oracleLatestPrices: Record<string, number>,
+): boolean {
   const vaultCollateralTokenBalances = vaultCollateralTokens.map((collateralToken: any) => {
-
     const oracleId = collateralToken.token.oracleId
     const collateralTokenLatestPrice = oracleLatestPrices[oracleId]
     const balanceInUSD = collateralToken.balance * collateralTokenLatestPrice
 
     return balanceInUSD
   })
-  
+
   const totalCollateralValueInUSD = vaultCollateralTokenBalances.length
     ? vaultCollateralTokenBalances.reduce((accumulator, tokenBalance) => {
-    return accumulator + tokenBalance
-  }) : 0
+        return accumulator + tokenBalance
+      })
+    : 0
 
   const loanTokenLatestPrice = oracleLatestPrices[loanTokenOracleAddress]
-  const loanOutstandingInUSD = (loanOutstandingTotal) * loanTokenLatestPrice
+  const loanOutstandingInUSD = loanOutstandingTotal * loanTokenLatestPrice
 
   if (totalCollateralValueInUSD === 0 && loanOutstandingInUSD > 0) {
     return true
-  } else  if (totalCollateralValueInUSD === 0 && loanOutstandingInUSD === 0) {
+  } else if (totalCollateralValueInUSD === 0 && loanOutstandingInUSD === 0) {
     return false
   }
 
-  const isBelowCollateralRatio  = loanOutstandingInUSD < (collateralRatio * totalCollateralValueInUSD) / 1000
+  const isBelowCollateralRatio = loanOutstandingInUSD < (collateralRatio * totalCollateralValueInUSD) / 1000
   const isAboveLiquidationRatio = loanOutstandingInUSD > (liquidationRatio * loanOutstandingInUSD) / 1000
   return isBelowCollateralRatio && isAboveLiquidationRatio
+}
+
+export const calculateVaultMaxLiquidationAmount = (
+  loanOutstandingTotal: number,
+  maxVaultLiquidationPercent: number,
+) => {
+  return Math.trunc((loanOutstandingTotal * maxVaultLiquidationPercent) / 10000)
+}
+
+export const calculateAdminLiquidationFee = (adminLiquidationFeePercent: number, liquidationAmount: number) => {
+  return Math.trunc((adminLiquidationFeePercent * liquidationAmount) / 10000)
 }
