@@ -34,7 +34,6 @@ export const Market = () => {
   const dispatch = useDispatch()
   const { assetId, tabId } = useParams<{ assetId: string; tabId: string }>()
   const { loanTokens, loansControllerAddress, isDataLoaded } = useSelector((state: State) => state.loans)
-  const { accountPkh } = useSelector((state: State) => state.wallet)
 
   const { isLoading } = useDataLoader(async () => {
     try {
@@ -42,7 +41,7 @@ export const Market = () => {
         await dispatch(getLoansStorage())
       }
     } catch (e) {}
-  }, [accountPkh])
+  }, [])
 
   const currentToken = useMemo(
     () => loanTokens.find(({ loanTokenData: { symbol } }) => assetId === symbol),

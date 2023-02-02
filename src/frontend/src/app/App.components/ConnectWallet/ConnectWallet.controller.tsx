@@ -5,7 +5,7 @@ import { useMedia } from 'react-use'
 import { useHistory } from 'react-router-dom'
 
 import { State } from '../../../reducers'
-import { changeWallet, clearStoreDataOnWalletChange, connect, disconnect } from './ConnectWallet.actions'
+import { changeWallet, connect, disconnect } from './ConnectWallet.actions'
 import { ConnectWalletStyled } from './ConnectWallet.style'
 import { ConnectedWalletBlock, CoinsInfoType, NoWalletConnectedButton } from './ConnectWallet.view'
 import { getWertOptions } from './Wert/WertIO.const'
@@ -43,7 +43,6 @@ export const ConnectWallet = ({ className, closeMobileMenu }: ConnectWalletProps
   }
 
   const disconnectWallet = async () => {
-    await dispatch(clearStoreDataOnWalletChange())
     await dispatch(disconnect())
   }
 

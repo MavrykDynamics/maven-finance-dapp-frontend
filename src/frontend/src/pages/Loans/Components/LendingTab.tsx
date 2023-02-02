@@ -1,9 +1,11 @@
+import { useSelector } from 'react-redux'
 import { useContext } from 'react'
 
 import { ACTION_PRIMARY, TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
 import { LendingItemType, LoanMarketType } from 'utils/TypesAndInterfaces/Loans'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+import { State } from 'reducers'
 import { loansPopupsContext } from './Modals/LoansModals.provider'
 
 import { Button } from 'app/App.components/Button/Button.controller'
@@ -23,6 +25,7 @@ type LendingTabPropsType = {
 
 export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, lendAPY }: LendingTabPropsType) => {
   const { openAddLendingAssetPopup, openRemoveLendingAssetPopup } = useContext(loansPopupsContext)
+  const { accountPkh } = useSelector((state: State) => state.wallet)
 
   return (
     <LoansTabStyled>
@@ -85,6 +88,7 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
               text="Add"
               icon="plus"
               kind={TRANSPARENT_WITH_BORDER}
+              disabled={!Boolean(accountPkh)}
               onClick={() => {
                 openAddLendingAssetPopup({
                   userBalance: lendingItem.loanAssetWalletBalance,
@@ -106,6 +110,7 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
               text="Remove"
               icon="minus"
               kind={TRANSPARENT_WITH_BORDER}
+              disabled={!Boolean(accountPkh)}
               onClick={() => {
                 openRemoveLendingAssetPopup({
                   userBalance: lendingItem.loanAssetWalletBalance,
@@ -133,6 +138,7 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
             text="Lend Asset"
             icon="plus"
             kind={ACTION_PRIMARY}
+            disabled={!Boolean(accountPkh)}
             onClick={() =>
               openAddLendingAssetPopup({
                 userBalance: assetData.userBalance,

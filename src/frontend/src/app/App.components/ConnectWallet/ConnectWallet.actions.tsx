@@ -6,7 +6,7 @@ import { showToaster } from '../Toaster/Toaster.actions'
 import { ERROR } from '../Toaster/Toaster.constants'
 import { fetchUserData } from 'pages/Doorman/Doorman.actions'
 import { DEFAULT_USER } from 'reducers/wallet'
-import { CLEAR_LOANS_STORAGE } from 'pages/Loans/Actions/getLoansData.actions'
+import { CLEAR_LOANS_STORAGE, getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 
 // TODO: check ts-ignores, here NetworkType is not compatible with  NetworkType | undefined
 
@@ -26,7 +26,6 @@ export const WalletOptions = {
 export const changeWallet = () => async (dispatch: AppDispatch) => {
   try {
     await dispatch(disconnect())
-    // TODO: handle user discard case for data loading
     await dispatch(connect())
   } catch (e) {
     console.error(`Failed to change wallet: `, e)
@@ -74,14 +73,14 @@ export const connect = () => async (dispatch: AppDispatch, getState: GetState) =
           )
         : DEFAULT_USER
 
-      dispatch(clearStoreDataOnWalletChange())
-      dispatch({
+      await dispatch({
         type: CONNECT,
         wallet,
         tezos: Tezos,
         userData,
         accountPkh,
       })
+      await dispatch(updateWalletDependedDataOnWalletChange())
     }
   } catch (e) {
     console.error(`Failed to connect wallet:`, e)
@@ -91,16 +90,16 @@ export const connect = () => async (dispatch: AppDispatch, getState: GetState) =
   }
 }
 
-export const clearStoreDataOnWalletChange = () => async (dispatch: AppDispatch, getState: GetState) => {
+export const updateWalletDependedDataOnWalletChange = () => async (dispatch: AppDispatch, getState: GetState) => {
   const state = getState()
   try {
-    console.log('state.loans.isDataLoaded', state.loans.isDataLoaded)
-
+    // TODO: check how many data will be refetched, mb consider update only data related to the current page
     if (state.loans.isDataLoaded) {
-      dispatch({ type: CLEAR_LOANS_STORAGE })
+      await dispatch({ type: CLEAR_LOANS_STORAGE })
+      await dispatch(getLoansStorage())
     }
   } catch (e) {
-    console.error(`Failed to clearStoreDataOnWalletChange: `, e)
+    console.error(`Failed to updateWalletDependedDataOnWalletChange: `, e)
   }
 }
 
@@ -112,7 +111,8 @@ export const disconnect = () => async (dispatch: AppDispatch, getState: GetState
     await state.wallet.wallet?.clearActiveAccount()
     Beacon_localStorage_keys.forEach((key) => localStorage.removeItem(key))
 
-    dispatch({ type: DISCONNECT })
+    await dispatch({ type: DISCONNECT })
+    await dispatch(updateWalletDependedDataOnWalletChange())
   } catch (e) {
     console.error(`Failed to disconnect TempleWallet: `, e)
     if (e instanceof Error) {

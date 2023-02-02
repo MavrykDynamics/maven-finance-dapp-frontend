@@ -32,7 +32,6 @@ import { getLoansStorage } from './Actions/getLoansData.actions'
 
 export const Loans = () => {
   const dispatch = useDispatch()
-  const { accountPkh } = useSelector((state: State) => state.wallet)
   const { isDataLoaded } = useSelector((state: State) => state.loans)
 
   const { isLoading } = useDataLoader(async () => {
@@ -41,7 +40,7 @@ export const Loans = () => {
         await dispatch(getLoansStorage())
       }
     } catch (e) {}
-  }, [accountPkh])
+  }, [])
   const { loanTokens, chartsData } = useSelector((state: State) => state.loans)
 
   const lendingPart = (
@@ -186,14 +185,8 @@ export const Loans = () => {
                         <div className="name">Utilization Rate</div>
                         <CommaNumber value={utilisationRate} className="value" endingText="%" />
                       </ThreeLevelListItem>
-                      <Link to={`/loans/${symbol}/${LEND_TAB_ID}`} className={`${accountPkh ? '' : 'disabled-link'}`}>
-                        <Button
-                          text="Lend"
-                          kind={ACTION_PRIMARY}
-                          iconAfter
-                          disabled={Boolean(!accountPkh)}
-                          icon="arrowRight"
-                        />
+                      <Link to={`/loans/${symbol}/${LEND_TAB_ID}`}>
+                        <Button text="Lend" kind={ACTION_PRIMARY} iconAfter icon="arrowRight" />
                       </Link>
                     </div>
                     <div className="row">
@@ -230,14 +223,8 @@ export const Loans = () => {
                           beginningText="$"
                         />
                       </ThreeLevelListItem>
-                      <Link to={`/loans/${symbol}/${BORROW_TAB_ID}`} className={`${accountPkh ? '' : 'disabled-link'}`}>
-                        <Button
-                          text="Borrow"
-                          kind={ACTION_PRIMARY}
-                          disabled={Boolean(!accountPkh)}
-                          iconAfter
-                          icon="arrowRight"
-                        />
+                      <Link to={`/loans/${symbol}/${BORROW_TAB_ID}`}>
+                        <Button text="Borrow" kind={ACTION_PRIMARY} iconAfter icon="arrowRight" />
                       </Link>
                     </div>
                   </div>
