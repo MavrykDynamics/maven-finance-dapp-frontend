@@ -12,6 +12,7 @@ import { getTimestampByLevel } from '../../Governance/Governance.actions'
 import { Timer } from 'app/App.components/Timer/Timer.controller'
 import { TimeLeftAreaWrap } from './TimeRemaining.style'
 import { COLON_VIEW } from 'app/App.components/Timer/Timer.view'
+import { parseDate } from 'utils/time'
 
 export default function TimeRemaining() {
   const { currentRoundEndLevel = 0 } = useSelector((state: State) => state.governance.governanceStorage)
@@ -21,10 +22,12 @@ export default function TimeRemaining() {
   useEffect(() => {
     ;(async () => {
       const duration = await getTimestampByLevel(currentRoundEndLevel)
+      console.log('duration', duration, parseDate({ time: duration, timeFormat: 'MMM Do, YYYY, HH:mm:ss' }))
+
       setTimerDeadline(new Date(duration).getTime())
       setTimerActive(Boolean(currentRoundEndLevel) && timerDeadline > Date.now())
     })()
-  }, [currentRoundEndLevel])
+  }, [currentRoundEndLevel, timerDeadline])
 
   return (
     <TimeLeftAreaWrap showBorder={timerActive}>
