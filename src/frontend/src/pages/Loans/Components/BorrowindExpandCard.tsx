@@ -31,6 +31,7 @@ import { useSelector } from 'react-redux'
 import { State } from 'reducers'
 import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 import { getTimestampByLevel } from 'pages/Governance/Governance.actions'
+import { calculateCollateralShare } from 'pages/Vaults/calcFunctionsForVaultStatuses'
 
 export type BorrowingCardOptions = {
   reverseColumns?: boolean
@@ -104,8 +105,10 @@ export const BorrowingExpandCard = ({
   }
 
   const vaultStatus = status ?? getStatusByCollateralRatio(collateralUtilization)
-
+  
   const [timerTimestamp, setTimerTimestamp] = useState<number | undefined>(undefined)
+
+  const collateralTotalBalance = collateralData[collateralData.length - 1]?.balance
 
   useEffect(() => {
     if (vaultStatus === vaultsStatuses.GRACE_PERIOD || vaultStatus === vaultsStatuses.LIQUIDATABLE) {
@@ -301,8 +304,14 @@ export const BorrowingExpandCard = ({
               <TableBody>
                 {collateralData.map(({ assetSymbol, assetIcon, balance, assetRate, maxWithdraw }, idx, array) => {
                   const customColumnValue = customTableColumn ? array[idx][customTableColumn] : undefined
+
                   const columnWidth = customTableColumn ? '18%' : '22%'
                   const isTotalRow = collateralData.length - 1 === idx
+
+                  const collateralShare = isTotalRow 
+                    ? 100
+                    : calculateCollateralShare(balance * assetRate, collateralTotalBalance)
+
                   if (isTotalRow && collateralData.length < 3) return null
 
                   return (
@@ -356,7 +365,7 @@ export const BorrowingExpandCard = ({
                       {typeof customColumnValue === 'number' ? (
                         <TableCell width={columnWidth}>
                           <div className="cell-content">
-                            <CommaNumber value={customColumnValue} className="value" endingText="%" />
+                            <CommaNumber value={collateralShare} className="value" endingText="%" />
                           </div>
                         </TableCell>
                       ) : null}

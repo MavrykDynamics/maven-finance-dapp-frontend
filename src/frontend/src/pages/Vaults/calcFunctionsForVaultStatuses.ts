@@ -219,3 +219,7 @@ export const calculateVaultMaxLiquidationAmount = (
 export const calculateAdminLiquidationFee = (adminLiquidationFeePercent: number, liquidationAmount: number) => {
   return Math.trunc((adminLiquidationFeePercent * liquidationAmount) / 10000)
 }
+
+export const calculateCollateralShare = (collateralAmount: number, totalAmount: number) => { 
+  return Number(((collateralAmount / totalAmount) * 100).toFixed(2))
+}

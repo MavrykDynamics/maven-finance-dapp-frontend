@@ -24,7 +24,7 @@ import {
 // helpers
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { INPUT_STATUS_SUCCESS, INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
-import { calculateAdminLiquidationFee } from 'pages/Vaults/calcFunctionsForVaultStatuses'
+import { calculateAdminLiquidationFee, calculateCollateralShare } from 'pages/Vaults/calcFunctionsForVaultStatuses'
 
 // types
 import { LiquidateVaultDataType } from 'pages/Loans/Components/Modals/Modals.helpers'
@@ -56,9 +56,10 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
   } = data ?? {}
 
   const { assetSymbol = '', assetIcon = '', assetRate = 0, userBalance = 0 } = borrowedAsset ?? {}
+  const [showAsPercentage, setShowAsPercentage] = useState(true)
+  const collateralTotalBalance = collateralData[collateralData.length - 1]?.balance
 
   const [inputAmount, setInputAmount] = useState('0')
-  const [showAsPercentage, setShowAsPercentage] = useState(true)
   const amount = Number(inputAmount)
 
   const liquidationMaxUsd = liquidationMax * assetRate
@@ -259,7 +260,13 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
                 </TableHeader>
 
                 <TableBody>
-                  {collateralData.slice(0, -1).map(({ assetSymbol, collateralShare, balance, assetRate }, index) => {
+                  {collateralData.slice(0, -1).map(({ assetSymbol, balance, assetRate }, index) => {
+                    const isTotalRow = collateralData.length - 1 === index
+
+                    const collateralShare = isTotalRow 
+                      ? 100
+                      : calculateCollateralShare(balance * assetRate, collateralTotalBalance)
+
                     return (
                       <TableRow rowHeight={rowHeight} key={assetSymbol + '-' + index}>
                         <TableCell width={columnWidth}>{assetSymbol}</TableCell>

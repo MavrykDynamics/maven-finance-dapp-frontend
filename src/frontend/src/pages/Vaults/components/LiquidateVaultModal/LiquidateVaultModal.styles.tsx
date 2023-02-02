@@ -79,7 +79,7 @@ export const LiquidateVaultModalStyled = styled.div<{ showAsPercentage: boolean;
 
   .table-amount-group {
     display: grid;
-    grid-template-columns: 40px auto;
+    grid-template-columns: 60px auto;
     column-gap: 8px;
   }
 

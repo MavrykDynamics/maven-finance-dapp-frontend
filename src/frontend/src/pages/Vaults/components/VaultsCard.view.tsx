@@ -31,6 +31,7 @@ import { CYAN } from 'app/App.components/TzAddress/TzAddress.constants'
 import { vaultsStatuses } from '../Vaults.consts'
 import { getTimestampByLevel } from 'pages/Governance/Governance.actions'
 import { loansPopupsContext } from 'pages/Loans/Components/Modals/LoansModals.provider'
+import { calculateCollateralShare } from '../calcFunctionsForVaultStatuses'
 
 const findStatusInfo = (status: string) => {
   switch (status) {
@@ -115,6 +116,8 @@ export const VaultsCard = (props: Props) => {
   const statusColor = findStatusInfo(status).color as StatusFlagStyle
   const statusText = findStatusInfo(status).text
   const footerText = findFooterText(status, statusColor, timerTimestamp)
+
+  const collateralTotalBalance = collateralData[collateralData.length - 1]?.balance
 
   const isActiveFooter =
     status === vaultsStatuses.LIQUIDATABLE || status === vaultsStatuses.GRACE_PERIOD || status === vaultsStatuses.MARK
@@ -216,9 +219,14 @@ export const VaultsCard = (props: Props) => {
               </TableHeader>
 
               <TableBody>
-                {collateralData.map(({ assetSymbol, assetIcon, assetRate, collateralShare, balance }, index) => {
+                {collateralData.map(({ assetSymbol, assetIcon, assetRate, balance }, index) => {
                   const columnWidth = '33%'
                   const isTotalRow = collateralData.length - 1 === index
+                  
+                  const collateralShare = isTotalRow 
+                    ? 100
+                    : calculateCollateralShare(balance * assetRate, collateralTotalBalance)
+
                   if (isTotalRow && collateralData.length < 3) return null
 
                   return (
@@ -244,7 +252,7 @@ export const VaultsCard = (props: Props) => {
 
                       <TableCell width={columnWidth}>
                         <div className="cell-content">
-                          <CommaNumber value={balance} className="balance" />
+                          <CommaNumber value={balance} beginningText={isTotalRow ? '$' : ''} className="balance" />
                           {assetRate ? (
                             <CommaNumber value={balance * assetRate} beginningText="~$" className="rate" />
                           ) : null}
