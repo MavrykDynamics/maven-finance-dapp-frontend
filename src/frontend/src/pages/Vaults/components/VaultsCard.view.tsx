@@ -101,18 +101,19 @@ export const VaultsCard = (props: Props) => {
   const {
     ownerId,
     vaultId,
-    status: x,
+    status,
     levelOfEarly,
     levelOfLate,
     collateralData,
     isOwner,
+    liquidationMax,
     handleMarkForLiquidation,
   } = props
 
   const { openLiquidateVaultPopup } = useContext(loansPopupsContext)
   const [expanded, setExpanded] = useState(false)
   const [timerTimestamp, setTimerTimestamp] = useState<number | undefined>(undefined)
-  const status = vaultsStatuses.LIQUIDATABLE // TODO: delete
+
   const statusColor = findStatusInfo(status).color as StatusFlagStyle
   const statusText = findStatusInfo(status).text
   const footerText = findFooterText(status, statusColor, timerTimestamp)
@@ -200,7 +201,7 @@ export const VaultsCard = (props: Props) => {
                 <Icon id="info" className="info-icon" />
               </div>
 
-              <CommaNumber value={400_999_000} beginningText="$" className="value" />
+              <CommaNumber value={liquidationMax} beginningText="$" className="value" />
             </div>
           </div>
         </div>

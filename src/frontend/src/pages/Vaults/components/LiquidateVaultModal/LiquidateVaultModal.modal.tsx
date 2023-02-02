@@ -63,13 +63,17 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
   const [inputAmount, setInputAmount] = useState('0')
   const amount = Number(inputAmount)
 
-  const liquidationMaxUsd = liquidationMax * assetRate
+  const liquidationMaxTokens = liquidationMax / assetRate
   const liquidationRewardPercentage = liquidationReward * 100
-  const maxProfit = liquidationMaxUsd * liquidationReward
+  const maxProfit = liquidationMax * liquidationReward
 
-  const useMaxBalance = showAsPercentage ? 100 : userBalance >= liquidationMax ? liquidationMax : userBalance
+  const useMaxBalance = showAsPercentage
+    ? 100
+    : userBalance >= liquidationMaxTokens
+    ? liquidationMaxTokens
+    : userBalance
 
-  const costToLiquidatePercentage = (liquidationMaxUsd / 100) * amount
+  const costToLiquidatePercentage = (liquidationMax / 100) * amount
   const costToLiquidateAsset = amount * assetRate
 
   const costToLiquidate = showAsPercentage ? costToLiquidatePercentage : costToLiquidateAsset
@@ -108,7 +112,7 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
     balance: userBalance,
     balanceAsset: vaultAsset,
     useMaxHandler: () => setInputAmount(String(useMaxBalance)),
-    inputStatus: handleInputStatus(costToLiquidate, liquidationMaxUsd),
+    inputStatus: handleInputStatus(costToLiquidate, liquidationMax),
     convertedValue: costToLiquidate,
   }
 
@@ -132,7 +136,7 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
                 <Icon id="info" className="info-icon" />
               </div>
               <CommaNumber
-                value={liquidationMaxUsd}
+                value={liquidationMax}
                 decimalsToShow={2}
                 showDecimal
                 beginningText="$"

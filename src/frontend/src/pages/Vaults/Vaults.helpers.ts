@@ -185,7 +185,7 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
       const liquidationMax = calculateVaultMaxLiquidationAmount(
         item.loan_outstanding_total,
         lendingController.max_vault_liquidation_pct,
-      )
+      ) / 10 ** vaultAsset.decimals * vaultAsset.rate
       const liquidationReward = lendingController.liquidation_fee_pct / 10 ** lendingController.decimals
       const adminLiquidateFee = lendingController.admin_liquidation_fee_pct
 
