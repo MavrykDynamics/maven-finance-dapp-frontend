@@ -45,6 +45,7 @@ type BorrowingExpandCardPropsType = BorrowingData & {
   children?: React.ReactNode
   status?: string
   options?: BorrowingCardOptions
+  isOpenedVault?: boolean
 }
 
 export const BorrowingExpandCard = ({
@@ -64,6 +65,7 @@ export const BorrowingExpandCard = ({
   options,
   levelOfEarly,
   levelOfLate,
+  isOpenedVault,
 }: BorrowingExpandCardPropsType) => {
   const { reverseColumns, customTableColumn } = options ?? {}
 
@@ -132,6 +134,7 @@ export const BorrowingExpandCard = ({
     <>
       <Expand
         getExpandedStatus={getExpandedStatus}
+        isExpandedByDefault={isOpenedVault}
         className={className || 'expand-borrow-tab'}
         sufix={headerSufix}
         header={

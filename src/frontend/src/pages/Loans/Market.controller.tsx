@@ -33,14 +33,14 @@ import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 export const Market = () => {
   const dispatch = useDispatch()
   const { assetId, tabId } = useParams<{ assetId: string; tabId: string }>()
-  const { loanTokens, loansControllerAddress, isFetched } = useSelector((state: State) => state.loans)
+  const { loanTokens, loansControllerAddress, isDataLoaded } = useSelector((state: State) => state.loans)
   const { accountPkh } = useSelector((state: State) => state.wallet)
 
   const { isLoading } = useDataLoader(async () => {
     try {
-      // if (!isFetched) {
-      await dispatch(getLoansStorage())
-      // }
+      if (!isDataLoaded) {
+        await dispatch(getLoansStorage())
+      }
     } catch (e) {}
   }, [accountPkh])
 
@@ -54,7 +54,7 @@ export const Market = () => {
     return [loanTokens[currentAssetIdx - 1], loanTokens[currentAssetIdx + 1], loanTokens[currentAssetIdx]]
   }, [assetId, loanTokens])
 
-  if (isLoading) {
+  if (isLoading || !isDataLoaded) {
     return (
       <Page>
         <PageHeader page={'lending'} />
@@ -105,7 +105,7 @@ export const Market = () => {
       <Link to={`/loans/${assetId}/${BORROW_TAB_ID}`}>
         <Button text={'My Borrowing'} kind={ACTION_SIMPLE} className={`${tabId === BORROW_TAB_ID ? 'active' : ''}`} />
       </Link>
-      {currentToken.permissionedBorrowingList.length ? (
+      {currentToken?.permissionedBorrowingList.length ? (
         <Link to={`/loans/${assetId}/${PERMISSIONS_VAULTS_TAB_ID}`}>
           <Button
             text={'Permissioned Vaults'}
@@ -127,9 +127,9 @@ export const Market = () => {
         <MarketStyled>
           <div className="gen-info">
             <div className="asset-info">
-              {currentToken.loanTokenData.icon ? (
+              {currentToken?.loanTokenData.icon ? (
                 <div className="img-wrapper">
-                  <img src={currentToken.loanTokenData.icon} alt={`${currentToken.loanTokenData.icon} icon`} />
+                  <img src={currentToken?.loanTokenData.icon} alt={`${currentToken?.loanTokenData.icon} icon`} />
                 </div>
               ) : (
                 <div className="no-icon">

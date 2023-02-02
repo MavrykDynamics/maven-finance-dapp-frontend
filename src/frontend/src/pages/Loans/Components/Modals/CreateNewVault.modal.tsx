@@ -67,7 +67,7 @@ export const CreateNewVault = ({
   show: boolean
   data: CreateVaultPopupDataType
 }) => {
-  const { currentMarketAsset } = data ?? {}
+  const { currentMarketAsset, setCreatedVaultAddress } = data ?? {}
   const dispatch = useDispatch()
   const { xtzBakers } = useSelector((state: State) => state.loans)
   const { avaliableCollaterals } = useSelector((state: State) => state.tokens)
@@ -299,6 +299,7 @@ export const CreateNewVault = ({
       try {
         setVaultCreating(true)
         const newVaultData = await dispatch(triggerInitialVaultCreation(currentMarketAsset))
+        setCreatedVaultAddress?.(String(newVaultData))
         setNewVaultAddress(String(newVaultData))
       } catch (e) {
         setShownScreen(INITIAL_SCREEN_ID)

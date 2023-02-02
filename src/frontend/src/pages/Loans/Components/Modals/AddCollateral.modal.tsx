@@ -45,7 +45,7 @@ export const AddCollateral = ({
   const { avaliableCollaterals } = useSelector((state: State) => state.tokens)
 
   const collateralData = useMemo(
-    () => avaliableCollaterals.find(({ assetSymbol }) => selectedAsset?.assetSymbol === assetSymbol),
+    () => avaliableCollaterals.find(({ originalName }) => selectedAsset?.assetSymbol?.toLowerCase() === originalName),
     [avaliableCollaterals, selectedAsset],
   )
 

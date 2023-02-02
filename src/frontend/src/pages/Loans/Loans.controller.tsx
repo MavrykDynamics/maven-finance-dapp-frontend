@@ -33,11 +33,11 @@ import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 export const Loans = () => {
   const dispatch = useDispatch()
   const { accountPkh } = useSelector((state: State) => state.wallet)
-  const { isFetched } = useSelector((state: State) => state.loans)
+  const { isDataLoaded } = useSelector((state: State) => state.loans)
 
   const { isLoading } = useDataLoader(async () => {
     try {
-      if (!isFetched) {
+      if (!isDataLoaded) {
         await dispatch(getLoansStorage())
       }
     } catch (e) {}
