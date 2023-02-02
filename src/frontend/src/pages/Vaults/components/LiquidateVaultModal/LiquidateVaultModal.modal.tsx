@@ -58,6 +58,7 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
   const { assetSymbol = '', assetIcon = '', assetRate = 0, userBalance = 0 } = borrowedAsset ?? {}
   const [showAsPercentage, setShowAsPercentage] = useState(true)
   const collateralTotalBalance = collateralData[collateralData.length - 1]?.balance
+  const vaultAsset = assetSymbol === 'tez' ? 'XTZ' : assetSymbol?.toUpperCase()
 
   const [inputAmount, setInputAmount] = useState('0')
   const amount = Number(inputAmount)
@@ -105,7 +106,7 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
 
   const inputSettings = {
     balance: userBalance,
-    balanceAsset: assetSymbol,
+    balanceAsset: vaultAsset,
     useMaxHandler: () => setInputAmount(String(useMaxBalance)),
     inputStatus: handleInputStatus(costToLiquidate, liquidationMaxUsd),
     convertedValue: costToLiquidate,
@@ -113,7 +114,7 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
 
   return (
     <PopupContainer onClick={closePopup} show={show}>
-      <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="loans">
+      <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="vaults">
         <LiquidateVaultModalStyled showAsPercentage={showAsPercentage}>
           <button onClick={closePopup} className="close-modal" />
           <h1>Liquidate Vault</h1>
@@ -176,7 +177,7 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
 
           <Toggle
             className="toggle"
-            prefix={assetSymbol}
+            prefix={vaultAsset}
             sufix={'Percent'}
             checked={showAsPercentage}
             onChange={handleToggle}
