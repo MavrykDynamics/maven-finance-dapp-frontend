@@ -8,7 +8,6 @@ import { Chart } from 'app/App.components/Chart/Chart.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import Icon from 'app/App.components/Icon/Icon.view'
 
-import { getLoansStorage } from './Loans.actions'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { BORROW_TAB_ID, LEND_TAB_ID } from './Loans.const'
 
@@ -29,6 +28,8 @@ import { EmptyContainer } from 'app/App.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import { getLoansStorage } from './Actions/getLoansData.actions'
+import { getAssetDisplayName } from './Loans.helpers'
 
 export const Loans = () => {
   const dispatch = useDispatch()
@@ -122,7 +123,7 @@ export const Loans = () => {
             </GovRightContainerTitleArea>
             {loanTokens.map((loanAsset) => {
               const {
-                loanTokenData: { name, symbol, icon, rate, originalName },
+                loanTokenData: { name, symbol, icon, rate, gqlName },
                 utilisationRate,
                 availableLiquidity,
                 borrowers,
@@ -147,7 +148,7 @@ export const Loans = () => {
                     ) : (
                       <Icon id={'noImage'} />
                     )}
-                    <div className="name">{originalName === 'tez' ? 'XTZ' : originalName.toUpperCase()}</div>
+                    <div className="name">{getAssetDisplayName(gqlName)}</div>
                     {rate ? (
                       <div className="rate">
                         <CommaNumber beginningText="$" value={rate} decimalsToShow={4} showDecimal />

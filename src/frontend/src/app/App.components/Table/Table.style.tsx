@@ -98,7 +98,7 @@ export const Table = styled.table<{ theme: MavrykTheme }>`
   border-collapse: collapse;
 
   &.borrowing-table {
-    margin-top: 15px;
+    margin-top: 5px;
     margin-bottom: 10px;
 
     &.show-before {

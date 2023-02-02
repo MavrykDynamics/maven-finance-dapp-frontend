@@ -29,6 +29,7 @@ query GetAllVaultsStorage {
       }
       last_updated_block_level
       owner_id
+      id
       marked_for_liquidation_level
       loan_outstanding_total
       loan_decimals
@@ -38,6 +39,7 @@ query GetAllVaultsStorage {
         lp_token_address
         loan_token_name
         loan_token_address
+        loan_token_contract_standard
         oracle_id
       }
     }
@@ -56,6 +58,6 @@ export const ORACLE_AGGREGATOR_LATEST_PRICE_QUERY = `
   }
 `
 export const ORACLE_AGGREGATOR_LATEST_PRICE_QUERY_NAME = 'GetOracleAggregatorLatestPrice'
-export function ORACLE_AGGREGATOR_LATEST_PRICE_QUERY_VARIABLE (_eq: string) {
+export function ORACLE_AGGREGATOR_LATEST_PRICE_QUERY_VARIABLE(_eq: string) {
   return { _eq }
 }

@@ -35,8 +35,8 @@ type Props = {
 export const VaultsSearchFilter = ({ assets, vaultsMapper, allVaultsIds, setVaultsIds }: Props) => {
   const [searchInputValue, setSearchInput] = useState('')
 
-  const [dropdownStatus, setDropdownStatus] = useState<{[key:string]: boolean}>({})
-  const [chosenDdItem, setChosenDdItem] = useState<{[key:string]: string}>({})
+  const [dropdownStatus, setDropdownStatus] = useState<{ [key: string]: boolean }>({})
+  const [chosenDdItem, setChosenDdItem] = useState<{ [key: string]: string }>({})
 
   const [filteredData, setFilteredData] = useState<string[]>([])
   const [searchedData, setSearchedData] = useState<string[]>([])
@@ -52,18 +52,18 @@ export const VaultsSearchFilter = ({ assets, vaultsMapper, allVaultsIds, setVaul
       filteredVaultsIds = data.filter((vaultId) => {
         const vault = vaultsMapper[vaultId]
 
-        const isFoundCollateralAsset = vault.collateralData.some(({ assetSymbol }) => {
-          return assetSymbol?.toLowerCase().includes(searchQuery)
+        const isFoundCollateralAsset = vault.collateralData.some(({ symbol }) => {
+          return symbol?.toLowerCase().includes(searchQuery)
         })
 
         if (
           vault.address.toLowerCase().includes(searchQuery) ||
-          vault.borrowedAsset.assetSymbol?.toLowerCase().includes(searchQuery) || 
+          vault.borrowedAsset.symbol?.toLowerCase().includes(searchQuery) ||
           isFoundCollateralAsset
         ) {
           return true
         }
-        
+
         return false
       })
     } else {
@@ -78,12 +78,12 @@ export const VaultsSearchFilter = ({ assets, vaultsMapper, allVaultsIds, setVaul
   const handleDropdownSelect = (name: string) => (selectedOption: string) => {
     setDropdownStatus((prev) => ({
       ...prev,
-      [name]: !prev[name]
+      [name]: !prev[name],
     }))
 
     const updatedChosenDdItem = {
       ...chosenDdItem,
-      [name]: selectedOption
+      [name]: selectedOption,
     }
 
     setChosenDdItem(updatedChosenDdItem)
@@ -97,7 +97,7 @@ export const VaultsSearchFilter = ({ assets, vaultsMapper, allVaultsIds, setVaul
         filteredVaultsIds = sortByVaultCategory({
           vaultsIds: data,
           vaultsMapper,
-          status: updatedChosenDdItem[dropdowns.SORT]
+          status: updatedChosenDdItem[dropdowns.SORT],
         })
       }
 
@@ -108,20 +108,19 @@ export const VaultsSearchFilter = ({ assets, vaultsMapper, allVaultsIds, setVaul
       // sort by: collateral value | borrowed amount | date
       if (sortIsCollateralValue || sortIsBorrowedAmount || sortIsMostRecent) {
         filteredVaultsIds = data.sort((a, b) => {
-
           // by collateral value
           if (sortIsCollateralValue) {
-            const vaultA = vaultsMapper[a].borrowedAsset.collateralBalance
-            const vaultB = vaultsMapper[b].borrowedAsset.collateralBalance
-  
+            const vaultA = vaultsMapper[a].collateralBalance
+            const vaultB = vaultsMapper[b].collateralBalance
+
             return vaultB - vaultA
-          // by borrowed amount
+            // by borrowed amount
           } else if (sortIsBorrowedAmount) {
-            const vaultA = vaultsMapper[a].borrowedAsset.amtBorrowed
-            const vaultB = vaultsMapper[b].borrowedAsset.amtBorrowed
-  
+            const vaultA = vaultsMapper[a].borrowedAmount
+            const vaultB = vaultsMapper[b].borrowedAmount
+
             return vaultB - vaultA
-          // by date
+            // by date
           } else if (sortIsMostRecent) {
             const vaultA = vaultsMapper[a].creationTimestamp
             const vaultB = vaultsMapper[b].creationTimestamp
@@ -129,10 +128,10 @@ export const VaultsSearchFilter = ({ assets, vaultsMapper, allVaultsIds, setVaul
             if (!vaultA || !vaultB) {
               return 0
             }
-  
+
             return new Date(vaultB).getTime() - new Date(vaultA).getTime()
           }
-          
+
           return 0
         })
       }
@@ -141,15 +140,15 @@ export const VaultsSearchFilter = ({ assets, vaultsMapper, allVaultsIds, setVaul
       if (updatedChosenDdItem[dropdowns.COLLATERAL]) {
         filteredVaultsIds = filteredVaultsIds.filter((vaultId) => {
           const vault = vaultsMapper[vaultId]
-  
+
           if (vault.collateralData.length) {
-            const isFound = vault.collateralData.some(({ assetSymbol }) => {
-              return assetSymbol?.toLowerCase() === updatedChosenDdItem[dropdowns.COLLATERAL].toLowerCase()
+            const isFound = vault.collateralData.some(({ symbol }) => {
+              return symbol?.toLowerCase() === updatedChosenDdItem[dropdowns.COLLATERAL].toLowerCase()
             })
-  
+
             return isFound
           }
-  
+
           return false
         })
       }
@@ -159,16 +158,17 @@ export const VaultsSearchFilter = ({ assets, vaultsMapper, allVaultsIds, setVaul
         filteredVaultsIds = filteredVaultsIds.filter((vaultId) => {
           const vault = vaultsMapper[vaultId]
 
-          if (vault.borrowedAsset.assetSymbol) {
-            const isFound = vault.borrowedAsset.assetSymbol?.toLowerCase() === updatedChosenDdItem[dropdowns.LOAN].toLowerCase()
-  
+          if (vault.borrowedAsset.symbol) {
+            const isFound =
+              vault.borrowedAsset.symbol?.toLowerCase() === updatedChosenDdItem[dropdowns.LOAN].toLowerCase()
+
             return isFound
           }
-  
+
           return false
         })
       }
-  
+
       setFilteredData(filteredVaultsIds)
       setVaultsIds(filteredVaultsIds)
     }
@@ -177,19 +177,13 @@ export const VaultsSearchFilter = ({ assets, vaultsMapper, allVaultsIds, setVaul
   const handleDropdownStatus = (name: string) => (status: boolean) => {
     setDropdownStatus((prev) => ({
       ...prev,
-      [name]: status
+      [name]: status,
     }))
   }
 
   return (
     <VaultsSearchFilterStyled>
-      <Input
-        type="text"
-        kind={'search'}
-        placeholder="Search by..."
-        onChange={handleSearch}
-        value={searchInputValue}
-      />
+      <Input type="text" kind={'search'} placeholder="Search by..." onChange={handleSearch} value={searchInputValue} />
 
       <DropdownContainer className="dd-container">
         <h4>Order by:</h4>

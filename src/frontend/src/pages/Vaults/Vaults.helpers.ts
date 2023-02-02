@@ -1,5 +1,5 @@
 import dayjs from 'dayjs'
-import { VaultType, CollateralType, LendingControllerGQL } from 'utils/TypesAndInterfaces/Vaults'
+import { VaultType, LendingControllerGQL } from 'utils/TypesAndInterfaces/Vaults'
 import { Aggregator } from 'utils/generated/graphqlTypes'
 import { State } from 'reducers'
 import {
@@ -17,6 +17,7 @@ import { calcCollateralRatio, calculateCompoundedInterest, getAssetMetadata } fr
 import { calcWithoutDecimals } from 'utils/calcFunctions'
 import { BLOCKS_PER_MINUTE } from 'utils/constants'
 import { getUserBalanceForLoanAsset } from 'pages/Loans/LoansFethcers'
+import { CollateralType, LoanTokenType } from 'utils/TypesAndInterfaces/Loans'
 
 type VaultsStorageProps = {
   lendingController: LendingControllerGQL
@@ -66,18 +67,22 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
 
           if (!collateralAsset) return acc
 
-          const collateralBalance = (collateral.balance / 10 ** collateralAsset.decimals)
+          const collateralBalance = collateral.balance / 10 ** collateralAsset.decimals
 
           acc.normalizedCollaterals.push({
-            assetSymbol: collateralAsset.symbol,
-            assetIcon: collateralAsset.icon,
-            balance: collateralBalance,
-            assetRate: collateralAsset.rate,
-            maxWithdraw: 0,
+            symbol: collateralAsset.symbol,
+            name: collateralAsset.name,
+            gqlName: collateralAsset.originalName,
+            icon: collateralAsset.icon,
+            id: collateralAsset.id,
+            decimals: collateralAsset.decimals,
+            amount: collateralBalance,
+            rate: collateralAsset.rate,
             collateralShare: 0,
+            maxWithdraw: 0,
           })
 
-          acc.totalRow.balance += collateralBalance
+          acc.totalRow.amount += collateralBalance
           // TODO: add a valid result in the field below
           acc.totalRow.maxWithdraw += 0
 
@@ -86,10 +91,15 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
         {
           normalizedCollaterals: [],
           totalRow: {
-            assetSymbol: 'total',
-            balance: 0,
-            assetRate: 0,
+            symbol: 'total',
+            amount: 0,
+            rate: 0,
             maxWithdraw: 0,
+            name: '',
+            gqlName: '',
+            icon: '',
+            id: 0,
+            decimals: 0,
             collateralShare: 100,
           },
         },
@@ -177,32 +187,28 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
 
       const borrowedAmount = item.loan_outstanding_total / 10 ** vaultAsset.decimals
 
-      const collateralUtilization = calcCollateralRatio(
-        vaultCollateral.totalRow.balance,
-        borrowedAmount,
-        vaultAsset.rate,
-      )
+      const collateralRatio = calcCollateralRatio(vaultCollateral.totalRow.amount, borrowedAmount, vaultAsset.rate)
 
       const normallizedVault = {
         borrowedAsset: {
-          assetSymbol: vaultAsset.symbol,
-          assetName: vaultAsset.name,
-          assetIcon: vaultAsset.icon,
-          amtBorrowed: borrowedAmount,
-          assetRate: vaultAsset.rate,
+          symbol: vaultAsset.symbol,
+          name: vaultAsset.name,
+          icon: vaultAsset.icon,
+          decimals: vaultAsset.decimals,
+          gqlName: vaultAsset.originalName,
+          tokenType: item.loan_token.loan_token_contract_standard as LoanTokenType,
+          id: vaultAsset.id,
           userBalance,
-          collateralBalance: vaultCollateral.totalRow.balance,
-          collateralUtilization,
-          apr: currentInterestRate * 100,
-          fee,
+          rate: vaultAsset.rate,
         },
-
+        collateralBalance: vaultCollateral.totalRow.amount,
+        collateralRatio,
+        apr: currentInterestRate * 100,
+        fee,
         collateralData: vaultCollateral.normalizedCollaterals.concat(
           vaultCollateral.normalizedCollaterals.length > 1 ? [vaultCollateral.totalRow] : [],
         ),
-        xtzDelegatedTo: vaultXtzDelegatedTo?.delegate?.address ?? null,
-        operators: [],
-        sMVKDelegatedTo: '',
+        borrowedAmount,
         address: item.vault?.address,
         ownerId: item.owner_id || '',
         vaultId: item.internal_id,
@@ -210,6 +216,10 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
         status,
         levelOfEarly,
         levelOfLate,
+
+        xtzDelegatedTo: vaultXtzDelegatedTo?.delegate?.address ?? null,
+        operators: [],
+        sMVKDelegatedTo: '',
         depositors: item.vault?.depositors.map(({ depositor_id }) => depositor_id) as Array<string> | undefined,
       }
 
@@ -323,9 +333,11 @@ export const getOracleLatestPrices = async (vaults: Lending_Controller_Vault[]) 
   })
 
   const arrayUniqueOracleAddresses = [...uniqueOracleAddresses]
-  // TODO: remove testOracleId and use item 
+  // TODO: remove testOracleId and use item
   const testOracleId = 'KT1JgBX8LRJ7AmVhTk64niDZxfXH8UBXyiDv'
-  const prices = await Promise.all(arrayUniqueOracleAddresses.map((item) => getOracleAggregatorLatestPrice(testOracleId)))
+  const prices = await Promise.all(
+    arrayUniqueOracleAddresses.map((item) => getOracleAggregatorLatestPrice(testOracleId)),
+  )
 
   const result: Record<string, number> = {}
 
@@ -345,16 +357,16 @@ export const getVaultAssets = (vaultsMapper: Record<string, VaultType>) => {
   const loanAssets = new Set<string>()
 
   list.map(({ borrowedAsset, collateralData }) => {
-    const { assetSymbol = '' } = borrowedAsset
+    const { symbol = '' } = borrowedAsset
 
-    if (assetSymbol) {
-      loanAssets.add(assetSymbol)
+    if (symbol) {
+      loanAssets.add(symbol)
     }
 
     if (collateralData.length) {
-      collateralData.map(({ assetSymbol }) => {
-        if (assetSymbol) {
-          collateralAssets.add(assetSymbol)
+      collateralData.map(({ symbol }) => {
+        if (symbol) {
+          collateralAssets.add(symbol)
         }
       })
     }
@@ -389,57 +401,60 @@ type VaultAssetBalances = {
   globalVaultTVL: number
   collateralRatio: number
   avgCollateralRatio: number
-  assets: Record<string, { 
-    balance: number
-    usdValue: number
-    rate: number
-    decimals: number
-    name: string
-    symbol: string
-  }>
+  assets: Record<
+    string,
+    {
+      balance: number
+      usdValue: number
+      rate: number
+      decimals: number
+      name: string
+      symbol: string
+    }
+  >
 }
 
-export const reduceVaultsAssets = (
-  vaultIds: string[],
-  vaultsMapper: Record<string, VaultType>,
-) => {
+export const reduceVaultsAssets = (vaultIds: string[], vaultsMapper: Record<string, VaultType>) => {
   let notEmptyCollateral = 0
 
-  const { assets, globalVaultTVL, collateralRatio } = vaultIds.reduce<VaultAssetBalances>((acc, vaultId) => {
-    const { assets } = acc
-    const { collateralData, borrowedAsset } = vaultsMapper[vaultId]
+  const { assets, globalVaultTVL, collateralRatio } = vaultIds.reduce<VaultAssetBalances>(
+    (acc, vaultId) => {
+      const { assets } = acc
+      const { collateralData, collateralRatio } = vaultsMapper[vaultId]
 
-    if (collateralData.length !== 0) {
-      notEmptyCollateral++
-      acc.collateralRatio += borrowedAsset.collateralUtilization
+      if (collateralData.length !== 0) {
+        notEmptyCollateral++
+        acc.collateralRatio += collateralRatio
 
-      collateralData.slice(0, -1).forEach((collateral) => {
-        acc.globalVaultTVL += collateral.balance * collateral.assetRate
+        collateralData.slice(0, -1).forEach((collateral) => {
+          acc.globalVaultTVL += collateral.amount * collateral.rate
 
-        if (collateral.assetSymbol && assets[collateral.assetSymbol]) {
-          assets[collateral.assetSymbol].balance += collateral.balance
-          assets[collateral.assetSymbol].usdValue += collateral.balance * collateral.assetRate
-        } else if (collateral.assetSymbol) {
-          assets[collateral.assetSymbol] = {
-            balance: collateral.balance,
-            usdValue: collateral.balance * collateral.assetRate,
-            rate: collateral.assetRate,
-            name: collateral.assetSymbol,
-            symbol: collateral.assetSymbol,
-            decimals: 0
+          if (collateral.symbol && assets[collateral.symbol]) {
+            assets[collateral.symbol].balance += collateral.amount
+            assets[collateral.symbol].usdValue += collateral.amount * collateral.rate
+          } else if (collateral.symbol) {
+            assets[collateral.symbol] = {
+              balance: collateral.amount,
+              usdValue: collateral.amount * collateral.rate,
+              rate: collateral.rate,
+              name: collateral.symbol,
+              symbol: collateral.symbol,
+              decimals: 0,
+            }
           }
-        }
-      })
-    }
+        })
+      }
 
-    return acc
-  }, {
-    assets: {},
-    globalVaultTVL: 0,
-    collateralRatio: 0,
-    avgCollateralRatio: 0,
-  })
-  
+      return acc
+    },
+    {
+      assets: {},
+      globalVaultTVL: 0,
+      collateralRatio: 0,
+      avgCollateralRatio: 0,
+    },
+  )
+
   return {
     assetsBalances: Object.values(assets),
     globalVaultTVL,

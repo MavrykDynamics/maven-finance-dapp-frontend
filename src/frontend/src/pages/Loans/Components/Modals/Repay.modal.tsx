@@ -2,13 +2,13 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useLockBodyScroll } from 'react-use'
 import { useEffect, useState } from 'react'
 
-import { getAssetName } from 'pages/Loans/Loans.helpers'
 import { COLLATERAL_RATIO_GRADIENT } from 'pages/Loans/Loans.const'
 import { INPUT_STATUS_SUCCESS, INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
-import { repayPartOfVaultAction } from 'pages/Loans/Loans.actions'
 import { DEFAULT_LOANS_INPUT_VALUE, getOnBlurValue, getOnFocusValue, RepayPartPopupDataType } from './Modals.helpers'
 import { State } from 'reducers'
 import { ACTION_PRIMARY, TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
+import { repayPartOfVaultAction } from 'pages/Loans/Actions/vault.actions'
+import { getAssetDisplayName } from 'pages/Loans/Loans.helpers'
 
 import NewButton from 'app/App.components/Button/NewButton.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
@@ -38,15 +38,16 @@ export const Repay = ({
     feesAmount = 0,
     currentCollateralBalance = 0,
     currentAvaliableToBorrow = 0,
+    borrowedAmount,
   } = data ?? {}
 
-  const totalOutstanding = feesAmount + Number(borrowedAsset?.amtBorrowed)
+  const totalOutstanding = feesAmount + Number(borrowedAmount)
 
   useLockBodyScroll(show)
   const dispatch = useDispatch()
   const { isActionLoading } = useSelector((state: State) => state.loading)
 
-  const assetName = getAssetName(borrowedAsset?.assetName ?? '')
+  const assetToDisplayName = getAssetDisplayName(borrowedAsset?.gqlName)
 
   const [screenShown, setShownScreen] = useState<'initial' | 'confitmation'>('initial')
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
@@ -110,27 +111,23 @@ export const Repay = ({
               <div className="lending-stats" style={{ marginBottom: '25px' }}>
                 <ThreeLevelListItem>
                   <div className="name">Borrowed</div>
-                  <CommaNumber value={Number(borrowedAsset?.amtBorrowed)} className="value" endingText={assetName} />
+                  <CommaNumber value={Number(borrowedAmount)} className="value" endingText={assetToDisplayName} />
                   <CommaNumber
-                    value={Number(borrowedAsset?.amtBorrowed) * Number(borrowedAsset?.assetRate)}
+                    value={Number(borrowedAmount) * Number(borrowedAsset?.rate)}
                     className="rate"
                     beginningText="$"
                   />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">Fees Due</div>
-                  <CommaNumber value={feesAmount} className="value" endingText={assetName} />
-                  <CommaNumber
-                    value={feesAmount * Number(borrowedAsset?.assetRate)}
-                    className="rate"
-                    beginningText="$"
-                  />
+                  <CommaNumber value={feesAmount} className="value" endingText={assetToDisplayName} />
+                  <CommaNumber value={feesAmount * Number(borrowedAsset?.rate)} className="rate" beginningText="$" />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem className="left-divider">
                   <div className="name">Total Outstanding</div>
-                  <CommaNumber value={totalOutstanding} className="value" endingText={assetName} />
+                  <CommaNumber value={totalOutstanding} className="value" endingText={assetToDisplayName} />
                   <CommaNumber
-                    value={totalOutstanding * Number(borrowedAsset?.assetRate)}
+                    value={totalOutstanding * Number(borrowedAsset?.rate)}
                     className="rate"
                     beginningText="$"
                   />
@@ -141,7 +138,7 @@ export const Repay = ({
               {borrowedAsset ? (
                 <Input
                   className={`${
-                    borrowedAsset.assetRate ? 'input-with-rate' : ''
+                    borrowedAsset.rate ? 'input-with-rate' : ''
                   } large-input pinned-dropdown withdrawCollateralInput`}
                   inputProps={{
                     value: inputData.amount,
@@ -153,25 +150,25 @@ export const Repay = ({
                   }}
                   settings={{
                     balance: borrowedAsset.userBalance,
-                    balanceAsset: assetName,
+                    balanceAsset: assetToDisplayName,
                     useMaxHandler: () =>
                       inputOnChangeHandle(
                         String(Math.min(borrowedAsset.userBalance, totalOutstanding)),
                         Math.min(borrowedAsset.userBalance, totalOutstanding),
                       ),
                     inputStatus: inputData.validationStatus,
-                    convertedValue: Number(inputData.amount) * borrowedAsset.assetRate,
+                    convertedValue: Number(inputData.amount) * borrowedAsset.rate,
                   }}
                 >
                   <InputPinnedTokenInfo>
-                    {borrowedAsset.assetIcon ? (
+                    {borrowedAsset.icon ? (
                       <div className="image-wrapper">
-                        <img src={borrowedAsset.assetIcon} alt={borrowedAsset.assetName + '-logo'} />
+                        <img src={borrowedAsset.icon} alt={assetToDisplayName + '-logo'} />
                       </div>
                     ) : (
                       <Icon id="noImage" />
                     )}{' '}
-                    {assetName}
+                    {assetToDisplayName}
                   </InputPinnedTokenInfo>
                 </Input>
               ) : null}
@@ -196,7 +193,7 @@ export const Repay = ({
               <div className="lending-stats" style={{ marginBottom: '25px' }}>
                 <ThreeLevelListItem>
                   <div className="name">Asset</div>
-                  <div className="value">{assetName}</div>
+                  <div className="value">{assetToDisplayName}</div>
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">Amount</div>
@@ -205,7 +202,7 @@ export const Repay = ({
                 <ThreeLevelListItem className="right">
                   <div className="name">USD Value</div>
                   <CommaNumber
-                    value={Number(inputData.amount) * Number(borrowedAsset?.assetRate)}
+                    value={Number(inputData.amount) * Number(borrowedAsset?.rate)}
                     className="value"
                     beginningText="$"
                   />

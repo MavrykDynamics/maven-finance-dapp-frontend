@@ -11,8 +11,8 @@ import { getGovernanceStorage } from 'pages/Governance/Governance.actions'
 import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
 import { getVaultsStorage } from 'pages/Vaults/Vaults.actions'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
-import { getLoansStorage } from 'pages/Loans/Loans.actions'
 import { getFarmStorage } from 'pages/Farms/Farms.actions'
+import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 
 export const Dashboard = () => {
   const dispatch = useDispatch()
@@ -25,6 +25,7 @@ export const Dashboard = () => {
   const { totalStakedMvk = 0 } = useSelector((state: State) => state.doorman)
   const { treasuryStorage } = useSelector((state: State) => state.treasury)
   const { farmStorage } = useSelector((state: State) => state.farm)
+  const { isDataLoaded: isLoansLoaded } = useSelector((state: State) => state.loans)
   const {
     chartsData: { totalBorrowed, totalLended },
   } = useSelector((state: State) => state.loans)
@@ -66,13 +67,15 @@ export const Dashboard = () => {
 
   const { isLoading: isTreasuryLoading } = useDataLoader(async () => {
     try {
-      await Promise.all([dispatch(getVestingStorage()), dispatch(fillTreasuryStorage())]) 
+      await Promise.all([dispatch(getVestingStorage()), dispatch(fillTreasuryStorage())])
     } catch (e) {}
   }, [])
 
   const { isLoading: isLendingLoading } = useDataLoader(async () => {
     try {
-      await dispatch(getLoansStorage())
+      if (!isLoansLoaded) {
+        await dispatch(getLoansStorage())
+      }
     } catch (e) {}
   }, [])
 

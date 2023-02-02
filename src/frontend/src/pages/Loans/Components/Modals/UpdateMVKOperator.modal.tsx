@@ -7,7 +7,6 @@ import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { validateTzAddress } from 'utils/validatorFunctions'
 import { LoansPopupsAddressInputStateType, UpdateOperatorsPopupDataType } from './Modals.helpers'
 import { State } from 'reducers'
-import { updateOperatorsAction } from 'pages/Loans/Loans.actions'
 
 import Icon from 'app/App.components/Icon/Icon.view'
 import NewButton from 'app/App.components/Button/NewButton.controller'
@@ -18,6 +17,7 @@ import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { AddRowBtn, RemoveRowBtn, Table, TableBody, TableCell, TableRow } from 'app/App.components/Table/Table.style'
 import { LoansModalBase } from './Modals.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
+import { updateOperatorsAction } from 'pages/Loans/Actions/vaultPermissions.actions'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17307%3A226700&t=Sx2aEpp3ifrGxBtQ-0
 export const UpdateMVKOperator = ({

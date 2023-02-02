@@ -5,46 +5,27 @@ import { Lending_Controller } from 'utils/generated/graphqlTypes'
 export type LoansGQL = Omit<Lending_Controller, '__typename'>
 export type LoansStorage = Awaited<ReturnType<typeof normalizeLoans>>
 
-export type LoanTokenType = {
-  loanTokenData: {
-    name: string
-    originalName: string
-    symbol?: string
-    decimals: number
-    icon?: string
-    address: string
-    rate: number
-    tokenType: 'tez' | 'fa12' | 'fa2'
-    id: number
-    userBalance: number
-  }
-  transactionHistory: Array<{
-    descr: string | null
-    amount: number
-    date: string | null
-    userAddress: string
-    operationHash: string
-    tokenSymbol: string | undefined
-  }>
-  lendingItem: LendingItemType
-  myBorrowingList: Array<BorrowingData>
-  permissionedBorrowingList: Array<BorrowingData>
-  utilisationRate: number
-  borrowers: number
-  suppliers: number
-  loanTokenTotalCollaterals: number
-  loanTokenVaultsTotalBorrowed: number
-  totalBorrowed: number
-  availableLiquidity: number
-  totalLended: number
-  borrowAPR: number
-  totalFeesEarned: number
-  lendingAPY: number
-  collateralFactor: number
-  reserveFactor: number
-  reserveAmount: number
-  lending24hVolume: number
-  borrowing24hVolume: number
+export type LoanTokenType = 'tez' | 'fa12' | 'fa2'
+
+export type BaseLoansAssetDataType = {
+  gqlName: string
+  name: string
+  rate: number
+  decimals: number
+  id: number
+  symbol: string
+  icon: string
+}
+
+export type LoansAssetDataType = BaseLoansAssetDataType & {
+  userBalance: number
+  tokenType: LoanTokenType
+}
+
+export type CollateralType = BaseLoansAssetDataType & {
+  amount: number
+  maxWithdraw: number
+  collateralShare?: number
 }
 
 export type LoansChartsDataType = {
@@ -61,16 +42,8 @@ export type LendingItemType = {
   mBalance: number
 } | null
 
-export type AvaliableCollateralType = {
-  id: number
-  userBalance: number
-  assetDecimals: number
-  assetRate: number
-  assetName: string
-  originalName: string
-  assetSymbol: string
-  assetIcon: string
-  assetAddress: string
+export type AvaliableCollateralType = LoansAssetDataType & {
+  address: string
   isProtected: boolean
   tokenType: 'tez' | 'fa12' | 'fa2'
 }
@@ -89,36 +62,6 @@ export type XtzBakerType = {
   reliability_points: number
 }
 
-export type BorrowingData = {
-  borrowedAsset: {
-    assetSymbol?: string
-    assetName?: string
-    userBalance: number
-    assetIcon?: string
-    amtBorrowed: number
-    assetRate: number
-    collateralBalance: number
-    collateralUtilization: number
-    apr: number
-    fee: number
-  }
-  collateralData: Array<{
-    assetSymbol?: string
-    assetIcon?: string
-    balance: number
-    assetRate: number
-    maxWithdraw: number
-    collateralShare?: number
-  }>
-  address: string
-  xtzDelegatedTo: string | null
-  operators?: Array<string>
-  sMVKDelegatedTo?: string
-  levelOfEarly?: number
-  levelOfLate?: number
-  depositors?: Array<string>
-}
-
 export type UserLendObjType = {
   assetIcon: string
   assetName: string
@@ -127,4 +70,53 @@ export type UserLendObjType = {
   annualPecentage: number
   earned: number
   operationHash: string
+}
+
+export type LoansVaultType = {
+  borrowedAsset: LoansAssetDataType
+  collateralData: Array<CollateralType>
+  borrowedAmount: number
+  collateralBalance: number
+  collateralRatio: number
+  apr: number
+  fee: number
+  address: string
+  vaultId: number
+  xtzDelegatedTo: string | null
+  operators?: Array<string>
+  sMVKDelegatedTo?: string
+  levelOfEarly?: number
+  levelOfLate?: number
+  depositors?: Array<string>
+}
+
+export type LoanMarketType = {
+  loanTokenData: LoansAssetDataType & { address: string }
+  transactionHistory: Array<{
+    descr: string | null
+    amount: number
+    date: string | null
+    userAddress: string
+    operationHash: string
+    tokenSymbol: string | undefined
+  }>
+  lendingItem: LendingItemType
+  myBorrowingList: Array<LoansVaultType>
+  permissionedBorrowingList: Array<LoansVaultType>
+  utilisationRate: number
+  borrowers: number
+  suppliers: number
+  loanTokenTotalCollaterals: number
+  loanTokenVaultsTotalBorrowed: number
+  totalBorrowed: number
+  availableLiquidity: number
+  totalLended: number
+  borrowAPR: number
+  totalFeesEarned: number
+  lendingAPY: number
+  collateralFactor: number
+  reserveFactor: number
+  reserveAmount: number
+  lending24hVolume: number
+  borrowing24hVolume: number
 }

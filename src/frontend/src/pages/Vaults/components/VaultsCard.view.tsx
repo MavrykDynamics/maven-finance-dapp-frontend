@@ -97,16 +97,8 @@ type Props = VaultType & {
 }
 
 export const VaultsCard = (props: Props) => {
-  const {
-    ownerId,
-    vaultId,
-    status,
-    levelOfEarly,
-    levelOfLate,
-    collateralData,
-    isOwner,
-    handleMarkForLiquidation,
-  } = props
+  const { ownerId, vaultId, status, levelOfEarly, levelOfLate, collateralData, isOwner, handleMarkForLiquidation } =
+    props
 
   const { openLiquidateVaultPopup } = useContext(loansPopupsContext)
   const [expanded, setExpanded] = useState(false)
@@ -134,7 +126,7 @@ export const VaultsCard = (props: Props) => {
   }
 
   const liquidateModalHandler = () => {
-    openLiquidateVaultPopup({...props})
+    openLiquidateVaultPopup({ ...props })
   }
 
   useEffect(() => {
@@ -216,38 +208,36 @@ export const VaultsCard = (props: Props) => {
               </TableHeader>
 
               <TableBody>
-                {collateralData.map(({ assetSymbol, assetIcon, assetRate, collateralShare, balance }, index) => {
+                {collateralData.map(({ symbol, icon, rate, collateralShare, amount }, index) => {
                   const columnWidth = '33%'
                   const isTotalRow = collateralData.length - 1 === index
                   if (isTotalRow && collateralData.length < 3) return null
 
                   return (
-                    <TableRow rowHeight={44} key={assetSymbol + '-' + index}>
+                    <TableRow rowHeight={44} key={symbol + '-' + index}>
                       <TableCell width={columnWidth} className="vert-middle">
                         {isTotalRow ? (
                           'Total'
                         ) : (
                           <div className="cell-content row">
-                            {assetIcon ? (
+                            {icon ? (
                               <div className="img-wrapper">
-                                <img src={assetIcon} alt={`${assetSymbol} logo`} />
+                                <img src={icon} alt={`${symbol} logo`} />
                               </div>
                             ) : (
                               <div className="no-icon">
                                 <Icon id="noImage" />
                               </div>
                             )}
-                            {assetSymbol}
+                            {symbol}
                           </div>
                         )}
                       </TableCell>
 
                       <TableCell width={columnWidth}>
                         <div className="cell-content">
-                          <CommaNumber value={balance} className="balance" />
-                          {assetRate ? (
-                            <CommaNumber value={balance * assetRate} beginningText="~$" className="rate" />
-                          ) : null}
+                          <CommaNumber value={amount} className="balance" />
+                          {rate ? <CommaNumber value={amount * rate} beginningText="~$" className="rate" /> : null}
                         </div>
                       </TableCell>
 
@@ -255,7 +245,8 @@ export const VaultsCard = (props: Props) => {
                         <div className="cell-content">{collateralShare}%</div>
                       </TableCell>
                     </TableRow>
-                )})}
+                  )
+                })}
               </TableBody>
             </Table>
           </div>
@@ -270,9 +261,7 @@ export const VaultsCard = (props: Props) => {
             text={isMarkStatus ? 'Mark for Liquidation' : 'Liquidate Vault'}
             kind={ACTION_PRIMARY}
             onClick={() => {
-              return isMarkStatus
-                ? handleMarkForLiquidation(vaultId, ownerId)
-                : liquidateModalHandler()
+              return isMarkStatus ? handleMarkForLiquidation(vaultId, ownerId) : liquidateModalHandler()
             }}
             disabled={vaultsStatuses.GRACE_PERIOD === status}
           />

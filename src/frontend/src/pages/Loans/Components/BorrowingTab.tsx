@@ -1,7 +1,7 @@
 import { useContext, useState } from 'react'
 
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
-import { BorrowingData } from 'utils/TypesAndInterfaces/Loans'
+import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
 import { loansPopupsContext } from './Modals/LoansModals.provider'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 
@@ -13,10 +13,10 @@ import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { LoansTabStyled, NoItemsInTabStyled } from './LoansComponents.style'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { useDispatch } from 'react-redux'
-import { getAvaliableCollaterals } from '../Loans.actions'
+import { getAvaliableCollaterals } from '../Actions/getLoansData.actions'
 
 type BorrowingTabPropsType = {
-  borrowingItems: Array<BorrowingData>
+  borrowingItems: Array<LoansVaultType>
   lendingControllerAddress: string
   currentMarketAsset: string
 }
@@ -57,7 +57,7 @@ export const BorrowingTab = ({
                 <BorrowingExpandCard
                   isOwner
                   {...item}
-                  key={item.borrowedAsset.assetSymbol + '-' + idx}
+                  key={item.borrowedAsset.symbol + '-' + idx}
                   isOpenedVault={createdVaultId === item.address}
                 />
               )

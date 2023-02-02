@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 
 import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { COLLATERAL_RATIO_GRADIENT } from 'pages/Loans/Loans.const'
-import { getAssetName } from 'pages/Loans/Loans.helpers'
 import { BorrowPopupDataType, DEFAULT_LOANS_INPUT_VALUE, getOnBlurValue, getOnFocusValue } from './Modals.helpers'
 import { State } from 'reducers'
 import { ACTION_PRIMARY, TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
@@ -20,9 +19,10 @@ import { PopupContainer, PopupContainerWrapper } from 'app/App.components/Settin
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase, VaultModalOverview } from './Modals.style'
-import { borrowVaultAssetAction } from 'pages/Loans/Loans.actions'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { silverColor } from 'styles'
+import { borrowVaultAssetAction } from 'pages/Loans/Actions/vault.actions'
+import { getAssetDisplayName } from 'pages/Loans/Loans.helpers'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A240058&t=Sx2aEpp3ifrGxBtQ-0
 export const BorrowAsset = ({
@@ -35,10 +35,10 @@ export const BorrowAsset = ({
   data: BorrowPopupDataType
 }) => {
   const {
-    vaultAddress,
+    vaultId,
     borrowedAsset,
     borowCapacity = 0,
-    collateralUtilization = 0,
+    collateralRatio = 0,
     borrowAPR = 0,
     hasUserBorrowed,
     currentCollateralBalance = 0,
@@ -49,10 +49,10 @@ export const BorrowAsset = ({
   const dispatch = useDispatch()
   const { isActionLoading } = useSelector((state: State) => state.loading)
 
-  const assetName = getAssetName(borrowedAsset?.assetName ?? '')
-
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
   const [screenShown, setShownScreen] = useState<'initial' | 'confitmation'>('initial')
+
+  const assetNameToDisplay = getAssetDisplayName(borrowedAsset?.gqlName)
 
   useEffect(() => {
     if (!show) {
@@ -95,8 +95,10 @@ export const BorrowAsset = ({
   const backBtnHandler = () => setShownScreen('initial')
 
   const borrowAsserHandler = async () => {
-    if (vaultAddress) {
-      await dispatch(borrowVaultAssetAction(vaultAddress, Number(inputData.amount), closePopup))
+    if (vaultId && borrowedAsset) {
+      await dispatch(
+        borrowVaultAssetAction(vaultId, Number(inputData.amount) * 10 ** borrowedAsset.decimals, closePopup),
+      )
     }
   }
 
@@ -109,7 +111,11 @@ export const BorrowAsset = ({
           {screenShown === 'initial' ? (
             <>
               <GovRightContainerTitleArea>
-                {hasUserBorrowed ? <h2>Borrow Additional {assetName}</h2> : <h2>Borrow {assetName}</h2>}
+                {hasUserBorrowed ? (
+                  <h2>Borrow Additional {assetNameToDisplay}</h2>
+                ) : (
+                  <h2>Borrow {assetNameToDisplay}</h2>
+                )}
               </GovRightContainerTitleArea>
               <div className="modalDescr">
                 Select the asset you would like to borrow. You cannot borrow more than your borrow capacity.
@@ -122,7 +128,7 @@ export const BorrowAsset = ({
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">Collateral Utilization</div>
-                  <CommaNumber value={collateralUtilization} className="value" endingText="%" />
+                  <CommaNumber value={collateralRatio} className="value" endingText="%" />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">Borrow APR</div>
@@ -141,7 +147,7 @@ export const BorrowAsset = ({
               {borrowedAsset ? (
                 <Input
                   className={`${
-                    borrowedAsset.assetRate ? 'input-with-rate' : ''
+                    borrowedAsset.rate ? 'input-with-rate' : ''
                   } large-input pinned-dropdown withdrawCollateralInput`}
                   inputProps={{
                     value: inputData.amount,
@@ -152,22 +158,22 @@ export const BorrowAsset = ({
                   }}
                   settings={{
                     balance: borrowedAsset.userBalance,
-                    balanceAsset: assetName,
+                    balanceAsset: assetNameToDisplay,
                     useMaxHandler: () =>
                       inputOnChangeHandle(String(borrowedAsset.userBalance), borrowedAsset.userBalance),
                     inputStatus: inputData.validationStatus,
-                    convertedValue: Number(inputData.amount) * borrowedAsset.assetRate,
+                    convertedValue: Number(inputData.amount) * borrowedAsset.rate,
                   }}
                 >
                   <InputPinnedTokenInfo>
-                    {borrowedAsset.assetIcon ? (
+                    {borrowedAsset.icon ? (
                       <div className="image-wrapper">
-                        <img src={borrowedAsset.assetIcon} alt={borrowedAsset.assetName + '-logo'} />
+                        <img src={borrowedAsset.icon} alt={borrowedAsset.name + '-logo'} />
                       </div>
                     ) : (
                       <Icon id="noImage" />
                     )}{' '}
-                    {assetName}
+                    {assetNameToDisplay}
                   </InputPinnedTokenInfo>
                 </Input>
               ) : null}
@@ -206,7 +212,7 @@ export const BorrowAsset = ({
           ) : (
             <>
               <GovRightContainerTitleArea>
-                <h2>Confirm Borrow {assetName}</h2>
+                <h2>Confirm Borrow {assetNameToDisplay}</h2>
               </GovRightContainerTitleArea>
               <div className="modalDescr">
                 Select the asset you would like to borrow. You cannot borrow more than your borrow capacity.
@@ -215,7 +221,7 @@ export const BorrowAsset = ({
               <div className="lending-stats" style={{ marginBottom: '30px' }}>
                 <ThreeLevelListItem>
                   <div className="name">Asset</div>
-                  <div className="value">{assetName}</div>
+                  <div className="value">{assetNameToDisplay}</div>
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">
@@ -231,7 +237,7 @@ export const BorrowAsset = ({
                 <ThreeLevelListItem>
                   <div className="name">USD Value</div>
                   <CommaNumber
-                    value={Number(inputData.amount) * Number(borrowedAsset?.assetRate)}
+                    value={Number(inputData.amount) * Number(borrowedAsset?.rate)}
                     className="value"
                     beginningText="$"
                   />

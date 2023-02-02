@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
 import { State } from 'reducers'
-import { LoanTokenType } from 'utils/TypesAndInterfaces/Loans'
+import { LoanMarketType } from 'utils/TypesAndInterfaces/Loans'
 
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 
@@ -32,8 +32,8 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
       return loanTokens.reduce<{
         lendingSuppliers: number
         borrowers: number
-        mostBorrowedAsset: LoanTokenType['loanTokenData'] | null
-        mostLendedAsset: LoanTokenType['loanTokenData'] | null
+        mostBorrowedAsset: LoanMarketType['loanTokenData'] | null
+        mostLendedAsset: LoanMarketType['loanTokenData'] | null
         prevMostBorrowed: number
         borrowing24hVolume: number
         lending24hVolume: number
@@ -50,12 +50,12 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
 
           if (acc.prevMostBorrowed < totalBorrowed * loanTokenData.rate) {
             acc.prevMostBorrowed = totalBorrowed * loanTokenData.rate
-            acc.mostBorrowedAsset = loanTokenData as LoanTokenType['loanTokenData']
+            acc.mostBorrowedAsset = loanTokenData as LoanMarketType['loanTokenData']
           }
 
           if (acc.prevMostLended < totalLended * loanTokenData.rate) {
             acc.prevMostLended = totalLended * loanTokenData.rate
-            acc.mostLendedAsset = loanTokenData as LoanTokenType['loanTokenData']
+            acc.mostLendedAsset = loanTokenData as LoanMarketType['loanTokenData']
           }
           return acc
         },
@@ -82,89 +82,91 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
       </div>
 
       {isLoading ? (
-        <DataLoaderWrapper className='tabLoader'>
+        <DataLoaderWrapper className="tabLoader">
           <ClockLoader width={150} height={150} />
           <div className="text">Loading lending</div>
         </DataLoaderWrapper>
-      ) : <LendingContentStyled>
-        <div className="left">
-          <StatBlock className="large">
-            <div className="name">Total Supplied</div>
-            <div className="value">
-              <CommaNumber beginningText="$" value={chartsData.totalLended} />
-              <div className={`impact ${false ? 'up' : 'down'}`}>{false ? '+' : '-'} 27%</div>
+      ) : (
+        <LendingContentStyled>
+          <div className="left">
+            <StatBlock className="large">
+              <div className="name">Total Supplied</div>
+              <div className="value">
+                <CommaNumber beginningText="$" value={chartsData.totalLended} />
+                <div className={`impact ${false ? 'up' : 'down'}`}>{false ? '+' : '-'} 27%</div>
+              </div>
+            </StatBlock>
+
+            <div className="stats-row">
+              <StatBlock>
+                <div className="name">Suppliers</div>
+                <div className="value">
+                  <CommaNumber value={lendingSuppliers} />
+                </div>
+              </StatBlock>
+              <StatBlock>
+                <div className="name">24H Supply Vol</div>
+                <div className="value">
+                  <CommaNumber beginningText="$" value={lending24hVolume} />
+                </div>
+              </StatBlock>
+              <StatBlock>
+                <div className="name">Most Supplied Asset</div>
+                <div className="value">
+                  {mostLendedAsset?.icon ? (
+                    <div className="image-wrapper">
+                      <img src={mostLendedAsset.icon} alt="" />
+                    </div>
+                  ) : (
+                    <Icon id="noImage" />
+                  )}
+
+                  {mostLendedAsset?.name || '-'}
+                </div>
+              </StatBlock>
             </div>
-          </StatBlock>
-
-          <div className="stats-row">
-            <StatBlock>
-              <div className="name">Suppliers</div>
-              <div className="value">
-                <CommaNumber value={lendingSuppliers} />
-              </div>
-            </StatBlock>
-            <StatBlock>
-              <div className="name">24H Supply Vol</div>
-              <div className="value">
-                <CommaNumber beginningText="$" value={lending24hVolume} />
-              </div>
-            </StatBlock>
-            <StatBlock>
-              <div className="name">Most Supplied Asset</div>
-              <div className="value">
-                {mostLendedAsset?.icon ? (
-                  <div className="image-wrapper">
-                    <img src={mostLendedAsset.icon} alt="" />
-                  </div>
-                ) : (
-                  <Icon id="noImage" />
-                )}
-
-                {mostLendedAsset?.name || '-'}
-              </div>
-            </StatBlock>
           </div>
-        </div>
-        <div className="spacer" />
-        <div className="right">
-          <StatBlock className="large">
-            <div className="name">Total Borrowed</div>
-            <div className="value">
-              <CommaNumber beginningText="$" value={chartsData.totalBorrowed} />
-              <div className={`impact ${true ? 'up' : 'down'}`}>{true ? '+' : '-'} 27%</div>
+          <div className="spacer" />
+          <div className="right">
+            <StatBlock className="large">
+              <div className="name">Total Borrowed</div>
+              <div className="value">
+                <CommaNumber beginningText="$" value={chartsData.totalBorrowed} />
+                <div className={`impact ${true ? 'up' : 'down'}`}>{true ? '+' : '-'} 27%</div>
+              </div>
+            </StatBlock>
+
+            <div className="stats-row">
+              <StatBlock>
+                <div className="name">Borrowers</div>
+                <div className="value">
+                  <CommaNumber value={borrowers} />
+                </div>
+              </StatBlock>
+              <StatBlock>
+                <div className="name">24H Borrow Vol</div>
+                <div className="value">
+                  <CommaNumber beginningText="$" value={borrowing24hVolume} />
+                </div>
+              </StatBlock>
+              <StatBlock>
+                <div className="name">Most Borrowed Asset</div>
+                <div className="value">
+                  {mostBorrowedAsset?.icon ? (
+                    <div className="image-wrapper">
+                      <img src={mostBorrowedAsset.icon} alt="" />
+                    </div>
+                  ) : (
+                    <Icon id="noImage" />
+                  )}
+
+                  {mostBorrowedAsset?.name ?? ''}
+                </div>
+              </StatBlock>
             </div>
-          </StatBlock>
-
-          <div className="stats-row">
-            <StatBlock>
-              <div className="name">Borrowers</div>
-              <div className="value">
-                <CommaNumber value={borrowers} />
-              </div>
-            </StatBlock>
-            <StatBlock>
-              <div className="name">24H Borrow Vol</div>
-              <div className="value">
-                <CommaNumber beginningText="$" value={borrowing24hVolume} />
-              </div>
-            </StatBlock>
-            <StatBlock>
-              <div className="name">Most Borrowed Asset</div>
-              <div className="value">
-                {mostBorrowedAsset?.icon ? (
-                  <div className="image-wrapper">
-                    <img src={mostBorrowedAsset.icon} alt="" />
-                  </div>
-                ) : (
-                  <Icon id="noImage" />
-                )}
-
-                {mostBorrowedAsset?.name ?? ''}
-              </div>
-            </StatBlock>
           </div>
-        </div>
-      </LendingContentStyled>}
+        </LendingContentStyled>
+      )}
 
       <div className="descr">
         <div className="title">How does Lending work on Mavyrk?</div>

@@ -11,8 +11,6 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { ACTION_PRIMARY, TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
 import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { silverColor } from 'styles'
-import { getAssetName } from 'pages/Loans/Loans.helpers'
-import { withdrawLendingAssetAction } from 'pages/Loans/Loans.actions'
 import {
   DEFAULT_LOANS_INPUT_VALUE,
   getOnBlurValue,
@@ -26,6 +24,8 @@ import { PopupContainer, PopupContainerWrapper } from 'app/App.components/Settin
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase } from './Modals.style'
+import { withdrawLendingAssetAction } from 'pages/Loans/Actions/lendingAsset.actions'
+import { getAssetDisplayName } from 'pages/Loans/Loans.helpers'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A238846&t=Sx2aEpp3ifrGxBtQ-0
 export const RemoveAssetsFromLending = ({
@@ -48,7 +48,7 @@ export const RemoveAssetsFromLending = ({
     assetIcon = '',
     originalName = '',
   } = data ?? {}
-  const assetSymbol = originalName === 'tez' ? 'XTZ' : assetName ?? originalName.toUpperCase()
+  const assetSymbol = getAssetDisplayName(originalName)
 
   useLockBodyScroll(show)
 

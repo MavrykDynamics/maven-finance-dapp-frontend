@@ -2,10 +2,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useLockBodyScroll } from 'react-use'
 import { useEffect, useMemo, useState } from 'react'
 
-import { getAssetName } from 'pages/Loans/Loans.helpers'
 import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { COLLATERAL_RATIO_GRADIENT } from 'pages/Loans/Loans.const'
-import { withdrawCollateralAction } from 'pages/Loans/Loans.actions'
 import { State } from 'reducers'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import {
@@ -14,6 +12,8 @@ import {
   getOnFocusValue,
   WithdrawCollateralPopupDataType,
 } from './Modals.helpers'
+import { withdrawCollateralAction } from 'pages/Loans/Actions/vaultCollateral.actions'
+import { getAssetDisplayName } from 'pages/Loans/Loans.helpers'
 
 import { Input } from 'app/App.components/Input/NewInput'
 import Icon from 'app/App.components/Icon/Icon.view'
@@ -51,10 +51,10 @@ export const WithdrawCollateral = ({
     [isActionPerforming, inputData.validationStatus],
   )
   const collateralData = useMemo(
-    () => avaliableCollaterals.find(({ assetSymbol }) => selectedAsset?.assetSymbol === assetSymbol),
+    () => avaliableCollaterals.find(({ gqlName }) => selectedAsset?.gqlName === gqlName),
     [avaliableCollaterals, selectedAsset],
   )
-  const assetName = getAssetName(collateralData?.assetName ?? '')
+  const assetName = getAssetDisplayName(collateralData?.gqlName)
 
   useEffect(() => {
     if (!show) {
@@ -91,9 +91,18 @@ export const WithdrawCollateral = ({
   }
 
   const withdrawHandler = async () => {
-    if (vaultAddress) {
+    console.log('vaultAddress', vaultAddress)
+
+    if (vaultAddress && collateralData?.gqlName) {
       setIsActionPerforming(true)
-      await dispatch(withdrawCollateralAction(closePopup))
+      await dispatch(
+        withdrawCollateralAction(
+          Number(inputData.amount) * 10 ** collateralData.decimals,
+          collateralData.gqlName,
+          vaultAddress,
+          closePopup,
+        ),
+      )
       setIsActionPerforming(false)
     }
   }
@@ -122,11 +131,7 @@ export const WithdrawCollateral = ({
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Collateral Value</div>
-              <CommaNumber
-                value={currentCollateralValue * Number(collateralData?.assetRate)}
-                className="value"
-                beginningText="$"
-              />
+              <CommaNumber value={currentCollateralValue} className="value" beginningText="$" />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Available To Withdraw</div>
@@ -138,7 +143,7 @@ export const WithdrawCollateral = ({
           {collateralData ? (
             <Input
               className={`${
-                collateralData?.assetRate ? 'input-with-rate' : ''
+                collateralData?.rate ? 'input-with-rate' : ''
               } large-input pinned-dropdown withdrawCollateralInput`}
               inputProps={{
                 value: inputData.amount,
@@ -157,13 +162,13 @@ export const WithdrawCollateral = ({
                     Math.min(collateralData.userBalance, currentCollateralValue),
                   ),
                 inputStatus: inputData.validationStatus,
-                convertedValue: Number(inputData.amount) * collateralData.assetRate,
+                convertedValue: Number(inputData.amount) * collateralData.rate,
               }}
             >
               <InputPinnedTokenInfo>
-                {collateralData?.assetIcon ? (
+                {collateralData?.icon ? (
                   <div className="image-wrapper">
-                    <img src={collateralData.assetIcon} alt={collateralData.assetName + '-logo'} />
+                    <img src={collateralData.icon} alt={collateralData.name + '-logo'} />
                   </div>
                 ) : (
                   <Icon id="noImage" />
@@ -187,7 +192,7 @@ export const WithdrawCollateral = ({
             <ThreeLevelListItem>
               <div className="name">Collateral Value</div>
               <CommaNumber
-                value={currentCollateralValue * Number(collateralData?.assetRate)}
+                value={currentCollateralValue * Number(collateralData?.rate)}
                 className="value"
                 beginningText="$"
               />

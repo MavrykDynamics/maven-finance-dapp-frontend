@@ -12,13 +12,13 @@ import { DropDown, DropdownItemType } from 'app/App.components/DropDown/DropDown
 import Icon from 'app/App.components/Icon/Icon.view'
 import { Input } from 'app/App.components/Input/NewInput'
 import NewButton from 'app/App.components/Button/NewButton.controller'
-import { managePermissionsAction } from 'pages/Loans/Loans.actions'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { AddRowBtn, RemoveRowBtn, Table, TableBody, TableCell, TableRow } from 'app/App.components/Table/Table.style'
 import { LoansModalBase } from './Modals.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
+import { managePermissionsAction } from 'pages/Loans/Actions/vaultPermissions.actions'
 
 const ddItems = [
   { text: 'Vault Owner', value: 'owner' },

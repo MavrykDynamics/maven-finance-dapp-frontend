@@ -9,7 +9,6 @@ import { Input } from 'app/App.components/Input/NewInput'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
-import { depositLendingAssetAction } from 'pages/Loans/Loans.actions'
 import { State } from 'reducers'
 import { AddLendingAssetDataType, DEFAULT_LOANS_INPUT_VALUE, getOnBlurValue, getOnFocusValue } from './Modals.helpers'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
@@ -20,6 +19,8 @@ import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { silverColor } from 'styles'
 import { LoansModalBase } from './Modals.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
+import { depositLendingAssetAction } from 'pages/Loans/Actions/lendingAsset.actions'
+import { getAssetDisplayName } from 'pages/Loans/Loans.helpers'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239981&t=Sx2aEpp3ifrGxBtQ-0
 export const AddLendingAsset = ({
@@ -44,7 +45,7 @@ export const AddLendingAsset = ({
     tokenType = '',
     assetId = 0,
   } = data ?? {}
-  const assetSymbol = originalName === 'tez' ? 'XTZ' : assetName ?? originalName.toUpperCase()
+  const assetSymbol = getAssetDisplayName(originalName)
   useLockBodyScroll(show)
 
   const dispatch = useDispatch()

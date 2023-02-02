@@ -26,9 +26,10 @@ import { State } from 'reducers'
 import { MarketPageHeader } from './Components/LoansPageHeader'
 import { PermissionVaults } from './Components/PermissionVaultsTab'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
-import { getLoansStorage } from './Loans.actions'
 import LoansPopupsProvider from './Components/Modals/LoansModals.provider'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import { getLoansStorage } from './Actions/getLoansData.actions'
+import { getAssetDisplayName, getAssetDisplaySymbol } from './Loans.helpers'
 
 export const Market = () => {
   const dispatch = useDispatch()
@@ -69,6 +70,12 @@ export const Market = () => {
   if (!currentToken) {
     return <Redirect to={'/loans'} />
   }
+
+  const assetNameToDisplay = getAssetDisplayName(currentToken.loanTokenData.gqlName)
+  const assetSymbolToDisplay = getAssetDisplaySymbol(
+    currentToken.loanTokenData.gqlName,
+    currentToken.loanTokenData.name,
+  )
 
   const marketPagination = (
     <MarketPagination>
@@ -138,12 +145,8 @@ export const Market = () => {
               )}
 
               <div className="text-wrapper">
-                <div className="symbol">
-                  {currentToken.loanTokenData.originalName === 'tez' ? 'Tezos' : currentToken.loanTokenData.name}
-                </div>
-                <div className="full-name">
-                  {currentToken.loanTokenData.originalName === 'tez' ? 'XTZ' : currentToken.loanTokenData.symbol}
-                </div>
+                <div className="symbol">{assetSymbolToDisplay}</div>
+                <div className="full-name">{assetNameToDisplay}</div>
               </div>
             </div>
             {tabId === LEND_TAB_ID ? (

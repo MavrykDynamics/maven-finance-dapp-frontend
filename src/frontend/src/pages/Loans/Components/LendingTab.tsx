@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 
 import { ACTION_PRIMARY, TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
-import { LendingItemType, LoanTokenType } from 'utils/TypesAndInterfaces/Loans'
+import { LendingItemType, LoanMarketType } from 'utils/TypesAndInterfaces/Loans'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { loansPopupsContext } from './Modals/LoansModals.provider'
@@ -13,11 +13,12 @@ import Icon from 'app/App.components/Icon/Icon.view'
 import { ThreeLevelListItem } from '../Loans.style'
 import { LendingTabListItem, LoansTabStyled, NoItemsInTabStyled } from './LoansComponents.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
+import { getAssetDisplayName } from '../Loans.helpers'
 
 type LendingTabPropsType = {
   lendingItem: LendingItemType
   lendingControllerAddress: string
-  assetData: LoanTokenType['loanTokenData']
+  assetData: LoanMarketType['loanTokenData']
   lendAPY: number
 }
 
@@ -45,7 +46,7 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
                     <Icon id="noImage" />
                   </div>
                 )}
-                {assetData.originalName === 'tez' ? 'XTZ' : assetData.originalName.toUpperCase()}
+                {getAssetDisplayName(assetData.gqlName)}
               </div>
             </ThreeLevelListItem>
             <ThreeLevelListItem>
@@ -92,7 +93,7 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
                   lendingAPY: lendAPY,
                   assetRate: assetData.rate,
                   decimals: assetData.decimals,
-                  originalName: assetData.originalName,
+                  originalName: assetData.gqlName,
                   assetName: assetData.symbol,
                   assetIcon: assetData.icon,
                   tokenType: assetData.tokenType,
@@ -113,7 +114,7 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
                   lendingAPY: lendAPY,
                   assetRate: assetData.rate,
                   decimals: assetData.decimals,
-                  originalName: assetData.originalName,
+                  originalName: assetData.gqlName,
                   assetName: assetData.symbol,
                   assetIcon: assetData.icon,
                   currentLendedAmount: lendingItem.lendValue,
@@ -140,7 +141,7 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
                 lendingAPY: 0,
                 decimals: assetData.decimals,
                 assetRate: assetData.rate,
-                originalName: assetData.originalName,
+                originalName: assetData.gqlName,
                 assetName: assetData.symbol,
                 assetIcon: assetData.icon,
                 tokenType: assetData.tokenType,

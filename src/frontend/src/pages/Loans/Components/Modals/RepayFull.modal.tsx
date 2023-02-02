@@ -2,11 +2,11 @@ import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useLockBodyScroll } from 'react-use'
 
-import { repayFullAndCloseVaultAction } from 'pages/Loans/Loans.actions'
 import { COLLATERAL_RATIO_GRADIENT } from 'pages/Loans/Loans.const'
 import { RepayFullPopupDataType } from './Modals.helpers'
-import { getAssetName } from 'pages/Loans/Loans.helpers'
 import { State } from 'reducers'
+import { repayFullAndCloseVaultAction } from 'pages/Loans/Actions/vault.actions'
+import { getAssetDisplayName } from 'pages/Loans/Loans.helpers'
 import { TRANSPARENT_WITH_BORDER, ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
@@ -33,20 +33,25 @@ export const RepayFull = ({
   const {
     vaultAddress,
     borrowedAsset,
+    borrowedAmount = 0,
     feesAmount = 0,
     currentCollateralBalance = 0,
     currentAvaliableToBorrow = 0,
   } = data ?? {}
 
-  const totalOutstanding = feesAmount + Number(borrowedAsset?.amtBorrowed)
+  const totalOutstanding = feesAmount + Number(borrowedAmount)
 
   useLockBodyScroll(show)
   const dispatch = useDispatch()
   const { isActionLoading } = useSelector((state: State) => state.loading)
 
-  const assetName = getAssetName(borrowedAsset?.assetName ?? '')
-  const canRepay = useMemo(() => totalOutstanding <= (borrowedAsset?.userBalance ?? 0), [borrowedAsset])
+  const canRepay = useMemo(
+    () => totalOutstanding <= (borrowedAsset?.userBalance ?? 0),
+    [borrowedAsset, totalOutstanding],
+  )
   const [screenShown, setShownScreen] = useState<'initial' | 'confitmation'>('initial')
+
+  const assetToDisplayName = getAssetDisplayName(borrowedAsset?.gqlName)
 
   useEffect(() => {
     if (!show) {
@@ -81,27 +86,23 @@ export const RepayFull = ({
               <div className="lending-stats" style={{ marginBottom: '25px' }}>
                 <ThreeLevelListItem>
                   <div className="name">Borrowed</div>
-                  <CommaNumber value={borrowedAsset?.amtBorrowed ?? 0} className="value" endingText={assetName} />
+                  <CommaNumber value={borrowedAmount} className="value" endingText={assetToDisplayName} />
                   <CommaNumber
-                    value={Number(borrowedAsset?.amtBorrowed) * Number(borrowedAsset?.assetRate)}
+                    value={borrowedAmount * Number(borrowedAsset?.rate)}
                     className="rate"
                     beginningText="$"
                   />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">Fees Due</div>
-                  <CommaNumber value={feesAmount} className="value" endingText={assetName} />
-                  <CommaNumber
-                    value={feesAmount * Number(borrowedAsset?.assetRate)}
-                    className="rate"
-                    beginningText="$"
-                  />
+                  <CommaNumber value={feesAmount} className="value" endingText={assetToDisplayName} />
+                  <CommaNumber value={feesAmount * Number(borrowedAsset?.rate)} className="rate" beginningText="$" />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem className="left-divider">
                   <div className="name">Total Outstanding</div>
-                  <CommaNumber value={totalOutstanding} className="value" endingText={assetName} />
+                  <CommaNumber value={totalOutstanding} className="value" endingText={assetToDisplayName} />
                   <CommaNumber
-                    value={totalOutstanding * Number(borrowedAsset?.assetRate)}
+                    value={totalOutstanding * Number(borrowedAsset?.rate)}
                     className="rate"
                     beginningText="$"
                   />
@@ -113,7 +114,7 @@ export const RepayFull = ({
                 <CommaNumber
                   value={Number(borrowedAsset?.userBalance)}
                   className={`value ${canRepay ? 'up' : 'down'}`}
-                  endingText={assetName}
+                  endingText={assetToDisplayName}
                 />
               </ThreeLevelListItem>
 
@@ -133,7 +134,7 @@ export const RepayFull = ({
                         decimalsToShow: 2,
                         number: totalOutstanding - Number(borrowedAsset?.userBalance),
                       })}{' '}
-                      {assetName} on your Ballance
+                      {assetToDisplayName} on your Ballance
                     </p>
                   </ConnectWalletInfoStyled>
 
@@ -172,7 +173,7 @@ export const RepayFull = ({
               <div className="lending-stats" style={{ marginBottom: '25px' }}>
                 <ThreeLevelListItem>
                   <div className="name">Asset</div>
-                  <div className="value">{assetName}</div>
+                  <div className="value">{assetToDisplayName}</div>
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">Amount</div>
@@ -181,7 +182,7 @@ export const RepayFull = ({
                 <ThreeLevelListItem className="right">
                   <div className="name">USD Value</div>
                   <CommaNumber
-                    value={totalOutstanding * Number(borrowedAsset?.assetRate)}
+                    value={totalOutstanding * Number(borrowedAsset?.rate)}
                     className="value"
                     beginningText="$"
                   />

@@ -1,4 +1,4 @@
-import { GET_LOANS_STORAGE, CLEAR_LOANS_STORAGE } from 'pages/Loans/Loans.actions'
+import { GET_LOANS_STORAGE, CLEAR_LOANS_STORAGE } from 'pages/Loans/Actions/getLoansData.actions'
 import { LoansChartsDataType, LoansStorage, XtzBakerType } from 'utils/TypesAndInterfaces/Loans'
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
 

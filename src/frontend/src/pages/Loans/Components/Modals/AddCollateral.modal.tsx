@@ -6,7 +6,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
-import { depositCollateralAction } from 'pages/Loans/Loans.actions'
 import {
   AddCollateralPopupDataType,
   DEFAULT_LOANS_INPUT_VALUE,
@@ -25,6 +24,8 @@ import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
+import { depositCollateralAction } from 'pages/Loans/Actions/vaultCollateral.actions'
+import { getAssetDisplayName } from 'pages/Loans/Loans.helpers'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239476&t=Sx2aEpp3ifrGxBtQ-0
 export const AddCollateral = ({
@@ -38,6 +39,8 @@ export const AddCollateral = ({
 }) => {
   const { selectedAsset, currentCollateralValue = 0, currentAvaliableToWithdraw = 0, vaultAddress } = data ?? {}
 
+  const assetNameToDisplay = getAssetDisplayName(selectedAsset?.gqlName)
+
   useLockBodyScroll(show)
 
   const dispatch = useDispatch()
@@ -45,7 +48,7 @@ export const AddCollateral = ({
   const { avaliableCollaterals } = useSelector((state: State) => state.tokens)
 
   const collateralData = useMemo(
-    () => avaliableCollaterals.find(({ originalName }) => selectedAsset?.assetSymbol?.toLowerCase() === originalName),
+    () => avaliableCollaterals.find(({ gqlName }) => selectedAsset?.gqlName === gqlName),
     [avaliableCollaterals, selectedAsset],
   )
 
@@ -90,18 +93,15 @@ export const AddCollateral = ({
   const depositCollateralHandler = async () => {
     if (collateralData) {
       const collaretalToDeposit = {
-        collateralName: collateralData.originalName,
+        collateralName: collateralData.gqlName,
         assetId: collateralData.id,
         tokenType: collateralData.tokenType,
-        amount: Math.floor(Number(inputData.amount) * 10 ** collateralData.assetDecimals),
-        assetAddress: collateralData.assetAddress,
+        amount: Math.floor(Number(inputData.amount) * 10 ** collateralData.decimals),
+        assetAddress: collateralData.address,
       }
 
       if (vaultAddress) {
-        await dispatch(
-          depositCollateralAction(vaultAddress, collaretalToDeposit, closePopup),
-          // depositCollateralAction(vaultAddress, collaretalToDeposit, closePopup, bakerChosenDdItem?.bakerAddress),
-        )
+        await dispatch(depositCollateralAction(vaultAddress, collaretalToDeposit, closePopup))
       }
     }
   }
@@ -151,7 +151,7 @@ export const AddCollateral = ({
 
           <Input
             className={`${
-              collateralData?.assetRate ? 'input-with-rate' : ''
+              collateralData?.rate ? 'input-with-rate' : ''
             } large-input pinned-dropdown withdrawCollateralInput`}
             inputProps={{
               value: inputData.amount,
@@ -162,26 +162,25 @@ export const AddCollateral = ({
             }}
             settings={{
               balance: collateralData?.userBalance ?? 0,
-              balanceAsset:
-                collateralData?.originalName === 'tez' ? 'XTZ' : collateralData?.originalName?.toUpperCase(),
+              balanceAsset: assetNameToDisplay,
               useMaxHandler: () =>
                 inputOnChangeHandle(
                   collateralData?.userBalance ? String(collateralData.userBalance) : '0',
                   collateralData?.userBalance ?? 0,
                 ),
               inputStatus: inputData.validationStatus,
-              convertedValue: Number(inputData.amount) * (collateralData?.assetRate ?? 1),
+              convertedValue: Number(inputData.amount) * (collateralData?.rate ?? 1),
             }}
           >
             <InputPinnedTokenInfo>
-              {collateralData?.assetIcon ? (
+              {collateralData?.icon ? (
                 <div className="image-wrapper">
-                  <img src={collateralData.assetIcon} alt={collateralData.assetName + '-logo'} />
+                  <img src={collateralData.icon} alt={collateralData.name + '-logo'} />
                 </div>
               ) : (
                 <Icon id="noImage" />
               )}{' '}
-              {collateralData?.originalName === 'tez' ? 'XTZ' : collateralData?.originalName?.toUpperCase()}
+              {assetNameToDisplay}
             </InputPinnedTokenInfo>
           </Input>
 

@@ -12,10 +12,11 @@ import {
 } from 'utils/generated/graphqlTypes'
 import { parseDate } from 'utils/time'
 import {
-  BorrowingData,
+  LoansVaultType,
   LendingItemType,
   LoansChartsDataType,
   LoansGQL,
+  LoanMarketType,
   LoanTokenType,
   UserLendObjType,
 } from 'utils/TypesAndInterfaces/Loans'
@@ -23,7 +24,20 @@ import { calcWithoutDecimals, calcWithoutMu } from '../../utils/calcFunctions'
 import { getUserBalanceForLoanAsset } from './LoansFethcers'
 
 export const isTezosAsset = (tokenName: string) => tokenName === 'tez'
-export const getAssetName = (tokenName: string) => (tokenName === 'tez' ? 'XTZ' : tokenName)
+
+export const getAssetDisplayName = (tokenGqlName?: string) => {
+  if (!tokenGqlName) return ''
+  const isXTZ = isTezosAsset(tokenGqlName)
+
+  return isXTZ ? 'XTZ' : tokenGqlName.toUpperCase()
+}
+
+export const getAssetDisplaySymbol = (tokenGqlName?: string, assetSymbol?: string) => {
+  if (!tokenGqlName || !assetSymbol) return ''
+  const isXTZ = isTezosAsset(tokenGqlName)
+
+  return isXTZ ? 'Tezos' : assetSymbol.toUpperCase()
+}
 
 export const getAssetMetadata = ({
   tokenName,
@@ -94,7 +108,7 @@ const getTransactionHistory = (
   feeds: State['oracles']['oraclesStorage']['feeds'],
 ) =>
   history_data.reduce<{
-    transactionHistory: LoanTokenType['transactionHistory']
+    transactionHistory: LoanMarketType['transactionHistory']
     totalBorrowed: number
     totalLended: number
     lending24hVolume: number
@@ -242,8 +256,8 @@ const getLendingItem = async (
 
 // Normalizing borrowed items for loan asset
 type BorrowingNormalizerReturnType = {
-  myBorrowingList: Array<BorrowingData>
-  permissinedBorrowingList: Array<BorrowingData>
+  myBorrowingList: Array<LoansVaultType>
+  permissinedBorrowingList: Array<LoansVaultType>
   totalCollateral: number
   vaultsBorrowedAmount: number
 }
@@ -294,8 +308,8 @@ const getBorrowings = async (
       if (!vault.loan_token || !vault.vault || !userAddress) return acc
 
       const vaultCollateral = vault.collateral_balances.reduce<{
-        normalizedCollaterals: BorrowingData['collateralData']
-        totalRow: BorrowingData['collateralData'][number]
+        normalizedCollaterals: LoansVaultType['collateralData']
+        totalRow: LoansVaultType['collateralData'][number]
       }>(
         (acc, collateral) => {
           if (!collateral.token) return acc
@@ -312,14 +326,18 @@ const getBorrowings = async (
           const collateralBalance = collateral.balance / 10 ** collateralAsset.decimals
 
           acc.normalizedCollaterals.push({
-            assetSymbol: collateralAsset.originalName,
-            assetIcon: collateralAsset.icon,
-            balance: collateralBalance,
-            assetRate: collateralAsset.rate,
+            symbol: collateralAsset.symbol,
+            name: collateralAsset.name,
+            gqlName: collateralAsset.originalName,
+            icon: collateralAsset.icon,
+            id: collateralAsset.id,
+            decimals: collateralAsset.decimals,
+            amount: collateralBalance,
+            rate: collateralAsset.rate,
             maxWithdraw: 0,
           })
 
-          acc.totalRow.balance += collateralBalance * collateralAsset.rate
+          acc.totalRow.amount += collateralBalance * collateralAsset.rate
           acc.totalRow.maxWithdraw += 0
 
           return acc
@@ -327,10 +345,15 @@ const getBorrowings = async (
         {
           normalizedCollaterals: [],
           totalRow: {
-            assetSymbol: 'total',
-            balance: 0,
-            assetRate: 0,
+            symbol: 'total',
+            amount: 0,
+            rate: 0,
             maxWithdraw: 0,
+            name: '',
+            gqlName: '',
+            icon: '',
+            id: 0,
+            decimals: 0,
           },
         },
       )
@@ -368,36 +391,40 @@ const getBorrowings = async (
 
       const borrowedAmount = vault.vault.lending_controller_vaults[0].loan_outstanding_total / 10 ** vaultAsset.decimals
 
-      const collateralUtilization = calcCollateralRatio(
-        vaultCollateral.totalRow.balance,
-        borrowedAmount,
-        vaultAsset.rate,
-      )
+      const collateralRatio = calcCollateralRatio(vaultCollateral.totalRow.amount, borrowedAmount, vaultAsset.rate)
+      const collateralData = vaultCollateral.normalizedCollaterals.length
+        ? [...vaultCollateral.normalizedCollaterals, vaultCollateral.totalRow]
+        : []
 
       const normallizedVault = {
         borrowedAsset: {
-          assetSymbol: vaultAsset.symbol,
-          assetName: vaultAsset.name,
-          assetIcon: vaultAsset.icon,
+          symbol: vaultAsset.symbol,
+          name: vaultAsset.name,
+          icon: vaultAsset.icon,
+          decimals: vaultAsset.decimals,
+          gqlName: vaultAsset.originalName,
+          tokenType: vault.loan_token.loan_token_contract_standard as LoanTokenType,
+          id: vaultAsset.id,
           userBalance,
-          amtBorrowed: borrowedAmount,
-          assetRate: vaultAsset.rate,
-          collateralBalance: vaultCollateral.totalRow.balance,
-          collateralUtilization,
-          apr: currentInterestRate * 100,
-          fee,
+          rate: vaultAsset.rate,
         },
+
+        collateralBalance: vaultCollateral.totalRow.amount,
+        collateralRatio,
+        apr: currentInterestRate * 100,
+        fee: borrowedAmount === 0 ? 0 : fee,
         address: vault.vault.address,
-        collateralData: vaultCollateral.normalizedCollaterals.length
-          ? [...vaultCollateral.normalizedCollaterals, vaultCollateral.totalRow]
-          : [],
-        borrowedAmount: vault.loan_outstanding_total,
-        xtzDelegatedTo: vaultXtzDelegatedTo?.delegate?.address ?? null,
-        operators: [],
+        vaultId: vault.id,
+        collateralData,
+        borrowedAmount,
+
         levelOfEarly: currentBlock?.level ?? 0,
         levelOfLate:
           vault.marked_for_liquidation_level +
           Number(vault.lending_controller?.liquidation_delay_in_minutes) * BLOCKS_PER_MINUTE,
+
+        xtzDelegatedTo: vaultXtzDelegatedTo?.delegate?.address ?? null,
+        operators: [],
         sMVKDelegatedTo: '',
         depositors: vault.vault?.depositors.map(({ depositor_id }) => depositor_id) as Array<string> | undefined,
       }
@@ -410,8 +437,8 @@ const getBorrowings = async (
         acc.permissinedBorrowingList.push(normallizedVault)
       }
 
-      acc.totalCollateral += vaultCollateral.totalRow.balance
-      acc.vaultsBorrowedAmount += normallizedVault.borrowedAmount * normallizedVault.borrowedAsset.assetRate
+      acc.totalCollateral += vaultCollateral.totalRow.amount
+      acc.vaultsBorrowedAmount += normallizedVault.borrowedAmount * normallizedVault.borrowedAsset.rate
 
       return acc
     }, Promise.resolve({ myBorrowingList: [], permissinedBorrowingList: [], totalCollateral: 0, vaultsBorrowedAmount: 0 }))
@@ -441,7 +468,7 @@ export const normalizeLoans = async ({
   try {
     const interestTreasuryShare = calcWithoutDecimals(storage?.interest_treasury_share, storage.decimals)
     const interestRateDecimals = storage?.interest_rate_decimals ?? 0
-    const loanTokens = await storage?.loan_tokens?.reduce<Promise<Array<LoanTokenType>>>(
+    const loanTokens = await storage?.loan_tokens?.reduce<Promise<Array<LoanMarketType>>>(
       async (promiseAcc, loanToken) => {
         const acc = await promiseAcc
 
@@ -503,8 +530,15 @@ export const normalizeLoans = async ({
         acc.push({
           loanTokenData: {
             ...loanTokenMetadata,
-            tokenType: loan_token_contract_standard as 'tez' | 'fa12' | 'fa2',
+            tokenType: loan_token_contract_standard as LoanTokenType,
             userBalance: loanTokenUserBalance,
+            gqlName: loanTokenMetadata.originalName,
+            name: loanTokenMetadata.name,
+            rate: loanTokenMetadata.rate,
+            decimals: loanTokenMetadata.decimals,
+            id: loanTokenMetadata.id,
+            symbol: loanTokenMetadata.symbol,
+            icon: loanTokenMetadata.icon,
           },
           myBorrowingList,
           permissionedBorrowingList: permissinedBorrowingList,
