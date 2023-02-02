@@ -3,7 +3,7 @@ import { useLockBodyScroll } from 'react-use'
 import { useEffect, useState } from 'react'
 
 import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
-import { COLLATERAL_RATIO_GRADIENT } from 'pages/Loans/Loans.const'
+import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { BorrowPopupDataType, DEFAULT_LOANS_INPUT_VALUE, getOnBlurValue, getOnFocusValue } from './Modals.helpers'
 import { State } from 'reducers'
 import { ACTION_PRIMARY, TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
@@ -176,14 +176,24 @@ export const BorrowAsset = ({
               ) : null}
 
               <VaultModalOverview>
-                <ThreeLevelListItem className="collateral-diagram">
-                  <div className={`percentage ${Number(154) / 100 > 2.5 ? 'up' : 'down'}`}>
-                    Collateral Ratio: <CommaNumber value={154} endingText="%" />
+                <ThreeLevelListItem
+                  className="collateral-diagram"
+                  customColor={getCollateralRationPersent(collateralRatio)}
+                >
+                  <div className={`percentage`}>
+                    Collateral Ratio:{' '}
+                    <CommaNumber
+                      beginningText={`${collateralRatio > 250 ? '+' : ''}`}
+                      value={Math.max(0, Math.min(collateralRatio, 250))}
+                      endingText="%"
+                      showDecimal
+                      decimalsToShow={2}
+                    />
                   </div>
                   <GradientDiagram
                     className="diagram"
                     colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
-                    currentPersentage={50}
+                    currentPersentage={Math.max(0, Math.min(((collateralRatio - 100) / 150) * 100, 100))}
                   />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
@@ -243,23 +253,33 @@ export const BorrowAsset = ({
 
               <div className="block-name">New Vault Stats</div>
               <VaultModalOverview>
-                <ThreeLevelListItem className="collateral-diagram">
-                  <div className={`percentage ${Number(154) / 100 > 2.5 ? 'up' : 'down'}`}>
-                    Collateral Ratio: <CommaNumber value={154} endingText="%" />
+                <ThreeLevelListItem
+                  className="collateral-diagram"
+                  customColor={getCollateralRationPersent(collateralRatio)}
+                >
+                  <div className={`percentage`}>
+                    Collateral Ratio:{' '}
+                    <CommaNumber
+                      beginningText={`${collateralRatio > 250 ? '+' : ''}`}
+                      value={Math.max(0, Math.min(collateralRatio, 250))}
+                      endingText="%"
+                      showDecimal
+                      decimalsToShow={2}
+                    />
                   </div>
                   <GradientDiagram
                     className="diagram"
                     colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
-                    currentPersentage={50}
+                    currentPersentage={Math.max(0, Math.min(((collateralRatio - 100) / 150) * 100, 100))}
                   />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">Collateral Value</div>
-                  <CommaNumber value={currentCollateralBalance} className="value" beginningText="$" />
+                  <CommaNumber value={0} className="value" beginningText="$" />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">Available To Withdraw</div>
-                  <CommaNumber value={currentAvaliableToBorrow} className="value" beginningText="$" />
+                  <CommaNumber value={0} className="value" beginningText="$" />
                 </ThreeLevelListItem>
               </VaultModalOverview>
 

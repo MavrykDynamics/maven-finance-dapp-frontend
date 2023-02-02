@@ -34,15 +34,15 @@ export const AddLendingAsset = ({
   const {
     userBalance = 0,
     mBalance = 0,
-    assetRate = 0,
+    rate = 0,
     decimals = 0,
-    assetName = '',
-    assetAddress = '',
+    symbol = '',
+    address = '',
     lendingAPY = 0,
-    assetIcon = '',
-    originalName = '',
+    icon = '',
+    gqlName = '',
     tokenType = '',
-    assetId = 0,
+    id = 0,
   } = data ?? {}
   useLockBodyScroll(show)
 
@@ -87,13 +87,13 @@ export const AddLendingAsset = ({
   }, [inputData.validationStatus, isActionLoading])
 
   const depositHandler = () => {
-    if (tokenType && assetAddress) {
+    if (tokenType && address) {
       dispatch(
         depositLendingAssetAction(
-          originalName,
+          gqlName,
           Number(inputData.amount) * 10 ** decimals,
-          assetAddress,
-          assetId,
+          address,
+          id,
           tokenType,
           closePopup,
         ),
@@ -116,7 +116,7 @@ export const AddLendingAsset = ({
           </div>
 
           <Input
-            className={`${assetRate ? 'input-with-rate' : ''} large-input pinned-dropdown`}
+            className={`${rate ? 'input-with-rate' : ''} large-input pinned-dropdown`}
             inputProps={{
               value: inputData.amount,
               type: 'number',
@@ -126,21 +126,21 @@ export const AddLendingAsset = ({
             }}
             settings={{
               balance: userBalance,
-              balanceAsset: assetName,
+              balanceAsset: symbol,
               useMaxHandler: () => onChangeHandler(String(userBalance), userBalance),
               inputStatus: inputData.validationStatus,
-              ...(assetRate ? { convertedValue: assetRate * Number(inputData.amount) } : {}),
+              ...(rate ? { convertedValue: rate * Number(inputData.amount) } : {}),
             }}
           >
             <InputPinnedTokenInfo>
-              {assetIcon ? (
+              {icon ? (
                 <div className="image-wrapper">
-                  <img src={assetIcon} alt={`${assetName}-logo`} />
+                  <img src={icon} alt={`${symbol}-logo`} />
                 </div>
               ) : (
                 <Icon id="noImage" />
               )}
-              {assetName}
+              {symbol}
             </InputPinnedTokenInfo>
           </Input>
 
@@ -151,18 +151,18 @@ export const AddLendingAsset = ({
                 <CustomTooltip
                   iconId="info"
                   defaultStrokeColor={silverColor}
-                  text={`You will receive m${assetName} instead of your ${assetName}`}
+                  text={`You will receive m${symbol} instead of your ${symbol}`}
                   className="tooltip"
                 />
               </div>
               <CommaNumber value={lendingAPY} className="value" endingText="%" />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
-              <div className="name">m{assetName} Received</div>
+              <div className="name">m{symbol} Received</div>
               <CommaNumber value={Number(inputData.amount)} className="value" />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
-              <div className="name">New m{assetName} Balance</div>
+              <div className="name">New m{symbol} Balance</div>
               <CommaNumber value={mBalance + Number(inputData.amount)} className="value" />
             </ThreeLevelListItem>
           </div>

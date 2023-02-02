@@ -256,11 +256,11 @@ export const BorrowingExpandCard = ({
                       openBorrowPopup?.({
                         vaultId,
                         borrowedAsset: borrowedAsset,
-                        borowCapacity: 0,
-                        collateralRatio: 0,
+                        collateralRatio,
                         borrowAPR: apr,
-                        hasUserBorrowed: false,
                         currentCollateralBalance: collateralData.at(-1)?.amount ?? 0,
+                        hasUserBorrowed: false,
+                        borowCapacity: 0,
                         currentAvaliableToBorrow: 0,
                       })
                     }

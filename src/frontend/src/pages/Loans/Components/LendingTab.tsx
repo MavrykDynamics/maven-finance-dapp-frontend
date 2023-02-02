@@ -71,13 +71,9 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Wallet Balance</div>
-              <CommaNumber value={lendingItem.loanAssetWalletBalance} className="value" />
+              <CommaNumber value={assetData.userBalance} className="value" />
               {assetData.rate ? (
-                <CommaNumber
-                  value={lendingItem.loanAssetWalletBalance * assetData.rate}
-                  beginningText="$"
-                  className="rate"
-                />
+                <CommaNumber value={assetData.userBalance * assetData.rate} beginningText="$" className="rate" />
               ) : null}
             </ThreeLevelListItem>
             <ThreeLevelListItem>
@@ -91,17 +87,9 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
               disabled={!Boolean(accountPkh)}
               onClick={() => {
                 openAddLendingAssetPopup({
-                  userBalance: lendingItem.loanAssetWalletBalance,
                   mBalance: lendingItem.mBalance,
                   lendingAPY: lendAPY,
-                  assetRate: assetData.rate,
-                  decimals: assetData.decimals,
-                  originalName: assetData.gqlName,
-                  assetName: assetData.symbol,
-                  assetIcon: assetData.icon,
-                  tokenType: assetData.tokenType,
-                  assetId: assetData.id,
-                  assetAddress: assetData.address,
+                  ...assetData,
                 })
               }}
               className="lending-btn"
@@ -113,18 +101,10 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
               disabled={!Boolean(accountPkh)}
               onClick={() => {
                 openRemoveLendingAssetPopup({
-                  userBalance: lendingItem.loanAssetWalletBalance,
                   mBalance: lendingItem.mBalance,
                   lendingAPY: lendAPY,
-                  assetRate: assetData.rate,
-                  decimals: assetData.decimals,
-                  originalName: assetData.gqlName,
-                  assetName: assetData.symbol,
-                  assetIcon: assetData.icon,
                   currentLendedAmount: lendingItem.lendValue,
-                  tokenType: assetData.tokenType,
-                  assetId: assetData.id,
-                  assetAddress: assetData.address,
+                  ...assetData,
                 })
               }}
               className="lending-btn"
@@ -141,17 +121,9 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
             disabled={!Boolean(accountPkh)}
             onClick={() =>
               openAddLendingAssetPopup({
-                userBalance: assetData.userBalance,
                 mBalance: 0,
                 lendingAPY: 0,
-                decimals: assetData.decimals,
-                assetRate: assetData.rate,
-                originalName: assetData.gqlName,
-                assetName: assetData.symbol,
-                assetIcon: assetData.icon,
-                tokenType: assetData.tokenType,
-                assetId: assetData.id,
-                assetAddress: assetData.address,
+                ...assetData,
               })
             }
             className="lending-tab-no-items-btn"

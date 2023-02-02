@@ -206,38 +206,26 @@ const calcLendingAPY = (currentInterestRate: number, treasuryShare: number): num
   return (power - 1) * 100
 }
 
-const getLendingItem = async (
+const getLendingItem = (
   loanToken: Lending_Controller_Loan_Token,
   userMTokens: UserState['mTokens'],
   loanTokenDecimals: number,
   accountPkh?: string,
-): Promise<LendingItemType> => {
-  try {
-    if (userMTokens && loanToken && accountPkh) {
-      const mTokenAsset = userMTokens?.find(({ m_token_id }) => m_token_id === loanToken.lp_token_address)
+): LendingItemType => {
+  if (userMTokens && loanToken && accountPkh) {
+    const mTokenAsset = userMTokens?.find(({ m_token_id }) => m_token_id === loanToken.lp_token_address)
 
-      const userBalance = await getUserBalanceForLoanAsset(
-        loanToken.loan_token_address,
-        loanToken.loan_token_name,
-        accountPkh,
-      )
-
-      if (mTokenAsset) {
-        return {
-          lendValue: Number(mTokenAsset.balance) / 10 ** loanTokenDecimals,
-          interestEarned: mTokenAsset.rewards_earned / 10 ** loanTokenDecimals,
-          mBalance:
-            Number(mTokenAsset.balance) / 10 ** loanTokenDecimals +
-            Number(mTokenAsset.rewards_earned) / 10 ** loanTokenDecimals,
-          loanAssetWalletBalance: userBalance,
-        }
+    if (mTokenAsset) {
+      return {
+        lendValue: Number(mTokenAsset.balance) / 10 ** loanTokenDecimals,
+        interestEarned: mTokenAsset.rewards_earned / 10 ** loanTokenDecimals,
+        mBalance:
+          Number(mTokenAsset.balance) / 10 ** loanTokenDecimals +
+          Number(mTokenAsset.rewards_earned) / 10 ** loanTokenDecimals,
       }
     }
-    return null
-  } catch (e) {
-    console.log('getLendingItem error: ', e)
-    return null
   }
+  return null
 }
 
 // Normalizing borrowed items for loan asset
@@ -490,7 +478,7 @@ export const normalizeLoans = async ({
           getTransactionHistory(history_data, dipDupData, feeds)
         const { myBorrowingList, permissinedBorrowingList, totalCollateral, vaultsBorrowedAmount } =
           await getBorrowings(vaults, dipDupData, feeds, interestRateDecimals, userAddres)
-        const lendingItem = await getLendingItem(loanToken, userMTokens, loanTokenMetadata.decimals, userAddres)
+        const lendingItem = getLendingItem(loanToken, userMTokens, loanTokenMetadata.decimals, userAddres)
 
         const loanTokenUserBalance = await getUserBalanceForLoanAsset(loan_token_address, loan_token_name, userAddres)
         const reservePercent = reserve_ratio / 10000

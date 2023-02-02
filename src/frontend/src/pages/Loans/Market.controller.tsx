@@ -59,7 +59,7 @@ export const Market = () => {
         <PageHeader page={'lending'} />
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
-          <div className="text">Loading {assetId.toUpperCase} market</div>
+          <div className="text">Loading {assetId} market</div>
         </DataLoaderWrapper>
       </Page>
     )
