@@ -25,17 +25,13 @@ import { getUserBalanceForLoanAsset } from './LoansFethcers'
 
 export const isTezosAsset = (tokenName: string) => tokenName === 'tez'
 
-export const getAssetDisplaySymbol = (tokenGqlName?: string) => {
-  if (!tokenGqlName) return ''
+export const getAssetDisplaySymbol = (tokenGqlName: string, assetSymbol: string) => {
   const isXTZ = isTezosAsset(tokenGqlName)
-
-  return isXTZ ? 'XTZ' : tokenGqlName.toUpperCase()
+  return isXTZ ? 'XTZ' : assetSymbol
 }
 
-export const getAssetDisplayName = (tokenGqlName?: string, assetName?: string) => {
-  if (!tokenGqlName || !assetName) return ''
+export const getAssetDisplayName = (tokenGqlName: string, assetName: string) => {
   const isXTZ = isTezosAsset(tokenGqlName)
-
   return isXTZ ? 'Tezos' : assetName.toUpperCase()
 }
 
@@ -135,7 +131,7 @@ const getTransactionHistory = (
             userAddress: sender_id,
             operationHash: operation_hash,
             descr: getDescrByType(type),
-            tokenSymbol: getAssetDisplaySymbol(assetMetadata.originalName),
+            tokenSymbol: getAssetDisplaySymbol(assetMetadata.originalName, assetMetadata.symbol),
           })
         }
 
@@ -326,7 +322,7 @@ const getBorrowings = async (
           const collateralBalance = collateral.balance / 10 ** collateralAsset.decimals
 
           acc.normalizedCollaterals.push({
-            symbol: getAssetDisplaySymbol(collateralAsset.originalName), //collateralAsset.symbol,
+            symbol: getAssetDisplaySymbol(collateralAsset.originalName, collateralAsset.symbol), //collateralAsset.symbol,
             name: getAssetDisplayName(collateralAsset.originalName, collateralAsset.name), // collateralAsset.name,
             gqlName: collateralAsset.originalName,
             icon: collateralAsset.icon,
@@ -398,7 +394,7 @@ const getBorrowings = async (
 
       const normallizedVault = {
         borrowedAsset: {
-          symbol: getAssetDisplaySymbol(vaultAsset.originalName), // vaultAsset.symbol,
+          symbol: getAssetDisplaySymbol(vaultAsset.originalName, vaultAsset.symbol), // vaultAsset.symbol,
           name: getAssetDisplayName(vaultAsset.originalName, vaultAsset.name), // vaultAsset.name,
           icon: vaultAsset.icon,
           decimals: vaultAsset.decimals,
@@ -470,7 +466,7 @@ export const normalizeLoans = async ({
     const interestRateDecimals = storage?.interest_rate_decimals ?? 0
     const loanTokens = await storage?.loan_tokens?.reduce<Promise<Array<LoanMarketType>>>(
       async (promiseAcc, loanToken) => {
-        const acc = await promiseAcc
+        const acc: LoanMarketType[] = await promiseAcc
 
         const {
           loan_token_name,
@@ -533,7 +529,7 @@ export const normalizeLoans = async ({
             tokenType: loan_token_contract_standard as LoanTokenType,
             userBalance: loanTokenUserBalance,
             gqlName: loanTokenMetadata.originalName,
-            symbol: getAssetDisplaySymbol(loanTokenMetadata.originalName), // loanTokenMetadata.symbol,
+            symbol: getAssetDisplaySymbol(loanTokenMetadata.originalName, loanTokenMetadata.symbol), // loanTokenMetadata.symbol,
             name: getAssetDisplayName(loanTokenMetadata.originalName, loanTokenMetadata.name), // loanTokenMetadata.name,
             rate: loanTokenMetadata.rate,
             decimals: loanTokenMetadata.decimals,
@@ -670,8 +666,8 @@ export const normalizeUserLending = ({
           case 0:
           case 1:
             acc.userLendings.push({
-              assetIcon: assetData.icon,
-              assetName: assetData.name,
+              icon: assetData.icon,
+              name: getAssetDisplaySymbol(assetData.originalName, assetData.symbol),
               id,
               amount: (amount / 10 ** assetData.decimals) * assetData.rate,
               annualPecentage: calcLendingAPY(
@@ -685,8 +681,8 @@ export const normalizeUserLending = ({
           case 2:
           case 3:
             acc.userBorrowing.push({
-              assetIcon: assetData.icon,
-              assetName: assetData.name,
+              icon: assetData.icon,
+              name: getAssetDisplaySymbol(assetData.originalName, assetData.symbol),
               id,
               amount: (amount / 10 ** assetData.decimals) * assetData.rate,
               annualPecentage: calcWithoutDecimals(loan_token.current_interest_rate, interest_rate_decimals) * 100,
