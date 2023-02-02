@@ -263,13 +263,15 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
                   {collateralData.slice(0, -1).map(({ assetSymbol, balance, assetRate }, index) => {
                     const isTotalRow = collateralData.length - 1 === index
 
-                    const collateralShare = isTotalRow 
+                    const collateralShare = isTotalRow
                       ? 100
                       : calculateCollateralShare(balance * assetRate, collateralTotalBalance)
 
                     return (
                       <TableRow rowHeight={rowHeight} key={assetSymbol + '-' + index}>
-                        <TableCell width={columnWidth}>{assetSymbol}</TableCell>
+                        <TableCell width={columnWidth}>
+                          {assetSymbol === 'tez' ? 'XTZ' : assetSymbol?.toUpperCase()}
+                        </TableCell>
 
                         <TableCell width={columnWidth}>
                           <div className="table-amount-group">

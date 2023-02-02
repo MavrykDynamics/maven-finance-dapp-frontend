@@ -245,7 +245,7 @@ export const VaultsCard = (props: Props) => {
                                 <Icon id="noImage" />
                               </div>
                             )}
-                            {assetSymbol}
+                            {assetSymbol === 'tez' ? 'XTZ' : assetSymbol?.toUpperCase()}
                           </div>
                         )}
                       </TableCell>
