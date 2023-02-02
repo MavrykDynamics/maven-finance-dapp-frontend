@@ -64,7 +64,6 @@ export type XtzBakerType = {
 
 export type UserLendObjType = {
   icon: string
-  name: string
   amount: number
   id: number
   annualPecentage: number

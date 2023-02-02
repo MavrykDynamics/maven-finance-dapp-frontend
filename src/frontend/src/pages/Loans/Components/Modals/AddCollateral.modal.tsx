@@ -159,7 +159,7 @@ export const AddCollateral = ({
             }}
             settings={{
               balance: collateralData?.userBalance ?? 0,
-              balanceAsset: selectedAsset?.name,
+              balanceAsset: selectedAsset?.symbol,
               useMaxHandler: () =>
                 inputOnChangeHandle(
                   collateralData?.userBalance ? String(collateralData.userBalance) : '0',
@@ -172,12 +172,12 @@ export const AddCollateral = ({
             <InputPinnedTokenInfo>
               {collateralData?.icon ? (
                 <div className="image-wrapper">
-                  <img src={collateralData.icon} alt={collateralData.name + '-logo'} />
+                  <img src={collateralData.icon} alt={collateralData.symbol + '-logo'} />
                 </div>
               ) : (
                 <Icon id="noImage" />
               )}{' '}
-              {selectedAsset?.name}
+              {selectedAsset?.symbol}
             </InputPinnedTokenInfo>
           </Input>
 

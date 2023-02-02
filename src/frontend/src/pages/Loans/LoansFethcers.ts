@@ -108,9 +108,9 @@ export const getCollateralTokens = async (
         if (isXTZ) {
           acc.push({
             id,
-            name: 'XTZ',
+            name: 'Tezos',
             gqlName: token_name,
-            symbol: 'tez',
+            symbol: 'XTZ',
             rate: rate ?? 0.25,
             userBalance,
             icon: '/images/tezos.png',
@@ -124,9 +124,9 @@ export const getCollateralTokens = async (
         if (assetMetadata) {
           acc.push({
             id,
-            name: token_name.toUpperCase(),
+            name: assetMetadata.name,
             gqlName: token_name,
-            symbol: assetMetadata.name,
+            symbol: assetMetadata.symbol,
             rate: rate ?? 0.25,
             userBalance,
             icon: token_name === 'eurl' ? '/images/eurl.png' : assetMetadata.icon ?? dataFromFeed?.icon,
