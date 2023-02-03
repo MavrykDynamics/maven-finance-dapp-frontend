@@ -62,6 +62,7 @@ export const BorrowingTab = ({
                   {...item}
                   key={item.borrowedAsset.symbol + '-' + idx}
                   isOpenedVault={createdVaultId === item.address}
+                  DAOFee={0}
                 />
               )
             })}

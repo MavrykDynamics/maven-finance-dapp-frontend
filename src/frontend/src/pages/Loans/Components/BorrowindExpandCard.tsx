@@ -47,6 +47,7 @@ type BorrowingExpandCardPropsType = LoansVaultType & {
   status?: string
   options?: BorrowingCardOptions
   isOpenedVault?: boolean
+  DAOFee: number
 }
 
 export const BorrowingExpandCard = ({
@@ -304,7 +305,7 @@ export const BorrowingExpandCard = ({
               ) : null}
 
               <TableBody>
-                {collateralData.map(({ icon, amount, rate, maxWithdraw, gqlName, symbol }, idx, array) => {
+                {collateralData.map(({ icon, amount, rate, maxWithdraw, gqlName, symbol }, idx) => {
                   const columnWidth = showOtherColumns ? '18%' : '22%'
                   const isTotalRow = collateralData.length - 1 === idx
 

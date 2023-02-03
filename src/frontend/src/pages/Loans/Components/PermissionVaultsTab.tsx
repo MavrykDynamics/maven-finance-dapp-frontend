@@ -23,7 +23,7 @@ export const PermissionVaults = ({ permissionVaults, lendingControllerAddress }:
       {permissionVaults.length ? (
         <div className="list-wrapper">
           {permissionVaults.map((item) => {
-            return <BorrowingExpandCard {...item} />
+            return <BorrowingExpandCard {...item} DAOFee={0} />
           })}
         </div>
       ) : (

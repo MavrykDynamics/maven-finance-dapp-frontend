@@ -297,6 +297,7 @@ export const VaultsCard = (props: Props) => {
           getExpandedStatus={setExpanded}
           isOwner
           options={borrowingCardOptions}
+          DAOFee={0}
         />
       ) : (
         <BorrowingExpandCard
@@ -305,6 +306,7 @@ export const VaultsCard = (props: Props) => {
           headerSufix={headerSufix}
           getExpandedStatus={setExpanded}
           options={borrowingCardOptions}
+          DAOFee={0}
         >
           {generalExpand}
         </BorrowingExpandCard>

@@ -10,6 +10,7 @@ query GetAllVaultsStorage {
     admin_liquidation_fee_pct
     liquidation_fee_pct
     decimals
+    minimum_loan_fee_pct
 
     loan_tokens {
       current_interest_rate
