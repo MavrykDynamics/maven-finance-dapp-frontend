@@ -57,14 +57,17 @@ export const BorrowAsset = ({
     const futureCollateralRatio = borrowedAsset
       ? calcCollateralRatio(
           currentCollateralBalance,
-          currentBorrowedAmount + Number(inputData.amount),
+          currentBorrowedAmount + parseFloat(inputData.amount),
           borrowedAsset.rate,
         )
       : 0
 
-    const futureBorrowCapacity = Math.max(borrowCapacity - Number(inputData.amount), 0)
+    const futureBorrowCapacity = Math.max(
+      borrowCapacity - parseFloat(inputData.amount) * Number(borrowedAsset?.rate),
+      0,
+    )
     return { futureCollateralRatio, futureBorrowCapacity }
-  }, [borrowedAsset, currentCollateralBalance, currentBorrowedAmount, inputData])
+  }, [borrowedAsset, currentCollateralBalance, currentBorrowedAmount, inputData, borrowCapacity])
 
   useEffect(() => {
     if (!show) {
@@ -175,7 +178,7 @@ export const BorrowAsset = ({
                         Math.min(borrowedAsset.userBalance, borrowCapacity),
                       ),
                     inputStatus: inputData.validationStatus,
-                    convertedValue: Number(inputData.amount) * borrowedAsset.rate,
+                    convertedValue: parseFloat(inputData.amount) * borrowedAsset.rate,
                   }}
                 >
                   <InputPinnedTokenInfo>
@@ -255,16 +258,16 @@ export const BorrowAsset = ({
                     Total Amount{' '}
                     <CustomTooltip iconId="info" defaultStrokeColor={silverColor} text={``} className="tooltip" />
                   </div>
-                  <CommaNumber value={Number(inputData.amount)} className="value" />
+                  <CommaNumber value={parseFloat(inputData.amount)} className="value" />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">Amount Received</div>
-                  <CommaNumber value={Number(inputData.amount) * 0.99} className="value" />
+                  <CommaNumber value={parseFloat(inputData.amount) * 0.99} className="value" />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">USD Value</div>
                   <CommaNumber
-                    value={Number(inputData.amount) * Number(borrowedAsset?.rate)}
+                    value={parseFloat(inputData.amount) * Number(borrowedAsset?.rate)}
                     className="value"
                     beginningText="$"
                   />

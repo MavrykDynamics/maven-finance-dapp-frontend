@@ -13,12 +13,22 @@ export const DEFAULT_LOANS_INPUT_VALUE: LoansPopupsInputStateType = {
 export const getOnBlurValue = (inputValue: string) => (inputValue === '' ? '0' : inputValue)
 export const getOnFocusValue = (inputValue: string) => (inputValue === '0' ? '' : inputValue)
 
-export type WithdrawCollateralPopupDataType = {
+export type CollateralPopupCommonDataType = {
   vaultAddress: string
-  currentCollateralValue: number
-  currentAvaliableToWithdraw: number
+  vaultCollateralBalance: number
   selectedAsset?: LoansVaultType['collateralData'][number]
-} | null
+  currentCollateralRatio: number
+  collateralWithdrawAmount: number
+  borrowedAmount: number
+}
+
+export type AddCollateralPopupDataType = CollateralPopupCommonDataType | null
+
+export type WithdrawCollateralPopupDataType =
+  | (CollateralPopupCommonDataType & {
+      currentCollateralBalance: number
+    })
+  | null
 
 export type RepayPartPopupDataType = {
   vaultAddress: string
@@ -48,13 +58,6 @@ export type BorrowPopupDataType = {
   currentCollateralBalance: number
   DAOFee: number
   currentBorrowedAmount: number
-} | null
-
-export type AddCollateralPopupDataType = {
-  vaultAddress: string
-  currentCollateralValue: number
-  currentAvaliableToWithdraw: number
-  selectedAsset?: LoansVaultType['collateralData'][number]
 } | null
 
 export type AddLendingAssetDataType =
