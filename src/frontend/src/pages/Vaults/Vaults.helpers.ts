@@ -182,10 +182,10 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
         vaultAsset.rate,
       )
 
-      const liquidationMax = calculateVaultMaxLiquidationAmount(
-        item.loan_outstanding_total,
-        lendingController.max_vault_liquidation_pct,
-      ) / 10 ** vaultAsset.decimals * vaultAsset.rate
+      const liquidationMax =
+        (calculateVaultMaxLiquidationAmount(item.loan_outstanding_total, lendingController.max_vault_liquidation_pct) /
+          10 ** vaultAsset.decimals) *
+        vaultAsset.rate
       const liquidationReward = lendingController.liquidation_fee_pct / 10 ** lendingController.decimals
       const adminLiquidateFee = lendingController.admin_liquidation_fee_pct
 
@@ -359,7 +359,7 @@ export const getVaultAssets = (vaultsMapper: Record<string, VaultType>) => {
     }
 
     if (collateralData.length) {
-      collateralData.map(({ assetSymbol }) => {
+      collateralData.slice(0, -1).map(({ assetSymbol }) => {
         if (assetSymbol) {
           collateralAssets.add(assetSymbol)
         }
