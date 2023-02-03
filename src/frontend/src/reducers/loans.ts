@@ -8,6 +8,9 @@ export interface LoansState {
   loansControllerAddress: string
   xtzBakers: Array<XtzBakerType>
   isDataLoaded: boolean
+  config: {
+    DAOFee: number
+  }
 }
 
 const loansDefaultState: LoansState = {
@@ -18,6 +21,9 @@ const loansDefaultState: LoansState = {
     borrowingChartData: [],
     totalLended: 0,
     lendingChartData: [],
+  },
+  config: {
+    DAOFee: 0
   },
   xtzBakers: [],
   isDataLoaded: false

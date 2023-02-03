@@ -7,6 +7,8 @@ import { BorrowingExpandCard } from './BorrowindExpandCard'
 import { EmptyContainer } from 'app/App.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { LoansTabStyled } from './LoansComponents.style'
+import { useSelector } from 'react-redux'
+import { State } from 'reducers'
 
 type PermissionVaultsPropsType = {
   permissionVaults: Array<LoansVaultType>
@@ -14,6 +16,10 @@ type PermissionVaultsPropsType = {
 }
 
 export const PermissionVaults = ({ permissionVaults, lendingControllerAddress }: PermissionVaultsPropsType) => {
+  const {
+    config: { DAOFee },
+  } = useSelector((state: State) => state.loans)
+
   return (
     <LoansTabStyled>
       <GovRightContainerTitleArea>
@@ -23,7 +29,7 @@ export const PermissionVaults = ({ permissionVaults, lendingControllerAddress }:
       {permissionVaults.length ? (
         <div className="list-wrapper">
           {permissionVaults.map((item) => {
-            return <BorrowingExpandCard {...item} DAOFee={0} />
+            return <BorrowingExpandCard {...item} DAOFee={DAOFee} />
           })}
         </div>
       ) : (

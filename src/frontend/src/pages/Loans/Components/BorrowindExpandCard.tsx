@@ -74,6 +74,8 @@ export const BorrowingExpandCard = ({
   collateralBalance,
   borrowedAmount,
   collateralRatio,
+  borrowCapacity,
+  DAOFee,
 }: BorrowingExpandCardPropsType) => {
   const { reverseColumns, showOtherColumns } = options ?? {}
 
@@ -255,6 +257,7 @@ export const BorrowingExpandCard = ({
                   <Button
                     text="Borrow"
                     icon="coin-loan"
+                    disabled={collateralRatio < 200}
                     strokeWidth={0.5}
                     onClick={() =>
                       openBorrowPopup?.({
@@ -264,8 +267,9 @@ export const BorrowingExpandCard = ({
                         borrowAPR: apr,
                         currentCollateralBalance: collateralData.at(-1)?.amount ?? 0,
                         hasUserBorrowed: false,
-                        borowCapacity: 0,
-                        currentAvaliableToBorrow: 0,
+                        borrowCapacity: borrowCapacity / borrowedAsset.rate,
+                        currentBorrowedAmount: borrowedAmount,
+                        DAOFee,
                       })
                     }
                     kind={ACTION_PRIMARY}
@@ -379,12 +383,18 @@ export const BorrowingExpandCard = ({
                                 onClick={() =>
                                   openAddNewCollateralPopup?.({
                                     vaultAddress: address,
-                                    currentCollateralValue: collateralData.at(-1)?.amount ?? 0,
-                                    currentAvaliableToWithdraw: 0,
+                                    vaultCollateralBalance: collateralData.at(-1)?.amount ?? 0,
+                                    currentCollateralRatio: collateralRatio,
+                                    borrowedAmount,
+                                    collateralWithdrawAmount: 0,
+                                    existingCollaterals: collateralData,
                                   })
                                 }
                                 kind={ACTION_PRIMARY}
-                                disabled={avaliableCollaterals.length === 0}
+                                disabled={
+                                  avaliableCollaterals.length === 0 ||
+                                  avaliableCollaterals.length === collateralData.length - 1
+                                }
                                 className="add-collateral"
                               />
                             ) : null}
@@ -397,9 +407,11 @@ export const BorrowingExpandCard = ({
                               onClick={() =>
                                 openAddExistingCollateralPopup?.({
                                   vaultAddress: address,
-                                  currentCollateralValue: collateralData.at(-1)?.amount ?? 0,
-                                  currentAvaliableToWithdraw: 0,
+                                  vaultCollateralBalance: collateralData.at(-1)?.amount ?? 0,
                                   selectedAsset: collateralData[idx],
+                                  currentCollateralRatio: collateralRatio,
+                                  borrowedAmount,
+                                  collateralWithdrawAmount: amount,
                                 })
                               }
                               kind={TRANSPARENT_WITH_BORDER}
@@ -411,9 +423,12 @@ export const BorrowingExpandCard = ({
                                 onClick={() =>
                                   openWithdrawCollateralPopup?.({
                                     vaultAddress: address,
-                                    currentCollateralValue: collateralData.at(-1)?.amount ?? 0,
-                                    currentAvaliableToWithdraw: 0,
+                                    currentCollateralBalance: amount,
+                                    vaultCollateralBalance: collateralData.at(-1)?.amount ?? 0,
                                     selectedAsset: collateralData[idx],
+                                    currentCollateralRatio: collateralRatio,
+                                    borrowedAmount,
+                                    collateralWithdrawAmount: amount,
                                   })
                                 }
                                 kind={TRANSPARENT_WITH_BORDER}
@@ -437,11 +452,17 @@ export const BorrowingExpandCard = ({
                 onClick={() =>
                   openAddNewCollateralPopup?.({
                     vaultAddress: address,
-                    currentCollateralValue: collateralData.at(-1)?.amount ?? 0,
-                    currentAvaliableToWithdraw: 0,
+                    vaultCollateralBalance: collateralData.at(-1)?.amount ?? 0,
+                    currentCollateralRatio: collateralRatio,
+                    borrowedAmount,
+                    collateralWithdrawAmount: 0,
+                    existingCollaterals: collateralData,
                   })
                 }
                 kind={ACTION_PRIMARY}
+                disabled={
+                  avaliableCollaterals.length === 0 || avaliableCollaterals.length === collateralData.length - 1
+                }
                 className="add-collateral"
               />
             ) : null}

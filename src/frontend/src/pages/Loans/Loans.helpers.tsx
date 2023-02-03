@@ -384,6 +384,7 @@ const getBorrowings = async (
         },
 
         collateralBalance: vaultCollateral.totalRow.amount,
+        borrowCapacity: vaultCollateral.totalRow.amount / 2 - borrowedAmount,
         collateralRatio,
         apr: currentInterestRate * 100,
         fee: borrowedAmount === 0 ? 0 : fee,
@@ -436,7 +437,6 @@ export const normalizeLoans = async ({
   mTokens: State['tokens']['mTokens']
   userMTokens: UserState['mTokens']
   userAddres?: string
-  tokensRate: State['tokens']['tokensPrices']
   feeds: State['oracles']['oraclesStorage']['feeds']
 }) => {
   try {
@@ -548,6 +548,9 @@ export const normalizeLoans = async ({
       loansControllerAddress: storage?.address,
       loanTokens,
       chartsData: getChartData(storage?.history_data, dipDupData, feeds),
+      config: {
+        DAOFee: (storage?.minimum_loan_fee_pct ?? 0) / 100,
+      },
     }
   } catch (e) {
     console.log('normalizeLoans error:', e)
@@ -555,6 +558,9 @@ export const normalizeLoans = async ({
       loansControllerAddress: storage?.address,
       chartsData: getChartData(storage?.history_data, dipDupData, feeds),
       loanTokens: [],
+      config: {
+        DAOFee: (storage?.minimum_loan_fee_pct ?? 0) / 100,
+      },
     }
   }
 }

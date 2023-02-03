@@ -1,5 +1,5 @@
 import { InputStatusType } from 'app/App.components/Input/Input.constants'
-import { LoansAssetDataType, LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
+import { CollateralType, LoansAssetDataType, LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
 import LoansPopupsProvider from './LoansModals.provider'
 import { VaultType } from 'utils/TypesAndInterfaces/Vaults'
 
@@ -13,12 +13,26 @@ export const DEFAULT_LOANS_INPUT_VALUE: LoansPopupsInputStateType = {
 export const getOnBlurValue = (inputValue: string) => (inputValue === '' ? '0' : inputValue)
 export const getOnFocusValue = (inputValue: string) => (inputValue === '0' ? '' : inputValue)
 
-export type WithdrawCollateralPopupDataType = {
+export type CollateralPopupCommonDataType = {
   vaultAddress: string
-  currentCollateralValue: number
-  currentAvaliableToWithdraw: number
+  vaultCollateralBalance: number
   selectedAsset?: LoansVaultType['collateralData'][number]
+  currentCollateralRatio: number
+  collateralWithdrawAmount: number
+  borrowedAmount: number
+}
+
+export type AddCollateralPopupDataType = CollateralPopupCommonDataType | null
+
+export type AddNewCollateralDataProps =CollateralPopupCommonDataType & {
+  existingCollaterals: Array<CollateralType>
 } | null
+
+export type WithdrawCollateralPopupDataType =
+  | (CollateralPopupCommonDataType & {
+      currentCollateralBalance: number
+    })
+  | null
 
 export type RepayPartPopupDataType = {
   vaultAddress: string
@@ -41,19 +55,13 @@ export type RepayFullPopupDataType = {
 export type BorrowPopupDataType = {
   vaultId: number
   borrowedAsset: LoansVaultType['borrowedAsset']
-  borowCapacity: number
+  borrowCapacity: number
   collateralRatio: number
   borrowAPR: number
   hasUserBorrowed: boolean
   currentCollateralBalance: number
-  currentAvaliableToBorrow: number
-} | null
-
-export type AddCollateralPopupDataType = {
-  vaultAddress: string
-  currentCollateralValue: number
-  currentAvaliableToWithdraw: number
-  selectedAsset?: LoansVaultType['collateralData'][number]
+  DAOFee: number
+  currentBorrowedAmount: number
 } | null
 
 export type AddLendingAssetDataType =
@@ -70,11 +78,7 @@ export type RemoveLendingAssetDataType =
     })
   | null
 
-export type AddNewCollateralDataProps = {
-  vaultAddress: string
-  currentCollateralValue: number
-  currentAvaliableToWithdraw: number
-} | null
+
 
 export type ChangeBakerPopupDataType = {
   bakerAddress: string | null

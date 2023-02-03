@@ -18,8 +18,6 @@ import { getLoansTokensRates, getXTZBakers, getCollateralTokens } from '../Loans
 export const GET_LOANS_STORAGE = 'GET_LOANS_STORAGE'
 export const CLEAR_LOANS_STORAGE = 'CLEAR_LOANS_STORAGE'
 export const getLoansStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
-  console.log('getLoansStorage trigger')
-
   const {
     tokens: { dipDupTokens, mTokens, tokensPrices },
     wallet: {
@@ -33,22 +31,15 @@ export const getLoansStorage = () => async (dispatch: AppDispatch, getState: Get
   try {
     const storage = await fetchFromIndexer(LOANS_QUERY, LOANS_QUERY_NAME, LOANS_QUERY_VARIABLE)
 
-    const loanTokensRate = await getLoansTokensRates(
-      storage?.lending_controller?.[0]?.loan_tokens,
-      dipDupTokens,
-      tokensPrices,
-    )
-
     const xtzBakers = await getXTZBakers()
 
-    const { chartsData, loanTokens, loansControllerAddress } = await normalizeLoans({
+    const { chartsData, loanTokens, loansControllerAddress, config } = await normalizeLoans({
       storage: storage?.lending_controller?.[0],
       dipDupData: dipDupTokens,
       mTokens,
       userMTokens,
       userAddres: accountPkh,
       feeds,
-      tokensRate: { ...tokensPrices, ...loanTokensRate },
     })
 
     await dispatch({
@@ -58,9 +49,9 @@ export const getLoansStorage = () => async (dispatch: AppDispatch, getState: Get
         chartsData,
         loanTokens,
         xtzBakers,
+        config,
       },
     })
-    await dispatch(updateTokensPrices(loanTokensRate))
   } catch (e) {
     console.error('getLoansStorage error: ', e)
   }

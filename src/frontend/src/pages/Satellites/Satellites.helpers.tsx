@@ -120,8 +120,8 @@ export function normalizeSatelliteRecord(
     },
   )
 
-  const v1 = satelliteRecord.user.aggregator_oracles[0].aggregator.last_completed_data
-  const v2 = satelliteRecord.user.aggregator_oracles[0].observations[0].data
+  const v1 = Number(satelliteRecord.user.aggregator_oracles?.[0]?.aggregator?.last_completed_data)
+  const v2 = Number(satelliteRecord.user.aggregator_oracles?.[0]?.observations?.[0]?.data)
   const accuracy = 100 - ((v1 - v2) / ((v1 + v2) / 2)) * 100
 
   const newSatelliteRecord: SatelliteRecord = {

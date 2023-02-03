@@ -11,7 +11,6 @@ import type {
 import { Dipdup_Token_Metadata, M_Token } from 'utils/generated/graphqlTypes'
 import { normalizeDataFeedsHistory, normalizeDataFeedsVolatility } from 'pages/Satellites/Satellites.helpers'
 import { Feed } from 'pages/Satellites/helpers/Satellites.types'
-import { State } from 'reducers'
 
 export function normalizeAddressesStorage(storage: AddressesGraphQl): ContractAddressesState {
   return {
@@ -49,7 +48,7 @@ export function normalizeVestingStorage(storage: VestingGraphQL | null) {
   return {
     address: storage?.address || '',
     totalVestedAmount: storage?.total_vested_amount ?? 0,
-    totalClaimedAmount: storage?.vestees_aggregate.aggregate?.sum?.total_claimed ?? 0,
+    totalClaimedAmount: storage?.vestees_aggregate?.aggregate?.sum?.total_claimed ?? 0,
   }
 }
 

@@ -4,6 +4,7 @@ export const LOANS_QUERY = `query GetLoansStorage {
     collateral_ratio
     interest_treasury_share
     interest_rate_decimals
+    minimum_loan_fee_pct
     decimals
     history_data(where: {type: {_in: ["0", "1", "2", "3"]}}) {
       type

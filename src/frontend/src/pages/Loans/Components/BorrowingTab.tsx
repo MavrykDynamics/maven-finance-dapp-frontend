@@ -34,6 +34,9 @@ export const BorrowingTab = ({
   const [createdVaultId, setCreatedVaultAddress] = useState<null | string>(null)
   const [showZeroVaults, setShowZeroVaults] = useState(false)
   const { accountPkh } = useSelector((state: State) => state.wallet)
+  const {
+    config: { DAOFee },
+  } = useSelector((state: State) => state.loans)
 
   const vaults = useMemo(() => {
     return showZeroVaults
@@ -80,7 +83,7 @@ export const BorrowingTab = ({
                   {...item}
                   key={item.borrowedAsset.symbol + '-' + idx}
                   isOpenedVault={createdVaultId === item.address}
-                  DAOFee={0}
+                  DAOFee={DAOFee}
                 />
               )
             })}
