@@ -59,13 +59,15 @@ export const AddCollateral = ({
 
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
 
+  const inputAmount = isNaN(parseFloat(inputData.amount)) ? 0 : parseFloat(inputData.amount)
+
   const { futureCollateralRatio, futureCollateralWithdraw, futureCollateralBalance } = useMemo(() => {
     const futureCollateralRatio = selectedAsset
-      ? calcCollateralRatio(vaultCollateralBalance + parseFloat(inputData.amount), borrowedAmount, selectedAsset.rate)
+      ? calcCollateralRatio(vaultCollateralBalance + inputAmount, borrowedAmount, selectedAsset.rate)
       : 0
 
-    const futureCollateralWithdraw = collateralWithdrawAmount + parseFloat(inputData.amount)
-    const futureCollateralBalance = vaultCollateralBalance + parseFloat(inputData.amount) * Number(selectedAsset?.rate)
+    const futureCollateralWithdraw = collateralWithdrawAmount + inputAmount
+    const futureCollateralBalance = vaultCollateralBalance + inputAmount * Number(selectedAsset?.rate)
     return { futureCollateralRatio, futureCollateralWithdraw, futureCollateralBalance }
   }, [selectedAsset, vaultCollateralBalance, inputData.amount, borrowedAmount, collateralWithdrawAmount])
 
@@ -109,7 +111,7 @@ export const AddCollateral = ({
         collateralName: collateralData.gqlName,
         assetId: collateralData.id,
         tokenType: collateralData.tokenType,
-        amount: Math.floor(parseFloat(inputData.amount) * 10 ** collateralData.decimals),
+        amount: Math.floor(Number(inputData.amount) * 10 ** collateralData.decimals),
         assetAddress: collateralData.address,
       }
 
@@ -186,7 +188,7 @@ export const AddCollateral = ({
                   Math.max(collateralData?.userBalance ?? 0, collateralWithdrawAmount),
                 ),
               inputStatus: inputData.validationStatus,
-              convertedValue: parseFloat(inputData.amount) * (collateralData?.rate ?? 1),
+              convertedValue: inputAmount * (collateralData?.rate ?? 1),
             }}
           >
             <InputPinnedTokenInfo>

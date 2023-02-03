@@ -383,12 +383,18 @@ export const BorrowingExpandCard = ({
                                 onClick={() =>
                                   openAddNewCollateralPopup?.({
                                     vaultAddress: address,
-                                    currentCollateralValue: collateralData.at(-1)?.amount ?? 0,
-                                    currentAvaliableToWithdraw: 0,
+                                    vaultCollateralBalance: collateralData.at(-1)?.amount ?? 0,
+                                    currentCollateralRatio: collateralRatio,
+                                    borrowedAmount,
+                                    collateralWithdrawAmount: 0,
+                                    existingCollaterals: collateralData,
                                   })
                                 }
                                 kind={ACTION_PRIMARY}
-                                disabled={avaliableCollaterals.length === 0}
+                                disabled={
+                                  avaliableCollaterals.length === 0 ||
+                                  avaliableCollaterals.length === collateralData.length - 1
+                                }
                                 className="add-collateral"
                               />
                             ) : null}
@@ -446,11 +452,17 @@ export const BorrowingExpandCard = ({
                 onClick={() =>
                   openAddNewCollateralPopup?.({
                     vaultAddress: address,
-                    currentCollateralValue: collateralData.at(-1)?.amount ?? 0,
-                    currentAvaliableToWithdraw: 0,
+                    vaultCollateralBalance: collateralData.at(-1)?.amount ?? 0,
+                    currentCollateralRatio: collateralRatio,
+                    borrowedAmount,
+                    collateralWithdrawAmount: 0,
+                    existingCollaterals: collateralData,
                   })
                 }
                 kind={ACTION_PRIMARY}
+                disabled={
+                  avaliableCollaterals.length === 0 || avaliableCollaterals.length === collateralData.length - 1
+                }
                 className="add-collateral"
               />
             ) : null}

@@ -63,18 +63,19 @@ export const WithdrawCollateral = ({
     [avaliableCollaterals, selectedAsset],
   )
 
+  const inputAmount = isNaN(parseFloat(inputData.amount)) ? 0 : parseFloat(inputData.amount)
+
   const { futureCollateralRatio, futureCollateralWithdraw, futureVaultCollateralBalance } = useMemo(() => {
     const futureCollateralRatio = selectedAsset
       ? calcCollateralRatio(
-          vaultCollateralBalance - parseFloat(inputData.amount) * Number(selectedAsset?.rate),
+          vaultCollateralBalance - inputAmount * Number(selectedAsset?.rate),
           borrowedAmount,
           selectedAsset.rate,
         )
       : 0
 
-    const futureCollateralWithdraw = collateralWithdrawAmount - parseFloat(inputData.amount)
-    const futureVaultCollateralBalance =
-      vaultCollateralBalance - parseFloat(inputData.amount) * Number(selectedAsset?.rate)
+    const futureCollateralWithdraw = collateralWithdrawAmount - inputAmount
+    const futureVaultCollateralBalance = vaultCollateralBalance - inputAmount * Number(selectedAsset?.rate)
 
     return { futureCollateralRatio, futureCollateralWithdraw, futureVaultCollateralBalance }
   }, [selectedAsset, vaultCollateralBalance, inputData.amount, borrowedAmount, collateralWithdrawAmount])
@@ -87,10 +88,9 @@ export const WithdrawCollateral = ({
   }, [show])
 
   const inputOnChangeHandle = (newInputAmount: string, maxAmount: number) => {
+    const parsedNewInputAmount = isNaN(parseFloat(newInputAmount)) ? 0 : parseFloat(newInputAmount)
     const validationStatus =
-      parseFloat(newInputAmount) > 0 && parseFloat(newInputAmount) <= maxAmount
-        ? INPUT_STATUS_SUCCESS
-        : INPUT_STATUS_ERROR
+      parsedNewInputAmount > 0 && parsedNewInputAmount <= maxAmount ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
 
     if (validationStatus === INPUT_STATUS_ERROR && newInputAmount !== '' && newInputAmount !== '0') return
 
@@ -195,7 +195,7 @@ export const WithdrawCollateral = ({
                     Math.min(collateralData.userBalance, currentCollateralBalance),
                   ),
                 inputStatus: inputData.validationStatus,
-                convertedValue: parseFloat(inputData.amount) * collateralData.rate,
+                convertedValue: inputAmount * collateralData.rate,
               }}
             >
               <InputPinnedTokenInfo>

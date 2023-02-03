@@ -11,7 +11,7 @@ import { Input } from 'app/App.components/Input/NewInput'
 import { DropDownCollateralAssetType, DropDownXTZBakerType } from './CreateNewVault.modal'
 import NewButton from 'app/App.components/Button/NewButton.controller'
 
-import { isTezosAsset } from 'pages/Loans/Loans.helpers'
+import { calcCollateralRatio, isTezosAsset } from 'pages/Loans/Loans.helpers'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
@@ -47,7 +47,14 @@ export const AddNewCollateral = ({
   show: boolean
   data: AddNewCollateralDataProps
 }) => {
-  const { currentCollateralValue = 0, currentAvaliableToWithdraw = 0, vaultAddress } = data ?? {}
+  const {
+    vaultCollateralBalance = 0,
+    vaultAddress,
+    currentCollateralRatio = 0,
+    collateralWithdrawAmount = 0,
+    borrowedAmount = 0,
+    existingCollaterals,
+  } = data ?? {}
 
   const dispatch = useDispatch()
   const { xtzBakers } = useSelector((state: State) => state.loans)
@@ -65,28 +72,50 @@ export const AddNewCollateral = ({
         acc[collateralData.id] = {
           ...collateralData,
           content: <DropdownInputCustomChild iconSrc={collateralData.icon} symbol={collateralData.symbol} />,
-          disabled: collateralData.isProtected,
+          disabled: Boolean(
+            collateralData.isProtected ||
+              existingCollaterals?.find(({ gqlName }) => collateralData.gqlName === gqlName),
+          ),
         }
         return acc
       },
       {},
     )
-    mappedAvaliableCollaterals[Number(Object.keys(mappedAvaliableCollaterals)[0])].disabled = true
+
+    const firstNotDisabledCollateralId = Number(
+      Object.keys(mappedAvaliableCollaterals).find((id) => mappedAvaliableCollaterals[Number(id)].disabled === false),
+    )
+    mappedAvaliableCollaterals[firstNotDisabledCollateralId].disabled = true
 
     setInputData({
       amount: '0',
-      assetName: mappedAvaliableCollaterals[Number(Object.keys(mappedAvaliableCollaterals)[0])].gqlName,
-      userBalance: mappedAvaliableCollaterals[Number(Object.keys(mappedAvaliableCollaterals)[0])].userBalance,
+      assetName: mappedAvaliableCollaterals[firstNotDisabledCollateralId].gqlName,
+      userBalance: mappedAvaliableCollaterals[firstNotDisabledCollateralId].userBalance,
       validationStatus: '',
-      id: mappedAvaliableCollaterals[Number(Object.keys(mappedAvaliableCollaterals)[0])].id,
+      id: mappedAvaliableCollaterals[firstNotDisabledCollateralId].id,
       ddItems: mappedAvaliableCollaterals,
-      selectedDdItem: mappedAvaliableCollaterals[Number(Object.keys(mappedAvaliableCollaterals)[0])],
+      selectedDdItem: mappedAvaliableCollaterals[firstNotDisabledCollateralId],
     })
 
     if (!show) {
       setInputData(undefined)
     }
-  }, [avaliableCollaterals, show])
+  }, [avaliableCollaterals, show, existingCollaterals])
+
+  const { futureCollateralRatio, futureCollateralWithdraw, futureCollateralBalance } = useMemo(() => {
+    if (inputData) {
+      const inputAmount = isNaN(parseFloat(inputData.amount)) ? 0 : parseFloat(inputData.amount)
+      const selectedAsset = avaliableCollaterals.find(({ id }) => id === inputData?.id)
+      const futureCollateralRatio = selectedAsset
+        ? calcCollateralRatio(vaultCollateralBalance + inputAmount, borrowedAmount, selectedAsset.rate)
+        : 0
+
+      const futureCollateralWithdraw = collateralWithdrawAmount + inputAmount
+      const futureCollateralBalance = vaultCollateralBalance + inputAmount * Number(selectedAsset?.rate)
+      return { futureCollateralRatio, futureCollateralWithdraw, futureCollateralBalance }
+    }
+    return { futureCollateralRatio: 0, futureCollateralWithdraw: 0, futureCollateralBalance: 0 }
+  }, [inputData, vaultCollateralBalance, borrowedAmount, collateralWithdrawAmount, avaliableCollaterals])
 
   // select baker for an xtz collateral, used only when we selected one collateral XTZ
   const bakerItemsForDropDown = useMemo<DropDownXTZBakerType[]>(
@@ -223,13 +252,13 @@ export const AddNewCollateral = ({
           <VaultModalOverview style={{ marginBottom: '45px' }}>
             <ThreeLevelListItem
               className="collateral-diagram"
-              customColor={getCollateralRationPersent(currentCollateralValue)}
+              customColor={getCollateralRationPersent(currentCollateralRatio)}
             >
               <div className={`percentage`}>
                 Collateral Ratio:{' '}
                 <CommaNumber
-                  beginningText={`${currentCollateralValue > 250 ? '+' : ''}`}
-                  value={Math.max(0, Math.min(currentCollateralValue, 250))}
+                  beginningText={`${currentCollateralRatio > 250 ? '+' : ''}`}
+                  value={Math.max(0, Math.min(currentCollateralRatio, 250))}
                   endingText="%"
                   showDecimal
                   decimalsToShow={2}
@@ -238,16 +267,16 @@ export const AddNewCollateral = ({
               <GradientDiagram
                 className="diagram"
                 colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
-                currentPersentage={Math.max(0, Math.min(((currentCollateralValue - 100) / 150) * 100, 100))}
+                currentPersentage={Math.max(0, Math.min(((currentCollateralRatio - 100) / 150) * 100, 100))}
               />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Collateral Value</div>
-              <CommaNumber value={currentCollateralValue} beginningText="$" className="value" />
+              <CommaNumber value={vaultCollateralBalance} beginningText="$" className="value" />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Available To Withdraw</div>
-              <CommaNumber value={currentAvaliableToWithdraw} className="value" beginningText="$" />
+              <CommaNumber value={collateralWithdrawAmount} className="value" beginningText="$" />
             </ThreeLevelListItem>
           </VaultModalOverview>
 
@@ -332,13 +361,13 @@ export const AddNewCollateral = ({
           <VaultModalOverview>
             <ThreeLevelListItem
               className="collateral-diagram"
-              customColor={getCollateralRationPersent(currentCollateralValue)}
+              customColor={getCollateralRationPersent(futureCollateralRatio)}
             >
               <div className={`percentage`}>
                 Collateral Ratio:{' '}
                 <CommaNumber
-                  beginningText={`${currentCollateralValue > 250 ? '+' : ''}`}
-                  value={Math.max(0, Math.min(currentCollateralValue, 250))}
+                  beginningText={`${futureCollateralRatio > 250 ? '+' : ''}`}
+                  value={Math.max(0, Math.min(futureCollateralRatio, 250))}
                   endingText="%"
                   showDecimal
                   decimalsToShow={2}
@@ -347,16 +376,16 @@ export const AddNewCollateral = ({
               <GradientDiagram
                 className="diagram"
                 colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
-                currentPersentage={Math.max(0, Math.min(((currentCollateralValue - 100) / 150) * 100, 100))}
+                currentPersentage={Math.max(0, Math.min(((futureCollateralRatio - 100) / 150) * 100, 100))}
               />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Collateral Value</div>
-              <CommaNumber value={0} className="value" beginningText="$" />
+              <CommaNumber value={futureCollateralBalance} className="value" beginningText="$" />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Available To Withdraw</div>
-              <CommaNumber value={0} className="value" beginningText="$" />
+              <CommaNumber value={futureCollateralWithdraw} className="value" beginningText="$" />
             </ThreeLevelListItem>
           </VaultModalOverview>
 
