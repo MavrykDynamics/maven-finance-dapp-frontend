@@ -10,4 +10,7 @@ export type VaultType = LoansVaultType & {
   status: string
   ownerId: string
   creationTimestamp?: string
+  liquidationMax: number
+  liquidationReward: number
+  adminLiquidateFee: number
 }

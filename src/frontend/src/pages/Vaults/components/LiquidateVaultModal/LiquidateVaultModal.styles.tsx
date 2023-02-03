@@ -1,5 +1,5 @@
-import styled from "styled-components";
-import { MavrykTheme } from "styles/interfaces";
+import styled from 'styled-components'
+import { MavrykTheme } from 'styles/interfaces'
 
 export const LiquidateVaultModalStyled = styled.div<{ showAsPercentage: boolean; theme: MavrykTheme }>`
   font-weight: 600;
@@ -37,7 +37,7 @@ export const LiquidateVaultModalStyled = styled.div<{ showAsPercentage: boolean;
     margin-bottom: 10px;
   }
 
-  div[class="g-centering-group"] > button {
+  div[class='g-centering-group'] > button {
     margin-top: 10px;
     width: 250px;
   }
@@ -98,11 +98,12 @@ export const LiquidateVaultModalStyled = styled.div<{ showAsPercentage: boolean;
       color: ${({ theme }) => theme.valueColor};
     }
 
-    ${({ showAsPercentage, theme }) => showAsPercentage
-      ? `.sufix {
+    ${({ showAsPercentage, theme }) =>
+      showAsPercentage
+        ? `.sufix {
           color: ${theme.headerColor};
         }`
-      : `.prefix {
+        : `.prefix {
           color: ${theme.headerColor};
         }`}
   }
@@ -127,11 +128,11 @@ export const LiquidateVaultModalStyled = styled.div<{ showAsPercentage: boolean;
   }
 
   .upColor {
-    color: ${({ theme }) => theme.newUpColor}
+    color: ${({ theme }) => theme.newUpColor};
   }
 
   .downColor {
-    color: ${({ theme }) => theme.downColor}
+    color: ${({ theme }) => theme.downColor};
   }
 
   .input {

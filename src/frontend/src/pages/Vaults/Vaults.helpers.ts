@@ -369,7 +369,7 @@ export const getVaultAssets = (vaultsMapper: Record<string, VaultType>) => {
     }
 
     if (collateralData.length) {
-      collateralData.map(({ symbol }) => {
+      collateralData.slice(0, -1).map(({ symbol }) => {
         if (symbol) {
           collateralAssets.add(symbol)
         }

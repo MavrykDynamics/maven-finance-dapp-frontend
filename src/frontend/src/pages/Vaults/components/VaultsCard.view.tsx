@@ -98,7 +98,17 @@ type Props = VaultType & {
 }
 
 export const VaultsCard = (props: Props) => {
-  const { ownerId, vaultId, status, levelOfEarly, levelOfLate, collateralData, isOwner, liquidationMax, handleMarkForLiquidation } = props
+  const {
+    ownerId,
+    vaultId,
+    status,
+    levelOfEarly,
+    levelOfLate,
+    collateralData,
+    isOwner,
+    liquidationMax,
+    handleMarkForLiquidation,
+  } = props
 
   const { openLiquidateVaultPopup } = useContext(loansPopupsContext)
   const [expanded, setExpanded] = useState(false)
