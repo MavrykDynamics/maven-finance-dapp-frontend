@@ -24,58 +24,60 @@ export const FarmsTab = ({ isLoading }: { isLoading: boolean }) => {
     <TabWrapperStyled backgroundImage="dashboard_farmsTab_bg.png">
       <div className="top">
         <BGPrimaryTitle>Yield Farms</BGPrimaryTitle>
-        <Link to="/yield-farms">
+        <Link to="/yield-farms?isLive=1">
           <Button text="Farms" icon="plant" kind={ACTION_PRIMARY} className="noStroke dashboard-sectionLink" />
         </Link>
       </div>
 
       <FarmsContentStyled className="scroll-block">
         {isLoading ? (
-        <DataLoaderWrapper className='tabLoader'>
-          <ClockLoader width={150} height={150} />
-          <div className="text">Loading farms</div>
-        </DataLoaderWrapper>
-      ) : hasLiveFarms
-          ? farmStorage.map((farmCardData) => {
-              if (!farmCardData.isLive) return null
+          <DataLoaderWrapper className="tabLoader">
+            <ClockLoader width={150} height={150} />
+            <div className="text">Loading farms</div>
+          </DataLoaderWrapper>
+        ) : hasLiveFarms ? (
+          farmStorage.map((farmCardData) => {
+            if (!farmCardData.isLive) return null
 
-              const apy = calculateAPY(farmCardData.currentRewardPerBlock, farmCardData.lpBalance)
-              return (
-                <Link
-                  to={`/yield-farms?${qs.stringify({ openedCards: [farmCardData.address] })}`}
-                  key={farmCardData.address + farmCardData.name}
-                >
-                  <div className="card">
-                    <div className="top">
-                      <div className="name">
-                        <div className="large">{farmCardData.name}</div>
-                        <TzAddress tzAddress={farmCardData.address} hasIcon type={CYAN} />
-                      </div>
-
-                      <CoinsIcons />
+            const apy = calculateAPY(farmCardData.currentRewardPerBlock, farmCardData.lpBalance)
+            return (
+              <Link
+                to={`/yield-farms?${qs.stringify({ openedCards: [farmCardData.address] })}`}
+                key={farmCardData.address + farmCardData.name}
+              >
+                <div className="card">
+                  <div className="top">
+                    <div className="name">
+                      <div className="large">{farmCardData.name}</div>
+                      <TzAddress tzAddress={farmCardData.address} hasIcon type={CYAN} />
                     </div>
 
-                    <div className="row-info">
-                      <div className="name">APY: </div>
-                      <div className="value">{apy}</div>
-                    </div>
+                    <CoinsIcons />
+                  </div>
 
-                    <div className="row-info">
-                      <div className="name">Earn: </div>
-                      <div className="value">sMVK + Fees</div>
-                    </div>
+                  <div className="row-info">
+                    <div className="name">APY: </div>
+                    <div className="value">{apy}</div>
+                  </div>
 
-                    <div className="row-info">
-                      <div className="name">Ends in: </div>
-                      <div className="value">
-                        <Timer deadline={farmCardData.endsIn} />
-                      </div>
+                  <div className="row-info">
+                    <div className="name">Earn: </div>
+                    <div className="value">sMVK + Fees</div>
+                  </div>
+
+                  <div className="row-info">
+                    <div className="name">Ends in: </div>
+                    <div className="value">
+                      <Timer deadline={farmCardData.endsIn} />
                     </div>
                   </div>
-                </Link>
-              )
-            })
-          : emptyContainer}
+                </div>
+              </Link>
+            )
+          })
+        ) : (
+          emptyContainer
+        )}
       </FarmsContentStyled>
 
       <div className="descr">

@@ -88,9 +88,7 @@ export const fillTreasuryStorage = () => async (dispatch: AppDispatch, getState:
         Array.from(arrayOfAssetsSymbols).map((symbol) => coinGeckoClient.coins.fetch(symbol, {})),
       )
     ).reduce<Record<string, { rate: number; symbol: string }>>((acc, promiseResult) => {
-      const {
-        value: { data, success },
-      } = promiseResult as any
+      const { value: { data, success } = {} as any } = (promiseResult ?? {}) as any
       if (success) {
         const symbol = data.symbol
         const rate = data.market_data.current_price.usd
