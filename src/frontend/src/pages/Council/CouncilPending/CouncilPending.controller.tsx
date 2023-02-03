@@ -11,7 +11,7 @@ import Icon from '../../../app/App.components/Icon/Icon.view'
 // helpers
 import { getSeparateCamelCase } from '../../../utils/parse'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { bytesToString } from 'utils/bytesToString'
+import { bytesToString, BytesType, BYTES_ADDRESS_TYPE } from 'utils/bytesToString'
 
 // types
 import { BreakGlassActions } from 'utils/TypesAndInterfaces/BreakGlass'
@@ -57,9 +57,9 @@ export const CouncilPending = (props: Props) => {
   }
 
   const findActionByName = useCallback(
-    (name: string) => {
+    (name: string, type?: BytesType) => {
       const foundField = parameters.find((item) => item.name === name)?.value
-      return foundField ? bytesToString(foundField) : ''
+      return foundField ? bytesToString(foundField, type) : ''
     }, [parameters],
   )
 
@@ -111,6 +111,8 @@ export const CouncilPending = (props: Props) => {
     const councilMemberName = findActionByName('councilMemberName')
     const councilMemberWebsite = findActionByName('councilMemberWebsite')
     const councilMemberImage = findActionByName('councilMemberImage')
+    const councilMemberAddress = findActionByName('councilMemberAddress', BYTES_ADDRESS_TYPE)
+
     return (
       <>
         <CouncilPendingStyled className={`${actionType} ${councilPendingActionsLength > 1 ? 'more' : ''}`}>
@@ -120,7 +122,7 @@ export const CouncilPending = (props: Props) => {
             <article>
               <p className="without-margin">Council Member Address</p>
               <span className="parameters-value">
-                <TzAddress tzAddress={findActionByName('councilMemberAddress')} hasIcon={false} />
+                <TzAddress tzAddress={councilMemberAddress} hasIcon={false} />
               </span>
             </article>
             {councilMemberName ? (
@@ -176,7 +178,7 @@ export const CouncilPending = (props: Props) => {
 
   // 2/3
   if (isUpdateChangeCouncilMember) {
-    const newCouncilMemberAddress = findActionByName('newCouncilMemberAddress')
+    const newCouncilMemberAddress = findActionByName('newCouncilMemberAddress', BYTES_ADDRESS_TYPE)
     const newCouncilMemberName = findActionByName('newCouncilMemberName')
     const newCouncilMemberWebsite = findActionByName('newCouncilMemberWebsite')
     const newCouncilMemberImage = findActionByName('newCouncilMemberImage')
@@ -244,8 +246,8 @@ export const CouncilPending = (props: Props) => {
 
   // 3/3
   if (isChangeCouncilMember) {
-    const oldCouncilMemberAddress = findActionByName('oldCouncilMemberAddress')
-    const newCouncilMemberAddress = findActionByName('newCouncilMemberAddress')
+    const oldCouncilMemberAddress = findActionByName('oldCouncilMemberAddress', BYTES_ADDRESS_TYPE)
+    const newCouncilMemberAddress = findActionByName('newCouncilMemberAddress', BYTES_ADDRESS_TYPE)
     const newCouncilMemberName = findActionByName('newCouncilMemberName')
     const newCouncilMemberWebsite = findActionByName('newCouncilMemberWebsite')
     const newCouncilMemberImage = findActionByName('newCouncilMemberImage')
@@ -321,8 +323,9 @@ export const CouncilPending = (props: Props) => {
 
   // 2/3
   if (isSetSingleContractAdmin) {
-    const newAdminAddress = findActionByName('newAdminAddress')
-    const targetContractAddress = findActionByName('targetContractAddress')
+    const newAdminAddress = findActionByName('newAdminAddress', BYTES_ADDRESS_TYPE)
+    const targetContractAddress = findActionByName('targetContractAddress', BYTES_ADDRESS_TYPE)
+
     return (
       <CouncilPendingStyled className={`${actionType} ${councilPendingActionsLength > 1 ? 'more' : ''}`}>
         <span className="number">{cardNumber}</span>
@@ -366,6 +369,7 @@ export const CouncilPending = (props: Props) => {
     const cliffInMonths = findActionByName('cliffInMonths')
     const vestingInMonths = findActionByName('vestingInMonths')
     const totalAllocatedAmount = findActionByName('totalAllocatedAmount')
+    const vesteeAddress = findActionByName('vesteeAddress', BYTES_ADDRESS_TYPE)
 
     return (
       <CouncilPendingStyled className={`${actionType} ${councilPendingActionsLength > 1 ? 'more' : ''}`}>
@@ -375,7 +379,7 @@ export const CouncilPending = (props: Props) => {
           <article>
             <p>Vestee Address</p>
             <span className="parameters-value">
-              <TzAddress tzAddress={findActionByName('vesteeAddress')} hasIcon={false} />
+              <TzAddress tzAddress={vesteeAddress} hasIcon={false} />
             </span>
           </article>
 
@@ -418,6 +422,7 @@ export const CouncilPending = (props: Props) => {
     const newCliffInMonths = findActionByName('newCliffInMonths')
     const newVestingInMonths = findActionByName('newVestingInMonths')
     const newTotalAllocatedAmount = findActionByName('newTotalAllocatedAmount')
+    const vesteeAddress = findActionByName('vesteeAddress', BYTES_ADDRESS_TYPE)
 
     return (
       <CouncilPendingStyled className={`${actionType} ${councilPendingActionsLength > 1 ? 'more' : ''}`}>
@@ -427,7 +432,7 @@ export const CouncilPending = (props: Props) => {
           <article>
             <p>Vestee Address</p>
             <span className="parameters-value">
-              <TzAddress tzAddress={findActionByName('vesteeAddress')} hasIcon={false} />
+              <TzAddress tzAddress={vesteeAddress} hasIcon={false} />
             </span>
           </article>
 
@@ -467,9 +472,9 @@ export const CouncilPending = (props: Props) => {
 
   // 3/3
   if (isRequestTokens) {
-    const treasuryAddress = findActionByName('treasuryAddress')
+    const treasuryAddress = findActionByName('treasuryAddress', BYTES_ADDRESS_TYPE)
     const tokenAmount = findActionByName('tokenAmount')
-    const tokenContractAddress = findActionByName('tokenContractAddress')
+    const tokenContractAddress = findActionByName('tokenContractAddress', BYTES_ADDRESS_TYPE)
     const tokenType = findActionByName('tokenType')
     const tokenId = findActionByName('tokenId')
 
@@ -539,8 +544,8 @@ export const CouncilPending = (props: Props) => {
 
   // 3/3
   if (isTransfer) {
-    const receiverAddress = findActionByName('receiverAddress')
-    const tokenContractAddress = findActionByName('tokenContractAddress')
+    const receiverAddress = findActionByName('receiverAddress', BYTES_ADDRESS_TYPE)
+    const tokenContractAddress = findActionByName('tokenContractAddress', BYTES_ADDRESS_TYPE)
     const tokenAmount = findActionByName('tokenAmount')
     const tokenType = findActionByName('tokenType')
     const tokenId = findActionByName('tokenId')
@@ -612,6 +617,7 @@ export const CouncilPending = (props: Props) => {
   // 2/3
   if (isRequestMint) {
     const tokenAmount = findActionByName('tokenAmount')
+    const treasuryAddress = findActionByName('treasuryAddress', BYTES_ADDRESS_TYPE)
 
     return (
       <CouncilPendingStyled className={`${actionType} ${councilPendingActionsLength > 1 ? 'more' : ''}`}>
@@ -621,7 +627,7 @@ export const CouncilPending = (props: Props) => {
           <article>
             <p>Treasury Address</p>
             <span className="parameters-value">
-              <TzAddress tzAddress={findActionByName('treasuryAddress')} hasIcon={false} />
+              <TzAddress tzAddress={treasuryAddress} hasIcon={false} />
             </span>
           </article>
 
@@ -664,6 +670,8 @@ export const CouncilPending = (props: Props) => {
   // 1/3
   // for general card with only address field
   if (isRemoveVestee || isToggleVesteeLock || isRemoveCouncilMember || isSignAction || isSetAllContractsAdmin) {
+    const address = bytesToString(value, BYTES_ADDRESS_TYPE)
+
     return (
       <CouncilPendingStyled className={`${actionType} ${councilPendingActionsLength > 1 ? 'more' : ''}`}>
         <span className="number">{cardNumber}</span>
@@ -672,7 +680,7 @@ export const CouncilPending = (props: Props) => {
           <div>
             <p className="parameters-name">{getSeparateCamelCase(name)}</p>
             <span className="parameters-value">
-              <TzAddress tzAddress={value} hasIcon={false} />
+              <TzAddress tzAddress={address} hasIcon={false} />
             </span>
           </div>
           <div>

@@ -17,6 +17,7 @@
     "@airgap/beacon-sdk": "^3.3.0",
     "@graphql-codegen/cli": "2.11.6",
     "@taquito/beacon-wallet": "^12.1.0",
+    "@taquito/michel-codec": "^15.1.0",
     "@taquito/signer": "^12.1.0",
     "@taquito/taquito": "^12.1.0",
     "@taquito/utils": "^12.1.0",

@@ -7,7 +7,8 @@ import {
   checkVaultIsAbleToMarkedForLiquidation,
   checkVaultLiquidatableStatus,
   checkIfVaultIsAtRisk,
-} from './calcFunctionsForVaultStatuses'
+  calculateVaultMaxLiquidationAmount,
+} from './calcFunctionsForVault'
 import { Lending_Controller_Vault } from 'utils/generated/graphqlTypes'
 import { symbolsAfterDecimalPoint } from 'utils/symbolsAfterDecimalPoint'
 import { getOracleAggregatorLatestPrice } from './Vaults.actions'
@@ -82,7 +83,7 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
             maxWithdraw: 0,
           })
 
-          acc.totalRow.amount += collateralBalance
+          acc.totalRow.amount += collateralBalance * collateralAsset.rate
           // TODO: add a valid result in the field below
           acc.totalRow.maxWithdraw += 0
 
@@ -100,7 +101,6 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
             icon: '',
             id: 0,
             decimals: 0,
-            collateralShare: 100,
           },
         },
       ) ?? {
@@ -110,7 +110,6 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
           balance: 0,
           assetRate: 0,
           maxWithdraw: 0,
-          collateralShare: 100,
         },
       }
 
@@ -189,6 +188,13 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
 
       const collateralRatio = calcCollateralRatio(vaultCollateral.totalRow.amount, borrowedAmount, vaultAsset.rate)
 
+      const liquidationMax =
+        (calculateVaultMaxLiquidationAmount(item.loan_outstanding_total, lendingController.max_vault_liquidation_pct) /
+          10 ** vaultAsset.decimals) *
+        vaultAsset.rate
+      const liquidationReward = lendingController.liquidation_fee_pct / 10 ** lendingController.decimals
+      const adminLiquidateFee = lendingController.admin_liquidation_fee_pct
+
       const normallizedVault = {
         borrowedAsset: {
           symbol: vaultAsset.symbol,
@@ -216,6 +222,9 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
         status,
         levelOfEarly,
         levelOfLate,
+        liquidationMax,
+        liquidationReward,
+        adminLiquidateFee,
 
         xtzDelegatedTo: vaultXtzDelegatedTo?.delegate?.address ?? null,
         operators: [],
@@ -333,11 +342,7 @@ export const getOracleLatestPrices = async (vaults: Lending_Controller_Vault[]) 
   })
 
   const arrayUniqueOracleAddresses = [...uniqueOracleAddresses]
-  // TODO: remove testOracleId and use item
-  const testOracleId = 'KT1JgBX8LRJ7AmVhTk64niDZxfXH8UBXyiDv'
-  const prices = await Promise.all(
-    arrayUniqueOracleAddresses.map((item) => getOracleAggregatorLatestPrice(testOracleId)),
-  )
+  const prices = await Promise.all(arrayUniqueOracleAddresses.map((item) => getOracleAggregatorLatestPrice(item)))
 
   const result: Record<string, number> = {}
 
@@ -364,7 +369,7 @@ export const getVaultAssets = (vaultsMapper: Record<string, VaultType>) => {
     }
 
     if (collateralData.length) {
-      collateralData.map(({ symbol }) => {
+      collateralData.slice(0, -1).map(({ symbol }) => {
         if (symbol) {
           collateralAssets.add(symbol)
         }

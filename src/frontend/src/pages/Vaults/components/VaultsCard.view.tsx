@@ -31,6 +31,7 @@ import { CYAN } from 'app/App.components/TzAddress/TzAddress.constants'
 import { vaultsStatuses } from '../Vaults.consts'
 import { getTimestampByLevel } from 'pages/Governance/Governance.actions'
 import { loansPopupsContext } from 'pages/Loans/Components/Modals/LoansModals.provider'
+import { calculateCollateralShare } from '../calcFunctionsForVault'
 
 const findStatusInfo = (status: string) => {
   switch (status) {
@@ -77,7 +78,7 @@ const findFooterText = (status: string, statusColor: StatusFlagStyle, timestamp?
     case vaultsStatuses.MARK:
       return (
         <p>
-          This vault is <span className={statusColor}>ready to arm</span> and can be marked for the next {timer}
+          This vault is <span className={statusColor}>ready to arm</span> and can be marked for liquidation.
         </p>
       )
 
@@ -88,7 +89,7 @@ const findFooterText = (status: string, statusColor: StatusFlagStyle, timestamp?
 
 const borrowingCardOptions: BorrowingCardOptions = {
   reverseColumns: true,
-  customTableColumn: 'collateralShare',
+  showOtherColumns: true,
 }
 
 type Props = VaultType & {
@@ -97,8 +98,17 @@ type Props = VaultType & {
 }
 
 export const VaultsCard = (props: Props) => {
-  const { ownerId, vaultId, status, levelOfEarly, levelOfLate, collateralData, isOwner, handleMarkForLiquidation } =
-    props
+  const {
+    ownerId,
+    vaultId,
+    status,
+    levelOfEarly,
+    levelOfLate,
+    collateralData,
+    isOwner,
+    liquidationMax,
+    handleMarkForLiquidation,
+  } = props
 
   const { openLiquidateVaultPopup } = useContext(loansPopupsContext)
   const [expanded, setExpanded] = useState(false)
@@ -107,6 +117,8 @@ export const VaultsCard = (props: Props) => {
   const statusColor = findStatusInfo(status).color as StatusFlagStyle
   const statusText = findStatusInfo(status).text
   const footerText = findFooterText(status, statusColor, timerTimestamp)
+
+  const collateralTotalBalance = collateralData[collateralData.length - 1]?.amount
 
   const isActiveFooter =
     status === vaultsStatuses.LIQUIDATABLE || status === vaultsStatuses.GRACE_PERIOD || status === vaultsStatuses.MARK
@@ -189,7 +201,7 @@ export const VaultsCard = (props: Props) => {
                 <Icon id="info" className="info-icon" />
               </div>
 
-              <CommaNumber value={400_999_000} beginningText="$" className="value" />
+              <CommaNumber value={liquidationMax} beginningText="$" className="value" />
             </div>
           </div>
         </div>
@@ -208,9 +220,14 @@ export const VaultsCard = (props: Props) => {
               </TableHeader>
 
               <TableBody>
-                {collateralData.map(({ symbol, icon, rate, collateralShare, amount }, index) => {
+                {collateralData.map(({ symbol, icon, rate, amount }, index) => {
                   const columnWidth = '33%'
                   const isTotalRow = collateralData.length - 1 === index
+
+                  const collateralShare = isTotalRow
+                    ? 100
+                    : calculateCollateralShare(amount * rate, collateralTotalBalance)
+
                   if (isTotalRow && collateralData.length < 3) return null
 
                   return (
@@ -280,6 +297,7 @@ export const VaultsCard = (props: Props) => {
           getExpandedStatus={setExpanded}
           isOwner
           options={borrowingCardOptions}
+          DAOFee={0}
         />
       ) : (
         <BorrowingExpandCard
@@ -288,6 +306,7 @@ export const VaultsCard = (props: Props) => {
           headerSufix={headerSufix}
           getExpandedStatus={setExpanded}
           options={borrowingCardOptions}
+          DAOFee={0}
         >
           {generalExpand}
         </BorrowingExpandCard>
