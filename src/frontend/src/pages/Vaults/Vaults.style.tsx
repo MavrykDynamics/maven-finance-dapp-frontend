@@ -4,7 +4,15 @@ import styled from 'styled-components/macro'
 import { Card } from 'styles'
 
 // helpers
-import { DOWN, INFO, PRIMARY, UP, WAITING, WARNING, DARK_WARNING } from 'app/App.components/StatusFlag/StatusFlag.constants'
+import {
+  DOWN,
+  INFO,
+  PRIMARY,
+  UP,
+  WAITING,
+  WARNING,
+  DARK_WARNING,
+} from 'app/App.components/StatusFlag/StatusFlag.constants'
 
 // types
 import { MavrykTheme } from '../../styles/interfaces'
@@ -35,7 +43,7 @@ export const VaultsStyled = styled.div<{ theme: MavrykTheme }>`
 
   .tabSwitcher {
     margin-bottom: 0;
-    width: 175px; 
+    width: 175px;
   }
 `
 

@@ -1,5 +1,5 @@
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
-import { BorrowingData } from 'utils/TypesAndInterfaces/Loans'
+import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
 
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { BorrowingExpandCard } from './BorrowindExpandCard'
@@ -9,7 +9,7 @@ import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { LoansTabStyled } from './LoansComponents.style'
 
 type PermissionVaultsPropsType = {
-  permissionVaults: Array<BorrowingData>
+  permissionVaults: Array<LoansVaultType>
   lendingControllerAddress: string
 }
 

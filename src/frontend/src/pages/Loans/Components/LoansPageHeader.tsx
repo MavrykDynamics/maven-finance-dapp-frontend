@@ -1,6 +1,6 @@
 import ConnectWalletInfo from 'app/App.components/ConnectWallet/ConnectWalletInfo.view'
 import Icon from 'app/App.components/Icon/Icon.view'
-import { LoanTokenType } from 'utils/TypesAndInterfaces/Loans'
+import { LoanMarketType } from 'utils/TypesAndInterfaces/Loans'
 
 import {
   PageHeaderForegroundImage,
@@ -12,7 +12,7 @@ import {
 import { ASSETS_WE_HAVE_BG_TO } from '../Loans.const'
 
 type MarketPageHeaderPropsType = {
-  currentAsset: LoanTokenType
+  currentAsset: LoanMarketType
   assetId: string
 }
 
@@ -37,9 +37,9 @@ export const MarketPageHeader = ({ currentAsset, assetId }: MarketPageHeaderProp
           </div>
           <div className="text-container">
             <h1>
-              {(currentAsset.loanTokenData.originalName === 'tez'
+              {(currentAsset.loanTokenData.gqlName === 'tez'
                 ? 'xtz'
-                : currentAsset.loanTokenData.originalName
+                : currentAsset.loanTokenData.gqlName
               ).toUpperCase()}{' '}
               Market
             </h1>

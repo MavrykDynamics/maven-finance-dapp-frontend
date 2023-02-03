@@ -11,11 +11,10 @@ import { Input } from 'app/App.components/Input/NewInput'
 import { DropDownCollateralAssetType, DropDownXTZBakerType } from './CreateNewVault.modal'
 import NewButton from 'app/App.components/Button/NewButton.controller'
 
-import { getAssetName, isTezosAsset } from 'pages/Loans/Loans.helpers'
+import { isTezosAsset } from 'pages/Loans/Loans.helpers'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
-import { depositCollateralAction } from 'pages/Loans/Loans.actions'
 import { AddNewCollateralDataProps, getOnBlurValue, getOnFocusValue } from './Modals.helpers'
 import { InputStatusType, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 
@@ -24,6 +23,7 @@ import { PopupContainer, PopupContainerWrapper } from 'app/App.components/Settin
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { DropDownJsxChild, LoansModalBase, VaultModalOverview } from './Modals.style'
+import { depositCollateralAction } from 'pages/Loans/Actions/vaultCollateral.actions'
 
 type InputState =
   | {
@@ -64,12 +64,7 @@ export const AddNewCollateral = ({
       (acc, collateralData) => {
         acc[collateralData.id] = {
           ...collateralData,
-          content: (
-            <DropdownInputCustomChild
-              iconSrc={collateralData.assetIcon}
-              symbol={collateralData.originalName === 'tez' ? 'XTZ' : collateralData.originalName.toUpperCase()}
-            />
-          ),
+          content: <DropdownInputCustomChild iconSrc={collateralData.icon} symbol={collateralData.symbol} />,
           disabled: collateralData.isProtected,
         }
         return acc
@@ -80,7 +75,7 @@ export const AddNewCollateral = ({
 
     setInputData({
       amount: '0',
-      assetName: mappedAvaliableCollaterals[Number(Object.keys(mappedAvaliableCollaterals)[0])].originalName,
+      assetName: mappedAvaliableCollaterals[Number(Object.keys(mappedAvaliableCollaterals)[0])].gqlName,
       userBalance: mappedAvaliableCollaterals[Number(Object.keys(mappedAvaliableCollaterals)[0])].userBalance,
       validationStatus: '',
       id: mappedAvaliableCollaterals[Number(Object.keys(mappedAvaliableCollaterals)[0])].id,
@@ -180,7 +175,7 @@ export const AddNewCollateral = ({
 
       setInputData({
         ...inputData,
-        assetName: inputData.ddItems[id].originalName,
+        assetName: inputData.ddItems[id].gqlName,
         selectedDdItem: inputData.ddItems[id],
         ddItems: newDDItems,
         id,
@@ -202,8 +197,8 @@ export const AddNewCollateral = ({
         collateralName: inputData.assetName,
         assetId: inputData.selectedDdItem.id,
         tokenType: inputData.selectedDdItem.tokenType,
-        amount: Math.floor(Number(inputData.amount) * 10 ** inputData.selectedDdItem.assetDecimals),
-        assetAddress: inputData.selectedDdItem.assetAddress,
+        amount: Math.floor(Number(inputData.amount) * 10 ** inputData.selectedDdItem.decimals),
+        assetAddress: inputData.selectedDdItem.address,
       }
 
       if (vaultAddress) {
@@ -260,7 +255,7 @@ export const AddNewCollateral = ({
             <>
               <Input
                 className={`${
-                  inputData.selectedDdItem?.assetRate ? 'input-with-rate' : ''
+                  inputData.selectedDdItem?.rate ? 'input-with-rate' : ''
                 } large-input pinned-dropdown withdrawCollateralInput`}
                 inputProps={{
                   value: inputData.amount,
@@ -271,7 +266,7 @@ export const AddNewCollateral = ({
                 }}
                 settings={{
                   balance: inputData.userBalance,
-                  balanceAsset: inputData.assetName === 'tez' ? 'XTZ' : inputData.assetName.toUpperCase(),
+                  balanceAsset: isTezosAsset(inputData.assetName) ? 'XTZ' : inputData.assetName.toUpperCase(),
                   useMaxHandler: () =>
                     setInputData({
                       ...inputData,
@@ -279,7 +274,7 @@ export const AddNewCollateral = ({
                       validationStatus: INPUT_STATUS_SUCCESS,
                     }),
                   inputStatus: inputData.validationStatus,
-                  convertedValue: Number(inputData.amount) * inputData.selectedDdItem.assetRate,
+                  convertedValue: Number(inputData.amount) * inputData.selectedDdItem.rate,
                 }}
               >
                 <InputPinnedDropDown>

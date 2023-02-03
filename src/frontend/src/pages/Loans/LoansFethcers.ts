@@ -108,14 +108,14 @@ export const getCollateralTokens = async (
         if (isXTZ) {
           acc.push({
             id,
-            assetName: 'XTZ',
-            originalName: token_name,
-            assetSymbol: 'tez',
-            assetRate: rate ?? 0.25,
+            name: 'Tezos',
+            gqlName: token_name,
+            symbol: 'XTZ',
+            rate: rate ?? 0.25,
             userBalance,
-            assetIcon: '/images/tezos.png',
-            assetDecimals: assetMetadata?.decimals ? Number(assetMetadata.decimals) : 6,
-            assetAddress: token_address,
+            icon: '/images/tezos.png',
+            decimals: assetMetadata?.decimals ? Number(assetMetadata.decimals) : 6,
+            address: token_address,
             tokenType: token_contract_standard as 'tez' | 'fa12' | 'fa2',
             isProtected,
           })
@@ -124,14 +124,14 @@ export const getCollateralTokens = async (
         if (assetMetadata) {
           acc.push({
             id,
-            assetName: assetMetadata.name,
-            originalName: token_name,
-            assetSymbol: assetMetadata.symbol,
-            assetRate: rate ?? 0.25,
+            name: assetMetadata.name,
+            gqlName: token_name,
+            symbol: assetMetadata.symbol,
+            rate: rate ?? 0.25,
             userBalance,
-            assetIcon: token_name === 'eurl' ? '/images/eurl.png' : assetMetadata.icon ?? dataFromFeed?.icon,
-            assetDecimals: assetMetadata?.decimals ? Number(assetMetadata.decimals) : 6,
-            assetAddress: token_address,
+            icon: token_name === 'eurl' ? '/images/eurl.png' : assetMetadata.icon ?? dataFromFeed?.icon,
+            decimals: assetMetadata?.decimals ? Number(assetMetadata.decimals) : 6,
+            address: token_address,
             tokenType: token_contract_standard as 'tez' | 'fa12' | 'fa2',
             isProtected,
           })

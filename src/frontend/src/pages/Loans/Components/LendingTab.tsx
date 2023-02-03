@@ -1,9 +1,11 @@
+import { useSelector } from 'react-redux'
 import { useContext } from 'react'
 
 import { ACTION_PRIMARY, TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
-import { LendingItemType, LoanTokenType } from 'utils/TypesAndInterfaces/Loans'
+import { LendingItemType, LoanMarketType } from 'utils/TypesAndInterfaces/Loans'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+import { State } from 'reducers'
 import { loansPopupsContext } from './Modals/LoansModals.provider'
 
 import { Button } from 'app/App.components/Button/Button.controller'
@@ -17,12 +19,13 @@ import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 type LendingTabPropsType = {
   lendingItem: LendingItemType
   lendingControllerAddress: string
-  assetData: LoanTokenType['loanTokenData']
+  assetData: LoanMarketType['loanTokenData']
   lendAPY: number
 }
 
 export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, lendAPY }: LendingTabPropsType) => {
   const { openAddLendingAssetPopup, openRemoveLendingAssetPopup } = useContext(loansPopupsContext)
+  const { accountPkh } = useSelector((state: State) => state.wallet)
 
   return (
     <LoansTabStyled>
@@ -38,14 +41,14 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
               <div className="value">
                 {assetData.icon ? (
                   <div className="img-wrapper">
-                    <img src={assetData.icon} alt={`${assetData.name} logo`} />
+                    <img src={assetData.icon} alt={`${assetData.symbol}-logo`} />
                   </div>
                 ) : (
                   <div className="no-icon">
                     <Icon id="noImage" />
                   </div>
                 )}
-                {assetData.originalName === 'tez' ? 'XTZ' : assetData.originalName.toUpperCase()}
+                {assetData.symbol}
               </div>
             </ThreeLevelListItem>
             <ThreeLevelListItem>
@@ -68,13 +71,9 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Wallet Balance</div>
-              <CommaNumber value={lendingItem.loanAssetWalletBalance} className="value" />
+              <CommaNumber value={assetData.userBalance} className="value" />
               {assetData.rate ? (
-                <CommaNumber
-                  value={lendingItem.loanAssetWalletBalance * assetData.rate}
-                  beginningText="$"
-                  className="rate"
-                />
+                <CommaNumber value={assetData.userBalance * assetData.rate} beginningText="$" className="rate" />
               ) : null}
             </ThreeLevelListItem>
             <ThreeLevelListItem>
@@ -85,19 +84,12 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
               text="Add"
               icon="plus"
               kind={TRANSPARENT_WITH_BORDER}
+              disabled={!Boolean(accountPkh)}
               onClick={() => {
                 openAddLendingAssetPopup({
-                  userBalance: lendingItem.loanAssetWalletBalance,
                   mBalance: lendingItem.mBalance,
                   lendingAPY: lendAPY,
-                  assetRate: assetData.rate,
-                  decimals: assetData.decimals,
-                  originalName: assetData.originalName,
-                  assetName: assetData.symbol,
-                  assetIcon: assetData.icon,
-                  tokenType: assetData.tokenType,
-                  assetId: assetData.id,
-                  assetAddress: assetData.address,
+                  ...assetData,
                 })
               }}
               className="lending-btn"
@@ -106,20 +98,13 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
               text="Remove"
               icon="minus"
               kind={TRANSPARENT_WITH_BORDER}
+              disabled={!Boolean(accountPkh)}
               onClick={() => {
                 openRemoveLendingAssetPopup({
-                  userBalance: lendingItem.loanAssetWalletBalance,
                   mBalance: lendingItem.mBalance,
                   lendingAPY: lendAPY,
-                  assetRate: assetData.rate,
-                  decimals: assetData.decimals,
-                  originalName: assetData.originalName,
-                  assetName: assetData.symbol,
-                  assetIcon: assetData.icon,
                   currentLendedAmount: lendingItem.lendValue,
-                  tokenType: assetData.tokenType,
-                  assetId: assetData.id,
-                  assetAddress: assetData.address,
+                  ...assetData,
                 })
               }}
               className="lending-btn"
@@ -133,19 +118,12 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
             text="Lend Asset"
             icon="plus"
             kind={ACTION_PRIMARY}
+            disabled={!Boolean(accountPkh)}
             onClick={() =>
               openAddLendingAssetPopup({
-                userBalance: assetData.userBalance,
                 mBalance: 0,
                 lendingAPY: 0,
-                decimals: assetData.decimals,
-                assetRate: assetData.rate,
-                originalName: assetData.originalName,
-                assetName: assetData.symbol,
-                assetIcon: assetData.icon,
-                tokenType: assetData.tokenType,
-                assetId: assetData.id,
-                assetAddress: assetData.address,
+                ...assetData,
               })
             }
             className="lending-tab-no-items-btn"

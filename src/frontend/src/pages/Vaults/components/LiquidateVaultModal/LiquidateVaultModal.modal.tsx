@@ -43,8 +43,6 @@ type Props = {
 }
 
 export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
-  const dispatch = useDispatch()
-
   const {
     vaultId,
     ownerId,
@@ -54,16 +52,17 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
     liquidationReward = 0,
     adminLiquidateFee = 0,
   } = data ?? {}
+  const { symbol = '', icon = '', rate = 0, userBalance = 0 } = borrowedAsset ?? {}
 
-  const { assetSymbol = '', assetIcon = '', assetRate = 0, userBalance = 0 } = borrowedAsset ?? {}
+  const dispatch = useDispatch()
+
   const [showAsPercentage, setShowAsPercentage] = useState(true)
-  const collateralTotalBalance = collateralData[collateralData.length - 1]?.balance
-  const vaultAsset = assetSymbol === 'tez' ? 'XTZ' : assetSymbol?.toUpperCase()
+  const collateralTotalBalance = collateralData[collateralData.length - 1]?.amount
 
   const [inputAmount, setInputAmount] = useState('0')
   const amount = Number(inputAmount)
 
-  const liquidationMaxTokens = liquidationMax / assetRate
+  const liquidationMaxTokens = liquidationMax / rate
   const liquidationRewardPercentage = liquidationReward * 100
   const maxProfit = liquidationMax * liquidationReward
 
@@ -74,7 +73,7 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
     : userBalance
 
   const costToLiquidatePercentage = (liquidationMax / 100) * amount
-  const costToLiquidateAsset = amount * assetRate
+  const costToLiquidateAsset = amount * rate
 
   const costToLiquidate = showAsPercentage ? costToLiquidatePercentage : costToLiquidateAsset
   const returnedToLiquidator = costToLiquidate + costToLiquidate * liquidationReward
@@ -110,7 +109,7 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
 
   const inputSettings = {
     balance: userBalance,
-    balanceAsset: vaultAsset,
+    balanceAsset: symbol,
     useMaxHandler: () => setInputAmount(String(useMaxBalance)),
     inputStatus: handleInputStatus(costToLiquidate, liquidationMax),
     convertedValue: costToLiquidate,
@@ -165,9 +164,9 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
                 '%'
               ) : (
                 <>
-                  {assetIcon ? (
+                  {icon ? (
                     <div className="img-wrapper">
-                      <img src={assetIcon} alt={`${assetSymbol} logo`} />
+                      <img src={icon} alt={`${symbol} logo`} />
                     </div>
                   ) : (
                     <div className="no-icon">
@@ -181,7 +180,7 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
 
           <Toggle
             className="toggle"
-            prefix={vaultAsset}
+            prefix={symbol}
             sufix={'Percent'}
             checked={showAsPercentage}
             onChange={handleToggle}
@@ -265,29 +264,27 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
                 </TableHeader>
 
                 <TableBody>
-                  {collateralData.slice(0, -1).map(({ assetSymbol, balance, assetRate }, index) => {
+                  {collateralData.slice(0, -1).map(({ symbol, amount, rate }, index) => {
                     const isTotalRow = collateralData.length - 1 === index
 
                     const collateralShare = isTotalRow
                       ? 100
-                      : calculateCollateralShare(balance * assetRate, collateralTotalBalance)
+                      : calculateCollateralShare(amount * rate, collateralTotalBalance)
 
                     return (
-                      <TableRow rowHeight={rowHeight} key={assetSymbol + '-' + index}>
-                        <TableCell width={columnWidth}>
-                          {assetSymbol === 'tez' ? 'XTZ' : assetSymbol?.toUpperCase()}
-                        </TableCell>
+                      <TableRow rowHeight={rowHeight} key={symbol + '-' + index}>
+                        <TableCell width={columnWidth}>{symbol}</TableCell>
 
                         <TableCell width={columnWidth}>
                           <div className="table-amount-group">
                             <div>{collateralShare}%</div>
-                            <CommaNumber value={balance} decimalsToShow={2} showDecimal />
+                            <CommaNumber value={amount} decimalsToShow={2} showDecimal />
                           </div>
                         </TableCell>
 
                         <TableCell width={columnWidth} contentPosition="right">
                           <CommaNumber
-                            value={assetRate ? balance * assetRate : 0}
+                            value={rate ? amount * rate : 0}
                             decimalsToShow={2}
                             showDecimal
                             beginningText="$"
@@ -302,7 +299,7 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
                     <TableCell width={columnWidth}></TableCell>
                     <TableCell width={columnWidth} contentPosition="right">
                       <CommaNumber
-                        value={collateralData[collateralData.length - 1].balance}
+                        value={collateralData[collateralData.length - 1].amount}
                         decimalsToShow={2}
                         showDecimal
                         beginningText="$"

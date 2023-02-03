@@ -98,17 +98,7 @@ type Props = VaultType & {
 }
 
 export const VaultsCard = (props: Props) => {
-  const {
-    ownerId,
-    vaultId,
-    status,
-    levelOfEarly,
-    levelOfLate,
-    collateralData,
-    isOwner,
-    liquidationMax,
-    handleMarkForLiquidation,
-  } = props
+  const { ownerId, vaultId, status, levelOfEarly, levelOfLate, collateralData, isOwner, liquidationMax, handleMarkForLiquidation } = props
 
   const { openLiquidateVaultPopup } = useContext(loansPopupsContext)
   const [expanded, setExpanded] = useState(false)
@@ -118,7 +108,7 @@ export const VaultsCard = (props: Props) => {
   const statusText = findStatusInfo(status).text
   const footerText = findFooterText(status, statusColor, timerTimestamp)
 
-  const collateralTotalBalance = collateralData[collateralData.length - 1]?.balance
+  const collateralTotalBalance = collateralData[collateralData.length - 1]?.amount
 
   const isActiveFooter =
     status === vaultsStatuses.LIQUIDATABLE || status === vaultsStatuses.GRACE_PERIOD || status === vaultsStatuses.MARK
@@ -220,43 +210,41 @@ export const VaultsCard = (props: Props) => {
               </TableHeader>
 
               <TableBody>
-                {collateralData.map(({ assetSymbol, assetIcon, assetRate, balance }, index) => {
+                {collateralData.map(({ symbol, icon, rate, amount }, index) => {
                   const columnWidth = '33%'
                   const isTotalRow = collateralData.length - 1 === index
 
                   const collateralShare = isTotalRow
                     ? 100
-                    : calculateCollateralShare(balance * assetRate, collateralTotalBalance)
+                    : calculateCollateralShare(amount * rate, collateralTotalBalance)
 
                   if (isTotalRow && collateralData.length < 3) return null
 
                   return (
-                    <TableRow rowHeight={44} key={assetSymbol + '-' + index}>
+                    <TableRow rowHeight={44} key={symbol + '-' + index}>
                       <TableCell width={columnWidth} className="vert-middle">
                         {isTotalRow ? (
                           'Total'
                         ) : (
                           <div className="cell-content row">
-                            {assetIcon ? (
+                            {icon ? (
                               <div className="img-wrapper">
-                                <img src={assetIcon} alt={`${assetSymbol} logo`} />
+                                <img src={icon} alt={`${symbol} logo`} />
                               </div>
                             ) : (
                               <div className="no-icon">
                                 <Icon id="noImage" />
                               </div>
                             )}
-                            {assetSymbol === 'tez' ? 'XTZ' : assetSymbol?.toUpperCase()}
+                            {symbol}
                           </div>
                         )}
                       </TableCell>
 
                       <TableCell width={columnWidth}>
                         <div className="cell-content">
-                          <CommaNumber value={balance} beginningText={isTotalRow ? '$' : ''} className="balance" />
-                          {assetRate ? (
-                            <CommaNumber value={balance * assetRate} beginningText="~$" className="rate" />
-                          ) : null}
+                          <CommaNumber value={amount} className="balance" />
+                          {rate ? <CommaNumber value={amount * rate} beginningText="~$" className="rate" /> : null}
                         </div>
                       </TableCell>
 

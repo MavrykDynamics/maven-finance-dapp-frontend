@@ -145,12 +145,12 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
           </div>
         ) : userLendings.length ? (
           <div className="list scroll-block">
-            {userLendings.map(({ assetIcon, amount, assetName, annualPecentage, earned, operationHash, id }) => {
+            {userLendings.map(({ icon, amount, annualPecentage, earned, operationHash, id }) => {
               return (
                 <ListItem columsTemplate="60px 0.9fr 0.7fr 0.8fr 0.7fr" key={id + operationHash}>
-                  {assetIcon ? (
+                  {icon ? (
                     <div className="image-wrapper">
-                      <img src={assetIcon} alt="" />
+                      <img src={icon} alt="" />
                     </div>
                   ) : (
                     <Icon id={'noImage'} />
@@ -201,12 +201,12 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
           </div>
         ) : userBorrowing.length ? (
           <div className="list scroll-block">
-            {userBorrowing.map(({ assetIcon, assetName, amount, annualPecentage, earned, operationHash, id }) => {
+            {userBorrowing.map(({ icon, amount, annualPecentage, earned, operationHash, id }) => {
               return (
                 <ListItem columsTemplate="60px 0.9fr 0.7fr 0.8fr 0.7fr" key={id + operationHash}>
-                  {assetIcon ? (
+                  {icon ? (
                     <div className="image-wrapper">
-                      <img src={assetIcon} alt="" />
+                      <img src={icon} alt="" />
                     </div>
                   ) : (
                     <Icon id={'noImage'} />

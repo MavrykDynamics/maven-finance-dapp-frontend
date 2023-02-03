@@ -82,6 +82,7 @@ export const LOANS_QUERY = `query GetLoansStorage {
         loan_token {
           loan_token_address
           loan_token_name
+          loan_token_contract_standard
           oracle_id
           lp_token_address
           current_interest_rate
@@ -89,6 +90,7 @@ export const LOANS_QUERY = `query GetLoansStorage {
         lending_controller {
           liquidation_delay_in_minutes
         }
+        id
         marked_for_liquidation_level
         last_updated_block_level
         loan_principal_total

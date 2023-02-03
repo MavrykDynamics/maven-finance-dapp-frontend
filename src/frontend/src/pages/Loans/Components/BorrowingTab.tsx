@@ -1,9 +1,13 @@
-import { useContext } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useContext, useState } from 'react'
 
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
-import { BorrowingData } from 'utils/TypesAndInterfaces/Loans'
+import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
 import { loansPopupsContext } from './Modals/LoansModals.provider'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
+import { State } from 'reducers'
+import { getAvaliableCollaterals } from '../Actions/getLoansData.actions'
 
 import { Button } from 'app/App.components/Button/Button.controller'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
@@ -11,12 +15,9 @@ import { BorrowingExpandCard } from './BorrowindExpandCard'
 
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { LoansTabStyled, NoItemsInTabStyled } from './LoansComponents.style'
-import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
-import { useDispatch } from 'react-redux'
-import { getAvaliableCollaterals } from '../Loans.actions'
 
 type BorrowingTabPropsType = {
-  borrowingItems: Array<BorrowingData>
+  borrowingItems: Array<LoansVaultType>
   lendingControllerAddress: string
   currentMarketAsset: string
 }
@@ -28,6 +29,8 @@ export const BorrowingTab = ({
 }: BorrowingTabPropsType) => {
   const dispatch = useDispatch()
   const { openCreateVaultPopup } = useContext(loansPopupsContext)
+  const [createdVaultId, setCreatedVaultAddress] = useState<null | string>(null)
+  const { accountPkh } = useSelector((state: State) => state.wallet)
 
   const { isLoading: loadingAvaliableCollaterals } = useDataLoader(async () => {
     try {
@@ -46,13 +49,21 @@ export const BorrowingTab = ({
           <Button
             text="New Vault"
             icon="plus"
-            onClick={() => openCreateVaultPopup({ currentMarketAsset })}
+            disabled={!Boolean(accountPkh)}
+            onClick={() => openCreateVaultPopup({ currentMarketAsset, setCreatedVaultAddress })}
             kind={ACTION_PRIMARY}
             className="lending-tab-no-items-btn has-items-borrow-btn"
           />
           <div className="list-wrapper">
             {borrowingItems.map((item, idx) => {
-              return <BorrowingExpandCard isOwner {...item} key={item.borrowedAsset.assetSymbol + '-' + idx} />
+              return (
+                <BorrowingExpandCard
+                  isOwner
+                  {...item}
+                  key={item.borrowedAsset.symbol + '-' + idx}
+                  isOpenedVault={createdVaultId === item.address}
+                />
+              )
             })}
           </div>
         </>
@@ -63,7 +74,8 @@ export const BorrowingTab = ({
             text="New Vault"
             icon="plus"
             kind={ACTION_PRIMARY}
-            onClick={() => openCreateVaultPopup({ currentMarketAsset })}
+            disabled={!Boolean(accountPkh)}
+            onClick={() => openCreateVaultPopup({ currentMarketAsset, setCreatedVaultAddress })}
             className="lending-tab-no-items-btn"
           />
         </NoItemsInTabStyled>

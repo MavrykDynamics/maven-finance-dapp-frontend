@@ -7,7 +7,7 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 
 import { State } from 'reducers'
-import { LoanTokenType } from 'utils/TypesAndInterfaces/Loans'
+import { LoanMarketType } from 'utils/TypesAndInterfaces/Loans'
 
 import { getPageNumber } from 'pages/FinacialRequests/FinancialRequests.helpers'
 import { TRANSACTION_HISTORY_SLIDING_BUTTONS } from '../Loans.const'
@@ -34,7 +34,7 @@ import { EmptyContainer } from 'app/App.style'
 import { Pagination } from 'pages/BreakGlass/BreakGlass.style'
 
 type TransactionHistoryPropsType = {
-  currentToken: LoanTokenType | undefined
+  currentToken: LoanMarketType | undefined
 }
 
 export const TransactionHistory = ({ currentToken }: TransactionHistoryPropsType) => {
@@ -42,7 +42,7 @@ export const TransactionHistory = ({ currentToken }: TransactionHistoryPropsType
   const { accountPkh } = useSelector((state: State) => state.wallet)
 
   const [switcherState, setSwitcherState] = useState<'all' | 'personal'>('all')
-  const [transactionHistory, setTransactionHistory] = useState<LoanTokenType['transactionHistory'] | undefined>(
+  const [transactionHistory, setTransactionHistory] = useState<LoanMarketType['transactionHistory'] | undefined>(
     currentToken?.transactionHistory,
   )
 

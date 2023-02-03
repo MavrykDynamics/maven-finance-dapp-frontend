@@ -170,9 +170,9 @@ export const stake = (amount: number) => async (dispatch: AppDispatch, getState:
     await batchOp?.confirmation()
 
     dispatch(showToaster(SUCCESS, 'Staking done', 'All good :)'))
-    await dispatch(updateUserData())
     await dispatch(getMvkTokenStorage())
     await dispatch(getDoormanStorage())
+    await dispatch(updateUserData())
     await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {
@@ -215,9 +215,9 @@ export const unstake = (amount: number) => async (dispatch: AppDispatch, getStat
 
     dispatch(showToaster(SUCCESS, 'Unstaking done', 'All good :)'))
 
-    await dispatch(updateUserData())
     await dispatch(getMvkTokenStorage())
     await dispatch(getDoormanStorage())
+    await dispatch(updateUserData())
     await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {
@@ -443,7 +443,7 @@ export const updateUserData = () => async (dispatch: AppDispatch, getState: GetS
       delegationStorage: { activeSatellites },
     },
     wallet: { accountPkh },
-    tokens: { dipDupTokens, tokensPrices },
+    tokens: { dipDupTokens },
     oracles: {
       oraclesStorage: { feeds },
     },
