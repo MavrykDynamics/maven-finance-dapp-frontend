@@ -216,7 +216,7 @@ export const Council = () => {
       <CouncilStyled>
         {review && isUserInCouncilMembers ? (
           <Link to={`/mavryk-council`}>
-            <NewButton kind={TRANSPARENT_WITH_BORDER} className="margin-top-30 go-back ">
+            <NewButton kind={TRANSPARENT_WITH_BORDER} className="go-back">
               <Icon id="arrowRight" /> Back to Member Dashboard
             </NewButton>
           </Link>
@@ -293,7 +293,11 @@ export const Council = () => {
 
             {review && (
               <>
-                <h1 className={`past-actions ${!review ? 'is-user-member' : ''}`}>
+                <h1
+                  className={`past-actions ${!review ? 'is-user-member' : ''} ${
+                    !isUserInCouncilMembers ? 'margin-top-30' : ''
+                  }`}
+                >
                   {isReviewPage ? 'Past Council Actions' : 'Pending Signature Council Actions'}
                 </h1>
                 {(isReviewPage ? paginatedCouncilPastActions : paginatedCouncilAllPendingActions).map((item) => (
@@ -342,7 +346,7 @@ export const Council = () => {
 
             {sortedCouncilMembers.length ? (
               <div>
-                <h1>Council Members</h1>
+                <h1 className={`${!isUserInCouncilMembers ? 'margin-top-30' : ''}`}>Council Members</h1>
                 {sortedCouncilMembers.map((item) => (
                   <CouncilMemberView
                     key={item.id}
