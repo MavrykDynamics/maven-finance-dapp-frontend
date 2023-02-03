@@ -47,9 +47,15 @@ export const VaultsStyled = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
+export const VaultsSearchFilterWrapper = styled.div`
+  .checkbox {
+    margin: 20px 0;
+  }
+`
+
 export const VaultsSearchFilterStyled = styled(Card)`
   padding: 20px 30px;
-  margin: 20px 0;
+  margin-top: 20px;
   display: flex;
 
   input {
