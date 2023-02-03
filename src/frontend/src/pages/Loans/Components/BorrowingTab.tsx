@@ -31,6 +31,9 @@ export const BorrowingTab = ({
   const { openCreateVaultPopup } = useContext(loansPopupsContext)
   const [createdVaultId, setCreatedVaultAddress] = useState<null | string>(null)
   const { accountPkh } = useSelector((state: State) => state.wallet)
+  const {
+    config: { DAOFee },
+  } = useSelector((state: State) => state.loans)
 
   const { isLoading: loadingAvaliableCollaterals } = useDataLoader(async () => {
     try {
@@ -62,6 +65,7 @@ export const BorrowingTab = ({
                   {...item}
                   key={item.borrowedAsset.symbol + '-' + idx}
                   isOpenedVault={createdVaultId === item.address}
+                  DAOFee={DAOFee}
                 />
               )
             })}

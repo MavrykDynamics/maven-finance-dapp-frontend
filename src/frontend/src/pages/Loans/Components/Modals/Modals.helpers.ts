@@ -41,12 +41,13 @@ export type RepayFullPopupDataType = {
 export type BorrowPopupDataType = {
   vaultId: number
   borrowedAsset: LoansVaultType['borrowedAsset']
-  borowCapacity: number
+  borrowCapacity: number
   collateralRatio: number
   borrowAPR: number
   hasUserBorrowed: boolean
   currentCollateralBalance: number
-  currentAvaliableToBorrow: number
+  DAOFee: number
+  currentBorrowedAmount: number
 } | null
 
 export type AddCollateralPopupDataType = {

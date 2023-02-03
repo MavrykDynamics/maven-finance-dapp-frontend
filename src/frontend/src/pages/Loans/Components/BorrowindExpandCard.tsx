@@ -46,6 +46,7 @@ type BorrowingExpandCardPropsType = LoansVaultType & {
   status?: string
   options?: BorrowingCardOptions
   isOpenedVault?: boolean
+  DAOFee: number
 }
 
 export const BorrowingExpandCard = ({
@@ -72,6 +73,8 @@ export const BorrowingExpandCard = ({
   collateralBalance,
   borrowedAmount,
   collateralRatio,
+  borrowCapacity,
+  DAOFee,
 }: BorrowingExpandCardPropsType) => {
   const { reverseColumns, customTableColumn } = options ?? {}
 
@@ -251,6 +254,7 @@ export const BorrowingExpandCard = ({
                   <Button
                     text="Borrow"
                     icon="coin-loan"
+                    disabled={collateralRatio < 200}
                     strokeWidth={0.5}
                     onClick={() =>
                       openBorrowPopup?.({
@@ -260,8 +264,9 @@ export const BorrowingExpandCard = ({
                         borrowAPR: apr,
                         currentCollateralBalance: collateralData.at(-1)?.amount ?? 0,
                         hasUserBorrowed: false,
-                        borowCapacity: 0,
-                        currentAvaliableToBorrow: 0,
+                        borrowCapacity: borrowCapacity / borrowedAsset.rate,
+                        currentBorrowedAmount: borrowedAmount,
+                        DAOFee,
                       })
                     }
                     kind={ACTION_PRIMARY}

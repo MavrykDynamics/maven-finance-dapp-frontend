@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { useLockBodyScroll } from 'react-use'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
@@ -22,6 +22,7 @@ import { LoansModalBase, VaultModalOverview } from './Modals.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { silverColor } from 'styles'
 import { borrowVaultAssetAction } from 'pages/Loans/Actions/vault.actions'
+import { calcCollateralRatio } from 'pages/Loans/Loans.helpers'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A240058&t=Sx2aEpp3ifrGxBtQ-0
 export const BorrowAsset = ({
@@ -36,12 +37,13 @@ export const BorrowAsset = ({
   const {
     vaultId,
     borrowedAsset,
-    borowCapacity = 0,
+    borrowCapacity = 0,
     collateralRatio = 0,
     borrowAPR = 0,
     hasUserBorrowed,
+    currentBorrowedAmount = 0,
     currentCollateralBalance = 0,
-    currentAvaliableToBorrow = 0,
+    DAOFee = 0,
   } = data ?? {}
 
   useLockBodyScroll(show)
@@ -51,6 +53,19 @@ export const BorrowAsset = ({
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
   const [screenShown, setShownScreen] = useState<'initial' | 'confitmation'>('initial')
 
+  const { futureCollateralRatio, futureBorrowCapacity } = useMemo(() => {
+    const futureCollateralRatio = borrowedAsset
+      ? calcCollateralRatio(
+          currentCollateralBalance,
+          currentBorrowedAmount + Number(inputData.amount),
+          borrowedAsset.rate,
+        )
+      : 0
+
+    const futureBorrowCapacity = Math.max(borrowCapacity - Number(inputData.amount), 0)
+    return { futureCollateralRatio, futureBorrowCapacity }
+  }, [borrowedAsset, currentCollateralBalance, currentBorrowedAmount, inputData])
+
   useEffect(() => {
     if (!show) {
       setInputData(DEFAULT_LOANS_INPUT_VALUE)
@@ -59,11 +74,9 @@ export const BorrowAsset = ({
   }, [show])
 
   // stuff to handle inputs
-  const inputOnChangeHandle = (newInputAmount: string, userAssetBalance: number) => {
+  const inputOnChangeHandle = (newInputAmount: string, maxAmount: number) => {
     const validationStatus =
-      Number(newInputAmount) > 0 && Number(newInputAmount) <= userAssetBalance
-        ? INPUT_STATUS_SUCCESS
-        : INPUT_STATUS_ERROR
+      Number(newInputAmount) > 0 && Number(newInputAmount) <= maxAmount ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
 
     if (validationStatus === INPUT_STATUS_ERROR && newInputAmount !== '' && newInputAmount !== '0') return
 
@@ -121,7 +134,7 @@ export const BorrowAsset = ({
               <div className="lending-stats" style={{ marginBottom: '30px' }}>
                 <ThreeLevelListItem>
                   <div className="name">Borrow Capacity</div>
-                  <CommaNumber value={borowCapacity} className="value" />
+                  <CommaNumber value={borrowCapacity} className="value" />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">Collateral Utilization</div>
@@ -136,7 +149,7 @@ export const BorrowAsset = ({
                     DAO Fee{' '}
                     <CustomTooltip iconId="info" defaultStrokeColor={silverColor} text={``} className="tooltip" />
                   </div>
-                  <CommaNumber value={1} className="value" endingText="%" />
+                  <CommaNumber value={DAOFee} className="value" endingText="%" />
                 </ThreeLevelListItem>
               </div>
 
@@ -157,7 +170,10 @@ export const BorrowAsset = ({
                     balance: borrowedAsset.userBalance,
                     balanceAsset: borrowedAsset?.symbol,
                     useMaxHandler: () =>
-                      inputOnChangeHandle(String(borrowedAsset.userBalance), borrowedAsset.userBalance),
+                      inputOnChangeHandle(
+                        String(Math.min(borrowedAsset.userBalance, borrowCapacity)),
+                        Math.min(borrowedAsset.userBalance, borrowCapacity),
+                      ),
                     inputStatus: inputData.validationStatus,
                     convertedValue: Number(inputData.amount) * borrowedAsset.rate,
                   }}
@@ -202,7 +218,11 @@ export const BorrowAsset = ({
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">Available To Borrow</div>
-                  <CommaNumber value={currentAvaliableToBorrow} className="value" beginningText="$" />
+                  <CommaNumber
+                    value={borrowCapacity * Number(borrowedAsset?.rate)}
+                    className="value"
+                    beginningText="$"
+                  />
                 </ThreeLevelListItem>
               </VaultModalOverview>
 
@@ -239,7 +259,7 @@ export const BorrowAsset = ({
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">Amount Received</div>
-                  <CommaNumber value={Number(inputData.amount)} className="value" />
+                  <CommaNumber value={Number(inputData.amount) * 0.99} className="value" />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">USD Value</div>
@@ -255,13 +275,13 @@ export const BorrowAsset = ({
               <VaultModalOverview>
                 <ThreeLevelListItem
                   className="collateral-diagram"
-                  customColor={getCollateralRationPersent(collateralRatio)}
+                  customColor={getCollateralRationPersent(futureCollateralRatio)}
                 >
                   <div className={`percentage`}>
                     Collateral Ratio:{' '}
                     <CommaNumber
-                      beginningText={`${collateralRatio > 250 ? '+' : ''}`}
-                      value={Math.max(0, Math.min(collateralRatio, 250))}
+                      beginningText={`${futureCollateralRatio > 250 ? '+' : ''}`}
+                      value={Math.max(0, Math.min(futureCollateralRatio, 250))}
                       endingText="%"
                       showDecimal
                       decimalsToShow={2}
@@ -270,16 +290,16 @@ export const BorrowAsset = ({
                   <GradientDiagram
                     className="diagram"
                     colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
-                    currentPersentage={Math.max(0, Math.min(((collateralRatio - 100) / 150) * 100, 100))}
+                    currentPersentage={Math.max(0, Math.min(((futureCollateralRatio - 100) / 150) * 100, 100))}
                   />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">Collateral Value</div>
-                  <CommaNumber value={0} className="value" beginningText="$" />
+                  <CommaNumber value={currentCollateralBalance} className="value" beginningText="$" />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
-                  <div className="name">Available To Withdraw</div>
-                  <CommaNumber value={0} className="value" beginningText="$" />
+                  <div className="name">Available To Borrow</div>
+                  <CommaNumber value={futureBorrowCapacity} className="value" beginningText="$" />
                 </ThreeLevelListItem>
               </VaultModalOverview>
 
