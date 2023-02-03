@@ -3679,6 +3679,11 @@
   "resolved" "https://registry.npmjs.org/@taquito/michel-codec/-/michel-codec-12.1.1.tgz"
   "version" "12.1.1"
 
+"@taquito/michel-codec@^15.1.0":
+  "integrity" "sha512-wKucIhs7vhaq5H+YSF2f6Qu9+g+QiEL6MPc5ROpxBrXJTeKSwBOEIpfqcKfkfMuecJyHZJW3glNfkpAVTCgkxg=="
+  "resolved" "https://registry.npmjs.org/@taquito/michel-codec/-/michel-codec-15.1.0.tgz"
+  "version" "15.1.0"
+
 "@taquito/michelson-encoder@^12.1.1":
   "integrity" "sha512-mWcA1DHHlFj7UswJpEmml853x9e0IYHyeiKZYAo7DtizHz0jiUWtptCuEWiPQ4fMOreFbYZ6KVYenoVfQVNrqA=="
   "resolved" "https://registry.npmjs.org/@taquito/michelson-encoder/-/michelson-encoder-12.1.1.tgz"

@@ -31,10 +31,11 @@ import { useSelector } from 'react-redux'
 import { State } from 'reducers'
 import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 import { getTimestampByLevel } from 'pages/Governance/Governance.actions'
+import { calculateCollateralShare } from 'pages/Vaults/calcFunctionsForVault'
 
 export type BorrowingCardOptions = {
   reverseColumns?: boolean
-  customTableColumn?: keyof LoansVaultType['collateralData'][0]
+  showOtherColumns?: boolean
 }
 
 type BorrowingExpandCardPropsType = LoansVaultType & {
@@ -76,7 +77,7 @@ export const BorrowingExpandCard = ({
   borrowCapacity,
   DAOFee,
 }: BorrowingExpandCardPropsType) => {
-  const { reverseColumns, customTableColumn } = options ?? {}
+  const { reverseColumns, showOtherColumns } = options ?? {}
 
   const { symbol, icon, rate = 1 } = borrowedAsset
 
@@ -108,6 +109,8 @@ export const BorrowingExpandCard = ({
   const vaultStatus = status ?? getStatusByCollateralRatio(collateralRatio)
 
   const [timerTimestamp, setTimerTimestamp] = useState<number | undefined>(undefined)
+
+  const collateralTotalBalance = collateralData[collateralData.length - 1]?.amount
 
   useEffect(() => {
     if (vaultStatus === vaultsStatuses.GRACE_PERIOD || vaultStatus === vaultsStatuses.LIQUIDATABLE) {
@@ -300,16 +303,20 @@ export const BorrowingExpandCard = ({
                     <TableHeaderCell>Asset</TableHeaderCell>
                     <TableHeaderCell>amount</TableHeaderCell>
                     <TableHeaderCell>Withdraw Max</TableHeaderCell>
-                    {customTableColumn && <TableHeaderCell>Collateral Share</TableHeaderCell>}
+                    {showOtherColumns && <TableHeaderCell>Collateral Share</TableHeaderCell>}
                   </TableRow>
                 </TableHeader>
               ) : null}
 
               <TableBody>
-                {collateralData.map(({ icon, amount, rate, maxWithdraw, gqlName, symbol }, idx, array) => {
-                  const customColumnValue = customTableColumn ? array[idx][customTableColumn] : undefined
-                  const columnWidth = customTableColumn ? '18%' : '22%'
+                {collateralData.map(({ icon, amount, rate, maxWithdraw, gqlName, symbol }, idx) => {
+                  const columnWidth = showOtherColumns ? '18%' : '22%'
                   const isTotalRow = collateralData.length - 1 === idx
+
+                  const collateralShare = isTotalRow
+                    ? 100
+                    : calculateCollateralShare(amount * rate, collateralTotalBalance)
+
                   if (isTotalRow && collateralData.length < 3) return null
 
                   return (
@@ -358,10 +365,10 @@ export const BorrowingExpandCard = ({
                           {rate ? <CommaNumber value={maxWithdraw * rate} className="rate" beginningText="$" /> : null}
                         </div>
                       </TableCell>
-                      {typeof customColumnValue === 'number' ? (
+                      {showOtherColumns ? (
                         <TableCell width={columnWidth}>
                           <div className="cell-content">
-                            <CommaNumber value={customColumnValue} className="value" endingText="%" />
+                            <CommaNumber value={collateralShare} className="value" endingText="%" />
                           </div>
                         </TableCell>
                       ) : null}

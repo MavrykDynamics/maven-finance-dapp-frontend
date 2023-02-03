@@ -55,6 +55,11 @@ export const PopupContainerWrapper = styled.div`
     padding: 30px 40px 40px;
   }
 
+  &.vaults {
+    max-width: 586px;
+    padding: 30px 40px;
+  }
+
   @media (max-width: 500px) {
     &.settings {
       .theme-switcher-block {

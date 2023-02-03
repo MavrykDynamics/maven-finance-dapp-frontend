@@ -6,6 +6,11 @@ query GetAllVaultsStorage {
     liquidation_delay_in_minutes
     liquidation_ratio
     collateral_ratio
+    max_vault_liquidation_pct
+    admin_liquidation_fee_pct
+    liquidation_fee_pct
+    decimals
+    minimum_loan_fee_pct
 
     loan_tokens {
       current_interest_rate
@@ -20,6 +25,7 @@ query GetAllVaultsStorage {
           oracle_id
         }
       }
+
       vault {
         creation_timestamp
         address
@@ -27,6 +33,7 @@ query GetAllVaultsStorage {
           depositor_id
         }
       }
+
       last_updated_block_level
       owner_id
       id
