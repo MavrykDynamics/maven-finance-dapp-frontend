@@ -538,16 +538,17 @@ export const BorrowingExpandCard = ({
 
                 <Button
                   text="Repay Loan in Full"
-                  disabled
+                  disabled={!borrowedAmount}
                   kind={TRANSPARENT_WITH_BORDER}
                   onClick={() =>
                     openRepayFullPopup?.({
-                      vaultAddress: address,
+                      vaultId,
                       borrowedAsset: borrowedAsset,
-                      feesAmount: 0,
-                      currentCollateralBalance: collateralData.at(-1)?.amount ?? 0,
-                      currentAvaliableToBorrow: 0,
+                      collateralRatio,
                       borrowedAmount,
+                      feesAmount: repayFee,
+                      currentCollateralBalance: collateralData.at(-1)?.amount ?? 0,
+                      borrowCapacity: borrowCapacity / borrowedAsset.rate,
                     })
                   }
                   className="close-vault"

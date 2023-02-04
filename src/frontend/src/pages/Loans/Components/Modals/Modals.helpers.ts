@@ -24,9 +24,11 @@ export type CollateralPopupCommonDataType = {
 
 export type AddCollateralPopupDataType = CollateralPopupCommonDataType | null
 
-export type AddNewCollateralDataProps =CollateralPopupCommonDataType & {
-  existingCollaterals: Array<CollateralType>
-} | null
+export type AddNewCollateralDataProps =
+  | (CollateralPopupCommonDataType & {
+      existingCollaterals: Array<CollateralType>
+    })
+  | null
 
 export type WithdrawCollateralPopupDataType =
   | (CollateralPopupCommonDataType & {
@@ -34,23 +36,22 @@ export type WithdrawCollateralPopupDataType =
     })
   | null
 
-export type RepayPartPopupDataType = {
+export type RepayCollateralPopupDataBaseType = {
   vaultId: number
   borrowedAsset: LoansVaultType['borrowedAsset']
   feesAmount: number
   borrowedAmount: number
   currentCollateralBalance: number
   borrowCapacity: number
-} | null
+}
 
-export type RepayFullPopupDataType = {
-  vaultAddress: string
-  borrowedAsset: LoansVaultType['borrowedAsset']
-  feesAmount: number
-  borrowedAmount: number
-  currentCollateralBalance: number
-  currentAvaliableToBorrow: number
-} | null
+export type RepayPartPopupDataType = RepayCollateralPopupDataBaseType | null
+
+export type RepayFullPopupDataType =
+  | (RepayCollateralPopupDataBaseType & {
+      collateralRatio: number
+    })
+  | null
 
 export type BorrowPopupDataType = {
   vaultId: number
@@ -77,8 +78,6 @@ export type RemoveLendingAssetDataType =
       currentLendedAmount: number
     })
   | null
-
-
 
 export type ChangeBakerPopupDataType = {
   bakerAddress: string | null

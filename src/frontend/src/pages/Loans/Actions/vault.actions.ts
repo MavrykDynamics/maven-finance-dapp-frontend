@@ -131,7 +131,7 @@ export const repayPartOfVaultAction =
 
 // repay full vault and close it
 export const repayFullAndCloseVaultAction =
-  (vaultId: string, repayAmount: number, callback: () => void) => async (dispatch: AppDispatch, getState: GetState) => {
+  (vaultId: number, repayAmount: number, callback: () => void) => async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
 
     if (!state.wallet.accountPkh) {
