@@ -39,6 +39,7 @@ query GetAllVaultsStorage {
       id
       marked_for_liquidation_level
       loan_outstanding_total
+      loan_interest_total
       loan_decimals
       liquidation_end_level
       internal_id

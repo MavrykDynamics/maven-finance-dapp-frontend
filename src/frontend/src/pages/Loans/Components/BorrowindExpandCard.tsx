@@ -76,6 +76,7 @@ export const BorrowingExpandCard = ({
   collateralRatio,
   borrowCapacity,
   DAOFee,
+  repayFee,
 }: BorrowingExpandCardPropsType) => {
   const { reverseColumns, showOtherColumns } = options ?? {}
 
@@ -277,17 +278,17 @@ export const BorrowingExpandCard = ({
                   <NewButton
                     onClick={() =>
                       openRepayPopup?.({
-                        vaultAddress: address,
+                        vaultId,
                         borrowedAsset: borrowedAsset,
                         borrowedAmount,
-                        feesAmount: 0,
+                        feesAmount: repayFee,
                         currentCollateralBalance: collateralData.at(-1)?.amount ?? 0,
-                        currentAvaliableToBorrow: 0,
+                        borrowCapacity: borrowCapacity / borrowedAsset.rate,
                       })
                     }
                     kind={TRANSPARENT_WITH_BORDER}
+                    disabled={!borrowedAmount}
                     className="repay"
-                    disabled
                   >
                     <Icon id="okIcon" /> Repay
                   </NewButton>

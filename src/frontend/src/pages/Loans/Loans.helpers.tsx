@@ -388,6 +388,7 @@ const getBorrowings = async (
         collateralRatio,
         apr: currentInterestRate * 100,
         fee: borrowedAmount === 0 ? 0 : fee,
+        repayFee: vault.loan_interest_total,
         address: vault.vault.address,
         vaultId: vault.id,
         collateralData,

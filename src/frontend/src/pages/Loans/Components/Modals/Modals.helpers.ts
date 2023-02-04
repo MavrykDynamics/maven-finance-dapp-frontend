@@ -35,12 +35,12 @@ export type WithdrawCollateralPopupDataType =
   | null
 
 export type RepayPartPopupDataType = {
-  vaultAddress: string
+  vaultId: number
   borrowedAsset: LoansVaultType['borrowedAsset']
   feesAmount: number
   borrowedAmount: number
   currentCollateralBalance: number
-  currentAvaliableToBorrow: number
+  borrowCapacity: number
 } | null
 
 export type RepayFullPopupDataType = {

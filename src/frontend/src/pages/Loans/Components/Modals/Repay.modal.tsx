@@ -1,8 +1,8 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { useLockBodyScroll } from 'react-use'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
-import { COLLATERAL_RATIO_GRADIENT } from 'pages/Loans/Loans.const'
+import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { INPUT_STATUS_SUCCESS, INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
 import { DEFAULT_LOANS_INPUT_VALUE, getOnBlurValue, getOnFocusValue, RepayPartPopupDataType } from './Modals.helpers'
 import { State } from 'reducers'
@@ -20,6 +20,7 @@ import { PopupContainer, PopupContainerWrapper } from 'app/App.components/Settin
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase, VaultModalOverview } from './Modals.style'
+import { calcCollateralRatio } from 'pages/Loans/Loans.helpers'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17953%3A224110&t=Sx2aEpp3ifrGxBtQ-0
 export const Repay = ({
@@ -32,12 +33,12 @@ export const Repay = ({
   data: RepayPartPopupDataType
 }) => {
   const {
-    vaultAddress,
+    vaultId,
     borrowedAsset,
     feesAmount = 0,
     currentCollateralBalance = 0,
-    currentAvaliableToBorrow = 0,
-    borrowedAmount,
+    borrowCapacity = 0,
+    borrowedAmount = 0,
   } = data ?? {}
 
   const totalOutstanding = feesAmount + Number(borrowedAmount)
@@ -48,6 +49,16 @@ export const Repay = ({
 
   const [screenShown, setShownScreen] = useState<'initial' | 'confitmation'>('initial')
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
+  const inputAmount = isNaN(parseFloat(inputData.amount)) ? 0 : parseFloat(inputData.amount)
+
+  const { futureCollateralRatio, futureBorrowCapacity } = useMemo(() => {
+    const futureCollateralRatio = borrowedAsset
+      ? calcCollateralRatio(currentCollateralBalance, borrowedAmount - inputAmount, borrowedAsset.rate)
+      : 0
+
+    const futureBorrowCapacity = Math.max(borrowCapacity + inputAmount, 0)
+    return { futureCollateralRatio, futureBorrowCapacity }
+  }, [borrowedAsset, currentCollateralBalance, borrowCapacity, inputAmount, borrowedAmount])
 
   useEffect(() => {
     if (!show) {
@@ -87,8 +98,8 @@ export const Repay = ({
   const backBtnHandler = () => setShownScreen('initial')
 
   const repayBtnHandler = async () => {
-    if (vaultAddress) {
-      await dispatch(repayPartOfVaultAction(vaultAddress, Number(inputData.amount), closePopup))
+    if (vaultId) {
+      await dispatch(repayPartOfVaultAction(vaultId, inputAmount * 10 ** Number(borrowedAsset?.decimals), closePopup))
     }
   }
 
@@ -108,9 +119,9 @@ export const Repay = ({
               <div className="lending-stats" style={{ marginBottom: '25px' }}>
                 <ThreeLevelListItem>
                   <div className="name">Borrowed</div>
-                  <CommaNumber value={Number(borrowedAmount)} className="value" endingText={borrowedAsset?.symbol} />
+                  <CommaNumber value={borrowedAmount} className="value" endingText={borrowedAsset?.symbol} />
                   <CommaNumber
-                    value={Number(borrowedAmount) * Number(borrowedAsset?.rate)}
+                    value={borrowedAmount * Number(borrowedAsset?.rate)}
                     className="rate"
                     beginningText="$"
                   />
@@ -154,7 +165,7 @@ export const Repay = ({
                         Math.min(borrowedAsset.userBalance, totalOutstanding),
                       ),
                     inputStatus: inputData.validationStatus,
-                    convertedValue: Number(inputData.amount) * borrowedAsset.rate,
+                    convertedValue: inputAmount * borrowedAsset.rate,
                   }}
                 >
                   <InputPinnedTokenInfo>
@@ -194,28 +205,34 @@ export const Repay = ({
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">Amount</div>
-                  <CommaNumber value={Number(inputData.amount)} className="value" />
+                  <CommaNumber value={inputAmount} className="value" />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem className="right">
                   <div className="name">USD Value</div>
-                  <CommaNumber
-                    value={Number(inputData.amount) * Number(borrowedAsset?.rate)}
-                    className="value"
-                    beginningText="$"
-                  />
+                  <CommaNumber value={inputAmount * Number(borrowedAsset?.rate)} className="value" beginningText="$" />
                 </ThreeLevelListItem>
               </div>
 
               <div className="block-name">New Vaults Stats</div>
               <VaultModalOverview>
-                <ThreeLevelListItem className="collateral-diagram">
-                  <div className={`percentage ${Number(154) / 100 > 2.5 ? 'up' : 'down'}`}>
-                    Collateral Ratio: <CommaNumber value={154} endingText="%" />
+                <ThreeLevelListItem
+                  className="collateral-diagram"
+                  customColor={getCollateralRationPersent(futureCollateralRatio)}
+                >
+                  <div className={`percentage`}>
+                    Collateral Ratio:{' '}
+                    <CommaNumber
+                      beginningText={`${futureCollateralRatio > 250 ? '+' : ''}`}
+                      value={Math.max(0, Math.min(futureCollateralRatio, 250))}
+                      endingText="%"
+                      showDecimal
+                      decimalsToShow={2}
+                    />
                   </div>
                   <GradientDiagram
                     className="diagram"
                     colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
-                    currentPersentage={50}
+                    currentPersentage={Math.max(0, Math.min(((futureCollateralRatio - 100) / 150) * 100, 100))}
                   />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
@@ -224,7 +241,7 @@ export const Repay = ({
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">Available To Borrow</div>
-                  <CommaNumber value={currentAvaliableToBorrow} className="value" beginningText="$" />
+                  <CommaNumber value={futureBorrowCapacity} className="value" beginningText="$" />
                 </ThreeLevelListItem>
               </VaultModalOverview>
 

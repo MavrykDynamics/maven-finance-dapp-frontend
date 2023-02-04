@@ -79,6 +79,7 @@ export type LoansVaultType = {
   borrowCapacity: number
   apr: number
   fee: number
+  repayFee: number
   address: string
   vaultId: number
   xtzDelegatedTo: string | null

@@ -226,6 +226,7 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
         liquidationMax,
         liquidationReward,
         adminLiquidateFee,
+        repayFee: item.loan_interest_total,
 
         xtzDelegatedTo: vaultXtzDelegatedTo?.delegate?.address ?? null,
         operators: [],

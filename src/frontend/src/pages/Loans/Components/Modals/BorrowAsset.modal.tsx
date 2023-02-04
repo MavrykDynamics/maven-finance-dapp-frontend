@@ -60,9 +60,9 @@ export const BorrowAsset = ({
       ? calcCollateralRatio(currentCollateralBalance, currentBorrowedAmount + inputAmount, borrowedAsset.rate)
       : 0
 
-    const futureBorrowCapacity = Math.max(borrowCapacity - inputAmount * Number(borrowedAsset?.rate), 0)
+    const futureBorrowCapacity = Math.max(borrowCapacity - inputAmount, 0)
     return { futureCollateralRatio, futureBorrowCapacity }
-  }, [borrowedAsset, currentCollateralBalance, currentBorrowedAmount, inputData, borrowCapacity])
+  }, [borrowedAsset, currentCollateralBalance, currentBorrowedAmount, inputAmount, borrowCapacity])
 
   useEffect(() => {
     if (!show) {
@@ -162,15 +162,16 @@ export const BorrowAsset = ({
                     type: 'number',
                     onBlur: inputOnBlurHandle,
                     onFocus: onFocusHandler,
-                    onChange: (e) => inputOnChangeHandle(e.target.value, borrowedAsset.userBalance),
+                    onChange: (e) =>
+                      inputOnChangeHandle(e.target.value, Math.max(borrowedAsset.userBalance, borrowCapacity)),
                   }}
                   settings={{
                     balance: borrowedAsset.userBalance,
                     balanceAsset: borrowedAsset?.symbol,
                     useMaxHandler: () =>
                       inputOnChangeHandle(
-                        String(Math.min(borrowedAsset.userBalance, borrowCapacity)),
-                        Math.min(borrowedAsset.userBalance, borrowCapacity),
+                        String(Math.max(borrowedAsset.userBalance, borrowCapacity)),
+                        Math.max(borrowedAsset.userBalance, borrowCapacity),
                       ),
                     inputStatus: inputData.validationStatus,
                     convertedValue: inputAmount * borrowedAsset.rate,
