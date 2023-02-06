@@ -57,9 +57,13 @@ export const AddNewCollateral = ({
   } = data ?? {}
 
   const dispatch = useDispatch()
-  const { xtzBakers } = useSelector((state: State) => state.loans)
+  const {
+    xtzBakers: { otherBakers, dao, mavrykDynamics },
+  } = useSelector((state: State) => state.loans)
   const { avaliableCollaterals } = useSelector((state: State) => state.tokens)
   const { isActionLoading } = useSelector((state: State) => state.loading)
+
+  const xtzBakers = [...otherBakers, ...(dao ? [dao] : []), ...(mavrykDynamics ? [mavrykDynamics] : [])]
 
   const [inputData, setInputData] = useState<InputState>()
 

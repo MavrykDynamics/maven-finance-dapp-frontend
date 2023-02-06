@@ -10,27 +10,70 @@ export const getXTZBakers = async () => {
     // TODO: add dynamic fetching
     // const bakers = await fetch('https://api.tezos-nodes.com/v1/bakers')
 
-    return process.env.REACT_APP_NETWORK === 'ghostnet'
-      ? [
-          {
-            rank: 1,
-            logo: 'https://tezos-nodes.com/storage/images/BBOZYYLQpLfTzbXzu0jvk4CublJzMgLM8GNz152M.png',
-            logo_min: 'https://tezos-nodes.com/storage/images/U8vdnpeU0LwtQCLge5KjVMBheLBUhNBi2v7lc4zy.png',
-            name: 'MyTezosBaking',
-            address: 'tz1bQMn5xYFbX6geRxqvuAiTywsCtNywawxH',
-            fee: 0.14,
-            lifetime: 500,
-            yield: 4.91,
-            efficiency: 99.56,
-            efficiency_last10cycle: 99.93,
-            freespace: 115494,
-            total_points: 75,
-            deletation_status: true,
-            freespace_min: '115.49 k XTZ',
-            pro_status: true,
-          },
-        ]
-      : BakersMocked
+    const otherBakers =
+      process.env.REACT_APP_NETWORK === 'ghostnet'
+        ? [
+            {
+              logo: 'https://tezos-nodes.com/storage/images/BBOZYYLQpLfTzbXzu0jvk4CublJzMgLM8GNz152M.png',
+              name: 'Puss in Buts',
+              address: 'tz1bQMn5xYFbX6geRxqvuAiTywsCtNywawxH',
+              fee: 0.14,
+              yield: 4.91,
+              efficiency: 99.56,
+              freespace: 115494,
+            },
+            {
+              logo: 'https://services.tzkt.io/v1/avatars/tz1eQmVDH438N6WN4CQSWJLVDFqpFfkZvt1R',
+              name: 'Lil Shrek',
+              address: 'tz1RuHDSj9P7mNNhfKxsyLGRDahTX5QD1DdP',
+              fee: 0.14,
+              yield: 4.91,
+              efficiency: 99.56,
+              freespace: 115494,
+            },
+            {
+              logo: 'https://services.tzkt.io/v1/avatars/tz1RuHDSj9P7mNNhfKxsyLGRDahTX5QD1DdP',
+              name: "Shrek's donkey",
+              address: 'tz1Qf1pSbJzMN4VtGFfVJRgbXhBksRv36TxW',
+              fee: 0.14,
+              yield: 4.91,
+              efficiency: 99.56,
+              freespace: 115494,
+            },
+          ]
+        : BakersMocked
+
+    return {
+      otherBakers,
+      dao: {
+        logo: 'https://tezos-nodes.com/storage/images/BBOZYYLQpLfTzbXzu0jvk4CublJzMgLM8GNz152M.png',
+        name: 'The DAO',
+        address: 'tz1ZY5ug2KcAiaVfxhDKtKLx8U5zEgsxgdjV',
+        fee: 0.14,
+        yield: 4.91,
+        efficiency: 99.56,
+        freespace: 115494,
+        description: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec euismod tincidunt felis, ac vehicula tellus
+        auctor id. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;
+        Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Morbi et ligula
+        fringilla, tempus sapien eget, pellentesque orci. Donec finibus quam rhoncus, fringilla ex ut, feugiat
+        nulla. Curabitur tristique augue non ante hendrerit ultrices`,
+      },
+      mavrykDynamics: {
+        logo: 'https://tezos-nodes.com/storage/images/BBOZYYLQpLfTzbXzu0jvk4CublJzMgLM8GNz152M.png',
+        name: 'Mavryk Dynamics',
+        address: 'tz1NKnczKg77PwF5NxrRohjT5j4PmPXw6hhL',
+        fee: 0.14,
+        yield: 4.91,
+        efficiency: 99.56,
+        freespace: 115494,
+        description: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec euismod tincidunt felis, ac vehicula tellus
+        auctor id. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;
+        Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Morbi et ligula
+        fringilla, tempus sapien eget, pellentesque orci. Donec finibus quam rhoncus, fringilla ex ut, feugiat
+        nulla. Curabitur tristique augue non ante hendrerit ultrices`,
+      },
+    }
   } catch (e) {
     console.log('getXTZBakers fething error', e)
     return []

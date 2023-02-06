@@ -89,7 +89,6 @@ const findFooterText = (status: string, statusColor: StatusFlagStyle, timestamp?
 
 const borrowingCardOptions: BorrowingCardOptions = {
   reverseColumns: true,
-  showOtherColumns: true,
 }
 
 type Props = VaultType & {

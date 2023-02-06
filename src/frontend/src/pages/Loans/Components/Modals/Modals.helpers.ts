@@ -81,6 +81,7 @@ export type RemoveLendingAssetDataType =
 
 export type ChangeBakerPopupDataType = {
   bakerAddress: string | null
+  vaultAddress: string
 } | null
 
 export type CreateVaultPopupDataType = {

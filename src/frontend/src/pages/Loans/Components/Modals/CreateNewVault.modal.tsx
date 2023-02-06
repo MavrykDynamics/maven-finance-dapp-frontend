@@ -70,7 +70,11 @@ export const CreateNewVault = ({
 }) => {
   const { currentMarketAsset, setCreatedVaultAddress } = data ?? {}
   const dispatch = useDispatch()
-  const { xtzBakers } = useSelector((state: State) => state.loans)
+  const {
+    xtzBakers: { otherBakers, dao, mavrykDynamics },
+  } = useSelector((state: State) => state.loans)
+  const xtzBakers = [...otherBakers, ...(dao ? [dao] : []), ...(mavrykDynamics ? [mavrykDynamics] : [])]
+
   const { avaliableCollaterals } = useSelector((state: State) => state.tokens)
   const { isActionLoading } = useSelector((state: State) => state.loading)
 

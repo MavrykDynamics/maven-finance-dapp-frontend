@@ -1,9 +1,11 @@
+import { useLockBodyScroll } from 'react-use'
 import { useState, useMemo, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { State } from 'reducers'
+import { changeBakerAction } from 'pages/Loans/Actions/vaultPermissions.actions'
 import { ChangeBakerPopupDataType } from './Modals.helpers'
 
 import NewButton from 'app/App.components/Button/NewButton.controller'
@@ -18,7 +20,6 @@ import { PopupContainer, PopupContainerWrapper } from 'app/App.components/Settin
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { DropDownJsxChild, LoansModalBase } from './Modals.style'
-import { changeBakerAction } from 'pages/Loans/Actions/vaultPermissions.actions'
 
 const MAVRYK_DYNAMICS_BAKERY = 1
 const DAO_BAKERY = 2
@@ -34,42 +35,73 @@ export const ChangeBaker = ({
   show: boolean
   data: ChangeBakerPopupDataType
 }) => {
-  const { bakerAddress = null } = data ?? {}
+  const { bakerAddress = null, vaultAddress = '' } = data ?? {}
 
   const dispatch = useDispatch()
-  const { xtzBakers } = useSelector((state: State) => state.loans)
+  const {
+    xtzBakers: { otherBakers, dao, mavrykDynamics },
+  } = useSelector((state: State) => state.loans)
   const [activeTab, setActiveSliding] = useState(MAVRYK_DYNAMICS_BAKERY)
   const [selectedAddress, setSelectedAddress] = useState<string | null>(null)
 
+  const currentNetwork = process.env.REACT_APP_NETWORK
+
+  useLockBodyScroll(show)
+
   useEffect(() => {
-    setSelectedAddress(bakerAddress)
+    // reset fields after closing the popup
     if (!show) {
       setBakerChosenDdItem(undefined)
+      setSelectedAddress(null)
+    } else {
+      // open tab that corresponds to the delegated bakery
+      setSelectedAddress(bakerAddress)
+
+      const vaultBaker = bakerySlidingButtons.find(
+        ({ bakeryAddresses }) => bakerAddress && bakeryAddresses.includes(bakerAddress),
+      )
+
+      // vault is delegated to
+      if (vaultBaker) {
+        setActiveSliding(vaultBaker.id)
+
+        // delegated to other bakery, need to select
+        if (vaultBaker.id === OTHER_BAKERY) {
+          setBakerChosenDdItem(bakerItemsForDropDown.find(({ bakerAddress: ddAddress }) => ddAddress === bakerAddress))
+        }
+      }
     }
   }, [bakerAddress, show])
 
   const bakerySlidingButtons = useMemo(
     () => [
       {
-        text: 'Mavryk Dynamics',
+        text: mavrykDynamics?.name ?? 'Mavryk Dynamics',
         id: MAVRYK_DYNAMICS_BAKERY,
         active: activeTab === MAVRYK_DYNAMICS_BAKERY,
-        bakeryAddresses: ['mavrykBakeryAddress'],
+        bakeryAddresses: [mavrykDynamics?.address ?? ''],
+        isDisabled: currentNetwork !== 'mainnet',
       },
-      { text: 'The DAO', id: DAO_BAKERY, active: activeTab === DAO_BAKERY, bakeryAddresses: ['DAOBakeryAddress'] },
+      {
+        text: dao?.name ?? 'The DAO',
+        id: DAO_BAKERY,
+        active: activeTab === DAO_BAKERY,
+        bakeryAddresses: [dao?.address ?? ''],
+        isDisabled: currentNetwork !== 'mainnet',
+      },
       {
         text: 'Other',
         id: OTHER_BAKERY,
         active: activeTab === OTHER_BAKERY,
-        bakeryAddresses: xtzBakers.map(({ address }) => address),
+        bakeryAddresses: otherBakers.map(({ address }) => address),
       },
     ],
-    [activeTab, xtzBakers],
+    [mavrykDynamics?.name, mavrykDynamics?.address, activeTab, currentNetwork, dao?.name, dao?.address, otherBakers],
   )
 
   const bakerItemsForDropDown = useMemo<DropDownXTZBakerType[]>(
     () =>
-      xtzBakers.map(({ name, fee, logo, address, yield: bakerYield, freespace }, idx) => ({
+      otherBakers.map(({ name, fee, logo, address, yield: bakerYield, freespace }, idx) => ({
         content: (
           <DropDownJsxChild>
             <div className="flex-row with-image">
@@ -93,30 +125,10 @@ export const ChangeBaker = ({
         bakerYield,
         bakerFreeSpace: freespace,
       })),
-    [xtzBakers],
+    [otherBakers],
   )
 
-  useEffect(() => {
-    // vault isn't delegated to baker
-    if (bakerAddress === null) {
-      return
-    }
-
-    const vaultBaker = bakerySlidingButtons.find(
-      ({ bakeryAddresses }) => bakerAddress && bakeryAddresses.includes(bakerAddress),
-    )
-
-    // vault is delegated to
-    if (vaultBaker) {
-      setActiveSliding(vaultBaker.id)
-
-      // delegated to other bakery, need to select
-      if (vaultBaker.id === OTHER_BAKERY) {
-        setBakerChosenDdItem(bakerItemsForDropDown.find(({ bakerAddress: ddAddress }) => ddAddress === bakerAddress))
-      }
-    }
-  }, [bakerAddress, bakerItemsForDropDown, bakerySlidingButtons])
-
+  // click on tab btn
   const handleSlidingButtonClick = (tabId: number) => {
     const selectedBakeryTab = bakerySlidingButtons.find(({ id }) => id === tabId)
     setActiveSliding(selectedBakeryTab?.id ?? MAVRYK_DYNAMICS_BAKERY)
@@ -136,8 +148,8 @@ export const ChangeBaker = ({
   }
 
   const updateBakerHandler = () => {
-    if (selectedAddress) {
-      dispatch(changeBakerAction(selectedAddress, closePopup))
+    if (selectedAddress && vaultAddress) {
+      dispatch(changeBakerAction(selectedAddress, vaultAddress, closePopup))
     }
   }
 
@@ -156,20 +168,13 @@ export const ChangeBaker = ({
 
           {activeTab === 1 ? (
             <div className="modalDescr" style={{ marginTop: '30px' }}>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec euismod tincidunt felis, ac vehicula tellus
-              auctor id. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;
-              Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Morbi et ligula
-              fringilla, tempus sapien eget, pellentesque orci. Donec finibus quam rhoncus, fringilla ex ut, feugiat
-              nulla. Curabitur tristique augue non ante hendrerit ultrices
+              {mavrykDynamics?.description ?? ''}
             </div>
           ) : null}
 
           {activeTab === 2 ? (
             <div className="modalDescr" style={{ marginTop: '30px' }}>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec euismod tincidunt felis, ac vehicula tellus
-              auctor id. Vestibfgnsijfdn gihdfbh gbfdgbdfish bgdfios bgoshdfbhousfdb ghbsd ughfdbgodsfb guhbdf gubds
-              ugbds ubgyd gfdngjisfdngjsndig fbd gbdfsihgb dfs hoidfbgh bdsfgho dbfgh bhfdbgihdsb gds uohbdfgb dfhsb
-              gbdfs]g sdf sgnjfdgnpisfdngidfbgd
+              {dao?.description ?? ''}
             </div>
           ) : null}
 
@@ -186,6 +191,14 @@ export const ChangeBaker = ({
           <div className="lending-stats">
             <ThreeLevelListItem>
               <div className="name">Bakery Address</div>
+              {activeTab === 1 ? (
+                <TzAddress className="value" tzAddress={mavrykDynamics?.address ?? ''} type={BLUE} hasIcon={false} />
+              ) : null}
+
+              {activeTab === 2 ? (
+                <TzAddress className="value" tzAddress={dao?.address ?? ''} type={BLUE} hasIcon={false} />
+              ) : null}
+
               {activeTab === 3 ? (
                 bakerChosenDdItem?.bakerAddress ? (
                   <TzAddress className="value" tzAddress={bakerChosenDdItem.bakerAddress} type={BLUE} hasIcon={false} />
@@ -193,25 +206,15 @@ export const ChangeBaker = ({
                   <div className="value">-</div>
                 )
               ) : null}
-              {activeTab === 1 ? (
-                <TzAddress
-                  className="value"
-                  tzAddress={'hihibhyvyvuyvuyvuyvuyvuvuuvugug'}
-                  type={BLUE}
-                  hasIcon={false}
-                />
-              ) : null}
-              {activeTab === 2 ? (
-                <TzAddress
-                  className="value"
-                  tzAddress={'jkgugufftyfccvgvgvchgvvytvtgcchgchgc'}
-                  type={BLUE}
-                  hasIcon={false}
-                />
-              ) : null}
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Yield</div>
+              {activeTab === 1 ? (
+                <CommaNumber value={mavrykDynamics?.yield ?? 0} className="value" endingText="%" />
+              ) : null}
+
+              {activeTab === 2 ? <CommaNumber value={dao?.yield ?? 0} className="value" endingText="%" /> : null}
+
               {activeTab === 3 ? (
                 bakerChosenDdItem?.bakerYield ? (
                   <CommaNumber value={bakerChosenDdItem.bakerYield} className="value" endingText="%" />
@@ -219,11 +222,15 @@ export const ChangeBaker = ({
                   <div className="value">-</div>
                 )
               ) : null}
-              {activeTab === 1 ? <CommaNumber value={11} className="value" endingText="%" /> : null}
-              {activeTab === 2 ? <CommaNumber value={22} className="value" endingText="%" /> : null}
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Free Capacity</div>
+              {activeTab === 1 ? (
+                <CommaNumber value={mavrykDynamics?.freespace ?? 0} className="value" endingText="XTZ" />
+              ) : null}
+
+              {activeTab === 2 ? <CommaNumber value={dao?.freespace ?? 0} className="value" endingText="XTZ" /> : null}
+
               {activeTab === 3 ? (
                 bakerChosenDdItem?.bakerFreeSpace ? (
                   <CommaNumber value={bakerChosenDdItem.bakerFreeSpace} className="value" endingText="XTZ" />
@@ -231,12 +238,15 @@ export const ChangeBaker = ({
                   <div className="value">-</div>
                 )
               ) : null}
-              {activeTab === 1 ? <CommaNumber value={1111} className="value" endingText="XTZ" /> : null}
-              {activeTab === 2 ? <CommaNumber value={2222} className="value" endingText="XTZ" /> : null}
             </ThreeLevelListItem>
           </div>
 
-          <NewButton kind={ACTION_PRIMARY} onClick={updateBakerHandler} className="modal-manage-btn">
+          <NewButton
+            kind={ACTION_PRIMARY}
+            onClick={updateBakerHandler}
+            className="modal-manage-btn"
+            disabled={!selectedAddress || selectedAddress === bakerAddress}
+          >
             Update Baker
           </NewButton>
         </LoansModalBase>

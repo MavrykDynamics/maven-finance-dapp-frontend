@@ -6,7 +6,11 @@ export interface LoansState {
   loanTokens: LoansStorage['loanTokens']
   chartsData: LoansChartsDataType
   loansControllerAddress: string
-  xtzBakers: Array<XtzBakerType>
+  xtzBakers: {
+    otherBakers: Array<XtzBakerType>
+    dao: (XtzBakerType & { description: string }) | null
+    mavrykDynamics: (XtzBakerType & { description: string }) | null
+  }
   isDataLoaded: boolean
   config: {
     DAOFee: number
@@ -23,10 +27,14 @@ const loansDefaultState: LoansState = {
     lendingChartData: [],
   },
   config: {
-    DAOFee: 0
+    DAOFee: 0,
   },
-  xtzBakers: [],
-  isDataLoaded: false
+  xtzBakers: {
+    otherBakers: [],
+    dao: null,
+    mavrykDynamics: null,
+  },
+  isDataLoaded: false,
 }
 
 export function loans(state = loansDefaultState, action: Action) {
@@ -35,7 +43,7 @@ export function loans(state = loansDefaultState, action: Action) {
       return {
         ...state,
         ...action.loansStorage,
-        isDataLoaded: true
+        isDataLoaded: true,
       }
     case CLEAR_LOANS_STORAGE:
       return {

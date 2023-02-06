@@ -76,7 +76,7 @@ export const getAssetMetadata = ({
       originalName: tokenName,
       name: foundAssetInDipDup.metadata.name,
       symbol: foundAssetInDipDup.metadata.symbol,
-      icon: tokenName === 'eurl' ? '/images/eurl.png' : foundAssetInDipDup.metadata.icon ?? icon,
+      icon: tokenName === 'eurl' ? '/images/eurl.png' : icon ?? foundAssetInDipDup.metadata.icon,
       rate: last_completed_data / 10 ** decimals,
       address: tokenAddress,
       id: foundAssetInDipDup.id,
