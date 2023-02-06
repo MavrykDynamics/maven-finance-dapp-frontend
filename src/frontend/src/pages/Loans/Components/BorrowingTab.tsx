@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useContext, useState } from 'react'
 
@@ -12,6 +13,7 @@ import { getAvaliableCollaterals } from '../Actions/getLoansData.actions'
 import { Button } from 'app/App.components/Button/Button.controller'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { BorrowingExpandCard } from './BorrowindExpandCard'
+import Checkbox from 'app/App.components/Checkbox/Checkbox.view'
 
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { LoansTabStyled, NoItemsInTabStyled } from './LoansComponents.style'
@@ -30,10 +32,17 @@ export const BorrowingTab = ({
   const dispatch = useDispatch()
   const { openCreateVaultPopup } = useContext(loansPopupsContext)
   const [createdVaultId, setCreatedVaultAddress] = useState<null | string>(null)
+  const [showZeroVaults, setShowZeroVaults] = useState(false)
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const {
     config: { DAOFee },
   } = useSelector((state: State) => state.loans)
+
+  const vaults = useMemo(() => {
+    return showZeroVaults
+      ? borrowingItems.filter(({ collateralBalance, borrowedAmount }) => collateralBalance || borrowedAmount)
+      : borrowingItems
+  }, [borrowingItems, showZeroVaults])
 
   const { isLoading: loadingAvaliableCollaterals } = useDataLoader(async () => {
     try {
@@ -47,7 +56,16 @@ export const BorrowingTab = ({
         <h2>My Borrowing</h2>
       </GovRightContainerTitleArea>
 
-      {borrowingItems.length ? (
+      <Checkbox
+        id="show_dropped"
+        onChangeHandler={() => setShowZeroVaults(!showZeroVaults)}
+        checked={showZeroVaults}
+        className="checkbox"
+      >
+        <span>Hide vaults with a balance of 0</span>
+      </Checkbox>
+
+      {vaults.length ? (
         <>
           <Button
             text="New Vault"
@@ -58,7 +76,7 @@ export const BorrowingTab = ({
             className="lending-tab-no-items-btn has-items-borrow-btn"
           />
           <div className="list-wrapper">
-            {borrowingItems.map((item, idx) => {
+            {vaults.map((item, idx) => {
               return (
                 <BorrowingExpandCard
                   isOwner
