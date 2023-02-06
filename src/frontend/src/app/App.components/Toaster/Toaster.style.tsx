@@ -85,7 +85,7 @@ export const ToasterIcon = styled.div<{ status?: string; theme: MavrykTheme }>`
   > svg {
     height: 14px;
     width: 14px;
-    stroke: ${(props) => {
+    fill: ${(props) => {
       switch (props.status) {
         case INFO:
           return ({ theme }) => theme.infoColor

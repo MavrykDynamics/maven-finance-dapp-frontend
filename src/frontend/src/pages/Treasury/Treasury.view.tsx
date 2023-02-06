@@ -120,7 +120,7 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
               <TableBody className="treasury">
                 {filteredBalance.map(({ symbol, balance, usdValue, rate }) => {
                   return (
-                    <TableRow rowHeight={25} borderColor="dataColor" className="add-hover">
+                    <TableRow rowHeight={25} borderColor="dataColor" className="add-hover" key={symbol}>
                       <TableCell width="33%">{symbol}</TableCell>
                       <TableCell width="33%">
                         {parseFloat(String(balance)) < 0.01 ? (

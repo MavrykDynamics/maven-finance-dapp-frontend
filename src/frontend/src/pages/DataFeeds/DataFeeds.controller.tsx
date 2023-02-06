@@ -24,6 +24,8 @@ import { DropdownContainer } from 'app/App.components/DropDown/DropDown.style'
 import { SatelliteSearchFilter } from 'pages/Satellites/SatelliteList/SatelliteList.style'
 import { getOracleStorage } from 'pages/Satellites/Satellites.actions'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
+import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
+import { INFO } from 'app/App.components/Toaster/Toaster.constants'
 
 const emptyContainer = (
   <EmptyContainer>
@@ -119,6 +121,7 @@ export const DataFeeds = () => {
           icon="requestFeed"
           kind={ACTION_PRIMARY}
           onClick={() => {
+            dispatch(showToaster(INFO, 'Coming soon', 'Request feed Feature coming soon'))
             // TODO: implement request data feed ORACLE_SI
           }}
         />

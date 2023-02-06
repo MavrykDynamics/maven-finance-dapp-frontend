@@ -19,8 +19,6 @@ export const getFa2Batch = ({
   contractMethod: any
   isDepositCollateral: boolean
 }) => {
-  console.log(assetName, assetAmount, operatorAddress, assetId, assetContract, contractMethod, userAddress)
-
   const fa2AddOperator = [
     {
       add_operator: {

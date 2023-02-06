@@ -14,6 +14,7 @@ import { normalizeTreasury } from './Treasury.helpers'
 import { AppDispatch, coinGeckoClient, GetState } from '../../app/App.controller'
 import { normalizeVestingStorage } from 'app/App.helpers'
 import { VESTING_STORAGE_QUERY, VESTING_STORAGE_QUERY_NAME, VESTING_STORAGE_QUERY_VARIABLE } from 'gql/queries'
+import { getAssetColor } from './helpers/treasury.utils'
 
 export const GET_TREASURY_STORAGE = 'GET_TREASURY_STORAGE'
 export const SET_TREASURY_STORAGE = 'SET_TREASURY_STORAGE'
@@ -54,6 +55,7 @@ export const fillTreasuryStorage = () => async (dispatch: AppDispatch, getState:
           symbol: 'sMVK',
           thumbnail_uri: 'https://mavryk.finance/logo192.png',
           rate: MVK_EXCHANGE_RATE,
+          chartColor: '#55D8BA',
         }
       },
     )
@@ -108,13 +110,16 @@ export const fillTreasuryStorage = () => async (dispatch: AppDispatch, getState:
 
         const tresuryTokensWithValidBalances = fetchedTheasuryData[idx]
           .map(
-            ({
-              account: { address },
-              token: {
-                metadata: { symbol, name, decimals, thumbnailUri },
-              },
-              balance,
-            }: FetchedTreasuryBalanceType): TreasuryBalanceType => {
+            (
+              {
+                account: { address },
+                token: {
+                  metadata: { symbol, name, decimals, thumbnailUri },
+                },
+                balance,
+              }: FetchedTreasuryBalanceType,
+              balanceIdx,
+            ): TreasuryBalanceType => {
               const assetRate = symbol === 'MVK' ? MVK_EXCHANGE_RATE : treasuryAssetsFetchedData[symbol]?.rate
               const coinsAmount = parseFloat(balance) / Math.pow(10, parseInt(decimals))
               const usdValue = coinsAmount * (assetRate ?? 1)
@@ -128,6 +133,7 @@ export const fillTreasuryStorage = () => async (dispatch: AppDispatch, getState:
                 symbol: treasuryAssetsFetchedData[symbol]?.symbol ?? symbol,
                 balance: coinsAmount,
                 rate: assetRate,
+                chartColor: getAssetColor(balanceIdx),
               }
             },
           )
