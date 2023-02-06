@@ -1,9 +1,40 @@
 import { State } from 'reducers'
 import { fetchRateBySymbols } from 'reducers/actions/dipDupActions.actions'
+import { calcWithoutMu } from 'utils/calcFunctions'
 import { Lending_Controller_Collateral_Token, Mavryk_User } from 'utils/generated/graphqlTypes'
 import { LoansGQL, AvaliableCollateralType } from 'utils/TypesAndInterfaces/Loans'
 import BakersMocked from './bakers.json'
 import { isTezosAsset } from './Loans.helpers'
+
+export type BakeryDelegateDataType = {
+  balance: number
+  delegatedBalance: number
+}
+
+export const getBakeryDelegateData = async (bakerAddress: string): Promise<BakeryDelegateDataType> => {
+  try {
+    const response = await fetch(`https://api.tzkt.io/v1/delegates/${bakerAddress}`)
+    const result = await response.json()
+
+    return result
+  } catch {
+    return {
+      balance: -1,
+      delegatedBalance: -1,
+    }
+  }
+}
+
+export const getFreeSpace = (data: BakeryDelegateDataType) => {
+  if (data.balance === -1) return [-1]
+
+  const balance = data.balance
+  const totalAmountOfSpace = balance * 9
+  const freeSpace = totalAmountOfSpace - data.delegatedBalance
+  const divededByMu = calcWithoutMu(freeSpace).toFixed(2)
+
+  return [Number(divededByMu)]
+}
 
 export const getXTZBakers = async () => {
   try {
@@ -19,7 +50,6 @@ export const getXTZBakers = async () => {
               address: 'tz1bQMn5xYFbX6geRxqvuAiTywsCtNywawxH',
               fee: 0.14,
               yield: 4.91,
-              efficiency: 99.56,
               freespace: 115494,
             },
             {
@@ -28,7 +58,6 @@ export const getXTZBakers = async () => {
               address: 'tz1RuHDSj9P7mNNhfKxsyLGRDahTX5QD1DdP',
               fee: 0.14,
               yield: 4.91,
-              efficiency: 99.56,
               freespace: 115494,
             },
             {
@@ -37,11 +66,15 @@ export const getXTZBakers = async () => {
               address: 'tz1Qf1pSbJzMN4VtGFfVJRgbXhBksRv36TxW',
               fee: 0.14,
               yield: 4.91,
-              efficiency: 99.56,
               freespace: 115494,
             },
           ]
         : BakersMocked
+
+    const values = await Promise.all([
+      getBakeryDelegateData('tz1ZY5ug2KcAiaVfxhDKtKLx8U5zEgsxgdjV'),
+      getBakeryDelegateData('tz1NKnczKg77PwF5NxrRohjT5j4PmPXw6hhL'),
+    ])
 
     return {
       otherBakers,
@@ -49,29 +82,19 @@ export const getXTZBakers = async () => {
         logo: 'https://tezos-nodes.com/storage/images/BBOZYYLQpLfTzbXzu0jvk4CublJzMgLM8GNz152M.png',
         name: 'The DAO',
         address: 'tz1ZY5ug2KcAiaVfxhDKtKLx8U5zEgsxgdjV',
-        fee: 0.14,
-        yield: 4.91,
-        efficiency: 99.56,
-        freespace: 115494,
-        description: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec euismod tincidunt felis, ac vehicula tellus
-        auctor id. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;
-        Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Morbi et ligula
-        fringilla, tempus sapien eget, pellentesque orci. Donec finibus quam rhoncus, fringilla ex ut, feugiat
-        nulla. Curabitur tristique augue non ante hendrerit ultrices`,
+        fee: 10,
+        yield: 5.5,
+        freespace: getFreeSpace(values[0] as BakeryDelegateDataType),
+        description: `The Mavryk DAO Bakery belongs to the Mavryk Finance network. A small portion of the earnings are used to pay for the Decentralized Oracle’s transaction fees. The DAO Bakery is operated by Mavryk Dynamics on behalf of the Mavryk Finance network.`,
       },
       mavrykDynamics: {
         logo: 'https://tezos-nodes.com/storage/images/BBOZYYLQpLfTzbXzu0jvk4CublJzMgLM8GNz152M.png',
         name: 'Mavryk Dynamics',
         address: 'tz1NKnczKg77PwF5NxrRohjT5j4PmPXw6hhL',
-        fee: 0.14,
-        yield: 4.91,
-        efficiency: 99.56,
-        freespace: 115494,
-        description: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec euismod tincidunt felis, ac vehicula tellus
-        auctor id. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;
-        Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Morbi et ligula
-        fringilla, tempus sapien eget, pellentesque orci. Donec finibus quam rhoncus, fringilla ex ut, feugiat
-        nulla. Curabitur tristique augue non ante hendrerit ultrices`,
+        fee: 10,
+        yield: 5.5,
+        freespace: getFreeSpace(values[1] as BakeryDelegateDataType),
+        description: `The Mavryk Dynamics Bakery belongs to one of the core teams contributing to Mavryk Finance. Delegating to this Bakery contributes to the further development of Mavryk Finance.`,
       },
     }
   } catch (e) {
