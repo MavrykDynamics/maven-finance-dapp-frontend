@@ -62,7 +62,7 @@ export const BorrowingTab = ({
         checked={showZeroVaults}
         className="checkbox"
       >
-        <span>Hide vaults with a balance of 0</span>
+        <span>Hide vaults with a loan balance of 0</span>
       </Checkbox>
 
       {vaults.length ? (

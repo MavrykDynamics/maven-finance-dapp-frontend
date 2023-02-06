@@ -281,7 +281,7 @@ export const VaultsSearchFilter = ({ assets, vaultsMapper, allVaultsIds, setVaul
         checked={chosenDdItem[filters.ZERO] === 'checked'}
         className="checkbox"
       >
-        <span>Hide vaults with a balance of 0</span>
+        <span>Hide vaults with a loan balance of 0</span>
       </Checkbox>
     </VaultsSearchFilterWrapper>
   )
