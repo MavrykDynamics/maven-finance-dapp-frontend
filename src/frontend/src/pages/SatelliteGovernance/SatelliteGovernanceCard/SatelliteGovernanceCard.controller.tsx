@@ -128,7 +128,7 @@ export const SatelliteGovernanceCard = ({
           <p className="purpose">{purpose}</p>
           {initiatorId ? (
             <Link className={'view-satellite'} to={`/satellites/satellite-details/${initiatorId}`}>
-              View Satellite
+              Profile Details
             </Link>
           ) : null}
           {statusFlag === ProposalStatus.ONGOING && accountPkh === initiatorId ? (

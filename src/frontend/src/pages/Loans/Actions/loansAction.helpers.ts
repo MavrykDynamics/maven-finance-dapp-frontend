@@ -8,6 +8,7 @@ export const getFa2Batch = ({
   assetContract,
   contractMethod,
   userAddress,
+  isDepositCollateral,
 }: {
   operatorAddress: string
   assetAmount: number
@@ -16,6 +17,7 @@ export const getFa2Batch = ({
   assetId: number
   assetContract: any
   contractMethod: any
+  isDepositCollateral: boolean
 }) => {
   const fa2AddOperator = [
     {
@@ -44,7 +46,9 @@ export const getFa2Batch = ({
     },
     {
       kind: OpKind.TRANSACTION,
-      ...contractMethod(assetAmount, assetName).toTransferParams(),
+      ...(isDepositCollateral
+        ? contractMethod(assetAmount, assetName).toTransferParams()
+        : contractMethod(assetName, assetAmount).toTransferParams()),
     },
     {
       kind: OpKind.TRANSACTION,

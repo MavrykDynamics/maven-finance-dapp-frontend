@@ -127,6 +127,7 @@ export const depositCollateralAction =
           assetId: 0,
           assetContract,
           contractMethod: contract.methods.deposit,
+          isDepositCollateral: true
         })
 
         const batch = await state.wallet.tezos?.wallet.batch(batchArr)

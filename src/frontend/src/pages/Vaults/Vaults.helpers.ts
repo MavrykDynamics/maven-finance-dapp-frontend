@@ -1,3 +1,4 @@
+import { getAssetColor } from './../Treasury/helpers/treasury.utils'
 import dayjs from 'dayjs'
 import { VaultType, LendingControllerGQL } from 'utils/TypesAndInterfaces/Vaults'
 import { Aggregator } from 'utils/generated/graphqlTypes'
@@ -218,6 +219,7 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
         liquidationMax,
         liquidationReward,
         adminLiquidateFee,
+        repayFee: item.loan_interest_total,
 
         xtzDelegatedTo: vaultXtzDelegatedTo?.delegate?.address ?? null,
         operators: [],
@@ -407,6 +409,7 @@ type VaultAssetBalances = {
       rate: number
       decimals: number
       name: string
+      chartColor: string
       symbol: string
     }
   >
@@ -424,7 +427,7 @@ export const reduceVaultsAssets = (vaultIds: string[], vaultsMapper: Record<stri
         notEmptyCollateral++
         acc.collateralRatio += collateralRatio
 
-        collateralData.slice(0, -1).forEach((collateral) => {
+        collateralData.slice(0, -1).forEach((collateral, idx) => {
           acc.globalVaultTVL += collateral.amount * collateral.rate
 
           if (collateral.symbol && assets[collateral.symbol]) {
@@ -437,6 +440,7 @@ export const reduceVaultsAssets = (vaultIds: string[], vaultsMapper: Record<stri
               rate: collateral.rate,
               name: collateral.symbol,
               symbol: collateral.symbol,
+              chartColor: getAssetColor(idx),
               decimals: 0,
             }
           }

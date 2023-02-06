@@ -89,7 +89,7 @@ export const borrowVaultAssetAction =
 
 // parlty repay vault
 export const repayPartOfVaultAction =
-  (vaultId: string, repayAmount: number, callback: () => void) => async (dispatch: AppDispatch, getState: GetState) => {
+  (vaultId: number, repayAmount: number, callback: () => void) => async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
 
     if (!state.wallet.accountPkh) {
@@ -116,6 +116,7 @@ export const repayPartOfVaultAction =
 
       await dispatch(showToaster(SUCCESS, 'Asset borrowed.', 'All good :)'))
       // refetch data we need
+      await dispatch(updateUserData())
       await dispatch(getLoansStorage())
       await dispatch(toggleActionLoader(false))
     } catch (error) {
@@ -130,7 +131,7 @@ export const repayPartOfVaultAction =
 
 // repay full vault and close it
 export const repayFullAndCloseVaultAction =
-  (vaultId: string, repayAmount: number, callback: () => void) => async (dispatch: AppDispatch, getState: GetState) => {
+  (vaultId: number, repayAmount: number, callback: () => void) => async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
 
     if (!state.wallet.accountPkh) {

@@ -32,10 +32,10 @@ import { State } from 'reducers'
 import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 import { getTimestampByLevel } from 'pages/Governance/Governance.actions'
 import { calculateCollateralShare } from 'pages/Vaults/calcFunctionsForVault'
+import { isTezosAsset } from '../Loans.helpers'
 
 export type BorrowingCardOptions = {
   reverseColumns?: boolean
-  showOtherColumns?: boolean
 }
 
 type BorrowingExpandCardPropsType = LoansVaultType & {
@@ -76,8 +76,9 @@ export const BorrowingExpandCard = ({
   collateralRatio,
   borrowCapacity,
   DAOFee,
+  repayFee,
 }: BorrowingExpandCardPropsType) => {
-  const { reverseColumns, showOtherColumns } = options ?? {}
+  const { reverseColumns } = options ?? {}
 
   const { symbol, icon, rate = 1 } = borrowedAsset
 
@@ -277,17 +278,17 @@ export const BorrowingExpandCard = ({
                   <NewButton
                     onClick={() =>
                       openRepayPopup?.({
-                        vaultAddress: address,
+                        vaultId,
                         borrowedAsset: borrowedAsset,
                         borrowedAmount,
-                        feesAmount: 0,
+                        feesAmount: repayFee,
                         currentCollateralBalance: collateralData.at(-1)?.amount ?? 0,
-                        currentAvaliableToBorrow: 0,
+                        borrowCapacity: borrowCapacity / borrowedAsset.rate,
                       })
                     }
                     kind={TRANSPARENT_WITH_BORDER}
+                    disabled={!borrowedAmount}
                     className="repay"
-                    disabled
                   >
                     <Icon id="okIcon" /> Repay
                   </NewButton>
@@ -301,16 +302,14 @@ export const BorrowingExpandCard = ({
                 <TableHeader className={`simple-header collateral `}>
                   <TableRow>
                     <TableHeaderCell>Asset</TableHeaderCell>
-                    <TableHeaderCell>amount</TableHeaderCell>
-                    <TableHeaderCell>Withdraw Max</TableHeaderCell>
-                    {showOtherColumns && <TableHeaderCell>Collateral Share</TableHeaderCell>}
+                    <TableHeaderCell>Amount</TableHeaderCell>
+                    <TableHeaderCell>Collateral Share</TableHeaderCell>
                   </TableRow>
                 </TableHeader>
               ) : null}
 
               <TableBody>
-                {collateralData.map(({ icon, amount, rate, maxWithdraw, gqlName, symbol }, idx) => {
-                  const columnWidth = showOtherColumns ? '18%' : '22%'
+                {collateralData.map(({ icon, amount, rate, gqlName, symbol }, idx) => {
                   const isTotalRow = collateralData.length - 1 === idx
 
                   const collateralShare = isTotalRow
@@ -321,7 +320,7 @@ export const BorrowingExpandCard = ({
 
                   return (
                     <TableRow rowHeight={60} key={gqlName + '-' + idx}>
-                      <TableCell width={columnWidth} className="vert-middle">
+                      <TableCell width={'22%'} className="vert-middle">
                         {isTotalRow ? (
                           'Total'
                         ) : (
@@ -339,7 +338,7 @@ export const BorrowingExpandCard = ({
                           </div>
                         )}
                       </TableCell>
-                      <TableCell width={columnWidth}>
+                      <TableCell width={'22%'}>
                         <div className="cell-content">
                           <CommaNumber
                             value={amount}
@@ -359,19 +358,11 @@ export const BorrowingExpandCard = ({
                           ) : null}
                         </div>
                       </TableCell>
-                      <TableCell width={columnWidth}>
+                      <TableCell width={'22%'}>
                         <div className="cell-content">
-                          <CommaNumber value={maxWithdraw} decimalsToShow={2} className="value" />
-                          {rate ? <CommaNumber value={maxWithdraw * rate} decimalsToShow={2} className="rate" beginningText="$" /> : null}
+                          <CommaNumber value={collateralShare} className="value" endingText="%" />
                         </div>
                       </TableCell>
-                      {showOtherColumns ? (
-                        <TableCell width={columnWidth}>
-                          <div className="cell-content">
-                            <CommaNumber value={collateralShare} decimalsToShow={2} className="value" endingText="%" />
-                          </div>
-                        </TableCell>
-                      ) : null}
                       {isTotalRow ? (
                         <TableCell className="buttons borrowing">
                           <div className="cell-content row">
@@ -473,17 +464,18 @@ export const BorrowingExpandCard = ({
                 <div className="bottom-info-row">
                   <div className="name">XTZ Delegated to </div>
                   <div className="value">
-                    {xtzDelegatedTo ? <TzAddress tzAddress={xtzDelegatedTo} type={BLUE} /> : 'None'}
+                    {xtzDelegatedTo ? <TzAddress tzAddress={xtzDelegatedTo} type={BLUE} /> : 'Not Delegated'}
                   </div>
                   <Button
                     kind={ACTION_SIMPLE}
                     text="Change Baker"
                     icon="paginationArrowLeft"
                     iconAfter
-                    disabled
+                    disabled={!collateralData.find(({ gqlName }) => isTezosAsset(gqlName))}
                     onClick={() =>
                       openChangeBakerPopup?.({
                         bakerAddress: xtzDelegatedTo,
+                        vaultAddress: address,
                       })
                     }
                   />
@@ -537,16 +529,17 @@ export const BorrowingExpandCard = ({
 
                 <Button
                   text="Repay Loan in Full"
-                  disabled
+                  disabled={!borrowedAmount}
                   kind={TRANSPARENT_WITH_BORDER}
                   onClick={() =>
                     openRepayFullPopup?.({
-                      vaultAddress: address,
+                      vaultId,
                       borrowedAsset: borrowedAsset,
-                      feesAmount: 0,
-                      currentCollateralBalance: collateralData.at(-1)?.amount ?? 0,
-                      currentAvaliableToBorrow: 0,
+                      collateralRatio,
                       borrowedAmount,
+                      feesAmount: repayFee,
+                      currentCollateralBalance: collateralData.at(-1)?.amount ?? 0,
+                      borrowCapacity: borrowCapacity / borrowedAsset.rate,
                     })
                   }
                   className="close-vault"

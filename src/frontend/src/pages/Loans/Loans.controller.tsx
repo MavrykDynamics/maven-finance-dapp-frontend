@@ -29,10 +29,11 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { getLoansStorage } from './Actions/getLoansData.actions'
+import { useEffect } from 'react'
 
 export const Loans = () => {
   const dispatch = useDispatch()
-  const { isDataLoaded } = useSelector((state: State) => state.loans)
+  const { isDataLoaded, loanTokens, chartsData } = useSelector((state: State) => state.loans)
 
   const { isLoading } = useDataLoader(async () => {
     try {
@@ -41,7 +42,10 @@ export const Loans = () => {
       }
     } catch (e) {}
   }, [])
-  const { loanTokens, chartsData } = useSelector((state: State) => state.loans)
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
 
   const lendingPart = (
     <div className="chart-wrapper">

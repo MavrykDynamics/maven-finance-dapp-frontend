@@ -11,15 +11,14 @@ import {
   NEW_VAULT_QUERY_NAME,
   NEW_VAULT_QUERY_VARIABLE,
 } from 'gql/queries/getLoansStorage'
-import { updateTokensPrices } from 'reducers/actions/dipDupActions.actions'
 import { normalizeLoans } from '../Loans.helpers'
-import { getLoansTokensRates, getXTZBakers, getCollateralTokens } from '../LoansFethcers'
+import { getXTZBakers, getCollateralTokens } from '../LoansFethcers'
 
 export const GET_LOANS_STORAGE = 'GET_LOANS_STORAGE'
 export const CLEAR_LOANS_STORAGE = 'CLEAR_LOANS_STORAGE'
 export const getLoansStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
   const {
-    tokens: { dipDupTokens, mTokens, tokensPrices },
+    tokens: { dipDupTokens, mTokens },
     wallet: {
       accountPkh,
       user: { mTokens: userMTokens },

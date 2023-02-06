@@ -195,6 +195,7 @@ export const ConnectedWalletStyled = styled.div<{ theme: MavrykTheme }>`
 
       button:first-of-type {
         width: 140px;
+        fill: ${cyanColor};
       }
 
       button:last-of-type {

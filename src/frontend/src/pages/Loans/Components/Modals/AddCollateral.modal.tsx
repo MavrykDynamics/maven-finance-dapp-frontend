@@ -69,7 +69,7 @@ export const AddCollateral = ({
     const futureCollateralWithdraw = collateralWithdrawAmount + inputAmount
     const futureCollateralBalance = vaultCollateralBalance + inputAmount * Number(selectedAsset?.rate)
     return { futureCollateralRatio, futureCollateralWithdraw, futureCollateralBalance }
-  }, [selectedAsset, vaultCollateralBalance, inputData.amount, borrowedAmount, collateralWithdrawAmount])
+  }, [selectedAsset, vaultCollateralBalance, inputAmount, borrowedAmount, collateralWithdrawAmount])
 
   useEffect(() => {
     if (!show) {

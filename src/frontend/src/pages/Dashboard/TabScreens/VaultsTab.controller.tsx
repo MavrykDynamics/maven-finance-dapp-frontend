@@ -27,9 +27,14 @@ import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 export const VaultsTab = ({ isLoading }: { isLoading: boolean }) => {
   const [hoveredPath, setHoveredPath] = useState<null | string>(null)
 
-  const { vaultsList: { allVaultsIds, vaultsMapper } } = useSelector((state: State) => state.vaults)
-  const { assetsBalances, globalVaultTVL, collateralRatio, avgCollateralRatio } = useMemo(() => reduceVaultsAssets(allVaultsIds, vaultsMapper), [allVaultsIds, vaultsMapper])
-  
+  const {
+    vaultsList: { allVaultsIds, vaultsMapper },
+  } = useSelector((state: State) => state.vaults)
+  const { assetsBalances, globalVaultTVL, collateralRatio, avgCollateralRatio } = useMemo(
+    () => reduceVaultsAssets(allVaultsIds, vaultsMapper),
+    [allVaultsIds, vaultsMapper],
+  )
+
   const chartData = useMemo(() => {
     return getPieChartData(assetsBalances, globalVaultTVL, hoveredPath)
   }, [hoveredPath, assetsBalances, globalVaultTVL])
@@ -43,11 +48,11 @@ export const VaultsTab = ({ isLoading }: { isLoading: boolean }) => {
         </Link>
       </div>
       {isLoading ? (
-        <DataLoaderWrapper className='tabLoader'>
+        <DataLoaderWrapper className="tabLoader">
           <ClockLoader width={150} height={150} />
           <div className="text">Loading vaults</div>
         </DataLoaderWrapper>
-      ) : (assetsBalances.length ? (
+      ) : assetsBalances.length ? (
         <VaultsContentStyled>
           <div className="top">
             <StatBlock>
@@ -138,7 +143,7 @@ export const VaultsTab = ({ isLoading }: { isLoading: boolean }) => {
         </VaultsContentStyled>
       ) : (
         emptyContainer
-      ))}
+      )}
 
       <div className="descr">
         <div className="title">What is a Vault?</div>

@@ -6,7 +6,8 @@ import { State } from 'reducers'
 import { getLoansStorage } from './getLoansData.actions'
 
 export const changeBakerAction =
-  (bakerAddress: string, callback: () => void) => async (dispatch: AppDispatch, getState: GetState) => {
+  (bakerAddress: string, vaultAddress: string, callback: () => void) =>
+  async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
 
     if (!state.wallet.accountPkh) {
@@ -21,8 +22,7 @@ export const changeBakerAction =
 
     try {
       // prepare and send query
-      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.vaultFactory.address)
-
+      const contract = await state.wallet.tezos?.wallet.at(vaultAddress)
       const transaction = await contract?.methods.delegateTezToBaker(bakerAddress).send()
 
       callback()

@@ -1,10 +1,8 @@
-
-export const SECTOR_STYLES = { transition: 'stroke .3s', cursor: 'pointer' }
+export const SECTOR_STYLES = { transition: 'stroke 0s', cursor: 'pointer' }
 
 export const TREASURYS_COLORS = [
   '#0D61FF',
   '#503EAA',
-  '#55D8BA',
   '#FF8486',
   '#5F95F2',
   '#38237C',

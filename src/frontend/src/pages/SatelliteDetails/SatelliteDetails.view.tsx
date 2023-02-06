@@ -30,6 +30,7 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { parseDate } from 'utils/time'
 import { PageContent } from 'styles'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import { getVoteText } from 'pages/Satellites/Satellites.helpers'
 
 type SatelliteDetailsViewProps = {
   satellite: SatelliteRecord
@@ -46,18 +47,12 @@ type SatelliteDetailsViewProps = {
 }
 
 const renderVotingHistoryItem = (item: SatelliteProposalVotingHistory | SatelliteFinancialRequestVotingHistory) => {
+  const voteText = getVoteText(item.vote)
   return (
     <SatelliteVotingHistoryListItem key={item.id}>
       <p>{item?.voteName?.split('_').join(' ').toLowerCase()}</p>
       <span className="satellite-voting-history-info">
-        Voted{' '}
-        {item.vote === 1 ? (
-          <b className="voting-yes">YES </b>
-        ) : item.vote === 2 ? (
-          <b className="voting-abstain">PASS </b>
-        ) : (
-          <b className="voting-no">NO </b>
-        )}
+        Voted <b className={`voting-${voteText.toLowerCase()}`}>{voteText} </b>
         on {parseDate({ time: new Date(item.timestamp).getTime(), timeFormat: 'MMM Do, YYYY' })}
       </span>
     </SatelliteVotingHistoryListItem>

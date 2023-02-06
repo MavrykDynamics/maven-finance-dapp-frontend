@@ -5,11 +5,13 @@ import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
 export interface TreasuryState {
   treasuryStorage: Array<TreasuryType>
   treasuryFactoryAddress: string
+  isLoaded: boolean
 }
 
 const treasuryDefaultState: TreasuryState = {
   treasuryStorage: [],
   treasuryFactoryAddress: '',
+  isLoaded: false,
 }
 
 export function treasury(state = treasuryDefaultState, action: Action) {
@@ -19,6 +21,7 @@ export function treasury(state = treasuryDefaultState, action: Action) {
         ...state,
         treasuryStorage: action.treasuryStorage,
         treasuryFactoryAddress: action.treasuryFactoryAddress,
+        isLoaded: true,
       }
     default:
       return state

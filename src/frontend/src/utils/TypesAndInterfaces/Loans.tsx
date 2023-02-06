@@ -48,17 +48,13 @@ export type AvaliableCollateralType = LoansAssetDataType & {
 }
 
 export type XtzBakerType = {
-  rank: number
   logo: string
   name: string
   address: string
   fee: number
-  lifetime: number
   yield: number
   efficiency: number
-  efficiency_last10cycle: number
   freespace: number
-  reliability_points: number
 }
 
 export type UserLendObjType = {
@@ -79,6 +75,7 @@ export type LoansVaultType = {
   borrowCapacity: number
   apr: number
   fee: number
+  repayFee: number
   address: string
   vaultId: number
   xtzDelegatedTo: string | null
