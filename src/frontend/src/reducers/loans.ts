@@ -8,8 +8,8 @@ export interface LoansState {
   loansControllerAddress: string
   xtzBakers: {
     otherBakers: Array<XtzBakerType>
-    dao: (XtzBakerType & { description: string }) | null
-    mavrykDynamics: (XtzBakerType & { description: string }) | null
+    dao: (XtzBakerType & { description: string, isDisabled: boolean }) | null
+    mavrykDynamics: (XtzBakerType & { description: string, isDisabled: boolean }) | null
   }
   isDataLoaded: boolean
   config: {

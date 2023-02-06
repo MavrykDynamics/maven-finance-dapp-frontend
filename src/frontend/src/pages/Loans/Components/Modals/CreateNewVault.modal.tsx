@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { InputStatusType, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { CreateVaultPopupDataType } from './Modals.helpers'
 import { isTezosAsset } from 'pages/Loans/Loans.helpers'
-import { AvaliableCollateralType } from 'utils/TypesAndInterfaces/Loans'
+import { AvaliableCollateralType, XtzBakerType } from 'utils/TypesAndInterfaces/Loans'
 import { ACTION_PRIMARY, TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
 
 import NewButton from 'app/App.components/Button/NewButton.controller'
@@ -73,7 +73,11 @@ export const CreateNewVault = ({
   const {
     xtzBakers: { otherBakers, dao, mavrykDynamics },
   } = useSelector((state: State) => state.loans)
-  const xtzBakers = [...otherBakers, ...(dao ? [dao] : []), ...(mavrykDynamics ? [mavrykDynamics] : [])]
+  const xtzBakers: Array<XtzBakerType & { isDisabled?: boolean }> = [
+    ...otherBakers,
+    ...(dao ? [dao] : []),
+    ...(mavrykDynamics ? [mavrykDynamics] : []),
+  ]
 
   const { avaliableCollaterals } = useSelector((state: State) => state.tokens)
   const { isActionLoading } = useSelector((state: State) => state.loading)
@@ -128,7 +132,7 @@ export const CreateNewVault = ({
   // select baker for an xtz collateral, used only when we selected one collateral XTZ
   const bakerItemsForDropDown = useMemo<DropDownXTZBakerType[]>(
     () =>
-      xtzBakers.map(({ name, fee, logo, address, yield: bakerYield, freespace }, idx) => ({
+      xtzBakers.map(({ name, fee, logo, address, yield: bakerYield, freespace, isDisabled }, idx) => ({
         content: (
           <DropDownJsxChild>
             <div className="flex-row with-image">
@@ -151,6 +155,7 @@ export const CreateNewVault = ({
         bakerAddress: address,
         bakerYield,
         bakerFreeSpace: freespace,
+        disabled: isDisabled,
       })),
     [xtzBakers],
   )

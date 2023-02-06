@@ -25,6 +25,7 @@ import { PopupContainer, PopupContainerWrapper } from 'app/App.components/Settin
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { DropDownJsxChild, LoansModalBase, VaultModalOverview } from './Modals.style'
+import { XtzBakerType } from 'utils/TypesAndInterfaces/Loans'
 
 type InputState =
   | {
@@ -65,7 +66,11 @@ export const AddNewCollateral = ({
   const { avaliableCollaterals } = useSelector((state: State) => state.tokens)
   const { isActionLoading } = useSelector((state: State) => state.loading)
 
-  const xtzBakers = [...otherBakers, ...(dao ? [dao] : []), ...(mavrykDynamics ? [mavrykDynamics] : [])]
+  const xtzBakers: Array<XtzBakerType & { isDisabled?: boolean }> = [
+    ...otherBakers,
+    ...(dao ? [dao] : []),
+    ...(mavrykDynamics ? [mavrykDynamics] : []),
+  ]
 
   const [inputData, setInputData] = useState<InputState>()
 
@@ -126,7 +131,7 @@ export const AddNewCollateral = ({
   // select baker for an xtz collateral, used only when we selected one collateral XTZ
   const bakerItemsForDropDown = useMemo<DropDownXTZBakerType[]>(
     () =>
-      xtzBakers.map(({ name, fee, logo, address, yield: bakerYield, freespace }, idx) => ({
+      xtzBakers.map(({ name, fee, logo, address, yield: bakerYield, freespace, isDisabled }, idx) => ({
         content: (
           <DropDownJsxChild>
             <div className="flex-row with-image">
@@ -149,6 +154,7 @@ export const AddNewCollateral = ({
         bakerAddress: address,
         bakerYield,
         bakerFreeSpace: freespace,
+        disabled: isDisabled,
       })),
     [xtzBakers],
   )

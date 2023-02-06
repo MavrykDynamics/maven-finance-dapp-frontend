@@ -44,8 +44,6 @@ export const ChangeBaker = ({
   const [activeTab, setActiveSliding] = useState(MAVRYK_DYNAMICS_BAKERY)
   const [selectedAddress, setSelectedAddress] = useState<string | null>(null)
 
-  const currentNetwork = process.env.REACT_APP_NETWORK
-
   useLockBodyScroll(show)
 
   useEffect(() => {
@@ -80,14 +78,14 @@ export const ChangeBaker = ({
         id: MAVRYK_DYNAMICS_BAKERY,
         active: activeTab === MAVRYK_DYNAMICS_BAKERY,
         bakeryAddresses: [mavrykDynamics?.address ?? ''],
-        isDisabled: currentNetwork !== 'mainnet',
+        isDisabled: mavrykDynamics?.isDisabled,
       },
       {
         text: dao?.name ?? 'The DAO',
         id: DAO_BAKERY,
         active: activeTab === DAO_BAKERY,
         bakeryAddresses: [dao?.address ?? ''],
-        isDisabled: currentNetwork !== 'mainnet',
+        isDisabled: dao?.isDisabled,
       },
       {
         text: 'Other',
@@ -96,7 +94,7 @@ export const ChangeBaker = ({
         bakeryAddresses: otherBakers.map(({ address }) => address),
       },
     ],
-    [mavrykDynamics?.name, mavrykDynamics?.address, activeTab, currentNetwork, dao?.name, dao?.address, otherBakers],
+    [mavrykDynamics?.name, mavrykDynamics?.address, activeTab, dao?.name, dao?.address, otherBakers],
   )
 
   const bakerItemsForDropDown = useMemo<DropDownXTZBakerType[]>(

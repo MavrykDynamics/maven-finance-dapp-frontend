@@ -80,6 +80,7 @@ export const getXTZBakers = async () => {
     return {
       otherBakers,
       dao: {
+        isDisabled: process.env.REACT_APP_NETWORK !== 'mainnet',
         logo: 'https://tezos-nodes.com/storage/images/BBOZYYLQpLfTzbXzu0jvk4CublJzMgLM8GNz152M.png',
         name: 'The DAO',
         address: 'tz1ZY5ug2KcAiaVfxhDKtKLx8U5zEgsxgdjV',
@@ -89,6 +90,7 @@ export const getXTZBakers = async () => {
         description: `The Mavryk DAO Bakery belongs to the Mavryk Finance network. A small portion of the earnings are used to pay for the Decentralized Oracle’s transaction fees. The DAO Bakery is operated by Mavryk Dynamics on behalf of the Mavryk Finance network.`,
       },
       mavrykDynamics: {
+        isDisabled: process.env.REACT_APP_NETWORK !== 'mainnet',
         logo: 'https://tezos-nodes.com/storage/images/BBOZYYLQpLfTzbXzu0jvk4CublJzMgLM8GNz152M.png',
         name: 'Mavryk Dynamics',
         address: 'tz1NKnczKg77PwF5NxrRohjT5j4PmPXw6hhL',
