@@ -343,12 +343,6 @@ const getBorrowings = async (
         oracleId: String(vault.loan_token.oracle_id),
       })
 
-      console.log({
-        name: vault.loan_token.loan_token_name,
-        mapped: vaultCollateral,
-        original: vault.collateral_balances,
-      })
-
       const userBalance = await getUserBalanceForLoanAsset(
         vault.loan_token.loan_token_address,
         vault.loan_token.loan_token_name,
