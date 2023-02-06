@@ -65,7 +65,8 @@ export const depositLendingAssetAction =
           operatorAddress: state.contractAddresses.lendingController.address,
           assetId: 0,
           assetContract,
-          contractMethod: contract.methods.deposit,
+          contractMethod: contract.methods.addLiquidity,
+          isDepositCollateral: false,
         })
 
         const batch = await state.wallet.tezos?.wallet.batch(batchArr)
