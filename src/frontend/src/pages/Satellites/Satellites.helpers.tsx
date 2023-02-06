@@ -288,3 +288,11 @@ export const getSatelliteMetrics = (
     oracleEfficiency: Math.max(0, Math.min(100, Number(oracleEfficiency))),
   }
 }
+
+export const getVoteText = (voteType?: number): string => {
+  if (voteType === 0) return 'Pass'
+  if (voteType === 1) return 'Yes'
+  if (voteType === 2) return 'No'
+
+  return ''
+}

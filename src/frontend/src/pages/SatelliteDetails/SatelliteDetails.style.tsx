@@ -123,7 +123,7 @@ export const SatelliteVotingHistoryListItem = styled.div`
       color: ${downColor};
     }
 
-    &.voting-abstain {
+    &.voting-pass {
       color: ${({ theme }) => theme.headerColor};
     }
   }
