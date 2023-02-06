@@ -86,7 +86,7 @@ export const VaultsView = () => {
 
     history.replace(`${pathname}/${foundTab.path}`)
   }
-
+  // TODO: fix updating vaultsIds after reload page
   const paginatedVaultsList = useMemo(() => {
     const [from, to] = calculateSlicePositions(currentPage, currentListName)
     return vaultsIds?.slice(from, to)
