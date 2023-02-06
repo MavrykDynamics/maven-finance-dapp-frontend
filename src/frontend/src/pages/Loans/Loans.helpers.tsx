@@ -19,6 +19,7 @@ import {
   LoanMarketType,
   LoanTokenType,
   UserLendObjType,
+  BaseLoansAssetDataType,
 } from 'utils/TypesAndInterfaces/Loans'
 import { calcWithoutDecimals, calcWithoutMu } from '../../utils/calcFunctions'
 import { getUserBalanceForLoanAsset } from './LoansFethcers'
@@ -37,18 +38,7 @@ export const getAssetMetadata = ({
   dipDupTokens: State['tokens']['dipDupTokens']
   feeds: Array<Feed>
   oracleId?: string
-}):
-  | {
-      decimals: number
-      name: string
-      symbol: string
-      originalName: string
-      icon: string
-      address: string
-      rate: number
-      id: number
-    }
-  | undefined => {
+}): (BaseLoansAssetDataType & { address: string }) | undefined => {
   const isXTZ = isTezosAsset(tokenName)
   const foundAssetInDipDup = dipDupTokens.find(
     ({ metadata: { name: dipDupName }, contract }) => tokenName === dipDupName || tokenAddress === contract,
@@ -59,7 +49,7 @@ export const getAssetMetadata = ({
   if (isXTZ && last_completed_data !== undefined && decimals !== undefined) {
     return {
       decimals: 6,
-      originalName: tokenName,
+      gqlName: tokenName,
       name: 'Tezos',
       symbol: 'XTZ',
       icon: '/images/tezos.png',
@@ -73,10 +63,15 @@ export const getAssetMetadata = ({
   if (foundAssetInDipDup && last_completed_data !== undefined && decimals !== undefined) {
     return {
       decimals: Number(foundAssetInDipDup.metadata.decimals),
-      originalName: tokenName,
+      gqlName: tokenName,
       name: foundAssetInDipDup.metadata.name,
       symbol: foundAssetInDipDup.metadata.symbol,
-      icon: tokenName === 'eurl' ? '/images/eurl.png' : icon ?? foundAssetInDipDup.metadata.icon,
+      icon:
+        tokenName === 'eurl'
+          ? '/images/eurl.png'
+          : tokenName === 'tzbtc'
+          ? '/images/tzBTC.png'
+          : icon ?? foundAssetInDipDup.metadata.icon,
       rate: last_completed_data / 10 ** decimals,
       address: tokenAddress,
       id: foundAssetInDipDup.id,
@@ -301,19 +296,11 @@ const getBorrowings = async (
           const collateralBalance = collateral.balance / 10 ** collateralAsset.decimals
 
           acc.normalizedCollaterals.push({
-            symbol: collateralAsset.symbol,
-            name: collateralAsset.name,
-            gqlName: collateralAsset.originalName,
-            icon: collateralAsset.icon,
-            id: collateralAsset.id,
-            decimals: collateralAsset.decimals,
+            ...collateralAsset,
             amount: collateralBalance,
-            rate: collateralAsset.rate,
-            maxWithdraw: 0,
           })
 
           acc.totalRow.amount += collateralBalance * collateralAsset.rate
-          acc.totalRow.maxWithdraw += 0
 
           return acc
         },
@@ -323,7 +310,6 @@ const getBorrowings = async (
             symbol: 'total',
             amount: 0,
             rate: 0,
-            maxWithdraw: 0,
             name: '',
             gqlName: '',
             icon: '',
@@ -373,15 +359,9 @@ const getBorrowings = async (
 
       const normallizedVault = {
         borrowedAsset: {
-          symbol: vaultAsset.symbol,
-          name: vaultAsset.name,
-          icon: vaultAsset.icon,
-          decimals: vaultAsset.decimals,
-          gqlName: vaultAsset.originalName,
+          ...vaultAsset,
           tokenType: vault.loan_token.loan_token_contract_standard as LoanTokenType,
-          id: vaultAsset.id,
           userBalance,
-          rate: vaultAsset.rate,
         },
 
         collateralBalance: vaultCollateral.totalRow.amount,
@@ -514,13 +494,6 @@ export const normalizeLoans = async ({
             ...loanTokenMetadata,
             tokenType: loan_token_contract_standard as LoanTokenType,
             userBalance: loanTokenUserBalance,
-            gqlName: loanTokenMetadata.originalName,
-            symbol: loanTokenMetadata.symbol,
-            name: loanTokenMetadata.name,
-            rate: loanTokenMetadata.rate,
-            decimals: loanTokenMetadata.decimals,
-            id: loanTokenMetadata.id,
-            icon: loanTokenMetadata.icon,
           },
           myBorrowingList,
           permissionedBorrowingList: permissinedBorrowingList,

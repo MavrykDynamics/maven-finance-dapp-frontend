@@ -72,20 +72,12 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
           const collateralBalance = collateral.balance / 10 ** collateralAsset.decimals
 
           acc.normalizedCollaterals.push({
-            symbol: collateralAsset.symbol,
-            name: collateralAsset.name,
-            gqlName: collateralAsset.originalName,
-            icon: collateralAsset.icon,
-            id: collateralAsset.id,
-            decimals: collateralAsset.decimals,
+            ...collateralAsset,
             amount: collateralBalance,
-            rate: collateralAsset.rate,
-            maxWithdraw: 0,
           })
 
           acc.totalRow.amount += collateralBalance * collateralAsset.rate
           // TODO: add a valid result in the field below
-          acc.totalRow.maxWithdraw += 0
 
           return acc
         },
@@ -95,7 +87,6 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
             symbol: 'total',
             amount: 0,
             rate: 0,
-            maxWithdraw: 0,
             name: '',
             gqlName: '',
             icon: '',
@@ -192,21 +183,15 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
 
       const normallizedVault = {
         borrowedAsset: {
-          symbol: vaultAsset.symbol,
-          name: vaultAsset.name,
-          icon: vaultAsset.icon,
-          decimals: vaultAsset.decimals,
-          gqlName: vaultAsset.originalName,
+          ...vaultAsset,
           tokenType: item.loan_token.loan_token_contract_standard as LoanTokenType,
-          id: vaultAsset.id,
           userBalance,
-          rate: vaultAsset.rate,
         },
         borrowCapacity: vaultCollateral.totalRow.amount / 2,
         collateralBalance: vaultCollateral.totalRow.amount,
         collateralRatio,
         apr: currentInterestRate * 100,
-        fee,
+        fee: borrowedAmount === 0 ? 0 : fee,
         collateralData,
         borrowedAmount,
         address: item.vault?.address,

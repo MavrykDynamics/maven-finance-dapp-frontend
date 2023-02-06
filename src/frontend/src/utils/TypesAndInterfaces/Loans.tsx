@@ -24,7 +24,6 @@ export type LoansAssetDataType = BaseLoansAssetDataType & {
 
 export type CollateralType = BaseLoansAssetDataType & {
   amount: number
-  maxWithdraw: number
   collateralShare?: number
 }
 

@@ -1,3 +1,4 @@
+import { getAssetMetadata } from 'pages/Loans/Loans.helpers'
 import { State } from 'reducers'
 import { fetchRateBySymbols } from 'reducers/actions/dipDupActions.actions'
 import { calcWithoutMu } from 'utils/calcFunctions'
@@ -149,9 +150,14 @@ export const getCollateralTokens = async (
       ) => {
         const acc = await promiseAcc
         const isXTZ = isTezosAsset(token_name)
-        const assetMetadata = dipDupTokens?.find(({ contract }) => contract === token_address)?.metadata
 
-        const dataFromFeed = feeds.find(({ address }) => address === oracle_id)
+        const assetMetadata = getAssetMetadata({
+          tokenName: token_name,
+          tokenAddress: token_address,
+          dipDupTokens,
+          feeds,
+          oracleId: String(oracle_id),
+        })
 
         const lendingAssetBalance = isXTZ
           ? await (
@@ -169,35 +175,10 @@ export const getCollateralTokens = async (
             : Number(lendingAssetBalance?.[0]?.balance ?? 0) /
               10 ** Number(lendingAssetBalance?.[0]?.token?.metadata?.decimals ?? 0)) ?? 0
 
-        const rate = Number(dataFromFeed?.last_completed_data) / 10 ** Number(dataFromFeed?.decimals)
-
-        if (isXTZ) {
-          acc.push({
-            id,
-            name: 'Tezos',
-            gqlName: token_name,
-            symbol: 'XTZ',
-            rate: rate ?? 0.25,
-            userBalance,
-            icon: '/images/tezos.png',
-            decimals: assetMetadata?.decimals ? Number(assetMetadata.decimals) : 6,
-            address: token_address,
-            tokenType: token_contract_standard as 'tez' | 'fa12' | 'fa2',
-            isProtected,
-          })
-        }
-
         if (assetMetadata) {
           acc.push({
-            id,
-            name: assetMetadata.name,
-            gqlName: token_name,
-            symbol: assetMetadata.symbol,
-            rate: rate ?? 0.25,
+            ...assetMetadata,
             userBalance,
-            icon: token_name === 'eurl' ? '/images/eurl.png' : assetMetadata.icon ?? dataFromFeed?.icon,
-            decimals: assetMetadata?.decimals ? Number(assetMetadata.decimals) : 6,
-            address: token_address,
             tokenType: token_contract_standard as 'tez' | 'fa12' | 'fa2',
             isProtected,
           })
