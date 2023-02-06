@@ -17,7 +17,7 @@ export function calcMLI(totalMvkSupply: number | undefined, totalStakedMVK: numb
 
 export function calcExitFee(totalMvkSupply: number | undefined, totalStakedMVK: number | undefined): number {
   const mli = calcMLI(totalMvkSupply, totalStakedMVK) * 10 //Need to multiply by 10 again so the MLI is adjusted properly to reflect the Litepaper
-  const fee = 500 / (mli + 5)
+  const fee = 30 - 0.525 * mli + 0.0025 * (mli ** 2)
   return fee
 }
 
