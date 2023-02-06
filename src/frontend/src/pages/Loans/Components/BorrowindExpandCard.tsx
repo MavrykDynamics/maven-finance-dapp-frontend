@@ -191,14 +191,14 @@ export const BorrowingExpandCard = ({
             )}
             <ThreeLevelListItem>
               <div className="name">Borrowed Amount</div>
-              <CommaNumber value={borrowedAmount} className="value" showDecimal decimalsToShow={4} />
+              <CommaNumber value={borrowedAmount} className="value" showDecimal decimalsToShow={2} />
               {rate ? (
                 <CommaNumber
                   value={borrowedAmount * rate}
                   beginningText="$"
                   className="rate"
                   showDecimal
-                  decimalsToShow={4}
+                  decimalsToShow={2}
                 />
               ) : null}
             </ThreeLevelListItem>
@@ -210,7 +210,7 @@ export const BorrowingExpandCard = ({
                   className="value"
                   beginningText="$"
                   showDecimal
-                  decimalsToShow={4}
+                  decimalsToShow={2}
                 />
               </ThreeLevelListItem>
             )}
@@ -240,17 +240,17 @@ export const BorrowingExpandCard = ({
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">Amount</div>
-                <CommaNumber value={borrowedAmount} className="value" />
-                {rate ? <CommaNumber value={borrowedAmount * rate} beginningText="$" className="rate" /> : null}
+                <CommaNumber value={borrowedAmount} decimalsToShow={2} className="value" />
+                {rate ? <CommaNumber value={borrowedAmount * rate} decimalsToShow={2} beginningText="$" className="rate" /> : null}
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">Fee</div>
-                <CommaNumber value={fee} className="value" />
-                {rate ? <CommaNumber value={fee * rate} beginningText="$" className="rate" /> : null}
+                <CommaNumber value={fee} decimalsToShow={2} className="value" />
+                {rate ? <CommaNumber value={fee * rate} decimalsToShow={2} beginningText="$" className="rate" /> : null}
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">APR</div>
-                <CommaNumber value={apr} className="value" endingText="%" />
+                <CommaNumber value={apr} decimalsToShow={2} className="value" endingText="%" />
               </ThreeLevelListItem>
               {isOwner ? (
                 <div className="buttons-wrapper">
@@ -345,7 +345,7 @@ export const BorrowingExpandCard = ({
                             value={amount}
                             className="value"
                             showDecimal
-                            decimalsToShow={4}
+                            decimalsToShow={2}
                             beginningText={isTotalRow ? '$' : ''}
                           />
                           {rate ? (
@@ -354,21 +354,21 @@ export const BorrowingExpandCard = ({
                               className="rate"
                               beginningText="$"
                               showDecimal
-                              decimalsToShow={4}
+                              decimalsToShow={2}
                             />
                           ) : null}
                         </div>
                       </TableCell>
                       <TableCell width={columnWidth}>
                         <div className="cell-content">
-                          <CommaNumber value={maxWithdraw} className="value" />
-                          {rate ? <CommaNumber value={maxWithdraw * rate} className="rate" beginningText="$" /> : null}
+                          <CommaNumber value={maxWithdraw} decimalsToShow={2} className="value" />
+                          {rate ? <CommaNumber value={maxWithdraw * rate} decimalsToShow={2} className="rate" beginningText="$" /> : null}
                         </div>
                       </TableCell>
                       {showOtherColumns ? (
                         <TableCell width={columnWidth}>
                           <div className="cell-content">
-                            <CommaNumber value={collateralShare} className="value" endingText="%" />
+                            <CommaNumber value={collateralShare} decimalsToShow={2} className="value" endingText="%" />
                           </div>
                         </TableCell>
                       ) : null}
