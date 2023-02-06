@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useLockBodyScroll } from 'react-use'
 import { State } from 'reducers'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -15,6 +16,7 @@ import { calcCollateralRatio, isTezosAsset } from 'pages/Loans/Loans.helpers'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
+import { depositCollateralAction } from 'pages/Loans/Actions/vaultCollateral.actions'
 import { AddNewCollateralDataProps, getOnBlurValue, getOnFocusValue } from './Modals.helpers'
 import { InputStatusType, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 
@@ -23,7 +25,6 @@ import { PopupContainer, PopupContainerWrapper } from 'app/App.components/Settin
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { DropDownJsxChild, LoansModalBase, VaultModalOverview } from './Modals.style'
-import { depositCollateralAction } from 'pages/Loans/Actions/vaultCollateral.actions'
 
 type InputState =
   | {
@@ -56,6 +57,7 @@ export const AddNewCollateral = ({
     existingCollaterals,
   } = data ?? {}
 
+  useLockBodyScroll(show)
   const dispatch = useDispatch()
   const {
     xtzBakers: { otherBakers, dao, mavrykDynamics },

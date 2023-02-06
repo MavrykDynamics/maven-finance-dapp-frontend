@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Redirect, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
@@ -41,6 +41,10 @@ export const Market = () => {
         await dispatch(getLoansStorage())
       }
     } catch (e) {}
+  }, [])
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
   }, [])
 
   const currentToken = useMemo(
