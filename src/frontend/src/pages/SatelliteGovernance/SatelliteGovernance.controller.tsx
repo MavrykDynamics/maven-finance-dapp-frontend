@@ -38,6 +38,7 @@ import { EmptyContainer } from '../../app/App.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { Button } from 'app/App.components/Button/Button.controller'
 import { ACTION_SIMPLE } from 'app/App.components/Button/Button.constants'
+import {convertBytesAddressToAddress, convertBytesStringToText} from "../../app/App.helpers";
 
 const itemsForDropDown = [
   'Suspend Satellite',
@@ -240,7 +241,7 @@ export const SatelliteGovernance = () => {
               <SatelliteGovernanceCard
                 key={item.id}
                 id={item.id}
-                satelliteId={item.parameters?.[0].value ?? ''} // TODO: add parsing target address from bytes to tz1
+                satelliteId={convertBytesAddressToAddress(item.parameters?.[0].value) ?? ''} // TODO: add parsing target address from bytes to tz1
                 initiatorId={item.initiator_id}
                 date={item.expiration_datetime || ''}
                 executed={item.executed}
