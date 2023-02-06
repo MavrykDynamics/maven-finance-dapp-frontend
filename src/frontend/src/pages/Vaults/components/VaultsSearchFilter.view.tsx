@@ -44,6 +44,7 @@ export const VaultsSearchFilter = ({ assets, vaultsMapper, allVaultsIds, setVaul
   const history = useHistory()
   const { search } = useLocation()
   const { tabId } = useParams<{ tabId: string }>()
+  const { sort = '', collateral = '', loan = '', zero = '', ...restQP } = qs.parse(search, { ignoreQueryPrefix: true })
 
   const [searchInputValue, setSearchInput] = useState('')
 
@@ -103,7 +104,8 @@ export const VaultsSearchFilter = ({ assets, vaultsMapper, allVaultsIds, setVaul
     applyFilters(updatedChosenDdItem)
   }
 
-  const applyFilters = useCallback((filtersList: Filters) => {
+  const applyFilters = useCallback(
+    (filtersList: Filters) => {
       const data = searchInputValue ? [...searchedData] : [...allVaultsIds]
       let filteredVaultsIds: string[] = data
 
@@ -192,14 +194,16 @@ export const VaultsSearchFilter = ({ assets, vaultsMapper, allVaultsIds, setVaul
       }
 
       const withoutEmptyFilters = Object.fromEntries(Object.entries(filtersList).filter((item) => item[1]))
-      const stringifiedQP = qs.stringify(withoutEmptyFilters)
+      const stringifiedQP = qs.stringify({ ...withoutEmptyFilters, ...restQP})
 
       history.replace(`${pathname}/${tabId}?${stringifiedQP}`)
 
       setChosenDdItem(withoutEmptyFilters)
       setFilteredData(filteredVaultsIds)
       setVaultsIds(filteredVaultsIds)
-    }, [allVaultsIds, history, searchInputValue, searchedData, setVaultsIds, tabId, vaultsMapper])
+    },
+    [allVaultsIds, history, searchInputValue, searchedData, setVaultsIds, tabId, vaultsMapper],
+  )
 
   const handleDropdownStatus = (name: string) => (status: boolean) => {
     setFilterStatuses((prev) => ({
@@ -220,14 +224,14 @@ export const VaultsSearchFilter = ({ assets, vaultsMapper, allVaultsIds, setVaul
 
   useEffect(() => {
     if (allVaultsIds.length) {
-      const {
-        sort = '',
-        collateral = '',
-        loan = '',
-        zero = '',
-      } = qs.parse(search, { ignoreQueryPrefix: true }) as Filters
+      const filtersFromQp = {
+        sort,
+        collateral,
+        loan,
+        zero,
+      } as Filters
 
-      applyFilters({ sort, collateral, loan, zero })
+      applyFilters(filtersFromQp)
     }
   }, [allVaultsIds, applyFilters])
 
