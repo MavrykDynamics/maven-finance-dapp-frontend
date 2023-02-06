@@ -210,6 +210,7 @@ const getLendingItem = (
   loanToken: Lending_Controller_Loan_Token,
   userMTokens: UserState['mTokens'],
   loanTokenDecimals: number,
+  interestRateDecimals: number,
   accountPkh?: string,
 ): LendingItemType => {
   if (userMTokens && loanToken && accountPkh) {
@@ -218,10 +219,10 @@ const getLendingItem = (
     if (mTokenAsset) {
       return {
         lendValue: Number(mTokenAsset.balance) / 10 ** loanTokenDecimals,
-        interestEarned: mTokenAsset.rewards_earned / 10 ** loanTokenDecimals,
+        interestEarned: Number(mTokenAsset.rewards_earned) / 10 ** interestRateDecimals / 10 ** loanTokenDecimals,
         mBalance:
           Number(mTokenAsset.balance) / 10 ** loanTokenDecimals +
-          Number(mTokenAsset.rewards_earned) / 10 ** loanTokenDecimals,
+          Number(mTokenAsset.rewards_earned) / 10 ** interestRateDecimals / 10 ** loanTokenDecimals,
       }
     }
   }
@@ -479,7 +480,13 @@ export const normalizeLoans = async ({
           getTransactionHistory(history_data, dipDupData, feeds)
         const { myBorrowingList, permissinedBorrowingList, totalCollateral, vaultsBorrowedAmount } =
           await getBorrowings(vaults, dipDupData, feeds, interestRateDecimals, userAddres)
-        const lendingItem = getLendingItem(loanToken, userMTokens, loanTokenMetadata.decimals, userAddres)
+        const lendingItem = getLendingItem(
+          loanToken,
+          userMTokens,
+          loanTokenMetadata.decimals,
+          interestRateDecimals,
+          userAddres,
+        )
 
         const loanTokenUserBalance = await getUserBalanceForLoanAsset(loan_token_address, loan_token_name, userAddres)
         const reservePercent = reserve_ratio / 10000
@@ -532,7 +539,14 @@ export const normalizeLoans = async ({
           lending24hVolume,
           borrowing24hVolume,
 
-          totalFeesEarned: userMTokens?.reduce((acc, { rewards_earned }) => acc + rewards_earned, 0) ?? 0,
+          totalFeesEarned:
+            userMTokens?.reduce((acc, { rewards_earned, m_token: { loan_token_name: mTokenLoanTokenName } }) => {
+              if (mTokenLoanTokenName === loan_token_name) {
+                acc += rewards_earned / 10 ** interestRateDecimals / 10 ** loanTokenMetadata.decimals
+              }
+
+              return acc
+            }, 0) ?? 0,
           collateralFactor: storage.collateral_ratio / 10,
           reserveFactor: reserve_ratio / 100,
           reserveAmount: reserveAmount,
