@@ -180,8 +180,8 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
 
       const collateralRatio = calcCollateralRatio(vaultCollateral.totalRow.amount, borrowedAmount, vaultAsset.rate)
       const collateralData = vaultCollateral.normalizedCollaterals.length
-      ? [...vaultCollateral.normalizedCollaterals, vaultCollateral.totalRow]
-      : []
+        ? [...vaultCollateral.normalizedCollaterals, vaultCollateral.totalRow]
+        : []
 
       const liquidationMax =
         (calculateVaultMaxLiquidationAmount(item.loan_outstanding_total, lendingController.max_vault_liquidation_pct) /
@@ -206,7 +206,7 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
         collateralBalance: vaultCollateral.totalRow.amount,
         collateralRatio,
         apr: currentInterestRate * 100,
-        fee,
+        fee: borrowedAmount === 0 ? 0 : fee,
         collateralData,
         borrowedAmount,
         address: item.vault?.address,
