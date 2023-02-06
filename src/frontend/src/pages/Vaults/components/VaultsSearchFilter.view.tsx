@@ -36,11 +36,11 @@ type AssetCategory = 'loanAssets' | 'collateralAssets'
 type Props = {
   assets: Record<AssetCategory, string[]>
   vaultsMapper: Record<string, VaultType>
-  allVaultsIds: string[]
+  currentVaultsIds: string[]
   setVaultsIds: (arg: string[]) => void
 }
 
-export const VaultsSearchFilter = ({ assets, vaultsMapper, allVaultsIds, setVaultsIds }: Props) => {
+export const VaultsSearchFilter = ({ assets, vaultsMapper, currentVaultsIds, setVaultsIds }: Props) => {
   const history = useHistory()
   const { search } = useLocation()
   const { tabId } = useParams<{ tabId: string }>()
@@ -55,7 +55,7 @@ export const VaultsSearchFilter = ({ assets, vaultsMapper, allVaultsIds, setVaul
   const [searchedData, setSearchedData] = useState<string[]>([])
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const data = Object.values(chosenDdItem).length ? filteredData : allVaultsIds
+    const data = Object.values(chosenDdItem).length ? filteredData : currentVaultsIds
 
     const searchQuery = e.target.value.toLowerCase()
 
@@ -106,7 +106,7 @@ export const VaultsSearchFilter = ({ assets, vaultsMapper, allVaultsIds, setVaul
 
   const applyFilters = useCallback(
     (filtersList: Filters) => {
-      const data = searchInputValue ? [...searchedData] : [...allVaultsIds]
+      const data = searchInputValue ? [...searchedData] : [...currentVaultsIds]
       let filteredVaultsIds: string[] = data
 
       // sort by statuses
@@ -194,7 +194,7 @@ export const VaultsSearchFilter = ({ assets, vaultsMapper, allVaultsIds, setVaul
       }
 
       const withoutEmptyFilters = Object.fromEntries(Object.entries(filtersList).filter((item) => item[1]))
-      const stringifiedQP = qs.stringify({ ...withoutEmptyFilters, ...restQP})
+      const stringifiedQP = qs.stringify({ ...withoutEmptyFilters, ...restQP })
 
       history.replace(`${pathname}/${tabId}?${stringifiedQP}`)
 
@@ -202,7 +202,7 @@ export const VaultsSearchFilter = ({ assets, vaultsMapper, allVaultsIds, setVaul
       setFilteredData(filteredVaultsIds)
       setVaultsIds(filteredVaultsIds)
     },
-    [allVaultsIds, history, searchInputValue, searchedData, setVaultsIds, tabId, vaultsMapper],
+    [currentVaultsIds, history, restQP, searchInputValue, searchedData, setVaultsIds, tabId, vaultsMapper],
   )
 
   const handleDropdownStatus = (name: string) => (status: boolean) => {
@@ -223,7 +223,7 @@ export const VaultsSearchFilter = ({ assets, vaultsMapper, allVaultsIds, setVaul
   }, [tabId])
 
   useEffect(() => {
-    if (allVaultsIds.length) {
+    if (currentVaultsIds.length) {
       const filtersFromQp = {
         sort,
         collateral,
@@ -233,7 +233,7 @@ export const VaultsSearchFilter = ({ assets, vaultsMapper, allVaultsIds, setVaul
 
       applyFilters(filtersFromQp)
     }
-  }, [allVaultsIds, applyFilters])
+  }, [currentVaultsIds])
 
   return (
     <VaultsSearchFilterWrapper>

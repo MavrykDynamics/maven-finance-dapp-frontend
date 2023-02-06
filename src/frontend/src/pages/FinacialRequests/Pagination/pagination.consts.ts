@@ -73,8 +73,8 @@ export const LIST_NAMES_MAPPER: Record<string, number> = {
   [FARMS_VERTICAL_CARDS]: 9,
   [FARMS_HORIZONTAL_CARDS]: 12,
   [BREAK_GLASS_LIST_NAME]: 8,
-  [VAULTS_LIST_NAME]: 8,
-  [MY_VAULTS_LIST_NAME]: 8,
+  [VAULTS_LIST_NAME]: 14,
+  [MY_VAULTS_LIST_NAME]: 14,
 }
 
 export const calculateSlicePositions = (currentPage: number, listName: string) => {
