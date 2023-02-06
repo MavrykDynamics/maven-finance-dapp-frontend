@@ -229,7 +229,7 @@ export const VaultsSearchFilter = ({ assets, vaultsMapper, allVaultsIds, setVaul
 
       applyFilters({ sort, collateral, loan, zero })
     }
-  }, [search, allVaultsIds, applyFilters])
+  }, [allVaultsIds, applyFilters])
 
   return (
     <VaultsSearchFilterWrapper>
