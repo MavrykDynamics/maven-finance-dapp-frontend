@@ -240,7 +240,7 @@ export const SatelliteGovernance = () => {
               <SatelliteGovernanceCard
                 key={item.id}
                 id={item.id}
-                satelliteId={item.governance_satellite_id}
+                satelliteId={item.parameters?.[0].value ?? ''} // TODO: add parsing target address from bytes to tz1
                 initiatorId={item.initiator_id}
                 date={item.expiration_datetime || ''}
                 executed={item.executed}
