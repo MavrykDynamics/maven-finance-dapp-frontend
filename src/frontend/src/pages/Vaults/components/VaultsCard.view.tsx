@@ -259,7 +259,7 @@ export const VaultsCard = (props: Props) => {
                       </TableCell>
 
                       <TableCell width={columnWidth}>
-                        <div className="cell-content">{collateralShare}%</div>
+                        <CommaNumber value={isTotalRow ? 100 : collateralShare} endingText='%' />
                       </TableCell>
                     </TableRow>
                   )

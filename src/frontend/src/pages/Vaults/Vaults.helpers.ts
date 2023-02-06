@@ -79,7 +79,6 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
             decimals: collateralAsset.decimals,
             amount: collateralBalance,
             rate: collateralAsset.rate,
-            collateralShare: 0,
             maxWithdraw: 0,
           })
 
@@ -103,15 +102,7 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
             decimals: 0,
           },
         },
-      ) ?? {
-        normalizedCollaterals: [],
-        totalRow: {
-          assetSymbol: 'total',
-          balance: 0,
-          assetRate: 0,
-          maxWithdraw: 0,
-        },
-      }
+      )
 
       const normalizeCollateralTokens = item.collateral_balances.length
         ? item.collateral_balances.map((collateralToken) => {
@@ -187,6 +178,9 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
       const borrowedAmount = item.loan_outstanding_total / 10 ** vaultAsset.decimals
 
       const collateralRatio = calcCollateralRatio(vaultCollateral.totalRow.amount, borrowedAmount, vaultAsset.rate)
+      const collateralData = vaultCollateral.normalizedCollaterals.length
+      ? [...vaultCollateral.normalizedCollaterals, vaultCollateral.totalRow]
+      : []
 
       const liquidationMax =
         (calculateVaultMaxLiquidationAmount(item.loan_outstanding_total, lendingController.max_vault_liquidation_pct) /
@@ -212,9 +206,7 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
         collateralRatio,
         apr: currentInterestRate * 100,
         fee,
-        collateralData: vaultCollateral.normalizedCollaterals.concat(
-          vaultCollateral.normalizedCollaterals.length > 1 ? [vaultCollateral.totalRow] : [],
-        ),
+        collateralData,
         borrowedAmount,
         address: item.vault?.address,
         ownerId: item.owner_id || '',
