@@ -206,7 +206,7 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
         collateralBalance: vaultCollateral.totalRow.amount,
         collateralRatio,
         apr: currentInterestRate * 100,
-        fee: borrowedAmount === 0 ? 0 : fee,
+        fee,
         collateralData,
         borrowedAmount,
         address: item.vault?.address,
