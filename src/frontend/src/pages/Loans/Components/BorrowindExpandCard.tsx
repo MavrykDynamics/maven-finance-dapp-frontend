@@ -296,7 +296,7 @@ export const BorrowingExpandCard = ({
             </div>
 
             <div className="block-name margin-top">Collateral In Vault</div>
-            <Table className={`no-margin borrowing-table ${isOwner ? 'show-before' : ''}`}>
+            <Table className={`no-margin borrowing-table ${(isOwner && !collateralData.length) ? 'show-before' : ''}`}>
               {collateralData.length ? (
                 <TableHeader className={`simple-header collateral `}>
                   <TableRow>
