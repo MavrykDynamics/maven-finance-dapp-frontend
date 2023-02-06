@@ -242,7 +242,9 @@ export const BorrowingExpandCard = ({
               <ThreeLevelListItem>
                 <div className="name">Amount</div>
                 <CommaNumber value={borrowedAmount} decimalsToShow={2} className="value" />
-                {rate ? <CommaNumber value={borrowedAmount * rate} decimalsToShow={2} beginningText="$" className="rate" /> : null}
+                {rate ? (
+                  <CommaNumber value={borrowedAmount * rate} decimalsToShow={2} beginningText="$" className="rate" />
+                ) : null}
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">Fee</div>
@@ -297,7 +299,7 @@ export const BorrowingExpandCard = ({
             </div>
 
             <div className="block-name margin-top">Collateral In Vault</div>
-            <Table className={`no-margin borrowing-table ${(isOwner && !collateralData.length) ? 'show-before' : ''}`}>
+            <Table className={`no-margin borrowing-table ${isOwner && collateralData.length <= 2 ? 'show-before' : ''}`}>
               {collateralData.length ? (
                 <TableHeader className={`simple-header collateral `}>
                   <TableRow>
