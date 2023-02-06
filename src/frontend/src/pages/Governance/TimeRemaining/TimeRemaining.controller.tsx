@@ -22,8 +22,6 @@ export default function TimeRemaining() {
   useEffect(() => {
     ;(async () => {
       const duration = await getTimestampByLevel(currentRoundEndLevel)
-      console.log('duration', duration, parseDate({ time: duration, timeFormat: 'MMM Do, YYYY, HH:mm:ss' }))
-
       setTimerDeadline(new Date(duration).getTime())
       setTimerActive(Boolean(currentRoundEndLevel) && timerDeadline > Date.now())
     })()

@@ -39,7 +39,7 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
     () =>
       isGlobal || !showZeroTreasuries
         ? treasury.balances
-        : treasury.balances.filter((item) => Number(item.balance) > 0.01),
+        : treasury.balances.filter((item) => parseFloat(String(item.balance)) > 0.01),
     [isGlobal, showZeroTreasuries, treasury.balances],
   )
 
@@ -123,10 +123,24 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
                     <TableRow rowHeight={25} borderColor="dataColor" className="add-hover">
                       <TableCell width="33%">{symbol}</TableCell>
                       <TableCell width="33%">
-                        <CommaNumber value={balance} useAccurateParsing />
+                        {parseFloat(String(balance)) < 0.01 ? (
+                          '<0.01'
+                        ) : (
+                          <CommaNumber value={balance} useAccurateParsing showDecimal decimalsToShow={2} />
+                        )}
                       </TableCell>
                       <TableCell width="33%" contentPosition="right">
-                        <CommaNumber value={usdValue} endingText={rate ? '$' : symbol} useAccurateParsing />
+                        {parseFloat(String(usdValue)) < 0.01 ? (
+                          `<0.01 ${rate ? '$' : symbol}`
+                        ) : (
+                          <CommaNumber
+                            value={usdValue}
+                            endingText={rate ? '$' : symbol}
+                            useAccurateParsing
+                            showDecimal
+                            decimalsToShow={2}
+                          />
+                        )}
                       </TableCell>
                     </TableRow>
                   )
