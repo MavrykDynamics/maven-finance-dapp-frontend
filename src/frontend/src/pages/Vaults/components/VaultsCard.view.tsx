@@ -191,7 +191,7 @@ export const VaultsCard = (props: Props) => {
                 <Icon id="info" className="info-icon" />
               </div>
 
-              <CommaNumber value={400_999_000} beginningText="$" className="value" />
+              <CommaNumber value={400_999_000} decimalsToShow={2} beginningText="$" className="value" />
             </div>
 
             <div>
@@ -200,7 +200,7 @@ export const VaultsCard = (props: Props) => {
                 <Icon id="info" className="info-icon" />
               </div>
 
-              <CommaNumber value={liquidationMax} beginningText="$" className="value" />
+              <CommaNumber value={liquidationMax} decimalsToShow={2} beginningText="$" className="value" />
             </div>
           </div>
         </div>
@@ -252,13 +252,13 @@ export const VaultsCard = (props: Props) => {
 
                       <TableCell width={columnWidth}>
                         <div className="cell-content">
-                          <CommaNumber value={amount} className="balance" />
-                          {rate ? <CommaNumber value={amount * rate} beginningText="~$" className="rate" /> : null}
+                          <CommaNumber value={amount} decimalsToShow={2} className="balance" />
+                          {rate ? <CommaNumber value={amount * rate} decimalsToShow={2} beginningText="~$" className="rate" /> : null}
                         </div>
                       </TableCell>
 
                       <TableCell width={columnWidth}>
-                        <div className="cell-content">{collateralShare}%</div>
+                        <CommaNumber value={isTotalRow ? 100 : collateralShare} decimalsToShow={2} endingText='%' />
                       </TableCell>
                     </TableRow>
                   )

@@ -36,14 +36,15 @@ type AssetCategory = 'loanAssets' | 'collateralAssets'
 type Props = {
   assets: Record<AssetCategory, string[]>
   vaultsMapper: Record<string, VaultType>
-  allVaultsIds: string[]
+  currentVaultsIds: string[]
   setVaultsIds: (arg: string[]) => void
 }
 
-export const VaultsSearchFilter = ({ assets, vaultsMapper, allVaultsIds, setVaultsIds }: Props) => {
+export const VaultsSearchFilter = ({ assets, vaultsMapper, currentVaultsIds, setVaultsIds }: Props) => {
   const history = useHistory()
   const { search } = useLocation()
   const { tabId } = useParams<{ tabId: string }>()
+  const { sort = '', collateral = '', loan = '', zero = '', ...restQP } = qs.parse(search, { ignoreQueryPrefix: true })
 
   const [searchInputValue, setSearchInput] = useState('')
 
@@ -54,7 +55,7 @@ export const VaultsSearchFilter = ({ assets, vaultsMapper, allVaultsIds, setVaul
   const [searchedData, setSearchedData] = useState<string[]>([])
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const data = Object.values(chosenDdItem).length ? filteredData : allVaultsIds
+    const data = Object.values(chosenDdItem).length ? filteredData : currentVaultsIds
 
     const searchQuery = e.target.value.toLowerCase()
 
@@ -103,8 +104,9 @@ export const VaultsSearchFilter = ({ assets, vaultsMapper, allVaultsIds, setVaul
     applyFilters(updatedChosenDdItem)
   }
 
-  const applyFilters = useCallback((filtersList: Filters) => {
-      const data = searchInputValue ? [...searchedData] : [...allVaultsIds]
+  const applyFilters = useCallback(
+    (filtersList: Filters) => {
+      const data = searchInputValue ? [...searchedData] : [...currentVaultsIds]
       let filteredVaultsIds: string[] = data
 
       // sort by statuses
@@ -192,14 +194,16 @@ export const VaultsSearchFilter = ({ assets, vaultsMapper, allVaultsIds, setVaul
       }
 
       const withoutEmptyFilters = Object.fromEntries(Object.entries(filtersList).filter((item) => item[1]))
-      const stringifiedQP = qs.stringify(withoutEmptyFilters)
+      const stringifiedQP = qs.stringify({ ...withoutEmptyFilters, ...restQP })
 
       history.replace(`${pathname}/${tabId}?${stringifiedQP}`)
 
       setChosenDdItem(withoutEmptyFilters)
       setFilteredData(filteredVaultsIds)
       setVaultsIds(filteredVaultsIds)
-    }, [allVaultsIds, history, searchInputValue, searchedData, setVaultsIds, tabId, vaultsMapper])
+    },
+    [currentVaultsIds, history, restQP, searchInputValue, searchedData, setVaultsIds, tabId, vaultsMapper],
+  )
 
   const handleDropdownStatus = (name: string) => (status: boolean) => {
     setFilterStatuses((prev) => ({
@@ -219,17 +223,17 @@ export const VaultsSearchFilter = ({ assets, vaultsMapper, allVaultsIds, setVaul
   }, [tabId])
 
   useEffect(() => {
-    if (allVaultsIds.length) {
-      const {
-        sort = '',
-        collateral = '',
-        loan = '',
-        zero = '',
-      } = qs.parse(search, { ignoreQueryPrefix: true }) as Filters
+    if (currentVaultsIds.length) {
+      const filtersFromQp = {
+        sort,
+        collateral,
+        loan,
+        zero,
+      } as Filters
 
-      applyFilters({ sort, collateral, loan, zero })
+      applyFilters(filtersFromQp)
     }
-  }, [search, allVaultsIds, applyFilters])
+  }, [currentVaultsIds])
 
   return (
     <VaultsSearchFilterWrapper>
@@ -281,7 +285,7 @@ export const VaultsSearchFilter = ({ assets, vaultsMapper, allVaultsIds, setVaul
         checked={chosenDdItem[filters.ZERO] === 'checked'}
         className="checkbox"
       >
-        <span>Hide vaults with a balance of 0</span>
+        <span>Hide vaults with a loan balance of 0</span>
       </Checkbox>
     </VaultsSearchFilterWrapper>
   )

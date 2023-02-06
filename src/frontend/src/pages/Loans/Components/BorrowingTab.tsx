@@ -56,17 +56,17 @@ export const BorrowingTab = ({
         <h2>My Borrowing</h2>
       </GovRightContainerTitleArea>
 
-      <Checkbox
-        id="show_dropped"
-        onChangeHandler={() => setShowZeroVaults(!showZeroVaults)}
-        checked={showZeroVaults}
-        className="checkbox"
-      >
-        <span>Hide vaults with a balance of 0</span>
-      </Checkbox>
-
       {vaults.length ? (
         <>
+          <Checkbox
+            id="show_dropped"
+            onChangeHandler={() => setShowZeroVaults(!showZeroVaults)}
+            checked={showZeroVaults}
+            className="checkbox"
+          >
+            <span>Hide vaults with a loan balance of 0</span>
+          </Checkbox>
+          
           <Button
             text="New Vault"
             icon="plus"
