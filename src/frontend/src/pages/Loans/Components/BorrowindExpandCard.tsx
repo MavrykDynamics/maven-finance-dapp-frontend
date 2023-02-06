@@ -464,7 +464,7 @@ export const BorrowingExpandCard = ({
                 <div className="bottom-info-row">
                   <div className="name">XTZ Delegated to </div>
                   <div className="value">
-                    {xtzDelegatedTo ? <TzAddress tzAddress={xtzDelegatedTo} type={BLUE} /> : 'None'}
+                    {xtzDelegatedTo ? <TzAddress tzAddress={xtzDelegatedTo} type={BLUE} /> : 'Not Delegated'}
                   </div>
                   <Button
                     kind={ACTION_SIMPLE}
