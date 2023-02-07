@@ -60,7 +60,8 @@ export const CouncilPending = (props: Props) => {
     (name: string, type?: BytesType) => {
       const foundField = parameters.find((item) => item.name === name)?.value
       return foundField ? bytesToString(foundField, type) : ''
-    }, [parameters],
+    },
+    [parameters],
   )
 
   const isAddCouncilMember = actionType === 'addCouncilMember'
