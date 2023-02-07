@@ -33,6 +33,7 @@ import {
 } from 'app/App.components/Table/Table.style'
 import { triggerInitialVaultCreation } from 'pages/Loans/Actions/vault.actions'
 import { depositCollateralAction } from 'pages/Loans/Actions/vaultCollateral.actions'
+import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
 export type DropDownCollateralAssetType = DropDownItemType & AvaliableCollateralType
 
@@ -136,14 +137,7 @@ export const CreateNewVault = ({
         content: (
           <DropDownJsxChild>
             <div className="flex-row with-image">
-              {logo ? (
-                <div className="image-wrapper">
-                  <img src={logo} alt={name + '-logo'} />
-                </div>
-              ) : (
-                <Icon id="noImage" />
-              )}{' '}
-              {name}
+              <ImageWithPlug imageLink={logo} alt={`${name} icon`} /> {name}
             </div>
             <div className="baker-fee">
               <CommaNumber value={fee} endingText="%" />

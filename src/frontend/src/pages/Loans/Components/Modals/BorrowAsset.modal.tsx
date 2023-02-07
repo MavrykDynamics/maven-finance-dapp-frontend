@@ -23,6 +23,7 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { silverColor } from 'styles'
 import { borrowVaultAssetAction } from 'pages/Loans/Actions/vault.actions'
 import { calcCollateralRatio } from 'pages/Loans/Loans.helpers'
+import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A240058&t=Sx2aEpp3ifrGxBtQ-0
 export const BorrowAsset = ({
@@ -178,13 +179,7 @@ export const BorrowAsset = ({
                   }}
                 >
                   <InputPinnedTokenInfo>
-                    {borrowedAsset.icon ? (
-                      <div className="image-wrapper">
-                        <img src={borrowedAsset.icon} alt={borrowedAsset.name + '-logo'} />
-                      </div>
-                    ) : (
-                      <Icon id="noImage" />
-                    )}{' '}
+                    <ImageWithPlug imageLink={borrowedAsset.icon} alt={`${borrowedAsset.symbol} icon`} />{' '}
                     {borrowedAsset?.symbol}
                   </InputPinnedTokenInfo>
                 </Input>

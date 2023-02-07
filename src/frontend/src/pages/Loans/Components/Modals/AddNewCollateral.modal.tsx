@@ -26,6 +26,7 @@ import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { DropDownJsxChild, LoansModalBase, VaultModalOverview } from './Modals.style'
 import { XtzBakerType } from 'utils/TypesAndInterfaces/Loans'
+import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
 type InputState =
   | {
@@ -135,14 +136,7 @@ export const AddNewCollateral = ({
         content: (
           <DropDownJsxChild>
             <div className="flex-row with-image">
-              {logo ? (
-                <div className="image-wrapper">
-                  <img src={logo} alt={name + '-logo'} />
-                </div>
-              ) : (
-                <Icon id="noImage" />
-              )}{' '}
-              {name}
+              <ImageWithPlug imageLink={logo} alt={`${name} icon`} /> {name}
             </div>
             <div className="baker-fee">
               <CommaNumber value={fee} endingText="%" />

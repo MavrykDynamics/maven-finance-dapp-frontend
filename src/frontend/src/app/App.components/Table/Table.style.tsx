@@ -471,12 +471,18 @@ export const TableCell = styled.td<{
       column-gap: 5px;
     }
 
+    &.with-icon {
+      svg {
+        fill: ${({ theme }) => theme.textColor};
+      }
+    }
+
     .no-icon {
       width: 24px;
       height: 24px;
       margin-right: 5px;
       svg {
-        fill: ${({ theme }) => theme.dataColor};
+        fill: ${({ theme }) => theme.data};
       }
     }
   }

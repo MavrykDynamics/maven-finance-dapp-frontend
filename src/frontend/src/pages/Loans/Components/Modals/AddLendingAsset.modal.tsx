@@ -20,6 +20,7 @@ import { silverColor } from 'styles'
 import { LoansModalBase } from './Modals.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
 import { depositLendingAssetAction } from 'pages/Loans/Actions/lendingAsset.actions'
+import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239981&t=Sx2aEpp3ifrGxBtQ-0
 export const AddLendingAsset = ({
@@ -133,13 +134,7 @@ export const AddLendingAsset = ({
             }}
           >
             <InputPinnedTokenInfo>
-              {icon ? (
-                <div className="image-wrapper">
-                  <img src={icon} alt={`${symbol}-logo`} />
-                </div>
-              ) : (
-                <Icon id="noImage" />
-              )}
+              <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} />
               {symbol}
             </InputPinnedTokenInfo>
           </Input>

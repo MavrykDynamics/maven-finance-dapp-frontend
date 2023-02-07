@@ -31,12 +31,12 @@ export const withdrawCollateralAction =
 
       callback()
       await dispatch(toggleActionLoader(true))
-      await dispatch(showToaster(INFO, 'Borrowing from the vault...', 'Please wait 30s'))
+      await dispatch(showToaster(INFO, 'Withdrowing collateral from the vault...', 'Please wait 30s'))
 
       // confirm query completion
       await transaction?.confirmation()
 
-      await dispatch(showToaster(SUCCESS, 'Asset borrowed.', 'All good :)'))
+      await dispatch(showToaster(SUCCESS, 'Collateral withdrawed.', 'All good :)'))
 
       // refetch data we need
       await dispatch(updateUserData())
@@ -136,12 +136,12 @@ export const depositCollateralAction =
 
       callback()
       await dispatch(toggleActionLoader(true))
-      await dispatch(showToaster(INFO, 'Creating Vault...', 'Please wait 30s'))
+      await dispatch(showToaster(INFO, 'Depositting collateral th the vault...', 'Please wait 30s'))
 
       // confirm query completion
       await transaction?.confirmation()
 
-      await dispatch(showToaster(SUCCESS, 'Vault Created.', 'All good :)'))
+      await dispatch(showToaster(SUCCESS, 'Collateral added.', 'All good :)'))
 
       // refetch data we need
       await dispatch(updateUserData())

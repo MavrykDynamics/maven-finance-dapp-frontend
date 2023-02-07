@@ -179,7 +179,7 @@ export const DropDownJsxChild = styled.div`
 
     &.with-image {
       svg,
-      .image-wrapper {
+      .img-wrapper {
         width: 24px;
         height: 24px;
         fill: ${({ theme }) => theme.textColor};

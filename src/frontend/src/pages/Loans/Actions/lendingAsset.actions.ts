@@ -75,7 +75,7 @@ export const depositLendingAssetAction =
 
       callback()
       await dispatch(toggleActionLoader(true))
-      await dispatch(showToaster(INFO, 'Adding Liquidity...', 'Please wait 30s'))
+      await dispatch(showToaster(INFO, 'Adding liquidity...', 'Please wait 30s'))
 
       // confirm query completion
       await transaction?.confirmation()
@@ -83,7 +83,7 @@ export const depositLendingAssetAction =
       // refetch data we need
       await dispatch(updateUserData())
       await dispatch(getLoansStorage())
-      await dispatch(showToaster(SUCCESS, 'Liquidity Added.', 'All good :)'))
+      await dispatch(showToaster(SUCCESS, 'Liquidity added.', 'All good :)'))
       await dispatch(toggleActionLoader(false))
     } catch (error) {
       console.error('depositLendingAssetAction error:', error)
@@ -117,12 +117,12 @@ export const withdrawLendingAssetAction =
 
       callback()
       await dispatch(toggleActionLoader(true))
-      await dispatch(showToaster(INFO, 'Adding Liquidity...', 'Please wait 30s'))
+      await dispatch(showToaster(INFO, 'Removing liquidity...', 'Please wait 30s'))
 
       // confirm query completion
       await transaction?.confirmation()
 
-      await dispatch(showToaster(SUCCESS, 'Liquidity Added.', 'All good :)'))
+      await dispatch(showToaster(SUCCESS, 'Liquidity removed.', 'All good :)'))
       // refetch data we need
       await dispatch(updateUserData())
       await dispatch(getLoansStorage())

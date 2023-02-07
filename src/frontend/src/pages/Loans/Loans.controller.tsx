@@ -30,6 +30,7 @@ import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { getLoansStorage } from './Actions/getLoansData.actions'
 import { useEffect } from 'react'
+import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
 export const Loans = () => {
   const dispatch = useDispatch()
@@ -143,13 +144,7 @@ export const Loans = () => {
               return (
                 <MarketOverview key={`${name}-${symbol}`}>
                   <div className="asset-info">
-                    {icon ? (
-                      <div className="icon">
-                        <img src={icon} alt={`${symbol} logo`} />
-                      </div>
-                    ) : (
-                      <Icon id={'noImage'} />
-                    )}
+                    <ImageWithPlug imageLink={icon} alt={`${symbol} logo`} />
                     <div className="name">{symbol}</div>
                     {rate ? (
                       <div className="rate">

@@ -60,7 +60,7 @@ export const LOANS_QUERY = `query GetLoansStorage {
         }
       }
 
-      vaults {
+      vaults(order_by: {vault: {creation_timestamp: desc}}) {
         collateral_balances {
           token {
             token_address

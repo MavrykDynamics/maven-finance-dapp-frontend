@@ -21,6 +21,7 @@ import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase, VaultModalOverview } from './Modals.style'
 import { calcCollateralRatio } from 'pages/Loans/Loans.helpers'
+import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17953%3A224110&t=Sx2aEpp3ifrGxBtQ-0
 export const Repay = ({
@@ -169,13 +170,7 @@ export const Repay = ({
                   }}
                 >
                   <InputPinnedTokenInfo>
-                    {borrowedAsset.icon ? (
-                      <div className="image-wrapper">
-                        <img src={borrowedAsset.icon} alt={borrowedAsset?.symbol + '-logo'} />
-                      </div>
-                    ) : (
-                      <Icon id="noImage" />
-                    )}{' '}
+                    <ImageWithPlug imageLink={borrowedAsset.icon} alt={`${borrowedAsset.symbol} icon`} />{' '}
                     {borrowedAsset?.symbol}
                   </InputPinnedTokenInfo>
                 </Input>
