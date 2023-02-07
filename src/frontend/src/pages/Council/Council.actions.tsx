@@ -131,6 +131,7 @@ export const sign = (actionID: number) => async (dispatch: AppDispatch, getState
 
     await dispatch(getCouncilPastActionsStorage())
     await dispatch(getCouncilPendingActionsStorage())
+    await dispatch(getCouncilStorage())
     await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {
@@ -169,6 +170,7 @@ export const addVestee =
 
       await dispatch(getCouncilPastActionsStorage())
       await dispatch(getCouncilPendingActionsStorage())
+      await dispatch(getCouncilStorage())
       await dispatch(toggleActionLoader(false))
     } catch (error) {
       if (error instanceof Error) {
@@ -246,6 +248,7 @@ export const updateVestee =
 
       await dispatch(getCouncilPastActionsStorage())
       await dispatch(getCouncilPendingActionsStorage())
+      await dispatch(getCouncilStorage())
       await dispatch(toggleActionLoader(false))
     } catch (error) {
       if (error instanceof Error) {
@@ -278,9 +281,10 @@ export const toggleVesteeLock = (vesteeAddress: string) => async (dispatch: AppD
     dispatch(showToaster(INFO, 'Toggle Vestee Lock...', 'Please wait 30s'))
     await transaction?.confirmation()
     dispatch(showToaster(SUCCESS, 'Toggle Vestee Lock is done', 'All good :)'))
-
+    
     await dispatch(getCouncilPastActionsStorage())
     await dispatch(getCouncilPendingActionsStorage())
+    await dispatch(getCouncilStorage())
     await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {
