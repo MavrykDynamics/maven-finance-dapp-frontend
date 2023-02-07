@@ -56,6 +56,7 @@ export const AddNewCollateral = ({
     currentCollateralRatio = 0,
     collateralWithdrawAmount = 0,
     borrowedAmount = 0,
+    borrowedAssetRate = 0,
     existingCollaterals,
   } = data ?? {}
 
@@ -119,7 +120,7 @@ export const AddNewCollateral = ({
       const inputAmount = isNaN(parseFloat(inputData.amount)) ? 0 : parseFloat(inputData.amount)
       const selectedAsset = avaliableCollaterals.find(({ id }) => id === inputData?.id)
       const futureCollateralRatio = selectedAsset
-        ? calcCollateralRatio(vaultCollateralBalance + inputAmount, borrowedAmount, selectedAsset.rate)
+        ? calcCollateralRatio(vaultCollateralBalance + inputAmount, borrowedAmount, borrowedAssetRate)
         : 0
 
       const futureCollateralWithdraw = collateralWithdrawAmount + inputAmount

@@ -40,6 +40,7 @@ export const WithdrawCollateral = ({
 }) => {
   const {
     selectedAsset,
+    borrowedAssetRate = 0,
     currentCollateralBalance = 0,
     vaultCollateralBalance = 0,
     vaultAddress,
@@ -71,7 +72,7 @@ export const WithdrawCollateral = ({
       ? calcCollateralRatio(
           vaultCollateralBalance - inputAmount * Number(selectedAsset?.rate),
           borrowedAmount,
-          selectedAsset.rate,
+          borrowedAssetRate,
         )
       : 0
 
@@ -79,7 +80,7 @@ export const WithdrawCollateral = ({
     const futureVaultCollateralBalance = vaultCollateralBalance - inputAmount * Number(selectedAsset?.rate)
 
     return { futureCollateralRatio, futureCollateralWithdraw, futureVaultCollateralBalance }
-  }, [selectedAsset, vaultCollateralBalance, inputData.amount, borrowedAmount, collateralWithdrawAmount])
+  }, [selectedAsset, vaultCollateralBalance, inputAmount, borrowedAmount, collateralWithdrawAmount])
 
   useEffect(() => {
     if (!show) {

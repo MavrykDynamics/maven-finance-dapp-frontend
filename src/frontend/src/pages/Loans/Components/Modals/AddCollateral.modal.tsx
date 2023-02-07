@@ -45,6 +45,7 @@ export const AddCollateral = ({
     currentCollateralRatio = 0,
     collateralWithdrawAmount = 0,
     borrowedAmount = 0,
+    borrowedAssetRate = 0,
   } = data ?? {}
 
   useLockBodyScroll(show)
@@ -64,7 +65,7 @@ export const AddCollateral = ({
 
   const { futureCollateralRatio, futureCollateralWithdraw, futureCollateralBalance } = useMemo(() => {
     const futureCollateralRatio = selectedAsset
-      ? calcCollateralRatio(vaultCollateralBalance + inputAmount, borrowedAmount, selectedAsset.rate)
+      ? calcCollateralRatio(vaultCollateralBalance + inputAmount, borrowedAmount, borrowedAssetRate)
       : 0
 
     const futureCollateralWithdraw = collateralWithdrawAmount + inputAmount

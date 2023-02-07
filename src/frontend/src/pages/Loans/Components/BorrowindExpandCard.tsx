@@ -362,6 +362,7 @@ export const BorrowingExpandCard = ({
                                     borrowedAmount,
                                     collateralWithdrawAmount: 0,
                                     existingCollaterals: collateralData,
+                                    borrowedAssetRate: borrowedAsset.rate,
                                   })
                                 }
                                 kind={ACTION_PRIMARY}
@@ -386,6 +387,7 @@ export const BorrowingExpandCard = ({
                                   currentCollateralRatio: collateralRatio,
                                   borrowedAmount,
                                   collateralWithdrawAmount: amount,
+                                  borrowedAssetRate: borrowedAsset.rate,
                                 })
                               }
                               kind={TRANSPARENT_WITH_BORDER}
@@ -403,6 +405,7 @@ export const BorrowingExpandCard = ({
                                     currentCollateralRatio: collateralRatio,
                                     borrowedAmount,
                                     collateralWithdrawAmount: amount,
+                                    borrowedAssetRate: borrowedAsset.rate,
                                   })
                                 }
                                 kind={TRANSPARENT_WITH_BORDER}
@@ -431,6 +434,7 @@ export const BorrowingExpandCard = ({
                     borrowedAmount,
                     collateralWithdrawAmount: 0,
                     existingCollaterals: collateralData,
+                    borrowedAssetRate: borrowedAsset.rate,
                   })
                 }
                 kind={ACTION_PRIMARY}
