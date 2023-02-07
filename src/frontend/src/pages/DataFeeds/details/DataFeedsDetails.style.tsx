@@ -61,15 +61,16 @@ export const DataFeedsStyled = styled.div<{ theme: MavrykTheme }>`
             }
           }
 
-          .img-wrapper {
+          .img-wrapper,
+          svg {
             position: absolute;
             height: 90%;
             max-width: 45px;
             left: 0;
             font-size: 14px;
+            fill: ${({ theme }) => theme.textColor};
 
-            img,
-            svg {
+            img {
               width: 100%;
               height: 100%;
               object-fit: cover;

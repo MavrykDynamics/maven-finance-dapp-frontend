@@ -59,7 +59,7 @@ export const TreasuryTab = ({ isLoading }: { isLoading: boolean }) => {
       </div>
 
       {isLoading ? (
-        <DataLoaderWrapper className='tabLoader'>
+        <DataLoaderWrapper className="tabLoader">
           <ClockLoader width={150} height={150} />
           <div className="text">Loading treasury</div>
         </DataLoaderWrapper>
@@ -101,10 +101,24 @@ export const TreasuryTab = ({ isLoading }: { isLoading: boolean }) => {
                         <TableRow key={symbol} rowHeight={25} borderColor="dataColor" className="add-hover">
                           <TableCell width="33%">{symbol}</TableCell>
                           <TableCell width="33%">
-                            <CommaNumber value={balance} useAccurateParsing />
+                            {parseFloat(String(balance)) < 0.01 ? (
+                              '<0.01'
+                            ) : (
+                              <CommaNumber value={balance} useAccurateParsing showDecimal decimalsToShow={2} />
+                            )}
                           </TableCell>
                           <TableCell width="33%" contentPosition="right">
-                            <CommaNumber value={usdValue} endingText={rate ? '$' : symbol} useAccurateParsing />
+                            {parseFloat(String(usdValue)) < 0.01 ? (
+                              `<0.01 ${rate ? '$' : symbol}`
+                            ) : (
+                              <CommaNumber
+                                value={usdValue}
+                                endingText={rate ? '$' : symbol}
+                                useAccurateParsing
+                                showDecimal
+                                decimalsToShow={2}
+                              />
+                            )}
                           </TableCell>
                         </TableRow>
                       )

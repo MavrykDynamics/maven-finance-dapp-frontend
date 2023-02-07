@@ -402,6 +402,7 @@ type VaultAssetBalances = {
 
 export const reduceVaultsAssets = (vaultIds: string[], vaultsMapper: Record<string, VaultType>) => {
   let notEmptyCollateral = 0
+  let colorIdx = 0
 
   const { assets, globalVaultTVL, collateralRatio } = vaultIds.reduce<VaultAssetBalances>(
     (acc, vaultId) => {
@@ -425,9 +426,10 @@ export const reduceVaultsAssets = (vaultIds: string[], vaultsMapper: Record<stri
               rate: collateral.rate,
               name: collateral.symbol,
               symbol: collateral.symbol,
-              chartColor: getAssetColor(idx),
+              chartColor: getAssetColor(colorIdx),
               decimals: 0,
             }
+            colorIdx++
           }
         })
       }

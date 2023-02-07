@@ -203,7 +203,6 @@ export const TableHeader = styled.thead<{ theme: MavrykTheme }>`
     border: none;
 
     th {
-      text-align: left;
       font-weight: 600;
     }
   }
@@ -351,14 +350,6 @@ export const TableHeaderCell = styled.th<{ theme: MavrykTheme; contentPosition?:
 
   ${({ contentPosition }) => {
     switch (contentPosition) {
-      case 'left':
-        return css`
-          text-align: left;
-
-          div {
-            margin-right: auto;
-          }
-        `
       case 'center':
         return css`
           text-align: center;
@@ -376,8 +367,15 @@ export const TableHeaderCell = styled.th<{ theme: MavrykTheme; contentPosition?:
             margin-left: auto;
           }
         `
+      case 'left':
       default:
-        return ''
+        return css`
+          text-align: left;
+
+          div {
+            margin-right: auto;
+          }
+        `
     }
   }}
 `

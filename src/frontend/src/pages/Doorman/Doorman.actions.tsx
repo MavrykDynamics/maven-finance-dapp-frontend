@@ -401,12 +401,6 @@ export const fetchUserData = async (
       USER_LENDING_DATA_QUERY_VARIABLE(accountPkh),
     )
 
-    // const tokensRate = await getUserLoansDataTokensRates(
-    //   userLendingData.mavryk_user[0].lending_controller_history_data_sender,
-    //   dipDupTokens,
-    //   tokensRates,
-    // )
-
     const { userBorrowing, userLendings } = normalizeUserLending({
       dipDupTokens,
       feeds,
