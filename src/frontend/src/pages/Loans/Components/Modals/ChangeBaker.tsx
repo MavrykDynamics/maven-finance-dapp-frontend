@@ -20,6 +20,7 @@ import { PopupContainer, PopupContainerWrapper } from 'app/App.components/Settin
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { DropDownJsxChild, LoansModalBase } from './Modals.style'
+import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
 const MAVRYK_DYNAMICS_BAKERY = 1
 const DAO_BAKERY = 2
@@ -43,8 +44,6 @@ export const ChangeBaker = ({
   } = useSelector((state: State) => state.loans)
   const [activeTab, setActiveSliding] = useState(MAVRYK_DYNAMICS_BAKERY)
   const [selectedAddress, setSelectedAddress] = useState<string | null>(null)
-
-  const currentNetwork = process.env.REACT_APP_NETWORK
 
   useLockBodyScroll(show)
 
@@ -80,14 +79,14 @@ export const ChangeBaker = ({
         id: MAVRYK_DYNAMICS_BAKERY,
         active: activeTab === MAVRYK_DYNAMICS_BAKERY,
         bakeryAddresses: [mavrykDynamics?.address ?? ''],
-        isDisabled: currentNetwork !== 'mainnet',
+        isDisabled: mavrykDynamics?.isDisabled,
       },
       {
         text: dao?.name ?? 'The DAO',
         id: DAO_BAKERY,
         active: activeTab === DAO_BAKERY,
         bakeryAddresses: [dao?.address ?? ''],
-        isDisabled: currentNetwork !== 'mainnet',
+        isDisabled: dao?.isDisabled,
       },
       {
         text: 'Other',
@@ -96,7 +95,7 @@ export const ChangeBaker = ({
         bakeryAddresses: otherBakers.map(({ address }) => address),
       },
     ],
-    [mavrykDynamics?.name, mavrykDynamics?.address, activeTab, currentNetwork, dao?.name, dao?.address, otherBakers],
+    [mavrykDynamics?.name, mavrykDynamics?.address, activeTab, dao?.name, dao?.address, otherBakers],
   )
 
   const bakerItemsForDropDown = useMemo<DropDownXTZBakerType[]>(
@@ -105,14 +104,7 @@ export const ChangeBaker = ({
         content: (
           <DropDownJsxChild>
             <div className="flex-row with-image">
-              {logo ? (
-                <div className="image-wrapper">
-                  <img src={logo} alt={name + '-logo'} />
-                </div>
-              ) : (
-                <Icon id="noImage" />
-              )}{' '}
-              {name}
+              <ImageWithPlug imageLink={logo} alt={`${name} icon`} /> {name}
             </div>
             <div className="baker-fee">
               <CommaNumber value={fee} endingText="%" />

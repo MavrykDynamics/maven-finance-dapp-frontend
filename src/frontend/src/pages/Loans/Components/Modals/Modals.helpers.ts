@@ -20,6 +20,7 @@ export type CollateralPopupCommonDataType = {
   currentCollateralRatio: number
   collateralWithdrawAmount: number
   borrowedAmount: number
+  borrowedAssetRate: number
 }
 
 export type AddCollateralPopupDataType = CollateralPopupCommonDataType | null

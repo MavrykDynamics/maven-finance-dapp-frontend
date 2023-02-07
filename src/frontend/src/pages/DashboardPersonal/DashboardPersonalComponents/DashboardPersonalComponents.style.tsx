@@ -234,7 +234,8 @@ export const ListItem = styled.div<{ theme: MavrykTheme; columsTemplate: string 
   position: relative;
 
   svg,
-  .image-wrapper {
+  .image-wrapper,
+  .img-wrapper {
     height: 40px;
     width: 40px;
     fill: ${({ theme }) => theme.lPurple_dPurple_lPuprple};

@@ -502,8 +502,8 @@ export const normalizeLoans = async ({
           utilisationRate: utilisation_rate / 10 ** interestRateDecimals,
 
           availableLiquidity,
-          totalLended: totalSupplied,
-          totalBorrowed: totalBorrowedCurrent,
+          totalLended: totalLended,
+          totalBorrowed: totalBorrowed,
           loanTokenTotalCollaterals: totalCollateral,
           loanTokenVaultsTotalBorrowed: vaultsBorrowedAmount,
 

@@ -36,15 +36,13 @@ export const getVaultsStorage = () => async (dispatch: AppDispatch, getState: Ge
     ])
 
     const {
-      tokens: { dipDupTokens, tokensPrices },
+      tokens: { dipDupTokens },
       wallet: { accountPkh },
       preferences: { headData },
       oracles: {
         oraclesStorage: { feeds },
       },
     } = getState()
-
-    const vaultsTokensRate = await getVaultsTokensRates(lendingController.vaults, dipDupTokens, tokensPrices)
 
     const normallaziedVaultsStorage = await normalizeVaultsStorage({
       accountPkh,
@@ -56,7 +54,6 @@ export const getVaultsStorage = () => async (dispatch: AppDispatch, getState: Ge
     })
 
     dispatch(setContractAddress('vaultAddress', lendingController.address))
-    dispatch(updateTokensPrices(vaultsTokensRate))
 
     dispatch({
       type: GET_VAULTS_STORAGE,

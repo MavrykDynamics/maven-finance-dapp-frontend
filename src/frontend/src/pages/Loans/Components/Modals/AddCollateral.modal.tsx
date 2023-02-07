@@ -26,6 +26,7 @@ import { PopupContainer, PopupContainerWrapper } from 'app/App.components/Settin
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { depositCollateralAction } from 'pages/Loans/Actions/vaultCollateral.actions'
 import { calcCollateralRatio } from 'pages/Loans/Loans.helpers'
+import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239476&t=Sx2aEpp3ifrGxBtQ-0
 export const AddCollateral = ({
@@ -44,6 +45,7 @@ export const AddCollateral = ({
     currentCollateralRatio = 0,
     collateralWithdrawAmount = 0,
     borrowedAmount = 0,
+    borrowedAssetRate = 0,
   } = data ?? {}
 
   useLockBodyScroll(show)
@@ -63,7 +65,7 @@ export const AddCollateral = ({
 
   const { futureCollateralRatio, futureCollateralWithdraw, futureCollateralBalance } = useMemo(() => {
     const futureCollateralRatio = selectedAsset
-      ? calcCollateralRatio(vaultCollateralBalance + inputAmount, borrowedAmount, selectedAsset.rate)
+      ? calcCollateralRatio(vaultCollateralBalance + inputAmount, borrowedAmount, borrowedAssetRate)
       : 0
 
     const futureCollateralWithdraw = collateralWithdrawAmount + inputAmount
@@ -192,13 +194,7 @@ export const AddCollateral = ({
             }}
           >
             <InputPinnedTokenInfo>
-              {collateralData?.icon ? (
-                <div className="image-wrapper">
-                  <img src={collateralData.icon} alt={collateralData.symbol + '-logo'} />
-                </div>
-              ) : (
-                <Icon id="noImage" />
-              )}{' '}
+              <ImageWithPlug imageLink={collateralData?.icon} alt={`${collateralData?.symbol} icon`} />{' '}
               {selectedAsset?.symbol}
             </InputPinnedTokenInfo>
           </Input>

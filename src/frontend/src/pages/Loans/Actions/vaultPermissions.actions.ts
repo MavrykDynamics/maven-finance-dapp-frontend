@@ -27,12 +27,12 @@ export const changeBakerAction =
 
       callback()
       await dispatch(toggleActionLoader(true))
-      await dispatch(showToaster(INFO, 'Borrowing from the vault...', 'Please wait 30s'))
+      await dispatch(showToaster(INFO, 'Chanding XTZ Baker...', 'Please wait 30s'))
 
       // confirm query completion
       await transaction?.confirmation()
 
-      await dispatch(showToaster(SUCCESS, 'Asset borrowed.', 'All good :)'))
+      await dispatch(showToaster(SUCCESS, 'Baker changed.', 'All good :)'))
       // refetch data we need
       await dispatch(getLoansStorage())
       await dispatch(toggleActionLoader(false))

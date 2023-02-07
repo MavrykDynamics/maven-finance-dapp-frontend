@@ -29,6 +29,7 @@ import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import LoansPopupsProvider from './Components/Modals/LoansModals.provider'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { getLoansStorage } from './Actions/getLoansData.actions'
+import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
 export const Market = () => {
   const dispatch = useDispatch()
@@ -130,15 +131,10 @@ export const Market = () => {
         <MarketStyled>
           <div className="gen-info">
             <div className="asset-info">
-              {currentToken?.loanTokenData.icon ? (
-                <div className="img-wrapper">
-                  <img src={currentToken?.loanTokenData.icon} alt={`${currentToken?.loanTokenData.icon} icon`} />
-                </div>
-              ) : (
-                <div className="no-icon">
-                  <Icon id="noImage" />
-                </div>
-              )}
+              <ImageWithPlug
+                imageLink={currentToken?.loanTokenData.icon}
+                alt={`${currentToken?.loanTokenData.icon} icon`}
+              />
 
               <div className="text-wrapper">
                 <div className="symbol">{currentToken?.loanTokenData.name}</div>
