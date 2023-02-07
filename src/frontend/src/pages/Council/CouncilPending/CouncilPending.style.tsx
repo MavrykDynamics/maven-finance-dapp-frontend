@@ -27,7 +27,7 @@ export const CouncilPendingStyled = styled(Card)`
     min-width: 590px;
     .parameters {
       display: grid;
-      grid-template-columns: 130px 180px 150px;
+      grid-template-columns: 180px 180px 150px;
       align-items: center;
     }
 
@@ -114,7 +114,7 @@ export const CouncilPendingStyled = styled(Card)`
     }
   }
 
-  .parameters-link{
+  .parameters-link {
     display: block;
 
     color: ${cyanColor};
@@ -155,6 +155,10 @@ export const CouncilPendingStyled = styled(Card)`
       max-width: 100%;
       text-overflow: ellipsis;
       display: block;
+    }
+
+    .address-width {
+      width: 150px;
     }
 
     p {
