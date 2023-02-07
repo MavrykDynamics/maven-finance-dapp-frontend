@@ -10,6 +10,7 @@ import Icon from '../Icon/Icon.view'
 // helpers
 import { scrollToFullView } from 'utils/scrollToFullView'
 import { DropDownJsxChild } from 'pages/Loans/Components/Modals/Modals.style'
+import { ImageWithPlug } from '../Icon/ImageWithPlug'
 
 export type DropDownItemType = {
   content: React.ReactNode
@@ -77,13 +78,7 @@ export const DropDown = ({ placeholder, clickItem, items, activeItem, className,
 export const DropdownInputCustomChild = ({ iconSrc, symbol }: { iconSrc: string; symbol: string }) => (
   <DropDownJsxChild>
     <div className="flex-row with-image">
-      {iconSrc ? (
-        <div className="image-wrapper">
-          <img src={iconSrc} alt={symbol + '-logo'} />
-        </div>
-      ) : (
-        <Icon id="noImage" />
-      )}
+      <ImageWithPlug alt={symbol + ' logo'} imageLink={iconSrc} />
       {symbol}
     </div>
   </DropDownJsxChild>
