@@ -252,13 +252,20 @@ export const VaultsCard = (props: Props) => {
 
                       <TableCell width={columnWidth}>
                         <div className="cell-content">
-                          <CommaNumber value={amount} decimalsToShow={2} className="balance" />
-                          {rate ? <CommaNumber value={amount * rate} decimalsToShow={2} beginningText="~$" className="rate" /> : null}
+                          <CommaNumber
+                            value={amount}
+                            decimalsToShow={2}
+                            beginningText={isTotalRow ? '$' : ''}
+                            className="balance"
+                          />
+                          {rate ? (
+                            <CommaNumber value={amount * rate} decimalsToShow={2} beginningText="~$" className="rate" />
+                          ) : null}
                         </div>
                       </TableCell>
 
                       <TableCell width={columnWidth}>
-                        <CommaNumber value={isTotalRow ? 100 : collateralShare} decimalsToShow={2} endingText='%' />
+                        <CommaNumber value={isTotalRow ? 100 : collateralShare} decimalsToShow={2} endingText="%" />
                       </TableCell>
                     </TableRow>
                   )

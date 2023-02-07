@@ -48,6 +48,7 @@ import { CouncilFormSetContractBaker } from './CouncilForms/CouncilFormSetContra
 import Pagination from 'pages/FinacialRequests/Pagination/Pagination.view'
 import ModalPopup from '../../app/App.components/Modal/ModalPopup.view'
 import { MyCouncilActions } from 'pages/Council/MyCouncilActions.view'
+import { EmptyContainer } from 'app/App.style'
 
 // styles
 import { Page } from 'styles'
@@ -58,6 +59,13 @@ import { DropdownCard, DropdownWrap } from '../../app/App.components/DropDown/Dr
 import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 import NewButton from 'app/App.components/Button/NewButton.controller'
 import { TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
+
+export const councilEmptyContainer = (
+  <EmptyContainer>
+    <img src="/images/not-found.svg" alt=" No proposals to show" />
+    <figcaption> No data to show</figcaption>
+  </EmptyContainer>
+)
 
 const queryParameters = {
   pathname: '/mavryk-council',
@@ -300,16 +308,37 @@ export const Council = () => {
                 >
                   {isReviewPage ? 'Past Council Actions' : 'Pending Signature Council Actions'}
                 </h1>
-                {(isReviewPage ? paginatedCouncilPastActions : paginatedCouncilAllPendingActions).map((item) => (
-                  <CouncilPastActionView
-                    startDatetime={String(item.startDatetime)}
-                    key={item.id}
-                    actionType={item.actionType}
-                    signersCount={item.signersCount}
-                    numCouncilMembers={councilMembers.length}
-                    councilId={item.councilId}
-                  />
-                ))}
+
+                {isReviewPage
+                  ? paginatedCouncilPastActions.length
+                    ? paginatedCouncilPastActions.map((item) => (
+                        <CouncilPastActionView
+                          startDatetime={String(item.startDatetime)}
+                          key={item.id}
+                          actionType={item.actionType}
+                          signersCount={item.signersCount}
+                          numCouncilMembers={councilMembers.length}
+                          councilId={item.councilId}
+                        />
+                      ))
+                    : councilEmptyContainer
+                  : null}
+
+                {!isReviewPage
+                  ? paginatedCouncilAllPendingActions.length
+                    ? paginatedCouncilAllPendingActions.map((item) => (
+                        <CouncilPastActionView
+                          startDatetime={String(item.startDatetime)}
+                          key={item.id}
+                          actionType={item.actionType}
+                          signersCount={item.signersCount}
+                          numCouncilMembers={councilMembers.length}
+                          councilId={item.councilId}
+                        />
+                      ))
+                    : councilEmptyContainer
+                  : null}
+
                 <Pagination
                   itemsCount={isReviewPage ? councilPastActions.length : councilAllPendingActions.length}
                   listName={COUNCIL_LIST_NAME}

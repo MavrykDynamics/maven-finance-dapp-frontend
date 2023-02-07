@@ -17,6 +17,8 @@ import { BreakGlassCouncilForm, actions } from './BreakGlassCouncilForms/BreakGl
 import { FormUpdateCouncilMemberView } from './BreakGlassCouncilForms/FormUpdateCouncilMember.view'
 import { CouncilPending } from '../Council/CouncilPending/CouncilPending.controller'
 import { MyCouncilActions } from '../Council/MyCouncilActions.view'
+import Icon from 'app/App.components/Icon/Icon.view'
+import { councilEmptyContainer } from 'pages/Council/Council.controller'
 
 // helpers
 import { ACTION_SECONDARY, TRANSPARENT_WITH_BORDER } from '../../app/App.components/Button/Button.constants'
@@ -53,7 +55,6 @@ import {
   dropBreakGlass,
   signAction,
 } from './BreakGlassCouncil.actions'
-import Icon from 'app/App.components/Icon/Icon.view'
 
 const queryParameters = {
   pathname: '/break-glass-council',
@@ -247,20 +248,41 @@ export function BreakGlassCouncil() {
 
           {review ? (
             <>
-              <h1>{isReviewPage ? 'Past Break Glass Council Actions' : 'Pending Signature Council Actions'}</h1>
-              {(isReviewPage
-                ? paginatedPastBreakGlassCouncilActions
-                : paginatedBreakGlassActionPendingAllSignature
-              ).map((item) => (
-                <CouncilPastActionView
-                  startDatetime={String(item.startDatetime)}
-                  key={item.id}
-                  actionType={item.actionType}
-                  signersCount={item.signersCount}
-                  numCouncilMembers={breakGlassCouncilMember.length}
-                  councilId={item.breakGlassId}
-                />
-              ))}
+              {isReviewPage ? (
+                <>
+                  <h1>Past Break Glass Council Actions</h1>
+                  {paginatedPastBreakGlassCouncilActions.length
+                    ? paginatedPastBreakGlassCouncilActions.map((item) => (
+                        <CouncilPastActionView
+                          startDatetime={String(item.startDatetime)}
+                          key={item.id}
+                          actionType={item.actionType}
+                          signersCount={item.signersCount}
+                          numCouncilMembers={breakGlassCouncilMember.length}
+                          councilId={item.breakGlassId}
+                        />
+                      ))
+                    : councilEmptyContainer}
+                </>
+              ) : null}
+
+              {!isReviewPage ? (
+                <>
+                  <h1>Pending Signature Council Actions</h1>
+                  {paginatedBreakGlassActionPendingAllSignature.length
+                    ? paginatedBreakGlassActionPendingAllSignature.map((item) => (
+                        <CouncilPastActionView
+                          startDatetime={String(item.startDatetime)}
+                          key={item.id}
+                          actionType={item.actionType}
+                          signersCount={item.signersCount}
+                          numCouncilMembers={breakGlassCouncilMember.length}
+                          councilId={item.breakGlassId}
+                        />
+                      ))
+                    : councilEmptyContainer}
+                </>
+              ) : null}
 
               <Pagination
                 itemsCount={

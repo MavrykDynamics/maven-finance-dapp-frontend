@@ -14,7 +14,6 @@ import {
 } from 'gql/queries/getVaultsStorage'
 import { normalizeVaultsStorage, normalizeOracleLatestPrice } from './Vaults.helpers'
 import { LendingControllerGQL } from 'utils/TypesAndInterfaces/Vaults'
-import { setContractAddress } from 'reducers/actions/contractAddresses.actions'
 import { getHeadData } from 'app/App.components/Menu/Menu.actions'
 import { getOracleLatestPrices } from './Vaults.helpers'
 
@@ -52,8 +51,6 @@ export const getVaultsStorage = () => async (dispatch: AppDispatch, getState: Ge
       lendingController,
     })
 
-    dispatch(setContractAddress('vaultAddress', lendingController.address))
-
     dispatch({
       type: GET_VAULTS_STORAGE,
       vaultsList: normallaziedVaultsStorage,
@@ -81,7 +78,7 @@ export const liquidateVault =
 
     try {
       dispatch(toggleActionLoader(true))
-      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.vaultAddress.address)
+      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.lendingController.address)
       const transaction = await contract?.methods.liquidateVault(vaultId, vaultOwner, liquidateAmount).send()
       dispatch(showToaster(INFO, 'Liqudation...', 'Please wait 30s'))
 
@@ -115,7 +112,7 @@ export const markForLiquidation =
 
     try {
       dispatch(toggleActionLoader(true))
-      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.vaultAddress.address)
+      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.lendingController.address)
       const transaction = await contract?.methods.markForLiquidation(vaultId, vaultOwner).send()
       dispatch(showToaster(INFO, 'Mark for Liquidation...', 'Please wait 30s'))
 
