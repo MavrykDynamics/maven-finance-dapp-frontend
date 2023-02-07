@@ -151,7 +151,7 @@ export const CouncilPendingStyled = styled(Card)`
       white-space: nowrap;
       overflow: hidden;
       word-break: break-all;
-      width: 100%;
+      width: 130px;
       max-width: 100%;
       text-overflow: ellipsis;
       display: block;
