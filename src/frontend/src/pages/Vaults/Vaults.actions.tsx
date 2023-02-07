@@ -12,12 +12,11 @@ import {
   ORACLE_AGGREGATOR_LATEST_PRICE_QUERY_NAME,
   ORACLE_AGGREGATOR_LATEST_PRICE_QUERY_VARIABLE,
 } from 'gql/queries/getVaultsStorage'
-import { normalizeVaultsStorage, normalizeOracleLatestPrice, getVaultsTokensRates } from './Vaults.helpers'
+import { normalizeVaultsStorage, normalizeOracleLatestPrice } from './Vaults.helpers'
 import { LendingControllerGQL } from 'utils/TypesAndInterfaces/Vaults'
 import { setContractAddress } from 'reducers/actions/contractAddresses.actions'
 import { getHeadData } from 'app/App.components/Menu/Menu.actions'
 import { getOracleLatestPrices } from './Vaults.helpers'
-import { updateTokensPrices } from 'reducers/actions/dipDupActions.actions'
 
 // Vaults Store
 export const GET_VAULTS_STORAGE = 'GET_VAULTS_STORAGE'

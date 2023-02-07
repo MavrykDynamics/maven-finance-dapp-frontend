@@ -33,8 +33,6 @@ export const DataFeedCard = ({ feed }: { feed: Feed }) => {
     ? '/images/eurl.png'
     : feed.name.includes('XTZ')
     ? '/images/tezos.png'
-    : feed.name.includes('BTC')
-    ? '/images/tzBTC.png'
     : dipDupContracts.find(({ contract }) => contract === feed.address)?.metadata?.icon
   const isDataFeedsPage = pathname === '/data-feeds'
 
