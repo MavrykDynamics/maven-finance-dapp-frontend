@@ -120,7 +120,7 @@ export const StageThreeForm = ({
     const newId = -(proposalPayments.length + 1)
     updateLocalProposalData(
       {
-        proposalPayments: proposalPayments.concat({
+        proposalPayments: (proposalPayments ?? []).concat({
           // TODO: check how to remove it
           governance_proposal: currentProposal as unknown as Governance_Proposal,
           governance_proposal_id: 0,
@@ -137,7 +137,7 @@ export const StageThreeForm = ({
     )
     updateLocalProposalValidation(
       {
-        paymentsValidation: currentProposalValidation.paymentsValidation.concat({
+        paymentsValidation: (currentProposalValidation.paymentsValidation ?? []).concat({
           token_amount: '',
           title: '',
           to__id: '',
