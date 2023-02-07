@@ -105,6 +105,11 @@ export const CouncilPendingStyled = styled(Card)`
     }
   }
 
+  .g-centering {
+    display: flex;
+    justify-content: center;
+  }
+
   .sign-btn {
     width: 185px;
 
@@ -159,6 +164,10 @@ export const CouncilPendingStyled = styled(Card)`
 
     .address-width {
       width: 150px;
+    }
+
+    .signed-width {
+      width: 100%;
     }
 
     p {

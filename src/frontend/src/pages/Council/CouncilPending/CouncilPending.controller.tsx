@@ -136,7 +136,7 @@ export const CouncilPending = (props: Props) => {
             <article className="signed-article">
               <div>
                 <p>Signed</p>
-                <span className="parameters-value">
+                <span className="parameters-value signed-width">
                   {signersCount}/{numCouncilMembers}
                 </span>
               </div>
@@ -205,7 +205,7 @@ export const CouncilPending = (props: Props) => {
             <article className="signed-article">
               <div>
                 <p>Signed</p>
-                <span className="parameters-value">
+                <span className="parameters-value signed-width">
                   {signersCount}/{numCouncilMembers}
                 </span>
               </div>
@@ -280,7 +280,7 @@ export const CouncilPending = (props: Props) => {
             <article className="signed-article">
               <div>
                 <p>Signed</p>
-                <span className="parameters-value">
+                <span className="parameters-value signed-width">
                   {signersCount}/{numCouncilMembers}
                 </span>
               </div>
@@ -343,7 +343,7 @@ export const CouncilPending = (props: Props) => {
           <article className="signed-article">
             <div>
               <p>Signed</p>
-              <span className="parameters-value">
+              <span className="parameters-value signed-width">
                 {signersCount}/{numCouncilMembers}
               </span>
             </div>
@@ -395,7 +395,7 @@ export const CouncilPending = (props: Props) => {
           <article className="signed-article">
             <div>
               <p>Signed</p>
-              <span className="parameters-value">
+              <span className="parameters-value signed-width">
                 {signersCount}/{numCouncilMembers}
               </span>
             </div>
@@ -448,7 +448,7 @@ export const CouncilPending = (props: Props) => {
           <article className="signed-article">
             <div>
               <p>Signed</p>
-              <span className="parameters-value">
+              <span className="parameters-value signed-width">
                 {signersCount}/{numCouncilMembers}
               </span>
             </div>
@@ -509,7 +509,7 @@ export const CouncilPending = (props: Props) => {
             <article className="signed-article">
               <div>
                 <p>Signed</p>
-                <span className="parameters-value">
+                <span className="parameters-value signed-width">
                   {signersCount}/{numCouncilMembers}
                 </span>
               </div>
@@ -581,7 +581,7 @@ export const CouncilPending = (props: Props) => {
             <article className="signed-article">
               <div>
                 <p>Signed</p>
-                <span className="parameters-value">
+                <span className="parameters-value signed-width">
                   {signersCount}/{numCouncilMembers}
                 </span>
               </div>
@@ -643,7 +643,7 @@ export const CouncilPending = (props: Props) => {
           <article className="signed-article">
             <div>
               <p>Signed</p>
-              <span className="parameters-value">
+              <span className="parameters-value signed-width">
                 {signersCount}/{numCouncilMembers}
               </span>
             </div>
@@ -687,12 +687,15 @@ export const CouncilPending = (props: Props) => {
           </div>
           <div>
             <p>Signed</p>
-            <span className="parameters-value">
+            <span className="parameters-value signed-width">
               {signersCount}/{numCouncilMembers}
             </span>
           </div>
         </div>
-        <Button text="Sign" className="sign-btn" kind={'actionPrimary'} icon="sign" onClick={onClickSign} />
+
+        <div className="g-centering">
+          <Button text="Sign" className="sign-btn" kind={'actionPrimary'} icon="sign" onClick={onClickSign} />
+        </div>
       </CouncilPendingStyled>
     )
   }
@@ -708,12 +711,15 @@ export const CouncilPending = (props: Props) => {
         </div>
         <div>
           <p>Signed</p>
-          <span className="parameters-value">
+          <span className="parameters-value signed-width">
             {signersCount}/{numCouncilMembers}
           </span>
         </div>
       </div>
-      <Button text="Sign" className="sign-btn" kind={ACTION_PRIMARY} icon="sign" onClick={onClickSign} />
+
+      <div className="g-centering">
+        <Button text="Sign" className="sign-btn" kind={ACTION_PRIMARY} icon="sign" onClick={onClickSign} />
+      </div>
     </CouncilPendingStyled>
   )
 }

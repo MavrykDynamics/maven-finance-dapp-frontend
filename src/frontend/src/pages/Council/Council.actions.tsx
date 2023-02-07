@@ -20,7 +20,6 @@ import {
 } from '../../gql/queries/getCouncilStorage'
 import { noralizeCouncilStorage, normalizeCouncilActions } from './Council.helpers'
 import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
-import { ROCKET_LOADER } from 'utils/constants'
 
 const time = String(new Date())
 const timeFormat = 'YYYY-MM-DD'
