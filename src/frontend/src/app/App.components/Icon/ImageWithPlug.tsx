@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import Icon from './Icon.view'
 
-export const ImageWithPlug = React.memo(({ imageLink, alt }: { imageLink?: string; alt: string }) => {
+export const ImageWithPlug = ({ imageLink, alt }: { imageLink?: string; alt: string }) => {
   const [imageExists, setImageExists] = useState(true)
 
   useEffect(() => {
     setImageExists(true)
-  }, [])
+  }, [imageLink])
 
   if (imageLink && imageExists) {
     return (
@@ -17,4 +17,4 @@ export const ImageWithPlug = React.memo(({ imageLink, alt }: { imageLink?: strin
   }
 
   return <Icon id="noImage" />
-})
+}

@@ -41,6 +41,7 @@ export const SatelliteItemStyle = styled(Card)<{ isDataFeeds?: boolean; oracle?:
         top: 50%;
         transform: translateY(-50%);
         font-size: 12px;
+        fill: ${({ theme }) => theme.textColor};
       }
     }
     h5 {

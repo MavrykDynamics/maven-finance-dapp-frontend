@@ -38,6 +38,7 @@ import { State } from 'reducers'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { INFO } from 'app/App.components/Toaster/Toaster.constants'
+import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
 type FeedDetailsProps = {
   feed: Feed | null
@@ -90,6 +91,10 @@ const DataFeedDetailsView = ({ feed, oracles, registerFeedHandler }: FeedDetails
 
   const imageLink = feed?.name.includes('EUROC')
     ? '/images/eurl.png'
+    : feed?.name.includes('XTZ')
+    ? '/images/tezos.png'
+    : feed?.name.includes('BTC')
+    ? '/images/tzBTC.png'
     : dipDupContracts.find(({ contract }) => contract === feed?.address)?.metadata?.icon
 
   return feed ? (
@@ -102,9 +107,7 @@ const DataFeedDetailsView = ({ feed, oracles, registerFeedHandler }: FeedDetails
           <div className="left-part">
             <div className="top">
               <div className="name-part">
-                <div className="img-wrapper">
-                  <CoinsLogo imageLink={imageLink} assetName={handleCoinName(feed.name)} />
-                </div>
+                <ImageWithPlug imageLink={imageLink} alt={`${feed.name} logo`} />
                 <div className="text">
                   <DataFeedsTitle fontSize={25} fontWeidth={700}>
                     {feed.name}
