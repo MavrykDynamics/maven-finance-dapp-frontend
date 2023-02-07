@@ -44,8 +44,11 @@ export const LoansTabStyled = styled.div<{ theme: MavrykTheme }>`
     }
   }
 
+  .checkbox {
+    margin: 25px 0 10px 0;
+  }
+
   .list-wrapper {
-    margin-top: 30px;
     display: flex;
     flex-direction: column;
     row-gap: 20px;

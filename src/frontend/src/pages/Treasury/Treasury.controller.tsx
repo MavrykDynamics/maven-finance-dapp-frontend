@@ -18,10 +18,13 @@ import { Page } from 'styles'
 import { TreasuryActiveStyle, TreasurySelectStyle } from './Treasury.style'
 import { TreasuryType } from 'utils/TypesAndInterfaces/Treasury'
 import { reduceTreasuryAssets } from './Treasury.helpers'
+import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 
 export const Treasury = () => {
   const dispatch = useDispatch()
-  const { treasuryStorage, treasuryFactoryAddress } = useSelector((state: State) => state.treasury)
+  const { treasuryStorage, treasuryFactoryAddress, isLoaded } = useSelector((state: State) => state.treasury)
 
   const itemsForDropDown = treasuryStorage
     .map((treasury) => ({
@@ -38,9 +41,13 @@ export const Treasury = () => {
   const [chosenDdItem, setChosenDdItem] = useState<DropdownItemType | undefined>()
   const [selectedTreasury, setSelectedTreasury] = useState<null | TreasuryType>(null)
 
-  useEffect(() => {
-    dispatch(fillTreasuryStorage())
-  }, [dispatch])
+  const { isLoading } = useDataLoader(async () => {
+    try {
+      if (!isLoaded) {
+        await dispatch(fillTreasuryStorage())
+      }
+    } catch (error) {}
+  }, [])
 
   const handleSelect = (item: DropdownItemType) => {
     const foundTreasury = treasuryStorage.find(({ address }) => item.value === address) || null
@@ -65,21 +72,30 @@ export const Treasury = () => {
   return (
     <Page>
       <PageHeader page={'treasury'} />
-      <TreasuryView treasury={globalTreasury} isGlobal factoryAddress={treasuryFactoryAddress} />
-      <TreasuryActiveStyle>
-        <TreasurySelectStyle isSelectedTreasury={Boolean(chosenDdItem?.value)}>
-          <h2>Active Treasuries</h2>
-          <DropDown
-            placeholder="Choose treasury"
-            isOpen={ddIsOpen}
-            setIsOpen={setDdIsOpen}
-            itemSelected={chosenDdItem?.text}
-            items={ddItems}
-            clickOnItem={(e) => handleOnClickDropdownItem(e)}
-          />
-        </TreasurySelectStyle>
-        {selectedTreasury ? <TreasuryView treasury={selectedTreasury} /> : null}
-      </TreasuryActiveStyle>
+      {isLoading ? (
+        <DataLoaderWrapper>
+          <ClockLoader width={150} height={150} />
+          <div className="text">Loading treasuries</div>
+        </DataLoaderWrapper>
+      ) : (
+        <>
+          <TreasuryView treasury={globalTreasury} isGlobal factoryAddress={treasuryFactoryAddress} />
+          <TreasuryActiveStyle>
+            <TreasurySelectStyle isSelectedTreasury={Boolean(chosenDdItem?.value)}>
+              <h2>Active Treasuries</h2>
+              <DropDown
+                placeholder="Choose treasury"
+                isOpen={ddIsOpen}
+                setIsOpen={setDdIsOpen}
+                itemSelected={chosenDdItem?.text}
+                items={ddItems}
+                clickOnItem={(e) => handleOnClickDropdownItem(e)}
+              />
+            </TreasurySelectStyle>
+            {selectedTreasury ? <TreasuryView treasury={selectedTreasury} /> : null}
+          </TreasuryActiveStyle>
+        </>
+      )}
     </Page>
   )
 }

@@ -11,7 +11,7 @@ import type {
 import { Dipdup_Token_Metadata, M_Token } from 'utils/generated/graphqlTypes'
 import { normalizeDataFeedsHistory, normalizeDataFeedsVolatility } from 'pages/Satellites/Satellites.helpers'
 import { Feed } from 'pages/Satellites/helpers/Satellites.types'
-import { State } from 'reducers'
+import {MichelsonType, unpackDataBytes} from '@taquito/michel-codec'
 
 export function normalizeAddressesStorage(storage: AddressesGraphQl): ContractAddressesState {
   return {
@@ -49,7 +49,7 @@ export function normalizeVestingStorage(storage: VestingGraphQL | null) {
   return {
     address: storage?.address || '',
     totalVestedAmount: storage?.total_vested_amount ?? 0,
-    totalClaimedAmount: storage?.vestees_aggregate.aggregate?.sum?.total_claimed ?? 0,
+    totalClaimedAmount: storage?.vestees_aggregate?.aggregate?.sum?.total_claimed ?? 0,
   }
 }
 
@@ -130,4 +130,24 @@ export function normalizeDipDupContracts(storage: { dipdup_contract_metadata?: A
 
 export function normalizeMTokens(storage: { m_token: M_Token }) {
   return storage?.m_token || []
+}
+
+export function convertBytesAddressToAddress(addressInBytes: string): string {
+  const addressType: MichelsonType = {
+    prim: 'address',
+  };
+  const formattedBytes = { bytes: addressInBytes }
+  const unpackedBytes = unpackDataBytes(formattedBytes, addressType)
+  const jsonString = JSON.parse(JSON.stringify(unpackedBytes))
+  return jsonString['string']
+}
+export function convertBytesStringToText(textInBytes: string): string {
+  const stringType: MichelsonType = {
+    prim: 'string',
+  };
+  const formattedBytes = { bytes: textInBytes }
+  // @ts-ignore
+  const unpackedBytes = unpackDataBytes(formattedBytes, stringType)
+  const jsonString = JSON.parse(JSON.stringify(unpackedBytes))
+  return jsonString['string']
 }

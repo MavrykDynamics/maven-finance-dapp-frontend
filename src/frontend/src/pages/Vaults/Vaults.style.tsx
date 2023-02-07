@@ -4,7 +4,15 @@ import styled from 'styled-components/macro'
 import { Card } from 'styles'
 
 // helpers
-import { DOWN, INFO, PRIMARY, UP, WAITING, WARNING, DARK_WARNING } from 'app/App.components/StatusFlag/StatusFlag.constants'
+import {
+  DOWN,
+  INFO,
+  PRIMARY,
+  UP,
+  WAITING,
+  WARNING,
+  DARK_WARNING,
+} from 'app/App.components/StatusFlag/StatusFlag.constants'
 
 // types
 import { MavrykTheme } from '../../styles/interfaces'
@@ -35,13 +43,19 @@ export const VaultsStyled = styled.div<{ theme: MavrykTheme }>`
 
   .tabSwitcher {
     margin-bottom: 0;
-    width: 175px; 
+    width: 175px;
+  }
+`
+
+export const VaultsSearchFilterWrapper = styled.div`
+  .checkbox {
+    margin: 20px 0;
   }
 `
 
 export const VaultsSearchFilterStyled = styled(Card)`
   padding: 20px 30px;
-  margin: 20px 0;
+  margin-top: 20px;
   display: flex;
 
   input {

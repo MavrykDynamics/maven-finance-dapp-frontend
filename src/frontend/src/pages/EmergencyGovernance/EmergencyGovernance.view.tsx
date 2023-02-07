@@ -30,6 +30,7 @@ import {
 import Pagination from 'pages/FinacialRequests/Pagination/Pagination.view'
 import { getPageNumber } from 'pages/FinacialRequests/FinancialRequests.helpers'
 import { useLocation } from 'react-router'
+import { EmptyContainer } from 'app/App.style'
 
 type Props = {
   accountPkh?: string
@@ -137,17 +138,30 @@ export const EmergencyGovernanceView = ({
 
       <EmergencyGovernHistory>
         <h1>Emergency Governance History</h1>
-        {paginatedItemsListHistory.map((emergencyGovernance) => {
-          return (
-            <EGovCard
-              key={emergencyGovernance.id}
-              emergencyGovernance={emergencyGovernance}
-              dropProposalHandler={dropProposalHandler}
-            />
-          )
-        })}
+        {paginatedItemsListHistory.length ? (
+          <>
+            {paginatedItemsListHistory.map((emergencyGovernance) => {
+              return (
+                <EGovCard
+                  key={emergencyGovernance.id}
+                  emergencyGovernance={emergencyGovernance}
+                  dropProposalHandler={dropProposalHandler}
+                />
+              )
+            })}
 
-        <Pagination itemsCount={historyItems.length} listName={EMERGENCY_GOVERNANCE_HISTORY_LIST_NAME} />
+            <Pagination itemsCount={historyItems.length} listName={EMERGENCY_GOVERNANCE_HISTORY_LIST_NAME} />
+          </>
+        ) : (
+          <EmptyContainer
+            style={{
+              paddingTop: '80px',
+            }}
+          >
+            <img src="/images/not-found.svg" alt=" No emergency history to show" />
+            <figcaption> No items to show</figcaption>
+          </EmptyContainer>
+        )}
       </EmergencyGovernHistory>
     </>
   )

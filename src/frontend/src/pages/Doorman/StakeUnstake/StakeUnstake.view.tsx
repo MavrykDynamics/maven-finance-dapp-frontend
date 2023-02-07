@@ -1,16 +1,15 @@
 // view
 import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
 import { ACTION_PRIMARY, ACTION_SECONDARY } from '../../../app/App.components/Button/Button.constants'
 import { Input } from '../../../app/App.components/Input/Input.controller'
 import Icon from '../../../app/App.components/Icon/Icon.view'
-import { StakeUnstakeForm, StakeUnstakeFormInputStatus } from '../../../utils/TypesAndInterfaces/Forms'
 // helpers
-import { isValidNumberValue, mathRoundTwoDigit, validateFormAndThrowErrors } from '../../../utils/validatorFunctions'
+import { isValidNumberValue, mathRoundTwoDigit } from '../../../utils/validatorFunctions'
 import { setExitFeeAmount } from '../ExitFeeModal/ExitFeeModal.actions'
 
 // style
@@ -30,6 +29,7 @@ import {
   StakeUnstakeCards,
 } from './StakeUnstake.style'
 import { rewardsCompound } from '../Doorman.actions'
+import { InputStatusType, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 
 type StakeUnstakeViewProps = {
   stakeCallback: (amount: number) => void
@@ -42,90 +42,88 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback }: StakeUnstak
   const {
     accountPkh,
     user: {
-      myDoormanRewardsData: { myAvailableDoormanRewards },
-      mySatelliteRewardsData: { myAvailableSatelliteRewards },
       myMvkTokenBalance,
       mySMvkTokenBalance,
+      userRewardsToDate: { farmRewards, doormanRewards },
+      myDoormanRewardsData: { myAvailableDoormanRewards },
+      mySatelliteRewardsData: { myAvailableSatelliteRewards },
     },
   } = useSelector((state: State) => state.wallet)
-  const { amount, showing } = useSelector((state: State) => state.exitFeeModal)
-  const [inputAmount, setInputAmount] = useState<StakeUnstakeForm>({ amount: 0 })
-  const [stakeUnstakeInputStatus, setStakeUnstakeInputStatus] = useState<StakeUnstakeFormInputStatus>({ amount: '' })
-  const [stakeUnstakeValueError, setStakeUnstakeValueError] = useState('')
+  const [inputData, setInputData] = useState<{ amount: string; validation: InputStatusType; errorMessage: string }>({
+    amount: '0',
+    validation: '',
+    errorMessage: '',
+  })
 
-  const exchangeValue = exchangeRate && inputAmount.amount ? inputAmount.amount * exchangeRate : 0
-  const earnedValue = myAvailableSatelliteRewards + myAvailableDoormanRewards
+  const exchangeValue = exchangeRate && inputData.amount ? Number(inputData.amount) * exchangeRate : 0
+  const earnedValue = farmRewards + doormanRewards
 
-  const inputAmountValue = +inputAmount.amount
   const userHasRewards = myAvailableDoormanRewards + myAvailableSatelliteRewards > 2
-  const isSuccess = stakeUnstakeInputStatus.amount === 'success'
 
   const onUseMaxClick = (actionType: string) => {
     switch (actionType) {
       case 'STAKE':
-        setInputAmount({ amount: mathRoundTwoDigit(myMvkTokenBalance) })
+        setInputData({
+          ...inputData,
+          amount: String(mathRoundTwoDigit(myMvkTokenBalance)),
+          validation: INPUT_STATUS_SUCCESS,
+        })
         dispatch(setExitFeeAmount(Number(mathRoundTwoDigit(myMvkTokenBalance))))
         break
       case 'UNSTAKE':
       default:
-        setInputAmount({ amount: mathRoundTwoDigit(mySMvkTokenBalance) })
+        setInputData({
+          ...inputData,
+          amount: String(mathRoundTwoDigit(mySMvkTokenBalance)),
+          validation: INPUT_STATUS_SUCCESS,
+        })
         dispatch(setExitFeeAmount(Number(mathRoundTwoDigit(mySMvkTokenBalance))))
         break
     }
   }
 
-  const checkInputIsOk = (value: number | '') => {
-    let validityCheckResult = false
-    setStakeUnstakeValueError('')
-    if (accountPkh) {
-      validityCheckResult = isValidNumberValue(
-        +value,
-        1,
-        Math.max(Number(myMvkTokenBalance), Number(mySMvkTokenBalance)),
-      )
-    } else {
-      validityCheckResult = isValidNumberValue(+value, 1)
-    }
-
-    const status = value === '' ? '' : validityCheckResult ? 'success' : 'error'
-    setStakeUnstakeInputStatus({ amount: status })
-  }
-
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = mathRoundTwoDigit(e.target.value)
+    const status = accountPkh
+      ? isValidNumberValue(Number(e.target.value), 1, Math.max(Number(myMvkTokenBalance), Number(mySMvkTokenBalance)))
+      : isValidNumberValue(Number(e.target.value), 1)
 
-    checkInputIsOk(Number(value))
-    setInputAmount({ amount: value })
+    const validationStatus = status ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
+
+    if (validationStatus === INPUT_STATUS_ERROR && e.target.value !== '') return
+
+    setInputData({ ...inputData, amount: e.target.value, validation: validationStatus })
   }
 
-  useEffect(() => {
-    checkInputIsOk(amount || '')
-    setInputAmount({ amount: mathRoundTwoDigit(amount) })
-  }, [amount, accountPkh, showing])
+  const handleStake = () => {
+    const canStakeAmount = Number(inputData.amount) <= Number(myMvkTokenBalance)
 
-  const handleStakeUnstakeClick = (actionType: string) => {
-    let validityCheckResult = isValidNumberValue(inputAmountValue, 1)
-    if (!validityCheckResult) setStakeUnstakeValueError('Stake/Unstake value must be 1 or more')
-    if (accountPkh) {
-      if (actionType === 'STAKE') {
-        validityCheckResult = isValidNumberValue(inputAmountValue, 1, Number(myMvkTokenBalance))
-      } else {
-        validityCheckResult = isValidNumberValue(inputAmountValue, 1, Number(mySMvkTokenBalance))
-      }
+    if (canStakeAmount) {
+      setInputData({
+        ...inputData,
+        errorMessage: '',
+      })
+      stakeCallback(Number(inputData.amount))
+    } else {
+      setInputData({
+        ...inputData,
+        errorMessage: "You don't have enought MVK to stake",
+      })
     }
-    setStakeUnstakeInputStatus({ amount: validityCheckResult ? 'success' : 'error' })
+  }
+  const handleUnStake = () => {
+    const canUnstakeAmount = Number(inputData.amount) <= Number(mySMvkTokenBalance)
 
-    let inputIsValid = false
-    switch (actionType) {
-      case 'STAKE':
-        inputIsValid = validateFormAndThrowErrors(dispatch, { amount: isSuccess })
-        if (inputIsValid) stakeCallback(inputAmountValue)
-        break
-      case 'UNSTAKE':
-      default:
-        inputIsValid = validateFormAndThrowErrors(dispatch, { amount: isSuccess })
-        if (inputIsValid) unstakeCallback(inputAmountValue)
-        break
+    if (canUnstakeAmount) {
+      setInputData({
+        ...inputData,
+        errorMessage: '',
+      })
+      unstakeCallback(Number(inputData.amount))
+    } else {
+      setInputData({
+        ...inputData,
+        errorMessage: "You don't have enought sMVK to unstake",
+      })
     }
   }
 
@@ -135,24 +133,15 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback }: StakeUnstak
     }
   }
 
-  const handleFocus = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value
-
-    if (+value === 0) {
-      setInputAmount({ amount: '' })
+  const handleFocus = () => {
+    if (inputData.amount === '0') {
+      setInputData({ ...inputData, amount: '' })
     }
   }
 
-  const handleBlur = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value
-
-    if (+value === 0) {
-      checkInputIsOk('')
-    }
-
-    if (value === '') {
-      checkInputIsOk('')
-      setInputAmount({ amount: 0 })
+  const handleBlur = () => {
+    if (inputData.amount === '') {
+      setInputData({ ...inputData, amount: '0' })
     }
   }
 
@@ -173,30 +162,25 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback }: StakeUnstak
             </StakeUnstakeInputLabels>
             <Input
               type={'number'}
-              placeholder={String(inputAmount.amount)}
+              placeholder={inputData.amount}
               onChange={onInputChange}
               onBlur={handleBlur}
               onFocus={handleFocus}
-              value={inputAmount.amount}
+              value={inputData.amount}
               pinnedText={'MVK'}
-              inputStatus={stakeUnstakeInputStatus.amount}
-              errorMessage={stakeUnstakeValueError}
+              inputStatus={inputData.validation}
+              errorMessage={inputData.errorMessage}
             />
             <StakeUnstakeRate>
-              <CommaNumber value={Number(exchangeValue ? inputAmount.amount : 1)} endingText={'MVK'} />
+              <CommaNumber value={Number(exchangeValue ? inputData.amount : 1)} endingText={'MVK'} />
               <span>&nbsp;= $</span>
               <CommaNumber value={Number(exchangeValue || exchangeRate)} endingText={''} />
             </StakeUnstakeRate>
           </StakeUnstakeInputColumn>
         </StakeUnstakeInputGrid>
         <StakeUnstakeButtonGrid className={`${userHasRewards ? 'compound' : ''}`}>
-          <Button text="Stake" kind={ACTION_PRIMARY} icon="in" onClick={() => handleStakeUnstakeClick('STAKE')} />
-          <Button
-            text="Unstake"
-            icon="out"
-            kind={ACTION_SECONDARY}
-            onClick={() => handleStakeUnstakeClick('UNSTAKE')}
-          />
+          <Button text="Stake" kind={ACTION_PRIMARY} icon="in" onClick={handleStake} />
+          <Button text="Unstake" icon="out" kind={ACTION_SECONDARY} onClick={handleUnStake} />
           {userHasRewards ? (
             <Button text="Compound" className="fill" kind={ACTION_PRIMARY} icon="compound" onClick={handleCompound} />
           ) : null}

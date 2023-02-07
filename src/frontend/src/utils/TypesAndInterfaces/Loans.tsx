@@ -5,19 +5,88 @@ import { Lending_Controller } from 'utils/generated/graphqlTypes'
 export type LoansGQL = Omit<Lending_Controller, '__typename'>
 export type LoansStorage = Awaited<ReturnType<typeof normalizeLoans>>
 
-export type LoanTokenType = {
-  loanTokenData: {
-    name: string
-    originalName: string
-    symbol?: string
-    decimals: number
-    icon?: string
-    address: string
-    rate: number
-    tokenType: 'tez' | 'fa12' | 'fa2'
-    id: number
-    userBalance: number
-  }
+export type LoanTokenType = 'tez' | 'fa12' | 'fa2'
+
+export type BaseLoansAssetDataType = {
+  gqlName: string
+  name: string
+  rate: number
+  decimals: number
+  id: number
+  symbol: string
+  icon: string
+}
+
+export type LoansAssetDataType = BaseLoansAssetDataType & {
+  userBalance: number
+  tokenType: LoanTokenType
+}
+
+export type CollateralType = BaseLoansAssetDataType & {
+  amount: number
+  collateralShare?: number
+}
+
+export type LoansChartsDataType = {
+  totalBorrowed: number
+  borrowingChartData: Array<ChartPlotType>
+  totalLended: number
+  lendingChartData: Array<ChartPlotType>
+}
+
+export type LendingItemType = {
+  lendValue: number
+  interestEarned: number
+  mBalance: number
+} | null
+
+export type AvaliableCollateralType = LoansAssetDataType & {
+  address: string
+  isProtected: boolean
+  tokenType: 'tez' | 'fa12' | 'fa2'
+}
+
+export type XtzBakerType = {
+  logo: string
+  name: string
+  address: string
+  fee: number
+  yield: number
+  efficiency: number
+  freespace: number
+}
+
+export type UserLendObjType = {
+  icon: string
+  amount: number
+  id: number
+  annualPecentage: number
+  earned: number
+  operationHash: string
+}
+
+export type LoansVaultType = {
+  borrowedAsset: LoansAssetDataType
+  collateralData: Array<CollateralType>
+  borrowedAmount: number
+  collateralBalance: number
+  collateralRatio: number
+  borrowCapacity: number
+  apr: number
+  fee: number
+  repayFee: number
+  address: string
+  vaultId: number
+  xtzDelegatedTo: string | null
+  operators?: Array<string>
+  sMVKDelegatedTo?: string
+  levelOfEarly?: number
+  levelOfLate?: number
+  depositors?: Array<string>
+}
+
+export type LoanMarketType = {
+  loanTokenData: LoansAssetDataType & { address: string }
   transactionHistory: Array<{
     descr: string | null
     amount: number
@@ -27,8 +96,8 @@ export type LoanTokenType = {
     tokenSymbol: string | undefined
   }>
   lendingItem: LendingItemType
-  myBorrowingList: Array<BorrowingData>
-  permissionedBorrowingList: Array<BorrowingData>
+  myBorrowingList: Array<LoansVaultType>
+  permissionedBorrowingList: Array<LoansVaultType>
   utilisationRate: number
   borrowers: number
   suppliers: number
@@ -45,86 +114,4 @@ export type LoanTokenType = {
   reserveAmount: number
   lending24hVolume: number
   borrowing24hVolume: number
-}
-
-export type LoansChartsDataType = {
-  totalBorrowed: number
-  borrowingChartData: Array<ChartPlotType>
-  totalLended: number
-  lendingChartData: Array<ChartPlotType>
-}
-
-export type LendingItemType = {
-  lendValue: number
-  interestEarned: number
-  loanAssetWalletBalance: number
-  mBalance: number
-} | null
-
-export type AvaliableCollateralType = {
-  id: number
-  userBalance: number
-  assetDecimals: number
-  assetRate: number
-  assetName: string
-  originalName: string
-  assetSymbol: string
-  assetIcon: string
-  assetAddress: string
-  isProtected: boolean
-  tokenType: 'tez' | 'fa12' | 'fa2'
-}
-
-export type XtzBakerType = {
-  rank: number
-  logo: string
-  name: string
-  address: string
-  fee: number
-  lifetime: number
-  yield: number
-  efficiency: number
-  efficiency_last10cycle: number
-  freespace: number
-  reliability_points: number
-}
-
-export type BorrowingData = {
-  borrowedAsset: {
-    assetSymbol?: string
-    assetName?: string
-    userBalance: number
-    assetIcon?: string
-    amtBorrowed: number
-    assetRate: number
-    collateralBalance: number
-    collateralUtilization: number
-    apr: number
-    fee: number
-  }
-  collateralData: Array<{
-    assetSymbol?: string
-    assetIcon?: string
-    balance: number
-    assetRate: number
-    maxWithdraw: number
-    collateralShare?: number
-  }>
-  address: string
-  xtzDelegatedTo: string | null
-  operators?: Array<string>
-  sMVKDelegatedTo?: string
-  levelOfEarly?: number
-  levelOfLate?: number
-  depositors?: Array<string>
-}
-
-export type UserLendObjType = {
-  assetIcon: string
-  assetName: string
-  amount: number
-  id: number
-  annualPecentage: number
-  earned: number
-  operationHash: string
 }

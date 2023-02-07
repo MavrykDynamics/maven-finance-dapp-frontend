@@ -1,5 +1,5 @@
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
-import { BorrowingData } from 'utils/TypesAndInterfaces/Loans'
+import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
 
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { BorrowingExpandCard } from './BorrowindExpandCard'
@@ -7,13 +7,19 @@ import { BorrowingExpandCard } from './BorrowindExpandCard'
 import { EmptyContainer } from 'app/App.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { LoansTabStyled } from './LoansComponents.style'
+import { useSelector } from 'react-redux'
+import { State } from 'reducers'
 
 type PermissionVaultsPropsType = {
-  permissionVaults: Array<BorrowingData>
+  permissionVaults: Array<LoansVaultType>
   lendingControllerAddress: string
 }
 
 export const PermissionVaults = ({ permissionVaults, lendingControllerAddress }: PermissionVaultsPropsType) => {
+  const {
+    config: { DAOFee },
+  } = useSelector((state: State) => state.loans)
+
   return (
     <LoansTabStyled>
       <GovRightContainerTitleArea>
@@ -23,7 +29,7 @@ export const PermissionVaults = ({ permissionVaults, lendingControllerAddress }:
       {permissionVaults.length ? (
         <div className="list-wrapper">
           {permissionVaults.map((item) => {
-            return <BorrowingExpandCard {...item} />
+            return <BorrowingExpandCard {...item} DAOFee={DAOFee} />
           })}
         </div>
       ) : (

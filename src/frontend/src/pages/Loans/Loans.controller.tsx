@@ -8,7 +8,6 @@ import { Chart } from 'app/App.components/Chart/Chart.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import Icon from 'app/App.components/Icon/Icon.view'
 
-import { getLoansStorage } from './Loans.actions'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { BORROW_TAB_ID, LEND_TAB_ID } from './Loans.const'
 
@@ -29,20 +28,24 @@ import { EmptyContainer } from 'app/App.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import { getLoansStorage } from './Actions/getLoansData.actions'
+import { useEffect } from 'react'
 
 export const Loans = () => {
   const dispatch = useDispatch()
-  const { accountPkh } = useSelector((state: State) => state.wallet)
-  const { isFetched } = useSelector((state: State) => state.loans)
+  const { isDataLoaded, loanTokens, chartsData } = useSelector((state: State) => state.loans)
 
   const { isLoading } = useDataLoader(async () => {
     try {
-      if (!isFetched) {
+      if (!isDataLoaded) {
         await dispatch(getLoansStorage())
       }
     } catch (e) {}
-  }, [accountPkh])
-  const { loanTokens, chartsData } = useSelector((state: State) => state.loans)
+  }, [])
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
 
   const lendingPart = (
     <div className="chart-wrapper">
@@ -122,7 +125,7 @@ export const Loans = () => {
             </GovRightContainerTitleArea>
             {loanTokens.map((loanAsset) => {
               const {
-                loanTokenData: { name, symbol, icon, rate, originalName },
+                loanTokenData: { name, symbol, icon, rate },
                 utilisationRate,
                 availableLiquidity,
                 borrowers,
@@ -147,7 +150,7 @@ export const Loans = () => {
                     ) : (
                       <Icon id={'noImage'} />
                     )}
-                    <div className="name">{originalName === 'tez' ? 'XTZ' : originalName.toUpperCase()}</div>
+                    <div className="name">{symbol}</div>
                     {rate ? (
                       <div className="rate">
                         <CommaNumber beginningText="$" value={rate} decimalsToShow={4} showDecimal />
@@ -186,14 +189,8 @@ export const Loans = () => {
                         <div className="name">Utilization Rate</div>
                         <CommaNumber value={utilisationRate} className="value" endingText="%" />
                       </ThreeLevelListItem>
-                      <Link to={`/loans/${symbol}/${LEND_TAB_ID}`} className={`${accountPkh ? '' : 'disabled-link'}`}>
-                        <Button
-                          text="Lend"
-                          kind={ACTION_PRIMARY}
-                          iconAfter
-                          disabled={Boolean(!accountPkh)}
-                          icon="arrowRight"
-                        />
+                      <Link to={`/loans/${symbol}/${LEND_TAB_ID}`}>
+                        <Button text="Lend" kind={ACTION_PRIMARY} iconAfter icon="arrowRight" />
                       </Link>
                     </div>
                     <div className="row">
@@ -230,14 +227,8 @@ export const Loans = () => {
                           beginningText="$"
                         />
                       </ThreeLevelListItem>
-                      <Link to={`/loans/${symbol}/${BORROW_TAB_ID}`} className={`${accountPkh ? '' : 'disabled-link'}`}>
-                        <Button
-                          text="Borrow"
-                          kind={ACTION_PRIMARY}
-                          disabled={Boolean(!accountPkh)}
-                          iconAfter
-                          icon="arrowRight"
-                        />
+                      <Link to={`/loans/${symbol}/${BORROW_TAB_ID}`}>
+                        <Button text="Borrow" kind={ACTION_PRIMARY} iconAfter icon="arrowRight" />
                       </Link>
                     </div>
                   </div>

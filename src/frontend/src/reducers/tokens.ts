@@ -9,8 +9,8 @@ import {
   GET_TOKENS_PRICES,
   GET_WHITELIST_TOKENS,
 } from './actions/dipDupActions.actions'
-import { GET_AVALIABLE_COLLATERALS } from 'pages/Loans/Loans.actions'
 import { AvaliableCollateralType } from 'utils/TypesAndInterfaces/Loans'
+import { GET_AVALIABLE_COLLATERALS } from 'pages/Loans/Actions/getLoansData.actions'
 
 export type TokensType = {
   dipDupTokens: Array<DipDupTokensGraphQl>

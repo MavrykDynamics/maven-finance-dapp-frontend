@@ -1,36 +1,105 @@
+import { getAssetMetadata } from 'pages/Loans/Loans.helpers'
 import { State } from 'reducers'
 import { fetchRateBySymbols } from 'reducers/actions/dipDupActions.actions'
+import { calcWithoutMu } from 'utils/calcFunctions'
 import { Lending_Controller_Collateral_Token, Mavryk_User } from 'utils/generated/graphqlTypes'
 import { LoansGQL, AvaliableCollateralType } from 'utils/TypesAndInterfaces/Loans'
 import BakersMocked from './bakers.json'
 import { isTezosAsset } from './Loans.helpers'
+
+export type BakeryDelegateDataType = {
+  balance: number
+  delegatedBalance: number
+}
+
+export const getBakeryDelegateData = async (bakerAddress: string): Promise<BakeryDelegateDataType> => {
+  try {
+    const response = await fetch(`https://api.tzkt.io/v1/delegates/${bakerAddress}`)
+    const result = await response.json()
+
+    return result
+  } catch {
+    return {
+      balance: -1,
+      delegatedBalance: -1,
+    }
+  }
+}
+
+export const getFreeSpace = (data: BakeryDelegateDataType) => {
+  if (data.balance === -1) return [-1]
+
+  const balance = data.balance
+  const totalAmountOfSpace = balance * 9
+  const freeSpace = totalAmountOfSpace - data.delegatedBalance
+  const divededByMu = calcWithoutMu(freeSpace).toFixed(2)
+
+  return [Number(divededByMu)]
+}
 
 export const getXTZBakers = async () => {
   try {
     // TODO: add dynamic fetching
     // const bakers = await fetch('https://api.tezos-nodes.com/v1/bakers')
 
-    return process.env.REACT_APP_NETWORK === 'ghostnet'
-      ? [
-          {
-            rank: 1,
-            logo: 'https://tezos-nodes.com/storage/images/BBOZYYLQpLfTzbXzu0jvk4CublJzMgLM8GNz152M.png',
-            logo_min: 'https://tezos-nodes.com/storage/images/U8vdnpeU0LwtQCLge5KjVMBheLBUhNBi2v7lc4zy.png',
-            name: 'MyTezosBaking',
-            address: 'tz1bQMn5xYFbX6geRxqvuAiTywsCtNywawxH',
-            fee: 0.14,
-            lifetime: 500,
-            yield: 4.91,
-            efficiency: 99.56,
-            efficiency_last10cycle: 99.93,
-            freespace: 115494,
-            total_points: 75,
-            deletation_status: true,
-            freespace_min: '115.49 k XTZ',
-            pro_status: true,
-          },
-        ]
-      : BakersMocked
+    const otherBakers =
+      process.env.REACT_APP_NETWORK === 'ghostnet'
+        ? [
+            {
+              logo: 'https://tezos-nodes.com/storage/images/BBOZYYLQpLfTzbXzu0jvk4CublJzMgLM8GNz152M.png',
+              name: 'Puss in Buts',
+              address: 'tz1bQMn5xYFbX6geRxqvuAiTywsCtNywawxH',
+              fee: 0.14,
+              yield: 4.91,
+              freespace: 115494,
+            },
+            {
+              logo: 'https://services.tzkt.io/v1/avatars/tz1eQmVDH438N6WN4CQSWJLVDFqpFfkZvt1R',
+              name: 'Lil Shrek',
+              address: 'tz1RuHDSj9P7mNNhfKxsyLGRDahTX5QD1DdP',
+              fee: 0.14,
+              yield: 4.91,
+              freespace: 115494,
+            },
+            {
+              logo: 'https://services.tzkt.io/v1/avatars/tz1RuHDSj9P7mNNhfKxsyLGRDahTX5QD1DdP',
+              name: "Shrek's donkey",
+              address: 'tz1Qf1pSbJzMN4VtGFfVJRgbXhBksRv36TxW',
+              fee: 0.14,
+              yield: 4.91,
+              freespace: 115494,
+            },
+          ]
+        : BakersMocked
+
+    const values = await Promise.all([
+      getBakeryDelegateData('tz1ZY5ug2KcAiaVfxhDKtKLx8U5zEgsxgdjV'),
+      getBakeryDelegateData('tz1NKnczKg77PwF5NxrRohjT5j4PmPXw6hhL'),
+    ])
+
+    return {
+      otherBakers,
+      dao: {
+        isDisabled: process.env.REACT_APP_NETWORK !== 'mainnet',
+        logo: 'https://tezos-nodes.com/storage/images/BBOZYYLQpLfTzbXzu0jvk4CublJzMgLM8GNz152M.png',
+        name: 'The DAO',
+        address: 'tz1ZY5ug2KcAiaVfxhDKtKLx8U5zEgsxgdjV',
+        fee: 10,
+        yield: 5.5,
+        freespace: getFreeSpace(values[0] as BakeryDelegateDataType),
+        description: `The Mavryk DAO Bakery belongs to the Mavryk Finance network. A small portion of the earnings are used to pay for the Decentralized Oracle’s transaction fees. The DAO Bakery is operated by Mavryk Dynamics on behalf of the Mavryk Finance network.`,
+      },
+      mavrykDynamics: {
+        isDisabled: process.env.REACT_APP_NETWORK !== 'mainnet',
+        logo: 'https://tezos-nodes.com/storage/images/BBOZYYLQpLfTzbXzu0jvk4CublJzMgLM8GNz152M.png',
+        name: 'Mavryk Dynamics',
+        address: 'tz1NKnczKg77PwF5NxrRohjT5j4PmPXw6hhL',
+        fee: 10,
+        yield: 5.5,
+        freespace: getFreeSpace(values[1] as BakeryDelegateDataType),
+        description: `The Mavryk Dynamics Bakery belongs to one of the core teams contributing to Mavryk Finance. Delegating to this Bakery contributes to the further development of Mavryk Finance.`,
+      },
+    }
   } catch (e) {
     console.log('getXTZBakers fething error', e)
     return []
@@ -83,9 +152,14 @@ export const getCollateralTokens = async (
       ) => {
         const acc = await promiseAcc
         const isXTZ = isTezosAsset(token_name)
-        const assetMetadata = dipDupTokens?.find(({ contract }) => contract === token_address)?.metadata
 
-        const dataFromFeed = feeds.find(({ address }) => address === oracle_id)
+        const assetMetadata = getAssetMetadata({
+          tokenName: token_name,
+          tokenAddress: token_address,
+          dipDupTokens,
+          feeds,
+          oracleId: String(oracle_id),
+        })
 
         const lendingAssetBalance = isXTZ
           ? await (
@@ -103,35 +177,10 @@ export const getCollateralTokens = async (
             : Number(lendingAssetBalance?.[0]?.balance ?? 0) /
               10 ** Number(lendingAssetBalance?.[0]?.token?.metadata?.decimals ?? 0)) ?? 0
 
-        const rate = Number(dataFromFeed?.last_completed_data) / 10 ** Number(dataFromFeed?.decimals)
-
-        if (isXTZ) {
-          acc.push({
-            id,
-            assetName: 'XTZ',
-            originalName: token_name,
-            assetSymbol: 'tez',
-            assetRate: rate ?? 0.25,
-            userBalance,
-            assetIcon: '/images/tezos.png',
-            assetDecimals: assetMetadata?.decimals ? Number(assetMetadata.decimals) : 6,
-            assetAddress: token_address,
-            tokenType: token_contract_standard as 'tez' | 'fa12' | 'fa2',
-            isProtected,
-          })
-        }
-
         if (assetMetadata) {
           acc.push({
-            id,
-            assetName: assetMetadata.name,
-            originalName: token_name,
-            assetSymbol: assetMetadata.symbol,
-            assetRate: rate ?? 0.25,
+            ...assetMetadata,
             userBalance,
-            assetIcon: token_name === 'eurl' ? '/images/eurl.png' : assetMetadata.icon ?? dataFromFeed?.icon,
-            assetDecimals: assetMetadata?.decimals ? Number(assetMetadata.decimals) : 6,
-            assetAddress: token_address,
             tokenType: token_contract_standard as 'tez' | 'fa12' | 'fa2',
             isProtected,
           })

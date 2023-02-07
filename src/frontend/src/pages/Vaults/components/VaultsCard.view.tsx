@@ -31,6 +31,7 @@ import { CYAN } from 'app/App.components/TzAddress/TzAddress.constants'
 import { vaultsStatuses } from '../Vaults.consts'
 import { getTimestampByLevel } from 'pages/Governance/Governance.actions'
 import { loansPopupsContext } from 'pages/Loans/Components/Modals/LoansModals.provider'
+import { calculateCollateralShare } from '../calcFunctionsForVault'
 
 const findStatusInfo = (status: string) => {
   switch (status) {
@@ -77,7 +78,7 @@ const findFooterText = (status: string, statusColor: StatusFlagStyle, timestamp?
     case vaultsStatuses.MARK:
       return (
         <p>
-          This vault is <span className={statusColor}>ready to arm</span> and can be marked for the next {timer}
+          This vault is <span className={statusColor}>ready to arm</span> and can be marked for liquidation.
         </p>
       )
 
@@ -88,7 +89,6 @@ const findFooterText = (status: string, statusColor: StatusFlagStyle, timestamp?
 
 const borrowingCardOptions: BorrowingCardOptions = {
   reverseColumns: true,
-  customTableColumn: 'collateralShare',
 }
 
 type Props = VaultType & {
@@ -105,6 +105,7 @@ export const VaultsCard = (props: Props) => {
     levelOfLate,
     collateralData,
     isOwner,
+    liquidationMax,
     handleMarkForLiquidation,
   } = props
 
@@ -115,6 +116,8 @@ export const VaultsCard = (props: Props) => {
   const statusColor = findStatusInfo(status).color as StatusFlagStyle
   const statusText = findStatusInfo(status).text
   const footerText = findFooterText(status, statusColor, timerTimestamp)
+
+  const collateralTotalBalance = collateralData[collateralData.length - 1]?.amount
 
   const isActiveFooter =
     status === vaultsStatuses.LIQUIDATABLE || status === vaultsStatuses.GRACE_PERIOD || status === vaultsStatuses.MARK
@@ -134,7 +137,7 @@ export const VaultsCard = (props: Props) => {
   }
 
   const liquidateModalHandler = () => {
-    openLiquidateVaultPopup({...props})
+    openLiquidateVaultPopup({ ...props })
   }
 
   useEffect(() => {
@@ -188,7 +191,7 @@ export const VaultsCard = (props: Props) => {
                 <Icon id="info" className="info-icon" />
               </div>
 
-              <CommaNumber value={400_999_000} beginningText="$" className="value" />
+              <CommaNumber value={400_999_000} decimalsToShow={2} beginningText="$" className="value" />
             </div>
 
             <div>
@@ -197,7 +200,7 @@ export const VaultsCard = (props: Props) => {
                 <Icon id="info" className="info-icon" />
               </div>
 
-              <CommaNumber value={400_999_000} beginningText="$" className="value" />
+              <CommaNumber value={liquidationMax} decimalsToShow={2} beginningText="$" className="value" />
             </div>
           </div>
         </div>
@@ -216,46 +219,50 @@ export const VaultsCard = (props: Props) => {
               </TableHeader>
 
               <TableBody>
-                {collateralData.map(({ assetSymbol, assetIcon, assetRate, collateralShare, balance }, index) => {
+                {collateralData.map(({ symbol, icon, rate, amount }, index) => {
                   const columnWidth = '33%'
                   const isTotalRow = collateralData.length - 1 === index
+
+                  const collateralShare = isTotalRow
+                    ? 100
+                    : calculateCollateralShare(amount * rate, collateralTotalBalance)
+
                   if (isTotalRow && collateralData.length < 3) return null
 
                   return (
-                    <TableRow rowHeight={44} key={assetSymbol + '-' + index}>
+                    <TableRow rowHeight={44} key={symbol + '-' + index}>
                       <TableCell width={columnWidth} className="vert-middle">
                         {isTotalRow ? (
                           'Total'
                         ) : (
                           <div className="cell-content row">
-                            {assetIcon ? (
+                            {icon ? (
                               <div className="img-wrapper">
-                                <img src={assetIcon} alt={`${assetSymbol} logo`} />
+                                <img src={icon} alt={`${symbol} logo`} />
                               </div>
                             ) : (
                               <div className="no-icon">
                                 <Icon id="noImage" />
                               </div>
                             )}
-                            {assetSymbol}
+                            {symbol}
                           </div>
                         )}
                       </TableCell>
 
                       <TableCell width={columnWidth}>
                         <div className="cell-content">
-                          <CommaNumber value={balance} className="balance" />
-                          {assetRate ? (
-                            <CommaNumber value={balance * assetRate} beginningText="~$" className="rate" />
-                          ) : null}
+                          <CommaNumber value={amount} decimalsToShow={2} className="balance" />
+                          {rate ? <CommaNumber value={amount * rate} decimalsToShow={2} beginningText="~$" className="rate" /> : null}
                         </div>
                       </TableCell>
 
                       <TableCell width={columnWidth}>
-                        <div className="cell-content">{collateralShare}%</div>
+                        <CommaNumber value={isTotalRow ? 100 : collateralShare} decimalsToShow={2} endingText='%' />
                       </TableCell>
                     </TableRow>
-                )})}
+                  )
+                })}
               </TableBody>
             </Table>
           </div>
@@ -270,9 +277,7 @@ export const VaultsCard = (props: Props) => {
             text={isMarkStatus ? 'Mark for Liquidation' : 'Liquidate Vault'}
             kind={ACTION_PRIMARY}
             onClick={() => {
-              return isMarkStatus
-                ? handleMarkForLiquidation(vaultId, ownerId)
-                : liquidateModalHandler()
+              return isMarkStatus ? handleMarkForLiquidation(vaultId, ownerId) : liquidateModalHandler()
             }}
             disabled={vaultsStatuses.GRACE_PERIOD === status}
           />
@@ -291,6 +296,7 @@ export const VaultsCard = (props: Props) => {
           getExpandedStatus={setExpanded}
           isOwner
           options={borrowingCardOptions}
+          DAOFee={0}
         />
       ) : (
         <BorrowingExpandCard
@@ -299,6 +305,7 @@ export const VaultsCard = (props: Props) => {
           headerSufix={headerSufix}
           getExpandedStatus={setExpanded}
           options={borrowingCardOptions}
+          DAOFee={0}
         >
           {generalExpand}
         </BorrowingExpandCard>

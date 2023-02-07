@@ -31,6 +31,7 @@ import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import Checkbox from 'app/App.components/Checkbox/Checkbox.view'
 import { DropDown } from 'app/App.components/DropDown/DropDown.controller'
 import { calcWithoutPrecision } from 'utils/calcFunctions'
+import { getVoteText } from 'pages/Satellites/Satellites.helpers'
 
 type ProposalsViewProps = {
   listTitle: string
@@ -203,7 +204,6 @@ export const ProposalsView = ({
           </GovRightContainerTitleArea>
           {votersList.map(({ vote, address, name, avatar }) => {
             const status = vote === 1 ? ProposalStatus.EXECUTED : vote === 2 ? ProposalStatus.DEFEATED : undefined
-            const statusText = vote === 1 ? 'YES' : vote === 2 ? 'NO' : 'PASS'
             return (
               <VoterListItem>
                 <div className="left">
@@ -215,7 +215,7 @@ export const ProposalsView = ({
                     <TzAddress tzAddress={address} />
                   </div>
                 </div>
-                <ProposalStatusFlag status={status}>{statusText}</ProposalStatusFlag>
+                <ProposalStatusFlag status={status}>{getVoteText(vote)}</ProposalStatusFlag>
               </VoterListItem>
             )
           })}

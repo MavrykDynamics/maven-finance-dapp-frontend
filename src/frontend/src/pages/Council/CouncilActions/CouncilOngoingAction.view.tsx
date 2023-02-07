@@ -9,7 +9,7 @@ import { ACTION_SECONDARY } from 'app/App.components/Button/Button.constants'
 import { parseDate } from 'utils/time'
 import { getSeparateCamelCase } from '../../../utils/parse'
 import { scrollToFullView } from 'utils/scrollToFullView'
-import { bytesToString } from 'utils/bytesToString'
+import { bytesToString, BytesType, BYTES_ADDRESS_TYPE } from 'utils/bytesToString'
 
 // styles
 import { CouncilActionStyled } from '../Council.style' 
@@ -37,9 +37,9 @@ export function CouncilOngoingAction(props: Props) {
   }
 
   const findActionByName = useCallback(
-    (name: string) => {
+    (name: string, type?: BytesType) => {
       const foundField = parameters.find((item) => item.name === name)?.value
-      return foundField ? bytesToString(foundField) : ''
+      return foundField ? bytesToString(foundField, type) : ''
     }, [parameters],
   )
 
@@ -71,8 +71,8 @@ export function CouncilOngoingAction(props: Props) {
   if (isChangeCouncilMember || isAddCouncilMember) {
     const name = findActionByName(isChangeCouncilMember ? 'newCouncilMemberName' : 'councilMemberName')
     const website = findActionByName(isChangeCouncilMember ? 'newCouncilMemberWebsite' :'councilMemberWebsite')
-    const address = findActionByName(isChangeCouncilMember ? 'newCouncilMemberAddress' : 'councilMemberAddress')
-    const oldAddress = findActionByName('oldCouncilMemberAddress')
+    const address = findActionByName(isChangeCouncilMember ? 'newCouncilMemberAddress' : 'councilMemberAddress', BYTES_ADDRESS_TYPE)
+    const oldAddress = findActionByName('oldCouncilMemberAddress', BYTES_ADDRESS_TYPE)
     const image = findActionByName(isChangeCouncilMember ? 'newCouncilMemberImage' : 'councilMemberImage')
 
     bottomSection = (
@@ -129,7 +129,7 @@ export function CouncilOngoingAction(props: Props) {
   }
 
   if (isRemoveCouncilMember) {
-    const address = findActionByName('councilMemberAddress')
+    const address = findActionByName('councilMemberAddress', BYTES_ADDRESS_TYPE)
 
     bottomSection = (
       <>

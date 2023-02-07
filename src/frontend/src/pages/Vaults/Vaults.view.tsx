@@ -51,18 +51,18 @@ export const VaultsView = () => {
       {
         text: 'All Vaults',
         id: 1,
-        active: true,
+        active: tabsId.ALL === tabId,
         path: tabsId.ALL,
       },
       {
         text: 'My Vaults',
         id: 2,
-        active: false,
+        active: tabsId.MY === tabId,
         path: tabsId.MY,
         isDisabled: !accountPkh,
       },
     ],
-    [accountPkh],
+    [accountPkh, tabId],
   )
 
   const { isLoading } = useDataLoader(async () => {
@@ -77,7 +77,7 @@ export const VaultsView = () => {
   const assets = useMemo(() => getVaultAssets(vaultsMapper), [vaultsMapper])
 
   const currentListName = tabId === tabsId.ALL ? VAULTS_LIST_NAME : MY_VAULTS_LIST_NAME
-
+  const currentVaultsIds = tabId === tabsId.ALL ? allVaultsIds : myVaultsIds
   const currentPage = getPageNumber(search, currentListName)
 
   const handleChangeTabs = (id: number) => {
@@ -85,6 +85,7 @@ export const VaultsView = () => {
     if (!foundTab?.path) return
 
     history.replace(`${pathname}/${foundTab.path}`)
+    setVaultsIds(foundTab.path === tabsId.ALL ? allVaultsIds : myVaultsIds)
   }
 
   const paginatedVaultsList = useMemo(() => {
@@ -96,10 +97,6 @@ export const VaultsView = () => {
     dispatch(markForLiquidation(vaultId, vaultOwner))
   }
 
-  useEffect(() => {
-    setVaultsIds(tabId === tabsId.ALL ? allVaultsIds : myVaultsIds)
-  }, [allVaultsIds, myVaultsIds, tabId])
-
   return (
     <VaultsStyled>
       <TabSwitcher tabItems={tabsList} onClick={handleChangeTabs} className="tabSwitcher" />
@@ -107,7 +104,7 @@ export const VaultsView = () => {
       <VaultsSearchFilter
         assets={assets}
         vaultsMapper={vaultsMapper}
-        allVaultsIds={allVaultsIds}
+        currentVaultsIds={currentVaultsIds}
         setVaultsIds={setVaultsIds}
       />
 

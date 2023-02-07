@@ -1,18 +1,20 @@
-import { GET_LOANS_STORAGE, RESET_FETCHED } from 'pages/Loans/Loans.actions'
-import {
-  AvaliableCollateralType,
-  LoansChartsDataType,
-  LoansStorage,
-  XtzBakerType,
-} from 'utils/TypesAndInterfaces/Loans'
+import { GET_LOANS_STORAGE, CLEAR_LOANS_STORAGE } from 'pages/Loans/Actions/getLoansData.actions'
+import { LoansChartsDataType, LoansStorage, XtzBakerType } from 'utils/TypesAndInterfaces/Loans'
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
 
 export interface LoansState {
   loanTokens: LoansStorage['loanTokens']
   chartsData: LoansChartsDataType
   loansControllerAddress: string
-  xtzBakers: Array<XtzBakerType>
-  isFetched: boolean
+  xtzBakers: {
+    otherBakers: Array<XtzBakerType>
+    dao: (XtzBakerType & { description: string, isDisabled: boolean }) | null
+    mavrykDynamics: (XtzBakerType & { description: string, isDisabled: boolean }) | null
+  }
+  isDataLoaded: boolean
+  config: {
+    DAOFee: number
+  }
 }
 
 const loansDefaultState: LoansState = {
@@ -24,8 +26,15 @@ const loansDefaultState: LoansState = {
     totalLended: 0,
     lendingChartData: [],
   },
-  xtzBakers: [],
-  isFetched: false,
+  config: {
+    DAOFee: 0,
+  },
+  xtzBakers: {
+    otherBakers: [],
+    dao: null,
+    mavrykDynamics: null,
+  },
+  isDataLoaded: false,
 }
 
 export function loans(state = loansDefaultState, action: Action) {
@@ -34,12 +43,12 @@ export function loans(state = loansDefaultState, action: Action) {
       return {
         ...state,
         ...action.loansStorage,
-        isFetched: true,
+        isDataLoaded: true,
       }
-    case RESET_FETCHED:
+    case CLEAR_LOANS_STORAGE:
       return {
         ...state,
-        isFetched: false,
+        ...loansDefaultState,
       }
     default:
       return state

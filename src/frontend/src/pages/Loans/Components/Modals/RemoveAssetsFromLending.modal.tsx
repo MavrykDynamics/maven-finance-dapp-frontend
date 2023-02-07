@@ -11,8 +11,6 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { ACTION_PRIMARY, TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
 import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { silverColor } from 'styles'
-import { getAssetName } from 'pages/Loans/Loans.helpers'
-import { withdrawLendingAssetAction } from 'pages/Loans/Loans.actions'
 import {
   DEFAULT_LOANS_INPUT_VALUE,
   getOnBlurValue,
@@ -26,6 +24,7 @@ import { PopupContainer, PopupContainerWrapper } from 'app/App.components/Settin
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase } from './Modals.style'
+import { withdrawLendingAssetAction } from 'pages/Loans/Actions/lendingAsset.actions'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A238846&t=Sx2aEpp3ifrGxBtQ-0
 export const RemoveAssetsFromLending = ({
@@ -40,15 +39,14 @@ export const RemoveAssetsFromLending = ({
   const {
     userBalance = 0,
     mBalance = 0,
-    assetRate = 0,
-    assetName = '',
+    rate = 0,
+    symbol = '',
     currentLendedAmount = 0,
     decimals = 0,
     lendingAPY = 0,
-    assetIcon = '',
-    originalName = '',
+    icon = '',
+    gqlName = '',
   } = data ?? {}
-  const assetSymbol = originalName === 'tez' ? 'XTZ' : assetName ?? originalName.toUpperCase()
 
   useLockBodyScroll(show)
 
@@ -104,7 +102,7 @@ export const RemoveAssetsFromLending = ({
   }, [inputData.validationStatus, isActionLoading])
 
   const withdrawHandler = () =>
-    dispatch(withdrawLendingAssetAction(originalName, Number(inputData.amount) * 10 ** decimals, closePopup))
+    dispatch(withdrawLendingAssetAction(gqlName, Number(inputData.amount) * 10 ** decimals, closePopup))
 
   return (
     <PopupContainer onClick={closePopup} show={show}>
@@ -123,8 +121,8 @@ export const RemoveAssetsFromLending = ({
             <>
               <div className="lending-stats" style={{ marginBottom: '25px' }}>
                 <ThreeLevelListItem>
-                  <div className="name">m{assetSymbol} Balance</div>
-                  <CommaNumber value={mBalance} className="value" endingText={`m${assetSymbol}`} />
+                  <div className="name">m{symbol} Balance</div>
+                  <CommaNumber value={mBalance} className="value" endingText={`m${symbol}`} />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">
@@ -135,13 +133,13 @@ export const RemoveAssetsFromLending = ({
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">Wallet Balance</div>
-                  <CommaNumber value={userBalance * assetRate} className="value" beginningText="$" />
+                  <CommaNumber value={userBalance * rate} className="value" beginningText="$" />
                 </ThreeLevelListItem>
               </div>
 
               <div className="block-name">Select amount to remove</div>
               <Input
-                className={`${assetRate ? 'input-with-rate' : ''} large-input pinned-dropdown withdrawCollateralInput`}
+                className={`${rate ? 'input-with-rate' : ''} large-input pinned-dropdown withdrawCollateralInput`}
                 inputProps={{
                   value: inputData.amount,
                   type: 'number',
@@ -151,25 +149,25 @@ export const RemoveAssetsFromLending = ({
                 }}
                 settings={{
                   balance: userBalance,
-                  balanceAsset: assetSymbol,
+                  balanceAsset: symbol,
                   useMaxHandler: () =>
                     onChangeHandler(
                       String(Math.min(mBalance, currentLendedAmount)),
                       Math.min(mBalance, currentLendedAmount),
                     ),
                   inputStatus: inputData.validationStatus,
-                  convertedValue: Number(inputData.amount) * assetRate,
+                  convertedValue: Number(inputData.amount) * rate,
                 }}
               >
                 <InputPinnedTokenInfo>
-                  {assetIcon ? (
+                  {icon ? (
                     <div className="image-wrapper">
-                      <img src={assetIcon} alt={`${assetSymbol}-logo`} />
+                      <img src={icon} alt={`${symbol}-logo`} />
                     </div>
                   ) : (
                     <Icon id="noImage" />
                   )}{' '}
-                  {assetSymbol}
+                  {symbol}
                 </InputPinnedTokenInfo>
               </Input>
 
@@ -189,11 +187,11 @@ export const RemoveAssetsFromLending = ({
                 <div className="lending-stats">
                   <ThreeLevelListItem>
                     <div className="name">Amount Removed</div>
-                    <CommaNumber value={Number(inputData.amount)} className="value" endingText={assetSymbol} />
+                    <CommaNumber value={Number(inputData.amount)} className="value" endingText={symbol} />
                   </ThreeLevelListItem>
                   <ThreeLevelListItem className="right">
                     <div className="name">USD Value</div>
-                    <CommaNumber value={Number(inputData.amount) * assetRate} className="value" beginningText="$" />
+                    <CommaNumber value={Number(inputData.amount) * rate} className="value" beginningText="$" />
                   </ThreeLevelListItem>
                 </div>
                 <hr />
@@ -203,13 +201,13 @@ export const RemoveAssetsFromLending = ({
                     <CommaNumber
                       value={currentLendedAmount - Number(inputData.amount)}
                       className="value"
-                      endingText={assetSymbol}
+                      endingText={symbol}
                     />
                   </ThreeLevelListItem>
                   <ThreeLevelListItem className="right">
                     <div className="name">New USD Value</div>
                     <CommaNumber
-                      value={(currentLendedAmount - Number(inputData.amount)) * assetRate}
+                      value={(currentLendedAmount - Number(inputData.amount)) * rate}
                       className="value"
                       beginningText="$"
                     />

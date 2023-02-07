@@ -120,8 +120,8 @@ export function normalizeSatelliteRecord(
     },
   )
 
-  const v1 = satelliteRecord.user.aggregator_oracles[0].aggregator.last_completed_data
-  const v2 = satelliteRecord.user.aggregator_oracles[0].observations[0].data
+  const v1 = Number(satelliteRecord.user.aggregator_oracles?.[0]?.aggregator?.last_completed_data)
+  const v2 = Number(satelliteRecord.user.aggregator_oracles?.[0]?.observations?.[0]?.data)
   const accuracy = 100 - ((v1 - v2) / ((v1 + v2) / 2)) * 100
 
   const newSatelliteRecord: SatelliteRecord = {
@@ -287,4 +287,12 @@ export const getSatelliteMetrics = (
       : 0,
     oracleEfficiency: Math.max(0, Math.min(100, Number(oracleEfficiency))),
   }
+}
+
+export const getVoteText = (voteType?: number): string => {
+  if (voteType === 0) return 'Pass'
+  if (voteType === 1) return 'Yes'
+  if (voteType === 2) return 'No'
+
+  return ''
 }

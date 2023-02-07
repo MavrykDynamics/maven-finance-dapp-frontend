@@ -73,10 +73,6 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
     transition: 0.3s all;
     color: ${({ theme }) => theme.valueColor};
     max-width: unset;
-
-    &.use-max-btn {
-      color: ${({ theme }) => theme.dataColor};
-    }
   }
 
   &.${NAV_SIMPLE} {

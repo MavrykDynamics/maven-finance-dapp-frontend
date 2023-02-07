@@ -1,5 +1,5 @@
-import styled from "styled-components";
-import { MavrykTheme } from "styles/interfaces";
+import styled from 'styled-components'
+import { MavrykTheme } from 'styles/interfaces'
 
 export const LiquidateVaultModalStyled = styled.div<{ showAsPercentage: boolean; theme: MavrykTheme }>`
   font-weight: 600;
@@ -11,7 +11,7 @@ export const LiquidateVaultModalStyled = styled.div<{ showAsPercentage: boolean;
   }
 
   & > h2 {
-    margin: 30px 0 10px 0;
+    margin-top: 10px;
 
     font-weight: 600;
     font-size: 18px;
@@ -24,7 +24,7 @@ export const LiquidateVaultModalStyled = styled.div<{ showAsPercentage: boolean;
   }
 
   .without-underscore {
-    margin-bottom: 20px;
+    margin-bottom: 0;
 
     &::after {
       content: '';
@@ -34,16 +34,16 @@ export const LiquidateVaultModalStyled = styled.div<{ showAsPercentage: boolean;
 
   & > p {
     margin: 0;
-    margin-bottom: 30px;
+    margin-bottom: 10px;
   }
 
-  div[class="g-centering-group"] > button {
-    margin-top: 40px;
+  div[class='g-centering-group'] > button {
+    margin-top: 10px;
     width: 250px;
   }
 
   hr {
-    margin: 25px 0 30px 0;
+    margin: 15px 0 20px 0;
 
     height: 1px;
     background-color: ${({ theme }) => theme.cardBorderColor};
@@ -70,7 +70,7 @@ export const LiquidateVaultModalStyled = styled.div<{ showAsPercentage: boolean;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     column-gap: 15px;
-    row-gap: 20px;
+    row-gap: 10px;
 
     p {
       margin: 0;
@@ -79,7 +79,7 @@ export const LiquidateVaultModalStyled = styled.div<{ showAsPercentage: boolean;
 
   .table-amount-group {
     display: grid;
-    grid-template-columns: 40px auto;
+    grid-template-columns: 60px auto;
     column-gap: 8px;
   }
 
@@ -98,11 +98,12 @@ export const LiquidateVaultModalStyled = styled.div<{ showAsPercentage: boolean;
       color: ${({ theme }) => theme.valueColor};
     }
 
-    ${({ showAsPercentage, theme }) => showAsPercentage
-      ? `.sufix {
+    ${({ showAsPercentage, theme }) =>
+      showAsPercentage
+        ? `.sufix {
           color: ${theme.headerColor};
         }`
-      : `.prefix {
+        : `.prefix {
           color: ${theme.headerColor};
         }`}
   }
@@ -127,11 +128,11 @@ export const LiquidateVaultModalStyled = styled.div<{ showAsPercentage: boolean;
   }
 
   .upColor {
-    color: ${({ theme }) => theme.newUpColor}
+    color: ${({ theme }) => theme.newUpColor};
   }
 
   .downColor {
-    color: ${({ theme }) => theme.downColor}
+    color: ${({ theme }) => theme.downColor};
   }
 
   .input {
@@ -144,7 +145,7 @@ export const LiquidateVaultModalStyled = styled.div<{ showAsPercentage: boolean;
   }
 
   .input-title {
-    margin-top: 20px;
+    margin-top: 10px;
     padding-left: 7px;
   }
 

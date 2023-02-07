@@ -142,7 +142,7 @@ export const getOracleAggregatorLatestPrice = async (oracleId: string) => {
     const storage = await fetchFromIndexer(
       ORACLE_AGGREGATOR_LATEST_PRICE_QUERY,
       ORACLE_AGGREGATOR_LATEST_PRICE_QUERY_NAME,
-      ORACLE_AGGREGATOR_LATEST_PRICE_QUERY_VARIABLE(oracleId)
+      ORACLE_AGGREGATOR_LATEST_PRICE_QUERY_VARIABLE(oracleId),
     )
 
     const oracleLatestPrice = normalizeOracleLatestPrice(storage)

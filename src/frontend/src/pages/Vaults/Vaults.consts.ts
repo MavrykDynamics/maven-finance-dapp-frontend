@@ -19,4 +19,4 @@ export const statusSortPriority = {
   [vaultsStatuses.MARK]: 3,
   [vaultsStatuses.AT_RISK]: 4,
   [vaultsStatuses.ACTIVE]: 5,
-};
+}

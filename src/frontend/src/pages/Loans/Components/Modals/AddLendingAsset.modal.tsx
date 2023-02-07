@@ -9,7 +9,6 @@ import { Input } from 'app/App.components/Input/NewInput'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
-import { depositLendingAssetAction } from 'pages/Loans/Loans.actions'
 import { State } from 'reducers'
 import { AddLendingAssetDataType, DEFAULT_LOANS_INPUT_VALUE, getOnBlurValue, getOnFocusValue } from './Modals.helpers'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
@@ -20,6 +19,7 @@ import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { silverColor } from 'styles'
 import { LoansModalBase } from './Modals.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
+import { depositLendingAssetAction } from 'pages/Loans/Actions/lendingAsset.actions'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239981&t=Sx2aEpp3ifrGxBtQ-0
 export const AddLendingAsset = ({
@@ -34,17 +34,16 @@ export const AddLendingAsset = ({
   const {
     userBalance = 0,
     mBalance = 0,
-    assetRate = 0,
+    rate = 0,
     decimals = 0,
-    assetName = '',
-    assetAddress = '',
+    symbol = '',
+    address = '',
     lendingAPY = 0,
-    assetIcon = '',
-    originalName = '',
+    icon = '',
+    gqlName = '',
     tokenType = '',
-    assetId = 0,
+    id = 0,
   } = data ?? {}
-  const assetSymbol = originalName === 'tez' ? 'XTZ' : assetName ?? originalName.toUpperCase()
   useLockBodyScroll(show)
 
   const dispatch = useDispatch()
@@ -88,13 +87,13 @@ export const AddLendingAsset = ({
   }, [inputData.validationStatus, isActionLoading])
 
   const depositHandler = () => {
-    if (tokenType && assetAddress) {
+    if (tokenType && address) {
       dispatch(
         depositLendingAssetAction(
-          originalName,
+          gqlName,
           Number(inputData.amount) * 10 ** decimals,
-          assetAddress,
-          assetId,
+          address,
+          id,
           tokenType,
           closePopup,
         ),
@@ -117,7 +116,7 @@ export const AddLendingAsset = ({
           </div>
 
           <Input
-            className={`${assetRate ? 'input-with-rate' : ''} large-input pinned-dropdown`}
+            className={`${rate ? 'input-with-rate' : ''} large-input pinned-dropdown`}
             inputProps={{
               value: inputData.amount,
               type: 'number',
@@ -127,21 +126,21 @@ export const AddLendingAsset = ({
             }}
             settings={{
               balance: userBalance,
-              balanceAsset: assetSymbol,
+              balanceAsset: symbol,
               useMaxHandler: () => onChangeHandler(String(userBalance), userBalance),
               inputStatus: inputData.validationStatus,
-              ...(assetRate ? { convertedValue: assetRate * Number(inputData.amount) } : {}),
+              ...(rate ? { convertedValue: rate * Number(inputData.amount) } : {}),
             }}
           >
             <InputPinnedTokenInfo>
-              {assetIcon ? (
+              {icon ? (
                 <div className="image-wrapper">
-                  <img src={assetIcon} alt={`${assetName}-logo`} />
+                  <img src={icon} alt={`${symbol}-logo`} />
                 </div>
               ) : (
                 <Icon id="noImage" />
               )}
-              {assetSymbol}
+              {symbol}
             </InputPinnedTokenInfo>
           </Input>
 
@@ -152,18 +151,18 @@ export const AddLendingAsset = ({
                 <CustomTooltip
                   iconId="info"
                   defaultStrokeColor={silverColor}
-                  text={`You will receive m${assetSymbol} instead of your ${assetSymbol}`}
+                  text={`You will receive m${symbol} instead of your ${symbol}`}
                   className="tooltip"
                 />
               </div>
               <CommaNumber value={lendingAPY} className="value" endingText="%" />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
-              <div className="name">m{assetSymbol} Received</div>
+              <div className="name">m{symbol} Received</div>
               <CommaNumber value={Number(inputData.amount)} className="value" />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
-              <div className="name">New m{assetSymbol} Balance</div>
+              <div className="name">New m{symbol} Balance</div>
               <CommaNumber value={mBalance + Number(inputData.amount)} className="value" />
             </ThreeLevelListItem>
           </div>

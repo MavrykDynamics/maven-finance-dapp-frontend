@@ -27,6 +27,9 @@ import {
 // types
 import { State } from '../../reducers'
 import { getPageNumber } from 'pages/FinacialRequests/FinancialRequests.helpers'
+import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 
 export const VERTICAL_FARM_VIEW = 'vertical'
 export const HORIZONTAL_FARM_VIEW = 'horizontal'
@@ -87,10 +90,14 @@ export const Farms = () => {
     return farmsList?.slice(from, to)
   }, [farmsList, isLive, searchFarm, sortType, isStakedOny, currentPage, listName])
 
+  const { isLoading } = useDataLoader(async () => {
+    try {
+      await dispatch(getFarmStorage())
+    } catch (error) {}
+  }, [])
+
   // effect to set all filters state from queryParams on mount
   useEffect(() => {
-    dispatch(getFarmStorage())
-
     setToggleChecked(isStakedOny)
     setSearchValue(searchFarm)
     setSortBy(sortType)
@@ -98,27 +105,46 @@ export const Farms = () => {
     setOpenedFarmsCards(openedCards)
   }, [])
 
+  const handleFilterClick = useCallback(
+    ({
+      newStakedNoValue,
+      newLiveFinished,
+      newSearchText,
+      newSortBy,
+      newOpenedCards,
+    }: Partial<{
+      newStakedNoValue: boolean
+      newLiveFinished: number
+      newSearchText: string
+      newSortBy: string
+      newOpenedCards: Array<string>
+    }>) => {
+      // creating qp object and update qp
+      const filtersQP = {
+        openedCards: newOpenedCards ?? openedCards,
+        isLive: newLiveFinished ?? liveFinished,
+        ...(newSearchText ?? searchValue ? { searchFarm: newSearchText ?? searchValue } : {}),
+        ...(newSortBy ?? sortBy ? { sortType: newSortBy ?? sortBy } : {}),
+        ...(newStakedNoValue ?? toggleChecked ? { isStakedOny: newStakedNoValue ?? toggleChecked } : {}),
+      }
+
+      const stringifiedQP = qs.stringify(filtersQP)
+      history.push(`${pathname}?${stringifiedQP}`)
+    },
+    [toggleChecked, liveFinished, openedFarmsCards, pathname, searchValue, sortBy],
+  )
+
   // fn to add/remove card address fron query params, is it open or not
   const handleOpenCard = useCallback(
     (cardAdrress: string) => {
-      const newOpenCardArr = openedFarmsCards.find((openCardAddress) => openCardAddress === cardAdrress)
+      const newOpenedCards = openedFarmsCards.find((openCardAddress) => openCardAddress === cardAdrress)
         ? openedFarmsCards.filter((openCardAddress) => openCardAddress !== cardAdrress)
         : openedFarmsCards.concat(cardAdrress)
 
-      setOpenedFarmsCards(newOpenCardArr)
-
-      const filtersQP = {
-        openedCards: newOpenCardArr,
-        isLive: liveFinished,
-        ...(searchFarm ? { searchFarm: searchValue } : {}),
-        ...(sortType ? { sortType: sortBy } : {}),
-        ...(isStakedOny ? { isStakedOny: isStakedOny } : {}),
-      }
-
-      const stringifiedQP = qs.stringify(filtersQP, { addQueryPrefix: true })
-      history.push(`${pathname}${stringifiedQP}`)
+      setOpenedFarmsCards(newOpenedCards)
+      handleFilterClick({ newOpenedCards })
     },
-    [isStakedOny, liveFinished, openedFarmsCards, pathname, searchFarm, searchValue, sortBy, sortType],
+    [handleFilterClick, openedFarmsCards],
   )
 
   // effect to handle all sortings and filters in top bar
@@ -189,23 +215,12 @@ export const Farms = () => {
     } else {
       setFarmsList(farmsToSortFilter)
     }
-
-    // creating qp object and update qp
-    const filtersQP = {
-      openedCards,
-      isLive: liveFinished,
-      ...(searchValue ? { searchFarm: searchValue } : {}),
-      ...(sortBy ? { sortType: sortBy } : {}),
-      ...(toggleChecked ? { isStakedOny: toggleChecked } : {}),
-    }
-
-    const stringifiedQP = qs.stringify(filtersQP)
-    history.push(`${pathname}?${stringifiedQP}`)
   }, [farmStorage, liveFinished, searchValue, toggleChecked, sortBy])
 
   // Handler for top bar
   const handleToggleStakedFarmsOnly = (e?: { target: { checked: boolean } }) => {
     setToggleChecked(Boolean(e?.target?.checked))
+    handleFilterClick({ newStakedNoValue: Boolean(e?.target?.checked) })
   }
 
   const handleSetFarmsViewVariant = (variant: FarmsViewVariantType) => {
@@ -214,14 +229,17 @@ export const Farms = () => {
 
   const handleLiveFinishedToggleButtons = (tabId: number) => {
     setLiveFinished(tabId)
+    handleFilterClick({ newLiveFinished: tabId })
   }
 
   const handleOnSearch = (text: string) => {
     setSearchValue(text)
+    handleFilterClick({ newSearchText: text })
   }
 
   const handleOnSort = (sortValue: string) => {
     setSortBy(sortValue)
+    handleFilterClick({ newSortBy: sortValue })
   }
 
   return (
@@ -240,7 +258,12 @@ export const Farms = () => {
           toggleChecked={toggleChecked}
           liveFinishedIdSelected={liveFinished}
         />
-        {farmsList.length ? (
+        {isLoading ? (
+          <DataLoaderWrapper className="tabLoader">
+            <ClockLoader width={150} height={150} />
+            <div className="text">Loading farms</div>
+          </DataLoaderWrapper>
+        ) : farmsList.length ? (
           <section className={`farm-list ${farmsViewVariant}`}>
             {farmsCards.map((farm, index: number) => {
               const depositAmount = getSummDepositedAmount(farm.farmAccounts)

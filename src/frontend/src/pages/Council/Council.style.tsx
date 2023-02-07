@@ -1,5 +1,5 @@
 import styled from 'styled-components/macro'
-import { headerColor, CardHover, royalPurpleColor, containerColor } from 'styles'
+import { CardHover } from 'styles'
 
 // types
 import { MavrykTheme } from 'styles/interfaces'
@@ -30,7 +30,7 @@ export const CouncilStyled = styled.section`
   }
 
   .go-back {
-    margin-bottom: 30px;
+    margin: 30px 0;
   }
 
   .council-details {
@@ -78,6 +78,10 @@ export const CouncilStyled = styled.section`
     &.is-user-member {
       margin-top: 9px;
     }
+  }
+
+  .margin-top-30 {
+    padding-top: 30px
   }
 `
 

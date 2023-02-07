@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Redirect, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
@@ -26,23 +26,26 @@ import { State } from 'reducers'
 import { MarketPageHeader } from './Components/LoansPageHeader'
 import { PermissionVaults } from './Components/PermissionVaultsTab'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
-import { getLoansStorage } from './Loans.actions'
 import LoansPopupsProvider from './Components/Modals/LoansModals.provider'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import { getLoansStorage } from './Actions/getLoansData.actions'
 
 export const Market = () => {
   const dispatch = useDispatch()
   const { assetId, tabId } = useParams<{ assetId: string; tabId: string }>()
-  const { loanTokens, loansControllerAddress, isFetched } = useSelector((state: State) => state.loans)
-  const { accountPkh } = useSelector((state: State) => state.wallet)
+  const { loanTokens, loansControllerAddress, isDataLoaded } = useSelector((state: State) => state.loans)
 
   const { isLoading } = useDataLoader(async () => {
     try {
-      // if (!isFetched) {
-      await dispatch(getLoansStorage())
-      // }
+      if (!isDataLoaded) {
+        await dispatch(getLoansStorage())
+      }
     } catch (e) {}
-  }, [accountPkh])
+  }, [])
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
 
   const currentToken = useMemo(
     () => loanTokens.find(({ loanTokenData: { symbol } }) => assetId === symbol),
@@ -54,13 +57,13 @@ export const Market = () => {
     return [loanTokens[currentAssetIdx - 1], loanTokens[currentAssetIdx + 1], loanTokens[currentAssetIdx]]
   }, [assetId, loanTokens])
 
-  if (isLoading) {
+  if (isLoading || !isDataLoaded) {
     return (
       <Page>
         <PageHeader page={'lending'} />
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
-          <div className="text">Loading {assetId.toUpperCase} market</div>
+          <div className="text">Loading {assetId} market</div>
         </DataLoaderWrapper>
       </Page>
     )
@@ -105,7 +108,7 @@ export const Market = () => {
       <Link to={`/loans/${assetId}/${BORROW_TAB_ID}`}>
         <Button text={'My Borrowing'} kind={ACTION_SIMPLE} className={`${tabId === BORROW_TAB_ID ? 'active' : ''}`} />
       </Link>
-      {currentToken.permissionedBorrowingList.length ? (
+      {currentToken?.permissionedBorrowingList.length ? (
         <Link to={`/loans/${assetId}/${PERMISSIONS_VAULTS_TAB_ID}`}>
           <Button
             text={'Permissioned Vaults'}
@@ -127,9 +130,9 @@ export const Market = () => {
         <MarketStyled>
           <div className="gen-info">
             <div className="asset-info">
-              {currentToken.loanTokenData.icon ? (
+              {currentToken?.loanTokenData.icon ? (
                 <div className="img-wrapper">
-                  <img src={currentToken.loanTokenData.icon} alt={`${currentToken.loanTokenData.icon} icon`} />
+                  <img src={currentToken?.loanTokenData.icon} alt={`${currentToken?.loanTokenData.icon} icon`} />
                 </div>
               ) : (
                 <div className="no-icon">
@@ -138,12 +141,8 @@ export const Market = () => {
               )}
 
               <div className="text-wrapper">
-                <div className="symbol">
-                  {currentToken.loanTokenData.originalName === 'tez' ? 'Tezos' : currentToken.loanTokenData.name}
-                </div>
-                <div className="full-name">
-                  {currentToken.loanTokenData.originalName === 'tez' ? 'XTZ' : currentToken.loanTokenData.symbol}
-                </div>
+                <div className="symbol">{currentToken?.loanTokenData.name}</div>
+                <div className="full-name">{currentToken?.loanTokenData.symbol}</div>
               </div>
             </div>
             {tabId === LEND_TAB_ID ? (
@@ -229,7 +228,7 @@ export const Market = () => {
             <BorrowingTab
               borrowingItems={currentToken.myBorrowingList}
               lendingControllerAddress={loansControllerAddress}
-              currentMarketAsset={assetId.toLowerCase()}
+              currentMarketAsset={currentToken.loanTokenData.gqlName}
             />
           ) : null}
           {tabId === PERMISSIONS_VAULTS_TAB_ID ? (
