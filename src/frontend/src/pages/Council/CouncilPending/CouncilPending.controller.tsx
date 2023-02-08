@@ -11,7 +11,7 @@ import Icon from '../../../app/App.components/Icon/Icon.view'
 // helpers
 import { getSeparateCamelCase } from '../../../utils/parse'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { bytesToString, keyHashBytesToString, BytesType, BYTES_ADDRESS_TYPE } from 'utils/bytesToString'
+import { bytesToText, bytesToAddress, BytesType, BYTES_ADDRESS_TYPE } from 'utils/bytesToString'
 import { CYAN } from 'app/App.components/TzAddress/TzAddress.constants'
 
 // types
@@ -60,7 +60,7 @@ export const CouncilPending = (props: Props) => {
   const findActionByName = useCallback(
     (name: string, type?: BytesType) => {
       const foundField = parameters.find((item) => item.name === name)?.value
-      return foundField ? bytesToString(foundField, type) : ''
+      return foundField ? (type === BYTES_ADDRESS_TYPE ? bytesToAddress(foundField) : bytesToText(foundField)) : ''
     },
     [parameters],
   )
@@ -680,7 +680,7 @@ export const CouncilPending = (props: Props) => {
     isSetAllContractsAdmin ||
     isSetBaker
   ) {
-    const address = isSetBaker ? keyHashBytesToString(value) : bytesToString(value, BYTES_ADDRESS_TYPE)
+    const address = bytesToAddress(value)
 
     return (
       <CouncilPendingStyled className={`${actionType} ${councilPendingActionsLength > 1 ? 'more' : ''}`}>
@@ -708,7 +708,7 @@ export const CouncilPending = (props: Props) => {
     )
   }
 
-  const convertedValue = bytesToString(value)
+  const convertedValue = bytesToText(value)
 
   return (
     <CouncilPendingStyled className={`${actionType} ${councilPendingActionsLength > 1 ? 'more' : ''}`}>
