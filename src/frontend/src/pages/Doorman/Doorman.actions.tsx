@@ -415,7 +415,7 @@ export const fetchUserData = async (
       mTokens,
     }
 
-    const userRewardsToDate = calcUsersRewardsToDate(userInfoData?.stakes_history_data)
+    const { actionsHistory, ...userRewardsToDate } = calcUsersRewardsToDate(userInfoData?.stakes_history_data)
 
     userInfo.myDoormanRewardsData = calcUsersDoormanRewards(userInfo)
     userInfo.mySatelliteRewardsData = calcUsersSatelliteRewards(userInfo)
@@ -439,6 +439,7 @@ export const fetchUserData = async (
     }
 
     userInfo.userRewardsToDate = userRewardsToDate
+    userInfo.actionsHistory = actionsHistory
 
     // TODO: ask Sam about it
     // const estimatedRewardsForNextCompound =

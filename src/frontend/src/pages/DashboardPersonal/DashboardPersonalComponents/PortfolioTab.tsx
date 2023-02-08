@@ -12,11 +12,9 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { Chart } from 'app/App.components/Chart/Chart.view'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { SlidingTabButtons, TabItem } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
-import Icon from 'app/App.components/Icon/Icon.view'
 
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import {
-  DashboardPersonalTabStyled,
   LBHInfoBlock,
   ListItem,
   PortfolioWalletStyled,
@@ -52,7 +50,7 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
   const lastSeria = CHART_TEST_DATA.at(-1)?.value ?? 0
 
   return (
-    <DashboardPersonalTabStyled>
+    <>
       <PortfolioChartStyled>
         <GovRightContainerTitleArea>
           <h2>MVK Earning History</h2>
@@ -241,7 +239,7 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
           </div>
         )}
       </LBHInfoBlock>
-    </DashboardPersonalTabStyled>
+    </>
   )
 }
 

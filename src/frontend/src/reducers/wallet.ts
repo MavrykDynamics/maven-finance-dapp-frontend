@@ -29,7 +29,15 @@ export interface UserState {
     satelliteRewards: number
     doormanRewards: number
   }
+  actionsHistory: Array<{
+    action: string
+    amount: number
+    totalAmount: number
+    fee: number
+    id: number
+  }>
   myLendingRewardsAmount: number
+  isLoaded: boolean
 }
 
 const RpcNetwork = preferencesDefaultState.REACT_APP_RPC_PROVIDER
@@ -73,6 +81,8 @@ export const DEFAULT_USER: UserState = {
     satelliteRewards: 0,
     doormanRewards: 0,
   },
+  actionsHistory: [],
+  isLoaded: false,
 }
 
 export const walletDefaultState: WalletState = {
@@ -90,12 +100,12 @@ export function wallet(state = walletDefaultState, action: Action) {
         wallet: action.wallet,
         tezos: action.tezos,
         accountPkh: action.accountPkh,
-        user: action.userData,
+        user: { ...action.userData, isLoaded: true },
       }
     case UPDATE_USER_DATA:
       return {
         ...state,
-        user: action.userData,
+        user: { ...action.userData, isLoaded: true },
       }
     case DISCONNECT:
       return {

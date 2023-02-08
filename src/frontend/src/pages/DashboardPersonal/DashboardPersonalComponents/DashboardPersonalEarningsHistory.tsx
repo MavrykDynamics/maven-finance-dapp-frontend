@@ -75,7 +75,7 @@ const DashboardPersonalEarningsHistory = ({
           <div className="name">Lending Income</div>
           <div className="value">
             <CommaNumber
-              value={switcherActive ? lendingIncome : lendingIncome / xtzRate}
+              value={switcherActive ? lendingIncome / xtzRate : lendingIncome}
               endingText={switcherActive ? 'XTZ' : 'USD'}
               showDecimal
               decimalsToShow={2}

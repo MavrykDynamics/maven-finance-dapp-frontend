@@ -1,3 +1,4 @@
+import { State } from 'reducers'
 import { UserState } from 'reducers/wallet'
 import { FIXED_POINT_ACCURACY, PRECISION_NUMBER, SECONDS_PER_BLOCK } from './constants'
 import { Stake_History_Data } from './generated/graphqlTypes'
@@ -110,14 +111,15 @@ export function calcUsersSatelliteRewards(userInfo: Partial<UserState>): UserSat
   return mySatelliteRewardsData
 }
 
-export function calcUsersRewardsToDate(usetStakesData?: Array<Stake_History_Data>): {
-  farmRewards: number
-  satelliteRewards: number
-  doormanRewards: number
-} {
-  if (!usetStakesData) return { farmRewards: 0, satelliteRewards: 0, doormanRewards: 0 }
-  return usetStakesData.reduce(
-    (acc, { type, final_amount }) => {
+export function calcUsersRewardsToDate(usetStakesData?: Array<Stake_History_Data>) {
+  if (!usetStakesData) return { farmRewards: 0, satelliteRewards: 0, doormanRewards: 0, actionsHistory: [] }
+  return usetStakesData.reduce<{
+    farmRewards: number
+    satelliteRewards: number
+    doormanRewards: number
+    actionsHistory: State['wallet']['user']['actionsHistory']
+  }>(
+    (acc, { type, final_amount, desired_amount, id, from_: { mvk_balance } }) => {
       if (type === 2) {
         acc.farmRewards += calcWithoutPrecision(final_amount)
       }
@@ -129,8 +131,32 @@ export function calcUsersRewardsToDate(usetStakesData?: Array<Stake_History_Data
       if (type === 4) {
         acc.satelliteRewards += calcWithoutPrecision(final_amount)
       }
+
+      const isUnstake = type === 1
+      const actionName =
+        type === 0
+          ? 'Stake'
+          : type === 1
+          ? 'Unstake'
+          : type === 2
+          ? 'Farm Claim'
+          : type === 3
+          ? 'Compound'
+          : 'Satellite Reward'
+
+      const amount = calcWithoutPrecision(desired_amount)
+      const totalAmount = calcWithoutPrecision(final_amount)
+      const historyDataItem: State['wallet']['user']['actionsHistory'][number] = {
+        action: actionName,
+        amount,
+        totalAmount,
+        fee: isUnstake ? ((amount - totalAmount) / amount) * 100 : 0,
+        id,
+      }
+
+      acc.actionsHistory.push(historyDataItem)
       return acc
     },
-    { farmRewards: 0, satelliteRewards: 0, doormanRewards: 0 },
+    { farmRewards: 0, satelliteRewards: 0, doormanRewards: 0, actionsHistory: [] },
   )
 }
