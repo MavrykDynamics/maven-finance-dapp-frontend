@@ -1,34 +1,45 @@
-import { M_Token_Account } from './../utils/generated/graphqlTypes'
-import { CONNECT, DISCONNECT } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 import { TezosToolkit } from '@taquito/taquito'
-import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
 import { BeaconWallet } from '@taquito/beacon-wallet'
-import { preferencesDefaultState } from './preferences'
+
+import { M_Token_Account } from './../utils/generated/graphqlTypes'
+import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
 import { UserDoormanRewardsData, UserFarmRewardsData, UserSatelliteRewardsData } from 'utils/TypesAndInterfaces/User'
-import { UPDATE_USER_DATA } from 'pages/Doorman/Doorman.actions'
 import { UserLendObjType } from 'utils/TypesAndInterfaces/Loans'
 
+import { CONNECT, DISCONNECT } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
+import { preferencesDefaultState } from './preferences'
+import { UPDATE_USER_DATA } from './actions/user.actions'
+
 export interface UserState {
+  // user balance
   myMvkTokenBalance: number
   mySMvkTokenBalance: number
   myXTZTokenBalance: number
   mytzBTCTokenBalance: number
-  participationFeesPerShare: number
+
   satelliteMvkIsDelegatedTo: string
+  isLoaded: boolean
   isSatellite: boolean
-  myDoormanRewardsData: UserDoormanRewardsData
-  myFarmRewardsData: Record<string, UserFarmRewardsData>
-  mySatelliteRewardsData: UserSatelliteRewardsData
-  mTokens?: Array<M_Token_Account>
+
+  // loans data
   userLoansData: {
     userLendings: Array<UserLendObjType>
     userBorrowing: Array<UserLendObjType>
   }
+  mTokens?: Array<M_Token_Account>
+
+  // user rewards
   userRewardsToDate: {
     farmRewards: number
     satelliteRewards: number
     doormanRewards: number
   }
+  myDoormanRewardsData: UserDoormanRewardsData
+  myFarmRewardsData: Record<string, UserFarmRewardsData>
+  mySatelliteRewardsData: UserSatelliteRewardsData
+  myLendingRewardsAmount: number
+
+  // user's actions history
   actionsHistory: Array<{
     action: string
     amount: number
@@ -36,8 +47,6 @@ export interface UserState {
     fee: number
     id: number
   }>
-  myLendingRewardsAmount: number
-  isLoaded: boolean
 }
 
 const RpcNetwork = preferencesDefaultState.REACT_APP_RPC_PROVIDER
@@ -52,19 +61,26 @@ export interface WalletState {
 export const DEFAULT_USER: UserState = {
   myMvkTokenBalance: 0,
   mySMvkTokenBalance: 0,
-  myLendingRewardsAmount: 0,
   myXTZTokenBalance: 0,
   mytzBTCTokenBalance: 0,
-  participationFeesPerShare: 0,
+
   satelliteMvkIsDelegatedTo: '',
+  isLoaded: false,
   isSatellite: false,
+
+  userLoansData: {
+    userLendings: [],
+    userBorrowing: [],
+  },
+  myLendingRewardsAmount: 0,
+
+  myFarmRewardsData: {},
   myDoormanRewardsData: {
     generalAccumulatedFeesPerShare: 0,
     generalUnclaimedRewards: 0,
     myAvailableDoormanRewards: 0,
     myParticipationFeesPerShare: 0,
   },
-  myFarmRewardsData: {},
   mySatelliteRewardsData: {
     myAvailableSatelliteRewards: 0,
     paid: 0,
@@ -72,17 +88,13 @@ export const DEFAULT_USER: UserState = {
     satelliteAccumulatedRewardPerShare: 0,
     unpaid: 0,
   },
-  userLoansData: {
-    userLendings: [],
-    userBorrowing: [],
-  },
   userRewardsToDate: {
     farmRewards: 0,
     satelliteRewards: 0,
     doormanRewards: 0,
   },
+
   actionsHistory: [],
-  isLoaded: false,
 }
 
 export const walletDefaultState: WalletState = {

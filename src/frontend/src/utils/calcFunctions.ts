@@ -1,7 +1,7 @@
 import { State } from 'reducers'
 import { UserState } from 'reducers/wallet'
 import { FIXED_POINT_ACCURACY, PRECISION_NUMBER, SECONDS_PER_BLOCK } from './constants'
-import { Stake_History_Data } from './generated/graphqlTypes'
+import { Farm, Stake_History_Data } from './generated/graphqlTypes'
 import { UserDoormanRewardsData, UserFarmRewardsData, UserSatelliteRewardsData } from './TypesAndInterfaces/User'
 
 /**
@@ -48,9 +48,19 @@ export function calcWithoutDecimals(amount: string | number, decimals: number): 
   return numberWithDecimals > 0 ? numberWithDecimals / 10 ** decimals : 0
 }
 // TODO: remove mutations in these 3 fns
-export function calcUsersDoormanRewards(userInfo: Partial<UserState>): UserDoormanRewardsData | undefined {
-  const { mySMvkTokenBalance = 0, myDoormanRewardsData } = userInfo
-  if (!myDoormanRewardsData) return undefined
+export function calcUsersDoormanRewards({
+  userDoormanRewardsFromGQL,
+  mySMvkTokenBalance = 0,
+}: {
+  userDoormanRewardsFromGQL?: any
+  mySMvkTokenBalance: number
+}): UserDoormanRewardsData | undefined {
+  const myDoormanRewardsData: UserDoormanRewardsData = {
+    generalAccumulatedFeesPerShare: userDoormanRewardsFromGQL?.accumulated_fees_per_share ?? 0,
+    generalUnclaimedRewards: userDoormanRewardsFromGQL?.unclaimed_rewards ?? 0,
+    myParticipationFeesPerShare: userDoormanRewardsFromGQL?.stake_accounts[0]?.participation_fees_per_share ?? 0,
+    myAvailableDoormanRewards: 0,
+  }
   const currentFeesPerShare =
     myDoormanRewardsData.generalAccumulatedFeesPerShare - myDoormanRewardsData.myParticipationFeesPerShare
   const usersAvailableDoormanRewards =
@@ -61,12 +71,34 @@ export function calcUsersDoormanRewards(userInfo: Partial<UserState>): UserDoorm
   return myDoormanRewardsData
 }
 
-export function calcUsersFarmRewards(
-  userInfo: Partial<UserState>,
-  currentBlockLevel: number,
-): Record<string, UserFarmRewardsData> | undefined {
-  const { myFarmRewardsData } = userInfo
-  if (!myFarmRewardsData) return undefined
+export function calcUsersFarmRewards({
+  currentBlockLevel,
+  userFarmsRewardsFromGQL,
+}: {
+  currentBlockLevel: number
+  userFarmsRewardsFromGQL: Array<Farm>
+}): Record<string, UserFarmRewardsData> | undefined {
+  const myFarmRewardsData: Record<string, UserFarmRewardsData> = userFarmsRewardsFromGQL.reduce<
+    Record<string, UserFarmRewardsData>
+  >((acc, farm) => {
+    const farmObj: UserFarmRewardsData = {
+      generalAccumulatedRewardsPerShare: farm.accumulated_rewards_per_share,
+      currentRewardPerBlock: farm.current_reward_per_block,
+      lastBlockUpdate: farm.last_block_update,
+      generalTotalRewards: farm.total_rewards,
+      generalPaidReward: farm.paid_rewards,
+      generalUnpaidReward: farm.unpaid_rewards,
+      totalLPTokenDeposited: farm.lp_token_balance,
+      infinite: farm.infinite,
+      myDepositedAmount: farm.farm_accounts[0].deposited_amount,
+      myParticipationRewardsPerShare: farm.farm_accounts[0].participation_rewards_per_share,
+      myAvailableFarmRewards: 0,
+    }
+    acc[farm.address] = farmObj
+
+    return acc
+  }, {})
+
   const newFarmRewardsData: Record<string, UserFarmRewardsData> = {}
   const farmsKeys = Object.keys(myFarmRewardsData)
 
@@ -97,9 +129,22 @@ export function calcUsersFarmRewards(
   return newFarmRewardsData
 }
 
-export function calcUsersSatelliteRewards(userInfo: Partial<UserState>): UserSatelliteRewardsData | undefined {
-  const { mySMvkTokenBalance = 0, mySatelliteRewardsData } = userInfo
-  if (!mySatelliteRewardsData) return undefined
+export function calcUsersSatelliteRewards({
+  mySMvkTokenBalance = 0,
+  userSatelliteRewardsFromGQL,
+}: {
+  mySMvkTokenBalance: number
+  userSatelliteRewardsFromGQL?: any
+}): UserSatelliteRewardsData | undefined {
+  const mySatelliteRewardsData: UserSatelliteRewardsData = {
+    unpaid: userSatelliteRewardsFromGQL?.unpaid ?? 0,
+    paid: userSatelliteRewardsFromGQL?.paid ?? 0,
+    participationRewardsPerShare: userSatelliteRewardsFromGQL?.participation_rewards_per_share ?? 0,
+    satelliteAccumulatedRewardPerShare:
+      userSatelliteRewardsFromGQL?.reference?.satellite_accumulated_reward_per_share ?? 0,
+    myAvailableSatelliteRewards: 0,
+  }
+
   const satelliteRewardRatio =
     mySatelliteRewardsData.satelliteAccumulatedRewardPerShare - mySatelliteRewardsData.participationRewardsPerShare
   const usersAvailableSatelliteRewards =

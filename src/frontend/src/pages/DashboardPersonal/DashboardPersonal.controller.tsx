@@ -1,14 +1,23 @@
 import { useLocation, useParams } from 'react-router'
-import { useCallback, useMemo } from 'react'
+import { useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, Redirect, Route, Switch } from 'react-router-dom'
 
+import { State } from 'reducers'
+
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { getGovernanceStorage } from 'pages/Governance/Governance.actions'
+import { getPageNumber } from 'pages/FinacialRequests/FinancialRequests.helpers'
 import { getDelegationStorage, getOracleStorage } from 'pages/Satellites/Satellites.actions'
-import { updateUserData } from 'pages/Doorman/Doorman.actions'
+import { claimAllRewardsAction } from './DashboardPersonal.actions'
+import { updateUserData } from 'reducers/actions/user.actions'
 import { getEmergencyGovernanceStorage } from 'pages/EmergencyGovernance/EmergencyGovernance.actions'
 import { isValidId, PORTFOLIO_TAB_ID, DELEGATION_TAB_ID, SATELLITE_TAB_ID } from './DashboardPersonal.utils'
+import {
+  USER_ACTIONS_HISTORY,
+  calculateSlicePositions,
+  PAGINATION_SIDE_CENTER,
+} from 'pages/FinacialRequests/Pagination/pagination.consts'
 
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
 import { Page } from 'styles/components'
@@ -18,10 +27,10 @@ import DelegationTab from './DashboardPersonalComponents/DelegationTab'
 import PortfolioTab from './DashboardPersonalComponents/PortfolioTab'
 import { DashboardPersonalStyled } from './DashboardPersonal.style'
 import SatelliteTab from './DashboardPersonalComponents/SatelliteTab'
-
-import { State } from 'reducers'
-import { claimAllRewardsAction } from './DashboardPersonal.actions'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import Pagination from 'pages/FinacialRequests/Pagination/Pagination.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+
 import {
   Table,
   TableHeader,
@@ -30,19 +39,11 @@ import {
   TableBody,
   TableCell,
 } from 'app/App.components/Table/Table.style'
-import { getPageNumber } from 'pages/FinacialRequests/FinancialRequests.helpers'
-import {
-  USER_ACTIONS_HISTORY,
-  calculateSlicePositions,
-  PAGINATION_SIDE_CENTER,
-} from 'pages/FinacialRequests/Pagination/pagination.consts'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import {
   DashboardPersonalTabStyled,
   HistoryBlock,
 } from './DashboardPersonalComponents/DashboardPersonalComponents.style'
-import Pagination from 'pages/FinacialRequests/Pagination/Pagination.view'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 const DashboardPersonal = () => {
   const dispatch = useDispatch()
