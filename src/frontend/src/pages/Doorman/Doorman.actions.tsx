@@ -44,7 +44,7 @@ import {
   normalizeSmvkHistoryData,
   normalizeMvkMintHistoryData,
 } from './Doorman.converter'
-import { Farm } from 'utils/generated/graphqlTypes'
+import { Farm, Lending_Controller_Loan_Token, M_Token_Account } from 'utils/generated/graphqlTypes'
 import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 import { DEFAULT_USER, UserState } from 'reducers/wallet'
 import { SatelliteRecord } from 'utils/TypesAndInterfaces/Delegation'
@@ -53,7 +53,7 @@ import {
   USER_LENDING_DATA_QUERY_NAME,
   USER_LENDING_DATA_QUERY_VARIABLE,
 } from 'gql/queries/getLoansStorage'
-import { normalizeUserLending } from 'pages/Loans/Loans.helpers'
+import { getAssetMetadata, normalizeUserLending } from 'pages/Loans/Loans.helpers'
 import { getUserLoansDataTokensRates } from 'pages/Loans/LoansFethcers'
 
 export const GET_SMVK_HISTORY_DATA = 'GET_SMVK_HISTORY_DATA'
@@ -362,8 +362,33 @@ export const fetchUserData = async (
     }, {})
 
     const userInfoData = userInfoFromIndexer?.mavryk_user[0]
+    const loanTokens = userRewardsData.lending_controller[0].loan_tokens as Array<Lending_Controller_Loan_Token>
 
-    const mTokens = userInfoData?.m_token_accounts
+    const interestRateDecimals = userRewardsData.lending_controller[0]?.interest_rate_decimals ?? 0
+
+    const mTokens = userInfoData?.m_token_accounts as Array<M_Token_Account> | undefined
+
+    const myLendingRewardsAmount =
+      mTokens?.reduce((acc, { rewards_earned, m_token: { loan_token_name: mTokenName, address } }) => {
+        const { oracle_id } = loanTokens.find(({ loan_token_name }) => loan_token_name === mTokenName) ?? {}
+
+        if (!oracle_id) return acc
+
+        const loanTokenMetadata = getAssetMetadata({
+          tokenName: mTokenName,
+          tokenAddress: address,
+          dipDupTokens,
+          feeds,
+          oracleId: String(oracle_id),
+        })
+
+        if (loanTokenMetadata) {
+          acc +=
+            (rewards_earned / 10 ** interestRateDecimals / 10 ** loanTokenMetadata.decimals) * loanTokenMetadata.rate
+        }
+
+        return acc
+      }, 0) ?? 0
 
     const userIsDelegatedToSatellite = userInfoData?.delegations.length > 0
     const userInfo: Partial<UserState> = {
@@ -386,6 +411,7 @@ export const fetchUserData = async (
       myDoormanRewardsData: userDoormanRewardsData,
       myFarmRewardsData: userFarmsRewardsData,
       mySatelliteRewardsData: userSatelliteRewardsData,
+      myLendingRewardsAmount,
       mTokens,
     }
 

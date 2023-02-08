@@ -37,6 +37,7 @@ const DashboardPersonal = () => {
       mySMvkTokenBalance,
       myXTZTokenBalance,
       mytzBTCTokenBalance,
+      myLendingRewardsAmount,
       isSatellite,
       myDoormanRewardsData: { myAvailableDoormanRewards },
       myFarmRewardsData,
@@ -74,7 +75,7 @@ const DashboardPersonal = () => {
     satelliteRewards: satelliteRewards,
     farmsRewards: farmRewards,
     exitRewards: doormanRewards,
-    lendingIncome: 3131.31,
+    lendingIncome: myLendingRewardsAmount,
   }
 
   const walletData = {

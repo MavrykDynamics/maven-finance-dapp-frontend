@@ -29,6 +29,7 @@ export interface UserState {
     satelliteRewards: number
     doormanRewards: number
   }
+  myLendingRewardsAmount: number
 }
 
 const RpcNetwork = preferencesDefaultState.REACT_APP_RPC_PROVIDER
@@ -43,6 +44,7 @@ export interface WalletState {
 export const DEFAULT_USER: UserState = {
   myMvkTokenBalance: 0,
   mySMvkTokenBalance: 0,
+  myLendingRewardsAmount: 0,
   myXTZTokenBalance: 0,
   mytzBTCTokenBalance: 0,
   participationFeesPerShare: 0,

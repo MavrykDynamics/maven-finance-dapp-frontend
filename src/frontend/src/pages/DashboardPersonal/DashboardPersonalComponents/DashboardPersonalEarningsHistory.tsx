@@ -44,6 +44,8 @@ const DashboardPersonalEarningsHistory = ({
             <CommaNumber
               value={switcherActive ? satelliteRewards : satelliteRewards * mvkRate}
               endingText={switcherActive ? 'MVK' : 'USD'}
+              showDecimal
+              decimalsToShow={2}
             />
           </div>
         </div>
@@ -53,6 +55,8 @@ const DashboardPersonalEarningsHistory = ({
             <CommaNumber
               value={switcherActive ? farmsRewards : farmsRewards * mvkRate}
               endingText={switcherActive ? 'MVK' : 'USD'}
+              showDecimal
+              decimalsToShow={2}
             />
           </div>
         </div>
@@ -62,6 +66,8 @@ const DashboardPersonalEarningsHistory = ({
             <CommaNumber
               value={switcherActive ? exitRewards : exitRewards * mvkRate}
               endingText={switcherActive ? 'MVK' : 'USD'}
+              showDecimal
+              decimalsToShow={2}
             />
           </div>
         </div>
@@ -69,8 +75,10 @@ const DashboardPersonalEarningsHistory = ({
           <div className="name">Lending Income</div>
           <div className="value">
             <CommaNumber
-              value={switcherActive ? lendingIncome : lendingIncome * xtzRate}
+              value={switcherActive ? lendingIncome : lendingIncome / xtzRate}
               endingText={switcherActive ? 'XTZ' : 'USD'}
+              showDecimal
+              decimalsToShow={2}
             />
           </div>
         </div>
