@@ -700,6 +700,8 @@ export const CouncilPending = (props: Props) => {
     )
   }
 
+  const convertedValue = bytesToString(value) 
+
   return (
     <CouncilPendingStyled className={`${actionType} ${councilPendingActionsLength > 1 ? 'more' : ''}`}>
       <span className="number">{cardNumber}</span>
@@ -707,7 +709,7 @@ export const CouncilPending = (props: Props) => {
       <div className="parameters">
         <div>
           <p className="parameters-name no-wrap">{getSeparateCamelCase(name)}</p>
-          <span className="parameters-value">{value}</span>
+          <span className="parameters-value">{convertedValue}</span>
         </div>
         <div>
           <p>Signed</p>
