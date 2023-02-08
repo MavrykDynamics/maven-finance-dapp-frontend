@@ -32,9 +32,9 @@ export const changeBakerAction =
       // confirm query completion
       await transaction?.confirmation()
 
-      await dispatch(showToaster(SUCCESS, 'Baker changed.', 'All good :)'))
       // refetch data we need
       await dispatch(getLoansStorage())
+      await dispatch(showToaster(SUCCESS, 'Baker changed.', 'All good :)'))
       await dispatch(toggleActionLoader(false))
     } catch (error) {
       console.error('changeBakerAction error:', error)
@@ -71,9 +71,9 @@ export const managePermissionsAction = (callback: () => void) => async (dispatch
     // confirm query completion
     // await transaction?.confirmation()
 
-    await dispatch(showToaster(SUCCESS, 'Asset borrowed.', 'All good :)'))
     // refetch data we need
     await dispatch(getLoansStorage())
+    await dispatch(showToaster(SUCCESS, 'Asset borrowed.', 'All good :)'))
     await dispatch(toggleActionLoader(false))
   } catch (error) {
     console.error('borrowVaultAssetAction error:', error)
@@ -110,9 +110,9 @@ export const updateOperatorsAction = (callback: () => void) => async (dispatch: 
     // confirm query completion
     // await transaction?.confirmation()
 
-    await dispatch(showToaster(SUCCESS, 'Asset borrowed.', 'All good :)'))
     // refetch data we need
     await dispatch(getLoansStorage())
+    await dispatch(showToaster(SUCCESS, 'Asset borrowed.', 'All good :)'))
     await dispatch(toggleActionLoader(false))
   } catch (error) {
     console.error('borrowVaultAssetAction error:', error)

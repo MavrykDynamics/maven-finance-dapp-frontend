@@ -36,11 +36,11 @@ export const withdrawCollateralAction =
       // confirm query completion
       await transaction?.confirmation()
 
-      await dispatch(showToaster(SUCCESS, 'Collateral withdrawed.', 'All good :)'))
-
+      
       // refetch data we need
       await dispatch(updateUserData())
       await dispatch(getLoansStorage())
+      await dispatch(showToaster(SUCCESS, 'Collateral withdrawed.', 'All good :)'))
       await dispatch(toggleActionLoader(false))
     } catch (error) {
       console.error('borrowVaultAssetAction error:', error)
@@ -141,11 +141,11 @@ export const depositCollateralAction =
       // confirm query completion
       await transaction?.confirmation()
 
-      await dispatch(showToaster(SUCCESS, 'Collateral added.', 'All good :)'))
-
+      
       // refetch data we need
       await dispatch(updateUserData())
       await dispatch(getLoansStorage())
+      await dispatch(showToaster(SUCCESS, 'Collateral added.', 'All good :)'))
       await dispatch(toggleActionLoader(false))
     } catch (error) {
       console.error('depositCollateralAction error:', error)

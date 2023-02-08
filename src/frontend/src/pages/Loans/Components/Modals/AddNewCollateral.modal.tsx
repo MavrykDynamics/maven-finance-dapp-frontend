@@ -128,7 +128,14 @@ export const AddNewCollateral = ({
       return { futureCollateralRatio, futureCollateralWithdraw, futureCollateralBalance }
     }
     return { futureCollateralRatio: 0, futureCollateralWithdraw: 0, futureCollateralBalance: 0 }
-  }, [inputData, vaultCollateralBalance, borrowedAmount, collateralWithdrawAmount, avaliableCollaterals])
+  }, [
+    inputData,
+    avaliableCollaterals,
+    vaultCollateralBalance,
+    borrowedAmount,
+    borrowedAssetRate,
+    collateralWithdrawAmount,
+  ])
 
   // select baker for an xtz collateral, used only when we selected one collateral XTZ
   const bakerItemsForDropDown = useMemo<DropDownXTZBakerType[]>(
