@@ -95,19 +95,6 @@ export const getTokensPrices = () => async (dispatch: any) => {
   }
 }
 
-export const ADD_TOKENS_PRICES = 'ADD_TOKENS_PRICES'
-export const updateTokensPrices =
-  (additionalTokensSrices: State['tokens']['tokensPrices']) => async (dispatch: any) => {
-    try {
-      dispatch({
-        type: ADD_TOKENS_PRICES,
-        tokensPrices: additionalTokensSrices,
-      })
-    } catch (e) {
-      console.error('updateTokensPrices error: ', e)
-    }
-  }
-
 export const GET_M_TOKENS = 'GET_M_TOKENS'
 export const getMTokensStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
   try {

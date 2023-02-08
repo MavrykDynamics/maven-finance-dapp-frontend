@@ -34,19 +34,13 @@ import {
   SatelliteTextGroup,
   SideBySideImageAndText,
 } from './SatelliteCard.style'
-import { getSatelliteMetrics } from 'pages/Satellites/Satellites.helpers'
+import { getSatelliteMetrics, getVoteText } from 'pages/Satellites/Satellites.helpers'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { Link } from 'react-router-dom'
 
 const renderVotingHistoryItem = (vote: number) => {
-  switch (vote) {
-    case 1:
-      return <span className="voting-yes">YES</span>
-    case 2:
-      return <span className="voting-pass">PASS</span>
-    default:
-      return <span className="voting-no">NO</span>
-  }
+  const voteText = getVoteText(vote)
+  return <span className={`voting-${voteText.toLowerCase()}`}>{voteText.toUpperCase()}</span>
 }
 
 export const SatelliteListItem = ({

@@ -57,7 +57,7 @@ export function BREAK_GLASS_ACTION_PENDING_SIGNATURE_QUERY_VARIABLE(variables: {
 
 export const BREAK_GLASS_ACTION_PENDING_SIGNATURE_QUERY = `
   query GetBreakGlassActionsPendingMySignature($_gte: timestamptz = "", $userAddress: String = "", $userAddress2: String = "") {
-    break_glass_action(where: {expiration_datetime: {_gte: $_gte}, initiator_id: {_neq: $userAddress}, signers: { signer_id: {_neq: $userAddress2}}}, order_by: {start_datetime: desc}) {
+    break_glass_action(where: {expiration_datetime: {_gte: $_gte}, _or: {executed: {_eq: false}}, initiator_id: {_neq: $userAddress}, signers: { signer_id: {_neq: $userAddress2}}}, order_by: {start_datetime: desc}) {
       ${BREAK_GLASS_ACTION_PARAMS}
       parameters {
         id

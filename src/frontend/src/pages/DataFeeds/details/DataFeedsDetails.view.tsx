@@ -93,8 +93,6 @@ const DataFeedDetailsView = ({ feed, oracles, registerFeedHandler }: FeedDetails
     ? '/images/eurl.png'
     : feed?.name.includes('XTZ')
     ? '/images/tezos.png'
-    : feed?.name.includes('BTC')
-    ? '/images/tzBTC.png'
     : dipDupContracts.find(({ contract }) => contract === feed?.address)?.metadata?.icon
 
   return feed ? (

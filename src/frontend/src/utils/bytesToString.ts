@@ -16,7 +16,7 @@ export type BytesType = typeof BYTES_ADDRESS_TYPE | typeof BYTES_STRING_TYPE
 export const bytesToString = (bytes: string, type?: BytesType) => {
   const bytesData = { bytes }
   const bytesType = type === BYTES_ADDRESS_TYPE ? addressType : stringType
-  
-  const data = unpackDataBytes(bytesData, bytesType) as { string: string }
-  return data.string
+
+  const data = unpackDataBytes(bytesData, bytesType)
+  return Object.values(data)[0]
 }
