@@ -1,3 +1,4 @@
+import { Doorman, Satellite_Rewards } from './../../utils/generated/graphqlTypes'
 import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { ERROR } from 'app/App.components/Toaster/Toaster.constants'
 import { AppDispatch, GetState } from 'app/App.controller'
@@ -84,11 +85,11 @@ export const fetchUserData = async (
     // getting user rewards
     userInfo.myDoormanRewardsData = calcUsersDoormanRewards({
       mySMvkTokenBalance: userInfo.mySMvkTokenBalance ?? 0,
-      userDoormanRewardsFromGQL: userRewardsData.doorman[0],
+      userDoormanRewardsFromGQL: userRewardsData.doorman[0] as Doorman,
     })
     userInfo.mySatelliteRewardsData = calcUsersSatelliteRewards({
       mySMvkTokenBalance: userInfo.mySMvkTokenBalance ?? 0,
-      userSatelliteRewardsFromGQL: userRewardsData.satellite_rewards[0],
+      userSatelliteRewardsFromGQL: userRewardsData.satellite_rewards[0] as Satellite_Rewards,
     })
     userInfo.myFarmRewardsData = calcUsersFarmRewards({
       currentBlockLevel: currentBlockLevel ?? 0,

@@ -1,7 +1,7 @@
 import { State } from 'reducers'
 import { UserState } from 'reducers/wallet'
 import { FIXED_POINT_ACCURACY, PRECISION_NUMBER, SECONDS_PER_BLOCK } from './constants'
-import { Farm, Stake_History_Data } from './generated/graphqlTypes'
+import { Doorman, Farm, Satellite_Rewards, Stake_History_Data } from './generated/graphqlTypes'
 import { UserDoormanRewardsData, UserFarmRewardsData, UserSatelliteRewardsData } from './TypesAndInterfaces/User'
 
 /**
@@ -52,7 +52,7 @@ export function calcUsersDoormanRewards({
   userDoormanRewardsFromGQL,
   mySMvkTokenBalance = 0,
 }: {
-  userDoormanRewardsFromGQL?: any
+  userDoormanRewardsFromGQL?: Doorman
   mySMvkTokenBalance: number
 }): UserDoormanRewardsData | undefined {
   const myDoormanRewardsData: UserDoormanRewardsData = {
@@ -134,7 +134,7 @@ export function calcUsersSatelliteRewards({
   userSatelliteRewardsFromGQL,
 }: {
   mySMvkTokenBalance: number
-  userSatelliteRewardsFromGQL?: any
+  userSatelliteRewardsFromGQL?: Satellite_Rewards
 }): UserSatelliteRewardsData | undefined {
   const mySatelliteRewardsData: UserSatelliteRewardsData = {
     unpaid: userSatelliteRewardsFromGQL?.unpaid ?? 0,
