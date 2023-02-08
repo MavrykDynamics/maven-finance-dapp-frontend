@@ -41,7 +41,7 @@ export const TabWrapperStyled = styled.div<{ theme: MavrykTheme; backgroundImage
       font-weight: 600;
       font-size: 22px;
       line-height: 22px;
-      
+
       color: ${({ theme }) => theme.textColor};
 
       &:after {
@@ -162,15 +162,21 @@ export const OraclesContentStyled = styled.div<{ theme: MavrykTheme }>`
     max-width: 720px;
     display: flex;
     flex-direction: column;
-    row-gap: 7px;
     cursor: pointer;
 
     .row {
       display: grid;
       grid-template-columns: 1.2fr 1.1fr 1.3fr 1.2fr;
 
+      .icon-first {
+        img {
+          width: 33px;
+          height: 33px;
+        }
+      }
+
       .value {
-        height: 22px;
+        height: max-content;
         transition: color 0.4s ease-in-out;
       }
     }
@@ -528,7 +534,7 @@ export const FarmsContentStyled = styled.div<{ theme: MavrykTheme }>`
 
 export const PopularFeed = styled(CardHover)`
   margin-top: 0;
-  padding: 12px 20px 12px 19px;
+  padding: 10px 20px 10px 19px;
   border: 1px solid transparent;
 `
 
