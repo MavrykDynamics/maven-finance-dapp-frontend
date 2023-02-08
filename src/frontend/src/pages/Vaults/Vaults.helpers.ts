@@ -401,19 +401,25 @@ type VaultAssetBalances = {
 }
 
 export const reduceVaultsAssets = (vaultIds: string[], vaultsMapper: Record<string, VaultType>) => {
-  let notEmptyCollateral = 0
+  let vaultWithBalances = 0
+  let totalBorrowedAmounts = 0
+  let totalCollateralBalances = 0
   let colorIdx = 0
 
-  const { assets, globalVaultTVL, collateralRatio } = vaultIds.reduce<VaultAssetBalances>(
+  const { assets, globalVaultTVL } = vaultIds.reduce<VaultAssetBalances>(
     (acc, vaultId) => {
       const { assets } = acc
-      const { collateralData, collateralRatio } = vaultsMapper[vaultId]
+      const { collateralData, borrowedAmount, collateralBalance } = vaultsMapper[vaultId]
+
+      totalBorrowedAmounts += borrowedAmount
+      totalCollateralBalances += collateralBalance
+
+      if (borrowedAmount && collateralBalance) {
+        vaultWithBalances++
+      }
 
       if (collateralData.length !== 0) {
-        notEmptyCollateral++
-        acc.collateralRatio += collateralRatio
-
-        collateralData.slice(0, -1).forEach((collateral, idx) => {
+        collateralData.slice(0, -1).forEach((collateral) => {
           acc.globalVaultTVL += collateral.amount * collateral.rate
 
           if (collateral.symbol && assets[collateral.symbol]) {
@@ -444,11 +450,13 @@ export const reduceVaultsAssets = (vaultIds: string[], vaultsMapper: Record<stri
     },
   )
 
+  const collateralRatio = (totalCollateralBalances / totalBorrowedAmounts) * 100
+
   return {
     assetsBalances: Object.values(assets),
     globalVaultTVL,
     collateralRatio,
-    avgCollateralRatio: collateralRatio / notEmptyCollateral,
+    avgCollateralRatio: collateralRatio / vaultWithBalances,
   }
 }
 

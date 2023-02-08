@@ -98,7 +98,7 @@ export const VaultsTab = ({ isLoading }: { isLoading: boolean }) => {
                             <CommaNumber value={balance} useAccurateParsing />
                           </TableCell>
                           <TableCell width="33%" contentPosition="right">
-                            <CommaNumber value={usdValue} endingText={rate ? '$' : symbol} useAccurateParsing />
+                            <CommaNumber value={usdValue} beginningText={rate ? '$' : symbol} useAccurateParsing />
                           </TableCell>
                         </TableRow>
                       )
