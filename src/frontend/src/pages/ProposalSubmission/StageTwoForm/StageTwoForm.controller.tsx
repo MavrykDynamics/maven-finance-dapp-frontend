@@ -122,7 +122,7 @@ export const StageTwoForm = ({
     )
     updateLocalProposalValidation(
       {
-        bytesValidation: currentProposalValidation.bytesValidation.concat({
+        bytesValidation: (currentProposalValidation.bytesValidation ?? []).concat({
           validBytes: '',
           validTitle: '',
           byteId: newId,

@@ -22,6 +22,7 @@ import {
   PortfolioWalletStyled,
   PortfolioChartStyled,
 } from './DashboardPersonalComponents.style'
+import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
 type PortfolioTabProps = {
   xtzAmount: number
@@ -148,13 +149,7 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
             {userLendings.map(({ icon, amount, annualPecentage, earned, operationHash, id }) => {
               return (
                 <ListItem columsTemplate="60px 0.9fr 0.7fr 0.8fr 0.7fr" key={id + operationHash}>
-                  {icon ? (
-                    <div className="image-wrapper">
-                      <img src={icon} alt="" />
-                    </div>
-                  ) : (
-                    <Icon id={'noImage'} />
-                  )}
+                  <ImageWithPlug imageLink={icon} alt={`lended asset logo`} />
                   <div className="list-part">
                     <div className="name">Supplied</div>
                     <div className="value">
@@ -204,14 +199,7 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
             {userBorrowing.map(({ icon, amount, annualPecentage, earned, operationHash, id }) => {
               return (
                 <ListItem columsTemplate="60px 0.9fr 0.7fr 0.8fr 0.7fr" key={id + operationHash}>
-                  {icon ? (
-                    <div className="image-wrapper">
-                      <img src={icon} alt="" />
-                    </div>
-                  ) : (
-                    <Icon id={'noImage'} />
-                  )}
-
+                  <ImageWithPlug imageLink={icon} alt={`borrowed asset logo`} />
                   <div className="list-part">
                     <div className="name">Borrowed</div>
                     <div className="value">

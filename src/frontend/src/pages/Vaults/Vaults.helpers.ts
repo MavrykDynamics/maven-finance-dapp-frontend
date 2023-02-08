@@ -244,49 +244,6 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
   return dataWithSortedIds
 }
 
-export const getVaultsTokensRates = async (
-  vaults: LendingControllerGQL['vaults'],
-  dipDupTokens: State['tokens']['dipDupTokens'],
-  tokenRatesFromRedux: State['tokens']['tokensPrices'],
-) => {
-  try {
-    const loanTokenSymbols = Array.from(
-      vaults?.reduce((acc, { loan_token, collateral_balances }) => {
-        const { loan_token_name = '', loan_token_address = '' } = loan_token ?? {}
-
-        // Getting symbol metadata of loanToken
-        const tokenInfo = dipDupTokens?.find(({ contract }) => contract === loan_token_address)
-        let tokenSymbolToFetch = null
-        if (loan_token_name === 'tez') {
-          tokenSymbolToFetch = 'tezos'
-        } else {
-          tokenSymbolToFetch = tokenInfo?.metadata.symbol ?? loan_token_name
-        }
-
-        if (!tokenRatesFromRedux[tokenSymbolToFetch]) {
-          acc.add(tokenSymbolToFetch)
-        }
-
-        // mapping through vaults to get symbol of each collateral asset
-        collateral_balances.forEach(({ token }) => {
-          const collaretalTokenInfo = dipDupTokens?.find(({ contract }) => contract === token?.token_address)
-
-          if (collaretalTokenInfo && !tokenRatesFromRedux[collaretalTokenInfo.metadata.symbol]) {
-            acc.add(collaretalTokenInfo.metadata.symbol)
-          }
-        })
-
-        return acc
-      }, new Set<string>()) ?? new Set(),
-    )
-
-    return await fetchRateBySymbols(loanTokenSymbols)
-  } catch (e) {
-    console.log('getVaultsTokensRates error: ', e)
-    return {}
-  }
-}
-
 type OracleLatestProps = {
   aggregator: Aggregator[]
 }
@@ -402,6 +359,7 @@ type VaultAssetBalances = {
 
 export const reduceVaultsAssets = (vaultIds: string[], vaultsMapper: Record<string, VaultType>) => {
   let notEmptyCollateral = 0
+  let colorIdx = 0
 
   const { assets, globalVaultTVL, collateralRatio } = vaultIds.reduce<VaultAssetBalances>(
     (acc, vaultId) => {
@@ -425,9 +383,10 @@ export const reduceVaultsAssets = (vaultIds: string[], vaultsMapper: Record<stri
               rate: collateral.rate,
               name: collateral.symbol,
               symbol: collateral.symbol,
-              chartColor: getAssetColor(idx),
+              chartColor: getAssetColor(colorIdx),
               decimals: 0,
             }
+            colorIdx++
           }
         })
       }

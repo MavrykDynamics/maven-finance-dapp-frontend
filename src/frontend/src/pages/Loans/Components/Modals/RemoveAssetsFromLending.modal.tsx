@@ -25,6 +25,7 @@ import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase } from './Modals.style'
 import { withdrawLendingAssetAction } from 'pages/Loans/Actions/lendingAsset.actions'
+import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A238846&t=Sx2aEpp3ifrGxBtQ-0
 export const RemoveAssetsFromLending = ({
@@ -160,14 +161,7 @@ export const RemoveAssetsFromLending = ({
                 }}
               >
                 <InputPinnedTokenInfo>
-                  {icon ? (
-                    <div className="image-wrapper">
-                      <img src={icon} alt={`${symbol}-logo`} />
-                    </div>
-                  ) : (
-                    <Icon id="noImage" />
-                  )}{' '}
-                  {symbol}
+                  <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} /> {symbol}
                 </InputPinnedTokenInfo>
               </Input>
 

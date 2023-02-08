@@ -12,6 +12,7 @@ import Icon from '../../../app/App.components/Icon/Icon.view'
 import { getSeparateCamelCase } from '../../../utils/parse'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { bytesToString, BytesType, BYTES_ADDRESS_TYPE } from 'utils/bytesToString'
+import { CYAN } from 'app/App.components/TzAddress/TzAddress.constants'
 
 // types
 import { BreakGlassActions } from 'utils/TypesAndInterfaces/BreakGlass'
@@ -60,7 +61,8 @@ export const CouncilPending = (props: Props) => {
     (name: string, type?: BytesType) => {
       const foundField = parameters.find((item) => item.name === name)?.value
       return foundField ? bytesToString(foundField, type) : ''
-    }, [parameters],
+    },
+    [parameters],
   )
 
   const isAddCouncilMember = actionType === 'addCouncilMember'
@@ -121,8 +123,8 @@ export const CouncilPending = (props: Props) => {
           <div className="parameters">
             <article>
               <p className="without-margin">Council Member Address</p>
-              <span className="parameters-value">
-                <TzAddress tzAddress={councilMemberAddress} hasIcon={false} />
+              <span className="parameters-value address-width">
+                <TzAddress tzAddress={councilMemberAddress} type={CYAN} hasIcon />
               </span>
             </article>
             {councilMemberName ? (
@@ -134,7 +136,7 @@ export const CouncilPending = (props: Props) => {
             <article className="signed-article">
               <div>
                 <p>Signed</p>
-                <span className="parameters-value">
+                <span className="parameters-value signed-width">
                   {signersCount}/{numCouncilMembers}
                 </span>
               </div>
@@ -190,8 +192,8 @@ export const CouncilPending = (props: Props) => {
           <div className="parameters grid">
             <article>
               <p>Council Member</p>
-              <span className="parameters-value">
-                <TzAddress tzAddress={newCouncilMemberAddress} hasIcon={false} />
+              <span className="parameters-value address-width">
+                <TzAddress tzAddress={newCouncilMemberAddress} type={CYAN} hasIcon />
               </span>
             </article>
 
@@ -203,7 +205,7 @@ export const CouncilPending = (props: Props) => {
             <article className="signed-article">
               <div>
                 <p>Signed</p>
-                <span className="parameters-value">
+                <span className="parameters-value signed-width">
                   {signersCount}/{numCouncilMembers}
                 </span>
               </div>
@@ -259,14 +261,14 @@ export const CouncilPending = (props: Props) => {
           <div className="parameters grid">
             <article>
               <p className="without-margin">Council Member to change</p>
-              <span className="parameters-value">
-                <TzAddress tzAddress={oldCouncilMemberAddress} hasIcon={false} />
+              <span className="parameters-value address-width">
+                <TzAddress tzAddress={oldCouncilMemberAddress} type={CYAN} hasIcon />
               </span>
             </article>
             <article>
               <p>Council Member Address</p>
-              <span className="parameters-value">
-                <TzAddress tzAddress={newCouncilMemberAddress} hasIcon={false} />
+              <span className="parameters-value address-width">
+                <TzAddress tzAddress={newCouncilMemberAddress} type={CYAN} hasIcon />
               </span>
             </article>
 
@@ -278,7 +280,7 @@ export const CouncilPending = (props: Props) => {
             <article className="signed-article">
               <div>
                 <p>Signed</p>
-                <span className="parameters-value">
+                <span className="parameters-value signed-width">
                   {signersCount}/{numCouncilMembers}
                 </span>
               </div>
@@ -333,15 +335,15 @@ export const CouncilPending = (props: Props) => {
         <div className="parameters">
           <article>
             <p>New Admin Address</p>
-            <span className="parameters-value">
-              <TzAddress tzAddress={newAdminAddress} hasIcon={false} />
+            <span className="parameters-value address-width">
+              <TzAddress tzAddress={newAdminAddress} type={CYAN} hasIcon />
             </span>
           </article>
 
           <article className="signed-article">
             <div>
               <p>Signed</p>
-              <span className="parameters-value">
+              <span className="parameters-value signed-width">
                 {signersCount}/{numCouncilMembers}
               </span>
             </div>
@@ -352,8 +354,8 @@ export const CouncilPending = (props: Props) => {
           <article>
             <div>
               <p>Target Contract</p>
-              <span className="parameters-value">
-                <TzAddress tzAddress={targetContractAddress} hasIcon={false} />
+              <span className="parameters-value address-width">
+                <TzAddress tzAddress={targetContractAddress} type={CYAN} hasIcon />
               </span>
             </div>
           </article>
@@ -378,8 +380,8 @@ export const CouncilPending = (props: Props) => {
         <div className="parameters">
           <article>
             <p>Vestee Address</p>
-            <span className="parameters-value">
-              <TzAddress tzAddress={vesteeAddress} hasIcon={false} />
+            <span className="parameters-value address-width">
+              <TzAddress tzAddress={vesteeAddress} type={CYAN} hasIcon />
             </span>
           </article>
 
@@ -393,7 +395,7 @@ export const CouncilPending = (props: Props) => {
           <article className="signed-article">
             <div>
               <p>Signed</p>
-              <span className="parameters-value">
+              <span className="parameters-value signed-width">
                 {signersCount}/{numCouncilMembers}
               </span>
             </div>
@@ -431,8 +433,8 @@ export const CouncilPending = (props: Props) => {
         <div className="parameters">
           <article>
             <p>Vestee Address</p>
-            <span className="parameters-value">
-              <TzAddress tzAddress={vesteeAddress} hasIcon={false} />
+            <span className="parameters-value address-width">
+              <TzAddress tzAddress={vesteeAddress} type={CYAN} hasIcon />
             </span>
           </article>
 
@@ -446,7 +448,7 @@ export const CouncilPending = (props: Props) => {
           <article className="signed-article">
             <div>
               <p>Signed</p>
-              <span className="parameters-value">
+              <span className="parameters-value signed-width">
                 {signersCount}/{numCouncilMembers}
               </span>
             </div>
@@ -486,14 +488,14 @@ export const CouncilPending = (props: Props) => {
           <div className="parameters grid">
             <article>
               <p>Treasury Address</p>
-              <span className="parameters-value">
-                <TzAddress tzAddress={treasuryAddress} hasIcon={false} />
+              <span className="parameters-value address-width">
+                <TzAddress tzAddress={treasuryAddress} type={CYAN} hasIcon />
               </span>
             </article>
             <article>
               <p>Token Contract Address</p>
-              <span className="parameters-value">
-                <TzAddress tzAddress={tokenContractAddress} hasIcon={false} />
+              <span className="parameters-value address-width">
+                <TzAddress tzAddress={tokenContractAddress} type={CYAN} hasIcon />
               </span>
             </article>
 
@@ -507,7 +509,7 @@ export const CouncilPending = (props: Props) => {
             <article className="signed-article">
               <div>
                 <p>Signed</p>
-                <span className="parameters-value">
+                <span className="parameters-value signed-width">
                   {signersCount}/{numCouncilMembers}
                 </span>
               </div>
@@ -558,14 +560,14 @@ export const CouncilPending = (props: Props) => {
           <div className="parameters grid">
             <article>
               <p>Receiver Address</p>
-              <span className="parameters-value">
-                <TzAddress tzAddress={receiverAddress} hasIcon={false} />
+              <span className="parameters-value address-width">
+                <TzAddress tzAddress={receiverAddress} type={CYAN} hasIcon />
               </span>
             </article>
             <article>
               <p>Token Contract Address</p>
-              <span className="parameters-value">
-                <TzAddress tzAddress={tokenContractAddress} hasIcon={false} />
+              <span className="parameters-value address-width">
+                <TzAddress tzAddress={tokenContractAddress} type={CYAN} hasIcon />
               </span>
             </article>
 
@@ -579,7 +581,7 @@ export const CouncilPending = (props: Props) => {
             <article className="signed-article">
               <div>
                 <p>Signed</p>
-                <span className="parameters-value">
+                <span className="parameters-value signed-width">
                   {signersCount}/{numCouncilMembers}
                 </span>
               </div>
@@ -626,8 +628,8 @@ export const CouncilPending = (props: Props) => {
         <div className="parameters">
           <article>
             <p>Treasury Address</p>
-            <span className="parameters-value">
-              <TzAddress tzAddress={treasuryAddress} hasIcon={false} />
+            <span className="parameters-value address-width">
+              <TzAddress tzAddress={treasuryAddress} type={CYAN} hasIcon />
             </span>
           </article>
 
@@ -641,7 +643,7 @@ export const CouncilPending = (props: Props) => {
           <article className="signed-article">
             <div>
               <p>Signed</p>
-              <span className="parameters-value">
+              <span className="parameters-value signed-width">
                 {signersCount}/{numCouncilMembers}
               </span>
             </div>
@@ -679,18 +681,21 @@ export const CouncilPending = (props: Props) => {
         <div className="parameters">
           <div>
             <p className="parameters-name">{getSeparateCamelCase(name)}</p>
-            <span className="parameters-value">
-              <TzAddress tzAddress={address} hasIcon={false} />
+            <span className="parameters-value address-width">
+              <TzAddress tzAddress={address} type={CYAN} hasIcon />
             </span>
           </div>
           <div>
             <p>Signed</p>
-            <span className="parameters-value">
+            <span className="parameters-value signed-width">
               {signersCount}/{numCouncilMembers}
             </span>
           </div>
         </div>
-        <Button text="Sign" className="sign-btn" kind={'actionPrimary'} icon="sign" onClick={onClickSign} />
+
+        <div className="g-centering">
+          <Button text="Sign" className="sign-btn" kind={'actionPrimary'} icon="sign" onClick={onClickSign} />
+        </div>
       </CouncilPendingStyled>
     )
   }
@@ -706,12 +711,15 @@ export const CouncilPending = (props: Props) => {
         </div>
         <div>
           <p>Signed</p>
-          <span className="parameters-value">
+          <span className="parameters-value signed-width">
             {signersCount}/{numCouncilMembers}
           </span>
         </div>
       </div>
-      <Button text="Sign" className="sign-btn" kind={ACTION_PRIMARY} icon="sign" onClick={onClickSign} />
+
+      <div className="g-centering">
+        <Button text="Sign" className="sign-btn" kind={ACTION_PRIMARY} icon="sign" onClick={onClickSign} />
+      </div>
     </CouncilPendingStyled>
   )
 }

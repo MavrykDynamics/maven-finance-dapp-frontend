@@ -109,12 +109,12 @@ export const repayPartOfVaultAction =
 
       callback()
       await dispatch(toggleActionLoader(true))
-      await dispatch(showToaster(INFO, 'Borrowing from the vault...', 'Please wait 30s'))
+      await dispatch(showToaster(INFO, 'Repaying asset...', 'Please wait 30s'))
 
       // confirm query completion
       await transaction?.confirmation()
 
-      await dispatch(showToaster(SUCCESS, 'Asset borrowed.', 'All good :)'))
+      await dispatch(showToaster(SUCCESS, 'Asset repayed.', 'All good :)'))
       // refetch data we need
       await dispatch(updateUserData())
       await dispatch(getLoansStorage())
@@ -162,12 +162,12 @@ export const repayFullAndCloseVaultAction =
 
       callback()
       await dispatch(toggleActionLoader(true))
-      await dispatch(showToaster(INFO, 'Borrowing from the vault...', 'Please wait 30s'))
+      await dispatch(showToaster(INFO, 'Repaying asset...', 'Please wait 30s'))
 
       // confirm query completion
       await batch?.confirmation()
 
-      await dispatch(showToaster(SUCCESS, 'Asset borrowed.', 'All good :)'))
+      await dispatch(showToaster(SUCCESS, 'Asset repayed.', 'All good :)'))
       // refetch data we need
       await dispatch(getLoansStorage())
       await dispatch(toggleActionLoader(false))

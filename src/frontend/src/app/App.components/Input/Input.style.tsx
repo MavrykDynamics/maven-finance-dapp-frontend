@@ -231,6 +231,18 @@ export const StyledInput = styled.input<{ theme: MavrykTheme }>`
 export const InputPinnedChild = styled.div<{ theme: MavrykTheme }>`
   height: 100%;
   border-left: 1px solid ${({ theme }) => theme.dataColor};
+
+  .img-wrapper,
+  svg {
+    width: 30px;
+    height: 30px;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
 `
 
 export const InputWrapper = styled.div<{ theme: MavrykTheme }>`

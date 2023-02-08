@@ -20,6 +20,7 @@ import { PopupContainer, PopupContainerWrapper } from 'app/App.components/Settin
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { DropDownJsxChild, LoansModalBase } from './Modals.style'
+import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
 const MAVRYK_DYNAMICS_BAKERY = 1
 const DAO_BAKERY = 2
@@ -103,14 +104,7 @@ export const ChangeBaker = ({
         content: (
           <DropDownJsxChild>
             <div className="flex-row with-image">
-              {logo ? (
-                <div className="image-wrapper">
-                  <img src={logo} alt={name + '-logo'} />
-                </div>
-              ) : (
-                <Icon id="noImage" />
-              )}{' '}
-              {name}
+              <ImageWithPlug imageLink={logo} alt={`${name} icon`} /> {name}
             </div>
             <div className="baker-fee">
               <CommaNumber value={fee} endingText="%" />

@@ -27,7 +27,7 @@ export const CouncilPendingStyled = styled(Card)`
     min-width: 590px;
     .parameters {
       display: grid;
-      grid-template-columns: 130px 180px 150px;
+      grid-template-columns: 180px 180px 150px;
       align-items: center;
     }
 
@@ -105,6 +105,11 @@ export const CouncilPendingStyled = styled(Card)`
     }
   }
 
+  .g-centering {
+    display: flex;
+    justify-content: center;
+  }
+
   .sign-btn {
     width: 185px;
 
@@ -114,7 +119,7 @@ export const CouncilPendingStyled = styled(Card)`
     }
   }
 
-  .parameters-link{
+  .parameters-link {
     display: block;
 
     color: ${cyanColor};
@@ -151,10 +156,18 @@ export const CouncilPendingStyled = styled(Card)`
       white-space: nowrap;
       overflow: hidden;
       word-break: break-all;
-      width: 100%;
+      width: 130px;
       max-width: 100%;
       text-overflow: ellipsis;
       display: block;
+    }
+
+    .address-width {
+      width: 150px;
+    }
+
+    .signed-width {
+      width: 100%;
     }
 
     p {

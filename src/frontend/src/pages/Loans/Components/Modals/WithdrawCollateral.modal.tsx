@@ -26,6 +26,7 @@ import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
 import { calcCollateralRatio } from 'pages/Loans/Loans.helpers'
+import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239234&t=Sx2aEpp3ifrGxBtQ-0
 export const WithdrawCollateral = ({
@@ -39,6 +40,7 @@ export const WithdrawCollateral = ({
 }) => {
   const {
     selectedAsset,
+    borrowedAssetRate = 0,
     currentCollateralBalance = 0,
     vaultCollateralBalance = 0,
     vaultAddress,
@@ -70,7 +72,7 @@ export const WithdrawCollateral = ({
       ? calcCollateralRatio(
           vaultCollateralBalance - inputAmount * Number(selectedAsset?.rate),
           borrowedAmount,
-          selectedAsset.rate,
+          borrowedAssetRate,
         )
       : 0
 
@@ -78,7 +80,7 @@ export const WithdrawCollateral = ({
     const futureVaultCollateralBalance = vaultCollateralBalance - inputAmount * Number(selectedAsset?.rate)
 
     return { futureCollateralRatio, futureCollateralWithdraw, futureVaultCollateralBalance }
-  }, [selectedAsset, vaultCollateralBalance, inputData.amount, borrowedAmount, collateralWithdrawAmount])
+  }, [selectedAsset, vaultCollateralBalance, inputAmount, borrowedAmount, collateralWithdrawAmount])
 
   useEffect(() => {
     if (!show) {
@@ -199,13 +201,7 @@ export const WithdrawCollateral = ({
               }}
             >
               <InputPinnedTokenInfo>
-                {collateralData?.icon ? (
-                  <div className="image-wrapper">
-                    <img src={collateralData.icon} alt={collateralData.name + '-logo'} />
-                  </div>
-                ) : (
-                  <Icon id="noImage" />
-                )}{' '}
+                <ImageWithPlug imageLink={collateralData.icon} alt={`${collateralData.symbol} icon`} />{' '}
                 {collateralData.symbol}
               </InputPinnedTokenInfo>
             </Input>

@@ -33,6 +33,7 @@ import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 import { getTimestampByLevel } from 'pages/Governance/Governance.actions'
 import { calculateCollateralShare } from 'pages/Vaults/calcFunctionsForVault'
 import { isTezosAsset } from '../Loans.helpers'
+import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
 export type BorrowingCardOptions = {
   reverseColumns?: boolean
@@ -144,13 +145,7 @@ export const BorrowingExpandCard = ({
         header={
           <>
             <ThreeLevelListItem className="borrow-asset-header">
-              {icon ? (
-                <div className="img-wrapper">
-                  <img src={icon} alt={`${symbol} logo`} />
-                </div>
-              ) : (
-                <Icon id="noImage" />
-              )}
+              <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} />
               <div className="data">
                 <div className="value">{borrowedAsset.symbol}</div>
                 <div className="value">
@@ -227,15 +222,7 @@ export const BorrowingExpandCard = ({
               <ThreeLevelListItem>
                 <div className="name">Asset</div>
                 <div className="value">
-                  {icon ? (
-                    <div className="img-wrapper">
-                      <img src={icon} alt={`${symbol} logo`} />
-                    </div>
-                  ) : (
-                    <div className="no-icon">
-                      <Icon id="noImage" />
-                    </div>
-                  )}
+                  <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} />
                   {borrowedAsset.symbol}
                 </div>
               </ThreeLevelListItem>
@@ -299,7 +286,9 @@ export const BorrowingExpandCard = ({
             </div>
 
             <div className="block-name margin-top">Collateral In Vault</div>
-            <Table className={`no-margin borrowing-table ${isOwner && collateralData.length <= 2 ? 'show-before' : ''}`}>
+            <Table
+              className={`no-margin borrowing-table ${isOwner && collateralData.length <= 2 ? 'show-before' : ''}`}
+            >
               {collateralData.length ? (
                 <TableHeader className={`simple-header collateral `}>
                   <TableRow>
@@ -326,16 +315,8 @@ export const BorrowingExpandCard = ({
                         {isTotalRow ? (
                           'Total'
                         ) : (
-                          <div className="cell-content row">
-                            {icon ? (
-                              <div className="img-wrapper">
-                                <img src={icon} alt={`${gqlName} logo`} />
-                              </div>
-                            ) : (
-                              <div className="no-icon">
-                                <Icon id="noImage" />
-                              </div>
-                            )}
+                          <div className="cell-content row with-icon">
+                            <ImageWithPlug imageLink={icon} alt={`${gqlName} icon`} />
                             {symbol}
                           </div>
                         )}
@@ -381,6 +362,7 @@ export const BorrowingExpandCard = ({
                                     borrowedAmount,
                                     collateralWithdrawAmount: 0,
                                     existingCollaterals: collateralData,
+                                    borrowedAssetRate: borrowedAsset.rate,
                                   })
                                 }
                                 kind={ACTION_PRIMARY}
@@ -405,6 +387,7 @@ export const BorrowingExpandCard = ({
                                   currentCollateralRatio: collateralRatio,
                                   borrowedAmount,
                                   collateralWithdrawAmount: amount,
+                                  borrowedAssetRate: borrowedAsset.rate,
                                 })
                               }
                               kind={TRANSPARENT_WITH_BORDER}
@@ -422,6 +405,7 @@ export const BorrowingExpandCard = ({
                                     currentCollateralRatio: collateralRatio,
                                     borrowedAmount,
                                     collateralWithdrawAmount: amount,
+                                    borrowedAssetRate: borrowedAsset.rate,
                                   })
                                 }
                                 kind={TRANSPARENT_WITH_BORDER}
@@ -450,6 +434,7 @@ export const BorrowingExpandCard = ({
                     borrowedAmount,
                     collateralWithdrawAmount: 0,
                     existingCollaterals: collateralData,
+                    borrowedAssetRate: borrowedAsset.rate,
                   })
                 }
                 kind={ACTION_PRIMARY}

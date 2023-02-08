@@ -11,6 +11,7 @@ import { parseDate } from 'utils/time'
 
 import { SatelliteItemStyle } from './SatelliteCard.style'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
 export const handleCoinName = (name: string) => {
   const updatedName = name.split('/')?.[1]
@@ -27,16 +28,19 @@ const defaultCategoryText = 'No Category'
 export const DataFeedCard = ({ feed }: { feed: Feed }) => {
   const { pathname } = useLocation()
   const { dipDupContracts } = useSelector((state: State) => state.tokens)
-  const imageLink = feed?.name.includes('EUROC')
+  // TODO: remove it when images will be ok in indexer
+  const imageLink = feed.name.includes('EUROC')
     ? '/images/eurl.png'
-    : dipDupContracts.find(({ contract }) => contract === feed?.address)?.metadata?.icon
+    : feed.name.includes('XTZ')
+    ? '/images/tezos.png'
+    : dipDupContracts.find(({ contract }) => contract === feed.address)?.metadata?.icon
   const isDataFeedsPage = pathname === '/data-feeds'
 
   return (
     <Link to={`/satellites/feed-details/${feed.address}`}>
       <SatelliteItemStyle className="feed" isDataFeeds={isDataFeedsPage}>
         <div className="item with-img">
-          <CoinsLogo imageLink={imageLink} assetName={handleCoinName(feed.name)} />
+          <ImageWithPlug imageLink={imageLink} alt={`${feed.name} logo`} />
           <h5>Feed</h5>
           <var>
             <Trim title={feed.name} />
