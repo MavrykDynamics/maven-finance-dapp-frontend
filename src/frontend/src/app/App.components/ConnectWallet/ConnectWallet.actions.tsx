@@ -16,20 +16,19 @@ const WALLET_INSTANCE = new BeaconWallet({
 export const CHANGE_WALLET = 'CHANGE_WALLET'
 export const changeWallet = () => async (dispatch: AppDispatch, getState: GetState) => {
   const {
-    wallet: { wallet },
-    preferences: { REACT_APP_RPC_PROVIDER },
+    wallet: { wallet, tezos },
   } = getState()
   try {
     if (wallet) {
       // getting current wallet
       const prevWalletAccount = await wallet.client.getActiveAccount()
 
-      //clearing wallet logged in
+      // clearing wallet logged in
       await wallet.client.clearActiveAccount()
 
       try {
         // triggering popups for wallet selection
-        await wallet.requestPermissions({
+        await wallet.client.requestPermissions({
           network: { type: NetworkType.GHOSTNET },
         })
       } catch (e) {
@@ -42,20 +41,18 @@ export const changeWallet = () => async (dispatch: AppDispatch, getState: GetSta
       if (newAccount) {
         // setting newly selected wallet
         await wallet.client.setActiveAccount(newAccount)
-        const newTezos = new TezosToolkit(REACT_APP_RPC_PROVIDER)
-        await newTezos.setRpcProvider(REACT_APP_RPC_PROVIDER)
-        await newTezos.setWalletProvider(wallet)
+        await tezos?.setWalletProvider(wallet)
 
-        dispatch({
+        await dispatch({
           type: CHANGE_WALLET,
           wallet,
-          tezos: newTezos,
           accountPkh: newAccount.address,
         })
         await dispatch(updateUserData())
         await dispatch(updateWalletDependedDataOnWalletChange())
       } else {
         await wallet.client.setActiveAccount(prevWalletAccount)
+        await tezos?.setWalletProvider(wallet)
       }
     }
   } catch (e) {
