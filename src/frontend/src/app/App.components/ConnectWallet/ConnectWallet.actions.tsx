@@ -57,8 +57,6 @@ export const changeWallet = () => async (dispatch: AppDispatch, getState: GetSta
       } else {
         await wallet.client.setActiveAccount(prevWalletAccount)
       }
-
-      console.log('after seting')
     }
   } catch (e) {
     console.error(`Failed to change wallet: `, e)
@@ -71,7 +69,6 @@ export const changeWallet = () => async (dispatch: AppDispatch, getState: GetSta
 export const CONNECT = 'CONNECT'
 export const connect = () => async (dispatch: AppDispatch, getState: GetState) => {
   const {
-    wallet: { wallet },
     preferences: { REACT_APP_RPC_PROVIDER, headData },
     tokens: { dipDupTokens },
     oracles: {
