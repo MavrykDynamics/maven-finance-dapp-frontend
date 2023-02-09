@@ -64,20 +64,10 @@ export const VaultsSearchFilter = ({ assets, vaultsMapper, currentVaultsIds, set
     if (searchQuery !== '') {
       filteredVaultsIds = data.filter((vaultId) => {
         const vault = vaultsMapper[vaultId]
+        const isIncludedInLoanAddress = vault.address.toLowerCase().includes(searchQuery)
+        const isIncludedInOwnerAddress = vault.ownerId.toLowerCase().includes(searchQuery)
 
-        const isFoundCollateralAsset = vault.collateralData.some(({ symbol }) => {
-          return symbol?.toLowerCase().includes(searchQuery)
-        })
-
-        if (
-          vault.address.toLowerCase().includes(searchQuery) ||
-          vault.borrowedAsset.symbol?.toLowerCase().includes(searchQuery) ||
-          isFoundCollateralAsset
-        ) {
-          return true
-        }
-
-        return false
+        return isIncludedInLoanAddress || isIncludedInOwnerAddress
       })
     } else {
       filteredVaultsIds = data
@@ -241,23 +231,11 @@ export const VaultsSearchFilter = ({ assets, vaultsMapper, currentVaultsIds, set
         <Input
           type="text"
           kind={'search'}
-          placeholder="Search by..."
+          placeholder="Search by address"
           onChange={handleSearch}
           value={searchInputValue}
         />
         <DropdownContainer className="dd-container">
-          <h4>Order by:</h4>
-
-          <DropDown
-            className="dd-item"
-            placeholder="Sort"
-            isOpen={filterStatuses[filters.SORT]}
-            setIsOpen={handleDropdownStatus(filters.SORT)}
-            itemSelected={chosenDdItem[filters.SORT]}
-            items={sortingList}
-            clickOnItem={handleDropdownSelect(filters.SORT)}
-          />
-
           <DropDown
             className="dd-item"
             placeholder="Сollateral Asset"
@@ -276,6 +254,18 @@ export const VaultsSearchFilter = ({ assets, vaultsMapper, currentVaultsIds, set
             itemSelected={chosenDdItem[filters.LOAN]}
             items={assets.loanAssets}
             clickOnItem={handleDropdownSelect(filters.LOAN)}
+          />
+
+          <h4>Order by:</h4>
+
+          <DropDown
+            className="dd-item"
+            placeholder="Sort"
+            isOpen={filterStatuses[filters.SORT]}
+            setIsOpen={handleDropdownStatus(filters.SORT)}
+            itemSelected={chosenDdItem[filters.SORT]}
+            items={sortingList}
+            clickOnItem={handleDropdownSelect(filters.SORT)}
           />
         </DropdownContainer>
       </VaultsSearchFilterStyled>
