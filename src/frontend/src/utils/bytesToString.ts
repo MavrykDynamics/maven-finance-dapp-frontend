@@ -26,5 +26,5 @@ export const bytesToAddress = (bytes: string): string => {
   const bytesData = { bytes }
   // @ts-ignore
   const dataCustom = schema.Execute(bytesData, { ticket: (val) => val.args[1].string })
-  return JSON.stringify(dataCustom)
+  return dataCustom
 }

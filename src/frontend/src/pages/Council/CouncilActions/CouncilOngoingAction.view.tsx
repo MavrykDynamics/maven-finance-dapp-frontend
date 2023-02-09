@@ -40,7 +40,12 @@ export function CouncilOngoingAction(props: Props) {
   const findActionByName = useCallback(
     (name: string, type?: BytesType) => {
       const foundField = parameters.find((item) => item.name === name)?.value
-      return foundField ? (type === BYTES_ADDRESS_TYPE ? bytesToAddress(foundField) : bytesToText(foundField)) : ''
+      
+      if (!foundField) {
+        return ''
+      }
+
+      return type === BYTES_ADDRESS_TYPE ? bytesToAddress(foundField) : bytesToText(foundField)
     },
     [parameters],
   )
