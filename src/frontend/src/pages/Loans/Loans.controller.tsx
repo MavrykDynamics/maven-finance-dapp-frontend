@@ -42,7 +42,7 @@ export const Loans = () => {
         await dispatch(getLoansStorage())
       }
     } catch (e) {}
-  }, [])
+  }, [isDataLoaded])
 
   useEffect(() => {
     window.scrollTo(0, 0)

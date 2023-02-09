@@ -305,7 +305,7 @@ export const BorrowAsset = ({
                   className="modal-manage-btn"
                 >
                   <Icon id="coin-loan" />
-                  Borrow XTZ
+                  Borrow {borrowedAsset?.symbol}
                 </NewButton>
               </div>
             </>
