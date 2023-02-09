@@ -75,53 +75,57 @@ export const SatellitesTab = ({ isLoading }: { isLoading: boolean }) => {
       </div>
 
       {isLoading ? (
-        <DataLoaderWrapper className='tabLoader'>
+        <DataLoaderWrapper className="tabLoader">
           <ClockLoader width={150} height={150} />
           <div className="text">Loading satellites</div>
         </DataLoaderWrapper>
-      ) : activeSatellites.length ? <SatellitesContentStyled>
-        <StatBlock>
-          <div className="name">Active Satellites</div>
-          <div className="value">
-            <CommaNumber value={satellitesInfo.activeSatellites} />
-          </div>
-        </StatBlock>
+      ) : activeSatellites.length ? (
+        <SatellitesContentStyled>
+          <StatBlock>
+            <div className="name">Active Satellites</div>
+            <div className="value">
+              <CommaNumber value={satellitesInfo.activeSatellites} />
+            </div>
+          </StatBlock>
 
-        <StatBlock>
-          <div className="name">Avg. Delegated sMVK</div>
-          <div className="value">
-            <CommaNumber endingText="sMVK" value={satellitesInfo.avgDelegatedsMVK} />
-          </div>
-        </StatBlock>
+          <StatBlock>
+            <div className="name">Avg. Delegated sMVK</div>
+            <div className="value">
+              <CommaNumber endingText="sMVK" value={satellitesInfo.avgDelegatedsMVK} />
+            </div>
+          </StatBlock>
 
-        <StatBlock>
-          <div className="name">Avg. Free sMVK Space</div>
-          <div className="value">
-            <CommaNumber endingText="sMVK" value={satellitesInfo.avgFreesMVKSpace} />
-          </div>
-        </StatBlock>
+          <StatBlock>
+            <div className="name">Avg. Free sMVK Space</div>
+            <div className="value">
+              <CommaNumber endingText="sMVK" value={satellitesInfo.avgFreesMVKSpace} />
+            </div>
+          </StatBlock>
 
-        <StatBlock>
-          <div className="name">Avg. Delegation Fee</div>
-          <div className="value">
-            <CommaNumber endingText="%" value={satellitesInfo.avgFee} />
-          </div>
-        </StatBlock>
+          <StatBlock>
+            <div className="name">Avg. Delegation Fee</div>
+            <div className="value">
+              <CommaNumber endingText="%" value={satellitesInfo.avgFee} />
+            </div>
+          </StatBlock>
 
-        <StatBlock>
-          <div className="name">Avg. MVK Staked</div>
-          <div className="value">
-            <CommaNumber endingText="sMVK" value={satellitesInfo.avgStakedMVK} />
-          </div>
-        </StatBlock>
+          <StatBlock>
+            <div className="name">Avg. MVK Staked</div>
+            <div className="value">
+              <CommaNumber endingText="sMVK" value={satellitesInfo.avgStakedMVK} />
+            </div>
+          </StatBlock>
 
-        <StatBlock>
-          <div className="name">Participation Rate</div>
-          <div className="value">
-            <CommaNumber endingText="%" value={satellitesInfo.partisipationRate} />
-          </div>
-        </StatBlock>
-      </SatellitesContentStyled> : emptyContainer}
+          <StatBlock>
+            <div className="name">Participation Rate</div>
+            <div className="value">
+              <CommaNumber endingText="%" value={satellitesInfo.partisipationRate} />
+            </div>
+          </StatBlock>
+        </SatellitesContentStyled>
+      ) : (
+        emptyContainer
+      )}
 
       <div className="descr">
         <div className="title">What are Satellites?</div>
@@ -132,7 +136,10 @@ export const SatellitesTab = ({ isLoading }: { isLoading: boolean }) => {
           <br />
           To operate a Mavryk Satellite, a user needs to stake a security deposit in MVK as a bond, which the user can
           buy on the open market or earn by participating in the ecosystem (e.g. through yield farming, or MVK returned
-          on DSR savings). <a href="#">Read more</a>
+          on DSR savings).{' '}
+          <a href="https://blogs.mavryk.finance/" target="_blank" rel="noreferrer">
+            Read more
+          </a>
         </div>
       </div>
     </TabWrapperStyled>

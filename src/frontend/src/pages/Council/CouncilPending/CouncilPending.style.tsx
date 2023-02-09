@@ -162,12 +162,8 @@ export const CouncilPendingStyled = styled(Card)`
       display: block;
     }
 
-    .address-width {
-      width: 150px;
-    }
-
-    .signed-width {
-      width: 100%;
+    .content-width {
+      width: max-content;
     }
 
     p {

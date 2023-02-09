@@ -134,7 +134,10 @@ export const OraclesTab = ({ isLoading }: { isLoading: boolean }) => {
         <div className="text">
           Satellites are nodes of Mavryk's decentralized oracle. Oracles provide price data for the asset classes that
           can be used as collateral for the CDPs (XTZ, wWBTC, wWETH, etc.). Satellites that provide Oracle pricing
-          information earn sMVK. <a href="#">Read more</a>
+          information earn sMVK.{' '}
+          <a href="https://blogs.mavryk.finance/" target="_blank" rel="noreferrer">
+            Read more
+          </a>
         </div>
       </div>
     </TabWrapperStyled>

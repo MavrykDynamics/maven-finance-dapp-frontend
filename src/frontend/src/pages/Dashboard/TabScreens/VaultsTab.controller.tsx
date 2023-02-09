@@ -98,7 +98,7 @@ export const VaultsTab = ({ isLoading }: { isLoading: boolean }) => {
                             <CommaNumber value={balance} useAccurateParsing />
                           </TableCell>
                           <TableCell width="33%" contentPosition="right">
-                            <CommaNumber value={usdValue} endingText={rate ? '$' : symbol} useAccurateParsing />
+                            <CommaNumber value={usdValue} beginningText={rate ? '$' : symbol} useAccurateParsing />
                           </TableCell>
                         </TableRow>
                       )
@@ -150,7 +150,10 @@ export const VaultsTab = ({ isLoading }: { isLoading: boolean }) => {
         <div className="text">
           The treasury is managed by the Mavryk DAO through on-chain voting. Governance votes, whether for the business
           logic or upgrades to the Mavryk ecosystem, are rewarded with a portion of the earned income from the on-chain
-          Treasury <a href="#">Read more</a>
+          Treasury.{' '}
+          <a href="https://blogs.mavryk.finance/" target="_blank" rel="noreferrer">
+            Read more
+          </a>
         </div>
       </div>
     </TabWrapperStyled>
