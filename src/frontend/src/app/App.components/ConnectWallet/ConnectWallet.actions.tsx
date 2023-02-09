@@ -19,7 +19,7 @@ export const changeWallet = () => async (dispatch: AppDispatch, getState: GetSta
     wallet: { wallet, tezos },
   } = getState()
   try {
-    if (wallet) {
+    if (wallet && tezos) {
       // getting current wallet
       const prevWalletAccount = await wallet.client.getActiveAccount()
 
@@ -41,18 +41,18 @@ export const changeWallet = () => async (dispatch: AppDispatch, getState: GetSta
       if (newAccount) {
         // setting newly selected wallet
         await wallet.client.setActiveAccount(newAccount)
-        await tezos?.setWalletProvider(wallet)
+        await tezos.setWalletProvider(wallet)
 
         await dispatch({
           type: CHANGE_WALLET,
-          wallet,
           accountPkh: newAccount.address,
         })
+
         await dispatch(updateUserData())
         await dispatch(updateWalletDependedDataOnWalletChange())
       } else {
         await wallet.client.setActiveAccount(prevWalletAccount)
-        await tezos?.setWalletProvider(wallet)
+        await tezos.setWalletProvider(wallet)
       }
     }
   } catch (e) {
@@ -66,7 +66,7 @@ export const changeWallet = () => async (dispatch: AppDispatch, getState: GetSta
 export const CONNECT = 'CONNECT'
 export const connect = () => async (dispatch: AppDispatch, getState: GetState) => {
   const {
-    preferences: { REACT_APP_RPC_PROVIDER, headData },
+    preferences: { headData },
     tokens: { dipDupTokens },
     oracles: {
       oraclesStorage: { feeds },
@@ -74,6 +74,7 @@ export const connect = () => async (dispatch: AppDispatch, getState: GetState) =
     delegation: {
       delegationStorage: { activeSatellites },
     },
+    wallet: { tezos },
   } = getState()
 
   try {
@@ -91,9 +92,7 @@ export const connect = () => async (dispatch: AppDispatch, getState: GetState) =
     const { address } = activeAcc ? activeAcc : (await WALLET_INSTANCE?.client.getActiveAccount()) ?? {}
 
     // set upping tezos instance
-    const Tezos = new TezosToolkit(REACT_APP_RPC_PROVIDER)
-    await Tezos.setRpcProvider(REACT_APP_RPC_PROVIDER)
-    await Tezos.setWalletProvider(WALLET_INSTANCE)
+    await tezos.setWalletProvider(WALLET_INSTANCE)
 
     // getting userData
     const userData = address
@@ -103,7 +102,6 @@ export const connect = () => async (dispatch: AppDispatch, getState: GetState) =
     await dispatch({
       type: CONNECT,
       wallet: WALLET_INSTANCE,
-      tezos: Tezos,
       userData,
       accountPkh: address,
     })

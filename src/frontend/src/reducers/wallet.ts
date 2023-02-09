@@ -35,8 +35,8 @@ const RpcNetwork = preferencesDefaultState.REACT_APP_RPC_PROVIDER
 
 export interface WalletState {
   wallet?: BeaconWallet
-  tezos?: TezosToolkit
   accountPkh?: string
+  tezos: TezosToolkit
   user: UserState
 }
 
@@ -75,7 +75,7 @@ export const DEFAULT_USER: UserState = {
 
 export const walletDefaultState: WalletState = {
   wallet: undefined,
-  tezos: undefined,
+  tezos: new TezosToolkit(RpcNetwork),
   accountPkh: undefined,
   user: DEFAULT_USER,
 }
@@ -86,14 +86,12 @@ export function wallet(state = walletDefaultState, action: Action) {
       return {
         ...state,
         wallet: action.wallet,
-        tezos: action.tezos,
         accountPkh: action.accountPkh,
         user: action.userData,
       }
     case CHANGE_WALLET:
       return {
         ...state,
-        wallet: action.wallet,
         accountPkh: action.accountPkh,
       }
     case UPDATE_USER_DATA:
@@ -104,6 +102,7 @@ export function wallet(state = walletDefaultState, action: Action) {
     case DISCONNECT:
       return {
         ...state,
+        tezos: new TezosToolkit(RpcNetwork),
         user: {
           ...walletDefaultState.user,
         },
