@@ -1,5 +1,5 @@
 import { M_Token_Account } from './../utils/generated/graphqlTypes'
-import { CONNECT, DISCONNECT } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
+import { CHANGE_WALLET, CONNECT, DISCONNECT } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 import { TezosToolkit } from '@taquito/taquito'
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
 import { BeaconWallet } from '@taquito/beacon-wallet'
@@ -89,6 +89,13 @@ export function wallet(state = walletDefaultState, action: Action) {
         tezos: action.tezos,
         accountPkh: action.accountPkh,
         user: action.userData,
+      }
+    case CHANGE_WALLET:
+      return {
+        ...state,
+        wallet: action.wallet,
+        tezos: action.tezos,
+        accountPkh: action.accountPkh,
       }
     case UPDATE_USER_DATA:
       return {

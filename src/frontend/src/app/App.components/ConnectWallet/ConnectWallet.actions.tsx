@@ -4,29 +4,66 @@ import { TezosToolkit } from '@taquito/taquito'
 import { AppDispatch, GetState } from 'app/App.controller'
 import { showToaster } from '../Toaster/Toaster.actions'
 import { ERROR } from '../Toaster/Toaster.constants'
-import { fetchUserData } from 'pages/Doorman/Doorman.actions'
+import { fetchUserData, updateUserData } from 'pages/Doorman/Doorman.actions'
 import { DEFAULT_USER } from 'reducers/wallet'
 import { CLEAR_LOANS_STORAGE, getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 
-// TODO: check ts-ignores, here NetworkType is not compatible with  NetworkType | undefined
-
-export const Beacon_localStorage_keys = [
-  'beacon:active-account',
-  'beacon:postmessage-peers-dapp',
-  'beacon:accounts',
-  'beacon:sdk-secret-seed',
-  'beacon:sdk_version',
-]
-export const network: Network = { type: NetworkType.GHOSTNET }
-export const WalletOptions = {
-  name: process.env.REACT_APP_NAME || 'MAVRYK',
-  preferredNetwork: network.type,
-}
-
-export const changeWallet = () => async (dispatch: AppDispatch) => {
+export const CHANGE_WALLET = 'CHANGE_WALLET'
+export const changeWallet = () => async (dispatch: AppDispatch, getState: GetState) => {
+  const {
+    wallet: { wallet },
+    preferences: { REACT_APP_RPC_PROVIDER },
+  } = getState()
   try {
-    await dispatch(disconnect())
-    await dispatch(connect())
+    if (wallet) {
+      // getting current wallet
+      const prevWalletAccount = await wallet.client.getActiveAccount()
+
+      //clearing wallet logged in
+      await wallet.client.clearActiveAccount()
+
+      try {
+        // triggering popups for wallet selection
+        // await wallet.requestPermissions({
+        //   network: { type: NetworkType.GHOSTNET },
+        // })
+
+        await wallet.requestPermissions()
+      } catch (e) {
+        console.warn('selecting wallet error', e)
+      }
+
+      // getting newly selected vault
+      const newAccount = await wallet.client.getActiveAccount()
+
+      console.log({ newAccount, prevWalletAccount, type: { type: NetworkType.GHOSTNET }, NetworkType })
+
+      if (newAccount) {
+        // setting newly selected wallet
+        await wallet.client.setActiveAccount(newAccount)
+        console.log('1', { wallet, client: wallet.client })
+        const newTezos = new TezosToolkit(REACT_APP_RPC_PROVIDER)
+        console.log('2', { wallet, client: wallet.client })
+        await newTezos.setRpcProvider(REACT_APP_RPC_PROVIDER)
+        console.log('3', { wallet, client: wallet.client })
+        await newTezos.setWalletProvider(wallet)
+        console.log('4', { wallet, client: wallet.client })
+
+        dispatch({
+          type: CHANGE_WALLET,
+          wallet,
+          tezos: newTezos,
+          accountPkh: newAccount.address,
+        })
+        await dispatch(updateUserData())
+        await dispatch(updateWalletDependedDataOnWalletChange())
+        console.log('5')
+      } else {
+        await wallet.client.setActiveAccount(prevWalletAccount)
+      }
+
+      console.log('after seting')
+    }
   } catch (e) {
     console.error(`Failed to change wallet: `, e)
     if (e instanceof Error) {
@@ -38,12 +75,13 @@ export const changeWallet = () => async (dispatch: AppDispatch) => {
 export const CONNECT = 'CONNECT'
 export const connect = () => async (dispatch: AppDispatch, getState: GetState) => {
   const state = getState()
-
   try {
     // getting userWallet data
     const rpcNetwork = state.preferences.REACT_APP_RPC_PROVIDER
-    // @ts-ignore
-    const wallet = state.wallet.wallet ?? new BeaconWallet(WalletOptions)
+    const wallet = new BeaconWallet({
+      name: process.env.REACT_APP_NAME || 'MAVRYK',
+      preferredNetwork: NetworkType.GHOSTNET,
+    })
     const walletResponse = await checkIfWalletIsConnected(wallet)
 
     if (walletResponse.success) {
@@ -51,8 +89,7 @@ export const connect = () => async (dispatch: AppDispatch, getState: GetState) =
       let account = await wallet.client.getActiveAccount()
       if (!account) {
         await wallet.client.requestPermissions({
-          // @ts-ignore
-          network,
+          network: { type: NetworkType.GHOSTNET },
         })
         account = await wallet.client.getActiveAccount()
       }
@@ -80,7 +117,6 @@ export const connect = () => async (dispatch: AppDispatch, getState: GetState) =
         userData,
         accountPkh,
       })
-      await dispatch(updateWalletDependedDataOnWalletChange())
     }
   } catch (e) {
     console.error(`Failed to connect wallet:`, e)
@@ -107,9 +143,8 @@ export const DISCONNECT = 'DISCONNECT'
 export const disconnect = () => async (dispatch: AppDispatch, getState: GetState) => {
   const state = getState()
   try {
-    // clearing wallet data
-    await state.wallet.wallet?.clearActiveAccount()
-    Beacon_localStorage_keys.forEach((key) => localStorage.removeItem(key))
+    await state.wallet.wallet?.client.clearActiveAccount()
+    await state.wallet.wallet?.disconnect()
 
     await dispatch({ type: DISCONNECT })
     await dispatch(updateWalletDependedDataOnWalletChange())
@@ -126,7 +161,7 @@ export const checkIfWalletIsConnected = async (wallet: any) => {
     const activeAccount = await wallet.client.getActiveAccount()
     if (!activeAccount) {
       await wallet.client.requestPermissions({
-        network,
+        network: { type: NetworkType.GHOSTNET },
       })
     }
     return {
