@@ -8,6 +8,11 @@ import { fetchUserData, updateUserData } from 'pages/Doorman/Doorman.actions'
 import { DEFAULT_USER } from 'reducers/wallet'
 import { CLEAR_LOANS_STORAGE, getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 
+const WALLET_INSTANCE = new BeaconWallet({
+  name: process.env.REACT_APP_NAME || 'MAVRYK',
+  preferredNetwork: NetworkType.GHOSTNET,
+})
+
 export const CHANGE_WALLET = 'CHANGE_WALLET'
 export const changeWallet = () => async (dispatch: AppDispatch, getState: GetState) => {
   const {
@@ -24,30 +29,22 @@ export const changeWallet = () => async (dispatch: AppDispatch, getState: GetSta
 
       try {
         // triggering popups for wallet selection
-        // await wallet.requestPermissions({
-        //   network: { type: NetworkType.GHOSTNET },
-        // })
-
-        await wallet.requestPermissions()
+        await wallet.requestPermissions({
+          network: { type: NetworkType.GHOSTNET },
+        })
       } catch (e) {
-        console.warn('selecting wallet error', e)
+        console.error('selecting wallet error', e)
       }
 
       // getting newly selected vault
       const newAccount = await wallet.client.getActiveAccount()
 
-      console.log({ newAccount, prevWalletAccount, type: { type: NetworkType.GHOSTNET }, NetworkType })
-
       if (newAccount) {
         // setting newly selected wallet
         await wallet.client.setActiveAccount(newAccount)
-        console.log('1', { wallet, client: wallet.client })
         const newTezos = new TezosToolkit(REACT_APP_RPC_PROVIDER)
-        console.log('2', { wallet, client: wallet.client })
         await newTezos.setRpcProvider(REACT_APP_RPC_PROVIDER)
-        console.log('3', { wallet, client: wallet.client })
         await newTezos.setWalletProvider(wallet)
-        console.log('4', { wallet, client: wallet.client })
 
         dispatch({
           type: CHANGE_WALLET,
@@ -57,7 +54,6 @@ export const changeWallet = () => async (dispatch: AppDispatch, getState: GetSta
         })
         await dispatch(updateUserData())
         await dispatch(updateWalletDependedDataOnWalletChange())
-        console.log('5')
       } else {
         await wallet.client.setActiveAccount(prevWalletAccount)
       }
@@ -74,50 +70,52 @@ export const changeWallet = () => async (dispatch: AppDispatch, getState: GetSta
 
 export const CONNECT = 'CONNECT'
 export const connect = () => async (dispatch: AppDispatch, getState: GetState) => {
-  const state = getState()
+  const {
+    wallet: { wallet },
+    preferences: { REACT_APP_RPC_PROVIDER, headData },
+    tokens: { dipDupTokens },
+    oracles: {
+      oraclesStorage: { feeds },
+    },
+    delegation: {
+      delegationStorage: { activeSatellites },
+    },
+  } = getState()
+
   try {
-    // getting userWallet data
-    const rpcNetwork = state.preferences.REACT_APP_RPC_PROVIDER
-    const wallet = new BeaconWallet({
-      name: process.env.REACT_APP_NAME || 'MAVRYK',
-      preferredNetwork: NetworkType.GHOSTNET,
-    })
-    const walletResponse = await checkIfWalletIsConnected(wallet)
+    // checking whether we have user from last session in local storage
+    const activeAcc = await WALLET_INSTANCE?.client.getActiveAccount()
 
-    if (walletResponse.success) {
-      const Tezos = new TezosToolkit(rpcNetwork)
-      let account = await wallet.client.getActiveAccount()
-      if (!account) {
-        await wallet.client.requestPermissions({
-          network: { type: NetworkType.GHOSTNET },
-        })
-        account = await wallet.client.getActiveAccount()
-      }
-
-      await Tezos.setRpcProvider(rpcNetwork)
-      await Tezos.setWalletProvider(wallet)
-
-      const accountPkh = account?.address
-
-      // getting userData
-      const userData = accountPkh
-        ? await fetchUserData(
-            accountPkh,
-            state.delegation.delegationStorage.activeSatellites,
-            state.tokens.dipDupTokens,
-            state.oracles.oraclesStorage.feeds,
-            state.preferences.headData?.level,
-          )
-        : DEFAULT_USER
-
-      await dispatch({
-        type: CONNECT,
-        wallet,
-        tezos: Tezos,
-        userData,
-        accountPkh,
+    // if we don't have user from last session request to select wallet
+    if (!activeAcc) {
+      await WALLET_INSTANCE.client.clearActiveAccount()
+      await WALLET_INSTANCE.client.requestPermissions({
+        network: { type: NetworkType.GHOSTNET },
       })
     }
+    // getting address of the wallet to load data
+    const { address } = activeAcc ? activeAcc : (await WALLET_INSTANCE?.client.getActiveAccount()) ?? {}
+
+    // set upping tezos instance
+    const Tezos = new TezosToolkit(REACT_APP_RPC_PROVIDER)
+    await Tezos.setRpcProvider(REACT_APP_RPC_PROVIDER)
+    await Tezos.setWalletProvider(WALLET_INSTANCE)
+
+    // getting userData
+    const userData = address
+      ? await fetchUserData(address, activeSatellites, dipDupTokens, feeds, headData?.level)
+      : DEFAULT_USER
+
+    await dispatch({
+      type: CONNECT,
+      wallet: WALLET_INSTANCE,
+      tezos: Tezos,
+      userData,
+      accountPkh: address,
+    })
+
+    // updating sections that are loaded and depends on user's wallet
+    await dispatch(updateWalletDependedDataOnWalletChange())
   } catch (e) {
     console.error(`Failed to connect wallet:`, e)
     if (e instanceof Error) {
@@ -141,34 +139,21 @@ export const updateWalletDependedDataOnWalletChange = () => async (dispatch: App
 
 export const DISCONNECT = 'DISCONNECT'
 export const disconnect = () => async (dispatch: AppDispatch, getState: GetState) => {
-  const state = getState()
+  const {
+    wallet: { wallet },
+  } = getState()
   try {
-    await state.wallet.wallet?.client.clearActiveAccount()
-    await state.wallet.wallet?.disconnect()
+    if (wallet) {
+      await wallet.client.clearActiveAccount()
+      await wallet.disconnect()
 
-    await dispatch({ type: DISCONNECT })
-    await dispatch(updateWalletDependedDataOnWalletChange())
+      await dispatch({ type: DISCONNECT })
+      await dispatch(updateWalletDependedDataOnWalletChange())
+    }
   } catch (e) {
     console.error(`Failed to disconnect TempleWallet: `, e)
     if (e instanceof Error) {
       dispatch(showToaster(ERROR, 'Failed to disconnect TempleWallet', e.message))
     }
-  }
-}
-
-export const checkIfWalletIsConnected = async (wallet: any) => {
-  try {
-    const activeAccount = await wallet.client.getActiveAccount()
-    if (!activeAccount) {
-      await wallet.client.requestPermissions({
-        network: { type: NetworkType.GHOSTNET },
-      })
-    }
-    return {
-      success: true,
-    }
-  } catch (e) {
-    // The user is not connected. A button should be displayed where the user can connect to his wallet.
-    return { success: false, e }
   }
 }
