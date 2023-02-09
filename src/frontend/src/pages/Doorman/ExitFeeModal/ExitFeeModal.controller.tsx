@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { State } from 'reducers'
+import { useDispatch } from 'react-redux'
 
 // helpers
 import { isValidNumberValue, mathRoundTwoDigit } from '../../../utils/validatorFunctions'
@@ -27,19 +26,20 @@ type ExitFeeModalPropsType = {
   show: boolean
   data: {
     amount: number
+    maximumTotalSupply: number
+    mySMvkTokenBalance: number
+    myMvkTokenBalance: number
+    totalStakedMvk: number
+    accountPkh?: string
   }
 }
 
-export const ExitFeeModal = ({ closePopup, show, data: { amount } }: ExitFeeModalPropsType) => {
+export const ExitFeeModal = ({
+  closePopup,
+  show,
+  data: { amount, maximumTotalSupply, mySMvkTokenBalance, myMvkTokenBalance, totalStakedMvk, accountPkh },
+}: ExitFeeModalPropsType) => {
   const dispatch = useDispatch()
-  const {
-    mvkTokenStorage: { maximumTotalSupply },
-  } = useSelector((state: State) => state.mvkToken)
-  const { totalStakedMvk } = useSelector((state: State) => state.doorman)
-  const {
-    accountPkh,
-    user: { myMvkTokenBalance, mySMvkTokenBalance },
-  } = useSelector((state: State) => state.wallet)
 
   const [inputAmount, setInputAmount] = useState<StakeUnstakeForm>({ amount: 0 })
   const [stakeUnstakeValueOK, setStakeUnstakeValueOK] = useState<ValidStakeUnstakeForm>({ amount: false })

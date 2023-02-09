@@ -54,6 +54,11 @@ export const AppRoutes = () => {
       <Route exact path="/">
         <Doorman />
       </Route>
+      <Route exact path="/stake">
+        <Doorman />
+      </Route>
+
+      {/* DASHBOARD */}
       <Route exact path="/dashboard/:tabId">
         <Dashboard />
       </Route>
@@ -65,24 +70,28 @@ export const AppRoutes = () => {
         canCheck={!isInitialDataLoading}
         redirectPath={`/dashboard/${LENDING_TAB_ID}`}
       />
-      <Route exact path="/your-vesting">
-        <Dashboard />
-      </Route>
-      <Route exact path="/stake">
-        <Doorman />
-      </Route>
+
+      {/* SATELLITES */}
       <Route exact path="/satellites">
         <Satellites />
       </Route>
       <Route exact path="/become-satellite">
         <BecomeSatellite />
       </Route>
+      <Route exact path="/satellite-nodes">
+        <SatelliteNodes />
+      </Route>
       <Route exact path="/satellites/satellite-details/:satelliteId">
         <SatelliteDetails />
+      </Route>
+      <Route exact path="/data-feeds">
+        <DataFeeds />
       </Route>
       <Route exact path="/satellites/feed-details/:feedId">
         <DataFeedDetails />
       </Route>
+
+      {/* GOVERNANCE PAGES */}
       <Route exact path="/governance">
         <Governance />
       </Route>
@@ -107,12 +116,6 @@ export const AppRoutes = () => {
       <Route exact path="/break-glass-council/:review?">
         <BreakGlassCouncil />
       </Route>
-      <Route exact path="/oracle-users">
-        <Users />
-      </Route>
-      <Route exact path="/satellites/user-details/:userId">
-        <UserDetails />
-      </Route>
       <ProtectedRoute
         path="/submit-proposal"
         component={ProposalSubmission}
@@ -121,30 +124,42 @@ export const AppRoutes = () => {
         hasAccess={Boolean(isSatellite)}
         redirectPath={'/'}
       />
+
       <Route exact path="/treasury">
         <Treasury />
       </Route>
-      <Route exact path="/satellite-nodes">
-        <SatelliteNodes />
+
+      <Route exact path="/yield-farms">
+        <Farms />
       </Route>
-      <Route exact path="/data-feeds">
-        <DataFeeds />
-      </Route>
+
+      {/* LEND/BORROW */}
       <Route exact path="/loans/:assetId/:tabId">
         <Market />
       </Route>
       <Route exact path="/loans">
         <Loans />
       </Route>
-      <Route exact path="/yield-farms">
-        <Farms />
-      </Route>
       <Route exact path="/vaults/:tabId">
         <Vaults />
       </Route>
+
+      {/* NOT READY PAGES */}
+      <Route exact path="/your-vesting">
+        <Dashboard />
+      </Route>
+      <Route exact path="/oracle-users">
+        <Users />
+      </Route>
+      <Route exact path="/satellites/user-details/:userId">
+        <UserDetails />
+      </Route>
+
+      {/* NOT PROD PAGES */}
       <Route exact path="/admin">
         <Admin />
       </Route>
+
       <Route exact path="/404">
         {/*TODO: Replace later on with actual 404 page*/}
         <Doorman />

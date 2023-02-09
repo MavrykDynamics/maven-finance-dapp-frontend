@@ -1,6 +1,4 @@
-import React, { useState } from 'react'
-import { useSelector } from 'react-redux'
-import { State } from 'reducers'
+import { useState } from 'react'
 
 // styles
 import { ChartCard, Wrapper } from './DoormanChart.style'
@@ -10,9 +8,12 @@ import { TabSwitcher } from 'app/App.components/TabSwitcher/TabSwitcher.controll
 import { Chart } from '../../../app/App.components/Chart/Chart.view'
 import { TabItem } from '../../../app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import { cyanColor } from 'styles'
+import { State } from 'reducers'
 
 type Props = {
   className?: string
+  mvkMintHistoryData: State['doorman']['mvkMintHistoryData']
+  smvkHistoryData: State['doorman']['smvkHistoryData']
 }
 
 const tabsList: TabItem[] = [
@@ -28,9 +29,7 @@ const tabsList: TabItem[] = [
   },
 ]
 
-export function DoormanChart({ className }: Props) {
-  const { mvkMintHistoryData, smvkHistoryData } = useSelector((state: State) => state.doorman)
-
+export function DoormanChart({ mvkMintHistoryData, smvkHistoryData, className }: Props) {
   const [activeTab, setActiveTab] = useState(tabsList[0].text)
   const isStakingHistory = activeTab === tabsList[1].text
 

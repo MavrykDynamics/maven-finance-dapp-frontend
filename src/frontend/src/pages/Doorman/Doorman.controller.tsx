@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 // style
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
@@ -17,9 +17,21 @@ import { StakeUnstakeView } from './StakeUnstake/StakeUnstake.view'
 // actions
 import { getDoormanStorage, getMvkTokenStorage, stake } from './Doorman.actions'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
+import { State } from 'reducers'
 
 export const Doorman = () => {
   const dispatch = useDispatch()
+  const {
+    exchangeRate,
+    mvkTokenStorage: { maximumTotalSupply },
+  } = useSelector((state: State) => state.mvkToken)
+  const { doormanAddress, mvkTokenAddress } = useSelector((state: State) => state.contractAddresses)
+  const {
+    accountPkh,
+    user: { mySMvkTokenBalance, myMvkTokenBalance },
+  } = useSelector((state: State) => state.wallet)
+  const { totalStakedMvk = 0, smvkHistoryData, mvkMintHistoryData } = useSelector((state: State) => state.doorman)
+
   const [amount, setAmount] = useState<null | number>(null)
 
   const { isLoading } = useDataLoader(async () => {
@@ -45,11 +57,32 @@ export const Doorman = () => {
         </DataLoaderWrapper>
       ) : (
         <>
-          <ExitFeeModal show={amount !== null} data={{ amount: Number(amount) }} closePopup={closeExitFeePopup} />
-          <StakeUnstakeView stakeCallback={stakeCallback} unstakeCallback={unstakeCallback} />
+          <ExitFeeModal
+            show={amount !== null}
+            data={{
+              amount: Number(amount),
+              maximumTotalSupply,
+              mySMvkTokenBalance,
+              myMvkTokenBalance,
+              totalStakedMvk,
+              accountPkh,
+            }}
+            closePopup={closeExitFeePopup}
+          />
+          <StakeUnstakeView
+            MVK_exchangeRate={exchangeRate}
+            stakeCallback={stakeCallback}
+            unstakeCallback={unstakeCallback}
+          />
           <DoormanInfoStyled>
-            <DoormanChart />
-            <DoormanStats />
+            <DoormanChart smvkHistoryData={smvkHistoryData} mvkMintHistoryData={mvkMintHistoryData} />
+            <DoormanStats
+              MVK_exchangeRate={exchangeRate}
+              maximumTotalSupply={maximumTotalSupply}
+              totalStakedMvk={totalStakedMvk}
+              doormanAddress={doormanAddress.address}
+              mvkTokenAddress={mvkTokenAddress.address}
+            />
           </DoormanInfoStyled>
         </>
       )}

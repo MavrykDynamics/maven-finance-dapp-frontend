@@ -1,6 +1,3 @@
-import { useSelector } from 'react-redux'
-import { State } from 'reducers'
-
 import { calcExitFee, calcMLI } from '../../../utils/calcFunctions'
 
 // components
@@ -9,17 +6,24 @@ import Icon from '../../../app/App.components/Icon/Icon.view'
 import { TzAddress } from '../../../app/App.components/TzAddress/TzAddress.view'
 import { DoormanList, DoormanStatsHeader, DoormanStatsStyled } from './DoormanStats.style'
 
-export const DoormanStats = () => {
-  const {
-    exchangeRate,
-    mvkTokenStorage: { maximumTotalSupply },
-  } = useSelector((state: State) => state.mvkToken)
-  const { doormanAddress, mvkTokenAddress } = useSelector((state: State) => state.contractAddresses)
-  const { totalStakedMvk = 0 } = useSelector((state: State) => state.doorman)
+type DoormanStatsPropsType = {
+  MVK_exchangeRate: number
+  maximumTotalSupply: number
+  totalStakedMvk: number
+  doormanAddress: string
+  mvkTokenAddress: string
+}
 
+export const DoormanStats = ({
+  MVK_exchangeRate,
+  maximumTotalSupply,
+  totalStakedMvk,
+  doormanAddress,
+  mvkTokenAddress,
+}: DoormanStatsPropsType) => {
   const mli = calcMLI(maximumTotalSupply, totalStakedMvk)
   const fee = calcExitFee(maximumTotalSupply, totalStakedMvk)
-  const marketCapValue = exchangeRate ? exchangeRate * maximumTotalSupply : 0
+  const marketCapValue = MVK_exchangeRate ? MVK_exchangeRate * maximumTotalSupply : 0
 
   return (
     <DoormanStatsStyled>
@@ -37,27 +41,23 @@ export const DoormanStats = () => {
             </a>
           </h4>
           <var>
-            <CommaNumber value={exchangeRate} beginningText={'$'} />
+            <CommaNumber value={MVK_exchangeRate} beginningText={'$'} />
           </var>
         </div>
 
-        {mvkTokenAddress?.address ? (
-          <div>
-            <h4>MVK Token Address</h4>
-            <var className="click-address">
-              <TzAddress type="blue" tzAddress={mvkTokenAddress?.address} hasIcon={true} />
-            </var>
-          </div>
-        ) : null}
+        <div>
+          <h4>MVK Token Address</h4>
+          <var className="click-address">
+            <TzAddress type="blue" tzAddress={mvkTokenAddress} hasIcon />
+          </var>
+        </div>
 
-        {doormanAddress?.address ? (
-          <div>
-            <h4>Doorman Address</h4>
-            <var className="click-address">
-              <TzAddress type="blue" tzAddress={doormanAddress?.address} hasIcon={true} />
-            </var>
-          </div>
-        ) : null}
+        <div>
+          <h4>Doorman Address</h4>
+          <var className="click-address">
+            <TzAddress type="blue" tzAddress={doormanAddress} hasIcon />
+          </var>
+        </div>
 
         <div>
           <h4>
@@ -71,7 +71,7 @@ export const DoormanStats = () => {
             </a>
           </h4>
           <var>
-            <CommaNumber value={mli} endingText={' '} />
+            <CommaNumber value={mli} />
           </var>
         </div>
 
