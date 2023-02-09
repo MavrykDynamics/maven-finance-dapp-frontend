@@ -1,29 +1,26 @@
-import { useDispatch, useSelector } from 'react-redux'
-import { State } from 'reducers'
+import { useState } from 'react'
+import { useDispatch } from 'react-redux'
 
 // style
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { Page } from 'styles'
 
 // view
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
 import { DoormanInfoStyled } from './Doorman.style'
 import { DoormanChart } from './DoormanChart/DoormanChart.controller'
+import { ExitFeeModal } from './ExitFeeModal/ExitFeeModal.controller'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
+import { DoormanStats } from './DoormanStats/DoormanStats.controller'
+import { StakeUnstakeView } from './StakeUnstake/StakeUnstake.view'
 
 // actions
 import { getDoormanStorage, getMvkTokenStorage, stake } from './Doorman.actions'
-import { DoormanStatsView } from './DoormanStats/DoormanStats.view'
-import { showExitFeeModal } from './ExitFeeModal/ExitFeeModal.actions'
-import { ExitFeeModal } from './ExitFeeModal/ExitFeeModal.controller'
-import { StakeUnstakeView } from './StakeUnstake/StakeUnstake.view'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
-import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
-import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 
 export const Doorman = () => {
   const dispatch = useDispatch()
-
-  const { totalSupply = 0 } = useSelector((state: State) => state.mvkToken.mvkTokenStorage)
-  const { totalStakedMvk } = useSelector((state: State) => state.doorman)
+  const [amount, setAmount] = useState<null | number>(null)
 
   const { isLoading } = useDataLoader(async () => {
     try {
@@ -33,13 +30,9 @@ export const Doorman = () => {
     }
   }, [])
 
-  const stakeCallback = (amount: number) => {
-    dispatch(stake(amount))
-  }
-
-  const unstakeCallback = (amount: number) => {
-    dispatch(showExitFeeModal(amount))
-  }
+  const stakeCallback = (amount: number) => dispatch(stake(amount))
+  const unstakeCallback = (amount: number) => setAmount(amount)
+  const closeExitFeePopup = () => setAmount(null)
 
   return (
     <Page>
@@ -52,11 +45,11 @@ export const Doorman = () => {
         </DataLoaderWrapper>
       ) : (
         <>
-          <ExitFeeModal />
+          <ExitFeeModal show={amount !== null} data={{ amount: Number(amount) }} closePopup={closeExitFeePopup} />
           <StakeUnstakeView stakeCallback={stakeCallback} unstakeCallback={unstakeCallback} />
           <DoormanInfoStyled>
             <DoormanChart />
-            <DoormanStatsView mvkTotalSupply={totalSupply} totalStakedMvkSupply={totalStakedMvk} />
+            <DoormanStats />
           </DoormanInfoStyled>
         </>
       )}
