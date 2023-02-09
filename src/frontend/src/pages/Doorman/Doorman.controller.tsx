@@ -30,7 +30,7 @@ export const Doorman = () => {
     accountPkh,
     user: { mySMvkTokenBalance, myMvkTokenBalance },
   } = useSelector((state: State) => state.wallet)
-  const { totalStakedMvk = 0, smvkHistoryData, mvkMintHistoryData } = useSelector((state: State) => state.doorman)
+  const { totalStakedMvk = 0 } = useSelector((state: State) => state.doorman)
 
   const [amount, setAmount] = useState<null | number>(null)
 
@@ -75,7 +75,7 @@ export const Doorman = () => {
             unstakeCallback={unstakeCallback}
           />
           <DoormanInfoStyled>
-            <DoormanChart smvkHistoryData={smvkHistoryData} mvkMintHistoryData={mvkMintHistoryData} />
+            <DoormanChart />
             <DoormanStats
               MVK_exchangeRate={exchangeRate}
               maximumTotalSupply={maximumTotalSupply}
