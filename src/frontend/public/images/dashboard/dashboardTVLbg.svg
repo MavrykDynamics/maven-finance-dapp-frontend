@@ -105,11 +105,6 @@
 <path d="M473.96 95.5495C465.261 91.6712 461.655 84.3521 458.685 84.1353C457.536 83.8219 456.34 84.0572 455.313 84.7982C454.286 85.5392 453.498 86.7366 453.092 88.1719C452.686 89.6072 452.69 91.1848 453.102 92.6169C453.515 94.049 454.308 95.2402 455.339 95.9731L455.386 96.0049C458.56 98.2763 463.66 96.1084 472.585 100.832C494.194 112.27 505.721 127.795 500.926 149.389C494.516 178.239 427.053 225.758 385 235.143H490.47C490.47 235.143 522.265 213.049 528.699 182.132C542.591 115.379 486.251 101.029 473.96 95.5495Z" fill="url(#paint3_linear_19789_23951)"/>
 </g>
 <defs>
-<linearGradient id="paint0_linear_19789_23951" x1="267.489" y1="8.38375" x2="267.489" y2="245.062" gradientUnits="userSpaceOnUse">
-<stop stop-color="#160E3F"/>
-<stop offset="0.796875" stop-color="#26185C"/>
-<stop offset="1" stop-color="#321F71"/>
-</linearGradient>
 <linearGradient id="paint1_linear_19789_23951" x1="445.392" y1="99.4549" x2="485.572" y2="140.208" gradientUnits="userSpaceOnUse">
 <stop stop-color="#7FFFE0" stop-opacity="0.5"/>
 <stop offset="0.14" stop-color="#7DF7DC" stop-opacity="0.48"/>
@@ -141,3 +136,14 @@
 </clipPath>
 </defs>
 </svg>
+
+<!-- <svg width="535" height="236" viewBox="0 0 535 236" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M10 0.5H525C530.247 0.5 534.5 4.7533 534.5 10V226C534.5 231.247 530.247 235.5 525 235.5H10C4.7533 235.5 0.5 231.247 0.5 226V10C0.5 4.7533 4.75329 0.5 10 0.5Z" fill="url(#paint0_linear_19807_23820)" stroke="#503EAA"/>
+<defs>
+<linearGradient id="paint0_linear_19807_23820" x1="267.489" y1="8.38375" x2="267.489" y2="245.062" gradientUnits="userSpaceOnUse">
+<stop stop-color="#160E3F"/>
+<stop offset="0.796875" stop-color="#26185C"/>
+<stop offset="1" stop-color="#321F71"/>
+</linearGradient>
+</defs>
+</svg> -->

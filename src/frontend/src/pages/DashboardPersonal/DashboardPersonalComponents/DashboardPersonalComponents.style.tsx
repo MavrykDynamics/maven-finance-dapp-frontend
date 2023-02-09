@@ -129,10 +129,10 @@ export const PortfolioWalletStyled = styled(MediumBlockBase)<{ theme: MavrykThem
 `
 
 export const MyRewardsStyled = styled(SmallBlockBase)<{ theme: MavrykTheme }>`
-  background-image: url('/images/dashboard/dashboardPersonalMyRewards.svg?v=0'),
-    ${({ theme }) => theme.dashboardTvlGradient};
+  background-image: url('/images/dashboard/dashboardPersonalMyRewards.svg?v=0'), ${({ theme }) => theme.dashboardTvlGradient};
   background-size: cover;
   background-repeat: no-repeat;
+
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 40px 55px;
