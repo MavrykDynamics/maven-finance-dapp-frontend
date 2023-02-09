@@ -113,7 +113,8 @@ export const TreasuryTab = ({ isLoading }: { isLoading: boolean }) => {
                             ) : (
                               <CommaNumber
                                 value={usdValue}
-                                endingText={rate ? '$' : symbol}
+                                endingText={rate ? '' : symbol}
+                                beginningText={rate ? '$' : ''}
                                 useAccurateParsing
                                 showDecimal
                                 decimalsToShow={2}

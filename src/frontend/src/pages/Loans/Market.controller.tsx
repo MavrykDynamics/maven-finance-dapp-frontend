@@ -42,7 +42,7 @@ export const Market = () => {
         await dispatch(getLoansStorage())
       }
     } catch (e) {}
-  }, [])
+  }, [isDataLoaded])
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -58,7 +58,7 @@ export const Market = () => {
     return [loanTokens[currentAssetIdx - 1], loanTokens[currentAssetIdx + 1], loanTokens[currentAssetIdx]]
   }, [assetId, loanTokens])
 
-  if (isLoading || !isDataLoaded) {
+  if (isLoading) {
     return (
       <Page>
         <PageHeader page={'lending'} />

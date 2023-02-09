@@ -135,7 +135,8 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
                         ) : (
                           <CommaNumber
                             value={usdValue}
-                            endingText={rate ? '$' : symbol}
+                            endingText={rate ? '' : symbol}
+                            beginningText={rate ? '$' : ''}
                             useAccurateParsing
                             showDecimal
                             decimalsToShow={2}

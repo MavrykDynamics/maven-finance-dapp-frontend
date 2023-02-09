@@ -122,10 +122,10 @@ export const withdrawLendingAssetAction =
       // confirm query completion
       await transaction?.confirmation()
 
-      await dispatch(showToaster(SUCCESS, 'Liquidity removed.', 'All good :)'))
       // refetch data we need
       await dispatch(updateUserData())
       await dispatch(getLoansStorage())
+      await dispatch(showToaster(SUCCESS, 'Liquidity removed.', 'All good :)'))
       await dispatch(toggleActionLoader(false))
     } catch (error) {
       console.error('withdrawLendingAssetAction error:', error)

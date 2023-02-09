@@ -77,7 +77,7 @@ export const Dashboard = () => {
         await dispatch(getLoansStorage())
       }
     } catch (e) {}
-  }, [])
+  }, [isLoansLoaded])
 
   const { isLoading: isFarmsLoading } = useDataLoader(async () => {
     try {
