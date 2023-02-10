@@ -38,6 +38,13 @@ export function calcWithoutPrecision(amount: string | number): number {
   return numberMu > 0 ? numberMu / PRECISION_NUMBER : 0
 }
 
+export function convertFromIndexerToRegNum(amount: string | number, decimalsAmount: string | number): number {
+  const numberMu = parseFloat(amount?.toString()) || 0
+  const decimals = Number(decimalsAmount)
+
+  return numberMu / Math.pow(10, decimals)
+}
+
 export function calcWithoutMu(amount: string | number): number {
   const numberMu = parseFloat(amount?.toString()) || 0
   return numberMu > 0 ? numberMu / 1000000 : 0
@@ -156,6 +163,14 @@ export function calcUsersSatelliteRewards({
   return mySatelliteRewardsData
 }
 
+const USER_ACTIONS_TYPES = {
+  STAKE: 0,
+  UNSTAKE: 1,
+  FARM_CLAIM: 2,
+  COMPOUND: 3,
+  SATELLITE_REWARD: 4,
+}
+
 export function calcUsersRewardsToDate(usetStakesData?: Array<Stake_History_Data>) {
   if (!usetStakesData) return { farmRewards: 0, satelliteRewards: 0, doormanRewards: 0, actionsHistory: [] }
   return usetStakesData.reduce<{
@@ -164,28 +179,28 @@ export function calcUsersRewardsToDate(usetStakesData?: Array<Stake_History_Data
     doormanRewards: number
     actionsHistory: State['wallet']['user']['actionsHistory']
   }>(
-    (acc, { type, final_amount, desired_amount, id, from_: { mvk_balance } }) => {
-      if (type === 2) {
+    (acc, { type, final_amount, desired_amount, id }) => {
+      if (type === USER_ACTIONS_TYPES.FARM_CLAIM) {
         acc.farmRewards += calcWithoutPrecision(final_amount)
       }
 
-      if (type === 3) {
+      if (type === USER_ACTIONS_TYPES.COMPOUND) {
         acc.doormanRewards += calcWithoutPrecision(final_amount)
       }
 
-      if (type === 4) {
+      if (type === USER_ACTIONS_TYPES.SATELLITE_REWARD) {
         acc.satelliteRewards += calcWithoutPrecision(final_amount)
       }
 
-      const isUnstake = type === 1
+      const isUnstake = type === USER_ACTIONS_TYPES.UNSTAKE
       const actionName =
-        type === 0
+        type === USER_ACTIONS_TYPES.STAKE
           ? 'Stake'
-          : type === 1
+          : type === USER_ACTIONS_TYPES.UNSTAKE
           ? 'Unstake'
-          : type === 2
+          : type === USER_ACTIONS_TYPES.FARM_CLAIM
           ? 'Farm Claim'
-          : type === 3
+          : type === USER_ACTIONS_TYPES.COMPOUND
           ? 'Compound'
           : 'Satellite Reward'
 

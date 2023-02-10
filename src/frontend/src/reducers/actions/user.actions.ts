@@ -26,16 +26,45 @@ import {
   calcUsersDoormanRewards,
   calcUsersSatelliteRewards,
   calcUsersFarmRewards,
+  convertFromIndexerToRegNum,
 } from 'utils/calcFunctions'
 import { Farm, Lending_Controller_Loan_Token } from 'utils/generated/graphqlTypes'
 import { SatelliteRecord } from 'utils/TypesAndInterfaces/Delegation'
+
+const checkWhetherUserIsActiveSatelltie = (satellitesList: Array<SatelliteRecord>, userAddress: string) =>
+  Boolean(
+    satellitesList.find(
+      ({ address: satelliteAddress, status, currentlyRegistered }) =>
+        satelliteAddress === userAddress && status === 0 && currentlyRegistered,
+    ),
+  )
+
+const TZBTC_CONTRACT_ADDRESS = 'KT1PWx2mnDueood7fEmfbBDKx1D9BAnnXitn'
+const getXtzAndTzbtcUserBalance = async (accountPkh: string) => {
+  const [xtzBalance, tzBTC] = await Promise.all([
+    await (
+      await fetch(`https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/accounts/${accountPkh}/balance`)
+    ).json(),
+    await (
+      await fetch(
+        `https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/tokens/balances?account.eq=${accountPkh}&token.contract.in=${TZBTC_CONTRACT_ADDRESS}`,
+      )
+    ).json(),
+  ])
+
+  const { balance: tzbtcBalance = 0, token: { metadata: { decimals: tzbtcDecimalsAmount = 0 } = {} } = {} } = tzBTC
+  return {
+    xtzBalance: calcWithoutMu(Number(xtzBalance)),
+    tzbtcBalance: convertFromIndexerToRegNum(tzbtcBalance, tzbtcDecimalsAmount),
+  }
+}
 
 export const fetchUserData = async (
   accountPkh: string,
   activeSatellites: Array<SatelliteRecord>,
   dipDupTokens: State['tokens']['dipDupTokens'],
   feeds: State['oracles']['oraclesStorage']['feeds'],
-  currentBlockLevel?: number,
+  currentBlockLevel: number | undefined = 0,
 ) => {
   try {
     const userInfoFromIndexer = await fetchFromIndexer(
@@ -50,36 +79,24 @@ export const fetchUserData = async (
       USER_REWARDS_QUERY_VARIABLES(accountPkh),
     )
 
-    const xtzBalance = await (
-      await fetch(`https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/accounts/${accountPkh}/balance`)
-    ).json()
+    const { xtzBalance, tzbtcBalance } = await getXtzAndTzbtcUserBalance(accountPkh)
 
-    // TODO: check contract.in make it dynamic depended on network
-    const [tzBTCTokenInfo] = await (
-      await fetch(
-        `https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/tokens/balances?account.eq=${accountPkh}&token.contract.in=KT1PWx2mnDueood7fEmfbBDKx1D9BAnnXitn`,
-      )
-    ).json()
+    const {
+      mvk_balance = 0,
+      smvk_balance = 0,
+      m_token_accounts,
+      delegations,
+      stakes_history_data,
+    } = userInfoFromIndexer?.mavryk_user[0] ?? {}
 
-    const mytzBTCTokenBalance =
-      parseFloat(tzBTCTokenInfo?.balance ?? 0) / 10 ** parseFloat(tzBTCTokenInfo?.token?.metadata?.decimals ?? 0)
-
-    const userInfoDataGQL = userInfoFromIndexer?.mavryk_user[0]
     const userInfo: Partial<UserState> = {
-      myMvkTokenBalance: calcWithoutPrecision(userInfoDataGQL?.mvk_balance ?? 0),
-      mySMvkTokenBalance: calcWithoutPrecision(userInfoDataGQL?.smvk_balance ?? 0),
-      myXTZTokenBalance: calcWithoutMu(Number(xtzBalance)),
-      mytzBTCTokenBalance,
-      mTokens: userInfoDataGQL?.m_token_accounts,
-      satelliteMvkIsDelegatedTo: userInfoDataGQL?.delegations?.[0]?.satellite?.user?.address ?? '',
-      isSatellite: Boolean(
-        activeSatellites.find(
-          ({ address: satelliteAddress, status, currentlyRegistered }) =>
-            (satelliteAddress === userInfoDataGQL?.address || satelliteAddress === accountPkh) &&
-            status === 0 &&
-            currentlyRegistered,
-        ),
-      ),
+      myMvkTokenBalance: calcWithoutPrecision(mvk_balance),
+      mySMvkTokenBalance: calcWithoutPrecision(smvk_balance),
+      myXTZTokenBalance: xtzBalance,
+      mytzBTCTokenBalance: tzbtcBalance,
+      mTokens: m_token_accounts,
+      satelliteMvkIsDelegatedTo: delegations?.[0]?.satellite?.user?.address ?? '',
+      isSatellite: checkWhetherUserIsActiveSatelltie(activeSatellites, accountPkh),
     }
 
     // getting user rewards
@@ -92,12 +109,21 @@ export const fetchUserData = async (
       userSatelliteRewardsFromGQL: userRewardsData.satellite_rewards[0] as Satellite_Rewards,
     })
     userInfo.myFarmRewardsData = calcUsersFarmRewards({
-      currentBlockLevel: currentBlockLevel ?? 0,
+      currentBlockLevel: currentBlockLevel,
       userFarmsRewardsFromGQL: userRewardsData.farm as Array<Farm>,
     })
 
     const loanTokens = userRewardsData.lending_controller[0].loan_tokens as Array<Lending_Controller_Loan_Token>
     const interestRateDecimals = userRewardsData.lending_controller[0]?.interest_rate_decimals ?? 0
+
+    /**
+     * @description userInfo.mTokens.reduce
+     * getting how much user has earned by loans,
+     * we are receiving large number that we need to conver to people readable format
+     * to convert it we need to get decimals for loan asset we are getting rewards of,
+     * and general decimal places for loans in general, and if we have all decimals we can calc correct number, the formula is:
+     * (reward amount in blockchain number) / (10 ** decimals for loanasset + decimals for loans in general) * (rate of the loan asset to convert it all to $)
+     */
     userInfo.myLendingRewardsAmount =
       userInfo.mTokens?.reduce((acc, { rewards_earned, m_token: { loan_token_name: mTokenName, address } }) => {
         const { oracle_id } = loanTokens.find(({ loan_token_name }) => loan_token_name === mTokenName) ?? {}
@@ -114,13 +140,14 @@ export const fetchUserData = async (
 
         if (loanTokenMetadata) {
           acc +=
-            (rewards_earned / 10 ** interestRateDecimals / 10 ** loanTokenMetadata.decimals) * loanTokenMetadata.rate
+            convertFromIndexerToRegNum(rewards_earned, interestRateDecimals + loanTokenMetadata.decimals) *
+            loanTokenMetadata.rate
         }
 
         return acc
       }, 0) ?? 0
 
-    const { actionsHistory, ...userRewardsToDate } = calcUsersRewardsToDate(userInfoDataGQL?.stakes_history_data)
+    const { actionsHistory, ...userRewardsToDate } = calcUsersRewardsToDate(stakes_history_data)
 
     userInfo.userRewardsToDate = userRewardsToDate
     userInfo.actionsHistory = actionsHistory
