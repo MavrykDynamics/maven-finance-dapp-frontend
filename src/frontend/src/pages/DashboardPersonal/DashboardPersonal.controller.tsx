@@ -1,14 +1,23 @@
-import { useParams } from 'react-router'
-import { useCallback, useMemo } from 'react'
+import { useLocation, useParams } from 'react-router'
+import { useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, Redirect, Route, Switch } from 'react-router-dom'
 
+import { State } from 'reducers'
+
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { getGovernanceStorage } from 'pages/Governance/Governance.actions'
+import { getPageNumber } from 'pages/FinacialRequests/FinancialRequests.helpers'
 import { getDelegationStorage, getOracleStorage } from 'pages/Satellites/Satellites.actions'
-import { updateUserData } from 'pages/Doorman/Doorman.actions'
+import { claimAllRewardsAction } from './DashboardPersonal.actions'
+import { updateUserData } from 'reducers/actions/user.actions'
 import { getEmergencyGovernanceStorage } from 'pages/EmergencyGovernance/EmergencyGovernance.actions'
 import { isValidId, PORTFOLIO_TAB_ID, DELEGATION_TAB_ID, SATELLITE_TAB_ID } from './DashboardPersonal.utils'
+import {
+  USER_ACTIONS_HISTORY,
+  calculateSlicePositions,
+  PAGINATION_SIDE_CENTER,
+} from 'pages/FinacialRequests/Pagination/pagination.consts'
 
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
 import { Page } from 'styles/components'
@@ -18,9 +27,23 @@ import DelegationTab from './DashboardPersonalComponents/DelegationTab'
 import PortfolioTab from './DashboardPersonalComponents/PortfolioTab'
 import { DashboardPersonalStyled } from './DashboardPersonal.style'
 import SatelliteTab from './DashboardPersonalComponents/SatelliteTab'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import Pagination from 'pages/FinacialRequests/Pagination/Pagination.view'
+import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 
-import { State } from 'reducers'
-import { claimAllRewardsAction } from './DashboardPersonal.actions'
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHeaderCell,
+  TableBody,
+  TableCell,
+} from 'app/App.components/Table/Table.style'
+import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
+import {
+  DashboardPersonalTabStyled,
+  HistoryBlock,
+} from './DashboardPersonalComponents/DashboardPersonalComponents.style'
 
 const DashboardPersonal = () => {
   const dispatch = useDispatch()
@@ -36,11 +59,14 @@ const DashboardPersonal = () => {
       mySMvkTokenBalance,
       myXTZTokenBalance,
       mytzBTCTokenBalance,
+      myLendingRewardsAmount,
       isSatellite,
       myDoormanRewardsData: { myAvailableDoormanRewards },
       myFarmRewardsData,
       mySatelliteRewardsData: { myAvailableSatelliteRewards },
       userRewardsToDate: { satelliteRewards, farmRewards, doormanRewards },
+      actionsHistory,
+      isLoaded: isUserDataLoaded,
     },
   } = useSelector((state: State) => state.wallet)
 
@@ -49,13 +75,20 @@ const DashboardPersonal = () => {
     console.log('claim rewards in DashboardPersonal')
   }
 
-  const { isLoading: isUserLoansLoading } = useDataLoader(async () => {
+  const { isLoading } = useDataLoader(async () => {
     try {
       await dispatch(getGovernanceStorage())
       await dispatch(getOracleStorage())
       await dispatch(getDelegationStorage())
       await dispatch(getEmergencyGovernanceStorage())
-      await dispatch(updateUserData())
+    } catch (e) {}
+  }, [accountPkh])
+
+  const { isLoading: isUserLoansLoading } = useDataLoader(async () => {
+    try {
+      if (!isUserDataLoaded) {
+        await dispatch(updateUserData())
+      }
     } catch (e) {}
   }, [accountPkh])
 
@@ -73,7 +106,7 @@ const DashboardPersonal = () => {
     satelliteRewards: satelliteRewards,
     farmsRewards: farmRewards,
     exitRewards: doormanRewards,
-    lendingIncome: 3131.31,
+    lendingIncome: myLendingRewardsAmount,
   }
 
   const walletData = {
@@ -84,6 +117,15 @@ const DashboardPersonal = () => {
   }
 
   const activeTab = useMemo(() => (isValidId(tabId) ? tabId : PORTFOLIO_TAB_ID), [tabId])
+
+  const { search, pathname } = useLocation()
+  const currentPage = getPageNumber(search, USER_ACTIONS_HISTORY)
+  const paginatedTableRows = useMemo(() => {
+    const [from, to] = calculateSlicePositions(currentPage, USER_ACTIONS_HISTORY)
+    return actionsHistory?.slice(from, to)
+  }, [currentPage, actionsHistory])
+
+  const showHistoryData = pathname !== `/dashboard-personal/${PORTFOLIO_TAB_ID}`
 
   return (
     <Page>
@@ -109,19 +151,77 @@ const DashboardPersonal = () => {
           </Link>
         </div>
         <div className={`bottom-grid ${activeTab}`}>
-          <Switch>
-            <Route exact path={`/dashboard-personal/${PORTFOLIO_TAB_ID}`}>
-              <PortfolioTab {...walletData} isUserLoansLoading={isUserLoansLoading} />
-            </Route>
-            <Route exact path={`/dashboard-personal/${DELEGATION_TAB_ID}`}>
-              <DelegationTab />
-            </Route>
-            <Route exact path={`/dashboard-personal/${SATELLITE_TAB_ID}`}>
-              <SatelliteTab />
-            </Route>
+          <DashboardPersonalTabStyled>
+            <Switch>
+              <Route exact path={`/dashboard-personal/${PORTFOLIO_TAB_ID}`}>
+                <PortfolioTab {...walletData} isUserLoansLoading={isUserLoansLoading} />
+              </Route>
+              <Route exact path={`/dashboard-personal/${DELEGATION_TAB_ID}`}>
+                <DelegationTab />
+              </Route>
+              <Route exact path={`/dashboard-personal/${SATELLITE_TAB_ID}`}>
+                <SatelliteTab />
+              </Route>
 
-            <Redirect to={`/dashboard-personal/${PORTFOLIO_TAB_ID}`} />
-          </Switch>
+              <Redirect to={`/dashboard-personal/${PORTFOLIO_TAB_ID}`} />
+            </Switch>
+
+            {showHistoryData ? (
+              <HistoryBlock>
+                <GovRightContainerTitleArea>
+                  <h2>History</h2>
+                </GovRightContainerTitleArea>
+                {actionsHistory ? (
+                  <Table className="treasury-table">
+                    <TableHeader className="treasury">
+                      <TableRow>
+                        <TableHeaderCell>Action</TableHeaderCell>
+                        <TableHeaderCell>Amount, MVK</TableHeaderCell>
+                        <TableHeaderCell>
+                          Total, MVK{' '}
+                          <CustomTooltip
+                            iconId="info"
+                            className="history-tooltip"
+                            text='For unstake, this is the amount received in MVK after the fee is deducted. For the rest, same as the "Amount, MVK" column'
+                          />
+                        </TableHeaderCell>
+                        <TableHeaderCell contentPosition="right">Fee</TableHeaderCell>
+                      </TableRow>
+                    </TableHeader>
+
+                    <TableBody className="treasury">
+                      {paginatedTableRows.map(({ action, amount, fee, totalAmount, id }) => {
+                        return (
+                          <TableRow rowHeight={40} borderColor="dataColor" className="add-hover" key={id}>
+                            <TableCell width="25%">{action}</TableCell>
+                            <TableCell width="30%">
+                              <CommaNumber value={amount} />
+                            </TableCell>
+                            <TableCell width="30%">
+                              <CommaNumber value={totalAmount} />
+                            </TableCell>
+                            <TableCell width="20%" contentPosition="right">
+                              <CommaNumber value={fee} endingText="%" />
+                            </TableCell>
+                          </TableRow>
+                        )
+                      })}
+                    </TableBody>
+                  </Table>
+                ) : (
+                  <div className="no-data">
+                    <span>You do not have any previous actions history</span>
+                  </div>
+                )}
+
+                <Pagination
+                  itemsCount={actionsHistory?.length ?? 0}
+                  listName={USER_ACTIONS_HISTORY}
+                  side={PAGINATION_SIDE_CENTER}
+                />
+              </HistoryBlock>
+            ) : null}
+          </DashboardPersonalTabStyled>
         </div>
       </DashboardPersonalStyled>
     </Page>

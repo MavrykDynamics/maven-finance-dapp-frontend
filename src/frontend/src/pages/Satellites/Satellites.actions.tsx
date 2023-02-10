@@ -1,6 +1,6 @@
 import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { ERROR, INFO, SUCCESS } from 'app/App.components/Toaster/Toaster.constants'
-import { getDoormanStorage, updateUserData } from 'pages/Doorman/Doorman.actions'
+import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
 import { State } from 'reducers'
 import {
   DELEGATION_STORAGE_QUERY,
@@ -15,6 +15,7 @@ import type { AppDispatch, GetState } from '../../app/App.controller'
 import { normalizeDelegationStorage } from './Satellites.helpers'
 import { normalizeOracle } from 'app/App.helpers'
 import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
+import { updateUserData } from 'reducers/actions/user.actions'
 
 export const GET_DELEGATION_STORAGE = 'GET_DELEGATION_STORAGE'
 export const getDelegationStorage = () => async (dispatch: AppDispatch) => {

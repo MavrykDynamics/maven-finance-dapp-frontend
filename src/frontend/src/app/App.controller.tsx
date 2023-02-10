@@ -47,15 +47,7 @@ const AppContainer = () => {
   useEffect(() => {
     ;(async () => {
       // Fetching initial data for DAPP
-      dispatch(getDelegationStorage())
-
-      // For using Beacon wallet
-      if (
-        localStorage.getItem('beacon:active-account') &&
-        localStorage.getItem('beacon:active-account') !== 'undefined'
-      ) {
-        dispatch(connect())
-      }
+      await dispatch(getDelegationStorage())
 
       // common data across the DAPP
       await Promise.all([
@@ -67,7 +59,15 @@ const AppContainer = () => {
         dispatch(getOracleStorage()),
       ])
 
-      dispatch(toggleInitialDataLoading(false))
+      // For using Beacon wallet
+      if (
+        localStorage.getItem('beacon:active-account') &&
+        localStorage.getItem('beacon:active-account') !== 'undefined'
+      ) {
+        await dispatch(connect())
+      }
+
+      await dispatch(toggleInitialDataLoading(false))
     })()
   }, [dispatch])
 
