@@ -27,7 +27,8 @@ export const CouncilPendingStyled = styled(Card)`
     min-width: 590px;
     .parameters {
       display: grid;
-      grid-template-columns: 180px 180px 150px;
+      grid-template-columns: 160px 150px 150px;
+      column-gap: 20px;
       align-items: center;
     }
 
