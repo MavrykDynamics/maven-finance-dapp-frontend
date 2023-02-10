@@ -11,7 +11,7 @@ import { ACTION_PRIMARY, TRANSPARENT_WITH_BORDER } from 'app/App.components/Butt
 import NewButton from 'app/App.components/Button/NewButton.controller'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { SimpleCircleSpinnerLoader } from 'app/App.components/Loader/Loader.view'
-import { DropDown, DropdownInputCustomChild, DropDownItemType } from 'app/App.components/DropDown/NewDropdown'
+import { DDItemId, DropDown, DropdownInputCustomChild, DropDownItemType } from 'app/App.components/DropDown/NewDropdown'
 import { Input } from 'app/App.components/Input/NewInput'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import Icon from 'app/App.components/Icon/Icon.view'
@@ -84,7 +84,7 @@ export const CreateNewVault = ({
   const { isActionLoading } = useSelector((state: State) => state.loading)
 
   const [shownScreen, setShownScreen] = useState<CurrentActiveModalScreen>(INITIAL_SCREEN_ID)
-  const [collateralsToSelect, setCollateralsToSelect] = useState<Record<number, DropDownCollateralAssetType>>({})
+  const [collateralsToSelect, setCollateralsToSelect] = useState<Record<DDItemId, DropDownCollateralAssetType>>({})
   const [collaterals, setCollaterals] = useState<Array<InputCollateral>>([])
   const [isVaultCreating, setVaultCreating] = useState(false)
   const [newVaultAddress, setNewVaultAddress] = useState('')
@@ -94,7 +94,7 @@ export const CreateNewVault = ({
   useEffect(() => {
     if (avaliableCollaterals.length === 0) return
 
-    const mappedAvaliableCollaterals = avaliableCollaterals.reduce<Record<number, DropDownCollateralAssetType>>(
+    const mappedAvaliableCollaterals = avaliableCollaterals.reduce<Record<DDItemId, DropDownCollateralAssetType>>(
       (acc, collateralData) => {
         acc[collateralData.id] = {
           ...collateralData,
@@ -158,7 +158,7 @@ export const CreateNewVault = ({
     () => bakerChosenDdItem?.bakerName && collaterals.find(({ id }) => isTezosAsset(collateralsToSelect[id].gqlName)),
     [bakerChosenDdItem?.bakerName, collaterals, collateralsToSelect],
   )
-  const handleOnClickDropdownBakerItem = (itemId: number) =>
+  const handleOnClickDropdownBakerItem = (itemId: DDItemId) =>
     setAssetChosenDdItem(bakerItemsForDropDown.find(({ id }) => id === itemId))
 
   const isAddCollateralContinueDisabled = useMemo(() => {
@@ -213,7 +213,7 @@ export const CreateNewVault = ({
   }
 
   // stuff to handle collateral input dropdown
-  const handleCollateralInputDdClick = (collateralIdx: number, listItemId: number, currentInputId: number) => {
+  const handleCollateralInputDdClick = (collateralIdx: number, listItemId: DDItemId, currentInputId: number) => {
     const selectedItem = collateralsToSelect[listItemId]
 
     if (!selectedItem) return
@@ -455,7 +455,9 @@ export const CreateNewVault = ({
                               id: inputCollateralId,
                             }}
                             items={Object.values(collateralsToSelect)}
-                            clickItem={(itemId: number) => handleCollateralInputDdClick(idx, itemId, inputCollateralId)}
+                            clickItem={(itemId: DDItemId) =>
+                              handleCollateralInputDdClick(idx, itemId, inputCollateralId)
+                            }
                             className="input-dropdown"
                           />
                         </InputPinnedDropDown>

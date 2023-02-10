@@ -41,7 +41,9 @@ const TOGGLE_VALUES: TabItem[] = [
 ]
 
 const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUserLoansLoading }: PortfolioTabProps) => {
-  const { exchangeRate } = useSelector((state: State) => state.mvkToken)
+  const {
+    tokensPrices: { mvk: { usd: mvkExchangeRate = 0 } = {} },
+  } = useSelector((state: State) => state.tokens)
   const {
     user: {
       userLoansData: { userBorrowing, userLendings },
@@ -82,7 +84,7 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
             <CommaNumber endingText="MVK" value={lastSeria} />
           </div>
           <div className="usd">
-            <CommaNumber beginningText="$" value={lastSeria * exchangeRate} />
+            <CommaNumber beginningText="$" value={lastSeria * mvkExchangeRate} />
           </div>
         </div>
         <Chart

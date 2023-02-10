@@ -17,7 +17,7 @@ import { toggleSidebarCollapsing } from './App.components/Menu/Menu.actions'
 import { useMedia } from 'react-use'
 import CoinGecko from 'coingecko-api'
 import { ActionLoader, LoaderRocket, WertLoader } from './App.components/Loader/Loader.view'
-import { getMvkTokenStorage } from 'pages/Doorman/Doorman.actions'
+import {} from 'pages/Doorman/Doorman.actions'
 import { getDelegationStorage, getOracleStorage } from 'pages/Satellites/Satellites.actions'
 import { getContractAddressesStorage } from 'reducers/actions/contractAddresses.actions'
 import {
@@ -47,28 +47,27 @@ const AppContainer = () => {
   useEffect(() => {
     ;(async () => {
       // Fetching initial data for DAPP
-      await dispatch(getDelegationStorage())
+      dispatch(getDelegationStorage())
 
       // For using Beacon wallet
       if (
         localStorage.getItem('beacon:active-account') &&
         localStorage.getItem('beacon:active-account') !== 'undefined'
       ) {
-        await dispatch(connect())
+        dispatch(connect())
       }
 
       // common data across the DAPP
       await Promise.all([
-        await dispatch(getContractAddressesStorage()),
-        await dispatch(getDipDupTokensStorage()),
-        await dispatch(getWhitelistTokensStorage()),
-        await dispatch(getTokensPrices()),
-        await dispatch(getMTokensStorage()),
-        await dispatch(getMvkTokenStorage()),
-        await dispatch(getOracleStorage()),
+        dispatch(getContractAddressesStorage()),
+        dispatch(getDipDupTokensStorage()),
+        dispatch(getWhitelistTokensStorage()),
+        dispatch(getTokensPrices()),
+        dispatch(getMTokensStorage()),
+        dispatch(getOracleStorage()),
       ])
 
-      await dispatch(toggleInitialDataLoading(false))
+      dispatch(toggleInitialDataLoading(false))
     })()
   }, [dispatch])
 

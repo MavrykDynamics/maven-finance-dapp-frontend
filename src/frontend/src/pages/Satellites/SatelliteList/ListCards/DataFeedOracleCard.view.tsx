@@ -12,8 +12,9 @@ import { SatelliteItemStyle, SatelliteOracleStatusComponent } from './SatelliteC
 
 export const OracleCard = ({ oracle }: { oracle: SatelliteRecord }) => {
   const { feeds } = useSelector((state: State) => state.oracles.oraclesStorage)
-  const { exchangeRate } = useSelector((state: State) => state.mvkToken)
-  const { tezos: { usd: XTZ_USD = null } = {} } = useSelector((state: State) => state.tokens.tokensPrices)
+  const { tezos: { usd: XTZ_USD = 0 } = {}, mvk: { usd: mvkExchangeRate = 0 } = {} } = useSelector(
+    (state: State) => state.tokens.tokensPrices,
+  )
   const oracleStatusType = getOracleStatus(oracle, feeds)
 
   return (
@@ -32,7 +33,9 @@ export const OracleCard = ({ oracle }: { oracle: SatelliteRecord }) => {
           <CommaNumber
             showDecimal
             beginningText="$"
-            value={oracle.oracleRecords.reduce<number>((acc, { sMVKReward }) => (acc += sMVKReward), 0) * exchangeRate}
+            value={
+              oracle.oracleRecords.reduce<number>((acc, { sMVKReward }) => (acc += sMVKReward), 0) * mvkExchangeRate
+            }
           />
         </var>
       </div>

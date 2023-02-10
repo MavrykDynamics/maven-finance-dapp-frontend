@@ -15,31 +15,37 @@ import { DoormanStats } from './DoormanStats/DoormanStats.controller'
 import { StakeUnstakeView } from './StakeUnstake/StakeUnstake.view'
 
 // actions
-import { getDoormanStorage, getMvkTokenStorage, stake } from './Doorman.actions'
+import { getDoormanStorage, stake } from './Doorman.actions'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { State } from 'reducers'
 
 export const Doorman = () => {
   const dispatch = useDispatch()
-  const {
-    exchangeRate,
-    mvkTokenStorage: { maximumTotalSupply },
-  } = useSelector((state: State) => state.mvkToken)
+
   const { doormanAddress, mvkTokenAddress } = useSelector((state: State) => state.contractAddresses)
   const {
     accountPkh,
     user: { mySMvkTokenBalance, myMvkTokenBalance },
   } = useSelector((state: State) => state.wallet)
-  const { totalStakedMvk = 0 } = useSelector((state: State) => state.doorman)
+  const { totalStakedMvk, maximumTotalSupply, isLoaded: isDoormanLoaded } = useSelector((state: State) => state.doorman)
+  const { tokensPrices: { mvk: { usd: mvkExchangeRate = 0 } = {} } = {} } = useSelector((state: State) => state.tokens)
 
   const [amount, setAmount] = useState<null | number>(null)
+  const exitFeeModal = {
+    amount: Number(amount),
+    maximumTotalSupply,
+    mySMvkTokenBalance,
+    myMvkTokenBalance,
+    totalStakedMvk,
+    accountPkh,
+  }
 
   const { isLoading } = useDataLoader(async () => {
     try {
-      await Promise.all([dispatch(getMvkTokenStorage()), dispatch(getDoormanStorage())])
-    } catch (e) {
-      //TODO: handle fetch error
-    }
+      if (!isDoormanLoaded) {
+        await dispatch(getDoormanStorage())
+      }
+    } catch (e) {}
   }, [])
 
   const stakeCallback = (amount: number) => dispatch(stake(amount))
@@ -57,27 +63,16 @@ export const Doorman = () => {
         </DataLoaderWrapper>
       ) : (
         <>
-          <ExitFeeModal
-            show={amount !== null}
-            data={{
-              amount: Number(amount),
-              maximumTotalSupply,
-              mySMvkTokenBalance,
-              myMvkTokenBalance,
-              totalStakedMvk,
-              accountPkh,
-            }}
-            closePopup={closeExitFeePopup}
-          />
+          <ExitFeeModal show={amount !== null} data={exitFeeModal} closePopup={closeExitFeePopup} />
           <StakeUnstakeView
-            MVK_exchangeRate={exchangeRate}
+            MVK_exchangeRate={mvkExchangeRate}
             stakeCallback={stakeCallback}
             unstakeCallback={unstakeCallback}
           />
           <DoormanInfoStyled>
             <DoormanChart />
             <DoormanStats
-              MVK_exchangeRate={exchangeRate}
+              MVK_exchangeRate={mvkExchangeRate}
               maximumTotalSupply={maximumTotalSupply}
               totalStakedMvk={totalStakedMvk}
               doormanAddress={doormanAddress.address}

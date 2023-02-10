@@ -8,7 +8,7 @@ import {
   EMERGENCY_GOVERNANCE_STORAGE_QUERY_VARIABLE,
 } from '../../gql/queries'
 import { State } from '../../reducers'
-import { getDoormanStorage, getMvkTokenStorage } from '../Doorman/Doorman.actions'
+import { getDoormanStorage } from '../Doorman/Doorman.actions'
 import { HIDE_EXIT_FEE_MODAL } from '../Doorman/ExitFeeModal/ExitFeeModal.actions'
 import { normalizeEmergencyGovernance } from '../EmergencyGovernance/EmergencyGovernance.helpers'
 import { EmergencyGovernanceProposalForm } from '../../utils/TypesAndInterfaces/Forms'
@@ -68,7 +68,7 @@ export const submitEmergencyGovernanceProposal =
       await transaction?.confirmation()
 
       await dispatch(showToaster(SUCCESS, 'Emergency Proposal Submitted', 'All good :)'))
-      await dispatch(getMvkTokenStorage())
+
       await dispatch(getDoormanStorage())
       await dispatch(toggleActionLoader(false))
     } catch (error) {
@@ -103,7 +103,7 @@ export const voteEmergencyGovernanceProposal = () => async (dispatch: AppDispatc
     await transaction?.confirmation()
 
     await dispatch(showToaster(SUCCESS, 'Emergency Proposal voted', 'All good :)'))
-    await dispatch(getMvkTokenStorage())
+
     await dispatch(getDoormanStorage())
     await dispatch(toggleActionLoader(false))
   } catch (error) {

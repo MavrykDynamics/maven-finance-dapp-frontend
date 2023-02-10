@@ -14,7 +14,7 @@ import { ERROR, INFO, SUCCESS } from '../../app/App.components/Toaster/Toaster.c
 import { getEndsInTimestampForFarmCards, getLPTokensInfo, normalizeFarmStorage } from './Farms.helpers'
 import { fetchFromIndexer } from '../../gql/fetchGraphQL'
 import { showToaster } from '../../app/App.components/Toaster/Toaster.actions'
-import { getDoormanStorage, getMvkTokenStorage, updateUserData } from '../Doorman/Doorman.actions'
+import { getDoormanStorage, updateUserData } from '../Doorman/Doorman.actions'
 import { hideModal } from '../../app/App.components/Modal/Modal.actions'
 import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 
@@ -116,7 +116,7 @@ export const harvest = (farmAddress: string) => async (dispatch: AppDispatch, ge
       dispatch(updateUserData())
     }
     await dispatch(getFarmStorage())
-    await dispatch(getMvkTokenStorage())
+
     await dispatch(getDoormanStorage())
   } catch (error) {
     if (error instanceof Error) {
@@ -156,7 +156,7 @@ export const deposit = (farmAddress: string, amount: number) => async (dispatch:
 
     await dispatch(updateUserData())
     await dispatch(getFarmStorage())
-    await dispatch(getMvkTokenStorage())
+
     await dispatch(getDoormanStorage())
     await dispatch(toggleActionLoader(false))
   } catch (error) {
@@ -198,7 +198,7 @@ export const withdraw = (farmAddress: string, amount: number) => async (dispatch
 
     await dispatch(updateUserData())
     await dispatch(getFarmStorage())
-    await dispatch(getMvkTokenStorage())
+
     await dispatch(getDoormanStorage())
     await dispatch(toggleActionLoader(false))
   } catch (error) {

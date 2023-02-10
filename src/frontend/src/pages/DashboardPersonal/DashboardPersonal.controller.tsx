@@ -27,9 +27,8 @@ const DashboardPersonal = () => {
   const { tabId } = useParams<{ tabId: string }>()
 
   const {
-    tokensPrices: { tezos },
+    tokensPrices: { tezos, mvk: { usd: mvkExchangeRate = 0 } = {} },
   } = useSelector((state: State) => state.tokens)
-  const { exchangeRate: mvkRate } = useSelector((state: State) => state.mvkToken)
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const {
     user: {
@@ -69,7 +68,7 @@ const DashboardPersonal = () => {
   }
 
   const earnings = {
-    mvkRate,
+    mvkRate: mvkExchangeRate,
     xtzRate: tezos?.usd ?? 0,
     satelliteRewards: satelliteRewards,
     farmsRewards: farmRewards,

@@ -21,8 +21,10 @@ import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 export const OraclesTab = ({ isLoading }: { isLoading: boolean }) => {
   const dispatch = useDispatch()
   const { feeds } = useSelector((state: State) => state.oracles.oraclesStorage)
-  const { dipDupContracts } = useSelector((state: State) => state.tokens)
-  const { exchangeRate } = useSelector((state: State) => state.mvkToken)
+  const {
+    dipDupContracts,
+    tokensPrices: { mvk: { usd: mvkExchangeRate = 0 } = {} },
+  } = useSelector((state: State) => state.tokens)
   const { satelliteLedger = [] } = useSelector((state: State) => state.delegation.delegationStorage)
 
   const oracleFeeds = feeds.length
@@ -37,11 +39,11 @@ export const OraclesTab = ({ isLoading }: { isLoading: boolean }) => {
       satelliteLedger.reduce((acc, { oracleRecords }) => {
         if (oracleRecords.length) {
           const sMVKReward = oracleRecords.reduce((acc, { sMVKReward = 0 }) => (acc += sMVKReward), 0)
-          acc += sMVKReward * exchangeRate
+          acc += sMVKReward * mvkExchangeRate
         }
         return acc
       }, 0),
-    [exchangeRate, satelliteLedger],
+    [mvkExchangeRate, satelliteLedger],
   )
 
   return (

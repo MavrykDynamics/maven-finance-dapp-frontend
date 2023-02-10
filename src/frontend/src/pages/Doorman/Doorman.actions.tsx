@@ -7,9 +7,6 @@ import {
   DOORMAN_STORAGE_QUERY,
   DOORMAN_STORAGE_QUERY_NAME,
   DOORMAN_STORAGE_QUERY_VARIABLE,
-  MVK_TOKEN_STORAGE_QUERY,
-  MVK_TOKEN_STORAGE_QUERY_NAME,
-  MVK_TOKEN_STORAGE_QUERY_VARIABLE,
   USER_INFO_QUERY,
   USER_INFO_QUERY_NAME,
   USER_INFO_QUERY_VARIABLES,
@@ -38,12 +35,7 @@ import {
   UserSatelliteRewardsData,
 } from '../../utils/TypesAndInterfaces/User'
 import { HIDE_EXIT_FEE_MODAL } from './ExitFeeModal/ExitFeeModal.actions'
-import {
-  normalizeDoormanStorage,
-  normalizeMvkToken,
-  normalizeSmvkHistoryData,
-  normalizeMvkMintHistoryData,
-} from './Doorman.converter'
+import { normalizeDoormanStorage, normalizeSmvkHistoryData, normalizeMvkMintHistoryData } from './Doorman.converter'
 import { Farm } from 'utils/generated/graphqlTypes'
 import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 import { DEFAULT_USER, UserState } from 'reducers/wallet'
@@ -54,11 +46,9 @@ import {
   USER_LENDING_DATA_QUERY_VARIABLE,
 } from 'gql/queries/getLoansStorage'
 import { normalizeUserLending } from 'pages/Loans/Loans.helpers'
-import { getUserLoansDataTokensRates } from 'pages/Loans/LoansFethcers'
 
-export const GET_SMVK_HISTORY_DATA = 'GET_SMVK_HISTORY_DATA'
-export const GET_MVK_MINT_HISTORY_DATA = 'GET_MVK_MINT_HISTORY_DATA'
-export const getDormanHistoryData = () => async (dispatch: AppDispatch, getState: GetState) => {
+export const GET_DOORMAN_STORAGE = 'GET_DOORMAN_STORAGE'
+export const getDoormanStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
   try {
     const smvkStorage = await fetchFromIndexer(
       SMVK_HISTORY_DATA_QUERY,
@@ -76,13 +66,20 @@ export const getDormanHistoryData = () => async (dispatch: AppDispatch, getState
 
     const mvkMintHistoryData = normalizeMvkMintHistoryData(mvkStorage)
 
-    dispatch({
-      type: GET_MVK_MINT_HISTORY_DATA,
-      mvkMintHistoryData,
-    })
+    const storage = await fetchFromIndexer(
+      DOORMAN_STORAGE_QUERY,
+      DOORMAN_STORAGE_QUERY_NAME,
+      DOORMAN_STORAGE_QUERY_VARIABLE,
+    )
+
+    const { totalStakedMvk, totalSupply, maximumTotalSupply } = normalizeDoormanStorage(storage)
 
     dispatch({
-      type: GET_SMVK_HISTORY_DATA,
+      type: GET_DOORMAN_STORAGE,
+      totalStakedMvk,
+      totalSupply,
+      maximumTotalSupply,
+      mvkMintHistoryData,
       smvkHistoryData,
     })
   } catch (error) {
@@ -90,27 +87,7 @@ export const getDormanHistoryData = () => async (dispatch: AppDispatch, getState
       console.error('smvkHistoryData', error)
       dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    dispatch({
-      type: GET_SMVK_HISTORY_DATA,
-      error,
-    })
   }
-}
-
-export const GET_MVK_TOKEN_STORAGE = 'GET_MVK_TOKEN_STORAGE'
-export const getMvkTokenStorage = () => async (dispatch: AppDispatch) => {
-  const storage = await fetchFromIndexer(
-    MVK_TOKEN_STORAGE_QUERY,
-    MVK_TOKEN_STORAGE_QUERY_NAME,
-    MVK_TOKEN_STORAGE_QUERY_VARIABLE,
-  )
-
-  const convertedStorage = normalizeMvkToken(storage?.mvk_token[0])
-
-  dispatch({
-    type: GET_MVK_TOKEN_STORAGE,
-    mvkTokenStorage: convertedStorage,
-  })
 }
 
 export const stake = (amount: number) => async (dispatch: AppDispatch, getState: GetState) => {
@@ -170,7 +147,6 @@ export const stake = (amount: number) => async (dispatch: AppDispatch, getState:
     await batchOp?.confirmation()
 
     dispatch(showToaster(SUCCESS, 'Staking done', 'All good :)'))
-    await dispatch(getMvkTokenStorage())
     await dispatch(getDoormanStorage())
     await dispatch(updateUserData())
     await dispatch(toggleActionLoader(false))
@@ -215,7 +191,6 @@ export const unstake = (amount: number) => async (dispatch: AppDispatch, getStat
 
     dispatch(showToaster(SUCCESS, 'Unstaking done', 'All good :)'))
 
-    await dispatch(getMvkTokenStorage())
     await dispatch(getDoormanStorage())
     await dispatch(updateUserData())
     await dispatch(toggleActionLoader(false))
@@ -253,7 +228,6 @@ export const rewardsCompound = (address: string) => async (dispatch: AppDispatch
     dispatch(showToaster(SUCCESS, 'Compounding done', 'All good :)'))
 
     await dispatch(updateUserData())
-    await dispatch(getMvkTokenStorage())
     await dispatch(getDoormanStorage())
     await dispatch(toggleActionLoader(false))
   } catch (error) {
@@ -262,32 +236,6 @@ export const rewardsCompound = (address: string) => async (dispatch: AppDispatch
       dispatch(showToaster(ERROR, 'Error', error.message))
     }
     dispatch(toggleActionLoader(false))
-  }
-}
-
-export const GET_DOORMAN_STORAGE = 'GET_DOORMAN_STORAGE'
-export const getDoormanStorage = () => async (dispatch: AppDispatch) => {
-  try {
-    const storage = await fetchFromIndexer(
-      DOORMAN_STORAGE_QUERY,
-      DOORMAN_STORAGE_QUERY_NAME,
-      DOORMAN_STORAGE_QUERY_VARIABLE,
-    )
-
-    const convertedStorage = normalizeDoormanStorage(storage?.doorman?.[0])
-
-    dispatch({
-      type: GET_DOORMAN_STORAGE,
-      storage: convertedStorage,
-      totalStakedMvkSupply: convertedStorage.totalStakedMvk,
-    })
-
-    await dispatch(getDormanHistoryData())
-  } catch (error) {
-    if (error instanceof Error) {
-      console.error(error)
-      dispatch(showToaster(ERROR, 'Error', error.message))
-    }
   }
 }
 
