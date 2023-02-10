@@ -129,7 +129,8 @@ export const PortfolioWalletStyled = styled(MediumBlockBase)<{ theme: MavrykThem
 `
 
 export const MyRewardsStyled = styled(SmallBlockBase)<{ theme: MavrykTheme }>`
-  background-image: url('/images/dashboard/dashboardPersonalMyRewards.svg?v=0'), ${({ theme }) => theme.dashboardTvlGradient};
+  background-image: url('/images/dashboard/dashboardPersonalMyRewards.svg?v=0'),
+    ${({ theme }) => theme.dashboardTvlGradient};
   background-size: cover;
   background-repeat: no-repeat;
 
@@ -290,6 +291,9 @@ export const ListItem = styled.div<{ theme: MavrykTheme; columsTemplate: string 
       button {
         height: fit-content;
       }
+
+      /* TODO: temp solution while earn column is disabled */
+      margin-left: auto;
     }
   }
 

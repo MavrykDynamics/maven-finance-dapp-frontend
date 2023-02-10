@@ -148,7 +148,9 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
           <div className="list scroll-block">
             {userLendings.map(({ icon, amount, annualPecentage, earned, operationHash, id }) => {
               return (
-                <ListItem columsTemplate="60px 0.9fr 0.7fr 0.8fr 0.7fr" key={id + operationHash}>
+                // TODO: temp solution while earn column is disabled
+                // <ListItem columsTemplate="60px 0.9fr 0.7fr 0.8fr 0.7fr" key={id + operationHash}>
+                <ListItem columsTemplate="60px 0.9fr 0.7fr 1.5fr" key={id + operationHash}>
                   <ImageWithPlug imageLink={icon} alt={`lended asset logo`} />
                   <div className="list-part">
                     <div className="name">Supplied</div>
@@ -162,12 +164,12 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
                       <CommaNumber value={annualPecentage} endingText="%" />
                     </div>
                   </div>
-                  <div className="list-part">
+                  {/* <div className="list-part">
                     <div className="name">Earned</div>
                     <div className="value">
                       <CommaNumber value={earned} />
                     </div>
-                  </div>
+                  </div> */}
                   <div className="list-part  view-tx-link">
                     <Link to={{ pathname: `https://ghostnet.tzkt.io/${operationHash}` }} target="_blank">
                       <Button text="View TX" kind={TRANSPARENT} className="link" />
@@ -198,7 +200,9 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
           <div className="list scroll-block">
             {userBorrowing.map(({ icon, amount, annualPecentage, earned, operationHash, id }) => {
               return (
-                <ListItem columsTemplate="60px 0.9fr 0.7fr 0.8fr 0.7fr" key={id + operationHash}>
+                // TODO: temp solution while earn column is disabled
+                // <ListItem columsTemplate="60px 0.9fr 0.7fr 0.8fr 0.7fr" key={id + operationHash}>
+                <ListItem columsTemplate="60px 0.9fr 0.7fr 1.5fr" key={id + operationHash}>
                   <ImageWithPlug imageLink={icon} alt={`borrowed asset logo`} />
                   <div className="list-part">
                     <div className="name">Borrowed</div>
@@ -212,12 +216,12 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
                       <CommaNumber value={annualPecentage} endingText="%" />
                     </div>
                   </div>
-                  <div className="list-part">
+                  {/* <div className="list-part">
                     <div className="name">Earned</div>
                     <div className="value">
                       <CommaNumber value={earned} />
                     </div>
-                  </div>
+                  </div> */}
                   <div className="list-part view-tx-link">
                     <Link to={{ pathname: `https://ghostnet.tzkt.io/${operationHash}` }} target="_blank">
                       <Button text="View TX" kind={TRANSPARENT} className="link" />
