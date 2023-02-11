@@ -50,41 +50,31 @@ export const getFarmStorage = () => async (dispatch: AppDispatch, getState: GetS
           urls.map(async (url) => await (await fetch(url)).json()),
         )
 
-        const farmStorage = normalizeFarmStorage(
-          storage?.farm,
-          dipDupTokens,
-          farmCardEndsIn,
-          farmLPTokensInfo,
-          farmContracts,
-        )
+        const farms = normalizeFarmStorage(storage?.farm, dipDupTokens, farmCardEndsIn, farmLPTokensInfo, farmContracts)
         dispatch({
           type: GET_FARM_STORAGE,
-          farmStorage,
+          farms,
         })
       } catch (e) {
         console.error('getFarmStorage, fetching contracts error: ', e)
 
-        const farmStorage = normalizeFarmStorage(storage?.farm, dipDupTokens, farmCardEndsIn, farmLPTokensInfo, [])
+        const farms = normalizeFarmStorage(storage?.farm, dipDupTokens, farmCardEndsIn, farmLPTokensInfo, [])
         dispatch({
           type: GET_FARM_STORAGE,
-          farmStorage,
+          farms,
         })
       }
     } catch (e) {
       console.error('getFarmStorage, fetching metadata error: ', e)
 
-      const farmStorage = normalizeFarmStorage(storage?.farm, dipDupTokens, [], [], [])
+      const farms = normalizeFarmStorage(storage?.farm, dipDupTokens, [], [], [])
       dispatch({
         type: GET_FARM_STORAGE,
-        farmStorage,
+        farms,
       })
     }
   } catch (e) {
     dispatch(showToaster(ERROR, 'Error while fetching farms data', 'Please try to reload page'))
-    dispatch({
-      type: GET_FARM_STORAGE,
-      farmStorage: [],
-    })
   }
 }
 

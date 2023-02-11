@@ -1,9 +1,10 @@
 // types
-import { FarmAccountsType, FarmContractType, FarmGraphQL } from '../../utils/TypesAndInterfaces/Farm'
+import { FarmAccountsType, FarmContractType, FarmGraphQL, Normalizedfarm } from '../../utils/TypesAndInterfaces/Farm'
 import { DipDupTokensGraphQl } from 'utils/TypesAndInterfaces/DipDupTokens'
 
 // helpers
 import { getContractBigmapKeys, network } from 'utils/api'
+import { STAKED } from './Farms.const'
 
 type EndsInType = {
   endsIn: any
@@ -168,4 +169,74 @@ export const getUserBalanceByAddress = async (tokenAddress?: string) => {
   if (!tokenAddress) return 0
 
   return await (await fetch(`https://api.${network}.tzkt.io/v1/accounts/${tokenAddress}/balance`)).json()
+}
+
+// filters helpers
+export const filterByLiveFinished = (
+  farmsToFilter: Array<Normalizedfarm>,
+  newLiveFinishedValue: number,
+): Array<Normalizedfarm> => {
+  return farmsToFilter.filter(({ isLive }) => (newLiveFinishedValue === 1 ? isLive === true : isLive === false))
+}
+
+export const filterBySearch = (farmsToFilter: Array<Normalizedfarm>, newSearchText: string): Array<Normalizedfarm> => {
+  return farmsToFilter.filter(({ lpTokenAddress, name }) => {
+    return lpTokenAddress.includes(newSearchText) || name.includes(newSearchText)
+  })
+}
+
+export const getNewOpenedCardsAddresses = (openedCards: Array<string>, newOpenedCardAddress: string): Array<string> => {
+  return openedCards.find((openCardAddress) => openCardAddress === newOpenedCardAddress)
+    ? openedCards.filter((openCardAddress) => openCardAddress !== newOpenedCardAddress)
+    : openedCards.concat(newOpenedCardAddress)
+}
+
+export const filterByStaked = (farmsToFilter: Array<Normalizedfarm>, newStakedValue: number): Array<Normalizedfarm> => {
+  return newStakedValue === STAKED
+    ? farmsToFilter.filter(
+        (item) => item.farmAccounts?.length && item.farmAccounts.some((account) => account?.deposited_amount > 0),
+      )
+    : farmsToFilter
+}
+
+export const sortFarms = (farmsToSort: Array<Normalizedfarm>, sortBy: string): Array<Normalizedfarm> => {
+  const dataToSort = [...farmsToSort]
+  dataToSort.sort((a, b) => {
+    let res = 0
+    switch (sortBy) {
+      case 'active':
+        res = Number(a.open) - Number(b.open)
+        break
+      case 'highestAPY':
+        res =
+          calculateAPY(a.currentRewardPerBlock, a.lpBalance) < calculateAPY(b.currentRewardPerBlock, b.lpBalance)
+            ? 1
+            : -1
+        break
+      case 'lowestAPY':
+        res =
+          calculateAPY(a.currentRewardPerBlock, a.lpBalance) > calculateAPY(b.currentRewardPerBlock, b.lpBalance)
+            ? 1
+            : -1
+        break
+      case 'highestLiquidity':
+        res = a.lpBalance < b.lpBalance ? 1 : -1
+        break
+      case 'lowestLiquidity':
+        res = a.lpBalance > b.lpBalance ? 1 : -1
+        break
+      case 'yourLargestStake':
+        res = getSummDepositedAmount(a.farmAccounts) < getSummDepositedAmount(b.farmAccounts) ? 1 : -1
+        break
+      case 'rewardsPerBlock':
+        res = a.currentRewardPerBlock < b.currentRewardPerBlock ? 1 : -1
+        break
+      default:
+        res = 1
+        break
+    }
+    return res
+  })
+
+  return dataToSort
 }

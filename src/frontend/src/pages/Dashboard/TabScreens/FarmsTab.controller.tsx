@@ -17,8 +17,9 @@ import { FarmsContentStyled, TabWrapperStyled } from './DashboardTabs.style'
 import { emptyContainer } from './LendingTab.controller'
 
 export const FarmsTab = ({ isLoading }: { isLoading: boolean }) => {
-  const { farmStorage } = useSelector((state: State) => state.farm)
-  const hasLiveFarms = useMemo(() => farmStorage.some(({ isLive }) => isLive), [farmStorage])
+  const { farms } = useSelector((state: State) => state.farm)
+  // On dashboard farms tab show only live farms
+  const liveFarms = useMemo(() => farms.filter(({ isLive }) => isLive), [farms])
 
   return (
     <TabWrapperStyled backgroundImage="dashboard_farmsTab_bg.png">
@@ -35,10 +36,8 @@ export const FarmsTab = ({ isLoading }: { isLoading: boolean }) => {
             <ClockLoader width={150} height={150} />
             <div className="text">Loading farms</div>
           </DataLoaderWrapper>
-        ) : hasLiveFarms ? (
-          farmStorage.map((farmCardData) => {
-            if (!farmCardData.isLive) return null
-
+        ) : liveFarms.length ? (
+          farms.map((farmCardData) => {
             const apy = calculateAPY(farmCardData.currentRewardPerBlock, farmCardData.lpBalance)
             return (
               <Link

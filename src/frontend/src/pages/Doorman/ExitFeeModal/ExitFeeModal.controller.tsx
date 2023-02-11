@@ -76,7 +76,6 @@ export const ExitFeeModal = ({
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = mathRoundTwoDigit(e.target.value)
     checkInputIsOk(+value)
-
     setInputAmount({ amount: value })
   }
 

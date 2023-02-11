@@ -3,14 +3,14 @@ import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
 // types
-import type { FarmsViewVariantType } from '../Farms.controller'
+import type { FarmsViewVariantType } from '../Farms.const'
 
 // view
 import Expand from '../../../app/App.components/Expand/Expand.view'
 import { Button } from '../../../app/App.components/Button/Button.controller'
 import { ConnectWallet } from '../../../app/App.components/ConnectWallet/ConnectWallet.controller'
 import { CommaNumber } from '../../../app/App.components/CommaNumber/CommaNumber.controller'
-import { deposit, harvest, withdraw } from '../Farms.actions'
+import { harvest } from '../Farms.actions'
 import { showModal } from '../../../app/App.components/Modal/Modal.actions'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 import RoiCalculator from '../RoiCalculator/RoiCalculator.controller'
@@ -241,11 +241,7 @@ const VerticalFarmComponent = ({
         />
       </div>
 
-      <Expand
-        className="vertical-expand"
-        onClickCallback={expandBlockCallback}
-        isExpandedByDefault={isOpenedCard}
-      >
+      <Expand className="vertical-expand" onClickCallback={expandBlockCallback} isExpandedByDefault={isOpenedCard}>
         <LinksBlock
           farmAddress={farm.address}
           token1Symbol={farm.lpToken1.symbol}
@@ -325,7 +321,7 @@ type FarmCardProps = {
   variant: FarmsViewVariantType
   depositAmount: number
   isOpenedCard: boolean
-  expandCallback: (address: string) => void
+  expandCallback: () => void
 }
 
 export const FarmCard = ({ farm, variant, isOpenedCard, currentRewardPerBlock, expandCallback }: FarmCardProps) => {
@@ -371,10 +367,6 @@ export const FarmCard = ({ farm, variant, isOpenedCard, currentRewardPerBlock, e
     await dispatch({ type: SELECT_FARM_ADDRESS, selectedFarmAddress: '' })
   }
 
-  const expandBlockCallback = () => {
-    expandCallback(farm.address)
-  }
-
   return variant === 'vertical' ? (
     <VerticalFarmComponent
       farm={farm}
@@ -382,7 +374,7 @@ export const FarmCard = ({ farm, variant, isOpenedCard, currentRewardPerBlock, e
       isOpenedCard={isOpenedCard}
       userReward={userReward}
       closeCalculatorModal={closeCalculatorModal}
-      expandBlockCallback={expandBlockCallback}
+      expandBlockCallback={expandCallback}
       apyValue={valueAPY}
       triggerCalculatorModal={triggerCalculatorModal}
       triggerDepositModal={triggerDepositModal}
@@ -398,7 +390,7 @@ export const FarmCard = ({ farm, variant, isOpenedCard, currentRewardPerBlock, e
       isOpenedCard={isOpenedCard}
       userReward={userReward}
       closeCalculatorModal={closeCalculatorModal}
-      expandBlockCallback={expandBlockCallback}
+      expandBlockCallback={expandCallback}
       apyValue={valueAPY}
       triggerCalculatorModal={triggerCalculatorModal}
       triggerDepositModal={triggerDepositModal}

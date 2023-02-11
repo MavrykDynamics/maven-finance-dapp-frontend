@@ -24,130 +24,132 @@ import { getUserBalanceByAddress } from 'pages/Farms/Farms.helpers'
 import { ERROR_STATUS, SUCCESS_STATUS } from '../FarmWithdrawModal/FarmWithdrawModal.controller'
 
 export const FarmDepositModal = () => {
-  const dispatch = useDispatch()
-  const { selectedFarmAddress, farmStorage } = useSelector((state: State) => state.farm)
-  const farm = farmStorage.find(({ address }) => selectedFarmAddress === address)
+  // const dispatch = useDispatch()
+  // const { selectedFarmAddress, farmStorage } = useSelector((state: State) => state.farm)
+  // const farm = farmStorage.find(({ address }) => selectedFarmAddress === address)
 
-  const [userBalance, setUserBalance] = useState(0)
-  const [amount, setAmount] = useState<number | string>(0)
-  const [status, setStatus] = useState<InputStatusType>('')
+  // const [userBalance, setUserBalance] = useState(0)
+  // const [amount, setAmount] = useState<number | string>(0)
+  // const [status, setStatus] = useState<InputStatusType>('')
 
-  const checkInputIsOk = (value: number | '') => {
-    setStatus(value && value <= userBalance && value >= 0 ? SUCCESS_STATUS : ERROR_STATUS)
-  }
+  // const checkInputIsOk = (value: number | '') => {
+  //   setStatus(value && value <= userBalance && value >= 0 ? SUCCESS_STATUS : ERROR_STATUS)
+  // }
 
-  const getUserBalance = async () => {
-    try {
-      const userBalanceFetched = Number(await getUserBalanceByAddress(farm?.lpTokenAddress))
-      setUserBalance(userBalanceFetched)
-    } catch (e) {
-      console.error('getUserBalance farms depositModal error:', e)
-    }
-  }
+  // const getUserBalance = async () => {
+  //   try {
+  //     const userBalanceFetched = Number(await getUserBalanceByAddress(farm?.lpTokenAddress))
+  //     setUserBalance(userBalanceFetched)
+  //   } catch (e) {
+  //     console.error('getUserBalance farms depositModal error:', e)
+  //   }
+  // }
 
-  useEffect(() => {
-    getUserBalance()
-  }, [])
+  // useEffect(() => {
+  //   getUserBalance()
+  // }, [])
 
-  useEffect(() => {
-    checkInputIsOk(Number(amount))
-  }, [amount])
+  // useEffect(() => {
+  //   checkInputIsOk(Number(amount))
+  // }, [amount])
 
-  // if farm address doesn't exists, close modal
-  if (!farm) {
-    dispatch({
-      type: SELECT_FARM_ADDRESS,
-      selectedFarmAddress: '',
-    })
+  // // if farm address doesn't exists, close modal
+  // if (!farm) {
+  //   dispatch({
+  //     type: SELECT_FARM_ADDRESS,
+  //     selectedFarmAddress: '',
+  //   })
 
-    return null
-  }
+  //   return null
+  // }
 
-  const disabled = !amount || !selectedFarmAddress || status === ERROR_STATUS
+  // const disabled = !amount || !selectedFarmAddress || status === ERROR_STATUS
 
-  const tokesnNames =
-    farm.lpToken1.symbol && farm.lpToken2.symbol && `${farm.lpToken1.symbol} - ${farm.lpToken2.symbol}`
+  // const tokesnNames =
+  //   farm.lpToken1.symbol && farm.lpToken2.symbol && `${farm.lpToken1.symbol} - ${farm.lpToken2.symbol}`
 
-  const handleBlur = () => {
-    if (amount === '') {
-      setAmount(0)
-    }
-  }
+  // const handleBlur = () => {
+  //   if (amount === '') {
+  //     setAmount(0)
+  //   }
+  // }
 
-  const handleFocus = () => {
-    if (amount === 0) {
-      setAmount('')
-    }
-  }
+  // const handleFocus = () => {
+  //   if (amount === 0) {
+  //     setAmount('')
+  //   }
+  // }
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.target.setCustomValidity('')
-    setAmount(e.target.value)
+  // const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   e.target.setCustomValidity('')
+  //   setAmount(e.target.value)
 
-    if (Number(e.target.value) > userBalance) {
-      e.target.setCustomValidity('Not enough balance')
-      e.target.reportValidity()
-    }
-  }
+  //   if (Number(e.target.value) > userBalance) {
+  //     e.target.setCustomValidity('Not enough balance')
+  //     e.target.reportValidity()
+  //   }
+  // }
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
+  // const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  //   e.preventDefault()
 
-    if (!disabled) {
-      dispatch(deposit(selectedFarmAddress, Number(amount)))
-    }
-  }
+  //   if (!disabled) {
+  //     dispatch(deposit(selectedFarmAddress, Number(amount)))
+  //   }
+  // }
 
-  const useMaxHandler = () => {
-    setAmount(+userBalance)
-  }
+  // const useMaxHandler = () => {
+  //   setAmount(+userBalance)
+  // }
 
-  return (
-    <ModalCard>
-      <ModalCardContent className="farm-modal">
-        <FarmCardTopSection>
-          <FarmCardContentSection>
-            <CoinsIcons />
-            <FarmTitleSection>
-              <h3>Stake {tokesnNames} LP Tokens</h3>
-            </FarmTitleSection>
-          </FarmCardContentSection>
-        </FarmCardTopSection>
+  // return (
+  //   <ModalCard>
+  //     <ModalCardContent className="farm-modal">
+  //       <FarmCardTopSection>
+  //         <FarmCardContentSection>
+  //           <CoinsIcons />
+  //           <FarmTitleSection>
+  //             <h3>Stake {tokesnNames} LP Tokens</h3>
+  //           </FarmTitleSection>
+  //         </FarmCardContentSection>
+  //       </FarmCardTopSection>
 
-        <FarmInputSection onSubmit={handleSubmit}>
-          <div className="input-info">
-            <div />
-            <button type="button" onClick={useMaxHandler}>
-              Use Max
-            </button>
-          </div>
-          <Input
-            type={'number'}
-            placeholder={String(amount)}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            onFocus={handleFocus}
-            value={amount}
-            pinnedText={`${tokesnNames} LP`}
-            inputStatus={status}
-            className="farm-modal-input"
-          />
-          <div className="input-info">
-            <p>{tokesnNames} LP Balance</p>
-            <p>
-              <CommaNumber value={userBalance} />
-            </p>
-          </div>
-          <Button
-            className="farm-button"
-            text="Stake LP"
-            kind="actionPrimary"
-            icon="in"
-            type="submit"
-            disabled={disabled}
-          />
-        </FarmInputSection>
-      </ModalCardContent>
-    </ModalCard>
-  )
+  //       <FarmInputSection onSubmit={handleSubmit}>
+  //         <div className="input-info">
+  //           <div />
+  //           <button type="button" onClick={useMaxHandler}>
+  //             Use Max
+  //           </button>
+  //         </div>
+  //         <Input
+  //           type={'number'}
+  //           placeholder={String(amount)}
+  //           onChange={handleChange}
+  //           onBlur={handleBlur}
+  //           onFocus={handleFocus}
+  //           value={amount}
+  //           pinnedText={`${tokesnNames} LP`}
+  //           inputStatus={status}
+  //           className="farm-modal-input"
+  //         />
+  //         <div className="input-info">
+  //           <p>{tokesnNames} LP Balance</p>
+  //           <p>
+  //             <CommaNumber value={userBalance} />
+  //           </p>
+  //         </div>
+  //         <Button
+  //           className="farm-button"
+  //           text="Stake LP"
+  //           kind="actionPrimary"
+  //           icon="in"
+  //           type="submit"
+  //           disabled={disabled}
+  //         />
+  //       </FarmInputSection>
+  //     </ModalCardContent>
+  //   </ModalCard>
+  // )
+
+  return null
 }
