@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useContext } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
@@ -11,14 +11,8 @@ import { Button } from '../../../app/App.components/Button/Button.controller'
 import { ConnectWallet } from '../../../app/App.components/ConnectWallet/ConnectWallet.controller'
 import { CommaNumber } from '../../../app/App.components/CommaNumber/CommaNumber.controller'
 import { harvest } from '../Farms.actions'
-import { showModal } from '../../../app/App.components/Modal/Modal.actions'
 import Icon from '../../../app/App.components/Icon/Icon.view'
-import RoiCalculator from '../RoiCalculator/RoiCalculator.controller'
 import CoinsIcons from '../../../app/App.components/Icon/CoinsIcons.view'
-
-// const
-import { SELECT_FARM_ADDRESS } from '../Farms.actions'
-import { FARM_DEPOSIT, FARM_WITHDRAW } from '../../../app/App.components/Modal/Modal.constants'
 
 // helpers
 import { calculateAPY } from '../Farms.helpers'
@@ -27,6 +21,7 @@ import { calculateAPY } from '../Farms.helpers'
 import { FarmCardStyled, FarmHarvestStyled, FarmStakeStyled } from './FarmCard.style'
 import { FarmStorage } from 'utils/TypesAndInterfaces/Farm'
 import { UserFarmRewardsData } from 'utils/TypesAndInterfaces/User'
+import { farmsPopupsContext } from '../FarmsPopups/FarmsPopups.provider'
 
 const QuestionLinkBlock = () => (
   <a className="info-link" href="https://mavryk.finance/litepaper#yield-farming" target="_blank" rel="noreferrer">
@@ -183,12 +178,10 @@ const FarmingBlock = ({
 
 type FarmCardViewProps = {
   farm: FarmStorage[number]
-  visibleModal: boolean
   apyValue: number
   accountPkh?: string
   isOpenedCard: boolean
   userReward?: UserFarmRewardsData
-  closeCalculatorModal: () => void
   triggerWithdrawModal: () => void
   triggerDepositModal: () => void
   harvestRewards: () => void
@@ -198,13 +191,11 @@ type FarmCardViewProps = {
 
 const VerticalFarmComponent = ({
   farm,
-  visibleModal,
   isOpenedCard,
   userReward,
   apyValue,
   accountPkh,
   triggerWithdrawModal,
-  closeCalculatorModal,
   triggerDepositModal,
   harvestRewards,
   expandBlockCallback,
@@ -248,20 +239,17 @@ const VerticalFarmComponent = ({
           token2Symbol={farm.lpToken2.symbol}
         />
       </Expand>
-      {visibleModal ? <RoiCalculator onClose={closeCalculatorModal} /> : null}
     </FarmCardStyled>
   )
 }
 
 const HorisontalFarmComponent = ({
   farm,
-  visibleModal,
   isOpenedCard,
   userReward,
   apyValue,
   accountPkh,
   triggerWithdrawModal,
-  closeCalculatorModal,
   triggerDepositModal,
   harvestRewards,
   expandBlockCallback,
@@ -310,7 +298,6 @@ const HorisontalFarmComponent = ({
           />
         </div>
       </Expand>
-      {visibleModal ? <RoiCalculator onClose={closeCalculatorModal} /> : null}
     </FarmCardStyled>
   )
 }
@@ -326,12 +313,11 @@ type FarmCardProps = {
 
 export const FarmCard = ({ farm, variant, isOpenedCard, currentRewardPerBlock, expandCallback }: FarmCardProps) => {
   const dispatch = useDispatch()
+  const { openDepositFarmPopup, openRoiCalculatorPopup, openWithdrawFarmPopup } = useContext(farmsPopupsContext)
   const {
     accountPkh,
     user: { myFarmRewardsData },
   } = useSelector((state: State) => state.wallet)
-
-  const [visibleModal, setVisibleModal] = useState(false)
 
   const valueAPY = calculateAPY(farm.currentRewardPerBlock, farm.lpBalance)
   const userReward = myFarmRewardsData[farm.address]
@@ -340,45 +326,28 @@ export const FarmCard = ({ farm, variant, isOpenedCard, currentRewardPerBlock, e
     dispatch(harvest(farm.address))
   }
 
-  const setReduxFarmAddress = async () => {
-    await dispatch({
-      type: SELECT_FARM_ADDRESS,
-      selectedFarmAddress: farm.address,
-    })
-  }
-
-  const triggerDepositModal = async () => {
-    await setReduxFarmAddress()
-    await dispatch(showModal(FARM_DEPOSIT))
-  }
-
-  const triggerWithdrawModal = async () => {
-    await setReduxFarmAddress()
-    await dispatch(showModal(FARM_WITHDRAW))
-  }
-
-  const triggerCalculatorModal = async () => {
-    await setReduxFarmAddress()
-    setVisibleModal(true)
-  }
-
-  const closeCalculatorModal = async () => {
-    setVisibleModal(false)
-    await dispatch({ type: SELECT_FARM_ADDRESS, selectedFarmAddress: '' })
-  }
-
   return variant === 'vertical' ? (
     <VerticalFarmComponent
       farm={farm}
-      visibleModal={visibleModal}
       isOpenedCard={isOpenedCard}
       userReward={userReward}
-      closeCalculatorModal={closeCalculatorModal}
       expandBlockCallback={expandCallback}
       apyValue={valueAPY}
-      triggerCalculatorModal={triggerCalculatorModal}
-      triggerDepositModal={triggerDepositModal}
-      triggerWithdrawModal={triggerWithdrawModal}
+      triggerCalculatorModal={() =>
+        openRoiCalculatorPopup({
+          selectedFarmAddress: farm.address,
+        })
+      }
+      triggerDepositModal={() =>
+        openDepositFarmPopup({
+          selectedFarmAddress: farm.address,
+        })
+      }
+      triggerWithdrawModal={() =>
+        openWithdrawFarmPopup({
+          selectedFarmAddress: farm.address,
+        })
+      }
       harvestRewards={harvestRewards}
       accountPkh={accountPkh}
     />
@@ -386,15 +355,25 @@ export const FarmCard = ({ farm, variant, isOpenedCard, currentRewardPerBlock, e
     <HorisontalFarmComponent
       farm={farm}
       accountPkh={accountPkh}
-      visibleModal={visibleModal}
       isOpenedCard={isOpenedCard}
       userReward={userReward}
-      closeCalculatorModal={closeCalculatorModal}
       expandBlockCallback={expandCallback}
       apyValue={valueAPY}
-      triggerCalculatorModal={triggerCalculatorModal}
-      triggerDepositModal={triggerDepositModal}
-      triggerWithdrawModal={triggerWithdrawModal}
+      triggerCalculatorModal={() =>
+        openRoiCalculatorPopup({
+          selectedFarmAddress: farm.address,
+        })
+      }
+      triggerDepositModal={() =>
+        openDepositFarmPopup({
+          selectedFarmAddress: farm.address,
+        })
+      }
+      triggerWithdrawModal={() =>
+        openWithdrawFarmPopup({
+          selectedFarmAddress: farm.address,
+        })
+      }
       harvestRewards={harvestRewards}
     />
   )

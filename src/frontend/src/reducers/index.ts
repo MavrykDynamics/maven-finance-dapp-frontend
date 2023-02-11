@@ -14,7 +14,6 @@ import { breakGlass, BreakGlassState } from './breakGlass'
 import { vesting, VestingState } from './vesting'
 import { farm, FarmState } from './farm'
 import { preferences, PreferencesState } from './preferences'
-import { modal, ModalState } from './modal'
 import { contractAddresses, ContractAddressesState } from './contractAddresses'
 import { oracles, OraclesState } from './oracles'
 import { tokens, TokensType } from './tokens'
@@ -37,7 +36,6 @@ export const reducers = combineReducers({
   vaults,
   farm,
   preferences,
-  modal,
   contractAddresses,
   oracles,
   tokens,
@@ -59,7 +57,6 @@ export interface State {
   vesting: VestingState
   farm: FarmState
   preferences: PreferencesState
-  modal: ModalState
   contractAddresses: ContractAddressesState
   oracles: OraclesState
   tokens: TokensType

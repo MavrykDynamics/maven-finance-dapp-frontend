@@ -1,3 +1,6 @@
+import { ModalStateType } from 'pages/Loans/Components/Modals/Modals.helpers'
+import FarmsPopupsProvider from './FarmsPopups/FarmsPopups.provider'
+
 export const LIVE_TAB_ID = 1
 export const FINISHED_TAB_ID = 2
 export type isLiveFarmType = typeof LIVE_TAB_ID | typeof FINISHED_TAB_ID
@@ -27,4 +30,34 @@ export type FarmsFiltersStateType = {
   searchValue: string
   sortBy: string
   farmsViewVariant: FarmsViewVariantType
+}
+
+export type RoiCalculatorPopupDataType = { selectedFarmAddress: string } | null
+
+export type FarmWithdrawPopupDataType = { selectedFarmAddress: string } | null
+
+export type FarmDepositPopupDataType = { selectedFarmAddress: string } | null
+
+export type FarmsPopupsContextStateType = {
+  roiPopup: ModalStateType<RoiCalculatorPopupDataType>
+  depositPopup: ModalStateType<FarmDepositPopupDataType>
+  withdrawPopup: ModalStateType<FarmWithdrawPopupDataType>
+
+  openRoiCalculatorPopup: InstanceType<typeof FarmsPopupsProvider>['openRoiCalculatorPopup']
+  closeRoiCalculatorPopup: InstanceType<typeof FarmsPopupsProvider>['closeRoiCalculatorPopup']
+  openDepositFarmPopup: InstanceType<typeof FarmsPopupsProvider>['openDepositFarmPopup']
+  closeDepositFarmPopup: InstanceType<typeof FarmsPopupsProvider>['closeDepositFarmPopup']
+  openWithdrawFarmPopup: InstanceType<typeof FarmsPopupsProvider>['openWithdrawFarmPopup']
+  closeWithdrawFarmPopup: InstanceType<typeof FarmsPopupsProvider>['closeWithdrawFarmPopup']
+}
+
+const DEFAULT_FARMS_POPUP_STATE = {
+  showModal: false,
+  data: null,
+}
+
+export const DEFAULT_FARMS_POPUPS_STATE = {
+  roiPopup: DEFAULT_FARMS_POPUP_STATE,
+  depositPopup: DEFAULT_FARMS_POPUP_STATE,
+  withdrawPopup: DEFAULT_FARMS_POPUP_STATE,
 }

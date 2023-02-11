@@ -7,7 +7,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
 import { FarmTopBar } from './FarmTopBar/FarmTopBar.controller'
 import { FarmCard } from './FarmCard/FarmCard.controller'
-import { Modal } from '../../app/App.components/Modal/Modal.controller'
 
 // helpers
 import {
@@ -47,6 +46,7 @@ import {
   isLiveFarmType,
   FarmsFiltersStateType,
 } from './Farms.const'
+import FarmsPopupsProvider from './FarmsPopups/FarmsPopups.provider'
 
 const EmptyContainer = () => (
   <EmptyList>
@@ -177,43 +177,46 @@ export const Farms = () => {
   return (
     <Page>
       <PageHeader page={'farms'} />
-      <FarmsStyled>
-        <FarmTopBar
-          handleFilterClick={handleFilterClick}
-          farmsFilters={farmsFilers}
-          handleSetFarmsViewVariant={(newFarmsView) => {
-            setFarmsFilters({ ...farmsFilers, farmsViewVariant: newFarmsView })
-          }}
-          className={farmsFilers.farmsViewVariant}
-        />
-        {isLoading ? (
-          <DataLoaderWrapper className="tabLoader">
-            <ClockLoader width={150} height={150} />
-            <div className="text">Loading farms</div>
-          </DataLoaderWrapper>
-        ) : farmsList.length ? (
-          <section className={`farm-list ${farmsFilers.farmsViewVariant}`}>
-            {paginatedFarms.map((farm, index: number) => {
-              const depositAmount = getSummDepositedAmount(farm.farmAccounts)
-              return (
-                <FarmCard
-                  farm={farm}
-                  key={farm.address + index}
-                  variant={farmsFilers.farmsViewVariant}
-                  currentRewardPerBlock={farm.currentRewardPerBlock}
-                  depositAmount={depositAmount}
-                  expandCallback={() => handleFilterClick({ filterType: 'openCard', newOpenCardAddress: farm.address })}
-                  isOpenedCard={Boolean(farmsFilers.openedFarmsCards.find((address) => farm.address === address))}
-                />
-              )
-            })}
-            <Pagination itemsCount={farmsList.length} listName={listName} />
-          </section>
-        ) : (
-          <EmptyContainer />
-        )}
-      </FarmsStyled>
-      <Modal />
+      <FarmsPopupsProvider>
+        <FarmsStyled>
+          <FarmTopBar
+            handleFilterClick={handleFilterClick}
+            farmsFilters={farmsFilers}
+            handleSetFarmsViewVariant={(newFarmsView) => {
+              setFarmsFilters({ ...farmsFilers, farmsViewVariant: newFarmsView })
+            }}
+            className={farmsFilers.farmsViewVariant}
+          />
+          {isLoading ? (
+            <DataLoaderWrapper className="tabLoader">
+              <ClockLoader width={150} height={150} />
+              <div className="text">Loading farms</div>
+            </DataLoaderWrapper>
+          ) : farmsList.length ? (
+            <section className={`farm-list ${farmsFilers.farmsViewVariant}`}>
+              {paginatedFarms.map((farm, index: number) => {
+                const depositAmount = getSummDepositedAmount(farm.farmAccounts)
+                return (
+                  <FarmCard
+                    farm={farm}
+                    key={farm.address + index}
+                    variant={farmsFilers.farmsViewVariant}
+                    currentRewardPerBlock={farm.currentRewardPerBlock}
+                    depositAmount={depositAmount}
+                    expandCallback={() =>
+                      handleFilterClick({ filterType: 'openCard', newOpenCardAddress: farm.address })
+                    }
+                    isOpenedCard={Boolean(farmsFilers.openedFarmsCards.find((address) => farm.address === address))}
+                  />
+                )
+              })}
+              <Pagination itemsCount={farmsList.length} listName={listName} />
+            </section>
+          ) : (
+            <EmptyContainer />
+          )}
+        </FarmsStyled>
+      </FarmsPopupsProvider>
     </Page>
   )
 }

@@ -15,11 +15,9 @@ import { getEndsInTimestampForFarmCards, getLPTokensInfo, normalizeFarmStorage }
 import { fetchFromIndexer } from '../../gql/fetchGraphQL'
 import { showToaster } from '../../app/App.components/Toaster/Toaster.actions'
 import { getDoormanStorage } from '../Doorman/Doorman.actions'
-import { hideModal } from '../../app/App.components/Modal/Modal.actions'
 import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 import { updateUserData } from 'reducers/actions/user.actions'
 
-export const SELECT_FARM_ADDRESS = 'SELECT_FARM_ADDRESS'
 export const GET_FARM_STORAGE = 'GET_FARM_STORAGE'
 export const getFarmStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
   const {
@@ -101,14 +99,11 @@ export const harvest = (farmAddress: string) => async (dispatch: AppDispatch, ge
     await transaction?.confirmation()
 
     await dispatch(showToaster(SUCCESS, 'Harvesting done', 'All good :)'))
-    await dispatch(toggleActionLoader(false))
 
-    if (state.wallet.accountPkh) {
-      dispatch(updateUserData())
-    }
+    await dispatch(updateUserData())
     await dispatch(getFarmStorage())
-
     await dispatch(getDoormanStorage())
+    await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
@@ -147,7 +142,6 @@ export const deposit = (farmAddress: string, amount: number) => async (dispatch:
 
     await dispatch(updateUserData())
     await dispatch(getFarmStorage())
-
     await dispatch(getDoormanStorage())
     await dispatch(toggleActionLoader(false))
   } catch (error) {
@@ -185,11 +179,9 @@ export const withdraw = (farmAddress: string, amount: number) => async (dispatch
     await transaction?.confirmation()
 
     await dispatch(showToaster(SUCCESS, 'Withdrawing done', 'All good :)'))
-    await dispatch(hideModal())
 
     await dispatch(updateUserData())
     await dispatch(getFarmStorage())
-
     await dispatch(getDoormanStorage())
     await dispatch(toggleActionLoader(false))
   } catch (error) {
