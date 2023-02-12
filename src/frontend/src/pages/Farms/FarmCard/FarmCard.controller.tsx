@@ -19,7 +19,7 @@ import { calculateAPY } from '../Farms.helpers'
 
 // styles
 import { FarmCardStyled, FarmHarvestStyled, FarmStakeStyled } from './FarmCard.style'
-import { FarmStorage } from 'utils/TypesAndInterfaces/Farm'
+import { FarmStorage, Normalizedfarm } from 'utils/TypesAndInterfaces/Farm'
 import { UserFarmRewardsData } from 'utils/TypesAndInterfaces/User'
 import { farmsPopupsContext } from '../FarmsPopups/FarmsPopups.provider'
 
@@ -41,10 +41,7 @@ const LogoHeaderContent = ({
   subtitle?: string
 }) => (
   <div className="farm-card-header">
-    <CoinsIcons
-      firstAssetLogoSrc={firstToken.thumbnailUri ?? firstToken.address}
-      secondAssetLogoSrc={secondToken.thumbnailUri ?? secondToken.address}
-    />
+    <CoinsIcons firstAssetLogoSrc={firstToken.thumbnailUri} secondAssetLogoSrc={secondToken.thumbnailUri} />
     <div className="farm-card-section">
       <h3>{name}</h3>
       {subtitle && <div className="subtitle">{subtitle}</div>}
@@ -92,7 +89,7 @@ const StakedBlock = ({
   myFarmStakedBalance: number
 }) => (
   <div className="farm-info">
-    <h3>{token1Symbol && token2Symbol ? `${token1Symbol} - ${token2Symbol}` : ''} LP staked</h3>
+    <h3>{`${token1Symbol} - ${token2Symbol}`} LP staked</h3>
     <var>
       <CommaNumber value={Number(myFarmStakedBalance)} />
     </var>
@@ -109,11 +106,10 @@ const LinksBlock = ({
   token2Symbol: string
 }) => (
   <div className="links-block">
-    {token1Symbol && token2Symbol ? (
-      <a target="_blank" rel="noreferrer" href="https://mavryk.finance/">
-        Get {`${token1Symbol} - ${token2Symbol}`} <Icon id="send" />
-      </a>
-    ) : null}
+    {/* TODO: get link for this */}
+    <a target="_blank" rel="noreferrer" href="https://mavryk.finance/">
+      Get {`${token1Symbol} - ${token2Symbol}`} <Icon id="send" />
+    </a>
     <a target="_blank" rel="noreferrer" href={`https://tzkt.io/${farmAddress}`}>
       View Contract <Icon id="send" />
     </a>
@@ -177,7 +173,7 @@ const FarmingBlock = ({
 }
 
 type FarmCardViewProps = {
-  farm: FarmStorage[number]
+  farm: Normalizedfarm
   apyValue: number
   accountPkh?: string
   isOpenedCard: boolean
@@ -326,6 +322,21 @@ export const FarmCard = ({ farm, variant, isOpenedCard, currentRewardPerBlock, e
     dispatch(harvest(farm.address))
   }
 
+  const openROI = () =>
+    openRoiCalculatorPopup({
+      selectedFarmAddress: farm.address,
+    })
+
+  const openDeposit = () =>
+    openDepositFarmPopup({
+      selectedFarmAddress: farm.address,
+    })
+
+  const openWithdraw = () =>
+    openWithdrawFarmPopup({
+      selectedFarmAddress: farm.address,
+    })
+
   return variant === 'vertical' ? (
     <VerticalFarmComponent
       farm={farm}
@@ -333,21 +344,9 @@ export const FarmCard = ({ farm, variant, isOpenedCard, currentRewardPerBlock, e
       userReward={userReward}
       expandBlockCallback={expandCallback}
       apyValue={valueAPY}
-      triggerCalculatorModal={() =>
-        openRoiCalculatorPopup({
-          selectedFarmAddress: farm.address,
-        })
-      }
-      triggerDepositModal={() =>
-        openDepositFarmPopup({
-          selectedFarmAddress: farm.address,
-        })
-      }
-      triggerWithdrawModal={() =>
-        openWithdrawFarmPopup({
-          selectedFarmAddress: farm.address,
-        })
-      }
+      triggerCalculatorModal={openROI}
+      triggerDepositModal={openDeposit}
+      triggerWithdrawModal={openWithdraw}
       harvestRewards={harvestRewards}
       accountPkh={accountPkh}
     />
@@ -359,21 +358,9 @@ export const FarmCard = ({ farm, variant, isOpenedCard, currentRewardPerBlock, e
       userReward={userReward}
       expandBlockCallback={expandCallback}
       apyValue={valueAPY}
-      triggerCalculatorModal={() =>
-        openRoiCalculatorPopup({
-          selectedFarmAddress: farm.address,
-        })
-      }
-      triggerDepositModal={() =>
-        openDepositFarmPopup({
-          selectedFarmAddress: farm.address,
-        })
-      }
-      triggerWithdrawModal={() =>
-        openWithdrawFarmPopup({
-          selectedFarmAddress: farm.address,
-        })
-      }
+      triggerCalculatorModal={openROI}
+      triggerDepositModal={openDeposit}
+      triggerWithdrawModal={openWithdraw}
       harvestRewards={harvestRewards}
     />
   )

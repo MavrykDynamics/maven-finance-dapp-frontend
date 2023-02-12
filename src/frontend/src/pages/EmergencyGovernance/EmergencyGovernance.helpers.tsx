@@ -2,7 +2,7 @@ import { EmergencyGovernanceGraphQl } from '../../utils/TypesAndInterfaces/Emerg
 
 // helpers
 import { calcWithoutMu, calcWithoutPrecision } from '../../utils/calcFunctions'
-import { 
+import {
   defaultProposalTitleMaxLength,
   defaultProposalDescriptionMaxLength,
 } from 'app/App.components/Input/Input.constants'
@@ -43,18 +43,16 @@ export function normalizeEmergencyGovernance(storage: EmergencyGovernanceGraphQl
     : []
   return {
     emergencyGovernanceLedger: eGovRecords,
-    address: storage?.address,
-    config: {
+    eGovConfig: {
       minStakedMvkRequiredToTrigger: calcWithoutPrecision(storage?.min_smvk_required_to_trigger),
       minStakedMvkRequiredToVote: calcWithoutPrecision(storage?.min_smvk_required_to_vote),
       requiredFeeMutez: calcWithoutMu(storage?.required_fee_mutez),
-      voteExpiryDays: storage?.vote_expiry_days,
       sMvkPercentageRequired: storage?.smvk_percentage_required / 100,
       proposalTitleMaxLength: storage?.proposal_title_max_length || defaultProposalTitleMaxLength,
       proposalDescMaxLength: storage?.proposal_desc_max_length || defaultProposalDescriptionMaxLength,
-      decimals: storage?.decimals,
+      currentEmergencyGovernanceRecordId: storage?.current_emergency_record_id,
+      nextEmergencyGovernanceRecordId: storage?.next_emergency_record_id,
+      emergencyGovActive: storage?.current_emergency_record_id !== 0,
     },
-    currentEmergencyGovernanceRecordId: storage?.current_emergency_record_id,
-    nextEmergencyGovernanceRecordId: storage?.next_emergency_record_id,
   }
 }

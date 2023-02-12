@@ -15,7 +15,6 @@ import {
   MVK_MINT_HISTORY_DATA_QUERY_VARIABLE,
 } from '../../gql/queries'
 import { PRECISION_NUMBER } from '../../utils/constants'
-import { HIDE_EXIT_FEE_MODAL } from './ExitFeeModal/ExitFeeModal.actions'
 import { normalizeDoormanStorage, normalizeSmvkHistoryData, normalizeMvkMintHistoryData } from './Doorman.converter'
 import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 import { updateUserData } from 'reducers/actions/user.actions'
@@ -156,9 +155,6 @@ export const unstake = (amount: number) => async (dispatch: AppDispatch, getStat
 
     dispatch(toggleActionLoader(true))
     dispatch(showToaster(INFO, 'Unstaking...', 'Please wait 30s'))
-    dispatch({
-      type: HIDE_EXIT_FEE_MODAL,
-    })
 
     await transaction?.confirmation()
 

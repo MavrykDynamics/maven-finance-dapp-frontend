@@ -22,9 +22,7 @@ const SatelliteTab = () => {
     governanceStorage: { financialRequestLedger, proposalLedger },
     pastProposals,
   } = useSelector((state: State) => state.governance)
-  const {
-    emergencyGovernanceStorage: { emergencyGovernanceLedger },
-  } = useSelector((state: State) => state.emergencyGovernance)
+  const { eGovProposals } = useSelector((state: State) => state.emergencyGovernance)
   const { satelliteLedger } = useSelector((state: State) => state.delegation.delegationStorage)
   const { accountPkh } = useSelector((state: State) => state.wallet)
 
@@ -32,15 +30,8 @@ const SatelliteTab = () => {
 
   const satelliteMetrics = useMemo(
     () =>
-      getSatelliteMetrics(
-        pastProposals,
-        proposalLedger,
-        emergencyGovernanceLedger,
-        satelliteRecord,
-        feeds,
-        financialRequestLedger,
-      ),
-    [emergencyGovernanceLedger, feeds, financialRequestLedger, pastProposals, proposalLedger, satelliteRecord],
+      getSatelliteMetrics(pastProposals, proposalLedger, eGovProposals, satelliteRecord, feeds, financialRequestLedger),
+    [eGovProposals, feeds, financialRequestLedger, pastProposals, proposalLedger, satelliteRecord],
   )
 
   const oracleStatusType = getOracleStatus(satelliteRecord, feeds)

@@ -29,24 +29,6 @@ export interface EmergencyGovernanceProposalRecord {
   voters: EmergencyGovProposalVoter[]
 }
 
-// export interface EmergencyGovernanceStorage {
-//   address: string;
-//   admin?: string;
-//   config: {
-//     voteExpiryDays: number;
-//     minStakedMvkRequiredToTrigger: number;
-//     minStakedMvkRequiredToVote: number;
-//     requiredFeeMutez: number;
-//     sMvkPercentageRequired: number;
-//     proposalTitleMaxLength: number;
-//     proposalDescMaxLength: number;
-//     decimals: number;
-//   };
-//   emergencyGovernanceLedger: EmergencyGovernanceProposalRecord[];
-//   currentEmergencyGovernanceRecordId: number;
-//   nextEmergencyGovernanceRecordId: number;
-// }
-
 export type EmergencyGovernanceGraphQl = Omit<Emergency_Governance, '__typename'>
 
 export type EmergencyGovernanceStorage = ReturnType<typeof normalizeEmergencyGovernance>
