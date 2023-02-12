@@ -37,10 +37,8 @@ import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import {
-  STAKED,
   NO_STAKED,
   LIVE_TAB_ID,
-  FINISHED_TAB_ID,
   VERTICAL_FARM_VIEW,
   isStakedFarmType,
   isLiveFarmType,
@@ -96,6 +94,9 @@ export const Farms = () => {
     return farmsList.slice(from, to)
   }, [farmsList, listName, search])
 
+  /**
+   * effect to track qp change and update filters state and filter/sort farms cards
+   */
   useEffect(() => {
     const {
       openedFarmsCards = [],
@@ -105,16 +106,39 @@ export const Farms = () => {
       isStaked = NO_STAKED,
     } = qs.parse(search, { ignoreQueryPrefix: true }) as Partial<FarmsFiltersStateType>
 
+    let filteredFarms = [...farms]
+    if (Number(isStaked) !== farmsFilers.isStaked) {
+      filteredFarms = filterByStaked(filteredFarms, Number(isStaked))
+    }
+
+    if (Number(isLive) !== farmsFilers.isLive) {
+      filteredFarms = filterByLiveFinished(filteredFarms, Number(isLive))
+    }
+
+    if (searchValue !== farmsFilers.searchValue) {
+      filteredFarms = filterBySearch(filteredFarms, searchValue)
+    }
+
+    if (sortBy !== farmsFilers.sortBy) {
+      filteredFarms = sortFarms(filteredFarms, sortBy)
+    }
+
     setFarmsFilters({
       ...farmsFilers,
-      isStaked: Number(isStaked) as typeof STAKED | typeof NO_STAKED,
+      isStaked: Number(isStaked) as isStakedFarmType,
       openedFarmsCards,
-      isLive: Number(isLive) as typeof LIVE_TAB_ID | typeof FINISHED_TAB_ID,
+      isLive: Number(isLive) as isLiveFarmType,
       searchValue,
       sortBy,
     })
-  }, [search])
 
+    setFarmsList(filteredFarms)
+  }, [search, farms])
+
+  /**
+   * @handleFilterClick fn to handle click on filter as we are storing filters in the qp
+   * it will update query params and filtering will perform in an effect above
+   */
   const handleFilterClick = useCallback(
     ({
       filterType,
@@ -124,8 +148,6 @@ export const Farms = () => {
       newSortBy,
       newOpenCardAddress,
     }: HandleClickArgsType) => {
-      let filteredFarms = [...farms]
-
       const newFiltersForQP: Partial<FarmsFiltersStateType> = {
         isLive: farmsFilers.isLive,
         ...(farmsFilers.searchValue ? { searchValue: farmsFilers.searchValue } : {}),
@@ -134,22 +156,18 @@ export const Farms = () => {
       }
 
       if (filterType === 'isLive' && newLiveFinished) {
-        filteredFarms = filterByLiveFinished(filteredFarms, newLiveFinished)
         newFiltersForQP.isLive = newLiveFinished
       }
 
       if (filterType === 'search' && newSearchText !== undefined) {
-        filteredFarms = filterBySearch(filteredFarms, newSearchText)
         newFiltersForQP.searchValue = newSearchText
       }
 
       if (filterType === 'isStaked' && newStakedValue !== undefined) {
-        filteredFarms = filterByStaked(filteredFarms, newStakedValue)
         newFiltersForQP.isStaked = newStakedValue
       }
 
       if (filterType === 'sort' && newSortBy !== undefined) {
-        filteredFarms = sortFarms(filteredFarms, newSortBy)
         newFiltersForQP.sortBy = newSortBy
       }
 
@@ -158,12 +176,10 @@ export const Farms = () => {
         newFiltersForQP.openedFarmsCards = newOpenedCardsArr
       }
 
-      setFarmsList(filteredFarms)
       const stringifiedQP = qs.stringify(newFiltersForQP)
       history.replace(`${pathname}?${stringifiedQP}`)
     },
     [
-      farms,
       farmsFilers.isLive,
       farmsFilers.searchValue,
       farmsFilers.sortBy,

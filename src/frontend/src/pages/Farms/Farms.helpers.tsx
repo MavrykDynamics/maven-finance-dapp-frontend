@@ -12,19 +12,22 @@ type EndsInType = {
 }[]
 
 type TokensInfoType = {
-  liquidityPairToken: {
-    tokenAddress: string[]
-    token0: {
-      symbol: string[]
+  lpTokenInfo: {
+    liquidityPairToken: {
       tokenAddress: string[]
-      thumbnailUri: string
-    }
-    token1: {
-      symbol: string[]
-      tokenAddress: string[]
-      thumbnailUri: string
+      token0: {
+        symbol: string[]
+        tokenAddress: string[]
+        thumbnailUri: string
+      }
+      token1: {
+        symbol: string[]
+        tokenAddress: string[]
+        thumbnailUri: string
+      }
     }
   }
+  lpTokenUserBalance: number
 }[]
 
 export const normalizeFarmStorage = (
@@ -38,11 +41,11 @@ export const normalizeFarmStorage = (
 
   return farmList.map((farmItem: FarmGraphQL, idx: number) => {
     const endsIn = farmCardEndsIn[idx].endsIn
-    const lpMetadata = farmLPTokensInfo[idx]
+    const { lpTokenInfo, lpTokenUserBalance } = farmLPTokensInfo[idx]
     const contract = farmContracts.find(
       ({ address }) =>
-        lpMetadata?.liquidityPairToken?.tokenAddress?.[0] &&
-        address === lpMetadata?.liquidityPairToken?.tokenAddress?.[0],
+        lpTokenInfo?.liquidityPairToken?.tokenAddress?.[0] &&
+        address === lpTokenInfo?.liquidityPairToken?.tokenAddress?.[0],
     )
     const dipDupToken = dipDupTokens.find(({ contract }) => farmItem.lp_token_address === contract)
 
@@ -62,17 +65,18 @@ export const normalizeFarmStorage = (
       initBlock: farmItem.init_block,
       accumulatedMvkPerShare: 0,
       lastBlockUpdate: farmItem.last_block_update,
-      lpTokenAddress: lpMetadata?.liquidityPairToken?.tokenAddress?.[0] ?? '',
+      lpTokenUserBalance,
+      lpTokenAddress: lpTokenInfo?.liquidityPairToken?.tokenAddress?.[0] ?? '',
       lpBalance: farmItem.lp_token_balance / Math.pow(10, Number(dipDupToken?.metadata.decimals)),
       lpToken1: {
-        symbol: lpMetadata?.liquidityPairToken?.token0?.symbol?.[0],
-        address: lpMetadata?.liquidityPairToken?.token0?.tokenAddress?.[0],
-        thumbnailUri: lpMetadata?.liquidityPairToken?.token0?.thumbnailUri,
+        symbol: lpTokenInfo?.liquidityPairToken?.token0?.symbol?.[0],
+        address: lpTokenInfo?.liquidityPairToken?.token0?.tokenAddress?.[0],
+        thumbnailUri: lpTokenInfo?.liquidityPairToken?.token0?.thumbnailUri,
       },
       lpToken2: {
-        symbol: lpMetadata?.liquidityPairToken?.token1?.symbol?.[0],
-        address: lpMetadata?.liquidityPairToken?.token1?.tokenAddress?.[0],
-        thumbnailUri: lpMetadata?.liquidityPairToken?.token1?.thumbnailUri,
+        symbol: lpTokenInfo?.liquidityPairToken?.token1?.symbol?.[0],
+        address: lpTokenInfo?.liquidityPairToken?.token1?.tokenAddress?.[0],
+        thumbnailUri: lpTokenInfo?.liquidityPairToken?.token1?.thumbnailUri,
       },
       rewardPerBlock: 0,
       rewardsFromTreasury: false,
@@ -126,9 +130,18 @@ export const getLvlTimestamp = async (blocksLvl: number) => {
 export const getLPTokensInfo = async (farmList: FarmGraphQL[]) => {
   try {
     return await Promise.all(
-      farmList.map(async (farmCard: { address: string }) => {
-        const lpTokenInfo = await getFarmMetadata(farmCard.address)
-        return typeof lpTokenInfo === 'string' ? JSON.parse(lpTokenInfo) : lpTokenInfo
+      farmList.map(async ({ address }) => {
+        const lpTokenInfo = await getFarmMetadata(address)
+        const parsedLpTokenInfo = typeof lpTokenInfo === 'string' ? JSON.parse(lpTokenInfo) : lpTokenInfo
+
+        const lpTokenUserBalance =
+          typeof parsedLpTokenInfo === 'object'
+            ? Number(await getUserBalanceByAddress(parsedLpTokenInfo?.liquidityPairToken?.tokenAddress?.[0]))
+            : 0
+        return {
+          lpTokenInfo: parsedLpTokenInfo,
+          lpTokenUserBalance: lpTokenUserBalance,
+        }
       }),
     )
   } catch (e: unknown) {
@@ -181,7 +194,10 @@ export const filterByLiveFinished = (
 
 export const filterBySearch = (farmsToFilter: Array<Normalizedfarm>, newSearchText: string): Array<Normalizedfarm> => {
   return farmsToFilter.filter(({ lpTokenAddress, name }) => {
-    return lpTokenAddress.includes(newSearchText) || name.includes(newSearchText)
+    return (
+      lpTokenAddress.toLowerCase().includes(newSearchText.toLowerCase()) ||
+      name.toLowerCase().includes(newSearchText.toLowerCase())
+    )
   })
 }
 
