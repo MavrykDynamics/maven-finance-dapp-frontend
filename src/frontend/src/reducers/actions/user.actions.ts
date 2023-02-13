@@ -41,21 +41,30 @@ const checkWhetherUserIsActiveSatelltie = (satellitesList: Array<SatelliteRecord
 
 const TZBTC_CONTRACT_ADDRESS = 'KT1PWx2mnDueood7fEmfbBDKx1D9BAnnXitn'
 const getXtzAndTzbtcUserBalance = async (accountPkh: string) => {
-  const [xtzBalance, tzBTC] = await Promise.all([
-    await (
-      await fetch(`https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/accounts/${accountPkh}/balance`)
-    ).json(),
-    await (
-      await fetch(
-        `https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/tokens/balances?account.eq=${accountPkh}&token.contract.in=${TZBTC_CONTRACT_ADDRESS}`,
-      )
-    ).json(),
-  ])
+  try {
+    const [xtzBalance, tzBTC] = await Promise.all([
+      await (
+        await fetch(`https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/accounts/${accountPkh}/balance`)
+      ).json(),
+      await (
+        await fetch(
+          `https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/tokens/balances?account.eq=${accountPkh}&token.contract.in=${TZBTC_CONTRACT_ADDRESS}`,
+        )
+      ).json(),
+    ])
 
-  const { balance: tzbtcBalance = 0, token: { metadata: { decimals: tzbtcDecimalsAmount = 0 } = {} } = {} } = tzBTC
-  return {
-    xtzBalance: calcWithoutMu(Number(xtzBalance)),
-    tzbtcBalance: convertFromIndexerToRegNum(tzbtcBalance, tzbtcDecimalsAmount),
+    const { balance: tzbtcBalance = 0, token: { metadata: { decimals: tzbtcDecimalsAmount = 0 } = {} } = {} } = tzBTC
+    return {
+      xtzBalance: calcWithoutMu(Number(xtzBalance)),
+      tzbtcBalance: convertFromIndexerToRegNum(tzbtcBalance, tzbtcDecimalsAmount),
+    }
+  } catch (e) {
+    console.error('getXtzAndTzbtcUserBalance: ', e)
+
+    return {
+      xtzBalance: 0,
+      tzbtcBalance: 0,
+    }
   }
 }
 

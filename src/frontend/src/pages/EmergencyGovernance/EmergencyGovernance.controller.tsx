@@ -27,15 +27,13 @@ export const EmergencyGovernance = () => {
 
   const { isLoading } = useDataLoader(async () => {
     try {
-      if (!isEgovLoaded) {
-        await dispatch(getEmergencyGovernanceStorage())
-      }
-
-      if (!isDoormanLoaded) {
-        await dispatch(getDoormanStorage())
-      }
-
-      await dispatch(getBreakGlassStorage())
+      await Promise.all(
+        [
+          dispatch(getBreakGlassStorage()),
+          !isDoormanLoaded && dispatch(getDoormanStorage()),
+          !isEgovLoaded && dispatch(getEmergencyGovernanceStorage()),
+        ].filter(Boolean),
+      )
     } catch (e) {}
   }, [])
 
