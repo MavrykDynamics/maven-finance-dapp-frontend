@@ -41,7 +41,7 @@ export const FarmsTab = ({ isLoading }: { isLoading: boolean }) => {
             const apy = calculateAPY(farmCardData.currentRewardPerBlock, farmCardData.lpBalance)
             return (
               <Link
-                to={`/yield-farms?${qs.stringify({ openedCards: [farmCardData.address] })}`}
+                to={`/yield-farms?${qs.stringify({ openedFarmsCards: [farmCardData.address] })}`}
                 key={farmCardData.address + farmCardData.name}
               >
                 <div className="card">

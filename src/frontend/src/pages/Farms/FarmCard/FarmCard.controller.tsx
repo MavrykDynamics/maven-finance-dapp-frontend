@@ -339,25 +339,25 @@ export const FarmCard = ({ farm, variant, isOpenedCard, currentRewardPerBlock, e
 
   return variant === 'vertical' ? (
     <VerticalFarmComponent
+      accountPkh={accountPkh}
       farm={farm}
       isOpenedCard={isOpenedCard}
       userReward={userReward}
-      expandBlockCallback={expandCallback}
       apyValue={valueAPY}
+      expandBlockCallback={expandCallback}
       triggerCalculatorModal={openROI}
       triggerDepositModal={openDeposit}
       triggerWithdrawModal={openWithdraw}
       harvestRewards={harvestRewards}
-      accountPkh={accountPkh}
     />
   ) : (
     <HorisontalFarmComponent
-      farm={farm}
       accountPkh={accountPkh}
+      farm={farm}
       isOpenedCard={isOpenedCard}
       userReward={userReward}
-      expandBlockCallback={expandCallback}
       apyValue={valueAPY}
+      expandBlockCallback={expandCallback}
       triggerCalculatorModal={openROI}
       triggerDepositModal={openDeposit}
       triggerWithdrawModal={openWithdraw}

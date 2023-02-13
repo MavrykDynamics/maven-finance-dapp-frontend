@@ -72,7 +72,6 @@ export const FarmWithdrawModal = ({
   }
 
   const handleChange = ({ target: { value } }: React.ChangeEvent<HTMLInputElement>) => {
-    // TODO: use depositted amount instead of lpTokenUserBalance
     const validationStatus =
       +value && +value <= farmDepositedAmountByUser && +value >= 0 ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
 
