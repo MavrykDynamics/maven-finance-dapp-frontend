@@ -205,7 +205,7 @@ export function checkIfVaultIsAtRisk(
   }
 
   const isBelowCollateralRatio = loanOutstandingInUSD < (collateralRatio * totalCollateralValueInUSD) / 1000
-  const isAboveLiquidationRatio = loanOutstandingInUSD > (liquidationRatio * loanOutstandingInUSD) / 1000
+  const isAboveLiquidationRatio = loanOutstandingInUSD > (liquidationRatio * totalCollateralValueInUSD) / 1000
   return isBelowCollateralRatio && isAboveLiquidationRatio
 }
 
@@ -222,4 +222,18 @@ export const calculateAdminLiquidationFee = (adminLiquidationFeePercent: number,
 
 export const calculateCollateralShare = (collateralAmount: number, totalAmount: number) => {
   return Number(((collateralAmount / totalAmount) * 100).toFixed(2))
+}
+
+export const calculateLiquidationPrice = (
+    loanOutstandingTotal: number,
+    loanTokenOracleAddress: string,
+    liquidationRatio: number,
+    oracleLatestPrices: Record<string, number>
+) => {
+  // Solve for x, loanValue * liquidation
+
+  const loanTokenLatestPrice = oracleLatestPrices[loanTokenOracleAddress]
+  const loanOutstandingInUSD = loanOutstandingTotal * loanTokenLatestPrice
+  console.log('Here in calculateLiquidationPrice', loanOutstandingInUSD, liquidationRatio)
+  return loanOutstandingInUSD * (liquidationRatio / 1000)
 }

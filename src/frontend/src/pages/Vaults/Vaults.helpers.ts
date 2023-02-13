@@ -8,7 +8,7 @@ import {
   checkVaultIsAbleToMarkedForLiquidation,
   checkVaultLiquidatableStatus,
   checkIfVaultIsAtRisk,
-  calculateVaultMaxLiquidationAmount,
+  calculateVaultMaxLiquidationAmount, calculateLiquidationPrice,
 } from './calcFunctionsForVault'
 import { Lending_Controller_Vault } from 'utils/generated/graphqlTypes'
 import { symbolsAfterDecimalPoint } from 'utils/symbolsAfterDecimalPoint'
@@ -180,7 +180,12 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
         vaultAsset.rate
       const liquidationReward = lendingController.liquidation_fee_pct / 10 ** lendingController.decimals
       const adminLiquidateFee = lendingController.admin_liquidation_fee_pct
-
+      const liquidationPrice = item.loan_token?.oracle_id ?
+          calculateLiquidationPrice(
+              item.loan_outstanding_total / 10 ** item.loan_decimals,
+            item.loan_token.oracle_id,
+            lendingController.liquidation_ratio,
+            oracleLatestPrices) : 0
       const normallizedVault = {
         borrowedAsset: {
           ...vaultAsset,
@@ -204,6 +209,7 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
         liquidationMax,
         liquidationReward,
         adminLiquidateFee,
+        liquidationPrice,
         repayFee: item.loan_interest_total,
 
         xtzDelegatedTo: vaultXtzDelegatedTo?.delegate?.address ?? null,
