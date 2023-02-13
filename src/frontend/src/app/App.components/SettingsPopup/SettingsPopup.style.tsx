@@ -60,6 +60,15 @@ export const PopupContainerWrapper = styled.div`
     padding: 30px 40px;
   }
 
+  &.exitFee {
+    width: 575px;
+    max-width: unset;
+
+    h1 {
+      margin-top: 0;
+    }
+  }
+
   @media (max-width: 500px) {
     &.settings {
       .theme-switcher-block {

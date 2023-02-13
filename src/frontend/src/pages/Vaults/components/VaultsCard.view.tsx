@@ -306,7 +306,9 @@ export const VaultsCard = (props: Props) => {
           getExpandedStatus={setExpanded}
           isOwner
           options={borrowingCardOptions}
+          // TODO: add this values as on loans
           DAOFee={0}
+          avaliableMarketLiquidity={0}
         />
       ) : (
         <BorrowingExpandCard
@@ -315,7 +317,9 @@ export const VaultsCard = (props: Props) => {
           headerSufix={headerSufix}
           getExpandedStatus={setExpanded}
           options={borrowingCardOptions}
+          // TODO: add this values as on loans
           DAOFee={0}
+          avaliableMarketLiquidity={0}
         >
           {generalExpand}
         </BorrowingExpandCard>

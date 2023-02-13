@@ -22,7 +22,7 @@ export const SET_TREASURY_STORAGE = 'SET_TREASURY_STORAGE'
 export const fillTreasuryStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
   try {
     const {
-      mvkToken: { exchangeRate: MVK_EXCHANGE_RATE },
+      tokens: { tokensPrices: { mvk: { usd: MVK_EXCHANGE_RATE = 0 } } = {} },
     } = getState()
     // Get treasury addresses from gql
     const treasuryAddressesStorage = await fetchFromIndexer(
@@ -67,7 +67,7 @@ export const fillTreasuryStorage = () => async (dispatch: AppDispatch, getState:
           getTreasuryAssetsByAddress(address),
     )
 
-    // Await promises from upper
+    // Await promises from above
     const fetchedTheasuryData = await Promise.all(getTreasuryCallbacks.map((fn) => fn()))
 
     // Mapping assets for every treasury, to fetch rates for them
@@ -178,9 +178,7 @@ export const getVestingStorage = () => async (dispatch: AppDispatch) => {
       VESTING_STORAGE_QUERY_NAME,
       VESTING_STORAGE_QUERY_VARIABLE,
     )
-
     const vestingStorage = normalizeVestingStorage(storage)
-
     dispatch({
       type: GET_VESTING_STORAGE,
       vestingStorage: vestingStorage,

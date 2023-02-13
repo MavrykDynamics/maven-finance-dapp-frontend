@@ -9,7 +9,7 @@ import SatellitesView from './Satellites.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 
 // consts, helpers, actions
-import { getMvkTokenStorage, getDoormanStorage } from 'pages/Doorman/Doorman.actions'
+import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
 import { getTotalDelegatedMVK } from './helpers/Satellites.consts'
 import { delegate, getDelegationStorage, getOracleStorage, undelegate } from 'pages/Satellites/Satellites.actions'
 import { getGovernanceStorage } from 'pages/Governance/Governance.actions'
@@ -31,7 +31,7 @@ const Satellites = () => {
     if (accountPkh) {
       dispatch(getDoormanStorage())
     }
-    dispatch(getMvkTokenStorage())
+
     dispatch(getDelegationStorage())
     dispatch(getOracleStorage())
     dispatch(getGovernanceStorage())

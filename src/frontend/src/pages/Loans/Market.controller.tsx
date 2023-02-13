@@ -225,12 +225,14 @@ export const Market = () => {
               borrowingItems={currentToken.myBorrowingList}
               lendingControllerAddress={loansControllerAddress}
               currentMarketAsset={currentToken.loanTokenData.gqlName}
+              avaliableMarketLiquidity={currentToken.reserveAmount}
             />
           ) : null}
           {tabId === PERMISSIONS_VAULTS_TAB_ID ? (
             <PermissionVaults
               permissionVaults={currentToken.permissionedBorrowingList}
               lendingControllerAddress={loansControllerAddress}
+              avaliableMarketLiquidity={currentToken.reserveAmount}
             />
           ) : null}
 

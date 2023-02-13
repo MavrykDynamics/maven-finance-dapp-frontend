@@ -34,11 +34,11 @@ import { InputStatusType, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/A
 type StakeUnstakeViewProps = {
   stakeCallback: (amount: number) => void
   unstakeCallback: (amount: number) => void
+  MVK_exchangeRate: number
 }
 
-export const StakeUnstakeView = ({ stakeCallback, unstakeCallback }: StakeUnstakeViewProps) => {
+export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeRate }: StakeUnstakeViewProps) => {
   const dispatch = useDispatch()
-  const { exchangeRate } = useSelector((state: State) => state.mvkToken)
   const {
     accountPkh,
     user: {
@@ -49,13 +49,14 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback }: StakeUnstak
       mySatelliteRewardsData: { myAvailableSatelliteRewards },
     },
   } = useSelector((state: State) => state.wallet)
+
   const [inputData, setInputData] = useState<{ amount: string; validation: InputStatusType; errorMessage: string }>({
     amount: '0',
     validation: '',
     errorMessage: '',
   })
 
-  const exchangeValue = exchangeRate && inputData.amount ? Number(inputData.amount) * exchangeRate : 0
+  const exchangeValue = MVK_exchangeRate && inputData.amount ? Number(inputData.amount) * MVK_exchangeRate : 0
   const earnedValue = farmRewards + doormanRewards
 
   const userHasRewards = myAvailableDoormanRewards + myAvailableSatelliteRewards > 2
@@ -174,7 +175,7 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback }: StakeUnstak
             <StakeUnstakeRate>
               <CommaNumber value={Number(exchangeValue ? inputData.amount : 1)} endingText={'MVK'} />
               <span>&nbsp;= $</span>
-              <CommaNumber value={Number(exchangeValue || exchangeRate)} endingText={''} />
+              <CommaNumber value={Number(exchangeValue || MVK_exchangeRate)} endingText={''} />
             </StakeUnstakeRate>
           </StakeUnstakeInputColumn>
         </StakeUnstakeInputGrid>

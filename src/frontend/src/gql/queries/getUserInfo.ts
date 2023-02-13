@@ -31,9 +31,16 @@ query GetUserInfo ($_eq: String = "") {
       }
     }
 
-    stakes_history_data(where: {from__id: {_eq: $_eq}, _and: {type: {_in: ["2", "3", "4"]}}}) {
+
+    stakes_history_data(where: {type: {_in: ["0", "1", "2", "3", "4"]}}) {
       type
+      id
+      desired_amount
       final_amount
+      from_ {
+        mvk_balance
+        smvk_balance
+      }
     }
   }
 }

@@ -7,16 +7,17 @@ import type { AppDispatch, GetState } from '../../app/App.controller'
 import { FARM_STORAGE_QUERY, FARM_STORAGE_QUERY_NAME, FARM_STORAGE_QUERY_VARIABLE } from '../../gql/queries'
 
 // consts
-import { PRECISION_NUMBER, ROCKET_LOADER } from '../../utils/constants'
+import { PRECISION_NUMBER } from '../../utils/constants'
 import { ERROR, INFO, SUCCESS } from '../../app/App.components/Toaster/Toaster.constants'
 
 //helpers
 import { getEndsInTimestampForFarmCards, getLPTokensInfo, normalizeFarmStorage } from './Farms.helpers'
 import { fetchFromIndexer } from '../../gql/fetchGraphQL'
 import { showToaster } from '../../app/App.components/Toaster/Toaster.actions'
-import { getDoormanStorage, getMvkTokenStorage, updateUserData } from '../Doorman/Doorman.actions'
+import { getDoormanStorage } from '../Doorman/Doorman.actions'
 import { hideModal } from '../../app/App.components/Modal/Modal.actions'
 import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
+import { updateUserData } from 'reducers/actions/user.actions'
 
 export const SELECT_FARM_ADDRESS = 'SELECT_FARM_ADDRESS'
 export const GET_FARM_STORAGE = 'GET_FARM_STORAGE'
@@ -116,7 +117,7 @@ export const harvest = (farmAddress: string) => async (dispatch: AppDispatch, ge
       dispatch(updateUserData())
     }
     await dispatch(getFarmStorage())
-    await dispatch(getMvkTokenStorage())
+
     await dispatch(getDoormanStorage())
   } catch (error) {
     if (error instanceof Error) {
@@ -156,7 +157,7 @@ export const deposit = (farmAddress: string, amount: number) => async (dispatch:
 
     await dispatch(updateUserData())
     await dispatch(getFarmStorage())
-    await dispatch(getMvkTokenStorage())
+
     await dispatch(getDoormanStorage())
     await dispatch(toggleActionLoader(false))
   } catch (error) {
@@ -198,7 +199,7 @@ export const withdraw = (farmAddress: string, amount: number) => async (dispatch
 
     await dispatch(updateUserData())
     await dispatch(getFarmStorage())
-    await dispatch(getMvkTokenStorage())
+
     await dispatch(getDoormanStorage())
     await dispatch(toggleActionLoader(false))
   } catch (error) {

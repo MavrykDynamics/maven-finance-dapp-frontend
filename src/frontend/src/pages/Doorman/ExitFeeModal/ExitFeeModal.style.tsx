@@ -4,8 +4,6 @@ import { skyColor } from '../../../styles/colors'
 import { MavrykTheme } from '../../../styles/interfaces'
 
 export const ExitFeeModalContent = styled.div<{ theme: MavrykTheme }>`
-  padding: 0 41px 20px 33px;
-
   label {
     color: ${({ theme }) => theme.textColor};
     font-weight: 600;

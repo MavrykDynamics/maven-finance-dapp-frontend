@@ -19,18 +19,23 @@ export const Dashboard = () => {
   const { tabId } = useParams<{ tabId: string }>()
 
   const {
-    exchangeRate,
-    mvkTokenStorage: { totalSupply, maximumTotalSupply },
-  } = useSelector((state: State) => state.mvkToken)
-  const { totalStakedMvk = 0 } = useSelector((state: State) => state.doorman)
-  const { treasuryStorage } = useSelector((state: State) => state.treasury)
-  const { farmStorage } = useSelector((state: State) => state.farm)
-  const { isDataLoaded: isLoansLoaded } = useSelector((state: State) => state.loans)
+    tokensPrices: { mvk: { usd: mvkExchangeRate = 0 } = {} },
+  } = useSelector((state: State) => state.tokens)
   const {
+    totalStakedMvk,
+    totalSupply,
+    maximumTotalSupply,
+    isLoaded: isDoormanLoaded,
+  } = useSelector((state: State) => state.doorman)
+  const { treasuryStorage, isLoaded: isTreasuryLoaded } = useSelector((state: State) => state.treasury)
+  const { isLoaded: isVestingLoaded } = useSelector((state: State) => state.vesting)
+  const { farmStorage } = useSelector((state: State) => state.farm)
+  const {
+    isDataLoaded: isLoansLoaded,
     chartsData: { totalBorrowed, totalLended },
   } = useSelector((state: State) => state.loans)
 
-  const marketCapValue = exchangeRate ? exchangeRate * totalSupply : 0
+  const marketCapValue = mvkExchangeRate ? mvkExchangeRate * totalSupply : 0
   const treasuryTVL = treasuryStorage.reduce((acc, { balances }) => {
     return (acc += balances.reduce((balanceAcc, balanceAsset) => {
       return (balanceAcc += balanceAsset.usdValue || 0)
@@ -43,9 +48,8 @@ export const Dashboard = () => {
   }, 0)
 
   const lendingTvl = totalBorrowed + totalLended
-
-  //TODO: add calculation for tvl value (loans, vaults)
-  const tvlValue = totalStakedMvk * exchangeRate + treasuryTVL + farmsTVL + lendingTvl
+  //TODO: add calculation for tvl value (vaults)
+  const tvlValue = totalStakedMvk * mvkExchangeRate + treasuryTVL + farmsTVL + lendingTvl
 
   const { isLoading: isVaultsLoading } = useDataLoader(async () => {
     try {
@@ -67,7 +71,13 @@ export const Dashboard = () => {
 
   const { isLoading: isTreasuryLoading } = useDataLoader(async () => {
     try {
-      await Promise.all([dispatch(getVestingStorage()), dispatch(fillTreasuryStorage())])
+      if (!isVestingLoaded) {
+        await dispatch(getVestingStorage())
+      }
+
+      if (!isTreasuryLoaded) {
+        await dispatch(fillTreasuryStorage())
+      }
     } catch (e) {}
   }, [])
 
@@ -87,7 +97,10 @@ export const Dashboard = () => {
 
   const { isLoading } = useDataLoader(async () => {
     try {
-      await Promise.all([dispatch(getGovernanceStorage()), dispatch(getDoormanStorage())])
+      if (!isDoormanLoaded) {
+        await dispatch(getDoormanStorage())
+      }
+      await dispatch(getGovernanceStorage())
     } catch (e) {}
   }, [])
 
@@ -106,8 +119,8 @@ export const Dashboard = () => {
     stakedMvk: totalStakedMvk,
     circuatingSupply: totalSupply,
     maxSupply: maximumTotalSupply,
-    livePrice: exchangeRate,
-    prevPrice: exchangeRate - 0.1,
+    livePrice: mvkExchangeRate,
+    prevPrice: mvkExchangeRate - 0.1,
   }
 
   return (
