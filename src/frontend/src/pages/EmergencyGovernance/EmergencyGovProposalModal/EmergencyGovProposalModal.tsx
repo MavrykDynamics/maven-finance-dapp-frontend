@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { State } from 'reducers'
@@ -6,19 +6,15 @@ import { submitEmergencyGovernanceProposal } from '../EmergencyGovernance.action
 import { InputStatusType, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { isValidLength } from '../../../utils/validatorFunctions'
 
-import { Button, PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
-import { Input } from 'app/App.components/Input/Input.controller'
+import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
+import { Input } from 'app/App.components/Input/NewInput'
 import { TextArea } from 'app/App.components/TextArea/TextArea.controller'
-import {
-  FormTitleAndFeeContainer,
-  FormTitleContainer,
-  FormTitleEntry,
-} from 'pages/ProposalSubmission/ProposalSubmission.style'
-import {
-  EmergencyGovProposalModalContent,
-  ModalFormContentContainer,
-  EmergencyGovProposalModalButtons,
-} from './EmergencyGovProposalModal.style'
+import { EmergencyGovProposalModalContent } from './EmergencyGovProposalModal.style'
+import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+import { NewInputLabel } from 'app/App.components/Input/Input.style'
+import NewButton from 'app/App.components/Button/NewButton.controller'
+import Icon from 'app/App.components/Icon/Icon.view'
+import { ACTION_PRIMARY, ACTION_SECONDARY } from 'app/App.components/Button/Button.constants'
 
 export const EmergencyGovProposalModal = ({ show, closeHandler }: { show: boolean; closeHandler: () => void }) => {
   const dispatch = useDispatch()
@@ -29,79 +25,91 @@ export const EmergencyGovProposalModal = ({ show, closeHandler }: { show: boolea
     config: { proposalTitleMaxLength, proposalDescMaxLength },
   } = useSelector((state: State) => state.emergencyGovernance)
 
-  const [name, setName] = useState<{ text: string; validation: InputStatusType }>({
-    text: '',
-    validation: '',
+  const [proposalData, setProposalData] = useState<{
+    title: { text: string; validation: InputStatusType }
+    description: { text: string; validation: InputStatusType }
+  }>({
+    title: {
+      text: '',
+      validation: '',
+    },
+    description: {
+      text: '',
+      validation: '',
+    },
   })
 
-  const [description, setDescription] = useState<{ text: string; validation: InputStatusType }>({
-    text: '',
-    validation: '',
-  })
+  const isActionDisabled = useMemo(
+    () =>
+      proposalData.title.validation !== INPUT_STATUS_SUCCESS &&
+      proposalData.description.validation !== INPUT_STATUS_SUCCESS,
+    [proposalData],
+  )
 
-  const handleOnBlur = (formField: string) => {
-    switch (formField) {
-      case 'TITLE':
-        const isNameValid = isValidLength(name.text, 1, proposalTitleMaxLength)
-          ? INPUT_STATUS_SUCCESS
-          : INPUT_STATUS_ERROR
-        setName({ ...name, validation: isNameValid })
-        break
-      case 'DESCRIPTION':
-        const isDescrValid = isValidLength(description.text, 1, proposalDescMaxLength)
-          ? INPUT_STATUS_SUCCESS
-          : INPUT_STATUS_ERROR
-        setDescription({ ...description, validation: isDescrValid })
-        break
-    }
+  const handleOnChange = ({ target: { name, value } }: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const validationStatus = isValidLength(value, 1, name === 'title' ? proposalTitleMaxLength : proposalDescMaxLength)
+      ? INPUT_STATUS_SUCCESS
+      : INPUT_STATUS_ERROR
+
+    setProposalData({ ...proposalData, [name]: { text: value, validation: validationStatus } })
   }
 
   const submitEmergencyGovProposalCallback = () => {
-    if (name.validation === INPUT_STATUS_SUCCESS && description.validation === INPUT_STATUS_SUCCESS)
-      dispatch(submitEmergencyGovernanceProposal({ title: name.text, description: description.text }))
+    if (!isActionDisabled)
+      dispatch(
+        submitEmergencyGovernanceProposal({
+          title: proposalData.title.text,
+          description: proposalData.description.text,
+        }),
+      )
   }
 
   return (
     <PopupContainer onClick={closeHandler} show={show}>
-      <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="child-width">
+      <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="loans child-width">
         <button onClick={closeHandler} className="close_modal">
           +
         </button>
         <EmergencyGovProposalModalContent>
           <h1>Trigger Emergency Governance Vote & Break Glass</h1>
-          <ModalFormContentContainer>
-            <FormTitleAndFeeContainer className="eGov-modal">
-              <FormTitleContainer style={{ width: '510px' }}>
-                <label>Title</label>
-                <Input
-                  type="text"
-                  value={name.text}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName({ ...name, text: e.target.value })}
-                  onBlur={(e: React.ChangeEvent<HTMLInputElement>) => handleOnBlur('TITLE')}
-                  inputStatus={name.validation}
-                />
-              </FormTitleContainer>
-              <div>
-                <label>Fee</label>
-                <FormTitleEntry>{fee} XTZ</FormTitleEntry>
-              </div>
-            </FormTitleAndFeeContainer>
-
-            <label>Enter your description</label>
-            <TextArea
-              value={description.text}
-              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                setDescription({ ...description, text: e.target.value })
-              }
-              onBlur={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleOnBlur('DESCRIPTION')}
-              inputStatus={description.validation}
-              textAreaMaxLimit={proposalDescMaxLength}
+          <div className="top-content">
+            <Input
+              className={`large-input`}
+              inputProps={{
+                value: proposalData.title.text,
+                type: 'text',
+                name: 'title',
+                onChange: handleOnChange,
+              }}
+              settings={{
+                inputStatus: proposalData.title.validation,
+                label: 'Title',
+              }}
             />
-          </ModalFormContentContainer>
-          <EmergencyGovProposalModalButtons>
-            <Button text="Cancel" kind="actionSecondary" icon="error" onClick={closeHandler} />
-            <Button text="Initiate" kind="actionPrimary" icon="auction" onClick={submitEmergencyGovProposalCallback} />
-          </EmergencyGovProposalModalButtons>
+
+            <div className="exit-fee">
+              <NewInputLabel>Fee</NewInputLabel>
+              <CommaNumber value={fee} endingText="XTZ" />
+            </div>
+          </div>
+
+          <TextArea
+            name="description"
+            value={proposalData.description.text}
+            onChange={handleOnChange}
+            label={'Description'}
+            inputStatus={proposalData.description.validation}
+            textAreaMaxLimit={proposalDescMaxLength}
+          />
+
+          <div className="buttons-container">
+            <NewButton kind={ACTION_SECONDARY} onClick={closeHandler}>
+              <Icon id="error" /> Cancel
+            </NewButton>
+            <NewButton kind={ACTION_PRIMARY} disabled={isActionDisabled} onClick={submitEmergencyGovProposalCallback}>
+              <Icon id="auction" /> Initiate
+            </NewButton>
+          </div>
         </EmergencyGovProposalModalContent>
       </PopupContainerWrapper>
     </PopupContainer>

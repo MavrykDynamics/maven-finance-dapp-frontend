@@ -3,7 +3,7 @@ import NewButton from '../Button/NewButton.controller'
 import { CommaNumber } from '../CommaNumber/CommaNumber.controller'
 import { InputStatusType } from './Input.constants'
 import { InputOneChange } from './Input.controller'
-import { InputPinnedChild, InputStyledStatus, InputWrapper, StyledInput } from './Input.style'
+import { InputPinnedChild, InputStyledStatus, InputWrapper, NewInputLabel, StyledInput } from './Input.style'
 
 type InputViewProps = {
   children?: React.ReactNode
@@ -14,6 +14,7 @@ type InputViewProps = {
     balanceName?: string
     useMaxHandler?: () => void
     errorMessage?: string
+    label?: string
     inputStatus: InputStatusType
     convertedValue?: number
   }
@@ -42,12 +43,14 @@ export const Input = ({
     useMaxHandler,
     convertedValue,
     errorMessage,
+    label,
     balanceName = 'Balance',
     inputStatus,
   },
 }: InputViewProps) => {
   return (
     <InputWrapper className={`${className} ${inputStatus}`} id={'inputStyled'}>
+      {label ? <NewInputLabel>{label}</NewInputLabel> : null}
       <StyledInput {...inputProps} className={inputStatus} autoComplete={inputProps.name} />
       {/* <InputStyledStatus className={`${inputStatus} ${children ? 'hasChild' : ''}`} /> */}
 

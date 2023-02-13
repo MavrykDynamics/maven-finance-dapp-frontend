@@ -337,6 +337,17 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
+export const NewInputLabel = styled.label`
+  color: ${({ theme }) => theme.textColor};
+  display: block;
+  white-space: nowrap;
+  font-weight: 700;
+  font-size: 14px;
+  position: absolute;
+  top: -20px;
+  left: 12px;
+`
+
 export const InputStyledStatus = styled.div<{ theme: MavrykTheme }>`
   display: block;
   position: absolute;

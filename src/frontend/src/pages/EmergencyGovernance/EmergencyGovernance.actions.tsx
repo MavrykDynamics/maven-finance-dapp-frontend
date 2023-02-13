@@ -8,7 +8,6 @@ import {
   EMERGENCY_GOVERNANCE_STORAGE_QUERY_VARIABLE,
 } from '../../gql/queries'
 import { State } from '../../reducers'
-import { getDoormanStorage } from '../Doorman/Doorman.actions'
 import { normalizeEmergencyGovernance } from '../EmergencyGovernance/EmergencyGovernance.helpers'
 import { EmergencyGovernanceProposalForm } from '../../utils/TypesAndInterfaces/Forms'
 import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
