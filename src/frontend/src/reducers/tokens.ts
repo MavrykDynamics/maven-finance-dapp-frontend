@@ -24,7 +24,7 @@ const defaultTokensInfoState: TokensType = {
   dipDupContracts: [],
   whitelistTokens: [],
   avaliableCollaterals: [],
-  tokensPrices: {},
+  tokensPrices: { mvk: { usd: 0.25 } },
   mTokens: [],
 }
 
@@ -41,7 +41,7 @@ export function tokens(state = defaultTokensInfoState, action: Action) {
     case GET_TOKENS_PRICES:
       return {
         ...state,
-        tokensPrices: action.tokensPrices,
+        tokensPrices: { ...state.tokensPrices, ...action.tokensPrices },
       }
     default:
       return state

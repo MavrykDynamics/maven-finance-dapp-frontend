@@ -43,9 +43,10 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
     [isGlobal, showZeroTreasuries, treasury.balances],
   )
 
-  const chartData = useMemo(() => {
-    return getPieChartData(filteredBalance, treasury.treasuryTVL, hoveredPath)
-  }, [hoveredPath, treasury.treasuryTVL, filteredBalance])
+  const chartData = useMemo(
+    () => getPieChartData(filteredBalance, treasury.treasuryTVL, hoveredPath),
+    [hoveredPath, treasury.treasuryTVL, filteredBalance],
+  )
 
   useEffect(() => {
     if (treasury) {

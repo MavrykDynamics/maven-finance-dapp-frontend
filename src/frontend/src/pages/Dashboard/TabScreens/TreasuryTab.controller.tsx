@@ -24,9 +24,7 @@ import { emptyContainer } from './LendingTab.controller'
 
 export const TreasuryTab = ({ isLoading }: { isLoading: boolean }) => {
   const { treasuryStorage } = useSelector((state: State) => state.treasury)
-  const {
-    vestingStorage: { totalVestedAmount, totalClaimedAmount },
-  } = useSelector((state: State) => state.vesting)
+  const { totalVestedAmount, totalClaimedAmount } = useSelector((state: State) => state.vesting)
 
   const amountOfTokens = totalVestedAmount + totalClaimedAmount
 

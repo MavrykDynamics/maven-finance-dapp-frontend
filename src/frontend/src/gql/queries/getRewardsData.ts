@@ -36,6 +36,15 @@ query GetUserRewards($user_address: String = "") {
       satellite_accumulated_reward_per_share
     }
   }
+
+  lending_controller(where: {mock_time: {_eq: true}}) {
+    interest_rate_decimals
+
+    loan_tokens {
+      loan_token_name
+      oracle_id
+    }
+  }
 }
 `
 

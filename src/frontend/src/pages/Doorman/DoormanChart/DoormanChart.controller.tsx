@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
+import { useState } from 'react'
 import { State } from 'reducers'
 
 // styles
@@ -9,10 +9,7 @@ import { TabSwitcher } from 'app/App.components/TabSwitcher/TabSwitcher.controll
 // components
 import { Chart } from '../../../app/App.components/Chart/Chart.view'
 import { TabItem } from '../../../app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
-import { formatNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { cyanColor } from 'styles'
-import { CHART_TEST_DATA } from 'pages/DashboardPersonal/tabs.const'
-import { DECIMALS_TO_SHOW } from 'utils/constants'
 
 type Props = {
   className?: string
@@ -32,7 +29,7 @@ const tabsList: TabItem[] = [
 ]
 
 export function DoormanChart({ className }: Props) {
-  const { mvkMintHistoryData, smvkHistoryData } = useSelector((state: State) => state.doorman)
+  const { smvkHistoryData, mvkMintHistoryData } = useSelector((state: State) => state.doorman)
 
   const [activeTab, setActiveTab] = useState(tabsList[0].text)
   const isStakingHistory = activeTab === tabsList[1].text
@@ -40,11 +37,6 @@ export function DoormanChart({ className }: Props) {
   const handleChangeTabs = (tabId?: number) => {
     setActiveTab(tabId === 1 ? tabsList[0].text : tabsList[1].text)
   }
-
-  // const valueFormatter =
-  //   (label: string) =>
-  //   (value: number): string =>
-  //     `${formatNumber(true, DECIMALS_TO_SHOW, value)}${label}`
 
   const shownData = isStakingHistory ? smvkHistoryData : mvkMintHistoryData
 

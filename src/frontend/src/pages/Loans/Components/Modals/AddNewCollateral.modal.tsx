@@ -4,7 +4,7 @@ import { State } from 'reducers'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { DropDown, DropdownInputCustomChild } from 'app/App.components/DropDown/NewDropdown'
+import { DDItemId, DropDown, DropdownInputCustomChild } from 'app/App.components/DropDown/NewDropdown'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
@@ -33,9 +33,9 @@ type InputState =
       amount: string
       assetName: string
       userBalance: number
-      id: number
+      id: DDItemId
       validationStatus: InputStatusType
-      ddItems: Record<number, DropDownCollateralAssetType>
+      ddItems: Record<DDItemId, DropDownCollateralAssetType>
       selectedDdItem: DropDownCollateralAssetType
     }
   | undefined
@@ -80,7 +80,7 @@ export const AddNewCollateral = ({
   useEffect(() => {
     if (avaliableCollaterals.length === 0) return
 
-    const mappedAvaliableCollaterals = avaliableCollaterals.reduce<Record<number, DropDownCollateralAssetType>>(
+    const mappedAvaliableCollaterals = avaliableCollaterals.reduce<Record<DDItemId, DropDownCollateralAssetType>>(
       (acc, collateralData) => {
         acc[collateralData.id] = {
           ...collateralData,
@@ -162,7 +162,7 @@ export const AddNewCollateral = ({
   )
   const [bakerChosenDdItem, setAssetChosenDdItem] = useState<DropDownXTZBakerType | undefined>()
   const showBakerAddress = useMemo(() => isTezosAsset(inputData?.assetName ?? ''), [inputData])
-  const handleOnClickDropdownBakerItem = (itemId: number) =>
+  const handleOnClickDropdownBakerItem = (itemId: DDItemId) =>
     setAssetChosenDdItem(bakerItemsForDropDown.find(({ id }) => id === itemId))
 
   // stuff to handle inputs
@@ -201,7 +201,7 @@ export const AddNewCollateral = ({
     }
   }
 
-  const clickOnInputDDItem = (id: number) => {
+  const clickOnInputDDItem = (id: DDItemId) => {
     if (inputData) {
       // resetting disabled flags for item we had selected before, and enabling disabled, we have selected now
       const newDDItems = {

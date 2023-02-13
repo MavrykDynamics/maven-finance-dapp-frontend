@@ -63,6 +63,14 @@ export const PopupContainerWrapper = styled.div`
   &.council {
     max-width: 750px;
     padding: 0;
+    
+  &.exitFee {
+    width: 575px;
+    max-width: unset;
+
+    h1 {
+      margin-top: 0;
+    }
   }
 
   @media (max-width: 500px) {

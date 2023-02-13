@@ -38,7 +38,9 @@ export default function RoiCalculator({ onClose }: RoiCalcProps) {
   const dispatch = useDispatch()
   const { selectedFarmAddress, farmStorage } = useSelector((state: State) => state.farm)
   const { accountPkh } = useSelector((state: State) => state.wallet)
-  const { exchangeRate } = useSelector((state: State) => state.mvkToken)
+  const {
+    tokensPrices: { mvk: { usd: mvkExchangeRate = 0 } = {} },
+  } = useSelector((state: State) => state.tokens)
 
   const farm = farmStorage.find(({ address }) => selectedFarmAddress === address)
 
@@ -335,7 +337,7 @@ export default function RoiCalculator({ onClose }: RoiCalcProps) {
                   <span>
                     <CommaNumber
                       beginningText="~"
-                      value={+inputValues.backwardAmount * exchangeRate}
+                      value={+inputValues.backwardAmount * mvkExchangeRate}
                       endingText="sMVK"
                     />
                     <CommaNumber
@@ -352,7 +354,11 @@ export default function RoiCalculator({ onClose }: RoiCalcProps) {
                   <CommaNumber beginningText="$" value={+inputValues.backwardAmount} />
                 </var>
                 <p>
-                  <CommaNumber beginningText="~" value={+inputValues.backwardAmount * exchangeRate} endingText="sMVK" />
+                  <CommaNumber
+                    beginningText="~"
+                    value={+inputValues.backwardAmount * mvkExchangeRate}
+                    endingText="sMVK"
+                  />
                   <CommaNumber
                     beginningText="("
                     value={(+inputValues.backwardAmount - +inputValues.amount) * 100}

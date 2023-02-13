@@ -2,10 +2,10 @@ import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { ERROR, INFO, SUCCESS } from 'app/App.components/Toaster/Toaster.constants'
 import { AppDispatch, GetState } from 'app/App.controller'
-import { updateUserData } from 'pages/Doorman/Doorman.actions'
 import { getGovernanceStorage } from 'pages/Governance/Governance.actions'
 import { getDelegationStorage, getOracleStorage } from 'pages/Satellites/Satellites.actions'
 import { State } from 'reducers'
+import { updateUserData } from 'reducers/actions/user.actions'
 
 export const claimAllRewardsAction = () => async (dispatch: AppDispatch, getState: GetState) => {
   const state: State = getState()

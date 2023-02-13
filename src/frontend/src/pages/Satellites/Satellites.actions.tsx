@@ -1,6 +1,6 @@
 import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { ERROR, INFO, SUCCESS } from 'app/App.components/Toaster/Toaster.constants'
-import { getDoormanStorage, getMvkTokenStorage, updateUserData } from 'pages/Doorman/Doorman.actions'
+import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
 import { State } from 'reducers'
 import {
   DELEGATION_STORAGE_QUERY,
@@ -15,6 +15,7 @@ import type { AppDispatch, GetState } from '../../app/App.controller'
 import { normalizeDelegationStorage } from './Satellites.helpers'
 import { normalizeOracle } from 'app/App.helpers'
 import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
+import { updateUserData } from 'reducers/actions/user.actions'
 
 export const GET_DELEGATION_STORAGE = 'GET_DELEGATION_STORAGE'
 export const getDelegationStorage = () => async (dispatch: AppDispatch) => {
@@ -73,7 +74,6 @@ export const delegate = (satelliteAddress: string) => async (dispatch: AppDispat
 
     dispatch(showToaster(SUCCESS, 'Delegation done', 'All good :)'))
 
-    await dispatch(getMvkTokenStorage())
     await dispatch(getDelegationStorage())
     await dispatch(getDoormanStorage())
     await dispatch(updateUserData())
@@ -111,7 +111,6 @@ export const undelegate = (delegateAddress: string) => async (dispatch: AppDispa
 
     dispatch(showToaster(SUCCESS, 'Undelegating done', 'All good :)'))
 
-    await dispatch(getMvkTokenStorage())
     await dispatch(getDelegationStorage())
     await dispatch(getDoormanStorage())
     await dispatch(updateUserData())

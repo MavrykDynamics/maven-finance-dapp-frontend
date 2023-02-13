@@ -1,45 +1,29 @@
-import React, { useState, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
-import { useEffect } from 'react'
+import { TreasuryType } from 'utils/TypesAndInterfaces/Treasury'
 
 // actions
 import { fillTreasuryStorage } from './Treasury.actions'
-
-// controller
-import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
+import { reduceTreasuryAssets } from './Treasury.helpers'
+import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 
 // view
+import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
 import TreasuryView from './Treasury.view'
-import { DropDown, DropdownItemType } from '../../app/App.components/DropDown/DropDown.controller'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
+import { DDItemId, DropDown, DropDownItemType } from '../../app/App.components/DropDown/NewDropdown'
 
 // styles
 import { Page } from 'styles'
 import { TreasuryActiveStyle, TreasurySelectStyle } from './Treasury.style'
-import { TreasuryType } from 'utils/TypesAndInterfaces/Treasury'
-import { reduceTreasuryAssets } from './Treasury.helpers'
-import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
-import { ClockLoader } from 'app/App.components/Loader/Loader.view'
+
+type TreasuryDDType = DropDownItemType & { treasury: TreasuryType }
 
 export const Treasury = () => {
   const dispatch = useDispatch()
   const { treasuryStorage, treasuryFactoryAddress, isLoaded } = useSelector((state: State) => state.treasury)
-
-  const itemsForDropDown = treasuryStorage
-    .map((treasury) => ({
-      text: treasury.name,
-      value: treasury.address,
-    }))
-    .map((item) => ({
-      ...item,
-      text: item.text,
-    }))
-
-  const ddItems = useMemo(() => itemsForDropDown.map((item) => item.text), [itemsForDropDown])
-  const [ddIsOpen, setDdIsOpen] = useState(false)
-  const [chosenDdItem, setChosenDdItem] = useState<DropdownItemType | undefined>()
-  const [selectedTreasury, setSelectedTreasury] = useState<null | TreasuryType>(null)
 
   const { isLoading } = useDataLoader(async () => {
     try {
@@ -49,19 +33,24 @@ export const Treasury = () => {
     } catch (error) {}
   }, [])
 
-  const handleSelect = (item: DropdownItemType) => {
-    const foundTreasury = treasuryStorage.find(({ address }) => item.value === address) || null
-    setSelectedTreasury(foundTreasury)
-  }
+  const ddItems = useMemo(
+    () =>
+      treasuryStorage.map<TreasuryDDType>((treasury) => ({
+        content: treasury.name,
+        treasury,
+        id: treasury.address,
+      })),
+    [treasuryStorage],
+  )
 
-  const handleOnClickDropdownItem = (e: string) => {
-    const chosenItem = itemsForDropDown.filter((item) => item.text === e)[0]
+  const [chosenDdItem, setChosenDdItem] = useState<TreasuryDDType | undefined>()
+  const handleOnClickDropdownItem = (e: DDItemId) => {
+    const chosenItem = ddItems.find((item) => item.id === e)
     setChosenDdItem(chosenItem)
-    setDdIsOpen(!ddIsOpen)
-    handleSelect(chosenItem)
   }
 
   const { assetsBalances, globalTreasuryTVL } = useMemo(() => reduceTreasuryAssets(treasuryStorage), [treasuryStorage])
+
   const globalTreasury = {
     name: 'Global Treasury TVL',
     balances: assetsBalances,
@@ -81,18 +70,16 @@ export const Treasury = () => {
         <>
           <TreasuryView treasury={globalTreasury} isGlobal factoryAddress={treasuryFactoryAddress} />
           <TreasuryActiveStyle>
-            <TreasurySelectStyle isSelectedTreasury={Boolean(chosenDdItem?.value)}>
+            <TreasurySelectStyle isSelectedTreasury={Boolean(chosenDdItem)}>
               <h2>Active Treasuries</h2>
               <DropDown
                 placeholder="Choose treasury"
-                isOpen={ddIsOpen}
-                setIsOpen={setDdIsOpen}
-                itemSelected={chosenDdItem?.text}
+                activeItem={chosenDdItem}
                 items={ddItems}
-                clickOnItem={(e) => handleOnClickDropdownItem(e)}
+                clickItem={handleOnClickDropdownItem}
               />
             </TreasurySelectStyle>
-            {selectedTreasury ? <TreasuryView treasury={selectedTreasury} /> : null}
+            {chosenDdItem?.treasury ? <TreasuryView treasury={chosenDdItem.treasury} /> : null}
           </TreasuryActiveStyle>
         </>
       )}

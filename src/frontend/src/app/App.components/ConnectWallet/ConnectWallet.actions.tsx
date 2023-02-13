@@ -4,9 +4,9 @@ import { TezosToolkit } from '@taquito/taquito'
 import { AppDispatch, GetState } from 'app/App.controller'
 import { showToaster } from '../Toaster/Toaster.actions'
 import { ERROR } from '../Toaster/Toaster.constants'
-import { fetchUserData } from 'pages/Doorman/Doorman.actions'
 import { DEFAULT_USER } from 'reducers/wallet'
 import { CLEAR_LOANS_STORAGE, getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
+import { fetchUserData } from 'reducers/actions/user.actions'
 
 // TODO: check ts-ignores, here NetworkType is not compatible with  NetworkType | undefined
 

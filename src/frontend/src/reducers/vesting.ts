@@ -1,22 +1,27 @@
-import { GET_VESTING_STORAGE } from './../pages/Treasury/Treasury.actions';
+import { GET_VESTING_STORAGE } from './../pages/Treasury/Treasury.actions'
 import { VestingStorage } from '../utils/TypesAndInterfaces/Vesting'
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
 
 import { normalizeVestingStorage } from '../app/App.helpers'
 
-export interface VestingState {
-  vestingStorage: VestingStorage
+export type VestingState = VestingStorage & {
+  isLoaded: boolean
 }
 
 const VestingDefaultState: VestingState = {
-  vestingStorage: normalizeVestingStorage(null),
+  address: '',
+  totalVestedAmount: 0,
+  totalClaimedAmount: 0,
+  isLoaded: false,
 }
 
 export function vesting(state = VestingDefaultState, action: Action) {
   switch (action.type) {
     case GET_VESTING_STORAGE:
       return {
-        vestingStorage: action.vestingStorage,
+        ...state,
+        ...action.vestingStorage,
+        isLoaded: true,
       }
     default:
       return state

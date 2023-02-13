@@ -226,6 +226,13 @@ export const HistoryBlock = styled(MediumBlockBase)<{ theme: MavrykTheme }>`
   .no-data {
     margin-top: 20px;
   }
+
+  .history-tooltip {
+    svg {
+      width: 13px;
+      height: 13px;
+    }
+  }
 `
 
 export const ListItem = styled.div<{ theme: MavrykTheme; columsTemplate: string }>`
@@ -338,7 +345,7 @@ export const SatelliteStatusBlock = styled(MediumBlockBase)<{ theme: MavrykTheme
         row-gap: 5px;
 
         svg,
-        .satellite-avatar {
+        .img-wrapper {
           width: 16px;
           height: 16px;
           fill: unset;
@@ -353,7 +360,7 @@ export const SatelliteStatusBlock = styled(MediumBlockBase)<{ theme: MavrykTheme
       }
 
       > svg,
-      .satellite-avatar {
+      .img-wrapper {
         height: 40px;
         width: 40px;
         fill: ${({ theme }) => theme.lPurple_dPurple_lPuprple};

@@ -1,37 +1,30 @@
 // type
 import {
   DoormanGraphQl,
+  MvkTokenGraphQL,
   MvkMintHistoryDataGraphQl,
   SmvkHistoryDataGraphQl,
 } from '../../utils/TypesAndInterfaces/Doorman'
-import { MvkTokenGraphQL } from '../../utils/TypesAndInterfaces/MvkToken'
 
 // helpers
 import { calcWithoutPrecision } from '../../utils/calcFunctions'
 import { symbolsAfterDecimalPoint } from '../../utils/symbolsAfterDecimalPoint'
 import { UTCTimestamp } from 'lightweight-charts'
 
-export function normalizeDoormanStorage(storage: DoormanGraphQl) {
-  const totalStakedMvk = storage?.stake_accounts_aggregate?.aggregate?.sum?.smvk_balance ?? 0
-  return {
-    unclaimedRewards: calcWithoutPrecision(storage?.unclaimed_rewards ?? 0),
-    minMvkAmount: calcWithoutPrecision(storage?.min_mvk_amount ?? 0),
-    totalStakedMvk: calcWithoutPrecision(totalStakedMvk),
-    breakGlassConfig: {
-      stakeIsPaused: storage?.stake_paused,
-      unstakeIsPaused: storage?.unstake_paused,
-      compoundIsPaused: storage?.compound_paused,
-      farmClaimIsPaused: storage?.farm_claimed_paused,
-    },
-    accumulatedFeesPerShare: calcWithoutPrecision(storage?.accumulated_fees_per_share),
-  }
-}
+export function normalizeDoormanStorage(storage: {
+  doorman: Array<DoormanGraphQl>
+  mvk_token: Array<MvkTokenGraphQL>
+}) {
+  const {
+    doorman: [dormanItem],
+    mvk_token: [mvkTokenItem],
+  } = storage
 
-export function normalizeMvkToken(storage: MvkTokenGraphQL | null) {
+  const totalStakedMvk = dormanItem?.stake_accounts_aggregate?.aggregate?.sum?.smvk_balance ?? 0
   return {
-    address: storage?.address,
-    totalSupply: storage?.total_supply ? calcWithoutPrecision(storage?.total_supply) : 0,
-    maximumTotalSupply: storage?.maximum_supply ? calcWithoutPrecision(storage?.maximum_supply) : 0,
+    totalStakedMvk: calcWithoutPrecision(totalStakedMvk),
+    totalSupply: mvkTokenItem?.total_supply ? calcWithoutPrecision(mvkTokenItem?.total_supply) : 0,
+    maximumTotalSupply: mvkTokenItem?.maximum_supply ? calcWithoutPrecision(mvkTokenItem?.maximum_supply) : 0,
   }
 }
 
