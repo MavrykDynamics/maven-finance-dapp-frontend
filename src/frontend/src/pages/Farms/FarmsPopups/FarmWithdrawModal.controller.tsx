@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
@@ -23,6 +23,7 @@ import { useLockBodyScroll } from 'react-use'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
 import { FarmLpActionsPopupsContent } from '../Farms.style'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
+import { farm } from 'reducers/farm'
 
 export const FarmWithdrawModal = ({
   closeHandler,
@@ -39,16 +40,22 @@ export const FarmWithdrawModal = ({
   useLockBodyScroll(show)
 
   const { farms } = useSelector((state: State) => state.farm)
+  const { accountPkh } = useSelector((state: State) => state.wallet)
   const {
     lpTokenUserBalance = 0,
     lpToken1: { symbol: lpTokenOneSymbol = '' } = {},
     lpToken2: { symbol: lpTokenTwoSymbol = '' } = {},
+    farmAccounts = [],
   } = farms.find(({ address }) => selectedFarmAddress === address) ?? {}
 
   const [inputData, setInputData] = useState<{ amount: string; validation: InputStatusType }>({
     amount: '0',
     validation: '',
   })
+
+  const farmDepositedAmountByUser = useMemo(() => {
+    return Number(farmAccounts.find(({ user_id }) => accountPkh === user_id))
+  }, [farmAccounts, accountPkh])
 
   const tokensNames = `${lpTokenOneSymbol}/${lpTokenTwoSymbol}`
 
@@ -67,7 +74,7 @@ export const FarmWithdrawModal = ({
   const handleChange = ({ target: { value } }: React.ChangeEvent<HTMLInputElement>) => {
     // TODO: use depositted amount instead of lpTokenUserBalance
     const validationStatus =
-      +value && +value <= lpTokenUserBalance && +value >= 0 ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
+      +value && +value <= farmDepositedAmountByUser && +value >= 0 ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
 
     setInputData({ ...inputData, amount: value, validation: validationStatus })
   }
