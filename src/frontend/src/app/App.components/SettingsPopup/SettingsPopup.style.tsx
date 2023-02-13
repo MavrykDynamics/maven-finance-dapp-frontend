@@ -60,6 +60,11 @@ export const PopupContainerWrapper = styled.div`
     padding: 30px 40px;
   }
 
+  &.council {
+    max-width: 750px;
+    padding: 0;
+  }
+
   @media (max-width: 500px) {
     &.settings {
       .theme-switcher-block {

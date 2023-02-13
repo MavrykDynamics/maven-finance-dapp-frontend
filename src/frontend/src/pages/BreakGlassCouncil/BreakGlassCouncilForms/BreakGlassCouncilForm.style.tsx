@@ -7,6 +7,10 @@ export const FormStyled = styled.div<{ theme: MavrykTheme }>`
   padding: 40px 20px;
   border-top: 1px solid ${({ theme }) => theme.cardBorderColor};
 
+  &.without-divider {
+    border-top: none;
+  }
+
   h1 {
     margin: 0;
   }
