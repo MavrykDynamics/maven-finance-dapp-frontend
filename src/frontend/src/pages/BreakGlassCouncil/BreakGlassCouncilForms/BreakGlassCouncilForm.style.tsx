@@ -19,11 +19,13 @@ export const FormStyled = styled.div<{ theme: MavrykTheme }>`
     margin-top: 0;
     margin-bottom: 20px;
 
-    font-weight: 600;
-    font-size: 14px;
-    line-height: 21px;
-
     color: ${({ theme }) => theme.textColor};
+  }
+
+  input, p {
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 24px;
   }
 
   h1,
@@ -34,6 +36,7 @@ export const FormStyled = styled.div<{ theme: MavrykTheme }>`
 
   button {
     max-width: 250px;
+    white-space: nowrap;
 
     &.stroke-01 {
       svg {
