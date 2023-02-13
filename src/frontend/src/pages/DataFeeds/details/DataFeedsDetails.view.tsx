@@ -3,7 +3,6 @@ import { useMemo, useState } from 'react'
 // consts, helpers
 import { ACTION_PRIMARY, ACTION_SIMPLE } from 'app/App.components/Button/Button.constants'
 import { ORACLES_DATA_IN_FEED_LIST_NAME } from 'pages/FinacialRequests/Pagination/pagination.consts'
-import { handleCoinName } from 'pages/Satellites/SatelliteList/ListCards/DataFeedCard.view'
 
 // view
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
@@ -30,7 +29,6 @@ import {
 } from './DataFeedsDetails.style'
 import { EmptyContainer } from 'app/App.style'
 import { cyanColor, downColor, Page, skyColor } from 'styles'
-import { CoinsLogo } from 'app/App.components/Icon/CoinsIcons.view'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { parseDate } from 'utils/time'
 import { useDispatch, useSelector } from 'react-redux'

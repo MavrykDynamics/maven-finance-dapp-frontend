@@ -79,7 +79,8 @@ export const MarketOverview = styled.div<{ theme: MavrykTheme }>`
     border-top-right-radius: 10px;
 
     svg,
-    .icon {
+    .icon,
+    .img-wrapper {
       width: 36px;
       height: 36px;
       fill: ${({ theme }) => theme.dataColor};

@@ -27,12 +27,12 @@ export const TREASURY_STORAGE_QUERY_NAME = 'GetTreasuryStorageQuery'
 export const TREASURY_STORAGE_QUERY_VARIABLE = {}
 
 export const TREASURY_SMVK_QUERY = `
-query GetsMVKBalances ($addresses: [String!]) {
-  mavryk_user(where: {address: {_in: $addresses}}) {
-    smvk_balance
-    address
+  query GetsMVKBalances ($addresses: [String!]) {
+    mavryk_user(where: {address: {_in: $addresses}}) {
+      smvk_balance
+      address
+    }
   }
-}
 `
 
 export const TREASURY_SMVK_QUERY_NAME = 'GetsMVKBalances'
