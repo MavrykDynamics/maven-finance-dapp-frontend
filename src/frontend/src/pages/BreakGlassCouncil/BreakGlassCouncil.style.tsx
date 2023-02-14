@@ -1,5 +1,5 @@
 import styled from 'styled-components/macro'
-import { Page as PageBase, Card, textsColor, headerColor } from 'styles'
+import { Page as PageBase, Card } from 'styles'
 
 // types
 import { MavrykTheme } from '../../styles/interfaces'
@@ -58,14 +58,7 @@ export const PropagateBreakGlassCouncilCard = styled(Card)<{ theme: MavrykTheme 
   }
 
   button {
-    max-width: 250px;
-
-    &.start_verification {
-      svg {
-        stroke-width: 0.1;
-        fill: ${textsColor};
-      }
-    }
+    white-space: nowrap;
   }
 `
 
@@ -81,6 +74,10 @@ export const ReviewPastCouncilActionsCard = styled(Card)<{
   margin-bottom: 23px;
   height: 201px;
 
+  button {
+    white-space: nowrap;
+  }
+
   button:first-of-type {
     margin-bottom: 20px;
   }
@@ -95,13 +92,13 @@ export const GoBack = styled(Card)`
   font-weight: 600;
   font-size: 14px;
   line-height: 21px;
-  color: ${headerColor};
+  color: ${({ theme }) => theme.headerColor};
   cursor: pointer;
 
   svg {
     width: 16px;
     height: 16px;
-    stroke: ${headerColor};
+    stroke: ${({ theme }) => theme.headerColor};
     margin-right: 8px;
   }
 `

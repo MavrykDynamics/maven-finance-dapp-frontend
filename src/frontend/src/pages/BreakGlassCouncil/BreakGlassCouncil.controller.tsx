@@ -5,9 +5,8 @@ import { Link, useHistory, useLocation } from 'react-router-dom'
 import { useParams } from 'react-router'
 
 // components
-import { DropDown, DropdownItemType } from '../../app/App.components/DropDown/DropDown.controller'
+import { DropDown, DDItemId } from 'app/App.components/DropDown/NewDropdown'
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
-import { Button } from 'app/App.components/Button/Button.controller'
 import NewButton from 'app/App.components/Button/NewButton.controller'
 import { CouncilPastActionView } from 'pages/Council/CouncilActions/CouncilPastAction.view'
 import Carousel from '../../app/App.components/Carousel/Carousel.view'
@@ -22,7 +21,11 @@ import { councilEmptyContainer } from 'pages/Council/Council.controller'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
 
 // helpers
-import { ACTION_SECONDARY, TRANSPARENT_WITH_BORDER } from '../../app/App.components/Button/Button.constants'
+import {
+  ACTION_PRIMARY,
+  ACTION_SECONDARY,
+  TRANSPARENT_WITH_BORDER,
+} from '../../app/App.components/Button/Button.constants'
 import {
   BREAK_GLASS_COUNCIL_ACTIONS_LIST_NAME,
   BREAK_GLASS_MY_PAST_COUNCIL_ACTIONS_LIST_NAME,
@@ -30,7 +33,6 @@ import {
   calculateSlicePositions,
 } from 'pages/FinacialRequests/Pagination/pagination.consts'
 import { getPageNumber } from 'pages/FinacialRequests/FinancialRequests.helpers'
-import { ACTION_PRIMARY } from '../../app/App.components/Button/Button.constants'
 import { getSeparateSnakeCase } from 'utils/parse'
 import { memberIsFirstOfList } from 'pages/Council/Council.helpers'
 import { scrollUpPage } from 'utils/scrollUpPage'
@@ -79,22 +81,20 @@ export function BreakGlassCouncil() {
     glassBroken,
     isPendingPropagateBreakGlass,
   } = useSelector((state: State) => state.breakGlass)
-  const itemsForDropDown = useMemo(
+
+  const dropDownItems = useMemo(
     () =>
-      Object.values(actions).map((item) => {
-        return {
-          text: getSeparateSnakeCase(item),
-          value: item,
-        }
-      }),
+      Object.values(actions).map((item, index) => ({
+        content: <div>{getSeparateSnakeCase(item)}</div>,
+        value: item,
+        id: index,
+      })),
     [],
   )
 
-  const ddItems = useMemo(() => itemsForDropDown.map(({ text }) => text), [itemsForDropDown])
-  const [ddIsOpen, setDdIsOpen] = useState(false)
-  const [chosenDdItem, setChosenDdItem] = useState<DropdownItemType | undefined>()
+  type DropDownItemType = typeof dropDownItems[0]
 
-  const [sliderKey, setSliderKey] = useState(1)
+  const [chosenDdItem, setChosenDdItem] = useState<DropDownItemType | undefined>()
   const [isUpdateCouncilMemberInfo, setIsUpdateCouncilMemberInfo] = useState(false)
   const [activeActionTab, setActiveActionTab] = useState(councilTabsList[0].text)
 
@@ -122,10 +122,11 @@ export function BreakGlassCouncil() {
     setIsUpdateCouncilMemberInfo(true)
   }
 
-  const handleClickDropdownItem = (e: string) => {
-    const chosenItem = itemsForDropDown.filter((item) => item.text === e)[0]
-    setChosenDdItem(chosenItem)
-    setDdIsOpen(!ddIsOpen)
+  const handleClickDropdownItem = (itemId: DDItemId) => {
+    const foundItem = dropDownItems.find((item) => item.id === itemId)
+
+    if (!foundItem) return
+    setChosenDdItem(foundItem)
   }
 
   const handleSignAction = (id: number) => {
@@ -183,8 +184,6 @@ export function BreakGlassCouncil() {
       dispatch(getMyPastBreakGlassCouncilAction())
       dispatch(getBreakGlassActionPendingSignature())
     }
-
-    setSliderKey(sliderKey + 1)
   }, [dispatch, accountPkh])
 
   useEffect(() => {
@@ -216,14 +215,14 @@ export function BreakGlassCouncil() {
         <PropagateBreakGlassCouncilCard>
           <h1>Propagate Break Glass</h1>
 
-          <Button
-            className="start_verification"
-            text="Propagate Break Glass"
+          <NewButton
             kind={ACTION_PRIMARY}
-            icon={'plus'}
             onClick={handleClickPropagateBreakGlass}
             disabled={glassBroken || isPendingPropagateBreakGlass}
-          />
+          >
+            <Icon id="plus" />
+            Propagate Break Glass
+          </NewButton>
         </PropagateBreakGlassCouncilCard>
       )}
 
@@ -234,7 +233,7 @@ export function BreakGlassCouncil() {
           {displayPendingSignature && (
             <article className="pending">
               <div className="pending-items">
-                <Carousel itemLength={breakGlassActionPendingSignature.length} key={sliderKey}>
+                <Carousel itemLength={breakGlassActionPendingSignature.length}>
                   {breakGlassActionPendingSignature.map((item, index) => (
                     <CouncilPending
                       {...item}
@@ -304,11 +303,9 @@ export function BreakGlassCouncil() {
                   <div className="dropdown-size">
                     <DropDown
                       placeholder="Choose action"
-                      isOpen={ddIsOpen}
-                      setIsOpen={setDdIsOpen}
-                      itemSelected={chosenDdItem?.text}
-                      items={ddItems}
-                      clickOnItem={(e) => handleClickDropdownItem(e)}
+                      activeItem={chosenDdItem}
+                      items={dropDownItems}
+                      clickItem={handleClickDropdownItem}
                     />
                   </div>
                 </div>
@@ -337,16 +334,12 @@ export function BreakGlassCouncil() {
         <div className="right-block">
           {!review && (
             <ReviewPastCouncilActionsCard displayPendingSignature={displayPendingSignature}>
-              <Button
-                text="Review Past Actions"
-                kind={ACTION_SECONDARY}
-                onClick={() => handleClickReview(queryParameters.review)}
-              />
-              <Button
-                text="Review Pending Actions"
-                kind={ACTION_SECONDARY}
-                onClick={() => handleClickReview(queryParameters.pendingReview)}
-              />
+              <NewButton kind={ACTION_SECONDARY} onClick={() => handleClickReview(queryParameters.review)}>
+                Review Past Actions
+              </NewButton>
+              <NewButton kind={ACTION_SECONDARY} onClick={() => handleClickReview(queryParameters.pendingReview)}>
+                Review Pending Actions
+              </NewButton>
             </ReviewPastCouncilActionsCard>
           )}
 

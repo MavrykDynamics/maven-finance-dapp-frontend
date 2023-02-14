@@ -1,5 +1,4 @@
 import styled from 'styled-components/macro'
-import {  headerColor, upColor } from 'styles'
 import { MavrykTheme } from '../../../styles/interfaces'
 
 export const FormStyled = styled.div<{ theme: MavrykTheme }>`
@@ -22,7 +21,8 @@ export const FormStyled = styled.div<{ theme: MavrykTheme }>`
     color: ${({ theme }) => theme.textColor};
   }
 
-  input, p {
+  input,
+  p {
     font-weight: 500;
     font-size: 14px;
     line-height: 24px;
@@ -44,7 +44,7 @@ export const FormStyled = styled.div<{ theme: MavrykTheme }>`
     align-items: center;
     height: 40px;
     margin-left: 20px;
-    color: ${upColor};
+    color: ${({ theme }) => theme.upColor};
   }
 
   .form {
@@ -76,7 +76,7 @@ export const FormStyled = styled.div<{ theme: MavrykTheme }>`
       font-size: 14px;
       line-height: 21px;
 
-      color: ${headerColor};
+      color: ${({ theme }) => theme.headerColor};
     }
   }
 
