@@ -15,12 +15,6 @@ export const normalizeBreakGlass = ({
 }) => {
   return {
     glassBroken: breakGlassStorage?.glass_broken,
-    address: breakGlassStorage?.address,
-    admin: breakGlassStorage?.admin,
-    governanceId: breakGlassStorage?.governance_id,
-    actionCounter: breakGlassStorage?.action_counter,
-    threshold: breakGlassStorage?.threshold,
-    actionExpiryDays: breakGlassStorage?.action_expiry_days,
     whitelistDev: whitelist_developer?.developer?.address ?? '',
   }
 }

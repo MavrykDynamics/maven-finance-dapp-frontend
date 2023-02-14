@@ -14,12 +14,6 @@ const breakGlassDefaultState: BreakGlassState = {
   breakGlassStatus: [],
   config: {
     glassBroken: false,
-    address: '',
-    admin: '',
-    governanceId: '',
-    actionCounter: 0,
-    threshold: 0,
-    actionExpiryDays: 0,
     whitelistDev: '',
     isConfigLoaded: false,
   },
@@ -27,10 +21,8 @@ const breakGlassDefaultState: BreakGlassState = {
 }
 
 export function breakGlass(state = breakGlassDefaultState, action: Action) {
-  console.log('11111', action)
   switch (action.type) {
     case GET_BREAK_GLASS_STORAGE:
-      console.log(action)
       return {
         ...state,
         config: { ...action.config, isConfigLoaded: true },
