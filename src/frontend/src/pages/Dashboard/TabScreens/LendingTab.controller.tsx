@@ -26,7 +26,14 @@ export const emptyContainer = (
 )
 
 export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
-  const { loanTokens, chartsData } = useSelector((state: State) => state.loans)
+  const {
+    loanTokens,
+    chartsData: {
+      totalLended,
+      totalBorrowed,
+      lendBorrow24hDiff: { last24hLending, last48hLending, last24hBorrowing, last48hBorrowing },
+    },
+  } = useSelector((state: State) => state.loans)
 
   const { lendingSuppliers, borrowers, mostBorrowedAsset, mostLendedAsset } = useMemo(() => {
     return loanTokens.reduce<{
@@ -63,14 +70,8 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
     )
   }, [loanTokens])
 
-  const lending24hPersentChange = calcDiffBetweenTwoNumbersInPersentage(
-    chartsData.lendBorrow24hDiff.last24hLending,
-    chartsData.lendBorrow24hDiff.last48hLending,
-  )
-  const borrowing24hPersentChange = calcDiffBetweenTwoNumbersInPersentage(
-    chartsData.lendBorrow24hDiff.last24hBorrowing,
-    chartsData.lendBorrow24hDiff.last48hBorrowing,
-  )
+  const lending24hPersentChange = calcDiffBetweenTwoNumbersInPersentage(last24hLending, last48hLending)
+  const borrowing24hPersentChange = calcDiffBetweenTwoNumbersInPersentage(last24hBorrowing, last48hBorrowing)
 
   return (
     <TabWrapperStyled backgroundImage="dashboard_lendingTab_bg.png">
@@ -92,7 +93,7 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
             <StatBlock className="large">
               <div className="name">Total Supplied</div>
               <div className="value">
-                <CommaNumber beginningText="$" value={chartsData.totalLended} />
+                <CommaNumber beginningText="$" value={totalLended} />
                 <div className={`impact ${lending24hPersentChange > 0 ? 'up' : 'down'}`}>
                   {lending24hPersentChange > 0 ? '+' : '-'} {lending24hPersentChange}%
                 </div>
@@ -109,7 +110,7 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
               <StatBlock>
                 <div className="name">24H Supply Vol</div>
                 <div className="value">
-                  <CommaNumber beginningText="$" value={chartsData.lendBorrow24hDiff.last24hLending} />
+                  <CommaNumber beginningText="$" value={last24hLending} />
                 </div>
               </StatBlock>
               <StatBlock>
@@ -133,7 +134,7 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
             <StatBlock className="large">
               <div className="name">Total Borrowed</div>
               <div className="value">
-                <CommaNumber beginningText="$" value={chartsData.totalBorrowed} />
+                <CommaNumber beginningText="$" value={totalBorrowed} />
                 <div className={`impact ${borrowing24hPersentChange > 0 ? 'up' : 'down'}`}>
                   {borrowing24hPersentChange > 0 ? '+' : '-'} {borrowing24hPersentChange}%
                 </div>
@@ -150,7 +151,7 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
               <StatBlock>
                 <div className="name">24H Borrow Vol</div>
                 <div className="value">
-                  <CommaNumber beginningText="$" value={chartsData.lendBorrow24hDiff.last24hBorrowing} />
+                  <CommaNumber beginningText="$" value={last24hBorrowing} />
                 </div>
               </StatBlock>
               <StatBlock>
