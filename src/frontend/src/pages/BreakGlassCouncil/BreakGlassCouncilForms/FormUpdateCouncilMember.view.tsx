@@ -77,10 +77,10 @@ export function FormUpdateCouncilMemberView({ councilMemberMaxLength }: Props) {
   const newMemberNameProps = {
     name: 'newMemberName',
     value: newMemberName,
-    onBlur: handleBlur,
+    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, councilMemberMaxLength.councilMemberNameMaxLength),
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
       handleChange(e)
-      handleBlur(e)
+      handleBlur(e, councilMemberMaxLength.councilMemberNameMaxLength)
     },
     required: true,
   }
@@ -92,10 +92,10 @@ export function FormUpdateCouncilMemberView({ councilMemberMaxLength }: Props) {
   const newMemberWebsiteProps = {
     name: 'newMemberWebsite',
     value: newMemberWebsite,
-    onBlur: handleBlur,
+    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, councilMemberMaxLength.councilMemberWebsiteMaxLength),
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
       handleChange(e)
-      handleBlur(e)
+      handleBlur(e, councilMemberMaxLength.councilMemberWebsiteMaxLength)
     },
     required: true,
   }
