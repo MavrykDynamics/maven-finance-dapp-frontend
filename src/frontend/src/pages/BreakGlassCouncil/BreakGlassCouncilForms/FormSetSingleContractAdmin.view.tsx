@@ -40,6 +40,7 @@ export function FormSetSingleContractAdminView() {
 
     try {
       await dispatch(setSingleContractAdmin(newAdminAddress, targetContract))
+      
       setForm(INIT_FORM)
       setFormInputStatus({
         newAdminAddress: '',

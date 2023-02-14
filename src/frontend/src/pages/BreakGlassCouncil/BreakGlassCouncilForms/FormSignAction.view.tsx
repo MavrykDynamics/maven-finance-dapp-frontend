@@ -35,6 +35,7 @@ export function FormSignActionView() {
 
     try {
       await dispatch(signAction(Number(breakGlassActionID)))
+      
       setForm(INIT_FORM)
       setFormInputStatus({
         breakGlassActionID: '',

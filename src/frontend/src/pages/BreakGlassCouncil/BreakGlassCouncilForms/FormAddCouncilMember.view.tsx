@@ -35,9 +35,7 @@ const INIT_FORM = {
 export function FormAddCouncilMemberView({ councilMemberMaxLength }: Props) {
   const dispatch = useDispatch()
 
-  const [uploadKey, setUploadKey] = useState(1)
   const [form, setForm] = useState(INIT_FORM)
-
   const [formInputStatus, setFormInputStatus] = useState<Record<string, InputStatusType>>({
     memberAddress: '',
     newMemberWebsite: '',
@@ -46,13 +44,13 @@ export function FormAddCouncilMemberView({ councilMemberMaxLength }: Props) {
   })
 
   const { memberAddress, newMemberWebsite, newMemberName, newMemberImage } = form
-  const disabled = false
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     try {
       await dispatch(addCouncilMember(memberAddress, newMemberName, newMemberWebsite, newMemberImage))
+      
       setForm(INIT_FORM)
       setFormInputStatus({
         memberAddress: '',
@@ -60,10 +58,8 @@ export function FormAddCouncilMemberView({ councilMemberMaxLength }: Props) {
         newMemberName: '',
         newMemberImage: '',
       })
-      setUploadKey(uploadKey + 1)
     } catch (error) {
       console.error('FormAddCouncilMemberView', error)
-      setUploadKey(uploadKey + 1)
     }
   }
 
@@ -149,8 +145,6 @@ export function FormAddCouncilMemberView({ councilMemberMaxLength }: Props) {
         </div>
 
         <IPFSUploader
-          disabled={disabled}
-          key={uploadKey}
           typeFile="image"
           imageIpfsUrl={newMemberImage}
           className="form-ipfs"

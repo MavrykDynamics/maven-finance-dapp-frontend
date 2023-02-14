@@ -38,6 +38,7 @@ export function FormSetAllContractsAdminView() {
 
     try {
       await dispatch(setAllContractsAdmin(newAdminAddress))
+      
       setForm(INIT_FORM)
       setFormInputStatus({
         newAdminAddress: '',

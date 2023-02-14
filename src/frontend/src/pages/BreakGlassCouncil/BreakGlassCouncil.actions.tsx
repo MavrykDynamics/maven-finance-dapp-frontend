@@ -283,7 +283,7 @@ export const addCouncilMember =
       const transaction = await contract?.methods
         .addCouncilMember(memberAddress, newMemberName, newMemberWebsite, newMemberImage)
         .send()
-      dispatch(showToaster(INFO, 'Add Council Members...', 'Please wait 30s'))
+      dispatch(showToaster(INFO, 'Add Council Member...', 'Please wait 30s'))
 
       await transaction?.confirmation()
 
@@ -294,7 +294,7 @@ export const addCouncilMember =
         dispatch(getBreakGlassCouncilMember()),
       ])
 
-      dispatch(showToaster(SUCCESS, 'Add Council Members is done', 'All good :)'))
+      dispatch(showToaster(SUCCESS, 'Add Council Member is done', 'All good :)'))
       dispatch(toggleActionLoader(false))
     } catch (error) {
       if (error instanceof Error) {

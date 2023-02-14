@@ -42,23 +42,18 @@ export function FormRemoveCouncilMemberView() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    try {
-      const memberAddress = chosenDdItem?.tzAddress
+    const memberAddress = chosenDdItem?.tzAddress
 
-      if (!memberAddress) return
-      await dispatch(removeCouncilMember(memberAddress))
+    if (!memberAddress) return
+    dispatch(removeCouncilMember(memberAddress))
 
-      setChosenDdItem(undefined)
-    } catch (error) {
-      console.error('FormRemoveCouncilMemberView', error)
-    }
+    setChosenDdItem(undefined)
   }
 
   const handleClickDropdownItem = (itemId: DDItemId) => {
     const foundItem = dropDownItems.find((item) => item.id === itemId)
 
     if (!foundItem) return
-
     setChosenDdItem(foundItem)
   }
 

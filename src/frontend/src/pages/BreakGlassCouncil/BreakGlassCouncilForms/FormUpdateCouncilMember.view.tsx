@@ -38,7 +38,6 @@ export function FormUpdateCouncilMemberView({ councilMemberMaxLength }: Props) {
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const { breakGlassCouncilMember } = useSelector((state: State) => state.breakGlass)
 
-  const [uploadKey, setUploadKey] = useState(1)
   const [form, setForm] = useState(INIT_FORM)
   const myInfo = breakGlassCouncilMember.find((item) => item.userId === accountPkh)
 
@@ -49,23 +48,21 @@ export function FormUpdateCouncilMemberView({ councilMemberMaxLength }: Props) {
   })
 
   const { newMemberWebsite, newMemberName, newMemberImage } = form
-  const disabled = false
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     try {
       await dispatch(updateCouncilMember(newMemberName, newMemberWebsite, newMemberImage))
+
       setForm(INIT_FORM)
       setFormInputStatus({
         newMemberWebsite: '',
         newMemberName: '',
         newMemberImage: '',
       })
-      setUploadKey(uploadKey + 1)
     } catch (error) {
       console.error('FormSetSingleContractAdminView', error)
-      setUploadKey(uploadKey + 1)
     }
   }
 
@@ -90,8 +87,6 @@ export function FormUpdateCouncilMemberView({ councilMemberMaxLength }: Props) {
         newMemberWebsite: 'success',
         newMemberImage: 'success',
       })
-
-      setUploadKey(uploadKey + 1)
     }
   }, [myInfo])
 
@@ -149,8 +144,6 @@ export function FormUpdateCouncilMemberView({ councilMemberMaxLength }: Props) {
         </div>
 
         <IPFSUploader
-          disabled={disabled}
-          key={uploadKey}
           typeFile="image"
           imageIpfsUrl={newMemberImage}
           className="form-ipfs"
