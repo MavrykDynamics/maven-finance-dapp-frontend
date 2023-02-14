@@ -3,8 +3,9 @@ import { useDispatch } from 'react-redux'
 
 // components
 import { ACTION_PRIMARY, SUBMIT } from '../../../app/App.components/Button/Button.constants'
-import { Button } from '../../../app/App.components/Button/Button.controller'
-import { Input } from 'app/App.components/Input/Input.controller'
+import { Input } from 'app/App.components/Input/NewInput'
+import NewButton from 'app/App.components/Button/NewButton.controller'
+import Icon from 'app/App.components/Icon/Icon.view'
 
 // types
 import { InputStatusType } from 'app/App.components/Input/Input.constants'
@@ -16,7 +17,7 @@ import { FormStyled } from './BreakGlassCouncilForm.style'
 import { setSingleContractAdmin } from '../BreakGlassCouncil.actions'
 
 // helpers
-import { validateFormAddress, validateFormField } from 'utils/validatorFunctions' 
+import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
 
 const INIT_FORM = {
   newAdminAddress: '',
@@ -58,6 +59,36 @@ export function FormSetSingleContractAdminView() {
   const handleBlur = validateFormField(setFormInputStatus)
   const handleBlurAddress = validateFormAddress(setFormInputStatus)
 
+  const newAdminAddressProps = {
+    name: 'newAdminAddress',
+    value: newAdminAddress,
+    onBlur: handleBlurAddress,
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+      handleChange(e)
+      handleBlurAddress(e)
+    },
+    required: true,
+  }
+
+  const newAdminAddressSettings = {
+    inputStatus: formInputStatus.newAdminAddress,
+  }
+
+  const targetContractProps = {
+    name: 'targetContract',
+    value: targetContract,
+    onBlur: handleBlur,
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+      handleChange(e)
+      handleBlur(e)
+    },
+    required: true,
+  }
+
+  const targetContracSettings = {
+    inputStatus: formInputStatus.targetContract,
+  }
+
   return (
     <FormStyled>
       <h1>Set Single Contract Admin</h1>
@@ -66,42 +97,16 @@ export function FormSetSingleContractAdminView() {
       <form className="form" onSubmit={handleSubmit}>
         <div className="form-fields input-size-primary">
           <label>New Admin Address</label>
-          <Input
-            className="margin-bottom-20"
-            type="text"
-            required
-            value={newAdminAddress}
-            name="newAdminAddress"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              handleChange(e)
-              handleBlurAddress(e)
-            }}
-            onBlur={handleBlurAddress}
-            inputStatus={formInputStatus.newAdminAddress}
-          />
+          <Input className="margin-bottom-20" inputProps={newAdminAddressProps} settings={newAdminAddressSettings} />
 
           <label>Target Contract</label>
-          <Input
-            type="text"
-            required
-            value={targetContract}
-            name="targetContract"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              handleChange(e)
-              handleBlur(e)
-            }}
-            onBlur={(e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e)}
-            inputStatus={formInputStatus.targetContract}
-          />
+          <Input inputProps={targetContractProps} settings={targetContracSettings} />
         </div>
 
-        <Button
-          className="stroke-01"
-          text={'Set Contract Admin'}
-          kind={ACTION_PRIMARY}
-          icon={'profile'}
-          type={SUBMIT}
-        />
+        <NewButton className="stroke-01" kind={ACTION_PRIMARY} type={SUBMIT}>
+          <Icon id="profile" />
+          Set Contract Admin
+        </NewButton>
       </form>
     </FormStyled>
   )
