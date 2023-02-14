@@ -71,13 +71,6 @@ export function FormChangeCouncilMemberView({ councilMemberMaxLength }: Props) {
 
     try {
       const oldCouncilMemberAddress = chosenDdItem?.tzAddress
-      console.log({
-        oldCouncilMemberAddress,
-        newCouncilMemberAddress,
-        newMemberName,
-        newMemberWebsite,
-        newMemberImage,
-      })
       if (!oldCouncilMemberAddress) return
 
       await dispatch(
@@ -89,6 +82,7 @@ export function FormChangeCouncilMemberView({ councilMemberMaxLength }: Props) {
           newMemberImage,
         ),
       )
+      
       setForm(INIT_FORM)
       setFormInputStatus({
         newCouncilMemberAddress: '',
