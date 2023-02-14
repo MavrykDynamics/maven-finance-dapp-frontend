@@ -4,8 +4,8 @@ import { State } from 'reducers'
 
 // components
 import { ACTION_PRIMARY, SUBMIT } from '../../../app/App.components/Button/Button.constants'
-import { Button } from '../../../app/App.components/Button/Button.controller'
-import { Input } from 'app/App.components/Input/Input.controller'
+import NewButton from 'app/App.components/Button/NewButton.controller'
+import { Input } from 'app/App.components/Input/NewInput'
 import { IPFSUploader } from '../../../app/App.components/IPFSUploader/IPFSUploader.controller'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 
@@ -74,6 +74,36 @@ export function FormUpdateCouncilMemberView({ councilMemberMaxLength }: Props) {
 
   const handleBlur = validateFormField(setFormInputStatus)
 
+  const newMemberNameProps = {
+    name: 'newMemberName',
+    value: newMemberName,
+    onBlur: handleBlur,
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+      handleChange(e)
+      handleBlur(e)
+    },
+    required: true,
+  }
+
+  const newMemberNameSettings = {
+    inputStatus: formInputStatus.newMemberName,
+  }
+
+  const newMemberWebsiteProps = {
+    name: 'newMemberWebsite',
+    value: newMemberWebsite,
+    onBlur: handleBlur,
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+      handleChange(e)
+      handleBlur(e)
+    },
+    required: true,
+  }
+
+  const newMemberWebsiteSettings = {
+    inputStatus: formInputStatus.newMemberWebsite,
+  }
+
   useEffect(() => {
     if (myInfo) {
       setForm({
@@ -91,7 +121,7 @@ export function FormUpdateCouncilMemberView({ councilMemberMaxLength }: Props) {
   }, [myInfo])
 
   return (
-    <FormStyled className='without-divider'>
+    <FormStyled className="without-divider">
       <a className="info-link" href="https://mavryk.finance/litepaper#mavryk-council" target="_blank" rel="noreferrer">
         <Icon id="question" />
       </a>
@@ -108,38 +138,12 @@ export function FormUpdateCouncilMemberView({ councilMemberMaxLength }: Props) {
 
           <div className="input-size-tertiary">
             <label>Council Member Name</label>
-            <Input
-              type="text"
-              required
-              value={newMemberName}
-              name="newMemberName"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                handleChange(e)
-                handleBlur(e, councilMemberMaxLength.councilMemberNameMaxLength)
-              }}
-              onBlur={(e: React.ChangeEvent<HTMLInputElement>) =>
-                handleBlur(e, councilMemberMaxLength.councilMemberNameMaxLength)
-              }
-              inputStatus={formInputStatus.newMemberName}
-            />
+            <Input inputProps={newMemberNameProps} settings={newMemberNameSettings} />
           </div>
 
           <div className="input-size-secondary margin-bottom-20">
             <label>Council Member Website URL</label>
-            <Input
-              type="text"
-              required
-              value={newMemberWebsite}
-              name="newMemberWebsite"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                handleChange(e)
-                handleBlur(e, councilMemberMaxLength.councilMemberWebsiteMaxLength)
-              }}
-              onBlur={(e: React.ChangeEvent<HTMLInputElement>) =>
-                handleBlur(e, councilMemberMaxLength.councilMemberWebsiteMaxLength)
-              }
-              inputStatus={formInputStatus.newMemberWebsite}
-            />
+            <Input inputProps={newMemberWebsiteProps} settings={newMemberWebsiteSettings} />
           </div>
         </div>
 
@@ -155,13 +159,10 @@ export function FormUpdateCouncilMemberView({ councilMemberMaxLength }: Props) {
         />
 
         <div className="align-to-right">
-          <Button
-            className="stroke-01"
-            text={'Update Council Member'}
-            kind={ACTION_PRIMARY}
-            icon={'upload'}
-            type={SUBMIT}
-          />
+          <NewButton kind={ACTION_PRIMARY} type={SUBMIT}>
+            <Icon id="upload" />
+            Update Council Member
+          </NewButton>
         </div>
       </form>
     </FormStyled>
