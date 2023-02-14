@@ -7,6 +7,10 @@ export const FormStyled = styled.div<{ theme: MavrykTheme }>`
   padding: 40px 20px;
   border-top: 1px solid ${({ theme }) => theme.cardBorderColor};
 
+  &.without-divider {
+    border-top: none;
+  }
+
   h1 {
     margin: 0;
   }
@@ -15,11 +19,13 @@ export const FormStyled = styled.div<{ theme: MavrykTheme }>`
     margin-top: 0;
     margin-bottom: 20px;
 
-    font-weight: 600;
-    font-size: 14px;
-    line-height: 21px;
-
     color: ${({ theme }) => theme.textColor};
+  }
+
+  input, p {
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 24px;
   }
 
   h1,
@@ -30,6 +36,7 @@ export const FormStyled = styled.div<{ theme: MavrykTheme }>`
 
   button {
     max-width: 250px;
+    white-space: nowrap;
 
     &.stroke-01 {
       svg {

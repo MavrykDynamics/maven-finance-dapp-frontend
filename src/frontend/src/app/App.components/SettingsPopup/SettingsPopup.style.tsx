@@ -65,6 +65,11 @@ export const PopupContainerWrapper = styled.div`
     width: fit-content;
   }
 
+  &.council {
+    max-width: 750px;
+    padding: 0;
+  }
+
   &.exitFee {
     width: 575px;
     max-width: unset;

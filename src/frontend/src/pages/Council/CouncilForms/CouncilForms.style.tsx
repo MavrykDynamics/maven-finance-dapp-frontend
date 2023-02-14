@@ -1,5 +1,5 @@
 import styled from 'styled-components/macro'
-import { upColor, headerColor, royalPurpleColor, containerColor } from 'styles'
+import { upColor, royalPurpleColor, containerColor } from 'styles'
 
 export const CouncilFormStyled = styled.form`
   padding: 24px 30px;
@@ -99,7 +99,6 @@ export const CouncilFormStyled = styled.form`
   }
 
   &.update-council-member-info {
-    padding: 0;
     border: none;
 
     .plus-btn {
