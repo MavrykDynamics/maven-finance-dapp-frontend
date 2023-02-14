@@ -46,9 +46,9 @@ import { CouncilFormRemoveVestee } from './CouncilForms/CouncilFormRemoveVestee.
 import { CouncilFormSetBaker } from './CouncilForms/CouncilFormSetBaker.view'
 import { CouncilFormSetContractBaker } from './CouncilForms/CouncilFormSetContractBaker.view'
 import Pagination from 'pages/FinacialRequests/Pagination/Pagination.view'
-import ModalPopup from '../../app/App.components/Modal/ModalPopup.view'
 import { MyCouncilActions } from 'pages/Council/MyCouncilActions.view'
 import { EmptyContainer } from 'app/App.style'
+import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
 
 // styles
 import { Page } from 'styles'
@@ -173,6 +173,10 @@ export const Council = () => {
 
   const handleOpenleModal = () => {
     setIsUpdateCouncilMemberInfo(true)
+  }
+
+  const closePopup = () => {
+    setIsUpdateCouncilMemberInfo(false)
   }
 
   const currentPage = getPageNumber(
@@ -390,11 +394,11 @@ export const Council = () => {
           </aside>
         </article>
       </CouncilStyled>
-      {isUpdateCouncilMemberInfo ? (
-        <ModalPopup width={750} onClose={() => setIsUpdateCouncilMemberInfo(false)}>
+      <PopupContainer onClick={closePopup} show={isUpdateCouncilMemberInfo}>
+        <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="council">
           <CouncilFormUpdateCouncilMemberInfo {...councilMemberMaxLength} />
-        </ModalPopup>
-      ) : null}
+        </PopupContainerWrapper>
+      </PopupContainer>
     </Page>
   )
 }

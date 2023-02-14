@@ -11,7 +11,8 @@ import Icon from '../../../app/App.components/Icon/Icon.view'
 // helpers
 import { getSeparateCamelCase } from '../../../utils/parse'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { bytesToText, bytesToAddress, BytesType, BYTES_ADDRESS_TYPE } from 'utils/bytesToString'
+import { bytesToText, BytesType, BYTES_ADDRESS_TYPE } from 'utils/bytesToString'
+import { convertBytesAddressToAddress } from 'app/App.helpers'
 import { CYAN } from 'app/App.components/TzAddress/TzAddress.constants'
 
 // types
@@ -65,7 +66,7 @@ export const CouncilPending = (props: Props) => {
         return ''
       }
 
-      return type === BYTES_ADDRESS_TYPE ? bytesToAddress(foundField) : bytesToText(foundField)
+      return type === BYTES_ADDRESS_TYPE ? convertBytesAddressToAddress(foundField) : bytesToText(foundField)
     },
     [parameters],
   )
@@ -77,6 +78,7 @@ export const CouncilPending = (props: Props) => {
   const isSetAllContractsAdmin = actionType === 'setAllContractsAdmin'
   const isSetSingleContractAdmin = actionType === 'setSingleContractAdmin'
   const isSetBaker = actionType === 'setBaker'
+  const isSetContractBaker = actionType === 'setContractBaker'
   const isSignAction = actionType === 'signAction'
   const isAddVestee = actionType === 'addVestee'
   const isRequestTokens = actionType === 'requestTokens'
@@ -86,6 +88,18 @@ export const CouncilPending = (props: Props) => {
   const isToggleVesteeLock = actionType === 'toggleVesteeLock'
   const isRemoveVestee = actionType === 'removeVestee'
   const purpose = findActionByName('purpose')
+
+  const findAddress = (type: string) => {
+    switch (type) {
+      // TODO: remove setBaker conditions after fix bakery address
+      case 'setBaker':
+        return 'in progress...'
+      case 'setContractBaker':
+        return findActionByName('targetContractAddress', BYTES_ADDRESS_TYPE)
+      default:
+        return convertBytesAddressToAddress(value)
+    }
+  }
 
   const modal = (
     <ModalStyled showing={true}>
@@ -683,9 +697,11 @@ export const CouncilPending = (props: Props) => {
     isRemoveCouncilMember ||
     isSignAction ||
     isSetAllContractsAdmin ||
-    isSetBaker
+    isSetBaker ||
+    isSetContractBaker
   ) {
-    const address = bytesToAddress(value)
+    console.log({ value, name, valuelength: value.length, parameters, actionType })
+    let address = findAddress(actionType)
 
     return (
       <CouncilPendingStyled className={`${actionType} ${councilPendingActionsLength > 1 ? 'more' : ''}`}>
@@ -695,7 +711,10 @@ export const CouncilPending = (props: Props) => {
           <div>
             <p className="parameters-name">{getSeparateCamelCase(name)}</p>
             <span className="parameters-value content-width">
-              <TzAddress tzAddress={address} type={CYAN} hasIcon />
+              {
+                // TODO: remove isSetBaker condition after fix baker address
+              }
+              {isSetBaker ? address : <TzAddress tzAddress={address} type={CYAN} hasIcon />}
             </span>
           </div>
           <div>

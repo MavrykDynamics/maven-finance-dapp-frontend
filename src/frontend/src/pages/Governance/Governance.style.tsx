@@ -265,7 +265,6 @@ export const RightSideSubContent = styled.div<{ theme: MavrykTheme }>`
   font-size: 14px;
   line-height: 24px;
   font-weight: normal;
-  word-break: break-all;
   color: ${({ theme }) => theme.dataColor};
 
   a {

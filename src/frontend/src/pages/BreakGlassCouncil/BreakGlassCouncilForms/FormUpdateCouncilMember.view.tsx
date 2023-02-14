@@ -96,7 +96,7 @@ export function FormUpdateCouncilMemberView({ councilMemberMaxLength }: Props) {
   }, [myInfo])
 
   return (
-    <FormStyled>
+    <FormStyled className='without-divider'>
       <a className="info-link" href="https://mavryk.finance/litepaper#mavryk-council" target="_blank" rel="noreferrer">
         <Icon id="question" />
       </a>

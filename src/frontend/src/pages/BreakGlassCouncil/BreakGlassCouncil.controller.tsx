@@ -19,6 +19,7 @@ import { CouncilPending } from '../Council/CouncilPending/CouncilPending.control
 import { MyCouncilActions } from '../Council/MyCouncilActions.view'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { councilEmptyContainer } from 'pages/Council/Council.controller'
+import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
 
 // helpers
 import { ACTION_SECONDARY, TRANSPARENT_WITH_BORDER } from '../../app/App.components/Button/Button.constants'
@@ -41,7 +42,6 @@ import {
   BreakGlassCouncilStyled,
   ReviewPastCouncilActionsCard,
   AvaliableActions,
-  ModalPopup,
   PropagateBreakGlassCouncilCard,
 } from './BreakGlassCouncil.style'
 
@@ -130,6 +130,10 @@ export function BreakGlassCouncil() {
 
   const handleSignAction = (id: number) => {
     dispatch(signAction(id))
+  }
+
+  const closePopup = () => {
+    setIsUpdateCouncilMemberInfo(false)
   }
 
   const currentPage = getPageNumber(
@@ -364,11 +368,11 @@ export function BreakGlassCouncil() {
           )}
         </div>
       </BreakGlassCouncilStyled>
-      {isUpdateCouncilMemberInfo ? (
-        <ModalPopup width={750} onClose={() => setIsUpdateCouncilMemberInfo(false)}>
+      <PopupContainer onClick={closePopup} show={isUpdateCouncilMemberInfo}>
+        <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="council">
           <FormUpdateCouncilMemberView councilMemberMaxLength={councilMemberMaxLength} />
-        </ModalPopup>
-      ) : null}
+        </PopupContainerWrapper>
+      </PopupContainer>
     </Page>
   )
 }
