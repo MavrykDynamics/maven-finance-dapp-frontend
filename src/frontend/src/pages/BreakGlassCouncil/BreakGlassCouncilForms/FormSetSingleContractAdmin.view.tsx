@@ -103,7 +103,7 @@ export function FormSetSingleContractAdminView() {
           <Input inputProps={targetContractProps} settings={targetContracSettings} />
         </div>
 
-        <NewButton className="stroke-01" kind={ACTION_PRIMARY} type={SUBMIT}>
+        <NewButton kind={ACTION_PRIMARY} type={SUBMIT}>
           <Icon id="profile" />
           Set Contract Admin
         </NewButton>

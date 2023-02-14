@@ -1,5 +1,5 @@
 import styled from 'styled-components/macro'
-import {  headerColor, textsColor, upColor } from 'styles'
+import {  headerColor, upColor } from 'styles'
 import { MavrykTheme } from '../../../styles/interfaces'
 
 export const FormStyled = styled.div<{ theme: MavrykTheme }>`
@@ -37,20 +37,11 @@ export const FormStyled = styled.div<{ theme: MavrykTheme }>`
   button {
     max-width: 250px;
     white-space: nowrap;
+  }
 
-    &.stroke-01 {
-      svg {
-        stroke-width: 0.1;
-        fill: ${textsColor};
-      }
-    }
-
-    &.stroke-03 {
-      svg {
-        stroke-width: 0.3;
-        fill: ${textsColor};
-      }
-    }
+  svg {
+    stroke: transparent;
+    fill: transparent;
   }
 
   .address {
