@@ -35,7 +35,7 @@ export const FormStyled = styled.div<{ theme: MavrykTheme }>`
   }
 
   button {
-    max-width: 250px;
+    max-width: 300px;
     white-space: nowrap;
   }
 
