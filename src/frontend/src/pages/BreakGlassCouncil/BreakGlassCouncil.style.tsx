@@ -96,9 +96,6 @@ export const GoBack = styled(Card)`
   cursor: pointer;
 
   svg {
-    width: 16px;
-    height: 16px;
-    stroke: ${({ theme }) => theme.headerColor};
     margin-right: 8px;
   }
 `

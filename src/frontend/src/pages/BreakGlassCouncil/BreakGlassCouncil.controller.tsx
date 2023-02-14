@@ -205,7 +205,7 @@ export function BreakGlassCouncil() {
       <PageHeader page={'break glass council'} />
       {review && isUserInBreakCouncilMember && (
         <Link to={`/break-glass-council`}>
-          <NewButton kind={TRANSPARENT_WITH_BORDER} className="margin-top-30 go-back ">
+          <NewButton kind={TRANSPARENT_WITH_BORDER} className="margin-top-30 go-back">
             <Icon id="arrowRight" /> Back to Member Dashboard
           </NewButton>
         </Link>
