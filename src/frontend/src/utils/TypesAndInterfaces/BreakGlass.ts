@@ -12,17 +12,14 @@ import type {
   Whitelist_Developer,
   Break_Glass_Council_Member,
   Break_Glass_Action,
+  Maybe,
 } from '../generated/graphqlTypes'
 
 import {
   normalizeBreakGlassAction,
   normalizeBreakGlassCouncilMember,
 } from 'pages/BreakGlassCouncil/BreakGlassCouncil.helpers'
-import {
-  normalizeBreakGlass,
-  normalizeBreakGlassStatus,
-  normalizeWhitelistDev,
-} from '../../pages/BreakGlass/BreakGlass.helpers'
+import { normalizeBreakGlass } from '../../pages/BreakGlass/BreakGlass.helpers'
 
 export type BreakGlassCouncilMember = ReturnType<typeof normalizeBreakGlassCouncilMember>
 export type BreakGlassCouncilMemberGraphQL = Omit<Break_Glass_Council_Member, '__typename'>
@@ -30,9 +27,15 @@ export type BreakGlassCouncilMemberGraphQL = Omit<Break_Glass_Council_Member, '_
 export type BreakGlassActions = ReturnType<typeof normalizeBreakGlassAction>
 export type BreakGlassActionGraphQL = Omit<Break_Glass_Action, '__typename'>
 
-export type BreakGlassStorage = ReturnType<typeof normalizeBreakGlass>
-export type BreakGlassStatusStorage = ReturnType<typeof normalizeBreakGlassStatus>
-export type WhitelistDevStorage = ReturnType<typeof normalizeWhitelistDev>
+export type BreakGlassConfig = ReturnType<typeof normalizeBreakGlass>
+export type BreakGlassStatusStorage = Array<{
+  title: string
+  type: string
+  address: string
+  admin: string
+  lastUpdated?: Maybe<string>
+  methods: Record<string, boolean>
+}>
 
 export type BreakGlassGraphQL = Omit<Break_Glass, '__typename'>
 export type WhitelistDevGraphQL = Omit<Whitelist_Developer, '__typename'>

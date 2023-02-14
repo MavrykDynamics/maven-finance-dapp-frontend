@@ -46,6 +46,19 @@ export const PAST_BREAK_GLASS_COUNCIL_ACTION_QUERY = `
   }
 `
 
+export const BREAK_GLASS_COUNSIL_CONFIG_QUERY = `
+  query GetBreakGlassCouncilConfig {
+    break_glass {
+      council_member_image_max_length
+      council_member_name_max_length
+      council_member_website_max_length
+    }
+  }
+`
+
+export const BREAK_GLASS_COUNSIL_CONFIG_QUERY_NAME = 'GetBreakGlassCouncilConfig'
+export const BREAK_GLASS_COUNSIL_CONFIG_QUERY_VARIABLE = {}
+
 export const BREAK_GLASS_ACTION_PENDING_SIGNATURE_QUERY_NAME = 'GetBreakGlassActionsPendingMySignature'
 export function BREAK_GLASS_ACTION_PENDING_SIGNATURE_QUERY_VARIABLE(variables: {
   _gte?: string

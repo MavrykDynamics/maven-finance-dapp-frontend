@@ -2,66 +2,30 @@
 import {
   BreakGlassGraphQL,
   BreakGlassStatusGraphQL,
+  BreakGlassStatusStorage,
   WhitelistDevGraphQL,
 } from '../../utils/TypesAndInterfaces/BreakGlass'
 
-// helpers
-import { 
-  defaultCouncilMemberImageMaxLength,
-  defaultCouncilMemberNameMaxLength,
-  defaultCouncilMemberWebsiteMaxLength,
-} from 'app/App.components/Input/Input.constants'
-
-export const normalizeBreakGlass = (storage: BreakGlassGraphQL) => {
-  const actionLedger = storage?.actions?.length
-    ? storage?.actions.map((actionRecord) => {
-        const signers = actionRecord.signers?.length
-          ? actionRecord.signers.map((signer) => {
-              return {
-                breakGlassActionRecordId: signer.break_glass_action_id,
-                id: signer.id,
-                signerId: signer.signer_id,
-              }
-            })
-          : []
-
-        return {
-          actionType: actionRecord.action_type,
-          breakGlassId: actionRecord.break_glass_id,
-          executed: actionRecord.executed,
-          expirationDatetime: new Date(actionRecord.expiration_datetime as string),
-          id: actionRecord.id,
-          initiatorId: actionRecord.initiator_id,
-          startDatetime: new Date(actionRecord.start_datetime as string),
-          status: actionRecord.status,
-          signers,
-          signersCount: actionRecord.signers_count,
-        }
-      })
-    : []
-
+export const normalizeBreakGlass = ({
+  break_glass: [breakGlassStorage],
+  whitelist_developer,
+}: {
+  break_glass: BreakGlassGraphQL[]
+  whitelist_developer: WhitelistDevGraphQL
+}) => {
   return {
-    address: storage?.address,
-    admin: storage?.admin,
-    governanceId: storage?.governance_id,
-    config: {
-      threshold: storage?.threshold,
-      actionExpiryDays: storage?.action_expiry_days,
-      councilMemberNameMaxLength: storage?.council_member_name_max_length || defaultCouncilMemberNameMaxLength,
-      councilMemberImageMaxLength: storage?.council_member_image_max_length || defaultCouncilMemberImageMaxLength,
-      councilMemberWebsiteMaxLength: storage?.council_member_website_max_length || defaultCouncilMemberWebsiteMaxLength,
-    },
-    actionCounter: storage?.action_counter,
-    glassBroken: storage?.glass_broken,
-    actionLedger,
+    glassBroken: breakGlassStorage?.glass_broken,
+    address: breakGlassStorage?.address,
+    admin: breakGlassStorage?.admin,
+    governanceId: breakGlassStorage?.governance_id,
+    actionCounter: breakGlassStorage?.action_counter,
+    threshold: breakGlassStorage?.threshold,
+    actionExpiryDays: breakGlassStorage?.action_expiry_days,
+    whitelistDev: whitelist_developer?.developer?.address ?? '',
   }
 }
 
-export function normalizeWhitelistDev(storage: WhitelistDevGraphQL) {
-  return storage?.developer?.address ?? ''
-}
-
-export function normalizeBreakGlassStatus(storage: BreakGlassStatusGraphQL) {
+export function normalizeBreakGlassStatus(storage: BreakGlassStatusGraphQL): BreakGlassStatusStorage {
   return [
     // doorman
     ...(storage?.doorman?.length

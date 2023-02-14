@@ -36,7 +36,7 @@ const INIT_FORM = {
 export function FormUpdateCouncilMemberView({ councilMemberMaxLength }: Props) {
   const dispatch = useDispatch()
   const { accountPkh } = useSelector((state: State) => state.wallet)
-  const { breakGlassCouncilMember } = useSelector((state: State) => state.breakGlass)
+  const { breakGlassCouncilMember } = useSelector((state: State) => state.breakGlassCounsil)
 
   const [uploadKey, setUploadKey] = useState(1)
   const [form, setForm] = useState(INIT_FORM)
@@ -96,7 +96,7 @@ export function FormUpdateCouncilMemberView({ councilMemberMaxLength }: Props) {
   }, [myInfo])
 
   return (
-    <FormStyled className='without-divider'>
+    <FormStyled className="without-divider">
       <a className="info-link" href="https://mavryk.finance/litepaper#mavryk-council" target="_blank" rel="noreferrer">
         <Icon id="question" />
       </a>

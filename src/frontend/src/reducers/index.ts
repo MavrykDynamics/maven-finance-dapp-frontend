@@ -18,6 +18,7 @@ import { oracles, OraclesState } from './oracles'
 import { tokens, TokensType } from './tokens'
 import { loans, LoansState } from './loans'
 import { vaults, VaultsStateType } from './vaults'
+import { breakGlassCounsil, BreakGlassCounsilState } from './breakGlassCounsil'
 
 export const reducers = combineReducers({
   loading,
@@ -33,6 +34,7 @@ export const reducers = combineReducers({
   vesting,
   vaults,
   farm,
+  breakGlassCounsil,
   preferences,
   contractAddresses,
   oracles,
@@ -46,6 +48,7 @@ export interface State {
   wallet: WalletState
   delegation: DelegationState
   doorman: DoormanState
+  breakGlassCounsil: BreakGlassCounsilState
   governance: GovernanceState
   emergencyGovernance: EmergencyGovernanceState
   treasury: TreasuryState

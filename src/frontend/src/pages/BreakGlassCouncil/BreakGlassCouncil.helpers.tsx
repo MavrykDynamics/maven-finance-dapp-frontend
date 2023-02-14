@@ -1,3 +1,4 @@
+import { Break_Glass } from 'utils/generated/graphqlTypes'
 import { BreakGlassCouncilMemberGraphQL, BreakGlassActionGraphQL } from 'utils/TypesAndInterfaces/BreakGlass'
 
 type BreakGlassActionProps = {
@@ -7,6 +8,14 @@ type BreakGlassActionProps = {
 type Options = {
   filterByAddress?: string
   filterWithoutAddress?: string
+}
+
+export const normalizeBreakGlassCouncilConfig = (storage: Break_Glass) => {
+  return {
+    councilMemberNameMaxLength: storage.council_member_name_max_length ?? 0,
+    councilMemberWebsiteMaxLength: storage.council_member_website_max_length ?? 0,
+    councilMemberImageMaxLength: storage.council_member_image_max_length ?? 0,
+  }
 }
 
 export function normalizeBreakGlassAction(storage: BreakGlassActionProps, options?: Options) {

@@ -55,6 +55,7 @@ import {
   dropBreakGlass,
   signAction,
 } from './BreakGlassCouncil.actions'
+import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 
 const queryParameters = {
   pathname: '/break-glass-council',
@@ -69,16 +70,16 @@ export function BreakGlassCouncil() {
 
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const {
-    breakGlassStorage,
     breakGlassCouncilMember,
     breakGlassActionPendingAllSignature,
     breakGlassActionPendingSignature,
     breakGlassActionPendingMySignature,
     pastBreakGlassCouncilAction,
     myPastBreakGlassCouncilAction,
-    glassBroken,
-    isPendingPropagateBreakGlass,
-  } = useSelector((state: State) => state.breakGlass)
+    config: { councilMemberNameMaxLength, councilMemberWebsiteMaxLength, isPendingPropagateBreakGlass },
+  } = useSelector((state: State) => state.breakGlassCounsil)
+  const { glassBroken } = useSelector((state: State) => state.breakGlass.config)
+
   const itemsForDropDown = useMemo(
     () =>
       Object.values(actions).map((item) => {
@@ -108,8 +109,8 @@ export function BreakGlassCouncil() {
   )
 
   const councilMemberMaxLength = {
-    councilMemberNameMaxLength: breakGlassStorage?.config?.councilMemberNameMaxLength,
-    councilMemberWebsiteMaxLength: breakGlassStorage?.config?.councilMemberWebsiteMaxLength,
+    councilMemberNameMaxLength: councilMemberNameMaxLength,
+    councilMemberWebsiteMaxLength: councilMemberWebsiteMaxLength,
   }
 
   const handleClickReview = (review: string) => {
@@ -173,19 +174,20 @@ export function BreakGlassCouncil() {
     dispatch(dropBreakGlass(id))
   }
 
-  useEffect(() => {
-    dispatch(getPastBreakGlassCouncilAction())
-    dispatch(getBreakGlassCouncilMember())
-  }, [dispatch])
+  const { isLoading } = useDataLoader(async () => {
+    try {
+      await Promise.all(
+        [
+          dispatch(getPastBreakGlassCouncilAction()),
+          dispatch(getBreakGlassCouncilMember()),
+          accountPkh && dispatch(getMyPastBreakGlassCouncilAction()),
+          accountPkh && dispatch(getBreakGlassActionPendingSignature()),
+        ].filter(Boolean),
+      )
 
-  useEffect(() => {
-    if (accountPkh) {
-      dispatch(getMyPastBreakGlassCouncilAction())
-      dispatch(getBreakGlassActionPendingSignature())
-    }
-
-    setSliderKey(sliderKey + 1)
-  }, [dispatch, accountPkh])
+      setSliderKey(sliderKey + 1)
+    } catch (e) {}
+  }, [accountPkh])
 
   useEffect(() => {
     // redirect to review or main page when member changes

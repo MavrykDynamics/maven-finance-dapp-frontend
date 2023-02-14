@@ -27,12 +27,13 @@ import {
 import { FAQLink } from '../Satellites/SatellitesSideBar/SatelliteSideBar.style'
 import { Button } from 'app/App.components/Button/Button.controller'
 import { ACTION_SIMPLE } from 'app/App.components/Button/Button.constants'
+import { BreakGlassStatusStorage } from 'utils/TypesAndInterfaces/BreakGlass'
 
 type BreakGlassViewProps = {
   glassBroken: boolean
   whitelistDev: string
   pauseAllActive: boolean
-  breakGlassStatuses: Record<string, unknown>[]
+  breakGlassStatuses: BreakGlassStatusStorage
 }
 
 const ALL = 'All Contracts'
@@ -48,8 +49,6 @@ export const BreakGlassView = ({
   const history = useHistory()
   const { page = {}, ...rest } = qs.parse(search, { ignoreQueryPrefix: true })
 
-  const breakGlassStatus = glassBroken ? 'glass broken' : 'not broken'
-  const pauseAllStatus = pauseAllActive ? 'paused' : 'not paused'
   const [selectedContract, setSelectedContract] = useState<string>(ALL)
   const [activeCard, setActiveCard] = React.useState<null | string>(null)
   const [openedAccordeon, setOpenedAcordeon] = React.useState<null | string>(null)
@@ -62,14 +61,9 @@ export const BreakGlassView = ({
   }, [breakGlassStatuses])
 
   const filteredBreakGlassStatuses = useMemo(() => {
-    return breakGlassStatuses
-      ? selectedContract === ALL
-        ? breakGlassStatuses
-        : breakGlassStatuses?.filter((item) => {
-            const type = item.type as string
-            return selectedContract === type
-          })
-      : []
+    return selectedContract === ALL
+      ? breakGlassStatuses
+      : breakGlassStatuses?.filter((item) => selectedContract === item.type)
   }, [breakGlassStatuses, selectedContract])
 
   const currentPage = getPageNumber(search, BREAK_GLASS_LIST_NAME)
@@ -97,10 +91,16 @@ export const BreakGlassView = ({
         <BGInfo>
           <BGStatusIndicator>
             <div className="status-indicator-wrapper">
-              Status: <span className={glassBroken ? 'color-red' : 'color-green'}>{breakGlassStatus}</span>
+              Status:{' '}
+              <span className={glassBroken ? 'color-red' : 'color-green'}>
+                {glassBroken ? 'glass broken' : 'not broken'}
+              </span>
             </div>
             <div className="status-indicator-wrapper">
-              Pause All: <span className={pauseAllActive ? 'color-red' : 'color-green'}>{pauseAllStatus}</span>
+              Pause All:{' '}
+              <span className={pauseAllActive ? 'color-red' : 'color-green'}>
+                {pauseAllActive ? 'paused' : 'not paused'}
+              </span>
             </div>
           </BGStatusIndicator>
 
@@ -121,9 +121,7 @@ export const BreakGlassView = ({
 
           <BGWhitelist>
             Whitelist Developers
-            <div className="adress-list">
-              <TzAddress tzAddress={whitelistDev} hasIcon />
-            </div>
+            <div className="adress-list">{whitelistDev ? <TzAddress tzAddress={whitelistDev} hasIcon /> : '-'}</div>
           </BGWhitelist>
           <div className="line"></div>
         </BGInfo>
@@ -134,6 +132,7 @@ export const BreakGlassView = ({
         <div className="buttons-selector">
           {uniqueContracts.map((item) => (
             <Button
+              key={item}
               kind={ACTION_SIMPLE}
               onClick={() => {
                 setSelectedContract(item)
@@ -147,22 +146,16 @@ export const BreakGlassView = ({
       </BGMiddleWrapper>
 
       <BGCardsWrapper>
-        {paginatedMyPastCouncilActions.map((item: Record<string, unknown>) => {
-          const trimmedTitle = (item.title as string).trim()
-          const address = (item.address as string).trim()
+        {paginatedMyPastCouncilActions.map((item) => {
+          const trimmedTitle = item.title.trim()
+          const address = item.address.trim()
           const isCardActive = activeCard === address
           return (
             <ContractCard
               isActive={isCardActive}
               contract={item}
               key={trimmedTitle + address}
-              onClick={() => {
-                if (isCardActive) {
-                  setActiveCard(null)
-                } else {
-                  setActiveCard(address || '')
-                }
-              }}
+              onClick={() => setActiveCard(isCardActive ? null : address)}
               isExpanded={openedAccordeon === item.address}
               handleExpandAccordeon={setOpenedAcordeon}
             />

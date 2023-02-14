@@ -1,4 +1,4 @@
-export const BREAK_GLASS_STORAGE_QUERY = `
+export const BREAK_GLASS_CONFIG_QUERY = `
  query GetBreakGlassStorageQuery {
     break_glass {
       action_counter
@@ -6,33 +6,20 @@ export const BREAK_GLASS_STORAGE_QUERY = `
       address
       glass_broken
       threshold
-      actions {
-        action_type
-        break_glass_id
-        executed
-        expiration_datetime
-        id
-        initiator_id
-        start_datetime
-        status
-        signers {
-          signer_id
-          id
-          break_glass_action_id
-        }
-        signers_count
-      }
-      council_member_image_max_length
-      council_member_name_max_length
-      council_member_website_max_length
       admin
       governance_id
+    }
+
+    whitelist_developer {
+      developer {
+        address
+      }
     }
   }
 `
 
-export const BREAK_GLASS_STORAGE_QUERY_NAME = 'GetBreakGlassStorageQuery'
-export const BREAK_GLASS_STORAGE_QUERY_VARIABLE = {}
+export const BREAK_GLASS_CONFIG_QUERY_NAME = 'GetBreakGlassStorageQuery'
+export const BREAK_GLASS_CONFIG_QUERY_VARIABLE = {}
 
 export const BREAK_GLASS_STATUS_QUERY = `
   query GetBreakGlassStatusQuery {
@@ -113,15 +100,3 @@ export const BREAK_GLASS_STATUS_QUERY = `
 
 export const BREAK_GLASS_STATUS_QUERY_NAME = 'GetBreakGlassStatusQuery'
 export const BREAK_GLASS_STATUS_QUERY_VARIABLE = {}
-
-export const WHITELIST_DEV_QUERY = `
-query GetWhitelistDevQuery {
-  whitelist_developer {
-    developer {
-      address
-    }
-  }
-}
-`
-export const WHITELIST_DEV_QUERY_NAME = 'GetWhitelistDevQuery'
-export const WHITELIST_DEV_QUERY_VARIABLE = {}

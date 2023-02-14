@@ -18,10 +18,17 @@ import {
   MY_PAST_BREAK_GLASS_COUNCIL_ACTION_QUERY,
   MY_PAST_BREAK_GLASS_COUNCIL_ACTION_QUERY_NAME,
   MY_PAST_BREAK_GLASS_COUNCIL_ACTION_QUERY_VARIABLE,
+  BREAK_GLASS_COUNSIL_CONFIG_QUERY,
+  BREAK_GLASS_COUNSIL_CONFIG_QUERY_NAME,
+  BREAK_GLASS_COUNSIL_CONFIG_QUERY_VARIABLE,
 } from '../../gql/queries/getBreakGlassCouncilStorage'
 
 // helpers
-import { normalizeBreakGlassAction, normalizeBreakGlassCouncilMember } from './BreakGlassCouncil.helpers'
+import {
+  normalizeBreakGlassAction,
+  normalizeBreakGlassCouncilConfig,
+  normalizeBreakGlassCouncilMember,
+} from './BreakGlassCouncil.helpers'
 import { parseDate } from 'utils/time'
 
 // actions
@@ -73,6 +80,14 @@ export const getBreakGlassActionPendingSignature = () => async (dispatch: AppDis
       BREAK_GLASS_ACTION_PENDING_SIGNATURE_QUERY_VARIABLE({ _gte: timestamptz }),
     )
 
+    const configStorage = await fetchFromIndexerWithPromise(
+      BREAK_GLASS_COUNSIL_CONFIG_QUERY,
+      BREAK_GLASS_COUNSIL_CONFIG_QUERY_NAME,
+      BREAK_GLASS_COUNSIL_CONFIG_QUERY_VARIABLE,
+    )
+
+    const config = normalizeBreakGlassCouncilConfig(configStorage)
+
     const breakGlassActionPendingAllSignature = normalizeBreakGlassAction(storage)
     const breakGlassActionPendingSignature = normalizeBreakGlassAction(storage, { filterWithoutAddress: accountPkh })
     const breakGlassActionPendingMySignature = normalizeBreakGlassAction(storage, { filterByAddress: accountPkh })
@@ -85,7 +100,10 @@ export const getBreakGlassActionPendingSignature = () => async (dispatch: AppDis
       breakGlassActionPendingAllSignature,
       breakGlassActionPendingSignature,
       breakGlassActionPendingMySignature,
-      isPendingPropagateBreakGlass,
+      config: {
+        ...config,
+        isPendingPropagateBreakGlass,
+      },
     })
   } catch (error) {
     if (error instanceof Error) {

@@ -37,7 +37,7 @@ const INIT_FORM = {
 
 export function FormChangeCouncilMemberView({ councilMemberMaxLength }: Props) {
   const dispatch = useDispatch()
-  const { breakGlassCouncilMember } = useSelector((state: State) => state.breakGlass)
+  const { breakGlassCouncilMember } = useSelector((state: State) => state.breakGlassCounsil)
 
   const itemsForDropDown = breakGlassCouncilMember.map((item) => {
     return {
