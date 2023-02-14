@@ -1,13 +1,7 @@
 export const BREAK_GLASS_CONFIG_QUERY = `
  query GetBreakGlassStorageQuery {
     break_glass {
-      action_counter
-      action_expiry_days
-      address
       glass_broken
-      threshold
-      admin
-      governance_id
     }
 
     whitelist_developer {
