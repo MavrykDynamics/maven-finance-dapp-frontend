@@ -16,6 +16,7 @@ import { LendingContentStyled, TabWrapperStyled, EmptyContainer } from './Dashbo
 import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
+import { calcDiffBetweenTwoNumbersInPersentage } from 'utils/calcFunctions'
 
 export const emptyContainer = (
   <EmptyContainer>
@@ -27,50 +28,49 @@ export const emptyContainer = (
 export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
   const { loanTokens, chartsData } = useSelector((state: State) => state.loans)
 
-  const { lendingSuppliers, borrowers, mostBorrowedAsset, mostLendedAsset, lending24hVolume, borrowing24hVolume } =
-    useMemo(() => {
-      return loanTokens.reduce<{
-        lendingSuppliers: number
-        borrowers: number
-        mostBorrowedAsset: LoanMarketType['loanTokenData'] | null
-        mostLendedAsset: LoanMarketType['loanTokenData'] | null
-        prevMostBorrowed: number
-        borrowing24hVolume: number
-        lending24hVolume: number
-        prevMostLended: number
-      }>(
-        (
-          acc,
-          { suppliers, borrowers, totalBorrowed, totalLended, loanTokenData, lending24hVolume, borrowing24hVolume },
-        ) => {
-          acc.lendingSuppliers += suppliers
-          acc.borrowers += borrowers
-          acc.borrowing24hVolume += borrowing24hVolume
-          acc.lending24hVolume += lending24hVolume
+  const { lendingSuppliers, borrowers, mostBorrowedAsset, mostLendedAsset } = useMemo(() => {
+    return loanTokens.reduce<{
+      lendingSuppliers: number
+      borrowers: number
+      mostBorrowedAsset: LoanMarketType['loanTokenData'] | null
+      mostLendedAsset: LoanMarketType['loanTokenData'] | null
+      prevMostBorrowed: number
+      prevMostLended: number
+    }>(
+      (acc, { suppliers, borrowers, totalBorrowed, totalLended, loanTokenData }) => {
+        acc.lendingSuppliers += suppliers
+        acc.borrowers += borrowers
 
-          if (acc.prevMostBorrowed < totalBorrowed * loanTokenData.rate) {
-            acc.prevMostBorrowed = totalBorrowed * loanTokenData.rate
-            acc.mostBorrowedAsset = loanTokenData as LoanMarketType['loanTokenData']
-          }
+        if (acc.prevMostBorrowed < totalBorrowed * loanTokenData.rate) {
+          acc.prevMostBorrowed = totalBorrowed * loanTokenData.rate
+          acc.mostBorrowedAsset = loanTokenData as LoanMarketType['loanTokenData']
+        }
 
-          if (acc.prevMostLended < totalLended * loanTokenData.rate) {
-            acc.prevMostLended = totalLended * loanTokenData.rate
-            acc.mostLendedAsset = loanTokenData as LoanMarketType['loanTokenData']
-          }
-          return acc
-        },
-        {
-          lendingSuppliers: 0,
-          borrowers: 0,
-          lending24hVolume: 0,
-          borrowing24hVolume: 0,
-          prevMostBorrowed: 0,
-          prevMostLended: 0,
-          mostBorrowedAsset: null,
-          mostLendedAsset: null,
-        },
-      )
-    }, [loanTokens])
+        if (acc.prevMostLended < totalLended * loanTokenData.rate) {
+          acc.prevMostLended = totalLended * loanTokenData.rate
+          acc.mostLendedAsset = loanTokenData as LoanMarketType['loanTokenData']
+        }
+        return acc
+      },
+      {
+        lendingSuppliers: 0,
+        borrowers: 0,
+        prevMostBorrowed: 0,
+        prevMostLended: 0,
+        mostBorrowedAsset: null,
+        mostLendedAsset: null,
+      },
+    )
+  }, [loanTokens])
+
+  const lending24hPersentChange = calcDiffBetweenTwoNumbersInPersentage(
+    chartsData.lendBorrow24hDiff.last24hLending,
+    chartsData.lendBorrow24hDiff.last48hLending,
+  )
+  const borrowing24hPersentChange = calcDiffBetweenTwoNumbersInPersentage(
+    chartsData.lendBorrow24hDiff.last24hBorrowing,
+    chartsData.lendBorrow24hDiff.last48hBorrowing,
+  )
 
   return (
     <TabWrapperStyled backgroundImage="dashboard_lendingTab_bg.png">
@@ -93,7 +93,9 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
               <div className="name">Total Supplied</div>
               <div className="value">
                 <CommaNumber beginningText="$" value={chartsData.totalLended} />
-                <div className={`impact ${false ? 'up' : 'down'}`}>{false ? '+' : '-'} 27%</div>
+                <div className={`impact ${lending24hPersentChange > 0 ? 'up' : 'down'}`}>
+                  {lending24hPersentChange > 0 ? '+' : '-'} {lending24hPersentChange}%
+                </div>
               </div>
             </StatBlock>
 
@@ -107,7 +109,7 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
               <StatBlock>
                 <div className="name">24H Supply Vol</div>
                 <div className="value">
-                  <CommaNumber beginningText="$" value={lending24hVolume} />
+                  <CommaNumber beginningText="$" value={chartsData.lendBorrow24hDiff.last24hLending} />
                 </div>
               </StatBlock>
               <StatBlock>
@@ -132,7 +134,9 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
               <div className="name">Total Borrowed</div>
               <div className="value">
                 <CommaNumber beginningText="$" value={chartsData.totalBorrowed} />
-                <div className={`impact ${true ? 'up' : 'down'}`}>{true ? '+' : '-'} 27%</div>
+                <div className={`impact ${borrowing24hPersentChange > 0 ? 'up' : 'down'}`}>
+                  {borrowing24hPersentChange > 0 ? '+' : '-'} {borrowing24hPersentChange}%
+                </div>
               </div>
             </StatBlock>
 
@@ -146,7 +150,7 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
               <StatBlock>
                 <div className="name">24H Borrow Vol</div>
                 <div className="value">
-                  <CommaNumber beginningText="$" value={borrowing24hVolume} />
+                  <CommaNumber beginningText="$" value={chartsData.lendBorrow24hDiff.last24hBorrowing} />
                 </div>
               </StatBlock>
               <StatBlock>

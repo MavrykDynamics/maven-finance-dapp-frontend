@@ -142,6 +142,7 @@ const getTransactionHistory = (
     { transactionHistory: [], totalBorrowed: 0, totalLended: 0, lending24hVolume: 0, borrowing24hVolume: 0 },
   )
 
+const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000
 // Normalizing chart data
 const getChartData = (
   history_data: Lending_Controller_History_Data[],
@@ -160,10 +161,22 @@ const getChartData = (
       })
 
       if (assetMetadata) {
+        const operationTimestampAndNowDiffInMs = new Date(Date.now()).getTime() - new Date(timestamp).getTime()
+        const isLast24hOperation = operationTimestampAndNowDiffInMs <= ONE_DAY_IN_MS
+        const islast48hOperation =
+          operationTimestampAndNowDiffInMs <= ONE_DAY_IN_MS * 2 && operationTimestampAndNowDiffInMs >= ONE_DAY_IN_MS
+
         switch (type) {
           case 0:
           case 1:
             const lendedAmount = (amount / 10 ** assetMetadata.decimals) * assetMetadata.rate
+            if (isLast24hOperation) {
+              acc.lendBorrow24hDiff.last24hLending += lendedAmount
+            }
+
+            if (islast48hOperation) {
+              acc.lendBorrow24hDiff.last48hLending += lendedAmount
+            }
             acc.totalLended += lendedAmount
             acc.lendingChartData.push({ time: new Date(timestamp).getTime() as UTCTimestamp, value: acc.totalLended })
             break
@@ -171,6 +184,13 @@ const getChartData = (
           case 2:
           case 3:
             const borrowedAmount = (amount / 10 ** assetMetadata.decimals) * assetMetadata.rate
+            if (isLast24hOperation) {
+              acc.lendBorrow24hDiff.last24hBorrowing += borrowedAmount
+            }
+
+            if (islast48hOperation) {
+              acc.lendBorrow24hDiff.last48hBorrowing += borrowedAmount
+            }
             acc.totalBorrowed += borrowedAmount
             acc.borrowingChartData.push({
               time: new Date(timestamp).getTime() as UTCTimestamp,
@@ -187,6 +207,12 @@ const getChartData = (
       borrowingChartData: [],
       totalLended: 0,
       lendingChartData: [],
+      lendBorrow24hDiff: {
+        last48hLending: 0,
+        last24hLending: 0,
+        last48hBorrowing: 0,
+        last24hBorrowing: 0,
+      },
     },
   )
 
