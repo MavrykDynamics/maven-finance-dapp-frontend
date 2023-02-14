@@ -111,15 +111,15 @@ export const fetchUserData = async (
     // getting user rewards
     userInfo.myDoormanRewardsData = calcUsersDoormanRewards({
       mySMvkTokenBalance: userInfo.mySMvkTokenBalance ?? 0,
-      userDoormanRewardsFromGQL: userRewardsData.doorman[0] as Doorman,
+      userDoormanRewardsFromGQL: userRewardsData.doorman[0],
     })
     userInfo.mySatelliteRewardsData = calcUsersSatelliteRewards({
       mySMvkTokenBalance: userInfo.mySMvkTokenBalance ?? 0,
-      userSatelliteRewardsFromGQL: userRewardsData.satellite_rewards[0] as Satellite_Rewards,
+      userSatelliteRewardsFromGQL: userRewardsData.satellite_rewards[0],
     })
     userInfo.myFarmRewardsData = calcUsersFarmRewards({
       currentBlockLevel: currentBlockLevel,
-      userFarmsRewardsFromGQL: userRewardsData.farm as Array<Farm>,
+      userFarmsRewardsFromGQL: userRewardsData.farm,
     })
 
     const loanTokens = userRewardsData.lending_controller[0].loan_tokens as Array<Lending_Controller_Loan_Token>
