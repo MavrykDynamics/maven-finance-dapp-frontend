@@ -82,7 +82,7 @@ export function FormSetAllContractsAdminView() {
           <Input inputProps={inputProps} settings={inputSettings} />
         </div>
 
-        <NewButton className="stroke-01" kind={ACTION_PRIMARY} type={SUBMIT}>
+        <NewButton kind={ACTION_PRIMARY} type={SUBMIT}>
           <Icon id="profile" />
           Set Contracts Admin
         </NewButton>

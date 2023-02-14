@@ -39,11 +39,6 @@ export const FormStyled = styled.div<{ theme: MavrykTheme }>`
     white-space: nowrap;
   }
 
-  svg {
-    stroke: transparent;
-    fill: transparent;
-  }
-
   .address {
     display: flex;
     align-items: center;
