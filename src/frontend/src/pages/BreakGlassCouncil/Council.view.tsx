@@ -41,9 +41,7 @@ import {
 } from './BreakGlassCouncil.style'
 
 // types
-import { BreakGlassActions } from 'utils/TypesAndInterfaces/BreakGlass'
-import { BreakGlassCouncilMember } from 'utils/TypesAndInterfaces/BreakGlass'
-import { CouncilMemberMaxLength } from 'utils/TypesAndInterfaces/Council'
+import { CouncilMemberMaxLength, CouncilActions, CouncilMembers } from 'utils/TypesAndInterfaces/Council'
 
 // actions
 import { propagateBreakGlass } from './BreakGlassCouncil.actions'
@@ -57,12 +55,12 @@ type Props = {
   memberMaxLength: CouncilMemberMaxLength
   glassBroken: boolean
   paginationListName: string
-  allPendingActions: BreakGlassActions
-  notMyPendingActions: BreakGlassActions
-  myPendingActions: BreakGlassActions
-  allPastActions: BreakGlassActions
-  myPastActions: BreakGlassActions
-  members: BreakGlassCouncilMember
+  allPendingActions: CouncilActions
+  notMyPendingActions: CouncilActions
+  myPendingActions: CouncilActions
+  allPastActions: CouncilActions
+  myPastActions: CouncilActions
+  members: CouncilMembers
   dropdowndActions: Record<string, string>
   handleSignAction: (id: number) => void
   handleDropAction: (id: number) => void
@@ -234,7 +232,7 @@ export function CouncilView({
                           actionType={item.actionType}
                           signersCount={item.signersCount}
                           numCouncilMembers={members.length}
-                          councilId={item.breakGlassId}
+                          councilId={item.councilId}
                         />
                       ))
                     : councilEmptyContainer}
@@ -252,7 +250,7 @@ export function CouncilView({
                           actionType={item.actionType}
                           signersCount={item.signersCount}
                           numCouncilMembers={members.length}
-                          councilId={item.breakGlassId}
+                          councilId={item.councilId}
                         />
                       ))
                     : councilEmptyContainer}

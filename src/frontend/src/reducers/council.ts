@@ -13,20 +13,14 @@ export interface CouncilState {
 }
 
 const defaultCouncilStorage: CouncilStorage = {
-  address: '',
-  config: {
-    threshold: 0,
-    actionExpiryDays: 0,
-  },
   councilMemberImageMaxLength: 0,
   councilMemberNameMaxLength: 0,
   councilMemberWebsiteMaxLength: 0,
   requestPurposeMaxLength: 0,
   requestTokenNameMaxLength: 0,
-  councilActionsLedger: [],
   councilMembers: [],
-  actionCounter: 0,
 }
+
 const councilDefaultState: CouncilState = {
   councilStorage: defaultCouncilStorage,
   councilAllPendingActions: [],

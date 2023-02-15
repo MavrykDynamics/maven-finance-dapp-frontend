@@ -14,9 +14,8 @@ import {
   BreakGlassStorage,
   BreakGlassStatusStorage,
   WhitelistDevStorage,
-  BreakGlassCouncilMember,
-  BreakGlassActions,
 } from '../utils/TypesAndInterfaces/BreakGlass'
+import { CouncilActions, CouncilMembers } from 'utils/TypesAndInterfaces/Council'
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
 
 export interface BreakGlassState {
@@ -25,12 +24,12 @@ export interface BreakGlassState {
   isPendingPropagateBreakGlass: boolean
   breakGlassStatus: BreakGlassStatusStorage
   whitelistDev: WhitelistDevStorage
-  breakGlassCouncilMember: BreakGlassCouncilMember
-  breakGlassActionPendingAllSignature: BreakGlassActions
-  breakGlassActionPendingSignature: BreakGlassActions
-  breakGlassActionPendingMySignature: BreakGlassActions
-  pastBreakGlassCouncilAction: BreakGlassActions
-  myPastBreakGlassCouncilAction: BreakGlassActions
+  breakGlassCouncilMember: CouncilMembers
+  breakGlassActionPendingAllSignature: CouncilActions
+  breakGlassActionPendingSignature: CouncilActions
+  breakGlassActionPendingMySignature: CouncilActions
+  pastBreakGlassCouncilAction: CouncilActions
+  myPastBreakGlassCouncilAction: CouncilActions
 }
 
 const defaultBreakGlassStorage: BreakGlassStorage = {

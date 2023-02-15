@@ -10,20 +10,14 @@ import { councilEmptyContainer } from './Council.controller'
 import { TabSwitcher } from './Council.style'
 
 // types
-import { BreakGlassActions } from 'utils/TypesAndInterfaces/BreakGlass'
+import { CouncilActions } from 'utils/TypesAndInterfaces/Council' 
 import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
-import { CouncilActions } from 'utils/TypesAndInterfaces/Council'
 import { CouncilPageType } from './CouncilActions/CouncilOngoingAction.view'
 
-type MyPastCouncilActionType = (BreakGlassActions[0] | CouncilActions[0]) & {
-  councilId?: string
-  breakGlassId?: string
-}
-
 type Props = {
-  myPastCouncilAction: MyPastCouncilActionType[]
+  myPastCouncilAction: CouncilActions
   myPastCouncilActionLength: number
-  actionPendingSignature: BreakGlassActions | CouncilActions
+  actionPendingSignature: CouncilActions
   actionPendingSignatureLength: number
   numCouncilMembers: number
   activeActionTab: string
@@ -65,7 +59,7 @@ export function MyCouncilActions({
                   actionType={item.actionType}
                   signersCount={item.signersCount}
                   numCouncilMembers={numCouncilMembers}
-                  councilId={item?.breakGlassId || item?.councilId || ''}
+                  councilId={item.councilId}
                 />
               ))
             : councilEmptyContainer}

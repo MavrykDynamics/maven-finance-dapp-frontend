@@ -1,8 +1,8 @@
 // types
-import { CouncilGraphQL, CouncilActionRecordhQL, CouncilStorage } from '../../utils/TypesAndInterfaces/Council'
+import { CouncilGraphQL, CouncilActionGraphQL, CouncilMembers } from '../../utils/TypesAndInterfaces/Council'
 
 // helpers
-import { 
+import {
   defaultCouncilMemberImageMaxLength,
   defaultCouncilMemberNameMaxLength,
   defaultCouncilMemberWebsiteMaxLength,
@@ -10,33 +10,10 @@ import {
   defaultRequestTokenNameMaxLength,
 } from 'app/App.components/Input/Input.constants'
 
-export const noralizeCouncilStorage = (storage: CouncilGraphQL) => {
-  const councilActionsLedger = storage?.actions?.length
-    ? storage?.actions.map((actionRecord) => {
-        const signers = actionRecord.signers?.length
-          ? actionRecord.signers.map((signer) => {
-              return {
-                id: signer.id,
-                signerId: signer.signer_id,
-              }
-            })
-          : []
+export const normalizeCouncilStorage = (storage: CouncilGraphQL) => {
+  const { members = [] } = storage
 
-        return {
-          actionType: actionRecord.action_type,
-          councilId: actionRecord.council_id,
-          executed: actionRecord.executed,
-          expirationDatetime: new Date(actionRecord.expiration_datetime as string),
-          id: actionRecord.id,
-          initiatorId: actionRecord.initiator_id,
-          startDatetime: new Date(actionRecord.start_datetime as string),
-          status: actionRecord.status,
-          signers,
-        }
-      })
-    : []
-
-  const councilMembers = storage?.members.map((member) => {
+  const councilMembers = members.map((member) => {
     return {
       id: member.id,
       name: member.name,
@@ -44,27 +21,16 @@ export const noralizeCouncilStorage = (storage: CouncilGraphQL) => {
       userId: member.user_id,
       website: member.website,
     }
-  }) 
+  })
 
   return {
-    address: storage?.address,
-    config: {
-      threshold: storage?.threshold,
-      actionExpiryDays: storage?.action_expiry_days,
-    },
-    actionCounter: storage?.action_counter,
     councilMemberImageMaxLength: storage?.council_member_image_max_length || defaultCouncilMemberImageMaxLength,
     councilMemberNameMaxLength: storage?.council_member_name_max_length || defaultCouncilMemberNameMaxLength,
     councilMemberWebsiteMaxLength: storage?.council_member_website_max_length || defaultCouncilMemberWebsiteMaxLength,
     requestPurposeMaxLength: storage?.request_purpose_max_length || defaultRequestPurposeMaxLength,
     requestTokenNameMaxLength: storage?.request_token_name_max_length || defaultRequestTokenNameMaxLength,
-    councilActionsLedger,
-    councilMembers: storage?.members?.length ? councilMembers : [],
+    councilMembers,
   }
-}
-
-type CouncilActionProps = {
-  council_action: CouncilActionRecordhQL[]
 }
 
 type Options = {
@@ -72,67 +38,63 @@ type Options = {
   filterWithoutAddress?: string
 }
 
-export const normalizeCouncilActions = (storage: CouncilActionProps, options?: Options) => {
-  const { council_action } = storage
-  if (!council_action?.length) return []
+export function normalizeCouncilActions(storage: CouncilActionGraphQL[], options?: Options) {
+  if (!storage?.length) return []
 
-  const filterByAddress = options?.filterByAddress
-  const filterWithoutAddress = options?.filterWithoutAddress
-  let list: CouncilActionRecordhQL[] = []
+  const { filterByAddress = '', filterWithoutAddress = ''} = options ?? {}
+
+  let list: CouncilActionGraphQL[] = []
 
   if (filterByAddress) {
-    list = council_action.filter((item) => item.initiator_id === filterByAddress)
+    list = storage.filter((item) => item.initiator_id === filterByAddress)
   } else if (filterWithoutAddress) {
-    list = council_action.filter((item) => item.initiator_id !== filterWithoutAddress)
+    list = storage.filter((item) => item.initiator_id !== filterWithoutAddress)
   } else {
-    list = council_action
+    list = storage
   }
 
-  const result = list.map(item => (
-    {
+  return list.map((item) => {
+    const signers = item?.signers?.length
+      ? item.signers.map((signer) => {
+          return {
+            councilAction: signer.council_action || signer.break_glass_action,
+            councilActionId: signer.council_action_id || signer.break_glass_action_id,
+            id: signer.id,
+            signer: signer.signer,
+            signerId: signer.signer_id,
+          }
+        })
+      : []
+
+    return {
       actionType: item.action_type,
-      councilId: item.council_id,
+      councilId: item.council_id || item.break_glass_id,
       executed: item.executed,
       executionDatetime: item.execution_datetime,
-      expirationDatetime: item.execution_datetime,
+      executionLevel: item.execution_level,
+      expirationDatetime: item.expiration_datetime,
       id: item.id,
+      initiator: item.initiator,
       initiatorId: item.initiator_id,
+      parameters: item.parameters,
+      parametersAggregate: item.parameters_aggregate,
+      signers,
+      signersAggregate: item.signers_aggregate,
+      signersCount: item.signers_count,
       startDatetime: item.start_datetime,
       status: item.status,
-      parameters: item.parameters?.map((param) => (
-        {
-          id: param.id,
-          name: param.name,
-          value: param.value,
-        }
-      )) || [],
-      signersCount: item.signers_count,
-      signers: item.signers?.map((signer) => (
-        {
-          council_action: signer.council_action,
-          council_action_id: signer.council_action_id,
-          id: signer.id,
-          signer: signer.signer,
-          signer_id: signer.signer_id,
-        }
-      )) || [],
     }
-  ))
-
-  return result
+  })
 }
 
-type CouncilMember = CouncilStorage['councilMembers']
-
-export const memberIsFirstOfList = (list: CouncilMember, address?: string) => {
+export const memberIsFirstOfList = (list: CouncilMembers, address?: string) => {
   const indexOfMember = list.findIndex((item) => item.userId === address)
 
   if (indexOfMember === -1) {
     return list
   }
 
-  const updatedList = [list[indexOfMember]].concat(list.filter(({userId}) => userId !== address))
+  const updatedList = [list[indexOfMember]].concat(list.filter(({ userId }) => userId !== address))
 
   return updatedList
 }
-

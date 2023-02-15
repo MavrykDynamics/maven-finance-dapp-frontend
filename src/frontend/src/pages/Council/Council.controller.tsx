@@ -235,9 +235,7 @@ export const Council = () => {
         ) : null}
 
         <article
-          className={`council-details ${isPendingList ? 'is-user-member' : ''} ${
-            !tabId ? 'is-pending-signature' : ''
-          }`}
+          className={`council-details ${isPendingList ? 'is-user-member' : ''} ${!tabId ? 'is-pending-signature' : ''}`}
         >
           <div className="council-actions">
             {!tabId && isPendingList ? (
@@ -275,7 +273,9 @@ export const Council = () => {
                   />
                 </DropdownWrap>
                 {chosenDdItem?.value === 'addVestee' ? <CouncilFormAddVestee /> : null}
-                {chosenDdItem?.value === 'addCouncilMember' ? <CouncilFormAddCouncilMember {...memberMaxLength} /> : null}
+                {chosenDdItem?.value === 'addCouncilMember' ? (
+                  <CouncilFormAddCouncilMember {...memberMaxLength} />
+                ) : null}
                 {chosenDdItem?.value === 'updateVestee' ? <CouncilFormUpdateVestee /> : null}
                 {chosenDdItem?.value === 'removeVestee' ? <CouncilFormRemoveVestee /> : null}
                 {chosenDdItem?.value === 'toggleVesteeLock' ? <CouncilFormToggleVesteeLock /> : null}
@@ -371,9 +371,7 @@ export const Council = () => {
               isPendingList && !tabId ? 'is-pending-list' : ''
             }`}
           >
-            {!tabId ? (
-              <CouncilPendingReviewView onClick={handleClickReview} queryParameters={queryParameters} />
-            ) : null}
+            {!tabId ? <CouncilPendingReviewView onClick={handleClickReview} queryParameters={queryParameters} /> : null}
 
             {sortedCouncilMembers.length ? (
               <div>

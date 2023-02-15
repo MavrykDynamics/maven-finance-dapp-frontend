@@ -21,7 +21,8 @@ import {
 } from '../../gql/queries/getBreakGlassCouncilStorage'
 
 // helpers
-import { normalizeBreakGlassAction, normalizeBreakGlassCouncilMember } from './BreakGlassCouncil.helpers'
+import { normalizeBreakGlassCouncilMember } from './BreakGlassCouncil.helpers'
+import { normalizeCouncilActions } from 'pages/Council/Council.helpers'
 import { parseDate } from 'utils/time'
 
 // actions
@@ -46,7 +47,8 @@ export const getMyPastBreakGlassCouncilAction = () => async (dispatch: AppDispat
         )
       : { break_glass_action: [] }
 
-    const myPastBreakGlassCouncilAction = normalizeBreakGlassAction(storage)
+    const breakGlassCouncil = storage?.break_glass_action || []
+    const myPastBreakGlassCouncilAction = normalizeCouncilActions(storage.break_glass_action)
 
     await dispatch({
       type: GET_MY_PAST_BREAK_GLASS_COUNCIL_ACTION,
@@ -73,9 +75,15 @@ export const getBreakGlassActionPendingSignature = () => async (dispatch: AppDis
       BREAK_GLASS_ACTION_PENDING_SIGNATURE_QUERY_VARIABLE({ _gte: timestamptz }),
     )
 
-    const breakGlassActionPendingAllSignature = normalizeBreakGlassAction(storage)
-    const breakGlassActionPendingSignature = normalizeBreakGlassAction(storage, { filterWithoutAddress: accountPkh })
-    const breakGlassActionPendingMySignature = normalizeBreakGlassAction(storage, { filterByAddress: accountPkh })
+    const breakGlassCouncil = storage?.break_glass_action || []
+
+    const breakGlassActionPendingAllSignature = normalizeCouncilActions(breakGlassCouncil)
+    const breakGlassActionPendingSignature = normalizeCouncilActions(breakGlassCouncil, {
+      filterWithoutAddress: accountPkh,
+    })
+    const breakGlassActionPendingMySignature = normalizeCouncilActions(breakGlassCouncil, {
+      filterByAddress: accountPkh,
+    })
     const isPendingPropagateBreakGlass = Boolean(
       breakGlassActionPendingAllSignature.find((item) => item.actionType === 'propagateBreakGlass'),
     )
@@ -101,15 +109,18 @@ export const getPastBreakGlassCouncilAction = () => async (dispatch: AppDispatch
   const state: State = getState()
 
   try {
-    const pastBreakGlassCouncilAction = await fetchFromIndexerWithPromise(
+    const storage = await fetchFromIndexerWithPromise(
       PAST_BREAK_GLASS_COUNCIL_ACTION_QUERY,
       PAST_BREAK_GLASS_COUNCIL_ACTION_QUERY_NAME,
       PAST_BREAK_GLASS_COUNCIL_ACTION_QUERY_VARIABLE({ _lt: timestamptz }),
     )
 
+    const breakGlassCouncil = storage?.break_glass_action || []
+    const pastBreakGlassCouncilAction = normalizeCouncilActions(breakGlassCouncil)
+
     await dispatch({
       type: GET_PAST_BREAK_GLASS_COUNCIL_ACTION,
-      pastBreakGlassCouncilAction: normalizeBreakGlassAction(pastBreakGlassCouncilAction),
+      pastBreakGlassCouncilAction,
     })
   } catch (error) {
     if (error instanceof Error) {

@@ -18,7 +18,7 @@ import {
   COUNCIL_STORAGE_QUERY_NAME,
   COUNCIL_STORAGE_QUERY_VARIABLE,
 } from '../../gql/queries/getCouncilStorage'
-import { noralizeCouncilStorage, normalizeCouncilActions } from './Council.helpers'
+import { normalizeCouncilStorage, normalizeCouncilActions } from './Council.helpers'
 import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 
 const time = String(new Date())
@@ -34,7 +34,7 @@ export const getCouncilStorage = () => async (dispatch: AppDispatch, getState: G
       COUNCIL_STORAGE_QUERY_VARIABLE,
     )
 
-    const convertedStorage = noralizeCouncilStorage(storage?.council[0])
+    const convertedStorage = normalizeCouncilStorage(storage?.council[0])
 
     dispatch({
       type: GET_COUNCIL_STORAGE,
@@ -60,8 +60,10 @@ export const getCouncilPastActionsStorage = () => async (dispatch: AppDispatch, 
       COUNCIL_PAST_ACTIONS_VARIABLE,
     )
 
-    const councilPastActions = normalizeCouncilActions(storage)
-    const councilMyPastActions = normalizeCouncilActions(storage, { filterByAddress: accountPkh })
+    const council = storage?.council_action || []
+
+    const councilPastActions = normalizeCouncilActions(council)
+    const councilMyPastActions = normalizeCouncilActions(council, { filterByAddress: accountPkh })
 
     dispatch({
       type: GET_COUNCIL_PAST_ACTIONS_STORAGE,
@@ -88,9 +90,11 @@ export const getCouncilPendingActionsStorage = () => async (dispatch: AppDispatc
       COUNCIL_PENDING_ACTIONS_VARIABLE({ _gte: timestamptz }),
     )
 
-    const councilAllPendingActions = normalizeCouncilActions(storage)
-    const councilPendingActions = normalizeCouncilActions(storage, { filterWithoutAddress: accountPkh })
-    const councilMyPendingActions = normalizeCouncilActions(storage, { filterByAddress: accountPkh })
+    const council = storage?.council_action || []
+
+    const councilAllPendingActions = normalizeCouncilActions(council)
+    const councilPendingActions = normalizeCouncilActions(council, { filterWithoutAddress: accountPkh })
+    const councilMyPendingActions = normalizeCouncilActions(council, { filterByAddress: accountPkh })
 
     dispatch({
       type: GET_COUNCIL_PENDING_ACTIONS_STORAGE,

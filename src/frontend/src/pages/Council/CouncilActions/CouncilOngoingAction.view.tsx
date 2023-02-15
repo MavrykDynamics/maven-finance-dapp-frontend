@@ -16,12 +16,11 @@ import { convertBytesAddressToAddress } from 'app/App.helpers'
 import { CouncilActionStyled } from '../Council.style'
 
 // types
-import { BreakGlassActions } from 'utils/TypesAndInterfaces/BreakGlass'
 import { CouncilActions } from 'utils/TypesAndInterfaces/Council'
 
 export type CouncilPageType = 'council' | 'breakGlassCouncil'
 
-type Props = (BreakGlassActions[0] | CouncilActions[0]) & {
+type Props = CouncilActions[0] & {
   numCouncilMembers: number
   handleDropAction: (arg: number) => void
   pageType: CouncilPageType
@@ -32,6 +31,7 @@ export function CouncilOngoingAction(props: Props) {
     props
   const [isOpen, setIsOpen] = useState(false)
   const ref = useRef<HTMLDivElement | null>(null)
+  // TODO: use props for page name
   const isCouncilPage = pageType === 'council'
 
   const handleClickCard = () => {
