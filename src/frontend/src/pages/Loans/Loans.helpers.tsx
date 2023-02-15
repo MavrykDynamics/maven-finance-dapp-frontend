@@ -235,7 +235,7 @@ const getLendingItem = (
   accountPkh?: string,
 ): LendingItemType => {
   if (userMTokens && loanToken && accountPkh) {
-    const mTokenAsset = userMTokens?.find(({ m_token_id }) => m_token_id === loanToken.lp_token_address)
+    const mTokenAsset = userMTokens?.find(({ m_token_id }) => m_token_id === loanToken.loan_token_address)
 
     if (mTokenAsset) {
       return {
