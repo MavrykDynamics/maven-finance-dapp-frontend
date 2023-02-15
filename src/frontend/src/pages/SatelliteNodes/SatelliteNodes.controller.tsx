@@ -16,9 +16,7 @@ const SatelliteNodes = () => {
     governanceStorage: { financialRequestLedger, proposalLedger },
     pastProposals,
   } = useSelector((state: State) => state.governance)
-  const {
-    emergencyGovernanceStorage: { emergencyGovernanceLedger },
-  } = useSelector((state: State) => state.emergencyGovernance)
+  const { eGovProposals } = useSelector((state: State) => state.emergencyGovernance)
   const dispatch = useDispatch()
 
   const [allSatellites, setAllSatellites] = useState<SatelliteRecord[]>(activeSatellites)
@@ -72,7 +70,7 @@ const SatelliteNodes = () => {
           const aMetrics = getSatelliteMetrics(
             pastProposals,
             proposalLedger,
-            emergencyGovernanceLedger,
+            eGovProposals,
             a,
             feeds,
             financialRequestLedger,
@@ -81,7 +79,7 @@ const SatelliteNodes = () => {
           const bMetrics = getSatelliteMetrics(
             pastProposals,
             proposalLedger,
-            emergencyGovernanceLedger,
+            eGovProposals,
             b,
             feeds,
             financialRequestLedger,

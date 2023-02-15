@@ -1,38 +1,38 @@
-import {
-  GET_EMERGENCY_GOVERNANCE_STORAGE,
-  SET_EMERGENCY_GOVERNANCE_ACTIVE,
-  SET_HAS_ACKNOWLEDGED_EMERGENCY_GOV,
-} from '../pages/EmergencyGovernance/EmergencyGovernance.actions'
-import { EmergencyGovernanceStorage } from '../utils/TypesAndInterfaces/EmergencyGovernance'
+import { EmergencyGovernanceStorage } from 'utils/TypesAndInterfaces/EmergencyGovernance'
+import { GET_EMERGENCY_GOVERNANCE_STORAGE } from '../pages/EmergencyGovernance/EmergencyGovernance.actions'
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
 
 export interface EmergencyGovernanceState {
-  type?: typeof GET_EMERGENCY_GOVERNANCE_STORAGE
-  emergencyGovernanceStorage: EmergencyGovernanceStorage
-  emergencyGovActive: boolean
-  hasAcknowledgeEmergencyGovernance: boolean
-}
-
-const defaultEmergencyGovernanceStorage: EmergencyGovernanceStorage = {
-  address: '',
+  eGovProposals: EmergencyGovernanceStorage['emergencyGovernanceLedger']
   config: {
-    minStakedMvkRequiredToTrigger: 0,
-    minStakedMvkRequiredToVote: 0,
-    requiredFeeMutez: 10,
-    voteExpiryDays: 3,
-    sMvkPercentageRequired: 0,
-    proposalTitleMaxLength: 400,
-    proposalDescMaxLength: 400,
-    decimals: 4,
-  },
-  currentEmergencyGovernanceRecordId: 0,
-  emergencyGovernanceLedger: [],
-  nextEmergencyGovernanceRecordId: 0,
+    emergencyGovActive: boolean
+    hasAcknowledgeEmergencyGovernance: boolean
+    proposalTitleMaxLength: number
+    proposalDescMaxLength: number
+    sMvkPercentageRequired: number
+    requiredFeeMutez: number
+    minStakedMvkRequiredToTrigger: number
+    minStakedMvkRequiredToVote: number
+    currentEmergencyGovernanceRecordId: number
+    nextEmergencyGovernanceRecordId: number
+  }
+  isLoaded: boolean
 }
 const emergencyGovernanceDefaultState: EmergencyGovernanceState = {
-  emergencyGovernanceStorage: defaultEmergencyGovernanceStorage,
-  emergencyGovActive: false,
-  hasAcknowledgeEmergencyGovernance: false,
+  eGovProposals: [],
+  config: {
+    emergencyGovActive: false,
+    hasAcknowledgeEmergencyGovernance: false,
+    proposalTitleMaxLength: 400,
+    proposalDescMaxLength: 400,
+    requiredFeeMutez: 10,
+    sMvkPercentageRequired: 0,
+    minStakedMvkRequiredToTrigger: 0,
+    minStakedMvkRequiredToVote: 0,
+    currentEmergencyGovernanceRecordId: 0,
+    nextEmergencyGovernanceRecordId: 0,
+  },
+  isLoaded: false,
 }
 
 export function emergencyGovernance(state = emergencyGovernanceDefaultState, action: Action) {
@@ -40,18 +40,9 @@ export function emergencyGovernance(state = emergencyGovernanceDefaultState, act
     case GET_EMERGENCY_GOVERNANCE_STORAGE:
       return {
         ...state,
-        type: GET_EMERGENCY_GOVERNANCE_STORAGE,
-        emergencyGovernanceStorage: action.emergencyGovernanceStorage,
-      }
-    case SET_EMERGENCY_GOVERNANCE_ACTIVE:
-      return {
-        ...state,
-        emergencyGovActive: action.emergencyGovActive,
-      }
-    case SET_HAS_ACKNOWLEDGED_EMERGENCY_GOV:
-      return {
-        ...state,
-        hasAcknowledgeEmergencyGovernance: action.hasAcknowledgeEmergencyGovernance,
+        eGovProposals: action.emergencyGovernanceLedger,
+        config: action.eGovConfig,
+        isLoaded: true,
       }
     default:
       return state

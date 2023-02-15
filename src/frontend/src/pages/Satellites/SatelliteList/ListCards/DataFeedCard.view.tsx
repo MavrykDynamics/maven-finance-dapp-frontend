@@ -1,5 +1,4 @@
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { CoinsLogo } from 'app/App.components/Icon/CoinsIcons.view'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { Trim } from 'app/App.components/Trim/Trim.view'
 import { Feed } from 'pages/Satellites/helpers/Satellites.types'

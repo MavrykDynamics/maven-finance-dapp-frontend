@@ -220,3 +220,11 @@ export function calcUsersRewardsToDate(usetStakesData?: Array<Stake_History_Data
     { farmRewards: 0, satelliteRewards: 0, doormanRewards: 0, actionsHistory: [] },
   )
 }
+
+export const calcDiffBetweenTwoNumbersInPersentage = (num1: number, num2: number): number => {
+  if (num1 === 0 && num2 === 0) return 0
+  const topPart = num1 - num2
+  const bottomPart = (num1 + num2) / 2
+
+  return (topPart / bottomPart) * 100
+}

@@ -3,24 +3,16 @@ import { FarmStorage } from '../utils/TypesAndInterfaces/Farm'
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
 
 // consts
-import { GET_FARM_STORAGE, SELECT_FARM_ADDRESS } from '../pages/Farms/Farms.actions'
-import { HIDE_MODAL } from '../app/App.components/Modal/Modal.actions'
+import { GET_FARM_STORAGE } from '../pages/Farms/Farms.actions'
 
 export interface FarmState {
-  type?: typeof HARVEST | typeof DEPOSIT | typeof WITHDRAW | undefined
-  farmStorage: FarmStorage
-  amount?: number
-  error?: undefined
-  selectedFarmAddress?: string
+  farms: FarmStorage
+  isLoaded: boolean
 }
-export const HARVEST = 'HARVEST',
-  DEPOSIT = 'DEPOSIT',
-  WITHDRAW = 'WITHDRAW'
-const defaultFarmStorage: FarmStorage = []
+
 const farmDefaultState: FarmState = {
-  farmStorage: defaultFarmStorage,
-  amount: 0,
-  selectedFarmAddress: '',
+  farms: [],
+  isLoaded: false,
 }
 
 export function farm(state = farmDefaultState, action: Action) {
@@ -28,17 +20,8 @@ export function farm(state = farmDefaultState, action: Action) {
     case GET_FARM_STORAGE:
       return {
         ...state,
-        farmStorage: action.farmStorage,
-      }
-    case SELECT_FARM_ADDRESS:
-      return {
-        ...state,
-        selectedFarmAddress: action.selectedFarmAddress,
-      }
-    case HIDE_MODAL:
-      return {
-        ...state,
-        selectedFarmAddress: farmDefaultState.selectedFarmAddress,
+        farms: action.farms,
+        isLoaded: true,
       }
     default:
       return state

@@ -9,14 +9,13 @@ export const DIPDUP_TOKENS_QUERY = `
       update_id
       updated_at
     }
-  
   }
 `
 export const DIPDUP_TOKENS_QUERY_NAME = 'GetDipDupTokens'
 export const DIPDUP_TOKENS_QUERY_VARIABLE = {}
 
 export const DIPDUP_CONTRACTS_QUERY = `
-   query GetDipDupContracts{
+  query GetDipDupContracts{
     dipdup_contract_metadata {
       contract
       created_at
@@ -26,7 +25,6 @@ export const DIPDUP_CONTRACTS_QUERY = `
       update_id
       updated_at
     }
-  
   }
 `
 export const DIPDUP_CONTRACTS_QUERY_NAME = 'GetDipDupContracts'

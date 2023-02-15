@@ -14,7 +14,6 @@ export const VESTING_STORAGE_QUERY = `
         }
       }
     }
-  
   }
 `
 

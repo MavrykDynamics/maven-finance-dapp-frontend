@@ -10,7 +10,6 @@ import { Input } from '../../../app/App.components/Input/Input.controller'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 // helpers
 import { isValidNumberValue, mathRoundTwoDigit } from '../../../utils/validatorFunctions'
-import { setExitFeeAmount } from '../ExitFeeModal/ExitFeeModal.actions'
 
 // style
 import {
@@ -58,7 +57,6 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
 
   const exchangeValue = MVK_exchangeRate && inputData.amount ? Number(inputData.amount) * MVK_exchangeRate : 0
   const earnedValue = farmRewards + doormanRewards
-
   const userHasRewards = myAvailableDoormanRewards + myAvailableSatelliteRewards > 2
 
   const onUseMaxClick = (actionType: string) => {
@@ -69,7 +67,6 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
           amount: String(mathRoundTwoDigit(myMvkTokenBalance)),
           validation: INPUT_STATUS_SUCCESS,
         })
-        dispatch(setExitFeeAmount(Number(mathRoundTwoDigit(myMvkTokenBalance))))
         break
       case 'UNSTAKE':
       default:
@@ -78,21 +75,22 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
           amount: String(mathRoundTwoDigit(mySMvkTokenBalance)),
           validation: INPUT_STATUS_SUCCESS,
         })
-        dispatch(setExitFeeAmount(Number(mathRoundTwoDigit(mySMvkTokenBalance))))
         break
     }
   }
 
-  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const status = accountPkh
-      ? isValidNumberValue(Number(e.target.value), 1, Math.max(Number(myMvkTokenBalance), Number(mySMvkTokenBalance)))
-      : isValidNumberValue(Number(e.target.value), 1)
+  const onInputChange = ({ target: { value } }: React.ChangeEvent<HTMLInputElement>) => {
+    const validationStatus = isValidNumberValue(
+      Number(value),
+      1,
+      accountPkh ? Math.max(Number(myMvkTokenBalance), Number(mySMvkTokenBalance)) : undefined,
+    )
+      ? INPUT_STATUS_SUCCESS
+      : INPUT_STATUS_ERROR
 
-    const validationStatus = status ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
+    if (validationStatus === INPUT_STATUS_ERROR && value !== '') return
 
-    if (validationStatus === INPUT_STATUS_ERROR && e.target.value !== '') return
-
-    setInputData({ ...inputData, amount: e.target.value, validation: validationStatus })
+    setInputData({ ...inputData, amount: value, validation: validationStatus })
   }
 
   const handleStake = () => {
@@ -225,14 +223,14 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
             <img src="/images/coin-gold.svg" alt="coin" />
             {myMvkTokenBalance === 0 ? <StakeLabel>Not Staking</StakeLabel> : null}
             <h3>My MVK Balance</h3>
-            <CommaNumber value={myMvkTokenBalance ?? 0} />
+            <CommaNumber value={myMvkTokenBalance} />
           </StakeUnstakeBalance>
         </StakeUnstakeCard>
         <StakeUnstakeCard>
           <StakeUnstakeBalance>
             <img src="/images/coin-silver.svg" alt="coin" />
             <h3>Total MVK Staked</h3>
-            <CommaNumber value={mySMvkTokenBalance ?? 0} />
+            <CommaNumber value={mySMvkTokenBalance} />
           </StakeUnstakeBalance>
         </StakeUnstakeCard>
         <StakeUnstakeCard>

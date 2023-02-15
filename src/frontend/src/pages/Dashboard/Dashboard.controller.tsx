@@ -29,7 +29,7 @@ export const Dashboard = () => {
   } = useSelector((state: State) => state.doorman)
   const { treasuryStorage, isLoaded: isTreasuryLoaded } = useSelector((state: State) => state.treasury)
   const { isLoaded: isVestingLoaded } = useSelector((state: State) => state.vesting)
-  const { farmStorage } = useSelector((state: State) => state.farm)
+  const { farms, isLoaded: isFarmsLoaded } = useSelector((state: State) => state.farm)
   const {
     isDataLoaded: isLoansLoaded,
     chartsData: { totalBorrowed, totalLended },
@@ -43,7 +43,7 @@ export const Dashboard = () => {
   }, 0)
 
   // TODO: check this calculation with sam
-  const farmsTVL = farmStorage.reduce((acc, farm) => {
+  const farmsTVL = farms.reduce((acc, farm) => {
     return (acc += farm.lpBalance)
   }, 0)
 
@@ -91,7 +91,9 @@ export const Dashboard = () => {
 
   const { isLoading: isFarmsLoading } = useDataLoader(async () => {
     try {
-      await dispatch(getFarmStorage())
+      if (!isFarmsLoaded) {
+        await dispatch(getFarmStorage())
+      }
     } catch (e) {}
   }, [])
 

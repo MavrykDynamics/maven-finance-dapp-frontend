@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux'
 import { isValidNumberValue, mathRoundTwoDigit } from '../../../utils/validatorFunctions'
 import { unstake } from '../Doorman.actions'
 import { calcExitFee, calcMLI } from '../../../utils/calcFunctions'
+import { InputStatusType, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { ACTION_PRIMARY, ACTION_SECONDARY } from '../../../app/App.components/Button/Button.constants'
 
 // components
@@ -12,11 +13,6 @@ import { CommaNumber } from '../../../app/App.components/CommaNumber/CommaNumber
 import { Button } from 'app/App.components/Button/Button.controller'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 import { Input } from '../../../app/App.components/Input/Input.controller'
-import {
-  StakeUnstakeForm,
-  StakeUnstakeFormInputStatus,
-  ValidStakeUnstakeForm,
-} from '../../../utils/TypesAndInterfaces/Forms'
 import { DoormanList } from '../DoormanStats/DoormanStats.style'
 import { ExitFeeModalButtons, ExitFeeModalContent } from './ExitFeeModal.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
@@ -41,50 +37,53 @@ export const ExitFeeModal = ({
 }: ExitFeeModalPropsType) => {
   const dispatch = useDispatch()
 
-  const [inputAmount, setInputAmount] = useState<StakeUnstakeForm>({ amount: 0 })
-  const [stakeUnstakeValueOK, setStakeUnstakeValueOK] = useState<ValidStakeUnstakeForm>({ amount: false })
-  const [stakeUnstakeInputStatus, setStakeUnstakeInputStatus] = useState<StakeUnstakeFormInputStatus>({ amount: '' })
-  const [stakeUnstakeValueError, setStakeUnstakeValueError] = useState('')
+  const [inputData, setInputData] = useState<{ amount: string; validation: InputStatusType }>({
+    amount: '0',
+    validation: '',
+  })
 
   const unstakeCallback = (amount: number) => dispatch(unstake(amount))
 
+  const validateInput = (value: number) => {
+    const validityCheckResult = isValidNumberValue(
+      value,
+      1,
+      accountPkh ? Math.max(Number(myMvkTokenBalance), Number(mySMvkTokenBalance)) : undefined,
+    )
+      ? INPUT_STATUS_SUCCESS
+      : INPUT_STATUS_ERROR
+
+    setInputData({
+      ...inputData,
+      validation: validityCheckResult,
+    })
+  }
+
   const mli = calcMLI(maximumTotalSupply, totalStakedMvk)
   const fee = calcExitFee(maximumTotalSupply, totalStakedMvk)
-  const inputAmountValue = +inputAmount.amount
 
+  // Validating initial amount came from props
   useEffect(() => {
-    checkInputIsOk(amount)
-    setInputAmount({ amount })
-  }, [amount])
-
-  const checkInputIsOk = (value: number) => {
-    let validityCheckResult = false
-    setStakeUnstakeValueError('')
-    if (accountPkh) {
-      validityCheckResult = isValidNumberValue(
-        value,
-        1,
-        Math.max(Number(myMvkTokenBalance), Number(mySMvkTokenBalance)),
-      )
-    } else {
-      validityCheckResult = isValidNumberValue(value, 1)
-    }
-    setStakeUnstakeValueOK({ amount: validityCheckResult })
-    setStakeUnstakeInputStatus({ amount: validityCheckResult ? 'success' : 'error' })
-  }
+    validateInput(amount)
+    setInputData({ ...inputData, amount: String(amount) })
+  }, [])
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = mathRoundTwoDigit(e.target.value)
-    checkInputIsOk(+value)
-
-    setInputAmount({ amount: value })
+    validateInput(+value)
+    setInputData({ ...inputData, amount: String(value) })
   }
 
-  const handleFocus = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value
+  const handleFocus = () => {
+    if (inputData.amount === '0') {
+      setInputData({ ...inputData, amount: '' })
+    }
+  }
 
-    if (+value === 0) {
-      setInputAmount({ amount: '' })
+  const handleBlur = ({ target: { value } }: React.ChangeEvent<HTMLInputElement>) => {
+    validateInput(+value)
+    if (inputData.amount === '') {
+      setInputData({ ...inputData, amount: '0' })
     }
   }
 
@@ -101,12 +100,11 @@ export const ExitFeeModal = ({
             <Input
               type={'number'}
               onChange={onInputChange}
-              onBlur={() => checkInputIsOk(inputAmountValue)}
-              value={inputAmount.amount}
+              onBlur={handleBlur}
+              value={inputData.amount}
               onFocus={handleFocus}
               pinnedText={'MVK'}
-              inputStatus={stakeUnstakeInputStatus.amount}
-              errorMessage={stakeUnstakeValueError}
+              inputStatus={inputData.validation}
             />
             <DoormanList>
               <div className="info-section">
@@ -145,10 +143,10 @@ export const ExitFeeModal = ({
               <Button
                 text="Proceed"
                 icon="success"
-                disabled={!stakeUnstakeValueOK.amount}
+                disabled={inputData.validation !== INPUT_STATUS_SUCCESS}
                 kind={ACTION_PRIMARY}
                 onClick={() => {
-                  unstakeCallback(inputAmountValue)
+                  unstakeCallback(Number(inputData.amount))
                   closePopup()
                 }}
               />
