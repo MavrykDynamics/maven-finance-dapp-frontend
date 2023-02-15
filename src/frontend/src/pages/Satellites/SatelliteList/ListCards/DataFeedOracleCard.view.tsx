@@ -11,11 +11,11 @@ import { SatelliteRecord } from 'utils/TypesAndInterfaces/Delegation'
 import { SatelliteItemStyle, SatelliteOracleStatusComponent } from './SatelliteCard.style'
 
 export const OracleCard = ({ oracle }: { oracle: SatelliteRecord }) => {
-  const { feeds } = useSelector((state: State) => state.oracles.oraclesStorage)
-  const { tezos: { usd: XTZ_USD = 0 } = {}, mvk: { usd: mvkExchangeRate = 0 } = {} } = useSelector(
+  const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
+  const { tezos: { usd: xtzExchangeRate = 0 } = {}, mvk: { usd: mvkExchangeRate = 0 } = {} } = useSelector(
     (state: State) => state.tokens.tokensPrices,
   )
-  const oracleStatusType = getOracleStatus(oracle, feeds)
+  const oracleStatusType = getOracleStatus(oracle, feedsLedger)
 
   return (
     <SatelliteItemStyle oracle>
@@ -44,11 +44,13 @@ export const OracleCard = ({ oracle }: { oracle: SatelliteRecord }) => {
           XTZ Rewards
         </DataFeedSubTitleText>
         <var>
-          {XTZ_USD ? (
+          {xtzExchangeRate ? (
             <CommaNumber
               showDecimal
               beginningText="$"
-              value={oracle.oracleRecords.reduce<number>((acc, { XTZReward }) => (acc += XTZReward), 0) * XTZ_USD}
+              value={
+                oracle.oracleRecords.reduce<number>((acc, { XTZReward }) => (acc += XTZReward), 0) * xtzExchangeRate
+              }
             />
           ) : (
             '-'

@@ -4,7 +4,7 @@ import { SatelliteListItem } from './ListCards/SateliteCard.view'
 import { DataFeedCard } from './ListCards/DataFeedCard.view'
 
 // types
-import { Feed, SatellitesListProps } from '../helpers/Satellites.types'
+import { SatellitesListProps } from '../helpers/Satellites.types'
 
 // styles
 import { FRListWrapper } from 'pages/FinacialRequests/FRList/FRList.styles'
@@ -13,6 +13,7 @@ import { PAGINATION_SIDE_RIGHT } from 'pages/FinacialRequests/Pagination/paginat
 import { OracleCard } from './ListCards/DataFeedOracleCard.view'
 import { UserDataFeedCard } from './ListCards/UsersFeedCard.view'
 import { SatelliteRecord } from 'utils/TypesAndInterfaces/Delegation'
+import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
 
 function SatteliteListView({
   listTitle,

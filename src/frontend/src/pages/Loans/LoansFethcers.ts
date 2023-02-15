@@ -139,7 +139,7 @@ export const getUserBalanceForLoanAsset = async (
 export const getCollateralTokens = async (
   collateralTokens: Array<Lending_Controller_Collateral_Token>,
   dipDupTokens: State['tokens']['dipDupTokens'],
-  feeds: State['oracles']['oraclesStorage']['feeds'],
+  feeds: State['dataFeeds']['feedsLedger'],
   accountPkh?: string,
 ): Promise<Array<AvaliableCollateralType>> => {
   if (!accountPkh) return []

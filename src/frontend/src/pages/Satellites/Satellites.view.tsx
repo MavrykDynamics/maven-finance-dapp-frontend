@@ -10,12 +10,12 @@ import { InfoBlockWrapper, SatelliteListStyled } from './Satellites.style'
 // types
 import { SatelliteRecord } from 'utils/TypesAndInterfaces/Delegation'
 
-import { Feed } from './helpers/Satellites.types'
 // view
 import SatelliteList from './SatelliteList/SatellitesList.controller'
 import SatellitesSideBar from './SatellitesSideBar/SatellitesSideBar.controller'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { SmallInfoBlock } from 'pages/SatelliteGovernance/SatelliteGovernance.style'
+import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
 
 type OraclesViewProps = {
   tabsInfo: {
