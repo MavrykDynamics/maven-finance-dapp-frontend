@@ -25,7 +25,7 @@ import { getShortTzAddress } from '../../../utils/tzAdress'
 import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
 
 type Props = {
-  councilMemberMaxLength: CouncilMemberMaxLength
+  memberMaxLength: CouncilMemberMaxLength
 }
 
 const INIT_FORM = {
@@ -35,7 +35,7 @@ const INIT_FORM = {
   newMemberImage: '',
 }
 
-export function FormChangeCouncilMemberView({ councilMemberMaxLength }: Props) {
+export function FormChangeCouncilMemberView({ memberMaxLength }: Props) {
   const dispatch = useDispatch()
   const { breakGlassCouncilMember } = useSelector((state: State) => state.breakGlass)
 
@@ -82,7 +82,7 @@ export function FormChangeCouncilMemberView({ councilMemberMaxLength }: Props) {
           newMemberImage,
         ),
       )
-      
+
       setForm(INIT_FORM)
       setFormInputStatus({
         newCouncilMemberAddress: '',
@@ -130,10 +130,10 @@ export function FormChangeCouncilMemberView({ councilMemberMaxLength }: Props) {
   const newMemberNameProps = {
     name: 'newMemberName',
     value: newMemberName,
-    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, councilMemberMaxLength.councilMemberNameMaxLength),
+    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, memberMaxLength.nameMaxLength),
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
       handleChange(e)
-      handleBlur(e, councilMemberMaxLength.councilMemberNameMaxLength)
+      handleBlur(e, memberMaxLength.nameMaxLength)
     },
     required: true,
   }
@@ -145,10 +145,10 @@ export function FormChangeCouncilMemberView({ councilMemberMaxLength }: Props) {
   const newMemberWebsiteProps = {
     name: 'newMemberWebsite',
     value: newMemberWebsite,
-    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, councilMemberMaxLength.councilMemberWebsiteMaxLength),
+    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, memberMaxLength.websiteMaxLength),
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
       handleChange(e)
-      handleBlur(e, councilMemberMaxLength.councilMemberWebsiteMaxLength)
+      handleBlur(e, memberMaxLength.websiteMaxLength)
     },
     required: true,
   }

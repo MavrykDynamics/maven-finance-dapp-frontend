@@ -11,7 +11,7 @@ import { CouncilMemberMaxLength } from '../../../utils/TypesAndInterfaces/Counci
 
 type Props = {
   action?: string
-  councilMemberMaxLength: CouncilMemberMaxLength
+  memberMaxLength: CouncilMemberMaxLength
 }
 
 export const actions = {
@@ -23,14 +23,16 @@ export const actions = {
   REMOVE_COUNCIL_MEMBER: 'REMOVE_COUNCIL_MEMBER',
 }
 
-export function BreakGlassCouncilForm ({ action, councilMemberMaxLength }: Props) {
+export function BreakGlassCouncilForm({ action, memberMaxLength }: Props) {
   return (
     <>
       {actions.SET_ALL_CONTRACTS_ADMIN === action ? <FormSetAllContractsAdminView /> : null}
       {actions.SET_SINGLE_CONTRACT_ADMIN === action ? <FormSetSingleContractAdminView /> : null}
       {actions.SIGN_ACTION === action ? <FormSignActionView /> : null}
-      {actions.ADD_COUNCIL_MEMBER === action ? <FormAddCouncilMemberView councilMemberMaxLength={councilMemberMaxLength} /> : null}
-      {actions.CHANGE_COUNCIL_MEMBER === action ? <FormChangeCouncilMemberView councilMemberMaxLength={councilMemberMaxLength} /> : null}
+      {actions.ADD_COUNCIL_MEMBER === action ? <FormAddCouncilMemberView memberMaxLength={memberMaxLength} /> : null}
+      {actions.CHANGE_COUNCIL_MEMBER === action ? (
+        <FormChangeCouncilMemberView memberMaxLength={memberMaxLength} />
+      ) : null}
       {actions.REMOVE_COUNCIL_MEMBER === action ? <FormRemoveCouncilMemberView /> : null}{' '}
     </>
   )

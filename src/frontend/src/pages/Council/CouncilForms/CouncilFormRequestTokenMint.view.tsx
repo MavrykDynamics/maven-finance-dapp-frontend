@@ -26,7 +26,7 @@ const INIT_FORM = {
   purpose: '',
 }
 
-export const CouncilFormRequestTokenMint = ({ requestPurposeMaxLength }: RequestPurposeMaxLength) => {
+export const CouncilFormRequestTokenMint = ({ purposeMaxLength: requestPurposeMaxLength }: RequestPurposeMaxLength) => {
   const dispatch = useDispatch()
   const [form, setForm] = useState(INIT_FORM)
 

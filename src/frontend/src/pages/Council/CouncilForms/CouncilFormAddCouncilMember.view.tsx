@@ -8,7 +8,7 @@ import { IPFSUploader } from '../../../app/App.components/IPFSUploader/IPFSUploa
 import { CouncilMemberMaxLength } from 'utils/TypesAndInterfaces/Council'
 
 // helpers
-import { validateFormAddress, validateFormField } from 'utils/validatorFunctions' 
+import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
 
 // action
 import { addCouncilMember } from '../Council.actions'
@@ -17,10 +17,7 @@ import { addCouncilMember } from '../Council.actions'
 import { CouncilFormStyled } from './CouncilForms.style'
 import { InputStatusType } from 'app/App.components/Input/Input.constants'
 
-export const CouncilFormAddCouncilMember = ({ 
-  councilMemberNameMaxLength,
-  councilMemberWebsiteMaxLength
- }: CouncilMemberMaxLength) => {
+export const CouncilFormAddCouncilMember = (maxLength: CouncilMemberMaxLength) => {
   const dispatch = useDispatch()
   const [form, setForm] = useState({
     newMemberAddress: '',
@@ -107,9 +104,9 @@ export const CouncilFormAddCouncilMember = ({
             name="newMemberName"
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               handleChange(e)
-              handleBlur(e, councilMemberNameMaxLength)
+              handleBlur(e, maxLength.nameMaxLength)
             }}
-            onBlur={(e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, councilMemberNameMaxLength)}
+            onBlur={(e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, maxLength.nameMaxLength)}
             inputStatus={formInputStatus.newMemberName}
           />
         </div>
@@ -123,9 +120,9 @@ export const CouncilFormAddCouncilMember = ({
             name="newMemberWebsite"
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               handleChange(e)
-              handleBlur(e, councilMemberWebsiteMaxLength)
+              handleBlur(e, maxLength.websiteMaxLength)
             }}
-            onBlur={(e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, councilMemberWebsiteMaxLength)}
+            onBlur={(e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, maxLength.websiteMaxLength)}
             inputStatus={formInputStatus.newMemberWebsite}
           />
         </div>

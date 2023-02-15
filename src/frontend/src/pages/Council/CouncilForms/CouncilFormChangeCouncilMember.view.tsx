@@ -27,10 +27,7 @@ import { showToaster } from '../../../app/App.components/Toaster/Toaster.actions
 // style
 import { CouncilFormStyled } from './CouncilForms.style'
 
-export const CouncilFormChangeCouncilMember = ({
-  councilMemberNameMaxLength,
-  councilMemberWebsiteMaxLength,
-}: CouncilMemberMaxLength) => {
+export const CouncilFormChangeCouncilMember = (maxLength: CouncilMemberMaxLength) => {
   const dispatch = useDispatch()
   const { councilStorage } = useSelector((state: State) => state.council)
   const { councilMembers } = councilStorage
@@ -175,9 +172,9 @@ export const CouncilFormChangeCouncilMember = ({
             name="newMemberName"
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               handleChange(e)
-              handleBlur(e, councilMemberNameMaxLength)
+              handleBlur(e, maxLength.nameMaxLength)
             }}
-            onBlur={(e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, councilMemberNameMaxLength)}
+            onBlur={(e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, maxLength.nameMaxLength)}
             inputStatus={formInputStatus.newMemberName}
           />
         </div>
@@ -190,9 +187,9 @@ export const CouncilFormChangeCouncilMember = ({
             name="newMemberWebsite"
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               handleChange(e)
-              handleBlur(e, councilMemberWebsiteMaxLength)
+              handleBlur(e, maxLength.websiteMaxLength)
             }}
-            onBlur={(e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, councilMemberWebsiteMaxLength)}
+            onBlur={(e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, maxLength.websiteMaxLength)}
             inputStatus={formInputStatus.newMemberWebsite}
           />
         </div>

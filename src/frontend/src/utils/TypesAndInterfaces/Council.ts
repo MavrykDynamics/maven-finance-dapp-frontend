@@ -8,9 +8,9 @@ export type CouncilGraphQL = Omit<Council, '__typename'>
 export type CouncilActionRecordhQL = Omit<Council_Action, '__typename'>
 
 export type CouncilMemberMaxLength = {
-  councilMemberNameMaxLength: number
-  councilMemberWebsiteMaxLength: number
+  nameMaxLength: number
+  websiteMaxLength: number
 }
 
-export type RequestPurposeMaxLength = { requestPurposeMaxLength: number }
-export type RequestTokenNameMaxLength = { requestTokenNameMaxLength: number }
+export type RequestPurposeMaxLength = { purposeMaxLength: number }
+export type RequestTokenNameMaxLength = { tokenNameMaxLength: number }

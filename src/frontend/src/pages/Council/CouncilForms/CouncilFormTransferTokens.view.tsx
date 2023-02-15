@@ -44,7 +44,7 @@ const itemsForDropDown = [
   },
 ]
 
-export const CouncilFormTransferTokens = ({ requestPurposeMaxLength }: RequestPurposeMaxLength) => {
+export const CouncilFormTransferTokens = ({ purposeMaxLength: requestPurposeMaxLength }: RequestPurposeMaxLength) => {
   const dispatch = useDispatch()
   const [form, setForm] = useState(INIT_FORM)
 

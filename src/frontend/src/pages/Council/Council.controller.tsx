@@ -107,15 +107,15 @@ export const Council = () => {
   const { councilMembers } = councilStorage
   const [activeActionTab, setActiveActionTab] = useState(councilTabsList[0].text)
 
-  const councilMemberMaxLength = {
-    councilMemberNameMaxLength: councilStorage?.councilMemberNameMaxLength,
-    councilMemberWebsiteMaxLength: councilStorage?.councilMemberWebsiteMaxLength,
+  const memberMaxLength = {
+    nameMaxLength: councilStorage?.councilMemberNameMaxLength,
+    websiteMaxLength: councilStorage?.councilMemberWebsiteMaxLength,
   }
 
   const isUserInCouncilMembers = Boolean(councilMembers.find((item) => item.userId === accountPkh)?.id)
   const isPendingList = councilPendingActions?.length && isUserInCouncilMembers
-  const { review } = useParams<{ review: string }>()
-  const isReviewPage = review === 'review'
+  const { tabId } = useParams<{ tabId: string }>()
+  const isReviewPage = tabId === 'review'
 
   const itemsForDropDown = [
     { text: 'Add Vestee', value: 'addVestee' },
@@ -181,7 +181,7 @@ export const Council = () => {
 
   const currentPage = getPageNumber(
     search,
-    review
+    tabId
       ? COUNCIL_LIST_NAME
       : councilTabsList[0].text === activeActionTab
       ? COUNCIL_MY_ONGOING_ACTIONS_LIST_NAME
@@ -226,7 +226,7 @@ export const Council = () => {
     <Page>
       <PageHeader page={'council'} />
       <CouncilStyled>
-        {review && isUserInCouncilMembers ? (
+        {tabId && isUserInCouncilMembers ? (
           <Link to={`/mavryk-council`}>
             <NewButton kind={TRANSPARENT_WITH_BORDER} className="go-back">
               <Icon id="arrowRight" /> Back to Member Dashboard
@@ -236,11 +236,11 @@ export const Council = () => {
 
         <article
           className={`council-details ${isPendingList ? 'is-user-member' : ''} ${
-            !review ? 'is-pending-signature' : ''
+            !tabId ? 'is-pending-signature' : ''
           }`}
         >
           <div className="council-actions">
-            {!review && isPendingList ? (
+            {!tabId && isPendingList ? (
               <>
                 <h1>Pending Signature</h1>
                 <article className="pending">
@@ -261,7 +261,7 @@ export const Council = () => {
                 </article>
               </>
             ) : null}
-            {!review ? (
+            {!tabId ? (
               <DropdownCard className="pending-dropdown">
                 <DropdownWrap>
                   <h2>Available Actions</h2>
@@ -275,27 +275,25 @@ export const Council = () => {
                   />
                 </DropdownWrap>
                 {chosenDdItem?.value === 'addVestee' ? <CouncilFormAddVestee /> : null}
-                {chosenDdItem?.value === 'addCouncilMember' ? (
-                  <CouncilFormAddCouncilMember {...councilMemberMaxLength} />
-                ) : null}
+                {chosenDdItem?.value === 'addCouncilMember' ? <CouncilFormAddCouncilMember {...memberMaxLength} /> : null}
                 {chosenDdItem?.value === 'updateVestee' ? <CouncilFormUpdateVestee /> : null}
                 {chosenDdItem?.value === 'removeVestee' ? <CouncilFormRemoveVestee /> : null}
                 {chosenDdItem?.value === 'toggleVesteeLock' ? <CouncilFormToggleVesteeLock /> : null}
                 {chosenDdItem?.value === 'changeCouncilMember' ? (
-                  <CouncilFormChangeCouncilMember {...councilMemberMaxLength} />
+                  <CouncilFormChangeCouncilMember {...memberMaxLength} />
                 ) : null}
                 {chosenDdItem?.value === 'removeCouncilMember' ? <CouncilFormRemoveCouncilMember /> : null}
                 {chosenDdItem?.value === 'transferTokens' ? (
-                  <CouncilFormTransferTokens requestPurposeMaxLength={councilStorage.requestPurposeMaxLength} />
+                  <CouncilFormTransferTokens purposeMaxLength={councilStorage.requestPurposeMaxLength} />
                 ) : null}
                 {chosenDdItem?.value === 'requestTokens' ? (
                   <CouncilFormRequestTokens
-                    requestTokenNameMaxLength={councilStorage.requestTokenNameMaxLength}
-                    requestPurposeMaxLength={councilStorage.requestPurposeMaxLength}
+                    tokenNameMaxLength={councilStorage.requestTokenNameMaxLength}
+                    purposeMaxLength={councilStorage.requestPurposeMaxLength}
                   />
                 ) : null}
                 {chosenDdItem?.value === 'requestTokenMint' ? (
-                  <CouncilFormRequestTokenMint requestPurposeMaxLength={councilStorage.requestPurposeMaxLength} />
+                  <CouncilFormRequestTokenMint purposeMaxLength={councilStorage.requestPurposeMaxLength} />
                 ) : null}
                 {chosenDdItem?.value === 'dropFinancialRequest' ? <CouncilFormDropFinancialRequest /> : null}
                 {chosenDdItem?.value === 'setBaker' ? <CouncilFormSetBaker /> : null}
@@ -303,10 +301,10 @@ export const Council = () => {
               </DropdownCard>
             ) : null}
 
-            {review && (
+            {tabId && (
               <>
                 <h1
-                  className={`past-actions ${!review ? 'is-user-member' : ''} ${
+                  className={`past-actions ${!tabId ? 'is-user-member' : ''} ${
                     !isUserInCouncilMembers ? 'margin-top-30' : ''
                   }`}
                 >
@@ -350,7 +348,7 @@ export const Council = () => {
               </>
             )}
 
-            {!review && (
+            {!tabId && (
               <MyCouncilActions
                 myPastCouncilAction={paginatedCouncilMyPastActions}
                 myPastCouncilActionLength={councilMyPastActions?.length ?? 0}
@@ -369,11 +367,11 @@ export const Council = () => {
           </div>
 
           <aside
-            className={`council-members ${!review ? 'is-user-member' : ''} ${
-              isPendingList && !review ? 'is-pending-list' : ''
+            className={`council-members ${!tabId ? 'is-user-member' : ''} ${
+              isPendingList && !tabId ? 'is-pending-list' : ''
             }`}
           >
-            {!review ? (
+            {!tabId ? (
               <CouncilPendingReviewView onClick={handleClickReview} queryParameters={queryParameters} />
             ) : null}
 
@@ -396,7 +394,7 @@ export const Council = () => {
       </CouncilStyled>
       <PopupContainer onClick={closePopup} show={isUpdateCouncilMemberInfo}>
         <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="council">
-          <CouncilFormUpdateCouncilMemberInfo {...councilMemberMaxLength} />
+          <CouncilFormUpdateCouncilMemberInfo {...memberMaxLength} />
         </PopupContainerWrapper>
       </PopupContainer>
     </Page>

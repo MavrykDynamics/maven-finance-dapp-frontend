@@ -47,7 +47,10 @@ const itemsForDropDown = [
 
 type Props = RequestTokenNameMaxLength & RequestPurposeMaxLength
 
-export const CouncilFormRequestTokens = ({ requestTokenNameMaxLength, requestPurposeMaxLength }: Props) => {
+export const CouncilFormRequestTokens = ({
+  tokenNameMaxLength: requestTokenNameMaxLength,
+  purposeMaxLength: requestPurposeMaxLength,
+}: Props) => {
   const dispatch = useDispatch()
   const [form, setForm] = useState(INIT_FORM)
 
