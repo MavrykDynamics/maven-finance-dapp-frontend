@@ -112,11 +112,11 @@ export const getBreakGlassCouncilMembers = () => async (dispatch: AppDispatch, g
     )
 
     const members = storage?.break_glass_council_member || []
-    const breakGlassCouncilMember = normalizeCouncilMembers(members)
+    const breakGlassCouncilMembers = normalizeCouncilMembers(members)
 
     await dispatch({
       type: GET_BREAK_GLASS_COUNCIL_MEMBERS,
-      breakGlassCouncilMember,
+      breakGlassCouncilMembers,
     })
   } catch (error) {
     if (error instanceof Error) {

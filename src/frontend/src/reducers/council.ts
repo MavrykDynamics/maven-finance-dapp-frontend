@@ -1,7 +1,10 @@
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
 import { CouncilActions, CouncilMembers, CouncilMaxLength } from '../utils/TypesAndInterfaces/Council'
 import { GET_COUNCIL_STORAGE, GET_COUNCIL_ACTIONS, GET_COUNCIL_MEMBERS } from '../pages/Council/Council.actions'
-import { GET_BREAK_GLASS_COUNCIL_ACTIONS } from 'pages/BreakGlassCouncil/BreakGlassCouncil.actions'
+import {
+  GET_BREAK_GLASS_COUNCIL_ACTIONS,
+  GET_BREAK_GLASS_COUNCIL_MEMBERS,
+} from 'pages/BreakGlassCouncil/BreakGlassCouncil.actions'
 import {
   defaultCouncilMemberImageMaxLength,
   defaultCouncilMemberNameMaxLength,
@@ -20,6 +23,7 @@ export type CouncilState = {
     allPastActions: CouncilActions
     myPastActions: CouncilActions
   }
+  breakGlassCouncilMembers: CouncilMembers
   breakGlassCouncilActions: {
     allPendingActions: CouncilActions
     notMyPendingActions: CouncilActions
@@ -45,6 +49,7 @@ const councilDefaultState: CouncilState = {
     allPastActions: [],
     myPastActions: [],
   },
+  breakGlassCouncilMembers: [],
   breakGlassCouncilActions: {
     allPendingActions: [],
     notMyPendingActions: [],
@@ -74,6 +79,11 @@ export function council(state = councilDefaultState, action: Action) {
           ...state.councilActions,
           ...action.councilActions,
         },
+      }
+    case GET_BREAK_GLASS_COUNCIL_MEMBERS:
+      return {
+        ...state,
+        breakGlassCouncilMembers: action.breakGlassCouncilMembers,
       }
     case GET_BREAK_GLASS_COUNCIL_ACTIONS:
       return {

@@ -33,8 +33,9 @@ export function BreakGlassCouncil() {
 
   const { accountPkh } = useSelector((state: State) => state.wallet)
 
-  const { breakGlassStorage, breakGlassCouncilMember, glassBroken } = useSelector((state: State) => state.breakGlass)
+  const { breakGlassStorage, glassBroken } = useSelector((state: State) => state.breakGlass)
   const {
+    breakGlassCouncilMembers,
     breakGlassCouncilActions: {
       allPendingActions,
       notMyPendingActions,
@@ -43,6 +44,7 @@ export function BreakGlassCouncil() {
       myPastActions,
     },
   } = useSelector((state: State) => state.council)
+  
   const memberMaxLength = {
     nameMaxLength: breakGlassStorage?.config?.councilMemberNameMaxLength,
     websiteMaxLength: breakGlassStorage?.config?.councilMemberWebsiteMaxLength,
@@ -87,7 +89,7 @@ export function BreakGlassCouncil() {
         allPastActions={allPastActions}
         myPastActions={myPastActions}
         // other lists
-        members={breakGlassCouncilMember}
+        members={breakGlassCouncilMembers}
         dropdowndActions={actions}
         // actions
         handleSignAction={handleSignAction}

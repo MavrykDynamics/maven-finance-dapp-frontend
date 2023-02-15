@@ -19,11 +19,11 @@ import { removeCouncilMember } from '../BreakGlassCouncil.actions'
 
 export function FormRemoveCouncilMemberView() {
   const dispatch = useDispatch()
-  const { breakGlassCouncilMember } = useSelector((state: State) => state.breakGlass)
+  const { breakGlassCouncilMembers } = useSelector((state: State) => state.council)
 
   const dropDownItems = useMemo(
     () =>
-      breakGlassCouncilMember.map((item, index) => ({
+      breakGlassCouncilMembers.map((item, index) => ({
         content: (
           <div>
             {item.name} - {getShortTzAddress({ tzAddress: item.userId })}
@@ -32,7 +32,7 @@ export function FormRemoveCouncilMemberView() {
         tzAddress: item.userId,
         id: index,
       })),
-    [breakGlassCouncilMember],
+    [breakGlassCouncilMembers],
   )
 
   type DropDownItemType = typeof dropDownItems[0]

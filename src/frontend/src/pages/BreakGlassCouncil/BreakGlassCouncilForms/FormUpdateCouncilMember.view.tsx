@@ -36,10 +36,10 @@ const INIT_FORM = {
 export function FormUpdateCouncilMemberView({ memberMaxLength }: Props) {
   const dispatch = useDispatch()
   const { accountPkh } = useSelector((state: State) => state.wallet)
-  const { breakGlassCouncilMember } = useSelector((state: State) => state.breakGlass)
+  const { breakGlassCouncilMembers } = useSelector((state: State) => state.council)
 
   const [form, setForm] = useState(INIT_FORM)
-  const myInfo = breakGlassCouncilMember.find((item) => item.userId === accountPkh)
+  const myInfo = breakGlassCouncilMembers.find((item) => item.userId === accountPkh)
 
   const [formInputStatus, setFormInputStatus] = useState<Record<string, InputStatusType>>({
     newMemberWebsite: '',

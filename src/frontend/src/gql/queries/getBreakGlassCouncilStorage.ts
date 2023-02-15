@@ -51,14 +51,14 @@ export function BREAK_GLASS_COUNCIL_PAST_ACTIONS_QUERY_VARIABLE(variables: { _lt
 }
 
 export const BREAK_GLASS_COUNCIL_PENDING_ACTIONS_QUERY = `
-  query GetBreakGlassActionsPendingMySignature($_gte: timestamptz = "") {
+  query GetPendingBreakGlassCouncilActions($_gte: timestamptz = "") {
     break_glass_action(where: {expiration_datetime: {_gte: $_gte}, _or: {executed: {_eq: false}}, initiator_id: {_neq: $userAddress}, signers: { signer_id: {_neq: $userAddress2}}}, order_by: {start_datetime: desc}) {
       ${BREAK_GLASS_ACTIONS_PARAMS}
     }
   }
 `
 
-export const BREAK_GLASS_COUNCIL_PENDING_ACTIONS_QUERY_NAME = 'GetBreakGlassActionsPendingMySignature'
+export const BREAK_GLASS_COUNCIL_PENDING_ACTIONS_QUERY_NAME = 'GetPendingBreakGlassCouncilActions'
 export function BREAK_GLASS_COUNCIL_PENDING_ACTIONS_QUERY_VARIABLE(variables: { _gte?: string }) {
   return variables
 }

@@ -23,7 +23,7 @@ type Options = {
 export function normalizeCouncilActions(storage: CouncilActionGraphQL[], options?: Options) {
   if (!storage?.length) return []
 
-  const { filterByAddress = '', filterWithoutAddress = ''} = options ?? {}
+  const { filterByAddress = '', filterWithoutAddress = '' } = options ?? {}
 
   let list: CouncilActionGraphQL[] = []
 

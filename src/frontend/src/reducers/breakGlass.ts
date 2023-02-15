@@ -6,7 +6,6 @@ import {
 } from '../pages/BreakGlass/BreakGlass.actions'
 import { GET_BREAK_GLASS_COUNCIL_MEMBERS } from 'pages/BreakGlassCouncil/BreakGlassCouncil.actions'
 import { BreakGlassStorage, BreakGlassStatusStorage, WhitelistDevStorage } from '../utils/TypesAndInterfaces/BreakGlass'
-import { CouncilMembers } from 'utils/TypesAndInterfaces/Council'
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
 
 export interface BreakGlassState {
@@ -15,7 +14,6 @@ export interface BreakGlassState {
   isPendingPropagateBreakGlass: boolean
   breakGlassStatus: BreakGlassStatusStorage
   whitelistDev: WhitelistDevStorage
-  breakGlassCouncilMember: CouncilMembers
 }
 
 const defaultBreakGlassStorage: BreakGlassStorage = {
@@ -40,7 +38,6 @@ const breakGlassDefaultState: BreakGlassState = {
   isPendingPropagateBreakGlass: false,
   breakGlassStatus: [],
   whitelistDev: '',
-  breakGlassCouncilMember: [],
 }
 
 export function breakGlass(state = breakGlassDefaultState, action: Action) {
@@ -55,6 +52,7 @@ export function breakGlass(state = breakGlassDefaultState, action: Action) {
         ...state,
         breakGlassStatus: action.breakGlassStatus,
       }
+    // TODO: move to council
     case SET_GLASS_BROKEN:
       return {
         ...state,
@@ -64,11 +62,6 @@ export function breakGlass(state = breakGlassDefaultState, action: Action) {
       return {
         ...state,
         whitelistDev: action.whitelistDev,
-      }
-    case GET_BREAK_GLASS_COUNCIL_MEMBERS:
-      return {
-        ...state,
-        breakGlassCouncilMember: action.breakGlassCouncilMember,
       }
     default:
       return state
