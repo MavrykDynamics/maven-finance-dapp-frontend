@@ -24,8 +24,8 @@ import { CouncilFormStyled } from './CouncilForms.style'
 export const CouncilFormUpdateCouncilMemberInfo = (maxLength: CouncilMemberMaxLength) => {
   const dispatch = useDispatch()
   const { accountPkh } = useSelector((state: State) => state.wallet)
-  const { councilStorage } = useSelector((state: State) => state.council)
-  const { councilMembers } = councilStorage
+  const { councilMembers } = useSelector((state: State) => state.council)
+
   const myInfo = councilMembers.find((item) => item.userId === accountPkh)
 
   const [form, setForm] = useState({

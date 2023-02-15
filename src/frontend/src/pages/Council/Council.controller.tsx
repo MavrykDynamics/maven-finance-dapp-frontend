@@ -6,9 +6,10 @@ import { useParams } from 'react-router'
 
 // actions, consts
 import {
-  getCouncilPastActionsStorage,
-  getCouncilPendingActionsStorage,
+  getCouncilPastActions,
+  getCouncilPendingActions,
   getCouncilStorage,
+  getCouncilMembers,
   dropRequest,
   sign,
 } from './Council.actions'
@@ -94,26 +95,22 @@ export const Council = () => {
   const { search, pathname } = useLocation()
 
   const {
-    councilStorage,
-    councilPastActions,
-    councilMyPastActions,
-    councilAllPendingActions,
-    councilPendingActions,
-    councilMyPendingActions,
+    councilMembers,
+    councilMaxLength,
+    councilActions: { allPendingActions, notMyPendingActions, myPendingActions, allPastActions, myPastActions },
   } = useSelector((state: State) => state.council)
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const [sliderKey, setSliderKey] = useState(1)
   const [isUpdateCouncilMemberInfo, setIsUpdateCouncilMemberInfo] = useState(false)
-  const { councilMembers } = councilStorage
   const [activeActionTab, setActiveActionTab] = useState(councilTabsList[0].text)
 
   const memberMaxLength = {
-    nameMaxLength: councilStorage?.councilMemberNameMaxLength,
-    websiteMaxLength: councilStorage?.councilMemberWebsiteMaxLength,
+    nameMaxLength: councilMaxLength.councilMemberNameMaxLength,
+    websiteMaxLength: councilMaxLength.councilMemberWebsiteMaxLength,
   }
 
   const isUserInCouncilMembers = Boolean(councilMembers.find((item) => item.userId === accountPkh)?.id)
-  const isPendingList = councilPendingActions?.length && isUserInCouncilMembers
+  const isPendingList = notMyPendingActions?.length && isUserInCouncilMembers
   const { tabId } = useParams<{ tabId: string }>()
   const isReviewPage = tabId === 'review'
 
@@ -162,12 +159,13 @@ export const Council = () => {
   }
 
   useEffect(() => {
-    dispatch(getCouncilPastActionsStorage())
+    dispatch(getCouncilMembers())
+    dispatch(getCouncilPastActions())
     dispatch(getCouncilStorage())
   }, [dispatch])
 
   useEffect(() => {
-    if (accountPkh) dispatch(getCouncilPendingActionsStorage())
+    if (accountPkh) dispatch(getCouncilPendingActions())
     setSliderKey(sliderKey + 1)
   }, [accountPkh])
 
@@ -190,23 +188,23 @@ export const Council = () => {
 
   const paginatedCouncilPastActions = useMemo(() => {
     const [from, to] = calculateSlicePositions(currentPage, COUNCIL_LIST_NAME)
-    return councilPastActions?.slice(from, to)
-  }, [currentPage, councilPastActions])
+    return allPastActions?.slice(from, to)
+  }, [currentPage, allPastActions])
 
   const paginatedCouncilMyPastActions = useMemo(() => {
     const [from, to] = calculateSlicePositions(currentPage, COUNCIL_MY_PAST_ACTIONS_LIST_NAME)
-    return councilMyPastActions?.slice(from, to)
-  }, [currentPage, councilMyPastActions])
+    return myPastActions?.slice(from, to)
+  }, [currentPage, myPastActions])
 
   const paginatedCouncilAllPendingActions = useMemo(() => {
     const [from, to] = calculateSlicePositions(currentPage, COUNCIL_LIST_NAME)
-    return councilAllPendingActions?.slice(from, to)
-  }, [currentPage, councilAllPendingActions])
+    return allPendingActions?.slice(from, to)
+  }, [currentPage, allPendingActions])
 
   const paginatedCouncilMyPendingActions = useMemo(() => {
     const [from, to] = calculateSlicePositions(currentPage, COUNCIL_MY_ONGOING_ACTIONS_LIST_NAME)
-    return councilMyPendingActions?.slice(from, to)
-  }, [currentPage, councilMyPendingActions])
+    return myPendingActions?.slice(from, to)
+  }, [currentPage, myPendingActions])
 
   useEffect(() => {
     // redirect to review or main page when member changes
@@ -243,13 +241,13 @@ export const Council = () => {
                 <h1>Pending Signature</h1>
                 <article className="pending">
                   <div className="pending-items">
-                    <Carousel itemLength={councilPendingActions?.length} key={sliderKey}>
-                      {councilPendingActions.map((item, index) => (
+                    <Carousel itemLength={notMyPendingActions?.length} key={sliderKey}>
+                      {notMyPendingActions.map((item, index) => (
                         <CouncilPending
                           {...item}
                           key={item.id}
                           numCouncilMembers={councilMembers.length}
-                          councilPendingActionsLength={councilPendingActions.length}
+                          councilPendingActionsLength={notMyPendingActions.length}
                           handleSignAction={handleSignAction}
                           index={index}
                         />
@@ -284,16 +282,16 @@ export const Council = () => {
                 ) : null}
                 {chosenDdItem?.value === 'removeCouncilMember' ? <CouncilFormRemoveCouncilMember /> : null}
                 {chosenDdItem?.value === 'transferTokens' ? (
-                  <CouncilFormTransferTokens purposeMaxLength={councilStorage.requestPurposeMaxLength} />
+                  <CouncilFormTransferTokens purposeMaxLength={councilMaxLength.requestPurposeMaxLength} />
                 ) : null}
                 {chosenDdItem?.value === 'requestTokens' ? (
                   <CouncilFormRequestTokens
-                    tokenNameMaxLength={councilStorage.requestTokenNameMaxLength}
-                    purposeMaxLength={councilStorage.requestPurposeMaxLength}
+                    tokenNameMaxLength={councilMaxLength.requestTokenNameMaxLength}
+                    purposeMaxLength={councilMaxLength.requestPurposeMaxLength}
                   />
                 ) : null}
                 {chosenDdItem?.value === 'requestTokenMint' ? (
-                  <CouncilFormRequestTokenMint purposeMaxLength={councilStorage.requestPurposeMaxLength} />
+                  <CouncilFormRequestTokenMint purposeMaxLength={councilMaxLength.requestPurposeMaxLength} />
                 ) : null}
                 {chosenDdItem?.value === 'dropFinancialRequest' ? <CouncilFormDropFinancialRequest /> : null}
                 {chosenDdItem?.value === 'setBaker' ? <CouncilFormSetBaker /> : null}
@@ -342,7 +340,7 @@ export const Council = () => {
                   : null}
 
                 <Pagination
-                  itemsCount={isReviewPage ? councilPastActions.length : councilAllPendingActions.length}
+                  itemsCount={isReviewPage ? allPastActions.length : allPendingActions.length}
                   listName={COUNCIL_LIST_NAME}
                 />
               </>
@@ -351,9 +349,9 @@ export const Council = () => {
             {!tabId && (
               <MyCouncilActions
                 myPastCouncilAction={paginatedCouncilMyPastActions}
-                myPastCouncilActionLength={councilMyPastActions?.length ?? 0}
+                myPastCouncilActionLength={myPastActions?.length ?? 0}
                 actionPendingSignature={paginatedCouncilMyPendingActions}
-                actionPendingSignatureLength={councilMyPendingActions?.length ?? 0}
+                actionPendingSignatureLength={myPendingActions?.length ?? 0}
                 numCouncilMembers={councilMembers?.length ?? 0}
                 activeActionTab={activeActionTab}
                 setActiveActionTab={setActiveActionTab}

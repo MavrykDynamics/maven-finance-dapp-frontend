@@ -4,18 +4,9 @@ import {
   GET_BREAK_GLASS_STATUS,
   GET_WHITELIST_DEV,
 } from '../pages/BreakGlass/BreakGlass.actions'
-import {
-  GET_BREAK_GLASS_COUNCIL_MEMBER,
-  GET_BREAK_GLASS_ACTION_PENDING_SIGNATURE,
-  GET_PAST_BREAK_GLASS_COUNCIL_ACTION,
-  GET_MY_PAST_BREAK_GLASS_COUNCIL_ACTION,
-} from 'pages/BreakGlassCouncil/BreakGlassCouncil.actions'
-import {
-  BreakGlassStorage,
-  BreakGlassStatusStorage,
-  WhitelistDevStorage,
-} from '../utils/TypesAndInterfaces/BreakGlass'
-import { CouncilActions, CouncilMembers } from 'utils/TypesAndInterfaces/Council'
+import { GET_BREAK_GLASS_COUNCIL_MEMBERS } from 'pages/BreakGlassCouncil/BreakGlassCouncil.actions'
+import { BreakGlassStorage, BreakGlassStatusStorage, WhitelistDevStorage } from '../utils/TypesAndInterfaces/BreakGlass'
+import { CouncilMembers } from 'utils/TypesAndInterfaces/Council'
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
 
 export interface BreakGlassState {
@@ -25,11 +16,6 @@ export interface BreakGlassState {
   breakGlassStatus: BreakGlassStatusStorage
   whitelistDev: WhitelistDevStorage
   breakGlassCouncilMember: CouncilMembers
-  breakGlassActionPendingAllSignature: CouncilActions
-  breakGlassActionPendingSignature: CouncilActions
-  breakGlassActionPendingMySignature: CouncilActions
-  pastBreakGlassCouncilAction: CouncilActions
-  myPastBreakGlassCouncilAction: CouncilActions
 }
 
 const defaultBreakGlassStorage: BreakGlassStorage = {
@@ -55,11 +41,6 @@ const breakGlassDefaultState: BreakGlassState = {
   breakGlassStatus: [],
   whitelistDev: '',
   breakGlassCouncilMember: [],
-  breakGlassActionPendingAllSignature: [],
-  breakGlassActionPendingSignature: [],
-  breakGlassActionPendingMySignature: [],
-  pastBreakGlassCouncilAction: [],
-  myPastBreakGlassCouncilAction: [],
 }
 
 export function breakGlass(state = breakGlassDefaultState, action: Action) {
@@ -84,28 +65,10 @@ export function breakGlass(state = breakGlassDefaultState, action: Action) {
         ...state,
         whitelistDev: action.whitelistDev,
       }
-    case GET_BREAK_GLASS_COUNCIL_MEMBER:
+    case GET_BREAK_GLASS_COUNCIL_MEMBERS:
       return {
         ...state,
         breakGlassCouncilMember: action.breakGlassCouncilMember,
-      }
-    case GET_BREAK_GLASS_ACTION_PENDING_SIGNATURE:
-      return {
-        ...state,
-        breakGlassActionPendingAllSignature: action.breakGlassActionPendingAllSignature,
-        breakGlassActionPendingSignature: action.breakGlassActionPendingSignature,
-        breakGlassActionPendingMySignature: action.breakGlassActionPendingMySignature,
-        isPendingPropagateBreakGlass: action.isPendingPropagateBreakGlass,
-      }
-    case GET_PAST_BREAK_GLASS_COUNCIL_ACTION:
-      return {
-        ...state,
-        pastBreakGlassCouncilAction: action.pastBreakGlassCouncilAction,
-      }
-    case GET_MY_PAST_BREAK_GLASS_COUNCIL_ACTION:
-      return {
-        ...state,
-        myPastBreakGlassCouncilAction: action.myPastBreakGlassCouncilAction,
       }
     default:
       return state

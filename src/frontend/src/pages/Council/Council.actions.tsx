@@ -8,23 +8,27 @@ import type { AppDispatch, GetState } from '../../app/App.controller'
 import { parseDate } from 'utils/time'
 
 import {
-  COUNCIL_PAST_ACTIONS_QUERY,
-  COUNCIL_PAST_ACTIONS_NAME,
-  COUNCIL_PAST_ACTIONS_VARIABLE,
-  COUNCIL_PENDING_ACTIONS_QUERY,
-  COUNCIL_PENDING_ACTIONS_NAME,
-  COUNCIL_PENDING_ACTIONS_VARIABLE,
   COUNCIL_STORAGE_QUERY,
   COUNCIL_STORAGE_QUERY_NAME,
   COUNCIL_STORAGE_QUERY_VARIABLE,
+  COUNCIL_MEMBERS_QUERY,
+  COUNCIL_MEMBERS_QUERY_NAME,
+  COUNCIL_MEMBERS_QUERY_VARIABLE,
+  COUNCIL_PENDING_ACTIONS_QUERY,
+  COUNCIL_PENDING_ACTIONS_NAME,
+  COUNCIL_PENDING_ACTIONS_VARIABLE,
+  COUNCIL_PAST_ACTIONS_QUERY,
+  COUNCIL_PAST_ACTIONS_NAME,
+  COUNCIL_PAST_ACTIONS_VARIABLE,
 } from '../../gql/queries/getCouncilStorage'
-import { normalizeCouncilStorage, normalizeCouncilActions } from './Council.helpers'
+import { normalizeCouncilActions, normalizeCouncilMembers, normalizeMaxLength } from './Council.helpers'
 import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 
 const time = String(new Date())
 const timeFormat = 'YYYY-MM-DD'
 const timestamptz = parseDate({ time, timeFormat }) || undefined
 
+// getCouncilStorage
 export const GET_COUNCIL_STORAGE = 'GET_COUNCIL_STORAGE'
 export const getCouncilStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
   try {
@@ -34,11 +38,13 @@ export const getCouncilStorage = () => async (dispatch: AppDispatch, getState: G
       COUNCIL_STORAGE_QUERY_VARIABLE,
     )
 
-    const convertedStorage = normalizeCouncilStorage(storage?.council[0])
+    const council = storage?.council[0]
+
+    const councilMaxLength = normalizeMaxLength(council)
 
     dispatch({
       type: GET_COUNCIL_STORAGE,
-      councilStorage: convertedStorage,
+      councilMaxLength,
     })
   } catch (error) {
     if (error instanceof Error) {
@@ -48,8 +54,43 @@ export const getCouncilStorage = () => async (dispatch: AppDispatch, getState: G
   }
 }
 
-export const GET_COUNCIL_PAST_ACTIONS_STORAGE = 'GET_COUNCIL_PAST_ACTIONS_STORAGE'
-export const getCouncilPastActionsStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
+export const GET_COUNCIL_ACTIONS = 'GET_COUNCIL_ACTIONS'
+// getCouncilPendingActions
+export const getCouncilPendingActions = () => async (dispatch: AppDispatch, getState: GetState) => {
+  const state: State = getState()
+  const { accountPkh } = state.wallet
+
+  try {
+    const storage = await fetchFromIndexerWithPromise(
+      COUNCIL_PENDING_ACTIONS_QUERY,
+      COUNCIL_PENDING_ACTIONS_NAME,
+      COUNCIL_PENDING_ACTIONS_VARIABLE({ _gte: timestamptz }),
+    )
+
+    const council = storage?.council_action || []
+    // TODO: add options filter by past and pending actions
+    const allPendingActions = normalizeCouncilActions(council)
+    const notMyPendingActions = normalizeCouncilActions(council, { filterWithoutAddress: accountPkh })
+    const myPendingActions = normalizeCouncilActions(council, { filterByAddress: accountPkh })
+
+    dispatch({
+      type: GET_COUNCIL_ACTIONS,
+      councilActions: {
+        allPendingActions,
+        notMyPendingActions,
+        myPendingActions,
+      },
+    })
+  } catch (error) {
+    if (error instanceof Error) {
+      console.log('error', error)
+      dispatch(showToaster(ERROR, 'Error', error.message))
+    }
+  }
+}
+
+// getCouncilPastActions
+export const getCouncilPastActions = () => async (dispatch: AppDispatch, getState: GetState) => {
   const state: State = getState()
   const { accountPkh } = state.wallet
 
@@ -62,13 +103,15 @@ export const getCouncilPastActionsStorage = () => async (dispatch: AppDispatch, 
 
     const council = storage?.council_action || []
 
-    const councilPastActions = normalizeCouncilActions(council)
-    const councilMyPastActions = normalizeCouncilActions(council, { filterByAddress: accountPkh })
+    const allPastActions = normalizeCouncilActions(council)
+    const myPastActions = normalizeCouncilActions(council, { filterByAddress: accountPkh })
 
     dispatch({
-      type: GET_COUNCIL_PAST_ACTIONS_STORAGE,
-      councilPastActions,
-      councilMyPastActions,
+      type: GET_COUNCIL_ACTIONS,
+      councilActions: {
+        allPastActions,
+        myPastActions,
+      },
     })
   } catch (error) {
     if (error instanceof Error) {
@@ -78,33 +121,28 @@ export const getCouncilPastActionsStorage = () => async (dispatch: AppDispatch, 
   }
 }
 
-export const GET_COUNCIL_PENDING_ACTIONS_STORAGE = 'GET_COUNCIL_PENDING_ACTIONS_STORAGE'
-export const getCouncilPendingActionsStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
+// getCouncilMembers
+export const GET_COUNCIL_MEMBERS = 'GET_COUNCIL_MEMBERS'
+export const getCouncilMembers = () => async (dispatch: AppDispatch, getState: GetState) => {
   const state: State = getState()
-  const { accountPkh } = state.wallet
 
   try {
     const storage = await fetchFromIndexerWithPromise(
-      COUNCIL_PENDING_ACTIONS_QUERY,
-      COUNCIL_PENDING_ACTIONS_NAME,
-      COUNCIL_PENDING_ACTIONS_VARIABLE({ _gte: timestamptz }),
+      COUNCIL_MEMBERS_QUERY,
+      COUNCIL_MEMBERS_QUERY_NAME,
+      COUNCIL_MEMBERS_QUERY_VARIABLE,
     )
 
-    const council = storage?.council_action || []
+    const members = storage?.council?.[0]?.members || []
+    const councilMembers = normalizeCouncilMembers(members)
 
-    const councilAllPendingActions = normalizeCouncilActions(council)
-    const councilPendingActions = normalizeCouncilActions(council, { filterWithoutAddress: accountPkh })
-    const councilMyPendingActions = normalizeCouncilActions(council, { filterByAddress: accountPkh })
-
-    dispatch({
-      type: GET_COUNCIL_PENDING_ACTIONS_STORAGE,
-      councilAllPendingActions,
-      councilPendingActions,
-      councilMyPendingActions,
+    await dispatch({
+      type: GET_COUNCIL_MEMBERS,
+      councilMembers,
     })
   } catch (error) {
     if (error instanceof Error) {
-      console.log('error', error)
+      console.error(error)
       dispatch(showToaster(ERROR, 'Error', error.message))
     }
   }
@@ -133,11 +171,7 @@ export const sign = (actionID: number) => async (dispatch: AppDispatch, getState
     await transaction?.confirmation()
     dispatch(showToaster(SUCCESS, 'Sign is done', 'All good :)'))
 
-    await Promise.all([
-      dispatch(getCouncilPastActionsStorage()),
-      dispatch(getCouncilPendingActionsStorage()),
-      dispatch(getCouncilStorage()),
-    ])
+    await Promise.all([dispatch(getCouncilPendingActions()), dispatch(getCouncilStorage())])
 
     await dispatch(toggleActionLoader(false))
   } catch (error) {
@@ -175,11 +209,7 @@ export const addVestee =
       await transaction?.confirmation()
       dispatch(showToaster(SUCCESS, 'Add Vestee is done', 'All good :)'))
 
-      await Promise.all([
-        dispatch(getCouncilPastActionsStorage()),
-        dispatch(getCouncilPendingActionsStorage()),
-        dispatch(getCouncilStorage()),
-      ])
+      await Promise.all([dispatch(getCouncilPendingActions()), dispatch(getCouncilStorage())])
 
       await dispatch(toggleActionLoader(false))
     } catch (error) {
@@ -217,11 +247,7 @@ export const addCouncilMember =
       await transaction?.confirmation()
       dispatch(showToaster(SUCCESS, 'Add Council Member is done', 'All good :)'))
 
-      await Promise.all([
-        dispatch(getCouncilPastActionsStorage()),
-        dispatch(getCouncilPendingActionsStorage()),
-        dispatch(getCouncilStorage()),
-      ])
+      await Promise.all([dispatch(getCouncilPendingActions()), dispatch(getCouncilStorage())])
 
       await dispatch(toggleActionLoader(false))
     } catch (error) {
@@ -259,11 +285,7 @@ export const updateVestee =
       await transaction?.confirmation()
       dispatch(showToaster(SUCCESS, 'Update Vestee is done', 'All good :)'))
 
-      await Promise.all([
-        dispatch(getCouncilPastActionsStorage()),
-        dispatch(getCouncilPendingActionsStorage()),
-        dispatch(getCouncilStorage()),
-      ])
+      await Promise.all([dispatch(getCouncilPendingActions()), dispatch(getCouncilStorage())])
 
       await dispatch(toggleActionLoader(false))
     } catch (error) {
@@ -298,11 +320,7 @@ export const toggleVesteeLock = (vesteeAddress: string) => async (dispatch: AppD
     await transaction?.confirmation()
     dispatch(showToaster(SUCCESS, 'Toggle Vestee Lock is done', 'All good :)'))
 
-    await Promise.all([
-      dispatch(getCouncilPastActionsStorage()),
-      dispatch(getCouncilPendingActionsStorage()),
-      dispatch(getCouncilStorage()),
-    ])
+    await Promise.all([dispatch(getCouncilPendingActions()), dispatch(getCouncilStorage())])
 
     await dispatch(toggleActionLoader(false))
   } catch (error) {
@@ -353,11 +371,7 @@ export const changeCouncilMember =
       await transaction?.confirmation()
       dispatch(showToaster(SUCCESS, 'Change Council Member is done', 'All good :)'))
 
-      await Promise.all([
-        dispatch(getCouncilPastActionsStorage()),
-        dispatch(getCouncilPendingActionsStorage()),
-        dispatch(getCouncilStorage()),
-      ])
+      await Promise.all([dispatch(getCouncilPendingActions()), dispatch(getCouncilStorage())])
 
       await dispatch(toggleActionLoader(false))
     } catch (error) {
@@ -392,11 +406,7 @@ export const removeCouncilMember = (memberAddress: string) => async (dispatch: A
     await transaction?.confirmation()
     dispatch(showToaster(SUCCESS, 'Remove Council Member is done', 'All good :)'))
 
-    await Promise.all([
-      dispatch(getCouncilPastActionsStorage()),
-      dispatch(getCouncilPendingActionsStorage()),
-      dispatch(getCouncilStorage()),
-    ])
+    await Promise.all([dispatch(getCouncilPendingActions()), dispatch(getCouncilStorage())])
 
     await dispatch(toggleActionLoader(false))
   } catch (error) {
@@ -435,11 +445,7 @@ export const updateCouncilMemberInfo =
       await transaction?.confirmation()
       await dispatch(showToaster(SUCCESS, 'Update Council Member Info is done', 'All good :)'))
 
-      await Promise.all([
-        dispatch(getCouncilPastActionsStorage()),
-        dispatch(getCouncilPendingActionsStorage()),
-        dispatch(getCouncilStorage()),
-      ])
+      await Promise.all([dispatch(getCouncilPendingActions()), dispatch(getCouncilStorage())])
 
       await dispatch(toggleActionLoader(false))
     } catch (error) {
@@ -485,11 +491,7 @@ export const transferTokens =
       await transaction?.confirmation()
       dispatch(showToaster(SUCCESS, 'Transfer Tokens is done', 'All good :)'))
 
-      await Promise.all([
-        dispatch(getCouncilPastActionsStorage()),
-        dispatch(getCouncilPendingActionsStorage()),
-        dispatch(getCouncilStorage()),
-      ])
+      await Promise.all([dispatch(getCouncilPendingActions()), dispatch(getCouncilStorage())])
 
       await dispatch(toggleActionLoader(false))
     } catch (error) {
@@ -544,11 +546,7 @@ export const requestTokens =
       await transaction?.confirmation()
       dispatch(showToaster(SUCCESS, 'Request Tokens is done', 'All good :)'))
 
-      await Promise.all([
-        dispatch(getCouncilPastActionsStorage()),
-        dispatch(getCouncilPendingActionsStorage()),
-        dispatch(getCouncilStorage()),
-      ])
+      await Promise.all([dispatch(getCouncilPendingActions()), dispatch(getCouncilStorage())])
 
       await dispatch(toggleActionLoader(false))
     } catch (error) {
@@ -585,11 +583,7 @@ export const requestTokenMint =
       await transaction?.confirmation()
       dispatch(showToaster(SUCCESS, 'Request Tokens is done', 'All good :)'))
 
-      await Promise.all([
-        dispatch(getCouncilPastActionsStorage()),
-        dispatch(getCouncilPendingActionsStorage()),
-        dispatch(getCouncilStorage()),
-      ])
+      await Promise.all([dispatch(getCouncilPendingActions()), dispatch(getCouncilStorage())])
 
       await dispatch(toggleActionLoader(false))
     } catch (error) {
@@ -624,11 +618,7 @@ export const dropFinancialRequest = (financialReqID: number) => async (dispatch:
     await transaction?.confirmation()
     dispatch(showToaster(SUCCESS, 'Drop Financial Request is done', 'All good :)'))
 
-    await Promise.all([
-      dispatch(getCouncilPastActionsStorage()),
-      dispatch(getCouncilPendingActionsStorage()),
-      dispatch(getCouncilStorage()),
-    ])
+    await Promise.all([dispatch(getCouncilPendingActions()), dispatch(getCouncilStorage())])
 
     await dispatch(toggleActionLoader(false))
   } catch (error) {
@@ -663,11 +653,7 @@ export const removeVesteeRequest = (vesteeAddress: string) => async (dispatch: A
     await transaction?.confirmation()
     dispatch(showToaster(SUCCESS, 'Remove Vestee Request is done', 'All good :)'))
 
-    await Promise.all([
-      dispatch(getCouncilPastActionsStorage()),
-      dispatch(getCouncilPendingActionsStorage()),
-      dispatch(getCouncilStorage()),
-    ])
+    await Promise.all([dispatch(getCouncilPendingActions()), dispatch(getCouncilStorage())])
 
     await dispatch(toggleActionLoader(false))
   } catch (error) {
@@ -702,11 +688,7 @@ export const setBakerRequest = (bakerHash: string) => async (dispatch: AppDispat
     await transaction?.confirmation()
     dispatch(showToaster(SUCCESS, 'Set Baker Request is done', 'All good :)'))
 
-    await Promise.all([
-      dispatch(getCouncilPastActionsStorage()),
-      dispatch(getCouncilPendingActionsStorage()),
-      dispatch(getCouncilStorage()),
-    ])
+    await Promise.all([dispatch(getCouncilPendingActions()), dispatch(getCouncilStorage())])
 
     await dispatch(toggleActionLoader(false))
   } catch (error) {
@@ -742,11 +724,7 @@ export const setContractBakerRequest =
       await transaction?.confirmation()
       dispatch(showToaster(SUCCESS, 'Set Contract Baker Request is done', 'All good :)'))
 
-      await Promise.all([
-        dispatch(getCouncilPastActionsStorage()),
-        dispatch(getCouncilPendingActionsStorage()),
-        dispatch(getCouncilStorage()),
-      ])
+      await Promise.all([dispatch(getCouncilPendingActions()), dispatch(getCouncilStorage())])
 
       await dispatch(toggleActionLoader(false))
     } catch (error) {
@@ -785,11 +763,7 @@ export const dropRequest = (actionID: number) => async (dispatch: AppDispatch, g
     console.log('done', done)
     dispatch(showToaster(SUCCESS, 'Set Contract Baker Request is done', 'All good :)'))
 
-    await Promise.all([
-      dispatch(getCouncilPastActionsStorage()),
-      dispatch(getCouncilPendingActionsStorage()),
-      dispatch(getCouncilStorage()),
-    ])
+    await Promise.all([dispatch(getCouncilPendingActions()), dispatch(getCouncilStorage())])
 
     await dispatch(toggleActionLoader(false))
   } catch (error) {

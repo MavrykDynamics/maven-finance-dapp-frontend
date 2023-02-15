@@ -15,10 +15,9 @@ import { Page } from './BreakGlassCouncil.style'
 
 // actions
 import {
-  getBreakGlassActionPendingSignature,
-  getMyPastBreakGlassCouncilAction,
-  getPastBreakGlassCouncilAction,
-  getBreakGlassCouncilMember,
+  getBreakGlassCouncilPendingActions,
+  getBreakGlassCouncilPastActions,
+  getBreakGlassCouncilMembers,
   dropBreakGlass,
   signAction,
 } from './BreakGlassCouncil.actions'
@@ -34,17 +33,16 @@ export function BreakGlassCouncil() {
 
   const { accountPkh } = useSelector((state: State) => state.wallet)
 
+  const { breakGlassStorage, breakGlassCouncilMember, glassBroken } = useSelector((state: State) => state.breakGlass)
   const {
-    breakGlassStorage,
-    breakGlassCouncilMember,
-    breakGlassActionPendingAllSignature,
-    breakGlassActionPendingSignature,
-    breakGlassActionPendingMySignature,
-    pastBreakGlassCouncilAction,
-    myPastBreakGlassCouncilAction,
-    glassBroken,
-  } = useSelector((state: State) => state.breakGlass)
-
+    breakGlassCouncilActions: {
+      allPendingActions,
+      notMyPendingActions,
+      myPendingActions,
+      allPastActions,
+      myPastActions,
+    },
+  } = useSelector((state: State) => state.council)
   const memberMaxLength = {
     nameMaxLength: breakGlassStorage?.config?.councilMemberNameMaxLength,
     websiteMaxLength: breakGlassStorage?.config?.councilMemberWebsiteMaxLength,
@@ -59,14 +57,15 @@ export function BreakGlassCouncil() {
   }
 
   useEffect(() => {
-    dispatch(getPastBreakGlassCouncilAction())
-    dispatch(getBreakGlassCouncilMember())
+    dispatch(getBreakGlassCouncilPendingActions())
+    dispatch(getBreakGlassCouncilPastActions())
+    dispatch(getBreakGlassCouncilMembers())
   }, [dispatch])
 
   useEffect(() => {
     if (accountPkh) {
-      dispatch(getMyPastBreakGlassCouncilAction())
-      dispatch(getBreakGlassActionPendingSignature())
+      dispatch(getBreakGlassCouncilPendingActions())
+      dispatch(getBreakGlassCouncilPastActions())
     }
   }, [dispatch, accountPkh])
 
@@ -81,12 +80,12 @@ export function BreakGlassCouncil() {
         glassBroken={glassBroken}
         paginationListName={BREAK_GLASS_COUNCIL_ACTIONS_LIST_NAME}
         // pending actions
-        allPendingActions={breakGlassActionPendingAllSignature}
-        notMyPendingActions={breakGlassActionPendingSignature}
-        myPendingActions={breakGlassActionPendingMySignature}
+        allPendingActions={allPendingActions}
+        notMyPendingActions={notMyPendingActions}
+        myPendingActions={myPendingActions}
         // past actions
-        allPastActions={pastBreakGlassCouncilAction}
-        myPastActions={myPastBreakGlassCouncilAction}
+        allPastActions={allPastActions}
+        myPastActions={myPastActions}
         // other lists
         members={breakGlassCouncilMember}
         dropdowndActions={actions}

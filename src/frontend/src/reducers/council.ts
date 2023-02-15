@@ -1,33 +1,57 @@
-import { GET_COUNCIL_STORAGE } from '../pages/Council/Council.actions'
-import { CouncilStorage, CouncilActions } from '../utils/TypesAndInterfaces/Council'
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
-import { GET_COUNCIL_PAST_ACTIONS_STORAGE, GET_COUNCIL_PENDING_ACTIONS_STORAGE } from '../pages/Council/Council.actions'
+import { CouncilActions, CouncilMembers, CouncilMaxLength } from '../utils/TypesAndInterfaces/Council'
+import { GET_COUNCIL_STORAGE, GET_COUNCIL_ACTIONS, GET_COUNCIL_MEMBERS } from '../pages/Council/Council.actions'
+import { GET_BREAK_GLASS_COUNCIL_ACTIONS } from 'pages/BreakGlassCouncil/BreakGlassCouncil.actions'
+import {
+  defaultCouncilMemberImageMaxLength,
+  defaultCouncilMemberNameMaxLength,
+  defaultCouncilMemberWebsiteMaxLength,
+  defaultRequestPurposeMaxLength,
+  defaultRequestTokenNameMaxLength,
+} from 'app/App.components/Input/Input.constants'
 
-export interface CouncilState {
-  councilStorage: CouncilStorage
-  councilAllPendingActions: CouncilActions
-  councilPendingActions: CouncilActions
-  councilMyPendingActions: CouncilActions
-  councilPastActions: CouncilActions
-  councilMyPastActions: CouncilActions
-}
-
-const defaultCouncilStorage: CouncilStorage = {
-  councilMemberImageMaxLength: 0,
-  councilMemberNameMaxLength: 0,
-  councilMemberWebsiteMaxLength: 0,
-  requestPurposeMaxLength: 0,
-  requestTokenNameMaxLength: 0,
-  councilMembers: [],
+export type CouncilState = {
+  councilMaxLength: CouncilMaxLength
+  councilMembers: CouncilMembers
+  councilActions: {
+    allPendingActions: CouncilActions
+    notMyPendingActions: CouncilActions
+    myPendingActions: CouncilActions
+    allPastActions: CouncilActions
+    myPastActions: CouncilActions
+  }
+  breakGlassCouncilActions: {
+    allPendingActions: CouncilActions
+    notMyPendingActions: CouncilActions
+    myPendingActions: CouncilActions
+    allPastActions: CouncilActions
+    myPastActions: CouncilActions
+  }
 }
 
 const councilDefaultState: CouncilState = {
-  councilStorage: defaultCouncilStorage,
-  councilAllPendingActions: [],
-  councilPendingActions: [],
-  councilMyPendingActions: [],
-  councilPastActions: [],
-  councilMyPastActions: [],
+  councilMaxLength: {
+    councilMemberImageMaxLength: defaultCouncilMemberImageMaxLength,
+    councilMemberNameMaxLength: defaultCouncilMemberNameMaxLength,
+    councilMemberWebsiteMaxLength: defaultCouncilMemberWebsiteMaxLength,
+    requestPurposeMaxLength: defaultRequestPurposeMaxLength,
+    requestTokenNameMaxLength: defaultRequestTokenNameMaxLength,
+  },
+  councilMembers: [],
+  councilActions: {
+    allPendingActions: [],
+    notMyPendingActions: [],
+    myPendingActions: [],
+    allPastActions: [],
+    myPastActions: [],
+  },
+  breakGlassCouncilActions: {
+    allPendingActions: [],
+    notMyPendingActions: [],
+    myPendingActions: [],
+    allPastActions: [],
+    myPastActions: [],
+  },
 }
 
 export function council(state = councilDefaultState, action: Action) {
@@ -35,20 +59,29 @@ export function council(state = councilDefaultState, action: Action) {
     case GET_COUNCIL_STORAGE:
       return {
         ...state,
-        councilStorage: action.councilStorage,
+        // TODO: add storage
+        councilMaxLength: action.councilMaxLength,
       }
-    case GET_COUNCIL_PAST_ACTIONS_STORAGE:
+    case GET_COUNCIL_MEMBERS:
       return {
         ...state,
-        councilPastActions: action.councilPastActions,
-        councilMyPastActions: action.councilMyPastActions,
+        councilMembers: action.councilMembers,
       }
-    case GET_COUNCIL_PENDING_ACTIONS_STORAGE:
+    case GET_COUNCIL_ACTIONS:
       return {
         ...state,
-        councilAllPendingActions: action.councilAllPendingActions,
-        councilPendingActions: action.councilPendingActions,
-        councilMyPendingActions: action.councilMyPendingActions,
+        councilActions: {
+          ...state.councilActions,
+          ...action.councilActions,
+        },
+      }
+    case GET_BREAK_GLASS_COUNCIL_ACTIONS:
+      return {
+        ...state,
+        breakGlassCouncilActions: {
+          ...state.breakGlassCouncilActions,
+          ...action.breakGlassCouncilActions,
+        },
       }
     default:
       return state

@@ -22,8 +22,7 @@ import { CouncilFormStyled } from './CouncilForms.style'
 
 export const CouncilFormRemoveCouncilMember = () => {
   const dispatch = useDispatch()
-  const { councilStorage } = useSelector((state: State) => state.council)
-  const { councilMembers } = councilStorage
+  const { councilMembers } = useSelector((state: State) => state.council)
 
   const itemsForDropDown = useMemo(
     () =>
