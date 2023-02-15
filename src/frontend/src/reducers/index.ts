@@ -2,7 +2,6 @@ import { combineReducers } from 'redux'
 
 import { delegation, DelegationState } from './delegation'
 import { doorman, DoormanState } from './doorman'
-import { exitFeeModal, ExitFeeModalState } from './exitFeeModal'
 import { loading, LoadingState } from './loading'
 import { toaster, ToasterState } from './toaster'
 import { wallet, WalletState } from './wallet'
@@ -14,7 +13,6 @@ import { breakGlass, BreakGlassState } from './breakGlass'
 import { vesting, VestingState } from './vesting'
 import { farm, FarmState } from './farm'
 import { preferences, PreferencesState } from './preferences'
-import { modal, ModalState } from './modal'
 import { contractAddresses, ContractAddressesState } from './contractAddresses'
 import { oracles, OraclesState } from './oracles'
 import { tokens, TokensType } from './tokens'
@@ -24,7 +22,6 @@ import { vaults, VaultsStateType } from './vaults'
 export const reducers = combineReducers({
   loading,
   toaster,
-  exitFeeModal,
   wallet,
   delegation,
   doorman,
@@ -37,7 +34,6 @@ export const reducers = combineReducers({
   vaults,
   farm,
   preferences,
-  modal,
   contractAddresses,
   oracles,
   tokens,
@@ -47,7 +43,6 @@ export const reducers = combineReducers({
 export interface State {
   loading: LoadingState
   toaster: ToasterState
-  exitFeeModal: ExitFeeModalState
   wallet: WalletState
   delegation: DelegationState
   doorman: DoormanState
@@ -59,7 +54,6 @@ export interface State {
   vesting: VestingState
   farm: FarmState
   preferences: PreferencesState
-  modal: ModalState
   contractAddresses: ContractAddressesState
   oracles: OraclesState
   tokens: TokensType

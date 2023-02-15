@@ -52,6 +52,7 @@ const DashboardPersonal = () => {
   const {
     tokensPrices: { tezos, mvk: { usd: mvkExchangeRate = 0 } = {} },
   } = useSelector((state: State) => state.tokens)
+  const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const {
     user: {
@@ -77,10 +78,14 @@ const DashboardPersonal = () => {
 
   const { isLoading } = useDataLoader(async () => {
     try {
-      await dispatch(getGovernanceStorage())
-      await dispatch(getOracleStorage())
-      await dispatch(getDelegationStorage())
-      await dispatch(getEmergencyGovernanceStorage())
+      await Promise.all(
+        [
+          dispatch(getGovernanceStorage()),
+          dispatch(getOracleStorage()),
+          dispatch(getDelegationStorage()),
+          !isEgovLoaded && dispatch(getEmergencyGovernanceStorage()),
+        ].filter(Boolean),
+      )
     } catch (e) {}
   }, [accountPkh])
 

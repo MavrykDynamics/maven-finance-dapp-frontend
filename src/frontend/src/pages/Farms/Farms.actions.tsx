@@ -15,11 +15,9 @@ import { getEndsInTimestampForFarmCards, getLPTokensInfo, normalizeFarmStorage }
 import { fetchFromIndexer } from '../../gql/fetchGraphQL'
 import { showToaster } from '../../app/App.components/Toaster/Toaster.actions'
 import { getDoormanStorage } from '../Doorman/Doorman.actions'
-import { hideModal } from '../../app/App.components/Modal/Modal.actions'
 import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 import { updateUserData } from 'reducers/actions/user.actions'
 
-export const SELECT_FARM_ADDRESS = 'SELECT_FARM_ADDRESS'
 export const GET_FARM_STORAGE = 'GET_FARM_STORAGE'
 export const getFarmStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
   const {
@@ -37,9 +35,9 @@ export const getFarmStorage = () => async (dispatch: AppDispatch, getState: GetS
       // try/catch to fetch farms contracts, if fails it will log error and dispatch farms cards without contacts data
       try {
         const urls = farmLPTokensInfo.reduce<string[]>(
-          (acc, item: { liquidityPairToken: { tokenAddress: string[] } }) => {
-            if (item?.liquidityPairToken?.tokenAddress?.[0]) {
-              acc.push(`https://api.tzkt.io/v1/contracts/${item.liquidityPairToken.tokenAddress[0]}`)
+          (acc, item: { lpTokenInfo: { liquidityPairToken: { tokenAddress: string[] } } }) => {
+            if (item?.lpTokenInfo?.liquidityPairToken?.tokenAddress?.[0]) {
+              acc.push(`https://api.tzkt.io/v1/contracts/${item?.lpTokenInfo.liquidityPairToken.tokenAddress[0]}`)
             }
             return acc
           },
@@ -50,41 +48,31 @@ export const getFarmStorage = () => async (dispatch: AppDispatch, getState: GetS
           urls.map(async (url) => await (await fetch(url)).json()),
         )
 
-        const farmStorage = normalizeFarmStorage(
-          storage?.farm,
-          dipDupTokens,
-          farmCardEndsIn,
-          farmLPTokensInfo,
-          farmContracts,
-        )
+        const farms = normalizeFarmStorage(storage?.farm, dipDupTokens, farmCardEndsIn, farmLPTokensInfo, farmContracts)
         dispatch({
           type: GET_FARM_STORAGE,
-          farmStorage,
+          farms,
         })
       } catch (e) {
         console.error('getFarmStorage, fetching contracts error: ', e)
 
-        const farmStorage = normalizeFarmStorage(storage?.farm, dipDupTokens, farmCardEndsIn, farmLPTokensInfo, [])
+        const farms = normalizeFarmStorage(storage?.farm, dipDupTokens, farmCardEndsIn, farmLPTokensInfo, [])
         dispatch({
           type: GET_FARM_STORAGE,
-          farmStorage,
+          farms,
         })
       }
     } catch (e) {
       console.error('getFarmStorage, fetching metadata error: ', e)
 
-      const farmStorage = normalizeFarmStorage(storage?.farm, dipDupTokens, [], [], [])
+      const farms = normalizeFarmStorage(storage?.farm, dipDupTokens, [], [], [])
       dispatch({
         type: GET_FARM_STORAGE,
-        farmStorage,
+        farms,
       })
     }
   } catch (e) {
     dispatch(showToaster(ERROR, 'Error while fetching farms data', 'Please try to reload page'))
-    dispatch({
-      type: GET_FARM_STORAGE,
-      farmStorage: [],
-    })
   }
 }
 
@@ -111,14 +99,11 @@ export const harvest = (farmAddress: string) => async (dispatch: AppDispatch, ge
     await transaction?.confirmation()
 
     await dispatch(showToaster(SUCCESS, 'Harvesting done', 'All good :)'))
-    await dispatch(toggleActionLoader(false))
 
-    if (state.wallet.accountPkh) {
-      dispatch(updateUserData())
-    }
+    await dispatch(updateUserData())
     await dispatch(getFarmStorage())
-
     await dispatch(getDoormanStorage())
+    await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
@@ -157,7 +142,6 @@ export const deposit = (farmAddress: string, amount: number) => async (dispatch:
 
     await dispatch(updateUserData())
     await dispatch(getFarmStorage())
-
     await dispatch(getDoormanStorage())
     await dispatch(toggleActionLoader(false))
   } catch (error) {
@@ -195,11 +179,9 @@ export const withdraw = (farmAddress: string, amount: number) => async (dispatch
     await transaction?.confirmation()
 
     await dispatch(showToaster(SUCCESS, 'Withdrawing done', 'All good :)'))
-    await dispatch(hideModal())
 
     await dispatch(updateUserData())
     await dispatch(getFarmStorage())
-
     await dispatch(getDoormanStorage())
     await dispatch(toggleActionLoader(false))
   } catch (error) {

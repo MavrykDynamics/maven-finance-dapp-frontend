@@ -21,9 +21,7 @@ export const SatellitesTab = ({ isLoading }: { isLoading: boolean }) => {
     governanceStorage: { financialRequestLedger, proposalLedger },
     pastProposals,
   } = useSelector((state: State) => state.governance)
-  const {
-    emergencyGovernanceStorage: { emergencyGovernanceLedger },
-  } = useSelector((state: State) => state.emergencyGovernance)
+  const { eGovProposals } = useSelector((state: State) => state.emergencyGovernance)
 
   const satellitesInfo = activeSatellites.reduce(
     (acc, satellite: SatelliteRecord) => {
@@ -31,7 +29,7 @@ export const SatellitesTab = ({ isLoading }: { isLoading: boolean }) => {
       const metrics = getSatelliteMetrics(
         pastProposals,
         proposalLedger,
-        emergencyGovernanceLedger,
+        eGovProposals,
         satellite,
         feeds,
         financialRequestLedger,

@@ -8,6 +8,7 @@ import {
 } from './TextArea.style'
 import { TextAreaStatusType } from './TextArea.controller'
 import React, { useLayoutEffect, useRef } from 'react'
+import { NewInputLabel } from '../Input/Input.style'
 
 type TextAreaViewProps = {
   icon?: string
@@ -20,6 +21,7 @@ type TextAreaViewProps = {
   onBlur?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
   textAreaStatus?: TextAreaStatusType
   errorMessage?: string
+  label?: string
   disabled?: boolean
   required?: boolean
 }
@@ -35,6 +37,7 @@ export const TextAreaView = ({
   textAreaStatus,
   errorMessage,
   disabled,
+  label,
   required,
   textAreaMaxLimit,
 }: TextAreaViewProps) => {
@@ -50,6 +53,7 @@ export const TextAreaView = ({
   let status = textAreaStatus !== undefined ? textAreaStatus : 'none'
   return (
     <TextAreaStyled className={className} id={'textAreaContainer'}>
+      {label ? <NewInputLabel>{label}</NewInputLabel> : null}
       {icon && (
         <TextAreaIcon>
           <use xlinkHref={`/icons/sprites.svg#${icon}`} />

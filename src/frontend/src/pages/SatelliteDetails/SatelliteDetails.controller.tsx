@@ -20,9 +20,7 @@ export const SatelliteDetails = () => {
     governanceStorage: { financialRequestLedger, proposalLedger },
     pastProposals,
   } = useSelector((state: State) => state.governance)
-  const {
-    emergencyGovernanceStorage: { emergencyGovernanceLedger },
-  } = useSelector((state: State) => state.emergencyGovernance)
+  const { eGovProposals } = useSelector((state: State) => state.emergencyGovernance)
   const {
     accountPkh,
     user: { mySatelliteRewardsData, mySMvkTokenBalance },
@@ -56,7 +54,7 @@ export const SatelliteDetails = () => {
       getSatelliteMetrics(
         pastProposals,
         proposalLedger,
-        emergencyGovernanceLedger,
+        eGovProposals,
         currentSatellite,
         feeds,
         financialRequestLedger,

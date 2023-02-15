@@ -68,9 +68,7 @@ export const SatelliteListItem = ({
     governanceStorage: { financialRequestLedger, proposalLedger },
     pastProposals,
   } = useSelector((state: State) => state.governance)
-  const {
-    emergencyGovernanceStorage: { emergencyGovernanceLedger },
-  } = useSelector((state: State) => state.emergencyGovernance)
+  const { eGovProposals } = useSelector((state: State) => state.emergencyGovernance)
 
   const myDelegatedMVK = userStakedBalance
   const userIsDelegatedToThisSatellite = satellite.address === satelliteUserIsDelegatedTo
@@ -88,15 +86,7 @@ export const SatelliteListItem = ({
   const isSatelliteInactive = satellite.status !== SatelliteStatus.ACTIVE
 
   const satelliteMetrics = React.useMemo(
-    () =>
-      getSatelliteMetrics(
-        pastProposals,
-        proposalLedger,
-        emergencyGovernanceLedger,
-        satellite,
-        feeds,
-        financialRequestLedger,
-      ),
+    () => getSatelliteMetrics(pastProposals, proposalLedger, eGovProposals, satellite, feeds, financialRequestLedger),
     [satellite],
   )
 

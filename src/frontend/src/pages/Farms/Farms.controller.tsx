@@ -5,12 +5,18 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 
 // view
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
-import { FarmTopBar, LIVE_TAB_ID } from './FarmTopBar/FarmTopBar.controller'
+import { FarmTopBar } from './FarmTopBar/FarmTopBar.controller'
 import { FarmCard } from './FarmCard/FarmCard.controller'
-import { Modal } from '../../app/App.components/Modal/Modal.controller'
 
 // helpers
-import { calculateAPY, getSummDepositedAmount } from './Farms.helpers'
+import {
+  getSummDepositedAmount,
+  filterByLiveFinished,
+  filterBySearch,
+  filterByStaked,
+  sortFarms,
+  getNewOpenedCardsAddresses,
+} from './Farms.helpers'
 
 // styles
 import { FarmsStyled } from './Farms.style'
@@ -30,10 +36,15 @@ import { getPageNumber } from 'pages/FinacialRequests/FinancialRequests.helpers'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
-
-export const VERTICAL_FARM_VIEW = 'vertical'
-export const HORIZONTAL_FARM_VIEW = 'horizontal'
-export type FarmsViewVariantType = typeof VERTICAL_FARM_VIEW | typeof HORIZONTAL_FARM_VIEW
+import {
+  NO_STAKED,
+  LIVE_TAB_ID,
+  VERTICAL_FARM_VIEW,
+  isStakedFarmType,
+  isLiveFarmType,
+  FarmsFiltersStateType,
+} from './Farms.const'
+import FarmsPopupsProvider from './FarmsPopups/FarmsPopups.provider'
 
 const EmptyContainer = () => (
   <EmptyList>
@@ -42,250 +53,186 @@ const EmptyContainer = () => (
   </EmptyList>
 )
 
+export type HandleClickArgsType = { filterType: 'search' | 'sort' | 'isStaked' | 'isLive' | 'openCard' } & Partial<{
+  newStakedValue: isStakedFarmType
+  newLiveFinished: isLiveFarmType
+  newSearchText: string
+  newSortBy: string
+  newOpenCardAddress: string
+}>
+
 export const Farms = () => {
   const dispatch = useDispatch()
   const history = useHistory()
-  const { accountPkh } = useSelector((state: State) => state.wallet)
-  const { farmStorage } = useSelector((state: State) => state.farm)
-
-  const [farmsList, setFarmsList] = useState(farmStorage)
-
-  // filters states
-  const [toggleChecked, setToggleChecked] = useState(false)
-  const [openedFarmsCards, setOpenedFarmsCards] = useState<Array<string>>([])
-  const [liveFinished, setLiveFinished] = useState<number>(LIVE_TAB_ID)
-  const [searchValue, setSearchValue] = useState<string>('')
-  const [sortBy, setSortBy] = useState<string>('')
-  const [farmsViewVariant, setFarmsViewVariant] = useState<FarmsViewVariantType>(VERTICAL_FARM_VIEW)
-
   const { search, pathname } = useLocation()
-  const {
-    openedCards = [],
-    isLive = LIVE_TAB_ID,
-    searchFarm = '',
-    sortType = '',
-    isStakedOny = false,
-  } = useMemo(
-    () =>
-      qs.parse(search, { ignoreQueryPrefix: true }) as {
-        openedCards?: Array<string>
-        isLive?: number
-        searchFarm?: string
-        sortType?: string
-        isStakedOny?: boolean
-      },
-    [search],
-  )
 
-  // pagination stuff
-  const listName = useMemo(
-    () => (farmsViewVariant === VERTICAL_FARM_VIEW ? FARMS_VERTICAL_CARDS : FARMS_HORIZONTAL_CARDS),
-    [farmsViewVariant],
-  )
-
-  const currentPage = useMemo(() => getPageNumber(search, listName), [search, listName])
-
-  const farmsCards = useMemo(() => {
-    const [from, to] = calculateSlicePositions(currentPage, listName)
-    return farmsList?.slice(from, to)
-  }, [farmsList, isLive, searchFarm, sortType, isStakedOny, currentPage, listName])
+  const { farms, isLoaded } = useSelector((state: State) => state.farm)
 
   const { isLoading } = useDataLoader(async () => {
     try {
-      await dispatch(getFarmStorage())
+      if (!isLoaded) {
+        await dispatch(getFarmStorage())
+      }
     } catch (error) {}
   }, [])
 
-  // effect to set all filters state from queryParams on mount
-  useEffect(() => {
-    setToggleChecked(isStakedOny)
-    setSearchValue(searchFarm)
-    setSortBy(sortType)
-    setLiveFinished(Number(isLive))
-    setOpenedFarmsCards(openedCards)
-  }, [])
+  const [farmsList, setFarmsList] = useState(farms)
+  const [farmsFilers, setFarmsFilters] = useState<FarmsFiltersStateType>({
+    isStaked: NO_STAKED,
+    openedFarmsCards: [],
+    isLive: LIVE_TAB_ID,
+    searchValue: '',
+    sortBy: '',
+    farmsViewVariant: VERTICAL_FARM_VIEW,
+  })
 
+  // pagination
+  const listName = farmsFilers.farmsViewVariant === VERTICAL_FARM_VIEW ? FARMS_VERTICAL_CARDS : FARMS_HORIZONTAL_CARDS
+  const paginatedFarms = useMemo(() => {
+    const currentPage = getPageNumber(search, listName)
+    const [from, to] = calculateSlicePositions(currentPage, listName)
+    return farmsList.slice(from, to)
+  }, [farmsList, listName, search])
+
+  /**
+   * effect to track qp change and update filters state and filter/sort farms cards
+   */
+  useEffect(() => {
+    const {
+      openedFarmsCards = [],
+      isLive = LIVE_TAB_ID,
+      searchValue = '',
+      sortBy = '',
+      isStaked = NO_STAKED,
+    } = qs.parse(search, { ignoreQueryPrefix: true }) as Partial<FarmsFiltersStateType>
+
+    let filteredFarms = [...farms]
+    if (Number(isStaked) !== farmsFilers.isStaked) {
+      filteredFarms = filterByStaked(filteredFarms, Number(isStaked))
+    }
+
+    if (Number(isLive) !== farmsFilers.isLive) {
+      filteredFarms = filterByLiveFinished(filteredFarms, Number(isLive))
+    }
+
+    if (searchValue !== farmsFilers.searchValue) {
+      filteredFarms = filterBySearch(filteredFarms, searchValue)
+    }
+
+    if (sortBy !== farmsFilers.sortBy) {
+      filteredFarms = sortFarms(filteredFarms, sortBy)
+    }
+
+    setFarmsFilters({
+      ...farmsFilers,
+      isStaked: Number(isStaked) as isStakedFarmType,
+      openedFarmsCards,
+      isLive: Number(isLive) as isLiveFarmType,
+      searchValue,
+      sortBy,
+    })
+
+    setFarmsList(filteredFarms)
+  }, [search, farms])
+
+  /**
+   * @handleFilterClick fn to handle click on filter as we are storing filters in the qp
+   * it will update query params and filtering will perform in an effect above
+   */
   const handleFilterClick = useCallback(
     ({
-      newStakedNoValue,
+      filterType,
+      newStakedValue,
       newLiveFinished,
       newSearchText,
       newSortBy,
-      newOpenedCards,
-    }: Partial<{
-      newStakedNoValue: boolean
-      newLiveFinished: number
-      newSearchText: string
-      newSortBy: string
-      newOpenedCards: Array<string>
-    }>) => {
-      // creating qp object and update qp
-      const filtersQP = {
-        openedCards: newOpenedCards ?? openedCards,
-        isLive: newLiveFinished ?? liveFinished,
-        ...(newSearchText ?? searchValue ? { searchFarm: newSearchText ?? searchValue } : {}),
-        ...(newSortBy ?? sortBy ? { sortType: newSortBy ?? sortBy } : {}),
-        ...(newStakedNoValue ?? toggleChecked ? { isStakedOny: newStakedNoValue ?? toggleChecked } : {}),
+      newOpenCardAddress,
+    }: HandleClickArgsType) => {
+      const newFiltersForQP: Partial<FarmsFiltersStateType> = {
+        isLive: farmsFilers.isLive,
+        ...(farmsFilers.searchValue ? { searchValue: farmsFilers.searchValue } : {}),
+        ...(farmsFilers.sortBy ? { sortBy: farmsFilers.sortBy } : {}),
+        ...(farmsFilers.isStaked ? { isStaked: farmsFilers.isStaked } : {}),
       }
 
-      const stringifiedQP = qs.stringify(filtersQP)
-      history.push(`${pathname}?${stringifiedQP}`)
+      if (filterType === 'isLive' && newLiveFinished) {
+        newFiltersForQP.isLive = newLiveFinished
+      }
+
+      if (filterType === 'search' && newSearchText !== undefined) {
+        newFiltersForQP.searchValue = newSearchText
+      }
+
+      if (filterType === 'isStaked' && newStakedValue !== undefined) {
+        newFiltersForQP.isStaked = newStakedValue
+      }
+
+      if (filterType === 'sort' && newSortBy !== undefined) {
+        newFiltersForQP.sortBy = newSortBy
+      }
+
+      if (filterType === 'openCard' && newOpenCardAddress !== undefined) {
+        const newOpenedCardsArr = getNewOpenedCardsAddresses(farmsFilers.openedFarmsCards, newOpenCardAddress)
+        newFiltersForQP.openedFarmsCards = newOpenedCardsArr
+      }
+
+      const stringifiedQP = qs.stringify(newFiltersForQP)
+      history.replace(`${pathname}?${stringifiedQP}`)
     },
-    [toggleChecked, liveFinished, openedFarmsCards, pathname, searchValue, sortBy],
+    [
+      farmsFilers.isLive,
+      farmsFilers.searchValue,
+      farmsFilers.sortBy,
+      farmsFilers.isStaked,
+      farmsFilers.openedFarmsCards,
+      history,
+      pathname,
+    ],
   )
-
-  // fn to add/remove card address fron query params, is it open or not
-  const handleOpenCard = useCallback(
-    (cardAdrress: string) => {
-      const newOpenedCards = openedFarmsCards.find((openCardAddress) => openCardAddress === cardAdrress)
-        ? openedFarmsCards.filter((openCardAddress) => openCardAddress !== cardAdrress)
-        : openedFarmsCards.concat(cardAdrress)
-
-      setOpenedFarmsCards(newOpenedCards)
-      handleFilterClick({ newOpenedCards })
-    },
-    [handleFilterClick, openedFarmsCards],
-  )
-
-  // effect to handle all sortings and filters in top bar
-  useEffect(() => {
-    let farmsToSortFilter = [...farmStorage]
-
-    // apply live finished filter
-    farmsToSortFilter = farmsToSortFilter.filter(({ isLive }) =>
-      liveFinished === 1 ? isLive === true : isLive === false,
-    )
-
-    // apply staked only filter
-    farmsToSortFilter = toggleChecked
-      ? farmsToSortFilter.filter(
-          (item) => item.farmAccounts?.length && item.farmAccounts.some((account) => account?.deposited_amount > 0),
-        )
-      : farmsToSortFilter
-
-    // apply search
-    farmsToSortFilter = searchValue.length
-      ? farmsToSortFilter.filter(({ lpTokenAddress, name }) => {
-          const isIncludesTokenAddress = lpTokenAddress.includes(searchValue)
-          const isIncludesName = name.includes(searchValue)
-          return isIncludesTokenAddress || isIncludesName
-        })
-      : farmsToSortFilter
-
-    // apply sorting
-    if (sortBy) {
-      const dataToSort = farmsToSortFilter ? [...farmsToSortFilter] : []
-      dataToSort.sort((a, b) => {
-        let res = 0
-        switch (sortBy) {
-          case 'active':
-            res = Number(a.open) - Number(b.open)
-            break
-          case 'highestAPY':
-            res =
-              calculateAPY(a.currentRewardPerBlock, a.lpBalance) < calculateAPY(b.currentRewardPerBlock, b.lpBalance)
-                ? 1
-                : -1
-            break
-          case 'lowestAPY':
-            res =
-              calculateAPY(a.currentRewardPerBlock, a.lpBalance) > calculateAPY(b.currentRewardPerBlock, b.lpBalance)
-                ? 1
-                : -1
-            break
-          case 'highestLiquidity':
-            res = a.lpBalance < b.lpBalance ? 1 : -1
-            break
-          case 'lowestLiquidity':
-            res = a.lpBalance > b.lpBalance ? 1 : -1
-            break
-          case 'yourLargestStake':
-            res = getSummDepositedAmount(a.farmAccounts) < getSummDepositedAmount(b.farmAccounts) ? 1 : -1
-            break
-          case 'rewardsPerBlock':
-            res = a.currentRewardPerBlock < b.currentRewardPerBlock ? 1 : -1
-            break
-          default:
-            res = 1
-            break
-        }
-        return res
-      })
-      setFarmsList(dataToSort)
-    } else {
-      setFarmsList(farmsToSortFilter)
-    }
-  }, [farmStorage, liveFinished, searchValue, toggleChecked, sortBy])
-
-  // Handler for top bar
-  const handleToggleStakedFarmsOnly = (e?: { target: { checked: boolean } }) => {
-    setToggleChecked(Boolean(e?.target?.checked))
-    handleFilterClick({ newStakedNoValue: Boolean(e?.target?.checked) })
-  }
-
-  const handleSetFarmsViewVariant = (variant: FarmsViewVariantType) => {
-    setFarmsViewVariant(variant)
-  }
-
-  const handleLiveFinishedToggleButtons = (tabId: number) => {
-    setLiveFinished(tabId)
-    handleFilterClick({ newLiveFinished: tabId })
-  }
-
-  const handleOnSearch = (text: string) => {
-    setSearchValue(text)
-    handleFilterClick({ newSearchText: text })
-  }
-
-  const handleOnSort = (sortValue: string) => {
-    setSortBy(sortValue)
-    handleFilterClick({ newSortBy: sortValue })
-  }
 
   return (
     <Page>
       <PageHeader page={'farms'} />
-      <FarmsStyled>
-        <FarmTopBar
-          ready={Boolean(accountPkh)}
-          searchValue={searchValue}
-          onSearch={handleOnSearch}
-          onSort={handleOnSort}
-          handleToggleStakedOnly={handleToggleStakedFarmsOnly}
-          handleLiveFinishedToggleButtons={handleLiveFinishedToggleButtons}
-          handleSetFarmsViewVariant={handleSetFarmsViewVariant}
-          className={farmsViewVariant}
-          toggleChecked={toggleChecked}
-          liveFinishedIdSelected={liveFinished}
-        />
-        {isLoading ? (
-          <DataLoaderWrapper className="tabLoader">
-            <ClockLoader width={150} height={150} />
-            <div className="text">Loading farms</div>
-          </DataLoaderWrapper>
-        ) : farmsList.length ? (
-          <section className={`farm-list ${farmsViewVariant}`}>
-            {farmsCards.map((farm, index: number) => {
-              const depositAmount = getSummDepositedAmount(farm.farmAccounts)
-              return (
-                <FarmCard
-                  farm={farm}
-                  key={farm.address + index}
-                  variant={farmsViewVariant}
-                  currentRewardPerBlock={farm.currentRewardPerBlock}
-                  depositAmount={depositAmount}
-                  expandCallback={handleOpenCard}
-                  isOpenedCard={Boolean(openedCards.find((address) => farm.address === address))}
-                />
-              )
-            })}
-            <Pagination itemsCount={farmsList.length} listName={listName} />
-          </section>
-        ) : (
-          <EmptyContainer />
-        )}
-      </FarmsStyled>
-      <Modal />
+      <FarmsPopupsProvider>
+        <FarmsStyled>
+          <FarmTopBar
+            handleFilterClick={handleFilterClick}
+            farmsFilters={farmsFilers}
+            handleSetFarmsViewVariant={(newFarmsView) => {
+              setFarmsFilters({ ...farmsFilers, farmsViewVariant: newFarmsView })
+            }}
+            className={farmsFilers.farmsViewVariant}
+          />
+          {isLoading ? (
+            <DataLoaderWrapper className="tabLoader">
+              <ClockLoader width={150} height={150} />
+              <div className="text">Loading farms</div>
+            </DataLoaderWrapper>
+          ) : farmsList.length ? (
+            <section className={`farm-list ${farmsFilers.farmsViewVariant}`}>
+              {paginatedFarms.map((farm, index: number) => {
+                const depositAmount = getSummDepositedAmount(farm.farmAccounts)
+                return (
+                  <FarmCard
+                    farm={farm}
+                    key={farm.address + index}
+                    variant={farmsFilers.farmsViewVariant}
+                    currentRewardPerBlock={farm.currentRewardPerBlock}
+                    depositAmount={depositAmount}
+                    expandCallback={() =>
+                      handleFilterClick({ filterType: 'openCard', newOpenCardAddress: farm.address })
+                    }
+                    isOpenedCard={Boolean(farmsFilers.openedFarmsCards.find((address) => farm.address === address))}
+                  />
+                )
+              })}
+              <Pagination itemsCount={farmsList.length} listName={listName} />
+            </section>
+          ) : (
+            <EmptyContainer />
+          )}
+        </FarmsStyled>
+      </FarmsPopupsProvider>
     </Page>
   )
 }

@@ -23,6 +23,7 @@ const DashboardPersonalMyRewards = ({
       <Button
         kind={ACTION_PRIMARY}
         text="Claim Rewards"
+        // TODO: remove disabled true after claimRewardsHandler implemented
         disabled={!rewardsToClaim || true}
         onClick={claimRewardsHandler}
       />

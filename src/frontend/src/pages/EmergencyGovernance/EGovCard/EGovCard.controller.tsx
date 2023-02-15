@@ -9,7 +9,7 @@ import { COLON_VIEW } from 'app/App.components/Timer/Timer.view'
 import { parseDate } from 'utils/time'
 
 import type { State } from 'reducers'
-import type { EmergencyGovernanceStorage } from '../../../utils/TypesAndInterfaces/EmergencyGovernance'
+import type { EmergergencyGovernanceItem } from '../../../utils/TypesAndInterfaces/EmergencyGovernance'
 
 // view
 import { StatusFlag } from '../../../app/App.components/StatusFlag/StatusFlag.controller'
@@ -28,16 +28,16 @@ import {
 } from 'pages/SatelliteGovernance/SatelliteGovernanceCard/SatelliteGovernanceCard.style'
 
 type EGovCardProps = {
-  emergencyGovernance: EmergencyGovernanceStorage['emergencyGovernanceLedger'][0]
+  emergencyGovernance: EmergergencyGovernanceItem
   dropProposalHandler: (proposalId: number) => void
 }
 
 export const EGovCard = ({ emergencyGovernance, dropProposalHandler }: EGovCardProps) => {
   const dispatch = useDispatch()
   const { totalStakedMvk } = useSelector((state: State) => state.doorman)
-  const { minStakedMvkRequiredToVote } = useSelector(
-    (state: State) => state.emergencyGovernance.emergencyGovernanceStorage.config,
-  )
+  const {
+    config: { minStakedMvkRequiredToVote },
+  } = useSelector((state: State) => state.emergencyGovernance)
   const {
     accountPkh,
     user: { mySMvkTokenBalance },
