@@ -167,7 +167,7 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, registerFeedHandler, isLoa
                             }}
                             timestamp={
                               new Date(feed.last_completed_data_last_updated_at).getTime() +
-                              new Date(feed.heart_beat_seconds).getTime() * 1000
+                              feed.heart_beat_seconds * 1000
                             }
                           />
                         </div>
