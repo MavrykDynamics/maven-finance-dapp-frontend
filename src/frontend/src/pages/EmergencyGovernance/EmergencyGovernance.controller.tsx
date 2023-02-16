@@ -4,7 +4,6 @@ import { State } from '../../reducers'
 
 import { getEmergencyGovernanceStorage } from './EmergencyGovernance.actions'
 import { getBreakGlassStorage } from '../BreakGlass/BreakGlass.actions'
-import { dropProposal } from 'pages/ProposalSubmission/ProposalSubmission.actions'
 import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 
@@ -37,10 +36,6 @@ export const EmergencyGovernance = () => {
     } catch (e) {}
   }, [])
 
-  const dropProposalHandler = (proposalId: number) => {
-    dispatch(dropProposal(proposalId))
-  }
-
   const closeInitiatePopup = () => {
     setShowInitiatePopup(false)
   }
@@ -64,7 +59,6 @@ export const EmergencyGovernance = () => {
             handleTriggerEmergencyProposal={openInitiatePopup}
             accountPkh={accountPkh}
             emergencyGovernanceLedger={eGovProposals}
-            dropProposalHandler={dropProposalHandler}
             isGlassBroken={glassBroken}
           />
         </>
