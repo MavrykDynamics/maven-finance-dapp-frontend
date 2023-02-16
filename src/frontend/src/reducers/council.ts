@@ -1,6 +1,11 @@
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
 import { CouncilActions, CouncilMembers, CouncilMaxLength } from '../utils/TypesAndInterfaces/Council'
-import { GET_COUNCIL_STORAGE, GET_COUNCIL_ACTIONS, GET_COUNCIL_MEMBERS } from '../pages/Council/Council.actions'
+import {
+  GET_COUNCIL_STORAGE,
+  GET_COUNCIL_PENDING_ACTIONS,
+  GET_COUNCIL_PAST_ACTIONS,
+  GET_COUNCIL_MEMBERS,
+} from '../pages/Council/Council.actions'
 import {
   GET_BREAK_GLASS_COUNCIL_MEMBERS,
   GET_BREAK_GLASS_COUNCIL_PENDING_ACTIONS,
@@ -75,13 +80,23 @@ export function council(state = councilDefaultState, action: Action) {
         ...state,
         councilMembers: action.councilMembers,
       }
-    // TODO: add past and pending actions
-    case GET_COUNCIL_ACTIONS:
+    case GET_COUNCIL_PENDING_ACTIONS:
       return {
         ...state,
         councilActions: {
           ...state.councilActions,
-          ...action.councilActions,
+          allPendingActions: action.councilActions.allPendingActions,
+          notMyPendingActions: action.councilActions.notMyPendingActions,
+          myPendingActions: action.councilActions.myPendingActions,
+        },
+      }
+    case GET_COUNCIL_PAST_ACTIONS:
+      return {
+        ...state,
+        councilActions: {
+          ...state.councilActions,
+          allPastActions: action.councilActions.allPastActions,
+          myPastActions: action.councilActions.myPastActions,
         },
       }
     case GET_BREAK_GLASS_COUNCIL_MEMBERS:

@@ -55,8 +55,8 @@ export const getCouncilStorage = () => async (dispatch: AppDispatch, getState: G
   }
 }
 
-export const GET_COUNCIL_ACTIONS = 'GET_COUNCIL_ACTIONS'
 // getCouncilPendingActions
+export const GET_COUNCIL_PENDING_ACTIONS = 'GET_COUNCIL_PENDING_ACTIONS'
 export const getCouncilPendingActions = () => async (dispatch: AppDispatch, getState: GetState) => {
   const state: State = getState()
   const { accountPkh } = state.wallet
@@ -75,7 +75,7 @@ export const getCouncilPendingActions = () => async (dispatch: AppDispatch, getS
     const myPendingActions = normalizeCouncilActions(council, { filterByAddress: accountPkh })
 
     dispatch({
-      type: GET_COUNCIL_ACTIONS,
+      type: GET_COUNCIL_PENDING_ACTIONS,
       councilActions: {
         allPendingActions,
         notMyPendingActions,
@@ -91,6 +91,7 @@ export const getCouncilPendingActions = () => async (dispatch: AppDispatch, getS
 }
 
 // getCouncilPastActions
+export const GET_COUNCIL_PAST_ACTIONS = 'GET_COUNCIL_PAST_ACTIONS'
 export const getCouncilPastActions = () => async (dispatch: AppDispatch, getState: GetState) => {
   const state: State = getState()
   const { accountPkh } = state.wallet
@@ -108,7 +109,7 @@ export const getCouncilPastActions = () => async (dispatch: AppDispatch, getStat
     const myPastActions = normalizeCouncilActions(council, { filterByAddress: accountPkh })
 
     dispatch({
-      type: GET_COUNCIL_ACTIONS,
+      type: GET_COUNCIL_PAST_ACTIONS,
       councilActions: {
         allPastActions,
         myPastActions,

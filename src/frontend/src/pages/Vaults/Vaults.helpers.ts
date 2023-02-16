@@ -77,8 +77,6 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
           })
 
           acc.totalRow.amount += collateralBalance * collateralAsset.rate
-          // TODO: add a valid result in the field below
-
           return acc
         },
         {
