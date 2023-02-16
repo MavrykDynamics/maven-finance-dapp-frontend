@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux'
 import type { InputStatusType } from '../../../app/App.components/Input/Input.constants'
 
 // helpers
-import { validateFormField } from 'utils/validatorFunctions' 
+import { validateFormField } from 'utils/validatorFunctions'
 
 // view
 import { Input } from '../../../app/App.components/Input/Input.controller'
@@ -16,7 +16,7 @@ import Icon from '../../../app/App.components/Icon/Icon.view'
 import { setBakerRequest } from '../Council.actions'
 
 // style
-import { CouncilFormStyled } from './CouncilForms.style'
+import { CouncilFormStyled } from './CouncilForm.style'
 
 export const CouncilFormSetBaker = () => {
   const dispatch = useDispatch()

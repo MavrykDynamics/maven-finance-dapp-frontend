@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux'
 
 // type
 import type { InputStatusType } from '../../../app/App.components/Input/Input.constants'
-import { RequestPurposeMaxLength } from 'utils/TypesAndInterfaces/Council'
+import { CouncilMaxLength } from 'utils/TypesAndInterfaces/Council'
 
 // helpers
 import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
@@ -18,7 +18,7 @@ import Icon from '../../../app/App.components/Icon/Icon.view'
 import { requestTokenMint } from '../Council.actions'
 
 // style
-import { CouncilFormStyled } from './CouncilForms.style'
+import { CouncilFormStyled } from './CouncilForm.style'
 
 const INIT_FORM = {
   treasuryAddress: '',
@@ -26,7 +26,7 @@ const INIT_FORM = {
   purpose: '',
 }
 
-export const CouncilFormRequestTokenMint = ({ purposeMaxLength: requestPurposeMaxLength }: RequestPurposeMaxLength) => {
+export const CouncilFormRequestTokenMint = (maxLength: CouncilMaxLength) => {
   const dispatch = useDispatch()
   const [form, setForm] = useState(INIT_FORM)
 
@@ -111,9 +111,9 @@ export const CouncilFormRequestTokenMint = ({ purposeMaxLength: requestPurposeMa
           onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
             handleChange(e)
           }}
-          onBlur={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleBlur(e, requestPurposeMaxLength)}
+          onBlur={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleBlur(e, maxLength.requestPurposeMaxLength)}
           inputStatus={formInputStatus.purpose}
-          textAreaMaxLimit={requestPurposeMaxLength}
+          textAreaMaxLimit={maxLength.requestPurposeMaxLength}
         />
       </div>
       <div className="btn-group">

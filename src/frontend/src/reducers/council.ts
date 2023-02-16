@@ -75,6 +75,7 @@ export function council(state = councilDefaultState, action: Action) {
         ...state,
         councilMembers: action.councilMembers,
       }
+    // TODO: add past and pending actions
     case GET_COUNCIL_ACTIONS:
       return {
         ...state,

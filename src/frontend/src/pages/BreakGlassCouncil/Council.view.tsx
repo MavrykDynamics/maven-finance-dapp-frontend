@@ -40,7 +40,7 @@ import {
 } from './BreakGlassCouncil.style'
 
 // types
-import { CouncilMemberMaxLength, CouncilActions, CouncilMembers } from 'utils/TypesAndInterfaces/Council'
+import { CouncilMaxLength, CouncilActions, CouncilMembers } from 'utils/TypesAndInterfaces/Council'
 
 // actions
 import { propagateBreakGlass } from './BreakGlassCouncil.actions'
@@ -51,11 +51,11 @@ type Props = {
     review: string
     pendingReview: string
   }
-  memberMaxLength: CouncilMemberMaxLength
+  maxLength: CouncilMaxLength
   glassBroken: boolean
   showPropagateBreakGlass: boolean
   paginationListName: string
-  getFormComponent: (memberMaxLength: CouncilMemberMaxLength, action?: string) => void
+  getFormComponent: (maxLength: CouncilMaxLength, action?: string) => void
 
   allPendingActions: CouncilActions
   notMyPendingActions: CouncilActions
@@ -73,7 +73,7 @@ type Props = {
 
 export function CouncilView({
   queryParameters,
-  memberMaxLength,
+  maxLength,
   glassBroken,
   showPropagateBreakGlass,
   paginationListName,
@@ -285,7 +285,7 @@ export function CouncilView({
                   </div>
                 </div>
 
-                {getFormComponent(memberMaxLength, chosenDdItem?.value)}
+                {getFormComponent(maxLength, chosenDdItem?.value)}
               </AvaliableActions>
 
               <MyCouncilActions
@@ -339,7 +339,7 @@ export function CouncilView({
 
       <PopupContainer onClick={closePopup} show={isUpdateCouncilMemberInfo}>
         <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="council">
-          <FormUpdateCouncilMemberView memberMaxLength={memberMaxLength} />
+          <FormUpdateCouncilMemberView {...maxLength} />
         </PopupContainerWrapper>
       </PopupContainer>
     </>

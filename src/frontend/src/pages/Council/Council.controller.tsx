@@ -259,7 +259,7 @@ export const Council = () => {
                 </article>
               </>
             ) : null}
-            {!tabId ? (
+            {/* {!tabId ? (
               <DropdownCard className="pending-dropdown">
                 <DropdownWrap>
                   <h2>Available Actions</h2>
@@ -299,7 +299,7 @@ export const Council = () => {
                 {chosenDdItem?.value === 'setBaker' ? <CouncilFormSetBaker /> : null}
                 {chosenDdItem?.value === 'setContractBaker' ? <CouncilFormSetContractBaker /> : null}
               </DropdownCard>
-            ) : null}
+            ) : null} */}
 
             {tabId && (
               <>
@@ -392,7 +392,7 @@ export const Council = () => {
       </CouncilStyled>
       <PopupContainer onClick={closePopup} show={isUpdateCouncilMemberInfo}>
         <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="council">
-          <CouncilFormUpdateCouncilMemberInfo {...memberMaxLength} />
+          {/* <CouncilFormUpdateCouncilMemberInfo {...maxLength} /> */}
         </PopupContainerWrapper>
       </PopupContainer>
     </Page>

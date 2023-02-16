@@ -4,7 +4,6 @@ import {
   GET_BREAK_GLASS_STATUS,
   GET_WHITELIST_DEV,
 } from '../pages/BreakGlass/BreakGlass.actions'
-import { GET_BREAK_GLASS_COUNCIL_MEMBERS } from 'pages/BreakGlassCouncil/BreakGlassCouncil.actions'
 import { BreakGlassStorage, BreakGlassStatusStorage, WhitelistDevStorage } from '../utils/TypesAndInterfaces/BreakGlass'
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
 
@@ -52,7 +51,6 @@ export function breakGlass(state = breakGlassDefaultState, action: Action) {
         ...state,
         breakGlassStatus: action.breakGlassStatus,
       }
-    // TODO: move to council
     case SET_GLASS_BROKEN:
       return {
         ...state,

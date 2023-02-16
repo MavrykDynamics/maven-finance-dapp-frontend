@@ -15,7 +15,7 @@ import { validateFormField } from 'utils/validatorFunctions'
 
 // types
 import { InputStatusType } from 'app/App.components/Input/Input.constants'
-import { CouncilMemberMaxLength } from '../../../utils/TypesAndInterfaces/Council'
+import { CouncilMaxLength } from '../../../utils/TypesAndInterfaces/Council'
 
 // styles
 import { FormStyled } from './BreakGlassCouncilForm.style'
@@ -23,17 +23,13 @@ import { FormStyled } from './BreakGlassCouncilForm.style'
 // actions
 import { updateCouncilMember } from '../BreakGlassCouncil.actions'
 
-type Props = {
-  memberMaxLength: CouncilMemberMaxLength
-}
-
 const INIT_FORM = {
   newMemberWebsite: '',
   newMemberName: '',
   newMemberImage: '',
 }
 
-export function FormUpdateCouncilMemberView({ memberMaxLength }: Props) {
+export function FormUpdateCouncilMemberView(maxLength: CouncilMaxLength) {
   const dispatch = useDispatch()
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const { breakGlassCouncilMembers } = useSelector((state: State) => state.council)
@@ -77,10 +73,10 @@ export function FormUpdateCouncilMemberView({ memberMaxLength }: Props) {
   const newMemberNameProps = {
     name: 'newMemberName',
     value: newMemberName,
-    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, memberMaxLength.nameMaxLength),
+    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, maxLength.councilMemberNameMaxLength),
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
       handleChange(e)
-      handleBlur(e, memberMaxLength.nameMaxLength)
+      handleBlur(e, maxLength.councilMemberNameMaxLength)
     },
     required: true,
   }
@@ -92,10 +88,10 @@ export function FormUpdateCouncilMemberView({ memberMaxLength }: Props) {
   const newMemberWebsiteProps = {
     name: 'newMemberWebsite',
     value: newMemberWebsite,
-    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, memberMaxLength.websiteMaxLength),
+    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, maxLength.councilMemberWebsiteMaxLength),
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
       handleChange(e)
-      handleBlur(e, memberMaxLength.websiteMaxLength)
+      handleBlur(e, maxLength.councilMemberWebsiteMaxLength)
     },
     required: true,
   }

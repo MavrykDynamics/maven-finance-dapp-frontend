@@ -17,7 +17,7 @@ import { showToaster } from '../../../app/App.components/Toaster/Toaster.actions
 import { getGovernanceStorage } from 'pages/Governance/Governance.actions'
 
 // style
-import { CouncilFormStyled } from './CouncilForms.style'
+import { CouncilFormStyled } from './CouncilForm.style'
 
 export const CouncilFormDropFinancialRequest = () => {
   const dispatch = useDispatch()

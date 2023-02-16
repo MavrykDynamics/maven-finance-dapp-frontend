@@ -24,11 +24,3 @@ export type CouncilActionGraphQL = Pick<Break_Glass_Action, 'break_glass_id'> &
       Omit<Council_Action_Signer, '__typename' | 'council' | 'signers'>)[]
   }
 export type CouncilActions = ReturnType<typeof normalizeCouncilActions>
-
-// max length
-export type CouncilMemberMaxLength = {
-  nameMaxLength: number
-  websiteMaxLength: number
-}
-export type RequestPurposeMaxLength = { purposeMaxLength: number }
-export type RequestTokenNameMaxLength = { tokenNameMaxLength: number }

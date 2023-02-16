@@ -22,6 +22,9 @@ import {
 } from './BreakGlassCouncil.actions'
 import { getCouncilStorage } from 'pages/Council/Council.actions'
 
+// types
+import { CouncilMaxLength } from 'utils/TypesAndInterfaces/Council'
+
 const queryParameters = {
   pathname: '/break-glass-council',
   review: '/review',
@@ -44,11 +47,6 @@ export function BreakGlassCouncil() {
       myPastActions,
     },
   } = useSelector((state: State) => state.council)
-
-  const memberMaxLength = {
-    nameMaxLength: councilMaxLength.councilMemberNameMaxLength,
-    websiteMaxLength: councilMaxLength.councilMemberWebsiteMaxLength,
-  }
 
   const handleSignAction = (id: number) => {
     dispatch(signAction(id))
@@ -78,12 +76,12 @@ export function BreakGlassCouncil() {
       <CouncilView
         // general info
         queryParameters={queryParameters}
-        memberMaxLength={memberMaxLength}
+        maxLength={councilMaxLength}
         glassBroken={glassBroken}
         showPropagateBreakGlass
         paginationListName={BREAK_GLASS_COUNCIL_ACTIONS_LIST_NAME}
-        getFormComponent={(maxLength: typeof memberMaxLength, action?: string) => (
-          <BreakGlassCouncilForm memberMaxLength={maxLength} action={action} />
+        getFormComponent={(maxLength: CouncilMaxLength, action?: string) => (
+          <BreakGlassCouncilForm maxLength={maxLength} action={action} />
         )}
         // pending actions
         allPendingActions={allPendingActions}

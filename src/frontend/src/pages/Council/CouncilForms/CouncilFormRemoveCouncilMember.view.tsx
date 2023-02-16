@@ -18,7 +18,7 @@ import { removeCouncilMember } from '../Council.actions'
 import { showToaster } from '../../../app/App.components/Toaster/Toaster.actions'
 
 // style
-import { CouncilFormStyled } from './CouncilForms.style'
+import { CouncilFormStyled } from './CouncilForm.style'
 
 export const CouncilFormRemoveCouncilMember = () => {
   const dispatch = useDispatch()
