@@ -33,16 +33,13 @@ export const COUNCIL_MEMBERS_QUERY_NAME = 'GetCouncilMembers'
 export const COUNCIL_MEMBERS_QUERY_VARIABLE = {}
 
 const COUNCIL_ACTIONS_PARAMS = `
+  action_type  
   council_id
   executed
-  execution_datetime
-  expiration_datetime
   id
   initiator_id
   signers_count
   start_datetime
-  status
-  action_type
   parameters {
     id
     name

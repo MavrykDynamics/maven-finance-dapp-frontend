@@ -17,19 +17,10 @@ const BREAK_GLASS_ACTIONS_PARAMS = `
   action_type
   break_glass_id
   executed
-  execution_datetime
-  execution_level
-  expiration_datetime
   id
   initiator_id
   signers_count
-  status
   start_datetime
-  signers {
-    signer_id
-    id
-    break_glass_action_id
-  }
   parameters {
     id
     name

@@ -36,35 +36,15 @@ export function normalizeCouncilActions(storage: CouncilActionGraphQL[], options
   }
 
   return list.map((item) => {
-    const signers = item?.signers?.length
-      ? item.signers.map((signer) => {
-          return {
-            councilAction: signer.council_action || signer.break_glass_action,
-            councilActionId: signer.council_action_id || signer.break_glass_action_id,
-            id: signer.id,
-            signer: signer.signer,
-            signerId: signer.signer_id,
-          }
-        })
-      : []
-
     return {
       actionType: item.action_type,
       councilId: item.council_id || item.break_glass_id,
       executed: item.executed,
-      executionDatetime: item.execution_datetime,
-      executionLevel: item.execution_level,
-      expirationDatetime: item.expiration_datetime,
       id: item.id,
-      initiator: item.initiator,
       initiatorId: item.initiator_id,
-      parameters: item.parameters,
-      parametersAggregate: item.parameters_aggregate,
-      signers,
-      signersAggregate: item.signers_aggregate,
       signersCount: item.signers_count,
       startDatetime: item.start_datetime,
-      status: item.status,
+      parameters: item.parameters,
     }
   })
 }
