@@ -7,6 +7,7 @@ import { Page } from 'styles'
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
 import { CouncilView } from '../Council/Council.view'
 import { BreakGlassCouncilForm, actions } from './BreakGlassCouncilForms/BreakGlassCouncilForm.controller'
+import { FormUpdateCouncilMemberView } from './BreakGlassCouncilForms/FormUpdateCouncilMember.view'
 
 // helpers
 import { COUNCIL_LIST_NAME } from 'pages/FinacialRequests/Pagination/pagination.consts'
@@ -33,7 +34,7 @@ const queryParameters = {
 const titles = {
   membersName: 'Break Glass Council',
   cardIdName: 'Break Glass Action ID',
-  allPastActions: 'Past Break Glass Council Actions'
+  allPastActions: 'Past Break Glass Council Actions',
 }
 
 export function BreakGlassCouncil() {
@@ -85,9 +86,6 @@ export function BreakGlassCouncil() {
         glassBroken={glassBroken}
         showPropagateBreakGlass
         paginationListName={COUNCIL_LIST_NAME}
-        getFormComponent={(maxLength: CouncilMaxLength, action?: string) => (
-          <BreakGlassCouncilForm maxLength={maxLength} action={action} />
-        )}
         titles={titles}
         // pending actions
         allPendingActions={allPendingActions}
@@ -102,6 +100,11 @@ export function BreakGlassCouncil() {
         // actions
         handleSignAction={handleSignAction}
         handleDropAction={handleDropAction}
+        // components
+        getFormComponent={(maxLength: CouncilMaxLength, action?: string) => (
+          <BreakGlassCouncilForm maxLength={maxLength} action={action} />
+        )}
+        getFormUpdateMemberInfo={(maxLength: CouncilMaxLength) => <FormUpdateCouncilMemberView {...maxLength} />}
       />
     </Page>
   )

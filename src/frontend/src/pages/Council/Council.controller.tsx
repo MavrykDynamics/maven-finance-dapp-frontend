@@ -7,6 +7,7 @@ import { Page } from 'styles'
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
 import { CouncilView } from 'pages/Council/Council.view'
 import { CouncilForm, actions } from './CouncilForms/CouncilForm.controller'
+import { CouncilFormUpdateCouncilMemberInfo } from './CouncilForms/CouncilFormUpdateCouncilMemberInfo.view'
 import { EmptyContainer } from 'app/App.style'
 
 // helpers
@@ -100,9 +101,6 @@ export const Council = () => {
         queryParameters={queryParameters}
         maxLength={councilMaxLength}
         paginationListName={COUNCIL_LIST_NAME}
-        getFormComponent={(maxLength: CouncilMaxLength, action?: string) => (
-          <CouncilForm maxLength={maxLength} action={action} />
-        )}
         titles={titles}
         // pending actions
         allPendingActions={allPendingActions}
@@ -117,6 +115,11 @@ export const Council = () => {
         // actions
         handleSignAction={handleSignAction}
         handleDropAction={handleDropAction}
+        // components
+        getFormComponent={(maxLength: CouncilMaxLength, action?: string) => (
+          <CouncilForm maxLength={maxLength} action={action} />
+        )}
+        getFormUpdateMemberInfo={(maxLength: CouncilMaxLength) => <CouncilFormUpdateCouncilMemberInfo {...maxLength} />}
       />
     </Page>
   )

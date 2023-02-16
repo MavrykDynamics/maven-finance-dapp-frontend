@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 import { Link, useHistory, useLocation } from 'react-router-dom'
@@ -11,7 +11,6 @@ import { CouncilPastActionView } from 'pages/Council/CouncilActions/CouncilPastA
 import Carousel from '../../app/App.components/Carousel/Carousel.view'
 import { CouncilMemberView } from 'pages/Council/CouncilMember/CouncilMember.view'
 import Pagination from 'pages/FinacialRequests/Pagination/Pagination.view'
-import { FormUpdateCouncilMemberView } from '../BreakGlassCouncil/BreakGlassCouncilForms/FormUpdateCouncilMember.view'
 import { CouncilPending } from './CouncilPending/CouncilPending.controller'
 import { MyCouncilActions } from './CouncilActions/MyCouncilActions.view'
 import Icon from 'app/App.components/Icon/Icon.view'
@@ -50,7 +49,6 @@ type Props = {
   glassBroken?: boolean
   showPropagateBreakGlass?: boolean
   paginationListName: string
-  getFormComponent: (maxLength: CouncilMaxLength, action?: string) => void
   titles: {
     membersName: string
     cardIdName: string
@@ -69,6 +67,9 @@ type Props = {
 
   handleSignAction: (id: number) => void
   handleDropAction: (id: number) => void
+
+  getFormComponent: (maxLength: CouncilMaxLength, action?: string) => React.ReactNode
+  getFormUpdateMemberInfo: (maxLength: CouncilMaxLength) => React.ReactNode
 }
 
 export function CouncilView({
@@ -78,6 +79,7 @@ export function CouncilView({
   showPropagateBreakGlass,
   paginationListName,
   getFormComponent,
+  getFormUpdateMemberInfo,
   titles,
 
   allPendingActions,
@@ -335,10 +337,10 @@ export function CouncilView({
           )}
         </div>
       </CouncilStyled>
-      {/* // TODO: add function like props */}
+
       <PopupContainer onClick={closePopup} show={isUpdateCouncilMemberInfo}>
         <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="council">
-          <FormUpdateCouncilMemberView {...maxLength} />
+          {getFormUpdateMemberInfo(maxLength)}
         </PopupContainerWrapper>
       </PopupContainer>
     </>
