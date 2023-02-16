@@ -20,9 +20,9 @@ import SatelliteList from 'pages/Satellites/SatelliteList/SatellitesList.control
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
-import DataFeedsPagination from '../pagination/DataFeedspagination.controler'
+import DataFeedsPagination from './pagination/DataFeedsPagination.controler'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import { DataFeedsChart } from '../chart/DataFeedsChart.controller'
+import { DataFeedsChart } from './chart/DataFeedsChart.controller'
 
 // types
 import { State } from 'reducers'
