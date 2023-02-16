@@ -1,18 +1,17 @@
 import React from 'react'
-import { CouncilOngoingAction } from './CouncilActions/CouncilOngoingAction.view'
+import { CouncilOngoingAction } from './CouncilOngoingAction.view'
 
 // components
 import { CouncilPastActionView } from 'pages/Council/CouncilActions/CouncilPastAction.view'
 import Pagination from 'pages/FinacialRequests/Pagination/Pagination.view'
-import { councilEmptyContainer } from './Council.controller'
+import { councilEmptyContainer } from '../Council.controller'
 
 // styles
-import { TabSwitcher } from './Council.style'
+import { TabSwitcher } from '../Council.style'
 
 // types
-import { CouncilActions } from 'utils/TypesAndInterfaces/Council' 
+import { CouncilActions } from 'utils/TypesAndInterfaces/Council'
 import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
-import { CouncilPageType } from './CouncilActions/CouncilOngoingAction.view'
 
 type Props = {
   myPastCouncilAction: CouncilActions
@@ -26,7 +25,7 @@ type Props = {
   handleDropAction: (arg: number) => void
   listNameMyPastActions: string
   listNameMyOngoingActions: string
-  pageType: CouncilPageType
+  cardIdName: string
 }
 
 export function MyCouncilActions({
@@ -41,7 +40,7 @@ export function MyCouncilActions({
   handleDropAction,
   listNameMyPastActions,
   listNameMyOngoingActions,
-  pageType,
+  cardIdName,
 }: Props) {
   const handleChangeTabs = (tabId?: number) => {
     setActiveActionTab(tabId === 1 ? tabsList[0].text : tabsList[1].text)
@@ -77,7 +76,7 @@ export function MyCouncilActions({
                   key={String(item.id)}
                   numCouncilMembers={numCouncilMembers}
                   handleDropAction={handleDropAction}
-                  pageType={pageType}
+                  cardIdName={cardIdName}
                 />
               ))
             : councilEmptyContainer}

@@ -30,6 +30,12 @@ const queryParameters = {
   pendingReview: '/pending-review',
 }
 
+const titles = {
+  membersName: 'Break Glass Council',
+  cardIdName: 'Break Glass Action ID',
+  allPastActions: 'Past Break Glass Council Actions'
+}
+
 export function BreakGlassCouncil() {
   const dispatch = useDispatch()
 
@@ -82,6 +88,7 @@ export function BreakGlassCouncil() {
         getFormComponent={(maxLength: CouncilMaxLength, action?: string) => (
           <BreakGlassCouncilForm maxLength={maxLength} action={action} />
         )}
+        titles={titles}
         // pending actions
         allPendingActions={allPendingActions}
         notMyPendingActions={notMyPendingActions}

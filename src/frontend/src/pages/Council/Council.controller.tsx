@@ -54,6 +54,12 @@ export const councilTabsList: TabItem[] = [
   },
 ]
 
+const titles = {
+  membersName: 'Council Members',
+  cardIdName: 'Council action ID',
+  allPastActions: 'Past Council Actions',
+}
+
 export const Council = () => {
   const dispatch = useDispatch()
 
@@ -97,6 +103,7 @@ export const Council = () => {
         getFormComponent={(maxLength: CouncilMaxLength, action?: string) => (
           <CouncilForm maxLength={maxLength} action={action} />
         )}
+        titles={titles}
         // pending actions
         allPendingActions={allPendingActions}
         notMyPendingActions={notMyPendingActions}

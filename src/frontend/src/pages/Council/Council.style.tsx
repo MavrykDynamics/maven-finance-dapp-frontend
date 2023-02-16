@@ -57,7 +57,7 @@ export const PropagateBreakGlassCouncilCard = styled(Card)<{ theme: MavrykTheme 
   }
 `
 
-export const ReviewPastCouncilActionsCard = styled(Card)<{
+export const ReviewCard = styled(Card)<{
   displayPendingSignature: boolean
   theme: MavrykTheme
 }>`
@@ -92,6 +92,34 @@ export const GoBack = styled(Card)`
 
   svg {
     margin-right: 8px;
+  }
+`
+
+export const AvaliableActions = styled(Card)<{ theme: MavrykTheme }>`
+  padding: 0;
+
+  .top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px 0 30px;
+    height: 75px;
+  }
+
+  .top-bar-title {
+    margin: 0;
+
+    font-weight: 600;
+    font-size: 22px;
+    line-height: 22px;
+
+    &::after {
+      display: none;
+    }
+  }
+
+  .dropdown-size {
+    width: 440px;
   }
 `
 
@@ -230,34 +258,6 @@ export const CouncilActionStyled = styled(CardHover)<{ theme: MavrykTheme }>`
         }
       }
     }
-  }
-`
-
-export const AvaliableActions = styled(Card)<{ theme: MavrykTheme }>`
-  padding: 0;
-
-  .top-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 20px 0 30px;
-    height: 75px;
-  }
-
-  .top-bar-title {
-    margin: 0;
-
-    font-weight: 600;
-    font-size: 22px;
-    line-height: 22px;
-
-    &::after {
-      display: none;
-    }
-  }
-
-  .dropdown-size {
-    width: 440px;
   }
 `
 
