@@ -69,7 +69,7 @@ export const getCouncilPendingActions = () => async (dispatch: AppDispatch, getS
     )
 
     const council = storage?.council_action || []
-    // TODO: add options filter by past and pending actions
+
     const allPendingActions = normalizeCouncilActions(council)
     const notMyPendingActions = normalizeCouncilActions(council, { filterWithoutAddress: accountPkh })
     const myPendingActions = normalizeCouncilActions(council, { filterByAddress: accountPkh })
