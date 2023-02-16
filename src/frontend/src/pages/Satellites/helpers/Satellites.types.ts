@@ -1,7 +1,6 @@
-import { ChartPlotType } from 'app/App.components/Chart/Chart.view'
-import type { Aggregator, Aggregator_History_Data } from 'utils/generated/graphqlTypes'
+import type { Aggregator_History_Data } from 'utils/generated/graphqlTypes'
+import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
 import { SatelliteRecord } from 'utils/TypesAndInterfaces/Delegation'
-import { normalizeDataFeedsHistory } from '../Satellites.helpers'
 
 type callbackFunction = (arg0: string) => void
 
@@ -17,36 +16,6 @@ export type SatellitesListProps = {
   className?: string
 }
 
-export type FeedFactory = {
-  address: string
-  admin: string
-  create_aggregator_paused: boolean
-  distribute_reward_smvk_paused: boolean
-  distribute_reward_xtz_paused: boolean
-  governance_id: string
-  track_aggregator_paused: boolean
-  untrack_aggregator_paused: boolean
-  aggregator_name_max_length: number
-}
-
-export type FeedGQL = Omit<Aggregator, '__typename' | 'history_data'> & {
-  category: string | null
-  network: string | null
-}
-
-export type Feed = FeedGQL & {
-  dataFeedsHistory: Array<ChartPlotType>
-  dataFeedsVolatility: Array<ChartPlotType>
-  amount: number
-  icon?: string
-}
-
-export type InitialOracleStorageType = {
-  feeds: Array<Feed>
-  feedsFactory: Array<FeedFactory>
-  feedCategories: Array<string>
-}
-
 export type SatelliteListItemProps = {
   satellite: SatelliteRecord
   delegateCallback: (satelliteAddress: string) => void
@@ -59,5 +28,3 @@ export type SatelliteListItemProps = {
   className?: string
   children?: JSX.Element
 }
-
-export type DataFeedsHistoryGraphQL = Omit<Aggregator_History_Data, '__typename'>

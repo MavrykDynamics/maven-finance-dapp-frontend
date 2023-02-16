@@ -14,14 +14,12 @@ import { TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.consta
 
 const DataFeedsPagination = () => {
   let { feedId = '' } = useParams<{ feedId: string }>()
-  const { feeds = [] } = useSelector((state: State) => state.oracles.oraclesStorage)
+  const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
 
-  const prevIndex = useMemo(() => {
-    return feeds.findIndex((item) => item.address === feedId) || 0
-  }, [feeds, feedId])
+  const currentFeedIdx = useMemo(() => feedsLedger.findIndex((item) => item.address === feedId), [feedsLedger, feedId])
 
-  const prevFeed = feeds?.[prevIndex - 1]
-  const nextFeed = feeds?.[prevIndex + 1]
+  const prevFeed = feedsLedger[currentFeedIdx - 1]
+  const nextFeed = feedsLedger[currentFeedIdx + 1]
 
   return (
     <SatellitePaginationStyled className="data-feeds-pagination">

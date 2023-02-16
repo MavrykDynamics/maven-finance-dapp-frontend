@@ -68,7 +68,7 @@ export const connect = () => async (dispatch: AppDispatch, getState: GetState) =
             accountPkh,
             state.delegation.delegationStorage.activeSatellites,
             state.tokens.dipDupTokens,
-            state.oracles.oraclesStorage.feeds,
+            state.dataFeeds.feedsLedger,
             state.preferences.headData?.level,
           )
         : DEFAULT_USER

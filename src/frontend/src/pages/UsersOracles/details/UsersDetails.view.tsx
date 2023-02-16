@@ -5,7 +5,7 @@ import { USER_DATA_FEEDS_LIST_NAME } from 'pages/FinacialRequests/Pagination/pag
 import { parseDate } from 'utils/time'
 
 // types
-import { Feed } from 'pages/Satellites/helpers/Satellites.types'
+import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
 import { UserType } from '../../../utils/TypesAndInterfaces/User'
 
 // view
