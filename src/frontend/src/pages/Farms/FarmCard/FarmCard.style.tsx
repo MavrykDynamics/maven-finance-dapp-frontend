@@ -15,7 +15,8 @@ export const FarmCardStyled = styled(Card)<{ theme: MavrykTheme }>`
       color: ${({ theme }) => theme.textColor};
     }
 
-    var {
+    var,
+    .value {
       font-weight: 600;
       font-size: 16px;
       line-height: 22px;
