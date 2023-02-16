@@ -1,14 +1,8 @@
 import styled from 'styled-components/macro'
-import { Page as PageBase, Card } from 'styles'
+import { Card } from 'styles'
 
 // types
 import { MavrykTheme } from '../../styles/interfaces'
-
-export const Page = styled(PageBase)`
-  & > h1 {
-    margin-bottom: 11px;
-  }
-`
 
 export const BreakGlassCouncilStyled = styled.div<{ theme: MavrykTheme }>`
   display: flex;

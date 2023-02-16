@@ -3,21 +3,20 @@ import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
 // components
+import { Page } from 'styles'
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
 import { CouncilView } from './Council.view'
+import { BreakGlassCouncilForm } from './BreakGlassCouncilForms/BreakGlassCouncilForm.controller'
 
 // helpers
 import { BREAK_GLASS_COUNCIL_ACTIONS_LIST_NAME } from 'pages/FinacialRequests/Pagination/pagination.consts'
 import { actions } from './BreakGlassCouncilForms/BreakGlassCouncilForm.controller'
 
-// styles
-import { Page } from './BreakGlassCouncil.style'
-
 // actions
 import {
+  getBreakGlassCouncilMembers,
   getBreakGlassCouncilPendingActions,
   getBreakGlassCouncilPastActions,
-  getBreakGlassCouncilMembers,
   dropBreakGlass,
   signAction,
 } from './BreakGlassCouncil.actions'
@@ -60,10 +59,9 @@ export function BreakGlassCouncil() {
   }
 
   useEffect(() => {
-    dispatch(getBreakGlassCouncilPendingActions())
-    dispatch(getBreakGlassCouncilPastActions())
-    dispatch(getBreakGlassCouncilMembers())
     dispatch(getCouncilStorage())
+    dispatch(getBreakGlassCouncilMembers())
+    dispatch(getBreakGlassCouncilPastActions())
   }, [dispatch])
 
   useEffect(() => {
@@ -82,7 +80,11 @@ export function BreakGlassCouncil() {
         queryParameters={queryParameters}
         memberMaxLength={memberMaxLength}
         glassBroken={glassBroken}
+        showPropagateBreakGlass
         paginationListName={BREAK_GLASS_COUNCIL_ACTIONS_LIST_NAME}
+        getFormComponent={(maxLength: typeof memberMaxLength, action?: string) => (
+          <BreakGlassCouncilForm memberMaxLength={maxLength} action={action} />
+        )}
         // pending actions
         allPendingActions={allPendingActions}
         notMyPendingActions={notMyPendingActions}

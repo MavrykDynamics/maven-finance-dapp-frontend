@@ -11,7 +11,6 @@ import { CouncilPastActionView } from 'pages/Council/CouncilActions/CouncilPastA
 import Carousel from '../../app/App.components/Carousel/Carousel.view'
 import { CouncilMemberView } from 'pages/Council/CouncilMember/CouncilMember.view'
 import Pagination from 'pages/FinacialRequests/Pagination/Pagination.view'
-import { BreakGlassCouncilForm } from './BreakGlassCouncilForms/BreakGlassCouncilForm.controller'
 import { FormUpdateCouncilMemberView } from './BreakGlassCouncilForms/FormUpdateCouncilMember.view'
 import { CouncilPending } from '../Council/CouncilPending/CouncilPending.controller'
 import { MyCouncilActions } from '../Council/MyCouncilActions.view'
@@ -54,14 +53,20 @@ type Props = {
   }
   memberMaxLength: CouncilMemberMaxLength
   glassBroken: boolean
+  showPropagateBreakGlass: boolean
   paginationListName: string
+  getFormComponent: (memberMaxLength: CouncilMemberMaxLength, action?: string) => void
+
   allPendingActions: CouncilActions
   notMyPendingActions: CouncilActions
   myPendingActions: CouncilActions
+
   allPastActions: CouncilActions
   myPastActions: CouncilActions
+
   members: CouncilMembers
   dropdowndActions: Record<string, string>
+
   handleSignAction: (id: number) => void
   handleDropAction: (id: number) => void
 }
@@ -70,7 +75,9 @@ export function CouncilView({
   queryParameters,
   memberMaxLength,
   glassBroken,
+  showPropagateBreakGlass,
   paginationListName,
+  getFormComponent,
 
   allPendingActions,
   notMyPendingActions,
@@ -178,14 +185,14 @@ export function CouncilView({
   return (
     <>
       {tabId && isUserInBreakCouncilMember && (
-        <Link to={`/break-glass-council`}>
+        <Link to={queryParameters.pathname}>
           <NewButton kind={TRANSPARENT_WITH_BORDER} className="margin-top-30 go-back">
             <Icon id="arrowRight" /> Back to Member Dashboard
           </NewButton>
         </Link>
       )}
 
-      {isUserInBreakCouncilMember && !tabId && (
+      {!tabId && isUserInBreakCouncilMember && showPropagateBreakGlass && (
         <PropagateBreakGlassCouncilCard>
           <h1>Propagate Break Glass</h1>
 
@@ -278,7 +285,7 @@ export function CouncilView({
                   </div>
                 </div>
 
-                <BreakGlassCouncilForm memberMaxLength={memberMaxLength} action={chosenDdItem?.value} />
+                {getFormComponent(memberMaxLength, chosenDdItem?.value)}
               </AvaliableActions>
 
               <MyCouncilActions

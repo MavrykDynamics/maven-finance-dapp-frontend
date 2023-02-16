@@ -159,15 +159,17 @@ export const Council = () => {
   }
 
   useEffect(() => {
+    dispatch(getCouncilStorage())
     dispatch(getCouncilMembers())
     dispatch(getCouncilPastActions())
-    dispatch(getCouncilStorage())
   }, [dispatch])
 
   useEffect(() => {
-    if (accountPkh) dispatch(getCouncilPendingActions())
-    setSliderKey(sliderKey + 1)
-  }, [accountPkh])
+    if (accountPkh) {
+      dispatch(getCouncilPendingActions())
+      dispatch(getCouncilPastActions())
+    }
+  }, [accountPkh, dispatch])
 
   const handleOpenleModal = () => {
     setIsUpdateCouncilMemberInfo(true)
