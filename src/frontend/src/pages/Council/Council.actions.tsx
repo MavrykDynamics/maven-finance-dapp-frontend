@@ -39,12 +39,13 @@ export const getCouncilStorage = () => async (dispatch: AppDispatch, getState: G
     )
 
     const council = storage?.council[0]
-
+    const glassBroken = storage?.break_glass[0]?.glass_broken
     const councilMaxLength = normalizeMaxLength(council)
 
     dispatch({
       type: GET_COUNCIL_STORAGE,
       councilMaxLength,
+      glassBroken,
     })
   } catch (error) {
     if (error instanceof Error) {
@@ -124,8 +125,6 @@ export const getCouncilPastActions = () => async (dispatch: AppDispatch, getStat
 // getCouncilMembers
 export const GET_COUNCIL_MEMBERS = 'GET_COUNCIL_MEMBERS'
 export const getCouncilMembers = () => async (dispatch: AppDispatch, getState: GetState) => {
-  const state: State = getState()
-
   try {
     const storage = await fetchFromIndexerWithPromise(
       COUNCIL_MEMBERS_QUERY,
@@ -171,8 +170,7 @@ export const sign = (actionID: number) => async (dispatch: AppDispatch, getState
     await transaction?.confirmation()
     dispatch(showToaster(SUCCESS, 'Sign is done', 'All good :)'))
 
-    await Promise.all([dispatch(getCouncilPendingActions()), dispatch(getCouncilStorage())])
-
+    await Promise.all([dispatch(getCouncilPendingActions()), dispatch(getCouncilPastActions())])
     await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {
@@ -209,8 +207,7 @@ export const addVestee =
       await transaction?.confirmation()
       dispatch(showToaster(SUCCESS, 'Add Vestee is done', 'All good :)'))
 
-      await Promise.all([dispatch(getCouncilPendingActions()), dispatch(getCouncilStorage())])
-
+      await dispatch(getCouncilPendingActions())
       await dispatch(toggleActionLoader(false))
     } catch (error) {
       if (error instanceof Error) {
@@ -247,8 +244,7 @@ export const addCouncilMember =
       await transaction?.confirmation()
       dispatch(showToaster(SUCCESS, 'Add Council Member is done', 'All good :)'))
 
-      await Promise.all([dispatch(getCouncilPendingActions()), dispatch(getCouncilStorage())])
-
+      await Promise.all([dispatch(getCouncilPendingActions()), dispatch(getCouncilMembers())])
       await dispatch(toggleActionLoader(false))
     } catch (error) {
       if (error instanceof Error) {
@@ -285,8 +281,7 @@ export const updateVestee =
       await transaction?.confirmation()
       dispatch(showToaster(SUCCESS, 'Update Vestee is done', 'All good :)'))
 
-      await Promise.all([dispatch(getCouncilPendingActions()), dispatch(getCouncilStorage())])
-
+      await dispatch(getCouncilPendingActions())
       await dispatch(toggleActionLoader(false))
     } catch (error) {
       if (error instanceof Error) {
@@ -320,8 +315,7 @@ export const toggleVesteeLock = (vesteeAddress: string) => async (dispatch: AppD
     await transaction?.confirmation()
     dispatch(showToaster(SUCCESS, 'Toggle Vestee Lock is done', 'All good :)'))
 
-    await Promise.all([dispatch(getCouncilPendingActions()), dispatch(getCouncilStorage())])
-
+    await dispatch(getCouncilPendingActions())
     await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {
@@ -371,8 +365,7 @@ export const changeCouncilMember =
       await transaction?.confirmation()
       dispatch(showToaster(SUCCESS, 'Change Council Member is done', 'All good :)'))
 
-      await Promise.all([dispatch(getCouncilPendingActions()), dispatch(getCouncilStorage())])
-
+      await Promise.all([dispatch(getCouncilPendingActions()), dispatch(getCouncilMembers())])
       await dispatch(toggleActionLoader(false))
     } catch (error) {
       if (error instanceof Error) {
@@ -406,8 +399,7 @@ export const removeCouncilMember = (memberAddress: string) => async (dispatch: A
     await transaction?.confirmation()
     dispatch(showToaster(SUCCESS, 'Remove Council Member is done', 'All good :)'))
 
-    await Promise.all([dispatch(getCouncilPendingActions()), dispatch(getCouncilStorage())])
-
+    await Promise.all([dispatch(getCouncilPendingActions()), dispatch(getCouncilMembers())])
     await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {
@@ -445,8 +437,7 @@ export const updateCouncilMemberInfo =
       await transaction?.confirmation()
       await dispatch(showToaster(SUCCESS, 'Update Council Member Info is done', 'All good :)'))
 
-      await Promise.all([dispatch(getCouncilPendingActions()), dispatch(getCouncilStorage())])
-
+      await Promise.all([dispatch(getCouncilPendingActions()), dispatch(getCouncilMembers())])
       await dispatch(toggleActionLoader(false))
     } catch (error) {
       if (error instanceof Error) {
@@ -491,8 +482,7 @@ export const transferTokens =
       await transaction?.confirmation()
       dispatch(showToaster(SUCCESS, 'Transfer Tokens is done', 'All good :)'))
 
-      await Promise.all([dispatch(getCouncilPendingActions()), dispatch(getCouncilStorage())])
-
+      await dispatch(getCouncilPendingActions())
       await dispatch(toggleActionLoader(false))
     } catch (error) {
       if (error instanceof Error) {
@@ -546,8 +536,7 @@ export const requestTokens =
       await transaction?.confirmation()
       dispatch(showToaster(SUCCESS, 'Request Tokens is done', 'All good :)'))
 
-      await Promise.all([dispatch(getCouncilPendingActions()), dispatch(getCouncilStorage())])
-
+      await dispatch(getCouncilPendingActions())
       await dispatch(toggleActionLoader(false))
     } catch (error) {
       if (error instanceof Error) {
@@ -583,8 +572,7 @@ export const requestTokenMint =
       await transaction?.confirmation()
       dispatch(showToaster(SUCCESS, 'Request Tokens is done', 'All good :)'))
 
-      await Promise.all([dispatch(getCouncilPendingActions()), dispatch(getCouncilStorage())])
-
+      await dispatch(getCouncilPendingActions())
       await dispatch(toggleActionLoader(false))
     } catch (error) {
       if (error instanceof Error) {
@@ -618,8 +606,7 @@ export const dropFinancialRequest = (financialReqID: number) => async (dispatch:
     await transaction?.confirmation()
     dispatch(showToaster(SUCCESS, 'Drop Financial Request is done', 'All good :)'))
 
-    await Promise.all([dispatch(getCouncilPendingActions()), dispatch(getCouncilStorage())])
-
+    await dispatch(getCouncilPendingActions())
     await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {
@@ -653,8 +640,7 @@ export const removeVesteeRequest = (vesteeAddress: string) => async (dispatch: A
     await transaction?.confirmation()
     dispatch(showToaster(SUCCESS, 'Remove Vestee Request is done', 'All good :)'))
 
-    await Promise.all([dispatch(getCouncilPendingActions()), dispatch(getCouncilStorage())])
-
+    await dispatch(getCouncilPendingActions())
     await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {
@@ -688,8 +674,7 @@ export const setBakerRequest = (bakerHash: string) => async (dispatch: AppDispat
     await transaction?.confirmation()
     dispatch(showToaster(SUCCESS, 'Set Baker Request is done', 'All good :)'))
 
-    await Promise.all([dispatch(getCouncilPendingActions()), dispatch(getCouncilStorage())])
-
+    await dispatch(getCouncilPendingActions())
     await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {
@@ -724,8 +709,7 @@ export const setContractBakerRequest =
       await transaction?.confirmation()
       dispatch(showToaster(SUCCESS, 'Set Contract Baker Request is done', 'All good :)'))
 
-      await Promise.all([dispatch(getCouncilPendingActions()), dispatch(getCouncilStorage())])
-
+      await dispatch(getCouncilPendingActions())
       await dispatch(toggleActionLoader(false))
     } catch (error) {
       if (error instanceof Error) {
@@ -763,8 +747,7 @@ export const dropRequest = (actionID: number) => async (dispatch: AppDispatch, g
     console.log('done', done)
     dispatch(showToaster(SUCCESS, 'Set Contract Baker Request is done', 'All good :)'))
 
-    await Promise.all([dispatch(getCouncilPendingActions()), dispatch(getCouncilStorage())])
-
+    await dispatch(getCouncilPendingActions())
     await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {

@@ -28,9 +28,8 @@ const time = String(new Date())
 const timeFormat = 'YYYY-MM-DD'
 const timestamptz = parseDate({ time, timeFormat }) || undefined
 
-export const GET_BREAK_GLASS_COUNCIL_ACTIONS = 'GET_BREAK_GLASS_COUNCIL_ACTIONS'
-
 // getBreakGlassCouncilPendingActions
+export const GET_BREAK_GLASS_COUNCIL_PENDING_ACTIONS = 'GET_BREAK_GLASS_COUNCIL_PENDING_ACTIONS'
 export const getBreakGlassCouncilPendingActions = () => async (dispatch: AppDispatch, getState: GetState) => {
   const state: State = getState()
   const { accountPkh } = state?.wallet
@@ -53,7 +52,7 @@ export const getBreakGlassCouncilPendingActions = () => async (dispatch: AppDisp
     })
 
     await dispatch({
-      type: GET_BREAK_GLASS_COUNCIL_ACTIONS,
+      type: GET_BREAK_GLASS_COUNCIL_PENDING_ACTIONS,
       breakGlassCouncilActions: {
         allPendingActions,
         notMyPendingActions,
@@ -69,6 +68,7 @@ export const getBreakGlassCouncilPendingActions = () => async (dispatch: AppDisp
 }
 
 // getBreakGlassCouncilPastActions
+export const GET_BREAK_GLASS_COUNCIL_PAST_ACTIONS = 'GET_BREAK_GLASS_COUNCIL_PAST_ACTIONS'
 export const getBreakGlassCouncilPastActions = () => async (dispatch: AppDispatch, getState: GetState) => {
   const state: State = getState()
   const { accountPkh } = state?.wallet
@@ -85,7 +85,7 @@ export const getBreakGlassCouncilPastActions = () => async (dispatch: AppDispatc
     const myPastActions = normalizeCouncilActions(breakGlassCouncil, { filterByAddress: accountPkh })
 
     await dispatch({
-      type: GET_BREAK_GLASS_COUNCIL_ACTIONS,
+      type: GET_BREAK_GLASS_COUNCIL_PAST_ACTIONS,
       breakGlassCouncilActions: {
         allPastActions,
         myPastActions,
@@ -102,8 +102,6 @@ export const getBreakGlassCouncilPastActions = () => async (dispatch: AppDispatc
 // getBreakGlassCouncilMembers
 export const GET_BREAK_GLASS_COUNCIL_MEMBERS = 'GET_BREAK_GLASS_COUNCIL_MEMBERS'
 export const getBreakGlassCouncilMembers = () => async (dispatch: AppDispatch, getState: GetState) => {
-  const state: State = getState()
-
   try {
     const storage = await fetchFromIndexerWithPromise(
       BREAK_GLASS_COUNCIL_MEMBERS_QUERY,
@@ -147,12 +145,7 @@ export const setAllContractsAdmin = (newAdminAddress: string) => async (dispatch
     dispatch(showToaster(INFO, 'Set All Contracts Admin...', 'Please wait 30s'))
 
     await transaction?.confirmation()
-
-    // await Promise.all([
-    //   dispatch(getPastBreakGlassCouncilAction()),
-    //   dispatch(getMyPastBreakGlassCouncilAction()),
-    //   dispatch(getBreakGlassActionPendingSignature()),
-    // ])
+    await dispatch(getBreakGlassCouncilPendingActions())
 
     dispatch(showToaster(SUCCESS, 'Set All Contracts Admin is done', 'All good :)'))
     dispatch(toggleActionLoader(false))
@@ -187,12 +180,7 @@ export const setSingleContractAdmin =
       dispatch(showToaster(INFO, 'Set Single Contract Admin...', 'Please wait 30s'))
 
       await transaction?.confirmation()
-
-      // await Promise.all([
-      //   dispatch(getPastBreakGlassCouncilAction()),
-      //   dispatch(getMyPastBreakGlassCouncilAction()),
-      //   dispatch(getBreakGlassActionPendingSignature()),
-      // ])
+      await dispatch(getBreakGlassCouncilPendingActions())
 
       dispatch(showToaster(SUCCESS, 'Set Single Contract Admin is done', 'All good :)'))
       dispatch(toggleActionLoader(false))
@@ -226,12 +214,7 @@ export const signAction = (breakGlassActionID: number) => async (dispatch: AppDi
     dispatch(showToaster(INFO, 'Sign action...', 'Please wait 30s'))
 
     await transaction?.confirmation()
-
-    // await Promise.all([
-    //   dispatch(getPastBreakGlassCouncilAction()),
-    //   dispatch(getMyPastBreakGlassCouncilAction()),
-    //   dispatch(getBreakGlassActionPendingSignature()),
-    // ])
+    await Promise.all([dispatch(getBreakGlassCouncilPendingActions()), dispatch(getBreakGlassCouncilPastActions())])
 
     dispatch(showToaster(SUCCESS, 'Sign Action is done', 'All good :)'))
     dispatch(toggleActionLoader(false))
@@ -269,13 +252,7 @@ export const addCouncilMember =
       dispatch(showToaster(INFO, 'Add Council Member...', 'Please wait 30s'))
 
       await transaction?.confirmation()
-
-      // await Promise.all([
-      //   dispatch(getPastBreakGlassCouncilAction()),
-      //   dispatch(getMyPastBreakGlassCouncilAction()),
-      //   dispatch(getBreakGlassActionPendingSignature()),
-      //   dispatch(getBreakGlassCouncilMember()),
-      // ])
+      await Promise.all([dispatch(getBreakGlassCouncilPendingActions()), dispatch(getBreakGlassCouncilMembers())])
 
       dispatch(showToaster(SUCCESS, 'Add Council Member is done', 'All good :)'))
       dispatch(toggleActionLoader(false))
@@ -313,13 +290,7 @@ export const updateCouncilMember =
       dispatch(showToaster(INFO, 'Update Council Member...', 'Please wait 30s'))
 
       await transaction?.confirmation()
-
-      // await Promise.all([
-      //   dispatch(getPastBreakGlassCouncilAction()),
-      //   dispatch(getMyPastBreakGlassCouncilAction()),
-      //   dispatch(getBreakGlassActionPendingSignature()),
-      //   dispatch(getBreakGlassCouncilMember()),
-      // ])
+      await Promise.all([dispatch(getBreakGlassCouncilPendingActions()), dispatch(getBreakGlassCouncilMembers())])
 
       dispatch(showToaster(SUCCESS, 'Update Council Member is done', 'All good :)'))
       dispatch(toggleActionLoader(false))
@@ -369,13 +340,7 @@ export const changeCouncilMember =
       dispatch(showToaster(INFO, 'Change Council Member...', 'Please wait 30s'))
 
       await transaction?.confirmation()
-
-      // await Promise.all([
-      //   dispatch(getPastBreakGlassCouncilAction()),
-      //   dispatch(getMyPastBreakGlassCouncilAction()),
-      //   dispatch(getBreakGlassActionPendingSignature()),
-      //   dispatch(getBreakGlassCouncilMember()),
-      // ])
+      await Promise.all([dispatch(getBreakGlassCouncilPendingActions()), dispatch(getBreakGlassCouncilMembers())])
 
       dispatch(showToaster(SUCCESS, 'Change Council Member is done', 'All good :)'))
       dispatch(toggleActionLoader(false))
@@ -409,13 +374,7 @@ export const removeCouncilMember = (memberAddress: string) => async (dispatch: A
     dispatch(showToaster(INFO, 'Remove Council Member...', 'Please wait 30s'))
 
     await transaction?.confirmation()
-
-    // await Promise.all([
-    //   dispatch(getPastBreakGlassCouncilAction()),
-    //   dispatch(getMyPastBreakGlassCouncilAction()),
-    //   dispatch(getBreakGlassActionPendingSignature()),
-    //   dispatch(getBreakGlassCouncilMember()),
-    // ])
+    await Promise.all([dispatch(getBreakGlassCouncilPendingActions()), dispatch(getBreakGlassCouncilMembers())])
 
     dispatch(showToaster(SUCCESS, 'Remove Council Member is done', 'All good :)'))
     dispatch(toggleActionLoader(false))
@@ -449,12 +408,11 @@ export const propagateBreakGlass = () => async (dispatch: AppDispatch, getState:
     dispatch(showToaster(INFO, 'Propagate Break Glass...', 'Please wait 30s'))
 
     await transaction?.confirmation()
-
-    // await Promise.all([
-    //   dispatch(getPastBreakGlassCouncilAction()),
-    //   dispatch(getMyPastBreakGlassCouncilAction()),
-    //   dispatch(getBreakGlassActionPendingSignature()),
-    // ])
+    await Promise.all([
+      dispatch(getBreakGlassCouncilPendingActions()),
+      dispatch(getBreakGlassCouncilPastActions()),
+      dispatch(getBreakGlassCouncilMembers()),
+    ])
 
     dispatch(showToaster(SUCCESS, 'Propagate Break Glass is done', 'All good :)'))
     dispatch(toggleActionLoader(false))
@@ -488,12 +446,7 @@ export const dropBreakGlass = (breakGlassActionID: number) => async (dispatch: A
     dispatch(showToaster(INFO, 'Drop Action...', 'Please wait 30s'))
 
     await transaction?.confirmation()
-
-    // await Promise.all([
-    //   dispatch(getPastBreakGlassCouncilAction()),
-    //   dispatch(getMyPastBreakGlassCouncilAction()),
-    //   dispatch(getBreakGlassActionPendingSignature()),
-    // ])
+    await dispatch(getBreakGlassCouncilPendingActions())
 
     dispatch(showToaster(SUCCESS, 'Drop Action is done', 'All good :)'))
     dispatch(toggleActionLoader(false))

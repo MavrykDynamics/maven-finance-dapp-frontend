@@ -7,6 +7,10 @@ export const COUNCIL_STORAGE_QUERY = `
       request_purpose_max_length
       request_token_name_max_length
     }
+
+    break_glass {
+      glass_broken
+    }
   }
 `
 export const COUNCIL_STORAGE_QUERY_NAME = 'GetCouncilStorageQuery'
@@ -57,7 +61,7 @@ export const COUNCIL_PAST_ACTIONS_NAME = 'GetPastCouncilActions'
 export const COUNCIL_PAST_ACTIONS_VARIABLE = {}
 
 export const COUNCIL_PENDING_ACTIONS_QUERY = `
-  query GetPendingCouncilActions($_gte: timestamptz = "") {
+  query GetPendingCouncilActions($_gte: timestamptz = "", $userAddress: String = "", $userAddress2: String = "") {
     council_action(where: {status: {_eq: "0"}, expiration_datetime: {_gte: $_gte}, _or: {executed: {_eq: false}}, initiator_id: {_neq: $userAddress}, signers: { signer_id: {_neq: $userAddress2}}}, order_by: {start_datetime: desc}) {
       ${COUNCIL_ACTIONS_PARAMS}
     }

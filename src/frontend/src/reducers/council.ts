@@ -2,8 +2,9 @@ import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
 import { CouncilActions, CouncilMembers, CouncilMaxLength } from '../utils/TypesAndInterfaces/Council'
 import { GET_COUNCIL_STORAGE, GET_COUNCIL_ACTIONS, GET_COUNCIL_MEMBERS } from '../pages/Council/Council.actions'
 import {
-  GET_BREAK_GLASS_COUNCIL_ACTIONS,
   GET_BREAK_GLASS_COUNCIL_MEMBERS,
+  GET_BREAK_GLASS_COUNCIL_PENDING_ACTIONS,
+  GET_BREAK_GLASS_COUNCIL_PAST_ACTIONS,
 } from 'pages/BreakGlassCouncil/BreakGlassCouncil.actions'
 import {
   defaultCouncilMemberImageMaxLength,
@@ -23,6 +24,7 @@ export type CouncilState = {
     allPastActions: CouncilActions
     myPastActions: CouncilActions
   }
+  glassBroken: boolean
   breakGlassCouncilMembers: CouncilMembers
   breakGlassCouncilActions: {
     allPendingActions: CouncilActions
@@ -49,6 +51,7 @@ const councilDefaultState: CouncilState = {
     allPastActions: [],
     myPastActions: [],
   },
+  glassBroken: false,
   breakGlassCouncilMembers: [],
   breakGlassCouncilActions: {
     allPendingActions: [],
@@ -64,8 +67,8 @@ export function council(state = councilDefaultState, action: Action) {
     case GET_COUNCIL_STORAGE:
       return {
         ...state,
-        // TODO: add storage
         councilMaxLength: action.councilMaxLength,
+        glassBroken: action.glassBroken,
       }
     case GET_COUNCIL_MEMBERS:
       return {
@@ -85,12 +88,23 @@ export function council(state = councilDefaultState, action: Action) {
         ...state,
         breakGlassCouncilMembers: action.breakGlassCouncilMembers,
       }
-    case GET_BREAK_GLASS_COUNCIL_ACTIONS:
+    case GET_BREAK_GLASS_COUNCIL_PENDING_ACTIONS:
       return {
         ...state,
         breakGlassCouncilActions: {
           ...state.breakGlassCouncilActions,
-          ...action.breakGlassCouncilActions,
+          allPendingActions: action.breakGlassCouncilActions.allPendingActions,
+          notMyPendingActions: action.breakGlassCouncilActions.notMyPendingActions,
+          myPendingActions: action.breakGlassCouncilActions.myPendingActions,
+        },
+      }
+    case GET_BREAK_GLASS_COUNCIL_PAST_ACTIONS:
+      return {
+        ...state,
+        breakGlassCouncilActions: {
+          ...state.breakGlassCouncilActions,
+          allPastActions: action.breakGlassCouncilActions.allPastActions,
+          myPastActions: action.breakGlassCouncilActions.myPastActions,
         },
       }
     default:

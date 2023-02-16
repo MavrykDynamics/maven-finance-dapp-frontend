@@ -21,6 +21,7 @@ import {
   dropBreakGlass,
   signAction,
 } from './BreakGlassCouncil.actions'
+import { getCouncilStorage } from 'pages/Council/Council.actions'
 
 const queryParameters = {
   pathname: '/break-glass-council',
@@ -32,9 +33,9 @@ export function BreakGlassCouncil() {
   const dispatch = useDispatch()
 
   const { accountPkh } = useSelector((state: State) => state.wallet)
-
-  const { breakGlassStorage, glassBroken } = useSelector((state: State) => state.breakGlass)
   const {
+    councilMaxLength,
+    glassBroken,
     breakGlassCouncilMembers,
     breakGlassCouncilActions: {
       allPendingActions,
@@ -44,10 +45,10 @@ export function BreakGlassCouncil() {
       myPastActions,
     },
   } = useSelector((state: State) => state.council)
-  
+
   const memberMaxLength = {
-    nameMaxLength: breakGlassStorage?.config?.councilMemberNameMaxLength,
-    websiteMaxLength: breakGlassStorage?.config?.councilMemberWebsiteMaxLength,
+    nameMaxLength: councilMaxLength.councilMemberNameMaxLength,
+    websiteMaxLength: councilMaxLength.councilMemberWebsiteMaxLength,
   }
 
   const handleSignAction = (id: number) => {
@@ -62,6 +63,7 @@ export function BreakGlassCouncil() {
     dispatch(getBreakGlassCouncilPendingActions())
     dispatch(getBreakGlassCouncilPastActions())
     dispatch(getBreakGlassCouncilMembers())
+    dispatch(getCouncilStorage())
   }, [dispatch])
 
   useEffect(() => {
