@@ -1,16 +1,15 @@
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
 // components
 import { Page } from 'styles'
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
-import { CouncilView } from './Council.view'
-import { BreakGlassCouncilForm } from './BreakGlassCouncilForms/BreakGlassCouncilForm.controller'
+import { CouncilView } from '../Council/Council.view'
+import { BreakGlassCouncilForm, actions } from './BreakGlassCouncilForms/BreakGlassCouncilForm.controller'
 
 // helpers
-import { BREAK_GLASS_COUNCIL_ACTIONS_LIST_NAME } from 'pages/FinacialRequests/Pagination/pagination.consts'
-import { actions } from './BreakGlassCouncilForms/BreakGlassCouncilForm.controller'
+import { COUNCIL_LIST_NAME } from 'pages/FinacialRequests/Pagination/pagination.consts'
 
 // actions
 import {
@@ -79,7 +78,7 @@ export function BreakGlassCouncil() {
         maxLength={councilMaxLength}
         glassBroken={glassBroken}
         showPropagateBreakGlass
-        paginationListName={BREAK_GLASS_COUNCIL_ACTIONS_LIST_NAME}
+        paginationListName={COUNCIL_LIST_NAME}
         getFormComponent={(maxLength: CouncilMaxLength, action?: string) => (
           <BreakGlassCouncilForm maxLength={maxLength} action={action} />
         )}

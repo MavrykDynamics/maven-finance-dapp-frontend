@@ -11,9 +11,9 @@ import { CouncilPastActionView } from 'pages/Council/CouncilActions/CouncilPastA
 import Carousel from '../../app/App.components/Carousel/Carousel.view'
 import { CouncilMemberView } from 'pages/Council/CouncilMember/CouncilMember.view'
 import Pagination from 'pages/FinacialRequests/Pagination/Pagination.view'
-import { FormUpdateCouncilMemberView } from './BreakGlassCouncilForms/FormUpdateCouncilMember.view'
-import { CouncilPending } from '../Council/CouncilPending/CouncilPending.controller'
-import { MyCouncilActions } from '../Council/MyCouncilActions.view'
+import { FormUpdateCouncilMemberView } from '../BreakGlassCouncil/BreakGlassCouncilForms/FormUpdateCouncilMember.view'
+import { CouncilPending } from './CouncilPending/CouncilPending.controller'
+import { MyCouncilActions } from './MyCouncilActions.view'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { councilEmptyContainer } from 'pages/Council/Council.controller'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
@@ -33,17 +33,17 @@ import { councilTabsList } from 'pages/Council/Council.controller'
 
 // styles
 import {
-  BreakGlassCouncilStyled,
+  CouncilStyled,
   ReviewPastCouncilActionsCard,
   AvaliableActions,
   PropagateBreakGlassCouncilCard,
-} from './BreakGlassCouncil.style'
+} from './Council.style'
 
 // types
 import { CouncilMaxLength, CouncilActions, CouncilMembers } from 'utils/TypesAndInterfaces/Council'
 
 // actions
-import { propagateBreakGlass } from './BreakGlassCouncil.actions'
+import { propagateBreakGlass } from '../BreakGlassCouncil/BreakGlassCouncil.actions'
 
 type Props = {
   queryParameters: {
@@ -52,8 +52,8 @@ type Props = {
     pendingReview: string
   }
   maxLength: CouncilMaxLength
-  glassBroken: boolean
-  showPropagateBreakGlass: boolean
+  glassBroken?: boolean
+  showPropagateBreakGlass?: boolean
   paginationListName: string
   getFormComponent: (maxLength: CouncilMaxLength, action?: string) => void
 
@@ -205,7 +205,7 @@ export function CouncilView({
 
       {displayPendingSignature && <h1>Pending Signature</h1>}
 
-      <BreakGlassCouncilStyled>
+      <CouncilStyled>
         <div className="left-block">
           {displayPendingSignature && (
             <article className="pending">
@@ -335,7 +335,7 @@ export function CouncilView({
             </>
           )}
         </div>
-      </BreakGlassCouncilStyled>
+      </CouncilStyled>
 
       <PopupContainer onClick={closePopup} show={isUpdateCouncilMemberInfo}>
         <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="council">
