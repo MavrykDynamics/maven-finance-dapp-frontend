@@ -16,12 +16,6 @@ type Props = {
 }
 
 export function DataFeedsChart({ className, dataFeedsHistory, dataFeedsVolatility, activeTab, tooltipAsset }: Props) {
-  // const tickFormater = (value: number): string => {
-  //   return activeTab === 1
-  //     ? `$${formatNumber(true, DECIMALS_TO_SHOW, value)}`
-  //     : `${formatNumber(true, DECIMALS_TO_SHOW, value)}%`
-  // }
-
   const shownData = activeTab === 1 ? dataFeedsHistory : dataFeedsVolatility
 
   return (

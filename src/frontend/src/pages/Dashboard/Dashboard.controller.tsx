@@ -5,7 +5,7 @@ import { Page } from 'styles'
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
 import { DashboardView } from './Dashboard.view'
 import { useParams } from 'react-router'
-import { getDelegationStorage, getOracleStorage } from 'pages/Satellites/Satellites.actions'
+import { getDelegationStorage } from 'pages/Satellites/Satellites.actions'
 import { mvkStatsType, isValidId, LENDING_TAB_ID } from './Dashboard.utils'
 import { getGovernanceStorage } from 'pages/Governance/Governance.actions'
 import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
@@ -13,6 +13,7 @@ import { getVaultsStorage } from 'pages/Vaults/Vaults.actions'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { getFarmStorage } from 'pages/Farms/Farms.actions'
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
+import { getFeedsStorage } from 'pages/DataFeeds/DataFeeds.actions'
 
 export const Dashboard = () => {
   const dispatch = useDispatch()
@@ -29,6 +30,7 @@ export const Dashboard = () => {
   } = useSelector((state: State) => state.doorman)
   const { treasuryStorage, isLoaded: isTreasuryLoaded } = useSelector((state: State) => state.treasury)
   const { isLoaded: isVestingLoaded } = useSelector((state: State) => state.vesting)
+  const { isLoaded: isFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
   const { farms, isLoaded: isFarmsLoaded } = useSelector((state: State) => state.farm)
   const {
     isDataLoaded: isLoansLoaded,
@@ -51,70 +53,21 @@ export const Dashboard = () => {
   //TODO: add calculation for tvl value (vaults)
   const tvlValue = totalStakedMvk * mvkExchangeRate + treasuryTVL + farmsTVL + lendingTvl
 
-  const { isLoading: isVaultsLoading } = useDataLoader(async () => {
-    try {
-      await dispatch(getVaultsStorage())
-    } catch (e) {}
-  }, [])
-
-  const { isLoading: isOraclesLoading } = useDataLoader(async () => {
-    try {
-      await dispatch(getOracleStorage())
-    } catch (e) {}
-  }, [])
-
-  const { isLoading: isDelegationLoading } = useDataLoader(async () => {
-    try {
-      await dispatch(getDelegationStorage())
-    } catch (e) {}
-  }, [])
-
-  const { isLoading: isTreasuryLoading } = useDataLoader(async () => {
-    try {
-      if (!isVestingLoaded) {
-        await dispatch(getVestingStorage())
-      }
-
-      if (!isTreasuryLoaded) {
-        await dispatch(fillTreasuryStorage())
-      }
-    } catch (e) {}
-  }, [])
-
-  const { isLoading: isLendingLoading } = useDataLoader(async () => {
-    try {
-      if (!isLoansLoaded) {
-        await dispatch(getLoansStorage())
-      }
-    } catch (e) {}
-  }, [isLoansLoaded])
-
-  const { isLoading: isFarmsLoading } = useDataLoader(async () => {
-    try {
-      if (!isFarmsLoaded) {
-        await dispatch(getFarmStorage())
-      }
-    } catch (e) {}
-  }, [])
-
   const { isLoading } = useDataLoader(async () => {
     try {
-      if (!isDoormanLoaded) {
-        await dispatch(getDoormanStorage())
-      }
-      await dispatch(getGovernanceStorage())
+      await Promise.all([
+        dispatch(getVaultsStorage()),
+        dispatch(getDelegationStorage()),
+        dispatch(getGovernanceStorage()),
+        !isFeedsLoaded && dispatch(getFeedsStorage()),
+        !isVestingLoaded && dispatch(getVestingStorage()),
+        !isTreasuryLoaded && dispatch(fillTreasuryStorage()),
+        !isLoansLoaded && dispatch(getLoansStorage()),
+        !isFarmsLoaded && dispatch(getFarmStorage()),
+        !isDoormanLoaded && dispatch(getDoormanStorage()),
+      ])
     } catch (e) {}
   }, [])
-
-  const tabLoadings = {
-    isVaultsLoading,
-    isOraclesLoading,
-    isDelegationLoading,
-    isTreasuryLoading,
-    isLendingLoading,
-    isFarmsLoading,
-    isLoading,
-  }
 
   const mvkStatsBlock: mvkStatsType = {
     marketCap: marketCapValue,
@@ -132,7 +85,7 @@ export const Dashboard = () => {
         tvl={tvlValue}
         mvkStatsBlock={mvkStatsBlock}
         activeTab={isValidId(tabId) ? tabId : LENDING_TAB_ID}
-        tabLoadings={tabLoadings}
+        isLoading={isLoading}
       />
     </Page>
   )

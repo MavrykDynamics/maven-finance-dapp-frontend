@@ -1,22 +1,24 @@
-import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
-import { Button } from 'app/App.components/Button/Button.controller'
-import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
-import { ClockLoader } from 'app/App.components/Loader/Loader.view'
-import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
-import { getSatelliteMetrics } from 'pages/Satellites/Satellites.helpers'
-import React from 'react'
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
+
 import { State } from 'reducers'
 import { SatelliteRecord } from 'utils/TypesAndInterfaces/Delegation'
+import { getSatelliteMetrics } from 'pages/Satellites/Satellites.helpers'
+import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
+
+import { emptyContainer } from './LendingTab.controller'
+import { Button } from 'app/App.components/Button/Button.controller'
+import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+
+import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
 import { StatBlock } from '../Dashboard.style'
 import { SatellitesContentStyled, TabWrapperStyled } from './DashboardTabs.style'
-import { emptyContainer } from './LendingTab.controller'
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 
 export const SatellitesTab = ({ isLoading }: { isLoading: boolean }) => {
   const { activeSatellites } = useSelector((state: State) => state.delegation.delegationStorage)
-  const { feeds } = useSelector((state: State) => state.oracles.oraclesStorage)
+  const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
   const {
     governanceStorage: { financialRequestLedger, proposalLedger },
     pastProposals,
@@ -31,7 +33,7 @@ export const SatellitesTab = ({ isLoading }: { isLoading: boolean }) => {
         proposalLedger,
         eGovProposals,
         satellite,
-        feeds,
+        feedsLedger,
         financialRequestLedger,
       )
 

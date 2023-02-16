@@ -1,8 +1,16 @@
+import { useMemo } from 'react'
+import { useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
+
+import { State } from 'reducers'
+import { reduceTreasuryAssets } from 'pages/Treasury/Treasury.helpers'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
+
 import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import { emptyContainer } from './LendingTab.controller'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
+
 import {
   Table,
   TableHeader,
@@ -12,15 +20,10 @@ import {
   TableCell,
   TableScrollable,
 } from 'app/App.components/Table/Table.style'
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
-import { reduceTreasuryAssets } from 'pages/Treasury/Treasury.helpers'
-import { useMemo } from 'react'
-import { useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
-import { State } from 'reducers'
 import { BlockName, StatBlock } from '../Dashboard.style'
 import { TabWrapperStyled, TreasuryContentStyled, TreasuryVesting } from './DashboardTabs.style'
-import { emptyContainer } from './LendingTab.controller'
 
 export const TreasuryTab = ({ isLoading }: { isLoading: boolean }) => {
   const { treasuryStorage } = useSelector((state: State) => state.treasury)

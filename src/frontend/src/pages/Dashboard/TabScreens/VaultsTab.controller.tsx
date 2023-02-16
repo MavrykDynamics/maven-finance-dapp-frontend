@@ -1,10 +1,18 @@
-import React, { useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
+
+import { State } from 'reducers'
+import { getPieChartData } from 'pages/Treasury/helpers/calculateChartData'
+import { reduceVaultsAssets } from 'pages/Vaults/Vaults.helpers'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
+
 import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+import { emptyContainer } from './LendingTab.controller'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import PieChartView from 'app/App.components/PieСhart/PieСhart.view'
+
 import {
   Table,
   TableHeader,
@@ -15,14 +23,9 @@ import {
   TableScrollable,
 } from 'app/App.components/Table/Table.style'
 import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
-import { getPieChartData } from 'pages/Treasury/helpers/calculateChartData'
-import { State } from 'reducers'
 import { StatBlock, BlockName } from '../Dashboard.style'
 import { TabWrapperStyled, VaultsContentStyled } from './DashboardTabs.style'
-import { emptyContainer } from './LendingTab.controller'
-import { reduceVaultsAssets } from 'pages/Vaults/Vaults.helpers'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
-import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 
 export const VaultsTab = ({ isLoading }: { isLoading: boolean }) => {
   const [hoveredPath, setHoveredPath] = useState<null | string>(null)
