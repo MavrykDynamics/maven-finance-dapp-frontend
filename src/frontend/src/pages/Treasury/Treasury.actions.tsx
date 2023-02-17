@@ -10,9 +10,8 @@ import {
 import { getTreasuryAssetsByAddress } from 'utils/api'
 import { FetchedTreasuryBalanceType, TreasuryBalanceType, TreasuryGQLType } from 'utils/TypesAndInterfaces/Treasury'
 
-import { normalizeTreasury } from './Treasury.helpers'
+import { normalizeTreasury, normalizeVestingStorage } from './Treasury.helpers'
 import { AppDispatch, coinGeckoClient, GetState } from '../../app/App.controller'
-import { normalizeVestingStorage } from 'app/App.helpers'
 import { VESTING_STORAGE_QUERY, VESTING_STORAGE_QUERY_NAME, VESTING_STORAGE_QUERY_VARIABLE } from 'gql/queries'
 import { getAssetColor } from './helpers/treasury.utils'
 

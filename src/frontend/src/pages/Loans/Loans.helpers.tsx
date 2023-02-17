@@ -1,6 +1,5 @@
 import dayjs from 'dayjs'
 import { UTCTimestamp } from 'lightweight-charts'
-import { Feed } from 'pages/Satellites/helpers/Satellites.types'
 import { State } from 'reducers'
 import { UserState } from 'reducers/wallet'
 import { BLOCKS_PER_MINUTE } from 'utils/constants'
@@ -11,6 +10,7 @@ import {
   Mavryk_User,
 } from 'utils/generated/graphqlTypes'
 import { parseDate } from 'utils/time'
+import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
 import {
   LoansVaultType,
   LendingItemType,
@@ -86,7 +86,7 @@ const DAY_IN_MS = 86400000
 const getTransactionHistory = (
   history_data: Lending_Controller_History_Data[],
   dipDupTokens: State['tokens']['dipDupTokens'],
-  feeds: State['oracles']['oraclesStorage']['feeds'],
+  feeds: State['dataFeeds']['feedsLedger'],
 ) =>
   history_data.reduce<{
     transactionHistory: LoanMarketType['transactionHistory']
@@ -147,7 +147,7 @@ const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000
 const getChartData = (
   history_data: Lending_Controller_History_Data[],
   dipDupTokens: State['tokens']['dipDupTokens'],
-  feeds: State['oracles']['oraclesStorage']['feeds'],
+  feeds: State['dataFeeds']['feedsLedger'],
 ) =>
   history_data?.reduce<LoansChartsDataType>(
     (acc, { type, amount, timestamp, loan_token }) => {
@@ -235,7 +235,7 @@ const getLendingItem = (
   accountPkh?: string,
 ): LendingItemType => {
   if (userMTokens && loanToken && accountPkh) {
-    const mTokenAsset = userMTokens?.find(({ m_token_id }) => m_token_id === loanToken.lp_token_address)
+    const mTokenAsset = userMTokens?.find(({ m_token_id }) => m_token_id === loanToken.loan_token_address)
 
     if (mTokenAsset) {
       return {
@@ -294,7 +294,7 @@ export const calcCollateralRatio = (collateralAmount: number, borrowedAmount: nu
 const getBorrowings = async (
   loanTokenVaults: Array<Lending_Controller_Vault>,
   dipDupTokens: State['tokens']['dipDupTokens'],
-  feeds: State['oracles']['oraclesStorage']['feeds'],
+  feeds: State['dataFeeds']['feedsLedger'],
   interestRateDecimals: number,
   userAddress?: string,
 ): Promise<BorrowingNormalizerReturnType> => {
@@ -445,7 +445,7 @@ export const normalizeLoans = async ({
   mTokens: State['tokens']['mTokens']
   userMTokens: UserState['mTokens']
   userAddres?: string
-  feeds: State['oracles']['oraclesStorage']['feeds']
+  feeds: State['dataFeeds']['feedsLedger']
 }) => {
   try {
     const interestTreasuryShare = calcWithoutDecimals(storage?.interest_treasury_share, storage.decimals)
@@ -630,7 +630,7 @@ export const normalizeUserLending = ({
   feeds,
 }: {
   dipDupTokens: State['tokens']['dipDupTokens']
-  feeds: State['oracles']['oraclesStorage']['feeds']
+  feeds: State['dataFeeds']['feedsLedger']
   userDataFromIndexer: Mavryk_User['lending_controller_history_data_sender']
 }) => {
   return (

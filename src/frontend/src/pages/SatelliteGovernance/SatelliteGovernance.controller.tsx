@@ -84,9 +84,7 @@ export const SatelliteGovernance = () => {
   const {
     governanceSatelliteStorage: { governance_satellite_action, governance_satellite },
   } = useSelector((state: State) => state.governance)
-  const {
-    oraclesStorage: { feedsFactory },
-  } = useSelector((state: State) => state.oracles)
+  const { feedNameMaxLength } = useSelector((state: State) => state.dataFeeds.config)
 
   const [ddIsOpen, setDdIsOpen] = useState(false)
   const [chosenDdItem, setChosenDdItem] = useState<string | undefined>()
@@ -113,7 +111,7 @@ export const SatelliteGovernance = () => {
 
   const maxLength = {
     purposeMaxLength: governance_satellite[0]?.gov_purpose_max_length || defaultGovPurposeMaxLength,
-    aggregatorNameMaxLength: feedsFactory[0]?.aggregator_name_max_length || defaultAggregatorNameMaxLength,
+    aggregatorNameMaxLength: feedNameMaxLength,
   }
 
   useEffect(() => {

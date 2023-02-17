@@ -1,44 +1,37 @@
-import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { CoinsLogo } from 'app/App.components/Icon/CoinsIcons.view'
-import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
-import { Trim } from 'app/App.components/Trim/Trim.view'
-import { Feed } from 'pages/Satellites/helpers/Satellites.types'
-import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 import { useLocation } from 'react-router-dom'
+
 import { State } from 'reducers'
 import { parseDate } from 'utils/time'
-
-import { SatelliteItemStyle } from './SatelliteCard.style'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
+
+import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
+import { Trim } from 'app/App.components/Trim/Trim.view'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
-export const handleCoinName = (name: string) => {
-  const updatedName = name.split('/')?.[1]
-
-  if (!updatedName && name.includes('USD')) {
-    return name.slice(3)
-  }
-
-  return updatedName
-}
+import { SatelliteItemStyle } from './SatelliteCard.style'
 
 const defaultCategoryText = 'No Category'
 
 export const DataFeedCard = ({ feed }: { feed: Feed }) => {
   const { pathname } = useLocation()
   const { dipDupContracts } = useSelector((state: State) => state.tokens)
+
   // TODO: remove it when images will be ok in indexer
   const imageLink = feed.name.includes('EUROC')
     ? '/images/eurl.png'
     : feed.name.includes('XTZ')
     ? '/images/tezos.png'
     : dipDupContracts.find(({ contract }) => contract === feed.address)?.metadata?.icon
-  const isDataFeedsPage = pathname === '/data-feeds'
+
+  const showAllColumns = pathname === '/data-feeds'
 
   return (
     <Link to={`/satellites/feed-details/${feed.address}`}>
-      <SatelliteItemStyle className="feed" isDataFeeds={isDataFeedsPage}>
+      <SatelliteItemStyle className="feed" isDataFeeds={showAllColumns}>
         <div className="item with-img">
           <ImageWithPlug imageLink={imageLink} alt={`${feed.name} logo`} />
           <h5>Feed</h5>
@@ -58,7 +51,7 @@ export const DataFeedCard = ({ feed }: { feed: Feed }) => {
             <TzAddress tzAddress={feed.address} hasIcon={true} type={BLUE} />
           </var>
         </div>
-        {isDataFeedsPage && (
+        {showAllColumns && (
           <div className="item">
             <h5>Category</h5>
             <var>{feed.category || defaultCategoryText}</var>

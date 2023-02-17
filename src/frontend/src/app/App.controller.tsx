@@ -1,32 +1,37 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect } from 'react'
 import { BrowserRouter as Router } from 'react-router-dom'
 import { AnyAction } from 'redux'
 import { useDispatch, useSelector } from 'react-redux'
-import { ThunkDispatch } from 'redux-thunk'
-
-import { State } from '../reducers'
-import { AppRoutes } from './App.components/AppRoutes/AppRoutes.controller'
-import { connect } from './App.components/ConnectWallet/ConnectWallet.actions'
-import { Menu } from './App.components/Menu/Menu.controller'
-import { Toaster } from './App.components/Toaster/Toaster.controller'
-import { configureStore } from './App.store'
-import { AppStyled } from './App.style'
-import { PopupChangeNode } from './App.components/SettingsPopup/SettingsPopup.controller'
-import { toggleRPCNodePopup } from './App.components/SettingsPopup/SettingsPopup.actions'
-import { toggleSidebarCollapsing } from './App.components/Menu/Menu.actions'
 import { useMedia } from 'react-use'
 import CoinGecko from 'coingecko-api'
+import { ThunkDispatch } from 'redux-thunk'
+import { configureStore } from './App.store'
+
+// types
+import { State } from '../reducers'
+
+// view, styles
+import { Toaster } from './App.components/Toaster/Toaster.controller'
+import { Menu } from './App.components/Menu/Menu.controller'
+import { PopupChangeNode } from './App.components/SettingsPopup/SettingsPopup.controller'
 import { ActionLoader, LoaderRocket, WertLoader } from './App.components/Loader/Loader.view'
-import {} from 'pages/Doorman/Doorman.actions'
-import { getDelegationStorage, getOracleStorage } from 'pages/Satellites/Satellites.actions'
+import { AppRoutes } from './App.components/AppRoutes/AppRoutes.controller'
+import { AppStyled } from './App.style'
+
+// actions
+import { toggleSidebarCollapsing } from './App.components/Menu/Menu.actions'
+import { getDelegationStorage } from 'pages/Satellites/Satellites.actions'
 import { getContractAddressesStorage } from 'reducers/actions/contractAddresses.actions'
+import { getFeedsStorage } from 'pages/DataFeeds/DataFeeds.actions'
+import { connect } from './App.components/ConnectWallet/ConnectWallet.actions'
+import { toggleInitialDataLoading } from './App.components/Loader/Loader.action'
+import { toggleRPCNodePopup } from './App.components/SettingsPopup/SettingsPopup.actions'
 import {
   getDipDupTokensStorage,
   getWhitelistTokensStorage,
   getTokensPrices,
   getMTokensStorage,
 } from 'reducers/actions/dipDupActions.actions'
-import { toggleInitialDataLoading } from './App.components/Loader/Loader.action'
 
 // export const { store, persistor } = configureStore({})
 export const { store } = configureStore({})
@@ -56,7 +61,7 @@ const AppContainer = () => {
         dispatch(getWhitelistTokensStorage()),
         dispatch(getTokensPrices()),
         dispatch(getMTokensStorage()),
-        dispatch(getOracleStorage()),
+        dispatch(getFeedsStorage()),
       ])
 
       // For using Beacon wallet

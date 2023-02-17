@@ -1,5 +1,5 @@
 export const GOVERNANCE_SATELLITE_STORAGE_QUERY = `
-query GetGovernanceSatelliteStorageQuery {
+  query GetGovernanceSatelliteStorageQuery {
     governance_satellite {
       address
       admin

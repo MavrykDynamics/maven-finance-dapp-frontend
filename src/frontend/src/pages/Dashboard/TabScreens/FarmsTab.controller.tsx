@@ -1,20 +1,23 @@
-import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
-import { Button } from 'app/App.components/Button/Button.controller'
-import CoinsIcons from 'app/App.components/Icon/CoinsIcons.view'
-import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
-import { ClockLoader } from 'app/App.components/Loader/Loader.view'
-import { Timer } from 'app/App.components/Timer/Timer.controller'
-import { CYAN } from 'app/App.components/TzAddress/TzAddress.constants'
-import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
-import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
-import { calculateAPY } from 'pages/Farms/Farms.helpers'
 import qs from 'qs'
 import { useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
+
 import { State } from 'reducers'
-import { FarmsContentStyled, TabWrapperStyled } from './DashboardTabs.style'
+import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { CYAN } from 'app/App.components/TzAddress/TzAddress.constants'
+import { calculateAPY } from 'pages/Farms/Farms.helpers'
+
+import { Button } from 'app/App.components/Button/Button.controller'
+import CoinsIcons from 'app/App.components/Icon/CoinsIcons.view'
+import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
+import { Timer } from 'app/App.components/Timer/Timer.controller'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { emptyContainer } from './LendingTab.controller'
+
+import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
+import { FarmsContentStyled, TabWrapperStyled } from './DashboardTabs.style'
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 
 export const FarmsTab = ({ isLoading }: { isLoading: boolean }) => {
   const { farms } = useSelector((state: State) => state.farm)

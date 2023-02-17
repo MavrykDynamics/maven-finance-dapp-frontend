@@ -5,7 +5,6 @@ import { useParams } from 'react-router-dom'
 // types
 import { State } from 'reducers'
 import { UserType } from '../../../utils/TypesAndInterfaces/User'
-import { Feed } from 'pages/Satellites/helpers/Satellites.types'
 
 // view
 import UserDetailsView from './UsersDetails.view'
@@ -13,20 +12,18 @@ import UserDetailsView from './UsersDetails.view'
 // helpers
 import { sortByCategory } from 'utils/sortByCategory'
 import { usersData } from '../users.const'
+import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
 
 const UserDetails = () => {
   const dispatch = useDispatch()
-  const {
-    oraclesStorage: { feedCategories },
-  } = useSelector((state: State) => state.oracles)
+  const { feedCategories, feedsLedger } = useSelector((state: State) => state.dataFeeds)
   let { userId } = useParams<{ userId: string }>()
 
   let [selectedUser, setSelectedUser] = useState<null | UserType>(null)
-  const { feeds } = useSelector((state: State) => state.oracles.oraclesStorage)
   const feedsForUser = useCallback(
     //@ts-ignore
-    () => feeds.filter(({ address }) => !selectedUser?.feeds.contains(address)),
-    [selectedUser, feeds],
+    () => feedsLedger.filter(({ address }) => !selectedUser?.feedsLedger.contains(address)),
+    [selectedUser, feedsLedger],
   )
   const [sortedFeeds, setSortedFeeds] = useState<Feed[]>(feedsForUser)
 

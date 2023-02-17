@@ -11,7 +11,7 @@ const SatelliteNodes = () => {
   const {
     delegationStorage: { activeSatellites = [] },
   } = useSelector((state: State) => state.delegation)
-  const { feeds } = useSelector((state: State) => state.oracles.oraclesStorage)
+  const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
   const {
     governanceStorage: { financialRequestLedger, proposalLedger },
     pastProposals,
@@ -72,7 +72,7 @@ const SatelliteNodes = () => {
             proposalLedger,
             eGovProposals,
             a,
-            feeds,
+            feedsLedger,
             financialRequestLedger,
           )
 
@@ -81,7 +81,7 @@ const SatelliteNodes = () => {
             proposalLedger,
             eGovProposals,
             b,
-            feeds,
+            feedsLedger,
             financialRequestLedger,
           )
 
