@@ -18,6 +18,7 @@ import { dataFeeds, DataFeedsState } from './dataFeeds'
 import { tokens, TokensType } from './tokens'
 import { loans, LoansState } from './loans'
 import { vaults, VaultsStateType } from './vaults'
+import { financialRequest, FinancialRequestStoreType } from './financialRequests'
 
 export const reducers = combineReducers({
   loading,
@@ -26,6 +27,7 @@ export const reducers = combineReducers({
   delegation,
   doorman,
   governance,
+  financialRequest,
   emergencyGovernance,
   treasury,
   council,
@@ -47,6 +49,7 @@ export interface State {
   delegation: DelegationState
   doorman: DoormanState
   governance: GovernanceState
+  financialRequest: FinancialRequestStoreType
   emergencyGovernance: EmergencyGovernanceState
   treasury: TreasuryState
   council: CouncilState

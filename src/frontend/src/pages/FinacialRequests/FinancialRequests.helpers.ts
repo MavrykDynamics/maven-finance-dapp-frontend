@@ -2,6 +2,16 @@ import qs, { ParsedQs } from 'qs'
 import { ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
 import { GovernanceFinancialRequestGraphQL } from '../../utils/TypesAndInterfaces/Governance'
 
+export const normalizeFinancialRequests = (storage: {
+  governance_financial_request: Array<GovernanceFinancialRequestGraphQL>
+}) => {
+  const financialRequestLedger = storage?.governance_financial_request.sort(
+    (a, b) => new Date(b.requested_datetime ?? '').getTime() - new Date(a.requested_datetime ?? '').getTime(),
+  )
+
+  return financialRequestLedger
+}
+
 export const distinctRequestsByExecuting = (
   mixedUpRequests: GovernanceFinancialRequestGraphQL[],
 ): {

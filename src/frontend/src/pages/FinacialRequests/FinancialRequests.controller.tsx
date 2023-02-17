@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { State } from '../../reducers'
 
 //  actions
-import { getGovernanceStorage } from '../Governance/Governance.actions'
+import { getFinancialRequestStorage } from './FiancialRequest.actions'
 
 // view
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
@@ -14,23 +14,33 @@ import { FinancialRequestsView } from './FinancialRequests.view'
 //styles
 import { Page } from 'styles'
 import { EmptyContainer } from 'app/App.style'
+import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 
 export const FinancialRequests = () => {
   const dispatch = useDispatch()
 
-  const {
-    governanceStorage: { financialRequestLedger },
-  } = useSelector((state: State) => state.governance)
+  const { financialRequests, isLoaded: isFinancialRequestsLoaded } = useSelector(
+    (state: State) => state.financialRequest,
+  )
 
-  useEffect(() => {
-    dispatch(getGovernanceStorage())
-  }, [dispatch])
+  const { isLoading } = useDataLoader(async () => {
+    if (!isFinancialRequestsLoaded) {
+      await dispatch(getFinancialRequestStorage())
+    }
+  }, [])
 
   return (
     <Page>
       <PageHeader page={'financial requests'} />
-      {financialRequestLedger?.length ? (
-        <FinancialRequestsView financialRequestsList={financialRequestLedger} />
+      {isLoading ? (
+        <DataLoaderWrapper>
+          <ClockLoader width={150} height={150} />
+          <div className="text">Loading financial requests</div>
+        </DataLoaderWrapper>
+      ) : financialRequests?.length ? (
+        <FinancialRequestsView financialRequestsList={financialRequests} />
       ) : (
         <EmptyContainer className="centered">
           <img src="/images/not-found.svg" alt=" No financial requests to show" />
