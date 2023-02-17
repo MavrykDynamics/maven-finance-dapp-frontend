@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
@@ -8,9 +7,12 @@ import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.contr
 import { CouncilView } from '../Council/Council.view'
 import { BreakGlassCouncilForm, actions } from './BreakGlassCouncilForms/BreakGlassCouncilForm.controller'
 import { FormUpdateCouncilMemberView } from './BreakGlassCouncilForms/FormUpdateCouncilMember.view'
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 
 // helpers
 import { COUNCIL_LIST_NAME } from 'pages/FinacialRequests/Pagination/pagination.consts'
+import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 
 // actions
 import {
@@ -62,50 +64,62 @@ export function BreakGlassCouncil() {
     dispatch(dropBreakGlass(id))
   }
 
-  useEffect(() => {
-    dispatch(getCouncilStorage())
-    dispatch(getBreakGlassCouncilMembers())
-    dispatch(getBreakGlassCouncilPastActions())
-  }, [dispatch])
+  const { isLoading } = useDataLoader(async () => {
+    try {
+      await Promise.all([
+        dispatch(getCouncilStorage()),
+        dispatch(getBreakGlassCouncilMembers()),
+        dispatch(getBreakGlassCouncilPastActions()),
+      ])
+    } catch (e) {}
+  }, [])
 
-  useEffect(() => {
-    if (accountPkh) {
-      dispatch(getBreakGlassCouncilPendingActions())
-      dispatch(getBreakGlassCouncilPastActions())
-    }
-  }, [dispatch, accountPkh])
+  useDataLoader(async () => {
+    if (!accountPkh) return
+
+    try {
+      await Promise.all([dispatch(getBreakGlassCouncilPendingActions()), dispatch(getBreakGlassCouncilPastActions())])
+    } catch (e) {}
+  }, [accountPkh])
 
   return (
     <Page>
       <PageHeader page={'break glass council'} />
 
-      <CouncilView
-        // general info
-        queryParameters={queryParameters}
-        maxLength={councilMaxLength}
-        glassBroken={glassBroken}
-        showPropagateBreakGlass
-        paginationListName={COUNCIL_LIST_NAME}
-        titles={titles}
-        // pending actions
-        allPendingActions={allPendingActions}
-        notMyPendingActions={notMyPendingActions}
-        myPendingActions={myPendingActions}
-        // past actions
-        allPastActions={allPastActions}
-        myPastActions={myPastActions}
-        // other lists
-        members={breakGlassCouncilMembers}
-        dropdowndActions={actions}
-        // actions
-        handleSignAction={handleSignAction}
-        handleDropAction={handleDropAction}
-        // components
-        getFormComponent={(maxLength: CouncilMaxLength, action?: string) => (
-          <BreakGlassCouncilForm maxLength={maxLength} action={action} />
-        )}
-        getFormUpdateMemberInfo={(maxLength: CouncilMaxLength) => <FormUpdateCouncilMemberView {...maxLength} />}
-      />
+      {isLoading ? (
+        <DataLoaderWrapper>
+          <ClockLoader width={150} height={150} />
+          <div className="text">Loading break glass counsil</div>
+        </DataLoaderWrapper>
+      ) : (
+        <CouncilView
+          // general info
+          queryParameters={queryParameters}
+          maxLength={councilMaxLength}
+          glassBroken={glassBroken}
+          showPropagateBreakGlass
+          paginationListName={COUNCIL_LIST_NAME}
+          titles={titles}
+          // pending actions
+          allPendingActions={allPendingActions}
+          notMyPendingActions={notMyPendingActions}
+          myPendingActions={myPendingActions}
+          // past actions
+          allPastActions={allPastActions}
+          myPastActions={myPastActions}
+          // other lists
+          members={breakGlassCouncilMembers}
+          dropdowndActions={actions}
+          // actions
+          handleSignAction={handleSignAction}
+          handleDropAction={handleDropAction}
+          // components
+          getFormComponent={(maxLength: CouncilMaxLength, action?: string) => (
+            <BreakGlassCouncilForm maxLength={maxLength} action={action} />
+          )}
+          getFormUpdateMemberInfo={(maxLength: CouncilMaxLength) => <FormUpdateCouncilMemberView {...maxLength} />}
+        />
+      )}
     </Page>
   )
 }

@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
@@ -9,9 +8,12 @@ import { CouncilView } from 'pages/Council/Council.view'
 import { CouncilForm, actions } from './CouncilForms/CouncilForm.controller'
 import { CouncilFormUpdateCouncilMemberInfo } from './CouncilForms/CouncilFormUpdateCouncilMemberInfo.view'
 import { EmptyContainer } from 'app/App.style'
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 
 // helpers
 import { COUNCIL_LIST_NAME } from 'pages/FinacialRequests/Pagination/pagination.consts'
+import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 
 // actions
 import {
@@ -79,48 +81,62 @@ export const Council = () => {
     dispatch(dropRequest(id))
   }
 
-  useEffect(() => {
-    dispatch(getCouncilStorage())
-    dispatch(getCouncilMembers())
-    dispatch(getCouncilPastActions())
-  }, [dispatch])
+  const { isLoading } = useDataLoader(async () => {
+    try {
+      await Promise.all([
+        dispatch(getCouncilStorage()),
+        dispatch(getCouncilMembers()),
+        dispatch(getCouncilPastActions()),
+      ])
+    } catch (e) {}
+  }, [])
 
-  useEffect(() => {
-    if (accountPkh) {
-      dispatch(getCouncilPendingActions())
-      dispatch(getCouncilPastActions())
-    }
-  }, [accountPkh, dispatch])
+  useDataLoader(async () => {
+    if (!accountPkh) return
+
+    try {
+      await Promise.all([dispatch(getCouncilPendingActions()), dispatch(getCouncilPastActions())])
+    } catch (e) {}
+  }, [accountPkh])
 
   return (
     <Page>
       <PageHeader page={'council'} />
 
-      <CouncilView
-        // general info
-        queryParameters={queryParameters}
-        maxLength={councilMaxLength}
-        paginationListName={COUNCIL_LIST_NAME}
-        titles={titles}
-        // pending actions
-        allPendingActions={allPendingActions}
-        notMyPendingActions={notMyPendingActions}
-        myPendingActions={myPendingActions}
-        // past actions
-        allPastActions={allPastActions}
-        myPastActions={myPastActions}
-        // other lists
-        members={councilMembers}
-        dropdowndActions={actions}
-        // actions
-        handleSignAction={handleSignAction}
-        handleDropAction={handleDropAction}
-        // components
-        getFormComponent={(maxLength: CouncilMaxLength, action?: string) => (
-          <CouncilForm maxLength={maxLength} action={action} />
-        )}
-        getFormUpdateMemberInfo={(maxLength: CouncilMaxLength) => <CouncilFormUpdateCouncilMemberInfo {...maxLength} />}
-      />
+      {isLoading ? (
+        <DataLoaderWrapper>
+          <ClockLoader width={150} height={150} />
+          <div className="text">Loading counsil</div>
+        </DataLoaderWrapper>
+      ) : (
+        <CouncilView
+          // general info
+          queryParameters={queryParameters}
+          maxLength={councilMaxLength}
+          paginationListName={COUNCIL_LIST_NAME}
+          titles={titles}
+          // pending actions
+          allPendingActions={allPendingActions}
+          notMyPendingActions={notMyPendingActions}
+          myPendingActions={myPendingActions}
+          // past actions
+          allPastActions={allPastActions}
+          myPastActions={myPastActions}
+          // other lists
+          members={councilMembers}
+          dropdowndActions={actions}
+          // actions
+          handleSignAction={handleSignAction}
+          handleDropAction={handleDropAction}
+          // components
+          getFormComponent={(maxLength: CouncilMaxLength, action?: string) => (
+            <CouncilForm maxLength={maxLength} action={action} />
+          )}
+          getFormUpdateMemberInfo={(maxLength: CouncilMaxLength) => (
+            <CouncilFormUpdateCouncilMemberInfo {...maxLength} />
+          )}
+        />
+      )}
     </Page>
   )
 }
