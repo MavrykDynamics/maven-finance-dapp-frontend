@@ -141,7 +141,7 @@ export const CouncilPending = (props: Props) => {
           <h3>{getSeparateCamelCase(actionType)}</h3>
           <div className="parameters">
             <article>
-              <p className="without-margin">Council Member Address</p>
+              <p>Council Member Address</p>
               <span className="parameters-value content-width">
                 <TzAddress tzAddress={councilMemberAddress} type={CYAN} hasIcon />
               </span>
@@ -285,7 +285,7 @@ export const CouncilPending = (props: Props) => {
           <h3>{getSeparateCamelCase(actionType)}</h3>
           <div className="parameters grid">
             <article>
-              <p className="without-margin">Council Member to change</p>
+              <p>Council Member to change</p>
               <span className="parameters-value content-width">
                 <TzAddress tzAddress={oldCouncilMemberAddress} type={CYAN} hasIcon />
               </span>
@@ -769,7 +769,7 @@ export const CouncilPending = (props: Props) => {
       <h3>{getSeparateCamelCase(actionType)}</h3>
       <div className="parameters">
         <div>
-          <p className="parameters-name no-wrap">{getSeparateCamelCase(name)}</p>
+          <p className="parameters-name">{getSeparateCamelCase(name)}</p>
           <span className="parameters-value">{convertedValue}</span>
         </div>
         <div>

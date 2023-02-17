@@ -140,6 +140,11 @@ export const CouncilPendingStyled = styled(Card)`
 
     .parameters-name {
       text-transform: capitalize;
+
+      max-width: 130px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
     }
 
     .parameters-value,
@@ -152,7 +157,6 @@ export const CouncilPendingStyled = styled(Card)`
       white-space: nowrap;
       overflow: hidden;
       width: 130px;
-      max-width: 100%;
       text-overflow: ellipsis;
       display: block;
     }
@@ -175,10 +179,6 @@ export const CouncilPendingStyled = styled(Card)`
       flex-direction: column;
       align-items: center;
     }
-
-    .without-margin {
-      margin: 0;
-    }
   }
 
   .parameters-img {
@@ -192,13 +192,6 @@ export const CouncilPendingStyled = styled(Card)`
       object-fit: cover;
       border-radius: 50%;
     }
-  }
-
-  .no-wrap {
-    max-width: 125px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
   }
 `
 
