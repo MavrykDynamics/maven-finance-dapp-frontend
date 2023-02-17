@@ -285,7 +285,7 @@ export const CouncilPending = (props: Props) => {
           <h3>{getSeparateCamelCase(actionType)}</h3>
           <div className="parameters grid">
             <article>
-              <p>Council Member to change</p>
+              <p className='without-margin'>Council Member to change</p>
               <span className="parameters-value content-width">
                 <TzAddress tzAddress={oldCouncilMemberAddress} type={CYAN} hasIcon />
               </span>
