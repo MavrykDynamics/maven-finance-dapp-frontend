@@ -1,11 +1,12 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react'
 
 // components
-import { Button } from 'app/App.components/SettingsPopup/SettingsPopup.style'
+import NewButton from 'app/App.components/Button/NewButton.controller'
 import { TzAddress } from '../../../app/App.components/TzAddress/TzAddress.view'
+import Icon from 'app/App.components/Icon/Icon.view'
 
 // helpers
-import { ACTION_SECONDARY } from 'app/App.components/Button/Button.constants'
+import { TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
 import { parseDate } from 'utils/time'
 import { getSeparateCamelCase } from '../../../utils/parse'
 import { scrollToFullView } from 'utils/scrollToFullView'
@@ -60,13 +61,10 @@ export function CouncilOngoingAction(props: Props) {
         </div>
 
         <div className="column">
-          <Button
-            className="drop-btn"
-            icon="close-stroke"
-            text="Drop Action"
-            kind={ACTION_SECONDARY}
-            onClick={() => handleDropAction(id)}
-          />
+          <NewButton className='drop-btn' kind={TRANSPARENT_WITH_BORDER} onClick={() => handleDropAction(id)}>
+            <Icon id="navigation-menu_close" />
+            Drop Action
+          </NewButton>
         </div>
       </div>
     </>
@@ -134,13 +132,10 @@ export function CouncilOngoingAction(props: Props) {
           )}
 
           <div className="column">
-            <Button
-              className="drop-btn"
-              icon="close-stroke"
-              text="Drop Action"
-              kind={ACTION_SECONDARY}
-              onClick={() => handleDropAction(id)}
-            />
+            <NewButton className='drop-btn' kind={TRANSPARENT_WITH_BORDER} onClick={() => handleDropAction(id)}>
+              <Icon id="navigation-menu_close" />
+              Drop Action
+            </NewButton>
           </div>
         </div>
       </>
@@ -159,13 +154,10 @@ export function CouncilOngoingAction(props: Props) {
           </div>
 
           <div className="column">
-            <Button
-              className="drop-btn"
-              icon="close-stroke"
-              text="Drop Action"
-              kind={ACTION_SECONDARY}
-              onClick={() => handleDropAction(id)}
-            />
+            <NewButton className='drop-btn' kind={TRANSPARENT_WITH_BORDER} onClick={() => handleDropAction(id)}>
+              <Icon id="navigation-menu_close" />
+              Drop Action
+            </NewButton>
           </div>
         </div>
       </>

@@ -1,5 +1,5 @@
 import styled from 'styled-components/macro'
-import { Card, skyColor, headerColor, containerColor, cyanColor } from 'styles'
+import { Card } from 'styles'
 
 export const CouncilPendingStyled = styled(Card)`
   position: relative;
@@ -98,7 +98,7 @@ export const CouncilPendingStyled = styled(Card)`
     font-weight: 600;
     font-size: 18px;
     line-height: 18px;
-    color: ${headerColor};
+    color: ${({ theme }) => theme.headerColor};
     margin-bottom: 20px;
 
     &::first-letter {
@@ -113,17 +113,12 @@ export const CouncilPendingStyled = styled(Card)`
 
   .sign-btn {
     width: 185px;
-
-    svg {
-      stroke: transparent;
-      fill: ${containerColor};
-    }
   }
 
   .parameters-link {
     display: block;
 
-    color: ${cyanColor};
+    color: ${({ theme }) => theme.textColorHovered};
     font-weight: 500;
     font-size: 14px;
     line-height: 24px;
@@ -150,7 +145,7 @@ export const CouncilPendingStyled = styled(Card)`
     .parameters-value,
     .parameters-value p {
       margin: 0;
-      color: ${cyanColor};
+      color: ${({ theme }) => theme.textColorHovered};
       font-weight: 600;
       font-size: 16px;
       line-height: 16px;
@@ -170,7 +165,7 @@ export const CouncilPendingStyled = styled(Card)`
       font-weight: 400;
       font-size: 12px;
       line-height: 12px;
-      color: ${skyColor};
+      color: ${({ theme }) => theme.headerSkyColor};
       margin-top: 0;
       margin-bottom: 10px;
     }

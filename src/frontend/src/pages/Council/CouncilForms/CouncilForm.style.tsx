@@ -1,9 +1,8 @@
 import styled from 'styled-components/macro'
-import { upColor, royalPurpleColor } from 'styles'
 
 export const CouncilFormStyled = styled.form`
   padding: 24px 30px;
-  border-top: 1px solid ${royalPurpleColor};
+  border-top: 1px solid ${({ theme }) => theme.cardBorderColor};
   margin-top: 1px;
   position: relative;
 
@@ -12,7 +11,8 @@ export const CouncilFormStyled = styled.form`
     margin-bottom: 0;
   }
 
-  input, p {
+  input,
+  p {
     font-weight: 500;
     font-size: 14px;
     line-height: 24px;
@@ -36,7 +36,7 @@ export const CouncilFormStyled = styled.form`
     }
 
     .form-grid-adress {
-      color: ${upColor};
+      color: ${({ theme }) => theme.upColor};
       padding-top: 12px;
       padding-left: 16px;
     }

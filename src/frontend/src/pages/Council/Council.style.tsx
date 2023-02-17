@@ -155,12 +155,6 @@ export const CouncilActionStyled = styled(CardHover)<{ theme: MavrykTheme }>`
 
   .two-columns {
     grid-template-columns: auto 250px;
-
-    .column {
-      .drop-btn {
-        margin-top: 0;
-      }
-    }
   }
 
   .column {
@@ -220,13 +214,7 @@ export const CouncilActionStyled = styled(CardHover)<{ theme: MavrykTheme }>`
     }
 
     .drop-btn {
-      margin-top: 14px;
-
-      svg {
-        margin-top: 2px;
-        height: 18px;
-        width: 18px;
-      }
+      width: 100%;
     }
 
     .is-green {
@@ -245,8 +233,6 @@ export const CouncilActionStyled = styled(CardHover)<{ theme: MavrykTheme }>`
     align-items: center;
 
     svg {
-      fill: none;
-      stroke: ${({ theme }) => theme.textColorHovered};
       width: 16px;
       height: 16px;
     }

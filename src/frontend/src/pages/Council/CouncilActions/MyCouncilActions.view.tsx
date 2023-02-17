@@ -1,4 +1,3 @@
-import React from 'react'
 import { CouncilOngoingAction } from './CouncilOngoingAction.view'
 
 // components

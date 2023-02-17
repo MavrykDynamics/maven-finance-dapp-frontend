@@ -5,7 +5,7 @@ import { ModalCard, ModalCardContent, ModalClose, ModalMask, ModalStyled } from 
 // components
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { TzAddress } from '../../../app/App.components/TzAddress/TzAddress.view'
-import { Button } from '../../../app/App.components/Button/Button.controller'
+import NewButton from 'app/App.components/Button/NewButton.controller'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 
 // helpers
@@ -189,7 +189,10 @@ export const CouncilPending = (props: Props) => {
               )}
             </article>
 
-            <Button text="Sign" className="sign-btn" kind={'actionPrimary'} icon="sign" onClick={onClickSign} />
+            <NewButton className="sign-btn" kind={ACTION_PRIMARY} onClick={onClickSign}>
+              <Icon id="sign" />
+              Sign
+            </NewButton>
           </div>
         </CouncilPendingStyled>
         {showing ? createPortal(modal, document?.body) : null}
@@ -258,7 +261,10 @@ export const CouncilPending = (props: Props) => {
               )}
             </article>
 
-            <Button text="Sign" className="sign-btn" kind={'actionPrimary'} icon="sign" onClick={onClickSign} />
+            <NewButton className="sign-btn" kind={ACTION_PRIMARY} onClick={onClickSign}>
+              <Icon id="sign" />
+              Sign
+            </NewButton>
           </div>
         </CouncilPendingStyled>
       </>
@@ -335,7 +341,10 @@ export const CouncilPending = (props: Props) => {
               )}
             </article>
 
-            <Button text="Sign" className="sign-btn" kind={'actionPrimary'} icon="sign" onClick={onClickSign} />
+            <NewButton className="sign-btn" kind={ACTION_PRIMARY} onClick={onClickSign}>
+              <Icon id="sign" />
+              Sign
+            </NewButton>
           </div>
         </CouncilPendingStyled>
       </>
@@ -379,7 +388,10 @@ export const CouncilPending = (props: Props) => {
             </div>
           </article>
 
-          <Button text="Sign" className="sign-btn" kind={'actionPrimary'} icon="sign" onClick={onClickSign} />
+          <NewButton className="sign-btn" kind={ACTION_PRIMARY} onClick={onClickSign}>
+            <Icon id="sign" />
+            Sign
+          </NewButton>
         </div>
       </CouncilPendingStyled>
     )
@@ -432,7 +444,10 @@ export const CouncilPending = (props: Props) => {
             <span className="parameters-value">{vestingInMonths} months</span>
           </article>
 
-          <Button text="Sign" className="sign-btn" kind={'actionPrimary'} icon="sign" onClick={onClickSign} />
+          <NewButton className="sign-btn" kind={ACTION_PRIMARY} onClick={onClickSign}>
+            <Icon id="sign" />
+            Sign
+          </NewButton>
         </div>
       </CouncilPendingStyled>
     )
@@ -485,7 +500,10 @@ export const CouncilPending = (props: Props) => {
             <span className="parameters-value">{newVestingInMonths} months</span>
           </article>
 
-          <Button text="Sign" className="sign-btn" kind={'actionPrimary'} icon="sign" onClick={onClickSign} />
+          <NewButton className="sign-btn" kind={ACTION_PRIMARY} onClick={onClickSign}>
+            <Icon id="sign" />
+            Sign
+          </NewButton>
         </div>
       </CouncilPendingStyled>
     )
@@ -555,7 +573,10 @@ export const CouncilPending = (props: Props) => {
               </article>
             )}
 
-            <Button text="Sign" className="sign-btn" kind={'actionPrimary'} icon="sign" onClick={onClickSign} />
+            <NewButton className="sign-btn" kind={ACTION_PRIMARY} onClick={onClickSign}>
+              <Icon id="sign" />
+              Sign
+            </NewButton>
           </div>
         </CouncilPendingStyled>
         {showing ? createPortal(modal, document?.body) : null}
@@ -627,7 +648,10 @@ export const CouncilPending = (props: Props) => {
               </article>
             )}
 
-            <Button text="Sign" className="sign-btn" kind={'actionPrimary'} icon="sign" onClick={onClickSign} />
+            <NewButton className="sign-btn" kind={ACTION_PRIMARY} onClick={onClickSign}>
+              <Icon id="sign" />
+              Sign
+            </NewButton>
           </div>
         </CouncilPendingStyled>
         {showing ? createPortal(modal, document?.body) : null}
@@ -681,7 +705,10 @@ export const CouncilPending = (props: Props) => {
 
           <article />
 
-          <Button text="Sign" className="sign-btn" kind={'actionPrimary'} icon="sign" onClick={onClickSign} />
+          <NewButton className="sign-btn" kind={ACTION_PRIMARY} onClick={onClickSign}>
+            <Icon id="sign" />
+            Sign
+          </NewButton>
         </div>
         {showing ? createPortal(modal, document?.body) : null}
       </CouncilPendingStyled>
@@ -725,7 +752,10 @@ export const CouncilPending = (props: Props) => {
         </div>
 
         <div className="g-centering">
-          <Button text="Sign" className="sign-btn" kind={'actionPrimary'} icon="sign" onClick={onClickSign} />
+          <NewButton className="sign-btn" kind={ACTION_PRIMARY} onClick={onClickSign}>
+            <Icon id="sign" />
+            Sign
+          </NewButton>
         </div>
       </CouncilPendingStyled>
     )
@@ -751,7 +781,10 @@ export const CouncilPending = (props: Props) => {
       </div>
 
       <div className="g-centering">
-        <Button text="Sign" className="sign-btn" kind={ACTION_PRIMARY} icon="sign" onClick={onClickSign} />
+        <NewButton className="sign-btn" kind={ACTION_PRIMARY} onClick={onClickSign}>
+          <Icon id="sign" />
+          Sign
+        </NewButton>
       </div>
     </CouncilPendingStyled>
   )
