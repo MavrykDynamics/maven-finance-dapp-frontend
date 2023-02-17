@@ -2,12 +2,24 @@ import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { ERROR, INFO, SUCCESS } from 'app/App.components/Toaster/Toaster.constants'
 import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
 import { State } from 'reducers'
-import { DELEGATION_STORAGE_QUERY, DELEGATION_STORAGE_QUERY_NAME, DELEGATION_STORAGE_QUERY_VARIABLE } from 'gql/queries'
+import {
+  DELEGATION_STORAGE_QUERY,
+  DELEGATION_STORAGE_QUERY_NAME,
+  DELEGATION_STORAGE_QUERY_VARIABLE,
+  SATELLITES_STORAGE_QUERY,
+  SATELLITES_STORAGE_QUERY_NAME,
+  SATELLITES_STORAGE_QUERY_VARIABLE,
+} from 'gql/queries'
 import { fetchFromIndexer } from '../../gql/fetchGraphQL'
 import type { AppDispatch, GetState } from '../../app/App.controller'
-import { normalizeDelegationStorage } from './Satellites.helpers'
+import { normalizeDelegationStorage, normalizeSatellitesLedger } from './Satellites.helpers'
 import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 import { updateUserData } from 'reducers/actions/user.actions'
+import { getFinancialRequestStorage } from 'pages/FinacialRequests/FiancialRequest.actions'
+import { getFeedsStorage } from 'pages/DataFeeds/DataFeeds.actions'
+import { getEmergencyGovernanceStorage } from 'pages/EmergencyGovernance/EmergencyGovernance.actions'
+import { getGovernanceStorage } from 'pages/Governance/Governance.actions'
+import { governance } from 'reducers/governance'
 
 export const GET_DELEGATION_STORAGE = 'GET_DELEGATION_STORAGE'
 export const getDelegationStorage = () => async (dispatch: AppDispatch) => {
@@ -26,6 +38,50 @@ export const getDelegationStorage = () => async (dispatch: AppDispatch) => {
     })
   } catch (error) {
     console.error('getDelegationStorage error: ', error)
+    if (error instanceof Error) {
+      dispatch(showToaster(ERROR, 'Error', error.message))
+    }
+  }
+}
+
+export const GET_SATELLITES_STORAGE = 'GET_SATELLITES_STORAGE'
+export const getSatellitesStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
+  const {
+    financialRequest: { financialRequests, isLoaded: isFinancialRequestsLoaded },
+    dataFeeds: { feedsLedger, isLoaded: isDataFeedsLoaded },
+    emergencyGovernance: { eGovProposals, isLoaded: isEgovProposalsLoaded },
+    governance: {
+      governanceStorage: { proposalLedger },
+      pastProposals,
+    },
+  } = getState()
+  try {
+    const storage = await fetchFromIndexer(
+      SATELLITES_STORAGE_QUERY,
+      SATELLITES_STORAGE_QUERY_NAME,
+      SATELLITES_STORAGE_QUERY_VARIABLE,
+    )
+
+    await Promise.all(
+      [
+        !isFinancialRequestsLoaded && dispatch(getFinancialRequestStorage()),
+        !isDataFeedsLoaded && dispatch(getFeedsStorage()),
+        !isEgovProposalsLoaded && dispatch(getEmergencyGovernanceStorage()),
+        dispatch(getGovernanceStorage()),
+      ].filter(Boolean),
+    )
+
+    const normalizedSatellites = normalizeSatellitesLedger(storage, {
+      financialRequestLedger: financialRequests,
+      feeds: feedsLedger,
+      emergencyGovernanceLedger: eGovProposals,
+      pastProposals,
+      proposalLedger,
+    })
+
+    console.log('getSatellitesStorage -> normalizedSatellites:', normalizedSatellites)
+  } catch (error) {
+    console.error('getSatellitesStorage error: ', error)
     if (error instanceof Error) {
       dispatch(showToaster(ERROR, 'Error', error.message))
     }

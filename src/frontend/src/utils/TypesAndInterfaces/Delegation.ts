@@ -4,7 +4,13 @@ import { Governance_Proposal, Maybe, Governance_Financial_Request } from '../gen
 
 import { FinancialRequestVote, ProposalVote } from './Governance'
 
-import { normalizeDelegationStorage, normalizeSatelliteRecord } from '../../pages/Satellites/Satellites.helpers'
+import {
+  getSatelliteVotings,
+  normalizeDelegationStorage,
+  normalizeSatelliteRecord,
+  normalizeSatellitesLedger,
+  normallizeSatellite,
+} from '../../pages/Satellites/Satellites.helpers'
 
 export enum SatelliteStatus {
   ACTIVE = 0,
@@ -18,6 +24,9 @@ export const SatelliteStatusToText = {
   2: 'Banned',
 }
 
+export type NewSatelliteRecordType = ReturnType<typeof normallizeSatellite>
+export type NewSatelliteVotingsType = ReturnType<typeof getSatelliteVotings>
+
 export type SatelliteRecord = ReturnType<typeof normalizeSatelliteRecord>
 export type SatelliteProposalVotingHistory = SatelliteRecord['proposalVotingHistory']
 export type SatelliteVotingDataType =
@@ -25,40 +34,6 @@ export type SatelliteVotingDataType =
   | SatelliteRecord['proposalVotingHistory'][number]
   | SatelliteRecord['satelliteActionVotes'][number]
   | SatelliteRecord['emergencyGovernanceVotes'][number]
-
-// FinancialRequestVote & {
-//   requestData?: Maybe<Governance_Financial_Request> | undefined
-//   voteName?: string
-// }
-
-// {
-//   address: string
-//   name: string
-//   image: string
-//   description: string
-//   website: string
-//   participation: number
-//   accuracy: number
-//   satelliteFee: number
-//   delegatorCount: number
-//   status: SatelliteStatus
-//   delegationRatio: number
-//   mvkBalance: number
-//   sMvkBalance: number
-//   totalDelegatedAmount: number
-//   isSatelliteReady: boolean
-//   currentlyRegistered: boolean
-//   proposalVotingHistory?: SatelliteProposalVotingHistory[]
-//   financialRequestsVotes?: SatelliteFinancialRequestVotingHistory[]
-//   emergencyGovernanceVotes?: SatelliteFinancialRequestVotingHistory[]
-//   satelliteActionVotes?: SatelliteFinancialRequestVotingHistory[]
-//   oracleRecords: Array<{
-//     oracleAddress: string
-//     sMVKReward: number
-//     XTZReward: number
-//     feedAddress: string
-//   }>
-// }
 
 export type DelegationConfig = {
   maxSatellites: number

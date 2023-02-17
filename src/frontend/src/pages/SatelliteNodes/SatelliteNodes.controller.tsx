@@ -5,7 +5,7 @@ import { getSatelliteMetrics } from 'pages/Satellites/Satellites.helpers'
 import { SatelliteRecord } from 'utils/TypesAndInterfaces/Delegation'
 import { DropdownItemType } from '../../app/App.components/DropDown/DropDown.controller'
 import { State } from 'reducers'
-import { getDelegationStorage, delegate, undelegate } from 'pages/Satellites/Satellites.actions'
+import { getDelegationStorage, delegate, undelegate, getSatellitesStorage } from 'pages/Satellites/Satellites.actions'
 import { getFinancialRequestStorage } from 'pages/FinacialRequests/FiancialRequest.actions'
 import { getFeedsStorage } from 'pages/DataFeeds/DataFeeds.actions'
 import { getGovernanceStorage } from 'pages/Governance/Governance.actions'
@@ -36,6 +36,7 @@ const SatelliteNodes = () => {
         !isFinancialRequestsLoaded && dispatch(getFinancialRequestStorage()),
         dispatch(getGovernanceStorage()),
         dispatch(getDelegationStorage()),
+        dispatch(getSatellitesStorage()),
       ])
     } catch (e) {}
   }, [])
