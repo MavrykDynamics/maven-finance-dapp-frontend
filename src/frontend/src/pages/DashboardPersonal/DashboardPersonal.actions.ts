@@ -32,22 +32,23 @@ export const claimAllRewardsAction = () => async (dispatch: AppDispatch, getStat
 
   try {
     // if user has farm rewards to claim it will transfrom this rewards to batch call getting rewards array
-    const farmsRewardsBatchPart = await Object.keys(myFarmRewardsData).reduce<Promise<Array<WalletParamsWithKind>>>(
-      async (promsieAcc, farmAddress) => {
-        const acc = await promsieAcc
+    const farmsRewardsBatchPart = await Promise.all(
+      Object.keys(myFarmRewardsData)
+        .reduce<Array<() => Promise<WalletParamsWithKind>>>((callbacks, farmAddress) => {
+          if (myFarmRewardsData[farmAddress].myAvailableFarmRewards > 0) {
+            callbacks.push(async () => {
+              const farmContractInstance = await tezos?.wallet.at(farmAddress)
 
-        if (myFarmRewardsData[farmAddress].myAvailableFarmRewards > 0) {
-          const farmContractInstance = await tezos?.wallet.at(farmAddress)
+              return {
+                kind: OpKind.TRANSACTION,
+                ...farmContractInstance.methods.claim(farmAddress).toTransferParams(),
+              }
+            })
+          }
 
-          acc.push({
-            kind: OpKind.TRANSACTION,
-            ...farmContractInstance.methods.claim(farmAddress).toTransferParams(),
-          })
-        }
-
-        return acc
-      },
-      Promise.resolve([]),
+          return callbacks
+        }, [])
+        .map((fn) => fn()),
     )
 
     const bachArr = [...farmsRewardsBatchPart]

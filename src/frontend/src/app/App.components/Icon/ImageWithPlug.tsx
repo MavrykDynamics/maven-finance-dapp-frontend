@@ -1,9 +1,9 @@
-import { useLayoutEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Maybe } from 'graphql/jsutils/Maybe'
 import Icon from './Icon.view'
 
 export const ImageWithPlug = ({
-  imageLink,
+  imageLink = null,
   alt,
   className = '',
   plugSrc,
@@ -13,24 +13,16 @@ export const ImageWithPlug = ({
   className?: string
   plugSrc?: string
 }) => {
-  const [imageExists, setImageExists] = useState(true)
+  const [imageSrc, setImageSrc] = useState<string | null>(imageLink)
 
-  useLayoutEffect(() => {
-    setImageExists(true)
+  useEffect(() => {
+    setImageSrc(imageSrc)
   }, [imageLink])
 
-  if (imageLink && imageExists) {
+  if (imageSrc) {
     return (
       <div className={`img-wrapper ${className}`}>
-        <img src={imageLink} alt={alt} loading="lazy" onError={() => setImageExists(false)} />
-      </div>
-    )
-  }
-
-  if (plugSrc) {
-    return (
-      <div className={`img-wrapper ${className}`}>
-        <img src={plugSrc} alt={alt} loading="lazy" />
+        <img src={imageSrc} alt={alt} loading="lazy" onError={() => setImageSrc(plugSrc ?? null)} />
       </div>
     )
   }
