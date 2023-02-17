@@ -187,8 +187,9 @@ export function CouncilView({
     <>
       {tabId && isCouncilMember && (
         <Link to={queryParameters.pathname}>
-          <NewButton kind={TRANSPARENT_WITH_BORDER} className="margin-top-30 go-back">
-            <Icon id="arrowRight" /> Back to Member Dashboard
+          <NewButton kind={TRANSPARENT_WITH_BORDER} className="margin-top-30">
+            <Icon id="arrowDown" />
+            Back to Member Dashboard
           </NewButton>
         </Link>
       )}
