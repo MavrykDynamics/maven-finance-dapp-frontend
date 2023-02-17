@@ -18,8 +18,11 @@ import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
 const SatelliteTab = () => {
   const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
+  const { financialRequests, isLoaded: isFinancialRequestsLoaded } = useSelector(
+    (state: State) => state.financialRequest,
+  )
   const {
-    governanceStorage: { financialRequestLedger, proposalLedger },
+    governanceStorage: { proposalLedger },
     pastProposals,
   } = useSelector((state: State) => state.governance)
   const { eGovProposals } = useSelector((state: State) => state.emergencyGovernance)
@@ -36,9 +39,9 @@ const SatelliteTab = () => {
         eGovProposals,
         satelliteRecord,
         feedsLedger,
-        financialRequestLedger,
+        financialRequests,
       ),
-    [eGovProposals, feedsLedger, financialRequestLedger, pastProposals, proposalLedger, satelliteRecord],
+    [eGovProposals, feedsLedger, financialRequests, pastProposals, proposalLedger, satelliteRecord],
   )
 
   const oracleStatusType = getOracleStatus(satelliteRecord, feedsLedger)

@@ -13,13 +13,17 @@ import { getSatelliteByAddress } from './SatelliteDetails.actions'
 import { State } from 'reducers'
 
 import { SatelliteDetailsView } from './SatelliteDetails.view'
+import { getFinancialRequestStorage } from 'pages/FinacialRequests/FiancialRequest.actions'
 
 export const SatelliteDetails = () => {
   const dispatch = useDispatch()
   const { currentSatellite } = useSelector((state: State) => state.delegation)
   const { feedsLedger, isLoaded: isFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
+  const { financialRequests, isLoaded: isFinancialRequestsLoaded } = useSelector(
+    (state: State) => state.financialRequest,
+  )
   const {
-    governanceStorage: { financialRequestLedger, proposalLedger },
+    governanceStorage: { proposalLedger },
     pastProposals,
   } = useSelector((state: State) => state.governance)
   const { eGovProposals, isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
@@ -35,6 +39,7 @@ export const SatelliteDetails = () => {
       await Promise.all([
         !isFeedsLoaded && dispatch(getFeedsStorage()),
         !isEgovLoaded && dispatch(getEmergencyGovernanceStorage()),
+        !isFinancialRequestsLoaded && dispatch(getFinancialRequestStorage()),
         dispatch(getGovernanceStorage()),
         dispatch(getSatelliteByAddress(satelliteId)),
         dispatch(getDelegationStorage()),
@@ -64,9 +69,9 @@ export const SatelliteDetails = () => {
         eGovProposals,
         currentSatellite,
         feedsLedger,
-        financialRequestLedger,
+        financialRequests,
       ),
-    [currentSatellite],
+    [currentSatellite, eGovProposals, feedsLedger, financialRequests, pastProposals, proposalLedger],
   )
 
   return (

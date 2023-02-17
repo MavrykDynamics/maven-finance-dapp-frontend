@@ -3,10 +3,7 @@ import { useParams } from 'react-router-dom'
 import { State } from 'reducers'
 import { Page } from 'styles'
 import { ClockLoader, SpinnerLoader } from 'app/App.components/Loader/Loader.view'
-import type {
-  SatelliteProposalVotingHistory,
-  SatelliteFinancialRequestVotingHistory,
-} from '../../utils/TypesAndInterfaces/Delegation'
+import type { SatelliteVotingDataType } from '../../utils/TypesAndInterfaces/Delegation'
 
 // view
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
@@ -46,14 +43,16 @@ type SatelliteDetailsViewProps = {
   }
 }
 
-const renderVotingHistoryItem = (item: SatelliteProposalVotingHistory | SatelliteFinancialRequestVotingHistory) => {
+const renderVotingHistoryItem = (item: SatelliteVotingDataType) => {
   const voteText = getVoteText(item.vote)
   return (
     <SatelliteVotingHistoryListItem key={item.id}>
       <p>{item?.voteName?.split('_').join(' ').toLowerCase()}</p>
       <span className="satellite-voting-history-info">
         Voted <b className={`voting-${voteText.toLowerCase()}`}>{voteText} </b>
-        on {parseDate({ time: new Date(item.timestamp).getTime(), timeFormat: 'MMM Do, YYYY' })}
+        {item.timestamp
+          ? `on ${parseDate({ time: new Date(item.timestamp).getTime(), timeFormat: 'MMM Do, YYYY' })}`
+          : null}
       </span>
     </SatelliteVotingHistoryListItem>
   )

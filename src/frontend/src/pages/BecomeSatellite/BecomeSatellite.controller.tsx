@@ -42,6 +42,10 @@ export const BecomeSatellite = () => {
           oracleRecords: [],
           isSatelliteReady: false,
           currentlyRegistered: false,
+          proposalVotingHistory: [],
+          financialRequestsVotes: [],
+          emergencyGovernanceVotes: [],
+          satelliteActionVotes: [],
         }
 
   useEffect(() => {

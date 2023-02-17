@@ -17,24 +17,18 @@ import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 const DelegationTab = () => {
   const { satelliteMvkIsDelegatedTo } = useSelector((state: State) => state.wallet.user)
   const { satelliteLedger } = useSelector((state: State) => state.delegation.delegationStorage)
+  const { financialRequests } = useSelector((state: State) => state.financialRequest)
   const satelliteInfo = satelliteLedger.find(({ address }) => satelliteMvkIsDelegatedTo === address)
 
   const {
-    governanceStorage: { financialRequestLedger, proposalLedger },
+    governanceStorage: { proposalLedger },
     pastProposals,
   } = useSelector((state: State) => state.governance)
   const { eGovProposals } = useSelector((state: State) => state.emergencyGovernance)
   const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
 
   const satelliteMetrics = satelliteInfo
-    ? getSatelliteMetrics(
-        pastProposals,
-        proposalLedger,
-        eGovProposals,
-        satelliteInfo,
-        feedsLedger,
-        financialRequestLedger,
-      )
+    ? getSatelliteMetrics(pastProposals, proposalLedger, eGovProposals, satelliteInfo, feedsLedger, financialRequests)
     : null
 
   return (

@@ -49,7 +49,7 @@ const defaultDelegationStorage: DelegationStorage = {
   activeSatellites: [],
 }
 
-export const DEFAULT_SATELLITE = {
+export const DEFAULT_SATELLITE: SatelliteRecord = {
   status: SatelliteStatus.SUSPENDED,
   delegationRatio: 0,
   accuracy: 0,
@@ -67,6 +67,10 @@ export const DEFAULT_SATELLITE = {
   oracleRecords: [],
   isSatelliteReady: false,
   currentlyRegistered: false,
+  proposalVotingHistory: [],
+  financialRequestsVotes: [],
+  emergencyGovernanceVotes: [],
+  satelliteActionVotes: [],
 }
 
 const delegationDefaultState: DelegationState = {

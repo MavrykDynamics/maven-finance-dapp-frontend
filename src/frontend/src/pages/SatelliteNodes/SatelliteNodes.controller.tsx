@@ -6,14 +6,21 @@ import { SatelliteRecord } from 'utils/TypesAndInterfaces/Delegation'
 import { DropdownItemType } from '../../app/App.components/DropDown/DropDown.controller'
 import { State } from 'reducers'
 import { getDelegationStorage, delegate, undelegate } from 'pages/Satellites/Satellites.actions'
+import { getFinancialRequestStorage } from 'pages/FinacialRequests/FiancialRequest.actions'
+import { getFeedsStorage } from 'pages/DataFeeds/DataFeeds.actions'
+import { getGovernanceStorage } from 'pages/Governance/Governance.actions'
+import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 
 const SatelliteNodes = () => {
   const {
     delegationStorage: { activeSatellites = [] },
   } = useSelector((state: State) => state.delegation)
-  const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
+  const { feedsLedger, isLoaded: isFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
+  const { financialRequests, isLoaded: isFinancialRequestsLoaded } = useSelector(
+    (state: State) => state.financialRequest,
+  )
   const {
-    governanceStorage: { financialRequestLedger, proposalLedger },
+    governanceStorage: { proposalLedger },
     pastProposals,
   } = useSelector((state: State) => state.governance)
   const { eGovProposals } = useSelector((state: State) => state.emergencyGovernance)
@@ -22,8 +29,15 @@ const SatelliteNodes = () => {
   const [allSatellites, setAllSatellites] = useState<SatelliteRecord[]>(activeSatellites)
   const [filteredSatelliteList, setFilteredSatelliteList] = useState<SatelliteRecord[]>(activeSatellites)
 
-  useEffect(() => {
-    dispatch(getDelegationStorage())
+  const { isLoading } = useDataLoader(async () => {
+    try {
+      await Promise.all([
+        !isFeedsLoaded && dispatch(getFeedsStorage()),
+        !isFinancialRequestsLoaded && dispatch(getFinancialRequestStorage()),
+        dispatch(getGovernanceStorage()),
+        dispatch(getDelegationStorage()),
+      ])
+    } catch (e) {}
   }, [])
 
   useEffect(() => {
@@ -73,7 +87,7 @@ const SatelliteNodes = () => {
             eGovProposals,
             a,
             feedsLedger,
-            financialRequestLedger,
+            financialRequests,
           )
 
           const bMetrics = getSatelliteMetrics(
@@ -82,7 +96,7 @@ const SatelliteNodes = () => {
             eGovProposals,
             b,
             feedsLedger,
-            financialRequestLedger,
+            financialRequests,
           )
 
           res =

@@ -64,8 +64,9 @@ export const SatelliteListItem = ({
     accountPkh,
     user: { isSatellite },
   } = useSelector((state: State) => state.wallet)
+  const { financialRequests } = useSelector((state: State) => state.financialRequest)
   const {
-    governanceStorage: { financialRequestLedger, proposalLedger },
+    governanceStorage: { proposalLedger },
     pastProposals,
   } = useSelector((state: State) => state.governance)
   const { eGovProposals } = useSelector((state: State) => state.emergencyGovernance)
@@ -86,9 +87,8 @@ export const SatelliteListItem = ({
   const isSatelliteInactive = satellite.status !== SatelliteStatus.ACTIVE
 
   const satelliteMetrics = React.useMemo(
-    () =>
-      getSatelliteMetrics(pastProposals, proposalLedger, eGovProposals, satellite, feedsLedger, financialRequestLedger),
-    [satellite],
+    () => getSatelliteMetrics(pastProposals, proposalLedger, eGovProposals, satellite, feedsLedger, financialRequests),
+    [eGovProposals, feedsLedger, financialRequests, pastProposals, proposalLedger, satellite],
   )
 
   const participation = (satelliteMetrics.proposalParticipation + satelliteMetrics.votingPartisipation) / 2

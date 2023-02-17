@@ -1,8 +1,9 @@
 import { GET_FINANCIAL_REQUEST_STORAGE } from 'pages/FinacialRequests/FiancialRequest.actions'
+import { FinancialRequestRecord } from 'utils/TypesAndInterfaces/Governance'
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
 
 export type FinancialRequestStoreType = {
-  financialRequests: Array<any>
+  financialRequests: Array<FinancialRequestRecord>
   isLoaded: boolean
 }
 

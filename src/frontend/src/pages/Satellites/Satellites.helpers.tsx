@@ -21,7 +21,7 @@ import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
 export function normalizeSatelliteRecord(
   satelliteRecord: SatelliteRecordGraphQl,
   userVotingHistory: MavrykUserGraphQl,
-): SatelliteRecord {
+) {
   const totalDelegatedAmount = satelliteRecord
     ? satelliteRecord.delegations.reduce(
         (sum: number, current: { user: { smvk_balance: number } }) => sum + current.user.smvk_balance,
@@ -67,6 +67,7 @@ export function normalizeSatelliteRecord(
           id: vote.id,
           proposalId: vote.emergency_governance_record_id,
           timestamp: new Date(vote.timestamp as string),
+          vote: 1,
           voterId: vote.voter_id,
           voteName: vote?.emergency_governance_record?.title,
         }
@@ -122,7 +123,7 @@ export function normalizeSatelliteRecord(
   const v2 = Number(satelliteRecord.user.aggregator_oracles?.[0]?.observations?.[0]?.data)
   const accuracy = 100 - ((v1 - v2) / ((v1 + v2) / 2)) * 100
 
-  const newSatelliteRecord: SatelliteRecord = {
+  const newSatelliteRecord = {
     address: satelliteRecord?.user_id || '',
     oracleRecords,
     description: satelliteRecord?.description || '',

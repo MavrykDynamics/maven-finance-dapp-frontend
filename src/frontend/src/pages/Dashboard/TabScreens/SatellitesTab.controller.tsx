@@ -19,8 +19,9 @@ import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 export const SatellitesTab = ({ isLoading }: { isLoading: boolean }) => {
   const { activeSatellites } = useSelector((state: State) => state.delegation.delegationStorage)
   const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
+  const { financialRequests } = useSelector((state: State) => state.financialRequest)
   const {
-    governanceStorage: { financialRequestLedger, proposalLedger },
+    governanceStorage: { proposalLedger },
     pastProposals,
   } = useSelector((state: State) => state.governance)
   const { eGovProposals } = useSelector((state: State) => state.emergencyGovernance)
@@ -34,7 +35,7 @@ export const SatellitesTab = ({ isLoading }: { isLoading: boolean }) => {
         eGovProposals,
         satellite,
         feedsLedger,
-        financialRequestLedger,
+        financialRequests,
       )
 
       acc.activeSatellites += 1

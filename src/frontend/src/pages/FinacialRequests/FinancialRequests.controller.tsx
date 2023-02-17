@@ -1,20 +1,17 @@
-import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 // types
 import { State } from '../../reducers'
 
 //  actions
+import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { getFinancialRequestStorage } from './FiancialRequest.actions'
 
 // view
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
 import { FinancialRequestsView } from './FinancialRequests.view'
-
-//styles
 import { Page } from 'styles'
 import { EmptyContainer } from 'app/App.style'
-import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 
