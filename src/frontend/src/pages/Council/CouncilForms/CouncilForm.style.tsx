@@ -1,5 +1,5 @@
 import styled from 'styled-components/macro'
-import { upColor, royalPurpleColor, containerColor } from 'styles'
+import { upColor, royalPurpleColor } from 'styles'
 
 export const CouncilFormStyled = styled.form`
   padding: 24px 30px;
@@ -12,10 +12,13 @@ export const CouncilFormStyled = styled.form`
     margin-bottom: 0;
   }
 
-  p {
-    font-weight: 600;
+  input, p {
+    font-weight: 500;
     font-size: 14px;
-    line-height: 21px;
+    line-height: 24px;
+  }
+
+  p {
     color: ${({ theme }) => theme.textColor};
     margin-bottom: 16px;
     margin-top: 1px;
@@ -64,20 +67,6 @@ export const CouncilFormStyled = styled.form`
     padding-bottom: 15px;
   }
 
-  .plus-btn {
-    width: 250px;
-
-    svg {
-      stroke: none;
-    }
-
-    &.fill {
-      svg {
-        stroke: ${containerColor};
-      }
-    }
-  }
-
   .button-aligment {
     display: flex;
     justify-content: flex-end;
@@ -91,6 +80,7 @@ export const CouncilFormStyled = styled.form`
 
   .with-pinned-text {
     .pinned-text {
+      position: relative;
       font-weight: 600;
       font-size: 14px;
       line-height: 14px;

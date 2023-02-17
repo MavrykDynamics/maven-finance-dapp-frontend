@@ -6,10 +6,11 @@ import type { InputStatusType } from '../../../app/App.components/Input/Input.co
 
 // helpers
 import { validateFormField } from 'utils/validatorFunctions'
+import { ACTION_PRIMARY, SUBMIT } from 'app/App.components/Button/Button.constants'
 
 // view
-import { Input } from '../../../app/App.components/Input/Input.controller'
-import { Button } from '../../../app/App.components/Button/Button.controller'
+import { Input } from 'app/App.components/Input/NewInput'
+import NewButton from 'app/App.components/Button/NewButton.controller'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 
 // action
@@ -53,6 +54,21 @@ export const CouncilFormSetBaker = () => {
 
   const handleBlur = validateFormField(setFormInputStatus)
 
+  const bakerHashProps = {
+    name: 'bakerHash',
+    value: bakerHash,
+    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e),
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+      handleChange(e)
+      handleBlur(e)
+    },
+    required: true,
+  }
+
+  const bakerHashSettings = {
+    inputStatus: formInputStatus.bakerHash,
+  }
+
   return (
     <CouncilFormStyled onSubmit={handleSubmit}>
       <a className="info-link" href="https://mavryk.finance/litepaper#mavryk-council" target="_blank" rel="noreferrer">
@@ -63,21 +79,13 @@ export const CouncilFormSetBaker = () => {
       <div className="form-grid form-grid-button-right">
         <div>
           <label>Baker Hash</label>
-          <Input
-            type="text"
-            required
-            value={bakerHash}
-            name="bakerHash"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              handleChange(e)
-              handleBlur(e)
-            }}
-            onBlur={(e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e)}
-            inputStatus={formInputStatus.bakerHash}
-          />
+          <Input inputProps={bakerHashProps} settings={bakerHashSettings} />
         </div>
         <div className="button-aligment">
-          <Button text="Set Baker" className="plus-btn" kind={'actionPrimary'} icon="plus" type="submit" />
+          <NewButton kind={ACTION_PRIMARY} type={SUBMIT}>
+            <Icon id="plus" />
+            Set Baker
+          </NewButton>
         </div>
       </div>
     </CouncilFormStyled>

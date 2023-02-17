@@ -5,9 +5,10 @@ import { State } from 'reducers'
 // const
 import { ERROR } from '../../../app/App.components/Toaster/Toaster.constants'
 import { distinctRequestsByExecuting } from 'pages/FinacialRequests/FinancialRequests.helpers'
+import { ACTION_PRIMARY, SUBMIT } from 'app/App.components/Button/Button.constants'
 
 // view
-import { Button } from '../../../app/App.components/Button/Button.controller'
+import NewButton from 'app/App.components/Button/NewButton.controller'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 import { DropDown, DropdownItemType } from '../../../app/App.components/DropDown/DropDown.controller'
 
@@ -104,13 +105,10 @@ export const CouncilFormDropFinancialRequest = () => {
           />
         </div>
         <div className="button-aligment">
-          <Button
-            text="Drop Financial Request"
-            className="plus-btn fill"
-            kind={'actionPrimary'}
-            icon="close-stroke"
-            type="submit"
-          />
+          <NewButton kind={ACTION_PRIMARY} type={SUBMIT}>
+            <Icon id="close" />
+            Drop Financial Request
+          </NewButton>
         </div>
       </div>
     </CouncilFormStyled>

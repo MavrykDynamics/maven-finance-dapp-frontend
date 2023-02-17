@@ -7,11 +7,12 @@ import { CouncilMaxLength } from 'utils/TypesAndInterfaces/Council'
 
 // helpers
 import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
+import { ACTION_PRIMARY, SUBMIT } from 'app/App.components/Button/Button.constants'
 
 // view
-import { Input } from '../../../app/App.components/Input/Input.controller'
+import { Input } from 'app/App.components/Input/NewInput'
+import NewButton from 'app/App.components/Button/NewButton.controller'
 import { TextArea } from '../../../app/App.components/TextArea/TextArea.controller'
-import { Button } from '../../../app/App.components/Button/Button.controller'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 import { DropDown, DropdownItemType } from '../../../app/App.components/DropDown/DropDown.controller'
 
@@ -106,6 +107,83 @@ export const CouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
     [ddIsOpen],
   )
 
+  const treasuryAddressProps = {
+    name: 'treasuryAddress',
+    value: treasuryAddress,
+    onBlur: handleBlurAddress,
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+      handleChange(e)
+      handleBlurAddress(e)
+    },
+    required: true,
+  }
+
+  const treasuryAddressSettings = {
+    inputStatus: formInputStatus.treasuryAddress,
+  }
+
+  const tokenContractAddressProps = {
+    name: 'tokenContractAddress',
+    value: tokenContractAddress,
+    onBlur: handleBlurAddress,
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+      handleChange(e)
+      handleBlurAddress(e)
+    },
+    required: true,
+  }
+
+  const tokenContractAddressSettings = {
+    inputStatus: formInputStatus.tokenContractAddress,
+  }
+
+  const tokenNameProps = {
+    name: 'tokenName',
+    value: tokenName,
+    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, maxLength.requestTokenNameMaxLength),
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+      handleChange(e)
+      handleBlur(e, maxLength.requestTokenNameMaxLength)
+    },
+    required: true,
+  }
+
+  const tokenNameSettings = {
+    inputStatus: formInputStatus.tokenName,
+  }
+
+  const tokenAmountProps = {
+    type: 'number',
+    name: 'tokenAmount',
+    value: tokenAmount,
+    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e),
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+      handleChange(e)
+      handleBlur(e)
+    },
+    required: true,
+  }
+
+  const tokenAmountSettings = {
+    inputStatus: formInputStatus.tokenAmount,
+  }
+
+  const tokenIdProps = {
+    type: 'number',
+    name: 'tokenId',
+    value: tokenId,
+    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e),
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+      handleChange(e)
+      handleBlur(e)
+    },
+    required: true,
+  }
+
+  const tokenIdSettings = {
+    inputStatus: formInputStatus.tokenId,
+  }
+
   return (
     <CouncilFormStyled onSubmit={handleSubmit}>
       <a className="info-link" href="https://mavryk.finance/litepaper#mavryk-council" target="_blank" rel="noreferrer">
@@ -116,66 +194,22 @@ export const CouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
       <div className="form-grid">
         <div>
           <label>Treasury Address</label>
-          <Input
-            type="text"
-            required
-            value={treasuryAddress}
-            name="treasuryAddress"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              handleChange(e)
-              handleBlurAddress(e)
-            }}
-            onBlur={handleBlurAddress}
-            inputStatus={formInputStatus.treasuryAddress}
-          />
+          <Input inputProps={treasuryAddressProps} settings={treasuryAddressSettings} />
         </div>
 
         <div>
           <label>Token Contract Address</label>
-          <Input
-            type="text"
-            required
-            value={tokenContractAddress}
-            name="tokenContractAddress"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              handleChange(e)
-              handleBlurAddress(e)
-            }}
-            onBlur={handleBlurAddress}
-            inputStatus={formInputStatus.tokenContractAddress}
-          />
+          <Input inputProps={tokenContractAddressProps} settings={tokenContractAddressSettings} />
         </div>
 
         <div>
           <label>Token Name</label>
-          <Input
-            type="text"
-            required
-            value={tokenName}
-            name="tokenName"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              handleChange(e)
-              handleBlur(e, maxLength.requestTokenNameMaxLength)
-            }}
-            onBlur={(e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, maxLength.requestTokenNameMaxLength)}
-            inputStatus={formInputStatus.tokenName}
-          />
+          <Input inputProps={tokenNameProps} settings={tokenNameSettings} />
         </div>
 
         <div>
           <label>Token Amount to Transfer</label>
-          <Input
-            type="number"
-            required
-            value={tokenAmount}
-            name="tokenAmount"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              handleChange(e)
-              handleBlur(e)
-            }}
-            onBlur={(e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e)}
-            inputStatus={formInputStatus.tokenAmount}
-          />
+          <Input inputProps={tokenAmountProps} settings={tokenAmountSettings} />
         </div>
 
         <div>
@@ -192,18 +226,7 @@ export const CouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
 
         <div>
           <label>Token ID</label>
-          <Input
-            type="number"
-            required
-            value={tokenId}
-            name="tokenId"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              handleChange(e)
-              handleBlur(e)
-            }}
-            onBlur={(e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e)}
-            inputStatus={formInputStatus.tokenId}
-          />
+          <Input inputProps={tokenIdProps} settings={tokenIdSettings} />
         </div>
       </div>
       <div className="textarea-group">
@@ -221,7 +244,10 @@ export const CouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
         />
       </div>
       <div className="btn-group">
-        <Button text="Request Tokens" className="plus-btn" kind={'actionPrimary'} icon="transfer-fill" type="submit" />
+        <NewButton kind={ACTION_PRIMARY} type={SUBMIT}>
+          <Icon id="transfer-fill" />
+          Request Tokens
+        </NewButton>
       </div>
     </CouncilFormStyled>
   )

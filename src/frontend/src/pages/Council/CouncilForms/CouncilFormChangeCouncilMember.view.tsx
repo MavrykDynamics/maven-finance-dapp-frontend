@@ -9,13 +9,14 @@ import type { CouncilMaxLength } from '../../../utils/TypesAndInterfaces/Council
 // helpers
 import { getShortTzAddress } from '../../../utils/tzAdress'
 import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
+import { ACTION_PRIMARY, SUBMIT } from 'app/App.components/Button/Button.constants'
 
 // const
 import { ERROR } from '../../../app/App.components/Toaster/Toaster.constants'
 
 // view
-import { Input } from '../../../app/App.components/Input/Input.controller'
-import { Button } from '../../../app/App.components/Button/Button.controller'
+import { Input } from 'app/App.components/Input/NewInput'
+import NewButton from 'app/App.components/Button/NewButton.controller'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 import { IPFSUploader } from '../../../app/App.components/IPFSUploader/IPFSUploader.controller'
 import { DropDown, DropdownItemType } from '../../../app/App.components/DropDown/DropDown.controller'
@@ -127,6 +128,51 @@ export const CouncilFormChangeCouncilMember = (maxLength: CouncilMaxLength) => {
     handleSelect(chosenItem)
   }
 
+  const newCouncilMemberAddressProps = {
+    name: 'newCouncilMemberAddress',
+    value: newCouncilMemberAddress,
+    onBlur: handleBlurAddress,
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+      handleChange(e)
+      handleBlurAddress(e)
+    },
+    required: true,
+  }
+
+  const newCouncilMemberAddressSettings = {
+    inputStatus: formInputStatus.newCouncilMemberAddress,
+  }
+
+  const newMemberNameProps = {
+    name: 'newMemberName',
+    value: newMemberName,
+    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, maxLength.councilMemberNameMaxLength),
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+      handleChange(e)
+      handleBlur(e, maxLength.councilMemberNameMaxLength)
+    },
+    required: true,
+  }
+
+  const newMemberNameSettings = {
+    inputStatus: formInputStatus.newMemberName,
+  }
+
+  const newMemberWebsiteProps = {
+    name: 'newMemberWebsite',
+    value: newMemberWebsite,
+    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, maxLength.councilMemberWebsiteMaxLength),
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+      handleChange(e)
+      handleBlur(e, maxLength.councilMemberWebsiteMaxLength)
+    },
+    required: true,
+  }
+
+  const newMemberWebsiteSettings = {
+    inputStatus: formInputStatus.newMemberWebsite,
+  }
+
   return (
     <CouncilFormStyled onSubmit={handleSubmit}>
       <a className="info-link" href="https://mavryk.finance/litepaper#mavryk-council" target="_blank" rel="noreferrer">
@@ -149,52 +195,18 @@ export const CouncilFormChangeCouncilMember = (maxLength: CouncilMaxLength) => {
         <div />
         <div>
           <label>Council Member Address</label>
-          <Input
-            type="text"
-            required
-            value={newCouncilMemberAddress}
-            name="newCouncilMemberAddress"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              handleChange(e)
-              handleBlurAddress(e)
-            }}
-            onBlur={handleBlurAddress}
-            inputStatus={formInputStatus.newCouncilMemberAddress}
-          />
+          <Input inputProps={newCouncilMemberAddressProps} settings={newCouncilMemberAddressSettings} />
         </div>
         <div>
           <label>Council Member Name</label>
-          <Input
-            type="text"
-            required
-            value={newMemberName}
-            name="newMemberName"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              handleChange(e)
-              handleBlur(e, maxLength.councilMemberNameMaxLength)
-            }}
-            onBlur={(e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, maxLength.councilMemberNameMaxLength)}
-            inputStatus={formInputStatus.newMemberName}
-          />
+          <Input inputProps={newMemberNameProps} settings={newMemberNameSettings} />
         </div>
         <div>
           <label>Council Member Website URL</label>
-          <Input
-            type="text"
-            required
-            value={newMemberWebsite}
-            name="newMemberWebsite"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              handleChange(e)
-              handleBlur(e, maxLength.councilMemberWebsiteMaxLength)
-            }}
-            onBlur={(e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, maxLength.councilMemberWebsiteMaxLength)}
-            inputStatus={formInputStatus.newMemberWebsite}
-          />
+          <Input inputProps={newMemberWebsiteProps} settings={newMemberWebsiteSettings} />
         </div>
       </div>
       <IPFSUploader
-        disabled={false}
         typeFile="image"
         key={uploadKey}
         imageIpfsUrl={newMemberImage}
@@ -206,7 +218,10 @@ export const CouncilFormChangeCouncilMember = (maxLength: CouncilMaxLength) => {
         title={'Upload Profile Pic'}
       />
       <div className="btn-group">
-        <Button text="Change Council Member" className="plus-btn" kind={'actionPrimary'} icon="switch" type="submit" />
+        <NewButton kind={ACTION_PRIMARY} type={SUBMIT}>
+          <Icon id="exchange" />
+          Change Council Member
+        </NewButton>
       </div>
     </CouncilFormStyled>
   )

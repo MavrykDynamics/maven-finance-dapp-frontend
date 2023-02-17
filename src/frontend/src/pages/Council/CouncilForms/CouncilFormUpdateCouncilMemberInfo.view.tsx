@@ -8,10 +8,12 @@ import type { CouncilMaxLength } from '../../../utils/TypesAndInterfaces/Council
 
 // helpers
 import { validateFormField } from 'utils/validatorFunctions'
-
+import { ACTION_PRIMARY, SUBMIT } from 'app/App.components/Button/Button.constants'
 import { TzAddress } from '../../../app/App.components/TzAddress/TzAddress.view'
-import { Input } from '../../../app/App.components/Input/Input.controller'
-import { Button } from '../../../app/App.components/Button/Button.controller'
+
+// view
+import { Input } from 'app/App.components/Input/NewInput'
+import NewButton from 'app/App.components/Button/NewButton.controller'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 import { IPFSUploader } from '../../../app/App.components/IPFSUploader/IPFSUploader.controller'
 
@@ -33,13 +35,44 @@ export const CouncilFormUpdateCouncilMemberInfo = (maxLength: CouncilMaxLength) 
     newMemberWebsite: '',
     newMemberImage: '',
   })
-  const [uploadKey, setUploadKey] = useState(1)
 
   const [formInputStatus, setFormInputStatus] = useState<Record<string, InputStatusType>>({
     newMemberName: '',
     newMemberWebsite: '',
     newMemberImage: '',
   })
+
+  const { newMemberName, newMemberWebsite, newMemberImage } = form
+
+  const newMemberNameProps = {
+    name: 'newMemberName',
+    value: newMemberName,
+    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, maxLength.councilMemberNameMaxLength),
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+      handleChange(e)
+      handleBlur(e, maxLength.councilMemberNameMaxLength)
+    },
+    required: true,
+  }
+
+  const newMemberNameSettings = {
+    inputStatus: formInputStatus.newMemberName,
+  }
+
+  const newMemberWebsiteProps = {
+    name: 'newMemberWebsite',
+    value: newMemberWebsite,
+    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, maxLength.councilMemberWebsiteMaxLength),
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+      handleChange(e)
+      handleBlur(e, maxLength.councilMemberWebsiteMaxLength)
+    },
+    required: true,
+  }
+
+  const newMemberWebsiteSettings = {
+    inputStatus: formInputStatus.newMemberWebsite,
+  }
 
   useEffect(() => {
     if (myInfo) {
@@ -54,22 +87,15 @@ export const CouncilFormUpdateCouncilMemberInfo = (maxLength: CouncilMaxLength) 
         newMemberWebsite: 'success',
         newMemberImage: 'success',
       })
-      setUploadKey(uploadKey + 1)
     }
   }, [myInfo])
-
-  const disabled = false
-
-  const { newMemberName, newMemberWebsite, newMemberImage } = form
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     try {
       await dispatch(updateCouncilMemberInfo(newMemberName, newMemberWebsite, newMemberImage))
-      setUploadKey(uploadKey + 1)
     } catch (error) {
       console.error(error)
-      setUploadKey(uploadKey + 1)
     }
   }
 
@@ -98,39 +124,15 @@ export const CouncilFormUpdateCouncilMemberInfo = (maxLength: CouncilMaxLength) 
 
         <div>
           <label>Update Name</label>
-          <Input
-            type="text"
-            required
-            value={newMemberName}
-            name="newMemberName"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              handleChange(e)
-              handleBlur(e, maxLength.councilMemberNameMaxLength)
-            }}
-            onBlur={(e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, maxLength.councilMemberNameMaxLength)}
-            inputStatus={formInputStatus.newMemberName}
-          />
+          <Input inputProps={newMemberNameProps} settings={newMemberNameSettings} />
         </div>
 
         <div>
           <label>Updated Website URL</label>
-          <Input
-            type="text"
-            required
-            value={newMemberWebsite}
-            name="newMemberWebsite"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              handleChange(e)
-              handleBlur(e, maxLength.councilMemberWebsiteMaxLength)
-            }}
-            onBlur={(e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, maxLength.councilMemberWebsiteMaxLength)}
-            inputStatus={formInputStatus.newMemberWebsite}
-          />
+          <Input inputProps={newMemberWebsiteProps} settings={newMemberWebsiteSettings} />
         </div>
       </div>
       <IPFSUploader
-        disabled={disabled}
-        key={uploadKey}
         typeFile="image"
         imageIpfsUrl={newMemberImage}
         className="form-ipfs"
@@ -141,13 +143,10 @@ export const CouncilFormUpdateCouncilMemberInfo = (maxLength: CouncilMaxLength) 
         title={'Upload Profile Pic'}
       />
       <div className="btn-group">
-        <Button
-          text="Update Council Member Info"
-          className="plus-btn fill"
-          kind={'actionPrimary'}
-          icon="upload"
-          type="submit"
-        />
+        <NewButton kind={ACTION_PRIMARY} type={SUBMIT}>
+          <Icon id="upload" />
+          Update Council Member Info
+        </NewButton>
       </div>
     </CouncilFormStyled>
   )
