@@ -132,8 +132,7 @@ export const CouncilPendingStyled = styled(Card)`
   .parameters {
     display: flex;
     justify-content: space-between;
-    column-gap: 25px;
-    row-gap: 16px;
+    gap: 16px;
 
     &:first-of-type {
       padding-bottom: 20px;
