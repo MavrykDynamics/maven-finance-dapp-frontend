@@ -129,7 +129,7 @@ export const CouncilFormRequestTokenMint = (maxLength: CouncilMaxLength) => {
       </div>
       <div className="btn-group">
         <NewButton kind={ACTION_PRIMARY} type={SUBMIT}>
-          <Icon id="coin-loan" />
+          <Icon id="loans" />
           Request Mint
         </NewButton>
       </div>

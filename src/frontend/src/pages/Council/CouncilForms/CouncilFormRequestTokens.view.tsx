@@ -245,7 +245,7 @@ export const CouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
       </div>
       <div className="btn-group">
         <NewButton kind={ACTION_PRIMARY} type={SUBMIT}>
-          <Icon id="transfer-fill" />
+          <Icon id="request_token" />
           Request Tokens
         </NewButton>
       </div>

@@ -106,7 +106,7 @@ export const CouncilFormDropFinancialRequest = () => {
         </div>
         <div className="button-aligment">
           <NewButton kind={ACTION_PRIMARY} type={SUBMIT}>
-            <Icon id="close" />
+            <Icon id="navigation-menu_close" />
             Drop Financial Request
           </NewButton>
         </div>
