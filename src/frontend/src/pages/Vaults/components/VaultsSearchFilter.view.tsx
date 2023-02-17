@@ -260,7 +260,7 @@ export const VaultsSearchFilter = ({ assets, vaultsMapper, currentVaultsIds, set
 
           <DropDown
             className="dd-item"
-            placeholder="Sort"
+            placeholder="Statuses"
             isOpen={filterStatuses[filters.SORT]}
             setIsOpen={handleDropdownStatus(filters.SORT)}
             itemSelected={chosenDdItem[filters.SORT]}
