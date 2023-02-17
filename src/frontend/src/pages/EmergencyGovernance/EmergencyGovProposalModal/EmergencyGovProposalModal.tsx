@@ -57,10 +57,13 @@ export const EmergencyGovProposalModal = ({ show, closeHandler }: { show: boolea
   const submitEmergencyGovProposalCallback = () => {
     if (!isActionDisabled)
       dispatch(
-        submitEmergencyGovernanceProposal({
-          title: proposalData.title.text,
-          description: proposalData.description.text,
-        }),
+        submitEmergencyGovernanceProposal(
+          {
+            title: proposalData.title.text,
+            description: proposalData.description.text,
+          },
+          closeHandler,
+        ),
       )
   }
 

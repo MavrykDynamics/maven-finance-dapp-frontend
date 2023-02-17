@@ -126,9 +126,14 @@ const HarvestBlock = ({
   <FarmHarvestStyled className="farm-harvest">
     <div className="farm-info">
       <h3>sMVK Earned</h3>
-      <var>{userReward?.myAvailableFarmRewards.toFixed(2) ?? '0.00'}</var>
+      <CommaNumber className="value" value={userReward?.myAvailableFarmRewards ?? 0} />
     </div>
-    <Button kind="actionPrimary" text={'Harvest'} onClick={harvestRewards} disabled={!userReward} />
+    <Button
+      kind="actionPrimary"
+      text={'Harvest'}
+      onClick={harvestRewards}
+      disabled={!userReward || userReward.myAvailableFarmRewards === 0}
+    />
   </FarmHarvestStyled>
 )
 

@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 
 // helpers
 import { ACTION_SECONDARY } from 'app/App.components/Button/Button.constants'
-import { voteEmergencyGovernanceProposal } from '../EmergencyGovernance.actions'
+import { dropEmergencyGovernanceProposal, voteEmergencyGovernanceProposal } from '../EmergencyGovernance.actions'
 import { skyColor } from 'styles/colors'
 import { COLON_VIEW } from 'app/App.components/Timer/Timer.view'
 import { parseDate } from 'utils/time'
@@ -29,10 +29,9 @@ import {
 
 type EGovCardProps = {
   emergencyGovernance: EmergergencyGovernanceItem
-  dropProposalHandler: (proposalId: number) => void
 }
 
-export const EGovCard = ({ emergencyGovernance, dropProposalHandler }: EGovCardProps) => {
+export const EGovCard = ({ emergencyGovernance }: EGovCardProps) => {
   const dispatch = useDispatch()
   const { totalStakedMvk } = useSelector((state: State) => state.doorman)
   const {
@@ -50,6 +49,10 @@ export const EGovCard = ({ emergencyGovernance, dropProposalHandler }: EGovCardP
 
   const handleProposalVote = async () => {
     await dispatch(voteEmergencyGovernanceProposal())
+  }
+
+  const dropProposalHandler = async () => {
+    await dispatch(dropEmergencyGovernanceProposal())
   }
 
   const status = isActiveProposal
@@ -88,8 +91,9 @@ export const EGovCard = ({ emergencyGovernance, dropProposalHandler }: EGovCardP
           <div className="descr">{emergencyGovernance.description}</div>
           <Button
             text="Drop Proposal"
-            onClick={() => dropProposalHandler(emergencyGovernance.id)}
+            onClick={dropProposalHandler}
             kind={ACTION_SECONDARY}
+            disabled={emergencyGovernance.proposerId !== accountPkh}
           />
         </div>
         <VotingArea

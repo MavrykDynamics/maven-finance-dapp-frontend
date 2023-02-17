@@ -11,6 +11,7 @@ import { State } from '../../reducers'
 import { normalizeEmergencyGovernance } from '../EmergencyGovernance/EmergencyGovernance.helpers'
 import { EmergencyGovernanceProposalForm } from '../../utils/TypesAndInterfaces/Forms'
 import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
+import { getBreakGlassStorage } from 'pages/BreakGlass/BreakGlass.actions'
 
 export const GET_EMERGENCY_GOVERNANCE_STORAGE = 'GET_EMERGENCY_GOVERNANCE_STORAGE'
 export const getEmergencyGovernanceStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
@@ -30,7 +31,8 @@ export const getEmergencyGovernanceStorage = () => async (dispatch: AppDispatch,
 }
 
 export const submitEmergencyGovernanceProposal =
-  (form: EmergencyGovernanceProposalForm) => async (dispatch: AppDispatch, getState: GetState) => {
+  (form: EmergencyGovernanceProposalForm, callback?: () => void) =>
+  async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
 
     if (!state.wallet.accountPkh) {
@@ -47,7 +49,8 @@ export const submitEmergencyGovernanceProposal =
       const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.emergencyGovernanceAddress.address)
       const transaction = await contract?.methods
         .triggerEmergencyControl(form.title, form.description)
-        .send({ amount: state.emergencyGovernance.config.requiredFeeMutez || 0 })
+        .send({ amount: state.emergencyGovernance.config.requiredFeeMutez ?? 0 })
+      callback?.()
 
       await dispatch(toggleActionLoader(true))
       await dispatch(showToaster(INFO, 'Submitting emergency proposal...', 'Please wait 30s'))
@@ -56,6 +59,7 @@ export const submitEmergencyGovernanceProposal =
 
       await dispatch(showToaster(SUCCESS, 'Emergency Proposal Submitted', 'All good :)'))
 
+      await dispatch(getBreakGlassStorage())
       await dispatch(getEmergencyGovernanceStorage())
       await dispatch(toggleActionLoader(false))
     } catch (error) {
@@ -90,6 +94,41 @@ export const voteEmergencyGovernanceProposal = () => async (dispatch: AppDispatc
     await transaction?.confirmation()
 
     await dispatch(showToaster(SUCCESS, 'Emergency Proposal voted', 'All good :)'))
+
+    await dispatch(getEmergencyGovernanceStorage())
+    await dispatch(toggleActionLoader(false))
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error)
+      await dispatch(showToaster(ERROR, 'Error', error.message))
+    }
+    await dispatch(toggleActionLoader(false))
+  }
+}
+
+export const dropEmergencyGovernanceProposal = () => async (dispatch: AppDispatch, getState: GetState) => {
+  const state: State = getState()
+
+  if (!state.wallet.accountPkh) {
+    dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
+    return
+  }
+
+  if (state.loading.isActionLoading) {
+    dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
+    return
+  }
+
+  try {
+    const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.emergencyGovernanceAddress.address)
+    const transaction = await contract?.methods.dropEmergencyGovernance().send()
+
+    await dispatch(toggleActionLoader(true))
+    await dispatch(showToaster(INFO, 'Dropping emergency proposal...', 'Please wait 30s'))
+
+    await transaction?.confirmation()
+
+    await dispatch(showToaster(SUCCESS, 'Emergency Proposal dropped', 'All good :)'))
 
     await dispatch(getEmergencyGovernanceStorage())
     await dispatch(toggleActionLoader(false))

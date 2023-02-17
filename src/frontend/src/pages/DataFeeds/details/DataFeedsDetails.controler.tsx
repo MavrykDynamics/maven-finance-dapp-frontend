@@ -1,64 +1,78 @@
-import React, { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
 // types
 import { State } from 'reducers'
-import { Feed } from 'pages/Satellites/helpers/Satellites.types'
 
 // view
 import DataFeedDetailsView from './DataFeedsDetails.view'
 
 // actions
-import { getOracleStorage, registerFeedAction } from 'pages/Satellites/Satellites.actions'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
+import { getFeedsStorage, registerFeedAction } from '../DataFeeds.actions'
+import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
 
 const DataFeedDetails = () => {
   const dispatch = useDispatch()
-  const {
-    oraclesStorage: { feeds = [] },
-  } = useSelector((state: State) => state.oracles)
+  const { feedsLedger, isLoaded: isFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
   const { satelliteLedger } = useSelector((state: State) => state.delegation.delegationStorage)
-  const timerId = useRef<null | number>(null)
-
-  let { feedId } = useParams<{ feedId: string }>()
-
-  let [selectedFeed, setSelectedFeed] = useState<null | Feed>(null)
 
   const { isLoading } = useDataLoader(async () => {
     try {
-      await dispatch(getOracleStorage())
+      if (!isFeedsLoaded) {
+        await dispatch(getFeedsStorage())
+      }
     } catch (e) {}
   }, [])
 
+  const timerId = useRef<null | NodeJS.Timeout>(null)
+  const { feedId } = useParams<{ feedId: string }>()
+  const [selectedFeed, setSelectedFeed] = useState<null | Feed>(null)
+
+  /**
+   * @description in this effect we need to update feeds data every
+   * (last_completed_data_last_updated_at + heart_beat_seconds + 5000)ms
+   * or every 30000ms, when user is on details page
+   */
   useEffect(() => {
-    const feedToDisplay = feeds.find((feed) => feed.address === feedId)
+    const feedToDisplay = feedsLedger.find((feed) => feed.address === feedId)
     setSelectedFeed(feedToDisplay || null)
 
     if (feedToDisplay) {
+      const { last_completed_data_last_updated_at: lastUpdateTimestamp, heart_beat_seconds } = feedToDisplay
       const timeToUpdate =
-        new Date(feedToDisplay.last_completed_data_last_updated_at ?? 0).getTime() +
-        feedToDisplay.heart_beat_seconds * 1000 -
-        new Date(Date.now()).getTime()
+        new Date(lastUpdateTimestamp ?? 0).getTime() + heart_beat_seconds * 1000 - new Date(Date.now()).getTime()
 
       const timer = setTimeout(
         () => {
-          dispatch(getOracleStorage())
+          dispatch(getFeedsStorage())
         },
         timeToUpdate < 0 ? 30000 : timeToUpdate + 5000,
       )
-      timerId.current = Number(timer)
+      timerId.current = timer
     }
 
     return () => {
       if (timerId.current) clearTimeout(timerId.current)
     }
-  }, [feedId, feeds])
+  }, [feedId, feedsLedger])
+
+  const feedsSatellites = useMemo(
+    () =>
+      selectedFeed?.address
+        ? satelliteLedger.filter(({ oracleRecords }) =>
+            oracleRecords.find(({ feedAddress }) => selectedFeed?.address === feedAddress),
+          )
+        : [],
+    [selectedFeed?.address, satelliteLedger],
+  )
 
   return (
     <DataFeedDetailsView
+      isLoading={isLoading}
       feed={selectedFeed}
-      oracles={satelliteLedger}
+      feedsSatellites={feedsSatellites}
       registerFeedHandler={() => dispatch(registerFeedAction())}
     />
   )

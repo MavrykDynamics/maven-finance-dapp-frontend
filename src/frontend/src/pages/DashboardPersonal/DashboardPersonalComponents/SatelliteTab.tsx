@@ -17,7 +17,7 @@ import { State } from 'reducers'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
 const SatelliteTab = () => {
-  const { feeds } = useSelector((state: State) => state.oracles.oraclesStorage)
+  const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
   const {
     governanceStorage: { financialRequestLedger, proposalLedger },
     pastProposals,
@@ -30,11 +30,18 @@ const SatelliteTab = () => {
 
   const satelliteMetrics = useMemo(
     () =>
-      getSatelliteMetrics(pastProposals, proposalLedger, eGovProposals, satelliteRecord, feeds, financialRequestLedger),
-    [eGovProposals, feeds, financialRequestLedger, pastProposals, proposalLedger, satelliteRecord],
+      getSatelliteMetrics(
+        pastProposals,
+        proposalLedger,
+        eGovProposals,
+        satelliteRecord,
+        feedsLedger,
+        financialRequestLedger,
+      ),
+    [eGovProposals, feedsLedger, financialRequestLedger, pastProposals, proposalLedger, satelliteRecord],
   )
 
-  const oracleStatusType = getOracleStatus(satelliteRecord, feeds)
+  const oracleStatusType = getOracleStatus(satelliteRecord, feedsLedger)
 
   return (
     <>

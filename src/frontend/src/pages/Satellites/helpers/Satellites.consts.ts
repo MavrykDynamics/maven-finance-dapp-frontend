@@ -1,5 +1,5 @@
+import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
 import { SatelliteRecord } from 'utils/TypesAndInterfaces/Delegation'
-import { Feed } from './Satellites.types'
 
 export const ORACLE_STATUSES_MAPPER = {
   responded: 'Responded',

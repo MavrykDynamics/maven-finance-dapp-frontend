@@ -72,7 +72,7 @@ export const fetchUserData = async (
   accountPkh: string,
   activeSatellites: Array<SatelliteRecord>,
   dipDupTokens: State['tokens']['dipDupTokens'],
-  feeds: State['oracles']['oraclesStorage']['feeds'],
+  feeds: State['dataFeeds']['feedsLedger'],
   currentBlockLevel: number | undefined = 0,
 ) => {
   try {
@@ -198,14 +198,12 @@ export const updateUserData = () => async (dispatch: AppDispatch, getState: GetS
     },
     wallet: { accountPkh },
     tokens: { dipDupTokens },
-    oracles: {
-      oraclesStorage: { feeds },
-    },
+    dataFeeds: { feedsLedger },
   } = getState()
 
   try {
     if (accountPkh) {
-      const userData = await fetchUserData(accountPkh, activeSatellites, dipDupTokens, feeds, level)
+      const userData = await fetchUserData(accountPkh, activeSatellites, dipDupTokens, feedsLedger, level)
 
       dispatch({
         type: UPDATE_USER_DATA,

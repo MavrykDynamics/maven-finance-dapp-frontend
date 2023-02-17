@@ -4,19 +4,18 @@ import { Link } from 'react-router-dom'
 
 import { State } from 'reducers'
 import { LoanMarketType } from 'utils/TypesAndInterfaces/Loans'
-
+import { calcDiffBetweenTwoNumbersInPersentage } from 'utils/calcFunctions'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 
 import Icon from 'app/App.components/Icon/Icon.view'
 import { Button } from 'app/App.components/Button/Button.controller'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 
 import { StatBlock } from '../Dashboard.style'
 import { LendingContentStyled, TabWrapperStyled, EmptyContainer } from './DashboardTabs.style'
 import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
-import { ClockLoader } from 'app/App.components/Loader/Loader.view'
-import { calcDiffBetweenTwoNumbersInPersentage } from 'utils/calcFunctions'
 
 export const emptyContainer = (
   <EmptyContainer>

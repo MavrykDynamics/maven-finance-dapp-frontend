@@ -59,7 +59,7 @@ export const SatelliteListItem = ({
   const sMvkBalance = satellite.sMvkBalance
   const freesMVKSpace = Math.max(sMvkBalance * satellite.delegationRatio - totalDelegatedMVK, 0)
 
-  const { feeds } = useSelector((state: State) => state.oracles.oraclesStorage)
+  const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
   const {
     accountPkh,
     user: { isSatellite },
@@ -81,12 +81,13 @@ export const SatelliteListItem = ({
     ? proposalLedger.find((proposal) => proposal.id === currentlySupportingProposalId)
     : null
 
-  const oracleStatusType = getOracleStatus(satellite, feeds)
+  const oracleStatusType = getOracleStatus(satellite, feedsLedger)
   const satelliteStatusColor = satellite.status === SatelliteStatus.BANNED ? DOWN : WARNING
   const isSatelliteInactive = satellite.status !== SatelliteStatus.ACTIVE
 
   const satelliteMetrics = React.useMemo(
-    () => getSatelliteMetrics(pastProposals, proposalLedger, eGovProposals, satellite, feeds, financialRequestLedger),
+    () =>
+      getSatelliteMetrics(pastProposals, proposalLedger, eGovProposals, satellite, feedsLedger, financialRequestLedger),
     [satellite],
   )
 

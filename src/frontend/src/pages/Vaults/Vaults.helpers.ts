@@ -23,7 +23,7 @@ import { CollateralType, LoanTokenType } from 'utils/TypesAndInterfaces/Loans'
 
 type VaultsStorageProps = {
   lendingController: LendingControllerGQL
-  feeds: State['oracles']['oraclesStorage']['feeds']
+  feeds: State['dataFeeds']['feedsLedger']
   accountPkh?: string
   dipDupTokens: State['tokens']['dipDupTokens']
   currentBlockLevel?: number

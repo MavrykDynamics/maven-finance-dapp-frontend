@@ -1,17 +1,8 @@
 // types
 import type { ContractAddressesState } from '../reducers/contractAddresses'
 import type { AddressesGraphQl } from '../utils/TypesAndInterfaces/Addresses'
-import type { VestingGraphQL } from '../utils/TypesAndInterfaces/Vesting'
-import type {
-  AggregatorGraphQL,
-  AggregatorFactoryGraphQL,
-  AggregatorOracleGraphQL,
-  DipdupContractMetadataGraphQL,
-} from '../utils/TypesAndInterfaces/Aggregator'
 import { Dipdup_Token_Metadata, M_Token } from 'utils/generated/graphqlTypes'
-import { normalizeDataFeedsHistory, normalizeDataFeedsVolatility } from 'pages/Satellites/Satellites.helpers'
-import { Feed } from 'pages/Satellites/helpers/Satellites.types'
-import {MichelsonType, unpackDataBytes} from '@taquito/michel-codec'
+import { MichelsonType, unpackDataBytes } from '@taquito/michel-codec'
 
 export function normalizeAddressesStorage(storage: AddressesGraphQl): ContractAddressesState {
   return {
@@ -45,79 +36,12 @@ export function normalizeAddressesStorage(storage: AddressesGraphQl): ContractAd
   }
 }
 
-export function normalizeVestingStorage(storage: VestingGraphQL | null) {
-  return {
-    address: storage?.address || '',
-    totalVestedAmount: storage?.total_vested_amount ?? 0,
-    totalClaimedAmount: storage?.vestees_aggregate?.aggregate?.sum?.total_claimed ?? 0,
-  }
-}
-
 export function getEnumKeyByEnumValue<T extends { [index: string]: string }>(
   myEnum: T,
   enumValue: string,
 ): keyof T | null {
   let keys = Object.keys(myEnum).filter((x) => myEnum[x] === enumValue)
   return keys.length > 0 ? keys[0] : null
-}
-
-export function normalizeOracle(storage: {
-  aggregator: AggregatorGraphQL[]
-  aggregator_factory: AggregatorFactoryGraphQL[]
-  aggregator_oracle: AggregatorOracleGraphQL[]
-  dipdup_contract_metadata: DipdupContractMetadataGraphQL[]
-}) {
-  const dataFeedUniqueCategories = new Set()
-
-  const getCategoryAndNetwork = (address: string) => {
-    const foundItem = storage?.dipdup_contract_metadata?.find((element) => element.contract === address) as
-      | { metadata?: { category?: string }; network?: string }
-      | undefined
-
-    const category = foundItem?.metadata?.category
-    const network = foundItem?.network || null
-
-    if (!category) {
-      return {
-        category: null,
-        network,
-      }
-    }
-
-    dataFeedUniqueCategories.add(category)
-
-    return {
-      category,
-      network,
-    }
-  }
-
-  const feeds = storage?.aggregator.map<Feed>((item) => {
-    const dataFeedsHistory = normalizeDataFeedsHistory(item.history_data)
-    const dataFeedsVolatility = normalizeDataFeedsVolatility(item.history_data)
-
-    const { icon } = storage?.dipdup_contract_metadata?.find(({ contract }) => contract === item.address)?.metadata as {
-      icon?: string
-    }
-
-    const { history_data, ...restOfTheItem } = item
-
-    const feed = {
-      ...restOfTheItem,
-      ...getCategoryAndNetwork(item.address),
-      amount: item.last_completed_data / 10 ** item.decimals,
-      dataFeedsHistory: dataFeedsHistory,
-      dataFeedsVolatility: dataFeedsVolatility,
-      icon,
-    }
-    return feed
-  })
-
-  return {
-    feeds,
-    feedsFactory: storage?.aggregator_factory,
-    feedCategories: [...dataFeedUniqueCategories],
-  }
 }
 
 export function normalizeDipDupTokens(storage: { dipdup_token_metadata?: Array<Dipdup_Token_Metadata> }) {
@@ -135,7 +59,7 @@ export function normalizeMTokens(storage: { m_token: M_Token }) {
 export function convertBytesAddressToAddress(addressInBytes: string): string {
   const addressType: MichelsonType = {
     prim: 'address',
-  };
+  }
   const formattedBytes = { bytes: addressInBytes }
   const unpackedBytes = unpackDataBytes(formattedBytes, addressType)
   const jsonString = JSON.parse(JSON.stringify(unpackedBytes))
@@ -144,7 +68,7 @@ export function convertBytesAddressToAddress(addressInBytes: string): string {
 export function convertBytesStringToText(textInBytes: string): string {
   const stringType: MichelsonType = {
     prim: 'string',
-  };
+  }
   const formattedBytes = { bytes: textInBytes }
   // @ts-ignore
   const unpackedBytes = unpackDataBytes(formattedBytes, stringType)

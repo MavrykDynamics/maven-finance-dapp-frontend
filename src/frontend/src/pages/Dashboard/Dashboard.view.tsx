@@ -22,17 +22,14 @@ export const DashboardView = ({
   tvl,
   mvkStatsBlock,
   activeTab,
-  tabLoadings,
+  isLoading,
 }: {
   tvl: number
   mvkStatsBlock: mvkStatsType
   activeTab: TabId
-  tabLoadings: Record<string, boolean>
+  isLoading: boolean
 }) => {
-  const tvlValue =
-    tabLoadings.isFarmsLoading || tabLoadings.isTreasuryLoading || tabLoadings.isLendingLoading || tabLoadings.isLoading
-      ? 0
-      : tvl
+  const tvlValue = isLoading ? 0 : tvl
   return (
     <DashboardStyled>
       <div className="top">
@@ -109,22 +106,22 @@ export const DashboardView = ({
 
       <Switch>
         <Route exact path={`/dashboard/${FARMS_TAB_ID}`}>
-          <FarmsTab isLoading={tabLoadings.isFarmsLoading} />
+          <FarmsTab isLoading={isLoading} />
         </Route>
         <Route exact path={`/dashboard/${VAULTS_TAB_ID}`}>
-          <VaultsTab isLoading={tabLoadings.isVaultsLoading} />
+          <VaultsTab isLoading={isLoading} />
         </Route>
         <Route exact path={`/dashboard/${SATELLITES_TAB_ID}`}>
-          <SatellitesTab isLoading={tabLoadings.isDelegationLoading} />
+          <SatellitesTab isLoading={isLoading} />
         </Route>
         <Route exact path={`/dashboard/${ORACLES_TAB_ID}`}>
-          <OraclesTab isLoading={tabLoadings.isOraclesLoading} />
+          <OraclesTab isLoading={isLoading} />
         </Route>
         <Route exact path={`/dashboard/${TREASURY_TAB_ID}`}>
-          <TreasuryTab isLoading={tabLoadings.isTreasuryLoading} />
+          <TreasuryTab isLoading={isLoading} />
         </Route>
         <Route path={`/dashboard/${LENDING_TAB_ID}`}>
-          <LendingTab isLoading={tabLoadings.isLendingLoading} />
+          <LendingTab isLoading={isLoading} />
         </Route>
         <Redirect to={`/dashboard/${LENDING_TAB_ID}`} />
       </Switch>

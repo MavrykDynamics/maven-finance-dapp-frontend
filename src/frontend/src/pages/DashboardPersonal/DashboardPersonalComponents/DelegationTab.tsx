@@ -24,10 +24,17 @@ const DelegationTab = () => {
     pastProposals,
   } = useSelector((state: State) => state.governance)
   const { eGovProposals } = useSelector((state: State) => state.emergencyGovernance)
-  const { feeds } = useSelector((state: State) => state.oracles.oraclesStorage)
+  const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
 
   const satelliteMetrics = satelliteInfo
-    ? getSatelliteMetrics(pastProposals, proposalLedger, eGovProposals, satelliteInfo, feeds, financialRequestLedger)
+    ? getSatelliteMetrics(
+        pastProposals,
+        proposalLedger,
+        eGovProposals,
+        satelliteInfo,
+        feedsLedger,
+        financialRequestLedger,
+      )
     : null
 
   return (
