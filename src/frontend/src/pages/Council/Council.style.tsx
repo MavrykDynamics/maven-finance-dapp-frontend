@@ -238,6 +238,10 @@ export const CouncilActionStyled = styled(CardHover)<{ theme: MavrykTheme }>`
     }
 
     .icon-send {
+      svg {
+        fill: ${({ theme }) => theme.topBarLinkColor};
+      }
+
       &:hover {
         svg {
           opacity: 0.8;
