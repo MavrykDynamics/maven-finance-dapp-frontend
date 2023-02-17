@@ -11,19 +11,15 @@ import { getShortTzAddress } from '../../../utils/tzAdress'
 import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
 import { ACTION_PRIMARY, SUBMIT } from 'app/App.components/Button/Button.constants'
 
-// const
-import { ERROR } from '../../../app/App.components/Toaster/Toaster.constants'
-
 // view
 import { Input } from 'app/App.components/Input/NewInput'
 import NewButton from 'app/App.components/Button/NewButton.controller'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 import { IPFSUploader } from '../../../app/App.components/IPFSUploader/IPFSUploader.controller'
-import { DropDown, DropdownItemType } from '../../../app/App.components/DropDown/DropDown.controller'
+import { DDItemId, DropDown } from 'app/App.components/DropDown/NewDropdown'
 
 // action
 import { changeCouncilMember } from '../Council.actions'
-import { showToaster } from '../../../app/App.components/Toaster/Toaster.actions'
 
 // style
 import { CouncilFormStyled } from './CouncilForm.style'
@@ -32,23 +28,23 @@ export const CouncilFormChangeCouncilMember = (maxLength: CouncilMaxLength) => {
   const dispatch = useDispatch()
   const { councilMembers } = useSelector((state: State) => state.council)
 
-  const itemsForDropDown = useMemo(
+  const dropDownItems = useMemo(
     () =>
-      councilMembers?.length
-        ? councilMembers.map((item) => {
-            return {
-              text: getShortTzAddress({ tzAddress: item.userId }),
-              value: item.userId,
-            }
-          })
-        : [],
+      councilMembers.map((item, index) => ({
+        content: (
+          <div>
+            {item.name} - {getShortTzAddress({ tzAddress: item.userId })}
+          </div>
+        ),
+        tzAddress: item.userId,
+        id: index,
+      })),
     [councilMembers],
   )
 
-  const [ddItems, _] = useState(itemsForDropDown.map(({ text }) => text))
-  const [ddIsOpen, setDdIsOpen] = useState(false)
-  const [chosenDdItem, setChosenDdItem] = useState<DropdownItemType | undefined>()
-  const [uploadKey, setUploadKey] = useState(1)
+  type DropDownItemType = typeof dropDownItems[0]
+  const [chosenDdItem, setChosenDdItem] = useState<DropDownItemType | undefined>()
+
   const [form, setForm] = useState({
     oldCouncilMemberAddress: '',
     newCouncilMemberAddress: '',
@@ -65,15 +61,13 @@ export const CouncilFormChangeCouncilMember = (maxLength: CouncilMaxLength) => {
     newMemberImage: '',
   })
 
-  const { oldCouncilMemberAddress, newCouncilMemberAddress, newMemberName, newMemberWebsite, newMemberImage } = form
+  const { newCouncilMemberAddress, newMemberName, newMemberWebsite, newMemberImage } = form
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     try {
-      if (!oldCouncilMemberAddress) {
-        dispatch(showToaster(ERROR, 'Please enter valid function parameter', 'Choose Council Member to change'))
-        return
-      }
+      const oldCouncilMemberAddress = chosenDdItem?.tzAddress
+      if (!oldCouncilMemberAddress) return
 
       await dispatch(
         changeCouncilMember(
@@ -98,11 +92,9 @@ export const CouncilFormChangeCouncilMember = (maxLength: CouncilMaxLength) => {
         newMemberWebsite: '',
         newMemberImage: '',
       })
-      setChosenDdItem(itemsForDropDown[0])
-      setUploadKey(uploadKey + 1)
+      setChosenDdItem(undefined)
     } catch (error) {
       console.error(error)
-      setUploadKey(uploadKey + 1)
     }
   }
 
@@ -115,17 +107,11 @@ export const CouncilFormChangeCouncilMember = (maxLength: CouncilMaxLength) => {
   const handleBlur = validateFormField(setFormInputStatus)
   const handleBlurAddress = validateFormAddress(setFormInputStatus)
 
-  const handleSelect = (item: DropdownItemType) => {
-    setForm((prev) => {
-      return { ...prev, oldCouncilMemberAddress: item.value }
-    })
-  }
+  const handleClickDropdownItem = (itemId: DDItemId) => {
+    const foundItem = dropDownItems.find((item) => item.id === itemId)
 
-  const handleOnClickDropdownItem = (e: string) => {
-    const chosenItem = itemsForDropDown.filter((item) => item.text === e)[0]
-    setChosenDdItem(chosenItem)
-    setDdIsOpen(!ddIsOpen)
-    handleSelect(chosenItem)
+    if (!foundItem) return
+    setChosenDdItem(foundItem)
   }
 
   const newCouncilMemberAddressProps = {
@@ -184,12 +170,10 @@ export const CouncilFormChangeCouncilMember = (maxLength: CouncilMaxLength) => {
         <div>
           <label>Choose Council Member to change</label>
           <DropDown
-            placeholder="Chose Member Address"
-            isOpen={ddIsOpen}
-            setIsOpen={setDdIsOpen}
-            itemSelected={chosenDdItem?.text}
-            items={ddItems}
-            clickOnItem={(e) => handleOnClickDropdownItem(e)}
+            placeholder="Choose Member Address"
+            activeItem={chosenDdItem}
+            items={dropDownItems}
+            clickItem={handleClickDropdownItem}
           />
         </div>
         <div />
@@ -208,7 +192,6 @@ export const CouncilFormChangeCouncilMember = (maxLength: CouncilMaxLength) => {
       </div>
       <IPFSUploader
         typeFile="image"
-        key={uploadKey}
         imageIpfsUrl={newMemberImage}
         className="form-ipfs"
         setIpfsImageUrl={(e: string) => {

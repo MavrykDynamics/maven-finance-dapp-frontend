@@ -5,17 +5,13 @@ import { State } from 'reducers'
 // helpers
 import { getShortTzAddress } from '../../../utils/tzAdress'
 
-// const
-import { ERROR } from '../../../app/App.components/Toaster/Toaster.constants'
-
 // view
 import { Button } from '../../../app/App.components/Button/Button.controller'
 import Icon from '../../../app/App.components/Icon/Icon.view'
-import { DropDown, DropdownItemType } from '../../../app/App.components/DropDown/DropDown.controller'
+import { DDItemId, DropDown } from 'app/App.components/DropDown/NewDropdown'
 
 // action
 import { removeCouncilMember } from '../Council.actions'
-import { showToaster } from '../../../app/App.components/Toaster/Toaster.actions'
 
 // style
 import { CouncilFormStyled } from './CouncilForm.style'
@@ -24,59 +20,41 @@ export const CouncilFormRemoveCouncilMember = () => {
   const dispatch = useDispatch()
   const { councilMembers } = useSelector((state: State) => state.council)
 
-  const itemsForDropDown = useMemo(
+  const dropDownItems = useMemo(
     () =>
-      councilMembers?.length
-        ? councilMembers.map((item) => {
-            return {
-              text: getShortTzAddress({ tzAddress: item.userId }),
-              value: item.userId,
-            }
-          })
-        : [],
+      councilMembers.map((item, index) => ({
+        content: (
+          <div>
+            {item.name} - {getShortTzAddress({ tzAddress: item.userId })}
+          </div>
+        ),
+        tzAddress: item.userId,
+        id: index,
+      })),
     [councilMembers],
   )
 
-  const [ddItems, _] = useState(itemsForDropDown.map(({ text }) => text))
-  const [ddIsOpen, setDdIsOpen] = useState(false)
-  const [chosenDdItem, setChosenDdItem] = useState<DropdownItemType | undefined>()
-
-  const [form, setForm] = useState({
-    memberAddress: '',
-  })
-
-  const { memberAddress } = form
+  type DropDownItemType = typeof dropDownItems[0]
+  const [chosenDdItem, setChosenDdItem] = useState<DropDownItemType | undefined>()
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     try {
-      if (!memberAddress) {
-        dispatch(showToaster(ERROR, 'Please enter valid function parameter', 'Choose Council Member to remove'))
-        return
-      }
+      const memberAddress = chosenDdItem?.tzAddress
+      if (!memberAddress) return
 
       await dispatch(removeCouncilMember(memberAddress))
-      setForm({
-        memberAddress: '',
-      })
-
-      setChosenDdItem(itemsForDropDown[0])
+      setChosenDdItem(undefined)
     } catch (error) {
       console.error(error)
     }
   }
 
-  const handleSelect = (item: DropdownItemType) => {
-    setForm((prev) => {
-      return { ...prev, memberAddress: item.value }
-    })
-  }
+  const handleClickDropdownItem = (itemId: DDItemId) => {
+    const foundItem = dropDownItems.find((item) => item.id === itemId)
 
-  const handleOnClickDropdownItem = (e: string) => {
-    const chosenItem = itemsForDropDown.filter((item) => item.text === e)[0]
-    setChosenDdItem(chosenItem)
-    setDdIsOpen(!ddIsOpen)
-    handleSelect(chosenItem)
+    if (!foundItem) return
+    setChosenDdItem(foundItem)
   }
 
   return (
@@ -90,12 +68,10 @@ export const CouncilFormRemoveCouncilMember = () => {
         <div>
           <label>Choose Council Member to remove</label>
           <DropDown
-            placeholder="Chose Member Address"
-            isOpen={ddIsOpen}
-            setIsOpen={setDdIsOpen}
-            itemSelected={chosenDdItem?.text}
-            items={ddItems}
-            clickOnItem={(e) => handleOnClickDropdownItem(e)}
+            placeholder="Choose Member Address"
+            activeItem={chosenDdItem}
+            items={dropDownItems}
+            clickItem={handleClickDropdownItem}
           />
         </div>
         <div className="button-aligment">

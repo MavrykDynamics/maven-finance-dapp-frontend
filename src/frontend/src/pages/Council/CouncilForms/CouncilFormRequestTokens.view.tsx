@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo } from 'react'
 import { useDispatch } from 'react-redux'
 
 // type
@@ -14,7 +14,7 @@ import { Input } from 'app/App.components/Input/NewInput'
 import NewButton from 'app/App.components/Button/NewButton.controller'
 import { TextArea } from '../../../app/App.components/TextArea/TextArea.controller'
 import Icon from '../../../app/App.components/Icon/Icon.view'
-import { DropDown, DropdownItemType } from '../../../app/App.components/DropDown/DropDown.controller'
+import { DDItemId, DropDown } from 'app/App.components/DropDown/NewDropdown'
 
 // action
 import { requestTokens } from '../Council.actions'
@@ -31,28 +31,24 @@ const INIT_FORM = {
   purpose: '',
 }
 
-const itemsForDropDown = [
-  {
-    text: 'FA12',
-    value: 'FA12',
-  },
-  {
-    text: 'FA2',
-    value: 'FA2',
-  },
-  {
-    text: 'TEZ',
-    value: 'TEZ',
-  },
-]
+const tokenTypes = ['FA12', 'FA2', 'TEZ']
 
 export const CouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
   const dispatch = useDispatch()
   const [form, setForm] = useState(INIT_FORM)
 
-  const ddItems = useMemo(() => itemsForDropDown.map(({ text }) => text), [])
-  const [ddIsOpen, setDdIsOpen] = useState(false)
-  const [tokenType, setTokenType] = useState<DropdownItemType | undefined>()
+  const dropDownItems = useMemo(
+    () =>
+      tokenTypes.map((item, index) => ({
+        content: <div>{item}</div>,
+        value: item,
+        id: index,
+      })),
+    [],
+  )
+
+  type DropDownItemType = typeof dropDownItems[0]
+  const [chosenDdItem, setChosenDdItem] = useState<DropDownItemType | undefined>()
 
   const [formInputStatus, setFormInputStatus] = useState<Record<string, InputStatusType>>({
     treasuryAddress: '',
@@ -68,13 +64,12 @@ export const CouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     try {
-      const typeOfToken = tokenType?.value || ''
+      const typeOfToken = chosenDdItem?.value
+      if (!typeOfToken) return
+
       await dispatch(
         requestTokens(treasuryAddress, tokenContractAddress, tokenName, +tokenAmount, typeOfToken, +tokenId, purpose),
       )
-
-      setTokenType(undefined)
-      setDdIsOpen(false)
       setForm(INIT_FORM)
       setFormInputStatus({
         treasuryAddress: '',
@@ -84,6 +79,7 @@ export const CouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
         tokenId: '',
         purpose: '',
       })
+      setChosenDdItem(undefined)
     } catch (error) {
       console.error(error)
     }
@@ -98,14 +94,12 @@ export const CouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
   const handleBlur = validateFormField(setFormInputStatus)
   const handleBlurAddress = validateFormAddress(setFormInputStatus)
 
-  const handleClickDropdownItem = useCallback(
-    (e: string) => {
-      const chosenItem = itemsForDropDown.filter((item) => item.text === e)[0]
-      setTokenType(chosenItem)
-      setDdIsOpen(!ddIsOpen)
-    },
-    [ddIsOpen],
-  )
+  const handleClickDropdownItem = (itemId: DDItemId) => {
+    const foundItem = dropDownItems.find((item) => item.id === itemId)
+
+    if (!foundItem) return
+    setChosenDdItem(foundItem)
+  }
 
   const treasuryAddressProps = {
     name: 'treasuryAddress',
@@ -215,12 +209,10 @@ export const CouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
         <div>
           <label>Token Type (FA12, FA2, TEZ)</label>
           <DropDown
-            placeholder={'Choose token type'}
-            isOpen={ddIsOpen}
-            setIsOpen={setDdIsOpen}
-            itemSelected={tokenType?.text}
-            items={ddItems}
-            clickOnItem={handleClickDropdownItem}
+            placeholder="Choose token type"
+            activeItem={chosenDdItem}
+            items={dropDownItems}
+            clickItem={handleClickDropdownItem}
           />
         </div>
 
