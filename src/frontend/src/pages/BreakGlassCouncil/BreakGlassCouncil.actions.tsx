@@ -141,7 +141,7 @@ export const setAllContractsAdmin = (newAdminAddress: string) => async (dispatch
   try {
     dispatch(toggleActionLoader(true))
     const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.breakGlassAddress.address)
-    const transaction = await contract?.methods.setSingleContractAdmin(newAdminAddress).send()
+    const transaction = await contract?.methods.setAllContractsAdmin(newAdminAddress).send()
     dispatch(showToaster(INFO, 'Set All Contracts Admin...', 'Please wait 30s'))
 
     await transaction?.confirmation()
