@@ -12,7 +12,7 @@ import Icon from '../../app/App.components/Icon/Icon.view'
 import { IPFSUploader } from '../../app/App.components/IPFSUploader/IPFSUploader.controller'
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
 import { TextArea } from '../../app/App.components/TextArea/TextArea.controller'
-import { SatelliteRecord } from '../../utils/TypesAndInterfaces/Delegation'
+import { SatelliteRecordType } from '../../utils/TypesAndInterfaces/Satellites'
 import { Info } from '../../app/App.components/Info/Info.view'
 import {
   RegisterAsSatelliteForm,
@@ -26,20 +26,18 @@ import {
   BecomeSatelliteForm,
   BecomeSatelliteFormBalanceCheck,
   BecomeSatelliteFormHorizontal,
-  BecomeSatelliteFormTitle,
 } from './BecomeSatellite.style'
 import InputWithPercent from 'app/App.components/Input/InputWithPercent'
 import SatellitesSideBar from 'pages/Satellites/SatellitesSideBar/SatellitesSideBar.controller'
-import type { DelegationStorage } from '../../utils/TypesAndInterfaces/Delegation'
+import { SatellitesState } from 'reducers/satellites'
 
 type BecomeSatelliteViewProps = {
   myTotalStakeBalance: number
-  satelliteConfig: DelegationStorage['config']
+  satelliteConfig: SatellitesState['config']
   accountPkh?: string
   registerCallback: (form: RegisterAsSatelliteForm) => void
   updateSatelliteCallback: (form: RegisterAsSatelliteForm) => void
-  usersSatellite: SatelliteRecord
-  isSatelliteRegistered: boolean
+  usersSatellite: SatelliteRecordType
 }
 
 const FORM_DEFAULT = {
@@ -66,7 +64,6 @@ export const BecomeSatelliteView = ({
   registerCallback,
   updateSatelliteCallback,
   usersSatellite,
-  isSatelliteRegistered,
 }: BecomeSatelliteViewProps) => {
   const dispatch = useDispatch()
   const [balanceOk, setBalanceOk] = useState(false)
@@ -82,6 +79,7 @@ export const BecomeSatelliteView = ({
     image: '',
   })
   const disabled = !balanceOk || !accountPkh
+  const isSatelliteRegistered = Boolean(usersSatellite.currentlyRegistered)
   const handleValidateLoad = (formFields: RegisterAsSatelliteForm) => {
     setFormInputStatus({
       name: isNotAllWhitespace(formFields.name) ? 'success' : 'error',
@@ -194,7 +192,7 @@ export const BecomeSatelliteView = ({
     <Page>
       <PageHeader
         page={updateSatellite && isSatelliteRegistered ? 'my satellite profile' : 'satellites'}
-        avatar={isSatelliteRegistered ? form.image || defaultAvatar : ''} 
+        avatar={isSatelliteRegistered ? form.image || defaultAvatar : ''}
       />
       <PageContent>
         <div>

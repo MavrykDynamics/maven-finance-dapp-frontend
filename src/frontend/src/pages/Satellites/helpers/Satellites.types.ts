@@ -1,6 +1,6 @@
 import type { Aggregator_History_Data } from 'utils/generated/graphqlTypes'
 import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
-import { SatelliteRecord } from 'utils/TypesAndInterfaces/Delegation'
+import { SatelliteRecord } from 'utils/TypesAndInterfaces/Satellites'
 
 type callbackFunction = (arg0: string) => void
 

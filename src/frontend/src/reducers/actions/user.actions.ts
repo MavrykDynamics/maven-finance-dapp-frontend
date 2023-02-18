@@ -29,7 +29,7 @@ import {
   convertFromIndexerToRegNum,
 } from 'utils/calcFunctions'
 import { Farm, Lending_Controller_Loan_Token } from 'utils/generated/graphqlTypes'
-import { SatelliteRecord } from 'utils/TypesAndInterfaces/Delegation'
+import { SatelliteRecord } from 'utils/TypesAndInterfaces/Satellites'
 
 const checkWhetherUserIsActiveSatelltie = (satellitesList: Array<SatelliteRecord>, userAddress: string) =>
   Boolean(

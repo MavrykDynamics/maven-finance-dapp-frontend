@@ -26,7 +26,7 @@ import { DataFeedsChart } from '../chart/DataFeedsChart.controller'
 
 // types
 import { State } from 'reducers'
-import { SatelliteRecord } from 'utils/TypesAndInterfaces/Delegation'
+import { SatelliteRecord } from 'utils/TypesAndInterfaces/Satellites'
 
 // styles
 import {

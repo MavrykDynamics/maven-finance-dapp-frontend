@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 
 import { State } from 'reducers'
-import { SatelliteRecord } from 'utils/TypesAndInterfaces/Delegation'
+import { SatelliteRecord } from 'utils/TypesAndInterfaces/Satellites'
 
 import { SATELITES_NODES_LIST_NAME } from 'pages/FinacialRequests/Pagination/pagination.consts'
 

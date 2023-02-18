@@ -10,7 +10,7 @@ import {
   USER_VOTING_HYSTORY_NAME,
   USER_VOTING_HYSTORY_VARIABLES,
 } from '../../gql/queries/getSatelliteRecords'
-import { normalizeSatelliteRecord } from '../../pages/Satellites/Satellites.helpers'
+import { normalizeSatelliteRecord } from '../Satellites/Satellites.normalizer'
 import type { AppDispatch, GetState } from '../../app/App.controller'
 
 export const GET_SATELLITE_BY_ADDRESS = 'GET_SATELLITE_BY_ADDRESS'

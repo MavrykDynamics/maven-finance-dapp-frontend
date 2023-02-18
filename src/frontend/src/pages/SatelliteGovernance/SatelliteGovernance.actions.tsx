@@ -11,7 +11,7 @@ import {
   GOVERNANCE_SATELLITE_STORAGE_QUERY_VARIABLE,
 } from '../../gql/queries/getGovernanceSatelliteStorage'
 
-import { SatelliteGovernanceTransfer } from '../../utils/TypesAndInterfaces/Delegation'
+import { SatelliteGovernanceTransfer } from '../../utils/TypesAndInterfaces/Satellites'
 import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 
 //getGovernanceSatelliteStorage

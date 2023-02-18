@@ -2,8 +2,8 @@ import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
 import { State } from 'reducers'
-import { SatelliteRecord } from 'utils/TypesAndInterfaces/Delegation'
-import { getSatelliteMetrics } from 'pages/Satellites/Satellites.helpers'
+import { SatelliteRecord } from 'utils/TypesAndInterfaces/Satellites'
+import { getSatelliteMetrics } from 'pages/Satellites/Satellites.normalizer'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 
 import { emptyContainer } from './LendingTab.controller'

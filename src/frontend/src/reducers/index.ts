@@ -1,6 +1,5 @@
 import { combineReducers } from 'redux'
 
-import { delegation, DelegationState } from './delegation'
 import { doorman, DoormanState } from './doorman'
 import { loading, LoadingState } from './loading'
 import { toaster, ToasterState } from './toaster'
@@ -19,34 +18,37 @@ import { tokens, TokensType } from './tokens'
 import { loans, LoansState } from './loans'
 import { vaults, VaultsStateType } from './vaults'
 import { financialRequest, FinancialRequestStoreType } from './financialRequests'
+import { satellites, SatellitesState } from './satellites'
 
 export const reducers = combineReducers({
   loading,
   toaster,
   wallet,
-  delegation,
-  doorman,
-  governance,
-  financialRequest,
-  emergencyGovernance,
-  treasury,
-  council,
-  breakGlass,
-  vesting,
-  vaults,
-  farm,
+  tokens,
   preferences,
   contractAddresses,
+
+  governance,
+  council,
+  financialRequest,
+  breakGlass,
+  emergencyGovernance,
+
+  satellites,
   dataFeeds,
-  tokens,
+
+  doorman,
   loans,
+  vaults,
+  treasury,
+  farm,
+  vesting,
 })
 
 export interface State {
   loading: LoadingState
   toaster: ToasterState
   wallet: WalletState
-  delegation: DelegationState
   doorman: DoormanState
   governance: GovernanceState
   financialRequest: FinancialRequestStoreType
@@ -62,4 +64,5 @@ export interface State {
   tokens: TokensType
   loans: LoansState
   vaults: VaultsStateType
+  satellites: SatellitesState
 }

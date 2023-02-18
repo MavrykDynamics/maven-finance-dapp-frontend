@@ -1,5 +1,5 @@
 import { matchPath } from 'react-router-dom'
-import { SatelliteRecord } from 'utils/TypesAndInterfaces/Delegation'
+import { SatelliteRecord } from 'utils/TypesAndInterfaces/Satellites'
 import { SubNavigationRoute } from 'utils/TypesAndInterfaces/Navigation'
 
 export const PRIMARY = 'primary'

@@ -1,21 +1,48 @@
-import { HIDE_TOASTER, SHOW_TOASTER } from '../app/App.components/Toaster/Toaster.actions'
-import { ERROR } from '../app/App.components/Toaster/Toaster.constants'
-import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
+import { GET_SATELLITES_STORAGE, GET_SATELLITE_CONFIG } from 'pages/Satellites/Satellites.actions'
+import { SatelliteRecordType } from 'utils/TypesAndInterfaces/Satellites'
 
 export type SatellitesState = {
-  config: {}
-  satelliteMapper: Record<string, any>
+  config: {
+    minimumStakedMvkBalance: number
+    satelliteNameMaxLength: number
+    satelliteDescriptionMaxLength: number
+    satelliteWebsiteMaxLength: number
+    isConfigLoaded: boolean
+  }
+  satelliteMapper: Record<string, SatelliteRecordType>
+  activeSatellitesIds: Array<SatelliteRecordType['address']>
+  allSatellitesIds: Array<SatelliteRecordType['address']>
+  oraclesIds: Array<SatelliteRecordType['address']>
+  isLoaded: boolean
 }
 
-const satellitesDefaultState: SatellitesState = { config: {}, satelliteMapper: [] }
+const satellitesDefaultState: SatellitesState = {
+  config: {
+    minimumStakedMvkBalance: 0,
+    satelliteNameMaxLength: 0,
+    satelliteDescriptionMaxLength: 0,
+    satelliteWebsiteMaxLength: 0,
+    isConfigLoaded: false,
+  },
+  satelliteMapper: {},
+  activeSatellitesIds: [],
+  allSatellitesIds: [],
+  oraclesIds: [],
+  isLoaded: false,
+}
 
-export function satellites(state = satellitesDefaultState, action: Action) {
+export function satellites(state = satellitesDefaultState, action: any) {
   switch (action.type) {
-    case SHOW_TOASTER:
+    case GET_SATELLITES_STORAGE:
       return {
         ...state,
-        ...action,
+        satelliteMapper: { ...state.satelliteMapper, ...action.satelliteMapper },
+        activeSatellitesIds: Array.from(new Set(state.activeSatellitesIds.concat(action.activeSatellitesIds))),
+        allSatellitesIds: Array.from(new Set(state.allSatellitesIds.concat(action.allSatellitesIds))),
+        oraclesIds: Array.from(new Set(state.oraclesIds.concat(action.oraclesIds))),
       }
+    case GET_SATELLITE_CONFIG:
+      return { ...state, config: { ...action.config, isConfigLoaded: true } }
     default:
       return state
   }

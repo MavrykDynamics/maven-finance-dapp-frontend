@@ -11,7 +11,7 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { DelegationStatusBlock } from './DashboardPersonalComponents.style'
 
-import { getSatelliteMetrics } from 'pages/Satellites/Satellites.helpers'
+import { getSatelliteMetrics } from 'pages/Satellites/Satellites.normalizer'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
 const DelegationTab = () => {

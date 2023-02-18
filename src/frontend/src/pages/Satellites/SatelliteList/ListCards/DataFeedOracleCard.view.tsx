@@ -6,7 +6,7 @@ import { getOracleStatus, ORACLE_STATUSES_MAPPER } from 'pages/Satellites/helper
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { State } from 'reducers'
-import { SatelliteRecord } from 'utils/TypesAndInterfaces/Delegation'
+import { SatelliteRecord } from 'utils/TypesAndInterfaces/Satellites'
 
 import { SatelliteItemStyle, SatelliteOracleStatusComponent } from './SatelliteCard.style'
 

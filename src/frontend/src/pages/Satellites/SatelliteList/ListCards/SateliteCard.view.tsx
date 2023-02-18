@@ -14,7 +14,7 @@ import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 
 // types
 import { State } from 'reducers'
-import { SatelliteStatus } from 'utils/TypesAndInterfaces/Delegation'
+import { SatelliteStatus } from 'utils/TypesAndInterfaces/Satellites'
 import { SatelliteListItemProps } from '../../helpers/Satellites.types'
 
 //styles
@@ -34,7 +34,7 @@ import {
   SatelliteTextGroup,
   SideBySideImageAndText,
 } from './SatelliteCard.style'
-import { getSatelliteMetrics, getVoteText } from 'pages/Satellites/Satellites.helpers'
+import { getSatelliteMetrics, getVoteText } from 'pages/Satellites/Satellites.normalizer'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { Link } from 'react-router-dom'
 

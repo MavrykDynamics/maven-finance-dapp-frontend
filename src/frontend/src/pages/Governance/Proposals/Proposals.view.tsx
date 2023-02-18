@@ -31,7 +31,7 @@ import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import Checkbox from 'app/App.components/Checkbox/Checkbox.view'
 import { DropDown } from 'app/App.components/DropDown/DropDown.controller'
 import { calcWithoutPrecision } from 'utils/calcFunctions'
-import { getVoteText } from 'pages/Satellites/Satellites.helpers'
+import { getVoteText } from 'pages/Satellites/Satellites.normalizer'
 
 type ProposalsViewProps = {
   listTitle: string

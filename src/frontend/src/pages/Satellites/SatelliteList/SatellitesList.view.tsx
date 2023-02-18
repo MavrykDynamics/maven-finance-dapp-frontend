@@ -12,7 +12,7 @@ import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { PAGINATION_SIDE_RIGHT } from 'pages/FinacialRequests/Pagination/pagination.consts'
 import { OracleCard } from './ListCards/DataFeedOracleCard.view'
 import { UserDataFeedCard } from './ListCards/UsersFeedCard.view'
-import { SatelliteRecord } from 'utils/TypesAndInterfaces/Delegation'
+import { SatelliteRecord } from 'utils/TypesAndInterfaces/Satellites'
 import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
 
 function SatteliteListView({

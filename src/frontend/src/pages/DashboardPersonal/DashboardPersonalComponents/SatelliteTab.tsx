@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 
 import { getOracleStatus, ORACLE_STATUSES_MAPPER } from 'pages/Satellites/helpers/Satellites.consts'
 import { DEFAULT_SATELLITE } from 'reducers/delegation'
-import { getSatelliteMetrics } from 'pages/Satellites/Satellites.helpers'
+import { getSatelliteMetrics } from 'pages/Satellites/Satellites.normalizer'
 
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'

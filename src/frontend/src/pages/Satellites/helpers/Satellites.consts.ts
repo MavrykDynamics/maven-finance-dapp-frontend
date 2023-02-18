@@ -1,5 +1,5 @@
 import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
-import { SatelliteRecord } from 'utils/TypesAndInterfaces/Delegation'
+import { SatelliteRecordType, SatelliteStatus } from 'utils/TypesAndInterfaces/Satellites'
 
 export const ORACLE_STATUSES_MAPPER = {
   responded: 'Responded',
@@ -7,16 +7,47 @@ export const ORACLE_STATUSES_MAPPER = {
   awaiting: 'Awaiting',
 }
 
-export function checkIfUserIsSatellite(accountPkh?: string, activeSatellites?: SatelliteRecord[]): boolean {
+export const DEFAULT_ACTIVE_SATELLITE: SatelliteRecordType = {
+  address: '',
+  description: '',
+  website: '',
+  image: '',
+  name: '',
+  isSatelliteReady: false,
+  currentlyRegistered: false,
+  status: SatelliteStatus.ACTIVE,
+  delegationRatio: 0,
+  delegatorCount: 0,
+  satelliteFee: 0,
+  mvkBalance: 0,
+  sMvkBalance: 0,
+  totalDelegatedAmount: 0,
+  accuracy: 0,
+  oracleRecords: [],
+  proposalVotingHistory: [],
+  financialRequestsVotes: [],
+  emergencyGovernanceVotes: [],
+  satelliteActionVotes: [],
+  satelliteMetrics: {
+    proposalParticipation: 0,
+    votingPartisipation: 0,
+    oracleEfficiency: 0,
+  },
+}
+
+export function checkIfUserIsSatellite(accountPkh?: string, activeSatellites?: SatelliteRecordType[]): boolean {
   return accountPkh && activeSatellites ? activeSatellites.some((record) => record.address === accountPkh) : false
 }
 
-export function getTotalDelegatedMVK(satelliteLedger: SatelliteRecord[]): number {
+export function getTotalDelegatedMVK(satelliteLedger: SatelliteRecordType[]): number {
   if (!satelliteLedger) return 0
   return satelliteLedger.reduce((sum, current) => sum + Number(current.totalDelegatedAmount + current.sMvkBalance), 0)
 }
 
-export const getOracleStatus = (oracle: SatelliteRecord, feeds: Feed[]): 'responded' | 'noResponse' | 'awaiting' => {
+export const getOracleStatus = (
+  oracle: SatelliteRecordType,
+  feeds: Feed[],
+): 'responded' | 'noResponse' | 'awaiting' => {
   let status: 'responded' | 'noResponse' | 'awaiting' = 'noResponse'
 
   // check if satellite is an oracle
@@ -41,4 +72,12 @@ export const getOracleStatus = (oracle: SatelliteRecord, feeds: Feed[]): 'respon
   }
 
   return status
+}
+
+export const getVoteText = (voteType?: number): string => {
+  if (voteType === 0) return 'Pass'
+  if (voteType === 1) return 'Yes'
+  if (voteType === 2) return 'No'
+
+  return ''
 }

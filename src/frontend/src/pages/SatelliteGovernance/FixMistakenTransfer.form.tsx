@@ -14,7 +14,7 @@ import {
 } from '../../app/App.components/Input/Input.constants'
 
 // helpers
-import { SatelliteGovernanceTransfer, TokenType } from '../../utils/TypesAndInterfaces/Delegation'
+import { SatelliteGovernanceTransfer, TokenType } from '../../utils/TypesAndInterfaces/Satellites'
 import { validateFormField, validateFormAddress, validateTzAddress } from 'utils/validatorFunctions'
 
 // actions

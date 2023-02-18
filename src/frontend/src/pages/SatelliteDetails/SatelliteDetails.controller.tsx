@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom'
 
 import { delegate, getDelegationStorage, undelegate } from 'pages/Satellites/Satellites.actions'
 import { getGovernanceStorage } from 'pages/Governance/Governance.actions'
-import { getSatelliteMetrics } from 'pages/Satellites/Satellites.helpers'
+import { getSatelliteMetrics } from 'pages/Satellites/Satellites.normalizer'
 import { getEmergencyGovernanceStorage } from 'pages/EmergencyGovernance/EmergencyGovernance.actions'
 import { rewardsCompound } from 'pages/Doorman/Doorman.actions'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'

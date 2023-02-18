@@ -3,11 +3,11 @@ import { useParams } from 'react-router-dom'
 import { State } from 'reducers'
 import { Page } from 'styles'
 import { ClockLoader, SpinnerLoader } from 'app/App.components/Loader/Loader.view'
-import type { SatelliteVotingDataType } from '../../utils/TypesAndInterfaces/Delegation'
+import type { SatelliteVotingDataType } from '../../utils/TypesAndInterfaces/Satellites'
 
 // view
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
-import { SatelliteRecord } from '../../utils/TypesAndInterfaces/Delegation'
+import { SatelliteRecord } from '../../utils/TypesAndInterfaces/Satellites'
 import SatellitePagination from '../Satellites/SatellitePagination/SatellitePagination.view'
 import SatellitesSideBar from 'pages/Satellites/SatellitesSideBar/SatellitesSideBar.controller'
 
@@ -27,7 +27,7 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { parseDate } from 'utils/time'
 import { PageContent } from 'styles'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
-import { getVoteText } from 'pages/Satellites/Satellites.helpers'
+import { getVoteText } from 'pages/Satellites/Satellites.normalizer'
 
 type SatelliteDetailsViewProps = {
   satellite: SatelliteRecord
