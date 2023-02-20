@@ -148,11 +148,11 @@ export function CouncilView({
   const [activeActionTab, setActiveActionTab] = useState(councilTabsList[0].text)
   const sortedCouncilMembers = memberIsFirstOfList(members, accountPkh)
 
-  const { page } = qs.parse(search, { ignoreQueryPrefix: true })
+  const { page, action } = qs.parse(search, { ignoreQueryPrefix: true })
   const { tabId } = useParams<{ tabId: string }>()
 
-  const isReviewPage = tabId === 'past-actions'
-  const isPendingRewiew = tabId === 'pending-actions'
+  const isPastActionsTab = tabId === 'past-actions'
+  const isPendingActionsTab = tabId === 'pending-actions'
   const isMyPendingActionsTab = activeActionTab === councilTabsList[0].text
 
   const isCouncilMember = Boolean(members.find((item) => item.userId === accountPkh)?.id)
@@ -183,9 +183,9 @@ export function CouncilView({
   }
 
   const getCurrentListName = () => {
-    if (isReviewPage) {
+    if (isPastActionsTab) {
       return COUNCIL_ALL_PAST_ACTIONS_LIST_NAME
-    } else if (isPendingRewiew) {
+    } else if (isPendingActionsTab) {
       return COUNCIL_ALL_PENDING_ACTIONS_LIST_NAME
     }
 
@@ -219,11 +219,18 @@ export function CouncilView({
   }
 
   useEffect(() => {
-    // redirect to review or main page when member changes
-    history.replace(
-      isCouncilMember ? queryParameters.pathname : `${queryParameters.pathname}${queryParameters.pastActions}`,
-    )
-  }, [history, isCouncilMember, queryParameters.pathname, queryParameters.pastActions])
+    // choose action after reload page
+    const foundAction = dropDownItems.find((item) => item.value === action)
+    if (!foundAction) return
+    setChosenDdItem(foundAction)
+  }, [])
+
+  useEffect(() => {
+    // redirect to review page when member changes
+    if (!accountPkh) {
+      history.replace(`${queryParameters.pathname}${queryParameters.pastActions}`)
+    }
+  }, [history, queryParameters.pathname, queryParameters.pastActions, accountPkh, isCouncilMember])
 
   useEffect(() => {
     // check authorization when clicking on a review or a header in the menu
@@ -283,7 +290,7 @@ export function CouncilView({
 
           {tabId ? (
             <>
-              {isReviewPage ? (
+              {isPastActionsTab ? (
                 <>
                   <h1>{titles.allPastActions}</h1>
                   {paginatedAllPastActions.length
@@ -305,7 +312,7 @@ export function CouncilView({
                 </>
               ) : null}
 
-              {!isReviewPage ? (
+              {!isPastActionsTab ? (
                 <>
                   <h1>Pending Signature Council Actions</h1>
                   {paginatedAllPendingActions.length
@@ -328,8 +335,8 @@ export function CouncilView({
               ) : null}
 
               <Pagination
-                itemsCount={isReviewPage ? allPastActions.length : allPastActions.length}
-                listName={isReviewPage ? COUNCIL_ALL_PAST_ACTIONS_LIST_NAME : COUNCIL_ALL_PENDING_ACTIONS_LIST_NAME}
+                itemsCount={isPastActionsTab ? allPastActions.length : allPastActions.length}
+                listName={isPastActionsTab ? COUNCIL_ALL_PAST_ACTIONS_LIST_NAME : COUNCIL_ALL_PENDING_ACTIONS_LIST_NAME}
               />
             </>
           ) : (
