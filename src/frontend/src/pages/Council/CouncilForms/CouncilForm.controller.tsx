@@ -1,3 +1,8 @@
+import { useLocation } from 'react-router-dom'
+import qs from 'qs'
+import { useSelector } from 'react-redux'
+import { State } from 'reducers'
+
 // components
 import { CouncilFormAddVestee } from './CouncilFormAddVestee.view'
 import { CouncilFormAddCouncilMember } from './CouncilFormAddCouncilMember.view'
@@ -12,14 +17,6 @@ import { CouncilFormRequestTokenMint } from './CouncilFormRequestTokenMint.view'
 import { CouncilFormDropFinancialRequest } from './CouncilFormDropFinancialRequest.view'
 import { CouncilFormSetBaker } from './CouncilFormSetBaker.view'
 import { CouncilFormSetContractBaker } from './CouncilFormSetContractBaker.view'
-
-// types
-import { CouncilMaxLength } from '../../../utils/TypesAndInterfaces/Council'
-
-type Props = {
-  maxLength: CouncilMaxLength
-  action?: string
-}
 
 export const actions = {
   ADD_VESTEE: 'ADD_VESTEE',
@@ -37,19 +34,26 @@ export const actions = {
   SET_CONTRACT_BAKER: 'SET_CONTRACT_BAKER',
 }
 
-export function CouncilForm({ maxLength, action }: Props) {
+export function CouncilForm() {
+  const { search } = useLocation()
+  const { action } = qs.parse(search, { ignoreQueryPrefix: true })
+
+  const {
+    config: { councilMaxLength },
+  } = useSelector((state: State) => state.council)
+
   return (
     <>
       {actions.ADD_VESTEE === action ? <CouncilFormAddVestee /> : null}
-      {actions.ADD_COUNCIL_MEMBER === action ? <CouncilFormAddCouncilMember {...maxLength} /> : null}
+      {actions.ADD_COUNCIL_MEMBER === action ? <CouncilFormAddCouncilMember {...councilMaxLength} /> : null}
       {actions.UPDATE_VESTEE === action ? <CouncilFormUpdateVestee /> : null}
       {actions.REMOVE_VESTEE === action ? <CouncilFormRemoveVestee /> : null}
       {actions.TOGGLE_VESTEE_LOCK === action ? <CouncilFormToggleVesteeLock /> : null}
-      {actions.CHANGE_COUNCIL_MEMBER === action ? <CouncilFormChangeCouncilMember {...maxLength} /> : null}
+      {actions.CHANGE_COUNCIL_MEMBER === action ? <CouncilFormChangeCouncilMember {...councilMaxLength} /> : null}
       {actions.REMOVE_COUNCIL_MEMBER === action ? <CouncilFormRemoveCouncilMember /> : null}
-      {actions.TRANSFER_TOKENS === action ? <CouncilFormTransferTokens {...maxLength} /> : null}
-      {actions.REQUEST_TOKENS === action ? <CouncilFormRequestTokens {...maxLength} /> : null}
-      {actions.REQUEST_TOKEN_MINT === action ? <CouncilFormRequestTokenMint {...maxLength} /> : null}
+      {actions.TRANSFER_TOKENS === action ? <CouncilFormTransferTokens {...councilMaxLength} /> : null}
+      {actions.REQUEST_TOKENS === action ? <CouncilFormRequestTokens {...councilMaxLength} /> : null}
+      {actions.REQUEST_TOKEN_MINT === action ? <CouncilFormRequestTokenMint {...councilMaxLength} /> : null}
       {actions.DROP_FINANCIAL_REQUEST === action ? <CouncilFormDropFinancialRequest /> : null}
       {actions.SET_BAKER === action ? <CouncilFormSetBaker /> : null}
       {actions.SET_CONTRACT_BAKER === action ? <CouncilFormSetContractBaker /> : null}

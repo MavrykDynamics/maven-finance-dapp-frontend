@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 import { Link, useHistory, useLocation } from 'react-router-dom'
 import { useParams } from 'react-router'
+import qs from 'qs'
 
 // components
 import { DropDown, DDItemId } from 'app/App.components/DropDown/NewDropdown'
@@ -90,7 +91,7 @@ type Props = {
   handleSignAction: (id: number) => void
   handleDropAction: (id: number) => void
 
-  getFormComponent: (maxLength: CouncilMaxLength, action?: string) => React.ReactNode
+  getFormComponent: () => React.ReactNode
   getFormUpdateMemberInfo: (maxLength: CouncilMaxLength) => React.ReactNode
 }
 
@@ -145,8 +146,9 @@ export function CouncilView({
   const [chosenDdItem, setChosenDdItem] = useState<DropDownItemType | undefined>()
   const [isUpdateCouncilMemberInfo, setIsUpdateCouncilMemberInfo] = useState(false)
   const [activeActionTab, setActiveActionTab] = useState(councilTabsList[0].text)
-
   const sortedCouncilMembers = memberIsFirstOfList(members, accountPkh)
+
+  const { page } = qs.parse(search, { ignoreQueryPrefix: true })
   const { tabId } = useParams<{ tabId: string }>()
 
   const isReviewPage = tabId === 'past-actions'
@@ -164,6 +166,15 @@ export function CouncilView({
     const foundItem = dropDownItems.find((item) => item.id === itemId)
 
     if (!foundItem) return
+
+    const newQueryParams = {
+      page,
+      action: foundItem.value,
+    }
+
+    const newPageLink = pathname + qs.stringify(newQueryParams, { addQueryPrefix: true })
+
+    history.push(newPageLink)
     setChosenDdItem(foundItem)
   }
 
@@ -337,7 +348,7 @@ export function CouncilView({
                   </div>
                 </div>
 
-                {getFormComponent(maxLength, chosenDdItem?.value)}
+                {getFormComponent()}
               </AvaliableActions>
 
               <MyCouncilActions

@@ -117,9 +117,7 @@ export const Council = () => {
           handleSignAction={handleSignAction}
           handleDropAction={handleDropAction}
           // components
-          getFormComponent={(maxLength: CouncilMaxLength, action?: string) => (
-            <CouncilForm maxLength={maxLength} action={action} />
-          )}
+          getFormComponent={() => <CouncilForm />}
           getFormUpdateMemberInfo={(maxLength: CouncilMaxLength) => (
             <CouncilFormUpdateCouncilMemberInfo {...maxLength} />
           )}
