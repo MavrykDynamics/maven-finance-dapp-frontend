@@ -42,21 +42,35 @@ export function CouncilForm() {
     config: { councilMaxLength },
   } = useSelector((state: State) => state.council)
 
-  return (
-    <>
-      {actions.ADD_VESTEE === action ? <CouncilFormAddVestee /> : null}
-      {actions.ADD_COUNCIL_MEMBER === action ? <CouncilFormAddCouncilMember {...councilMaxLength} /> : null}
-      {actions.UPDATE_VESTEE === action ? <CouncilFormUpdateVestee /> : null}
-      {actions.REMOVE_VESTEE === action ? <CouncilFormRemoveVestee /> : null}
-      {actions.TOGGLE_VESTEE_LOCK === action ? <CouncilFormToggleVesteeLock /> : null}
-      {actions.CHANGE_COUNCIL_MEMBER === action ? <CouncilFormChangeCouncilMember {...councilMaxLength} /> : null}
-      {actions.REMOVE_COUNCIL_MEMBER === action ? <CouncilFormRemoveCouncilMember /> : null}
-      {actions.TRANSFER_TOKENS === action ? <CouncilFormTransferTokens {...councilMaxLength} /> : null}
-      {actions.REQUEST_TOKENS === action ? <CouncilFormRequestTokens {...councilMaxLength} /> : null}
-      {actions.REQUEST_TOKEN_MINT === action ? <CouncilFormRequestTokenMint {...councilMaxLength} /> : null}
-      {actions.DROP_FINANCIAL_REQUEST === action ? <CouncilFormDropFinancialRequest /> : null}
-      {actions.SET_BAKER === action ? <CouncilFormSetBaker /> : null}
-      {actions.SET_CONTRACT_BAKER === action ? <CouncilFormSetContractBaker /> : null}
-    </>
-  )
+  switch (action) {
+    case actions.ADD_VESTEE:
+      return <CouncilFormAddVestee />
+    case actions.ADD_COUNCIL_MEMBER:
+      return <CouncilFormAddCouncilMember {...councilMaxLength} />
+    case actions.UPDATE_VESTEE:
+      return <CouncilFormUpdateVestee />
+    case actions.REMOVE_VESTEE:
+      return <CouncilFormRemoveVestee />
+    case actions.TOGGLE_VESTEE_LOCK:
+      return <CouncilFormToggleVesteeLock />
+    case actions.CHANGE_COUNCIL_MEMBER:
+      return <CouncilFormChangeCouncilMember {...councilMaxLength} />
+    case actions.REMOVE_COUNCIL_MEMBER:
+      return <CouncilFormRemoveCouncilMember />
+    case actions.TRANSFER_TOKENS:
+      return <CouncilFormTransferTokens {...councilMaxLength} />
+    case actions.REQUEST_TOKENS:
+      return <CouncilFormRequestTokens {...councilMaxLength} />
+    case actions.REQUEST_TOKEN_MINT:
+      return <CouncilFormRequestTokenMint {...councilMaxLength} />
+    case actions.DROP_FINANCIAL_REQUEST:
+      return <CouncilFormDropFinancialRequest />
+    case actions.SET_BAKER:
+      return <CouncilFormSetBaker />
+    case actions.SET_CONTRACT_BAKER:
+      return <CouncilFormSetContractBaker />
+
+    default:
+      return <></>
+  }
 }

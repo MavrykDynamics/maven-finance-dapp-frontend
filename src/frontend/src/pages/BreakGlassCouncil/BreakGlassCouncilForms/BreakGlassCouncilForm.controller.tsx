@@ -28,14 +28,21 @@ export function BreakGlassCouncilForm() {
     config: { councilMaxLength },
   } = useSelector((state: State) => state.council)
 
-  return (
-    <>
-      {actions.SET_ALL_CONTRACTS_ADMIN === action ? <FormSetAllContractsAdminView /> : null}
-      {actions.SET_SINGLE_CONTRACT_ADMIN === action ? <FormSetSingleContractAdminView /> : null}
-      {actions.SIGN_ACTION === action ? <FormSignActionView /> : null}
-      {actions.ADD_COUNCIL_MEMBER === action ? <FormAddCouncilMemberView {...councilMaxLength} /> : null}
-      {actions.CHANGE_COUNCIL_MEMBER === action ? <FormChangeCouncilMemberView {...councilMaxLength} /> : null}
-      {actions.REMOVE_COUNCIL_MEMBER === action ? <FormRemoveCouncilMemberView /> : null}
-    </>
-  )
+  switch (action) {
+    case actions.SET_ALL_CONTRACTS_ADMIN:
+      return <FormSetAllContractsAdminView />
+    case actions.SET_SINGLE_CONTRACT_ADMIN:
+      return <FormSetSingleContractAdminView />
+    case actions.SIGN_ACTION:
+      return <FormSignActionView />
+    case actions.ADD_COUNCIL_MEMBER:
+      return <FormAddCouncilMemberView {...councilMaxLength} />
+    case actions.CHANGE_COUNCIL_MEMBER:
+      return <FormChangeCouncilMemberView {...councilMaxLength} />
+    case actions.REMOVE_COUNCIL_MEMBER:
+      return <FormRemoveCouncilMemberView />
+
+    default:
+      return <></>
+  }
 }
