@@ -18,7 +18,7 @@ import {
   COUNCIL_LIST_NAME,
   COUNCIL_MY_PAST_ACTIONS_LIST_NAME,
   COUNCIL_MY_ONGOING_ACTIONS_LIST_NAME,
-} from 'pages/FinacialRequests/Pagination/pagination.consts'
+} from 'app/Pagination/pagination.consts'
 import { memberIsFirstOfList } from './Council.helpers'
 import { scrollUpPage } from 'utils/scrollUpPage'
 
@@ -45,7 +45,7 @@ import { CouncilFormDropFinancialRequest } from './CouncilForms/CouncilFormDropF
 import { CouncilFormRemoveVestee } from './CouncilForms/CouncilFormRemoveVestee.view'
 import { CouncilFormSetBaker } from './CouncilForms/CouncilFormSetBaker.view'
 import { CouncilFormSetContractBaker } from './CouncilForms/CouncilFormSetContractBaker.view'
-import Pagination from 'pages/FinacialRequests/Pagination/Pagination.view'
+import Pagination from 'app/Pagination/Pagination.view'
 import { MyCouncilActions } from 'pages/Council/MyCouncilActions.view'
 import { EmptyContainer } from 'app/App.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'

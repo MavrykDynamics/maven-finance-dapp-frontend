@@ -1,16 +1,12 @@
-import Icon from 'app/App.components/Icon/Icon.view'
 // consts
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
 import { EmptyContainer as EmptyList } from 'app/App.style'
-import { FEEDS_TOP_LIST_NAME, SATELITES_TOP_LIST_NAME } from 'pages/FinacialRequests/Pagination/pagination.consts'
-import { Link } from 'react-router-dom'
 // styles
 import { Page, PageContent } from 'styles'
-import { InfoBlockWrapper, SatelliteListStyled } from './Satellites.style'
+import { InfoBlockWrapper } from './Satellites.style'
 // types
 
 // view
-import SatelliteList from './SatelliteList/SatellitesList.controller'
 import SatellitesSideBar from './SatellitesSideBar/SatellitesSideBar.controller'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { SmallInfoBlock } from 'pages/SatelliteGovernance/SatelliteGovernance.style'

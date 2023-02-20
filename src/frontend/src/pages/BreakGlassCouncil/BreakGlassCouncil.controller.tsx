@@ -12,7 +12,7 @@ import NewButton from 'app/App.components/Button/NewButton.controller'
 import { CouncilPastActionView } from 'pages/Council/CouncilActions/CouncilPastAction.view'
 import Carousel from '../../app/App.components/Carousel/Carousel.view'
 import { CouncilMemberView } from 'pages/Council/CouncilMember/CouncilMember.view'
-import Pagination from 'pages/FinacialRequests/Pagination/Pagination.view'
+import Pagination from 'app/Pagination/Pagination.view'
 import { BreakGlassCouncilForm, actions } from './BreakGlassCouncilForms/BreakGlassCouncilForm.controller'
 import { FormUpdateCouncilMemberView } from './BreakGlassCouncilForms/FormUpdateCouncilMember.view'
 import { CouncilPending } from '../Council/CouncilPending/CouncilPending.controller'
@@ -28,7 +28,7 @@ import {
   BREAK_GLASS_MY_PAST_COUNCIL_ACTIONS_LIST_NAME,
   BREAK_GLASS_MY_ONGOING_ACTIONS_LIST_NAME,
   calculateSlicePositions,
-} from 'pages/FinacialRequests/Pagination/pagination.consts'
+} from 'app/Pagination/pagination.consts'
 import { getPageNumber } from 'pages/FinacialRequests/FinancialRequests.helpers'
 import { ACTION_PRIMARY } from '../../app/App.components/Button/Button.constants'
 import { getSeparateSnakeCase } from 'utils/parse'

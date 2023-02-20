@@ -15,9 +15,9 @@ import { EmptyContainer } from 'app/App.style'
 import { VaultsStyled } from './Vaults.style'
 
 // helpers
-import { VAULTS_LIST_NAME, MY_VAULTS_LIST_NAME } from 'pages/FinacialRequests/Pagination/pagination.consts'
+import { VAULTS_LIST_NAME, MY_VAULTS_LIST_NAME } from 'app/Pagination/pagination.consts'
 import { getPageNumber } from 'pages/FinacialRequests/FinancialRequests.helpers'
-import { calculateSlicePositions } from 'pages/FinacialRequests/Pagination/pagination.consts'
+import { calculateSlicePositions } from 'app/Pagination/pagination.consts'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { getVaultAssets } from './Vaults.helpers'
 

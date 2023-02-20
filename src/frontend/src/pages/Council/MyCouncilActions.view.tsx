@@ -3,7 +3,7 @@ import { CouncilOngoingAction } from './CouncilActions/CouncilOngoingAction.view
 
 // components
 import { CouncilPastActionView } from 'pages/Council/CouncilActions/CouncilPastAction.view'
-import Pagination from 'pages/FinacialRequests/Pagination/Pagination.view'
+import Pagination from 'app/Pagination/Pagination.view'
 import { councilEmptyContainer } from './Council.controller'
 
 // styles

@@ -23,10 +23,10 @@ import SatellitesSideBar from './SatellitesSideBar/SatellitesSideBar.controller'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { SmallInfoBlock } from 'pages/SatelliteGovernance/SatelliteGovernance.style'
 import { Link } from 'react-router-dom'
-import { SatelliteListItem } from './SatelliteList/ListCards/SateliteCard.view'
+import { SatelliteListItem } from './listItem/SateliteCard.view'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
-import { DataFeedCard } from './SatelliteList/ListCards/DataFeedCard.view'
+import { DataFeedCard } from '../DataFeedsDetails/listItem/DataFeedCard.view'
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
 
 const Satellites = () => {

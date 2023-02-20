@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
 // consts, helpers
-import { USER_DATA_FEEDS_LIST_NAME } from 'pages/FinacialRequests/Pagination/pagination.consts'
+import { USER_DATA_FEEDS_LIST_NAME } from 'app/Pagination/pagination.consts'
 import { parseDate } from 'utils/time'
 
 // types
@@ -10,7 +10,6 @@ import { UserType } from '../../../utils/TypesAndInterfaces/User'
 
 // view
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
-import SatelliteList from 'pages/Satellites/SatelliteList/SatellitesList.controller'
 import UsersPagination from '../pagination/UsersPagination.controler'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import Icon from 'app/App.components/Icon/Icon.view'
@@ -22,7 +21,6 @@ import { DataFeedsTitle, DataFeedSubTitleText } from 'pages/DataFeedsDetails/Dat
 import { UserDetailsStyled } from './UsersDetails.style'
 import { DropDown } from 'app/App.components/DropDown/DropDown.controller'
 import { DropdownContainer } from 'app/App.components/DropDown/DropDown.style'
-import { SatelliteSearchFilter } from 'pages/Satellites/SatelliteList/SatelliteList.style'
 
 const emptyContainer = (
   <EmptyContainer>
@@ -102,7 +100,7 @@ const UserDetailsView = ({
         </div>
       </UserDetailsStyled>
 
-      <SatelliteSearchFilter oracle>
+      {/* <SatelliteSearchFilter oracle>
         <DropdownContainer>
           <h4>Category:</h4>
           <DropDown
@@ -114,7 +112,7 @@ const UserDetailsView = ({
             clickOnItem={handleOnClickDropdownItem}
           />
         </DropdownContainer>
-      </SatelliteSearchFilter>
+      </SatelliteSearchFilter> */}
 
       {/* {feeds ? <SatelliteList items={feeds} listType={'userFeeds'} name={USER_DATA_FEEDS_LIST_NAME} /> : emptyContainer} */}
     </Page>

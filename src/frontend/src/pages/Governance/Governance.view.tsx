@@ -26,7 +26,7 @@ import {
   ONGOING_PROPOSALS_LIST_NAME,
   NEXT_PROPOSALS_LIST_NAME,
   HISTORY_PROPOSALS_LIST_NAME,
-} from 'pages/FinacialRequests/Pagination/pagination.consts'
+} from 'app/Pagination/pagination.consts'
 import { PRECISION_NUMBER } from 'utils/constants'
 import { dropProposal } from '../ProposalSubmission/ProposalSubmission.actions'
 import { parseDate } from 'utils/time'

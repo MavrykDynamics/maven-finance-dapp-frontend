@@ -8,10 +8,7 @@ import { ACTION_PRIMARY, ACTION_SIMPLE } from 'app/App.components/Button/Button.
 import { parseDate } from 'utils/time'
 import { cyanColor, downColor, Page, skyColor } from 'styles'
 import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
-import {
-  ORACLES_DATA_IN_FEED_LIST_NAME,
-  PAGINATION_SIDE_RIGHT,
-} from 'pages/FinacialRequests/Pagination/pagination.consts'
+import { ORACLES_DATA_IN_FEED_LIST_NAME, PAGINATION_SIDE_RIGHT } from 'app/Pagination/pagination.consts'
 
 // view
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
@@ -19,7 +16,6 @@ import { Button } from 'app/App.components/Button/Button.controller'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { Timer } from 'app/App.components/Timer/Timer.controller'
-import SatelliteList from 'pages/Satellites/SatelliteList/SatellitesList.controller'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
@@ -45,7 +41,7 @@ import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
 import { FRListWrapper } from 'pages/FinacialRequests/FRList/FRList.styles'
 import { Pagination } from 'pages/BreakGlass/BreakGlass.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
-import { OracleCard } from 'pages/Satellites/SatelliteList/ListCards/DataFeedOracleCard.view'
+import { OracleCard } from 'pages/DataFeedsDetails/listItem/OracleCard.view'
 
 type FeedDetailsProps = {
   feed: Feed | null

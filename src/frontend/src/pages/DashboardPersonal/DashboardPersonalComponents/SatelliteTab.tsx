@@ -8,7 +8,7 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { SatelliteStatusBlock } from './DashboardPersonalComponents.style'
-import { SatelliteOracleStatusComponent } from 'pages/Satellites/SatelliteList/ListCards/SatelliteCard.style'
+import { SatelliteOracleStatusComponent } from 'pages/Satellites/listItem/SatelliteCard.style'
 
 import { State } from 'reducers'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'

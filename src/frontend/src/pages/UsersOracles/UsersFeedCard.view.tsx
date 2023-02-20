@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { parseDate } from 'utils/time'
 import { Trim } from 'app/App.components/Trim/Trim.view'
 
-import { SatelliteItemStyle } from './SatelliteCard.style'
+import { SatelliteItemStyle } from '../Satellites/listItem/SatelliteCard.style'
 import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
 
 export const UserDataFeedCard = ({ feed }: { feed: Feed }) => {

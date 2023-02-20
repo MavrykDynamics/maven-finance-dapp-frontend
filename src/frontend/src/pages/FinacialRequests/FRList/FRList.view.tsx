@@ -1,11 +1,11 @@
 import React, { useMemo } from 'react'
 import { useLocation } from 'react-router-dom'
 
-import Pagination from '../Pagination/Pagination.view'
+import Pagination from '../../../app/Pagination/Pagination.view'
 import FRSListItem from './FRSListItem.view'
 
 import { getPageNumber, getRequestStatus } from '../FinancialRequests.helpers'
-import { calculateSlicePositions, PAGINATION_SIDE_RIGHT } from '../Pagination/pagination.consts'
+import { calculateSlicePositions, PAGINATION_SIDE_RIGHT } from '../../../app/Pagination/pagination.consts'
 
 import { FRListProps } from '../FinancialRequests.types'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'

@@ -13,19 +13,19 @@ import {
   calculateSlicePositions,
   PAGINATION_SIDE_RIGHT,
   SATELITES_NODES_LIST_NAME,
-} from 'pages/FinacialRequests/Pagination/pagination.consts'
+} from 'app/Pagination/pagination.consts'
 
 import { DropDown, DropdownItemType } from '../../app/App.components/DropDown/DropDown.controller'
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
 import { Input } from 'app/App.components/Input/Input.controller'
-import Pagination from 'pages/FinacialRequests/Pagination/Pagination.view'
-import { SatelliteListItem } from 'pages/Satellites/SatelliteList/ListCards/SateliteCard.view'
-import { SatelliteSearchFilter } from 'pages/Satellites/SatelliteList/SatelliteList.style'
+import Pagination from 'app/Pagination/Pagination.view'
+import { SatelliteListItem } from 'pages/Satellites/listItem/SateliteCard.view'
 import { Page, PageContent } from 'styles'
 import { EmptyContainer } from 'app/App.style'
 import { DropdownContainer } from 'app/App.components/DropDown/DropDown.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
+import { SatelliteSearchFilter } from 'pages/Satellites/Satellites.style'
 
 const itemsForDropDown = [
   { text: 'Lowest Fee', value: 'satelliteFee' },

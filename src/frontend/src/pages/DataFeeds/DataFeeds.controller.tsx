@@ -1,26 +1,24 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
 // view
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
-import SatelliteList from 'pages/Satellites/SatelliteList/SatellitesList.controller'
 import { Button } from 'app/App.components/Button/Button.controller'
 import { Input } from 'app/App.components/Input/Input.controller'
 import { DropDown } from 'app/App.components/DropDown/DropDown.controller'
 
 // const
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
-import { FEEDS_ALL_LIST_NAME, PAGINATION_SIDE_RIGHT } from 'pages/FinacialRequests/Pagination/pagination.consts'
+import { FEEDS_ALL_LIST_NAME, PAGINATION_SIDE_RIGHT } from 'app/Pagination/pagination.consts'
 
 // types
 
 // styles
 import { Page } from 'styles'
-import { DataFeedsStyled } from './DataFeeds.styles'
+import { DataFeedsSearchFilter, DataFeedsStyled } from './DataFeeds.styles'
 import { EmptyContainer } from 'app/App.style'
 import { DropdownContainer } from 'app/App.components/DropDown/DropDown.style'
-import { SatelliteSearchFilter } from 'pages/Satellites/SatelliteList/SatelliteList.style'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { INFO } from 'app/App.components/Toaster/Toaster.constants'
@@ -31,7 +29,7 @@ import { getFeedsStorage } from './DataFeeds.actions'
 import { FRListWrapper } from 'pages/FinacialRequests/FRList/FRList.styles'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { Pagination } from 'pages/BreakGlass/BreakGlass.style'
-import { DataFeedCard } from 'pages/Satellites/SatelliteList/ListCards/DataFeedCard.view'
+import { DataFeedCard } from 'pages/DataFeedsDetails/listItem/DataFeedCard.view'
 
 const emptyContainer = (
   <EmptyContainer>
@@ -95,7 +93,7 @@ export const DataFeeds = () => {
         </DataLoaderWrapper>
       ) : (
         <>
-          <SatelliteSearchFilter dataFeeds>
+          <DataFeedsSearchFilter>
             <DropdownContainer className="dropDown">
               <h4>Category:</h4>
               <DropDown
@@ -123,7 +121,7 @@ export const DataFeeds = () => {
                 dispatch(showToaster(INFO, 'Coming soon', 'Request feed Feature coming soon'))
               }}
             />
-          </SatelliteSearchFilter>
+          </DataFeedsSearchFilter>
 
           <DataFeedsStyled>
             {filteredFeeds.length ? (

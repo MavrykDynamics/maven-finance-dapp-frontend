@@ -7,7 +7,7 @@ import { UserSatelliteRewardsData } from 'utils/TypesAndInterfaces/User'
 import { State } from 'reducers'
 
 // view
-import { SatelliteListItem } from 'pages/Satellites/SatelliteList/ListCards/SateliteCard.view'
+import { SatelliteListItem } from 'pages/Satellites/listItem/SateliteCard.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 
 // style

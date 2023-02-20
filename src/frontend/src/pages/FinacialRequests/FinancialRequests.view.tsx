@@ -6,7 +6,7 @@ import { distinctRequestsByExecuting, getRequestStatus } from './FinancialReques
 import {
   ONGOING_REQUESTS_FINANCIAL_REQUESTS_LIST,
   PAST_REQUESTS_FINANCIAL_REQUESTS_LIST,
-} from './Pagination/pagination.consts'
+} from '../../app/Pagination/pagination.consts'
 import { PRECISION_NUMBER } from 'utils/constants'
 import { calcWithoutMu, calcWithoutPrecision } from 'utils/calcFunctions'
 import { votingRinancialRequestVote } from 'pages/Governance/Governance.actions'

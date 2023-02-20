@@ -11,7 +11,7 @@ import { getPageNumber } from 'pages/FinacialRequests/FinancialRequests.helpers'
 import { CommaNumber } from '../../../app/App.components/CommaNumber/CommaNumber.controller'
 import { StatusFlag } from '../../../app/App.components/StatusFlag/StatusFlag.controller'
 import { ProposalRecordType, ProposalStatus } from '../../../utils/TypesAndInterfaces/Governance'
-import Pagination from 'pages/FinacialRequests/Pagination/Pagination.view'
+import Pagination from 'app/Pagination/Pagination.view'
 
 // style
 import {
@@ -25,7 +25,7 @@ import {
   calculateSlicePositions,
   GOVERNANCE_VOTERS_LIST_NAME,
   LIST_NAMES_MAPPER,
-} from 'pages/FinacialRequests/Pagination/pagination.consts'
+} from 'app/Pagination/pagination.consts'
 import { EmptyContainer, GovRightContainerTitleArea } from '../Governance.style'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import Checkbox from 'app/App.components/Checkbox/Checkbox.view'

@@ -9,10 +9,7 @@ import type { GovernanceSatelliteActionGraphQL } from '../../utils/TypesAndInter
 
 // const
 import { getPageNumber } from 'pages/FinacialRequests/FinancialRequests.helpers'
-import {
-  calculateSlicePositions,
-  getSatelliteGovernanceListName,
-} from 'pages/FinacialRequests/Pagination/pagination.consts'
+import { calculateSlicePositions, getSatelliteGovernanceListName } from 'app/Pagination/pagination.consts'
 import { defaultGovPurposeMaxLength } from 'app/App.components/Input/Input.constants'
 import { defaultAggregatorNameMaxLength } from 'app/App.components/Input/Input.constants'
 
@@ -23,7 +20,7 @@ import { FixMistakenTransferForm } from './FixMistakenTransfer.form'
 import { SatelliteGovernanceCard } from './SatelliteGovernanceCard/SatelliteGovernanceCard.controller'
 import { SatelliteGovernanceForm } from './SatelliteGovernance.form'
 import { CommaNumber } from '../../app/App.components/CommaNumber/CommaNumber.controller'
-import Pagination from 'pages/FinacialRequests/Pagination/Pagination.view'
+import Pagination from 'app/Pagination/Pagination.view'
 import { TabItem } from '../../app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import { RegisterAggregatorForm } from './RegisterAggregator.form'
 

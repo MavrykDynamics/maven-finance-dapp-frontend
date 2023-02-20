@@ -1,5 +1,5 @@
 import type { Satellite, Delegation } from '../generated/graphqlTypes'
-import { getSatelliteVotings, normallizeSatellite } from '../../pages/Satellites/Satellites.normalizer'
+import { getSatelliteVotings, normallizeSatellite } from '../../pages/Satellites/helpers/Satellites.normalizer'
 
 export enum SatelliteStatus {
   ACTIVE = 0,

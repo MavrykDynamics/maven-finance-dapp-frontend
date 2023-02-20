@@ -6,10 +6,10 @@ import { Input } from 'app/App.components/Input/Input.controller'
 
 import { PaginationArrow, PaginationWrapper } from './Pagination.style'
 
-import { updatePageInUrl } from '../FinancialRequests.helpers'
+import { updatePageInUrl } from '../../pages/FinacialRequests/FinancialRequests.helpers'
 import { LIST_NAMES_MAPPER, PAGINATION_SIDE_RIGHT } from './pagination.consts'
 
-import { PaginationProps } from '../FinancialRequests.types'
+import { PaginationProps } from '../../pages/FinacialRequests/FinancialRequests.types'
 
 const Pagination = ({ itemsCount, side = PAGINATION_SIDE_RIGHT, listName, className }: PaginationProps) => {
   const { pathname, search } = useLocation()

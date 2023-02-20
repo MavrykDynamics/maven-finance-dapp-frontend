@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom'
 import { State } from 'reducers'
 import { SatelliteRecordType } from 'utils/TypesAndInterfaces/Satellites'
 
-import { SatelliteItemStyle, SatelliteOracleStatusComponent } from './SatelliteCard.style'
+import { SatelliteItemStyle, SatelliteOracleStatusComponent } from '../../Satellites/listItem/SatelliteCard.style'
 
 export const OracleCard = ({ oracle }: { oracle: SatelliteRecordType }) => {
   const { feedsLedger } = useSelector((state: State) => state.dataFeeds)

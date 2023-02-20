@@ -1,7 +1,7 @@
 import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
 import { fetchFromIndexer } from '../../gql/fetchGraphQL'
-import { nomalizeSatelliteConfig, normalizeSatellitesLedger } from './Satellites.normalizer'
+import { nomalizeSatelliteConfig, normalizeSatellitesLedger } from './helpers/Satellites.normalizer'
 import { updateUserData } from 'reducers/actions/user.actions'
 import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 import { getFeedsStorage } from 'pages/DataFeeds/DataFeeds.actions'

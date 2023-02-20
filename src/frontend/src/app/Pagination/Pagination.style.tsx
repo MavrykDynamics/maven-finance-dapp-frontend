@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components/macro'
 
-import { MavrykTheme } from '../../../styles/interfaces'
+import { MavrykTheme } from '../../styles/interfaces'
 import { PAGINATION_SIDE_CENTER, PAGINATION_SIDE_RIGHT } from './pagination.consts'
 
 export const PaginationWrapper = styled.div<{ theme: MavrykTheme; side?: string }>`

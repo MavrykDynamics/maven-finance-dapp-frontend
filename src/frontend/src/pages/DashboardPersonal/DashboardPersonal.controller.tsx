@@ -14,11 +14,7 @@ import { claimAllRewardsAction } from './DashboardPersonal.actions'
 import { updateUserData } from 'reducers/actions/user.actions'
 import { getEmergencyGovernanceStorage } from 'pages/EmergencyGovernance/EmergencyGovernance.actions'
 import { isValidId, PORTFOLIO_TAB_ID, DELEGATION_TAB_ID, SATELLITE_TAB_ID } from './DashboardPersonal.utils'
-import {
-  USER_ACTIONS_HISTORY,
-  calculateSlicePositions,
-  PAGINATION_SIDE_CENTER,
-} from 'pages/FinacialRequests/Pagination/pagination.consts'
+import { USER_ACTIONS_HISTORY, calculateSlicePositions, PAGINATION_SIDE_CENTER } from 'app/Pagination/pagination.consts'
 
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
 import { Page } from 'styles/components'
@@ -29,7 +25,7 @@ import PortfolioTab from './DashboardPersonalComponents/PortfolioTab'
 import { DashboardPersonalStyled } from './DashboardPersonal.style'
 import SatelliteTab from './DashboardPersonalComponents/SatelliteTab'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import Pagination from 'pages/FinacialRequests/Pagination/Pagination.view'
+import Pagination from 'app/Pagination/Pagination.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 
 import {

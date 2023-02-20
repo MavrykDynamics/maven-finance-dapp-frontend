@@ -1,9 +1,10 @@
-import * as React from 'react'
+import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
 // consts, helpers, actions
 import { DOWN, WARNING } from 'app/App.components/StatusFlag/StatusFlag.constants'
 import { getOracleStatus, getVoteText, ORACLE_STATUSES_MAPPER } from 'pages/Satellites/helpers/Satellites.consts'
+import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { ACTION_PRIMARY, ACTION_SECONDARY } from 'app/App.components/Button/Button.constants'
 
 // view
@@ -15,27 +16,25 @@ import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 // types
 import { State } from 'reducers'
 import { SatelliteStatus } from 'utils/TypesAndInterfaces/Satellites'
-import { SatelliteListItemProps } from '../../helpers/Satellites.types'
+import { SatelliteListItemProps } from '../helpers/Satellites.types'
 
 //styles
 import { AvatarStyle } from 'app/App.components/Avatar/Avatar.style'
 import {
   SatelliteCard,
-  SatelliteCardButtons,
   SatelliteCardInner,
-  SatelliteCardRow,
-  SatelliteCardTopRow,
-  SatelliteMainText,
-  SatelliteOracleStatusComponent,
-  SatelliteProfileDetails,
-  SatelliteProfileImage,
-  SatelliteProfileImageContainer,
-  SatelliteSubText,
-  SatelliteTextGroup,
   SideBySideImageAndText,
+  SatelliteProfileImageContainer,
+  SatelliteProfileImage,
+  SatelliteTextGroup,
+  SatelliteMainText,
+  SatelliteProfileDetails,
+  SatelliteCardTopRow,
+  SatelliteSubText,
+  SatelliteOracleStatusComponent,
+  SatelliteCardButtons,
+  SatelliteCardRow,
 } from './SatelliteCard.style'
-import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
-import { Link } from 'react-router-dom'
 
 const renderVotingHistoryItem = (vote: number) => {
   const voteText = getVoteText(vote)

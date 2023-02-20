@@ -1,5 +1,9 @@
 import { ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
-import { PAGINATION_SIDE_CENTER, PAGINATION_SIDE_LEFT, PAGINATION_SIDE_RIGHT } from './Pagination/pagination.consts'
+import {
+  PAGINATION_SIDE_CENTER,
+  PAGINATION_SIDE_LEFT,
+  PAGINATION_SIDE_RIGHT,
+} from '../../app/Pagination/pagination.consts'
 
 import { GovernanceFinancialRequestGraphQL } from '../../utils/TypesAndInterfaces/Governance'
 

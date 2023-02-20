@@ -12,7 +12,7 @@ import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { Trim } from 'app/App.components/Trim/Trim.view'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
-import { SatelliteItemStyle } from './SatelliteCard.style'
+import { SatelliteItemStyle } from '../../Satellites/listItem/SatelliteCard.style'
 
 const defaultCategoryText = 'No Category'
 

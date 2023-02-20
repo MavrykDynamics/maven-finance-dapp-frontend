@@ -23,13 +23,13 @@ import { FarmsStyled } from './Farms.style'
 import { Page } from 'styles'
 import { EmptyContainer as EmptyList } from 'app/App.style'
 import { getFarmStorage } from './Farms.actions'
-import Pagination from 'pages/FinacialRequests/Pagination/Pagination.view'
+import Pagination from 'app/Pagination/Pagination.view'
 import {
   calculateSlicePositions,
   FARMS_HORIZONTAL_CARDS,
   FARMS_VERTICAL_CARDS,
   PAGINATION_SIDE_CENTER,
-} from 'pages/FinacialRequests/Pagination/pagination.consts'
+} from 'app/Pagination/pagination.consts'
 
 // types
 import { State } from '../../reducers'

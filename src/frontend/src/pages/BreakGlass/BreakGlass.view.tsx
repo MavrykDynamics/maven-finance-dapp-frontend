@@ -8,7 +8,7 @@ import { SlidingTabButtons } from '../../app/App.components/SlidingTabButtons/Sl
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 
 // helpers
-import { BREAK_GLASS_LIST_NAME, calculateSlicePositions } from 'pages/FinacialRequests/Pagination/pagination.consts'
+import { BREAK_GLASS_LIST_NAME, calculateSlicePositions } from 'app/Pagination/pagination.consts'
 import { getPageNumber } from 'pages/FinacialRequests/FinancialRequests.helpers'
 import { updatePageInUrl } from 'pages/FinacialRequests/FinancialRequests.helpers'
 

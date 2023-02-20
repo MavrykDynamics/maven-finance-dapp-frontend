@@ -1,5 +1,5 @@
-import type { SatelliteRecordType, SatelliteVotingsType } from '../../utils/TypesAndInterfaces/Satellites'
-import type { SatelliteRecordGraphQl, DelegationGraphQl } from '../../utils/TypesAndInterfaces/Satellites'
+import type { SatelliteRecordType, SatelliteVotingsType } from '../../../utils/TypesAndInterfaces/Satellites'
+import type { SatelliteRecordGraphQl, DelegationGraphQl } from '../../../utils/TypesAndInterfaces/Satellites'
 import {
   FinancialRequestRecord,
   GovernanceFinancialRequestGraphQL,
@@ -8,7 +8,7 @@ import {
 import { EmergergencyGovernanceItem } from 'utils/TypesAndInterfaces/EmergencyGovernance'
 
 // helpers
-import { calcWithoutMu, calcWithoutPrecision, getNumberInBounds } from '../../utils/calcFunctions'
+import { calcWithoutMu, calcWithoutPrecision, getNumberInBounds } from '../../../utils/calcFunctions'
 import { Aggregator_Oracle } from 'utils/generated/graphqlTypes'
 import {
   defaultSatelliteDescriptionMaxLength,

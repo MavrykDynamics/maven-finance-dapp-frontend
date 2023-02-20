@@ -17,7 +17,7 @@ import {
   TRANSACTION_HISTORY_TABLE_NAME,
   PAGINATION_SIDE_CENTER,
   calculateSlicePositions,
-} from 'pages/FinacialRequests/Pagination/pagination.consts'
+} from 'app/Pagination/pagination.consts'
 
 import { TransactionHistoryStyled } from '../Loans.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'

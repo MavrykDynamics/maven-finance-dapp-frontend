@@ -1,10 +1,7 @@
 import { useMemo } from 'react'
 
 // actions, consts
-import {
-  calculateSlicePositions,
-  EMERGENCY_GOVERNANCE_HISTORY_LIST_NAME,
-} from 'pages/FinacialRequests/Pagination/pagination.consts'
+import { calculateSlicePositions, EMERGENCY_GOVERNANCE_HISTORY_LIST_NAME } from 'app/Pagination/pagination.consts'
 
 // types
 import type {
@@ -27,7 +24,7 @@ import {
   EmergencyGovernHistory,
 } from './EmergencyGovernance.style'
 
-import Pagination from 'pages/FinacialRequests/Pagination/Pagination.view'
+import Pagination from 'app/Pagination/Pagination.view'
 import { getPageNumber } from 'pages/FinacialRequests/FinancialRequests.helpers'
 import { useLocation } from 'react-router'
 import { EmptyContainer } from 'app/App.style'
