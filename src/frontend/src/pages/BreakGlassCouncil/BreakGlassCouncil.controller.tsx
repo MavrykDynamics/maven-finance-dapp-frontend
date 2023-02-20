@@ -27,12 +27,6 @@ import { getBreakGlassStorage } from 'pages/BreakGlass/BreakGlass.actions'
 // types
 import { CouncilMaxLength } from 'utils/TypesAndInterfaces/Council'
 
-const queryParameters = {
-  pathname: '/break-glass-council',
-  review: '/review',
-  pendingReview: '/pending-review',
-}
-
 const titles = {
   membersName: 'Break Glass Council',
   cardIdName: 'Break Glass Action ID',
@@ -107,7 +101,7 @@ export function BreakGlassCouncil() {
       ) : (
         <CouncilView
           // general info
-          queryParameters={queryParameters}
+          pathnameOfPage="/break-glass-council"
           maxLength={councilMaxLength}
           glassBroken={glassBroken}
           showPropagateBreakGlass

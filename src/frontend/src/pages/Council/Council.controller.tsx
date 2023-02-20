@@ -26,14 +26,6 @@ import {
 // types
 import { CouncilMaxLength } from 'utils/TypesAndInterfaces/Council'
 
-export type QueryParameters = typeof queryParameters
-
-const queryParameters = {
-  pathname: '/mavryk-council',
-  review: '/review',
-  pendingReview: '/pending-review',
-}
-
 const titles = {
   membersName: 'Council Members',
   cardIdName: 'Council action ID',
@@ -99,7 +91,7 @@ export const Council = () => {
       ) : (
         <CouncilView
           // general info
-          queryParameters={queryParameters}
+          pathnameOfPage="/mavryk-council"
           maxLength={councilMaxLength}
           titles={titles}
           // pending actions

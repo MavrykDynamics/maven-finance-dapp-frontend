@@ -65,11 +65,7 @@ export const councilTabsList: TabItem[] = [
 ]
 
 type Props = {
-  queryParameters: {
-    pathname: string
-    review: string
-    pendingReview: string
-  }
+  pathnameOfPage: string
   maxLength: CouncilMaxLength
   glassBroken?: boolean
   showPropagateBreakGlass?: boolean
@@ -97,7 +93,7 @@ type Props = {
 }
 
 export function CouncilView({
-  queryParameters,
+  pathnameOfPage,
   maxLength,
   glassBroken,
   showPropagateBreakGlass,
@@ -122,6 +118,12 @@ export function CouncilView({
   const history = useHistory()
   const { search, pathname } = useLocation()
 
+  const queryParameters = {
+    pathname: pathnameOfPage,
+    pastActions: '/past-actions',
+    pendingActions: '/pending-actions',
+  }
+
   const { accountPkh } = useSelector((state: State) => state.wallet)
 
   const dropDownItems = useMemo(
@@ -142,8 +144,9 @@ export function CouncilView({
 
   const sortedCouncilMembers = memberIsFirstOfList(members, accountPkh)
   const { tabId } = useParams<{ tabId: string }>()
-  const isReviewPage = tabId === 'review'
-  const isPendingRewiew = tabId === 'pending-review'
+
+  const isReviewPage = tabId === 'past-actions'
+  const isPendingRewiew = tabId === 'pending-actions'
   const isMyPendingActionsTab = activeActionTab === councilTabsList[0].text
 
   const isCouncilMember = Boolean(members.find((item) => item.userId === accountPkh)?.id)
@@ -202,15 +205,17 @@ export function CouncilView({
 
   useEffect(() => {
     // redirect to review or main page when member changes
-    history.replace(isCouncilMember ? queryParameters.pathname : `${queryParameters.pathname}${queryParameters.review}`)
-  }, [history, isCouncilMember, queryParameters.pathname, queryParameters.review])
+    history.replace(
+      isCouncilMember ? queryParameters.pathname : `${queryParameters.pathname}${queryParameters.pastActions}`,
+    )
+  }, [history, isCouncilMember, queryParameters.pathname, queryParameters.pastActions])
 
   useEffect(() => {
     // check authorization when clicking on a review or a header in the menu
     if (!isCouncilMember) {
-      history.replace(`${queryParameters.pathname}${queryParameters.review}`)
+      history.replace(`${queryParameters.pathname}${queryParameters.pastActions}`)
     }
-  }, [history, isCouncilMember, pathname, queryParameters.pathname, queryParameters.review])
+  }, [history, isCouncilMember, pathname, queryParameters.pathname, queryParameters.pastActions])
 
   return (
     <>
@@ -340,11 +345,11 @@ export function CouncilView({
         <div className="right-block">
           {!tabId && (
             <ReviewCard displayPendingSignature={displayPendingSignature}>
-              <Link to={`${queryParameters.pathname}${queryParameters.review}`}>
+              <Link to={`${queryParameters.pathname}${queryParameters.pastActions}`}>
                 <NewButton kind={ACTION_SECONDARY}>Review Past Actions</NewButton>
               </Link>
 
-              <Link to={`${queryParameters.pathname}${queryParameters.pendingReview}`}>
+              <Link to={`${queryParameters.pathname}${queryParameters.pendingActions}`}>
                 <NewButton kind={ACTION_SECONDARY}>Review Pending Actions</NewButton>
               </Link>
             </ReviewCard>
