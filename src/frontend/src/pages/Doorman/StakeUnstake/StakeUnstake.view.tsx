@@ -65,7 +65,7 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
   const exchangeValue = MVK_exchangeRate && inputData.amount ? Number(inputData.amount) * MVK_exchangeRate : 0
   const earnedValue = farmRewards + doormanRewards
   const userHasRewards = myAvailableDoormanRewards + myAvailableSatelliteRewards > 2
-  const showDelegateBtn = !isSatellite && !satelliteMvkIsDelegatedTo
+  const showDelegateBtn = accountPkh && !isSatellite && !satelliteMvkIsDelegatedTo
 
   const onUseMaxClick = (actionType: string) => {
     switch (actionType) {

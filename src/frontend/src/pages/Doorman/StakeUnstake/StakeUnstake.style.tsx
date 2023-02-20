@@ -29,6 +29,10 @@ export const StakeUnstakeCard = styled.div<{ theme: MavrykTheme }>`
 `
 
 export const StakeUnstakeCards = styled(Card)<{ theme: MavrykTheme }>`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  
   padding: 30px 0;
   margin: 0;
 
