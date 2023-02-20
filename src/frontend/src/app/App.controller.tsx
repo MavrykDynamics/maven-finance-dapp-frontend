@@ -32,7 +32,6 @@ import {
   getTokensPrices,
   getMTokensStorage,
 } from 'reducers/actions/dipDupActions.actions'
-import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 
 // export const { store, persistor } = configureStore({})
 export const { store } = configureStore({})
@@ -50,8 +49,8 @@ const AppContainer = () => {
     dispatch(toggleSidebarCollapsing(showSidebarOpened))
   }, [showSidebarOpened])
 
-  const { isLoading } = useDataLoader(async () => {
-    try {
+  useEffect(() => {
+    ;(async () => {
       // Fetching initial&common data for DAPP
       await Promise.all([
         dispatch(getSatellitesStorage()),
@@ -72,8 +71,8 @@ const AppContainer = () => {
       }
 
       await dispatch(toggleInitialDataLoading(false))
-    } catch (e) {}
-  }, [])
+    })()
+  }, [dispatch])
 
   useEffect(() => {
     dispatch(toggleSidebarCollapsing(showSidebarOpened))

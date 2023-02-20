@@ -6,11 +6,11 @@ import { getOracleStatus, ORACLE_STATUSES_MAPPER } from 'pages/Satellites/helper
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { State } from 'reducers'
-import { SatelliteRecord } from 'utils/TypesAndInterfaces/Satellites'
+import { SatelliteRecordType } from 'utils/TypesAndInterfaces/Satellites'
 
 import { SatelliteItemStyle, SatelliteOracleStatusComponent } from './SatelliteCard.style'
 
-export const OracleCard = ({ oracle }: { oracle: SatelliteRecord }) => {
+export const OracleCard = ({ oracle }: { oracle: SatelliteRecordType }) => {
   const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
   const { tezos: { usd: xtzExchangeRate = 0 } = {}, mvk: { usd: mvkExchangeRate = 0 } = {} } = useSelector(
     (state: State) => state.tokens.tokensPrices,

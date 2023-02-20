@@ -1,5 +1,5 @@
 import { matchPath } from 'react-router-dom'
-import { SatelliteRecord } from 'utils/TypesAndInterfaces/Satellites'
+import { State } from 'reducers'
 import { SubNavigationRoute } from 'utils/TypesAndInterfaces/Navigation'
 
 export const PRIMARY = 'primary'
@@ -9,7 +9,7 @@ export type NavigationLinkStyle = typeof PRIMARY | typeof SECONDARY | typeof TRA
 
 export const isSubLinkShown = (
   subNavLink: SubNavigationRoute,
-  satelliteLedger: SatelliteRecord[],
+  satelliteLedger: State['satellites']['activeSatellitesIds'],
   accountPkh?: string,
 ): boolean => {
   const { isSatellite, isVestee, isNotSatellite, isUnregisteredSatellite, isAuth } = subNavLink.requires || {}
@@ -26,13 +26,9 @@ export const isSubLinkShown = (
   if (isUnregisteredSatellite) {
     if (!accountPkh) return false
 
-    const isSatellite = satelliteLedger.find(({ address }) => {
-      return address === accountPkh
-    })
+    const isSatellite = Boolean(satelliteLedger.find((address) => address === accountPkh))
 
-    const isUnregistartion = isSatellite ? isSatellite.currentlyRegistered === false : false
-
-    return isUnregistartion
+    return isSatellite
   }
 
   if (isSatellite || isVestee || isNotSatellite) {
@@ -40,8 +36,8 @@ export const isSubLinkShown = (
 
     // if user is logged, and link is only for satellites return true if user is currently registered satellite otherwise false
     return isNotSatellite
-      ? !Boolean(satelliteLedger.find(({ address }) => address === accountPkh))
-      : Boolean(satelliteLedger.find(({ address }) => address === accountPkh)?.currentlyRegistered)
+      ? Boolean(satelliteLedger.find((address) => address !== accountPkh))
+      : Boolean(satelliteLedger.find((address) => address === accountPkh))
   }
 
   return true

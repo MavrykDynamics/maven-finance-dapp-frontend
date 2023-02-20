@@ -24,7 +24,7 @@ function SatteliteListView({
 }: SatellitesListProps) {
   return items.length ? (
     <FRListWrapper className={`${className} oracle`}>
-      {listTitle ? (
+      {/* {listTitle ? (
         <GovRightContainerTitleArea>
           <h1>{listTitle}</h1>
         </GovRightContainerTitleArea>
@@ -49,7 +49,7 @@ function SatteliteListView({
           side={PAGINATION_SIDE_RIGHT}
           listName={name}
         />
-      )}
+      )} */}
     </FRListWrapper>
   ) : null
 }

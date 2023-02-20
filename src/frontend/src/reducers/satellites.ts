@@ -36,7 +36,7 @@ export function satellites(state = satellitesDefaultState, action: any) {
     case GET_SATELLITES_STORAGE:
       return {
         ...state,
-        satelliteMapper: { ...state.satelliteMapper, ...action.satelliteMapper },
+        satelliteMapper: { ...state.satelliteMapper, ...action.satellitesMapper },
         activeSatellitesIds: Array.from(new Set(state.activeSatellitesIds.concat(action.activeSatellitesIds))),
         allSatellitesIds: Array.from(new Set(state.allSatellitesIds.concat(action.allSatellitesIds))),
         oraclesIds: Array.from(new Set(state.oraclesIds.concat(action.oraclesIds))),

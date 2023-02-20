@@ -1,10 +1,13 @@
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import dayjs from 'dayjs'
-import { getDelegationStorage } from 'pages/Satellites/Satellites.actions'
-import React, { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 import { calcWithoutPrecision } from 'utils/calcFunctions'
-import { checkIfUserIsSatellite, getTotalDelegatedMVK } from '../helpers/Satellites.consts'
+import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
+import { getTotalDelegatedMVK } from '../helpers/Satellites.consts'
+import { getSatellitesStorage } from '../Satellites.actions'
 import SatellitesSideBarView from './SatellitesSideBar.view'
 
 const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
@@ -14,14 +17,18 @@ const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
     user: { isSatellite },
   } = useSelector((state: State) => state.wallet)
   const {
-    delegationStorage: { oraclesAmount, satelliteLedger, activeSatellites },
-  } = useSelector((state: State) => state.delegation)
+    oraclesIds,
+    activeSatellitesIds,
+    allSatellitesIds,
+    satelliteMapper,
+    isLoaded: isSatellitesLoaded,
+  } = useSelector((state: State) => state.satellites)
   const {
     config: { feedsFactoryAddress },
     feedsLedger,
   } = useSelector((state: State) => state.dataFeeds)
   const { delegationAddress } = useSelector((state: State) => state.contractAddresses)
-  const numSatellites = activeSatellites?.length || 0
+  const numSatellites = activeSatellitesIds?.length || 0
   const dataPointsCount = useMemo(
     () =>
       feedsLedger?.filter(
@@ -29,7 +36,7 @@ const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
       ).length,
     [feedsLedger],
   )
-  const totalDelegatedMVK = getTotalDelegatedMVK(satelliteLedger)
+  const totalDelegatedMVK = getTotalDelegatedMVK(allSatellitesIds, satelliteMapper)
   const averageRevard = feedsLedger?.length
     ? calcWithoutPrecision(
         (
@@ -41,11 +48,18 @@ const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
       )
     : undefined
 
-  useEffect(() => {
-    dispatch(getDelegationStorage())
-  }, [dispatch])
+  const { isLoading } = useDataLoader(async () => {
+    if (!isSatellitesLoaded) {
+      await dispatch(getSatellitesStorage)
+    }
+  }, [])
 
-  return (
+  return isLoading ? (
+    <DataLoaderWrapper>
+      <ClockLoader width={150} height={150} />
+      <div className="text">Loading satellite info</div>
+    </DataLoaderWrapper>
+  ) : (
     <SatellitesSideBarView
       accountPkh={accountPkh}
       userIsSatellite={Boolean(isSatellite)}
@@ -53,7 +67,7 @@ const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
       totalDelegatedMVK={totalDelegatedMVK}
       isButton={isButton}
       satelliteFactory={delegationAddress?.address || ''}
-      totalOracleNetworks={oraclesAmount}
+      totalOracleNetworks={oraclesIds.length}
       infoBlockAddresses={{
         satellite: delegationAddress?.address || '',
         oracle: feedsFactoryAddress,

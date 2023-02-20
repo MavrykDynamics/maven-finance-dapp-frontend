@@ -1,3 +1,4 @@
+import { State } from 'reducers'
 import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
 import { SatelliteRecordType, SatelliteStatus } from 'utils/TypesAndInterfaces/Satellites'
 
@@ -39,9 +40,17 @@ export function checkIfUserIsSatellite(accountPkh?: string, activeSatellites?: S
   return accountPkh && activeSatellites ? activeSatellites.some((record) => record.address === accountPkh) : false
 }
 
-export function getTotalDelegatedMVK(satelliteLedger: SatelliteRecordType[]): number {
-  if (!satelliteLedger) return 0
-  return satelliteLedger.reduce((sum, current) => sum + Number(current.totalDelegatedAmount + current.sMvkBalance), 0)
+export function getTotalDelegatedMVK(
+  satelliteIds: State['satellites']['allSatellitesIds'],
+  satellitesMapper: State['satellites']['satelliteMapper'],
+): number {
+  if (!satelliteIds) return 0
+  return satelliteIds.reduce(
+    (sum, currentAddress) =>
+      sum +
+      Number(satellitesMapper[currentAddress].totalDelegatedAmount + satellitesMapper[currentAddress].sMvkBalance),
+    0,
+  )
 }
 
 export const getOracleStatus = (

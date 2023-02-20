@@ -1,10 +1,7 @@
 import { useSelector } from 'react-redux'
-import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 
 import { getOracleStatus, ORACLE_STATUSES_MAPPER } from 'pages/Satellites/helpers/Satellites.consts'
-import { DEFAULT_SATELLITE } from 'reducers/delegation'
-import { getSatelliteMetrics } from 'pages/Satellites/Satellites.normalizer'
 
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
@@ -18,31 +15,11 @@ import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
 const SatelliteTab = () => {
   const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
-  const { financialRequests, isLoaded: isFinancialRequestsLoaded } = useSelector(
-    (state: State) => state.financialRequest,
-  )
-  const {
-    governanceStorage: { proposalLedger },
-    pastProposals,
-  } = useSelector((state: State) => state.governance)
-  const { eGovProposals } = useSelector((state: State) => state.emergencyGovernance)
-  const { satelliteLedger } = useSelector((state: State) => state.delegation.delegationStorage)
   const { accountPkh } = useSelector((state: State) => state.wallet)
 
-  const satelliteRecord = satelliteLedger.find(({ address }) => address === accountPkh) ?? DEFAULT_SATELLITE
-
-  const satelliteMetrics = useMemo(
-    () =>
-      getSatelliteMetrics(
-        pastProposals,
-        proposalLedger,
-        eGovProposals,
-        satelliteRecord,
-        feedsLedger,
-        financialRequests,
-      ),
-    [eGovProposals, feedsLedger, financialRequests, pastProposals, proposalLedger, satelliteRecord],
-  )
+  const { allSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
+  const satelliteRecord =
+    satelliteMapper[allSatellitesIds.find((satelliteAddress) => accountPkh === satelliteAddress) ?? '']
 
   const oracleStatusType = getOracleStatus(satelliteRecord, feedsLedger)
 
@@ -77,7 +54,7 @@ const SatelliteTab = () => {
           <div className="grid-item ">
             <div className="name">Gov. Participation</div>
             <div className="value">
-              <CommaNumber value={satelliteMetrics.votingPartisipation} endingText="%" />
+              <CommaNumber value={satelliteRecord.satelliteMetrics.votingPartisipation} endingText="%" />
             </div>
           </div>
           <div className="grid-item ">
@@ -89,7 +66,7 @@ const SatelliteTab = () => {
           <div className="grid-item ">
             <div className="name">Oracle Participation</div>
             <div className="value">
-              <CommaNumber value={satelliteMetrics.oracleEfficiency} endingText="%" />
+              <CommaNumber value={satelliteRecord.satelliteMetrics.oracleEfficiency} endingText="%" />
             </div>
           </div>
         </div>

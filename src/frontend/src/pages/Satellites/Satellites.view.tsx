@@ -15,6 +15,7 @@ import SatellitesSideBar from './SatellitesSideBar/SatellitesSideBar.controller'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { SmallInfoBlock } from 'pages/SatelliteGovernance/SatelliteGovernance.style'
 import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
+import { State } from 'reducers'
 
 type OraclesViewProps = {
   tabsInfo: {
@@ -26,7 +27,7 @@ type OraclesViewProps = {
   oracleSatellitesData: {
     userStakedBalance: number
     satelliteUserIsDelegatedTo?: string
-    items: SatelliteRecord[]
+    items: State['satellites']['activeSatellitesIds']
     delegateCallback: (address: string) => void
     undelegateCallback: (address: string) => void
   }
@@ -85,7 +86,7 @@ const SatellitesView = ({ tabsInfo, oracleSatellitesData, dataFeedsData, delegat
               <div className="info-content">{tabsInfo.numberOfDataFeeds}</div>
             </SmallInfoBlock>
           </InfoBlockWrapper>
-          {isShowSatellites ? (
+          {/* {isShowSatellites ? (
             <div className="oracle-list-wrapper">
               <Link to="/satellite-nodes">
                 <div className="see-all-link">
@@ -125,7 +126,7 @@ const SatellitesView = ({ tabsInfo, oracleSatellitesData, dataFeedsData, delegat
 
           {(!isShowSatellites || !isShowFeeds) && (
             <EmptyContainer showSatellite={isShowSatellites} showFeeds={isShowFeeds} />
-          )}
+          )} */}
         </div>
         <SatellitesSideBar />
       </PageContent>

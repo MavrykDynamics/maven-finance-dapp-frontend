@@ -8,7 +8,7 @@ import { Page } from 'styles'
 import { State } from '../../reducers'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { mvkStatsType, isValidId, LENDING_TAB_ID } from './Dashboard.utils'
-import { getDelegationStorage } from 'pages/Satellites/Satellites.actions'
+import { getSatellitesStorage } from 'pages/Satellites/Satellites.actions'
 import { fillTreasuryStorage, getVestingStorage } from '../Treasury/Treasury.actions'
 import { getGovernanceStorage } from 'pages/Governance/Governance.actions'
 import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
@@ -33,6 +33,7 @@ export const Dashboard = () => {
   const { treasuryStorage, isLoaded: isTreasuryLoaded } = useSelector((state: State) => state.treasury)
   const { isLoaded: isVestingLoaded } = useSelector((state: State) => state.vesting)
   const { isLoaded: isFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
+  const { isLoaded: isSatellitesLoaded } = useSelector((state: State) => state.dataFeeds)
   const { allVaultsIds, vaultsMapper } = useSelector((state: State) => state.vaults.vaultsList)
   const { farms, isLoaded: isFarmsLoaded } = useSelector((state: State) => state.farm)
   const {
@@ -70,17 +71,19 @@ export const Dashboard = () => {
 
   const { isLoading } = useDataLoader(async () => {
     try {
-      await Promise.all([
-        dispatch(getVaultsStorage()),
-        dispatch(getDelegationStorage()),
-        dispatch(getGovernanceStorage()),
-        !isFeedsLoaded && dispatch(getFeedsStorage()),
-        !isVestingLoaded && dispatch(getVestingStorage()),
-        !isTreasuryLoaded && dispatch(fillTreasuryStorage()),
-        !isLoansLoaded && dispatch(getLoansStorage()),
-        !isFarmsLoaded && dispatch(getFarmStorage()),
-        !isDoormanLoaded && dispatch(getDoormanStorage()),
-      ])
+      await Promise.all(
+        [
+          dispatch(getVaultsStorage()),
+          dispatch(getGovernanceStorage()),
+          !isSatellitesLoaded && dispatch(getSatellitesStorage()),
+          !isFeedsLoaded && dispatch(getFeedsStorage()),
+          !isVestingLoaded && dispatch(getVestingStorage()),
+          !isTreasuryLoaded && dispatch(fillTreasuryStorage()),
+          !isLoansLoaded && dispatch(getLoansStorage()),
+          !isFarmsLoaded && dispatch(getFarmStorage()),
+          !isDoormanLoaded && dispatch(getDoormanStorage()),
+        ].filter(Boolean),
+      )
     } catch (e) {}
   }, [])
 
