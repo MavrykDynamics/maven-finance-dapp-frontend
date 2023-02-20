@@ -16,7 +16,7 @@ import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
 const DataFeedDetails = () => {
   const dispatch = useDispatch()
   const { feedsLedger, isLoaded: isFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
-  const { allSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
+  const { satelliteLedger } = useSelector((state: State) => state.delegation.delegationStorage)
 
   const { isLoading } = useDataLoader(async () => {
     try {
@@ -61,13 +61,11 @@ const DataFeedDetails = () => {
   const feedsSatellites = useMemo(
     () =>
       selectedFeed?.address
-        ? allSatellitesIds
-            .filter((address) =>
-              satelliteMapper[address].oracleRecords.find(({ feedAddress }) => selectedFeed?.address === feedAddress),
-            )
-            .map((address) => satelliteMapper[address])
+        ? satelliteLedger.filter(({ oracleRecords }) =>
+            oracleRecords.find(({ feedAddress }) => selectedFeed?.address === feedAddress),
+          )
         : [],
-    [selectedFeed?.address, allSatellitesIds, satelliteMapper],
+    [selectedFeed?.address, satelliteLedger],
   )
 
   return (

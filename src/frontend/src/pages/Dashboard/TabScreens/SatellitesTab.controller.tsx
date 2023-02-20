@@ -2,6 +2,8 @@ import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
 import { State } from 'reducers'
+import { SatelliteRecord } from 'utils/TypesAndInterfaces/Delegation'
+import { getSatelliteMetrics } from 'pages/Satellites/Satellites.helpers'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 
 import { emptyContainer } from './LendingTab.controller'
@@ -15,25 +17,35 @@ import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 
 export const SatellitesTab = ({ isLoading }: { isLoading: boolean }) => {
-  const { activeSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
+  const { activeSatellites } = useSelector((state: State) => state.delegation.delegationStorage)
+  const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
+  const {
+    governanceStorage: { financialRequestLedger, proposalLedger },
+    pastProposals,
+  } = useSelector((state: State) => state.governance)
+  const { eGovProposals } = useSelector((state: State) => state.emergencyGovernance)
 
-  const satellitesInfo = activeSatellitesIds.reduce(
-    (acc, satelliteAddress) => {
-      const satelliteRecord = satelliteMapper[satelliteAddress]
-      if (!satelliteRecord || satelliteRecord.status !== 0) return acc
+  const satellitesInfo = activeSatellites.reduce(
+    (acc, satellite: SatelliteRecord) => {
+      if (satellite.status !== 0) return acc
+      const metrics = getSatelliteMetrics(
+        pastProposals,
+        proposalLedger,
+        eGovProposals,
+        satellite,
+        feedsLedger,
+        financialRequestLedger,
+      )
 
       acc.activeSatellites += 1
-      acc.avgFee += satelliteRecord.satelliteFee
-      acc.avgStakedMVK += satelliteRecord.sMvkBalance
-      acc.partisipationRate +=
-        (satelliteRecord.satelliteMetrics.proposalParticipation +
-          satelliteRecord.satelliteMetrics.votingPartisipation) /
-        2
+      acc.avgFee += satellite.satelliteFee
+      acc.avgStakedMVK += satellite.sMvkBalance
+      acc.partisipationRate += (metrics.proposalParticipation + metrics.votingPartisipation) / 2
       acc.avgFreesMVKSpace += Math.max(
-        satelliteRecord.sMvkBalance * satelliteRecord.delegationRatio - satelliteRecord.totalDelegatedAmount,
+        satellite.sMvkBalance * satellite.delegationRatio - satellite.totalDelegatedAmount,
         0,
       )
-      acc.avgDelegatedsMVK += satelliteRecord.sMvkBalance + satelliteRecord.totalDelegatedAmount
+      acc.avgDelegatedsMVK += satellite.sMvkBalance + satellite.totalDelegatedAmount
 
       return acc
     },
@@ -67,7 +79,7 @@ export const SatellitesTab = ({ isLoading }: { isLoading: boolean }) => {
           <ClockLoader width={150} height={150} />
           <div className="text">Loading satellites</div>
         </DataLoaderWrapper>
-      ) : activeSatellitesIds.length ? (
+      ) : activeSatellites.length ? (
         <SatellitesContentStyled>
           <StatBlock>
             <div className="name">Active Satellites</div>

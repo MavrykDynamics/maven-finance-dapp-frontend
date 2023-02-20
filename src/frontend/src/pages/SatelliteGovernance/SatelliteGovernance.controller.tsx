@@ -78,9 +78,9 @@ export const SatelliteGovernance = () => {
     accountPkh,
     user: { isSatellite },
   } = useSelector((state: State) => state.wallet)
-  const { oraclesIds, activeSatellitesIds, allSatellitesIds, satelliteMapper } = useSelector(
-    (state: State) => state.satellites,
-  )
+  const {
+    delegationStorage: { satelliteLedger, activeSatellites, oraclesAmount },
+  } = useSelector((state: State) => state.delegation)
   const {
     governanceSatelliteStorage: { governance_satellite_action, governance_satellite },
   } = useSelector((state: State) => state.governance)
@@ -106,7 +106,7 @@ export const SatelliteGovernance = () => {
     return separateRecord?.slice(from, to)
   }, [currentPage, separateRecord])
 
-  const totalDelegatedMVK = getTotalDelegatedMVK(activeSatellitesIds, satelliteMapper)
+  const totalDelegatedMVK = getTotalDelegatedMVK(satelliteLedger)
   const ongoingActionsAmount = getOngoingActionsList(governance_satellite_action)?.length
 
   const maxLength = {
@@ -177,11 +177,11 @@ export const SatelliteGovernance = () => {
         <article className="satellite-governance-article">
           <SmallInfoBlock>
             <h3>Total Active Satellites</h3>
-            <div className="info-content">{activeSatellitesIds.length}</div>
+            <div className="info-content">{activeSatellites?.length}</div>
           </SmallInfoBlock>
           <SmallInfoBlock>
             <h3>Total Oracle Networks</h3>
-            <div className="info-content">{oraclesIds.length}</div>
+            <div className="info-content">{oraclesAmount}</div>
           </SmallInfoBlock>
           <SmallInfoBlock>
             <h3>Total Delegated MVK</h3>

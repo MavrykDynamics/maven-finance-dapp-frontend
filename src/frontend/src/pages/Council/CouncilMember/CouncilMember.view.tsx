@@ -18,13 +18,14 @@ type Props = {
 }
 
 export const CouncilMemberView = (props: Props) => {
+  const { accountPkh } = useSelector((state: State) => state.wallet)
   const {
-    accountPkh,
-    user: { isSatellite },
-  } = useSelector((state: State) => state.wallet)
+    delegationStorage: { activeSatellites },
+  } = useSelector((state: State) => state.delegation)
 
   const { image, name, userId, openModal, showUpdateInfo = true } = props
   const href = `/satellites/satellite-details/${userId}`
+  const isSatellite = activeSatellites.find(({ address }) => address === userId)
 
   const isMe = userId === accountPkh
   const content = (
@@ -42,7 +43,7 @@ export const CouncilMemberView = (props: Props) => {
         </AvatarStyle>
         <figcaption>
           <h4>{name}</h4>
-          {userId ? <TzAddress type="blue" tzAddress={userId} hasIcon={true} /> : null}
+          {userId ? <TzAddress type='blue' tzAddress={userId} hasIcon={true} /> : null}
         </figcaption>
       </div>
       {isMe && showUpdateInfo ? (

@@ -5,38 +5,24 @@ import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
 // view
+import SatellitesView from './Satellites.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 
 // consts, helpers, actions
 import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
 import { getTotalDelegatedMVK } from './helpers/Satellites.consts'
-import { delegate, getSatellitesStorage, undelegate } from 'pages/Satellites/Satellites.actions'
+import { delegate, getDelegationStorage, undelegate } from 'pages/Satellites/Satellites.actions'
+import { getGovernanceStorage } from 'pages/Governance/Governance.actions'
+import { getEmergencyGovernanceStorage } from 'pages/EmergencyGovernance/EmergencyGovernance.actions'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { getFeedsStorage } from 'pages/DataFeeds/DataFeeds.actions'
 
-import { Page, PageContent } from 'styles'
-import { InfoBlockWrapper } from './Satellites.style'
-// types
-
-// view
-import SatellitesSideBar from './SatellitesSideBar/SatellitesSideBar.controller'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import { SmallInfoBlock } from 'pages/SatelliteGovernance/SatelliteGovernance.style'
-import { Link } from 'react-router-dom'
-import { SatelliteListItem } from './SatelliteList/ListCards/SateliteCard.view'
-import Icon from 'app/App.components/Icon/Icon.view'
-import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
-import { DataFeedCard } from './SatelliteList/ListCards/DataFeedCard.view'
-import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
-
 const Satellites = () => {
   const {
-    activeSatellitesIds,
-    allSatellitesIds,
-    satelliteMapper,
-    isLoaded: isSatellitesLoaded,
-  } = useSelector((state: State) => state.satellites)
+    delegationStorage: { activeSatellites = [] },
+  } = useSelector((state: State) => state.delegation)
   const { feedsLedger, isLoaded: isFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
+  const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
   const {
     user: { mySMvkTokenBalance, satelliteMvkIsDelegatedTo },
     accountPkh,
@@ -44,26 +30,24 @@ const Satellites = () => {
   const dispatch = useDispatch()
 
   const { isLoading } = useDataLoader(async () => {
-    try {
-      await Promise.all(
-        [
-          !isFeedsLoaded && dispatch(getFeedsStorage()),
-          accountPkh && dispatch(getDoormanStorage()),
-          !isSatellitesLoaded && dispatch(getSatellitesStorage()),
-        ].filter(Boolean),
-      )
-    } catch (e) {}
-  }, [])
+    await Promise.all([
+      !isFeedsLoaded && dispatch(getFeedsStorage()),
+      !isEgovLoaded && dispatch(getEmergencyGovernanceStorage()),
+      accountPkh && dispatch(getDoormanStorage()),
+      dispatch(getDelegationStorage()),
+      dispatch(getGovernanceStorage()),
+    ])
+  }, [accountPkh])
 
-  const totalDelegatedMVK = getTotalDelegatedMVK(allSatellitesIds, satelliteMapper)
+  const totalDelegatedMVK = getTotalDelegatedMVK(activeSatellites)
 
   const tabsInfo = useMemo(
     () => ({
       totalDelegetedMVK: <CommaNumber value={totalDelegatedMVK} endingText={'MVK'} />,
-      totalSatelliteOracles: activeSatellitesIds.length,
+      totalSatelliteOracles: activeSatellites.length,
       numberOfDataFeeds: feedsLedger.length > 50 ? feedsLedger.length + '+' : feedsLedger.length,
     }),
-    [activeSatellitesIds, feedsLedger, totalDelegatedMVK],
+    [activeSatellites, feedsLedger, totalDelegatedMVK],
   )
 
   const delegateCallback = (satelliteAddress: string) => {
@@ -75,81 +59,18 @@ const Satellites = () => {
   }
 
   return (
-    <Page>
-      <PageHeader page={'satellites'} />
-      <PageContent>
-        <div className="left-content-wrapper">
-          <InfoBlockWrapper>
-            <SmallInfoBlock>
-              <h3>Total Delegated MVK</h3>
-              <div className="info-content">
-                {tabsInfo.totalDelegetedMVK}
-                <a href="https://mavryk.finance/litepaper#satellites-governance-and-the-decentralized-oracle">
-                  <CustomTooltip iconId="info" text="All staked MVK that is delegated to satellites by users" />
-                </a>
-              </div>
-            </SmallInfoBlock>
-            <SmallInfoBlock>
-              <h3>Total Satellites & Oracles</h3>
-              <div className="info-content">{tabsInfo.totalSatelliteOracles}</div>
-            </SmallInfoBlock>
-            <SmallInfoBlock>
-              <h3>Number of Data Feeds</h3>
-              <div className="info-content">{tabsInfo.numberOfDataFeeds}</div>
-            </SmallInfoBlock>
-          </InfoBlockWrapper>
-          {activeSatellitesIds.length ? (
-            <div className="oracle-list-wrapper">
-              <Link to="/satellite-nodes">
-                <div className="see-all-link">
-                  See all Satellites
-                  <Icon id="arrow-left-stroke" />
-                </div>
-              </Link>
-
-              <GovRightContainerTitleArea>
-                <h1>Top Satellites</h1>
-              </GovRightContainerTitleArea>
-
-              <div className={`satellitesList`}>
-                {activeSatellitesIds.slice(0, 3).map((satelliteAddress) => (
-                  <SatelliteListItem
-                    satellite={satelliteMapper[satelliteAddress]}
-                    key={satelliteAddress}
-                    delegateCallback={delegateCallback}
-                    undelegateCallback={undelegateCallback}
-                    userStakedBalance={mySMvkTokenBalance}
-                    satelliteUserIsDelegatedTo={satelliteMvkIsDelegatedTo}
-                  />
-                ))}
-              </div>
-            </div>
-          ) : null}
-
-          {feedsLedger.length ? (
-            <div className="oracle-list-wrapper">
-              <Link to="/data-feeds">
-                <div className="see-all-link">
-                  See all Data Feeds
-                  <Icon id="arrow-left-stroke" />
-                </div>
-              </Link>
-
-              <GovRightContainerTitleArea>
-                <h1>Popular Feeds</h1>
-              </GovRightContainerTitleArea>
-
-              <div className={`satellitesList`}>
-                {feedsLedger.slice(0, 3).map((feed) => (
-                  <DataFeedCard feed={feed} key={feed.address} />
-                ))}
-              </div>
-            </div>
-          ) : null}
-        </div>
-        <SatellitesSideBar />
-      </PageContent>
-    </Page>
+    <SatellitesView
+      tabsInfo={tabsInfo}
+      delegateCallback={delegateCallback}
+      oracleSatellitesData={{
+        userStakedBalance: mySMvkTokenBalance,
+        satelliteUserIsDelegatedTo: satelliteMvkIsDelegatedTo,
+        items: activeSatellites.slice(0, 3),
+        delegateCallback,
+        undelegateCallback,
+      }}
+      dataFeedsData={{ items: feedsLedger }}
+    />
   )
 }
 

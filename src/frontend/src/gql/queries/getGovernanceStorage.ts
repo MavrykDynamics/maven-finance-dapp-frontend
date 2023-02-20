@@ -33,6 +33,39 @@ export const GOVERNANCE_STORAGE_QUERY = `
       min_quorum_percentage
       min_yay_vote_percentage
     }
+    governance_financial_request {
+      executed
+      expiration_datetime
+      execution_datetime
+      id
+      request_purpose
+      request_type
+      requested_datetime
+      smvk_percentage_for_approval
+      requester_id
+      smvk_required_for_approval
+      snapshot_smvk_total_supply
+      status
+      token_amount
+      token_address
+      treasury_id
+      governance_financial_id
+      pass_vote_smvk_total
+      nay_vote_smvk_total
+      yay_vote_smvk_total
+      votes {
+        governance_financial_request_id
+        id
+        timestamp
+        vote
+        voter_id
+      }
+      governance_financial {
+        governance {
+          address
+        }
+      }
+    }
     governance_proposal(order_by: {start_datetime: desc}) {
       current_cycle_end_level
       current_cycle_start_level

@@ -1,20 +1,24 @@
+import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Page } from 'styles'
 import { State } from 'reducers'
 
 // actions
 import { getEmergencyGovernanceStorage } from '../EmergencyGovernance/EmergencyGovernance.actions'
-import { getSatellitesStorage } from '../Satellites/Satellites.actions'
+import { getDelegationStorage } from '../Satellites/Satellites.actions'
 import { getCurrentRoundProposals, executeProposal, getGovernanceStorage } from './Governance.actions'
+import { checkIfUserIsSatellite } from 'pages/Satellites/helpers/Satellites.consts'
 
 // view
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
 import { GovernanceView } from './Governance.view'
 import { GovernanceTopBar } from './GovernanceTopBar/GovernanceTopBar.controller'
 
+// utils
+import { calcTimeToBlock } from '../../utils/calcFunctions'
+
 // hooks
 import useGovernence from './UseGovernance'
-import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 
 export type VoteStatistics = {
   passVotesMVKTotal: number
@@ -34,20 +38,20 @@ export const Governance = () => {
   const { governanceStorage, governancePhase, currentRoundProposals, pastProposals } = useSelector(
     (state: State) => state.governance,
   )
-  const { isLoaded: isSatellitesLoaded } = useSelector((state: State) => state.satellites)
-  const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
 
-  const { isLoading } = useDataLoader(async () => {
-    try {
-      await Promise.all(
-        [
-          !isEgovLoaded && dispatch(getEmergencyGovernanceStorage()),
-          !isSatellitesLoaded && dispatch(getSatellitesStorage()),
+  useEffect(() => {
+    ;(async () => {
+      try {
+        await Promise.all([
           dispatch(getCurrentRoundProposals()),
+          dispatch(getEmergencyGovernanceStorage()),
+          dispatch(getDelegationStorage()),
           dispatch(getGovernanceStorage()),
-        ].filter(Boolean),
-      )
-    } catch (e) {}
+        ])
+      } catch (e) {
+        console.error('Governance data fetching error', e)
+      }
+    })()
   }, [])
 
   const isVotingRound = governancePhase === 'VOTING'

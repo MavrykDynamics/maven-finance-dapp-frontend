@@ -8,10 +8,7 @@ import { ACTION_PRIMARY, ACTION_SIMPLE } from 'app/App.components/Button/Button.
 import { parseDate } from 'utils/time'
 import { cyanColor, downColor, Page, skyColor } from 'styles'
 import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
-import {
-  ORACLES_DATA_IN_FEED_LIST_NAME,
-  PAGINATION_SIDE_RIGHT,
-} from 'pages/FinacialRequests/Pagination/pagination.consts'
+import { ORACLES_DATA_IN_FEED_LIST_NAME } from 'pages/FinacialRequests/Pagination/pagination.consts'
 
 // view
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
@@ -29,7 +26,7 @@ import { DataFeedsChart } from './chart/DataFeedsChart.controller'
 
 // types
 import { State } from 'reducers'
-import { SatelliteRecordType } from 'utils/TypesAndInterfaces/Satellites'
+import { SatelliteRecord } from 'utils/TypesAndInterfaces/Delegation'
 
 // styles
 import {
@@ -42,15 +39,11 @@ import {
 import { EmptyContainer } from 'app/App.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
-import { FRListWrapper } from 'pages/FinacialRequests/FRList/FRList.styles'
-import { Pagination } from 'pages/BreakGlass/BreakGlass.style'
-import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
-import { OracleCard } from 'pages/Satellites/SatelliteList/ListCards/DataFeedOracleCard.view'
 
 type FeedDetailsProps = {
   feed: Feed | null
   isLoading: boolean
-  feedsSatellites: Array<SatelliteRecordType>
+  feedsSatellites: Array<SatelliteRecord>
   registerFeedHandler: () => void
 }
 
@@ -279,28 +272,14 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, registerFeedHandler, isLoa
           </DataFeedsStyled>
 
           {feedsSatellites.length ? (
-            <FRListWrapper className={`oracle`}>
-              <GovRightContainerTitleArea>
-                <h1>Oracles data</h1>
-              </GovRightContainerTitleArea>
-              {feedsSatellites.map((item) => (
-                <OracleCard oracle={item} key={item.address} />
-              ))}
-
-              <Pagination
-                itemsCount={feedsSatellites.length}
-                side={PAGINATION_SIDE_RIGHT}
-                listName={ORACLES_DATA_IN_FEED_LIST_NAME}
-              />
-            </FRListWrapper>
+            <SatelliteList
+              listTitle={'Oracles data'}
+              items={feedsSatellites}
+              listType={'oracles'}
+              name={ORACLES_DATA_IN_FEED_LIST_NAME}
+            />
           ) : (
-            // <SatelliteList
-            //   listTitle={'Oracles data'}
-            //   items={feedsSatellites}
-            //   listType={'oracles'}
-            //   name={ORACLES_DATA_IN_FEED_LIST_NAME}
-            // />
-            'no data'
+            emptyContainer
           )}
         </>
       )}

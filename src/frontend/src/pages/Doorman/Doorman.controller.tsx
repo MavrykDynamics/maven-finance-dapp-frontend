@@ -27,12 +27,7 @@ export const Doorman = () => {
     accountPkh,
     user: { mySMvkTokenBalance, myMvkTokenBalance },
   } = useSelector((state: State) => state.wallet)
-  const {
-    totalStakedMvk,
-    maximumTotalSupply,
-    totalSupply,
-    isLoaded: isDoormanLoaded,
-  } = useSelector((state: State) => state.doorman)
+  const { totalStakedMvk, maximumTotalSupply, isLoaded: isDoormanLoaded } = useSelector((state: State) => state.doorman)
   const { tokensPrices: { mvk: { usd: mvkExchangeRate = 0 } = {} } = {} } = useSelector((state: State) => state.tokens)
 
   const [amount, setAmount] = useState<null | number>(null)
@@ -80,7 +75,6 @@ export const Doorman = () => {
               MVK_exchangeRate={mvkExchangeRate}
               maximumTotalSupply={maximumTotalSupply}
               totalStakedMvk={totalStakedMvk}
-              totalSupply={totalSupply}
               doormanAddress={doormanAddress.address}
               mvkTokenAddress={mvkTokenAddress.address}
             />

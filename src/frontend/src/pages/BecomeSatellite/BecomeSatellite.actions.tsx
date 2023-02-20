@@ -1,6 +1,6 @@
 import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { ERROR, INFO, SUCCESS } from 'app/App.components/Toaster/Toaster.constants'
-import { getSatellitesStorage } from 'pages/Satellites/Satellites.actions'
+import { getDelegationStorage } from 'pages/Satellites/Satellites.actions'
 import { State } from 'reducers'
 import { RegisterAsSatelliteForm } from '../../utils/TypesAndInterfaces/Forms'
 import type { AppDispatch, GetState } from '../../app/App.controller'
@@ -37,7 +37,7 @@ export const registerAsSatellite =
       console.log('done', done)
       dispatch(showToaster(SUCCESS, 'Satellite Registered.', 'All good :)'))
 
-      dispatch(getSatellitesStorage())
+      dispatch(getDelegationStorage())
       dispatch(toggleActionLoader(false))
     } catch (error) {
       if (error instanceof Error) {
@@ -77,7 +77,7 @@ export const updateSatelliteRecord =
       console.log('done', done)
       dispatch(showToaster(SUCCESS, 'Satellite Registered.', 'All good :)'))
 
-      dispatch(getSatellitesStorage())
+      dispatch(getDelegationStorage())
       dispatch(toggleActionLoader(false))
     } catch (error) {
       if (error instanceof Error) {
@@ -114,7 +114,7 @@ export const unregisterAsSatellite = () => async (dispatch: AppDispatch, getStat
     console.log('done', done)
     dispatch(showToaster(SUCCESS, 'Satellite is no longer registered.', 'All good :)'))
 
-    dispatch(getSatellitesStorage())
+    dispatch(getDelegationStorage())
     dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {

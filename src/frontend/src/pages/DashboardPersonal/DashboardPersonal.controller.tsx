@@ -9,7 +9,7 @@ import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { getGovernanceStorage } from 'pages/Governance/Governance.actions'
 import { getFeedsStorage } from 'pages/DataFeeds/DataFeeds.actions'
 import { getPageNumber } from 'pages/FinacialRequests/FinancialRequests.helpers'
-import { getSatellitesStorage } from 'pages/Satellites/Satellites.actions'
+import { getDelegationStorage } from 'pages/Satellites/Satellites.actions'
 import { claimAllRewardsAction } from './DashboardPersonal.actions'
 import { updateUserData } from 'reducers/actions/user.actions'
 import { getEmergencyGovernanceStorage } from 'pages/EmergencyGovernance/EmergencyGovernance.actions'
@@ -56,7 +56,6 @@ const DashboardPersonal = () => {
   const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const { isLoaded: isFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
-  const { isLoaded: isSatellitesLoaded } = useSelector((state: State) => state.satellites)
   const {
     user: {
       myMvkTokenBalance,
@@ -83,7 +82,7 @@ const DashboardPersonal = () => {
       await Promise.all(
         [
           dispatch(getGovernanceStorage()),
-          !isSatellitesLoaded && dispatch(getSatellitesStorage()),
+          dispatch(getDelegationStorage()),
           !isEgovLoaded && dispatch(getEmergencyGovernanceStorage()),
           !isFeedsLoaded && dispatch(getFeedsStorage()),
         ].filter(Boolean),

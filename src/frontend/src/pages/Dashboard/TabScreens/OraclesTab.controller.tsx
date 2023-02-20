@@ -26,21 +26,21 @@ export const OraclesTab = ({ isLoading }: { isLoading: boolean }) => {
     dipDupContracts,
     tokensPrices: { mvk: { usd: mvkExchangeRate = 0 } = {} },
   } = useSelector((state: State) => state.tokens)
-  const { satelliteMapper, oraclesIds } = useSelector((state: State) => state.satellites)
+  const { satelliteLedger = [] } = useSelector((state: State) => state.delegation.delegationStorage)
 
   const oracleFeeds = feedsLedger.length
   const popularFeeds = feedsLedger.slice(0, 3)
 
   const oracleRevardsTotal = useMemo(
     () =>
-      oraclesIds.reduce((acc, address) => {
-        const sMVKReward = satelliteMapper[address].oracleRecords.reduce(
-          (acc, { sMVKReward = 0 }) => (acc += sMVKReward),
-          0,
-        )
-        return (acc += sMVKReward * mvkExchangeRate)
+      satelliteLedger.reduce((acc, { oracleRecords }) => {
+        if (oracleRecords.length) {
+          const sMVKReward = oracleRecords.reduce((acc, { sMVKReward = 0 }) => (acc += sMVKReward), 0)
+          acc += sMVKReward * mvkExchangeRate
+        }
+        return acc
       }, 0),
-    [mvkExchangeRate, satelliteMapper, oraclesIds],
+    [mvkExchangeRate, satelliteLedger],
   )
 
   return (

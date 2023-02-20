@@ -20,7 +20,7 @@ import { AppStyled } from './App.style'
 
 // actions
 import { toggleSidebarCollapsing } from './App.components/Menu/Menu.actions'
-import { getSatellitesStorage } from 'pages/Satellites/Satellites.actions'
+import { getDelegationStorage } from 'pages/Satellites/Satellites.actions'
 import { getContractAddressesStorage } from 'reducers/actions/contractAddresses.actions'
 import { getFeedsStorage } from 'pages/DataFeeds/DataFeeds.actions'
 import { connect } from './App.components/ConnectWallet/ConnectWallet.actions'
@@ -51,9 +51,11 @@ const AppContainer = () => {
 
   useEffect(() => {
     ;(async () => {
-      // Fetching initial&common data for DAPP
+      // Fetching initial data for DAPP
+      await dispatch(getDelegationStorage())
+
+      // common data across the DAPP
       await Promise.all([
-        dispatch(getSatellitesStorage()),
         dispatch(getContractAddressesStorage()),
         dispatch(getDipDupTokensStorage()),
         dispatch(getWhitelistTokensStorage()),

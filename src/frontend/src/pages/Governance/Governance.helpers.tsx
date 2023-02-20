@@ -10,7 +10,7 @@ import { calcWithoutMu, calcWithoutPrecision } from '../../utils/calcFunctions'
 import { DipDupTokensGraphQl } from 'utils/TypesAndInterfaces/DipDupTokens'
 
 // helpers
-import {
+import { 
   defaultProposalInvoiceMaxLength,
   defaultProposalMetadataTitleMaxLength,
   defaultProposalDescriptionMaxLength,
@@ -274,6 +274,10 @@ export const normalizeGovernanceStorage = (
   const currentGovernance = storage?.governance?.[0]
   const proposalLedger = normalizeProposals(storage?.governance_proposal, dipDupTokens)
 
+  const financialRequestLedger = storage?.governance_financial_request.sort(
+    (a, b) => new Date(b.requested_datetime ?? '').getTime() - new Date(a.requested_datetime ?? '').getTime(),
+  )
+
   return {
     address: currentGovernance?.address || '',
     fee: currentGovernance?.proposal_submission_fee_mutez
@@ -286,13 +290,10 @@ export const normalizeGovernanceStorage = (
       blocksPerProposalRound: currentGovernance?.blocks_per_proposal_round ?? 0,
       blocksPerVotingRound: currentGovernance?.blocks_per_voting_round ?? 0,
       blocksPerTimelockRound: currentGovernance?.blocks_per_timelock_round,
-      proposalDescriptionMaxLength:
-        currentGovernance?.proposal_description_max_length || defaultProposalDescriptionMaxLength,
+      proposalDescriptionMaxLength: currentGovernance?.proposal_description_max_length || defaultProposalDescriptionMaxLength,
       proposalInvoiceMaxLength: currentGovernance?.proposal_invoice_max_length || defaultProposalInvoiceMaxLength,
-      proposalMetadataTitleMaxLength:
-        currentGovernance?.proposal_metadata_title_max_length || defaultProposalMetadataTitleMaxLength,
-      proposalSourceCodeMaxLength:
-        currentGovernance?.proposal_source_code_max_length || defaultProposalSourceCodeMaxLength,
+      proposalMetadataTitleMaxLength: currentGovernance?.proposal_metadata_title_max_length || defaultProposalMetadataTitleMaxLength,
+      proposalSourceCodeMaxLength: currentGovernance?.proposal_source_code_max_length || defaultProposalSourceCodeMaxLength,
       proposalTitleMaxLength: currentGovernance?.proposal_title_max_length || defaultProposalTitleMaxLength,
     },
     currentCycleEndLevel: currentGovernance?.current_cycle_end_level ?? 0,
@@ -301,6 +302,7 @@ export const normalizeGovernanceStorage = (
     currentRoundProposals: new MichelsonMap<string, ProposalRecordType>(),
     currentRoundStartLevel: currentGovernance?.current_round_start_level ?? 0,
     cycle: currentGovernance?.cycle_id ?? 0,
+    financialRequestLedger,
     nextProposalId: currentGovernance?.next_proposal_id ?? 0,
     proposalLedger,
     timelockProposalId: currentGovernance?.timelock_proposal_id ?? 0,

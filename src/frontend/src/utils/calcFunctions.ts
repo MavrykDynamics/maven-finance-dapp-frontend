@@ -233,7 +233,3 @@ export const percentageDifference = (a: number, b: number): number => {
   const twoNumberDifference = (a / b - 1) * 100
   return Number(twoNumberDifference.toFixed(2))
 }
-
-export const getNumberInBounds = (minBound: number, maxBound: number, numberToPutInBound: number) => {
-  return Math.max(minBound, Math.min(maxBound, numberToPutInBound))
-}

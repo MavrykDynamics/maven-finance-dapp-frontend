@@ -11,13 +11,31 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { DelegationStatusBlock } from './DashboardPersonalComponents.style'
 
+import { getSatelliteMetrics } from 'pages/Satellites/Satellites.helpers'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
 const DelegationTab = () => {
   const { satelliteMvkIsDelegatedTo } = useSelector((state: State) => state.wallet.user)
-  const { allSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
-  const satelliteInfo =
-    satelliteMapper[allSatellitesIds.find((satelliteAddress) => satelliteMvkIsDelegatedTo === satelliteAddress) ?? '']
+  const { satelliteLedger } = useSelector((state: State) => state.delegation.delegationStorage)
+  const satelliteInfo = satelliteLedger.find(({ address }) => satelliteMvkIsDelegatedTo === address)
+
+  const {
+    governanceStorage: { financialRequestLedger, proposalLedger },
+    pastProposals,
+  } = useSelector((state: State) => state.governance)
+  const { eGovProposals } = useSelector((state: State) => state.emergencyGovernance)
+  const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
+
+  const satelliteMetrics = satelliteInfo
+    ? getSatelliteMetrics(
+        pastProposals,
+        proposalLedger,
+        eGovProposals,
+        satelliteInfo,
+        feedsLedger,
+        financialRequestLedger,
+      )
+    : null
 
   return (
     <>
@@ -25,7 +43,7 @@ const DelegationTab = () => {
         <GovRightContainerTitleArea>
           <h2>Delegation Status</h2>
         </GovRightContainerTitleArea>
-        {satelliteMvkIsDelegatedTo && satelliteInfo ? (
+        {satelliteMvkIsDelegatedTo && satelliteInfo && satelliteMetrics ? (
           <>
             <div className="delegated-to">Delegated To</div>
             <div className="top-row">
@@ -52,7 +70,7 @@ const DelegationTab = () => {
               <div className="grid-item participation">
                 <div className="name">Gov. Participation</div>
                 <div className="value">
-                  <CommaNumber value={satelliteInfo.satelliteMetrics.proposalParticipation} endingText="%" />
+                  <CommaNumber value={satelliteMetrics.proposalParticipation} endingText="%" />
                 </div>
               </div>
               <div className="grid-item delegated">
@@ -70,7 +88,7 @@ const DelegationTab = () => {
               <div className="grid-item oraclePart">
                 <div className="name">Oracle Participation</div>
                 <div className="value">
-                  <CommaNumber value={satelliteInfo.satelliteMetrics.oracleEfficiency} endingText="%" />
+                  <CommaNumber value={satelliteMetrics.oracleEfficiency} endingText="%" />
                 </div>
               </div>
             </div>

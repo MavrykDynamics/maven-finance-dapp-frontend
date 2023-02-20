@@ -14,27 +14,16 @@ import { DropDown, DropdownItemType } from '../../../app/App.components/DropDown
 // action
 import { dropFinancialRequest } from '../Council.actions'
 import { showToaster } from '../../../app/App.components/Toaster/Toaster.actions'
-import { getFinancialRequestStorage } from 'pages/FinacialRequests/FiancialRequest.actions'
-import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
+import { getGovernanceStorage } from 'pages/Governance/Governance.actions'
 
 // style
 import { CouncilFormStyled } from './CouncilForms.style'
 
 export const CouncilFormDropFinancialRequest = () => {
   const dispatch = useDispatch()
-  const { financialRequests, isLoaded: isFinancialRequestsLoaded } = useSelector(
-    (state: State) => state.financialRequest,
-  )
-
-  const { isLoading } = useDataLoader(async () => {
-    try {
-      if (!isFinancialRequestsLoaded) {
-        await dispatch(getFinancialRequestStorage())
-      }
-    } catch (e) {}
-  }, [])
-
-  const { ongoing } = distinctRequestsByExecuting(financialRequests || [])
+  const { governanceStorage } = useSelector((state: State) => state.governance)
+  const { financialRequestLedger } = governanceStorage
+  const { ongoing } = distinctRequestsByExecuting(financialRequestLedger || [])
 
   const itemsForDropDown = useMemo(
     () =>
@@ -90,6 +79,10 @@ export const CouncilFormDropFinancialRequest = () => {
     setDdIsOpen(!ddIsOpen)
     handleSelect(chosenItem)
   }
+
+  useEffect(() => {
+    dispatch(getGovernanceStorage())
+  }, [dispatch])
 
   return (
     <CouncilFormStyled onSubmit={handleSubmit}>

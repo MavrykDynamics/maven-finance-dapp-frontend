@@ -58,7 +58,9 @@ export const NavigationLink = ({
   navLinkClickHandler,
 }: NavigationLinkProps) => {
   const { pathname } = useLocation()
-  const { activeSatellitesIds } = useSelector((state: State) => state.satellites)
+  const {
+    delegationStorage: { satelliteLedger },
+  } = useSelector((state: State) => state.delegation)
   const [showSubPages, setShowSubPages] = useState<boolean>(false)
 
   const isMainLinkDisabled = useMemo(() => {
@@ -114,7 +116,7 @@ export const NavigationLink = ({
             <NavigationSubLinks className="content">
               {subPages.map((subNavLink: SubNavigationRoute) => {
                 const selectedSubLink = checkIfLinkSelected(pathname, subNavLink.routeSubPath)
-                const showSublink = isSubLinkShown(subNavLink, activeSatellitesIds, accountPkh)
+                const showSublink = isSubLinkShown(subNavLink, satelliteLedger, accountPkh)
 
                 return showSublink ? (
                   <Sublink key={subNavLink.id} subNavLink={subNavLink} isSelected={selectedSubLink} />

@@ -1,6 +1,6 @@
 // helpres
 import { ERROR, INFO, SUCCESS } from 'app/App.components/Toaster/Toaster.constants'
-import { getSatellitesStorage } from 'pages/Satellites/Satellites.actions'
+import { getDelegationStorage } from 'pages/Satellites/Satellites.actions'
 import { getGovernanceStorage, getCurrentRoundProposals } from '../Governance/Governance.actions'
 import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
 
@@ -39,7 +39,7 @@ export const submitProposal =
 
       await dispatch(showToaster(SUCCESS, 'Proposal Submitted.', 'All good :)'))
       await dispatch(getGovernanceStorage())
-      await dispatch(getSatellitesStorage())
+      await dispatch(getDelegationStorage())
       await dispatch(getCurrentRoundProposals())
       await dispatch(toggleActionLoader(false))
     } catch (error) {
@@ -76,7 +76,7 @@ export const dropProposal = (proposalId: number) => async (dispatch: AppDispatch
     await dispatch(toggleActionLoader(false))
 
     await dispatch(getGovernanceStorage())
-    await dispatch(getSatellitesStorage())
+    await dispatch(getDelegationStorage())
     await dispatch(getCurrentRoundProposals())
   } catch (error) {
     console.error('dropProposal error:', error)
@@ -112,7 +112,7 @@ export const lockProposal = (proposalId: number) => async (dispatch: AppDispatch
     await dispatch(showToaster(SUCCESS, 'Proposal locked.', 'All good :)'))
 
     await dispatch(getGovernanceStorage())
-    await dispatch(getSatellitesStorage())
+    await dispatch(getDelegationStorage())
     await dispatch(getCurrentRoundProposals())
   } catch (error) {
     console.error('lockProposal error:', error)
@@ -175,7 +175,7 @@ export const updateProposalData =
       await dispatch(toggleActionLoader(false))
 
       await dispatch(getGovernanceStorage())
-      await dispatch(getSatellitesStorage())
+      await dispatch(getDelegationStorage())
       await dispatch(getCurrentRoundProposals())
     } catch (error) {
       if (error instanceof Error) {

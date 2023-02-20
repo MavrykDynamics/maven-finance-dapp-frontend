@@ -1,85 +1,83 @@
+import { useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
-import { delegate, getSatellitesStorage, undelegate } from 'pages/Satellites/Satellites.actions'
+import { delegate, getDelegationStorage, undelegate } from 'pages/Satellites/Satellites.actions'
+import { getGovernanceStorage } from 'pages/Governance/Governance.actions'
+import { getSatelliteMetrics } from 'pages/Satellites/Satellites.helpers'
+import { getEmergencyGovernanceStorage } from 'pages/EmergencyGovernance/EmergencyGovernance.actions'
 import { rewardsCompound } from 'pages/Doorman/Doorman.actions'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
+import { getFeedsStorage } from 'pages/DataFeeds/DataFeeds.actions'
+import { getSatelliteByAddress } from './SatelliteDetails.actions'
 import { State } from 'reducers'
 
-import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
-import SatellitesSideBar from 'pages/Satellites/SatellitesSideBar/SatellitesSideBar.controller'
 import { SatelliteDetailsView } from './SatelliteDetails.view'
-import SatellitePagination from './SatellitePagination/SatellitePagination.view'
-import { ClockLoader } from 'app/App.components/Loader/Loader.view'
-import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
-import { Page, PageContent } from 'styles'
-import { EmptyContainer } from 'app/App.style'
-import { useCallback } from 'react'
 
 export const SatelliteDetails = () => {
   const dispatch = useDispatch()
-  const { satelliteId } = useParams<{ satelliteId: string }>()
-
+  const { currentSatellite } = useSelector((state: State) => state.delegation)
+  const { feedsLedger, isLoaded: isFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
+  const {
+    governanceStorage: { financialRequestLedger, proposalLedger },
+    pastProposals,
+  } = useSelector((state: State) => state.governance)
+  const { eGovProposals, isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
   const {
     accountPkh,
     user: { mySatelliteRewardsData, mySMvkTokenBalance },
   } = useSelector((state: State) => state.wallet)
 
-  const { satelliteMapper, isLoaded } = useSelector((state: State) => state.satellites)
-
-  const currentSatellite = satelliteMapper[satelliteId]
+  const { satelliteId } = useParams<{ satelliteId: string }>()
 
   const { isLoading } = useDataLoader(async () => {
     try {
-      // TODO: ensure in this condition
-      if (!currentSatellite && !isLoaded) {
-        await dispatch(getSatellitesStorage(satelliteId))
-      }
+      await Promise.all([
+        !isFeedsLoaded && dispatch(getFeedsStorage()),
+        !isEgovLoaded && dispatch(getEmergencyGovernanceStorage()),
+        dispatch(getGovernanceStorage()),
+        dispatch(getSatelliteByAddress(satelliteId)),
+        dispatch(getDelegationStorage()),
+      ])
     } catch (e) {}
   }, [])
 
-  const delegateCallback = useCallback((address: string) => {
+  const delegateCallback = (address: string) => {
     dispatch(delegate(address))
-  }, [])
+  }
 
-  const undelegateCallback = useCallback((address: string) => {
+  const undelegateCallback = (address: string) => {
     dispatch(undelegate(address))
-  }, [])
+  }
 
-  const handleClaimRewards = useCallback(() => {
-    if (accountPkh) dispatch(rewardsCompound(accountPkh))
-  }, [accountPkh])
+  const handleClaimRewards = () => {
+    if (accountPkh) {
+      dispatch(rewardsCompound(accountPkh))
+    }
+  }
+
+  const satelliteMetrics = useMemo(
+    () =>
+      getSatelliteMetrics(
+        pastProposals,
+        proposalLedger,
+        eGovProposals,
+        currentSatellite,
+        feedsLedger,
+        financialRequestLedger,
+      ),
+    [currentSatellite],
+  )
 
   return (
-    <Page>
-      <PageHeader page={'satellites'} />
-      <PageContent>
-        <div>
-          <SatellitePagination />
-
-          {isLoading ? (
-            <DataLoaderWrapper>
-              <ClockLoader width={150} height={150} />
-              <div className="text">Loading satellite info</div>
-            </DataLoaderWrapper>
-          ) : currentSatellite ? (
-            <SatelliteDetailsView
-              satellite={currentSatellite}
-              userSatelliteReward={mySatelliteRewardsData}
-              delegateCallback={delegateCallback}
-              undelegateCallback={undelegateCallback}
-              claimRewardsCallback={handleClaimRewards}
-              userStakedBalanceInSatellite={mySMvkTokenBalance}
-            />
-          ) : (
-            <EmptyContainer>
-              <img src="/images/not-found.svg" alt=" No proposals to show" />
-              <figcaption> No satellite data</figcaption>
-            </EmptyContainer>
-          )}
-        </div>
-        <SatellitesSideBar />
-      </PageContent>
-    </Page>
+    <SatelliteDetailsView
+      satellite={currentSatellite}
+      userSatelliteReward={mySatelliteRewardsData}
+      delegateCallback={delegateCallback}
+      undelegateCallback={undelegateCallback}
+      claimRewardsCallback={handleClaimRewards}
+      userStakedBalanceInSatellite={mySMvkTokenBalance}
+      satelliteMetrics={satelliteMetrics}
+    />
   )
 }

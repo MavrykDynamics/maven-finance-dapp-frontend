@@ -4,7 +4,7 @@ import { ERROR, INFO, SUCCESS } from 'app/App.components/Toaster/Toaster.constan
 import { AppDispatch, GetState } from 'app/App.controller'
 import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
 import { getFarmStorage } from 'pages/Farms/Farms.actions'
-import { getSatellitesStorage } from 'pages/Satellites/Satellites.actions'
+import { getDelegationStorage } from 'pages/Satellites/Satellites.actions'
 import { State } from 'reducers'
 import { updateUserData } from 'reducers/actions/user.actions'
 import { OpKind, WalletParamsWithKind } from '@taquito/taquito'
@@ -70,7 +70,7 @@ export const claimAllRewardsAction = () => async (dispatch: AppDispatch, getStat
     await transaction?.confirmation()
 
     await dispatch(showToaster(SUCCESS, 'Emergency Proposal Submitted', 'All good :)'))
-    await dispatch(getSatellitesStorage())
+    await dispatch(getDelegationStorage())
     await dispatch(updateUserData())
     await dispatch(getDoormanStorage())
     await dispatch(getFarmStorage())

@@ -116,7 +116,7 @@ const UserDetailsView = ({
         </DropdownContainer>
       </SatelliteSearchFilter>
 
-      {/* {feeds ? <SatelliteList items={feeds} listType={'userFeeds'} name={USER_DATA_FEEDS_LIST_NAME} /> : emptyContainer} */}
+      {feeds ? <SatelliteList items={feeds} listType={'userFeeds'} name={USER_DATA_FEEDS_LIST_NAME} /> : emptyContainer}
     </Page>
   ) : null
 }
