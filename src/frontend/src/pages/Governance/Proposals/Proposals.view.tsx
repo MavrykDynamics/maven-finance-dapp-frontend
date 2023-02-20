@@ -30,8 +30,7 @@ import { EmptyContainer, GovRightContainerTitleArea } from '../Governance.style'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import Checkbox from 'app/App.components/Checkbox/Checkbox.view'
 import { DropDown } from 'app/App.components/DropDown/DropDown.controller'
-import { calcWithoutPrecision } from 'utils/calcFunctions'
-import { getVoteText } from 'pages/Satellites/Satellites.helpers'
+import { getVoteText } from 'pages/Satellites/helpers/Satellites.consts'
 
 type ProposalsViewProps = {
   listTitle: string
@@ -55,7 +54,7 @@ export const ProposalsView = ({
     governancePhase,
     governanceStorage: { cycle, timelockProposalId, cycleHighestVotedProposalId, cycleCounter },
   } = useSelector((state: State) => state.governance)
-  const { satelliteLedger } = useSelector((state: State) => state.delegation.delegationStorage)
+  const { allSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
 
   const dropDownOptions = useMemo(
     () => Array.from({ length: cycle - 1 }, (_, idx) => String(cycle - (idx + 1))),
@@ -101,7 +100,7 @@ export const ProposalsView = ({
           address: string
         }>
       >((acc, { voter_id, round, vote }) => {
-        const satelliteData = satelliteLedger?.find(({ address }) => address === voter_id)
+        const satelliteData = satelliteMapper[allSatellitesIds.find((address) => address === voter_id) ?? '']
 
         if (satelliteData && round === 1) {
           acc.push({
@@ -114,7 +113,7 @@ export const ProposalsView = ({
 
         return acc
       }, []),
-    [satelliteLedger, selectedProposal],
+    [satelliteMapper, selectedProposal, allSatellitesIds],
   )
 
   return (

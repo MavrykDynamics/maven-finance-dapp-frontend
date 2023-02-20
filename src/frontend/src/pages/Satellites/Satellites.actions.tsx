@@ -1,31 +1,99 @@
 import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
-import { ERROR, INFO, SUCCESS } from 'app/App.components/Toaster/Toaster.constants'
 import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
-import { State } from 'reducers'
-import { DELEGATION_STORAGE_QUERY, DELEGATION_STORAGE_QUERY_NAME, DELEGATION_STORAGE_QUERY_VARIABLE } from 'gql/queries'
 import { fetchFromIndexer } from '../../gql/fetchGraphQL'
-import type { AppDispatch, GetState } from '../../app/App.controller'
-import { normalizeDelegationStorage } from './Satellites.helpers'
-import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
+import { nomalizeSatelliteConfig, normalizeSatellitesLedger } from './Satellites.normalizer'
 import { updateUserData } from 'reducers/actions/user.actions'
+import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
+import { getFeedsStorage } from 'pages/DataFeeds/DataFeeds.actions'
+import { getGovernanceStorage } from 'pages/Governance/Governance.actions'
+import { getEmergencyGovernanceStorage } from 'pages/EmergencyGovernance/EmergencyGovernance.actions'
+import { getFinancialRequestStorage } from 'pages/FinacialRequests/FiancialRequest.actions'
 
-export const GET_DELEGATION_STORAGE = 'GET_DELEGATION_STORAGE'
-export const getDelegationStorage = () => async (dispatch: AppDispatch) => {
+import { State } from 'reducers'
+import type { AppDispatch, GetState } from '../../app/App.controller'
+
+import { ERROR, INFO, SUCCESS } from 'app/App.components/Toaster/Toaster.constants'
+import {
+  SATELLITES_STORAGE_QUERY,
+  SATELLITES_STORAGE_QUERY_NAME,
+  SATELLITES_STORAGE_QUERY_VARIABLE,
+  SATELLITE_CONFIG_QUERY,
+  SATELLITE_CONFIG_QUERY_NAME,
+  SATELLITE_CONFIG_QUERY_VARIABLE,
+} from 'gql/queries'
+
+export const GET_SATELLITES_STORAGE = 'GET_SATELLITES_STORAGE'
+export const getSatellitesStorage =
+  (satelliteAddress?: string) => async (dispatch: AppDispatch, getState: GetState) => {
+    const {
+      financialRequest: { financialRequests, isLoaded: isFinancialRequestsLoaded },
+      dataFeeds: { feedsLedger, isLoaded: isDataFeedsLoaded },
+      emergencyGovernance: { eGovProposals, isLoaded: isEgovProposalsLoaded },
+      governance: {
+        governanceStorage: { proposalLedger },
+        pastProposals,
+      },
+    } = getState()
+    try {
+      // if satelliteAddress we will load data for this certain satellite, othervise, we will load all satellites
+      const storage = await fetchFromIndexer(
+        SATELLITES_STORAGE_QUERY(satelliteAddress),
+        SATELLITES_STORAGE_QUERY_NAME,
+        SATELLITES_STORAGE_QUERY_VARIABLE,
+      )
+
+      // We need to load some data to normalize full satellite
+      //"getGovernanceStorage" will be reunited to smaller parts later
+      await Promise.all(
+        [
+          !isFinancialRequestsLoaded && dispatch(getFinancialRequestStorage()),
+          !isDataFeedsLoaded && dispatch(getFeedsStorage()),
+          !isEgovProposalsLoaded && dispatch(getEmergencyGovernanceStorage()),
+          dispatch(getGovernanceStorage()),
+        ].filter(Boolean),
+      )
+
+      const { oraclesIds, activeSatellitesIds, allSatellitesIds, satellitesMapper } = normalizeSatellitesLedger(
+        storage,
+        {
+          financialRequestLedger: financialRequests,
+          feeds: feedsLedger,
+          emergencyGovernanceLedger: eGovProposals,
+          pastProposals,
+          proposalLedger,
+        },
+      )
+
+      dispatch({
+        type: GET_SATELLITES_STORAGE,
+        oraclesIds,
+        activeSatellitesIds,
+        allSatellitesIds,
+        satellitesMapper,
+        isLoaded: !satelliteAddress,
+      })
+    } catch (error) {
+      console.error('getSatellitesStorage error: ', error)
+      if (error instanceof Error) {
+        dispatch(showToaster(ERROR, 'Error', error.message))
+      }
+    }
+  }
+
+export const GET_SATELLITE_CONFIG = 'GET_SATELLITE_CONFIG'
+export const getSatelliteConfig = () => async (dispatch: AppDispatch, getState: GetState) => {
   try {
-    const delegationStorageFromIndexer = await fetchFromIndexer(
-      DELEGATION_STORAGE_QUERY,
-      DELEGATION_STORAGE_QUERY_NAME,
-      DELEGATION_STORAGE_QUERY_VARIABLE,
+    const storage = await fetchFromIndexer(
+      SATELLITE_CONFIG_QUERY,
+      SATELLITE_CONFIG_QUERY_NAME,
+      SATELLITE_CONFIG_QUERY_VARIABLE,
     )
 
-    const delegationStorage = normalizeDelegationStorage(delegationStorageFromIndexer?.delegation[0])
+    const nomalizedConfig = nomalizeSatelliteConfig(storage)
 
-    dispatch({
-      type: GET_DELEGATION_STORAGE,
-      delegationStorage,
-    })
+    dispatch({ type: GET_SATELLITE_CONFIG, config: nomalizedConfig })
   } catch (error) {
-    console.error('getDelegationStorage error: ', error)
+    console.error('getSatellitesStorage error: ', error)
     if (error instanceof Error) {
       dispatch(showToaster(ERROR, 'Error', error.message))
     }
@@ -66,8 +134,8 @@ export const delegate = (satelliteAddress: string) => async (dispatch: AppDispat
 
     dispatch(showToaster(SUCCESS, 'Delegation done', 'All good :)'))
 
-    await dispatch(getDelegationStorage())
-    await dispatch(getDoormanStorage())
+    await Promise.all([dispatch(getSatellitesStorage()), dispatch(getDoormanStorage())])
+
     await dispatch(updateUserData())
     await dispatch(toggleActionLoader(false))
   } catch (error) {
@@ -103,8 +171,8 @@ export const undelegate = (delegateAddress: string) => async (dispatch: AppDispa
 
     dispatch(showToaster(SUCCESS, 'Undelegating done', 'All good :)'))
 
-    await dispatch(getDelegationStorage())
-    await dispatch(getDoormanStorage())
+    await Promise.all([dispatch(getSatellitesStorage()), dispatch(getDoormanStorage())])
+
     await dispatch(updateUserData())
     await dispatch(toggleActionLoader(false))
   } catch (error) {

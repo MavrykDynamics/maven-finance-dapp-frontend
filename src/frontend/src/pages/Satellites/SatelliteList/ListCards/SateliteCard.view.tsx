@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 
 // consts, helpers, actions
 import { DOWN, WARNING } from 'app/App.components/StatusFlag/StatusFlag.constants'
-import { getOracleStatus, ORACLE_STATUSES_MAPPER } from 'pages/Satellites/helpers/Satellites.consts'
+import { getOracleStatus, getVoteText, ORACLE_STATUSES_MAPPER } from 'pages/Satellites/helpers/Satellites.consts'
 import { ACTION_PRIMARY, ACTION_SECONDARY } from 'app/App.components/Button/Button.constants'
 
 // view
@@ -14,7 +14,7 @@ import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 
 // types
 import { State } from 'reducers'
-import { SatelliteStatus } from 'utils/TypesAndInterfaces/Delegation'
+import { SatelliteStatus } from 'utils/TypesAndInterfaces/Satellites'
 import { SatelliteListItemProps } from '../../helpers/Satellites.types'
 
 //styles
@@ -34,7 +34,6 @@ import {
   SatelliteTextGroup,
   SideBySideImageAndText,
 } from './SatelliteCard.style'
-import { getSatelliteMetrics, getVoteText } from 'pages/Satellites/Satellites.helpers'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { Link } from 'react-router-dom'
 
@@ -65,10 +64,8 @@ export const SatelliteListItem = ({
     user: { isSatellite },
   } = useSelector((state: State) => state.wallet)
   const {
-    governanceStorage: { financialRequestLedger, proposalLedger },
-    pastProposals,
+    governanceStorage: { proposalLedger },
   } = useSelector((state: State) => state.governance)
-  const { eGovProposals } = useSelector((state: State) => state.emergencyGovernance)
 
   const myDelegatedMVK = userStakedBalance
   const userIsDelegatedToThisSatellite = satellite.address === satelliteUserIsDelegatedTo
@@ -85,13 +82,8 @@ export const SatelliteListItem = ({
   const satelliteStatusColor = satellite.status === SatelliteStatus.BANNED ? DOWN : WARNING
   const isSatelliteInactive = satellite.status !== SatelliteStatus.ACTIVE
 
-  const satelliteMetrics = React.useMemo(
-    () =>
-      getSatelliteMetrics(pastProposals, proposalLedger, eGovProposals, satellite, feedsLedger, financialRequestLedger),
-    [satellite],
-  )
-
-  const participation = (satelliteMetrics.proposalParticipation + satelliteMetrics.votingPartisipation) / 2
+  const participation =
+    (satellite.satelliteMetrics.proposalParticipation + satellite.satelliteMetrics.votingPartisipation) / 2
 
   const buttonToShow = userIsDelegatedToThisSatellite ? (
     <>

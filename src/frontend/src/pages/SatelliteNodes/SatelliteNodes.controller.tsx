@@ -1,35 +1,73 @@
-import React, { useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useLocation } from 'react-router'
 import { useSelector, useDispatch } from 'react-redux'
-import OracleSatellitesView from './SatelliteNodes.view'
-import { getSatelliteMetrics } from 'pages/Satellites/Satellites.helpers'
-import { SatelliteRecord } from 'utils/TypesAndInterfaces/Delegation'
-import { DropdownItemType } from '../../app/App.components/DropDown/DropDown.controller'
+
+// helpers, actions
+import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { State } from 'reducers'
-import { getDelegationStorage, delegate, undelegate } from 'pages/Satellites/Satellites.actions'
+import { getPageNumber } from 'pages/FinacialRequests/FinancialRequests.helpers'
+import { delegate, undelegate, getSatellitesStorage } from 'pages/Satellites/Satellites.actions'
+
+// consts
+import {
+  calculateSlicePositions,
+  PAGINATION_SIDE_RIGHT,
+  SATELITES_NODES_LIST_NAME,
+} from 'pages/FinacialRequests/Pagination/pagination.consts'
+
+import { DropDown, DropdownItemType } from '../../app/App.components/DropDown/DropDown.controller'
+import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
+import { Input } from 'app/App.components/Input/Input.controller'
+import Pagination from 'pages/FinacialRequests/Pagination/Pagination.view'
+import { SatelliteListItem } from 'pages/Satellites/SatelliteList/ListCards/SateliteCard.view'
+import { SatelliteSearchFilter } from 'pages/Satellites/SatelliteList/SatelliteList.style'
+import { Page, PageContent } from 'styles'
+import { EmptyContainer } from 'app/App.style'
+import { DropdownContainer } from 'app/App.components/DropDown/DropDown.style'
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
+
+const itemsForDropDown = [
+  { text: 'Lowest Fee', value: 'satelliteFee' },
+  { text: 'Highest Fee', value: 'satelliteFee' },
+  { text: 'Delegated MVK', value: 'totalDelegatedAmount' },
+  { text: 'Participation', value: 'participation' },
+]
 
 const SatelliteNodes = () => {
   const {
-    delegationStorage: { activeSatellites = [] },
-  } = useSelector((state: State) => state.delegation)
-  const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
-  const {
-    governanceStorage: { financialRequestLedger, proposalLedger },
-    pastProposals,
-  } = useSelector((state: State) => state.governance)
-  const { eGovProposals } = useSelector((state: State) => state.emergencyGovernance)
+    activeSatellitesIds,
+    satelliteMapper,
+    isLoaded: isSatellitesLoaded,
+  } = useSelector((state: State) => state.satellites)
+  const { satelliteMvkIsDelegatedTo, mySMvkTokenBalance } = useSelector((state: State) => state.wallet.user)
   const dispatch = useDispatch()
+  const { pathname, search } = useLocation()
 
-  const [allSatellites, setAllSatellites] = useState<SatelliteRecord[]>(activeSatellites)
-  const [filteredSatelliteList, setFilteredSatelliteList] = useState<SatelliteRecord[]>(activeSatellites)
+  const [filteredSatelliteList, setFilteredSatelliteList] = useState(activeSatellitesIds)
+  const [ddItems, _] = useState(itemsForDropDown.map(({ text }) => text))
+  const [ddIsOpen, setDdIsOpen] = useState(false)
+  const [inputSearch, setInputSearch] = useState('')
+  const [chosenDdItem, setChosenDdItem] = useState<DropdownItemType | undefined>()
 
-  useEffect(() => {
-    dispatch(getDelegationStorage())
+  const currentPage = getPageNumber(search, SATELITES_NODES_LIST_NAME)
+
+  const paginatedItemsList = useMemo(() => {
+    const [from, to] = calculateSlicePositions(currentPage, SATELITES_NODES_LIST_NAME)
+    return filteredSatelliteList.slice(from, to)
+  }, [currentPage, filteredSatelliteList])
+
+  const { isLoading } = useDataLoader(async () => {
+    try {
+      if (!isSatellitesLoaded) {
+        await dispatch(getSatellitesStorage())
+      }
+    } catch (e) {}
   }, [])
 
   useEffect(() => {
-    setAllSatellites(activeSatellites)
-    setFilteredSatelliteList(activeSatellites)
-  }, [activeSatellites])
+    setFilteredSatelliteList(activeSatellitesIds)
+  }, [activeSatellitesIds])
 
   const handleSearch = (e: {
     target: {
@@ -37,57 +75,50 @@ const SatelliteNodes = () => {
     }
   }) => {
     const searchQuery = e.target.value
-    let searchResult: SatelliteRecord[] = []
-
     if (searchQuery !== '') {
-      searchResult = allSatellites.filter(
-        (item: SatelliteRecord) =>
-          item.address.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          item.name.toLowerCase().includes(searchQuery.toLowerCase()),
+      setFilteredSatelliteList(
+        activeSatellitesIds.filter((satelliteAddress) => {
+          const satellite = satelliteMapper[satelliteAddress]
+          return (
+            satellite.address.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            satellite.name.toLowerCase().includes(searchQuery.toLowerCase())
+          )
+        }),
       )
     } else {
-      searchResult = allSatellites
+      setFilteredSatelliteList(activeSatellitesIds)
     }
-
-    setFilteredSatelliteList(searchResult)
+    setInputSearch(searchQuery)
   }
 
-  const handleSelect = (selectedOption: DropdownItemType) => {
+  const handleSelect = (e: string) => {
+    const chosenItem = itemsForDropDown.find((item) => item.text === e)
+    setChosenDdItem(chosenItem)
+    setDdIsOpen(!ddIsOpen)
+
+    if (!chosenItem) return
+
     const sortedData = (filteredSatelliteList ? [...filteredSatelliteList] : []).sort((a, b) => {
+      const satelliteA = satelliteMapper[a],
+        satelliteB = satelliteMapper[b]
       let res = 0
-      switch (selectedOption.text) {
+      switch (chosenItem.text) {
         case 'Lowest Fee':
-          res = Number(a.satelliteFee) - Number(b.satelliteFee)
+          res = satelliteA.satelliteFee - satelliteB.satelliteFee
           break
         case 'Highest Fee':
-          res = Number(b.satelliteFee) - Number(a.satelliteFee)
+          res = satelliteB.satelliteFee - satelliteA.satelliteFee
           break
         case 'Delegated MVK':
-          res = b.totalDelegatedAmount + b.sMvkBalance - (a.totalDelegatedAmount + a.sMvkBalance)
-
+          res =
+            satelliteB.totalDelegatedAmount +
+            satelliteB.sMvkBalance -
+            (satelliteA.totalDelegatedAmount + satelliteA.sMvkBalance)
           break
         case 'Participation':
-          const aMetrics = getSatelliteMetrics(
-            pastProposals,
-            proposalLedger,
-            eGovProposals,
-            a,
-            feedsLedger,
-            financialRequestLedger,
-          )
-
-          const bMetrics = getSatelliteMetrics(
-            pastProposals,
-            proposalLedger,
-            eGovProposals,
-            b,
-            feedsLedger,
-            financialRequestLedger,
-          )
-
           res =
-            (bMetrics.proposalParticipation + bMetrics.votingPartisipation) / 2 -
-            (aMetrics.proposalParticipation + aMetrics.votingPartisipation) / 2
+            (satelliteB.satelliteMetrics.proposalParticipation + satelliteB.satelliteMetrics.votingPartisipation) / 2 -
+            (satelliteA.satelliteMetrics.proposalParticipation + satelliteA.satelliteMetrics.votingPartisipation) / 2
           break
         default:
           return 0
@@ -98,22 +129,74 @@ const SatelliteNodes = () => {
     setFilteredSatelliteList(sortedData)
   }
 
-  const delegateCallback = (satelliteAddress: string) => {
+  const delegateCallback = useCallback((satelliteAddress: string) => {
     dispatch(delegate(satelliteAddress))
-  }
+  }, [])
 
-  const undelegateCallback = (delegateAddress: string) => {
+  const undelegateCallback = useCallback((delegateAddress: string) => {
     dispatch(undelegate(delegateAddress))
-  }
+  }, [])
 
   return (
-    <OracleSatellitesView
-      handleSelect={handleSelect}
-      handleSearch={handleSearch}
-      delegateCallback={delegateCallback}
-      undelegateCallback={undelegateCallback}
-      satellitesList={filteredSatelliteList}
-    />
+    <Page>
+      <PageHeader page={'satellites'} />
+
+      <PageContent>
+        <div className="left-content-wrapper">
+          <SatelliteSearchFilter>
+            <Input
+              type="text"
+              kind={'search'}
+              placeholder="Search by address or name..."
+              onChange={handleSearch}
+              value={inputSearch}
+            />
+            <DropdownContainer>
+              <h4>Order by:</h4>
+              <DropDown
+                placeholder="Choose option"
+                isOpen={ddIsOpen}
+                setIsOpen={setDdIsOpen}
+                itemSelected={chosenDdItem?.text}
+                items={ddItems}
+                clickOnItem={handleSelect}
+              />
+            </DropdownContainer>
+          </SatelliteSearchFilter>
+
+          {isLoading ? (
+            <DataLoaderWrapper>
+              <ClockLoader width={150} height={150} />
+              <div className="text">Loading satellites</div>
+            </DataLoaderWrapper>
+          ) : paginatedItemsList ? (
+            <div className={`satellitesList`}>
+              {paginatedItemsList.map((satelliteAddress) => (
+                <SatelliteListItem
+                  satellite={satelliteMapper[satelliteAddress]}
+                  key={satelliteAddress}
+                  delegateCallback={delegateCallback}
+                  undelegateCallback={undelegateCallback}
+                  userStakedBalance={mySMvkTokenBalance}
+                  satelliteUserIsDelegatedTo={satelliteMvkIsDelegatedTo}
+                />
+              ))}
+
+              <Pagination
+                itemsCount={filteredSatelliteList.length}
+                side={PAGINATION_SIDE_RIGHT}
+                listName={SATELITES_NODES_LIST_NAME}
+              />
+            </div>
+          ) : (
+            <EmptyContainer>
+              <img src="/images/not-found.svg" alt=" No proposals to show" />
+              <figcaption> No oracles to show</figcaption>
+            </EmptyContainer>
+          )}
+        </div>
+      </PageContent>
+    </Page>
   )
 }
 

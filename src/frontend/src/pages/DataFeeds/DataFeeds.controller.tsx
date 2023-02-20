@@ -11,7 +11,7 @@ import { DropDown } from 'app/App.components/DropDown/DropDown.controller'
 
 // const
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
-import { FEEDS_ALL_LIST_NAME } from 'pages/FinacialRequests/Pagination/pagination.consts'
+import { FEEDS_ALL_LIST_NAME, PAGINATION_SIDE_RIGHT } from 'pages/FinacialRequests/Pagination/pagination.consts'
 
 // types
 
@@ -28,6 +28,10 @@ import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
 import { getFeedsStorage } from './DataFeeds.actions'
+import { FRListWrapper } from 'pages/FinacialRequests/FRList/FRList.styles'
+import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
+import { Pagination } from 'pages/BreakGlass/BreakGlass.style'
+import { DataFeedCard } from 'pages/Satellites/SatelliteList/ListCards/DataFeedCard.view'
 
 const emptyContainer = (
   <EmptyContainer>
@@ -123,7 +127,20 @@ export const DataFeeds = () => {
 
           <DataFeedsStyled>
             {filteredFeeds.length ? (
-              <SatelliteList items={filteredFeeds} listType={'feeds'} name={FEEDS_ALL_LIST_NAME} />
+              <FRListWrapper className={`oracle`}>
+                <GovRightContainerTitleArea>
+                  <h1>Oracles data</h1>
+                </GovRightContainerTitleArea>
+                {filteredFeeds.map((item) => (
+                  <DataFeedCard feed={item} key={item.address} />
+                ))}
+
+                <Pagination
+                  itemsCount={filteredFeeds.length}
+                  side={PAGINATION_SIDE_RIGHT}
+                  listName={FEEDS_ALL_LIST_NAME}
+                />
+              </FRListWrapper>
             ) : (
               emptyContainer
             )}

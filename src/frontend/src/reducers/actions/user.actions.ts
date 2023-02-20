@@ -28,16 +28,12 @@ import {
   calcUsersFarmRewards,
   convertFromIndexerToRegNum,
 } from 'utils/calcFunctions'
-import { Farm, Lending_Controller_Loan_Token } from 'utils/generated/graphqlTypes'
-import { SatelliteRecord } from 'utils/TypesAndInterfaces/Delegation'
+import { Lending_Controller_Loan_Token } from 'utils/generated/graphqlTypes'
 
-const checkWhetherUserIsActiveSatelltie = (satellitesList: Array<SatelliteRecord>, userAddress: string) =>
-  Boolean(
-    satellitesList.find(
-      ({ address: satelliteAddress, status, currentlyRegistered }) =>
-        satelliteAddress === userAddress && status === 0 && currentlyRegistered,
-    ),
-  )
+const checkWhetherUserIsActiveSatelltie = (
+  satellitesList: State['satellites']['activeSatellitesIds'],
+  userAddress: string,
+) => Boolean(satellitesList.find((activeSatelliteAddress) => activeSatelliteAddress === userAddress))
 
 const TZBTC_CONTRACT_ADDRESS = 'KT1PWx2mnDueood7fEmfbBDKx1D9BAnnXitn'
 const getXtzAndTzbtcUserBalance = async (accountPkh: string) => {
@@ -70,7 +66,7 @@ const getXtzAndTzbtcUserBalance = async (accountPkh: string) => {
 
 export const fetchUserData = async (
   accountPkh: string,
-  activeSatellites: Array<SatelliteRecord>,
+  activeSatellites: State['satellites']['activeSatellitesIds'],
   dipDupTokens: State['tokens']['dipDupTokens'],
   feeds: State['dataFeeds']['feedsLedger'],
   currentBlockLevel: number | undefined = 0,
@@ -193,9 +189,7 @@ export const UPDATE_USER_DATA = 'UPDATE_USER_DATA'
 export const updateUserData = () => async (dispatch: AppDispatch, getState: GetState) => {
   const {
     preferences: { headData: { level = 0 } = {} },
-    delegation: {
-      delegationStorage: { activeSatellites },
-    },
+    satellites: { activeSatellitesIds },
     wallet: { accountPkh },
     tokens: { dipDupTokens },
     dataFeeds: { feedsLedger },
@@ -203,7 +197,7 @@ export const updateUserData = () => async (dispatch: AppDispatch, getState: GetS
 
   try {
     if (accountPkh) {
-      const userData = await fetchUserData(accountPkh, activeSatellites, dipDupTokens, feedsLedger, level)
+      const userData = await fetchUserData(accountPkh, activeSatellitesIds, dipDupTokens, feedsLedger, level)
 
       dispatch({
         type: UPDATE_USER_DATA,
