@@ -131,6 +131,7 @@ export function council(state = councilDefaultState, action: Action) {
             ...action.councilActions.actionsMapper,
           },
         },
+        // TODO: Set the value when all data is received
         isCouncilPastActionsLoaded: action.isCouncilPastActionsLoaded,
       }
     case GET_BREAK_GLASS_COUNCIL_MEMBERS:
@@ -166,6 +167,7 @@ export function council(state = councilDefaultState, action: Action) {
             ...action.breakGlassCouncilActions.actionsMapper,
           },
         },
+        // TODO: Set the value when all data is received
         isBreakGlassCouncilPastActionsLoaded: action.isBreakGlassCouncilPastActionsLoaded,
       }
     default:
