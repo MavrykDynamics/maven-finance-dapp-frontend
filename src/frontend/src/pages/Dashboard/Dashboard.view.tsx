@@ -29,13 +29,12 @@ export const DashboardView = ({
   activeTab: TabId
   isLoading: boolean
 }) => {
-  const tvlValue = isLoading ? 0 : tvl
   return (
     <DashboardStyled>
       <div className="top">
         <div className="tvlBlock">
           <BGPrimaryTitleStyled>Mavryk TVL</BGPrimaryTitleStyled>
-          <CommaNumber beginningText="$" value={tvlValue} />
+          <CommaNumber beginningText="$" value={isLoading ? 0 : tvl} />
         </div>
 
         <div className="mvkStats">

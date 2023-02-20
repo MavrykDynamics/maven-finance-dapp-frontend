@@ -1,7 +1,7 @@
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
-import { DataFeedSubTitleText } from 'pages/DataFeeds/details/DataFeedsDetails.style'
+import { DataFeedSubTitleText } from 'pages/DataFeedsDetails/DataFeedsDetails.style'
 import { getOracleStatus, ORACLE_STATUSES_MAPPER } from 'pages/Satellites/helpers/Satellites.consts'
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'

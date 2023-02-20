@@ -20,13 +20,7 @@ export const DataFeedCard = ({ feed }: { feed: Feed }) => {
   const { pathname } = useLocation()
   const { dipDupContracts } = useSelector((state: State) => state.tokens)
 
-  // TODO: remove it when images will be ok in indexer
-  const imageLink = feed.name.includes('EUROC')
-    ? '/images/eurl.png'
-    : feed.name.includes('XTZ')
-    ? '/images/tezos.png'
-    : dipDupContracts.find(({ contract }) => contract === feed.address)?.metadata?.icon
-
+  const imageLink = dipDupContracts.find(({ contract }) => contract === feed.address)?.metadata?.icon
   const showAllColumns = pathname === '/data-feeds'
 
   return (
