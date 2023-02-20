@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { boxShadowColor, cyanColor } from 'styles'
-import { MavrykTheme } from '../../../styles/interfaces'
+import { MavrykTheme } from '../../styles/interfaces'
 
 export const DataFeedsStyled = styled.div<{ theme: MavrykTheme }>`
   display: flex;

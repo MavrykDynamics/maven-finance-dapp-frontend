@@ -1,7 +1,6 @@
-import { useState } from 'react'
 import styled from 'styled-components/macro'
 import { MavrykTheme } from '../../../styles/interfaces'
-import Icon from './Icon.view'
+import { ImageWithPlug } from './ImageWithPlug'
 
 export const FarmCardTokenLogoContainer = styled.figure<{ theme: MavrykTheme }>`
   height: 50px;
@@ -9,34 +8,35 @@ export const FarmCardTokenLogoContainer = styled.figure<{ theme: MavrykTheme }>`
   position: relative;
   margin: 0;
   width: 55px;
-  > img {
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  > div {
     align-items: center;
     justify-content: center;
     position: absolute;
   }
-`
-export const FarmCardFirstTokenIcon = styled.img<{ theme: MavrykTheme }>`
-  height: 43px;
-  width: 43px;
-  bottom: 0px;
-  right: -5px;
-  align-self: flex-end;
-  z-index: 1;
-`
-export const FarmCardSecondTokenIcon = styled.img<{ theme: MavrykTheme }>`
-  height: 30px;
-  width: 30px;
-  top: 0px;
-  left: 0;
-  align-self: flex-end;
-`
 
-export const FarmCardOneTokenIcon = styled.img<{ theme: MavrykTheme }>`
-  height: 40px;
-  width: 44px;
-  left: 0;
-  top: 4px;
-  align-self: flex-end;
+  .left-top-icon {
+    height: 43px;
+    width: 43px;
+    bottom: 0px;
+    right: -5px;
+    align-self: flex-end;
+    z-index: 1;
+  }
+
+  .right-bottom-icon {
+    height: 30px;
+    width: 30px;
+    top: 0px;
+    left: 0;
+    align-self: flex-end;
+  }
 `
 
 export default function CoinsIcons({
@@ -48,35 +48,21 @@ export default function CoinsIcons({
   secondAssetLogoSrc?: string
   className?: string
 }) {
-  const withoutValidLogos = !firstAssetLogoSrc && !secondAssetLogoSrc
   return (
     <FarmCardTokenLogoContainer className={className}>
-      {withoutValidLogos ? (
-        <FarmCardOneTokenIcon src="/images/coin-gold.svg" />
-      ) : (
-        <>
-          <FarmCardFirstTokenIcon
-            src={
-              firstAssetLogoSrc ? `https://services.tzkt.io/v1/avatars/${firstAssetLogoSrc}` : '/images/coin-gold.svg'
-            }
-            onError={({ currentTarget }) => {
-              currentTarget.onerror = null
-              currentTarget.src = '/images/coin-gold.svg'
-            }}
-          />
-          <FarmCardSecondTokenIcon
-            src={
-              secondAssetLogoSrc
-                ? `https://services.tzkt.io/v1/avatars/${secondAssetLogoSrc}`
-                : '/images/coin-silver.svg'
-            }
-            onError={({ currentTarget }) => {
-              currentTarget.onerror = null
-              currentTarget.src = '/images/coin-silver.svg'
-            }}
-          />
-        </>
-      )}
+      <ImageWithPlug
+        imageLink={firstAssetLogoSrc ? `https://services.tzkt.io/v1/avatars/${firstAssetLogoSrc}` : null}
+        plugSrc={'/images/coin-gold.svg'}
+        alt={`${firstAssetLogoSrc ?? 'gold'} - logo`}
+        className={'left-top-icon'}
+      />
+
+      <ImageWithPlug
+        imageLink={secondAssetLogoSrc ? `https://services.tzkt.io/v1/avatars/${secondAssetLogoSrc}` : null}
+        plugSrc={'/images/coin-silver.svg'}
+        alt={`${secondAssetLogoSrc ?? 'silver'} - logo`}
+        className={'right-bottom-icon'}
+      />
     </FarmCardTokenLogoContainer>
   )
 }

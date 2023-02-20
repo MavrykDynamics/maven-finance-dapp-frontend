@@ -53,6 +53,7 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
 
   return (
     <>
+      {/* TODO: make this chart dynamic need data in indexer for it */}
       <PortfolioChartStyled>
         <GovRightContainerTitleArea>
           <h2>MVK Earning History</h2>
@@ -62,17 +63,10 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
             tabItems={toggleItems}
             onClick={(tabId) =>
               setToggleItems(
-                toggleItems.map((item) =>
-                  item.id === tabId
-                    ? {
-                        ...item,
-                        active: true,
-                      }
-                    : {
-                        ...item,
-                        active: false,
-                      },
-                ),
+                toggleItems.map((item) => ({
+                  ...item,
+                  active: item.id === tabId,
+                })),
               )
             }
           />
