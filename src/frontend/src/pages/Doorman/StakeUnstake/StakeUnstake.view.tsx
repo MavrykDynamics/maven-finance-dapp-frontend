@@ -5,12 +5,14 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
-
+import { useHistory } from 'react-router-dom'
+import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { ACTION_PRIMARY, ACTION_SECONDARY } from '../../../app/App.components/Button/Button.constants'
 import { Input } from '../../../app/App.components/Input/Input.controller'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 // helpers
 import { isValidNumberValue, mathRoundTwoDigit } from '../../../utils/validatorFunctions'
+import { ERROR } from 'app/App.components/Toaster/Toaster.constants'
 
 // style
 import {
@@ -39,6 +41,8 @@ type StakeUnstakeViewProps = {
 
 export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeRate }: StakeUnstakeViewProps) => {
   const dispatch = useDispatch()
+  const history = useHistory()
+
   const {
     accountPkh,
     user: {
@@ -47,6 +51,8 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
       userRewardsToDate: { farmRewards, doormanRewards },
       myDoormanRewardsData: { myAvailableDoormanRewards },
       mySatelliteRewardsData: { myAvailableSatelliteRewards },
+      satelliteMvkIsDelegatedTo,
+      isSatellite,
     },
   } = useSelector((state: State) => state.wallet)
 
@@ -59,6 +65,7 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
   const exchangeValue = MVK_exchangeRate && inputData.amount ? Number(inputData.amount) * MVK_exchangeRate : 0
   const earnedValue = farmRewards + doormanRewards
   const userHasRewards = myAvailableDoormanRewards + myAvailableSatelliteRewards > 2
+  const showDelegateBtn = !isSatellite && !satelliteMvkIsDelegatedTo
 
   const onUseMaxClick = (actionType: string) => {
     switch (actionType) {
@@ -145,6 +152,15 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
     }
   }
 
+  const handleDelegate = () => {
+    if (mySMvkTokenBalance === 0) {
+      dispatch(showToaster(ERROR, 'Failed to delegate', 'You need to stake MVK'))
+      return
+    }
+
+    history.push('/satellite-nodes')
+  }
+
   return (
     <StakeUnstakeStyled>
       <StakeUnstakeActionCard>
@@ -221,12 +237,14 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
           </StakeUnstakeCard>
         </div>
 
-        <div className="centering-wrapper">
-          <NewButton>
-            <Icon id="delegate" />
-            Delegate
-          </NewButton>
-        </div>
+        {showDelegateBtn && (
+          <div className="centering-wrapper">
+            <NewButton onClick={handleDelegate}>
+              <Icon id="satellites" />
+              Delegate
+            </NewButton>
+          </div>
+        )}
       </StakeUnstakeCards>
     </StakeUnstakeStyled>
   )
