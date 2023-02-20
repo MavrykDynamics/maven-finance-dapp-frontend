@@ -74,8 +74,7 @@ const DashboardPersonal = () => {
   } = useSelector((state: State) => state.wallet)
 
   const claimRewards = async () => {
-    await claimAllRewardsAction()
-    console.log('claim rewards in DashboardPersonal')
+    await dispatch(claimAllRewardsAction())
   }
 
   const { isLoading } = useDataLoader(async () => {

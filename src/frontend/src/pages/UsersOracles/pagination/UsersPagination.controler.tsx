@@ -10,7 +10,7 @@ import Icon from '../../../app/App.components/Icon/Icon.view'
 import { usersData } from '../users.const'
 
 // style
-import { SatellitePaginationStyled } from 'pages/Satellites/SatellitePagination/SatellitePagination.style'
+import { SatellitePaginationStyled } from 'pages/SatelliteDetails/SatellitePagination/SatellitePagination.style'
 import { TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
 import NewButton from 'app/App.components/Button/NewButton.controller'
 

@@ -18,7 +18,7 @@ import Icon from 'app/App.components/Icon/Icon.view'
 // styles
 import { Page } from 'styles'
 import { EmptyContainer } from 'app/App.style'
-import { DataFeedsTitle, DataFeedSubTitleText } from 'pages/DataFeeds/details/DataFeedsDetails.style'
+import { DataFeedsTitle, DataFeedSubTitleText } from 'pages/DataFeedsDetails/DataFeedsDetails.style'
 import { UserDetailsStyled } from './UsersDetails.style'
 import { DropDown } from 'app/App.components/DropDown/DropDown.controller'
 import { DropdownContainer } from 'app/App.components/DropDown/DropDown.style'

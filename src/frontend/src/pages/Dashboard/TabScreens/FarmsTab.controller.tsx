@@ -54,7 +54,10 @@ export const FarmsTab = ({ isLoading }: { isLoading: boolean }) => {
                       <TzAddress tzAddress={farmCardData.address} hasIcon type={CYAN} />
                     </div>
 
-                    <CoinsIcons />
+                    <CoinsIcons
+                      firstAssetLogoSrc={farmCardData.lpToken1.thumbnailUri}
+                      secondAssetLogoSrc={farmCardData.lpToken2.thumbnailUri}
+                    />
                   </div>
 
                   <div className="row-info">
