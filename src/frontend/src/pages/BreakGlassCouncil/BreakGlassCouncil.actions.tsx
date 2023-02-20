@@ -18,7 +18,12 @@ import {
 } from '../../gql/queries/getBreakGlassCouncilStorage'
 
 // helpers
-import { normalizeCouncilActions, normalizeCouncilMembers } from 'pages/Council/Council.helpers'
+import {
+  normalizeCouncilActions,
+  normalizeCouncilMembers,
+  PENDING_ACTIONS,
+  PAST_ACTIONS,
+} from 'pages/Council/Council.helpers'
 import { parseDate } from 'utils/time'
 
 // actions
@@ -43,17 +48,11 @@ export const getBreakGlassCouncilPendingActions = () => async (dispatch: AppDisp
 
     const breakGlassCouncil = storage?.break_glass_action || []
 
-    const allPendingActions = normalizeCouncilActions(breakGlassCouncil)
-    const notMyPendingActions = accountPkh
-      ? normalizeCouncilActions(breakGlassCouncil, {
-          filterWithoutAddress: accountPkh,
-        })
-      : []
-    const myPendingActions = accountPkh
-      ? normalizeCouncilActions(breakGlassCouncil, {
-          filterByAddress: accountPkh,
-        })
-      : []
+    const { allPendingActions, notMyPendingActions, myPendingActions, actionsMapper } = normalizeCouncilActions(
+      breakGlassCouncil,
+      PENDING_ACTIONS,
+      accountPkh,
+    )
 
     await dispatch({
       type: GET_BREAK_GLASS_COUNCIL_PENDING_ACTIONS,
@@ -61,6 +60,7 @@ export const getBreakGlassCouncilPendingActions = () => async (dispatch: AppDisp
         allPendingActions,
         notMyPendingActions,
         myPendingActions,
+        actionsMapper,
       },
     })
   } catch (error) {
@@ -85,18 +85,20 @@ export const getBreakGlassCouncilPastActions = () => async (dispatch: AppDispatc
     )
 
     const breakGlassCouncil = storage?.break_glass_action || []
-    const allPastActions = normalizeCouncilActions(breakGlassCouncil)
-    const myPastActions = accountPkh ? normalizeCouncilActions(breakGlassCouncil, { filterByAddress: accountPkh }) : []
+
+    const { allPastActions, myPastActions, actionsMapper } = normalizeCouncilActions(
+      breakGlassCouncil,
+      PAST_ACTIONS,
+      accountPkh,
+    )
 
     await dispatch({
       type: GET_BREAK_GLASS_COUNCIL_PAST_ACTIONS,
       breakGlassCouncilActions: {
         allPastActions,
         myPastActions,
+        actionsMapper,
       },
-      // TODO: temporary solution
-      // it needs to now, because after authorization the user will not update the data, and will 
-      // not see the section with its actions because you need to filter the data at address.
       isBreakGlassCouncilPastActionsLoaded: Boolean(accountPkh),
     })
   } catch (error) {

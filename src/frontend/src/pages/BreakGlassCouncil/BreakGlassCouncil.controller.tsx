@@ -47,6 +47,7 @@ export function BreakGlassCouncil() {
       myPendingActions,
       allPastActions,
       myPastActions,
+      actionsMapper,
     },
     isStorageLoaded,
     isBreakGlassCouncilMembersLoaded,
@@ -113,6 +114,8 @@ export function BreakGlassCouncil() {
           // past actions
           allPastActions={allPastActions}
           myPastActions={myPastActions}
+          // mapper
+          actionsMapper={actionsMapper}
           // other lists
           members={breakGlassCouncilMembers}
           dropdowndActions={actions}

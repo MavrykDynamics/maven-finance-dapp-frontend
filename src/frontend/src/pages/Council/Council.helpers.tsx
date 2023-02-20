@@ -4,6 +4,8 @@ import {
   CouncilActionGraphQL,
   CouncilMemberGraphQL,
   CouncilMembers,
+  CouncilActions,
+  CouncilAction,
 } from '../../utils/TypesAndInterfaces/Council'
 
 // helpers
@@ -15,38 +17,61 @@ import {
   defaultRequestTokenNameMaxLength,
 } from 'app/App.components/Input/Input.constants'
 
-type Options = {
-  filterByAddress?: string
-  filterWithoutAddress?: string
-}
+export const PAST_ACTIONS = 'PAST_ACTIONS'
+export const PENDING_ACTIONS = 'PENDING_ACTIONS'
 
-export function normalizeCouncilActions(storage: CouncilActionGraphQL[], options?: Options) {
-  if (!storage?.length) return []
+type FilterType = typeof PAST_ACTIONS | typeof PENDING_ACTIONS
 
-  const { filterByAddress = '', filterWithoutAddress = '' } = options ?? {}
-
-  let list: CouncilActionGraphQL[] = []
-
-  if (filterByAddress) {
-    list = storage.filter((item) => item.initiator_id === filterByAddress)
-  } else if (filterWithoutAddress) {
-    list = storage.filter((item) => item.initiator_id !== filterWithoutAddress)
-  } else {
-    list = storage
+export function normalizeCouncilActions(
+  storage: CouncilActionGraphQL[],
+  typeOfActions: FilterType,
+  userAddress?: string,
+) {
+  const initialData: CouncilActions = {
+    allPendingActions: [],
+    notMyPendingActions: [],
+    myPendingActions: [],
+    allPastActions: [],
+    myPastActions: [],
+    actionsMapper: {},
   }
 
-  return list.map((item) => {
-    return {
+  if (!storage?.length) return initialData
+
+  const normalizedActions = storage.reduce<CouncilActions>((acc, item) => {
+    const action: CouncilAction = {
       actionType: item.action_type,
       councilId: item.council_id ?? item.break_glass_id,
       executed: item.executed,
       id: item.id,
       initiatorId: item.initiator_id,
       signersCount: item.signers_count,
-      startDatetime: item.start_datetime,
+      startDatetime: item.start_datetime ?? '',
       parameters: item.parameters,
     }
-  })
+
+    acc.actionsMapper[action.id] = action
+
+    if (typeOfActions === PENDING_ACTIONS) {
+      acc.allPendingActions.push(action.id)
+
+      if (userAddress === action.initiatorId) {
+        acc.myPendingActions.push(action.id)
+      } else {
+        acc.notMyPendingActions.push(action.id)
+      }
+    } else {
+      acc.allPastActions.push(action.id)
+
+      if (userAddress === action.initiatorId) {
+        acc.myPastActions.push(action.id)
+      }
+    }
+
+    return acc
+  }, initialData)
+
+  return normalizedActions
 }
 
 export function normalizeCouncilMembers(storage: CouncilMemberGraphQL[]) {

@@ -7,7 +7,6 @@ import {
   Break_Glass_Action_Signer,
 } from '../generated/graphqlTypes'
 import {
-  normalizeCouncilActions,
   normalizeCouncilMembers,
   normalizeMaxLength,
 } from '../../pages/Council/Council.helpers'
@@ -23,4 +22,27 @@ export type CouncilActionGraphQL = Pick<Break_Glass_Action, 'break_glass_id'> &
     signers: (Pick<Break_Glass_Action_Signer, 'break_glass_action' | 'break_glass_action_id'> &
       Omit<Council_Action_Signer, '__typename' | 'council' | 'signers'>)[]
   }
-export type CouncilActions = ReturnType<typeof normalizeCouncilActions>
+
+export type CouncilActions = {
+  allPendingActions: number[];
+  notMyPendingActions: number[];
+  myPendingActions: number[];
+  allPastActions: number[];
+  myPastActions: number[];
+  actionsMapper: Record<number, CouncilAction>;
+}
+
+export type CouncilAction = {
+  actionType: string
+  councilId: string
+  executed: boolean
+  id: number
+  initiatorId: string
+  signersCount: number
+  startDatetime: string
+  parameters: {
+    id: number
+    name: string
+    value: string
+  }[]
+}

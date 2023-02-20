@@ -39,7 +39,14 @@ export const Council = () => {
   const {
     config: { councilMaxLength },
     councilMembers,
-    councilActions: { allPendingActions, notMyPendingActions, myPendingActions, allPastActions, myPastActions },
+    councilActions: {
+      allPendingActions,
+      notMyPendingActions,
+      myPendingActions,
+      allPastActions,
+      myPastActions,
+      actionsMapper,
+    },
     isStorageLoaded,
     isCouncilMembersLoaded,
     isCouncilPendingActionsLoaded,
@@ -101,6 +108,8 @@ export const Council = () => {
           // past actions
           allPastActions={allPastActions}
           myPastActions={myPastActions}
+          // mapper
+          actionsMapper={actionsMapper}
           // other lists
           members={councilMembers}
           dropdowndActions={actions}

@@ -6,7 +6,15 @@ import type { AppDispatch, GetState } from '../../app/App.controller'
 
 // helpers
 import { parseDate } from 'utils/time'
+import {
+  normalizeCouncilActions,
+  normalizeCouncilMembers,
+  normalizeMaxLength,
+  PENDING_ACTIONS,
+  PAST_ACTIONS,
+} from './Council.helpers'
 
+// gql
 import {
   COUNCIL_STORAGE_QUERY,
   COUNCIL_STORAGE_QUERY_NAME,
@@ -21,7 +29,8 @@ import {
   COUNCIL_PAST_ACTIONS_NAME,
   COUNCIL_PAST_ACTIONS_VARIABLE,
 } from '../../gql/queries/getCouncilStorage'
-import { normalizeCouncilActions, normalizeCouncilMembers, normalizeMaxLength } from './Council.helpers'
+
+// actions
 import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 
 const time = String(new Date())
@@ -68,9 +77,11 @@ export const getCouncilPendingActions = () => async (dispatch: AppDispatch, getS
 
     const council = storage?.council_action || []
 
-    const allPendingActions = normalizeCouncilActions(council)
-    const notMyPendingActions = accountPkh ? normalizeCouncilActions(council, { filterWithoutAddress: accountPkh }) : []
-    const myPendingActions = accountPkh ? normalizeCouncilActions(council, { filterByAddress: accountPkh }) : []
+    const { allPendingActions, notMyPendingActions, myPendingActions, actionsMapper } = normalizeCouncilActions(
+      council,
+      PENDING_ACTIONS,
+      accountPkh,
+    )
 
     dispatch({
       type: GET_COUNCIL_PENDING_ACTIONS,
@@ -78,6 +89,7 @@ export const getCouncilPendingActions = () => async (dispatch: AppDispatch, getS
         allPendingActions,
         notMyPendingActions,
         myPendingActions,
+        actionsMapper,
       },
     })
   } catch (error) {
@@ -103,18 +115,15 @@ export const getCouncilPastActions = () => async (dispatch: AppDispatch, getStat
 
     const council = storage?.council_action || []
 
-    const allPastActions = normalizeCouncilActions(council)
-    const myPastActions = accountPkh ? normalizeCouncilActions(council, { filterByAddress: accountPkh }) : []
+    const { allPastActions, myPastActions, actionsMapper } = normalizeCouncilActions(council, PAST_ACTIONS, accountPkh)
 
     dispatch({
       type: GET_COUNCIL_PAST_ACTIONS,
       councilActions: {
         allPastActions,
         myPastActions,
+        actionsMapper,
       },
-      // TODO: temporary solution
-      // it needs to now, because after authorization the user will not update the data, and will
-      // not see the section with its actions because you need to filter the data at address.
       isCouncilPastActionsLoaded: Boolean(accountPkh),
     })
   } catch (error) {

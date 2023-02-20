@@ -38,7 +38,7 @@ import {
 import { CouncilStyled, ReviewCard, AvaliableActions, PropagateBreakGlassCouncilCard } from './Council.style'
 
 // types
-import { CouncilMaxLength, CouncilActions, CouncilMembers } from 'utils/TypesAndInterfaces/Council'
+import { CouncilMaxLength, CouncilAction, CouncilMembers } from 'utils/TypesAndInterfaces/Council'
 import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 
 // actions
@@ -75,12 +75,14 @@ type Props = {
     allPastActions: string
   }
 
-  allPendingActions: CouncilActions
-  notMyPendingActions: CouncilActions
-  myPendingActions: CouncilActions
+  allPendingActions: number[]
+  notMyPendingActions: number[]
+  myPendingActions: number[]
 
-  allPastActions: CouncilActions
-  myPastActions: CouncilActions
+  allPastActions: number[]
+  myPastActions: number[]
+
+  actionsMapper: Record<number, CouncilAction>
 
   members: CouncilMembers
   dropdowndActions: Record<string, string>
@@ -107,6 +109,8 @@ export function CouncilView({
 
   allPastActions,
   myPastActions,
+
+  actionsMapper,
 
   members,
   dropdowndActions,
@@ -247,16 +251,20 @@ export function CouncilView({
             <article className="pending">
               <div className="pending-items">
                 <Carousel itemLength={notMyPendingActions.length}>
-                  {notMyPendingActions.map((item, index) => (
-                    <CouncilPending
-                      {...item}
-                      key={item.id}
-                      numCouncilMembers={members.length}
-                      councilPendingActionsLength={notMyPendingActions.length}
-                      index={index}
-                      handleSignAction={handleSignAction}
-                    />
-                  ))}
+                  {notMyPendingActions.map((item, index) => {
+                    const action = actionsMapper[item]
+
+                    return (
+                      <CouncilPending
+                        {...action}
+                        key={action.id}
+                        numCouncilMembers={members.length}
+                        councilPendingActionsLength={notMyPendingActions.length}
+                        index={index}
+                        handleSignAction={handleSignAction}
+                      />
+                    )
+                  })}
                 </Carousel>
               </div>
             </article>
@@ -268,16 +276,20 @@ export function CouncilView({
                 <>
                   <h1>{titles.allPastActions}</h1>
                   {paginatedAllPastActions.length
-                    ? paginatedAllPastActions.map((item) => (
-                        <CouncilPastActionView
-                          startDatetime={String(item.startDatetime)}
-                          key={item.id}
-                          actionType={item.actionType}
-                          signersCount={item.signersCount}
-                          numCouncilMembers={members.length}
-                          councilId={item.councilId}
-                        />
-                      ))
+                    ? paginatedAllPastActions.map((item) => {
+                        const action = actionsMapper[item]
+
+                        return (
+                          <CouncilPastActionView
+                            startDatetime={action.startDatetime}
+                            key={action.id}
+                            actionType={action.actionType}
+                            signersCount={action.signersCount}
+                            numCouncilMembers={members.length}
+                            councilId={action.councilId}
+                          />
+                        )
+                      })
                     : councilEmptyContainer}
                 </>
               ) : null}
@@ -286,16 +298,20 @@ export function CouncilView({
                 <>
                   <h1>Pending Signature Council Actions</h1>
                   {paginatedAllPendingActions.length
-                    ? paginatedAllPendingActions.map((item) => (
-                        <CouncilPastActionView
-                          startDatetime={String(item.startDatetime)}
-                          key={item.id}
-                          actionType={item.actionType}
-                          signersCount={item.signersCount}
-                          numCouncilMembers={members.length}
-                          councilId={item.councilId}
-                        />
-                      ))
+                    ? paginatedAllPendingActions.map((item) => {
+                        const action = actionsMapper[item]
+
+                        return (
+                          <CouncilPastActionView
+                            startDatetime={action.startDatetime}
+                            key={action.id}
+                            actionType={action.actionType}
+                            signersCount={action.signersCount}
+                            numCouncilMembers={members.length}
+                            councilId={action.councilId}
+                          />
+                        )
+                      })
                     : councilEmptyContainer}
                 </>
               ) : null}
@@ -329,6 +345,7 @@ export function CouncilView({
                 myPastCouncilActionLength={myPastActions.length}
                 actionPendingSignature={paginatedMyPendingActions}
                 actionPendingSignatureLength={myPendingActions.length}
+                actionsMapper={actionsMapper}
                 numCouncilMembers={members.length}
                 activeActionTab={activeActionTab}
                 setActiveActionTab={setActiveActionTab}

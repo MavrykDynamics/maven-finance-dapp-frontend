@@ -3,20 +3,21 @@ import { CouncilOngoingAction } from './CouncilOngoingAction.view'
 // components
 import { CouncilPastActionView } from 'pages/Council/CouncilActions/CouncilPastAction.view'
 import Pagination from 'pages/FinacialRequests/Pagination/Pagination.view'
-import { councilEmptyContainer } from '../Council.view' 
+import { councilEmptyContainer } from '../Council.view'
 
 // styles
 import { TabSwitcher } from '../Council.style'
 
 // types
-import { CouncilActions } from 'utils/TypesAndInterfaces/Council'
+import { CouncilAction } from 'utils/TypesAndInterfaces/Council'
 import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 
 type Props = {
-  myPastCouncilAction: CouncilActions
+  myPastCouncilAction: number[]
   myPastCouncilActionLength: number
-  actionPendingSignature: CouncilActions
+  actionPendingSignature: number[]
   actionPendingSignatureLength: number
+  actionsMapper: Record<number, CouncilAction>
   numCouncilMembers: number
   activeActionTab: string
   setActiveActionTab: (arg: string) => void
@@ -32,6 +33,7 @@ export function MyCouncilActions({
   myPastCouncilActionLength,
   actionPendingSignature,
   actionPendingSignatureLength,
+  actionsMapper,
   numCouncilMembers,
   activeActionTab,
   setActiveActionTab,
@@ -50,16 +52,20 @@ export function MyCouncilActions({
       {activeActionTab === tabsList[1].text && (
         <>
           {myPastCouncilAction.length
-            ? myPastCouncilAction.map((item) => (
-                <CouncilPastActionView
-                  startDatetime={String(item.startDatetime)}
-                  key={item.id}
-                  actionType={item.actionType}
-                  signersCount={item.signersCount}
-                  numCouncilMembers={numCouncilMembers}
-                  councilId={item.councilId}
-                />
-              ))
+            ? myPastCouncilAction.map((item) => {
+                const action = actionsMapper[item]
+
+                return (
+                  <CouncilPastActionView
+                    startDatetime={action.startDatetime}
+                    key={action.id}
+                    actionType={action.actionType}
+                    signersCount={action.signersCount}
+                    numCouncilMembers={numCouncilMembers}
+                    councilId={action.councilId}
+                  />
+                )
+              })
             : councilEmptyContainer}
 
           <Pagination itemsCount={myPastCouncilActionLength} listName={listNameMyPastActions} />
@@ -69,15 +75,19 @@ export function MyCouncilActions({
       {activeActionTab === tabsList[0].text && (
         <>
           {actionPendingSignature.length
-            ? actionPendingSignature.map((item) => (
-                <CouncilOngoingAction
-                  {...item}
-                  key={String(item.id)}
-                  numCouncilMembers={numCouncilMembers}
-                  handleDropAction={handleDropAction}
-                  cardIdName={cardIdName}
-                />
-              ))
+            ? actionPendingSignature.map((item) => {
+                const action = actionsMapper[item]
+
+                return (
+                  <CouncilOngoingAction
+                    {...action}
+                    key={action.id}
+                    numCouncilMembers={numCouncilMembers}
+                    handleDropAction={handleDropAction}
+                    cardIdName={cardIdName}
+                  />
+                )
+              })
             : councilEmptyContainer}
 
           <Pagination itemsCount={actionPendingSignatureLength} listName={listNameMyOngoingActions} />

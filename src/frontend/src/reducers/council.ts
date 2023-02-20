@@ -1,5 +1,5 @@
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
-import { CouncilActions, CouncilMembers, CouncilMaxLength } from '../utils/TypesAndInterfaces/Council'
+import { CouncilAction, CouncilMembers, CouncilMaxLength } from '../utils/TypesAndInterfaces/Council'
 import {
   GET_COUNCIL_STORAGE,
   GET_COUNCIL_PENDING_ACTIONS,
@@ -25,19 +25,21 @@ export type CouncilState = {
   }
   councilMembers: CouncilMembers
   councilActions: {
-    allPendingActions: CouncilActions
-    notMyPendingActions: CouncilActions
-    myPendingActions: CouncilActions
-    allPastActions: CouncilActions
-    myPastActions: CouncilActions
+    allPendingActions: number[]
+    notMyPendingActions: number[]
+    myPendingActions: number[]
+    allPastActions: number[]
+    myPastActions: number[]
+    actionsMapper: Record<number, CouncilAction>
   }
   breakGlassCouncilMembers: CouncilMembers
   breakGlassCouncilActions: {
-    allPendingActions: CouncilActions
-    notMyPendingActions: CouncilActions
-    myPendingActions: CouncilActions
-    allPastActions: CouncilActions
-    myPastActions: CouncilActions
+    allPendingActions: number[]
+    notMyPendingActions: number[]
+    myPendingActions: number[]
+    allPastActions: number[]
+    myPastActions: number[]
+    actionsMapper: Record<number, CouncilAction>
   }
   isStorageLoaded: boolean
   isCouncilMembersLoaded: boolean
@@ -65,6 +67,7 @@ const councilDefaultState: CouncilState = {
     myPendingActions: [],
     allPastActions: [],
     myPastActions: [],
+    actionsMapper: {},
   },
   breakGlassCouncilMembers: [],
   breakGlassCouncilActions: {
@@ -73,6 +76,7 @@ const councilDefaultState: CouncilState = {
     myPendingActions: [],
     allPastActions: [],
     myPastActions: [],
+    actionsMapper: {},
   },
   isStorageLoaded: false,
   isCouncilMembersLoaded: false,
@@ -108,6 +112,10 @@ export function council(state = councilDefaultState, action: Action) {
           allPendingActions: action.councilActions.allPendingActions,
           notMyPendingActions: action.councilActions.notMyPendingActions,
           myPendingActions: action.councilActions.myPendingActions,
+          actionsMapper: {
+            ...state.councilActions.actionsMapper,
+            ...action.councilActions.actionsMapper,
+          },
         },
         isCouncilPendingActionsLoaded: true,
       }
@@ -118,6 +126,10 @@ export function council(state = councilDefaultState, action: Action) {
           ...state.councilActions,
           allPastActions: action.councilActions.allPastActions,
           myPastActions: action.councilActions.myPastActions,
+          actionsMapper: {
+            ...state.councilActions.actionsMapper,
+            ...action.councilActions.actionsMapper,
+          },
         },
         isCouncilPastActionsLoaded: action.isCouncilPastActionsLoaded,
       }
@@ -135,6 +147,10 @@ export function council(state = councilDefaultState, action: Action) {
           allPendingActions: action.breakGlassCouncilActions.allPendingActions,
           notMyPendingActions: action.breakGlassCouncilActions.notMyPendingActions,
           myPendingActions: action.breakGlassCouncilActions.myPendingActions,
+          actionsMapper: {
+            ...state.breakGlassCouncilActions.actionsMapper,
+            ...action.breakGlassCouncilActions.actionsMapper,
+          },
         },
         isBreakGlassCouncilPendingActionsLoaded: true,
       }
@@ -145,6 +161,10 @@ export function council(state = councilDefaultState, action: Action) {
           ...state.breakGlassCouncilActions,
           allPastActions: action.breakGlassCouncilActions.allPastActions,
           myPastActions: action.breakGlassCouncilActions.myPastActions,
+          actionsMapper: {
+            ...state.breakGlassCouncilActions.actionsMapper,
+            ...action.breakGlassCouncilActions.actionsMapper,
+          },
         },
         isBreakGlassCouncilPastActionsLoaded: action.isBreakGlassCouncilPastActionsLoaded,
       }

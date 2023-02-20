@@ -16,13 +16,13 @@ import { convertBytesAddressToAddress } from 'app/App.helpers'
 import { CYAN } from 'app/App.components/TzAddress/TzAddress.constants'
 
 // types
-import { CouncilActions } from 'utils/TypesAndInterfaces/Council'
+import { CouncilAction } from 'utils/TypesAndInterfaces/Council'
 
 // styles
 import { CouncilPendingStyled } from './CouncilPending.style'
 import { AvatarStyle } from '../../../app/App.components/Avatar/Avatar.style'
 
-type Props = CouncilActions[0] & {
+type Props = CouncilAction & {
   numCouncilMembers: number
   councilPendingActionsLength: number
   index: number

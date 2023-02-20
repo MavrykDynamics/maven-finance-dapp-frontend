@@ -17,9 +17,9 @@ import { convertBytesAddressToAddress } from 'app/App.helpers'
 import { CouncilActionStyled } from '../Council.style'
 
 // types
-import { CouncilActions } from 'utils/TypesAndInterfaces/Council'
+import { CouncilAction } from 'utils/TypesAndInterfaces/Council'
 
-type Props = CouncilActions[0] & {
+type Props = CouncilAction & {
   numCouncilMembers: number
   handleDropAction: (arg: number) => void
   cardIdName: string
@@ -61,7 +61,7 @@ export function CouncilOngoingAction(props: Props) {
         </div>
 
         <div className="column">
-          <NewButton className='drop-btn' kind={TRANSPARENT_WITH_BORDER} onClick={() => handleDropAction(id)}>
+          <NewButton className="drop-btn" kind={TRANSPARENT_WITH_BORDER} onClick={() => handleDropAction(id)}>
             <Icon id="navigation-menu_close" />
             Drop Action
           </NewButton>
@@ -132,7 +132,7 @@ export function CouncilOngoingAction(props: Props) {
           )}
 
           <div className="column">
-            <NewButton className='drop-btn' kind={TRANSPARENT_WITH_BORDER} onClick={() => handleDropAction(id)}>
+            <NewButton className="drop-btn" kind={TRANSPARENT_WITH_BORDER} onClick={() => handleDropAction(id)}>
               <Icon id="navigation-menu_close" />
               Drop Action
             </NewButton>
@@ -154,7 +154,7 @@ export function CouncilOngoingAction(props: Props) {
           </div>
 
           <div className="column">
-            <NewButton className='drop-btn' kind={TRANSPARENT_WITH_BORDER} onClick={() => handleDropAction(id)}>
+            <NewButton className="drop-btn" kind={TRANSPARENT_WITH_BORDER} onClick={() => handleDropAction(id)}>
               <Icon id="navigation-menu_close" />
               Drop Action
             </NewButton>
