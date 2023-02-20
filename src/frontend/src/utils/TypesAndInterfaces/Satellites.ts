@@ -15,6 +15,11 @@ export const SatelliteStatusToText = {
 
 export type SatelliteRecordType = ReturnType<typeof normallizeSatellite>
 export type SatelliteVotingsType = ReturnType<typeof getSatelliteVotings>
+export type SatelliteVoteType =
+  | SatelliteVotingsType['satelliteActionVotes'][number]
+  | SatelliteVotingsType['emergencyGovernanceVotes'][number]
+  | SatelliteVotingsType['financialRequestsVotes'][number]
+  | SatelliteVotingsType['proposalVotingHistory'][number]
 
 // TODO: check if i need this
 export type TokenType = 'FA12' | 'FA2' | 'TEZ'

@@ -8,7 +8,6 @@ import { Link } from 'react-router-dom'
 import { Page, PageContent } from 'styles'
 import { InfoBlockWrapper, SatelliteListStyled } from './Satellites.style'
 // types
-import { SatelliteRecord } from 'utils/TypesAndInterfaces/Satellites'
 
 // view
 import SatelliteList from './SatelliteList/SatellitesList.controller'

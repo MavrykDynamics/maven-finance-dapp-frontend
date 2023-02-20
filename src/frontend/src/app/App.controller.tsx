@@ -20,7 +20,7 @@ import { AppStyled } from './App.style'
 
 // actions
 import { toggleSidebarCollapsing } from './App.components/Menu/Menu.actions'
-import { getDelegationStorage } from 'pages/Satellites/Satellites.actions'
+import { getSatellitesStorage } from 'pages/Satellites/Satellites.actions'
 import { getContractAddressesStorage } from 'reducers/actions/contractAddresses.actions'
 import { getFeedsStorage } from 'pages/DataFeeds/DataFeeds.actions'
 import { connect } from './App.components/ConnectWallet/ConnectWallet.actions'
@@ -32,6 +32,7 @@ import {
   getTokensPrices,
   getMTokensStorage,
 } from 'reducers/actions/dipDupActions.actions'
+import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 
 // export const { store, persistor } = configureStore({})
 export const { store } = configureStore({})
@@ -49,13 +50,11 @@ const AppContainer = () => {
     dispatch(toggleSidebarCollapsing(showSidebarOpened))
   }, [showSidebarOpened])
 
-  useEffect(() => {
-    ;(async () => {
-      // Fetching initial data for DAPP
-      await dispatch(getDelegationStorage())
-
-      // common data across the DAPP
+  const { isLoading } = useDataLoader(async () => {
+    try {
+      // Fetching initial&common data for DAPP
       await Promise.all([
+        dispatch(getSatellitesStorage()),
         dispatch(getContractAddressesStorage()),
         dispatch(getDipDupTokensStorage()),
         dispatch(getWhitelistTokensStorage()),
@@ -73,8 +72,8 @@ const AppContainer = () => {
       }
 
       await dispatch(toggleInitialDataLoading(false))
-    })()
-  }, [dispatch])
+    } catch (e) {}
+  }, [])
 
   useEffect(() => {
     dispatch(toggleSidebarCollapsing(showSidebarOpened))

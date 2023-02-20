@@ -1,13 +1,12 @@
-import type { Aggregator_History_Data } from 'utils/generated/graphqlTypes'
 import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
-import { SatelliteRecord } from 'utils/TypesAndInterfaces/Satellites'
+import { SatelliteRecordType } from 'utils/TypesAndInterfaces/Satellites'
 
 type callbackFunction = (arg0: string) => void
 
 // TODO: IDK how to type additional data, maybe revrite logic in future
 export type SatellitesListProps = {
   listTitle?: string
-  items: Array<Feed> | Array<SatelliteRecord>
+  items: Array<Feed> | Array<SatelliteRecordType>
   listType: 'satellites' | 'feeds' | 'oracles' | 'userFeeds'
   name: string
   onClickHandler?: (arg0: string) => void
@@ -17,7 +16,7 @@ export type SatellitesListProps = {
 }
 
 export type SatelliteListItemProps = {
-  satellite: SatelliteRecord
+  satellite: SatelliteRecordType
   delegateCallback: (satelliteAddress: string) => void
   claimRewardsCallback?: () => void
   undelegateCallback: (address: string) => void

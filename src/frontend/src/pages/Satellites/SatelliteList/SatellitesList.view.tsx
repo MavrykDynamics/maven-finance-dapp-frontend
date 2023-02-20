@@ -1,6 +1,5 @@
 // view
 import Pagination from 'pages/FinacialRequests/Pagination/Pagination.view'
-import { SatelliteListItem } from './ListCards/SateliteCard.view'
 import { DataFeedCard } from './ListCards/DataFeedCard.view'
 
 // types
@@ -12,7 +11,6 @@ import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { PAGINATION_SIDE_RIGHT } from 'pages/FinacialRequests/Pagination/pagination.consts'
 import { OracleCard } from './ListCards/DataFeedOracleCard.view'
 import { UserDataFeedCard } from './ListCards/UsersFeedCard.view'
-import { SatelliteRecord } from 'utils/TypesAndInterfaces/Satellites'
 import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
 
 function SatteliteListView({
@@ -34,24 +32,12 @@ function SatteliteListView({
       {items.map((item, idx) => {
         const additionalClassName = idx === 0 ? 'first' : idx === items.length - 1 ? 'last' : ''
         switch (listType) {
-          case 'satellites':
-            return (
-              <SatelliteListItem
-                className={additionalClassName}
-                satellite={item as SatelliteRecord}
-                key={item.address}
-                delegateCallback={additionaldata?.delegateCallback as (arg0: string) => void}
-                undelegateCallback={additionaldata?.undelegateCallback as () => void}
-                userStakedBalance={(additionaldata?.userStakedBalance as number) || 0}
-                satelliteUserIsDelegatedTo={(additionaldata?.satelliteUserIsDelegatedTo as string) || ''}
-              />
-            )
           case 'feeds':
             return <DataFeedCard feed={item as Feed} key={item.address} />
           case 'userFeeds':
             return <UserDataFeedCard feed={item as Feed} key={item.address} />
           case 'oracles':
-            return <OracleCard oracle={item as SatelliteRecord} key={item.address} />
+            return <OracleCard oracle={item} key={item.address} />
           default:
             return null
         }
