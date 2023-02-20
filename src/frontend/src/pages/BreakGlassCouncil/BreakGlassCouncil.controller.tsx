@@ -11,7 +11,6 @@ import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 
 // helpers
-import { COUNCIL_LIST_NAME } from 'pages/FinacialRequests/Pagination/pagination.consts'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 
 // actions
@@ -23,6 +22,7 @@ import {
   signAction,
 } from './BreakGlassCouncil.actions'
 import { getCouncilStorage } from 'pages/Council/Council.actions'
+import { getBreakGlassStorage } from 'pages/BreakGlass/BreakGlass.actions'
 
 // types
 import { CouncilMaxLength } from 'utils/TypesAndInterfaces/Council'
@@ -43,9 +43,9 @@ export function BreakGlassCouncil() {
   const dispatch = useDispatch()
 
   const { accountPkh } = useSelector((state: State) => state.wallet)
+  const { glassBroken } = useSelector((state: State) => state.breakGlass)
   const {
-    councilMaxLength,
-    glassBroken,
+    config: { councilMaxLength },
     breakGlassCouncilMembers,
     breakGlassCouncilActions: {
       allPendingActions,
@@ -54,6 +54,10 @@ export function BreakGlassCouncil() {
       allPastActions,
       myPastActions,
     },
+    isStorageLoaded,
+    isBreakGlassCouncilMembersLoaded,
+    isBreakGlassCouncilPendingActionsLoaded,
+    isBreakGlassCouncilPastActionsLoaded,
   } = useSelector((state: State) => state.council)
 
   const handleSignAction = (id: number) => {
@@ -66,19 +70,28 @@ export function BreakGlassCouncil() {
 
   const { isLoading } = useDataLoader(async () => {
     try {
-      await Promise.all([
-        dispatch(getCouncilStorage()),
-        dispatch(getBreakGlassCouncilMembers()),
-        dispatch(getBreakGlassCouncilPastActions()),
-      ])
+      await Promise.all(
+        [
+          dispatch(getBreakGlassStorage()),
+          !isStorageLoaded && dispatch(getCouncilStorage()),
+          !isBreakGlassCouncilMembersLoaded && dispatch(getBreakGlassCouncilMembers()),
+          !isBreakGlassCouncilPastActionsLoaded && dispatch(getBreakGlassCouncilPastActions()),
+        ].filter(Boolean),
+      )
     } catch (e) {}
   }, [])
 
+  // getting data after auth
   useDataLoader(async () => {
     if (!accountPkh) return
 
     try {
-      await Promise.all([dispatch(getBreakGlassCouncilPendingActions()), dispatch(getBreakGlassCouncilPastActions())])
+      await Promise.all(
+        [
+          !isBreakGlassCouncilPendingActionsLoaded && dispatch(getBreakGlassCouncilPendingActions()),
+          !isBreakGlassCouncilPastActionsLoaded && dispatch(getBreakGlassCouncilPastActions()),
+        ].filter(Boolean),
+      )
     } catch (e) {}
   }, [accountPkh])
 
@@ -98,7 +111,6 @@ export function BreakGlassCouncil() {
           maxLength={councilMaxLength}
           glassBroken={glassBroken}
           showPropagateBreakGlass
-          paginationListName={COUNCIL_LIST_NAME}
           titles={titles}
           // pending actions
           allPendingActions={allPendingActions}

@@ -44,12 +44,16 @@ export const getBreakGlassCouncilPendingActions = () => async (dispatch: AppDisp
     const breakGlassCouncil = storage?.break_glass_action || []
 
     const allPendingActions = normalizeCouncilActions(breakGlassCouncil)
-    const notMyPendingActions = normalizeCouncilActions(breakGlassCouncil, {
-      filterWithoutAddress: accountPkh,
-    })
-    const myPendingActions = normalizeCouncilActions(breakGlassCouncil, {
-      filterByAddress: accountPkh,
-    })
+    const notMyPendingActions = accountPkh
+      ? normalizeCouncilActions(breakGlassCouncil, {
+          filterWithoutAddress: accountPkh,
+        })
+      : []
+    const myPendingActions = accountPkh
+      ? normalizeCouncilActions(breakGlassCouncil, {
+          filterByAddress: accountPkh,
+        })
+      : []
 
     await dispatch({
       type: GET_BREAK_GLASS_COUNCIL_PENDING_ACTIONS,
@@ -82,7 +86,7 @@ export const getBreakGlassCouncilPastActions = () => async (dispatch: AppDispatc
 
     const breakGlassCouncil = storage?.break_glass_action || []
     const allPastActions = normalizeCouncilActions(breakGlassCouncil)
-    const myPastActions = normalizeCouncilActions(breakGlassCouncil, { filterByAddress: accountPkh })
+    const myPastActions = accountPkh ? normalizeCouncilActions(breakGlassCouncil, { filterByAddress: accountPkh }) : []
 
     await dispatch({
       type: GET_BREAK_GLASS_COUNCIL_PAST_ACTIONS,
@@ -90,6 +94,10 @@ export const getBreakGlassCouncilPastActions = () => async (dispatch: AppDispatc
         allPastActions,
         myPastActions,
       },
+      // TODO: temporary solution
+      // it needs to now, because after authorization the user will not update the data, and will 
+      // not see the section with its actions because you need to filter the data at address.
+      isBreakGlassCouncilPastActionsLoaded: Boolean(accountPkh),
     })
   } catch (error) {
     if (error instanceof Error) {

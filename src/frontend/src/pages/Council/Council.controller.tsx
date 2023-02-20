@@ -7,12 +7,10 @@ import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.contr
 import { CouncilView } from 'pages/Council/Council.view'
 import { CouncilForm, actions } from './CouncilForms/CouncilForm.controller'
 import { CouncilFormUpdateCouncilMemberInfo } from './CouncilForms/CouncilFormUpdateCouncilMemberInfo.view'
-import { EmptyContainer } from 'app/App.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 
 // helpers
-import { COUNCIL_LIST_NAME } from 'pages/FinacialRequests/Pagination/pagination.consts'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 
 // actions
@@ -26,15 +24,7 @@ import {
 } from './Council.actions'
 
 // types
-import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 import { CouncilMaxLength } from 'utils/TypesAndInterfaces/Council'
-
-export const councilEmptyContainer = (
-  <EmptyContainer>
-    <img src="/images/not-found.svg" alt=" No proposals to show" />
-    <figcaption> No data to show</figcaption>
-  </EmptyContainer>
-)
 
 export type QueryParameters = typeof queryParameters
 
@@ -43,19 +33,6 @@ const queryParameters = {
   review: '/review',
   pendingReview: '/pending-review',
 }
-
-export const councilTabsList: TabItem[] = [
-  {
-    text: 'My Ongoing Actions',
-    id: 1,
-    active: true,
-  },
-  {
-    text: 'My Past Actions',
-    id: 2,
-    active: false,
-  },
-]
 
 const titles = {
   membersName: 'Council Members',
@@ -68,9 +45,13 @@ export const Council = () => {
 
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const {
-    councilMaxLength,
+    config: { councilMaxLength },
     councilMembers,
     councilActions: { allPendingActions, notMyPendingActions, myPendingActions, allPastActions, myPastActions },
+    isStorageLoaded,
+    isCouncilMembersLoaded,
+    isCouncilPendingActionsLoaded,
+    isCouncilPastActionsLoaded,
   } = useSelector((state: State) => state.council)
 
   const handleSignAction = (id: number) => {
@@ -83,11 +64,13 @@ export const Council = () => {
 
   const { isLoading } = useDataLoader(async () => {
     try {
-      await Promise.all([
-        dispatch(getCouncilStorage()),
-        dispatch(getCouncilMembers()),
-        dispatch(getCouncilPastActions()),
-      ])
+      await Promise.all(
+        [
+          !isStorageLoaded && dispatch(getCouncilStorage()),
+          !isCouncilMembersLoaded && dispatch(getCouncilMembers()),
+          !isCouncilPastActionsLoaded && dispatch(getCouncilPastActions()),
+        ].filter(Boolean),
+      )
     } catch (e) {}
   }, [])
 
@@ -95,7 +78,12 @@ export const Council = () => {
     if (!accountPkh) return
 
     try {
-      await Promise.all([dispatch(getCouncilPendingActions()), dispatch(getCouncilPastActions())])
+      await Promise.all(
+        [
+          !isCouncilPendingActionsLoaded && dispatch(getCouncilPendingActions()),
+          !isCouncilPastActionsLoaded && dispatch(getCouncilPastActions()),
+        ].filter(Boolean),
+      )
     } catch (e) {}
   }, [accountPkh])
 
@@ -113,7 +101,6 @@ export const Council = () => {
           // general info
           queryParameters={queryParameters}
           maxLength={councilMaxLength}
-          paginationListName={COUNCIL_LIST_NAME}
           titles={titles}
           // pending actions
           allPendingActions={allPendingActions}

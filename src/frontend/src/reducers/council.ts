@@ -20,7 +20,9 @@ import {
 } from 'app/App.components/Input/Input.constants'
 
 export type CouncilState = {
-  councilMaxLength: CouncilMaxLength
+  config: {
+    councilMaxLength: CouncilMaxLength
+  }
   councilMembers: CouncilMembers
   councilActions: {
     allPendingActions: CouncilActions
@@ -29,7 +31,6 @@ export type CouncilState = {
     allPastActions: CouncilActions
     myPastActions: CouncilActions
   }
-  glassBroken: boolean
   breakGlassCouncilMembers: CouncilMembers
   breakGlassCouncilActions: {
     allPendingActions: CouncilActions
@@ -38,15 +39,24 @@ export type CouncilState = {
     allPastActions: CouncilActions
     myPastActions: CouncilActions
   }
+  isStorageLoaded: boolean
+  isCouncilMembersLoaded: boolean
+  isCouncilPendingActionsLoaded: boolean
+  isCouncilPastActionsLoaded: boolean
+  isBreakGlassCouncilMembersLoaded: boolean
+  isBreakGlassCouncilPendingActionsLoaded: boolean
+  isBreakGlassCouncilPastActionsLoaded: boolean
 }
 
 const councilDefaultState: CouncilState = {
-  councilMaxLength: {
-    councilMemberImageMaxLength: defaultCouncilMemberImageMaxLength,
-    councilMemberNameMaxLength: defaultCouncilMemberNameMaxLength,
-    councilMemberWebsiteMaxLength: defaultCouncilMemberWebsiteMaxLength,
-    requestPurposeMaxLength: defaultRequestPurposeMaxLength,
-    requestTokenNameMaxLength: defaultRequestTokenNameMaxLength,
+  config: {
+    councilMaxLength: {
+      councilMemberImageMaxLength: defaultCouncilMemberImageMaxLength,
+      councilMemberNameMaxLength: defaultCouncilMemberNameMaxLength,
+      councilMemberWebsiteMaxLength: defaultCouncilMemberWebsiteMaxLength,
+      requestPurposeMaxLength: defaultRequestPurposeMaxLength,
+      requestTokenNameMaxLength: defaultRequestTokenNameMaxLength,
+    },
   },
   councilMembers: [],
   councilActions: {
@@ -56,7 +66,6 @@ const councilDefaultState: CouncilState = {
     allPastActions: [],
     myPastActions: [],
   },
-  glassBroken: false,
   breakGlassCouncilMembers: [],
   breakGlassCouncilActions: {
     allPendingActions: [],
@@ -65,6 +74,13 @@ const councilDefaultState: CouncilState = {
     allPastActions: [],
     myPastActions: [],
   },
+  isStorageLoaded: false,
+  isCouncilMembersLoaded: false,
+  isCouncilPendingActionsLoaded: false,
+  isCouncilPastActionsLoaded: false,
+  isBreakGlassCouncilMembersLoaded: false,
+  isBreakGlassCouncilPendingActionsLoaded: false,
+  isBreakGlassCouncilPastActionsLoaded: false,
 }
 
 export function council(state = councilDefaultState, action: Action) {
@@ -72,13 +88,17 @@ export function council(state = councilDefaultState, action: Action) {
     case GET_COUNCIL_STORAGE:
       return {
         ...state,
-        councilMaxLength: action.councilMaxLength,
-        glassBroken: action.glassBroken,
+        config: {
+          ...state.config,
+          councilMaxLength: action.councilMaxLength,
+        },
+        isStorageLoaded: true,
       }
     case GET_COUNCIL_MEMBERS:
       return {
         ...state,
         councilMembers: action.councilMembers,
+        isCouncilMembersLoaded: true,
       }
     case GET_COUNCIL_PENDING_ACTIONS:
       return {
@@ -89,6 +109,7 @@ export function council(state = councilDefaultState, action: Action) {
           notMyPendingActions: action.councilActions.notMyPendingActions,
           myPendingActions: action.councilActions.myPendingActions,
         },
+        isCouncilPendingActionsLoaded: true,
       }
     case GET_COUNCIL_PAST_ACTIONS:
       return {
@@ -98,11 +119,13 @@ export function council(state = councilDefaultState, action: Action) {
           allPastActions: action.councilActions.allPastActions,
           myPastActions: action.councilActions.myPastActions,
         },
+        isCouncilPastActionsLoaded: action.isCouncilPastActionsLoaded,
       }
     case GET_BREAK_GLASS_COUNCIL_MEMBERS:
       return {
         ...state,
         breakGlassCouncilMembers: action.breakGlassCouncilMembers,
+        isBreakGlassCouncilMembersLoaded: true,
       }
     case GET_BREAK_GLASS_COUNCIL_PENDING_ACTIONS:
       return {
@@ -113,6 +136,7 @@ export function council(state = councilDefaultState, action: Action) {
           notMyPendingActions: action.breakGlassCouncilActions.notMyPendingActions,
           myPendingActions: action.breakGlassCouncilActions.myPendingActions,
         },
+        isBreakGlassCouncilPendingActionsLoaded: true,
       }
     case GET_BREAK_GLASS_COUNCIL_PAST_ACTIONS:
       return {
@@ -122,6 +146,7 @@ export function council(state = councilDefaultState, action: Action) {
           allPastActions: action.breakGlassCouncilActions.allPastActions,
           myPastActions: action.breakGlassCouncilActions.myPastActions,
         },
+        isBreakGlassCouncilPastActionsLoaded: action.isBreakGlassCouncilPastActionsLoaded,
       }
     default:
       return state

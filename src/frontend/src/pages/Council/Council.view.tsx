@@ -14,8 +14,8 @@ import Pagination from 'pages/FinacialRequests/Pagination/Pagination.view'
 import { CouncilPending } from './CouncilPending/CouncilPending.controller'
 import { MyCouncilActions } from './CouncilActions/MyCouncilActions.view'
 import Icon from 'app/App.components/Icon/Icon.view'
-import { councilEmptyContainer } from 'pages/Council/Council.controller'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
+import { EmptyContainer } from 'app/App.style'
 
 // helpers
 import {
@@ -27,17 +27,42 @@ import { calculateSlicePositions } from 'pages/FinacialRequests/Pagination/pagin
 import { getPageNumber } from 'pages/FinacialRequests/FinancialRequests.helpers'
 import { getSeparateSnakeCase } from 'utils/parse'
 import { memberIsFirstOfList } from 'pages/Council/Council.helpers'
-import { scrollUpPage } from 'utils/scrollUpPage'
-import { councilTabsList } from 'pages/Council/Council.controller'
+import {
+  COUNCIL_ALL_PAST_ACTIONS_LIST_NAME,
+  COUNCIL_ALL_PENDING_ACTIONS_LIST_NAME,
+  COUNCIL_MY_PAST_ACTIONS_LIST_NAME,
+  COUNCIL_MY_PENDING_ACTIONS_LIST_NAME,
+} from 'pages/FinacialRequests/Pagination/pagination.consts'
 
 // styles
 import { CouncilStyled, ReviewCard, AvaliableActions, PropagateBreakGlassCouncilCard } from './Council.style'
 
 // types
 import { CouncilMaxLength, CouncilActions, CouncilMembers } from 'utils/TypesAndInterfaces/Council'
+import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 
 // actions
 import { propagateBreakGlass } from '../BreakGlassCouncil/BreakGlassCouncil.actions'
+
+export const councilEmptyContainer = (
+  <EmptyContainer>
+    <img src="/images/not-found.svg" alt=" No proposals to show" />
+    <figcaption> No data to show</figcaption>
+  </EmptyContainer>
+)
+
+export const councilTabsList: TabItem[] = [
+  {
+    text: 'My Ongoing Actions',
+    id: 1,
+    active: true,
+  },
+  {
+    text: 'My Past Actions',
+    id: 2,
+    active: false,
+  },
+]
 
 type Props = {
   queryParameters: {
@@ -48,7 +73,6 @@ type Props = {
   maxLength: CouncilMaxLength
   glassBroken?: boolean
   showPropagateBreakGlass?: boolean
-  paginationListName: string
   titles: {
     membersName: string
     cardIdName: string
@@ -77,7 +101,6 @@ export function CouncilView({
   maxLength,
   glassBroken,
   showPropagateBreakGlass,
-  paginationListName,
   getFormComponent,
   getFormUpdateMemberInfo,
   titles,
@@ -120,15 +143,11 @@ export function CouncilView({
   const sortedCouncilMembers = memberIsFirstOfList(members, accountPkh)
   const { tabId } = useParams<{ tabId: string }>()
   const isReviewPage = tabId === 'review'
+  const isPendingRewiew = tabId === 'pending-review'
+  const isMyPendingActionsTab = activeActionTab === councilTabsList[0].text
 
   const isCouncilMember = Boolean(members.find((item) => item.userId === accountPkh)?.id)
   const displayPendingSignature = Boolean(!tabId && isCouncilMember && notMyPendingActions.length)
-
-  const handleClickReview = (review: string) => {
-    history.replace(`${queryParameters.pathname}${review}`)
-    setActiveActionTab(councilTabsList[0].text)
-    scrollUpPage()
-  }
 
   const handleOpenleModal = () => {
     setIsUpdateCouncilMemberInfo(true)
@@ -145,27 +164,37 @@ export function CouncilView({
     setIsUpdateCouncilMemberInfo(false)
   }
 
-  const currentPage = getPageNumber(search, paginationListName)
+  const getCurrentListName = () => {
+    if (isReviewPage) {
+      return COUNCIL_ALL_PAST_ACTIONS_LIST_NAME
+    } else if (isPendingRewiew) {
+      return COUNCIL_ALL_PENDING_ACTIONS_LIST_NAME
+    }
+
+    return isMyPendingActionsTab ? COUNCIL_MY_PENDING_ACTIONS_LIST_NAME : COUNCIL_MY_PAST_ACTIONS_LIST_NAME
+  }
+
+  const currentPage = getPageNumber(search, getCurrentListName())
 
   const paginatedAllPendingActions = useMemo(() => {
-    const [from, to] = calculateSlicePositions(currentPage, paginationListName)
+    const [from, to] = calculateSlicePositions(currentPage, COUNCIL_ALL_PENDING_ACTIONS_LIST_NAME)
     return allPendingActions?.slice(from, to)
-  }, [currentPage, paginationListName, allPendingActions])
-
-  const paginatedMyPendingActions = useMemo(() => {
-    const [from, to] = calculateSlicePositions(currentPage, paginationListName)
-    return myPendingActions?.slice(from, to)
-  }, [currentPage, myPendingActions, paginationListName])
-
-  const paginatedMyPastActions = useMemo(() => {
-    const [from, to] = calculateSlicePositions(currentPage, paginationListName)
-    return myPastActions?.slice(from, to)
-  }, [currentPage, myPastActions, paginationListName])
+  }, [currentPage, allPendingActions])
 
   const paginatedAllPastActions = useMemo(() => {
-    const [from, to] = calculateSlicePositions(currentPage, paginationListName)
+    const [from, to] = calculateSlicePositions(currentPage, COUNCIL_ALL_PAST_ACTIONS_LIST_NAME)
     return allPastActions?.slice(from, to)
-  }, [currentPage, paginationListName, allPastActions])
+  }, [currentPage, allPastActions])
+
+  const paginatedMyPendingActions = useMemo(() => {
+    const [from, to] = calculateSlicePositions(currentPage, COUNCIL_MY_PENDING_ACTIONS_LIST_NAME)
+    return myPendingActions?.slice(from, to)
+  }, [currentPage, myPendingActions])
+
+  const paginatedMyPastActions = useMemo(() => {
+    const [from, to] = calculateSlicePositions(currentPage, COUNCIL_MY_PAST_ACTIONS_LIST_NAME)
+    return myPastActions?.slice(from, to)
+  }, [currentPage, myPastActions])
 
   const handleClickPropagateBreakGlass = () => {
     dispatch(propagateBreakGlass())
@@ -268,7 +297,7 @@ export function CouncilView({
 
               <Pagination
                 itemsCount={isReviewPage ? allPastActions.length : allPastActions.length}
-                listName={paginationListName}
+                listName={isReviewPage ? COUNCIL_ALL_PAST_ACTIONS_LIST_NAME : COUNCIL_ALL_PENDING_ACTIONS_LIST_NAME}
               />
             </>
           ) : (
@@ -300,8 +329,8 @@ export function CouncilView({
                 setActiveActionTab={setActiveActionTab}
                 tabsList={councilTabsList}
                 handleDropAction={handleDropAction}
-                listNameMyPastActions={paginationListName}
-                listNameMyOngoingActions={paginationListName}
+                listNameMyPastActions={COUNCIL_MY_PAST_ACTIONS_LIST_NAME}
+                listNameMyOngoingActions={COUNCIL_MY_PENDING_ACTIONS_LIST_NAME}
                 cardIdName={titles.cardIdName}
               />
             </>
@@ -311,12 +340,13 @@ export function CouncilView({
         <div className="right-block">
           {!tabId && (
             <ReviewCard displayPendingSignature={displayPendingSignature}>
-              <NewButton kind={ACTION_SECONDARY} onClick={() => handleClickReview(queryParameters.review)}>
-                Review Past Actions
-              </NewButton>
-              <NewButton kind={ACTION_SECONDARY} onClick={() => handleClickReview(queryParameters.pendingReview)}>
-                Review Pending Actions
-              </NewButton>
+              <Link to={`${queryParameters.pathname}${queryParameters.review}`}>
+                <NewButton kind={ACTION_SECONDARY}>Review Past Actions</NewButton>
+              </Link>
+
+              <Link to={`${queryParameters.pathname}${queryParameters.pendingReview}`}>
+                <NewButton kind={ACTION_SECONDARY}>Review Pending Actions</NewButton>
+              </Link>
             </ReviewCard>
           )}
 

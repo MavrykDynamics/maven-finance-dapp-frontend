@@ -38,7 +38,7 @@ export function normalizeCouncilActions(storage: CouncilActionGraphQL[], options
   return list.map((item) => {
     return {
       actionType: item.action_type,
-      councilId: item.council_id || item.break_glass_id,
+      councilId: item.council_id ?? item.break_glass_id,
       executed: item.executed,
       id: item.id,
       initiatorId: item.initiator_id,
@@ -65,11 +65,11 @@ export function normalizeCouncilMembers(storage: CouncilMemberGraphQL[]) {
 
 export const normalizeMaxLength = (storage: CouncilGraphQL) => {
   return {
-    councilMemberImageMaxLength: storage?.council_member_image_max_length || defaultCouncilMemberImageMaxLength,
-    councilMemberNameMaxLength: storage?.council_member_name_max_length || defaultCouncilMemberNameMaxLength,
-    councilMemberWebsiteMaxLength: storage?.council_member_website_max_length || defaultCouncilMemberWebsiteMaxLength,
-    requestPurposeMaxLength: storage?.request_purpose_max_length || defaultRequestPurposeMaxLength,
-    requestTokenNameMaxLength: storage?.request_token_name_max_length || defaultRequestTokenNameMaxLength,
+    councilMemberImageMaxLength: storage?.council_member_image_max_length ?? defaultCouncilMemberImageMaxLength,
+    councilMemberNameMaxLength: storage?.council_member_name_max_length ?? defaultCouncilMemberNameMaxLength,
+    councilMemberWebsiteMaxLength: storage?.council_member_website_max_length ?? defaultCouncilMemberWebsiteMaxLength,
+    requestPurposeMaxLength: storage?.request_purpose_max_length ?? defaultRequestPurposeMaxLength,
+    requestTokenNameMaxLength: storage?.request_token_name_max_length ?? defaultRequestTokenNameMaxLength,
   }
 }
 

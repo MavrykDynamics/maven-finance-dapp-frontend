@@ -39,13 +39,11 @@ export const getCouncilStorage = () => async (dispatch: AppDispatch, getState: G
     )
 
     const council = storage?.council[0]
-    const glassBroken = storage?.break_glass[0]?.glass_broken
     const councilMaxLength = normalizeMaxLength(council)
 
     dispatch({
       type: GET_COUNCIL_STORAGE,
       councilMaxLength,
-      glassBroken,
     })
   } catch (error) {
     if (error instanceof Error) {
@@ -71,8 +69,8 @@ export const getCouncilPendingActions = () => async (dispatch: AppDispatch, getS
     const council = storage?.council_action || []
 
     const allPendingActions = normalizeCouncilActions(council)
-    const notMyPendingActions = normalizeCouncilActions(council, { filterWithoutAddress: accountPkh })
-    const myPendingActions = normalizeCouncilActions(council, { filterByAddress: accountPkh })
+    const notMyPendingActions = accountPkh ? normalizeCouncilActions(council, { filterWithoutAddress: accountPkh }) : []
+    const myPendingActions = accountPkh ? normalizeCouncilActions(council, { filterByAddress: accountPkh }) : []
 
     dispatch({
       type: GET_COUNCIL_PENDING_ACTIONS,
@@ -106,7 +104,7 @@ export const getCouncilPastActions = () => async (dispatch: AppDispatch, getStat
     const council = storage?.council_action || []
 
     const allPastActions = normalizeCouncilActions(council)
-    const myPastActions = normalizeCouncilActions(council, { filterByAddress: accountPkh })
+    const myPastActions = accountPkh ? normalizeCouncilActions(council, { filterByAddress: accountPkh }) : []
 
     dispatch({
       type: GET_COUNCIL_PAST_ACTIONS,
@@ -114,6 +112,10 @@ export const getCouncilPastActions = () => async (dispatch: AppDispatch, getStat
         allPastActions,
         myPastActions,
       },
+      // TODO: temporary solution
+      // it needs to now, because after authorization the user will not update the data, and will
+      // not see the section with its actions because you need to filter the data at address.
+      isCouncilPastActionsLoaded: Boolean(accountPkh),
     })
   } catch (error) {
     if (error instanceof Error) {

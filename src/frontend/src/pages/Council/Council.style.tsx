@@ -70,6 +70,7 @@ export const ReviewCard = styled(Card)<{
   height: 201px;
 
   button {
+    width: 100%;
     white-space: nowrap;
   }
 
