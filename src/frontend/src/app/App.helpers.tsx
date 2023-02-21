@@ -57,21 +57,32 @@ export function normalizeMTokens(storage: { m_token: M_Token }) {
 }
 
 export function convertBytesAddressToAddress(addressInBytes: string): string {
-  const addressType: MichelsonType = {
-    prim: 'address',
+  try {
+    const addressType: MichelsonType = {
+      prim: 'address',
+    }
+    const formattedBytes = { bytes: addressInBytes }
+    const unpackedBytes = unpackDataBytes(formattedBytes, addressType)
+    const jsonString = JSON.parse(JSON.stringify(unpackedBytes))
+    return jsonString['string']
+  } catch (e) {
+    console.log('convertBytesAddressToAddress', e)
+    return ''
   }
-  const formattedBytes = { bytes: addressInBytes }
-  const unpackedBytes = unpackDataBytes(formattedBytes, addressType)
-  const jsonString = JSON.parse(JSON.stringify(unpackedBytes))
-  return jsonString['string']
 }
+
 export function convertBytesStringToText(textInBytes: string): string {
-  const stringType: MichelsonType = {
-    prim: 'string',
+  try {
+    const stringType: MichelsonType = {
+      prim: 'string',
+    }
+    const formattedBytes = { bytes: textInBytes }
+    // @ts-ignore
+    const unpackedBytes = unpackDataBytes(formattedBytes, stringType)
+    const jsonString = JSON.parse(JSON.stringify(unpackedBytes))
+    return jsonString['string']
+  } catch (e) {
+    console.log(convertBytesStringToText, e)
+    return ''
   }
-  const formattedBytes = { bytes: textInBytes }
-  // @ts-ignore
-  const unpackedBytes = unpackDataBytes(formattedBytes, stringType)
-  const jsonString = JSON.parse(JSON.stringify(unpackedBytes))
-  return jsonString['string']
 }
