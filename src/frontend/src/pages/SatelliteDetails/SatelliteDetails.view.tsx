@@ -11,7 +11,7 @@ import type {
 // view
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
 import { SatelliteRecord } from '../../utils/TypesAndInterfaces/Delegation'
-import SatellitePagination from '../Satellites/SatellitePagination/SatellitePagination.view'
+import SatellitePagination from './SatellitePagination/SatellitePagination.view'
 import SatellitesSideBar from 'pages/Satellites/SatellitesSideBar/SatellitesSideBar.controller'
 
 // style

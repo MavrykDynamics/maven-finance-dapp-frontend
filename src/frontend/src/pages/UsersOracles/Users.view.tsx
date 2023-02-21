@@ -1,5 +1,5 @@
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
-import { DataFeedsTitle, DataFeedSubTitleText } from 'pages/DataFeeds/details/DataFeedsDetails.style'
+import { DataFeedsTitle, DataFeedSubTitleText } from 'pages/DataFeedsDetails/DataFeedsDetails.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { Link } from 'react-router-dom'
 import { Page } from 'styles'

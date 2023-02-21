@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux'
 import { State } from 'reducers'
 
 import { DataFeeds } from 'pages/DataFeeds/DataFeeds.controller'
-import DataFeedDetails from 'pages/DataFeeds/details/DataFeedsDetails.controler'
+import DataFeedDetails from 'pages/DataFeedsDetails/DataFeedsDetails.controler'
 import { FinancialRequests } from 'pages/FinacialRequests/FinancialRequests.controller'
 import SatelliteNodes from 'pages/SatelliteNodes/SatelliteNodes.controller'
 import Satellites from 'pages/Satellites/Satellites.controller'

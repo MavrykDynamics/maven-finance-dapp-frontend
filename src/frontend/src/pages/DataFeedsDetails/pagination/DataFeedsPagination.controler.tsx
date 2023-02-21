@@ -8,7 +8,7 @@ import { State } from 'reducers'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 
 // style
-import { SatellitePaginationStyled } from 'pages/Satellites/SatellitePagination/SatellitePagination.style'
+import { SatellitePaginationStyled } from 'pages/SatelliteDetails/SatellitePagination/SatellitePagination.style'
 import NewButton from 'app/App.components/Button/NewButton.controller'
 import { TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
 
