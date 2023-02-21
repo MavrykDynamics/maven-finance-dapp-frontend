@@ -239,7 +239,7 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
 
         {showDelegateBtn && (
           <div className="centering-wrapper">
-            <NewButton onClick={handleDelegate}>
+            <NewButton className='pulse' onClick={handleDelegate}>
               <Icon id="satellites" />
               Delegate
             </NewButton>
