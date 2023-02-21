@@ -10,6 +10,7 @@ type DoormanStatsPropsType = {
   MVK_exchangeRate: number
   maximumTotalSupply: number
   totalStakedMvk: number
+  totalSupply: number
   doormanAddress: string
   mvkTokenAddress: string
 }
@@ -18,6 +19,7 @@ export const DoormanStats = ({
   MVK_exchangeRate,
   maximumTotalSupply,
   totalStakedMvk,
+  totalSupply,
   doormanAddress,
   mvkTokenAddress,
 }: DoormanStatsPropsType) => {
@@ -101,7 +103,7 @@ export const DoormanStats = ({
         <div>
           <h4>Total Circulating</h4>
           <var>
-            <CommaNumber value={maximumTotalSupply} endingText={'MVK'} />
+            <CommaNumber value={totalSupply} endingText={'MVK'} />
           </var>
         </div>
 
