@@ -11,8 +11,7 @@
     "cypress:test": "cypress run -s 'cypress/integration/**/*-spec.js'",
     "import-contracts": "rm -Rf src/deployments && cp -R ../contracts/deployments src/deployments",
     "open-explorer": "open https://better-call.dev/hangzhou2net/KT1N4WXRdpxmqKVuukhQXX5kgc6JwJwyJrVH/",
-    "codegen": "graphql-codegen --config codegen.yml",
-    "tsc": "tsc"
+    "codegen": "graphql-codegen --config codegen.yml"
   },
   "dependencies": {
     "@airgap/beacon-sdk": "^3.3.0",
