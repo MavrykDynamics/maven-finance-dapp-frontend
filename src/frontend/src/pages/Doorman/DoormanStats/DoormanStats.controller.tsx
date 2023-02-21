@@ -19,13 +19,14 @@ export const DoormanStats = ({
   MVK_exchangeRate,
   maximumTotalSupply,
   totalStakedMvk,
+  totalSupply,
   doormanAddress,
   mvkTokenAddress,
   totalSupply,
 }: DoormanStatsPropsType) => {
-  const mli = calcMLI(maximumTotalSupply, totalStakedMvk)
-  const fee = calcExitFee(maximumTotalSupply, totalStakedMvk)
-  const marketCapValue = MVK_exchangeRate ? MVK_exchangeRate * maximumTotalSupply : 0
+  const mli = calcMLI(totalSupply, totalStakedMvk)
+  const fee = calcExitFee(totalSupply, totalStakedMvk)
+  const marketCapValue = MVK_exchangeRate ? MVK_exchangeRate * totalSupply : 0
 
   return (
     <DoormanStatsStyled>

@@ -1,11 +1,12 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react'
 
 // components
-import { Button } from 'app/App.components/SettingsPopup/SettingsPopup.style'
+import NewButton from 'app/App.components/Button/NewButton.controller'
 import { TzAddress } from '../../../app/App.components/TzAddress/TzAddress.view'
+import Icon from 'app/App.components/Icon/Icon.view'
 
 // helpers
-import { ACTION_SECONDARY } from 'app/App.components/Button/Button.constants'
+import { TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
 import { parseDate } from 'utils/time'
 import { getSeparateCamelCase } from '../../../utils/parse'
 import { scrollToFullView } from 'utils/scrollToFullView'
@@ -16,23 +17,19 @@ import { convertBytesAddressToAddress } from 'app/App.helpers'
 import { CouncilActionStyled } from '../Council.style'
 
 // types
-import { BreakGlassActions } from 'utils/TypesAndInterfaces/BreakGlass'
-import { CouncilActions } from 'utils/TypesAndInterfaces/Council'
+import { CouncilAction } from 'utils/TypesAndInterfaces/Council'
 
-export type CouncilPageType = 'council' | 'breakGlassCouncil'
-
-type Props = (BreakGlassActions[0] | CouncilActions[0]) & {
+type Props = CouncilAction & {
   numCouncilMembers: number
   handleDropAction: (arg: number) => void
-  pageType: CouncilPageType
+  cardIdName: string
 }
 
 export function CouncilOngoingAction(props: Props) {
-  const { startDatetime, actionType, signersCount, numCouncilMembers, id, parameters, handleDropAction, pageType } =
+  const { startDatetime, actionType, signersCount, numCouncilMembers, id, parameters, handleDropAction, cardIdName } =
     props
   const [isOpen, setIsOpen] = useState(false)
   const ref = useRef<HTMLDivElement | null>(null)
-  const isCouncilPage = pageType === 'council'
 
   const handleClickCard = () => {
     setIsOpen(!isOpen)
@@ -59,18 +56,15 @@ export function CouncilOngoingAction(props: Props) {
     <>
       <div className="row two-columns">
         <div className="column">
-          <div className="column-name">{isCouncilPage ? 'Council action ID' : 'Break Glass Action ID'}</div>
+          <div className="column-name">{cardIdName}</div>
           <div className="column-value">{id}</div>
         </div>
 
         <div className="column">
-          <Button
-            className="drop-btn"
-            icon="close-stroke"
-            text="Drop Action"
-            kind={ACTION_SECONDARY}
-            onClick={() => handleDropAction(id)}
-          />
+          <NewButton className="drop-btn" kind={TRANSPARENT_WITH_BORDER} onClick={() => handleDropAction(id)}>
+            <Icon id="navigation-menu_close" />
+            Drop Action
+          </NewButton>
         </div>
       </div>
     </>
@@ -138,13 +132,10 @@ export function CouncilOngoingAction(props: Props) {
           )}
 
           <div className="column">
-            <Button
-              className="drop-btn"
-              icon="close-stroke"
-              text="Drop Action"
-              kind={ACTION_SECONDARY}
-              onClick={() => handleDropAction(id)}
-            />
+            <NewButton className="drop-btn" kind={TRANSPARENT_WITH_BORDER} onClick={() => handleDropAction(id)}>
+              <Icon id="navigation-menu_close" />
+              Drop Action
+            </NewButton>
           </div>
         </div>
       </>
@@ -163,13 +154,10 @@ export function CouncilOngoingAction(props: Props) {
           </div>
 
           <div className="column">
-            <Button
-              className="drop-btn"
-              icon="close-stroke"
-              text="Drop Action"
-              kind={ACTION_SECONDARY}
-              onClick={() => handleDropAction(id)}
-            />
+            <NewButton className="drop-btn" kind={TRANSPARENT_WITH_BORDER} onClick={() => handleDropAction(id)}>
+              <Icon id="navigation-menu_close" />
+              Drop Action
+            </NewButton>
           </div>
         </div>
       </>

@@ -110,10 +110,10 @@ export const AppRoutes = () => {
       <Route exact path="/emergency-governance">
         <EmergencyGovernance />
       </Route>
-      <Route exact path="/mavryk-council/:review?">
+      <Route exact path="/mavryk-council/:tabId?">
         <Council />
       </Route>
-      <Route exact path="/break-glass-council/:review?">
+      <Route exact path="/break-glass-council/:tabId?">
         <BreakGlassCouncil />
       </Route>
       <ProtectedRoute

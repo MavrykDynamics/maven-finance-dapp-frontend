@@ -113,14 +113,14 @@ export const stake = (amount: number) => async (dispatch: AppDispatch, getState:
         .withContractCall(mvkTokenContract.methods.update_operators(removeOperators)))
     const batchOp = await batch?.send()
 
-    dispatch(toggleActionLoader(true))
-    dispatch(showToaster(INFO, 'Staking...', 'Please wait 30s'))
+    await dispatch(toggleActionLoader(true))
+    await dispatch(showToaster(INFO, 'Staking...', 'Please wait 30s'))
 
     await batchOp?.confirmation()
 
-    dispatch(showToaster(SUCCESS, 'Staking done', 'All good :)'))
-    await dispatch(getDoormanStorage())
+    await dispatch(showToaster(SUCCESS, 'Staking done', 'All good :)'))
     await dispatch(updateUserData())
+    await dispatch(getDoormanStorage())
     await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {
@@ -153,15 +153,14 @@ export const unstake = (amount: number) => async (dispatch: AppDispatch, getStat
     const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.doormanAddress.address)
     const transaction = await contract?.methods.unstake(amount * PRECISION_NUMBER).send()
 
-    dispatch(toggleActionLoader(true))
-    dispatch(showToaster(INFO, 'Unstaking...', 'Please wait 30s'))
+    await dispatch(toggleActionLoader(true))
+    await dispatch(showToaster(INFO, 'Unstaking...', 'Please wait 30s'))
 
     await transaction?.confirmation()
 
-    dispatch(showToaster(SUCCESS, 'Unstaking done', 'All good :)'))
-
-    await dispatch(getDoormanStorage())
+    await dispatch(showToaster(SUCCESS, 'Unstaking done', 'All good :)'))
     await dispatch(updateUserData())
+    await dispatch(getDoormanStorage())
     await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {
@@ -189,13 +188,12 @@ export const rewardsCompound = (address: string) => async (dispatch: AppDispatch
     const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.doormanAddress.address)
     const transaction = await contract?.methods.compound(address).send()
 
-    dispatch(toggleActionLoader(true))
-    dispatch(showToaster(INFO, 'Compounding rewards...', 'Please wait 30s'))
+    await dispatch(toggleActionLoader(true))
+    await dispatch(showToaster(INFO, 'Compounding rewards...', 'Please wait 30s'))
 
     await transaction?.confirmation()
 
-    dispatch(showToaster(SUCCESS, 'Compounding done', 'All good :)'))
-
+    await dispatch(showToaster(SUCCESS, 'Compounding done', 'All good :)'))
     await dispatch(updateUserData())
     await dispatch(getDoormanStorage())
     await dispatch(toggleActionLoader(false))

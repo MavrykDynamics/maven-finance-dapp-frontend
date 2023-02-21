@@ -1,26 +1,23 @@
 import { useState } from 'react'
 import { useDispatch } from 'react-redux'
-
-import { Input } from '../../../app/App.components/Input/Input.controller'
-import { Button } from '../../../app/App.components/Button/Button.controller'
+import { Input } from 'app/App.components/Input/NewInput'
+import NewButton from 'app/App.components/Button/NewButton.controller'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 import { IPFSUploader } from '../../../app/App.components/IPFSUploader/IPFSUploader.controller'
-import { CouncilMemberMaxLength } from 'utils/TypesAndInterfaces/Council'
+import { CouncilMaxLength } from 'utils/TypesAndInterfaces/Council'
 
 // helpers
-import { validateFormAddress, validateFormField } from 'utils/validatorFunctions' 
+import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
+import { ACTION_PRIMARY, SUBMIT } from 'app/App.components/Button/Button.constants'
 
 // action
 import { addCouncilMember } from '../Council.actions'
 
 // style
-import { CouncilFormStyled } from './CouncilForms.style'
+import { CouncilFormStyled } from './CouncilForm.style'
 import { InputStatusType } from 'app/App.components/Input/Input.constants'
 
-export const CouncilFormAddCouncilMember = ({ 
-  councilMemberNameMaxLength,
-  councilMemberWebsiteMaxLength
- }: CouncilMemberMaxLength) => {
+export const CouncilFormAddCouncilMember = (maxLength: CouncilMaxLength) => {
   const dispatch = useDispatch()
   const [form, setForm] = useState({
     newMemberAddress: '',
@@ -29,16 +26,12 @@ export const CouncilFormAddCouncilMember = ({
     newMemberImage: '',
   })
 
-  const [uploadKey, setUploadKey] = useState(1)
-
   const [formInputStatus, setFormInputStatus] = useState<Record<string, InputStatusType>>({
     newMemberAddress: '',
     newMemberName: '',
     newMemberWebsite: '',
     newMemberImage: '',
   })
-
-  const disabled = false
 
   const { newMemberAddress, newMemberName, newMemberWebsite, newMemberImage } = form
 
@@ -58,10 +51,8 @@ export const CouncilFormAddCouncilMember = ({
         newMemberWebsite: '',
         newMemberImage: '',
       })
-      setUploadKey(uploadKey + 1)
     } catch (error) {
       console.error(error)
-      setUploadKey(uploadKey + 1)
     }
   }
 
@@ -74,6 +65,51 @@ export const CouncilFormAddCouncilMember = ({
   const handleBlur = validateFormField(setFormInputStatus)
   const handleBlurAddress = validateFormAddress(setFormInputStatus)
 
+  const newMemberAddressProps = {
+    name: 'newMemberAddress',
+    value: newMemberAddress,
+    onBlur: handleBlurAddress,
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+      handleChange(e)
+      handleBlurAddress(e)
+    },
+    required: true,
+  }
+
+  const newMemberAddressSettings = {
+    inputStatus: formInputStatus.newMemberAddress,
+  }
+
+  const newMemberNameProps = {
+    name: 'newMemberName',
+    value: newMemberName,
+    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, maxLength.councilMemberNameMaxLength),
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+      handleChange(e)
+      handleBlur(e, maxLength.councilMemberNameMaxLength)
+    },
+    required: true,
+  }
+
+  const newMemberNameSettings = {
+    inputStatus: formInputStatus.newMemberName,
+  }
+
+  const newMemberWebsiteProps = {
+    name: 'newMemberWebsite',
+    value: newMemberWebsite,
+    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, maxLength.councilMemberWebsiteMaxLength),
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+      handleChange(e)
+      handleBlur(e, maxLength.councilMemberWebsiteMaxLength)
+    },
+    required: true,
+  }
+
+  const newMemberWebsiteSettings = {
+    inputStatus: formInputStatus.newMemberWebsite,
+  }
+
   return (
     <CouncilFormStyled onSubmit={handleSubmit}>
       <a className="info-link" href="https://mavryk.finance/litepaper#mavryk-council" target="_blank" rel="noreferrer">
@@ -84,55 +120,20 @@ export const CouncilFormAddCouncilMember = ({
       <div className="form-grid">
         <div>
           <label>Council Member Address</label>
-          <Input
-            type="text"
-            required
-            value={newMemberAddress}
-            name="newMemberAddress"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              handleChange(e)
-              handleBlurAddress(e)
-            }}
-            onBlur={handleBlurAddress}
-            inputStatus={formInputStatus.newMemberAddress}
-          />
+          <Input inputProps={newMemberAddressProps} settings={newMemberAddressSettings} />
         </div>
 
         <div>
           <label>Council Member Name</label>
-          <Input
-            type="text"
-            required
-            value={newMemberName}
-            name="newMemberName"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              handleChange(e)
-              handleBlur(e, councilMemberNameMaxLength)
-            }}
-            onBlur={(e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, councilMemberNameMaxLength)}
-            inputStatus={formInputStatus.newMemberName}
-          />
+          <Input inputProps={newMemberNameProps} settings={newMemberNameSettings} />
         </div>
 
         <div>
           <label>Council Member Website URL</label>
-          <Input
-            type="text"
-            required
-            value={newMemberWebsite}
-            name="newMemberWebsite"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              handleChange(e)
-              handleBlur(e, councilMemberWebsiteMaxLength)
-            }}
-            onBlur={(e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, councilMemberWebsiteMaxLength)}
-            inputStatus={formInputStatus.newMemberWebsite}
-          />
+          <Input inputProps={newMemberWebsiteProps} settings={newMemberWebsiteSettings} />
         </div>
       </div>
       <IPFSUploader
-        disabled={disabled}
-        key={uploadKey}
         typeFile="image"
         imageIpfsUrl={newMemberImage}
         className="form-ipfs"
@@ -143,7 +144,10 @@ export const CouncilFormAddCouncilMember = ({
         title={'Upload Profile Pic'}
       />
       <div className="btn-group">
-        <Button text="Add Council Member" className="plus-btn" kind={'actionPrimary'} icon="plus" type="submit" />
+        <NewButton kind={ACTION_PRIMARY} type={SUBMIT}>
+          <Icon id="plus" />
+          Add Council Member
+        </NewButton>
       </div>
     </CouncilFormStyled>
   )

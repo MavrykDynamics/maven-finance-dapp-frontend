@@ -4,7 +4,9 @@ import { State } from 'reducers'
 import { Link } from 'react-router-dom'
 import { AvatarStyle } from '../../../app/App.components/Avatar/Avatar.style'
 import { TzAddress } from '../../../app/App.components/TzAddress/TzAddress.view'
-import { Button } from '../../../app/App.components/Button/Button.controller'
+import NewButton from 'app/App.components/Button/NewButton.controller'
+import Icon from 'app/App.components/Icon/Icon.view'
+import { TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
 
 // style
 import { CouncilMemberStyled } from './CouncilMember.style'
@@ -46,7 +48,10 @@ export const CouncilMemberView = (props: Props) => {
         </figcaption>
       </div>
       {isMe && showUpdateInfo ? (
-        <Button text="Update Info" className="fill" icon="spiner" kind="actionSecondary" onClick={openModal} />
+        <NewButton className='update-btn' kind={TRANSPARENT_WITH_BORDER} onClick={openModal}>
+          <Icon id="update" />
+          Update Info
+        </NewButton>
       ) : null}
     </CouncilMemberStyled>
   )

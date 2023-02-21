@@ -78,11 +78,9 @@ export const BGMiddleWrapper = styled.div<{ theme: MavrykTheme }>`
   grid-row-start: 1;
   grid-row-end: 2;
 
-  .brake-glass-tabs {
-    button {
-      height: 100%;
-      width: fit-content;
-    }
+  .buttons-selector {
+    display: flex;
+    columns: 10px;
   }
 `
 
