@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { State } from '../../reducers'
 
 import { getEmergencyGovernanceStorage } from './EmergencyGovernance.actions'
-import { getBreakGlassStorage } from '../BreakGlass/BreakGlass.actions'
+import { getBreakGlassConfig } from '../BreakGlass/BreakGlass.actions'
 import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 
@@ -19,7 +19,9 @@ export const EmergencyGovernance = () => {
 
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const { eGovProposals, isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
-  const { glassBroken } = useSelector((state: State) => state.breakGlass)
+  const { glassBroken, isConfigLoaded: isBreakGlassConfigLoaded } = useSelector(
+    (state: State) => state.breakGlass.config,
+  )
   const { isLoaded: isDoormanLoaded } = useSelector((state: State) => state.doorman)
 
   const [showInitiatePopup, setShowInitiatePopup] = useState(false)
@@ -28,7 +30,7 @@ export const EmergencyGovernance = () => {
     try {
       await Promise.all(
         [
-          dispatch(getBreakGlassStorage()),
+          !isBreakGlassConfigLoaded && dispatch(getBreakGlassConfig()),
           !isDoormanLoaded && dispatch(getDoormanStorage()),
           !isEgovLoaded && dispatch(getEmergencyGovernanceStorage()),
         ].filter(Boolean),
