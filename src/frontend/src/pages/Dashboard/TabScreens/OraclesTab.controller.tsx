@@ -31,7 +31,7 @@ export const OraclesTab = ({ isLoading }: { isLoading: boolean }) => {
   const oracleFeeds = feedsLedger.length
   const popularFeeds = feedsLedger.slice(0, 3)
 
-  const oracleRevardsTotal = useMemo(
+  const oracleRewardsTotal = useMemo(
     () =>
       oraclesIds.reduce((acc, address) => {
         const sMVKReward = satelliteMapper[address].oracleRecords.reduce(
@@ -63,7 +63,7 @@ export const OraclesTab = ({ isLoading }: { isLoading: boolean }) => {
             <StatBlock>
               <div className="name">Total Oracle Rewards Paid</div>
               <div className="value">
-                <CommaNumber beginningText="$" value={oracleRevardsTotal} />
+                <CommaNumber beginningText="$" value={oracleRewardsTotal} />
               </div>
             </StatBlock>
             <StatBlock>

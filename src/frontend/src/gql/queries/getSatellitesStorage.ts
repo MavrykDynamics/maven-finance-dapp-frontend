@@ -1,6 +1,6 @@
-export const SATELLITES_STORAGE_QUERY = (satelliteAddress?: string) => `
-  query SatellitesStorageQuery${satelliteAddress ? `($_eq: String = "${satelliteAddress}")` : ''} {
-    satellite${satelliteAddress ? `(where: {user_id: {_eq: $_eq}})` : ''} {
+export const SATELLITES_STORAGE_QUERY = `
+  query SatellitesStorageQuery {
+    satellite {
       currently_registered
       delegation_id
       description
@@ -90,6 +90,39 @@ export const SATELLITES_STORAGE_QUERY = (satelliteAddress?: string) => `
           voter_id
           governance_satellite_action {
             governance_type
+          }
+        }
+      }
+    }
+
+    governance_proposal(order_by: {start_datetime: desc}) {
+      id
+      executed
+      locked
+    }
+
+    emergency_governance {
+      emergency_governance_records(order_by: {start_timestamp: desc}) {
+        emergency_governance_id
+        executed
+      }
+    }
+
+    governance_financial_request {
+      executed
+      id
+    }
+
+    aggregator(where: {admin: {_neq: ""}}, order_by: {creation_timestamp: desc}) {
+      oracles {
+        observations {
+          epoch
+          round
+          timestamp
+          oracle {
+            user_id
+            init_epoch
+            init_round
           }
         }
       }

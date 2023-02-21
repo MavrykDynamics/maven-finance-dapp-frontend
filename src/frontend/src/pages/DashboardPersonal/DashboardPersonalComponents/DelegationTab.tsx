@@ -15,9 +15,8 @@ import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
 const DelegationTab = () => {
   const { satelliteMvkIsDelegatedTo } = useSelector((state: State) => state.wallet.user)
-  const { allSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
-  const satelliteInfo =
-    satelliteMapper[allSatellitesIds.find((satelliteAddress) => satelliteMvkIsDelegatedTo === satelliteAddress) ?? '']
+  const { satelliteMapper } = useSelector((state: State) => state.satellites)
+  const satelliteInfo = satelliteMapper[satelliteMvkIsDelegatedTo]
 
   return (
     <>

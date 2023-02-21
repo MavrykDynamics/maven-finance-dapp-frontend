@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 // types
@@ -10,7 +10,7 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 // consts, helpers, actions
 import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
 import { getTotalDelegatedMVK } from './helpers/Satellites.consts'
-import { delegate, getSatellitesStorage, undelegate } from 'pages/Satellites/Satellites.actions'
+import { delegate, undelegate } from 'pages/Satellites/Satellites.actions'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { getFeedsStorage } from 'pages/DataFeeds/DataFeeds.actions'
 
@@ -30,27 +30,20 @@ import { DataFeedCard } from '../DataFeedsDetails/listItem/DataFeedCard.view'
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
 
 const Satellites = () => {
-  const {
-    activeSatellitesIds,
-    allSatellitesIds,
-    satelliteMapper,
-    isLoaded: isSatellitesLoaded,
-  } = useSelector((state: State) => state.satellites)
+  const { allSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
   const { feedsLedger, isLoaded: isFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
+  const { isLoaded: isDoormanLoaded } = useSelector((state: State) => state.doorman)
   const {
     user: { mySMvkTokenBalance, satelliteMvkIsDelegatedTo },
-    accountPkh,
   } = useSelector((state: State) => state.wallet)
   const dispatch = useDispatch()
 
   const { isLoading } = useDataLoader(async () => {
     try {
       await Promise.all(
-        [
-          !isFeedsLoaded && dispatch(getFeedsStorage()),
-          accountPkh && dispatch(getDoormanStorage()),
-          !isSatellitesLoaded && dispatch(getSatellitesStorage()),
-        ].filter(Boolean),
+        [!isFeedsLoaded && dispatch(getFeedsStorage()), !isDoormanLoaded && dispatch(getDoormanStorage())].filter(
+          Boolean,
+        ),
       )
     } catch (e) {}
   }, [])
@@ -60,10 +53,10 @@ const Satellites = () => {
   const tabsInfo = useMemo(
     () => ({
       totalDelegetedMVK: <CommaNumber value={totalDelegatedMVK} endingText={'MVK'} />,
-      totalSatelliteOracles: activeSatellitesIds.length,
+      totalSatelliteOracles: allSatellitesIds.length,
       numberOfDataFeeds: feedsLedger.length > 50 ? feedsLedger.length + '+' : feedsLedger.length,
     }),
-    [activeSatellitesIds, feedsLedger, totalDelegatedMVK],
+    [allSatellitesIds, feedsLedger, totalDelegatedMVK],
   )
 
   const delegateCallback = (satelliteAddress: string) => {
@@ -98,7 +91,7 @@ const Satellites = () => {
               <div className="info-content">{tabsInfo.numberOfDataFeeds}</div>
             </SmallInfoBlock>
           </InfoBlockWrapper>
-          {activeSatellitesIds.length ? (
+          {allSatellitesIds.length ? (
             <div className="oracle-list-wrapper">
               <Link to="/satellite-nodes">
                 <div className="see-all-link">
@@ -112,7 +105,7 @@ const Satellites = () => {
               </GovRightContainerTitleArea>
 
               <div className={`satellitesList`}>
-                {activeSatellitesIds.slice(0, 3).map((satelliteAddress) => (
+                {allSatellitesIds.slice(0, 3).map((satelliteAddress) => (
                   <SatelliteListItem
                     satellite={satelliteMapper[satelliteAddress]}
                     key={satelliteAddress}

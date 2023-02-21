@@ -22,7 +22,6 @@ export const DoormanStats = ({
   totalSupply,
   doormanAddress,
   mvkTokenAddress,
-  totalSupply,
 }: DoormanStatsPropsType) => {
   const mli = calcMLI(totalSupply, totalStakedMvk)
   const fee = calcExitFee(totalSupply, totalStakedMvk)

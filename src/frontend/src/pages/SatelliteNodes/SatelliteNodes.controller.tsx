@@ -3,10 +3,9 @@ import { useLocation } from 'react-router'
 import { useSelector, useDispatch } from 'react-redux'
 
 // helpers, actions
-import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { State } from 'reducers'
 import { getPageNumber } from 'pages/FinacialRequests/FinancialRequests.helpers'
-import { delegate, undelegate, getSatellitesStorage } from 'pages/Satellites/Satellites.actions'
+import { delegate, undelegate } from 'pages/Satellites/Satellites.actions'
 
 // consts
 import {
@@ -23,8 +22,6 @@ import { SatelliteListItem } from 'pages/Satellites/listItem/SateliteCard.view'
 import { Page, PageContent } from 'styles'
 import { EmptyContainer } from 'app/App.style'
 import { DropdownContainer } from 'app/App.components/DropDown/DropDown.style'
-import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
-import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { SatelliteSearchFilter } from 'pages/Satellites/Satellites.style'
 
 const itemsForDropDown = [
@@ -35,16 +32,12 @@ const itemsForDropDown = [
 ]
 
 const SatelliteNodes = () => {
-  const {
-    activeSatellitesIds,
-    satelliteMapper,
-    isLoaded: isSatellitesLoaded,
-  } = useSelector((state: State) => state.satellites)
+  const { allSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
   const { satelliteMvkIsDelegatedTo, mySMvkTokenBalance } = useSelector((state: State) => state.wallet.user)
   const dispatch = useDispatch()
   const { pathname, search } = useLocation()
 
-  const [filteredSatelliteList, setFilteredSatelliteList] = useState(activeSatellitesIds)
+  const [filteredSatelliteList, setFilteredSatelliteList] = useState(allSatellitesIds)
   const [ddItems, _] = useState(itemsForDropDown.map(({ text }) => text))
   const [ddIsOpen, setDdIsOpen] = useState(false)
   const [inputSearch, setInputSearch] = useState('')
@@ -57,17 +50,9 @@ const SatelliteNodes = () => {
     return filteredSatelliteList.slice(from, to)
   }, [currentPage, filteredSatelliteList])
 
-  const { isLoading } = useDataLoader(async () => {
-    try {
-      if (!isSatellitesLoaded) {
-        await dispatch(getSatellitesStorage())
-      }
-    } catch (e) {}
-  }, [])
-
   useEffect(() => {
-    setFilteredSatelliteList(activeSatellitesIds)
-  }, [activeSatellitesIds])
+    setFilteredSatelliteList(allSatellitesIds)
+  }, [allSatellitesIds])
 
   const handleSearch = (e: {
     target: {
@@ -77,7 +62,7 @@ const SatelliteNodes = () => {
     const searchQuery = e.target.value
     if (searchQuery !== '') {
       setFilteredSatelliteList(
-        activeSatellitesIds.filter((satelliteAddress) => {
+        allSatellitesIds.filter((satelliteAddress) => {
           const satellite = satelliteMapper[satelliteAddress]
           return (
             satellite.address.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -86,7 +71,7 @@ const SatelliteNodes = () => {
         }),
       )
     } else {
-      setFilteredSatelliteList(activeSatellitesIds)
+      setFilteredSatelliteList(allSatellitesIds)
     }
     setInputSearch(searchQuery)
   }
@@ -164,12 +149,7 @@ const SatelliteNodes = () => {
             </DropdownContainer>
           </SatelliteSearchFilter>
 
-          {isLoading ? (
-            <DataLoaderWrapper>
-              <ClockLoader width={150} height={150} />
-              <div className="text">Loading satellites</div>
-            </DataLoaderWrapper>
-          ) : paginatedItemsList ? (
+          {paginatedItemsList ? (
             <div className={`satellitesList`}>
               {paginatedItemsList.map((satelliteAddress) => (
                 <SatelliteListItem

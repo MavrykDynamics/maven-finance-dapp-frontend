@@ -23,62 +23,31 @@ import {
 } from 'gql/queries'
 
 export const GET_SATELLITES_STORAGE = 'GET_SATELLITES_STORAGE'
-export const getSatellitesStorage =
-  (satelliteAddress?: string) => async (dispatch: AppDispatch, getState: GetState) => {
-    const {
-      financialRequest: { financialRequests, isLoaded: isFinancialRequestsLoaded },
-      dataFeeds: { feedsLedger, isLoaded: isDataFeedsLoaded },
-      emergencyGovernance: { eGovProposals, isLoaded: isEgovProposalsLoaded },
-      governance: {
-        governanceStorage: { proposalLedger },
-        pastProposals,
-      },
-    } = getState()
-    try {
-      // if satelliteAddress we will load data for this certain satellite, othervise, we will load all satellites
-      const storage = await fetchFromIndexer(
-        SATELLITES_STORAGE_QUERY(satelliteAddress),
-        SATELLITES_STORAGE_QUERY_NAME,
-        SATELLITES_STORAGE_QUERY_VARIABLE,
-      )
+export const getSatellitesStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
+  try {
+    // if satelliteAddress we will load data for this certain satellite, othervise, we will load all satellites
+    const storage = await fetchFromIndexer(
+      SATELLITES_STORAGE_QUERY,
+      SATELLITES_STORAGE_QUERY_NAME,
+      SATELLITES_STORAGE_QUERY_VARIABLE,
+    )
 
-      // We need to load some data to normalize full satellite
-      //"getGovernanceStorage" will be reunited to smaller parts later
-      await Promise.all(
-        [
-          !isFinancialRequestsLoaded && dispatch(getFinancialRequestStorage()),
-          !isDataFeedsLoaded && dispatch(getFeedsStorage()),
-          !isEgovProposalsLoaded && dispatch(getEmergencyGovernanceStorage()),
-          dispatch(getGovernanceStorage()),
-        ].filter(Boolean),
-      )
+    const { oraclesIds, activeSatellitesIds, allSatellitesIds, satellitesMapper } = normalizeSatellitesLedger(storage)
 
-      const { oraclesIds, activeSatellitesIds, allSatellitesIds, satellitesMapper } = normalizeSatellitesLedger(
-        storage,
-        {
-          financialRequestLedger: financialRequests,
-          feeds: feedsLedger,
-          emergencyGovernanceLedger: eGovProposals,
-          pastProposals,
-          proposalLedger,
-        },
-      )
-
-      dispatch({
-        type: GET_SATELLITES_STORAGE,
-        oraclesIds,
-        activeSatellitesIds,
-        allSatellitesIds,
-        satellitesMapper,
-        isLoaded: !satelliteAddress,
-      })
-    } catch (error) {
-      console.error('getSatellitesStorage error: ', error)
-      if (error instanceof Error) {
-        dispatch(showToaster(ERROR, 'Error', error.message))
-      }
+    dispatch({
+      type: GET_SATELLITES_STORAGE,
+      oraclesIds,
+      activeSatellitesIds,
+      allSatellitesIds,
+      satellitesMapper,
+    })
+  } catch (error) {
+    console.error('getSatellitesStorage error: ', error)
+    if (error instanceof Error) {
+      dispatch(showToaster(ERROR, 'Error', error.message))
     }
   }
+}
 
 export const GET_SATELLITE_CONFIG = 'GET_SATELLITE_CONFIG'
 export const getSatelliteConfig = () => async (dispatch: AppDispatch, getState: GetState) => {

@@ -4,7 +4,7 @@ import { State } from 'reducers'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
 import { registerAsSatellite, updateSatelliteRecord } from './BecomeSatellite.actions'
-import { getSatellitesStorage, getSatelliteConfig } from 'pages/Satellites/Satellites.actions'
+import { getSatelliteConfig } from 'pages/Satellites/Satellites.actions'
 import { DEFAULT_ACTIVE_SATELLITE } from 'pages/Satellites/helpers/Satellites.consts'
 
 import { RegisterAsSatelliteForm } from '../../utils/TypesAndInterfaces/Forms'
@@ -18,21 +18,18 @@ export const BecomeSatellite = () => {
     accountPkh,
     user: { mySMvkTokenBalance },
   } = useSelector((state: State) => state.wallet)
-  const { satelliteMapper, config, isLoaded: isSatellitesLoaded } = useSelector((state: State) => state.satellites)
+  const { satelliteMapper, config } = useSelector((state: State) => state.satellites)
   const { isLoaded: isDoormanLoaded } = useSelector((state: State) => state.doorman)
 
   const { isLoading } = useDataLoader(async () => {
     try {
       await Promise.all(
-        [
-          !isSatellitesLoaded && getSatellitesStorage(),
-          !config.isConfigLoaded && getSatelliteConfig(),
-          !isDoormanLoaded && getDoormanStorage(),
-        ].filter(Boolean),
+        [!config.isConfigLoaded && getSatelliteConfig(), !isDoormanLoaded && getDoormanStorage()].filter(Boolean),
       )
     } catch (error) {}
   }, [])
 
+  // TODO: if user is not satellite pass null
   const usersSatelliteProfile = accountPkh
     ? satelliteMapper[accountPkh] ?? DEFAULT_ACTIVE_SATELLITE
     : DEFAULT_ACTIVE_SATELLITE
@@ -47,7 +44,7 @@ export const BecomeSatellite = () => {
   return isLoading ? (
     <DataLoaderWrapper>
       <ClockLoader width={150} height={150} />
-      <div className="text">Loading satelliteData</div>
+      <div className="text">Loading satellites data</div>
     </DataLoaderWrapper>
   ) : (
     <BecomeSatelliteView

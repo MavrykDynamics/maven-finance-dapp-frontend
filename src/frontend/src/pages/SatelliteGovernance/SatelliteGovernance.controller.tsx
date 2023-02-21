@@ -103,7 +103,7 @@ export const SatelliteGovernance = () => {
     return separateRecord?.slice(from, to)
   }, [currentPage, separateRecord])
 
-  const totalDelegatedMVK = getTotalDelegatedMVK(activeSatellitesIds, satelliteMapper)
+  const totalDelegatedMVK = getTotalDelegatedMVK(allSatellitesIds, satelliteMapper)
   const ongoingActionsAmount = getOngoingActionsList(governance_satellite_action)?.length
 
   const maxLength = {

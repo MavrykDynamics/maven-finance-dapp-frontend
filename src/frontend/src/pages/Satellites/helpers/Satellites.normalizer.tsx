@@ -1,21 +1,22 @@
 import type { SatelliteRecordType, SatelliteVotingsType } from '../../../utils/TypesAndInterfaces/Satellites'
 import type { SatelliteRecordGraphQl, DelegationGraphQl } from '../../../utils/TypesAndInterfaces/Satellites'
+import { GovernanceFinancialRequestGraphQL } from 'utils/TypesAndInterfaces/Governance'
 import {
-  FinancialRequestRecord,
-  GovernanceFinancialRequestGraphQL,
-  ProposalRecordType,
-} from 'utils/TypesAndInterfaces/Governance'
-import { EmergergencyGovernanceItem } from 'utils/TypesAndInterfaces/EmergencyGovernance'
+  Aggregator,
+  Aggregator_Oracle,
+  Aggregator_Oracle_Observation,
+  Emergency_Governance,
+  Governance_Proposal,
+} from 'utils/generated/graphqlTypes'
 
 // helpers
 import { calcWithoutMu, calcWithoutPrecision, getNumberInBounds } from '../../../utils/calcFunctions'
-import { Aggregator_Oracle } from 'utils/generated/graphqlTypes'
 import {
   defaultSatelliteDescriptionMaxLength,
   defaultSatelliteNameMaxLength,
   defaultSatelliteWebsiteMaxLength,
 } from 'app/App.components/Input/Input.constants'
-import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
+import { VOTE_NUM_MAPPER } from './Satellites.consts'
 
 export const getSatelliteAccuracy = (satelliteRecord: SatelliteRecordGraphQl) => {
   const v1 = Number(satelliteRecord.user.aggregator_oracles?.[0]?.aggregator?.last_completed_data),
@@ -28,66 +29,93 @@ export const getSatelliteAccuracy = (satelliteRecord: SatelliteRecordGraphQl) =>
   return 100 - ((parsedV1 - parsedv2) / ((parsedV1 + parsedv2) / 2)) * 100
 }
 
+const getOraclePredictionSuccessRatio = (latestObservation?: Aggregator_Oracle_Observation): number => {
+  if (!latestObservation) return 0
+
+  const {
+    epoch,
+    round,
+    oracle: { init_epoch, init_round },
+  } = latestObservation
+  return epoch / round - init_epoch / init_round
+}
+
 export const getNewSatelliteMetrics = ({
-  pastProposals,
-  proposalLedger,
+  proposals,
   emergencyGovernanceLedger,
-  satelliteVotings: { proposalVotingHistory, emergencyGovernanceVotes, financialRequestsVotes, satelliteActionVotes },
+  satelliteVotings: { proposalVotingHistory, emergencyGovernanceVotes, financialRequestsVotes },
   satelliteAddress,
   financialRequestLedger,
   feeds,
 }: {
-  pastProposals: Array<ProposalRecordType>
-  proposalLedger: Array<ProposalRecordType>
-  emergencyGovernanceLedger: Array<EmergergencyGovernanceItem>
+  proposals: Array<Governance_Proposal>
+  emergencyGovernanceLedger: Array<Emergency_Governance>
+  feeds: Array<Aggregator>
+  financialRequestLedger: Array<GovernanceFinancialRequestGraphQL>
   satelliteVotings: SatelliteVotingsType
   satelliteAddress: string
-  feeds: Array<Feed>
-  financialRequestLedger: Array<FinancialRequestRecord>
 }) => {
-  const submittedProposalsCount = pastProposals
-    .concat(proposalLedger)
-    .reduce((acc, { locked, executed }) => (acc += locked && executed ? 1 : 0), 0)
-  const totalVotingPeriods =
-    (emergencyGovernanceLedger.length ?? 0) +
-    (financialRequestLedger?.length ?? 0) +
-    (proposalLedger.length ?? 0) +
-    (pastProposals.length ?? 0)
+  /**
+   * calc proposalParticipation how many times proposal that is voted by satellite has been executed
+   * @submittedProposalsCount – how many proposals were executed
+   * @votedProposalsSubmitted – how many executed proposal i've voted Yes
+   */
+  const { submittedProposalsCount, votedProposalsSubmitted } = proposals.reduce(
+    (acc, { executed, id }) => {
+      if (executed) {
+        acc.submittedProposalsCount += 1
 
-  const votedProposalSubmitted = proposalVotingHistory.reduce((acc, { proposalId }) => {
-    const isProposalSubmitted = pastProposals.find(({ id, executed }) => proposalId === id && executed)
-    return isProposalSubmitted ? (acc += 1) : acc
-  }, 0)
+        const satelliteVotingData = proposalVotingHistory.find(({ proposalId }) => proposalId === id)
 
-  const satelliteVotes =
-    emergencyGovernanceVotes.length +
-    satelliteActionVotes.length +
-    proposalVotingHistory.length +
-    financialRequestsVotes.length
+        if (satelliteVotingData && VOTE_NUM_MAPPER[satelliteVotingData.vote] === 'Yes') {
+          acc.votedProposalsSubmitted += 1
+        }
+      }
 
+      return acc
+    },
+    {
+      submittedProposalsCount: 0,
+      votedProposalsSubmitted: 0,
+    },
+  )
+  const proposalParticipation =
+    submittedProposalsCount === 0 ? 0 : (votedProposalsSubmitted / submittedProposalsCount) * 100
+
+  /**
+   * calc votingPartisipation how many votes satellite has participied
+   * @satelliteVotes – how many times satellite has voted
+   * @totalVotingPeriods – how many votings has been performed
+   */
+  const satelliteVotes = emergencyGovernanceVotes.length + proposalVotingHistory.length + financialRequestsVotes.length
+  const totalVotingPeriods = emergencyGovernanceLedger.length + financialRequestLedger.length + proposals.length
+  const votingPartisipation = totalVotingPeriods === 0 ? 0 : (satelliteVotes / totalVotingPeriods) * 100
+
+  /**
+   * calc how satellite predicts feed price
+   * @observationsForSatellite – oracles predictions
+   * @numberOfObservations – amount of oracle's predictions
+   * @epochRoundRatio – success of the predictions?
+   */
   const observationsForSatellite = feeds
-    ?.reduce<Aggregator_Oracle['observations']>(
-      (acc, { oracles }) => acc.concat(...oracles.map(({ observations }) => observations)),
-      [],
-    )
-    ?.filter(({ oracle: { user_id } }) => user_id === satelliteAddress)
-    ?.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+    .reduce<Aggregator_Oracle['observations']>((acc, { oracles }) => {
+      const filteredSatellitesObservations = oracles
+        .map(({ observations }) => observations)
+        .flat()
+        .filter(({ oracle: { user_id } }) => user_id === satelliteAddress)
+      return acc.concat(filteredSatellitesObservations)
+    }, [])
+    .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
 
-  const latestObservation = observationsForSatellite?.[0]
-  const numberOfObservations = observationsForSatellite?.length ?? 0
-  const epochRoundRatio =
-    (latestObservation?.epoch ?? 0) / (latestObservation?.round || 1) -
-    (latestObservation?.oracle?.init_epoch ?? 0) / (latestObservation?.oracle?.init_round || 1)
+  const latestObservation = observationsForSatellite[0]
+  const numberOfObservations = observationsForSatellite.length
+  const epochRoundRatio = getOraclePredictionSuccessRatio(latestObservation)
   const oracleEfficiency = (numberOfObservations / Math.max(epochRoundRatio, 1)) * 100
 
   return {
-    proposalParticipation: submittedProposalsCount
-      ? getNumberInBounds(0, 100, Number((votedProposalSubmitted / submittedProposalsCount) * 100))
-      : 0,
-    votingPartisipation: totalVotingPeriods
-      ? getNumberInBounds(0, 100, Number((satelliteVotes / totalVotingPeriods) * 100))
-      : 0,
-    oracleEfficiency: getNumberInBounds(0, 100, Number(oracleEfficiency)),
+    proposalParticipation: getNumberInBounds(0, 100, proposalParticipation),
+    votingPartisipation: getNumberInBounds(0, 100, votingPartisipation),
+    oracleEfficiency: getNumberInBounds(0, 100, oracleEfficiency),
   }
 }
 
@@ -187,10 +215,9 @@ export const getSatelliteVotings = ({
 export const normallizeSatellite = (
   satelliteRecord: SatelliteRecordGraphQl,
   metricsData: {
-    pastProposals: Array<ProposalRecordType>
-    proposalLedger: Array<ProposalRecordType>
-    emergencyGovernanceLedger: Array<EmergergencyGovernanceItem>
-    feeds: Array<Feed>
+    proposals: Array<Governance_Proposal>
+    emergencyGovernanceLedger: Array<Emergency_Governance>
+    feeds: Array<Aggregator>
     financialRequestLedger: Array<GovernanceFinancialRequestGraphQL>
   },
 ) => {
@@ -203,11 +230,7 @@ export const normallizeSatellite = (
     getSatelliteVotings(satelliteRecord)
 
   const satelliteMetrics = getNewSatelliteMetrics({
-    pastProposals: metricsData.pastProposals,
-    proposalLedger: metricsData.proposalLedger,
-    emergencyGovernanceLedger: metricsData.emergencyGovernanceLedger,
-    feeds: metricsData.feeds,
-    financialRequestLedger: metricsData.financialRequestLedger,
+    ...metricsData,
     satelliteAddress: satelliteRecord.user_id,
     satelliteVotings: { proposalVotingHistory, financialRequestsVotes, emergencyGovernanceVotes, satelliteActionVotes },
   })
@@ -247,16 +270,13 @@ export const nomalizeSatelliteConfig = ({ delegation: [delegationInfo] }: { dele
   }
 }
 
-export const normalizeSatellitesLedger = (
-  store: { satellite: Array<SatelliteRecordGraphQl> },
-  metricsData: {
-    pastProposals: Array<ProposalRecordType>
-    proposalLedger: Array<ProposalRecordType>
-    emergencyGovernanceLedger: Array<EmergergencyGovernanceItem>
-    feeds: Array<Feed>
-    financialRequestLedger: Array<GovernanceFinancialRequestGraphQL>
-  },
-) => {
+export const normalizeSatellitesLedger = (store: {
+  satellite: Array<SatelliteRecordGraphQl>
+  governance_proposal: Array<Governance_Proposal>
+  emergency_governance: Array<Emergency_Governance>
+  aggregator: Array<Aggregator>
+  governance_financial_request: Array<GovernanceFinancialRequestGraphQL>
+}) => {
   const normalizedSatellites = store.satellite.reduce<{
     satellitesMapper: Record<SatelliteRecordType['address'], SatelliteRecordType>
     activeSatellitesIds: Array<SatelliteRecordType['address']>
@@ -264,7 +284,12 @@ export const normalizeSatellitesLedger = (
     oraclesIds: Array<SatelliteRecordType['address']>
   }>(
     (acc, satelliteRecord) => {
-      const nomalizedSatellite = normallizeSatellite(satelliteRecord, metricsData)
+      const nomalizedSatellite = normallizeSatellite(satelliteRecord, {
+        proposals: store.governance_proposal,
+        emergencyGovernanceLedger: store.emergency_governance,
+        feeds: store.aggregator,
+        financialRequestLedger: store.governance_financial_request,
+      })
       acc.satellitesMapper[nomalizedSatellite.address] = nomalizedSatellite
       acc.allSatellitesIds.push(nomalizedSatellite.address)
 

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { State } from 'reducers'
@@ -54,7 +54,7 @@ export const ProposalsView = ({
     governancePhase,
     governanceStorage: { cycle, timelockProposalId, cycleHighestVotedProposalId, cycleCounter },
   } = useSelector((state: State) => state.governance)
-  const { allSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
+  const { satelliteMapper } = useSelector((state: State) => state.satellites)
 
   const dropDownOptions = useMemo(
     () => Array.from({ length: cycle - 1 }, (_, idx) => String(cycle - (idx + 1))),
@@ -100,7 +100,7 @@ export const ProposalsView = ({
           address: string
         }>
       >((acc, { voter_id, round, vote }) => {
-        const satelliteData = satelliteMapper[allSatellitesIds.find((address) => address === voter_id) ?? '']
+        const satelliteData = satelliteMapper[voter_id]
 
         if (satelliteData && round === 1) {
           acc.push({
@@ -113,7 +113,7 @@ export const ProposalsView = ({
 
         return acc
       }, []),
-    [satelliteMapper, selectedProposal, allSatellitesIds],
+    [satelliteMapper, selectedProposal],
   )
 
   return (

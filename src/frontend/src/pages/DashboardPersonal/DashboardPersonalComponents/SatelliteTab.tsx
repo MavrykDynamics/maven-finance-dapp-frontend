@@ -15,12 +15,10 @@ import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
 const SatelliteTab = () => {
   const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
-  const { accountPkh } = useSelector((state: State) => state.wallet)
+  const { accountPkh = '' } = useSelector((state: State) => state.wallet)
+  const { satelliteMapper } = useSelector((state: State) => state.satellites)
 
-  const { allSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
-  const satelliteRecord =
-    satelliteMapper[allSatellitesIds.find((satelliteAddress) => accountPkh === satelliteAddress) ?? '']
-
+  const satelliteRecord = satelliteMapper[accountPkh]
   const oracleStatusType = getOracleStatus(satelliteRecord, feedsLedger)
 
   return (
@@ -29,70 +27,79 @@ const SatelliteTab = () => {
         <GovRightContainerTitleArea>
           <h2>My Satellite Details</h2>
         </GovRightContainerTitleArea>
-        <div className="top-row">
-          <div className="grid-item info">
-            <ImageWithPlug imageLink={satelliteRecord.image} alt={satelliteRecord.name + ' avatar'} />
+        {!satelliteRecord ? (
+          <div className="no-data">
+            <span>No satellite data</span>
+          </div>
+        ) : (
+          <>
+            <div className="top-row">
+              <div className="grid-item info">
+                <ImageWithPlug imageLink={satelliteRecord.image} alt={satelliteRecord.name + ' avatar'} />
 
-            <div className="text">
-              <div className="name">{satelliteRecord.name}</div>
-              <div className="value">
-                <TzAddress tzAddress={satelliteRecord.address} />
+                <div className="text">
+                  <div className="name">{satelliteRecord.name}</div>
+                  <div className="value">
+                    <TzAddress tzAddress={satelliteRecord.address} />
+                  </div>
+                </div>
+              </div>
+              <div className="grid-item ">
+                <div className="name">Free MVK Space</div>
+                <div className="value">
+                  <CommaNumber
+                    value={Math.max(
+                      satelliteRecord.sMvkBalance * satelliteRecord.delegationRatio -
+                        satelliteRecord.totalDelegatedAmount,
+                      0,
+                    )}
+                  />
+                </div>
+              </div>
+              <div className="grid-item ">
+                <div className="name">Gov. Participation</div>
+                <div className="value">
+                  <CommaNumber value={satelliteRecord.satelliteMetrics.votingPartisipation} endingText="%" />
+                </div>
+              </div>
+              <div className="grid-item ">
+                <div className="name">Delegated MVK</div>
+                <div className="value">
+                  <CommaNumber value={satelliteRecord.totalDelegatedAmount} />
+                </div>
+              </div>
+              <div className="grid-item ">
+                <div className="name">Oracle Participation</div>
+                <div className="value">
+                  <CommaNumber value={satelliteRecord.satelliteMetrics.oracleEfficiency} endingText="%" />
+                </div>
               </div>
             </div>
-          </div>
-          <div className="grid-item ">
-            <div className="name">Free MVK Space</div>
-            <div className="value">
-              <CommaNumber
-                value={Math.max(
-                  satelliteRecord.sMvkBalance * satelliteRecord.delegationRatio - satelliteRecord.totalDelegatedAmount,
-                  0,
-                )}
-              />
+            <div className="bottom-row">
+              <div className="grid-item ">
+                <div className="name">Fee</div>
+                <div className="value">
+                  <CommaNumber value={satelliteRecord.satelliteFee} endingText="%" />
+                </div>
+              </div>
+              <div className="grid-item ">
+                <div className="name">Oracle Status</div>
+                <div className="value">
+                  <SatelliteOracleStatusComponent statusType={oracleStatusType}>
+                    {ORACLE_STATUSES_MAPPER[oracleStatusType]}
+                  </SatelliteOracleStatusComponent>
+                </div>
+              </div>
+              <div className="grid-item ">
+                <div className="name">Website</div>
+                <div className="value">
+                  <a href={satelliteRecord.website}>{satelliteRecord.website}</a>
+                </div>
+              </div>
             </div>
-          </div>
-          <div className="grid-item ">
-            <div className="name">Gov. Participation</div>
-            <div className="value">
-              <CommaNumber value={satelliteRecord.satelliteMetrics.votingPartisipation} endingText="%" />
-            </div>
-          </div>
-          <div className="grid-item ">
-            <div className="name">Delegated MVK</div>
-            <div className="value">
-              <CommaNumber value={satelliteRecord.totalDelegatedAmount} />
-            </div>
-          </div>
-          <div className="grid-item ">
-            <div className="name">Oracle Participation</div>
-            <div className="value">
-              <CommaNumber value={satelliteRecord.satelliteMetrics.oracleEfficiency} endingText="%" />
-            </div>
-          </div>
-        </div>
-        <div className="bottom-row">
-          <div className="grid-item ">
-            <div className="name">Fee</div>
-            <div className="value">
-              <CommaNumber value={satelliteRecord.satelliteFee} endingText="%" />
-            </div>
-          </div>
-          <div className="grid-item ">
-            <div className="name">Oracle Status</div>
-            <div className="value">
-              <SatelliteOracleStatusComponent statusType={oracleStatusType}>
-                {ORACLE_STATUSES_MAPPER[oracleStatusType]}
-              </SatelliteOracleStatusComponent>
-            </div>
-          </div>
-          <div className="grid-item ">
-            <div className="name">Website</div>
-            <div className="value">
-              <a href={satelliteRecord.website}>{satelliteRecord.website}</a>
-            </div>
-          </div>
-        </div>
-        <Link to="/become-satellite">Edit My Profile</Link>
+            <Link to="/become-satellite">Edit My Profile</Link>
+          </>
+        )}
       </SatelliteStatusBlock>
     </>
   )

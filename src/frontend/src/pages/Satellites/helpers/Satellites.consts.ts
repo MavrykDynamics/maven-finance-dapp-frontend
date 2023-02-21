@@ -83,10 +83,16 @@ export const getOracleStatus = (
   return status
 }
 
+export const VOTE_NUM_MAPPER: Record<number, string> = {
+  0: 'Pass',
+  1: 'Yes',
+  2: 'No',
+}
+
 export const getVoteText = (voteType?: number): string => {
   if (voteType === 0) return 'Pass'
   if (voteType === 1) return 'Yes'
   if (voteType === 2) return 'No'
 
-  return ''
+  return voteType ? VOTE_NUM_MAPPER[voteType] ?? '' : ''
 }

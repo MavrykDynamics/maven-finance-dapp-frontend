@@ -16,7 +16,7 @@ import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
 const DataFeedDetails = () => {
   const dispatch = useDispatch()
   const { feedsLedger, isLoaded: isFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
-  const { allSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
+  const { oraclesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
 
   const { isLoading } = useDataLoader(async () => {
     try {
@@ -36,20 +36,15 @@ const DataFeedDetails = () => {
    * or every 30000ms, when user is on details page
    */
   useEffect(() => {
-    const feedToDisplay = feedsLedger.find((feed) => feed.address === feedId)
-    setSelectedFeed(feedToDisplay || null)
+    const feedToDisplay = feedsLedger.find((feed) => feed.address === feedId) ?? null
+    setSelectedFeed(feedToDisplay)
 
     if (feedToDisplay) {
       const { last_completed_data_last_updated_at: lastUpdateTimestamp, heart_beat_seconds } = feedToDisplay
       const timeToUpdate =
         new Date(lastUpdateTimestamp ?? 0).getTime() + heart_beat_seconds * 1000 - new Date(Date.now()).getTime()
 
-      const timer = setTimeout(
-        () => {
-          dispatch(getFeedsStorage())
-        },
-        timeToUpdate < 0 ? 30000 : timeToUpdate + 5000,
-      )
+      const timer = setTimeout(() => dispatch(getFeedsStorage()), timeToUpdate < 0 ? 30000 : timeToUpdate + 5000)
       timerId.current = timer
     }
 
@@ -61,13 +56,13 @@ const DataFeedDetails = () => {
   const feedsSatellites = useMemo(
     () =>
       selectedFeed?.address
-        ? allSatellitesIds
+        ? oraclesIds
             .filter((address) =>
-              satelliteMapper[address].oracleRecords.find(({ feedAddress }) => selectedFeed?.address === feedAddress),
+              satelliteMapper[address].oracleRecords.find(({ feedAddress }) => selectedFeed.address === feedAddress),
             )
             .map((address) => satelliteMapper[address])
         : [],
-    [selectedFeed?.address, allSatellitesIds, satelliteMapper],
+    [selectedFeed?.address, oraclesIds, satelliteMapper],
   )
 
   return (

@@ -4,7 +4,6 @@ import { State } from 'reducers'
 
 // actions
 import { getEmergencyGovernanceStorage } from '../EmergencyGovernance/EmergencyGovernance.actions'
-import { getSatellitesStorage } from '../Satellites/Satellites.actions'
 import { getCurrentRoundProposals, executeProposal, getGovernanceStorage } from './Governance.actions'
 
 // view
@@ -34,7 +33,6 @@ export const Governance = () => {
   const { governanceStorage, governancePhase, currentRoundProposals, pastProposals } = useSelector(
     (state: State) => state.governance,
   )
-  const { isLoaded: isSatellitesLoaded } = useSelector((state: State) => state.satellites)
   const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
 
   const { isLoading } = useDataLoader(async () => {
@@ -42,7 +40,6 @@ export const Governance = () => {
       await Promise.all(
         [
           !isEgovLoaded && dispatch(getEmergencyGovernanceStorage()),
-          !isSatellitesLoaded && dispatch(getSatellitesStorage()),
           dispatch(getCurrentRoundProposals()),
           dispatch(getGovernanceStorage()),
         ].filter(Boolean),

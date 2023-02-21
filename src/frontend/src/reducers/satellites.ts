@@ -36,10 +36,11 @@ export function satellites(state = satellitesDefaultState, action: any) {
     case GET_SATELLITES_STORAGE:
       return {
         ...state,
-        satelliteMapper: { ...state.satelliteMapper, ...action.satellitesMapper },
-        activeSatellitesIds: Array.from(new Set(state.activeSatellitesIds.concat(action.activeSatellitesIds))),
-        allSatellitesIds: Array.from(new Set(state.allSatellitesIds.concat(action.allSatellitesIds))),
-        oraclesIds: Array.from(new Set(state.oraclesIds.concat(action.oraclesIds))),
+        satelliteMapper: action.satellitesMapper,
+        activeSatellitesIds: action.activeSatellitesIds,
+        allSatellitesIds: action.allSatellitesIds,
+        oraclesIds: action.oraclesIds,
+        isLoaded: true,
       }
     case GET_SATELLITE_CONFIG:
       return { ...state, config: { ...action.config, isConfigLoaded: true } }
