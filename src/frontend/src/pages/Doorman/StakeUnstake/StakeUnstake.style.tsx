@@ -5,33 +5,12 @@ import { cyanColor, downColor } from '../../../styles/colors'
 import { MavrykTheme } from '../../../styles/interfaces'
 
 export const StakeUnstakeStyled = styled.div`
-  /* height: 240px; */
   position: relative;
   margin-top: 30px;
   display: grid;
-  // TODO: delete commented code after aproved new design [MAV-774]
-  /* grid-template-columns: 3fr 1fr 1fr 1fr; */
   grid-template-columns: 500px auto;
   grid-gap: 30px;
 `
-
-// TODO: delete commented code after aproved new design [MAV-774]
-// export const StakeUnstakeCard = styled(Card)<{ theme: MavrykTheme }>`
-//   margin: 0;
-//   background-color: ${({ theme }) => theme.containerColor};
-//   border-radius: 10px;
-//   text-align: center;
-//   font-size: 14px;
-//   font-weight: 600;
-//   color: ${({ theme }) => theme.subTextColor};
-//   display: flex;
-//   justify-content: center;
-//   align-items: flex-start;
-//   padding: 20px;
-//   min-width: 130px;
-//   padding-top: 28px;
-//   padding-bottom: 19px;
-// `
 
 export const StakeUnstakeCard = styled.div<{ theme: MavrykTheme }>`
   display: flex;
@@ -50,9 +29,11 @@ export const StakeUnstakeCard = styled.div<{ theme: MavrykTheme }>`
 `
 
 export const StakeUnstakeCards = styled(Card)<{ theme: MavrykTheme }>`
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  padding: 60px 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  padding: 30px 0;
   margin: 0;
 
   font-size: 14px;
@@ -61,6 +42,22 @@ export const StakeUnstakeCards = styled(Card)<{ theme: MavrykTheme }>`
   color: ${({ theme }) => theme.subTextColor};
   background-color: ${({ theme }) => theme.containerColor};
   border-radius: 10px;
+
+  .grid-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  .centering-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    width: 100%;
+
+    button {
+      width: 215px;
+    }
+  }
 `
 
 export const StakeUnstakeActionCard = styled(Card)<{ theme: MavrykTheme }>`
@@ -204,62 +201,21 @@ export const StakeUnstakeRate = styled.div`
 
 export const StakeUnstakeButtonGrid = styled.div`
   margin: 25px auto 0 auto;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-gap: 10px;
+  display: flex;
+  justify-content: space-between;
+  column-gap: 10px;
+
+  button {
+    width: 50%;
+  }
 
   &.compound {
-    grid-template-columns: 1fr 1fr 1fr;
+    button {
+      padding: 0;
+      width: 33%;
+    }
   }
 `
-// TODO: delete commented code after aproved new design [MAV-774]
-// export const StakeUnstakeBalance = styled.div<{ theme: MavrykTheme }>`
-//   display: flex;
-//   flex-direction: column;
-//   justify-content: center;
-//   align-items: center;
-//   flex-shrink: 0;
-//   height: 100%;
-
-//   h3 {
-//     font-size: 14px;
-//     font-weight: 600; 
-//     line-height: 21px;
-//     color: ${({ theme }) => theme.textColor};
-//   }
-//   img {
-//     margin-bottom: 10px;
-//     margin-top: auto;
-//   }
-
-//   p {
-//     color: ${({ theme }) => theme.dataColor};
-//     font-weight: 600;
-//     font-size: 22px;
-//     line-height: 22px;
-//     overflow: hidden;
-//     text-overflow: ellipsis;
-//     max-width: 130px;
-//   }
-
-//   div {
-//     max-width: max-content;
-//     align-items: center;
-//     font-size: 20px;
-//     font-weight: 600;
-//     color: ${({ theme }) => theme.subTextColor};
-
-//     &::after {
-//       content: '';
-//       display: block;
-//       width: 42px;
-//       height: 3px;
-//       background-color: ${({ theme }) => theme.textColor};
-//       margin: 20px auto 10px;
-//       border-radius: 2px;
-//     } 
-//   }
-// `
 
 export const StakeUnstakeBalance = styled.div<{ theme: MavrykTheme }>`
   position: relative;
@@ -271,13 +227,13 @@ export const StakeUnstakeBalance = styled.div<{ theme: MavrykTheme }>`
 
   h3 {
     font-size: 14px;
-    font-weight: 600; 
+    font-weight: 600;
     line-height: 21px;
     color: ${({ theme }) => theme.textColor};
   }
 
   img {
-    margin-bottom: 40px;
+    margin-bottom: 10px;
   }
 
   div {
@@ -291,7 +247,7 @@ export const StakeUnstakeBalance = styled.div<{ theme: MavrykTheme }>`
 
 export const StakeLabel = styled.blockquote`
   position: absolute;
-  bottom: 50px;
+  bottom: -25px;
   color: ${downColor};
   margin: 0;
   line-height: 19px;

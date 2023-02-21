@@ -1,9 +1,8 @@
 import styled from 'styled-components/macro'
-import { upColor, royalPurpleColor, containerColor } from 'styles'
 
 export const CouncilFormStyled = styled.form`
   padding: 24px 30px;
-  border-top: 1px solid ${royalPurpleColor};
+  border-top: 1px solid ${({ theme }) => theme.cardBorderColor};
   margin-top: 1px;
   position: relative;
 
@@ -12,10 +11,14 @@ export const CouncilFormStyled = styled.form`
     margin-bottom: 0;
   }
 
+  input,
   p {
-    font-weight: 600;
+    font-weight: 500;
     font-size: 14px;
-    line-height: 21px;
+    line-height: 24px;
+  }
+
+  p {
     color: ${({ theme }) => theme.textColor};
     margin-bottom: 16px;
     margin-top: 1px;
@@ -33,7 +36,7 @@ export const CouncilFormStyled = styled.form`
     }
 
     .form-grid-adress {
-      color: ${upColor};
+      color: ${({ theme }) => theme.upColor};
       padding-top: 12px;
       padding-left: 16px;
     }
@@ -64,20 +67,6 @@ export const CouncilFormStyled = styled.form`
     padding-bottom: 15px;
   }
 
-  .plus-btn {
-    width: 250px;
-
-    svg {
-      stroke: none;
-    }
-
-    &.fill {
-      svg {
-        stroke: ${containerColor};
-      }
-    }
-  }
-
   .button-aligment {
     display: flex;
     justify-content: flex-end;
@@ -91,6 +80,7 @@ export const CouncilFormStyled = styled.form`
 
   .with-pinned-text {
     .pinned-text {
+      position: relative;
       font-weight: 600;
       font-size: 14px;
       line-height: 14px;
@@ -105,4 +95,4 @@ export const CouncilFormStyled = styled.form`
       width: 280px;
     }
   }
-` //CouncilFormStyled
+`

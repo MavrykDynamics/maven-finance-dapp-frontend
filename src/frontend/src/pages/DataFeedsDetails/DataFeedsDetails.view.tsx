@@ -20,9 +20,9 @@ import SatelliteList from 'pages/Satellites/SatelliteList/SatellitesList.control
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
-import DataFeedsPagination from '../pagination/DataFeedspagination.controler'
+import DataFeedsPagination from './pagination/DataFeedsPagination.controler'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import { DataFeedsChart } from '../chart/DataFeedsChart.controller'
+import { DataFeedsChart } from './chart/DataFeedsChart.controller'
 
 // types
 import { State } from 'reducers'
@@ -73,12 +73,7 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, registerFeedHandler, isLoa
 
   const isTrustedAnswer = feed && feed.last_completed_data_pct_oracle_resp >= feed.pct_oracle_threshold
 
-  // TODO: temporary icon selection cuz of troubles with usage from indexer
-  const imageLink = feed?.name.includes('EUROC')
-    ? '/images/eurl.png'
-    : feed?.name.includes('XTZ')
-    ? '/images/tezos.png'
-    : dipDupContracts.find(({ contract }) => contract === feed?.address)?.metadata?.icon
+  const imageLink = dipDupContracts.find(({ contract }) => contract === feed?.address)?.metadata?.icon
 
   return feed ? (
     <Page>

@@ -10,7 +10,7 @@ import DataFeedDetailsView from './DataFeedsDetails.view'
 
 // actions
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
-import { getFeedsStorage, registerFeedAction } from '../DataFeeds.actions'
+import { getFeedsStorage, registerFeedAction } from '../DataFeeds/DataFeeds.actions'
 import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
 
 const DataFeedDetails = () => {

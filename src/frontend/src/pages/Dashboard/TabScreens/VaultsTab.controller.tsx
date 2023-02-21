@@ -30,9 +30,7 @@ import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 export const VaultsTab = ({ isLoading }: { isLoading: boolean }) => {
   const [hoveredPath, setHoveredPath] = useState<null | string>(null)
 
-  const {
-    vaultsList: { allVaultsIds, vaultsMapper },
-  } = useSelector((state: State) => state.vaults)
+  const { allVaultsIds, vaultsMapper } = useSelector((state: State) => state.vaults.vaultsList)
   const { assetsBalances, globalVaultTVL, collateralRatio, avgCollateralRatio } = useMemo(
     () => reduceVaultsAssets(allVaultsIds, vaultsMapper),
     [allVaultsIds, vaultsMapper],

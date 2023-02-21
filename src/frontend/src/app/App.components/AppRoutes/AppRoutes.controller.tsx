@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux'
 import { State } from 'reducers'
 
 import { DataFeeds } from 'pages/DataFeeds/DataFeeds.controller'
-import DataFeedDetails from 'pages/DataFeeds/details/DataFeedsDetails.controler'
+import DataFeedDetails from 'pages/DataFeedsDetails/DataFeedsDetails.controler'
 import { FinancialRequests } from 'pages/FinacialRequests/FinancialRequests.controller'
 import SatelliteNodes from 'pages/SatelliteNodes/SatelliteNodes.controller'
 import Satellites from 'pages/Satellites/Satellites.controller'
@@ -110,10 +110,10 @@ export const AppRoutes = () => {
       <Route exact path="/emergency-governance">
         <EmergencyGovernance />
       </Route>
-      <Route exact path="/mavryk-council/:review?">
+      <Route exact path="/mavryk-council/:tabId?">
         <Council />
       </Route>
-      <Route exact path="/break-glass-council/:review?">
+      <Route exact path="/break-glass-council/:tabId?">
         <BreakGlassCouncil />
       </Route>
       <ProtectedRoute

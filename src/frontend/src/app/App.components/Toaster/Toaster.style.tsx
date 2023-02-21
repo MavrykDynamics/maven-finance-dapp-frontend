@@ -98,6 +98,7 @@ export const ToasterIcon = styled.div<{ status?: string; theme: MavrykTheme }>`
 export const ToasterContent = styled.div`
   padding: 8px;
   max-width: 300px;
+  width: 100%;
 
   > div {
     word-break: break-word;

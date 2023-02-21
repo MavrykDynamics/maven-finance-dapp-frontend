@@ -15,7 +15,6 @@ import { Lending_Controller_Vault } from 'utils/generated/graphqlTypes'
 import { symbolsAfterDecimalPoint } from 'utils/symbolsAfterDecimalPoint'
 import { getOracleAggregatorLatestPrice } from './Vaults.actions'
 import { statusSortPriority, vaultsStatuses } from './Vaults.consts'
-import { fetchRateBySymbols } from 'reducers/actions/dipDupActions.actions'
 import { calcCollateralRatio, calculateCompoundedInterest, getAssetMetadata } from 'pages/Loans/Loans.helpers'
 import { calcWithoutDecimals } from 'utils/calcFunctions'
 import { BLOCKS_PER_MINUTE } from 'utils/constants'
@@ -78,8 +77,6 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
           })
 
           acc.totalRow.amount += collateralBalance * collateralAsset.rate
-          // TODO: add a valid result in the field below
-
           return acc
         },
         {
