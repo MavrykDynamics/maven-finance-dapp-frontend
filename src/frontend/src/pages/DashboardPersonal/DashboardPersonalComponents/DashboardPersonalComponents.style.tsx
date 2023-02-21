@@ -52,7 +52,7 @@ export const MediumBlockBase = styled(SmallBlockBase)<{ theme: MavrykTheme }>`
     span {
       font-weight: 600;
       font-size: 18px;
-      color: ${({ theme }) => theme.lPurple_dPurple_lPuprple};
+      color: ${({ theme }) => theme.textColor};
     }
   }
 `
