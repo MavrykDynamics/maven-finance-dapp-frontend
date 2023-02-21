@@ -10,6 +10,7 @@ type DoormanStatsPropsType = {
   MVK_exchangeRate: number
   maximumTotalSupply: number
   totalStakedMvk: number
+  totalSupply: number
   doormanAddress: string
   mvkTokenAddress: string
 }
@@ -18,12 +19,13 @@ export const DoormanStats = ({
   MVK_exchangeRate,
   maximumTotalSupply,
   totalStakedMvk,
+  totalSupply,
   doormanAddress,
   mvkTokenAddress,
 }: DoormanStatsPropsType) => {
-  const mli = calcMLI(maximumTotalSupply, totalStakedMvk)
-  const fee = calcExitFee(maximumTotalSupply, totalStakedMvk)
-  const marketCapValue = MVK_exchangeRate ? MVK_exchangeRate * maximumTotalSupply : 0
+  const mli = calcMLI(totalSupply, totalStakedMvk)
+  const fee = calcExitFee(totalSupply, totalStakedMvk)
+  const marketCapValue = MVK_exchangeRate ? MVK_exchangeRate * totalSupply : 0
 
   return (
     <DoormanStatsStyled>
@@ -101,7 +103,7 @@ export const DoormanStats = ({
         <div>
           <h4>Total Circulating</h4>
           <var>
-            <CommaNumber value={maximumTotalSupply} endingText={'MVK'} />
+            <CommaNumber value={totalSupply} endingText={'MVK'} />
           </var>
         </div>
 

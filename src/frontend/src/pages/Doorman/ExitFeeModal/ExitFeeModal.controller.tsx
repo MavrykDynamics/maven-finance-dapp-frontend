@@ -10,22 +10,23 @@ import { ACTION_PRIMARY, ACTION_SECONDARY } from '../../../app/App.components/Bu
 
 // components
 import { CommaNumber } from '../../../app/App.components/CommaNumber/CommaNumber.controller'
-import { Button } from 'app/App.components/Button/Button.controller'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 import { Input } from '../../../app/App.components/Input/Input.controller'
 import { DoormanList } from '../DoormanStats/DoormanStats.style'
 import { ExitFeeModalButtons, ExitFeeModalContent } from './ExitFeeModal.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
+import NewButton from 'app/App.components/Button/NewButton.controller'
+import { containerColor } from 'styles'
 
 type ExitFeeModalPropsType = {
   closePopup: () => void
   show: boolean
   data: {
     amount: number
-    maximumTotalSupply: number
     mySMvkTokenBalance: number
     myMvkTokenBalance: number
     totalStakedMvk: number
+    totalSupply: number
     accountPkh?: string
   }
 }
@@ -33,7 +34,7 @@ type ExitFeeModalPropsType = {
 export const ExitFeeModal = ({
   closePopup,
   show,
-  data: { amount, maximumTotalSupply, mySMvkTokenBalance, myMvkTokenBalance, totalStakedMvk, accountPkh },
+  data: { amount, totalSupply, mySMvkTokenBalance, myMvkTokenBalance, totalStakedMvk, accountPkh },
 }: ExitFeeModalPropsType) => {
   const dispatch = useDispatch()
 
@@ -44,34 +45,42 @@ export const ExitFeeModal = ({
 
   const unstakeCallback = (amount: number) => dispatch(unstake(amount))
 
-  const validateInput = (value: number) => {
-    const validityCheckResult = isValidNumberValue(
-      value,
-      1,
-      accountPkh ? Math.max(Number(myMvkTokenBalance), Number(mySMvkTokenBalance)) : undefined,
-    )
-      ? INPUT_STATUS_SUCCESS
-      : INPUT_STATUS_ERROR
-
-    setInputData({
-      ...inputData,
-      validation: validityCheckResult,
-    })
-  }
-
-  const mli = calcMLI(maximumTotalSupply, totalStakedMvk)
-  const fee = calcExitFee(maximumTotalSupply, totalStakedMvk)
+  const mli = calcMLI(totalSupply, totalStakedMvk)
+  const fee = calcExitFee(totalSupply, totalStakedMvk)
 
   // Validating initial amount came from props
   useEffect(() => {
-    validateInput(amount)
-    setInputData({ ...inputData, amount: String(amount) })
-  }, [])
+    setInputData({
+      amount: String(amount),
+      validation: isValidNumberValue(
+        amount,
+        1,
+        accountPkh ? Math.max(Number(myMvkTokenBalance), Number(mySMvkTokenBalance)) : undefined,
+      )
+        ? INPUT_STATUS_SUCCESS
+        : INPUT_STATUS_ERROR,
+    })
+
+    return () => {
+      setInputData({
+        amount: '0',
+        validation: '',
+      })
+    }
+  }, [show])
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = mathRoundTwoDigit(e.target.value)
-    validateInput(+value)
-    setInputData({ ...inputData, amount: String(value) })
+    setInputData({
+      amount: String(amount),
+      validation: isValidNumberValue(
+        +value,
+        1,
+        accountPkh ? Math.max(Number(myMvkTokenBalance), Number(mySMvkTokenBalance)) : undefined,
+      )
+        ? INPUT_STATUS_SUCCESS
+        : INPUT_STATUS_ERROR,
+    })
   }
 
   const handleFocus = () => {
@@ -81,7 +90,6 @@ export const ExitFeeModal = ({
   }
 
   const handleBlur = ({ target: { value } }: React.ChangeEvent<HTMLInputElement>) => {
-    validateInput(+value)
     if (inputData.amount === '') {
       setInputData({ ...inputData, amount: '0' })
     }
@@ -140,17 +148,20 @@ export const ExitFeeModal = ({
             </DoormanList>
 
             <ExitFeeModalButtons>
-              <Button
-                text="Proceed"
-                icon="success"
-                disabled={inputData.validation !== INPUT_STATUS_SUCCESS}
+              <NewButton
                 kind={ACTION_PRIMARY}
+                disabled={inputData.validation !== INPUT_STATUS_SUCCESS}
                 onClick={() => {
                   unstakeCallback(Number(inputData.amount))
                   closePopup()
                 }}
-              />
-              <Button text="Cancel" kind={ACTION_SECONDARY} icon="error" onClick={closePopup} />
+              >
+                <Icon id="success-fill" fill={containerColor} /> Proceed
+              </NewButton>
+
+              <NewButton kind={ACTION_SECONDARY} onClick={closePopup}>
+                <Icon id="error" /> Cancel
+              </NewButton>
             </ExitFeeModalButtons>
           </ExitFeeModalContent>
         </div>
