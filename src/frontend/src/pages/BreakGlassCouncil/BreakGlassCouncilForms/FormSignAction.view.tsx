@@ -3,8 +3,9 @@ import { useDispatch } from 'react-redux'
 
 // components
 import { ACTION_PRIMARY, SUBMIT } from '../../../app/App.components/Button/Button.constants'
-import { Button } from '../../../app/App.components/Button/Button.controller'
-import { Input } from 'app/App.components/Input/Input.controller'
+import { Input } from 'app/App.components/Input/NewInput'
+import NewButton from 'app/App.components/Button/NewButton.controller'
+import Icon from 'app/App.components/Icon/Icon.view'
 
 // types
 import { InputStatusType } from 'app/App.components/Input/Input.constants'
@@ -34,6 +35,7 @@ export function FormSignActionView() {
 
     try {
       await dispatch(signAction(Number(breakGlassActionID)))
+      
       setForm(INIT_FORM)
       setFormInputStatus({
         breakGlassActionID: '',
@@ -55,6 +57,21 @@ export function FormSignActionView() {
     })
   }
 
+  const inputProps = {
+    name: 'breakGlassActionID',
+    value: breakGlassActionID,
+    onBlur: handleBlur,
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+      handleChange(e)
+      handleBlur(e)
+    },
+    required: true,
+  }
+
+  const inputSettings = {
+    inputStatus: formInputStatus.breakGlassActionID,
+  }
+
   return (
     <FormStyled>
       <h1>Sign Action</h1>
@@ -64,21 +81,13 @@ export function FormSignActionView() {
         <div className="form-fields input-size-primary">
           <label>Break Glass Action ID</label>
 
-          <Input
-            type="text"
-            required
-            value={breakGlassActionID}
-            name="breakGlassActionID"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              handleChange(e)
-              handleBlur(e)
-            }}
-            onBlur={(e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e)}
-            inputStatus={formInputStatus.breakGlassActionID}
-          />
+          <Input inputProps={inputProps} settings={inputSettings} />
         </div>
 
-        <Button className="stroke-03" text={'Sign Action'} kind={ACTION_PRIMARY} icon={'sign'} type={SUBMIT} />
+        <NewButton kind={ACTION_PRIMARY} type={SUBMIT}>
+          <Icon id="sign" />
+          Sign Action
+        </NewButton>
       </form>
     </FormStyled>
   )

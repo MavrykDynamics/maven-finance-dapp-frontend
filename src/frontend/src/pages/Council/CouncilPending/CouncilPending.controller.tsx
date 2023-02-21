@@ -5,7 +5,7 @@ import { ModalCard, ModalCardContent, ModalClose, ModalMask, ModalStyled } from 
 // components
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { TzAddress } from '../../../app/App.components/TzAddress/TzAddress.view'
-import { Button } from '../../../app/App.components/Button/Button.controller'
+import NewButton from 'app/App.components/Button/NewButton.controller'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 
 // helpers
@@ -16,14 +16,13 @@ import { convertBytesAddressToAddress } from 'app/App.helpers'
 import { CYAN } from 'app/App.components/TzAddress/TzAddress.constants'
 
 // types
-import { BreakGlassActions } from 'utils/TypesAndInterfaces/BreakGlass'
-import { CouncilActions } from 'utils/TypesAndInterfaces/Council'
+import { CouncilAction } from 'utils/TypesAndInterfaces/Council'
 
 // styles
 import { CouncilPendingStyled } from './CouncilPending.style'
 import { AvatarStyle } from '../../../app/App.components/Avatar/Avatar.style'
 
-type Props = (BreakGlassActions[0] | CouncilActions[0]) & {
+type Props = CouncilAction & {
   numCouncilMembers: number
   councilPendingActionsLength: number
   index: number
@@ -142,7 +141,7 @@ export const CouncilPending = (props: Props) => {
           <h3>{getSeparateCamelCase(actionType)}</h3>
           <div className="parameters">
             <article>
-              <p className="without-margin">Council Member Address</p>
+              <p>Council Member Address</p>
               <span className="parameters-value content-width">
                 <TzAddress tzAddress={councilMemberAddress} type={CYAN} hasIcon />
               </span>
@@ -190,7 +189,10 @@ export const CouncilPending = (props: Props) => {
               )}
             </article>
 
-            <Button text="Sign" className="sign-btn" kind={'actionPrimary'} icon="sign" onClick={onClickSign} />
+            <NewButton className="sign-btn" kind={ACTION_PRIMARY} onClick={onClickSign}>
+              <Icon id="sign" />
+              Sign
+            </NewButton>
           </div>
         </CouncilPendingStyled>
         {showing ? createPortal(modal, document?.body) : null}
@@ -259,7 +261,10 @@ export const CouncilPending = (props: Props) => {
               )}
             </article>
 
-            <Button text="Sign" className="sign-btn" kind={'actionPrimary'} icon="sign" onClick={onClickSign} />
+            <NewButton className="sign-btn" kind={ACTION_PRIMARY} onClick={onClickSign}>
+              <Icon id="sign" />
+              Sign
+            </NewButton>
           </div>
         </CouncilPendingStyled>
       </>
@@ -280,7 +285,7 @@ export const CouncilPending = (props: Props) => {
           <h3>{getSeparateCamelCase(actionType)}</h3>
           <div className="parameters grid">
             <article>
-              <p className="without-margin">Council Member to change</p>
+              <p className='without-margin'>Council Member to change</p>
               <span className="parameters-value content-width">
                 <TzAddress tzAddress={oldCouncilMemberAddress} type={CYAN} hasIcon />
               </span>
@@ -336,7 +341,10 @@ export const CouncilPending = (props: Props) => {
               )}
             </article>
 
-            <Button text="Sign" className="sign-btn" kind={'actionPrimary'} icon="sign" onClick={onClickSign} />
+            <NewButton className="sign-btn" kind={ACTION_PRIMARY} onClick={onClickSign}>
+              <Icon id="sign" />
+              Sign
+            </NewButton>
           </div>
         </CouncilPendingStyled>
       </>
@@ -380,7 +388,10 @@ export const CouncilPending = (props: Props) => {
             </div>
           </article>
 
-          <Button text="Sign" className="sign-btn" kind={'actionPrimary'} icon="sign" onClick={onClickSign} />
+          <NewButton className="sign-btn" kind={ACTION_PRIMARY} onClick={onClickSign}>
+            <Icon id="sign" />
+            Sign
+          </NewButton>
         </div>
       </CouncilPendingStyled>
     )
@@ -433,7 +444,10 @@ export const CouncilPending = (props: Props) => {
             <span className="parameters-value">{vestingInMonths} months</span>
           </article>
 
-          <Button text="Sign" className="sign-btn" kind={'actionPrimary'} icon="sign" onClick={onClickSign} />
+          <NewButton className="sign-btn" kind={ACTION_PRIMARY} onClick={onClickSign}>
+            <Icon id="sign" />
+            Sign
+          </NewButton>
         </div>
       </CouncilPendingStyled>
     )
@@ -486,7 +500,10 @@ export const CouncilPending = (props: Props) => {
             <span className="parameters-value">{newVestingInMonths} months</span>
           </article>
 
-          <Button text="Sign" className="sign-btn" kind={'actionPrimary'} icon="sign" onClick={onClickSign} />
+          <NewButton className="sign-btn" kind={ACTION_PRIMARY} onClick={onClickSign}>
+            <Icon id="sign" />
+            Sign
+          </NewButton>
         </div>
       </CouncilPendingStyled>
     )
@@ -556,7 +573,10 @@ export const CouncilPending = (props: Props) => {
               </article>
             )}
 
-            <Button text="Sign" className="sign-btn" kind={'actionPrimary'} icon="sign" onClick={onClickSign} />
+            <NewButton className="sign-btn" kind={ACTION_PRIMARY} onClick={onClickSign}>
+              <Icon id="sign" />
+              Sign
+            </NewButton>
           </div>
         </CouncilPendingStyled>
         {showing ? createPortal(modal, document?.body) : null}
@@ -628,7 +648,10 @@ export const CouncilPending = (props: Props) => {
               </article>
             )}
 
-            <Button text="Sign" className="sign-btn" kind={'actionPrimary'} icon="sign" onClick={onClickSign} />
+            <NewButton className="sign-btn" kind={ACTION_PRIMARY} onClick={onClickSign}>
+              <Icon id="sign" />
+              Sign
+            </NewButton>
           </div>
         </CouncilPendingStyled>
         {showing ? createPortal(modal, document?.body) : null}
@@ -682,7 +705,10 @@ export const CouncilPending = (props: Props) => {
 
           <article />
 
-          <Button text="Sign" className="sign-btn" kind={'actionPrimary'} icon="sign" onClick={onClickSign} />
+          <NewButton className="sign-btn" kind={ACTION_PRIMARY} onClick={onClickSign}>
+            <Icon id="sign" />
+            Sign
+          </NewButton>
         </div>
         {showing ? createPortal(modal, document?.body) : null}
       </CouncilPendingStyled>
@@ -700,7 +726,7 @@ export const CouncilPending = (props: Props) => {
     isSetBaker ||
     isSetContractBaker
   ) {
-    console.log({ value, name, valuelength: value.length, parameters, actionType })
+    // console.log({ value, name, valuelength: value.length, parameters, actionType })
     let address = findAddress(actionType)
 
     return (
@@ -726,7 +752,10 @@ export const CouncilPending = (props: Props) => {
         </div>
 
         <div className="g-centering">
-          <Button text="Sign" className="sign-btn" kind={'actionPrimary'} icon="sign" onClick={onClickSign} />
+          <NewButton className="sign-btn" kind={ACTION_PRIMARY} onClick={onClickSign}>
+            <Icon id="sign" />
+            Sign
+          </NewButton>
         </div>
       </CouncilPendingStyled>
     )
@@ -740,7 +769,7 @@ export const CouncilPending = (props: Props) => {
       <h3>{getSeparateCamelCase(actionType)}</h3>
       <div className="parameters">
         <div>
-          <p className="parameters-name no-wrap">{getSeparateCamelCase(name)}</p>
+          <p className="parameters-name">{getSeparateCamelCase(name)}</p>
           <span className="parameters-value">{convertedValue}</span>
         </div>
         <div>
@@ -752,7 +781,10 @@ export const CouncilPending = (props: Props) => {
       </div>
 
       <div className="g-centering">
-        <Button text="Sign" className="sign-btn" kind={ACTION_PRIMARY} icon="sign" onClick={onClickSign} />
+        <NewButton className="sign-btn" kind={ACTION_PRIMARY} onClick={onClickSign}>
+          <Icon id="sign" />
+          Sign
+        </NewButton>
       </div>
     </CouncilPendingStyled>
   )

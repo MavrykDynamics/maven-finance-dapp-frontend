@@ -1,30 +1,23 @@
-import React from 'react'
-import { CouncilOngoingAction } from './CouncilActions/CouncilOngoingAction.view'
+import { CouncilOngoingAction } from './CouncilOngoingAction.view'
 
 // components
 import { CouncilPastActionView } from 'pages/Council/CouncilActions/CouncilPastAction.view'
 import Pagination from 'pages/FinacialRequests/Pagination/Pagination.view'
-import { councilEmptyContainer } from './Council.controller'
+import { councilEmptyContainer } from '../Council.view'
 
 // styles
-import { TabSwitcher } from './Council.style'
+import { TabSwitcher } from '../Council.style'
 
 // types
-import { BreakGlassActions } from 'utils/TypesAndInterfaces/BreakGlass'
+import { CouncilAction } from 'utils/TypesAndInterfaces/Council'
 import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
-import { CouncilActions } from 'utils/TypesAndInterfaces/Council'
-import { CouncilPageType } from './CouncilActions/CouncilOngoingAction.view'
-
-type MyPastCouncilActionType = (BreakGlassActions[0] | CouncilActions[0]) & {
-  councilId?: string
-  breakGlassId?: string
-}
 
 type Props = {
-  myPastCouncilAction: MyPastCouncilActionType[]
+  myPastCouncilAction: number[]
   myPastCouncilActionLength: number
-  actionPendingSignature: BreakGlassActions | CouncilActions
+  actionPendingSignature: number[]
   actionPendingSignatureLength: number
+  actionsMapper: Record<number, CouncilAction>
   numCouncilMembers: number
   activeActionTab: string
   setActiveActionTab: (arg: string) => void
@@ -32,7 +25,7 @@ type Props = {
   handleDropAction: (arg: number) => void
   listNameMyPastActions: string
   listNameMyOngoingActions: string
-  pageType: CouncilPageType
+  cardIdName: string
 }
 
 export function MyCouncilActions({
@@ -40,6 +33,7 @@ export function MyCouncilActions({
   myPastCouncilActionLength,
   actionPendingSignature,
   actionPendingSignatureLength,
+  actionsMapper,
   numCouncilMembers,
   activeActionTab,
   setActiveActionTab,
@@ -47,7 +41,7 @@ export function MyCouncilActions({
   handleDropAction,
   listNameMyPastActions,
   listNameMyOngoingActions,
-  pageType,
+  cardIdName,
 }: Props) {
   const handleChangeTabs = (tabId?: number) => {
     setActiveActionTab(tabId === 1 ? tabsList[0].text : tabsList[1].text)
@@ -58,16 +52,20 @@ export function MyCouncilActions({
       {activeActionTab === tabsList[1].text && (
         <>
           {myPastCouncilAction.length
-            ? myPastCouncilAction.map((item) => (
-                <CouncilPastActionView
-                  startDatetime={String(item.startDatetime)}
-                  key={item.id}
-                  actionType={item.actionType}
-                  signersCount={item.signersCount}
-                  numCouncilMembers={numCouncilMembers}
-                  councilId={item?.breakGlassId || item?.councilId || ''}
-                />
-              ))
+            ? myPastCouncilAction.map((item) => {
+                const action = actionsMapper[item]
+
+                return (
+                  <CouncilPastActionView
+                    startDatetime={action.startDatetime}
+                    key={action.id}
+                    actionType={action.actionType}
+                    signersCount={action.signersCount}
+                    numCouncilMembers={numCouncilMembers}
+                    councilId={action.councilId}
+                  />
+                )
+              })
             : councilEmptyContainer}
 
           <Pagination itemsCount={myPastCouncilActionLength} listName={listNameMyPastActions} />
@@ -77,15 +75,19 @@ export function MyCouncilActions({
       {activeActionTab === tabsList[0].text && (
         <>
           {actionPendingSignature.length
-            ? actionPendingSignature.map((item) => (
-                <CouncilOngoingAction
-                  {...item}
-                  key={String(item.id)}
-                  numCouncilMembers={numCouncilMembers}
-                  handleDropAction={handleDropAction}
-                  pageType={pageType}
-                />
-              ))
+            ? actionPendingSignature.map((item) => {
+                const action = actionsMapper[item]
+
+                return (
+                  <CouncilOngoingAction
+                    {...action}
+                    key={action.id}
+                    numCouncilMembers={numCouncilMembers}
+                    handleDropAction={handleDropAction}
+                    cardIdName={cardIdName}
+                  />
+                )
+              })
             : councilEmptyContainer}
 
           <Pagination itemsCount={actionPendingSignatureLength} listName={listNameMyOngoingActions} />

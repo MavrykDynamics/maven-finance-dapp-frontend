@@ -3,21 +3,20 @@ import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
 // const
-import { ERROR } from '../../../app/App.components/Toaster/Toaster.constants'
 import { distinctRequestsByExecuting } from 'pages/FinacialRequests/FinancialRequests.helpers'
+import { ACTION_PRIMARY, SUBMIT } from 'app/App.components/Button/Button.constants'
 
 // view
-import { Button } from '../../../app/App.components/Button/Button.controller'
+import NewButton from 'app/App.components/Button/NewButton.controller'
 import Icon from '../../../app/App.components/Icon/Icon.view'
-import { DropDown, DropdownItemType } from '../../../app/App.components/DropDown/DropDown.controller'
+import { DDItemId, DropDown } from 'app/App.components/DropDown/NewDropdown'
 
 // action
 import { dropFinancialRequest } from '../Council.actions'
-import { showToaster } from '../../../app/App.components/Toaster/Toaster.actions'
 import { getGovernanceStorage } from 'pages/Governance/Governance.actions'
 
 // style
-import { CouncilFormStyled } from './CouncilForms.style'
+import { CouncilFormStyled } from './CouncilForm.style'
 
 export const CouncilFormDropFinancialRequest = () => {
   const dispatch = useDispatch()
@@ -25,59 +24,40 @@ export const CouncilFormDropFinancialRequest = () => {
   const { financialRequestLedger } = governanceStorage
   const { ongoing } = distinctRequestsByExecuting(financialRequestLedger || [])
 
-  const itemsForDropDown = useMemo(
+  const dropDownItems = useMemo(
     () =>
-      ongoing?.length
-        ? ongoing.map((item, i: number) => {
-            return {
-              text: `${item.request_type} ${item.request_purpose}`,
-              value: String(item.id),
-            }
-          })
-        : [],
+      ongoing.map((item, index) => ({
+        content: (
+          <div>
+            {item.request_type} {item.request_purpose}
+          </div>
+        ),
+        id: item.id,
+      })),
     [ongoing],
   )
 
-  const [ddItems, _] = useState(itemsForDropDown.map(({ text }) => text))
-  const [ddIsOpen, setDdIsOpen] = useState(false)
-  const [chosenDdItem, setChosenDdItem] = useState<DropdownItemType | undefined>()
-
-  const [form, setForm] = useState({
-    financialReqID: '',
-  })
-
-  const { financialReqID } = form
+  type DropDownItemType = typeof dropDownItems[0]
+  const [chosenDdItem, setChosenDdItem] = useState<DropDownItemType | undefined>()
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     try {
-      if (!financialReqID) {
-        dispatch(showToaster(ERROR, 'Please enter valid function parameter', 'Choose Financial Request to drop'))
-        return
-      }
+      const financialReqID = chosenDdItem?.id
+      if (!financialReqID) return
 
-      await dispatch(dropFinancialRequest(+financialReqID))
-      setForm({
-        financialReqID: '',
-      })
-
-      setChosenDdItem(itemsForDropDown[0])
+      await dispatch(dropFinancialRequest(financialReqID))
+      setChosenDdItem(undefined)
     } catch (error) {
       console.error(error)
     }
   }
 
-  const handleSelect = (item: DropdownItemType) => {
-    setForm((prev) => {
-      return { ...prev, financialReqID: item.value }
-    })
-  }
+  const handleClickDropdownItem = (itemId: DDItemId) => {
+    const foundItem = dropDownItems.find((item) => item.id === itemId)
 
-  const handleOnClickDropdownItem = (e: string) => {
-    const chosenItem = itemsForDropDown.filter((item) => item.text === e)[0]
-    setChosenDdItem(chosenItem)
-    setDdIsOpen(!ddIsOpen)
-    handleSelect(chosenItem)
+    if (!foundItem) return
+    setChosenDdItem(foundItem)
   }
 
   useEffect(() => {
@@ -96,21 +76,16 @@ export const CouncilFormDropFinancialRequest = () => {
           <label>Choose Financial Request to drop</label>
           <DropDown
             placeholder="Choose Financial Request"
-            isOpen={ddIsOpen}
-            setIsOpen={setDdIsOpen}
-            itemSelected={chosenDdItem?.text}
-            items={ddItems}
-            clickOnItem={(e) => handleOnClickDropdownItem(e)}
+            activeItem={chosenDdItem}
+            items={dropDownItems}
+            clickItem={handleClickDropdownItem}
           />
         </div>
         <div className="button-aligment">
-          <Button
-            text="Drop Financial Request"
-            className="plus-btn fill"
-            kind={'actionPrimary'}
-            icon="close-stroke"
-            type="submit"
-          />
+          <NewButton kind={ACTION_PRIMARY} type={SUBMIT}>
+            <Icon id="navigation-menu_close" />
+            Drop Financial Request
+          </NewButton>
         </div>
       </div>
     </CouncilFormStyled>

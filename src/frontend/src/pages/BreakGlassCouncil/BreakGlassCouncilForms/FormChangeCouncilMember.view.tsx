@@ -1,18 +1,18 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
 // components
 import { ACTION_PRIMARY, SUBMIT } from '../../../app/App.components/Button/Button.constants'
-import { Button } from '../../../app/App.components/Button/Button.controller'
-import { Input } from 'app/App.components/Input/Input.controller'
+import NewButton from 'app/App.components/Button/NewButton.controller'
+import { Input } from 'app/App.components/Input/NewInput'
 import { IPFSUploader } from '../../../app/App.components/IPFSUploader/IPFSUploader.controller'
-import { DropDown, DropdownItemType } from '../../../app/App.components/DropDown/DropDown.controller'
+import { DDItemId, DropDown } from 'app/App.components/DropDown/NewDropdown'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 
 // types
 import { InputStatusType } from 'app/App.components/Input/Input.constants'
-import { CouncilMemberMaxLength } from '../../../utils/TypesAndInterfaces/Council'
+import { CouncilMaxLength } from '../../../utils/TypesAndInterfaces/Council'
 
 // styles
 import { FormStyled } from './BreakGlassCouncilForm.style'
@@ -24,10 +24,6 @@ import { changeCouncilMember } from '../BreakGlassCouncil.actions'
 import { getShortTzAddress } from '../../../utils/tzAdress'
 import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
 
-type Props = {
-  councilMemberMaxLength: CouncilMemberMaxLength
-}
-
 const INIT_FORM = {
   newCouncilMemberAddress: '',
   newMemberWebsite: '',
@@ -35,24 +31,28 @@ const INIT_FORM = {
   newMemberImage: '',
 }
 
-export function FormChangeCouncilMemberView({ councilMemberMaxLength }: Props) {
+export function FormChangeCouncilMemberView(maxLength: CouncilMaxLength) {
   const dispatch = useDispatch()
-  const { breakGlassCouncilMember } = useSelector((state: State) => state.breakGlass)
+  const { breakGlassCouncilMembers } = useSelector((state: State) => state.council)
 
-  const itemsForDropDown = breakGlassCouncilMember.map((item) => {
-    return {
-      text: `${item.name} - ${getShortTzAddress({ tzAddress: item.userId })}`,
-      value: item.userId,
-    }
-  })
+  const dropDownItems = useMemo(
+    () =>
+      breakGlassCouncilMembers.map((item, index) => ({
+        content: (
+          <div>
+            {item.name} - {getShortTzAddress({ tzAddress: item.userId })}
+          </div>
+        ),
+        tzAddress: item.userId,
+        id: index,
+      })),
+    [breakGlassCouncilMembers],
+  )
 
-  const [ddItems, _] = useState(itemsForDropDown.map(({ text }) => text))
-  const [ddIsOpen, setDdIsOpen] = useState(false)
-  const [chosenDdItem, setChosenDdItem] = useState<DropdownItemType | undefined>()
+  type DropDownItemType = typeof dropDownItems[0]
 
-  const [uploadKey, setUploadKey] = useState(1)
+  const [chosenDdItem, setChosenDdItem] = useState<DropDownItemType | undefined>()
   const [form, setForm] = useState(INIT_FORM)
-
   const [formInputStatus, setFormInputStatus] = useState<Record<string, InputStatusType>>({
     newCouncilMemberAddress: '',
     newMemberWebsite: '',
@@ -61,13 +61,13 @@ export function FormChangeCouncilMemberView({ councilMemberMaxLength }: Props) {
   })
 
   const { newCouncilMemberAddress, newMemberWebsite, newMemberName, newMemberImage } = form
-  const disabled = false
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     try {
-      const oldCouncilMemberAddress = chosenDdItem?.value || ''
+      const oldCouncilMemberAddress = chosenDdItem?.tzAddress
+      if (!oldCouncilMemberAddress) return
 
       await dispatch(
         changeCouncilMember(
@@ -78,6 +78,7 @@ export function FormChangeCouncilMemberView({ councilMemberMaxLength }: Props) {
           newMemberImage,
         ),
       )
+
       setForm(INIT_FORM)
       setFormInputStatus({
         newCouncilMemberAddress: '',
@@ -85,11 +86,9 @@ export function FormChangeCouncilMemberView({ councilMemberMaxLength }: Props) {
         newMemberName: '',
         newMemberImage: '',
       })
-      setChosenDdItem(itemsForDropDown[0])
-      setUploadKey(uploadKey + 1)
+      setChosenDdItem(undefined)
     } catch (error) {
       console.error('FormChangeCouncilMemberViewe', error)
-      setUploadKey(uploadKey + 1)
     }
   }
 
@@ -102,10 +101,56 @@ export function FormChangeCouncilMemberView({ councilMemberMaxLength }: Props) {
   const handleBlur = validateFormField(setFormInputStatus)
   const handleBlurAddress = validateFormAddress(setFormInputStatus)
 
-  const handleClickDropdownItem = (e: string) => {
-    const chosenItem = itemsForDropDown.filter((item) => item.text === e)[0]
-    setChosenDdItem(chosenItem)
-    setDdIsOpen(!ddIsOpen)
+  const handleClickDropdownItem = (itemId: DDItemId) => {
+    const foundItem = dropDownItems.find((item) => item.id === itemId)
+
+    if (!foundItem) return
+    setChosenDdItem(foundItem)
+  }
+
+  const newCouncilMemberAddressProps = {
+    name: 'newCouncilMemberAddress',
+    value: newCouncilMemberAddress,
+    onBlur: handleBlurAddress,
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+      handleChange(e)
+      handleBlurAddress(e)
+    },
+    required: true,
+  }
+
+  const newCouncilMemberAddressSettings = {
+    inputStatus: formInputStatus.newCouncilMemberAddress,
+  }
+
+  const newMemberNameProps = {
+    name: 'newMemberName',
+    value: newMemberName,
+    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, maxLength.councilMemberNameMaxLength),
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+      handleChange(e)
+      handleBlur(e, maxLength.councilMemberNameMaxLength)
+    },
+    required: true,
+  }
+
+  const newMemberNameSettings = {
+    inputStatus: formInputStatus.newMemberName,
+  }
+
+  const newMemberWebsiteProps = {
+    name: 'newMemberWebsite',
+    value: newMemberWebsite,
+    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, maxLength.councilMemberWebsiteMaxLength),
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+      handleChange(e)
+      handleBlur(e, maxLength.councilMemberWebsiteMaxLength)
+    },
+    required: true,
+  }
+
+  const newMemberWebsiteSettings = {
+    inputStatus: formInputStatus.newMemberWebsite,
   }
 
   return (
@@ -122,71 +167,30 @@ export function FormChangeCouncilMemberView({ councilMemberMaxLength }: Props) {
           <label>Choose Council Member to change</label>
           <DropDown
             placeholder="Choose member"
-            isOpen={ddIsOpen}
-            setIsOpen={setDdIsOpen}
-            itemSelected={chosenDdItem?.text}
-            items={ddItems}
-            clickOnItem={(e) => handleClickDropdownItem(e)}
+            activeItem={chosenDdItem}
+            items={dropDownItems}
+            clickItem={handleClickDropdownItem}
           />
         </div>
 
         <div className="form-fields in-two-columns">
           <div className="input-size-secondary margin-bottom-20">
             <label>Council Member Address</label>
-            <Input
-              type="text"
-              required
-              value={newCouncilMemberAddress}
-              name="newCouncilMemberAddress"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                handleChange(e)
-                handleBlurAddress(e)
-              }}
-              onBlur={handleBlurAddress}
-              inputStatus={formInputStatus.newCouncilMemberAddress}
-            />
+            <Input inputProps={newCouncilMemberAddressProps} settings={newCouncilMemberAddressSettings} />
           </div>
 
           <div className="input-size-tertiary">
             <label>Council Member Name</label>
-            <Input
-              type="text"
-              required
-              value={newMemberName}
-              name="newMemberName"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                handleChange(e)
-                handleBlur(e, councilMemberMaxLength.councilMemberNameMaxLength)
-              }}
-              onBlur={(e: React.ChangeEvent<HTMLInputElement>) =>
-                handleBlur(e, councilMemberMaxLength.councilMemberNameMaxLength)
-              }
-              inputStatus={formInputStatus.newMemberName}
-            />
+            <Input inputProps={newMemberNameProps} settings={newMemberNameSettings} />
           </div>
 
           <div className="input-size-secondary margin-bottom-20">
             <label>Council Member Website URL</label>
-            <Input
-              type="text"
-              required
-              value={newMemberWebsite}
-              name="newMemberWebsite"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                handleChange(e)
-                handleBlur(e, councilMemberMaxLength.councilMemberWebsiteMaxLength)
-              }}
-              onBlur={(e: React.ChangeEvent<HTMLInputElement>) =>
-                handleBlur(e, councilMemberMaxLength.councilMemberWebsiteMaxLength)
-              }
-              inputStatus={formInputStatus.newMemberWebsite}
-            />
+            <Input inputProps={newMemberWebsiteProps} settings={newMemberWebsiteSettings} />
           </div>
         </div>
 
         <IPFSUploader
-          disabled={disabled}
-          key={uploadKey}
           typeFile="image"
           imageIpfsUrl={newMemberImage}
           className="form-ipfs"
@@ -198,13 +202,10 @@ export function FormChangeCouncilMemberView({ councilMemberMaxLength }: Props) {
         />
 
         <div className="align-to-right">
-          <Button
-            className="stroke-01"
-            text={'Change Council Member'}
-            kind={ACTION_PRIMARY}
-            icon={'exchange'}
-            type={SUBMIT}
-          />
+          <NewButton kind={ACTION_PRIMARY} type={SUBMIT}>
+            <Icon id="exchange" />
+            Change Council Member
+          </NewButton>
         </div>
       </form>
     </FormStyled>

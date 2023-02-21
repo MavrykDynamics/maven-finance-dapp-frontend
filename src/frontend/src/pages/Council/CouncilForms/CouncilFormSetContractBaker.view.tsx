@@ -5,18 +5,19 @@ import { useDispatch } from 'react-redux'
 import type { InputStatusType } from '../../../app/App.components/Input/Input.constants'
 
 // helpers
-import { validateFormAddress, validateFormField } from 'utils/validatorFunctions' 
+import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
+import { ACTION_PRIMARY, SUBMIT } from 'app/App.components/Button/Button.constants'
 
 // view
-import { Input } from '../../../app/App.components/Input/Input.controller'
-import { Button } from '../../../app/App.components/Button/Button.controller'
+import { Input } from 'app/App.components/Input/NewInput'
+import NewButton from 'app/App.components/Button/NewButton.controller'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 
 // action
 import { setContractBakerRequest } from '../Council.actions'
 
 // style
-import { CouncilFormStyled } from './CouncilForms.style'
+import { CouncilFormStyled } from './CouncilForm.style'
 
 const INIT_FORM = {
   targetContractAddress: '',
@@ -57,6 +58,36 @@ export const CouncilFormSetContractBaker = () => {
   const handleBlur = validateFormField(setFormInputStatus)
   const handleBlurAddress = validateFormAddress(setFormInputStatus)
 
+  const targetContractAddressProps = {
+    name: 'targetContractAddress',
+    value: targetContractAddress,
+    onBlur: handleBlurAddress,
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+      handleChange(e)
+      handleBlurAddress(e)
+    },
+    required: true,
+  }
+
+  const targetContractAddressSettings = {
+    inputStatus: formInputStatus.targetContractAddress,
+  }
+
+  const keyHashProps = {
+    name: 'keyHash',
+    value: keyHash,
+    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e),
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+      handleChange(e)
+      handleBlur(e)
+    },
+    required: true,
+  }
+
+  const keyHashSettings = {
+    inputStatus: formInputStatus.keyHash,
+  }
+
   return (
     <CouncilFormStyled onSubmit={handleSubmit}>
       <a className="info-link" href="https://mavryk.finance/litepaper#mavryk-council" target="_blank" rel="noreferrer">
@@ -67,38 +98,19 @@ export const CouncilFormSetContractBaker = () => {
       <div className="form-grid">
         <div>
           <label>Target Contract Address</label>
-          <Input
-            type="text"
-            required
-            value={targetContractAddress}
-            name="targetContractAddress"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              handleChange(e)
-              handleBlurAddress(e)
-            }}
-            onBlur={handleBlurAddress}
-            inputStatus={formInputStatus.targetContractAddress}
-          />
+          <Input inputProps={targetContractAddressProps} settings={targetContractAddressSettings} />
         </div>
 
         <div>
           <label>Key Hash</label>
-          <Input
-            type="text"
-            required
-            value={keyHash}
-            name="keyHash"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              handleChange(e)
-              handleBlur(e)
-            }}
-            onBlur={(e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e)}
-            inputStatus={formInputStatus.keyHash}
-          />
+          <Input inputProps={keyHashProps} settings={keyHashSettings} />
         </div>
       </div>
       <div className="btn-group">
-        <Button text="Set Contract Baker" className="plus-btn" kind={'actionPrimary'} icon="plus" type="submit" />
+        <NewButton kind={ACTION_PRIMARY} type={SUBMIT}>
+          <Icon id="plus" />
+          Set Contract Baker
+        </NewButton>
       </div>
     </CouncilFormStyled>
   )

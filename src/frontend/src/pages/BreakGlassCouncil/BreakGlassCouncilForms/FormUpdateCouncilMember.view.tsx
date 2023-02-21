@@ -4,8 +4,8 @@ import { State } from 'reducers'
 
 // components
 import { ACTION_PRIMARY, SUBMIT } from '../../../app/App.components/Button/Button.constants'
-import { Button } from '../../../app/App.components/Button/Button.controller'
-import { Input } from 'app/App.components/Input/Input.controller'
+import NewButton from 'app/App.components/Button/NewButton.controller'
+import { Input } from 'app/App.components/Input/NewInput'
 import { IPFSUploader } from '../../../app/App.components/IPFSUploader/IPFSUploader.controller'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 
@@ -15,7 +15,7 @@ import { validateFormField } from 'utils/validatorFunctions'
 
 // types
 import { InputStatusType } from 'app/App.components/Input/Input.constants'
-import { CouncilMemberMaxLength } from '../../../utils/TypesAndInterfaces/Council'
+import { CouncilMaxLength } from '../../../utils/TypesAndInterfaces/Council'
 
 // styles
 import { FormStyled } from './BreakGlassCouncilForm.style'
@@ -23,24 +23,19 @@ import { FormStyled } from './BreakGlassCouncilForm.style'
 // actions
 import { updateCouncilMember } from '../BreakGlassCouncil.actions'
 
-type Props = {
-  councilMemberMaxLength: CouncilMemberMaxLength
-}
-
 const INIT_FORM = {
   newMemberWebsite: '',
   newMemberName: '',
   newMemberImage: '',
 }
 
-export function FormUpdateCouncilMemberView({ councilMemberMaxLength }: Props) {
+export function FormUpdateCouncilMemberView(maxLength: CouncilMaxLength) {
   const dispatch = useDispatch()
   const { accountPkh } = useSelector((state: State) => state.wallet)
-  const { breakGlassCouncilMember } = useSelector((state: State) => state.breakGlass)
+  const { breakGlassCouncilMembers } = useSelector((state: State) => state.council)
 
-  const [uploadKey, setUploadKey] = useState(1)
   const [form, setForm] = useState(INIT_FORM)
-  const myInfo = breakGlassCouncilMember.find((item) => item.userId === accountPkh)
+  const myInfo = breakGlassCouncilMembers.find((item) => item.userId === accountPkh)
 
   const [formInputStatus, setFormInputStatus] = useState<Record<string, InputStatusType>>({
     newMemberWebsite: '',
@@ -49,23 +44,21 @@ export function FormUpdateCouncilMemberView({ councilMemberMaxLength }: Props) {
   })
 
   const { newMemberWebsite, newMemberName, newMemberImage } = form
-  const disabled = false
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     try {
       await dispatch(updateCouncilMember(newMemberName, newMemberWebsite, newMemberImage))
+
       setForm(INIT_FORM)
       setFormInputStatus({
         newMemberWebsite: '',
         newMemberName: '',
         newMemberImage: '',
       })
-      setUploadKey(uploadKey + 1)
     } catch (error) {
       console.error('FormSetSingleContractAdminView', error)
-      setUploadKey(uploadKey + 1)
     }
   }
 
@@ -76,6 +69,36 @@ export function FormUpdateCouncilMemberView({ councilMemberMaxLength }: Props) {
   }
 
   const handleBlur = validateFormField(setFormInputStatus)
+
+  const newMemberNameProps = {
+    name: 'newMemberName',
+    value: newMemberName,
+    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, maxLength.councilMemberNameMaxLength),
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+      handleChange(e)
+      handleBlur(e, maxLength.councilMemberNameMaxLength)
+    },
+    required: true,
+  }
+
+  const newMemberNameSettings = {
+    inputStatus: formInputStatus.newMemberName,
+  }
+
+  const newMemberWebsiteProps = {
+    name: 'newMemberWebsite',
+    value: newMemberWebsite,
+    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, maxLength.councilMemberWebsiteMaxLength),
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+      handleChange(e)
+      handleBlur(e, maxLength.councilMemberWebsiteMaxLength)
+    },
+    required: true,
+  }
+
+  const newMemberWebsiteSettings = {
+    inputStatus: formInputStatus.newMemberWebsite,
+  }
 
   useEffect(() => {
     if (myInfo) {
@@ -90,13 +113,11 @@ export function FormUpdateCouncilMemberView({ councilMemberMaxLength }: Props) {
         newMemberWebsite: 'success',
         newMemberImage: 'success',
       })
-
-      setUploadKey(uploadKey + 1)
     }
   }, [myInfo])
 
   return (
-    <FormStyled className='without-divider'>
+    <FormStyled className="without-divider">
       <a className="info-link" href="https://mavryk.finance/litepaper#mavryk-council" target="_blank" rel="noreferrer">
         <Icon id="question" />
       </a>
@@ -113,44 +134,16 @@ export function FormUpdateCouncilMemberView({ councilMemberMaxLength }: Props) {
 
           <div className="input-size-tertiary">
             <label>Council Member Name</label>
-            <Input
-              type="text"
-              required
-              value={newMemberName}
-              name="newMemberName"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                handleChange(e)
-                handleBlur(e, councilMemberMaxLength.councilMemberNameMaxLength)
-              }}
-              onBlur={(e: React.ChangeEvent<HTMLInputElement>) =>
-                handleBlur(e, councilMemberMaxLength.councilMemberNameMaxLength)
-              }
-              inputStatus={formInputStatus.newMemberName}
-            />
+            <Input inputProps={newMemberNameProps} settings={newMemberNameSettings} />
           </div>
 
           <div className="input-size-secondary margin-bottom-20">
             <label>Council Member Website URL</label>
-            <Input
-              type="text"
-              required
-              value={newMemberWebsite}
-              name="newMemberWebsite"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                handleChange(e)
-                handleBlur(e, councilMemberMaxLength.councilMemberWebsiteMaxLength)
-              }}
-              onBlur={(e: React.ChangeEvent<HTMLInputElement>) =>
-                handleBlur(e, councilMemberMaxLength.councilMemberWebsiteMaxLength)
-              }
-              inputStatus={formInputStatus.newMemberWebsite}
-            />
+            <Input inputProps={newMemberWebsiteProps} settings={newMemberWebsiteSettings} />
           </div>
         </div>
 
         <IPFSUploader
-          disabled={disabled}
-          key={uploadKey}
           typeFile="image"
           imageIpfsUrl={newMemberImage}
           className="form-ipfs"
@@ -162,13 +155,10 @@ export function FormUpdateCouncilMemberView({ councilMemberMaxLength }: Props) {
         />
 
         <div className="align-to-right">
-          <Button
-            className="stroke-01"
-            text={'Update Council Member'}
-            kind={ACTION_PRIMARY}
-            icon={'upload'}
-            type={SUBMIT}
-          />
+          <NewButton kind={ACTION_PRIMARY} type={SUBMIT}>
+            <Icon id="upload" />
+            Update Council Member
+          </NewButton>
         </div>
       </form>
     </FormStyled>

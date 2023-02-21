@@ -1,87 +1,126 @@
 import styled from 'styled-components/macro'
-import { CardHover } from 'styles'
-
-// types
-import { MavrykTheme } from 'styles/interfaces'
-
-// components
+import { Card, CardHover } from 'styles'
 import { TabSwitcher as TabSwitcherBase } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 
-export const CouncilStyled = styled.section`
-  .pending {
-    display: flex;
-    width: 100%;
-    justify-content: space-between;
-    margin-bottom: 30px;
+// types
+import { MavrykTheme } from '../../styles/interfaces'
+
+export const CouncilStyled = styled.div<{ theme: MavrykTheme }>`
+  display: flex;
+  justify-content: space-between;
+
+  .left-block {
+    width: 750px;
+
+    & > h1 {
+      margin-bottom: 11px;
+    }
+
+    .pending {
+      display: flex;
+      width: 100%;
+      justify-content: space-between;
+    }
+
+    .pending-items {
+      width: 750px;
+    }
   }
 
-  .pending-items {
-    width: 750px;
+  .right-block {
+    width: 310px;
+
+    & > h1 {
+      margin-top: 30px;
+      margin-bottom: 10px;
+    }
   }
+`
+
+export const PropagateBreakGlassCouncilCard = styled(Card)<{ theme: MavrykTheme }>`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px 0 30px;
+  height: 75px;
 
   h1 {
-    margin-top: 29px;
-    margin-bottom: 11px;
+    margin: 0;
 
-    small {
-      font-weight: normal;
-      font-size: 0.7em;
+    &::after {
+      display: none;
     }
   }
 
-  .go-back {
-    margin: 30px 0;
+  button {
+    white-space: nowrap;
   }
+`
 
-  .council-details {
-    display: flex;
+export const ReviewCard = styled(Card)<{
+  displayPendingSignature: boolean
+  theme: MavrykTheme
+}>`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 30px;
+  margin-top: ${({ displayPendingSignature }) => (displayPendingSignature ? 0 : 30)}px;
+  margin-bottom: 23px;
+  height: 201px;
 
-    &.is-user-member,
-    &.is-pending-signature {
-      padding-top: 0;
-    }
-  }
-
-  .council-members {
-    width: 309px;
-    margin-left: 30px;
-    flex-shrink: 0;
-
-    &.is-user-member {
-      padding-top: 30px;
-    }
-
-    &.is-pending-list {
-      padding-top: 86px;
-    }
-
-    h1 {
-      margin-top: 0;
-      margin-bottom: 9px;
-    }
-
-    &.is-user-member {
-      h1 {
-        margin-top: 22px;
-      }
-    }
-  }
-
-  .council-actions {
+  button {
     width: 100%;
+    white-space: nowrap;
   }
 
-  .past-actions {
-    margin-top: 0;
-    margin-bottom: 9px;
+  button:first-of-type {
+    margin-bottom: 20px;
+  }
+`
 
-    &.is-user-member {
-      margin-top: 9px;
+export const GoBack = styled(Card)`
+  display: flex;
+  align-items: center;
+  padding: 0 26px;
+  height: 75px;
+
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 21px;
+  color: ${({ theme }) => theme.headerColor};
+  cursor: pointer;
+
+  svg {
+    margin-right: 8px;
+  }
+`
+
+export const AvaliableActions = styled(Card)<{ theme: MavrykTheme }>`
+  padding: 0;
+
+  .top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px 0 30px;
+    height: 75px;
+  }
+
+  .top-bar-title {
+    margin: 0;
+
+    font-weight: 600;
+    font-size: 22px;
+    line-height: 22px;
+
+    &::after {
+      display: none;
     }
   }
 
-  .margin-top-30 {
-    padding-top: 30px
+  .dropdown-size {
+    width: 440px;
   }
 `
 
@@ -117,12 +156,6 @@ export const CouncilActionStyled = styled(CardHover)<{ theme: MavrykTheme }>`
 
   .two-columns {
     grid-template-columns: auto 250px;
-
-    .column {
-      .drop-btn {
-        margin-top: 0;
-      }
-    }
   }
 
   .column {
@@ -182,13 +215,7 @@ export const CouncilActionStyled = styled(CardHover)<{ theme: MavrykTheme }>`
     }
 
     .drop-btn {
-      margin-top: 14px;
-
-      svg {
-        margin-top: 2px;
-        height: 18px;
-        width: 18px;
-      }
+      width: 100%;
     }
 
     .is-green {
@@ -207,13 +234,15 @@ export const CouncilActionStyled = styled(CardHover)<{ theme: MavrykTheme }>`
     align-items: center;
 
     svg {
-      fill: none;
-      stroke: ${({ theme }) => theme.textColorHovered};
       width: 16px;
       height: 16px;
     }
 
     .icon-send {
+      svg {
+        fill: ${({ theme }) => theme.topBarLinkColor};
+      }
+
       &:hover {
         svg {
           opacity: 0.8;

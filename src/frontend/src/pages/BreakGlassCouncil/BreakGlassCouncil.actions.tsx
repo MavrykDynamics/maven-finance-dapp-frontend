@@ -6,22 +6,24 @@ import { fetchFromIndexerWithPromise } from '../../gql/fetchGraphQL'
 
 // gql
 import {
-  BREAK_GLASS_COUNCIL_MEMBER_QUERY,
-  BREAK_GLASS_COUNCIL_MEMBER_QUERY_NAME,
-  BREAK_GLASS_COUNCIL_MEMBER_QUERY_VARIABLE,
-  PAST_BREAK_GLASS_COUNCIL_ACTION_QUERY,
-  PAST_BREAK_GLASS_COUNCIL_ACTION_QUERY_NAME,
-  PAST_BREAK_GLASS_COUNCIL_ACTION_QUERY_VARIABLE,
-  BREAK_GLASS_ACTION_PENDING_SIGNATURE_QUERY,
-  BREAK_GLASS_ACTION_PENDING_SIGNATURE_QUERY_NAME,
-  BREAK_GLASS_ACTION_PENDING_SIGNATURE_QUERY_VARIABLE,
-  MY_PAST_BREAK_GLASS_COUNCIL_ACTION_QUERY,
-  MY_PAST_BREAK_GLASS_COUNCIL_ACTION_QUERY_NAME,
-  MY_PAST_BREAK_GLASS_COUNCIL_ACTION_QUERY_VARIABLE,
+  BREAK_GLASS_COUNCIL_MEMBERS_QUERY,
+  BREAK_GLASS_COUNCIL_MEMBERS_QUERY_NAME,
+  BREAK_GLASS_COUNCIL_MEMBERS_QUERY_VARIABLE,
+  BREAK_GLASS_COUNCIL_PAST_ACTIONS_QUERY,
+  BREAK_GLASS_COUNCIL_PAST_ACTIONS_QUERY_NAME,
+  BREAK_GLASS_COUNCIL_PAST_ACTIONS_QUERY_VARIABLE,
+  BREAK_GLASS_COUNCIL_PENDING_ACTIONS_QUERY,
+  BREAK_GLASS_COUNCIL_PENDING_ACTIONS_QUERY_NAME,
+  BREAK_GLASS_COUNCIL_PENDING_ACTIONS_QUERY_VARIABLE,
 } from '../../gql/queries/getBreakGlassCouncilStorage'
 
 // helpers
-import { normalizeBreakGlassAction, normalizeBreakGlassCouncilMember } from './BreakGlassCouncil.helpers'
+import {
+  normalizeCouncilActions,
+  normalizeCouncilMembers,
+  PENDING_ACTIONS,
+  PAST_ACTIONS,
+} from 'pages/Council/Council.helpers'
 import { parseDate } from 'utils/time'
 
 // actions
@@ -31,61 +33,35 @@ const time = String(new Date())
 const timeFormat = 'YYYY-MM-DD'
 const timestamptz = parseDate({ time, timeFormat }) || undefined
 
-// getMyPastBreakGlassCouncilAction
-export const GET_MY_PAST_BREAK_GLASS_COUNCIL_ACTION = 'GET_MY_PAST_BREAK_GLASS_COUNCIL_ACTION'
-export const getMyPastBreakGlassCouncilAction = () => async (dispatch: AppDispatch, getState: GetState) => {
-  const state: State = getState()
-  const { accountPkh } = state?.wallet
-
-  try {
-    const storage = accountPkh
-      ? await fetchFromIndexerWithPromise(
-          MY_PAST_BREAK_GLASS_COUNCIL_ACTION_QUERY,
-          MY_PAST_BREAK_GLASS_COUNCIL_ACTION_QUERY_NAME,
-          MY_PAST_BREAK_GLASS_COUNCIL_ACTION_QUERY_VARIABLE({ _lt: timestamptz, userAddress: accountPkh }),
-        )
-      : { break_glass_action: [] }
-
-    const myPastBreakGlassCouncilAction = normalizeBreakGlassAction(storage)
-
-    await dispatch({
-      type: GET_MY_PAST_BREAK_GLASS_COUNCIL_ACTION,
-      myPastBreakGlassCouncilAction,
-    })
-  } catch (error) {
-    if (error instanceof Error) {
-      console.error(error)
-      dispatch(showToaster(ERROR, 'Error', error.message))
-    }
-  }
-}
-
-// getBreakGlassActionPendingSignature
-export const GET_BREAK_GLASS_ACTION_PENDING_SIGNATURE = 'GET_BREAK_GLASS_ACTION_PENDING_SIGNATURE'
-export const getBreakGlassActionPendingSignature = () => async (dispatch: AppDispatch, getState: GetState) => {
+// getBreakGlassCouncilPendingActions
+export const GET_BREAK_GLASS_COUNCIL_PENDING_ACTIONS = 'GET_BREAK_GLASS_COUNCIL_PENDING_ACTIONS'
+export const getBreakGlassCouncilPendingActions = () => async (dispatch: AppDispatch, getState: GetState) => {
   const state: State = getState()
   const { accountPkh } = state?.wallet
 
   try {
     const storage = await fetchFromIndexerWithPromise(
-      BREAK_GLASS_ACTION_PENDING_SIGNATURE_QUERY,
-      BREAK_GLASS_ACTION_PENDING_SIGNATURE_QUERY_NAME,
-      BREAK_GLASS_ACTION_PENDING_SIGNATURE_QUERY_VARIABLE({ _gte: timestamptz }),
+      BREAK_GLASS_COUNCIL_PENDING_ACTIONS_QUERY,
+      BREAK_GLASS_COUNCIL_PENDING_ACTIONS_QUERY_NAME,
+      BREAK_GLASS_COUNCIL_PENDING_ACTIONS_QUERY_VARIABLE({ _gte: timestamptz }),
     )
 
-    const breakGlassActionPendingAllSignature = normalizeBreakGlassAction(storage)
-    const breakGlassActionPendingSignature = normalizeBreakGlassAction(storage, { filterWithoutAddress: accountPkh })
-    const breakGlassActionPendingMySignature = normalizeBreakGlassAction(storage, { filterByAddress: accountPkh })
-    const isPendingPropagateBreakGlass = Boolean(
-      breakGlassActionPendingAllSignature.find((item) => item.actionType === 'propagateBreakGlass'),
+    const breakGlassCouncil = storage?.break_glass_action || []
+
+    const { allPendingActions, notMyPendingActions, myPendingActions, actionsMapper } = normalizeCouncilActions(
+      breakGlassCouncil,
+      PENDING_ACTIONS,
+      accountPkh,
     )
 
     await dispatch({
-      type: GET_BREAK_GLASS_ACTION_PENDING_SIGNATURE,
-      breakGlassActionPendingAllSignature,
-      breakGlassActionPendingSignature,
-      breakGlassActionPendingMySignature,
-      isPendingPropagateBreakGlass,
+      type: GET_BREAK_GLASS_COUNCIL_PENDING_ACTIONS,
+      breakGlassCouncilActions: {
+        allPendingActions,
+        notMyPendingActions,
+        myPendingActions,
+        actionsMapper,
+      },
     })
   } catch (error) {
     if (error instanceof Error) {
@@ -95,21 +71,35 @@ export const getBreakGlassActionPendingSignature = () => async (dispatch: AppDis
   }
 }
 
-// getPastBreakGlassCouncilAction
-export const GET_PAST_BREAK_GLASS_COUNCIL_ACTION = 'GET_PAST_BREAK_GLASS_COUNCIL_ACTION'
-export const getPastBreakGlassCouncilAction = () => async (dispatch: AppDispatch, getState: GetState) => {
+// getBreakGlassCouncilPastActions
+export const GET_BREAK_GLASS_COUNCIL_PAST_ACTIONS = 'GET_BREAK_GLASS_COUNCIL_PAST_ACTIONS'
+export const getBreakGlassCouncilPastActions = () => async (dispatch: AppDispatch, getState: GetState) => {
   const state: State = getState()
+  const { accountPkh } = state?.wallet
 
   try {
-    const pastBreakGlassCouncilAction = await fetchFromIndexerWithPromise(
-      PAST_BREAK_GLASS_COUNCIL_ACTION_QUERY,
-      PAST_BREAK_GLASS_COUNCIL_ACTION_QUERY_NAME,
-      PAST_BREAK_GLASS_COUNCIL_ACTION_QUERY_VARIABLE({ _lt: timestamptz }),
+    const storage = await fetchFromIndexerWithPromise(
+      BREAK_GLASS_COUNCIL_PAST_ACTIONS_QUERY,
+      BREAK_GLASS_COUNCIL_PAST_ACTIONS_QUERY_NAME,
+      BREAK_GLASS_COUNCIL_PAST_ACTIONS_QUERY_VARIABLE({ _lt: timestamptz }),
+    )
+
+    const breakGlassCouncil = storage?.break_glass_action || []
+
+    const { allPastActions, myPastActions, actionsMapper } = normalizeCouncilActions(
+      breakGlassCouncil,
+      PAST_ACTIONS,
+      accountPkh,
     )
 
     await dispatch({
-      type: GET_PAST_BREAK_GLASS_COUNCIL_ACTION,
-      pastBreakGlassCouncilAction: normalizeBreakGlassAction(pastBreakGlassCouncilAction),
+      type: GET_BREAK_GLASS_COUNCIL_PAST_ACTIONS,
+      breakGlassCouncilActions: {
+        allPastActions,
+        myPastActions,
+        actionsMapper,
+      },
+      isBreakGlassCouncilPastActionsLoaded: Boolean(accountPkh),
     })
   } catch (error) {
     if (error instanceof Error) {
@@ -119,21 +109,22 @@ export const getPastBreakGlassCouncilAction = () => async (dispatch: AppDispatch
   }
 }
 
-// getBreakGlassCouncilMember
-export const GET_BREAK_GLASS_COUNCIL_MEMBER = 'GET_BREAK_GLASS_COUNCIL_MEMBER'
-export const getBreakGlassCouncilMember = () => async (dispatch: AppDispatch, getState: GetState) => {
-  const state: State = getState()
-
+// getBreakGlassCouncilMembers
+export const GET_BREAK_GLASS_COUNCIL_MEMBERS = 'GET_BREAK_GLASS_COUNCIL_MEMBERS'
+export const getBreakGlassCouncilMembers = () => async (dispatch: AppDispatch, getState: GetState) => {
   try {
-    const breakGlassCouncilMember = await fetchFromIndexerWithPromise(
-      BREAK_GLASS_COUNCIL_MEMBER_QUERY,
-      BREAK_GLASS_COUNCIL_MEMBER_QUERY_NAME,
-      BREAK_GLASS_COUNCIL_MEMBER_QUERY_VARIABLE,
+    const storage = await fetchFromIndexerWithPromise(
+      BREAK_GLASS_COUNCIL_MEMBERS_QUERY,
+      BREAK_GLASS_COUNCIL_MEMBERS_QUERY_NAME,
+      BREAK_GLASS_COUNCIL_MEMBERS_QUERY_VARIABLE,
     )
 
+    const members = storage?.break_glass_council_member || []
+    const breakGlassCouncilMembers = normalizeCouncilMembers(members)
+
     await dispatch({
-      type: GET_BREAK_GLASS_COUNCIL_MEMBER,
-      breakGlassCouncilMember: normalizeBreakGlassCouncilMember(breakGlassCouncilMember),
+      type: GET_BREAK_GLASS_COUNCIL_MEMBERS,
+      breakGlassCouncilMembers,
     })
   } catch (error) {
     if (error instanceof Error) {
@@ -160,16 +151,11 @@ export const setAllContractsAdmin = (newAdminAddress: string) => async (dispatch
   try {
     dispatch(toggleActionLoader(true))
     const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.breakGlassAddress.address)
-    const transaction = await contract?.methods.setSingleContractAdmin(newAdminAddress).send()
+    const transaction = await contract?.methods.setAllContractsAdmin(newAdminAddress).send()
     dispatch(showToaster(INFO, 'Set All Contracts Admin...', 'Please wait 30s'))
 
     await transaction?.confirmation()
-
-    await Promise.all([
-      dispatch(getPastBreakGlassCouncilAction()),
-      dispatch(getMyPastBreakGlassCouncilAction()),
-      dispatch(getBreakGlassActionPendingSignature()),
-    ])
+    await dispatch(getBreakGlassCouncilPendingActions())
 
     dispatch(showToaster(SUCCESS, 'Set All Contracts Admin is done', 'All good :)'))
     dispatch(toggleActionLoader(false))
@@ -204,12 +190,7 @@ export const setSingleContractAdmin =
       dispatch(showToaster(INFO, 'Set Single Contract Admin...', 'Please wait 30s'))
 
       await transaction?.confirmation()
-
-      await Promise.all([
-        dispatch(getPastBreakGlassCouncilAction()),
-        dispatch(getMyPastBreakGlassCouncilAction()),
-        dispatch(getBreakGlassActionPendingSignature()),
-      ])
+      await dispatch(getBreakGlassCouncilPendingActions())
 
       dispatch(showToaster(SUCCESS, 'Set Single Contract Admin is done', 'All good :)'))
       dispatch(toggleActionLoader(false))
@@ -243,12 +224,7 @@ export const signAction = (breakGlassActionID: number) => async (dispatch: AppDi
     dispatch(showToaster(INFO, 'Sign action...', 'Please wait 30s'))
 
     await transaction?.confirmation()
-
-    await Promise.all([
-      dispatch(getPastBreakGlassCouncilAction()),
-      dispatch(getMyPastBreakGlassCouncilAction()),
-      dispatch(getBreakGlassActionPendingSignature()),
-    ])
+    await Promise.all([dispatch(getBreakGlassCouncilPendingActions()), dispatch(getBreakGlassCouncilPastActions())])
 
     dispatch(showToaster(SUCCESS, 'Sign Action is done', 'All good :)'))
     dispatch(toggleActionLoader(false))
@@ -283,18 +259,12 @@ export const addCouncilMember =
       const transaction = await contract?.methods
         .addCouncilMember(memberAddress, newMemberName, newMemberWebsite, newMemberImage)
         .send()
-      dispatch(showToaster(INFO, 'Add Council Members...', 'Please wait 30s'))
+      dispatch(showToaster(INFO, 'Add Council Member...', 'Please wait 30s'))
 
       await transaction?.confirmation()
+      await Promise.all([dispatch(getBreakGlassCouncilPendingActions()), dispatch(getBreakGlassCouncilMembers())])
 
-      await Promise.all([
-        dispatch(getPastBreakGlassCouncilAction()),
-        dispatch(getMyPastBreakGlassCouncilAction()),
-        dispatch(getBreakGlassActionPendingSignature()),
-        dispatch(getBreakGlassCouncilMember()),
-      ])
-
-      dispatch(showToaster(SUCCESS, 'Add Council Members is done', 'All good :)'))
+      dispatch(showToaster(SUCCESS, 'Add Council Member is done', 'All good :)'))
       dispatch(toggleActionLoader(false))
     } catch (error) {
       if (error instanceof Error) {
@@ -330,13 +300,7 @@ export const updateCouncilMember =
       dispatch(showToaster(INFO, 'Update Council Member...', 'Please wait 30s'))
 
       await transaction?.confirmation()
-
-      await Promise.all([
-        dispatch(getPastBreakGlassCouncilAction()),
-        dispatch(getMyPastBreakGlassCouncilAction()),
-        dispatch(getBreakGlassActionPendingSignature()),
-        dispatch(getBreakGlassCouncilMember()),
-      ])
+      await Promise.all([dispatch(getBreakGlassCouncilPendingActions()), dispatch(getBreakGlassCouncilMembers())])
 
       dispatch(showToaster(SUCCESS, 'Update Council Member is done', 'All good :)'))
       dispatch(toggleActionLoader(false))
@@ -386,13 +350,7 @@ export const changeCouncilMember =
       dispatch(showToaster(INFO, 'Change Council Member...', 'Please wait 30s'))
 
       await transaction?.confirmation()
-
-      await Promise.all([
-        dispatch(getPastBreakGlassCouncilAction()),
-        dispatch(getMyPastBreakGlassCouncilAction()),
-        dispatch(getBreakGlassActionPendingSignature()),
-        dispatch(getBreakGlassCouncilMember()),
-      ])
+      await Promise.all([dispatch(getBreakGlassCouncilPendingActions()), dispatch(getBreakGlassCouncilMembers())])
 
       dispatch(showToaster(SUCCESS, 'Change Council Member is done', 'All good :)'))
       dispatch(toggleActionLoader(false))
@@ -426,13 +384,7 @@ export const removeCouncilMember = (memberAddress: string) => async (dispatch: A
     dispatch(showToaster(INFO, 'Remove Council Member...', 'Please wait 30s'))
 
     await transaction?.confirmation()
-
-    await Promise.all([
-      dispatch(getPastBreakGlassCouncilAction()),
-      dispatch(getMyPastBreakGlassCouncilAction()),
-      dispatch(getBreakGlassActionPendingSignature()),
-      dispatch(getBreakGlassCouncilMember()),
-    ])
+    await Promise.all([dispatch(getBreakGlassCouncilPendingActions()), dispatch(getBreakGlassCouncilMembers())])
 
     dispatch(showToaster(SUCCESS, 'Remove Council Member is done', 'All good :)'))
     dispatch(toggleActionLoader(false))
@@ -466,11 +418,10 @@ export const propagateBreakGlass = () => async (dispatch: AppDispatch, getState:
     dispatch(showToaster(INFO, 'Propagate Break Glass...', 'Please wait 30s'))
 
     await transaction?.confirmation()
-
     await Promise.all([
-      dispatch(getPastBreakGlassCouncilAction()),
-      dispatch(getMyPastBreakGlassCouncilAction()),
-      dispatch(getBreakGlassActionPendingSignature()),
+      dispatch(getBreakGlassCouncilPendingActions()),
+      dispatch(getBreakGlassCouncilPastActions()),
+      dispatch(getBreakGlassCouncilMembers()),
     ])
 
     dispatch(showToaster(SUCCESS, 'Propagate Break Glass is done', 'All good :)'))
@@ -505,12 +456,7 @@ export const dropBreakGlass = (breakGlassActionID: number) => async (dispatch: A
     dispatch(showToaster(INFO, 'Drop Action...', 'Please wait 30s'))
 
     await transaction?.confirmation()
-
-    await Promise.all([
-      dispatch(getPastBreakGlassCouncilAction()),
-      dispatch(getMyPastBreakGlassCouncilAction()),
-      dispatch(getBreakGlassActionPendingSignature()),
-    ])
+    await dispatch(getBreakGlassCouncilPendingActions())
 
     dispatch(showToaster(SUCCESS, 'Drop Action is done', 'All good :)'))
     dispatch(toggleActionLoader(false))
