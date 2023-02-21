@@ -1,5 +1,5 @@
 export const DOORMAN_STORAGE_QUERY = `
-  query DoormanStorageQuery($doormanContractAddress: String = "KT1C8skLrZqU6beWV3M1qD9TPBY8nnFpSPur") {
+  query DoormanStorageQuery($doormanContractAddress: String = "") {
     mvk_token {
       total_supply
       maximum_supply
