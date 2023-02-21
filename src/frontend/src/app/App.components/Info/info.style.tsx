@@ -1,18 +1,21 @@
 import styled from 'styled-components/macro'
-import { headerColor, darkPurpleColor, royalPurpleColor, downColor, dangerColor } from 'styles'
 import { MavrykTheme } from 'styles/interfaces'
 
 export const InfoBlock = styled.blockquote<{ theme: MavrykTheme }>`
-  display: flex;
-  align-items: center;
   background-color: ${({ theme }) => theme.connectInfoColor};
   border: 1px solid ${({ theme }) => theme.valueColor};
   border-radius: 10px;
   margin: 0;
   padding: 8px 20px;
-  justify-content: space-between;
 
-  svg {
+  &,
+  .content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .infoIcon {
     stroke: ${({ theme }) => theme.textColor};
     height: 16px;
     width: 16px;
@@ -39,7 +42,7 @@ export const InfoBlock = styled.blockquote<{ theme: MavrykTheme }>`
       line-height: 21px;
     }
 
-    svg {
+    .infoIcon {
       stroke: ${({ theme }) => theme.downColor};
       stroke-width: 2;
       margin-right: 0;
@@ -59,12 +62,12 @@ export const InfoBlock = styled.blockquote<{ theme: MavrykTheme }>`
       padding-left: 20px;
     }
 
-    svg {
+    .infoIcon {
       stroke: ${({ theme }) => theme.downColor};
       stroke-width: 2;
       margin-right: 0;
-      width: 24px;
-      height: 24px;
+      width: 16px;
+      height: 16px;
     }
   }
 
@@ -73,10 +76,10 @@ export const InfoBlock = styled.blockquote<{ theme: MavrykTheme }>`
   }
 
   &.indent-bottom {
-    margin-bottom: 20px;
+    margin-top: 30px;
 
     &.warning {
-      svg {
+      .infoIcon {
         stroke: none;
         stroke-width: 0.3;
         fill: ${({ theme }) => theme.downColor};

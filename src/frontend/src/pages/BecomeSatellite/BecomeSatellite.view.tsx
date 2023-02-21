@@ -5,9 +5,11 @@ import * as React from 'react'
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { Page, PageContent } from 'styles'
+import { Link } from 'react-router-dom'
 
 import { ACTION_PRIMARY, ACTION_SECONDARY } from '../../app/App.components/Button/Button.constants'
 // components
+import NewButton from 'app/App.components/Button/NewButton.controller'
 import Icon from '../../app/App.components/Icon/Icon.view'
 import { IPFSUploader } from '../../app/App.components/IPFSUploader/IPFSUploader.controller'
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
@@ -26,7 +28,7 @@ import {
   BecomeSatelliteForm,
   BecomeSatelliteFormBalanceCheck,
   BecomeSatelliteFormHorizontal,
-  BecomeSatelliteFormTitle,
+  InfoBanner,
 } from './BecomeSatellite.style'
 import InputWithPercent from 'app/App.components/Input/InputWithPercent'
 import SatellitesSideBar from 'pages/Satellites/SatellitesSideBar/SatellitesSideBar.controller'
@@ -194,22 +196,32 @@ export const BecomeSatelliteView = ({
     <Page>
       <PageHeader
         page={updateSatellite && isSatelliteRegistered ? 'my satellite profile' : 'satellites'}
-        avatar={isSatelliteRegistered ? form.image || defaultAvatar : ''} 
+        avatar={isSatelliteRegistered ? form.image || defaultAvatar : ''}
       />
+
+      <InfoBanner>
+        {!accountPkh || !balanceOk ? (
+          <Info
+            className="indent-bottom"
+            text={
+              !accountPkh
+                ? 'Please connect your wallet'
+                : `To become a satellite you need to stake ${satelliteConfig.minimumStakedMvkBalance} MVK`
+            }
+            type="warning"
+          >
+            <Link to="/">
+              <NewButton kind={ACTION_PRIMARY}>
+                <Icon id="staking" />
+                Staking
+              </NewButton>
+            </Link>
+          </Info>
+        ) : null}
+      </InfoBanner>
+
       <PageContent>
         <div>
-          {!accountPkh || !balanceOk ? (
-            <Info
-              className="indent-bottom"
-              text={
-                !accountPkh
-                  ? 'Please connect your wallet'
-                  : `To become a satellite you need to stake ${satelliteConfig.minimumStakedMvkBalance} MVK`
-              }
-              type="warning"
-            />
-          ) : null}
-
           <BecomeSatelliteForm>
             {updateSatellite ? <h2>Edit Satellite Profile</h2> : <h2>Become a Satellite</h2>}
             <CommaNumber

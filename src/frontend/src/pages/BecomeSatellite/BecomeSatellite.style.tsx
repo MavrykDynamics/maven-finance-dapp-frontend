@@ -1,11 +1,15 @@
 import styled from 'styled-components/macro'
 import { Card } from 'styles'
-
-import { headerColor } from '../../styles/colors'
 import { MavrykTheme } from '../../styles/interfaces'
 
 export const BecomeSatelliteStyled = styled.div<{ theme: MavrykTheme }>`
   background-color: ${({ theme }) => theme.containerColor};
+`
+
+export const InfoBanner = styled.div`
+  button {
+    width: 250px;
+  }
 `
 
 export const BecomeSatelliteForm = styled(Card)`
@@ -162,3 +166,4 @@ export const BecomeSatelliteButttons = styled.div`
     margin-left: 40px;
   }
 `
+
