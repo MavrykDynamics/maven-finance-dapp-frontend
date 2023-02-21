@@ -4,12 +4,13 @@ import qs from 'qs'
 
 // components
 import { ContractCard } from './ContractCard/ContractCard.controller'
-import { SlidingTabButtons } from '../../app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
+import NewButton from 'app/App.components/Button/NewButton.controller'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 
 // helpers
 import { BREAK_GLASS_LIST_NAME, calculateSlicePositions } from 'pages/FinacialRequests/Pagination/pagination.consts'
 import { getPageNumber } from 'pages/FinacialRequests/FinancialRequests.helpers'
+import { NAV_SIMPLE } from 'app/App.components/Button/Button.constants'
 import { updatePageInUrl } from 'pages/FinacialRequests/FinancialRequests.helpers'
 
 // styles
@@ -25,8 +26,6 @@ import {
   Pagination,
 } from './BreakGlass.style'
 import { FAQLink } from '../Satellites/SatellitesSideBar/SatelliteSideBar.style'
-import { Button } from 'app/App.components/Button/Button.controller'
-import { ACTION_SIMPLE } from 'app/App.components/Button/Button.constants'
 import { BreakGlassStatusStorage } from 'utils/TypesAndInterfaces/BreakGlass'
 
 type BreakGlassViewProps = {
@@ -131,16 +130,17 @@ export const BreakGlassView = ({
         <BGPrimaryTitle>Contract Status</BGPrimaryTitle>
         <div className="buttons-selector">
           {uniqueContracts.map((item) => (
-            <Button
+            <NewButton
               key={item}
-              kind={ACTION_SIMPLE}
+              kind={NAV_SIMPLE}
+              className={item === selectedContract ? 'active' : ''}
               onClick={() => {
                 setSelectedContract(item)
                 handleTabChange()
               }}
-              text={item}
-              className={item === selectedContract ? 'active' : ''}
-            />
+            >
+              {item}
+            </NewButton>
           ))}
         </div>
       </BGMiddleWrapper>
