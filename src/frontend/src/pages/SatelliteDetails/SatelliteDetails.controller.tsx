@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
-import { delegate, getSatellitesStorage, undelegate } from 'pages/Satellites/Satellites.actions'
+import { delegate, undelegate } from 'pages/Satellites/Satellites.actions'
 import { rewardsCompound } from 'pages/Doorman/Doorman.actions'
 import { State } from 'reducers'
 

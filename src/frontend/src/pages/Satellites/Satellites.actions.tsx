@@ -62,7 +62,7 @@ export const getSatelliteConfig = () => async (dispatch: AppDispatch, getState: 
 
     dispatch({ type: GET_SATELLITE_CONFIG, config: nomalizedConfig })
   } catch (error) {
-    console.error('getSatellitesStorage error: ', error)
+    console.error('getSatelliteConfig error: ', error)
     if (error instanceof Error) {
       dispatch(showToaster(ERROR, 'Error', error.message))
     }
