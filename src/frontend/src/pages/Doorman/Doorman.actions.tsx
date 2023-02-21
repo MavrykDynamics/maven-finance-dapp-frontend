@@ -21,6 +21,11 @@ import { updateUserData } from 'reducers/actions/user.actions'
 
 export const GET_DOORMAN_STORAGE = 'GET_DOORMAN_STORAGE'
 export const getDoormanStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
+  const {
+    contractAddresses: {
+      doormanAddress: { address },
+    },
+  } = getState()
   try {
     const smvkStorage = await fetchFromIndexer(
       SMVK_HISTORY_DATA_QUERY,
@@ -41,7 +46,7 @@ export const getDoormanStorage = () => async (dispatch: AppDispatch, getState: G
     const storage = await fetchFromIndexer(
       DOORMAN_STORAGE_QUERY,
       DOORMAN_STORAGE_QUERY_NAME,
-      DOORMAN_STORAGE_QUERY_VARIABLE,
+      DOORMAN_STORAGE_QUERY_VARIABLE(address),
     )
 
     const { totalStakedMvk, totalSupply, maximumTotalSupply } = normalizeDoormanStorage(storage)

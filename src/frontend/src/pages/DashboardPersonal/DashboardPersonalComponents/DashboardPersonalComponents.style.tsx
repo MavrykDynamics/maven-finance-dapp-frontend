@@ -43,11 +43,15 @@ export const MediumBlockBase = styled(SmallBlockBase)<{ theme: MavrykTheme }>`
     justify-content: center;
     align-items: center;
     height: 100%;
-    row-gap: 20px;
+    row-gap: 15px;
+
+    button {
+      max-width: unset;
+    }
 
     span {
       font-weight: 600;
-      font-size: 14px;
+      font-size: 18px;
       color: ${({ theme }) => theme.lPurple_dPurple_lPuprple};
     }
   }

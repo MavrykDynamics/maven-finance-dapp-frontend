@@ -26,7 +26,6 @@ type ExitFeeModalPropsType = {
     mySMvkTokenBalance: number
     myMvkTokenBalance: number
     totalStakedMvk: number
-    totalSupply: number
     accountPkh?: string
   }
 }
@@ -34,7 +33,7 @@ type ExitFeeModalPropsType = {
 export const ExitFeeModal = ({
   closePopup,
   show,
-  data: { amount, totalSupply, mySMvkTokenBalance, myMvkTokenBalance, totalStakedMvk, accountPkh },
+  data: { amount, mySMvkTokenBalance, myMvkTokenBalance, totalStakedMvk, accountPkh },
 }: ExitFeeModalPropsType) => {
   const dispatch = useDispatch()
 
@@ -45,8 +44,8 @@ export const ExitFeeModal = ({
 
   const unstakeCallback = (amount: number) => dispatch(unstake(amount))
 
-  const mli = calcMLI(totalSupply, totalStakedMvk)
-  const fee = calcExitFee(totalSupply, totalStakedMvk)
+  const mli = calcMLI(totalStakedMvk, totalStakedMvk)
+  const fee = calcExitFee(totalStakedMvk, totalStakedMvk)
 
   // Validating initial amount came from props
   useEffect(() => {

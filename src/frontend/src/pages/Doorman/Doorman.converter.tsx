@@ -1,6 +1,5 @@
 // type
 import {
-  DoormanGraphQl,
   MvkTokenGraphQL,
   MvkMintHistoryDataGraphQl,
   SmvkHistoryDataGraphQl,
@@ -8,19 +7,19 @@ import {
 
 // helpers
 import { calcWithoutPrecision } from '../../utils/calcFunctions'
-import { symbolsAfterDecimalPoint } from '../../utils/symbolsAfterDecimalPoint'
 import { UTCTimestamp } from 'lightweight-charts'
+import { Mavryk_User } from 'utils/generated/graphqlTypes'
 
 export function normalizeDoormanStorage(storage: {
-  doorman: Array<DoormanGraphQl>
+  mavryk_user: Array<Mavryk_User>
   mvk_token: Array<MvkTokenGraphQL>
 }) {
   const {
-    doorman: [dormanItem],
+    mavryk_user: [mvkContractData],
     mvk_token: [mvkTokenItem],
   } = storage
 
-  const totalStakedMvk = dormanItem?.stake_accounts_aggregate?.aggregate?.sum?.smvk_balance ?? 0
+  const totalStakedMvk = mvkContractData.mvk_balance
   return {
     totalStakedMvk: calcWithoutPrecision(totalStakedMvk),
     totalSupply: mvkTokenItem?.total_supply ? calcWithoutPrecision(mvkTokenItem?.total_supply) : 0,
@@ -38,7 +37,7 @@ export function normalizeSmvkHistoryData(storage: SmvkHistoryDataProps) {
   return smvk_history_data?.length
     ? smvk_history_data?.map((item) => {
         return {
-          value: symbolsAfterDecimalPoint(calcWithoutPrecision(item.smvk_total_supply)),
+          value: parseFloat(calcWithoutPrecision(item.smvk_total_supply).toFixed(2)),
           time: new Date(item.timestamp).getTime() as UTCTimestamp,
         }
       })
@@ -55,7 +54,7 @@ export function normalizeMvkMintHistoryData(storage: MvkMintHistoryDataProps) {
   return mvk_mint_history_data?.length
     ? mvk_mint_history_data?.map((item) => {
         return {
-          value: symbolsAfterDecimalPoint(calcWithoutPrecision(item.mvk_total_supply)),
+          value: parseFloat(calcWithoutPrecision(item.mvk_total_supply).toFixed(2)),
           time: new Date(item.timestamp).getTime() as UTCTimestamp,
         }
       })

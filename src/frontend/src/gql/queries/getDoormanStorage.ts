@@ -1,24 +1,21 @@
 export const DOORMAN_STORAGE_QUERY = `
-  query DoormanStorageQuery {
-    doorman {
-      stake_accounts_aggregate {
-        aggregate {
-          sum {
-            smvk_balance
-          }
-        }
-      }
-    }
-
+  query DoormanStorageQuery($doormanContractAddress: String = "KT1C8skLrZqU6beWV3M1qD9TPBY8nnFpSPur") {
     mvk_token {
       total_supply
       maximum_supply
+    }
+
+    mavryk_user(where: {address: {_eq: $doormanContractAddress}}) {
+      mvk_balance
     }
   }
 `
 
 export const DOORMAN_STORAGE_QUERY_NAME = 'DoormanStorageQuery'
-export const DOORMAN_STORAGE_QUERY_VARIABLE = {}
+
+export function DOORMAN_STORAGE_QUERY_VARIABLE(address: string) {
+  return { doormanContractAddress: address }
+}
 
 export const SMVK_HISTORY_DATA_QUERY = `
   query GetSmvkHistoryData {

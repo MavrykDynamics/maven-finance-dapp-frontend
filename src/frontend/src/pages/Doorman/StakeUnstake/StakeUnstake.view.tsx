@@ -160,12 +160,9 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
   }
 
   const handleDelegate = () => {
-    if (mySMvkTokenBalance === 0) {
-      dispatch(showToaster(ERROR, 'Failed to delegate', 'You need to stake MVK'))
-      return
-    }
-
-    history.push('/satellite-nodes')
+    history.push(
+      satelliteMvkIsDelegatedTo ? `/satellites/satellite-details/${satelliteMvkIsDelegatedTo}` : '/satellite-nodes',
+    )
   }
 
   return (
@@ -254,7 +251,7 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
 
         {showDelegateBtn && (
           <div className="centering-wrapper">
-            <NewButton onClick={handleDelegate}>
+            <NewButton onClick={handleDelegate} disabled={mySMvkTokenBalance === 0}>
               <Icon id="satellites" />
               Delegate
             </NewButton>
