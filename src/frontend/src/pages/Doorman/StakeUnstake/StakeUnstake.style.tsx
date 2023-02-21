@@ -32,7 +32,7 @@ export const StakeUnstakeCards = styled(Card)<{ theme: MavrykTheme }>`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  
+
   padding: 30px 0;
   margin: 0;
 
@@ -201,12 +201,19 @@ export const StakeUnstakeRate = styled.div`
 
 export const StakeUnstakeButtonGrid = styled.div`
   margin: 25px auto 0 auto;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-gap: 10px;
+  display: flex;
+  justify-content: space-between;
+  column-gap: 10px;
+
+  button {
+    width: 50%;
+  }
 
   &.compound {
-    grid-template-columns: 1fr 1fr 1fr;
+    button {
+      padding: 0;
+      width: 33%;
+    }
   }
 `
 

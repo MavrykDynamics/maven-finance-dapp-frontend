@@ -11,7 +11,7 @@ import { State } from '../../reducers'
 import { normalizeEmergencyGovernance } from '../EmergencyGovernance/EmergencyGovernance.helpers'
 import { EmergencyGovernanceProposalForm } from '../../utils/TypesAndInterfaces/Forms'
 import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
-import { getBreakGlassStorage } from 'pages/BreakGlass/BreakGlass.actions'
+import { getBreakGlassConfig } from 'pages/BreakGlass/BreakGlass.actions'
 
 export const GET_EMERGENCY_GOVERNANCE_STORAGE = 'GET_EMERGENCY_GOVERNANCE_STORAGE'
 export const getEmergencyGovernanceStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
@@ -59,7 +59,7 @@ export const submitEmergencyGovernanceProposal =
 
       await dispatch(showToaster(SUCCESS, 'Emergency Proposal Submitted', 'All good :)'))
 
-      await dispatch(getBreakGlassStorage())
+      await dispatch(getBreakGlassConfig())
       await dispatch(getEmergencyGovernanceStorage())
       await dispatch(toggleActionLoader(false))
     } catch (error) {

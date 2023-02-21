@@ -1,18 +1,21 @@
+import { useEffect, useState } from 'react'
+import { useHistory } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+
 // view
-import { Button } from 'app/App.components/Button/Button.controller'
 import NewButton from 'app/App.components/Button/NewButton.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { State } from 'reducers'
-import { useHistory } from 'react-router-dom'
-import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
-import { ACTION_PRIMARY, ACTION_SECONDARY } from '../../../app/App.components/Button/Button.constants'
 import { Input } from '../../../app/App.components/Input/Input.controller'
 import Icon from '../../../app/App.components/Icon/Icon.view'
-// helpers
+
+// helpers, consts
+import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
+import { State } from 'reducers'
+import { ACTION_PRIMARY, ACTION_SECONDARY } from '../../../app/App.components/Button/Button.constants'
 import { isValidNumberValue, mathRoundTwoDigit } from '../../../utils/validatorFunctions'
 import { ERROR } from 'app/App.components/Toaster/Toaster.constants'
+import { rewardsCompound } from '../Doorman.actions'
+import { InputStatusType, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 
 // style
 import {
@@ -30,8 +33,6 @@ import {
   StakeUnstakeStyled,
   StakeUnstakeCards,
 } from './StakeUnstake.style'
-import { rewardsCompound } from '../Doorman.actions'
-import { InputStatusType, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 
 type StakeUnstakeViewProps = {
   stakeCallback: (amount: number) => void
@@ -61,6 +62,14 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
     validation: '',
     errorMessage: '',
   })
+
+  useEffect(() => {
+    setInputData({
+      amount: '0',
+      validation: '',
+      errorMessage: '',
+    })
+  }, [myMvkTokenBalance, mySMvkTokenBalance])
 
   const exchangeValue = MVK_exchangeRate && inputData.amount ? Number(inputData.amount) * MVK_exchangeRate : 0
   const earnedValue = farmRewards + doormanRewards
@@ -95,8 +104,6 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
     )
       ? INPUT_STATUS_SUCCESS
       : INPUT_STATUS_ERROR
-
-    if (validationStatus === INPUT_STATUS_ERROR && value !== '') return
 
     setInputData({ ...inputData, amount: value, validation: validationStatus })
   }
@@ -195,10 +202,18 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
           </StakeUnstakeInputColumn>
         </StakeUnstakeInputGrid>
         <StakeUnstakeButtonGrid className={`${userHasRewards ? 'compound' : ''}`}>
-          <Button text="Stake" kind={ACTION_PRIMARY} icon="in" onClick={handleStake} />
-          <Button text="Unstake" icon="out" kind={ACTION_SECONDARY} onClick={handleUnStake} />
+          <NewButton kind={ACTION_PRIMARY} onClick={handleStake}>
+            <Icon id="in" /> Stake
+          </NewButton>
+
+          <NewButton kind={ACTION_SECONDARY} onClick={handleUnStake}>
+            <Icon id="out" /> Unstake
+          </NewButton>
+
           {userHasRewards ? (
-            <Button text="Compound" className="fill" kind={ACTION_PRIMARY} icon="compound" onClick={handleCompound} />
+            <NewButton kind={ACTION_PRIMARY} onClick={handleCompound}>
+              <Icon id="compound" /> Compound
+            </NewButton>
           ) : null}
         </StakeUnstakeButtonGrid>
         {userHasRewards ? (
