@@ -5,17 +5,14 @@ import * as React from 'react'
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { Page, PageContent } from 'styles'
-import { Link } from 'react-router-dom'
 
 import { ACTION_PRIMARY, ACTION_SECONDARY } from '../../app/App.components/Button/Button.constants'
 // components
-import NewButton from 'app/App.components/Button/NewButton.controller'
 import Icon from '../../app/App.components/Icon/Icon.view'
 import { IPFSUploader } from '../../app/App.components/IPFSUploader/IPFSUploader.controller'
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
 import { TextArea } from '../../app/App.components/TextArea/TextArea.controller'
 import { SatelliteRecord } from '../../utils/TypesAndInterfaces/Delegation'
-import { Info } from '../../app/App.components/Info/Info.view'
 import {
   RegisterAsSatelliteForm,
   RegisterAsSatelliteFormInputStatus,
@@ -28,8 +25,8 @@ import {
   BecomeSatelliteForm,
   BecomeSatelliteFormBalanceCheck,
   BecomeSatelliteFormHorizontal,
-  InfoBanner,
 } from './BecomeSatellite.style'
+import { NotStakinkBanner } from 'pages/Satellites/components/NotStakingBanner.view'
 import InputWithPercent from 'app/App.components/Input/InputWithPercent'
 import SatellitesSideBar from 'pages/Satellites/SatellitesSideBar/SatellitesSideBar.controller'
 import type { DelegationStorage } from '../../utils/TypesAndInterfaces/Delegation'
@@ -199,26 +196,15 @@ export const BecomeSatelliteView = ({
         avatar={isSatelliteRegistered ? form.image || defaultAvatar : ''}
       />
 
-      <InfoBanner>
-        {!accountPkh || !balanceOk ? (
-          <Info
-            className="indent-bottom"
-            text={
-              !accountPkh
-                ? 'Please connect your wallet'
-                : `To become a satellite you need to stake ${satelliteConfig.minimumStakedMvkBalance} MVK`
-            }
-            type="warning"
-          >
-            <Link to="/">
-              <NewButton kind={ACTION_PRIMARY}>
-                <Icon id="staking" />
-                Staking
-              </NewButton>
-            </Link>
-          </Info>
-        ) : null}
-      </InfoBanner>
+      <NotStakinkBanner
+        accountPkh={accountPkh}
+        balanceOk={balanceOk}
+        text={
+          !accountPkh
+            ? 'Please connect your wallet'
+            : `To become a satellite you need to stake ${satelliteConfig.minimumStakedMvkBalance} MVK`
+        }
+      />
 
       <PageContent>
         <div>

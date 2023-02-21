@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 // types
@@ -19,7 +19,10 @@ import { getFeedsStorage } from 'pages/DataFeeds/DataFeeds.actions'
 
 const Satellites = () => {
   const {
-    delegationStorage: { activeSatellites = [] },
+    delegationStorage: {
+      activeSatellites = [],
+      config: { minimumStakedMvkBalance },
+    },
   } = useSelector((state: State) => state.delegation)
   const { feedsLedger, isLoaded: isFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
   const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
@@ -28,6 +31,8 @@ const Satellites = () => {
     accountPkh,
   } = useSelector((state: State) => state.wallet)
   const dispatch = useDispatch()
+
+  const [balanceOk, setBalanceOk] = useState(false)
 
   const { isLoading } = useDataLoader(async () => {
     await Promise.all([
@@ -58,6 +63,10 @@ const Satellites = () => {
     dispatch(undelegate(delegateAddress))
   }
 
+  useEffect(() => {
+    setBalanceOk(mySMvkTokenBalance >= minimumStakedMvkBalance)
+  }, [accountPkh, minimumStakedMvkBalance, mySMvkTokenBalance])
+
   return (
     <SatellitesView
       tabsInfo={tabsInfo}
@@ -70,6 +79,8 @@ const Satellites = () => {
         undelegateCallback,
       }}
       dataFeedsData={{ items: feedsLedger }}
+      balanceOk={balanceOk}
+      accountPkh={accountPkh}
     />
   )
 }

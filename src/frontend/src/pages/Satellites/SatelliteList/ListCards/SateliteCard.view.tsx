@@ -52,6 +52,7 @@ export const SatelliteListItem = ({
   satelliteUserIsDelegatedTo,
   isDetailsPage = false,
   userHasSatelliteRewards = false,
+  balanceOk,
   className = '',
   children,
 }: SatelliteListItemProps) => {
@@ -119,7 +120,7 @@ export const SatelliteListItem = ({
       icon="man-check"
       kind={ACTION_PRIMARY}
       onClick={() => delegateCallback(satellite.address)}
-      disabled={!accountPkh}
+      disabled={!accountPkh || !balanceOk}
     />
   )
 

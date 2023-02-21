@@ -9,7 +9,14 @@ import { getDelegationStorage, delegate, undelegate } from 'pages/Satellites/Sat
 
 const SatelliteNodes = () => {
   const {
-    delegationStorage: { activeSatellites = [] },
+    accountPkh,
+    user: { mySMvkTokenBalance },
+  } = useSelector((state: State) => state.wallet)
+  const {
+    delegationStorage: {
+      activeSatellites = [],
+      config: { minimumStakedMvkBalance },
+    },
   } = useSelector((state: State) => state.delegation)
   const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
   const {
@@ -21,6 +28,7 @@ const SatelliteNodes = () => {
 
   const [allSatellites, setAllSatellites] = useState<SatelliteRecord[]>(activeSatellites)
   const [filteredSatelliteList, setFilteredSatelliteList] = useState<SatelliteRecord[]>(activeSatellites)
+  const [balanceOk, setBalanceOk] = useState(false)
 
   useEffect(() => {
     dispatch(getDelegationStorage())
@@ -30,6 +38,11 @@ const SatelliteNodes = () => {
     setAllSatellites(activeSatellites)
     setFilteredSatelliteList(activeSatellites)
   }, [activeSatellites])
+
+  
+  useEffect(() => {
+    setBalanceOk(mySMvkTokenBalance >= minimumStakedMvkBalance)
+  }, [accountPkh, minimumStakedMvkBalance, mySMvkTokenBalance])
 
   const handleSearch = (e: {
     target: {
@@ -113,6 +126,8 @@ const SatelliteNodes = () => {
       delegateCallback={delegateCallback}
       undelegateCallback={undelegateCallback}
       satellitesList={filteredSatelliteList}
+      balanceOk={balanceOk}
+      accountPkh={accountPkh}
     />
   )
 }

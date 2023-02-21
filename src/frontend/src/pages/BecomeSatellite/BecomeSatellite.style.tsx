@@ -6,12 +6,6 @@ export const BecomeSatelliteStyled = styled.div<{ theme: MavrykTheme }>`
   background-color: ${({ theme }) => theme.containerColor};
 `
 
-export const InfoBanner = styled.div`
-  button {
-    width: 250px;
-  }
-`
-
 export const BecomeSatelliteForm = styled(Card)`
   padding-bottom: 53px;
   margin-top: 0;
