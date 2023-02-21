@@ -9,17 +9,19 @@ import type {
   Treasury,
   Treasury_Factory,
   Whitelist_Developer,
+  Maybe,
 } from '../generated/graphqlTypes'
+import { normalizeBreakGlass } from '../../pages/BreakGlass/BreakGlass.helpers'
 
-import {
-  normalizeBreakGlass,
-  normalizeBreakGlassStatus,
-  normalizeWhitelistDev,
-} from '../../pages/BreakGlass/BreakGlass.helpers'
-
-export type BreakGlassStorage = ReturnType<typeof normalizeBreakGlass>
-export type BreakGlassStatusStorage = ReturnType<typeof normalizeBreakGlassStatus>
-export type WhitelistDevStorage = ReturnType<typeof normalizeWhitelistDev>
+export type BreakGlassConfig = ReturnType<typeof normalizeBreakGlass>
+export type BreakGlassStatusStorage = Array<{
+  title: string
+  type: string
+  address: string
+  admin: string
+  lastUpdated?: Maybe<string>
+  methods: Record<string, boolean>
+}>
 
 export type BreakGlassGraphQL = Omit<Break_Glass, '__typename'>
 export type WhitelistDevGraphQL = Omit<Whitelist_Developer, '__typename'>

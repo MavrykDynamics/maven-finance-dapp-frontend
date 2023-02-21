@@ -22,7 +22,7 @@ import {
   signAction,
 } from './BreakGlassCouncil.actions'
 import { getCouncilStorage } from 'pages/Council/Council.actions'
-import { getBreakGlassStorage } from 'pages/BreakGlass/BreakGlass.actions'
+import { getBreakGlassConfig } from 'pages/BreakGlass/BreakGlass.actions'
 
 // types
 import { CouncilMaxLength } from 'utils/TypesAndInterfaces/Council'
@@ -37,7 +37,7 @@ export function BreakGlassCouncil() {
   const dispatch = useDispatch()
 
   const { accountPkh } = useSelector((state: State) => state.wallet)
-  const { glassBroken } = useSelector((state: State) => state.breakGlass)
+  const { glassBroken, isConfigLoaded } = useSelector((state: State) => state.breakGlass.config)
   const {
     config: { councilMaxLength },
     breakGlassCouncilMembers,
@@ -67,7 +67,7 @@ export function BreakGlassCouncil() {
     try {
       await Promise.all(
         [
-          dispatch(getBreakGlassStorage()),
+          !isConfigLoaded && dispatch(getBreakGlassConfig()),
           !isStorageLoaded && dispatch(getCouncilStorage()),
           !isBreakGlassCouncilMembersLoaded && dispatch(getBreakGlassCouncilMembers()),
           !isBreakGlassCouncilPastActionsLoaded && dispatch(getBreakGlassCouncilPastActions()),
