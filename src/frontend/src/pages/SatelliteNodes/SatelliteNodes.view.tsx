@@ -48,7 +48,7 @@ const OracleSatellitesView = ({
 }: OracleSatellitesViewProps) => {
   const { satelliteMvkIsDelegatedTo, mySMvkTokenBalance } = useSelector((state: State) => state.wallet.user)
 
-  const balanceOver1Mvk = mySMvkTokenBalance >= 1
+  const balanceOver1SMvk = mySMvkTokenBalance >= 1
 
   const [ddItems, _] = useState(itemsForDropDown.map(({ text }) => text))
   const [ddIsOpen, setDdIsOpen] = useState(false)
@@ -66,7 +66,7 @@ const OracleSatellitesView = ({
     <Page>
       <PageHeader page={'satellites'} />
 
-      {!balanceOver1Mvk && (
+      {!balanceOver1SMvk && (
         <NotStakingBanner
           text="You are currently not staking MVK, please stake MVK in order to delegate to a satellite
         or become your own and take part in the platform’s governance"
