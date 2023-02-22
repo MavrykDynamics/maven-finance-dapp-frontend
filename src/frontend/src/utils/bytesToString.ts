@@ -14,7 +14,7 @@ export const bytesToText = (bytes: string) => {
     const bytesData = { bytes }
 
     const data = unpackDataBytes(bytesData, stringType)
-    return Object.values(data)[0]
+    return Object.values(data)[0] || ''
   } catch (e) {
     console.log('bytesToText', e)
     return ''
