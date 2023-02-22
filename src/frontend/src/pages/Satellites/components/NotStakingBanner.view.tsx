@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 
 import { Info } from 'app/App.components/Info/Info.view'
 import NewButton from 'app/App.components/Button/NewButton.controller'
-import { NotStakinkBannerStyled } from '../Satellites.style'
+import { NotStakinkBannerStyled as NotStakingBannerStyled } from '../Satellites.style'
 import Icon from 'app/App.components/Icon/Icon.view'
 
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
@@ -16,7 +16,7 @@ type Props = {
 
 export const NotStakinkBanner = ({ accountPkh, balanceOk, text, className }: Props) => {
   return (
-    <NotStakinkBannerStyled className={className}>
+    <NotStakingBannerStyled className={className}>
       {accountPkh && !balanceOk ? (
         <Info className="indent-bottom" text={text} type="warning">
           <Link to="/">
@@ -27,6 +27,6 @@ export const NotStakinkBanner = ({ accountPkh, balanceOk, text, className }: Pro
           </Link>
         </Info>
       ) : null}
-    </NotStakinkBannerStyled>
+    </NotStakingBannerStyled>
   )
 }

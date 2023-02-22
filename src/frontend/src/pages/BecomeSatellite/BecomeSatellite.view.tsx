@@ -193,7 +193,7 @@ export const BecomeSatelliteView = ({
     <Page>
       <PageHeader
         page={updateSatellite && isSatelliteRegistered ? 'my satellite profile' : 'satellites'}
-        avatar={isSatelliteRegistered ? form.image || defaultAvatar : ''}
+        avatar={form.image ?? defaultAvatar}
       />
 
       <NotStakinkBanner

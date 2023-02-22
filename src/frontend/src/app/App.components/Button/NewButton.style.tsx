@@ -47,23 +47,8 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
     }
 
     &.pulse {
-      transform: scale(1);
       animation: pulse 2s infinite;
       box-shadow: 0 0 0 0 rgba(134, 212, 201, 1);
-
-      @keyframes pulse {
-        0% {
-          box-shadow: 0 0 0 0 rgba(134, 212, 201, 7);
-        }
-
-        70% {
-          box-shadow: 0 0 0 10px rgba(134, 212, 201, 0);
-        }
-
-        100% {
-          box-shadow: 0 0 0 0 rgba(134, 212, 201, 0);
-        }
-      }
     }
   }
 

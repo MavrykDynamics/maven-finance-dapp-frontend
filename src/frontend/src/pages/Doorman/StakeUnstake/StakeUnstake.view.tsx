@@ -161,7 +161,7 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
 
   const handleDelegate = () => {
     if (mySMvkTokenBalance === 0) {
-      dispatch(showToaster(ERROR, 'Unable to Delegate', 'Please stake your MVK'))
+      dispatch(showToaster(ERROR, 'Failed to delegate', 'You need to stake MVK'))
       return
     }
 
