@@ -42,7 +42,6 @@ export const Doorman = () => {
     mySMvkTokenBalance,
     myMvkTokenBalance,
     totalStakedMvk,
-    totalSupply,
     accountPkh,
   }
 

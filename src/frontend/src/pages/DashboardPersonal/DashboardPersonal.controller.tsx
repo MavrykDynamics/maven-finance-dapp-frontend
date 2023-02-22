@@ -177,7 +177,7 @@ const DashboardPersonal = () => {
                 <GovRightContainerTitleArea>
                   <h2>History</h2>
                 </GovRightContainerTitleArea>
-                {actionsHistory ? (
+                {actionsHistory.length ? (
                   <Table className="treasury-table">
                     <TableHeader className="treasury">
                       <TableRow>
