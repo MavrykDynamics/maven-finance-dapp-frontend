@@ -32,6 +32,20 @@ import { getLoansStorage } from './Actions/getLoansData.actions'
 import { useEffect } from 'react'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
+const CHART_SETTINGS = {
+  width: 450,
+  height: 270,
+  hideXAxis: true,
+  hideYAxis: true,
+}
+
+const CHART_COLORS = {
+  lineColor: skyColor,
+  areaTopColor: skyColor,
+  areaBottomColor: 'rgba(119, 164, 242, 0)',
+  textColor: '#CDCDCD',
+}
+
 export const Loans = () => {
   const dispatch = useDispatch()
   const { isDataLoaded, loanTokens, chartsData } = useSelector((state: State) => state.loans)
@@ -56,19 +70,9 @@ export const Loans = () => {
       </div>
       <Chart
         data={chartsData.lendingChartData}
-        colors={{
-          lineColor: skyColor,
-          areaTopColor: skyColor,
-          areaBottomColor: 'rgba(119, 164, 242, 0)',
-          textColor: '#CDCDCD',
-        }}
+        colors={CHART_COLORS}
         className="loan-chart"
-        settings={{
-          width: 372,
-          height: 182,
-          hideXAxis: true,
-          hideYAxis: true,
-        }}
+        settings={CHART_SETTINGS}
         numberOfItemsToDisplay={3}
       >
         <div className="chart-interval">7 Days</div>
@@ -84,20 +88,9 @@ export const Loans = () => {
       </div>
       <Chart
         data={chartsData.borrowingChartData}
-        colors={{
-          lineColor: skyColor,
-          areaTopColor: skyColor,
-          areaBottomColor: 'rgba(119, 164, 242, 0)',
-          textColor: '#CDCDCD',
-        }}
+        colors={CHART_COLORS}
         className="loan-chart"
-        settings={{
-          width: 372,
-          height: 182,
-
-          hideXAxis: true,
-          hideYAxis: true,
-        }}
+        settings={CHART_SETTINGS}
         numberOfItemsToDisplay={3}
       >
         <div className="chart-interval">7 Days</div>
