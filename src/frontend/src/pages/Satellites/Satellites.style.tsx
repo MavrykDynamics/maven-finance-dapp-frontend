@@ -16,3 +16,16 @@ export const SatelliteListStyled = styled(SatelliteList)`
     padding: 16px 25px;
   }
 `
+
+export const NotStakinkBannerStyled = styled.div`
+  margin-top: 30px;
+  margin-bottom: -10px;
+
+  p {
+    max-width: 610px;
+  }
+
+  button {
+    width: 250px;
+  }
+`

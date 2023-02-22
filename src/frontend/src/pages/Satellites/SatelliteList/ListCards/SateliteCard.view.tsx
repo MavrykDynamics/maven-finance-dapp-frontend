@@ -62,7 +62,7 @@ export const SatelliteListItem = ({
   const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
   const {
     accountPkh,
-    user: { isSatellite },
+    user: { isSatellite, mySMvkTokenBalance },
   } = useSelector((state: State) => state.wallet)
   const {
     governanceStorage: { financialRequestLedger, proposalLedger },
@@ -70,6 +70,7 @@ export const SatelliteListItem = ({
   } = useSelector((state: State) => state.governance)
   const { eGovProposals } = useSelector((state: State) => state.emergencyGovernance)
 
+  const balanceOver1SMvk = mySMvkTokenBalance >= 1
   const myDelegatedMVK = userStakedBalance
   const userIsDelegatedToThisSatellite = satellite.address === satelliteUserIsDelegatedTo
   const isSatelliteOracle = satellite.oracleRecords.length
@@ -119,7 +120,7 @@ export const SatelliteListItem = ({
       icon="man-check"
       kind={ACTION_PRIMARY}
       onClick={() => delegateCallback(satellite.address)}
-      disabled={!accountPkh}
+      disabled={!accountPkh || !balanceOver1SMvk}
     />
   )
 

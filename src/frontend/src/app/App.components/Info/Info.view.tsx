@@ -9,13 +9,17 @@ type Props = {
   text: string
   type: infoType
   className?: string
+  children?: React.ReactNode
 }
-export const Info = ({ text, type, className = '' }: Props) => {
+export const Info = ({ children, text, type, className = '' }: Props) => {
   return (
     <InfoBlock className={`${type} ${className}`}>
-      {type === 'warning' ? <Icon id="info" /> : null}
-      <p>{text}</p>
-      {type === 'error' ? <Icon id="error" /> : null}
+      <div className="content">
+        {type === 'warning' ? <Icon className='infoIcon' id="info" /> : null}
+        <p>{text}</p>
+      </div>
+      {type === 'error' ? <Icon className='infoIcon' id="error" /> : null}
+      {children}
     </InfoBlock>
   )
 }

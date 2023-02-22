@@ -45,6 +45,11 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
     svg {
       fill: ${({ theme }) => theme.containerColor};
     }
+
+    &.pulse {
+      animation: pulse 2s infinite;
+      box-shadow: 0 0 0 0 rgba(134, 212, 201, 1);
+    }
   }
 
   &.${ACTION_SECONDARY} {

@@ -10,7 +10,7 @@ import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
 import { DropDown, DropdownItemType } from 'app/App.components/DropDown/DropDown.controller'
 import { Input } from 'app/App.components/Input/Input.controller'
 import SatteliteList from 'pages/Satellites/SatelliteList/SatellitesList.view'
-
+import { NotStakingBanner } from 'pages/Satellites/components/NotStakingBanner.view'
 import { SatelliteSearchFilter } from 'pages/Satellites/SatelliteList/SatelliteList.style'
 import { DropdownContainer } from 'app/App.components/DropDown/DropDown.style'
 import { Page, PageContent } from 'styles'
@@ -46,7 +46,9 @@ const OracleSatellitesView = ({
   delegateCallback,
   undelegateCallback,
 }: OracleSatellitesViewProps) => {
-  const { satelliteMvkIsDelegatedTo } = useSelector((state: State) => state.wallet.user)
+  const { satelliteMvkIsDelegatedTo, mySMvkTokenBalance } = useSelector((state: State) => state.wallet.user)
+
+  const balanceOver1SMvk = mySMvkTokenBalance >= 1
 
   const [ddItems, _] = useState(itemsForDropDown.map(({ text }) => text))
   const [ddIsOpen, setDdIsOpen] = useState(false)
@@ -63,6 +65,13 @@ const OracleSatellitesView = ({
   return (
     <Page>
       <PageHeader page={'satellites'} />
+
+      {!balanceOver1SMvk && (
+        <NotStakingBanner
+          text="You are currently not staking MVK, please stake MVK in order to delegate to a satellite
+        or become your own and take part in the platform’s governance"
+        />
+      )}
 
       <PageContent>
         <div className="left-content-wrapper">
