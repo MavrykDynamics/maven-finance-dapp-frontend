@@ -42,7 +42,7 @@ export const CouncilFormDropFinancialRequest = () => {
       ongoing.map((item) => ({
         content: (
           <div>
-            {item.request_type} {item.request_purpose}
+            {item.type} {item.purpose}
           </div>
         ),
         id: item.id,

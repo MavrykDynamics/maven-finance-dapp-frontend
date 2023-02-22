@@ -38,7 +38,6 @@ import {
 import { EmptyContainer } from 'app/App.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
-import { FRListWrapper } from 'pages/FinacialRequests/FRList/FRList.styles'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { OracleCard } from 'pages/DataFeedsDetails/listItem/OracleCard.view'
 import Pagination from 'app/Pagination/Pagination.view'
@@ -275,7 +274,7 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, registerFeedHandler, isLoa
           </DataFeedsStyled>
 
           {feedsSatellites.length ? (
-            <FRListWrapper className={`oracle`}>
+            <div className={`oracle`}>
               <GovRightContainerTitleArea>
                 <h1>Oracles data</h1>
               </GovRightContainerTitleArea>
@@ -288,7 +287,7 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, registerFeedHandler, isLoa
                 side={PAGINATION_SIDE_RIGHT}
                 listName={ORACLES_DATA_IN_FEED_LIST_NAME}
               />
-            </FRListWrapper>
+            </div>
           ) : (
             // <SatelliteList
             //   listTitle={'Oracles data'}

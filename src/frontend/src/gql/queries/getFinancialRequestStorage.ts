@@ -1,6 +1,6 @@
 export const FINANCIAL_REQUESTS_STORAGE_QUERY = `
   query GetFinRequestsStorageQuery {
-    governance_financial_request(order_by: {requested_datetime: asc}) {
+    governance_financial_request(order_by: {requested_datetime: desc}) {
       executed
       expiration_datetime
       execution_datetime
@@ -10,7 +10,6 @@ export const FINANCIAL_REQUESTS_STORAGE_QUERY = `
       requested_datetime
       smvk_percentage_for_approval
       requester_id
-      smvk_required_for_approval
       snapshot_smvk_total_supply
       status
       token_amount

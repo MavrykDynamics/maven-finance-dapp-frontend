@@ -11,6 +11,9 @@ import { normalizeFinancialRequests } from './FinancialRequests.helpers'
 
 export const GET_FINANCIAL_REQUEST_STORAGE = 'GET_FINANCIAL_REQUEST_STORAGE'
 export const getFinancialRequestStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
+  const {
+    tokens: { dipDupTokens },
+  } = getState()
   try {
     const storage = await fetchFromIndexer(
       FINANCIAL_REQUESTS_STORAGE_QUERY,
@@ -18,7 +21,7 @@ export const getFinancialRequestStorage = () => async (dispatch: AppDispatch, ge
       FINANCIAL_REQUESTS_STORAGE_QUERY_VARIABLE,
     )
 
-    const financialRequests = normalizeFinancialRequests(storage)
+    const financialRequests = normalizeFinancialRequests(storage, dipDupTokens)
 
     dispatch({
       type: GET_FINANCIAL_REQUEST_STORAGE,

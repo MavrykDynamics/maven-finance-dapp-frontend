@@ -1,68 +1,78 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { useLocation } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
 
 // helpers, actions, consts
 import { distinctRequestsByExecuting, getRequestStatus } from './FinancialRequests.helpers'
 import {
+  calculateSlicePositions,
+  getPageNumber,
   ONGOING_REQUESTS_FINANCIAL_REQUESTS_LIST,
+  PAGINATION_SIDE_RIGHT,
   PAST_REQUESTS_FINANCIAL_REQUESTS_LIST,
 } from '../../app/Pagination/pagination.consts'
-import { PRECISION_NUMBER } from 'utils/constants'
 import { calcWithoutMu, calcWithoutPrecision } from 'utils/calcFunctions'
 import { votingRinancialRequestVote } from 'pages/Governance/Governance.actions'
 import { VotingTypes } from 'app/App.components/VotingArea/helpers/voting.const'
 import { parseDate } from 'utils/time'
 
 // types
-import { ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
-import { GovernanceFinancialRequestGraphQL } from '../../utils/TypesAndInterfaces/Governance'
+import { FinancialRequestRecord, ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
 import { State } from 'reducers'
 
 // view
 import { StatusFlag } from '../../app/App.components/StatusFlag/StatusFlag.controller'
 import { TzAddress } from '../../app/App.components/TzAddress/TzAddress.view'
 import { CommaNumber } from '../../app/App.components/CommaNumber/CommaNumber.controller'
-import FRList from './FRList/FRList.view'
+import Pagination from 'app/Pagination/Pagination.view'
+import { FRSListItem } from './FRSListItem.view'
+import { VotingArea } from 'app/App.components/VotingArea/VotingArea.controller'
 
 // styles
 import {
-  GovRightContainerTitleArea,
-  FinancialRequestsContainer,
   FinancialRequestsRightContainer,
   FinancialRequestsStyled,
   InfoBlockValue,
   InfoBlockTitle,
-  VotingArea,
   InfoBlockName,
 } from './FinancialRequests.style'
+import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 
-type FinancialRequestsViewProps = {
-  financialRequestsList: GovernanceFinancialRequestGraphQL[]
-}
-
-export const FinancialRequestsView = ({ financialRequestsList = [] }: FinancialRequestsViewProps) => {
+export const FinancialRequestsView = ({
+  financialRequestsList = [],
+}: {
+  financialRequestsList: Array<FinancialRequestRecord>
+}) => {
   const dispatch = useDispatch()
+  const { search } = useLocation()
+
   const { dipDupTokens } = useSelector((state: State) => state.tokens)
   const {
     accountPkh,
     user: { isSatellite: isUserSatellite },
   } = useSelector((state: State) => state.wallet)
 
+  // Handling lists data
   const { ongoing, past } = distinctRequestsByExecuting(financialRequestsList)
+
+  const currentOngoingPage = getPageNumber(search, ONGOING_REQUESTS_FINANCIAL_REQUESTS_LIST)
+  const currentPastPage = getPageNumber(search, PAST_REQUESTS_FINANCIAL_REQUESTS_LIST)
+
+  const paginatedPastItemsList = useMemo(() => {
+    const [from, to] = calculateSlicePositions(currentPastPage, PAST_REQUESTS_FINANCIAL_REQUESTS_LIST)
+    return past.slice(from, to)
+  }, [currentPastPage, past])
+
+  const paginatedOngoingItemsList = useMemo(() => {
+    const [from, to] = calculateSlicePositions(currentOngoingPage, ONGOING_REQUESTS_FINANCIAL_REQUESTS_LIST)
+    return ongoing.slice(from, to)
+  }, [currentOngoingPage, ongoing])
 
   const [rightSideContent, setRightSideContent] = useState(ongoing[0] ?? past[0])
 
-  const handleItemSelect = (selectedRequest: GovernanceFinancialRequestGraphQL) => {
-    if (selectedRequest.id !== rightSideContent?.id) {
-      setRightSideContent(selectedRequest)
-    }
-  }
-
+  // Full view item data handling
   const rightItemStatus = rightSideContent && getRequestStatus(rightSideContent)
-  const tokenName =
-    dipDupTokens.find(({ contract }) => (contract = rightSideContent.token_address))?.metadata.symbol ?? ''
 
-  // Voting data & handlers
   const [votingStats, setVoteStatistics] = useState({
     forVotesMVKTotal: 0,
     againstVotesMVKTotal: 0,
@@ -72,14 +82,12 @@ export const FinancialRequestsView = ({ financialRequestsList = [] }: FinancialR
 
   useEffect(() => {
     setVoteStatistics({
-      forVotesMVKTotal: rightSideContent.yay_vote_smvk_total / PRECISION_NUMBER,
-      againstVotesMVKTotal: rightSideContent.nay_vote_smvk_total / PRECISION_NUMBER,
+      forVotesMVKTotal: rightSideContent.forVotesMVKTotal,
+      againstVotesMVKTotal: rightSideContent.againstVotesMVKTotal,
       unusedVotesMVKTotal: Math.round(
-        rightSideContent.snapshot_smvk_total_supply / PRECISION_NUMBER -
-          rightSideContent.yay_vote_smvk_total / PRECISION_NUMBER -
-          rightSideContent.nay_vote_smvk_total / PRECISION_NUMBER,
+        rightSideContent.sMVKTotakSupply - rightSideContent.forVotesMVKTotal - rightSideContent.againstVotesMVKTotal,
       ),
-      quorum: rightSideContent.smvk_percentage_for_approval / 100,
+      quorum: rightSideContent.quorum,
     })
   }, [rightSideContent])
 
@@ -110,14 +118,14 @@ export const FinancialRequestsView = ({ financialRequestsList = [] }: FinancialR
     rightSideContent ? (
       <FinancialRequestsRightContainer>
         <GovRightContainerTitleArea className="financial-request">
-          <h1>{rightSideContent.request_type}</h1>
+          <h1>{rightSideContent.type}</h1>
           <StatusFlag text={rightItemStatus} status={rightItemStatus} />
         </GovRightContainerTitleArea>
 
         <div className="voting_ending">
           Voting {rightItemStatus !== ProposalStatus.ONGOING ? 'ended' : 'ending'} on{' '}
           {parseDate({
-            time: rightSideContent.execution_datetime || rightSideContent.expiration_datetime,
+            time: rightSideContent.votingTillTime,
             timeFormat: 'MMM DD, HH:mm:ss',
           })}
         </div>
@@ -136,20 +144,20 @@ export const FinancialRequestsView = ({ financialRequestsList = [] }: FinancialR
         <div className="info_section_wrapper">
           <div className="info_section">
             <InfoBlockTitle>Type</InfoBlockTitle>
-            <InfoBlockName>{rightSideContent.request_type}</InfoBlockName>
+            <InfoBlockName>{rightSideContent.type}</InfoBlockName>
           </div>
 
           <div className="info_section">
             <InfoBlockTitle>Requester</InfoBlockTitle>
             <InfoBlockValue>
-              <TzAddress tzAddress={rightSideContent.requester_id} hasIcon />
+              <TzAddress tzAddress={rightSideContent.requesterAddress} hasIcon />
             </InfoBlockValue>
           </div>
         </div>
 
         <div className="info_section">
           <InfoBlockTitle>Purpose</InfoBlockTitle>
-          <InfoBlockName>{rightSideContent.request_purpose}</InfoBlockName>
+          <InfoBlockName>{rightSideContent.purpose}</InfoBlockName>
         </div>
 
         <div className="info_section">
@@ -158,20 +166,13 @@ export const FinancialRequestsView = ({ financialRequestsList = [] }: FinancialR
             <div className="list_item">
               <InfoBlockName>Amount Requested</InfoBlockName>
               <InfoBlockValue>
-                <CommaNumber
-                  value={
-                    tokenName === 'MVK'
-                      ? calcWithoutPrecision(rightSideContent.token_amount)
-                      : calcWithoutMu(rightSideContent.token_amount)
-                  }
-                  endingText={tokenName}
-                />
+                <CommaNumber value={rightSideContent.tokensAmount} endingText={rightSideContent.tokenName} />
               </InfoBlockValue>
             </div>
 
             <div className="list_item">
               <InfoBlockName>Type</InfoBlockName>
-              <InfoBlockValue>{tokenName}</InfoBlockValue>
+              <InfoBlockValue>{rightSideContent.tokenName}</InfoBlockValue>
             </div>
           </div>
         </div>
@@ -179,7 +180,7 @@ export const FinancialRequestsView = ({ financialRequestsList = [] }: FinancialR
         <div className="info_section">
           <InfoBlockTitle>Date Requested</InfoBlockTitle>
           <InfoBlockName>
-            {parseDate({ time: rightSideContent.requested_datetime, timeFormat: 'MMM DD, HH:mm:ss' })}
+            {parseDate({ time: rightSideContent.requestedTime, timeFormat: 'MMM DD, HH:mm:ss' })}
           </InfoBlockName>
         </div>
 
@@ -189,21 +190,21 @@ export const FinancialRequestsView = ({ financialRequestsList = [] }: FinancialR
             <div className="list_item">
               <InfoBlockName>Governance Contract</InfoBlockName>
               <InfoBlockValue>
-                <TzAddress tzAddress={rightSideContent.governance_financial.governance.address} />
+                <TzAddress tzAddress={rightSideContent.governanceContract} />
               </InfoBlockValue>
             </div>
 
             <div className="list_item">
               <InfoBlockName>Governance Financial Contract</InfoBlockName>
               <InfoBlockValue>
-                <TzAddress tzAddress={rightSideContent.governance_financial_id} />
+                <TzAddress tzAddress={rightSideContent.governanceFinId} />
               </InfoBlockValue>
             </div>
 
             <div className="list_item">
               <InfoBlockName>Treasury Contract</InfoBlockName>
               <InfoBlockValue>
-                <TzAddress tzAddress={rightSideContent.treasury_id} />
+                <TzAddress tzAddress={rightSideContent.treasuryContract} />
               </InfoBlockValue>
             </div>
           </div>
@@ -213,22 +214,57 @@ export const FinancialRequestsView = ({ financialRequestsList = [] }: FinancialR
 
   return (
     <FinancialRequestsStyled>
-      <FinancialRequestsContainer>
-        <FRList
-          listTitle="Ongoing Requests"
-          items={ongoing}
-          handleItemSelect={handleItemSelect}
-          name={ONGOING_REQUESTS_FINANCIAL_REQUESTS_LIST}
-          selectedItem={rightSideContent}
-        />
-        <FRList
-          listTitle="Past Requests"
-          items={past}
-          name={PAST_REQUESTS_FINANCIAL_REQUESTS_LIST}
-          handleItemSelect={handleItemSelect}
-          selectedItem={rightSideContent}
-        />
-      </FinancialRequestsContainer>
+      <div className="list-container">
+        {ongoing.length ? (
+          <>
+            <GovRightContainerTitleArea>
+              <h1>Ongoing Requests</h1>
+            </GovRightContainerTitleArea>
+            <div className="list">
+              {paginatedOngoingItemsList.map((item, idx) => (
+                <FRSListItem
+                  key={item.id}
+                  id={idx + 1}
+                  onClickHandler={() => setRightSideContent(item)}
+                  request={item}
+                  selected={rightSideContent?.id === item.id}
+                />
+              ))}
+
+              <Pagination
+                itemsCount={ongoing.length}
+                side={PAGINATION_SIDE_RIGHT}
+                listName={ONGOING_REQUESTS_FINANCIAL_REQUESTS_LIST}
+              />
+            </div>
+          </>
+        ) : null}
+
+        {past.length ? (
+          <>
+            <GovRightContainerTitleArea>
+              <h1>Past Requests</h1>
+            </GovRightContainerTitleArea>
+            <div className="list">
+              {paginatedPastItemsList.map((item, idx) => (
+                <FRSListItem
+                  key={item.id}
+                  id={idx + 1}
+                  onClickHandler={() => setRightSideContent(item)}
+                  request={item}
+                  selected={rightSideContent?.id === item.id}
+                />
+              ))}
+
+              <Pagination
+                itemsCount={past.length}
+                side={PAGINATION_SIDE_RIGHT}
+                listName={PAST_REQUESTS_FINANCIAL_REQUESTS_LIST}
+              />
+            </div>
+          </>
+        ) : null}
+      </div>
       <RightSideBlock />
     </FinancialRequestsStyled>
   )

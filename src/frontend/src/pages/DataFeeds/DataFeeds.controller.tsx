@@ -26,7 +26,6 @@ import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
 import { getFeedsStorage } from './DataFeeds.actions'
-import { FRListWrapper } from 'pages/FinacialRequests/FRList/FRList.styles'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { DataFeedCard } from 'pages/DataFeedsDetails/listItem/DataFeedCard.view'
 import Pagination from 'app/Pagination/Pagination.view'
@@ -125,7 +124,7 @@ export const DataFeeds = () => {
 
           <DataFeedsStyled>
             {filteredFeeds.length ? (
-              <FRListWrapper className={`oracle`}>
+              <div className={`oracle`}>
                 <GovRightContainerTitleArea>
                   <h1>Oracles data</h1>
                 </GovRightContainerTitleArea>
@@ -138,7 +137,7 @@ export const DataFeeds = () => {
                   side={PAGINATION_SIDE_RIGHT}
                   listName={FEEDS_ALL_LIST_NAME}
                 />
-              </FRListWrapper>
+              </div>
             ) : (
               emptyContainer
             )}
