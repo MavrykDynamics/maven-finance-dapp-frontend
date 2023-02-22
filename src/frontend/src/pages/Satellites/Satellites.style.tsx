@@ -18,6 +18,7 @@ export const SatelliteListStyled = styled(SatelliteList)`
 `
 
 export const NotStakinkBannerStyled = styled.div`
+  margin-top: 30px;
   margin-bottom: -10px;
 
   p {

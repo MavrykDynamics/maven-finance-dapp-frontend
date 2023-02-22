@@ -16,10 +16,10 @@ export const InfoBlock = styled.blockquote<{ theme: MavrykTheme }>`
   }
 
   .infoIcon {
-    stroke: ${({ theme }) => theme.textColor};
+    fill: ${({ theme }) => theme.textColor};
     height: 16px;
     width: 16px;
-    margin-right: 19px;
+    margin-right: 20px;
     flex-shrink: 0;
   }
 
@@ -43,8 +43,7 @@ export const InfoBlock = styled.blockquote<{ theme: MavrykTheme }>`
     }
 
     .infoIcon {
-      stroke: ${({ theme }) => theme.downColor};
-      stroke-width: 2;
+      fill: ${({ theme }) => theme.textColor};
       margin-right: 0;
     }
   }
@@ -63,27 +62,12 @@ export const InfoBlock = styled.blockquote<{ theme: MavrykTheme }>`
     }
 
     .infoIcon {
-      stroke: ${({ theme }) => theme.downColor};
-      stroke-width: 2;
+      fill: ${({ theme }) => theme.downColor};
       margin-right: 0;
-      width: 16px;
-      height: 16px;
     }
   }
 
   &.no-edit-info {
     margin-top: 20px;
-  }
-
-  &.indent-bottom {
-    margin-top: 30px;
-
-    &.warning {
-      .infoIcon {
-        stroke: none;
-        stroke-width: 0.3;
-        fill: ${({ theme }) => theme.downColor};
-      }
-    }
   }
 `

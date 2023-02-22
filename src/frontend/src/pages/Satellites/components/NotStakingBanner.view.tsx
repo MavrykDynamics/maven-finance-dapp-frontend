@@ -20,7 +20,7 @@ export const NotStakingBanner = ({ text, className }: Props) => {
   return (
     <NotStakingBannerStyled className={className}>
       {accountPkh ? (
-        <Info className="indent-bottom" text={text} type="warning">
+        <Info text={text} type="warning">
           <Link to="/">
             <NewButton kind={ACTION_PRIMARY}>
               <Icon id="staking" />
