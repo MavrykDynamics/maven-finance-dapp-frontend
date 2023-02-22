@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { State } from 'reducers'
 
-import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { ACTION_PRIMARY, ACTION_SECONDARY } from 'app/App.components/Button/Button.constants'
 
 import { Button } from 'app/App.components/Button/Button.controller'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
@@ -13,6 +13,8 @@ import { DelegationStatusBlock } from './DashboardPersonalComponents.style'
 
 import { getSatelliteMetrics } from 'pages/Satellites/Satellites.helpers'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
+import NewButton from 'app/App.components/Button/NewButton.controller'
+import Icon from 'app/App.components/Icon/Icon.view'
 
 const DelegationTab = () => {
   const { satelliteMvkIsDelegatedTo } = useSelector((state: State) => state.wallet.user)
@@ -25,6 +27,7 @@ const DelegationTab = () => {
   } = useSelector((state: State) => state.governance)
   const { eGovProposals } = useSelector((state: State) => state.emergencyGovernance)
   const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
+  const { mySMvkTokenBalance } = useSelector((state: State) => state.wallet.user)
 
   const satelliteMetrics = satelliteInfo
     ? getSatelliteMetrics(
@@ -94,16 +97,22 @@ const DelegationTab = () => {
             </div>
             <Link to="/satellites">Satellites Overview</Link>
           </>
+        ) : mySMvkTokenBalance === 0 ? (
+          <div className="no-data">
+            <span>You don't have SMVK</span>
+            <Link to="/">
+              <NewButton kind={ACTION_SECONDARY} className="dashboard-sectionLink">
+                <Icon id="menu-staking" /> Stake MVK
+              </NewButton>
+            </Link>
+          </div>
         ) : (
           <div className="no-data">
-            <span>You are not delegated at this time.</span>
+            <span>You are not delegated at this time</span>
             <Link to="/satellites">
-              <Button
-                text="Satellites"
-                icon="satellite"
-                kind={ACTION_PRIMARY}
-                className="noStroke dashboard-sectionLink"
-              />
+              <NewButton kind={ACTION_SECONDARY} className="dashboard-sectionLink">
+                <Icon id="satellite" /> View Satellites
+              </NewButton>
             </Link>
           </div>
         )}

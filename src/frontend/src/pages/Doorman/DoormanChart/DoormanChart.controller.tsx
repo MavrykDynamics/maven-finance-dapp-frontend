@@ -11,10 +11,6 @@ import { Chart } from '../../../app/App.components/Chart/Chart.view'
 import { TabItem } from '../../../app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import { cyanColor } from 'styles'
 
-type Props = {
-  className?: string
-}
-
 const tabsList: TabItem[] = [
   {
     text: 'MVK Total Supply',
@@ -28,7 +24,7 @@ const tabsList: TabItem[] = [
   },
 ]
 
-export function DoormanChart({ className }: Props) {
+export function DoormanChart() {
   const { smvkHistoryData, mvkMintHistoryData } = useSelector((state: State) => state.doorman)
 
   const [activeTab, setActiveTab] = useState(tabsList[0].text)
@@ -55,6 +51,7 @@ export function DoormanChart({ className }: Props) {
           }}
           settings={{
             height: 370,
+            tooltipAsset: 'MVK',
           }}
           className="dorman-chart"
         />

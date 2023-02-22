@@ -59,11 +59,15 @@ export const Plug = styled.div`
   }
 
   &.loan-chart {
-    max-height: 182px;
-    padding: 15px 10px 15px 10px;
+    height: 270px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    row-gap: 25px;
 
     p {
-      margin-top: 25px;
+      margin: 0;
     }
   }
 `
