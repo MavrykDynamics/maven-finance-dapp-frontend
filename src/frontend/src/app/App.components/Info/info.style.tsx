@@ -32,7 +32,7 @@ export const InfoBlock = styled.blockquote<{ theme: MavrykTheme }>`
   }
 
   &.error {
-    border-color: ${({ theme }) => theme.dangerColor};
+    border-color: ${({ theme }) => theme.downColor};
     min-height: 100px;
     padding: 20px 40px;
 
