@@ -12,7 +12,6 @@ export type SatellitesListProps = {
   name: string
   onClickHandler?: (arg0: string) => void
   additionaldata?: Record<string, boolean | number | callbackFunction | string | object>
-  balanceOk?: boolean
   pagination?: boolean
   className?: string
 }
@@ -26,7 +25,6 @@ export type SatelliteListItemProps = {
   satelliteUserIsDelegatedTo?: string
   isDetailsPage?: boolean
   userHasSatelliteRewards?: boolean
-  balanceOk?: boolean
   className?: string
   children?: JSX.Element
 }

@@ -21,7 +21,6 @@ function SatteliteListView({
   name,
   listType,
   additionaldata,
-  balanceOk,
   pagination,
   className,
 }: SatellitesListProps) {
@@ -45,7 +44,6 @@ function SatteliteListView({
                 undelegateCallback={additionaldata?.undelegateCallback as () => void}
                 userStakedBalance={(additionaldata?.userStakedBalance as number) || 0}
                 satelliteUserIsDelegatedTo={(additionaldata?.satelliteUserIsDelegatedTo as string) || ''}
-                balanceOk={balanceOk}
               />
             )
           case 'feeds':

@@ -4,7 +4,7 @@ import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
 import { EmptyContainer as EmptyList } from 'app/App.style'
 import { FEEDS_TOP_LIST_NAME, SATELITES_TOP_LIST_NAME } from 'pages/FinacialRequests/Pagination/pagination.consts'
 import { Link } from 'react-router-dom'
-import { NotStakinkBanner } from './components/NotStakingBanner.view'
+import { NotStakingBanner } from './components/NotStakingBanner.view'
 
 // styles
 import { Page, PageContent } from 'styles'
@@ -36,8 +36,6 @@ type OraclesViewProps = {
   dataFeedsData: {
     items: Array<Feed>
   }
-  balanceOk: boolean
-  accountPkh?: string
 }
 
 type EmptyContainerType = {
@@ -60,14 +58,8 @@ const EmptyContainer = ({ showSatellite, showFeeds }: EmptyContainerType) => {
   )
 }
 
-const SatellitesView = ({
-  tabsInfo,
-  oracleSatellitesData,
-  dataFeedsData,
-  delegateCallback,
-  balanceOk,
-  accountPkh,
-}: OraclesViewProps) => {
+const SatellitesView = ({ tabsInfo, oracleSatellitesData, dataFeedsData, delegateCallback }: OraclesViewProps) => {
+  const balanceOver1Mvk = oracleSatellitesData.userStakedBalance >= 1
   const isShowSatellites = Boolean(oracleSatellitesData.items.length)
   const isShowFeeds = Boolean(dataFeedsData.items.length)
 
@@ -76,12 +68,12 @@ const SatellitesView = ({
   return (
     <Page>
       <PageHeader page={'satellites'} />
-      <NotStakinkBanner
-        accountPkh={accountPkh}
-        balanceOk={balanceOk}
-        text="You are currently not staking MVK, please stake MVK in order to delegate to a satellite
+      {!balanceOver1Mvk && (
+        <NotStakingBanner
+          text="You are currently not staking MVK, please stake MVK in order to delegate to a satellite
         or become your own and take part in the platform’s governance"
-      />
+        />
+      )}
       <PageContent>
         <div className="left-content-wrapper">
           <InfoBlockWrapper>

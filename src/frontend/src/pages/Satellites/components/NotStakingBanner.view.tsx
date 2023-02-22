@@ -1,3 +1,5 @@
+import { useSelector } from 'react-redux'
+import { State } from 'reducers'
 import { Link } from 'react-router-dom'
 
 import { Info } from 'app/App.components/Info/Info.view'
@@ -8,16 +10,16 @@ import Icon from 'app/App.components/Icon/Icon.view'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 
 type Props = {
-  accountPkh?: string
-  balanceOk: boolean
   text: string
   className?: string
 }
 
-export const NotStakinkBanner = ({ accountPkh, balanceOk, text, className }: Props) => {
+export const NotStakingBanner = ({ text, className }: Props) => {
+  const { accountPkh } = useSelector((state: State) => state.wallet)
+
   return (
     <NotStakingBannerStyled className={className}>
-      {accountPkh && !balanceOk ? (
+      {accountPkh ? (
         <Info className="indent-bottom" text={text} type="warning">
           <Link to="/">
             <NewButton kind={ACTION_PRIMARY}>
