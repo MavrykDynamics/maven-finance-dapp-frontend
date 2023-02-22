@@ -29,7 +29,7 @@ const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
     feedsLedger.reduce((acc, { reward_amount_smvk }) => {
       acc += reward_amount_smvk
       return acc
-    }, 0) / (feedsLedger.length || 1),
+    }, 0) / Math.max(feedsLedger.length, 1),
   )
 
   return (

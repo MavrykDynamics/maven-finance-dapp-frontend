@@ -1,25 +1,25 @@
 export const SATELLITES_STORAGE_QUERY = `
   query SatellitesStorageQuery {
     satellite {
-      currently_registered
-      delegation_id
       description
       fee
-      id
       image
       name
       status
       website
       user_id
       currently_registered
+
       delegations {
         user {
           smvk_balance
         }
       }
+
       delegation {
         delegation_ratio
       }
+
       user {
         smvk_balance
         mvk_balance
@@ -47,6 +47,7 @@ export const SATELLITES_STORAGE_QUERY = `
             }
           }
         }
+
         emergency_governance_votes {
           emergency_governance_record_id
           id
@@ -57,6 +58,7 @@ export const SATELLITES_STORAGE_QUERY = `
             title
           }
         }
+
         governance_financial_requests_votes {
           governance_financial_request_id
           id
@@ -67,6 +69,7 @@ export const SATELLITES_STORAGE_QUERY = `
             request_type
           }
         }
+
         governance_proposals_votes (order_by: {timestamp: desc}) {
           governance_proposal_id
           id
@@ -82,6 +85,7 @@ export const SATELLITES_STORAGE_QUERY = `
             locked
           }
         }
+
         governance_satellite_actions_votes {
           governance_satellite_action_id
           id
@@ -92,6 +96,7 @@ export const SATELLITES_STORAGE_QUERY = `
             governance_type
           }
         }
+        
       }
     }
 

@@ -7,12 +7,6 @@ export enum SatelliteStatus {
   BANNED = 2,
 }
 
-export const SatelliteStatusToText = {
-  0: 'Active',
-  1: 'Suspended',
-  2: 'Banned',
-}
-
 export type SatelliteRecordType = ReturnType<typeof normallizeSatellite>
 export type SatelliteVotingsType = ReturnType<typeof getSatelliteVotings>
 export type SatelliteVoteType =
@@ -21,7 +15,6 @@ export type SatelliteVoteType =
   | SatelliteVotingsType['financialRequestsVotes'][number]
   | SatelliteVotingsType['proposalVotingHistory'][number]
 
-// TODO: check if i need this
 export type TokenType = 'FA12' | 'FA2' | 'TEZ'
 export type SatelliteGovernanceTransfer = {
   to_: string //this is a contract address

@@ -8,12 +8,16 @@ import { State } from 'reducers'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { getGovernanceStorage } from 'pages/Governance/Governance.actions'
 import { getFeedsStorage } from 'pages/DataFeeds/DataFeeds.actions'
-import { getPageNumber } from 'pages/FinacialRequests/FinancialRequests.helpers'
 import { claimAllRewardsAction } from './DashboardPersonal.actions'
 import { updateUserData } from 'reducers/actions/user.actions'
 import { getEmergencyGovernanceStorage } from 'pages/EmergencyGovernance/EmergencyGovernance.actions'
 import { isValidId, PORTFOLIO_TAB_ID, DELEGATION_TAB_ID, SATELLITE_TAB_ID } from './DashboardPersonal.utils'
-import { USER_ACTIONS_HISTORY, calculateSlicePositions, PAGINATION_SIDE_CENTER } from 'app/Pagination/pagination.consts'
+import {
+  USER_ACTIONS_HISTORY,
+  calculateSlicePositions,
+  PAGINATION_SIDE_CENTER,
+  getPageNumber,
+} from 'app/Pagination/pagination.consts'
 
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
 import { Page } from 'styles/components'

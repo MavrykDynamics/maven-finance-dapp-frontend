@@ -15,8 +15,7 @@ import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 
 // types
 import { State } from 'reducers'
-import { SatelliteStatus } from 'utils/TypesAndInterfaces/Satellites'
-import { SatelliteListItemProps } from '../helpers/Satellites.types'
+import { SatelliteStatus, SatelliteRecordType } from 'utils/TypesAndInterfaces/Satellites'
 
 //styles
 import { AvatarStyle } from 'app/App.components/Avatar/Avatar.style'
@@ -35,6 +34,19 @@ import {
   SatelliteCardButtons,
   SatelliteCardRow,
 } from './SatelliteCard.style'
+
+type SatelliteListItemProps = {
+  satellite: SatelliteRecordType
+  delegateCallback: (satelliteAddress: string) => void
+  claimRewardsCallback?: () => void
+  undelegateCallback: (address: string) => void
+  userStakedBalance: number
+  satelliteUserIsDelegatedTo?: string
+  isDetailsPage?: boolean
+  userHasSatelliteRewards?: boolean
+  className?: string
+  children?: JSX.Element
+}
 
 const renderVotingHistoryItem = (vote: number) => {
   const voteText = getVoteText(vote)

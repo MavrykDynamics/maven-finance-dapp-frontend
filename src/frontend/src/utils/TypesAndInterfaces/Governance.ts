@@ -96,9 +96,9 @@ export interface SnapshotRecordType {
   currentCycleEndLevel: number // log of when cycle (proposal + voting) will end
 }
 
-export type FinancialRequestRecord = ReturnType<typeof normalizeFinancialRequests>[number]
-export type FinancialRequestVote = FinancialRequestRecord['votes'][number]
-
 export type GovernanceRoundType = 'VOTING' | 'TIME_LOCK' | 'PROPOSAL' | ''
 export type ProposalStatusType = string
 export type CurrentRoundProposalsStorageType = ProposalRecordType[]
+
+// Financical request types
+export type FinancialRequestRecord = ReturnType<typeof normalizeFinancialRequests>[number]

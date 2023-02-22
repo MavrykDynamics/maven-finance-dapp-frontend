@@ -4,7 +4,6 @@ import { useSelector, useDispatch } from 'react-redux'
 
 // helpers, actions
 import { State } from 'reducers'
-import { getPageNumber } from 'pages/FinacialRequests/FinancialRequests.helpers'
 import { delegate, undelegate } from 'pages/Satellites/Satellites.actions'
 
 // consts
@@ -12,6 +11,7 @@ import {
   calculateSlicePositions,
   PAGINATION_SIDE_RIGHT,
   SATELITES_NODES_LIST_NAME,
+  getPageNumber,
 } from 'app/Pagination/pagination.consts'
 
 import { DropDown, DropdownItemType } from '../../app/App.components/DropDown/DropDown.controller'

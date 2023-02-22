@@ -28,8 +28,8 @@ import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
 import { getFeedsStorage } from './DataFeeds.actions'
 import { FRListWrapper } from 'pages/FinacialRequests/FRList/FRList.styles'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
-import { Pagination } from 'pages/BreakGlass/BreakGlass.style'
 import { DataFeedCard } from 'pages/DataFeedsDetails/listItem/DataFeedCard.view'
+import Pagination from 'app/Pagination/Pagination.view'
 
 const emptyContainer = (
   <EmptyContainer>

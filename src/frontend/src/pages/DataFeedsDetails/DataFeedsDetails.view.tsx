@@ -39,9 +39,9 @@ import { EmptyContainer } from 'app/App.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
 import { FRListWrapper } from 'pages/FinacialRequests/FRList/FRList.styles'
-import { Pagination } from 'pages/BreakGlass/BreakGlass.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { OracleCard } from 'pages/DataFeedsDetails/listItem/OracleCard.view'
+import Pagination from 'app/Pagination/Pagination.view'
 
 type FeedDetailsProps = {
   feed: Feed | null

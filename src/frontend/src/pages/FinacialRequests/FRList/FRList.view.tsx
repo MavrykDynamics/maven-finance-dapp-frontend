@@ -4,13 +4,25 @@ import { useLocation } from 'react-router-dom'
 import Pagination from '../../../app/Pagination/Pagination.view'
 import FRSListItem from './FRSListItem.view'
 
-import { getPageNumber, getRequestStatus } from '../FinancialRequests.helpers'
-import { calculateSlicePositions, PAGINATION_SIDE_RIGHT } from '../../../app/Pagination/pagination.consts'
+import { getRequestStatus } from '../FinancialRequests.helpers'
+import {
+  calculateSlicePositions,
+  PAGINATION_SIDE_RIGHT,
+  getPageNumber,
+} from '../../../app/Pagination/pagination.consts'
 
-import { FRListProps } from '../FinancialRequests.types'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { FRListWrapper } from './FRList.styles'
 import { PRECISION_NUMBER } from 'utils/constants'
+import { FinancialRequestRecord } from 'utils/TypesAndInterfaces/Governance'
+
+export type FRListProps = {
+  listTitle: string
+  items: Array<FinancialRequestRecord>
+  name: string
+  handleItemSelect: (arg0: FinancialRequestRecord) => void
+  selectedItem?: FinancialRequestRecord
+}
 
 function FRList({ listTitle, items, handleItemSelect, selectedItem, name }: FRListProps) {
   const { search } = useLocation()

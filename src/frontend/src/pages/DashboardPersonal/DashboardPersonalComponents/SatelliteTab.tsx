@@ -27,11 +27,7 @@ const SatelliteTab = () => {
         <GovRightContainerTitleArea>
           <h2>My Satellite Details</h2>
         </GovRightContainerTitleArea>
-        {!satelliteRecord ? (
-          <div className="no-data">
-            <span>No satellite data</span>
-          </div>
-        ) : (
+        {satelliteRecord ? (
           <>
             <div className="top-row">
               <div className="grid-item info">
@@ -99,6 +95,10 @@ const SatelliteTab = () => {
             </div>
             <Link to="/become-satellite">Edit My Profile</Link>
           </>
+        ) : (
+          <div className="no-data">
+            <span>No satellite data</span>
+          </div>
         )}
       </SatelliteStatusBlock>
     </>

@@ -1,14 +1,10 @@
-import qs, { ParsedQs } from 'qs'
 import { ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
 import { GovernanceFinancialRequestGraphQL } from '../../utils/TypesAndInterfaces/Governance'
 
 export const normalizeFinancialRequests = (storage: {
   governance_financial_request: Array<GovernanceFinancialRequestGraphQL>
 }) => {
-  const financialRequestLedger = storage?.governance_financial_request.sort(
-    (a, b) => new Date(b.requested_datetime ?? '').getTime() - new Date(a.requested_datetime ?? '').getTime(),
-  )
-
+  const financialRequestLedger = storage?.governance_financial_request
   return financialRequestLedger
 }
 
@@ -33,37 +29,6 @@ export const distinctRequestsByExecuting = (
     ongoing,
     past,
   }
-}
-
-export const getPageNumber = (search: string, listName: string): number => {
-  const { page = {} } = qs.parse(search, { ignoreQueryPrefix: true })
-  return Number((page as Record<string, string>)?.[listName]) || 1
-}
-
-export const updatePageInUrl = ({
-  page,
-  newPage,
-  listName,
-  pathname,
-  restQP,
-}: {
-  page: string | ParsedQs | string[] | ParsedQs[]
-  newPage: number
-  listName: string
-  pathname: string
-  restQP: object
-}) => {
-  const { [listName]: removedEl, ...newPageParams } = page as Record<string, string>
-
-  if (Number(newPage) !== 1) {
-    newPageParams[listName] = newPage.toString()
-  }
-
-  const newQueryParams = {
-    ...restQP,
-    page: newPageParams,
-  }
-  return pathname + qs.stringify(newQueryParams, { addQueryPrefix: true })
 }
 
 export const getRequestStatus = (request: GovernanceFinancialRequestGraphQL) => {

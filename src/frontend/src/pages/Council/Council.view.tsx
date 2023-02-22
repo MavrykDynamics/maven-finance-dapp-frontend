@@ -24,7 +24,6 @@ import {
   ACTION_SECONDARY,
   TRANSPARENT_WITH_BORDER,
 } from '../../app/App.components/Button/Button.constants'
-import { getPageNumber } from 'pages/FinacialRequests/FinancialRequests.helpers'
 import { getSeparateSnakeCase } from 'utils/parse'
 import { memberIsFirstOfList } from 'pages/Council/Council.helpers'
 import {
@@ -33,6 +32,7 @@ import {
   COUNCIL_MY_PENDING_ACTIONS_LIST_NAME,
   COUNCIL_MY_PAST_ACTIONS_LIST_NAME,
   calculateSlicePositions,
+  getPageNumber,
 } from 'app/Pagination/pagination.consts'
 
 // styles

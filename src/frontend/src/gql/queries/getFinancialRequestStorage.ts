@@ -1,6 +1,6 @@
 export const FINANCIAL_REQUESTS_STORAGE_QUERY = `
   query GetFinRequestsStorageQuery {
-    governance_financial_request {
+    governance_financial_request(order_by: {requested_datetime: asc}) {
       executed
       expiration_datetime
       execution_datetime

@@ -4,10 +4,6 @@ import { fetchFromIndexer } from '../../gql/fetchGraphQL'
 import { nomalizeSatelliteConfig, normalizeSatellitesLedger } from './helpers/Satellites.normalizer'
 import { updateUserData } from 'reducers/actions/user.actions'
 import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
-import { getFeedsStorage } from 'pages/DataFeeds/DataFeeds.actions'
-import { getGovernanceStorage } from 'pages/Governance/Governance.actions'
-import { getEmergencyGovernanceStorage } from 'pages/EmergencyGovernance/EmergencyGovernance.actions'
-import { getFinancialRequestStorage } from 'pages/FinacialRequests/FiancialRequest.actions'
 
 import { State } from 'reducers'
 import type { AppDispatch, GetState } from '../../app/App.controller'
@@ -25,7 +21,6 @@ import {
 export const GET_SATELLITES_STORAGE = 'GET_SATELLITES_STORAGE'
 export const getSatellitesStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
   try {
-    // if satelliteAddress we will load data for this certain satellite, othervise, we will load all satellites
     const storage = await fetchFromIndexer(
       SATELLITES_STORAGE_QUERY,
       SATELLITES_STORAGE_QUERY_NAME,

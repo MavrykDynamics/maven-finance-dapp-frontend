@@ -18,6 +18,8 @@ import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 
 // style
 import { CouncilFormStyled } from './CouncilForm.style'
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 
 export const CouncilFormDropFinancialRequest = () => {
   const dispatch = useDispatch()
@@ -33,11 +35,11 @@ export const CouncilFormDropFinancialRequest = () => {
     } catch (e) {}
   }, [])
 
-  const { ongoing } = distinctRequestsByExecuting(financialRequests || [])
+  const { ongoing } = distinctRequestsByExecuting(financialRequests)
 
   const dropDownItems = useMemo(
     () =>
-      ongoing.map((item, index) => ({
+      ongoing.map((item) => ({
         content: (
           <div>
             {item.request_type} {item.request_purpose}
@@ -73,28 +75,42 @@ export const CouncilFormDropFinancialRequest = () => {
 
   return (
     <CouncilFormStyled onSubmit={handleSubmit}>
-      <a className="info-link" href="https://mavryk.finance/litepaper#mavryk-council" target="_blank" rel="noreferrer">
-        <Icon id="question" />
-      </a>
-      <h1 className="form-h1">Drop Financial Request</h1>
-      <p>Please enter valid function parameters for dropping a financial request</p>
-      <div className="form-grid form-grid-button-right">
-        <div>
-          <label>Choose Financial Request to drop</label>
-          <DropDown
-            placeholder="Choose Financial Request"
-            activeItem={chosenDdItem}
-            items={dropDownItems}
-            clickItem={handleClickDropdownItem}
-          />
-        </div>
-        <div className="button-aligment">
-          <NewButton kind={ACTION_PRIMARY} type={SUBMIT}>
-            <Icon id="navigation-menu_close" />
-            Drop Financial Request
-          </NewButton>
-        </div>
-      </div>
+      {isLoading ? (
+        <DataLoaderWrapper>
+          <ClockLoader width={100} height={100} />
+          <div className="text">Loading financial requests</div>
+        </DataLoaderWrapper>
+      ) : (
+        <>
+          <a
+            className="info-link"
+            href="https://mavryk.finance/litepaper#mavryk-council"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <Icon id="question" />
+          </a>
+          <h1 className="form-h1">Drop Financial Request</h1>
+          <p>Please enter valid function parameters for dropping a financial request</p>
+          <div className="form-grid form-grid-button-right">
+            <div>
+              <label>Choose Financial Request to drop</label>
+              <DropDown
+                placeholder="Choose Financial Request"
+                activeItem={chosenDdItem}
+                items={dropDownItems}
+                clickItem={handleClickDropdownItem}
+              />
+            </div>
+            <div className="button-aligment">
+              <NewButton kind={ACTION_PRIMARY} type={SUBMIT}>
+                <Icon id="navigation-menu_close" />
+                Drop Financial Request
+              </NewButton>
+            </div>
+          </div>
+        </>
+      )}
     </CouncilFormStyled>
   )
 }

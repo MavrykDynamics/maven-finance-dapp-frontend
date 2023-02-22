@@ -8,10 +8,12 @@ import { useLocation } from 'react-router'
 import type { GovernanceSatelliteActionGraphQL } from '../../utils/TypesAndInterfaces/Governance'
 
 // const
-import { getPageNumber } from 'pages/FinacialRequests/FinancialRequests.helpers'
-import { calculateSlicePositions, getSatelliteGovernanceListName } from 'app/Pagination/pagination.consts'
+import {
+  calculateSlicePositions,
+  getSatelliteGovernanceListName,
+  getPageNumber,
+} from 'app/Pagination/pagination.consts'
 import { defaultGovPurposeMaxLength } from 'app/App.components/Input/Input.constants'
-import { defaultAggregatorNameMaxLength } from 'app/App.components/Input/Input.constants'
 
 // view
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'

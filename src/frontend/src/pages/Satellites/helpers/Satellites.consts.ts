@@ -36,10 +36,6 @@ export const DEFAULT_ACTIVE_SATELLITE: SatelliteRecordType = {
   },
 }
 
-export function checkIfUserIsSatellite(accountPkh?: string, activeSatellites?: SatelliteRecordType[]): boolean {
-  return accountPkh && activeSatellites ? activeSatellites.some((record) => record.address === accountPkh) : false
-}
-
 export function getTotalDelegatedMVK(
   satelliteIds: State['satellites']['allSatellitesIds'],
   satellitesMapper: State['satellites']['satelliteMapper'],
