@@ -53,6 +53,7 @@ export const getPieChartData = (
 
         const newSmallValuesObj = {
           ...smallValuesAccObj,
+          ...(item.usdValue < 0.01 ? {} : { color: item.chartColor }),
           title: `${smallValuesAccObj.title}, ${item.symbol}`,
           isHoveredPathAsset,
           value: smallSectorValue,

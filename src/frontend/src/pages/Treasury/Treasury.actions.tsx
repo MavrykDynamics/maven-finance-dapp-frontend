@@ -83,6 +83,11 @@ export const fillTreasuryStorage = () => async (dispatch: AppDispatch, getState:
       return acc
     }, new Set<string>())
 
+    const mapperOfAssetsColors = Array.from(arrayOfAssetsSymbols).reduce<Record<string, string>>((acc, asset, idx) => {
+      acc[asset] = getAssetColor(idx)
+      return acc
+    }, {})
+
     // Fetching rates for every asset in treasury
     const treasuryAssetsFetchedData = (
       await Promise.allSettled(
@@ -109,16 +114,13 @@ export const fillTreasuryStorage = () => async (dispatch: AppDispatch, getState:
 
         const tresuryTokensWithValidBalances = fetchedTheasuryData[idx]
           .map(
-            (
-              {
-                account: { address },
-                token: {
-                  metadata: { symbol, name, decimals, thumbnailUri },
-                },
-                balance,
-              }: FetchedTreasuryBalanceType,
-              balanceIdx,
-            ): TreasuryBalanceType => {
+            ({
+              account: { address },
+              token: {
+                metadata: { symbol, name, decimals, thumbnailUri },
+              },
+              balance,
+            }: FetchedTreasuryBalanceType): TreasuryBalanceType => {
               const assetRate = symbol === 'MVK' ? MVK_EXCHANGE_RATE : treasuryAssetsFetchedData[symbol]?.rate
               const coinsAmount = parseFloat(balance) / Math.pow(10, parseInt(decimals))
               const usdValue = coinsAmount * (assetRate ?? 1)
@@ -132,7 +134,7 @@ export const fillTreasuryStorage = () => async (dispatch: AppDispatch, getState:
                 symbol: treasuryAssetsFetchedData[symbol]?.symbol ?? symbol,
                 balance: coinsAmount,
                 rate: assetRate,
-                chartColor: getAssetColor(balanceIdx),
+                chartColor: mapperOfAssetsColors[symbol],
               }
             },
           )

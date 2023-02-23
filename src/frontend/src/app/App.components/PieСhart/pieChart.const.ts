@@ -3,7 +3,6 @@ export const SECTOR_STYLES = { transition: 'stroke 0s', cursor: 'pointer' }
 export const TREASURYS_COLORS = [
   '#FF8486',
   '#0D61FF',
-  '#55D8BA',
   '#38237C',
   '#7F66FF',
   '#FFA3A4',
