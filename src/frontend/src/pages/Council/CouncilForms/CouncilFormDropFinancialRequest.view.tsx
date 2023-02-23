@@ -10,7 +10,6 @@ import { ACTION_PRIMARY, SUBMIT } from 'app/App.components/Button/Button.constan
 import NewButton from 'app/App.components/Button/NewButton.controller'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 import { DDItemId, DropDown } from 'app/App.components/DropDown/NewDropdown'
-import { Truncate } from 'app/App.style'
 
 // action
 import { dropFinancialRequest } from '../Council.actions'
@@ -29,9 +28,9 @@ export const CouncilFormDropFinancialRequest = () => {
     () =>
       ongoing.map((item) => ({
         content: (
-          <Truncate>
+          <div className="dropdownItem">
             {item.request_type} - {item.request_purpose}
-          </Truncate>
+          </div>
         ),
         id: item.id,
       })),

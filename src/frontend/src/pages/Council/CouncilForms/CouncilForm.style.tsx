@@ -24,6 +24,13 @@ export const CouncilFormStyled = styled.form`
     margin-top: 1px;
   }
 
+  .dropdownItem {
+    max-width: 245px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
   .form-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
