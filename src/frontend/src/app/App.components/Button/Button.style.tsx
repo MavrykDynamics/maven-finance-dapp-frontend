@@ -76,8 +76,7 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
 
   &.move-to-next {
     svg {
-      stroke: ${cyanColor};
-      fill: transparent;
+      fill: ${cyanColor};
     }
   }
 
