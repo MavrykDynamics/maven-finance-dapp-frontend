@@ -32,6 +32,7 @@ import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 const time = String(new Date())
 const timeFormat = 'YYYY-MM-DD'
 const timestamptz = parseDate({ time, timeFormat }) || undefined
+export const CLEAR_MY_BREAK_GLASS_COUNCIL_ACTIONS = 'CLEAR_MY_BREAK_GLASS_COUNCIL_ACTIONS'
 
 // getBreakGlassCouncilPendingActions
 export const GET_BREAK_GLASS_COUNCIL_PENDING_ACTIONS = 'GET_BREAK_GLASS_COUNCIL_PENDING_ACTIONS'

@@ -2,14 +2,16 @@ import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
 import { CouncilAction, CouncilMembers, CouncilMaxLength } from '../utils/TypesAndInterfaces/Council'
 import {
   GET_COUNCIL_STORAGE,
+  GET_COUNCIL_MEMBERS,
   GET_COUNCIL_PENDING_ACTIONS,
   GET_COUNCIL_PAST_ACTIONS,
-  GET_COUNCIL_MEMBERS,
+  CLEAR_MY_COUNCIL_ACTIONS,
 } from '../pages/Council/Council.actions'
 import {
   GET_BREAK_GLASS_COUNCIL_MEMBERS,
   GET_BREAK_GLASS_COUNCIL_PENDING_ACTIONS,
   GET_BREAK_GLASS_COUNCIL_PAST_ACTIONS,
+  CLEAR_MY_BREAK_GLASS_COUNCIL_ACTIONS,
 } from 'pages/BreakGlassCouncil/BreakGlassCouncil.actions'
 import {
   defaultCouncilMemberImageMaxLength,
@@ -134,6 +136,18 @@ export function council(state = councilDefaultState, action: Action) {
         // TODO: Set the value when all data is received
         isCouncilPastActionsLoaded: action.isCouncilPastActionsLoaded,
       }
+    case CLEAR_MY_COUNCIL_ACTIONS:
+      return {
+        ...state,
+        councilActions: {
+          ...state.councilActions,
+          notMyPendingActions: [],
+          myPendingActions: [],
+          myPastActions: [],
+        },
+        isCouncilPendingActionsLoaded: false,
+        isCouncilPastActionsLoaded: false,
+      }
     case GET_BREAK_GLASS_COUNCIL_MEMBERS:
       return {
         ...state,
@@ -169,6 +183,18 @@ export function council(state = councilDefaultState, action: Action) {
         },
         // TODO: Set the value when all data is received
         isBreakGlassCouncilPastActionsLoaded: action.isBreakGlassCouncilPastActionsLoaded,
+      }
+    case CLEAR_MY_BREAK_GLASS_COUNCIL_ACTIONS:
+      return {
+        ...state,
+        breakGlassCouncilActions: {
+          ...state.breakGlassCouncilActions,
+          notMyPendingActions: [],
+          myPendingActions: [],
+          myPastActions: [],
+        },
+        isBreakGlassCouncilPendingActionsLoaded: false,
+        isBreakGlassCouncilPastActionsLoaded: false,
       }
     default:
       return state

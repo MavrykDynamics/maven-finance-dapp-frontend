@@ -6,6 +6,8 @@ import { showToaster } from '../Toaster/Toaster.actions'
 import { ERROR } from '../Toaster/Toaster.constants'
 import { DEFAULT_USER } from 'reducers/wallet'
 import { CLEAR_LOANS_STORAGE, getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
+import { CLEAR_MY_COUNCIL_ACTIONS } from 'pages/Council/Council.actions'
+import { CLEAR_MY_BREAK_GLASS_COUNCIL_ACTIONS } from 'pages/BreakGlassCouncil/BreakGlassCouncil.actions'
 import { fetchUserData } from 'reducers/actions/user.actions'
 
 // TODO: check ts-ignores, here NetworkType is not compatible with  NetworkType | undefined
@@ -97,6 +99,14 @@ export const updateWalletDependedDataOnWalletChange = () => async (dispatch: App
     if (state.loans.isDataLoaded) {
       await dispatch({ type: CLEAR_LOANS_STORAGE })
       await dispatch(getLoansStorage())
+    }
+
+    if (state.council.isCouncilPendingActionsLoaded || state.council.isCouncilPastActionsLoaded) {
+      await dispatch({ type: CLEAR_MY_COUNCIL_ACTIONS })
+    }
+
+    if (state.council.isBreakGlassCouncilPendingActionsLoaded || state.council.isBreakGlassCouncilPastActionsLoaded) {
+      await dispatch({ type: CLEAR_MY_BREAK_GLASS_COUNCIL_ACTIONS })
     }
   } catch (e) {
     console.error(`Failed to updateWalletDependedDataOnWalletChange: `, e)
