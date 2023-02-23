@@ -221,7 +221,6 @@ export function CouncilView({
   useEffect(() => {
     // choose action after reload page
     const foundAction = dropDownItems.find((item) => item.value === action)
-    if (!foundAction) return
     setChosenDdItem(foundAction)
   }, [])
 

@@ -114,7 +114,7 @@ export const CouncilPending = (props: Props) => {
             setShowing(false)
           }}
         >
-          <Icon id="error" />
+          <Icon id="navigation-menu_close" />
         </ModalClose>
         <ModalCardContent style={{ width: 586 }}>
           <h1>Purpose for Request</h1>
