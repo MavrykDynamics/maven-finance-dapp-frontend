@@ -10,6 +10,7 @@ import { ACTION_PRIMARY, SUBMIT } from 'app/App.components/Button/Button.constan
 import NewButton from 'app/App.components/Button/NewButton.controller'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 import { DDItemId, DropDown } from 'app/App.components/DropDown/NewDropdown'
+import { Truncate } from 'app/App.style'
 
 // action
 import { dropFinancialRequest } from '../Council.actions'
@@ -26,11 +27,11 @@ export const CouncilFormDropFinancialRequest = () => {
 
   const dropDownItems = useMemo(
     () =>
-      ongoing.map((item, index) => ({
+      ongoing.map((item) => ({
         content: (
-          <div>
-            {item.request_type} {item.request_purpose}
-          </div>
+          <Truncate>
+            {item.request_type} - {item.request_purpose}
+          </Truncate>
         ),
         id: item.id,
       })),
