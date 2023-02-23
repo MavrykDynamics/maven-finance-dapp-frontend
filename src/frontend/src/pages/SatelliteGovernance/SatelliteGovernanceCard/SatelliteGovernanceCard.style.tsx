@@ -1,5 +1,5 @@
 import styled from 'styled-components/macro'
-import { CardHover, royalPurpleColor, cyanColor, boxShadowColor, headerColor } from 'styles'
+import { royalPurpleColor } from 'styles'
 
 import { MavrykTheme } from '../../../styles/interfaces'
 
@@ -22,7 +22,6 @@ export const SatelliteGovernanceCardTitleTextGroup = styled.div<{ theme: MavrykT
     color: ${({ theme }) => theme.dataColor};
     font-weight: 600;
     font-size: 16px;
-    word-break: break-all;
 
     &.capitallize {
       &::first-letter {
@@ -49,7 +48,6 @@ export const SatelliteGovernanceCardDropDown = styled.div<{ theme: MavrykTheme }
   padding: 30px 40px;
 
   .purpose {
-    word-break: break-all;
     color: ${({ theme }) => theme.textColor};
     font-weight: 500;
     max-width: 520px;

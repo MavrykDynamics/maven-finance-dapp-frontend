@@ -12,14 +12,15 @@ import { scrollToFullView } from 'utils/scrollToFullView'
 import { DropDownJsxChild } from 'pages/Loans/Components/Modals/Modals.style'
 import { ImageWithPlug } from '../Icon/ImageWithPlug'
 
+export type DDItemId = number | string
 export type DropDownItemType = {
   content: React.ReactNode
-  id: number
+  id: DDItemId
   disabled?: boolean
 }
 
 type DropDownProps = {
-  clickItem: (id: number) => void
+  clickItem: (id: DDItemId) => void
   placeholder: string
   disabled?: boolean
   activeItem?: DropDownItemType

@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
-import { getDoormanStorage, getMvkTokenStorage } from 'pages/Doorman/Doorman.actions'
+import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
 import { getDelegationStorage } from 'pages/Satellites/Satellites.actions'
 
 import { SatelliteRecord, SatelliteStatus } from '../../utils/TypesAndInterfaces/Delegation'
@@ -46,7 +46,7 @@ export const BecomeSatellite = () => {
 
   useEffect(() => {
     dispatch(getDoormanStorage())
-    dispatch(getMvkTokenStorage())
+
     dispatch(getDelegationStorage())
   }, [accountPkh])
 

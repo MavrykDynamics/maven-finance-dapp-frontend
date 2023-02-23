@@ -3,21 +3,33 @@ import { MavrykTheme } from '../../../styles/interfaces'
 import { Card, headerColor } from 'styles'
 
 export const EmergencyGovProposalModalContent = styled.div<{ theme: MavrykTheme }>`
-  padding: 0;
+  width: 750px;
 
   > h1 {
     margin-top: -2px;
     margin-bottom: 27px;
   }
 
-  label {
-    color: ${({ theme }) => theme.textColor};
-    padding-bottom: 9px;
-    display: block;
-    padding-left: 5px;
-    white-space: nowrap;
-    font-weight: 700;
-    font-size: 14px;
+  .top-content {
+    margin: 10px 0 45px 0;
+    display: flex;
+    column-gap: 50px;
+    align-items: center;
+
+    #inputStyled {
+      max-width: 75%;
+    }
+
+    .exit-fee {
+      height: 56px;
+      position: relative;
+      display: flex;
+      align-items: center;
+
+      label {
+        left: 0;
+      }
+    }
   }
 
   .upload-wrap {
@@ -27,42 +39,11 @@ export const EmergencyGovProposalModalContent = styled.div<{ theme: MavrykTheme 
       margin-bottom: 0;
     }
   }
-`
 
-export const EmergencyGovProposalModalButtons = styled.div`
-  display: grid;
-  grid-template-columns: 250px 250px;
-  grid-gap: 10px;
-  justify-content: flex-end;
-  padding-top: 40px;
-  padding-bottom: 30px;
-`
-
-export const EmergencyGovProposalModalGrid = styled.div<{ theme: MavrykTheme }>`
-  font-weight: 500;
-  margin: auto;
-  text-align: center;
-
-  > div {
-    color: ${({ theme }) => theme.subTextColor};
-  }
-
-  > p {
-    color: ${({ theme }) => theme.primaryColor};
-    margin-top: 0;
-  }
-`
-
-export const ModalFormContentContainer = styled.div<{ theme: MavrykTheme }>`
-  display: flex;
-  flex-direction: column;
-  justify-content: space-evenly;
-
-  > #ipfsUploaderContainer {
-    margin-top: 5px;
-  }
-
-  > #textAreaContainer {
-    margin-bottom: 5px;
+  .buttons-container {
+    display: flex;
+    justify-content: flex-end;
+    column-gap: 10px;
+    margin-top: 40px;
   }
 `

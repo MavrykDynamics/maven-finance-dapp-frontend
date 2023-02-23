@@ -1,21 +1,25 @@
 import styled from 'styled-components/macro'
-import { headerColor, darkPurpleColor, royalPurpleColor, downColor, dangerColor } from 'styles'
+import { MavrykTheme } from 'styles/interfaces'
 
-export const InfoBlock = styled.blockquote`
-  display: flex;
-  align-items: center;
-  background-color: ${darkPurpleColor};
-  border: 1px solid ${royalPurpleColor};
+export const InfoBlock = styled.blockquote<{ theme: MavrykTheme }>`
+  background-color: ${({ theme }) => theme.connectInfoColor};
+  border: 1px solid ${({ theme }) => theme.valueColor};
   border-radius: 10px;
   margin: 0;
   padding: 8px 20px;
-  justify-content: space-between;
 
-  svg {
-    stroke: ${headerColor};
+  &,
+  .content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .infoIcon {
+    fill: ${({ theme }) => theme.textColor};
     height: 16px;
     width: 16px;
-    margin-right: 19px;
+    margin-right: 20px;
     flex-shrink: 0;
   }
 
@@ -24,11 +28,11 @@ export const InfoBlock = styled.blockquote`
     font-size: 12px;
     line-height: 18px;
     margin: 0;
-    color: ${headerColor};
+    color: ${({ theme }) => theme.textColor};
   }
 
   &.error {
-    border-color: ${dangerColor};
+    border-color: ${({ theme }) => theme.downColor};
     min-height: 100px;
     padding: 20px 40px;
 
@@ -38,15 +42,14 @@ export const InfoBlock = styled.blockquote`
       line-height: 21px;
     }
 
-    svg {
-      stroke: ${downColor};
-      stroke-width: 2;
+    .infoIcon {
+      fill: ${({ theme }) => theme.textColor};
       margin-right: 0;
     }
   }
 
   &.warning {
-    border-color: ${downColor};
+    border-color: ${({ theme }) => theme.downColor};
     min-height: 64px;
     padding: 20px 30px;
 
@@ -58,28 +61,13 @@ export const InfoBlock = styled.blockquote`
       padding-left: 20px;
     }
 
-    svg {
-      stroke: ${downColor};
-      stroke-width: 2;
+    .infoIcon {
+      fill: ${({ theme }) => theme.downColor};
       margin-right: 0;
-      width: 24px;
-      height: 24px;
     }
   }
 
   &.no-edit-info {
     margin-top: 20px;
-  }
-
-  &.indent-bottom {
-    margin-bottom: 20px;
-
-    &.warning {
-      svg {
-        stroke: none;
-        stroke-width: 0.3;
-        fill: ${downColor};
-      }
-    }
   }
 `

@@ -1,11 +1,14 @@
 import styled from 'styled-components/macro'
-import {  headerColor, textsColor, upColor } from 'styles'
 import { MavrykTheme } from '../../../styles/interfaces'
 
 export const FormStyled = styled.div<{ theme: MavrykTheme }>`
   position: relative;
   padding: 40px 20px;
   border-top: 1px solid ${({ theme }) => theme.cardBorderColor};
+
+  &.without-divider {
+    border-top: none;
+  }
 
   h1 {
     margin: 0;
@@ -15,11 +18,14 @@ export const FormStyled = styled.div<{ theme: MavrykTheme }>`
     margin-top: 0;
     margin-bottom: 20px;
 
-    font-weight: 600;
-    font-size: 14px;
-    line-height: 21px;
-
     color: ${({ theme }) => theme.textColor};
+  }
+
+  input,
+  p {
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 24px;
   }
 
   h1,
@@ -29,21 +35,8 @@ export const FormStyled = styled.div<{ theme: MavrykTheme }>`
   }
 
   button {
-    max-width: 250px;
-
-    &.stroke-01 {
-      svg {
-        stroke-width: 0.1;
-        fill: ${textsColor};
-      }
-    }
-
-    &.stroke-03 {
-      svg {
-        stroke-width: 0.3;
-        fill: ${textsColor};
-      }
-    }
+    max-width: 300px;
+    white-space: nowrap;
   }
 
   .address {
@@ -51,7 +44,7 @@ export const FormStyled = styled.div<{ theme: MavrykTheme }>`
     align-items: center;
     height: 40px;
     margin-left: 20px;
-    color: ${upColor};
+    color: ${({ theme }) => theme.upColor};
   }
 
   .form {
@@ -83,7 +76,7 @@ export const FormStyled = styled.div<{ theme: MavrykTheme }>`
       font-size: 14px;
       line-height: 21px;
 
-      color: ${headerColor};
+      color: ${({ theme }) => theme.headerColor};
     }
   }
 

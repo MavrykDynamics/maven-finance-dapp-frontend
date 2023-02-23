@@ -3,8 +3,8 @@ import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { ERROR, INFO, SUCCESS } from 'app/App.components/Toaster/Toaster.constants'
 import { AppDispatch, GetState } from 'app/App.controller'
-import { updateUserData } from 'pages/Doorman/Doorman.actions'
 import { State } from 'reducers'
+import { updateUserData } from 'reducers/actions/user.actions'
 import { getLoansStorage } from './getLoansData.actions'
 import { getFa12Batch, getFa2Batch } from './loansAction.helpers'
 
@@ -36,11 +36,11 @@ export const withdrawCollateralAction =
       // confirm query completion
       await transaction?.confirmation()
 
-      await dispatch(showToaster(SUCCESS, 'Collateral withdrawed.', 'All good :)'))
-
+      
       // refetch data we need
       await dispatch(updateUserData())
       await dispatch(getLoansStorage())
+      await dispatch(showToaster(SUCCESS, 'Collateral withdrawed.', 'All good :)'))
       await dispatch(toggleActionLoader(false))
     } catch (error) {
       console.error('borrowVaultAssetAction error:', error)
@@ -141,11 +141,11 @@ export const depositCollateralAction =
       // confirm query completion
       await transaction?.confirmation()
 
-      await dispatch(showToaster(SUCCESS, 'Collateral added.', 'All good :)'))
-
+      
       // refetch data we need
       await dispatch(updateUserData())
       await dispatch(getLoansStorage())
+      await dispatch(showToaster(SUCCESS, 'Collateral added.', 'All good :)'))
       await dispatch(toggleActionLoader(false))
     } catch (error) {
       console.error('depositCollateralAction error:', error)

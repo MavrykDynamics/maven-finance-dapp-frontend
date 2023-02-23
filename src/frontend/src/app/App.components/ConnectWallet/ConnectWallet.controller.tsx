@@ -29,7 +29,6 @@ export const ConnectWallet = ({ className, closeMobileMenu }: ConnectWalletProps
     accountPkh,
     user: { myMvkTokenBalance, mySMvkTokenBalance, myXTZTokenBalance },
   } = useSelector((state: State) => state.wallet)
-  const { exchangeRate } = useSelector((state: State) => state.mvkToken)
   const { tokensPrices } = useSelector((state: State) => state.tokens)
 
   const isMobileView = useMedia('(max-width: 870px)')
@@ -67,11 +66,11 @@ export const ConnectWallet = ({ className, closeMobileMenu }: ConnectWalletProps
 
   // will implemented after Sam's answers about data for this block
   const coinsInfo: CoinsInfoType = {
-    MVKExchangeRate: exchangeRate,
+    MVKExchangeRate: tokensPrices?.mvk?.usd ?? 0,
     userMVKBalance: myMvkTokenBalance,
     userXTZBalance: myXTZTokenBalance,
     userMVKStaked: mySMvkTokenBalance,
-    XTZExchnageRate: tokensPrices?.tezos?.usd ?? 1,
+    XTZExchnageRate: tokensPrices?.tezos?.usd ?? 0,
   }
 
   const detailsHandlers = {

@@ -1,8 +1,16 @@
+import { useMemo } from 'react'
+import { useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
+
+import { State } from 'reducers'
+import { reduceTreasuryAssets } from 'pages/Treasury/Treasury.helpers'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
+
 import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import { emptyContainer } from './LendingTab.controller'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
+
 import {
   Table,
   TableHeader,
@@ -12,21 +20,14 @@ import {
   TableCell,
   TableScrollable,
 } from 'app/App.components/Table/Table.style'
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
-import { reduceTreasuryAssets } from 'pages/Treasury/Treasury.helpers'
-import { useMemo } from 'react'
-import { useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
-import { State } from 'reducers'
 import { BlockName, StatBlock } from '../Dashboard.style'
 import { TabWrapperStyled, TreasuryContentStyled, TreasuryVesting } from './DashboardTabs.style'
-import { emptyContainer } from './LendingTab.controller'
 
 export const TreasuryTab = ({ isLoading }: { isLoading: boolean }) => {
   const { treasuryStorage } = useSelector((state: State) => state.treasury)
-  const {
-    vestingStorage: { totalVestedAmount, totalClaimedAmount },
-  } = useSelector((state: State) => state.vesting)
+  const { totalVestedAmount, totalClaimedAmount } = useSelector((state: State) => state.vesting)
 
   const amountOfTokens = totalVestedAmount + totalClaimedAmount
 
@@ -113,7 +114,8 @@ export const TreasuryTab = ({ isLoading }: { isLoading: boolean }) => {
                             ) : (
                               <CommaNumber
                                 value={usdValue}
-                                endingText={rate ? '$' : symbol}
+                                endingText={rate ? '' : symbol}
+                                beginningText={rate ? '$' : ''}
                                 useAccurateParsing
                                 showDecimal
                                 decimalsToShow={2}
@@ -178,7 +180,10 @@ export const TreasuryTab = ({ isLoading }: { isLoading: boolean }) => {
         <div className="text">
           The treasury is managed by the Mavryk DAO through on-chain voting. Governance votes, whether for the business
           logic or upgrades to the Mavryk ecosystem, are rewarded with a portion of the earned income from the on-chain
-          Treasury. <a href="#">Read more</a>
+          Treasury.{' '}
+          <a href="https://blogs.mavryk.finance/" target="_blank" rel="noreferrer">
+            Read more
+          </a>
         </div>
       </div>
     </TabWrapperStyled>

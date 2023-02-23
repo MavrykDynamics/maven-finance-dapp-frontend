@@ -22,12 +22,14 @@ type BorrowingTabPropsType = {
   borrowingItems: Array<LoansVaultType>
   lendingControllerAddress: string
   currentMarketAsset: string
+  avaliableMarketLiquidity: number
 }
 
 export const BorrowingTab = ({
   borrowingItems,
   lendingControllerAddress,
   currentMarketAsset,
+  avaliableMarketLiquidity,
 }: BorrowingTabPropsType) => {
   const dispatch = useDispatch()
   const { openCreateVaultPopup } = useContext(loansPopupsContext)
@@ -66,7 +68,7 @@ export const BorrowingTab = ({
           >
             <span>Hide vaults with a loan balance of 0</span>
           </Checkbox>
-          
+
           <Button
             text="New Vault"
             icon="plus"
@@ -84,6 +86,7 @@ export const BorrowingTab = ({
                   key={item.borrowedAsset.symbol + '-' + idx}
                   isOpenedVault={createdVaultId === item.address}
                   DAOFee={DAOFee}
+                  avaliableMarketLiquidity={avaliableMarketLiquidity}
                 />
               )
             })}

@@ -32,6 +32,12 @@ export type LoansChartsDataType = {
   borrowingChartData: Array<ChartPlotType>
   totalLended: number
   lendingChartData: Array<ChartPlotType>
+  lendBorrow24hDiff: {
+    last48hLending: number
+    last24hLending: number
+    last48hBorrowing: number
+    last24hBorrowing: number
+  }
 }
 
 export type LendingItemType = {

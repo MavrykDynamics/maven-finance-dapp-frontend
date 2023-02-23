@@ -89,8 +89,8 @@ export const ModalCardContent = styled.div<{ width?: number; height?: number; th
       width: 5px;
     }
 
-    &::-webkit-scrollbar-track { 
-      background: #271C60;
+    &::-webkit-scrollbar-track {
+      background: #271c60;
       border-radius: 20px;
     }
 
@@ -105,7 +105,7 @@ export const ModalCardContent = styled.div<{ width?: number; height?: number; th
     bottom: 25px;
     height: 50px;
     width: 85%;
-    background: linear-gradient(to bottom, transparent 0%, #160E3F 60%);
+    background: linear-gradient(to bottom, transparent 0%, #160e3f 60%);
   }
 `
 
@@ -118,6 +118,6 @@ export const ModalClose = styled.div<{ theme: MavrykTheme }>`
   > svg {
     height: 24px;
     width: 24px;
-    stroke: ${({ theme }) => theme.subTextColor};
+    fill: ${({ theme }) => theme.navTitleColor};
   }
 `

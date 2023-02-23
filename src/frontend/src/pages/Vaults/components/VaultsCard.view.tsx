@@ -32,6 +32,8 @@ import { vaultsStatuses } from '../Vaults.consts'
 import { getTimestampByLevel } from 'pages/Governance/Governance.actions'
 import { loansPopupsContext } from 'pages/Loans/Components/Modals/LoansModals.provider'
 import { calculateCollateralShare } from '../calcFunctionsForVault'
+import {skyColor, textColor} from "../../../styles";
+import {CustomTooltip} from "../../../app/App.components/Tooltip/Tooltip.view";
 
 const findStatusInfo = (status: string) => {
   switch (status) {
@@ -106,6 +108,7 @@ export const VaultsCard = (props: Props) => {
     collateralData,
     isOwner,
     liquidationMax,
+    liquidationPrice,
     handleMarkForLiquidation,
   } = props
 
@@ -191,7 +194,7 @@ export const VaultsCard = (props: Props) => {
                 <Icon id="info" className="info-icon" />
               </div>
 
-              <CommaNumber value={400_999_000} decimalsToShow={2} beginningText="$" className="value" />
+              <CommaNumber value={liquidationPrice ?? 0} decimalsToShow={2} beginningText="$" className="value" />
             </div>
 
             <div>
@@ -303,7 +306,9 @@ export const VaultsCard = (props: Props) => {
           getExpandedStatus={setExpanded}
           isOwner
           options={borrowingCardOptions}
+          // TODO: add this values as on loans
           DAOFee={0}
+          avaliableMarketLiquidity={0}
         />
       ) : (
         <BorrowingExpandCard
@@ -312,7 +317,9 @@ export const VaultsCard = (props: Props) => {
           headerSufix={headerSufix}
           getExpandedStatus={setExpanded}
           options={borrowingCardOptions}
+          // TODO: add this values as on loans
           DAOFee={0}
+          avaliableMarketLiquidity={0}
         >
           {generalExpand}
         </BorrowingExpandCard>

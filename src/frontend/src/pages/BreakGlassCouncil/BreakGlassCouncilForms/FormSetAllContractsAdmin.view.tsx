@@ -3,8 +3,9 @@ import { useDispatch } from 'react-redux'
 
 // components
 import { ACTION_PRIMARY, SUBMIT } from '../../../app/App.components/Button/Button.constants'
-import { Button } from '../../../app/App.components/Button/Button.controller'
-import { Input } from 'app/App.components/Input/Input.controller'
+import { Input } from 'app/App.components/Input/NewInput'
+import NewButton from 'app/App.components/Button/NewButton.controller'
+import Icon from 'app/App.components/Icon/Icon.view'
 
 // types
 import { InputStatusType } from 'app/App.components/Input/Input.constants'
@@ -16,7 +17,7 @@ import { FormStyled } from './BreakGlassCouncilForm.style'
 import { setAllContractsAdmin } from '../BreakGlassCouncil.actions'
 
 // helpers
-import { validateFormAddress } from 'utils/validatorFunctions' 
+import { validateFormAddress } from 'utils/validatorFunctions'
 
 const INIT_FORM = {
   newAdminAddress: '',
@@ -37,6 +38,7 @@ export function FormSetAllContractsAdminView() {
 
     try {
       await dispatch(setAllContractsAdmin(newAdminAddress))
+      
       setForm(INIT_FORM)
       setFormInputStatus({
         newAdminAddress: '',
@@ -54,6 +56,21 @@ export function FormSetAllContractsAdminView() {
 
   const handleBlurAddress = validateFormAddress(setFormInputStatus)
 
+  const inputProps = {
+    name: 'newAdminAddress',
+    value: newAdminAddress,
+    onBlur: handleBlurAddress,
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+      handleChange(e)
+      handleBlurAddress(e)
+    },
+    required: true,
+  }
+
+  const inputSettings = {
+    inputStatus: formInputStatus.newAdminAddress,
+  }
+
   return (
     <FormStyled>
       <h1>Set All Contracts Admin</h1>
@@ -63,27 +80,13 @@ export function FormSetAllContractsAdminView() {
         <div className="form-fields input-size-primary">
           <label>New Admin Address</label>
 
-          <Input
-            type="text"
-            required
-            value={newAdminAddress}
-            name="newAdminAddress"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              handleChange(e)
-              handleBlurAddress(e)
-            }}
-            onBlur={handleBlurAddress}
-            inputStatus={formInputStatus.newAdminAddress}
-          />
+          <Input inputProps={inputProps} settings={inputSettings} />
         </div>
 
-        <Button
-          className="stroke-01"
-          text={'Set Contracts Admin'}
-          kind={ACTION_PRIMARY}
-          icon={'profile'}
-          type={SUBMIT}
-        />
+        <NewButton kind={ACTION_PRIMARY} type={SUBMIT}>
+          <Icon id="profile" />
+          Set Contracts Admin
+        </NewButton>
       </form>
     </FormStyled>
   )

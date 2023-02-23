@@ -1,37 +1,29 @@
 // type
 import {
-  DoormanGraphQl,
+  MvkTokenGraphQL,
   MvkMintHistoryDataGraphQl,
   SmvkHistoryDataGraphQl,
 } from '../../utils/TypesAndInterfaces/Doorman'
-import { MvkTokenGraphQL } from '../../utils/TypesAndInterfaces/MvkToken'
 
 // helpers
 import { calcWithoutPrecision } from '../../utils/calcFunctions'
-import { symbolsAfterDecimalPoint } from '../../utils/symbolsAfterDecimalPoint'
 import { UTCTimestamp } from 'lightweight-charts'
+import { Mavryk_User } from 'utils/generated/graphqlTypes'
 
-export function normalizeDoormanStorage(storage: DoormanGraphQl) {
-  const totalStakedMvk = storage?.stake_accounts_aggregate?.aggregate?.sum?.smvk_balance ?? 0
+export function normalizeDoormanStorage(storage: {
+  mavryk_user: Array<Mavryk_User>
+  mvk_token: Array<MvkTokenGraphQL>
+}) {
+  const {
+    mavryk_user: [mvkContractData],
+    mvk_token: [mvkTokenItem],
+  } = storage
+
+  const totalStakedMvk = mvkContractData.mvk_balance
   return {
-    unclaimedRewards: calcWithoutPrecision(storage?.unclaimed_rewards ?? 0),
-    minMvkAmount: calcWithoutPrecision(storage?.min_mvk_amount ?? 0),
     totalStakedMvk: calcWithoutPrecision(totalStakedMvk),
-    breakGlassConfig: {
-      stakeIsPaused: storage?.stake_paused,
-      unstakeIsPaused: storage?.unstake_paused,
-      compoundIsPaused: storage?.compound_paused,
-      farmClaimIsPaused: storage?.farm_claimed_paused,
-    },
-    accumulatedFeesPerShare: calcWithoutPrecision(storage?.accumulated_fees_per_share),
-  }
-}
-
-export function normalizeMvkToken(storage: MvkTokenGraphQL | null) {
-  return {
-    address: storage?.address,
-    totalSupply: storage?.total_supply ? calcWithoutPrecision(storage?.total_supply) : 0,
-    maximumTotalSupply: storage?.maximum_supply ? calcWithoutPrecision(storage?.maximum_supply) : 0,
+    totalSupply: mvkTokenItem?.total_supply ? calcWithoutPrecision(mvkTokenItem?.total_supply) : 0,
+    maximumTotalSupply: mvkTokenItem?.maximum_supply ? calcWithoutPrecision(mvkTokenItem?.maximum_supply) : 0,
   }
 }
 
@@ -45,7 +37,7 @@ export function normalizeSmvkHistoryData(storage: SmvkHistoryDataProps) {
   return smvk_history_data?.length
     ? smvk_history_data?.map((item) => {
         return {
-          value: symbolsAfterDecimalPoint(calcWithoutPrecision(item.smvk_total_supply)),
+          value: parseFloat(calcWithoutPrecision(item.smvk_total_supply).toFixed(2)),
           time: new Date(item.timestamp).getTime() as UTCTimestamp,
         }
       })
@@ -62,7 +54,7 @@ export function normalizeMvkMintHistoryData(storage: MvkMintHistoryDataProps) {
   return mvk_mint_history_data?.length
     ? mvk_mint_history_data?.map((item) => {
         return {
-          value: symbolsAfterDecimalPoint(calcWithoutPrecision(item.mvk_total_supply)),
+          value: parseFloat(calcWithoutPrecision(item.mvk_total_supply).toFixed(2)),
           time: new Date(item.timestamp).getTime() as UTCTimestamp,
         }
       })

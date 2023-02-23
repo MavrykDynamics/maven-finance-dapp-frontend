@@ -42,7 +42,7 @@ export const Market = () => {
         await dispatch(getLoansStorage())
       }
     } catch (e) {}
-  }, [])
+  }, [isDataLoaded])
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -58,7 +58,7 @@ export const Market = () => {
     return [loanTokens[currentAssetIdx - 1], loanTokens[currentAssetIdx + 1], loanTokens[currentAssetIdx]]
   }, [assetId, loanTokens])
 
-  if (isLoading || !isDataLoaded) {
+  if (isLoading) {
     return (
       <Page>
         <PageHeader page={'lending'} />
@@ -225,12 +225,14 @@ export const Market = () => {
               borrowingItems={currentToken.myBorrowingList}
               lendingControllerAddress={loansControllerAddress}
               currentMarketAsset={currentToken.loanTokenData.gqlName}
+              avaliableMarketLiquidity={currentToken.reserveAmount}
             />
           ) : null}
           {tabId === PERMISSIONS_VAULTS_TAB_ID ? (
             <PermissionVaults
               permissionVaults={currentToken.permissionedBorrowingList}
               lendingControllerAddress={loansControllerAddress}
+              avaliableMarketLiquidity={currentToken.reserveAmount}
             />
           ) : null}
 

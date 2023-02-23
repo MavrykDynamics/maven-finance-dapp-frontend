@@ -2,34 +2,23 @@ import { HIDE_TOASTER, SHOW_TOASTER } from '../app/App.components/Toaster/Toaste
 import { ERROR } from '../app/App.components/Toaster/Toaster.constants'
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
 
-export interface ToasterState {
-  showing: boolean
-  status?: string
-  title?: string
-  message?: string
-}
+export type ToasterState = {
+  status: string
+  title: string
+  message: string
+} | null
 
-const toasterDefaultState: ToasterState = {
-  showing: false,
-  status: ERROR,
-  title: undefined,
-  message: undefined,
-}
+const toasterDefaultState: ToasterState = null
 
 export function toaster(state = toasterDefaultState, action: Action) {
   switch (action.type) {
     case SHOW_TOASTER:
       return {
-        showing: true,
-        status: action.status,
-        title: action.title,
-        message: action.message,
+        ...state,
+        ...action,
       }
     case HIDE_TOASTER:
-      return {
-        ...state,
-        showing: false,
-      }
+      return null
     default:
       return state
   }

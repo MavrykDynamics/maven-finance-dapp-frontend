@@ -5,18 +5,19 @@ import { useDispatch } from 'react-redux'
 import type { InputStatusType } from '../../../app/App.components/Input/Input.constants'
 
 // helpers
-import { validateFormAddress } from 'utils/validatorFunctions' 
+import { validateFormAddress } from 'utils/validatorFunctions'
+import { ACTION_PRIMARY, SUBMIT } from 'app/App.components/Button/Button.constants'
 
 // view
-import { Input } from '../../../app/App.components/Input/Input.controller'
-import { Button } from '../../../app/App.components/Button/Button.controller'
+import { Input } from 'app/App.components/Input/NewInput'
+import NewButton from 'app/App.components/Button/NewButton.controller'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 
 // action
 import { removeVesteeRequest } from '../Council.actions'
 
 // style
-import { CouncilFormStyled } from './CouncilForms.style'
+import { CouncilFormStyled } from './CouncilForm.style'
 
 export const CouncilFormRemoveVestee = () => {
   const dispatch = useDispatch()
@@ -53,6 +54,21 @@ export const CouncilFormRemoveVestee = () => {
 
   const handleBlurAddress = validateFormAddress(setFormInputStatus)
 
+  const vesteeAddressProps = {
+    name: 'vesteeAddress',
+    value: vesteeAddress,
+    onBlur: handleBlurAddress,
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+      handleChange(e)
+      handleBlurAddress(e)
+    },
+    required: true,
+  }
+
+  const vesteeAddressSettings = {
+    inputStatus: formInputStatus.vesteeAddress,
+  }
+
   return (
     <CouncilFormStyled onSubmit={handleSubmit}>
       <a className="info-link" href="https://mavryk.finance/litepaper#mavryk-council" target="_blank" rel="noreferrer">
@@ -63,27 +79,13 @@ export const CouncilFormRemoveVestee = () => {
       <div className="form-grid form-grid-button-right">
         <div>
           <label>Vestee Address</label>
-          <Input
-            type="text"
-            required
-            value={vesteeAddress}
-            name="vesteeAddress"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              handleChange(e)
-              handleBlurAddress(e)
-            }}
-            onBlur={handleBlurAddress}
-            inputStatus={formInputStatus.vesteeAddress}
-          />
+          <Input inputProps={vesteeAddressProps} settings={vesteeAddressSettings} />
         </div>
         <div className="button-aligment">
-          <Button
-            text="Remove Vestee"
-            className="plus-btn fill"
-            kind={'actionPrimary'}
-            icon="close-stroke"
-            type="submit"
-          />
+          <NewButton kind={ACTION_PRIMARY} type={SUBMIT}>
+            <Icon id="minus" />
+            Remove Vestee
+          </NewButton>
         </div>
       </div>
     </CouncilFormStyled>

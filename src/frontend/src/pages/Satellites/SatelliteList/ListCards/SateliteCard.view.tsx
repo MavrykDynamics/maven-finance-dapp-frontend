@@ -59,19 +59,18 @@ export const SatelliteListItem = ({
   const sMvkBalance = satellite.sMvkBalance
   const freesMVKSpace = Math.max(sMvkBalance * satellite.delegationRatio - totalDelegatedMVK, 0)
 
-  const { feeds } = useSelector((state: State) => state.oracles.oraclesStorage)
+  const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
   const {
     accountPkh,
-    user: { isSatellite },
+    user: { isSatellite, mySMvkTokenBalance },
   } = useSelector((state: State) => state.wallet)
   const {
     governanceStorage: { financialRequestLedger, proposalLedger },
     pastProposals,
   } = useSelector((state: State) => state.governance)
-  const {
-    emergencyGovernanceStorage: { emergencyGovernanceLedger },
-  } = useSelector((state: State) => state.emergencyGovernance)
+  const { eGovProposals } = useSelector((state: State) => state.emergencyGovernance)
 
+  const balanceOver1SMvk = mySMvkTokenBalance >= 1
   const myDelegatedMVK = userStakedBalance
   const userIsDelegatedToThisSatellite = satellite.address === satelliteUserIsDelegatedTo
   const isSatelliteOracle = satellite.oracleRecords.length
@@ -83,20 +82,13 @@ export const SatelliteListItem = ({
     ? proposalLedger.find((proposal) => proposal.id === currentlySupportingProposalId)
     : null
 
-  const oracleStatusType = getOracleStatus(satellite, feeds)
+  const oracleStatusType = getOracleStatus(satellite, feedsLedger)
   const satelliteStatusColor = satellite.status === SatelliteStatus.BANNED ? DOWN : WARNING
   const isSatelliteInactive = satellite.status !== SatelliteStatus.ACTIVE
 
   const satelliteMetrics = React.useMemo(
     () =>
-      getSatelliteMetrics(
-        pastProposals,
-        proposalLedger,
-        emergencyGovernanceLedger,
-        satellite,
-        feeds,
-        financialRequestLedger,
-      ),
+      getSatelliteMetrics(pastProposals, proposalLedger, eGovProposals, satellite, feedsLedger, financialRequestLedger),
     [satellite],
   )
 
@@ -128,7 +120,7 @@ export const SatelliteListItem = ({
       icon="man-check"
       kind={ACTION_PRIMARY}
       onClick={() => delegateCallback(satellite.address)}
-      disabled={!accountPkh}
+      disabled={!accountPkh || !balanceOver1SMvk}
     />
   )
 

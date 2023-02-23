@@ -9,12 +9,12 @@ import {
   checkVaultLiquidatableStatus,
   checkIfVaultIsAtRisk,
   calculateVaultMaxLiquidationAmount,
+  calculateLiquidationPrice,
 } from './calcFunctionsForVault'
 import { Lending_Controller_Vault } from 'utils/generated/graphqlTypes'
 import { symbolsAfterDecimalPoint } from 'utils/symbolsAfterDecimalPoint'
 import { getOracleAggregatorLatestPrice } from './Vaults.actions'
 import { statusSortPriority, vaultsStatuses } from './Vaults.consts'
-import { fetchRateBySymbols } from 'reducers/actions/dipDupActions.actions'
 import { calcCollateralRatio, calculateCompoundedInterest, getAssetMetadata } from 'pages/Loans/Loans.helpers'
 import { calcWithoutDecimals } from 'utils/calcFunctions'
 import { BLOCKS_PER_MINUTE } from 'utils/constants'
@@ -23,7 +23,7 @@ import { CollateralType, LoanTokenType } from 'utils/TypesAndInterfaces/Loans'
 
 type VaultsStorageProps = {
   lendingController: LendingControllerGQL
-  feeds: State['oracles']['oraclesStorage']['feeds']
+  feeds: State['dataFeeds']['feedsLedger']
   accountPkh?: string
   dipDupTokens: State['tokens']['dipDupTokens']
   currentBlockLevel?: number
@@ -77,8 +77,6 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
           })
 
           acc.totalRow.amount += collateralBalance * collateralAsset.rate
-          // TODO: add a valid result in the field below
-
           return acc
         },
         {
@@ -180,7 +178,14 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
         vaultAsset.rate
       const liquidationReward = lendingController.liquidation_fee_pct / 10 ** lendingController.decimals
       const adminLiquidateFee = lendingController.admin_liquidation_fee_pct
-
+      const liquidationPrice = item.loan_token?.oracle_id
+        ? calculateLiquidationPrice(
+            item.loan_outstanding_total / 10 ** item.loan_decimals,
+            item.loan_token.oracle_id,
+            lendingController.liquidation_ratio,
+            oracleLatestPrices,
+          )
+        : 0
       const normallizedVault = {
         borrowedAsset: {
           ...vaultAsset,
@@ -204,6 +209,7 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
         liquidationMax,
         liquidationReward,
         adminLiquidateFee,
+        liquidationPrice,
         repayFee: item.loan_interest_total,
 
         xtzDelegatedTo: vaultXtzDelegatedTo?.delegate?.address ?? null,
@@ -358,19 +364,25 @@ type VaultAssetBalances = {
 }
 
 export const reduceVaultsAssets = (vaultIds: string[], vaultsMapper: Record<string, VaultType>) => {
-  let notEmptyCollateral = 0
+  let vaultWithBalances = 0
+  let totalBorrowedAmounts = 0
+  let totalCollateralBalances = 0
   let colorIdx = 0
 
-  const { assets, globalVaultTVL, collateralRatio } = vaultIds.reduce<VaultAssetBalances>(
+  const { assets, globalVaultTVL } = vaultIds.reduce<VaultAssetBalances>(
     (acc, vaultId) => {
       const { assets } = acc
-      const { collateralData, collateralRatio } = vaultsMapper[vaultId]
+      const { collateralData, borrowedAmount, collateralBalance } = vaultsMapper[vaultId]
+
+      totalBorrowedAmounts += borrowedAmount
+      totalCollateralBalances += collateralBalance
+
+      if (borrowedAmount && collateralBalance) {
+        vaultWithBalances++
+      }
 
       if (collateralData.length !== 0) {
-        notEmptyCollateral++
-        acc.collateralRatio += collateralRatio
-
-        collateralData.slice(0, -1).forEach((collateral, idx) => {
+        collateralData.slice(0, -1).forEach((collateral) => {
           acc.globalVaultTVL += collateral.amount * collateral.rate
 
           if (collateral.symbol && assets[collateral.symbol]) {
@@ -401,11 +413,13 @@ export const reduceVaultsAssets = (vaultIds: string[], vaultsMapper: Record<stri
     },
   )
 
+  const collateralRatio = (totalCollateralBalances / totalBorrowedAmounts) * 100
+
   return {
     assetsBalances: Object.values(assets),
     globalVaultTVL,
     collateralRatio,
-    avgCollateralRatio: collateralRatio / notEmptyCollateral,
+    avgCollateralRatio: collateralRatio / vaultWithBalances,
   }
 }
 

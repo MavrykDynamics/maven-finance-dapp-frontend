@@ -6,12 +6,12 @@ export const LoansStyled = styled.div<{ theme: MavrykTheme }>``
 export const MarketChartsContainer = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   justify-content: center;
-  column-gap: 150px;
+  column-gap: 40px;
   margin-top: 30px;
 
   .chart-wrapper {
     width: 45%;
-    max-width: 372px;
+    max-width: 450px;
     display: flex;
     flex-direction: column;
     row-gap: 10px;
@@ -79,7 +79,8 @@ export const MarketOverview = styled.div<{ theme: MavrykTheme }>`
     border-top-right-radius: 10px;
 
     svg,
-    .icon {
+    .icon,
+    .img-wrapper {
       width: 36px;
       height: 36px;
       fill: ${({ theme }) => theme.dataColor};

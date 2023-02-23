@@ -306,6 +306,26 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
     }
   }
 
+  &.transparent-child-wrap {
+    input {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+
+    &:hover {
+      .pinned-child {
+        background-color: ${({ theme }) => theme.containerColor};
+      }
+    }
+
+    .pinned-child {
+      border-left: none;
+      border-top-right-radius: 10px;
+      border-bottom-right-radius: 10px;
+      background-color: ${({ theme }) => theme.backgroundColor};
+    }
+  }
+
   .input-balance {
     position: absolute;
     bottom: -35px;
@@ -335,6 +355,17 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
     line-height: 21px;
     color: ${({ theme }) => theme.valueColor};
   }
+`
+
+export const NewInputLabel = styled.label`
+  color: ${({ theme }) => theme.textColor};
+  display: block;
+  white-space: nowrap;
+  font-weight: 700;
+  font-size: 14px;
+  position: absolute;
+  top: -20px;
+  left: 12px;
 `
 
 export const InputStyledStatus = styled.div<{ theme: MavrykTheme }>`

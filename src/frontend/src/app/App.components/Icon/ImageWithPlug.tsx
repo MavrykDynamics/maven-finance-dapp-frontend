@@ -1,20 +1,31 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
+import { Maybe } from 'graphql/jsutils/Maybe'
 import Icon from './Icon.view'
 
-export const ImageWithPlug = ({ imageLink, alt }: { imageLink?: string; alt: string }) => {
-  const [imageExists, setImageExists] = useState(true)
+export const ImageWithPlug = ({
+  imageLink = null,
+  alt,
+  className = '',
+  plugSrc,
+}: {
+  imageLink?: Maybe<string>
+  alt: string
+  className?: string
+  plugSrc?: string
+}) => {
+  const [imageSrc, setImageSrc] = useState<string | null>(imageLink)
 
   useEffect(() => {
-    setImageExists(true)
-  }, [imageLink])
+    setImageSrc(imageLink ?? plugSrc ?? null)
+  }, [imageLink, plugSrc])
 
-  if (imageLink && imageExists) {
+  if (imageSrc) {
     return (
-      <div className="img-wrapper">
-        <img src={imageLink} alt={alt} loading="lazy" onError={() => setImageExists(false)} />
+      <div className={`img-wrapper ${className}`}>
+        <img src={imageSrc} alt={alt} loading="lazy" onError={() => setImageSrc(plugSrc ?? null)} />
       </div>
     )
   }
 
-  return <Icon id="noImage" />
+  return <Icon id="noImage" className={className} />
 }

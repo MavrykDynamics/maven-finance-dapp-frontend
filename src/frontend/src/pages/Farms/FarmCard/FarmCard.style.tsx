@@ -15,7 +15,8 @@ export const FarmCardStyled = styled(Card)<{ theme: MavrykTheme }>`
       color: ${({ theme }) => theme.textColor};
     }
 
-    var {
+    var,
+    .value {
       font-weight: 600;
       font-size: 16px;
       line-height: 22px;
@@ -338,100 +339,5 @@ export const FarmStakeStyled = styled(Card)`
     gap: 10px;
     flex-direction: column;
     padding-top: 24px;
-  }
-`
-
-export const FarmCardTopSection = styled.div<{ theme: MavrykTheme }>`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  min-height: max-content;
-  margin-bottom: 30px;
-  padding: 0 10px;
-`
-
-export const FarmCardContentSection = styled.div<{ theme: MavrykTheme }>`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-
-  > div > p {
-    font-size: 14px;
-    font-weight: 600;
-  }
-
-  div:nth-child(2) {
-    text-align: right;
-  }
-`
-export const FarmTitleSection = styled.div<{ theme: MavrykTheme }>`
-  width: max-content;
-  text-align: right;
-
-  > h3 {
-    font-weight: 600;
-    font-size: 18px;
-    line-height: 18px;
-    color: ${cyanColor};
-  }
-  > p {
-    font-size: 14px;
-    font-weight: 400;
-    color: ${({ theme }) => theme.primaryColor};
-  }
-`
-export const FarmInputSection = styled.form`
-  width: 350px;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
-  input {
-    padding-right: 174px;
-    height: 50px;
-    font-size: 18px;
-    margin-bottom: 6px;
-  }
-
-  .with-text {
-    right: 150px;
-    top: 18px;
-  }
-
-  .input-info {
-    font-size: 12px;
-    line-height: 12px;
-    color: ${skyColor};
-    font-weight: 400;
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 4px;
-    padding: 0 8px;
-    width: 100%;
-
-    p {
-      margin: 0;
-      font-weight: 600;
-    }
-  }
-
-  .farm-button {
-    width: 262px;
-    margin-top: auto;
-    margin-bottom: 10px;
-  }
-
-  .farm-modal-input {
-    .pinned-text {
-      font-size: 14px;
-    }
-    .with-text {
-      right: -25px;
-    }
   }
 `

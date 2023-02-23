@@ -14,9 +14,10 @@ import { isMobile } from './utils/device-info'
 import Mobile from './app/App.components/Mobile/Mobile.view'
 
 import './styles/fonts.css'
+import './styles/animations.css'
 
 export const Root = () => {
-    const reCaptchaKey = process.env.REACT_APP_RECAPTCHA_SITE_KEY ?? ''
+  const reCaptchaKey = process.env.REACT_APP_RECAPTCHA_SITE_KEY ?? ''
   return (
     <GoogleReCaptchaProvider reCaptchaKey={reCaptchaKey} language="en">
       <Provider store={store}>

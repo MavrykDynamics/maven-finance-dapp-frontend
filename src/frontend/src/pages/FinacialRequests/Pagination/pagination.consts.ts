@@ -1,6 +1,7 @@
-export const COUNCIL_LIST_NAME = 'council'
-export const COUNCIL_MY_PAST_ACTIONS_LIST_NAME = 'counsilMyPastActions'
-export const COUNCIL_MY_ONGOING_ACTIONS_LIST_NAME = 'counsilMyOngoingActions'
+export const COUNCIL_ALL_PENDING_ACTIONS_LIST_NAME = 'allPendingActions'
+export const COUNCIL_ALL_PAST_ACTIONS_LIST_NAME = 'allPastActions'
+export const COUNCIL_MY_PENDING_ACTIONS_LIST_NAME = 'myPendingActions'
+export const COUNCIL_MY_PAST_ACTIONS_LIST_NAME = 'myPastActions'
 
 export const EMERGENCY_GOVERNANCE_HISTORY_LIST_NAME = 'emergencyGovHistory'
 
@@ -12,6 +13,7 @@ export const PAST_ACTIONS_SATELLITE_GOVERNANCE_LIST = 'pastActionsSatellitesGov'
 export const MY_ACTIONS_SATELLITE_GOVERNANCE_LIST = 'myActionsSatellitesGov'
 
 export const TRANSACTION_HISTORY_TABLE_NAME = 'transactionHistoryTable'
+export const USER_ACTIONS_HISTORY = 'userActionsHistory'
 
 export const SATELITES_OVERVIEW_LIST_NAME = 'saletitesGov'
 export const SATELITES_TOP_LIST_NAME = 'topSatelitesOracle'
@@ -30,10 +32,6 @@ export const NEXT_PROPOSALS_LIST_NAME = 'nextProposals'
 export const ONGOING_VOTING_PROPOSALS_LIST_NAME = 'ongoingVotingProposals'
 export const GOVERNANCE_VOTERS_LIST_NAME = 'govVotets'
 
-export const BREAK_GLASS_MY_PAST_COUNCIL_ACTIONS_LIST_NAME = 'myPastCouncilActions'
-export const BREAK_GLASS_COUNCIL_ACTIONS_LIST_NAME = 'pastBreakGlassCouncilActions'
-export const BREAK_GLASS_MY_ONGOING_ACTIONS_LIST_NAME = 'breakGlassActionPendingMySignature'
-
 export const FARMS_VERTICAL_CARDS = 'farmsVertical'
 export const FARMS_HORIZONTAL_CARDS = 'farmsHorizontal'
 
@@ -43,10 +41,12 @@ export const VAULTS_LIST_NAME = 'vaults'
 export const MY_VAULTS_LIST_NAME = 'myVaults'
 
 export const LIST_NAMES_MAPPER: Record<string, number> = {
-  [COUNCIL_LIST_NAME]: 8,
+  [COUNCIL_ALL_PENDING_ACTIONS_LIST_NAME]: 8,
+  [COUNCIL_ALL_PAST_ACTIONS_LIST_NAME]: 8,
+  [COUNCIL_MY_PENDING_ACTIONS_LIST_NAME]: 8,
   [COUNCIL_MY_PAST_ACTIONS_LIST_NAME]: 8,
-  [COUNCIL_MY_ONGOING_ACTIONS_LIST_NAME]: 8,
   [EMERGENCY_GOVERNANCE_HISTORY_LIST_NAME]: 5,
+  [USER_ACTIONS_HISTORY]: 8,
   [TRANSACTION_HISTORY_TABLE_NAME]: 9,
   [PAST_REQUESTS_FINANCIAL_REQUESTS_LIST]: 8,
   [ONGOING_REQUESTS_FINANCIAL_REQUESTS_LIST]: 8,
@@ -67,9 +67,6 @@ export const LIST_NAMES_MAPPER: Record<string, number> = {
   [USER_DATA_FEEDS_LIST_NAME]: 3,
   [FEEDS_ALL_LIST_NAME]: 10,
   [SATELLITES_OVERVIEW_LIST_NAME]: 10,
-  [BREAK_GLASS_COUNCIL_ACTIONS_LIST_NAME]: 8,
-  [BREAK_GLASS_MY_PAST_COUNCIL_ACTIONS_LIST_NAME]: 8,
-  [BREAK_GLASS_MY_ONGOING_ACTIONS_LIST_NAME]: 8,
   [FARMS_VERTICAL_CARDS]: 9,
   [FARMS_HORIZONTAL_CARDS]: 12,
   [BREAK_GLASS_LIST_NAME]: 8,

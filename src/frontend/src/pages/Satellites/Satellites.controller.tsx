@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react'
+import React, { useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 // types
@@ -9,34 +9,35 @@ import SatellitesView from './Satellites.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 
 // consts, helpers, actions
-import { getMvkTokenStorage, getDoormanStorage } from 'pages/Doorman/Doorman.actions'
+import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
 import { getTotalDelegatedMVK } from './helpers/Satellites.consts'
-import { delegate, getDelegationStorage, getOracleStorage, undelegate } from 'pages/Satellites/Satellites.actions'
+import { delegate, getDelegationStorage, undelegate } from 'pages/Satellites/Satellites.actions'
 import { getGovernanceStorage } from 'pages/Governance/Governance.actions'
 import { getEmergencyGovernanceStorage } from 'pages/EmergencyGovernance/EmergencyGovernance.actions'
+import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
+import { getFeedsStorage } from 'pages/DataFeeds/DataFeeds.actions'
 
 const Satellites = () => {
   const {
     delegationStorage: { activeSatellites = [] },
   } = useSelector((state: State) => state.delegation)
-  const { oraclesStorage } = useSelector((state: State) => state.oracles)
+  const { feedsLedger, isLoaded: isFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
+  const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
   const {
     user: { mySMvkTokenBalance, satelliteMvkIsDelegatedTo },
+    accountPkh,
   } = useSelector((state: State) => state.wallet)
   const dispatch = useDispatch()
 
-  const { accountPkh } = useSelector((state: State) => state.wallet)
-
-  useEffect(() => {
-    if (accountPkh) {
-      dispatch(getDoormanStorage())
-    }
-    dispatch(getMvkTokenStorage())
-    dispatch(getDelegationStorage())
-    dispatch(getOracleStorage())
-    dispatch(getGovernanceStorage())
-    dispatch(getEmergencyGovernanceStorage())
-  }, [dispatch, accountPkh])
+  const { isLoading } = useDataLoader(async () => {
+    await Promise.all([
+      !isFeedsLoaded && dispatch(getFeedsStorage()),
+      !isEgovLoaded && dispatch(getEmergencyGovernanceStorage()),
+      accountPkh && dispatch(getDoormanStorage()),
+      dispatch(getDelegationStorage()),
+      dispatch(getGovernanceStorage()),
+    ])
+  }, [accountPkh])
 
   const totalDelegatedMVK = getTotalDelegatedMVK(activeSatellites)
 
@@ -44,10 +45,9 @@ const Satellites = () => {
     () => ({
       totalDelegetedMVK: <CommaNumber value={totalDelegatedMVK} endingText={'MVK'} />,
       totalSatelliteOracles: activeSatellites.length,
-      numberOfDataFeeds:
-        oraclesStorage.feeds.length > 50 ? oraclesStorage.feeds.length + '+' : oraclesStorage.feeds.length,
+      numberOfDataFeeds: feedsLedger.length > 50 ? feedsLedger.length + '+' : feedsLedger.length,
     }),
-    [activeSatellites, oraclesStorage.feeds, totalDelegatedMVK],
+    [activeSatellites, feedsLedger, totalDelegatedMVK],
   )
 
   const delegateCallback = (satelliteAddress: string) => {
@@ -69,7 +69,7 @@ const Satellites = () => {
         delegateCallback,
         undelegateCallback,
       }}
-      dataFeedsData={{ items: oraclesStorage.feeds }}
+      dataFeedsData={{ items: feedsLedger }}
     />
   )
 }

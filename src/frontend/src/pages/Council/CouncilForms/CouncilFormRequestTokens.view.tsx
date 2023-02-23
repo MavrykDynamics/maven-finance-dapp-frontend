@@ -1,25 +1,26 @@
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo } from 'react'
 import { useDispatch } from 'react-redux'
 
 // type
 import type { InputStatusType } from '../../../app/App.components/Input/Input.constants'
-import { RequestTokenNameMaxLength, RequestPurposeMaxLength } from 'utils/TypesAndInterfaces/Council'
+import { CouncilMaxLength } from 'utils/TypesAndInterfaces/Council'
 
 // helpers
 import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
+import { ACTION_PRIMARY, SUBMIT } from 'app/App.components/Button/Button.constants'
 
 // view
-import { Input } from '../../../app/App.components/Input/Input.controller'
+import { Input } from 'app/App.components/Input/NewInput'
+import NewButton from 'app/App.components/Button/NewButton.controller'
 import { TextArea } from '../../../app/App.components/TextArea/TextArea.controller'
-import { Button } from '../../../app/App.components/Button/Button.controller'
 import Icon from '../../../app/App.components/Icon/Icon.view'
-import { DropDown, DropdownItemType } from '../../../app/App.components/DropDown/DropDown.controller'
+import { DDItemId, DropDown } from 'app/App.components/DropDown/NewDropdown'
 
 // action
 import { requestTokens } from '../Council.actions'
 
 // style
-import { CouncilFormStyled } from './CouncilForms.style'
+import { CouncilFormStyled } from './CouncilForm.style'
 
 const INIT_FORM = {
   treasuryAddress: '',
@@ -30,30 +31,24 @@ const INIT_FORM = {
   purpose: '',
 }
 
-const itemsForDropDown = [
-  {
-    text: 'FA12',
-    value: 'FA12',
-  },
-  {
-    text: 'FA2',
-    value: 'FA2',
-  },
-  {
-    text: 'TEZ',
-    value: 'TEZ',
-  },
-]
+const tokenTypes = ['FA12', 'FA2', 'TEZ']
 
-type Props = RequestTokenNameMaxLength & RequestPurposeMaxLength
-
-export const CouncilFormRequestTokens = ({ requestTokenNameMaxLength, requestPurposeMaxLength }: Props) => {
+export const CouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
   const dispatch = useDispatch()
   const [form, setForm] = useState(INIT_FORM)
 
-  const ddItems = useMemo(() => itemsForDropDown.map(({ text }) => text), [])
-  const [ddIsOpen, setDdIsOpen] = useState(false)
-  const [tokenType, setTokenType] = useState<DropdownItemType | undefined>()
+  const dropDownItems = useMemo(
+    () =>
+      tokenTypes.map((item, index) => ({
+        content: <div>{item}</div>,
+        value: item,
+        id: index,
+      })),
+    [],
+  )
+
+  type DropDownItemType = typeof dropDownItems[0]
+  const [chosenDdItem, setChosenDdItem] = useState<DropDownItemType | undefined>()
 
   const [formInputStatus, setFormInputStatus] = useState<Record<string, InputStatusType>>({
     treasuryAddress: '',
@@ -69,13 +64,12 @@ export const CouncilFormRequestTokens = ({ requestTokenNameMaxLength, requestPur
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     try {
-      const typeOfToken = tokenType?.value || ''
+      const typeOfToken = chosenDdItem?.value
+      if (!typeOfToken) return
+
       await dispatch(
         requestTokens(treasuryAddress, tokenContractAddress, tokenName, +tokenAmount, typeOfToken, +tokenId, purpose),
       )
-
-      setTokenType(undefined)
-      setDdIsOpen(false)
       setForm(INIT_FORM)
       setFormInputStatus({
         treasuryAddress: '',
@@ -85,6 +79,7 @@ export const CouncilFormRequestTokens = ({ requestTokenNameMaxLength, requestPur
         tokenId: '',
         purpose: '',
       })
+      setChosenDdItem(undefined)
     } catch (error) {
       console.error(error)
     }
@@ -99,14 +94,89 @@ export const CouncilFormRequestTokens = ({ requestTokenNameMaxLength, requestPur
   const handleBlur = validateFormField(setFormInputStatus)
   const handleBlurAddress = validateFormAddress(setFormInputStatus)
 
-  const handleClickDropdownItem = useCallback(
-    (e: string) => {
-      const chosenItem = itemsForDropDown.filter((item) => item.text === e)[0]
-      setTokenType(chosenItem)
-      setDdIsOpen(!ddIsOpen)
+  const handleClickDropdownItem = (itemId: DDItemId) => {
+    const foundItem = dropDownItems.find((item) => item.id === itemId)
+
+    if (!foundItem) return
+    setChosenDdItem(foundItem)
+  }
+
+  const treasuryAddressProps = {
+    name: 'treasuryAddress',
+    value: treasuryAddress,
+    onBlur: handleBlurAddress,
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+      handleChange(e)
+      handleBlurAddress(e)
     },
-    [ddIsOpen],
-  )
+    required: true,
+  }
+
+  const treasuryAddressSettings = {
+    inputStatus: formInputStatus.treasuryAddress,
+  }
+
+  const tokenContractAddressProps = {
+    name: 'tokenContractAddress',
+    value: tokenContractAddress,
+    onBlur: handleBlurAddress,
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+      handleChange(e)
+      handleBlurAddress(e)
+    },
+    required: true,
+  }
+
+  const tokenContractAddressSettings = {
+    inputStatus: formInputStatus.tokenContractAddress,
+  }
+
+  const tokenNameProps = {
+    name: 'tokenName',
+    value: tokenName,
+    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, maxLength.requestTokenNameMaxLength),
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+      handleChange(e)
+      handleBlur(e, maxLength.requestTokenNameMaxLength)
+    },
+    required: true,
+  }
+
+  const tokenNameSettings = {
+    inputStatus: formInputStatus.tokenName,
+  }
+
+  const tokenAmountProps = {
+    type: 'number',
+    name: 'tokenAmount',
+    value: tokenAmount,
+    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e),
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+      handleChange(e)
+      handleBlur(e)
+    },
+    required: true,
+  }
+
+  const tokenAmountSettings = {
+    inputStatus: formInputStatus.tokenAmount,
+  }
+
+  const tokenIdProps = {
+    type: 'number',
+    name: 'tokenId',
+    value: tokenId,
+    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e),
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+      handleChange(e)
+      handleBlur(e)
+    },
+    required: true,
+  }
+
+  const tokenIdSettings = {
+    inputStatus: formInputStatus.tokenId,
+  }
 
   return (
     <CouncilFormStyled onSubmit={handleSubmit}>
@@ -118,94 +188,37 @@ export const CouncilFormRequestTokens = ({ requestTokenNameMaxLength, requestPur
       <div className="form-grid">
         <div>
           <label>Treasury Address</label>
-          <Input
-            type="text"
-            required
-            value={treasuryAddress}
-            name="treasuryAddress"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              handleChange(e)
-              handleBlurAddress(e)
-            }}
-            onBlur={handleBlurAddress}
-            inputStatus={formInputStatus.treasuryAddress}
-          />
+          <Input inputProps={treasuryAddressProps} settings={treasuryAddressSettings} />
         </div>
 
         <div>
           <label>Token Contract Address</label>
-          <Input
-            type="text"
-            required
-            value={tokenContractAddress}
-            name="tokenContractAddress"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              handleChange(e)
-              handleBlurAddress(e)
-            }}
-            onBlur={handleBlurAddress}
-            inputStatus={formInputStatus.tokenContractAddress}
-          />
+          <Input inputProps={tokenContractAddressProps} settings={tokenContractAddressSettings} />
         </div>
 
         <div>
           <label>Token Name</label>
-          <Input
-            type="text"
-            required
-            value={tokenName}
-            name="tokenName"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              handleChange(e)
-              handleBlur(e, requestTokenNameMaxLength)
-            }}
-            onBlur={(e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, requestTokenNameMaxLength)}
-            inputStatus={formInputStatus.tokenName}
-          />
+          <Input inputProps={tokenNameProps} settings={tokenNameSettings} />
         </div>
 
         <div>
           <label>Token Amount to Transfer</label>
-          <Input
-            type="number"
-            required
-            value={tokenAmount}
-            name="tokenAmount"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              handleChange(e)
-              handleBlur(e)
-            }}
-            onBlur={(e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e)}
-            inputStatus={formInputStatus.tokenAmount}
-          />
+          <Input inputProps={tokenAmountProps} settings={tokenAmountSettings} />
         </div>
 
         <div>
           <label>Token Type (FA12, FA2, TEZ)</label>
           <DropDown
-            placeholder={'Choose token type'}
-            isOpen={ddIsOpen}
-            setIsOpen={setDdIsOpen}
-            itemSelected={tokenType?.text}
-            items={ddItems}
-            clickOnItem={handleClickDropdownItem}
+            placeholder="Choose token type"
+            activeItem={chosenDdItem}
+            items={dropDownItems}
+            clickItem={handleClickDropdownItem}
           />
         </div>
 
         <div>
           <label>Token ID</label>
-          <Input
-            type="number"
-            required
-            value={tokenId}
-            name="tokenId"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              handleChange(e)
-              handleBlur(e)
-            }}
-            onBlur={(e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e)}
-            inputStatus={formInputStatus.tokenId}
-          />
+          <Input inputProps={tokenIdProps} settings={tokenIdSettings} />
         </div>
       </div>
       <div className="textarea-group">
@@ -217,13 +230,16 @@ export const CouncilFormRequestTokens = ({ requestTokenNameMaxLength, requestPur
           onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
             handleChange(e)
           }}
-          onBlur={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleBlur(e, requestPurposeMaxLength)}
+          onBlur={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleBlur(e, maxLength.requestPurposeMaxLength)}
           inputStatus={formInputStatus.purpose}
-          textAreaMaxLimit={requestPurposeMaxLength}
+          textAreaMaxLimit={maxLength.requestPurposeMaxLength}
         />
       </div>
       <div className="btn-group">
-        <Button text="Request Tokens" className="plus-btn" kind={'actionPrimary'} icon="transfer-fill" type="submit" />
+        <NewButton kind={ACTION_PRIMARY} type={SUBMIT}>
+          <Icon id="request_token" />
+          Request Tokens
+        </NewButton>
       </div>
     </CouncilFormStyled>
   )

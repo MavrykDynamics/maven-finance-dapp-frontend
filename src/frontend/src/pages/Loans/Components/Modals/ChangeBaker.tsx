@@ -12,7 +12,7 @@ import NewButton from 'app/App.components/Button/NewButton.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
-import { DropDown } from 'app/App.components/DropDown/NewDropdown'
+import { DDItemId, DropDown } from 'app/App.components/DropDown/NewDropdown'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { DropDownXTZBakerType } from './CreateNewVault.modal'
 
@@ -133,7 +133,7 @@ export const ChangeBaker = ({
 
   // select baker for an xtz collateral, used only when we selected one collateral XTZ
   const [bakerChosenDdItem, setBakerChosenDdItem] = useState<DropDownXTZBakerType | undefined>()
-  const handleOnClickDropdownBakerItem = (itemId: number) => {
+  const handleOnClickDropdownBakerItem = (itemId: DDItemId) => {
     const ddChoosenItem = bakerItemsForDropDown.find(({ id }) => id === itemId)
     setBakerChosenDdItem(ddChoosenItem)
     setSelectedAddress(ddChoosenItem?.bakerAddress ?? null)

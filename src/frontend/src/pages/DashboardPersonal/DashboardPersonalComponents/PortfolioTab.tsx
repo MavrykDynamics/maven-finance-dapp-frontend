@@ -12,11 +12,9 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { Chart } from 'app/App.components/Chart/Chart.view'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { SlidingTabButtons, TabItem } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
-import Icon from 'app/App.components/Icon/Icon.view'
 
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import {
-  DashboardPersonalTabStyled,
   LBHInfoBlock,
   ListItem,
   PortfolioWalletStyled,
@@ -41,7 +39,9 @@ const TOGGLE_VALUES: TabItem[] = [
 ]
 
 const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUserLoansLoading }: PortfolioTabProps) => {
-  const { exchangeRate } = useSelector((state: State) => state.mvkToken)
+  const {
+    tokensPrices: { mvk: { usd: mvkExchangeRate = 0 } = {} },
+  } = useSelector((state: State) => state.tokens)
   const {
     user: {
       userLoansData: { userBorrowing, userLendings },
@@ -52,7 +52,8 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
   const lastSeria = CHART_TEST_DATA.at(-1)?.value ?? 0
 
   return (
-    <DashboardPersonalTabStyled>
+    <>
+      {/* TODO: make this chart dynamic need data in indexer for it */}
       <PortfolioChartStyled>
         <GovRightContainerTitleArea>
           <h2>MVK Earning History</h2>
@@ -62,17 +63,10 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
             tabItems={toggleItems}
             onClick={(tabId) =>
               setToggleItems(
-                toggleItems.map((item) =>
-                  item.id === tabId
-                    ? {
-                        ...item,
-                        active: true,
-                      }
-                    : {
-                        ...item,
-                        active: false,
-                      },
-                ),
+                toggleItems.map((item) => ({
+                  ...item,
+                  active: item.id === tabId,
+                })),
               )
             }
           />
@@ -82,7 +76,7 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
             <CommaNumber endingText="MVK" value={lastSeria} />
           </div>
           <div className="usd">
-            <CommaNumber beginningText="$" value={lastSeria * exchangeRate} />
+            <CommaNumber beginningText="$" value={lastSeria * mvkExchangeRate} />
           </div>
         </div>
         <Chart
@@ -148,7 +142,9 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
           <div className="list scroll-block">
             {userLendings.map(({ icon, amount, annualPecentage, earned, operationHash, id }) => {
               return (
-                <ListItem columsTemplate="60px 0.9fr 0.7fr 0.8fr 0.7fr" key={id + operationHash}>
+                // TODO: temp solution while earn column is disabled
+                // <ListItem columsTemplate="60px 0.9fr 0.7fr 0.8fr 0.7fr" key={id + operationHash}>
+                <ListItem columsTemplate="60px 0.9fr 0.7fr 1.5fr" key={id + operationHash}>
                   <ImageWithPlug imageLink={icon} alt={`lended asset logo`} />
                   <div className="list-part">
                     <div className="name">Supplied</div>
@@ -162,12 +158,12 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
                       <CommaNumber value={annualPecentage} endingText="%" />
                     </div>
                   </div>
-                  <div className="list-part">
+                  {/* <div className="list-part">
                     <div className="name">Earned</div>
                     <div className="value">
                       <CommaNumber value={earned} />
                     </div>
-                  </div>
+                  </div> */}
                   <div className="list-part  view-tx-link">
                     <Link to={{ pathname: `https://ghostnet.tzkt.io/${operationHash}` }} target="_blank">
                       <Button text="View TX" kind={TRANSPARENT} className="link" />
@@ -198,7 +194,9 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
           <div className="list scroll-block">
             {userBorrowing.map(({ icon, amount, annualPecentage, earned, operationHash, id }) => {
               return (
-                <ListItem columsTemplate="60px 0.9fr 0.7fr 0.8fr 0.7fr" key={id + operationHash}>
+                // TODO: temp solution while earn column is disabled
+                // <ListItem columsTemplate="60px 0.9fr 0.7fr 0.8fr 0.7fr" key={id + operationHash}>
+                <ListItem columsTemplate="60px 0.9fr 0.7fr 1.5fr" key={id + operationHash}>
                   <ImageWithPlug imageLink={icon} alt={`borrowed asset logo`} />
                   <div className="list-part">
                     <div className="name">Borrowed</div>
@@ -212,12 +210,12 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
                       <CommaNumber value={annualPecentage} endingText="%" />
                     </div>
                   </div>
-                  <div className="list-part">
+                  {/* <div className="list-part">
                     <div className="name">Earned</div>
                     <div className="value">
                       <CommaNumber value={earned} />
                     </div>
-                  </div>
+                  </div> */}
                   <div className="list-part view-tx-link">
                     <Link to={{ pathname: `https://ghostnet.tzkt.io/${operationHash}` }} target="_blank">
                       <Button text="View TX" kind={TRANSPARENT} className="link" />
@@ -241,7 +239,7 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
           </div>
         )}
       </LBHInfoBlock>
-    </DashboardPersonalTabStyled>
+    </>
   )
 }
 

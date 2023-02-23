@@ -64,7 +64,7 @@ export const VaultsSearchFilterStyled = styled(Card)`
 
   .dd-container {
     display: grid;
-    grid-template-columns: 70px 190px 190px 190px;
+    grid-template-columns: 190px 190px 70px 190px;
     column-gap: 15px;
 
     h4 {

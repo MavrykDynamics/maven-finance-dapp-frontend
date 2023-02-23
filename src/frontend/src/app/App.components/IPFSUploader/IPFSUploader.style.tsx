@@ -136,10 +136,9 @@ export const UploadIconContainer = styled.div<{
   }
 
   .upload-icon {
-    stroke: ${({ theme }) => theme.textColor};
+    fill: ${({ theme }) => theme.textColor};
     width: 24px;
     height: 24px;
-    display: block;
   }
 
   .pencil-wrap {

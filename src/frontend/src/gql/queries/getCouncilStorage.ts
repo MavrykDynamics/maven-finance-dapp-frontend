@@ -1,32 +1,24 @@
 export const COUNCIL_STORAGE_QUERY = `
   query GetCouncilStorageQuery {
     council {
-      action_counter
-      action_expiry_days
-      address
-      admin
-      council_member_image_max_length
       council_member_name_max_length
-      governance_id
+      council_member_image_max_length
+      council_member_website_max_length
       request_purpose_max_length
       request_token_name_max_length
-      threshold
-      actions {
-        action_type
-        council_id
-        executed
-        expiration_datetime
-        id
-        status
-        start_datetime
-        signers_count
-        initiator_id
-        signers {
-          id
-          signer_id
-        }
-      }
-      council_member_website_max_length
+    }
+
+    break_glass {
+      glass_broken
+    }
+  }
+`
+export const COUNCIL_STORAGE_QUERY_NAME = 'GetCouncilStorageQuery'
+export const COUNCIL_STORAGE_QUERY_VARIABLE = {}
+
+export const COUNCIL_MEMBERS_QUERY = `
+  query GetCouncilMembers {
+    council {
       members {
         id
         name
@@ -37,20 +29,17 @@ export const COUNCIL_STORAGE_QUERY = `
     }
   }
 `
-export const COUNCIL_STORAGE_QUERY_NAME = 'GetCouncilStorageQuery'
-export const COUNCIL_STORAGE_QUERY_VARIABLE = {}
+export const COUNCIL_MEMBERS_QUERY_NAME = 'GetCouncilMembers'
+export const COUNCIL_MEMBERS_QUERY_VARIABLE = {}
 
 const COUNCIL_ACTIONS_PARAMS = `
+  action_type  
   council_id
   executed
-  execution_datetime
-  expiration_datetime
   id
   initiator_id
   signers_count
   start_datetime
-  status
-  action_type
   parameters {
     id
     name
@@ -75,12 +64,7 @@ export const COUNCIL_PENDING_ACTIONS_QUERY = `
     }
   }
 `
-
 export const COUNCIL_PENDING_ACTIONS_NAME = 'GetPendingCouncilActions'
-export function COUNCIL_PENDING_ACTIONS_VARIABLE (variables: {
-  _gte?: string
-  userAddress?: string
-  userAddress2?: string
-}) {
+export function COUNCIL_PENDING_ACTIONS_VARIABLE(variables: { _gte?: string }) {
   return variables
 }

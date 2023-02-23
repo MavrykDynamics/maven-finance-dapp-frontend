@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useLocation, useHistory, useParams } from 'react-router'
 
@@ -7,6 +7,9 @@ import { VaultsSearchFilter } from './components/VaultsSearchFilter.view'
 import { VaultsCard } from './components/VaultsCard.view'
 import { TabSwitcher } from 'pages/Council/Council.style'
 import { Pagination } from 'pages/BreakGlass/BreakGlass.style'
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
+import { EmptyContainer } from 'app/App.style'
 
 // styles
 import { VaultsStyled } from './Vaults.style'
@@ -24,9 +27,7 @@ import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 
 // actions
 import { getVaultsStorage, markForLiquidation } from './Vaults.actions'
-import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
-import { ClockLoader } from 'app/App.components/Loader/Loader.view'
-import { EmptyContainer } from 'app/App.style'
+import { getAvaliableCollaterals } from 'pages/Loans/Actions/getLoansData.actions'
 
 const pathname = '/vaults'
 
@@ -72,6 +73,14 @@ export const VaultsView = () => {
       //TODO: handle fetch error
     }
   }, [accountPkh])
+
+  useDataLoader(async () => {
+    try {
+      await dispatch(getAvaliableCollaterals())
+    } catch (e) {
+      //TODO: handle fetch error
+    }
+  }, [])
 
   const [vaultsIds, setVaultsIds] = useState<string[]>([])
   const assets = useMemo(() => getVaultAssets(vaultsMapper), [vaultsMapper])

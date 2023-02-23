@@ -1,4 +1,3 @@
-import { updateUserData } from './../../Doorman/Doorman.actions'
 import { OpKind } from '@taquito/taquito'
 import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
@@ -7,6 +6,7 @@ import { AppDispatch, GetState } from 'app/App.controller'
 import { fetchFromIndexer } from 'gql/fetchGraphQL'
 import { NEW_VAULT_QUERY, NEW_VAULT_QUERY_NAME, NEW_VAULT_QUERY_VARIABLE } from 'gql/queries/getLoansStorage'
 import { State } from 'reducers'
+import { updateUserData } from 'reducers/actions/user.actions'
 import { getLoansStorage } from './getLoansData.actions'
 
 // trigger initial vault creation to get the id of future vault
@@ -33,6 +33,8 @@ export const triggerInitialVaultCreation =
       await transaction?.confirmation()
 
       // refetch data we need
+      await dispatch(updateUserData())
+      await dispatch(getLoansStorage())
       const newVaultData = await fetchFromIndexer(NEW_VAULT_QUERY, NEW_VAULT_QUERY_NAME, NEW_VAULT_QUERY_VARIABLE)
       return newVaultData.vault.at(-1)?.lending_controller_vaults[0].vault_id
     } catch (error) {
@@ -72,10 +74,10 @@ export const borrowVaultAssetAction =
       // confirm query completion
       await transaction?.confirmation()
 
-      await dispatch(showToaster(SUCCESS, 'Asset borrowed.', 'All good :)'))
       // refetch data we need
       await dispatch(updateUserData())
       await dispatch(getLoansStorage())
+      await dispatch(showToaster(SUCCESS, 'Asset borrowed.', 'All good :)'))
       await dispatch(toggleActionLoader(false))
     } catch (error) {
       console.error('borrowVaultAssetAction error:', error)
@@ -114,10 +116,10 @@ export const repayPartOfVaultAction =
       // confirm query completion
       await transaction?.confirmation()
 
-      await dispatch(showToaster(SUCCESS, 'Asset repayed.', 'All good :)'))
       // refetch data we need
       await dispatch(updateUserData())
       await dispatch(getLoansStorage())
+      await dispatch(showToaster(SUCCESS, 'Asset repayed.', 'All good :)'))
       await dispatch(toggleActionLoader(false))
     } catch (error) {
       console.error('borrowVaultAssetAction error:', error)
@@ -167,9 +169,10 @@ export const repayFullAndCloseVaultAction =
       // confirm query completion
       await batch?.confirmation()
 
-      await dispatch(showToaster(SUCCESS, 'Asset repayed.', 'All good :)'))
       // refetch data we need
+      await dispatch(updateUserData())
       await dispatch(getLoansStorage())
+      await dispatch(showToaster(SUCCESS, 'Asset repayed.', 'All good :)'))
       await dispatch(toggleActionLoader(false))
     } catch (error) {
       console.error('borrowVaultAssetAction error:', error)

@@ -23,9 +23,7 @@ export const getLoansStorage = () => async (dispatch: AppDispatch, getState: Get
       accountPkh,
       user: { mTokens: userMTokens },
     },
-    oracles: {
-      oraclesStorage: { feeds },
-    },
+    dataFeeds: { feedsLedger },
   } = getState()
   try {
     const storage = await fetchFromIndexer(LOANS_QUERY, LOANS_QUERY_NAME, LOANS_QUERY_VARIABLE)
@@ -38,7 +36,7 @@ export const getLoansStorage = () => async (dispatch: AppDispatch, getState: Get
       mTokens,
       userMTokens,
       userAddres: accountPkh,
-      feeds,
+      feeds: feedsLedger,
     })
 
     await dispatch({
@@ -71,9 +69,7 @@ export const getAvaliableCollaterals = () => async (dispatch: AppDispatch, getSt
   const {
     tokens: { dipDupTokens },
     wallet: { accountPkh },
-    oracles: {
-      oraclesStorage: { feeds },
-    },
+    dataFeeds: { feedsLedger },
   } = getState()
   try {
     const storage = await fetchFromIndexer(
@@ -85,7 +81,7 @@ export const getAvaliableCollaterals = () => async (dispatch: AppDispatch, getSt
     const avaliableCollaterals = await getCollateralTokens(
       storage?.lending_controller?.[0]?.collateral_tokens,
       dipDupTokens,
-      feeds,
+      feedsLedger,
       accountPkh,
     )
 
