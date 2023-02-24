@@ -25,13 +25,12 @@ import {
   StakeUnstakeInputColumn,
   StakeUnstakeInputGrid,
   StakeUnstakeInputLabels,
-  StakeUnstakeMax,
-  StakeUnstakeMin,
   StakeUnstakeRate,
   StakeUnstakeStyled,
   StakeUnstakeCards,
   StakeUnstakeRightPart,
   StakeDelegatedUser,
+  StakeUnstakeAmount,
 } from './StakeUnstake.style'
 
 // types
@@ -159,11 +158,25 @@ export const StakeUnstakeView = ({
 
   const handleStakeAll = () => {
     if (!myMvkTokenBalance) return
-    stakeCallback(myMvkTokenBalance)
+
+    setInputData({
+      ...inputData,
+      amount: String(mathRoundTwoDigit(myMvkTokenBalance)),
+      validation: INPUT_STATUS_SUCCESS,
+    })
+
+    stakeCallback((myMvkTokenBalance))
   }
 
   const handleUnstakeAll = () => {
     if (!mySMvkTokenBalance) return
+
+    setInputData({
+      ...inputData,
+      amount: String(mathRoundTwoDigit(mySMvkTokenBalance)),
+      validation: INPUT_STATUS_SUCCESS,
+    })
+
     unstakeCallback(mySMvkTokenBalance)
   }
 
@@ -269,14 +282,15 @@ export const StakeUnstakeView = ({
           <img src="/images/coin-gold.svg" alt="coin" />
           <StakeUnstakeInputColumn>
             <StakeUnstakeInputLabels>
-              <StakeUnstakeMin>Min 1 MVK</StakeUnstakeMin>
-              {accountPkh && (
-                <>
-                  <StakeUnstakeMax onClick={() => onUseMaxClick('STAKE')}>Max Stake</StakeUnstakeMax>
-                  <StakeUnstakeMax onClick={() => onUseMaxClick('UNSTAKE')}>Max Unstake</StakeUnstakeMax>
-                </>
-              )}
+              <div>Min 1 MVK</div>
+
+              <StakeUnstakeAmount>
+                <span>Staked Amount:</span>
+                &nbsp;
+                <CommaNumber value={mySMvkTokenBalance} endingText={'MVK'} />
+              </StakeUnstakeAmount>
             </StakeUnstakeInputLabels>
+
             <Input
               type={'number'}
               placeholder={inputData.amount}
@@ -288,14 +302,23 @@ export const StakeUnstakeView = ({
               inputStatus={inputData.validation}
               errorMessage={inputData.errorMessage}
             />
-            <StakeUnstakeRate>
-              <CommaNumber value={Number(exchangeValue ? inputData.amount : 1)} endingText={'MVK'} />
-              <span>&nbsp;= $</span>
-              <CommaNumber value={Number(exchangeValue || MVK_exchangeRate)} endingText={''} />
-            </StakeUnstakeRate>
+
+            <StakeUnstakeInputLabels>
+              <StakeUnstakeRate>
+                <CommaNumber value={Number(exchangeValue ? inputData.amount : 1)} endingText={'MVK'} />
+                <span>&nbsp;= $</span>
+                <CommaNumber value={Number(exchangeValue || MVK_exchangeRate)} />
+              </StakeUnstakeRate>
+
+              <StakeUnstakeAmount>
+                <span>Wallet Balance:</span>
+                &nbsp;
+                <CommaNumber value={myMvkTokenBalance} endingText={'MVK'} />
+              </StakeUnstakeAmount>
+            </StakeUnstakeInputLabels>
           </StakeUnstakeInputColumn>
         </StakeUnstakeInputGrid>
-        <StakeUnstakeButtonGrid className={`${userHasRewards ? 'compound' : ''}`}>
+        <StakeUnstakeButtonGrid>
           <NewButton kind={ACTION_PRIMARY} onClick={handleStake}>
             <Icon id="in" /> Stake
           </NewButton>
@@ -303,21 +326,7 @@ export const StakeUnstakeView = ({
           <NewButton kind={ACTION_SECONDARY} onClick={handleUnStake}>
             <Icon id="out" /> Unstake
           </NewButton>
-
-          {userHasRewards ? (
-            <NewButton kind={ACTION_PRIMARY} onClick={handleCompound}>
-              <Icon id="compound" /> Compound
-            </NewButton>
-          ) : null}
         </StakeUnstakeButtonGrid>
-        {userHasRewards ? (
-          <p className="compound-info">
-            Compounds the satellite rewards along with the exit fee{' '}
-            <a className="info-link" href="https://mavryk.finance/litepaper#abstract" target="_blank" rel="noreferrer">
-              <Icon id="question" />
-            </a>
-          </p>
-        ) : null}
       </StakeUnstakeActionCard>
     </StakeUnstakeStyled>
   )
