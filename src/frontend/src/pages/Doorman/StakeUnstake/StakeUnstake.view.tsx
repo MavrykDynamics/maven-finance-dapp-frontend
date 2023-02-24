@@ -201,7 +201,7 @@ export const StakeUnstakeView = ({
               <h3>My MVK Balance</h3>
               <div className="balance-btn-group">
                 <CommaNumber value={myMvkTokenBalance} />
-                <button onClick={handleStakeAll}>Stake All</button>
+                {Boolean(myMvkTokenBalance) && <button onClick={handleStakeAll}>Stake All</button>}
               </div>
             </div>
           </StakeUnstakeBalance>
@@ -214,7 +214,7 @@ export const StakeUnstakeView = ({
               <h3>Total MVK Staked</h3>
               <div className="balance-btn-group">
                 <CommaNumber value={mySMvkTokenBalance} />
-                <button onClick={handleUnstakeAll}>Unstake All</button>
+                {Boolean(mySMvkTokenBalance) && <button onClick={handleUnstakeAll}>Unstake All</button>}
               </div>
             </div>
           </StakeUnstakeBalance>
