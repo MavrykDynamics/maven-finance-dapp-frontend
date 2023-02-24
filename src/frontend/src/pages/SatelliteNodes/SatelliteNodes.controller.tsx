@@ -1,10 +1,9 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useLocation } from 'react-router'
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
 
 // helpers, actions
 import { State } from 'reducers'
-import { delegate, undelegate } from 'pages/Satellites/Satellites.actions'
 
 // consts
 import {
@@ -13,6 +12,7 @@ import {
   SATELITES_NODES_LIST_NAME,
   getPageNumber,
 } from 'app/Pagination/pagination.consts'
+import { handleFilterSatellites, handleSortSatellites } from './SatelliteNodes.helpers'
 
 import { DropDown, DropdownItemType } from '../../app/App.components/DropDown/DropDown.controller'
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
@@ -23,6 +23,8 @@ import { Page, PageContent } from 'styles'
 import { EmptyContainer } from 'app/App.style'
 import { DropdownContainer } from 'app/App.components/DropDown/DropDown.style'
 import { SatelliteSearchFilter } from 'pages/Satellites/Satellites.style'
+import { SatelliteNodesStyled } from './SatelliteNodes.style'
+import SatellitesSideBar from 'pages/Satellites/SatellitesSideBar/SatellitesSideBar.controller'
 
 const itemsForDropDown = [
   { text: 'Lowest Fee', value: 'satelliteFee' },
@@ -32,10 +34,9 @@ const itemsForDropDown = [
 ]
 
 const SatelliteNodes = () => {
-  const { allSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
-  const { satelliteMvkIsDelegatedTo, mySMvkTokenBalance } = useSelector((state: State) => state.wallet.user)
-  const dispatch = useDispatch()
   const { pathname, search } = useLocation()
+
+  const { allSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
 
   const [filteredSatelliteList, setFilteredSatelliteList] = useState(allSatellitesIds)
   const [ddItems, _] = useState(itemsForDropDown.map(({ text }) => text))
@@ -51,83 +52,27 @@ const SatelliteNodes = () => {
   }, [currentPage, filteredSatelliteList])
 
   useEffect(() => {
-    setFilteredSatelliteList(allSatellitesIds)
-  }, [allSatellitesIds])
+    const filteredSatellitesIds = [...allSatellitesIds]
+      .filter(handleFilterSatellites(inputSearch, satelliteMapper))
+      .sort(handleSortSatellites(chosenDdItem?.text ?? '', satelliteMapper))
 
-  const handleSearch = (e: {
-    target: {
-      value: string
-    }
-  }) => {
-    const searchQuery = e.target.value
-    if (searchQuery !== '') {
-      setFilteredSatelliteList(
-        allSatellitesIds.filter((satelliteAddress) => {
-          const satellite = satelliteMapper[satelliteAddress]
-          return (
-            satellite.address.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            satellite.name.toLowerCase().includes(searchQuery.toLowerCase())
-          )
-        }),
-      )
-    } else {
-      setFilteredSatelliteList(allSatellitesIds)
-    }
-    setInputSearch(searchQuery)
-  }
+    setFilteredSatelliteList(filteredSatellitesIds)
+  }, [allSatellitesIds, chosenDdItem?.text, inputSearch, satelliteMapper])
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => setInputSearch(e.target.value)
 
   const handleSelect = (e: string) => {
     const chosenItem = itemsForDropDown.find((item) => item.text === e)
     setChosenDdItem(chosenItem)
     setDdIsOpen(!ddIsOpen)
-
-    if (!chosenItem) return
-
-    const sortedData = (filteredSatelliteList ? [...filteredSatelliteList] : []).sort((a, b) => {
-      const satelliteA = satelliteMapper[a],
-        satelliteB = satelliteMapper[b]
-      let res = 0
-      switch (chosenItem.text) {
-        case 'Lowest Fee':
-          res = satelliteA.satelliteFee - satelliteB.satelliteFee
-          break
-        case 'Highest Fee':
-          res = satelliteB.satelliteFee - satelliteA.satelliteFee
-          break
-        case 'Delegated MVK':
-          res =
-            satelliteB.totalDelegatedAmount +
-            satelliteB.sMvkBalance -
-            (satelliteA.totalDelegatedAmount + satelliteA.sMvkBalance)
-          break
-        case 'Participation':
-          res =
-            (satelliteB.satelliteMetrics.proposalParticipation + satelliteB.satelliteMetrics.votingPartisipation) / 2 -
-            (satelliteA.satelliteMetrics.proposalParticipation + satelliteA.satelliteMetrics.votingPartisipation) / 2
-          break
-        default:
-          return 0
-      }
-      return res
-    })
-
-    setFilteredSatelliteList(sortedData)
   }
-
-  const delegateCallback = useCallback((satelliteAddress: string) => {
-    dispatch(delegate(satelliteAddress))
-  }, [])
-
-  const undelegateCallback = useCallback((delegateAddress: string) => {
-    dispatch(undelegate(delegateAddress))
-  }, [])
 
   return (
     <Page>
       <PageHeader page={'satellites'} />
 
       <PageContent>
-        <div className="left-content-wrapper">
+        <SatelliteNodesStyled>
           <SatelliteSearchFilter>
             <Input
               type="text"
@@ -150,16 +95,9 @@ const SatelliteNodes = () => {
           </SatelliteSearchFilter>
 
           {paginatedItemsList ? (
-            <div className={`satellitesList`}>
+            <div className={`list`}>
               {paginatedItemsList.map((satelliteAddress) => (
-                <SatelliteListItem
-                  satellite={satelliteMapper[satelliteAddress]}
-                  key={satelliteAddress}
-                  delegateCallback={delegateCallback}
-                  undelegateCallback={undelegateCallback}
-                  userStakedBalance={mySMvkTokenBalance}
-                  satelliteUserIsDelegatedTo={satelliteMvkIsDelegatedTo}
-                />
+                <SatelliteListItem satellite={satelliteMapper[satelliteAddress]} key={satelliteAddress} />
               ))}
 
               <Pagination
@@ -170,11 +108,13 @@ const SatelliteNodes = () => {
             </div>
           ) : (
             <EmptyContainer>
-              <img src="/images/not-found.svg" alt=" No proposals to show" />
-              <figcaption> No oracles to show</figcaption>
+              <img src="/images/not-found.svg" alt=" No satellites to show" />
+              <figcaption> No satellites to show</figcaption>
             </EmptyContainer>
           )}
-        </div>
+        </SatelliteNodesStyled>
+
+        <SatellitesSideBar />
       </PageContent>
     </Page>
   )

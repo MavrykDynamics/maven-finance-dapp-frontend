@@ -1,47 +1,42 @@
 import { useMemo } from 'react'
+import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 
 // types
 import { State } from 'reducers'
 
 // view
+import SatellitesSideBar from './SatellitesSideBar/SatellitesSideBar.controller'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import { SatelliteListItem } from './listItem/SateliteCard.view'
+import Icon from 'app/App.components/Icon/Icon.view'
+import { DataFeedCard } from '../DataFeedsDetails/listItem/DataFeedCard.view'
+import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 
 // consts, helpers, actions
 import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
 import { getTotalDelegatedMVK } from './helpers/Satellites.consts'
-import { delegate, undelegate } from 'pages/Satellites/Satellites.actions'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
+import { NAV_SIMPLE } from 'app/App.components/Button/Button.constants'
 import { getFeedsStorage } from 'pages/DataFeeds/DataFeeds.actions'
 
+// view
+import { SmallInfoBlock } from 'pages/SatelliteGovernance/SatelliteGovernance.style'
+import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
+import NewButton from 'app/App.components/Button/NewButton.controller'
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import { EmptyContainer } from 'app/App.style'
 import { Page, PageContent } from 'styles'
 import { InfoBlockWrapper, SatellitesOverviewStyled } from './Satellites.style'
-// types
-
-// view
-import SatellitesSideBar from './SatellitesSideBar/SatellitesSideBar.controller'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import { SmallInfoBlock } from 'pages/SatelliteGovernance/SatelliteGovernance.style'
-import { Link } from 'react-router-dom'
-import { SatelliteListItem } from './listItem/SateliteCard.view'
-import Icon from 'app/App.components/Icon/Icon.view'
-import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
-import { DataFeedCard } from '../DataFeedsDetails/listItem/DataFeedCard.view'
-import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
-import NewButton from 'app/App.components/Button/NewButton.controller'
-import { NAV_SIMPLE } from 'app/App.components/Button/Button.constants'
-import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
-import { ClockLoader } from 'app/App.components/Loader/Loader.view'
-import { EmptyContainer } from 'app/App.style'
 
 const Satellites = () => {
+  const dispatch = useDispatch()
+
   const { allSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
   const { feedsLedger, isLoaded: isFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
   const { isLoaded: isDoormanLoaded } = useSelector((state: State) => state.doorman)
-  const {
-    user: { mySMvkTokenBalance, satelliteMvkIsDelegatedTo },
-  } = useSelector((state: State) => state.wallet)
-  const dispatch = useDispatch()
 
   const { isLoading } = useDataLoader(async () => {
     try {
@@ -53,27 +48,16 @@ const Satellites = () => {
     } catch (e) {}
   }, [])
 
-  const totalDelegatedMVK = useMemo(
-    () => getTotalDelegatedMVK(allSatellitesIds, satelliteMapper),
-    [allSatellitesIds, satelliteMapper],
-  )
-
   const tabsInfo = useMemo(
     () => ({
-      totalDelegetedMVK: <CommaNumber value={totalDelegatedMVK} endingText={'MVK'} />,
+      totalDelegetedMVK: (
+        <CommaNumber value={getTotalDelegatedMVK(allSatellitesIds, satelliteMapper)} endingText={'MVK'} />
+      ),
       totalSatelliteOracles: allSatellitesIds.length,
       numberOfDataFeeds: feedsLedger.length > 50 ? feedsLedger.length + '+' : feedsLedger.length,
     }),
-    [allSatellitesIds, feedsLedger, totalDelegatedMVK],
+    [allSatellitesIds, feedsLedger, satelliteMapper],
   )
-
-  const delegateCallback = (satelliteAddress: string) => {
-    dispatch(delegate(satelliteAddress))
-  }
-
-  const undelegateCallback = (delegateAddress: string) => {
-    dispatch(undelegate(delegateAddress))
-  }
 
   return (
     <Page>
@@ -124,14 +108,7 @@ const Satellites = () => {
 
                   <div className={`satellitesList`}>
                     {allSatellitesIds.slice(0, 3).map((satelliteAddress) => (
-                      <SatelliteListItem
-                        satellite={satelliteMapper[satelliteAddress]}
-                        key={satelliteAddress}
-                        delegateCallback={delegateCallback}
-                        undelegateCallback={undelegateCallback}
-                        userStakedBalance={mySMvkTokenBalance}
-                        satelliteUserIsDelegatedTo={satelliteMvkIsDelegatedTo}
-                      />
+                      <SatelliteListItem satellite={satelliteMapper[satelliteAddress]} key={satelliteAddress} />
                     ))}
                   </div>
                 </>

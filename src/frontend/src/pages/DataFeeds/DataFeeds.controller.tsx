@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
@@ -17,7 +17,6 @@ import { INFO } from 'app/App.components/Toaster/Toaster.constants'
 import { FEEDS_ALL_LIST_NAME, PAGINATION_SIDE_RIGHT } from 'app/Pagination/pagination.consts'
 
 // types, actions
-import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { getFeedsStorage } from './DataFeeds.actions'
@@ -45,33 +44,27 @@ export const DataFeeds = () => {
 
   const [ddIsOpen, setDdIsOpen] = useState(false)
   const [searchInputValue, setSearchInput] = useState('')
-  const [chosenDdItem, setChosenDdItem] = useState<string>('All')
+  const [chosenDdItem, setChosenDdItem] = useState('All')
   const [filteredFeeds, setFilteredFeeds] = useState(feedsLedger)
+
+  useEffect(() => {
+    const filteredFeeds = [...feedsLedger].filter(
+      ({ category, name, address }) =>
+        category?.toLowerCase() === chosenDdItem.toLowerCase() ||
+        name.toLowerCase().includes(searchInputValue.toLowerCase()) ||
+        address.toLowerCase().includes(searchInputValue.toLowerCase()),
+    )
+
+    setFilteredFeeds(filteredFeeds)
+  }, [feedsLedger, chosenDdItem, searchInputValue])
 
   const handleSelect = (selectedOption: string) => {
     setDdIsOpen(!ddIsOpen)
     setChosenDdItem(selectedOption)
-
-    if (selectedOption !== '' && selectedOption !== chosenDdItem) {
-      setFilteredFeeds(
-        selectedOption === 'All'
-          ? feedsLedger
-          : feedsLedger.filter(({ category }) => category?.toLowerCase() === selectedOption.toLowerCase()),
-      )
-    }
   }
 
   const handleSearch = ({ target: { value: searchValue } }: React.ChangeEvent<HTMLInputElement>) => {
     setSearchInput(searchValue)
-    setFilteredFeeds(
-      searchValue === ''
-        ? feedsLedger
-        : feedsLedger.filter(
-            (item: Feed) =>
-              item.name.toLowerCase().includes(searchValue.toLowerCase()) ||
-              item.address.toLowerCase().includes(searchValue.toLowerCase()),
-          ),
-    )
   }
 
   return (

@@ -31,13 +31,12 @@ export const getSatelliteAccuracy = (satelliteRecord: SatelliteRecordGraphQl) =>
 
 const getOraclePredictionSuccessRatio = (latestObservation?: Aggregator_Oracle_Observation): number => {
   if (!latestObservation) return 0
-
   const {
     epoch,
     round,
     oracle: { init_epoch, init_round },
   } = latestObservation
-  return epoch / round - init_epoch / init_round
+  return epoch / Math.max(round, 1) - init_epoch / Math.max(init_round, 1)
 }
 
 export const getNewSatelliteMetrics = ({

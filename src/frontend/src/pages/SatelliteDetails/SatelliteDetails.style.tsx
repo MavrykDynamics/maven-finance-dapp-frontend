@@ -1,10 +1,6 @@
 import styled from 'styled-components/macro'
-import { cyanColor, downColor, upColor } from 'styles'
+import { downColor, upColor } from 'styles'
 import { MavrykTheme } from 'styles/interfaces'
-
-export const SatelliteDetailsStyled = styled.div<{ theme: MavrykTheme }>`
-  background-color: ${({ theme }) => theme.containerColor};
-`
 
 export const SatelliteCardBottomRow = styled.div<{ theme: MavrykTheme }>`
   display: flex;
@@ -21,7 +17,7 @@ export const SatelliteCardBottomRow = styled.div<{ theme: MavrykTheme }>`
     font-weight: 600;
     font-size: 14px;
     line-height: 18px;
-    color: ${cyanColor};
+    color: ${({ theme }) => theme.valueColor};
   }
 `
 
@@ -57,10 +53,6 @@ export const SatelliteMetricsBlock = styled.div<{ theme: MavrykTheme }>`
 export const SatelliteVotingInfoWrapper = styled.div`
   width: 100%;
 
-  figure {
-    padding: 0;
-  }
-
   .voting-info-list-wrapper {
     max-height: 84px;
     overflow-y: auto;
@@ -80,7 +72,7 @@ export const SatelliteDescrBlock = styled.div<{ theme: MavrykTheme }>`
   }
 
   .satellite-website {
-    color: ${cyanColor};
+    color: ${({ theme }) => theme.valueColor};
     font-weight: 700;
     font-size: 14px;
     line-height: 14px;
