@@ -2,127 +2,6 @@ import styled, { css } from 'styled-components/macro'
 import { Card, upColor, downColor, warningColor } from 'styles'
 import { MavrykTheme } from 'styles/interfaces'
 
-export const SatelliteItemStyle = styled(Card)<{ isDataFeeds?: boolean; oracle?: boolean; theme: MavrykTheme }>`
-  margin-top: 0;
-  margin-bottom: 10px;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  padding: 16px 30px;
-  transition: 0.5s all;
-
-  &.userFeed {
-    grid-template-columns: 0.75fr 1fr 0.75fr 1.5fr 0.75fr;
-    padding: 25px 30px;
-
-    var {
-      text-transform: capitalize;
-    }
-  }
-
-  &.feed {
-    grid-template-columns: ${({ isDataFeeds }) =>
-      isDataFeeds ? '1.1fr 0.8fr 1.1fr 1fr 1.25fr' : '0.95fr 0.65fr 0.95fr 1.2fr'};
-    column-gap: ${({ isDataFeeds }) => (isDataFeeds ? '50px' : '30px')};
-  }
-
-  .item {
-    width: 100%;
-    &.with-img {
-      padding-left: 45px;
-      position: relative;
-
-      img,
-      svg {
-        display: block;
-        position: absolute;
-        max-height: 32px;
-        max-width: 32px;
-        left: 0;
-        top: 50%;
-        transform: translateY(-50%);
-        font-size: 12px;
-        fill: ${({ theme }) => theme.textColor};
-      }
-    }
-    h5 {
-      color: ${({ theme }) => theme.textColor};
-      font-weight: 600;
-      font-size: 14px;
-      line-height: 21px;
-      margin-top: 0;
-      margin-bottom: 6px;
-    }
-
-    var {
-      font-style: normal;
-      color: ${({ theme }) => theme.dataColor};
-      font-weight: 600;
-      font-size: 16px;
-      line-height: 14px;
-      display: flex;
-      column-gap: 10px;
-
-      div {
-        line-height: 100%;
-      }
-
-      p {
-        margin: 0;
-      }
-    }
-
-    &.feed-last {
-      width: 100%;
-      margin-left: auto;
-    }
-
-    &.center-v {
-      display: flex;
-      align-items: center;
-    }
-
-    .secondary {
-      font-weight: 600;
-      color: ${({ theme }) => theme.valueColor};
-      stroke: ${({ theme }) => theme.valueColor};
-    }
-  }
-
-  .svg-wrapper {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    height: 100%;
-    svg {
-      width: 16px;
-      height: 16px;
-      fill: ${({ theme }) => theme.valueColor};
-      stroke: ${({ theme }) => theme.valueColor};
-      transition: 0.5s all;
-    }
-  }
-
-  &:hover {
-    border-color: ${({ theme }) => theme.valueColor};
-    box-shadow: 0px 4px 4px ${({ theme }) => theme.boxShadowColor};
-    cursor: pointer;
-
-    .svg-wrapper {
-      svg {
-        fill: ${({ theme }) => theme.valueColor};
-        stroke: ${({ theme }) => theme.valueColor};
-      }
-    }
-  }
-
-  ${({ oracle }) =>
-    oracle
-      ? css`
-          grid-template-columns: repeat(5, 1fr) 75px;
-        `
-      : ''}
-`
-
 export const SatelliteOracleStatusComponent = styled.div<{ statusType: 'responded' | 'noResponse' | 'awaiting' }>`
   padding: 8px 12px;
   text-transform: uppercase;
@@ -140,15 +19,8 @@ export const SatelliteOracleStatusComponent = styled.div<{ statusType: 'responde
 `
 
 export const SatelliteCard = styled(Card)<{ theme: MavrykTheme }>`
-  background-color: ${({ theme }) => theme.containerColor};
-  border-radius: 10px;
   padding: 0;
-
-  margin: 30px 0;
-
-  &.iterable {
-    margin-top: 20px;
-  }
+  margin: 0;
 `
 
 export const SatelliteCardTopRow = styled.div<{ isExtendedListItem?: boolean }>`

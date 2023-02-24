@@ -11,10 +11,7 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { Trim } from 'app/App.components/Trim/Trim.view'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
-
-import { SatelliteItemStyle } from '../../Satellites/listItem/SatelliteCard.style'
-
-const defaultCategoryText = 'No Category'
+import { DataFeedsCardStyled, FeedsListItem } from 'pages/DataFeeds/DataFeeds.styles'
 
 export const DataFeedCard = ({ feed }: { feed: Feed }) => {
   const { pathname } = useLocation()
@@ -25,39 +22,40 @@ export const DataFeedCard = ({ feed }: { feed: Feed }) => {
 
   return (
     <Link to={`/satellites/feed-details/${feed.address}`}>
-      <SatelliteItemStyle className="feed" isDataFeeds={showAllColumns}>
-        <div className="item with-img">
+      <DataFeedsCardStyled isExtendedCard={showAllColumns}>
+        <FeedsListItem className="with-img">
           <ImageWithPlug imageLink={imageLink} alt={`${feed.name} logo`} />
           <h5>Feed</h5>
           <var>
             <Trim title={feed.name} />
           </var>
-        </div>
-        <div className="item">
+        </FeedsListItem>
+
+        <FeedsListItem>
           <h5>Answer</h5>
           <var>
             <CommaNumber beginningText="$" value={feed.amount} />
           </var>
-        </div>
-        <div className="item">
+        </FeedsListItem>
+        <FeedsListItem>
           <h5>Contract address</h5>
           <var>
             <TzAddress tzAddress={feed.address} hasIcon={true} type={BLUE} />
           </var>
-        </div>
+        </FeedsListItem>
         {showAllColumns && (
-          <div className="item">
+          <FeedsListItem>
             <h5>Category</h5>
-            <var>{feed.category || defaultCategoryText}</var>
-          </div>
+            <var>{feed.category ?? 'No Category'}</var>
+          </FeedsListItem>
         )}
-        <div className="item feed-last">
+        <FeedsListItem className="last-item">
           <h5>Date</h5>
           <var>
             {parseDate({ time: feed.last_completed_data_last_updated_at, timeFormat: 'MMM Do, YYYY, HH:mm:ss' })}
           </var>
-        </div>
-      </SatelliteItemStyle>
+        </FeedsListItem>
+      </DataFeedsCardStyled>
     </Link>
   )
 }

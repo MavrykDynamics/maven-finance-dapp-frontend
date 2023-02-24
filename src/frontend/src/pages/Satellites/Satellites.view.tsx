@@ -12,6 +12,10 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { SmallInfoBlock } from 'pages/SatelliteGovernance/SatelliteGovernance.style'
 import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
 import { State } from 'reducers'
+import { Link } from 'react-router-dom'
+import Icon from 'app/App.components/Icon/Icon.view'
+import { DataFeedCard } from 'pages/DataFeedsDetails/listItem/DataFeedCard.view'
+import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 
 type OraclesViewProps = {
   tabsInfo: {
@@ -61,7 +65,7 @@ const SatellitesView = ({ tabsInfo, oracleSatellitesData, dataFeedsData, delegat
   return (
     <Page>
       <PageHeader page={'satellites'} />
-      <PageContent>
+      {/* <PageContent>
         <div className="left-content-wrapper">
           <InfoBlockWrapper>
             <SmallInfoBlock>
@@ -82,50 +86,58 @@ const SatellitesView = ({ tabsInfo, oracleSatellitesData, dataFeedsData, delegat
               <div className="info-content">{tabsInfo.numberOfDataFeeds}</div>
             </SmallInfoBlock>
           </InfoBlockWrapper>
-          {/* {isShowSatellites ? (
-            <div className="oracle-list-wrapper">
-              <Link to="/satellite-nodes">
-                <div className="see-all-link">
-                  See all Satellites
-                  <Icon id="arrow-left-stroke" />
-                </div>
-              </Link>
-              <SatelliteList
-                listTitle={'Top Satellites'}
-                items={satellites}
-                listType={'satellites'}
-                name={SATELITES_TOP_LIST_NAME}
-                additionaldata={oracleSatellitesData}
-                pagination={false}
-              />
-            </div>
+          {satellites.length ? (
+            <>
+              <div className="top-list">
+                <GovRightContainerTitleArea>
+                  <h2>Top Satellites</h2>
+                </GovRightContainerTitleArea>
+
+                <Link to="/satellite-nodes">
+                  <div className="see-all-link">
+                    See all Satellites
+                    <Icon id="arrow-left-stroke" />
+                  </div>
+                </Link>
+              </div>
+
+              <div className="list-wrapper">
+                {satellites.map((satellite) => (
+                  <SatelliteListItem feed={feed} key={satellite.} />
+                ))}
+              </div>
+            </>
           ) : null}
 
-          {isShowFeeds ? (
-            <div className="oracle-list-wrapper">
-              <Link to="/data-feeds">
-                <div className="see-all-link">
-                  See all Data Feeds
-                  <Icon id="arrow-left-stroke" />
-                </div>
-              </Link>
-              <SatelliteListStyled
-                listTitle={'Popular Feeds'}
-                items={feeds}
-                listType={'feeds'}
-                name={FEEDS_TOP_LIST_NAME}
-                onClickHandler={delegateCallback}
-                pagination={false}
-              />
-            </div>
+          {feeds.length ? (
+            <>
+              <div className="top-list">
+                <GovRightContainerTitleArea>
+                  <h2>Popular Feeds</h2>
+                </GovRightContainerTitleArea>
+
+                <Link to="/data-feeds">
+                  <div className="see-all-link">
+                    See all Data Feeds
+                    <Icon id="arrow-left-stroke" />
+                  </div>
+                </Link>
+              </div>
+
+              <div className="list-wrapper">
+                {feeds.map((feed) => (
+                  <DataFeedCard feed={feed} key={feed.address} />
+                ))}
+              </div>
+            </>
           ) : null}
 
           {(!isShowSatellites || !isShowFeeds) && (
             <EmptyContainer showSatellite={isShowSatellites} showFeeds={isShowFeeds} />
-          )} */}
+          )}
         </div>
         <SatellitesSideBar />
-      </PageContent>
+      </PageContent> */}
     </Page>
   )
 }

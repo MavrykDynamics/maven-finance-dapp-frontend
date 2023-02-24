@@ -15,7 +15,7 @@ import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { getFeedsStorage } from 'pages/DataFeeds/DataFeeds.actions'
 
 import { Page, PageContent } from 'styles'
-import { InfoBlockWrapper } from './Satellites.style'
+import { InfoBlockWrapper, SatellitesOverviewStyled } from './Satellites.style'
 // types
 
 // view
@@ -28,6 +28,11 @@ import Icon from 'app/App.components/Icon/Icon.view'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { DataFeedCard } from '../DataFeedsDetails/listItem/DataFeedCard.view'
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
+import NewButton from 'app/App.components/Button/NewButton.controller'
+import { NAV_SIMPLE } from 'app/App.components/Button/Button.constants'
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
+import { EmptyContainer } from 'app/App.style'
 
 const Satellites = () => {
   const { allSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
@@ -48,7 +53,10 @@ const Satellites = () => {
     } catch (e) {}
   }, [])
 
-  const totalDelegatedMVK = getTotalDelegatedMVK(allSatellitesIds, satelliteMapper)
+  const totalDelegatedMVK = useMemo(
+    () => getTotalDelegatedMVK(allSatellitesIds, satelliteMapper),
+    [allSatellitesIds, satelliteMapper],
+  )
 
   const tabsInfo = useMemo(
     () => ({
@@ -71,7 +79,7 @@ const Satellites = () => {
     <Page>
       <PageHeader page={'satellites'} />
       <PageContent>
-        <div className="left-content-wrapper">
+        <SatellitesOverviewStyled>
           <InfoBlockWrapper>
             <SmallInfoBlock>
               <h3>Total Delegated MVK</h3>
@@ -91,55 +99,76 @@ const Satellites = () => {
               <div className="info-content">{tabsInfo.numberOfDataFeeds}</div>
             </SmallInfoBlock>
           </InfoBlockWrapper>
-          {allSatellitesIds.length ? (
-            <div className="oracle-list-wrapper">
-              <Link to="/satellite-nodes">
-                <div className="see-all-link">
-                  See all Satellites
-                  <Icon id="arrow-left-stroke" />
-                </div>
-              </Link>
 
-              <GovRightContainerTitleArea>
-                <h1>Top Satellites</h1>
-              </GovRightContainerTitleArea>
+          {isLoading ? (
+            <DataLoaderWrapper>
+              <ClockLoader width={150} height={150} />
+              <div className="text">Loading satellites and data feeds data</div>
+            </DataLoaderWrapper>
+          ) : (
+            <>
+              {allSatellitesIds.length ? (
+                <>
+                  <div className="top-list">
+                    <GovRightContainerTitleArea>
+                      <h1>Top Satellites</h1>
+                    </GovRightContainerTitleArea>
 
-              <div className={`satellitesList`}>
-                {allSatellitesIds.slice(0, 3).map((satelliteAddress) => (
-                  <SatelliteListItem
-                    satellite={satelliteMapper[satelliteAddress]}
-                    key={satelliteAddress}
-                    delegateCallback={delegateCallback}
-                    undelegateCallback={undelegateCallback}
-                    userStakedBalance={mySMvkTokenBalance}
-                    satelliteUserIsDelegatedTo={satelliteMvkIsDelegatedTo}
-                  />
-                ))}
-              </div>
-            </div>
-          ) : null}
+                    <Link to="/satellite-nodes">
+                      <NewButton kind={NAV_SIMPLE} className="see-all">
+                        See all Satellites
+                        <Icon id="arrow-left-stroke" />
+                      </NewButton>
+                    </Link>
+                  </div>
 
-          {feedsLedger.length ? (
-            <div className="oracle-list-wrapper">
-              <Link to="/data-feeds">
-                <div className="see-all-link">
-                  See all Data Feeds
-                  <Icon id="arrow-left-stroke" />
-                </div>
-              </Link>
+                  <div className={`satellitesList`}>
+                    {allSatellitesIds.slice(0, 3).map((satelliteAddress) => (
+                      <SatelliteListItem
+                        satellite={satelliteMapper[satelliteAddress]}
+                        key={satelliteAddress}
+                        delegateCallback={delegateCallback}
+                        undelegateCallback={undelegateCallback}
+                        userStakedBalance={mySMvkTokenBalance}
+                        satelliteUserIsDelegatedTo={satelliteMvkIsDelegatedTo}
+                      />
+                    ))}
+                  </div>
+                </>
+              ) : null}
 
-              <GovRightContainerTitleArea>
-                <h1>Popular Feeds</h1>
-              </GovRightContainerTitleArea>
+              {feedsLedger.length ? (
+                <>
+                  <div className="top-list">
+                    <GovRightContainerTitleArea>
+                      <h1>Popular Feeds</h1>
+                    </GovRightContainerTitleArea>
 
-              <div className={`satellitesList`}>
-                {feedsLedger.slice(0, 3).map((feed) => (
-                  <DataFeedCard feed={feed} key={feed.address} />
-                ))}
-              </div>
-            </div>
-          ) : null}
-        </div>
+                    <Link to="/data-feeds">
+                      <NewButton kind={NAV_SIMPLE} className="see-all">
+                        See all Data Feeds
+                        <Icon id="arrow-left-stroke" />
+                      </NewButton>
+                    </Link>
+                  </div>
+
+                  <div className={`satellitesList`}>
+                    {feedsLedger.slice(0, 3).map((feed) => (
+                      <DataFeedCard feed={feed} key={feed.address} />
+                    ))}
+                  </div>
+                </>
+              ) : null}
+
+              {feedsLedger.length === 0 && allSatellitesIds.length === 0 ? (
+                <EmptyContainer>
+                  <img src="/images/not-found.svg" alt={`no satellites and data feeds`} />
+                  <figcaption>No satellites and data feeds</figcaption>
+                </EmptyContainer>
+              ) : null}
+            </>
+          )}
+        </SatellitesOverviewStyled>
         <SatellitesSideBar />
       </PageContent>
     </Page>

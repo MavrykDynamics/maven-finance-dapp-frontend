@@ -1,17 +1,17 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useParams } from 'react-router-dom'
+import { Redirect, useParams } from 'react-router-dom'
 
 // types
 import { State } from 'reducers'
 
 // view
+import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
 import DataFeedDetailsView from './DataFeedsDetails.view'
 
 // actions
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
-import { getFeedsStorage, registerFeedAction } from '../DataFeeds/DataFeeds.actions'
-import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
+import { getFeedsStorage } from '../DataFeeds/DataFeeds.actions'
 
 const DataFeedDetails = () => {
   const dispatch = useDispatch()
@@ -65,14 +65,9 @@ const DataFeedDetails = () => {
     [selectedFeed?.address, oraclesIds, satelliteMapper],
   )
 
-  return (
-    <DataFeedDetailsView
-      isLoading={isLoading}
-      feed={selectedFeed}
-      feedsSatellites={feedsSatellites}
-      registerFeedHandler={() => dispatch(registerFeedAction())}
-    />
-  )
+  if (!isLoading && !selectedFeed) return <Redirect to={'/data-feeds'} />
+
+  return <DataFeedDetailsView isLoading={isLoading} feed={selectedFeed} feedsSatellites={feedsSatellites} />
 }
 
 export default DataFeedDetails

@@ -17,7 +17,6 @@ import Icon from 'app/App.components/Icon/Icon.view'
 // styles
 import { Page } from 'styles'
 import { EmptyContainer } from 'app/App.style'
-import { DataFeedsTitle, DataFeedSubTitleText } from 'pages/DataFeedsDetails/DataFeedsDetails.style'
 import { UserDetailsStyled } from './UsersDetails.style'
 import { DropDown } from 'app/App.components/DropDown/DropDown.controller'
 import { DropdownContainer } from 'app/App.components/DropDown/DropDown.style'
@@ -57,17 +56,11 @@ const UserDetailsView = ({
       <UserDetailsStyled>
         <div className="top-wrapper">
           <div className="img-wrapper">logo</div>
-          <DataFeedsTitle fontSize={25} fontWeidth={600}>
-            {user.name}
-          </DataFeedsTitle>
+          <h3>{user.name}</h3>
         </div>
 
         <div className="left-side-wrapper">
-          {user?.descr && (
-            <DataFeedSubTitleText fontSize={14} fontWeidth={400}>
-              {user.descr}
-            </DataFeedSubTitleText>
-          )}
+          {user?.descr && <h4>{user.descr}</h4>}
           <div className="bottom">
             <div className="item">
               <h5>Official website</h5>

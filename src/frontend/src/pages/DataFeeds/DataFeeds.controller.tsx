@@ -7,35 +7,27 @@ import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.contr
 import { Button } from 'app/App.components/Button/Button.controller'
 import { Input } from 'app/App.components/Input/Input.controller'
 import { DropDown } from 'app/App.components/DropDown/DropDown.controller'
+import { DataFeedCard } from 'pages/DataFeedsDetails/listItem/DataFeedCard.view'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
+import Pagination from 'app/Pagination/Pagination.view'
 
-// const
+// const, actions
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { INFO } from 'app/App.components/Toaster/Toaster.constants'
 import { FEEDS_ALL_LIST_NAME, PAGINATION_SIDE_RIGHT } from 'app/Pagination/pagination.consts'
 
-// types
+// types, actions
+import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
+import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
+import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
+import { getFeedsStorage } from './DataFeeds.actions'
 
 // styles
 import { Page } from 'styles'
 import { DataFeedsSearchFilter, DataFeedsStyled } from './DataFeeds.styles'
 import { EmptyContainer } from 'app/App.style'
 import { DropdownContainer } from 'app/App.components/DropDown/DropDown.style'
-import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
-import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
-import { INFO } from 'app/App.components/Toaster/Toaster.constants'
-import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
-import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
-import { getFeedsStorage } from './DataFeeds.actions'
-import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
-import { DataFeedCard } from 'pages/DataFeedsDetails/listItem/DataFeedCard.view'
-import Pagination from 'app/Pagination/Pagination.view'
-
-const emptyContainer = (
-  <EmptyContainer>
-    <img src="/images/not-found.svg" alt=" No data feeds to show" />
-    <figcaption> No data feeds to show</figcaption>
-  </EmptyContainer>
-)
 
 export const DataFeeds = () => {
   const dispatch = useDispatch()
@@ -124,22 +116,24 @@ export const DataFeeds = () => {
 
           <DataFeedsStyled>
             {filteredFeeds.length ? (
-              <div className={`oracle`}>
-                <GovRightContainerTitleArea>
-                  <h1>Oracles data</h1>
-                </GovRightContainerTitleArea>
-                {filteredFeeds.map((item) => (
-                  <DataFeedCard feed={item} key={item.address} />
-                ))}
+              <>
+                <div className="list-wrapper">
+                  {filteredFeeds.map((item) => (
+                    <DataFeedCard feed={item} key={item.address} />
+                  ))}
+                </div>
 
                 <Pagination
                   itemsCount={filteredFeeds.length}
                   side={PAGINATION_SIDE_RIGHT}
                   listName={FEEDS_ALL_LIST_NAME}
                 />
-              </div>
+              </>
             ) : (
-              emptyContainer
+              <EmptyContainer>
+                <img src="/images/not-found.svg" alt=" No data feeds to show" />
+                <figcaption> No data feeds to show</figcaption>
+              </EmptyContainer>
             )}
           </DataFeedsStyled>
         </>
