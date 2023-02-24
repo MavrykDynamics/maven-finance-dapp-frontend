@@ -8,32 +8,27 @@ export const StakeUnstakeStyled = styled.div`
   position: relative;
   margin-top: 30px;
   display: grid;
-  grid-template-columns: 500px auto;
+  grid-template-columns: auto 500px;
   grid-gap: 30px;
 `
 
 export const StakeUnstakeCard = styled.div<{ theme: MavrykTheme }>`
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   min-width: 130px;
 
   font-size: 14px;
   font-weight: 600;
 
   color: ${({ theme }) => theme.subTextColor};
-
-  &:nth-of-type(2) {
-    border-left: 1px solid ${({ theme }) => theme.cardBorderColor};
-    border-right: 1px solid ${({ theme }) => theme.cardBorderColor};
-  }
 `
 
 export const StakeUnstakeCards = styled(Card)<{ theme: MavrykTheme }>`
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
 
-  padding: 30px 0;
+  padding: 30px;
   margin: 0;
 
   font-size: 14px;
@@ -42,22 +37,6 @@ export const StakeUnstakeCards = styled(Card)<{ theme: MavrykTheme }>`
   color: ${({ theme }) => theme.subTextColor};
   background-color: ${({ theme }) => theme.containerColor};
   border-radius: 10px;
-
-  .grid-group {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-  }
-
-  .centering-wrapper {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-    width: 100%;
-
-    button {
-      width: 215px;
-    }
-  }
 `
 
 export const StakeUnstakeActionCard = styled(Card)<{ theme: MavrykTheme }>`
@@ -220,7 +199,6 @@ export const StakeUnstakeButtonGrid = styled.div`
 export const StakeUnstakeBalance = styled.div<{ theme: MavrykTheme }>`
   position: relative;
   display: flex;
-  flex-direction: column;
   align-items: center;
   flex-shrink: 0;
   height: 100%;
@@ -233,29 +211,82 @@ export const StakeUnstakeBalance = styled.div<{ theme: MavrykTheme }>`
   }
 
   img {
-    margin-bottom: 10px;
+    margin-right: 10px;
+    width: 42px;
+    height: 45px;
   }
 
-  div {
+  div,
+  button {
     max-width: max-content;
     font-size: 16px;
     font-weight: 600;
     line-height: 21px;
     color: ${({ theme }) => theme.dataColor};
   }
+
+  .balance-btn-group {
+    display: flex;
+
+    button {
+      margin-left: 10px;
+      color: ${({ theme }) => theme.navTitleColor};
+    }
+  }
+`
+
+export const StakeUnstakeRightPart = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 150px;
+
+  button {
+    padding: 0 16px;
+    width: 150px;
+    height: 36px;
+  }
 `
 
 export const StakeLabel = styled.blockquote`
-  position: absolute;
-  bottom: -25px;
-  color: ${downColor};
   margin: 0;
-  line-height: 19px;
+  padding: 4px 12px;
+
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 18px;
+  text-transform: uppercase;
+
+  color: ${downColor};
   border: 1px solid ${downColor};
-  font-weight: 400;
-  font-size: 10px;
   border-radius: 10px;
-  padding: 0 11px;
+`
+
+export const StakeDelegatedUser = styled.div`
+  display: flex;
+  align-items: center;
+  padding: 5px 10px;
+
+  border: 1px solid ${({ theme }) => theme.cardBorderColor};
+  border-radius: 100px;
+
+  img {
+    width: 35px;
+    height: 35px;
+    margin-right: 10px;
+  }
+
+  h3,
+  span {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 21px;
+    color: ${({ theme }) => theme.textColor};
+  }
+
+  span {
+    color: ${({ theme }) => theme.navTitleColor};
+  }
 `
 
 export const StakeCompound = styled.button<{ theme: MavrykTheme }>`

@@ -17,6 +17,7 @@ import { StakeUnstakeView } from './StakeUnstake/StakeUnstake.view'
 // actions
 import { getDoormanStorage, stake } from './Doorman.actions'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
+import { getDelegationStorage } from 'pages/Satellites/Satellites.actions'
 import { State } from 'reducers'
 
 export const Doorman = () => {
@@ -34,6 +35,10 @@ export const Doorman = () => {
     isLoaded: isDoormanLoaded,
   } = useSelector((state: State) => state.doorman)
   const { tokensPrices: { mvk: { usd: mvkExchangeRate = 0 } = {} } = {} } = useSelector((state: State) => state.tokens)
+  const {
+    delegationStorage: { activeSatellites = [] },
+    delegationStorageisLoaded,
+  } = useSelector((state: State) => state.delegation)
 
   const [amount, setAmount] = useState<null | number>(null)
   const exitFeeModal = {
@@ -50,6 +55,13 @@ export const Doorman = () => {
       if (!isDoormanLoaded) {
         await dispatch(getDoormanStorage())
       }
+
+      await Promise.all(
+        [
+          !isDoormanLoaded && dispatch(getDoormanStorage()),
+          !delegationStorageisLoaded && dispatch(getDelegationStorage()),
+        ].filter(Boolean),
+      )
     } catch (e) {}
   }, [])
 
@@ -73,6 +85,7 @@ export const Doorman = () => {
             MVK_exchangeRate={mvkExchangeRate}
             stakeCallback={stakeCallback}
             unstakeCallback={unstakeCallback}
+            satellites={activeSatellites}
           />
           <DoormanInfoStyled>
             <DoormanChart />
