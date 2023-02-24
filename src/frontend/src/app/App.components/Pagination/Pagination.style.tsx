@@ -1,9 +1,9 @@
 import styled, { css } from 'styled-components/macro'
+import { MavrykTheme } from 'styles/interfaces'
 
-import { MavrykTheme } from '../../styles/interfaces'
-import { PAGINATION_SIDE_CENTER, PAGINATION_SIDE_RIGHT } from './pagination.consts'
+import { PaginationPlacementVariants, PAGINATION_SIDE_CENTER, PAGINATION_SIDE_RIGHT } from './pagination.consts'
 
-export const PaginationWrapper = styled.div<{ theme: MavrykTheme; side?: string }>`
+export const PaginationWrapper = styled.div<{ theme: MavrykTheme; side?: PaginationPlacementVariants }>`
   display: flex;
   max-height: 36px;
   align-items: center;

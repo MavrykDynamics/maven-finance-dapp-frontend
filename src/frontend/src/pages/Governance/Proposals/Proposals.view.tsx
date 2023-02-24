@@ -10,13 +10,13 @@ import {
   GOVERNANCE_VOTERS_LIST_NAME,
   LIST_NAMES_MAPPER,
   getPageNumber,
-} from 'app/Pagination/pagination.consts'
+} from 'app/App.components/Pagination/pagination.consts'
 
 // view
 import { CommaNumber } from '../../../app/App.components/CommaNumber/CommaNumber.controller'
 import { StatusFlag } from '../../../app/App.components/StatusFlag/StatusFlag.controller'
 import { ProposalRecordType, ProposalStatus } from '../../../utils/TypesAndInterfaces/Governance'
-import Pagination from 'app/Pagination/Pagination.view'
+import Pagination from 'app/App.components/Pagination/Pagination.view'
 
 // style
 import {

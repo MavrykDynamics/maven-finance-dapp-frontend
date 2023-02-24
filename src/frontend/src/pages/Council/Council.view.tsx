@@ -15,7 +15,7 @@ import { CouncilPending } from './CouncilPending/CouncilPending.controller'
 import { MyCouncilActions } from './CouncilActions/MyCouncilActions.view'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
-import Pagination from 'app/Pagination/Pagination.view'
+import Pagination from 'app/App.components/Pagination/Pagination.view'
 import { EmptyContainer } from 'app/App.style'
 
 // helpers
@@ -33,7 +33,7 @@ import {
   COUNCIL_MY_PAST_ACTIONS_LIST_NAME,
   calculateSlicePositions,
   getPageNumber,
-} from 'app/Pagination/pagination.consts'
+} from 'app/App.components/Pagination/pagination.consts'
 
 // styles
 import { CouncilStyled, ReviewCard, AvaliableActions, PropagateBreakGlassCouncilCard } from './Council.style'

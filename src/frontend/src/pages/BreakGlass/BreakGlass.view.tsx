@@ -13,7 +13,7 @@ import {
   calculateSlicePositions,
   getPageNumber,
   updatePageInUrl,
-} from 'app/Pagination/pagination.consts'
+} from 'app/App.components/Pagination/pagination.consts'
 import { NAV_SIMPLE } from 'app/App.components/Button/Button.constants'
 
 // styles
@@ -29,7 +29,7 @@ import {
 } from './BreakGlass.style'
 import { FAQLink } from '../Satellites/SatellitesSideBar/SatelliteSideBar.style'
 import { BreakGlassStatusStorage } from 'utils/TypesAndInterfaces/BreakGlass'
-import Pagination from 'app/Pagination/Pagination.view'
+import Pagination from 'app/App.components/Pagination/Pagination.view'
 
 type BreakGlassViewProps = {
   glassBroken: boolean

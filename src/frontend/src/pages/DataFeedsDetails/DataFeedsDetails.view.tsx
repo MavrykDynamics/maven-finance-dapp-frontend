@@ -9,7 +9,7 @@ import { parseDate } from 'utils/time'
 import { cyanColor, downColor, Page, skyColor } from 'styles'
 import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { registerFeedAction } from 'pages/DataFeeds/DataFeeds.actions'
-import { ORACLES_DATA_IN_FEED_LIST_NAME, PAGINATION_SIDE_RIGHT } from 'app/Pagination/pagination.consts'
+import { ORACLES_DATA_IN_FEED_LIST_NAME, PAGINATION_SIDE_RIGHT } from 'app/App.components/Pagination/pagination.consts'
 
 // view
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
@@ -24,7 +24,7 @@ import DataFeedsPagination from './pagination/DataFeedsPagination.controler'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { DataFeedsChart } from './chart/DataFeedsChart.controller'
 import { OracleCard } from 'pages/DataFeedsDetails/listItem/OracleCard.view'
-import Pagination from 'app/Pagination/Pagination.view'
+import Pagination from 'app/App.components/Pagination/Pagination.view'
 
 // types
 import { State } from 'reducers'

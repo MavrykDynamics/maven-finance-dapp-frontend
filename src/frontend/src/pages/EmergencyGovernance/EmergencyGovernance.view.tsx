@@ -5,7 +5,7 @@ import {
   calculateSlicePositions,
   EMERGENCY_GOVERNANCE_HISTORY_LIST_NAME,
   getPageNumber,
-} from 'app/Pagination/pagination.consts'
+} from 'app/App.components/Pagination/pagination.consts'
 
 // types
 import type {
@@ -28,7 +28,7 @@ import {
   EmergencyGovernHistory,
 } from './EmergencyGovernance.style'
 
-import Pagination from 'app/Pagination/Pagination.view'
+import Pagination from 'app/App.components/Pagination/Pagination.view'
 import { useLocation } from 'react-router'
 import { EmptyContainer } from 'app/App.style'
 

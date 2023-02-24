@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
 // consts, helpers
-import { USER_DATA_FEEDS_LIST_NAME } from 'app/Pagination/pagination.consts'
+import { USER_DATA_FEEDS_LIST_NAME } from 'app/App.components/Pagination/pagination.consts'
 import { parseDate } from 'utils/time'
 
 // types

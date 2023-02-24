@@ -8,15 +8,15 @@ import { VaultsCard } from './components/VaultsCard.view'
 import { TabSwitcher } from 'pages/Council/Council.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
-import Pagination from 'app/Pagination/Pagination.view'
+import Pagination from 'app/App.components/Pagination/Pagination.view'
 import { EmptyContainer } from 'app/App.style'
 
 // styles
 import { VaultsStyled } from './Vaults.style'
 
 // helpers
-import { VAULTS_LIST_NAME, getPageNumber, MY_VAULTS_LIST_NAME } from 'app/Pagination/pagination.consts'
-import { calculateSlicePositions } from 'app/Pagination/pagination.consts'
+import { VAULTS_LIST_NAME, getPageNumber, MY_VAULTS_LIST_NAME } from 'app/App.components/Pagination/pagination.consts'
+import { calculateSlicePositions } from 'app/App.components/Pagination/pagination.consts'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { getVaultAssets } from './Vaults.helpers'
 

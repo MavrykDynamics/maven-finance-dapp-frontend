@@ -17,7 +17,7 @@ import {
   calculateSlicePositions,
   PAGINATION_SIDE_CENTER,
   getPageNumber,
-} from 'app/Pagination/pagination.consts'
+} from 'app/App.components/Pagination/pagination.consts'
 
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
 import { Page } from 'styles/components'
@@ -28,7 +28,7 @@ import PortfolioTab from './DashboardPersonalComponents/PortfolioTab'
 import { DashboardPersonalStyled } from './DashboardPersonal.style'
 import SatelliteTab from './DashboardPersonalComponents/SatelliteTab'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import Pagination from 'app/Pagination/Pagination.view'
+import Pagination from 'app/App.components/Pagination/Pagination.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 
 import {

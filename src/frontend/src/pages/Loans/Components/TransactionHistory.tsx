@@ -17,7 +17,7 @@ import {
   getPageNumber,
   PAGINATION_SIDE_CENTER,
   calculateSlicePositions,
-} from 'app/Pagination/pagination.consts'
+} from 'app/App.components/Pagination/pagination.consts'
 
 import { TransactionHistoryStyled } from '../Loans.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
@@ -31,7 +31,7 @@ import {
   TableCell,
 } from 'app/App.components/Table/Table.style'
 import { EmptyContainer } from 'app/App.style'
-import Pagination from 'app/Pagination/Pagination.view'
+import Pagination from 'app/App.components/Pagination/Pagination.view'
 
 type TransactionHistoryPropsType = {
   currentToken: LoanMarketType | undefined

@@ -10,7 +10,7 @@ import {
   ONGOING_REQUESTS_FINANCIAL_REQUESTS_LIST,
   PAGINATION_SIDE_RIGHT,
   PAST_REQUESTS_FINANCIAL_REQUESTS_LIST,
-} from '../../app/Pagination/pagination.consts'
+} from '../../app/App.components/Pagination/pagination.consts'
 import { calcWithoutMu, calcWithoutPrecision } from 'utils/calcFunctions'
 import { votingRinancialRequestVote } from 'pages/Governance/Governance.actions'
 import { VotingTypes } from 'app/App.components/VotingArea/helpers/voting.const'
@@ -24,7 +24,7 @@ import { State } from 'reducers'
 import { StatusFlag } from '../../app/App.components/StatusFlag/StatusFlag.controller'
 import { TzAddress } from '../../app/App.components/TzAddress/TzAddress.view'
 import { CommaNumber } from '../../app/App.components/CommaNumber/CommaNumber.controller'
-import Pagination from 'app/Pagination/Pagination.view'
+import Pagination from 'app/App.components/Pagination/Pagination.view'
 import { FRSListItem } from './FRSListItem.view'
 import { VotingArea } from 'app/App.components/VotingArea/VotingArea.controller'
 

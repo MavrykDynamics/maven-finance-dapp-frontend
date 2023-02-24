@@ -9,12 +9,12 @@ import { Input } from 'app/App.components/Input/Input.controller'
 import { DropDown } from 'app/App.components/DropDown/DropDown.controller'
 import { DataFeedCard } from 'pages/DataFeedsDetails/listItem/DataFeedCard.view'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
-import Pagination from 'app/Pagination/Pagination.view'
+import Pagination from 'app/App.components/Pagination/Pagination.view'
 
 // const, actions
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { INFO } from 'app/App.components/Toaster/Toaster.constants'
-import { FEEDS_ALL_LIST_NAME, PAGINATION_SIDE_RIGHT } from 'app/Pagination/pagination.consts'
+import { FEEDS_ALL_LIST_NAME, PAGINATION_SIDE_RIGHT } from 'app/App.components/Pagination/pagination.consts'
 
 // types, actions
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'

@@ -12,7 +12,7 @@ import {
   calculateSlicePositions,
   getSatelliteGovernanceListName,
   getPageNumber,
-} from 'app/Pagination/pagination.consts'
+} from 'app/App.components/Pagination/pagination.consts'
 import { defaultGovPurposeMaxLength } from 'app/App.components/Input/Input.constants'
 
 // view
@@ -22,7 +22,7 @@ import { FixMistakenTransferForm } from './FixMistakenTransfer.form'
 import { SatelliteGovernanceCard } from './SatelliteGovernanceCard/SatelliteGovernanceCard.controller'
 import { SatelliteGovernanceForm } from './SatelliteGovernance.form'
 import { CommaNumber } from '../../app/App.components/CommaNumber/CommaNumber.controller'
-import Pagination from 'app/Pagination/Pagination.view'
+import Pagination from 'app/App.components/Pagination/Pagination.view'
 import { TabItem } from '../../app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import { RegisterAggregatorForm } from './RegisterAggregator.form'
 

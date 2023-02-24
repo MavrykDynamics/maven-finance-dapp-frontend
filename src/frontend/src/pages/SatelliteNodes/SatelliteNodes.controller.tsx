@@ -11,13 +11,13 @@ import {
   PAGINATION_SIDE_RIGHT,
   SATELITES_NODES_LIST_NAME,
   getPageNumber,
-} from 'app/Pagination/pagination.consts'
+} from 'app/App.components/Pagination/pagination.consts'
 import { handleFilterSatellites, handleSortSatellites } from './SatelliteNodes.helpers'
 
 import { DropDown, DropdownItemType } from '../../app/App.components/DropDown/DropDown.controller'
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
 import { Input } from 'app/App.components/Input/Input.controller'
-import Pagination from 'app/Pagination/Pagination.view'
+import Pagination from 'app/App.components/Pagination/Pagination.view'
 import { SatelliteListItem } from 'pages/Satellites/listItem/SateliteCard.view'
 import { Page, PageContent } from 'styles'
 import { EmptyContainer } from 'app/App.style'

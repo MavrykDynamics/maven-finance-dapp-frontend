@@ -23,14 +23,14 @@ import { FarmsStyled } from './Farms.style'
 import { Page } from 'styles'
 import { EmptyContainer as EmptyList } from 'app/App.style'
 import { getFarmStorage } from './Farms.actions'
-import Pagination from 'app/Pagination/Pagination.view'
+import Pagination from 'app/App.components/Pagination/Pagination.view'
 import {
   calculateSlicePositions,
   FARMS_HORIZONTAL_CARDS,
   FARMS_VERTICAL_CARDS,
   PAGINATION_SIDE_CENTER,
   getPageNumber,
-} from 'app/Pagination/pagination.consts'
+} from 'app/App.components/Pagination/pagination.consts'
 
 // types
 import { State } from '../../reducers'
