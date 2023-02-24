@@ -282,7 +282,7 @@ export const StakeUnstakeView = ({
           <img src="/images/coin-gold.svg" alt="coin" />
           <StakeUnstakeInputColumn>
             <StakeUnstakeInputLabels>
-              <div>Min 1 MVK</div>
+              <div className="minAmount">Min 1 MVK</div>
 
               <StakeUnstakeAmount>
                 <span>Staked Amount:</span>

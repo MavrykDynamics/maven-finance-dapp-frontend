@@ -81,6 +81,10 @@ export const StakeUnstakeInputLabels = styled.div`
   line-height: 21px;
 
   color: ${({ theme }) => theme.textColor};
+
+  .minAmount {
+    font-size: 16px;
+  }
 `
 export const StakeUnstakeInputGrid = styled.div`
   display: grid;
