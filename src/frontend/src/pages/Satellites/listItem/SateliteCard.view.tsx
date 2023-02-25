@@ -74,6 +74,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
 
   const freesMVKSpace = Math.max(satellite.sMvkBalance * satellite.delegationRatio - satellite.totalDelegatedAmount, 0)
   const isUserDelegatedToThisSatellite = satellite.address === satelliteMvkIsDelegatedTo
+  const balanceOver1SMvk = mySMvkTokenBalance >= 1
 
   // Latest vote data
   const currentlySupportingProposalVote = satellite.proposalVotingHistory?.at(0)?.vote ?? null
@@ -111,7 +112,13 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
       ) : null}
     </>
   ) : (
-    <Button text="Delegate" icon="man-check" kind={ACTION_PRIMARY} onClick={delegateCallback} disabled={!accountPkh} />
+    <Button
+      text="Delegate"
+      icon="man-check"
+      kind={ACTION_PRIMARY}
+      onClick={delegateCallback}
+      disabled={!accountPkh || !balanceOver1SMvk}
+    />
   )
 
   return (

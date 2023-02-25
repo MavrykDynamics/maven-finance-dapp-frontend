@@ -49,14 +49,15 @@ export const SatelliteSearchFilter = styled(Card)<{ theme: MavrykTheme; oracle?:
   }
 `
 
-export const SatelliteListEmptyContainer = styled.figure<{ theme: MavrykTheme }>`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 0;
-  color: ${({ theme }) => theme.headerColor};
-  font-size: 18px;
-  font-weight: 800;
-  flex-direction: column;
-  padding-top: 16px;
+export const NotStakinkBannerStyled = styled.div`
+  margin-top: 30px;
+  margin-bottom: -10px;
+
+  p {
+    max-width: 610px;
+  }
+
+  button {
+    width: 250px;
+  }
 `

@@ -12,13 +12,15 @@ export const FarmCardTokenLogoContainer = styled.figure<{ theme: MavrykTheme }>`
   img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: fill;
   }
 
-  > div {
+  > div,
+  svg {
     align-items: center;
     justify-content: center;
     position: absolute;
+    fill: ${({ theme }) => theme.textColor};
   }
 
   .left-top-icon {

@@ -93,7 +93,7 @@ export const CouncilFormRequestTokenMint = (maxLength: CouncilMaxLength) => {
     inputStatus: formInputStatus.tokenAmount,
   }
 
-  const label = <span className="pinned-text">MVK</span>
+  const inputPinnedChild = <div className="pinned-child">MVK</div>
 
   return (
     <CouncilFormStyled onSubmit={handleSubmit}>
@@ -108,9 +108,14 @@ export const CouncilFormRequestTokenMint = (maxLength: CouncilMaxLength) => {
           <Input inputProps={treasuryAddressProps} settings={treasuryAddressSettings} />
         </div>
 
-        <div className="with-pinned-text">
+        <div>
           <label>Token Amount</label>
-          <Input children={label} inputProps={tokenAmountProps} settings={tokenAmountSettings} />
+          <Input
+            className="transparent-child-wrap"
+            children={inputPinnedChild}
+            inputProps={tokenAmountProps}
+            settings={tokenAmountSettings}
+          />
         </div>
       </div>
       <div className="textarea-group">

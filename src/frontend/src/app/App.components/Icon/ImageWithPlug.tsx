@@ -16,8 +16,8 @@ export const ImageWithPlug = ({
   const [imageSrc, setImageSrc] = useState<string | null>(imageLink)
 
   useEffect(() => {
-    setImageSrc(imageSrc)
-  }, [imageLink])
+    setImageSrc(imageLink ?? plugSrc ?? null)
+  }, [imageLink, plugSrc])
 
   if (imageSrc) {
     return (
@@ -27,5 +27,5 @@ export const ImageWithPlug = ({
     )
   }
 
-  return <Icon id="noImage" />
+  return <Icon id="noImage" className={className} />
 }

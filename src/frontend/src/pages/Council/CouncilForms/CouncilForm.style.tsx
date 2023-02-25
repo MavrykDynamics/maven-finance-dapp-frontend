@@ -24,6 +24,13 @@ export const CouncilFormStyled = styled.form`
     margin-top: 1px;
   }
 
+  .dropdownItem {
+    max-width: 245px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
   .form-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -78,14 +85,16 @@ export const CouncilFormStyled = styled.form`
     padding-top: 20px;
   }
 
-  .with-pinned-text {
-    .pinned-text {
-      position: relative;
-      font-weight: 600;
-      font-size: 14px;
-      line-height: 14px;
-      top: 14px;
-    }
+  .pinned-child {
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 14px;
+
+    color: ${({ theme }) => theme.textColor};
   }
 
   &.update-council-member-info {

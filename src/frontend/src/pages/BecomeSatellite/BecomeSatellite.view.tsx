@@ -27,6 +27,7 @@ import {
   BecomeSatelliteFormBalanceCheck,
   BecomeSatelliteFormHorizontal,
 } from './BecomeSatellite.style'
+import { NotStakingBanner } from 'pages/Satellites/components/NotStakingBanner.view'
 import InputWithPercent from 'app/App.components/Input/InputWithPercent'
 import SatellitesSideBar from 'pages/Satellites/SatellitesSideBar/SatellitesSideBar.controller'
 import { SatellitesState } from 'reducers/satellites'
@@ -66,7 +67,7 @@ export const BecomeSatelliteView = ({
   usersSatellite,
 }: BecomeSatelliteViewProps) => {
   const dispatch = useDispatch()
-  const [balanceOk, setBalanceOk] = useState(false)
+  const balanceOverMinStakedMvk = myTotalStakeBalance >= satelliteConfig.minimumStakedMvkBalance
   const updateSatellite = usersSatellite && usersSatellite?.address !== ''
 
   const [form, setForm] = useState<RegisterAsSatelliteForm>(FORM_DEFAULT)
@@ -78,8 +79,8 @@ export const BecomeSatelliteView = ({
     fee: '',
     image: '',
   })
-  const disabled = !balanceOk || !accountPkh
   const isSatelliteRegistered = Boolean(usersSatellite.currentlyRegistered)
+  const disabled = !balanceOverMinStakedMvk || !accountPkh
   const handleValidateLoad = (formFields: RegisterAsSatelliteForm) => {
     setFormInputStatus({
       name: isNotAllWhitespace(formFields.name) ? 'success' : 'error',
@@ -119,10 +120,6 @@ export const BecomeSatelliteView = ({
       handleValidateLoad(data)
     }
   }, [updateSatellite, usersSatellite])
-
-  useEffect(() => {
-    setBalanceOk(myTotalStakeBalance >= satelliteConfig.minimumStakedMvkBalance)
-  }, [accountPkh, myTotalStakeBalance, satelliteConfig])
 
   useEffect(() => {
     handleValidate('FEE')
@@ -192,22 +189,17 @@ export const BecomeSatelliteView = ({
     <Page>
       <PageHeader
         page={updateSatellite && isSatelliteRegistered ? 'my satellite profile' : 'satellites'}
-        avatar={isSatelliteRegistered ? form.image || defaultAvatar : ''}
+        avatar={form.image ?? defaultAvatar}
       />
+
+      {!balanceOverMinStakedMvk && (
+        <NotStakingBanner
+          text={`To become a satellite you need to stake ${satelliteConfig.minimumStakedMvkBalance} MVK`}
+        />
+      )}
+
       <PageContent>
         <div>
-          {!accountPkh || !balanceOk ? (
-            <Info
-              className="indent-bottom"
-              text={
-                !accountPkh
-                  ? 'Please connect your wallet'
-                  : `To become a satellite you need to stake ${satelliteConfig.minimumStakedMvkBalance} MVK`
-              }
-              type="warning"
-            />
-          ) : null}
-
           <BecomeSatelliteForm>
             {updateSatellite ? <h2>Edit Satellite Profile</h2> : <h2>Become a Satellite</h2>}
             <CommaNumber
@@ -218,8 +210,8 @@ export const BecomeSatelliteView = ({
             />
 
             {accountPkh ? (
-              <BecomeSatelliteFormBalanceCheck balanceOk={balanceOk}>
-                <Icon id={balanceOk ? 'check-stroke' : 'close-stroke'} />
+              <BecomeSatelliteFormBalanceCheck balanceOk={balanceOverMinStakedMvk}>
+                <Icon id={balanceOverMinStakedMvk ? 'check-stroke' : 'close-stroke'} />
                 <CommaNumber
                   value={Number(myTotalStakeBalance)}
                   beginningText={'Currently staking'}

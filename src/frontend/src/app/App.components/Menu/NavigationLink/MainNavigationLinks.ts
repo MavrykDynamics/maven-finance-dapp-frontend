@@ -144,13 +144,13 @@ export const mainNavigationLinks: MainNavigationRoute[] = [
         id: 79754,
         subTitle: 'Mavryk Council',
         subPath: 'mavryk-council',
-        routeSubPath: ['/mavryk-council', '/mavryk-council/review', '/mavryk-council/pending-review'],
+        routeSubPath: ['/mavryk-council', '/mavryk-council/:tabId'],
       },
       {
         id: 38374,
         subTitle: 'Break Glass Council',
         subPath: 'break-glass-council',
-        routeSubPath: ['/break-glass-council', '/break-glass-council/review', '/break-glass-council/pending-review'],
+        routeSubPath: ['/break-glass-council', '/break-glass-council/:tabId'],
       },
       {
         id: 561812,

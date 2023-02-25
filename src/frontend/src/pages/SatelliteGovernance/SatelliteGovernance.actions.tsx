@@ -96,7 +96,7 @@ export const unsuspendSatellite =
     try {
       await dispatch(toggleActionLoader(true))
       const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
-      const transaction = await contract?.methods.unsuspendSatellite(satelliteAddress, purpose).send()
+      const transaction = await contract?.methods.restoreSatellite(satelliteAddress, purpose).send()
 
       await dispatch(showToaster(INFO, 'Unsuspend Satellite...', 'Please wait 30s'))
       await transaction?.confirmation()

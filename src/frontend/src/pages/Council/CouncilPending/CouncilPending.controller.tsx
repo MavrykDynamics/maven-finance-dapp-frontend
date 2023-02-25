@@ -114,7 +114,7 @@ export const CouncilPending = (props: Props) => {
             setShowing(false)
           }}
         >
-          <Icon id="error" />
+          <Icon id="navigation-menu_close" />
         </ModalClose>
         <ModalCardContent style={{ width: 586 }}>
           <h1>Purpose for Request</h1>
@@ -285,7 +285,7 @@ export const CouncilPending = (props: Props) => {
           <h3>{getSeparateCamelCase(actionType)}</h3>
           <div className="parameters grid">
             <article>
-              <p className='without-margin'>Council Member to change</p>
+              <p className="without-margin">Council Member to change</p>
               <span className="parameters-value content-width">
                 <TzAddress tzAddress={oldCouncilMemberAddress} type={CYAN} hasIcon />
               </span>

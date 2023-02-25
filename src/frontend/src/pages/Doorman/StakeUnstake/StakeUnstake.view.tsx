@@ -9,11 +9,9 @@ import { Input } from '../../../app/App.components/Input/Input.controller'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 
 // helpers, consts
-import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { State } from 'reducers'
 import { ACTION_PRIMARY, ACTION_SECONDARY } from '../../../app/App.components/Button/Button.constants'
 import { isValidNumberValue, mathRoundTwoDigit } from '../../../utils/validatorFunctions'
-import { ERROR } from 'app/App.components/Toaster/Toaster.constants'
 import { rewardsCompound } from '../Doorman.actions'
 import { InputStatusType, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 
@@ -71,6 +69,7 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
     })
   }, [myMvkTokenBalance, mySMvkTokenBalance])
 
+  const mySMvkBalanceIsZero = mySMvkTokenBalance === 0
   const exchangeValue = MVK_exchangeRate && inputData.amount ? Number(inputData.amount) * MVK_exchangeRate : 0
   const earnedValue = farmRewards + doormanRewards
   const userHasRewards = myAvailableDoormanRewards + myAvailableSatelliteRewards > 2
@@ -160,12 +159,9 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
   }
 
   const handleDelegate = () => {
-    if (mySMvkTokenBalance === 0) {
-      dispatch(showToaster(ERROR, 'Failed to delegate', 'You need to stake MVK'))
-      return
-    }
-
-    history.push('/satellite-nodes')
+    history.push(
+      satelliteMvkIsDelegatedTo ? `/satellites/satellite-details/${satelliteMvkIsDelegatedTo}` : '/satellite-nodes',
+    )
   }
 
   return (
@@ -254,7 +250,11 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
 
         {showDelegateBtn && (
           <div className="centering-wrapper">
-            <NewButton onClick={handleDelegate}>
+            <NewButton
+              className={mySMvkBalanceIsZero ? '' : 'pulse'}
+              onClick={handleDelegate}
+              disabled={mySMvkBalanceIsZero}
+            >
               <Icon id="satellites" />
               Delegate
             </NewButton>
