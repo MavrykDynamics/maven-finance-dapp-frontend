@@ -158,7 +158,7 @@ export const BecomeSatellite = () => {
     <Page>
       <PageHeader
         page={isSatellite ? 'my satellite profile' : 'satellites'}
-        avatar={usersSatelliteProfile.image || '/images/default-avatar.png'}
+        avatar={usersSatelliteProfile?.image || '/images/default-avatar.png'}
       />
 
       {!balanceOverMinStakedMvk && (
