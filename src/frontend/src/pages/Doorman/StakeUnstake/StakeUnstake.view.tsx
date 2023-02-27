@@ -165,7 +165,7 @@ export const StakeUnstakeView = ({
       validation: INPUT_STATUS_SUCCESS,
     })
 
-    stakeCallback((myMvkTokenBalance))
+    stakeCallback(myMvkTokenBalance)
   }
 
   const handleUnstakeAll = () => {
@@ -233,9 +233,9 @@ export const StakeUnstakeView = ({
           </StakeUnstakeBalance>
 
           <StakeUnstakeRightPart>
-            {mySMvkBalanceIsZero && accountPkh && <StakeLabel>Not Staking</StakeLabel>}
+            {mySMvkBalanceIsZero && myMvkTokenBalance > 0 && <StakeLabel>Not Staking</StakeLabel>}
 
-            {((!mySMvkBalanceIsZero && showDelegateBtn) || !accountPkh) && (
+            {!mySMvkBalanceIsZero && showDelegateBtn && (
               <NewButton
                 onClick={handleDelegate}
                 kind={ACTION_PRIMARY}
@@ -247,7 +247,7 @@ export const StakeUnstakeView = ({
               </NewButton>
             )}
 
-            {delegatedUser && (
+            {!mySMvkBalanceIsZero && delegatedUser && (
               <StakeDelegatedUser>
                 <img src={delegatedUser.image} alt="coin" />
 
