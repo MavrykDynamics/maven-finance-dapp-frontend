@@ -34,22 +34,13 @@ import {
   StakeUnstakeAmount,
 } from './StakeUnstake.style'
 
-// types
-import { SatelliteRecord } from 'utils/TypesAndInterfaces/Delegation'
-
 type StakeUnstakeViewProps = {
   stakeCallback: (amount: number) => void
   unstakeCallback: (amount: number) => void
   MVK_exchangeRate: number
-  satellites: SatelliteRecord[]
 }
 
-export const StakeUnstakeView = ({
-  stakeCallback,
-  unstakeCallback,
-  MVK_exchangeRate,
-  satellites,
-}: StakeUnstakeViewProps) => {
+export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeRate }: StakeUnstakeViewProps) => {
   const dispatch = useDispatch()
   const history = useHistory()
 
@@ -66,9 +57,13 @@ export const StakeUnstakeView = ({
     },
   } = useSelector((state: State) => state.wallet)
 
+  const {
+    delegationStorage: { activeSatellites = [] },
+  } = useSelector((state: State) => state.delegation)
+
   const delegatedUser = useMemo(
-    () => satellites.find((item) => item.address === satelliteMvkIsDelegatedTo),
-    [satelliteMvkIsDelegatedTo, satellites],
+    () => activeSatellites.find((item) => item.address === satelliteMvkIsDelegatedTo),
+    [satelliteMvkIsDelegatedTo, activeSatellites],
   )
 
   const [inputData, setInputData] = useState<{ amount: string; validation: InputStatusType; errorMessage: string }>({

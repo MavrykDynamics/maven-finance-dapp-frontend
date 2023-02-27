@@ -34,9 +34,6 @@ export const Doorman = () => {
     isLoaded: isDoormanLoaded,
   } = useSelector((state: State) => state.doorman)
   const { tokensPrices: { mvk: { usd: mvkExchangeRate = 0 } = {} } = {} } = useSelector((state: State) => state.tokens)
-  const {
-    delegationStorage: { activeSatellites = [] },
-  } = useSelector((state: State) => state.delegation)
 
   const [amount, setAmount] = useState<null | number>(null)
   const exitFeeModal = {
@@ -76,7 +73,6 @@ export const Doorman = () => {
             MVK_exchangeRate={mvkExchangeRate}
             stakeCallback={stakeCallback}
             unstakeCallback={unstakeCallback}
-            satellites={activeSatellites}
           />
           <DoormanInfoStyled>
             <DoormanChart />
