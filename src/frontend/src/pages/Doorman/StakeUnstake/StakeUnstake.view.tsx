@@ -210,7 +210,7 @@ export const StakeUnstakeView = ({
       <StakeUnstakeCards>
         <StakeUnstakeCard>
           <StakeUnstakeBalance>
-            <img src="/images/coin-gold.svg" alt="coin" />
+            <ImageWithPlug imageLink={'/images/coin-gold.svg'} alt="coin" />
             <div>
               <h3>My MVK Balance</h3>
               <div className="balance-btn-group">
@@ -223,7 +223,7 @@ export const StakeUnstakeView = ({
 
         <StakeUnstakeCard>
           <StakeUnstakeBalance>
-            <img src="/images/coin-silver.svg" alt="coin" />
+            <ImageWithPlug imageLink={'/images/coin-silver.svg'} alt="coin" />
             <div>
               <h3>Total MVK Staked</h3>
               <div className="balance-btn-group">
@@ -250,7 +250,7 @@ export const StakeUnstakeView = ({
 
             {!mySMvkBalanceIsZero && delegatedUser && (
               <StakeDelegatedUser>
-                <img src={delegatedUser.image} alt="coin" />
+                <ImageWithPlug imageLink={delegatedUser.image} alt="coin" />
 
                 <div>
                   <h3>Delegated to</h3>
@@ -263,7 +263,7 @@ export const StakeUnstakeView = ({
 
         <StakeUnstakeCard>
           <StakeUnstakeBalance>
-            <img src="/images/coin-bronze.svg" alt="coin" />
+            <ImageWithPlug imageLink={'/images/coin-bronze.svg'} alt="coin" />
             <div>
               <h3>Total MVK Earned</h3>
               <CommaNumber value={earnedValue} />
