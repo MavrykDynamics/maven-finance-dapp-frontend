@@ -1,7 +1,6 @@
-import styled, { keyframes } from 'styled-components/macro'
-
+import styled from 'styled-components/macro'
+import { zoomIn, slideDown } from 'styles/animations'
 import { MavrykTheme } from '../../../styles/interfaces'
-import { primaryColor, headerColor, downColor } from 'styles'
 
 export const IPFSUploaderStyled = styled.div<{ theme: MavrykTheme }>`
   margin-bottom: 5px;
@@ -127,7 +126,7 @@ export const UploadIconContainer = styled.div<{
     }
 
     .tip {
-      color: ${({ uploadIsFailed }) => uploadIsFailed && downColor};
+      color: ${({ uploadIsFailed, theme }) => uploadIsFailed && theme.downColor};
     }
   }
 
@@ -158,16 +157,6 @@ export const UploadIconContainer = styled.div<{
       height: 10px;
       stroke: ${({ theme }) => theme.containerColor};
     }
-  }
-`
-const zoomIn = keyframes`
-  from {
-    transform:scale(.2);
-    opacity:0
-  }
-  to {
-    transform:scale(1);
-    opacity:1
   }
 `
 
@@ -214,7 +203,7 @@ export const IpfsUploadedImageContainer = styled.figure`
   .uploaded-document {
     width: 20px;
     height: 20px;
-    stroke: ${headerColor};
+    stroke: ${({ theme }) => theme.headerColor};
     margin-top: 12px;
   }
 `
@@ -234,17 +223,6 @@ export const TextAreaIcon = styled.svg<{ theme: MavrykTheme }>`
   visibility: visible;
   pointer-events: none;
   stroke: ${({ theme }) => theme.backgroundTextColor};
-`
-
-const slideDown = keyframes`
-  from {
-    transform: translate3d(0, -10px, 0);
-    opacity:0
-  }
-  to {
-    transform: translate3d(0, 0px, 0);
-    opacity:1
-  }
 `
 
 export const IPFSUploaderErrorMessage = styled.div<{ theme: MavrykTheme }>`

@@ -1,4 +1,5 @@
-import styled, { css, keyframes } from 'styled-components/macro'
+import styled, { css } from 'styled-components/macro'
+import { decreaseBar } from 'styles/animations'
 import { MavrykTheme } from '../../../styles/interfaces'
 import { ERROR, INFO } from './Toaster.constants'
 
@@ -24,15 +25,6 @@ export const ToasterStyled = styled.div<{ showing: boolean; theme: MavrykTheme }
     css`
       transform: translate3d(-470px, 0, 0);
     `}
-`
-
-export const decreaseBar = keyframes`
-  from {
-    transform: translate3d(0, 0, 0);
-  }
-  to {
-    transform: translate3d(470px, 0, 0);
-  }
 `
 
 export const ToasterCountdown = styled.div<{ showing: boolean; status?: string; theme: MavrykTheme }>`

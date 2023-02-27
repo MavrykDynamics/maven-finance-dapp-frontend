@@ -245,7 +245,7 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
 
             {!mySMvkBalanceIsZero && delegatedUser && (
               <StakeDelegatedUser>
-                <ImageWithPlug imageLink={delegatedUser.image} alt="coin" />
+                <ImageWithPlug className='userImage' imageLink={delegatedUser.image} alt="user image" />
 
                 <div>
                   <h3>Delegated to</h3>

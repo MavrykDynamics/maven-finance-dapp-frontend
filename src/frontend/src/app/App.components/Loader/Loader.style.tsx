@@ -1,4 +1,5 @@
-import styled, { keyframes } from 'styled-components/macro'
+import styled from 'styled-components/macro'
+import { shine, ellipsis } from 'styles/animations'
 import { MavrykTheme } from 'styles/interfaces'
 
 export const LoaderStyled = styled.div`
@@ -88,12 +89,6 @@ export const LoaderStyledWithBackdrop = styled.div<{ theme: MavrykTheme; backdro
   }
 `
 
-const shine = keyframes`
-  from {
-    background-position: 200% center;
-  }
-`
-
 export const LoaderShineTextAnimation = styled.div<{ theme: MavrykTheme }>`
   background-image: ${({ theme }) => theme.shineAnimationGradient};
   background-size: auto auto;
@@ -130,12 +125,6 @@ export const ClockLoaderWrapper = styled.svg<{ width: number; height: number }>`
   width: ${({ width }) => width}px;
   height: ${({ height }) => height}px;
   display: inline-block;
-`
-
-const ellipsis = keyframes`
-  to {
-    width: 18px;
-  }
 `
 
 export const DataLoaderWrapper = styled.div<{ theme: MavrykTheme }>`

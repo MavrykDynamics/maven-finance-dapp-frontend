@@ -1,16 +1,7 @@
-import styled, { css, keyframes } from 'styled-components/macro'
-
+import styled, { css } from 'styled-components/macro'
+import { clickWave, turn } from 'styles/animations'
 import { BUTTON_RADIUS } from '../../../styles/constants'
 import { MavrykTheme } from '../../../styles/interfaces'
-
-export const clickWave = (color: string) => keyframes`
-  from {
-    box-shadow: 0 0 0 0 ${color};
-  }
-  to {
-    box-shadow: 0 0 0 5px ${color}00;
-  }
-`
 
 export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
   padding: 0;
@@ -329,12 +320,6 @@ export const ButtonIcon = styled.svg<{ theme: MavrykTheme; strokeWidth?: number 
           stroke-width: ${strokeWidth};
         `
       : ''}
-`
-
-const turn = keyframes`
-  100% {
-      transform: rotate(360deg);
-  }
 `
 
 export const ButtonLoadingIcon = styled.svg<{ theme: MavrykTheme }>`
