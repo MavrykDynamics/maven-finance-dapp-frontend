@@ -9,9 +9,8 @@ export const IPFSUploaderStyled = styled.div<{ theme: MavrykTheme }>`
 
   label {
     margin-bottom: 10px;
-
-    & + div {
-    }
+    color: ${({ theme }) => theme.textColor};
+    font-weight: 700;
   }
 
   > p {

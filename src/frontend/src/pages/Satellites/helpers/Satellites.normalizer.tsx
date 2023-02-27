@@ -261,7 +261,7 @@ export const normallizeSatellite = (
 
 export const nomalizeSatelliteConfig = ({ delegation: [delegationInfo] }: { delegation: Array<DelegationGraphQl> }) => {
   return {
-    minimumStakedMvkBalance: delegationInfo.minimum_smvk_balance ?? 0,
+    minimumStakedMvkBalance: calcWithoutPrecision(delegationInfo.minimum_smvk_balance),
     satelliteNameMaxLength: delegationInfo.satellite_name_max_length ?? defaultSatelliteNameMaxLength,
     satelliteDescriptionMaxLength:
       delegationInfo.satellite_description_max_length ?? defaultSatelliteDescriptionMaxLength,

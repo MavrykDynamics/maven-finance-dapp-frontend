@@ -8,34 +8,6 @@ export const ORACLE_STATUSES_MAPPER = {
   awaiting: 'Awaiting',
 }
 
-export const DEFAULT_ACTIVE_SATELLITE: SatelliteRecordType = {
-  address: '',
-  description: '',
-  website: '',
-  image: '',
-  name: '',
-  isSatelliteReady: false,
-  currentlyRegistered: false,
-  status: SatelliteStatus.ACTIVE,
-  delegationRatio: 0,
-  delegatorCount: 0,
-  satelliteFee: 0,
-  mvkBalance: 0,
-  sMvkBalance: 0,
-  totalDelegatedAmount: 0,
-  accuracy: 0,
-  oracleRecords: [],
-  proposalVotingHistory: [],
-  financialRequestsVotes: [],
-  emergencyGovernanceVotes: [],
-  satelliteActionVotes: [],
-  satelliteMetrics: {
-    proposalParticipation: 0,
-    votingPartisipation: 0,
-    oracleEfficiency: 0,
-  },
-}
-
 export function getTotalDelegatedMVK(
   satelliteIds: State['satellites']['allSatellitesIds'],
   satellitesMapper: State['satellites']['satelliteMapper'],
