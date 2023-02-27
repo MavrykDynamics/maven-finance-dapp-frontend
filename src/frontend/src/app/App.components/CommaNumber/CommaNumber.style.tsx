@@ -1,13 +1,7 @@
-import styled, { keyframes } from 'styled-components/macro'
-
+import styled from 'styled-components/macro'
+import { turn } from 'styles/animations'
 import { MavrykTheme } from '../../../styles/interfaces'
 import { PRIMARY_COMMA_NUMBER, SECONDARY_COMMA_NUMBER, TRANSPARENT_COMMA_NUMBER } from './CommaNumber.constants'
-
-const turn = keyframes`
-  100% {
-      transform: rotate(360deg);
-  }
-`
 
 export const LoadingIcon = styled.svg<{ theme: MavrykTheme }>`
   width: 20px;

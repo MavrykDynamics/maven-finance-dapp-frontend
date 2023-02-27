@@ -122,7 +122,7 @@ export const VaultsView = () => {
           <div className="text">Loading vaults</div>
         </DataLoaderWrapper>
       ) : paginatedVaultsList.length ? (
-        <>
+        <div className="vaults">
           {paginatedVaultsList.map((item) => {
             const isOwner = vaultsMapper[item].ownerId === accountPkh
 
@@ -137,7 +137,7 @@ export const VaultsView = () => {
           })}
 
           <Pagination itemsCount={vaultsIds.length} listName={currentListName} />
-        </>
+        </div>
       ) : (
         <EmptyContainer className="centered">
           <img src="/images/not-found.svg" alt=" No financial requests to show" />

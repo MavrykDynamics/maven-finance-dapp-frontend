@@ -5,7 +5,7 @@ import { ERROR, INFO, SUCCESS } from 'app/App.components/Toaster/Toaster.constan
 import { AppDispatch, GetState } from 'app/App.controller'
 import { State } from 'reducers'
 import { updateUserData } from 'reducers/actions/user.actions'
-import { getLoansStorage } from './getLoansData.actions'
+import { getAvaliableCollaterals, getLoansStorage } from './getLoansData.actions'
 import { getFa12Batch, getFa2Batch } from './loansAction.helpers'
 
 // remove collateral from the vault
@@ -36,9 +36,9 @@ export const withdrawCollateralAction =
       // confirm query completion
       await transaction?.confirmation()
 
-      
       // refetch data we need
       await dispatch(updateUserData())
+      await dispatch(getAvaliableCollaterals())
       await dispatch(getLoansStorage())
       await dispatch(showToaster(SUCCESS, 'Collateral withdrawed.', 'All good :)'))
       await dispatch(toggleActionLoader(false))
@@ -127,7 +127,7 @@ export const depositCollateralAction =
           assetId: 0,
           assetContract,
           contractMethod: contract.methods.deposit,
-          isDepositCollateral: true
+          isDepositCollateral: true,
         })
 
         const batch = await state.wallet.tezos?.wallet.batch(batchArr)
@@ -141,9 +141,9 @@ export const depositCollateralAction =
       // confirm query completion
       await transaction?.confirmation()
 
-      
       // refetch data we need
       await dispatch(updateUserData())
+      await dispatch(getAvaliableCollaterals())
       await dispatch(getLoansStorage())
       await dispatch(showToaster(SUCCESS, 'Collateral added.', 'All good :)'))
       await dispatch(toggleActionLoader(false))

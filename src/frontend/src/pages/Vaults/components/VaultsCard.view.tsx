@@ -32,8 +32,6 @@ import { vaultsStatuses } from '../Vaults.consts'
 import { getTimestampByLevel } from 'pages/Governance/Governance.actions'
 import { loansPopupsContext } from 'pages/Loans/Components/Modals/LoansModals.provider'
 import { calculateCollateralShare } from '../calcFunctionsForVault'
-import {skyColor, textColor} from "../../../styles";
-import {CustomTooltip} from "../../../app/App.components/Tooltip/Tooltip.view";
 
 const findStatusInfo = (status: string) => {
   switch (status) {
@@ -301,7 +299,7 @@ export const VaultsCard = (props: Props) => {
       {isOwner ? (
         <BorrowingExpandCard
           {...props}
-          className="expand-vault"
+          className={`expand-vault ${expanded ? 'openVault' : ''}`}
           headerSufix={headerSufix}
           getExpandedStatus={setExpanded}
           isOwner
@@ -313,7 +311,7 @@ export const VaultsCard = (props: Props) => {
       ) : (
         <BorrowingExpandCard
           {...props}
-          className="expand-vault"
+          className={`expand-vault ${expanded ? 'openVault' : ''}`}
           headerSufix={headerSufix}
           getExpandedStatus={setExpanded}
           options={borrowingCardOptions}

@@ -1,5 +1,5 @@
-import styled, { keyframes } from 'styled-components/macro'
-
+import styled from 'styled-components/macro'
+import { zoomIn, slideDown } from 'styles/animations'
 import { MavrykTheme } from '../../../styles/interfaces'
 
 export const InputStyled = styled.div`
@@ -112,17 +112,6 @@ export const InputLabel = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-const zoomIn = keyframes`
-  from {
-    transform:scale(.2);
-    opacity:0
-  }
-  to {
-    transform:scale(1);
-    opacity:1
-  }
-`
-
 export const InputStatus = styled.div`
   display: block;
   position: absolute;
@@ -169,17 +158,6 @@ export const InputIcon = styled.svg<{ theme: MavrykTheme }>`
   visibility: visible;
   pointer-events: none;
   stroke: ${({ theme }) => theme.backgroundTextColor};
-`
-
-const slideDown = keyframes`
-  from {
-    transform: translate3d(0, -10px, 0);
-    opacity:0
-  }
-  to {
-    transform: translate3d(0, 0px, 0);
-    opacity:1
-  }
 `
 
 export const InputErrorMessage = styled.div<{ theme: MavrykTheme }>`

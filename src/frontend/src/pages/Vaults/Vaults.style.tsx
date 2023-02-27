@@ -45,6 +45,18 @@ export const VaultsStyled = styled.div<{ theme: MavrykTheme }>`
     margin-bottom: 0;
     width: 175px;
   }
+
+  .vaults:has(.openVault) {
+    .expand-vault {
+      opacity: 0.3;
+      pointer-events: none;
+    }
+
+    .openVault {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
 `
 
 export const VaultsSearchFilterWrapper = styled.div`
