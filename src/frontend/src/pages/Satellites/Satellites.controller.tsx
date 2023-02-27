@@ -101,7 +101,7 @@ const Satellites = () => {
                     <Link to="/satellite-nodes">
                       <NewButton kind={NAV_SIMPLE} className="see-all">
                         See all Satellites
-                        <Icon id="arrow-left-stroke" />
+                        <Icon id="full-arrow-right" />
                       </NewButton>
                     </Link>
                   </div>
@@ -124,7 +124,7 @@ const Satellites = () => {
                     <Link to="/data-feeds">
                       <NewButton kind={NAV_SIMPLE} className="see-all">
                         See all Data Feeds
-                        <Icon id="arrow-left-stroke" />
+                        <Icon id="full-arrow-right" />
                       </NewButton>
                     </Link>
                   </div>

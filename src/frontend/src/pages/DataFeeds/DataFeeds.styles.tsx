@@ -18,7 +18,7 @@ export const DataFeedsCardStyled = styled(CardHover)<{ theme: MavrykTheme; isExt
   margin: 0;
 
   grid-template-columns: ${({ isExtendedCard }) =>
-    isExtendedCard ? '1.1fr 0.8fr 1.1fr 1fr 1.25fr' : '0.87fr 0.55fr 0.95fr 1.2fr'};
+    isExtendedCard ? '1.1fr 0.75fr 1.1fr 0.8fr 1.3fr' : '0.87fr 0.5fr 0.95fr 1.2fr'};
   column-gap: ${({ isExtendedCard }) => (isExtendedCard ? '50px' : '30px')};
 `
 
