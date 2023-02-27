@@ -57,14 +57,9 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
     },
   } = useSelector((state: State) => state.wallet)
 
-  const {
-    delegationStorage: { activeSatellites = [] },
-  } = useSelector((state: State) => state.delegation)
+  const { satelliteMapper } = useSelector((state: State) => state.satellites)
 
-  const delegatedUser = useMemo(
-    () => activeSatellites.find((item) => item.address === satelliteMvkIsDelegatedTo),
-    [satelliteMvkIsDelegatedTo, activeSatellites],
-  )
+  const delegatedUser = satelliteMapper[satelliteMvkIsDelegatedTo]
 
   const [inputData, setInputData] = useState<{ amount: string; validation: InputStatusType; errorMessage: string }>({
     amount: '0',
@@ -245,7 +240,7 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
 
             {!mySMvkBalanceIsZero && delegatedUser && (
               <StakeDelegatedUser>
-                <ImageWithPlug className='userImage' imageLink={delegatedUser.image} alt="user image" />
+                <ImageWithPlug className="userImage" imageLink={delegatedUser.image} alt="user image" />
 
                 <div>
                   <h3>Delegated to</h3>
