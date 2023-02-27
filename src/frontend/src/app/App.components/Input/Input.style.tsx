@@ -1,6 +1,7 @@
 import styled from 'styled-components/macro'
 import { zoomIn, slideDown } from 'styles/animations'
 import { MavrykTheme } from '../../../styles/interfaces'
+import { INPUT_BIG, INPUT_LARGE, INPUT_MEDIUM } from './Input.constants'
 
 export const InputStyled = styled.div`
   position: relative;
@@ -232,6 +233,18 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
   height: 40px;
   transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 
+  &.${INPUT_MEDIUM} {
+    height: 50px;
+  }
+
+  &.${INPUT_LARGE} {
+    height: 56px;
+  }
+
+  &.${INPUT_BIG} {
+    height: 60px;
+  }
+
   &:focus-within {
     box-shadow: 0 0 0 2px ${({ theme }) => theme.primaryColor}19;
     border-color: ${({ theme }) => theme.primaryColor}7F;
@@ -277,10 +290,6 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
       box-shadow: unset;
       border-color: unset;
     }
-  }
-
-  &.large-input {
-    height: 56px;
   }
 
   &.input-with-rate {

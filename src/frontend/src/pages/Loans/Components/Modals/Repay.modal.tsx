@@ -3,7 +3,7 @@ import { useLockBodyScroll } from 'react-use'
 import { useEffect, useMemo, useState } from 'react'
 
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
-import { INPUT_STATUS_SUCCESS, INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
+import { INPUT_STATUS_SUCCESS, INPUT_STATUS_ERROR, INPUT_LARGE } from 'app/App.components/Input/Input.constants'
 import { DEFAULT_LOANS_INPUT_VALUE, getOnBlurValue, getOnFocusValue, RepayPartPopupDataType } from './Modals.helpers'
 import { State } from 'reducers'
 import { ACTION_PRIMARY, TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
@@ -146,9 +146,7 @@ export const Repay = ({
               <div className="block-name">Please enter how much you would like to repay</div>
               {borrowedAsset ? (
                 <Input
-                  className={`${
-                    borrowedAsset.rate ? 'input-with-rate' : ''
-                  } large-input pinned-dropdown withdrawCollateralInput`}
+                  className={`${borrowedAsset.rate ? 'input-with-rate' : ''} pinned-dropdown withdrawCollateralInput`}
                   inputProps={{
                     value: inputData.amount,
                     type: 'number',
@@ -167,6 +165,7 @@ export const Repay = ({
                       ),
                     inputStatus: inputData.validationStatus,
                     convertedValue: inputAmount * borrowedAsset.rate,
+                    inputSize: INPUT_LARGE,
                   }}
                 >
                   <InputPinnedTokenInfo>

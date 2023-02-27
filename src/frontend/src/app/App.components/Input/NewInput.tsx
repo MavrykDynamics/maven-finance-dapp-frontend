@@ -1,7 +1,7 @@
 import { ACTION_SIMPLE } from '../Button/Button.constants'
 import NewButton from '../Button/NewButton.controller'
 import { CommaNumber } from '../CommaNumber/CommaNumber.controller'
-import { InputStatusType } from './Input.constants'
+import { InputSizeType, InputStatusType } from './Input.constants'
 import { InputOneChange } from './Input.controller'
 import { InputPinnedChild, InputStyledStatus, InputWrapper, NewInputLabel, StyledInput } from './Input.style'
 
@@ -16,6 +16,7 @@ type InputViewProps = {
     label?: string
     inputStatus: InputStatusType
     convertedValue?: number
+    inputSize?: InputSizeType
   }
   inputProps: {
     disabled?: boolean
@@ -36,10 +37,19 @@ export const Input = ({
   children,
   className,
   inputProps,
-  settings: { balance, balanceAsset, useMaxHandler, convertedValue, label, balanceName = 'Balance', inputStatus },
+  settings: {
+    balance,
+    balanceAsset,
+    useMaxHandler,
+    convertedValue,
+    label,
+    balanceName = 'Balance',
+    inputStatus,
+    inputSize,
+  },
 }: InputViewProps) => {
   return (
-    <InputWrapper className={`${className} ${inputStatus}`} id={'inputStyled'}>
+    <InputWrapper className={`${className} ${inputStatus} ${inputSize}`} id={'inputStyled'}>
       {label ? <NewInputLabel>{label}</NewInputLabel> : null}
       <StyledInput {...inputProps} className={inputStatus} autoComplete={inputProps.name} />
       {Boolean(children) ? null : <InputStyledStatus className={`${inputStatus}`} />}

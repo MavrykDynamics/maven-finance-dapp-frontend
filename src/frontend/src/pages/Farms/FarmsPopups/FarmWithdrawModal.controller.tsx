@@ -14,6 +14,7 @@ import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { withdraw } from '../Farms.actions'
 import {
   InputStatusType,
+  INPUT_LARGE,
   INPUT_STATUS_ERROR,
   INPUT_STATUS_SUCCESS,
 } from '../../../app/App.components/Input/Input.constants'
@@ -97,7 +98,7 @@ export const FarmWithdrawModal = ({
           </div>
 
           <Input
-            className={`large-input pinned-dropdown withdrawCollateralInput`}
+            className={`pinned-dropdown withdrawCollateralInput`}
             inputProps={{
               value: inputData.amount,
               type: 'number',
@@ -110,6 +111,7 @@ export const FarmWithdrawModal = ({
               balanceAsset: tokensNames,
               useMaxHandler: () => setInputData({ ...inputData, amount: String(lpTokenUserBalance) }),
               inputStatus: inputData.validation,
+              inputSize: INPUT_LARGE,
             }}
           >
             <InputPinnedTokenInfo>{tokensNames}</InputPinnedTokenInfo>

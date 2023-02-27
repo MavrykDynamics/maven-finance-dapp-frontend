@@ -2,7 +2,12 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useLockBodyScroll } from 'react-use'
 import { useEffect, useMemo, useState } from 'react'
 
-import { InputStatusType, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import {
+  InputStatusType,
+  INPUT_LARGE,
+  INPUT_STATUS_ERROR,
+  INPUT_STATUS_SUCCESS,
+} from 'app/App.components/Input/Input.constants'
 import { CreateVaultPopupDataType } from './Modals.helpers'
 import { isTezosAsset } from 'pages/Loans/Loans.helpers'
 import { AvaliableCollateralType, XtzBakerType } from 'utils/TypesAndInterfaces/Loans'
@@ -419,7 +424,7 @@ export const CreateNewVault = ({
                     <div className="collateral-block" key={inputCollateralId}>
                       <div className="block-name">Select Collateral Asset and Amount</div>
                       <Input
-                        className={`${collateralMetadata.rate ? 'input-with-rate' : ''} large-input pinned-dropdown`}
+                        className={`${collateralMetadata.rate ? 'input-with-rate' : ''} pinned-dropdown`}
                         inputProps={{
                           value: inputAmount,
                           type: 'number',
@@ -440,6 +445,7 @@ export const CreateNewVault = ({
                             ? { convertedValue: Number(collateralMetadata.rate) * Number(inputAmount) }
                             : {}),
                           balance: collateralMetadata.userBalance,
+                          inputSize: INPUT_LARGE,
                         }}
                       >
                         <InputPinnedDropDown>

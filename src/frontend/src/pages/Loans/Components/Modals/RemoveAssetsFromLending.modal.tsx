@@ -9,7 +9,7 @@ import { Input } from 'app/App.components/Input/NewInput'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 import { ACTION_PRIMARY, TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
-import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import { INPUT_LARGE, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { silverColor } from 'styles'
 import {
   DEFAULT_LOANS_INPUT_VALUE,
@@ -140,7 +140,7 @@ export const RemoveAssetsFromLending = ({
 
               <div className="block-name">Select amount to remove</div>
               <Input
-                className={`${rate ? 'input-with-rate' : ''} large-input pinned-dropdown withdrawCollateralInput`}
+                className={`${rate ? 'input-with-rate' : ''} pinned-dropdown withdrawCollateralInput`}
                 inputProps={{
                   value: inputData.amount,
                   type: 'number',
@@ -158,6 +158,7 @@ export const RemoveAssetsFromLending = ({
                     ),
                   inputStatus: inputData.validationStatus,
                   convertedValue: Number(inputData.amount) * rate,
+                  inputSize: INPUT_LARGE,
                 }}
               >
                 <InputPinnedTokenInfo>

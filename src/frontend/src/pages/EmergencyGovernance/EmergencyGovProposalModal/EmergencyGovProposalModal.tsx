@@ -3,7 +3,12 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import { State } from 'reducers'
 import { submitEmergencyGovernanceProposal } from '../EmergencyGovernance.actions'
-import { InputStatusType, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import {
+  InputStatusType,
+  INPUT_LARGE,
+  INPUT_STATUS_ERROR,
+  INPUT_STATUS_SUCCESS,
+} from 'app/App.components/Input/Input.constants'
 import { isValidLength } from '../../../utils/validatorFunctions'
 
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
@@ -77,7 +82,6 @@ export const EmergencyGovProposalModal = ({ show, closeHandler }: { show: boolea
           <h1>Trigger Emergency Governance Vote & Break Glass</h1>
           <div className="top-content">
             <Input
-              className={`large-input`}
               inputProps={{
                 value: proposalData.title.text,
                 type: 'text',
@@ -87,6 +91,7 @@ export const EmergencyGovProposalModal = ({ show, closeHandler }: { show: boolea
               settings={{
                 inputStatus: proposalData.title.validation,
                 label: 'Title',
+                inputSize: INPUT_LARGE,
               }}
             />
 

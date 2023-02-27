@@ -8,7 +8,7 @@ import Icon from 'app/App.components/Icon/Icon.view'
 import { Input } from 'app/App.components/Input/NewInput'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
-import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import { INPUT_LARGE, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { State } from 'reducers'
 import { AddLendingAssetDataType, DEFAULT_LOANS_INPUT_VALUE, getOnBlurValue, getOnFocusValue } from './Modals.helpers'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
@@ -117,7 +117,7 @@ export const AddLendingAsset = ({
           </div>
 
           <Input
-            className={`${rate ? 'input-with-rate' : ''} large-input pinned-dropdown`}
+            className={`${rate ? 'input-with-rate' : ''} pinned-dropdown`}
             inputProps={{
               value: inputData.amount,
               type: 'number',
@@ -130,6 +130,7 @@ export const AddLendingAsset = ({
               balanceAsset: symbol,
               useMaxHandler: () => onChangeHandler(String(userBalance), userBalance),
               inputStatus: inputData.validationStatus,
+              inputSize: INPUT_LARGE,
               ...(rate ? { convertedValue: rate * Number(inputData.amount) } : {}),
             }}
           >

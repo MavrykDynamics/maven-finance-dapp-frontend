@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useLockBodyScroll } from 'react-use'
 import { useEffect, useMemo, useState } from 'react'
 
-import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import { INPUT_LARGE, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { BorrowPopupDataType, DEFAULT_LOANS_INPUT_VALUE, getOnBlurValue, getOnFocusValue } from './Modals.helpers'
 import { State } from 'reducers'
@@ -156,9 +156,7 @@ export const BorrowAsset = ({
               <div className="block-name">Select asset and amount to borrow</div>
               {borrowedAsset ? (
                 <Input
-                  className={`${
-                    borrowedAsset.rate ? 'input-with-rate' : ''
-                  } large-input pinned-dropdown withdrawCollateralInput`}
+                  className={`${borrowedAsset.rate ? 'input-with-rate' : ''}pinned-dropdown withdrawCollateralInput`}
                   inputProps={{
                     value: inputData.amount,
                     type: 'number',
@@ -176,6 +174,7 @@ export const BorrowAsset = ({
                       ),
                     inputStatus: inputData.validationStatus,
                     convertedValue: inputAmount * borrowedAsset.rate,
+                    inputSize: INPUT_LARGE,
                   }}
                 >
                   <InputPinnedTokenInfo>

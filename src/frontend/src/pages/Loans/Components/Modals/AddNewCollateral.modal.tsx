@@ -18,7 +18,12 @@ import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { depositCollateralAction } from 'pages/Loans/Actions/vaultCollateral.actions'
 import { AddNewCollateralDataProps, getOnBlurValue, getOnFocusValue } from './Modals.helpers'
-import { InputStatusType, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import {
+  InputStatusType,
+  INPUT_LARGE,
+  INPUT_STATUS_ERROR,
+  INPUT_STATUS_SUCCESS,
+} from 'app/App.components/Input/Input.constants'
 
 import { InputPinnedDropDown } from 'app/App.components/Input/Input.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
@@ -299,7 +304,7 @@ export const AddNewCollateral = ({
               <Input
                 className={`${
                   inputData.selectedDdItem?.rate ? 'input-with-rate' : ''
-                } large-input pinned-dropdown withdrawCollateralInput`}
+                } pinned-dropdown withdrawCollateralInput`}
                 inputProps={{
                   value: inputData.amount,
                   type: 'number',
@@ -316,6 +321,7 @@ export const AddNewCollateral = ({
                       amount: String(inputData.userBalance),
                       validationStatus: INPUT_STATUS_SUCCESS,
                     }),
+                  inputSize: INPUT_LARGE,
                   inputStatus: inputData.validationStatus,
                   convertedValue: Number(inputData.amount) * inputData.selectedDdItem.rate,
                 }}
