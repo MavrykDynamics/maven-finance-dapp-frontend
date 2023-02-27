@@ -23,7 +23,7 @@ const DelegationTab = () => {
         <GovRightContainerTitleArea>
           <h2>Delegation Status</h2>
         </GovRightContainerTitleArea>
-        {satelliteMvkIsDelegatedTo && satelliteInfo ? (
+        {satelliteInfo ? (
           <>
             <div className="delegated-to">Delegated To</div>
             <div className="top-row">
