@@ -77,7 +77,7 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
       <div className="top">
         <BGPrimaryTitle>Lending</BGPrimaryTitle>
         <Link to="/loans">
-          <Button text="Loans" icon="coin-loan" kind={ACTION_PRIMARY} className="noStroke dashboard-sectionLink" />
+          <Button text="Lending" icon="coin-loan" kind={ACTION_PRIMARY} className="noStroke dashboard-sectionLink" />
         </Link>
       </div>
 
@@ -175,8 +175,8 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
       <div className="descr">
         <div className="title">How does Lending work on Mavyrk?</div>
         <div className="text">
-          Mavryk allows its users to put up existing crypto-assets as equity for a stablecoin loan, up to a 50%
-          loan-to-value ratio. Likewise, suppliers can loan out their crypto-assets to receive interest.{' '}
+          Mavryk allows its users to put up existing crypto-assets as collateral for a loan, up to a 50% loan-to-value
+          ratio. Likewise, suppliers can loan out their crypto-assets to receive interest.{' '}
           <a href="https://blogs.mavryk.finance/" target="_blank" rel="noreferrer">
             Read more
           </a>

@@ -132,7 +132,7 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
 
       <LBHInfoBlock>
         <GovRightContainerTitleArea>
-          <h2>Lending</h2>
+          <h2>My Lending</h2>
         </GovRightContainerTitleArea>
         {isUserLoansLoading ? (
           <div className="loader-wrapper">
@@ -184,7 +184,7 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
       </LBHInfoBlock>
       <LBHInfoBlock>
         <GovRightContainerTitleArea>
-          <h2>Borrowing</h2>
+          <h2>My Borrowing</h2>
         </GovRightContainerTitleArea>
         {isUserLoansLoading ? (
           <div className="loader-wrapper">

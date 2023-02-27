@@ -70,7 +70,7 @@ export const SatellitesTab = ({ isLoading }: { isLoading: boolean }) => {
       <div className="top">
         <BGPrimaryTitle>Satellites</BGPrimaryTitle>
         <Link to="/satellites">
-          <Button text="Satellite" icon="satellite" kind={ACTION_PRIMARY} className="noStroke dashboard-sectionLink" />
+          <Button text="Satellites" icon="satellite" kind={ACTION_PRIMARY} className="noStroke dashboard-sectionLink" />
         </Link>
       </div>
 
@@ -130,16 +130,16 @@ export const SatellitesTab = ({ isLoading }: { isLoading: boolean }) => {
       <div className="descr">
         <div className="title">What are Satellites?</div>
         <div className="text">
-          Satellites are nodes that administer the Mavryk platform (similarly to Bakers on Tezos). A Satellite can act
+          Satellites are nodes that administer the Mavryk platform (similarly to validators on PoS). A Satellite can act
           on its own behalf and can receive delegations on behalf of others.
           <br />
           <br />
-          To operate a Mavryk Satellite, a user needs to stake a security deposit in MVK as a bond, which the user can
-          buy on the open market or earn by participating in the ecosystem (e.g. through yield farming, or MVK returned
-          on DSR savings).{' '}
+          To operate a Mavryk Satellite, a users needs to stake a security deposit in MVK, and operate an oracle node
+          for signing data feeds. For more information about starting & operating a Satellite, please read more{' '}
           <a href="https://blogs.mavryk.finance/" target="_blank" rel="noreferrer">
-            Read more
+            here
           </a>
+          .
         </div>
       </div>
     </TabWrapperStyled>
