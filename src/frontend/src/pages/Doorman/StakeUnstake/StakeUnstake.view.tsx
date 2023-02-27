@@ -7,6 +7,7 @@ import NewButton from 'app/App.components/Button/NewButton.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { Input } from '../../../app/App.components/Input/Input.controller'
 import Icon from '../../../app/App.components/Icon/Icon.view'
+import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
 // helpers, consts
 import { State } from 'reducers'
@@ -279,7 +280,7 @@ export const StakeUnstakeView = ({
 
       <StakeUnstakeActionCard>
         <StakeUnstakeInputGrid>
-          <img src="/images/coin-gold.svg" alt="coin" />
+          <ImageWithPlug imageLink={'/images/coin-gold.svg'} alt="coin" />
           <StakeUnstakeInputColumn>
             <StakeUnstakeInputLabels>
               <div className="minAmount">Min 1 MVK</div>
