@@ -21,7 +21,6 @@ export interface DelegationState {
   error?: object
   currentSatellite: SatelliteRecord
   participationMetrics: ParticipationMetrics
-  delegationStorageisLoaded: boolean
 }
 
 const defaultDelegationStorage: DelegationStorage = {
@@ -78,7 +77,6 @@ const delegationDefaultState: DelegationState = {
     pollParticipation: 0,
     proposalParticipation: 0,
   },
-  delegationStorageisLoaded: false,
 }
 
 export function delegation(state = delegationDefaultState, action: Action) {
@@ -87,7 +85,6 @@ export function delegation(state = delegationDefaultState, action: Action) {
       return {
         ...state,
         delegationStorage: action.delegationStorage,
-        delegationStorageisLoaded: true,
       }
     case GET_SATELLITE_BY_ADDRESS:
       return {
