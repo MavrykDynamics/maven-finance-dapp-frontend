@@ -159,14 +159,13 @@ export const ConnectedWalletStyled = styled.div<{ theme: MavrykTheme }>`
     .icon-send {
       width: 16px;
       height: 16px;
-      fill: none;
-      stroke: ${({ theme }) => theme.textColor};
+      fill:  ${({ theme }) => theme.textColor};
       cursor: pointer;
-      transition: stroke 0.6s;
-    }
+      transition: fill 0.6s;
 
-    .icon-send:hover {
-      stroke: ${({ theme }) => theme.headerSkyColor};
+      &:hover {
+        fill: ${({ theme }) => theme.headerSkyColor};
+      }
     }
 
     .wallet-details-address {
