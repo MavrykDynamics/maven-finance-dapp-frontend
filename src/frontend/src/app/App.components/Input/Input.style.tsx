@@ -263,6 +263,9 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
     border: 1px solid ${({ theme }) => theme.downColor};
     input {
       color: ${({ theme }) => theme.downColor};
+      &::placeholder {
+        color: ${({ theme }) => theme.downColor};
+      }
     }
   }
 
@@ -270,6 +273,9 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
     border: 1px solid ${({ theme }) => theme.upColor};
     input {
       color: ${({ theme }) => theme.upColor};
+      &::placeholder {
+        color: ${({ theme }) => theme.upColor};
+      }
     }
   }
 

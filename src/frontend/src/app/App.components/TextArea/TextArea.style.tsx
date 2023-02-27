@@ -38,6 +38,9 @@ export const TextAreaStyled = styled.div`
 
       .textarea {
         color: ${({ theme }) => theme.downColor};
+        &::placeholder {
+          color: ${({ theme }) => theme.downColor};
+        }
       }
     }
 
@@ -49,6 +52,9 @@ export const TextAreaStyled = styled.div`
 
       .textarea {
         color: ${({ theme }) => theme.upColor};
+        &::placeholder {
+          color: ${({ theme }) => theme.upColor};
+        }
       }
     }
   }

@@ -78,7 +78,7 @@ export const TextArea = ({
       <TextAreaCounter className={status}>
         {String(value).length}/{textAreaMaxLimit}
       </TextAreaCounter>
-      {/* <TextAreaStatus className={status} /> */}
+      <TextAreaStatus className={status} />
       {errorMessage && <TextAreaErrorMessage>{errorMessage}</TextAreaErrorMessage>}
     </TextAreaStyled>
   )

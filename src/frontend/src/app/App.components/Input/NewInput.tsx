@@ -13,7 +13,6 @@ type InputViewProps = {
     balanceAsset?: string
     balanceName?: string
     useMaxHandler?: () => void
-    errorMessage?: string
     label?: string
     inputStatus: InputStatusType
     convertedValue?: number
@@ -37,22 +36,13 @@ export const Input = ({
   children,
   className,
   inputProps,
-  settings: {
-    balance,
-    balanceAsset,
-    useMaxHandler,
-    convertedValue,
-    errorMessage,
-    label,
-    balanceName = 'Balance',
-    inputStatus,
-  },
+  settings: { balance, balanceAsset, useMaxHandler, convertedValue, label, balanceName = 'Balance', inputStatus },
 }: InputViewProps) => {
   return (
     <InputWrapper className={`${className} ${inputStatus}`} id={'inputStyled'}>
       {label ? <NewInputLabel>{label}</NewInputLabel> : null}
       <StyledInput {...inputProps} className={inputStatus} autoComplete={inputProps.name} />
-      {/* <InputStyledStatus className={`${inputStatus} ${children ? 'hasChild' : ''}`} /> */}
+      {Boolean(children) ? null : <InputStyledStatus className={`${inputStatus}`} />}
 
       {balance !== undefined && balanceAsset ? (
         <CommaNumber
