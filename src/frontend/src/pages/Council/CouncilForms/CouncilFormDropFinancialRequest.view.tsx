@@ -41,7 +41,7 @@ export const CouncilFormDropFinancialRequest = () => {
     () =>
       ongoing.map((item) => ({
         content: (
-          <div>
+          <div className="truncated-text">
             {item.type} {item.purpose}
           </div>
         ),
