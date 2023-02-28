@@ -106,6 +106,7 @@ export const VaultsCard = (props: Props) => {
     collateralData,
     isOwner,
     liquidationMax,
+    liquidationPrice,
     handleMarkForLiquidation,
   } = props
 
@@ -191,7 +192,7 @@ export const VaultsCard = (props: Props) => {
                 <Icon id="info" className="info-icon" />
               </div>
 
-              <CommaNumber value={400_999_000} decimalsToShow={2} beginningText="$" className="value" />
+              <CommaNumber value={liquidationPrice ?? 0} decimalsToShow={2} beginningText="$" className="value" />
             </div>
 
             <div>
@@ -298,21 +299,25 @@ export const VaultsCard = (props: Props) => {
       {isOwner ? (
         <BorrowingExpandCard
           {...props}
-          className="expand-vault"
+          className={`expand-vault ${expanded ? 'openVault' : ''}`}
           headerSufix={headerSufix}
           getExpandedStatus={setExpanded}
           isOwner
           options={borrowingCardOptions}
+          // TODO: add this values as on loans
           DAOFee={0}
+          avaliableMarketLiquidity={0}
         />
       ) : (
         <BorrowingExpandCard
           {...props}
-          className="expand-vault"
+          className={`expand-vault ${expanded ? 'openVault' : ''}`}
           headerSufix={headerSufix}
           getExpandedStatus={setExpanded}
           options={borrowingCardOptions}
+          // TODO: add this values as on loans
           DAOFee={0}
+          avaliableMarketLiquidity={0}
         >
           {generalExpand}
         </BorrowingExpandCard>

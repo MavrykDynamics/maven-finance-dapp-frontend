@@ -1,66 +1,23 @@
-import {
-  GET_BREAK_GLASS_STORAGE,
-  SET_GLASS_BROKEN,
-  GET_BREAK_GLASS_STATUS,
-  GET_WHITELIST_DEV,
-} from '../pages/BreakGlass/BreakGlass.actions'
-import {
-  GET_BREAK_GLASS_COUNCIL_MEMBER,
-  GET_BREAK_GLASS_ACTION_PENDING_SIGNATURE,
-  GET_PAST_BREAK_GLASS_COUNCIL_ACTION,
-  GET_MY_PAST_BREAK_GLASS_COUNCIL_ACTION,
-} from 'pages/BreakGlassCouncil/BreakGlassCouncil.actions'
-import {
-  BreakGlassStorage,
-  BreakGlassStatusStorage,
-  WhitelistDevStorage,
-  BreakGlassCouncilMember,
-  BreakGlassActions,
-} from '../utils/TypesAndInterfaces/BreakGlass'
+import { GET_BREAK_GLASS_STORAGE, GET_CONTRACT_STATUSES } from '../pages/BreakGlass/BreakGlass.actions'
+import { BreakGlassStatusStorage, BreakGlassConfig } from '../utils/TypesAndInterfaces/BreakGlass'
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
 
 export interface BreakGlassState {
-  breakGlassStorage: BreakGlassStorage
-  glassBroken: boolean
-  isPendingPropagateBreakGlass: boolean
   breakGlassStatus: BreakGlassStatusStorage
-  whitelistDev: WhitelistDevStorage
-  breakGlassCouncilMember: BreakGlassCouncilMember
-  breakGlassActionPendingAllSignature: BreakGlassActions
-  breakGlassActionPendingSignature: BreakGlassActions
-  breakGlassActionPendingMySignature: BreakGlassActions
-  pastBreakGlassCouncilAction: BreakGlassActions
-  myPastBreakGlassCouncilAction: BreakGlassActions
-}
-
-const defaultBreakGlassStorage: BreakGlassStorage = {
-  address: '',
-  admin: '',
-  governanceId: '',
-  actionLedger: [],
-  config: {
-    threshold: 0,
-    actionExpiryDays: 0,
-    councilMemberNameMaxLength: 400,
-    councilMemberWebsiteMaxLength: 400,
-    councilMemberImageMaxLength: 400,
-  },
-  actionCounter: 0,
-  glassBroken: false,
+  config: BreakGlassConfig & {
+    isConfigLoaded: boolean
+  }
+  isLoaded: boolean
 }
 
 const breakGlassDefaultState: BreakGlassState = {
-  breakGlassStorage: defaultBreakGlassStorage,
-  glassBroken: false,
-  isPendingPropagateBreakGlass: false,
   breakGlassStatus: [],
-  whitelistDev: '',
-  breakGlassCouncilMember: [],
-  breakGlassActionPendingAllSignature: [],
-  breakGlassActionPendingSignature: [],
-  breakGlassActionPendingMySignature: [],
-  pastBreakGlassCouncilAction: [],
-  myPastBreakGlassCouncilAction: [],
+  config: {
+    glassBroken: false,
+    whitelistDev: '',
+    isConfigLoaded: false,
+  },
+  isLoaded: false,
 }
 
 export function breakGlass(state = breakGlassDefaultState, action: Action) {
@@ -68,45 +25,13 @@ export function breakGlass(state = breakGlassDefaultState, action: Action) {
     case GET_BREAK_GLASS_STORAGE:
       return {
         ...state,
-        breakGlassStorage: action.breakGlassStorage,
+        config: { ...action.config, isConfigLoaded: true },
       }
-    case GET_BREAK_GLASS_STATUS:
+    case GET_CONTRACT_STATUSES:
       return {
         ...state,
         breakGlassStatus: action.breakGlassStatus,
-      }
-    case SET_GLASS_BROKEN:
-      return {
-        ...state,
-        glassBroken: action.glassBroken,
-      }
-    case GET_WHITELIST_DEV:
-      return {
-        ...state,
-        whitelistDev: action.whitelistDev,
-      }
-    case GET_BREAK_GLASS_COUNCIL_MEMBER:
-      return {
-        ...state,
-        breakGlassCouncilMember: action.breakGlassCouncilMember,
-      }
-    case GET_BREAK_GLASS_ACTION_PENDING_SIGNATURE:
-      return {
-        ...state,
-        breakGlassActionPendingAllSignature: action.breakGlassActionPendingAllSignature,
-        breakGlassActionPendingSignature: action.breakGlassActionPendingSignature,
-        breakGlassActionPendingMySignature: action.breakGlassActionPendingMySignature,
-        isPendingPropagateBreakGlass: action.isPendingPropagateBreakGlass,
-      }
-    case GET_PAST_BREAK_GLASS_COUNCIL_ACTION:
-      return {
-        ...state,
-        pastBreakGlassCouncilAction: action.pastBreakGlassCouncilAction,
-      }
-    case GET_MY_PAST_BREAK_GLASS_COUNCIL_ACTION:
-      return {
-        ...state,
-        myPastBreakGlassCouncilAction: action.myPastBreakGlassCouncilAction,
+        isLoaded: true,
       }
     default:
       return state

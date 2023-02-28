@@ -2,9 +2,7 @@ import { combineReducers } from 'redux'
 
 import { delegation, DelegationState } from './delegation'
 import { doorman, DoormanState } from './doorman'
-import { exitFeeModal, ExitFeeModalState } from './exitFeeModal'
 import { loading, LoadingState } from './loading'
-import { mvkToken, MvkTokenState } from './mvkToken'
 import { toaster, ToasterState } from './toaster'
 import { wallet, WalletState } from './wallet'
 import { governance, GovernanceState } from './governance'
@@ -15,9 +13,8 @@ import { breakGlass, BreakGlassState } from './breakGlass'
 import { vesting, VestingState } from './vesting'
 import { farm, FarmState } from './farm'
 import { preferences, PreferencesState } from './preferences'
-import { modal, ModalState } from './modal'
 import { contractAddresses, ContractAddressesState } from './contractAddresses'
-import { oracles, OraclesState } from './oracles'
+import { dataFeeds, DataFeedsState } from './dataFeeds'
 import { tokens, TokensType } from './tokens'
 import { loans, LoansState } from './loans'
 import { vaults, VaultsStateType } from './vaults'
@@ -25,8 +22,6 @@ import { vaults, VaultsStateType } from './vaults'
 export const reducers = combineReducers({
   loading,
   toaster,
-  exitFeeModal,
-  mvkToken,
   wallet,
   delegation,
   doorman,
@@ -39,9 +34,8 @@ export const reducers = combineReducers({
   vaults,
   farm,
   preferences,
-  modal,
   contractAddresses,
-  oracles,
+  dataFeeds,
   tokens,
   loans,
 })
@@ -49,8 +43,6 @@ export const reducers = combineReducers({
 export interface State {
   loading: LoadingState
   toaster: ToasterState
-  exitFeeModal: ExitFeeModalState
-  mvkToken: MvkTokenState
   wallet: WalletState
   delegation: DelegationState
   doorman: DoormanState
@@ -62,9 +54,8 @@ export interface State {
   vesting: VestingState
   farm: FarmState
   preferences: PreferencesState
-  modal: ModalState
   contractAddresses: ContractAddressesState
-  oracles: OraclesState
+  dataFeeds: DataFeedsState
   tokens: TokensType
   loans: LoansState
   vaults: VaultsStateType

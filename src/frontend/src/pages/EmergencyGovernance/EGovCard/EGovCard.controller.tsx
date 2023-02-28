@@ -3,13 +3,13 @@ import { useDispatch, useSelector } from 'react-redux'
 
 // helpers
 import { ACTION_SECONDARY } from 'app/App.components/Button/Button.constants'
-import { voteEmergencyGovernanceProposal } from '../EmergencyGovernance.actions'
+import { dropEmergencyGovernanceProposal, voteEmergencyGovernanceProposal } from '../EmergencyGovernance.actions'
 import { skyColor } from 'styles/colors'
 import { COLON_VIEW } from 'app/App.components/Timer/Timer.view'
 import { parseDate } from 'utils/time'
 
 import type { State } from 'reducers'
-import type { EmergencyGovernanceStorage } from '../../../utils/TypesAndInterfaces/EmergencyGovernance'
+import type { EmergergencyGovernanceItem } from '../../../utils/TypesAndInterfaces/EmergencyGovernance'
 
 // view
 import { StatusFlag } from '../../../app/App.components/StatusFlag/StatusFlag.controller'
@@ -28,16 +28,15 @@ import {
 } from 'pages/SatelliteGovernance/SatelliteGovernanceCard/SatelliteGovernanceCard.style'
 
 type EGovCardProps = {
-  emergencyGovernance: EmergencyGovernanceStorage['emergencyGovernanceLedger'][0]
-  dropProposalHandler: (proposalId: number) => void
+  emergencyGovernance: EmergergencyGovernanceItem
 }
 
-export const EGovCard = ({ emergencyGovernance, dropProposalHandler }: EGovCardProps) => {
+export const EGovCard = ({ emergencyGovernance }: EGovCardProps) => {
   const dispatch = useDispatch()
   const { totalStakedMvk } = useSelector((state: State) => state.doorman)
-  const { minStakedMvkRequiredToVote } = useSelector(
-    (state: State) => state.emergencyGovernance.emergencyGovernanceStorage.config,
-  )
+  const {
+    config: { minStakedMvkRequiredToVote },
+  } = useSelector((state: State) => state.emergencyGovernance)
   const {
     accountPkh,
     user: { mySMvkTokenBalance },
@@ -50,6 +49,10 @@ export const EGovCard = ({ emergencyGovernance, dropProposalHandler }: EGovCardP
 
   const handleProposalVote = async () => {
     await dispatch(voteEmergencyGovernanceProposal())
+  }
+
+  const dropProposalHandler = async () => {
+    await dispatch(dropEmergencyGovernanceProposal())
   }
 
   const status = isActiveProposal
@@ -88,8 +91,9 @@ export const EGovCard = ({ emergencyGovernance, dropProposalHandler }: EGovCardP
           <div className="descr">{emergencyGovernance.description}</div>
           <Button
             text="Drop Proposal"
-            onClick={() => dropProposalHandler(emergencyGovernance.id)}
+            onClick={dropProposalHandler}
             kind={ACTION_SECONDARY}
+            disabled={emergencyGovernance.proposerId !== accountPkh}
           />
         </div>
         <VotingArea

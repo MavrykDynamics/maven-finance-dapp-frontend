@@ -43,12 +43,16 @@ export const MediumBlockBase = styled(SmallBlockBase)<{ theme: MavrykTheme }>`
     justify-content: center;
     align-items: center;
     height: 100%;
-    row-gap: 20px;
+    row-gap: 15px;
+
+    button {
+      max-width: unset;
+    }
 
     span {
       font-weight: 600;
-      font-size: 14px;
-      color: ${({ theme }) => theme.lPurple_dPurple_lPuprple};
+      font-size: 18px;
+      color: ${({ theme }) => theme.textColor};
     }
   }
 `
@@ -133,6 +137,7 @@ export const MyRewardsStyled = styled(SmallBlockBase)<{ theme: MavrykTheme }>`
     ${({ theme }) => theme.dashboardTvlGradient};
   background-size: cover;
   background-repeat: no-repeat;
+
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 40px 55px;
@@ -226,6 +231,13 @@ export const HistoryBlock = styled(MediumBlockBase)<{ theme: MavrykTheme }>`
   .no-data {
     margin-top: 20px;
   }
+
+  .history-tooltip {
+    svg {
+      width: 13px;
+      height: 13px;
+    }
+  }
 `
 
 export const ListItem = styled.div<{ theme: MavrykTheme; columsTemplate: string }>`
@@ -283,6 +295,9 @@ export const ListItem = styled.div<{ theme: MavrykTheme; columsTemplate: string 
       button {
         height: fit-content;
       }
+
+      /* TODO: temp solution while earn column is disabled */
+      margin-left: auto;
     }
   }
 
@@ -338,7 +353,7 @@ export const SatelliteStatusBlock = styled(MediumBlockBase)<{ theme: MavrykTheme
         row-gap: 5px;
 
         svg,
-        .satellite-avatar {
+        .img-wrapper {
           width: 16px;
           height: 16px;
           fill: unset;
@@ -353,7 +368,7 @@ export const SatelliteStatusBlock = styled(MediumBlockBase)<{ theme: MavrykTheme
       }
 
       > svg,
-      .satellite-avatar {
+      .img-wrapper {
         height: 40px;
         width: 40px;
         fill: ${({ theme }) => theme.lPurple_dPurple_lPuprple};

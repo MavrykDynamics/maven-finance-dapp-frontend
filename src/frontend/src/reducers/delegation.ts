@@ -1,5 +1,5 @@
 import { MichelsonMap } from '@taquito/taquito'
-import { GET_DELEGATION_STORAGE, REGISTER_FEED, REGISTER_FEED_ERROR } from 'pages/Satellites/Satellites.actions'
+import { GET_DELEGATION_STORAGE } from 'pages/Satellites/Satellites.actions'
 import { GET_SATELLITE_BY_ADDRESS } from '../pages/SatelliteDetails/SatelliteDetails.actions'
 import {
   DelegateRecord,
@@ -91,18 +91,6 @@ export function delegation(state = delegationDefaultState, action: Action) {
         ...state,
         type: SATELLITE_ACTION,
         currentSatellite: action.currentSatellite,
-      }
-    case REGISTER_FEED:
-      // TODO: implement state change after success action ORACLES_SI
-      return {
-        ...state,
-        error: undefined,
-      }
-    case REGISTER_FEED_ERROR:
-      // TODO: implement state change after unsuccess action ORACLES_SI
-      return {
-        ...state,
-        error: action.error,
       }
     default:
       return state

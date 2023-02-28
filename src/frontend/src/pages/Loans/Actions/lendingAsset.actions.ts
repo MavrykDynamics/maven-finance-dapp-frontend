@@ -2,8 +2,9 @@ import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { ERROR, INFO, SUCCESS } from 'app/App.components/Toaster/Toaster.constants'
 import { AppDispatch, GetState } from 'app/App.controller'
-import { updateUserData } from 'pages/Doorman/Doorman.actions'
 import { State } from 'reducers'
+import { getMTokensStorage } from 'reducers/actions/dipDupActions.actions'
+import { updateUserData } from 'reducers/actions/user.actions'
 import { getLoansStorage } from './getLoansData.actions'
 import { getFa12Batch, getFa2Batch } from './loansAction.helpers'
 
@@ -82,6 +83,7 @@ export const depositLendingAssetAction =
 
       // refetch data we need
       await dispatch(updateUserData())
+      await dispatch(getMTokensStorage())
       await dispatch(getLoansStorage())
       await dispatch(showToaster(SUCCESS, 'Liquidity added.', 'All good :)'))
       await dispatch(toggleActionLoader(false))
@@ -124,6 +126,7 @@ export const withdrawLendingAssetAction =
 
       // refetch data we need
       await dispatch(updateUserData())
+      await dispatch(getMTokensStorage())
       await dispatch(getLoansStorage())
       await dispatch(showToaster(SUCCESS, 'Liquidity removed.', 'All good :)'))
       await dispatch(toggleActionLoader(false))

@@ -1,10 +1,18 @@
-import React, { useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
+
+import { State } from 'reducers'
+import { getPieChartData } from 'pages/Treasury/helpers/calculateChartData'
+import { reduceVaultsAssets } from 'pages/Vaults/Vaults.helpers'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
+
 import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+import { emptyContainer } from './LendingTab.controller'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import PieChartView from 'app/App.components/PieСhart/PieСhart.view'
+
 import {
   Table,
   TableHeader,
@@ -15,21 +23,14 @@ import {
   TableScrollable,
 } from 'app/App.components/Table/Table.style'
 import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
-import { getPieChartData } from 'pages/Treasury/helpers/calculateChartData'
-import { State } from 'reducers'
 import { StatBlock, BlockName } from '../Dashboard.style'
 import { TabWrapperStyled, VaultsContentStyled } from './DashboardTabs.style'
-import { emptyContainer } from './LendingTab.controller'
-import { reduceVaultsAssets } from 'pages/Vaults/Vaults.helpers'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
-import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 
 export const VaultsTab = ({ isLoading }: { isLoading: boolean }) => {
   const [hoveredPath, setHoveredPath] = useState<null | string>(null)
 
-  const {
-    vaultsList: { allVaultsIds, vaultsMapper },
-  } = useSelector((state: State) => state.vaults)
+  const { allVaultsIds, vaultsMapper } = useSelector((state: State) => state.vaults.vaultsList)
   const { assetsBalances, globalVaultTVL, collateralRatio, avgCollateralRatio } = useMemo(
     () => reduceVaultsAssets(allVaultsIds, vaultsMapper),
     [allVaultsIds, vaultsMapper],
@@ -98,7 +99,7 @@ export const VaultsTab = ({ isLoading }: { isLoading: boolean }) => {
                             <CommaNumber value={balance} useAccurateParsing />
                           </TableCell>
                           <TableCell width="33%" contentPosition="right">
-                            <CommaNumber value={usdValue} endingText={rate ? '$' : symbol} useAccurateParsing />
+                            <CommaNumber value={usdValue} beginningText={rate ? '$' : symbol} useAccurateParsing />
                           </TableCell>
                         </TableRow>
                       )
@@ -150,7 +151,10 @@ export const VaultsTab = ({ isLoading }: { isLoading: boolean }) => {
         <div className="text">
           The treasury is managed by the Mavryk DAO through on-chain voting. Governance votes, whether for the business
           logic or upgrades to the Mavryk ecosystem, are rewarded with a portion of the earned income from the on-chain
-          Treasury <a href="#">Read more</a>
+          Treasury.{' '}
+          <a href="https://blogs.mavryk.finance/" target="_blank" rel="noreferrer">
+            Read more
+          </a>
         </div>
       </div>
     </TabWrapperStyled>

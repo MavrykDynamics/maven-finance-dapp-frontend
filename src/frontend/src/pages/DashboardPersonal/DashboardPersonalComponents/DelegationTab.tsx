@@ -2,27 +2,19 @@ import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { State } from 'reducers'
 
-import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { ACTION_PRIMARY, ACTION_SECONDARY } from 'app/App.components/Button/Button.constants'
 
 import { Button } from 'app/App.components/Button/Button.controller'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import Icon from 'app/App.components/Icon/Icon.view'
 
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
-import { DashboardPersonalTabStyled, DelegationStatusBlock, HistoryBlock } from './DashboardPersonalComponents.style'
+import { DelegationStatusBlock } from './DashboardPersonalComponents.style'
 
-import { historyData } from '../tabs.const'
 import { getSatelliteMetrics } from 'pages/Satellites/Satellites.helpers'
-import {
-  Table,
-  TableHeader,
-  TableRow,
-  TableHeaderCell,
-  TableBody,
-  TableCell,
-} from 'app/App.components/Table/Table.style'
-import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
+import NewButton from 'app/App.components/Button/NewButton.controller'
+import Icon from 'app/App.components/Icon/Icon.view'
 
 const DelegationTab = () => {
   const { satelliteMvkIsDelegatedTo } = useSelector((state: State) => state.wallet.user)
@@ -33,24 +25,23 @@ const DelegationTab = () => {
     governanceStorage: { financialRequestLedger, proposalLedger },
     pastProposals,
   } = useSelector((state: State) => state.governance)
-  const {
-    emergencyGovernanceStorage: { emergencyGovernanceLedger },
-  } = useSelector((state: State) => state.emergencyGovernance)
-  const { feeds } = useSelector((state: State) => state.oracles.oraclesStorage)
+  const { eGovProposals } = useSelector((state: State) => state.emergencyGovernance)
+  const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
+  const { mySMvkTokenBalance } = useSelector((state: State) => state.wallet.user)
 
   const satelliteMetrics = satelliteInfo
     ? getSatelliteMetrics(
         pastProposals,
         proposalLedger,
-        emergencyGovernanceLedger,
+        eGovProposals,
         satelliteInfo,
-        feeds,
+        feedsLedger,
         financialRequestLedger,
       )
     : null
 
   return (
-    <DashboardPersonalTabStyled>
+    <>
       <DelegationStatusBlock>
         <GovRightContainerTitleArea>
           <h2>Delegation Status</h2>
@@ -60,13 +51,7 @@ const DelegationTab = () => {
             <div className="delegated-to">Delegated To</div>
             <div className="top-row">
               <div className="grid-item info">
-                {satelliteInfo.image ? (
-                  <div className="satellite-avatar">
-                    <img src={satelliteInfo.image} alt="satellite logo" />
-                  </div>
-                ) : (
-                  <Icon id="noImage" />
-                )}
+                <ImageWithPlug imageLink={satelliteInfo.image} alt={satelliteInfo.name + ' avatar'} />
                 <div className="text">
                   <div className="name">{satelliteInfo.name}</div>
                   <div className="value">
@@ -112,59 +97,27 @@ const DelegationTab = () => {
             </div>
             <Link to="/satellites">Satellites Overview</Link>
           </>
+        ) : mySMvkTokenBalance === 0 ? (
+          <div className="no-data">
+            <span>You don't have SMVK</span>
+            <Link to="/">
+              <NewButton kind={ACTION_SECONDARY} className="dashboard-sectionLink">
+                <Icon id="menu-staking" /> Stake MVK
+              </NewButton>
+            </Link>
+          </div>
         ) : (
           <div className="no-data">
-            <span>You are not delegated at this time.</span>
+            <span>You are not delegated at this time</span>
             <Link to="/satellites">
-              <Button
-                text="Satellites"
-                icon="satellite"
-                kind={ACTION_PRIMARY}
-                className="noStroke dashboard-sectionLink"
-              />
+              <NewButton kind={ACTION_SECONDARY} className="dashboard-sectionLink">
+                <Icon id="satellite" /> View Satellites
+              </NewButton>
             </Link>
           </div>
         )}
       </DelegationStatusBlock>
-      <HistoryBlock>
-        <GovRightContainerTitleArea>
-          <h2>History</h2>
-        </GovRightContainerTitleArea>
-        {historyData ? (
-          <Table className="treasury-table">
-            <TableHeader className="treasury">
-              <TableRow>
-                <TableHeaderCell>Action</TableHeaderCell>
-                <TableHeaderCell>Amount, MVK</TableHeaderCell>
-                <TableHeaderCell>Total, MVK</TableHeaderCell>
-                <TableHeaderCell>Fee</TableHeaderCell>
-                <TableHeaderCell>User</TableHeaderCell>
-              </TableRow>
-            </TableHeader>
-
-            <TableBody className="treasury">
-              {historyData.map(({ action, amount, exitFee, totalAmount, user, id }) => {
-                return (
-                  <TableRow rowHeight={50} borderColor="dataColor" className="add-hover">
-                    <TableCell width="25%">{action}</TableCell>
-                    <TableCell width="20%">{amount ? <CommaNumber value={amount} /> : '-'}</TableCell>
-                    <TableCell width="20%">{totalAmount ? <CommaNumber value={totalAmount} /> : '-'}</TableCell>
-                    <TableCell width="15%">{exitFee ? <CommaNumber value={exitFee} endingText="%" /> : '-'}</TableCell>
-                    <TableCell width="10%">
-                      {user?.address ? <TzAddress tzAddress={user.address} hasIcon={true} type={BLUE} /> : '-'}
-                    </TableCell>
-                  </TableRow>
-                )
-              })}
-            </TableBody>
-          </Table>
-        ) : (
-          <div className="no-data">
-            <span>You do not have any previous delegation history</span>
-          </div>
-        )}
-      </HistoryBlock>
-    </DashboardPersonalTabStyled>
+    </>
   )
 }
 

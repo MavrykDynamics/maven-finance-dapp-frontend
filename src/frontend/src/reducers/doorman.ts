@@ -1,4 +1,4 @@
-import { GET_DOORMAN_STORAGE, GET_SMVK_HISTORY_DATA, GET_MVK_MINT_HISTORY_DATA } from 'pages/Doorman/Doorman.actions'
+import { GET_DOORMAN_STORAGE } from 'pages/Doorman/Doorman.actions'
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
 import { DoormanStorage, MvkMintHistoryData, SmvkHistoryData } from '../utils/TypesAndInterfaces/Doorman'
 
@@ -7,36 +7,21 @@ export const UNSTAKE = 'UNSTAKE'
 export const COMPOUND = 'COMPOUND'
 
 export interface DoormanState {
-  type?: typeof STAKE | typeof UNSTAKE | typeof GET_DOORMAN_STORAGE | typeof COMPOUND
-  amount: number
-  error?: object
-  doormanStorage?: DoormanStorage
-  totalStakedMvk?: number
+  totalStakedMvk: number
   mvkMintHistoryData: MvkMintHistoryData
   smvkHistoryData: SmvkHistoryData
-}
-
-const defaultStorageState: DoormanStorage = {
-  minMvkAmount: 0,
-  unclaimedRewards: 0,
-  breakGlassConfig: {
-    stakeIsPaused: false,
-    unstakeIsPaused: false,
-    compoundIsPaused: false,
-    farmClaimIsPaused: false,
-  },
-  totalStakedMvk: 0,
-  accumulatedFeesPerShare: 0,
+  isLoaded: boolean
+  totalSupply: number
+  maximumTotalSupply: number
 }
 
 const doormanDefaultState: DoormanState = {
-  type: undefined,
-  amount: 0,
-  error: undefined,
-  doormanStorage: defaultStorageState,
   totalStakedMvk: 0,
+  totalSupply: 0,
+  maximumTotalSupply: 0,
   mvkMintHistoryData: [],
   smvkHistoryData: [],
+  isLoaded: false,
 }
 
 export function doorman(state = doormanDefaultState, action: Action) {
@@ -44,22 +29,12 @@ export function doorman(state = doormanDefaultState, action: Action) {
     case GET_DOORMAN_STORAGE:
       return {
         ...state,
-        type: GET_DOORMAN_STORAGE,
-        doormanStorage: action.storage,
-        totalStakedMvk: action.totalStakedMvkSupply,
-        amount: 0,
-      }
-    case GET_MVK_MINT_HISTORY_DATA:
-      return {
-        ...state,
-        type: GET_MVK_MINT_HISTORY_DATA,
+        totalStakedMvk: action.totalStakedMvk,
+        totalSupply: action.totalSupply,
+        maximumTotalSupply: action.maximumTotalSupply,
         mvkMintHistoryData: action.mvkMintHistoryData,
-      }
-    case GET_SMVK_HISTORY_DATA:
-      return {
-        ...state,
-        type: GET_SMVK_HISTORY_DATA,
         smvkHistoryData: action.smvkHistoryData,
+        isLoaded: true,
       }
     default:
       return state

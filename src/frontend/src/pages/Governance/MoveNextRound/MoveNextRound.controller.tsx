@@ -1,22 +1,23 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
 // components
-import { Button } from '../../../app/App.components/Button/Button.controller'
 import { MoveNextRoundModal } from './MoveNextRoundModal.controller'
+import NewButton from 'app/App.components/Button/NewButton.controller'
+import { TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
+import Icon from 'app/App.components/Icon/Icon.view'
 
 // actions
-import { estimateExecution, startNextRound } from '../Governance.actions'
+import { startNextRound } from '../Governance.actions'
 
 export default function MoveToNextRound() {
   const dispatch = useDispatch()
-  const { accountPkh, tezos } = useSelector((state: State) => state.wallet)
-  const govAddress = useSelector((state: State) => state.contractAddresses?.governanceAddress?.address)
-  const { governanceStorage, governancePhase, currentRoundProposals } = useSelector((state: State) => state.governance)
+  const { accountPkh } = useSelector((state: State) => state.wallet)
+  const { governanceStorage, governancePhase } = useSelector((state: State) => state.governance)
 
   const [visibleModal, setVisibleModal] = useState(false)
-  const [estimatedValues, setEstimatedValues] = useState({ fee: 0, cost: 0 })
+  const [estimatedValues] = useState({ fee: 0, cost: 0 })
   const isTimeLockRound = governancePhase === 'TIME_LOCK'
 
   const handleCloseModal = () => {
@@ -47,14 +48,11 @@ export default function MoveToNextRound() {
 
   return (
     <>
-      <Button
-        icon="upload"
-        text={'Move to next round'}
-        kind="actionSecondary"
-        className="move-to-next"
-        disabled={!accountPkh}
-        onClick={handleMoveNextRound}
-      />
+      <NewButton kind={TRANSPARENT_WITH_BORDER} disabled={!accountPkh} onClick={handleMoveNextRound}>
+        <Icon id="upload" />
+        Move to next round
+      </NewButton>
+
       {visibleModal ? (
         <MoveNextRoundModal
           handleCloseModal={handleCloseModal}

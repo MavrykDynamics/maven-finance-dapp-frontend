@@ -1,17 +1,7 @@
-import styled, { css, keyframes } from 'styled-components/macro'
-
-import { primaryColor, darkColor, skyColor, cyanColor } from '../../../styles'
+import styled, { css } from 'styled-components/macro'
+import { clickWave, turn } from 'styles/animations'
 import { BUTTON_RADIUS } from '../../../styles/constants'
 import { MavrykTheme } from '../../../styles/interfaces'
-
-export const clickWave = keyframes`
-  from {
-    box-shadow: 0 0 0 0 ${primaryColor};
-  }
-  to {
-    box-shadow: 0 0 0 5px ${primaryColor}00;
-  }
-`
 
 export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
   padding: 0;
@@ -36,7 +26,7 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
   }
 
   &.clicked {
-    animation: ${clickWave} 1250ms cubic-bezier(0.19, 1, 0.22, 1);
+    animation: ${({ theme }) => clickWave(theme.primaryColor)} 1250ms cubic-bezier(0.19, 1, 0.22, 1);
     animation-fill-mode: forwards;
   }
 
@@ -62,21 +52,21 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
   }
 
   &.votingFor {
-    color: ${darkColor};
+    color: ${({ theme }) => theme.backgroundColor};
     background-color: ${({ theme }) => theme.upColor};
   }
   &.votingAgainst {
-    color: ${darkColor};
+    color: ${({ theme }) => theme.backgroundColor};
     background-color: ${({ theme }) => theme.downColor};
   }
   &.votingAbstain {
-    color: ${darkColor};
-    background-color: ${skyColor};
+    color: ${({ theme }) => theme.backgroundColor};
+    background-color: ${({ theme }) => theme.headerSkyColor};
   }
 
   &.move-to-next {
     svg {
-      stroke: ${cyanColor};
+      fill: ${({ theme }) => theme.valueColor};
     }
   }
 
@@ -194,7 +184,7 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
     align-items: center;
     position: relative;
     margin-right: 15px;
-    color: ${cyanColor};
+    color: ${({ theme }) => theme.valueColor};
     opacity: 0.7;
 
     &:hover {
@@ -279,13 +269,13 @@ export const ButtonText = styled.div<{ theme: MavrykTheme }>`
   }
 
   &.votingFor {
-    color: ${darkColor};
+    color: ${({ theme }) => theme.backgroundColor};
   }
   &.votingAgainst {
-    color: ${darkColor};
+    color: ${({ theme }) => theme.backgroundColor};
   }
   &.votingAbstain {
-    color: ${darkColor};
+    color: ${({ theme }) => theme.backgroundColor};
   }
 `
 
@@ -330,12 +320,6 @@ export const ButtonIcon = styled.svg<{ theme: MavrykTheme; strokeWidth?: number 
           stroke-width: ${strokeWidth};
         `
       : ''}
-`
-
-const turn = keyframes`
-  100% {
-      transform: rotate(360deg);
-  }
 `
 
 export const ButtonLoadingIcon = styled.svg<{ theme: MavrykTheme }>`

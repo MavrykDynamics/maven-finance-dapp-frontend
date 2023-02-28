@@ -1,39 +1,170 @@
-import { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { State } from 'reducers'
-import { getDoormanStorage, getMvkTokenStorage, unstake } from '../Doorman.actions'
+import { useEffect, useState } from 'react'
+import { useDispatch } from 'react-redux'
 
-import { hideExitFeeModal } from './ExitFeeModal.actions'
-import { ExitFeeModalView } from './ExitFeeModal.view'
+// helpers
+import { isValidNumberValue, mathRoundTwoDigit } from '../../../utils/validatorFunctions'
+import { unstake } from '../Doorman.actions'
+import { calcExitFee, calcMLI } from '../../../utils/calcFunctions'
+import { InputStatusType, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import { ACTION_PRIMARY, ACTION_SECONDARY } from '../../../app/App.components/Button/Button.constants'
 
-export const ExitFeeModal = () => {
+// components
+import { CommaNumber } from '../../../app/App.components/CommaNumber/CommaNumber.controller'
+import Icon from '../../../app/App.components/Icon/Icon.view'
+import { Input } from '../../../app/App.components/Input/Input.controller'
+import { DoormanList } from '../DoormanStats/DoormanStats.style'
+import { ExitFeeModalButtons, ExitFeeModalContent } from './ExitFeeModal.style'
+import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
+import NewButton from 'app/App.components/Button/NewButton.controller'
+import { containerColor } from 'styles'
+
+type ExitFeeModalPropsType = {
+  closePopup: () => void
+  show: boolean
+  data: {
+    amount: number
+    mySMvkTokenBalance: number
+    myMvkTokenBalance: number
+    totalStakedMvk: number
+    accountPkh?: string
+  }
+}
+
+export const ExitFeeModal = ({
+  closePopup,
+  show,
+  data: { amount, mySMvkTokenBalance, myMvkTokenBalance, totalStakedMvk, accountPkh },
+}: ExitFeeModalPropsType) => {
   const dispatch = useDispatch()
-  const { showing, amount } = useSelector((state: State) => state.exitFeeModal)
-  const { accountPkh } = useSelector((state: State) => state.wallet)
-  const { mvkTokenStorage } = useSelector((state: State) => state.mvkToken)
-  const { totalStakedMvk } = useSelector((state: State) => state.doorman)
 
+  const [inputData, setInputData] = useState<{ amount: string; validation: InputStatusType }>({
+    amount: '0',
+    validation: '',
+  })
+
+  const unstakeCallback = (amount: number) => dispatch(unstake(amount))
+
+  const mli = calcMLI(totalStakedMvk, totalStakedMvk)
+  const fee = calcExitFee(totalStakedMvk, totalStakedMvk)
+
+  // Validating initial amount came from props
   useEffect(() => {
-    dispatch(getMvkTokenStorage())
-    dispatch(getDoormanStorage())
-  }, [dispatch, accountPkh, showing])
+    setInputData({
+      amount: String(amount),
+      validation: isValidNumberValue(
+        amount,
+        1,
+        accountPkh ? Math.max(Number(myMvkTokenBalance), Number(mySMvkTokenBalance)) : undefined,
+      )
+        ? INPUT_STATUS_SUCCESS
+        : INPUT_STATUS_ERROR,
+    })
 
-  const cancelCallback = () => {
-    dispatch(hideExitFeeModal())
+    return () => {
+      setInputData({
+        amount: '0',
+        validation: '',
+      })
+    }
+  }, [show])
+
+  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = mathRoundTwoDigit(e.target.value)
+    setInputData({
+      amount: String(amount),
+      validation: isValidNumberValue(
+        +value,
+        1,
+        accountPkh ? Math.max(Number(myMvkTokenBalance), Number(mySMvkTokenBalance)) : undefined,
+      )
+        ? INPUT_STATUS_SUCCESS
+        : INPUT_STATUS_ERROR,
+    })
   }
 
-  const unstakeCallback = (amount: number) => {
-    dispatch(unstake(amount))
+  const handleFocus = () => {
+    if (inputData.amount === '0') {
+      setInputData({ ...inputData, amount: '' })
+    }
+  }
+
+  const handleBlur = ({ target: { value } }: React.ChangeEvent<HTMLInputElement>) => {
+    if (inputData.amount === '') {
+      setInputData({ ...inputData, amount: '0' })
+    }
   }
 
   return (
-    <ExitFeeModalView
-      showing={showing}
-      amount={amount}
-      mvkTotalSupply={mvkTokenStorage?.totalSupply}
-      totalStakedMvkSupply={totalStakedMvk}
-      unstakeCallback={unstakeCallback}
-      cancelCallback={cancelCallback}
-    />
+    <PopupContainer onClick={closePopup} show={show}>
+      <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="exitFee">
+        <div onClick={closePopup} className="close_modal">
+          +
+        </div>
+        <div>
+          <h1>Unstake your MVK</h1>
+          <ExitFeeModalContent>
+            <label>Amount to Unstake:</label>
+            <Input
+              type={'number'}
+              onChange={onInputChange}
+              onBlur={handleBlur}
+              value={inputData.amount}
+              onFocus={handleFocus}
+              pinnedText={'MVK'}
+              inputStatus={inputData.validation}
+            />
+            <DoormanList>
+              <div className="info-section">
+                <h4>
+                  MVK Loyalty Index
+                  <a
+                    href="https://mavryk.finance/litepaper#converting-vmvk-back-to-mvk-exit-fees"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <Icon id="question" />
+                  </a>
+                </h4>
+                <var>
+                  <CommaNumber value={mli} endingText={' '} />
+                </var>
+              </div>
+              <div>
+                <h4>
+                  Exit Fee
+                  <a
+                    href="https://mavryk.finance/litepaper#converting-vmvk-back-to-mvk-exit-fees"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <Icon id="question" />
+                  </a>
+                </h4>
+                <var>
+                  <CommaNumber value={fee} endingText={'%'} />
+                </var>
+              </div>
+            </DoormanList>
+
+            <ExitFeeModalButtons>
+              <NewButton
+                kind={ACTION_PRIMARY}
+                disabled={inputData.validation !== INPUT_STATUS_SUCCESS}
+                onClick={() => {
+                  unstakeCallback(Number(inputData.amount))
+                  closePopup()
+                }}
+              >
+                <Icon id="success-fill" fill={containerColor} /> Proceed
+              </NewButton>
+
+              <NewButton kind={ACTION_SECONDARY} onClick={closePopup}>
+                <Icon id="error" /> Cancel
+              </NewButton>
+            </ExitFeeModalButtons>
+          </ExitFeeModalContent>
+        </div>
+      </PopupContainerWrapper>
+    </PopupContainer>
   )
 }

@@ -8,8 +8,8 @@ export interface LoansState {
   loansControllerAddress: string
   xtzBakers: {
     otherBakers: Array<XtzBakerType>
-    dao: (XtzBakerType & { description: string, isDisabled: boolean }) | null
-    mavrykDynamics: (XtzBakerType & { description: string, isDisabled: boolean }) | null
+    dao: (XtzBakerType & { description: string; isDisabled: boolean }) | null
+    mavrykDynamics: (XtzBakerType & { description: string; isDisabled: boolean }) | null
   }
   isDataLoaded: boolean
   config: {
@@ -25,6 +25,12 @@ const loansDefaultState: LoansState = {
     borrowingChartData: [],
     totalLended: 0,
     lendingChartData: [],
+    lendBorrow24hDiff: {
+      last48hLending: 0,
+      last24hLending: 0,
+      last48hBorrowing: 0,
+      last24hBorrowing: 0,
+    },
   },
   config: {
     DAOFee: 0,
@@ -34,6 +40,7 @@ const loansDefaultState: LoansState = {
     dao: null,
     mavrykDynamics: null,
   },
+
   isDataLoaded: false,
 }
 

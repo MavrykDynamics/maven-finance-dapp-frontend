@@ -13,4 +13,5 @@ export type VaultType = LoansVaultType & {
   liquidationMax: number
   liquidationReward: number
   adminLiquidateFee: number
+  liquidationPrice?: number
 }

@@ -4,18 +4,20 @@ import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
 import { EmptyContainer as EmptyList } from 'app/App.style'
 import { FEEDS_TOP_LIST_NAME, SATELITES_TOP_LIST_NAME } from 'pages/FinacialRequests/Pagination/pagination.consts'
 import { Link } from 'react-router-dom'
+import { NotStakingBanner } from './components/NotStakingBanner.view'
+
 // styles
 import { Page, PageContent } from 'styles'
 import { InfoBlockWrapper, SatelliteListStyled } from './Satellites.style'
 // types
 import { SatelliteRecord } from 'utils/TypesAndInterfaces/Delegation'
 
-import { Feed } from './helpers/Satellites.types'
 // view
 import SatelliteList from './SatelliteList/SatellitesList.controller'
 import SatellitesSideBar from './SatellitesSideBar/SatellitesSideBar.controller'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { SmallInfoBlock } from 'pages/SatelliteGovernance/SatelliteGovernance.style'
+import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
 
 type OraclesViewProps = {
   tabsInfo: {
@@ -57,6 +59,7 @@ const EmptyContainer = ({ showSatellite, showFeeds }: EmptyContainerType) => {
 }
 
 const SatellitesView = ({ tabsInfo, oracleSatellitesData, dataFeedsData, delegateCallback }: OraclesViewProps) => {
+  const balanceOver1Mvk = oracleSatellitesData.userStakedBalance >= 1
   const isShowSatellites = Boolean(oracleSatellitesData.items.length)
   const isShowFeeds = Boolean(dataFeedsData.items.length)
 
@@ -65,6 +68,12 @@ const SatellitesView = ({ tabsInfo, oracleSatellitesData, dataFeedsData, delegat
   return (
     <Page>
       <PageHeader page={'satellites'} />
+      {!balanceOver1Mvk && (
+        <NotStakingBanner
+          text="You are currently not staking MVK, please stake MVK in order to delegate to a satellite
+        or become your own and take part in the platform’s governance"
+        />
+      )}
       <PageContent>
         <div className="left-content-wrapper">
           <InfoBlockWrapper>

@@ -36,7 +36,6 @@ type Props = {
   accountPkh?: string
   handleTriggerEmergencyProposal: () => void
   emergencyGovernanceLedger: EmergencyGovernanceStorage['emergencyGovernanceLedger']
-  dropProposalHandler: (proposalId: number) => void
   isGlassBroken: boolean
 }
 
@@ -44,7 +43,6 @@ export const EmergencyGovernanceView = ({
   accountPkh,
   handleTriggerEmergencyProposal,
   emergencyGovernanceLedger,
-  dropProposalHandler,
   isGlassBroken,
 }: Props) => {
   const { historyItems, activeItems } = useMemo(
@@ -115,7 +113,7 @@ export const EmergencyGovernanceView = ({
                 kind={ACTION_PRIMARY}
                 icon={'auction'}
                 onClick={handleTriggerEmergencyProposal}
-                disabled={isGlassBroken}
+                disabled={isGlassBroken || activeItems.length !== 0}
               />
             ) : (
               <ConnectWallet className="connect-wallet" />
@@ -126,13 +124,7 @@ export const EmergencyGovernanceView = ({
 
       {activeItems.length
         ? activeItems.map((emergencyGovernance) => {
-            return (
-              <EGovCard
-                key={emergencyGovernance.id}
-                emergencyGovernance={emergencyGovernance}
-                dropProposalHandler={dropProposalHandler}
-              />
-            )
+            return <EGovCard key={emergencyGovernance.id} emergencyGovernance={emergencyGovernance} />
           })
         : null}
 
@@ -141,13 +133,7 @@ export const EmergencyGovernanceView = ({
         {paginatedItemsListHistory.length ? (
           <>
             {paginatedItemsListHistory.map((emergencyGovernance) => {
-              return (
-                <EGovCard
-                  key={emergencyGovernance.id}
-                  emergencyGovernance={emergencyGovernance}
-                  dropProposalHandler={dropProposalHandler}
-                />
-              )
+              return <EGovCard key={emergencyGovernance.id} emergencyGovernance={emergencyGovernance} />
             })}
 
             <Pagination itemsCount={historyItems.length} listName={EMERGENCY_GOVERNANCE_HISTORY_LIST_NAME} />

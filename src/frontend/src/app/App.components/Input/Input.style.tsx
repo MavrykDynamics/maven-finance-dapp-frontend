@@ -1,5 +1,5 @@
-import styled, { keyframes } from 'styled-components/macro'
-
+import styled from 'styled-components/macro'
+import { zoomIn, slideDown } from 'styles/animations'
 import { MavrykTheme } from '../../../styles/interfaces'
 
 export const InputStyled = styled.div`
@@ -112,17 +112,6 @@ export const InputLabel = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-const zoomIn = keyframes`
-  from {
-    transform:scale(.2);
-    opacity:0
-  }
-  to {
-    transform:scale(1);
-    opacity:1
-  }
-`
-
 export const InputStatus = styled.div`
   display: block;
   position: absolute;
@@ -169,17 +158,6 @@ export const InputIcon = styled.svg<{ theme: MavrykTheme }>`
   visibility: visible;
   pointer-events: none;
   stroke: ${({ theme }) => theme.backgroundTextColor};
-`
-
-const slideDown = keyframes`
-  from {
-    transform: translate3d(0, -10px, 0);
-    opacity:0
-  }
-  to {
-    transform: translate3d(0, 0px, 0);
-    opacity:1
-  }
 `
 
 export const InputErrorMessage = styled.div<{ theme: MavrykTheme }>`
@@ -306,6 +284,26 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
     }
   }
 
+  &.transparent-child-wrap {
+    input {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+
+    &:hover {
+      .pinned-child {
+        background-color: ${({ theme }) => theme.containerColor};
+      }
+    }
+
+    .pinned-child {
+      border-left: none;
+      border-top-right-radius: 10px;
+      border-bottom-right-radius: 10px;
+      background-color: ${({ theme }) => theme.backgroundColor};
+    }
+  }
+
   .input-balance {
     position: absolute;
     bottom: -35px;
@@ -335,6 +333,17 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
     line-height: 21px;
     color: ${({ theme }) => theme.valueColor};
   }
+`
+
+export const NewInputLabel = styled.label`
+  color: ${({ theme }) => theme.textColor};
+  display: block;
+  white-space: nowrap;
+  font-weight: 700;
+  font-size: 14px;
+  position: absolute;
+  top: -20px;
+  left: 12px;
 `
 
 export const InputStyledStatus = styled.div<{ theme: MavrykTheme }>`

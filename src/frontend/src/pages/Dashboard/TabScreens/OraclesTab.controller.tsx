@@ -1,47 +1,46 @@
+import { useMemo } from 'react'
+import { useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
+
+import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+import { parseDate } from 'utils/time'
+import { State } from 'reducers'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
+
 import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
-import { Trim } from 'app/App.components/Trim/Trim.view'
-import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
-import { getOracleStorage } from 'pages/Satellites/Satellites.actions'
-import { useEffect, useMemo } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
-import { State } from 'reducers'
-import { parseDate } from 'utils/time'
-import { StatBlock } from '../Dashboard.style'
-import { OraclesContentStyled, TabWrapperStyled, PopularFeed } from './DashboardTabs.style'
 import { emptyContainer } from './LendingTab.controller'
-import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
+import { Trim } from 'app/App.components/Trim/Trim.view'
+
+import { StatBlock } from '../Dashboard.style'
+import { OraclesContentStyled, TabWrapperStyled, PopularFeed } from './DashboardTabs.style'
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
 
 export const OraclesTab = ({ isLoading }: { isLoading: boolean }) => {
-  const dispatch = useDispatch()
-  const { feeds } = useSelector((state: State) => state.oracles.oraclesStorage)
-  const { dipDupContracts } = useSelector((state: State) => state.tokens)
-  const { exchangeRate } = useSelector((state: State) => state.mvkToken)
+  const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
+  const {
+    dipDupContracts,
+    tokensPrices: { mvk: { usd: mvkExchangeRate = 0 } = {} },
+  } = useSelector((state: State) => state.tokens)
   const { satelliteLedger = [] } = useSelector((state: State) => state.delegation.delegationStorage)
 
-  const oracleFeeds = feeds.length
-  const popularFeeds = feeds.slice(0, 3)
-
-  useEffect(() => {
-    dispatch(getOracleStorage())
-  }, [dispatch])
+  const oracleFeeds = feedsLedger.length
+  const popularFeeds = feedsLedger.slice(0, 3)
 
   const oracleRevardsTotal = useMemo(
     () =>
       satelliteLedger.reduce((acc, { oracleRecords }) => {
         if (oracleRecords.length) {
           const sMVKReward = oracleRecords.reduce((acc, { sMVKReward = 0 }) => (acc += sMVKReward), 0)
-          acc += sMVKReward * exchangeRate
+          acc += sMVKReward * mvkExchangeRate
         }
         return acc
       }, 0),
-    [exchangeRate, satelliteLedger],
+    [mvkExchangeRate, satelliteLedger],
   )
 
   return (
@@ -80,12 +79,7 @@ export const OraclesTab = ({ isLoading }: { isLoading: boolean }) => {
           {popularFeeds.length ? (
             <div className="feeds-grid">
               {popularFeeds.map((feed) => {
-                // TODO: remove it when images will be ok in indexer
-                const imageLink = feed.name.includes('EUROC')
-                  ? '/images/eurl.png'
-                  : feed.name.includes('XTZ')
-                  ? '/images/tezos.png'
-                  : dipDupContracts.find(({ contract }) => contract === feed.address)?.metadata?.icon
+                const imageLink = dipDupContracts.find(({ contract }) => contract === feed.address)?.metadata?.icon
 
                 return (
                   <Link key={feed.address} to={`/satellites/feed-details/${feed.address}`}>
@@ -134,7 +128,10 @@ export const OraclesTab = ({ isLoading }: { isLoading: boolean }) => {
         <div className="text">
           Satellites are nodes of Mavryk's decentralized oracle. Oracles provide price data for the asset classes that
           can be used as collateral for the CDPs (XTZ, wWBTC, wWETH, etc.). Satellites that provide Oracle pricing
-          information earn sMVK. <a href="#">Read more</a>
+          information earn sMVK.{' '}
+          <a href="https://blogs.mavryk.finance/" target="_blank" rel="noreferrer">
+            Read more
+          </a>
         </div>
       </div>
     </TabWrapperStyled>

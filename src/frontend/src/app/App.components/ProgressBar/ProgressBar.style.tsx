@@ -26,22 +26,4 @@ export const ProgressBarStyled = styled.div<{ status: ProgressBarStatus; theme: 
     css`
       opacity: 0;
     `};
-
-  @keyframes progres {
-    0% {
-      width: 0%;
-    }
-    25% {
-      width: 50%;
-    }
-    50% {
-      width: 75%;
-    }
-    75% {
-      width: 85%;
-    }
-    100% {
-      width: 100%;
-    }
-  } ;
 `

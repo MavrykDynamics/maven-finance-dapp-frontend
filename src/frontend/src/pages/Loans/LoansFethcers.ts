@@ -139,7 +139,7 @@ export const getUserBalanceForLoanAsset = async (
 export const getCollateralTokens = async (
   collateralTokens: Array<Lending_Controller_Collateral_Token>,
   dipDupTokens: State['tokens']['dipDupTokens'],
-  feeds: State['oracles']['oraclesStorage']['feeds'],
+  feeds: State['dataFeeds']['feedsLedger'],
   accountPkh?: string,
 ): Promise<Array<AvaliableCollateralType>> => {
   if (!accountPkh) return []
@@ -204,9 +204,9 @@ export const getLoansTokensRates = async (
 ) => {
   try {
     const loanTokenSymbols = Array.from(
-      loan_tokens?.reduce((acc, { lp_token_address, loan_token_name, vaults }) => {
+      loan_tokens?.reduce((acc, { loan_token_address, loan_token_name, vaults }) => {
         // Getting symbol metadata of loanToken
-        const tokenInfo = dipDupTokens?.find(({ contract }) => contract === lp_token_address)
+        const tokenInfo = dipDupTokens?.find(({ contract }) => contract === loan_token_address)
         let tokenSymbolToFetch = null
         if (loan_token_name === 'tez') {
           tokenSymbolToFetch = 'tezos'

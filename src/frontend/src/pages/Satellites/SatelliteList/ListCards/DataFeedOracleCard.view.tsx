@@ -1,7 +1,7 @@
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
-import { DataFeedSubTitleText } from 'pages/DataFeeds/details/DataFeedsDetails.style'
+import { DataFeedSubTitleText } from 'pages/DataFeedsDetails/DataFeedsDetails.style'
 import { getOracleStatus, ORACLE_STATUSES_MAPPER } from 'pages/Satellites/helpers/Satellites.consts'
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
@@ -11,10 +11,11 @@ import { SatelliteRecord } from 'utils/TypesAndInterfaces/Delegation'
 import { SatelliteItemStyle, SatelliteOracleStatusComponent } from './SatelliteCard.style'
 
 export const OracleCard = ({ oracle }: { oracle: SatelliteRecord }) => {
-  const { feeds } = useSelector((state: State) => state.oracles.oraclesStorage)
-  const { exchangeRate } = useSelector((state: State) => state.mvkToken)
-  const { tezos: { usd: XTZ_USD = null } = {} } = useSelector((state: State) => state.tokens.tokensPrices)
-  const oracleStatusType = getOracleStatus(oracle, feeds)
+  const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
+  const { tezos: { usd: xtzExchangeRate = 0 } = {}, mvk: { usd: mvkExchangeRate = 0 } = {} } = useSelector(
+    (state: State) => state.tokens.tokensPrices,
+  )
+  const oracleStatusType = getOracleStatus(oracle, feedsLedger)
 
   return (
     <SatelliteItemStyle oracle>
@@ -32,7 +33,9 @@ export const OracleCard = ({ oracle }: { oracle: SatelliteRecord }) => {
           <CommaNumber
             showDecimal
             beginningText="$"
-            value={oracle.oracleRecords.reduce<number>((acc, { sMVKReward }) => (acc += sMVKReward), 0) * exchangeRate}
+            value={
+              oracle.oracleRecords.reduce<number>((acc, { sMVKReward }) => (acc += sMVKReward), 0) * mvkExchangeRate
+            }
           />
         </var>
       </div>
@@ -41,11 +44,13 @@ export const OracleCard = ({ oracle }: { oracle: SatelliteRecord }) => {
           XTZ Rewards
         </DataFeedSubTitleText>
         <var>
-          {XTZ_USD ? (
+          {xtzExchangeRate ? (
             <CommaNumber
               showDecimal
               beginningText="$"
-              value={oracle.oracleRecords.reduce<number>((acc, { XTZReward }) => (acc += XTZReward), 0) * XTZ_USD}
+              value={
+                oracle.oracleRecords.reduce<number>((acc, { XTZReward }) => (acc += XTZReward), 0) * xtzExchangeRate
+              }
             />
           ) : (
             '-'

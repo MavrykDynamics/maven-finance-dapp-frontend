@@ -1,19 +1,133 @@
-import { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { State } from 'reducers'
+import { calcExitFee, calcMLI } from '../../../utils/calcFunctions'
 
-import { getDoormanStorage, getMvkTokenStorage } from '../Doorman.actions'
-import { DoormanStatsView } from './DoormanStats.view'
+// components
+import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+import Icon from '../../../app/App.components/Icon/Icon.view'
+import { TzAddress } from '../../../app/App.components/TzAddress/TzAddress.view'
+import { DoormanList, DoormanStatsHeader, DoormanStatsStyled } from './DoormanStats.style'
 
-export const DoormanStats = () => {
-  const dispatch = useDispatch()
-  const { mvkTokenStorage, myMvkTokenBalance } = useSelector((state: State) => state.mvkToken)
-  const { doormanStorage, totalStakedMvk } = useSelector((state: State) => state.doorman)
+type DoormanStatsPropsType = {
+  MVK_exchangeRate: number
+  maximumTotalSupply: number
+  totalStakedMvk: number
+  totalSupply: number
+  doormanAddress: string
+  mvkTokenAddress: string
+}
 
-  useEffect(() => {
-    dispatch(getMvkTokenStorage())
-    dispatch(getDoormanStorage())
-  }, [dispatch, totalStakedMvk])
+export const DoormanStats = ({
+  MVK_exchangeRate,
+  maximumTotalSupply,
+  totalStakedMvk,
+  totalSupply,
+  doormanAddress,
+  mvkTokenAddress,
+}: DoormanStatsPropsType) => {
+  const mli = calcMLI(totalStakedMvk, totalStakedMvk)
+  const fee = calcExitFee(totalStakedMvk, totalStakedMvk)
+  const marketCapValue = MVK_exchangeRate ? MVK_exchangeRate * totalSupply : 0
 
-  return <DoormanStatsView mvkTotalSupply={mvkTokenStorage?.totalSupply} totalStakedMvkSupply={totalStakedMvk} />
+  return (
+    <DoormanStatsStyled>
+      <DoormanStatsHeader>Key MVK Metrics</DoormanStatsHeader>
+      <DoormanList>
+        <div>
+          <h4>
+            MVK Price
+            <a
+              href="https://mavryk.finance/litepaper#converting-vmvk-back-to-mvk-exit-fees"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <Icon id="question" />
+            </a>
+          </h4>
+          <var>
+            <CommaNumber value={MVK_exchangeRate} beginningText={'$'} />
+          </var>
+        </div>
+
+        <div>
+          <h4>MVK Token Address</h4>
+          <var className="click-address">
+            <TzAddress type="blue" tzAddress={mvkTokenAddress} hasIcon />
+          </var>
+        </div>
+
+        <div>
+          <h4>Doorman Address</h4>
+          <var className="click-address">
+            <TzAddress type="blue" tzAddress={doormanAddress} hasIcon />
+          </var>
+        </div>
+
+        <div>
+          <h4>
+            MVK Loyalty Index
+            <a
+              href="https://mavryk.finance/litepaper#converting-vmvk-back-to-mvk-exit-fees"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <Icon id="question" />
+            </a>
+          </h4>
+          <var>
+            <CommaNumber value={mli} />
+          </var>
+        </div>
+
+        <div>
+          <h4>
+            Exit Fee
+            <a
+              href="https://mavryk.finance/litepaper#converting-vmvk-back-to-mvk-exit-fees"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <Icon id="question" />
+            </a>
+          </h4>
+          <var>
+            <CommaNumber value={fee} endingText={'%'} />
+          </var>
+        </div>
+
+        <div>
+          <h4>Total Staked MVK</h4>
+          <var>
+            <CommaNumber value={totalStakedMvk} endingText={'MVK'} />
+          </var>
+        </div>
+
+        <div>
+          <h4>Total Circulating</h4>
+          <var>
+            <CommaNumber value={totalSupply} endingText={'MVK'} />
+          </var>
+        </div>
+
+        <div>
+          <h4>Max Supply</h4>
+          <var>
+            <CommaNumber value={maximumTotalSupply} endingText={'MVK'} />
+          </var>
+        </div>
+
+        <div>
+          <h4>Market Cap</h4>
+          <var>
+            <CommaNumber value={marketCapValue} endingText={'USD'} />
+          </var>
+        </div>
+
+        {/* <div>
+          <h4>Total supply</h4>
+          <var>
+            <CommaNumber value={maximumTotalSupply}  endingText={'MVK'} />
+          </var>
+        </div> */}
+      </DoormanList>
+    </DoormanStatsStyled>
+  )
 }

@@ -1,4 +1,3 @@
-import { updateUserData } from './../../Doorman/Doorman.actions'
 import { OpKind } from '@taquito/taquito'
 import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
@@ -7,7 +6,8 @@ import { AppDispatch, GetState } from 'app/App.controller'
 import { fetchFromIndexer } from 'gql/fetchGraphQL'
 import { NEW_VAULT_QUERY, NEW_VAULT_QUERY_NAME, NEW_VAULT_QUERY_VARIABLE } from 'gql/queries/getLoansStorage'
 import { State } from 'reducers'
-import { getLoansStorage } from './getLoansData.actions'
+import { updateUserData } from 'reducers/actions/user.actions'
+import { getAvaliableCollaterals, getLoansStorage } from './getLoansData.actions'
 
 // trigger initial vault creation to get the id of future vault
 export const triggerInitialVaultCreation =
@@ -76,6 +76,7 @@ export const borrowVaultAssetAction =
 
       // refetch data we need
       await dispatch(updateUserData())
+      await dispatch(getAvaliableCollaterals())
       await dispatch(getLoansStorage())
       await dispatch(showToaster(SUCCESS, 'Asset borrowed.', 'All good :)'))
       await dispatch(toggleActionLoader(false))
@@ -118,6 +119,7 @@ export const repayPartOfVaultAction =
 
       // refetch data we need
       await dispatch(updateUserData())
+      await dispatch(getAvaliableCollaterals())
       await dispatch(getLoansStorage())
       await dispatch(showToaster(SUCCESS, 'Asset repayed.', 'All good :)'))
       await dispatch(toggleActionLoader(false))
@@ -171,6 +173,7 @@ export const repayFullAndCloseVaultAction =
 
       // refetch data we need
       await dispatch(updateUserData())
+      await dispatch(getAvaliableCollaterals())
       await dispatch(getLoansStorage())
       await dispatch(showToaster(SUCCESS, 'Asset repayed.', 'All good :)'))
       await dispatch(toggleActionLoader(false))

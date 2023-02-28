@@ -1,52 +1,70 @@
-import { useCallback, useEffect } from 'react'
+import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from '../../reducers'
 
-import { Page } from 'styles'
-import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
 import { getEmergencyGovernanceStorage } from './EmergencyGovernance.actions'
-import { EmergencyGovernanceView } from './EmergencyGovernance.view'
-import { getBreakGlassStorage } from '../BreakGlass/BreakGlass.actions'
-import { EmergencyGovProposalModal } from './EmergencyGovProposalModal/EmergencyGovProposalModal.controller'
-import { showExitFeeModal } from './EmergencyGovProposalModal/EmergencyGovProposalModal.actions'
-import { dropProposal } from 'pages/ProposalSubmission/ProposalSubmission.actions'
+import { getBreakGlassConfig } from '../BreakGlass/BreakGlass.actions'
 import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
+import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
+
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
+import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
+import { EmergencyGovernanceView } from './EmergencyGovernance.view'
+import { EmergencyGovProposalModal } from './EmergencyGovProposalModal/EmergencyGovProposalModal'
+import { Page } from 'styles'
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 
 export const EmergencyGovernance = () => {
   const dispatch = useDispatch()
+
   const { accountPkh } = useSelector((state: State) => state.wallet)
-  const { emergencyGovernanceLedger } = useSelector(
-    (state: State) => state.emergencyGovernance.emergencyGovernanceStorage,
+  const { eGovProposals, isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
+  const { glassBroken, isConfigLoaded: isBreakGlassConfigLoaded } = useSelector(
+    (state: State) => state.breakGlass.config,
   )
-  const { glassBroken } = useSelector((state: State) => state.breakGlass)
+  const { isLoaded: isDoormanLoaded } = useSelector((state: State) => state.doorman)
 
-  useEffect(() => {
-    ;(async () => {
-      await dispatch(getEmergencyGovernanceStorage())
-      await dispatch(getBreakGlassStorage())
-      await dispatch(getDoormanStorage())
-    })()
-  }, [dispatch])
+  const [showInitiatePopup, setShowInitiatePopup] = useState(false)
 
-  const handleTriggerEmergencyProposal = useCallback(() => {
-    dispatch(showExitFeeModal())
+  const { isLoading } = useDataLoader(async () => {
+    try {
+      await Promise.all(
+        [
+          !isBreakGlassConfigLoaded && dispatch(getBreakGlassConfig()),
+          !isDoormanLoaded && dispatch(getDoormanStorage()),
+          !isEgovLoaded && dispatch(getEmergencyGovernanceStorage()),
+        ].filter(Boolean),
+      )
+    } catch (e) {}
   }, [])
 
-  const dropProposalHandler = useCallback((proposalId: number) => {
-    dispatch(dropProposal(proposalId))
-  }, [])
+  const closeInitiatePopup = () => {
+    setShowInitiatePopup(false)
+  }
+
+  const openInitiatePopup = () => {
+    setShowInitiatePopup(true)
+  }
 
   return (
     <Page>
-      <EmergencyGovProposalModal />
       <PageHeader page={'emergency governance'} />
-      <EmergencyGovernanceView
-        handleTriggerEmergencyProposal={handleTriggerEmergencyProposal}
-        accountPkh={accountPkh}
-        emergencyGovernanceLedger={emergencyGovernanceLedger}
-        dropProposalHandler={dropProposalHandler}
-        isGlassBroken={glassBroken}
-      />
+      {isLoading ? (
+        <DataLoaderWrapper>
+          <ClockLoader width={150} height={150} />
+          <div className="text">Loading emergency governance proposals</div>
+        </DataLoaderWrapper>
+      ) : (
+        <>
+          <EmergencyGovProposalModal show={showInitiatePopup} closeHandler={closeInitiatePopup} />
+          <EmergencyGovernanceView
+            handleTriggerEmergencyProposal={openInitiatePopup}
+            accountPkh={accountPkh}
+            emergencyGovernanceLedger={eGovProposals}
+            isGlassBroken={glassBroken}
+          />
+        </>
+      )}
     </Page>
   )
 }

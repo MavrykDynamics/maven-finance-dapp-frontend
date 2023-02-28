@@ -1,5 +1,5 @@
 import styled from 'styled-components/macro'
-import { Card, skyColor, headerColor, containerColor, cyanColor } from 'styles'
+import { Card } from 'styles'
 
 export const CouncilPendingStyled = styled(Card)`
   position: relative;
@@ -27,7 +27,8 @@ export const CouncilPendingStyled = styled(Card)`
     min-width: 590px;
     .parameters {
       display: grid;
-      grid-template-columns: 180px 180px 150px;
+      grid-template-columns: 160px 150px 150px;
+      column-gap: 20px;
       align-items: center;
     }
 
@@ -80,7 +81,7 @@ export const CouncilPendingStyled = styled(Card)`
 
     .parameters {
       display: grid;
-      grid-template-columns: 125px 160px 155px 185px;
+      grid-template-columns: 135px 150px 150px 185px;
       align-items: center;
     }
   }
@@ -97,7 +98,7 @@ export const CouncilPendingStyled = styled(Card)`
     font-weight: 600;
     font-size: 18px;
     line-height: 18px;
-    color: ${headerColor};
+    color: ${({ theme }) => theme.headerColor};
     margin-bottom: 20px;
 
     &::first-letter {
@@ -112,17 +113,12 @@ export const CouncilPendingStyled = styled(Card)`
 
   .sign-btn {
     width: 185px;
-
-    svg {
-      stroke: transparent;
-      fill: ${containerColor};
-    }
   }
 
   .parameters-link {
     display: block;
 
-    color: ${cyanColor};
+    color: ${({ theme }) => theme.textColorHovered};
     font-weight: 500;
     font-size: 14px;
     line-height: 24px;
@@ -144,37 +140,36 @@ export const CouncilPendingStyled = styled(Card)`
 
     .parameters-name {
       text-transform: capitalize;
+
+      max-width: 130px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
     }
 
     .parameters-value,
     .parameters-value p {
       margin: 0;
-      color: ${cyanColor};
+      color: ${({ theme }) => theme.textColorHovered};
       font-weight: 600;
       font-size: 16px;
       line-height: 16px;
       white-space: nowrap;
       overflow: hidden;
-      word-break: break-all;
       width: 130px;
-      max-width: 100%;
       text-overflow: ellipsis;
       display: block;
     }
 
-    .address-width {
-      width: 150px;
-    }
-
-    .signed-width {
-      width: 100%;
+    .content-width {
+      width: max-content;
     }
 
     p {
       font-weight: 400;
       font-size: 12px;
       line-height: 12px;
-      color: ${skyColor};
+      color: ${({ theme }) => theme.headerSkyColor};
       margin-top: 0;
       margin-bottom: 10px;
     }
@@ -201,13 +196,6 @@ export const CouncilPendingStyled = styled(Card)`
       object-fit: cover;
       border-radius: 50%;
     }
-  }
-
-  .no-wrap {
-    max-width: 125px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
   }
 `
 

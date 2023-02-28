@@ -45,6 +45,18 @@ export const VaultsStyled = styled.div<{ theme: MavrykTheme }>`
     margin-bottom: 0;
     width: 175px;
   }
+
+  .vaults:has(.openVault) {
+    .expand-vault {
+      opacity: 0.3;
+      pointer-events: none;
+    }
+
+    .openVault {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
 `
 
 export const VaultsSearchFilterWrapper = styled.div`
@@ -64,7 +76,7 @@ export const VaultsSearchFilterStyled = styled(Card)`
 
   .dd-container {
     display: grid;
-    grid-template-columns: 70px 190px 190px 190px;
+    grid-template-columns: 190px 190px 70px 190px;
     column-gap: 15px;
 
     h4 {

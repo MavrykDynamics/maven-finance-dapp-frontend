@@ -20,7 +20,12 @@ const DashboardPersonalMyRewards = ({
       <GovRightContainerTitleArea>
         <h1>My MVK Earnings</h1>
       </GovRightContainerTitleArea>
-      <Button kind={ACTION_PRIMARY} text="Claim Rewards" disabled={!rewardsToClaim} onClick={claimRewardsHandler} />
+      <Button
+        kind={ACTION_PRIMARY}
+        text="Claim Rewards"
+        disabled={rewardsToClaim === 0}
+        onClick={claimRewardsHandler}
+      />
       <div className="stat-block">
         <div className="name">Earned to Date</div>
         <div className="value">

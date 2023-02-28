@@ -10,9 +10,8 @@ import {
 import { getTreasuryAssetsByAddress } from 'utils/api'
 import { FetchedTreasuryBalanceType, TreasuryBalanceType, TreasuryGQLType } from 'utils/TypesAndInterfaces/Treasury'
 
-import { normalizeTreasury } from './Treasury.helpers'
+import { normalizeTreasury, normalizeVestingStorage } from './Treasury.helpers'
 import { AppDispatch, coinGeckoClient, GetState } from '../../app/App.controller'
-import { normalizeVestingStorage } from 'app/App.helpers'
 import { VESTING_STORAGE_QUERY, VESTING_STORAGE_QUERY_NAME, VESTING_STORAGE_QUERY_VARIABLE } from 'gql/queries'
 import { getAssetColor } from './helpers/treasury.utils'
 
@@ -22,7 +21,7 @@ export const SET_TREASURY_STORAGE = 'SET_TREASURY_STORAGE'
 export const fillTreasuryStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
   try {
     const {
-      mvkToken: { exchangeRate: MVK_EXCHANGE_RATE },
+      tokens: { tokensPrices: { mvk: { usd: MVK_EXCHANGE_RATE = 0 } } = {} },
     } = getState()
     // Get treasury addresses from gql
     const treasuryAddressesStorage = await fetchFromIndexer(
@@ -67,7 +66,7 @@ export const fillTreasuryStorage = () => async (dispatch: AppDispatch, getState:
           getTreasuryAssetsByAddress(address),
     )
 
-    // Await promises from upper
+    // Await promises from above
     const fetchedTheasuryData = await Promise.all(getTreasuryCallbacks.map((fn) => fn()))
 
     // Mapping assets for every treasury, to fetch rates for them
@@ -83,6 +82,11 @@ export const fillTreasuryStorage = () => async (dispatch: AppDispatch, getState:
       )
       return acc
     }, new Set<string>())
+
+    const mapperOfAssetsColors = Array.from(arrayOfAssetsSymbols).reduce<Record<string, string>>((acc, asset, idx) => {
+      acc[asset] = getAssetColor(idx)
+      return acc
+    }, {})
 
     // Fetching rates for every asset in treasury
     const treasuryAssetsFetchedData = (
@@ -110,16 +114,13 @@ export const fillTreasuryStorage = () => async (dispatch: AppDispatch, getState:
 
         const tresuryTokensWithValidBalances = fetchedTheasuryData[idx]
           .map(
-            (
-              {
-                account: { address },
-                token: {
-                  metadata: { symbol, name, decimals, thumbnailUri },
-                },
-                balance,
-              }: FetchedTreasuryBalanceType,
-              balanceIdx,
-            ): TreasuryBalanceType => {
+            ({
+              account: { address },
+              token: {
+                metadata: { symbol, name, decimals, thumbnailUri },
+              },
+              balance,
+            }: FetchedTreasuryBalanceType): TreasuryBalanceType => {
               const assetRate = symbol === 'MVK' ? MVK_EXCHANGE_RATE : treasuryAssetsFetchedData[symbol]?.rate
               const coinsAmount = parseFloat(balance) / Math.pow(10, parseInt(decimals))
               const usdValue = coinsAmount * (assetRate ?? 1)
@@ -133,7 +134,7 @@ export const fillTreasuryStorage = () => async (dispatch: AppDispatch, getState:
                 symbol: treasuryAssetsFetchedData[symbol]?.symbol ?? symbol,
                 balance: coinsAmount,
                 rate: assetRate,
-                chartColor: getAssetColor(balanceIdx),
+                chartColor: mapperOfAssetsColors[symbol],
               }
             },
           )
@@ -178,9 +179,7 @@ export const getVestingStorage = () => async (dispatch: AppDispatch) => {
       VESTING_STORAGE_QUERY_NAME,
       VESTING_STORAGE_QUERY_VARIABLE,
     )
-
     const vestingStorage = normalizeVestingStorage(storage)
-
     dispatch({
       type: GET_VESTING_STORAGE,
       vestingStorage: vestingStorage,

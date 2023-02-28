@@ -17,7 +17,3 @@ export type InputStatusesType = {
   amountStatus: InputStatusType
   backwardStatus: InputStatusType
 }
-
-export type RoiCalcProps = {
-  onClose: () => void
-}

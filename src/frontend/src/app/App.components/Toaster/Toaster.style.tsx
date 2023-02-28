@@ -1,6 +1,7 @@
-import styled, { css, keyframes } from 'styled-components/macro'
+import styled, { css } from 'styled-components/macro'
+import { decreaseBar } from 'styles/animations'
 import { MavrykTheme } from '../../../styles/interfaces'
-import { ERROR, INFO, WARNING } from './Toaster.constants'
+import { ERROR, INFO } from './Toaster.constants'
 
 export const ToasterStyled = styled.div<{ showing: boolean; theme: MavrykTheme }>`
   position: fixed;
@@ -26,15 +27,6 @@ export const ToasterStyled = styled.div<{ showing: boolean; theme: MavrykTheme }
     `}
 `
 
-export const decreaseBar = keyframes`
-  from {
-    transform: translate3d(0, 0, 0);
-  }
-  to {
-    transform: translate3d(470px, 0, 0);
-  }
-`
-
 export const ToasterCountdown = styled.div<{ showing: boolean; status?: string; theme: MavrykTheme }>`
   position: absolute;
   bottom: 0;
@@ -49,8 +41,6 @@ export const ToasterCountdown = styled.div<{ showing: boolean; status?: string; 
     switch (props.status) {
       case INFO:
         return ({ theme }) => theme.infoColor
-      case WARNING:
-        return ({ theme }) => theme.warningColor
       case ERROR:
         return ({ theme }) => theme.downColor
       default:
@@ -68,9 +58,8 @@ export const ToasterCountdown = styled.div<{ showing: boolean; status?: string; 
 `
 
 export const ToasterGrid = styled.div`
-  display: grid;
-  grid-gap: 20px;
-  grid-template-columns: 30px calc(100% - 100px) 30px;
+  display: flex;
+  column-gap: 15px;
 `
 
 export const ToasterIcon = styled.div<{ status?: string; theme: MavrykTheme }>`
@@ -89,8 +78,6 @@ export const ToasterIcon = styled.div<{ status?: string; theme: MavrykTheme }>`
       switch (props.status) {
         case INFO:
           return ({ theme }) => theme.infoColor
-        case WARNING:
-          return ({ theme }) => theme.warningColor
         case ERROR:
           return ({ theme }) => theme.downColor
         default:
@@ -102,6 +89,12 @@ export const ToasterIcon = styled.div<{ status?: string; theme: MavrykTheme }>`
 
 export const ToasterContent = styled.div`
   padding: 8px;
+  max-width: 300px;
+  width: 100%;
+
+  > div {
+    word-break: break-word;
+  }
 `
 
 export const ToasterTitle = styled.div<{ theme: MavrykTheme }>`
@@ -125,7 +118,7 @@ export const ToasterClose = styled.div<{ theme: MavrykTheme }>`
   justify-content: space-around;
 
   > svg {
-    stroke: ${({ theme }) => theme.textColor};
+    fill: ${({ theme }) => theme.textColor};
     height: 14px;
     width: 14px;
   }

@@ -37,15 +37,13 @@ export const getVaultsStorage = () => async (dispatch: AppDispatch, getState: Ge
       tokens: { dipDupTokens },
       wallet: { accountPkh },
       preferences: { headData },
-      oracles: {
-        oraclesStorage: { feeds },
-      },
+      dataFeeds: { feedsLedger },
     } = getState()
 
     const normallaziedVaultsStorage = await normalizeVaultsStorage({
       accountPkh,
       dipDupTokens,
-      feeds,
+      feeds: feedsLedger,
       oracleLatestPrices,
       currentBlockLevel: headData?.level,
       lendingController,

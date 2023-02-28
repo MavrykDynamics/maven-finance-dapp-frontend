@@ -45,6 +45,7 @@ export const BorrowAsset = ({
     currentBorrowedAmount = 0,
     currentCollateralBalance = 0,
     DAOFee = 0,
+    avaliableLiquidity = 0,
   } = data ?? {}
 
   useLockBodyScroll(show)
@@ -61,7 +62,7 @@ export const BorrowAsset = ({
       ? calcCollateralRatio(currentCollateralBalance, currentBorrowedAmount + inputAmount, borrowedAsset.rate)
       : 0
 
-    const futureBorrowCapacity = Math.max(borrowCapacity - inputAmount, 0)
+    const futureBorrowCapacity = borrowCapacity - inputAmount
     return { futureCollateralRatio, futureBorrowCapacity }
   }, [borrowedAsset, currentCollateralBalance, currentBorrowedAmount, inputAmount, borrowCapacity])
 
@@ -163,16 +164,15 @@ export const BorrowAsset = ({
                     type: 'number',
                     onBlur: inputOnBlurHandle,
                     onFocus: onFocusHandler,
-                    onChange: (e) =>
-                      inputOnChangeHandle(e.target.value, Math.max(borrowedAsset.userBalance, borrowCapacity)),
+                    onChange: (e) => inputOnChangeHandle(e.target.value, Math.min(avaliableLiquidity, borrowCapacity)),
                   }}
                   settings={{
                     balance: borrowedAsset.userBalance,
                     balanceAsset: borrowedAsset?.symbol,
                     useMaxHandler: () =>
                       inputOnChangeHandle(
-                        String(Math.max(borrowedAsset.userBalance, borrowCapacity)),
-                        Math.max(borrowedAsset.userBalance, borrowCapacity),
+                        String(Math.min(avaliableLiquidity, borrowCapacity)),
+                        Math.min(avaliableLiquidity, borrowCapacity),
                       ),
                     inputStatus: inputData.validationStatus,
                     convertedValue: inputAmount * borrowedAsset.rate,
@@ -305,7 +305,7 @@ export const BorrowAsset = ({
                   className="modal-manage-btn"
                 >
                   <Icon id="coin-loan" />
-                  Borrow XTZ
+                  Borrow {borrowedAsset?.symbol}
                 </NewButton>
               </div>
             </>

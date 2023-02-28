@@ -1,5 +1,5 @@
 import styled from 'styled-components/macro'
-import { CardHover, royalPurpleColor } from 'styles'
+import { CardHover } from 'styles'
 import { MavrykTheme } from 'styles/interfaces'
 
 export const CouncilMemberStyled = styled(CardHover)<{ theme: MavrykTheme }>`
@@ -46,10 +46,14 @@ export const CouncilMemberStyled = styled(CardHover)<{ theme: MavrykTheme }>`
     }
   }
 
+  .update-btn {
+    width: 100%;
+  }
+
   &.is-me {
     &:hover {
       box-shadow: none;
-      border-color: ${royalPurpleColor};
+      border-color: ${({ theme }) => theme.cardBorderColor};
       cursor: default;
     }
   }
@@ -63,4 +67,4 @@ export const CouncilMemberStyled = styled(CardHover)<{ theme: MavrykTheme }>`
       margin-top: 16px;
     }
   }
-` //CouncilMemberStyled
+`

@@ -3,22 +3,23 @@ import { useDispatch } from 'react-redux'
 
 // type
 import type { InputStatusType } from '../../../app/App.components/Input/Input.constants'
-import { RequestPurposeMaxLength } from 'utils/TypesAndInterfaces/Council'
+import { CouncilMaxLength } from 'utils/TypesAndInterfaces/Council'
 
 // helpers
 import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
+import { ACTION_PRIMARY, SUBMIT } from 'app/App.components/Button/Button.constants'
 
 // view
-import { Input } from '../../../app/App.components/Input/Input.controller'
+import { Input } from 'app/App.components/Input/NewInput'
+import NewButton from 'app/App.components/Button/NewButton.controller'
 import { TextArea } from '../../../app/App.components/TextArea/TextArea.controller'
-import { Button } from '../../../app/App.components/Button/Button.controller'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 
 // action
 import { requestTokenMint } from '../Council.actions'
 
 // style
-import { CouncilFormStyled } from './CouncilForms.style'
+import { CouncilFormStyled } from './CouncilForm.style'
 
 const INIT_FORM = {
   treasuryAddress: '',
@@ -26,7 +27,7 @@ const INIT_FORM = {
   purpose: '',
 }
 
-export const CouncilFormRequestTokenMint = ({ requestPurposeMaxLength }: RequestPurposeMaxLength) => {
+export const CouncilFormRequestTokenMint = (maxLength: CouncilMaxLength) => {
   const dispatch = useDispatch()
   const [form, setForm] = useState(INIT_FORM)
 
@@ -62,6 +63,38 @@ export const CouncilFormRequestTokenMint = ({ requestPurposeMaxLength }: Request
   const handleBlur = validateFormField(setFormInputStatus)
   const handleBlurAddress = validateFormAddress(setFormInputStatus)
 
+  const treasuryAddressProps = {
+    name: 'treasuryAddress',
+    value: treasuryAddress,
+    onBlur: handleBlurAddress,
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+      handleChange(e)
+      handleBlurAddress(e)
+    },
+    required: true,
+  }
+
+  const treasuryAddressSettings = {
+    inputStatus: formInputStatus.treasuryAddress,
+  }
+
+  const tokenAmountProps = {
+    name: 'tokenAmount',
+    value: tokenAmount,
+    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e),
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+      handleChange(e)
+      handleBlur(e)
+    },
+    required: true,
+  }
+
+  const tokenAmountSettings = {
+    inputStatus: formInputStatus.tokenAmount,
+  }
+
+  const inputPinnedChild = <div className="pinned-child">MVK</div>
+
   return (
     <CouncilFormStyled onSubmit={handleSubmit}>
       <a className="info-link" href="https://mavryk.finance/litepaper#mavryk-council" target="_blank" rel="noreferrer">
@@ -72,33 +105,16 @@ export const CouncilFormRequestTokenMint = ({ requestPurposeMaxLength }: Request
       <div className="form-grid">
         <div>
           <label>Treasury Address</label>
-          <Input
-            type="text"
-            required
-            value={treasuryAddress}
-            name="treasuryAddress"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              handleChange(e)
-              handleBlurAddress(e)
-            }}
-            onBlur={handleBlurAddress}
-            inputStatus={formInputStatus.treasuryAddress}
-          />
+          <Input inputProps={treasuryAddressProps} settings={treasuryAddressSettings} />
         </div>
 
-        <div className="with-pinned-text">
+        <div>
           <label>Token Amount</label>
           <Input
-            type="text"
-            required
-            value={tokenAmount}
-            name="tokenAmount"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              handleChange(e)
-            }}
-            onBlur={(e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e)}
-            inputStatus={formInputStatus.tokenAmount}
-            pinnedText={'MVK'}
+            className="transparent-child-wrap"
+            children={inputPinnedChild}
+            inputProps={tokenAmountProps}
+            settings={tokenAmountSettings}
           />
         </div>
       </div>
@@ -111,13 +127,16 @@ export const CouncilFormRequestTokenMint = ({ requestPurposeMaxLength }: Request
           onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
             handleChange(e)
           }}
-          onBlur={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleBlur(e, requestPurposeMaxLength)}
+          onBlur={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleBlur(e, maxLength.requestPurposeMaxLength)}
           inputStatus={formInputStatus.purpose}
-          textAreaMaxLimit={requestPurposeMaxLength}
+          textAreaMaxLimit={maxLength.requestPurposeMaxLength}
         />
       </div>
       <div className="btn-group">
-        <Button text="Request Mint" className="plus-btn" kind={'actionPrimary'} icon="coin-loan" type="submit" />
+        <NewButton kind={ACTION_PRIMARY} type={SUBMIT}>
+          <Icon id="loans" />
+          Request Mint
+        </NewButton>
       </div>
     </CouncilFormStyled>
   )

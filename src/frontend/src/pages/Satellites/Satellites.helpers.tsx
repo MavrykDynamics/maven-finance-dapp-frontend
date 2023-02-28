@@ -3,15 +3,12 @@ import { MichelsonMap } from '@taquito/taquito'
 import type { DelegateRecord, SatelliteRecord } from '../../utils/TypesAndInterfaces/Delegation'
 import type { MavrykUserGraphQl } from '../../utils/TypesAndInterfaces/User'
 import type { SatelliteRecordGraphQl, DelegationGraphQl } from '../../utils/TypesAndInterfaces/Delegation'
-import type { DataFeedsHistoryGraphQL, Feed } from './helpers/Satellites.types'
 import { GovernanceFinancialRequestGraphQL, ProposalRecordType } from 'utils/TypesAndInterfaces/Governance'
 import { EmergergencyGovernanceItem } from 'utils/TypesAndInterfaces/EmergencyGovernance'
 
 // helpers
 import { calcWithoutPrecision } from '../../utils/calcFunctions'
-import { symbolsAfterDecimalPoint } from '../../utils/symbolsAfterDecimalPoint'
-import { Aggregator, Aggregator_Oracle } from 'utils/generated/graphqlTypes'
-import { UTCTimestamp } from 'lightweight-charts'
+import { Aggregator_Oracle } from 'utils/generated/graphqlTypes'
 import {
   defaultSatelliteDescriptionMaxLength,
   defaultSatelliteImageMaxLength,
@@ -19,6 +16,7 @@ import {
   defaultSatelliteWebsiteMaxLength,
 } from 'app/App.components/Input/Input.constants'
 import { ChartPlotType } from 'app/App.components/Chart/Chart.view'
+import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
 
 export function normalizeSatelliteRecord(
   satelliteRecord: SatelliteRecordGraphQl,
@@ -202,40 +200,6 @@ export function normalizeDelegationStorage(delegationStorage: DelegationGraphQl)
     numberActiveSatellites: delegationStorage?.max_satellites,
     totalDelegatedMVK: delegationStorage?.max_satellites,
   }
-}
-
-export function normalizeDataFeedsHistory(historyData: DataFeedsHistoryGraphQL[]) {
-  return historyData?.length
-    ? historyData.map((item) => {
-        return {
-          time: new Date(item.timestamp).getTime() as UTCTimestamp,
-          // TODO: ask Sam if the decimal is right we use?
-          value: symbolsAfterDecimalPoint(item.data / 10 ** item.aggregator.decimals),
-        }
-      })
-    : []
-}
-
-export function normalizeDataFeedsVolatility(historyData: DataFeedsHistoryGraphQL[]) {
-  return historyData?.length >= 2
-    ? historyData.reduce<Array<ChartPlotType>>((acc, { data, aggregator: { decimals }, timestamp }, idx, arr) => {
-        if (!arr?.[idx - 1]) return acc
-        acc.push({
-          time: new Date(timestamp).getTime() as UTCTimestamp,
-          value: percentageDifference(
-            symbolsAfterDecimalPoint(data / 10 ** decimals),
-            symbolsAfterDecimalPoint(arr[idx - 1]?.data / 10 ** decimals),
-          ),
-        })
-        return acc
-      }, [])
-    : []
-}
-
-export const percentageDifference = (a: number, b: number): number => {
-  const twoNumberDifference = (a / b - 1) * 100
-
-  return Number(twoNumberDifference.toFixed(2))
 }
 
 export const getSatelliteMetrics = (

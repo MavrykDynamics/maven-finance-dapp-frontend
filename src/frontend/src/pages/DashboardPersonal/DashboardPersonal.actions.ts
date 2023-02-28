@@ -2,35 +2,78 @@ import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { ERROR, INFO, SUCCESS } from 'app/App.components/Toaster/Toaster.constants'
 import { AppDispatch, GetState } from 'app/App.controller'
-import { updateUserData } from 'pages/Doorman/Doorman.actions'
-import { getGovernanceStorage } from 'pages/Governance/Governance.actions'
-import { getDelegationStorage, getOracleStorage } from 'pages/Satellites/Satellites.actions'
+import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
+import { getFarmStorage } from 'pages/Farms/Farms.actions'
+import { getDelegationStorage } from 'pages/Satellites/Satellites.actions'
 import { State } from 'reducers'
+import { updateUserData } from 'reducers/actions/user.actions'
+import { OpKind, WalletParamsWithKind } from '@taquito/taquito'
 
 export const claimAllRewardsAction = () => async (dispatch: AppDispatch, getState: GetState) => {
-  const state: State = getState()
+  const {
+    wallet: {
+      tezos,
+      accountPkh,
+      user: { myFarmRewardsData, myDoormanRewardsData, mySatelliteRewardsData },
+    },
+    contractAddresses: { doormanAddress },
+    loading: { isActionLoading },
+  }: State = getState()
 
-  if (!state.wallet.accountPkh) {
+  if (!accountPkh) {
     dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
     return
   }
 
-  if (state.loading.isActionLoading) {
+  if (isActionLoading) {
     dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
     return
   }
 
   try {
-    // const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.emergencyGovernanceAddress.address)
+    // if user has farm rewards to claim it will transfrom this rewards to batch call getting rewards array
+    const farmsRewardsBatchPart = await Promise.all(
+      Object.keys(myFarmRewardsData)
+        .reduce<Array<() => Promise<WalletParamsWithKind>>>((callbacks, farmAddress) => {
+          if (myFarmRewardsData[farmAddress].myAvailableFarmRewards > 0) {
+            callbacks.push(async () => {
+              const farmContractInstance = await tezos?.wallet.at(farmAddress)
+
+              return {
+                kind: OpKind.TRANSACTION,
+                ...farmContractInstance.methods.claim(farmAddress).toTransferParams(),
+              }
+            })
+          }
+
+          return callbacks
+        }, [])
+        .map((fn) => fn()),
+    )
+
+    const bachArr = [...farmsRewardsBatchPart]
+
+    // if user has satelite/doorman reward batch part of getting this reward will be added to the batch array
+    if (myDoormanRewardsData.myAvailableDoormanRewards > 0 || mySatelliteRewardsData.myAvailableSatelliteRewards > 0) {
+      const doormanContractInstance = await tezos?.wallet.at(doormanAddress.address)
+      bachArr.push({
+        kind: OpKind.TRANSACTION,
+        ...doormanContractInstance.methods.compound(accountPkh).toTransferParams(),
+      })
+    }
+    const batch = tezos?.wallet.batch(bachArr)
+    const transaction = await batch.send()
 
     await dispatch(toggleActionLoader(true))
     await dispatch(showToaster(INFO, 'Submitting emergency proposal...', 'Please wait 30s'))
 
+    await transaction?.confirmation()
+
     await dispatch(showToaster(SUCCESS, 'Emergency Proposal Submitted', 'All good :)'))
-    await dispatch(getGovernanceStorage())
-    await dispatch(getOracleStorage())
     await dispatch(getDelegationStorage())
     await dispatch(updateUserData())
+    await dispatch(getDoormanStorage())
+    await dispatch(getFarmStorage())
     await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {

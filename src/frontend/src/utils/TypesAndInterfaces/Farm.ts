@@ -51,5 +51,6 @@ export type FarmContractType = {
 }
 
 export type FarmStorage = Awaited<ReturnType<typeof normalizeFarmStorage>>
+export type Normalizedfarm = FarmStorage[number]
 
 export type FarmGraphQL = Omit<Farm, '__typename'>

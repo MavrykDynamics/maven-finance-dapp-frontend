@@ -1,11 +1,11 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
 // components
 import { ACTION_PRIMARY, SUBMIT } from '../../../app/App.components/Button/Button.constants'
-import { Button } from '../../../app/App.components/Button/Button.controller'
-import { DropDown, DropdownItemType } from '../../../app/App.components/DropDown/DropDown.controller'
+import NewButton from 'app/App.components/Button/NewButton.controller'
+import { DropDown, DDItemId } from 'app/App.components/DropDown/NewDropdown'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 
 // styles
@@ -19,35 +19,42 @@ import { removeCouncilMember } from '../BreakGlassCouncil.actions'
 
 export function FormRemoveCouncilMemberView() {
   const dispatch = useDispatch()
-  const { breakGlassCouncilMember } = useSelector((state: State) => state.breakGlass)
+  const { breakGlassCouncilMembers } = useSelector((state: State) => state.council)
 
-  const itemsForDropDown = breakGlassCouncilMember.map((item) => {
-    return {
-      text: `${item.name} - ${getShortTzAddress({ tzAddress: item.userId })}`,
-      value: item.userId,
-    }
-  })
+  const dropDownItems = useMemo(
+    () =>
+      breakGlassCouncilMembers.map((item, index) => ({
+        content: (
+          <div>
+            {item.name} - {getShortTzAddress({ tzAddress: item.userId })}
+          </div>
+        ),
+        tzAddress: item.userId,
+        id: index,
+      })),
+    [breakGlassCouncilMembers],
+  )
 
-  const [ddItems, _] = useState(itemsForDropDown.map(({ text }) => text))
-  const [ddIsOpen, setDdIsOpen] = useState(false)
-  const [chosenDdItem, setChosenDdItem] = useState<DropdownItemType | undefined>()
+  type DropDownItemType = typeof dropDownItems[0]
+
+  const [chosenDdItem, setChosenDdItem] = useState<DropDownItemType | undefined>()
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    try {
-      const memberAddress = chosenDdItem?.value || ''
-      await dispatch(removeCouncilMember(memberAddress))
-      setChosenDdItem(itemsForDropDown[0])
-    } catch (error) {
-      console.error('FormRemoveCouncilMemberView', error)
-    }
+    const memberAddress = chosenDdItem?.tzAddress
+
+    if (!memberAddress) return
+    dispatch(removeCouncilMember(memberAddress))
+
+    setChosenDdItem(undefined)
   }
 
-  const handleClickDropdownItem = (e: string) => {
-    const chosenItem = itemsForDropDown.filter((item) => item.text === e)[0]
-    setChosenDdItem(chosenItem)
-    setDdIsOpen(!ddIsOpen)
+  const handleClickDropdownItem = (itemId: DDItemId) => {
+    const foundItem = dropDownItems.find((item) => item.id === itemId)
+
+    if (!foundItem) return
+    setChosenDdItem(foundItem)
   }
 
   return (
@@ -65,21 +72,16 @@ export function FormRemoveCouncilMemberView() {
 
           <DropDown
             placeholder="Choose member"
-            isOpen={ddIsOpen}
-            setIsOpen={setDdIsOpen}
-            itemSelected={chosenDdItem?.text}
-            items={ddItems}
-            clickOnItem={(e) => handleClickDropdownItem(e)}
+            activeItem={chosenDdItem}
+            items={dropDownItems}
+            clickItem={handleClickDropdownItem}
           />
         </div>
 
-        <Button
-          className="stroke-01"
-          text={'Remove Council Member'}
-          kind={ACTION_PRIMARY}
-          icon={'minus'}
-          type={SUBMIT}
-        />
+        <NewButton kind={ACTION_PRIMARY} type={SUBMIT}>
+          <Icon id="minus" />
+          Remove Council Member
+        </NewButton>
       </form>
     </FormStyled>
   )

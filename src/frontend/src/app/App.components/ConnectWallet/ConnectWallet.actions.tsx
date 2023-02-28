@@ -1,12 +1,13 @@
 import { BeaconWallet } from '@taquito/beacon-wallet'
-import { Network, NetworkType } from '@airgap/beacon-sdk'
-import { TezosToolkit } from '@taquito/taquito'
+import { NetworkType } from '@airgap/beacon-sdk'
 import { AppDispatch, GetState } from 'app/App.controller'
 import { showToaster } from '../Toaster/Toaster.actions'
 import { ERROR } from '../Toaster/Toaster.constants'
-import { fetchUserData, updateUserData } from 'pages/Doorman/Doorman.actions'
 import { DEFAULT_USER } from 'reducers/wallet'
 import { CLEAR_LOANS_STORAGE, getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
+import { CLEAR_MY_COUNCIL_ACTIONS } from 'pages/Council/Council.actions'
+import { CLEAR_MY_BREAK_GLASS_COUNCIL_ACTIONS } from 'pages/BreakGlassCouncil/BreakGlassCouncil.actions'
+import { fetchUserData, updateUserData } from 'reducers/actions/user.actions'
 
 const WALLET_INSTANCE = new BeaconWallet({
   name: process.env.REACT_APP_NAME || 'MAVRYK',
@@ -68,9 +69,7 @@ export const connect = () => async (dispatch: AppDispatch, getState: GetState) =
   const {
     preferences: { headData },
     tokens: { dipDupTokens },
-    oracles: {
-      oraclesStorage: { feeds },
-    },
+    dataFeeds: { feedsLedger },
     delegation: {
       delegationStorage: { activeSatellites },
     },
@@ -96,7 +95,7 @@ export const connect = () => async (dispatch: AppDispatch, getState: GetState) =
 
     // getting userData
     const userData = address
-      ? await fetchUserData(address, activeSatellites, dipDupTokens, feeds, headData?.level)
+      ? await fetchUserData(address, activeSatellites, dipDupTokens, feedsLedger, headData?.level)
       : DEFAULT_USER
 
     await dispatch({
@@ -123,6 +122,14 @@ export const updateWalletDependedDataOnWalletChange = () => async (dispatch: App
     if (state.loans.isDataLoaded) {
       await dispatch({ type: CLEAR_LOANS_STORAGE })
       await dispatch(getLoansStorage())
+    }
+
+    if (state.council.isCouncilPendingActionsLoaded || state.council.isCouncilPastActionsLoaded) {
+      await dispatch({ type: CLEAR_MY_COUNCIL_ACTIONS })
+    }
+
+    if (state.council.isBreakGlassCouncilPendingActionsLoaded || state.council.isBreakGlassCouncilPastActionsLoaded) {
+      await dispatch({ type: CLEAR_MY_BREAK_GLASS_COUNCIL_ACTIONS })
     }
   } catch (e) {
     console.error(`Failed to updateWalletDependedDataOnWalletChange: `, e)

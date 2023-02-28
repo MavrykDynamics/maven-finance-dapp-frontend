@@ -1,7 +1,5 @@
 import styled from 'styled-components/macro'
 import { Card } from 'styles'
-
-import { headerColor } from '../../styles/colors'
 import { MavrykTheme } from '../../styles/interfaces'
 
 export const BecomeSatelliteStyled = styled.div<{ theme: MavrykTheme }>`
@@ -162,3 +160,4 @@ export const BecomeSatelliteButttons = styled.div`
     margin-left: 40px;
   }
 `
+

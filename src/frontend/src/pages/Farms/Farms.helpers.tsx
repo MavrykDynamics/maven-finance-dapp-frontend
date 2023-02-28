@@ -1,9 +1,10 @@
 // types
-import { FarmAccountsType, FarmContractType, FarmGraphQL } from '../../utils/TypesAndInterfaces/Farm'
+import { FarmAccountsType, FarmContractType, FarmGraphQL, Normalizedfarm } from '../../utils/TypesAndInterfaces/Farm'
 import { DipDupTokensGraphQl } from 'utils/TypesAndInterfaces/DipDupTokens'
 
 // helpers
 import { getContractBigmapKeys, network } from 'utils/api'
+import { STAKED } from './Farms.const'
 
 type EndsInType = {
   endsIn: any
@@ -11,19 +12,22 @@ type EndsInType = {
 }[]
 
 type TokensInfoType = {
-  liquidityPairToken: {
-    tokenAddress: string[]
-    token0: {
-      symbol: string[]
+  lpTokenInfo: {
+    liquidityPairToken: {
       tokenAddress: string[]
-      thumbnailUri: string
-    }
-    token1: {
-      symbol: string[]
-      tokenAddress: string[]
-      thumbnailUri: string
+      token0: {
+        symbol: string[]
+        tokenAddress: string[]
+        thumbnailUri: string
+      }
+      token1: {
+        symbol: string[]
+        tokenAddress: string[]
+        thumbnailUri: string
+      }
     }
   }
+  lpTokenUserBalance: number
 }[]
 
 export const normalizeFarmStorage = (
@@ -37,11 +41,11 @@ export const normalizeFarmStorage = (
 
   return farmList.map((farmItem: FarmGraphQL, idx: number) => {
     const endsIn = farmCardEndsIn[idx].endsIn
-    const lpMetadata = farmLPTokensInfo[idx]
+    const { lpTokenInfo, lpTokenUserBalance } = farmLPTokensInfo[idx]
     const contract = farmContracts.find(
       ({ address }) =>
-        lpMetadata?.liquidityPairToken?.tokenAddress?.[0] &&
-        address === lpMetadata?.liquidityPairToken?.tokenAddress?.[0],
+        lpTokenInfo?.liquidityPairToken?.tokenAddress?.[0] &&
+        address === lpTokenInfo?.liquidityPairToken?.tokenAddress?.[0],
     )
     const dipDupToken = dipDupTokens.find(({ contract }) => farmItem.lp_token_address === contract)
 
@@ -61,17 +65,18 @@ export const normalizeFarmStorage = (
       initBlock: farmItem.init_block,
       accumulatedMvkPerShare: 0,
       lastBlockUpdate: farmItem.last_block_update,
-      lpTokenAddress: lpMetadata?.liquidityPairToken?.tokenAddress?.[0] ?? '',
+      lpTokenUserBalance,
+      lpTokenAddress: lpTokenInfo?.liquidityPairToken?.tokenAddress?.[0] ?? '',
       lpBalance: farmItem.lp_token_balance / Math.pow(10, Number(dipDupToken?.metadata.decimals)),
       lpToken1: {
-        symbol: lpMetadata?.liquidityPairToken?.token0?.symbol?.[0],
-        address: lpMetadata?.liquidityPairToken?.token0?.tokenAddress?.[0],
-        thumbnailUri: lpMetadata?.liquidityPairToken?.token0?.thumbnailUri,
+        symbol: lpTokenInfo?.liquidityPairToken?.token0?.symbol?.[0],
+        address: lpTokenInfo?.liquidityPairToken?.token0?.tokenAddress?.[0],
+        thumbnailUri: lpTokenInfo?.liquidityPairToken?.token0?.thumbnailUri,
       },
       lpToken2: {
-        symbol: lpMetadata?.liquidityPairToken?.token1?.symbol?.[0],
-        address: lpMetadata?.liquidityPairToken?.token1?.tokenAddress?.[0],
-        thumbnailUri: lpMetadata?.liquidityPairToken?.token1?.thumbnailUri,
+        symbol: lpTokenInfo?.liquidityPairToken?.token1?.symbol?.[0],
+        address: lpTokenInfo?.liquidityPairToken?.token1?.tokenAddress?.[0],
+        thumbnailUri: lpTokenInfo?.liquidityPairToken?.token1?.thumbnailUri,
       },
       rewardPerBlock: 0,
       rewardsFromTreasury: false,
@@ -125,9 +130,18 @@ export const getLvlTimestamp = async (blocksLvl: number) => {
 export const getLPTokensInfo = async (farmList: FarmGraphQL[]) => {
   try {
     return await Promise.all(
-      farmList.map(async (farmCard: { address: string }) => {
-        const lpTokenInfo = await getFarmMetadata(farmCard.address)
-        return typeof lpTokenInfo === 'string' ? JSON.parse(lpTokenInfo) : lpTokenInfo
+      farmList.map(async ({ address }) => {
+        const lpTokenInfo = await getFarmMetadata(address)
+        const parsedLpTokenInfo = typeof lpTokenInfo === 'string' ? JSON.parse(lpTokenInfo) : lpTokenInfo
+
+        const lpTokenUserBalance =
+          typeof parsedLpTokenInfo === 'object'
+            ? Number(await getUserBalanceByAddress(parsedLpTokenInfo?.liquidityPairToken?.tokenAddress?.[0]))
+            : 0
+        return {
+          lpTokenInfo: parsedLpTokenInfo,
+          lpTokenUserBalance: lpTokenUserBalance,
+        }
       }),
     )
   } catch (e: unknown) {
@@ -168,4 +182,77 @@ export const getUserBalanceByAddress = async (tokenAddress?: string) => {
   if (!tokenAddress) return 0
 
   return await (await fetch(`https://api.${network}.tzkt.io/v1/accounts/${tokenAddress}/balance`)).json()
+}
+
+// filters helpers
+export const filterByLiveFinished = (
+  farmsToFilter: Array<Normalizedfarm>,
+  newLiveFinishedValue: number,
+): Array<Normalizedfarm> => {
+  return farmsToFilter.filter(({ isLive }) => (newLiveFinishedValue === 1 ? isLive === true : isLive === false))
+}
+
+export const filterBySearch = (farmsToFilter: Array<Normalizedfarm>, newSearchText: string): Array<Normalizedfarm> => {
+  return farmsToFilter.filter(({ lpTokenAddress, name }) => {
+    return (
+      lpTokenAddress.toLowerCase().includes(newSearchText.toLowerCase()) ||
+      name.toLowerCase().includes(newSearchText.toLowerCase())
+    )
+  })
+}
+
+export const getNewOpenedCardsAddresses = (openedCards: Array<string>, newOpenedCardAddress: string): Array<string> => {
+  return openedCards.find((openCardAddress) => openCardAddress === newOpenedCardAddress)
+    ? openedCards.filter((openCardAddress) => openCardAddress !== newOpenedCardAddress)
+    : openedCards.concat(newOpenedCardAddress)
+}
+
+export const filterByStaked = (farmsToFilter: Array<Normalizedfarm>, newStakedValue: number): Array<Normalizedfarm> => {
+  return newStakedValue === STAKED
+    ? farmsToFilter.filter(
+        (item) => item.farmAccounts?.length && item.farmAccounts.some((account) => account?.deposited_amount > 0),
+      )
+    : farmsToFilter
+}
+
+export const sortFarms = (farmsToSort: Array<Normalizedfarm>, sortBy: string): Array<Normalizedfarm> => {
+  const dataToSort = [...farmsToSort]
+  dataToSort.sort((a, b) => {
+    let res = 0
+    switch (sortBy) {
+      case 'active':
+        res = Number(a.open) - Number(b.open)
+        break
+      case 'highestAPY':
+        res =
+          calculateAPY(a.currentRewardPerBlock, a.lpBalance) < calculateAPY(b.currentRewardPerBlock, b.lpBalance)
+            ? 1
+            : -1
+        break
+      case 'lowestAPY':
+        res =
+          calculateAPY(a.currentRewardPerBlock, a.lpBalance) > calculateAPY(b.currentRewardPerBlock, b.lpBalance)
+            ? 1
+            : -1
+        break
+      case 'highestLiquidity':
+        res = a.lpBalance < b.lpBalance ? 1 : -1
+        break
+      case 'lowestLiquidity':
+        res = a.lpBalance > b.lpBalance ? 1 : -1
+        break
+      case 'yourLargestStake':
+        res = getSummDepositedAmount(a.farmAccounts) < getSummDepositedAmount(b.farmAccounts) ? 1 : -1
+        break
+      case 'rewardsPerBlock':
+        res = a.currentRewardPerBlock < b.currentRewardPerBlock ? 1 : -1
+        break
+      default:
+        res = 1
+        break
+    }
+    return res
+  })
+
+  return dataToSort
 }
