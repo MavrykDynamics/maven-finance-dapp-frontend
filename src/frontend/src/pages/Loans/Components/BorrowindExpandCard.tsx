@@ -4,18 +4,15 @@ import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent, getStatusByCollateralRatio } from '../Loans.const'
 import {
   BUTTON_PRIMARY,
-  TRANSPARENT_WITH_BORDER,
   BUTTON_SECONDARY,
-  ACTION_SIMPLE,
   BUTTON_SMALL,
   BUTTON_SIMPLE,
 } from 'app/App.components/Button/Button.constants'
 
-import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
 import Expand from 'app/App.components/Expand/Expand.view'
-import NewButton from 'app/App.components/Button/NewButton'
+import Button from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { StatusMessage } from './StatusMessage.view'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
@@ -253,7 +250,7 @@ export const BorrowingExpandCard = ({
               </ThreeLevelListItem>
               {isOwner ? (
                 <div className="buttons-wrapper">
-                  <NewButton
+                  <Button
                     onClick={() =>
                       openBorrowPopup?.({
                         vaultId,
@@ -272,8 +269,8 @@ export const BorrowingExpandCard = ({
                     disabled={collateralRatio < 200}
                   >
                     <Icon id="coin-loan" /> Borrow
-                  </NewButton>
-                  <NewButton
+                  </Button>
+                  <Button
                     onClick={() =>
                       openRepayPopup?.({
                         vaultId,
@@ -289,7 +286,7 @@ export const BorrowingExpandCard = ({
                     className="repay"
                   >
                     <Icon id="okIcon" /> Repay
-                  </NewButton>
+                  </Button>
                 </div>
               ) : null}
             </div>
@@ -359,7 +356,7 @@ export const BorrowingExpandCard = ({
                         <TableCell className="buttons borrowing">
                           <div className="cell-content row">
                             {isOwner ? (
-                              <NewButton
+                              <Button
                                 onClick={() =>
                                   openAddNewCollateralPopup?.({
                                     vaultAddress: address,
@@ -379,14 +376,14 @@ export const BorrowingExpandCard = ({
                                 className="add-collateral"
                               >
                                 <Icon id="plus" /> Add Collateral
-                              </NewButton>
+                              </Button>
                             ) : null}
                           </div>
                         </TableCell>
                       ) : (
                         <TableCell className="buttons borrowing">
                           <div className="cell-content row">
-                            <NewButton
+                            <Button
                               onClick={() =>
                                 openAddExistingCollateralPopup?.({
                                   vaultAddress: address,
@@ -401,9 +398,9 @@ export const BorrowingExpandCard = ({
                               kind={BUTTON_SECONDARY}
                             >
                               <Icon id="plus" /> Add
-                            </NewButton>
+                            </Button>
                             {isOwner ? (
-                              <NewButton
+                              <Button
                                 onClick={() =>
                                   openWithdrawCollateralPopup?.({
                                     vaultAddress: address,
@@ -419,7 +416,7 @@ export const BorrowingExpandCard = ({
                                 kind={BUTTON_SECONDARY}
                               >
                                 <Icon id="minus" /> Remove
-                              </NewButton>
+                              </Button>
                             ) : null}
                           </div>
                         </TableCell>
@@ -430,7 +427,7 @@ export const BorrowingExpandCard = ({
               </TableBody>
             </Table>
             {collateralData.length < 3 && isOwner ? (
-              <NewButton
+              <Button
                 onClick={() =>
                   openAddNewCollateralPopup?.({
                     vaultAddress: address,
@@ -451,7 +448,7 @@ export const BorrowingExpandCard = ({
                 style={{ marginLeft: 'auto' }}
               >
                 <Icon id="plus" /> Add Collateral
-              </NewButton>
+              </Button>
             ) : null}
 
             {isOwner ? (
@@ -462,7 +459,7 @@ export const BorrowingExpandCard = ({
                   <div className="value">
                     {xtzDelegatedTo ? <TzAddress tzAddress={xtzDelegatedTo} type={BLUE} /> : 'Not Delegated'}
                   </div>
-                  <NewButton
+                  <Button
                     kind={BUTTON_SIMPLE}
                     disabled={!collateralData.find(({ gqlName }) => isTezosAsset(gqlName))}
                     onClick={() =>
@@ -473,7 +470,7 @@ export const BorrowingExpandCard = ({
                     }
                   >
                     Change Baker <Icon id="paginationArrowLeft" />
-                  </NewButton>
+                  </Button>
                 </div>
                 <div className="bottom-info-row">
                   <div className="name">sMVK Delegated to </div>
@@ -481,9 +478,9 @@ export const BorrowingExpandCard = ({
                     {sMVKDelegatedTo ? <TzAddress tzAddress={sMVKDelegatedTo} type={BLUE} /> : 'None'}
                   </div>
                   <Link to={sMVKDelegatedTo ? `/satellites/satellite-details/${sMVKDelegatedTo}` : '/satellite-nodes'}>
-                    <NewButton kind={BUTTON_SIMPLE}>
+                    <Button kind={BUTTON_SIMPLE}>
                       View Satellite <Icon id="paginationArrowLeft" />
-                    </NewButton>
+                    </Button>
                   </Link>
                 </div>
 
@@ -498,9 +495,9 @@ export const BorrowingExpandCard = ({
                       : 'None Allowed'}
                   </div>
 
-                  <NewButton kind={BUTTON_SIMPLE} disabled onClick={() => openManagePermissionsPopup?.({})}>
+                  <Button kind={BUTTON_SIMPLE} disabled onClick={() => openManagePermissionsPopup?.({})}>
                     Update <Icon id="paginationArrowLeft" />
-                  </NewButton>
+                  </Button>
                 </div>
                 <div className="bottom-info-row">
                   <div className="name">MVK Operators </div>
@@ -510,12 +507,12 @@ export const BorrowingExpandCard = ({
                         ` ${mappedMVKOperators.amount ?? ''}`
                       : 'None'}
                   </div>
-                  <NewButton kind={BUTTON_SIMPLE} disabled onClick={() => openUpdateMvkOperatorsPopup?.({})}>
+                  <Button kind={BUTTON_SIMPLE} disabled onClick={() => openUpdateMvkOperatorsPopup?.({})}>
                     Update <Icon id="paginationArrowLeft" />
-                  </NewButton>
+                  </Button>
                 </div>
 
-                <NewButton
+                <Button
                   disabled={!borrowedAmount}
                   size={BUTTON_SMALL}
                   kind={BUTTON_SECONDARY}
@@ -533,7 +530,7 @@ export const BorrowingExpandCard = ({
                   className="close-vault"
                 >
                   <Icon id="navigation-menu_close" /> Repay Loan in Full
-                </NewButton>
+                </Button>
               </>
             ) : null}
           </BorrowingTabListItemExpanded>

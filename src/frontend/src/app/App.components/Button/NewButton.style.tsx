@@ -15,6 +15,7 @@ import {
   VOTING_PASS,
 } from './Button.constants'
 
+// TOOD: refactor colors with theme implementation
 export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
   font-weight: 600;
   font-size: 16px;

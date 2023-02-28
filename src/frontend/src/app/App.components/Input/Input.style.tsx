@@ -179,6 +179,8 @@ export const InputSpacer = styled.div`
   height: 10px;
 `
 
+// New input styles
+// TOOD: refactor colors with theme implementation
 export const StyledInput = styled.input<{ theme: MavrykTheme }>`
   width: 100%;
   height: 100%;
@@ -194,7 +196,7 @@ export const StyledInput = styled.input<{ theme: MavrykTheme }>`
   padding: 13px 45px 13px 20px;
 
   &::placeholder {
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.blockNameTitleColor};
   }
 
   &:disabled {
