@@ -140,6 +140,7 @@ export const BecomeSatellite = () => {
 
   // Handlers for register/unregister and update data
   const handleUnregisterSatellite = () => dispatch(unregisterAsSatellite())
+
   const handleRegisterOrUpdateSatellite = () => {
     const parsedForm: RegisterAsSatelliteForm = {
       name: form.name.text,
