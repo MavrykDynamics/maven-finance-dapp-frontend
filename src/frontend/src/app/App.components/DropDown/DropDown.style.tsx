@@ -149,8 +149,8 @@ export const DropDownListItem = styled.li<{ disabled?: boolean }>`
   align-items: center;
   width: 100%;
   color: ${({ theme }) => theme.textColor};
-  padding-left: 20px;
-  padding-right: 10px;
+  padding-left: 15px;
+  padding-right: 15px;
   cursor: pointer;
   justify-content: space-between;
   text-transform: capitalize;
@@ -176,6 +176,13 @@ export const DropDownListItem = styled.li<{ disabled?: boolean }>`
           }
         `
       : ''}
+
+  .truncated-text {
+    display: block;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
 `
 
 export const DropdownContainer = styled.div<{ theme: MavrykTheme }>`

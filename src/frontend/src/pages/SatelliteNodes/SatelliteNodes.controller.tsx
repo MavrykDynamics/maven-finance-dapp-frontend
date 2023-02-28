@@ -33,13 +33,14 @@ const itemsForDropDown = [
   { text: 'Participation', value: 'participation' },
 ]
 
+const ddItems = itemsForDropDown.map(({ text }) => text)
+
 const SatelliteNodes = () => {
   const { pathname, search } = useLocation()
 
   const { allSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
 
   const [filteredSatelliteList, setFilteredSatelliteList] = useState(allSatellitesIds)
-  const [ddItems, _] = useState(itemsForDropDown.map(({ text }) => text))
   const [ddIsOpen, setDdIsOpen] = useState(false)
   const [inputSearch, setInputSearch] = useState('')
   const [chosenDdItem, setChosenDdItem] = useState<DropdownItemType | undefined>()

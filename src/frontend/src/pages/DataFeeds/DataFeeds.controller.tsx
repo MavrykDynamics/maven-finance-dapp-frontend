@@ -48,14 +48,14 @@ export const DataFeeds = () => {
   const [filteredFeeds, setFilteredFeeds] = useState(feedsLedger)
 
   useEffect(() => {
-    const filteredFeeds = [...feedsLedger].filter(
-      ({ category, name, address }) =>
-        category?.toLowerCase() === chosenDdItem.toLowerCase() ||
-        name.toLowerCase().includes(searchInputValue.toLowerCase()) ||
-        address.toLowerCase().includes(searchInputValue.toLowerCase()),
+    setFilteredFeeds(
+      feedsLedger.filter(
+        ({ category, name, address }) =>
+          category?.toLowerCase() === chosenDdItem.toLowerCase() ||
+          name.toLowerCase().includes(searchInputValue.toLowerCase()) ||
+          address.toLowerCase().includes(searchInputValue.toLowerCase()),
+      ),
     )
-
-    setFilteredFeeds(filteredFeeds)
   }, [feedsLedger, chosenDdItem, searchInputValue])
 
   const handleSelect = (selectedOption: string) => {
