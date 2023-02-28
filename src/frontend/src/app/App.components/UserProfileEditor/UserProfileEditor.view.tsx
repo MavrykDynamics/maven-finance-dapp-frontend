@@ -19,7 +19,7 @@ type Props = {
 export const UserProfileEditor = ({ file, getFile, show: showEditor, closeEditor }: Props) => {
   const [zoom, setZoom] = useState('1')
   const [rotate, setRotate] = useState('0')
-  const editor = useRef<any | undefined>() // TODO: add valid type
+  const editor = useRef<AvatarEditor | null>(null)
 
   const handleFile = async () => {
     if (editor.current) {
