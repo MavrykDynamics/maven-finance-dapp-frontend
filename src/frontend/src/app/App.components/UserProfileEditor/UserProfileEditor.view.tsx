@@ -1,0 +1,96 @@
+import React, { useRef, useState } from 'react'
+import AvatarEditor from 'react-avatar-editor'
+import { PopupContainer, PopupContainerWrapper } from '../SettingsPopup/SettingsPopup.style'
+import { UserProfileEditorStyled, UserProfileEditorSettings, UserProfileEditorButtons } from './UserProfileEditor.style'
+import Icon from '../Icon/Icon.view'
+
+const rotateSides = {
+  LEFT: 'left',
+  RIGHT: 'right',
+}
+
+type Props = {
+  file: File | null
+  getFile: (file: File) => void
+  show: boolean
+  closeEditor: () => void
+}
+
+export const UserProfileEditor = ({ file, getFile, show: showEditor, closeEditor }: Props) => {
+  const [zoom, setZoom] = useState('1')
+  const [rotate, setRotate] = useState('0')
+  const editor = useRef<any | undefined>() // TODO: add valid type
+
+  const handleFile = async () => {
+    if (editor.current) {
+      const defaultFileName = 'user profile image'
+      const dataUrl = editor.current.getImage().toDataURL()
+      const preparedUrl = await fetch(dataUrl)
+      const blob = await preparedUrl.blob()
+      const editedFile = new File([blob], file?.name || defaultFileName)
+      getFile(editedFile)
+      closeEditor()
+    }
+  }
+
+  const handleRotate = (side: string) => {
+    if (rotateSides.LEFT === side) {
+      const result = String(Number(rotate) - 90)
+      setRotate(result)
+    } else if (rotateSides.RIGHT === side) {
+      const result = String(Number(rotate) + 90)
+      setRotate(result)
+    }
+  }
+
+  return (
+    <PopupContainer onClick={closeEditor} show={showEditor}>
+      <PopupContainerWrapper onClick={(e) => e.stopPropagation()}>
+        <UserProfileEditorStyled>
+          <div className="avatar">
+            <AvatarEditor
+              ref={editor}
+              image={file || ''}
+              width={120}
+              height={120}
+              border={20}
+              borderRadius={60}
+              color={[255, 255, 255, 0.6]} // RGBA
+              scale={Number(zoom)}
+              rotate={Number(rotate)}
+            />
+          </div>
+
+          <div onClick={closeEditor}>
+            <Icon className="close-btn" id="navigation-menu_close" />
+          </div>
+
+          <UserProfileEditorSettings>
+            <div className="setting">
+              <label>Zoom:</label>
+              <input
+                defaultValue={zoom}
+                onChange={(e) => setZoom(e.target.value)}
+                type="range"
+                min="1"
+                max="3"
+                step="0.1"
+              />
+            </div>
+
+            <div className="setting">
+              <label>Rotate:</label>
+
+              <button onClick={() => handleRotate(rotateSides.LEFT)}>left</button>
+              <button onClick={() => handleRotate(rotateSides.RIGHT)}>right</button>
+            </div>
+          </UserProfileEditorSettings>
+
+          <UserProfileEditorButtons>
+            <button onClick={handleFile}>Save</button>
+          </UserProfileEditorButtons>
+        </UserProfileEditorStyled>
+      </PopupContainerWrapper>
+    </PopupContainer>
+  )
+}
