@@ -2,17 +2,20 @@ import styled from 'styled-components'
 import { BUTTON_RADIUS } from 'styles/constants'
 import { MavrykTheme } from 'styles/interfaces'
 import {
-  ACTION_PRIMARY,
-  ACTION_SECONDARY,
-  ACTION_SIMPLE,
-  NAV_SIMPLE,
-  TRANSPARENT_WITH_BORDER,
+  BUTTON_MEDIUM,
+  BUTTON_NAVIGATION,
+  BUTTON_NORMAL,
+  BUTTON_PRIMARY,
+  BUTTON_ROUND,
+  BUTTON_SECONDARY,
+  BUTTON_SIMPLE,
+  BUTTON_SMALL,
+  VOTING_AGAINST,
+  VOTING_FOR,
+  VOTING_PASS,
 } from './Button.constants'
 
 export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
-  padding: 0 31px;
-  height: 50px;
-  border: none;
   font-weight: 600;
   font-size: 16px;
   line-height: 16px;
@@ -22,12 +25,6 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  column-gap: 10px;
-
-  svg {
-    width: 24px;
-    height: 24px;
-  }
 
   &:hover {
     opacity: 0.8;
@@ -38,51 +35,89 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
     cursor: not-allowed;
   }
 
-  &.${ACTION_PRIMARY} {
+  /* styling for buttons forms */
+  &.${BUTTON_NORMAL} {
+    column-gap: 10px;
+    padding: 0 20px;
+  }
+
+  &.${BUTTON_ROUND} {
+    padding: 0;
+    border-radius: 50%;
+
+    /* Make button square, this type of button will contain only icon */
+    &.${BUTTON_MEDIUM} {
+      height: 50px;
+      width: 50px;
+    }
+
+    &.${BUTTON_SMALL} {
+      height: 36px;
+      width: 36px;
+    }
+  }
+
+  /* styling for buttons sizing */
+  &.${BUTTON_MEDIUM} {
+    height: 50px;
+
+    svg {
+      height: 24px;
+      width: 24px;
+    }
+  }
+
+  &.${BUTTON_SMALL} {
+    height: 36px;
+
+    svg {
+      height: 20px;
+      width: 20px;
+    }
+  }
+
+  /* styling for button kinds */
+  &.${BUTTON_PRIMARY} {
     color: ${({ theme }) => theme.containerColor};
-    background-color: ${({ theme }) => theme.actionPrimaryBtnColor};
+    background-color: ${({ theme }) => theme.valueColor};
 
     svg {
       fill: ${({ theme }) => theme.containerColor};
     }
-
-    &.pulse {
-      animation: pulse 2s infinite;
-      box-shadow: 0 0 0 0 rgba(134, 212, 201, 1);
-    }
   }
 
-  &.${ACTION_SECONDARY} {
-    color: ${({ theme }) => theme.actionPrimaryBtnColor};
+  &.${BUTTON_SECONDARY} {
+    color: ${({ theme }) => theme.valueColor};
     background-color: transparent;
-    border: 2px solid ${({ theme }) => theme.actionPrimaryBtnColor};
+    border: 2px solid ${({ theme }) => theme.valueColor};
 
     svg {
-      fill: ${({ theme }) => theme.actionPrimaryBtnColor};
+      fill: ${({ theme }) => theme.valueColor};
     }
   }
 
-  &.${ACTION_SIMPLE} {
+  &.${BUTTON_SIMPLE} {
     width: fit-content;
     height: fit-content;
-    padding: 3px 7px;
-    transition: 0.3s all;
+    padding: 0;
+
     color: ${({ theme }) => theme.valueColor};
-    max-width: unset;
+    svg {
+      fill: ${({ theme }) => theme.valueColor};
+    }
   }
 
-  &.${NAV_SIMPLE} {
+  &.${BUTTON_NAVIGATION} {
     width: fit-content;
     height: fit-content;
     padding: 3px 7px;
     position: relative;
     transition: 0.3s all;
     color: ${({ theme }) => theme.navTitleColor};
-    max-width: unset;
 
     &.active,
-    &:not(.see-all):hover {
-      &:not(.no-before)::before {
+    &:hover {
+      &::before {
         position: absolute;
         bottom: -3px;
         left: 50%;
@@ -95,47 +130,39 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
       }
       color: ${({ theme }) => theme.navLinkSubTitleActive};
     }
-
-    &.see-all {
-      svg {
-        fill: ${({ theme }) => theme.valueColor};
-      }
-    }
   }
 
-  &.${TRANSPARENT_WITH_BORDER} {
-    background: transparent;
-    border: 1px solid ${({ theme }) => theme.valueColor};
-    color: ${({ theme }) => theme.valueColor};
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: fit-content;
+  /* styling for voting buttons  */
+  &.${VOTING_FOR} {
+    color: ${({ theme }) => theme.backgroundColor};
+    background-color: ${({ theme }) => theme.upColor};
+  }
 
+  &.${VOTING_PASS} {
+    color: ${({ theme }) => theme.backgroundColor};
+    background-color: ${({ theme }) => theme.headerSkyColor};
+  }
+
+  &.${VOTING_AGAINST} {
+    color: ${({ theme }) => theme.backgroundColor};
+    background-color: ${({ theme }) => theme.downColor};
+  }
+
+  /* additional classes */
+  &.pulse {
+    animation: pulse 2s infinite;
+    box-shadow: 0 0 0 0 rgba(134, 212, 201, 1);
+  }
+
+  /* TODO: remove this class later, make icon via fill not stroke */
+  &.expand-btn {
     svg {
-      fill: ${({ theme }) => theme.valueColor};
+      height: 8px;
+      width: 14px;
+      stroke: ${({ theme }) => theme.navIconColor};
+      transition: transform 0.3s ease-in-out;
+      fill: none;
+      stroke-width: 5px;
     }
-  }
-
-  &.go-back {
-    a {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      column-gap: 10px;
-      color: ${({ theme }) => theme.valueColor};
-    }
-
-    svg {
-      transform: rotate(180deg);
-      width: 18px;
-      height: 18px;
-      stroke: ${({ theme }) => theme.valueColor};
-      fill: ${({ theme }) => theme.valueColor};
-    }
-  }
-
-  &.margin-top-30 {
-    margin-top: 30px;
   }
 `
