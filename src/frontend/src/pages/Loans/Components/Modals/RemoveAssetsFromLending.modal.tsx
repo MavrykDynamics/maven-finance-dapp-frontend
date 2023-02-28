@@ -2,13 +2,13 @@ import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useLockBodyScroll } from 'react-use'
 
-import NewButton from 'app/App.components/Button/NewButton.controller'
+import NewButton from 'app/App.components/Button/NewButton'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { Input } from 'app/App.components/Input/NewInput'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
-import { ACTION_PRIMARY, TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_SECONDARY } from 'app/App.components/Button/Button.constants'
 import { INPUT_LARGE, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { silverColor } from 'styles'
 import {
@@ -140,7 +140,7 @@ export const RemoveAssetsFromLending = ({
 
               <div className="block-name">Select amount to remove</div>
               <Input
-                className={`${rate ? 'input-with-rate' : ''} pinned-dropdown withdrawCollateralInput`}
+                className={`${rate ? 'input-with-rate' : ''} pinned-dropdown mb-45`}
                 inputProps={{
                   value: inputData.amount,
                   type: 'number',
@@ -167,7 +167,7 @@ export const RemoveAssetsFromLending = ({
               </Input>
 
               <NewButton
-                kind={ACTION_PRIMARY}
+                kind={BUTTON_PRIMARY}
                 onClick={continueBtnHandler}
                 disabled={continueBtnDisabled}
                 className="modal-manage-btn"
@@ -211,12 +211,12 @@ export const RemoveAssetsFromLending = ({
               </div>
 
               <div className="buttons-wrapper">
-                <NewButton kind={TRANSPARENT_WITH_BORDER} onClick={backBtnHandler} className="modal-manage-btn">
+                <NewButton kind={BUTTON_SECONDARY} onClick={backBtnHandler} className="modal-manage-btn">
                   <Icon id="arrowLeft" />
                   Back
                 </NewButton>
                 <NewButton
-                  kind={ACTION_PRIMARY}
+                  kind={BUTTON_PRIMARY}
                   onClick={withdrawHandler}
                   disabled={isWithdrawDisabled}
                   className="modal-manage-btn"

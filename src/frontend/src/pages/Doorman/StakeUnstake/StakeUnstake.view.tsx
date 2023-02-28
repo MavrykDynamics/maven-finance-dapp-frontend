@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 
 // view
-import NewButton from 'app/App.components/Button/NewButton.controller'
+import NewButton from 'app/App.components/Button/NewButton'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { Input } from '../../../app/App.components/Input/Input.controller'
 import Icon from '../../../app/App.components/Icon/Icon.view'
@@ -11,7 +11,7 @@ import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
 // helpers, consts
 import { State } from 'reducers'
-import { ACTION_PRIMARY, ACTION_SECONDARY } from '../../../app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_SECONDARY } from '../../../app/App.components/Button/Button.constants'
 import { isValidNumberValue, mathRoundTwoDigit } from '../../../utils/validatorFunctions'
 import { rewardsCompound } from '../Doorman.actions'
 import { InputStatusType, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
@@ -229,7 +229,7 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
             {!mySMvkBalanceIsZero && showDelegateBtn && (
               <NewButton
                 onClick={handleDelegate}
-                kind={ACTION_PRIMARY}
+                kind={BUTTON_PRIMARY}
                 disabled={!accountPkh}
                 className={!accountPkh ? '' : 'pulse'}
               >
@@ -261,7 +261,7 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
           </StakeUnstakeBalance>
 
           <StakeUnstakeRightPart>
-            <NewButton kind={ACTION_PRIMARY} onClick={handleCompound} disabled={!userHasRewards}>
+            <NewButton kind={BUTTON_PRIMARY} onClick={handleCompound} disabled={!userHasRewards}>
               <Icon id="compound" /> Compound
             </NewButton>
           </StakeUnstakeRightPart>
@@ -310,11 +310,11 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
           </StakeUnstakeInputColumn>
         </StakeUnstakeInputGrid>
         <StakeUnstakeButtonGrid>
-          <NewButton kind={ACTION_PRIMARY} onClick={handleStake}>
+          <NewButton kind={BUTTON_PRIMARY} onClick={handleStake}>
             <Icon id="in" /> Stake
           </NewButton>
 
-          <NewButton kind={ACTION_SECONDARY} onClick={handleUnStake}>
+          <NewButton kind={BUTTON_SECONDARY} onClick={handleUnStake}>
             <Icon id="out" /> Unstake
           </NewButton>
         </StakeUnstakeButtonGrid>

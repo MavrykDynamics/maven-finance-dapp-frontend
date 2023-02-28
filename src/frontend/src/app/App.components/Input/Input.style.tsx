@@ -270,7 +270,7 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
     }
   }
 
-  &.withdrawCollateralInput {
+  &.mb-45 {
     margin-bottom: 45px;
   }
 

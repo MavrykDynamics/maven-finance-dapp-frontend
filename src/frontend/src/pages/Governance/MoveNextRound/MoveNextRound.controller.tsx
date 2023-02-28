@@ -4,8 +4,8 @@ import { State } from 'reducers'
 
 // components
 import { MoveNextRoundModal } from './MoveNextRoundModal.controller'
-import NewButton from 'app/App.components/Button/NewButton.controller'
-import { TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
+import NewButton from 'app/App.components/Button/NewButton'
+import { BUTTON_SECONDARY } from 'app/App.components/Button/Button.constants'
 import Icon from 'app/App.components/Icon/Icon.view'
 
 // actions
@@ -48,7 +48,7 @@ export default function MoveToNextRound() {
 
   return (
     <>
-      <NewButton kind={TRANSPARENT_WITH_BORDER} disabled={!accountPkh} onClick={handleMoveNextRound}>
+      <NewButton kind={BUTTON_SECONDARY} disabled={!accountPkh} onClick={handleMoveNextRound}>
         <Icon id="upload" />
         Move to next round
       </NewButton>

@@ -2,8 +2,14 @@ import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 // Consts
-import { ACTION_PRIMARY, ACTION_SECONDARY } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_SECONDARY } from 'app/App.components/Button/Button.constants'
 import { INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import {
+  BecomeSatelliteFormStateType,
+  DEFAULT_BECOME_SATELLITE_FORM,
+  getFormTextBasedOnUserRole,
+  getInputValidationStatus,
+} from './BecomeSatellite.conts'
 
 // Actions
 import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
@@ -26,17 +32,11 @@ import Icon from 'app/App.components/Icon/Icon.view'
 import SatellitesSideBar from 'pages/Satellites/SatellitesSideBar/SatellitesSideBar.controller'
 import { TextArea } from 'app/App.components/TextArea/TextArea.controller'
 import { IPFSUploader } from 'app/App.components/IPFSUploader/IPFSUploader.controller'
-import NewButton from 'app/App.components/Button/NewButton.controller'
+import NewButton from 'app/App.components/Button/NewButton'
 
 // Styled components
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { Page, PageContent } from 'styles'
-import {
-  BecomeSatelliteFormStateType,
-  DEFAULT_BECOME_SATELLITE_FORM,
-  getFormTextBasedOnUserRole,
-  getInputValidationStatus,
-} from './BecomeSatellite.conts'
 import { BecomeSatelliteForm, BecomeSatelliteFormBalanceCheck } from './BecomeSatellite.style'
 
 const connectWalletMessage = (
@@ -270,7 +270,7 @@ export const BecomeSatellite = () => {
               <div className="buttons-wrapper">
                 {usersSatelliteProfile && usersSatelliteProfile.currentlyRegistered && (
                   <NewButton
-                    kind={ACTION_SECONDARY}
+                    kind={BUTTON_SECONDARY}
                     disabled={!usersSatelliteProfile.currentlyRegistered}
                     onClick={handleUnregisterSatellite}
                   >
@@ -280,7 +280,7 @@ export const BecomeSatellite = () => {
 
                 <NewButton
                   disabled={isUpdateButtonDisabled}
-                  kind={ACTION_PRIMARY}
+                  kind={BUTTON_PRIMARY}
                   onClick={handleRegisterOrUpdateSatellite}
                 >
                   <Icon id="satellite-small" />

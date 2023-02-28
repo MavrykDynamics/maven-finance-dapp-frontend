@@ -4,7 +4,7 @@ import qs from 'qs'
 
 // components
 import { ContractCard } from './ContractCard/ContractCard.controller'
-import NewButton from 'app/App.components/Button/NewButton.controller'
+import NewButton from 'app/App.components/Button/NewButton'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 
 // helpers
@@ -14,7 +14,7 @@ import {
   getPageNumber,
   updatePageInUrl,
 } from 'app/App.components/Pagination/pagination.consts'
-import { NAV_SIMPLE } from 'app/App.components/Button/Button.constants'
+import { BUTTON_NAVIGATION } from 'app/App.components/Button/Button.constants'
 
 // styles
 import {
@@ -135,7 +135,7 @@ export const BreakGlassView = ({
           {uniqueContracts.map((item) => (
             <NewButton
               key={item}
-              kind={NAV_SIMPLE}
+              kind={BUTTON_NAVIGATION}
               className={item === selectedContract ? 'active' : ''}
               onClick={() => {
                 setSelectedContract(item)

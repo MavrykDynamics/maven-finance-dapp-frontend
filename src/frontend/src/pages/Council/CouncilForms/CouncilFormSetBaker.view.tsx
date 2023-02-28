@@ -6,11 +6,11 @@ import type { InputStatusType } from '../../../app/App.components/Input/Input.co
 
 // helpers
 import { validateFormField } from 'utils/validatorFunctions'
-import { ACTION_PRIMARY, SUBMIT } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, SUBMIT } from 'app/App.components/Button/Button.constants'
 
 // view
 import { Input } from 'app/App.components/Input/NewInput'
-import NewButton from 'app/App.components/Button/NewButton.controller'
+import NewButton from 'app/App.components/Button/NewButton'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 
 // action
@@ -82,7 +82,7 @@ export const CouncilFormSetBaker = () => {
           <Input inputProps={bakerHashProps} settings={bakerHashSettings} />
         </div>
         <div className="button-aligment">
-          <NewButton kind={ACTION_PRIMARY} type={SUBMIT}>
+          <NewButton kind={BUTTON_PRIMARY} type={SUBMIT}>
             <Icon id="plus" />
             Set Baker
           </NewButton>

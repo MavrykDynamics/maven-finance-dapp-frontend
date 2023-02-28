@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { INPUT_LARGE, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { State } from 'reducers'
-import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
 import {
   DEFAULT_LOANS_INPUT_VALUE,
   getOnBlurValue,
@@ -17,7 +17,7 @@ import { withdrawCollateralAction } from 'pages/Loans/Actions/vaultCollateral.ac
 import { Input } from 'app/App.components/Input/NewInput'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
-import NewButton from 'app/App.components/Button/NewButton.controller'
+import NewButton from 'app/App.components/Button/NewButton'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 
 import { LoansModalBase, VaultModalOverview } from './Modals.style'
@@ -177,7 +177,7 @@ export const WithdrawCollateral = ({
           <hr />
           {collateralData ? (
             <Input
-              className={`${collateralData?.rate ? 'input-with-rate' : ''} pinned-dropdown withdrawCollateralInput`}
+              className={`${collateralData?.rate ? 'input-with-rate' : ''} pinned-dropdown mb-45`}
               inputProps={{
                 value: inputData.amount,
                 type: 'number',
@@ -238,7 +238,7 @@ export const WithdrawCollateral = ({
           </VaultModalOverview>
 
           <NewButton
-            kind={ACTION_PRIMARY}
+            kind={BUTTON_PRIMARY}
             onClick={withdrawHandler}
             disabled={isActionBtnDisabled}
             className="modal-manage-btn"

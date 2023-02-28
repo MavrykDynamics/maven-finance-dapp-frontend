@@ -1,5 +1,5 @@
-import { ACTION_SIMPLE } from '../Button/Button.constants'
-import NewButton from '../Button/NewButton.controller'
+import { BUTTON_SIMPLE } from '../Button/Button.constants'
+import NewButton from '../Button/NewButton'
 import { CommaNumber } from '../CommaNumber/CommaNumber.controller'
 import { InputSizeType, InputStatusType } from './Input.constants'
 import { InputOneChange } from './Input.controller'
@@ -64,7 +64,7 @@ export const Input = ({
       ) : null}
 
       {useMaxHandler ? (
-        <NewButton onClick={useMaxHandler} kind={ACTION_SIMPLE} className="use-max-btn">
+        <NewButton onClick={useMaxHandler} kind={BUTTON_SIMPLE}>
           Use Max
         </NewButton>
       ) : null}

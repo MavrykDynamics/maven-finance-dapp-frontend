@@ -10,11 +10,11 @@ import Icon from 'app/App.components/Icon/Icon.view'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { Input } from 'app/App.components/Input/NewInput'
 import { DropDownCollateralAssetType, DropDownXTZBakerType } from './CreateNewVault.modal'
-import NewButton from 'app/App.components/Button/NewButton.controller'
+import NewButton from 'app/App.components/Button/NewButton'
 
 import { calcCollateralRatio, isTezosAsset } from 'pages/Loans/Loans.helpers'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
-import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { depositCollateralAction } from 'pages/Loans/Actions/vaultCollateral.actions'
 import { AddNewCollateralDataProps, getOnBlurValue, getOnFocusValue } from './Modals.helpers'
@@ -302,9 +302,7 @@ export const AddNewCollateral = ({
           {inputData ? (
             <>
               <Input
-                className={`${
-                  inputData.selectedDdItem?.rate ? 'input-with-rate' : ''
-                } pinned-dropdown withdrawCollateralInput`}
+                className={`${inputData.selectedDdItem?.rate ? 'input-with-rate' : ''} pinned-dropdown mb-45`}
                 inputProps={{
                   value: inputData.amount,
                   type: 'number',
@@ -410,7 +408,7 @@ export const AddNewCollateral = ({
           </VaultModalOverview>
 
           <NewButton
-            kind={ACTION_PRIMARY}
+            kind={BUTTON_PRIMARY}
             onClick={depositCollateralHandler}
             className="modal-manage-btn"
             disabled={isDepositBtnDisabled}

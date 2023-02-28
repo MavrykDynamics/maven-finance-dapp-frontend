@@ -6,10 +6,10 @@ import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loa
 import { INPUT_STATUS_SUCCESS, INPUT_STATUS_ERROR, INPUT_LARGE } from 'app/App.components/Input/Input.constants'
 import { DEFAULT_LOANS_INPUT_VALUE, getOnBlurValue, getOnFocusValue, RepayPartPopupDataType } from './Modals.helpers'
 import { State } from 'reducers'
-import { ACTION_PRIMARY, TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_SECONDARY } from 'app/App.components/Button/Button.constants'
 import { repayPartOfVaultAction } from 'pages/Loans/Actions/vault.actions'
 
-import NewButton from 'app/App.components/Button/NewButton.controller'
+import NewButton from 'app/App.components/Button/NewButton'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
@@ -146,7 +146,7 @@ export const Repay = ({
               <div className="block-name">Please enter how much you would like to repay</div>
               {borrowedAsset ? (
                 <Input
-                  className={`${borrowedAsset.rate ? 'input-with-rate' : ''} pinned-dropdown withdrawCollateralInput`}
+                  className={`${borrowedAsset.rate ? 'input-with-rate' : ''} pinned-dropdown mb-45`}
                   inputProps={{
                     value: inputData.amount,
                     type: 'number',
@@ -176,7 +176,7 @@ export const Repay = ({
               ) : null}
 
               <NewButton
-                kind={ACTION_PRIMARY}
+                kind={BUTTON_PRIMARY}
                 onClick={continueBtnHandler}
                 disabled={inputData.validationStatus !== INPUT_STATUS_SUCCESS}
                 className="modal-manage-btn"
@@ -240,12 +240,12 @@ export const Repay = ({
               </VaultModalOverview>
 
               <div className="buttons-wrapper" style={{ marginTop: '40px' }}>
-                <NewButton kind={TRANSPARENT_WITH_BORDER} onClick={backBtnHandler} className="modal-manage-btn">
+                <NewButton kind={BUTTON_SECONDARY} onClick={backBtnHandler} className="modal-manage-btn">
                   <Icon id="arrowLeft" />
                   Back
                 </NewButton>
                 <NewButton
-                  kind={ACTION_PRIMARY}
+                  kind={BUTTON_PRIMARY}
                   onClick={repayBtnHandler}
                   disabled={isActionLoading}
                   className="modal-manage-btn"

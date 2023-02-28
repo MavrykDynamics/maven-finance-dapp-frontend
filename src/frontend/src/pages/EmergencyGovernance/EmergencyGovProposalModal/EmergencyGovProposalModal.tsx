@@ -17,9 +17,9 @@ import { TextArea } from 'app/App.components/TextArea/TextArea.controller'
 import { EmergencyGovProposalModalContent } from './EmergencyGovProposalModal.style'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { NewInputLabel } from 'app/App.components/Input/Input.style'
-import NewButton from 'app/App.components/Button/NewButton.controller'
+import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
-import { ACTION_PRIMARY, ACTION_SECONDARY } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_SECONDARY } from 'app/App.components/Button/Button.constants'
 
 export const EmergencyGovProposalModal = ({ show, closeHandler }: { show: boolean; closeHandler: () => void }) => {
   const dispatch = useDispatch()
@@ -111,10 +111,10 @@ export const EmergencyGovProposalModal = ({ show, closeHandler }: { show: boolea
           />
 
           <div className="buttons-container">
-            <NewButton kind={ACTION_SECONDARY} onClick={closeHandler}>
-              <Icon id="error" /> Cancel
+            <NewButton kind={BUTTON_SECONDARY} onClick={closeHandler}>
+              <Icon id="navigation-menu_close" /> Cancel
             </NewButton>
-            <NewButton kind={ACTION_PRIMARY} disabled={isActionDisabled} onClick={submitEmergencyGovProposalCallback}>
+            <NewButton kind={BUTTON_PRIMARY} disabled={isActionDisabled} onClick={submitEmergencyGovProposalCallback}>
               <Icon id="auction" /> Initiate
             </NewButton>
           </div>

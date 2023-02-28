@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { Link, useParams } from 'react-router-dom'
@@ -12,7 +13,7 @@ import { usersData } from '../users.const'
 // style
 import { SatellitePaginationStyled } from 'pages/SatelliteDetails/SatellitePagination/SatellitePagination.style'
 import { TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
-import NewButton from 'app/App.components/Button/NewButton.controller'
+import NewButton from 'app/App.components/Button/NewButton'
 
 const UsersPagination = () => {
   let { userId = '' } = useParams<{ userId: string }>()

@@ -11,9 +11,9 @@ import {
 import { CreateVaultPopupDataType } from './Modals.helpers'
 import { isTezosAsset } from 'pages/Loans/Loans.helpers'
 import { AvaliableCollateralType, XtzBakerType } from 'utils/TypesAndInterfaces/Loans'
-import { ACTION_PRIMARY, TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_SECONDARY } from 'app/App.components/Button/Button.constants'
 
-import NewButton from 'app/App.components/Button/NewButton.controller'
+import NewButton from 'app/App.components/Button/NewButton'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { SimpleCircleSpinnerLoader } from 'app/App.components/Loader/Loader.view'
 import { DDItemId, DropDown, DropdownInputCustomChild, DropDownItemType } from 'app/App.components/DropDown/NewDropdown'
@@ -397,7 +397,7 @@ export const CreateNewVault = ({
           {shownScreen === 'initial' ? (
             <>
               <NewButton
-                kind={ACTION_PRIMARY}
+                kind={BUTTON_PRIMARY}
                 onClick={() => {
                   setShownScreen(ADD_COLLATERAL_SCREEN_ID)
                   createVaultAction()
@@ -490,7 +490,7 @@ export const CreateNewVault = ({
 
               {/* button for despositting more than 1 collateral */}
               {/* <NewButton
-                kind={ACTION_SIMPLE}
+                kind={BUTTON_SIMPLE}
                 disabled={!Boolean(nextAvaliableCollateralToAdd)}
                 onClick={addNewCollateralHandler}
                 className="add-collateral-inline"
@@ -499,7 +499,7 @@ export const CreateNewVault = ({
               </NewButton> */}
 
               <NewButton
-                kind={ACTION_PRIMARY}
+                kind={BUTTON_PRIMARY}
                 onClick={() => setShownScreen(CONFIRMATION_SCREEN_ID)}
                 className="modal-manage-btn"
                 disabled={isAddCollateralContinueDisabled}
@@ -604,7 +604,7 @@ export const CreateNewVault = ({
               </div>
               <div className="buttons-wrapper" style={{ marginTop: '30px' }}>
                 <NewButton
-                  kind={TRANSPARENT_WITH_BORDER}
+                  kind={BUTTON_SECONDARY}
                   onClick={() => setShownScreen(ADD_COLLATERAL_SCREEN_ID)}
                   className="modal-manage-btn"
                 >
@@ -612,7 +612,7 @@ export const CreateNewVault = ({
                   Back
                 </NewButton>
                 <NewButton
-                  kind={ACTION_PRIMARY}
+                  kind={BUTTON_PRIMARY}
                   onClick={depositCollateralHandler}
                   className="modal-manage-btn"
                   disabled={isActionLoading}

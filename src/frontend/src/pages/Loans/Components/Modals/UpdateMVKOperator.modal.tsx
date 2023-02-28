@@ -3,13 +3,13 @@ import { useEffect, useMemo, useState } from 'react'
 import { useLockBodyScroll } from 'react-use'
 
 import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
-import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { validateTzAddress } from 'utils/validatorFunctions'
 import { LoansPopupsAddressInputStateType, UpdateOperatorsPopupDataType } from './Modals.helpers'
 import { State } from 'reducers'
 
 import Icon from 'app/App.components/Icon/Icon.view'
-import NewButton from 'app/App.components/Button/NewButton.controller'
+import NewButton from 'app/App.components/Button/NewButton'
 import { Input } from 'app/App.components/Input/NewInput'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
@@ -123,7 +123,7 @@ export const UpdateMVKOperator = ({
           </Table>
 
           <NewButton
-            kind={ACTION_PRIMARY}
+            kind={BUTTON_PRIMARY}
             onClick={updateHandler}
             disabled={isActionDisabled}
             className="modal-manage-btn"
