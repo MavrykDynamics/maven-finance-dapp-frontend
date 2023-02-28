@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
@@ -13,23 +13,36 @@ import { DDItemId, DropDown } from 'app/App.components/DropDown/NewDropdown'
 
 // action
 import { dropFinancialRequest } from '../Council.actions'
-import { getGovernanceStorage } from 'pages/Governance/Governance.actions'
+import { getFinancialRequestStorage } from 'pages/FinacialRequests/FiancialRequest.actions'
+import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 
 // style
 import { CouncilFormStyled } from './CouncilForm.style'
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 
 export const CouncilFormDropFinancialRequest = () => {
   const dispatch = useDispatch()
-  const { governanceStorage } = useSelector((state: State) => state.governance)
-  const { financialRequestLedger } = governanceStorage
-  const { ongoing } = distinctRequestsByExecuting(financialRequestLedger || [])
+  const { financialRequests, isLoaded: isFinancialRequestsLoaded } = useSelector(
+    (state: State) => state.financialRequest,
+  )
+
+  useDataLoader(async () => {
+    try {
+      if (!isFinancialRequestsLoaded) {
+        await dispatch(getFinancialRequestStorage())
+      }
+    } catch (e) {}
+  }, [])
+
+  const { ongoing } = distinctRequestsByExecuting(financialRequests)
 
   const dropDownItems = useMemo(
     () =>
       ongoing.map((item) => ({
         content: (
-          <div className="dropdownItem">
-            {item.request_type} - {item.request_purpose}
+          <div className="truncated-text">
+            {item.type} {item.purpose}
           </div>
         ),
         id: item.id,
@@ -59,10 +72,6 @@ export const CouncilFormDropFinancialRequest = () => {
     if (!foundItem) return
     setChosenDdItem(foundItem)
   }
-
-  useEffect(() => {
-    dispatch(getGovernanceStorage())
-  }, [dispatch])
 
   return (
     <CouncilFormStyled onSubmit={handleSubmit}>

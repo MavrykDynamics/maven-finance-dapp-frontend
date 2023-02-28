@@ -1,3 +1,6 @@
+import qs from 'qs'
+import { ParsedQs } from 'qs'
+
 export const COUNCIL_ALL_PENDING_ACTIONS_LIST_NAME = 'allPendingActions'
 export const COUNCIL_ALL_PAST_ACTIONS_LIST_NAME = 'allPastActions'
 export const COUNCIL_MY_PENDING_ACTIONS_LIST_NAME = 'myPendingActions'
@@ -79,6 +82,37 @@ export const calculateSlicePositions = (currentPage: number, listName: string) =
   return [(currentPage - 1) * itemsPerPage, currentPage * itemsPerPage]
 }
 
+export const getPageNumber = (search: string, listName: string): number => {
+  const { page = {} } = qs.parse(search, { ignoreQueryPrefix: true })
+  return Number((page as Record<string, string>)?.[listName]) || 1
+}
+
+export const updatePageInUrl = ({
+  page,
+  newPage,
+  listName,
+  pathname,
+  restQP,
+}: {
+  page: string | ParsedQs | string[] | ParsedQs[]
+  newPage: number
+  listName: string
+  pathname: string
+  restQP: object
+}) => {
+  const { [listName]: removedEl, ...newPageParams } = page as Record<string, string>
+
+  if (Number(newPage) !== 1) {
+    newPageParams[listName] = newPage.toString()
+  }
+
+  const newQueryParams = {
+    ...restQP,
+    page: newPageParams,
+  }
+  return pathname + qs.stringify(newQueryParams, { addQueryPrefix: true })
+}
+
 export const getSatelliteGovernanceListName = (tabId: number) => {
   switch (tabId) {
     case 2:
@@ -94,3 +128,15 @@ export const getSatelliteGovernanceListName = (tabId: number) => {
 export const PAGINATION_SIDE_RIGHT = 'right'
 export const PAGINATION_SIDE_CENTER = 'center'
 export const PAGINATION_SIDE_LEFT = 'left'
+
+export type PaginationPlacementVariants =
+  | typeof PAGINATION_SIDE_RIGHT
+  | typeof PAGINATION_SIDE_LEFT
+  | typeof PAGINATION_SIDE_CENTER
+
+export type PaginationProps = {
+  itemsCount: number
+  side?: PaginationPlacementVariants
+  listName: string
+  className?: string
+}

@@ -8,8 +8,6 @@ import { State } from 'reducers'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { getGovernanceStorage } from 'pages/Governance/Governance.actions'
 import { getFeedsStorage } from 'pages/DataFeeds/DataFeeds.actions'
-import { getPageNumber } from 'pages/FinacialRequests/FinancialRequests.helpers'
-import { getDelegationStorage } from 'pages/Satellites/Satellites.actions'
 import { claimAllRewardsAction } from './DashboardPersonal.actions'
 import { updateUserData } from 'reducers/actions/user.actions'
 import { getEmergencyGovernanceStorage } from 'pages/EmergencyGovernance/EmergencyGovernance.actions'
@@ -18,7 +16,8 @@ import {
   USER_ACTIONS_HISTORY,
   calculateSlicePositions,
   PAGINATION_SIDE_CENTER,
-} from 'pages/FinacialRequests/Pagination/pagination.consts'
+  getPageNumber,
+} from 'app/App.components/Pagination/pagination.consts'
 
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
 import { Page } from 'styles/components'
@@ -29,7 +28,7 @@ import PortfolioTab from './DashboardPersonalComponents/PortfolioTab'
 import { DashboardPersonalStyled } from './DashboardPersonal.style'
 import SatelliteTab from './DashboardPersonalComponents/SatelliteTab'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import Pagination from 'pages/FinacialRequests/Pagination/Pagination.view'
+import Pagination from 'app/App.components/Pagination/Pagination.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 
 import {
@@ -82,7 +81,6 @@ const DashboardPersonal = () => {
       await Promise.all(
         [
           dispatch(getGovernanceStorage()),
-          dispatch(getDelegationStorage()),
           !isEgovLoaded && dispatch(getEmergencyGovernanceStorage()),
           !isFeedsLoaded && dispatch(getFeedsStorage()),
         ].filter(Boolean),

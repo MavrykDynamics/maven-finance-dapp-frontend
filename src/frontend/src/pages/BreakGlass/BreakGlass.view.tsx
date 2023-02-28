@@ -8,10 +8,13 @@ import NewButton from 'app/App.components/Button/NewButton.controller'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 
 // helpers
-import { BREAK_GLASS_LIST_NAME, calculateSlicePositions } from 'pages/FinacialRequests/Pagination/pagination.consts'
-import { getPageNumber } from 'pages/FinacialRequests/FinancialRequests.helpers'
+import {
+  BREAK_GLASS_LIST_NAME,
+  calculateSlicePositions,
+  getPageNumber,
+  updatePageInUrl,
+} from 'app/App.components/Pagination/pagination.consts'
 import { NAV_SIMPLE } from 'app/App.components/Button/Button.constants'
-import { updatePageInUrl } from 'pages/FinacialRequests/FinancialRequests.helpers'
 
 // styles
 import {
@@ -23,10 +26,10 @@ import {
   BGPrimaryTitle,
   BGTop,
   BGWhitelist,
-  Pagination,
 } from './BreakGlass.style'
 import { FAQLink } from '../Satellites/SatellitesSideBar/SatelliteSideBar.style'
 import { BreakGlassStatusStorage } from 'utils/TypesAndInterfaces/BreakGlass'
+import Pagination from 'app/App.components/Pagination/Pagination.view'
 
 type BreakGlassViewProps = {
   glassBroken: boolean

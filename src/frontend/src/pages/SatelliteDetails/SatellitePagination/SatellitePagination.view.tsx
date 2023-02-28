@@ -1,26 +1,26 @@
-import { TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
-import NewButton from 'app/App.components/Button/NewButton.controller'
-import { useMemo } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { Link, useParams } from 'react-router-dom'
+
+import { TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
 import { State } from 'reducers'
 
 // components
 import Icon from '../../../app/App.components/Icon/Icon.view'
+import NewButton from 'app/App.components/Button/NewButton.controller'
+
 // style
 import { SatellitePaginationStyled } from './SatellitePagination.style'
 
 const SatellitePagination = () => {
-  const params: { satelliteId: string } = useParams()
-  const { activeSatellites } = useSelector((state: State) => state.delegation.delegationStorage)
-  const satelliteId = params?.satelliteId || ''
+  const { satelliteId = '' }: { satelliteId: string } = useParams()
+  const { allSatellitesIds } = useSelector((state: State) => state.satellites)
 
-  const prevIndex = useMemo(() => {
-    return activeSatellites?.length ? activeSatellites.findIndex((item) => item.address === satelliteId) : 0
-  }, [activeSatellites, satelliteId])
+  const currentSatelliteIndex = allSatellitesIds?.length
+    ? allSatellitesIds.findIndex((activeSatelliteAddress) => activeSatelliteAddress === satelliteId)
+    : -1
 
-  const prevSatellite = activeSatellites?.[prevIndex - 1]
-  const nextSatellite = activeSatellites?.[prevIndex + 1]
+  const prevSatelliteAddress = currentSatelliteIndex === -1 ? null : allSatellitesIds?.[currentSatelliteIndex - 1]
+  const nextSatelliteAddress = currentSatelliteIndex === -1 ? null : allSatellitesIds?.[currentSatelliteIndex + 1]
 
   return (
     <SatellitePaginationStyled>
@@ -29,14 +29,14 @@ const SatellitePagination = () => {
           <Icon id="arrowRight" /> Back to satellites
         </NewButton>
       </Link>
-      {prevSatellite ? (
-        <Link className="pagination-link prev" to={`/satellites/satellite-details/${prevSatellite.address}`}>
+      {prevSatelliteAddress ? (
+        <Link className="pagination-link prev" to={`/satellites/satellite-details/${prevSatelliteAddress}`}>
           <Icon id="arrow-obtuse-angle" />
           Previous satellite
         </Link>
       ) : null}
-      {nextSatellite ? (
-        <Link className="pagination-link next" to={`/satellites/satellite-details/${nextSatellite.address}`}>
+      {nextSatelliteAddress ? (
+        <Link className="pagination-link next" to={`/satellites/satellite-details/${nextSatelliteAddress}`}>
           Next satellite
           <Icon id="arrow-obtuse-angle" />
         </Link>

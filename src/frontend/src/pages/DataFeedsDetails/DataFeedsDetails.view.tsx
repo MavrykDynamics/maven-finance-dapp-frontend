@@ -8,7 +8,8 @@ import { ACTION_PRIMARY, ACTION_SIMPLE } from 'app/App.components/Button/Button.
 import { parseDate } from 'utils/time'
 import { cyanColor, downColor, Page, skyColor } from 'styles'
 import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
-import { ORACLES_DATA_IN_FEED_LIST_NAME } from 'pages/FinacialRequests/Pagination/pagination.consts'
+import { registerFeedAction } from 'pages/DataFeeds/DataFeeds.actions'
+import { ORACLES_DATA_IN_FEED_LIST_NAME, PAGINATION_SIDE_RIGHT } from 'app/App.components/Pagination/pagination.consts'
 
 // view
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
@@ -16,43 +17,37 @@ import { Button } from 'app/App.components/Button/Button.controller'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { Timer } from 'app/App.components/Timer/Timer.controller'
-import SatelliteList from 'pages/Satellites/SatelliteList/SatellitesList.controller'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import DataFeedsPagination from './pagination/DataFeedsPagination.controler'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { DataFeedsChart } from './chart/DataFeedsChart.controller'
+import { OracleCard } from 'pages/DataFeedsDetails/listItem/OracleCard.view'
+import Pagination from 'app/App.components/Pagination/Pagination.view'
 
 // types
 import { State } from 'reducers'
-import { SatelliteRecord } from 'utils/TypesAndInterfaces/Delegation'
+import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
+import { SatelliteRecordType } from 'utils/TypesAndInterfaces/Satellites'
 
 // styles
 import {
+  ContractDetails,
   DataFeedInfoBlock,
   DataFeedsStyled,
-  DataFeedsTitle,
-  DataFeedSubTitleText,
   DataFeedValueText,
+  FeedInfo,
 } from './DataFeedsDetails.style'
 import { EmptyContainer } from 'app/App.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
-import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
+import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 
 type FeedDetailsProps = {
   feed: Feed | null
   isLoading: boolean
-  feedsSatellites: Array<SatelliteRecord>
-  registerFeedHandler: () => void
+  feedsSatellites: Array<SatelliteRecordType>
 }
-
-const emptyContainer = (
-  <EmptyContainer>
-    <img src="/images/not-found.svg" alt=" No proposals to show" />
-    <figcaption> No oracles to show</figcaption>
-  </EmptyContainer>
-)
 
 const tabsList = [
   {
@@ -65,9 +60,11 @@ const tabsList = [
   },
 ]
 
-const DataFeedDetailsView = ({ feed, feedsSatellites, registerFeedHandler, isLoading }: FeedDetailsProps) => {
+const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsProps) => {
   const dispatch = useDispatch()
   const { dipDupContracts } = useSelector((state: State) => state.tokens)
+
+  const registerFeedHandler = () => dispatch(registerFeedAction())
 
   const [activeTab, setActiveTab] = useState(tabsList[0].id)
 
@@ -75,11 +72,11 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, registerFeedHandler, isLoa
 
   const imageLink = dipDupContracts.find(({ contract }) => contract === feed?.address)?.metadata?.icon
 
-  return feed ? (
+  return (
     <Page>
       <PageHeader page={'data-feeds'} />
 
-      {isLoading ? (
+      {isLoading || !feed ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
           <div className="text">Loading data feeds</div>
@@ -90,14 +87,12 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, registerFeedHandler, isLoa
 
           <DataFeedsStyled>
             <div className="top-section-wrapper">
-              <div className="left-part">
+              <FeedInfo>
                 <div className="top">
                   <div className="name-part">
                     <ImageWithPlug imageLink={imageLink} alt={`${feed.name} logo`} />
                     <div className="text">
-                      <DataFeedsTitle fontSize={25} fontWeidth={700}>
-                        {feed.name}
-                      </DataFeedsTitle>
+                      <div className="name">{feed.name}</div>
                       <a href="https://mavryk.finance/litepaper" target="_blank" rel="noreferrer">
                         Learn how to use {feed.name} in your smart contracts here
                         <CustomTooltip className="info-icon" iconId={'question'} />
@@ -109,7 +104,7 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, registerFeedHandler, isLoa
                       <Icon id={isTrustedAnswer ? 'trustShield' : 'notTrustedShield'} />
                       <CommaNumber beginningText="$" value={feed.amount} showDecimal decimalsToShow={6} />
                     </DataFeedValueText>
-                    <DataFeedsTitle fontSize={14} fontWeidth={500}>
+                    <h3>
                       {isTrustedAnswer ? 'Trusted Answer' : 'Not Trusted Answer'}
                       <CustomTooltip
                         text={`The current price is ${
@@ -118,23 +113,21 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, registerFeedHandler, isLoa
                         iconId={'info'}
                         className="info-icon"
                       />
-                    </DataFeedsTitle>
+                    </h3>
                   </div>
                 </div>
                 <div className="bottom">
                   <DataFeedInfoBlock>
-                    <DataFeedsTitle fontSize={14} fontWeidth={600}>
+                    <h3>
                       Trigger parameters
                       <CustomTooltip
                         text={`A new trusted answer is written when the off-chain data moves more than the deviation threshold or 30 seconds have passed since the last answer was written on-chain`}
                         iconId={'info'}
                         className="info-icon"
                       />
-                    </DataFeedsTitle>
+                    </h3>
 
-                    <DataFeedSubTitleText fontSize={14} fontWeidth={500}>
-                      Deviation threshold
-                    </DataFeedSubTitleText>
+                    <h4>Deviation threshold</h4>
 
                     <DataFeedValueText fontSize={16} fontWeidth={600}>
                       {feed.alpha_pct_per_thousand}%
@@ -142,14 +135,14 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, registerFeedHandler, isLoa
                   </DataFeedInfoBlock>
 
                   <DataFeedInfoBlock justifyContent={'flex-end'}>
-                    <DataFeedSubTitleText fontSize={14} fontWeidth={500}>
+                    <h4>
                       Heartbeat
                       <CustomTooltip
                         text={'Timer until the next feed data will be written on chain'}
                         iconId={'info'}
                         className="info-icon"
                       />
-                    </DataFeedSubTitleText>
+                    </h4>
                     <DataFeedValueText fontSize={16} fontWeidth={600}>
                       {feed.last_completed_data_last_updated_at ? (
                         <div className="timer">
@@ -171,31 +164,29 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, registerFeedHandler, isLoa
                   </DataFeedInfoBlock>
 
                   <DataFeedInfoBlock>
-                    <DataFeedsTitle fontSize={14} fontWeidth={600}>
+                    <h3>
                       Oracle responses
                       <CustomTooltip
                         className="info-icon"
                         text={`The aggregator requires a minimum amount of responses from oracles for the answer to be trusted`}
                         iconId={'info'}
                       />
-                    </DataFeedsTitle>
-                    <DataFeedSubTitleText fontSize={14} fontWeidth={500}>
-                      Minimum of {feed.pct_oracle_threshold}%
-                    </DataFeedSubTitleText>
+                    </h3>
+                    <h4>Minimum of {feed.pct_oracle_threshold}%</h4>
                     <DataFeedValueText fontSize={16} fontWeidth={600}>
                       {feed.last_completed_data_pct_oracle_resp}%
                     </DataFeedValueText>
                   </DataFeedInfoBlock>
 
                   <DataFeedInfoBlock>
-                    <DataFeedsTitle fontSize={14} fontWeidth={600}>
+                    <h3>
                       Last update
                       <CustomTooltip
                         text={`Last time the aggregator was updated with a trusted answer and written on-chain`}
                         iconId={'info'}
                         className="info-icon"
                       />
-                    </DataFeedsTitle>
+                    </h3>
                     <DataFeedValueText fontSize={14} fontWeidth={500} style={{ padding: '2px 0' }}>
                       {parseDate({
                         time: feed.last_completed_data_last_updated_at,
@@ -204,28 +195,28 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, registerFeedHandler, isLoa
                     </DataFeedValueText>
                   </DataFeedInfoBlock>
                 </div>
-              </div>
+              </FeedInfo>
 
-              <div className="right-part">
-                <h3>Oracle Contract Details</h3>
+              <ContractDetails>
+                <div className="block-name">Oracle Contract Details</div>
                 <div className="info-wrapper">
-                  <DataFeedsTitle fontSize={14} fontWeidth={600} style={{ lineHeight: '100%' }}>
+                  <h3>
                     Contract address
                     <CustomTooltip text={`Address of this specific data feed`} iconId={'info'} className="info-icon" />
-                  </DataFeedsTitle>
+                  </h3>
                   <DataFeedValueText fontSize={14} fontWeidth={600} style={{ lineHeight: '100%' }}>
                     <TzAddress tzAddress={feed.address} type={BLUE} hasIcon={true} />
                   </DataFeedValueText>
                 </div>
                 <div className="info-wrapper">
-                  <DataFeedsTitle fontSize={14} fontWeidth={600} style={{ lineHeight: '100%' }}>
+                  <h3>
                     Oracle Factory
                     <CustomTooltip
                       text={`Address of the oracle (aggregator) factory which is responsible for creating the aggregator feeds which oracles can sign price feeds for`}
                       iconId={'info'}
                       className="info-icon"
                     />
-                  </DataFeedsTitle>
+                  </h3>
                   <DataFeedValueText fontSize={14} fontWeidth={600} style={{ lineHeight: '100%' }}>
                     {feed.factory?.address ? (
                       <TzAddress tzAddress={feed.factory?.address} type={BLUE} hasIcon={true} />
@@ -244,7 +235,7 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, registerFeedHandler, isLoa
                     }}
                   />
                 </div>
-              </div>
+              </ContractDetails>
             </div>
 
             <div className="chart-wrapper">
@@ -269,18 +260,32 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, registerFeedHandler, isLoa
                 tooltipAsset={feed.name.split('/')?.[1]}
               />
             </div>
-          </DataFeedsStyled>
 
-          {feedsSatellites.length ? (
-            <SatelliteList
-              listTitle={'Oracles data'}
-              items={feedsSatellites}
-              listType={'oracles'}
-              name={ORACLES_DATA_IN_FEED_LIST_NAME}
-            />
-          ) : (
-            emptyContainer
-          )}
+            {feedsSatellites.length ? (
+              <>
+                <GovRightContainerTitleArea>
+                  <h1>Oracles data</h1>
+                </GovRightContainerTitleArea>
+
+                <div className={`oracles-list`}>
+                  {feedsSatellites.map((item) => (
+                    <OracleCard oracle={item} key={item.address} />
+                  ))}
+
+                  <Pagination
+                    itemsCount={feedsSatellites.length}
+                    side={PAGINATION_SIDE_RIGHT}
+                    listName={ORACLES_DATA_IN_FEED_LIST_NAME}
+                  />
+                </div>
+              </>
+            ) : (
+              <EmptyContainer>
+                <img src="/images/not-found.svg" alt=" No proposals to show" />
+                <figcaption> No oracles to show</figcaption>
+              </EmptyContainer>
+            )}
+          </DataFeedsStyled>
         </>
       )}
 
@@ -308,7 +313,7 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, registerFeedHandler, isLoa
         </UsersListCardsWrapper>
       </UsersListWrapper> */}
     </Page>
-  ) : null
+  )
 }
 
 export default DataFeedDetailsView
