@@ -99,6 +99,7 @@ export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   flex-direction: column;
   position: relative;
+  cursor: default;
 
   .block-name {
     font-weight: 600;
@@ -143,7 +144,7 @@ export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
     display: flex;
     align-items: center;
     width: 400px;
-    margin: 4px 0;
+    margin: 6px 0;
 
     .name {
       margin-right: 10px;
