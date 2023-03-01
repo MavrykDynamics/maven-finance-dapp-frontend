@@ -26,6 +26,13 @@ export type ButtonProps = {
   children?: React.ReactNode
 }
 
+/**
+ * To style button positioning or certain pixesl size do it via parent layout styling
+ * or via form={BUTTON_WIDE} and wrapper that will contain size in px
+ * If you need to style appearance add this styling via creating new kind and assign new styles to it
+ *
+ * Button shoun't contain id | classes cuz it should be only responsible for appearance, not positioning & size
+ */
 const Button = ({
   onClick,
   kind,
