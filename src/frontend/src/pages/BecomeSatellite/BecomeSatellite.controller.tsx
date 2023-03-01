@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 // Consts
-import { BUTTON_PRIMARY, BUTTON_SECONDARY } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import {
   BecomeSatelliteFormStateType,
@@ -272,6 +272,7 @@ export const BecomeSatellite = () => {
                 {usersSatelliteProfile && usersSatelliteProfile.currentlyRegistered && (
                   <NewButton
                     kind={BUTTON_SECONDARY}
+                    form={BUTTON_WIDE}
                     disabled={!usersSatelliteProfile.currentlyRegistered}
                     onClick={handleUnregisterSatellite}
                   >
@@ -282,6 +283,7 @@ export const BecomeSatellite = () => {
                 <NewButton
                   disabled={isUpdateButtonDisabled}
                   kind={BUTTON_PRIMARY}
+                  form={BUTTON_WIDE}
                   onClick={handleRegisterOrUpdateSatellite}
                 >
                   <Icon id="satellite-small" />

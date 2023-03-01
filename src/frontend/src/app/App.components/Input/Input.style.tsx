@@ -341,7 +341,7 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
     color: ${({ theme }) => theme.textColor};
   }
 
-  #ButtonStyled {
+  .useMax-btn {
     position: absolute;
     top: -27px;
     right: 0px;

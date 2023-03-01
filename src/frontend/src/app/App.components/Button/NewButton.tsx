@@ -59,13 +59,7 @@ const Button = ({
   )
 
   return (
-    <ButtonStyled
-      className={buttonClasses}
-      id="ButtonStyled"
-      onClick={loadingWrappedClickHandler}
-      type={type}
-      disabled={isDisabled}
-    >
+    <ButtonStyled className={buttonClasses} onClick={loadingWrappedClickHandler} type={type} disabled={isDisabled}>
       {isLoadingFromHandler ? <SimpleCircleSpinnerLoader /> : children}
     </ButtonStyled>
   )

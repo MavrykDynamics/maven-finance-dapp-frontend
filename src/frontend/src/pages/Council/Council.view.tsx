@@ -19,7 +19,12 @@ import Pagination from 'app/App.components/Pagination/Pagination.view'
 import { EmptyContainer } from 'app/App.style'
 
 // helpers
-import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_SIMPLE } from '../../app/App.components/Button/Button.constants'
+import {
+  BUTTON_PRIMARY,
+  BUTTON_SECONDARY,
+  BUTTON_SIMPLE,
+  BUTTON_WIDE,
+} from '../../app/App.components/Button/Button.constants'
 import { getSeparateSnakeCase } from 'utils/parse'
 import { memberIsFirstOfList } from 'pages/Council/Council.helpers'
 import {
@@ -242,16 +247,14 @@ export function CouncilView({
 
   return (
     <CounsilPageWrapper>
-      <div className="go-back">
-        {tabId && isCouncilMember && (
-          <Link to={queryParameters.pathname}>
-            <NewButton kind={BUTTON_SECONDARY}>
-              <Icon id="full-arrow-left" />
-              Back to Member Dashboard
-            </NewButton>
-          </Link>
-        )}
-      </div>
+      {tabId && isCouncilMember && (
+        <Link to={queryParameters.pathname}>
+          <NewButton kind={BUTTON_SECONDARY}>
+            <Icon id="full-arrow-left" />
+            Back to Member Dashboard
+          </NewButton>
+        </Link>
+      )}
 
       {!tabId && isCouncilMember && showPropagateBreakGlass && (
         <PropagateBreakGlassCouncilCard>
@@ -384,11 +387,15 @@ export function CouncilView({
           {!tabId && (
             <ReviewCard displayPendingSignature={displayPendingSignature}>
               <Link to={`${queryParameters.pathname}${queryParameters.pastActions}`}>
-                <NewButton kind={BUTTON_SECONDARY}>Review Past Actions</NewButton>
+                <NewButton form={BUTTON_WIDE} kind={BUTTON_SECONDARY}>
+                  Review Past Actions
+                </NewButton>
               </Link>
 
               <Link to={`${queryParameters.pathname}${queryParameters.pendingActions}`}>
-                <NewButton kind={BUTTON_SECONDARY}>Review Pending Actions</NewButton>
+                <NewButton form={BUTTON_WIDE} kind={BUTTON_SECONDARY}>
+                  Review Pending Actions
+                </NewButton>
               </Link>
             </ReviewCard>
           )}
