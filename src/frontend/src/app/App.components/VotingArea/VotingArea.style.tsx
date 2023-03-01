@@ -11,6 +11,7 @@ export const VotingAreaStyled = styled.article`
   margin-bottom: 48px;
   flex-direction: column;
 
+  /* TODO: remove buttons sizes, make it via parent */
   > button {
     max-width: 40%;
   }
