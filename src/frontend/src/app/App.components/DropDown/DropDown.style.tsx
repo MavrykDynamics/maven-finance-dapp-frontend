@@ -153,7 +153,6 @@ export const DropDownListItem = styled.li<{ disabled?: boolean }>`
   padding-right: 15px;
   cursor: pointer;
   justify-content: space-between;
-  text-transform: capitalize;
 
   > svg {
     stroke: ${({ theme }) => theme.textColor};

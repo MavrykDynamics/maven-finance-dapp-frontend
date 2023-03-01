@@ -477,7 +477,7 @@ export const BorrowingExpandCard = ({
                   </Link>
                 </div>
 
-                <div className="block-name margin-top-20">Permissions</div>
+                <div className="block-name margin-top-20">Permissions (Advanced)</div>
                 <div className="bottom-info-row">
                   <div className="name">Depositors </div>
                   <div className="value">

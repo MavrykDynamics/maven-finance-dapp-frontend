@@ -56,10 +56,6 @@ export const WithdrawCollateral = ({
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
   const [isActionPerforming, setIsActionPerforming] = useState(false)
 
-  const isActionBtnDisabled = useMemo(
-    () => isActionPerforming || inputData.validationStatus !== INPUT_STATUS_SUCCESS,
-    [isActionPerforming, inputData.validationStatus],
-  )
   const collateralData = useMemo(
     () => avaliableCollaterals.find(({ gqlName }) => selectedAsset?.gqlName === gqlName),
     [avaliableCollaterals, selectedAsset],
@@ -81,6 +77,11 @@ export const WithdrawCollateral = ({
 
     return { futureCollateralRatio, futureCollateralWithdraw, futureVaultCollateralBalance }
   }, [selectedAsset, vaultCollateralBalance, inputAmount, borrowedAmount, collateralWithdrawAmount])
+
+  const isActionBtnDisabled = useMemo(
+    () => isActionPerforming || inputData.validationStatus !== INPUT_STATUS_SUCCESS || futureCollateralRatio <= 200,
+    [isActionPerforming, inputData.validationStatus, futureCollateralRatio],
+  )
 
   useEffect(() => {
     if (!show) {

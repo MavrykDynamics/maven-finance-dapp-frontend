@@ -218,7 +218,6 @@ const getChartData = (
 
 // Normalizing lending item for loan asset
 const calcLendingAPY = (currentInterestRate: number, treasuryShare: number): number => {
-  // ((1 + (currentInterestRate - treasuryShare)/secondsPerYear)^secondsPerYear - 1) * 100
   const secondsPerYear = 60 * 60 * 24 * 365
 
   const top = currentInterestRate - treasuryShare
@@ -235,8 +234,10 @@ const getLendingItem = (
   accountPkh?: string,
 ): LendingItemType => {
   if (userMTokens && loanToken && accountPkh) {
-    const mTokenAsset = userMTokens?.find(({ m_token_id }) => m_token_id === loanToken.loan_token_address)
-
+    const mTokenAsset = userMTokens?.find(
+      ({ m_token_id, m_token: { loan_token_name } }) =>
+        m_token_id === loanToken.loan_token_address || loan_token_name === loanToken.loan_token_name,
+    )
     if (mTokenAsset) {
       return {
         lendValue: Number(mTokenAsset.balance) / 10 ** loanTokenDecimals,
