@@ -2,9 +2,12 @@ import styled from 'styled-components/macro'
 import { MavrykTheme } from '../../../styles/interfaces'
 
 export const UserProfileEditorStyled = styled.div<{ theme: MavrykTheme }>`
+  padding: 10px 25px 0 25px;
+
   .avatar {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
   }
 
   .close-btn {
@@ -15,7 +18,7 @@ export const UserProfileEditorStyled = styled.div<{ theme: MavrykTheme }>`
     width: 24px;
     height: 24px;
 
-    fill: ${({ theme }) => theme.textColor};
+    fill: ${({ theme }) => theme.valueColor};
 
     transition: opacity 0.3s;
 
@@ -25,18 +28,19 @@ export const UserProfileEditorStyled = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const UserProfileEditorButtons = styled.div`
+export const UserProfileEditorSaveButton = styled.div`
   display: flex;
-  justify-content: right;
-  margin-top: 20px;
+  justify-content: center;
+  margin-top: 30px;
 
   button {
     padding: 0 50px;
-    height: 36px;
+    height: 50px;
+    width: 250px;
 
     font-weight: 600;
-    font-size: 14px;
-    line-height: 20px;
+    font-size: 16px;
+    line-height: 16px;
 
     color: ${({ theme }) => theme.containerColor};
     background-color: ${({ theme }) => theme.valueColor};
@@ -50,45 +54,86 @@ export const UserProfileEditorButtons = styled.div`
   }
 `
 
-export const UserProfileEditorSettings = styled.div`
-  margin-top: 20px;
+export const UserProfileEditorZoom = styled.div`
   color: ${({ theme }) => theme.textColor};
 
-  .setting {
+  & > div {
     display: flex;
-    align-items: center;
-    margin-top: 10px;
 
-    label {
-      margin: 0;
-      margin-right: 10px;
-    }
+    svg {
+      width: 12px;
+      height: 12px;
 
-    input {
-      width: 100%;
-    }
-
-    button {
-      padding: 0 30px;
-
-      font-weight: 600;
-      font-size: 14px;
-      line-height: 20px;
-
-      color: ${({ theme }) => theme.valueColor};
-      border: 1px solid ${({ theme }) => theme.valueColor};
-      border-radius: 25px;
-
-      text-transform: capitalize;
-      transition: opacity 0.3s;
-
-      &:hover {
-        opacity: 0.6;
-      }
+      fill: ${({ theme }) => theme.textColor};
 
       &:first-of-type {
         margin-right: 10px;
       }
+
+      &:last-of-type {
+        margin-left: 10px;
+      }
+    }
+  }
+
+  label {
+    margin: 10px 0 10px 22px;
+  }
+
+  input[type='range'] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 7px;
+
+    background: ${({ theme }) => theme.connectInfoColor};
+    background-image: ${({ theme }) => `linear-gradient(${theme.valueColor}, ${theme.valueColor})`};
+    background-repeat: no-repeat;
+    border-radius: 5px;
+
+    &::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 17px;
+      height: 17px;
+
+      background: ${({ theme }) => theme.valueColor};
+      border-radius: 50%;
+
+      cursor: ew-resize;
+      transition: background 0.3s ease-in-out;
+    }
+  }
+`
+
+export const UserProfileEditorRotate = styled.div`
+  display: flex;
+  margin-top: 10px;
+
+  button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 30px;
+    height: 30px;
+
+    border: 1px solid ${({ theme }) => theme.cardBorderColor};
+    border-radius: 50%;
+
+    transition: opacity 0.3s;
+
+    svg {
+      width: 16px;
+      height: 16px;
+      fill: ${({ theme }) => theme.valueColor};
+    }
+
+    &:hover {
+      opacity: 0.6;
+    }
+
+    &:first-of-type {
+      margin-right: 10px;
     }
   }
 `

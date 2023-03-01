@@ -1,7 +1,12 @@
 import React, { useRef, useState } from 'react'
 import AvatarEditor from 'react-avatar-editor'
 import { PopupContainer, PopupContainerWrapper } from '../SettingsPopup/SettingsPopup.style'
-import { UserProfileEditorStyled, UserProfileEditorSettings, UserProfileEditorButtons } from './UserProfileEditor.style'
+import {
+  UserProfileEditorStyled,
+  UserProfileEditorRotate,
+  UserProfileEditorZoom,
+  UserProfileEditorSaveButton,
+} from './UserProfileEditor.style'
 import Icon from '../Icon/Icon.view'
 
 const rotateSides = {
@@ -59,15 +64,27 @@ export const UserProfileEditor = ({ file, getFile, show: showEditor, closeEditor
               scale={Number(zoom)}
               rotate={Number(rotate)}
             />
+
+            <UserProfileEditorRotate>
+              <button onClick={() => handleRotate(rotateSides.LEFT)}>
+                <Icon id="rotate-left-outlined" />
+              </button>
+              <button onClick={() => handleRotate(rotateSides.RIGHT)}>
+                <Icon id="rotate-right-outlined" />
+              </button>
+            </UserProfileEditorRotate>
           </div>
 
           <div onClick={closeEditor}>
             <Icon className="close-btn" id="navigation-menu_close" />
           </div>
 
-          <UserProfileEditorSettings>
-            <div className="setting">
-              <label>Zoom:</label>
+          <UserProfileEditorZoom>
+            <label>Zoom:</label>
+
+            <div>
+              <Icon id="minus" />
+
               <input
                 defaultValue={zoom}
                 onChange={(e) => setZoom(e.target.value)}
@@ -76,19 +93,14 @@ export const UserProfileEditor = ({ file, getFile, show: showEditor, closeEditor
                 max="3"
                 step="0.1"
               />
+
+              <Icon id="plus" />
             </div>
+          </UserProfileEditorZoom>
 
-            <div className="setting">
-              <label>Rotate:</label>
-
-              <button onClick={() => handleRotate(rotateSides.LEFT)}>left</button>
-              <button onClick={() => handleRotate(rotateSides.RIGHT)}>right</button>
-            </div>
-          </UserProfileEditorSettings>
-
-          <UserProfileEditorButtons>
-            <button onClick={handleFile}>Save</button>
-          </UserProfileEditorButtons>
+          <UserProfileEditorSaveButton>
+            <button onClick={handleFile}>Save Photo</button>
+          </UserProfileEditorSaveButton>
         </UserProfileEditorStyled>
       </PopupContainerWrapper>
     </PopupContainer>
