@@ -1,16 +1,22 @@
-import styled from 'styled-components/macro'
-import { Card, cyanColor, skyColor, royalPurpleColor, headerColor } from 'styles'
+import styled, { css } from 'styled-components/macro'
+import { Card, CardHover } from 'styles'
 import { MavrykTheme } from '../../styles/interfaces'
-import { VotingArea as VotingAreaBase } from 'app/App.components/VotingArea/VotingArea.controller'
-import { GovRightContainerTitleArea as GovRightContainerTitleAreaBase } from 'pages/Governance/Governance.style'
 
 export const FinancialRequestsStyled = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   margin-top: 30px;
+
+  .list-container {
+    width: 50%;
+    max-width: 540px;
+
+    .list {
+      margin-bottom: 37px;
+    }
+  }
 `
 
 export const FinancialRequestsRightContainer = styled(Card)<{ theme: MavrykTheme }>`
-  background-color: ${({ theme }) => theme.containerColor};
   width: calc(50% - 25px);
   padding: 28px 30px;
   border-radius: 10px;
@@ -29,18 +35,19 @@ export const FinancialRequestsRightContainer = styled(Card)<{ theme: MavrykTheme
     border-radius: 10px;
     bottom: 42px;
     left: 50%;
-    background-color: ${royalPurpleColor};
+    background-color: ${({ theme }) => theme.cardBorderColor};
     transform: translateX(-50%);
   }
 
   .voting_ending {
-    margin-top: 5px;
+    margin-top: 10px;
     font-weight: 600;
     font-size: 14px;
     color: ${({ theme }) => theme.dataColor};
   }
 
   .fr-voting {
+    margin-bottom: 20px;
     > div {
       justify-content: space-between;
       column-gap: 15px;
@@ -113,15 +120,53 @@ export const InfoBlockValue = styled(InfoBlockName)`
   }
 `
 
-export const FinancialRequestsContainer = styled.div<{ theme: MavrykTheme }>`
-  width: 50%;
-  max-width: 540px;
-`
+export const FRListItem = styled(CardHover)<{ selected: boolean; theme: MavrykTheme }>`
+  min-height: 57px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 10px auto;
+  padding: 0 18px;
+  border-radius: 10px;
+  font-weight: 600;
+  padding: 8px 28px;
+  cursor: pointer;
 
-export const VotingArea = styled(VotingAreaBase)`
-  margin-top: 25px;
-  margin-bottom: 20px;
-`
-export const GovRightContainerTitleArea = styled(GovRightContainerTitleAreaBase)`
-  margin-bottom: 10px;
+  ${({ selected }) =>
+    selected &&
+    css`
+      border-color: ${({ theme }) => theme.textColorHovered};
+      box-shadow: 0px 4px 4px ${({ theme }) => theme.boxShadowColor};
+    `}
+
+  .proposal-voted-mvk {
+    font-weight: 600;
+    font-size: 14px;
+    color: ${({ theme }) => theme.dataColor};
+    margin-right: 10px;
+  }
+
+  .id-and-title {
+    display: flex;
+    font-size: 14px;
+    align-items: center;
+    margin-right: auto;
+
+    > span {
+      font-weight: 500;
+      margin-right: 20px;
+      color: ${({ theme }) => theme.textColor};
+    }
+
+    > h4 {
+      font-weight: 500;
+      color: ${({ theme }) => theme.textColor};
+      padding-right: 8px;
+      max-width: 280px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
 `

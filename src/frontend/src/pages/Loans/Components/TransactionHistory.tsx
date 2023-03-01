@@ -9,15 +9,15 @@ import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingT
 import { State } from 'reducers'
 import { LoanMarketType } from 'utils/TypesAndInterfaces/Loans'
 
-import { getPageNumber } from 'pages/FinacialRequests/FinancialRequests.helpers'
 import { TRANSACTION_HISTORY_SLIDING_BUTTONS } from '../Loans.const'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { TRANSPARENT } from 'app/App.components/Button/Button.constants'
 import {
   TRANSACTION_HISTORY_TABLE_NAME,
+  getPageNumber,
   PAGINATION_SIDE_CENTER,
   calculateSlicePositions,
-} from 'pages/FinacialRequests/Pagination/pagination.consts'
+} from 'app/App.components/Pagination/pagination.consts'
 
 import { TransactionHistoryStyled } from '../Loans.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
@@ -31,7 +31,7 @@ import {
   TableCell,
 } from 'app/App.components/Table/Table.style'
 import { EmptyContainer } from 'app/App.style'
-import { Pagination } from 'pages/BreakGlass/BreakGlass.style'
+import Pagination from 'app/App.components/Pagination/Pagination.view'
 
 type TransactionHistoryPropsType = {
   currentToken: LoanMarketType | undefined

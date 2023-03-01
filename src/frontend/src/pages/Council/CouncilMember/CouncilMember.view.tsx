@@ -20,14 +20,13 @@ type Props = {
 }
 
 export const CouncilMemberView = (props: Props) => {
-  const { accountPkh } = useSelector((state: State) => state.wallet)
   const {
-    delegationStorage: { activeSatellites },
-  } = useSelector((state: State) => state.delegation)
+    accountPkh,
+    user: { isSatellite },
+  } = useSelector((state: State) => state.wallet)
 
   const { image, name, userId, openModal, showUpdateInfo = true } = props
   const href = `/satellites/satellite-details/${userId}`
-  const isSatellite = activeSatellites.find(({ address }) => address === userId)
 
   const isMe = userId === accountPkh
   const content = (

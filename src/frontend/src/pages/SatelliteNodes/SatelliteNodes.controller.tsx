@@ -1,119 +1,123 @@
-import React, { useEffect, useState } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
-import OracleSatellitesView from './SatelliteNodes.view'
-import { getSatelliteMetrics } from 'pages/Satellites/Satellites.helpers'
-import { SatelliteRecord } from 'utils/TypesAndInterfaces/Delegation'
-import { DropdownItemType } from '../../app/App.components/DropDown/DropDown.controller'
+import { useEffect, useMemo, useState } from 'react'
+import { useLocation } from 'react-router'
+import { useSelector } from 'react-redux'
+
+// helpers, actions
 import { State } from 'reducers'
-import { getDelegationStorage, delegate, undelegate } from 'pages/Satellites/Satellites.actions'
+
+// consts
+import {
+  calculateSlicePositions,
+  PAGINATION_SIDE_RIGHT,
+  SATELITES_NODES_LIST_NAME,
+  getPageNumber,
+} from 'app/App.components/Pagination/pagination.consts'
+import { handleFilterSatellites, handleSortSatellites } from './SatelliteNodes.helpers'
+
+import { DropDown, DropdownItemType } from '../../app/App.components/DropDown/DropDown.controller'
+import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
+import { Input } from 'app/App.components/Input/Input.controller'
+import Pagination from 'app/App.components/Pagination/Pagination.view'
+import { SatelliteListItem } from 'pages/Satellites/listItem/SateliteCard.view'
+import { Page, PageContent } from 'styles'
+import { EmptyContainer } from 'app/App.style'
+import { DropdownContainer } from 'app/App.components/DropDown/DropDown.style'
+import { SatelliteSearchFilter } from 'pages/Satellites/Satellites.style'
+import { SatelliteNodesStyled } from './SatelliteNodes.style'
+import SatellitesSideBar from 'pages/Satellites/SatellitesSideBar/SatellitesSideBar.controller'
+
+const itemsForDropDown = [
+  { text: 'Lowest Fee', value: 'satelliteFee' },
+  { text: 'Highest Fee', value: 'satelliteFee' },
+  { text: 'Delegated MVK', value: 'totalDelegatedAmount' },
+  { text: 'Participation', value: 'participation' },
+]
+
+const ddItems = itemsForDropDown.map(({ text }) => text)
 
 const SatelliteNodes = () => {
-  const {
-    delegationStorage: { activeSatellites = [] },
-  } = useSelector((state: State) => state.delegation)
-  const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
-  const {
-    governanceStorage: { financialRequestLedger, proposalLedger },
-    pastProposals,
-  } = useSelector((state: State) => state.governance)
-  const { eGovProposals } = useSelector((state: State) => state.emergencyGovernance)
-  const dispatch = useDispatch()
+  const { pathname, search } = useLocation()
 
-  const [allSatellites, setAllSatellites] = useState<SatelliteRecord[]>(activeSatellites)
-  const [filteredSatelliteList, setFilteredSatelliteList] = useState<SatelliteRecord[]>(activeSatellites)
+  const { allSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
 
-  useEffect(() => {
-    dispatch(getDelegationStorage())
-  }, [])
+  const [filteredSatelliteList, setFilteredSatelliteList] = useState(allSatellitesIds)
+  const [ddIsOpen, setDdIsOpen] = useState(false)
+  const [inputSearch, setInputSearch] = useState('')
+  const [chosenDdItem, setChosenDdItem] = useState<DropdownItemType | undefined>()
+
+  const currentPage = getPageNumber(search, SATELITES_NODES_LIST_NAME)
+
+  const paginatedItemsList = useMemo(() => {
+    const [from, to] = calculateSlicePositions(currentPage, SATELITES_NODES_LIST_NAME)
+    return filteredSatelliteList.slice(from, to)
+  }, [currentPage, filteredSatelliteList])
 
   useEffect(() => {
-    setAllSatellites(activeSatellites)
-    setFilteredSatelliteList(activeSatellites)
-  }, [activeSatellites])
+    const filteredSatellitesIds = [...allSatellitesIds]
+      .filter(handleFilterSatellites(inputSearch, satelliteMapper))
+      .sort(handleSortSatellites(chosenDdItem?.text ?? '', satelliteMapper))
 
-  const handleSearch = (e: {
-    target: {
-      value: string
-    }
-  }) => {
-    const searchQuery = e.target.value
-    let searchResult: SatelliteRecord[] = []
+    setFilteredSatelliteList(filteredSatellitesIds)
+  }, [allSatellitesIds, chosenDdItem?.text, inputSearch, satelliteMapper])
 
-    if (searchQuery !== '') {
-      searchResult = allSatellites.filter(
-        (item: SatelliteRecord) =>
-          item.address.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          item.name.toLowerCase().includes(searchQuery.toLowerCase()),
-      )
-    } else {
-      searchResult = allSatellites
-    }
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => setInputSearch(e.target.value)
 
-    setFilteredSatelliteList(searchResult)
-  }
-
-  const handleSelect = (selectedOption: DropdownItemType) => {
-    const sortedData = (filteredSatelliteList ? [...filteredSatelliteList] : []).sort((a, b) => {
-      let res = 0
-      switch (selectedOption.text) {
-        case 'Lowest Fee':
-          res = Number(a.satelliteFee) - Number(b.satelliteFee)
-          break
-        case 'Highest Fee':
-          res = Number(b.satelliteFee) - Number(a.satelliteFee)
-          break
-        case 'Delegated MVK':
-          res = b.totalDelegatedAmount + b.sMvkBalance - (a.totalDelegatedAmount + a.sMvkBalance)
-
-          break
-        case 'Participation':
-          const aMetrics = getSatelliteMetrics(
-            pastProposals,
-            proposalLedger,
-            eGovProposals,
-            a,
-            feedsLedger,
-            financialRequestLedger,
-          )
-
-          const bMetrics = getSatelliteMetrics(
-            pastProposals,
-            proposalLedger,
-            eGovProposals,
-            b,
-            feedsLedger,
-            financialRequestLedger,
-          )
-
-          res =
-            (bMetrics.proposalParticipation + bMetrics.votingPartisipation) / 2 -
-            (aMetrics.proposalParticipation + aMetrics.votingPartisipation) / 2
-          break
-        default:
-          return 0
-      }
-      return res
-    })
-
-    setFilteredSatelliteList(sortedData)
-  }
-
-  const delegateCallback = (satelliteAddress: string) => {
-    dispatch(delegate(satelliteAddress))
-  }
-
-  const undelegateCallback = (delegateAddress: string) => {
-    dispatch(undelegate(delegateAddress))
+  const handleSelect = (e: string) => {
+    const chosenItem = itemsForDropDown.find((item) => item.text === e)
+    setChosenDdItem(chosenItem)
+    setDdIsOpen(!ddIsOpen)
   }
 
   return (
-    <OracleSatellitesView
-      handleSelect={handleSelect}
-      handleSearch={handleSearch}
-      delegateCallback={delegateCallback}
-      undelegateCallback={undelegateCallback}
-      satellitesList={filteredSatelliteList}
-    />
+    <Page>
+      <PageHeader page={'satellites'} />
+
+      <PageContent>
+        <SatelliteNodesStyled>
+          <SatelliteSearchFilter>
+            <Input
+              type="text"
+              kind={'search'}
+              placeholder="Search by address or name..."
+              onChange={handleSearch}
+              value={inputSearch}
+            />
+            <DropdownContainer>
+              <h4>Order by:</h4>
+              <DropDown
+                placeholder="Choose option"
+                isOpen={ddIsOpen}
+                setIsOpen={setDdIsOpen}
+                itemSelected={chosenDdItem?.text}
+                items={ddItems}
+                clickOnItem={handleSelect}
+              />
+            </DropdownContainer>
+          </SatelliteSearchFilter>
+
+          {paginatedItemsList ? (
+            <div className={`list`}>
+              {paginatedItemsList.map((satelliteAddress) => (
+                <SatelliteListItem satellite={satelliteMapper[satelliteAddress]} key={satelliteAddress} />
+              ))}
+
+              <Pagination
+                itemsCount={filteredSatelliteList.length}
+                side={PAGINATION_SIDE_RIGHT}
+                listName={SATELITES_NODES_LIST_NAME}
+              />
+            </div>
+          ) : (
+            <EmptyContainer>
+              <img src="/images/not-found.svg" alt=" No satellites to show" />
+              <figcaption> No satellites to show</figcaption>
+            </EmptyContainer>
+          )}
+        </SatelliteNodesStyled>
+
+        <SatellitesSideBar />
+      </PageContent>
+    </Page>
   )
 }
 

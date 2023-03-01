@@ -81,7 +81,7 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
     max-width: unset;
 
     &.active,
-    &:hover {
+    &:not(.see-all):hover {
       &:not(.no-before)::before {
         position: absolute;
         bottom: -3px;
@@ -94,6 +94,12 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
         background-color: ${({ theme }) => theme.navLinkSubTitleActive};
       }
       color: ${({ theme }) => theme.navLinkSubTitleActive};
+    }
+
+    &.see-all {
+      svg {
+        fill: ${({ theme }) => theme.valueColor};
+      }
     }
   }
 

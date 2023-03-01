@@ -1,16 +1,16 @@
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
-import { DataFeedSubTitleText } from 'pages/DataFeedsDetails/DataFeedsDetails.style'
+import { FeedsListItem, FeedsOraclesCardStyled } from 'pages/DataFeeds/DataFeeds.styles'
 import { getOracleStatus, ORACLE_STATUSES_MAPPER } from 'pages/Satellites/helpers/Satellites.consts'
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { State } from 'reducers'
-import { SatelliteRecord } from 'utils/TypesAndInterfaces/Delegation'
+import { SatelliteRecordType } from 'utils/TypesAndInterfaces/Satellites'
 
-import { SatelliteItemStyle, SatelliteOracleStatusComponent } from './SatelliteCard.style'
+import { SatelliteOracleStatusComponent } from '../../Satellites/listItem/SatelliteCard.style'
 
-export const OracleCard = ({ oracle }: { oracle: SatelliteRecord }) => {
+export const OracleCard = ({ oracle }: { oracle: SatelliteRecordType }) => {
   const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
   const { tezos: { usd: xtzExchangeRate = 0 } = {}, mvk: { usd: mvkExchangeRate = 0 } = {} } = useSelector(
     (state: State) => state.tokens.tokensPrices,
@@ -18,17 +18,14 @@ export const OracleCard = ({ oracle }: { oracle: SatelliteRecord }) => {
   const oracleStatusType = getOracleStatus(oracle, feedsLedger)
 
   return (
-    <SatelliteItemStyle oracle>
-      <div className="item">
-        <DataFeedSubTitleText fontSize={14} fontWeidth={500}>
-          Oracle
-        </DataFeedSubTitleText>
+    <FeedsOraclesCardStyled>
+      <FeedsListItem>
+        <h5>Oracle</h5>
         <TzAddress tzAddress={oracle.address} hasIcon type={BLUE} />
-      </div>
-      <div className="item">
-        <DataFeedSubTitleText fontSize={14} fontWeidth={500}>
-          sMVK Rewards
-        </DataFeedSubTitleText>
+      </FeedsListItem>
+
+      <FeedsListItem>
+        <h5>sMVK Rewards</h5>
         <var>
           <CommaNumber
             showDecimal
@@ -38,11 +35,10 @@ export const OracleCard = ({ oracle }: { oracle: SatelliteRecord }) => {
             }
           />
         </var>
-      </div>
-      <div className="item">
-        <DataFeedSubTitleText fontSize={14} fontWeidth={500}>
-          XTZ Rewards
-        </DataFeedSubTitleText>
+      </FeedsListItem>
+
+      <FeedsListItem>
+        <h5>XTZ Rewards</h5>
         <var>
           {xtzExchangeRate ? (
             <CommaNumber
@@ -56,27 +52,28 @@ export const OracleCard = ({ oracle }: { oracle: SatelliteRecord }) => {
             '-'
           )}
         </var>
-      </div>
-      <div className="item">
-        <DataFeedSubTitleText fontSize={14} fontWeidth={500}>
-          Accuracy
-        </DataFeedSubTitleText>
+      </FeedsListItem>
+
+      <FeedsListItem>
+        <h5>Accuracy</h5>
         <var>
           <CommaNumber showDecimal value={Math.max(0, Math.min(oracle.accuracy, 100))} endingText="%" />
         </var>
-      </div>
-      <div className="item center-v">
+      </FeedsListItem>
+
+      <FeedsListItem className="vertical-center">
         <SatelliteOracleStatusComponent statusType={oracleStatusType}>
           {ORACLE_STATUSES_MAPPER[oracleStatusType]}
         </SatelliteOracleStatusComponent>
-      </div>
-      <Link to={`/satellites/satellite-details/${oracle.address}`}>
-        <div className="svg-wrapper">
+      </FeedsListItem>
+
+      <FeedsListItem className="open-full vertical-center">
+        <Link to={`/satellites/satellite-details/${oracle.address}`}>
           <svg>
             <use xlinkHref="/icons/sprites.svg#openLink" />
           </svg>
-        </div>
-      </Link>
-    </SatelliteItemStyle>
+        </Link>
+      </FeedsListItem>
+    </FeedsOraclesCardStyled>
   )
 }

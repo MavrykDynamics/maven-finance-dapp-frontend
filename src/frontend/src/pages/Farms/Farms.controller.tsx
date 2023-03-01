@@ -1,7 +1,7 @@
 import { useHistory, useLocation } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import qs from 'qs'
-import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
+import { useCallback, useLayoutEffect, useMemo, useState } from 'react'
 
 // view
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
@@ -23,17 +23,17 @@ import { FarmsStyled } from './Farms.style'
 import { Page } from 'styles'
 import { EmptyContainer as EmptyList } from 'app/App.style'
 import { getFarmStorage } from './Farms.actions'
-import Pagination from 'pages/FinacialRequests/Pagination/Pagination.view'
+import Pagination from 'app/App.components/Pagination/Pagination.view'
 import {
   calculateSlicePositions,
   FARMS_HORIZONTAL_CARDS,
   FARMS_VERTICAL_CARDS,
   PAGINATION_SIDE_CENTER,
-} from 'pages/FinacialRequests/Pagination/pagination.consts'
+  getPageNumber,
+} from 'app/App.components/Pagination/pagination.consts'
 
 // types
 import { State } from '../../reducers'
-import { getPageNumber } from 'pages/FinacialRequests/FinancialRequests.helpers'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'

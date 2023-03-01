@@ -1,5 +1,6 @@
+import { State } from 'reducers'
 import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
-import { SatelliteRecord } from 'utils/TypesAndInterfaces/Delegation'
+import { SatelliteRecordType, SatelliteStatus } from 'utils/TypesAndInterfaces/Satellites'
 
 export const ORACLE_STATUSES_MAPPER = {
   responded: 'Responded',
@@ -7,16 +8,23 @@ export const ORACLE_STATUSES_MAPPER = {
   awaiting: 'Awaiting',
 }
 
-export function checkIfUserIsSatellite(accountPkh?: string, activeSatellites?: SatelliteRecord[]): boolean {
-  return accountPkh && activeSatellites ? activeSatellites.some((record) => record.address === accountPkh) : false
+export function getTotalDelegatedMVK(
+  satelliteIds: State['satellites']['allSatellitesIds'],
+  satellitesMapper: State['satellites']['satelliteMapper'],
+): number {
+  if (!satelliteIds) return 0
+  return satelliteIds.reduce(
+    (sum, currentAddress) =>
+      sum +
+      Number(satellitesMapper[currentAddress].totalDelegatedAmount + satellitesMapper[currentAddress].sMvkBalance),
+    0,
+  )
 }
 
-export function getTotalDelegatedMVK(satelliteLedger: SatelliteRecord[]): number {
-  if (!satelliteLedger) return 0
-  return satelliteLedger.reduce((sum, current) => sum + Number(current.totalDelegatedAmount + current.sMvkBalance), 0)
-}
-
-export const getOracleStatus = (oracle: SatelliteRecord, feeds: Feed[]): 'responded' | 'noResponse' | 'awaiting' => {
+export const getOracleStatus = (
+  oracle: SatelliteRecordType,
+  feeds: Feed[],
+): 'responded' | 'noResponse' | 'awaiting' => {
   let status: 'responded' | 'noResponse' | 'awaiting' = 'noResponse'
 
   // check if satellite is an oracle
@@ -41,4 +49,18 @@ export const getOracleStatus = (oracle: SatelliteRecord, feeds: Feed[]): 'respon
   }
 
   return status
+}
+
+export const VOTE_NUM_MAPPER: Record<number, string> = {
+  0: 'Pass',
+  1: 'Yes',
+  2: 'No',
+}
+
+export const getVoteText = (voteType?: number): string => {
+  if (voteType === 0) return 'Pass'
+  if (voteType === 1) return 'Yes'
+  if (voteType === 2) return 'No'
+
+  return voteType ? VOTE_NUM_MAPPER[voteType] ?? '' : ''
 }

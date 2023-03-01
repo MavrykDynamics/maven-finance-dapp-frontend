@@ -1,31 +1,62 @@
 import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
-import { ERROR, INFO, SUCCESS } from 'app/App.components/Toaster/Toaster.constants'
 import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
-import { State } from 'reducers'
-import { DELEGATION_STORAGE_QUERY, DELEGATION_STORAGE_QUERY_NAME, DELEGATION_STORAGE_QUERY_VARIABLE } from 'gql/queries'
 import { fetchFromIndexer } from '../../gql/fetchGraphQL'
-import type { AppDispatch, GetState } from '../../app/App.controller'
-import { normalizeDelegationStorage } from './Satellites.helpers'
-import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
+import { nomalizeSatelliteConfig, normalizeSatellitesLedger } from './helpers/Satellites.normalizer'
 import { updateUserData } from 'reducers/actions/user.actions'
+import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 
-export const GET_DELEGATION_STORAGE = 'GET_DELEGATION_STORAGE'
-export const getDelegationStorage = () => async (dispatch: AppDispatch) => {
+import { State } from 'reducers'
+import type { AppDispatch, GetState } from '../../app/App.controller'
+
+import { ERROR, INFO, SUCCESS } from 'app/App.components/Toaster/Toaster.constants'
+import {
+  SATELLITES_STORAGE_QUERY,
+  SATELLITES_STORAGE_QUERY_NAME,
+  SATELLITES_STORAGE_QUERY_VARIABLE,
+  SATELLITE_CONFIG_QUERY,
+  SATELLITE_CONFIG_QUERY_NAME,
+  SATELLITE_CONFIG_QUERY_VARIABLE,
+} from 'gql/queries'
+
+export const GET_SATELLITES_STORAGE = 'GET_SATELLITES_STORAGE'
+export const getSatellitesStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
   try {
-    const delegationStorageFromIndexer = await fetchFromIndexer(
-      DELEGATION_STORAGE_QUERY,
-      DELEGATION_STORAGE_QUERY_NAME,
-      DELEGATION_STORAGE_QUERY_VARIABLE,
+    const storage = await fetchFromIndexer(
+      SATELLITES_STORAGE_QUERY,
+      SATELLITES_STORAGE_QUERY_NAME,
+      SATELLITES_STORAGE_QUERY_VARIABLE,
     )
 
-    const delegationStorage = normalizeDelegationStorage(delegationStorageFromIndexer?.delegation[0])
+    const { oraclesIds, activeSatellitesIds, allSatellitesIds, satellitesMapper } = normalizeSatellitesLedger(storage)
 
     dispatch({
-      type: GET_DELEGATION_STORAGE,
-      delegationStorage,
+      type: GET_SATELLITES_STORAGE,
+      oraclesIds,
+      activeSatellitesIds,
+      allSatellitesIds,
+      satellitesMapper,
     })
   } catch (error) {
-    console.error('getDelegationStorage error: ', error)
+    console.error('getSatellitesStorage error: ', error)
+    if (error instanceof Error) {
+      dispatch(showToaster(ERROR, 'Error', error.message))
+    }
+  }
+}
+
+export const GET_SATELLITE_CONFIG = 'GET_SATELLITE_CONFIG'
+export const getSatelliteConfig = () => async (dispatch: AppDispatch, getState: GetState) => {
+  try {
+    const storage = await fetchFromIndexer(
+      SATELLITE_CONFIG_QUERY,
+      SATELLITE_CONFIG_QUERY_NAME,
+      SATELLITE_CONFIG_QUERY_VARIABLE,
+    )
+
+    const nomalizedConfig = nomalizeSatelliteConfig(storage)
+    dispatch({ type: GET_SATELLITE_CONFIG, config: nomalizedConfig })
+  } catch (error) {
+    console.error('getSatelliteConfig error: ', error)
     if (error instanceof Error) {
       dispatch(showToaster(ERROR, 'Error', error.message))
     }
@@ -66,8 +97,8 @@ export const delegate = (satelliteAddress: string) => async (dispatch: AppDispat
 
     dispatch(showToaster(SUCCESS, 'Delegation done', 'All good :)'))
 
-    await dispatch(getDelegationStorage())
-    await dispatch(getDoormanStorage())
+    await Promise.all([dispatch(getSatellitesStorage()), dispatch(getDoormanStorage())])
+
     await dispatch(updateUserData())
     await dispatch(toggleActionLoader(false))
   } catch (error) {
@@ -103,8 +134,8 @@ export const undelegate = (delegateAddress: string) => async (dispatch: AppDispa
 
     dispatch(showToaster(SUCCESS, 'Undelegating done', 'All good :)'))
 
-    await dispatch(getDelegationStorage())
-    await dispatch(getDoormanStorage())
+    await Promise.all([dispatch(getSatellitesStorage()), dispatch(getDoormanStorage())])
+
     await dispatch(updateUserData())
     await dispatch(toggleActionLoader(false))
   } catch (error) {

@@ -1,5 +1,4 @@
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
-import { DataFeedsTitle, DataFeedSubTitleText } from 'pages/DataFeedsDetails/DataFeedsDetails.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { Link } from 'react-router-dom'
 import { Page } from 'styles'
@@ -22,17 +21,11 @@ const UsersView = ({ users }: { users: UserType[] }) => {
               <UserCardWrapper key={user.id}>
                 <div className="top-wrapper">
                   <div className="img-wrapper">logo</div>
-                  <DataFeedsTitle fontSize={25} fontWeidth={600}>
-                    {user.name}
-                  </DataFeedsTitle>
+                  <h3>{user.name}</h3>
                 </div>
-                <DataFeedSubTitleText fontSize={16} fontWeidth={400} className="descr">
-                  {user.descr}
-                </DataFeedSubTitleText>
+                <h4 className="descr">{user.descr}</h4>
                 <Link to={`/satellites/user-details/${user.id}`}>
-                  <DataFeedsTitle fontSize={14} fontWeidth={400} className="link">
-                    View {user.name} feeds
-                  </DataFeedsTitle>
+                  <h3 className="link">View {user.name} feeds</h3>
                 </Link>
               </UserCardWrapper>
             </Link>

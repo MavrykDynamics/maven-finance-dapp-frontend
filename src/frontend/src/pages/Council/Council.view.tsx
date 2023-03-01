@@ -11,11 +11,11 @@ import NewButton from 'app/App.components/Button/NewButton.controller'
 import { CouncilPastActionView } from 'pages/Council/CouncilActions/CouncilPastAction.view'
 import Carousel from '../../app/App.components/Carousel/Carousel.view'
 import { CouncilMemberView } from 'pages/Council/CouncilMember/CouncilMember.view'
-import Pagination from 'pages/FinacialRequests/Pagination/Pagination.view'
 import { CouncilPending } from './CouncilPending/CouncilPending.controller'
 import { MyCouncilActions } from './CouncilActions/MyCouncilActions.view'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
+import Pagination from 'app/App.components/Pagination/Pagination.view'
 import { EmptyContainer } from 'app/App.style'
 
 // helpers
@@ -24,16 +24,16 @@ import {
   ACTION_SECONDARY,
   TRANSPARENT_WITH_BORDER,
 } from '../../app/App.components/Button/Button.constants'
-import { calculateSlicePositions } from 'pages/FinacialRequests/Pagination/pagination.consts'
-import { getPageNumber } from 'pages/FinacialRequests/FinancialRequests.helpers'
 import { getSeparateSnakeCase } from 'utils/parse'
 import { memberIsFirstOfList } from 'pages/Council/Council.helpers'
 import {
   COUNCIL_ALL_PAST_ACTIONS_LIST_NAME,
   COUNCIL_ALL_PENDING_ACTIONS_LIST_NAME,
-  COUNCIL_MY_PAST_ACTIONS_LIST_NAME,
   COUNCIL_MY_PENDING_ACTIONS_LIST_NAME,
-} from 'pages/FinacialRequests/Pagination/pagination.consts'
+  COUNCIL_MY_PAST_ACTIONS_LIST_NAME,
+  calculateSlicePositions,
+  getPageNumber,
+} from 'app/App.components/Pagination/pagination.consts'
 
 // styles
 import { CouncilStyled, ReviewCard, AvaliableActions, PropagateBreakGlassCouncilCard } from './Council.style'

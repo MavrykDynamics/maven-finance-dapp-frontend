@@ -1,10 +1,13 @@
-import * as React from 'react'
-import { useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
 
 // consts, helpers, actions
 import { DOWN, WARNING } from 'app/App.components/StatusFlag/StatusFlag.constants'
-import { getOracleStatus, ORACLE_STATUSES_MAPPER } from 'pages/Satellites/helpers/Satellites.consts'
+import { getOracleStatus, getVoteText, ORACLE_STATUSES_MAPPER } from 'pages/Satellites/helpers/Satellites.consts'
+import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { ACTION_PRIMARY, ACTION_SECONDARY } from 'app/App.components/Button/Button.constants'
+import { delegate, undelegate } from '../Satellites.actions'
+import { rewardsCompound } from 'pages/Doorman/Doorman.actions'
 
 // view
 import { Button } from 'app/App.components/Button/Button.controller'
@@ -14,101 +17,95 @@ import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 
 // types
 import { State } from 'reducers'
-import { SatelliteStatus } from 'utils/TypesAndInterfaces/Delegation'
-import { SatelliteListItemProps } from '../../helpers/Satellites.types'
+import { SatelliteStatus, SatelliteRecordType } from 'utils/TypesAndInterfaces/Satellites'
 
 //styles
 import { AvatarStyle } from 'app/App.components/Avatar/Avatar.style'
 import {
   SatelliteCard,
-  SatelliteCardButtons,
   SatelliteCardInner,
-  SatelliteCardRow,
-  SatelliteCardTopRow,
-  SatelliteMainText,
-  SatelliteOracleStatusComponent,
-  SatelliteProfileDetails,
-  SatelliteProfileImage,
-  SatelliteProfileImageContainer,
-  SatelliteSubText,
-  SatelliteTextGroup,
   SideBySideImageAndText,
+  SatelliteProfileImageContainer,
+  SatelliteProfileImage,
+  SatelliteTextGroup,
+  SatelliteMainText,
+  SatelliteProfileDetails,
+  SatelliteCardTopRow,
+  SatelliteSubText,
+  SatelliteOracleStatusComponent,
+  SatelliteCardButtons,
+  SatelliteCardRow,
 } from './SatelliteCard.style'
-import { getSatelliteMetrics, getVoteText } from 'pages/Satellites/Satellites.helpers'
-import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
-import { Link } from 'react-router-dom'
+
+type SatelliteListItemProps = {
+  satellite: SatelliteRecordType
+  isDetailsPage?: boolean
+  userHasSatelliteRewards?: boolean
+  className?: string
+  children?: JSX.Element
+}
 
 const renderVotingHistoryItem = (vote: number) => {
   const voteText = getVoteText(vote)
   return <span className={`voting-${voteText.toLowerCase()}`}>{voteText.toUpperCase()}</span>
 }
 
-export const SatelliteListItem = ({
-  satellite,
-  delegateCallback,
-  undelegateCallback,
-  claimRewardsCallback,
-  userStakedBalance,
-  satelliteUserIsDelegatedTo,
-  isDetailsPage = false,
-  userHasSatelliteRewards = false,
-  className = '',
-  children,
-}: SatelliteListItemProps) => {
-  const totalDelegatedMVK = satellite.totalDelegatedAmount
-  const sMvkBalance = satellite.sMvkBalance
-  const freesMVKSpace = Math.max(sMvkBalance * satellite.delegationRatio - totalDelegatedMVK, 0)
+export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }: SatelliteListItemProps) => {
+  const dispatch = useDispatch()
 
   const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
   const {
     accountPkh,
-    user: { isSatellite, mySMvkTokenBalance },
+    user: {
+      isSatellite,
+      mySMvkTokenBalance,
+      satelliteMvkIsDelegatedTo,
+      mySatelliteRewardsData: { myAvailableSatelliteRewards },
+    },
   } = useSelector((state: State) => state.wallet)
   const {
-    governanceStorage: { financialRequestLedger, proposalLedger },
-    pastProposals,
+    governanceStorage: { proposalLedger },
   } = useSelector((state: State) => state.governance)
-  const { eGovProposals } = useSelector((state: State) => state.emergencyGovernance)
 
+  // Card buttons handlers
+  const delegateCallback = () => dispatch(delegate(satellite.address))
+  const undelegateCallback = () => dispatch(undelegate(satellite.address))
+  const claimRewardsCallback = () => (accountPkh ? dispatch(rewardsCompound(accountPkh)) : null)
+
+  const freesMVKSpace = Math.max(satellite.sMvkBalance * satellite.delegationRatio - satellite.totalDelegatedAmount, 0)
+  const isUserDelegatedToThisSatellite = satellite.address === satelliteMvkIsDelegatedTo
   const balanceOver1SMvk = mySMvkTokenBalance >= 1
-  const myDelegatedMVK = userStakedBalance
-  const userIsDelegatedToThisSatellite = satellite.address === satelliteUserIsDelegatedTo
-  const isSatelliteOracle = satellite.oracleRecords.length
 
+  // Latest vote data
   const currentlySupportingProposalVote = satellite.proposalVotingHistory?.at(0)?.vote ?? null
   const currentlySupportingProposalId = satellite.proposalVotingHistory?.at(0)?.proposalId ?? null
-
   const currentlySupportingProposal = proposalLedger?.length
     ? proposalLedger.find((proposal) => proposal.id === currentlySupportingProposalId)
     : null
 
+  // Satellite status data
   const oracleStatusType = getOracleStatus(satellite, feedsLedger)
   const satelliteStatusColor = satellite.status === SatelliteStatus.BANNED ? DOWN : WARNING
   const isSatelliteInactive = satellite.status !== SatelliteStatus.ACTIVE
 
-  const satelliteMetrics = React.useMemo(
-    () =>
-      getSatelliteMetrics(pastProposals, proposalLedger, eGovProposals, satellite, feedsLedger, financialRequestLedger),
-    [satellite],
-  )
+  const participation =
+    (satellite.satelliteMetrics.proposalParticipation + satellite.satelliteMetrics.votingPartisipation) / 2
 
-  const participation = (satelliteMetrics.proposalParticipation + satelliteMetrics.votingPartisipation) / 2
-
-  const buttonToShow = userIsDelegatedToThisSatellite ? (
+  const buttonToShow = isUserDelegatedToThisSatellite ? (
     <>
       <Button
         text="Undelegate"
         icon="man-close"
         kind={ACTION_SECONDARY}
-        onClick={() => undelegateCallback(satellite.address)}
+        onClick={undelegateCallback}
         disabled={!accountPkh}
       />
-      {isDetailsPage && claimRewardsCallback && userHasSatelliteRewards ? (
+      {isDetailsPage && myAvailableSatelliteRewards > 0 ? (
         <Button
           text="Claim Rewards"
           icon="rewards"
           kind={ACTION_PRIMARY}
-          onClick={() => claimRewardsCallback()}
+          onClick={claimRewardsCallback}
           disabled={!accountPkh}
           strokeWidth={0.3}
         />
@@ -119,13 +116,13 @@ export const SatelliteListItem = ({
       text="Delegate"
       icon="man-check"
       kind={ACTION_PRIMARY}
-      onClick={() => delegateCallback(satellite.address)}
+      onClick={delegateCallback}
       disabled={!accountPkh || !balanceOver1SMvk}
     />
   )
 
   return (
-    <SatelliteCard className={className} key={String(`satellite${satellite.address}`)}>
+    <SatelliteCard key={String(`satellite${satellite.address}`)}>
       <SatelliteCardInner>
         <div className="rows-wrapper">
           <div>
@@ -155,7 +152,7 @@ export const SatelliteListItem = ({
             <SatelliteTextGroup>
               <SatelliteMainText>Delegated MVK</SatelliteMainText>
               <SatelliteSubText>
-                <CommaNumber value={totalDelegatedMVK + sMvkBalance} />
+                <CommaNumber value={satellite.totalDelegatedAmount + satellite.sMvkBalance} />
               </SatelliteSubText>
             </SatelliteTextGroup>
 
@@ -163,7 +160,7 @@ export const SatelliteListItem = ({
               <SatelliteTextGroup>
                 <SatelliteMainText>Your delegated MVK</SatelliteMainText>
                 <SatelliteSubText>
-                  <CommaNumber value={userIsDelegatedToThisSatellite ? myDelegatedMVK : 0} />
+                  <CommaNumber value={isUserDelegatedToThisSatellite ? mySMvkTokenBalance : 0} />
                 </SatelliteSubText>
               </SatelliteTextGroup>
             ) : null}
@@ -191,7 +188,7 @@ export const SatelliteListItem = ({
               </SatelliteSubText>
             </SatelliteTextGroup>
 
-            {!isSatelliteOracle ? (
+            {!satellite.oracleRecords.length ? (
               <SatelliteTextGroup>
                 <SatelliteMainText># Delegators</SatelliteMainText>
                 <SatelliteSubText>
@@ -200,7 +197,7 @@ export const SatelliteListItem = ({
               </SatelliteTextGroup>
             ) : null}
 
-            {isSatelliteOracle ? (
+            {satellite.oracleRecords.length ? (
               <SatelliteTextGroup className="oracle-status">
                 <SatelliteMainText>Oracle Status</SatelliteMainText>
                 <SatelliteSubText>

@@ -26,21 +26,21 @@ export const OraclesTab = ({ isLoading }: { isLoading: boolean }) => {
     dipDupContracts,
     tokensPrices: { mvk: { usd: mvkExchangeRate = 0 } = {} },
   } = useSelector((state: State) => state.tokens)
-  const { satelliteLedger = [] } = useSelector((state: State) => state.delegation.delegationStorage)
+  const { satelliteMapper, oraclesIds } = useSelector((state: State) => state.satellites)
 
   const oracleFeeds = feedsLedger.length
   const popularFeeds = feedsLedger.slice(0, 3)
 
-  const oracleRevardsTotal = useMemo(
+  const oracleRewardsTotal = useMemo(
     () =>
-      satelliteLedger.reduce((acc, { oracleRecords }) => {
-        if (oracleRecords.length) {
-          const sMVKReward = oracleRecords.reduce((acc, { sMVKReward = 0 }) => (acc += sMVKReward), 0)
-          acc += sMVKReward * mvkExchangeRate
-        }
-        return acc
+      oraclesIds.reduce((acc, address) => {
+        const sMVKReward = satelliteMapper[address].oracleRecords.reduce(
+          (acc, { sMVKReward = 0 }) => (acc += sMVKReward),
+          0,
+        )
+        return (acc += sMVKReward * mvkExchangeRate)
       }, 0),
-    [mvkExchangeRate, satelliteLedger],
+    [mvkExchangeRate, satelliteMapper, oraclesIds],
   )
 
   return (
@@ -63,7 +63,7 @@ export const OraclesTab = ({ isLoading }: { isLoading: boolean }) => {
             <StatBlock>
               <div className="name">Total Oracle Rewards Paid</div>
               <div className="value">
-                <CommaNumber beginningText="$" value={oracleRevardsTotal} />
+                <CommaNumber beginningText="$" value={oracleRewardsTotal} />
               </div>
             </StatBlock>
             <StatBlock>
