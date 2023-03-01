@@ -219,15 +219,16 @@ export const BorrowAsset = ({
                 </ThreeLevelListItem>
               </VaultModalOverview>
 
-              <NewButton
-                kind={BUTTON_PRIMARY}
-                onClick={continueBtnHandler}
-                disabled={inputData.validationStatus !== INPUT_STATUS_SUCCESS}
-                className="modal-manage-btn"
-              >
-                Continue
-                <Icon id="arrowRight" />
-              </NewButton>
+              <div className="manage-btn">
+                <NewButton
+                  kind={BUTTON_PRIMARY}
+                  onClick={continueBtnHandler}
+                  disabled={inputData.validationStatus !== INPUT_STATUS_SUCCESS}
+                >
+                  Continue
+                  <Icon id="arrowRight" />
+                </NewButton>
+              </div>
             </>
           ) : (
             <>
@@ -293,16 +294,11 @@ export const BorrowAsset = ({
               </VaultModalOverview>
 
               <div className="buttons-wrapper">
-                <NewButton kind={BUTTON_SECONDARY} onClick={backBtnHandler} className="modal-manage-btn">
+                <NewButton kind={BUTTON_SECONDARY} onClick={backBtnHandler}>
                   <Icon id="arrowLeft" />
                   Back
                 </NewButton>
-                <NewButton
-                  kind={BUTTON_PRIMARY}
-                  onClick={borrowAsserHandler}
-                  disabled={isActionLoading}
-                  className="modal-manage-btn"
-                >
+                <NewButton kind={BUTTON_PRIMARY} onClick={borrowAsserHandler} disabled={isActionLoading}>
                   <Icon id="coin-loan" />
                   Borrow {borrowedAsset?.symbol}
                 </NewButton>

@@ -68,11 +68,10 @@ export default function Expand({
               handleToggleExpand()
               onClickCallback && onClickCallback()
             }}
-            className="expand-btn"
             kind={BUTTON_SIMPLE}
             size={BUTTON_SMALL}
           >
-            Details <Icon id="arrow-down" />
+            Details <Icon id="simple-arrow-down" />
           </Button>
         </div>
         {sufix}

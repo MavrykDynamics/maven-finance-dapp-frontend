@@ -127,16 +127,6 @@ export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
       display: flex;
       column-gap: 10px;
       margin-left: auto;
-
-      button {
-        width: 180px;
-
-        &.repay {
-          svg {
-            height: 27px;
-          }
-        }
-      }
     }
   }
 
@@ -156,6 +146,7 @@ export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
       font-size: 14px;
     }
 
+    /* TODO: remove button styles from here */
     button,
     a {
       margin-left: auto;
@@ -201,6 +192,10 @@ export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
       width: 15px;
       height: 15px;
     }
+  }
+
+  .repay-full {
+    margin-left: auto;
   }
 `
 export const StatusMessageStyled = styled.div<{ theme: MavrykTheme }>`

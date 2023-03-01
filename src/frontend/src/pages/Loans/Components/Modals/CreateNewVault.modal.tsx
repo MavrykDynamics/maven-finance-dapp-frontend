@@ -395,19 +395,18 @@ export const CreateNewVault = ({
 
           {/* showing initial screen */}
           {shownScreen === 'initial' ? (
-            <>
+            <div className="manage-btn">
               <NewButton
                 kind={BUTTON_PRIMARY}
                 onClick={() => {
                   setShownScreen(ADD_COLLATERAL_SCREEN_ID)
                   createVaultAction()
                 }}
-                className="modal-manage-btn"
               >
                 Continue
                 <Icon id="arrowRight" />
               </NewButton>
-            </>
+            </div>
           ) : null}
 
           {/* showing add collateral screen */}
@@ -498,15 +497,16 @@ export const CreateNewVault = ({
                 + Add more assets as collateral
               </NewButton> */}
 
-              <NewButton
-                kind={BUTTON_PRIMARY}
-                onClick={() => setShownScreen(CONFIRMATION_SCREEN_ID)}
-                className="modal-manage-btn"
-                disabled={isAddCollateralContinueDisabled}
-              >
-                Continue
-                <Icon id="arrowRight" />
-              </NewButton>
+              <div className="manage-btn">
+                <NewButton
+                  kind={BUTTON_PRIMARY}
+                  onClick={() => setShownScreen(CONFIRMATION_SCREEN_ID)}
+                  disabled={isAddCollateralContinueDisabled}
+                >
+                  Continue
+                  <Icon id="arrowRight" />
+                </NewButton>
+              </div>
 
               {isVaultCreating ? (
                 <div className="creating-vault-loader-wrapper">
@@ -603,20 +603,11 @@ export const CreateNewVault = ({
                 </ThreeLevelListItem>
               </div>
               <div className="buttons-wrapper" style={{ marginTop: '30px' }}>
-                <NewButton
-                  kind={BUTTON_SECONDARY}
-                  onClick={() => setShownScreen(ADD_COLLATERAL_SCREEN_ID)}
-                  className="modal-manage-btn"
-                >
+                <NewButton kind={BUTTON_SECONDARY} onClick={() => setShownScreen(ADD_COLLATERAL_SCREEN_ID)}>
                   <Icon id="arrowLeft" />
                   Back
                 </NewButton>
-                <NewButton
-                  kind={BUTTON_PRIMARY}
-                  onClick={depositCollateralHandler}
-                  className="modal-manage-btn"
-                  disabled={isActionLoading}
-                >
+                <NewButton kind={BUTTON_PRIMARY} onClick={depositCollateralHandler} disabled={isActionLoading}>
                   <Icon id="plus" />
                   Deposit
                 </NewButton>

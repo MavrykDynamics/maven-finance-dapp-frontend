@@ -78,7 +78,7 @@ const DelegationTab = () => {
           <div className="no-data">
             <span>You don't have SMVK</span>
             <Link to="/">
-              <NewButton kind={BUTTON_SECONDARY} className="dashboard-sectionLink">
+              <NewButton kind={BUTTON_SECONDARY}>
                 <Icon id="menu-staking" /> Stake MVK
               </NewButton>
             </Link>
@@ -87,7 +87,7 @@ const DelegationTab = () => {
           <div className="no-data">
             <span>You are not delegated at this time</span>
             <Link to="/satellites">
-              <NewButton kind={BUTTON_SECONDARY} className="dashboard-sectionLink">
+              <NewButton kind={BUTTON_SECONDARY}>
                 <Icon id="satellite" /> View Satellites
               </NewButton>
             </Link>

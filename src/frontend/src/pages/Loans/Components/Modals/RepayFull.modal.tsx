@@ -127,10 +127,12 @@ export const RepayFull = ({
               </ThreeLevelListItem>
 
               {canRepay ? (
-                <NewButton kind={BUTTON_SECONDARY} onClick={continueBtnHandler} className="modal-manage-btn">
-                  Continue
-                  <Icon id="arrowRight" />
-                </NewButton>
+                <div className="manage-btn">
+                  <NewButton kind={BUTTON_SECONDARY} onClick={continueBtnHandler}>
+                    Continue
+                    <Icon id="arrowRight" />
+                  </NewButton>
+                </div>
               ) : (
                 <>
                   <ConnectWalletInfoStyled className="info error">
@@ -179,10 +181,12 @@ export const RepayFull = ({
                       <CommaNumber value={borrowCapacity} className="value" beginningText="$" />
                     </ThreeLevelListItem>
                   </VaultModalOverview>
-                  <NewButton kind={BUTTON_SECONDARY} className="modal-manage-btn" disabled>
-                    <Icon id="close" />
-                    Repay And Close
-                  </NewButton>
+                  <div className="manage-btn">
+                    <NewButton kind={BUTTON_SECONDARY} disabled>
+                      <Icon id="close" />
+                      Repay And Close
+                    </NewButton>
+                  </div>
                 </>
               )}
             </>
@@ -240,16 +244,11 @@ export const RepayFull = ({
               </VaultModalOverview>
 
               <div className="buttons-wrapper">
-                <NewButton kind={BUTTON_SECONDARY} onClick={backBtnHandler} className="modal-manage-btn">
+                <NewButton kind={BUTTON_SECONDARY} onClick={backBtnHandler}>
                   <Icon id="arrowLeft" />
                   Back
                 </NewButton>
-                <NewButton
-                  kind={BUTTON_PRIMARY}
-                  onClick={repayBtnHandler}
-                  disabled={isActionLoading}
-                  className="modal-manage-btn"
-                >
+                <NewButton kind={BUTTON_PRIMARY} onClick={repayBtnHandler} disabled={isActionLoading}>
                   <Icon id="close" />
                   Repay And Close
                 </NewButton>

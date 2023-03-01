@@ -283,7 +283,6 @@ export const BorrowingExpandCard = ({
                     }
                     kind={BUTTON_SECONDARY}
                     disabled={!borrowedAmount}
-                    className="repay"
                   >
                     <Icon id="okIcon" /> Repay
                   </Button>
@@ -373,7 +372,6 @@ export const BorrowingExpandCard = ({
                                   avaliableCollaterals.length === 0 ||
                                   avaliableCollaterals.length === collateralData.length - 1
                                 }
-                                className="add-collateral"
                               >
                                 <Icon id="plus" /> Add Collateral
                               </Button>
@@ -444,8 +442,6 @@ export const BorrowingExpandCard = ({
                 disabled={
                   avaliableCollaterals.length === 0 || avaliableCollaterals.length === collateralData.length - 1
                 }
-                className="add-collateral"
-                style={{ marginLeft: 'auto' }}
               >
                 <Icon id="plus" /> Add Collateral
               </Button>
@@ -512,25 +508,26 @@ export const BorrowingExpandCard = ({
                   </Button>
                 </div>
 
-                <Button
-                  disabled={!borrowedAmount}
-                  size={BUTTON_SMALL}
-                  kind={BUTTON_SECONDARY}
-                  onClick={() =>
-                    openRepayFullPopup?.({
-                      vaultId,
-                      borrowedAsset: borrowedAsset,
-                      collateralRatio,
-                      borrowedAmount,
-                      feesAmount: repayFee,
-                      currentCollateralBalance: collateralData.at(-1)?.amount ?? 0,
-                      borrowCapacity: borrowCapacity / borrowedAsset.rate,
-                    })
-                  }
-                  className="close-vault"
-                >
-                  <Icon id="navigation-menu_close" /> Repay Loan in Full
-                </Button>
+                <div className="repay-full">
+                  <Button
+                    disabled={!borrowedAmount}
+                    size={BUTTON_SMALL}
+                    kind={BUTTON_SECONDARY}
+                    onClick={() =>
+                      openRepayFullPopup?.({
+                        vaultId,
+                        borrowedAsset: borrowedAsset,
+                        collateralRatio,
+                        borrowedAmount,
+                        feesAmount: repayFee,
+                        currentCollateralBalance: collateralData.at(-1)?.amount ?? 0,
+                        borrowCapacity: borrowCapacity / borrowedAsset.rate,
+                      })
+                    }
+                  >
+                    <Icon id="navigation-menu_close" /> Repay Loan in Full
+                  </Button>
+                </div>
               </>
             ) : null}
           </BorrowingTabListItemExpanded>

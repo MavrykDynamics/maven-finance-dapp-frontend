@@ -32,7 +32,13 @@ import {
 } from 'app/App.components/Pagination/pagination.consts'
 
 // styles
-import { CouncilStyled, ReviewCard, AvaliableActions, PropagateBreakGlassCouncilCard } from './Council.style'
+import {
+  CouncilStyled,
+  ReviewCard,
+  AvaliableActions,
+  PropagateBreakGlassCouncilCard,
+  CounsilPageWrapper,
+} from './Council.style'
 
 // types
 import { CouncilMaxLength, CouncilAction, CouncilMembers } from 'utils/TypesAndInterfaces/Council'
@@ -235,15 +241,17 @@ export function CouncilView({
   }, [history, isCouncilMember, pathname, queryParameters.pathname, queryParameters.pastActions])
 
   return (
-    <>
-      {tabId && isCouncilMember && (
-        <Link to={queryParameters.pathname}>
-          <NewButton kind={BUTTON_SECONDARY} style={{ marginTop: '30px' }}>
-            <Icon id="full-arrow-left" />
-            Back to Member Dashboard
-          </NewButton>
-        </Link>
-      )}
+    <CounsilPageWrapper>
+      <div className="go-back">
+        {tabId && isCouncilMember && (
+          <Link to={queryParameters.pathname}>
+            <NewButton kind={BUTTON_SECONDARY}>
+              <Icon id="full-arrow-left" />
+              Back to Member Dashboard
+            </NewButton>
+          </Link>
+        )}
+      </div>
 
       {!tabId && isCouncilMember && showPropagateBreakGlass && (
         <PropagateBreakGlassCouncilCard>
@@ -409,6 +417,6 @@ export function CouncilView({
           {getFormUpdateMemberInfo(maxLength)}
         </PopupContainerWrapper>
       </PopupContainer>
-    </>
+    </CounsilPageWrapper>
   )
 }

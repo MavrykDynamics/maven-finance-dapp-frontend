@@ -166,15 +166,12 @@ export const RemoveAssetsFromLending = ({
                 </InputPinnedTokenInfo>
               </Input>
 
-              <NewButton
-                kind={BUTTON_PRIMARY}
-                onClick={continueBtnHandler}
-                disabled={continueBtnDisabled}
-                className="modal-manage-btn"
-              >
-                Continue
-                <Icon id="arrowRight" />
-              </NewButton>
+              <div className="manage-btn">
+                <NewButton kind={BUTTON_PRIMARY} onClick={continueBtnHandler} disabled={continueBtnDisabled}>
+                  Continue
+                  <Icon id="arrowRight" />
+                </NewButton>
+              </div>
             </>
           ) : (
             <>
@@ -211,16 +208,11 @@ export const RemoveAssetsFromLending = ({
               </div>
 
               <div className="buttons-wrapper">
-                <NewButton kind={BUTTON_SECONDARY} onClick={backBtnHandler} className="modal-manage-btn">
+                <NewButton kind={BUTTON_SECONDARY} onClick={backBtnHandler}>
                   <Icon id="arrowLeft" />
                   Back
                 </NewButton>
-                <NewButton
-                  kind={BUTTON_PRIMARY}
-                  onClick={withdrawHandler}
-                  disabled={isWithdrawDisabled}
-                  className="modal-manage-btn"
-                >
+                <NewButton kind={BUTTON_PRIMARY} onClick={withdrawHandler} disabled={isWithdrawDisabled}>
                   <Icon id="minus" />
                   Remove Asset
                 </NewButton>

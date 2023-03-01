@@ -5,6 +5,12 @@ import { TabSwitcher as TabSwitcherBase } from 'app/App.components/TabSwitcher/T
 // types
 import { MavrykTheme } from '../../styles/interfaces'
 
+export const CounsilPageWrapper = styled.div`
+  .go-back {
+    margin-top: 30px;
+  }
+`
+
 export const CouncilStyled = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   justify-content: space-between;
@@ -212,10 +218,6 @@ export const CouncilActionStyled = styled(CardHover)<{ theme: MavrykTheme }>`
         stroke: ${({ theme }) => theme.dataColor};
         width: 20px;
       }
-    }
-
-    .drop-btn {
-      width: 100%;
     }
 
     .is-green {

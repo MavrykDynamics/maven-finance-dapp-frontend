@@ -46,7 +46,7 @@ export const MediumBlockBase = styled(SmallBlockBase)<{ theme: MavrykTheme }>`
     row-gap: 15px;
 
     button {
-      max-width: unset;
+      width: 220px;
     }
 
     span {

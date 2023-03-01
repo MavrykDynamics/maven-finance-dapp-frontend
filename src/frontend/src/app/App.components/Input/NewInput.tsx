@@ -64,7 +64,7 @@ export const Input = ({
       ) : null}
 
       {useMaxHandler ? (
-        <NewButton onClick={useMaxHandler} kind={BUTTON_SIMPLE} className="use-max-btn">
+        <NewButton onClick={useMaxHandler} kind={BUTTON_SIMPLE}>
           Use Max
         </NewButton>
       ) : null}

@@ -46,10 +46,6 @@ export const CouncilMemberStyled = styled(CardHover)<{ theme: MavrykTheme }>`
     }
   }
 
-  .update-btn {
-    width: 100%;
-  }
-
   &.is-me {
     &:hover {
       box-shadow: none;

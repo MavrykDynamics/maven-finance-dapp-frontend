@@ -6,7 +6,7 @@ import { AvatarStyle } from '../../../app/App.components/Avatar/Avatar.style'
 import { TzAddress } from '../../../app/App.components/TzAddress/TzAddress.view'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
-import { BUTTON_SECONDARY } from 'app/App.components/Button/Button.constants'
+import { BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
 // style
 import { CouncilMemberStyled } from './CouncilMember.style'
@@ -48,7 +48,7 @@ export const CouncilMemberView = (props: Props) => {
         </figcaption>
       </div>
       {isMe && showUpdateInfo ? (
-        <NewButton className="update-btn" kind={BUTTON_SECONDARY} onClick={openModal}>
+        <NewButton kind={BUTTON_SECONDARY} form={BUTTON_WIDE} onClick={openModal}>
           <Icon id="update" />
           Update Info
         </NewButton>

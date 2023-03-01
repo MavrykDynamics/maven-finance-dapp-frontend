@@ -237,15 +237,12 @@ export const WithdrawCollateral = ({
             </ThreeLevelListItem>
           </VaultModalOverview>
 
-          <NewButton
-            kind={BUTTON_PRIMARY}
-            onClick={withdrawHandler}
-            disabled={isActionBtnDisabled}
-            className="modal-manage-btn"
-          >
-            <Icon id="minus" />
-            Remove
-          </NewButton>
+          <div className="manage-btn">
+            <NewButton kind={BUTTON_PRIMARY} onClick={withdrawHandler} disabled={isActionBtnDisabled}>
+              <Icon id="minus" />
+              Remove
+            </NewButton>
+          </div>
         </LoansModalBase>
       </PopupContainerWrapper>
     </PopupContainer>

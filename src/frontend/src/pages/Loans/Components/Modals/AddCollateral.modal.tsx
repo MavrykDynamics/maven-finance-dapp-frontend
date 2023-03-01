@@ -230,15 +230,16 @@ export const AddCollateral = ({
             </ThreeLevelListItem>
           </VaultModalOverview>
 
-          <NewButton
-            kind={BUTTON_PRIMARY}
-            onClick={depositCollateralHandler}
-            disabled={inputData.validationStatus === INPUT_STATUS_ERROR || isActionLoading}
-            className="modal-manage-btn"
-          >
-            <Icon id="plus" />
-            Deposit
-          </NewButton>
+          <div className="manage-btn">
+            <NewButton
+              kind={BUTTON_PRIMARY}
+              onClick={depositCollateralHandler}
+              disabled={inputData.validationStatus === INPUT_STATUS_ERROR || isActionLoading}
+            >
+              <Icon id="plus" />
+              Deposit
+            </NewButton>
+          </div>
         </LoansModalBase>
       </PopupContainerWrapper>
     </PopupContainer>

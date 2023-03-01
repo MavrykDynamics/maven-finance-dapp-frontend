@@ -180,7 +180,7 @@ export const InputSpacer = styled.div`
 `
 
 // New input styles
-// TOOD: refactor colors with theme implementation
+// TODO: refactor colors with theme implementation
 export const StyledInput = styled.input<{ theme: MavrykTheme }>`
   width: 100%;
   height: 100%;
@@ -341,14 +341,12 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
     color: ${({ theme }) => theme.textColor};
   }
 
-  .use-max-btn {
+  #ButtonStyled {
     position: absolute;
     top: -27px;
     right: 0px;
-    font-weight: 600;
     font-size: 14px;
     line-height: 21px;
-    color: ${({ theme }) => theme.valueColor};
   }
 `
 

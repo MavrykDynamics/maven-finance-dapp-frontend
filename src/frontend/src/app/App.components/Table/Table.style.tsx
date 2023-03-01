@@ -494,23 +494,6 @@ export const TableCell = styled.td<{
       justify-content: flex-end;
       column-gap: 10px;
     }
-
-    &.borrowing {
-      button:not(.add-collateral) {
-        width: 130px;
-        padding: 0;
-
-        svg {
-          fill: ${({ theme }) => theme.valueColor};
-          width: 18px;
-          height: 18px;
-        }
-      }
-
-      .add-collateral {
-        max-width: 180px;
-      }
-    }
   }
 
   input,

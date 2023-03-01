@@ -11,7 +11,7 @@ import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
 // helpers, consts
 import { State } from 'reducers'
-import { BUTTON_PRIMARY, BUTTON_SECONDARY } from '../../../app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_PULSE, BUTTON_SECONDARY } from '../../../app/App.components/Button/Button.constants'
 import { isValidNumberValue, mathRoundTwoDigit } from '../../../utils/validatorFunctions'
 import { rewardsCompound } from '../Doorman.actions'
 import { InputStatusType, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
@@ -231,7 +231,7 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
                 onClick={handleDelegate}
                 kind={BUTTON_PRIMARY}
                 disabled={!accountPkh}
-                className={!accountPkh ? '' : 'pulse'}
+                animation={accountPkh ? BUTTON_PULSE : null}
               >
                 <Icon id="satellites" />
                 Delegate

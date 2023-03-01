@@ -6,16 +6,18 @@ import {
   BUTTON_NAVIGATION,
   BUTTON_NORMAL,
   BUTTON_PRIMARY,
+  BUTTON_PULSE,
   BUTTON_ROUND,
   BUTTON_SECONDARY,
   BUTTON_SIMPLE,
   BUTTON_SMALL,
+  BUTTON_WIDE,
   VOTING_AGAINST,
   VOTING_FOR,
   VOTING_PASS,
 } from './Button.constants'
 
-// TOOD: refactor colors with theme implementation
+// TODO: refactor colors with theme implementation
 export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
   font-weight: 600;
   font-size: 16px;
@@ -26,6 +28,7 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
   display: flex;
   align-items: center;
   justify-content: center;
+  width: fit-content;
 
   &:hover {
     opacity: 0.8;
@@ -36,10 +39,19 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
     cursor: not-allowed;
   }
 
+  svg {
+    transition: 0.3s all;
+  }
+
   /* styling for buttons forms */
   &.${BUTTON_NORMAL} {
     column-gap: 10px;
     padding: 0 20px;
+  }
+
+  &.${BUTTON_WIDE} {
+    column-gap: 10px;
+    width: 100%;
   }
 
   &.${BUTTON_ROUND} {
@@ -77,7 +89,7 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
     }
   }
 
-  /* styling for button kinds */
+  /* styling for main button kinds */
   &.${BUTTON_PRIMARY} {
     color: ${({ theme }) => theme.containerColor};
     background-color: ${({ theme }) => theme.valueColor};
@@ -116,7 +128,7 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
     transition: 0.3s all;
     color: ${({ theme }) => theme.navTitleColor};
 
-    &.active,
+    &.selected,
     &:hover {
       &::before {
         position: absolute;
@@ -149,21 +161,9 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
     background-color: ${({ theme }) => theme.downColor};
   }
 
-  /* additional classes */
-  &.pulse {
+  /* additional kinds */
+  &.${BUTTON_PULSE} {
     animation: pulse 2s infinite;
     box-shadow: 0 0 0 0 rgba(134, 212, 201, 1);
-  }
-
-  /* TODO: remove this class later, make icon via fill not stroke */
-  &.expand-btn {
-    svg {
-      height: 8px;
-      width: 14px;
-      stroke: ${({ theme }) => theme.navIconColor};
-      transition: transform 0.3s ease-in-out;
-      fill: none;
-      stroke-width: 5px;
-    }
   }
 `

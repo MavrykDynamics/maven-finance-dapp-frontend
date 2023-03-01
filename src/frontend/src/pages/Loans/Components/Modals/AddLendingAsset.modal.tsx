@@ -163,15 +163,12 @@ export const AddLendingAsset = ({
             </ThreeLevelListItem>
           </div>
 
-          <NewButton
-            kind={BUTTON_PRIMARY}
-            onClick={depositHandler}
-            className="modal-manage-btn"
-            disabled={isDepositDisabled}
-          >
-            <Icon id="plus" />
-            Deposit
-          </NewButton>
+          <div className="manage-btn">
+            <NewButton kind={BUTTON_PRIMARY} onClick={depositHandler} disabled={isDepositDisabled}>
+              <Icon id="plus" />
+              Deposit
+            </NewButton>
+          </div>
         </LoansModalBase>
       </PopupContainerWrapper>
     </PopupContainer>

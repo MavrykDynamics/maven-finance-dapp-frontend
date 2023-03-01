@@ -233,14 +233,15 @@ export const ChangeBaker = ({
             </ThreeLevelListItem>
           </div>
 
-          <NewButton
-            kind={BUTTON_PRIMARY}
-            onClick={updateBakerHandler}
-            className="modal-manage-btn"
-            disabled={!selectedAddress || selectedAddress === bakerAddress}
-          >
-            Update Baker
-          </NewButton>
+          <div className="manage-btn">
+            <NewButton
+              kind={BUTTON_PRIMARY}
+              onClick={updateBakerHandler}
+              disabled={!selectedAddress || selectedAddress === bakerAddress}
+            >
+              Update Baker
+            </NewButton>
+          </div>
         </LoansModalBase>
       </PopupContainerWrapper>
     </PopupContainer>

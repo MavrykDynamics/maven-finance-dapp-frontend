@@ -6,7 +6,7 @@ import { TzAddress } from '../../../app/App.components/TzAddress/TzAddress.view'
 import Icon from 'app/App.components/Icon/Icon.view'
 
 // helpers
-import { BUTTON_SECONDARY } from 'app/App.components/Button/Button.constants'
+import { BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { parseDate } from 'utils/time'
 import { getSeparateCamelCase } from '../../../utils/parse'
 import { scrollToFullView } from 'utils/scrollToFullView'
@@ -61,7 +61,7 @@ export function CouncilOngoingAction(props: Props) {
         </div>
 
         <div className="column">
-          <NewButton className="drop-btn" kind={BUTTON_SECONDARY} onClick={() => handleDropAction(id)}>
+          <NewButton kind={BUTTON_SECONDARY} onClick={() => handleDropAction(id)}>
             <Icon id="navigation-menu_close" />
             Drop Action
           </NewButton>
@@ -132,7 +132,7 @@ export function CouncilOngoingAction(props: Props) {
           )}
 
           <div className="column">
-            <NewButton className="drop-btn" kind={BUTTON_SECONDARY} onClick={() => handleDropAction(id)}>
+            <NewButton kind={BUTTON_SECONDARY} onClick={() => handleDropAction(id)}>
               <Icon id="navigation-menu_close" />
               Drop Action
             </NewButton>
@@ -154,7 +154,7 @@ export function CouncilOngoingAction(props: Props) {
           </div>
 
           <div className="column">
-            <NewButton className="drop-btn" kind={BUTTON_SECONDARY} onClick={() => handleDropAction(id)}>
+            <NewButton kind={BUTTON_SECONDARY} form={BUTTON_WIDE} onClick={() => handleDropAction(id)}>
               <Icon id="navigation-menu_close" />
               Drop Action
             </NewButton>

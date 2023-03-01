@@ -162,14 +162,11 @@ export const ManagePermissions = ({
             </Table>
           ) : null}
 
-          <NewButton
-            kind={BUTTON_PRIMARY}
-            onClick={updateHandler}
-            disabled={isActionDisabled}
-            className="modal-manage-btn"
-          >
-            Update
-          </NewButton>
+          <div className="manage-btn">
+            <NewButton kind={BUTTON_PRIMARY} onClick={updateHandler} disabled={isActionDisabled}>
+              Update
+            </NewButton>
+          </div>
         </LoansModalBase>
       </PopupContainerWrapper>
     </PopupContainer>

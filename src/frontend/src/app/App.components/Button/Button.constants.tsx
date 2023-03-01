@@ -46,11 +46,13 @@ export type ButtonKind =
   | typeof VOTING_FOR
 
 export const BUTTON_ROUND = 'round'
+export const BUTTON_WIDE = 'wide'
 export const BUTTON_NORMAL = 'normal'
-
-export type ButtomForm = typeof BUTTON_ROUND | typeof BUTTON_NORMAL
+export type ButtonForm = typeof BUTTON_ROUND | typeof BUTTON_NORMAL | typeof BUTTON_WIDE
 
 export const BUTTON_SMALL = 'small'
 export const BUTTON_MEDIUM = 'medium'
+export type ButtonSize = typeof BUTTON_SMALL | typeof BUTTON_MEDIUM
 
-export type ButtomSize = typeof BUTTON_SMALL | typeof BUTTON_MEDIUM
+export const BUTTON_PULSE = 'pulse'
+export type ButtonAnimation = typeof BUTTON_PULSE

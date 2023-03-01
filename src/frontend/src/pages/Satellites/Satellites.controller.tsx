@@ -99,7 +99,7 @@ const Satellites = () => {
                     </GovRightContainerTitleArea>
 
                     <Link to="/satellite-nodes">
-                      <NewButton kind={BUTTON_SIMPLE} className="see-all">
+                      <NewButton kind={BUTTON_SIMPLE}>
                         See all Satellites
                         <Icon id="full-arrow-right" />
                       </NewButton>
@@ -122,7 +122,7 @@ const Satellites = () => {
                     </GovRightContainerTitleArea>
 
                     <Link to="/data-feeds">
-                      <NewButton kind={BUTTON_SIMPLE} className="see-all">
+                      <NewButton kind={BUTTON_SIMPLE}>
                         See all Data Feeds
                         <Icon id="full-arrow-right" />
                       </NewButton>

@@ -407,15 +407,12 @@ export const AddNewCollateral = ({
             </ThreeLevelListItem>
           </VaultModalOverview>
 
-          <NewButton
-            kind={BUTTON_PRIMARY}
-            onClick={depositCollateralHandler}
-            className="modal-manage-btn"
-            disabled={isDepositBtnDisabled}
-          >
-            <Icon id="plus" />
-            Deposit
-          </NewButton>
+          <div className="manage-btn">
+            <NewButton kind={BUTTON_PRIMARY} onClick={depositCollateralHandler} disabled={isDepositBtnDisabled}>
+              <Icon id="plus" />
+              Deposit
+            </NewButton>
+          </div>
         </LoansModalBase>
       </PopupContainerWrapper>
     </PopupContainer>

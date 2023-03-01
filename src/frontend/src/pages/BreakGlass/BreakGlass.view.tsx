@@ -136,7 +136,7 @@ export const BreakGlassView = ({
             <NewButton
               key={item}
               kind={BUTTON_NAVIGATION}
-              className={item === selectedContract ? 'active' : ''}
+              selected={item === selectedContract}
               onClick={() => {
                 setSelectedContract(item)
                 handleTabChange()

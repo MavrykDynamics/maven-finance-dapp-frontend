@@ -1,28 +1,29 @@
-import { AppDispatch } from 'app/App.controller'
 import React, { useCallback, useState } from 'react'
+import { AppDispatch } from 'app/App.controller'
 import { SimpleCircleSpinnerLoader } from '../Loader/Loader.view'
 
 import {
-  ButtomForm,
-  ButtomSize,
+  ButtonForm,
+  ButtonSize,
   BUTTON,
   ButtonKind,
   ButtonTypes,
   BUTTON_MEDIUM,
   BUTTON_NORMAL,
+  ButtonAnimation,
 } from './Button.constants'
 import { ButtonStyled } from './NewButton.style'
 
 export type ButtonProps = {
   onClick?: AppDispatch | ((e: React.MouseEvent<HTMLElement>) => Promise<unknown> | void)
-  className?: string
   kind: ButtonKind
-  size?: ButtomSize
-  form?: ButtomForm
+  size?: ButtonSize
+  form?: ButtonForm
   type?: ButtonTypes
+  selected?: boolean
+  animation?: ButtonAnimation | null
   disabled?: boolean
   children?: React.ReactNode
-  style?: React.CSSProperties
 }
 
 const Button = ({
@@ -30,13 +31,15 @@ const Button = ({
   kind,
   children,
   disabled = false,
-  style = {},
-  className = '',
+  selected = false,
   type = BUTTON,
   size = BUTTON_MEDIUM,
   form = BUTTON_NORMAL,
+  animation,
 }: ButtonProps) => {
-  const buttonClasses = `${kind} ${size} ${form} ${disabled ? 'disabled' : ''} ${className}`
+  const buttonClasses = `${kind} ${size} ${form} ${animation ?? ''} ${disabled ? 'disabled' : ''} ${
+    selected ? 'selected' : ''
+  }`
 
   const [isLoadingFromHandler, setLoading] = useState(false)
   const isDisabled = disabled || isLoadingFromHandler
@@ -58,10 +61,10 @@ const Button = ({
   return (
     <ButtonStyled
       className={buttonClasses}
+      id="ButtonStyled"
       onClick={loadingWrappedClickHandler}
       type={type}
       disabled={isDisabled}
-      style={style}
     >
       {isLoadingFromHandler ? <SimpleCircleSpinnerLoader /> : children}
     </ButtonStyled>

@@ -32,7 +32,8 @@ export const CouncilPendingStyled = styled(Card)`
       align-items: center;
     }
 
-    .sign-btn {
+    /* TODO: do it via parent styles */
+    #ButtonStyled {
       margin-left: -37px;
     }
   }
@@ -109,10 +110,6 @@ export const CouncilPendingStyled = styled(Card)`
   .g-centering {
     display: flex;
     justify-content: center;
-  }
-
-  .sign-btn {
-    width: 185px;
   }
 
   .parameters-link {

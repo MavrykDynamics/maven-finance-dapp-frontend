@@ -49,9 +49,14 @@ export const LoansModalBase = styled.div<{ theme: MavrykTheme }>`
     padding-bottom: 3px;
   }
 
-  .modal-manage-btn {
-    margin: 45px auto 0 auto;
-    width: 250px;
+  .manage-btn {
+    display: flex;
+    justify-content: center;
+    margin: 30px auto 0 auto;
+
+    button {
+      width: 250px;
+    }
   }
 
   .buttons-wrapper {
