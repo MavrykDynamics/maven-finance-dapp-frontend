@@ -1,21 +1,32 @@
-import styled, { css } from 'styled-components/macro'
-import { Card, upColor, downColor, warningColor } from 'styles'
+import styled from 'styled-components/macro'
+import { Card } from 'styles'
 import { MavrykTheme } from 'styles/interfaces'
 
-export const SatelliteOracleStatusComponent = styled.div<{ statusType: 'responded' | 'noResponse' | 'awaiting' }>`
+export const SatelliteOracleStatusComponent = styled.div<{
+  statusType: 'responded' | 'noResponse' | 'awaiting' | 'notAnOracle'
+  theme: MavrykTheme
+}>`
   padding: 8px 12px;
   text-transform: uppercase;
   border: 1px solid
-    ${({ statusType }) =>
-      statusType === 'responded' ? upColor : statusType === 'noResponse' ? downColor : warningColor};
+    ${({ statusType, theme }) =>
+      statusType === 'responded'
+        ? theme.upColor
+        : statusType === 'noResponse' || statusType === 'notAnOracle'
+        ? theme.downColor
+        : theme.warningColor};
   border-radius: 10px;
   font-weight: 600;
   font-size: 12px;
   line-height: 12px;
   text-align: center;
   max-width: 130px;
-  color: ${({ statusType }) =>
-    statusType === 'responded' ? upColor : statusType === 'noResponse' ? downColor : warningColor};
+  color: ${({ statusType, theme }) =>
+    statusType === 'responded'
+      ? theme.upColor
+      : statusType === 'noResponse' || statusType === 'notAnOracle'
+      ? theme.downColor
+      : theme.warningColor};
 `
 
 export const SatelliteCard = styled(Card)<{ theme: MavrykTheme }>`
@@ -69,11 +80,11 @@ export const SatelliteCardRow = styled.div<{ theme: MavrykTheme }>`
     font-size: 16px;
 
     &.voting-yes {
-      color: ${upColor};
+      color: ${({ theme }) => theme.upColor};
     }
 
     &.voting-no {
-      color: ${downColor};
+      color: ${({ theme }) => theme.downColor};
     }
 
     &.voting-pass {

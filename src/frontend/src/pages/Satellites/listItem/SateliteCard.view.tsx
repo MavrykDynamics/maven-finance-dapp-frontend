@@ -150,20 +150,11 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
 
           <SatelliteCardTopRow isExtendedListItem={isDetailsPage}>
             <SatelliteTextGroup>
-              <SatelliteMainText>Delegated MVK</SatelliteMainText>
+              <SatelliteMainText>Fee</SatelliteMainText>
               <SatelliteSubText>
-                <CommaNumber value={satellite.totalDelegatedAmount + satellite.sMvkBalance} />
+                <CommaNumber value={satellite.satelliteFee} endingText="%" />
               </SatelliteSubText>
             </SatelliteTextGroup>
-
-            {isDetailsPage ? (
-              <SatelliteTextGroup>
-                <SatelliteMainText>Your delegated MVK</SatelliteMainText>
-                <SatelliteSubText>
-                  <CommaNumber value={isUserDelegatedToThisSatellite ? mySMvkTokenBalance : 0} />
-                </SatelliteSubText>
-              </SatelliteTextGroup>
-            ) : null}
 
             <SatelliteTextGroup>
               <SatelliteMainText>Free sMVK Space</SatelliteMainText>
@@ -172,15 +163,6 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
               </SatelliteSubText>
             </SatelliteTextGroup>
 
-            {isDetailsPage ? (
-              <SatelliteTextGroup>
-                <SatelliteMainText>Fee</SatelliteMainText>
-                <SatelliteSubText>
-                  <CommaNumber value={satellite.satelliteFee} endingText="%" />
-                </SatelliteSubText>
-              </SatelliteTextGroup>
-            ) : null}
-
             <SatelliteTextGroup>
               <SatelliteMainText>Participation</SatelliteMainText>
               <SatelliteSubText>
@@ -188,25 +170,14 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
               </SatelliteSubText>
             </SatelliteTextGroup>
 
-            {!satellite.oracleRecords.length ? (
-              <SatelliteTextGroup>
-                <SatelliteMainText># Delegators</SatelliteMainText>
-                <SatelliteSubText>
-                  <CommaNumber value={satellite.delegatorCount} showDecimal={false} />
-                </SatelliteSubText>
-              </SatelliteTextGroup>
-            ) : null}
-
-            {satellite.oracleRecords.length ? (
-              <SatelliteTextGroup className="oracle-status">
-                <SatelliteMainText>Oracle Status</SatelliteMainText>
-                <SatelliteSubText>
-                  <SatelliteOracleStatusComponent statusType={oracleStatusType}>
-                    {ORACLE_STATUSES_MAPPER[oracleStatusType]}
-                  </SatelliteOracleStatusComponent>
-                </SatelliteSubText>
-              </SatelliteTextGroup>
-            ) : null}
+            <SatelliteTextGroup className="oracle-status">
+              <SatelliteMainText>Oracle Status</SatelliteMainText>
+              <SatelliteSubText>
+                <SatelliteOracleStatusComponent statusType={oracleStatusType}>
+                  {ORACLE_STATUSES_MAPPER[oracleStatusType]}
+                </SatelliteOracleStatusComponent>
+              </SatelliteSubText>
+            </SatelliteTextGroup>
           </SatelliteCardTopRow>
         </div>
 

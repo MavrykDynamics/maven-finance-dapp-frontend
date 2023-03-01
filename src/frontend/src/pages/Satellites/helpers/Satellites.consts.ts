@@ -1,11 +1,12 @@
 import { State } from 'reducers'
 import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
-import { SatelliteRecordType, SatelliteStatus } from 'utils/TypesAndInterfaces/Satellites'
+import { SatelliteRecordType } from 'utils/TypesAndInterfaces/Satellites'
 
 export const ORACLE_STATUSES_MAPPER = {
   responded: 'Responded',
   noResponse: 'No Response',
   awaiting: 'Awaiting',
+  notAnOracle: 'Not An Oracle',
 }
 
 export function getTotalDelegatedMVK(
@@ -24,8 +25,8 @@ export function getTotalDelegatedMVK(
 export const getOracleStatus = (
   oracle: SatelliteRecordType,
   feeds: Feed[],
-): 'responded' | 'noResponse' | 'awaiting' => {
-  let status: 'responded' | 'noResponse' | 'awaiting' = 'noResponse'
+): 'responded' | 'noResponse' | 'awaiting' | 'notAnOracle' => {
+  let status: 'responded' | 'noResponse' | 'awaiting' | 'notAnOracle' = 'notAnOracle'
 
   // check if satellite is an oracle
   if (oracle?.oracleRecords?.length > 0) {
@@ -45,6 +46,9 @@ export const getOracleStatus = (
       } else {
         status = 'awaiting'
       }
+      // if oracle is not active, status should be "no response"
+    } else {
+      status = 'noResponse'
     }
   }
 

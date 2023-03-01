@@ -19,6 +19,7 @@ import {
   SatelliteCardBottomRow,
   SatelliteDescrBlock,
   BlockName,
+  SatelliteMetrics,
   SatelliteMetricsBlock,
   SatelliteVotingInfoWrapper,
   SatelliteVotingHistoryListItem,
@@ -72,6 +73,9 @@ const SatellitesVotingHistory = ({
 
 export const SatelliteDetails = () => {
   const { satelliteId } = useParams<{ satelliteId: string }>()
+  const {
+    user: { mySMvkTokenBalance },
+  } = useSelector((state: State) => state.wallet)
   const { satelliteMapper } = useSelector((state: State) => state.satellites)
   const currentSatellite = satelliteMapper[satelliteId]
   if (!currentSatellite) return <Redirect to={'/currentSatellite-nodes'} />
@@ -96,35 +100,53 @@ export const SatelliteDetails = () => {
                   ) : null}
                 </SatelliteDescrBlock>
 
-                <div>
-                  <BlockName>Satellite metrics</BlockName>
+                <SatelliteMetrics>
+                  <div>
+                    <BlockName>Satellite metrics</BlockName>
+                    <SatelliteMetricsBlock>
+                      <h5>Proposal Participation</h5>
+                      <p>
+                        <CommaNumber
+                          value={currentSatellite.satelliteMetrics.proposalParticipation}
+                          endingText="%"
+                          showDecimal={false}
+                        />
+                      </p>
+                      <h5>Vote Participation</h5>
+                      <p>
+                        <CommaNumber
+                          value={currentSatellite.satelliteMetrics.votingPartisipation}
+                          endingText="%"
+                          showDecimal={false}
+                        />
+                      </p>
+                      <h5>Oracle Participation</h5>
+                      <p>
+                        <CommaNumber
+                          value={currentSatellite.satelliteMetrics.oracleEfficiency}
+                          endingText="%"
+                          showDecimal={false}
+                        />
+                      </p>
+                    </SatelliteMetricsBlock>
+                  </div>
+
                   <SatelliteMetricsBlock>
-                    <h5>Proposal Participation</h5>
+                    <h5>Satellite’s sMVK</h5>
                     <p>
-                      <CommaNumber
-                        value={currentSatellite.satelliteMetrics.proposalParticipation}
-                        endingText="%"
-                        showDecimal={false}
-                      />
+                      <CommaNumber value={mySMvkTokenBalance} showDecimal={true} />
                     </p>
-                    <h5>Vote Participation</h5>
+                    <h5># Delegators</h5>
                     <p>
-                      <CommaNumber
-                        value={currentSatellite.satelliteMetrics.votingPartisipation}
-                        endingText="%"
-                        showDecimal={false}
-                      />
+                      <CommaNumber value={currentSatellite.delegatorCount} showDecimal={true}/>
                     </p>
-                    <h5>Oracle Participation</h5>
+                    <h5># Oracle Feeds</h5>
                     <p>
-                      <CommaNumber
-                        value={currentSatellite.satelliteMetrics.oracleEfficiency}
-                        endingText="%"
-                        showDecimal={false}
-                      />
+                      {/* // TODO: add oracle feed */}
+                      <CommaNumber value={0} showDecimal={false} />
                     </p>
                   </SatelliteMetricsBlock>
-                </div>
+                </SatelliteMetrics>
 
                 <SatelliteVotingInfoWrapper>
                   <BlockName>Voting History</BlockName>

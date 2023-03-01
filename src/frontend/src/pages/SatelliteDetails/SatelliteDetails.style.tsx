@@ -30,12 +30,13 @@ export const BlockName = styled.div<{ theme: MavrykTheme }>`
 
 export const SatelliteMetricsBlock = styled.div<{ theme: MavrykTheme }>`
   display: grid;
-  grid-template-columns: 200px 60px;
+  grid-template-columns: 160px 100px;
+  row-gap: 9px;
   align-items: center;
   padding-top: 10px;
 
   p {
-    margin: 3px 0;
+    margin: 0;
     text-align: right;
     color: ${({ theme }) => theme.dataColor};
     font-weight: 600;
@@ -48,6 +49,12 @@ export const SatelliteMetricsBlock = styled.div<{ theme: MavrykTheme }>`
     font-size: 14px;
     color: ${({ theme }) => theme.textColor};
   }
+`
+
+export const SatelliteMetrics = styled.div<{ theme: MavrykTheme }>`
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
 `
 
 export const SatelliteVotingInfoWrapper = styled.div`
