@@ -49,7 +49,6 @@ type BorrowingExpandCardPropsType = LoansVaultType & {
   options?: BorrowingCardOptions
   isOpenedVault?: boolean
   DAOFee: number
-  avaliableMarketLiquidity: number
 }
 
 export const BorrowingExpandCard = ({
@@ -79,7 +78,6 @@ export const BorrowingExpandCard = ({
   borrowCapacity,
   DAOFee,
   repayFee,
-  avaliableMarketLiquidity,
 }: BorrowingExpandCardPropsType) => {
   const { reverseColumns } = options ?? {}
 
@@ -261,7 +259,6 @@ export const BorrowingExpandCard = ({
                         hasUserBorrowed: false,
                         borrowCapacity: borrowCapacity / borrowedAsset.rate,
                         currentBorrowedAmount: borrowedAmount,
-                        avaliableLiquidity: avaliableMarketLiquidity,
                         DAOFee,
                       })
                     }

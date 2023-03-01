@@ -64,7 +64,6 @@ export type BorrowPopupDataType = {
   currentCollateralBalance: number
   DAOFee: number
   currentBorrowedAmount: number
-  avaliableLiquidity: number
 } | null
 
 export type AddLendingAssetDataType =
