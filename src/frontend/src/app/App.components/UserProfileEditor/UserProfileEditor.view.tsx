@@ -38,6 +38,20 @@ export const UserProfileEditor = ({ file, getFile, show: showEditor, closeEditor
     }
   }
 
+  function handleZoom(e: any) {
+    // stylizes the background of input range up to slider thumb
+    const target = e.target
+
+    const min = target.min
+    const max = target.max
+    const val = target.value
+    
+    target.style.backgroundSize = (val - min) * 100 / (max - min) + '% 100%'
+
+    // set zoom
+    setZoom(e.target.value)
+  }
+
   const handleRotate = (side: string) => {
     if (rotateSides.LEFT === side) {
       const result = String(Number(rotate) - 90)
@@ -87,7 +101,7 @@ export const UserProfileEditor = ({ file, getFile, show: showEditor, closeEditor
 
               <input
                 defaultValue={zoom}
-                onChange={(e) => setZoom(e.target.value)}
+                onChange={handleZoom}
                 type="range"
                 min="1"
                 max="3"

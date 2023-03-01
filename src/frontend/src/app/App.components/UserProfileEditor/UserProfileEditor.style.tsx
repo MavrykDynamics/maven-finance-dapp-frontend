@@ -2,7 +2,8 @@ import styled from 'styled-components/macro'
 import { MavrykTheme } from '../../../styles/interfaces'
 
 export const UserProfileEditorStyled = styled.div<{ theme: MavrykTheme }>`
-  padding: 10px 25px 0 25px;
+  padding: 10px;
+  padding-bottom: 0;
 
   .avatar {
     display: flex;
@@ -82,13 +83,13 @@ export const UserProfileEditorZoom = styled.div`
 
   input[type='range'] {
     -webkit-appearance: none;
-    appearance: none;
     width: 100%;
     height: 7px;
 
     background: ${({ theme }) => theme.connectInfoColor};
     background-image: ${({ theme }) => `linear-gradient(${theme.valueColor}, ${theme.valueColor})`};
     background-repeat: no-repeat;
+    background-size: 0% 100%;
     border-radius: 5px;
 
     &::-webkit-slider-thumb {
