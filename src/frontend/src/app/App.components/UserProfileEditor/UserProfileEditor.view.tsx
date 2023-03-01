@@ -33,7 +33,10 @@ export const UserProfileEditor = ({ file, getFile, show: showEditor, closeEditor
       const preparedUrl = await fetch(dataUrl)
       const blob = await preparedUrl.blob()
       const editedFile = new File([blob], file?.name || defaultFileName)
+      
       getFile(editedFile)
+      setZoom('1')
+      setRotate('0')
       closeEditor()
     }
   }
