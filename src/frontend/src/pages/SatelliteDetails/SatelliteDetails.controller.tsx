@@ -138,12 +138,11 @@ export const SatelliteDetails = () => {
                     </p>
                     <h5># Delegators</h5>
                     <p>
-                      <CommaNumber value={currentSatellite.delegatorCount} showDecimal={true}/>
+                      <CommaNumber value={currentSatellite.delegatorCount} showDecimal={true} />
                     </p>
                     <h5># Oracle Feeds</h5>
                     <p>
-                      {/* // TODO: add oracle feed */}
-                      <CommaNumber value={0} showDecimal={false} />
+                      <CommaNumber value={currentSatellite.oracleRecords.length} showDecimal={false} />
                     </p>
                   </SatelliteMetricsBlock>
                 </SatelliteMetrics>
