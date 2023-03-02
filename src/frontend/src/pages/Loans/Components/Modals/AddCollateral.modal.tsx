@@ -46,6 +46,7 @@ export const AddCollateral = ({
     collateralWithdrawAmount = 0,
     borrowedAmount = 0,
     borrowedAssetRate = 0,
+    bakerAddress,
   } = data ?? {}
 
   useLockBodyScroll(show)
@@ -116,7 +117,7 @@ export const AddCollateral = ({
       }
 
       if (vaultAddress) {
-        await dispatch(depositCollateralAction(vaultAddress, collaretalToDeposit, closePopup))
+        await dispatch(depositCollateralAction(vaultAddress, collaretalToDeposit, closePopup, bakerAddress))
       }
     }
   }

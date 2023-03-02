@@ -23,7 +23,11 @@ export type CollateralPopupCommonDataType = {
   borrowedAssetRate: number
 }
 
-export type AddCollateralPopupDataType = CollateralPopupCommonDataType | null
+export type AddCollateralPopupDataType =
+  | (CollateralPopupCommonDataType & {
+      bakerAddress: string | null
+    })
+  | null
 
 export type AddNewCollateralDataProps =
   | (CollateralPopupCommonDataType & {

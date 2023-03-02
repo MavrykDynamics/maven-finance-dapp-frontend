@@ -391,6 +391,7 @@ export const BorrowingExpandCard = ({
                                   borrowedAmount,
                                   collateralWithdrawAmount: amount,
                                   borrowedAssetRate: borrowedAsset.rate,
+                                  bakerAddress: xtzDelegatedTo,
                                 })
                               }
                               kind={TRANSPARENT_WITH_BORDER}
