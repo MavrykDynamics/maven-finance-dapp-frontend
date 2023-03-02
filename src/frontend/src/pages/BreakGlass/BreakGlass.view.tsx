@@ -164,9 +164,9 @@ export const BreakGlassView = ({
             />
           )
         })}
-      </BGCardsWrapper>
 
-      <Pagination itemsCount={filteredBreakGlassStatuses.length} listName={BREAK_GLASS_LIST_NAME} />
+        <Pagination itemsCount={filteredBreakGlassStatuses.length} listName={BREAK_GLASS_LIST_NAME} />
+      </BGCardsWrapper>
     </BGStyled>
   )
 }

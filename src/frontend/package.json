@@ -24,6 +24,7 @@
     "@wert-io/widget-initializer": "^2.0.0",
     "axios": "^1.2.1",
     "bignumber.js": "^9.1.0",
+    "classnames": "^2.3.2",
     "coingecko-api": "^1.0.10",
     "dayjs": "^1.11.5",
     "embla-carousel-react": "^6.2.0",

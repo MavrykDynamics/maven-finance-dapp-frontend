@@ -13,6 +13,7 @@ import {
   ButtonAnimation,
 } from './Button.constants'
 import { ButtonStyled } from './NewButton.style'
+import classNames from 'classnames'
 
 export type ButtonProps = {
   onClick?: AppDispatch | ((e: React.MouseEvent<HTMLElement>) => Promise<unknown> | void)
@@ -44,26 +45,33 @@ const Button = ({
   form = BUTTON_NORMAL,
   animation,
 }: ButtonProps) => {
-  const buttonClasses = `${kind} ${size} ${form} ${animation ?? ''} ${disabled ? 'disabled' : ''} ${
-    selected ? 'selected' : ''
-  }`
-
   const [isLoadingFromHandler, setLoading] = useState(false)
-  const isDisabled = disabled || isLoadingFromHandler
+  const [isButtonDisabled, setButtonDisabled] = useState(disabled)
+  const isDisabled = disabled || isLoadingFromHandler || isButtonDisabled
 
   const loadingWrappedClickHandler = useCallback(
     async (e: React.MouseEvent<HTMLElement>) => {
-      if (onClick) {
-        const callResult = onClick(e)
-        if (callResult && typeof callResult.then === 'function') {
-          setLoading(true)
-          await callResult
-          setLoading(false)
+      try {
+        if (onClick) {
+          const callResult = onClick(e)
+          if (callResult && typeof callResult.then === 'function') {
+            setLoading(true)
+            await callResult
+            setLoading(false)
+          }
         }
+      } catch (e) {
+        setLoading(false)
+        setButtonDisabled(true)
       }
     },
     [onClick],
   )
+
+  const buttonClasses = classNames(kind, size, form, animation, {
+    disabled: isDisabled,
+    selected,
+  })
 
   return (
     <ButtonStyled className={buttonClasses} onClick={loadingWrappedClickHandler} type={type} disabled={isDisabled}>
