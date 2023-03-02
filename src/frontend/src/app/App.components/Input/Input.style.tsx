@@ -343,10 +343,9 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
 
   .useMax-btn {
     position: absolute;
-    top: -27px;
+    top: -20px;
     right: 0px;
     font-size: 14px;
-    line-height: 21px;
   }
 `
 

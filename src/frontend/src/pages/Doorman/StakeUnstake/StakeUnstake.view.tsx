@@ -11,7 +11,12 @@ import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
 // helpers, consts
 import { State } from 'reducers'
-import { BUTTON_PRIMARY, BUTTON_PULSE, BUTTON_SECONDARY } from '../../../app/App.components/Button/Button.constants'
+import {
+  BUTTON_PRIMARY,
+  BUTTON_PULSE,
+  BUTTON_SECONDARY,
+  BUTTON_WIDE,
+} from '../../../app/App.components/Button/Button.constants'
 import { isValidNumberValue, mathRoundTwoDigit } from '../../../utils/validatorFunctions'
 import { rewardsCompound } from '../Doorman.actions'
 import { InputStatusType, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
@@ -231,6 +236,7 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
                 onClick={handleDelegate}
                 kind={BUTTON_PRIMARY}
                 disabled={!accountPkh}
+                isThin
                 animation={accountPkh ? BUTTON_PULSE : null}
               >
                 <Icon id="satellites" />
@@ -261,7 +267,7 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
           </StakeUnstakeBalance>
 
           <StakeUnstakeRightPart>
-            <NewButton kind={BUTTON_PRIMARY} onClick={handleCompound} disabled={!userHasRewards}>
+            <NewButton kind={BUTTON_PRIMARY} isThin onClick={handleCompound} disabled={!userHasRewards}>
               <Icon id="compound" /> Compound
             </NewButton>
           </StakeUnstakeRightPart>
@@ -310,11 +316,11 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
           </StakeUnstakeInputColumn>
         </StakeUnstakeInputGrid>
         <StakeUnstakeButtonGrid>
-          <NewButton kind={BUTTON_PRIMARY} onClick={handleStake}>
+          <NewButton kind={BUTTON_PRIMARY} onClick={handleStake} form={BUTTON_WIDE}>
             <Icon id="in" /> Stake
           </NewButton>
 
-          <NewButton kind={BUTTON_SECONDARY} onClick={handleUnStake}>
+          <NewButton kind={BUTTON_SECONDARY} onClick={handleUnStake} form={BUTTON_WIDE}>
             <Icon id="out" /> Unstake
           </NewButton>
         </StakeUnstakeButtonGrid>

@@ -14,11 +14,6 @@ export const SmallBlockBase = styled.div<{ theme: MavrykTheme }>`
     font-size: 22px;
   }
 
-  button {
-    max-width: 190px;
-    font-size: 16px;
-  }
-
   .name {
     font-weight: 600;
     font-size: 14px;
@@ -45,7 +40,7 @@ export const MediumBlockBase = styled(SmallBlockBase)<{ theme: MavrykTheme }>`
     height: 100%;
     row-gap: 15px;
 
-    button {
+    .nav-button {
       width: 220px;
     }
 

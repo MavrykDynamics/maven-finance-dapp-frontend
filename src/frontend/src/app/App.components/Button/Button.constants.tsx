@@ -31,6 +31,7 @@ export type ButtonStyle =
 export const BUTTON_PRIMARY = 'primary'
 export const BUTTON_SECONDARY = 'secondary'
 export const BUTTON_SIMPLE = 'simple'
+export const BUTTON_SIMPLE_SMALL = 'simpleSmall'
 export const BUTTON_NAVIGATION = 'navigation'
 export const VOTING_FOR = `for`
 export const VOTING_PASS = `pass`
@@ -40,6 +41,7 @@ export type ButtonKind =
   | typeof BUTTON_PRIMARY
   | typeof BUTTON_SECONDARY
   | typeof BUTTON_SIMPLE
+  | typeof BUTTON_SIMPLE_SMALL
   | typeof BUTTON_NAVIGATION
   | typeof VOTING_AGAINST
   | typeof VOTING_PASS
@@ -47,12 +49,7 @@ export type ButtonKind =
 
 export const BUTTON_ROUND = 'round'
 export const BUTTON_WIDE = 'wide'
-export const BUTTON_NORMAL = 'normal'
-export type ButtonForm = typeof BUTTON_ROUND | typeof BUTTON_NORMAL | typeof BUTTON_WIDE
-
-export const BUTTON_SMALL = 'small'
-export const BUTTON_MEDIUM = 'medium'
-export type ButtonSize = typeof BUTTON_SMALL | typeof BUTTON_MEDIUM
+export type ButtonForm = typeof BUTTON_ROUND | typeof BUTTON_WIDE
 
 export const BUTTON_PULSE = 'pulse'
 export type ButtonAnimation = typeof BUTTON_PULSE

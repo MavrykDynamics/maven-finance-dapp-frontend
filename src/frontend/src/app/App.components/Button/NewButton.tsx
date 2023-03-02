@@ -2,34 +2,27 @@ import React, { useCallback, useState } from 'react'
 import { AppDispatch } from 'app/App.controller'
 import { SimpleCircleSpinnerLoader } from '../Loader/Loader.view'
 
-import {
-  ButtonForm,
-  ButtonSize,
-  BUTTON,
-  ButtonKind,
-  ButtonTypes,
-  BUTTON_MEDIUM,
-  BUTTON_NORMAL,
-  ButtonAnimation,
-} from './Button.constants'
+import { ButtonForm, BUTTON, ButtonKind, ButtonTypes, ButtonAnimation } from './Button.constants'
 import { ButtonStyled } from './NewButton.style'
 import classNames from 'classnames'
 
 export type ButtonProps = {
   onClick?: AppDispatch | ((e: React.MouseEvent<HTMLElement>) => Promise<unknown> | void)
   kind: ButtonKind
-  size?: ButtonSize
   form?: ButtonForm
   type?: ButtonTypes
   selected?: boolean
   animation?: ButtonAnimation | null
   disabled?: boolean
+  isThin?: boolean
   children?: React.ReactNode
 }
 
 /**
- * To style button positioning or certain pixesl size do it via parent layout styling
- * or via form={BUTTON_WIDE} and wrapper that will contain size in px
+ * To style button positioning or certain pixesl size do it via parent layout styling and @BUTTON_WIDE form prop
+ *
+ * By default button will take width of the content and padding 20px 0, or use @BUTTON_WIDE it will take 100% of the parent width
+ *
  * If you need to style appearance add this styling via creating new kind and assign new styles to it
  *
  * Button shoun't contain id | classes cuz it should be only responsible for appearance, not positioning & size
@@ -38,16 +31,15 @@ const Button = ({
   onClick,
   kind,
   children,
+  form,
+  animation,
   disabled = false,
   selected = false,
+  isThin = false,
   type = BUTTON,
-  size = BUTTON_MEDIUM,
-  form = BUTTON_NORMAL,
-  animation,
 }: ButtonProps) => {
-  const [isLoadingFromHandler, setLoading] = useState(false)
-  const [isButtonDisabled, setButtonDisabled] = useState(disabled)
-  const isDisabled = disabled || isLoadingFromHandler || isButtonDisabled
+  const [isLoading, setLoading] = useState(false)
+  const isDisabled = disabled || isLoading
 
   const loadingWrappedClickHandler = useCallback(
     async (e: React.MouseEvent<HTMLElement>) => {
@@ -62,20 +54,22 @@ const Button = ({
         }
       } catch (e) {
         setLoading(false)
-        setButtonDisabled(true)
       }
     },
     [onClick],
   )
 
-  const buttonClasses = classNames(kind, size, form, animation, {
+  const buttonClasses = classNames(kind, form, animation, {
     disabled: isDisabled,
+    isThin,
     selected,
+    isLoading,
   })
 
   return (
     <ButtonStyled className={buttonClasses} onClick={loadingWrappedClickHandler} type={type} disabled={isDisabled}>
-      {isLoadingFromHandler ? <SimpleCircleSpinnerLoader /> : children}
+      {isLoading ? <SimpleCircleSpinnerLoader /> : null}
+      <div className="child">{children}</div>
     </ButtonStyled>
   )
 }

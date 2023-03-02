@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { State } from 'reducers'
 
-import { BUTTON_SECONDARY } from 'app/App.components/Button/Button.constants'
+import { BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
@@ -77,20 +77,24 @@ const DelegationTab = () => {
         ) : mySMvkTokenBalance === 0 ? (
           <div className="no-data">
             <span>You don't have SMVK</span>
-            <Link to="/">
-              <NewButton kind={BUTTON_SECONDARY}>
-                <Icon id="menu-staking" /> Stake MVK
-              </NewButton>
-            </Link>
+            <div className="nav-button">
+              <Link to="/">
+                <NewButton kind={BUTTON_SECONDARY} form={BUTTON_WIDE}>
+                  <Icon id="menu-staking" /> Stake MVK
+                </NewButton>
+              </Link>
+            </div>
           </div>
         ) : (
           <div className="no-data">
             <span>You are not delegated at this time</span>
-            <Link to="/satellites">
-              <NewButton kind={BUTTON_SECONDARY}>
-                <Icon id="satellite" /> View Satellites
-              </NewButton>
-            </Link>
+            <div className="nav-button">
+              <Link to="/satellites">
+                <NewButton kind={BUTTON_SECONDARY} form={BUTTON_WIDE}>
+                  <Icon id="satellite" /> View Satellites
+                </NewButton>
+              </Link>
+            </div>
           </div>
         )}
       </DelegationStatusBlock>

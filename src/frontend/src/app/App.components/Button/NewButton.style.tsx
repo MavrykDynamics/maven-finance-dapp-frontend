@@ -1,95 +1,21 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { BUTTON_RADIUS } from 'styles/constants'
 import { MavrykTheme } from 'styles/interfaces'
 import {
-  BUTTON_MEDIUM,
   BUTTON_NAVIGATION,
-  BUTTON_NORMAL,
   BUTTON_PRIMARY,
   BUTTON_PULSE,
   BUTTON_ROUND,
   BUTTON_SECONDARY,
   BUTTON_SIMPLE,
-  BUTTON_SMALL,
+  BUTTON_SIMPLE_SMALL,
   BUTTON_WIDE,
   VOTING_AGAINST,
   VOTING_FOR,
   VOTING_PASS,
 } from './Button.constants'
 
-// TODO: refactor colors with theme implementation
-export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
-  font-weight: 600;
-  font-size: 16px;
-  line-height: 16px;
-  cursor: pointer;
-  border-radius: ${BUTTON_RADIUS};
-  user-select: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: fit-content;
-
-  &:hover {
-    opacity: 0.8;
-  }
-
-  &.disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-
-  svg {
-    transition: 0.3s all;
-  }
-
-  /* styling for buttons forms */
-  &.${BUTTON_NORMAL} {
-    column-gap: 10px;
-    padding: 0 20px;
-  }
-
-  &.${BUTTON_WIDE} {
-    column-gap: 10px;
-    width: 100%;
-  }
-
-  &.${BUTTON_ROUND} {
-    padding: 0;
-    border-radius: 50%;
-
-    /* Make button square, this type of button will contain only icon */
-    &.${BUTTON_MEDIUM} {
-      height: 50px;
-      width: 50px;
-    }
-
-    &.${BUTTON_SMALL} {
-      height: 36px;
-      width: 36px;
-    }
-  }
-
-  /* styling for buttons sizing */
-  &.${BUTTON_MEDIUM} {
-    height: 50px;
-
-    svg {
-      height: 24px;
-      width: 24px;
-    }
-  }
-
-  &.${BUTTON_SMALL} {
-    height: 36px;
-
-    svg {
-      height: 20px;
-      width: 20px;
-    }
-  }
-
-  /* styling for main button kinds */
+const BUTTONS_KIND_STYLES = css`
   &.${BUTTON_PRIMARY} {
     color: ${({ theme }) => theme.containerColor};
     background-color: ${({ theme }) => theme.valueColor};
@@ -120,6 +46,19 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
     }
   }
 
+  &.${BUTTON_SIMPLE_SMALL} {
+    width: fit-content;
+    height: fit-content;
+    padding: 0;
+
+    color: ${({ theme }) => theme.valueColor};
+    svg {
+      width: 14px;
+      height: 14px;
+      fill: ${({ theme }) => theme.valueColor};
+    }
+  }
+
   &.${BUTTON_NAVIGATION} {
     width: fit-content;
     height: fit-content;
@@ -145,7 +84,6 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
     }
   }
 
-  /* styling for voting buttons  */
   &.${VOTING_FOR} {
     color: ${({ theme }) => theme.backgroundColor};
     background-color: ${({ theme }) => theme.upColor};
@@ -160,10 +98,97 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
     color: ${({ theme }) => theme.backgroundColor};
     background-color: ${({ theme }) => theme.downColor};
   }
+`
 
-  /* additional kinds */
+const BUTTONS_FORMS_STYLES = css`
+  &.${BUTTON_WIDE} {
+    padding: 0;
+    width: 100%;
+  }
+
+  &.${BUTTON_ROUND} {
+    padding: 0;
+    border-radius: 50%;
+
+    /* Make button square, this type of button will contain only icon */
+    width: 50px;
+
+    &.isThin {
+      height: 36px;
+      width: 36px;
+    }
+  }
+`
+
+const BUTTONS_ANIMATIONS_STYLES = css`
   &.${BUTTON_PULSE} {
     animation: pulse 2s infinite;
     box-shadow: 0 0 0 0 rgba(134, 212, 201, 1);
   }
+`
+
+// TODO: refactor colors with theme implementation
+export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 16px;
+
+  cursor: pointer;
+  user-select: none;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  height: 50px;
+
+  border-radius: ${BUTTON_RADIUS};
+  padding: 0 20px;
+
+  .child {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    column-gap: 10px;
+  }
+
+  /* Icon styling */
+  svg {
+    transition: 0.3s all;
+    width: 24px;
+    height: 24px;
+  }
+
+  &.isThin {
+    height: 36px;
+
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  &:hover {
+    opacity: 0.8;
+  }
+
+  &.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &.isLoading {
+    .child {
+      display: none;
+    }
+  }
+
+  /* styling for buttons forms */
+  ${BUTTONS_FORMS_STYLES}
+
+  /* styling for main button kinds */
+  ${BUTTONS_KIND_STYLES}
+
+  /* additional kinds */
+  ${BUTTONS_ANIMATIONS_STYLES}
 `

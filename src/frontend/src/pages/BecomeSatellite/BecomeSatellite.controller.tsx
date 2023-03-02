@@ -272,7 +272,6 @@ export const BecomeSatellite = () => {
                 {usersSatelliteProfile && usersSatelliteProfile.currentlyRegistered && (
                   <NewButton
                     kind={BUTTON_SECONDARY}
-                    form={BUTTON_WIDE}
                     disabled={!usersSatelliteProfile.currentlyRegistered}
                     onClick={handleUnregisterSatellite}
                   >
@@ -283,7 +282,6 @@ export const BecomeSatellite = () => {
                 <NewButton
                   disabled={isUpdateButtonDisabled}
                   kind={BUTTON_PRIMARY}
-                  form={BUTTON_WIDE}
                   onClick={handleRegisterOrUpdateSatellite}
                 >
                   <Icon id="satellite-small" />

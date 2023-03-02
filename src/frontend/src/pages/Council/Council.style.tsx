@@ -68,7 +68,7 @@ export const ReviewCard = styled(Card)<{
 }>`
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-around;
   padding: 30px;
   margin-top: ${({ displayPendingSignature }) => (displayPendingSignature ? 0 : 30)}px;
   margin-bottom: 23px;

@@ -9,7 +9,7 @@ import { ExpandStyled, ExpandArticleStyled } from './Expand.style'
 
 // helpers
 import { scrollToFullView } from '../../../utils/scrollToFullView'
-import { BUTTON_SIMPLE, BUTTON_SMALL } from '../Button/Button.constants'
+import { BUTTON_SIMPLE_SMALL } from '../Button/Button.constants'
 
 type Props = {
   children: React.ReactNode
@@ -68,8 +68,7 @@ export default function Expand({
               handleToggleExpand()
               onClickCallback && onClickCallback()
             }}
-            kind={BUTTON_SIMPLE}
-            size={BUTTON_SMALL}
+            kind={BUTTON_SIMPLE_SMALL}
           >
             Details <Icon id="simple-arrow-down" />
           </Button>

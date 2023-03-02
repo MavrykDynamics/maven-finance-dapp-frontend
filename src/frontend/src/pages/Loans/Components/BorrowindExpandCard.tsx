@@ -2,12 +2,7 @@ import { useContext, useEffect, useState } from 'react'
 
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent, getStatusByCollateralRatio } from '../Loans.const'
-import {
-  BUTTON_PRIMARY,
-  BUTTON_SECONDARY,
-  BUTTON_SMALL,
-  BUTTON_SIMPLE,
-} from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_SIMPLE } from 'app/App.components/Button/Button.constants'
 
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
@@ -438,7 +433,7 @@ export const BorrowingExpandCard = ({
                   })
                 }
                 kind={BUTTON_PRIMARY}
-                size={BUTTON_SMALL}
+                isThin
                 disabled={
                   avaliableCollaterals.length === 0 || avaliableCollaterals.length === collateralData.length - 1
                 }
@@ -511,7 +506,7 @@ export const BorrowingExpandCard = ({
                 <div className="repay-full">
                   <Button
                     disabled={!borrowedAmount}
-                    size={BUTTON_SMALL}
+                    isThin
                     kind={BUTTON_SECONDARY}
                     onClick={() =>
                       openRepayFullPopup?.({
