@@ -34,6 +34,8 @@ import { getTimestampByLevel } from 'pages/Governance/Governance.actions'
 import { calculateCollateralShare } from 'pages/Vaults/calcFunctionsForVault'
 import { isTezosAsset } from '../Loans.helpers'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import colors from 'styles/colors'
 
 export type BorrowingCardOptions = {
   reverseColumns?: boolean
@@ -84,6 +86,7 @@ export const BorrowingExpandCard = ({
   const { symbol, icon, rate = 1 } = borrowedAsset
 
   const { avaliableCollaterals } = useSelector((state: State) => state.tokens)
+  const { themeSelected } = useSelector((state: State) => state.preferences)
 
   const {
     openChangeBakerPopup,
@@ -479,7 +482,14 @@ export const BorrowingExpandCard = ({
 
                 <div className="block-name margin-top-20">Permissions (Advanced)</div>
                 <div className="bottom-info-row">
-                  <div className="name">Depositors </div>
+                  <div className="name">
+                    Depositors{' '}
+                    <CustomTooltip
+                      iconId="info"
+                      text="need text"
+                      defaultStrokeColor={colors[themeSelected].textColor}
+                    />
+                  </div>
                   <div className="value">
                     {mappedDepositors.isAll ? 'All Alowed' : null}
                     {mappedDepositors.firstAddress
@@ -497,7 +507,14 @@ export const BorrowingExpandCard = ({
                   />
                 </div>
                 <div className="bottom-info-row">
-                  <div className="name">MVK Operators </div>
+                  <div className="name">
+                    MVK Operators{' '}
+                    <CustomTooltip
+                      iconId="info"
+                      text="need text"
+                      defaultStrokeColor={colors[themeSelected].textColor}
+                    />
+                  </div>
                   <div className="value">
                     {mappedMVKOperators.firstAddress
                       ? <TzAddress tzAddress={mappedMVKOperators.firstAddress} type={BLUE} /> +
