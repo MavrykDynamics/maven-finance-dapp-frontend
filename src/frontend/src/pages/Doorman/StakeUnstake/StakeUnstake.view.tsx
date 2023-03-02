@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -15,6 +15,7 @@ import {
   BUTTON_PRIMARY,
   BUTTON_PULSE,
   BUTTON_SECONDARY,
+  BUTTON_SIMPLE,
   BUTTON_WIDE,
 } from '../../../app/App.components/Button/Button.constants'
 import { isValidNumberValue, mathRoundTwoDigit } from '../../../utils/validatorFunctions'
@@ -209,8 +210,12 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
             <div>
               <h3>My MVK Balance</h3>
               <div className="balance-btn-group">
-                <CommaNumber value={myMvkTokenBalance} />
-                {Boolean(myMvkTokenBalance) && <button onClick={handleStakeAll}>Stake All</button>}
+                <CommaNumber value={myMvkTokenBalance} className="amount" />
+                {Boolean(myMvkTokenBalance) && (
+                  <NewButton onClick={handleStakeAll} kind={BUTTON_SIMPLE}>
+                    Stake All
+                  </NewButton>
+                )}
               </div>
             </div>
           </StakeUnstakeBalance>
@@ -222,8 +227,12 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
             <div>
               <h3>Total MVK Staked</h3>
               <div className="balance-btn-group">
-                <CommaNumber value={mySMvkTokenBalance} />
-                {Boolean(mySMvkTokenBalance) && <button onClick={handleUnstakeAll}>Unstake All</button>}
+                <CommaNumber value={mySMvkTokenBalance} className="amount" />
+                {Boolean(mySMvkTokenBalance) && (
+                  <NewButton onClick={handleUnstakeAll} kind={BUTTON_SIMPLE}>
+                    Unstake All
+                  </NewButton>
+                )}
               </div>
             </div>
           </StakeUnstakeBalance>
@@ -262,7 +271,7 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
             <ImageWithPlug imageLink={'/images/coin-bronze.svg'} alt="coin" />
             <div>
               <h3>Total MVK Earned</h3>
-              <CommaNumber value={earnedValue} />
+              <CommaNumber value={earnedValue} className="amount" />
             </div>
           </StakeUnstakeBalance>
 

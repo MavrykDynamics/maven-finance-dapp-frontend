@@ -176,6 +176,7 @@ export const StakeUnstakeBalance = styled.div<{ theme: MavrykTheme }>`
     font-size: 14px;
     font-weight: 600;
     line-height: 21px;
+    margin-bottom: 2px;
     color: ${({ theme }) => theme.textColor};
   }
 
@@ -185,22 +186,14 @@ export const StakeUnstakeBalance = styled.div<{ theme: MavrykTheme }>`
     height: 45px;
   }
 
-  div,
-  button {
-    max-width: max-content;
+  .amount {
     font-size: 16px;
-    font-weight: 600;
-    line-height: 21px;
     color: ${({ theme }) => theme.dataColor};
   }
 
   .balance-btn-group {
     display: flex;
-
-    button {
-      margin-left: 10px;
-      color: ${({ theme }) => theme.navTitleColor};
-    }
+    column-gap: 10px;
   }
 `
 
