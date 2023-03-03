@@ -364,7 +364,6 @@ export const BorrowingExpandCard = ({
                                     vaultCollateralBalance: collateralData.at(-1)?.amount ?? 0,
                                     currentCollateralRatio: collateralRatio,
                                     borrowedAmount,
-                                    collateralWithdrawAmount: 0,
                                     existingCollaterals: collateralData,
                                     borrowedAssetRate: borrowedAsset.rate,
                                   })
@@ -391,8 +390,8 @@ export const BorrowingExpandCard = ({
                                   selectedAsset: collateralData[idx],
                                   currentCollateralRatio: collateralRatio,
                                   borrowedAmount,
-                                  collateralWithdrawAmount: amount,
                                   borrowedAssetRate: borrowedAsset.rate,
+                                  currentCollateralBalance: amount,
                                 })
                               }
                               form={BUTTON_WIDE}
@@ -410,7 +409,6 @@ export const BorrowingExpandCard = ({
                                     selectedAsset: collateralData[idx],
                                     currentCollateralRatio: collateralRatio,
                                     borrowedAmount,
-                                    collateralWithdrawAmount: amount,
                                     borrowedAssetRate: borrowedAsset.rate,
                                   })
                                 }
@@ -436,7 +434,6 @@ export const BorrowingExpandCard = ({
                     vaultCollateralBalance: collateralData.at(-1)?.amount ?? 0,
                     currentCollateralRatio: collateralRatio,
                     borrowedAmount,
-                    collateralWithdrawAmount: 0,
                     existingCollaterals: collateralData,
                     borrowedAssetRate: borrowedAsset.rate,
                   })

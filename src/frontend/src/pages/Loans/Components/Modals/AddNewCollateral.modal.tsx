@@ -12,7 +12,7 @@ import { Input } from 'app/App.components/Input/NewInput'
 import { DropDownCollateralAssetType, DropDownXTZBakerType } from './CreateNewVault.modal'
 import NewButton from 'app/App.components/Button/NewButton'
 
-import { calcCollateralRatio, isTezosAsset } from 'pages/Loans/Loans.helpers'
+import { calcCollateralRatio, getMaxCollateralWithdraw, isTezosAsset } from 'pages/Loans/Loans.helpers'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
@@ -59,7 +59,6 @@ export const AddNewCollateral = ({
     vaultCollateralBalance = 0,
     vaultAddress,
     currentCollateralRatio = 0,
-    collateralWithdrawAmount = 0,
     borrowedAmount = 0,
     borrowedAssetRate = 0,
     existingCollaterals,
@@ -124,23 +123,27 @@ export const AddNewCollateral = ({
     if (inputData) {
       const inputAmount = isNaN(parseFloat(inputData.amount)) ? 0 : parseFloat(inputData.amount)
       const selectedAsset = avaliableCollaterals.find(({ id }) => id === inputData?.id)
+      const collateralRate = Number(selectedAsset?.rate)
+
       const futureCollateralRatio = selectedAsset
         ? calcCollateralRatio(vaultCollateralBalance + inputAmount, borrowedAmount, borrowedAssetRate)
         : 0
 
-      const futureCollateralWithdraw = collateralWithdrawAmount + inputAmount
-      const futureCollateralBalance = vaultCollateralBalance + inputAmount * Number(selectedAsset?.rate)
+      const futureCollateralWithdraw =
+        getMaxCollateralWithdraw(
+          inputAmount * collateralRate,
+          vaultCollateralBalance + inputAmount * collateralRate,
+          borrowedAmount,
+          borrowedAssetRate,
+          collateralRate,
+        ) * collateralRate
+
+      const futureCollateralBalance = vaultCollateralBalance + inputAmount * collateralRate
+
       return { futureCollateralRatio, futureCollateralWithdraw, futureCollateralBalance }
     }
     return { futureCollateralRatio: 0, futureCollateralWithdraw: 0, futureCollateralBalance: 0 }
-  }, [
-    inputData,
-    avaliableCollaterals,
-    vaultCollateralBalance,
-    borrowedAmount,
-    borrowedAssetRate,
-    collateralWithdrawAmount,
-  ])
+  }, [inputData, avaliableCollaterals, vaultCollateralBalance, borrowedAmount, borrowedAssetRate])
 
   // select baker for an xtz collateral, used only when we selected one collateral XTZ
   const bakerItemsForDropDown = useMemo<DropDownXTZBakerType[]>(
@@ -295,7 +298,7 @@ export const AddNewCollateral = ({
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Available To Withdraw</div>
-              <CommaNumber value={collateralWithdrawAmount} className="value" beginningText="$" />
+              <CommaNumber value={0} className="value" beginningText="$" />
             </ThreeLevelListItem>
           </VaultModalOverview>
 

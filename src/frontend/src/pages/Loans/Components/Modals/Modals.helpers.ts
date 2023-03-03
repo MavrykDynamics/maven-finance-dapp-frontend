@@ -18,12 +18,15 @@ export type CollateralPopupCommonDataType = {
   vaultCollateralBalance: number
   selectedAsset?: LoansVaultType['collateralData'][number]
   currentCollateralRatio: number
-  collateralWithdrawAmount: number
   borrowedAmount: number
   borrowedAssetRate: number
 }
 
-export type AddCollateralPopupDataType = CollateralPopupCommonDataType | null
+export type AddCollateralPopupDataType =
+  | (CollateralPopupCommonDataType & {
+      currentCollateralBalance: number
+    })
+  | null
 
 export type AddNewCollateralDataProps =
   | (CollateralPopupCommonDataType & {
