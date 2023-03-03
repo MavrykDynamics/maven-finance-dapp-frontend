@@ -108,7 +108,8 @@ export const PortfolioWalletStyled = styled(MediumBlockBase)<{ theme: MavrykThem
   .wallet-info {
     display: flex;
     flex-direction: column;
-    margin-top: 24px;
+    row-gap: 7px;
+    margin-top: 30px;
 
     .name {
       font-weight: 600;
@@ -121,7 +122,7 @@ export const PortfolioWalletStyled = styled(MediumBlockBase)<{ theme: MavrykThem
       font-size: 16px;
       color: ${({ theme }) => theme.dataColor};
       display: flex;
-      column-gap: 7px;
+      column-gap: 10px;
       align-items: center;
     }
   }
@@ -143,9 +144,9 @@ export const MyRewardsStyled = styled(SmallBlockBase)<{ theme: MavrykTheme }>`
     align-items: flex-end;
   }
 
-  button {
-    margin-left: auto;
+  .claim-rewards {
     margin-top: -10px;
+    margin-left: auto;
   }
 
   .stat-block {
@@ -287,9 +288,6 @@ export const ListItem = styled.div<{ theme: MavrykTheme; columsTemplate: string 
     &.view-tx-link {
       align-items: center;
       justify-content: center;
-      button {
-        height: fit-content;
-      }
 
       /* TODO: temp solution while earn column is disabled */
       margin-left: auto;
