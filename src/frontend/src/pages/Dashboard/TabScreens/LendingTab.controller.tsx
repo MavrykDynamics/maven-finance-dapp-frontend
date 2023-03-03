@@ -5,10 +5,10 @@ import { Link } from 'react-router-dom'
 import { State } from 'reducers'
 import { LoanMarketType } from 'utils/TypesAndInterfaces/Loans'
 import { calcDiffBetweenTwoNumbersInPersentage } from 'utils/calcFunctions'
-import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
 import Icon from 'app/App.components/Icon/Icon.view'
-import { Button } from 'app/App.components/Button/Button.controller'
+import NewButton from 'app/App.components/Button/NewButton'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 
@@ -76,8 +76,11 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
     <TabWrapperStyled backgroundImage="dashboard_lendingTab_bg.png">
       <div className="top">
         <BGPrimaryTitle>Lending</BGPrimaryTitle>
-        <Link to="/loans">
-          <Button text="Lending" icon="coin-loan" kind={ACTION_PRIMARY} className="noStroke dashboard-sectionLink" />
+        <Link to="/loans" className="dashboard-sectionLink" >
+          <NewButton kind={PRIMARY} form={BUTTON_WIDE}>
+            <Icon id="coin-loan" />
+            Lending
+          </NewButton>
         </Link>
       </div>
 

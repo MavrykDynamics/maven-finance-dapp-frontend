@@ -1,32 +1,22 @@
 import styled from 'styled-components/macro'
 import { Card } from 'styles'
 import { MavrykTheme } from 'styles/interfaces'
+import { findColorBasedOnStatus, OracleStatusTypes } from '../helpers/Satellites.consts'
 
 export const SatelliteOracleStatusComponent = styled.div<{
-  statusType: 'responded' | 'noResponse' | 'awaiting' | 'notAnOracle'
+  statusType: OracleStatusTypes
   theme: MavrykTheme
 }>`
   padding: 8px 12px;
   text-transform: uppercase;
-  border: 1px solid
-    ${({ statusType, theme }) =>
-      statusType === 'responded'
-        ? theme.upColor
-        : statusType === 'noResponse' || statusType === 'notAnOracle'
-        ? theme.downColor
-        : theme.warningColor};
+  border: 1px solid ${({ statusType, theme }) => findColorBasedOnStatus(statusType, theme)};
   border-radius: 10px;
   font-weight: 600;
   font-size: 12px;
   line-height: 12px;
   text-align: center;
   max-width: 130px;
-  color: ${({ statusType, theme }) =>
-    statusType === 'responded'
-      ? theme.upColor
-      : statusType === 'noResponse' || statusType === 'notAnOracle'
-      ? theme.downColor
-      : theme.warningColor};
+  color: ${({ statusType, theme }) => findColorBasedOnStatus(statusType, theme)};
 `
 
 export const SatelliteCard = styled(Card)<{ theme: MavrykTheme }>`
