@@ -3,8 +3,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
 // components
-import { ACTION_PRIMARY, SUBMIT } from '../../../app/App.components/Button/Button.constants'
-import NewButton from 'app/App.components/Button/NewButton.controller'
+import { BUTTON_PRIMARY, SUBMIT } from '../../../app/App.components/Button/Button.constants'
+import NewButton from 'app/App.components/Button/NewButton'
 import { Input } from 'app/App.components/Input/NewInput'
 import { IPFSUploader } from '../../../app/App.components/IPFSUploader/IPFSUploader.controller'
 import { DDItemId, DropDown } from 'app/App.components/DropDown/NewDropdown'
@@ -202,7 +202,7 @@ export function FormChangeCouncilMemberView(maxLength: CouncilMaxLength) {
         />
 
         <div className="align-to-right">
-          <NewButton kind={ACTION_PRIMARY} type={SUBMIT}>
+          <NewButton kind={BUTTON_PRIMARY} type={SUBMIT}>
             <Icon id="exchange" />
             Change Council Member
           </NewButton>

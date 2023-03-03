@@ -240,19 +240,6 @@ export const GovRightContainerTitleArea = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const RightSideVotingArea = styled.div<{ theme: MavrykTheme }>`
-  display: flex;
-  flex-direction: row;
-  margin: 20px 0;
-  justify-content: space-between;
-  align-items: center;
-  font-weight: 600;
-
-  > button {
-    max-width: 40%;
-  }
-`
-
 export const RightSideSubHeader = styled.div<{ theme: MavrykTheme }>`
   font-size: 18px;
   font-weight: 600;

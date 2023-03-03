@@ -3,8 +3,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
 // components
-import { ACTION_PRIMARY, SUBMIT } from '../../../app/App.components/Button/Button.constants'
-import NewButton from 'app/App.components/Button/NewButton.controller'
+import { BUTTON_PRIMARY, SUBMIT } from '../../../app/App.components/Button/Button.constants'
+import NewButton from 'app/App.components/Button/NewButton'
 import { DropDown, DDItemId } from 'app/App.components/DropDown/NewDropdown'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 
@@ -78,7 +78,7 @@ export function FormRemoveCouncilMemberView() {
           />
         </div>
 
-        <NewButton kind={ACTION_PRIMARY} type={SUBMIT}>
+        <NewButton kind={BUTTON_PRIMARY} type={SUBMIT}>
           <Icon id="minus" />
           Remove Council Member
         </NewButton>

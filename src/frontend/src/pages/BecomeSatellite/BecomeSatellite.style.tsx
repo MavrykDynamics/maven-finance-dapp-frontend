@@ -65,13 +65,10 @@ export const BecomeSatelliteForm = styled(Card)`
 
   .buttons-wrapper {
     display: flex;
-    padding-top: 42px;
     justify-content: flex-end;
-
-    button {
-      width: 255px;
-      margin-left: 40px;
-    }
+    margin-left: auto;
+    padding-top: 42px;
+    column-gap: 20px;
   }
 
   .input-fee-wrap {

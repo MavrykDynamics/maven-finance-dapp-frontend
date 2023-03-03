@@ -1,14 +1,14 @@
 import { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { Input } from 'app/App.components/Input/NewInput'
-import NewButton from 'app/App.components/Button/NewButton.controller'
+import NewButton from 'app/App.components/Button/NewButton'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 import { IPFSUploader } from '../../../app/App.components/IPFSUploader/IPFSUploader.controller'
 import { CouncilMaxLength } from 'utils/TypesAndInterfaces/Council'
 
 // helpers
 import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
-import { ACTION_PRIMARY, SUBMIT } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, SUBMIT } from 'app/App.components/Button/Button.constants'
 
 // action
 import { addCouncilMember } from '../Council.actions'
@@ -144,7 +144,7 @@ export const CouncilFormAddCouncilMember = (maxLength: CouncilMaxLength) => {
         title={'Upload Profile Pic'}
       />
       <div className="btn-group">
-        <NewButton kind={ACTION_PRIMARY} type={SUBMIT}>
+        <NewButton kind={BUTTON_PRIMARY} type={SUBMIT}>
           <Icon id="plus" />
           Add Council Member
         </NewButton>

@@ -4,10 +4,10 @@ import { State } from 'reducers'
 
 // const
 import { distinctRequestsByExecuting } from 'pages/FinacialRequests/FinancialRequests.helpers'
-import { ACTION_PRIMARY, SUBMIT } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, SUBMIT } from 'app/App.components/Button/Button.constants'
 
 // view
-import NewButton from 'app/App.components/Button/NewButton.controller'
+import NewButton from 'app/App.components/Button/NewButton'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 import { DDItemId, DropDown } from 'app/App.components/DropDown/NewDropdown'
 
@@ -35,11 +35,9 @@ export const CouncilFormDropFinancialRequest = () => {
     } catch (e) {}
   }, [])
 
-  const { ongoing } = distinctRequestsByExecuting(financialRequests)
-
   const dropDownItems = useMemo(
     () =>
-      ongoing.map((item) => ({
+      distinctRequestsByExecuting(financialRequests).ongoing.map((item) => ({
         content: (
           <div className="truncated-text">
             {item.type} {item.purpose}
@@ -47,7 +45,7 @@ export const CouncilFormDropFinancialRequest = () => {
         ),
         id: item.id,
       })),
-    [ongoing],
+    [financialRequests],
   )
 
   type DropDownItemType = typeof dropDownItems[0]
@@ -91,7 +89,7 @@ export const CouncilFormDropFinancialRequest = () => {
           />
         </div>
         <div className="button-aligment">
-          <NewButton kind={ACTION_PRIMARY} type={SUBMIT}>
+          <NewButton kind={BUTTON_PRIMARY} type={SUBMIT}>
             <Icon id="navigation-menu_close" />
             Drop Financial Request
           </NewButton>

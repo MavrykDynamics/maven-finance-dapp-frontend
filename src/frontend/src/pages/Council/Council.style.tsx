@@ -5,6 +5,10 @@ import { TabSwitcher as TabSwitcherBase } from 'app/App.components/TabSwitcher/T
 // types
 import { MavrykTheme } from '../../styles/interfaces'
 
+export const CounsilPageWrapper = styled.div`
+  margin-top: 30px;
+`
+
 export const CouncilStyled = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   justify-content: space-between;
@@ -43,6 +47,7 @@ export const PropagateBreakGlassCouncilCard = styled(Card)<{ theme: MavrykTheme 
   justify-content: space-between;
   padding: 0 20px 0 30px;
   height: 75px;
+  margin: 0;
 
   h1 {
     margin: 0;
@@ -63,20 +68,11 @@ export const ReviewCard = styled(Card)<{
 }>`
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-around;
   padding: 30px;
   margin-top: ${({ displayPendingSignature }) => (displayPendingSignature ? 0 : 30)}px;
   margin-bottom: 23px;
   height: 201px;
-
-  button {
-    width: 100%;
-    white-space: nowrap;
-  }
-
-  button:first-of-type {
-    margin-bottom: 20px;
-  }
 `
 
 export const GoBack = styled(Card)`
@@ -212,10 +208,6 @@ export const CouncilActionStyled = styled(CardHover)<{ theme: MavrykTheme }>`
         stroke: ${({ theme }) => theme.dataColor};
         width: 20px;
       }
-    }
-
-    .drop-btn {
-      width: 100%;
     }
 
     .is-green {

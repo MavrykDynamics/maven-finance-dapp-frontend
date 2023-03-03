@@ -11,8 +11,6 @@ export const ACTION_PRIMARY = 'actionPrimary'
 export const ACTION_SIMPLE = 'actionSimple'
 export const NAV_SIMPLE = 'navigationSimple'
 export const ACTION_SECONDARY = 'actionSecondary'
-export const VOTING_FOR = 'votingFor'
-export const VOTING_AGAINST = 'votingAgainst'
 export const VOTING_ABSTAIN = 'votingAbstain'
 
 export type ButtonStyle =
@@ -28,3 +26,30 @@ export type ButtonStyle =
   | typeof ACTION_SECONDARY
   | typeof ACTION_SIMPLE
   | undefined
+
+// new button consts
+export const BUTTON_PRIMARY = 'primary'
+export const BUTTON_SECONDARY = 'secondary'
+export const BUTTON_SIMPLE = 'simple'
+export const BUTTON_SIMPLE_SMALL = 'simpleSmall'
+export const BUTTON_NAVIGATION = 'navigation'
+export const VOTING_FOR = `for`
+export const VOTING_PASS = `pass`
+export const VOTING_AGAINST = `against`
+
+export type ButtonKind =
+  | typeof BUTTON_PRIMARY
+  | typeof BUTTON_SECONDARY
+  | typeof BUTTON_SIMPLE
+  | typeof BUTTON_SIMPLE_SMALL
+  | typeof BUTTON_NAVIGATION
+  | typeof VOTING_AGAINST
+  | typeof VOTING_PASS
+  | typeof VOTING_FOR
+
+export const BUTTON_ROUND = 'round'
+export const BUTTON_WIDE = 'wide'
+export type ButtonForm = typeof BUTTON_ROUND | typeof BUTTON_WIDE
+
+export const BUTTON_PULSE = 'pulse'
+export type ButtonAnimation = typeof BUTTON_PULSE

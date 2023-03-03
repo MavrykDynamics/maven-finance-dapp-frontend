@@ -2,14 +2,14 @@ import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { State } from 'reducers'
 
-import { ACTION_SECONDARY } from 'app/App.components/Button/Button.constants'
+import { BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { DelegationStatusBlock } from './DashboardPersonalComponents.style'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
-import NewButton from 'app/App.components/Button/NewButton.controller'
+import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 
 const DelegationTab = () => {
@@ -77,20 +77,24 @@ const DelegationTab = () => {
         ) : mySMvkTokenBalance === 0 ? (
           <div className="no-data">
             <span>You don't have SMVK</span>
-            <Link to="/">
-              <NewButton kind={ACTION_SECONDARY} className="dashboard-sectionLink">
-                <Icon id="menu-staking" /> Stake MVK
-              </NewButton>
-            </Link>
+            <div className="nav-button">
+              <Link to="/">
+                <NewButton kind={BUTTON_SECONDARY} form={BUTTON_WIDE}>
+                  <Icon id="menu-staking" /> Stake MVK
+                </NewButton>
+              </Link>
+            </div>
           </div>
         ) : (
           <div className="no-data">
             <span>You are not delegated at this time</span>
-            <Link to="/satellites">
-              <NewButton kind={ACTION_SECONDARY} className="dashboard-sectionLink">
-                <Icon id="satellite" /> View Satellites
-              </NewButton>
-            </Link>
+            <div className="nav-button">
+              <Link to="/satellites">
+                <NewButton kind={BUTTON_SECONDARY} form={BUTTON_WIDE}>
+                  <Icon id="satellite" /> View Satellites
+                </NewButton>
+              </Link>
+            </div>
           </div>
         )}
       </DelegationStatusBlock>

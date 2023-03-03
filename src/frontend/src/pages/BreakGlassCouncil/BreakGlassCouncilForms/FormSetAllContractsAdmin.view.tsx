@@ -2,9 +2,9 @@ import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
 
 // components
-import { ACTION_PRIMARY, SUBMIT } from '../../../app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, SUBMIT } from '../../../app/App.components/Button/Button.constants'
 import { Input } from 'app/App.components/Input/NewInput'
-import NewButton from 'app/App.components/Button/NewButton.controller'
+import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 
 // types
@@ -38,7 +38,7 @@ export function FormSetAllContractsAdminView() {
 
     try {
       await dispatch(setAllContractsAdmin(newAdminAddress))
-      
+
       setForm(INIT_FORM)
       setFormInputStatus({
         newAdminAddress: '',
@@ -83,7 +83,7 @@ export function FormSetAllContractsAdminView() {
           <Input inputProps={inputProps} settings={inputSettings} />
         </div>
 
-        <NewButton kind={ACTION_PRIMARY} type={SUBMIT}>
+        <NewButton kind={BUTTON_PRIMARY} type={SUBMIT}>
           <Icon id="profile" />
           Set Contracts Admin
         </NewButton>
