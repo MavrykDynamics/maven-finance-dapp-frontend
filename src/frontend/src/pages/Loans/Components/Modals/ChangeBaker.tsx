@@ -2,7 +2,7 @@ import { useLockBodyScroll } from 'react-use'
 import { useState, useMemo, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
-import { BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { State } from 'reducers'
 import { changeBakerAction } from 'pages/Loans/Actions/vaultPermissions.actions'
@@ -237,6 +237,7 @@ export const ChangeBaker = ({
             <NewButton
               kind={BUTTON_PRIMARY}
               onClick={updateBakerHandler}
+              form={BUTTON_WIDE}
               disabled={!selectedAddress || selectedAddress === bakerAddress}
             >
               Update Baker

@@ -3,7 +3,7 @@ import { useLockBodyScroll } from 'react-use'
 import { useEffect, useMemo, useState } from 'react'
 
 import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
-import { BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { LoansPopupsAddressInputStateType, ManagePermissionsPopupDataType } from './Modals.helpers'
 import { State } from 'reducers'
 import { validateTzAddress } from 'utils/validatorFunctions'
@@ -163,7 +163,7 @@ export const ManagePermissions = ({
           ) : null}
 
           <div className="manage-btn">
-            <NewButton kind={BUTTON_PRIMARY} onClick={updateHandler} disabled={isActionDisabled}>
+            <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={updateHandler} disabled={isActionDisabled}>
               Update
             </NewButton>
           </div>

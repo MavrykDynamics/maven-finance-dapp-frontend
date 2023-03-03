@@ -6,7 +6,7 @@ import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loa
 import { RepayFullPopupDataType } from './Modals.helpers'
 import { State } from 'reducers'
 import { repayFullAndCloseVaultAction } from 'pages/Loans/Actions/vault.actions'
-import { BUTTON_SECONDARY, BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { BUTTON_SECONDARY, BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
 import NewButton from 'app/App.components/Button/NewButton'
@@ -128,7 +128,7 @@ export const RepayFull = ({
 
               {canRepay ? (
                 <div className="manage-btn">
-                  <NewButton kind={BUTTON_SECONDARY} onClick={continueBtnHandler}>
+                  <NewButton kind={BUTTON_SECONDARY} form={BUTTON_WIDE} onClick={continueBtnHandler}>
                     Continue
                     <Icon id="arrowRight" />
                   </NewButton>
@@ -182,7 +182,7 @@ export const RepayFull = ({
                     </ThreeLevelListItem>
                   </VaultModalOverview>
                   <div className="manage-btn">
-                    <NewButton kind={BUTTON_SECONDARY} disabled>
+                    <NewButton kind={BUTTON_SECONDARY} form={BUTTON_WIDE} disabled>
                       <Icon id="close" />
                       Repay And Close
                     </NewButton>
@@ -244,11 +244,16 @@ export const RepayFull = ({
               </VaultModalOverview>
 
               <div className="buttons-wrapper">
-                <NewButton kind={BUTTON_SECONDARY} onClick={backBtnHandler}>
+                <NewButton kind={BUTTON_SECONDARY} form={BUTTON_WIDE} onClick={backBtnHandler}>
                   <Icon id="arrowLeft" />
                   Back
                 </NewButton>
-                <NewButton kind={BUTTON_PRIMARY} onClick={repayBtnHandler} disabled={isActionLoading}>
+                <NewButton
+                  kind={BUTTON_PRIMARY}
+                  form={BUTTON_WIDE}
+                  onClick={repayBtnHandler}
+                  disabled={isActionLoading}
+                >
                   <Icon id="close" />
                   Repay And Close
                 </NewButton>

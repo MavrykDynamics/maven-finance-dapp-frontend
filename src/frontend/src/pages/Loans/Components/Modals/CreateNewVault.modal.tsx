@@ -11,7 +11,7 @@ import {
 import { CreateVaultPopupDataType } from './Modals.helpers'
 import { isTezosAsset } from 'pages/Loans/Loans.helpers'
 import { AvaliableCollateralType, XtzBakerType } from 'utils/TypesAndInterfaces/Loans'
-import { BUTTON_PRIMARY, BUTTON_SECONDARY } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
 import NewButton from 'app/App.components/Button/NewButton'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
@@ -398,6 +398,7 @@ export const CreateNewVault = ({
             <div className="manage-btn">
               <NewButton
                 kind={BUTTON_PRIMARY}
+                form={BUTTON_WIDE}
                 onClick={() => {
                   setShownScreen(ADD_COLLATERAL_SCREEN_ID)
                   createVaultAction()
@@ -500,6 +501,7 @@ export const CreateNewVault = ({
               <div className="manage-btn">
                 <NewButton
                   kind={BUTTON_PRIMARY}
+                  form={BUTTON_WIDE}
                   onClick={() => setShownScreen(CONFIRMATION_SCREEN_ID)}
                   disabled={isAddCollateralContinueDisabled}
                 >
@@ -603,11 +605,20 @@ export const CreateNewVault = ({
                 </ThreeLevelListItem>
               </div>
               <div className="buttons-wrapper" style={{ marginTop: '30px' }}>
-                <NewButton kind={BUTTON_SECONDARY} onClick={() => setShownScreen(ADD_COLLATERAL_SCREEN_ID)}>
+                <NewButton
+                  kind={BUTTON_SECONDARY}
+                  form={BUTTON_WIDE}
+                  onClick={() => setShownScreen(ADD_COLLATERAL_SCREEN_ID)}
+                >
                   <Icon id="arrowLeft" />
                   Back
                 </NewButton>
-                <NewButton kind={BUTTON_PRIMARY} onClick={depositCollateralHandler} disabled={isActionLoading}>
+                <NewButton
+                  kind={BUTTON_PRIMARY}
+                  form={BUTTON_WIDE}
+                  onClick={depositCollateralHandler}
+                  disabled={isActionLoading}
+                >
                   <Icon id="plus" />
                   Deposit
                 </NewButton>

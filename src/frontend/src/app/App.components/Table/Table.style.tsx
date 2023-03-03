@@ -494,6 +494,20 @@ export const TableCell = styled.td<{
       justify-content: flex-end;
       column-gap: 10px;
     }
+
+    &.borrowing {
+      > div {
+        display: grid;
+        grid-template-columns: 130px 130px;
+        justify-content: flex-end;
+      }
+
+      &.total {
+        > div {
+          grid-template-columns: auto;
+        }
+      }
+    }
   }
 
   input,

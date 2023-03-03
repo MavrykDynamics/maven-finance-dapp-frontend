@@ -3,7 +3,7 @@ import { useLockBodyScroll } from 'react-use'
 import { State } from 'reducers'
 import { useDispatch, useSelector } from 'react-redux'
 
-import { BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { INPUT_LARGE, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import {
@@ -234,6 +234,7 @@ export const AddCollateral = ({
             <NewButton
               kind={BUTTON_PRIMARY}
               onClick={depositCollateralHandler}
+              form={BUTTON_WIDE}
               disabled={inputData.validationStatus === INPUT_STATUS_ERROR || isActionLoading}
             >
               <Icon id="plus" />

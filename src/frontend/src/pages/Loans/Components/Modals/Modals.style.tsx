@@ -51,24 +51,16 @@ export const LoansModalBase = styled.div<{ theme: MavrykTheme }>`
 
   .manage-btn {
     display: flex;
+    width: 250px;
     justify-content: center;
     margin: 30px auto 0 auto;
-
-    button {
-      width: 250px;
-    }
   }
 
   .buttons-wrapper {
-    display: flex;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     column-gap: 10px;
     margin-top: 60px;
-
-    button {
-      margin-top: 0;
-      width: calc(50% - 5px);
-    }
   }
 
   hr {

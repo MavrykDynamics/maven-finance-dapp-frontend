@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { INPUT_LARGE, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { State } from 'reducers'
-import { BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import {
   DEFAULT_LOANS_INPUT_VALUE,
   getOnBlurValue,
@@ -238,7 +238,12 @@ export const WithdrawCollateral = ({
           </VaultModalOverview>
 
           <div className="manage-btn">
-            <NewButton kind={BUTTON_PRIMARY} onClick={withdrawHandler} disabled={isActionBtnDisabled}>
+            <NewButton
+              kind={BUTTON_PRIMARY}
+              form={BUTTON_WIDE}
+              onClick={withdrawHandler}
+              disabled={isActionBtnDisabled}
+            >
               <Icon id="minus" />
               Remove
             </NewButton>

@@ -2,7 +2,12 @@ import { useContext, useEffect, useState } from 'react'
 
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent, getStatusByCollateralRatio } from '../Loans.const'
-import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_SIMPLE } from 'app/App.components/Button/Button.constants'
+import {
+  BUTTON_PRIMARY,
+  BUTTON_SECONDARY,
+  BUTTON_SIMPLE,
+  BUTTON_WIDE,
+} from 'app/App.components/Button/Button.constants'
 
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
@@ -261,6 +266,7 @@ export const BorrowingExpandCard = ({
                       })
                     }
                     kind={BUTTON_PRIMARY}
+                    form={BUTTON_WIDE}
                     disabled={collateralRatio < 200}
                   >
                     <Icon id="coin-loan" /> Borrow
@@ -277,6 +283,7 @@ export const BorrowingExpandCard = ({
                       })
                     }
                     kind={BUTTON_SECONDARY}
+                    form={BUTTON_WIDE}
                     disabled={!borrowedAmount}
                   >
                     <Icon id="okIcon" /> Repay
@@ -347,7 +354,7 @@ export const BorrowingExpandCard = ({
                         </div>
                       </TableCell>
                       {isTotalRow ? (
-                        <TableCell className="buttons borrowing">
+                        <TableCell className="buttons borrowing total">
                           <div className="cell-content row">
                             {isOwner ? (
                               <Button
@@ -388,6 +395,7 @@ export const BorrowingExpandCard = ({
                                   borrowedAssetRate: borrowedAsset.rate,
                                 })
                               }
+                              form={BUTTON_WIDE}
                               kind={BUTTON_SECONDARY}
                             >
                               <Icon id="plus" /> Add
@@ -406,6 +414,7 @@ export const BorrowingExpandCard = ({
                                     borrowedAssetRate: borrowedAsset.rate,
                                   })
                                 }
+                                form={BUTTON_WIDE}
                                 kind={BUTTON_SECONDARY}
                               >
                                 <Icon id="minus" /> Remove

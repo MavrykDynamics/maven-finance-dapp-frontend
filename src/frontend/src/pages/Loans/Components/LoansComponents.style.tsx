@@ -124,7 +124,8 @@ export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
     }
 
     .buttons-wrapper {
-      display: flex;
+      display: grid;
+      grid-template-columns: 180px 180px;
       column-gap: 10px;
       margin-left: auto;
     }
@@ -195,7 +196,9 @@ export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
   }
 
   .repay-full {
-    margin-left: auto;
+    position: absolute;
+    right: 18px;
+    bottom: 20px;
   }
 `
 export const StatusMessageStyled = styled.div<{ theme: MavrykTheme }>`

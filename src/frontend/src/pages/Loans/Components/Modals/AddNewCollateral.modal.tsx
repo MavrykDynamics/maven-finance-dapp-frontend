@@ -14,7 +14,7 @@ import NewButton from 'app/App.components/Button/NewButton'
 
 import { calcCollateralRatio, isTezosAsset } from 'pages/Loans/Loans.helpers'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
-import { BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { depositCollateralAction } from 'pages/Loans/Actions/vaultCollateral.actions'
 import { AddNewCollateralDataProps, getOnBlurValue, getOnFocusValue } from './Modals.helpers'
@@ -408,7 +408,12 @@ export const AddNewCollateral = ({
           </VaultModalOverview>
 
           <div className="manage-btn">
-            <NewButton kind={BUTTON_PRIMARY} onClick={depositCollateralHandler} disabled={isDepositBtnDisabled}>
+            <NewButton
+              kind={BUTTON_PRIMARY}
+              form={BUTTON_WIDE}
+              onClick={depositCollateralHandler}
+              disabled={isDepositBtnDisabled}
+            >
               <Icon id="plus" />
               Deposit
             </NewButton>

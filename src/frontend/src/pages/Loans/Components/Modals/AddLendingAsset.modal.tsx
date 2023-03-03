@@ -11,7 +11,7 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { INPUT_LARGE, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { State } from 'reducers'
 import { AddLendingAssetDataType, DEFAULT_LOANS_INPUT_VALUE, getOnBlurValue, getOnFocusValue } from './Modals.helpers'
-import { BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
@@ -164,7 +164,7 @@ export const AddLendingAsset = ({
           </div>
 
           <div className="manage-btn">
-            <NewButton kind={BUTTON_PRIMARY} onClick={depositHandler} disabled={isDepositDisabled}>
+            <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={depositHandler} disabled={isDepositDisabled}>
               <Icon id="plus" />
               Deposit
             </NewButton>

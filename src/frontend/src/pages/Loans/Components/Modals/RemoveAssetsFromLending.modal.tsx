@@ -8,7 +8,7 @@ import Icon from 'app/App.components/Icon/Icon.view'
 import { Input } from 'app/App.components/Input/NewInput'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
-import { BUTTON_PRIMARY, BUTTON_SECONDARY } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { INPUT_LARGE, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { silverColor } from 'styles'
 import {
@@ -167,7 +167,12 @@ export const RemoveAssetsFromLending = ({
               </Input>
 
               <div className="manage-btn">
-                <NewButton kind={BUTTON_PRIMARY} onClick={continueBtnHandler} disabled={continueBtnDisabled}>
+                <NewButton
+                  kind={BUTTON_PRIMARY}
+                  form={BUTTON_WIDE}
+                  onClick={continueBtnHandler}
+                  disabled={continueBtnDisabled}
+                >
                   Continue
                   <Icon id="arrowRight" />
                 </NewButton>
@@ -208,11 +213,16 @@ export const RemoveAssetsFromLending = ({
               </div>
 
               <div className="buttons-wrapper">
-                <NewButton kind={BUTTON_SECONDARY} onClick={backBtnHandler}>
+                <NewButton kind={BUTTON_SECONDARY} form={BUTTON_WIDE} onClick={backBtnHandler}>
                   <Icon id="arrowLeft" />
                   Back
                 </NewButton>
-                <NewButton kind={BUTTON_PRIMARY} onClick={withdrawHandler} disabled={isWithdrawDisabled}>
+                <NewButton
+                  kind={BUTTON_PRIMARY}
+                  form={BUTTON_WIDE}
+                  onClick={withdrawHandler}
+                  disabled={isWithdrawDisabled}
+                >
                   <Icon id="minus" />
                   Remove Asset
                 </NewButton>

@@ -6,7 +6,7 @@ import { INPUT_LARGE, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.c
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { BorrowPopupDataType, DEFAULT_LOANS_INPUT_VALUE, getOnBlurValue, getOnFocusValue } from './Modals.helpers'
 import { State } from 'reducers'
-import { BUTTON_PRIMARY, BUTTON_SECONDARY } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
 import NewButton from 'app/App.components/Button/NewButton'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
@@ -223,6 +223,7 @@ export const BorrowAsset = ({
                 <NewButton
                   kind={BUTTON_PRIMARY}
                   onClick={continueBtnHandler}
+                  form={BUTTON_WIDE}
                   disabled={inputData.validationStatus !== INPUT_STATUS_SUCCESS}
                 >
                   Continue
@@ -294,11 +295,16 @@ export const BorrowAsset = ({
               </VaultModalOverview>
 
               <div className="buttons-wrapper">
-                <NewButton kind={BUTTON_SECONDARY} onClick={backBtnHandler}>
+                <NewButton kind={BUTTON_SECONDARY} form={BUTTON_WIDE} onClick={backBtnHandler}>
                   <Icon id="arrowLeft" />
                   Back
                 </NewButton>
-                <NewButton kind={BUTTON_PRIMARY} onClick={borrowAsserHandler} disabled={isActionLoading}>
+                <NewButton
+                  kind={BUTTON_PRIMARY}
+                  form={BUTTON_WIDE}
+                  onClick={borrowAsserHandler}
+                  disabled={isActionLoading}
+                >
                   <Icon id="coin-loan" />
                   Borrow {borrowedAsset?.symbol}
                 </NewButton>
