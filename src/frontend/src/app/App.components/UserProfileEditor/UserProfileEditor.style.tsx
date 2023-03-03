@@ -2,8 +2,7 @@ import styled from 'styled-components/macro'
 import { MavrykTheme } from '../../../styles/interfaces'
 
 export const UserProfileEditorStyled = styled.div<{ theme: MavrykTheme }>`
-  padding: 10px;
-  padding-bottom: 0;
+  padding: 10px 10px 0 10px;
 
   .avatar {
     display: flex;
@@ -30,29 +29,8 @@ export const UserProfileEditorStyled = styled.div<{ theme: MavrykTheme }>`
 `
 
 export const UserProfileEditorSaveButton = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-top: 30px;
-
-  button {
-    padding: 0 50px;
-    height: 50px;
-    width: 250px;
-
-    font-weight: 600;
-    font-size: 16px;
-    line-height: 16px;
-
-    color: ${({ theme }) => theme.containerColor};
-    background-color: ${({ theme }) => theme.valueColor};
-    border-radius: 25px;
-
-    transition: opacity 0.3s;
-
-    &:hover {
-      opacity: 0.6;
-    }
-  }
+  margin: 30px auto 0;
+  max-width: 250px;
 `
 
 export const UserProfileEditorZoom = styled.div`
@@ -77,7 +55,7 @@ export const UserProfileEditorZoom = styled.div`
     }
   }
 
-  label {
+  .setting-title {
     margin: 10px 0 10px 22px;
   }
 
@@ -111,27 +89,7 @@ export const UserProfileEditorRotate = styled.div`
   margin-top: 10px;
 
   button {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    width: 30px;
-    height: 30px;
-
     border: 1px solid ${({ theme }) => theme.cardBorderColor};
-    border-radius: 50%;
-
-    transition: opacity 0.3s;
-
-    svg {
-      width: 16px;
-      height: 16px;
-      fill: ${({ theme }) => theme.valueColor};
-    }
-
-    &:hover {
-      opacity: 0.6;
-    }
 
     &:first-of-type {
       margin-right: 10px;

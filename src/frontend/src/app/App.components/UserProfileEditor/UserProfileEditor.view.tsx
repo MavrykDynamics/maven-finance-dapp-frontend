@@ -8,6 +8,8 @@ import {
   UserProfileEditorSaveButton,
 } from './UserProfileEditor.style'
 import Icon from '../Icon/Icon.view'
+import NewButton from 'app/App.components/Button/NewButton'
+import { PRIMARY, BUTTON_SIMPLE, BUTTON_ROUND, BUTTON_WIDE } from '../Button/Button.constants'
 
 const rotateSides = {
   LEFT: 'left',
@@ -33,7 +35,7 @@ export const UserProfileEditor = ({ file, getFile, show: showEditor, closeEditor
       const preparedUrl = await fetch(dataUrl)
       const blob = await preparedUrl.blob()
       const editedFile = new File([blob], file?.name || defaultFileName)
-      
+
       getFile(editedFile)
       setZoom('1')
       setRotate('0')
@@ -41,15 +43,15 @@ export const UserProfileEditor = ({ file, getFile, show: showEditor, closeEditor
     }
   }
 
-  function handleZoom(e: any) {
+  function handleZoom(e: React.ChangeEvent<HTMLInputElement>) {
     // stylizes the background of input range up to slider thumb
     const target = e.target
 
-    const min = target.min
-    const max = target.max
-    const val = target.value
-    
-    target.style.backgroundSize = (val - min) * 100 / (max - min) + '% 100%'
+    const min = Number(target.min)
+    const max = Number(target.max)
+    const val = Number(target.value)
+
+    target.style.backgroundSize = ((val - min) * 100) / (max - min) + '% 100%'
 
     // set zoom
     setZoom(e.target.value)
@@ -83,12 +85,17 @@ export const UserProfileEditor = ({ file, getFile, show: showEditor, closeEditor
             />
 
             <UserProfileEditorRotate>
-              <button onClick={() => handleRotate(rotateSides.LEFT)}>
+              <NewButton isThin kind={BUTTON_SIMPLE} form={BUTTON_ROUND} onClick={() => handleRotate(rotateSides.LEFT)}>
                 <Icon id="rotate-left-outlined" />
-              </button>
-              <button onClick={() => handleRotate(rotateSides.RIGHT)}>
+              </NewButton>
+              <NewButton
+                isThin
+                kind={BUTTON_SIMPLE}
+                form={BUTTON_ROUND}
+                onClick={() => handleRotate(rotateSides.RIGHT)}
+              >
                 <Icon id="rotate-right-outlined" />
-              </button>
+              </NewButton>
             </UserProfileEditorRotate>
           </div>
 
@@ -97,26 +104,21 @@ export const UserProfileEditor = ({ file, getFile, show: showEditor, closeEditor
           </div>
 
           <UserProfileEditorZoom>
-            <label>Zoom:</label>
+            <div className="setting-title">Zoom:</div>
 
             <div>
               <Icon id="minus" />
 
-              <input
-                defaultValue={zoom}
-                onChange={handleZoom}
-                type="range"
-                min="1"
-                max="3"
-                step="0.1"
-              />
+              <input defaultValue={zoom} onChange={handleZoom} type="range" min="1" max="3" step="0.1" />
 
               <Icon id="plus" />
             </div>
           </UserProfileEditorZoom>
 
           <UserProfileEditorSaveButton>
-            <button onClick={handleFile}>Save Photo</button>
+            <NewButton kind={PRIMARY} form={BUTTON_WIDE} onClick={handleFile}>
+              Save Photo
+            </NewButton>
           </UserProfileEditorSaveButton>
         </UserProfileEditorStyled>
       </PopupContainerWrapper>
