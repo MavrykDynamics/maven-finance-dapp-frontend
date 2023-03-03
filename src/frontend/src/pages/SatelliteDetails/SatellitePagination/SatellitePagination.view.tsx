@@ -1,12 +1,12 @@
 import { useSelector } from 'react-redux'
 import { Link, useParams } from 'react-router-dom'
 
-import { TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
+import { BUTTON_SECONDARY } from 'app/App.components/Button/Button.constants'
 import { State } from 'reducers'
 
 // components
 import Icon from '../../../app/App.components/Icon/Icon.view'
-import NewButton from 'app/App.components/Button/NewButton.controller'
+import NewButton from 'app/App.components/Button/NewButton'
 
 // style
 import { SatellitePaginationStyled } from './SatellitePagination.style'
@@ -25,8 +25,8 @@ const SatellitePagination = () => {
   return (
     <SatellitePaginationStyled>
       <Link to={`/satellite-nodes`} className="go-back">
-        <NewButton kind={TRANSPARENT_WITH_BORDER} className="go-back">
-          <Icon id="arrowRight" /> Back to satellites
+        <NewButton kind={BUTTON_SECONDARY}>
+          <Icon id="full-arrow-left" /> Back to satellites
         </NewButton>
       </Link>
       {prevSatelliteAddress ? (

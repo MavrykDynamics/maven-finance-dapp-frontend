@@ -5,13 +5,15 @@ import { Link } from 'react-router-dom'
 import { State } from 'reducers'
 
 import { CHART_TEST_DATA } from '../tabs.const'
-import { ACTION_PRIMARY, ACTION_SIMPLE, TRANSPARENT } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_SIMPLE, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
-import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { Chart } from 'app/App.components/Chart/Chart.view'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { SlidingTabButtons, TabItem } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
+import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
+import Button from 'app/App.components/Button/NewButton'
+import Icon from 'app/App.components/Icon/Icon.view'
 
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import {
@@ -20,7 +22,6 @@ import {
   PortfolioWalletStyled,
   PortfolioChartStyled,
 } from './DashboardPersonalComponents.style'
-import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
 type PortfolioTabProps = {
   xtzAmount: number
@@ -97,7 +98,7 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
           <div className="value">
             <CommaNumber value={sMVKAmount} />
             <Link to="/">
-              <Button text="View" className="no-before" kind={ACTION_SIMPLE} />
+              <Button kind={BUTTON_SIMPLE}>View</Button>
             </Link>
           </div>
         </div>
@@ -106,7 +107,7 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
           <div className="value">
             <CommaNumber value={notsMVKAmount} />
             <Link to="/">
-              <Button text="Stake" className="no-before" kind={ACTION_SIMPLE} />
+              <Button kind={BUTTON_SIMPLE}>Stake</Button>
             </Link>
           </div>
         </div>
@@ -115,7 +116,7 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
           <div className="value">
             <CommaNumber value={xtzAmount} />
             <Link to="/satellites">
-              <Button text="Delegate" className="no-before" kind={ACTION_SIMPLE} />
+              <Button kind={BUTTON_SIMPLE}>Delegate</Button>
             </Link>
           </div>
         </div>
@@ -124,7 +125,7 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
           <div className="value">
             <CommaNumber value={tzBTCAmount} />
             <Link to="/loans">
-              <Button text="Borrow" className="no-before" kind={ACTION_SIMPLE} />
+              <Button kind={BUTTON_SIMPLE}>Borrow</Button>
             </Link>
           </div>
         </div>
@@ -166,7 +167,7 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
                   </div> */}
                   <div className="list-part  view-tx-link">
                     <Link to={{ pathname: `https://ghostnet.tzkt.io/${operationHash}` }} target="_blank">
-                      <Button text="View TX" kind={TRANSPARENT} className="link" />
+                      <Button kind={BUTTON_SIMPLE}>View TX</Button>
                     </Link>
                   </div>
                 </ListItem>
@@ -176,9 +177,14 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
         ) : (
           <div className="no-data">
             <span>Nothing supplied at this time</span>
-            <Link to="/loans">
-              <Button text="Lend Asset" icon="lend" kind={ACTION_PRIMARY} className="noStroke dashboard-sectionLink" />
-            </Link>
+            <div className="nav-button">
+              <Link to="/loans">
+                <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE}>
+                  <Icon id="lend" />
+                  Lend Asset{' '}
+                </Button>
+              </Link>
+            </div>
           </div>
         )}
       </LBHInfoBlock>
@@ -218,7 +224,7 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
                   </div> */}
                   <div className="list-part view-tx-link">
                     <Link to={{ pathname: `https://ghostnet.tzkt.io/${operationHash}` }} target="_blank">
-                      <Button text="View TX" kind={TRANSPARENT} className="link" />
+                      <Button kind={BUTTON_SIMPLE}>View TX</Button>
                     </Link>
                   </div>
                 </ListItem>
@@ -228,14 +234,14 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
         ) : (
           <div className="no-data">
             <span>Nothing borrowed at this time</span>
-            <Link to="/loans">
-              <Button
-                text="Borrow Asset"
-                icon="borrow"
-                kind={ACTION_PRIMARY}
-                className="noStroke dashboard-sectionLink"
-              />
-            </Link>
+            <div className="nav-button">
+              <Link to="/loans">
+                <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE}>
+                  <Icon id="borrow" />
+                  Borrow Asset{' '}
+                </Button>
+              </Link>
+            </div>
           </div>
         )}
       </LBHInfoBlock>

@@ -19,13 +19,13 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
 import { getTotalDelegatedMVK } from './helpers/Satellites.consts'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
-import { NAV_SIMPLE } from 'app/App.components/Button/Button.constants'
+import { BUTTON_SECONDARY, BUTTON_SIMPLE } from 'app/App.components/Button/Button.constants'
 import { getFeedsStorage } from 'pages/DataFeeds/DataFeeds.actions'
 
 // view
 import { SmallInfoBlock } from 'pages/SatelliteGovernance/SatelliteGovernance.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
-import NewButton from 'app/App.components/Button/NewButton.controller'
+import NewButton from 'app/App.components/Button/NewButton'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { EmptyContainer } from 'app/App.style'
 import { Page, PageContent } from 'styles'
@@ -99,7 +99,7 @@ const Satellites = () => {
                     </GovRightContainerTitleArea>
 
                     <Link to="/satellite-nodes">
-                      <NewButton kind={NAV_SIMPLE} className="see-all">
+                      <NewButton kind={BUTTON_SIMPLE}>
                         See all Satellites
                         <Icon id="full-arrow-right" />
                       </NewButton>
@@ -122,7 +122,7 @@ const Satellites = () => {
                     </GovRightContainerTitleArea>
 
                     <Link to="/data-feeds">
-                      <NewButton kind={NAV_SIMPLE} className="see-all">
+                      <NewButton kind={BUTTON_SIMPLE}>
                         See all Data Feeds
                         <Icon id="full-arrow-right" />
                       </NewButton>

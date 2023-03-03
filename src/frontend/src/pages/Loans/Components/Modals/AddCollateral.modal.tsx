@@ -3,9 +3,9 @@ import { useLockBodyScroll } from 'react-use'
 import { State } from 'reducers'
 import { useDispatch, useSelector } from 'react-redux'
 
-import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
-import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import { INPUT_LARGE, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import {
   AddCollateralPopupDataType,
   DEFAULT_LOANS_INPUT_VALUE,
@@ -15,7 +15,7 @@ import {
 
 import { Input } from 'app/App.components/Input/NewInput'
 import Icon from 'app/App.components/Icon/Icon.view'
-import NewButton from 'app/App.components/Button/NewButton.controller'
+import NewButton from 'app/App.components/Button/NewButton'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
 
@@ -167,9 +167,7 @@ export const AddCollateral = ({
           <hr />
 
           <Input
-            className={`${
-              collateralData?.rate ? 'input-with-rate' : ''
-            } large-input pinned-dropdown withdrawCollateralInput`}
+            className={`${collateralData?.rate ? 'input-with-rate' : ''} pinned-dropdown mb-45`}
             inputProps={{
               value: inputData.amount,
               type: 'number',
@@ -191,6 +189,7 @@ export const AddCollateral = ({
                 ),
               inputStatus: inputData.validationStatus,
               convertedValue: inputAmount * (collateralData?.rate ?? 1),
+              inputSize: INPUT_LARGE,
             }}
           >
             <InputPinnedTokenInfo>
@@ -231,15 +230,17 @@ export const AddCollateral = ({
             </ThreeLevelListItem>
           </VaultModalOverview>
 
-          <NewButton
-            kind={ACTION_PRIMARY}
-            onClick={depositCollateralHandler}
-            disabled={inputData.validationStatus === INPUT_STATUS_ERROR || isActionLoading}
-            className="modal-manage-btn"
-          >
-            <Icon id="plus" />
-            Deposit
-          </NewButton>
+          <div className="manage-btn">
+            <NewButton
+              kind={BUTTON_PRIMARY}
+              onClick={depositCollateralHandler}
+              form={BUTTON_WIDE}
+              disabled={inputData.validationStatus === INPUT_STATUS_ERROR || isActionLoading}
+            >
+              <Icon id="plus" />
+              Deposit
+            </NewButton>
+          </div>
         </LoansModalBase>
       </PopupContainerWrapper>
     </PopupContainer>

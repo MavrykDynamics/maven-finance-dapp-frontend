@@ -7,11 +7,11 @@ import { CouncilMaxLength } from 'utils/TypesAndInterfaces/Council'
 
 // helpers
 import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
-import { ACTION_PRIMARY, SUBMIT } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, SUBMIT } from 'app/App.components/Button/Button.constants'
 
 // view
 import { Input } from 'app/App.components/Input/NewInput'
-import NewButton from 'app/App.components/Button/NewButton.controller'
+import NewButton from 'app/App.components/Button/NewButton'
 import { TextArea } from '../../../app/App.components/TextArea/TextArea.controller'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 import { DropDown, DropdownItemType } from '../../../app/App.components/DropDown/DropDown.controller'
@@ -223,7 +223,7 @@ export const CouncilFormTransferTokens = (maxLength: CouncilMaxLength) => {
         />
       </div>
       <div className="btn-group">
-        <NewButton kind={ACTION_PRIMARY} type={SUBMIT}>
+        <NewButton kind={BUTTON_PRIMARY} type={SUBMIT}>
           <Icon id="transfer_tokens" />
           Transfer Tokens
         </NewButton>

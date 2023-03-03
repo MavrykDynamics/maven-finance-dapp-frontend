@@ -4,15 +4,16 @@ import { useSelector } from 'react-redux'
 import { State } from 'reducers'
 import { VotingProposalsProps, VotingProps } from './helpers/voting'
 import { VotingTypes } from './helpers/voting.const'
+import { VOTING_AGAINST, BUTTON_PRIMARY, VOTING_FOR, VOTING_PASS, BUTTON_WIDE } from '../Button/Button.constants'
 
 // styles
 import { VotingAreaStyled, VotingButtonsContainer } from './VotingArea.style'
 
 // view
 import { VotingBar } from './VotingBar.controller'
-import { Button } from '../Button/Button.controller'
 import { CommaNumber } from '../CommaNumber/CommaNumber.controller'
 import { ConnectWallet } from '../ConnectWallet/ConnectWallet.controller'
+import Button from '../Button/NewButton'
 
 type VotingType = VotingProps & {
   className?: string
@@ -39,27 +40,33 @@ export const VotingArea = ({
       <VotingButtonsContainer className="voting-buttons-wrapper">
         {forBtn && (
           <Button
-            text={forBtn.text ?? 'Vote YES'}
             onClick={() => handleVote(VotingTypes.YES)}
-            kind={'votingFor'}
+            kind={VOTING_FOR}
+            form={BUTTON_WIDE}
             disabled={disableVotingButtons}
-          />
+          >
+            {forBtn.text ?? 'Vote YES'}
+          </Button>
         )}
         {passBtn && (
           <Button
-            text={passBtn.text ?? 'Vote PASS'}
             onClick={() => handleVote(VotingTypes.PASS)}
-            kind={'votingAbstain'}
+            kind={VOTING_PASS}
+            form={BUTTON_WIDE}
             disabled={disableVotingButtons}
-          />
+          >
+            {passBtn.text ?? 'Vote PASS'}
+          </Button>
         )}
         {againsBtn && (
           <Button
-            text={againsBtn.text ?? 'Vote NO'}
             onClick={() => handleVote(VotingTypes.NO)}
-            kind={'votingAgainst'}
+            kind={VOTING_AGAINST}
+            form={BUTTON_WIDE}
             disabled={disableVotingButtons}
-          />
+          >
+            {againsBtn.text ?? 'Vote NO'}
+          </Button>
         )}
       </VotingButtonsContainer>
     ) : null
@@ -115,11 +122,12 @@ export const VotingProposalsArea = ({
           <CommaNumber className="voted-label" value={voteStatistics.passVotesMVKTotal ?? 0} endingText={'voted MVK'} />
           {accountPkh ? (
             <Button
-              text={'Vote for this Proposal'}
               onClick={() => handleProposalVote(Number(selectedProposal.id))}
-              kind="actionPrimary"
+              kind={BUTTON_PRIMARY}
               disabled={vote?.round === 0 || !isSatellite}
-            />
+            >
+              Vote for this Proposal
+            </Button>
           ) : (
             <ConnectWallet />
           )}

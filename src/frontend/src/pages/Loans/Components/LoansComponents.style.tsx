@@ -99,6 +99,7 @@ export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   flex-direction: column;
   position: relative;
+  cursor: default;
 
   .block-name {
     font-weight: 600;
@@ -123,19 +124,10 @@ export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
     }
 
     .buttons-wrapper {
-      display: flex;
+      display: grid;
+      grid-template-columns: 180px 180px;
       column-gap: 10px;
       margin-left: auto;
-
-      button {
-        width: 180px;
-
-        &.repay {
-          svg {
-            height: 27px;
-          }
-        }
-      }
     }
   }
 
@@ -143,7 +135,7 @@ export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
     display: flex;
     align-items: center;
     width: 400px;
-    margin: 4px 0;
+    margin: 6px 0;
 
     .name {
       margin-right: 10px;
@@ -155,6 +147,7 @@ export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
       font-size: 14px;
     }
 
+    /* TODO: remove button styles from here */
     button,
     a {
       margin-left: auto;
@@ -200,6 +193,12 @@ export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
       width: 15px;
       height: 15px;
     }
+  }
+
+  .repay-full {
+    position: absolute;
+    right: 18px;
+    bottom: 20px;
   }
 `
 export const StatusMessageStyled = styled.div<{ theme: MavrykTheme }>`

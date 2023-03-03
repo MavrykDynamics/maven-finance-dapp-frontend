@@ -1,7 +1,7 @@
-import { ACTION_SIMPLE } from '../Button/Button.constants'
-import NewButton from '../Button/NewButton.controller'
+import { BUTTON_SIMPLE } from '../Button/Button.constants'
+import NewButton from '../Button/NewButton'
 import { CommaNumber } from '../CommaNumber/CommaNumber.controller'
-import { InputStatusType } from './Input.constants'
+import { InputSizeType, InputStatusType } from './Input.constants'
 import { InputOneChange } from './Input.controller'
 import { InputPinnedChild, InputStyledStatus, InputWrapper, NewInputLabel, StyledInput } from './Input.style'
 
@@ -13,10 +13,10 @@ type InputViewProps = {
     balanceAsset?: string
     balanceName?: string
     useMaxHandler?: () => void
-    errorMessage?: string
     label?: string
     inputStatus: InputStatusType
     convertedValue?: number
+    inputSize?: InputSizeType
   }
   inputProps: {
     disabled?: boolean
@@ -42,17 +42,17 @@ export const Input = ({
     balanceAsset,
     useMaxHandler,
     convertedValue,
-    errorMessage,
     label,
     balanceName = 'Balance',
     inputStatus,
+    inputSize,
   },
 }: InputViewProps) => {
   return (
-    <InputWrapper className={`${className} ${inputStatus}`} id={'inputStyled'}>
+    <InputWrapper className={`${className} ${inputStatus} ${inputSize}`} id={'inputStyled'}>
       {label ? <NewInputLabel>{label}</NewInputLabel> : null}
       <StyledInput {...inputProps} className={inputStatus} autoComplete={inputProps.name} />
-      {/* <InputStyledStatus className={`${inputStatus} ${children ? 'hasChild' : ''}`} /> */}
+      {Boolean(children) ? null : <InputStyledStatus className={`${inputStatus}`} />}
 
       {balance !== undefined && balanceAsset ? (
         <CommaNumber
@@ -64,9 +64,11 @@ export const Input = ({
       ) : null}
 
       {useMaxHandler ? (
-        <NewButton onClick={useMaxHandler} kind={ACTION_SIMPLE} className="use-max-btn">
-          Use Max
-        </NewButton>
+        <div className="useMax-btn">
+          <NewButton onClick={useMaxHandler} kind={BUTTON_SIMPLE}>
+            Use Max
+          </NewButton>
+        </div>
       ) : null}
 
       {convertedValue !== undefined ? (

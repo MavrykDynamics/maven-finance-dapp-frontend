@@ -1,9 +1,9 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 
 // view
-import NewButton from 'app/App.components/Button/NewButton.controller'
+import NewButton from 'app/App.components/Button/NewButton'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { Input } from '../../../app/App.components/Input/Input.controller'
 import Icon from '../../../app/App.components/Icon/Icon.view'
@@ -11,7 +11,13 @@ import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
 // helpers, consts
 import { State } from 'reducers'
-import { ACTION_PRIMARY, ACTION_SECONDARY } from '../../../app/App.components/Button/Button.constants'
+import {
+  BUTTON_PRIMARY,
+  BUTTON_PULSE,
+  BUTTON_SECONDARY,
+  BUTTON_SIMPLE,
+  BUTTON_WIDE,
+} from '../../../app/App.components/Button/Button.constants'
 import { isValidNumberValue, mathRoundTwoDigit } from '../../../utils/validatorFunctions'
 import { rewardsCompound } from '../Doorman.actions'
 import { InputStatusType, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
@@ -204,8 +210,12 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
             <div>
               <h3>My MVK Balance</h3>
               <div className="balance-btn-group">
-                <CommaNumber value={myMvkTokenBalance} />
-                {Boolean(myMvkTokenBalance) && <button onClick={handleStakeAll}>Stake All</button>}
+                <CommaNumber value={myMvkTokenBalance} className="amount" />
+                {Boolean(myMvkTokenBalance) && (
+                  <NewButton onClick={handleStakeAll} kind={BUTTON_SIMPLE}>
+                    Stake All
+                  </NewButton>
+                )}
               </div>
             </div>
           </StakeUnstakeBalance>
@@ -217,8 +227,12 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
             <div>
               <h3>Total MVK Staked</h3>
               <div className="balance-btn-group">
-                <CommaNumber value={mySMvkTokenBalance} />
-                {Boolean(mySMvkTokenBalance) && <button onClick={handleUnstakeAll}>Unstake All</button>}
+                <CommaNumber value={mySMvkTokenBalance} className="amount" />
+                {Boolean(mySMvkTokenBalance) && (
+                  <NewButton onClick={handleUnstakeAll} kind={BUTTON_SIMPLE}>
+                    Unstake All
+                  </NewButton>
+                )}
               </div>
             </div>
           </StakeUnstakeBalance>
@@ -229,9 +243,10 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
             {!mySMvkBalanceIsZero && showDelegateBtn && (
               <NewButton
                 onClick={handleDelegate}
-                kind={ACTION_PRIMARY}
+                kind={BUTTON_PRIMARY}
                 disabled={!accountPkh}
-                className={!accountPkh ? '' : 'pulse'}
+                isThin
+                animation={accountPkh ? BUTTON_PULSE : null}
               >
                 <Icon id="satellites" />
                 Delegate
@@ -256,12 +271,12 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
             <ImageWithPlug imageLink={'/images/coin-bronze.svg'} alt="coin" />
             <div>
               <h3>Total MVK Earned</h3>
-              <CommaNumber value={earnedValue} />
+              <CommaNumber value={earnedValue} className="amount" />
             </div>
           </StakeUnstakeBalance>
 
           <StakeUnstakeRightPart>
-            <NewButton kind={ACTION_PRIMARY} onClick={handleCompound} disabled={!userHasRewards}>
+            <NewButton kind={BUTTON_PRIMARY} isThin onClick={handleCompound} disabled={!userHasRewards}>
               <Icon id="compound" /> Compound
             </NewButton>
           </StakeUnstakeRightPart>
@@ -310,11 +325,11 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
           </StakeUnstakeInputColumn>
         </StakeUnstakeInputGrid>
         <StakeUnstakeButtonGrid>
-          <NewButton kind={ACTION_PRIMARY} onClick={handleStake}>
+          <NewButton kind={BUTTON_PRIMARY} onClick={handleStake} form={BUTTON_WIDE}>
             <Icon id="in" /> Stake
           </NewButton>
 
-          <NewButton kind={ACTION_SECONDARY} onClick={handleUnStake}>
+          <NewButton kind={BUTTON_SECONDARY} onClick={handleUnStake} form={BUTTON_WIDE}>
             <Icon id="out" /> Unstake
           </NewButton>
         </StakeUnstakeButtonGrid>
