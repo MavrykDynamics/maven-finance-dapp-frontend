@@ -148,6 +148,8 @@ export const TextareaStyled = styled.textarea`
   /* hyphens: auto; */
   font-family: 'Metropolis', Helvetica, Arial, sans-serif;
   font-weight: 500;
+  font-size: 14px;
+  line-height: 14px;
   margin: 0;
   display: block;
   overflow: visible;

@@ -18,6 +18,7 @@ export const EmergencyGovProposalModalContent = styled.div<{ theme: MavrykTheme 
 
     #inputStyled {
       max-width: 75%;
+      font-size: 14px;
     }
 
     .exit-fee {

@@ -187,9 +187,9 @@ export const StyledInput = styled.input<{ theme: MavrykTheme }>`
   background-color: ${({ theme }) => theme.backgroundColor};
   border: none;
   border-radius: 10px;
-  font-weight: 600;
-  font-size: 22px;
-  line-height: 22px;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 14px;
   margin: 0;
   color: ${({ theme }) => theme.textColor};
   display: block;

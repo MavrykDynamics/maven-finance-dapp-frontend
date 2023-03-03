@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux'
 import { State } from 'reducers'
 import { VotingProposalsProps, VotingProps } from './helpers/voting'
 import { VotingTypes } from './helpers/voting.const'
-import { VOTING_AGAINST, BUTTON_PRIMARY, VOTING_FOR, VOTING_PASS } from '../Button/Button.constants'
+import { VOTING_AGAINST, BUTTON_PRIMARY, VOTING_FOR, VOTING_PASS, BUTTON_WIDE } from '../Button/Button.constants'
 
 // styles
 import { VotingAreaStyled, VotingButtonsContainer } from './VotingArea.style'
@@ -39,17 +39,32 @@ export const VotingArea = ({
     isSatellite && handleVote ? (
       <VotingButtonsContainer className="voting-buttons-wrapper">
         {forBtn && (
-          <Button onClick={() => handleVote(VotingTypes.YES)} kind={VOTING_FOR} disabled={disableVotingButtons}>
+          <Button
+            onClick={() => handleVote(VotingTypes.YES)}
+            kind={VOTING_FOR}
+            form={BUTTON_WIDE}
+            disabled={disableVotingButtons}
+          >
             {forBtn.text ?? 'Vote YES'}
           </Button>
         )}
         {passBtn && (
-          <Button onClick={() => handleVote(VotingTypes.PASS)} kind={VOTING_PASS} disabled={disableVotingButtons}>
+          <Button
+            onClick={() => handleVote(VotingTypes.PASS)}
+            kind={VOTING_PASS}
+            form={BUTTON_WIDE}
+            disabled={disableVotingButtons}
+          >
             {passBtn.text ?? 'Vote PASS'}
           </Button>
         )}
         {againsBtn && (
-          <Button onClick={() => handleVote(VotingTypes.NO)} kind={VOTING_AGAINST} disabled={disableVotingButtons}>
+          <Button
+            onClick={() => handleVote(VotingTypes.NO)}
+            kind={VOTING_AGAINST}
+            form={BUTTON_WIDE}
+            disabled={disableVotingButtons}
+          >
             {againsBtn.text ?? 'Vote NO'}
           </Button>
         )}

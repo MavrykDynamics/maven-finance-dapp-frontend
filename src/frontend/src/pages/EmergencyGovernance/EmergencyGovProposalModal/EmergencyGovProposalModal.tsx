@@ -6,6 +6,7 @@ import { submitEmergencyGovernanceProposal } from '../EmergencyGovernance.action
 import {
   InputStatusType,
   INPUT_LARGE,
+  INPUT_MEDIUM,
   INPUT_STATUS_ERROR,
   INPUT_STATUS_SUCCESS,
 } from 'app/App.components/Input/Input.constants'
@@ -91,7 +92,7 @@ export const EmergencyGovProposalModal = ({ show, closeHandler }: { show: boolea
               settings={{
                 inputStatus: proposalData.title.validation,
                 label: 'Title',
-                inputSize: INPUT_LARGE,
+                inputSize: INPUT_MEDIUM,
               }}
             />
 
