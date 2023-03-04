@@ -32,7 +32,7 @@ export const CouncilPendingStyled = styled(Card)`
       align-items: center;
     }
 
-    .sign-btn {
+    .sign-action {
       margin-left: -37px;
     }
   }
@@ -109,10 +109,6 @@ export const CouncilPendingStyled = styled(Card)`
   .g-centering {
     display: flex;
     justify-content: center;
-  }
-
-  .sign-btn {
-    width: 185px;
   }
 
   .parameters-link {

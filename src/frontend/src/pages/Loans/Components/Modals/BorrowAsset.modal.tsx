@@ -2,13 +2,13 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useLockBodyScroll } from 'react-use'
 import { useEffect, useMemo, useState } from 'react'
 
-import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import { INPUT_LARGE, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { BorrowPopupDataType, DEFAULT_LOANS_INPUT_VALUE, getOnBlurValue, getOnFocusValue } from './Modals.helpers'
 import { State } from 'reducers'
-import { ACTION_PRIMARY, TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
-import NewButton from 'app/App.components/Button/NewButton.controller'
+import NewButton from 'app/App.components/Button/NewButton'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { Input } from 'app/App.components/Input/NewInput'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
@@ -154,9 +154,7 @@ export const BorrowAsset = ({
               <div className="block-name">Select asset and amount to borrow</div>
               {borrowedAsset ? (
                 <Input
-                  className={`${
-                    borrowedAsset.rate ? 'input-with-rate' : ''
-                  } large-input pinned-dropdown withdrawCollateralInput`}
+                  className={`${borrowedAsset.rate ? 'input-with-rate' : ''}pinned-dropdown mb-45`}
                   inputProps={{
                     value: inputData.amount,
                     type: 'number',
@@ -170,6 +168,7 @@ export const BorrowAsset = ({
                     useMaxHandler: () => inputOnChangeHandle(String(borrowCapacity), borrowCapacity),
                     inputStatus: inputData.validationStatus,
                     convertedValue: inputAmount * borrowedAsset.rate,
+                    inputSize: INPUT_LARGE,
                   }}
                 >
                   <InputPinnedTokenInfo>
@@ -214,15 +213,17 @@ export const BorrowAsset = ({
                 </ThreeLevelListItem>
               </VaultModalOverview>
 
-              <NewButton
-                kind={ACTION_PRIMARY}
-                onClick={continueBtnHandler}
-                disabled={inputData.validationStatus !== INPUT_STATUS_SUCCESS}
-                className="modal-manage-btn"
-              >
-                Continue
-                <Icon id="arrowRight" />
-              </NewButton>
+              <div className="manage-btn">
+                <NewButton
+                  kind={BUTTON_PRIMARY}
+                  onClick={continueBtnHandler}
+                  form={BUTTON_WIDE}
+                  disabled={inputData.validationStatus !== INPUT_STATUS_SUCCESS}
+                >
+                  Continue
+                  <Icon id="arrowRight" />
+                </NewButton>
+              </div>
             </>
           ) : (
             <>
@@ -288,15 +289,15 @@ export const BorrowAsset = ({
               </VaultModalOverview>
 
               <div className="buttons-wrapper">
-                <NewButton kind={TRANSPARENT_WITH_BORDER} onClick={backBtnHandler} className="modal-manage-btn">
+                <NewButton kind={BUTTON_SECONDARY} form={BUTTON_WIDE} onClick={backBtnHandler}>
                   <Icon id="arrowLeft" />
                   Back
                 </NewButton>
                 <NewButton
-                  kind={ACTION_PRIMARY}
+                  kind={BUTTON_PRIMARY}
+                  form={BUTTON_WIDE}
                   onClick={borrowAsserHandler}
                   disabled={isActionLoading}
-                  className="modal-manage-btn"
                 >
                   <Icon id="coin-loan" />
                   Borrow {borrowedAsset?.symbol}

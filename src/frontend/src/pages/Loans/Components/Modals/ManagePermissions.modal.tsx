@@ -3,7 +3,7 @@ import { useLockBodyScroll } from 'react-use'
 import { useEffect, useMemo, useState } from 'react'
 
 import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
-import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { LoansPopupsAddressInputStateType, ManagePermissionsPopupDataType } from './Modals.helpers'
 import { State } from 'reducers'
 import { validateTzAddress } from 'utils/validatorFunctions'
@@ -11,7 +11,7 @@ import { validateTzAddress } from 'utils/validatorFunctions'
 import { DropDown, DropdownItemType } from 'app/App.components/DropDown/DropDown.controller'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { Input } from 'app/App.components/Input/NewInput'
-import NewButton from 'app/App.components/Button/NewButton.controller'
+import NewButton from 'app/App.components/Button/NewButton'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
@@ -162,14 +162,11 @@ export const ManagePermissions = ({
             </Table>
           ) : null}
 
-          <NewButton
-            kind={ACTION_PRIMARY}
-            onClick={updateHandler}
-            disabled={isActionDisabled}
-            className="modal-manage-btn"
-          >
-            Update
-          </NewButton>
+          <div className="manage-btn">
+            <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={updateHandler} disabled={isActionDisabled}>
+              Update
+            </NewButton>
+          </div>
         </LoansModalBase>
       </PopupContainerWrapper>
     </PopupContainer>

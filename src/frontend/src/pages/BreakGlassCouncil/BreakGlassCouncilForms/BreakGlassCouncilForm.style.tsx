@@ -34,11 +34,6 @@ export const FormStyled = styled.div<{ theme: MavrykTheme }>`
     padding-left: 10px;
   }
 
-  button {
-    max-width: 300px;
-    white-space: nowrap;
-  }
-
   .address {
     display: flex;
     align-items: center;

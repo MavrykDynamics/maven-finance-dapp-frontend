@@ -7,7 +7,7 @@ import qs from 'qs'
 
 // components
 import { DropDown, DDItemId } from 'app/App.components/DropDown/NewDropdown'
-import NewButton from 'app/App.components/Button/NewButton.controller'
+import NewButton from 'app/App.components/Button/NewButton'
 import { CouncilPastActionView } from 'pages/Council/CouncilActions/CouncilPastAction.view'
 import Carousel from '../../app/App.components/Carousel/Carousel.view'
 import { CouncilMemberView } from 'pages/Council/CouncilMember/CouncilMember.view'
@@ -20,9 +20,10 @@ import { EmptyContainer } from 'app/App.style'
 
 // helpers
 import {
-  ACTION_PRIMARY,
-  ACTION_SECONDARY,
-  TRANSPARENT_WITH_BORDER,
+  BUTTON_PRIMARY,
+  BUTTON_SECONDARY,
+  BUTTON_SIMPLE,
+  BUTTON_WIDE,
 } from '../../app/App.components/Button/Button.constants'
 import { getSeparateSnakeCase } from 'utils/parse'
 import { memberIsFirstOfList } from 'pages/Council/Council.helpers'
@@ -36,7 +37,13 @@ import {
 } from 'app/App.components/Pagination/pagination.consts'
 
 // styles
-import { CouncilStyled, ReviewCard, AvaliableActions, PropagateBreakGlassCouncilCard } from './Council.style'
+import {
+  CouncilStyled,
+  ReviewCard,
+  AvaliableActions,
+  PropagateBreakGlassCouncilCard,
+  CounsilPageWrapper,
+} from './Council.style'
 
 // types
 import { CouncilMaxLength, CouncilAction, CouncilMembers } from 'utils/TypesAndInterfaces/Council'
@@ -239,11 +246,11 @@ export function CouncilView({
   }, [history, isCouncilMember, pathname, queryParameters.pathname, queryParameters.pastActions])
 
   return (
-    <>
+    <CounsilPageWrapper>
       {tabId && isCouncilMember && (
         <Link to={queryParameters.pathname}>
-          <NewButton kind={TRANSPARENT_WITH_BORDER} className="margin-top-30">
-            <Icon id="arrowDown" />
+          <NewButton kind={BUTTON_SECONDARY}>
+            <Icon id="full-arrow-left" />
             Back to Member Dashboard
           </NewButton>
         </Link>
@@ -253,7 +260,7 @@ export function CouncilView({
         <PropagateBreakGlassCouncilCard>
           <h1>Propagate Break Glass</h1>
 
-          <NewButton kind={ACTION_PRIMARY} onClick={handleClickPropagateBreakGlass} disabled={glassBroken}>
+          <NewButton kind={BUTTON_PRIMARY} onClick={handleClickPropagateBreakGlass} disabled={glassBroken}>
             <Icon id="plus" />
             Propagate Break Glass
           </NewButton>
@@ -380,11 +387,15 @@ export function CouncilView({
           {!tabId && (
             <ReviewCard displayPendingSignature={displayPendingSignature}>
               <Link to={`${queryParameters.pathname}${queryParameters.pastActions}`}>
-                <NewButton kind={ACTION_SECONDARY}>Review Past Actions</NewButton>
+                <NewButton form={BUTTON_WIDE} kind={BUTTON_SECONDARY}>
+                  Review Past Actions
+                </NewButton>
               </Link>
 
               <Link to={`${queryParameters.pathname}${queryParameters.pendingActions}`}>
-                <NewButton kind={ACTION_SECONDARY}>Review Pending Actions</NewButton>
+                <NewButton form={BUTTON_WIDE} kind={BUTTON_SECONDARY}>
+                  Review Pending Actions
+                </NewButton>
               </Link>
             </ReviewCard>
           )}
@@ -413,6 +424,6 @@ export function CouncilView({
           {getFormUpdateMemberInfo(maxLength)}
         </PopupContainerWrapper>
       </PopupContainer>
-    </>
+    </CounsilPageWrapper>
   )
 }

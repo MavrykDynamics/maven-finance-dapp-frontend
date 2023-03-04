@@ -6,7 +6,7 @@ import { isValidNumberValue, mathRoundTwoDigit } from '../../../utils/validatorF
 import { unstake } from '../Doorman.actions'
 import { calcExitFee, calcMLI } from '../../../utils/calcFunctions'
 import { InputStatusType, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
-import { ACTION_PRIMARY, ACTION_SECONDARY } from '../../../app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_SECONDARY } from '../../../app/App.components/Button/Button.constants'
 
 // components
 import { CommaNumber } from '../../../app/App.components/CommaNumber/CommaNumber.controller'
@@ -15,7 +15,7 @@ import { Input } from '../../../app/App.components/Input/Input.controller'
 import { DoormanList } from '../DoormanStats/DoormanStats.style'
 import { ExitFeeModalButtons, ExitFeeModalContent } from './ExitFeeModal.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
-import NewButton from 'app/App.components/Button/NewButton.controller'
+import NewButton from 'app/App.components/Button/NewButton'
 import { containerColor } from 'styles'
 
 type ExitFeeModalPropsType = {
@@ -148,7 +148,7 @@ export const ExitFeeModal = ({
 
             <ExitFeeModalButtons>
               <NewButton
-                kind={ACTION_PRIMARY}
+                kind={BUTTON_PRIMARY}
                 disabled={inputData.validation !== INPUT_STATUS_SUCCESS}
                 onClick={() => {
                   unstakeCallback(Number(inputData.amount))
@@ -158,8 +158,8 @@ export const ExitFeeModal = ({
                 <Icon id="success-fill" fill={containerColor} /> Proceed
               </NewButton>
 
-              <NewButton kind={ACTION_SECONDARY} onClick={closePopup}>
-                <Icon id="error" /> Cancel
+              <NewButton kind={BUTTON_SECONDARY} onClick={closePopup}>
+                <Icon id="navigation-menu_close" /> Cancel
               </NewButton>
             </ExitFeeModalButtons>
           </ExitFeeModalContent>

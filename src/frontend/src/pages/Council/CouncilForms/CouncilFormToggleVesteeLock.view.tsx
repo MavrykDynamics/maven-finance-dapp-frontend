@@ -6,11 +6,11 @@ import type { InputStatusType } from '../../../app/App.components/Input/Input.co
 
 // helpers
 import { validateFormAddress } from 'utils/validatorFunctions'
-import { ACTION_PRIMARY, SUBMIT } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, SUBMIT } from 'app/App.components/Button/Button.constants'
 
 // view
 import { Input } from 'app/App.components/Input/NewInput'
-import NewButton from 'app/App.components/Button/NewButton.controller'
+import NewButton from 'app/App.components/Button/NewButton'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 
 // action
@@ -82,7 +82,7 @@ export const CouncilFormToggleVesteeLock = () => {
           <Input inputProps={vesteeAddressProps} settings={vesteeAddressSettings} />
         </div>
         <div className="button-aligment">
-          <NewButton kind={ACTION_PRIMARY} type={SUBMIT}>
+          <NewButton kind={BUTTON_PRIMARY} type={SUBMIT}>
             <Icon id="lock" />
             Toggle Vestee Lock
           </NewButton>

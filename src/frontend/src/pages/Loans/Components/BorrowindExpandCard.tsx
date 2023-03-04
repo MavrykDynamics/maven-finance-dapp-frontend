@@ -2,13 +2,17 @@ import { useContext, useEffect, useState } from 'react'
 
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent, getStatusByCollateralRatio } from '../Loans.const'
-import { ACTION_PRIMARY, ACTION_SIMPLE, TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
+import {
+  BUTTON_PRIMARY,
+  BUTTON_SECONDARY,
+  BUTTON_SIMPLE,
+  BUTTON_WIDE,
+} from 'app/App.components/Button/Button.constants'
 
-import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
 import Expand from 'app/App.components/Expand/Expand.view'
-import NewButton from 'app/App.components/Button/NewButton.controller'
+import Button from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { StatusMessage } from './StatusMessage.view'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
@@ -248,10 +252,6 @@ export const BorrowingExpandCard = ({
               {isOwner ? (
                 <div className="buttons-wrapper">
                   <Button
-                    text="Borrow"
-                    icon="coin-loan"
-                    disabled={collateralRatio < 200}
-                    strokeWidth={0.5}
                     onClick={() =>
                       openBorrowPopup?.({
                         vaultId,
@@ -265,9 +265,13 @@ export const BorrowingExpandCard = ({
                         DAOFee,
                       })
                     }
-                    kind={ACTION_PRIMARY}
-                  />
-                  <NewButton
+                    kind={BUTTON_PRIMARY}
+                    form={BUTTON_WIDE}
+                    disabled={collateralRatio < 200}
+                  >
+                    <Icon id="coin-loan" /> Borrow
+                  </Button>
+                  <Button
                     onClick={() =>
                       openRepayPopup?.({
                         vaultId,
@@ -278,12 +282,12 @@ export const BorrowingExpandCard = ({
                         borrowCapacity: borrowCapacity / borrowedAsset.rate,
                       })
                     }
-                    kind={TRANSPARENT_WITH_BORDER}
+                    kind={BUTTON_SECONDARY}
+                    form={BUTTON_WIDE}
                     disabled={!borrowedAmount}
-                    className="repay"
                   >
                     <Icon id="okIcon" /> Repay
-                  </NewButton>
+                  </Button>
                 </div>
               ) : null}
             </div>
@@ -350,13 +354,10 @@ export const BorrowingExpandCard = ({
                         </div>
                       </TableCell>
                       {isTotalRow ? (
-                        <TableCell className="buttons borrowing">
+                        <TableCell className="buttons borrowing total">
                           <div className="cell-content row">
                             {isOwner ? (
                               <Button
-                                text="Add Collateral"
-                                icon="plus"
-                                strokeWidth={0.1}
                                 onClick={() =>
                                   openAddNewCollateralPopup?.({
                                     vaultAddress: address,
@@ -368,20 +369,21 @@ export const BorrowingExpandCard = ({
                                     borrowedAssetRate: borrowedAsset.rate,
                                   })
                                 }
-                                kind={ACTION_PRIMARY}
+                                kind={BUTTON_PRIMARY}
                                 disabled={
                                   avaliableCollaterals.length === 0 ||
                                   avaliableCollaterals.length === collateralData.length - 1
                                 }
-                                className="add-collateral"
-                              />
+                              >
+                                <Icon id="plus" /> Add Collateral
+                              </Button>
                             ) : null}
                           </div>
                         </TableCell>
                       ) : (
                         <TableCell className="buttons borrowing">
                           <div className="cell-content row">
-                            <NewButton
+                            <Button
                               onClick={() =>
                                 openAddExistingCollateralPopup?.({
                                   vaultAddress: address,
@@ -394,12 +396,13 @@ export const BorrowingExpandCard = ({
                                   bakerAddress: xtzDelegatedTo,
                                 })
                               }
-                              kind={TRANSPARENT_WITH_BORDER}
+                              form={BUTTON_WIDE}
+                              kind={BUTTON_SECONDARY}
                             >
                               <Icon id="plus" /> Add
-                            </NewButton>
+                            </Button>
                             {isOwner ? (
-                              <NewButton
+                              <Button
                                 onClick={() =>
                                   openWithdrawCollateralPopup?.({
                                     vaultAddress: address,
@@ -412,10 +415,11 @@ export const BorrowingExpandCard = ({
                                     borrowedAssetRate: borrowedAsset.rate,
                                   })
                                 }
-                                kind={TRANSPARENT_WITH_BORDER}
+                                form={BUTTON_WIDE}
+                                kind={BUTTON_SECONDARY}
                               >
                                 <Icon id="minus" /> Remove
-                              </NewButton>
+                              </Button>
                             ) : null}
                           </div>
                         </TableCell>
@@ -427,9 +431,6 @@ export const BorrowingExpandCard = ({
             </Table>
             {collateralData.length < 3 && isOwner ? (
               <Button
-                text="Add Collateral"
-                icon="plus"
-                strokeWidth={0.1}
                 onClick={() =>
                   openAddNewCollateralPopup?.({
                     vaultAddress: address,
@@ -441,12 +442,14 @@ export const BorrowingExpandCard = ({
                     borrowedAssetRate: borrowedAsset.rate,
                   })
                 }
-                kind={ACTION_PRIMARY}
+                kind={BUTTON_PRIMARY}
+                isThin
                 disabled={
                   avaliableCollaterals.length === 0 || avaliableCollaterals.length === collateralData.length - 1
                 }
-                className="add-collateral"
-              />
+              >
+                <Icon id="plus" /> Add Collateral
+              </Button>
             ) : null}
 
             {isOwner ? (
@@ -458,10 +461,7 @@ export const BorrowingExpandCard = ({
                     {xtzDelegatedTo ? <TzAddress tzAddress={xtzDelegatedTo} type={BLUE} /> : 'Not Delegated'}
                   </div>
                   <Button
-                    kind={ACTION_SIMPLE}
-                    text="Change Baker"
-                    icon="paginationArrowLeft"
-                    iconAfter
+                    kind={BUTTON_SIMPLE}
                     disabled={!collateralData.find(({ gqlName }) => isTezosAsset(gqlName))}
                     onClick={() =>
                       openChangeBakerPopup?.({
@@ -469,7 +469,9 @@ export const BorrowingExpandCard = ({
                         vaultAddress: address,
                       })
                     }
-                  />
+                  >
+                    Change Baker <Icon id="paginationArrowLeft" />
+                  </Button>
                 </div>
                 <div className="bottom-info-row">
                   <div className="name">sMVK Delegated to </div>
@@ -477,7 +479,9 @@ export const BorrowingExpandCard = ({
                     {sMVKDelegatedTo ? <TzAddress tzAddress={sMVKDelegatedTo} type={BLUE} /> : 'None'}
                   </div>
                   <Link to={sMVKDelegatedTo ? `/satellites/satellite-details/${sMVKDelegatedTo}` : '/satellite-nodes'}>
-                    <Button kind={ACTION_SIMPLE} text="View Satellite" icon="paginationArrowLeft" iconAfter />
+                    <Button kind={BUTTON_SIMPLE}>
+                      View Satellite <Icon id="paginationArrowLeft" />
+                    </Button>
                   </Link>
                 </div>
 
@@ -498,14 +502,10 @@ export const BorrowingExpandCard = ({
                         ` ${mappedDepositors.amount ?? ''}`
                       : 'None Allowed'}
                   </div>
-                  <Button
-                    kind={ACTION_SIMPLE}
-                    text="Update"
-                    icon="paginationArrowLeft"
-                    iconAfter
-                    disabled
-                    onClick={() => openManagePermissionsPopup?.({})}
-                  />
+
+                  <Button kind={BUTTON_SIMPLE} disabled onClick={() => openManagePermissionsPopup?.({})}>
+                    Update <Icon id="paginationArrowLeft" />
+                  </Button>
                 </div>
                 <div className="bottom-info-row">
                   <div className="name">
@@ -522,34 +522,31 @@ export const BorrowingExpandCard = ({
                         ` ${mappedMVKOperators.amount ?? ''}`
                       : 'None'}
                   </div>
-                  <Button
-                    kind={ACTION_SIMPLE}
-                    text="Update"
-                    icon="paginationArrowLeft"
-                    iconAfter
-                    disabled
-                    onClick={() => openUpdateMvkOperatorsPopup?.({})}
-                  />
+                  <Button kind={BUTTON_SIMPLE} disabled onClick={() => openUpdateMvkOperatorsPopup?.({})}>
+                    Update <Icon id="paginationArrowLeft" />
+                  </Button>
                 </div>
 
-                <Button
-                  text="Repay Loan in Full"
-                  disabled={!borrowedAmount}
-                  kind={TRANSPARENT_WITH_BORDER}
-                  onClick={() =>
-                    openRepayFullPopup?.({
-                      vaultId,
-                      borrowedAsset: borrowedAsset,
-                      collateralRatio,
-                      borrowedAmount,
-                      feesAmount: repayFee,
-                      currentCollateralBalance: collateralData.at(-1)?.amount ?? 0,
-                      borrowCapacity: borrowCapacity / borrowedAsset.rate,
-                    })
-                  }
-                  className="close-vault"
-                  icon="close-stroke"
-                />
+                <div className="repay-full">
+                  <Button
+                    disabled={!borrowedAmount}
+                    isThin
+                    kind={BUTTON_SECONDARY}
+                    onClick={() =>
+                      openRepayFullPopup?.({
+                        vaultId,
+                        borrowedAsset: borrowedAsset,
+                        collateralRatio,
+                        borrowedAmount,
+                        feesAmount: repayFee,
+                        currentCollateralBalance: collateralData.at(-1)?.amount ?? 0,
+                        borrowCapacity: borrowCapacity / borrowedAsset.rate,
+                      })
+                    }
+                  >
+                    <Icon id="navigation-menu_close" /> Repay Loan in Full
+                  </Button>
+                </div>
               </>
             ) : null}
           </BorrowingTabListItemExpanded>

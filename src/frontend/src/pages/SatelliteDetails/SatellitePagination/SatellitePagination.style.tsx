@@ -15,10 +15,6 @@ export const SatellitePaginationStyled = styled.div<{ theme: MavrykTheme }>`
     margin-right: auto;
   }
 
-  &.data-feeds-pagination {
-    margin-top: 20px;
-  }
-
   .pagination-link {
     display: flex;
     color: ${({ theme }) => theme.valueColor};

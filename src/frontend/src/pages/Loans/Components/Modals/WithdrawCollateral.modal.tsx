@@ -2,10 +2,10 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useLockBodyScroll } from 'react-use'
 import { useEffect, useMemo, useState } from 'react'
 
-import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import { INPUT_LARGE, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { State } from 'reducers'
-import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import {
   DEFAULT_LOANS_INPUT_VALUE,
   getOnBlurValue,
@@ -17,7 +17,7 @@ import { withdrawCollateralAction } from 'pages/Loans/Actions/vaultCollateral.ac
 import { Input } from 'app/App.components/Input/NewInput'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
-import NewButton from 'app/App.components/Button/NewButton.controller'
+import NewButton from 'app/App.components/Button/NewButton'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 
 import { LoansModalBase, VaultModalOverview } from './Modals.style'
@@ -178,9 +178,7 @@ export const WithdrawCollateral = ({
           <hr />
           {collateralData ? (
             <Input
-              className={`${
-                collateralData?.rate ? 'input-with-rate' : ''
-              } large-input pinned-dropdown withdrawCollateralInput`}
+              className={`${collateralData?.rate ? 'input-with-rate' : ''} pinned-dropdown mb-45`}
               inputProps={{
                 value: inputData.amount,
                 type: 'number',
@@ -199,6 +197,7 @@ export const WithdrawCollateral = ({
                   ),
                 inputStatus: inputData.validationStatus,
                 convertedValue: inputAmount * collateralData.rate,
+                inputSize: INPUT_LARGE,
               }}
             >
               <InputPinnedTokenInfo>
@@ -239,15 +238,17 @@ export const WithdrawCollateral = ({
             </ThreeLevelListItem>
           </VaultModalOverview>
 
-          <NewButton
-            kind={ACTION_PRIMARY}
-            onClick={withdrawHandler}
-            disabled={isActionBtnDisabled}
-            className="modal-manage-btn"
-          >
-            <Icon id="minus" />
-            Remove
-          </NewButton>
+          <div className="manage-btn">
+            <NewButton
+              kind={BUTTON_PRIMARY}
+              form={BUTTON_WIDE}
+              onClick={withdrawHandler}
+              disabled={isActionBtnDisabled}
+            >
+              <Icon id="minus" />
+              Remove
+            </NewButton>
+          </div>
         </LoansModalBase>
       </PopupContainerWrapper>
     </PopupContainer>

@@ -2,16 +2,16 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useLockBodyScroll } from 'react-use'
 import { useEffect, useMemo, useState } from 'react'
 
-import NewButton from 'app/App.components/Button/NewButton.controller'
+import NewButton from 'app/App.components/Button/NewButton'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { Input } from 'app/App.components/Input/NewInput'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
-import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import { INPUT_LARGE, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { State } from 'reducers'
 import { AddLendingAssetDataType, DEFAULT_LOANS_INPUT_VALUE, getOnBlurValue, getOnFocusValue } from './Modals.helpers'
-import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
@@ -115,7 +115,7 @@ export const AddLendingAsset = ({
           </div>
 
           <Input
-            className={`${rate ? 'input-with-rate' : ''} large-input pinned-dropdown`}
+            className={`${rate ? 'input-with-rate' : ''} pinned-dropdown`}
             inputProps={{
               value: inputData.amount,
               type: 'number',
@@ -128,6 +128,7 @@ export const AddLendingAsset = ({
               balanceAsset: symbol,
               useMaxHandler: () => onChangeHandler(String(userBalance), userBalance),
               inputStatus: inputData.validationStatus,
+              inputSize: INPUT_LARGE,
               ...(rate ? { convertedValue: rate * Number(inputData.amount) } : {}),
             }}
           >
@@ -160,15 +161,12 @@ export const AddLendingAsset = ({
             </ThreeLevelListItem>
           </div>
 
-          <NewButton
-            kind={ACTION_PRIMARY}
-            onClick={depositHandler}
-            className="modal-manage-btn"
-            disabled={isDepositDisabled}
-          >
-            <Icon id="plus" />
-            Deposit
-          </NewButton>
+          <div className="manage-btn">
+            <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={depositHandler} disabled={isDepositDisabled}>
+              <Icon id="plus" />
+              Deposit
+            </NewButton>
+          </div>
         </LoansModalBase>
       </PopupContainerWrapper>
     </PopupContainer>
