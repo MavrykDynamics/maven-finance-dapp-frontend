@@ -38,6 +38,8 @@ import { getTimestampByLevel } from 'pages/Governance/Governance.actions'
 import { calculateCollateralShare } from 'pages/Vaults/calcFunctionsForVault'
 import { isTezosAsset } from '../Loans.helpers'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import colors from 'styles/colors'
 
 export type BorrowingCardOptions = {
   reverseColumns?: boolean
@@ -53,7 +55,6 @@ type BorrowingExpandCardPropsType = LoansVaultType & {
   options?: BorrowingCardOptions
   isOpenedVault?: boolean
   DAOFee: number
-  avaliableMarketLiquidity: number
 }
 
 export const BorrowingExpandCard = ({
@@ -83,13 +84,13 @@ export const BorrowingExpandCard = ({
   borrowCapacity,
   DAOFee,
   repayFee,
-  avaliableMarketLiquidity,
 }: BorrowingExpandCardPropsType) => {
   const { reverseColumns } = options ?? {}
 
   const { symbol, icon, rate = 1 } = borrowedAsset
 
   const { avaliableCollaterals } = useSelector((state: State) => state.tokens)
+  const { themeSelected } = useSelector((state: State) => state.preferences)
 
   const {
     openChangeBakerPopup,
@@ -261,7 +262,6 @@ export const BorrowingExpandCard = ({
                         hasUserBorrowed: false,
                         borrowCapacity: borrowCapacity / borrowedAsset.rate,
                         currentBorrowedAmount: borrowedAmount,
-                        avaliableLiquidity: avaliableMarketLiquidity,
                         DAOFee,
                       })
                     }
@@ -393,6 +393,7 @@ export const BorrowingExpandCard = ({
                                   borrowedAmount,
                                   collateralWithdrawAmount: amount,
                                   borrowedAssetRate: borrowedAsset.rate,
+                                  bakerAddress: xtzDelegatedTo,
                                 })
                               }
                               form={BUTTON_WIDE}
@@ -484,9 +485,16 @@ export const BorrowingExpandCard = ({
                   </Link>
                 </div>
 
-                <div className="block-name margin-top-20">Permissions</div>
+                <div className="block-name margin-top-20">Permissions (Advanced)</div>
                 <div className="bottom-info-row">
-                  <div className="name">Depositors </div>
+                  <div className="name">
+                    Depositors{' '}
+                    <CustomTooltip
+                      iconId="info"
+                      text="need text"
+                      defaultStrokeColor={colors[themeSelected].textColor}
+                    />
+                  </div>
                   <div className="value">
                     {mappedDepositors.isAll ? 'All Alowed' : null}
                     {mappedDepositors.firstAddress
@@ -500,7 +508,14 @@ export const BorrowingExpandCard = ({
                   </Button>
                 </div>
                 <div className="bottom-info-row">
-                  <div className="name">MVK Operators </div>
+                  <div className="name">
+                    MVK Operators{' '}
+                    <CustomTooltip
+                      iconId="info"
+                      text="need text"
+                      defaultStrokeColor={colors[themeSelected].textColor}
+                    />
+                  </div>
                   <div className="value">
                     {mappedMVKOperators.firstAddress
                       ? <TzAddress tzAddress={mappedMVKOperators.firstAddress} type={BLUE} /> +

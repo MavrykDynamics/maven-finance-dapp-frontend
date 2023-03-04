@@ -89,7 +89,7 @@ export const FeedInfo = styled.div<{ theme: MavrykTheme }>`
       a {
         font-weight: 600;
         font-size: 12px;
-        line-height: 18px;
+        line-height: 100%;
         color: ${({ theme }) => theme.textColor};
         display: flex;
         align-items: center;

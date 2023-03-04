@@ -68,8 +68,6 @@ export const RemoveAssetsFromLending = ({
     const validationStatus =
       Number(inputAmount) > 0 && Number(inputAmount) <= maxAmount ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
 
-    if (validationStatus === INPUT_STATUS_ERROR && inputAmount !== '' && inputAmount !== '0') return
-
     setInputData({
       ...inputData,
       amount: inputAmount,

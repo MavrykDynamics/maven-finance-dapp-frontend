@@ -349,10 +349,9 @@ export const ThreeLevelListItem = styled.div<{ theme: MavrykTheme; customColor?:
   .value {
     font-weight: 600;
     font-size: 16px;
-    line-height: 20px;
+    line-height: 100%;
     color: ${({ theme }) => theme.dataColor};
     display: flex;
-    align-items: center;
 
     .img-wrapper,
     .no-icon {

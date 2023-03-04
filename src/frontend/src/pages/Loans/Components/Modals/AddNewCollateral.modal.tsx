@@ -177,8 +177,6 @@ export const AddNewCollateral = ({
         ? INPUT_STATUS_SUCCESS
         : INPUT_STATUS_ERROR
 
-    if (validationStatus === INPUT_STATUS_ERROR && newInputAmount !== '' && newInputAmount !== '0') return
-
     if (inputData) {
       setInputData({
         ...inputData,

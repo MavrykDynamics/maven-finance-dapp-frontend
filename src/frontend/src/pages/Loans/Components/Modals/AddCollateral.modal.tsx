@@ -46,6 +46,7 @@ export const AddCollateral = ({
     collateralWithdrawAmount = 0,
     borrowedAmount = 0,
     borrowedAssetRate = 0,
+    bakerAddress,
   } = data ?? {}
 
   useLockBodyScroll(show)
@@ -71,7 +72,7 @@ export const AddCollateral = ({
     const futureCollateralWithdraw = collateralWithdrawAmount + inputAmount
     const futureCollateralBalance = vaultCollateralBalance + inputAmount * Number(selectedAsset?.rate)
     return { futureCollateralRatio, futureCollateralWithdraw, futureCollateralBalance }
-  }, [selectedAsset, vaultCollateralBalance, inputAmount, borrowedAmount, collateralWithdrawAmount])
+  }, [selectedAsset, vaultCollateralBalance, inputAmount, borrowedAmount, borrowedAssetRate, collateralWithdrawAmount])
 
   useEffect(() => {
     if (!show) {
@@ -83,8 +84,6 @@ export const AddCollateral = ({
   const inputOnChangeHandle = (newInputAmount: string, maxAmount: number) => {
     const validationStatus =
       Number(newInputAmount) > 0 && Number(newInputAmount) <= maxAmount ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
-
-    if (validationStatus === INPUT_STATUS_ERROR && newInputAmount !== '' && newInputAmount !== '0') return
 
     setInputData({
       ...inputData,
@@ -118,7 +117,7 @@ export const AddCollateral = ({
       }
 
       if (vaultAddress) {
-        await dispatch(depositCollateralAction(vaultAddress, collaretalToDeposit, closePopup))
+        await dispatch(depositCollateralAction(vaultAddress, collaretalToDeposit, closePopup, bakerAddress))
       }
     }
   }

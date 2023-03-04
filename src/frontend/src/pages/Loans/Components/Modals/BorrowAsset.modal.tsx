@@ -45,7 +45,6 @@ export const BorrowAsset = ({
     currentBorrowedAmount = 0,
     currentCollateralBalance = 0,
     DAOFee = 0,
-    avaliableLiquidity = 0,
   } = data ?? {}
 
   useLockBodyScroll(show)
@@ -61,7 +60,6 @@ export const BorrowAsset = ({
     const futureCollateralRatio = borrowedAsset
       ? calcCollateralRatio(currentCollateralBalance, currentBorrowedAmount + inputAmount, borrowedAsset.rate)
       : 0
-
     const futureBorrowCapacity = borrowCapacity - inputAmount
     return { futureCollateralRatio, futureBorrowCapacity }
   }, [borrowedAsset, currentCollateralBalance, currentBorrowedAmount, inputAmount, borrowCapacity])
@@ -162,16 +160,12 @@ export const BorrowAsset = ({
                     type: 'number',
                     onBlur: inputOnBlurHandle,
                     onFocus: onFocusHandler,
-                    onChange: (e) => inputOnChangeHandle(e.target.value, Math.min(avaliableLiquidity, borrowCapacity)),
+                    onChange: (e) => inputOnChangeHandle(e.target.value, Math.min(borrowCapacity)),
                   }}
                   settings={{
                     balance: borrowedAsset.userBalance,
                     balanceAsset: borrowedAsset?.symbol,
-                    useMaxHandler: () =>
-                      inputOnChangeHandle(
-                        String(Math.min(avaliableLiquidity, borrowCapacity)),
-                        Math.min(avaliableLiquidity, borrowCapacity),
-                      ),
+                    useMaxHandler: () => inputOnChangeHandle(String(borrowCapacity), borrowCapacity),
                     inputStatus: inputData.validationStatus,
                     convertedValue: inputAmount * borrowedAsset.rate,
                     inputSize: INPUT_LARGE,

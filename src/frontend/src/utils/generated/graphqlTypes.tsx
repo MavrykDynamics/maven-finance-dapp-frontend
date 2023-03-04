@@ -33515,7 +33515,7 @@ export type Lending_Controller_Collateral_Token = {
   /** An object relationship */
   lending_controller?: Maybe<Lending_Controller>;
   lending_controller_id?: Maybe<Scalars['String']>;
-  max_deposited_amount?: Maybe<Scalars['float8']>;
+  max_deposit_amount?: Maybe<Scalars['float8']>;
   /** An object relationship */
   oracle?: Maybe<Mavryk_User>;
   oracle_id?: Maybe<Scalars['String']>;
@@ -33698,14 +33698,14 @@ export type Lending_Controller_Collateral_Token_Aggregate_Order_By = {
 export type Lending_Controller_Collateral_Token_Avg_Fields = {
   __typename?: 'lending_controller_collateral_token_avg_fields';
   id?: Maybe<Scalars['Float']>;
-  max_deposited_amount?: Maybe<Scalars['Float']>;
+  max_deposit_amount?: Maybe<Scalars['Float']>;
   total_deposited?: Maybe<Scalars['Float']>;
 };
 
 /** order by avg() on columns of table "lending_controller_collateral_token" */
 export type Lending_Controller_Collateral_Token_Avg_Order_By = {
   id?: InputMaybe<Order_By>;
-  max_deposited_amount?: InputMaybe<Order_By>;
+  max_deposit_amount?: InputMaybe<Order_By>;
   total_deposited?: InputMaybe<Order_By>;
 };
 
@@ -33721,7 +33721,7 @@ export type Lending_Controller_Collateral_Token_Bool_Exp = {
   is_staked_token?: InputMaybe<Boolean_Comparison_Exp>;
   lending_controller?: InputMaybe<Lending_Controller_Bool_Exp>;
   lending_controller_id?: InputMaybe<String_Comparison_Exp>;
-  max_deposited_amount?: InputMaybe<Float8_Comparison_Exp>;
+  max_deposit_amount?: InputMaybe<Float8_Comparison_Exp>;
   oracle?: InputMaybe<Mavryk_User_Bool_Exp>;
   oracle_id?: InputMaybe<String_Comparison_Exp>;
   paused?: InputMaybe<Boolean_Comparison_Exp>;
@@ -33738,7 +33738,7 @@ export type Lending_Controller_Collateral_Token_Max_Fields = {
   __typename?: 'lending_controller_collateral_token_max_fields';
   id?: Maybe<Scalars['bigint']>;
   lending_controller_id?: Maybe<Scalars['String']>;
-  max_deposited_amount?: Maybe<Scalars['float8']>;
+  max_deposit_amount?: Maybe<Scalars['float8']>;
   oracle_id?: Maybe<Scalars['String']>;
   staking_contract_address?: Maybe<Scalars['String']>;
   token_address?: Maybe<Scalars['String']>;
@@ -33751,7 +33751,7 @@ export type Lending_Controller_Collateral_Token_Max_Fields = {
 export type Lending_Controller_Collateral_Token_Max_Order_By = {
   id?: InputMaybe<Order_By>;
   lending_controller_id?: InputMaybe<Order_By>;
-  max_deposited_amount?: InputMaybe<Order_By>;
+  max_deposit_amount?: InputMaybe<Order_By>;
   oracle_id?: InputMaybe<Order_By>;
   staking_contract_address?: InputMaybe<Order_By>;
   token_address?: InputMaybe<Order_By>;
@@ -33765,7 +33765,7 @@ export type Lending_Controller_Collateral_Token_Min_Fields = {
   __typename?: 'lending_controller_collateral_token_min_fields';
   id?: Maybe<Scalars['bigint']>;
   lending_controller_id?: Maybe<Scalars['String']>;
-  max_deposited_amount?: Maybe<Scalars['float8']>;
+  max_deposit_amount?: Maybe<Scalars['float8']>;
   oracle_id?: Maybe<Scalars['String']>;
   staking_contract_address?: Maybe<Scalars['String']>;
   token_address?: Maybe<Scalars['String']>;
@@ -33778,7 +33778,7 @@ export type Lending_Controller_Collateral_Token_Min_Fields = {
 export type Lending_Controller_Collateral_Token_Min_Order_By = {
   id?: InputMaybe<Order_By>;
   lending_controller_id?: InputMaybe<Order_By>;
-  max_deposited_amount?: InputMaybe<Order_By>;
+  max_deposit_amount?: InputMaybe<Order_By>;
   oracle_id?: InputMaybe<Order_By>;
   staking_contract_address?: InputMaybe<Order_By>;
   token_address?: InputMaybe<Order_By>;
@@ -33795,7 +33795,7 @@ export type Lending_Controller_Collateral_Token_Order_By = {
   is_staked_token?: InputMaybe<Order_By>;
   lending_controller?: InputMaybe<Lending_Controller_Order_By>;
   lending_controller_id?: InputMaybe<Order_By>;
-  max_deposited_amount?: InputMaybe<Order_By>;
+  max_deposit_amount?: InputMaybe<Order_By>;
   oracle?: InputMaybe<Mavryk_User_Order_By>;
   oracle_id?: InputMaybe<Order_By>;
   paused?: InputMaybe<Order_By>;
@@ -33818,7 +33818,7 @@ export enum Lending_Controller_Collateral_Token_Select_Column {
   /** column name */
   LendingControllerId = 'lending_controller_id',
   /** column name */
-  MaxDepositedAmount = 'max_deposited_amount',
+  MaxDepositAmount = 'max_deposit_amount',
   /** column name */
   OracleId = 'oracle_id',
   /** column name */
@@ -33840,7 +33840,7 @@ export enum Lending_Controller_Collateral_Token_Select_Column {
 /** select "lending_controller_collateral_token_aggregate_bool_exp_avg_arguments_columns" columns of table "lending_controller_collateral_token" */
 export enum Lending_Controller_Collateral_Token_Select_Column_Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Avg_Arguments_Columns {
   /** column name */
-  MaxDepositedAmount = 'max_deposited_amount',
+  MaxDepositAmount = 'max_deposit_amount',
   /** column name */
   TotalDeposited = 'total_deposited'
 }
@@ -33872,7 +33872,7 @@ export enum Lending_Controller_Collateral_Token_Select_Column_Lending_Controller
 /** select "lending_controller_collateral_token_aggregate_bool_exp_corr_arguments_columns" columns of table "lending_controller_collateral_token" */
 export enum Lending_Controller_Collateral_Token_Select_Column_Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Corr_Arguments_Columns {
   /** column name */
-  MaxDepositedAmount = 'max_deposited_amount',
+  MaxDepositAmount = 'max_deposit_amount',
   /** column name */
   TotalDeposited = 'total_deposited'
 }
@@ -33880,7 +33880,7 @@ export enum Lending_Controller_Collateral_Token_Select_Column_Lending_Controller
 /** select "lending_controller_collateral_token_aggregate_bool_exp_covar_samp_arguments_columns" columns of table "lending_controller_collateral_token" */
 export enum Lending_Controller_Collateral_Token_Select_Column_Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns {
   /** column name */
-  MaxDepositedAmount = 'max_deposited_amount',
+  MaxDepositAmount = 'max_deposit_amount',
   /** column name */
   TotalDeposited = 'total_deposited'
 }
@@ -33888,7 +33888,7 @@ export enum Lending_Controller_Collateral_Token_Select_Column_Lending_Controller
 /** select "lending_controller_collateral_token_aggregate_bool_exp_max_arguments_columns" columns of table "lending_controller_collateral_token" */
 export enum Lending_Controller_Collateral_Token_Select_Column_Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Max_Arguments_Columns {
   /** column name */
-  MaxDepositedAmount = 'max_deposited_amount',
+  MaxDepositAmount = 'max_deposit_amount',
   /** column name */
   TotalDeposited = 'total_deposited'
 }
@@ -33896,7 +33896,7 @@ export enum Lending_Controller_Collateral_Token_Select_Column_Lending_Controller
 /** select "lending_controller_collateral_token_aggregate_bool_exp_min_arguments_columns" columns of table "lending_controller_collateral_token" */
 export enum Lending_Controller_Collateral_Token_Select_Column_Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Min_Arguments_Columns {
   /** column name */
-  MaxDepositedAmount = 'max_deposited_amount',
+  MaxDepositAmount = 'max_deposit_amount',
   /** column name */
   TotalDeposited = 'total_deposited'
 }
@@ -33904,7 +33904,7 @@ export enum Lending_Controller_Collateral_Token_Select_Column_Lending_Controller
 /** select "lending_controller_collateral_token_aggregate_bool_exp_stddev_samp_arguments_columns" columns of table "lending_controller_collateral_token" */
 export enum Lending_Controller_Collateral_Token_Select_Column_Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns {
   /** column name */
-  MaxDepositedAmount = 'max_deposited_amount',
+  MaxDepositAmount = 'max_deposit_amount',
   /** column name */
   TotalDeposited = 'total_deposited'
 }
@@ -33912,7 +33912,7 @@ export enum Lending_Controller_Collateral_Token_Select_Column_Lending_Controller
 /** select "lending_controller_collateral_token_aggregate_bool_exp_sum_arguments_columns" columns of table "lending_controller_collateral_token" */
 export enum Lending_Controller_Collateral_Token_Select_Column_Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Sum_Arguments_Columns {
   /** column name */
-  MaxDepositedAmount = 'max_deposited_amount',
+  MaxDepositAmount = 'max_deposit_amount',
   /** column name */
   TotalDeposited = 'total_deposited'
 }
@@ -33920,7 +33920,7 @@ export enum Lending_Controller_Collateral_Token_Select_Column_Lending_Controller
 /** select "lending_controller_collateral_token_aggregate_bool_exp_var_samp_arguments_columns" columns of table "lending_controller_collateral_token" */
 export enum Lending_Controller_Collateral_Token_Select_Column_Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns {
   /** column name */
-  MaxDepositedAmount = 'max_deposited_amount',
+  MaxDepositAmount = 'max_deposit_amount',
   /** column name */
   TotalDeposited = 'total_deposited'
 }
@@ -33929,14 +33929,14 @@ export enum Lending_Controller_Collateral_Token_Select_Column_Lending_Controller
 export type Lending_Controller_Collateral_Token_Stddev_Fields = {
   __typename?: 'lending_controller_collateral_token_stddev_fields';
   id?: Maybe<Scalars['Float']>;
-  max_deposited_amount?: Maybe<Scalars['Float']>;
+  max_deposit_amount?: Maybe<Scalars['Float']>;
   total_deposited?: Maybe<Scalars['Float']>;
 };
 
 /** order by stddev() on columns of table "lending_controller_collateral_token" */
 export type Lending_Controller_Collateral_Token_Stddev_Order_By = {
   id?: InputMaybe<Order_By>;
-  max_deposited_amount?: InputMaybe<Order_By>;
+  max_deposit_amount?: InputMaybe<Order_By>;
   total_deposited?: InputMaybe<Order_By>;
 };
 
@@ -33944,14 +33944,14 @@ export type Lending_Controller_Collateral_Token_Stddev_Order_By = {
 export type Lending_Controller_Collateral_Token_Stddev_Pop_Fields = {
   __typename?: 'lending_controller_collateral_token_stddev_pop_fields';
   id?: Maybe<Scalars['Float']>;
-  max_deposited_amount?: Maybe<Scalars['Float']>;
+  max_deposit_amount?: Maybe<Scalars['Float']>;
   total_deposited?: Maybe<Scalars['Float']>;
 };
 
 /** order by stddev_pop() on columns of table "lending_controller_collateral_token" */
 export type Lending_Controller_Collateral_Token_Stddev_Pop_Order_By = {
   id?: InputMaybe<Order_By>;
-  max_deposited_amount?: InputMaybe<Order_By>;
+  max_deposit_amount?: InputMaybe<Order_By>;
   total_deposited?: InputMaybe<Order_By>;
 };
 
@@ -33959,14 +33959,14 @@ export type Lending_Controller_Collateral_Token_Stddev_Pop_Order_By = {
 export type Lending_Controller_Collateral_Token_Stddev_Samp_Fields = {
   __typename?: 'lending_controller_collateral_token_stddev_samp_fields';
   id?: Maybe<Scalars['Float']>;
-  max_deposited_amount?: Maybe<Scalars['Float']>;
+  max_deposit_amount?: Maybe<Scalars['Float']>;
   total_deposited?: Maybe<Scalars['Float']>;
 };
 
 /** order by stddev_samp() on columns of table "lending_controller_collateral_token" */
 export type Lending_Controller_Collateral_Token_Stddev_Samp_Order_By = {
   id?: InputMaybe<Order_By>;
-  max_deposited_amount?: InputMaybe<Order_By>;
+  max_deposit_amount?: InputMaybe<Order_By>;
   total_deposited?: InputMaybe<Order_By>;
 };
 
@@ -33984,7 +33984,7 @@ export type Lending_Controller_Collateral_Token_Stream_Cursor_Value_Input = {
   is_scaled_token?: InputMaybe<Scalars['Boolean']>;
   is_staked_token?: InputMaybe<Scalars['Boolean']>;
   lending_controller_id?: InputMaybe<Scalars['String']>;
-  max_deposited_amount?: InputMaybe<Scalars['float8']>;
+  max_deposit_amount?: InputMaybe<Scalars['float8']>;
   oracle_id?: InputMaybe<Scalars['String']>;
   paused?: InputMaybe<Scalars['Boolean']>;
   protected?: InputMaybe<Scalars['Boolean']>;
@@ -33999,14 +33999,14 @@ export type Lending_Controller_Collateral_Token_Stream_Cursor_Value_Input = {
 export type Lending_Controller_Collateral_Token_Sum_Fields = {
   __typename?: 'lending_controller_collateral_token_sum_fields';
   id?: Maybe<Scalars['bigint']>;
-  max_deposited_amount?: Maybe<Scalars['float8']>;
+  max_deposit_amount?: Maybe<Scalars['float8']>;
   total_deposited?: Maybe<Scalars['float8']>;
 };
 
 /** order by sum() on columns of table "lending_controller_collateral_token" */
 export type Lending_Controller_Collateral_Token_Sum_Order_By = {
   id?: InputMaybe<Order_By>;
-  max_deposited_amount?: InputMaybe<Order_By>;
+  max_deposit_amount?: InputMaybe<Order_By>;
   total_deposited?: InputMaybe<Order_By>;
 };
 
@@ -34014,14 +34014,14 @@ export type Lending_Controller_Collateral_Token_Sum_Order_By = {
 export type Lending_Controller_Collateral_Token_Var_Pop_Fields = {
   __typename?: 'lending_controller_collateral_token_var_pop_fields';
   id?: Maybe<Scalars['Float']>;
-  max_deposited_amount?: Maybe<Scalars['Float']>;
+  max_deposit_amount?: Maybe<Scalars['Float']>;
   total_deposited?: Maybe<Scalars['Float']>;
 };
 
 /** order by var_pop() on columns of table "lending_controller_collateral_token" */
 export type Lending_Controller_Collateral_Token_Var_Pop_Order_By = {
   id?: InputMaybe<Order_By>;
-  max_deposited_amount?: InputMaybe<Order_By>;
+  max_deposit_amount?: InputMaybe<Order_By>;
   total_deposited?: InputMaybe<Order_By>;
 };
 
@@ -34029,14 +34029,14 @@ export type Lending_Controller_Collateral_Token_Var_Pop_Order_By = {
 export type Lending_Controller_Collateral_Token_Var_Samp_Fields = {
   __typename?: 'lending_controller_collateral_token_var_samp_fields';
   id?: Maybe<Scalars['Float']>;
-  max_deposited_amount?: Maybe<Scalars['Float']>;
+  max_deposit_amount?: Maybe<Scalars['Float']>;
   total_deposited?: Maybe<Scalars['Float']>;
 };
 
 /** order by var_samp() on columns of table "lending_controller_collateral_token" */
 export type Lending_Controller_Collateral_Token_Var_Samp_Order_By = {
   id?: InputMaybe<Order_By>;
-  max_deposited_amount?: InputMaybe<Order_By>;
+  max_deposit_amount?: InputMaybe<Order_By>;
   total_deposited?: InputMaybe<Order_By>;
 };
 
@@ -34044,14 +34044,14 @@ export type Lending_Controller_Collateral_Token_Var_Samp_Order_By = {
 export type Lending_Controller_Collateral_Token_Variance_Fields = {
   __typename?: 'lending_controller_collateral_token_variance_fields';
   id?: Maybe<Scalars['Float']>;
-  max_deposited_amount?: Maybe<Scalars['Float']>;
+  max_deposit_amount?: Maybe<Scalars['Float']>;
   total_deposited?: Maybe<Scalars['Float']>;
 };
 
 /** order by variance() on columns of table "lending_controller_collateral_token" */
 export type Lending_Controller_Collateral_Token_Variance_Order_By = {
   id?: InputMaybe<Order_By>;
-  max_deposited_amount?: InputMaybe<Order_By>;
+  max_deposit_amount?: InputMaybe<Order_By>;
   total_deposited?: InputMaybe<Order_By>;
 };
 
@@ -35096,8 +35096,10 @@ export type Lending_Controller_Loan_Token = {
   loan_token_address: Scalars['String'];
   loan_token_contract_standard: Scalars['String'];
   loan_token_name: Scalars['String'];
-  lp_token_address: Scalars['String'];
-  lp_token_total: Scalars['float8'];
+  /** An object relationship */
+  m_token?: Maybe<M_Token>;
+  m_token_id?: Maybe<Scalars['String']>;
+  m_tokens_total: Scalars['float8'];
   max_interest_rate: Scalars['float8'];
   min_repayment_amount: Scalars['float8'];
   optimal_utilisation_rate: Scalars['float8'];
@@ -35313,7 +35315,7 @@ export type Lending_Controller_Loan_Token_Avg_Fields = {
   interest_rate_above_optimal_utilisation?: Maybe<Scalars['Float']>;
   interest_rate_below_optimal_utilisation?: Maybe<Scalars['Float']>;
   last_updated_block_level?: Maybe<Scalars['Float']>;
-  lp_token_total?: Maybe<Scalars['Float']>;
+  m_tokens_total?: Maybe<Scalars['Float']>;
   max_interest_rate?: Maybe<Scalars['Float']>;
   min_repayment_amount?: Maybe<Scalars['Float']>;
   optimal_utilisation_rate?: Maybe<Scalars['Float']>;
@@ -35334,7 +35336,7 @@ export type Lending_Controller_Loan_Token_Avg_Order_By = {
   interest_rate_above_optimal_utilisation?: InputMaybe<Order_By>;
   interest_rate_below_optimal_utilisation?: InputMaybe<Order_By>;
   last_updated_block_level?: InputMaybe<Order_By>;
-  lp_token_total?: InputMaybe<Order_By>;
+  m_tokens_total?: InputMaybe<Order_By>;
   max_interest_rate?: InputMaybe<Order_By>;
   min_repayment_amount?: InputMaybe<Order_By>;
   optimal_utilisation_rate?: InputMaybe<Order_By>;
@@ -35365,8 +35367,9 @@ export type Lending_Controller_Loan_Token_Bool_Exp = {
   loan_token_address?: InputMaybe<String_Comparison_Exp>;
   loan_token_contract_standard?: InputMaybe<String_Comparison_Exp>;
   loan_token_name?: InputMaybe<String_Comparison_Exp>;
-  lp_token_address?: InputMaybe<String_Comparison_Exp>;
-  lp_token_total?: InputMaybe<Float8_Comparison_Exp>;
+  m_token?: InputMaybe<M_Token_Bool_Exp>;
+  m_token_id?: InputMaybe<String_Comparison_Exp>;
+  m_tokens_total?: InputMaybe<Float8_Comparison_Exp>;
   max_interest_rate?: InputMaybe<Float8_Comparison_Exp>;
   min_repayment_amount?: InputMaybe<Float8_Comparison_Exp>;
   optimal_utilisation_rate?: InputMaybe<Float8_Comparison_Exp>;
@@ -35397,8 +35400,8 @@ export type Lending_Controller_Loan_Token_Max_Fields = {
   loan_token_address?: Maybe<Scalars['String']>;
   loan_token_contract_standard?: Maybe<Scalars['String']>;
   loan_token_name?: Maybe<Scalars['String']>;
-  lp_token_address?: Maybe<Scalars['String']>;
-  lp_token_total?: Maybe<Scalars['float8']>;
+  m_token_id?: Maybe<Scalars['String']>;
+  m_tokens_total?: Maybe<Scalars['float8']>;
   max_interest_rate?: Maybe<Scalars['float8']>;
   min_repayment_amount?: Maybe<Scalars['float8']>;
   optimal_utilisation_rate?: Maybe<Scalars['float8']>;
@@ -35424,8 +35427,8 @@ export type Lending_Controller_Loan_Token_Max_Order_By = {
   loan_token_address?: InputMaybe<Order_By>;
   loan_token_contract_standard?: InputMaybe<Order_By>;
   loan_token_name?: InputMaybe<Order_By>;
-  lp_token_address?: InputMaybe<Order_By>;
-  lp_token_total?: InputMaybe<Order_By>;
+  m_token_id?: InputMaybe<Order_By>;
+  m_tokens_total?: InputMaybe<Order_By>;
   max_interest_rate?: InputMaybe<Order_By>;
   min_repayment_amount?: InputMaybe<Order_By>;
   optimal_utilisation_rate?: InputMaybe<Order_By>;
@@ -35452,8 +35455,8 @@ export type Lending_Controller_Loan_Token_Min_Fields = {
   loan_token_address?: Maybe<Scalars['String']>;
   loan_token_contract_standard?: Maybe<Scalars['String']>;
   loan_token_name?: Maybe<Scalars['String']>;
-  lp_token_address?: Maybe<Scalars['String']>;
-  lp_token_total?: Maybe<Scalars['float8']>;
+  m_token_id?: Maybe<Scalars['String']>;
+  m_tokens_total?: Maybe<Scalars['float8']>;
   max_interest_rate?: Maybe<Scalars['float8']>;
   min_repayment_amount?: Maybe<Scalars['float8']>;
   optimal_utilisation_rate?: Maybe<Scalars['float8']>;
@@ -35479,8 +35482,8 @@ export type Lending_Controller_Loan_Token_Min_Order_By = {
   loan_token_address?: InputMaybe<Order_By>;
   loan_token_contract_standard?: InputMaybe<Order_By>;
   loan_token_name?: InputMaybe<Order_By>;
-  lp_token_address?: InputMaybe<Order_By>;
-  lp_token_total?: InputMaybe<Order_By>;
+  m_token_id?: InputMaybe<Order_By>;
+  m_tokens_total?: InputMaybe<Order_By>;
   max_interest_rate?: InputMaybe<Order_By>;
   min_repayment_amount?: InputMaybe<Order_By>;
   optimal_utilisation_rate?: InputMaybe<Order_By>;
@@ -35508,8 +35511,9 @@ export type Lending_Controller_Loan_Token_Order_By = {
   loan_token_address?: InputMaybe<Order_By>;
   loan_token_contract_standard?: InputMaybe<Order_By>;
   loan_token_name?: InputMaybe<Order_By>;
-  lp_token_address?: InputMaybe<Order_By>;
-  lp_token_total?: InputMaybe<Order_By>;
+  m_token?: InputMaybe<M_Token_Order_By>;
+  m_token_id?: InputMaybe<Order_By>;
+  m_tokens_total?: InputMaybe<Order_By>;
   max_interest_rate?: InputMaybe<Order_By>;
   min_repayment_amount?: InputMaybe<Order_By>;
   optimal_utilisation_rate?: InputMaybe<Order_By>;
@@ -35551,9 +35555,9 @@ export enum Lending_Controller_Loan_Token_Select_Column {
   /** column name */
   LoanTokenName = 'loan_token_name',
   /** column name */
-  LpTokenAddress = 'lp_token_address',
+  MTokenId = 'm_token_id',
   /** column name */
-  LpTokenTotal = 'lp_token_total',
+  MTokensTotal = 'm_tokens_total',
   /** column name */
   MaxInterestRate = 'max_interest_rate',
   /** column name */
@@ -35591,7 +35595,7 @@ export enum Lending_Controller_Loan_Token_Select_Column_Lending_Controller_Loan_
   /** column name */
   InterestRateBelowOptimalUtilisation = 'interest_rate_below_optimal_utilisation',
   /** column name */
-  LpTokenTotal = 'lp_token_total',
+  MTokensTotal = 'm_tokens_total',
   /** column name */
   MaxInterestRate = 'max_interest_rate',
   /** column name */
@@ -35635,7 +35639,7 @@ export enum Lending_Controller_Loan_Token_Select_Column_Lending_Controller_Loan_
   /** column name */
   InterestRateBelowOptimalUtilisation = 'interest_rate_below_optimal_utilisation',
   /** column name */
-  LpTokenTotal = 'lp_token_total',
+  MTokensTotal = 'm_tokens_total',
   /** column name */
   MaxInterestRate = 'max_interest_rate',
   /** column name */
@@ -35667,7 +35671,7 @@ export enum Lending_Controller_Loan_Token_Select_Column_Lending_Controller_Loan_
   /** column name */
   InterestRateBelowOptimalUtilisation = 'interest_rate_below_optimal_utilisation',
   /** column name */
-  LpTokenTotal = 'lp_token_total',
+  MTokensTotal = 'm_tokens_total',
   /** column name */
   MaxInterestRate = 'max_interest_rate',
   /** column name */
@@ -35699,7 +35703,7 @@ export enum Lending_Controller_Loan_Token_Select_Column_Lending_Controller_Loan_
   /** column name */
   InterestRateBelowOptimalUtilisation = 'interest_rate_below_optimal_utilisation',
   /** column name */
-  LpTokenTotal = 'lp_token_total',
+  MTokensTotal = 'm_tokens_total',
   /** column name */
   MaxInterestRate = 'max_interest_rate',
   /** column name */
@@ -35731,7 +35735,7 @@ export enum Lending_Controller_Loan_Token_Select_Column_Lending_Controller_Loan_
   /** column name */
   InterestRateBelowOptimalUtilisation = 'interest_rate_below_optimal_utilisation',
   /** column name */
-  LpTokenTotal = 'lp_token_total',
+  MTokensTotal = 'm_tokens_total',
   /** column name */
   MaxInterestRate = 'max_interest_rate',
   /** column name */
@@ -35763,7 +35767,7 @@ export enum Lending_Controller_Loan_Token_Select_Column_Lending_Controller_Loan_
   /** column name */
   InterestRateBelowOptimalUtilisation = 'interest_rate_below_optimal_utilisation',
   /** column name */
-  LpTokenTotal = 'lp_token_total',
+  MTokensTotal = 'm_tokens_total',
   /** column name */
   MaxInterestRate = 'max_interest_rate',
   /** column name */
@@ -35795,7 +35799,7 @@ export enum Lending_Controller_Loan_Token_Select_Column_Lending_Controller_Loan_
   /** column name */
   InterestRateBelowOptimalUtilisation = 'interest_rate_below_optimal_utilisation',
   /** column name */
-  LpTokenTotal = 'lp_token_total',
+  MTokensTotal = 'm_tokens_total',
   /** column name */
   MaxInterestRate = 'max_interest_rate',
   /** column name */
@@ -35827,7 +35831,7 @@ export enum Lending_Controller_Loan_Token_Select_Column_Lending_Controller_Loan_
   /** column name */
   InterestRateBelowOptimalUtilisation = 'interest_rate_below_optimal_utilisation',
   /** column name */
-  LpTokenTotal = 'lp_token_total',
+  MTokensTotal = 'm_tokens_total',
   /** column name */
   MaxInterestRate = 'max_interest_rate',
   /** column name */
@@ -35855,7 +35859,7 @@ export type Lending_Controller_Loan_Token_Stddev_Fields = {
   interest_rate_above_optimal_utilisation?: Maybe<Scalars['Float']>;
   interest_rate_below_optimal_utilisation?: Maybe<Scalars['Float']>;
   last_updated_block_level?: Maybe<Scalars['Float']>;
-  lp_token_total?: Maybe<Scalars['Float']>;
+  m_tokens_total?: Maybe<Scalars['Float']>;
   max_interest_rate?: Maybe<Scalars['Float']>;
   min_repayment_amount?: Maybe<Scalars['Float']>;
   optimal_utilisation_rate?: Maybe<Scalars['Float']>;
@@ -35876,7 +35880,7 @@ export type Lending_Controller_Loan_Token_Stddev_Order_By = {
   interest_rate_above_optimal_utilisation?: InputMaybe<Order_By>;
   interest_rate_below_optimal_utilisation?: InputMaybe<Order_By>;
   last_updated_block_level?: InputMaybe<Order_By>;
-  lp_token_total?: InputMaybe<Order_By>;
+  m_tokens_total?: InputMaybe<Order_By>;
   max_interest_rate?: InputMaybe<Order_By>;
   min_repayment_amount?: InputMaybe<Order_By>;
   optimal_utilisation_rate?: InputMaybe<Order_By>;
@@ -35898,7 +35902,7 @@ export type Lending_Controller_Loan_Token_Stddev_Pop_Fields = {
   interest_rate_above_optimal_utilisation?: Maybe<Scalars['Float']>;
   interest_rate_below_optimal_utilisation?: Maybe<Scalars['Float']>;
   last_updated_block_level?: Maybe<Scalars['Float']>;
-  lp_token_total?: Maybe<Scalars['Float']>;
+  m_tokens_total?: Maybe<Scalars['Float']>;
   max_interest_rate?: Maybe<Scalars['Float']>;
   min_repayment_amount?: Maybe<Scalars['Float']>;
   optimal_utilisation_rate?: Maybe<Scalars['Float']>;
@@ -35919,7 +35923,7 @@ export type Lending_Controller_Loan_Token_Stddev_Pop_Order_By = {
   interest_rate_above_optimal_utilisation?: InputMaybe<Order_By>;
   interest_rate_below_optimal_utilisation?: InputMaybe<Order_By>;
   last_updated_block_level?: InputMaybe<Order_By>;
-  lp_token_total?: InputMaybe<Order_By>;
+  m_tokens_total?: InputMaybe<Order_By>;
   max_interest_rate?: InputMaybe<Order_By>;
   min_repayment_amount?: InputMaybe<Order_By>;
   optimal_utilisation_rate?: InputMaybe<Order_By>;
@@ -35941,7 +35945,7 @@ export type Lending_Controller_Loan_Token_Stddev_Samp_Fields = {
   interest_rate_above_optimal_utilisation?: Maybe<Scalars['Float']>;
   interest_rate_below_optimal_utilisation?: Maybe<Scalars['Float']>;
   last_updated_block_level?: Maybe<Scalars['Float']>;
-  lp_token_total?: Maybe<Scalars['Float']>;
+  m_tokens_total?: Maybe<Scalars['Float']>;
   max_interest_rate?: Maybe<Scalars['Float']>;
   min_repayment_amount?: Maybe<Scalars['Float']>;
   optimal_utilisation_rate?: Maybe<Scalars['Float']>;
@@ -35962,7 +35966,7 @@ export type Lending_Controller_Loan_Token_Stddev_Samp_Order_By = {
   interest_rate_above_optimal_utilisation?: InputMaybe<Order_By>;
   interest_rate_below_optimal_utilisation?: InputMaybe<Order_By>;
   last_updated_block_level?: InputMaybe<Order_By>;
-  lp_token_total?: InputMaybe<Order_By>;
+  m_tokens_total?: InputMaybe<Order_By>;
   max_interest_rate?: InputMaybe<Order_By>;
   min_repayment_amount?: InputMaybe<Order_By>;
   optimal_utilisation_rate?: InputMaybe<Order_By>;
@@ -35995,8 +35999,8 @@ export type Lending_Controller_Loan_Token_Stream_Cursor_Value_Input = {
   loan_token_address?: InputMaybe<Scalars['String']>;
   loan_token_contract_standard?: InputMaybe<Scalars['String']>;
   loan_token_name?: InputMaybe<Scalars['String']>;
-  lp_token_address?: InputMaybe<Scalars['String']>;
-  lp_token_total?: InputMaybe<Scalars['float8']>;
+  m_token_id?: InputMaybe<Scalars['String']>;
+  m_tokens_total?: InputMaybe<Scalars['float8']>;
   max_interest_rate?: InputMaybe<Scalars['float8']>;
   min_repayment_amount?: InputMaybe<Scalars['float8']>;
   optimal_utilisation_rate?: InputMaybe<Scalars['float8']>;
@@ -36020,7 +36024,7 @@ export type Lending_Controller_Loan_Token_Sum_Fields = {
   interest_rate_above_optimal_utilisation?: Maybe<Scalars['float8']>;
   interest_rate_below_optimal_utilisation?: Maybe<Scalars['float8']>;
   last_updated_block_level?: Maybe<Scalars['bigint']>;
-  lp_token_total?: Maybe<Scalars['float8']>;
+  m_tokens_total?: Maybe<Scalars['float8']>;
   max_interest_rate?: Maybe<Scalars['float8']>;
   min_repayment_amount?: Maybe<Scalars['float8']>;
   optimal_utilisation_rate?: Maybe<Scalars['float8']>;
@@ -36041,7 +36045,7 @@ export type Lending_Controller_Loan_Token_Sum_Order_By = {
   interest_rate_above_optimal_utilisation?: InputMaybe<Order_By>;
   interest_rate_below_optimal_utilisation?: InputMaybe<Order_By>;
   last_updated_block_level?: InputMaybe<Order_By>;
-  lp_token_total?: InputMaybe<Order_By>;
+  m_tokens_total?: InputMaybe<Order_By>;
   max_interest_rate?: InputMaybe<Order_By>;
   min_repayment_amount?: InputMaybe<Order_By>;
   optimal_utilisation_rate?: InputMaybe<Order_By>;
@@ -36063,7 +36067,7 @@ export type Lending_Controller_Loan_Token_Var_Pop_Fields = {
   interest_rate_above_optimal_utilisation?: Maybe<Scalars['Float']>;
   interest_rate_below_optimal_utilisation?: Maybe<Scalars['Float']>;
   last_updated_block_level?: Maybe<Scalars['Float']>;
-  lp_token_total?: Maybe<Scalars['Float']>;
+  m_tokens_total?: Maybe<Scalars['Float']>;
   max_interest_rate?: Maybe<Scalars['Float']>;
   min_repayment_amount?: Maybe<Scalars['Float']>;
   optimal_utilisation_rate?: Maybe<Scalars['Float']>;
@@ -36084,7 +36088,7 @@ export type Lending_Controller_Loan_Token_Var_Pop_Order_By = {
   interest_rate_above_optimal_utilisation?: InputMaybe<Order_By>;
   interest_rate_below_optimal_utilisation?: InputMaybe<Order_By>;
   last_updated_block_level?: InputMaybe<Order_By>;
-  lp_token_total?: InputMaybe<Order_By>;
+  m_tokens_total?: InputMaybe<Order_By>;
   max_interest_rate?: InputMaybe<Order_By>;
   min_repayment_amount?: InputMaybe<Order_By>;
   optimal_utilisation_rate?: InputMaybe<Order_By>;
@@ -36106,7 +36110,7 @@ export type Lending_Controller_Loan_Token_Var_Samp_Fields = {
   interest_rate_above_optimal_utilisation?: Maybe<Scalars['Float']>;
   interest_rate_below_optimal_utilisation?: Maybe<Scalars['Float']>;
   last_updated_block_level?: Maybe<Scalars['Float']>;
-  lp_token_total?: Maybe<Scalars['Float']>;
+  m_tokens_total?: Maybe<Scalars['Float']>;
   max_interest_rate?: Maybe<Scalars['Float']>;
   min_repayment_amount?: Maybe<Scalars['Float']>;
   optimal_utilisation_rate?: Maybe<Scalars['Float']>;
@@ -36127,7 +36131,7 @@ export type Lending_Controller_Loan_Token_Var_Samp_Order_By = {
   interest_rate_above_optimal_utilisation?: InputMaybe<Order_By>;
   interest_rate_below_optimal_utilisation?: InputMaybe<Order_By>;
   last_updated_block_level?: InputMaybe<Order_By>;
-  lp_token_total?: InputMaybe<Order_By>;
+  m_tokens_total?: InputMaybe<Order_By>;
   max_interest_rate?: InputMaybe<Order_By>;
   min_repayment_amount?: InputMaybe<Order_By>;
   optimal_utilisation_rate?: InputMaybe<Order_By>;
@@ -36149,7 +36153,7 @@ export type Lending_Controller_Loan_Token_Variance_Fields = {
   interest_rate_above_optimal_utilisation?: Maybe<Scalars['Float']>;
   interest_rate_below_optimal_utilisation?: Maybe<Scalars['Float']>;
   last_updated_block_level?: Maybe<Scalars['Float']>;
-  lp_token_total?: Maybe<Scalars['Float']>;
+  m_tokens_total?: Maybe<Scalars['Float']>;
   max_interest_rate?: Maybe<Scalars['Float']>;
   min_repayment_amount?: Maybe<Scalars['Float']>;
   optimal_utilisation_rate?: Maybe<Scalars['Float']>;
@@ -36170,7 +36174,7 @@ export type Lending_Controller_Loan_Token_Variance_Order_By = {
   interest_rate_above_optimal_utilisation?: InputMaybe<Order_By>;
   interest_rate_below_optimal_utilisation?: InputMaybe<Order_By>;
   last_updated_block_level?: InputMaybe<Order_By>;
-  lp_token_total?: InputMaybe<Order_By>;
+  m_tokens_total?: InputMaybe<Order_By>;
   max_interest_rate?: InputMaybe<Order_By>;
   min_repayment_amount?: InputMaybe<Order_By>;
   optimal_utilisation_rate?: InputMaybe<Order_By>;
@@ -39947,6 +39951,10 @@ export type M_Token = {
   governance_id?: Maybe<Scalars['String']>;
   is_scaled_token: Scalars['Boolean'];
   last_updated_at?: Maybe<Scalars['timestamptz']>;
+  /** An array relationship */
+  lending_controller_loan_tokens: Array<Lending_Controller_Loan_Token>;
+  /** An aggregate relationship */
+  lending_controller_loan_tokens_aggregate: Lending_Controller_Loan_Token_Aggregate;
   loan_token_name: Scalars['String'];
   /** An array relationship */
   operators: Array<M_Token_Operator>;
@@ -39977,6 +39985,26 @@ export type M_TokenAccounts_AggregateArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   order_by?: InputMaybe<Array<M_Token_Account_Order_By>>;
   where?: InputMaybe<M_Token_Account_Bool_Exp>;
+};
+
+
+/** columns and relationships of "m_token" */
+export type M_TokenLending_Controller_Loan_TokensArgs = {
+  distinct_on?: InputMaybe<Array<Lending_Controller_Loan_Token_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Lending_Controller_Loan_Token_Order_By>>;
+  where?: InputMaybe<Lending_Controller_Loan_Token_Bool_Exp>;
+};
+
+
+/** columns and relationships of "m_token" */
+export type M_TokenLending_Controller_Loan_Tokens_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Lending_Controller_Loan_Token_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Lending_Controller_Loan_Token_Order_By>>;
+  where?: InputMaybe<Lending_Controller_Loan_Token_Bool_Exp>;
 };
 
 
@@ -41240,6 +41268,8 @@ export type M_Token_Bool_Exp = {
   governance_id?: InputMaybe<String_Comparison_Exp>;
   is_scaled_token?: InputMaybe<Boolean_Comparison_Exp>;
   last_updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  lending_controller_loan_tokens?: InputMaybe<Lending_Controller_Loan_Token_Bool_Exp>;
+  lending_controller_loan_tokens_aggregate?: InputMaybe<Lending_Controller_Loan_Token_Aggregate_Bool_Exp>;
   loan_token_name?: InputMaybe<String_Comparison_Exp>;
   operators?: InputMaybe<M_Token_Operator_Bool_Exp>;
   operators_aggregate?: InputMaybe<M_Token_Operator_Aggregate_Bool_Exp>;
@@ -41545,6 +41575,7 @@ export type M_Token_Order_By = {
   governance_id?: InputMaybe<Order_By>;
   is_scaled_token?: InputMaybe<Order_By>;
   last_updated_at?: InputMaybe<Order_By>;
+  lending_controller_loan_tokens_aggregate?: InputMaybe<Lending_Controller_Loan_Token_Aggregate_Order_By>;
   loan_token_name?: InputMaybe<Order_By>;
   operators_aggregate?: InputMaybe<M_Token_Operator_Aggregate_Order_By>;
   token_reward_index?: InputMaybe<Order_By>;

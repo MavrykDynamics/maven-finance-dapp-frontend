@@ -13,14 +13,9 @@ import { State } from 'reducers'
 type PermissionVaultsPropsType = {
   permissionVaults: Array<LoansVaultType>
   lendingControllerAddress: string
-  avaliableMarketLiquidity: number
 }
 
-export const PermissionVaults = ({
-  permissionVaults,
-  lendingControllerAddress,
-  avaliableMarketLiquidity,
-}: PermissionVaultsPropsType) => {
+export const PermissionVaults = ({ permissionVaults, lendingControllerAddress }: PermissionVaultsPropsType) => {
   const {
     config: { DAOFee },
   } = useSelector((state: State) => state.loans)
@@ -34,7 +29,7 @@ export const PermissionVaults = ({
       {permissionVaults.length ? (
         <div className="list-wrapper">
           {permissionVaults.map((item) => {
-            return <BorrowingExpandCard {...item} DAOFee={DAOFee} avaliableMarketLiquidity={avaliableMarketLiquidity} />
+            return <BorrowingExpandCard {...item} DAOFee={DAOFee} />
           })}
         </div>
       ) : (

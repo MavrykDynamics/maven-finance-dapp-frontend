@@ -72,8 +72,6 @@ export const Repay = ({
     const validationStatus =
       Number(newInputAmount) > 0 && Number(newInputAmount) <= maxAmount ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
 
-    if (validationStatus === INPUT_STATUS_ERROR && newInputAmount !== '' && newInputAmount !== '0') return
-
     setInputData({
       ...inputData,
       amount: newInputAmount,

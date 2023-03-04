@@ -306,7 +306,6 @@ export const VaultsCard = (props: Props) => {
           options={borrowingCardOptions}
           // TODO: add this values as on loans
           DAOFee={0}
-          avaliableMarketLiquidity={0}
         />
       ) : (
         <BorrowingExpandCard
@@ -317,7 +316,6 @@ export const VaultsCard = (props: Props) => {
           options={borrowingCardOptions}
           // TODO: add this values as on loans
           DAOFee={0}
-          avaliableMarketLiquidity={0}
         >
           {generalExpand}
         </BorrowingExpandCard>

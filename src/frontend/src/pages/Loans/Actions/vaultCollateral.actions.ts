@@ -64,7 +64,7 @@ export const depositCollateralAction =
       tokenType: 'tez' | 'fa2' | 'fa12'
     },
     callback: () => void,
-    bakerAddress?: string,
+    bakerAddress?: string | null,
   ) =>
   async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
