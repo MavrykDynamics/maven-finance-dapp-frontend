@@ -30,6 +30,7 @@ export type ButtonStyle =
 // new button consts
 export const BUTTON_PRIMARY = 'primary'
 export const BUTTON_SECONDARY = 'secondary'
+export const BUTTON_THIRD = 'third'
 export const BUTTON_SIMPLE = 'simple'
 export const BUTTON_SIMPLE_SMALL = 'simpleSmall'
 export const BUTTON_NAVIGATION = 'navigation'
@@ -40,6 +41,7 @@ export const VOTING_AGAINST = `against`
 export type ButtonKind =
   | typeof BUTTON_PRIMARY
   | typeof BUTTON_SECONDARY
+  | typeof BUTTON_THIRD
   | typeof BUTTON_SIMPLE
   | typeof BUTTON_SIMPLE_SMALL
   | typeof BUTTON_NAVIGATION

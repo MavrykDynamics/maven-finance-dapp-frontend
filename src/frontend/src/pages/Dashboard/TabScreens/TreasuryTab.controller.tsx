@@ -178,10 +178,10 @@ export const TreasuryTab = ({ isLoading }: { isLoading: boolean }) => {
       <div className="descr">
         <div className="title">What is the purpose of the Treasury?</div>
         <div className="text">
-          The treasury is managed by the Mavryk DAO through on-chain voting. Governance votes, whether for the business
-          logic or upgrades to the Mavryk ecosystem, are rewarded with a portion of the earned income from the on-chain
-          Treasury.{' '}
-          <a href="https://blogs.mavryk.finance/" target="_blank" rel="noreferrer">
+          The Treasury is managed by Satellites through on-chain voting. The purpose is to store the income earned from
+          Mavryk Finance for assigned purposes, such as buying back MVK, investing & holding in on-chain assets, and
+          more.{' '}
+          <a href="https://mavryk.finance/litepaper#treasury" target="_blank" rel="noreferrer">
             Read more
           </a>
         </div>

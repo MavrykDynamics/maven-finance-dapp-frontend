@@ -10,6 +10,7 @@ import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { INFO } from 'app/App.components/Toaster/Toaster.constants'
 // components
 import Icon from '../Icon/Icon.view'
+import { UserProfileEditor } from '../UserProfileEditor/UserProfileEditor.view'
 // styles
 import {
   IpfsUploadedImageContainer,
@@ -57,32 +58,33 @@ export const IPFSUploaderView = ({
   const [fileName, setFileName] = useState('')
   const isTypeFileImage = typeFile === 'image'
   const isUploaded = Boolean(imageIpfsUrl && !isUploading)
+  const [file, setFile] = useState<File | null>(null)
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       if (!e.target.files?.length) return
 
-      const file = e.target?.files?.[0]
-      const fileSize = file?.size / 1024 / 1024 // in MiB
-      const { name } = file
+      const uploadedFile = e.target.files[0]
+      const fileSize = uploadedFile?.size / 1024 / 1024 // in MiB
+      const { name } = uploadedFile
 
       if (fileSize <= IMG_MAX_SIZE) {
         setUploadIsFailed(false)
-        handleUpload(e.target.files[0])
+        setFile(uploadedFile)
       } else {
         setUploadIsFailed(true)
         dispatch(showToaster(INFO, 'File is too big!', `Max size is ${IMG_MAX_SIZE}MB`))
       }
 
       // check file type
-      if (file?.type.toLowerCase().includes('pdf')) {
+      if (uploadedFile?.type.toLowerCase().includes('pdf')) {
         setIsDocument(true)
         setFileName(name)
       } else {
         setIsDocument(false)
       }
     },
-    [dispatch, handleUpload],
+    [dispatch],
   )
 
   const handleDelete = () => {
@@ -90,6 +92,11 @@ export const IPFSUploaderView = ({
     setIsDocument(false)
     setFileName('')
     setIpfsImageUrl('')
+    setFile(null)
+  }
+
+  const handleCloseEditor = () => {
+    setFile(null)
   }
 
   return (
@@ -101,18 +108,26 @@ export const IPFSUploaderView = ({
         </label>
       )}
       <div style={{ opacity: disabled ? 0.4 : 1 }}>
-        <UploaderFileSelector isUploaded={isUploaded} className={disabled ? 'disabled' : '' }>
+        <UploaderFileSelector isUploaded={isUploaded} className={disabled ? 'disabled' : ''}>
           <div>
             <input
+              value=""
               id="uploader"
               type="file"
               disabled={disabled || isUploading}
               accept={'.jpeg, .png, .pdf'}
-              // required
               ref={inputFile}
               onChange={handleChange}
               onBlur={onBlur}
             />
+
+            <UserProfileEditor
+              file={file}
+              getFile={handleUpload}
+              show={Boolean(file)}
+              closeEditor={handleCloseEditor}
+            />
+
             <UploadIconContainer uploadIsFailed={uploadIsFailed} onClick={handleIconClick}>
               {imageIpfsUrl && !isUploading ? (
                 <>

@@ -1,14 +1,13 @@
+import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { useLocation } from 'react-router-dom'
 
 import { State } from 'reducers'
 import { parseDate } from 'utils/time'
-import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
 
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { Trim } from 'app/App.components/Trim/Trim.view'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { DataFeedsCardStyled, FeedsListItem } from 'pages/DataFeeds/DataFeeds.styles'
@@ -16,6 +15,15 @@ import { DataFeedsCardStyled, FeedsListItem } from 'pages/DataFeeds/DataFeeds.st
 export const DataFeedCard = ({ feed }: { feed: Feed }) => {
   const { pathname } = useLocation()
   const { dipDupContracts } = useSelector((state: State) => state.tokens)
+  const { oraclesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
+
+  const oracleNodes = useMemo(
+    () =>
+      oraclesIds.filter((address) =>
+        satelliteMapper[address].oracleRecords.find(({ feedAddress }) => feed.address === feedAddress),
+      ),
+    [feed.address, oraclesIds, satelliteMapper],
+  )
 
   const imageLink = dipDupContracts.find(({ contract }) => contract === feed.address)?.metadata?.icon
   const showAllColumns = pathname === '/data-feeds'
@@ -38,10 +46,8 @@ export const DataFeedCard = ({ feed }: { feed: Feed }) => {
           </var>
         </FeedsListItem>
         <FeedsListItem>
-          <h5>Contract address</h5>
-          <var>
-            <TzAddress tzAddress={feed.address} hasIcon={true} type={BLUE} />
-          </var>
+          <h5>Oracle Nodes</h5>
+          <var>{oracleNodes.length}</var>
         </FeedsListItem>
         {showAllColumns && (
           <FeedsListItem>
