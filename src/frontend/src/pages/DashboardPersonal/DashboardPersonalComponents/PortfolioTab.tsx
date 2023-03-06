@@ -115,9 +115,9 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
           <div className="name">XTZ in Wallet</div>
           <div className="value">
             <CommaNumber value={xtzAmount} />
-            <Link to="/satellites">
+            <a href="https://mavryk.finance/bakery" target="_blank" rel="noreferrer">
               <Button kind={BUTTON_SIMPLE}>Delegate</Button>
-            </Link>
+            </a>
           </div>
         </div>
         <div className="wallet-info">
