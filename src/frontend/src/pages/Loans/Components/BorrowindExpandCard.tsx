@@ -502,13 +502,22 @@ export const BorrowingExpandCard = ({
                     {deporsitorsFlag === NONE_USER ? 'None Allowed' : null}
                     {deporsitorsFlag === WHITELIST_USERS ? (
                       <>
-                        <TzAddress tzAddress={depositors[0]} type={BLUE} />
+                        <TzAddress tzAddress={depositors[0]} type={BLUE} shouldCopy={false} />
                         {depositors.length - 1 >= 1 ? ` + ${depositors.length - 1}` : ''}
                       </>
                     ) : null}
                   </div>
 
-                  <Button kind={BUTTON_SIMPLE} onClick={() => openManagePermissionsPopup?.({})}>
+                  <Button
+                    kind={BUTTON_SIMPLE}
+                    onClick={() =>
+                      openManagePermissionsPopup?.({
+                        vaultAddress: address,
+                        deporsitorsFlag,
+                        depositors,
+                      })
+                    }
+                  >
                     Update <Icon id="paginationArrowLeft" />
                   </Button>
                 </div>

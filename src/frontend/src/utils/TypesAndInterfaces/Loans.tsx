@@ -1,5 +1,11 @@
 import { ChartPlotType } from 'app/App.components/Chart/Chart.view'
-import { ANY_USER, NONE_USER, WHITELIST_USERS } from 'pages/Loans/Loans.const'
+import {
+  ANY_USER,
+  NONE_USER,
+  VAULT_ALLOWANCE_ACCOUNTS,
+  VAULT_ALLOWANCE_ANY,
+  WHITELIST_USERS,
+} from 'pages/Loans/Loans.const'
 import { normalizeLoans } from 'pages/Loans/Loans.helpers'
 import { Lending_Controller } from 'utils/generated/graphqlTypes'
 
@@ -7,6 +13,7 @@ export type LoansGQL = Omit<Lending_Controller, '__typename'>
 export type LoansStorage = Awaited<ReturnType<typeof normalizeLoans>>
 
 export type LoanTokenType = 'tez' | 'fa12' | 'fa2'
+export type LoanVaultAllowanceType = typeof VAULT_ALLOWANCE_ANY | typeof VAULT_ALLOWANCE_ACCOUNTS
 
 export type BaseLoansAssetDataType = {
   gqlName: string

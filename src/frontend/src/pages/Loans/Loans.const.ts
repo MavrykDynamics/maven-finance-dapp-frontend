@@ -24,6 +24,9 @@ export const ANY_USER = 'any'
 export const NONE_USER = 'none'
 export const WHITELIST_USERS = 'whitelist'
 
+export const VAULT_ALLOWANCE_ANY = 'any'
+export const VAULT_ALLOWANCE_ACCOUNTS = 'whitelist'
+
 export const ADD_COLLATERAL_MODAL_ID = 'addCollateral'
 export const ADD_NEW_COLLATERAL_MODAL_ID = 'addNewCollateral'
 export const ADD_LENDING_ASSET_MODAL_ID = 'addLendingAsset'

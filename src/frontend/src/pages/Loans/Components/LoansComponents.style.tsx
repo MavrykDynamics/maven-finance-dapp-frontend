@@ -145,6 +145,9 @@ export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
       color: ${({ theme }) => theme.dataColor};
       font-weight: 600;
       font-size: 14px;
+      display: flex;
+      align-items: center;
+      column-gap: 6px;
     }
 
     /* TODO: remove button styles from here */
