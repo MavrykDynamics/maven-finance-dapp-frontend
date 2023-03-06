@@ -2,18 +2,19 @@ import { useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
-import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { parseDate } from 'utils/time'
 import { State } from 'reducers'
-import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import colors from 'styles/colors'
 
-import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { emptyContainer } from './LendingTab.controller'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { Trim } from 'app/App.components/Trim/Trim.view'
+import Button from 'app/App.components/Button/NewButton'
+import Icon from 'app/App.components/Icon/Icon.view'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 import { StatBlock } from '../Dashboard.style'
 import { OraclesContentStyled, TabWrapperStyled, PopularFeed } from './DashboardTabs.style'
@@ -22,6 +23,7 @@ import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
 
 export const OraclesTab = ({ isLoading }: { isLoading: boolean }) => {
   const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
+  const { themeSelected } = useSelector((state: State) => state.preferences)
   const {
     dipDupContracts,
     tokensPrices: { mvk: { usd: mvkExchangeRate = 0 } = {} },
@@ -38,17 +40,19 @@ export const OraclesTab = ({ isLoading }: { isLoading: boolean }) => {
           (acc, { sMVKReward = 0 }) => (acc += sMVKReward),
           0,
         )
-        return (acc += sMVKReward * mvkExchangeRate)
+        return (acc += sMVKReward)
       }, 0),
-    [mvkExchangeRate, satelliteMapper, oraclesIds],
+    [satelliteMapper, oraclesIds],
   )
 
   return (
     <TabWrapperStyled className="oracles" backgroundImage="dashboard_oraclesTab_bg.png">
       <div className="top">
         <BGPrimaryTitle>Oracles</BGPrimaryTitle>
-        <Link to="/data-feeds">
-          <Button text="Oracle Feeds" icon="plant" kind={ACTION_PRIMARY} className="noStroke dashboard-sectionLink" />
+        <Link to="/data-feeds" className="dashboard-sectionLink">
+          <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE}>
+            <Icon id="oracles" /> Oracle Feeds
+          </Button>
         </Link>
       </div>
 
@@ -63,7 +67,10 @@ export const OraclesTab = ({ isLoading }: { isLoading: boolean }) => {
             <StatBlock>
               <div className="name">Total Oracle Rewards Paid</div>
               <div className="value">
-                <CommaNumber beginningText="$" value={oracleRewardsTotal} />
+                <CommaNumber value={oracleRewardsTotal} endingText="sMVK" />
+              </div>
+              <div className="converted">
+                <CommaNumber beginningText="$" value={oracleRewardsTotal * mvkExchangeRate} />
               </div>
             </StatBlock>
             <StatBlock>
@@ -98,17 +105,24 @@ export const OraclesTab = ({ isLoading }: { isLoading: boolean }) => {
                         </div>
                       </StatBlock>
                       <StatBlock>
-                        <div className="name">Contract Address</div>
+                        <div className="name">Oracle Nodes</div>
                         <div className="value">
-                          <TzAddress type={BLUE} tzAddress={feed.address} hasIcon />
+                          <CommaNumber value={feed.oracles.length} />
                         </div>
                       </StatBlock>
                       <StatBlock>
-                        <div className="name">Date/Time</div>
+                        <div className="name">
+                          Last Update{' '}
+                          <CustomTooltip
+                            iconId="info"
+                            defaultStrokeColor={colors[themeSelected].textColor}
+                            text="dummy text"
+                          />
+                        </div>
                         <div className="value">
                           {parseDate({
                             time: feed.last_completed_data_last_updated_at,
-                            timeFormat: 'DD MMM YYYY / HH:mm',
+                            timeFormat: 'DD MMM YYYY, HH:mm UTC',
                           })}
                         </div>
                       </StatBlock>
