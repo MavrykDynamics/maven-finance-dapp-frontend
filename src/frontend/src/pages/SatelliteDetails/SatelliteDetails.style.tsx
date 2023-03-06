@@ -8,8 +8,8 @@ export const SatelliteCardBottomRow = styled.div<{ theme: MavrykTheme }>`
   padding: 38px 25px;
   justify-content: center;
   font-weight: 400;
-  font-size: 12px;
-  line-height: 12px;
+  font-size: 14px;
+  line-height: 21px;
   row-gap: 40px;
   border-top: 1px solid ${({ theme }) => theme.cardBorderColor};
 
@@ -30,24 +30,35 @@ export const BlockName = styled.div<{ theme: MavrykTheme }>`
 
 export const SatelliteMetricsBlock = styled.div<{ theme: MavrykTheme }>`
   display: grid;
-  grid-template-columns: 200px 60px;
+  grid-template-columns: 160px 100px;
+  row-gap: 7px;
   align-items: center;
   padding-top: 10px;
 
   p {
-    margin: 3px 0;
+    margin: 0;
     text-align: right;
     color: ${({ theme }) => theme.dataColor};
+
     font-weight: 600;
     font-size: 16px;
+    line-height: 22px;
   }
 
   h5 {
     margin: 0;
-    font-weight: 500;
-    font-size: 14px;
     color: ${({ theme }) => theme.textColor};
+
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 21px;
   }
+`
+
+export const SatelliteMetrics = styled.div<{ theme: MavrykTheme }>`
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
 `
 
 export const SatelliteVotingInfoWrapper = styled.div`
@@ -89,6 +100,7 @@ export const SatelliteVotingHistoryListItem = styled.div`
     color: ${({ theme }) => theme.textColor};
     font-weight: 500;
     font-size: 14px;
+    line-height: 24px;
   }
 
   p:first-letter {

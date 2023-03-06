@@ -149,9 +149,8 @@ export const VaultsTab = ({ isLoading }: { isLoading: boolean }) => {
       <div className="descr">
         <div className="title">What is a Vault?</div>
         <div className="text">
-          The treasury is managed by the Mavryk DAO through on-chain voting. Governance votes, whether for the business
-          logic or upgrades to the Mavryk ecosystem, are rewarded with a portion of the earned income from the on-chain
-          Treasury.{' '}
+          Mavryk Finance’s vaults are non-custodial smart contracts and are direct between the vault owner and smart
+          contract. In order to borrow, users must open a vault and deposit collateral.{' '}
           <a href="https://blogs.mavryk.finance/" target="_blank" rel="noreferrer">
             Read more
           </a>

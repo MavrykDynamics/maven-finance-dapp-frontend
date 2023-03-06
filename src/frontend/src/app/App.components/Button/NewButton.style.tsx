@@ -7,6 +7,7 @@ import {
   BUTTON_PULSE,
   BUTTON_ROUND,
   BUTTON_SECONDARY,
+  BUTTON_THIRD,
   BUTTON_SIMPLE,
   BUTTON_SIMPLE_SMALL,
   BUTTON_WIDE,
@@ -29,6 +30,18 @@ const BUTTONS_KIND_STYLES = css`
     color: ${({ theme }) => theme.valueColor};
     background-color: transparent;
     border: 2px solid ${({ theme }) => theme.valueColor};
+
+    svg {
+      fill: ${({ theme }) => theme.valueColor};
+    }
+  }
+
+  &.${BUTTON_THIRD} {
+    width: fit-content;
+    height: fit-content;
+    padding: 0;
+
+    border: 1px solid ${({ theme }) => theme.cardBorderColor};
 
     svg {
       fill: ${({ theme }) => theme.valueColor};

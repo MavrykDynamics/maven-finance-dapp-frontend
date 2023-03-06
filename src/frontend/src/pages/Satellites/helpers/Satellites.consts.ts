@@ -1,11 +1,23 @@
 import { State } from 'reducers'
 import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
-import { SatelliteRecordType, SatelliteStatus } from 'utils/TypesAndInterfaces/Satellites'
+import { SatelliteRecordType } from 'utils/TypesAndInterfaces/Satellites'
+import { MavrykTheme } from 'styles/interfaces'
 
 export const ORACLE_STATUSES_MAPPER = {
   responded: 'Responded',
   noResponse: 'No Response',
   awaiting: 'Awaiting',
+  notAnOracle: 'Not An Oracle',
+}
+
+export type OracleStatusTypes = keyof typeof ORACLE_STATUSES_MAPPER
+
+export const findColorBasedOnStatus = (statusType: OracleStatusTypes, theme: MavrykTheme) => {
+  return statusType === 'responded'
+    ? theme.upColor
+    : statusType === 'noResponse' || statusType === 'notAnOracle'
+    ? theme.downColor
+    : theme.warningColor
 }
 
 export function getTotalDelegatedMVK(
@@ -21,11 +33,8 @@ export function getTotalDelegatedMVK(
   )
 }
 
-export const getOracleStatus = (
-  oracle: SatelliteRecordType,
-  feeds: Feed[],
-): 'responded' | 'noResponse' | 'awaiting' => {
-  let status: 'responded' | 'noResponse' | 'awaiting' = 'noResponse'
+export const getOracleStatus = (oracle: SatelliteRecordType, feeds: Feed[]): OracleStatusTypes => {
+  let status: OracleStatusTypes = 'notAnOracle'
 
   // check if satellite is an oracle
   if (oracle?.oracleRecords?.length > 0) {
@@ -45,6 +54,9 @@ export const getOracleStatus = (
       } else {
         status = 'awaiting'
       }
+      // if oracle is not active, status should be "no response"
+    } else {
+      status = 'noResponse'
     }
   }
 

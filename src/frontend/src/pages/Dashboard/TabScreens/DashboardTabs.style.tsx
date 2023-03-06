@@ -33,8 +33,8 @@ export const TabWrapperStyled = styled.div<{ theme: MavrykTheme; backgroundImage
     width: 100%;
     justify-content: space-between;
 
-    button {
-      margin: 0 auto;
+    .dashboard-sectionLink {
+      width: 220px;
     }
 
     h1 {
