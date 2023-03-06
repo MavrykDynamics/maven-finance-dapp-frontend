@@ -75,6 +75,7 @@ export const managePermissionsAction =
       const contract = await state.wallet.tezos?.wallet.at(vaultAddress)
       let transaction = null
 
+      // if depostiorAllowance === VAULT_ALLOWANCE_ANY call updateDepositor with any 2 args and VAULT_ALLOWANCE_ANY config
       if (depostiorAllowance === VAULT_ALLOWANCE_ANY) {
         transaction = await contract?.methods
           .updateDepositor(state.wallet.accountPkh, false, VAULT_ALLOWANCE_ANY)

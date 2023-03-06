@@ -77,7 +77,7 @@ export const ManagePermissions = ({
       setTableData([{ address: '', validationStatus: '' }])
       setChosenDdItem(undefined)
     } else {
-      // set default data based on selected
+      // set initial data based on selected vault
       handleOnClickDropdownItem(deporsitorsFlag ?? '')
       setTableData(
         depositors.map((depositorAddress) => ({ address: depositorAddress, validationStatus: INPUT_STATUS_SUCCESS })),
