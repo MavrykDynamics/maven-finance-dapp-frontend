@@ -1,4 +1,5 @@
 import { ChartPlotType } from 'app/App.components/Chart/Chart.view'
+import { ANY_USER, NONE_USER, WHITELIST_USERS } from 'pages/Loans/Loans.const'
 import { normalizeLoans } from 'pages/Loans/Loans.helpers'
 import { Lending_Controller } from 'utils/generated/graphqlTypes'
 
@@ -71,6 +72,7 @@ export type UserLendObjType = {
   operationHash: string
 }
 
+export type DepositorsFlagType = typeof ANY_USER | typeof NONE_USER | typeof WHITELIST_USERS
 export type LoansVaultType = {
   borrowedAsset: LoansAssetDataType
   collateralData: Array<CollateralType>
@@ -88,7 +90,8 @@ export type LoansVaultType = {
   sMVKDelegatedTo?: string
   levelOfEarly?: number
   levelOfLate?: number
-  depositors?: Array<string>
+  depositors: Array<string>
+  deporsitorsFlag: DepositorsFlagType
 }
 
 export type LoanMarketType = {

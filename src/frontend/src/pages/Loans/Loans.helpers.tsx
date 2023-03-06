@@ -20,8 +20,10 @@ import {
   LoanTokenType,
   UserLendObjType,
   BaseLoansAssetDataType,
+  DepositorsFlagType,
 } from 'utils/TypesAndInterfaces/Loans'
 import { calcWithoutDecimals, calcWithoutMu } from '../../utils/calcFunctions'
+import { ANY_USER, NONE_USER, WHITELIST_USERS } from './Loans.const'
 import { getUserBalanceForLoanAsset } from './LoansFethcers'
 
 export const isTezosAsset = (tokenName: string) => tokenName === 'tez'
@@ -387,6 +389,15 @@ const getBorrowings = async (
 
       const borrowCapacity = Math.min(vaultCollateral.totalRow.amount / 2 - borrowedAmount, avaliableMarketLiquidity)
 
+      const depositors = (vault.vault?.depositors.map(({ depositor_id }) => depositor_id).filter(Boolean) ??
+        []) as Array<string>
+      const deporsitorsFlag: DepositorsFlagType =
+        vault.vault.allowance === 0
+          ? ANY_USER
+          : vault.vault.allowance === 1 && depositors.length !== 0
+          ? WHITELIST_USERS
+          : NONE_USER
+
       const normallizedVault = {
         borrowedAsset: {
           ...vaultAsset,
@@ -413,7 +424,8 @@ const getBorrowings = async (
         xtzDelegatedTo: vaultXtzDelegatedTo?.delegate?.address ?? null,
         operators: [],
         sMVKDelegatedTo: '',
-        depositors: vault.vault?.depositors.map(({ depositor_id }) => depositor_id) as Array<string> | undefined,
+        deporsitorsFlag,
+        depositors,
       }
 
       if (vault.owner_id === userAddress) {

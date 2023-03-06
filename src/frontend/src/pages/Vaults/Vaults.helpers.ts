@@ -19,7 +19,8 @@ import { calcCollateralRatio, calculateCompoundedInterest, getAssetMetadata } fr
 import { calcWithoutDecimals } from 'utils/calcFunctions'
 import { BLOCKS_PER_MINUTE } from 'utils/constants'
 import { getUserBalanceForLoanAsset } from 'pages/Loans/LoansFethcers'
-import { CollateralType, LoanTokenType } from 'utils/TypesAndInterfaces/Loans'
+import { CollateralType, DepositorsFlagType, LoanTokenType } from 'utils/TypesAndInterfaces/Loans'
+import { ANY_USER, WHITELIST_USERS, NONE_USER } from 'pages/Loans/Loans.const'
 
 type VaultsStorageProps = {
   lendingController: LendingControllerGQL
@@ -186,6 +187,16 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
             oracleLatestPrices,
           )
         : 0
+
+      const depositors = (item.vault?.depositors.map(({ depositor_id }) => depositor_id).filter(Boolean) ??
+        []) as Array<string>
+      const deporsitorsFlag: DepositorsFlagType =
+        item.vault.allowance === 0
+          ? ANY_USER
+          : item.vault.allowance === 1 && depositors.length !== 0
+          ? WHITELIST_USERS
+          : NONE_USER
+
       const normallizedVault = {
         borrowedAsset: {
           ...vaultAsset,
@@ -215,7 +226,8 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
         xtzDelegatedTo: vaultXtzDelegatedTo?.delegate?.address ?? null,
         operators: [],
         sMVKDelegatedTo: '',
-        depositors: item.vault?.depositors.map(({ depositor_id }) => depositor_id) as Array<string> | undefined,
+        depositors,
+        deporsitorsFlag,
       }
 
       acc.vaultsMapper[item.vault.address] = normallizedVault

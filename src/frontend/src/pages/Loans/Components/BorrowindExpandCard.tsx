@@ -1,7 +1,14 @@
 import { useContext, useEffect, useState } from 'react'
 
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
-import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent, getStatusByCollateralRatio } from '../Loans.const'
+import {
+  ANY_USER,
+  COLLATERAL_RATIO_GRADIENT,
+  getCollateralRationPersent,
+  getStatusByCollateralRatio,
+  NONE_USER,
+  WHITELIST_USERS,
+} from '../Loans.const'
 import {
   BUTTON_PRIMARY,
   BUTTON_SECONDARY,
@@ -66,6 +73,7 @@ export const BorrowingExpandCard = ({
   sMVKDelegatedTo,
   vaultId,
   depositors,
+  deporsitorsFlag,
   headerSufix,
   getExpandedStatus,
   className,
@@ -104,12 +112,6 @@ export const BorrowingExpandCard = ({
     openWithdrawCollateralPopup,
   } = useContext(loansPopupsContext)
 
-  const mappedDepositors = {
-    isAll: depositors?.[0] === 'all',
-    isNone: depositors?.[0] === 'none',
-    firstAddress: depositors?.[0],
-    ...(depositors ? { amount: depositors.length - 1 } : {}),
-  }
   const mappedMVKOperators = {
     firstAddress: operators?.[0],
     ...(operators ? { amount: operators.length - 1 } : {}),
@@ -496,14 +498,17 @@ export const BorrowingExpandCard = ({
                     />
                   </div>
                   <div className="value">
-                    {mappedDepositors.isAll ? 'All Alowed' : null}
-                    {mappedDepositors.firstAddress
-                      ? <TzAddress tzAddress={mappedDepositors.firstAddress} type={BLUE} /> +
-                        ` ${mappedDepositors.amount ?? ''}`
-                      : 'None Allowed'}
+                    {deporsitorsFlag === ANY_USER ? 'All Alowed' : null}
+                    {deporsitorsFlag === NONE_USER ? 'None Allowed' : null}
+                    {deporsitorsFlag === WHITELIST_USERS ? (
+                      <>
+                        <TzAddress tzAddress={depositors[0]} type={BLUE} />
+                        {depositors.length - 1 >= 1 ? ` + ${depositors.length - 1}` : ''}
+                      </>
+                    ) : null}
                   </div>
 
-                  <Button kind={BUTTON_SIMPLE} disabled onClick={() => openManagePermissionsPopup?.({})}>
+                  <Button kind={BUTTON_SIMPLE} onClick={() => openManagePermissionsPopup?.({})}>
                     Update <Icon id="paginationArrowLeft" />
                   </Button>
                 </div>
