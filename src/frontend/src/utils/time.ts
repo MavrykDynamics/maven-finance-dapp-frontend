@@ -16,6 +16,7 @@ type TimeFormatTypes =
   | 'MMM Do, YYYY, HH:mm:ss UTC'
   | 'MMM Do, YYYY, HH:mm:ss'
   | 'DD MMM YYYY / HH:mm'
+  | 'DD MMM YYYY, HH:mm UTC'
   | 'MMMM DD HH:mm Z'
   | 'MMM DD, YYYY'
   | 'YYYY-MM-DD'
