@@ -34,6 +34,8 @@ export const getInputValidationStatus = (
         : INPUT_STATUS_ERROR
     case 'satelliteFee':
       return Number(value) >= 0 && Number(value) <= 100 ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
+    case 'image':
+      return value ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
   }
 
   return ''
