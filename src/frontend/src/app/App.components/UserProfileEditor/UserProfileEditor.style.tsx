@@ -88,11 +88,7 @@ export const UserProfileEditorRotate = styled.div`
   display: flex;
   margin-top: 10px;
 
-  button {
-    border: 1px solid ${({ theme }) => theme.cardBorderColor};
-
-    &:first-of-type {
-      margin-right: 10px;
-    }
+  button:first-of-type {
+    margin-right: 10px;
   }
 `

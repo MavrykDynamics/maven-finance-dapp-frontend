@@ -9,7 +9,7 @@ import {
 } from './UserProfileEditor.style'
 import Icon from '../Icon/Icon.view'
 import NewButton from 'app/App.components/Button/NewButton'
-import { PRIMARY, BUTTON_SIMPLE, BUTTON_ROUND, BUTTON_WIDE } from '../Button/Button.constants'
+import { PRIMARY, BUTTON_SIMPLE, BUTTON_ROUND, BUTTON_WIDE, BUTTON_THIRD } from '../Button/Button.constants'
 
 const rotateSides = {
   LEFT: 'left',
@@ -85,12 +85,12 @@ export const UserProfileEditor = ({ file, getFile, show: showEditor, closeEditor
             />
 
             <UserProfileEditorRotate>
-              <NewButton isThin kind={BUTTON_SIMPLE} form={BUTTON_ROUND} onClick={() => handleRotate(rotateSides.LEFT)}>
+              <NewButton isThin kind={BUTTON_THIRD} form={BUTTON_ROUND} onClick={() => handleRotate(rotateSides.LEFT)}>
                 <Icon id="rotate-left-outlined" />
               </NewButton>
               <NewButton
                 isThin
-                kind={BUTTON_SIMPLE}
+                kind={BUTTON_THIRD}
                 form={BUTTON_ROUND}
                 onClick={() => handleRotate(rotateSides.RIGHT)}
               >
@@ -99,9 +99,9 @@ export const UserProfileEditor = ({ file, getFile, show: showEditor, closeEditor
             </UserProfileEditorRotate>
           </div>
 
-          <div onClick={closeEditor}>
+          <NewButton kind={BUTTON_SIMPLE} onClick={closeEditor}>
             <Icon className="close-btn" id="navigation-menu_close" />
-          </div>
+          </NewButton>
 
           <UserProfileEditorZoom>
             <div className="setting-title">Zoom:</div>
