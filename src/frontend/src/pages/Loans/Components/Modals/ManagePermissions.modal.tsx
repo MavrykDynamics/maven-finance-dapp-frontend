@@ -8,24 +8,31 @@ import { LoansPopupsAddressInputStateType, ManagePermissionsPopupDataType } from
 import { State } from 'reducers'
 import { validateTzAddress } from 'utils/validatorFunctions'
 
-import { DropDown, DropdownItemType } from 'app/App.components/DropDown/DropDown.controller'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { Input } from 'app/App.components/Input/NewInput'
 import NewButton from 'app/App.components/Button/NewButton'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import { DDItemId, DropDown, DropDownItemType } from 'app/App.components/DropDown/NewDropdown'
 
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { AddRowBtn, RemoveRowBtn, Table, TableBody, TableCell, TableRow } from 'app/App.components/Table/Table.style'
-import { LoansModalBase } from './Modals.style'
+import { DropDownJsxChild, LoansModalBase } from './Modals.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
 import { managePermissionsAction } from 'pages/Loans/Actions/vaultPermissions.actions'
+import {
+  NONE_USER,
+  WHITELIST_USERS,
+  ANY_USER,
+  VAULT_ALLOWANCE_ANY,
+  VAULT_ALLOWANCE_ACCOUNTS,
+} from 'pages/Loans/Loans.const'
+import { LoanVaultAllowanceType } from 'utils/TypesAndInterfaces/Loans'
 
 const ddItems = [
-  { text: 'Vault Owner', value: 'owner' },
-  { text: 'Defined Accounts', value: 'selected' },
-  { text: 'Allow Any', value: 'anyone' },
+  { text: 'Vault Owner', value: NONE_USER },
+  { text: 'Defined Accounts', value: WHITELIST_USERS },
+  { text: 'Allow Any', value: ANY_USER },
 ]
-const dropDownListItems = ddItems.map(({ text }) => text)
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17307%3A226126&t=Sx2aEpp3ifrGxBtQ-0
 export const ManagePermissions = ({
@@ -37,36 +44,57 @@ export const ManagePermissions = ({
   show: boolean
   data: ManagePermissionsPopupDataType
 }) => {
-  const {} = data ?? {}
+  const { vaultAddress = '', deporsitorsFlag, depositors = [] } = data ?? {}
 
   useLockBodyScroll(show)
   const dispatch = useDispatch()
   const { isActionLoading } = useSelector((state: State) => state.loading)
   const { accountPkh } = useSelector((state: State) => state.wallet)
 
-  const [ddIsOpen, setDdIsOpen] = useState(false)
-  const [chosenDdItem, setChosenDdItem] = useState<DropdownItemType | undefined>()
   const [tableData, setTableData] = useState<Array<LoansPopupsAddressInputStateType>>([
     { address: '', validationStatus: '' },
   ])
+
+  const itemsForDropDown = useMemo<DropDownItemType[]>(
+    () =>
+      ddItems.map(({ text, value }) => ({
+        content: <DropDownJsxChild>{text}</DropDownJsxChild>,
+        id: value,
+      })),
+    [],
+  )
+
+  const [chosenDdItem, setChosenDdItem] = useState<DropDownItemType | undefined>()
+  const handleOnClickDropdownItem = (itemId: DDItemId) => {
+    const ddChoosenItem = itemsForDropDown.find(({ id }) => id === itemId)
+    setChosenDdItem(ddChoosenItem)
+
+    if (ddChoosenItem?.id === WHITELIST_USERS && tableData.length < 1) handleAddRow()
+  }
 
   useEffect(() => {
     if (!show) {
       setTableData([{ address: '', validationStatus: '' }])
       setChosenDdItem(undefined)
-      setDdIsOpen(false)
+    } else {
+      // set initial data based on selected vault
+      handleOnClickDropdownItem(deporsitorsFlag ?? '')
+      setTableData(
+        depositors.map((depositorAddress) => ({ address: depositorAddress, validationStatus: INPUT_STATUS_SUCCESS })),
+      )
     }
   }, [show])
 
   const isActionDisabled = useMemo(() => {
-    return isActionLoading || tableData.some(({ validationStatus }) => validationStatus !== INPUT_STATUS_SUCCESS)
-  }, [isActionLoading, tableData])
+    const isInvalidTable =
+      chosenDdItem?.id === WHITELIST_USERS &&
+      tableData.some(({ validationStatus }) => validationStatus !== INPUT_STATUS_SUCCESS)
 
-  const handleClickDropdownItem = (e: string) => {
-    const chosenItem = ddItems.filter((item) => item.text === e)[0]
-    setChosenDdItem(chosenItem)
-    setDdIsOpen(!ddIsOpen)
-  }
+    const isNoChanges =
+      tableData.every(({ address }) => depositors.includes(address)) && deporsitorsFlag === chosenDdItem?.id
+
+    return isActionLoading || isInvalidTable || !chosenDdItem || !vaultAddress || isNoChanges
+  }, [chosenDdItem, deporsitorsFlag, depositors, isActionLoading, tableData, vaultAddress])
 
   const handleAddRow = () => {
     setTableData(tableData.concat([{ address: '', validationStatus: '' }]))
@@ -87,7 +115,13 @@ export const ManagePermissions = ({
     )
   }
 
-  const updateHandler = () => dispatch(managePermissionsAction(closePopup))
+  const updateHandler = () => {
+    const depostiorAllowance: LoanVaultAllowanceType =
+      chosenDdItem?.id === ANY_USER ? VAULT_ALLOWANCE_ANY : VAULT_ALLOWANCE_ACCOUNTS
+    const newDepositors: Array<string> =
+      chosenDdItem?.id === NONE_USER ? [] : tableData.map(({ address }) => address).filter(Boolean)
+    dispatch(managePermissionsAction(vaultAddress, depostiorAllowance, newDepositors, depositors, closePopup))
+  }
 
   return (
     <PopupContainer onClick={closePopup} show={show}>
@@ -111,14 +145,12 @@ export const ManagePermissions = ({
 
           <DropDown
             placeholder="Choose Permissions"
-            isOpen={ddIsOpen}
-            setIsOpen={setDdIsOpen}
-            itemSelected={chosenDdItem?.text}
-            items={dropDownListItems}
-            clickOnItem={(e) => handleClickDropdownItem(e)}
+            activeItem={chosenDdItem}
+            items={itemsForDropDown}
+            clickItem={handleOnClickDropdownItem}
           />
 
-          {chosenDdItem?.value === 'selected' ? (
+          {chosenDdItem?.id === WHITELIST_USERS ? (
             <Table className="editable-table one-column">
               <TableBody className="editable-body">
                 {tableData.map(({ address, validationStatus }, rowIdx) => {
@@ -131,9 +163,6 @@ export const ManagePermissions = ({
                             placeholder: 'Enter tz1 address',
                             value: address,
                             type: 'text',
-                            onFocus: () => {
-                              setDdIsOpen(false)
-                            },
                             onChange: (e) => updateTableDataState(e.target.value, rowIdx),
                           }}
                           settings={{

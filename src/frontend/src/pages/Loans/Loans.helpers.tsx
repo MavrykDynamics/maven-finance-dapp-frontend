@@ -20,8 +20,10 @@ import {
   LoanTokenType,
   UserLendObjType,
   BaseLoansAssetDataType,
+  DepositorsFlagType,
 } from 'utils/TypesAndInterfaces/Loans'
 import { calcWithoutDecimals, calcWithoutMu } from '../../utils/calcFunctions'
+import { ANY_USER, NONE_USER, WHITELIST_USERS } from './Loans.const'
 import { getUserBalanceForLoanAsset } from './LoansFethcers'
 
 export const isTezosAsset = (tokenName: string) => tokenName === 'tez'
@@ -292,6 +294,25 @@ export const calcCollateralRatio = (collateralAmount: number, borrowedAmount: nu
   return (collateralAmount / (borrowedAmount * borrowedAssetRate)) * 100
 }
 
+export const getMaxCollateralWithdraw = (
+  currentCollateralAmount: number,
+  totalCollateralAmount: number,
+  borrowedAmount: number,
+  borrowedAssetRate: number,
+  collarealAssetRate: number,
+): number => {
+  // If vault is not borrowed we can withdraw all amount
+  if (borrowedAmount === 0) return currentCollateralAmount
+  /**
+   * @collateralNeedsToBe is now much collateralAmount i need to left for current borrowed amount
+   * 200 ratio in persent the smallest we can get, <200 vault is under collateralization
+   * 100 is to transform % => number
+   * (borrowedAmount * borrowedAssetRate) how much has been borrowed from the vault
+   */
+  const collateralNeedsToBe = (200 / 100) * (borrowedAmount * borrowedAssetRate)
+  return Math.min(totalCollateralAmount - collateralNeedsToBe, currentCollateralAmount) / collarealAssetRate
+}
+
 const getBorrowings = async (
   loanTokenVaults: Array<Lending_Controller_Vault>,
   dipDupTokens: State['tokens']['dipDupTokens'],
@@ -387,6 +408,15 @@ const getBorrowings = async (
 
       const borrowCapacity = Math.min(vaultCollateral.totalRow.amount / 2 - borrowedAmount, avaliableMarketLiquidity)
 
+      const depositors = (vault.vault?.depositors.map(({ depositor_id }) => depositor_id).filter(Boolean) ??
+        []) as Array<string>
+      const deporsitorsFlag: DepositorsFlagType =
+        vault.vault.allowance === 0
+          ? ANY_USER
+          : vault.vault.allowance === 1 && depositors.length !== 0
+          ? WHITELIST_USERS
+          : NONE_USER
+
       const normallizedVault = {
         borrowedAsset: {
           ...vaultAsset,
@@ -413,7 +443,8 @@ const getBorrowings = async (
         xtzDelegatedTo: vaultXtzDelegatedTo?.delegate?.address ?? null,
         operators: [],
         sMVKDelegatedTo: '',
-        depositors: vault.vault?.depositors.map(({ depositor_id }) => depositor_id) as Array<string> | undefined,
+        deporsitorsFlag,
+        depositors,
       }
 
       if (vault.owner_id === userAddress) {

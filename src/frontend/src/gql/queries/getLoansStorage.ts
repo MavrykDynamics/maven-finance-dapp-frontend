@@ -71,9 +71,12 @@ export const LOANS_QUERY = `
           }
           vault {
             address
+            
             depositors {
               depositor_id
             }
+            allowance
+
             lending_controller_vaults {
               loan_principal_total
               loan_outstanding_total

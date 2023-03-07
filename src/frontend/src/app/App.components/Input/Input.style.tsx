@@ -187,7 +187,6 @@ export const StyledInput = styled.input<{ theme: MavrykTheme }>`
   background-color: ${({ theme }) => theme.backgroundColor};
   border: none;
   border-radius: 10px;
-
   line-height: 100%;
   margin: 0;
   color: ${({ theme }) => theme.textColor};
@@ -311,7 +310,7 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
   &.input-with-rate {
     input {
       padding-top: 0px;
-      padding-bottom: 13px;
+      padding-bottom: 10px;
     }
   }
 

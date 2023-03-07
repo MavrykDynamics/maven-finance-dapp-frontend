@@ -32,6 +32,7 @@ export const VAULTS_STORAGE_QUERY = `
           depositors {
             depositor_id
           }
+          allowance
         }
 
         last_updated_block_level

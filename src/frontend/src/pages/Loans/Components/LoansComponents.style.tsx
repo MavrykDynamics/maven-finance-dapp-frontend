@@ -145,6 +145,9 @@ export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
       color: ${({ theme }) => theme.dataColor};
       font-weight: 600;
       font-size: 14px;
+      display: flex;
+      align-items: center;
+      column-gap: 6px;
     }
 
     /* TODO: remove button styles from here */
@@ -215,6 +218,10 @@ export const StatusMessageStyled = styled.div<{ theme: MavrykTheme }>`
 
   .timer {
     display: inline-block;
+  }
+
+  &.borrow-message {
+    margin: 40px 0 40px 0;
   }
 
   svg {
