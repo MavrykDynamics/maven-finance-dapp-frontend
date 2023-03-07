@@ -179,7 +179,8 @@ export const getVestingStorage = () => async (dispatch: AppDispatch) => {
       VESTING_STORAGE_QUERY_NAME,
       VESTING_STORAGE_QUERY_VARIABLE,
     )
-    const vestingStorage = normalizeVestingStorage(storage)
+    const vestingStorage = normalizeVestingStorage(storage?.vesting?.[0])
+
     dispatch({
       type: GET_VESTING_STORAGE,
       vestingStorage: vestingStorage,

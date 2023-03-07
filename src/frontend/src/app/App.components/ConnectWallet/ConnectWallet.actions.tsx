@@ -68,7 +68,6 @@ export const connect = () => async (dispatch: AppDispatch, getState: GetState) =
       const userData = accountPkh
         ? await fetchUserData(
             accountPkh,
-            state.satellites.activeSatellitesIds,
             state.tokens.dipDupTokens,
             state.dataFeeds.feedsLedger,
             state.preferences.headData?.level,

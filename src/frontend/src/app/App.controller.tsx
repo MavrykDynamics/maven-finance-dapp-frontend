@@ -53,6 +53,7 @@ const AppContainer = () => {
     ;(async () => {
       // Fetching initial&common data for DAPP
       await Promise.all([
+        // TODO: we can move out satellites loading to sections
         dispatch(getSatellitesStorage()),
         dispatch(getContractAddressesStorage()),
         dispatch(getDipDupTokensStorage()),
