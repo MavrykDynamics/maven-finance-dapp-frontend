@@ -118,7 +118,9 @@ export const BorrowingExpandCard = ({
   }
 
   const vaultStatus = status ?? getStatusByCollateralRatio(collateralRatio)
-
+  const vaultHasXtzCollateral = collateralData.find(({ gqlName }) => isTezosAsset(gqlName))
+  // TODO: test it when sMVK will be avaliable as collateral
+  const vaultHasSmvkCollateral = collateralData.find(({ gqlName }) => gqlName === 'sMVK')
   const [timerTimestamp, setTimerTimestamp] = useState<number | undefined>(undefined)
 
   const collateralTotalBalance = collateralData[collateralData.length - 1]?.amount
@@ -456,38 +458,54 @@ export const BorrowingExpandCard = ({
 
             {isOwner ? (
               <>
-                <div className="block-name margin-top">Delegations</div>
-                <div className="bottom-info-row">
-                  <div className="name">XTZ Delegated to </div>
-                  <div className="value">
-                    {xtzDelegatedTo ? <TzAddress tzAddress={xtzDelegatedTo} type={BLUE} /> : 'Not Delegated'}
-                  </div>
-                  <Button
-                    kind={BUTTON_SIMPLE}
-                    disabled={!collateralData.find(({ gqlName }) => isTezosAsset(gqlName))}
-                    onClick={() =>
-                      openChangeBakerPopup?.({
-                        bakerAddress: xtzDelegatedTo,
-                        vaultAddress: address,
-                      })
-                    }
-                  >
-                    Change Baker <Icon id="paginationArrowLeft" />
-                  </Button>
-                </div>
-                <div className="bottom-info-row">
-                  <div className="name">sMVK Delegated to </div>
-                  <div className="value">
-                    {sMVKDelegatedTo ? <TzAddress tzAddress={sMVKDelegatedTo} type={BLUE} /> : 'None'}
-                  </div>
-                  <Link to={sMVKDelegatedTo ? `/satellites/satellite-details/${sMVKDelegatedTo}` : '/satellite-nodes'}>
-                    <Button kind={BUTTON_SIMPLE}>
-                      View Satellite <Icon id="paginationArrowLeft" />
-                    </Button>
-                  </Link>
-                </div>
+                {vaultHasXtzCollateral || vaultHasSmvkCollateral ? (
+                  <div className="block-name margin-top">Delegations</div>
+                ) : null}
 
-                <div className="block-name margin-top-20">Permissions (Advanced)</div>
+                {vaultHasXtzCollateral ? (
+                  <div className="bottom-info-row">
+                    <div className="name">XTZ Delegated to </div>
+                    <div className="value">
+                      {xtzDelegatedTo ? <TzAddress tzAddress={xtzDelegatedTo} type={BLUE} /> : 'Not Delegated'}
+                    </div>
+                    <Button
+                      kind={BUTTON_SIMPLE}
+                      disabled={!collateralData.find(({ gqlName }) => isTezosAsset(gqlName))}
+                      onClick={() =>
+                        openChangeBakerPopup?.({
+                          bakerAddress: xtzDelegatedTo,
+                          vaultAddress: address,
+                        })
+                      }
+                    >
+                      Change Baker <Icon id="paginationArrowLeft" />
+                    </Button>
+                  </div>
+                ) : null}
+
+                {vaultHasSmvkCollateral ? (
+                  <div className="bottom-info-row">
+                    <div className="name">sMVK Delegated to </div>
+                    <div className="value">
+                      {sMVKDelegatedTo ? <TzAddress tzAddress={sMVKDelegatedTo} type={BLUE} /> : 'None'}
+                    </div>
+                    <Link
+                      to={sMVKDelegatedTo ? `/satellites/satellite-details/${sMVKDelegatedTo}` : '/satellite-nodes'}
+                    >
+                      <Button kind={BUTTON_SIMPLE}>
+                        View Satellite <Icon id="paginationArrowLeft" />
+                      </Button>
+                    </Link>
+                  </div>
+                ) : null}
+
+                <div
+                  className={`block-name ${
+                    vaultHasXtzCollateral || vaultHasSmvkCollateral ? 'margin-top-20' : 'margin-top'
+                  }`}
+                >
+                  Permissions (Advanced)
+                </div>
                 <div className="bottom-info-row">
                   <div className="name">
                     Depositors{' '}
@@ -498,14 +516,9 @@ export const BorrowingExpandCard = ({
                     />
                   </div>
                   <div className="value">
-                    {deporsitorsFlag === ANY_USER ? 'All Alowed' : null}
-                    {deporsitorsFlag === NONE_USER ? 'None Allowed' : null}
-                    {deporsitorsFlag === WHITELIST_USERS ? (
-                      <>
-                        <TzAddress tzAddress={depositors[0]} type={BLUE} shouldCopy={false} />
-                        {depositors.length - 1 >= 1 ? ` + ${depositors.length - 1}` : ''}
-                      </>
-                    ) : null}
+                    {deporsitorsFlag === ANY_USER ? 'Allow Any' : null}
+                    {deporsitorsFlag === NONE_USER ? 'Vault Owner' : null}
+                    {deporsitorsFlag === WHITELIST_USERS ? 'Defined Accounts' : null}
                   </div>
 
                   <Button
