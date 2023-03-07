@@ -66,6 +66,11 @@ export const DropDownStyled = styled.div<{ theme: MavrykTheme }>`
         padding-left: 10px;
       }
     }
+
+    span {
+      border: none;
+      margin: 0;
+    }
   }
 
   &.select-xtz-baker {
@@ -102,7 +107,7 @@ export const DropDownMenu = styled.div<{ theme: MavrykTheme }>`
     height: 100%;
     justify-content: center;
     align-items: center;
-    margin-left: 16px;
+    margin-left: 3px;
 
     > svg {
       height: 15px;

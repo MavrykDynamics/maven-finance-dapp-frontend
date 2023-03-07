@@ -63,38 +63,19 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
       <div className="content-wrapper">
         <header>
           {treasury.name ? <h1 title={treasury.name}>{treasury.name}</h1> : null}
-          {isGlobal ? (
-            <var>
-              <CommaNumber beginningText="$" value={treasury.treasuryTVL} />
-            </var>
-          ) : null}
         </header>
-        {factoryAddress ? (
-          <div className="info-block">
-            <div className="text">Treasury Factory Address</div>
-            <div className="value">
-              <TzAddress type={BLUE} tzAddress={factoryAddress} hasIcon={true} />
-            </div>
-          </div>
-        ) : null}
+
         <div>
+          <div className="info-block">
+            <p className="text">TVL</p>
+            <p className="value">
+              <CommaNumber beginningText="$" value={treasury.treasuryTVL} />
+            </p>
+            <div />
+          </div>
+
           {!isGlobal ? (
             <>
-              <div className="info-block not-global">
-                <p className="text">TVL</p>
-                <p className="value">
-                  <CommaNumber beginningText="$" value={treasury.treasuryTVL} />
-                </p>
-                <div />
-              </div>
-              <div className="info-block not-global">
-                <p className="text">Treasury Address</p>
-                <div className="value">
-                  <TzAddress type={BLUE} tzAddress={treasury.address} hasIcon={true} />
-                </div>
-                <div />
-              </div>
-
               <Checkbox
                 id={'show_dropped'}
                 onChangeHandler={() => {
@@ -177,6 +158,14 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
           ))}
         </div>
       </div>
+      {factoryAddress || (!isGlobal && treasury.address) ? (
+        <div className="address-block">
+          <div className="text">Treasury Factory Address</div>
+          <div className="value">
+            <TzAddress type={BLUE} tzAddress={isGlobal ? factoryAddress : treasury.address} hasIcon={true} />
+          </div>
+        </div>
+      ) : null}
     </TreasuryViewStyle>
   )
 }

@@ -187,7 +187,6 @@ export const StyledInput = styled.input<{ theme: MavrykTheme }>`
   background-color: ${({ theme }) => theme.backgroundColor};
   border: none;
   border-radius: 10px;
-  font-weight: 500;
   line-height: 100%;
   margin: 0;
   color: ${({ theme }) => theme.textColor};
@@ -238,8 +237,8 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
     height: 50px;
 
     input {
-      font-size: 14px;
       font-weight: 500;
+      font-size: 14px;
     }
   }
 
@@ -247,8 +246,8 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
     height: 56px;
 
     input {
-      font-size: 22px;
       font-weight: 600;
+      font-size: 22px;
     }
   }
 
@@ -256,8 +255,8 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
     height: 60px;
 
     input {
-      font-size: 22px;
       font-weight: 600;
+      font-size: 22px;
     }
   }
 

@@ -29,7 +29,7 @@ export const TzAddress = ({
   iconToLeft,
   isBold,
   shouldCopy = true,
-  amountFromStart = 7,
+  amountFromStart = 4,
   amountFromEnd = 4,
 }: TzAddressProps) => {
   const addrClasses = `${type} ${isBold ? 'bold' : ''} copyIcon`

@@ -34,6 +34,7 @@ export const TabWrapperStyled = styled.div<{ theme: MavrykTheme; backgroundImage
     justify-content: space-between;
 
     .dashboard-sectionLink {
+      display: block;
       width: 220px;
     }
 
@@ -159,14 +160,15 @@ export const OraclesContentStyled = styled.div<{ theme: MavrykTheme }>`
   .feeds-grid {
     margin-top: 15px;
     margin-bottom: 5px;
-    max-width: 720px;
+    max-width: 680px;
     display: flex;
     flex-direction: column;
     cursor: pointer;
 
     .row {
       display: grid;
-      grid-template-columns: 1.2fr 1.1fr 1.3fr 1.2fr;
+      grid-template-columns: 1.25fr 0.8fr 0.9fr auto;
+      padding-right: 10px;
 
       .icon-first {
         img {
