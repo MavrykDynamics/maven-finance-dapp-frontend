@@ -310,7 +310,7 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
   &.input-with-rate {
     input {
       padding-top: 0px;
-      padding-bottom: 13px;
+      padding-bottom: 10px;
     }
   }
 

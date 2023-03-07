@@ -90,9 +90,11 @@ export const ManagePermissions = ({
       chosenDdItem?.id === WHITELIST_USERS &&
       tableData.some(({ validationStatus }) => validationStatus !== INPUT_STATUS_SUCCESS)
 
-    const isNoChanges = tableData.every(({ address }) => depositors.includes(address))
+    const isNoChanges =
+      tableData.every(({ address }) => depositors.includes(address)) && deporsitorsFlag === chosenDdItem?.id
+
     return isActionLoading || isInvalidTable || !chosenDdItem || !vaultAddress || isNoChanges
-  }, [chosenDdItem, depositors, isActionLoading, tableData, vaultAddress])
+  }, [chosenDdItem, deporsitorsFlag, depositors, isActionLoading, tableData, vaultAddress])
 
   const handleAddRow = () => {
     setTableData(tableData.concat([{ address: '', validationStatus: '' }]))

@@ -24,6 +24,8 @@ import { silverColor } from 'styles'
 import { borrowVaultAssetAction } from 'pages/Loans/Actions/vault.actions'
 import { calcCollateralRatio } from 'pages/Loans/Loans.helpers'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
+import { StatusMessageStyled } from '../LoansComponents.style'
+import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A240058&t=Sx2aEpp3ifrGxBtQ-0
 export const BorrowAsset = ({
@@ -75,8 +77,6 @@ export const BorrowAsset = ({
   const inputOnChangeHandle = (newInputAmount: string, maxAmount: number) => {
     const validationStatus =
       Number(newInputAmount) > 0 && Number(newInputAmount) <= maxAmount ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
-
-    if (validationStatus === INPUT_STATUS_ERROR && newInputAmount !== '' && newInputAmount !== '0') return
 
     setInputData({
       ...inputData,
@@ -154,13 +154,13 @@ export const BorrowAsset = ({
               <div className="block-name">Select asset and amount to borrow</div>
               {borrowedAsset ? (
                 <Input
-                  className={`${borrowedAsset.rate ? 'input-with-rate' : ''}pinned-dropdown mb-45`}
+                  className={`${borrowedAsset.rate ? 'input-with-rate' : ''} pinned-dropdown mb-45`}
                   inputProps={{
                     value: inputData.amount,
                     type: 'number',
                     onBlur: inputOnBlurHandle,
                     onFocus: onFocusHandler,
-                    onChange: (e) => inputOnChangeHandle(e.target.value, Math.min(borrowCapacity)),
+                    onChange: (e) => inputOnChangeHandle(e.target.value, borrowCapacity),
                   }}
                   settings={{
                     balance: borrowedAsset.userBalance,
@@ -178,16 +178,17 @@ export const BorrowAsset = ({
                 </Input>
               ) : null}
 
+              <div className="block-name">New Vault Stats</div>
               <VaultModalOverview>
                 <ThreeLevelListItem
                   className="collateral-diagram"
-                  customColor={getCollateralRationPersent(collateralRatio)}
+                  customColor={getCollateralRationPersent(futureCollateralRatio)}
                 >
                   <div className={`percentage`}>
                     Collateral Ratio:{' '}
                     <CommaNumber
-                      beginningText={`${collateralRatio > 250 ? '+' : ''}`}
-                      value={Math.max(0, Math.min(collateralRatio, 250))}
+                      beginningText={`${futureCollateralRatio > 250 ? '+' : ''}`}
+                      value={Math.max(0, Math.min(futureCollateralRatio, 250))}
                       endingText="%"
                       showDecimal
                       decimalsToShow={2}
@@ -196,7 +197,7 @@ export const BorrowAsset = ({
                   <GradientDiagram
                     className="diagram"
                     colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
-                    currentPersentage={Math.max(0, Math.min(((collateralRatio - 100) / 150) * 100, 100))}
+                    currentPersentage={Math.max(0, Math.min(((futureCollateralRatio - 100) / 150) * 100, 100))}
                   />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
@@ -205,13 +206,16 @@ export const BorrowAsset = ({
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">Available To Borrow</div>
-                  <CommaNumber
-                    value={borrowCapacity * Number(borrowedAsset?.rate)}
-                    className="value"
-                    beginningText="$"
-                  />
+                  <CommaNumber value={futureBorrowCapacity} className="value" beginningText="$" />
                 </ThreeLevelListItem>
               </VaultModalOverview>
+
+              {inputAmount > borrowCapacity ? (
+                <StatusMessageStyled className={`${vaultsStatuses.LIQUIDATABLE} borrow-message`}>
+                  <Icon id="error-triangle" />
+                  Select the amount you would like to borrow. You cannot borrow more than your borrow capacity.
+                </StatusMessageStyled>
+              ) : null}
 
               <div className="manage-btn">
                 <NewButton

@@ -296,164 +296,168 @@ export const BorrowingExpandCard = ({
               ) : null}
             </div>
 
-            <div className="block-name margin-top">Collateral In Vault</div>
-            <Table
-              className={`no-margin borrowing-table ${isOwner && collateralData.length <= 2 ? 'show-before' : ''}`}
-            >
-              {collateralData.length ? (
-                <TableHeader className={`simple-header collateral `}>
-                  <TableRow>
-                    <TableHeaderCell>Asset</TableHeaderCell>
-                    <TableHeaderCell>Amount</TableHeaderCell>
-                    <TableHeaderCell>Collateral Share</TableHeaderCell>
-                  </TableRow>
-                </TableHeader>
-              ) : null}
+            {isOwner || (!isOwner && collateralData.length) ? (
+              <>
+                <div className="block-name margin-top">Collateral In Vault</div>
+                <Table
+                  className={`no-margin borrowing-table ${isOwner && collateralData.length <= 2 ? 'show-before' : ''}`}
+                >
+                  {collateralData.length ? (
+                    <TableHeader className={`simple-header collateral `}>
+                      <TableRow>
+                        <TableHeaderCell>Asset</TableHeaderCell>
+                        <TableHeaderCell>Amount</TableHeaderCell>
+                        <TableHeaderCell>Collateral Share</TableHeaderCell>
+                      </TableRow>
+                    </TableHeader>
+                  ) : null}
 
-              <TableBody>
-                {collateralData.map(({ icon, amount, rate, gqlName, symbol }, idx) => {
-                  const isTotalRow = collateralData.length - 1 === idx
+                  <TableBody>
+                    {collateralData.map(({ icon, amount, rate, gqlName, symbol }, idx) => {
+                      const isTotalRow = collateralData.length - 1 === idx
 
-                  const collateralShare = isTotalRow
-                    ? 100
-                    : calculateCollateralShare(amount * rate, collateralTotalBalance)
+                      const collateralShare = isTotalRow
+                        ? 100
+                        : calculateCollateralShare(amount * rate, collateralTotalBalance)
 
-                  if (isTotalRow && collateralData.length < 3) return null
+                      if (isTotalRow && collateralData.length < 3) return null
 
-                  return (
-                    <TableRow rowHeight={60} key={gqlName + '-' + idx}>
-                      <TableCell width={'22%'} className="vert-middle">
-                        {isTotalRow ? (
-                          'Total'
-                        ) : (
-                          <div className="cell-content row with-icon">
-                            <ImageWithPlug imageLink={icon} alt={`${gqlName} icon`} />
-                            {symbol}
-                          </div>
-                        )}
-                      </TableCell>
-                      <TableCell width={'22%'}>
-                        <div className="cell-content">
-                          <CommaNumber
-                            value={amount}
-                            className="value"
-                            showDecimal
-                            decimalsToShow={2}
-                            beginningText={isTotalRow ? '$' : ''}
-                          />
-                          {rate ? (
-                            <CommaNumber
-                              value={amount * rate}
-                              className="rate"
-                              beginningText="$"
-                              showDecimal
-                              decimalsToShow={2}
-                            />
-                          ) : null}
-                        </div>
-                      </TableCell>
-                      <TableCell width={'22%'}>
-                        <div className="cell-content">
-                          <CommaNumber value={collateralShare} className="value" endingText="%" />
-                        </div>
-                      </TableCell>
-                      {isTotalRow ? (
-                        <TableCell className="buttons borrowing total">
-                          <div className="cell-content row">
-                            {isOwner ? (
-                              <Button
-                                onClick={() =>
-                                  openAddNewCollateralPopup?.({
-                                    vaultAddress: address,
-                                    vaultCollateralBalance: collateralData.at(-1)?.amount ?? 0,
-                                    currentCollateralRatio: collateralRatio,
-                                    borrowedAmount,
-                                    collateralWithdrawAmount: 0,
-                                    existingCollaterals: collateralData,
-                                    borrowedAssetRate: borrowedAsset.rate,
-                                  })
-                                }
-                                kind={BUTTON_PRIMARY}
-                                disabled={
-                                  avaliableCollaterals.length === 0 ||
-                                  avaliableCollaterals.length === collateralData.length - 1
-                                }
-                              >
-                                <Icon id="plus" /> Add Collateral
-                              </Button>
-                            ) : null}
-                          </div>
-                        </TableCell>
-                      ) : (
-                        <TableCell className="buttons borrowing">
-                          <div className="cell-content row">
-                            <Button
-                              onClick={() =>
-                                openAddExistingCollateralPopup?.({
-                                  vaultAddress: address,
-                                  vaultCollateralBalance: collateralData.at(-1)?.amount ?? 0,
-                                  selectedAsset: collateralData[idx],
-                                  currentCollateralRatio: collateralRatio,
-                                  borrowedAmount,
-                                  collateralWithdrawAmount: amount,
-                                  borrowedAssetRate: borrowedAsset.rate,
-                                  bakerAddress: xtzDelegatedTo,
-                                })
-                              }
-                              form={BUTTON_WIDE}
-                              kind={BUTTON_SECONDARY}
-                            >
-                              <Icon id="plus" /> Add
-                            </Button>
-                            {isOwner ? (
-                              <Button
-                                onClick={() =>
-                                  openWithdrawCollateralPopup?.({
-                                    vaultAddress: address,
-                                    currentCollateralBalance: amount,
-                                    vaultCollateralBalance: collateralData.at(-1)?.amount ?? 0,
-                                    selectedAsset: collateralData[idx],
-                                    currentCollateralRatio: collateralRatio,
-                                    borrowedAmount,
-                                    collateralWithdrawAmount: amount,
-                                    borrowedAssetRate: borrowedAsset.rate,
-                                  })
-                                }
-                                form={BUTTON_WIDE}
-                                kind={BUTTON_SECONDARY}
-                              >
-                                <Icon id="minus" /> Remove
-                              </Button>
-                            ) : null}
-                          </div>
-                        </TableCell>
-                      )}
-                    </TableRow>
-                  )
-                })}
-              </TableBody>
-            </Table>
-            {collateralData.length < 3 && isOwner ? (
-              <Button
-                onClick={() =>
-                  openAddNewCollateralPopup?.({
-                    vaultAddress: address,
-                    vaultCollateralBalance: collateralData.at(-1)?.amount ?? 0,
-                    currentCollateralRatio: collateralRatio,
-                    borrowedAmount,
-                    collateralWithdrawAmount: 0,
-                    existingCollaterals: collateralData,
-                    borrowedAssetRate: borrowedAsset.rate,
-                  })
-                }
-                kind={BUTTON_PRIMARY}
-                isThin
-                disabled={
-                  avaliableCollaterals.length === 0 || avaliableCollaterals.length === collateralData.length - 1
-                }
-              >
-                <Icon id="plus" /> Add Collateral
-              </Button>
+                      return (
+                        <TableRow rowHeight={60} key={gqlName + '-' + idx}>
+                          <TableCell width={'22%'} className="vert-middle">
+                            {isTotalRow ? (
+                              'Total'
+                            ) : (
+                              <div className="cell-content row with-icon">
+                                <ImageWithPlug imageLink={icon} alt={`${gqlName} icon`} />
+                                {symbol}
+                              </div>
+                            )}
+                          </TableCell>
+                          <TableCell width={'22%'}>
+                            <div className="cell-content">
+                              <CommaNumber
+                                value={amount}
+                                className="value"
+                                showDecimal
+                                decimalsToShow={2}
+                                beginningText={isTotalRow ? '$' : ''}
+                              />
+                              {rate ? (
+                                <CommaNumber
+                                  value={amount * rate}
+                                  className="rate"
+                                  beginningText="$"
+                                  showDecimal
+                                  decimalsToShow={2}
+                                />
+                              ) : null}
+                            </div>
+                          </TableCell>
+                          <TableCell width={'22%'}>
+                            <div className="cell-content">
+                              <CommaNumber value={collateralShare} className="value" endingText="%" />
+                            </div>
+                          </TableCell>
+                          {isTotalRow ? (
+                            <TableCell className="buttons borrowing total">
+                              <div className="cell-content row">
+                                {isOwner ? (
+                                  <Button
+                                    onClick={() =>
+                                      openAddNewCollateralPopup?.({
+                                        vaultAddress: address,
+                                        vaultCollateralBalance: collateralData.at(-1)?.amount ?? 0,
+                                        currentCollateralRatio: collateralRatio,
+                                        borrowedAmount,
+                                        collateralWithdrawAmount: 0,
+                                        existingCollaterals: collateralData,
+                                        borrowedAssetRate: borrowedAsset.rate,
+                                      })
+                                    }
+                                    kind={BUTTON_PRIMARY}
+                                    disabled={
+                                      avaliableCollaterals.length === 0 ||
+                                      avaliableCollaterals.length === collateralData.length - 1
+                                    }
+                                  >
+                                    <Icon id="plus" /> Add Collateral
+                                  </Button>
+                                ) : null}
+                              </div>
+                            </TableCell>
+                          ) : (
+                            <TableCell className={`buttons borrowing ${!isOwner ? 'single-btn' : ''}`}>
+                              <div className="cell-content row">
+                                <Button
+                                  onClick={() =>
+                                    openAddExistingCollateralPopup?.({
+                                      vaultAddress: address,
+                                      vaultCollateralBalance: collateralData.at(-1)?.amount ?? 0,
+                                      selectedAsset: collateralData[idx],
+                                      currentCollateralRatio: collateralRatio,
+                                      borrowedAmount,
+                                      collateralWithdrawAmount: amount,
+                                      borrowedAssetRate: borrowedAsset.rate,
+                                      bakerAddress: xtzDelegatedTo,
+                                    })
+                                  }
+                                  form={BUTTON_WIDE}
+                                  kind={BUTTON_SECONDARY}
+                                >
+                                  <Icon id="plus" /> Add
+                                </Button>
+                                {isOwner ? (
+                                  <Button
+                                    onClick={() =>
+                                      openWithdrawCollateralPopup?.({
+                                        vaultAddress: address,
+                                        currentCollateralBalance: amount,
+                                        vaultCollateralBalance: collateralData.at(-1)?.amount ?? 0,
+                                        selectedAsset: collateralData[idx],
+                                        currentCollateralRatio: collateralRatio,
+                                        borrowedAmount,
+                                        collateralWithdrawAmount: amount,
+                                        borrowedAssetRate: borrowedAsset.rate,
+                                      })
+                                    }
+                                    form={BUTTON_WIDE}
+                                    kind={BUTTON_SECONDARY}
+                                  >
+                                    <Icon id="minus" /> Remove
+                                  </Button>
+                                ) : null}
+                              </div>
+                            </TableCell>
+                          )}
+                        </TableRow>
+                      )
+                    })}
+                  </TableBody>
+                </Table>
+                {collateralData.length < 3 && isOwner ? (
+                  <Button
+                    onClick={() =>
+                      openAddNewCollateralPopup?.({
+                        vaultAddress: address,
+                        vaultCollateralBalance: collateralData.at(-1)?.amount ?? 0,
+                        currentCollateralRatio: collateralRatio,
+                        borrowedAmount,
+                        collateralWithdrawAmount: 0,
+                        existingCollaterals: collateralData,
+                        borrowedAssetRate: borrowedAsset.rate,
+                      })
+                    }
+                    kind={BUTTON_PRIMARY}
+                    isThin
+                    disabled={
+                      avaliableCollaterals.length === 0 || avaliableCollaterals.length === collateralData.length - 1
+                    }
+                  >
+                    <Icon id="plus" /> Add Collateral
+                  </Button>
+                ) : null}
+              </>
             ) : null}
 
             {isOwner ? (

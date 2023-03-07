@@ -502,6 +502,12 @@ export const TableCell = styled.td<{
         justify-content: flex-end;
       }
 
+      &.single-btn {
+        > div {
+          grid-template-columns: 130px;
+        }
+      }
+
       &.total {
         > div {
           grid-template-columns: auto;

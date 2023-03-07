@@ -220,6 +220,10 @@ export const StatusMessageStyled = styled.div<{ theme: MavrykTheme }>`
     display: inline-block;
   }
 
+  &.borrow-message {
+    margin: 40px 0 40px 0;
+  }
+
   svg {
     display: block;
     margin: auto 0;
