@@ -294,6 +294,25 @@ export const calcCollateralRatio = (collateralAmount: number, borrowedAmount: nu
   return (collateralAmount / (borrowedAmount * borrowedAssetRate)) * 100
 }
 
+export const getMaxCollateralWithdraw = (
+  currentCollateralAmount: number,
+  totalCollateralAmount: number,
+  borrowedAmount: number,
+  borrowedAssetRate: number,
+  collarealAssetRate: number,
+): number => {
+  // If vault is not borrowed we can withdraw all amount
+  if (borrowedAmount === 0) return currentCollateralAmount
+  /**
+   * @collateralNeedsToBe is now much collateralAmount i need to left for current borrowed amount
+   * 200 ratio in persent the smallest we can get, <200 vault is under collateralization
+   * 100 is to transform % => number
+   * (borrowedAmount * borrowedAssetRate) how much has been borrowed from the vault
+   */
+  const collateralNeedsToBe = (200 / 100) * (borrowedAmount * borrowedAssetRate)
+  return Math.min(totalCollateralAmount - collateralNeedsToBe, currentCollateralAmount) / collarealAssetRate
+}
+
 const getBorrowings = async (
   loanTokenVaults: Array<Lending_Controller_Vault>,
   dipDupTokens: State['tokens']['dipDupTokens'],

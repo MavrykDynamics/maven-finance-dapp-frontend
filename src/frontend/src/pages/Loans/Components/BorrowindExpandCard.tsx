@@ -370,7 +370,6 @@ export const BorrowingExpandCard = ({
                                         vaultCollateralBalance: collateralData.at(-1)?.amount ?? 0,
                                         currentCollateralRatio: collateralRatio,
                                         borrowedAmount,
-                                        collateralWithdrawAmount: 0,
                                         existingCollaterals: collateralData,
                                         borrowedAssetRate: borrowedAsset.rate,
                                       })
@@ -397,7 +396,7 @@ export const BorrowingExpandCard = ({
                                       selectedAsset: collateralData[idx],
                                       currentCollateralRatio: collateralRatio,
                                       borrowedAmount,
-                                      collateralWithdrawAmount: amount,
+                                      currentCollateralBalance: amount,
                                       borrowedAssetRate: borrowedAsset.rate,
                                       bakerAddress: xtzDelegatedTo,
                                     })
@@ -417,7 +416,6 @@ export const BorrowingExpandCard = ({
                                         selectedAsset: collateralData[idx],
                                         currentCollateralRatio: collateralRatio,
                                         borrowedAmount,
-                                        collateralWithdrawAmount: amount,
                                         borrowedAssetRate: borrowedAsset.rate,
                                       })
                                     }
@@ -443,7 +441,6 @@ export const BorrowingExpandCard = ({
                         vaultCollateralBalance: collateralData.at(-1)?.amount ?? 0,
                         currentCollateralRatio: collateralRatio,
                         borrowedAmount,
-                        collateralWithdrawAmount: 0,
                         existingCollaterals: collateralData,
                         borrowedAssetRate: borrowedAsset.rate,
                       })

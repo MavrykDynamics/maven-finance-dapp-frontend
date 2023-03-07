@@ -25,7 +25,7 @@ import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { depositCollateralAction } from 'pages/Loans/Actions/vaultCollateral.actions'
-import { calcCollateralRatio } from 'pages/Loans/Loans.helpers'
+import { calcCollateralRatio, getMaxCollateralWithdraw } from 'pages/Loans/Loans.helpers'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239476&t=Sx2aEpp3ifrGxBtQ-0
@@ -43,10 +43,10 @@ export const AddCollateral = ({
     vaultCollateralBalance = 0,
     vaultAddress,
     currentCollateralRatio = 0,
-    collateralWithdrawAmount = 0,
     borrowedAmount = 0,
     borrowedAssetRate = 0,
     bakerAddress,
+    currentCollateralBalance = 0,
   } = data ?? {}
 
   useLockBodyScroll(show)
@@ -63,16 +63,35 @@ export const AddCollateral = ({
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
 
   const inputAmount = isNaN(parseFloat(inputData.amount)) ? 0 : parseFloat(inputData.amount)
+  const collateralRate = Number(selectedAsset?.rate)
 
-  const { futureCollateralRatio, futureCollateralWithdraw, futureCollateralBalance } = useMemo(() => {
-    const futureCollateralRatio = selectedAsset
-      ? calcCollateralRatio(vaultCollateralBalance + inputAmount, borrowedAmount, borrowedAssetRate)
-      : 0
+  const { futureCollateralRatio, futureCollateralWithdraw, futureCollateralBalance, currentCollateralToWithdraw } =
+    useMemo(() => {
+      const futureCollateralRatio = selectedAsset
+        ? calcCollateralRatio(vaultCollateralBalance + inputAmount, borrowedAmount, borrowedAssetRate)
+        : 0
 
-    const futureCollateralWithdraw = collateralWithdrawAmount + inputAmount
-    const futureCollateralBalance = vaultCollateralBalance + inputAmount * Number(selectedAsset?.rate)
-    return { futureCollateralRatio, futureCollateralWithdraw, futureCollateralBalance }
-  }, [selectedAsset, vaultCollateralBalance, inputAmount, borrowedAmount, borrowedAssetRate, collateralWithdrawAmount])
+      const currentCollateralToWithdraw = getMaxCollateralWithdraw(
+        currentCollateralBalance * collateralRate,
+        vaultCollateralBalance,
+        borrowedAmount,
+        borrowedAssetRate,
+        collateralRate,
+      )
+
+      const futureCollateralWithdraw = currentCollateralToWithdraw * collateralRate + inputAmount * collateralRate
+
+      const futureCollateralBalance = vaultCollateralBalance + inputAmount * collateralRate
+      return { futureCollateralRatio, futureCollateralWithdraw, futureCollateralBalance, currentCollateralToWithdraw }
+    }, [
+      selectedAsset,
+      vaultCollateralBalance,
+      inputAmount,
+      borrowedAmount,
+      borrowedAssetRate,
+      currentCollateralBalance,
+      collateralRate,
+    ])
 
   useEffect(() => {
     if (!show) {
@@ -159,7 +178,7 @@ export const AddCollateral = ({
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Available To Withdraw</div>
-              <CommaNumber value={collateralWithdrawAmount} className="value" />
+              <CommaNumber value={currentCollateralToWithdraw * collateralRate} className="value" beginningText="$" />
             </ThreeLevelListItem>
           </VaultModalOverview>
 
@@ -172,20 +191,13 @@ export const AddCollateral = ({
               type: 'number',
               onFocus: onFocusHandler,
               onBlur: inputOnBlurHandle,
-              onChange: (e) =>
-                inputOnChangeHandle(
-                  e.target.value,
-                  Math.max(collateralData?.userBalance ?? 0, collateralWithdrawAmount),
-                ),
+              onChange: (e) => inputOnChangeHandle(e.target.value, collateralData?.userBalance ?? 0),
             }}
             settings={{
               balance: collateralData?.userBalance ?? 0,
               balanceAsset: selectedAsset?.symbol,
               useMaxHandler: () =>
-                inputOnChangeHandle(
-                  String(Math.max(collateralData?.userBalance ?? 0, collateralWithdrawAmount)),
-                  Math.max(collateralData?.userBalance ?? 0, collateralWithdrawAmount),
-                ),
+                inputOnChangeHandle(String(collateralData?.userBalance ?? 0), collateralData?.userBalance ?? 0),
               inputStatus: inputData.validationStatus,
               convertedValue: inputAmount * (collateralData?.rate ?? 1),
               inputSize: INPUT_LARGE,
@@ -225,7 +237,7 @@ export const AddCollateral = ({
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Available To Withdraw</div>
-              <CommaNumber value={futureCollateralWithdraw} className="value" />
+              <CommaNumber value={futureCollateralWithdraw} className="value" beginningText="$" />
             </ThreeLevelListItem>
           </VaultModalOverview>
 
