@@ -201,20 +201,13 @@ export const WithdrawCollateral = ({
                 type: 'number',
                 onBlur: inputOnBlurHandle,
                 onFocus: onFocusHandler,
-                onChange: (e) =>
-                  inputOnChangeHandle(
-                    e.target.value,
-                    Math.min(collateralData.userBalance, currentCollateralToWithdraw),
-                  ),
+                onChange: (e) => inputOnChangeHandle(e.target.value, currentCollateralToWithdraw),
               }}
               settings={{
                 balance: collateralData.userBalance,
                 balanceAsset: collateralData.symbol,
                 useMaxHandler: () =>
-                  inputOnChangeHandle(
-                    String(Math.min(collateralData.userBalance, currentCollateralToWithdraw)),
-                    Math.min(collateralData.userBalance, currentCollateralToWithdraw),
-                  ),
+                  inputOnChangeHandle(String(currentCollateralToWithdraw), currentCollateralToWithdraw),
                 inputStatus: inputData.validationStatus,
                 convertedValue: inputAmount * collateralRate,
                 inputSize: INPUT_LARGE,

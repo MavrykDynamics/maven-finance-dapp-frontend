@@ -120,7 +120,7 @@ export const BorrowingExpandCard = ({
   const vaultStatus = status ?? getStatusByCollateralRatio(collateralRatio)
   const vaultHasXtzCollateral = collateralData.find(({ gqlName }) => isTezosAsset(gqlName))
   // TODO: test it when sMVK will be avaliable as collateral
-  const vaultHasSmvkCollateral = collateralData.find(({ gqlName }) => gqlName === 'sMVK')
+  const vaultHasSmvkCollateral = collateralData.find(({ gqlName }) => gqlName === 'smvk')
   const [timerTimestamp, setTimerTimestamp] = useState<number | undefined>(undefined)
 
   const collateralTotalBalance = collateralData[collateralData.length - 1]?.amount
