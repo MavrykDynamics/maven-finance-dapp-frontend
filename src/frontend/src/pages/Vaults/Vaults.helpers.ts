@@ -234,20 +234,11 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
     }),
   )
 
-  // sort data by most recent
-  const dataWithSortedIds = {
-    myVaultsIds: sortVaultsByMostRecent({
-      vaultsIds: data.myVaultsIds,
-      vaultsMapper: data.vaultsMapper,
-    }),
-    allVaultsIds: sortVaultsByMostRecent({
-      vaultsIds: data.allVaultsIds,
-      vaultsMapper: data.vaultsMapper,
-    }),
+  return {
+    myVaultsIds: data.myVaultsIds,
+    allVaultsIds: data.allVaultsIds,
     vaultsMapper: data.vaultsMapper,
   }
-
-  return dataWithSortedIds
 }
 
 type OracleLatestProps = {
@@ -342,23 +333,6 @@ export const sortByVaultCategory = ({ vaultsMapper, vaultsIds, status }: SortByV
     const secondItem = vaultsMapper[b].status
 
     return updatedPriority[firstItem] - updatedPriority[secondItem]
-  })
-}
-
-type SortVaultsByMostRecentProps = Omit<SortByVaultCategoryProps, 'status'>
-
-export const sortVaultsByMostRecent = ({ vaultsMapper, vaultsIds }: SortVaultsByMostRecentProps) => {
-  const dataToSort = vaultsIds ? [...vaultsIds] : []
-
-  return dataToSort.sort((a, b) => {
-    const vaultA = vaultsMapper[a].creationTimestamp
-    const vaultB = vaultsMapper[b].creationTimestamp
-
-    if (!vaultA || !vaultB) {
-      return 0
-    }
-
-    return new Date(vaultB).getTime() - new Date(vaultA).getTime()
   })
 }
 
