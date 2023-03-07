@@ -19,8 +19,10 @@ export const vaultsFilters = {
 
 export const sortVaultItems = {
   STATUSES: 'Status',
-  COLLATERAL_VALUE: 'Collateral Amount',
-  BORROWED_AMOUNT: 'Borrowed Amount',
+  COLLATERAL_HIGH: 'Collateral Amount ↑',
+  COLLATERAL_LOW: 'Collateral Amount ↓',
+  BORROWED_HIGH: 'Borrowed Amount ↑',
+  BORROWED_LOW: 'Borrowed Amount ↓',
   MOST_RECENT: 'Most Recent',
 }
 

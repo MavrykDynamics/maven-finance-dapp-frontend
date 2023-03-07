@@ -113,28 +113,51 @@ export const VaultsSearchFilter = ({ assets: assetSymbols, vaultsMapper, current
         })
       }
 
-      const sortIsCollateralValue = filtersList[vaultsFilters.SORT] === sortVaultItems.COLLATERAL_VALUE
-      const sortIsBorrowedAmount = filtersList[vaultsFilters.SORT] === sortVaultItems.BORROWED_AMOUNT
+      const sortIsCollateralHighToLow = filtersList[vaultsFilters.SORT] === sortVaultItems.COLLATERAL_HIGH
+      const sortIsCollateralLowToHigh = filtersList[vaultsFilters.SORT] === sortVaultItems.COLLATERAL_LOW
+      const sortIsBorrowedAmountHighToLow = filtersList[vaultsFilters.SORT] === sortVaultItems.BORROWED_HIGH
+      const sortIsBorrowedAmountLowToHigh = filtersList[vaultsFilters.SORT] === sortVaultItems.BORROWED_LOW
       const sortIsMostRecent = filtersList[vaultsFilters.SORT] === sortVaultItems.MOST_RECENT
 
       // sort by: collateral value | borrowed amount | date
-      if (sortIsCollateralValue || sortIsBorrowedAmount || sortIsMostRecent) {
+      if (
+        sortIsCollateralHighToLow ||
+        sortIsCollateralLowToHigh ||
+        sortIsBorrowedAmountHighToLow ||
+        sortIsBorrowedAmountLowToHigh ||
+        sortIsMostRecent
+      ) {
         filteredVaultsIds = data.sort((a, b) => {
-          // by collateral value
-          if (sortIsCollateralValue) {
+          // by collateral amount high > low
+          if (sortIsCollateralHighToLow) {
             const vaultA = vaultsMapper[a].collateralBalance
             const vaultB = vaultsMapper[b].collateralBalance
 
             return vaultB - vaultA
-            // by borrowed amount
           }
-          if (sortIsBorrowedAmount) {
+          // by collateral amount low > high
+          if (sortIsCollateralLowToHigh) {
+            const vaultA = vaultsMapper[a].collateralBalance
+            const vaultB = vaultsMapper[b].collateralBalance
+
+            return vaultA - vaultB
+          }
+          // by borrowed amount high > low
+          if (sortIsBorrowedAmountHighToLow) {
             const vaultA = vaultsMapper[a].borrowedAmount
             const vaultB = vaultsMapper[b].borrowedAmount
 
             return vaultB - vaultA
-            // by date
           }
+
+          // by borrowed amount low > high
+          if (sortIsBorrowedAmountLowToHigh) {
+            const vaultA = vaultsMapper[a].borrowedAmount
+            const vaultB = vaultsMapper[b].borrowedAmount
+
+            return vaultA - vaultB
+          }
+          // by date
           if (sortIsMostRecent) {
             const vaultA = vaultsMapper[a].creationTimestamp
             const vaultB = vaultsMapper[b].creationTimestamp
