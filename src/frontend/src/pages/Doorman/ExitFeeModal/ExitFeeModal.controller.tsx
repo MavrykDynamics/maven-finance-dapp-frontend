@@ -42,6 +42,8 @@ export const ExitFeeModal = ({
     validation: '',
   })
 
+  const inputAmount = Number(inputData.amount).toFixed(2)
+
   const unstakeCallback = (amount: number) => dispatch(unstake(amount))
 
   const mli = calcMLI(totalStakedMvk, totalStakedMvk)
@@ -108,7 +110,7 @@ export const ExitFeeModal = ({
               type={'number'}
               onChange={onInputChange}
               onBlur={handleBlur}
-              value={inputData.amount}
+              value={inputAmount}
               onFocus={handleFocus}
               pinnedText={'MVK'}
               inputStatus={inputData.validation}
