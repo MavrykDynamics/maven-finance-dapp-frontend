@@ -4,33 +4,32 @@ import { useHistory, useLocation, useParams } from 'react-router-dom'
 
 // components
 import { Input } from 'app/App.components/Input/Input.controller'
-import { DropdownContainer } from 'app/App.components/DropDown/DropDown.style'
 import { DropDown } from 'app/App.components/DropDown/DropDown.controller'
 import Checkbox from 'app/App.components/Checkbox/Checkbox.view'
 
 // styles
-import { VaultsSearchFilterStyled, VaultsSearchFilterWrapper } from './../Vaults.style'
+import { VaultsSearchFilterStyled, VaultsSearchFilterWrapper, VaultsFilters } from './../Vaults.style'
 
 // helpers
-import { sortByVaultCategory } from '../Vaults.helpers'
+import { sortByVaultCategory, compareAssets } from '../Vaults.helpers'
 import { sortVaultItems } from '../Vaults.consts'
 
 // types
 import { VaultType } from 'utils/TypesAndInterfaces/Vaults'
 
-const pathname = '/vaults'
+const sortingList = Object.values(sortVaultItems)
 
+const pathname = '/vaults'
 const filters = {
   SORT: 'sort',
-  COLLATERAL: 'collateral',
-  LOAN: 'loan',
+  ASSETS: 'assets',
   ZERO: 'zero',
 }
 
+const COLLATERAL_NAME = 'Collateral Asset'
+const LOAN_NAME = 'Loan Asset'
+
 type Filters = Record<string, string>
-
-const sortingList = Object.values(sortVaultItems)
-
 type AssetCategory = 'loanAssets' | 'collateralAssets'
 
 type Props = {
@@ -40,11 +39,15 @@ type Props = {
   setVaultsIds: (arg: string[]) => void
 }
 
-export const VaultsSearchFilter = ({ assets, vaultsMapper, currentVaultsIds, setVaultsIds }: Props) => {
+export const VaultsSearchFilter = ({ assets: assetSymbols, vaultsMapper, currentVaultsIds, setVaultsIds }: Props) => {
   const history = useHistory()
   const { search } = useLocation()
   const { tabId } = useParams<{ tabId: string }>()
-  const { sort = '', collateral = '', loan = '', zero = '', ...restQP } = qs.parse(search, { ignoreQueryPrefix: true })
+  const { sort = '', assets = '', zero = '', ...restQP } = qs.parse(search, { ignoreQueryPrefix: true })
+
+  const preparedCollateralAssets = assetSymbols.collateralAssets.map((asset) => `${COLLATERAL_NAME}, ${asset}`)
+  const preparedLoanAssets = assetSymbols.loanAssets.map((asset) => `${LOAN_NAME}, ${asset}`)
+  const preparedAssets = preparedCollateralAssets.concat(preparedLoanAssets)
 
   const [searchInputValue, setSearchInput] = useState('')
 
@@ -88,7 +91,10 @@ export const VaultsSearchFilter = ({ assets, vaultsMapper, currentVaultsIds, set
       ...chosenDdItem,
       [name]: selectedOption,
     }
-
+    console.log(
+      '🚀 ~ file: VaultsSearchFilter.view.tsx:90 ~ handleDropdownSelect ~ updatedChosenDdItem:',
+      updatedChosenDdItem,
+    )
     if (selectedOption === chosenDdItem[name]) return
 
     applyFilters(updatedChosenDdItem)
@@ -98,6 +104,7 @@ export const VaultsSearchFilter = ({ assets, vaultsMapper, currentVaultsIds, set
     (filtersList: Filters) => {
       const data = searchInputValue ? [...searchedData] : [...currentVaultsIds]
       let filteredVaultsIds: string[] = data
+      console.log(filtersList)
 
       // sort by statuses
       if (filtersList[filters.SORT] === sortVaultItems.STATUSES) {
@@ -145,13 +152,17 @@ export const VaultsSearchFilter = ({ assets, vaultsMapper, currentVaultsIds, set
         })
       }
 
+      const asset = filtersList[filters.ASSETS]?.split(',') || []
+      const [assetName = '', assetIcon = ''] = asset
+      const isCollateralAsset = assetName === COLLATERAL_NAME
+
       // filter by collateral asset
-      if (filtersList[filters.COLLATERAL]) {
+      if (filtersList[filters.ASSETS] && isCollateralAsset) {
         filteredVaultsIds = filteredVaultsIds.filter((vaultId) => {
           const vault = vaultsMapper[vaultId]
           if (vault.collateralData.length) {
             const isFound = vault.collateralData.some(({ symbol }) => {
-              return symbol?.toLowerCase() === filtersList[filters.COLLATERAL].toLowerCase()
+              return compareAssets(symbol, assetIcon)
             })
 
             return isFound
@@ -159,16 +170,16 @@ export const VaultsSearchFilter = ({ assets, vaultsMapper, currentVaultsIds, set
 
           return false
         })
+
+        console.log(filteredVaultsIds, 'filteredVaultsIds col')
       }
 
       // filter by loan asset
-      if (filtersList[filters.LOAN]) {
+      if (filtersList[filters.ASSETS] && !isCollateralAsset) {
         filteredVaultsIds = filteredVaultsIds.filter((vaultId) => {
           const vault = vaultsMapper[vaultId]
           if (vault.borrowedAsset.symbol) {
-            const isFound = vault.borrowedAsset.symbol?.toLowerCase() === filtersList[filters.LOAN].toLowerCase()
-
-            return isFound
+            return compareAssets(vault.borrowedAsset.symbol, assetIcon)
           }
 
           return false
@@ -184,6 +195,11 @@ export const VaultsSearchFilter = ({ assets, vaultsMapper, currentVaultsIds, set
       }
 
       const withoutEmptyFilters = Object.fromEntries(Object.entries(filtersList).filter((item) => item[1]))
+      console.log({
+        filtersList,
+        withoutEmptyFilters,
+      })
+
       const stringifiedQP = qs.stringify({ ...withoutEmptyFilters, ...restQP })
 
       history.replace(`${pathname}/${tabId}?${stringifiedQP}`)
@@ -216,8 +232,7 @@ export const VaultsSearchFilter = ({ assets, vaultsMapper, currentVaultsIds, set
     if (currentVaultsIds.length) {
       const filtersFromQp = {
         sort,
-        collateral,
-        loan,
+        assets,
         zero,
       } as Filters
 
@@ -235,39 +250,32 @@ export const VaultsSearchFilter = ({ assets, vaultsMapper, currentVaultsIds, set
           onChange={handleSearch}
           value={searchInputValue}
         />
-        <DropdownContainer className="dd-container">
-          <DropDown
-            className="dd-item"
-            placeholder="Сollateral Asset"
-            isOpen={filterStatuses[filters.COLLATERAL]}
-            setIsOpen={handleDropdownStatus(filters.COLLATERAL)}
-            itemSelected={chosenDdItem[filters.COLLATERAL]}
-            items={assets.collateralAssets}
-            clickOnItem={handleDropdownSelect(filters.COLLATERAL)}
-          />
+        <VaultsFilters>
+          <div className="filter">
+            <h4>Filter by:</h4>
+            <DropDown
+              className="assetsFilter"
+              placeholder="Default of All Assets"
+              isOpen={filterStatuses[filters.ASSETS]}
+              setIsOpen={handleDropdownStatus(filters.ASSETS)}
+              itemSelected={chosenDdItem[filters.ASSETS]}
+              items={preparedAssets}
+              clickOnItem={handleDropdownSelect(filters.ASSETS)}
+            />
+          </div>
 
-          <DropDown
-            className="dd-item"
-            placeholder="Loan Asset"
-            isOpen={filterStatuses[filters.LOAN]}
-            setIsOpen={handleDropdownStatus(filters.LOAN)}
-            itemSelected={chosenDdItem[filters.LOAN]}
-            items={assets.loanAssets}
-            clickOnItem={handleDropdownSelect(filters.LOAN)}
-          />
-
-          <h4>Order by:</h4>
-
-          <DropDown
-            className="dd-item"
-            placeholder="Statuses"
-            isOpen={filterStatuses[filters.SORT]}
-            setIsOpen={handleDropdownStatus(filters.SORT)}
-            itemSelected={chosenDdItem[filters.SORT]}
-            items={sortingList}
-            clickOnItem={handleDropdownSelect(filters.SORT)}
-          />
-        </DropdownContainer>
+          <div className="filter">
+            <h4>Order by:</h4>
+            <DropDown
+              placeholder="Statuses"
+              isOpen={filterStatuses[filters.SORT]}
+              setIsOpen={handleDropdownStatus(filters.SORT)}
+              itemSelected={chosenDdItem[filters.SORT]}
+              items={sortingList}
+              clickOnItem={handleDropdownSelect(filters.SORT)}
+            />
+          </div>
+        </VaultsFilters>
       </VaultsSearchFilterStyled>
       <Checkbox
         id="show_dropped"
