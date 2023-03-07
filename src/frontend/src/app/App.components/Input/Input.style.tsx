@@ -188,8 +188,7 @@ export const StyledInput = styled.input<{ theme: MavrykTheme }>`
   border: none;
   border-radius: 10px;
   font-weight: 500;
-  font-size: 14px;
-  line-height: 14px;
+  line-height: 100%;
   margin: 0;
   color: ${({ theme }) => theme.textColor};
   display: block;
@@ -237,14 +236,29 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
 
   &.${INPUT_MEDIUM} {
     height: 50px;
+
+    input {
+      font-size: 14px;
+      font-weight: 500;
+    }
   }
 
   &.${INPUT_LARGE} {
     height: 56px;
+
+    input {
+      font-size: 22px;
+      font-weight: 600;
+    }
   }
 
   &.${INPUT_BIG} {
     height: 60px;
+
+    input {
+      font-size: 22px;
+      font-weight: 600;
+    }
   }
 
   &:focus-within {
