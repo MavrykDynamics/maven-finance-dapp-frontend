@@ -1,7 +1,7 @@
-import { useSelector } from 'react-redux'
-import { Link, Redirect } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { Redirect } from 'react-router-dom'
+import dayjs from 'dayjs'
 
-import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
@@ -12,14 +12,27 @@ import Button from 'app/App.components/Button/NewButton'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { parseDate } from 'utils/time'
 import { PORTFOLIO_TAB_ID } from '../DashboardPersonal.utils'
+import { claimVestingReward } from '../DashboardPersonal.actions'
 
 const VestingTab = () => {
+  const dispatch = useDispatch()
   const { vesteesMapper } = useSelector((state: State) => state.vesting)
   const { accountPkh = '' } = useSelector((state: State) => state.wallet)
 
   const vesteeRecord = vesteesMapper[accountPkh]
 
   if (!vesteeRecord) return <Redirect to={`/dashboard-personal/${PORTFOLIO_TAB_ID}`} />
+
+  const handleClaimVestingReward = () => {
+    // TODO: test claim vestee reward action
+    dispatch(claimVestingReward())
+  }
+
+  const { vestingMonth, totalAllocated, totalRemainded, rewardPerMonth, nextRewardDate, lastClaimDate } = vesteeRecord
+
+  const lastClaimTime = dayjs(lastClaimDate),
+    nextClaimTime = dayjs(nextRewardDate),
+    isClaimBtnDisabled = rewardPerMonth === 0 || lastClaimTime.diff(nextClaimTime, 'month') < 1
 
   return (
     <VestingTabStyled>
@@ -31,37 +44,42 @@ const VestingTab = () => {
         <div className="column">
           <div className="name">Vesting Period</div>
           <div className="value">
-            <CommaNumber value={vesteeRecord.vestingMonth} endingText="mos" />
+            <CommaNumber value={vestingMonth} endingText="mos" />
           </div>
         </div>
 
         <div className="column">
           <div className="name">Total Vesting Amount</div>
           <div className="value">
-            <CommaNumber value={vesteeRecord.totalAllocated} endingText="MVK" />
+            <CommaNumber value={totalAllocated} endingText="MVK" />
           </div>
         </div>
 
         <div className="column">
           <div className="name">Amount Left to Vest</div>
           <div className="value">
-            <CommaNumber value={vesteeRecord.totalRemainded} endingText="MVK" />
+            <CommaNumber value={totalRemainded} endingText="MVK" />
           </div>
         </div>
 
         <div className="column">
           <div className="name">Ready to Claim</div>
           <div className="value">
-            <CommaNumber value={vesteeRecord.rewardPerMonth} endingText="MVK" />
+            <CommaNumber value={rewardPerMonth} endingText="MVK" />
           </div>
         </div>
 
         <div className="column">
           <div className="name">Next Claim</div>
-          <div className="value">{parseDate({ time: vesteeRecord.nextRewardDate, timeFormat: 'MMM Do, YYYY' })}</div>
+          <div className="value">{parseDate({ time: nextRewardDate, timeFormat: 'MMM Do, YYYY' })}</div>
         </div>
 
-        <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE}>
+        <Button
+          kind={BUTTON_PRIMARY}
+          form={BUTTON_WIDE}
+          disabled={isClaimBtnDisabled}
+          onClick={handleClaimVestingReward}
+        >
           Claim
         </Button>
       </div>

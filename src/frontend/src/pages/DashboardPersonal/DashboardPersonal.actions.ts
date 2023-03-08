@@ -8,6 +8,7 @@ import { getSatellitesStorage } from 'pages/Satellites/Satellites.actions'
 import { State } from 'reducers'
 import { updateUserData } from 'reducers/actions/user.actions'
 import { OpKind, WalletParamsWithKind } from '@taquito/taquito'
+import { getVestingStorage } from 'pages/Treasury/Treasury.actions'
 
 export const claimAllRewardsAction = () => async (dispatch: AppDispatch, getState: GetState) => {
   const {
@@ -74,6 +75,45 @@ export const claimAllRewardsAction = () => async (dispatch: AppDispatch, getStat
     await dispatch(updateUserData())
     await dispatch(getDoormanStorage())
     await dispatch(getFarmStorage())
+    await dispatch(toggleActionLoader(false))
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error)
+      await dispatch(showToaster(ERROR, 'Error', error.message))
+    }
+    await dispatch(toggleActionLoader(false))
+  }
+}
+
+export const claimVestingReward = () => async (dispatch: AppDispatch, getState: GetState) => {
+  const {
+    wallet: { tezos, accountPkh },
+    loading: { isActionLoading },
+    contractAddresses: { vestingAddress },
+  }: State = getState()
+
+  if (!accountPkh) {
+    dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
+    return
+  }
+
+  if (isActionLoading) {
+    dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
+    return
+  }
+
+  try {
+    const contract = await tezos?.wallet.at(vestingAddress.address)
+    const transaction = await contract?.methods.claim().send()
+
+    await dispatch(toggleActionLoader(true))
+    await dispatch(showToaster(INFO, 'Claiming vesting reward...', 'Please wait 30s'))
+
+    await transaction?.confirmation()
+
+    await dispatch(showToaster(SUCCESS, 'Vesting reward claimed', 'All good :)'))
+    await dispatch(updateUserData())
+    await dispatch(getVestingStorage())
     await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {
