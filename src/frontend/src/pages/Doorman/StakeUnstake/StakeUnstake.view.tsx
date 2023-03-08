@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 // view
 import NewButton from 'app/App.components/Button/NewButton'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { Input } from '../../../app/App.components/Input/Input.controller'
+import { Input } from 'app/App.components/Input/NewInput'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
@@ -20,7 +20,12 @@ import {
 } from '../../../app/App.components/Button/Button.constants'
 import { isValidNumberValue, mathRoundTwoDigit } from '../../../utils/validatorFunctions'
 import { rewardsCompound } from '../Doorman.actions'
-import { InputStatusType, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import {
+  InputStatusType,
+  INPUT_STATUS_ERROR,
+  INPUT_STATUS_SUCCESS,
+  INPUT_LARGE,
+} from 'app/App.components/Input/Input.constants'
 
 // style
 import {
@@ -195,11 +200,26 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
     }
   }
 
+  const inputProps = {
+    type: 'number',
+    value: inputData.amount,
+    onBlur: handleBlur,
+    onFocus: handleFocus,
+    onChange: onInputChange,
+  }
+
+  const inputSettings = {
+    inputStatus: inputData.validation,
+    convertedValue: exchangeValue,
+  }
+
   const handleDelegate = () => {
     history.push(
       satelliteMvkIsDelegatedTo ? `/satellites/satellite-details/${satelliteMvkIsDelegatedTo}` : '/satellite-nodes',
     )
   }
+
+  const inputPinnedChild = <div>MVK</div>
 
   return (
     <StakeUnstakeStyled>
@@ -298,16 +318,12 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
           <StakeUnstakeInputWithCoin>
             <ImageWithPlug imageLink={'/images/coin-gold.svg'} alt="coin" />
             <Input
-              type={'number'}
-              placeholder={inputData.amount}
-              onChange={onInputChange}
-              onBlur={handleBlur}
-              onFocus={handleFocus}
-              value={inputData.amount}
-              pinnedText={'MVK'}
-              inputStatus={inputData.validation}
-              errorMessage={inputData.errorMessage}
+              className={`${INPUT_LARGE} input-with-rate transparent-child-wrap text-child`}
+              children={inputPinnedChild}
+              inputProps={inputProps}
+              settings={inputSettings}
             />
+            {/* // TODO: add style for inputData.errorMessage */}
           </StakeUnstakeInputWithCoin>
 
           <StakeUnstakeInputLabels>

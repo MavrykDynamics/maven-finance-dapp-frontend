@@ -14,20 +14,6 @@ export const ExitFeeModalContent = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const InputPinnedText = styled.div<{ theme: MavrykTheme }>`
-  display: flex;
-  align-items: center;
-  padding: 0 16px;
-
-  height: 100%;
-
-  font-weight: 600;
-  font-size: 20px;
-  line-height: 20px;
-
-  color: ${({ theme }) => theme.textColor};
-`
-
 export const ExitFeeModalStats = styled.div`
   margin: 10px 6px 0;
 

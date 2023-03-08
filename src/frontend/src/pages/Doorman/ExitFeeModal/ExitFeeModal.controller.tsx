@@ -5,15 +5,19 @@ import { useDispatch } from 'react-redux'
 import { isValidNumberValue, mathRoundTwoDigit } from '../../../utils/validatorFunctions'
 import { unstake } from '../Doorman.actions'
 import { calcExitFee, calcMLI } from '../../../utils/calcFunctions'
-import { InputStatusType, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import {
+  InputStatusType,
+  INPUT_STATUS_ERROR,
+  INPUT_STATUS_SUCCESS,
+  INPUT_LARGE,
+} from 'app/App.components/Input/Input.constants'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from '../../../app/App.components/Button/Button.constants'
-import { INPUT_LARGE } from 'app/App.components/Input/Input.constants'
 
 // components
 import { CommaNumber } from '../../../app/App.components/CommaNumber/CommaNumber.controller'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 import { Input } from 'app/App.components/Input/NewInput'
-import { ExitFeeModalButtons, ExitFeeModalContent, ExitFeeModalStats, InputPinnedText } from './ExitFeeModal.style'
+import { ExitFeeModalButtons, ExitFeeModalContent, ExitFeeModalStats } from './ExitFeeModal.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
 import NewButton from 'app/App.components/Button/NewButton'
 import { containerColor } from 'styles'
@@ -99,6 +103,7 @@ export const ExitFeeModal = ({
   }
 
   const inputProps = {
+    type: 'number',
     value: inputAmount,
     onBlur: handleBlur,
     onFocus: handleFocus,
@@ -110,7 +115,7 @@ export const ExitFeeModal = ({
     convertedValue,
   }
 
-  const inputPinnedChild = <InputPinnedText>MVK</InputPinnedText>
+  const inputPinnedChild = <div>MVK</div>
 
   return (
     <PopupContainer onClick={closePopup} show={show}>
@@ -123,7 +128,7 @@ export const ExitFeeModal = ({
         <ExitFeeModalContent>
           <label>Amount to Unstake:</label>
           <Input
-            className={`${INPUT_LARGE} input-with-rate transparent-child-wrap`}
+            className={`${INPUT_LARGE} input-with-rate transparent-child-wrap text-child`}
             children={inputPinnedChild}
             inputProps={inputProps}
             settings={inputSettings}

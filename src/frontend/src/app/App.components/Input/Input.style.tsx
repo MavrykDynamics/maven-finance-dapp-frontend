@@ -335,6 +335,22 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
     }
   }
 
+  &.text-child {
+    .pinned-child {
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+
+      height: 100%;
+
+      font-weight: 600;
+      font-size: 20px;
+      line-height: 20px;
+
+      color: ${({ theme }) => theme.textColor};
+    }
+  }
+
   .input-balance {
     position: absolute;
     bottom: -35px;
