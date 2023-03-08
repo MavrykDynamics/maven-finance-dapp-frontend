@@ -67,7 +67,7 @@ export const AddCollateral = ({
   const { futureCollateralRatio, futureCollateralWithdraw, futureCollateralBalance, currentCollateralToWithdraw } =
     useMemo(() => {
       const futureCollateralRatio = selectedAsset
-        ? calcCollateralRatio(vaultCollateralBalance + inputAmount, borrowedAmount, borrowedAssetRate)
+        ? calcCollateralRatio(vaultCollateralBalance + inputAmount * collateralRate, borrowedAmount, borrowedAssetRate)
         : 0
 
       const currentCollateralToWithdraw = getMaxCollateralWithdraw(
