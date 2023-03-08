@@ -45,7 +45,6 @@ export const AddCollateral = ({
     currentCollateralRatio = 0,
     borrowedAmount = 0,
     borrowedAssetRate = 0,
-    bakerAddress,
     currentCollateralBalance = 0,
   } = data ?? {}
 
@@ -136,7 +135,7 @@ export const AddCollateral = ({
       }
 
       if (vaultAddress) {
-        await dispatch(depositCollateralAction(vaultAddress, collaretalToDeposit, closePopup, bakerAddress))
+        await dispatch(depositCollateralAction(vaultAddress, collaretalToDeposit, closePopup))
       }
     }
   }

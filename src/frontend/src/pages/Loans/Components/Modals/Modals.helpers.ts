@@ -24,7 +24,6 @@ export type CollateralPopupCommonDataType = {
 
 export type AddCollateralPopupDataType =
   | (CollateralPopupCommonDataType & {
-      bakerAddress: string | null
       currentCollateralBalance: number
     })
   | null

@@ -398,7 +398,6 @@ export const BorrowingExpandCard = ({
                                       borrowedAmount,
                                       currentCollateralBalance: amount,
                                       borrowedAssetRate: borrowedAsset.rate,
-                                      bakerAddress: xtzDelegatedTo,
                                     })
                                   }
                                   form={BUTTON_WIDE}

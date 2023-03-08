@@ -91,7 +91,9 @@ export const ManagePermissions = ({
       tableData.some(({ validationStatus }) => validationStatus !== INPUT_STATUS_SUCCESS)
 
     const isNoChanges =
-      tableData.every(({ address }) => depositors.includes(address)) && deporsitorsFlag === chosenDdItem?.id
+      tableData.length === depositors.length &&
+      tableData.every(({ address }) => depositors.includes(address)) &&
+      deporsitorsFlag === chosenDdItem?.id
 
     return isActionLoading || isInvalidTable || !chosenDdItem || !vaultAddress || isNoChanges
   }, [chosenDdItem, deporsitorsFlag, depositors, isActionLoading, tableData, vaultAddress])

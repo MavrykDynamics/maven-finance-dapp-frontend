@@ -1,4 +1,4 @@
-import { OpKind } from '@taquito/taquito'
+import { OpKind, WalletParamsWithKind } from '@taquito/taquito'
 import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { ERROR, INFO, SUCCESS } from 'app/App.components/Toaster/Toaster.constants'
@@ -86,18 +86,24 @@ export const depositCollateralAction =
       const contract = await state.wallet.tezos?.wallet.at(vaultAddress)
       let transaction = null
 
-      if (tokenType === 'tez' && bakerAddress) {
-        const batch = await state.wallet.tezos?.wallet.batch([
+      if (tokenType === 'tez') {
+        const delegateToBakerBatchPart: Array<WalletParamsWithKind> = bakerAddress
+          ? [
+              {
+                kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+                ...contract.methods.delegateTezToBaker(bakerAddress).toTransferParams(),
+              },
+            ]
+          : []
+
+        const batch = state.wallet.tezos?.wallet.batch([
           {
-            kind: OpKind.TRANSACTION,
+            kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
             ...contract.methods.deposit(amount, 'tez').toTransferParams(),
             amount,
             mutez: true,
           },
-          {
-            kind: OpKind.TRANSACTION,
-            ...contract.methods.delegateTezToBaker(bakerAddress).toTransferParams(),
-          },
+          ...delegateToBakerBatchPart,
         ])
 
         transaction = await batch.send()
