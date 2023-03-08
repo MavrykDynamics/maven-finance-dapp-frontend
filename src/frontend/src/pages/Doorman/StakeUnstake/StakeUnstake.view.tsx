@@ -8,6 +8,7 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { Input } from 'app/App.components/Input/NewInput'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
+import { InputErrorMessage } from 'app/App.components/Input/Input.style'
 
 // helpers, consts
 import { State } from 'reducers'
@@ -323,9 +324,8 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
               inputProps={inputProps}
               settings={inputSettings}
             />
-            {/* // TODO: add style for inputData.errorMessage */}
           </StakeUnstakeInputWithCoin>
-
+          {inputData.errorMessage && <InputErrorMessage>{inputData.errorMessage}</InputErrorMessage>}
           <StakeUnstakeInputLabels>
             <StakeUnstakeRate>
               <CommaNumber value={Number(exchangeValue ? inputData.amount : 1)} endingText={'MVK'} />
