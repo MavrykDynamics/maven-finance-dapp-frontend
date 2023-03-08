@@ -129,46 +129,48 @@ export const TreasuryTab = ({ isLoading }: { isLoading: boolean }) => {
                 </Table>
               </TableScrollable>
             </div>
-            <div>
-              <BlockName>Token Vesting</BlockName>
+            {totalClaimedAmount !== 0 && totalVestedAmount !== 0 ? (
+              <div>
+                <BlockName>Token Vesting</BlockName>
 
-              <TreasuryVesting
-                totalPersent={(totalVestedAmount / amountOfTokens || 0.5) * 100}
-                claimedColor={'navTitleColor'}
-                totalColor={'primaryColor'}
-              >
-                <div className="vest-stat">
-                  <div className="name">
-                    <div className="color claimed" /> Tokens Claimed
-                  </div>
-                  <div className="value">
-                    <CommaNumber value={totalClaimedAmount} endingText="MVK" />
-                  </div>
-                </div>
-
-                <div className="vest-stat">
-                  <div className="name">
-                    <div className="color total" /> Total Vested
-                  </div>
-                  <div className="value">
-                    <CommaNumber value={totalVestedAmount} endingText="MVK" />
-                  </div>
-                </div>
-
-                <div className="ratio">
-                  <div className="claimed">
-                    <div className="hoverValue">
-                      Claimed tokens persent: {(totalClaimedAmount / amountOfTokens || 0.5) * 100}%
+                <TreasuryVesting
+                  totalPersent={(totalVestedAmount / amountOfTokens || 0.5) * 100}
+                  claimedColor={'navTitleColor'}
+                  totalColor={'primaryColor'}
+                >
+                  <div className="vest-stat">
+                    <div className="name">
+                      <div className="color claimed" /> Tokens Claimed
+                    </div>
+                    <div className="value">
+                      <CommaNumber value={totalClaimedAmount} endingText="MVK" />
                     </div>
                   </div>
-                  <div className="total">
-                    <div className="hoverValue">
-                      Total vested persent: {(totalVestedAmount / amountOfTokens || 0.5) * 100}%
+
+                  <div className="vest-stat">
+                    <div className="name">
+                      <div className="color total" /> Total Vested
+                    </div>
+                    <div className="value">
+                      <CommaNumber value={totalVestedAmount} endingText="MVK" />
                     </div>
                   </div>
-                </div>
-              </TreasuryVesting>
-            </div>
+
+                  <div className="ratio">
+                    <div className="claimed">
+                      <div className="hoverValue">
+                        Claimed tokens persent: {(totalClaimedAmount / amountOfTokens || 0.5) * 100}%
+                      </div>
+                    </div>
+                    <div className="total">
+                      <div className="hoverValue">
+                        Total vested persent: {(totalVestedAmount / amountOfTokens || 0.5) * 100}%
+                      </div>
+                    </div>
+                  </div>
+                </TreasuryVesting>
+              </div>
+            ) : null}
           </div>
         </TreasuryContentStyled>
       ) : (
