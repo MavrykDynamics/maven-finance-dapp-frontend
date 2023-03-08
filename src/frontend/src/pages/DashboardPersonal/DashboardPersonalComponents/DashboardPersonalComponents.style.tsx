@@ -304,6 +304,31 @@ export const ListItem = styled.div<{ theme: MavrykTheme; columsTemplate: string 
   }
 `
 
+export const VestingTabStyled = styled(MediumBlockBase)<{ theme: MavrykTheme }>`
+  width: 100%;
+  height: 187px;
+  padding-bottom: 20px;
+
+  p {
+    margin: 0;
+  }
+
+  .vesting-data {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    justify-content: space-between;
+    align-items: center;
+    grid-template-rows: 50px;
+    margin-top: 30px;
+
+    .column {
+      display: flex;
+      flex-direction: column;
+      row-gap: 5px;
+    }
+  }
+`
+
 export const SatelliteStatusBlock = styled(MediumBlockBase)<{ theme: MavrykTheme }>`
   padding-bottom: 20px;
   width: 100%;
