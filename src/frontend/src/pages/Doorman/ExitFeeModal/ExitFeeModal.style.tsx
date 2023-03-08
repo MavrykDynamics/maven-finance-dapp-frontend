@@ -1,51 +1,73 @@
 import styled from 'styled-components/macro'
-
-import { skyColor } from '../../../styles/colors'
 import { MavrykTheme } from '../../../styles/interfaces'
 
 export const ExitFeeModalContent = styled.div<{ theme: MavrykTheme }>`
+  padding: 10px 40px 0 40px;
+
   label {
     color: ${({ theme }) => theme.textColor};
     font-weight: 600;
     font-size: 16px;
     line-height: 22px;
     display: block;
-    margin-bottom: 6px;
     margin-left: 6px;
   }
+`
 
-  input {
-    margin-bottom: 0;
-    height: 50px;
-    font-weight: 600;
-    font-size: 22px;
-    line-height: 22px;
+export const InputPinnedText = styled.div<{ theme: MavrykTheme }>`
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
 
-    & ~ div {
-      top: 18px;
-    }
+  height: 100%;
+
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 20px;
+
+  color: ${({ theme }) => theme.textColor};
+`
+
+export const ExitFeeModalStats = styled.div`
+  margin: 10px 6px 0;
+
+  & > div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 
-  aside div {
-    margin: 4px 6px;
-    height: auto;
+  p {
+    margin: 0;
 
-    h4 {
-      color: ${({ theme }) => theme.textColor};
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 22px;
 
-      a svg {
-        opacity: 0.8;
-      }
+    color: ${({ theme }) => theme.dataColor};
+  }
+
+  h4 {
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 24px;
+
+    color: ${({ theme }) => theme.textColor};
+
+    svg {
+      width: 12px;
+      height: 12px;
+      margin-left: 4px;
+
+      fill: ${({ theme }) => theme.textColor};
     }
   }
 `
 
 export const ExitFeeModalButtons = styled.div`
-  display: grid;
-  grid-template-columns: auto auto;
-  grid-gap: 10px;
+  display: flex;
   margin-top: 30px;
-  margin-bottom: 10px;
+  column-gap: 10px;
 `
 
 export const ExitFeeModalGrid = styled.div<{ theme: MavrykTheme }>`

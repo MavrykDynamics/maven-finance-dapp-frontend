@@ -38,6 +38,7 @@ export const Doorman = () => {
   const [amount, setAmount] = useState<null | number>(null)
   const exitFeeModal = {
     amount: Number(amount),
+    mvkExchangeRate,
     maximumTotalSupply,
     mySMvkTokenBalance,
     myMvkTokenBalance,

@@ -30,7 +30,7 @@ import {
   StakeUnstakeButtonGrid,
   StakeUnstakeCard,
   StakeUnstakeInputColumn,
-  StakeUnstakeInputGrid,
+  StakeUnstakeInputWithCoin,
   StakeUnstakeInputLabels,
   StakeUnstakeRate,
   StakeUnstakeStyled,
@@ -284,19 +284,19 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
       </StakeUnstakeCards>
 
       <StakeUnstakeActionCard>
-        <StakeUnstakeInputGrid>
-          <ImageWithPlug imageLink={'/images/coin-gold.svg'} alt="coin" />
-          <StakeUnstakeInputColumn>
-            <StakeUnstakeInputLabels>
-              <div className="minAmount">Min 1 MVK</div>
+        <StakeUnstakeInputColumn>
+          <StakeUnstakeInputLabels>
+            <div className="minAmount">Min 1 MVK</div>
 
-              <StakeUnstakeAmount>
-                <span>Staked Amount:</span>
-                &nbsp;
-                <CommaNumber value={mySMvkTokenBalance} endingText={'MVK'} />
-              </StakeUnstakeAmount>
-            </StakeUnstakeInputLabels>
+            <StakeUnstakeAmount>
+              <span>Staked Amount:</span>
+              &nbsp;
+              <CommaNumber value={mySMvkTokenBalance} endingText={'MVK'} />
+            </StakeUnstakeAmount>
+          </StakeUnstakeInputLabels>
 
+          <StakeUnstakeInputWithCoin>
+            <ImageWithPlug imageLink={'/images/coin-gold.svg'} alt="coin" />
             <Input
               type={'number'}
               placeholder={inputData.amount}
@@ -308,22 +308,22 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
               inputStatus={inputData.validation}
               errorMessage={inputData.errorMessage}
             />
+          </StakeUnstakeInputWithCoin>
 
-            <StakeUnstakeInputLabels>
-              <StakeUnstakeRate>
-                <CommaNumber value={Number(exchangeValue ? inputData.amount : 1)} endingText={'MVK'} />
-                <span>&nbsp;= $</span>
-                <CommaNumber value={Number(exchangeValue || MVK_exchangeRate)} />
-              </StakeUnstakeRate>
+          <StakeUnstakeInputLabels>
+            <StakeUnstakeRate>
+              <CommaNumber value={Number(exchangeValue ? inputData.amount : 1)} endingText={'MVK'} />
+              <span>&nbsp;= $</span>
+              <CommaNumber value={Number(exchangeValue || MVK_exchangeRate)} />
+            </StakeUnstakeRate>
 
-              <StakeUnstakeAmount>
-                <span>Wallet Balance:</span>
-                &nbsp;
-                <CommaNumber value={myMvkTokenBalance} endingText={'MVK'} />
-              </StakeUnstakeAmount>
-            </StakeUnstakeInputLabels>
-          </StakeUnstakeInputColumn>
-        </StakeUnstakeInputGrid>
+            <StakeUnstakeAmount>
+              <span>Wallet Balance:</span>
+              &nbsp;
+              <CommaNumber value={myMvkTokenBalance} endingText={'MVK'} />
+            </StakeUnstakeAmount>
+          </StakeUnstakeInputLabels>
+        </StakeUnstakeInputColumn>
         <StakeUnstakeButtonGrid>
           <NewButton kind={BUTTON_PRIMARY} onClick={handleStake} form={BUTTON_WIDE}>
             <Icon id="in" /> Stake
