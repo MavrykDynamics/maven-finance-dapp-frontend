@@ -19,8 +19,9 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
 import { getTotalDelegatedMVK } from './helpers/Satellites.consts'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
-import { BUTTON_SECONDARY, BUTTON_SIMPLE } from 'app/App.components/Button/Button.constants'
+import { BUTTON_SIMPLE } from 'app/App.components/Button/Button.constants'
 import { getFeedsStorage } from 'pages/DataFeeds/DataFeeds.actions'
+import { getGovernanceStorage } from 'pages/Governance/Governance.actions'
 
 // view
 import { SmallInfoBlock } from 'pages/SatelliteGovernance/SatelliteGovernance.style'
@@ -33,7 +34,7 @@ import { InfoBlockWrapper, SatellitesOverviewStyled } from './Satellites.style'
 
 const Satellites = () => {
   const dispatch = useDispatch()
-
+  const { isGovernanceStorageLoaded } = useSelector((state: State) => state.governance)
   const { allSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
   const { feedsLedger, isLoaded: isFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
   const { isLoaded: isDoormanLoaded } = useSelector((state: State) => state.doorman)
@@ -41,9 +42,11 @@ const Satellites = () => {
   const { isLoading } = useDataLoader(async () => {
     try {
       await Promise.all(
-        [!isFeedsLoaded && dispatch(getFeedsStorage()), !isDoormanLoaded && dispatch(getDoormanStorage())].filter(
-          Boolean,
-        ),
+        [
+          !isFeedsLoaded && dispatch(getFeedsStorage()),
+          !isDoormanLoaded && dispatch(getDoormanStorage()),
+          !isGovernanceStorageLoaded && dispatch(getGovernanceStorage()),
+        ].filter(Boolean),
       )
     } catch (e) {}
   }, [])
