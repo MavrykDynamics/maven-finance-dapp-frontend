@@ -265,6 +265,7 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
               <NewButton
                 onClick={handleDelegate}
                 kind={BUTTON_PRIMARY}
+                form={BUTTON_WIDE}
                 disabled={!accountPkh}
                 isThin
                 animation={accountPkh ? BUTTON_PULSE : null}
@@ -297,7 +298,13 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
           </StakeUnstakeBalance>
 
           <StakeUnstakeRightPart>
-            <NewButton kind={BUTTON_PRIMARY} isThin onClick={handleCompound} disabled={!userHasRewards}>
+            <NewButton
+              kind={BUTTON_PRIMARY}
+              form={BUTTON_WIDE}
+              isThin
+              onClick={handleCompound}
+              disabled={!userHasRewards}
+            >
               <Icon id="compound" /> Compound
             </NewButton>
           </StakeUnstakeRightPart>
