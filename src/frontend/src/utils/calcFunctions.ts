@@ -27,6 +27,7 @@ export function calcExitFee(totalMvkSupply: number | undefined, totalStakedMVK: 
  * @param grage -> grage for 10, that we'll need to multiply number to convert it for usage in contract call
  *
  * By default fn will use MVK decimals amount
+ * Math.floor is used to remove decimals that are more that allowed amount for token
  */
 export const convertNumberForContractCall = ({
   number,
@@ -35,7 +36,7 @@ export const convertNumberForContractCall = ({
   number: number
   grage?: number
 }): number => {
-  return number * Math.pow(10, grage)
+  return Math.floor(number * Math.pow(10, grage))
 }
 
 /**
