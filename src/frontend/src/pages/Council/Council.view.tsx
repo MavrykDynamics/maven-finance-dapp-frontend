@@ -341,7 +341,7 @@ export function CouncilView({
               ) : null}
 
               <Pagination
-                itemsCount={isPastActionsTab ? allPastActions.length : allPastActions.length}
+                itemsCount={isPastActionsTab ? allPastActions.length : allPendingActions.length}
                 listName={isPastActionsTab ? COUNCIL_ALL_PAST_ACTIONS_LIST_NAME : COUNCIL_ALL_PENDING_ACTIONS_LIST_NAME}
               />
             </>
@@ -351,7 +351,7 @@ export function CouncilView({
                 <div className="top-bar">
                   <h1 className="top-bar-title">Available Actions</h1>
 
-                  <div className="dropdown-size">
+                  <div className="dropdown">
                     <DropDown
                       placeholder="Choose action"
                       activeItem={chosenDdItem}

@@ -5,6 +5,7 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import Icon from '../../../app/App.components/Icon/Icon.view'
 import { TzAddress } from '../../../app/App.components/TzAddress/TzAddress.view'
 import { DoormanList, DoormanStatsHeader, DoormanStatsStyled } from './DoormanStats.style'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 type DoormanStatsPropsType = {
   MVK_exchangeRate: number
@@ -34,13 +35,10 @@ export const DoormanStats = ({
         <div>
           <h4>
             MVK Price
-            <a
-              href="https://mavryk.finance/litepaper#converting-vmvk-back-to-mvk-exit-fees"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <Icon id="question" />
-            </a>
+            <CustomTooltip
+              text="Price taken from the exchange MVK is currently listed on, not from our Oracle price feeds"
+              iconId={'info'}
+            />
           </h4>
           <var>
             <CommaNumber value={MVK_exchangeRate} beginningText={'$'} />
@@ -65,7 +63,7 @@ export const DoormanStats = ({
           <h4>
             MVK Loyalty Index
             <a
-              href="https://mavryk.finance/litepaper#converting-vmvk-back-to-mvk-exit-fees"
+              href="https://mavryk.finance/litepaper#converting-smvk-back-to-mvk-exit-fees"
               target="_blank"
               rel="noreferrer"
             >
@@ -81,7 +79,7 @@ export const DoormanStats = ({
           <h4>
             Exit Fee
             <a
-              href="https://mavryk.finance/litepaper#converting-vmvk-back-to-mvk-exit-fees"
+              href="https://mavryk.finance/litepaper#converting-smvk-back-to-mvk-exit-fees"
               target="_blank"
               rel="noreferrer"
             >

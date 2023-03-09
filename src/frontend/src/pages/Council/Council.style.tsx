@@ -115,8 +115,9 @@ export const AvaliableActions = styled(Card)<{ theme: MavrykTheme }>`
     }
   }
 
-  .dropdown-size {
+  .dropdown {
     width: 440px;
+    text-transform: capitalize;
   }
 `
 

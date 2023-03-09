@@ -30,9 +30,8 @@ export const Governance = () => {
     accountPkh,
     user: { isSatellite },
   } = useSelector((state: State) => state.wallet)
-  const { governanceStorage, governancePhase, currentRoundProposals, pastProposals } = useSelector(
-    (state: State) => state.governance,
-  )
+  const { governanceStorage, governancePhase, currentRoundProposals, pastProposals, isGovernanceStorageLoaded } =
+    useSelector((state: State) => state.governance)
   const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
 
   const { isLoading } = useDataLoader(async () => {
@@ -41,7 +40,7 @@ export const Governance = () => {
         [
           !isEgovLoaded && dispatch(getEmergencyGovernanceStorage()),
           dispatch(getCurrentRoundProposals()),
-          dispatch(getGovernanceStorage()),
+          !isGovernanceStorageLoaded && dispatch(getGovernanceStorage()),
         ].filter(Boolean),
       )
     } catch (e) {}
