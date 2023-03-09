@@ -18,8 +18,42 @@ export function calcMLI(totalMvkSupply: number | undefined, totalStakedMVK: numb
 
 export function calcExitFee(totalMvkSupply: number | undefined, totalStakedMVK: number | undefined): number {
   const mli = calcMLI(totalMvkSupply, totalStakedMVK) * 10 //Need to multiply by 10 again so the MLI is adjusted properly to reflect the Litepaper
-  const fee = 30 - 0.525 * mli + 0.0025 * (mli ** 2)
+  const fee = 30 - 0.525 * mli + 0.0025 * mli ** 2
   return fee
+}
+
+/**
+ * @param number -> number in regular form that we wan't to convert for usage in contract call
+ * @param grage -> grage for 10, that we'll need to multiply number to convert it for usage in contract call
+ *
+ * By default fn will use MVK decimals amount
+ */
+export const convertNumberForContractCall = ({
+  number,
+  grage = PRECISION_NUMBER,
+}: {
+  number: number
+  grage?: number
+}): number => {
+  return number * Math.pow(10, grage)
+}
+
+/**
+ * @param number -> number in contract form that we wan't to convert for usage on client output
+ * @param grage -> grage for 10, that we'll need to divide number to convert it for usage on client
+ *
+ * contract number form is number without decimals, this form is reached by multiplying reqular number by 10^(decimals amount different between different types of tokens)
+ *
+ * By default fn will use MVK decimals amount
+ */
+export const convertNumberForClient = ({
+  number,
+  grage = PRECISION_NUMBER,
+}: {
+  number: number
+  grage?: number
+}): number => {
+  return number / Math.pow(10, grage)
 }
 
 export function calcTimeToBlock(currentBlockLevel?: number, endBlockLevel?: number) {
