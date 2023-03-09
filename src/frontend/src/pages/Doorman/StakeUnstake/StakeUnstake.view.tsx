@@ -8,7 +8,7 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { Input } from 'app/App.components/Input/NewInput'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
-import { InputErrorMessage } from 'app/App.components/Input/Input.style'
+import { InputErrorMessage, InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 
 // helpers, consts
 import { State } from 'reducers'
@@ -212,6 +212,9 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
   const inputSettings = {
     inputStatus: inputData.validation,
     convertedValue: exchangeValue,
+    balance: myMvkTokenBalance,
+    balanceAsset: 'MVK',
+    balanceName: 'Wallet Balance',
   }
 
   const handleDelegate = () => {
@@ -219,8 +222,6 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
       satelliteMvkIsDelegatedTo ? `/satellites/satellite-details/${satelliteMvkIsDelegatedTo}` : '/satellite-nodes',
     )
   }
-
-  const inputPinnedChild = <div>MVK</div>
 
   return (
     <StakeUnstakeStyled>
@@ -326,26 +327,15 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
           <StakeUnstakeInputWithCoin>
             <ImageWithPlug imageLink={'/images/coin-gold.svg'} alt="coin" />
             <Input
-              className={`${INPUT_LARGE} input-with-rate transparent-child-wrap text-child`}
-              children={inputPinnedChild}
+              className={`${INPUT_LARGE} input-with-rate transparent-child-wrap`}
+              children={<InputPinnedTokenInfo>MVK</InputPinnedTokenInfo>}
               inputProps={inputProps}
               settings={inputSettings}
             />
           </StakeUnstakeInputWithCoin>
-          {inputData.errorMessage && <InputErrorMessage>{inputData.errorMessage}</InputErrorMessage>}
-          <StakeUnstakeInputLabels>
-            <StakeUnstakeRate>
-              <CommaNumber value={Number(exchangeValue ? inputData.amount : 1)} endingText={'MVK'} />
-              <span>&nbsp;= $</span>
-              <CommaNumber value={Number(exchangeValue || MVK_exchangeRate)} />
-            </StakeUnstakeRate>
-
-            <StakeUnstakeAmount>
-              <span>Wallet Balance:</span>
-              &nbsp;
-              <CommaNumber value={myMvkTokenBalance} endingText={'MVK'} />
-            </StakeUnstakeAmount>
-          </StakeUnstakeInputLabels>
+          {inputData.errorMessage && (
+            <InputErrorMessage className="errorMessage">{inputData.errorMessage}</InputErrorMessage>
+          )}
         </StakeUnstakeInputColumn>
         <StakeUnstakeButtonGrid>
           <NewButton kind={BUTTON_PRIMARY} onClick={handleStake} form={BUTTON_WIDE}>

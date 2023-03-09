@@ -21,6 +21,7 @@ import { ExitFeeModalButtons, ExitFeeModalContent, ExitFeeModalStats } from './E
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
 import NewButton from 'app/App.components/Button/NewButton'
 import { containerColor } from 'styles'
+import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 
 type ExitFeeModalPropsType = {
   closePopup: () => void
@@ -115,8 +116,6 @@ export const ExitFeeModal = ({
     convertedValue,
   }
 
-  const inputPinnedChild = <div>MVK</div>
-
   return (
     <PopupContainer onClick={closePopup} show={show}>
       <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="exitFee">
@@ -128,8 +127,8 @@ export const ExitFeeModal = ({
         <ExitFeeModalContent>
           <label>Amount to Unstake:</label>
           <Input
-            className={`${INPUT_LARGE} input-with-rate transparent-child-wrap text-child`}
-            children={inputPinnedChild}
+            className={`${INPUT_LARGE} input-with-rate transparent-child-wrap`}
+            children={<InputPinnedTokenInfo>MVK</InputPinnedTokenInfo>}
             inputProps={inputProps}
             settings={inputSettings}
           />

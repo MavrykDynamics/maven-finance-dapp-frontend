@@ -55,12 +55,16 @@ export const StakeUnstakeActionCard = styled(Card)<{ theme: MavrykTheme }>`
 export const StakeUnstakeInputColumn = styled.div`
   display: flex;
   flex-direction: column;
+
+  .errorMessage {
+    position: relative;
+    top: 16px;
+  }
 `
 export const StakeUnstakeInputLabels = styled.div`
   display: flex;
   justify-content: space-between;
   margin-left: 70px;
-  margin-right: 10px;
 
   &:last-of-type {
     margin-top: 5px;
@@ -79,6 +83,18 @@ export const StakeUnstakeInputLabels = styled.div`
 export const StakeUnstakeInputWithCoin = styled.div`
   display: flex;
   column-gap: 10px;
+
+  .input-balance {
+    color: ${({ theme }) => theme.valueColor};
+
+    .prefix {
+      color: ${({ theme }) => theme.headerSkyColor};
+    }
+
+    .sufix {
+      margin-right: 6px;
+    }
+  }
 `
 
 export const StakeUnstakeAmount = styled.div`
@@ -140,7 +156,7 @@ export const StakeUnstakeRate = styled.div`
 `
 
 export const StakeUnstakeButtonGrid = styled.div`
-  margin: 25px auto 0 auto;
+  margin: 65px auto 0 auto;
   display: flex;
   justify-content: space-between;
   column-gap: 10px;
