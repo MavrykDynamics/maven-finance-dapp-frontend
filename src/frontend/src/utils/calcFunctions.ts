@@ -1,8 +1,8 @@
 import { State } from 'reducers'
-import { UserState } from 'reducers/wallet'
-import { FIXED_POINT_ACCURACY, PRECISION_NUMBER, SECONDS_PER_BLOCK } from './constants'
+import { FIXED_POINT_ACCURACY, PRECISION_NUMBER, SECONDS_PER_BLOCK, MU_NUMBER } from './constants'
 import { Doorman, Farm, Satellite_Rewards, Stake_History_Data } from './generated/graphqlTypes'
 import { UserDoormanRewardsData, UserFarmRewardsData, UserSatelliteRewardsData } from './TypesAndInterfaces/User'
+import { LoanTokenType } from './TypesAndInterfaces/Loans'
 
 /**
  * Calculates the MVK Loyalty Index (MLI) per the function in the litepaper
@@ -55,6 +55,22 @@ export const convertNumberForClient = ({
   grage?: number
 }): number => {
   return number / Math.pow(10, grage)
+}
+
+export const getTokenDecimals = ({
+  tokenType,
+  tokenAddress,
+  dipDupTokens,
+}: {
+  tokenType: LoanTokenType
+  tokenAddress: string
+  dipDupTokens: State['tokens']['dipDupTokens']
+}): number | null => {
+  if (tokenType === 'tez') return MU_NUMBER
+
+  const { metadata: { decimals = null } = {} } = dipDupTokens.find(({ contract }) => tokenAddress === contract) ?? {}
+
+  return decimals ? Number(decimals) : null
 }
 
 export function calcTimeToBlock(currentBlockLevel?: number, endBlockLevel?: number) {

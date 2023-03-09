@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux'
 // type
 import type { InputStatusType } from '../../../app/App.components/Input/Input.constants'
 import { CouncilMaxLength } from 'utils/TypesAndInterfaces/Council'
+import { LoanTokenType } from 'utils/TypesAndInterfaces/Loans'
 
 // helpers
 import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
@@ -33,15 +34,15 @@ const INIT_FORM = {
 const itemsForDropDown = [
   {
     text: 'FA12',
-    value: 'FA12',
+    value: 'fa12',
   },
   {
     text: 'FA2',
-    value: 'FA2',
+    value: 'fa2',
   },
   {
     text: 'TEZ',
-    value: 'TEZ',
+    value: 'tez',
   },
 ]
 
@@ -65,25 +66,26 @@ export const CouncilFormTransferTokens = (maxLength: CouncilMaxLength) => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    try {
-      const typeOfToken = tokenType?.value || ''
-      await dispatch(
-        transferTokens(receiverAddress, tokenContractAddress, +tokenAmount, typeOfToken, +tokenId, purpose),
-      )
 
-      setTokenType(undefined)
-      setDdIsOpen(false)
-      setForm(INIT_FORM)
-      setFormInputStatus({
-        receiverAddress: '',
-        tokenContractAddress: '',
-        tokenAmount: '',
-        tokenId: '',
-        purpose: '',
-      })
-    } catch (error) {
-      console.error(error)
-    }
+    const typeOfToken = tokenType?.value as LoanTokenType | undefined
+    if (!typeOfToken) return
+
+    const isSuccess = await dispatch(
+      transferTokens(receiverAddress, tokenContractAddress, +tokenAmount, typeOfToken, +tokenId, purpose),
+    )
+
+    if (!isSuccess) return
+
+    setTokenType(undefined)
+    setDdIsOpen(false)
+    setForm(INIT_FORM)
+    setFormInputStatus({
+      receiverAddress: '',
+      tokenContractAddress: '',
+      tokenAmount: '',
+      tokenId: '',
+      purpose: '',
+    })
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => {

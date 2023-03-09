@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux'
 // type
 import type { InputStatusType } from '../../../app/App.components/Input/Input.constants'
 import { CouncilMaxLength } from 'utils/TypesAndInterfaces/Council'
+import { LoanTokenType } from 'utils/TypesAndInterfaces/Loans'
 
 // helpers
 import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
@@ -41,7 +42,7 @@ export const CouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
     () =>
       tokenTypes.map((item, index) => ({
         content: <div>{item}</div>,
-        value: item,
+        value: item.toLowerCase(),
         id: index,
       })),
     [],
@@ -63,26 +64,26 @@ export const CouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    try {
-      const typeOfToken = chosenDdItem?.value
-      if (!typeOfToken) return
 
-      await dispatch(
-        requestTokens(treasuryAddress, tokenContractAddress, tokenName, +tokenAmount, typeOfToken, +tokenId, purpose),
-      )
-      setForm(INIT_FORM)
-      setFormInputStatus({
-        treasuryAddress: '',
-        tokenContractAddress: '',
-        tokenName: '',
-        tokenAmount: '',
-        tokenId: '',
-        purpose: '',
-      })
-      setChosenDdItem(undefined)
-    } catch (error) {
-      console.error(error)
-    }
+    const typeOfToken = chosenDdItem?.value as LoanTokenType | undefined
+    if (!typeOfToken) return
+
+    const isSuccess = await dispatch(
+      requestTokens(treasuryAddress, tokenContractAddress, tokenName, +tokenAmount, typeOfToken, +tokenId, purpose),
+    )
+
+    if (!isSuccess) return
+
+    setForm(INIT_FORM)
+    setFormInputStatus({
+      treasuryAddress: '',
+      tokenContractAddress: '',
+      tokenName: '',
+      tokenAmount: '',
+      tokenId: '',
+      purpose: '',
+    })
+    setChosenDdItem(undefined)
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
