@@ -93,12 +93,17 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
     setShowAsPercentage(!showAsPercentage)
   }
 
-  const handleLiquidateVault = (data: { vaultId?: number; ownerId?: string; costToLiquidate: number }) => {
-    const { vaultId, ownerId, costToLiquidate } = data
+  const handleLiquidateVault = () => {
+    if (!vaultId || !ownerId || !borrowedAsset?.decimals) return
 
-    if (!vaultId || !ownerId) return
-
-    dispatch(liquidateVault(vaultId, ownerId, costToLiquidate))
+    dispatch(
+      liquidateVault({
+        vaultId,
+        vaultOwner: ownerId,
+        liquidateAmount: costToLiquidate,
+        decimals: borrowedAsset.decimals,
+      }),    
+    )
   }
 
   const inputProps = {
@@ -313,12 +318,7 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
           )}
 
           <div className="g-centering-group">
-            <Button
-              text="Liquidate"
-              kind={ACTION_PRIMARY}
-              disabled={!costToLiquidate}
-              onClick={() => handleLiquidateVault({ vaultId, ownerId, costToLiquidate })}
-            />
+            <Button text="Liquidate" kind={ACTION_PRIMARY} disabled={!costToLiquidate} onClick={handleLiquidateVault} />
           </div>
         </LiquidateVaultModalStyled>
       </PopupContainerWrapper>

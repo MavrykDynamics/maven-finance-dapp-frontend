@@ -62,7 +62,7 @@ export const getTokenDecimals = ({
   tokenAddress,
   dipDupTokens,
 }: {
-  tokenType: LoanTokenType
+  tokenType?: LoanTokenType
   tokenAddress: string
   dipDupTokens: State['tokens']['dipDupTokens']
 }): number | null => {
