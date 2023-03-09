@@ -56,21 +56,15 @@ export const StakeUnstakeInputColumn = styled.div`
   display: flex;
   flex-direction: column;
 
-  input {
-    padding-right: 90px;
-    height: 50px;
-    font-weight: 600;
-    font-size: 22px;
-
-    & ~ div {
-      top: 18px;
-    }
+  .errorMessage {
+    position: relative;
+    top: 16px;
   }
 `
 export const StakeUnstakeInputLabels = styled.div`
   display: flex;
   justify-content: space-between;
-  margin: 0 10px;
+  margin-left: 70px;
 
   &:last-of-type {
     margin-top: 5px;
@@ -86,17 +80,20 @@ export const StakeUnstakeInputLabels = styled.div`
     font-size: 16px;
   }
 `
-export const StakeUnstakeInputGrid = styled.div`
-  display: grid;
-  grid-template-columns: 50px auto;
-  grid-column-gap: 10px;
+export const StakeUnstakeInputWithCoin = styled.div`
+  display: flex;
+  column-gap: 10px;
 
-  > img {
-    margin-top: 20px;
-  }
+  .input-balance {
+    color: ${({ theme }) => theme.valueColor};
 
-  > div {
-    position: relative;
+    .prefix {
+      color: ${({ theme }) => theme.headerSkyColor};
+    }
+
+    .sufix {
+      margin-right: 6px;
+    }
   }
 `
 
@@ -159,7 +156,7 @@ export const StakeUnstakeRate = styled.div`
 `
 
 export const StakeUnstakeButtonGrid = styled.div`
-  margin: 25px auto 0 auto;
+  margin: 65px auto 0 auto;
   display: flex;
   justify-content: space-between;
   column-gap: 10px;
@@ -230,6 +227,8 @@ export const StakeDelegatedUser = styled.div`
     width: 35px;
     height: 35px;
     margin-right: 10px;
+
+    border-radius: 50%;
     fill: ${({ theme }) => theme.cardBorderColor};
 
     img {

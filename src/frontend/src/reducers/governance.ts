@@ -30,6 +30,7 @@ export interface GovernanceState {
   pastProposals: CurrentRoundProposalsStorageType
   vote?: number
   governanceSatelliteStorage: GovernanceSatellite
+  isGovernanceStorageLoaded: boolean
 }
 
 const defaultGovernanceStorage = normalizeGovernanceStorage(null)
@@ -42,6 +43,7 @@ const governanceDefaultState: GovernanceState = {
     governance_satellite: [],
     governance_satellite_action: [],
   },
+  isGovernanceStorageLoaded: false,
 }
 
 export function governance(state = governanceDefaultState, action: Action) {
@@ -60,6 +62,7 @@ export function governance(state = governanceDefaultState, action: Action) {
       return {
         ...state,
         governanceStorage: action.governanceStorage,
+        isGovernanceStorageLoaded: true,
       }
     case SET_GOVERNANCE_PHASE:
       return {

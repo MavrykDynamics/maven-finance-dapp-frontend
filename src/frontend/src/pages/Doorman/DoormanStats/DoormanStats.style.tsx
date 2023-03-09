@@ -71,23 +71,24 @@ export const DoormanList = styled.aside<{ theme: MavrykTheme }>`
       font-size: 14px;
       line-height: 24px;
       display: flex;
-      align-items: center;
-      white-space: nowrap;
 
       a {
         margin-left: 4px;
+      }
 
+      svg {
+        position: relative;
+        top: 2px;
+        
+        transition: 0.4s all;
+        width: 12px;
+        height: 12px;
+        fill: ${({ theme }) => theme.textColor};
+      }
+
+      &:hover {
         svg {
-          transition: 0.4s all;
-          width: 14px;
-          height: 14px;
-          fill: ${({ theme }) => theme.textColor};
-        }
-
-        &:hover {
-          svg {
-            opacity: 0.8;
-          }
+          opacity: 0.8;
         }
       }
     }

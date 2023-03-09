@@ -61,7 +61,7 @@ export const SatelliteCardRow = styled.div<{ theme: MavrykTheme }>`
   padding: 15px;
   justify-content: center;
   font-weight: 600;
-  font-size: 16px;
+  font-size: 14px;
   color: ${({ theme }) => theme.textColor};
   border-top: 1px solid ${({ theme }) => theme.cardBorderColor};
 
