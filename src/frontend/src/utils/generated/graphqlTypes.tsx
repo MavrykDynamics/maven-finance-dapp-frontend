@@ -20905,10 +20905,6 @@ export type Governance = {
   /** An aggregate relationship */
   vault_factories_aggregate: Vault_Factory_Aggregate;
   /** An array relationship */
-  vaults: Array<Vault>;
-  /** An aggregate relationship */
-  vaults_aggregate: Vault_Aggregate;
-  /** An array relationship */
   vestings: Array<Vesting>;
   /** An aggregate relationship */
   vestings_aggregate: Vesting_Aggregate;
@@ -21384,26 +21380,6 @@ export type GovernanceVault_Factories_AggregateArgs = {
 
 
 /** columns and relationships of "governance" */
-export type GovernanceVaultsArgs = {
-  distinct_on?: InputMaybe<Array<Vault_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Vault_Order_By>>;
-  where?: InputMaybe<Vault_Bool_Exp>;
-};
-
-
-/** columns and relationships of "governance" */
-export type GovernanceVaults_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Vault_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Vault_Order_By>>;
-  where?: InputMaybe<Vault_Bool_Exp>;
-};
-
-
-/** columns and relationships of "governance" */
 export type GovernanceVestingsArgs = {
   distinct_on?: InputMaybe<Array<Vesting_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
@@ -21610,8 +21586,6 @@ export type Governance_Bool_Exp = {
   treasury_factories_aggregate?: InputMaybe<Treasury_Factory_Aggregate_Bool_Exp>;
   vault_factories?: InputMaybe<Vault_Factory_Bool_Exp>;
   vault_factories_aggregate?: InputMaybe<Vault_Factory_Aggregate_Bool_Exp>;
-  vaults?: InputMaybe<Vault_Bool_Exp>;
-  vaults_aggregate?: InputMaybe<Vault_Aggregate_Bool_Exp>;
   vestings?: InputMaybe<Vesting_Bool_Exp>;
   vestings_aggregate?: InputMaybe<Vesting_Aggregate_Bool_Exp>;
   whitelist_contracts?: InputMaybe<Governance_Whitelist_Contract_Bool_Exp>;
@@ -24782,7 +24756,6 @@ export type Governance_Order_By = {
   treasuries_aggregate?: InputMaybe<Treasury_Aggregate_Order_By>;
   treasury_factories_aggregate?: InputMaybe<Treasury_Factory_Aggregate_Order_By>;
   vault_factories_aggregate?: InputMaybe<Vault_Factory_Aggregate_Order_By>;
-  vaults_aggregate?: InputMaybe<Vault_Aggregate_Order_By>;
   vestings_aggregate?: InputMaybe<Vesting_Aggregate_Order_By>;
   whitelist_contracts_aggregate?: InputMaybe<Governance_Whitelist_Contract_Aggregate_Order_By>;
   whitelist_developers_aggregate?: InputMaybe<Whitelist_Developer_Aggregate_Order_By>;
@@ -38483,6 +38456,1166 @@ export type Liquidity_BakingPositions_AggregateArgs = {
   where?: InputMaybe<Liquidity_Baking_Position_Bool_Exp>;
 };
 
+/** columns and relationships of "liquidity_baking_1d_candle" */
+export type Liquidity_Baking_1d_Candle = {
+  __typename?: 'liquidity_baking_1d_candle';
+  bucket?: Maybe<Scalars['timestamptz']>;
+  close?: Maybe<Scalars['float8']>;
+  high?: Maybe<Scalars['float8']>;
+  low?: Maybe<Scalars['float8']>;
+  open?: Maybe<Scalars['float8']>;
+  token_volume?: Maybe<Scalars['float8']>;
+  trades?: Maybe<Scalars['bigint']>;
+  xtz_volume?: Maybe<Scalars['float8']>;
+};
+
+/** aggregated selection of "liquidity_baking_1d_candle" */
+export type Liquidity_Baking_1d_Candle_Aggregate = {
+  __typename?: 'liquidity_baking_1d_candle_aggregate';
+  aggregate?: Maybe<Liquidity_Baking_1d_Candle_Aggregate_Fields>;
+  nodes: Array<Liquidity_Baking_1d_Candle>;
+};
+
+/** aggregate fields of "liquidity_baking_1d_candle" */
+export type Liquidity_Baking_1d_Candle_Aggregate_Fields = {
+  __typename?: 'liquidity_baking_1d_candle_aggregate_fields';
+  avg?: Maybe<Liquidity_Baking_1d_Candle_Avg_Fields>;
+  count: Scalars['Int'];
+  max?: Maybe<Liquidity_Baking_1d_Candle_Max_Fields>;
+  min?: Maybe<Liquidity_Baking_1d_Candle_Min_Fields>;
+  stddev?: Maybe<Liquidity_Baking_1d_Candle_Stddev_Fields>;
+  stddev_pop?: Maybe<Liquidity_Baking_1d_Candle_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<Liquidity_Baking_1d_Candle_Stddev_Samp_Fields>;
+  sum?: Maybe<Liquidity_Baking_1d_Candle_Sum_Fields>;
+  var_pop?: Maybe<Liquidity_Baking_1d_Candle_Var_Pop_Fields>;
+  var_samp?: Maybe<Liquidity_Baking_1d_Candle_Var_Samp_Fields>;
+  variance?: Maybe<Liquidity_Baking_1d_Candle_Variance_Fields>;
+};
+
+
+/** aggregate fields of "liquidity_baking_1d_candle" */
+export type Liquidity_Baking_1d_Candle_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Liquidity_Baking_1d_Candle_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** aggregate avg on columns */
+export type Liquidity_Baking_1d_Candle_Avg_Fields = {
+  __typename?: 'liquidity_baking_1d_candle_avg_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** Boolean expression to filter rows from the table "liquidity_baking_1d_candle". All fields are combined with a logical 'AND'. */
+export type Liquidity_Baking_1d_Candle_Bool_Exp = {
+  _and?: InputMaybe<Array<Liquidity_Baking_1d_Candle_Bool_Exp>>;
+  _not?: InputMaybe<Liquidity_Baking_1d_Candle_Bool_Exp>;
+  _or?: InputMaybe<Array<Liquidity_Baking_1d_Candle_Bool_Exp>>;
+  bucket?: InputMaybe<Timestamptz_Comparison_Exp>;
+  close?: InputMaybe<Float8_Comparison_Exp>;
+  high?: InputMaybe<Float8_Comparison_Exp>;
+  low?: InputMaybe<Float8_Comparison_Exp>;
+  open?: InputMaybe<Float8_Comparison_Exp>;
+  token_volume?: InputMaybe<Float8_Comparison_Exp>;
+  trades?: InputMaybe<Bigint_Comparison_Exp>;
+  xtz_volume?: InputMaybe<Float8_Comparison_Exp>;
+};
+
+/** aggregate max on columns */
+export type Liquidity_Baking_1d_Candle_Max_Fields = {
+  __typename?: 'liquidity_baking_1d_candle_max_fields';
+  bucket?: Maybe<Scalars['timestamptz']>;
+  close?: Maybe<Scalars['float8']>;
+  high?: Maybe<Scalars['float8']>;
+  low?: Maybe<Scalars['float8']>;
+  open?: Maybe<Scalars['float8']>;
+  token_volume?: Maybe<Scalars['float8']>;
+  trades?: Maybe<Scalars['bigint']>;
+  xtz_volume?: Maybe<Scalars['float8']>;
+};
+
+/** aggregate min on columns */
+export type Liquidity_Baking_1d_Candle_Min_Fields = {
+  __typename?: 'liquidity_baking_1d_candle_min_fields';
+  bucket?: Maybe<Scalars['timestamptz']>;
+  close?: Maybe<Scalars['float8']>;
+  high?: Maybe<Scalars['float8']>;
+  low?: Maybe<Scalars['float8']>;
+  open?: Maybe<Scalars['float8']>;
+  token_volume?: Maybe<Scalars['float8']>;
+  trades?: Maybe<Scalars['bigint']>;
+  xtz_volume?: Maybe<Scalars['float8']>;
+};
+
+/** Ordering options when selecting data from "liquidity_baking_1d_candle". */
+export type Liquidity_Baking_1d_Candle_Order_By = {
+  bucket?: InputMaybe<Order_By>;
+  close?: InputMaybe<Order_By>;
+  high?: InputMaybe<Order_By>;
+  low?: InputMaybe<Order_By>;
+  open?: InputMaybe<Order_By>;
+  token_volume?: InputMaybe<Order_By>;
+  trades?: InputMaybe<Order_By>;
+  xtz_volume?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "liquidity_baking_1d_candle" */
+export enum Liquidity_Baking_1d_Candle_Select_Column {
+  /** column name */
+  Bucket = 'bucket',
+  /** column name */
+  Close = 'close',
+  /** column name */
+  High = 'high',
+  /** column name */
+  Low = 'low',
+  /** column name */
+  Open = 'open',
+  /** column name */
+  TokenVolume = 'token_volume',
+  /** column name */
+  Trades = 'trades',
+  /** column name */
+  XtzVolume = 'xtz_volume'
+}
+
+/** aggregate stddev on columns */
+export type Liquidity_Baking_1d_Candle_Stddev_Fields = {
+  __typename?: 'liquidity_baking_1d_candle_stddev_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Liquidity_Baking_1d_Candle_Stddev_Pop_Fields = {
+  __typename?: 'liquidity_baking_1d_candle_stddev_pop_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Liquidity_Baking_1d_Candle_Stddev_Samp_Fields = {
+  __typename?: 'liquidity_baking_1d_candle_stddev_samp_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** Streaming cursor of the table "liquidity_baking_1d_candle" */
+export type Liquidity_Baking_1d_Candle_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Liquidity_Baking_1d_Candle_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Liquidity_Baking_1d_Candle_Stream_Cursor_Value_Input = {
+  bucket?: InputMaybe<Scalars['timestamptz']>;
+  close?: InputMaybe<Scalars['float8']>;
+  high?: InputMaybe<Scalars['float8']>;
+  low?: InputMaybe<Scalars['float8']>;
+  open?: InputMaybe<Scalars['float8']>;
+  token_volume?: InputMaybe<Scalars['float8']>;
+  trades?: InputMaybe<Scalars['bigint']>;
+  xtz_volume?: InputMaybe<Scalars['float8']>;
+};
+
+/** aggregate sum on columns */
+export type Liquidity_Baking_1d_Candle_Sum_Fields = {
+  __typename?: 'liquidity_baking_1d_candle_sum_fields';
+  close?: Maybe<Scalars['float8']>;
+  high?: Maybe<Scalars['float8']>;
+  low?: Maybe<Scalars['float8']>;
+  open?: Maybe<Scalars['float8']>;
+  token_volume?: Maybe<Scalars['float8']>;
+  trades?: Maybe<Scalars['bigint']>;
+  xtz_volume?: Maybe<Scalars['float8']>;
+};
+
+/** aggregate var_pop on columns */
+export type Liquidity_Baking_1d_Candle_Var_Pop_Fields = {
+  __typename?: 'liquidity_baking_1d_candle_var_pop_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate var_samp on columns */
+export type Liquidity_Baking_1d_Candle_Var_Samp_Fields = {
+  __typename?: 'liquidity_baking_1d_candle_var_samp_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate variance on columns */
+export type Liquidity_Baking_1d_Candle_Variance_Fields = {
+  __typename?: 'liquidity_baking_1d_candle_variance_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** columns and relationships of "liquidity_baking_1h_candle" */
+export type Liquidity_Baking_1h_Candle = {
+  __typename?: 'liquidity_baking_1h_candle';
+  bucket?: Maybe<Scalars['timestamptz']>;
+  close?: Maybe<Scalars['float8']>;
+  high?: Maybe<Scalars['float8']>;
+  low?: Maybe<Scalars['float8']>;
+  open?: Maybe<Scalars['float8']>;
+  token_volume?: Maybe<Scalars['float8']>;
+  trades?: Maybe<Scalars['bigint']>;
+  xtz_volume?: Maybe<Scalars['float8']>;
+};
+
+/** aggregated selection of "liquidity_baking_1h_candle" */
+export type Liquidity_Baking_1h_Candle_Aggregate = {
+  __typename?: 'liquidity_baking_1h_candle_aggregate';
+  aggregate?: Maybe<Liquidity_Baking_1h_Candle_Aggregate_Fields>;
+  nodes: Array<Liquidity_Baking_1h_Candle>;
+};
+
+/** aggregate fields of "liquidity_baking_1h_candle" */
+export type Liquidity_Baking_1h_Candle_Aggregate_Fields = {
+  __typename?: 'liquidity_baking_1h_candle_aggregate_fields';
+  avg?: Maybe<Liquidity_Baking_1h_Candle_Avg_Fields>;
+  count: Scalars['Int'];
+  max?: Maybe<Liquidity_Baking_1h_Candle_Max_Fields>;
+  min?: Maybe<Liquidity_Baking_1h_Candle_Min_Fields>;
+  stddev?: Maybe<Liquidity_Baking_1h_Candle_Stddev_Fields>;
+  stddev_pop?: Maybe<Liquidity_Baking_1h_Candle_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<Liquidity_Baking_1h_Candle_Stddev_Samp_Fields>;
+  sum?: Maybe<Liquidity_Baking_1h_Candle_Sum_Fields>;
+  var_pop?: Maybe<Liquidity_Baking_1h_Candle_Var_Pop_Fields>;
+  var_samp?: Maybe<Liquidity_Baking_1h_Candle_Var_Samp_Fields>;
+  variance?: Maybe<Liquidity_Baking_1h_Candle_Variance_Fields>;
+};
+
+
+/** aggregate fields of "liquidity_baking_1h_candle" */
+export type Liquidity_Baking_1h_Candle_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Liquidity_Baking_1h_Candle_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** aggregate avg on columns */
+export type Liquidity_Baking_1h_Candle_Avg_Fields = {
+  __typename?: 'liquidity_baking_1h_candle_avg_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** Boolean expression to filter rows from the table "liquidity_baking_1h_candle". All fields are combined with a logical 'AND'. */
+export type Liquidity_Baking_1h_Candle_Bool_Exp = {
+  _and?: InputMaybe<Array<Liquidity_Baking_1h_Candle_Bool_Exp>>;
+  _not?: InputMaybe<Liquidity_Baking_1h_Candle_Bool_Exp>;
+  _or?: InputMaybe<Array<Liquidity_Baking_1h_Candle_Bool_Exp>>;
+  bucket?: InputMaybe<Timestamptz_Comparison_Exp>;
+  close?: InputMaybe<Float8_Comparison_Exp>;
+  high?: InputMaybe<Float8_Comparison_Exp>;
+  low?: InputMaybe<Float8_Comparison_Exp>;
+  open?: InputMaybe<Float8_Comparison_Exp>;
+  token_volume?: InputMaybe<Float8_Comparison_Exp>;
+  trades?: InputMaybe<Bigint_Comparison_Exp>;
+  xtz_volume?: InputMaybe<Float8_Comparison_Exp>;
+};
+
+/** aggregate max on columns */
+export type Liquidity_Baking_1h_Candle_Max_Fields = {
+  __typename?: 'liquidity_baking_1h_candle_max_fields';
+  bucket?: Maybe<Scalars['timestamptz']>;
+  close?: Maybe<Scalars['float8']>;
+  high?: Maybe<Scalars['float8']>;
+  low?: Maybe<Scalars['float8']>;
+  open?: Maybe<Scalars['float8']>;
+  token_volume?: Maybe<Scalars['float8']>;
+  trades?: Maybe<Scalars['bigint']>;
+  xtz_volume?: Maybe<Scalars['float8']>;
+};
+
+/** aggregate min on columns */
+export type Liquidity_Baking_1h_Candle_Min_Fields = {
+  __typename?: 'liquidity_baking_1h_candle_min_fields';
+  bucket?: Maybe<Scalars['timestamptz']>;
+  close?: Maybe<Scalars['float8']>;
+  high?: Maybe<Scalars['float8']>;
+  low?: Maybe<Scalars['float8']>;
+  open?: Maybe<Scalars['float8']>;
+  token_volume?: Maybe<Scalars['float8']>;
+  trades?: Maybe<Scalars['bigint']>;
+  xtz_volume?: Maybe<Scalars['float8']>;
+};
+
+/** Ordering options when selecting data from "liquidity_baking_1h_candle". */
+export type Liquidity_Baking_1h_Candle_Order_By = {
+  bucket?: InputMaybe<Order_By>;
+  close?: InputMaybe<Order_By>;
+  high?: InputMaybe<Order_By>;
+  low?: InputMaybe<Order_By>;
+  open?: InputMaybe<Order_By>;
+  token_volume?: InputMaybe<Order_By>;
+  trades?: InputMaybe<Order_By>;
+  xtz_volume?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "liquidity_baking_1h_candle" */
+export enum Liquidity_Baking_1h_Candle_Select_Column {
+  /** column name */
+  Bucket = 'bucket',
+  /** column name */
+  Close = 'close',
+  /** column name */
+  High = 'high',
+  /** column name */
+  Low = 'low',
+  /** column name */
+  Open = 'open',
+  /** column name */
+  TokenVolume = 'token_volume',
+  /** column name */
+  Trades = 'trades',
+  /** column name */
+  XtzVolume = 'xtz_volume'
+}
+
+/** aggregate stddev on columns */
+export type Liquidity_Baking_1h_Candle_Stddev_Fields = {
+  __typename?: 'liquidity_baking_1h_candle_stddev_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Liquidity_Baking_1h_Candle_Stddev_Pop_Fields = {
+  __typename?: 'liquidity_baking_1h_candle_stddev_pop_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Liquidity_Baking_1h_Candle_Stddev_Samp_Fields = {
+  __typename?: 'liquidity_baking_1h_candle_stddev_samp_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** Streaming cursor of the table "liquidity_baking_1h_candle" */
+export type Liquidity_Baking_1h_Candle_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Liquidity_Baking_1h_Candle_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Liquidity_Baking_1h_Candle_Stream_Cursor_Value_Input = {
+  bucket?: InputMaybe<Scalars['timestamptz']>;
+  close?: InputMaybe<Scalars['float8']>;
+  high?: InputMaybe<Scalars['float8']>;
+  low?: InputMaybe<Scalars['float8']>;
+  open?: InputMaybe<Scalars['float8']>;
+  token_volume?: InputMaybe<Scalars['float8']>;
+  trades?: InputMaybe<Scalars['bigint']>;
+  xtz_volume?: InputMaybe<Scalars['float8']>;
+};
+
+/** aggregate sum on columns */
+export type Liquidity_Baking_1h_Candle_Sum_Fields = {
+  __typename?: 'liquidity_baking_1h_candle_sum_fields';
+  close?: Maybe<Scalars['float8']>;
+  high?: Maybe<Scalars['float8']>;
+  low?: Maybe<Scalars['float8']>;
+  open?: Maybe<Scalars['float8']>;
+  token_volume?: Maybe<Scalars['float8']>;
+  trades?: Maybe<Scalars['bigint']>;
+  xtz_volume?: Maybe<Scalars['float8']>;
+};
+
+/** aggregate var_pop on columns */
+export type Liquidity_Baking_1h_Candle_Var_Pop_Fields = {
+  __typename?: 'liquidity_baking_1h_candle_var_pop_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate var_samp on columns */
+export type Liquidity_Baking_1h_Candle_Var_Samp_Fields = {
+  __typename?: 'liquidity_baking_1h_candle_var_samp_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate variance on columns */
+export type Liquidity_Baking_1h_Candle_Variance_Fields = {
+  __typename?: 'liquidity_baking_1h_candle_variance_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** columns and relationships of "liquidity_baking_1w_candle" */
+export type Liquidity_Baking_1w_Candle = {
+  __typename?: 'liquidity_baking_1w_candle';
+  bucket?: Maybe<Scalars['timestamptz']>;
+  close?: Maybe<Scalars['float8']>;
+  high?: Maybe<Scalars['float8']>;
+  low?: Maybe<Scalars['float8']>;
+  open?: Maybe<Scalars['float8']>;
+  token_volume?: Maybe<Scalars['float8']>;
+  trades?: Maybe<Scalars['bigint']>;
+  xtz_volume?: Maybe<Scalars['float8']>;
+};
+
+/** aggregated selection of "liquidity_baking_1w_candle" */
+export type Liquidity_Baking_1w_Candle_Aggregate = {
+  __typename?: 'liquidity_baking_1w_candle_aggregate';
+  aggregate?: Maybe<Liquidity_Baking_1w_Candle_Aggregate_Fields>;
+  nodes: Array<Liquidity_Baking_1w_Candle>;
+};
+
+/** aggregate fields of "liquidity_baking_1w_candle" */
+export type Liquidity_Baking_1w_Candle_Aggregate_Fields = {
+  __typename?: 'liquidity_baking_1w_candle_aggregate_fields';
+  avg?: Maybe<Liquidity_Baking_1w_Candle_Avg_Fields>;
+  count: Scalars['Int'];
+  max?: Maybe<Liquidity_Baking_1w_Candle_Max_Fields>;
+  min?: Maybe<Liquidity_Baking_1w_Candle_Min_Fields>;
+  stddev?: Maybe<Liquidity_Baking_1w_Candle_Stddev_Fields>;
+  stddev_pop?: Maybe<Liquidity_Baking_1w_Candle_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<Liquidity_Baking_1w_Candle_Stddev_Samp_Fields>;
+  sum?: Maybe<Liquidity_Baking_1w_Candle_Sum_Fields>;
+  var_pop?: Maybe<Liquidity_Baking_1w_Candle_Var_Pop_Fields>;
+  var_samp?: Maybe<Liquidity_Baking_1w_Candle_Var_Samp_Fields>;
+  variance?: Maybe<Liquidity_Baking_1w_Candle_Variance_Fields>;
+};
+
+
+/** aggregate fields of "liquidity_baking_1w_candle" */
+export type Liquidity_Baking_1w_Candle_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Liquidity_Baking_1w_Candle_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** aggregate avg on columns */
+export type Liquidity_Baking_1w_Candle_Avg_Fields = {
+  __typename?: 'liquidity_baking_1w_candle_avg_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** Boolean expression to filter rows from the table "liquidity_baking_1w_candle". All fields are combined with a logical 'AND'. */
+export type Liquidity_Baking_1w_Candle_Bool_Exp = {
+  _and?: InputMaybe<Array<Liquidity_Baking_1w_Candle_Bool_Exp>>;
+  _not?: InputMaybe<Liquidity_Baking_1w_Candle_Bool_Exp>;
+  _or?: InputMaybe<Array<Liquidity_Baking_1w_Candle_Bool_Exp>>;
+  bucket?: InputMaybe<Timestamptz_Comparison_Exp>;
+  close?: InputMaybe<Float8_Comparison_Exp>;
+  high?: InputMaybe<Float8_Comparison_Exp>;
+  low?: InputMaybe<Float8_Comparison_Exp>;
+  open?: InputMaybe<Float8_Comparison_Exp>;
+  token_volume?: InputMaybe<Float8_Comparison_Exp>;
+  trades?: InputMaybe<Bigint_Comparison_Exp>;
+  xtz_volume?: InputMaybe<Float8_Comparison_Exp>;
+};
+
+/** aggregate max on columns */
+export type Liquidity_Baking_1w_Candle_Max_Fields = {
+  __typename?: 'liquidity_baking_1w_candle_max_fields';
+  bucket?: Maybe<Scalars['timestamptz']>;
+  close?: Maybe<Scalars['float8']>;
+  high?: Maybe<Scalars['float8']>;
+  low?: Maybe<Scalars['float8']>;
+  open?: Maybe<Scalars['float8']>;
+  token_volume?: Maybe<Scalars['float8']>;
+  trades?: Maybe<Scalars['bigint']>;
+  xtz_volume?: Maybe<Scalars['float8']>;
+};
+
+/** aggregate min on columns */
+export type Liquidity_Baking_1w_Candle_Min_Fields = {
+  __typename?: 'liquidity_baking_1w_candle_min_fields';
+  bucket?: Maybe<Scalars['timestamptz']>;
+  close?: Maybe<Scalars['float8']>;
+  high?: Maybe<Scalars['float8']>;
+  low?: Maybe<Scalars['float8']>;
+  open?: Maybe<Scalars['float8']>;
+  token_volume?: Maybe<Scalars['float8']>;
+  trades?: Maybe<Scalars['bigint']>;
+  xtz_volume?: Maybe<Scalars['float8']>;
+};
+
+/** Ordering options when selecting data from "liquidity_baking_1w_candle". */
+export type Liquidity_Baking_1w_Candle_Order_By = {
+  bucket?: InputMaybe<Order_By>;
+  close?: InputMaybe<Order_By>;
+  high?: InputMaybe<Order_By>;
+  low?: InputMaybe<Order_By>;
+  open?: InputMaybe<Order_By>;
+  token_volume?: InputMaybe<Order_By>;
+  trades?: InputMaybe<Order_By>;
+  xtz_volume?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "liquidity_baking_1w_candle" */
+export enum Liquidity_Baking_1w_Candle_Select_Column {
+  /** column name */
+  Bucket = 'bucket',
+  /** column name */
+  Close = 'close',
+  /** column name */
+  High = 'high',
+  /** column name */
+  Low = 'low',
+  /** column name */
+  Open = 'open',
+  /** column name */
+  TokenVolume = 'token_volume',
+  /** column name */
+  Trades = 'trades',
+  /** column name */
+  XtzVolume = 'xtz_volume'
+}
+
+/** aggregate stddev on columns */
+export type Liquidity_Baking_1w_Candle_Stddev_Fields = {
+  __typename?: 'liquidity_baking_1w_candle_stddev_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Liquidity_Baking_1w_Candle_Stddev_Pop_Fields = {
+  __typename?: 'liquidity_baking_1w_candle_stddev_pop_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Liquidity_Baking_1w_Candle_Stddev_Samp_Fields = {
+  __typename?: 'liquidity_baking_1w_candle_stddev_samp_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** Streaming cursor of the table "liquidity_baking_1w_candle" */
+export type Liquidity_Baking_1w_Candle_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Liquidity_Baking_1w_Candle_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Liquidity_Baking_1w_Candle_Stream_Cursor_Value_Input = {
+  bucket?: InputMaybe<Scalars['timestamptz']>;
+  close?: InputMaybe<Scalars['float8']>;
+  high?: InputMaybe<Scalars['float8']>;
+  low?: InputMaybe<Scalars['float8']>;
+  open?: InputMaybe<Scalars['float8']>;
+  token_volume?: InputMaybe<Scalars['float8']>;
+  trades?: InputMaybe<Scalars['bigint']>;
+  xtz_volume?: InputMaybe<Scalars['float8']>;
+};
+
+/** aggregate sum on columns */
+export type Liquidity_Baking_1w_Candle_Sum_Fields = {
+  __typename?: 'liquidity_baking_1w_candle_sum_fields';
+  close?: Maybe<Scalars['float8']>;
+  high?: Maybe<Scalars['float8']>;
+  low?: Maybe<Scalars['float8']>;
+  open?: Maybe<Scalars['float8']>;
+  token_volume?: Maybe<Scalars['float8']>;
+  trades?: Maybe<Scalars['bigint']>;
+  xtz_volume?: Maybe<Scalars['float8']>;
+};
+
+/** aggregate var_pop on columns */
+export type Liquidity_Baking_1w_Candle_Var_Pop_Fields = {
+  __typename?: 'liquidity_baking_1w_candle_var_pop_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate var_samp on columns */
+export type Liquidity_Baking_1w_Candle_Var_Samp_Fields = {
+  __typename?: 'liquidity_baking_1w_candle_var_samp_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate variance on columns */
+export type Liquidity_Baking_1w_Candle_Variance_Fields = {
+  __typename?: 'liquidity_baking_1w_candle_variance_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** columns and relationships of "liquidity_baking_5m_candle" */
+export type Liquidity_Baking_5m_Candle = {
+  __typename?: 'liquidity_baking_5m_candle';
+  bucket?: Maybe<Scalars['timestamptz']>;
+  close?: Maybe<Scalars['float8']>;
+  high?: Maybe<Scalars['float8']>;
+  low?: Maybe<Scalars['float8']>;
+  open?: Maybe<Scalars['float8']>;
+  token_volume?: Maybe<Scalars['float8']>;
+  trades?: Maybe<Scalars['bigint']>;
+  xtz_volume?: Maybe<Scalars['float8']>;
+};
+
+/** aggregated selection of "liquidity_baking_5m_candle" */
+export type Liquidity_Baking_5m_Candle_Aggregate = {
+  __typename?: 'liquidity_baking_5m_candle_aggregate';
+  aggregate?: Maybe<Liquidity_Baking_5m_Candle_Aggregate_Fields>;
+  nodes: Array<Liquidity_Baking_5m_Candle>;
+};
+
+/** aggregate fields of "liquidity_baking_5m_candle" */
+export type Liquidity_Baking_5m_Candle_Aggregate_Fields = {
+  __typename?: 'liquidity_baking_5m_candle_aggregate_fields';
+  avg?: Maybe<Liquidity_Baking_5m_Candle_Avg_Fields>;
+  count: Scalars['Int'];
+  max?: Maybe<Liquidity_Baking_5m_Candle_Max_Fields>;
+  min?: Maybe<Liquidity_Baking_5m_Candle_Min_Fields>;
+  stddev?: Maybe<Liquidity_Baking_5m_Candle_Stddev_Fields>;
+  stddev_pop?: Maybe<Liquidity_Baking_5m_Candle_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<Liquidity_Baking_5m_Candle_Stddev_Samp_Fields>;
+  sum?: Maybe<Liquidity_Baking_5m_Candle_Sum_Fields>;
+  var_pop?: Maybe<Liquidity_Baking_5m_Candle_Var_Pop_Fields>;
+  var_samp?: Maybe<Liquidity_Baking_5m_Candle_Var_Samp_Fields>;
+  variance?: Maybe<Liquidity_Baking_5m_Candle_Variance_Fields>;
+};
+
+
+/** aggregate fields of "liquidity_baking_5m_candle" */
+export type Liquidity_Baking_5m_Candle_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Liquidity_Baking_5m_Candle_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** aggregate avg on columns */
+export type Liquidity_Baking_5m_Candle_Avg_Fields = {
+  __typename?: 'liquidity_baking_5m_candle_avg_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** Boolean expression to filter rows from the table "liquidity_baking_5m_candle". All fields are combined with a logical 'AND'. */
+export type Liquidity_Baking_5m_Candle_Bool_Exp = {
+  _and?: InputMaybe<Array<Liquidity_Baking_5m_Candle_Bool_Exp>>;
+  _not?: InputMaybe<Liquidity_Baking_5m_Candle_Bool_Exp>;
+  _or?: InputMaybe<Array<Liquidity_Baking_5m_Candle_Bool_Exp>>;
+  bucket?: InputMaybe<Timestamptz_Comparison_Exp>;
+  close?: InputMaybe<Float8_Comparison_Exp>;
+  high?: InputMaybe<Float8_Comparison_Exp>;
+  low?: InputMaybe<Float8_Comparison_Exp>;
+  open?: InputMaybe<Float8_Comparison_Exp>;
+  token_volume?: InputMaybe<Float8_Comparison_Exp>;
+  trades?: InputMaybe<Bigint_Comparison_Exp>;
+  xtz_volume?: InputMaybe<Float8_Comparison_Exp>;
+};
+
+/** aggregate max on columns */
+export type Liquidity_Baking_5m_Candle_Max_Fields = {
+  __typename?: 'liquidity_baking_5m_candle_max_fields';
+  bucket?: Maybe<Scalars['timestamptz']>;
+  close?: Maybe<Scalars['float8']>;
+  high?: Maybe<Scalars['float8']>;
+  low?: Maybe<Scalars['float8']>;
+  open?: Maybe<Scalars['float8']>;
+  token_volume?: Maybe<Scalars['float8']>;
+  trades?: Maybe<Scalars['bigint']>;
+  xtz_volume?: Maybe<Scalars['float8']>;
+};
+
+/** aggregate min on columns */
+export type Liquidity_Baking_5m_Candle_Min_Fields = {
+  __typename?: 'liquidity_baking_5m_candle_min_fields';
+  bucket?: Maybe<Scalars['timestamptz']>;
+  close?: Maybe<Scalars['float8']>;
+  high?: Maybe<Scalars['float8']>;
+  low?: Maybe<Scalars['float8']>;
+  open?: Maybe<Scalars['float8']>;
+  token_volume?: Maybe<Scalars['float8']>;
+  trades?: Maybe<Scalars['bigint']>;
+  xtz_volume?: Maybe<Scalars['float8']>;
+};
+
+/** Ordering options when selecting data from "liquidity_baking_5m_candle". */
+export type Liquidity_Baking_5m_Candle_Order_By = {
+  bucket?: InputMaybe<Order_By>;
+  close?: InputMaybe<Order_By>;
+  high?: InputMaybe<Order_By>;
+  low?: InputMaybe<Order_By>;
+  open?: InputMaybe<Order_By>;
+  token_volume?: InputMaybe<Order_By>;
+  trades?: InputMaybe<Order_By>;
+  xtz_volume?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "liquidity_baking_5m_candle" */
+export enum Liquidity_Baking_5m_Candle_Select_Column {
+  /** column name */
+  Bucket = 'bucket',
+  /** column name */
+  Close = 'close',
+  /** column name */
+  High = 'high',
+  /** column name */
+  Low = 'low',
+  /** column name */
+  Open = 'open',
+  /** column name */
+  TokenVolume = 'token_volume',
+  /** column name */
+  Trades = 'trades',
+  /** column name */
+  XtzVolume = 'xtz_volume'
+}
+
+/** aggregate stddev on columns */
+export type Liquidity_Baking_5m_Candle_Stddev_Fields = {
+  __typename?: 'liquidity_baking_5m_candle_stddev_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Liquidity_Baking_5m_Candle_Stddev_Pop_Fields = {
+  __typename?: 'liquidity_baking_5m_candle_stddev_pop_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Liquidity_Baking_5m_Candle_Stddev_Samp_Fields = {
+  __typename?: 'liquidity_baking_5m_candle_stddev_samp_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** Streaming cursor of the table "liquidity_baking_5m_candle" */
+export type Liquidity_Baking_5m_Candle_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Liquidity_Baking_5m_Candle_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Liquidity_Baking_5m_Candle_Stream_Cursor_Value_Input = {
+  bucket?: InputMaybe<Scalars['timestamptz']>;
+  close?: InputMaybe<Scalars['float8']>;
+  high?: InputMaybe<Scalars['float8']>;
+  low?: InputMaybe<Scalars['float8']>;
+  open?: InputMaybe<Scalars['float8']>;
+  token_volume?: InputMaybe<Scalars['float8']>;
+  trades?: InputMaybe<Scalars['bigint']>;
+  xtz_volume?: InputMaybe<Scalars['float8']>;
+};
+
+/** aggregate sum on columns */
+export type Liquidity_Baking_5m_Candle_Sum_Fields = {
+  __typename?: 'liquidity_baking_5m_candle_sum_fields';
+  close?: Maybe<Scalars['float8']>;
+  high?: Maybe<Scalars['float8']>;
+  low?: Maybe<Scalars['float8']>;
+  open?: Maybe<Scalars['float8']>;
+  token_volume?: Maybe<Scalars['float8']>;
+  trades?: Maybe<Scalars['bigint']>;
+  xtz_volume?: Maybe<Scalars['float8']>;
+};
+
+/** aggregate var_pop on columns */
+export type Liquidity_Baking_5m_Candle_Var_Pop_Fields = {
+  __typename?: 'liquidity_baking_5m_candle_var_pop_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate var_samp on columns */
+export type Liquidity_Baking_5m_Candle_Var_Samp_Fields = {
+  __typename?: 'liquidity_baking_5m_candle_var_samp_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate variance on columns */
+export type Liquidity_Baking_5m_Candle_Variance_Fields = {
+  __typename?: 'liquidity_baking_5m_candle_variance_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** columns and relationships of "liquidity_baking_15m_candle" */
+export type Liquidity_Baking_15m_Candle = {
+  __typename?: 'liquidity_baking_15m_candle';
+  bucket?: Maybe<Scalars['timestamptz']>;
+  close?: Maybe<Scalars['float8']>;
+  high?: Maybe<Scalars['float8']>;
+  low?: Maybe<Scalars['float8']>;
+  open?: Maybe<Scalars['float8']>;
+  token_volume?: Maybe<Scalars['float8']>;
+  trades?: Maybe<Scalars['bigint']>;
+  xtz_volume?: Maybe<Scalars['float8']>;
+};
+
+/** aggregated selection of "liquidity_baking_15m_candle" */
+export type Liquidity_Baking_15m_Candle_Aggregate = {
+  __typename?: 'liquidity_baking_15m_candle_aggregate';
+  aggregate?: Maybe<Liquidity_Baking_15m_Candle_Aggregate_Fields>;
+  nodes: Array<Liquidity_Baking_15m_Candle>;
+};
+
+/** aggregate fields of "liquidity_baking_15m_candle" */
+export type Liquidity_Baking_15m_Candle_Aggregate_Fields = {
+  __typename?: 'liquidity_baking_15m_candle_aggregate_fields';
+  avg?: Maybe<Liquidity_Baking_15m_Candle_Avg_Fields>;
+  count: Scalars['Int'];
+  max?: Maybe<Liquidity_Baking_15m_Candle_Max_Fields>;
+  min?: Maybe<Liquidity_Baking_15m_Candle_Min_Fields>;
+  stddev?: Maybe<Liquidity_Baking_15m_Candle_Stddev_Fields>;
+  stddev_pop?: Maybe<Liquidity_Baking_15m_Candle_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<Liquidity_Baking_15m_Candle_Stddev_Samp_Fields>;
+  sum?: Maybe<Liquidity_Baking_15m_Candle_Sum_Fields>;
+  var_pop?: Maybe<Liquidity_Baking_15m_Candle_Var_Pop_Fields>;
+  var_samp?: Maybe<Liquidity_Baking_15m_Candle_Var_Samp_Fields>;
+  variance?: Maybe<Liquidity_Baking_15m_Candle_Variance_Fields>;
+};
+
+
+/** aggregate fields of "liquidity_baking_15m_candle" */
+export type Liquidity_Baking_15m_Candle_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Liquidity_Baking_15m_Candle_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** aggregate avg on columns */
+export type Liquidity_Baking_15m_Candle_Avg_Fields = {
+  __typename?: 'liquidity_baking_15m_candle_avg_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** Boolean expression to filter rows from the table "liquidity_baking_15m_candle". All fields are combined with a logical 'AND'. */
+export type Liquidity_Baking_15m_Candle_Bool_Exp = {
+  _and?: InputMaybe<Array<Liquidity_Baking_15m_Candle_Bool_Exp>>;
+  _not?: InputMaybe<Liquidity_Baking_15m_Candle_Bool_Exp>;
+  _or?: InputMaybe<Array<Liquidity_Baking_15m_Candle_Bool_Exp>>;
+  bucket?: InputMaybe<Timestamptz_Comparison_Exp>;
+  close?: InputMaybe<Float8_Comparison_Exp>;
+  high?: InputMaybe<Float8_Comparison_Exp>;
+  low?: InputMaybe<Float8_Comparison_Exp>;
+  open?: InputMaybe<Float8_Comparison_Exp>;
+  token_volume?: InputMaybe<Float8_Comparison_Exp>;
+  trades?: InputMaybe<Bigint_Comparison_Exp>;
+  xtz_volume?: InputMaybe<Float8_Comparison_Exp>;
+};
+
+/** aggregate max on columns */
+export type Liquidity_Baking_15m_Candle_Max_Fields = {
+  __typename?: 'liquidity_baking_15m_candle_max_fields';
+  bucket?: Maybe<Scalars['timestamptz']>;
+  close?: Maybe<Scalars['float8']>;
+  high?: Maybe<Scalars['float8']>;
+  low?: Maybe<Scalars['float8']>;
+  open?: Maybe<Scalars['float8']>;
+  token_volume?: Maybe<Scalars['float8']>;
+  trades?: Maybe<Scalars['bigint']>;
+  xtz_volume?: Maybe<Scalars['float8']>;
+};
+
+/** aggregate min on columns */
+export type Liquidity_Baking_15m_Candle_Min_Fields = {
+  __typename?: 'liquidity_baking_15m_candle_min_fields';
+  bucket?: Maybe<Scalars['timestamptz']>;
+  close?: Maybe<Scalars['float8']>;
+  high?: Maybe<Scalars['float8']>;
+  low?: Maybe<Scalars['float8']>;
+  open?: Maybe<Scalars['float8']>;
+  token_volume?: Maybe<Scalars['float8']>;
+  trades?: Maybe<Scalars['bigint']>;
+  xtz_volume?: Maybe<Scalars['float8']>;
+};
+
+/** Ordering options when selecting data from "liquidity_baking_15m_candle". */
+export type Liquidity_Baking_15m_Candle_Order_By = {
+  bucket?: InputMaybe<Order_By>;
+  close?: InputMaybe<Order_By>;
+  high?: InputMaybe<Order_By>;
+  low?: InputMaybe<Order_By>;
+  open?: InputMaybe<Order_By>;
+  token_volume?: InputMaybe<Order_By>;
+  trades?: InputMaybe<Order_By>;
+  xtz_volume?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "liquidity_baking_15m_candle" */
+export enum Liquidity_Baking_15m_Candle_Select_Column {
+  /** column name */
+  Bucket = 'bucket',
+  /** column name */
+  Close = 'close',
+  /** column name */
+  High = 'high',
+  /** column name */
+  Low = 'low',
+  /** column name */
+  Open = 'open',
+  /** column name */
+  TokenVolume = 'token_volume',
+  /** column name */
+  Trades = 'trades',
+  /** column name */
+  XtzVolume = 'xtz_volume'
+}
+
+/** aggregate stddev on columns */
+export type Liquidity_Baking_15m_Candle_Stddev_Fields = {
+  __typename?: 'liquidity_baking_15m_candle_stddev_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Liquidity_Baking_15m_Candle_Stddev_Pop_Fields = {
+  __typename?: 'liquidity_baking_15m_candle_stddev_pop_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Liquidity_Baking_15m_Candle_Stddev_Samp_Fields = {
+  __typename?: 'liquidity_baking_15m_candle_stddev_samp_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** Streaming cursor of the table "liquidity_baking_15m_candle" */
+export type Liquidity_Baking_15m_Candle_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Liquidity_Baking_15m_Candle_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Liquidity_Baking_15m_Candle_Stream_Cursor_Value_Input = {
+  bucket?: InputMaybe<Scalars['timestamptz']>;
+  close?: InputMaybe<Scalars['float8']>;
+  high?: InputMaybe<Scalars['float8']>;
+  low?: InputMaybe<Scalars['float8']>;
+  open?: InputMaybe<Scalars['float8']>;
+  token_volume?: InputMaybe<Scalars['float8']>;
+  trades?: InputMaybe<Scalars['bigint']>;
+  xtz_volume?: InputMaybe<Scalars['float8']>;
+};
+
+/** aggregate sum on columns */
+export type Liquidity_Baking_15m_Candle_Sum_Fields = {
+  __typename?: 'liquidity_baking_15m_candle_sum_fields';
+  close?: Maybe<Scalars['float8']>;
+  high?: Maybe<Scalars['float8']>;
+  low?: Maybe<Scalars['float8']>;
+  open?: Maybe<Scalars['float8']>;
+  token_volume?: Maybe<Scalars['float8']>;
+  trades?: Maybe<Scalars['bigint']>;
+  xtz_volume?: Maybe<Scalars['float8']>;
+};
+
+/** aggregate var_pop on columns */
+export type Liquidity_Baking_15m_Candle_Var_Pop_Fields = {
+  __typename?: 'liquidity_baking_15m_candle_var_pop_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate var_samp on columns */
+export type Liquidity_Baking_15m_Candle_Var_Samp_Fields = {
+  __typename?: 'liquidity_baking_15m_candle_var_samp_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate variance on columns */
+export type Liquidity_Baking_15m_Candle_Variance_Fields = {
+  __typename?: 'liquidity_baking_15m_candle_variance_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
 /** aggregated selection of "liquidity_baking" */
 export type Liquidity_Baking_Aggregate = {
   __typename?: 'liquidity_baking_aggregate';
@@ -45995,6 +47128,26 @@ export type Query_Root = {
   lending_controller_whitelist_token_contract_by_pk?: Maybe<Lending_Controller_Whitelist_Token_Contract>;
   /** fetch data from the table: "liquidity_baking" */
   liquidity_baking: Array<Liquidity_Baking>;
+  /** fetch data from the table: "liquidity_baking_1d_candle" */
+  liquidity_baking_1d_candle: Array<Liquidity_Baking_1d_Candle>;
+  /** fetch aggregated fields from the table: "liquidity_baking_1d_candle" */
+  liquidity_baking_1d_candle_aggregate: Liquidity_Baking_1d_Candle_Aggregate;
+  /** fetch data from the table: "liquidity_baking_1h_candle" */
+  liquidity_baking_1h_candle: Array<Liquidity_Baking_1h_Candle>;
+  /** fetch aggregated fields from the table: "liquidity_baking_1h_candle" */
+  liquidity_baking_1h_candle_aggregate: Liquidity_Baking_1h_Candle_Aggregate;
+  /** fetch data from the table: "liquidity_baking_1w_candle" */
+  liquidity_baking_1w_candle: Array<Liquidity_Baking_1w_Candle>;
+  /** fetch aggregated fields from the table: "liquidity_baking_1w_candle" */
+  liquidity_baking_1w_candle_aggregate: Liquidity_Baking_1w_Candle_Aggregate;
+  /** fetch data from the table: "liquidity_baking_5m_candle" */
+  liquidity_baking_5m_candle: Array<Liquidity_Baking_5m_Candle>;
+  /** fetch aggregated fields from the table: "liquidity_baking_5m_candle" */
+  liquidity_baking_5m_candle_aggregate: Liquidity_Baking_5m_Candle_Aggregate;
+  /** fetch data from the table: "liquidity_baking_15m_candle" */
+  liquidity_baking_15m_candle: Array<Liquidity_Baking_15m_Candle>;
+  /** fetch aggregated fields from the table: "liquidity_baking_15m_candle" */
+  liquidity_baking_15m_candle_aggregate: Liquidity_Baking_15m_Candle_Aggregate;
   /** fetch aggregated fields from the table: "liquidity_baking" */
   liquidity_baking_aggregate: Liquidity_Baking_Aggregate;
   /** fetch data from the table: "liquidity_baking" using primary key columns */
@@ -48692,6 +49845,96 @@ export type Query_RootLiquidity_BakingArgs = {
 };
 
 
+export type Query_RootLiquidity_Baking_1d_CandleArgs = {
+  distinct_on?: InputMaybe<Array<Liquidity_Baking_1d_Candle_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Liquidity_Baking_1d_Candle_Order_By>>;
+  where?: InputMaybe<Liquidity_Baking_1d_Candle_Bool_Exp>;
+};
+
+
+export type Query_RootLiquidity_Baking_1d_Candle_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Liquidity_Baking_1d_Candle_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Liquidity_Baking_1d_Candle_Order_By>>;
+  where?: InputMaybe<Liquidity_Baking_1d_Candle_Bool_Exp>;
+};
+
+
+export type Query_RootLiquidity_Baking_1h_CandleArgs = {
+  distinct_on?: InputMaybe<Array<Liquidity_Baking_1h_Candle_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Liquidity_Baking_1h_Candle_Order_By>>;
+  where?: InputMaybe<Liquidity_Baking_1h_Candle_Bool_Exp>;
+};
+
+
+export type Query_RootLiquidity_Baking_1h_Candle_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Liquidity_Baking_1h_Candle_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Liquidity_Baking_1h_Candle_Order_By>>;
+  where?: InputMaybe<Liquidity_Baking_1h_Candle_Bool_Exp>;
+};
+
+
+export type Query_RootLiquidity_Baking_1w_CandleArgs = {
+  distinct_on?: InputMaybe<Array<Liquidity_Baking_1w_Candle_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Liquidity_Baking_1w_Candle_Order_By>>;
+  where?: InputMaybe<Liquidity_Baking_1w_Candle_Bool_Exp>;
+};
+
+
+export type Query_RootLiquidity_Baking_1w_Candle_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Liquidity_Baking_1w_Candle_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Liquidity_Baking_1w_Candle_Order_By>>;
+  where?: InputMaybe<Liquidity_Baking_1w_Candle_Bool_Exp>;
+};
+
+
+export type Query_RootLiquidity_Baking_5m_CandleArgs = {
+  distinct_on?: InputMaybe<Array<Liquidity_Baking_5m_Candle_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Liquidity_Baking_5m_Candle_Order_By>>;
+  where?: InputMaybe<Liquidity_Baking_5m_Candle_Bool_Exp>;
+};
+
+
+export type Query_RootLiquidity_Baking_5m_Candle_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Liquidity_Baking_5m_Candle_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Liquidity_Baking_5m_Candle_Order_By>>;
+  where?: InputMaybe<Liquidity_Baking_5m_Candle_Bool_Exp>;
+};
+
+
+export type Query_RootLiquidity_Baking_15m_CandleArgs = {
+  distinct_on?: InputMaybe<Array<Liquidity_Baking_15m_Candle_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Liquidity_Baking_15m_Candle_Order_By>>;
+  where?: InputMaybe<Liquidity_Baking_15m_Candle_Bool_Exp>;
+};
+
+
+export type Query_RootLiquidity_Baking_15m_Candle_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Liquidity_Baking_15m_Candle_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Liquidity_Baking_15m_Candle_Order_By>>;
+  where?: InputMaybe<Liquidity_Baking_15m_Candle_Bool_Exp>;
+};
+
+
 export type Query_RootLiquidity_Baking_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Liquidity_Baking_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
@@ -48726,6 +49969,7 @@ export type Query_RootLiquidity_Baking_History_Data_AggregateArgs = {
 
 export type Query_RootLiquidity_Baking_History_Data_By_PkArgs = {
   id: Scalars['bigint'];
+  timestamp: Scalars['timestamptz'];
 };
 
 
@@ -52567,6 +53811,36 @@ export type Subscription_Root = {
   lending_controller_whitelist_token_contract_stream: Array<Lending_Controller_Whitelist_Token_Contract>;
   /** fetch data from the table: "liquidity_baking" */
   liquidity_baking: Array<Liquidity_Baking>;
+  /** fetch data from the table: "liquidity_baking_1d_candle" */
+  liquidity_baking_1d_candle: Array<Liquidity_Baking_1d_Candle>;
+  /** fetch aggregated fields from the table: "liquidity_baking_1d_candle" */
+  liquidity_baking_1d_candle_aggregate: Liquidity_Baking_1d_Candle_Aggregate;
+  /** fetch data from the table in a streaming manner: "liquidity_baking_1d_candle" */
+  liquidity_baking_1d_candle_stream: Array<Liquidity_Baking_1d_Candle>;
+  /** fetch data from the table: "liquidity_baking_1h_candle" */
+  liquidity_baking_1h_candle: Array<Liquidity_Baking_1h_Candle>;
+  /** fetch aggregated fields from the table: "liquidity_baking_1h_candle" */
+  liquidity_baking_1h_candle_aggregate: Liquidity_Baking_1h_Candle_Aggregate;
+  /** fetch data from the table in a streaming manner: "liquidity_baking_1h_candle" */
+  liquidity_baking_1h_candle_stream: Array<Liquidity_Baking_1h_Candle>;
+  /** fetch data from the table: "liquidity_baking_1w_candle" */
+  liquidity_baking_1w_candle: Array<Liquidity_Baking_1w_Candle>;
+  /** fetch aggregated fields from the table: "liquidity_baking_1w_candle" */
+  liquidity_baking_1w_candle_aggregate: Liquidity_Baking_1w_Candle_Aggregate;
+  /** fetch data from the table in a streaming manner: "liquidity_baking_1w_candle" */
+  liquidity_baking_1w_candle_stream: Array<Liquidity_Baking_1w_Candle>;
+  /** fetch data from the table: "liquidity_baking_5m_candle" */
+  liquidity_baking_5m_candle: Array<Liquidity_Baking_5m_Candle>;
+  /** fetch aggregated fields from the table: "liquidity_baking_5m_candle" */
+  liquidity_baking_5m_candle_aggregate: Liquidity_Baking_5m_Candle_Aggregate;
+  /** fetch data from the table in a streaming manner: "liquidity_baking_5m_candle" */
+  liquidity_baking_5m_candle_stream: Array<Liquidity_Baking_5m_Candle>;
+  /** fetch data from the table: "liquidity_baking_15m_candle" */
+  liquidity_baking_15m_candle: Array<Liquidity_Baking_15m_Candle>;
+  /** fetch aggregated fields from the table: "liquidity_baking_15m_candle" */
+  liquidity_baking_15m_candle_aggregate: Liquidity_Baking_15m_Candle_Aggregate;
+  /** fetch data from the table in a streaming manner: "liquidity_baking_15m_candle" */
+  liquidity_baking_15m_candle_stream: Array<Liquidity_Baking_15m_Candle>;
   /** fetch aggregated fields from the table: "liquidity_baking" */
   liquidity_baking_aggregate: Liquidity_Baking_Aggregate;
   /** fetch data from the table: "liquidity_baking" using primary key columns */
@@ -56092,6 +57366,131 @@ export type Subscription_RootLiquidity_BakingArgs = {
 };
 
 
+export type Subscription_RootLiquidity_Baking_1d_CandleArgs = {
+  distinct_on?: InputMaybe<Array<Liquidity_Baking_1d_Candle_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Liquidity_Baking_1d_Candle_Order_By>>;
+  where?: InputMaybe<Liquidity_Baking_1d_Candle_Bool_Exp>;
+};
+
+
+export type Subscription_RootLiquidity_Baking_1d_Candle_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Liquidity_Baking_1d_Candle_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Liquidity_Baking_1d_Candle_Order_By>>;
+  where?: InputMaybe<Liquidity_Baking_1d_Candle_Bool_Exp>;
+};
+
+
+export type Subscription_RootLiquidity_Baking_1d_Candle_StreamArgs = {
+  batch_size: Scalars['Int'];
+  cursor: Array<InputMaybe<Liquidity_Baking_1d_Candle_Stream_Cursor_Input>>;
+  where?: InputMaybe<Liquidity_Baking_1d_Candle_Bool_Exp>;
+};
+
+
+export type Subscription_RootLiquidity_Baking_1h_CandleArgs = {
+  distinct_on?: InputMaybe<Array<Liquidity_Baking_1h_Candle_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Liquidity_Baking_1h_Candle_Order_By>>;
+  where?: InputMaybe<Liquidity_Baking_1h_Candle_Bool_Exp>;
+};
+
+
+export type Subscription_RootLiquidity_Baking_1h_Candle_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Liquidity_Baking_1h_Candle_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Liquidity_Baking_1h_Candle_Order_By>>;
+  where?: InputMaybe<Liquidity_Baking_1h_Candle_Bool_Exp>;
+};
+
+
+export type Subscription_RootLiquidity_Baking_1h_Candle_StreamArgs = {
+  batch_size: Scalars['Int'];
+  cursor: Array<InputMaybe<Liquidity_Baking_1h_Candle_Stream_Cursor_Input>>;
+  where?: InputMaybe<Liquidity_Baking_1h_Candle_Bool_Exp>;
+};
+
+
+export type Subscription_RootLiquidity_Baking_1w_CandleArgs = {
+  distinct_on?: InputMaybe<Array<Liquidity_Baking_1w_Candle_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Liquidity_Baking_1w_Candle_Order_By>>;
+  where?: InputMaybe<Liquidity_Baking_1w_Candle_Bool_Exp>;
+};
+
+
+export type Subscription_RootLiquidity_Baking_1w_Candle_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Liquidity_Baking_1w_Candle_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Liquidity_Baking_1w_Candle_Order_By>>;
+  where?: InputMaybe<Liquidity_Baking_1w_Candle_Bool_Exp>;
+};
+
+
+export type Subscription_RootLiquidity_Baking_1w_Candle_StreamArgs = {
+  batch_size: Scalars['Int'];
+  cursor: Array<InputMaybe<Liquidity_Baking_1w_Candle_Stream_Cursor_Input>>;
+  where?: InputMaybe<Liquidity_Baking_1w_Candle_Bool_Exp>;
+};
+
+
+export type Subscription_RootLiquidity_Baking_5m_CandleArgs = {
+  distinct_on?: InputMaybe<Array<Liquidity_Baking_5m_Candle_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Liquidity_Baking_5m_Candle_Order_By>>;
+  where?: InputMaybe<Liquidity_Baking_5m_Candle_Bool_Exp>;
+};
+
+
+export type Subscription_RootLiquidity_Baking_5m_Candle_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Liquidity_Baking_5m_Candle_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Liquidity_Baking_5m_Candle_Order_By>>;
+  where?: InputMaybe<Liquidity_Baking_5m_Candle_Bool_Exp>;
+};
+
+
+export type Subscription_RootLiquidity_Baking_5m_Candle_StreamArgs = {
+  batch_size: Scalars['Int'];
+  cursor: Array<InputMaybe<Liquidity_Baking_5m_Candle_Stream_Cursor_Input>>;
+  where?: InputMaybe<Liquidity_Baking_5m_Candle_Bool_Exp>;
+};
+
+
+export type Subscription_RootLiquidity_Baking_15m_CandleArgs = {
+  distinct_on?: InputMaybe<Array<Liquidity_Baking_15m_Candle_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Liquidity_Baking_15m_Candle_Order_By>>;
+  where?: InputMaybe<Liquidity_Baking_15m_Candle_Bool_Exp>;
+};
+
+
+export type Subscription_RootLiquidity_Baking_15m_Candle_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Liquidity_Baking_15m_Candle_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Liquidity_Baking_15m_Candle_Order_By>>;
+  where?: InputMaybe<Liquidity_Baking_15m_Candle_Bool_Exp>;
+};
+
+
+export type Subscription_RootLiquidity_Baking_15m_Candle_StreamArgs = {
+  batch_size: Scalars['Int'];
+  cursor: Array<InputMaybe<Liquidity_Baking_15m_Candle_Stream_Cursor_Input>>;
+  where?: InputMaybe<Liquidity_Baking_15m_Candle_Bool_Exp>;
+};
+
+
 export type Subscription_RootLiquidity_Baking_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Liquidity_Baking_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
@@ -56126,6 +57525,7 @@ export type Subscription_RootLiquidity_Baking_History_Data_AggregateArgs = {
 
 export type Subscription_RootLiquidity_Baking_History_Data_By_PkArgs = {
   id: Scalars['bigint'];
+  timestamp: Scalars['timestamptz'];
 };
 
 
@@ -63023,9 +64423,6 @@ export type Vault = {
   /** An object relationship */
   factory?: Maybe<Vault_Factory>;
   factory_id?: Maybe<Scalars['String']>;
-  /** An object relationship */
-  governance?: Maybe<Governance>;
-  governance_id?: Maybe<Scalars['String']>;
   /** An array relationship */
   lambdas: Array<Vault_Lambda>;
   /** An aggregate relationship */
@@ -63035,6 +64432,7 @@ export type Vault = {
   lending_controller_vaults: Array<Lending_Controller_Vault>;
   /** An aggregate relationship */
   lending_controller_vaults_aggregate: Lending_Controller_Vault_Aggregate;
+  name: Scalars['String'];
 };
 
 
@@ -63179,13 +64577,12 @@ export type Vault_Bool_Exp = {
   depositors_aggregate?: InputMaybe<Vault_Depositor_Aggregate_Bool_Exp>;
   factory?: InputMaybe<Vault_Factory_Bool_Exp>;
   factory_id?: InputMaybe<String_Comparison_Exp>;
-  governance?: InputMaybe<Governance_Bool_Exp>;
-  governance_id?: InputMaybe<String_Comparison_Exp>;
   lambdas?: InputMaybe<Vault_Lambda_Bool_Exp>;
   lambdas_aggregate?: InputMaybe<Vault_Lambda_Aggregate_Bool_Exp>;
   last_updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   lending_controller_vaults?: InputMaybe<Lending_Controller_Vault_Bool_Exp>;
   lending_controller_vaults_aggregate?: InputMaybe<Lending_Controller_Vault_Aggregate_Bool_Exp>;
+  name?: InputMaybe<String_Comparison_Exp>;
 };
 
 /** columns and relationships of "vault_depositor" */
@@ -65066,8 +66463,8 @@ export type Vault_Max_Fields = {
   allowance?: Maybe<Scalars['smallint']>;
   creation_timestamp?: Maybe<Scalars['timestamptz']>;
   factory_id?: Maybe<Scalars['String']>;
-  governance_id?: Maybe<Scalars['String']>;
   last_updated_at?: Maybe<Scalars['timestamptz']>;
+  name?: Maybe<Scalars['String']>;
 };
 
 /** order by max() on columns of table "vault" */
@@ -65078,8 +66475,8 @@ export type Vault_Max_Order_By = {
   allowance?: InputMaybe<Order_By>;
   creation_timestamp?: InputMaybe<Order_By>;
   factory_id?: InputMaybe<Order_By>;
-  governance_id?: InputMaybe<Order_By>;
   last_updated_at?: InputMaybe<Order_By>;
+  name?: InputMaybe<Order_By>;
 };
 
 /** aggregate min on columns */
@@ -65091,8 +66488,8 @@ export type Vault_Min_Fields = {
   allowance?: Maybe<Scalars['smallint']>;
   creation_timestamp?: Maybe<Scalars['timestamptz']>;
   factory_id?: Maybe<Scalars['String']>;
-  governance_id?: Maybe<Scalars['String']>;
   last_updated_at?: Maybe<Scalars['timestamptz']>;
+  name?: Maybe<Scalars['String']>;
 };
 
 /** order by min() on columns of table "vault" */
@@ -65103,8 +66500,8 @@ export type Vault_Min_Order_By = {
   allowance?: InputMaybe<Order_By>;
   creation_timestamp?: InputMaybe<Order_By>;
   factory_id?: InputMaybe<Order_By>;
-  governance_id?: InputMaybe<Order_By>;
   last_updated_at?: InputMaybe<Order_By>;
+  name?: InputMaybe<Order_By>;
 };
 
 /** Ordering options when selecting data from "vault". */
@@ -65116,11 +66513,10 @@ export type Vault_Order_By = {
   depositors_aggregate?: InputMaybe<Vault_Depositor_Aggregate_Order_By>;
   factory?: InputMaybe<Vault_Factory_Order_By>;
   factory_id?: InputMaybe<Order_By>;
-  governance?: InputMaybe<Governance_Order_By>;
-  governance_id?: InputMaybe<Order_By>;
   lambdas_aggregate?: InputMaybe<Vault_Lambda_Aggregate_Order_By>;
   last_updated_at?: InputMaybe<Order_By>;
   lending_controller_vaults_aggregate?: InputMaybe<Lending_Controller_Vault_Aggregate_Order_By>;
+  name?: InputMaybe<Order_By>;
 };
 
 /** select columns of table "vault" */
@@ -65136,9 +66532,9 @@ export enum Vault_Select_Column {
   /** column name */
   FactoryId = 'factory_id',
   /** column name */
-  GovernanceId = 'governance_id',
+  LastUpdatedAt = 'last_updated_at',
   /** column name */
-  LastUpdatedAt = 'last_updated_at'
+  Name = 'name'
 }
 
 /** aggregate stddev on columns */
@@ -65196,8 +66592,8 @@ export type Vault_Stream_Cursor_Value_Input = {
   allowance?: InputMaybe<Scalars['smallint']>;
   creation_timestamp?: InputMaybe<Scalars['timestamptz']>;
   factory_id?: InputMaybe<Scalars['String']>;
-  governance_id?: InputMaybe<Scalars['String']>;
   last_updated_at?: InputMaybe<Scalars['timestamptz']>;
+  name?: InputMaybe<Scalars['String']>;
 };
 
 /** aggregate sum on columns */
