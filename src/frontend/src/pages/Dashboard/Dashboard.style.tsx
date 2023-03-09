@@ -99,8 +99,8 @@ export const StatBlock = styled.div`
 
     > .img-wrapper,
     svg {
-      height: 40px;
-      width: 40px;
+      height: 35px;
+      width: 35px;
       position: absolute;
       top: 0;
       left: 0;
