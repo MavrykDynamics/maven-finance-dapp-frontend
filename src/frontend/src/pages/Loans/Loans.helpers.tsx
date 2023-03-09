@@ -302,7 +302,7 @@ export const getMaxCollateralWithdraw = (
   collarealAssetRate: number,
 ): number => {
   // If vault is not borrowed we can withdraw all amount
-  if (borrowedAmount === 0) return currentCollateralAmount
+  if (borrowedAmount === 0) return currentCollateralAmount / collarealAssetRate
   /**
    * @collateralNeedsToBe is now much collateralAmount i need to left for current borrowed amount
    * 200 ratio in persent the smallest we can get, <200 vault is under collateralization
@@ -511,6 +511,7 @@ export const normalizeLoans = async ({
           feeds,
           oracleId: String(oracle_id),
         })
+
         const appropriateMtokenData = mTokens.find(
           ({ loan_token_name: m_token_name }) => loan_token_name === m_token_name,
         )

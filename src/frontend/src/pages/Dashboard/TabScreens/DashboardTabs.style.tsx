@@ -170,13 +170,6 @@ export const OraclesContentStyled = styled.div<{ theme: MavrykTheme }>`
       grid-template-columns: 1.25fr 0.8fr 0.9fr auto;
       padding-right: 10px;
 
-      .icon-first {
-        img {
-          width: 33px;
-          height: 33px;
-        }
-      }
-
       .value {
         height: max-content;
         transition: color 0.4s ease-in-out;
