@@ -280,6 +280,7 @@ export const VaultsSearchFilter = ({ assets: assetSymbols, vaultsMapper, current
 
           <div className="filter">
             <h4>Order by:</h4>
+            {/* TODO: replace to new dd */}
             <DropDown
               placeholder={sortVaultItems.MOST_RECENT}
               isOpen={filterStatuses[vaultsFilters.SORT]}
