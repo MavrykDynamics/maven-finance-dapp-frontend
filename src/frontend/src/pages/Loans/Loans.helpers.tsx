@@ -28,6 +28,22 @@ import { getUserBalanceForLoanAsset } from './LoansFethcers'
 
 export const isTezosAsset = (tokenName: string) => tokenName === 'tez'
 
+const getTokenDecimals = ({
+  tokenType,
+  tokenAddress,
+  dipDupTokens,
+}: {
+  tokenType: 'tez' | 'fa2' | 'fa12'
+  tokenAddress: string
+  dipDupTokens: State['tokens']['dipDupTokens']
+}): number | null => {
+  if (tokenType === 'tez') return 6 // tokenAddress === xtz address => xtz asset
+
+  const { metadata: { decimals = null } = {} } = dipDupTokens.find(({ contract }) => tokenAddress === contract) ?? {}
+
+  return decimals ? Number(decimals) : null
+}
+
 export const getAssetMetadata = ({
   tokenName,
   tokenAddress,

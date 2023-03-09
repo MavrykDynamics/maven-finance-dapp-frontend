@@ -22,19 +22,16 @@ export const registerAsSatellite =
 
     try {
       const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.delegationAddress.address)
-      console.log('contract', contract)
 
-      console.log(form)
       const transaction = await contract?.methods
         .registerAsSatellite(form.name, form.description, form.image, form.website, form.fee * 100)
         .send()
-      console.log('transaction', transaction)
 
       dispatch(toggleActionLoader(true))
       dispatch(showToaster(INFO, 'Registering...', 'Please wait 30s'))
 
-      const done = await transaction?.confirmation()
-      console.log('done', done)
+      await transaction?.confirmation()
+
       dispatch(showToaster(SUCCESS, 'Satellite Registered.', 'All good :)'))
 
       dispatch(getSatellitesStorage())
@@ -63,18 +60,16 @@ export const updateSatelliteRecord =
 
     try {
       const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.delegationAddress.address)
-      console.log('contract', contract)
 
       const transaction = await contract?.methods
         .updateSatelliteRecord(form.name, form.description, form.image, form.website, form.fee * 100)
         .send()
-      console.log('transaction', transaction)
 
       dispatch(toggleActionLoader(true))
       dispatch(showToaster(INFO, 'Registering...', 'Please wait 30s'))
 
-      const done = await transaction?.confirmation()
-      console.log('done', done)
+      await transaction?.confirmation()
+
       dispatch(showToaster(SUCCESS, 'Satellite Registered.', 'All good :)'))
 
       dispatch(getSatellitesStorage())
@@ -102,16 +97,14 @@ export const unregisterAsSatellite = () => async (dispatch: AppDispatch, getStat
 
   try {
     const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.delegationAddress.address)
-    console.log('contract', contract)
 
     const transaction = await contract?.methods.unregisterAsSatellite(state.wallet.accountPkh).send()
-    console.log('transaction', transaction)
 
     dispatch(toggleActionLoader(true))
     dispatch(showToaster(INFO, 'Unregistering...', 'Please wait 30s'))
 
-    const done = await transaction?.confirmation()
-    console.log('done', done)
+    await transaction?.confirmation()
+
     dispatch(showToaster(SUCCESS, 'Satellite is no longer registered.', 'All good :)'))
 
     dispatch(getSatellitesStorage())

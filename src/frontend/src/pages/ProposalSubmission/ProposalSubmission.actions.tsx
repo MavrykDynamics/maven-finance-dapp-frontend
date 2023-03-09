@@ -14,7 +14,7 @@ import { PaymentsDataChangesType, ProposalDataChangesType } from './ProposalSybm
 import { ContractAbstraction, Wallet } from '@taquito/taquito'
 
 export const submitProposal =
-  (form: SubmitProposalForm, amount: number) => async (dispatch: AppDispatch, getState: GetState) => {
+  (form: SubmitProposalForm, fee: number) => async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
 
     if (!state.wallet.accountPkh) {
@@ -30,7 +30,7 @@ export const submitProposal =
     try {
       const { title, description, ipfs, sourceCode } = form
       const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.governanceAddress.address)
-      const query = await contract?.methods.propose(title, description, ipfs, sourceCode).send({ amount })
+      const query = await contract?.methods.propose(title, description, ipfs, sourceCode).send({ amount: fee })
 
       await dispatch(toggleActionLoader(true))
       await dispatch(showToaster(INFO, 'Submitting proposal...', 'Please wait 30s'))
