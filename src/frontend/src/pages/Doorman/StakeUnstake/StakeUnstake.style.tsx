@@ -228,12 +228,13 @@ export const StakeDelegatedUser = styled.div`
     height: 35px;
     margin-right: 10px;
 
-    border-radius: 50%;
     fill: ${({ theme }) => theme.cardBorderColor};
 
     img {
       max-width: 100%;
       max-height: 100%;
+
+      border-radius: 50%;
     }
   }
 
