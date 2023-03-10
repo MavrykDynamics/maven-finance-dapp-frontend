@@ -71,7 +71,7 @@ export const LOANS_QUERY = `
           }
           vault {
             address
-            
+            name
             depositors {
               depositor_id
             }
