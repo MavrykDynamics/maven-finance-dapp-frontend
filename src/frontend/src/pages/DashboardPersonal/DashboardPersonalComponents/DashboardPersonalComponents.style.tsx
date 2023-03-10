@@ -315,7 +315,7 @@ export const VestingTabStyled = styled(MediumBlockBase)<{ theme: MavrykTheme }>`
 
   .vesting-data {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(5, auto) 140px;
     justify-content: space-between;
     align-items: center;
     grid-template-rows: 50px;
