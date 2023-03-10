@@ -99,8 +99,6 @@ export const depositCollateralAction =
       let transaction = null
 
       if (tokenType === 'tez') {
-        // TODO: @Maksym, take a look how the initVaultAction is used here
-
         const delegateToBakerBatchPart: Array<WalletParamsWithKind> = bakerAddress
           ? [
               {

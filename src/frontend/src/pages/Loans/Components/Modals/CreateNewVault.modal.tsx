@@ -300,7 +300,7 @@ export const CreateNewVault = ({
     if (currentMarketAsset) {
       try {
         setVaultCreating(true)
-        //TODO: Maksym, will need to connect this value to an input
+        //TODO: connect this value to an input
         const vaultName = 'TestVaultName'
         const newVaultData = await dispatch(triggerInitialVaultCreation(currentMarketAsset, vaultName))
         setCreatedVaultAddress?.(String(newVaultData))
