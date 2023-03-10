@@ -26,11 +26,11 @@ export const changeBakerAction =
     try {
       // prepare and send query
       const contract = await state.wallet.tezos?.wallet.at(vaultAddress)
-      const transaction = await contract?.methods.delegateTezToBaker(bakerAddress).send()
+      const transaction = await contract?.methods.initVaultAction('delegateTezToBaker', bakerAddress).send()
 
       callback()
       dispatch(toggleActionLoader(true))
-      dispatch(showToaster(INFO, 'Chanding XTZ Baker...', 'Please wait 30s'))
+      dispatch(showToaster(INFO, 'Changing XTZ Baker...', 'Please wait 30s'))
 
       // confirm query completion
       await transaction?.confirmation()
@@ -78,7 +78,7 @@ export const managePermissionsAction =
       // if depostiorAllowance === VAULT_ALLOWANCE_ANY call updateDepositor with any 2 args and VAULT_ALLOWANCE_ANY config
       if (depostiorAllowance === VAULT_ALLOWANCE_ANY) {
         transaction = await contract?.methods
-          .updateDepositor(state.wallet.accountPkh, false, VAULT_ALLOWANCE_ANY)
+          .initVaultAction('updateDepositor', state.wallet.accountPkh, false, VAULT_ALLOWANCE_ANY)
           .send()
       }
 
@@ -90,14 +90,14 @@ export const managePermissionsAction =
                 {
                   kind: OpKind.TRANSACTION,
                   ...contract.methods
-                    .updateDepositor(state.wallet.accountPkh, false, VAULT_ALLOWANCE_ACCOUNTS)
+                    .initVaultAction('updateDepositor', state.wallet.accountPkh, false, VAULT_ALLOWANCE_ACCOUNTS)
                     .toTransferParams(),
                 },
               ]
             : vaultOriginalDepositros.map((depositorAddress) => ({
                 kind: OpKind.TRANSACTION,
                 ...contract.methods
-                  .updateDepositor(depositorAddress, false, VAULT_ALLOWANCE_ACCOUNTS)
+                  .initVaultAction('updateDepositor', depositorAddress, false, VAULT_ALLOWANCE_ACCOUNTS)
                   .toTransferParams(),
               })),
         )
@@ -117,12 +117,16 @@ export const managePermissionsAction =
           ...depositorsToRemove.map((depositorAddress) => ({
             // TODO: idk what's wrong with the enum typings here it sets kind to OpKind type instead of OpKind.TRANSACTION
             kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
-            ...contract.methods.updateDepositor(depositorAddress, false, VAULT_ALLOWANCE_ACCOUNTS).toTransferParams(),
+            ...contract.methods
+              .initVaultAction('updateDepositor', depositorAddress, false, VAULT_ALLOWANCE_ACCOUNTS)
+              .toTransferParams(),
           })),
           ...depositorsToAdd.map((depositorAddress) => ({
             // TODO: idk what's wrong with the enum typings here it sets kind to OpKind type instead of OpKind.TRANSACTION
             kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
-            ...contract.methods.updateDepositor(depositorAddress, true, VAULT_ALLOWANCE_ACCOUNTS).toTransferParams(),
+            ...contract.methods
+              .initVaultAction('updateDepositor', depositorAddress, true, VAULT_ALLOWANCE_ACCOUNTS)
+              .toTransferParams(),
           })),
         ]
 

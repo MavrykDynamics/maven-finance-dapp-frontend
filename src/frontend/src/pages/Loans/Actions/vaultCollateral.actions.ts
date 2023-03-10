@@ -8,7 +8,6 @@ import { updateUserData } from 'reducers/actions/user.actions'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { TokenType } from 'utils/TypesAndInterfaces/General'
 import { getAvaliableCollaterals, getLoansStorage } from './getLoansData.actions'
-import { getFa12Batch, getFa2Batch } from './loansAction.helpers'
 
 // remove collateral from the vault
 export const withdrawCollateralAction =
@@ -36,11 +35,13 @@ export const withdrawCollateralAction =
       const convertedAssetAmount = convertNumberForContractCall({ number: withdrawAmount, grage: assetDecimals })
       // prepare and send query
       const contract = await state.wallet.tezos?.wallet.at(vaultAddress)
-      const transaction = await contract.methods.withdraw(convertedAssetAmount, collateralAssetName).send()
+      const transaction = await contract.methods
+        .initVaultAction('withdraw', convertedAssetAmount, collateralAssetName)
+        .send()
 
       callback()
       await dispatch(toggleActionLoader(true))
-      await dispatch(showToaster(INFO, 'Withdrowing collateral from the vault...', 'Please wait 30s'))
+      await dispatch(showToaster(INFO, 'Withdrawing collateral from the vault...', 'Please wait 30s'))
 
       // confirm query completion
       await transaction?.confirmation()
@@ -49,7 +50,7 @@ export const withdrawCollateralAction =
       await dispatch(updateUserData())
       await dispatch(getAvaliableCollaterals())
       await dispatch(getLoansStorage())
-      await dispatch(showToaster(SUCCESS, 'Collateral withdrawed.', 'All good :)'))
+      await dispatch(showToaster(SUCCESS, 'Collateral withdrawn.', 'All good :)'))
       await dispatch(toggleActionLoader(false))
     } catch (error) {
       console.error('borrowVaultAssetAction error:', error)
@@ -102,15 +103,14 @@ export const depositCollateralAction =
           ? [
               {
                 kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
-                ...contract.methods.delegateTezToBaker(bakerAddress).toTransferParams(),
+                ...contract.methods.initVaultAction('delegateTezToBaker', bakerAddress).toTransferParams(),
               },
             ]
           : []
-
         const batch = state.wallet.tezos?.wallet.batch([
           {
             kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
-            ...contract.methods.deposit(convertedAssetAmount, 'tez').toTransferParams(),
+            ...contract.methods.initVaultAction('deposit', convertedAssetAmount, 'tez').toTransferParams(),
             amount: convertedAssetAmount,
             mutez: true,
           },
@@ -122,13 +122,20 @@ export const depositCollateralAction =
 
       if (tokenType === 'fa12') {
         const assetContract = await state.wallet.tezos?.wallet.at(assetAddress)
-        const batchArr = getFa12Batch({
-          assetName: collateralName,
-          assetAmount: convertedAssetAmount,
-          operatorAddress: vaultAddress,
-          assetContract,
-          contractMethod: contract.methods.deposit,
-        })
+        const batchArr = [
+          {
+            kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+            ...assetContract.methods.approve(vaultAddress, 0).toTransferParams(),
+          },
+          {
+            kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+            ...assetContract.methods.approve(vaultAddress, convertedAssetAmount).toTransferParams(),
+          },
+          {
+            kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+            ...contract.methods.initVaultAction('deposit', convertedAssetAmount, collateralName).toTransferParams(),
+          },
+        ]
 
         const batch = await state.wallet.tezos?.wallet.batch(batchArr)
         transaction = await batch.send()
@@ -136,16 +143,41 @@ export const depositCollateralAction =
 
       if (tokenType === 'fa2') {
         const assetContract = await state.wallet.tezos?.wallet.at(assetAddress)
-        const batchArr = getFa2Batch({
-          assetName: collateralName,
-          assetAmount: convertedAssetAmount,
-          userAddress: state.wallet.accountPkh,
-          operatorAddress: vaultAddress,
-          assetId: 0,
-          assetContract,
-          contractMethod: contract.methods.deposit,
-          isDepositCollateral: true,
-        })
+
+        const batchArr = [
+          {
+            kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+            ...assetContract.methods
+              .update_operators([
+                {
+                  add_operator: {
+                    owner: state.wallet.accountPkh,
+                    operator: state.contractAddresses.lendingController.address,
+                    token_id: 0, // Should be a number, usually 0
+                  },
+                },
+              ])
+              .toTransferParams(),
+          },
+          {
+            kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+            ...contract.methods.initVaultAction('deposit', convertedAssetAmount, collateralName).toTransferParams(),
+          },
+          {
+            kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+            ...assetContract.methods
+              .update_operators([
+                {
+                  remove_operator: {
+                    owner: state.wallet.accountPkh,
+                    operator: state.contractAddresses.lendingController.address,
+                    token_id: 0, // Should be a number, usually 0
+                  },
+                },
+              ])
+              .toTransferParams(),
+          },
+        ]
 
         const batch = await state.wallet.tezos?.wallet.batch(batchArr)
         transaction = await batch.send()
@@ -153,7 +185,7 @@ export const depositCollateralAction =
 
       callback()
       await dispatch(toggleActionLoader(true))
-      await dispatch(showToaster(INFO, 'Depositting collateral th the vault...', 'Please wait 30s'))
+      await dispatch(showToaster(INFO, 'Depositing collateral th the vault...', 'Please wait 30s'))
 
       // confirm query completion
       await transaction?.confirmation()

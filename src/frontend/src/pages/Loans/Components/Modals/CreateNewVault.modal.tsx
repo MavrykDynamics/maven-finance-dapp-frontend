@@ -300,12 +300,14 @@ export const CreateNewVault = ({
     if (currentMarketAsset) {
       try {
         setVaultCreating(true)
-        const newVaultData = await dispatch(triggerInitialVaultCreation(currentMarketAsset))
+        //TODO: connect this value to an input
+        const vaultName = 'TestVaultName'
+        const newVaultData = await dispatch(triggerInitialVaultCreation(currentMarketAsset, vaultName))
         setCreatedVaultAddress?.(String(newVaultData))
         setNewVaultAddress(String(newVaultData))
       } catch (e) {
         setShownScreen(INITIAL_SCREEN_ID)
-        console.log('fetching new vault data error', e)
+        console.log('Fetching new vault data error', e)
       } finally {
         setVaultCreating(false)
       }

@@ -12,7 +12,7 @@ import { getAvaliableCollaterals, getLoansStorage } from './getLoansData.actions
 
 // trigger initial vault creation to get the id of future vault
 export const triggerInitialVaultCreation =
-  (loanTokenName: string) => async (dispatch: AppDispatch, getState: GetState) => {
+  (loanTokenName: string, vaultName: string) => async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
 
     if (!state.wallet.accountPkh) {
@@ -28,7 +28,7 @@ export const triggerInitialVaultCreation =
     try {
       // prepare and send query
       const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.vaultFactory.address)
-      const transaction = await contract?.methods.createVault(undefined, loanTokenName, [], 'any').send()
+      const transaction = await contract?.methods.createVault(undefined, loanTokenName, vaultName, [], 'any').send()
 
       // confirm query completion
       await transaction?.confirmation()
