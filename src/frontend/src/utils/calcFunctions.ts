@@ -1,5 +1,5 @@
 import { State } from 'reducers'
-import { FIXED_POINT_ACCURACY, PRECISION_NUMBER, SECONDS_PER_BLOCK, MU_NUMBER } from './constants'
+import { FIXED_POINT_ACCURACY, PRECISION_NUMBER, SECONDS_PER_BLOCK, MVK_DECIMALS, XTZ_DECIMALS } from './constants'
 import { Doorman, Farm, Satellite_Rewards, Stake_History_Data } from './generated/graphqlTypes'
 import { UserDoormanRewardsData, UserFarmRewardsData, UserSatelliteRewardsData } from './TypesAndInterfaces/User'
 import { LoanTokenType } from './TypesAndInterfaces/Loans'
@@ -31,7 +31,7 @@ export function calcExitFee(totalMvkSupply: number | undefined, totalStakedMVK: 
  */
 export const convertNumberForContractCall = ({
   number,
-  grage = PRECISION_NUMBER,
+  grage = MVK_DECIMALS,
 }: {
   number: number
   grage?: number
@@ -49,7 +49,7 @@ export const convertNumberForContractCall = ({
  */
 export const convertNumberForClient = ({
   number,
-  grage = PRECISION_NUMBER,
+  grage = MVK_DECIMALS,
 }: {
   number: number
   grage?: number
@@ -66,7 +66,7 @@ export const getTokenDecimals = ({
   tokenAddress: string
   dipDupTokens: State['tokens']['dipDupTokens']
 }): number | null => {
-  if (tokenType === 'tez') return MU_NUMBER
+  if (tokenType === 'tez') return XTZ_DECIMALS
 
   const { metadata: { decimals = null } = {} } = dipDupTokens.find(({ contract }) => tokenAddress === contract) ?? {}
 
