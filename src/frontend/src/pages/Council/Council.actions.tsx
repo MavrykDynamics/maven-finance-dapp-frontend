@@ -484,13 +484,10 @@ export const transferTokens =
     tokenType: LoanTokenType,
     tokenId: number,
     purpose: string,
+    decimals: number,
   ) =>
   async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
-
-    const {
-      tokens: { dipDupTokens },
-    } = getState()
 
     if (!state.wallet.accountPkh) {
       dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
@@ -502,17 +499,7 @@ export const transferTokens =
       return
     }
 
-    const decimals = getTokenDecimals({
-      tokenType,
-      tokenAddress: tokenContractAddress,
-      dipDupTokens,
-    })
-
     try {
-      if (!decimals) {
-        throw new Error('Invalid Token Contract Address')
-      }
-
       const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.councilAddress.address)
       const transaction = await contract?.methods
         .councilActionTransfer(
@@ -532,16 +519,12 @@ export const transferTokens =
 
       await dispatch(getCouncilPendingActions())
       await dispatch(toggleActionLoader(false))
-
-      return true
     } catch (error) {
       if (error instanceof Error) {
         console.error(error)
         await dispatch(showToaster(ERROR, 'Error', error.message))
       }
       await dispatch(toggleActionLoader(false))
-
-      return false
     }
   }
 
@@ -555,13 +538,10 @@ export const requestTokens =
     tokenType: LoanTokenType,
     tokenId: number,
     purpose: string,
+    decimals: number,
   ) =>
   async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
-
-    const {
-      tokens: { dipDupTokens },
-    } = getState()
 
     if (!state.wallet.accountPkh) {
       dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
@@ -573,17 +553,7 @@ export const requestTokens =
       return
     }
 
-    const decimals = getTokenDecimals({
-      tokenType,
-      tokenAddress: tokenContractAddress,
-      dipDupTokens,
-    })
-
     try {
-      if (!decimals) {
-        throw new Error('Invalid Token Contract Address')
-      }
-
       const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.councilAddress.address)
       const transaction = await contract?.methods
         .councilActionRequestTokens(
@@ -605,16 +575,12 @@ export const requestTokens =
 
       await dispatch(getCouncilPendingActions())
       await dispatch(toggleActionLoader(false))
-
-      return true
     } catch (error) {
       if (error instanceof Error) {
         console.error(error)
         await dispatch(showToaster(ERROR, 'Error', error.message))
       }
       await dispatch(toggleActionLoader(false))
-
-      return false
     }
   }
 
