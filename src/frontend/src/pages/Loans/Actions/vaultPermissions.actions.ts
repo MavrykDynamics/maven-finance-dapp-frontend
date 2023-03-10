@@ -26,11 +26,11 @@ export const changeBakerAction =
     try {
       // prepare and send query
       const contract = await state.wallet.tezos?.wallet.at(vaultAddress)
-      const transaction = await contract?.methods.delegateTezToBaker(bakerAddress).send()
+      const transaction = await contract?.methods.initVaultAction('delegateTezToBaker', bakerAddress).send()
 
       callback()
       dispatch(toggleActionLoader(true))
-      dispatch(showToaster(INFO, 'Chanding XTZ Baker...', 'Please wait 30s'))
+      dispatch(showToaster(INFO, 'Changing XTZ Baker...', 'Please wait 30s'))
 
       // confirm query completion
       await transaction?.confirmation()

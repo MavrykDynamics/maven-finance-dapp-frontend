@@ -38,7 +38,7 @@ export const getFa2Batch = ({
       },
     },
   ]
-
+  // TODO: @Maksym, will hae to change the contract method here to be more dynamic and use the initVaultAction
   return [
     {
       kind: OpKind.TRANSACTION,
@@ -70,6 +70,8 @@ export const getFa12Batch = ({
   assetContract: any
   contractMethod: any
 }) => {
+
+  // TODO: @Maksym, will hae to change the ...contract method here to be more dynamic and use the initVaultAction
   return [
     {
       kind: OpKind.TRANSACTION,

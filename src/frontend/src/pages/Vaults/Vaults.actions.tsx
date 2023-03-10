@@ -78,11 +78,11 @@ export const liquidateVault =
       dispatch(toggleActionLoader(true))
       const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.lendingController.address)
       const transaction = await contract?.methods.liquidateVault(vaultId, vaultOwner, liquidateAmount).send()
-      dispatch(showToaster(INFO, 'Liqudation...', 'Please wait 30s'))
+      dispatch(showToaster(INFO, 'Liquidating vault...', 'Please wait 30s'))
 
       await transaction?.confirmation()
 
-      dispatch(showToaster(SUCCESS, 'Liqudation is done', 'All good :)'))
+      dispatch(showToaster(SUCCESS, 'Vault Liquidated', 'All good :)'))
       dispatch(toggleActionLoader(false))
     } catch (error) {
       if (error instanceof Error) {
@@ -112,11 +112,11 @@ export const markForLiquidation =
       dispatch(toggleActionLoader(true))
       const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.lendingController.address)
       const transaction = await contract?.methods.markForLiquidation(vaultId, vaultOwner).send()
-      dispatch(showToaster(INFO, 'Mark for Liquidation...', 'Please wait 30s'))
+      dispatch(showToaster(INFO, 'Marking vault for Liquidation...', 'Please wait 30s'))
 
       await transaction?.confirmation()
 
-      dispatch(showToaster(SUCCESS, 'Mark for Liquidation is done', 'All good :)'))
+      dispatch(showToaster(SUCCESS, 'Vault marked for Liquidation', 'All good :)'))
       dispatch(toggleActionLoader(false))
     } catch (error) {
       if (error instanceof Error) {

@@ -27,11 +27,12 @@ export const withdrawCollateralAction =
     try {
       // prepare and send query
       const contract = await state.wallet.tezos?.wallet.at(vaultAddress)
-      const transaction = await contract.methods.withdraw(withdrawAmount, collateralAssetName).send()
+      // TODO: @Maksym, take a look how its done here
+      const transaction = await contract.methods.initVaultAction('withdraw', withdrawAmount, collateralAssetName).send()
 
       callback()
       await dispatch(toggleActionLoader(true))
-      await dispatch(showToaster(INFO, 'Withdrowing collateral from the vault...', 'Please wait 30s'))
+      await dispatch(showToaster(INFO, 'Withdrawing collateral from the vault...', 'Please wait 30s'))
 
       // confirm query completion
       await transaction?.confirmation()
@@ -40,7 +41,7 @@ export const withdrawCollateralAction =
       await dispatch(updateUserData())
       await dispatch(getAvaliableCollaterals())
       await dispatch(getLoansStorage())
-      await dispatch(showToaster(SUCCESS, 'Collateral withdrawed.', 'All good :)'))
+      await dispatch(showToaster(SUCCESS, 'Collateral withdrawn.', 'All good :)'))
       await dispatch(toggleActionLoader(false))
     } catch (error) {
       console.error('borrowVaultAssetAction error:', error)
@@ -87,19 +88,20 @@ export const depositCollateralAction =
       let transaction = null
 
       if (tokenType === 'tez') {
+        // TODO: @Maksym, take a look how the initVaultAction is used here
+
         const delegateToBakerBatchPart: Array<WalletParamsWithKind> = bakerAddress
           ? [
               {
                 kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
-                ...contract.methods.delegateTezToBaker(bakerAddress).toTransferParams(),
+                ...contract.methods.initVaultAction('delegateTezToBaker', bakerAddress).toTransferParams(),
               },
             ]
           : []
-
         const batch = state.wallet.tezos?.wallet.batch([
           {
             kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
-            ...contract.methods.deposit(amount, 'tez').toTransferParams(),
+            ...contract.methods.initVaultAction('deposit', amount, 'tez').toTransferParams(),
             amount,
             mutez: true,
           },
@@ -116,7 +118,7 @@ export const depositCollateralAction =
           assetAmount: amount,
           operatorAddress: vaultAddress,
           assetContract,
-          contractMethod: contract.methods.deposit,
+          contractMethod: contract.methods.initVaultAction,
         })
 
         const batch = await state.wallet.tezos?.wallet.batch(batchArr)
@@ -132,7 +134,7 @@ export const depositCollateralAction =
           operatorAddress: vaultAddress,
           assetId: 0,
           assetContract,
-          contractMethod: contract.methods.deposit,
+          contractMethod: contract.methods.initVaultAction, // TODO: @Maksym, take a look how its done here
           isDepositCollateral: true,
         })
 
@@ -142,7 +144,7 @@ export const depositCollateralAction =
 
       callback()
       await dispatch(toggleActionLoader(true))
-      await dispatch(showToaster(INFO, 'Depositting collateral th the vault...', 'Please wait 30s'))
+      await dispatch(showToaster(INFO, 'Depositing collateral th the vault...', 'Please wait 30s'))
 
       // confirm query completion
       await transaction?.confirmation()
