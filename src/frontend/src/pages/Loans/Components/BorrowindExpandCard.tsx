@@ -48,10 +48,6 @@ import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import colors from 'styles/colors'
 
-export type BorrowingCardOptions = {
-  reverseColumns?: boolean
-}
-
 type BorrowingExpandCardPropsType = LoansVaultType & {
   isOwner?: boolean
   headerSufix?: React.ReactNode
@@ -59,7 +55,6 @@ type BorrowingExpandCardPropsType = LoansVaultType & {
   className?: string
   children?: React.ReactNode
   status?: string
-  options?: BorrowingCardOptions
   isOpenedVault?: boolean
   DAOFee: number
 }
@@ -80,7 +75,6 @@ export const BorrowingExpandCard = ({
   address,
   children,
   status,
-  options,
   levelOfEarly,
   levelOfLate,
   isOpenedVault,
@@ -93,8 +87,6 @@ export const BorrowingExpandCard = ({
   DAOFee,
   repayFee,
 }: BorrowingExpandCardPropsType) => {
-  const { reverseColumns } = options ?? {}
-
   const { symbol, icon, rate = 1 } = borrowedAsset
 
   const { avaliableCollaterals } = useSelector((state: State) => state.tokens)
@@ -184,20 +176,8 @@ export const BorrowingExpandCard = ({
                 currentPersentage={Math.max(0, Math.min(((collateralRatio - 100) / 150) * 100, 100))}
               />
             </ThreeLevelListItem>
-            {reverseColumns && (
-              <ThreeLevelListItem>
-                <div className="name">Collateral amount</div>
-                <CommaNumber
-                  value={collateralBalance}
-                  className="value"
-                  beginningText="$"
-                  showDecimal
-                  decimalsToShow={2}
-                />
-              </ThreeLevelListItem>
-            )}
             <ThreeLevelListItem>
-              <div className="name">Borrowed Amount</div>
+              <div className="name">Amount</div>
               <CommaNumber value={borrowedAmount} className="value" showDecimal decimalsToShow={2} />
               {rate ? (
                 <CommaNumber
@@ -209,18 +189,16 @@ export const BorrowingExpandCard = ({
                 />
               ) : null}
             </ThreeLevelListItem>
-            {!reverseColumns && (
-              <ThreeLevelListItem>
-                <div className="name">Collateral amount</div>
-                <CommaNumber
-                  value={collateralBalance}
-                  className="value"
-                  beginningText="$"
-                  showDecimal
-                  decimalsToShow={2}
-                />
-              </ThreeLevelListItem>
-            )}
+            <ThreeLevelListItem>
+              <div className="name">Collateral amount</div>
+              <CommaNumber
+                value={collateralBalance}
+                className="value"
+                beginningText="$"
+                showDecimal
+                decimalsToShow={2}
+              />
+            </ThreeLevelListItem>
           </>
         }
       >

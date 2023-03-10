@@ -59,7 +59,7 @@ export const ExpandStyled = styled(CardHover)`
   &.expand-borrow-tab {
     .expand-header {
       cursor: default;
-      padding: 23px 25px 13px 25px;
+      padding: 20px 25px;
       align-items: flex-start;
       grid-template-columns: 0.6fr 0.8fr 0.5fr 0.45fr 0.4fr;
     }

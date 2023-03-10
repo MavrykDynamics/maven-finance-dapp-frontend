@@ -24,7 +24,6 @@ import {
 // types
 import { VaultType } from 'utils/TypesAndInterfaces/Vaults'
 import { StatusFlagStyle } from '../../../app/App.components/StatusFlag/StatusFlag.constants'
-import { BorrowingCardOptions } from 'pages/Loans/Components/BorrowindExpandCard'
 
 // helpers
 import { CYAN } from 'app/App.components/TzAddress/TzAddress.constants'
@@ -85,10 +84,6 @@ const findFooterText = (status: string, statusColor: StatusFlagStyle, timestamp?
     default:
       return ''
   }
-}
-
-const borrowingCardOptions: BorrowingCardOptions = {
-  reverseColumns: true,
 }
 
 type Props = VaultType & {
@@ -303,7 +298,6 @@ export const VaultsCard = (props: Props) => {
           headerSufix={headerSufix}
           getExpandedStatus={setExpanded}
           isOwner
-          options={borrowingCardOptions}
           // TODO: add this values as on loans
           DAOFee={0}
         />
@@ -313,7 +307,6 @@ export const VaultsCard = (props: Props) => {
           className={`expand-vault ${expanded ? 'openVault' : ''}`}
           headerSufix={headerSufix}
           getExpandedStatus={setExpanded}
-          options={borrowingCardOptions}
           // TODO: add this values as on loans
           DAOFee={0}
         >
