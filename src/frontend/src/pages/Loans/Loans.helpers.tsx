@@ -11,13 +11,13 @@ import {
 } from 'utils/generated/graphqlTypes'
 import { parseDate } from 'utils/time'
 import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
+import { TokenType } from 'utils/TypesAndInterfaces/General'
 import {
   LoansVaultType,
   LendingItemType,
   LoansChartsDataType,
   LoansGQL,
   LoanMarketType,
-  LoanTokenType,
   UserLendObjType,
   BaseLoansAssetDataType,
   DepositorsFlagType,
@@ -420,7 +420,7 @@ const getBorrowings = async (
       const normallizedVault = {
         borrowedAsset: {
           ...vaultAsset,
-          tokenType: vault.loan_token.loan_token_contract_standard as LoanTokenType,
+          tokenType: vault.loan_token.loan_token_contract_standard as TokenType,
           userBalance,
         },
 
@@ -554,7 +554,7 @@ export const normalizeLoans = async ({
         acc.push({
           loanTokenData: {
             ...loanTokenMetadata,
-            tokenType: loan_token_contract_standard as LoanTokenType,
+            tokenType: loan_token_contract_standard as TokenType,
             userBalance: loanTokenUserBalance,
           },
           myBorrowingList,

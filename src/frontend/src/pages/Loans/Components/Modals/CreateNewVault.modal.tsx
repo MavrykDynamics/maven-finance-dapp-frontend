@@ -345,7 +345,8 @@ export const CreateNewVault = ({
       collateralName: gqlName,
       assetId: collaterals[0].id,
       tokenType,
-      amount: Math.floor(Number(collaterals[0].inputAmount) * 10 ** decimals),
+      decimals,
+      amount: Number(collaterals[0].inputAmount),
       assetAddress: address,
     }
 

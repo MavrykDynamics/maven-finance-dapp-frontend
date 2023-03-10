@@ -24,7 +24,10 @@ export const DataFeedsCardStyled = styled(CardHover)<{ theme: MavrykTheme; isExt
 
 export const FeedsOraclesCardStyled = styled(DataFeedsCardStyled)<{ theme: MavrykTheme }>`
   grid-template-columns: 1fr 1fr 1fr 0.8fr 0.65fr 75px;
+  max-height: 80px;
   column-gap: 30px;
+  align-items: flex-start;
+  padding: 15px 30px 8px 30px;
 `
 
 export const FeedsListItem = styled.div<{ theme: MavrykTheme }>`
@@ -59,7 +62,7 @@ export const FeedsListItem = styled.div<{ theme: MavrykTheme }>`
     font-size: 14px;
     line-height: 21px;
     margin-top: 0;
-    margin-bottom: 6px;
+    margin-bottom: 0px;
   }
 
   var {
@@ -67,7 +70,6 @@ export const FeedsListItem = styled.div<{ theme: MavrykTheme }>`
     color: ${({ theme }) => theme.dataColor};
     font-weight: 600;
     font-size: 16px;
-    line-height: 14px;
     display: flex;
     column-gap: 10px;
 
@@ -80,12 +82,20 @@ export const FeedsListItem = styled.div<{ theme: MavrykTheme }>`
     }
   }
 
+  .converted {
+    font-weight: 500;
+    font-size: 12px;
+    color: ${({ theme }) => theme.dataColor};
+    margin-top: -7px;
+  }
+
   &.last-item {
     width: 100%;
     margin-left: auto;
   }
 
   &.vertical-center {
+    height: 75%;
     display: flex;
     align-items: center;
   }

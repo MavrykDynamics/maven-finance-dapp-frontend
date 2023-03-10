@@ -14,7 +14,7 @@ import {
 } from '../../app/App.components/Input/Input.constants'
 
 // helpers
-import { SatelliteGovernanceTransfer, TokenType } from '../../utils/TypesAndInterfaces/Satellites'
+import { SatelliteGovernanceTransfer } from '../../utils/TypesAndInterfaces/Satellites'
 import { validateFormField, validateFormAddress, validateTzAddress } from 'utils/validatorFunctions'
 
 // actions
@@ -36,8 +36,9 @@ import {
   AddRowBtn,
 } from 'app/App.components/Table/Table.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import { TokenType } from 'utils/TypesAndInterfaces/General'
 
-const TOKEN_TYPES: Array<TokenType> = ['FA12', 'FA2', 'TEZ']
+const TOKEN_TYPES: Array<TokenType> = ['fa12', 'fa2', 'tez']
 
 const DEFAULT_TABLE: Array<SatelliteGovernanceTransfer> = [{ to_: '', amount: 0, token: TOKEN_TYPES[0] }]
 const DEFAULT_TABLE_VALIDATION: Array<{

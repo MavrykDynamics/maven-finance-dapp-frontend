@@ -19,8 +19,9 @@ import { calcCollateralRatio, calculateCompoundedInterest, getAssetMetadata } fr
 import { calcWithoutDecimals } from 'utils/calcFunctions'
 import { BLOCKS_PER_MINUTE } from 'utils/constants'
 import { getUserBalanceForLoanAsset } from 'pages/Loans/LoansFethcers'
-import { CollateralType, DepositorsFlagType, LoanTokenType } from 'utils/TypesAndInterfaces/Loans'
+import { CollateralType, DepositorsFlagType } from 'utils/TypesAndInterfaces/Loans'
 import { ANY_USER, WHITELIST_USERS, NONE_USER } from 'pages/Loans/Loans.const'
+import { TokenType } from 'utils/TypesAndInterfaces/General'
 
 type VaultsStorageProps = {
   lendingController: LendingControllerGQL
@@ -200,7 +201,7 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
       const normallizedVault = {
         borrowedAsset: {
           ...vaultAsset,
-          tokenType: item.loan_token.loan_token_contract_standard as LoanTokenType,
+          tokenType: item.loan_token.loan_token_contract_standard as TokenType,
           userBalance,
         },
         borrowCapacity: vaultCollateral.totalRow.amount / 2,
@@ -246,11 +247,7 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
     }),
   )
 
-  return {
-    myVaultsIds: data.myVaultsIds,
-    allVaultsIds: data.allVaultsIds,
-    vaultsMapper: data.vaultsMapper,
-  }
+  return data
 }
 
 type OracleLatestProps = {
@@ -495,8 +492,4 @@ const vaultStatusChecker = ({
   }
 
   return vaultsStatuses.ACTIVE
-}
-
-export const compareAssets = (a: string, b: string) => {
-  return a.trim().toLowerCase() === b.trim().toLowerCase()
 }

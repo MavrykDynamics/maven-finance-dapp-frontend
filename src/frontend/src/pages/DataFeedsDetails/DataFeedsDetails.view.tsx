@@ -138,7 +138,7 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsPr
                     <h4>
                       Heartbeat
                       <CustomTooltip
-                        text={'Timer until the next feed data will be written on chain'}
+                        text={'Countdown until the next set data feed update.'}
                         iconId={'info'}
                         className="info-icon"
                       />

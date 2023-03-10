@@ -88,14 +88,7 @@ export const AddLendingAsset = ({
   const depositHandler = () => {
     if (tokenType && address) {
       dispatch(
-        depositLendingAssetAction(
-          gqlName,
-          Number(inputData.amount) * 10 ** decimals,
-          address,
-          id,
-          tokenType,
-          closePopup,
-        ),
+        depositLendingAssetAction(gqlName, Number(inputData.amount), address, id, tokenType, decimals, closePopup),
       )
     }
   }

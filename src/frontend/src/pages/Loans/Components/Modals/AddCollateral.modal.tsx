@@ -130,7 +130,8 @@ export const AddCollateral = ({
         collateralName: collateralData.gqlName,
         assetId: collateralData.id,
         tokenType: collateralData.tokenType,
-        amount: Math.floor(Number(inputData.amount) * 10 ** collateralData.decimals),
+        decimals: collateralData.decimals,
+        amount: Number(inputData.amount),
         assetAddress: collateralData.address,
       }
 

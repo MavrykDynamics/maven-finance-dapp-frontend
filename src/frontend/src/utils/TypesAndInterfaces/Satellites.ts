@@ -1,5 +1,6 @@
 import type { Satellite, Delegation } from '../generated/graphqlTypes'
 import { getSatelliteVotings, normallizeSatellite } from '../../pages/Satellites/helpers/Satellites.normalizer'
+import { TokenType } from './General'
 
 export enum SatelliteStatus {
   ACTIVE = 0,
@@ -15,7 +16,6 @@ export type SatelliteVoteType =
   | SatelliteVotingsType['financialRequestsVotes'][number]
   | SatelliteVotingsType['proposalVotingHistory'][number]
 
-export type TokenType = 'FA12' | 'FA2' | 'TEZ'
 export type SatelliteGovernanceTransfer = {
   to_: string //this is a contract address
   amount: number

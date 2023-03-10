@@ -7,7 +7,6 @@ import type { AppDispatch, GetState } from '../../app/App.controller'
 import { FARM_STORAGE_QUERY, FARM_STORAGE_QUERY_NAME, FARM_STORAGE_QUERY_VARIABLE } from '../../gql/queries'
 
 // consts
-import { PRECISION_NUMBER } from '../../utils/constants'
 import { ERROR, INFO, SUCCESS } from '../../app/App.components/Toaster/Toaster.constants'
 
 //helpers
@@ -17,6 +16,7 @@ import { showToaster } from '../../app/App.components/Toaster/Toaster.actions'
 import { getDoormanStorage } from '../Doorman/Doorman.actions'
 import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 import { updateUserData } from 'reducers/actions/user.actions'
+import { convertNumberForContractCall } from 'utils/calcFunctions'
 
 export const GET_FARM_STORAGE = 'GET_FARM_STORAGE'
 export const getFarmStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
@@ -131,7 +131,7 @@ export const deposit = (farmAddress: string, amount: number) => async (dispatch:
 
   try {
     const contract = await state.wallet.tezos?.wallet.at(farmAddress)
-    const transaction = await contract?.methods.deposit(amount * PRECISION_NUMBER).send()
+    const transaction = await contract?.methods.deposit(convertNumberForContractCall({ number: amount })).send()
 
     await dispatch(toggleActionLoader(true))
     await dispatch(showToaster(INFO, 'Depositing...', 'Please wait 30s'))
@@ -171,7 +171,7 @@ export const withdraw = (farmAddress: string, amount: number) => async (dispatch
 
   try {
     const contract = await state.wallet.tezos?.wallet.at(farmAddress)
-    const transaction = await contract?.methods.withdraw(amount * PRECISION_NUMBER).send()
+    const transaction = await contract?.methods.withdraw(convertNumberForContractCall({ number: amount })).send()
 
     await dispatch(toggleActionLoader(true))
     await dispatch(showToaster(INFO, 'Withdrawing...', 'Please wait 30s'))
