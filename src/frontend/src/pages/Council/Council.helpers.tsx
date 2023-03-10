@@ -7,6 +7,7 @@ import {
   CouncilActions,
   CouncilAction,
 } from '../../utils/TypesAndInterfaces/Council'
+import { State } from 'reducers'
 
 // helpers
 import {
@@ -16,6 +17,8 @@ import {
   defaultRequestPurposeMaxLength,
   defaultRequestTokenNameMaxLength,
 } from 'app/App.components/Input/Input.constants'
+
+import { LoanTokenType } from 'utils/TypesAndInterfaces/Loans'
 
 export const PAST_ACTIONS = 'PAST_ACTIONS'
 export const PENDING_ACTIONS = 'PENDING_ACTIONS'
