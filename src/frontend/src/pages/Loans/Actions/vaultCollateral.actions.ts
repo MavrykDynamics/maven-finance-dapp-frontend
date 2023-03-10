@@ -8,7 +8,6 @@ import { updateUserData } from 'reducers/actions/user.actions'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { TokenType } from 'utils/TypesAndInterfaces/General'
 import { getAvaliableCollaterals, getLoansStorage } from './getLoansData.actions'
-import { getFa12Batch, getFa2Batch } from './loansAction.helpers'
 
 // remove collateral from the vault
 export const withdrawCollateralAction =
@@ -36,7 +35,6 @@ export const withdrawCollateralAction =
       const convertedAssetAmount = convertNumberForContractCall({ number: withdrawAmount, grage: assetDecimals })
       // prepare and send query
       const contract = await state.wallet.tezos?.wallet.at(vaultAddress)
-      // TODO: @Maksym, take a look how its done here
       const transaction = await contract.methods
         .initVaultAction('withdraw', convertedAssetAmount, collateralAssetName)
         .send()
@@ -126,13 +124,20 @@ export const depositCollateralAction =
 
       if (tokenType === 'fa12') {
         const assetContract = await state.wallet.tezos?.wallet.at(assetAddress)
-        const batchArr = getFa12Batch({
-          assetName: collateralName,
-          assetAmount: convertedAssetAmount,
-          operatorAddress: vaultAddress,
-          assetContract,
-          contractMethod: contract.methods.initVaultAction,
-        })
+        const batchArr = [
+          {
+            kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+            ...assetContract.methods.approve(vaultAddress, 0).toTransferParams(),
+          },
+          {
+            kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+            ...assetContract.methods.approve(vaultAddress, convertedAssetAmount).toTransferParams(),
+          },
+          {
+            kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+            ...contract.methods.initVaultAction('deposit', convertedAssetAmount, collateralName).toTransferParams(),
+          },
+        ]
 
         const batch = await state.wallet.tezos?.wallet.batch(batchArr)
         transaction = await batch.send()
@@ -140,16 +145,41 @@ export const depositCollateralAction =
 
       if (tokenType === 'fa2') {
         const assetContract = await state.wallet.tezos?.wallet.at(assetAddress)
-        const batchArr = getFa2Batch({
-          assetName: collateralName,
-          assetAmount: convertedAssetAmount,
-          userAddress: state.wallet.accountPkh,
-          operatorAddress: vaultAddress,
-          assetId: 0,
-          assetContract,
-          contractMethod: contract.methods.initVaultAction, // TODO: @Maksym, take a look how its done here
-          isDepositCollateral: true,
-        })
+
+        const batchArr = [
+          {
+            kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+            ...assetContract.methods
+              .update_operators([
+                {
+                  add_operator: {
+                    owner: state.wallet.accountPkh,
+                    operator: state.contractAddresses.lendingController.address,
+                    token_id: 0, // Should be a number, usually 0
+                  },
+                },
+              ])
+              .toTransferParams(),
+          },
+          {
+            kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+            ...contract.methods.initVaultAction('deposit', convertedAssetAmount, collateralName).toTransferParams(),
+          },
+          {
+            kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+            ...assetContract.methods
+              .update_operators([
+                {
+                  remove_operator: {
+                    owner: state.wallet.accountPkh,
+                    operator: state.contractAddresses.lendingController.address,
+                    token_id: 0, // Should be a number, usually 0
+                  },
+                },
+              ])
+              .toTransferParams(),
+          },
+        ]
 
         const batch = await state.wallet.tezos?.wallet.batch(batchArr)
         transaction = await batch.send()
