@@ -246,6 +246,7 @@ export const AddNewCollateral = ({
         collateralName: inputData.assetName,
         assetId: inputData.selectedDdItem.id,
         tokenType: inputData.selectedDdItem.tokenType,
+        decimals: inputData.selectedDdItem.decimals,
         amount: Math.floor(Number(inputData.amount) * 10 ** inputData.selectedDdItem.decimals),
         assetAddress: inputData.selectedDdItem.address,
       }

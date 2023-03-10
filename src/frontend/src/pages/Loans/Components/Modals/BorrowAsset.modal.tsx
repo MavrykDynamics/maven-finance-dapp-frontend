@@ -104,9 +104,7 @@ export const BorrowAsset = ({
 
   const borrowAsserHandler = async () => {
     if (vaultId && borrowedAsset) {
-      await dispatch(
-        borrowVaultAssetAction(vaultId, Number(inputData.amount) * 10 ** borrowedAsset.decimals, closePopup),
-      )
+      await dispatch(borrowVaultAssetAction(vaultId, Number(inputData.amount), borrowedAsset.decimals, closePopup))
     }
   }
 

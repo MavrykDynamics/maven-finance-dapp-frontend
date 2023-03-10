@@ -140,9 +140,10 @@ export const WithdrawCollateral = ({
       setIsActionPerforming(true)
       await dispatch(
         withdrawCollateralAction(
-          Number(inputData.amount) * 10 ** collateralData.decimals,
+          Number(inputData.amount),
           collateralData.gqlName,
           vaultAddress,
+          collateralData.decimals,
           closePopup,
         ),
       )

@@ -97,8 +97,8 @@ export const Repay = ({
   const backBtnHandler = () => setShownScreen('initial')
 
   const repayBtnHandler = async () => {
-    if (vaultId) {
-      await dispatch(repayPartOfVaultAction(vaultId, inputAmount * 10 ** Number(borrowedAsset?.decimals), closePopup))
+    if (vaultId && borrowedAsset) {
+      await dispatch(repayPartOfVaultAction(vaultId, inputAmount, borrowedAsset.decimals, closePopup))
     }
   }
 

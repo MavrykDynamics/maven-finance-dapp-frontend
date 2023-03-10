@@ -101,7 +101,7 @@ export const RemoveAssetsFromLending = ({
   }, [inputData.validationStatus, isActionLoading])
 
   const withdrawHandler = () =>
-    dispatch(withdrawLendingAssetAction(gqlName, Number(inputData.amount) * 10 ** decimals, closePopup))
+    dispatch(withdrawLendingAssetAction(gqlName, Number(inputData.amount), decimals, closePopup))
 
   return (
     <PopupContainer onClick={closePopup} show={show}>

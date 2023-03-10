@@ -5,6 +5,8 @@ import { AppDispatch, GetState } from 'app/App.controller'
 import { State } from 'reducers'
 import { getMTokensStorage } from 'reducers/actions/dipDupActions.actions'
 import { updateUserData } from 'reducers/actions/user.actions'
+import { convertNumberForContractCall } from 'utils/calcFunctions'
+import { TokenType } from 'utils/TypesAndInterfaces/General'
 import { getLoansStorage } from './getLoansData.actions'
 import { getFa12Batch, getFa2Batch } from './loansAction.helpers'
 
@@ -15,7 +17,8 @@ export const depositLendingAssetAction =
     tokenAddress: string,
     // TODO: make it dynamic, blocked by backend
     assetId: number,
-    tokenType: 'tez' | 'fa2' | 'fa12',
+    tokenType: TokenType,
+    assetDecimals: number,
     callback: () => void,
   ) =>
   async (dispatch: AppDispatch, getState: GetState) => {
@@ -32,6 +35,7 @@ export const depositLendingAssetAction =
     }
 
     try {
+      const convertedAssetAmount = convertNumberForContractCall({ number: addLiquidityAmount, grage: assetDecimals })
       // prepare and send query
       const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.lendingController.address)
 
@@ -39,15 +43,15 @@ export const depositLendingAssetAction =
 
       if (tokenType === 'tez') {
         transaction = await contract?.methods
-          .addLiquidity(loanTokenName, addLiquidityAmount)
-          .send({ amount: addLiquidityAmount, mutez: true })
+          .addLiquidity(loanTokenName, convertedAssetAmount)
+          .send({ amount: convertedAssetAmount, mutez: true })
       }
 
       if (tokenType === 'fa12') {
         const assetContract = await state.wallet.tezos?.wallet.at(tokenAddress)
         const batchArr = getFa12Batch({
           assetName: loanTokenName,
-          assetAmount: addLiquidityAmount,
+          assetAmount: convertedAssetAmount,
           operatorAddress: state.contractAddresses.lendingController.address,
           assetContract,
           contractMethod: contract?.methods.addLiquidity,
@@ -61,7 +65,7 @@ export const depositLendingAssetAction =
         const assetContract = await state.wallet.tezos?.wallet.at(tokenAddress)
         const batchArr = getFa2Batch({
           assetName: loanTokenName,
-          assetAmount: addLiquidityAmount,
+          assetAmount: convertedAssetAmount,
           userAddress: state.wallet.accountPkh,
           operatorAddress: state.contractAddresses.lendingController.address,
           assetId: 0,
@@ -98,7 +102,7 @@ export const depositLendingAssetAction =
   }
 
 export const withdrawLendingAssetAction =
-  (loanTokenName: string, addLiquidityAmount: number, callback: () => void) =>
+  (loanTokenName: string, removeLiquidityAmount: number, assetDecimals: number, callback: () => void) =>
   async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
 
@@ -113,9 +117,10 @@ export const withdrawLendingAssetAction =
     }
 
     try {
+      const convertedAssetAmount = convertNumberForContractCall({ number: removeLiquidityAmount, grage: assetDecimals })
       // prepare and send query
       const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.lendingController.address)
-      const transaction = await contract?.methods.removeLiquidity(loanTokenName, addLiquidityAmount).send()
+      const transaction = await contract?.methods.removeLiquidity(loanTokenName, convertedAssetAmount).send()
 
       callback()
       await dispatch(toggleActionLoader(true))

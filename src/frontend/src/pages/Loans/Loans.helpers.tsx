@@ -11,13 +11,13 @@ import {
 } from 'utils/generated/graphqlTypes'
 import { parseDate } from 'utils/time'
 import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
+import { TokenType } from 'utils/TypesAndInterfaces/General'
 import {
   LoansVaultType,
   LendingItemType,
   LoansChartsDataType,
   LoansGQL,
   LoanMarketType,
-  LoanTokenType,
   UserLendObjType,
   BaseLoansAssetDataType,
   DepositorsFlagType,
@@ -27,22 +27,6 @@ import { ANY_USER, NONE_USER, WHITELIST_USERS } from './Loans.const'
 import { getUserBalanceForLoanAsset } from './LoansFethcers'
 
 export const isTezosAsset = (tokenName: string) => tokenName === 'tez'
-
-const getTokenDecimals = ({
-  tokenType,
-  tokenAddress,
-  dipDupTokens,
-}: {
-  tokenType: 'tez' | 'fa2' | 'fa12'
-  tokenAddress: string
-  dipDupTokens: State['tokens']['dipDupTokens']
-}): number | null => {
-  if (tokenType === 'tez') return 6 // tokenAddress === xtz address => xtz asset
-
-  const { metadata: { decimals = null } = {} } = dipDupTokens.find(({ contract }) => tokenAddress === contract) ?? {}
-
-  return decimals ? Number(decimals) : null
-}
 
 export const getAssetMetadata = ({
   tokenName,
@@ -436,7 +420,7 @@ const getBorrowings = async (
       const normallizedVault = {
         borrowedAsset: {
           ...vaultAsset,
-          tokenType: vault.loan_token.loan_token_contract_standard as LoanTokenType,
+          tokenType: vault.loan_token.loan_token_contract_standard as TokenType,
           userBalance,
         },
 
@@ -570,7 +554,7 @@ export const normalizeLoans = async ({
         acc.push({
           loanTokenData: {
             ...loanTokenMetadata,
-            tokenType: loan_token_contract_standard as LoanTokenType,
+            tokenType: loan_token_contract_standard as TokenType,
             userBalance: loanTokenUserBalance,
           },
           myBorrowingList,
