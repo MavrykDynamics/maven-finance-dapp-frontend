@@ -5,7 +5,7 @@ import { State } from 'reducers'
 // type
 import type { InputStatusType } from '../../../app/App.components/Input/Input.constants'
 import { CouncilMaxLength } from 'utils/TypesAndInterfaces/Council'
-import { LoanTokenType } from 'utils/TypesAndInterfaces/Loans'
+import { TokenType } from 'utils/TypesAndInterfaces/General'
 
 // helpers
 import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
@@ -72,7 +72,7 @@ export const CouncilFormTransferTokens = (maxLength: CouncilMaxLength) => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    const typeOfToken = tokenType?.value as LoanTokenType | undefined
+    const typeOfToken = tokenType?.value as TokenType | undefined
     if (!typeOfToken || !tokenDecimals) return
 
     dispatch(

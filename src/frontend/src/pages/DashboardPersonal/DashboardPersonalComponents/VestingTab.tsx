@@ -32,7 +32,8 @@ const VestingTab = () => {
 
   const lastClaimTime = dayjs(lastClaimDate),
     nextClaimTime = dayjs(nextRewardDate),
-    isClaimBtnDisabled = rewardPerMonth === 0 || lastClaimTime.diff(nextClaimTime, 'month') < 1
+    hasRewardsFor = Math.max(0, nextClaimTime.diff(lastClaimTime, 'month')),
+    isClaimBtnDisabled = rewardPerMonth === 0 || hasRewardsFor === 0
 
   return (
     <VestingTabStyled>
@@ -44,7 +45,7 @@ const VestingTab = () => {
         <div className="column">
           <div className="name">Vesting Period</div>
           <div className="value">
-            <CommaNumber value={vestingMonth} endingText="mos" />
+            <CommaNumber value={vestingMonth} endingText="mos." />
           </div>
         </div>
 
@@ -65,7 +66,7 @@ const VestingTab = () => {
         <div className="column">
           <div className="name">Ready to Claim</div>
           <div className="value">
-            <CommaNumber value={rewardPerMonth} endingText="MVK" />
+            <CommaNumber value={rewardPerMonth * hasRewardsFor} endingText="MVK" />
           </div>
         </div>
 

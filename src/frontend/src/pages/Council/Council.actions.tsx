@@ -33,9 +33,9 @@ import {
 
 // actions
 import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
+import { TokenType } from 'utils/TypesAndInterfaces/General'
 
 // types
-import { LoanTokenType } from 'utils/TypesAndInterfaces/Loans'
 
 const time = String(new Date())
 const timeFormat = 'YYYY-MM-DD'
@@ -481,7 +481,7 @@ export const transferTokens =
     receiverAddress: string,
     tokenContractAddress: string,
     tokenAmount: number,
-    tokenType: LoanTokenType,
+    tokenType: TokenType,
     tokenId: number,
     purpose: string,
     decimals: number,
@@ -535,7 +535,7 @@ export const requestTokens =
     tokenContractAddress: string,
     tokenName: string,
     tokenAmount: number,
-    tokenType: LoanTokenType,
+    tokenType: TokenType,
     tokenId: number,
     purpose: string,
     decimals: number,

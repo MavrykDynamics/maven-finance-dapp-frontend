@@ -14,10 +14,10 @@ import {
   MVK_MINT_HISTORY_DATA_QUERY_NAME,
   MVK_MINT_HISTORY_DATA_QUERY_VARIABLE,
 } from '../../gql/queries'
-import { PRECISION_NUMBER } from '../../utils/constants'
 import { normalizeDoormanStorage, normalizeSmvkHistoryData, normalizeMvkMintHistoryData } from './Doorman.converter'
 import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 import { updateUserData } from 'reducers/actions/user.actions'
+import { convertNumberForContractCall } from 'utils/calcFunctions'
 
 export const GET_DOORMAN_STORAGE = 'GET_DOORMAN_STORAGE'
 export const getDoormanStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
@@ -114,7 +114,7 @@ export const stake = (amount: number) => async (dispatch: AppDispatch, getState:
       (await state.wallet.tezos?.wallet
         .batch()
         .withContractCall(mvkTokenContract.methods.update_operators(addOperators))
-        .withContractCall(doormanContract.methods.stake(amount * PRECISION_NUMBER))
+        .withContractCall(doormanContract.methods.stake(convertNumberForContractCall({ number: amount })))
         .withContractCall(mvkTokenContract.methods.update_operators(removeOperators)))
     const batchOp = await batch?.send()
 
@@ -156,7 +156,7 @@ export const unstake = (amount: number) => async (dispatch: AppDispatch, getStat
 
   try {
     const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.doormanAddress.address)
-    const transaction = await contract?.methods.unstake(amount * PRECISION_NUMBER).send()
+    const transaction = await contract?.methods.unstake(convertNumberForContractCall({ number: amount })).send()
 
     await dispatch(toggleActionLoader(true))
     await dispatch(showToaster(INFO, 'Unstaking...', 'Please wait 30s'))

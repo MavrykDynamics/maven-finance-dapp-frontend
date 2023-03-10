@@ -50,6 +50,7 @@ export const submitEmergencyGovernanceProposal =
       const transaction = await contract?.methods
         .triggerEmergencyControl(form.title, form.description)
         .send({ amount: state.emergencyGovernance.config.requiredFeeMutez ?? 0 })
+
       callback?.()
 
       await dispatch(toggleActionLoader(true))

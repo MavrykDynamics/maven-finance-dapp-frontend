@@ -5,12 +5,20 @@ import { ERROR, INFO, SUCCESS } from 'app/App.components/Toaster/Toaster.constan
 import { AppDispatch, GetState } from 'app/App.controller'
 import { State } from 'reducers'
 import { updateUserData } from 'reducers/actions/user.actions'
+import { convertNumberForContractCall } from 'utils/calcFunctions'
+import { TokenType } from 'utils/TypesAndInterfaces/General'
 import { getAvaliableCollaterals, getLoansStorage } from './getLoansData.actions'
 import { getFa12Batch, getFa2Batch } from './loansAction.helpers'
 
 // remove collateral from the vault
 export const withdrawCollateralAction =
-  (withdrawAmount: number, collateralAssetName: string, vaultAddress: string, callback: () => void) =>
+  (
+    withdrawAmount: number,
+    collateralAssetName: string,
+    vaultAddress: string,
+    assetDecimals: number,
+    callback: () => void,
+  ) =>
   async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
 
@@ -25,9 +33,10 @@ export const withdrawCollateralAction =
     }
 
     try {
+      const convertedAssetAmount = convertNumberForContractCall({ number: withdrawAmount, grage: assetDecimals })
       // prepare and send query
       const contract = await state.wallet.tezos?.wallet.at(vaultAddress)
-      const transaction = await contract.methods.withdraw(withdrawAmount, collateralAssetName).send()
+      const transaction = await contract.methods.withdraw(convertedAssetAmount, collateralAssetName).send()
 
       callback()
       await dispatch(toggleActionLoader(true))
@@ -60,8 +69,9 @@ export const depositCollateralAction =
       collateralName: string
       assetAddress: string
       amount: number
+      decimals: number
       assetId: number
-      tokenType: 'tez' | 'fa2' | 'fa12'
+      tokenType: TokenType
     },
     callback: () => void,
     bakerAddress?: string | null,
@@ -80,7 +90,8 @@ export const depositCollateralAction =
     }
 
     try {
-      const { amount, assetAddress, assetId, collateralName, tokenType } = collateralAssets
+      const { amount, assetAddress, assetId, collateralName, tokenType, decimals } = collateralAssets
+      const convertedAssetAmount = convertNumberForContractCall({ number: amount, grage: decimals })
 
       // prepare and send query
       const contract = await state.wallet.tezos?.wallet.at(vaultAddress)
@@ -99,8 +110,8 @@ export const depositCollateralAction =
         const batch = state.wallet.tezos?.wallet.batch([
           {
             kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
-            ...contract.methods.deposit(amount, 'tez').toTransferParams(),
-            amount,
+            ...contract.methods.deposit(convertedAssetAmount, 'tez').toTransferParams(),
+            amount: convertedAssetAmount,
             mutez: true,
           },
           ...delegateToBakerBatchPart,
@@ -113,7 +124,7 @@ export const depositCollateralAction =
         const assetContract = await state.wallet.tezos?.wallet.at(assetAddress)
         const batchArr = getFa12Batch({
           assetName: collateralName,
-          assetAmount: amount,
+          assetAmount: convertedAssetAmount,
           operatorAddress: vaultAddress,
           assetContract,
           contractMethod: contract.methods.deposit,
@@ -127,7 +138,7 @@ export const depositCollateralAction =
         const assetContract = await state.wallet.tezos?.wallet.at(assetAddress)
         const batchArr = getFa2Batch({
           assetName: collateralName,
-          assetAmount: amount,
+          assetAmount: convertedAssetAmount,
           userAddress: state.wallet.accountPkh,
           operatorAddress: vaultAddress,
           assetId: 0,
