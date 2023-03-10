@@ -111,11 +111,6 @@ export const ExitFeeModal = ({
     onChange: onInputChange,
   }
 
-  const inputSettings = {
-    inputStatus: inputData.validation,
-    convertedValue,
-  }
-
   return (
     <PopupContainer onClick={closePopup} show={show}>
       <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="exitFee">
@@ -127,10 +122,14 @@ export const ExitFeeModal = ({
         <ExitFeeModalContent>
           <label>Amount to Unstake:</label>
           <Input
-            className={`${INPUT_LARGE} input-with-rate transparent-child-wrap`}
+            className={`input-with-rate transparent-child-wrap`}
             children={<InputPinnedTokenInfo>MVK</InputPinnedTokenInfo>}
             inputProps={inputProps}
-            settings={inputSettings}
+            settings={{
+              inputStatus: inputData.validation,
+              convertedValue,
+              inputSize: INPUT_LARGE,
+            }}
           />
           <ExitFeeModalStats>
             <div>

@@ -11,7 +11,7 @@ import Checkbox from 'app/App.components/Checkbox/Checkbox.view'
 import { VaultsSearchFilterStyled, VaultsSearchFilterWrapper, VaultsFilters } from './../Vaults.style'
 
 // helpers
-import { sortByVaultCategory, compareAssets } from '../Vaults.helpers'
+import { sortByVaultCategory } from '../Vaults.helpers'
 import {
   sortVaultItems,
   sortingList,
@@ -20,6 +20,7 @@ import {
   COLLATERAL_NAME,
   LOAN_NAME,
 } from '../Vaults.consts'
+import { stringFullCharsCompare } from 'utils/stringFullCharsCompare'
 
 // types
 import { VaultType } from 'utils/TypesAndInterfaces/Vaults'
@@ -183,7 +184,7 @@ export const VaultsSearchFilter = ({ assets: assetSymbols, vaultsMapper, current
           const vault = vaultsMapper[vaultId]
           if (vault.collateralData.length) {
             const isFound = vault.collateralData.some(({ symbol }) => {
-              return compareAssets(symbol, assetIcon)
+              return stringFullCharsCompare(symbol, assetIcon)
             })
 
             return isFound
@@ -198,7 +199,7 @@ export const VaultsSearchFilter = ({ assets: assetSymbols, vaultsMapper, current
         filteredVaultsIds = filteredVaultsIds.filter((vaultId) => {
           const vault = vaultsMapper[vaultId]
           if (vault.borrowedAsset.symbol) {
-            return compareAssets(vault.borrowedAsset.symbol, assetIcon)
+            return stringFullCharsCompare(vault.borrowedAsset.symbol, assetIcon)
           }
 
           return false
