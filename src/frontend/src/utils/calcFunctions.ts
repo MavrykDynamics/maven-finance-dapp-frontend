@@ -2,7 +2,7 @@ import { State } from 'reducers'
 import { FIXED_POINT_ACCURACY, PRECISION_NUMBER, SECONDS_PER_BLOCK, MVK_DECIMALS, XTZ_DECIMALS } from './constants'
 import { Doorman, Farm, Satellite_Rewards, Stake_History_Data } from './generated/graphqlTypes'
 import { UserDoormanRewardsData, UserFarmRewardsData, UserSatelliteRewardsData } from './TypesAndInterfaces/User'
-import { LoanTokenType } from './TypesAndInterfaces/Loans'
+import { TokenType } from './TypesAndInterfaces/General'
 
 /**
  * Calculates the MVK Loyalty Index (MLI) per the function in the litepaper
@@ -62,7 +62,7 @@ export const getTokenDecimals = ({
   tokenAddress,
   dipDupTokens,
 }: {
-  tokenType?: LoanTokenType
+  tokenType?: TokenType
   tokenAddress: string
   dipDupTokens: State['tokens']['dipDupTokens']
 }): number | null => {
