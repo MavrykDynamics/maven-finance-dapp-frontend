@@ -41,6 +41,9 @@ export const GovernanceRightContainer = styled(Card)<{ isAuthorized?: boolean; t
   }
 
   .info-block {
+    display: grid;
+    grid-template-columns: 16px auto;
+    column-gap: 20px;
     margin-top: 40px;
     margin-bottom: 40px;
 
@@ -51,6 +54,9 @@ export const GovernanceRightContainer = styled(Card)<{ isAuthorized?: boolean; t
     svg {
       stroke: none;
       fill: ${({ theme }) => theme.headerColor};
+
+      width: 16px;
+      height: 16px;
     }
   }
 

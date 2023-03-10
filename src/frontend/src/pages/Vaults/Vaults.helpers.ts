@@ -246,11 +246,7 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
     }),
   )
 
-  return {
-    myVaultsIds: data.myVaultsIds,
-    allVaultsIds: data.allVaultsIds,
-    vaultsMapper: data.vaultsMapper,
-  }
+  return data
 }
 
 type OracleLatestProps = {
@@ -495,8 +491,4 @@ const vaultStatusChecker = ({
   }
 
   return vaultsStatuses.ACTIVE
-}
-
-export const compareAssets = (a: string, b: string) => {
-  return a.trim().toLowerCase() === b.trim().toLowerCase()
 }

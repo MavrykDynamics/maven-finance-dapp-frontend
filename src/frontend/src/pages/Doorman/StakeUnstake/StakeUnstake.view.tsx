@@ -209,14 +209,6 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
     onChange: onInputChange,
   }
 
-  const inputSettings = {
-    inputStatus: inputData.validation,
-    convertedValue: exchangeValue,
-    balance: myMvkTokenBalance,
-    balanceAsset: 'MVK',
-    balanceName: 'Wallet Balance',
-  }
-
   const handleDelegate = () => {
     history.push(
       satelliteMvkIsDelegatedTo ? `/satellites/satellite-details/${satelliteMvkIsDelegatedTo}` : '/satellite-nodes',
@@ -327,10 +319,17 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
           <StakeUnstakeInputWithCoin>
             <ImageWithPlug imageLink={'/images/coin-gold.svg'} alt="coin" />
             <Input
-              className={`${INPUT_LARGE} input-with-rate transparent-child-wrap`}
+              className={`input-with-rate transparent-child-wrap`}
               children={<InputPinnedTokenInfo>MVK</InputPinnedTokenInfo>}
               inputProps={inputProps}
-              settings={inputSettings}
+              settings={{
+                inputStatus: inputData.validation,
+                convertedValue: exchangeValue,
+                balance: myMvkTokenBalance,
+                balanceAsset: 'MVK',
+                balanceName: 'Wallet Balance',
+                inputSize: INPUT_LARGE,
+              }}
             />
           </StakeUnstakeInputWithCoin>
           {inputData.errorMessage && (
