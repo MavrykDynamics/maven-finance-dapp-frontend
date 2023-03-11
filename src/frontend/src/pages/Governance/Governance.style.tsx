@@ -41,6 +41,9 @@ export const GovernanceRightContainer = styled(Card)<{ isAuthorized?: boolean; t
   }
 
   .info-block {
+    display: grid;
+    grid-template-columns: 16px auto;
+    column-gap: 20px;
     margin-top: 40px;
     margin-bottom: 40px;
 
@@ -51,6 +54,9 @@ export const GovernanceRightContainer = styled(Card)<{ isAuthorized?: boolean; t
     svg {
       stroke: none;
       fill: ${({ theme }) => theme.headerColor};
+
+      width: 16px;
+      height: 16px;
     }
   }
 
@@ -237,19 +243,6 @@ export const GovRightContainerTitleArea = styled.div<{ theme: MavrykTheme }>`
     &::after {
       margin-bottom: 7px;
     }
-  }
-`
-
-export const RightSideVotingArea = styled.div<{ theme: MavrykTheme }>`
-  display: flex;
-  flex-direction: row;
-  margin: 20px 0;
-  justify-content: space-between;
-  align-items: center;
-  font-weight: 600;
-
-  > button {
-    max-width: 40%;
   }
 `
 

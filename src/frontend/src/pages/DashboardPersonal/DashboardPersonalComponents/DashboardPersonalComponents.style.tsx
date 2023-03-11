@@ -14,11 +14,6 @@ export const SmallBlockBase = styled.div<{ theme: MavrykTheme }>`
     font-size: 22px;
   }
 
-  button {
-    max-width: 190px;
-    font-size: 16px;
-  }
-
   .name {
     font-weight: 600;
     font-size: 14px;
@@ -45,8 +40,8 @@ export const MediumBlockBase = styled(SmallBlockBase)<{ theme: MavrykTheme }>`
     height: 100%;
     row-gap: 15px;
 
-    button {
-      max-width: unset;
+    .nav-button {
+      width: 220px;
     }
 
     span {
@@ -113,7 +108,8 @@ export const PortfolioWalletStyled = styled(MediumBlockBase)<{ theme: MavrykThem
   .wallet-info {
     display: flex;
     flex-direction: column;
-    margin-top: 24px;
+    row-gap: 7px;
+    margin-top: 30px;
 
     .name {
       font-weight: 600;
@@ -126,7 +122,7 @@ export const PortfolioWalletStyled = styled(MediumBlockBase)<{ theme: MavrykThem
       font-size: 16px;
       color: ${({ theme }) => theme.dataColor};
       display: flex;
-      column-gap: 7px;
+      column-gap: 10px;
       align-items: center;
     }
   }
@@ -148,9 +144,9 @@ export const MyRewardsStyled = styled(SmallBlockBase)<{ theme: MavrykTheme }>`
     align-items: flex-end;
   }
 
-  button {
-    margin-left: auto;
+  .claim-rewards {
     margin-top: -10px;
+    margin-left: auto;
   }
 
   .stat-block {
@@ -292,9 +288,6 @@ export const ListItem = styled.div<{ theme: MavrykTheme; columsTemplate: string 
     &.view-tx-link {
       align-items: center;
       justify-content: center;
-      button {
-        height: fit-content;
-      }
 
       /* TODO: temp solution while earn column is disabled */
       margin-left: auto;
@@ -308,6 +301,31 @@ export const ListItem = styled.div<{ theme: MavrykTheme; columsTemplate: string 
     width: 100%;
     height: 1px;
     background-color: ${({ theme }) => theme.cardBorderColor};
+  }
+`
+
+export const VestingTabStyled = styled(MediumBlockBase)<{ theme: MavrykTheme }>`
+  width: 100%;
+  height: 187px;
+  padding-bottom: 20px;
+
+  p {
+    margin: 0;
+  }
+
+  .vesting-data {
+    display: grid;
+    grid-template-columns: repeat(5, auto) 140px;
+    justify-content: space-between;
+    align-items: center;
+    grid-template-rows: 50px;
+    margin-top: 30px;
+
+    .column {
+      display: flex;
+      flex-direction: column;
+      row-gap: 5px;
+    }
   }
 `
 

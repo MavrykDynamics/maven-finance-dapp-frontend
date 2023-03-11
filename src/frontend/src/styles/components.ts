@@ -14,37 +14,6 @@ export const Page = styled.div<{ theme: MavrykTheme }>`
   max-width: 1170px;
   padding-top: 112px;
 
-  .oracle-list-wrapper {
-    position: relative;
-
-    .see-all-link {
-      display: flex;
-      align-items: center;
-      position: absolute;
-      right: 0;
-      top: 15px;
-      font-weight: 500;
-      font-size: 14px;
-      line-height: 21px;
-      color: ${({ theme }) => theme.navLinkTextActive};
-      cursor: pointer;
-      transition: 0.5s all;
-
-      &:hover {
-        opacity: 0.8;
-      }
-
-      svg {
-        margin-left: 5px;
-        height: 13px;
-        width: 18px;
-        transform: rotate(180deg);
-        stroke: ${({ theme }) => theme.navLinkTextActive};
-        transition: 0.5s all;
-      }
-    }
-  }
-
   a.disabled-link {
     pointer-events: none;
   }

@@ -4,9 +4,9 @@ import { State } from 'reducers'
 import { Link } from 'react-router-dom'
 import { AvatarStyle } from '../../../app/App.components/Avatar/Avatar.style'
 import { TzAddress } from '../../../app/App.components/TzAddress/TzAddress.view'
-import NewButton from 'app/App.components/Button/NewButton.controller'
+import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
-import { TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
+import { BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
 // style
 import { CouncilMemberStyled } from './CouncilMember.style'
@@ -20,14 +20,13 @@ type Props = {
 }
 
 export const CouncilMemberView = (props: Props) => {
-  const { accountPkh } = useSelector((state: State) => state.wallet)
   const {
-    delegationStorage: { activeSatellites },
-  } = useSelector((state: State) => state.delegation)
+    accountPkh,
+    user: { isSatellite },
+  } = useSelector((state: State) => state.wallet)
 
   const { image, name, userId, openModal, showUpdateInfo = true } = props
   const href = `/satellites/satellite-details/${userId}`
-  const isSatellite = activeSatellites.find(({ address }) => address === userId)
 
   const isMe = userId === accountPkh
   const content = (
@@ -49,7 +48,7 @@ export const CouncilMemberView = (props: Props) => {
         </figcaption>
       </div>
       {isMe && showUpdateInfo ? (
-        <NewButton className='update-btn' kind={TRANSPARENT_WITH_BORDER} onClick={openModal}>
+        <NewButton kind={BUTTON_SECONDARY} form={BUTTON_WIDE} onClick={openModal}>
           <Icon id="update" />
           Update Info
         </NewButton>

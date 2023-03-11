@@ -1,76 +1,157 @@
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
+import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 
 // types
 import { State } from 'reducers'
 
 // view
-import SatellitesView from './Satellites.view'
+import SatellitesSideBar from './SatellitesSideBar/SatellitesSideBar.controller'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import { SatelliteListItem } from './listItem/SateliteCard.view'
+import Icon from 'app/App.components/Icon/Icon.view'
+import { DataFeedCard } from '../DataFeedsDetails/listItem/DataFeedCard.view'
+import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 
 // consts, helpers, actions
 import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
 import { getTotalDelegatedMVK } from './helpers/Satellites.consts'
-import { delegate, getDelegationStorage, undelegate } from 'pages/Satellites/Satellites.actions'
-import { getGovernanceStorage } from 'pages/Governance/Governance.actions'
-import { getEmergencyGovernanceStorage } from 'pages/EmergencyGovernance/EmergencyGovernance.actions'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
+import { BUTTON_SIMPLE } from 'app/App.components/Button/Button.constants'
 import { getFeedsStorage } from 'pages/DataFeeds/DataFeeds.actions'
+import { getGovernanceStorage } from 'pages/Governance/Governance.actions'
+
+// view
+import { SmallInfoBlock } from 'pages/SatelliteGovernance/SatelliteGovernance.style'
+import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
+import NewButton from 'app/App.components/Button/NewButton'
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import { EmptyContainer } from 'app/App.style'
+import { Page, PageContent } from 'styles'
+import { InfoBlockWrapper, SatellitesOverviewStyled } from './Satellites.style'
 
 const Satellites = () => {
-  const {
-    delegationStorage: { activeSatellites = [] },
-  } = useSelector((state: State) => state.delegation)
-  const { feedsLedger, isLoaded: isFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
-  const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
-  const {
-    user: { mySMvkTokenBalance, satelliteMvkIsDelegatedTo },
-    accountPkh,
-  } = useSelector((state: State) => state.wallet)
   const dispatch = useDispatch()
+  const { isGovernanceStorageLoaded } = useSelector((state: State) => state.governance)
+  const { allSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
+  const { feedsLedger, isLoaded: isFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
+  const { isLoaded: isDoormanLoaded } = useSelector((state: State) => state.doorman)
 
   const { isLoading } = useDataLoader(async () => {
-    await Promise.all([
-      !isFeedsLoaded && dispatch(getFeedsStorage()),
-      !isEgovLoaded && dispatch(getEmergencyGovernanceStorage()),
-      accountPkh && dispatch(getDoormanStorage()),
-      dispatch(getDelegationStorage()),
-      dispatch(getGovernanceStorage()),
-    ])
-  }, [accountPkh])
-
-  const totalDelegatedMVK = getTotalDelegatedMVK(activeSatellites)
+    try {
+      await Promise.all(
+        [
+          !isFeedsLoaded && dispatch(getFeedsStorage()),
+          !isDoormanLoaded && dispatch(getDoormanStorage()),
+          !isGovernanceStorageLoaded && dispatch(getGovernanceStorage()),
+        ].filter(Boolean),
+      )
+    } catch (e) {}
+  }, [])
 
   const tabsInfo = useMemo(
     () => ({
-      totalDelegetedMVK: <CommaNumber value={totalDelegatedMVK} endingText={'MVK'} />,
-      totalSatelliteOracles: activeSatellites.length,
+      totalDelegetedMVK: (
+        <CommaNumber value={getTotalDelegatedMVK(allSatellitesIds, satelliteMapper)} endingText={'MVK'} />
+      ),
+      totalSatelliteOracles: allSatellitesIds.length,
       numberOfDataFeeds: feedsLedger.length > 50 ? feedsLedger.length + '+' : feedsLedger.length,
     }),
-    [activeSatellites, feedsLedger, totalDelegatedMVK],
+    [allSatellitesIds, feedsLedger, satelliteMapper],
   )
 
-  const delegateCallback = (satelliteAddress: string) => {
-    dispatch(delegate(satelliteAddress))
-  }
-
-  const undelegateCallback = (delegateAddress: string) => {
-    dispatch(undelegate(delegateAddress))
-  }
-
   return (
-    <SatellitesView
-      tabsInfo={tabsInfo}
-      delegateCallback={delegateCallback}
-      oracleSatellitesData={{
-        userStakedBalance: mySMvkTokenBalance,
-        satelliteUserIsDelegatedTo: satelliteMvkIsDelegatedTo,
-        items: activeSatellites.slice(0, 3),
-        delegateCallback,
-        undelegateCallback,
-      }}
-      dataFeedsData={{ items: feedsLedger }}
-    />
+    <Page>
+      <PageHeader page={'satellites'} />
+      <PageContent>
+        <SatellitesOverviewStyled>
+          <InfoBlockWrapper>
+            <SmallInfoBlock>
+              <h3>Total Delegated MVK</h3>
+              <div className="info-content">
+                {tabsInfo.totalDelegetedMVK}
+                <a href="https://mavryk.finance/litepaper#satellites-governance-and-the-decentralized-oracle">
+                  <CustomTooltip iconId="info" text="All staked MVK that is delegated to satellites by users" />
+                </a>
+              </div>
+            </SmallInfoBlock>
+            <SmallInfoBlock>
+              <h3>Total Satellites & Oracles</h3>
+              <div className="info-content">{tabsInfo.totalSatelliteOracles}</div>
+            </SmallInfoBlock>
+            <SmallInfoBlock>
+              <h3>Number of Data Feeds</h3>
+              <div className="info-content">{tabsInfo.numberOfDataFeeds}</div>
+            </SmallInfoBlock>
+          </InfoBlockWrapper>
+
+          {isLoading ? (
+            <DataLoaderWrapper>
+              <ClockLoader width={150} height={150} />
+              <div className="text">Loading satellites and data feeds data</div>
+            </DataLoaderWrapper>
+          ) : (
+            <>
+              {allSatellitesIds.length ? (
+                <>
+                  <div className="top-list">
+                    <GovRightContainerTitleArea>
+                      <h1>Top Satellites</h1>
+                    </GovRightContainerTitleArea>
+
+                    <Link to="/satellite-nodes">
+                      <NewButton kind={BUTTON_SIMPLE}>
+                        See all Satellites
+                        <Icon id="full-arrow-right" />
+                      </NewButton>
+                    </Link>
+                  </div>
+
+                  <div className={`satellitesList`}>
+                    {allSatellitesIds.slice(0, 3).map((satelliteAddress) => (
+                      <SatelliteListItem satellite={satelliteMapper[satelliteAddress]} key={satelliteAddress} />
+                    ))}
+                  </div>
+                </>
+              ) : null}
+
+              {feedsLedger.length ? (
+                <>
+                  <div className="top-list">
+                    <GovRightContainerTitleArea>
+                      <h1>Popular Feeds</h1>
+                    </GovRightContainerTitleArea>
+
+                    <Link to="/data-feeds">
+                      <NewButton kind={BUTTON_SIMPLE}>
+                        See all Data Feeds
+                        <Icon id="full-arrow-right" />
+                      </NewButton>
+                    </Link>
+                  </div>
+
+                  <div className={`satellitesList`}>
+                    {feedsLedger.slice(0, 3).map((feed) => (
+                      <DataFeedCard feed={feed} key={feed.address} />
+                    ))}
+                  </div>
+                </>
+              ) : null}
+
+              {feedsLedger.length === 0 && allSatellitesIds.length === 0 ? (
+                <EmptyContainer>
+                  <img src="/images/not-found.svg" alt={`no satellites and data feeds`} />
+                  <figcaption>No satellites and data feeds</figcaption>
+                </EmptyContainer>
+              ) : null}
+            </>
+          )}
+        </SatellitesOverviewStyled>
+        <SatellitesSideBar />
+      </PageContent>
+    </Page>
   )
 }
 

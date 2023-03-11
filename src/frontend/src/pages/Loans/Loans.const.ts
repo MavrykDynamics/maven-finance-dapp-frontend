@@ -20,6 +20,13 @@ export const TRANSACTION_HISTORY_SLIDING_BUTTONS = [
   },
 ]
 
+export const ANY_USER = 'any'
+export const NONE_USER = 'none'
+export const WHITELIST_USERS = 'whitelist'
+
+export const VAULT_ALLOWANCE_ANY = 'any'
+export const VAULT_ALLOWANCE_ACCOUNTS = 'whitelist'
+
 export const ADD_COLLATERAL_MODAL_ID = 'addCollateral'
 export const ADD_NEW_COLLATERAL_MODAL_ID = 'addNewCollateral'
 export const ADD_LENDING_ASSET_MODAL_ID = 'addLendingAsset'
@@ -59,7 +66,7 @@ export const getCollateralRationPersent = (persentage: number) => {
 }
 
 export const getStatusByCollateralRatio = (collateralRatio: number) => {
-  if(collateralRatio === 0) return 'no status'
+  if (collateralRatio === 0) return 'no status'
   if (collateralRatio <= 200 && collateralRatio > 150) return vaultsStatuses.AT_RISK
   if (collateralRatio <= 150) return vaultsStatuses.GRACE_PERIOD
 

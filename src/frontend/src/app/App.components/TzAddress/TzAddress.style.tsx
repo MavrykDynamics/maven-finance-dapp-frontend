@@ -6,6 +6,10 @@ export const TzAddressContainer = styled.div`
   display: flex;
   align-items: center;
   cursor: pointer;
+
+  &.notCopy {
+    cursor: default;
+  }
 `
 export const TzAddressStyled = styled.div<{ theme: MavrykTheme }>`
   transition: color 0.4s ease-in-out;

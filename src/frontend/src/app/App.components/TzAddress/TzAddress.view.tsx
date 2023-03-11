@@ -19,6 +19,8 @@ type TzAddressProps = {
   amountFromStart?: number
   amountFromEnd?: number
 }
+
+// TODO: make classes via classNames lib, check classes usage for styling
 export const TzAddress = ({
   className,
   tzAddress,
@@ -27,7 +29,7 @@ export const TzAddress = ({
   iconToLeft,
   isBold,
   shouldCopy = true,
-  amountFromStart = 7,
+  amountFromStart = 4,
   amountFromEnd = 4,
 }: TzAddressProps) => {
   const addrClasses = `${type} ${isBold ? 'bold' : ''} copyIcon`
@@ -41,8 +43,11 @@ export const TzAddress = ({
   }
 
   return (
-    <TzAddressContainer className={`${className} tzAddressToClick`} onClick={handleCopyToClipboard}>
-      {hasIcon && iconToLeft && (
+    <TzAddressContainer
+      className={`${className} tzAddressToClick ${!shouldCopy ? 'notCopy' : ''}`}
+      onClick={handleCopyToClipboard}
+    >
+      {hasIcon && iconToLeft && shouldCopy && (
         <TzAddressIcon className={addrClasses}>
           <use xlinkHref="/icons/sprites.svg#copyToClipboard" />
         </TzAddressIcon>
@@ -50,7 +55,7 @@ export const TzAddress = ({
       <TzAddressStyled className={addrClasses}>
         {getShortTzAddress({ tzAddress, amountFromEnd, amountFromStart })}
       </TzAddressStyled>
-      {hasIcon && !iconToLeft && (
+      {hasIcon && !iconToLeft && shouldCopy && (
         <TzAddressIcon className={addrClasses}>
           <use xlinkHref="/icons/sprites.svg#copyToClipboard" />
         </TzAddressIcon>

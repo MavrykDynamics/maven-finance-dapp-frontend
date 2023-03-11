@@ -1,5 +1,5 @@
 import { InputStatusType } from 'app/App.components/Input/Input.constants'
-import { CollateralType, LoansAssetDataType, LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
+import { CollateralType, DepositorsFlagType, LoansAssetDataType, LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
 import LoansPopupsProvider from './LoansModals.provider'
 import { VaultType } from 'utils/TypesAndInterfaces/Vaults'
 
@@ -18,12 +18,15 @@ export type CollateralPopupCommonDataType = {
   vaultCollateralBalance: number
   selectedAsset?: LoansVaultType['collateralData'][number]
   currentCollateralRatio: number
-  collateralWithdrawAmount: number
   borrowedAmount: number
   borrowedAssetRate: number
 }
 
-export type AddCollateralPopupDataType = CollateralPopupCommonDataType | null
+export type AddCollateralPopupDataType =
+  | (CollateralPopupCommonDataType & {
+      currentCollateralBalance: number
+    })
+  | null
 
 export type AddNewCollateralDataProps =
   | (CollateralPopupCommonDataType & {
@@ -64,7 +67,6 @@ export type BorrowPopupDataType = {
   currentCollateralBalance: number
   DAOFee: number
   currentBorrowedAmount: number
-  avaliableLiquidity: number
 } | null
 
 export type AddLendingAssetDataType =
@@ -93,7 +95,11 @@ export type CreateVaultPopupDataType = {
 
 export type LiquidateVaultDataType = VaultType | null
 
-export type ManagePermissionsPopupDataType = {} | null
+export type ManagePermissionsPopupDataType = {
+  vaultAddress: string
+  depositors: Array<string>
+  deporsitorsFlag: DepositorsFlagType
+} | null
 export type UpdateOperatorsPopupDataType = {} | null
 
 export type ModalStateType<T = {}> = {

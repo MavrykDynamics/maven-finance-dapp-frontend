@@ -1,23 +1,40 @@
+import { State } from 'reducers'
 import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
-import { SatelliteRecord } from 'utils/TypesAndInterfaces/Delegation'
+import { SatelliteRecordType } from 'utils/TypesAndInterfaces/Satellites'
+import { MavrykTheme } from 'styles/interfaces'
 
 export const ORACLE_STATUSES_MAPPER = {
   responded: 'Responded',
   noResponse: 'No Response',
   awaiting: 'Awaiting',
+  notAnOracle: 'Not An Oracle',
 }
 
-export function checkIfUserIsSatellite(accountPkh?: string, activeSatellites?: SatelliteRecord[]): boolean {
-  return accountPkh && activeSatellites ? activeSatellites.some((record) => record.address === accountPkh) : false
+export type OracleStatusTypes = keyof typeof ORACLE_STATUSES_MAPPER
+
+export const findColorBasedOnStatus = (statusType: OracleStatusTypes, theme: MavrykTheme) => {
+  return statusType === 'responded'
+    ? theme.upColor
+    : statusType === 'noResponse' || statusType === 'notAnOracle'
+    ? theme.downColor
+    : theme.warningColor
 }
 
-export function getTotalDelegatedMVK(satelliteLedger: SatelliteRecord[]): number {
-  if (!satelliteLedger) return 0
-  return satelliteLedger.reduce((sum, current) => sum + Number(current.totalDelegatedAmount + current.sMvkBalance), 0)
+export function getTotalDelegatedMVK(
+  satelliteIds: State['satellites']['allSatellitesIds'],
+  satellitesMapper: State['satellites']['satelliteMapper'],
+): number {
+  if (!satelliteIds) return 0
+  return satelliteIds.reduce(
+    (sum, currentAddress) =>
+      sum +
+      Number(satellitesMapper[currentAddress].totalDelegatedAmount + satellitesMapper[currentAddress].sMvkBalance),
+    0,
+  )
 }
 
-export const getOracleStatus = (oracle: SatelliteRecord, feeds: Feed[]): 'responded' | 'noResponse' | 'awaiting' => {
-  let status: 'responded' | 'noResponse' | 'awaiting' = 'noResponse'
+export const getOracleStatus = (oracle: SatelliteRecordType, feeds: Feed[]): OracleStatusTypes => {
+  let status: OracleStatusTypes = 'notAnOracle'
 
   // check if satellite is an oracle
   if (oracle?.oracleRecords?.length > 0) {
@@ -37,8 +54,25 @@ export const getOracleStatus = (oracle: SatelliteRecord, feeds: Feed[]): 'respon
       } else {
         status = 'awaiting'
       }
+      // if oracle is not active, status should be "no response"
+    } else {
+      status = 'noResponse'
     }
   }
 
   return status
+}
+
+export const VOTE_NUM_MAPPER: Record<number, string> = {
+  0: 'Pass',
+  1: 'Yes',
+  2: 'No',
+}
+
+export const getVoteText = (voteType?: number): string => {
+  if (voteType === 0) return 'Pass'
+  if (voteType === 1) return 'Yes'
+  if (voteType === 2) return 'No'
+
+  return voteType ? VOTE_NUM_MAPPER[voteType] ?? '' : ''
 }

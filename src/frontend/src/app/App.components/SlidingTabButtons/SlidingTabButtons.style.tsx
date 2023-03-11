@@ -1,28 +1,10 @@
-import styled, { css, keyframes } from 'styled-components/macro'
-
-import { royalPurpleColor, darkColor, primaryColor } from '../../../styles'
+import styled, { css } from 'styled-components/macro'
+import { turn } from 'styles/animations'
+import { darkColor } from '../../../styles'
 import { BUTTON_RADIUS } from '../../../styles/constants'
 import { MavrykTheme } from '../../../styles/interfaces'
 import { PRIMARY, SECONDARY, TRANSPARENT } from './SlidingTabButtons.constants'
 
-export const clickWave = keyframes`
-  from {
-    box-shadow: 0 0 0 0 ${primaryColor};
-  }
-  to {
-    box-shadow: 0 0 0 5px ${primaryColor}00;
-  }
-`
-
-export const clickSlide = keyframes`
-  0% {
-    transform: translateX(0);
-  }
-
-  100% {
-    transform: translateX(100px);
-  }
-`
 export const SlidingTabButtonsStyled = styled.div<{ theme: MavrykTheme }>`
   background-color: ${darkColor};
   border: 1px solid ${({ theme }) => theme.lPurple_dPurple_lPuprple};
@@ -109,11 +91,6 @@ export const ButtonText = styled.div<{ theme: MavrykTheme }>`
 
   &.${TRANSPARENT} {
     color: ${({ theme }) => theme.primaryColor};
-  }
-`
-const turn = keyframes`
-  100% {
-      transform: rotate(360deg);
   }
 `
 

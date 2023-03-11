@@ -48,9 +48,10 @@ export function normalizeFeeds({
     const dataFeedsHistory = normalizeDataFeedsHistory(item.history_data)
     const dataFeedsVolatility = normalizeDataFeedsVolatility(item.history_data)
 
-    const { icon } = dipdup_contract_metadata?.find(({ contract }) => contract === item.address)?.metadata as {
-      icon?: string
-    }
+    const { icon } =
+      (dipdup_contract_metadata?.find(({ contract }) => contract === item.address)?.metadata as {
+        icon?: string
+      }) ?? {}
 
     const { history_data, ...restOfTheItem } = item
 

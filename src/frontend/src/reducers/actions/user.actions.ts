@@ -1,4 +1,3 @@
-import { Doorman, Satellite_Rewards } from './../../utils/generated/graphqlTypes'
 import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { ERROR } from 'app/App.components/Toaster/Toaster.constants'
 import { AppDispatch, GetState } from 'app/App.controller'
@@ -28,16 +27,7 @@ import {
   calcUsersFarmRewards,
   convertFromIndexerToRegNum,
 } from 'utils/calcFunctions'
-import { Farm, Lending_Controller_Loan_Token } from 'utils/generated/graphqlTypes'
-import { SatelliteRecord } from 'utils/TypesAndInterfaces/Delegation'
-
-const checkWhetherUserIsActiveSatelltie = (satellitesList: Array<SatelliteRecord>, userAddress: string) =>
-  Boolean(
-    satellitesList.find(
-      ({ address: satelliteAddress, status, currentlyRegistered }) =>
-        satelliteAddress === userAddress && status === 0 && currentlyRegistered,
-    ),
-  )
+import { Lending_Controller_Loan_Token } from 'utils/generated/graphqlTypes'
 
 const TZBTC_CONTRACT_ADDRESS = 'KT1PWx2mnDueood7fEmfbBDKx1D9BAnnXitn'
 const getXtzAndTzbtcUserBalance = async (accountPkh: string) => {
@@ -70,7 +60,6 @@ const getXtzAndTzbtcUserBalance = async (accountPkh: string) => {
 
 export const fetchUserData = async (
   accountPkh: string,
-  activeSatellites: Array<SatelliteRecord>,
   dipDupTokens: State['tokens']['dipDupTokens'],
   feeds: State['dataFeeds']['feedsLedger'],
   currentBlockLevel: number | undefined = 0,
@@ -96,6 +85,8 @@ export const fetchUserData = async (
       m_token_accounts,
       delegations,
       stakes_history_data,
+      activeSatelliteRecord: [activeSatelliteRecord],
+      vesteeRecord: [vesteeRecord],
     } = userInfoFromIndexer?.mavryk_user[0] ?? {}
 
     const userInfo: Partial<UserState> = {
@@ -105,7 +96,8 @@ export const fetchUserData = async (
       mytzBTCTokenBalance: tzbtcBalance,
       mTokens: m_token_accounts,
       satelliteMvkIsDelegatedTo: delegations?.[0]?.satellite?.user?.address ?? '',
-      isSatellite: checkWhetherUserIsActiveSatelltie(activeSatellites, accountPkh),
+      isSatellite: Boolean(activeSatelliteRecord),
+      isVestee: Boolean(vesteeRecord),
     }
 
     // getting user rewards
@@ -193,9 +185,6 @@ export const UPDATE_USER_DATA = 'UPDATE_USER_DATA'
 export const updateUserData = () => async (dispatch: AppDispatch, getState: GetState) => {
   const {
     preferences: { headData: { level = 0 } = {} },
-    delegation: {
-      delegationStorage: { activeSatellites },
-    },
     wallet: { accountPkh },
     tokens: { dipDupTokens },
     dataFeeds: { feedsLedger },
@@ -203,7 +192,7 @@ export const updateUserData = () => async (dispatch: AppDispatch, getState: GetS
 
   try {
     if (accountPkh) {
-      const userData = await fetchUserData(accountPkh, activeSatellites, dipDupTokens, feedsLedger, level)
+      const userData = await fetchUserData(accountPkh, dipDupTokens, feedsLedger, level)
 
       dispatch({
         type: UPDATE_USER_DATA,

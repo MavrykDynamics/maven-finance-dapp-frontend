@@ -115,7 +115,7 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
             onClick={() =>
               openAddLendingAssetPopup({
                 mBalance: 0,
-                lendingAPY: 0,
+                lendingAPY: lendAPY,
                 ...assetData,
               })
             }

@@ -40,7 +40,6 @@ type NavigationLinkProps = {
   subPages?: SubNavigationRoute[]
   selectedMainLink: number
   isMobMenuExpanded: boolean
-  accountPkh?: string
   disabled?: boolean
   navLinkClickHandler: () => void
 }
@@ -53,14 +52,14 @@ export const NavigationLink = ({
   subPages = [],
   selectedMainLink,
   isMobMenuExpanded,
-  accountPkh,
   disabled,
   navLinkClickHandler,
 }: NavigationLinkProps) => {
   const { pathname } = useLocation()
   const {
-    delegationStorage: { satelliteLedger },
-  } = useSelector((state: State) => state.delegation)
+    accountPkh,
+    user: { isSatellite },
+  } = useSelector((state: State) => state.wallet)
   const [showSubPages, setShowSubPages] = useState<boolean>(false)
 
   const isMainLinkDisabled = useMemo(() => {
@@ -116,7 +115,7 @@ export const NavigationLink = ({
             <NavigationSubLinks className="content">
               {subPages.map((subNavLink: SubNavigationRoute) => {
                 const selectedSubLink = checkIfLinkSelected(pathname, subNavLink.routeSubPath)
-                const showSublink = isSubLinkShown(subNavLink, satelliteLedger, accountPkh)
+                const showSublink = isSubLinkShown(subNavLink, isSatellite, accountPkh)
 
                 return showSublink ? (
                   <Sublink key={subNavLink.id} subNavLink={subNavLink} isSelected={selectedSubLink} />

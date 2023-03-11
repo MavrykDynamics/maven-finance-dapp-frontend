@@ -4,16 +4,17 @@ import { State } from 'reducers'
 
 // view
 import { Input } from '../../../app/App.components/Input/NewInput'
-import NewButton from 'app/App.components/Button/NewButton.controller'
+import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 import CoinsIcons from '../../../app/App.components/Icon/CoinsIcons.view'
 
 // actions
 import { FarmDepositPopupDataType } from 'pages/Farms/Farms.const'
-import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { withdraw } from '../Farms.actions'
 import {
   InputStatusType,
+  INPUT_LARGE,
   INPUT_STATUS_ERROR,
   INPUT_STATUS_SUCCESS,
 } from '../../../app/App.components/Input/Input.constants'
@@ -97,7 +98,7 @@ export const FarmWithdrawModal = ({
           </div>
 
           <Input
-            className={`large-input pinned-dropdown withdrawCollateralInput`}
+            className={`pinned-dropdown mb-45`}
             inputProps={{
               value: inputData.amount,
               type: 'number',
@@ -110,6 +111,7 @@ export const FarmWithdrawModal = ({
               balanceAsset: tokensNames,
               useMaxHandler: () => setInputData({ ...inputData, amount: String(lpTokenUserBalance) }),
               inputStatus: inputData.validation,
+              inputSize: INPUT_LARGE,
             }}
           >
             <InputPinnedTokenInfo>{tokensNames}</InputPinnedTokenInfo>
@@ -117,7 +119,7 @@ export const FarmWithdrawModal = ({
 
           <NewButton
             disabled={inputData.validation !== INPUT_STATUS_SUCCESS}
-            kind={ACTION_PRIMARY}
+            kind={BUTTON_PRIMARY}
             onClick={handleClick}
           >
             <Icon id="out" />

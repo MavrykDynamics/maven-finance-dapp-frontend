@@ -1,5 +1,5 @@
-import styled, { keyframes } from 'styled-components/macro'
-
+import styled from 'styled-components/macro'
+import { zoomIn, slideDown } from 'styles/animations'
 import { MavrykTheme } from '../../../styles/interfaces'
 
 export const TextAreaStyled = styled.div`
@@ -38,6 +38,9 @@ export const TextAreaStyled = styled.div`
 
       .textarea {
         color: ${({ theme }) => theme.downColor};
+        &::placeholder {
+          color: ${({ theme }) => theme.downColor};
+        }
       }
     }
 
@@ -49,6 +52,9 @@ export const TextAreaStyled = styled.div`
 
       .textarea {
         color: ${({ theme }) => theme.upColor};
+        &::placeholder {
+          color: ${({ theme }) => theme.upColor};
+        }
       }
     }
   }
@@ -66,17 +72,6 @@ export const TextAreaCounter = styled.div`
 
   &.success {
     color: ${({ theme }) => theme.upColor};
-  }
-`
-
-const zoomIn = keyframes`
-  from {
-    transform:scale(.2);
-    opacity:0
-  }
-  to {
-    transform:scale(1);
-    opacity:1
   }
 `
 
@@ -125,17 +120,6 @@ export const TextAreaIcon = styled.svg<{ theme: MavrykTheme }>`
   stroke: ${({ theme }) => theme.backgroundTextColor};
 `
 
-const slideDown = keyframes`
-  from {
-    transform: translate3d(0, -10px, 0);
-    opacity:0
-  }
-  to {
-    transform: translate3d(0, 0px, 0);
-    opacity:1
-  }
-`
-
 export const TextAreaErrorMessage = styled.div<{ theme: MavrykTheme }>`
   color: ${({ theme }) => theme.downColor};
   line-height: 24px;
@@ -164,6 +148,8 @@ export const TextareaStyled = styled.textarea`
   /* hyphens: auto; */
   font-family: 'Metropolis', Helvetica, Arial, sans-serif;
   font-weight: 500;
+  font-size: 14px;
+  line-height: 14px;
   margin: 0;
   display: block;
   overflow: visible;

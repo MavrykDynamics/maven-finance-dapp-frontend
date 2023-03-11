@@ -4,40 +4,39 @@ import { State } from 'reducers'
 
 // view
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
-import SatelliteList from 'pages/Satellites/SatelliteList/SatellitesList.controller'
 import { Button } from 'app/App.components/Button/Button.controller'
 import { Input } from 'app/App.components/Input/Input.controller'
 import { DropDown } from 'app/App.components/DropDown/DropDown.controller'
+import { DataFeedCard } from 'pages/DataFeedsDetails/listItem/DataFeedCard.view'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
+import Pagination from 'app/App.components/Pagination/Pagination.view'
 
-// const
+// const, actions
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
-import { FEEDS_ALL_LIST_NAME } from 'pages/FinacialRequests/Pagination/pagination.consts'
+import { INFO } from 'app/App.components/Toaster/Toaster.constants'
+import {
+  calculateSlicePositions,
+  FEEDS_ALL_LIST_NAME,
+  getPageNumber,
+  PAGINATION_SIDE_RIGHT,
+} from 'app/App.components/Pagination/pagination.consts'
 
-// types
+// types, actions
+import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
+import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
+import { getFeedsStorage } from './DataFeeds.actions'
 
 // styles
 import { Page } from 'styles'
-import { DataFeedsStyled } from './DataFeeds.styles'
+import { DataFeedsSearchFilter, DataFeedsStyled } from './DataFeeds.styles'
 import { EmptyContainer } from 'app/App.style'
 import { DropdownContainer } from 'app/App.components/DropDown/DropDown.style'
-import { SatelliteSearchFilter } from 'pages/Satellites/SatelliteList/SatelliteList.style'
-import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
-import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
-import { INFO } from 'app/App.components/Toaster/Toaster.constants'
-import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
-import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
-import { getFeedsStorage } from './DataFeeds.actions'
-
-const emptyContainer = (
-  <EmptyContainer>
-    <img src="/images/not-found.svg" alt=" No data feeds to show" />
-    <figcaption> No data feeds to show</figcaption>
-  </EmptyContainer>
-)
+import { useLocation } from 'react-router'
 
 export const DataFeeds = () => {
   const dispatch = useDispatch()
+  const { search } = useLocation()
   const { feedsLedger, feedCategories, isLoaded: isDataFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
 
   const { isLoading } = useDataLoader(async () => {
@@ -48,37 +47,45 @@ export const DataFeeds = () => {
     } catch (e) {}
   }, [])
 
-  const ddItems = useMemo(() => ['All', ...feedCategories], [feedCategories])
+  const ddItems = useMemo(() => ['all', ...feedCategories], [feedCategories])
 
   const [ddIsOpen, setDdIsOpen] = useState(false)
   const [searchInputValue, setSearchInput] = useState('')
-  const [chosenDdItem, setChosenDdItem] = useState<string>('All')
+  const [chosenDdItem, setChosenDdItem] = useState('all')
   const [filteredFeeds, setFilteredFeeds] = useState(feedsLedger)
+
+  const paginatedFeeds = useMemo(() => {
+    const currentPage = getPageNumber(search, FEEDS_ALL_LIST_NAME)
+    const [from, to] = calculateSlicePositions(currentPage, FEEDS_ALL_LIST_NAME)
+    return filteredFeeds.slice(from, to)
+  }, [filteredFeeds, search])
+
+  useEffect(() => {
+    setFilteredFeeds(
+      feedsLedger.filter(({ category, name, address }) => {
+        if (chosenDdItem === 'all') {
+          return (
+            name.toLowerCase().includes(searchInputValue.toLowerCase()) ||
+            address.toLowerCase().includes(searchInputValue.toLowerCase())
+          )
+        }
+
+        return (
+          category?.toLowerCase() === chosenDdItem.toLowerCase() &&
+          (name.toLowerCase().includes(searchInputValue.toLowerCase()) ||
+            address.toLowerCase().includes(searchInputValue.toLowerCase()))
+        )
+      }),
+    )
+  }, [feedsLedger, chosenDdItem, searchInputValue])
 
   const handleSelect = (selectedOption: string) => {
     setDdIsOpen(!ddIsOpen)
     setChosenDdItem(selectedOption)
-
-    if (selectedOption !== '' && selectedOption !== chosenDdItem) {
-      setFilteredFeeds(
-        selectedOption === 'All'
-          ? feedsLedger
-          : feedsLedger.filter(({ category }) => category?.toLowerCase() === selectedOption.toLowerCase()),
-      )
-    }
   }
 
   const handleSearch = ({ target: { value: searchValue } }: React.ChangeEvent<HTMLInputElement>) => {
     setSearchInput(searchValue)
-    setFilteredFeeds(
-      searchValue === ''
-        ? feedsLedger
-        : feedsLedger.filter(
-            (item: Feed) =>
-              item.name.toLowerCase().includes(searchValue.toLowerCase()) ||
-              item.address.toLowerCase().includes(searchValue.toLowerCase()),
-          ),
-    )
   }
 
   return (
@@ -91,9 +98,10 @@ export const DataFeeds = () => {
         </DataLoaderWrapper>
       ) : (
         <>
-          <SatelliteSearchFilter dataFeeds>
+          <DataFeedsSearchFilter>
             <DropdownContainer className="dropDown">
               <h4>Category:</h4>
+              {/* TODO: replace to new dd */}
               <DropDown
                 placeholder="Choose category"
                 isOpen={ddIsOpen}
@@ -119,13 +127,28 @@ export const DataFeeds = () => {
                 dispatch(showToaster(INFO, 'Coming soon', 'Request feed Feature coming soon'))
               }}
             />
-          </SatelliteSearchFilter>
+          </DataFeedsSearchFilter>
 
           <DataFeedsStyled>
             {filteredFeeds.length ? (
-              <SatelliteList items={filteredFeeds} listType={'feeds'} name={FEEDS_ALL_LIST_NAME} />
+              <>
+                <div className="list-wrapper">
+                  {paginatedFeeds.map((item) => (
+                    <DataFeedCard feed={item} key={item.address} />
+                  ))}
+                </div>
+
+                <Pagination
+                  itemsCount={filteredFeeds.length}
+                  side={PAGINATION_SIDE_RIGHT}
+                  listName={FEEDS_ALL_LIST_NAME}
+                />
+              </>
             ) : (
-              emptyContainer
+              <EmptyContainer>
+                <img src="/images/not-found.svg" alt=" No data feeds to show" />
+                <figcaption> No data feeds to show</figcaption>
+              </EmptyContainer>
             )}
           </DataFeedsStyled>
         </>

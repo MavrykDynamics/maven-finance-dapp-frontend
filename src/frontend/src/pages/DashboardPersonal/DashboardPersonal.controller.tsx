@@ -8,17 +8,22 @@ import { State } from 'reducers'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { getGovernanceStorage } from 'pages/Governance/Governance.actions'
 import { getFeedsStorage } from 'pages/DataFeeds/DataFeeds.actions'
-import { getPageNumber } from 'pages/FinacialRequests/FinancialRequests.helpers'
-import { getDelegationStorage } from 'pages/Satellites/Satellites.actions'
 import { claimAllRewardsAction } from './DashboardPersonal.actions'
 import { updateUserData } from 'reducers/actions/user.actions'
 import { getEmergencyGovernanceStorage } from 'pages/EmergencyGovernance/EmergencyGovernance.actions'
-import { isValidId, PORTFOLIO_TAB_ID, DELEGATION_TAB_ID, SATELLITE_TAB_ID } from './DashboardPersonal.utils'
+import {
+  isValidId,
+  PORTFOLIO_TAB_ID,
+  DELEGATION_TAB_ID,
+  SATELLITE_TAB_ID,
+  VESTING_TAB_ID,
+} from './DashboardPersonal.utils'
 import {
   USER_ACTIONS_HISTORY,
   calculateSlicePositions,
   PAGINATION_SIDE_CENTER,
-} from 'pages/FinacialRequests/Pagination/pagination.consts'
+  getPageNumber,
+} from 'app/App.components/Pagination/pagination.consts'
 
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
 import { Page } from 'styles/components'
@@ -29,7 +34,7 @@ import PortfolioTab from './DashboardPersonalComponents/PortfolioTab'
 import { DashboardPersonalStyled } from './DashboardPersonal.style'
 import SatelliteTab from './DashboardPersonalComponents/SatelliteTab'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import Pagination from 'pages/FinacialRequests/Pagination/Pagination.view'
+import Pagination from 'app/App.components/Pagination/Pagination.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 
 import {
@@ -45,6 +50,10 @@ import {
   DashboardPersonalTabStyled,
   HistoryBlock,
 } from './DashboardPersonalComponents/DashboardPersonalComponents.style'
+import { getVestingStorage } from 'pages/Treasury/Treasury.actions'
+import VestingTab from './DashboardPersonalComponents/VestingTab'
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 
 const DashboardPersonal = () => {
   const dispatch = useDispatch()
@@ -54,8 +63,12 @@ const DashboardPersonal = () => {
     tokensPrices: { tezos, mvk: { usd: mvkExchangeRate = 0 } = {} },
   } = useSelector((state: State) => state.tokens)
   const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
-  const { accountPkh } = useSelector((state: State) => state.wallet)
+  const {
+    accountPkh,
+    user: { isVestee },
+  } = useSelector((state: State) => state.wallet)
   const { isLoaded: isFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
+  const { isLoaded: isVestingLoaded } = useSelector((state: State) => state.vesting)
   const {
     user: {
       myMvkTokenBalance,
@@ -82,8 +95,8 @@ const DashboardPersonal = () => {
       await Promise.all(
         [
           dispatch(getGovernanceStorage()),
-          dispatch(getDelegationStorage()),
           !isEgovLoaded && dispatch(getEmergencyGovernanceStorage()),
+          isVestee && !isVestingLoaded && dispatch(getVestingStorage()),
           !isFeedsLoaded && dispatch(getFeedsStorage()),
         ].filter(Boolean),
       )
@@ -142,93 +155,115 @@ const DashboardPersonal = () => {
           <DashboardPersonalMyRewards {...rewards} claimRewardsHandler={claimRewards} />
           <DashboardPersonalEarningsHistory {...earnings} />
         </div>
-        <div className="tabs-switchers">
-          <Link
-            to={`/dashboard-personal/${PORTFOLIO_TAB_ID}`}
-            className={activeTab === PORTFOLIO_TAB_ID ? 'selected' : ''}
-          >
-            Portfolio
-          </Link>
-          <Link
-            to={`/dashboard-personal/${isSatellite ? SATELLITE_TAB_ID : DELEGATION_TAB_ID}`}
-            className={activeTab === (isSatellite ? SATELLITE_TAB_ID : DELEGATION_TAB_ID) ? 'selected' : ''}
-          >
-            {isSatellite ? 'Satellite' : 'Delegation'}
-          </Link>
-        </div>
-        <div className={`bottom-grid ${activeTab}`}>
-          <DashboardPersonalTabStyled>
-            <Switch>
-              <Route exact path={`/dashboard-personal/${PORTFOLIO_TAB_ID}`}>
-                <PortfolioTab {...walletData} isUserLoansLoading={isUserLoansLoading} />
-              </Route>
-              <Route exact path={`/dashboard-personal/${DELEGATION_TAB_ID}`}>
-                <DelegationTab />
-              </Route>
-              <Route exact path={`/dashboard-personal/${SATELLITE_TAB_ID}`}>
-                <SatelliteTab />
-              </Route>
 
-              <Redirect to={`/dashboard-personal/${PORTFOLIO_TAB_ID}`} />
-            </Switch>
+        {isLoading ? (
+          <DataLoaderWrapper>
+            <ClockLoader width={150} height={150} />
+            <div className="text">Loading your statistic</div>
+          </DataLoaderWrapper>
+        ) : (
+          <>
+            <div className="tabs-switchers">
+              <Link
+                to={`/dashboard-personal/${PORTFOLIO_TAB_ID}`}
+                className={activeTab === PORTFOLIO_TAB_ID ? 'selected' : ''}
+              >
+                Portfolio
+              </Link>
+              <Link
+                to={`/dashboard-personal/${isSatellite ? SATELLITE_TAB_ID : DELEGATION_TAB_ID}`}
+                className={activeTab === (isSatellite ? SATELLITE_TAB_ID : DELEGATION_TAB_ID) ? 'selected' : ''}
+              >
+                {isSatellite ? 'Satellite' : 'Delegation'}
+              </Link>
+              {isVestee ? (
+                <Link
+                  to={`/dashboard-personal/${VESTING_TAB_ID}`}
+                  className={activeTab === VESTING_TAB_ID ? 'selected' : ''}
+                >
+                  Vesting
+                </Link>
+              ) : null}
+            </div>
 
-            {showHistoryData ? (
-              <HistoryBlock>
-                <GovRightContainerTitleArea>
-                  <h2>History</h2>
-                </GovRightContainerTitleArea>
-                {actionsHistory.length ? (
-                  <Table className="treasury-table">
-                    <TableHeader className="treasury">
-                      <TableRow>
-                        <TableHeaderCell>Action</TableHeaderCell>
-                        <TableHeaderCell>Amount, MVK</TableHeaderCell>
-                        <TableHeaderCell>
-                          Total, MVK{' '}
-                          <CustomTooltip
-                            iconId="info"
-                            className="history-tooltip"
-                            text='For unstake, this is the amount received in MVK after the fee is deducted. For the rest, same as the "Amount, MVK" column'
-                          />
-                        </TableHeaderCell>
-                        <TableHeaderCell contentPosition="right">Fee</TableHeaderCell>
-                      </TableRow>
-                    </TableHeader>
+            <div className={`bottom-grid ${activeTab}`}>
+              <DashboardPersonalTabStyled>
+                <Switch>
+                  <Route exact path={`/dashboard-personal/${PORTFOLIO_TAB_ID}`}>
+                    <PortfolioTab {...walletData} isUserLoansLoading={isUserLoansLoading} />
+                  </Route>
+                  <Route exact path={`/dashboard-personal/${DELEGATION_TAB_ID}`}>
+                    <DelegationTab />
+                  </Route>
+                  <Route exact path={`/dashboard-personal/${SATELLITE_TAB_ID}`}>
+                    <SatelliteTab />
+                  </Route>
+                  <Route exact path={`/dashboard-personal/${VESTING_TAB_ID}`}>
+                    <VestingTab />
+                  </Route>
 
-                    <TableBody className="treasury">
-                      {paginatedTableRows.map(({ action, amount, fee, totalAmount, id }) => {
-                        return (
-                          <TableRow rowHeight={40} borderColor="dataColor" className="add-hover" key={id}>
-                            <TableCell width="25%">{action}</TableCell>
-                            <TableCell width="30%">
-                              <CommaNumber value={amount} />
-                            </TableCell>
-                            <TableCell width="30%">
-                              <CommaNumber value={totalAmount} />
-                            </TableCell>
-                            <TableCell width="20%" contentPosition="right">
-                              <CommaNumber value={fee} endingText="%" />
-                            </TableCell>
+                  <Redirect to={`/dashboard-personal/${PORTFOLIO_TAB_ID}`} />
+                </Switch>
+
+                {showHistoryData ? (
+                  <HistoryBlock>
+                    <GovRightContainerTitleArea>
+                      <h2>History</h2>
+                    </GovRightContainerTitleArea>
+                    {actionsHistory.length ? (
+                      <Table className="treasury-table">
+                        <TableHeader className="treasury">
+                          <TableRow>
+                            <TableHeaderCell>Action</TableHeaderCell>
+                            <TableHeaderCell>Amount, MVK</TableHeaderCell>
+                            <TableHeaderCell>
+                              Total, MVK{' '}
+                              <CustomTooltip
+                                iconId="info"
+                                className="history-tooltip"
+                                text='For unstake, this is the amount received in MVK after the fee is deducted. For the rest, same as the "Amount, MVK" column'
+                              />
+                            </TableHeaderCell>
+                            <TableHeaderCell contentPosition="right">Fee</TableHeaderCell>
                           </TableRow>
-                        )
-                      })}
-                    </TableBody>
-                  </Table>
-                ) : (
-                  <div className="no-data">
-                    <span>You do not have any previous actions history</span>
-                  </div>
-                )}
+                        </TableHeader>
 
-                <Pagination
-                  itemsCount={actionsHistory?.length ?? 0}
-                  listName={USER_ACTIONS_HISTORY}
-                  side={PAGINATION_SIDE_CENTER}
-                />
-              </HistoryBlock>
-            ) : null}
-          </DashboardPersonalTabStyled>
-        </div>
+                        <TableBody className="treasury">
+                          {paginatedTableRows.map(({ action, amount, fee, totalAmount, id }) => {
+                            return (
+                              <TableRow rowHeight={40} borderColor="dataColor" className="add-hover" key={id}>
+                                <TableCell width="25%">{action}</TableCell>
+                                <TableCell width="30%">
+                                  <CommaNumber value={amount} />
+                                </TableCell>
+                                <TableCell width="30%">
+                                  <CommaNumber value={totalAmount} />
+                                </TableCell>
+                                <TableCell width="20%" contentPosition="right">
+                                  <CommaNumber value={fee} endingText="%" />
+                                </TableCell>
+                              </TableRow>
+                            )
+                          })}
+                        </TableBody>
+                      </Table>
+                    ) : (
+                      <div className="no-data">
+                        <span>You do not have any previous actions history</span>
+                      </div>
+                    )}
+
+                    <Pagination
+                      itemsCount={actionsHistory?.length ?? 0}
+                      listName={USER_ACTIONS_HISTORY}
+                      side={PAGINATION_SIDE_CENTER}
+                    />
+                  </HistoryBlock>
+                ) : null}
+              </DashboardPersonalTabStyled>
+            </div>
+          </>
+        )}
       </DashboardPersonalStyled>
     </Page>
   )

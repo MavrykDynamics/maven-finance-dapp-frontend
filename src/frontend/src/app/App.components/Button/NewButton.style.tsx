@@ -1,88 +1,88 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { BUTTON_RADIUS } from 'styles/constants'
 import { MavrykTheme } from 'styles/interfaces'
 import {
-  ACTION_PRIMARY,
-  ACTION_SECONDARY,
-  ACTION_SIMPLE,
-  NAV_SIMPLE,
-  TRANSPARENT_WITH_BORDER,
+  BUTTON_NAVIGATION,
+  BUTTON_PRIMARY,
+  BUTTON_PULSE,
+  BUTTON_ROUND,
+  BUTTON_SECONDARY,
+  BUTTON_THIRD,
+  BUTTON_SIMPLE,
+  BUTTON_SIMPLE_SMALL,
+  BUTTON_WIDE,
+  VOTING_AGAINST,
+  VOTING_FOR,
+  VOTING_PASS,
 } from './Button.constants'
 
-export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
-  padding: 0 31px;
-  height: 50px;
-  border: none;
-  font-weight: 600;
-  font-size: 16px;
-  line-height: 16px;
-  cursor: pointer;
-  border-radius: ${BUTTON_RADIUS};
-  user-select: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  column-gap: 10px;
-
-  svg {
-    width: 24px;
-    height: 24px;
-  }
-
-  &:hover {
-    opacity: 0.8;
-  }
-
-  &.disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-
-  &.${ACTION_PRIMARY} {
+const BUTTONS_KIND_STYLES = css`
+  &.${BUTTON_PRIMARY} {
     color: ${({ theme }) => theme.containerColor};
-    background-color: ${({ theme }) => theme.actionPrimaryBtnColor};
+    background-color: ${({ theme }) => theme.valueColor};
 
     svg {
       fill: ${({ theme }) => theme.containerColor};
     }
-
-    &.pulse {
-      animation: pulse 2s infinite;
-      box-shadow: 0 0 0 0 rgba(134, 212, 201, 1);
-    }
   }
 
-  &.${ACTION_SECONDARY} {
-    color: ${({ theme }) => theme.actionPrimaryBtnColor};
+  &.${BUTTON_SECONDARY} {
+    color: ${({ theme }) => theme.valueColor};
     background-color: transparent;
-    border: 2px solid ${({ theme }) => theme.actionPrimaryBtnColor};
+    border: 2px solid ${({ theme }) => theme.valueColor};
 
     svg {
-      fill: ${({ theme }) => theme.actionPrimaryBtnColor};
+      fill: ${({ theme }) => theme.valueColor};
     }
   }
 
-  &.${ACTION_SIMPLE} {
+  &.${BUTTON_THIRD} {
     width: fit-content;
     height: fit-content;
-    padding: 3px 7px;
-    transition: 0.3s all;
-    color: ${({ theme }) => theme.valueColor};
-    max-width: unset;
+    padding: 0;
+
+    border: 1px solid ${({ theme }) => theme.cardBorderColor};
+
+    svg {
+      fill: ${({ theme }) => theme.valueColor};
+    }
   }
 
-  &.${NAV_SIMPLE} {
+  &.${BUTTON_SIMPLE} {
+    width: fit-content;
+    height: fit-content;
+    padding: 0;
+
+    color: ${({ theme }) => theme.valueColor};
+    svg {
+      fill: ${({ theme }) => theme.valueColor};
+    }
+  }
+
+  &.${BUTTON_SIMPLE_SMALL} {
+    width: fit-content;
+    height: fit-content;
+    padding: 0;
+
+    color: ${({ theme }) => theme.valueColor};
+    svg {
+      width: 14px;
+      height: 14px;
+      fill: ${({ theme }) => theme.valueColor};
+    }
+  }
+
+  &.${BUTTON_NAVIGATION} {
     width: fit-content;
     height: fit-content;
     padding: 3px 7px;
     position: relative;
     transition: 0.3s all;
     color: ${({ theme }) => theme.navTitleColor};
-    max-width: unset;
 
-    &.active,
+    &.selected,
     &:hover {
-      &:not(.no-before)::before {
+      &::before {
         position: absolute;
         bottom: -3px;
         left: 50%;
@@ -97,39 +97,111 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
     }
   }
 
-  &.${TRANSPARENT_WITH_BORDER} {
-    background: transparent;
-    border: 1px solid ${({ theme }) => theme.valueColor};
-    color: ${({ theme }) => theme.valueColor};
+  &.${VOTING_FOR} {
+    color: ${({ theme }) => theme.backgroundColor};
+    background-color: ${({ theme }) => theme.upColor};
+  }
+
+  &.${VOTING_PASS} {
+    color: ${({ theme }) => theme.backgroundColor};
+    background-color: ${({ theme }) => theme.headerSkyColor};
+  }
+
+  &.${VOTING_AGAINST} {
+    color: ${({ theme }) => theme.backgroundColor};
+    background-color: ${({ theme }) => theme.downColor};
+  }
+`
+
+const BUTTONS_FORMS_STYLES = css`
+  &.${BUTTON_WIDE} {
+    padding: 0;
+    width: 100%;
+  }
+
+  &.${BUTTON_ROUND} {
+    padding: 0;
+    border-radius: 50%;
+
+    /* Make button square, this type of button will contain only icon */
+    width: 50px;
+
+    &.isThin {
+      height: 36px;
+      width: 36px;
+    }
+  }
+`
+
+const BUTTONS_ANIMATIONS_STYLES = css`
+  &.${BUTTON_PULSE} {
+    animation: pulse 2s infinite;
+    box-shadow: 0 0 0 0 rgba(134, 212, 201, 1);
+  }
+`
+
+// TODO: refactor colors with theme implementation
+export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 16px;
+
+  cursor: pointer;
+  user-select: none;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  height: 50px;
+
+  border-radius: ${BUTTON_RADIUS};
+  padding: 0 20px;
+
+  .child {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: fit-content;
+    column-gap: 10px;
+  }
+
+  /* Icon styling */
+  svg {
+    transition: 0.3s all;
+    width: 24px;
+    height: 24px;
+  }
+
+  &.isThin {
+    height: 36px;
 
     svg {
-      fill: ${({ theme }) => theme.valueColor};
+      width: 20px;
+      height: 20px;
     }
   }
 
-  &.go-back {
-    a {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      column-gap: 10px;
-      color: ${({ theme }) => theme.valueColor};
-    }
+  &:hover {
+    opacity: 0.8;
+  }
 
-    svg {
-      transform: rotate(180deg);
-      width: 18px;
-      height: 18px;
-      stroke: ${({ theme }) => theme.valueColor};
-      fill: ${({ theme }) => theme.valueColor};
+  &.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &.isLoading {
+    .child {
+      display: none;
     }
   }
 
-  &.margin-top-30 {
-    margin-top: 30px;
-  }
+  /* styling for buttons forms */
+  ${BUTTONS_FORMS_STYLES}
+
+  /* styling for main button kinds */
+  ${BUTTONS_KIND_STYLES}
+
+  /* additional kinds */
+  ${BUTTONS_ANIMATIONS_STYLES}
 `

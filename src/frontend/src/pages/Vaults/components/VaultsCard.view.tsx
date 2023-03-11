@@ -24,7 +24,6 @@ import {
 // types
 import { VaultType } from 'utils/TypesAndInterfaces/Vaults'
 import { StatusFlagStyle } from '../../../app/App.components/StatusFlag/StatusFlag.constants'
-import { BorrowingCardOptions } from 'pages/Loans/Components/BorrowindExpandCard'
 
 // helpers
 import { CYAN } from 'app/App.components/TzAddress/TzAddress.constants'
@@ -32,8 +31,6 @@ import { vaultsStatuses } from '../Vaults.consts'
 import { getTimestampByLevel } from 'pages/Governance/Governance.actions'
 import { loansPopupsContext } from 'pages/Loans/Components/Modals/LoansModals.provider'
 import { calculateCollateralShare } from '../calcFunctionsForVault'
-import {skyColor, textColor} from "../../../styles";
-import {CustomTooltip} from "../../../app/App.components/Tooltip/Tooltip.view";
 
 const findStatusInfo = (status: string) => {
   switch (status) {
@@ -87,10 +84,6 @@ const findFooterText = (status: string, statusColor: StatusFlagStyle, timestamp?
     default:
       return ''
   }
-}
-
-const borrowingCardOptions: BorrowingCardOptions = {
-  reverseColumns: true,
 }
 
 type Props = VaultType & {
@@ -301,25 +294,21 @@ export const VaultsCard = (props: Props) => {
       {isOwner ? (
         <BorrowingExpandCard
           {...props}
-          className="expand-vault"
+          className={`expand-vault ${expanded ? 'openVault' : ''}`}
           headerSufix={headerSufix}
           getExpandedStatus={setExpanded}
           isOwner
-          options={borrowingCardOptions}
           // TODO: add this values as on loans
           DAOFee={0}
-          avaliableMarketLiquidity={0}
         />
       ) : (
         <BorrowingExpandCard
           {...props}
-          className="expand-vault"
+          className={`expand-vault ${expanded ? 'openVault' : ''}`}
           headerSufix={headerSufix}
           getExpandedStatus={setExpanded}
-          options={borrowingCardOptions}
           // TODO: add this values as on loans
           DAOFee={0}
-          avaliableMarketLiquidity={0}
         >
           {generalExpand}
         </BorrowingExpandCard>

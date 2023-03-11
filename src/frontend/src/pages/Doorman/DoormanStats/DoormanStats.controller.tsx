@@ -5,6 +5,7 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import Icon from '../../../app/App.components/Icon/Icon.view'
 import { TzAddress } from '../../../app/App.components/TzAddress/TzAddress.view'
 import { DoormanList, DoormanStatsHeader, DoormanStatsStyled } from './DoormanStats.style'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 type DoormanStatsPropsType = {
   MVK_exchangeRate: number
@@ -23,8 +24,8 @@ export const DoormanStats = ({
   doormanAddress,
   mvkTokenAddress,
 }: DoormanStatsPropsType) => {
-  const mli = calcMLI(totalStakedMvk, totalStakedMvk)
-  const fee = calcExitFee(totalStakedMvk, totalStakedMvk)
+  const mli = calcMLI(totalSupply, totalStakedMvk)
+  const fee = calcExitFee(totalSupply, totalStakedMvk)
   const marketCapValue = MVK_exchangeRate ? MVK_exchangeRate * totalSupply : 0
 
   return (
@@ -34,13 +35,10 @@ export const DoormanStats = ({
         <div>
           <h4>
             MVK Price
-            <a
-              href="https://mavryk.finance/litepaper#converting-vmvk-back-to-mvk-exit-fees"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <Icon id="question" />
-            </a>
+            <CustomTooltip
+              text="Once launched, the price will be taken from the exchange MVK is listed on, not from our Oracle price feeds."
+              iconId={'info'}
+            />
           </h4>
           <var>
             <CommaNumber value={MVK_exchangeRate} beginningText={'$'} />
@@ -65,11 +63,14 @@ export const DoormanStats = ({
           <h4>
             MVK Loyalty Index
             <a
-              href="https://mavryk.finance/litepaper#converting-vmvk-back-to-mvk-exit-fees"
+              href="https://mavryk.finance/litepaper#converting-smvk-back-to-mvk-exit-fees"
               target="_blank"
               rel="noreferrer"
             >
-              <Icon id="question" />
+              <CustomTooltip
+                  text="The Mavryk Loyalty Index is a metric that balances MVK & sMVK. The more MVK is staked v.s. MVK, the higher the MLI, and the lower the exit fee is. The less MVK staked v.s. MVK, the lower the MLI, and the exit fee will rise. Click here to read more."
+                  iconId={'info'}
+              />
             </a>
           </h4>
           <var>
@@ -81,11 +82,14 @@ export const DoormanStats = ({
           <h4>
             Exit Fee
             <a
-              href="https://mavryk.finance/litepaper#converting-vmvk-back-to-mvk-exit-fees"
+              href="https://mavryk.finance/litepaper#converting-smvk-back-to-mvk-exit-fees"
               target="_blank"
               rel="noreferrer"
             >
-              <Icon id="question" />
+              <CustomTooltip
+                  text="The Exit Fee is dynamic, adjusts according to the MLI, and may modified by governance vote. Exit fees are paid directly to sMVK stakeholders for remaining active participants in securing the network. Click to read more."
+                  iconId={'info'}
+              />
             </a>
           </h4>
           <var>

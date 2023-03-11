@@ -86,25 +86,16 @@ export const mainNavigationLinks: MainNavigationRoute[] = [
         subPath: 'become-satellite',
         routeSubPath: '/become-satellite',
         requires: {
-          isNotSatellite: true,
+          authNotSatellite: true,
         },
       },
       {
         id: 55614,
-        subTitle: 'Edit my Profile',
-        subPath: 'become-satellite',
-        routeSubPath: '/become-satellite',
-        requires: {
-          isSatellite: true,
-        },
-      },
-      {
-        id: 55619,
         subTitle: 'Edit My Profile',
         subPath: 'become-satellite',
         routeSubPath: '/become-satellite',
         requires: {
-          isUnregisteredSatellite: true,
+          isSatellite: true,
         },
       },
       {

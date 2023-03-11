@@ -15,6 +15,7 @@ import { State } from 'reducers'
 // helpers
 import { validateTzAddress, isValidLength } from 'utils/validatorFunctions'
 import { defaultProposalDescriptionMaxLength } from 'app/App.components/Input/Input.constants'
+import { convertNumberForContractCall } from 'utils/calcFunctions'
 
 export const checkWhetherBytesIsValid = (proposalData: ProposalRecordType['proposalData']): boolean => {
   return proposalData.every(({ encoded_code, title }) => Boolean(encoded_code) && Boolean(title))
@@ -31,7 +32,11 @@ export const getBytesPairValidationStatus = (
   }
 }
 
-export const getValidityStageThreeTable = (valueName: StageThreeValidityItem, value: string | number, maxLength?: number): boolean => {
+export const getValidityStageThreeTable = (
+  valueName: StageThreeValidityItem,
+  value: string | number,
+  maxLength?: number,
+): boolean => {
   switch (valueName) {
     case 'token_amount':
       if (Number(value) < 0) return false
@@ -39,7 +44,6 @@ export const getValidityStageThreeTable = (valueName: StageThreeValidityItem, va
     case 'to__id':
       return validateTzAddress(value as string)
     case 'title':
-   
       return isValidLength(value as string, 1, maxLength || defaultProposalDescriptionMaxLength)
   }
   return true
@@ -120,7 +124,8 @@ export const getPaymentsDiff = (
     .map<PaymentsDataChangesType[number] | null>((item1) => {
       const item2 = originalData?.[originalIdx]
 
-      const decimals = dipDupTokens.find(({ contract }) => contract === item1.token_address)?.metadata?.decimals ?? 1
+      // default decimals is 6 cuz 6 is xtz decimals, and dipDupTokens don't contain xtz asset
+      const decimals = dipDupTokens.find(({ contract }) => contract === item1.token_address)?.metadata?.decimals ?? 6
       const symbol = paymentMethods.find(({ address }) => address === item1.token_address)?.shortSymbol ?? 'fa2'
 
       let token = {}
@@ -155,7 +160,9 @@ export const getPaymentsDiff = (
             transaction: {
               to_: item1.to__id ?? '',
               token,
-              amount: new BigNumber(item1.token_amount ?? 0).multipliedBy(Math.pow(10, Number(decimals))),
+              amount: new BigNumber(
+                convertNumberForContractCall({ number: item1.token_amount, grage: Number(decimals) }),
+              ),
             },
           },
         }
@@ -177,7 +184,9 @@ export const getPaymentsDiff = (
             transaction: {
               to_: item1.to__id ?? '',
               token,
-              amount: new BigNumber(item1.token_amount ?? 0).multipliedBy(Math.pow(10, Number(decimals))),
+              amount: new BigNumber(
+                convertNumberForContractCall({ number: item1.token_amount, grage: Number(decimals) }),
+              ),
             },
             index: String(originalIdx++),
           },

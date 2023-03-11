@@ -48,6 +48,12 @@ export const DropDownStyled = styled.div<{ theme: MavrykTheme }>`
       }
     }
 
+    &.not-capitalized {
+      div {
+        text-transform: initial;
+      }
+    }
+
     #selected-option {
       padding-left: 3px;
     }
@@ -65,6 +71,11 @@ export const DropDownStyled = styled.div<{ theme: MavrykTheme }>`
       li {
         padding-left: 10px;
       }
+    }
+
+    span {
+      border: none;
+      margin: 0;
     }
   }
 
@@ -102,7 +113,7 @@ export const DropDownMenu = styled.div<{ theme: MavrykTheme }>`
     height: 100%;
     justify-content: center;
     align-items: center;
-    margin-left: 16px;
+    margin-left: 3px;
 
     > svg {
       height: 15px;
@@ -149,11 +160,10 @@ export const DropDownListItem = styled.li<{ disabled?: boolean }>`
   align-items: center;
   width: 100%;
   color: ${({ theme }) => theme.textColor};
-  padding-left: 20px;
-  padding-right: 10px;
+  padding-left: 15px;
+  padding-right: 15px;
   cursor: pointer;
   justify-content: space-between;
-  text-transform: capitalize;
 
   > svg {
     stroke: ${({ theme }) => theme.textColor};
@@ -176,6 +186,13 @@ export const DropDownListItem = styled.li<{ disabled?: boolean }>`
           }
         `
       : ''}
+
+  .truncated-text {
+    display: block;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
 `
 
 export const DropdownContainer = styled.div<{ theme: MavrykTheme }>`

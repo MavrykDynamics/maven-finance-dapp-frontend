@@ -9,8 +9,8 @@ import Icon from '../../../app/App.components/Icon/Icon.view'
 
 // style
 import { SatellitePaginationStyled } from 'pages/SatelliteDetails/SatellitePagination/SatellitePagination.style'
-import NewButton from 'app/App.components/Button/NewButton.controller'
-import { TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
+import NewButton from 'app/App.components/Button/NewButton'
+import { BUTTON_SECONDARY } from 'app/App.components/Button/Button.constants'
 
 const DataFeedsPagination = () => {
   let { feedId = '' } = useParams<{ feedId: string }>()
@@ -22,10 +22,10 @@ const DataFeedsPagination = () => {
   const nextFeed = feedsLedger[currentFeedIdx + 1]
 
   return (
-    <SatellitePaginationStyled className="data-feeds-pagination">
+    <SatellitePaginationStyled style={{ marginTop: '20px' }}>
       <Link to={`/data-feeds`} className="go-back">
-        <NewButton kind={TRANSPARENT_WITH_BORDER} className="go-back">
-          <Icon id="arrowRight" /> Back to feeds
+        <NewButton kind={BUTTON_SECONDARY}>
+          <Icon id="full-arrow-left" /> Back to feeds
         </NewButton>
       </Link>
       {prevFeed ? (

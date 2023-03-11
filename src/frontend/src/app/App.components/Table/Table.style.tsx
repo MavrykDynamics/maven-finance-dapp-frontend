@@ -496,19 +496,22 @@ export const TableCell = styled.td<{
     }
 
     &.borrowing {
-      button:not(.add-collateral) {
-        width: 130px;
-        padding: 0;
+      > div {
+        display: grid;
+        grid-template-columns: 130px 130px;
+        justify-content: flex-end;
+      }
 
-        svg {
-          fill: ${({ theme }) => theme.valueColor};
-          width: 18px;
-          height: 18px;
+      &.single-btn {
+        > div {
+          grid-template-columns: 130px;
         }
       }
 
-      .add-collateral {
-        max-width: 180px;
+      &.total {
+        > div {
+          grid-template-columns: auto;
+        }
       }
     }
   }

@@ -4,15 +4,19 @@ import { Button } from '../../app/App.components/Button/Button.controller'
 
 type AdminViewProps = {
   handleChangeGovernancePeriod: (period: string) => void
-  handleTrackFarm: () => void
+  handleCreateFarm: () => void
   handleChangeAllAdminsFromGov: () => void
+    handleAddAllLoanTokensToLendBorrow: () => void
+    handleAddAllCollateralTokensToLendBorrow: () => void
 }
 
 export const AdminView = ({
-                            handleChangeGovernancePeriod,
-                            handleTrackFarm,
-                            handleChangeAllAdminsFromGov,
-                          }: AdminViewProps) => {
+                              handleChangeGovernancePeriod,
+                              handleCreateFarm,
+                              handleChangeAllAdminsFromGov,
+                              handleAddAllLoanTokensToLendBorrow,
+                              handleAddAllCollateralTokensToLendBorrow
+}: AdminViewProps) => {
   return (
     <AdminStyled>
       <Button
@@ -30,7 +34,9 @@ export const AdminView = ({
         kind='actionPrimary'
         onClick={() => handleChangeGovernancePeriod('TIME_LOCK')}
       />
-      <Button text={'Track Farm'} kind='actionPrimary' onClick={handleTrackFarm} />
+      <Button text={'Create Farm'} kind='actionPrimary' onClick={handleCreateFarm} />
+      <Button text={'Add All Loan tokens'} kind='actionPrimary' onClick={handleAddAllLoanTokensToLendBorrow} />
+      <Button text={'Add All Collateral tokens'} kind='actionPrimary' onClick={handleAddAllCollateralTokensToLendBorrow} />
       <Button text={'ChangeAdminsFromGov'} kind='actionPrimary' onClick={handleChangeAllAdminsFromGov} />
     </AdminStyled>
   )

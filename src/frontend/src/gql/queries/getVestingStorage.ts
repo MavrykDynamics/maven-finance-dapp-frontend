@@ -5,6 +5,7 @@ export const VESTING_STORAGE_QUERY = `
       admin
       governance_id
       total_vested_amount
+      
       vestees_aggregate {
         aggregate {
           sum {
@@ -12,6 +13,17 @@ export const VESTING_STORAGE_QUERY = `
             total_remainder
           }
         }
+      }
+
+      vestees {
+        vestee_id
+        total_remainder
+        total_allocated_amount
+        claim_amount_per_month
+        cliff_months
+        vesting_months
+        next_redemption_timestamp
+        last_claimed_timestamp
       }
     }
   }

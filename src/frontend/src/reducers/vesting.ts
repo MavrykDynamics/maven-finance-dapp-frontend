@@ -6,11 +6,25 @@ export type VestingState = VestingStorage & {
   isLoaded: boolean
 }
 
+export type VestingRecord = {
+  address: string
+  totalRemainded: number
+  totalAllocated: number
+  rewardPerMonth: number
+  cliffMonth: number
+  vestingMonth: number
+  nextRewardDate?: string | null
+  lastClaimDate?: string | null
+}
+
 const VestingDefaultState: VestingState = {
+  isLoaded: false,
   address: '',
   totalVestedAmount: 0,
   totalClaimedAmount: 0,
-  isLoaded: false,
+
+  vesteeIds: [],
+  vesteesMapper: {},
 }
 
 export function vesting(state = VestingDefaultState, action: Action) {

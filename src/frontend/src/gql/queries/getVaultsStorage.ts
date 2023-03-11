@@ -29,9 +29,11 @@ export const VAULTS_STORAGE_QUERY = `
         vault {
           creation_timestamp
           address
+          name
           depositors {
             depositor_id
           }
+          allowance
         }
 
         last_updated_block_level

@@ -90,13 +90,17 @@ export const StatBlock = styled.div`
   row-gap: 4px;
   position: relative;
 
+  p {
+    margin: 0;
+  }
+
   &.icon-first {
     padding-left: 50px;
 
     > .img-wrapper,
     svg {
-      height: 40px;
-      width: 40px;
+      height: 35px;
+      width: 35px;
       position: absolute;
       top: 0;
       left: 0;
@@ -124,10 +128,6 @@ export const StatBlock = styled.div`
     column-gap: 4px;
     height: 36px;
     align-items: center;
-
-    p {
-      margin: 0;
-    }
 
     svg,
     .image-wrapper {
@@ -161,6 +161,16 @@ export const StatBlock = styled.div`
         background: rgba(174, 48, 39, 0.4);
       }
     }
+  }
+
+  .converted {
+    font-weight: 500;
+    font-size: 12px;
+    display: flex;
+    color: ${({ theme }) => theme.dataColor};
+    column-gap: 4px;
+    align-items: center;
+    margin-top: -5px;
   }
 
   &.large {

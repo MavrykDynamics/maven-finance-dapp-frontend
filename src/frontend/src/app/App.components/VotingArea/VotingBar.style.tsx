@@ -1,16 +1,7 @@
-import styled, { keyframes } from 'styled-components/macro'
+import styled from 'styled-components/macro'
+import { dropShadow } from 'styles/animations'
 import { subTextColor, upColor, skyColor } from 'styles'
 import { MavrykTheme } from 'styles/interfaces'
-
-const dropShadow = keyframes`
-  0% {
-    box-shadow: 0 0 0 0 ${upColor};
-  }
-
-  100% {
-    box-shadow: 0 0 10px 0 ${upColor};
-  }
-`
 
 export const VotingContainer = styled.aside<{ theme: MavrykTheme; showButtons?: boolean }>`
   display: flex;
@@ -32,7 +23,9 @@ export const QuorumBar = styled.div<{ width: number; theme: MavrykTheme }>`
     width: fit-content;
     position: absolute;
     left: ${({ width }) => width}%;
-    transform: translateX(-30%);
+    transform: translateX(-50%);
+    padding-bottom: 15px;
+    white-space: nowrap;
     padding-bottom: 15px;
 
     &::before {
@@ -40,7 +33,7 @@ export const QuorumBar = styled.div<{ width: number; theme: MavrykTheme }>`
       position: absolute;
       bottom: 0;
       left: 50%;
-      transform: ${({ width }) => `translateX(${width < 5 ? -150 : -100}%)`};
+      transform: translateX(-50%);
       color: ${({ theme }) => theme.headerColor};
     }
   }
@@ -77,7 +70,7 @@ export const VotingFor = styled.div<{ width: number; theme: MavrykTheme }>`
   width: ${({ width }) => width}%;
   background-color: ${({ theme }) => theme.upColor};
   color: ${({ theme }) => theme.upColor};
-  animation: ${dropShadow} 10s ease-in-out 0s infinite normal forwards;
+  animation: ${({ theme }) => dropShadow(theme.upColor)} 10s ease-in-out 0s infinite normal forwards;
   cursor: pointer;
 
   &:hover {

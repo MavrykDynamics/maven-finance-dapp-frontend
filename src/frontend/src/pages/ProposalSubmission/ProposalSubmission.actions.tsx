@@ -1,6 +1,6 @@
 // helpres
 import { ERROR, INFO, SUCCESS } from 'app/App.components/Toaster/Toaster.constants'
-import { getDelegationStorage } from 'pages/Satellites/Satellites.actions'
+import { getSatellitesStorage } from 'pages/Satellites/Satellites.actions'
 import { getGovernanceStorage, getCurrentRoundProposals } from '../Governance/Governance.actions'
 import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
 
@@ -14,7 +14,7 @@ import { PaymentsDataChangesType, ProposalDataChangesType } from './ProposalSybm
 import { ContractAbstraction, Wallet } from '@taquito/taquito'
 
 export const submitProposal =
-  (form: SubmitProposalForm, amount: number) => async (dispatch: AppDispatch, getState: GetState) => {
+  (form: SubmitProposalForm, fee: number) => async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
 
     if (!state.wallet.accountPkh) {
@@ -30,7 +30,7 @@ export const submitProposal =
     try {
       const { title, description, ipfs, sourceCode } = form
       const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.governanceAddress.address)
-      const query = await contract?.methods.propose(title, description, ipfs, sourceCode).send({ amount })
+      const query = await contract?.methods.propose(title, description, ipfs, sourceCode).send({ amount: fee })
 
       await dispatch(toggleActionLoader(true))
       await dispatch(showToaster(INFO, 'Submitting proposal...', 'Please wait 30s'))
@@ -39,7 +39,7 @@ export const submitProposal =
 
       await dispatch(showToaster(SUCCESS, 'Proposal Submitted.', 'All good :)'))
       await dispatch(getGovernanceStorage())
-      await dispatch(getDelegationStorage())
+      await dispatch(getSatellitesStorage())
       await dispatch(getCurrentRoundProposals())
       await dispatch(toggleActionLoader(false))
     } catch (error) {
@@ -76,7 +76,7 @@ export const dropProposal = (proposalId: number) => async (dispatch: AppDispatch
     await dispatch(toggleActionLoader(false))
 
     await dispatch(getGovernanceStorage())
-    await dispatch(getDelegationStorage())
+    await dispatch(getSatellitesStorage())
     await dispatch(getCurrentRoundProposals())
   } catch (error) {
     console.error('dropProposal error:', error)
@@ -112,7 +112,7 @@ export const lockProposal = (proposalId: number) => async (dispatch: AppDispatch
     await dispatch(showToaster(SUCCESS, 'Proposal locked.', 'All good :)'))
 
     await dispatch(getGovernanceStorage())
-    await dispatch(getDelegationStorage())
+    await dispatch(getSatellitesStorage())
     await dispatch(getCurrentRoundProposals())
   } catch (error) {
     console.error('lockProposal error:', error)
@@ -175,7 +175,7 @@ export const updateProposalData =
       await dispatch(toggleActionLoader(false))
 
       await dispatch(getGovernanceStorage())
-      await dispatch(getDelegationStorage())
+      await dispatch(getSatellitesStorage())
       await dispatch(getCurrentRoundProposals())
     } catch (error) {
       if (error instanceof Error) {
