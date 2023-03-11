@@ -134,17 +134,17 @@ export const managePermissionsAction =
 
       callback()
       dispatch(toggleActionLoader(true))
-      dispatch(showToaster(INFO, 'Borrowing from the vault...', 'Please wait 30s'))
+      dispatch(showToaster(INFO, 'Updating depositors...', 'Please wait 30s'))
 
       // confirm query completion
       await transaction?.confirmation()
 
       // refetch data we need
       await dispatch(getLoansStorage())
-      dispatch(showToaster(SUCCESS, 'Asset borrowed.', 'All good :)'))
+      dispatch(showToaster(SUCCESS, 'Depositors updated.', 'All good :)'))
       dispatch(toggleActionLoader(false))
     } catch (error) {
-      console.error('borrowVaultAssetAction error:', error)
+      console.error('managePermissionsAction error:', error)
       if (error instanceof Error) {
         dispatch(showToaster(ERROR, 'Error', error.message))
         callback()

@@ -19,6 +19,7 @@ import {
   vaultsFilters,
   COLLATERAL_NAME,
   LOAN_NAME,
+  ALL_VAULTS_FILTER,
 } from '../Vaults.consts'
 import { stringFullCharsCompare } from 'utils/stringFullCharsCompare'
 
@@ -50,12 +51,15 @@ export const VaultsSearchFilter = ({ assets: assetSymbols, vaultsMapper, current
 
   const preparedCollateralAssets = assetSymbols.collateralAssets.map((asset) => `${COLLATERAL_NAME}, ${asset}`)
   const preparedLoanAssets = assetSymbols.loanAssets.map((asset) => `${LOAN_NAME}, ${asset}`)
-  const preparedAssets = preparedCollateralAssets.concat(preparedLoanAssets)
+  const preparedAssets = [ALL_VAULTS_FILTER].concat(preparedCollateralAssets).concat(preparedLoanAssets)
 
   const [searchInputValue, setSearchInput] = useState('')
 
   const [filterStatuses, setFilterStatuses] = useState<{ [key: string]: boolean }>({})
-  const [chosenDdItem, setChosenDdItem] = useState<Filters>({})
+  const [chosenDdItem, setChosenDdItem] = useState<Filters>({
+    [vaultsFilters.ASSETS]: ALL_VAULTS_FILTER,
+    [vaultsFilters.SORT]: sortVaultItems.MOST_RECENT,
+  })
 
   const [filteredData, setFilteredData] = useState<string[]>([])
   const [searchedData, setSearchedData] = useState<string[]>([])
@@ -179,7 +183,7 @@ export const VaultsSearchFilter = ({ assets: assetSymbols, vaultsMapper, current
       const isCollateralAsset = assetName === COLLATERAL_NAME
 
       // filter by collateral asset
-      if (filtersList[vaultsFilters.ASSETS] && isCollateralAsset) {
+      if (filtersList[vaultsFilters.ASSETS] && isCollateralAsset && assetIcon) {
         filteredVaultsIds = filteredVaultsIds.filter((vaultId) => {
           const vault = vaultsMapper[vaultId]
           if (vault.collateralData.length) {
@@ -195,7 +199,7 @@ export const VaultsSearchFilter = ({ assets: assetSymbols, vaultsMapper, current
       }
 
       // filter by loan asset
-      if (filtersList[vaultsFilters.ASSETS] && !isCollateralAsset) {
+      if (filtersList[vaultsFilters.ASSETS] && !isCollateralAsset && assetIcon) {
         filteredVaultsIds = filteredVaultsIds.filter((vaultId) => {
           const vault = vaultsMapper[vaultId]
           if (vault.borrowedAsset.symbol) {
@@ -270,7 +274,7 @@ export const VaultsSearchFilter = ({ assets: assetSymbols, vaultsMapper, current
             <h4>Filter by:</h4>
             <DropDown
               className="assetsFilter"
-              placeholder="Default of All Assets"
+              placeholder="All Assets"
               isOpen={filterStatuses[vaultsFilters.ASSETS]}
               setIsOpen={handleDropdownStatus(vaultsFilters.ASSETS)}
               itemSelected={chosenDdItem[vaultsFilters.ASSETS]}
