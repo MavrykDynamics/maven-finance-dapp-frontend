@@ -22,6 +22,7 @@ import { PopupContainer, PopupContainerWrapper } from 'app/App.components/Settin
 import NewButton from 'app/App.components/Button/NewButton'
 import { containerColor } from 'styles'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
+import {CustomTooltip} from "../../../app/App.components/Tooltip/Tooltip.view";
 
 type ExitFeeModalPropsType = {
   closePopup: () => void
@@ -141,7 +142,10 @@ export const ExitFeeModal = ({
                   target="_blank"
                   rel="noreferrer"
                 >
-                  <Icon id="question" />
+                  <CustomTooltip
+                      text="The Mavryk Loyalty Index is a metric that balances MVK & sMVK. The more MVK is staked v.s. MVK, the higher the MLI, and the lower the exit fee is. The less MVK staked v.s. MVK, the lower the MLI, and the exit fee will rise. Click here to read more."
+                      iconId={'info'}
+                  />
                 </a>
               </h4>
               <var>
@@ -157,7 +161,10 @@ export const ExitFeeModal = ({
                   target="_blank"
                   rel="noreferrer"
                 >
-                  <Icon id="question" />
+                  <CustomTooltip
+                      text="The Exit Fee is dynamic, adjusts according to the MLI, and may modified by governance vote. Exit fees are paid directly to sMVK stakeholders for remaining active participants in securing the network. Click to read more."
+                      iconId={'info'}
+                  />
                 </a>
               </h4>
               <var>

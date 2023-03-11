@@ -92,3 +92,10 @@ export const BecomeSatelliteFormBalanceCheck = styled.div<{ balanceOk: boolean; 
     margin-right: 8px;
   }
 `
+
+export const BecomeSatelliteOracleText = styled.h3<{ theme: MavrykTheme }>`
+  font-weight: 500;
+  font-size: 14px;
+  color: ${({ theme }) => theme.textColor};
+  padding-bottom: 15px;
+`
