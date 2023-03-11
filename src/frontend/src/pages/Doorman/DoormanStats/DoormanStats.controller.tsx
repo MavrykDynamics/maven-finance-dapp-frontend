@@ -36,7 +36,7 @@ export const DoormanStats = ({
           <h4>
             MVK Price
             <CustomTooltip
-              text="Price taken from the exchange MVK is currently listed on, not from our Oracle price feeds"
+              text="Once launched, the price will be taken from the exchange MVK is listed on, not from our Oracle price feeds."
               iconId={'info'}
             />
           </h4>
@@ -67,7 +67,10 @@ export const DoormanStats = ({
               target="_blank"
               rel="noreferrer"
             >
-              <Icon id="question" />
+              <CustomTooltip
+                  text="The Mavryk Loyalty Index is a metric that balances MVK & sMVK. The more MVK is staked v.s. MVK, the higher the MLI, and the lower the exit fee is. The less MVK staked v.s. MVK, the lower the MLI, and the exit fee will rise. Click here to read more."
+                  iconId={'info'}
+              />
             </a>
           </h4>
           <var>
@@ -83,7 +86,10 @@ export const DoormanStats = ({
               target="_blank"
               rel="noreferrer"
             >
-              <Icon id="question" />
+              <CustomTooltip
+                  text="The Exit Fee is dynamic, adjusts according to the MLI, and may modified by governance vote. Exit fees are paid directly to sMVK stakeholders for remaining active participants in securing the network. Click to read more."
+                  iconId={'info'}
+              />
             </a>
           </h4>
           <var>
