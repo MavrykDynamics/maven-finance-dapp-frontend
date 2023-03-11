@@ -512,25 +512,27 @@ export const BorrowingExpandCard = ({
                     Update <Icon id="paginationArrowLeft" />
                   </Button>
                 </div>
-                <div className="bottom-info-row">
-                  <div className="name">
-                    MVK Operators{' '}
-                    <CustomTooltip
-                      iconId="info"
-                      text="need text"
-                      defaultStrokeColor={colors[themeSelected].textColor}
-                    />
+                {vaultHasSmvkCollateral ? (
+                  <div className="bottom-info-row">
+                    <div className="name">
+                      MVK Operators{' '}
+                      <CustomTooltip
+                        iconId="info"
+                        text="need text"
+                        defaultStrokeColor={colors[themeSelected].textColor}
+                      />
+                    </div>
+                    <div className="value">
+                      {mappedMVKOperators.firstAddress
+                        ? <TzAddress tzAddress={mappedMVKOperators.firstAddress} type={BLUE} /> +
+                          ` ${mappedMVKOperators.amount ?? ''}`
+                        : 'None'}
+                    </div>
+                    <Button kind={BUTTON_SIMPLE} disabled onClick={() => openUpdateMvkOperatorsPopup?.({})}>
+                      Update <Icon id="paginationArrowLeft" />
+                    </Button>
                   </div>
-                  <div className="value">
-                    {mappedMVKOperators.firstAddress
-                      ? <TzAddress tzAddress={mappedMVKOperators.firstAddress} type={BLUE} /> +
-                        ` ${mappedMVKOperators.amount ?? ''}`
-                      : 'None'}
-                  </div>
-                  <Button kind={BUTTON_SIMPLE} disabled onClick={() => openUpdateMvkOperatorsPopup?.({})}>
-                    Update <Icon id="paginationArrowLeft" />
-                  </Button>
-                </div>
+                ) : null}
 
                 <div className="repay-full">
                   <Button

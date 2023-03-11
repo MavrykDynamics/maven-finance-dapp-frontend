@@ -48,6 +48,12 @@ export const DropDownStyled = styled.div<{ theme: MavrykTheme }>`
       }
     }
 
+    &.not-capitalized {
+      div {
+        text-transform: initial;
+      }
+    }
+
     #selected-option {
       padding-left: 3px;
     }

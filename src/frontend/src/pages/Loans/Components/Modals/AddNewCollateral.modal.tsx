@@ -37,6 +37,7 @@ type InputState =
   | {
       amount: string
       assetName: string
+      assetSymbol: string
       userBalance: number
       id: DDItemId
       validationStatus: InputStatusType
@@ -72,11 +73,10 @@ export const AddNewCollateral = ({
   const { avaliableCollaterals } = useSelector((state: State) => state.tokens)
   const { isActionLoading } = useSelector((state: State) => state.loading)
 
-  const xtzBakers: Array<XtzBakerType & { isDisabled?: boolean }> = [
-    ...otherBakers,
-    ...(dao ? [dao] : []),
-    ...(mavrykDynamics ? [mavrykDynamics] : []),
-  ]
+  const xtzBakers: Array<XtzBakerType & { isDisabled?: boolean }> = useMemo(
+    () => [...otherBakers, ...(dao ? [dao] : []), ...(mavrykDynamics ? [mavrykDynamics] : [])],
+    [dao, mavrykDynamics, otherBakers],
+  )
 
   const [inputData, setInputData] = useState<InputState>()
 
@@ -107,6 +107,7 @@ export const AddNewCollateral = ({
     setInputData({
       amount: '0',
       assetName: mappedAvaliableCollaterals[firstNotDisabledCollateralId].gqlName,
+      assetSymbol: mappedAvaliableCollaterals[firstNotDisabledCollateralId].symbol,
       userBalance: mappedAvaliableCollaterals[firstNotDisabledCollateralId].userBalance,
       validationStatus: '',
       id: mappedAvaliableCollaterals[firstNotDisabledCollateralId].id,
@@ -225,6 +226,7 @@ export const AddNewCollateral = ({
       setInputData({
         ...inputData,
         assetName: inputData.ddItems[id].gqlName,
+        assetSymbol: inputData.ddItems[id].symbol,
         selectedDdItem: inputData.ddItems[id],
         ddItems: newDDItems,
         id,
@@ -314,7 +316,7 @@ export const AddNewCollateral = ({
                 }}
                 settings={{
                   balance: inputData.userBalance,
-                  balanceAsset: isTezosAsset(inputData.assetName) ? 'XTZ' : inputData.assetName.toUpperCase(),
+                  balanceAsset: isTezosAsset(inputData.assetName) ? 'XTZ' : inputData.assetSymbol,
                   useMaxHandler: () =>
                     setInputData({
                       ...inputData,
@@ -332,7 +334,7 @@ export const AddNewCollateral = ({
                     activeItem={inputData.selectedDdItem}
                     items={Object.values(inputData.ddItems)}
                     clickItem={clickOnInputDDItem}
-                    className="input-dropdown"
+                    className="input-dropdown not-capitalized"
                   />
                 </InputPinnedDropDown>
               </Input>
