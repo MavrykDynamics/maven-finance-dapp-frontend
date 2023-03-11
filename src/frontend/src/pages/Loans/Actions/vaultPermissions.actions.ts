@@ -77,9 +77,7 @@ export const managePermissionsAction =
 
       // if depostiorAllowance === VAULT_ALLOWANCE_ANY call updateDepositor with any 2 args and VAULT_ALLOWANCE_ANY config
       if (depostiorAllowance === VAULT_ALLOWANCE_ANY) {
-        transaction = await contract?.methods
-          .initVaultAction('updateDepositor', state.wallet.accountPkh, false, VAULT_ALLOWANCE_ANY)
-          .send()
+        transaction = await contract?.methods.initVaultAction('updateDepositor', VAULT_ALLOWANCE_ANY, true).send()
       }
 
       // if newDepositorsAddresses is empty means we need to remove all depositors
@@ -90,14 +88,14 @@ export const managePermissionsAction =
                 {
                   kind: OpKind.TRANSACTION,
                   ...contract.methods
-                    .initVaultAction('updateDepositor', state.wallet.accountPkh, false, VAULT_ALLOWANCE_ACCOUNTS)
+                    .initVaultAction('updateDepositor', VAULT_ALLOWANCE_ACCOUNTS, false, state.wallet.accountPkh)
                     .toTransferParams(),
                 },
               ]
             : vaultOriginalDepositros.map((depositorAddress) => ({
                 kind: OpKind.TRANSACTION,
                 ...contract.methods
-                  .initVaultAction('updateDepositor', depositorAddress, false, VAULT_ALLOWANCE_ACCOUNTS)
+                  .initVaultAction('updateDepositor', VAULT_ALLOWANCE_ACCOUNTS, false, depositorAddress)
                   .toTransferParams(),
               })),
         )
@@ -118,14 +116,14 @@ export const managePermissionsAction =
             // TODO: idk what's wrong with the enum typings here it sets kind to OpKind type instead of OpKind.TRANSACTION
             kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
             ...contract.methods
-              .initVaultAction('updateDepositor', depositorAddress, false, VAULT_ALLOWANCE_ACCOUNTS)
+              .initVaultAction('updateDepositor', VAULT_ALLOWANCE_ACCOUNTS, false, depositorAddress)
               .toTransferParams(),
           })),
           ...depositorsToAdd.map((depositorAddress) => ({
             // TODO: idk what's wrong with the enum typings here it sets kind to OpKind type instead of OpKind.TRANSACTION
             kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
             ...contract.methods
-              .initVaultAction('updateDepositor', depositorAddress, true, VAULT_ALLOWANCE_ACCOUNTS)
+              .initVaultAction('updateDepositor', VAULT_ALLOWANCE_ACCOUNTS, true, depositorAddress)
               .toTransferParams(),
           })),
         ]
