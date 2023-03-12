@@ -249,7 +249,12 @@ export const BorrowAsset = ({
                 <ThreeLevelListItem>
                   <div className="name">
                     Total Amount{' '}
-                    <CustomTooltip iconId="info" defaultStrokeColor={silverColor} text={``} className="tooltip" />
+                    <CustomTooltip
+                      iconId="info"
+                      defaultStrokeColor={silverColor}
+                      text={`Full amount being borrowed included the DAO Fee`}
+                      className="tooltip"
+                    />
                   </div>
                   <CommaNumber value={inputAmount} className="value" />
                 </ThreeLevelListItem>
