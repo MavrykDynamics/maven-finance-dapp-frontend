@@ -71,7 +71,8 @@ export const ExpandArticleStyled = styled.article<{ show?: boolean; theme: Mavry
   max-height: 0;
   height: fit-content;
   cursor: pointer;
-  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
   position: relative;
 
   &::before {
@@ -87,6 +88,8 @@ export const ExpandArticleStyled = styled.article<{ show?: boolean; theme: Mavry
     show
       ? css`
           max-height: 100%;
+          visibility: visible;
+          opacity: 1;
         `
       : ''}
 `

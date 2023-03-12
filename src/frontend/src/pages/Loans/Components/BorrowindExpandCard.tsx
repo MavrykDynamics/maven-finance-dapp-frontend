@@ -489,7 +489,7 @@ export const BorrowingExpandCard = ({
                     Depositors{' '}
                     <CustomTooltip
                       iconId="info"
-                      text="need text"
+                      text="Depositors are tz and KT addresses that are allowed to deposit tokens and XTZ into your vault. For instance, if you delegate your XTZ to a bakery, you should add the bakery’s payout address as a a depositor so your vault can receive its delegation rewards."
                       defaultStrokeColor={colors[themeSelected].textColor}
                     />
                   </div>
@@ -518,7 +518,7 @@ export const BorrowingExpandCard = ({
                       MVK Operators{' '}
                       <CustomTooltip
                         iconId="info"
-                        text="need text"
+                        text="MVK operators are tz or KT addresses that you allow to perform specific actions with your tokens. Only use this if you know exactly what you are doing. By default, you have to allow the vault to do an operator of your sMVK so it can execute its required functions."
                         defaultStrokeColor={colors[themeSelected].textColor}
                       />
                     </div>
