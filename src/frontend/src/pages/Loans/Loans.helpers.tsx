@@ -291,7 +291,9 @@ export const calcCollateralRatio = (collateralAmount: number, borrowedAmount: nu
   // means we haven't borrowed, but we have deposited
   if (borrowedAmount === 0) return 251
 
-  return (collateralAmount / (borrowedAmount * borrowedAssetRate)) * 100
+  const collateralRatio = String((collateralAmount / (borrowedAmount * borrowedAssetRate)) * 100)
+  const [intPart, decimalPart] = collateralRatio.split('.')
+  return Number(String(`${intPart}${decimalPart ? `.${decimalPart.toString().substring(0, 2)}` : ''}`))
 }
 
 export const getMaxCollateralWithdraw = (

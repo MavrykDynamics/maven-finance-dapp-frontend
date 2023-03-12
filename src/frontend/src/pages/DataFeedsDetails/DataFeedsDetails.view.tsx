@@ -42,6 +42,7 @@ import {
 import { EmptyContainer } from 'app/App.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
+import colors from 'styles/colors'
 
 type FeedDetailsProps = {
   feed: Feed | null
@@ -63,6 +64,7 @@ const tabsList = [
 const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsProps) => {
   const dispatch = useDispatch()
   const { dipDupContracts } = useSelector((state: State) => state.tokens)
+  const { themeSelected } = useSelector((state: State) => state.preferences)
 
   const registerFeedHandler = () => dispatch(registerFeedAction())
 
@@ -95,7 +97,11 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsPr
                       <div className="name">{feed.name}</div>
                       <a href="https://mavryk.finance/litepaper" target="_blank" rel="noreferrer">
                         Learn how to use {feed.name} in your smart contracts here
-                        <CustomTooltip className="info-icon" iconId={'question'} />
+                        <CustomTooltip
+                          className="info-icon"
+                          iconId={'question'}
+                          defaultStrokeColor={colors[themeSelected].textColor}
+                        />
                       </a>
                     </div>
                   </div>
@@ -112,6 +118,7 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsPr
                         } and approved by a majority of the oracles`}
                         iconId={'info'}
                         className="info-icon"
+                        defaultStrokeColor={colors[themeSelected].textColor}
                       />
                     </h3>
                   </div>
@@ -119,10 +126,11 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsPr
                 <div className="bottom">
                   <DataFeedInfoBlock>
                     <h3>
-                      Trigger parameters
+                      Trigger Trigger
                       <CustomTooltip
-                        text={`A new trusted answer is written when the off-chain data moves more than the deviation threshold or 30 seconds have passed since the last answer was written on-chain`}
+                        text={`If the price of the asset is volatile and changes more than the set deviation trigger, a new trusted price will be pushed on chain from the oracle. Asides from the deviation trigger, price updates occur at least once per hour.`}
                         iconId={'info'}
+                        defaultStrokeColor={colors[themeSelected].textColor}
                         className="info-icon"
                       />
                     </h3>
@@ -141,6 +149,7 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsPr
                         text={'Countdown until the next set data feed update.'}
                         iconId={'info'}
                         className="info-icon"
+                        defaultStrokeColor={colors[themeSelected].textColor}
                       />
                     </h4>
                     <DataFeedValueText fontSize={16} fontWeidth={600}>
@@ -170,6 +179,7 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsPr
                         className="info-icon"
                         text={`The aggregator requires a minimum amount of responses from oracles for the answer to be trusted`}
                         iconId={'info'}
+                        defaultStrokeColor={colors[themeSelected].textColor}
                       />
                     </h3>
                     <h4>Minimum of {feed.pct_oracle_threshold}%</h4>
@@ -185,6 +195,7 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsPr
                         text={`Last time the aggregator was updated with a trusted answer and written on-chain`}
                         iconId={'info'}
                         className="info-icon"
+                        defaultStrokeColor={colors[themeSelected].textColor}
                       />
                     </h3>
                     <DataFeedValueText fontSize={14} fontWeidth={500} style={{ padding: '2px 0' }}>
@@ -202,7 +213,12 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsPr
                 <div className="info-wrapper">
                   <h3>
                     Contract address
-                    <CustomTooltip text={`Address of this specific data feed`} iconId={'info'} className="info-icon" />
+                    <CustomTooltip
+                      text={`Address of this specific data feed`}
+                      iconId={'info'}
+                      className="info-icon"
+                      defaultStrokeColor={colors[themeSelected].textColor}
+                    />
                   </h3>
                   <DataFeedValueText fontSize={14} fontWeidth={600} style={{ lineHeight: '100%' }}>
                     <TzAddress tzAddress={feed.address} type={BLUE} hasIcon={true} />
@@ -215,6 +231,7 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsPr
                       text={`Address of the oracle (aggregator) factory which is responsible for creating the aggregator feeds which oracles can sign price feeds for`}
                       iconId={'info'}
                       className="info-icon"
+                      defaultStrokeColor={colors[themeSelected].textColor}
                     />
                   </h3>
                   <DataFeedValueText fontSize={14} fontWeidth={600} style={{ lineHeight: '100%' }}>

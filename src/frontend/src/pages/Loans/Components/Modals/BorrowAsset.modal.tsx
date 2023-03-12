@@ -154,7 +154,7 @@ export const BorrowAsset = ({
                 </ThreeLevelListItem>
               </div>
 
-              <div className="block-name">Select asset and amount to borrow</div>
+              <div className="block-name">Select the amount to borrow</div>
               {borrowedAsset ? (
                 <Input
                   className={`${borrowedAsset.rate ? 'input-with-rate' : ''} pinned-dropdown mb-45`}
@@ -216,7 +216,9 @@ export const BorrowAsset = ({
               {inputAmount > borrowCapacity || futureCollateralRatio < 200 ? (
                 <StatusMessageStyled className={`${vaultsStatuses.LIQUIDATABLE} borrow-message`}>
                   <Icon id="error-triangle" />
-                  Select the amount you would like to borrow. You cannot borrow more than your borrow capacity.
+                  {futureCollateralRatio < 200
+                    ? 'The amount you wish to borrow would under-collateralize your vault. Please enter a different amount to borrow so your vault will not be under-collateralized when you borrow.'
+                    : 'Select the amount you would like to borrow. You cannot borrow more than your borrow capacity.'}
                 </StatusMessageStyled>
               ) : null}
 

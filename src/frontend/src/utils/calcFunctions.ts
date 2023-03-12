@@ -69,12 +69,6 @@ export const getDynamicDecimalsAmountForOutput = (number: number): number => {
   if (!decimalPart) return DECIMALS_TO_SHOW
 
   const matchesForLeadingZeroes = decimalPart.match(/^0+/)
-  console.log({
-    number,
-    matchesForLeadingZeroes,
-    decimalPart,
-    result: matchesForLeadingZeroes ? matchesForLeadingZeroes[0].length + 2 : DECIMALS_TO_SHOW,
-  })
   return matchesForLeadingZeroes ? matchesForLeadingZeroes[0].length + 2 : DECIMALS_TO_SHOW
 }
 

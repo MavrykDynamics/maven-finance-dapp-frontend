@@ -215,9 +215,9 @@ const DashboardPersonal = () => {
                         <TableHeader className="treasury">
                           <TableRow>
                             <TableHeaderCell>Action</TableHeaderCell>
-                            <TableHeaderCell>Amount, MVK</TableHeaderCell>
+                            <TableHeaderCell>Amount: MVK</TableHeaderCell>
                             <TableHeaderCell>
-                              Total, MVK{' '}
+                              Total: MVK{' '}
                               <CustomTooltip
                                 iconId="info"
                                 className="history-tooltip"
