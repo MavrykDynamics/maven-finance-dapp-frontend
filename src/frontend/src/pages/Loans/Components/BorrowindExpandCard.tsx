@@ -224,7 +224,14 @@ export const BorrowingExpandCard = ({
                 ) : null}
               </ThreeLevelListItem>
               <ThreeLevelListItem>
-                <div className="name">Fee</div>
+                <div className="name">
+                  Fees{' '}
+                  <CustomTooltip
+                    iconId="info"
+                    text="Origination Fee and Interest"
+                    defaultStrokeColor={colors[themeSelected].textColor}
+                  />
+                </div>
                 <CommaNumber value={fee} decimalsToShow={2} className="value" />
                 {rate ? <CommaNumber value={fee * rate} decimalsToShow={2} beginningText="$" className="rate" /> : null}
               </ThreeLevelListItem>
