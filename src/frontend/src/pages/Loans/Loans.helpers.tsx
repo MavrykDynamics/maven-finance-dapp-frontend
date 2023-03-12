@@ -532,7 +532,7 @@ export const normalizeLoans = async ({
         const { transactionHistory, totalBorrowed, totalLended, lending24hVolume, borrowing24hVolume } =
           getTransactionHistory(history_data, dipDupData, feeds)
         const { myBorrowingList, permissinedBorrowingList, totalCollateral, vaultsBorrowedAmount } =
-          await getBorrowings(vaults, dipDupData, feeds, interestRateDecimals, reserveAmount, userAddres)
+          await getBorrowings(vaults, dipDupData, feeds, interestRateDecimals, availableLiquidity, userAddres)
         const lendingItem = getLendingItem(
           loanToken,
           userMTokens,

@@ -243,7 +243,7 @@ export const BorrowingExpandCard = ({
                         borrowAPR: apr,
                         currentCollateralBalance: collateralData.at(-1)?.amount ?? 0,
                         hasUserBorrowed: false,
-                        borrowCapacity: borrowCapacity / borrowedAsset.rate,
+                        borrowCapacity,
                         currentBorrowedAmount: borrowedAmount,
                         DAOFee,
                       })
@@ -262,7 +262,7 @@ export const BorrowingExpandCard = ({
                         borrowedAmount,
                         feesAmount: repayFee,
                         currentCollateralBalance: collateralData.at(-1)?.amount ?? 0,
-                        borrowCapacity: borrowCapacity / borrowedAsset.rate,
+                        borrowCapacity,
                       })
                     }
                     kind={BUTTON_SECONDARY}
@@ -554,7 +554,7 @@ export const BorrowingExpandCard = ({
                         borrowedAmount,
                         feesAmount: repayFee,
                         currentCollateralBalance: collateralData.at(-1)?.amount ?? 0,
-                        borrowCapacity: borrowCapacity / borrowedAsset.rate,
+                        borrowCapacity,
                       })
                     }
                   >
