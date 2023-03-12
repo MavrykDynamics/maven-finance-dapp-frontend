@@ -71,12 +71,12 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
 
   const lending24hPersentChange = calcDiffBetweenTwoNumbersInPersentage(last24hLending, last48hLending)
   const borrowing24hPersentChange = calcDiffBetweenTwoNumbersInPersentage(last24hBorrowing, last48hBorrowing)
-
+  console.log({ lending24hPersentChange, borrowing24hPersentChange })
   return (
     <TabWrapperStyled backgroundImage="dashboard_lendingTab_bg.png">
       <div className="top">
         <BGPrimaryTitle>Lending</BGPrimaryTitle>
-        <Link to="/loans" className="dashboard-sectionLink" >
+        <Link to="/loans" className="dashboard-sectionLink">
           <NewButton kind={PRIMARY} form={BUTTON_WIDE}>
             <Icon id="coin-loan" />
             Lending
@@ -97,7 +97,11 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
               <div className="value">
                 <CommaNumber beginningText="$" value={totalLended} />
                 <div className={`impact ${lending24hPersentChange > 0 ? 'up' : 'down'}`}>
-                  {lending24hPersentChange > 0 ? '+' : '-'} {lending24hPersentChange}%
+                  <CommaNumber
+                    value={lending24hPersentChange}
+                    beginningText={lending24hPersentChange > 0 ? '+' : ''}
+                    endingText={'%'}
+                  />
                 </div>
               </div>
             </StatBlock>
@@ -138,7 +142,11 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
               <div className="value">
                 <CommaNumber beginningText="$" value={totalBorrowed} />
                 <div className={`impact ${borrowing24hPersentChange > 0 ? 'up' : 'down'}`}>
-                  {borrowing24hPersentChange > 0 ? '+' : '-'} {borrowing24hPersentChange}%
+                  <CommaNumber
+                    value={borrowing24hPersentChange}
+                    beginningText={borrowing24hPersentChange > 0 ? '+' : ''}
+                    endingText={'%'}
+                  />
                 </div>
               </div>
             </StatBlock>
