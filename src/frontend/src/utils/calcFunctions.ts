@@ -1,5 +1,12 @@
 import { State } from 'reducers'
-import { FIXED_POINT_ACCURACY, PRECISION_NUMBER, SECONDS_PER_BLOCK, MVK_DECIMALS, XTZ_DECIMALS } from './constants'
+import {
+  FIXED_POINT_ACCURACY,
+  PRECISION_NUMBER,
+  SECONDS_PER_BLOCK,
+  MVK_DECIMALS,
+  XTZ_DECIMALS,
+  DECIMALS_TO_SHOW,
+} from './constants'
 import { Doorman, Farm, Satellite_Rewards, Stake_History_Data } from './generated/graphqlTypes'
 import { UserDoormanRewardsData, UserFarmRewardsData, UserSatelliteRewardsData } from './TypesAndInterfaces/User'
 import { TokenType } from './TypesAndInterfaces/General'
@@ -55,6 +62,20 @@ export const convertNumberForClient = ({
   grage?: number
 }): number => {
   return number / Math.pow(10, grage)
+}
+
+export const getDynamicDecimalsAmountForOutput = (number: number): number => {
+  const decimalPart = String(number).split('.')[1]
+  if (!decimalPart) return DECIMALS_TO_SHOW
+
+  const matchesForLeadingZeroes = decimalPart.match(/^0+/)
+  console.log({
+    number,
+    matchesForLeadingZeroes,
+    decimalPart,
+    result: matchesForLeadingZeroes ? matchesForLeadingZeroes[0].length + 2 : DECIMALS_TO_SHOW,
+  })
+  return matchesForLeadingZeroes ? matchesForLeadingZeroes[0].length + 2 : DECIMALS_TO_SHOW
 }
 
 export const getTokenDecimals = ({

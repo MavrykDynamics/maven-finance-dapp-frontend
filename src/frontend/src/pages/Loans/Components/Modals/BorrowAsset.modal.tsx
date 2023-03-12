@@ -213,7 +213,7 @@ export const BorrowAsset = ({
                 </ThreeLevelListItem>
               </VaultModalOverview>
 
-              {inputAmount > borrowCapacity ? (
+              {inputAmount > borrowCapacity || futureCollateralRatio < 200 ? (
                 <StatusMessageStyled className={`${vaultsStatuses.LIQUIDATABLE} borrow-message`}>
                   <Icon id="error-triangle" />
                   Select the amount you would like to borrow. You cannot borrow more than your borrow capacity.
@@ -225,7 +225,7 @@ export const BorrowAsset = ({
                   kind={BUTTON_PRIMARY}
                   onClick={continueBtnHandler}
                   form={BUTTON_WIDE}
-                  disabled={inputData.validationStatus !== INPUT_STATUS_SUCCESS}
+                  disabled={inputData.validationStatus !== INPUT_STATUS_SUCCESS || futureCollateralRatio < 200}
                 >
                   Continue
                   <Icon id="arrowRight" />

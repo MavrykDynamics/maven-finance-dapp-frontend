@@ -47,6 +47,7 @@ import { isTezosAsset } from '../Loans.helpers'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import colors from 'styles/colors'
+import { getDynamicDecimalsAmountForOutput } from 'utils/calcFunctions'
 
 type BorrowingExpandCardPropsType = LoansVaultType & {
   isOwner?: boolean
@@ -299,6 +300,8 @@ export const BorrowingExpandCard = ({
                         : calculateCollateralShare(amount * rate, collateralTotalBalance)
 
                       if (isTotalRow && collateralData.length < 3) return null
+                      const collateralDecimalsLength = getDynamicDecimalsAmountForOutput(amount)
+                      const collateralRateDecimalsLength = getDynamicDecimalsAmountForOutput(amount * rate)
 
                       return (
                         <TableRow rowHeight={65} key={gqlName + '-' + idx}>
@@ -318,7 +321,7 @@ export const BorrowingExpandCard = ({
                                 value={amount}
                                 className="value"
                                 showDecimal
-                                decimalsToShow={2}
+                                decimalsToShow={collateralDecimalsLength}
                                 beginningText={isTotalRow ? '$' : ''}
                               />
                               {rate ? (
@@ -327,7 +330,7 @@ export const BorrowingExpandCard = ({
                                   className="rate"
                                   beginningText="$"
                                   showDecimal
-                                  decimalsToShow={2}
+                                  decimalsToShow={collateralRateDecimalsLength}
                                 />
                               ) : null}
                             </div>

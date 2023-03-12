@@ -349,7 +349,7 @@ const getBorrowings = async (
             amount: collateralBalance,
           })
 
-          acc.totalRow.amount += collateralBalance * collateralAsset.rate
+          acc.totalRow.amount += Number((collateralBalance * collateralAsset.rate).toFixed(2))
 
           return acc
         },
