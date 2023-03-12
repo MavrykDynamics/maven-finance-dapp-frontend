@@ -31,6 +31,7 @@ import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { getLoansStorage } from './Actions/getLoansData.actions'
 import { useEffect } from 'react'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
+import colors from 'styles/colors'
 
 const CHART_SETTINGS = {
   width: 450,
@@ -49,6 +50,7 @@ const CHART_COLORS = {
 export const Loans = () => {
   const dispatch = useDispatch()
   const { isDataLoaded, loanTokens, chartsData } = useSelector((state: State) => state.loans)
+  const { themeSelected } = useSelector((state: State) => state.preferences)
 
   const { isLoading } = useDataLoader(async () => {
     try {
@@ -159,8 +161,8 @@ export const Loans = () => {
                           <CommaNumber value={lendingAPY} className="value" endingText="%" />{' '}
                           <CustomTooltip
                             iconId="info"
-                            defaultStrokeColor={skyColor}
-                            text="wgsgfdgdfg"
+                            defaultStrokeColor={colors[themeSelected].dataColor}
+                            text="Current yield suppliers are earning on their deposits."
                             className="tooltip"
                           />
                         </div>
@@ -193,8 +195,8 @@ export const Loans = () => {
                           <CommaNumber value={borrowAPR} className="value" endingText="%" />{' '}
                           <CustomTooltip
                             iconId="info"
-                            defaultStrokeColor={skyColor}
-                            text="wgsgfdgdfg"
+                            defaultStrokeColor={colors[themeSelected].dataColor}
+                            text="Current interest rate being charged to borrowers."
                             className="tooltip"
                           />
                         </div>

@@ -116,7 +116,7 @@ export const OraclesTab = ({ isLoading }: { isLoading: boolean }) => {
                           <CustomTooltip
                             iconId="info"
                             defaultStrokeColor={colors[themeSelected].textColor}
-                            text="dummy text"
+                            text="Last time the aggregator was updated with a trusted answer and written on-chain."
                           />
                         </div>
                         <div className="value">

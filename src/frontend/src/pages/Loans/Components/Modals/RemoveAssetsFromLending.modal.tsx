@@ -26,6 +26,7 @@ import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase } from './Modals.style'
 import { withdrawLendingAssetAction } from 'pages/Loans/Actions/lendingAsset.actions'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
+import colors from 'styles/colors'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A238846&t=Sx2aEpp3ifrGxBtQ-0
 export const RemoveAssetsFromLending = ({
@@ -53,6 +54,7 @@ export const RemoveAssetsFromLending = ({
 
   const dispatch = useDispatch()
   const { isActionLoading } = useSelector((state: State) => state.loading)
+  const { themeSelected } = useSelector((state: State) => state.preferences)
   const [screenShown, setShownScreen] = useState<'initial' | 'confitmation'>('initial')
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
 
@@ -126,7 +128,12 @@ export const RemoveAssetsFromLending = ({
                 <ThreeLevelListItem>
                   <div className="name">
                     Lending APY{' '}
-                    <CustomTooltip iconId="info" defaultStrokeColor={silverColor} text="" className="tooltip" />
+                    <CustomTooltip
+                      iconId="info"
+                      defaultStrokeColor={colors[themeSelected].textColor}
+                      text={'Current yield suppliers are earning on their deposits.'}
+                      className="tooltip"
+                    />
                   </div>
                   <CommaNumber value={lendingAPY} className="value" endingText="%" />
                 </ThreeLevelListItem>

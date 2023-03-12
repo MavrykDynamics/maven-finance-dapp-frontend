@@ -26,6 +26,7 @@ import { calcCollateralRatio } from 'pages/Loans/Loans.helpers'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { StatusMessageStyled } from '../LoansComponents.style'
 import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
+import colors from 'styles/colors'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A240058&t=Sx2aEpp3ifrGxBtQ-0
 export const BorrowAsset = ({
@@ -52,6 +53,7 @@ export const BorrowAsset = ({
   useLockBodyScroll(show)
   const dispatch = useDispatch()
   const { isActionLoading } = useSelector((state: State) => state.loading)
+  const { themeSelected } = useSelector((state: State) => state.preferences)
 
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
   const [screenShown, setShownScreen] = useState<'initial' | 'confitmation'>('initial')
@@ -145,7 +147,7 @@ export const BorrowAsset = ({
                     DAO Fee{' '}
                     <CustomTooltip
                       iconId="info"
-                      defaultStrokeColor={silverColor}
+                      defaultStrokeColor={colors[themeSelected].textColor}
                       text={`Origination fee`}
                       className="tooltip"
                     />
