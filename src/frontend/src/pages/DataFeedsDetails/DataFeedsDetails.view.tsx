@@ -128,7 +128,7 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsPr
                     <h3>
                       Trigger Trigger
                       <CustomTooltip
-                        text={`If the price of the asset is volatile and changes more than the set deviation trigger, a new trusted price will be pushed on chain from the oracle. Asides from the deviation trigger, price updates occur at least once per hour.`}
+                        text={`If the price of the asset is volatile and changes more than the set deviation trigger, a new trusted price will be pushed on chain from the oracle. Aside from the deviation trigger, price updates occur on average every 15 minutes.`}
                         iconId={'info'}
                         defaultStrokeColor={colors[themeSelected].textColor}
                         className="info-icon"
