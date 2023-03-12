@@ -73,10 +73,11 @@ export const Treasury = () => {
             <TreasurySelectStyle isSelectedTreasury={Boolean(chosenDdItem)}>
               <h2>Active Treasuries</h2>
               <DropDown
-                placeholder="Choose treasury"
+                placeholder={ddItems.length === 0 ? 'No Treasuries currently active' : 'Choose treasury'}
                 activeItem={chosenDdItem}
                 items={ddItems}
                 clickItem={handleOnClickDropdownItem}
+                disabled={ddItems.length === 0}
               />
             </TreasurySelectStyle>
             {chosenDdItem?.treasury ? <TreasuryView treasury={chosenDdItem.treasury} /> : null}
