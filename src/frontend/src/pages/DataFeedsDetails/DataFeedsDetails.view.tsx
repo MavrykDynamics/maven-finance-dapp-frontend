@@ -126,7 +126,7 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsPr
                 <div className="bottom">
                   <DataFeedInfoBlock>
                     <h3>
-                      Trigger Trigger
+                      Trigger parameters
                       <CustomTooltip
                         text={`If the price of the asset is volatile and changes more than the set deviation trigger, a new trusted price will be pushed on chain from the oracle. Aside from the deviation trigger, price updates occur on average every 15 minutes.`}
                         iconId={'info'}
@@ -135,7 +135,7 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsPr
                       />
                     </h3>
 
-                    <h4>Deviation threshold</h4>
+                    <h4>Deviation Trigger</h4>
 
                     <DataFeedValueText fontSize={16} fontWeidth={600}>
                       {feed.alpha_pct_per_thousand}%
