@@ -510,7 +510,7 @@ export const TableCell = styled.td<{
 
       &.total {
         > div {
-          grid-template-columns: auto;
+          grid-template-columns: 270px;
         }
       }
     }

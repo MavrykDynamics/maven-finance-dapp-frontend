@@ -112,8 +112,6 @@ export const WithdrawCollateral = ({
     const validationStatus =
       parsedNewInputAmount > 0 && parsedNewInputAmount <= maxAmount ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
 
-    if (validationStatus === INPUT_STATUS_ERROR && newInputAmount !== '' && newInputAmount !== '0') return
-
     setInputData({
       ...inputData,
       amount: newInputAmount,

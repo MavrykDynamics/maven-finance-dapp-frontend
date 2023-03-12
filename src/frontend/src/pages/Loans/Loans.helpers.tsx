@@ -291,7 +291,9 @@ export const calcCollateralRatio = (collateralAmount: number, borrowedAmount: nu
   // means we haven't borrowed, but we have deposited
   if (borrowedAmount === 0) return 251
 
-  return (collateralAmount / (borrowedAmount * borrowedAssetRate)) * 100
+  const collateralRatio = String((collateralAmount / (borrowedAmount * borrowedAssetRate)) * 100)
+  const [intPart, decimalPart] = collateralRatio.split('.')
+  return Number(String(`${intPart}${decimalPart ? `.${decimalPart.toString().substring(0, 2)}` : ''}`))
 }
 
 export const getMaxCollateralWithdraw = (
@@ -349,7 +351,7 @@ const getBorrowings = async (
             amount: collateralBalance,
           })
 
-          acc.totalRow.amount += collateralBalance * collateralAsset.rate
+          acc.totalRow.amount += Number((collateralBalance * collateralAsset.rate).toFixed(2))
 
           return acc
         },
@@ -530,7 +532,7 @@ export const normalizeLoans = async ({
         const { transactionHistory, totalBorrowed, totalLended, lending24hVolume, borrowing24hVolume } =
           getTransactionHistory(history_data, dipDupData, feeds)
         const { myBorrowingList, permissinedBorrowingList, totalCollateral, vaultsBorrowedAmount } =
-          await getBorrowings(vaults, dipDupData, feeds, interestRateDecimals, reserveAmount, userAddres)
+          await getBorrowings(vaults, dipDupData, feeds, interestRateDecimals, availableLiquidity, userAddres)
         const lendingItem = getLendingItem(
           loanToken,
           userMTokens,

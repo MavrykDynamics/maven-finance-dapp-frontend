@@ -66,10 +66,11 @@ export const DoormanStats = ({
               href="https://mavryk.finance/litepaper#converting-smvk-back-to-mvk-exit-fees"
               target="_blank"
               rel="noreferrer"
+              className="full-opacity"
             >
               <CustomTooltip
-                  text="The Mavryk Loyalty Index is a metric that balances MVK & sMVK. The more MVK is staked v.s. MVK, the higher the MLI, and the lower the exit fee is. The less MVK staked v.s. MVK, the lower the MLI, and the exit fee will rise. Click here to read more."
-                  iconId={'info'}
+                text="The Mavryk Loyalty Index is a metric that balances MVK & sMVK. The more MVK is staked v.s. MVK, the higher the MLI, and the lower the exit fee is. The less MVK staked v.s. MVK, the lower the MLI, and the exit fee will rise. Click here to read more."
+                iconId={'info'}
               />
             </a>
           </h4>
@@ -85,10 +86,11 @@ export const DoormanStats = ({
               href="https://mavryk.finance/litepaper#converting-smvk-back-to-mvk-exit-fees"
               target="_blank"
               rel="noreferrer"
+              className="full-opacity"
             >
               <CustomTooltip
-                  text="The Exit Fee is dynamic, adjusts according to the MLI, and may modified by governance vote. Exit fees are paid directly to sMVK stakeholders for remaining active participants in securing the network. Click to read more."
-                  iconId={'info'}
+                text="The Exit Fee is dynamic, adjusts according to the MLI, and may modified by governance vote. Exit fees are paid directly to sMVK stakeholders for remaining active participants in securing the network. Click to read more."
+                iconId={'info'}
               />
             </a>
           </h4>

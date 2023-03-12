@@ -26,6 +26,7 @@ import { calcCollateralRatio } from 'pages/Loans/Loans.helpers'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { StatusMessageStyled } from '../LoansComponents.style'
 import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
+import colors from 'styles/colors'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A240058&t=Sx2aEpp3ifrGxBtQ-0
 export const BorrowAsset = ({
@@ -52,6 +53,7 @@ export const BorrowAsset = ({
   useLockBodyScroll(show)
   const dispatch = useDispatch()
   const { isActionLoading } = useSelector((state: State) => state.loading)
+  const { themeSelected } = useSelector((state: State) => state.preferences)
 
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
   const [screenShown, setShownScreen] = useState<'initial' | 'confitmation'>('initial')
@@ -145,7 +147,7 @@ export const BorrowAsset = ({
                     DAO Fee{' '}
                     <CustomTooltip
                       iconId="info"
-                      defaultStrokeColor={silverColor}
+                      defaultStrokeColor={colors[themeSelected].textColor}
                       text={`Origination fee`}
                       className="tooltip"
                     />
@@ -154,7 +156,7 @@ export const BorrowAsset = ({
                 </ThreeLevelListItem>
               </div>
 
-              <div className="block-name">Select asset and amount to borrow</div>
+              <div className="block-name">Select the amount to borrow</div>
               {borrowedAsset ? (
                 <Input
                   className={`${borrowedAsset.rate ? 'input-with-rate' : ''} pinned-dropdown mb-45`}
@@ -213,10 +215,12 @@ export const BorrowAsset = ({
                 </ThreeLevelListItem>
               </VaultModalOverview>
 
-              {inputAmount > borrowCapacity ? (
+              {inputAmount > borrowCapacity || futureCollateralRatio < 200 ? (
                 <StatusMessageStyled className={`${vaultsStatuses.LIQUIDATABLE} borrow-message`}>
                   <Icon id="error-triangle" />
-                  Select the amount you would like to borrow. You cannot borrow more than your borrow capacity.
+                  {futureCollateralRatio < 200
+                    ? 'The amount you wish to borrow would under-collateralize your vault. Please enter a different amount to borrow so your vault will not be under-collateralized when you borrow.'
+                    : 'Select the amount you would like to borrow. You cannot borrow more than your borrow capacity.'}
                 </StatusMessageStyled>
               ) : null}
 
@@ -225,7 +229,7 @@ export const BorrowAsset = ({
                   kind={BUTTON_PRIMARY}
                   onClick={continueBtnHandler}
                   form={BUTTON_WIDE}
-                  disabled={inputData.validationStatus !== INPUT_STATUS_SUCCESS}
+                  disabled={inputData.validationStatus !== INPUT_STATUS_SUCCESS || futureCollateralRatio < 200}
                 >
                   Continue
                   <Icon id="arrowRight" />
@@ -249,7 +253,12 @@ export const BorrowAsset = ({
                 <ThreeLevelListItem>
                   <div className="name">
                     Total Amount{' '}
-                    <CustomTooltip iconId="info" defaultStrokeColor={silverColor} text={``} className="tooltip" />
+                    <CustomTooltip
+                      iconId="info"
+                      defaultStrokeColor={silverColor}
+                      text={`Full amount being borrowed included the DAO Fee`}
+                      className="tooltip"
+                    />
                   </div>
                   <CommaNumber value={inputAmount} className="value" />
                 </ThreeLevelListItem>

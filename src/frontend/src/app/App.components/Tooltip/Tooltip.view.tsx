@@ -30,7 +30,7 @@ export const TooltipStyled = styled.div<{ defaultStrokeColor?: string; theme: Ma
     border-radius: 3px;
     line-height: 15px;
     background: #503eaa;
-    color: #9ea9e8;
+    color: ${({ theme }) => theme.textColor};
     opacity: 0;
     transition: 0.3s all;
     visibility: hidden;

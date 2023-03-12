@@ -198,6 +198,12 @@ export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
     }
   }
 
+  .add-first-collateral {
+    margin-left: auto;
+    margin-top: 3px;
+    width: 270px;
+  }
+
   .repay-full {
     position: absolute;
     right: 18px;

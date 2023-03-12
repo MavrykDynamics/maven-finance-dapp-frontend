@@ -228,6 +228,7 @@ export const AddNewCollateral = ({
         assetName: inputData.ddItems[id].gqlName,
         assetSymbol: inputData.ddItems[id].symbol,
         selectedDdItem: inputData.ddItems[id],
+        userBalance: inputData.ddItems[id].userBalance,
         ddItems: newDDItems,
         id,
       })

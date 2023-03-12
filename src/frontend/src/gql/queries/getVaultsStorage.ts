@@ -12,10 +12,6 @@ export const VAULTS_STORAGE_QUERY = `
       decimals
       minimum_loan_fee_pct
 
-      loan_tokens {
-        current_interest_rate
-      }
-
       vaults {
         collateral_balances {
           balance
@@ -50,6 +46,7 @@ export const VAULTS_STORAGE_QUERY = `
           loan_token_address
           loan_token_contract_standard
           oracle_id
+          current_interest_rate
         }
       }
     }
