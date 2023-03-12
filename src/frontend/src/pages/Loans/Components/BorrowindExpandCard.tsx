@@ -301,7 +301,7 @@ export const BorrowingExpandCard = ({
                       if (isTotalRow && collateralData.length < 3) return null
 
                       return (
-                        <TableRow rowHeight={60} key={gqlName + '-' + idx}>
+                        <TableRow rowHeight={65} key={gqlName + '-' + idx}>
                           <TableCell width={'22%'} className="vert-middle">
                             {isTotalRow ? (
                               'Total'
@@ -353,6 +353,7 @@ export const BorrowingExpandCard = ({
                                       })
                                     }
                                     kind={BUTTON_PRIMARY}
+                                    form={BUTTON_WIDE}
                                     disabled={
                                       avaliableCollaterals.length === 0 ||
                                       avaliableCollaterals.length === collateralData.length - 1
@@ -411,25 +412,28 @@ export const BorrowingExpandCard = ({
                   </TableBody>
                 </Table>
                 {collateralData.length < 3 && isOwner ? (
-                  <Button
-                    onClick={() =>
-                      openAddNewCollateralPopup?.({
-                        vaultAddress: address,
-                        vaultCollateralBalance: collateralData.at(-1)?.amount ?? 0,
-                        currentCollateralRatio: collateralRatio,
-                        borrowedAmount,
-                        existingCollaterals: collateralData,
-                        borrowedAssetRate: borrowedAsset.rate,
-                      })
-                    }
-                    kind={BUTTON_PRIMARY}
-                    isThin
-                    disabled={
-                      avaliableCollaterals.length === 0 || avaliableCollaterals.length === collateralData.length - 1
-                    }
-                  >
-                    <Icon id="plus" /> Add Collateral
-                  </Button>
+                  <div className="add-first-collateral">
+                    <Button
+                      onClick={() =>
+                        openAddNewCollateralPopup?.({
+                          vaultAddress: address,
+                          vaultCollateralBalance: collateralData.at(-1)?.amount ?? 0,
+                          currentCollateralRatio: collateralRatio,
+                          borrowedAmount,
+                          existingCollaterals: collateralData,
+                          borrowedAssetRate: borrowedAsset.rate,
+                        })
+                      }
+                      kind={BUTTON_PRIMARY}
+                      form={BUTTON_WIDE}
+                      isThin
+                      disabled={
+                        avaliableCollaterals.length === 0 || avaliableCollaterals.length === collateralData.length - 1
+                      }
+                    >
+                      <Icon id="plus" /> Add Collateral
+                    </Button>
+                  </div>
                 ) : null}
               </>
             ) : null}
