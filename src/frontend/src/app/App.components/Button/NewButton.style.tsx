@@ -75,13 +75,13 @@ const BUTTONS_KIND_STYLES = css`
   &.${BUTTON_NAVIGATION} {
     width: fit-content;
     height: fit-content;
-    padding: 3px 7px;
+    padding: 0;
     position: relative;
     transition: 0.3s all;
     color: ${({ theme }) => theme.navTitleColor};
 
-    &.selected,
-    &:hover {
+    &.selected:not(:disabled),
+    &:hover:not(:disabled) {
       &::before {
         position: absolute;
         bottom: -3px;

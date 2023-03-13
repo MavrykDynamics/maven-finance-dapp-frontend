@@ -17,7 +17,7 @@ import {
   DELEGATION_TAB_ID,
   SATELLITE_TAB_ID,
   VESTING_TAB_ID,
-  PORTFOLIO_POSITION_TAB_ID,
+  PORTFOLIO_LENDING_TAB_ID,
   PORTFOLIO_LENDING_TAB_ID,
   PORTFOLIO_BORROWING_TAB_ID,
 } from './DashboardPersonal.utils'
@@ -57,6 +57,8 @@ import { getVestingStorage } from 'pages/Treasury/Treasury.actions'
 import VestingTab from './DashboardPersonalComponents/VestingTab'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
+import Button from 'app/App.components/Button/NewButton'
+import { BUTTON_NAVIGATION } from 'app/App.components/Button/Button.constants'
 
 const DashboardPersonal = () => {
   const dispatch = useDispatch()
@@ -157,24 +159,24 @@ const DashboardPersonal = () => {
         ) : (
           <>
             <div className="tabs-switchers">
-              <Link
-                to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`}
-                className={activeTab === PORTFOLIO_TAB_ID ? 'selected' : ''}
-              >
-                Portfolio
+              <Link to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_LENDING_TAB_ID}`}>
+                <Button selected={activeTab === PORTFOLIO_TAB_ID} kind={BUTTON_NAVIGATION}>
+                  Portfolio
+                </Button>
               </Link>
-              <Link
-                to={`/dashboard-personal/${isSatellite ? SATELLITE_TAB_ID : DELEGATION_TAB_ID}`}
-                className={activeTab === (isSatellite ? SATELLITE_TAB_ID : DELEGATION_TAB_ID) ? 'selected' : ''}
-              >
-                {isSatellite ? 'Satellite' : 'Delegation'}
+              <Link to={`/dashboard-personal/${isSatellite ? SATELLITE_TAB_ID : DELEGATION_TAB_ID}`}>
+                <Button
+                  selected={activeTab === (isSatellite ? SATELLITE_TAB_ID : DELEGATION_TAB_ID)}
+                  kind={BUTTON_NAVIGATION}
+                >
+                  {isSatellite ? 'Satellite' : 'Delegation'}
+                </Button>
               </Link>
               {isVestee ? (
-                <Link
-                  to={`/dashboard-personal/${VESTING_TAB_ID}`}
-                  className={activeTab === VESTING_TAB_ID ? 'selected' : ''}
-                >
-                  Vesting
+                <Link to={`/dashboard-personal/${VESTING_TAB_ID}`}>
+                  <Button selected={activeTab === VESTING_TAB_ID} kind={BUTTON_NAVIGATION}>
+                    Vesting
+                  </Button>
                 </Link>
               ) : null}
             </div>
@@ -195,7 +197,7 @@ const DashboardPersonal = () => {
                     <VestingTab />
                   </Route>
 
-                  <Redirect to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`} />
+                  <Redirect to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_LENDING_TAB_ID}`} />
                 </Switch>
               </DashboardPersonalTabStyled>
             </div>

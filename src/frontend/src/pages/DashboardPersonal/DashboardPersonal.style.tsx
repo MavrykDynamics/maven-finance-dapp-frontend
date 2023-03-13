@@ -23,7 +23,7 @@ export const DashboardPersonalStyled = styled.div`
       &:hover {
         &:before {
           position: absolute;
-          bottom: -2px;
+          bottom: -3px;
           left: 50%;
           transform: translateX(-50%);
           transition: 0.3s all;

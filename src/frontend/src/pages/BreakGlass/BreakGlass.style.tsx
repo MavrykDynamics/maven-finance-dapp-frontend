@@ -78,7 +78,7 @@ export const BGMiddleWrapper = styled.div<{ theme: MavrykTheme }>`
 
   .buttons-selector {
     display: flex;
-    columns: 10px;
+    column-gap: 10px;
   }
 `
 
