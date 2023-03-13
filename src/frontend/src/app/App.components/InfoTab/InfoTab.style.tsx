@@ -36,9 +36,6 @@ export const InfoTabStyled = styled.div<{ theme: MavrykTheme }>`
   }
 
   .info-icon {
-    width: 13px;
-    height: 13px;
-
     svg {
       width: 12px;
       height: 12px;
