@@ -41,10 +41,10 @@ export const VaultsSearchFilter = ({ assets: assetSymbols, vaultsMapper, current
   const { search } = useLocation()
   const { tabId } = useParams<{ tabId: string }>()
 
-  // use MOST_RECENT as the default sorting value
+  // use MOST_RECENT and ALL_VAULTS_FILTER as the default filters value
   const {
     sort = sortVaultItems.MOST_RECENT,
-    assets = '',
+    assets = ALL_VAULTS_FILTER,
     zero = '',
     ...restQP
   } = qs.parse(search, { ignoreQueryPrefix: true })
