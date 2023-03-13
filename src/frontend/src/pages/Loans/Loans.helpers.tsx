@@ -408,7 +408,9 @@ const getBorrowings = async (
         ? [...vaultCollateral.normalizedCollaterals, vaultCollateral.totalRow]
         : []
 
-      const borrowCapacity = Math.min(vaultCollateral.totalRow.amount / 2 - borrowedAmount, avaliableMarketLiquidity)
+      const borrowCapacity =
+        Math.min(vaultCollateral.totalRow.amount / 2 - borrowedAmount * vaultAsset.rate, avaliableMarketLiquidity) /
+        vaultAsset.rate
 
       const depositors = (vault.vault?.depositors.map(({ depositor_id }) => depositor_id).filter(Boolean) ??
         []) as Array<string>
