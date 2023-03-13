@@ -9,6 +9,7 @@ import { Button } from 'app/App.components/SettingsPopup/SettingsPopup.style'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { BorrowingExpandCard } from 'pages/Loans/Components/BorrowindExpandCard'
 import { Timer } from 'app/App.components/Timer/Timer.controller'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 // styles
 import { VaultsCardDropDown } from './../Vaults.style'
@@ -173,7 +174,11 @@ export const VaultsCard = (props: Props) => {
             <div>
               <div className="title">
                 Vault Risk
-                <Icon id="info" className="info-icon" />
+                <CustomTooltip
+                  text="The level of risk of being liquidated your vault is at."
+                  iconId="info"
+                  className="info-icon"
+                />
               </div>
 
               <div className={statusColor}>{statusText}</div>
@@ -184,7 +189,11 @@ export const VaultsCard = (props: Props) => {
             <div>
               <div className="title">
                 Liquidation Price
-                <Icon id="info" className="info-icon" />
+                <CustomTooltip
+                  text="Price value of your vault’s collateral at which your vault can be liquidated."
+                  iconId="info"
+                  className="info-icon"
+                />
               </div>
 
               <CommaNumber value={liquidationPrice ?? 0} decimalsToShow={2} beginningText="$" className="value" />
@@ -193,7 +202,11 @@ export const VaultsCard = (props: Props) => {
             <div>
               <div className="title">
                 Liquidation Cost
-                <Icon id="info" className="info-icon" />
+                <CustomTooltip
+                  text="How much it will cost to liquidated this vault."
+                  iconId="info"
+                  className="info-icon"
+                />
               </div>
 
               <CommaNumber value={liquidationMax} decimalsToShow={2} beginningText="$" className="value" />

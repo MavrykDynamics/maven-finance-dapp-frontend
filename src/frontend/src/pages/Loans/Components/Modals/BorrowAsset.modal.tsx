@@ -64,6 +64,7 @@ export const BorrowAsset = ({
     const futureCollateralRatio = borrowedAsset
       ? calcCollateralRatio(currentCollateralBalance, currentBorrowedAmount + inputAmount, borrowedAsset.rate)
       : 0
+
     const futureBorrowCapacity = borrowCapacity - inputAmount
     return { futureCollateralRatio, futureBorrowCapacity }
   }, [borrowedAsset, currentCollateralBalance, currentBorrowedAmount, inputAmount, borrowCapacity])

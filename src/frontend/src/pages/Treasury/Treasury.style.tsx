@@ -11,12 +11,26 @@ export const TreasuryViewStyle = styled(Card)<{ theme: MavrykTheme }>`
   position: relative;
 
   .content-wrapper {
-    max-width: 480px;
+    max-width: 460px;
 
     .treasury-checkbox {
       margin-top: 25px;
       margin-bottom: -15px;
     }
+
+    .no-treasury-table-data {
+      p {
+        margin: 0;
+        margin-top: 15px;
+        font-weight: 600;
+        font-size: 14px;
+      }
+    }
+  }
+
+  .pie-chart {
+    display: flex;
+    align-items: center;
   }
 
   .treasuryTooltip-link {
@@ -160,7 +174,6 @@ export const TreasuryViewStyle = styled(Card)<{ theme: MavrykTheme }>`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    text-transform: uppercase;
   }
 
   .assets-map {

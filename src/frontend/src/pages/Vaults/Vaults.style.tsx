@@ -218,6 +218,15 @@ export const VaultsCardDropDown = styled.div<{ theme: MavrykTheme }>`
     }
   }
 
+  .info-icon {
+    position: relative;
+    bottom: 2px;
+    
+    svg {
+      fill: ${({ theme }) => theme.textColor};
+    }
+  }
+
   .${PRIMARY} {
     color: ${({ theme }) => theme.infoColor};
   }
