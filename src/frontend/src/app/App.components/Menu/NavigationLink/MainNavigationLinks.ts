@@ -55,7 +55,7 @@ export const mainNavigationLinks: MainNavigationRoute[] = [
   {
     title: 'Vaults',
     id: 8,
-    path: 'vaults/all',
+    path: 'vaults/my',
     routePath: '/vaults/:tabId',
     icon: 'vaults',
   },

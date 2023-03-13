@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useLocation, useHistory, useParams } from 'react-router'
 
@@ -68,17 +68,13 @@ export const VaultsView = () => {
   const { isLoading } = useDataLoader(async () => {
     try {
       await dispatch(getVaultsStorage())
-    } catch (e) {
-      //TODO: handle fetch error
-    }
+    } catch (e) {}
   }, [accountPkh])
 
   useDataLoader(async () => {
     try {
       await dispatch(getAvaliableCollaterals())
-    } catch (e) {
-      //TODO: handle fetch error
-    }
+    } catch (e) {}
   }, [])
 
   const [vaultsIds, setVaultsIds] = useState<string[]>([])
@@ -106,6 +102,12 @@ export const VaultsView = () => {
   const handleMarkForLiquidation = (vaultId: number, vaultOwner: string) => {
     dispatch(markForLiquidation(vaultId, vaultOwner))
   }
+
+  // switch to "all" tab if user is disabled
+  useEffect(() => {   
+    if (accountPkh) return
+    handleChangeTabs(tabsList[0].id)
+  }, [accountPkh])
 
   return (
     <VaultsStyled>
