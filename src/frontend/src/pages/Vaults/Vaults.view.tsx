@@ -90,7 +90,9 @@ export const VaultsView = () => {
 
   const handleChangeTabs = (id: number) => {
     const foundTab = tabsList.find((item) => item.id === id)
-    if (!foundTab?.path) return
+    const currentTabId = tabsList.find((item) => item.path === tabId)?.id
+
+    if (!foundTab?.path || currentTabId === id) return
 
     history.replace(`${pathname}/${foundTab.path}`)
     setVaultsIds(foundTab.path === tabsId.ALL ? allVaultsIds : myVaultsIds)
