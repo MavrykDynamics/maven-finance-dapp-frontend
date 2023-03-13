@@ -19,12 +19,12 @@ export const vaultsFilters = {
 }
 
 export const sortVaultItems = {
+  MOST_RECENT: 'Most Recent',
   STATUSES: 'Status',
   COLLATERAL_HIGH: 'Collateral Amount ↑',
   COLLATERAL_LOW: 'Collateral Amount ↓',
   BORROWED_HIGH: 'Borrowed Amount ↑',
   BORROWED_LOW: 'Borrowed Amount ↓',
-  MOST_RECENT: 'Most Recent',
 }
 
 export const sortingList = Object.values(sortVaultItems)
