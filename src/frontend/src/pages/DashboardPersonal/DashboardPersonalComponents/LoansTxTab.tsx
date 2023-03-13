@@ -61,19 +61,19 @@ export const LoansTxTab = ({
               {dataToShow.map(({ icon, amount, annualPecentage, operationHash, symbol, date, id }) => {
                 return (
                   <TableRow rowHeight={55} borderColor="cardBorderColor" className="add-hover" key={id + operationHash}>
-                    <TableCell width="25%">
+                    <TableCell width="20%">
                       <div className="cell-content row">
                         <ImageWithPlug imageLink={icon} alt={`lended asset logo`} />
                         {symbol}
                       </div>
                     </TableCell>
                     <TableCell width="20%">
-                      <CommaNumber value={amount} beginningText="$" />
+                      <CommaNumber value={amount} />
                     </TableCell>
                     <TableCell width="20%">
                       <CommaNumber value={annualPecentage} endingText="%" />
                     </TableCell>
-                    <TableCell width="25%">
+                    <TableCell width="30%">
                       {parseDate({ time: date, timeFormat: 'MMM Do, YYYY, HH:mm:ss UTC' })}
                     </TableCell>
                     <TableCell width="10%" contentPosition="right">
