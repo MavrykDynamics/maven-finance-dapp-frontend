@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
+import { Link, Redirect, Route, Switch, useParams } from 'react-router-dom'
 
 import { State } from 'reducers'
 
@@ -22,6 +22,12 @@ import {
   PortfolioWalletStyled,
   PortfolioChartStyled,
 } from './DashboardPersonalComponents.style'
+import {
+  PORTFOLIO_BORROWING_TAB_ID,
+  PORTFOLIO_LENDING_TAB_ID,
+  PORTFOLIO_POSITION_TAB_ID,
+  PORTFOLIO_TAB_ID,
+} from '../DashboardPersonal.utils'
 
 type PortfolioTabProps = {
   xtzAmount: number
@@ -40,6 +46,9 @@ const TOGGLE_VALUES: TabItem[] = [
 ]
 
 const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUserLoansLoading }: PortfolioTabProps) => {
+  const { secondaryTabId } = useParams<{ secondaryTabId: string }>()
+  const portfolioActiveTab = secondaryTabId
+  console.log({ portfolioActiveTab })
   const {
     tokensPrices: { mvk: { usd: mvkExchangeRate = 0 } = {} },
   } = useSelector((state: State) => state.tokens)
@@ -130,6 +139,41 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
           </div>
         </div>
       </PortfolioWalletStyled>
+
+      <div className="tabs-switchers">
+        <Link
+          to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`}
+          className={portfolioActiveTab === PORTFOLIO_POSITION_TAB_ID ? 'selected' : ''}
+        >
+          Lend/Borrow Position
+        </Link>
+        <Link
+          to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_LENDING_TAB_ID}`}
+          className={portfolioActiveTab === PORTFOLIO_LENDING_TAB_ID ? 'selected' : ''}
+        >
+          Lending TXs
+        </Link>
+        <Link
+          to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_BORROWING_TAB_ID}`}
+          className={portfolioActiveTab === PORTFOLIO_BORROWING_TAB_ID ? 'selected' : ''}
+        >
+          Borrow TXs
+        </Link>
+      </div>
+
+      <Switch>
+        <Route exact path={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`}>
+          <div>{PORTFOLIO_POSITION_TAB_ID}</div>
+        </Route>
+        <Route exact path={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_LENDING_TAB_ID}`}>
+          <div>{PORTFOLIO_LENDING_TAB_ID}</div>
+        </Route>
+        <Route exact path={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_BORROWING_TAB_ID}`}>
+          <div>{PORTFOLIO_BORROWING_TAB_ID}</div>
+        </Route>
+
+        <Redirect to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`} />
+      </Switch>
 
       <LBHInfoBlock>
         <GovRightContainerTitleArea>

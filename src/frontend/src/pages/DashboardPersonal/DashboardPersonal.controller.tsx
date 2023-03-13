@@ -17,6 +17,9 @@ import {
   DELEGATION_TAB_ID,
   SATELLITE_TAB_ID,
   VESTING_TAB_ID,
+  PORTFOLIO_POSITION_TAB_ID,
+  PORTFOLIO_LENDING_TAB_ID,
+  PORTFOLIO_BORROWING_TAB_ID,
 } from './DashboardPersonal.utils'
 import {
   USER_ACTIONS_HISTORY,
@@ -81,7 +84,6 @@ const DashboardPersonal = () => {
       myFarmRewardsData,
       mySatelliteRewardsData: { myAvailableSatelliteRewards },
       userRewardsToDate: { satelliteRewards, farmRewards, doormanRewards },
-      actionsHistory,
       isLoaded: isUserDataLoaded,
     },
   } = useSelector((state: State) => state.wallet)
@@ -137,15 +139,6 @@ const DashboardPersonal = () => {
 
   const activeTab = useMemo(() => (isValidId(tabId) ? tabId : PORTFOLIO_TAB_ID), [tabId])
 
-  const { search, pathname } = useLocation()
-  const currentPage = getPageNumber(search, USER_ACTIONS_HISTORY)
-  const paginatedTableRows = useMemo(() => {
-    const [from, to] = calculateSlicePositions(currentPage, USER_ACTIONS_HISTORY)
-    return actionsHistory?.slice(from, to)
-  }, [currentPage, actionsHistory])
-
-  const showHistoryData = pathname !== `/dashboard-personal/${PORTFOLIO_TAB_ID}`
-
   return (
     <Page>
       <PageHeader page={'dashboard'} avatar={'/images/default-avatar.png'} />
@@ -165,7 +158,7 @@ const DashboardPersonal = () => {
           <>
             <div className="tabs-switchers">
               <Link
-                to={`/dashboard-personal/${PORTFOLIO_TAB_ID}`}
+                to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`}
                 className={activeTab === PORTFOLIO_TAB_ID ? 'selected' : ''}
               >
                 Portfolio
@@ -189,7 +182,7 @@ const DashboardPersonal = () => {
             <div className={`bottom-grid ${activeTab}`}>
               <DashboardPersonalTabStyled>
                 <Switch>
-                  <Route exact path={`/dashboard-personal/${PORTFOLIO_TAB_ID}`}>
+                  <Route exact path={`/dashboard-personal/${PORTFOLIO_TAB_ID}/:secondaryTabId?`}>
                     <PortfolioTab {...walletData} isUserLoansLoading={isUserLoansLoading} />
                   </Route>
                   <Route exact path={`/dashboard-personal/${DELEGATION_TAB_ID}`}>
@@ -202,64 +195,8 @@ const DashboardPersonal = () => {
                     <VestingTab />
                   </Route>
 
-                  <Redirect to={`/dashboard-personal/${PORTFOLIO_TAB_ID}`} />
+                  <Redirect to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`} />
                 </Switch>
-
-                {showHistoryData ? (
-                  <HistoryBlock>
-                    <GovRightContainerTitleArea>
-                      <h2>History</h2>
-                    </GovRightContainerTitleArea>
-                    {actionsHistory.length ? (
-                      <Table className="treasury-table">
-                        <TableHeader className="treasury">
-                          <TableRow>
-                            <TableHeaderCell>Action</TableHeaderCell>
-                            <TableHeaderCell>Amount: MVK</TableHeaderCell>
-                            <TableHeaderCell>
-                              Total: MVK{' '}
-                              <CustomTooltip
-                                iconId="info"
-                                className="history-tooltip"
-                                text='For unstake, this is the amount received in MVK after the fee is deducted. For the rest, same as the "Amount, MVK" column'
-                              />
-                            </TableHeaderCell>
-                            <TableHeaderCell contentPosition="right">Fee</TableHeaderCell>
-                          </TableRow>
-                        </TableHeader>
-
-                        <TableBody className="treasury">
-                          {paginatedTableRows.map(({ action, amount, fee, totalAmount, id }) => {
-                            return (
-                              <TableRow rowHeight={40} borderColor="dataColor" className="add-hover" key={id}>
-                                <TableCell width="25%">{action}</TableCell>
-                                <TableCell width="30%">
-                                  <CommaNumber value={amount} />
-                                </TableCell>
-                                <TableCell width="30%">
-                                  <CommaNumber value={totalAmount} />
-                                </TableCell>
-                                <TableCell width="20%" contentPosition="right">
-                                  <CommaNumber value={fee} endingText="%" />
-                                </TableCell>
-                              </TableRow>
-                            )
-                          })}
-                        </TableBody>
-                      </Table>
-                    ) : (
-                      <div className="no-data">
-                        <span>You do not have any previous actions history</span>
-                      </div>
-                    )}
-
-                    <Pagination
-                      itemsCount={actionsHistory?.length ?? 0}
-                      listName={USER_ACTIONS_HISTORY}
-                      side={PAGINATION_SIDE_CENTER}
-                    />
-                  </HistoryBlock>
-                ) : null}
               </DashboardPersonalTabStyled>
             </div>
           </>

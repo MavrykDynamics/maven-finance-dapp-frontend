@@ -11,6 +11,7 @@ import { DelegationStatusBlock } from './DashboardPersonalComponents.style'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
+import { UserActionHistory } from './UserOperationsHistory'
 
 const DelegationTab = () => {
   const { satelliteMvkIsDelegatedTo, mySMvkTokenBalance } = useSelector((state: State) => state.wallet.user)
@@ -98,6 +99,8 @@ const DelegationTab = () => {
           </div>
         )}
       </DelegationStatusBlock>
+
+      <UserActionHistory />
     </>
   )
 }
