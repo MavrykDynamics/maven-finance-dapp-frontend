@@ -20,6 +20,7 @@ import {
 } from 'app/App.components/Table/Table.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { LBHInfoBlock } from './DashboardPersonalComponents.style'
+import { parseDate } from 'utils/time'
 
 export const LoansTxTab = ({
   txVariant,
@@ -57,13 +58,13 @@ export const LoansTxTab = ({
             </TableHeader>
 
             <TableBody className="dashboard-loans treasury">
-              {dataToShow.map(({ icon, amount, annualPecentage, operationHash, id }) => {
+              {dataToShow.map(({ icon, amount, annualPecentage, operationHash, symbol, date, id }) => {
                 return (
                   <TableRow rowHeight={55} borderColor="cardBorderColor" className="add-hover" key={id + operationHash}>
                     <TableCell width="25%">
                       <div className="cell-content row">
                         <ImageWithPlug imageLink={icon} alt={`lended asset logo`} />
-                        namename
+                        {symbol}
                       </div>
                     </TableCell>
                     <TableCell width="20%">
@@ -72,7 +73,9 @@ export const LoansTxTab = ({
                     <TableCell width="20%">
                       <CommaNumber value={annualPecentage} endingText="%" />
                     </TableCell>
-                    <TableCell width="25%">datdatedatee</TableCell>
+                    <TableCell width="25%">
+                      {parseDate({ time: date, timeFormat: 'MMM Do, YYYY, HH:mm:ss UTC' })}
+                    </TableCell>
                     <TableCell width="10%" contentPosition="right">
                       <div style={{ width: 'fit-content' }}>
                         <Link to={{ pathname: `https://ghostnet.tzkt.io/${operationHash}` }} target="_blank">

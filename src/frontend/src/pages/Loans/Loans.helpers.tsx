@@ -22,7 +22,7 @@ import {
   BaseLoansAssetDataType,
   DepositorsFlagType,
 } from 'utils/TypesAndInterfaces/Loans'
-import { calcWithoutDecimals, calcWithoutMu } from '../../utils/calcFunctions'
+import { calcWithoutDecimals, calcWithoutMu, convertNumberForClient } from '../../utils/calcFunctions'
 import { ANY_USER, NONE_USER, WHITELIST_USERS } from './Loans.const'
 import { getUserBalanceForLoanAsset } from './LoansFethcers'
 
@@ -684,6 +684,7 @@ export const normalizeUserLending = ({
           id,
           amount,
           operation_hash,
+          timestamp,
           lending_controller: { interest_rate_decimals, interest_treasury_share, decimals },
         },
       ) => {
@@ -704,12 +705,13 @@ export const normalizeUserLending = ({
             acc.userLendings.push({
               icon: assetData.icon,
               id,
-              amount: (amount / 10 ** assetData.decimals) * assetData.rate,
+              amount: convertNumberForClient({ number: amount, grage: assetData.decimals }),
+              date: timestamp,
               annualPecentage: calcLendingAPY(
                 calcWithoutDecimals(loan_token.current_interest_rate, interest_rate_decimals),
                 calcWithoutDecimals(interest_treasury_share, decimals),
               ),
-              earned: 0,
+              symbol: assetData.symbol,
               operationHash: operation_hash,
             })
             break
@@ -718,10 +720,11 @@ export const normalizeUserLending = ({
             acc.userBorrowing.push({
               icon: assetData.icon,
               id,
-              amount: (amount / 10 ** assetData.decimals) * assetData.rate,
+              date: timestamp,
+              amount: convertNumberForClient({ number: amount, grage: assetData.decimals }),
               annualPecentage: calcWithoutDecimals(loan_token.current_interest_rate, interest_rate_decimals) * 100,
-              earned: 0,
               operationHash: operation_hash,
+              symbol: assetData.symbol,
             })
             break
         }

@@ -75,7 +75,8 @@ export type UserLendObjType = {
   amount: number
   id: number
   annualPecentage: number
-  earned: number
+  symbol: string
+  date: string
   operationHash: string
 }
 

@@ -19,10 +19,6 @@ export const ProposalSubmissionForm = styled(Card)<{ theme: MavrykTheme }>`
     margin-bottom: 4px;
   }
 
-  p {
-    margin-top: 30px;
-  }
-
   label {
     color: ${({ theme }) => theme.textColor};
     padding-bottom: 9px;

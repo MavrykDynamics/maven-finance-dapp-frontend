@@ -1,4 +1,4 @@
-import { useLocation, useParams } from 'react-router'
+import { useParams } from 'react-router'
 import { useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, Redirect, Route, Switch } from 'react-router-dom'
@@ -18,47 +18,24 @@ import {
   SATELLITE_TAB_ID,
   VESTING_TAB_ID,
   PORTFOLIO_LENDING_TAB_ID,
-  PORTFOLIO_LENDING_TAB_ID,
-  PORTFOLIO_BORROWING_TAB_ID,
 } from './DashboardPersonal.utils'
-import {
-  USER_ACTIONS_HISTORY,
-  calculateSlicePositions,
-  PAGINATION_SIDE_CENTER,
-  getPageNumber,
-} from 'app/App.components/Pagination/pagination.consts'
+import { BUTTON_NAVIGATION } from 'app/App.components/Button/Button.constants'
 
+import Button from 'app/App.components/Button/NewButton'
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
 import { Page } from 'styles/components'
 import DashboardPersonalEarningsHistory from './DashboardPersonalComponents/DashboardPersonalEarningsHistory'
 import DashboardPersonalMyRewards from './DashboardPersonalComponents/DashboardPersonalMyRewards'
 import DelegationTab from './DashboardPersonalComponents/DelegationTab'
 import PortfolioTab from './DashboardPersonalComponents/PortfolioTab'
-import { DashboardPersonalStyled } from './DashboardPersonal.style'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import SatelliteTab from './DashboardPersonalComponents/SatelliteTab'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import Pagination from 'app/App.components/Pagination/Pagination.view'
-import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 
-import {
-  Table,
-  TableHeader,
-  TableRow,
-  TableHeaderCell,
-  TableBody,
-  TableCell,
-} from 'app/App.components/Table/Table.style'
-import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
-import {
-  DashboardPersonalTabStyled,
-  HistoryBlock,
-} from './DashboardPersonalComponents/DashboardPersonalComponents.style'
+import { DashboardPersonalTabStyled } from './DashboardPersonalComponents/DashboardPersonalComponents.style'
 import { getVestingStorage } from 'pages/Treasury/Treasury.actions'
 import VestingTab from './DashboardPersonalComponents/VestingTab'
+import { DashboardPersonalStyled } from './DashboardPersonal.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
-import { ClockLoader } from 'app/App.components/Loader/Loader.view'
-import Button from 'app/App.components/Button/NewButton'
-import { BUTTON_NAVIGATION } from 'app/App.components/Button/Button.constants'
 
 const DashboardPersonal = () => {
   const dispatch = useDispatch()
