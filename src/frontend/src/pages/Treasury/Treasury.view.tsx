@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect, useRef } from 'react'
 
 // view
 import { TreasuryType } from 'utils/TypesAndInterfaces/Treasury'
+import Icon from 'app/App.components/Icon/Icon.view'
 import PieChartView from '../../app/App.components/PieСhart/PieСhart.view'
 
 // helpers
@@ -23,9 +24,7 @@ import {
   TableCell,
   TableScrollable,
 } from 'app/App.components/Table/Table.style'
-import { EmptyContainer } from 'app/App.style'
 import { Plug } from 'app/App.components/Chart/Chart.style'
-import Icon from 'app/App.components/Icon/Icon.view'
 
 type Props = {
   treasury: TreasuryType
