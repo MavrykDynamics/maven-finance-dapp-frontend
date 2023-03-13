@@ -12,7 +12,7 @@ import { claimAllRewardsAction } from './DashboardPersonal.actions'
 import { updateUserData } from 'reducers/actions/user.actions'
 import { getEmergencyGovernanceStorage } from 'pages/EmergencyGovernance/EmergencyGovernance.actions'
 import {
-  isValidId,
+  isValidPersonalDashboardTabId,
   PORTFOLIO_TAB_ID,
   DELEGATION_TAB_ID,
   SATELLITE_TAB_ID,
@@ -116,7 +116,7 @@ const DashboardPersonal = () => {
     tzBTCAmount: mytzBTCTokenBalance,
   }
 
-  const activeTab = useMemo(() => (isValidId(tabId) ? tabId : PORTFOLIO_TAB_ID), [tabId])
+  const activeTab = useMemo(() => (isValidPersonalDashboardTabId(tabId) ? tabId : PORTFOLIO_TAB_ID), [tabId])
 
   return (
     <Page>

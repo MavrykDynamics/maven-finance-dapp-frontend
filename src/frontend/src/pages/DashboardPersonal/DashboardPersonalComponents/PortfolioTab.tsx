@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { Link, Redirect, Route, Switch, useParams } from 'react-router-dom'
 
@@ -7,6 +7,7 @@ import { State } from 'reducers'
 import { CHART_TEST_DATA } from '../tabs.const'
 import { BUTTON_NAVIGATION, BUTTON_SIMPLE } from 'app/App.components/Button/Button.constants'
 import {
+  isValidPersonalDashboardSecondaryTabId,
   PORTFOLIO_BORROWING_TAB_ID,
   PORTFOLIO_LENDING_TAB_ID,
   PORTFOLIO_POSITION_TAB_ID,
@@ -41,7 +42,10 @@ const TOGGLE_VALUES: TabItem[] = [
 
 const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUserLoansLoading }: PortfolioTabProps) => {
   const { secondaryTabId } = useParams<{ secondaryTabId: string }>()
-  const portfolioActiveTab = secondaryTabId
+  const portfolioActiveTab = useMemo(
+    () => (isValidPersonalDashboardSecondaryTabId(secondaryTabId) ? secondaryTabId : PORTFOLIO_LENDING_TAB_ID),
+    [secondaryTabId],
+  )
 
   const {
     tokensPrices: { mvk: { usd: mvkExchangeRate = 0 } = {} },

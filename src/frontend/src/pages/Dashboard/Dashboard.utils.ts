@@ -22,7 +22,7 @@ export type TabId =
   | typeof ORACLES_TAB_ID
   | typeof TREASURY_TAB_ID
 
-export const isValidId = (x: string): x is TabId =>
+export const isValidPersonalDashboardTabId = (x: string): x is TabId =>
   x === LENDING_TAB_ID ||
   x === VAULTS_TAB_ID ||
   x === FARMS_TAB_ID ||
