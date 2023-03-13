@@ -1,6 +1,6 @@
 export const GET_TREASURY_DATA = `
   query GetTreasuryStorageQuery {
-    treasury {
+    treasury(where: {admin: {_neq: ""}}) {
       address
       admin
       creation_timestamp
@@ -11,6 +11,7 @@ export const GET_TREASURY_DATA = `
       transfer_paused
       unstake_mvk_paused
     }
+    
     treasury_factory {
       address
       admin
