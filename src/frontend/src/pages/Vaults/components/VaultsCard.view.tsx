@@ -1,4 +1,5 @@
-import React, { useEffect, useState, useContext } from 'react'
+import React, { useEffect, useState, useContext, useRef } from 'react'
+import { useClickAway } from 'react-use'
 
 // components
 import { StatusFlag } from '../../../app/App.components/StatusFlag/StatusFlag.controller'
@@ -120,6 +121,9 @@ export const VaultsCard = (props: Props) => {
     status === vaultsStatuses.LIQUIDATABLE || status === vaultsStatuses.GRACE_PERIOD || status === vaultsStatuses.MARK
 
   const isMarkStatus = vaultsStatuses.MARK === status
+
+  const ref = useRef<HTMLDivElement | null>(null)
+  useClickAway(ref, () => setExpanded(false))
 
   const getCountdownTimestamp = async (levelOfEarly: number, levelOfLate: number) => {
     const [timestampOfEarly, timestampOfLate] = await Promise.all([
@@ -303,13 +307,14 @@ export const VaultsCard = (props: Props) => {
   )
 
   return (
-    <>
+    <div ref={ref}>
       {isOwner ? (
         <BorrowingExpandCard
           {...props}
           className={`expand-vault ${expanded ? 'openVault' : ''}`}
           headerSufix={headerSufix}
           getExpandedStatus={setExpanded}
+          isOpenedVault={expanded}
           isOwner
           // TODO: add this values as on loans
           DAOFee={0}
@@ -320,12 +325,13 @@ export const VaultsCard = (props: Props) => {
           className={`expand-vault ${expanded ? 'openVault' : ''}`}
           headerSufix={headerSufix}
           getExpandedStatus={setExpanded}
+          isOpenedVault={expanded}
           // TODO: add this values as on loans
           DAOFee={0}
         >
           {generalExpand}
         </BorrowingExpandCard>
       )}
-    </>
+    </div>
   )
 }
