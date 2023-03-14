@@ -24,7 +24,6 @@ export const fillTreasuryStorage = () => async (dispatch: AppDispatch, getState:
   try {
     const {
       tokens: { tokensPrices },
-      dataFeeds: { feedsLedger },
     } = getState()
     const MVK_EXCHANGE_RATE = tokensPrices['mvk'] ?? 0
     // Get treasury addresses from gql
@@ -92,13 +91,7 @@ export const fillTreasuryStorage = () => async (dispatch: AppDispatch, getState:
           const symbolToSearch =
             symbol.toLowerCase() === 'tezos' ? 'xtz' : symbol.toLowerCase() === 'tzbtc' ? 'btc' : symbol.toLowerCase()
 
-          // const { last_completed_data: feedAnswer, decimals: feedDecimals } =
-          //   feedsLedger.find(({ name }) => {
-          //     return name.toLowerCase().includes(symbolToSearch)
-          //   }) ?? {}
-
           const feedAssetRate = tokensPrices[symbol.toLowerCase()] ?? null
-          // feedAnswer && feedDecimals ? convertNumberForClient({ number: feedAnswer, grage: feedDecimals }) : null
 
           acc[symbol.toLowerCase()] = {
             symbol: isTezosAsset(symbol.toLowerCase()) ? 'XTZ' : symbol,

@@ -60,7 +60,7 @@ const AppContainer = () => {
         dispatch(getMTokensStorage()),
       ])
 
-      // Depands on data feeds (getFeedsStorage())
+      // Depends on data feeds (getFeedsStorage())
       await dispatch(getTokensPrices())
 
       // For using Beacon wallet
