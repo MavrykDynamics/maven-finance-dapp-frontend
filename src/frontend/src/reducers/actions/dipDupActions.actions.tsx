@@ -109,25 +109,3 @@ export const getMTokensStorage = () => async (dispatch: AppDispatch, getState: G
     console.error('getMTokensStorage error: ', e)
   }
 }
-
-export const fetchRateBySymbols = async (tokensSymbols: Array<string>) => {
-  try {
-    return await (
-      await Promise.all(tokensSymbols.map((symbol) => coinGeckoClient.coins.fetch(symbol, {})))
-    ).reduce<Record<string, { usd: number }>>((acc, promiseResult, idx) => {
-      if (promiseResult?.success && promiseResult?.code === 200) {
-        // TODO: extract this, and consider use id instead of symbol
-        const symbol = promiseResult.data.symbol === 'xtz' ? 'tezos' : promiseResult.data.symbol
-        const rate = promiseResult.data.market_data.current_price.usd
-        acc[symbol] = { usd: rate }
-      } else {
-        acc[tokensSymbols[idx]] = { usd: 0.25 }
-      }
-
-      return acc
-    }, {})
-  } catch (e) {
-    console.log('fetchRateBySymbols error: ', e)
-    return {}
-  }
-}
