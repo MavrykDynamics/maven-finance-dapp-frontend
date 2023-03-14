@@ -26,7 +26,7 @@ export const OraclesTab = ({ isLoading }: { isLoading: boolean }) => {
   const { themeSelected } = useSelector((state: State) => state.preferences)
   const {
     dipDupContracts,
-    tokensPrices: { mvk: { usd: mvkExchangeRate = 0 } = {} },
+    tokensPrices: { mvk: mvkExchangeRate = 0 },
   } = useSelector((state: State) => state.tokens)
   const { satelliteMapper, oraclesIds } = useSelector((state: State) => state.satellites)
 

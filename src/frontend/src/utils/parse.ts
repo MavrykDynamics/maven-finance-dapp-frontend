@@ -3,3 +3,14 @@ export const getSeparateCamelCase = (stringCamelCase: string): string =>
 
 export const getSeparateSnakeCase = (stringSnakeCase: string): string =>
   stringSnakeCase?.length ? stringSnakeCase.replaceAll('_', ' ').toLowerCase() : ''
+
+/**
+ * Feed name comes like symbol/currency, we need to get symbol and in some cases transform it to different symbol
+ */
+export const getSymbolFromFeedName = (feedName: string) => {
+  const [symbol, currency] = feedName.split('/')
+
+  if (symbol.toLowerCase() === 'btc') return 'tzbtc'
+  if (symbol.toLowerCase() === 'xtz') return 'tezos'
+  return symbol.toLowerCase()
+}

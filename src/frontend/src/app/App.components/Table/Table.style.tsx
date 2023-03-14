@@ -267,10 +267,6 @@ export const TableBody = styled.tbody<{ theme: MavrykTheme }>`
       font-size: 14px;
       font-weight: 600;
     }
-
-    td:first-child {
-      text-transform: uppercase;
-    }
   }
 
   &.dashboard-loans {

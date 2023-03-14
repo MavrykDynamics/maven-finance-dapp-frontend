@@ -3,7 +3,6 @@ import { BrowserRouter as Router } from 'react-router-dom'
 import { AnyAction } from 'redux'
 import { useDispatch, useSelector } from 'react-redux'
 import { useMedia } from 'react-use'
-import CoinGecko from 'coingecko-api'
 import { ThunkDispatch } from 'redux-thunk'
 import { configureStore } from './App.store'
 
@@ -37,7 +36,6 @@ import {
 export const { store } = configureStore({})
 export type AppDispatch = ThunkDispatch<State, unknown, AnyAction>
 export type GetState = typeof store.getState
-export const coinGeckoClient = new CoinGecko()
 
 const AppContainer = () => {
   const dispatch = useDispatch()
@@ -53,15 +51,17 @@ const AppContainer = () => {
     ;(async () => {
       // Fetching initial&common data for DAPP
       await Promise.all([
-        // TODO: we can move out satellites loading to sections
         dispatch(getSatellitesStorage()),
+        dispatch(getFeedsStorage()),
+
         dispatch(getContractAddressesStorage()),
         dispatch(getDipDupTokensStorage()),
         dispatch(getWhitelistTokensStorage()),
-        dispatch(getTokensPrices()),
         dispatch(getMTokensStorage()),
-        dispatch(getFeedsStorage()),
       ])
+
+      // Depends on data feeds (getFeedsStorage())
+      await dispatch(getTokensPrices())
 
       // For using Beacon wallet
       if (
