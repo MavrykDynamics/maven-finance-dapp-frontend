@@ -37,15 +37,14 @@ export const TreasuryTab = ({ isLoading }: { isLoading: boolean }) => {
     () =>
       treasuryStorage.reduce(
         (acc, treasury) => {
-          if (treasury.balances.length > acc.assetsCount) {
+          if (treasury.treasuryTVL > acc.treasuryTVL) {
             acc.treasuryName = treasury.name
-            acc.assetsCount = treasury.balances.length
             acc.treasuryTVL = treasury.treasuryTVL
           }
 
           return acc
         },
-        { treasuryName: '', assetsCount: 0, treasuryTVL: 0 },
+        { treasuryName: '', treasuryTVL: 0 },
       ),
     [treasuryStorage],
   )
@@ -105,7 +104,7 @@ export const TreasuryTab = ({ isLoading }: { isLoading: boolean }) => {
                             {parseFloat(String(balance)) < 0.01 ? (
                               '<0.01'
                             ) : (
-                              <CommaNumber value={balance} useAccurateParsing showDecimal decimalsToShow={2} />
+                              <CommaNumber value={balance} showDecimal decimalsToShow={2} />
                             )}
                           </TableCell>
                           <TableCell width="33%" contentPosition="right">
@@ -116,7 +115,6 @@ export const TreasuryTab = ({ isLoading }: { isLoading: boolean }) => {
                                 value={usdValue}
                                 endingText={rate ? '' : symbol}
                                 beginningText={rate ? '$' : ''}
-                                useAccurateParsing
                                 showDecimal
                                 decimalsToShow={2}
                               />

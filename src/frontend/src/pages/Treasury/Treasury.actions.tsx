@@ -14,6 +14,8 @@ import { normalizeTreasury, normalizeVestingStorage } from './Treasury.helpers'
 import { AppDispatch, coinGeckoClient, GetState } from '../../app/App.controller'
 import { VESTING_STORAGE_QUERY, VESTING_STORAGE_QUERY_NAME, VESTING_STORAGE_QUERY_VARIABLE } from 'gql/queries'
 import { getAssetColor } from './helpers/treasury.utils'
+import { isTezosAsset } from 'pages/Loans/Loans.helpers'
+import { convertNumberForClient } from 'utils/calcFunctions'
 
 export const GET_TREASURY_STORAGE = 'GET_TREASURY_STORAGE'
 export const SET_TREASURY_STORAGE = 'SET_TREASURY_STORAGE'
@@ -22,6 +24,7 @@ export const fillTreasuryStorage = () => async (dispatch: AppDispatch, getState:
   try {
     const {
       tokens: { tokensPrices: { mvk: { usd: MVK_EXCHANGE_RATE = 0 } } = {} },
+      dataFeeds: { feedsLedger },
     } = getState()
     // Get treasury addresses from gql
     const treasuryAddressesStorage = await fetchFromIndexer(
@@ -69,39 +72,43 @@ export const fillTreasuryStorage = () => async (dispatch: AppDispatch, getState:
     // Await promises from above
     const fetchedTheasuryData = await Promise.all(getTreasuryCallbacks.map((fn) => fn()))
 
-    // Mapping assets for every treasury, to fetch rates for them
-    const arrayOfAssetsSymbols: Set<string> = fetchedTheasuryData.reduce((acc, treasuryData) => {
+    // Gathering metadata for symbols in treasuries
+    const treasurySymbolsMetadata = fetchedTheasuryData.reduce<
+      Record<string, { rate: number | null; symbol: string; color: string }>
+    >((acc, treasuryData, treasuryIdx) => {
       treasuryData.forEach(
-        ({
-          token: {
-            metadata: { symbol },
+        (
+          {
+            token: {
+              metadata: { symbol },
+            },
           },
-        }: {
-          token: { metadata: { symbol: string } }
-        }) => acc.add(symbol),
+          assetIdx,
+        ) => {
+          if (acc[symbol.toLowerCase()]) return acc
+
+          // TODO: temp solution cuz back-end can't normally relate treasury and feeds for now
+          const symbolToSearch =
+            symbol.toLowerCase() === 'tezos' ? 'xtz' : symbol.toLowerCase() === 'tzbtc' ? 'btc' : symbol.toLowerCase()
+
+          const { last_completed_data: feedAnswer, decimals: feedDecimals } =
+            feedsLedger.find(({ name }) => {
+              return name.toLowerCase().includes(symbolToSearch)
+            }) ?? {}
+
+          const feedAssetRate =
+            feedAnswer && feedDecimals ? convertNumberForClient({ number: feedAnswer, grage: feedDecimals }) : null
+
+          acc[symbol.toLowerCase()] = {
+            symbol: isTezosAsset(symbol.toLowerCase()) ? 'XTZ' : symbol,
+            color: getAssetColor(treasuryIdx + assetIdx),
+            // TODO: this will be redone after normal integration of treasury with feeds
+            rate: symbolToSearch === 'mvk' ? MVK_EXCHANGE_RATE : feedAssetRate,
+          }
+
+          return acc
+        },
       )
-      return acc
-    }, new Set<string>())
-
-    const mapperOfAssetsColors = Array.from(arrayOfAssetsSymbols).reduce<Record<string, string>>((acc, asset, idx) => {
-      acc[asset] = getAssetColor(idx)
-      return acc
-    }, {})
-
-    // Fetching rates for every asset in treasury
-    const treasuryAssetsFetchedData = (
-      await Promise.allSettled(
-        Array.from(arrayOfAssetsSymbols).map((symbol) => coinGeckoClient.coins.fetch(symbol, {})),
-      )
-    ).reduce<Record<string, { rate: number; symbol: string }>>((acc, promiseResult) => {
-      const { value: { data, success } = {} as any } = (promiseResult ?? {}) as any
-      if (success) {
-        const symbol = data.symbol
-        const rate = data.market_data.current_price.usd
-
-        acc[data.id] = { rate, symbol }
-      }
-
       return acc
     }, {})
 
@@ -118,21 +125,18 @@ export const fillTreasuryStorage = () => async (dispatch: AppDispatch, getState:
             },
             balance,
           }: FetchedTreasuryBalanceType): TreasuryBalanceType => {
-            const assetRate = symbol === 'MVK' ? MVK_EXCHANGE_RATE : treasuryAssetsFetchedData[symbol]?.rate
-            const coinsAmount = parseFloat(balance) / Math.pow(10, parseInt(decimals))
-            const usdValue = coinsAmount * (assetRate ?? 1)
-
+            const assetData = treasurySymbolsMetadata[symbol.toLowerCase()]
+            const coinsAmount = convertNumberForClient({ number: parseFloat(balance), grage: parseInt(decimals) })
             return {
               contract: address,
-              usdValue: usdValue,
+              usdValue: coinsAmount * (assetData.rate ?? 1),
               decimals: parseInt(decimals),
               name: name,
               thumbnail_uri: thumbnailUri,
-              // TODO: take asset symbol from feed or think from where
-              symbol: treasuryAssetsFetchedData[symbol]?.symbol ?? symbol,
+              symbol: assetData.symbol,
               balance: coinsAmount,
-              rate: assetRate,
-              chartColor: mapperOfAssetsColors[symbol],
+              rate: assetData.rate,
+              chartColor: assetData.color,
             }
           },
         )
