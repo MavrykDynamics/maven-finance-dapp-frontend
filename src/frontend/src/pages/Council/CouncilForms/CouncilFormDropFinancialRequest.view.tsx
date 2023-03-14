@@ -1,40 +1,51 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
 // const
 import { distinctRequestsByExecuting } from 'pages/FinacialRequests/FinancialRequests.helpers'
-import { ACTION_PRIMARY, SUBMIT } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, SUBMIT } from 'app/App.components/Button/Button.constants'
 
 // view
-import NewButton from 'app/App.components/Button/NewButton.controller'
+import NewButton from 'app/App.components/Button/NewButton'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 import { DDItemId, DropDown } from 'app/App.components/DropDown/NewDropdown'
 
 // action
 import { dropFinancialRequest } from '../Council.actions'
-import { getGovernanceStorage } from 'pages/Governance/Governance.actions'
+import { getFinancialRequestStorage } from 'pages/FinacialRequests/FiancialRequest.actions'
+import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 
 // style
 import { CouncilFormStyled } from './CouncilForm.style'
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 
 export const CouncilFormDropFinancialRequest = () => {
   const dispatch = useDispatch()
-  const { governanceStorage } = useSelector((state: State) => state.governance)
-  const { financialRequestLedger } = governanceStorage
-  const { ongoing } = distinctRequestsByExecuting(financialRequestLedger || [])
+  const { financialRequests, isLoaded: isFinancialRequestsLoaded } = useSelector(
+    (state: State) => state.financialRequest,
+  )
+
+  useDataLoader(async () => {
+    try {
+      if (!isFinancialRequestsLoaded) {
+        await dispatch(getFinancialRequestStorage())
+      }
+    } catch (e) {}
+  }, [])
 
   const dropDownItems = useMemo(
     () =>
-      ongoing.map((item) => ({
+      distinctRequestsByExecuting(financialRequests).ongoing.map((item) => ({
         content: (
-          <div className="dropdownItem">
-            {item.request_type} - {item.request_purpose}
+          <div className="truncated-text">
+            {item.type} {item.purpose}
           </div>
         ),
         id: item.id,
       })),
-    [ongoing],
+    [financialRequests],
   )
 
   type DropDownItemType = typeof dropDownItems[0]
@@ -60,10 +71,6 @@ export const CouncilFormDropFinancialRequest = () => {
     setChosenDdItem(foundItem)
   }
 
-  useEffect(() => {
-    dispatch(getGovernanceStorage())
-  }, [dispatch])
-
   return (
     <CouncilFormStyled onSubmit={handleSubmit}>
       <a className="info-link" href="https://mavryk.finance/litepaper#mavryk-council" target="_blank" rel="noreferrer">
@@ -82,7 +89,7 @@ export const CouncilFormDropFinancialRequest = () => {
           />
         </div>
         <div className="button-aligment">
-          <NewButton kind={ACTION_PRIMARY} type={SUBMIT}>
+          <NewButton kind={BUTTON_PRIMARY} type={SUBMIT}>
             <Icon id="navigation-menu_close" />
             Drop Financial Request
           </NewButton>

@@ -1,8 +1,15 @@
 import { State } from 'reducers'
-import { UserState } from 'reducers/wallet'
-import { FIXED_POINT_ACCURACY, PRECISION_NUMBER, SECONDS_PER_BLOCK } from './constants'
+import {
+  FIXED_POINT_ACCURACY,
+  PRECISION_NUMBER,
+  SECONDS_PER_BLOCK,
+  MVK_DECIMALS,
+  XTZ_DECIMALS,
+  DECIMALS_TO_SHOW,
+} from './constants'
 import { Doorman, Farm, Satellite_Rewards, Stake_History_Data } from './generated/graphqlTypes'
 import { UserDoormanRewardsData, UserFarmRewardsData, UserSatelliteRewardsData } from './TypesAndInterfaces/User'
+import { TokenType } from './TypesAndInterfaces/General'
 
 /**
  * Calculates the MVK Loyalty Index (MLI) per the function in the litepaper
@@ -18,8 +25,67 @@ export function calcMLI(totalMvkSupply: number | undefined, totalStakedMVK: numb
 
 export function calcExitFee(totalMvkSupply: number | undefined, totalStakedMVK: number | undefined): number {
   const mli = calcMLI(totalMvkSupply, totalStakedMVK) * 10 //Need to multiply by 10 again so the MLI is adjusted properly to reflect the Litepaper
-  const fee = 30 - 0.525 * mli + 0.0025 * (mli ** 2)
+  const fee = 30 - 0.525 * mli + 0.0025 * mli ** 2
   return fee
+}
+
+/**
+ * @param number -> number in regular form that we wan't to convert for usage in contract call
+ * @param grage -> grage for 10, that we'll need to multiply number to convert it for usage in contract call
+ *
+ * By default fn will use MVK decimals amount
+ * Math.floor is used to remove decimals that are more that allowed amount for token
+ */
+export const convertNumberForContractCall = ({
+  number,
+  grage = MVK_DECIMALS,
+}: {
+  number: number
+  grage?: number
+}): number => {
+  return Math.floor(number * Math.pow(10, grage))
+}
+
+/**
+ * @param number -> number in contract form that we wan't to convert for usage on client output
+ * @param grage -> grage for 10, that we'll need to divide number to convert it for usage on client
+ *
+ * contract number form is number without decimals, this form is reached by multiplying reqular number by 10^(decimals amount different between different types of tokens)
+ *
+ * By default fn will use MVK decimals amount
+ */
+export const convertNumberForClient = ({
+  number,
+  grage = MVK_DECIMALS,
+}: {
+  number: number
+  grage?: number
+}): number => {
+  return number / Math.pow(10, grage)
+}
+
+export const getDynamicDecimalsAmountForOutput = (number: number): number => {
+  const decimalPart = String(number).split('.')[1]
+  if (!decimalPart) return DECIMALS_TO_SHOW
+
+  const matchesForLeadingZeroes = decimalPart.match(/^0+/)
+  return matchesForLeadingZeroes ? matchesForLeadingZeroes[0].length + 2 : DECIMALS_TO_SHOW
+}
+
+export const getTokenDecimals = ({
+  tokenType,
+  tokenAddress,
+  dipDupTokens,
+}: {
+  tokenType?: TokenType
+  tokenAddress: string
+  dipDupTokens: State['tokens']['dipDupTokens']
+}): number | null => {
+  if (tokenType === 'tez') return XTZ_DECIMALS
+
+  const { metadata: { decimals = null } = {} } = dipDupTokens.find(({ contract }) => tokenAddress === contract) ?? {}
+
+  return decimals ? Number(decimals) : null
 }
 
 export function calcTimeToBlock(currentBlockLevel?: number, endBlockLevel?: number) {
@@ -232,4 +298,8 @@ export const calcDiffBetweenTwoNumbersInPersentage = (num1: number, num2: number
 export const percentageDifference = (a: number, b: number): number => {
   const twoNumberDifference = (a / b - 1) * 100
   return Number(twoNumberDifference.toFixed(2))
+}
+
+export const getNumberInBounds = (minBound: number, maxBound: number, numberToPutInBound: number) => {
+  return Math.max(minBound, Math.min(maxBound, numberToPutInBound))
 }

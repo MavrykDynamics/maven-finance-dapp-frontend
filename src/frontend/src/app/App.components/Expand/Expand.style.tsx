@@ -28,25 +28,6 @@ export const ExpandStyled = styled(CardHover)`
       margin-right: 8px;
     }
 
-    .expand-btn {
-      color: ${({ theme }) => theme.navIconColor};
-      font-weight: 600;
-      height: 100%;
-      font-size: 16px;
-      display: flex;
-      column-gap: 8px;
-      align-items: center;
-
-      svg {
-        height: 8px;
-        width: 14px;
-        stroke: ${({ theme }) => theme.navIconColor};
-        transition: transform 0.3s ease-in-out;
-        fill: none;
-        stroke-width: 5px;
-      }
-    }
-
     &.top {
       svg {
         transform: rotate(-180deg);
@@ -77,7 +58,8 @@ export const ExpandStyled = styled(CardHover)`
 
   &.expand-borrow-tab {
     .expand-header {
-      padding: 23px 25px 13px 25px;
+      cursor: default;
+      padding: 20px 25px;
       align-items: flex-start;
       grid-template-columns: 0.6fr 0.8fr 0.5fr 0.45fr 0.4fr;
     }
@@ -89,7 +71,8 @@ export const ExpandArticleStyled = styled.article<{ show?: boolean; theme: Mavry
   max-height: 0;
   height: fit-content;
   cursor: pointer;
-  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
   position: relative;
 
   &::before {
@@ -105,6 +88,8 @@ export const ExpandArticleStyled = styled.article<{ show?: boolean; theme: Mavry
     show
       ? css`
           max-height: 100%;
+          visibility: visible;
+          opacity: 1;
         `
       : ''}
 `

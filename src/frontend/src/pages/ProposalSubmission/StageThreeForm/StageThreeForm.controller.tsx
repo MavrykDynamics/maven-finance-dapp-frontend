@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { State } from 'reducers'
 
@@ -7,7 +7,7 @@ import { StageThreeFormProps, StageThreeValidityItem } from '../ProposalSybmitti
 import { Governance_Proposal } from 'utils/generated/graphqlTypes'
 
 // helpers
-import { checkPaymentExists, getValidityStageThreeTable, MAX_ROWS } from '../ProposalSubmition.helpers'
+import { checkPaymentExists, getValidityStageThreeTable } from '../ProposalSubmition.helpers'
 
 // components
 import Icon from '../../../app/App.components/Icon/Icon.view'
@@ -39,8 +39,9 @@ import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { Input } from 'app/App.components/Input/Input.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { DropDown } from 'app/App.components/DropDown/DropDown.controller'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import { DDItemId, DropDown } from 'app/App.components/DropDown/NewDropdown'
+import { DropDownJsxChild } from 'pages/Loans/Components/Modals/Modals.style'
 
 export const StageThreeForm = ({
   proposalId,
@@ -56,7 +57,7 @@ export const StageThreeForm = ({
   const {
     governanceStorage: {
       fee,
-      config: { successReward, proposalDescriptionMaxLength },
+      config: { successReward },
     },
     governancePhase,
   } = useSelector((state: State) => state.governance)
@@ -67,13 +68,14 @@ export const StageThreeForm = ({
     }
   }, [proposalId, proposalPayments])
 
+  const ddItems = useMemo(() => {
+    return paymentMethods.map((method) => ({
+      content: <DropDownJsxChild>{method.symbol}</DropDownJsxChild>,
+      id: method.address,
+    }))
+  }, [paymentMethods])
+
   const isProposalRound = governancePhase === 'PROPOSAL'
-  const isMaxRows = MAX_ROWS <= proposalPayments.length
-  const DEFAULT_DROPDOWNS_STATE = useMemo(
-    () => Array.from({ length: proposalPayments.length }, () => false),
-    [proposalPayments],
-  )
-  const [openDrop, setOpenDrop] = useState(DEFAULT_DROPDOWNS_STATE)
 
   const handleOnBlur = (e: React.ChangeEvent<HTMLInputElement>, itemIdx: number, maxLength?: number) => {
     const { name, value } = e.target
@@ -111,7 +113,6 @@ export const StageThreeForm = ({
       proposalId,
     )
 
-    setOpenDrop(DEFAULT_DROPDOWNS_STATE)
     setProposalHasChange(true)
   }
 
@@ -146,7 +147,6 @@ export const StageThreeForm = ({
       },
       proposalId,
     )
-    setOpenDrop(DEFAULT_DROPDOWNS_STATE)
     setProposalHasChange(true)
   }
 
@@ -163,7 +163,6 @@ export const StageThreeForm = ({
       },
       proposalId,
     )
-    setOpenDrop(DEFAULT_DROPDOWNS_STATE)
     setProposalHasChange(true)
   }
 
@@ -210,26 +209,29 @@ export const StageThreeForm = ({
             const validationObj = currentProposalValidation.paymentsValidation?.find(
               ({ paymentId }) => paymentId === payment.id,
             )
-            const { symbol: selectedSymbol = 'MVK' } =
+            const { symbol: selectedSymbol = 'MVK', address } =
               paymentMethods.find(({ address }) => address === payment.token_address) ?? paymentMethods?.[0] ?? {}
 
             return (
               <TableRow className="editable-row">
                 <TableCell width="25%">
                   {isTableDisabled ? (
-                    <TzAddress
-                      tzAddress={String(payment.to__id)}
-                      type={BLUE}
-                      hasIcon={true}
-                      className="table-cell-tzAddress"
-                    />
+                    payment.to__id ? (
+                      <TzAddress
+                        tzAddress={String(payment.to__id)}
+                        type={BLUE}
+                        hasIcon={true}
+                        className="table-cell-tzAddress"
+                      />
+                    ) : (
+                      ''
+                    )
                   ) : (
                     <Input
                       value={String(payment.to__id)}
                       inputStatus={validationObj?.to__id}
                       onChange={(e) => handleChange(e, rowIdx)}
                       onBlur={(e) => handleOnBlur(e, rowIdx)}
-                      onFocus={() => setOpenDrop(DEFAULT_DROPDOWNS_STATE)}
                       name={'to__id'}
                       type={'text'}
                     />
@@ -244,7 +246,6 @@ export const StageThreeForm = ({
                       inputStatus={validationObj?.title}
                       onChange={(e) => handleChange(e, rowIdx)}
                       onBlur={(e) => handleOnBlur(e, rowIdx)}
-                      onFocus={() => setOpenDrop(DEFAULT_DROPDOWNS_STATE)}
                       name={'title'}
                       type={'text'}
                     />
@@ -259,7 +260,6 @@ export const StageThreeForm = ({
                       inputStatus={validationObj?.token_amount}
                       onChange={(e) => handleChange(e, rowIdx)}
                       onBlur={(e) => handleOnBlur(e, rowIdx)}
-                      onFocus={() => setOpenDrop(DEFAULT_DROPDOWNS_STATE)}
                       name={'token_amount'}
                       type={'number'}
                     />
@@ -270,28 +270,18 @@ export const StageThreeForm = ({
                     selectedSymbol
                   ) : (
                     <DropDown
-                      placeholder={''}
-                      items={paymentMethods.map(({ symbol }) => symbol)}
-                      isOpen={openDrop[rowIdx]}
-                      itemSelected={String(selectedSymbol)}
-                      setIsOpen={(newDropDownState: boolean) => {
-                        console.log(rowIdx, newDropDownState, openDrop)
-
-                        setOpenDrop(openDrop.map((_, idx) => (idx === rowIdx ? newDropDownState : false)))
-                      }}
-                      clickOnItem={(newSelectedSymbol: string) => {
-                        const address = paymentMethods.find(({ symbol }) => newSelectedSymbol === symbol)?.address
-
-                        if (address) {
-                          handleChange(
-                            {
-                              target: { name: 'token_address', value: address },
-                            },
-                            rowIdx,
-                          )
-                        }
-                      }}
+                      placeholder={'Select paymeth method'}
                       className="stage-3-dropDown"
+                      items={ddItems}
+                      activeItem={ddItems.find(({ id }) => address === id) ?? ddItems[0]}
+                      clickItem={(newSelectedAddress: DDItemId) => {
+                        handleChange(
+                          {
+                            target: { name: 'token_address', value: newSelectedAddress },
+                          },
+                          rowIdx,
+                        )
+                      }}
                     />
                   )}
                 </TableCell>

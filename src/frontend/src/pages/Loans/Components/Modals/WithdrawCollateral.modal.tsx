@@ -2,10 +2,10 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useLockBodyScroll } from 'react-use'
 import { useEffect, useMemo, useState } from 'react'
 
-import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import { INPUT_LARGE, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { State } from 'reducers'
-import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import {
   DEFAULT_LOANS_INPUT_VALUE,
   getOnBlurValue,
@@ -17,7 +17,7 @@ import { withdrawCollateralAction } from 'pages/Loans/Actions/vaultCollateral.ac
 import { Input } from 'app/App.components/Input/NewInput'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
-import NewButton from 'app/App.components/Button/NewButton.controller'
+import NewButton from 'app/App.components/Button/NewButton'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 
 import { LoansModalBase, VaultModalOverview } from './Modals.style'
@@ -25,7 +25,7 @@ import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
-import { calcCollateralRatio } from 'pages/Loans/Loans.helpers'
+import { calcCollateralRatio, getMaxCollateralWithdraw } from 'pages/Loans/Loans.helpers'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239234&t=Sx2aEpp3ifrGxBtQ-0
@@ -45,7 +45,6 @@ export const WithdrawCollateral = ({
     vaultCollateralBalance = 0,
     vaultAddress,
     currentCollateralRatio = 0,
-    collateralWithdrawAmount = 0,
     borrowedAmount = 0,
   } = data ?? {}
 
@@ -56,31 +55,50 @@ export const WithdrawCollateral = ({
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
   const [isActionPerforming, setIsActionPerforming] = useState(false)
 
-  const isActionBtnDisabled = useMemo(
-    () => isActionPerforming || inputData.validationStatus !== INPUT_STATUS_SUCCESS,
-    [isActionPerforming, inputData.validationStatus],
-  )
   const collateralData = useMemo(
     () => avaliableCollaterals.find(({ gqlName }) => selectedAsset?.gqlName === gqlName),
     [avaliableCollaterals, selectedAsset],
   )
 
   const inputAmount = isNaN(parseFloat(inputData.amount)) ? 0 : parseFloat(inputData.amount)
+  const collateralRate = Number(selectedAsset?.rate)
+  const { futureCollateralRatio, futureCollateralWithdraw, futureVaultCollateralBalance, currentCollateralToWithdraw } =
+    useMemo(() => {
+      const futureCollateralRatio = selectedAsset
+        ? calcCollateralRatio(vaultCollateralBalance - inputAmount * collateralRate, borrowedAmount, borrowedAssetRate)
+        : 0
 
-  const { futureCollateralRatio, futureCollateralWithdraw, futureVaultCollateralBalance } = useMemo(() => {
-    const futureCollateralRatio = selectedAsset
-      ? calcCollateralRatio(
-          vaultCollateralBalance - inputAmount * Number(selectedAsset?.rate),
-          borrowedAmount,
-          borrowedAssetRate,
-        )
-      : 0
+      const currentCollateralToWithdraw = getMaxCollateralWithdraw(
+        currentCollateralBalance * collateralRate,
+        vaultCollateralBalance,
+        borrowedAmount,
+        borrowedAssetRate,
+        collateralRate,
+      )
 
-    const futureCollateralWithdraw = collateralWithdrawAmount - inputAmount
-    const futureVaultCollateralBalance = vaultCollateralBalance - inputAmount * Number(selectedAsset?.rate)
+      const futureCollateralWithdraw = currentCollateralToWithdraw * collateralRate - inputAmount * collateralRate
+      const futureVaultCollateralBalance = vaultCollateralBalance - inputAmount * collateralRate
 
-    return { futureCollateralRatio, futureCollateralWithdraw, futureVaultCollateralBalance }
-  }, [selectedAsset, vaultCollateralBalance, inputAmount, borrowedAmount, collateralWithdrawAmount])
+      return {
+        futureCollateralRatio,
+        futureCollateralWithdraw,
+        futureVaultCollateralBalance,
+        currentCollateralToWithdraw,
+      }
+    }, [
+      selectedAsset,
+      vaultCollateralBalance,
+      inputAmount,
+      borrowedAmount,
+      borrowedAssetRate,
+      currentCollateralBalance,
+      collateralRate,
+    ])
+
+  const isActionBtnDisabled = useMemo(
+    () => isActionPerforming || inputData.validationStatus !== INPUT_STATUS_SUCCESS || futureCollateralRatio <= 200,
+    [isActionPerforming, inputData.validationStatus, futureCollateralRatio],
+  )
 
   useEffect(() => {
     if (!show) {
@@ -93,8 +111,6 @@ export const WithdrawCollateral = ({
     const parsedNewInputAmount = isNaN(parseFloat(newInputAmount)) ? 0 : parseFloat(newInputAmount)
     const validationStatus =
       parsedNewInputAmount > 0 && parsedNewInputAmount <= maxAmount ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
-
-    if (validationStatus === INPUT_STATUS_ERROR && newInputAmount !== '' && newInputAmount !== '0') return
 
     setInputData({
       ...inputData,
@@ -122,9 +138,10 @@ export const WithdrawCollateral = ({
       setIsActionPerforming(true)
       await dispatch(
         withdrawCollateralAction(
-          Number(inputData.amount) * 10 ** collateralData.decimals,
+          Number(inputData.amount),
           collateralData.gqlName,
           vaultAddress,
+          collateralData.decimals,
           closePopup,
         ),
       )
@@ -170,34 +187,29 @@ export const WithdrawCollateral = ({
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Available To Withdraw</div>
-              <CommaNumber value={collateralWithdrawAmount} className="value" />
+              <CommaNumber value={currentCollateralToWithdraw * collateralRate} className="value" beginningText="$" />
             </ThreeLevelListItem>
           </VaultModalOverview>
 
           <hr />
           {collateralData ? (
             <Input
-              className={`${
-                collateralData?.rate ? 'input-with-rate' : ''
-              } large-input pinned-dropdown withdrawCollateralInput`}
+              className={`${collateralData?.rate ? 'input-with-rate' : ''} pinned-dropdown mb-45`}
               inputProps={{
                 value: inputData.amount,
                 type: 'number',
                 onBlur: inputOnBlurHandle,
                 onFocus: onFocusHandler,
-                onChange: (e) =>
-                  inputOnChangeHandle(e.target.value, Math.min(collateralData.userBalance, currentCollateralBalance)),
+                onChange: (e) => inputOnChangeHandle(e.target.value, currentCollateralToWithdraw),
               }}
               settings={{
                 balance: collateralData.userBalance,
                 balanceAsset: collateralData.symbol,
                 useMaxHandler: () =>
-                  inputOnChangeHandle(
-                    String(Math.min(collateralData.userBalance, currentCollateralBalance)),
-                    Math.min(collateralData.userBalance, currentCollateralBalance),
-                  ),
+                  inputOnChangeHandle(String(currentCollateralToWithdraw), currentCollateralToWithdraw),
                 inputStatus: inputData.validationStatus,
-                convertedValue: inputAmount * collateralData.rate,
+                convertedValue: inputAmount * collateralRate,
+                inputSize: INPUT_LARGE,
               }}
             >
               <InputPinnedTokenInfo>
@@ -234,19 +246,21 @@ export const WithdrawCollateral = ({
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Available To Withdraw</div>
-              <CommaNumber value={futureCollateralWithdraw} className="value" />
+              <CommaNumber value={futureCollateralWithdraw * collateralRate} className="value" beginningText="$" />
             </ThreeLevelListItem>
           </VaultModalOverview>
 
-          <NewButton
-            kind={ACTION_PRIMARY}
-            onClick={withdrawHandler}
-            disabled={isActionBtnDisabled}
-            className="modal-manage-btn"
-          >
-            <Icon id="minus" />
-            Remove
-          </NewButton>
+          <div className="manage-btn">
+            <NewButton
+              kind={BUTTON_PRIMARY}
+              form={BUTTON_WIDE}
+              onClick={withdrawHandler}
+              disabled={isActionBtnDisabled}
+            >
+              <Icon id="minus" />
+              Remove
+            </NewButton>
+          </div>
         </LoansModalBase>
       </PopupContainerWrapper>
     </PopupContainer>

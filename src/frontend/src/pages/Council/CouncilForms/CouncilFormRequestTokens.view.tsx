@@ -1,17 +1,20 @@
 import { useState, useMemo } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { State } from 'reducers'
 
 // type
 import type { InputStatusType } from '../../../app/App.components/Input/Input.constants'
 import { CouncilMaxLength } from 'utils/TypesAndInterfaces/Council'
+import { TokenType } from 'utils/TypesAndInterfaces/General'
 
 // helpers
 import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
-import { ACTION_PRIMARY, SUBMIT } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, SUBMIT } from 'app/App.components/Button/Button.constants'
+import { getTokenDecimals } from 'utils/calcFunctions'
 
 // view
 import { Input } from 'app/App.components/Input/NewInput'
-import NewButton from 'app/App.components/Button/NewButton.controller'
+import NewButton from 'app/App.components/Button/NewButton'
 import { TextArea } from '../../../app/App.components/TextArea/TextArea.controller'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 import { DDItemId, DropDown } from 'app/App.components/DropDown/NewDropdown'
@@ -35,13 +38,15 @@ const tokenTypes = ['FA12', 'FA2', 'TEZ']
 
 export const CouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
   const dispatch = useDispatch()
+  const { dipDupTokens } = useSelector((state: State) => state.tokens)
+
   const [form, setForm] = useState(INIT_FORM)
 
   const dropDownItems = useMemo(
     () =>
       tokenTypes.map((item, index) => ({
         content: <div>{item}</div>,
-        value: item,
+        value: item.toLowerCase(),
         id: index,
       })),
     [],
@@ -50,6 +55,7 @@ export const CouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
   type DropDownItemType = typeof dropDownItems[0]
   const [chosenDdItem, setChosenDdItem] = useState<DropDownItemType | undefined>()
 
+  const [tokenDecimals, setTokenDecimals] = useState<number | null>(null)
   const [formInputStatus, setFormInputStatus] = useState<Record<string, InputStatusType>>({
     treasuryAddress: '',
     tokenContractAddress: '',
@@ -63,26 +69,34 @@ export const CouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    try {
-      const typeOfToken = chosenDdItem?.value
-      if (!typeOfToken) return
 
-      await dispatch(
-        requestTokens(treasuryAddress, tokenContractAddress, tokenName, +tokenAmount, typeOfToken, +tokenId, purpose),
-      )
-      setForm(INIT_FORM)
-      setFormInputStatus({
-        treasuryAddress: '',
-        tokenContractAddress: '',
-        tokenName: '',
-        tokenAmount: '',
-        tokenId: '',
-        purpose: '',
-      })
-      setChosenDdItem(undefined)
-    } catch (error) {
-      console.error(error)
-    }
+    const typeOfToken = chosenDdItem?.value as TokenType | undefined
+    if (!typeOfToken || !tokenDecimals) return
+
+    dispatch(
+      requestTokens(
+        treasuryAddress,
+        tokenContractAddress,
+        tokenName,
+        +tokenAmount,
+        typeOfToken,
+        +tokenId,
+        purpose,
+        tokenDecimals,
+      ),
+    )
+
+    setForm(INIT_FORM)
+    setFormInputStatus({
+      treasuryAddress: '',
+      tokenContractAddress: '',
+      tokenName: '',
+      tokenAmount: '',
+      tokenId: '',
+      purpose: '',
+    })
+    setTokenDecimals(null)
+    setChosenDdItem(undefined)
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -93,6 +107,21 @@ export const CouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
 
   const handleBlur = validateFormField(setFormInputStatus)
   const handleBlurAddress = validateFormAddress(setFormInputStatus)
+  const handleBlurTokenAddress = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value, name } = e.target
+
+    const decimals = getTokenDecimals({
+      tokenAddress: value,
+      dipDupTokens,
+    })
+
+    setFormInputStatus((prev) => {
+      const isValidAddress = decimals ? 'success' : 'error'
+      return { ...prev, [name]: isValidAddress }
+    })
+
+    setTokenDecimals(decimals)
+  }
 
   const handleClickDropdownItem = (itemId: DDItemId) => {
     const foundItem = dropDownItems.find((item) => item.id === itemId)
@@ -119,10 +148,10 @@ export const CouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
   const tokenContractAddressProps = {
     name: 'tokenContractAddress',
     value: tokenContractAddress,
-    onBlur: handleBlurAddress,
+    onBlur: handleBlurTokenAddress,
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
       handleChange(e)
-      handleBlurAddress(e)
+      handleBlurTokenAddress(e)
     },
     required: true,
   }
@@ -177,7 +206,7 @@ export const CouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
   const tokenIdSettings = {
     inputStatus: formInputStatus.tokenId,
   }
-
+  // TODO: need to add a sequence of fields
   return (
     <CouncilFormStyled onSubmit={handleSubmit}>
       <a className="info-link" href="https://mavryk.finance/litepaper#mavryk-council" target="_blank" rel="noreferrer">
@@ -236,7 +265,7 @@ export const CouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
         />
       </div>
       <div className="btn-group">
-        <NewButton kind={ACTION_PRIMARY} type={SUBMIT}>
+        <NewButton kind={BUTTON_PRIMARY} type={SUBMIT}>
           <Icon id="request_token" />
           Request Tokens
         </NewButton>

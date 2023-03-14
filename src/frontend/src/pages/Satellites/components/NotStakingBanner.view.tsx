@@ -3,11 +3,11 @@ import { State } from 'reducers'
 import { Link } from 'react-router-dom'
 
 import { Info } from 'app/App.components/Info/Info.view'
-import NewButton from 'app/App.components/Button/NewButton.controller'
+import NewButton from 'app/App.components/Button/NewButton'
 import { NotStakinkBannerStyled as NotStakingBannerStyled } from '../Satellites.style'
 import Icon from 'app/App.components/Icon/Icon.view'
 
-import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
 
 type Props = {
   text: string
@@ -22,7 +22,7 @@ export const NotStakingBanner = ({ text, className }: Props) => {
       {accountPkh ? (
         <Info text={text} type="warning">
           <Link to="/">
-            <NewButton kind={ACTION_PRIMARY}>
+            <NewButton kind={BUTTON_PRIMARY}>
               <Icon id="staking" />
               Staking
             </NewButton>

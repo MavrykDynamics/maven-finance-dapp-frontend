@@ -4,14 +4,17 @@ import qs from 'qs'
 
 // components
 import { ContractCard } from './ContractCard/ContractCard.controller'
-import NewButton from 'app/App.components/Button/NewButton.controller'
+import NewButton from 'app/App.components/Button/NewButton'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 
 // helpers
-import { BREAK_GLASS_LIST_NAME, calculateSlicePositions } from 'pages/FinacialRequests/Pagination/pagination.consts'
-import { getPageNumber } from 'pages/FinacialRequests/FinancialRequests.helpers'
-import { NAV_SIMPLE } from 'app/App.components/Button/Button.constants'
-import { updatePageInUrl } from 'pages/FinacialRequests/FinancialRequests.helpers'
+import {
+  BREAK_GLASS_LIST_NAME,
+  calculateSlicePositions,
+  getPageNumber,
+  updatePageInUrl,
+} from 'app/App.components/Pagination/pagination.consts'
+import { BUTTON_NAVIGATION } from 'app/App.components/Button/Button.constants'
 
 // styles
 import {
@@ -23,10 +26,10 @@ import {
   BGPrimaryTitle,
   BGTop,
   BGWhitelist,
-  Pagination,
 } from './BreakGlass.style'
 import { FAQLink } from '../Satellites/SatellitesSideBar/SatelliteSideBar.style'
 import { BreakGlassStatusStorage } from 'utils/TypesAndInterfaces/BreakGlass'
+import Pagination from 'app/App.components/Pagination/Pagination.view'
 
 type BreakGlassViewProps = {
   glassBroken: boolean
@@ -120,7 +123,7 @@ export const BreakGlassView = ({
 
           <BGWhitelist>
             Whitelist Developers
-            <div className="adress-list">{whitelistDev ? <TzAddress tzAddress={whitelistDev} hasIcon /> : '-'}</div>
+            <div className="adress-list">{whitelistDev ? <TzAddress tzAddress={whitelistDev} hasIcon /> : <div>None</div>}</div>
           </BGWhitelist>
           <div className="line"></div>
         </BGInfo>
@@ -132,8 +135,8 @@ export const BreakGlassView = ({
           {uniqueContracts.map((item) => (
             <NewButton
               key={item}
-              kind={NAV_SIMPLE}
-              className={item === selectedContract ? 'active' : ''}
+              kind={BUTTON_NAVIGATION}
+              selected={item === selectedContract}
               onClick={() => {
                 setSelectedContract(item)
                 handleTabChange()
@@ -161,9 +164,9 @@ export const BreakGlassView = ({
             />
           )
         })}
-      </BGCardsWrapper>
 
-      <Pagination itemsCount={filteredBreakGlassStatuses.length} listName={BREAK_GLASS_LIST_NAME} />
+        <Pagination itemsCount={filteredBreakGlassStatuses.length} listName={BREAK_GLASS_LIST_NAME} />
+      </BGCardsWrapper>
     </BGStyled>
   )
 }

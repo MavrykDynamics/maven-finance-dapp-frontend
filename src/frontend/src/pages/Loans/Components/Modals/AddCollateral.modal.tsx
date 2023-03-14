@@ -3,9 +3,9 @@ import { useLockBodyScroll } from 'react-use'
 import { State } from 'reducers'
 import { useDispatch, useSelector } from 'react-redux'
 
-import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
-import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import { INPUT_LARGE, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import {
   AddCollateralPopupDataType,
   DEFAULT_LOANS_INPUT_VALUE,
@@ -15,7 +15,7 @@ import {
 
 import { Input } from 'app/App.components/Input/NewInput'
 import Icon from 'app/App.components/Icon/Icon.view'
-import NewButton from 'app/App.components/Button/NewButton.controller'
+import NewButton from 'app/App.components/Button/NewButton'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
 
@@ -25,7 +25,7 @@ import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { depositCollateralAction } from 'pages/Loans/Actions/vaultCollateral.actions'
-import { calcCollateralRatio } from 'pages/Loans/Loans.helpers'
+import { calcCollateralRatio, getMaxCollateralWithdraw } from 'pages/Loans/Loans.helpers'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239476&t=Sx2aEpp3ifrGxBtQ-0
@@ -43,9 +43,9 @@ export const AddCollateral = ({
     vaultCollateralBalance = 0,
     vaultAddress,
     currentCollateralRatio = 0,
-    collateralWithdrawAmount = 0,
     borrowedAmount = 0,
     borrowedAssetRate = 0,
+    currentCollateralBalance = 0,
   } = data ?? {}
 
   useLockBodyScroll(show)
@@ -62,16 +62,35 @@ export const AddCollateral = ({
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
 
   const inputAmount = isNaN(parseFloat(inputData.amount)) ? 0 : parseFloat(inputData.amount)
+  const collateralRate = Number(selectedAsset?.rate)
 
-  const { futureCollateralRatio, futureCollateralWithdraw, futureCollateralBalance } = useMemo(() => {
-    const futureCollateralRatio = selectedAsset
-      ? calcCollateralRatio(vaultCollateralBalance + inputAmount, borrowedAmount, borrowedAssetRate)
-      : 0
+  const { futureCollateralRatio, futureCollateralWithdraw, futureCollateralBalance, currentCollateralToWithdraw } =
+    useMemo(() => {
+      const futureCollateralRatio = selectedAsset
+        ? calcCollateralRatio(vaultCollateralBalance + inputAmount * collateralRate, borrowedAmount, borrowedAssetRate)
+        : 0
 
-    const futureCollateralWithdraw = collateralWithdrawAmount + inputAmount
-    const futureCollateralBalance = vaultCollateralBalance + inputAmount * Number(selectedAsset?.rate)
-    return { futureCollateralRatio, futureCollateralWithdraw, futureCollateralBalance }
-  }, [selectedAsset, vaultCollateralBalance, inputAmount, borrowedAmount, collateralWithdrawAmount])
+      const currentCollateralToWithdraw = getMaxCollateralWithdraw(
+        currentCollateralBalance * collateralRate,
+        vaultCollateralBalance,
+        borrowedAmount,
+        borrowedAssetRate,
+        collateralRate,
+      )
+
+      const futureCollateralWithdraw = currentCollateralToWithdraw * collateralRate + inputAmount * collateralRate
+
+      const futureCollateralBalance = vaultCollateralBalance + inputAmount * collateralRate
+      return { futureCollateralRatio, futureCollateralWithdraw, futureCollateralBalance, currentCollateralToWithdraw }
+    }, [
+      selectedAsset,
+      vaultCollateralBalance,
+      inputAmount,
+      borrowedAmount,
+      borrowedAssetRate,
+      currentCollateralBalance,
+      collateralRate,
+    ])
 
   useEffect(() => {
     if (!show) {
@@ -83,8 +102,6 @@ export const AddCollateral = ({
   const inputOnChangeHandle = (newInputAmount: string, maxAmount: number) => {
     const validationStatus =
       Number(newInputAmount) > 0 && Number(newInputAmount) <= maxAmount ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
-
-    if (validationStatus === INPUT_STATUS_ERROR && newInputAmount !== '' && newInputAmount !== '0') return
 
     setInputData({
       ...inputData,
@@ -113,7 +130,8 @@ export const AddCollateral = ({
         collateralName: collateralData.gqlName,
         assetId: collateralData.id,
         tokenType: collateralData.tokenType,
-        amount: Math.floor(Number(inputData.amount) * 10 ** collateralData.decimals),
+        decimals: collateralData.decimals,
+        amount: Number(inputData.amount),
         assetAddress: collateralData.address,
       }
 
@@ -160,37 +178,29 @@ export const AddCollateral = ({
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Available To Withdraw</div>
-              <CommaNumber value={collateralWithdrawAmount} className="value" />
+              <CommaNumber value={currentCollateralToWithdraw * collateralRate} className="value" beginningText="$" />
             </ThreeLevelListItem>
           </VaultModalOverview>
 
           <hr />
 
           <Input
-            className={`${
-              collateralData?.rate ? 'input-with-rate' : ''
-            } large-input pinned-dropdown withdrawCollateralInput`}
+            className={`${collateralData?.rate ? 'input-with-rate' : ''} pinned-dropdown mb-45`}
             inputProps={{
               value: inputData.amount,
               type: 'number',
               onFocus: onFocusHandler,
               onBlur: inputOnBlurHandle,
-              onChange: (e) =>
-                inputOnChangeHandle(
-                  e.target.value,
-                  Math.max(collateralData?.userBalance ?? 0, collateralWithdrawAmount),
-                ),
+              onChange: (e) => inputOnChangeHandle(e.target.value, collateralData?.userBalance ?? 0),
             }}
             settings={{
               balance: collateralData?.userBalance ?? 0,
               balanceAsset: selectedAsset?.symbol,
               useMaxHandler: () =>
-                inputOnChangeHandle(
-                  String(Math.max(collateralData?.userBalance ?? 0, collateralWithdrawAmount)),
-                  Math.max(collateralData?.userBalance ?? 0, collateralWithdrawAmount),
-                ),
+                inputOnChangeHandle(String(collateralData?.userBalance ?? 0), collateralData?.userBalance ?? 0),
               inputStatus: inputData.validationStatus,
               convertedValue: inputAmount * (collateralData?.rate ?? 1),
+              inputSize: INPUT_LARGE,
             }}
           >
             <InputPinnedTokenInfo>
@@ -227,19 +237,21 @@ export const AddCollateral = ({
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Available To Withdraw</div>
-              <CommaNumber value={futureCollateralWithdraw} className="value" />
+              <CommaNumber value={futureCollateralWithdraw} className="value" beginningText="$" />
             </ThreeLevelListItem>
           </VaultModalOverview>
 
-          <NewButton
-            kind={ACTION_PRIMARY}
-            onClick={depositCollateralHandler}
-            disabled={inputData.validationStatus === INPUT_STATUS_ERROR || isActionLoading}
-            className="modal-manage-btn"
-          >
-            <Icon id="plus" />
-            Deposit
-          </NewButton>
+          <div className="manage-btn">
+            <NewButton
+              kind={BUTTON_PRIMARY}
+              onClick={depositCollateralHandler}
+              form={BUTTON_WIDE}
+              disabled={inputData.validationStatus === INPUT_STATUS_ERROR || isActionLoading}
+            >
+              <Icon id="plus" />
+              Deposit
+            </NewButton>
+          </div>
         </LoansModalBase>
       </PopupContainerWrapper>
     </PopupContainer>

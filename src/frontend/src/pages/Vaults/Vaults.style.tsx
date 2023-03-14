@@ -69,36 +69,38 @@ export const VaultsSearchFilterStyled = styled(Card)`
   padding: 20px 30px;
   margin-top: 20px;
   display: flex;
+  justify-content: space-between;
 
-  input {
-    width: 320px;
+  .search {
+    max-width: 320px;
+    margin: 0;
   }
+`
 
-  .dd-container {
-    display: grid;
-    grid-template-columns: 190px 190px 70px 190px;
-    column-gap: 15px;
+export const VaultsFilters = styled.div`
+  display: flex;
 
-    h4 {
-      margin: 0;
+  .filter {
+    display: flex;
+    align-items: center;
+
+    &:first-of-type {
+      margin-right: 20px;
     }
 
-    .dd-item {
-      div {
-        width: 190px;
-        white-space: nowrap;
-      }
+    h4 {
+      margin: 0 10px 0 0;
 
-      ul {
-        position: relative;
-        right: 36px;
-      }
+      font-weight: 700;
+      font-size: 14px;
+      line-height: 14px;
 
-      .scroll-block {
-        li {
-          text-transform: capitalize;
-        }
-      }
+      white-space: nowrap;
+      color: ${({ theme }) => theme.textColor};
+    }
+
+    .assetsFilter {
+      width: 275px;
     }
   }
 `
@@ -213,6 +215,15 @@ export const VaultsCardDropDown = styled.div<{ theme: MavrykTheme }>`
     .timer {
       display: inline-block;
       color: ${({ theme }) => theme.dataColor};
+    }
+  }
+
+  .info-icon {
+    position: relative;
+    bottom: 2px;
+    
+    svg {
+      fill: ${({ theme }) => theme.textColor};
     }
   }
 

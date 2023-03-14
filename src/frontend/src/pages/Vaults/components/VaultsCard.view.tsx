@@ -1,4 +1,5 @@
-import React, { useEffect, useState, useContext } from 'react'
+import React, { useEffect, useState, useContext, useRef } from 'react'
+import { useClickAway } from 'react-use'
 
 // components
 import { StatusFlag } from '../../../app/App.components/StatusFlag/StatusFlag.controller'
@@ -9,6 +10,7 @@ import { Button } from 'app/App.components/SettingsPopup/SettingsPopup.style'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { BorrowingExpandCard } from 'pages/Loans/Components/BorrowindExpandCard'
 import { Timer } from 'app/App.components/Timer/Timer.controller'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 // styles
 import { VaultsCardDropDown } from './../Vaults.style'
@@ -24,7 +26,6 @@ import {
 // types
 import { VaultType } from 'utils/TypesAndInterfaces/Vaults'
 import { StatusFlagStyle } from '../../../app/App.components/StatusFlag/StatusFlag.constants'
-import { BorrowingCardOptions } from 'pages/Loans/Components/BorrowindExpandCard'
 
 // helpers
 import { CYAN } from 'app/App.components/TzAddress/TzAddress.constants'
@@ -87,10 +88,6 @@ const findFooterText = (status: string, statusColor: StatusFlagStyle, timestamp?
   }
 }
 
-const borrowingCardOptions: BorrowingCardOptions = {
-  reverseColumns: true,
-}
-
 type Props = VaultType & {
   isOwner: boolean
   handleMarkForLiquidation: (vaultId: number, vaultOwner: string) => void
@@ -124,6 +121,9 @@ export const VaultsCard = (props: Props) => {
     status === vaultsStatuses.LIQUIDATABLE || status === vaultsStatuses.GRACE_PERIOD || status === vaultsStatuses.MARK
 
   const isMarkStatus = vaultsStatuses.MARK === status
+
+  const ref = useRef<HTMLDivElement | null>(null)
+  useClickAway(ref, () => setExpanded(false))
 
   const getCountdownTimestamp = async (levelOfEarly: number, levelOfLate: number) => {
     const [timestampOfEarly, timestampOfLate] = await Promise.all([
@@ -178,7 +178,11 @@ export const VaultsCard = (props: Props) => {
             <div>
               <div className="title">
                 Vault Risk
-                <Icon id="info" className="info-icon" />
+                <CustomTooltip
+                  text="The level of risk of being liquidated your vault is at."
+                  iconId="info"
+                  className="info-icon"
+                />
               </div>
 
               <div className={statusColor}>{statusText}</div>
@@ -189,7 +193,11 @@ export const VaultsCard = (props: Props) => {
             <div>
               <div className="title">
                 Liquidation Price
-                <Icon id="info" className="info-icon" />
+                <CustomTooltip
+                  text="Price value of your vault’s collateral at which your vault can be liquidated."
+                  iconId="info"
+                  className="info-icon"
+                />
               </div>
 
               <CommaNumber value={liquidationPrice ?? 0} decimalsToShow={2} beginningText="$" className="value" />
@@ -198,7 +206,11 @@ export const VaultsCard = (props: Props) => {
             <div>
               <div className="title">
                 Liquidation Cost
-                <Icon id="info" className="info-icon" />
+                <CustomTooltip
+                  text="How much it will cost to liquidated this vault."
+                  iconId="info"
+                  className="info-icon"
+                />
               </div>
 
               <CommaNumber value={liquidationMax} decimalsToShow={2} beginningText="$" className="value" />
@@ -295,18 +307,17 @@ export const VaultsCard = (props: Props) => {
   )
 
   return (
-    <>
+    <div ref={ref}>
       {isOwner ? (
         <BorrowingExpandCard
           {...props}
           className={`expand-vault ${expanded ? 'openVault' : ''}`}
           headerSufix={headerSufix}
           getExpandedStatus={setExpanded}
+          isOpenedVault={expanded}
           isOwner
-          options={borrowingCardOptions}
           // TODO: add this values as on loans
           DAOFee={0}
-          avaliableMarketLiquidity={0}
         />
       ) : (
         <BorrowingExpandCard
@@ -314,14 +325,13 @@ export const VaultsCard = (props: Props) => {
           className={`expand-vault ${expanded ? 'openVault' : ''}`}
           headerSufix={headerSufix}
           getExpandedStatus={setExpanded}
-          options={borrowingCardOptions}
+          isOpenedVault={expanded}
           // TODO: add this values as on loans
           DAOFee={0}
-          avaliableMarketLiquidity={0}
         >
           {generalExpand}
         </BorrowingExpandCard>
       )}
-    </>
+    </div>
   )
 }

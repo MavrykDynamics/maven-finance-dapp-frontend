@@ -192,7 +192,6 @@ export const getCollateralTokens = async (
     )
   } catch (e) {
     console.log('getCollateralTokens error:', e)
-
     return []
   }
 }
@@ -235,40 +234,6 @@ export const getLoansTokensRates = async (
     return await fetchRateBySymbols(loanTokenSymbols)
   } catch (e) {
     console.log('getLoansTokensRates error: ', e)
-    return {}
-  }
-}
-
-export const getUserLoansDataTokensRates = async (
-  loan_tokens: Mavryk_User['lending_controller_history_data_sender'],
-  dipDupTokens: State['tokens']['dipDupTokens'],
-  tokenRatesFromRedux: State['tokens']['tokensPrices'],
-) => {
-  try {
-    const loanTokenSymbols = Array.from(
-      loan_tokens?.reduce((acc, { loan_token }) => {
-        // Getting symbol metadata of loanToken
-
-        if (!loan_token) return acc
-        const tokenInfo = dipDupTokens?.find(({ contract }) => contract === loan_token.loan_token_address)
-        let tokenSymbolToFetch = null
-        if (loan_token.loan_token_name === 'tez') {
-          tokenSymbolToFetch = 'tezos'
-        } else {
-          tokenSymbolToFetch = tokenInfo?.metadata.symbol ?? loan_token.loan_token_name
-        }
-
-        if (!tokenRatesFromRedux[tokenSymbolToFetch]) {
-          acc.add(tokenSymbolToFetch)
-        }
-
-        return acc
-      }, new Set<string>()) ?? new Set(),
-    )
-
-    return await fetchRateBySymbols(loanTokenSymbols)
-  } catch (e) {
-    console.log('getUserLoansDataTokensRates error: ', e)
     return {}
   }
 }

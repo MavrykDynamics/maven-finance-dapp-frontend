@@ -23,7 +23,9 @@ export const QuorumBar = styled.div<{ width: number; theme: MavrykTheme }>`
     width: fit-content;
     position: absolute;
     left: ${({ width }) => width}%;
-    transform: translateX(-30%);
+    transform: translateX(-50%);
+    padding-bottom: 15px;
+    white-space: nowrap;
     padding-bottom: 15px;
 
     &::before {
@@ -31,7 +33,7 @@ export const QuorumBar = styled.div<{ width: number; theme: MavrykTheme }>`
       position: absolute;
       bottom: 0;
       left: 50%;
-      transform: ${({ width }) => `translateX(${width < 5 ? -150 : -100}%)`};
+      transform: translateX(-50%);
       color: ${({ theme }) => theme.headerColor};
     }
   }

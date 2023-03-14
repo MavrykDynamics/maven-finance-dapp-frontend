@@ -14,11 +14,6 @@ export const SmallBlockBase = styled.div<{ theme: MavrykTheme }>`
     font-size: 22px;
   }
 
-  button {
-    max-width: 190px;
-    font-size: 16px;
-  }
-
   .name {
     font-weight: 600;
     font-size: 14px;
@@ -33,7 +28,7 @@ export const SmallBlockBase = styled.div<{ theme: MavrykTheme }>`
 `
 
 export const MediumBlockBase = styled(SmallBlockBase)<{ theme: MavrykTheme }>`
-  height: 382px;
+  height: 361px;
   display: flex;
   flex-direction: column;
 
@@ -45,8 +40,8 @@ export const MediumBlockBase = styled(SmallBlockBase)<{ theme: MavrykTheme }>`
     height: 100%;
     row-gap: 15px;
 
-    button {
-      max-width: unset;
+    .nav-button {
+      width: 220px;
     }
 
     span {
@@ -113,7 +108,8 @@ export const PortfolioWalletStyled = styled(MediumBlockBase)<{ theme: MavrykThem
   .wallet-info {
     display: flex;
     flex-direction: column;
-    margin-top: 24px;
+    row-gap: 7px;
+    margin-top: 30px;
 
     .name {
       font-weight: 600;
@@ -126,7 +122,7 @@ export const PortfolioWalletStyled = styled(MediumBlockBase)<{ theme: MavrykThem
       font-size: 16px;
       color: ${({ theme }) => theme.dataColor};
       display: flex;
-      column-gap: 7px;
+      column-gap: 10px;
       align-items: center;
     }
   }
@@ -148,9 +144,9 @@ export const MyRewardsStyled = styled(SmallBlockBase)<{ theme: MavrykTheme }>`
     align-items: flex-end;
   }
 
-  button {
-    margin-left: auto;
+  .claim-rewards {
     margin-top: -10px;
+    margin-left: auto;
   }
 
   .stat-block {
@@ -204,22 +200,21 @@ export const EarnHistoryStyled = styled(SmallBlockBase)<{ theme: MavrykTheme }>`
 `
 
 export const LBHInfoBlock = styled(MediumBlockBase)<{ theme: MavrykTheme }>`
-  .list {
-    display: flex;
-    flex-direction: column;
-    row-gap: 24px;
-    margin-top: 20px;
-    overflow: auto;
-    position: relative;
-    width: calc(100% + 30px);
-    padding-right: 30px;
-  }
+  width: 100%;
+  padding-right: 0px;
+  position: relative;
 
   .loader-wrapper {
     height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  .view-markets {
+    position: absolute;
+    top: 30px;
+    right: 30px;
   }
 `
 
@@ -240,74 +235,28 @@ export const HistoryBlock = styled(MediumBlockBase)<{ theme: MavrykTheme }>`
   }
 `
 
-export const ListItem = styled.div<{ theme: MavrykTheme; columsTemplate: string }>`
-  display: grid;
-  grid-template-columns: ${({ columsTemplate }) => columsTemplate};
-  position: relative;
+export const VestingTabStyled = styled(MediumBlockBase)<{ theme: MavrykTheme }>`
+  width: 100%;
+  height: 187px;
+  padding-bottom: 20px;
 
-  svg,
-  .image-wrapper,
-  .img-wrapper {
-    height: 40px;
-    width: 40px;
-    fill: ${({ theme }) => theme.lPurple_dPurple_lPuprple};
-
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
+  p {
+    margin: 0;
   }
 
-  .list-part {
-    display: flex;
-    flex-direction: column;
-    row-gap: 5px;
-    p {
-      margin: 0;
-    }
+  .vesting-data {
+    display: grid;
+    grid-template-columns: repeat(5, auto) 140px;
+    justify-content: space-between;
+    align-items: center;
+    grid-template-rows: 50px;
+    margin-top: 30px;
 
-    &.user {
+    .column {
       display: flex;
-      justify-content: flex-end;
-      flex-direction: row;
-      column-gap: 15px;
-
-      .user-info {
-        display: flex;
-        flex-direction: column;
-        row-gap: 5px;
-
-        .user-address {
-          svg {
-            width: 16px;
-            height: 16px;
-            fill: unset;
-            stroke: ${({ theme }) => theme.dataColor};
-          }
-        }
-      }
+      flex-direction: column;
+      row-gap: 5px;
     }
-
-    &.view-tx-link {
-      align-items: center;
-      justify-content: center;
-      button {
-        height: fit-content;
-      }
-
-      /* TODO: temp solution while earn column is disabled */
-      margin-left: auto;
-    }
-  }
-
-  &:not(:last-child)::before {
-    content: '';
-    position: absolute;
-    bottom: -12px;
-    width: 100%;
-    height: 1px;
-    background-color: ${({ theme }) => theme.cardBorderColor};
   }
 `
 

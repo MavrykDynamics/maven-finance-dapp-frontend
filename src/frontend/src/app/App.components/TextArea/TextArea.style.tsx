@@ -38,6 +38,9 @@ export const TextAreaStyled = styled.div`
 
       .textarea {
         color: ${({ theme }) => theme.downColor};
+        &::placeholder {
+          color: ${({ theme }) => theme.downColor};
+        }
       }
     }
 
@@ -49,6 +52,9 @@ export const TextAreaStyled = styled.div`
 
       .textarea {
         color: ${({ theme }) => theme.upColor};
+        &::placeholder {
+          color: ${({ theme }) => theme.upColor};
+        }
       }
     }
   }
@@ -142,6 +148,8 @@ export const TextareaStyled = styled.textarea`
   /* hyphens: auto; */
   font-family: 'Metropolis', Helvetica, Arial, sans-serif;
   font-weight: 500;
+  font-size: 14px;
+  line-height: 14px;
   margin: 0;
   display: block;
   overflow: visible;

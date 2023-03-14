@@ -1,6 +1,7 @@
 import styled from 'styled-components/macro'
 import { zoomIn, slideDown } from 'styles/animations'
 import { MavrykTheme } from '../../../styles/interfaces'
+import { INPUT_BIG, INPUT_LARGE, INPUT_MEDIUM } from './Input.constants'
 
 export const InputStyled = styled.div`
   position: relative;
@@ -178,22 +179,22 @@ export const InputSpacer = styled.div`
   height: 10px;
 `
 
+// New input styles
+// TODO: refactor colors with theme implementation
 export const StyledInput = styled.input<{ theme: MavrykTheme }>`
   width: 100%;
   height: 100%;
   background-color: ${({ theme }) => theme.backgroundColor};
   border: none;
   border-radius: 10px;
-  font-weight: 600;
-  font-size: 22px;
-  line-height: 22px;
+  line-height: 100%;
   margin: 0;
   color: ${({ theme }) => theme.textColor};
   display: block;
   padding: 13px 45px 13px 20px;
 
   &::placeholder {
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.blockNameTitleColor};
   }
 
   &:disabled {
@@ -232,6 +233,33 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
   height: 40px;
   transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 
+  &.${INPUT_MEDIUM} {
+    height: 50px;
+
+    input {
+      font-weight: 500;
+      font-size: 14px;
+    }
+  }
+
+  &.${INPUT_LARGE} {
+    height: 56px;
+
+    input {
+      font-weight: 600;
+      font-size: 22px;
+    }
+  }
+
+  &.${INPUT_BIG} {
+    height: 60px;
+
+    input {
+      font-weight: 600;
+      font-size: 22px;
+    }
+  }
+
   &:focus-within {
     box-shadow: 0 0 0 2px ${({ theme }) => theme.primaryColor}19;
     border-color: ${({ theme }) => theme.primaryColor}7F;
@@ -241,6 +269,9 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
     border: 1px solid ${({ theme }) => theme.downColor};
     input {
       color: ${({ theme }) => theme.downColor};
+      &::placeholder {
+        color: ${({ theme }) => theme.downColor};
+      }
     }
   }
 
@@ -248,10 +279,13 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
     border: 1px solid ${({ theme }) => theme.upColor};
     input {
       color: ${({ theme }) => theme.upColor};
+      &::placeholder {
+        color: ${({ theme }) => theme.upColor};
+      }
     }
   }
 
-  &.withdrawCollateralInput {
+  &.mb-45 {
     margin-bottom: 45px;
   }
 
@@ -273,14 +307,10 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
     }
   }
 
-  &.large-input {
-    height: 56px;
-  }
-
   &.input-with-rate {
     input {
       padding-top: 0px;
-      padding-bottom: 13px;
+      padding-bottom: 10px;
     }
   }
 
@@ -324,14 +354,11 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
     color: ${({ theme }) => theme.textColor};
   }
 
-  .use-max-btn {
+  .useMax-btn {
     position: absolute;
-    top: -27px;
+    top: -20px;
     right: 0px;
-    font-weight: 600;
     font-size: 14px;
-    line-height: 21px;
-    color: ${({ theme }) => theme.valueColor};
   }
 `
 

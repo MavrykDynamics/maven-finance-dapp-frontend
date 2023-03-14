@@ -1,12 +1,7 @@
 import styled from 'styled-components/macro'
 
-import { Card, headerColor, downColor, cyanColor, boxShadowColor } from '../../styles'
+import { Card, downColor, cyanColor, boxShadowColor } from '../../styles'
 import { MavrykTheme } from '../../styles/interfaces'
-
-export const ProposalSubmissionStyled = styled.div<{ theme: MavrykTheme }>`
-  background-color: ${({ theme }) => theme.containerColor};
-  height: 100%;
-`
 
 export const SubmissionStyled = styled.section<{ theme: MavrykTheme }>`
   display: flex;
@@ -22,10 +17,6 @@ export const ProposalSubmissionForm = styled(Card)<{ theme: MavrykTheme }>`
   h1 {
     margin-top: 0;
     margin-bottom: 4px;
-  }
-
-  p {
-    margin-top: 30px;
   }
 
   label {
@@ -189,10 +180,6 @@ export const FormTitleAndFeeContainer = styled.div<{ theme: MavrykTheme }>`
 `
 export const FormTitleContainer = styled.div<{ theme: MavrykTheme }>``
 
-export const FormSubTitle = styled.p<{ theme: MavrykTheme }>`
-  color: ${({ theme }) => theme.textColor};
-  font-weight: 700;
-`
 export const FormTitleEntry = styled.div<{ theme: MavrykTheme }>`
   font-weight: 500;
   font-size: 14px;
@@ -208,132 +195,6 @@ export const FormTitleEntry = styled.div<{ theme: MavrykTheme }>`
 
   a {
     color: ${cyanColor};
-  }
-`
-export const UploaderFileSelector = styled.div<{ theme: MavrykTheme }>`
-  margin: 15px 0;
-  cursor: pointer;
-  min-height: 100px;
-  width: 100%;
-  border: 2px dashed ${({ theme }) => theme.borderColor};
-  display: inline-block;
-  border-radius: 10px;
-
-  > div {
-    width: 100%;
-    height: 100%;
-    position: relative;
-  }
-  > div > input {
-    all: unset;
-    display: inline-block;
-    border-radius: 10px;
-    outline: none;
-    width: 100%;
-    height: 100%;
-    appearance: initial;
-    opacity: 0;
-    position: relative;
-    -webkit-appearance: none;
-  }
-`
-
-export const UploadIconContainer = styled.div<{ theme: MavrykTheme }>`
-  position: absolute;
-  top: 15%;
-  left: 47.5%;
-  text-align: center;
-
-  > div {
-    font-size: 14px;
-    font-weight: 400;
-    color: ${({ theme }) => theme.textColor};
-  }
-`
-export const UploadIcon = styled.svg<{ theme: MavrykTheme }>`
-  stroke: ${({ theme }) => theme.primaryColor};
-  width: 37px;
-  height: 37px;
-
-  > use {
-    overflow: visible;
-  }
-  &.primary {
-    stroke: ${({ theme }) => theme.containerColor};
-  }
-
-  &.secondary {
-    stroke: ${({ theme }) => theme.primaryColor};
-  }
-
-  &.transparent {
-    stroke: ${({ theme }) => theme.textColor};
-  }
-`
-export const ProposalSubmissionInvoiceImage = styled.div`
-  margin: 30px 0 15px;
-  min-height: 200px;
-  > img {
-    height: 100%;
-  }
-`
-export const FormTableGrid = styled.div<{ theme: MavrykTheme }>`
-  padding-top: 10px;
-  margin-bottom: auto;
-
-  &.disabled {
-    pointer-events: none;
-  }
-
-  .input-cell {
-    padding: 0;
-
-    .submit-proposal-stage-3 {
-      > div {
-        > div.success {
-          display: none;
-        }
-
-        input {
-          width: 96%;
-          margin: 0 auto;
-          border: none;
-          background-color: transparent;
-          box-shadow: unset;
-          color: ${({ theme }) => theme.dataColor};
-
-          &:hover {
-            background-color: transparent;
-          }
-
-          &:focus {
-            border: none;
-            box-shadow: unset;
-          }
-
-          &.error {
-            width: 85%;
-            border: none;
-            box-shadow: unset;
-            color: ${({ theme }) => theme.downColor};
-
-            &:focus {
-              box-shadow: unset;
-            }
-          }
-
-          &.success {
-            border: none;
-            box-shadow: unset;
-            color: ${({ theme }) => theme.dataColor};
-
-            &:focus {
-              box-shadow: unset;
-            }
-          }
-        }
-      }
-    }
   }
 `
 

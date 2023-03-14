@@ -5,10 +5,10 @@ import { Link } from 'react-router-dom'
 import { State } from 'reducers'
 import { LoanMarketType } from 'utils/TypesAndInterfaces/Loans'
 import { calcDiffBetweenTwoNumbersInPersentage } from 'utils/calcFunctions'
-import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
 import Icon from 'app/App.components/Icon/Icon.view'
-import { Button } from 'app/App.components/Button/Button.controller'
+import NewButton from 'app/App.components/Button/NewButton'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 
@@ -76,8 +76,11 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
     <TabWrapperStyled backgroundImage="dashboard_lendingTab_bg.png">
       <div className="top">
         <BGPrimaryTitle>Lending</BGPrimaryTitle>
-        <Link to="/loans">
-          <Button text="Loans" icon="coin-loan" kind={ACTION_PRIMARY} className="noStroke dashboard-sectionLink" />
+        <Link to="/loans" className="dashboard-sectionLink">
+          <NewButton kind={PRIMARY} form={BUTTON_WIDE}>
+            <Icon id="coin-loan" />
+            Lending
+          </NewButton>
         </Link>
       </div>
 
@@ -94,7 +97,11 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
               <div className="value">
                 <CommaNumber beginningText="$" value={totalLended} />
                 <div className={`impact ${lending24hPersentChange > 0 ? 'up' : 'down'}`}>
-                  {lending24hPersentChange > 0 ? '+' : '-'} {lending24hPersentChange}%
+                  <CommaNumber
+                    value={lending24hPersentChange}
+                    beginningText={lending24hPersentChange > 0 ? '+' : ''}
+                    endingText={'%'}
+                  />
                 </div>
               </div>
             </StatBlock>
@@ -135,7 +142,11 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
               <div className="value">
                 <CommaNumber beginningText="$" value={totalBorrowed} />
                 <div className={`impact ${borrowing24hPersentChange > 0 ? 'up' : 'down'}`}>
-                  {borrowing24hPersentChange > 0 ? '+' : '-'} {borrowing24hPersentChange}%
+                  <CommaNumber
+                    value={borrowing24hPersentChange}
+                    beginningText={borrowing24hPersentChange > 0 ? '+' : ''}
+                    endingText={'%'}
+                  />
                 </div>
               </div>
             </StatBlock>
@@ -175,8 +186,8 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
       <div className="descr">
         <div className="title">How does Lending work on Mavyrk?</div>
         <div className="text">
-          Mavryk allows its users to put up existing crypto-assets as equity for a stablecoin loan, up to a 50%
-          loan-to-value ratio. Likewise, suppliers can loan out their crypto-assets to receive interest.{' '}
+          Mavryk allows its users to put up existing crypto-assets as collateral for a loan, up to a 50% loan-to-value
+          ratio. Likewise, suppliers can loan out their crypto-assets to receive interest.{' '}
           <a href="https://blogs.mavryk.finance/" target="_blank" rel="noreferrer">
             Read more
           </a>

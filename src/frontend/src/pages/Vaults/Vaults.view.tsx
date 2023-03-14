@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useLocation, useHistory, useParams } from 'react-router'
 
@@ -6,18 +6,17 @@ import { useLocation, useHistory, useParams } from 'react-router'
 import { VaultsSearchFilter } from './components/VaultsSearchFilter.view'
 import { VaultsCard } from './components/VaultsCard.view'
 import { TabSwitcher } from 'pages/Council/Council.style'
-import { Pagination } from 'pages/BreakGlass/BreakGlass.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
+import Pagination from 'app/App.components/Pagination/Pagination.view'
 import { EmptyContainer } from 'app/App.style'
 
 // styles
 import { VaultsStyled } from './Vaults.style'
 
 // helpers
-import { VAULTS_LIST_NAME, MY_VAULTS_LIST_NAME } from 'pages/FinacialRequests/Pagination/pagination.consts'
-import { getPageNumber } from 'pages/FinacialRequests/FinancialRequests.helpers'
-import { calculateSlicePositions } from 'pages/FinacialRequests/Pagination/pagination.consts'
+import { VAULTS_LIST_NAME, getPageNumber, MY_VAULTS_LIST_NAME } from 'app/App.components/Pagination/pagination.consts'
+import { calculateSlicePositions } from 'app/App.components/Pagination/pagination.consts'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { getVaultAssets } from './Vaults.helpers'
 
@@ -69,17 +68,13 @@ export const VaultsView = () => {
   const { isLoading } = useDataLoader(async () => {
     try {
       await dispatch(getVaultsStorage())
-    } catch (e) {
-      //TODO: handle fetch error
-    }
+    } catch (e) {}
   }, [accountPkh])
 
   useDataLoader(async () => {
     try {
       await dispatch(getAvaliableCollaterals())
-    } catch (e) {
-      //TODO: handle fetch error
-    }
+    } catch (e) {}
   }, [])
 
   const [vaultsIds, setVaultsIds] = useState<string[]>([])
@@ -91,7 +86,9 @@ export const VaultsView = () => {
 
   const handleChangeTabs = (id: number) => {
     const foundTab = tabsList.find((item) => item.id === id)
-    if (!foundTab?.path) return
+    const currentTabId = tabsList.find((item) => item.path === tabId)?.id
+
+    if (!foundTab?.path || currentTabId === id) return
 
     history.replace(`${pathname}/${foundTab.path}`)
     setVaultsIds(foundTab.path === tabsId.ALL ? allVaultsIds : myVaultsIds)
@@ -105,6 +102,12 @@ export const VaultsView = () => {
   const handleMarkForLiquidation = (vaultId: number, vaultOwner: string) => {
     dispatch(markForLiquidation(vaultId, vaultOwner))
   }
+
+  // switch to "all" tab if user is disabled
+  useEffect(() => {   
+    if (accountPkh) return
+    handleChangeTabs(tabsList[0].id)
+  }, [accountPkh])
 
   return (
     <VaultsStyled>

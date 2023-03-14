@@ -1,69 +1,65 @@
-import qs, { ParsedQs } from 'qs'
-import { ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
+import { State } from 'reducers'
+import { calcWithoutMu, calcWithoutPrecision } from 'utils/calcFunctions'
+import { FinancialRequestRecord, ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
 import { GovernanceFinancialRequestGraphQL } from '../../utils/TypesAndInterfaces/Governance'
 
-export const distinctRequestsByExecuting = (
-  mixedUpRequests: GovernanceFinancialRequestGraphQL[],
-): {
-  ongoing: GovernanceFinancialRequestGraphQL[]
-  past: GovernanceFinancialRequestGraphQL[]
-} => {
-  const ongoing: GovernanceFinancialRequestGraphQL[] = [],
-    past: GovernanceFinancialRequestGraphQL[] = []
-  if (!mixedUpRequests) return { ongoing, past }
+export const normalizeFinancialRequests = (
+  storage: {
+    governance_financial_request: Array<GovernanceFinancialRequestGraphQL>
+  },
+  dipDupTokens: State['tokens']['dipDupTokens'],
+) => {
+  const financialRequestLedger = storage?.governance_financial_request.map((item) => {
+    const tokenName = dipDupTokens.find(({ contract }) => contract === item.token_address)?.metadata.symbol ?? 'MVK'
+    return {
+      tokenAddress: item.token_address,
+      id: item.id,
+      type: item.request_type,
+      purpose: item.request_purpose,
+      requesterAddress: item.requester_id,
+      requestedTime: item.requested_datetime,
+      governanceContract: item.governance_financial.governance.address,
+      governanceFinId: item.governance_financial_id,
+      treasuryContract: item.treasury_id,
+      votingTillTime: item.execution_datetime ?? item.expiration_datetime,
+      tokensAmount: tokenName === 'MVK' ? calcWithoutPrecision(item.token_amount) : calcWithoutMu(item.token_amount),
+      tokenName: tokenName,
+      executed: item.executed,
 
-  mixedUpRequests.forEach((request) => {
-    if (request.executed || new Date(request.expiration_datetime as string).getTime() < +Date.now()) {
-      past.push(request)
-    } else {
-      ongoing.push(request)
+      // Votes data
+      votes: item.votes,
+      forVotesMVKTotal: calcWithoutPrecision(item.yay_vote_smvk_total),
+      againstVotesMVKTotal: calcWithoutPrecision(item.nay_vote_smvk_total),
+      sMVKTotakSupply: calcWithoutPrecision(item.snapshot_smvk_total_supply),
+      quorum: item.smvk_percentage_for_approval / 100,
     }
   })
-  return {
-    ongoing,
-    past,
-  }
+  return financialRequestLedger
 }
 
-export const getPageNumber = (search: string, listName: string): number => {
-  const { page = {} } = qs.parse(search, { ignoreQueryPrefix: true })
-  return Number((page as Record<string, string>)?.[listName]) || 1
+export const distinctRequestsByExecuting = (mixedUpRequests: FinancialRequestRecord[]) => {
+  return mixedUpRequests.reduce<{
+    ongoing: FinancialRequestRecord[]
+    past: FinancialRequestRecord[]
+  }>(
+    (acc, request) => {
+      const isPastRequest =
+        request.executed || (request.votingTillTime && new Date(request.votingTillTime).getTime() < +Date.now())
+      acc[isPastRequest ? 'past' : 'ongoing'].push(request)
+
+      return acc
+    },
+    {
+      ongoing: [],
+      past: [],
+    },
+  )
 }
 
-export const updatePageInUrl = ({
-  page,
-  newPage,
-  listName,
-  pathname,
-  restQP,
-}: {
-  page: string | ParsedQs | string[] | ParsedQs[]
-  newPage: number
-  listName: string
-  pathname: string
-  restQP: object
-}) => {
-  const { [listName]: removedEl, ...newPageParams } = page as Record<string, string>
+export const getRequestStatus = (request: FinancialRequestRecord) => {
+  if (request.executed) return ProposalStatus.EXECUTED
 
-  if (Number(newPage) !== 1) {
-    newPageParams[listName] = newPage.toString()
-  }
+  if (request.votingTillTime && new Date(request.votingTillTime).getTime() < +Date.now()) return ProposalStatus.DEFEATED
 
-  const newQueryParams = {
-    ...restQP,
-    page: newPageParams,
-  }
-  return pathname + qs.stringify(newQueryParams, { addQueryPrefix: true })
-}
-
-export const getRequestStatus = (request: GovernanceFinancialRequestGraphQL) => {
-  if (!request.executed) {
-    if (new Date(request.expiration_datetime as string).getTime() < +Date.now()) {
-      return ProposalStatus.DEFEATED
-    } else {
-      return ProposalStatus.ONGOING
-    }
-  } else {
-    return ProposalStatus.EXECUTED
-  }
+  return ProposalStatus.ONGOING
 }

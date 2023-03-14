@@ -138,7 +138,7 @@ a {
   will-change: opacity;
 }
 
-a:hover {
+a:hover:not(.full-opacity) {
   opacity: 0.9;
 }
 

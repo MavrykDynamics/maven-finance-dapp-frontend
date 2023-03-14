@@ -90,6 +90,10 @@ export const TableScrollable = styled.div<{ theme: MavrykTheme; bodyHeight: numb
   &.treasury-table {
     margin-top: 30px;
   }
+
+  &.dashboard-loans-table {
+    padding-right: 30px;
+  }
 `
 
 export const Table = styled.table<{ theme: MavrykTheme }>`
@@ -219,6 +223,15 @@ export const TableHeader = styled.thead<{ theme: MavrykTheme }>`
     }
   }
 
+  &.dashboard-loans {
+    z-index: 100;
+    th {
+      font-weight: 600;
+      font-size: 14px;
+      padding-bottom: 7px;
+    }
+  }
+
   &.collateral {
     th {
       padding-bottom: 0;
@@ -257,6 +270,13 @@ export const TableBody = styled.tbody<{ theme: MavrykTheme }>`
 
     td:first-child {
       text-transform: uppercase;
+    }
+  }
+
+  &.dashboard-loans {
+    svg {
+      width: 60px;
+      height: 60px;
     }
   }
 
@@ -449,6 +469,10 @@ export const TableCell = styled.td<{
     margin: 0;
   }
 
+  a {
+    width: fit-content;
+  }
+
   .rate {
     font-weight: 400;
     font-size: 12px;
@@ -496,19 +520,22 @@ export const TableCell = styled.td<{
     }
 
     &.borrowing {
-      button:not(.add-collateral) {
-        width: 130px;
-        padding: 0;
+      > div {
+        display: grid;
+        grid-template-columns: 130px 130px;
+        justify-content: flex-end;
+      }
 
-        svg {
-          fill: ${({ theme }) => theme.valueColor};
-          width: 18px;
-          height: 18px;
+      &.single-btn {
+        > div {
+          grid-template-columns: 130px;
         }
       }
 
-      .add-collateral {
-        max-width: 180px;
+      &.total {
+        > div {
+          grid-template-columns: 270px;
+        }
       }
     }
   }

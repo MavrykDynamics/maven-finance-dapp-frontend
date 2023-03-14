@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react'
 
 // view
+import Button from '../Button/NewButton'
 import Icon from '../Icon/Icon.view'
 
 // style
@@ -8,6 +9,7 @@ import { ExpandStyled, ExpandArticleStyled } from './Expand.style'
 
 // helpers
 import { scrollToFullView } from '../../../utils/scrollToFullView'
+import { BUTTON_SIMPLE_SMALL } from '../Button/Button.constants'
 
 type Props = {
   children: React.ReactNode
@@ -50,32 +52,30 @@ export default function Expand({
   // move the scroll to fix it
   useEffect(() => {
     if (expanded) {
-      scrollToFullView(ref.current)
+      scrollToFullView(ref.current, 'nearest')
     }
   }, [expanded])
 
   return (
-    <ExpandStyled className={className}>
+    <ExpandStyled ref={ref} className={className}>
       <header className="expand-header">
         {header}
         <div className={`arrow-wrap ${expanded ? 'top' : 'bottom'}`}>
-        {showText ? <span>{expanded ? 'Hide' : 'Show'}</span> : null}
+          {showText ? <span>{expanded ? 'Hide' : 'Show'}</span> : null}
           {showCustomText ? <span>{showCustomText}</span> : null}
-          <div
-            className="expand-btn"
+          <Button
             onClick={() => {
               handleToggleExpand()
               onClickCallback && onClickCallback()
             }}
+            kind={BUTTON_SIMPLE_SMALL}
           >
-            Details <Icon id="arrow-down" />
-          </div>
+            Details <Icon id="simple-arrow-down" />
+          </Button>
         </div>
         {sufix}
       </header>
-      <ExpandArticleStyled ref={ref} show={expanded}>
-        {children}
-      </ExpandArticleStyled>
+      <ExpandArticleStyled show={expanded}>{children}</ExpandArticleStyled>
     </ExpandStyled>
   )
 }

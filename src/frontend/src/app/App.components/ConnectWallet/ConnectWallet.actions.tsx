@@ -70,9 +70,6 @@ export const connect = () => async (dispatch: AppDispatch, getState: GetState) =
     preferences: { headData },
     tokens: { dipDupTokens },
     dataFeeds: { feedsLedger },
-    delegation: {
-      delegationStorage: { activeSatellites },
-    },
     wallet: { tezos },
   } = getState()
 
@@ -94,9 +91,7 @@ export const connect = () => async (dispatch: AppDispatch, getState: GetState) =
     await tezos.setWalletProvider(WALLET_INSTANCE)
 
     // getting userData
-    const userData = address
-      ? await fetchUserData(address, activeSatellites, dipDupTokens, feedsLedger, headData?.level)
-      : DEFAULT_USER
+    const userData = address ? await fetchUserData(address, dipDupTokens, feedsLedger, headData?.level) : DEFAULT_USER
 
     await dispatch({
       type: CONNECT,

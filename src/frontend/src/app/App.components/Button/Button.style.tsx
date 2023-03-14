@@ -212,7 +212,7 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
   }
 
   &.dashboard-sectionLink {
-    width: 220px;
+    max-width: 220px;
   }
 
   &.link {

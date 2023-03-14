@@ -20,6 +20,7 @@ export interface UserState {
   satelliteMvkIsDelegatedTo: string
   isLoaded: boolean
   isSatellite: boolean
+  isVestee: boolean
 
   // loans data
   userLoansData: {
@@ -67,6 +68,7 @@ export const DEFAULT_USER: UserState = {
   satelliteMvkIsDelegatedTo: '',
   isLoaded: false,
   isSatellite: false,
+  isVestee: false,
 
   userLoansData: {
     userLendings: [],

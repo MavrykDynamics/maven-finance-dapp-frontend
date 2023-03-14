@@ -3,12 +3,17 @@ export const INPUT_SEARCH = 'search'
 export const INPUT_STATUS_SUCCESS = 'success'
 export const INPUT_STATUS_ERROR = 'error'
 
+export const INPUT_MEDIUM = 'medium-input'
+export const INPUT_LARGE = 'large-input'
+export const INPUT_BIG = 'big-input'
+
+export type InputSizeType = typeof INPUT_MEDIUM | typeof INPUT_LARGE | typeof INPUT_BIG
 export type InputStatusType = typeof INPUT_STATUS_SUCCESS | typeof INPUT_STATUS_ERROR | '' | undefined
 export type InputKind = typeof INPUT_PRIMARY | typeof INPUT_SEARCH
 
 // default max length
 export const defaultCouncilMemberImageMaxLength = 500
-export const defaultCouncilMemberNameMaxLength = 25 
+export const defaultCouncilMemberNameMaxLength = 25
 export const defaultCouncilMemberWebsiteMaxLength = 500
 export const defaultRequestPurposeMaxLength = 800
 export const defaultRequestTokenNameMaxLength = 20

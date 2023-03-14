@@ -71,11 +71,13 @@ export const PopupContainerWrapper = styled.div`
   }
 
   &.exitFee {
-    width: 575px;
+    padding: 30px 40px 50px;
+    width: 586px;
     max-width: unset;
 
     h1 {
-      margin-top: 0;
+      margin: 0;
+      text-align: start;
     }
   }
 

@@ -20905,10 +20905,6 @@ export type Governance = {
   /** An aggregate relationship */
   vault_factories_aggregate: Vault_Factory_Aggregate;
   /** An array relationship */
-  vaults: Array<Vault>;
-  /** An aggregate relationship */
-  vaults_aggregate: Vault_Aggregate;
-  /** An array relationship */
   vestings: Array<Vesting>;
   /** An aggregate relationship */
   vestings_aggregate: Vesting_Aggregate;
@@ -21384,26 +21380,6 @@ export type GovernanceVault_Factories_AggregateArgs = {
 
 
 /** columns and relationships of "governance" */
-export type GovernanceVaultsArgs = {
-  distinct_on?: InputMaybe<Array<Vault_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Vault_Order_By>>;
-  where?: InputMaybe<Vault_Bool_Exp>;
-};
-
-
-/** columns and relationships of "governance" */
-export type GovernanceVaults_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Vault_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Vault_Order_By>>;
-  where?: InputMaybe<Vault_Bool_Exp>;
-};
-
-
-/** columns and relationships of "governance" */
 export type GovernanceVestingsArgs = {
   distinct_on?: InputMaybe<Array<Vesting_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
@@ -21610,8 +21586,6 @@ export type Governance_Bool_Exp = {
   treasury_factories_aggregate?: InputMaybe<Treasury_Factory_Aggregate_Bool_Exp>;
   vault_factories?: InputMaybe<Vault_Factory_Bool_Exp>;
   vault_factories_aggregate?: InputMaybe<Vault_Factory_Aggregate_Bool_Exp>;
-  vaults?: InputMaybe<Vault_Bool_Exp>;
-  vaults_aggregate?: InputMaybe<Vault_Aggregate_Bool_Exp>;
   vestings?: InputMaybe<Vesting_Bool_Exp>;
   vestings_aggregate?: InputMaybe<Vesting_Aggregate_Bool_Exp>;
   whitelist_contracts?: InputMaybe<Governance_Whitelist_Contract_Bool_Exp>;
@@ -24782,7 +24756,6 @@ export type Governance_Order_By = {
   treasuries_aggregate?: InputMaybe<Treasury_Aggregate_Order_By>;
   treasury_factories_aggregate?: InputMaybe<Treasury_Factory_Aggregate_Order_By>;
   vault_factories_aggregate?: InputMaybe<Vault_Factory_Aggregate_Order_By>;
-  vaults_aggregate?: InputMaybe<Vault_Aggregate_Order_By>;
   vestings_aggregate?: InputMaybe<Vesting_Aggregate_Order_By>;
   whitelist_contracts_aggregate?: InputMaybe<Governance_Whitelist_Contract_Aggregate_Order_By>;
   whitelist_developers_aggregate?: InputMaybe<Whitelist_Developer_Aggregate_Order_By>;
@@ -33515,7 +33488,7 @@ export type Lending_Controller_Collateral_Token = {
   /** An object relationship */
   lending_controller?: Maybe<Lending_Controller>;
   lending_controller_id?: Maybe<Scalars['String']>;
-  max_deposited_amount?: Maybe<Scalars['float8']>;
+  max_deposit_amount?: Maybe<Scalars['float8']>;
   /** An object relationship */
   oracle?: Maybe<Mavryk_User>;
   oracle_id?: Maybe<Scalars['String']>;
@@ -33698,14 +33671,14 @@ export type Lending_Controller_Collateral_Token_Aggregate_Order_By = {
 export type Lending_Controller_Collateral_Token_Avg_Fields = {
   __typename?: 'lending_controller_collateral_token_avg_fields';
   id?: Maybe<Scalars['Float']>;
-  max_deposited_amount?: Maybe<Scalars['Float']>;
+  max_deposit_amount?: Maybe<Scalars['Float']>;
   total_deposited?: Maybe<Scalars['Float']>;
 };
 
 /** order by avg() on columns of table "lending_controller_collateral_token" */
 export type Lending_Controller_Collateral_Token_Avg_Order_By = {
   id?: InputMaybe<Order_By>;
-  max_deposited_amount?: InputMaybe<Order_By>;
+  max_deposit_amount?: InputMaybe<Order_By>;
   total_deposited?: InputMaybe<Order_By>;
 };
 
@@ -33721,7 +33694,7 @@ export type Lending_Controller_Collateral_Token_Bool_Exp = {
   is_staked_token?: InputMaybe<Boolean_Comparison_Exp>;
   lending_controller?: InputMaybe<Lending_Controller_Bool_Exp>;
   lending_controller_id?: InputMaybe<String_Comparison_Exp>;
-  max_deposited_amount?: InputMaybe<Float8_Comparison_Exp>;
+  max_deposit_amount?: InputMaybe<Float8_Comparison_Exp>;
   oracle?: InputMaybe<Mavryk_User_Bool_Exp>;
   oracle_id?: InputMaybe<String_Comparison_Exp>;
   paused?: InputMaybe<Boolean_Comparison_Exp>;
@@ -33738,7 +33711,7 @@ export type Lending_Controller_Collateral_Token_Max_Fields = {
   __typename?: 'lending_controller_collateral_token_max_fields';
   id?: Maybe<Scalars['bigint']>;
   lending_controller_id?: Maybe<Scalars['String']>;
-  max_deposited_amount?: Maybe<Scalars['float8']>;
+  max_deposit_amount?: Maybe<Scalars['float8']>;
   oracle_id?: Maybe<Scalars['String']>;
   staking_contract_address?: Maybe<Scalars['String']>;
   token_address?: Maybe<Scalars['String']>;
@@ -33751,7 +33724,7 @@ export type Lending_Controller_Collateral_Token_Max_Fields = {
 export type Lending_Controller_Collateral_Token_Max_Order_By = {
   id?: InputMaybe<Order_By>;
   lending_controller_id?: InputMaybe<Order_By>;
-  max_deposited_amount?: InputMaybe<Order_By>;
+  max_deposit_amount?: InputMaybe<Order_By>;
   oracle_id?: InputMaybe<Order_By>;
   staking_contract_address?: InputMaybe<Order_By>;
   token_address?: InputMaybe<Order_By>;
@@ -33765,7 +33738,7 @@ export type Lending_Controller_Collateral_Token_Min_Fields = {
   __typename?: 'lending_controller_collateral_token_min_fields';
   id?: Maybe<Scalars['bigint']>;
   lending_controller_id?: Maybe<Scalars['String']>;
-  max_deposited_amount?: Maybe<Scalars['float8']>;
+  max_deposit_amount?: Maybe<Scalars['float8']>;
   oracle_id?: Maybe<Scalars['String']>;
   staking_contract_address?: Maybe<Scalars['String']>;
   token_address?: Maybe<Scalars['String']>;
@@ -33778,7 +33751,7 @@ export type Lending_Controller_Collateral_Token_Min_Fields = {
 export type Lending_Controller_Collateral_Token_Min_Order_By = {
   id?: InputMaybe<Order_By>;
   lending_controller_id?: InputMaybe<Order_By>;
-  max_deposited_amount?: InputMaybe<Order_By>;
+  max_deposit_amount?: InputMaybe<Order_By>;
   oracle_id?: InputMaybe<Order_By>;
   staking_contract_address?: InputMaybe<Order_By>;
   token_address?: InputMaybe<Order_By>;
@@ -33795,7 +33768,7 @@ export type Lending_Controller_Collateral_Token_Order_By = {
   is_staked_token?: InputMaybe<Order_By>;
   lending_controller?: InputMaybe<Lending_Controller_Order_By>;
   lending_controller_id?: InputMaybe<Order_By>;
-  max_deposited_amount?: InputMaybe<Order_By>;
+  max_deposit_amount?: InputMaybe<Order_By>;
   oracle?: InputMaybe<Mavryk_User_Order_By>;
   oracle_id?: InputMaybe<Order_By>;
   paused?: InputMaybe<Order_By>;
@@ -33818,7 +33791,7 @@ export enum Lending_Controller_Collateral_Token_Select_Column {
   /** column name */
   LendingControllerId = 'lending_controller_id',
   /** column name */
-  MaxDepositedAmount = 'max_deposited_amount',
+  MaxDepositAmount = 'max_deposit_amount',
   /** column name */
   OracleId = 'oracle_id',
   /** column name */
@@ -33840,7 +33813,7 @@ export enum Lending_Controller_Collateral_Token_Select_Column {
 /** select "lending_controller_collateral_token_aggregate_bool_exp_avg_arguments_columns" columns of table "lending_controller_collateral_token" */
 export enum Lending_Controller_Collateral_Token_Select_Column_Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Avg_Arguments_Columns {
   /** column name */
-  MaxDepositedAmount = 'max_deposited_amount',
+  MaxDepositAmount = 'max_deposit_amount',
   /** column name */
   TotalDeposited = 'total_deposited'
 }
@@ -33872,7 +33845,7 @@ export enum Lending_Controller_Collateral_Token_Select_Column_Lending_Controller
 /** select "lending_controller_collateral_token_aggregate_bool_exp_corr_arguments_columns" columns of table "lending_controller_collateral_token" */
 export enum Lending_Controller_Collateral_Token_Select_Column_Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Corr_Arguments_Columns {
   /** column name */
-  MaxDepositedAmount = 'max_deposited_amount',
+  MaxDepositAmount = 'max_deposit_amount',
   /** column name */
   TotalDeposited = 'total_deposited'
 }
@@ -33880,7 +33853,7 @@ export enum Lending_Controller_Collateral_Token_Select_Column_Lending_Controller
 /** select "lending_controller_collateral_token_aggregate_bool_exp_covar_samp_arguments_columns" columns of table "lending_controller_collateral_token" */
 export enum Lending_Controller_Collateral_Token_Select_Column_Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns {
   /** column name */
-  MaxDepositedAmount = 'max_deposited_amount',
+  MaxDepositAmount = 'max_deposit_amount',
   /** column name */
   TotalDeposited = 'total_deposited'
 }
@@ -33888,7 +33861,7 @@ export enum Lending_Controller_Collateral_Token_Select_Column_Lending_Controller
 /** select "lending_controller_collateral_token_aggregate_bool_exp_max_arguments_columns" columns of table "lending_controller_collateral_token" */
 export enum Lending_Controller_Collateral_Token_Select_Column_Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Max_Arguments_Columns {
   /** column name */
-  MaxDepositedAmount = 'max_deposited_amount',
+  MaxDepositAmount = 'max_deposit_amount',
   /** column name */
   TotalDeposited = 'total_deposited'
 }
@@ -33896,7 +33869,7 @@ export enum Lending_Controller_Collateral_Token_Select_Column_Lending_Controller
 /** select "lending_controller_collateral_token_aggregate_bool_exp_min_arguments_columns" columns of table "lending_controller_collateral_token" */
 export enum Lending_Controller_Collateral_Token_Select_Column_Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Min_Arguments_Columns {
   /** column name */
-  MaxDepositedAmount = 'max_deposited_amount',
+  MaxDepositAmount = 'max_deposit_amount',
   /** column name */
   TotalDeposited = 'total_deposited'
 }
@@ -33904,7 +33877,7 @@ export enum Lending_Controller_Collateral_Token_Select_Column_Lending_Controller
 /** select "lending_controller_collateral_token_aggregate_bool_exp_stddev_samp_arguments_columns" columns of table "lending_controller_collateral_token" */
 export enum Lending_Controller_Collateral_Token_Select_Column_Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns {
   /** column name */
-  MaxDepositedAmount = 'max_deposited_amount',
+  MaxDepositAmount = 'max_deposit_amount',
   /** column name */
   TotalDeposited = 'total_deposited'
 }
@@ -33912,7 +33885,7 @@ export enum Lending_Controller_Collateral_Token_Select_Column_Lending_Controller
 /** select "lending_controller_collateral_token_aggregate_bool_exp_sum_arguments_columns" columns of table "lending_controller_collateral_token" */
 export enum Lending_Controller_Collateral_Token_Select_Column_Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Sum_Arguments_Columns {
   /** column name */
-  MaxDepositedAmount = 'max_deposited_amount',
+  MaxDepositAmount = 'max_deposit_amount',
   /** column name */
   TotalDeposited = 'total_deposited'
 }
@@ -33920,7 +33893,7 @@ export enum Lending_Controller_Collateral_Token_Select_Column_Lending_Controller
 /** select "lending_controller_collateral_token_aggregate_bool_exp_var_samp_arguments_columns" columns of table "lending_controller_collateral_token" */
 export enum Lending_Controller_Collateral_Token_Select_Column_Lending_Controller_Collateral_Token_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns {
   /** column name */
-  MaxDepositedAmount = 'max_deposited_amount',
+  MaxDepositAmount = 'max_deposit_amount',
   /** column name */
   TotalDeposited = 'total_deposited'
 }
@@ -33929,14 +33902,14 @@ export enum Lending_Controller_Collateral_Token_Select_Column_Lending_Controller
 export type Lending_Controller_Collateral_Token_Stddev_Fields = {
   __typename?: 'lending_controller_collateral_token_stddev_fields';
   id?: Maybe<Scalars['Float']>;
-  max_deposited_amount?: Maybe<Scalars['Float']>;
+  max_deposit_amount?: Maybe<Scalars['Float']>;
   total_deposited?: Maybe<Scalars['Float']>;
 };
 
 /** order by stddev() on columns of table "lending_controller_collateral_token" */
 export type Lending_Controller_Collateral_Token_Stddev_Order_By = {
   id?: InputMaybe<Order_By>;
-  max_deposited_amount?: InputMaybe<Order_By>;
+  max_deposit_amount?: InputMaybe<Order_By>;
   total_deposited?: InputMaybe<Order_By>;
 };
 
@@ -33944,14 +33917,14 @@ export type Lending_Controller_Collateral_Token_Stddev_Order_By = {
 export type Lending_Controller_Collateral_Token_Stddev_Pop_Fields = {
   __typename?: 'lending_controller_collateral_token_stddev_pop_fields';
   id?: Maybe<Scalars['Float']>;
-  max_deposited_amount?: Maybe<Scalars['Float']>;
+  max_deposit_amount?: Maybe<Scalars['Float']>;
   total_deposited?: Maybe<Scalars['Float']>;
 };
 
 /** order by stddev_pop() on columns of table "lending_controller_collateral_token" */
 export type Lending_Controller_Collateral_Token_Stddev_Pop_Order_By = {
   id?: InputMaybe<Order_By>;
-  max_deposited_amount?: InputMaybe<Order_By>;
+  max_deposit_amount?: InputMaybe<Order_By>;
   total_deposited?: InputMaybe<Order_By>;
 };
 
@@ -33959,14 +33932,14 @@ export type Lending_Controller_Collateral_Token_Stddev_Pop_Order_By = {
 export type Lending_Controller_Collateral_Token_Stddev_Samp_Fields = {
   __typename?: 'lending_controller_collateral_token_stddev_samp_fields';
   id?: Maybe<Scalars['Float']>;
-  max_deposited_amount?: Maybe<Scalars['Float']>;
+  max_deposit_amount?: Maybe<Scalars['Float']>;
   total_deposited?: Maybe<Scalars['Float']>;
 };
 
 /** order by stddev_samp() on columns of table "lending_controller_collateral_token" */
 export type Lending_Controller_Collateral_Token_Stddev_Samp_Order_By = {
   id?: InputMaybe<Order_By>;
-  max_deposited_amount?: InputMaybe<Order_By>;
+  max_deposit_amount?: InputMaybe<Order_By>;
   total_deposited?: InputMaybe<Order_By>;
 };
 
@@ -33984,7 +33957,7 @@ export type Lending_Controller_Collateral_Token_Stream_Cursor_Value_Input = {
   is_scaled_token?: InputMaybe<Scalars['Boolean']>;
   is_staked_token?: InputMaybe<Scalars['Boolean']>;
   lending_controller_id?: InputMaybe<Scalars['String']>;
-  max_deposited_amount?: InputMaybe<Scalars['float8']>;
+  max_deposit_amount?: InputMaybe<Scalars['float8']>;
   oracle_id?: InputMaybe<Scalars['String']>;
   paused?: InputMaybe<Scalars['Boolean']>;
   protected?: InputMaybe<Scalars['Boolean']>;
@@ -33999,14 +33972,14 @@ export type Lending_Controller_Collateral_Token_Stream_Cursor_Value_Input = {
 export type Lending_Controller_Collateral_Token_Sum_Fields = {
   __typename?: 'lending_controller_collateral_token_sum_fields';
   id?: Maybe<Scalars['bigint']>;
-  max_deposited_amount?: Maybe<Scalars['float8']>;
+  max_deposit_amount?: Maybe<Scalars['float8']>;
   total_deposited?: Maybe<Scalars['float8']>;
 };
 
 /** order by sum() on columns of table "lending_controller_collateral_token" */
 export type Lending_Controller_Collateral_Token_Sum_Order_By = {
   id?: InputMaybe<Order_By>;
-  max_deposited_amount?: InputMaybe<Order_By>;
+  max_deposit_amount?: InputMaybe<Order_By>;
   total_deposited?: InputMaybe<Order_By>;
 };
 
@@ -34014,14 +33987,14 @@ export type Lending_Controller_Collateral_Token_Sum_Order_By = {
 export type Lending_Controller_Collateral_Token_Var_Pop_Fields = {
   __typename?: 'lending_controller_collateral_token_var_pop_fields';
   id?: Maybe<Scalars['Float']>;
-  max_deposited_amount?: Maybe<Scalars['Float']>;
+  max_deposit_amount?: Maybe<Scalars['Float']>;
   total_deposited?: Maybe<Scalars['Float']>;
 };
 
 /** order by var_pop() on columns of table "lending_controller_collateral_token" */
 export type Lending_Controller_Collateral_Token_Var_Pop_Order_By = {
   id?: InputMaybe<Order_By>;
-  max_deposited_amount?: InputMaybe<Order_By>;
+  max_deposit_amount?: InputMaybe<Order_By>;
   total_deposited?: InputMaybe<Order_By>;
 };
 
@@ -34029,14 +34002,14 @@ export type Lending_Controller_Collateral_Token_Var_Pop_Order_By = {
 export type Lending_Controller_Collateral_Token_Var_Samp_Fields = {
   __typename?: 'lending_controller_collateral_token_var_samp_fields';
   id?: Maybe<Scalars['Float']>;
-  max_deposited_amount?: Maybe<Scalars['Float']>;
+  max_deposit_amount?: Maybe<Scalars['Float']>;
   total_deposited?: Maybe<Scalars['Float']>;
 };
 
 /** order by var_samp() on columns of table "lending_controller_collateral_token" */
 export type Lending_Controller_Collateral_Token_Var_Samp_Order_By = {
   id?: InputMaybe<Order_By>;
-  max_deposited_amount?: InputMaybe<Order_By>;
+  max_deposit_amount?: InputMaybe<Order_By>;
   total_deposited?: InputMaybe<Order_By>;
 };
 
@@ -34044,14 +34017,14 @@ export type Lending_Controller_Collateral_Token_Var_Samp_Order_By = {
 export type Lending_Controller_Collateral_Token_Variance_Fields = {
   __typename?: 'lending_controller_collateral_token_variance_fields';
   id?: Maybe<Scalars['Float']>;
-  max_deposited_amount?: Maybe<Scalars['Float']>;
+  max_deposit_amount?: Maybe<Scalars['Float']>;
   total_deposited?: Maybe<Scalars['Float']>;
 };
 
 /** order by variance() on columns of table "lending_controller_collateral_token" */
 export type Lending_Controller_Collateral_Token_Variance_Order_By = {
   id?: InputMaybe<Order_By>;
-  max_deposited_amount?: InputMaybe<Order_By>;
+  max_deposit_amount?: InputMaybe<Order_By>;
   total_deposited?: InputMaybe<Order_By>;
 };
 
@@ -35096,8 +35069,10 @@ export type Lending_Controller_Loan_Token = {
   loan_token_address: Scalars['String'];
   loan_token_contract_standard: Scalars['String'];
   loan_token_name: Scalars['String'];
-  lp_token_address: Scalars['String'];
-  lp_token_total: Scalars['float8'];
+  /** An object relationship */
+  m_token?: Maybe<M_Token>;
+  m_token_id?: Maybe<Scalars['String']>;
+  m_tokens_total: Scalars['float8'];
   max_interest_rate: Scalars['float8'];
   min_repayment_amount: Scalars['float8'];
   optimal_utilisation_rate: Scalars['float8'];
@@ -35313,7 +35288,7 @@ export type Lending_Controller_Loan_Token_Avg_Fields = {
   interest_rate_above_optimal_utilisation?: Maybe<Scalars['Float']>;
   interest_rate_below_optimal_utilisation?: Maybe<Scalars['Float']>;
   last_updated_block_level?: Maybe<Scalars['Float']>;
-  lp_token_total?: Maybe<Scalars['Float']>;
+  m_tokens_total?: Maybe<Scalars['Float']>;
   max_interest_rate?: Maybe<Scalars['Float']>;
   min_repayment_amount?: Maybe<Scalars['Float']>;
   optimal_utilisation_rate?: Maybe<Scalars['Float']>;
@@ -35334,7 +35309,7 @@ export type Lending_Controller_Loan_Token_Avg_Order_By = {
   interest_rate_above_optimal_utilisation?: InputMaybe<Order_By>;
   interest_rate_below_optimal_utilisation?: InputMaybe<Order_By>;
   last_updated_block_level?: InputMaybe<Order_By>;
-  lp_token_total?: InputMaybe<Order_By>;
+  m_tokens_total?: InputMaybe<Order_By>;
   max_interest_rate?: InputMaybe<Order_By>;
   min_repayment_amount?: InputMaybe<Order_By>;
   optimal_utilisation_rate?: InputMaybe<Order_By>;
@@ -35365,8 +35340,9 @@ export type Lending_Controller_Loan_Token_Bool_Exp = {
   loan_token_address?: InputMaybe<String_Comparison_Exp>;
   loan_token_contract_standard?: InputMaybe<String_Comparison_Exp>;
   loan_token_name?: InputMaybe<String_Comparison_Exp>;
-  lp_token_address?: InputMaybe<String_Comparison_Exp>;
-  lp_token_total?: InputMaybe<Float8_Comparison_Exp>;
+  m_token?: InputMaybe<M_Token_Bool_Exp>;
+  m_token_id?: InputMaybe<String_Comparison_Exp>;
+  m_tokens_total?: InputMaybe<Float8_Comparison_Exp>;
   max_interest_rate?: InputMaybe<Float8_Comparison_Exp>;
   min_repayment_amount?: InputMaybe<Float8_Comparison_Exp>;
   optimal_utilisation_rate?: InputMaybe<Float8_Comparison_Exp>;
@@ -35397,8 +35373,8 @@ export type Lending_Controller_Loan_Token_Max_Fields = {
   loan_token_address?: Maybe<Scalars['String']>;
   loan_token_contract_standard?: Maybe<Scalars['String']>;
   loan_token_name?: Maybe<Scalars['String']>;
-  lp_token_address?: Maybe<Scalars['String']>;
-  lp_token_total?: Maybe<Scalars['float8']>;
+  m_token_id?: Maybe<Scalars['String']>;
+  m_tokens_total?: Maybe<Scalars['float8']>;
   max_interest_rate?: Maybe<Scalars['float8']>;
   min_repayment_amount?: Maybe<Scalars['float8']>;
   optimal_utilisation_rate?: Maybe<Scalars['float8']>;
@@ -35424,8 +35400,8 @@ export type Lending_Controller_Loan_Token_Max_Order_By = {
   loan_token_address?: InputMaybe<Order_By>;
   loan_token_contract_standard?: InputMaybe<Order_By>;
   loan_token_name?: InputMaybe<Order_By>;
-  lp_token_address?: InputMaybe<Order_By>;
-  lp_token_total?: InputMaybe<Order_By>;
+  m_token_id?: InputMaybe<Order_By>;
+  m_tokens_total?: InputMaybe<Order_By>;
   max_interest_rate?: InputMaybe<Order_By>;
   min_repayment_amount?: InputMaybe<Order_By>;
   optimal_utilisation_rate?: InputMaybe<Order_By>;
@@ -35452,8 +35428,8 @@ export type Lending_Controller_Loan_Token_Min_Fields = {
   loan_token_address?: Maybe<Scalars['String']>;
   loan_token_contract_standard?: Maybe<Scalars['String']>;
   loan_token_name?: Maybe<Scalars['String']>;
-  lp_token_address?: Maybe<Scalars['String']>;
-  lp_token_total?: Maybe<Scalars['float8']>;
+  m_token_id?: Maybe<Scalars['String']>;
+  m_tokens_total?: Maybe<Scalars['float8']>;
   max_interest_rate?: Maybe<Scalars['float8']>;
   min_repayment_amount?: Maybe<Scalars['float8']>;
   optimal_utilisation_rate?: Maybe<Scalars['float8']>;
@@ -35479,8 +35455,8 @@ export type Lending_Controller_Loan_Token_Min_Order_By = {
   loan_token_address?: InputMaybe<Order_By>;
   loan_token_contract_standard?: InputMaybe<Order_By>;
   loan_token_name?: InputMaybe<Order_By>;
-  lp_token_address?: InputMaybe<Order_By>;
-  lp_token_total?: InputMaybe<Order_By>;
+  m_token_id?: InputMaybe<Order_By>;
+  m_tokens_total?: InputMaybe<Order_By>;
   max_interest_rate?: InputMaybe<Order_By>;
   min_repayment_amount?: InputMaybe<Order_By>;
   optimal_utilisation_rate?: InputMaybe<Order_By>;
@@ -35508,8 +35484,9 @@ export type Lending_Controller_Loan_Token_Order_By = {
   loan_token_address?: InputMaybe<Order_By>;
   loan_token_contract_standard?: InputMaybe<Order_By>;
   loan_token_name?: InputMaybe<Order_By>;
-  lp_token_address?: InputMaybe<Order_By>;
-  lp_token_total?: InputMaybe<Order_By>;
+  m_token?: InputMaybe<M_Token_Order_By>;
+  m_token_id?: InputMaybe<Order_By>;
+  m_tokens_total?: InputMaybe<Order_By>;
   max_interest_rate?: InputMaybe<Order_By>;
   min_repayment_amount?: InputMaybe<Order_By>;
   optimal_utilisation_rate?: InputMaybe<Order_By>;
@@ -35551,9 +35528,9 @@ export enum Lending_Controller_Loan_Token_Select_Column {
   /** column name */
   LoanTokenName = 'loan_token_name',
   /** column name */
-  LpTokenAddress = 'lp_token_address',
+  MTokenId = 'm_token_id',
   /** column name */
-  LpTokenTotal = 'lp_token_total',
+  MTokensTotal = 'm_tokens_total',
   /** column name */
   MaxInterestRate = 'max_interest_rate',
   /** column name */
@@ -35591,7 +35568,7 @@ export enum Lending_Controller_Loan_Token_Select_Column_Lending_Controller_Loan_
   /** column name */
   InterestRateBelowOptimalUtilisation = 'interest_rate_below_optimal_utilisation',
   /** column name */
-  LpTokenTotal = 'lp_token_total',
+  MTokensTotal = 'm_tokens_total',
   /** column name */
   MaxInterestRate = 'max_interest_rate',
   /** column name */
@@ -35635,7 +35612,7 @@ export enum Lending_Controller_Loan_Token_Select_Column_Lending_Controller_Loan_
   /** column name */
   InterestRateBelowOptimalUtilisation = 'interest_rate_below_optimal_utilisation',
   /** column name */
-  LpTokenTotal = 'lp_token_total',
+  MTokensTotal = 'm_tokens_total',
   /** column name */
   MaxInterestRate = 'max_interest_rate',
   /** column name */
@@ -35667,7 +35644,7 @@ export enum Lending_Controller_Loan_Token_Select_Column_Lending_Controller_Loan_
   /** column name */
   InterestRateBelowOptimalUtilisation = 'interest_rate_below_optimal_utilisation',
   /** column name */
-  LpTokenTotal = 'lp_token_total',
+  MTokensTotal = 'm_tokens_total',
   /** column name */
   MaxInterestRate = 'max_interest_rate',
   /** column name */
@@ -35699,7 +35676,7 @@ export enum Lending_Controller_Loan_Token_Select_Column_Lending_Controller_Loan_
   /** column name */
   InterestRateBelowOptimalUtilisation = 'interest_rate_below_optimal_utilisation',
   /** column name */
-  LpTokenTotal = 'lp_token_total',
+  MTokensTotal = 'm_tokens_total',
   /** column name */
   MaxInterestRate = 'max_interest_rate',
   /** column name */
@@ -35731,7 +35708,7 @@ export enum Lending_Controller_Loan_Token_Select_Column_Lending_Controller_Loan_
   /** column name */
   InterestRateBelowOptimalUtilisation = 'interest_rate_below_optimal_utilisation',
   /** column name */
-  LpTokenTotal = 'lp_token_total',
+  MTokensTotal = 'm_tokens_total',
   /** column name */
   MaxInterestRate = 'max_interest_rate',
   /** column name */
@@ -35763,7 +35740,7 @@ export enum Lending_Controller_Loan_Token_Select_Column_Lending_Controller_Loan_
   /** column name */
   InterestRateBelowOptimalUtilisation = 'interest_rate_below_optimal_utilisation',
   /** column name */
-  LpTokenTotal = 'lp_token_total',
+  MTokensTotal = 'm_tokens_total',
   /** column name */
   MaxInterestRate = 'max_interest_rate',
   /** column name */
@@ -35795,7 +35772,7 @@ export enum Lending_Controller_Loan_Token_Select_Column_Lending_Controller_Loan_
   /** column name */
   InterestRateBelowOptimalUtilisation = 'interest_rate_below_optimal_utilisation',
   /** column name */
-  LpTokenTotal = 'lp_token_total',
+  MTokensTotal = 'm_tokens_total',
   /** column name */
   MaxInterestRate = 'max_interest_rate',
   /** column name */
@@ -35827,7 +35804,7 @@ export enum Lending_Controller_Loan_Token_Select_Column_Lending_Controller_Loan_
   /** column name */
   InterestRateBelowOptimalUtilisation = 'interest_rate_below_optimal_utilisation',
   /** column name */
-  LpTokenTotal = 'lp_token_total',
+  MTokensTotal = 'm_tokens_total',
   /** column name */
   MaxInterestRate = 'max_interest_rate',
   /** column name */
@@ -35855,7 +35832,7 @@ export type Lending_Controller_Loan_Token_Stddev_Fields = {
   interest_rate_above_optimal_utilisation?: Maybe<Scalars['Float']>;
   interest_rate_below_optimal_utilisation?: Maybe<Scalars['Float']>;
   last_updated_block_level?: Maybe<Scalars['Float']>;
-  lp_token_total?: Maybe<Scalars['Float']>;
+  m_tokens_total?: Maybe<Scalars['Float']>;
   max_interest_rate?: Maybe<Scalars['Float']>;
   min_repayment_amount?: Maybe<Scalars['Float']>;
   optimal_utilisation_rate?: Maybe<Scalars['Float']>;
@@ -35876,7 +35853,7 @@ export type Lending_Controller_Loan_Token_Stddev_Order_By = {
   interest_rate_above_optimal_utilisation?: InputMaybe<Order_By>;
   interest_rate_below_optimal_utilisation?: InputMaybe<Order_By>;
   last_updated_block_level?: InputMaybe<Order_By>;
-  lp_token_total?: InputMaybe<Order_By>;
+  m_tokens_total?: InputMaybe<Order_By>;
   max_interest_rate?: InputMaybe<Order_By>;
   min_repayment_amount?: InputMaybe<Order_By>;
   optimal_utilisation_rate?: InputMaybe<Order_By>;
@@ -35898,7 +35875,7 @@ export type Lending_Controller_Loan_Token_Stddev_Pop_Fields = {
   interest_rate_above_optimal_utilisation?: Maybe<Scalars['Float']>;
   interest_rate_below_optimal_utilisation?: Maybe<Scalars['Float']>;
   last_updated_block_level?: Maybe<Scalars['Float']>;
-  lp_token_total?: Maybe<Scalars['Float']>;
+  m_tokens_total?: Maybe<Scalars['Float']>;
   max_interest_rate?: Maybe<Scalars['Float']>;
   min_repayment_amount?: Maybe<Scalars['Float']>;
   optimal_utilisation_rate?: Maybe<Scalars['Float']>;
@@ -35919,7 +35896,7 @@ export type Lending_Controller_Loan_Token_Stddev_Pop_Order_By = {
   interest_rate_above_optimal_utilisation?: InputMaybe<Order_By>;
   interest_rate_below_optimal_utilisation?: InputMaybe<Order_By>;
   last_updated_block_level?: InputMaybe<Order_By>;
-  lp_token_total?: InputMaybe<Order_By>;
+  m_tokens_total?: InputMaybe<Order_By>;
   max_interest_rate?: InputMaybe<Order_By>;
   min_repayment_amount?: InputMaybe<Order_By>;
   optimal_utilisation_rate?: InputMaybe<Order_By>;
@@ -35941,7 +35918,7 @@ export type Lending_Controller_Loan_Token_Stddev_Samp_Fields = {
   interest_rate_above_optimal_utilisation?: Maybe<Scalars['Float']>;
   interest_rate_below_optimal_utilisation?: Maybe<Scalars['Float']>;
   last_updated_block_level?: Maybe<Scalars['Float']>;
-  lp_token_total?: Maybe<Scalars['Float']>;
+  m_tokens_total?: Maybe<Scalars['Float']>;
   max_interest_rate?: Maybe<Scalars['Float']>;
   min_repayment_amount?: Maybe<Scalars['Float']>;
   optimal_utilisation_rate?: Maybe<Scalars['Float']>;
@@ -35962,7 +35939,7 @@ export type Lending_Controller_Loan_Token_Stddev_Samp_Order_By = {
   interest_rate_above_optimal_utilisation?: InputMaybe<Order_By>;
   interest_rate_below_optimal_utilisation?: InputMaybe<Order_By>;
   last_updated_block_level?: InputMaybe<Order_By>;
-  lp_token_total?: InputMaybe<Order_By>;
+  m_tokens_total?: InputMaybe<Order_By>;
   max_interest_rate?: InputMaybe<Order_By>;
   min_repayment_amount?: InputMaybe<Order_By>;
   optimal_utilisation_rate?: InputMaybe<Order_By>;
@@ -35995,8 +35972,8 @@ export type Lending_Controller_Loan_Token_Stream_Cursor_Value_Input = {
   loan_token_address?: InputMaybe<Scalars['String']>;
   loan_token_contract_standard?: InputMaybe<Scalars['String']>;
   loan_token_name?: InputMaybe<Scalars['String']>;
-  lp_token_address?: InputMaybe<Scalars['String']>;
-  lp_token_total?: InputMaybe<Scalars['float8']>;
+  m_token_id?: InputMaybe<Scalars['String']>;
+  m_tokens_total?: InputMaybe<Scalars['float8']>;
   max_interest_rate?: InputMaybe<Scalars['float8']>;
   min_repayment_amount?: InputMaybe<Scalars['float8']>;
   optimal_utilisation_rate?: InputMaybe<Scalars['float8']>;
@@ -36020,7 +35997,7 @@ export type Lending_Controller_Loan_Token_Sum_Fields = {
   interest_rate_above_optimal_utilisation?: Maybe<Scalars['float8']>;
   interest_rate_below_optimal_utilisation?: Maybe<Scalars['float8']>;
   last_updated_block_level?: Maybe<Scalars['bigint']>;
-  lp_token_total?: Maybe<Scalars['float8']>;
+  m_tokens_total?: Maybe<Scalars['float8']>;
   max_interest_rate?: Maybe<Scalars['float8']>;
   min_repayment_amount?: Maybe<Scalars['float8']>;
   optimal_utilisation_rate?: Maybe<Scalars['float8']>;
@@ -36041,7 +36018,7 @@ export type Lending_Controller_Loan_Token_Sum_Order_By = {
   interest_rate_above_optimal_utilisation?: InputMaybe<Order_By>;
   interest_rate_below_optimal_utilisation?: InputMaybe<Order_By>;
   last_updated_block_level?: InputMaybe<Order_By>;
-  lp_token_total?: InputMaybe<Order_By>;
+  m_tokens_total?: InputMaybe<Order_By>;
   max_interest_rate?: InputMaybe<Order_By>;
   min_repayment_amount?: InputMaybe<Order_By>;
   optimal_utilisation_rate?: InputMaybe<Order_By>;
@@ -36063,7 +36040,7 @@ export type Lending_Controller_Loan_Token_Var_Pop_Fields = {
   interest_rate_above_optimal_utilisation?: Maybe<Scalars['Float']>;
   interest_rate_below_optimal_utilisation?: Maybe<Scalars['Float']>;
   last_updated_block_level?: Maybe<Scalars['Float']>;
-  lp_token_total?: Maybe<Scalars['Float']>;
+  m_tokens_total?: Maybe<Scalars['Float']>;
   max_interest_rate?: Maybe<Scalars['Float']>;
   min_repayment_amount?: Maybe<Scalars['Float']>;
   optimal_utilisation_rate?: Maybe<Scalars['Float']>;
@@ -36084,7 +36061,7 @@ export type Lending_Controller_Loan_Token_Var_Pop_Order_By = {
   interest_rate_above_optimal_utilisation?: InputMaybe<Order_By>;
   interest_rate_below_optimal_utilisation?: InputMaybe<Order_By>;
   last_updated_block_level?: InputMaybe<Order_By>;
-  lp_token_total?: InputMaybe<Order_By>;
+  m_tokens_total?: InputMaybe<Order_By>;
   max_interest_rate?: InputMaybe<Order_By>;
   min_repayment_amount?: InputMaybe<Order_By>;
   optimal_utilisation_rate?: InputMaybe<Order_By>;
@@ -36106,7 +36083,7 @@ export type Lending_Controller_Loan_Token_Var_Samp_Fields = {
   interest_rate_above_optimal_utilisation?: Maybe<Scalars['Float']>;
   interest_rate_below_optimal_utilisation?: Maybe<Scalars['Float']>;
   last_updated_block_level?: Maybe<Scalars['Float']>;
-  lp_token_total?: Maybe<Scalars['Float']>;
+  m_tokens_total?: Maybe<Scalars['Float']>;
   max_interest_rate?: Maybe<Scalars['Float']>;
   min_repayment_amount?: Maybe<Scalars['Float']>;
   optimal_utilisation_rate?: Maybe<Scalars['Float']>;
@@ -36127,7 +36104,7 @@ export type Lending_Controller_Loan_Token_Var_Samp_Order_By = {
   interest_rate_above_optimal_utilisation?: InputMaybe<Order_By>;
   interest_rate_below_optimal_utilisation?: InputMaybe<Order_By>;
   last_updated_block_level?: InputMaybe<Order_By>;
-  lp_token_total?: InputMaybe<Order_By>;
+  m_tokens_total?: InputMaybe<Order_By>;
   max_interest_rate?: InputMaybe<Order_By>;
   min_repayment_amount?: InputMaybe<Order_By>;
   optimal_utilisation_rate?: InputMaybe<Order_By>;
@@ -36149,7 +36126,7 @@ export type Lending_Controller_Loan_Token_Variance_Fields = {
   interest_rate_above_optimal_utilisation?: Maybe<Scalars['Float']>;
   interest_rate_below_optimal_utilisation?: Maybe<Scalars['Float']>;
   last_updated_block_level?: Maybe<Scalars['Float']>;
-  lp_token_total?: Maybe<Scalars['Float']>;
+  m_tokens_total?: Maybe<Scalars['Float']>;
   max_interest_rate?: Maybe<Scalars['Float']>;
   min_repayment_amount?: Maybe<Scalars['Float']>;
   optimal_utilisation_rate?: Maybe<Scalars['Float']>;
@@ -36170,7 +36147,7 @@ export type Lending_Controller_Loan_Token_Variance_Order_By = {
   interest_rate_above_optimal_utilisation?: InputMaybe<Order_By>;
   interest_rate_below_optimal_utilisation?: InputMaybe<Order_By>;
   last_updated_block_level?: InputMaybe<Order_By>;
-  lp_token_total?: InputMaybe<Order_By>;
+  m_tokens_total?: InputMaybe<Order_By>;
   max_interest_rate?: InputMaybe<Order_By>;
   min_repayment_amount?: InputMaybe<Order_By>;
   optimal_utilisation_rate?: InputMaybe<Order_By>;
@@ -38479,6 +38456,1166 @@ export type Liquidity_BakingPositions_AggregateArgs = {
   where?: InputMaybe<Liquidity_Baking_Position_Bool_Exp>;
 };
 
+/** columns and relationships of "liquidity_baking_1d_candle" */
+export type Liquidity_Baking_1d_Candle = {
+  __typename?: 'liquidity_baking_1d_candle';
+  bucket?: Maybe<Scalars['timestamptz']>;
+  close?: Maybe<Scalars['float8']>;
+  high?: Maybe<Scalars['float8']>;
+  low?: Maybe<Scalars['float8']>;
+  open?: Maybe<Scalars['float8']>;
+  token_volume?: Maybe<Scalars['float8']>;
+  trades?: Maybe<Scalars['bigint']>;
+  xtz_volume?: Maybe<Scalars['float8']>;
+};
+
+/** aggregated selection of "liquidity_baking_1d_candle" */
+export type Liquidity_Baking_1d_Candle_Aggregate = {
+  __typename?: 'liquidity_baking_1d_candle_aggregate';
+  aggregate?: Maybe<Liquidity_Baking_1d_Candle_Aggregate_Fields>;
+  nodes: Array<Liquidity_Baking_1d_Candle>;
+};
+
+/** aggregate fields of "liquidity_baking_1d_candle" */
+export type Liquidity_Baking_1d_Candle_Aggregate_Fields = {
+  __typename?: 'liquidity_baking_1d_candle_aggregate_fields';
+  avg?: Maybe<Liquidity_Baking_1d_Candle_Avg_Fields>;
+  count: Scalars['Int'];
+  max?: Maybe<Liquidity_Baking_1d_Candle_Max_Fields>;
+  min?: Maybe<Liquidity_Baking_1d_Candle_Min_Fields>;
+  stddev?: Maybe<Liquidity_Baking_1d_Candle_Stddev_Fields>;
+  stddev_pop?: Maybe<Liquidity_Baking_1d_Candle_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<Liquidity_Baking_1d_Candle_Stddev_Samp_Fields>;
+  sum?: Maybe<Liquidity_Baking_1d_Candle_Sum_Fields>;
+  var_pop?: Maybe<Liquidity_Baking_1d_Candle_Var_Pop_Fields>;
+  var_samp?: Maybe<Liquidity_Baking_1d_Candle_Var_Samp_Fields>;
+  variance?: Maybe<Liquidity_Baking_1d_Candle_Variance_Fields>;
+};
+
+
+/** aggregate fields of "liquidity_baking_1d_candle" */
+export type Liquidity_Baking_1d_Candle_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Liquidity_Baking_1d_Candle_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** aggregate avg on columns */
+export type Liquidity_Baking_1d_Candle_Avg_Fields = {
+  __typename?: 'liquidity_baking_1d_candle_avg_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** Boolean expression to filter rows from the table "liquidity_baking_1d_candle". All fields are combined with a logical 'AND'. */
+export type Liquidity_Baking_1d_Candle_Bool_Exp = {
+  _and?: InputMaybe<Array<Liquidity_Baking_1d_Candle_Bool_Exp>>;
+  _not?: InputMaybe<Liquidity_Baking_1d_Candle_Bool_Exp>;
+  _or?: InputMaybe<Array<Liquidity_Baking_1d_Candle_Bool_Exp>>;
+  bucket?: InputMaybe<Timestamptz_Comparison_Exp>;
+  close?: InputMaybe<Float8_Comparison_Exp>;
+  high?: InputMaybe<Float8_Comparison_Exp>;
+  low?: InputMaybe<Float8_Comparison_Exp>;
+  open?: InputMaybe<Float8_Comparison_Exp>;
+  token_volume?: InputMaybe<Float8_Comparison_Exp>;
+  trades?: InputMaybe<Bigint_Comparison_Exp>;
+  xtz_volume?: InputMaybe<Float8_Comparison_Exp>;
+};
+
+/** aggregate max on columns */
+export type Liquidity_Baking_1d_Candle_Max_Fields = {
+  __typename?: 'liquidity_baking_1d_candle_max_fields';
+  bucket?: Maybe<Scalars['timestamptz']>;
+  close?: Maybe<Scalars['float8']>;
+  high?: Maybe<Scalars['float8']>;
+  low?: Maybe<Scalars['float8']>;
+  open?: Maybe<Scalars['float8']>;
+  token_volume?: Maybe<Scalars['float8']>;
+  trades?: Maybe<Scalars['bigint']>;
+  xtz_volume?: Maybe<Scalars['float8']>;
+};
+
+/** aggregate min on columns */
+export type Liquidity_Baking_1d_Candle_Min_Fields = {
+  __typename?: 'liquidity_baking_1d_candle_min_fields';
+  bucket?: Maybe<Scalars['timestamptz']>;
+  close?: Maybe<Scalars['float8']>;
+  high?: Maybe<Scalars['float8']>;
+  low?: Maybe<Scalars['float8']>;
+  open?: Maybe<Scalars['float8']>;
+  token_volume?: Maybe<Scalars['float8']>;
+  trades?: Maybe<Scalars['bigint']>;
+  xtz_volume?: Maybe<Scalars['float8']>;
+};
+
+/** Ordering options when selecting data from "liquidity_baking_1d_candle". */
+export type Liquidity_Baking_1d_Candle_Order_By = {
+  bucket?: InputMaybe<Order_By>;
+  close?: InputMaybe<Order_By>;
+  high?: InputMaybe<Order_By>;
+  low?: InputMaybe<Order_By>;
+  open?: InputMaybe<Order_By>;
+  token_volume?: InputMaybe<Order_By>;
+  trades?: InputMaybe<Order_By>;
+  xtz_volume?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "liquidity_baking_1d_candle" */
+export enum Liquidity_Baking_1d_Candle_Select_Column {
+  /** column name */
+  Bucket = 'bucket',
+  /** column name */
+  Close = 'close',
+  /** column name */
+  High = 'high',
+  /** column name */
+  Low = 'low',
+  /** column name */
+  Open = 'open',
+  /** column name */
+  TokenVolume = 'token_volume',
+  /** column name */
+  Trades = 'trades',
+  /** column name */
+  XtzVolume = 'xtz_volume'
+}
+
+/** aggregate stddev on columns */
+export type Liquidity_Baking_1d_Candle_Stddev_Fields = {
+  __typename?: 'liquidity_baking_1d_candle_stddev_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Liquidity_Baking_1d_Candle_Stddev_Pop_Fields = {
+  __typename?: 'liquidity_baking_1d_candle_stddev_pop_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Liquidity_Baking_1d_Candle_Stddev_Samp_Fields = {
+  __typename?: 'liquidity_baking_1d_candle_stddev_samp_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** Streaming cursor of the table "liquidity_baking_1d_candle" */
+export type Liquidity_Baking_1d_Candle_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Liquidity_Baking_1d_Candle_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Liquidity_Baking_1d_Candle_Stream_Cursor_Value_Input = {
+  bucket?: InputMaybe<Scalars['timestamptz']>;
+  close?: InputMaybe<Scalars['float8']>;
+  high?: InputMaybe<Scalars['float8']>;
+  low?: InputMaybe<Scalars['float8']>;
+  open?: InputMaybe<Scalars['float8']>;
+  token_volume?: InputMaybe<Scalars['float8']>;
+  trades?: InputMaybe<Scalars['bigint']>;
+  xtz_volume?: InputMaybe<Scalars['float8']>;
+};
+
+/** aggregate sum on columns */
+export type Liquidity_Baking_1d_Candle_Sum_Fields = {
+  __typename?: 'liquidity_baking_1d_candle_sum_fields';
+  close?: Maybe<Scalars['float8']>;
+  high?: Maybe<Scalars['float8']>;
+  low?: Maybe<Scalars['float8']>;
+  open?: Maybe<Scalars['float8']>;
+  token_volume?: Maybe<Scalars['float8']>;
+  trades?: Maybe<Scalars['bigint']>;
+  xtz_volume?: Maybe<Scalars['float8']>;
+};
+
+/** aggregate var_pop on columns */
+export type Liquidity_Baking_1d_Candle_Var_Pop_Fields = {
+  __typename?: 'liquidity_baking_1d_candle_var_pop_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate var_samp on columns */
+export type Liquidity_Baking_1d_Candle_Var_Samp_Fields = {
+  __typename?: 'liquidity_baking_1d_candle_var_samp_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate variance on columns */
+export type Liquidity_Baking_1d_Candle_Variance_Fields = {
+  __typename?: 'liquidity_baking_1d_candle_variance_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** columns and relationships of "liquidity_baking_1h_candle" */
+export type Liquidity_Baking_1h_Candle = {
+  __typename?: 'liquidity_baking_1h_candle';
+  bucket?: Maybe<Scalars['timestamptz']>;
+  close?: Maybe<Scalars['float8']>;
+  high?: Maybe<Scalars['float8']>;
+  low?: Maybe<Scalars['float8']>;
+  open?: Maybe<Scalars['float8']>;
+  token_volume?: Maybe<Scalars['float8']>;
+  trades?: Maybe<Scalars['bigint']>;
+  xtz_volume?: Maybe<Scalars['float8']>;
+};
+
+/** aggregated selection of "liquidity_baking_1h_candle" */
+export type Liquidity_Baking_1h_Candle_Aggregate = {
+  __typename?: 'liquidity_baking_1h_candle_aggregate';
+  aggregate?: Maybe<Liquidity_Baking_1h_Candle_Aggregate_Fields>;
+  nodes: Array<Liquidity_Baking_1h_Candle>;
+};
+
+/** aggregate fields of "liquidity_baking_1h_candle" */
+export type Liquidity_Baking_1h_Candle_Aggregate_Fields = {
+  __typename?: 'liquidity_baking_1h_candle_aggregate_fields';
+  avg?: Maybe<Liquidity_Baking_1h_Candle_Avg_Fields>;
+  count: Scalars['Int'];
+  max?: Maybe<Liquidity_Baking_1h_Candle_Max_Fields>;
+  min?: Maybe<Liquidity_Baking_1h_Candle_Min_Fields>;
+  stddev?: Maybe<Liquidity_Baking_1h_Candle_Stddev_Fields>;
+  stddev_pop?: Maybe<Liquidity_Baking_1h_Candle_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<Liquidity_Baking_1h_Candle_Stddev_Samp_Fields>;
+  sum?: Maybe<Liquidity_Baking_1h_Candle_Sum_Fields>;
+  var_pop?: Maybe<Liquidity_Baking_1h_Candle_Var_Pop_Fields>;
+  var_samp?: Maybe<Liquidity_Baking_1h_Candle_Var_Samp_Fields>;
+  variance?: Maybe<Liquidity_Baking_1h_Candle_Variance_Fields>;
+};
+
+
+/** aggregate fields of "liquidity_baking_1h_candle" */
+export type Liquidity_Baking_1h_Candle_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Liquidity_Baking_1h_Candle_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** aggregate avg on columns */
+export type Liquidity_Baking_1h_Candle_Avg_Fields = {
+  __typename?: 'liquidity_baking_1h_candle_avg_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** Boolean expression to filter rows from the table "liquidity_baking_1h_candle". All fields are combined with a logical 'AND'. */
+export type Liquidity_Baking_1h_Candle_Bool_Exp = {
+  _and?: InputMaybe<Array<Liquidity_Baking_1h_Candle_Bool_Exp>>;
+  _not?: InputMaybe<Liquidity_Baking_1h_Candle_Bool_Exp>;
+  _or?: InputMaybe<Array<Liquidity_Baking_1h_Candle_Bool_Exp>>;
+  bucket?: InputMaybe<Timestamptz_Comparison_Exp>;
+  close?: InputMaybe<Float8_Comparison_Exp>;
+  high?: InputMaybe<Float8_Comparison_Exp>;
+  low?: InputMaybe<Float8_Comparison_Exp>;
+  open?: InputMaybe<Float8_Comparison_Exp>;
+  token_volume?: InputMaybe<Float8_Comparison_Exp>;
+  trades?: InputMaybe<Bigint_Comparison_Exp>;
+  xtz_volume?: InputMaybe<Float8_Comparison_Exp>;
+};
+
+/** aggregate max on columns */
+export type Liquidity_Baking_1h_Candle_Max_Fields = {
+  __typename?: 'liquidity_baking_1h_candle_max_fields';
+  bucket?: Maybe<Scalars['timestamptz']>;
+  close?: Maybe<Scalars['float8']>;
+  high?: Maybe<Scalars['float8']>;
+  low?: Maybe<Scalars['float8']>;
+  open?: Maybe<Scalars['float8']>;
+  token_volume?: Maybe<Scalars['float8']>;
+  trades?: Maybe<Scalars['bigint']>;
+  xtz_volume?: Maybe<Scalars['float8']>;
+};
+
+/** aggregate min on columns */
+export type Liquidity_Baking_1h_Candle_Min_Fields = {
+  __typename?: 'liquidity_baking_1h_candle_min_fields';
+  bucket?: Maybe<Scalars['timestamptz']>;
+  close?: Maybe<Scalars['float8']>;
+  high?: Maybe<Scalars['float8']>;
+  low?: Maybe<Scalars['float8']>;
+  open?: Maybe<Scalars['float8']>;
+  token_volume?: Maybe<Scalars['float8']>;
+  trades?: Maybe<Scalars['bigint']>;
+  xtz_volume?: Maybe<Scalars['float8']>;
+};
+
+/** Ordering options when selecting data from "liquidity_baking_1h_candle". */
+export type Liquidity_Baking_1h_Candle_Order_By = {
+  bucket?: InputMaybe<Order_By>;
+  close?: InputMaybe<Order_By>;
+  high?: InputMaybe<Order_By>;
+  low?: InputMaybe<Order_By>;
+  open?: InputMaybe<Order_By>;
+  token_volume?: InputMaybe<Order_By>;
+  trades?: InputMaybe<Order_By>;
+  xtz_volume?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "liquidity_baking_1h_candle" */
+export enum Liquidity_Baking_1h_Candle_Select_Column {
+  /** column name */
+  Bucket = 'bucket',
+  /** column name */
+  Close = 'close',
+  /** column name */
+  High = 'high',
+  /** column name */
+  Low = 'low',
+  /** column name */
+  Open = 'open',
+  /** column name */
+  TokenVolume = 'token_volume',
+  /** column name */
+  Trades = 'trades',
+  /** column name */
+  XtzVolume = 'xtz_volume'
+}
+
+/** aggregate stddev on columns */
+export type Liquidity_Baking_1h_Candle_Stddev_Fields = {
+  __typename?: 'liquidity_baking_1h_candle_stddev_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Liquidity_Baking_1h_Candle_Stddev_Pop_Fields = {
+  __typename?: 'liquidity_baking_1h_candle_stddev_pop_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Liquidity_Baking_1h_Candle_Stddev_Samp_Fields = {
+  __typename?: 'liquidity_baking_1h_candle_stddev_samp_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** Streaming cursor of the table "liquidity_baking_1h_candle" */
+export type Liquidity_Baking_1h_Candle_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Liquidity_Baking_1h_Candle_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Liquidity_Baking_1h_Candle_Stream_Cursor_Value_Input = {
+  bucket?: InputMaybe<Scalars['timestamptz']>;
+  close?: InputMaybe<Scalars['float8']>;
+  high?: InputMaybe<Scalars['float8']>;
+  low?: InputMaybe<Scalars['float8']>;
+  open?: InputMaybe<Scalars['float8']>;
+  token_volume?: InputMaybe<Scalars['float8']>;
+  trades?: InputMaybe<Scalars['bigint']>;
+  xtz_volume?: InputMaybe<Scalars['float8']>;
+};
+
+/** aggregate sum on columns */
+export type Liquidity_Baking_1h_Candle_Sum_Fields = {
+  __typename?: 'liquidity_baking_1h_candle_sum_fields';
+  close?: Maybe<Scalars['float8']>;
+  high?: Maybe<Scalars['float8']>;
+  low?: Maybe<Scalars['float8']>;
+  open?: Maybe<Scalars['float8']>;
+  token_volume?: Maybe<Scalars['float8']>;
+  trades?: Maybe<Scalars['bigint']>;
+  xtz_volume?: Maybe<Scalars['float8']>;
+};
+
+/** aggregate var_pop on columns */
+export type Liquidity_Baking_1h_Candle_Var_Pop_Fields = {
+  __typename?: 'liquidity_baking_1h_candle_var_pop_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate var_samp on columns */
+export type Liquidity_Baking_1h_Candle_Var_Samp_Fields = {
+  __typename?: 'liquidity_baking_1h_candle_var_samp_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate variance on columns */
+export type Liquidity_Baking_1h_Candle_Variance_Fields = {
+  __typename?: 'liquidity_baking_1h_candle_variance_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** columns and relationships of "liquidity_baking_1w_candle" */
+export type Liquidity_Baking_1w_Candle = {
+  __typename?: 'liquidity_baking_1w_candle';
+  bucket?: Maybe<Scalars['timestamptz']>;
+  close?: Maybe<Scalars['float8']>;
+  high?: Maybe<Scalars['float8']>;
+  low?: Maybe<Scalars['float8']>;
+  open?: Maybe<Scalars['float8']>;
+  token_volume?: Maybe<Scalars['float8']>;
+  trades?: Maybe<Scalars['bigint']>;
+  xtz_volume?: Maybe<Scalars['float8']>;
+};
+
+/** aggregated selection of "liquidity_baking_1w_candle" */
+export type Liquidity_Baking_1w_Candle_Aggregate = {
+  __typename?: 'liquidity_baking_1w_candle_aggregate';
+  aggregate?: Maybe<Liquidity_Baking_1w_Candle_Aggregate_Fields>;
+  nodes: Array<Liquidity_Baking_1w_Candle>;
+};
+
+/** aggregate fields of "liquidity_baking_1w_candle" */
+export type Liquidity_Baking_1w_Candle_Aggregate_Fields = {
+  __typename?: 'liquidity_baking_1w_candle_aggregate_fields';
+  avg?: Maybe<Liquidity_Baking_1w_Candle_Avg_Fields>;
+  count: Scalars['Int'];
+  max?: Maybe<Liquidity_Baking_1w_Candle_Max_Fields>;
+  min?: Maybe<Liquidity_Baking_1w_Candle_Min_Fields>;
+  stddev?: Maybe<Liquidity_Baking_1w_Candle_Stddev_Fields>;
+  stddev_pop?: Maybe<Liquidity_Baking_1w_Candle_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<Liquidity_Baking_1w_Candle_Stddev_Samp_Fields>;
+  sum?: Maybe<Liquidity_Baking_1w_Candle_Sum_Fields>;
+  var_pop?: Maybe<Liquidity_Baking_1w_Candle_Var_Pop_Fields>;
+  var_samp?: Maybe<Liquidity_Baking_1w_Candle_Var_Samp_Fields>;
+  variance?: Maybe<Liquidity_Baking_1w_Candle_Variance_Fields>;
+};
+
+
+/** aggregate fields of "liquidity_baking_1w_candle" */
+export type Liquidity_Baking_1w_Candle_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Liquidity_Baking_1w_Candle_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** aggregate avg on columns */
+export type Liquidity_Baking_1w_Candle_Avg_Fields = {
+  __typename?: 'liquidity_baking_1w_candle_avg_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** Boolean expression to filter rows from the table "liquidity_baking_1w_candle". All fields are combined with a logical 'AND'. */
+export type Liquidity_Baking_1w_Candle_Bool_Exp = {
+  _and?: InputMaybe<Array<Liquidity_Baking_1w_Candle_Bool_Exp>>;
+  _not?: InputMaybe<Liquidity_Baking_1w_Candle_Bool_Exp>;
+  _or?: InputMaybe<Array<Liquidity_Baking_1w_Candle_Bool_Exp>>;
+  bucket?: InputMaybe<Timestamptz_Comparison_Exp>;
+  close?: InputMaybe<Float8_Comparison_Exp>;
+  high?: InputMaybe<Float8_Comparison_Exp>;
+  low?: InputMaybe<Float8_Comparison_Exp>;
+  open?: InputMaybe<Float8_Comparison_Exp>;
+  token_volume?: InputMaybe<Float8_Comparison_Exp>;
+  trades?: InputMaybe<Bigint_Comparison_Exp>;
+  xtz_volume?: InputMaybe<Float8_Comparison_Exp>;
+};
+
+/** aggregate max on columns */
+export type Liquidity_Baking_1w_Candle_Max_Fields = {
+  __typename?: 'liquidity_baking_1w_candle_max_fields';
+  bucket?: Maybe<Scalars['timestamptz']>;
+  close?: Maybe<Scalars['float8']>;
+  high?: Maybe<Scalars['float8']>;
+  low?: Maybe<Scalars['float8']>;
+  open?: Maybe<Scalars['float8']>;
+  token_volume?: Maybe<Scalars['float8']>;
+  trades?: Maybe<Scalars['bigint']>;
+  xtz_volume?: Maybe<Scalars['float8']>;
+};
+
+/** aggregate min on columns */
+export type Liquidity_Baking_1w_Candle_Min_Fields = {
+  __typename?: 'liquidity_baking_1w_candle_min_fields';
+  bucket?: Maybe<Scalars['timestamptz']>;
+  close?: Maybe<Scalars['float8']>;
+  high?: Maybe<Scalars['float8']>;
+  low?: Maybe<Scalars['float8']>;
+  open?: Maybe<Scalars['float8']>;
+  token_volume?: Maybe<Scalars['float8']>;
+  trades?: Maybe<Scalars['bigint']>;
+  xtz_volume?: Maybe<Scalars['float8']>;
+};
+
+/** Ordering options when selecting data from "liquidity_baking_1w_candle". */
+export type Liquidity_Baking_1w_Candle_Order_By = {
+  bucket?: InputMaybe<Order_By>;
+  close?: InputMaybe<Order_By>;
+  high?: InputMaybe<Order_By>;
+  low?: InputMaybe<Order_By>;
+  open?: InputMaybe<Order_By>;
+  token_volume?: InputMaybe<Order_By>;
+  trades?: InputMaybe<Order_By>;
+  xtz_volume?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "liquidity_baking_1w_candle" */
+export enum Liquidity_Baking_1w_Candle_Select_Column {
+  /** column name */
+  Bucket = 'bucket',
+  /** column name */
+  Close = 'close',
+  /** column name */
+  High = 'high',
+  /** column name */
+  Low = 'low',
+  /** column name */
+  Open = 'open',
+  /** column name */
+  TokenVolume = 'token_volume',
+  /** column name */
+  Trades = 'trades',
+  /** column name */
+  XtzVolume = 'xtz_volume'
+}
+
+/** aggregate stddev on columns */
+export type Liquidity_Baking_1w_Candle_Stddev_Fields = {
+  __typename?: 'liquidity_baking_1w_candle_stddev_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Liquidity_Baking_1w_Candle_Stddev_Pop_Fields = {
+  __typename?: 'liquidity_baking_1w_candle_stddev_pop_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Liquidity_Baking_1w_Candle_Stddev_Samp_Fields = {
+  __typename?: 'liquidity_baking_1w_candle_stddev_samp_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** Streaming cursor of the table "liquidity_baking_1w_candle" */
+export type Liquidity_Baking_1w_Candle_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Liquidity_Baking_1w_Candle_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Liquidity_Baking_1w_Candle_Stream_Cursor_Value_Input = {
+  bucket?: InputMaybe<Scalars['timestamptz']>;
+  close?: InputMaybe<Scalars['float8']>;
+  high?: InputMaybe<Scalars['float8']>;
+  low?: InputMaybe<Scalars['float8']>;
+  open?: InputMaybe<Scalars['float8']>;
+  token_volume?: InputMaybe<Scalars['float8']>;
+  trades?: InputMaybe<Scalars['bigint']>;
+  xtz_volume?: InputMaybe<Scalars['float8']>;
+};
+
+/** aggregate sum on columns */
+export type Liquidity_Baking_1w_Candle_Sum_Fields = {
+  __typename?: 'liquidity_baking_1w_candle_sum_fields';
+  close?: Maybe<Scalars['float8']>;
+  high?: Maybe<Scalars['float8']>;
+  low?: Maybe<Scalars['float8']>;
+  open?: Maybe<Scalars['float8']>;
+  token_volume?: Maybe<Scalars['float8']>;
+  trades?: Maybe<Scalars['bigint']>;
+  xtz_volume?: Maybe<Scalars['float8']>;
+};
+
+/** aggregate var_pop on columns */
+export type Liquidity_Baking_1w_Candle_Var_Pop_Fields = {
+  __typename?: 'liquidity_baking_1w_candle_var_pop_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate var_samp on columns */
+export type Liquidity_Baking_1w_Candle_Var_Samp_Fields = {
+  __typename?: 'liquidity_baking_1w_candle_var_samp_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate variance on columns */
+export type Liquidity_Baking_1w_Candle_Variance_Fields = {
+  __typename?: 'liquidity_baking_1w_candle_variance_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** columns and relationships of "liquidity_baking_5m_candle" */
+export type Liquidity_Baking_5m_Candle = {
+  __typename?: 'liquidity_baking_5m_candle';
+  bucket?: Maybe<Scalars['timestamptz']>;
+  close?: Maybe<Scalars['float8']>;
+  high?: Maybe<Scalars['float8']>;
+  low?: Maybe<Scalars['float8']>;
+  open?: Maybe<Scalars['float8']>;
+  token_volume?: Maybe<Scalars['float8']>;
+  trades?: Maybe<Scalars['bigint']>;
+  xtz_volume?: Maybe<Scalars['float8']>;
+};
+
+/** aggregated selection of "liquidity_baking_5m_candle" */
+export type Liquidity_Baking_5m_Candle_Aggregate = {
+  __typename?: 'liquidity_baking_5m_candle_aggregate';
+  aggregate?: Maybe<Liquidity_Baking_5m_Candle_Aggregate_Fields>;
+  nodes: Array<Liquidity_Baking_5m_Candle>;
+};
+
+/** aggregate fields of "liquidity_baking_5m_candle" */
+export type Liquidity_Baking_5m_Candle_Aggregate_Fields = {
+  __typename?: 'liquidity_baking_5m_candle_aggregate_fields';
+  avg?: Maybe<Liquidity_Baking_5m_Candle_Avg_Fields>;
+  count: Scalars['Int'];
+  max?: Maybe<Liquidity_Baking_5m_Candle_Max_Fields>;
+  min?: Maybe<Liquidity_Baking_5m_Candle_Min_Fields>;
+  stddev?: Maybe<Liquidity_Baking_5m_Candle_Stddev_Fields>;
+  stddev_pop?: Maybe<Liquidity_Baking_5m_Candle_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<Liquidity_Baking_5m_Candle_Stddev_Samp_Fields>;
+  sum?: Maybe<Liquidity_Baking_5m_Candle_Sum_Fields>;
+  var_pop?: Maybe<Liquidity_Baking_5m_Candle_Var_Pop_Fields>;
+  var_samp?: Maybe<Liquidity_Baking_5m_Candle_Var_Samp_Fields>;
+  variance?: Maybe<Liquidity_Baking_5m_Candle_Variance_Fields>;
+};
+
+
+/** aggregate fields of "liquidity_baking_5m_candle" */
+export type Liquidity_Baking_5m_Candle_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Liquidity_Baking_5m_Candle_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** aggregate avg on columns */
+export type Liquidity_Baking_5m_Candle_Avg_Fields = {
+  __typename?: 'liquidity_baking_5m_candle_avg_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** Boolean expression to filter rows from the table "liquidity_baking_5m_candle". All fields are combined with a logical 'AND'. */
+export type Liquidity_Baking_5m_Candle_Bool_Exp = {
+  _and?: InputMaybe<Array<Liquidity_Baking_5m_Candle_Bool_Exp>>;
+  _not?: InputMaybe<Liquidity_Baking_5m_Candle_Bool_Exp>;
+  _or?: InputMaybe<Array<Liquidity_Baking_5m_Candle_Bool_Exp>>;
+  bucket?: InputMaybe<Timestamptz_Comparison_Exp>;
+  close?: InputMaybe<Float8_Comparison_Exp>;
+  high?: InputMaybe<Float8_Comparison_Exp>;
+  low?: InputMaybe<Float8_Comparison_Exp>;
+  open?: InputMaybe<Float8_Comparison_Exp>;
+  token_volume?: InputMaybe<Float8_Comparison_Exp>;
+  trades?: InputMaybe<Bigint_Comparison_Exp>;
+  xtz_volume?: InputMaybe<Float8_Comparison_Exp>;
+};
+
+/** aggregate max on columns */
+export type Liquidity_Baking_5m_Candle_Max_Fields = {
+  __typename?: 'liquidity_baking_5m_candle_max_fields';
+  bucket?: Maybe<Scalars['timestamptz']>;
+  close?: Maybe<Scalars['float8']>;
+  high?: Maybe<Scalars['float8']>;
+  low?: Maybe<Scalars['float8']>;
+  open?: Maybe<Scalars['float8']>;
+  token_volume?: Maybe<Scalars['float8']>;
+  trades?: Maybe<Scalars['bigint']>;
+  xtz_volume?: Maybe<Scalars['float8']>;
+};
+
+/** aggregate min on columns */
+export type Liquidity_Baking_5m_Candle_Min_Fields = {
+  __typename?: 'liquidity_baking_5m_candle_min_fields';
+  bucket?: Maybe<Scalars['timestamptz']>;
+  close?: Maybe<Scalars['float8']>;
+  high?: Maybe<Scalars['float8']>;
+  low?: Maybe<Scalars['float8']>;
+  open?: Maybe<Scalars['float8']>;
+  token_volume?: Maybe<Scalars['float8']>;
+  trades?: Maybe<Scalars['bigint']>;
+  xtz_volume?: Maybe<Scalars['float8']>;
+};
+
+/** Ordering options when selecting data from "liquidity_baking_5m_candle". */
+export type Liquidity_Baking_5m_Candle_Order_By = {
+  bucket?: InputMaybe<Order_By>;
+  close?: InputMaybe<Order_By>;
+  high?: InputMaybe<Order_By>;
+  low?: InputMaybe<Order_By>;
+  open?: InputMaybe<Order_By>;
+  token_volume?: InputMaybe<Order_By>;
+  trades?: InputMaybe<Order_By>;
+  xtz_volume?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "liquidity_baking_5m_candle" */
+export enum Liquidity_Baking_5m_Candle_Select_Column {
+  /** column name */
+  Bucket = 'bucket',
+  /** column name */
+  Close = 'close',
+  /** column name */
+  High = 'high',
+  /** column name */
+  Low = 'low',
+  /** column name */
+  Open = 'open',
+  /** column name */
+  TokenVolume = 'token_volume',
+  /** column name */
+  Trades = 'trades',
+  /** column name */
+  XtzVolume = 'xtz_volume'
+}
+
+/** aggregate stddev on columns */
+export type Liquidity_Baking_5m_Candle_Stddev_Fields = {
+  __typename?: 'liquidity_baking_5m_candle_stddev_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Liquidity_Baking_5m_Candle_Stddev_Pop_Fields = {
+  __typename?: 'liquidity_baking_5m_candle_stddev_pop_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Liquidity_Baking_5m_Candle_Stddev_Samp_Fields = {
+  __typename?: 'liquidity_baking_5m_candle_stddev_samp_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** Streaming cursor of the table "liquidity_baking_5m_candle" */
+export type Liquidity_Baking_5m_Candle_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Liquidity_Baking_5m_Candle_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Liquidity_Baking_5m_Candle_Stream_Cursor_Value_Input = {
+  bucket?: InputMaybe<Scalars['timestamptz']>;
+  close?: InputMaybe<Scalars['float8']>;
+  high?: InputMaybe<Scalars['float8']>;
+  low?: InputMaybe<Scalars['float8']>;
+  open?: InputMaybe<Scalars['float8']>;
+  token_volume?: InputMaybe<Scalars['float8']>;
+  trades?: InputMaybe<Scalars['bigint']>;
+  xtz_volume?: InputMaybe<Scalars['float8']>;
+};
+
+/** aggregate sum on columns */
+export type Liquidity_Baking_5m_Candle_Sum_Fields = {
+  __typename?: 'liquidity_baking_5m_candle_sum_fields';
+  close?: Maybe<Scalars['float8']>;
+  high?: Maybe<Scalars['float8']>;
+  low?: Maybe<Scalars['float8']>;
+  open?: Maybe<Scalars['float8']>;
+  token_volume?: Maybe<Scalars['float8']>;
+  trades?: Maybe<Scalars['bigint']>;
+  xtz_volume?: Maybe<Scalars['float8']>;
+};
+
+/** aggregate var_pop on columns */
+export type Liquidity_Baking_5m_Candle_Var_Pop_Fields = {
+  __typename?: 'liquidity_baking_5m_candle_var_pop_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate var_samp on columns */
+export type Liquidity_Baking_5m_Candle_Var_Samp_Fields = {
+  __typename?: 'liquidity_baking_5m_candle_var_samp_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate variance on columns */
+export type Liquidity_Baking_5m_Candle_Variance_Fields = {
+  __typename?: 'liquidity_baking_5m_candle_variance_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** columns and relationships of "liquidity_baking_15m_candle" */
+export type Liquidity_Baking_15m_Candle = {
+  __typename?: 'liquidity_baking_15m_candle';
+  bucket?: Maybe<Scalars['timestamptz']>;
+  close?: Maybe<Scalars['float8']>;
+  high?: Maybe<Scalars['float8']>;
+  low?: Maybe<Scalars['float8']>;
+  open?: Maybe<Scalars['float8']>;
+  token_volume?: Maybe<Scalars['float8']>;
+  trades?: Maybe<Scalars['bigint']>;
+  xtz_volume?: Maybe<Scalars['float8']>;
+};
+
+/** aggregated selection of "liquidity_baking_15m_candle" */
+export type Liquidity_Baking_15m_Candle_Aggregate = {
+  __typename?: 'liquidity_baking_15m_candle_aggregate';
+  aggregate?: Maybe<Liquidity_Baking_15m_Candle_Aggregate_Fields>;
+  nodes: Array<Liquidity_Baking_15m_Candle>;
+};
+
+/** aggregate fields of "liquidity_baking_15m_candle" */
+export type Liquidity_Baking_15m_Candle_Aggregate_Fields = {
+  __typename?: 'liquidity_baking_15m_candle_aggregate_fields';
+  avg?: Maybe<Liquidity_Baking_15m_Candle_Avg_Fields>;
+  count: Scalars['Int'];
+  max?: Maybe<Liquidity_Baking_15m_Candle_Max_Fields>;
+  min?: Maybe<Liquidity_Baking_15m_Candle_Min_Fields>;
+  stddev?: Maybe<Liquidity_Baking_15m_Candle_Stddev_Fields>;
+  stddev_pop?: Maybe<Liquidity_Baking_15m_Candle_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<Liquidity_Baking_15m_Candle_Stddev_Samp_Fields>;
+  sum?: Maybe<Liquidity_Baking_15m_Candle_Sum_Fields>;
+  var_pop?: Maybe<Liquidity_Baking_15m_Candle_Var_Pop_Fields>;
+  var_samp?: Maybe<Liquidity_Baking_15m_Candle_Var_Samp_Fields>;
+  variance?: Maybe<Liquidity_Baking_15m_Candle_Variance_Fields>;
+};
+
+
+/** aggregate fields of "liquidity_baking_15m_candle" */
+export type Liquidity_Baking_15m_Candle_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Liquidity_Baking_15m_Candle_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** aggregate avg on columns */
+export type Liquidity_Baking_15m_Candle_Avg_Fields = {
+  __typename?: 'liquidity_baking_15m_candle_avg_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** Boolean expression to filter rows from the table "liquidity_baking_15m_candle". All fields are combined with a logical 'AND'. */
+export type Liquidity_Baking_15m_Candle_Bool_Exp = {
+  _and?: InputMaybe<Array<Liquidity_Baking_15m_Candle_Bool_Exp>>;
+  _not?: InputMaybe<Liquidity_Baking_15m_Candle_Bool_Exp>;
+  _or?: InputMaybe<Array<Liquidity_Baking_15m_Candle_Bool_Exp>>;
+  bucket?: InputMaybe<Timestamptz_Comparison_Exp>;
+  close?: InputMaybe<Float8_Comparison_Exp>;
+  high?: InputMaybe<Float8_Comparison_Exp>;
+  low?: InputMaybe<Float8_Comparison_Exp>;
+  open?: InputMaybe<Float8_Comparison_Exp>;
+  token_volume?: InputMaybe<Float8_Comparison_Exp>;
+  trades?: InputMaybe<Bigint_Comparison_Exp>;
+  xtz_volume?: InputMaybe<Float8_Comparison_Exp>;
+};
+
+/** aggregate max on columns */
+export type Liquidity_Baking_15m_Candle_Max_Fields = {
+  __typename?: 'liquidity_baking_15m_candle_max_fields';
+  bucket?: Maybe<Scalars['timestamptz']>;
+  close?: Maybe<Scalars['float8']>;
+  high?: Maybe<Scalars['float8']>;
+  low?: Maybe<Scalars['float8']>;
+  open?: Maybe<Scalars['float8']>;
+  token_volume?: Maybe<Scalars['float8']>;
+  trades?: Maybe<Scalars['bigint']>;
+  xtz_volume?: Maybe<Scalars['float8']>;
+};
+
+/** aggregate min on columns */
+export type Liquidity_Baking_15m_Candle_Min_Fields = {
+  __typename?: 'liquidity_baking_15m_candle_min_fields';
+  bucket?: Maybe<Scalars['timestamptz']>;
+  close?: Maybe<Scalars['float8']>;
+  high?: Maybe<Scalars['float8']>;
+  low?: Maybe<Scalars['float8']>;
+  open?: Maybe<Scalars['float8']>;
+  token_volume?: Maybe<Scalars['float8']>;
+  trades?: Maybe<Scalars['bigint']>;
+  xtz_volume?: Maybe<Scalars['float8']>;
+};
+
+/** Ordering options when selecting data from "liquidity_baking_15m_candle". */
+export type Liquidity_Baking_15m_Candle_Order_By = {
+  bucket?: InputMaybe<Order_By>;
+  close?: InputMaybe<Order_By>;
+  high?: InputMaybe<Order_By>;
+  low?: InputMaybe<Order_By>;
+  open?: InputMaybe<Order_By>;
+  token_volume?: InputMaybe<Order_By>;
+  trades?: InputMaybe<Order_By>;
+  xtz_volume?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "liquidity_baking_15m_candle" */
+export enum Liquidity_Baking_15m_Candle_Select_Column {
+  /** column name */
+  Bucket = 'bucket',
+  /** column name */
+  Close = 'close',
+  /** column name */
+  High = 'high',
+  /** column name */
+  Low = 'low',
+  /** column name */
+  Open = 'open',
+  /** column name */
+  TokenVolume = 'token_volume',
+  /** column name */
+  Trades = 'trades',
+  /** column name */
+  XtzVolume = 'xtz_volume'
+}
+
+/** aggregate stddev on columns */
+export type Liquidity_Baking_15m_Candle_Stddev_Fields = {
+  __typename?: 'liquidity_baking_15m_candle_stddev_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Liquidity_Baking_15m_Candle_Stddev_Pop_Fields = {
+  __typename?: 'liquidity_baking_15m_candle_stddev_pop_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Liquidity_Baking_15m_Candle_Stddev_Samp_Fields = {
+  __typename?: 'liquidity_baking_15m_candle_stddev_samp_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** Streaming cursor of the table "liquidity_baking_15m_candle" */
+export type Liquidity_Baking_15m_Candle_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Liquidity_Baking_15m_Candle_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Liquidity_Baking_15m_Candle_Stream_Cursor_Value_Input = {
+  bucket?: InputMaybe<Scalars['timestamptz']>;
+  close?: InputMaybe<Scalars['float8']>;
+  high?: InputMaybe<Scalars['float8']>;
+  low?: InputMaybe<Scalars['float8']>;
+  open?: InputMaybe<Scalars['float8']>;
+  token_volume?: InputMaybe<Scalars['float8']>;
+  trades?: InputMaybe<Scalars['bigint']>;
+  xtz_volume?: InputMaybe<Scalars['float8']>;
+};
+
+/** aggregate sum on columns */
+export type Liquidity_Baking_15m_Candle_Sum_Fields = {
+  __typename?: 'liquidity_baking_15m_candle_sum_fields';
+  close?: Maybe<Scalars['float8']>;
+  high?: Maybe<Scalars['float8']>;
+  low?: Maybe<Scalars['float8']>;
+  open?: Maybe<Scalars['float8']>;
+  token_volume?: Maybe<Scalars['float8']>;
+  trades?: Maybe<Scalars['bigint']>;
+  xtz_volume?: Maybe<Scalars['float8']>;
+};
+
+/** aggregate var_pop on columns */
+export type Liquidity_Baking_15m_Candle_Var_Pop_Fields = {
+  __typename?: 'liquidity_baking_15m_candle_var_pop_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate var_samp on columns */
+export type Liquidity_Baking_15m_Candle_Var_Samp_Fields = {
+  __typename?: 'liquidity_baking_15m_candle_var_samp_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate variance on columns */
+export type Liquidity_Baking_15m_Candle_Variance_Fields = {
+  __typename?: 'liquidity_baking_15m_candle_variance_fields';
+  close?: Maybe<Scalars['Float']>;
+  high?: Maybe<Scalars['Float']>;
+  low?: Maybe<Scalars['Float']>;
+  open?: Maybe<Scalars['Float']>;
+  token_volume?: Maybe<Scalars['Float']>;
+  trades?: Maybe<Scalars['Float']>;
+  xtz_volume?: Maybe<Scalars['Float']>;
+};
+
 /** aggregated selection of "liquidity_baking" */
 export type Liquidity_Baking_Aggregate = {
   __typename?: 'liquidity_baking_aggregate';
@@ -39947,6 +41084,10 @@ export type M_Token = {
   governance_id?: Maybe<Scalars['String']>;
   is_scaled_token: Scalars['Boolean'];
   last_updated_at?: Maybe<Scalars['timestamptz']>;
+  /** An array relationship */
+  lending_controller_loan_tokens: Array<Lending_Controller_Loan_Token>;
+  /** An aggregate relationship */
+  lending_controller_loan_tokens_aggregate: Lending_Controller_Loan_Token_Aggregate;
   loan_token_name: Scalars['String'];
   /** An array relationship */
   operators: Array<M_Token_Operator>;
@@ -39977,6 +41118,26 @@ export type M_TokenAccounts_AggregateArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   order_by?: InputMaybe<Array<M_Token_Account_Order_By>>;
   where?: InputMaybe<M_Token_Account_Bool_Exp>;
+};
+
+
+/** columns and relationships of "m_token" */
+export type M_TokenLending_Controller_Loan_TokensArgs = {
+  distinct_on?: InputMaybe<Array<Lending_Controller_Loan_Token_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Lending_Controller_Loan_Token_Order_By>>;
+  where?: InputMaybe<Lending_Controller_Loan_Token_Bool_Exp>;
+};
+
+
+/** columns and relationships of "m_token" */
+export type M_TokenLending_Controller_Loan_Tokens_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Lending_Controller_Loan_Token_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Lending_Controller_Loan_Token_Order_By>>;
+  where?: InputMaybe<Lending_Controller_Loan_Token_Bool_Exp>;
 };
 
 
@@ -41240,6 +42401,8 @@ export type M_Token_Bool_Exp = {
   governance_id?: InputMaybe<String_Comparison_Exp>;
   is_scaled_token?: InputMaybe<Boolean_Comparison_Exp>;
   last_updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  lending_controller_loan_tokens?: InputMaybe<Lending_Controller_Loan_Token_Bool_Exp>;
+  lending_controller_loan_tokens_aggregate?: InputMaybe<Lending_Controller_Loan_Token_Aggregate_Bool_Exp>;
   loan_token_name?: InputMaybe<String_Comparison_Exp>;
   operators?: InputMaybe<M_Token_Operator_Bool_Exp>;
   operators_aggregate?: InputMaybe<M_Token_Operator_Aggregate_Bool_Exp>;
@@ -41545,6 +42708,7 @@ export type M_Token_Order_By = {
   governance_id?: InputMaybe<Order_By>;
   is_scaled_token?: InputMaybe<Order_By>;
   last_updated_at?: InputMaybe<Order_By>;
+  lending_controller_loan_tokens_aggregate?: InputMaybe<Lending_Controller_Loan_Token_Aggregate_Order_By>;
   loan_token_name?: InputMaybe<Order_By>;
   operators_aggregate?: InputMaybe<M_Token_Operator_Aggregate_Order_By>;
   token_reward_index?: InputMaybe<Order_By>;
@@ -45964,6 +47128,26 @@ export type Query_Root = {
   lending_controller_whitelist_token_contract_by_pk?: Maybe<Lending_Controller_Whitelist_Token_Contract>;
   /** fetch data from the table: "liquidity_baking" */
   liquidity_baking: Array<Liquidity_Baking>;
+  /** fetch data from the table: "liquidity_baking_1d_candle" */
+  liquidity_baking_1d_candle: Array<Liquidity_Baking_1d_Candle>;
+  /** fetch aggregated fields from the table: "liquidity_baking_1d_candle" */
+  liquidity_baking_1d_candle_aggregate: Liquidity_Baking_1d_Candle_Aggregate;
+  /** fetch data from the table: "liquidity_baking_1h_candle" */
+  liquidity_baking_1h_candle: Array<Liquidity_Baking_1h_Candle>;
+  /** fetch aggregated fields from the table: "liquidity_baking_1h_candle" */
+  liquidity_baking_1h_candle_aggregate: Liquidity_Baking_1h_Candle_Aggregate;
+  /** fetch data from the table: "liquidity_baking_1w_candle" */
+  liquidity_baking_1w_candle: Array<Liquidity_Baking_1w_Candle>;
+  /** fetch aggregated fields from the table: "liquidity_baking_1w_candle" */
+  liquidity_baking_1w_candle_aggregate: Liquidity_Baking_1w_Candle_Aggregate;
+  /** fetch data from the table: "liquidity_baking_5m_candle" */
+  liquidity_baking_5m_candle: Array<Liquidity_Baking_5m_Candle>;
+  /** fetch aggregated fields from the table: "liquidity_baking_5m_candle" */
+  liquidity_baking_5m_candle_aggregate: Liquidity_Baking_5m_Candle_Aggregate;
+  /** fetch data from the table: "liquidity_baking_15m_candle" */
+  liquidity_baking_15m_candle: Array<Liquidity_Baking_15m_Candle>;
+  /** fetch aggregated fields from the table: "liquidity_baking_15m_candle" */
+  liquidity_baking_15m_candle_aggregate: Liquidity_Baking_15m_Candle_Aggregate;
   /** fetch aggregated fields from the table: "liquidity_baking" */
   liquidity_baking_aggregate: Liquidity_Baking_Aggregate;
   /** fetch data from the table: "liquidity_baking" using primary key columns */
@@ -48661,6 +49845,96 @@ export type Query_RootLiquidity_BakingArgs = {
 };
 
 
+export type Query_RootLiquidity_Baking_1d_CandleArgs = {
+  distinct_on?: InputMaybe<Array<Liquidity_Baking_1d_Candle_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Liquidity_Baking_1d_Candle_Order_By>>;
+  where?: InputMaybe<Liquidity_Baking_1d_Candle_Bool_Exp>;
+};
+
+
+export type Query_RootLiquidity_Baking_1d_Candle_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Liquidity_Baking_1d_Candle_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Liquidity_Baking_1d_Candle_Order_By>>;
+  where?: InputMaybe<Liquidity_Baking_1d_Candle_Bool_Exp>;
+};
+
+
+export type Query_RootLiquidity_Baking_1h_CandleArgs = {
+  distinct_on?: InputMaybe<Array<Liquidity_Baking_1h_Candle_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Liquidity_Baking_1h_Candle_Order_By>>;
+  where?: InputMaybe<Liquidity_Baking_1h_Candle_Bool_Exp>;
+};
+
+
+export type Query_RootLiquidity_Baking_1h_Candle_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Liquidity_Baking_1h_Candle_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Liquidity_Baking_1h_Candle_Order_By>>;
+  where?: InputMaybe<Liquidity_Baking_1h_Candle_Bool_Exp>;
+};
+
+
+export type Query_RootLiquidity_Baking_1w_CandleArgs = {
+  distinct_on?: InputMaybe<Array<Liquidity_Baking_1w_Candle_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Liquidity_Baking_1w_Candle_Order_By>>;
+  where?: InputMaybe<Liquidity_Baking_1w_Candle_Bool_Exp>;
+};
+
+
+export type Query_RootLiquidity_Baking_1w_Candle_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Liquidity_Baking_1w_Candle_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Liquidity_Baking_1w_Candle_Order_By>>;
+  where?: InputMaybe<Liquidity_Baking_1w_Candle_Bool_Exp>;
+};
+
+
+export type Query_RootLiquidity_Baking_5m_CandleArgs = {
+  distinct_on?: InputMaybe<Array<Liquidity_Baking_5m_Candle_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Liquidity_Baking_5m_Candle_Order_By>>;
+  where?: InputMaybe<Liquidity_Baking_5m_Candle_Bool_Exp>;
+};
+
+
+export type Query_RootLiquidity_Baking_5m_Candle_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Liquidity_Baking_5m_Candle_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Liquidity_Baking_5m_Candle_Order_By>>;
+  where?: InputMaybe<Liquidity_Baking_5m_Candle_Bool_Exp>;
+};
+
+
+export type Query_RootLiquidity_Baking_15m_CandleArgs = {
+  distinct_on?: InputMaybe<Array<Liquidity_Baking_15m_Candle_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Liquidity_Baking_15m_Candle_Order_By>>;
+  where?: InputMaybe<Liquidity_Baking_15m_Candle_Bool_Exp>;
+};
+
+
+export type Query_RootLiquidity_Baking_15m_Candle_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Liquidity_Baking_15m_Candle_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Liquidity_Baking_15m_Candle_Order_By>>;
+  where?: InputMaybe<Liquidity_Baking_15m_Candle_Bool_Exp>;
+};
+
+
 export type Query_RootLiquidity_Baking_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Liquidity_Baking_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
@@ -48695,6 +49969,7 @@ export type Query_RootLiquidity_Baking_History_Data_AggregateArgs = {
 
 export type Query_RootLiquidity_Baking_History_Data_By_PkArgs = {
   id: Scalars['bigint'];
+  timestamp: Scalars['timestamptz'];
 };
 
 
@@ -52536,6 +53811,36 @@ export type Subscription_Root = {
   lending_controller_whitelist_token_contract_stream: Array<Lending_Controller_Whitelist_Token_Contract>;
   /** fetch data from the table: "liquidity_baking" */
   liquidity_baking: Array<Liquidity_Baking>;
+  /** fetch data from the table: "liquidity_baking_1d_candle" */
+  liquidity_baking_1d_candle: Array<Liquidity_Baking_1d_Candle>;
+  /** fetch aggregated fields from the table: "liquidity_baking_1d_candle" */
+  liquidity_baking_1d_candle_aggregate: Liquidity_Baking_1d_Candle_Aggregate;
+  /** fetch data from the table in a streaming manner: "liquidity_baking_1d_candle" */
+  liquidity_baking_1d_candle_stream: Array<Liquidity_Baking_1d_Candle>;
+  /** fetch data from the table: "liquidity_baking_1h_candle" */
+  liquidity_baking_1h_candle: Array<Liquidity_Baking_1h_Candle>;
+  /** fetch aggregated fields from the table: "liquidity_baking_1h_candle" */
+  liquidity_baking_1h_candle_aggregate: Liquidity_Baking_1h_Candle_Aggregate;
+  /** fetch data from the table in a streaming manner: "liquidity_baking_1h_candle" */
+  liquidity_baking_1h_candle_stream: Array<Liquidity_Baking_1h_Candle>;
+  /** fetch data from the table: "liquidity_baking_1w_candle" */
+  liquidity_baking_1w_candle: Array<Liquidity_Baking_1w_Candle>;
+  /** fetch aggregated fields from the table: "liquidity_baking_1w_candle" */
+  liquidity_baking_1w_candle_aggregate: Liquidity_Baking_1w_Candle_Aggregate;
+  /** fetch data from the table in a streaming manner: "liquidity_baking_1w_candle" */
+  liquidity_baking_1w_candle_stream: Array<Liquidity_Baking_1w_Candle>;
+  /** fetch data from the table: "liquidity_baking_5m_candle" */
+  liquidity_baking_5m_candle: Array<Liquidity_Baking_5m_Candle>;
+  /** fetch aggregated fields from the table: "liquidity_baking_5m_candle" */
+  liquidity_baking_5m_candle_aggregate: Liquidity_Baking_5m_Candle_Aggregate;
+  /** fetch data from the table in a streaming manner: "liquidity_baking_5m_candle" */
+  liquidity_baking_5m_candle_stream: Array<Liquidity_Baking_5m_Candle>;
+  /** fetch data from the table: "liquidity_baking_15m_candle" */
+  liquidity_baking_15m_candle: Array<Liquidity_Baking_15m_Candle>;
+  /** fetch aggregated fields from the table: "liquidity_baking_15m_candle" */
+  liquidity_baking_15m_candle_aggregate: Liquidity_Baking_15m_Candle_Aggregate;
+  /** fetch data from the table in a streaming manner: "liquidity_baking_15m_candle" */
+  liquidity_baking_15m_candle_stream: Array<Liquidity_Baking_15m_Candle>;
   /** fetch aggregated fields from the table: "liquidity_baking" */
   liquidity_baking_aggregate: Liquidity_Baking_Aggregate;
   /** fetch data from the table: "liquidity_baking" using primary key columns */
@@ -56061,6 +57366,131 @@ export type Subscription_RootLiquidity_BakingArgs = {
 };
 
 
+export type Subscription_RootLiquidity_Baking_1d_CandleArgs = {
+  distinct_on?: InputMaybe<Array<Liquidity_Baking_1d_Candle_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Liquidity_Baking_1d_Candle_Order_By>>;
+  where?: InputMaybe<Liquidity_Baking_1d_Candle_Bool_Exp>;
+};
+
+
+export type Subscription_RootLiquidity_Baking_1d_Candle_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Liquidity_Baking_1d_Candle_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Liquidity_Baking_1d_Candle_Order_By>>;
+  where?: InputMaybe<Liquidity_Baking_1d_Candle_Bool_Exp>;
+};
+
+
+export type Subscription_RootLiquidity_Baking_1d_Candle_StreamArgs = {
+  batch_size: Scalars['Int'];
+  cursor: Array<InputMaybe<Liquidity_Baking_1d_Candle_Stream_Cursor_Input>>;
+  where?: InputMaybe<Liquidity_Baking_1d_Candle_Bool_Exp>;
+};
+
+
+export type Subscription_RootLiquidity_Baking_1h_CandleArgs = {
+  distinct_on?: InputMaybe<Array<Liquidity_Baking_1h_Candle_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Liquidity_Baking_1h_Candle_Order_By>>;
+  where?: InputMaybe<Liquidity_Baking_1h_Candle_Bool_Exp>;
+};
+
+
+export type Subscription_RootLiquidity_Baking_1h_Candle_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Liquidity_Baking_1h_Candle_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Liquidity_Baking_1h_Candle_Order_By>>;
+  where?: InputMaybe<Liquidity_Baking_1h_Candle_Bool_Exp>;
+};
+
+
+export type Subscription_RootLiquidity_Baking_1h_Candle_StreamArgs = {
+  batch_size: Scalars['Int'];
+  cursor: Array<InputMaybe<Liquidity_Baking_1h_Candle_Stream_Cursor_Input>>;
+  where?: InputMaybe<Liquidity_Baking_1h_Candle_Bool_Exp>;
+};
+
+
+export type Subscription_RootLiquidity_Baking_1w_CandleArgs = {
+  distinct_on?: InputMaybe<Array<Liquidity_Baking_1w_Candle_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Liquidity_Baking_1w_Candle_Order_By>>;
+  where?: InputMaybe<Liquidity_Baking_1w_Candle_Bool_Exp>;
+};
+
+
+export type Subscription_RootLiquidity_Baking_1w_Candle_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Liquidity_Baking_1w_Candle_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Liquidity_Baking_1w_Candle_Order_By>>;
+  where?: InputMaybe<Liquidity_Baking_1w_Candle_Bool_Exp>;
+};
+
+
+export type Subscription_RootLiquidity_Baking_1w_Candle_StreamArgs = {
+  batch_size: Scalars['Int'];
+  cursor: Array<InputMaybe<Liquidity_Baking_1w_Candle_Stream_Cursor_Input>>;
+  where?: InputMaybe<Liquidity_Baking_1w_Candle_Bool_Exp>;
+};
+
+
+export type Subscription_RootLiquidity_Baking_5m_CandleArgs = {
+  distinct_on?: InputMaybe<Array<Liquidity_Baking_5m_Candle_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Liquidity_Baking_5m_Candle_Order_By>>;
+  where?: InputMaybe<Liquidity_Baking_5m_Candle_Bool_Exp>;
+};
+
+
+export type Subscription_RootLiquidity_Baking_5m_Candle_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Liquidity_Baking_5m_Candle_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Liquidity_Baking_5m_Candle_Order_By>>;
+  where?: InputMaybe<Liquidity_Baking_5m_Candle_Bool_Exp>;
+};
+
+
+export type Subscription_RootLiquidity_Baking_5m_Candle_StreamArgs = {
+  batch_size: Scalars['Int'];
+  cursor: Array<InputMaybe<Liquidity_Baking_5m_Candle_Stream_Cursor_Input>>;
+  where?: InputMaybe<Liquidity_Baking_5m_Candle_Bool_Exp>;
+};
+
+
+export type Subscription_RootLiquidity_Baking_15m_CandleArgs = {
+  distinct_on?: InputMaybe<Array<Liquidity_Baking_15m_Candle_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Liquidity_Baking_15m_Candle_Order_By>>;
+  where?: InputMaybe<Liquidity_Baking_15m_Candle_Bool_Exp>;
+};
+
+
+export type Subscription_RootLiquidity_Baking_15m_Candle_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Liquidity_Baking_15m_Candle_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Liquidity_Baking_15m_Candle_Order_By>>;
+  where?: InputMaybe<Liquidity_Baking_15m_Candle_Bool_Exp>;
+};
+
+
+export type Subscription_RootLiquidity_Baking_15m_Candle_StreamArgs = {
+  batch_size: Scalars['Int'];
+  cursor: Array<InputMaybe<Liquidity_Baking_15m_Candle_Stream_Cursor_Input>>;
+  where?: InputMaybe<Liquidity_Baking_15m_Candle_Bool_Exp>;
+};
+
+
 export type Subscription_RootLiquidity_Baking_AggregateArgs = {
   distinct_on?: InputMaybe<Array<Liquidity_Baking_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
@@ -56095,6 +57525,7 @@ export type Subscription_RootLiquidity_Baking_History_Data_AggregateArgs = {
 
 export type Subscription_RootLiquidity_Baking_History_Data_By_PkArgs = {
   id: Scalars['bigint'];
+  timestamp: Scalars['timestamptz'];
 };
 
 
@@ -62992,9 +64423,6 @@ export type Vault = {
   /** An object relationship */
   factory?: Maybe<Vault_Factory>;
   factory_id?: Maybe<Scalars['String']>;
-  /** An object relationship */
-  governance?: Maybe<Governance>;
-  governance_id?: Maybe<Scalars['String']>;
   /** An array relationship */
   lambdas: Array<Vault_Lambda>;
   /** An aggregate relationship */
@@ -63004,6 +64432,7 @@ export type Vault = {
   lending_controller_vaults: Array<Lending_Controller_Vault>;
   /** An aggregate relationship */
   lending_controller_vaults_aggregate: Lending_Controller_Vault_Aggregate;
+  name: Scalars['String'];
 };
 
 
@@ -63148,13 +64577,12 @@ export type Vault_Bool_Exp = {
   depositors_aggregate?: InputMaybe<Vault_Depositor_Aggregate_Bool_Exp>;
   factory?: InputMaybe<Vault_Factory_Bool_Exp>;
   factory_id?: InputMaybe<String_Comparison_Exp>;
-  governance?: InputMaybe<Governance_Bool_Exp>;
-  governance_id?: InputMaybe<String_Comparison_Exp>;
   lambdas?: InputMaybe<Vault_Lambda_Bool_Exp>;
   lambdas_aggregate?: InputMaybe<Vault_Lambda_Aggregate_Bool_Exp>;
   last_updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   lending_controller_vaults?: InputMaybe<Lending_Controller_Vault_Bool_Exp>;
   lending_controller_vaults_aggregate?: InputMaybe<Lending_Controller_Vault_Aggregate_Bool_Exp>;
+  name?: InputMaybe<String_Comparison_Exp>;
 };
 
 /** columns and relationships of "vault_depositor" */
@@ -65035,8 +66463,8 @@ export type Vault_Max_Fields = {
   allowance?: Maybe<Scalars['smallint']>;
   creation_timestamp?: Maybe<Scalars['timestamptz']>;
   factory_id?: Maybe<Scalars['String']>;
-  governance_id?: Maybe<Scalars['String']>;
   last_updated_at?: Maybe<Scalars['timestamptz']>;
+  name?: Maybe<Scalars['String']>;
 };
 
 /** order by max() on columns of table "vault" */
@@ -65047,8 +66475,8 @@ export type Vault_Max_Order_By = {
   allowance?: InputMaybe<Order_By>;
   creation_timestamp?: InputMaybe<Order_By>;
   factory_id?: InputMaybe<Order_By>;
-  governance_id?: InputMaybe<Order_By>;
   last_updated_at?: InputMaybe<Order_By>;
+  name?: InputMaybe<Order_By>;
 };
 
 /** aggregate min on columns */
@@ -65060,8 +66488,8 @@ export type Vault_Min_Fields = {
   allowance?: Maybe<Scalars['smallint']>;
   creation_timestamp?: Maybe<Scalars['timestamptz']>;
   factory_id?: Maybe<Scalars['String']>;
-  governance_id?: Maybe<Scalars['String']>;
   last_updated_at?: Maybe<Scalars['timestamptz']>;
+  name?: Maybe<Scalars['String']>;
 };
 
 /** order by min() on columns of table "vault" */
@@ -65072,8 +66500,8 @@ export type Vault_Min_Order_By = {
   allowance?: InputMaybe<Order_By>;
   creation_timestamp?: InputMaybe<Order_By>;
   factory_id?: InputMaybe<Order_By>;
-  governance_id?: InputMaybe<Order_By>;
   last_updated_at?: InputMaybe<Order_By>;
+  name?: InputMaybe<Order_By>;
 };
 
 /** Ordering options when selecting data from "vault". */
@@ -65085,11 +66513,10 @@ export type Vault_Order_By = {
   depositors_aggregate?: InputMaybe<Vault_Depositor_Aggregate_Order_By>;
   factory?: InputMaybe<Vault_Factory_Order_By>;
   factory_id?: InputMaybe<Order_By>;
-  governance?: InputMaybe<Governance_Order_By>;
-  governance_id?: InputMaybe<Order_By>;
   lambdas_aggregate?: InputMaybe<Vault_Lambda_Aggregate_Order_By>;
   last_updated_at?: InputMaybe<Order_By>;
   lending_controller_vaults_aggregate?: InputMaybe<Lending_Controller_Vault_Aggregate_Order_By>;
+  name?: InputMaybe<Order_By>;
 };
 
 /** select columns of table "vault" */
@@ -65105,9 +66532,9 @@ export enum Vault_Select_Column {
   /** column name */
   FactoryId = 'factory_id',
   /** column name */
-  GovernanceId = 'governance_id',
+  LastUpdatedAt = 'last_updated_at',
   /** column name */
-  LastUpdatedAt = 'last_updated_at'
+  Name = 'name'
 }
 
 /** aggregate stddev on columns */
@@ -65165,8 +66592,8 @@ export type Vault_Stream_Cursor_Value_Input = {
   allowance?: InputMaybe<Scalars['smallint']>;
   creation_timestamp?: InputMaybe<Scalars['timestamptz']>;
   factory_id?: InputMaybe<Scalars['String']>;
-  governance_id?: InputMaybe<Scalars['String']>;
   last_updated_at?: InputMaybe<Scalars['timestamptz']>;
+  name?: InputMaybe<Scalars['String']>;
 };
 
 /** aggregate sum on columns */

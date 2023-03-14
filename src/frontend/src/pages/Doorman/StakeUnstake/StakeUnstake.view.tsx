@@ -1,20 +1,32 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 
 // view
-import NewButton from 'app/App.components/Button/NewButton.controller'
+import NewButton from 'app/App.components/Button/NewButton'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { Input } from '../../../app/App.components/Input/Input.controller'
+import { Input } from 'app/App.components/Input/NewInput'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
+import { InputErrorMessage, InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 
 // helpers, consts
 import { State } from 'reducers'
-import { ACTION_PRIMARY, ACTION_SECONDARY } from '../../../app/App.components/Button/Button.constants'
+import {
+  BUTTON_PRIMARY,
+  BUTTON_PULSE,
+  BUTTON_SECONDARY,
+  BUTTON_SIMPLE,
+  BUTTON_WIDE,
+} from '../../../app/App.components/Button/Button.constants'
 import { isValidNumberValue, mathRoundTwoDigit } from '../../../utils/validatorFunctions'
 import { rewardsCompound } from '../Doorman.actions'
-import { InputStatusType, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import {
+  InputStatusType,
+  INPUT_STATUS_ERROR,
+  INPUT_STATUS_SUCCESS,
+  INPUT_LARGE,
+} from 'app/App.components/Input/Input.constants'
 
 // style
 import {
@@ -24,7 +36,7 @@ import {
   StakeUnstakeButtonGrid,
   StakeUnstakeCard,
   StakeUnstakeInputColumn,
-  StakeUnstakeInputGrid,
+  StakeUnstakeInputWithCoin,
   StakeUnstakeInputLabels,
   StakeUnstakeRate,
   StakeUnstakeStyled,
@@ -57,14 +69,9 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
     },
   } = useSelector((state: State) => state.wallet)
 
-  const {
-    delegationStorage: { activeSatellites = [] },
-  } = useSelector((state: State) => state.delegation)
+  const { satelliteMapper } = useSelector((state: State) => state.satellites)
 
-  const delegatedUser = useMemo(
-    () => activeSatellites.find((item) => item.address === satelliteMvkIsDelegatedTo),
-    [satelliteMvkIsDelegatedTo, activeSatellites],
-  )
+  const delegatedUser = satelliteMapper[satelliteMvkIsDelegatedTo]
 
   const [inputData, setInputData] = useState<{ amount: string; validation: InputStatusType; errorMessage: string }>({
     amount: '0',
@@ -194,6 +201,14 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
     }
   }
 
+  const inputProps = {
+    type: 'number',
+    value: inputData.amount,
+    onBlur: handleBlur,
+    onFocus: handleFocus,
+    onChange: onInputChange,
+  }
+
   const handleDelegate = () => {
     history.push(
       satelliteMvkIsDelegatedTo ? `/satellites/satellite-details/${satelliteMvkIsDelegatedTo}` : '/satellite-nodes',
@@ -209,8 +224,12 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
             <div>
               <h3>My MVK Balance</h3>
               <div className="balance-btn-group">
-                <CommaNumber value={myMvkTokenBalance} />
-                {Boolean(myMvkTokenBalance) && <button onClick={handleStakeAll}>Stake All</button>}
+                <CommaNumber value={myMvkTokenBalance} className="amount" />
+                {Boolean(myMvkTokenBalance) && (
+                  <NewButton onClick={handleStakeAll} kind={BUTTON_SIMPLE}>
+                    Stake All
+                  </NewButton>
+                )}
               </div>
             </div>
           </StakeUnstakeBalance>
@@ -222,8 +241,12 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
             <div>
               <h3>Total MVK Staked</h3>
               <div className="balance-btn-group">
-                <CommaNumber value={mySMvkTokenBalance} />
-                {Boolean(mySMvkTokenBalance) && <button onClick={handleUnstakeAll}>Unstake All</button>}
+                <CommaNumber value={mySMvkTokenBalance} className="amount" />
+                {Boolean(mySMvkTokenBalance) && (
+                  <NewButton onClick={handleUnstakeAll} kind={BUTTON_SIMPLE}>
+                    Unstake All
+                  </NewButton>
+                )}
               </div>
             </div>
           </StakeUnstakeBalance>
@@ -234,9 +257,11 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
             {!mySMvkBalanceIsZero && showDelegateBtn && (
               <NewButton
                 onClick={handleDelegate}
-                kind={ACTION_PRIMARY}
+                kind={BUTTON_PRIMARY}
+                form={BUTTON_WIDE}
                 disabled={!accountPkh}
-                className={!accountPkh ? '' : 'pulse'}
+                isThin
+                animation={accountPkh ? BUTTON_PULSE : null}
               >
                 <Icon id="satellites" />
                 Delegate
@@ -245,7 +270,7 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
 
             {!mySMvkBalanceIsZero && delegatedUser && (
               <StakeDelegatedUser>
-                <ImageWithPlug className='userImage' imageLink={delegatedUser.image} alt="user image" />
+                <ImageWithPlug className="userImage" imageLink={delegatedUser.image} alt="user image" />
 
                 <div>
                   <h3>Delegated to</h3>
@@ -261,12 +286,18 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
             <ImageWithPlug imageLink={'/images/coin-bronze.svg'} alt="coin" />
             <div>
               <h3>Total MVK Earned</h3>
-              <CommaNumber value={earnedValue} />
+              <CommaNumber value={earnedValue} className="amount" />
             </div>
           </StakeUnstakeBalance>
 
           <StakeUnstakeRightPart>
-            <NewButton kind={ACTION_PRIMARY} onClick={handleCompound} disabled={!userHasRewards}>
+            <NewButton
+              kind={BUTTON_PRIMARY}
+              form={BUTTON_WIDE}
+              isThin
+              onClick={handleCompound}
+              disabled={!userHasRewards}
+            >
               <Icon id="compound" /> Compound
             </NewButton>
           </StakeUnstakeRightPart>
@@ -274,52 +305,43 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
       </StakeUnstakeCards>
 
       <StakeUnstakeActionCard>
-        <StakeUnstakeInputGrid>
-          <ImageWithPlug imageLink={'/images/coin-gold.svg'} alt="coin" />
-          <StakeUnstakeInputColumn>
-            <StakeUnstakeInputLabels>
-              <div className="minAmount">Min 1 MVK</div>
+        <StakeUnstakeInputColumn>
+          <StakeUnstakeInputLabels>
+            <div className="minAmount">Min 1 MVK</div>
 
-              <StakeUnstakeAmount>
-                <span>Staked Amount:</span>
-                &nbsp;
-                <CommaNumber value={mySMvkTokenBalance} endingText={'MVK'} />
-              </StakeUnstakeAmount>
-            </StakeUnstakeInputLabels>
+            <StakeUnstakeAmount>
+              <span>Staked Amount:</span>
+              &nbsp;
+              <CommaNumber value={mySMvkTokenBalance} endingText={'MVK'} />
+            </StakeUnstakeAmount>
+          </StakeUnstakeInputLabels>
 
+          <StakeUnstakeInputWithCoin>
+            <ImageWithPlug imageLink={'/images/coin-gold.svg'} alt="coin" />
             <Input
-              type={'number'}
-              placeholder={inputData.amount}
-              onChange={onInputChange}
-              onBlur={handleBlur}
-              onFocus={handleFocus}
-              value={inputData.amount}
-              pinnedText={'MVK'}
-              inputStatus={inputData.validation}
-              errorMessage={inputData.errorMessage}
+              className={`input-with-rate transparent-child-wrap`}
+              children={<InputPinnedTokenInfo>MVK</InputPinnedTokenInfo>}
+              inputProps={inputProps}
+              settings={{
+                inputStatus: inputData.validation,
+                convertedValue: exchangeValue,
+                balance: myMvkTokenBalance,
+                balanceAsset: 'MVK',
+                balanceName: 'Wallet Balance',
+                inputSize: INPUT_LARGE,
+              }}
             />
-
-            <StakeUnstakeInputLabels>
-              <StakeUnstakeRate>
-                <CommaNumber value={Number(exchangeValue ? inputData.amount : 1)} endingText={'MVK'} />
-                <span>&nbsp;= $</span>
-                <CommaNumber value={Number(exchangeValue || MVK_exchangeRate)} />
-              </StakeUnstakeRate>
-
-              <StakeUnstakeAmount>
-                <span>Wallet Balance:</span>
-                &nbsp;
-                <CommaNumber value={myMvkTokenBalance} endingText={'MVK'} />
-              </StakeUnstakeAmount>
-            </StakeUnstakeInputLabels>
-          </StakeUnstakeInputColumn>
-        </StakeUnstakeInputGrid>
+          </StakeUnstakeInputWithCoin>
+          {inputData.errorMessage && (
+            <InputErrorMessage className="errorMessage">{inputData.errorMessage}</InputErrorMessage>
+          )}
+        </StakeUnstakeInputColumn>
         <StakeUnstakeButtonGrid>
-          <NewButton kind={ACTION_PRIMARY} onClick={handleStake}>
+          <NewButton kind={BUTTON_PRIMARY} onClick={handleStake} form={BUTTON_WIDE}>
             <Icon id="in" /> Stake
           </NewButton>
 
-          <NewButton kind={ACTION_SECONDARY} onClick={handleUnStake}>
+          <NewButton kind={BUTTON_SECONDARY} onClick={handleUnStake} form={BUTTON_WIDE}>
             <Icon id="out" /> Unstake
           </NewButton>
         </StakeUnstakeButtonGrid>

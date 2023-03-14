@@ -2,14 +2,14 @@ import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useLockBodyScroll } from 'react-use'
 
-import NewButton from 'app/App.components/Button/NewButton.controller'
+import NewButton from 'app/App.components/Button/NewButton'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { Input } from 'app/App.components/Input/NewInput'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
-import { ACTION_PRIMARY, TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
-import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import { INPUT_LARGE, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { silverColor } from 'styles'
 import {
   DEFAULT_LOANS_INPUT_VALUE,
@@ -26,6 +26,7 @@ import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase } from './Modals.style'
 import { withdrawLendingAssetAction } from 'pages/Loans/Actions/lendingAsset.actions'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
+import colors from 'styles/colors'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A238846&t=Sx2aEpp3ifrGxBtQ-0
 export const RemoveAssetsFromLending = ({
@@ -53,6 +54,7 @@ export const RemoveAssetsFromLending = ({
 
   const dispatch = useDispatch()
   const { isActionLoading } = useSelector((state: State) => state.loading)
+  const { themeSelected } = useSelector((state: State) => state.preferences)
   const [screenShown, setShownScreen] = useState<'initial' | 'confitmation'>('initial')
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
 
@@ -67,8 +69,6 @@ export const RemoveAssetsFromLending = ({
   const onChangeHandler = (inputAmount: string, maxAmount: number) => {
     const validationStatus =
       Number(inputAmount) > 0 && Number(inputAmount) <= maxAmount ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
-
-    if (validationStatus === INPUT_STATUS_ERROR && inputAmount !== '' && inputAmount !== '0') return
 
     setInputData({
       ...inputData,
@@ -103,7 +103,7 @@ export const RemoveAssetsFromLending = ({
   }, [inputData.validationStatus, isActionLoading])
 
   const withdrawHandler = () =>
-    dispatch(withdrawLendingAssetAction(gqlName, Number(inputData.amount) * 10 ** decimals, closePopup))
+    dispatch(withdrawLendingAssetAction(gqlName, Number(inputData.amount), decimals, closePopup))
 
   return (
     <PopupContainer onClick={closePopup} show={show}>
@@ -128,7 +128,12 @@ export const RemoveAssetsFromLending = ({
                 <ThreeLevelListItem>
                   <div className="name">
                     Lending APY{' '}
-                    <CustomTooltip iconId="info" defaultStrokeColor={silverColor} text="" className="tooltip" />
+                    <CustomTooltip
+                      iconId="info"
+                      defaultStrokeColor={colors[themeSelected].textColor}
+                      text={'Current yield suppliers are earning on their deposits.'}
+                      className="tooltip"
+                    />
                   </div>
                   <CommaNumber value={lendingAPY} className="value" endingText="%" />
                 </ThreeLevelListItem>
@@ -140,7 +145,7 @@ export const RemoveAssetsFromLending = ({
 
               <div className="block-name">Select amount to remove</div>
               <Input
-                className={`${rate ? 'input-with-rate' : ''} large-input pinned-dropdown withdrawCollateralInput`}
+                className={`${rate ? 'input-with-rate' : ''} pinned-dropdown mb-45`}
                 inputProps={{
                   value: inputData.amount,
                   type: 'number',
@@ -158,6 +163,7 @@ export const RemoveAssetsFromLending = ({
                     ),
                   inputStatus: inputData.validationStatus,
                   convertedValue: Number(inputData.amount) * rate,
+                  inputSize: INPUT_LARGE,
                 }}
               >
                 <InputPinnedTokenInfo>
@@ -165,15 +171,17 @@ export const RemoveAssetsFromLending = ({
                 </InputPinnedTokenInfo>
               </Input>
 
-              <NewButton
-                kind={ACTION_PRIMARY}
-                onClick={continueBtnHandler}
-                disabled={continueBtnDisabled}
-                className="modal-manage-btn"
-              >
-                Continue
-                <Icon id="arrowRight" />
-              </NewButton>
+              <div className="manage-btn">
+                <NewButton
+                  kind={BUTTON_PRIMARY}
+                  form={BUTTON_WIDE}
+                  onClick={continueBtnHandler}
+                  disabled={continueBtnDisabled}
+                >
+                  Continue
+                  <Icon id="arrowRight" />
+                </NewButton>
+              </div>
             </>
           ) : (
             <>
@@ -210,15 +218,15 @@ export const RemoveAssetsFromLending = ({
               </div>
 
               <div className="buttons-wrapper">
-                <NewButton kind={TRANSPARENT_WITH_BORDER} onClick={backBtnHandler} className="modal-manage-btn">
+                <NewButton kind={BUTTON_SECONDARY} form={BUTTON_WIDE} onClick={backBtnHandler}>
                   <Icon id="arrowLeft" />
                   Back
                 </NewButton>
                 <NewButton
-                  kind={ACTION_PRIMARY}
+                  kind={BUTTON_PRIMARY}
+                  form={BUTTON_WIDE}
                   onClick={withdrawHandler}
                   disabled={isWithdrawDisabled}
-                  className="modal-manage-btn"
                 >
                   <Icon id="minus" />
                   Remove Asset

@@ -2,8 +2,6 @@ import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
 import { State } from 'reducers'
-import { SatelliteRecord } from 'utils/TypesAndInterfaces/Delegation'
-import { getSatelliteMetrics } from 'pages/Satellites/Satellites.helpers'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 
 import { emptyContainer } from './LendingTab.controller'
@@ -17,35 +15,25 @@ import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 
 export const SatellitesTab = ({ isLoading }: { isLoading: boolean }) => {
-  const { activeSatellites } = useSelector((state: State) => state.delegation.delegationStorage)
-  const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
-  const {
-    governanceStorage: { financialRequestLedger, proposalLedger },
-    pastProposals,
-  } = useSelector((state: State) => state.governance)
-  const { eGovProposals } = useSelector((state: State) => state.emergencyGovernance)
+  const { activeSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
 
-  const satellitesInfo = activeSatellites.reduce(
-    (acc, satellite: SatelliteRecord) => {
-      if (satellite.status !== 0) return acc
-      const metrics = getSatelliteMetrics(
-        pastProposals,
-        proposalLedger,
-        eGovProposals,
-        satellite,
-        feedsLedger,
-        financialRequestLedger,
-      )
+  const satellitesInfo = activeSatellitesIds.reduce(
+    (acc, satelliteAddress) => {
+      const satelliteRecord = satelliteMapper[satelliteAddress]
+      if (!satelliteRecord || satelliteRecord.status !== 0) return acc
 
       acc.activeSatellites += 1
-      acc.avgFee += satellite.satelliteFee
-      acc.avgStakedMVK += satellite.sMvkBalance
-      acc.partisipationRate += (metrics.proposalParticipation + metrics.votingPartisipation) / 2
+      acc.avgFee += satelliteRecord.satelliteFee
+      acc.avgStakedMVK += satelliteRecord.sMvkBalance
+      acc.partisipationRate +=
+        (satelliteRecord.satelliteMetrics.proposalParticipation +
+          satelliteRecord.satelliteMetrics.votingPartisipation) /
+        2
       acc.avgFreesMVKSpace += Math.max(
-        satellite.sMvkBalance * satellite.delegationRatio - satellite.totalDelegatedAmount,
+        satelliteRecord.sMvkBalance * satelliteRecord.delegationRatio - satelliteRecord.totalDelegatedAmount,
         0,
       )
-      acc.avgDelegatedsMVK += satellite.sMvkBalance + satellite.totalDelegatedAmount
+      acc.avgDelegatedsMVK += satelliteRecord.sMvkBalance + satelliteRecord.totalDelegatedAmount
 
       return acc
     },
@@ -70,7 +58,7 @@ export const SatellitesTab = ({ isLoading }: { isLoading: boolean }) => {
       <div className="top">
         <BGPrimaryTitle>Satellites</BGPrimaryTitle>
         <Link to="/satellites">
-          <Button text="Satellite" icon="satellite" kind={ACTION_PRIMARY} className="noStroke dashboard-sectionLink" />
+          <Button text="Satellites" icon="satellite" kind={ACTION_PRIMARY} className="noStroke dashboard-sectionLink" />
         </Link>
       </div>
 
@@ -79,7 +67,7 @@ export const SatellitesTab = ({ isLoading }: { isLoading: boolean }) => {
           <ClockLoader width={150} height={150} />
           <div className="text">Loading satellites</div>
         </DataLoaderWrapper>
-      ) : activeSatellites.length ? (
+      ) : activeSatellitesIds.length ? (
         <SatellitesContentStyled>
           <StatBlock>
             <div className="name">Active Satellites</div>
@@ -130,16 +118,16 @@ export const SatellitesTab = ({ isLoading }: { isLoading: boolean }) => {
       <div className="descr">
         <div className="title">What are Satellites?</div>
         <div className="text">
-          Satellites are nodes that administer the Mavryk platform (similarly to Bakers on Tezos). A Satellite can act
+          Satellites are nodes that administer the Mavryk platform (similarly to validators on PoS). A Satellite can act
           on its own behalf and can receive delegations on behalf of others.
           <br />
           <br />
-          To operate a Mavryk Satellite, a user needs to stake a security deposit in MVK as a bond, which the user can
-          buy on the open market or earn by participating in the ecosystem (e.g. through yield farming, or MVK returned
-          on DSR savings).{' '}
+          To operate a Mavryk Satellite, a users needs to stake a security deposit in MVK, and operate an oracle node
+          for signing data feeds. For more information about starting & operating a Satellite, please read more{' '}
           <a href="https://blogs.mavryk.finance/" target="_blank" rel="noreferrer">
-            Read more
+            here
           </a>
+          .
         </div>
       </div>
     </TabWrapperStyled>

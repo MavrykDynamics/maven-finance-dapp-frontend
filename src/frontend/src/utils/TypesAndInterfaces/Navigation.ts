@@ -1,8 +1,6 @@
 export type RequiresProperties = {
   isSatellite?: boolean
-  isNotSatellite?: boolean
-  isVestee?: boolean
-  isUnregisteredSatellite?: boolean
+  authNotSatellite?: boolean
   isAuth?: boolean
 }
 

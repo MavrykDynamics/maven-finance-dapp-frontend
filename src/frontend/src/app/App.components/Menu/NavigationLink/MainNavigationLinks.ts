@@ -1,6 +1,6 @@
 import { LENDING_TAB_ID } from './../../../../pages/Dashboard/Dashboard.utils'
 import { MainNavigationRoute } from '../../../../utils/TypesAndInterfaces/Navigation'
-import { PORTFOLIO_TAB_ID } from 'pages/DashboardPersonal/DashboardPersonal.utils'
+import { PORTFOLIO_LENDING_TAB_ID, PORTFOLIO_TAB_ID } from 'pages/DashboardPersonal/DashboardPersonal.utils'
 
 export const mainNavigationLinks: MainNavigationRoute[] = [
   {
@@ -19,8 +19,8 @@ export const mainNavigationLinks: MainNavigationRoute[] = [
       {
         id: 84425,
         subTitle: 'Personal',
-        subPath: `dashboard-personal/${PORTFOLIO_TAB_ID}`,
-        routeSubPath: '/dashboard-personal/:tabId',
+        subPath: `dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_LENDING_TAB_ID}`,
+        routeSubPath: '/dashboard-personal/:tabId/:secondaryTabId?',
         requires: {
           isAuth: true,
         },
@@ -55,7 +55,7 @@ export const mainNavigationLinks: MainNavigationRoute[] = [
   {
     title: 'Vaults',
     id: 8,
-    path: 'vaults/all',
+    path: 'vaults/my',
     routePath: '/vaults/:tabId',
     icon: 'vaults',
   },
@@ -86,25 +86,16 @@ export const mainNavigationLinks: MainNavigationRoute[] = [
         subPath: 'become-satellite',
         routeSubPath: '/become-satellite',
         requires: {
-          isNotSatellite: true,
+          authNotSatellite: true,
         },
       },
       {
         id: 55614,
-        subTitle: 'Edit my Profile',
-        subPath: 'become-satellite',
-        routeSubPath: '/become-satellite',
-        requires: {
-          isSatellite: true,
-        },
-      },
-      {
-        id: 55619,
         subTitle: 'Edit My Profile',
         subPath: 'become-satellite',
         routeSubPath: '/become-satellite',
         requires: {
-          isUnregisteredSatellite: true,
+          isSatellite: true,
         },
       },
       {

@@ -10,6 +10,7 @@ import type {
   Governance_Proposal_Data,
 } from '../generated/graphqlTypes'
 import { normalizeGovernanceStorage, normalizeProposal } from '../../pages/Governance/Governance.helpers'
+import { normalizeFinancialRequests } from 'pages/FinacialRequests/FinancialRequests.helpers'
 
 export type GovernanceGraphQL = Omit<Governance, '__typename'>
 export type GovernanceFinancialRequestGraphQL = Omit<Governance_Financial_Request, '__typename'>
@@ -95,42 +96,9 @@ export interface SnapshotRecordType {
   currentCycleEndLevel: number // log of when cycle (proposal + voting) will end
 }
 
-export interface FinancialRequestRecord {
-  id: string
-  governanceId: string
-  treasuryId: string
-  executed: boolean
-  ready: boolean
-  status: string | boolean
-
-  requesterId: string
-  requestPurpose: string
-  requestType: string
-  smvkPercentageForApproval: number
-  smvkRequiredForApproval: number
-  approveVoteTotal: number
-  disapproveVoteTotal: number
-  votes: FinancialRequestVote[]
-  requestedDatetime: Date
-  expirationDatetime: Date
-
-  tokenContractAddress: string
-  tokenId: string
-  tokenAmount: number
-  tokenName: string
-
-  snapshotsMvkTotalSupply: number
-}
-
-export interface FinancialRequestVote {
-  id: number
-  proposalId: number
-  timestamp: Date
-  voterId: string
-  vote?: number
-  votingPower?: number
-}
-
 export type GovernanceRoundType = 'VOTING' | 'TIME_LOCK' | 'PROPOSAL' | ''
 export type ProposalStatusType = string
 export type CurrentRoundProposalsStorageType = ProposalRecordType[]
+
+// Financical request types
+export type FinancialRequestRecord = ReturnType<typeof normalizeFinancialRequests>[number]

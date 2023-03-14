@@ -6,17 +6,31 @@ import { MavrykTheme } from 'styles/interfaces'
 export const TreasuryViewStyle = styled(Card)<{ theme: MavrykTheme }>`
   display: grid;
   grid-template-columns: auto 254px 184px;
-  gap: 50px;
+  column-gap: 50px;
   padding-bottom: 33px;
   position: relative;
 
   .content-wrapper {
-    max-width: 480px;
+    max-width: 460px;
 
     .treasury-checkbox {
       margin-top: 25px;
       margin-bottom: -15px;
     }
+
+    .no-treasury-table-data {
+      p {
+        margin: 0;
+        margin-top: 15px;
+        font-weight: 600;
+        font-size: 14px;
+      }
+    }
+  }
+
+  .pie-chart {
+    display: flex;
+    align-items: center;
   }
 
   .treasuryTooltip-link {
@@ -41,7 +55,7 @@ export const TreasuryViewStyle = styled(Card)<{ theme: MavrykTheme }>`
     align-items: center;
     justify-content: space-between;
     padding-top: 3px;
-    padding-bottom: 16px;
+    padding-bottom: 3px;
 
     h1 {
       margin: 0;
@@ -50,6 +64,10 @@ export const TreasuryViewStyle = styled(Card)<{ theme: MavrykTheme }>`
       text-overflow: ellipsis;
       white-space: nowrap;
       text-transform: capitalize;
+
+      font-weight: 600;
+      font-size: 22px;
+      line-height: 22px;
     }
   }
 
@@ -65,21 +83,18 @@ export const TreasuryViewStyle = styled(Card)<{ theme: MavrykTheme }>`
   .info-block {
     display: flex;
     align-items: center;
-    margin: 5px 0;
+    margin: 7px 0 50px 0;
 
-    &.not-global {
-      margin: 7px 0;
-    }
+    grid-column-start: 2;
+    grid-column-end: 4;
 
     p {
       margin: 0;
     }
 
     .text {
+      margin-right: 30px;
       color: ${({ theme }) => theme.textColor};
-      margin-right: 20px;
-      font-weight: 600;
-      font-size: 18px;
     }
 
     .tzAddressToClick {
@@ -97,6 +112,36 @@ export const TreasuryViewStyle = styled(Card)<{ theme: MavrykTheme }>`
       svg {
         stroke: ${({ theme }) => theme.dataColor};
       }
+    }
+
+    .text,
+    .value {
+      font-weight: 600;
+      font-size: 22px;
+      line-height: 22px;
+    }
+  }
+
+  .address-block {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    grid-column-start: 2;
+    grid-column-end: 4;
+
+    .text {
+      margin-right: 10px;
+
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 21px;
+    }
+
+    .value {
+      font-weight: 600;
+      font-size: 16px;
+      line-height: 22px;
     }
   }
 
@@ -129,7 +174,6 @@ export const TreasuryViewStyle = styled(Card)<{ theme: MavrykTheme }>`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    text-transform: uppercase;
   }
 
   .assets-map {

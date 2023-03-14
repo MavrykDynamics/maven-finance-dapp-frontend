@@ -1,17 +1,22 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { State } from 'reducers'
 
 // helpers
 import { getProposalStatusInfo } from '../Governance.helpers'
-import { getPageNumber } from 'pages/FinacialRequests/FinancialRequests.helpers'
+import {
+  calculateSlicePositions,
+  GOVERNANCE_VOTERS_LIST_NAME,
+  LIST_NAMES_MAPPER,
+  getPageNumber,
+} from 'app/App.components/Pagination/pagination.consts'
 
 // view
 import { CommaNumber } from '../../../app/App.components/CommaNumber/CommaNumber.controller'
 import { StatusFlag } from '../../../app/App.components/StatusFlag/StatusFlag.controller'
 import { ProposalRecordType, ProposalStatus } from '../../../utils/TypesAndInterfaces/Governance'
-import Pagination from 'pages/FinacialRequests/Pagination/Pagination.view'
+import Pagination from 'app/App.components/Pagination/Pagination.view'
 
 // style
 import {
@@ -21,17 +26,11 @@ import {
   VoterListItem,
   ProposalStatusFlag,
 } from './Proposals.style'
-import {
-  calculateSlicePositions,
-  GOVERNANCE_VOTERS_LIST_NAME,
-  LIST_NAMES_MAPPER,
-} from 'pages/FinacialRequests/Pagination/pagination.consts'
 import { EmptyContainer, GovRightContainerTitleArea } from '../Governance.style'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import Checkbox from 'app/App.components/Checkbox/Checkbox.view'
 import { DropDown } from 'app/App.components/DropDown/DropDown.controller'
-import { calcWithoutPrecision } from 'utils/calcFunctions'
-import { getVoteText } from 'pages/Satellites/Satellites.helpers'
+import { getVoteText } from 'pages/Satellites/helpers/Satellites.consts'
 
 type ProposalsViewProps = {
   listTitle: string
@@ -55,7 +54,7 @@ export const ProposalsView = ({
     governancePhase,
     governanceStorage: { cycle, timelockProposalId, cycleHighestVotedProposalId, cycleCounter },
   } = useSelector((state: State) => state.governance)
-  const { satelliteLedger } = useSelector((state: State) => state.delegation.delegationStorage)
+  const { satelliteMapper } = useSelector((state: State) => state.satellites)
 
   const dropDownOptions = useMemo(
     () => Array.from({ length: cycle - 1 }, (_, idx) => String(cycle - (idx + 1))),
@@ -101,7 +100,7 @@ export const ProposalsView = ({
           address: string
         }>
       >((acc, { voter_id, round, vote }) => {
-        const satelliteData = satelliteLedger?.find(({ address }) => address === voter_id)
+        const satelliteData = satelliteMapper[voter_id]
 
         if (satelliteData && round === 1) {
           acc.push({
@@ -114,7 +113,7 @@ export const ProposalsView = ({
 
         return acc
       }, []),
-    [satelliteLedger, selectedProposal],
+    [satelliteMapper, selectedProposal],
   )
 
   return (

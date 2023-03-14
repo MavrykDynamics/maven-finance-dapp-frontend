@@ -89,8 +89,8 @@ export const FarmsTab = ({ isLoading }: { isLoading: boolean }) => {
         <div className="title">What is Yield Farming?</div>
         <div className="text">
           Liquidity providers will be able to stake their LP tokens within yield farms to receive sMVK as an incentive.
-          The amount of sMVK rewards depends on how long the LP tokens are staked. By default, Mavryk farms are spawned
-          for three months.{' '}
+          DEX LP tokens and Mavryk mTokens may be staked to available farms. By default, Mavryk farms are spawned for
+          three months.{' '}
           <a href="https://blogs.mavryk.finance/" target="_blank" rel="noreferrer">
             Read more
           </a>

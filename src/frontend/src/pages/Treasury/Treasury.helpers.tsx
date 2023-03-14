@@ -1,3 +1,6 @@
+import { VestingRecord } from 'reducers/vesting'
+import { calcWithoutPrecision } from 'utils/calcFunctions'
+import { Vesting_Vestee } from 'utils/generated/graphqlTypes'
 import { VestingGraphQL } from 'utils/TypesAndInterfaces/Vesting'
 import type {
   TreasuryGraphQL,
@@ -44,10 +47,37 @@ export const reduceTreasuryAssets = (
   return { assetsBalances: Object.values(assets), globalTreasuryTVL }
 }
 
-export function normalizeVestingStorage(storage: VestingGraphQL | null) {
+export function normalizeVestingStorage(storage?: VestingGraphQL | null) {
+  const { vesteesMapper = {}, vesteeIds = [] } =
+    storage?.vestees.reduce<{
+      vesteesMapper: Record<Vesting_Vestee['vestee_id'], VestingRecord>
+      vesteeIds: Array<string>
+    }>(
+      (acc, vestee) => {
+        acc.vesteeIds.push(vestee.vestee_id)
+        acc.vesteesMapper[vestee.vestee_id] = {
+          address: vestee.vestee_id,
+          totalRemainded: calcWithoutPrecision(vestee.total_remainder),
+          totalAllocated: calcWithoutPrecision(vestee.total_allocated_amount),
+          rewardPerMonth: vestee.claim_amount_per_month,
+          cliffMonth: vestee.cliff_months,
+          vestingMonth: vestee.vesting_months,
+          nextRewardDate: vestee.next_redemption_timestamp,
+          lastClaimDate: vestee.last_claimed_timestamp,
+        }
+        return acc
+      },
+      {
+        vesteesMapper: {},
+        vesteeIds: [],
+      },
+    ) ?? {}
+
   return {
     address: storage?.address || '',
     totalVestedAmount: storage?.total_vested_amount ?? 0,
     totalClaimedAmount: storage?.vestees_aggregate?.aggregate?.sum?.total_claimed ?? 0,
+    vesteesMapper,
+    vesteeIds,
   }
 }

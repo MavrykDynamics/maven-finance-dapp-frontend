@@ -100,7 +100,6 @@ export const MenuView = ({ accountPkh, openChangeNodePopupHandler }: MenuViewPro
                   key={navigationLink.id}
                   selectedMainLink={selectedMainLink}
                   isMobMenuExpanded={sidebarOpened}
-                  accountPkh={accountPkh}
                   navLinkClickHandler={navLinkClickHandler}
                   {...navigationLink}
                 />

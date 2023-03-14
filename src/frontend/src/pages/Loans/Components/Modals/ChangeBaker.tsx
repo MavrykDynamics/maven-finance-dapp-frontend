@@ -2,13 +2,13 @@ import { useLockBodyScroll } from 'react-use'
 import { useState, useMemo, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
-import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { State } from 'reducers'
 import { changeBakerAction } from 'pages/Loans/Actions/vaultPermissions.actions'
 import { ChangeBakerPopupDataType } from './Modals.helpers'
 
-import NewButton from 'app/App.components/Button/NewButton.controller'
+import NewButton from 'app/App.components/Button/NewButton'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
@@ -233,14 +233,16 @@ export const ChangeBaker = ({
             </ThreeLevelListItem>
           </div>
 
-          <NewButton
-            kind={ACTION_PRIMARY}
-            onClick={updateBakerHandler}
-            className="modal-manage-btn"
-            disabled={!selectedAddress || selectedAddress === bakerAddress}
-          >
-            Update Baker
-          </NewButton>
+          <div className="manage-btn">
+            <NewButton
+              kind={BUTTON_PRIMARY}
+              onClick={updateBakerHandler}
+              form={BUTTON_WIDE}
+              disabled={!selectedAddress || selectedAddress === bakerAddress}
+            >
+              Update Baker
+            </NewButton>
+          </div>
         </LoansModalBase>
       </PopupContainerWrapper>
     </PopupContainer>

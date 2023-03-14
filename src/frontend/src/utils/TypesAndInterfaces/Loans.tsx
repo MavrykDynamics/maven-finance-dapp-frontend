@@ -1,11 +1,19 @@
 import { ChartPlotType } from 'app/App.components/Chart/Chart.view'
+import {
+  ANY_USER,
+  NONE_USER,
+  VAULT_ALLOWANCE_ACCOUNTS,
+  VAULT_ALLOWANCE_ANY,
+  WHITELIST_USERS,
+} from 'pages/Loans/Loans.const'
 import { normalizeLoans } from 'pages/Loans/Loans.helpers'
 import { Lending_Controller } from 'utils/generated/graphqlTypes'
+import { TokenType } from './General'
 
 export type LoansGQL = Omit<Lending_Controller, '__typename'>
 export type LoansStorage = Awaited<ReturnType<typeof normalizeLoans>>
 
-export type LoanTokenType = 'tez' | 'fa12' | 'fa2'
+export type LoanVaultAllowanceType = typeof VAULT_ALLOWANCE_ANY | typeof VAULT_ALLOWANCE_ACCOUNTS
 
 export type BaseLoansAssetDataType = {
   gqlName: string
@@ -19,7 +27,7 @@ export type BaseLoansAssetDataType = {
 
 export type LoansAssetDataType = BaseLoansAssetDataType & {
   userBalance: number
-  tokenType: LoanTokenType
+  tokenType: TokenType
 }
 
 export type CollateralType = BaseLoansAssetDataType & {
@@ -67,10 +75,12 @@ export type UserLendObjType = {
   amount: number
   id: number
   annualPecentage: number
-  earned: number
+  symbol: string
+  date: string
   operationHash: string
 }
 
+export type DepositorsFlagType = typeof ANY_USER | typeof NONE_USER | typeof WHITELIST_USERS
 export type LoansVaultType = {
   borrowedAsset: LoansAssetDataType
   collateralData: Array<CollateralType>
@@ -88,7 +98,8 @@ export type LoansVaultType = {
   sMVKDelegatedTo?: string
   levelOfEarly?: number
   levelOfLate?: number
-  depositors?: Array<string>
+  depositors: Array<string>
+  deporsitorsFlag: DepositorsFlagType
 }
 
 export type LoanMarketType = {

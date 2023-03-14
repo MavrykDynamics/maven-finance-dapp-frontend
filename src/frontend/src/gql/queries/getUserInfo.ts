@@ -42,6 +42,14 @@ query GetUserInfo ($_eq: String = "") {
         smvk_balance
       }
     }
+
+    activeSatelliteRecord: satellites(where: {user_id: {_eq: $_eq}, _and: {currently_registered: {_eq: true}, _and: {status: {_eq: "0"}}}}) {
+      user_id
+    }
+    
+    vesteeRecord: vesting_vestees(where: {vestee_id: {_eq: $_eq}}) {
+      vestee_id
+    }
   }
 }
 `

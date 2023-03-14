@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect, useRef } from 'react'
 
 // view
 import { TreasuryType } from 'utils/TypesAndInterfaces/Treasury'
+import Icon from 'app/App.components/Icon/Icon.view'
 import PieChartView from '../../app/App.components/PieСhart/PieСhart.view'
 
 // helpers
@@ -23,6 +24,7 @@ import {
   TableCell,
   TableScrollable,
 } from 'app/App.components/Table/Table.style'
+import { Plug } from 'app/App.components/Chart/Chart.style'
 
 type Props = {
   treasury: TreasuryType
@@ -61,40 +63,19 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
       </a>
 
       <div className="content-wrapper">
-        <header>
-          {treasury.name ? <h1 title={treasury.name}>{treasury.name}</h1> : null}
-          {isGlobal ? (
-            <var>
-              <CommaNumber beginningText="$" value={treasury.treasuryTVL} />
-            </var>
-          ) : null}
-        </header>
-        {factoryAddress ? (
-          <div className="info-block">
-            <div className="text">Treasury Factory Address</div>
-            <div className="value">
-              <TzAddress type={BLUE} tzAddress={factoryAddress} hasIcon={true} />
-            </div>
-          </div>
-        ) : null}
-        <div>
-          {!isGlobal ? (
-            <>
-              <div className="info-block not-global">
-                <p className="text">TVL</p>
-                <p className="value">
-                  <CommaNumber beginningText="$" value={treasury.treasuryTVL} />
-                </p>
-                <div />
-              </div>
-              <div className="info-block not-global">
-                <p className="text">Treasury Address</p>
-                <div className="value">
-                  <TzAddress type={BLUE} tzAddress={treasury.address} hasIcon={true} />
-                </div>
-                <div />
-              </div>
+        <header>{treasury.name ? <h1 title={treasury.name}>{treasury.name}</h1> : null}</header>
 
+        <div>
+          <div className="info-block">
+            <p className="text">TVL</p>
+            <p className="value">
+              <CommaNumber beginningText="$" value={treasury.treasuryTVL} />
+            </p>
+            <div />
+          </div>
+
+          {!isGlobal && treasury.balances.length ? (
+            <>
               <Checkbox
                 id={'show_dropped'}
                 onChangeHandler={() => {
@@ -108,7 +89,7 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
             </>
           ) : null}
 
-          <TableScrollable bodyHeight={90} className="treasury-table scroll-block">
+          <TableScrollable bodyHeight={filteredBalance.length === 0 ? 60 : 90} className="treasury-table scroll-block">
             <Table>
               <TableHeader className="treasury">
                 <TableRow>
@@ -118,41 +99,54 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
                 </TableRow>
               </TableHeader>
 
-              <TableBody className="treasury">
-                {filteredBalance.map(({ symbol, balance, usdValue, rate }) => {
-                  return (
-                    <TableRow rowHeight={25} borderColor="dataColor" className="add-hover" key={symbol}>
-                      <TableCell width="33%">{symbol}</TableCell>
-                      <TableCell width="33%">
-                        {parseFloat(String(balance)) < 0.01 ? (
-                          '<0.01'
-                        ) : (
-                          <CommaNumber value={balance} useAccurateParsing showDecimal decimalsToShow={2} />
-                        )}
-                      </TableCell>
-                      <TableCell width="33%" contentPosition="right">
-                        {parseFloat(String(usdValue)) < 0.01 ? (
-                          `<0.01 ${rate ? '$' : symbol}`
-                        ) : (
-                          <CommaNumber
-                            value={usdValue}
-                            endingText={rate ? '' : symbol}
-                            beginningText={rate ? '$' : ''}
-                            useAccurateParsing
-                            showDecimal
-                            decimalsToShow={2}
-                          />
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  )
-                })}
-              </TableBody>
+              {filteredBalance.length ? (
+                <TableBody className={`treasury`}>
+                  {filteredBalance.map(({ symbol, balance, usdValue, rate }) => {
+                    return (
+                      <TableRow rowHeight={25} borderColor="dataColor" className="add-hover" key={symbol}>
+                        <TableCell width="33%">{symbol}</TableCell>
+                        <TableCell width="33%">
+                          {parseFloat(String(balance)) < 0.01 ? (
+                            '<0.01'
+                          ) : (
+                            <CommaNumber value={balance} useAccurateParsing showDecimal decimalsToShow={2} />
+                          )}
+                        </TableCell>
+                        <TableCell width="33%" contentPosition="right">
+                          {parseFloat(String(usdValue)) < 0.01 ? (
+                            `<0.01 ${rate ? '$' : symbol}`
+                          ) : (
+                            <CommaNumber
+                              value={usdValue}
+                              endingText={rate ? '' : symbol}
+                              beginningText={rate ? '$' : ''}
+                              useAccurateParsing
+                              showDecimal
+                              decimalsToShow={2}
+                            />
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    )
+                  })}
+                </TableBody>
+              ) : null}
             </Table>
           </TableScrollable>
+
+          {filteredBalance.length === 0 ? (
+            <Plug className={'no-treasury-table-data'}>
+              <div>
+                <Icon id="stars" className="icon-stars" />
+                <Icon id="cow" className="icon-cow" />
+              </div>
+
+              <p>There is not enough data to display the chart</p>
+            </Plug>
+          ) : null}
         </div>
       </div>
-      <div>
+      <div className="pie-chart">
         <PieChartView chartData={chartData} />
       </div>
       <div>
@@ -177,6 +171,14 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
           ))}
         </div>
       </div>
+      {factoryAddress || (!isGlobal && treasury.address) ? (
+        <div className="address-block">
+          <div className="text">Treasury Factory Address</div>
+          <div className="value">
+            <TzAddress type={BLUE} tzAddress={isGlobal ? factoryAddress : treasury.address} hasIcon={true} />
+          </div>
+        </div>
+      ) : null}
     </TreasuryViewStyle>
   )
 }
