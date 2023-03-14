@@ -63,7 +63,7 @@ export const AppRoutes = () => {
         <Dashboard />
       </Route>
       <ProtectedRoute
-        path="/dashboard-personal/:tabId"
+        path="/dashboard-personal/:tabId/:secondaryTabId?"
         component={DashboardPersonal}
         hasAccess={Boolean(accountPkh)}
         isAuthorized={Boolean(accountPkh)}

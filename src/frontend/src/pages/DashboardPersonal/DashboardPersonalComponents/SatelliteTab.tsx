@@ -12,6 +12,7 @@ import { SatelliteOracleStatusComponent } from 'pages/Satellites/listItem/Satell
 
 import { State } from 'reducers'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
+import { UserActionHistory } from './UserOperationsHistory'
 
 const SatelliteTab = () => {
   const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
@@ -101,6 +102,8 @@ const SatelliteTab = () => {
           </div>
         )}
       </SatelliteStatusBlock>
+
+      <UserActionHistory />
     </>
   )
 }

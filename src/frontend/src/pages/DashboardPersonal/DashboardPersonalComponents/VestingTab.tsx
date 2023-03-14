@@ -13,6 +13,7 @@ import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.co
 import { parseDate } from 'utils/time'
 import { PORTFOLIO_TAB_ID } from '../DashboardPersonal.utils'
 import { claimVestingReward } from '../DashboardPersonal.actions'
+import { UserActionHistory } from './UserOperationsHistory'
 
 const VestingTab = () => {
   const dispatch = useDispatch()
@@ -36,55 +37,59 @@ const VestingTab = () => {
     isClaimBtnDisabled = rewardPerMonth === 0 || hasRewardsFor === 0
 
   return (
-    <VestingTabStyled>
-      <GovRightContainerTitleArea>
-        <h2>My Vesting</h2>
-      </GovRightContainerTitleArea>
+    <>
+      <VestingTabStyled>
+        <GovRightContainerTitleArea>
+          <h2>My Vesting</h2>
+        </GovRightContainerTitleArea>
 
-      <div className="vesting-data">
-        <div className="column">
-          <div className="name">Vesting Period</div>
-          <div className="value">
-            <CommaNumber value={vestingMonth} endingText="mos." />
+        <div className="vesting-data">
+          <div className="column">
+            <div className="name">Vesting Period</div>
+            <div className="value">
+              <CommaNumber value={vestingMonth} endingText="mos." />
+            </div>
           </div>
-        </div>
 
-        <div className="column">
-          <div className="name">Total Vesting Amount</div>
-          <div className="value">
-            <CommaNumber value={totalAllocated} endingText="MVK" />
+          <div className="column">
+            <div className="name">Total Vesting Amount</div>
+            <div className="value">
+              <CommaNumber value={totalAllocated} endingText="MVK" />
+            </div>
           </div>
-        </div>
 
-        <div className="column">
-          <div className="name">Amount Left to Vest</div>
-          <div className="value">
-            <CommaNumber value={totalRemainded} endingText="MVK" />
+          <div className="column">
+            <div className="name">Amount Left to Vest</div>
+            <div className="value">
+              <CommaNumber value={totalRemainded} endingText="MVK" />
+            </div>
           </div>
-        </div>
 
-        <div className="column">
-          <div className="name">Ready to Claim</div>
-          <div className="value">
-            <CommaNumber value={rewardPerMonth * hasRewardsFor} endingText="MVK" />
+          <div className="column">
+            <div className="name">Ready to Claim</div>
+            <div className="value">
+              <CommaNumber value={rewardPerMonth * hasRewardsFor} endingText="MVK" />
+            </div>
           </div>
-        </div>
 
-        <div className="column">
-          <div className="name">Next Claim</div>
-          <div className="value">{parseDate({ time: nextRewardDate, timeFormat: 'MMM Do, YYYY' })}</div>
-        </div>
+          <div className="column">
+            <div className="name">Next Claim</div>
+            <div className="value">{parseDate({ time: nextRewardDate, timeFormat: 'MMM Do, YYYY' })}</div>
+          </div>
 
-        <Button
-          kind={BUTTON_PRIMARY}
-          form={BUTTON_WIDE}
-          disabled={isClaimBtnDisabled}
-          onClick={handleClaimVestingReward}
-        >
-          Claim
-        </Button>
-      </div>
-    </VestingTabStyled>
+          <Button
+            kind={BUTTON_PRIMARY}
+            form={BUTTON_WIDE}
+            disabled={isClaimBtnDisabled}
+            onClick={handleClaimVestingReward}
+          >
+            Claim
+          </Button>
+        </div>
+      </VestingTabStyled>
+
+      <UserActionHistory />
+    </>
   )
 }
 

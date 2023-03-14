@@ -90,6 +90,10 @@ export const TableScrollable = styled.div<{ theme: MavrykTheme; bodyHeight: numb
   &.treasury-table {
     margin-top: 30px;
   }
+
+  &.dashboard-loans-table {
+    padding-right: 30px;
+  }
 `
 
 export const Table = styled.table<{ theme: MavrykTheme }>`
@@ -219,6 +223,15 @@ export const TableHeader = styled.thead<{ theme: MavrykTheme }>`
     }
   }
 
+  &.dashboard-loans {
+    z-index: 100;
+    th {
+      font-weight: 600;
+      font-size: 14px;
+      padding-bottom: 7px;
+    }
+  }
+
   &.collateral {
     th {
       padding-bottom: 0;
@@ -257,6 +270,13 @@ export const TableBody = styled.tbody<{ theme: MavrykTheme }>`
 
     td:first-child {
       text-transform: uppercase;
+    }
+  }
+
+  &.dashboard-loans {
+    svg {
+      width: 60px;
+      height: 60px;
     }
   }
 
@@ -447,6 +467,10 @@ export const TableCell = styled.td<{
 
   p {
     margin: 0;
+  }
+
+  a {
+    width: fit-content;
   }
 
   .rate {
