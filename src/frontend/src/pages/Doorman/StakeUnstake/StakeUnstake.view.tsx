@@ -93,27 +93,15 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
   const userHasRewards = myAvailableDoormanRewards + myAvailableSatelliteRewards > 2
   const showDelegateBtn = !isSatellite && !satelliteMvkIsDelegatedTo
 
-  const onUseMaxClick = (actionType: string) => {
-    switch (actionType) {
-      case 'STAKE':
-        setInputData({
-          ...inputData,
-          amount: String(mathRoundTwoDigit(myMvkTokenBalance)),
-          validation: INPUT_STATUS_SUCCESS,
-        })
-        break
-      case 'UNSTAKE':
-      default:
-        setInputData({
-          ...inputData,
-          amount: String(mathRoundTwoDigit(mySMvkTokenBalance)),
-          validation: INPUT_STATUS_SUCCESS,
-        })
-        break
-    }
+  const onUseMaxBalance = (balance: 'smvk' | 'mvk') => () => {
+    handleInputData(String(mathRoundTwoDigit(balance === 'mvk' ? myMvkTokenBalance : mySMvkTokenBalance)))
   }
 
   const onInputChange = ({ target: { value } }: React.ChangeEvent<HTMLInputElement>) => {
+    handleInputData(value)
+  }
+
+  const handleInputData = (value: string) => {
     const validationStatus = isValidNumberValue(
       Number(value),
       1,
@@ -309,7 +297,7 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
           <StakeUnstakeInputLabels>
             <div className="minAmount">Min 1 MVK</div>
 
-            <StakeUnstakeAmount>
+            <StakeUnstakeAmount onClick={onUseMaxBalance('smvk')}>
               <span>Staked Amount:</span>
               &nbsp;
               <CommaNumber value={mySMvkTokenBalance} endingText={'MVK'} />
@@ -329,6 +317,7 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
                 balanceAsset: 'MVK',
                 balanceName: 'Wallet Balance',
                 inputSize: INPUT_LARGE,
+                balanceHandler: onUseMaxBalance('mvk'),
               }}
             />
           </StakeUnstakeInputWithCoin>
@@ -336,6 +325,13 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
             <InputErrorMessage className="errorMessage">{inputData.errorMessage}</InputErrorMessage>
           )}
         </StakeUnstakeInputColumn>
+
+        <StakeUnstakeRate onClick={onUseMaxBalance('smvk')}>
+          <span>1 MVK =</span>
+          &nbsp;
+          <CommaNumber value={MVK_exchangeRate} beginningText={'$'} />
+        </StakeUnstakeRate>
+
         <StakeUnstakeButtonGrid>
           <NewButton kind={BUTTON_PRIMARY} onClick={handleStake} form={BUTTON_WIDE}>
             <Icon id="in" /> Stake
