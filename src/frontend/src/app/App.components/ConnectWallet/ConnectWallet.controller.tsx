@@ -66,11 +66,11 @@ export const ConnectWallet = ({ className, closeMobileMenu }: ConnectWalletProps
 
   // will implemented after Sam's answers about data for this block
   const coinsInfo: CoinsInfoType = {
-    MVKExchangeRate: tokensPrices?.mvk?.usd ?? 0,
+    MVKExchangeRate: tokensPrices?.mvk ?? 0,
     userMVKBalance: myMvkTokenBalance,
     userXTZBalance: myXTZTokenBalance,
     userMVKStaked: mySMvkTokenBalance,
-    XTZExchnageRate: tokensPrices?.tezos?.usd ?? 0,
+    XTZExchnageRate: tokensPrices?.tezos ?? 0,
   }
 
   const detailsHandlers = {

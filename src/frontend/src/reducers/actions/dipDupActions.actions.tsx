@@ -1,4 +1,4 @@
-import { AppDispatch, coinGeckoClient, GetState } from 'app/App.controller'
+import { AppDispatch, GetState } from 'app/App.controller'
 import { normalizeDipDupContracts, normalizeDipDupTokens, normalizeMTokens } from 'app/App.helpers'
 import { fetchFromIndexer } from 'gql/fetchGraphQL'
 import {
@@ -18,6 +18,8 @@ import {
   WHITELIST_TOKENS_VARIABLE,
 } from 'gql/queries/getTokensData'
 import { State } from 'reducers'
+import { convertNumberForClient } from 'utils/calcFunctions'
+import { getSymbolFromFeedName } from 'utils/parse'
 
 export const GET_DIP_DUP_TOKENS = 'GET_DIP_DUP_TOKENS'
 export const getDipDupTokensStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
@@ -79,16 +81,24 @@ export const getWhitelistTokensStorage = () => async (dispatch: AppDispatch, get
 }
 
 export const GET_TOKENS_PRICES = 'GET_TOKENS_PRICES'
-export const getTokensPrices = () => async (dispatch: any) => {
+export const getTokensPrices = () => async (dispatch: AppDispatch, getState: GetState) => {
+  const {
+    dataFeeds: { feedsLedger },
+  } = getState()
   try {
-    const tokensInfoFromCoingecko = await coinGeckoClient.simple.price({
-      ids: ['tezos'],
-      vs_currencies: ['usd'],
-    })
+    const tokenPricesFromFeeds = feedsLedger.reduce<State['tokens']['tokensPrices']>(
+      (acc, { name, last_completed_data, decimals }) => {
+        const assetSymbol = getSymbolFromFeedName(name)
+        const rate = convertNumberForClient({ number: last_completed_data, grage: decimals })
+        acc[assetSymbol] = rate
+        return acc
+      },
+      {},
+    )
 
     dispatch({
       type: GET_TOKENS_PRICES,
-      tokensPrices: tokensInfoFromCoingecko.data,
+      tokensPrices: tokenPricesFromFeeds,
     })
   } catch (e) {
     console.error('getTokensPrices error: ', e)

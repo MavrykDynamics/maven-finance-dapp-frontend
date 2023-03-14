@@ -14,7 +14,7 @@ import { GET_AVALIABLE_COLLATERALS } from 'pages/Loans/Actions/getLoansData.acti
 export type TokensType = {
   dipDupTokens: Array<DipDupTokensGraphQl>
   dipDupContracts: Array<DipDupTokensGraphQl>
-  tokensPrices: Record<string, { usd: number }>
+  tokensPrices: Record<string, number>
   avaliableCollaterals: Array<AvaliableCollateralType>
   whitelistTokens: Array<Governance_Financial_Whitelist_Token_Contract>
   mTokens: Array<M_Token>
@@ -24,7 +24,7 @@ const defaultTokensInfoState: TokensType = {
   dipDupContracts: [],
   whitelistTokens: [],
   avaliableCollaterals: [],
-  tokensPrices: { mvk: { usd: 0.25 } },
+  tokensPrices: { mvk: 0.25 },
   mTokens: [],
 }
 

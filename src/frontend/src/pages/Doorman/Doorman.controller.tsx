@@ -33,7 +33,7 @@ export const Doorman = () => {
     totalSupply,
     isLoaded: isDoormanLoaded,
   } = useSelector((state: State) => state.doorman)
-  const { tokensPrices: { mvk: { usd: mvkExchangeRate = 0 } = {} } = {} } = useSelector((state: State) => state.tokens)
+  const { mvk: mvkExchangeRate = 0 } = useSelector((state: State) => state.tokens.tokensPrices)
 
   const [amount, setAmount] = useState<null | number>(null)
   const exitFeeModal = {

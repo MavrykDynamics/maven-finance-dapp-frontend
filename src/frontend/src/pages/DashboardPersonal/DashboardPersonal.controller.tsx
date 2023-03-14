@@ -42,7 +42,7 @@ const DashboardPersonal = () => {
   const { tabId } = useParams<{ tabId: string }>()
 
   const {
-    tokensPrices: { tezos, mvk: { usd: mvkExchangeRate = 0 } = {} },
+    tokensPrices: { tezos: xtzExchangeRate = 0, mvk: mvkExchangeRate = 0 },
   } = useSelector((state: State) => state.tokens)
   const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
   const {
@@ -102,7 +102,7 @@ const DashboardPersonal = () => {
 
   const earnings = {
     mvkRate: mvkExchangeRate,
-    xtzRate: tezos?.usd ?? 0,
+    xtzRate: xtzExchangeRate,
     satelliteRewards: satelliteRewards,
     farmsRewards: farmRewards,
     exitRewards: doormanRewards,

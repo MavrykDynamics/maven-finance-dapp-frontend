@@ -23,9 +23,10 @@ export const SET_TREASURY_STORAGE = 'SET_TREASURY_STORAGE'
 export const fillTreasuryStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
   try {
     const {
-      tokens: { tokensPrices: { mvk: { usd: MVK_EXCHANGE_RATE = 0 } } = {} },
+      tokens: { tokensPrices },
       dataFeeds: { feedsLedger },
     } = getState()
+    const MVK_EXCHANGE_RATE = tokensPrices['mvk'] ?? 0
     // Get treasury addresses from gql
     const treasuryAddressesStorage = await fetchFromIndexer(
       GET_TREASURY_DATA,
@@ -91,13 +92,13 @@ export const fillTreasuryStorage = () => async (dispatch: AppDispatch, getState:
           const symbolToSearch =
             symbol.toLowerCase() === 'tezos' ? 'xtz' : symbol.toLowerCase() === 'tzbtc' ? 'btc' : symbol.toLowerCase()
 
-          const { last_completed_data: feedAnswer, decimals: feedDecimals } =
-            feedsLedger.find(({ name }) => {
-              return name.toLowerCase().includes(symbolToSearch)
-            }) ?? {}
+          // const { last_completed_data: feedAnswer, decimals: feedDecimals } =
+          //   feedsLedger.find(({ name }) => {
+          //     return name.toLowerCase().includes(symbolToSearch)
+          //   }) ?? {}
 
-          const feedAssetRate =
-            feedAnswer && feedDecimals ? convertNumberForClient({ number: feedAnswer, grage: feedDecimals }) : null
+          const feedAssetRate = tokensPrices[symbol.toLowerCase()] ?? null
+          // feedAnswer && feedDecimals ? convertNumberForClient({ number: feedAnswer, grage: feedDecimals }) : null
 
           acc[symbol.toLowerCase()] = {
             symbol: isTezosAsset(symbol.toLowerCase()) ? 'XTZ' : symbol,
