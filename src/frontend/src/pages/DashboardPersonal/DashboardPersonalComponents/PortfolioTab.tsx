@@ -48,7 +48,7 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
   )
 
   const {
-    tokensPrices: { mvk: { usd: mvkExchangeRate = 0 } = {} },
+    tokensPrices: { mvk: mvkExchangeRate = 0 },
   } = useSelector((state: State) => state.tokens)
   const {
     user: { userLoansData },

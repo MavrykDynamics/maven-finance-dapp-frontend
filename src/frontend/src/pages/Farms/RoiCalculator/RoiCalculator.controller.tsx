@@ -50,9 +50,7 @@ export default function RoiCalculator({
   useLockBodyScroll(show)
   const { farms } = useSelector((state: State) => state.farm)
   const { accountPkh } = useSelector((state: State) => state.wallet)
-  const {
-    tokensPrices: { mvk: { usd: mvkExchangeRate = 0 } = {} },
-  } = useSelector((state: State) => state.tokens)
+  const { mvk: mvkExchangeRate = 0 } = useSelector((state: State) => state.tokens.tokensPrices)
 
   const farm = farms.find(({ address }) => selectedFarmAddress === address)
 

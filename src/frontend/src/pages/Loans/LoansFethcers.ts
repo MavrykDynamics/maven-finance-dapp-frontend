@@ -1,9 +1,8 @@
 import { getAssetMetadata } from 'pages/Loans/Loans.helpers'
 import { State } from 'reducers'
-import { fetchRateBySymbols } from 'reducers/actions/dipDupActions.actions'
 import { calcWithoutMu } from 'utils/calcFunctions'
-import { Lending_Controller_Collateral_Token, Mavryk_User } from 'utils/generated/graphqlTypes'
-import { LoansGQL, AvaliableCollateralType } from 'utils/TypesAndInterfaces/Loans'
+import { Lending_Controller_Collateral_Token } from 'utils/generated/graphqlTypes'
+import { AvaliableCollateralType } from 'utils/TypesAndInterfaces/Loans'
 import BakersMocked from './bakers.json'
 import { isTezosAsset } from './Loans.helpers'
 
@@ -193,47 +192,5 @@ export const getCollateralTokens = async (
   } catch (e) {
     console.log('getCollateralTokens error:', e)
     return []
-  }
-}
-
-export const getLoansTokensRates = async (
-  loan_tokens: LoansGQL['loan_tokens'],
-  dipDupTokens: State['tokens']['dipDupTokens'],
-  tokenRatesFromRedux: State['tokens']['tokensPrices'],
-) => {
-  try {
-    const loanTokenSymbols = Array.from(
-      loan_tokens?.reduce((acc, { loan_token_address, loan_token_name, vaults }) => {
-        // Getting symbol metadata of loanToken
-        const tokenInfo = dipDupTokens?.find(({ contract }) => contract === loan_token_address)
-        let tokenSymbolToFetch = null
-        if (loan_token_name === 'tez') {
-          tokenSymbolToFetch = 'tezos'
-        } else {
-          tokenSymbolToFetch = tokenInfo?.metadata.symbol ?? loan_token_name
-        }
-
-        if (!tokenRatesFromRedux[tokenSymbolToFetch]) {
-          acc.add(tokenSymbolToFetch)
-        }
-
-        // mapping through vaults to get symbol of each collateral asset
-        vaults.forEach(({ collateral_balances }) => {
-          collateral_balances.forEach(({ token }) => {
-            const collaretalTokenInfo = dipDupTokens?.find(({ contract }) => contract === token?.token_address)
-
-            if (collaretalTokenInfo && !tokenRatesFromRedux[collaretalTokenInfo.metadata.symbol]) {
-              acc.add(collaretalTokenInfo.metadata.symbol)
-            }
-          })
-        })
-        return acc
-      }, new Set<string>()) ?? new Set(),
-    )
-
-    return await fetchRateBySymbols(loanTokenSymbols)
-  } catch (e) {
-    console.log('getLoansTokensRates error: ', e)
-    return {}
   }
 }

@@ -21,7 +21,7 @@ export const Dashboard = () => {
   const { tabId } = useParams<{ tabId: string }>()
 
   const {
-    tokensPrices: { mvk: { usd: mvkExchangeRate = 0 } = {} },
+    tokensPrices: { mvk: mvkExchangeRate = 0 },
   } = useSelector((state: State) => state.tokens)
   const {
     totalStakedMvk,

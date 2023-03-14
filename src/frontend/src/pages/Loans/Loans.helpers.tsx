@@ -26,7 +26,7 @@ import { calcWithoutDecimals, calcWithoutMu, convertNumberForClient } from '../.
 import { ANY_USER, NONE_USER, WHITELIST_USERS } from './Loans.const'
 import { getUserBalanceForLoanAsset } from './LoansFethcers'
 
-export const isTezosAsset = (tokenName: string) => tokenName === 'tez'
+export const isTezosAsset = (tokenName: string) => tokenName === 'tez' || tokenName === 'tezos'
 
 export const getAssetMetadata = ({
   tokenName,
