@@ -82,7 +82,7 @@ export const GET_TOKENS_PRICES = 'GET_TOKENS_PRICES'
 export const getTokensPrices = () => async (dispatch: any) => {
   try {
     const tokensInfoFromCoingecko = await coinGeckoClient.simple.price({
-      ids: ['tezos', 'tzbtc'],
+      ids: ['tezos'],
       vs_currencies: ['usd'],
     })
 

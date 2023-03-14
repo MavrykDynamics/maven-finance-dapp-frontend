@@ -232,6 +232,7 @@ export const getLoansTokensRates = async (
       }, new Set<string>()) ?? new Set(),
     )
 
+    // TODO: move to feeds
     return await fetchRateBySymbols(loanTokenSymbols)
   } catch (e) {
     console.log('getLoansTokensRates error: ', e)
@@ -266,6 +267,7 @@ export const getUserLoansDataTokensRates = async (
       }, new Set<string>()) ?? new Set(),
     )
 
+    // TODO: move to feeds
     return await fetchRateBySymbols(loanTokenSymbols)
   } catch (e) {
     console.log('getUserLoansDataTokensRates error: ', e)

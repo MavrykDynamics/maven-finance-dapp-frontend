@@ -11,7 +11,7 @@ import { getTreasuryAssetsByAddress } from 'utils/api'
 import { FetchedTreasuryBalanceType, TreasuryBalanceType, TreasuryGQLType } from 'utils/TypesAndInterfaces/Treasury'
 
 import { normalizeTreasury, normalizeVestingStorage } from './Treasury.helpers'
-import { AppDispatch, coinGeckoClient, GetState } from '../../app/App.controller'
+import { AppDispatch, GetState } from '../../app/App.controller'
 import { VESTING_STORAGE_QUERY, VESTING_STORAGE_QUERY_NAME, VESTING_STORAGE_QUERY_VARIABLE } from 'gql/queries'
 import { getAssetColor } from './helpers/treasury.utils'
 import { isTezosAsset } from 'pages/Loans/Loans.helpers'
