@@ -216,12 +216,16 @@ export const StageThreeForm = ({
               <TableRow className="editable-row">
                 <TableCell width="25%">
                   {isTableDisabled ? (
-                    <TzAddress
-                      tzAddress={String(payment.to__id)}
-                      type={BLUE}
-                      hasIcon={true}
-                      className="table-cell-tzAddress"
-                    />
+                    payment.to__id ? (
+                      <TzAddress
+                        tzAddress={String(payment.to__id)}
+                        type={BLUE}
+                        hasIcon={true}
+                        className="table-cell-tzAddress"
+                      />
+                    ) : (
+                      ''
+                    )
                   ) : (
                     <Input
                       value={String(payment.to__id)}

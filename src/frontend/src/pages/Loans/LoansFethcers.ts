@@ -191,7 +191,6 @@ export const getCollateralTokens = async (
     )
   } catch (e) {
     console.log('getCollateralTokens error:', e)
-
     return []
   }
 }
