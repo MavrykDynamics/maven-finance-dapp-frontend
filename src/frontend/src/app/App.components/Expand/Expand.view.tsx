@@ -52,12 +52,12 @@ export default function Expand({
   // move the scroll to fix it
   useEffect(() => {
     if (expanded) {
-      scrollToFullView(ref.current)
+      scrollToFullView(ref.current, 'nearest')
     }
   }, [expanded])
 
   return (
-    <ExpandStyled className={className}>
+    <ExpandStyled ref={ref} className={className}>
       <header className="expand-header">
         {header}
         <div className={`arrow-wrap ${expanded ? 'top' : 'bottom'}`}>
@@ -75,9 +75,7 @@ export default function Expand({
         </div>
         {sufix}
       </header>
-      <ExpandArticleStyled ref={ref} show={expanded}>
-        {children}
-      </ExpandArticleStyled>
+      <ExpandArticleStyled show={expanded}>{children}</ExpandArticleStyled>
     </ExpandStyled>
   )
 }

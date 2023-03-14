@@ -177,6 +177,17 @@ export const SubLinkText = styled.p<{ selected: boolean; theme: MavrykTheme }>`
         background-color: ${({ theme }) => theme.navLinkSubTitleActive};
       }
 
+      &:after {
+        position: absolute;
+        left: 155px;
+        bottom: -17px;
+        height: 50px;
+        width: 2px;
+
+        content: '';
+        background-color: ${({ theme }) => theme.navLinkSubTitleActive};
+      }
+
       color: ${({ theme }) => theme.navLinkSubTitleActive};
     `}
 
