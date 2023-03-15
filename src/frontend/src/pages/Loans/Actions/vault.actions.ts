@@ -8,7 +8,7 @@ import { NEW_VAULT_QUERY, NEW_VAULT_QUERY_NAME, NEW_VAULT_QUERY_VARIABLE } from 
 import { State } from 'reducers'
 import { updateUserData } from 'reducers/actions/user.actions'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
-import { getAvaliableCollaterals, getLoansStorage } from './getLoansData.actions'
+import { getAvaliableCollaterals, getLoansStorage, getLoansVaultsData } from './getLoansData.actions'
 
 // trigger initial vault creation to get the id of future vault
 export const triggerInitialVaultCreation =
@@ -79,7 +79,7 @@ export const borrowVaultAssetAction =
       // refetch data we need
       await dispatch(updateUserData())
       await dispatch(getAvaliableCollaterals())
-      await dispatch(getLoansStorage())
+      await dispatch(getLoansVaultsData())
       await dispatch(showToaster(SUCCESS, 'Asset borrowed.', 'All good :)'))
       await dispatch(toggleActionLoader(false))
     } catch (error) {
@@ -124,7 +124,7 @@ export const repayPartOfVaultAction =
       // refetch data we need
       await dispatch(updateUserData())
       await dispatch(getAvaliableCollaterals())
-      await dispatch(getLoansStorage())
+      await dispatch(getLoansVaultsData())
       await dispatch(showToaster(SUCCESS, 'Asset repayed.', 'All good :)'))
       await dispatch(toggleActionLoader(false))
     } catch (error) {
@@ -180,7 +180,7 @@ export const repayFullAndCloseVaultAction =
       // refetch data we need
       await dispatch(updateUserData())
       await dispatch(getAvaliableCollaterals())
-      await dispatch(getLoansStorage())
+      await dispatch(getLoansVaultsData())
       await dispatch(showToaster(SUCCESS, 'Asset repayed.', 'All good :)'))
       await dispatch(toggleActionLoader(false))
     } catch (error) {

@@ -7,7 +7,7 @@ import { State } from 'reducers'
 import { updateUserData } from 'reducers/actions/user.actions'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { TokenType } from 'utils/TypesAndInterfaces/General'
-import { getAvaliableCollaterals, getLoansStorage } from './getLoansData.actions'
+import { getAvaliableCollaterals, getLoansVaultsData } from './getLoansData.actions'
 
 // remove collateral from the vault
 export const withdrawCollateralAction =
@@ -49,7 +49,7 @@ export const withdrawCollateralAction =
       // refetch data we need
       await dispatch(updateUserData())
       await dispatch(getAvaliableCollaterals())
-      await dispatch(getLoansStorage())
+      await dispatch(getLoansVaultsData())
       await dispatch(showToaster(SUCCESS, 'Collateral withdrawn.', 'All good :)'))
       await dispatch(toggleActionLoader(false))
     } catch (error) {
@@ -193,7 +193,7 @@ export const depositCollateralAction =
       // refetch data we need
       await dispatch(updateUserData())
       await dispatch(getAvaliableCollaterals())
-      await dispatch(getLoansStorage())
+      await dispatch(getLoansVaultsData())
       await dispatch(showToaster(SUCCESS, 'Collateral added.', 'All good :)'))
       await dispatch(toggleActionLoader(false))
     } catch (error) {
