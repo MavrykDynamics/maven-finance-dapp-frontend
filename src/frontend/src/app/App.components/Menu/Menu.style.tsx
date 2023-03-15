@@ -162,8 +162,9 @@ export const MenuFooter = styled.div<{ theme: MavrykTheme }>`
       display: flex;
       justify-content: center;
       align-items: center;
-      background: #080628;
+      border: 1px solid ${({ theme }) => theme.valueColor};
       border-radius: 10px;
+
       svg {
         width: 27px;
         height: 27px;
