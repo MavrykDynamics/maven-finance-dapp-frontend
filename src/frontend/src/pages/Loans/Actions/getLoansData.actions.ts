@@ -106,25 +106,16 @@ export const getLoansVaultsData = () => async (dispatch: AppDispatch, getState: 
     vaults: { isLoaded: isVaultsStorageLoaded },
   } = state
 
-  const isLoansPage = /loans/.test(window.location.pathname)
-  const isVaultsPage = /vaults/.test(window.location.pathname)
+  const { pathname } = window.location
 
-  console.log({
-    isLoansPage,
-    isVaultsPage,
-    isLoansStorageLoaded,
-    isVaultsStorageLoaded,
-  })
+  const isLoansPage = /loans/.test(pathname)
+  const isVaultsPage = /vaults/.test(pathname)
 
   if (isLoansPage || isLoansStorageLoaded) {
-    console.log('loans')
-
     await dispatch(getLoansStorage())
   }
 
   if (isVaultsPage || isVaultsStorageLoaded) {
-    console.log('vaults')
-
     await dispatch(getVaultsStorage())
   }
 }
