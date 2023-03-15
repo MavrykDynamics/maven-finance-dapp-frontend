@@ -43,6 +43,11 @@ export const LoansDashboardStyled = styled.div`
       }
     }
   }
+
+  .position {
+    height: fit-content;
+    padding-bottom: 5px;
+  }
 `
 
 export const TotalVolumeStyled = styled(SmallBlockBase)<{ theme: MavrykTheme }>`
@@ -97,4 +102,14 @@ export const AccountStyledStyled = styled(SmallBlockBase)<{ theme: MavrykTheme }
   }
 `
 
-export const PositionTableStyled = styled.div<{ theme: MavrykTheme }>``
+export const PositionTableStyled = styled.div<{ theme: MavrykTheme }>`
+  .no-markets-table-data {
+    margin: 20px 0;
+
+    p {
+      margin-top: 10px;
+    }
+  }
+
+  position: relative;
+`

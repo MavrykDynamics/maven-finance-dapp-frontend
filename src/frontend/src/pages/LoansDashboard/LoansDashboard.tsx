@@ -137,7 +137,7 @@ export const LoansDashboard = () => {
               </AccountStyledStyled>
             </div>
 
-            <LBHInfoBlock>
+            <LBHInfoBlock className="position">
               <GovRightContainerTitleArea>
                 <h2>Lend/Borrow Position</h2>
               </GovRightContainerTitleArea>
@@ -147,7 +147,7 @@ export const LoansDashboard = () => {
                 </Link>
               </div>
 
-              <LoansPositionTable />
+              <LoansPositionTable markets={loanTokens} />
             </LBHInfoBlock>
           </>
         )}
