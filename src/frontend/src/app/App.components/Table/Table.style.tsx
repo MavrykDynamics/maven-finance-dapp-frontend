@@ -85,6 +85,7 @@ export const TableScrollable = styled.div<{ theme: MavrykTheme; bodyHeight: numb
     position: sticky;
     background-color: ${({ theme }) => theme.containerColor};
     top: 0;
+    z-index: 100;
   }
 
   &.treasury-table {

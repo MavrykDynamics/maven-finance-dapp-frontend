@@ -39,12 +39,12 @@ export const LoansPositionTable = ({ markets }: { markets: State['loans']['loanT
                   <div className="cell-content" style={{ marginRight: '20px' }}>
                     <span>
                       Lend APY{' '}
-                      <CustomTooltip iconId="info" text="dummy" defaultStrokeColor={colors[themeSelected].textColor} />
+                      {/* <CustomTooltip iconId="info" text="dummy" defaultStrokeColor={colors[themeSelected].textColor} /> */}
                     </span>
                     <span>Total Supplied</span>
                     <span>
                       Yield{' '}
-                      <CustomTooltip iconId="info" text="dummy" defaultStrokeColor={colors[themeSelected].textColor} />
+                      {/* <CustomTooltip iconId="info" text="dummy" defaultStrokeColor={colors[themeSelected].textColor} /> */}
                     </span>
                     <span></span>
                   </div>
@@ -56,7 +56,7 @@ export const LoansPositionTable = ({ markets }: { markets: State['loans']['loanT
                     <span>Loan Balance</span>
                     <span>
                       Vault Status{' '}
-                      <CustomTooltip iconId="info" text="dummy" defaultStrokeColor={colors[themeSelected].textColor} />
+                      {/* <CustomTooltip iconId="info" text="dummy" defaultStrokeColor={colors[themeSelected].textColor} /> */}
                     </span>
                     <span></span>
                   </div>
