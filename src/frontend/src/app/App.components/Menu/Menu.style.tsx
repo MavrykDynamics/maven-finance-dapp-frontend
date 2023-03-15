@@ -151,11 +151,12 @@ export const MenuFooter = styled.div<{ theme: MavrykTheme }>`
   span {
     margin-bottom: 20px;
     color: ${({ theme }) => theme.valueColor};
-  }  
+  }
 
   .social-wrapper {
     display: flex;
     column-gap: 5px;
+
     a {
       width: 30px;
       height: 30px;
@@ -164,12 +165,14 @@ export const MenuFooter = styled.div<{ theme: MavrykTheme }>`
       align-items: center;
       border: 1px solid ${({ theme }) => theme.valueColor};
       border-radius: 10px;
-
+      
       svg {
-        width: 27px;
-        height: 27px;
-        fill: ${cyanColor};
+        fill: ${({ theme }) => theme.valueColor};
       }
+    }
+
+    .padding {
+      padding: 4px;
     }
   }
 

@@ -34,8 +34,12 @@ export const SocialIcons = () => (
     <a href="https://t.me/Mavryk_Finance" target="_blank" rel="noreferrer">
       <Icon id="socialTelegram" />
     </a>
-    <a href="https://medium.com/@Mavryk_Finance" target="_blank" rel="noreferrer">
+    {/* // TODO: delete after approval  */}
+    {/* <a href="https://medium.com/@Mavryk_Finance" target="_blank" rel="noreferrer">
       <Icon id="socialMedium" />
+    </a> */}
+    <a href="https://linkedin.com/company/mavryk-finance" target="_blank" rel="noreferrer" className="padding">
+      <Icon id="socialLinkedin" />
     </a>
     <a href="https://discord.com/invite/7VXPR4gkT6" target="_blank" rel="noreferrer">
       <Icon id="socialDiscord" />
