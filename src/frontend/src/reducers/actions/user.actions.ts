@@ -78,15 +78,17 @@ export const fetchUserData = async (
     )
 
     const { xtzBalance, tzbtcBalance } = await getXtzAndTzbtcUserBalance(accountPkh)
+    console.log(userInfoFromIndexer?.mavryk_user)
+    const userExists = userInfoFromIndexer?.mavryk_user.length > 0
 
     const {
-      mvk_balance = 0,
-      smvk_balance = 0,
-      m_token_accounts,
-      delegations,
-      stakes_history_data,
-      activeSatelliteRecord: [activeSatelliteRecord],
-      vesteeRecord: [vesteeRecord],
+      mvk_balance = userExists ? userInfoFromIndexer?.mavryk_user[0].mvk_balance: 0,
+      smvk_balance = userExists ? userInfoFromIndexer?.mavryk_user[0].smvk_balance: 0,
+      m_token_accounts = userExists ? userInfoFromIndexer?.mavryk_user[0].m_token_accounts: [],
+      delegations = userExists ? userInfoFromIndexer?.mavryk_user[0].delegations: [],
+      stakes_history_data = userExists ? userInfoFromIndexer?.mavryk_user[0].stakes_history_data: [],
+      activeSatelliteRecord = userExists ? [userInfoFromIndexer?.mavryk_user[0].activeSatelliteRecord]: [],
+      vesteeRecord = userExists ? [userInfoFromIndexer?.mavryk_user[0].vesteeRecord]: [],
     } = userInfoFromIndexer?.mavryk_user[0] ?? {}
 
     const userInfo: Partial<UserState> = {
