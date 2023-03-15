@@ -167,6 +167,8 @@ export const MenuFooter = styled.div<{ theme: MavrykTheme }>`
       border-radius: 10px;
       
       svg {
+        width: 30px;
+        height: 30px;
         fill: ${({ theme }) => theme.valueColor};
       }
     }
