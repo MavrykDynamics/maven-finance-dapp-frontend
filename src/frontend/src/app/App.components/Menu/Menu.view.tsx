@@ -31,14 +31,14 @@ export const SocialIcons = () => (
     <a href="https://twitter.com/Mavryk_Finance" target="_blank" rel="noreferrer">
       <Icon id="socialTwitter" />
     </a>
-    <a href="https://discord.com/invite/7VXPR4gkT6" target="_blank" rel="noreferrer">
-      <Icon id="socialDiscord" />
-    </a>
     <a href="https://t.me/Mavryk_Finance" target="_blank" rel="noreferrer">
       <Icon id="socialTelegram" />
     </a>
     <a href="https://medium.com/@Mavryk_Finance" target="_blank" rel="noreferrer">
       <Icon id="socialMedium" />
+    </a>
+    <a href="https://discord.com/invite/7VXPR4gkT6" target="_blank" rel="noreferrer">
+      <Icon id="socialDiscord" />
     </a>
     <a href="https://mavryk.finance/litepaper" target="_blank" rel="noreferrer">
       <Icon id="faqIcon" />
