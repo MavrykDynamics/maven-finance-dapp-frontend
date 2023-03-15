@@ -7,7 +7,7 @@ import {
   addAllLoanTokensToMarkets,
   adminChangeGovernancePeriod,
   ChangeAllAdminsFromGovernance,
-  createFarm
+  createFarm, createTreasuries
 } from './Admin.actions'
 import { Page } from 'styles'
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
@@ -44,6 +44,9 @@ export const Admin = () => {
   const ChangeAllAdminsFromGov = () => {
     dispatch(ChangeAllAdminsFromGovernance())
   }
+  const handleCreateAllTreasuries = () => {
+    dispatch(createTreasuries())
+  }
   return (
     <Page>
       <PageHeader page={'admin'} />
@@ -53,6 +56,7 @@ export const Admin = () => {
           handleChangeAllAdminsFromGov={ChangeAllAdminsFromGov}
           handleAddAllLoanTokensToLendBorrow={handleAddAllLoanTokensToLendBorrow}
           handleAddAllCollateralTokensToLendBorrow={handleAddAllCollateralTokensToLendBorrow}
+          handleCreateAllTreasuries={handleCreateAllTreasuries}
       />
     </Page>
   )
