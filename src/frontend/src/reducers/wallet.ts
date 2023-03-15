@@ -1,7 +1,7 @@
 import { TezosToolkit } from '@taquito/taquito'
 import { BeaconWallet } from '@taquito/beacon-wallet'
 
-import { M_Token_Account } from './../utils/generated/graphqlTypes'
+import { M_Token_Account } from '../utils/generated/graphqlTypes'
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
 import { UserDoormanRewardsData, UserFarmRewardsData, UserSatelliteRewardsData } from 'utils/TypesAndInterfaces/User'
 import { UserLendObjType } from 'utils/TypesAndInterfaces/Loans'
