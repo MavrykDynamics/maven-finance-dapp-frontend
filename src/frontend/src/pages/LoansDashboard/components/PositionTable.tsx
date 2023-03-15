@@ -65,7 +65,7 @@ export const LoansPositionTable = ({ markets }: { markets: State['loans']['loanT
             </TableHeader>
 
             <TableBody className={`treasury dashboard-loans-table`}>
-              {markets.concat(markets).map(({ lendingItem, myBorrowingList, loanTokenData, lendingAPY }) => {
+              {markets.map(({ lendingItem, myBorrowingList, loanTokenData, lendingAPY }) => {
                 const { lendValue = 0, interestEarned = 0 } = lendingItem ?? {}
                 const vaultsData = myBorrowingList.reduce<{ apr: number; loan: number; collateralRatio: number }>(
                   (acc, { apr, borrowedAmount, collateralRatio }) => {

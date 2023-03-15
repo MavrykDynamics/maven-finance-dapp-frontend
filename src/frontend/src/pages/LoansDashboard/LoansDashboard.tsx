@@ -20,6 +20,7 @@ import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { Page } from 'styles'
 import { AccountStyledStyled, LoansDashboardStyled, TotalVolumeStyled } from './LoansDashboard.styles'
 import { calcDiffBetweenTwoNumbersInPersentage } from 'utils/calcFunctions'
+import { GaugeChart } from 'app/App.components/GaugeChart/GaugeChart'
 
 export const LoansDashboard = () => {
   const dispatch = useDispatch()
@@ -117,7 +118,14 @@ export const LoansDashboard = () => {
                 </GovRightContainerTitleArea>
 
                 <div className="content">
-                  <div className="gauge-chart"></div>
+                  <div className="gauge-chart">
+                    <GaugeChart>
+                      <div className="lend-borrow-position">
+                        <CommaNumber value={0} className="amount" />
+                        <div className="status">low risk</div>
+                      </div>
+                    </GaugeChart>
+                  </div>
 
                   <div className="details">
                     <div className="column">
