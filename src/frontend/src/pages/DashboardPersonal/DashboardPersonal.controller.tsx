@@ -45,13 +45,10 @@ const DashboardPersonal = () => {
     tokensPrices: { tezos: xtzExchangeRate = 0, mvk: mvkExchangeRate = 0 },
   } = useSelector((state: State) => state.tokens)
   const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
-  const {
-    accountPkh,
-    user: { isVestee },
-  } = useSelector((state: State) => state.wallet)
   const { isLoaded: isFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
   const { isLoaded: isVestingLoaded } = useSelector((state: State) => state.vesting)
   const {
+    accountPkh,
     user: {
       myMvkTokenBalance,
       mySMvkTokenBalance,
@@ -59,6 +56,7 @@ const DashboardPersonal = () => {
       mytzBTCTokenBalance,
       myLendingRewardsAmount,
       isSatellite,
+      isVestee,
       myDoormanRewardsData: { myAvailableDoormanRewards },
       myFarmRewardsData,
       mySatelliteRewardsData: { myAvailableSatelliteRewards },

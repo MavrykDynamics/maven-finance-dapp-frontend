@@ -45,6 +45,12 @@ export const mainNavigationLinks: MainNavigationRoute[] = [
     icon: 'coin-loan',
     subPages: [
       {
+        id: 57594,
+        subTitle: 'Dashboard',
+        subPath: `loans/dashboard`,
+        routeSubPath: '/loans/dashboard',
+      },
+      {
         id: 57792,
         subTitle: 'Markets',
         subPath: `loans`,
