@@ -64,6 +64,7 @@ export const LoansDashboard = () => {
     chartsData: { totalBorrowed, totalLended, lendingChartData, borrowingChartData },
   } = useSelector((state: State) => state.loans)
   const {
+    accountPkh,
     user: { myLendingRewardsAmount, userLoansData },
   } = useSelector((state: State) => state.wallet)
 
@@ -73,7 +74,7 @@ export const LoansDashboard = () => {
         await dispatch(getLoansStorage())
       }
     } catch (e) {}
-  }, [])
+  }, [accountPkh])
 
   // Calcuating total lended and borrowed by user
   const { totalUserLended, totalUserBorrowed } = useMemo(() => {
@@ -119,8 +120,8 @@ export const LoansDashboard = () => {
 
     return {
       ...GAUGE_STATE_RISK_PART,
-      currentValue: averageCollateralRatio,
-      ...getVaultSimpleStatus(averageCollateralRatio),
+      currentValue: isNaN(averageCollateralRatio) ? 0 : averageCollateralRatio,
+      ...getVaultSimpleStatus(isNaN(averageCollateralRatio) ? 0 : averageCollateralRatio),
     }
   }, [loanTokens])
 
@@ -139,7 +140,7 @@ export const LoansDashboard = () => {
 
     const averageAPY = apySum / apyMarkets
 
-    return { ...GAUGE_STATE_APY_PART, currentValue: averageAPY }
+    return { ...GAUGE_STATE_APY_PART, currentValue: isNaN(averageAPY) ? 0 : averageAPY }
   }, [loanTokens])
 
   // Default data for gauge chart will be for vault risk

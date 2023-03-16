@@ -52,8 +52,8 @@ export const LendBorrowPosition = ({
 
     return {
       ...GAUGE_STATE_RISK_PART,
-      currentValue: averageCollateralRatio,
-      ...getVaultSimpleStatus(averageCollateralRatio),
+      currentValue: isNaN(averageCollateralRatio) ? 0 : averageCollateralRatio,
+      ...getVaultSimpleStatus(isNaN(averageCollateralRatio) ? 0 : averageCollateralRatio),
     }
   }, [markets])
 
@@ -72,7 +72,7 @@ export const LendBorrowPosition = ({
 
     const averageAPY = apySum / apyMarkets
 
-    return { ...GAUGE_STATE_APY_PART, currentValue: averageAPY }
+    return { ...GAUGE_STATE_APY_PART, currentValue: isNaN(averageAPY) ? 0 : averageAPY }
   }, [markets])
 
   // Default data for gauge chart will be for vault risk
