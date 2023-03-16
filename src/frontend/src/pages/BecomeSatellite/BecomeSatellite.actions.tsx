@@ -30,8 +30,8 @@ export const registerAsSatellite =
           form.image,
           form.website,
           form.fee * 100,
-          form.peerId,
           form.publicKey,
+          form.peerId,
         )
         .send()
 
@@ -76,8 +76,8 @@ export const updateSatelliteRecord =
           form.image,
           form.website,
           form.fee * 100,
-          form.peerId,
           form.publicKey,
+          form.peerId,
         )
         .send()
 
