@@ -1,6 +1,6 @@
 import { InputStatusType, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { State } from 'reducers'
-import { isNotAllWhitespace, isValidLength } from 'utils/validatorFunctions'
+import { isNotAllWhitespace, isValidLength, validatePublicKey } from 'utils/validatorFunctions'
 
 export const getFormTextBasedOnUserRole = (isUserSatellite: boolean) => ({
   pageTitle: isUserSatellite ? 'Edit Satellite Profile' : 'Become a Satellite',
@@ -8,6 +8,9 @@ export const getFormTextBasedOnUserRole = (isUserSatellite: boolean) => ({
   websiteInputLabel: isUserSatellite ? '3 - Edit your website' : '3 - Enter your website',
   descrInputLabel: isUserSatellite ? '4 - Edit description' : '4 - Enter description',
   feeInputLabel: isUserSatellite ? '5 - Edit your fee (%)' : '5 - Enter your fee (%)',
+  registerAsOracle: isUserSatellite ? '7 - Register as Oracle' : '7 - Register as Oracle',
+  oraclePeerId: isUserSatellite ? '7a - Oracle Peer ID' : '7a - Oracle Peer ID',
+  oraclePublicKey: isUserSatellite ? '7b - Oracle Public Key' : '7b - Oracle Public Key',
 })
 
 export const getInputValidationStatus = (
@@ -36,6 +39,10 @@ export const getInputValidationStatus = (
       return Number(value) >= 0 && Number(value) <= 100 ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
     case 'image':
       return value ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
+    case 'oraclePeerId':
+      return value ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
+    case 'oraclePublicKey':
+      return validatePublicKey(value) ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
   }
 
   return ''
@@ -52,6 +59,8 @@ export type BecomeSatelliteFormStateType = {
   website: FormFieldType
   satelliteFee: FormFieldType
   image: FormFieldType
+  oraclePeerId: FormFieldType
+  oraclePublicKey: FormFieldType
 }
 
 const DEFAULT_FORM_FIELD_VALUE: FormFieldType = {
@@ -68,4 +77,6 @@ export const DEFAULT_BECOME_SATELLITE_FORM: BecomeSatelliteFormStateType = {
     status: '',
   },
   image: DEFAULT_FORM_FIELD_VALUE,
+  oraclePeerId: DEFAULT_FORM_FIELD_VALUE,
+  oraclePublicKey: DEFAULT_FORM_FIELD_VALUE,
 }

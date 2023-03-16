@@ -25,7 +25,7 @@ export const PRODUCTS_LINKS = [
     disabled: false,
     path: '/liquidity-baking',
   },
-  { name: 'Mavryk Bakery', href: 'https://mavryk.finance/bakery', disabled: false },
+  { name: 'Mavryk Bakeries', href: 'https://mavryk.finance/bakery', disabled: false },
 ]
 
 export const ABOUT_LINKS = [
