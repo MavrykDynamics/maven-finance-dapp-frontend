@@ -82,11 +82,28 @@ export const BecomeSatellite = () => {
   const [form, setForm] = useState(DEFAULT_BECOME_SATELLITE_FORM)
   const [isChecked, setIsChecked] = useState(false)
   const pageText = getFormTextBasedOnUserRole(Boolean(usersSatelliteProfile))
+  const isUserOracle = Boolean(usersSatelliteProfile?.peerId || usersSatelliteProfile?.publicKey)
 
   // Disable update button when no user connected, not enoght sMVK to become a satellite, not full valid form, or user is satellite, but hasn't changed nothing
   const isUpdateButtonDisabled = useMemo(() => {
-    const formIsValid = Object.values(form).every(({ status }) => status === INPUT_STATUS_SUCCESS)
-    const hasChangedValues = Object.entries(form).some(([key, { text }]) => {
+    // Remove oraclePeerId and oraclePublicKey fields from validation if checkbox 'Register as Oracle" not chosen
+    const formForValidation = isChecked
+      ? form
+      : Object.fromEntries(
+          Object.entries(form).filter((item) => {
+            switch (item[0]) {
+              case 'oraclePeerId':
+                return false
+              case 'oraclePublicKey':
+                return false
+              default:
+                return true
+            }
+          }),
+        )
+
+    const formIsValid = Object.values(formForValidation).every(({ status }) => status === INPUT_STATUS_SUCCESS)
+    const hasChangedValues = Object.entries(formForValidation).some(([key, { text }]) => {
       const existingSatelliteField = usersSatelliteProfile?.[key as keyof SatelliteRecordType]
 
       if (existingSatelliteField) {
@@ -97,7 +114,7 @@ export const BecomeSatellite = () => {
     })
 
     return !balanceOverMinStakedMvk || !accountPkh || !formIsValid || !hasChangedValues
-  }, [accountPkh, balanceOverMinStakedMvk, form, usersSatelliteProfile])
+  }, [accountPkh, balanceOverMinStakedMvk, form, isChecked, usersSatelliteProfile])
 
   // Set satellite data if user is satellite
   useEffect(() => {
@@ -108,12 +125,23 @@ export const BecomeSatellite = () => {
         website: { text: usersSatelliteProfile.website, status: INPUT_STATUS_SUCCESS },
         satelliteFee: { text: String(usersSatelliteProfile.satelliteFee + '%'), status: INPUT_STATUS_SUCCESS },
         image: { text: usersSatelliteProfile.image, status: INPUT_STATUS_SUCCESS },
-        // TODO: add texts and statuses for oracles
-        oraclePeerId: { text: '', status: false ? INPUT_STATUS_SUCCESS : '' },
-        oraclePublicKey: { text: '', status: false ? INPUT_STATUS_SUCCESS : '' },
+        oraclePeerId: {
+          text: usersSatelliteProfile.peerId,
+          status: usersSatelliteProfile.peerId ? INPUT_STATUS_SUCCESS : '',
+        },
+        oraclePublicKey: {
+          text: usersSatelliteProfile.publicKey,
+          status: usersSatelliteProfile.publicKey ? INPUT_STATUS_SUCCESS : '',
+        },
       })
     }
   }, [usersSatelliteProfile])
+
+  // Set checkbox === true if satellite is oracle
+  useEffect(() => {
+    if (isChecked === isUserOracle) return
+    setIsChecked(isUserOracle)
+  }, [isUserOracle])
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | { target: { name: string; value: string } },
@@ -152,8 +180,7 @@ export const BecomeSatellite = () => {
   const handleUnregisterSatellite = () => dispatch(unregisterAsSatellite())
 
   const handleRegisterOrUpdateSatellite = () => {
-    // TODO: add fields for oracle id and key
-    const parsedForm: RegisterAsSatelliteForm = {
+    const mainRequestForm: RegisterAsSatelliteForm = {
       name: form.name.text,
       description: form.description.text,
       website: form.website.text,
@@ -161,9 +188,14 @@ export const BecomeSatellite = () => {
       image: form.image.text,
     }
 
+    // Remove peerId and publicKey fields from request if checkbox 'Register as Oracle" not chosen
+    const requestData = isChecked
+      ? { ...mainRequestForm, peerId: form.oraclePeerId.text, publicKey: form.oraclePublicKey.text }
+      : mainRequestForm
+
     usersSatelliteProfile && usersSatelliteProfile.currentlyRegistered
-      ? dispatch(updateSatelliteRecord(parsedForm))
-      : dispatch(registerAsSatellite(parsedForm))
+      ? dispatch(updateSatelliteRecord(requestData))
+      : dispatch(registerAsSatellite(requestData))
   }
 
   return (
@@ -302,7 +334,7 @@ export const BecomeSatellite = () => {
                 <BecomeSatelliteOracleText>
                   Text here that shows if they are going to register as oracle. Will have some explainer about the
                   process of setting up to become and oracle and a link to the Gitbook, please read more on Gitbook{' '}
-                  <a href="/" target="_blank" rel="noreferrer">
+                  <a href="https://mavryk.finance/litepaper#the-decentralized-oracle" target="_blank" rel="noreferrer">
                     here
                   </a>
                 </BecomeSatelliteOracleText>
@@ -319,6 +351,7 @@ export const BecomeSatellite = () => {
                         placeholder: 'Enter Oracle Peer ID',
                         name: 'oraclePeerId',
                         onChange: handleChange,
+                        required: true,
                       }}
                     />
 
@@ -332,6 +365,7 @@ export const BecomeSatellite = () => {
                         placeholder: 'Enter Public Key',
                         name: 'oraclePublicKey',
                         onChange: handleChange,
+                        required: true,
                       }}
                     />
                   </div>

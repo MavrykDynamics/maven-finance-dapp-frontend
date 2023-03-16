@@ -72,6 +72,8 @@ export type RegisterAsSatelliteForm = {
   website: string
   fee: number
   image: string
+  peerId?: string
+  publicKey?: string
 }
 
 export type ValidRegisterAsSatelliteForm = {

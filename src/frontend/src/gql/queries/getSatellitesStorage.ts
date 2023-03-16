@@ -9,6 +9,8 @@ export const SATELLITES_STORAGE_QUERY = `
       website
       user_id
       currently_registered
+      peer_id
+      public_key
 
       delegations {
         user {
