@@ -545,13 +545,13 @@ export const TableCell = styled.td<{
       }
     }
 
-    &.lending {
+    &.lending:not(.one-item) {
       .cell-content {
         grid-template-columns: 1.1fr 1.3fr 0.9fr 0.4fr;
       }
     }
 
-    &.borrowing:not(.create-vault-only) {
+    &.borrowing:not(.one-item) {
       .cell-content {
         grid-template-columns: 1.1fr 1.1fr 1.1fr 0.4fr;
 
@@ -571,7 +571,7 @@ export const TableCell = styled.td<{
       }
     }
 
-    &.create-vault-only {
+    &.one-item {
       .cell-content {
         padding: 10px 20px;
         justify-content: center;

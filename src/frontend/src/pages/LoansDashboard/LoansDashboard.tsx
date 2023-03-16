@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
 
-import LoansPopupsProvider from 'pages/Loans/Components/Modals/LoansModals.provider'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { State } from 'reducers'
 
@@ -24,7 +23,7 @@ import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { Page } from 'styles'
 import { AccountStyledStyled, LoansDashboardStyled, TotalVolumeStyled } from './LoansDashboard.styles'
 
-type GaugeChartStateType = {
+export type GaugeChartStateType = {
   maxValue: number
   minValue: number
   currentValue: number
@@ -33,13 +32,13 @@ type GaugeChartStateType = {
   status: string | null
 }
 
-const GAUGE_STATE_RISK_PART = {
+export const GAUGE_STATE_RISK_PART = {
   maxValue: 250,
   minValue: 100,
   isAPY: false,
 }
 
-const GAUGE_STATE_APY_PART = {
+export const GAUGE_STATE_APY_PART = {
   maxValue: 50,
   minValue: 0,
   isAPY: true,
@@ -162,7 +161,7 @@ export const LoansDashboard = () => {
 
   return (
     <Page>
-      <PageHeader page={'dashboard'} avatar={'/images/default-avatar.png'} />
+      <PageHeader page={'loansDashboard'} avatar={'/images/default-avatar.png'} />
 
       <LoansDashboardStyled>
         {isLoading ? (
@@ -233,7 +232,7 @@ export const LoansDashboard = () => {
                       </div>
                     </GaugeChart>
                   </div>
-                  ''
+
                   <div className="details">
                     <div className="column">
                       <div className="label">Total Lend</div>
@@ -254,16 +253,14 @@ export const LoansDashboard = () => {
 
             <LBHInfoBlock className="position">
               <GovRightContainerTitleArea>
-                <h2>Lend/Borrow Position</h2>
+                <h2>Your Positions</h2>
               </GovRightContainerTitleArea>
               <div className="view-markets">
                 <Link to={'/loans'}>
                   <Button kind={BUTTON_PRIMARY}>View markets</Button>
                 </Link>
               </div>
-              <LoansPopupsProvider>
-                <LoansPositionTable markets={loanTokens} />
-              </LoansPopupsProvider>
+              <LoansPositionTable markets={loanTokens} />
             </LBHInfoBlock>
           </>
         )}

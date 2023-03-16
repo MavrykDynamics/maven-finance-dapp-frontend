@@ -35,7 +35,7 @@ import { getVaultSimpleStatus } from '../helpers/position.helpers'
 
 export const LoansPositionTable = ({ markets }: { markets: State['loans']['loanTokens'] }) => {
   const { themeSelected } = useSelector((state: State) => state.preferences)
-  const { openCreateVaultPopup } = useContext(loansPopupsContext)
+  const { openCreateVaultPopup, openAddLendingAssetPopup } = useContext(loansPopupsContext)
 
   const { search, pathname } = useLocation()
   const currentPage = getPageNumber(search, LOANS_POSITION_TABLE)
@@ -105,22 +105,39 @@ export const LoansPositionTable = ({ markets }: { markets: State['loans']['loanT
                       </div>
                     </TableCell>
 
-                    <TableCell width="43%" className="position-multy-cell lending">
+                    <TableCell width="43%" className={`position-multy-cell lending ${!lendingItem ? 'one-item' : ''}`}>
                       <div className="cell-content" style={{ marginRight: '20px' }}>
-                        <CommaNumber value={lendingAPY} endingText="%" />
-                        <CommaNumber value={lendValue} />
-                        <CommaNumber value={interestEarned} />
-                        <Link to={`/loans/${loanTokenData.symbol}/${LEND_TAB_ID}`}>
-                          <Button kind={BUTTON_SIMPLE}>View</Button>
-                        </Link>
+                        {lendingItem ? (
+                          <>
+                            <CommaNumber value={lendingAPY} endingText="%" />
+                            <CommaNumber value={lendValue} />
+                            <CommaNumber value={interestEarned} />
+                            <Link to={`/loans/${loanTokenData.symbol}/${LEND_TAB_ID}`}>
+                              <Button kind={BUTTON_SIMPLE}>View</Button>
+                            </Link>
+                          </>
+                        ) : (
+                          <Link to={`/loans/${loanTokenData.symbol}/${LEND_TAB_ID}`}>
+                            <Button
+                              kind={BUTTON_SIMPLE}
+                              onClick={() => {
+                                openAddLendingAssetPopup({
+                                  mBalance: 0,
+                                  lendingAPY: lendingAPY,
+                                  ...loanTokenData,
+                                })
+                              }}
+                            >
+                              Supply {loanTokenData.symbol} and start Earning
+                            </Button>
+                          </Link>
+                        )}
                       </div>
                     </TableCell>
 
                     <TableCell
                       width="41%"
-                      className={`position-multy-cell borrowing ${
-                        myBorrowingList.length === 0 ? 'create-vault-only' : ''
-                      }`}
+                      className={`position-multy-cell borrowing ${myBorrowingList.length === 0 ? 'one-item' : ''}`}
                     >
                       <div className="cell-content">
                         {myBorrowingList.length ? (
@@ -133,16 +150,18 @@ export const LoansPositionTable = ({ markets }: { markets: State['loans']['loanT
                             </Link>
                           </>
                         ) : (
-                          <Button
-                            kind={BUTTON_SIMPLE}
-                            onClick={() =>
-                              openCreateVaultPopup({
-                                currentMarketAsset: loanTokenData.symbol,
-                              })
-                            }
-                          >
-                            Create a vault and start borrowing
-                          </Button>
+                          <Link to={`/loans/${loanTokenData.symbol}/${BORROW_TAB_ID}`}>
+                            <Button
+                              kind={BUTTON_SIMPLE}
+                              onClick={() =>
+                                openCreateVaultPopup({
+                                  currentMarketAsset: loanTokenData.symbol,
+                                })
+                              }
+                            >
+                              Create a vault and start borrowing
+                            </Button>
+                          </Link>
                         )}
                       </div>
                     </TableCell>
