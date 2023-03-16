@@ -46,7 +46,8 @@ export const LoansDashboardStyled = styled.div`
 
   .position {
     height: fit-content;
-    padding-bottom: 5px;
+    padding-right: 30px;
+    padding-bottom: 15px;
   }
 `
 
@@ -110,6 +111,4 @@ export const PositionTableStyled = styled.div<{ theme: MavrykTheme }>`
       margin-top: 10px;
     }
   }
-
-  position: relative;
 `

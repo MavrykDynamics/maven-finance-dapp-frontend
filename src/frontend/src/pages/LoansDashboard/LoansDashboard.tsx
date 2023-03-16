@@ -1,11 +1,14 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
 
+import LoansPopupsProvider from 'pages/Loans/Components/Modals/LoansModals.provider'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { State } from 'reducers'
 
 import { BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { calcDiffBetweenTwoNumbersInPersentage } from 'utils/calcFunctions'
+import { getVaultSimpleStatus } from './helpers/position.helpers'
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 
 import Button from 'app/App.components/Button/NewButton'
@@ -13,14 +16,45 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
 import { LoansPositionTable } from './components/PositionTable'
+import { GaugeChart } from 'app/App.components/GaugeChart/GaugeChart'
 
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { LBHInfoBlock } from 'pages/DashboardPersonal/DashboardPersonalComponents/DashboardPersonalComponents.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { Page } from 'styles'
 import { AccountStyledStyled, LoansDashboardStyled, TotalVolumeStyled } from './LoansDashboard.styles'
-import { calcDiffBetweenTwoNumbersInPersentage } from 'utils/calcFunctions'
-import { GaugeChart } from 'app/App.components/GaugeChart/GaugeChart'
+
+type GaugeChartStateType = {
+  maxValue: number
+  minValue: number
+  currentValue: number
+  text: string
+  isAPY: boolean
+  status: string | null
+}
+
+const GAUGE_STATE_RISK_PART = {
+  maxValue: 250,
+  minValue: 100,
+  isAPY: false,
+}
+
+const GAUGE_STATE_APY_PART = {
+  maxValue: 50,
+  minValue: 0,
+  isAPY: true,
+  text: 'Net APY',
+  status: null,
+}
+
+/**
+ * @SAM
+ * to manually change gauge chart values you need to play with maxValue & minValue, for apy and risk charts, they are declared above
+ * @GAUGE_STATE_APY_PART & @GAUGE_STATE_RISK_PART respectively,
+ * and to test this min & max you need to manually set @currentValue inside return objects in
+ * @const apyGaugeData for apy chart
+ * @const vaultRiskGaugeData for vault risk chart
+ */
 
 export const LoansDashboard = () => {
   const dispatch = useDispatch()
@@ -66,6 +100,65 @@ export const LoansDashboard = () => {
 
     return { lendingPersentDiff, borrowingPersentDiff }
   }, [borrowingChartData, lendingChartData, totalBorrowed, totalLended])
+
+  // calc averageCollateralRatio for gauge chart
+  const vaultRiskGaugeData = useMemo((): GaugeChartStateType => {
+    const { ratioSum, vaultsAmount } = loanTokens.reduce<{
+      ratioSum: number
+      vaultsAmount: number
+    }>(
+      (acc, { myBorrowingList }) => {
+        acc.ratioSum += myBorrowingList.reduce(
+          (acc, { collateralRatio }) => (acc += Math.max(0, Math.min(250, collateralRatio))),
+          0,
+        )
+        acc.vaultsAmount += myBorrowingList.length
+        return acc
+      },
+      { ratioSum: 0, vaultsAmount: 0 },
+    )
+
+    const averageCollateralRatio = ratioSum / vaultsAmount
+
+    return {
+      ...GAUGE_STATE_RISK_PART,
+      currentValue: averageCollateralRatio,
+      ...getVaultSimpleStatus(averageCollateralRatio),
+    }
+  }, [loanTokens])
+
+  // calc average apy for user's markets for gauge chart
+  const apyGaugeData = useMemo((): GaugeChartStateType => {
+    const { apySum, apyMarkets } = loanTokens.reduce<{ apySum: number; apyMarkets: number }>(
+      (acc, { lendingAPY, lendingItem }) => {
+        if (lendingItem) {
+          acc.apySum += lendingAPY
+          acc.apyMarkets += 1
+        }
+        return acc
+      },
+      { apySum: 0, apyMarkets: 0 },
+    )
+
+    const averageAPY = apySum / apyMarkets
+
+    return { ...GAUGE_STATE_APY_PART, currentValue: averageAPY }
+  }, [loanTokens])
+
+  // Default data for gauge chart will be for vault risk
+  const [gaugeData, setGaugeData] = useState<GaugeChartStateType>({
+    ...GAUGE_STATE_RISK_PART,
+    currentValue: 0,
+    text: '',
+    status: null,
+  })
+
+  // Set gauge chart data for vault risk
+  useEffect(() => {
+    if (!gaugeData.isAPY) {
+      setGaugeData(vaultRiskGaugeData)
+    }
+  }, [vaultRiskGaugeData])
 
   return (
     <Page>
@@ -118,15 +211,29 @@ export const LoansDashboard = () => {
                 </GovRightContainerTitleArea>
 
                 <div className="content">
-                  <div className="gauge-chart">
-                    <GaugeChart>
-                      <div className="lend-borrow-position">
-                        <CommaNumber value={0} className="amount" />
-                        <div className="status">low risk</div>
+                  <div
+                    className="gauge-chart"
+                    onMouseEnter={() => setGaugeData(apyGaugeData)}
+                    onMouseLeave={() => setGaugeData(vaultRiskGaugeData)}
+                  >
+                    <GaugeChart
+                      maxValue={gaugeData.maxValue}
+                      minValue={gaugeData.minValue}
+                      currentValue={gaugeData.currentValue}
+                      isReversed
+                    >
+                      <div className={`lend-borrow-position ${gaugeData.status ?? ''}`}>
+                        <CommaNumber
+                          value={gaugeData.currentValue}
+                          className="amount"
+                          endingText={gaugeData.isAPY ? '%' : ''}
+                          showDecimal={false}
+                        />
+                        <div className="status">{gaugeData.text}</div>
                       </div>
                     </GaugeChart>
                   </div>
-
+                  ''
                   <div className="details">
                     <div className="column">
                       <div className="label">Total Lend</div>
@@ -154,8 +261,9 @@ export const LoansDashboard = () => {
                   <Button kind={BUTTON_PRIMARY}>View markets</Button>
                 </Link>
               </div>
-
-              <LoansPositionTable markets={loanTokens} />
+              <LoansPopupsProvider>
+                <LoansPositionTable markets={loanTokens} />
+              </LoansPopupsProvider>
             </LBHInfoBlock>
           </>
         )}

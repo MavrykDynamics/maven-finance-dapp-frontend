@@ -1,13 +1,23 @@
-import { Link } from 'react-router-dom'
+import { useContext, useMemo } from 'react'
+import { Link, useLocation } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 import { State } from 'reducers'
 
 import { BORROW_TAB_ID, LEND_TAB_ID } from 'pages/Loans/Loans.const'
+import colors from 'styles/colors'
+import {
+  calculateSlicePositions,
+  getPageNumber,
+  LOANS_POSITION_TABLE,
+  PAGINATION_SIDE_CENTER,
+} from 'app/App.components/Pagination/pagination.consts'
 import { BUTTON_SIMPLE } from 'app/App.components/Button/Button.constants'
 
 import Button from 'app/App.components/Button/NewButton'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import Icon from 'app/App.components/Icon/Icon.view'
+import Pagination from 'app/App.components/Pagination/Pagination.view'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
 import {
@@ -17,21 +27,28 @@ import {
   TableHeader,
   TableHeaderCell,
   TableRow,
-  TableScrollable,
 } from 'app/App.components/Table/Table.style'
 import { Plug } from 'app/App.components/Chart/Chart.style'
 import { PositionTableStyled } from '../LoansDashboard.styles'
-import { useSelector } from 'react-redux'
-import colors from 'styles/colors'
+import { loansPopupsContext } from 'pages/Loans/Components/Modals/LoansModals.provider'
+import { getVaultSimpleStatus } from '../helpers/position.helpers'
 
 export const LoansPositionTable = ({ markets }: { markets: State['loans']['loanTokens'] }) => {
   const { themeSelected } = useSelector((state: State) => state.preferences)
+  const { openCreateVaultPopup } = useContext(loansPopupsContext)
+
+  const { search, pathname } = useLocation()
+  const currentPage = getPageNumber(search, LOANS_POSITION_TABLE)
+  const paginatedTableRows = useMemo(() => {
+    const [from, to] = calculateSlicePositions(currentPage, LOANS_POSITION_TABLE)
+    return markets?.slice(from, to)
+  }, [currentPage, markets])
 
   return (
     <PositionTableStyled>
       {markets.length ? (
-        <TableScrollable bodyHeight={210} className="treasury-table loans-position dashboard-loans-table scroll-block">
-          <Table>
+        <>
+          <Table className="treasury-table">
             <TableHeader className="treasury">
               <TableRow>
                 <TableHeaderCell>Asset</TableHeaderCell>
@@ -39,12 +56,12 @@ export const LoansPositionTable = ({ markets }: { markets: State['loans']['loanT
                   <div className="cell-content" style={{ marginRight: '20px' }}>
                     <span>
                       Lend APY{' '}
-                      {/* <CustomTooltip iconId="info" text="dummy" defaultStrokeColor={colors[themeSelected].textColor} /> */}
+                      <CustomTooltip iconId="info" text="dummy" defaultStrokeColor={colors[themeSelected].textColor} />
                     </span>
                     <span>Total Supplied</span>
                     <span>
                       Yield{' '}
-                      {/* <CustomTooltip iconId="info" text="dummy" defaultStrokeColor={colors[themeSelected].textColor} /> */}
+                      <CustomTooltip iconId="info" text="dummy" defaultStrokeColor={colors[themeSelected].textColor} />
                     </span>
                     <span></span>
                   </div>
@@ -56,7 +73,7 @@ export const LoansPositionTable = ({ markets }: { markets: State['loans']['loanT
                     <span>Loan Balance</span>
                     <span>
                       Vault Status{' '}
-                      {/* <CustomTooltip iconId="info" text="dummy" defaultStrokeColor={colors[themeSelected].textColor} /> */}
+                      <CustomTooltip iconId="info" text="dummy" defaultStrokeColor={colors[themeSelected].textColor} />
                     </span>
                     <span></span>
                   </div>
@@ -65,7 +82,7 @@ export const LoansPositionTable = ({ markets }: { markets: State['loans']['loanT
             </TableHeader>
 
             <TableBody className={`treasury dashboard-loans-table`}>
-              {markets.map(({ lendingItem, myBorrowingList, loanTokenData, lendingAPY }) => {
+              {paginatedTableRows.map(({ lendingItem, myBorrowingList, loanTokenData, lendingAPY }) => {
                 const { lendValue = 0, interestEarned = 0 } = lendingItem ?? {}
                 const vaultsData = myBorrowingList.reduce<{ apr: number; loan: number; collateralRatio: number }>(
                   (acc, { apr, borrowedAmount, collateralRatio }) => {
@@ -77,14 +94,8 @@ export const LoansPositionTable = ({ markets }: { markets: State['loans']['loanT
                   { apr: 0, loan: 0, collateralRatio: 0 },
                 )
 
-                const averageVaultsCollateralRatio = vaultsData.collateralRatio / myBorrowingList.length
+                const averageVaultStatus = getVaultSimpleStatus(vaultsData.collateralRatio / myBorrowingList.length)
 
-                const averageVaultStatus =
-                  averageVaultsCollateralRatio >= 200
-                    ? { text: 'Low Risk', status: 'low' }
-                    : averageVaultsCollateralRatio <= 150
-                    ? { text: 'High Risk', status: 'hight' }
-                    : { text: 'At Risk', status: 'risk' }
                 return (
                   <TableRow rowHeight={60} borderColor="dataColor" className="add-hover" key={loanTokenData.symbol}>
                     <TableCell width="15%">
@@ -122,7 +133,16 @@ export const LoansPositionTable = ({ markets }: { markets: State['loans']['loanT
                             </Link>
                           </>
                         ) : (
-                          <Button kind={BUTTON_SIMPLE}>Create a vault and start borrowing</Button>
+                          <Button
+                            kind={BUTTON_SIMPLE}
+                            onClick={() =>
+                              openCreateVaultPopup({
+                                currentMarketAsset: loanTokenData.symbol,
+                              })
+                            }
+                          >
+                            Create a vault and start borrowing
+                          </Button>
                         )}
                       </div>
                     </TableCell>
@@ -131,7 +151,9 @@ export const LoansPositionTable = ({ markets }: { markets: State['loans']['loanT
               })}
             </TableBody>
           </Table>
-        </TableScrollable>
+
+          <Pagination itemsCount={markets?.length ?? 0} listName={LOANS_POSITION_TABLE} side={PAGINATION_SIDE_CENTER} />
+        </>
       ) : (
         <Plug className={'no-markets-table-data'}>
           <div>

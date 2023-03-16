@@ -90,7 +90,7 @@ export type ChangeBakerPopupDataType = {
 
 export type CreateVaultPopupDataType = {
   currentMarketAsset: string
-  setCreatedVaultAddress: (address: string) => void
+  setCreatedVaultAddress?: (address: string) => void
 } | null
 
 export type LiquidateVaultDataType = VaultType | null

@@ -75,6 +75,24 @@ export const ValueWrapper = styled.div<{ theme: MavrykTheme }>`
       font-weight: 600;
       font-size: 10px;
     }
+
+    &.low {
+      > * {
+        color: ${({ theme }) => theme.upColor};
+      }
+    }
+
+    &.hight {
+      > * {
+        color: ${({ theme }) => theme.downColor};
+      }
+    }
+
+    &.risk {
+      > * {
+        color: ${({ theme }) => theme.warningColor};
+      }
+    }
   }
 
   position: absolute;
