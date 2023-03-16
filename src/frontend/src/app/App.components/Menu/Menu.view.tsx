@@ -7,6 +7,7 @@ import { State } from 'reducers'
 import Icon from '../Icon/Icon.view'
 import { MenuTopBar } from './MenuTopBar/MenuTopBar.controller'
 import { NavigationLink } from './NavigationLink/NavigationLink.controller'
+import NewButton from '../Button/NewButton'
 
 // types
 import { MainNavigationRoute } from '../../../utils/TypesAndInterfaces/Navigation'
@@ -18,6 +19,7 @@ import { MenuFooter, MenuGrid, MenuSidebarContent, MenuSidebarStyled } from './M
 import { toggleSidebarCollapsing } from './Menu.actions'
 import { mainNavigationLinks } from './NavigationLink/MainNavigationLinks'
 import { checkIfLinkSelected } from './NavigationLink/NavigationLink.constants'
+import { BUTTON_ROUND, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
 type MenuViewProps = {
   accountPkh?: string
@@ -29,14 +31,18 @@ export const SocialIcons = () => (
     <a href="https://twitter.com/Mavryk_Finance" target="_blank" rel="noreferrer">
       <Icon id="socialTwitter" />
     </a>
-    <a href="https://discord.com/invite/7VXPR4gkT6" target="_blank" rel="noreferrer">
-      <Icon id="socialDiscord" />
-    </a>
     <a href="https://t.me/Mavryk_Finance" target="_blank" rel="noreferrer">
       <Icon id="socialTelegram" />
     </a>
-    <a href="https://medium.com/@Mavryk_Finance" target="_blank" rel="noreferrer">
+    {/* // TODO: delete after approval  */}
+    {/* <a href="https://medium.com/@Mavryk_Finance" target="_blank" rel="noreferrer">
       <Icon id="socialMedium" />
+    </a> */}
+    <a href="https://linkedin.com/company/mavryk-finance" target="_blank" rel="noreferrer" className="padding">
+      <Icon id="socialLinkedin" />
+    </a>
+    <a href="https://discord.com/invite/7VXPR4gkT6" target="_blank" rel="noreferrer">
+      <Icon id="socialDiscord" />
     </a>
     <a href="https://mavryk.finance/litepaper" target="_blank" rel="noreferrer">
       <Icon id="faqIcon" />
@@ -107,8 +113,12 @@ export const MenuView = ({ accountPkh, openChangeNodePopupHandler }: MenuViewPro
             })}
           </MenuGrid>
           <MenuFooter className={`${sidebarOpened ? '' : 'menu-collapsed'}`}>
+            <NewButton kind={BUTTON_SECONDARY} form={sidebarOpened ? BUTTON_WIDE : BUTTON_ROUND} isThin>
+              {sidebarOpened ? 'Submit Feedback' : 'F'}
+            </NewButton>
+
             <SocialIcons />
-            MAVRYK App <p>v1.0</p>
+            <span>MAVRYK App v1.0</span>
           </MenuFooter>
         </MenuSidebarContent>
       </MenuSidebarStyled>

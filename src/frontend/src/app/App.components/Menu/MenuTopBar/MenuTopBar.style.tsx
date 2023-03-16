@@ -42,12 +42,11 @@ export const MenuTopStyled = styled.div<{ theme: MavrykTheme }>`
         width: 28px;
         height: 28px;
         transition: 0.35s all;
+        fill: ${({ theme }) => theme.valueColor};
       }
 
       &:hover {
-        svg {
-          stroke: ${cyanColor};
-        }
+        opacity: 0.8;
       }
     }
   }
@@ -91,6 +90,7 @@ export const MenuTopStyled = styled.div<{ theme: MavrykTheme }>`
         width: 28px;
         height: 28px;
         transition: 0.35s all;
+        fill: ${({ theme }) => theme.valueColor};
       }
 
       &:hover {

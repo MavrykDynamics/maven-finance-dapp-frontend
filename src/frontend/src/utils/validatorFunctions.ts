@@ -1,5 +1,5 @@
 import { TezosToolkit } from '@taquito/taquito'
-import { validateAddress } from '@taquito/utils';
+import { validateAddress, validatePublicKey as taquitoValidatePublicKey } from '@taquito/utils'
 import { showToaster } from '../app/App.components/Toaster/Toaster.actions'
 import { ERROR } from '../app/App.components/Toaster/Toaster.constants'
 import { AllValidFormTypes } from './TypesAndInterfaces/Forms'
@@ -99,37 +99,41 @@ export const isValidRPCNode = (input: string): boolean => {
   } catch {
     result = false
   }
-  
-  return result;
+
+  return result
 }
 
-export const validateFormField = (setFormInputStatus: (value: React.SetStateAction<Record<string, InputStatusType>>) => void) => (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>, maxLength?: number) => {
-  setFormInputStatus((prev) => {
-    const { value, name } = e.target
+export const validateFormField =
+  (setFormInputStatus: (value: React.SetStateAction<Record<string, InputStatusType>>) => void) =>
+  (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>, maxLength?: number) => {
+    setFormInputStatus((prev) => {
+      const { value, name } = e.target
 
-    // if maxLength is missing, we check only for an empty field
-    const checkMaxLengthField = maxLength ? isValidLength(value, 1, maxLength) ? 'success' : 'error' : 'success'
-    const checkEmptyField = isNotAllWhitespace(value) ? checkMaxLengthField : 'error'
+      // if maxLength is missing, we check only for an empty field
+      const checkMaxLengthField = maxLength ? (isValidLength(value, 1, maxLength) ? 'success' : 'error') : 'success'
+      const checkEmptyField = isNotAllWhitespace(value) ? checkMaxLengthField : 'error'
 
-    return { ...prev, [name]: checkEmptyField }
-  })
-}
+      return { ...prev, [name]: checkEmptyField }
+    })
+  }
 
-export const validateFormAddress = (setFormInputStatus: (value: React.SetStateAction<Record<string, InputStatusType>>) => void) => (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
-  setFormInputStatus((prev) => {
-    const { value, name } = e.target
+export const validateFormAddress =
+  (setFormInputStatus: (value: React.SetStateAction<Record<string, InputStatusType>>) => void) =>
+  (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
+    setFormInputStatus((prev) => {
+      const { value, name } = e.target
 
-    const isValidAddress = validateTzAddress(value) ? 'success' : 'error'
-    return { ...prev, [name]: isValidAddress }
-  })
-}
+      const isValidAddress = validateTzAddress(value) ? 'success' : 'error'
+      return { ...prev, [name]: isValidAddress }
+    })
+  }
 
 export const isHexadecimal = (value: string) => {
-  const regex = /[0-9A-Fa-f]{6}/g;
+  const regex = /[0-9A-Fa-f]{6}/g
   return value.match(regex) ? true : false
 }
 
-export const addressErrors = {
+export const validationResults = {
   0: 'NO_PREFIX_MATCHED',
   1: 'INVALID_CHECKSUM',
   2: 'INVALID_LENGTH',
@@ -139,5 +143,11 @@ export const addressErrors = {
 export const validateTzAddress = (address: string) => {
   const resultNumber = validateAddress(address)
 
-  return addressErrors[resultNumber] === addressErrors[3] ? true : false
+  return validationResults[resultNumber] === validationResults[3] ? true : false
+}
+
+export const validatePublicKey = (key: string) => {
+  const resultNumber = taquitoValidatePublicKey(key)
+
+  return validationResults[resultNumber] === validationResults[3] ? true : false
 }

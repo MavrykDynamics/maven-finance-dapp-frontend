@@ -13,6 +13,8 @@ import {
 } from 'gql/queries/getLoansStorage'
 import { normalizeLoans } from '../Loans.helpers'
 import { getXTZBakers, getCollateralTokens } from '../LoansFethcers'
+import { State } from 'reducers'
+import { getVaultsStorage } from 'pages/Vaults/Vaults.actions'
 
 export const GET_LOANS_STORAGE = 'GET_LOANS_STORAGE'
 export const CLEAR_LOANS_STORAGE = 'CLEAR_LOANS_STORAGE'
@@ -91,5 +93,29 @@ export const getAvaliableCollaterals = () => async (dispatch: AppDispatch, getSt
     })
   } catch (e) {
     console.log('getNewVaultData error: ', e)
+  }
+}
+
+// update Loans or Vaults data according to the transaction call location
+// use in popups in the BorrowingExpandCard component
+export const getLoansVaultsData = () => async (dispatch: AppDispatch, getState: GetState) => {
+  const state: State = getState()
+
+  const {
+    loans: { isDataLoaded: isLoansStorageLoaded },
+    vaults: { isLoaded: isVaultsStorageLoaded },
+  } = state
+
+  const { pathname } = window.location
+
+  const isLoansPage = /loans/.test(pathname)
+  const isVaultsPage = /vaults/.test(pathname)
+
+  if (isLoansPage || isLoansStorageLoaded) {
+    await dispatch(getLoansStorage())
+  }
+
+  if (isVaultsPage || isVaultsStorageLoaded) {
+    await dispatch(getVaultsStorage())
   }
 }

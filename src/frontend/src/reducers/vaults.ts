@@ -4,6 +4,7 @@ import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
 
 export type VaultsStateType = {
   vaultsList: VaultsStorage
+  isLoaded: boolean
 }
 
 const defaultVaultsState: VaultsStateType = {
@@ -12,6 +13,7 @@ const defaultVaultsState: VaultsStateType = {
     allVaultsIds: [],
     vaultsMapper: {}
   },
+  isLoaded: false
 }
 
 export function vaults(state = defaultVaultsState, action: Action) {
@@ -20,6 +22,7 @@ export function vaults(state = defaultVaultsState, action: Action) {
       return {
         ...state,
         vaultsList: action.vaultsList,
+        isLoaded: true
       }
     default:
       return state

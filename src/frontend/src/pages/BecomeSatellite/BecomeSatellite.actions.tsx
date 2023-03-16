@@ -24,7 +24,15 @@ export const registerAsSatellite =
       const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.delegationAddress.address)
 
       const transaction = await contract?.methods
-        .registerAsSatellite(form.name, form.description, form.image, form.website, form.fee * 100)
+        .registerAsSatellite(
+          form.name,
+          form.description,
+          form.image,
+          form.website,
+          form.fee * 100,
+          form.publicKey,
+          form.peerId,
+        )
         .send()
 
       dispatch(toggleActionLoader(true))
@@ -62,7 +70,15 @@ export const updateSatelliteRecord =
       const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.delegationAddress.address)
 
       const transaction = await contract?.methods
-        .updateSatelliteRecord(form.name, form.description, form.image, form.website, form.fee * 100)
+        .updateSatelliteRecord(
+          form.name,
+          form.description,
+          form.image,
+          form.website,
+          form.fee * 100,
+          form.publicKey,
+          form.peerId,
+        )
         .send()
 
       dispatch(toggleActionLoader(true))

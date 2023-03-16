@@ -43,6 +43,7 @@ export const VaultsView = () => {
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const {
     vaultsList: { myVaultsIds, allVaultsIds, vaultsMapper },
+    isLoaded,
   } = useSelector((state: State) => state.vaults)
   const { tabId } = useParams<{ tabId: string }>()
 
@@ -67,7 +68,9 @@ export const VaultsView = () => {
 
   const { isLoading } = useDataLoader(async () => {
     try {
-      await dispatch(getVaultsStorage())
+      if (!isLoaded) {
+        await dispatch(getVaultsStorage())
+      }
     } catch (e) {}
   }, [accountPkh])
 

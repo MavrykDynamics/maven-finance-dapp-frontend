@@ -13,6 +13,7 @@ type InputViewProps = {
     balanceAsset?: string
     balanceName?: string
     useMaxHandler?: () => void
+    balanceHandler?: () => void
     label?: string
     inputStatus: InputStatusType
     convertedValue?: number
@@ -41,6 +42,7 @@ export const Input = ({
     balance,
     balanceAsset,
     useMaxHandler,
+    balanceHandler,
     convertedValue,
     label,
     balanceName = 'Balance',
@@ -55,12 +57,14 @@ export const Input = ({
       {Boolean(children) ? null : <InputStyledStatus className={`${inputStatus}`} />}
 
       {balance !== undefined && balanceAsset ? (
-        <CommaNumber
-          value={balance}
-          beginningText={`${balanceName}: `}
-          endingText={balanceAsset}
-          className={'input-balance'}
-        />
+        <div onClick={balanceHandler}>
+          <CommaNumber
+            value={balance}
+            beginningText={`${balanceName}: `}
+            endingText={balanceAsset}
+            className={`input-balance ${balanceHandler ? 'pointer' : ''}`}
+          />
+        </div>
       ) : null}
 
       {useMaxHandler ? (
