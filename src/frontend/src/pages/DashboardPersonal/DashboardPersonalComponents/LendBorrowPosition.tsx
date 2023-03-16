@@ -25,12 +25,8 @@ export const LendBorrowPosition = ({
 }) => {
   // Calcuating total lended and borrowed by user
   const { totalUserLended, totalUserBorrowed } = useMemo(() => {
-    const totalUserLended = userLoansData.userLendings.reduce((acc, { usdAmount }) => {
-      return (acc += usdAmount)
-    }, 0)
-    const totalUserBorrowed = userLoansData.userBorrowing.reduce((acc, { usdAmount }) => {
-      return (acc += usdAmount)
-    }, 0)
+    const totalUserLended = userLoansData.userLendings.reduce((acc, { usdAmount }) => (acc += usdAmount), 0)
+    const totalUserBorrowed = userLoansData.userBorrowing.reduce((acc, { usdAmount }) => (acc += usdAmount), 0)
 
     return { totalUserLended, totalUserBorrowed }
   }, [userLoansData])

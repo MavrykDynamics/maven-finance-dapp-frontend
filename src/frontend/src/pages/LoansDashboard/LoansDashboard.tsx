@@ -69,18 +69,16 @@ export const LoansDashboard = () => {
 
   const { isLoading } = useDataLoader(async () => {
     try {
-      await Promise.all([!isLoansLoaded && dispatch(getLoansStorage())].filter(Boolean))
+      if (!isLoansLoaded) {
+        await dispatch(getLoansStorage())
+      }
     } catch (e) {}
   }, [])
 
   // Calcuating total lended and borrowed by user
   const { totalUserLended, totalUserBorrowed } = useMemo(() => {
-    const totalUserLended = userLoansData.userLendings.reduce((acc, { usdAmount }) => {
-      return (acc += usdAmount)
-    }, 0)
-    const totalUserBorrowed = userLoansData.userBorrowing.reduce((acc, { usdAmount }) => {
-      return (acc += usdAmount)
-    }, 0)
+    const totalUserLended = userLoansData.userLendings.reduce((acc, { usdAmount }) => (acc += usdAmount), 0)
+    const totalUserBorrowed = userLoansData.userBorrowing.reduce((acc, { usdAmount }) => (acc += usdAmount), 0)
 
     return { totalUserLended, totalUserBorrowed }
   }, [userLoansData])
