@@ -17,7 +17,7 @@ import {
   DELEGATION_TAB_ID,
   SATELLITE_TAB_ID,
   VESTING_TAB_ID,
-  PORTFOLIO_LENDING_TAB_ID,
+  PORTFOLIO_POSITION_TAB_ID,
 } from './DashboardPersonal.utils'
 import { BUTTON_NAVIGATION } from 'app/App.components/Button/Button.constants'
 
@@ -36,6 +36,7 @@ import { getVestingStorage } from 'pages/Treasury/Treasury.actions'
 import VestingTab from './DashboardPersonalComponents/VestingTab'
 import { DashboardPersonalStyled } from './DashboardPersonal.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 
 const DashboardPersonal = () => {
   const dispatch = useDispatch()
@@ -45,13 +46,11 @@ const DashboardPersonal = () => {
     tokensPrices: { tezos: xtzExchangeRate = 0, mvk: mvkExchangeRate = 0 },
   } = useSelector((state: State) => state.tokens)
   const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
-  const {
-    accountPkh,
-    user: { isVestee },
-  } = useSelector((state: State) => state.wallet)
   const { isLoaded: isFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
+  const { isDataLoaded: isLoansLoaded } = useSelector((state: State) => state.loans)
   const { isLoaded: isVestingLoaded } = useSelector((state: State) => state.vesting)
   const {
+    accountPkh,
     user: {
       myMvkTokenBalance,
       mySMvkTokenBalance,
@@ -59,6 +58,7 @@ const DashboardPersonal = () => {
       mytzBTCTokenBalance,
       myLendingRewardsAmount,
       isSatellite,
+      isVestee,
       myDoormanRewardsData: { myAvailableDoormanRewards },
       myFarmRewardsData,
       mySatelliteRewardsData: { myAvailableSatelliteRewards },
@@ -79,6 +79,7 @@ const DashboardPersonal = () => {
           !isEgovLoaded && dispatch(getEmergencyGovernanceStorage()),
           isVestee && !isVestingLoaded && dispatch(getVestingStorage()),
           !isFeedsLoaded && dispatch(getFeedsStorage()),
+          !isLoansLoaded && dispatch(getLoansStorage()),
         ].filter(Boolean),
       )
     } catch (e) {}
@@ -136,7 +137,7 @@ const DashboardPersonal = () => {
         ) : (
           <>
             <div className="tabs-switchers">
-              <Link to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_LENDING_TAB_ID}`}>
+              <Link to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`}>
                 <Button selected={activeTab === PORTFOLIO_TAB_ID} kind={BUTTON_NAVIGATION}>
                   Portfolio
                 </Button>
@@ -174,7 +175,7 @@ const DashboardPersonal = () => {
                     <VestingTab />
                   </Route>
 
-                  <Redirect to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_LENDING_TAB_ID}`} />
+                  <Redirect to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`} />
                 </Switch>
               </DashboardPersonalTabStyled>
             </div>

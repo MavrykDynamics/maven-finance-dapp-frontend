@@ -85,6 +85,7 @@ export const TableScrollable = styled.div<{ theme: MavrykTheme; bodyHeight: numb
     position: sticky;
     background-color: ${({ theme }) => theme.containerColor};
     top: 0;
+    z-index: 100;
   }
 
   &.treasury-table {
@@ -98,11 +99,12 @@ export const TableScrollable = styled.div<{ theme: MavrykTheme; bodyHeight: numb
 
 export const Table = styled.table<{ theme: MavrykTheme }>`
   width: 100%;
-  position: relative;
+
   border-collapse: collapse;
 
   &.borrowing-table {
     margin-top: 5px;
+    position: relative;
     margin-bottom: 10px;
 
     &.show-before {
@@ -394,6 +396,26 @@ export const TableHeaderCell = styled.th<{ theme: MavrykTheme; contentPosition?:
         `
     }
   }}
+
+  &.position-multy-cell {
+    .cell-content {
+      padding: 0 18px;
+      display: grid;
+      justify-content: space-between;
+    }
+
+    &.lending {
+      .cell-content {
+        grid-template-columns: 1.1fr 1.3fr 0.9fr 0.4fr;
+      }
+    }
+
+    &.borrowing {
+      .cell-content {
+        grid-template-columns: 1fr 1fr 1fr 0.4fr;
+      }
+    }
+  }
 `
 
 export const TableCell = styled.td<{
@@ -507,6 +529,54 @@ export const TableCell = styled.td<{
 
   &.vert-middle {
     vertical-align: middle;
+  }
+
+  &.position-multy-cell {
+    .cell-content {
+      background: ${({ theme }) => theme.backgroundColor};
+      border-radius: 10px;
+      padding: 8px 20px;
+      display: grid;
+      justify-content: space-between;
+
+      a {
+        display: block;
+        margin-left: auto;
+      }
+    }
+
+    &.lending:not(.one-item) {
+      .cell-content {
+        grid-template-columns: 1.1fr 1.3fr 0.9fr 0.4fr;
+      }
+    }
+
+    &.borrowing:not(.one-item) {
+      .cell-content {
+        grid-template-columns: 1.1fr 1.1fr 1.1fr 0.4fr;
+
+        .vault-status {
+          &.low {
+            color: ${({ theme }) => theme.upColor};
+          }
+
+          &.risk {
+            color: ${({ theme }) => theme.warningColor};
+          }
+
+          &.hight {
+            color: ${({ theme }) => theme.downColor};
+          }
+        }
+      }
+    }
+
+    &.one-item {
+      .cell-content {
+        padding: 10px 20px;
+        justify-content: center;
+      }
+    }
   }
 
   &.buttons {

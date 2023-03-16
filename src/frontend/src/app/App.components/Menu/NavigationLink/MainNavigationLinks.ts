@@ -1,6 +1,6 @@
 import { LENDING_TAB_ID } from './../../../../pages/Dashboard/Dashboard.utils'
 import { MainNavigationRoute } from '../../../../utils/TypesAndInterfaces/Navigation'
-import { PORTFOLIO_LENDING_TAB_ID, PORTFOLIO_TAB_ID } from 'pages/DashboardPersonal/DashboardPersonal.utils'
+import { PORTFOLIO_POSITION_TAB_ID, PORTFOLIO_TAB_ID } from 'pages/DashboardPersonal/DashboardPersonal.utils'
 
 export const mainNavigationLinks: MainNavigationRoute[] = [
   {
@@ -19,7 +19,7 @@ export const mainNavigationLinks: MainNavigationRoute[] = [
       {
         id: 84425,
         subTitle: 'Personal',
-        subPath: `dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_LENDING_TAB_ID}`,
+        subPath: `dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`,
         routeSubPath: '/dashboard-personal/:tabId/:secondaryTabId?',
         requires: {
           isAuth: true,
@@ -44,6 +44,12 @@ export const mainNavigationLinks: MainNavigationRoute[] = [
     routePath: '/loans',
     icon: 'coin-loan',
     subPages: [
+      {
+        id: 57594,
+        subTitle: 'Dashboard',
+        subPath: `loans/dashboard`,
+        routeSubPath: '/loans/dashboard',
+      },
       {
         id: 57792,
         subTitle: 'Markets',

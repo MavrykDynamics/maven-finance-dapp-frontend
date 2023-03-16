@@ -51,8 +51,9 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
     tokensPrices: { mvk: mvkExchangeRate = 0 },
   } = useSelector((state: State) => state.tokens)
   const {
-    user: { userLoansData },
+    user: { userLoansData, myLendingRewardsAmount },
   } = useSelector((state: State) => state.wallet)
+  const { loanTokens } = useSelector((state: State) => state.loans)
 
   const [toggleItems, setToggleItems] = useState<TabItem[]>(TOGGLE_VALUES)
   const lastSeria = CHART_TEST_DATA.at(-1)?.value ?? 0
@@ -137,12 +138,11 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
       </PortfolioWalletStyled>
 
       <div className="tabs-switchers">
-        {/* TODO: add link when tab is ready */}
-        {/* <Link to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`}>
-        <Button selected={portfolioActiveTab === PORTFOLIO_POSITION_TAB_ID} kind={BUTTON_NAVIGATION} disabled>
-          Lend/Borrow Position
-        </Button>
-        </Link> */}
+        <Link to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`}>
+          <Button selected={portfolioActiveTab === PORTFOLIO_POSITION_TAB_ID} kind={BUTTON_NAVIGATION}>
+            Lend/Borrow Position
+          </Button>
+        </Link>
         <Link to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_LENDING_TAB_ID}`}>
           <Button selected={portfolioActiveTab === PORTFOLIO_LENDING_TAB_ID} kind={BUTTON_NAVIGATION}>
             Lending TXs
@@ -157,7 +157,11 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
 
       <Switch>
         <Route exact path={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`}>
-          <LendBorrowPosition />
+          <LendBorrowPosition
+            markets={loanTokens}
+            userLoansData={userLoansData}
+            userLoansRewards={myLendingRewardsAmount}
+          />
         </Route>
         <Route exact path={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_LENDING_TAB_ID}`}>
           <LoansTxTab txVariant="lending" userLoansData={userLoansData} isUserLoansLoading={isUserLoansLoading} />
