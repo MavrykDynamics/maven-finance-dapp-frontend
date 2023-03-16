@@ -135,7 +135,7 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
                 <Icon id="cow" className="icon-cow" />
               </div>
 
-              <p>There is not actie treasuries</p>
+              <p>There is not active treasuries</p>
             </Plug>
           ) : null}
         </div>

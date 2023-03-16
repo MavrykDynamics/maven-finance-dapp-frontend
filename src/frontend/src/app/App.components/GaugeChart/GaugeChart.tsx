@@ -43,8 +43,7 @@ export const calcReversedAngle = ({
 }
 
 /**
- * For current purposes we need only max value cuz min can be only 0,
- * and also there's no need to handle negative angles for now
+ * For current purposes we need to only handle 0 - 180 angles
  */
 export const GaugeChart = ({ children, maxValue, minValue, currentValue, isReversed }: GaugeChartProps) => {
   const angle = Math.max(
