@@ -82,12 +82,12 @@ export const fetchUserData = async (
     const {
       mvk_balance = 0,
       smvk_balance = 0,
-      m_token_accounts,
-      delegations,
-      stakes_history_data,
-      activeSatelliteRecord: [activeSatelliteRecord],
-      vesteeRecord: [vesteeRecord],
-    } = userInfoFromIndexer?.mavryk_user[0] ?? {}
+      m_token_accounts = [],
+      delegations = [],
+      stakes_history_data = [],
+      activeSatelliteRecord: [activeSatelliteRecord = null] = [],
+      vesteeRecord: [vesteeRecord = null] = [],
+    } = userInfoFromIndexer?.mavryk_user?.[0] ?? {}
 
     const userInfo: Partial<UserState> = {
       myMvkTokenBalance: calcWithoutPrecision(mvk_balance),
@@ -103,19 +103,19 @@ export const fetchUserData = async (
     // getting user rewards
     userInfo.myDoormanRewardsData = calcUsersDoormanRewards({
       mySMvkTokenBalance: userInfo.mySMvkTokenBalance ?? 0,
-      userDoormanRewardsFromGQL: userRewardsData.doorman[0],
+      userDoormanRewardsFromGQL: userRewardsData?.doorman?.[0],
     })
     userInfo.mySatelliteRewardsData = calcUsersSatelliteRewards({
       mySMvkTokenBalance: userInfo.mySMvkTokenBalance ?? 0,
-      userSatelliteRewardsFromGQL: userRewardsData.satellite_rewards[0],
+      userSatelliteRewardsFromGQL: userRewardsData?.satellite_rewards?.[0],
     })
     userInfo.myFarmRewardsData = calcUsersFarmRewards({
       currentBlockLevel: currentBlockLevel,
-      userFarmsRewardsFromGQL: userRewardsData.farm,
+      userFarmsRewardsFromGQL: userRewardsData?.farm ?? [],
     })
 
-    const loanTokens = userRewardsData.lending_controller[0].loan_tokens as Array<Lending_Controller_Loan_Token>
-    const interestRateDecimals = userRewardsData.lending_controller[0]?.interest_rate_decimals ?? 0
+    const loanTokens = userRewardsData?.lending_controller?.[0]?.loan_tokens as Array<Lending_Controller_Loan_Token>
+    const interestRateDecimals = userRewardsData?.lending_controller?.[0]?.interest_rate_decimals ?? 0
 
     /**
      * @description userInfo.mTokens.reduce
@@ -127,7 +127,7 @@ export const fetchUserData = async (
      */
     userInfo.myLendingRewardsAmount =
       userInfo.mTokens?.reduce((acc, { rewards_earned, m_token: { loan_token_name: mTokenName, address } }) => {
-        const { oracle_id } = loanTokens.find(({ loan_token_name }) => loan_token_name === mTokenName) ?? {}
+        const { oracle_id } = loanTokens?.find(({ loan_token_name }) => loan_token_name === mTokenName) ?? {}
 
         if (!oracle_id) return acc
 
