@@ -16,7 +16,11 @@ import { DashboardCardHeader } from '../DashboardPersonal.style'
 
 const DelegationTab = () => {
   const dispatch = useDispatch()
-  const { satelliteMvkIsDelegatedTo, mySMvkTokenBalance } = useSelector((state: State) => state.wallet.user)
+  const {
+    satelliteMvkIsDelegatedTo,
+    mySMvkTokenBalance,
+    mySatelliteRewardsData: { myAvailableSatelliteRewards },
+  } = useSelector((state: State) => state.wallet.user)
   const { satelliteMapper } = useSelector((state: State) => state.satellites)
   const satelliteInfo = satelliteMapper[satelliteMvkIsDelegatedTo]
 
@@ -31,7 +35,12 @@ const DelegationTab = () => {
         <DashboardCardHeader>
           <h2>Delegation Status</h2>
 
-          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={handleDistributeRewards}>
+          <NewButton
+            kind={BUTTON_PRIMARY}
+            form={BUTTON_WIDE}
+            onClick={handleDistributeRewards}
+            disabled={myAvailableSatelliteRewards === 0}
+          >
             <Icon id="loans" />
             Distribute Gov. Rewards
           </NewButton>

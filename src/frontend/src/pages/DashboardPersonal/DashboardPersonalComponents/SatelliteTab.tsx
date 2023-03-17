@@ -21,7 +21,12 @@ import Icon from 'app/App.components/Icon/Icon.view'
 const SatelliteTab = () => {
   const dispatch = useDispatch()
   const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
-  const { accountPkh = '' } = useSelector((state: State) => state.wallet)
+  const {
+    accountPkh = '',
+    user: {
+      mySatelliteRewardsData: { myAvailableSatelliteRewards },
+    },
+  } = useSelector((state: State) => state.wallet)
   const { satelliteMapper } = useSelector((state: State) => state.satellites)
 
   const satelliteRecord = satelliteMapper[accountPkh]
@@ -37,8 +42,13 @@ const SatelliteTab = () => {
       <SatelliteStatusBlock>
         <DashboardCardHeader>
           <h2>My Satellite Details</h2>
-          
-          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={handleDistributeRewards}>
+
+          <NewButton
+            kind={BUTTON_PRIMARY}
+            form={BUTTON_WIDE}
+            onClick={handleDistributeRewards}
+            disabled={myAvailableSatelliteRewards === 0}
+          >
             <Icon id="loans" />
             Distribute Gov. Rewards
           </NewButton>

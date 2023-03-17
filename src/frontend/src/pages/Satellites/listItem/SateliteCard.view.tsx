@@ -78,6 +78,8 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
   const delegateCallback = () => dispatch(delegate(satellite.address))
   const undelegateCallback = () => dispatch(undelegate(satellite.address))
   const claimRewardsCallback = () => (accountPkh ? dispatch(rewardsCompound(accountPkh)) : null)
+  // TODO: add valid data
+  const distributeRewardsCallback = () => dispatch(distributeProposalRewards('', []))
 
   const freesMVKSpace = Math.max(satellite.sMvkBalance * satellite.delegationRatio - satellite.totalDelegatedAmount, 0)
   const isUserDelegatedToThisSatellite = satellite.address === satelliteMvkIsDelegatedTo
@@ -97,11 +99,6 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
 
   const participation =
     (satellite.satelliteMetrics.proposalParticipation + satellite.satelliteMetrics.votingPartisipation) / 2
-
-  const handleDistributeRewards = () => {
-    // TODO: add valid data
-    dispatch(distributeProposalRewards('', []))
-  }
 
   const buttonToShow = isUserDelegatedToThisSatellite ? (
     <>
@@ -123,7 +120,12 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
         />
       ) : null}
       {isDetailsPage && (
-        <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={handleDistributeRewards}>
+        <NewButton
+          kind={BUTTON_PRIMARY}
+          form={BUTTON_WIDE}
+          onClick={distributeRewardsCallback}
+          disabled={myAvailableSatelliteRewards === 0}
+        >
           <Icon id="commision" />
           Distribute Rewards
         </NewButton>
