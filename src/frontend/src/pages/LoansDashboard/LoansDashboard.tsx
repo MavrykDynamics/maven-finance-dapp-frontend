@@ -16,6 +16,7 @@ import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
 import { LoansPositionTable } from './components/PositionTable'
 import { GaugeChart } from 'app/App.components/GaugeChart/GaugeChart'
+import { getUserAvatar } from 'app/App.components/Avatar/Avatar.helpers'
 
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { LBHInfoBlock } from 'pages/DashboardPersonal/DashboardPersonalComponents/DashboardPersonalComponents.style'
@@ -67,6 +68,8 @@ export const LoansDashboard = () => {
     accountPkh,
     user: { myLendingRewardsAmount, userLoansData },
   } = useSelector((state: State) => state.wallet)
+  const { satelliteMapper } = useSelector((state: State) => state.satellites)
+  const { councilMembers, breakGlassCouncilMembers } = useSelector((state: State) => state.council)
 
   const { isLoading } = useDataLoader(async () => {
     try {
@@ -75,6 +78,17 @@ export const LoansDashboard = () => {
       }
     } catch (e) {}
   }, [accountPkh])
+
+  const userImage = useMemo(
+    () =>
+      getUserAvatar({
+        accountPkh,
+        satelliteMapper,
+        councilMembers,
+        breakGlassCouncilMembers,
+      }),
+    [accountPkh, breakGlassCouncilMembers, councilMembers, satelliteMapper],
+  )
 
   // Calcuating total lended and borrowed by user
   const { totalUserLended, totalUserBorrowed } = useMemo(() => {
@@ -160,7 +174,7 @@ export const LoansDashboard = () => {
 
   return (
     <Page>
-      <PageHeader page={'loansDashboard'} avatar={'/images/default-avatar.png'} />
+      <PageHeader page={'loansDashboard'} avatar={userImage} />
 
       <LoansDashboardStyled>
         {isLoading ? (
