@@ -22,14 +22,7 @@ import {
 import { TransactionHistoryStyled } from '../Loans.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { TzAddress } from 'pages/Treasury/Treasury.style'
-import {
-  Table,
-  TableHeader,
-  TableRow,
-  TableHeaderCell,
-  TableBody,
-  TableCell,
-} from 'app/App.components/Table/Table.style'
+import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } from 'app/App.components/Table'
 import { EmptyContainer } from 'app/App.style'
 import Pagination from 'app/App.components/Pagination/Pagination.view'
 

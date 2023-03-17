@@ -12,14 +12,7 @@ import { Button } from 'app/App.components/SettingsPopup/SettingsPopup.style'
 // styles
 import { LiquidateVaultModalStyled } from './LiquidateVaultModal.styles'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
-import {
-  Table,
-  TableHeader,
-  TableRow,
-  TableHeaderCell,
-  TableBody,
-  TableCell,
-} from 'app/App.components/Table/Table.style'
+import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } from 'app/App.components/Table'
 
 // helpers
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
@@ -102,7 +95,7 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
         vaultOwner: ownerId,
         liquidateAmount: costToLiquidate,
         decimals: borrowedAsset.decimals,
-      }),    
+      }),
     )
   }
 

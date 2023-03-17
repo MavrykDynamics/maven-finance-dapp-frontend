@@ -14,14 +14,7 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 // styles
 import { VaultsCardDropDown } from './../Vaults.style'
-import {
-  Table,
-  TableHeader,
-  TableRow,
-  TableHeaderCell,
-  TableBody,
-  TableCell,
-} from 'app/App.components/Table/Table.style'
+import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } from 'app/App.components/Table'
 
 // types
 import { VaultType } from 'utils/TypesAndInterfaces/Vaults'

@@ -34,7 +34,7 @@ import {
   TableHeader,
   TableHeaderCell,
   TableRow,
-} from 'app/App.components/Table/Table.style'
+} from 'app/App.components/Table'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { Input } from 'app/App.components/Input/Input.controller'
@@ -299,7 +299,7 @@ export const StageThreeForm = ({
           })}
         </TableBody>
         <AddRowBtn
-          className={`button-wrap add ${isTableDisabled ? 'disabled' : ''}`}
+          className={`button-wrap ${isTableDisabled ? 'disabled' : ''}`}
           {...(!isTableDisabled ? { onClick: handleAddRow } : {})}
         >
           <CustomTooltip text="Insert 1 row below">

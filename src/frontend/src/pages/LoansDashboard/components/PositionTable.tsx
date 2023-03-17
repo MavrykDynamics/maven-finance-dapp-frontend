@@ -20,14 +20,7 @@ import Icon from 'app/App.components/Icon/Icon.view'
 import Pagination from 'app/App.components/Pagination/Pagination.view'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHeader,
-  TableHeaderCell,
-  TableRow,
-} from 'app/App.components/Table/Table.style'
+import { Table, TableBody, TableCell, TableHeader, TableHeaderCell, TableRow } from 'app/App.components/Table'
 import { Plug } from 'app/App.components/Chart/Chart.style'
 import { PositionTableStyled } from '../LoansDashboard.styles'
 import { loansPopupsContext } from 'pages/Loans/Components/Modals/LoansModals.provider'

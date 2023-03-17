@@ -21,7 +21,7 @@ import {
   TableBody,
   TableCell,
   TableScrollable,
-} from 'app/App.components/Table/Table.style'
+} from 'app/App.components/Table'
 import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
 import { StatBlock, BlockName } from '../Dashboard.style'
 import { TabWrapperStyled, VaultsContentStyled } from './DashboardTabs.style'

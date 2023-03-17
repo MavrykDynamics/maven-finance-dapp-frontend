@@ -19,7 +19,7 @@ import {
   TableBody,
   TableCell,
   TableScrollable,
-} from 'app/App.components/Table/Table.style'
+} from 'app/App.components/Table'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
 import { BlockName, StatBlock } from '../Dashboard.style'
