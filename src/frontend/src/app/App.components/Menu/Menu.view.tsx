@@ -113,9 +113,11 @@ export const MenuView = ({ accountPkh, openChangeNodePopupHandler }: MenuViewPro
             })}
           </MenuGrid>
           <MenuFooter className={`${sidebarOpened ? '' : 'menu-collapsed'}`}>
-            <NewButton kind={BUTTON_SECONDARY} form={sidebarOpened ? BUTTON_WIDE : BUTTON_ROUND} isThin>
-              {sidebarOpened ? 'Submit Feedback' : 'F'}
-            </NewButton>
+            <a className='feedbackLink' href="https://forms.gle/bwmTfpoLKBhaf7yD6" target="_blank" rel="noreferrer">
+              <NewButton kind={BUTTON_SECONDARY} form={sidebarOpened ? BUTTON_WIDE : BUTTON_ROUND} isThin>
+                {sidebarOpened ? 'Submit Feedback' : 'F'}
+              </NewButton>
+            </a>
 
             <SocialIcons />
             <span>MAVRYK App v1.0</span>
