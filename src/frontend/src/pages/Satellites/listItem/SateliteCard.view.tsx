@@ -5,7 +5,12 @@ import { useDispatch, useSelector } from 'react-redux'
 import { DOWN, WARNING } from 'app/App.components/StatusFlag/StatusFlag.constants'
 import { getOracleStatus, getVoteText, ORACLE_STATUSES_MAPPER } from 'pages/Satellites/helpers/Satellites.consts'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
-import { ACTION_PRIMARY, ACTION_SECONDARY } from 'app/App.components/Button/Button.constants'
+import {
+  ACTION_PRIMARY,
+  ACTION_SECONDARY,
+  BUTTON_WIDE,
+  BUTTON_PRIMARY,
+} from 'app/App.components/Button/Button.constants'
 import { delegate, undelegate } from '../Satellites.actions'
 import { rewardsCompound } from 'pages/Doorman/Doorman.actions'
 
@@ -14,6 +19,8 @@ import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { StatusFlag } from 'app/App.components/StatusFlag/StatusFlag.controller'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
+import Icon from 'app/App.components/Icon/Icon.view'
+import NewButton from 'app/App.components/Button/NewButton'
 
 // types
 import { State } from 'reducers'
@@ -110,6 +117,12 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
           strokeWidth={0.3}
         />
       ) : null}
+      {isDetailsPage && (
+        <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE}>
+          <Icon id="commision" />
+          Distribute Rewards
+        </NewButton>
+      )}
     </>
   ) : (
     <Button
@@ -123,7 +136,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
 
   return (
     <SatelliteCard key={String(`satellite${satellite.address}`)}>
-      <SatelliteCardInner>
+      <SatelliteCardInner isExtendedListItem={isDetailsPage}>
         <div className="rows-wrapper">
           <div>
             <SideBySideImageAndText>

@@ -14,3 +14,17 @@ export const DashboardPersonalStyled = styled.div`
     column-gap: 15px;
   }
 `
+
+export const DashboardCardHeader = styled.div`
+  display: grid;
+  grid-template-columns: auto 300px;
+
+  h2 {
+    margin: 0;
+    font-weight: 700;
+
+    &::after {
+      margin-bottom: 7px;
+    }
+  }
+`

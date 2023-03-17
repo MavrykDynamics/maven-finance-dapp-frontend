@@ -2,17 +2,20 @@ import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
 import { getOracleStatus, ORACLE_STATUSES_MAPPER } from 'pages/Satellites/helpers/Satellites.consts'
+import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 
-import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { SatelliteStatusBlock } from './DashboardPersonalComponents.style'
 import { SatelliteOracleStatusComponent } from 'pages/Satellites/listItem/SatelliteCard.style'
+import { DashboardCardHeader } from '../DashboardPersonal.style'
 
 import { State } from 'reducers'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { UserActionHistory } from './UserOperationsHistory'
+import NewButton from 'app/App.components/Button/NewButton'
+import Icon from 'app/App.components/Icon/Icon.view'
 
 const SatelliteTab = () => {
   const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
@@ -25,9 +28,14 @@ const SatelliteTab = () => {
   return (
     <>
       <SatelliteStatusBlock>
-        <GovRightContainerTitleArea>
+        <DashboardCardHeader>
           <h2>My Satellite Details</h2>
-        </GovRightContainerTitleArea>
+          
+          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE}>
+            <Icon id="loans" />
+            Distribute Gov. Rewards
+          </NewButton>
+        </DashboardCardHeader>
         {satelliteRecord ? (
           <>
             <div className="top-row">

@@ -2,16 +2,16 @@ import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { State } from 'reducers'
 
-import { BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import { BUTTON_SECONDARY, BUTTON_WIDE, BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
 
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { DelegationStatusBlock } from './DashboardPersonalComponents.style'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { UserActionHistory } from './UserOperationsHistory'
+import { DashboardCardHeader } from '../DashboardPersonal.style'
 
 const DelegationTab = () => {
   const { satelliteMvkIsDelegatedTo, mySMvkTokenBalance } = useSelector((state: State) => state.wallet.user)
@@ -21,9 +21,14 @@ const DelegationTab = () => {
   return (
     <>
       <DelegationStatusBlock>
-        <GovRightContainerTitleArea>
+        <DashboardCardHeader>
           <h2>Delegation Status</h2>
-        </GovRightContainerTitleArea>
+
+          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE}>
+            <Icon id="loans" />
+            Distribute Gov. Rewards
+          </NewButton>
+        </DashboardCardHeader>
         {satelliteInfo ? (
           <>
             <div className="delegated-to">Delegated To</div>

@@ -26,21 +26,22 @@ export const SatelliteCard = styled(Card)<{ theme: MavrykTheme }>`
 
 export const SatelliteCardTopRow = styled.div<{ isExtendedListItem?: boolean }>`
   margin-top: 8px;
-  column-gap: 30px;
+  column-gap: ${({ isExtendedListItem }) => (isExtendedListItem ? '10px' : '30px')};
   row-gap: 20px;
   display: grid;
   grid-template-columns: ${({ isExtendedListItem }) => (isExtendedListItem ? '121px 142px' : '121px 133px')};
 `
 
-export const SatelliteCardInner = styled.div`
-  display: flex;
+export const SatelliteCardInner = styled.div<{ isExtendedListItem?: boolean }>`
+  display: grid;
+  grid-template-columns: ${({ isExtendedListItem }) => (isExtendedListItem ? 'auto 220px' : 'auto 180px')};
+  column-gap: 10px;
   padding: 25px;
-  padding-right: 0;
 
   .rows-wrapper {
     display: grid;
     grid-template-columns: 190px auto;
-    column-gap: 30px;
+    column-gap: ${({ isExtendedListItem }) => (isExtendedListItem ? '10px' : '30px')};
   }
 `
 
@@ -49,9 +50,6 @@ export const SatelliteCardButtons = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin-left: auto;
-  margin-left: 15px;
-  width: 180px;
   flex-shrink: 0;
   justify-content: space-around;
 `
