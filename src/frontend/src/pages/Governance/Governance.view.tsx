@@ -50,14 +50,7 @@ import {
   EmptyContainer,
 } from './Governance.style'
 import { InfoBlock } from '../../app/App.components/Info/info.style'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHeader,
-  TableHeaderCell,
-  TableRow,
-} from 'app/App.components/Table/Table.style'
+import { Table, TableBody, TableCell, TableHeader, TableHeaderCell, TableRow } from 'app/App.components/Table'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { VotingTypes } from 'app/App.components/VotingArea/helpers/voting.const'

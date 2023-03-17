@@ -87,17 +87,17 @@ export const COLLATERAL_RATIO_GRADIENT: Array<ColorBreakpoint> = [
     persentage: 33,
     color: {
       r: 255,
-      g: 129,
-      b: 67,
+      g: 120,
+      b: 90,
     },
     value: 150,
   },
   {
     persentage: 66,
     color: {
-      r: 251,
+      r: 110,
       g: 255,
-      b: 67,
+      b: 110,
     },
     value: 200,
   },

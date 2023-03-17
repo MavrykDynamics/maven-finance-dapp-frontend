@@ -17,7 +17,7 @@ import {
   TableHeaderCell,
   TableBody,
   TableCell,
-} from 'app/App.components/Table/Table.style'
+} from 'app/App.components/Table'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { LBHInfoBlock } from './DashboardPersonalComponents.style'
 import { parseDate } from 'utils/time'

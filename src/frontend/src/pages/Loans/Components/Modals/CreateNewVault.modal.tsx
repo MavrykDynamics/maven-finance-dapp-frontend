@@ -28,14 +28,7 @@ import { InputPinnedDropDown } from 'app/App.components/Input/Input.style'
 import { State } from 'reducers'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { silverColor } from 'styles'
-import {
-  Table,
-  TableHeader,
-  TableRow,
-  TableHeaderCell,
-  TableBody,
-  TableCell,
-} from 'app/App.components/Table/Table.style'
+import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } from 'app/App.components/Table'
 import { triggerInitialVaultCreation } from 'pages/Loans/Actions/vault.actions'
 import { depositCollateralAction } from 'pages/Loans/Actions/vaultCollateral.actions'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
@@ -572,7 +565,7 @@ export const CreateNewVault = ({
                           <TableCell width="28%">
                             <CommaNumber value={Number(inputAmount)} />
                           </TableCell>
-                          <TableCell className="right" width="28%">
+                          <TableCell contentPosition="right" width="28%">
                             {collateralMetadata?.rate ? (
                               <CommaNumber
                                 value={Number(inputAmount) * Number(collateralMetadata?.rate)}

@@ -6,14 +6,7 @@ import {
   PAGINATION_SIDE_CENTER,
 } from 'app/App.components/Pagination/pagination.consts'
 import Pagination from 'app/App.components/Pagination/Pagination.view'
-import {
-  Table,
-  TableHeader,
-  TableRow,
-  TableHeaderCell,
-  TableBody,
-  TableCell,
-} from 'app/App.components/Table/Table.style'
+import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } from 'app/App.components/Table'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { useMemo } from 'react'

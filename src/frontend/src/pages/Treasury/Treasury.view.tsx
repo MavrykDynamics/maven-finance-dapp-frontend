@@ -23,7 +23,7 @@ import {
   TableBody,
   TableCell,
   TableScrollable,
-} from 'app/App.components/Table/Table.style'
+} from 'app/App.components/Table'
 import { Plug } from 'app/App.components/Chart/Chart.style'
 
 type Props = {

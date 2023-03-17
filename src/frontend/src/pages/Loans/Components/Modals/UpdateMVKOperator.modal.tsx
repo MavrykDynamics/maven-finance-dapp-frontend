@@ -14,7 +14,7 @@ import { Input } from 'app/App.components/Input/NewInput'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
-import { AddRowBtn, RemoveRowBtn, Table, TableBody, TableCell, TableRow } from 'app/App.components/Table/Table.style'
+import { AddRowBtn, RemoveRowBtn, Table, TableBody, TableCell, TableRow } from 'app/App.components/Table'
 import { LoansModalBase } from './Modals.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
 import { updateOperatorsAction } from 'pages/Loans/Actions/vaultPermissions.actions'
@@ -115,7 +115,7 @@ export const UpdateMVKOperator = ({
                 )
               })}
             </TableBody>
-            <AddRowBtn className={`button-wrap add `} onClick={handleAddRow}>
+            <AddRowBtn className={`button-wrap `} onClick={handleAddRow}>
               <CustomTooltip text="Insert 1 row below">
                 <span>+</span>
               </CustomTooltip>
