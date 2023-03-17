@@ -1,8 +1,9 @@
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
 
 import { getOracleStatus, ORACLE_STATUSES_MAPPER } from 'pages/Satellites/helpers/Satellites.consts'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import { distributeProposalRewards } from 'pages/Satellites/Satellites.actions'
 
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
@@ -18,6 +19,7 @@ import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 
 const SatelliteTab = () => {
+  const dispatch = useDispatch()
   const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
   const { accountPkh = '' } = useSelector((state: State) => state.wallet)
   const { satelliteMapper } = useSelector((state: State) => state.satellites)
@@ -25,13 +27,18 @@ const SatelliteTab = () => {
   const satelliteRecord = satelliteMapper[accountPkh]
   const oracleStatusType = getOracleStatus(satelliteRecord, feedsLedger)
 
+  const handleDistributeRewards = () => {
+    // TODO: add valid data
+    dispatch(distributeProposalRewards('', []))
+  }
+
   return (
     <>
       <SatelliteStatusBlock>
         <DashboardCardHeader>
           <h2>My Satellite Details</h2>
           
-          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE}>
+          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={handleDistributeRewards}>
             <Icon id="loans" />
             Distribute Gov. Rewards
           </NewButton>

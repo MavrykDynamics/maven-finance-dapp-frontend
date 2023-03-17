@@ -11,7 +11,7 @@ import {
   BUTTON_WIDE,
   BUTTON_PRIMARY,
 } from 'app/App.components/Button/Button.constants'
-import { delegate, undelegate } from '../Satellites.actions'
+import { delegate, undelegate, distributeProposalRewards } from '../Satellites.actions'
 import { rewardsCompound } from 'pages/Doorman/Doorman.actions'
 
 // view
@@ -98,6 +98,11 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
   const participation =
     (satellite.satelliteMetrics.proposalParticipation + satellite.satelliteMetrics.votingPartisipation) / 2
 
+  const handleDistributeRewards = () => {
+    // TODO: add valid data
+    dispatch(distributeProposalRewards('', []))
+  }
+
   const buttonToShow = isUserDelegatedToThisSatellite ? (
     <>
       <Button
@@ -118,7 +123,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
         />
       ) : null}
       {isDetailsPage && (
-        <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE}>
+        <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={handleDistributeRewards}>
           <Icon id="commision" />
           Distribute Rewards
         </NewButton>
