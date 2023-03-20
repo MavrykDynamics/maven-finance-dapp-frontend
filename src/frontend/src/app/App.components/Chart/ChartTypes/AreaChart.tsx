@@ -25,6 +25,8 @@ export const AreaChart = ({
     valueTooltipFormatter,
     hideXAxis,
     hideYAxis,
+    yAxisSide = 'right',
+    priceMargins,
   } = {},
   colors: {
     lineColor = skyColor,
@@ -65,16 +67,17 @@ export const AreaChart = ({
       },
       localization: CHART_LOCALE_SETTING,
       grid: CHART_GRID_SETTING,
-      ...getAxisSettings(Boolean(hideXAxis), Boolean(hideYAxis)),
+      ...getAxisSettings(Boolean(hideXAxis), Boolean(hideYAxis), yAxisSide),
     })
 
     // Setting the border color for the vertical axis and paddings for it
-    chart.priceScale('right').applyOptions({
+    chart.priceScale(yAxisSide).applyOptions({
       borderColor,
       entireTextOnly: true,
       scaleMargins: {
         top: 0.1,
         bottom: 0.1,
+        ...(priceMargins ?? {}),
       },
     })
 
@@ -83,8 +86,12 @@ export const AreaChart = ({
       borderColor,
       fixRightEdge: true,
       fixLeftEdge: true,
-      tickMarkFormatter: (time: BusinessDay | UTCTimestamp) =>
-        tickDateFormatter?.(Number(time)) ?? parseDate({ time: Number(time), timeFormat: 'HH:mm' }),
+      tickMarkFormatter: (time: BusinessDay | UTCTimestamp) => {
+        if (tickDateFormatter) {
+          return tickDateFormatter(Number(time))
+        }
+        return parseDate({ time: Number(time), timeFormat: 'HH:mm' })
+      },
     })
 
     // Setting color of the chart
@@ -118,6 +125,7 @@ export const AreaChart = ({
       } else {
         // set tooltip values
         const { value, time } = (param.seriesData.get(series) ?? {}) as AreaChartPlotType
+
         setTooltipData({
           yAxis: Number(time),
           xAxis: parseFloat(String(value)),
@@ -147,9 +155,11 @@ export const AreaChart = ({
     hideXAxis,
     hideYAxis,
     lineColor,
+    priceMargins,
     textColor,
     tickDateFormatter,
     width,
+    yAxisSide,
   ])
 
   return (

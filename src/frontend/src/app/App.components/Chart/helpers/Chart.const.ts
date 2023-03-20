@@ -18,7 +18,7 @@ export const DEFAULT_LAYOUT_SETTING = {
   fontSize: 12,
 }
 
-export const getAxisSettings = (hideXAxis: boolean, hideYAxis: boolean) => {
+export const getAxisSettings = (hideXAxis: boolean, hideYAxis: boolean, yAxisSide: 'left' | 'right') => {
   return {
     ...(hideXAxis
       ? {
@@ -31,6 +31,27 @@ export const getAxisSettings = (hideXAxis: boolean, hideYAxis: boolean) => {
       ? {
           rightPriceScale: {
             visible: false,
+          },
+          leftPriceScale: {
+            visible: false,
+          },
+        }
+      : {}),
+    ...(!hideYAxis && yAxisSide === 'left'
+      ? {
+          leftPriceScale: {
+            visible: true,
+          },
+          rightPriceScale: {
+            visible: false,
+          },
+        }
+      : {}),
+
+    ...(!hideYAxis && yAxisSide === 'right'
+      ? {
+          rightPriceScale: {
+            visible: true,
           },
           leftPriceScale: {
             visible: false,

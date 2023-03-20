@@ -11,16 +11,21 @@ import { Chart } from '../../../app/App.components/Chart/Chart'
 import { TabItem } from '../../../app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import { cyanColor } from 'styles'
 
+import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
+import { MLI_FEE_CHART_DATA } from './MliFee-chart-data'
+import { CHART_TEST_DATA } from 'pages/DashboardPersonal/tabs.const'
+import { MLI_FEE_TOOLTIP } from 'app/App.components/Chart/Tooltips/ChartTooltip'
+
 const tabsList: TabItem[] = [
-  {
-    text: 'Circulating MVK vs. sMVK',
-    id: 1,
-    active: true,
-  },
+  // {
+  //   text: 'MVK vs. sMVK',
+  //   id: 1,
+  //   active: true,
+  // },
   {
     text: 'MLI and Exit Fee',
     id: 2,
-    active: false,
+    active: true,
   },
   {
     text: 'Staking History',
@@ -29,8 +34,6 @@ const tabsList: TabItem[] = [
   },
 ]
 
-const exitFeeMliData = JSON.parse()
-
 export function DoormanChart() {
   const { smvkHistoryData, mvkMintHistoryData } = useSelector((state: State) => state.doorman)
 
@@ -38,40 +41,43 @@ export function DoormanChart() {
 
   const handleChangeTabs = (tabId?: number) => setActiveTabId(tabsList.find(({ id }) => tabId === id)?.id ?? 1)
 
-  const { plots, tooltipAsset } = useMemo(() => {
-    switch (activeTabId) {
-      // return double chart data
-      case tabsList[0].id:
-        return { plots: [], tooltipAsset: 'sMVK' }
-      // return MLI & exit fee chart data
-      case tabsList[1].id:
-        return { plots: [], tooltipAsset: 'sMVK' }
-      // return sMVK chart data
-      case tabsList[2].id:
-        return { plots: smvkHistoryData, tooltipAsset: 'sMVK' }
-      default:
-        return { plots: [], tooltipAsset: '' }
-    }
-  }, [smvkHistoryData, activeTabId])
-
   return (
     <Wrapper>
       {tabsList?.length ? <TabSwitcher className="switcher" tabItems={tabsList} onClick={handleChangeTabs} /> : null}
 
       <ChartCard>
-        <Chart
-          data={{ type: 'area', plots }}
-          colors={{
-            lineColor: cyanColor,
-            areaTopColor: cyanColor,
-            areaBottomColor: 'rgba(119, 164, 242, 0)',
-            textColor: '#CDCDCD',
-          }}
-          settings={{
-            height: 370,
-          }}
-          tooltipAsset={tooltipAsset}
-        />
+        {/* {activeTabId === tabsList[0].id ? null : null} */}
+        {activeTabId === tabsList[0].id ? (
+          <Chart
+            data={{
+              type: 'area',
+              plots: MLI_FEE_CHART_DATA,
+            }}
+            settings={{
+              height: 370,
+              tickDateFormatter: (timeTick) => timeTick.toFixed(2),
+              priceMargins: { top: 0.05, bottom: 0 },
+              yAxisSide: 'left',
+            }}
+            tooltipAsset={'%'}
+            numberOfItemsToDisplay={10}
+            tooltipName={MLI_FEE_TOOLTIP}
+          />
+        ) : null}
+
+        {activeTabId === tabsList[1].id ? (
+          <Chart
+            data={{
+              type: 'area',
+              plots: smvkHistoryData,
+            }}
+            settings={{
+              height: 370,
+            }}
+            tooltipAsset={'sMVK'}
+            numberOfItemsToDisplay={10}
+          />
+        ) : null}
       </ChartCard>
     </Wrapper>
   )

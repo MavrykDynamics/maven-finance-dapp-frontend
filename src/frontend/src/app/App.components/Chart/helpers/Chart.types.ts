@@ -30,6 +30,8 @@ type ChartSettings = {
   valueTooltipFormatter?: (date: number) => string
   hideXAxis?: boolean
   hideYAxis?: boolean
+  yAxisSide?: 'left' | 'right'
+  priceMargins?: { top: number; bottom: number }
 }
 
 type ChartBasePropsType = {

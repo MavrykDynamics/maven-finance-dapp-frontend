@@ -25,6 +25,8 @@ export const CandlestickChart = ({
     valueTooltipFormatter,
     hideXAxis,
     hideYAxis,
+    yAxisSide = 'left',
+    priceMargins,
   } = {},
   colors: {
     textColor = lightTextColor,
@@ -64,16 +66,17 @@ export const CandlestickChart = ({
       },
       localization: CHART_LOCALE_SETTING,
       grid: CHART_GRID_SETTING,
-      ...getAxisSettings(Boolean(hideXAxis), Boolean(hideYAxis)),
+      ...getAxisSettings(Boolean(hideXAxis), Boolean(hideYAxis), yAxisSide),
     })
 
     // Setting the border color for the vertical axis and paddings for it
-    chart.priceScale('right').applyOptions({
+    chart.priceScale(yAxisSide).applyOptions({
       borderColor,
       entireTextOnly: true,
       scaleMargins: {
         top: 0.1,
         bottom: 0.1,
+        ...(priceMargins ?? {}),
       },
     })
 
@@ -82,8 +85,12 @@ export const CandlestickChart = ({
       borderColor,
       fixRightEdge: true,
       fixLeftEdge: true,
-      tickMarkFormatter: (time: BusinessDay | UTCTimestamp) =>
-        tickDateFormatter?.(Number(time)) ?? parseDate({ time: Number(time), timeFormat: 'HH:mm' }),
+      tickMarkFormatter: (time: BusinessDay | UTCTimestamp) => {
+        if (tickDateFormatter) {
+          return tickDateFormatter(Number(time))
+        }
+        return parseDate({ time: Number(time), timeFormat: 'HH:mm' })
+      },
     })
 
     // Setting color of the candles
@@ -143,9 +150,11 @@ export const CandlestickChart = ({
     height,
     hideXAxis,
     hideYAxis,
+    priceMargins,
     textColor,
     tickDateFormatter,
     width,
+    yAxisSide,
   ])
 
   return (

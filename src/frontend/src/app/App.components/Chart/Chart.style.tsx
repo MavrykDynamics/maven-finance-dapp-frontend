@@ -82,3 +82,31 @@ export const AmountDateTooltipStyled = styled(BaseTooltipStyles)`
     white-space: pre;
   }
 `
+
+export const MliFeeTooltipStyled = styled(BaseTooltipStyles)`
+  width: 140px;
+  transform: translate(calc(var(--translateX, 0) * 1px + 65px), calc(var(--translateY, 0px) * 1px));
+
+  > div {
+    display: flex;
+    justify-content: center;
+    column-gap: 5px;
+
+    p {
+      margin: 0;
+    }
+
+    > * {
+      font-weight: 600;
+      font-size: 18px;
+    }
+
+    .name {
+      color: ${({ theme }) => theme.textColor};
+    }
+
+    .value {
+      color: ${({ theme }) => theme.dataColor};
+    }
+  }
+`
