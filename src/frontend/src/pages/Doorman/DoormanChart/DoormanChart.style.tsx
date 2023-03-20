@@ -8,7 +8,8 @@ export const Wrapper = styled.div`
 
   .switcher {
     margin-top: 30px;
-    width: 287px;
+    width: fit-content;
+    column-gap: 15px;
   }
 `
 
