@@ -10,7 +10,7 @@ export const MarketChartsContainer = styled.div<{ theme: MavrykTheme }>`
   margin-top: 30px;
 
   .chart-wrapper {
-    width: 45%;
+    width: fit-content;
     max-width: 450px;
     display: flex;
     flex-direction: column;
@@ -51,6 +51,10 @@ export const MarketChartsContainer = styled.div<{ theme: MavrykTheme }>`
     background-color: ${({ theme }) => theme.containerColor};
     border: 1px solid ${({ theme }) => theme.cardBorderColor};
     border-radius: 10px;
+  }
+
+  &.largeGap {
+    column-gap: 150px;
   }
 `
 

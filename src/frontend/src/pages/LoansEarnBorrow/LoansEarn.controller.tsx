@@ -1,17 +1,22 @@
+import { useDispatch, useSelector } from 'react-redux'
+import { State } from 'reducers'
+
 // components
 import { Page } from 'styles'
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
-
-// styles
-import { LoansEarnBorrowStyled } from './LoansEarnBorrow.styles'
+import { LoansEarnBorrow } from './LoansEarnBorrow.view'
+import { EarnBorrowTotalCharts } from './Components/EarnBorrowTotalCharts.view'
 
 export const LoansEarn = () => {
+  const dispatch = useDispatch()
+  // TODO: chartsData - test data
+  const { chartsData } = useSelector((state: State) => state.loans)
+
   return (
     <Page>
       <PageHeader page={'loansEarn'} />
-      <LoansEarnBorrowStyled>
-
-      </LoansEarnBorrowStyled>
+      <EarnBorrowTotalCharts chartsData={chartsData} leftChartTitle="Total Earning" rightChartTitle="Total Borrowing" />
+      <LoansEarnBorrow title="Earn" />
     </Page>
   )
 }
