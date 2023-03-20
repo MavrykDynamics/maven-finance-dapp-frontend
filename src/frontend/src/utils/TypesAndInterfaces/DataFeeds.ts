@@ -1,4 +1,4 @@
-import { AreaChartPlotType } from 'app/App.components/Chart/Chart.types'
+import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
 import { normalizeFeeds } from 'pages/DataFeeds/DataFeeds.helpers'
 import { Aggregator, Aggregator_History_Data } from 'utils/generated/graphqlTypes'
 

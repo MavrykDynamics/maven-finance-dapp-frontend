@@ -1,34 +1,32 @@
 import { useRef, useEffect, useState } from 'react'
 import { createChart, BusinessDay, UTCTimestamp } from 'lightweight-charts'
 
-import { skyColor, lightTextColor, headerColor } from 'styles'
+import { lightTextColor, headerColor } from 'styles'
 import { parseDate } from 'utils/time'
-import { formatNumber } from '../CommaNumber/CommaNumber.controller'
-import { DEFAULT_LAYOUT_SETTING, CHART_GRID_SETTING, getAxisSettings } from './Chart.const'
+import {
+  DEFAULT_LAYOUT_SETTING,
+  CHART_GRID_SETTING,
+  getAxisSettings,
+  CHART_LOCALE_SETTING,
+  checkWhetherHideTooltip,
+} from '../helpers/Chart.const'
 
-import { ChartStyled } from './Chart.style'
+import ChartTooltip, { PRICE_DATA_TOOLTIP } from '../Tooltips/ChartTooltip'
+import { ChartStyled } from '../Chart.style'
 
-import { AreaChartPropsType } from './Chart.types'
-import ChartTooltip, { PRICE_DATA_TOOLTIP } from './Tooltips/ChartTooltip'
+import { AreaChartPlotType, AreaChartPropsType } from '../helpers/Chart.types'
 
-export const AreaChart = ({
+export const HistogramChart = ({
   settings: {
     height,
     width,
     tickDateFormatter,
-    tickPriceFormatter,
     dateTooltipFormatter,
     valueTooltipFormatter,
     hideXAxis,
     hideYAxis,
-  },
-  colors: {
-    lineColor = skyColor,
-    areaTopColor = skyColor,
-    areaBottomColor = 'transparent',
-    textColor = lightTextColor,
-    borderColor = headerColor,
   } = {},
+  colors: { barColor = 'rgba(119, 164, 242, 0.51)', textColor = lightTextColor, borderColor = headerColor } = {},
   data,
   tooltipName = PRICE_DATA_TOOLTIP,
   tooltipAsset,
@@ -42,77 +40,68 @@ export const AreaChart = ({
   } | null>(null)
 
   useEffect(() => {
+    if (!chartContainerRef?.current || !mainChartWrapperRef?.current) return
+
     const handleResize = () => {
-      chart.applyOptions({ width: chartContainerRef?.current?.clientWidth ?? 0 })
+      chart.applyOptions({
+        width: chartContainerRef?.current?.clientWidth ?? 0,
+        height: height ?? mainChartWrapperRef?.current?.clientHeight ?? 0,
+      })
     }
 
-    const chart = createChart(chartContainerRef?.current ?? '', {
-      width: width ?? chartContainerRef?.current?.clientWidth ?? 0,
-      height,
+    // Setting sizes of the chart, removing grid and layout default lines, setting xAxis formatter
+    const chart = createChart(chartContainerRef.current, {
+      width: width ?? chartContainerRef.current?.clientWidth ?? 0,
+      height: height ?? mainChartWrapperRef.current?.clientHeight ?? 0,
       layout: {
         ...DEFAULT_LAYOUT_SETTING,
         textColor,
       },
-      localization: {
-        locale: 'en-US',
-        timeFormatter: (time: BusinessDay | UTCTimestamp) =>
-          tickDateFormatter?.(Number(time)) ?? parseDate({ time: Number(time), timeFormat: 'HH:mm' }),
-      },
+      localization: CHART_LOCALE_SETTING,
       grid: CHART_GRID_SETTING,
       ...getAxisSettings(Boolean(hideXAxis), Boolean(hideYAxis)),
     })
 
-    // Setting the border color for the vertical axis
-    chart.priceScale().applyOptions({
+    // Setting the border color for the vertical axis and paddings for it
+    chart.priceScale('right').applyOptions({
       borderColor,
+      entireTextOnly: true,
       scaleMargins: {
         top: 0.1,
-        bottom: 0.1,
+        bottom: 0,
       },
     })
 
-    // Setting the border color for the horizontal axis
+    // Setting the border color for the horizontal axis, and disabling overscroll to left | right
     chart.timeScale().applyOptions({
       borderColor,
-      tickMarkFormatter: (time: UTCTimestamp | BusinessDay) =>
-        tickDateFormatter?.(Number(time)) ?? parseDate({ time: Number(time), timeFormat: 'HH:mm' }),
       fixRightEdge: true,
       fixLeftEdge: true,
+      tickMarkFormatter: (time: BusinessDay | UTCTimestamp) =>
+        tickDateFormatter?.(Number(time)) ?? parseDate({ time: Number(time), timeFormat: 'HH:mm' }),
     })
 
-    const series = chart.addAreaSeries({
-      lineColor,
-      topColor: areaTopColor,
-      bottomColor: areaBottomColor,
+    // Setting color of the chart
+    const series = chart.addHistogramSeries({
+      color: barColor,
     })
 
+    // Setting data
     series.setData(data)
+
+    // Setting yAxis data format
     series.applyOptions({
       lastValueVisible: false,
       priceLineVisible: false,
       priceFormat: {
-        type: 'custom',
-        minMove: 0.000001,
-        formatter: (price: any) =>
-          tickPriceFormatter?.(parseFloat(price)) ??
-          formatNumber({
-            showDecimal: true,
-            decimalsToShow: 6,
-            number: parseFloat(price),
-          }),
+        minMove: 0.00000001,
+        type: 'price',
       },
     })
 
+    // Subscribe for tooltip update
     chart.subscribeCrosshairMove((param) => {
-      if (
-        !chartContainerRef?.current ||
-        param.point === undefined ||
-        !param.time ||
-        param.point.x < 0 ||
-        param.point.x > chartContainerRef?.current?.clientWidth ||
-        param.point.y < 0 ||
-        param.point.y > chartContainerRef?.current?.clientHeight
-      ) {
+      if (checkWhetherHideTooltip(param, chartContainerRef)) {
         // hide tooltip
         if (mainChartWrapperRef.current) {
           mainChartWrapperRef.current.style.setProperty('--translateX', '0')
@@ -120,12 +109,13 @@ export const AreaChart = ({
         }
       } else {
         // set tooltip values
+        const { value, time } = (param.seriesData.get(series) ?? {}) as AreaChartPlotType
         setTooltipData({
-          yAxis: Number(param.time),
-          xAxis: parseFloat(String(param.seriesPrices.get(series))),
+          yAxis: Number(time),
+          xAxis: parseFloat(String(value)),
         })
 
-        if (mainChartWrapperRef.current) {
+        if (mainChartWrapperRef.current && param.point) {
           mainChartWrapperRef.current.style.setProperty('--translateX', `${param.point.x + 15}`)
           mainChartWrapperRef.current.style.setProperty('--translateY', `${param.point.y - 20}`)
         }
@@ -140,18 +130,15 @@ export const AreaChart = ({
       chart.remove()
     }
   }, [
-    areaBottomColor,
-    areaTopColor,
     borderColor,
+    barColor,
     data,
     dateTooltipFormatter,
     height,
     hideXAxis,
     hideYAxis,
-    lineColor,
     textColor,
     tickDateFormatter,
-    tickPriceFormatter,
     width,
   ])
 

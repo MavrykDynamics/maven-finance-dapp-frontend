@@ -2,15 +2,15 @@ import { useEffect, useRef, useState } from 'react'
 import { createChart, ColorType, BusinessDay, UTCTimestamp } from 'lightweight-charts'
 
 // styles
-import { ChartStyled, Plug, TradingViewTooltipStyled } from './Chart.style'
+import { ChartStyled, Plug, TradingViewTooltipStyled } from '../Chart.style'
 
 // helpers
-import { parseDate } from '../../../utils/time'
+import { parseDate } from '../../../../utils/time'
 
 // components
-import Icon from '../Icon/Icon.view'
+import Icon from '../../Icon/Icon.view'
 
-import { CommaNumber, formatNumber } from '../CommaNumber/CommaNumber.controller'
+import { CommaNumber, formatNumber } from '../../CommaNumber/CommaNumber.controller'
 import { headerColor, lightTextColor, skyColor } from 'styles'
 
 export type ChartPlotType = { time: UTCTimestamp; value: number }
@@ -164,7 +164,7 @@ export const TradingViewChart = ({
     })
 
     // Setting the border color for the vertical axis
-    chart.priceScale().applyOptions({
+    chart.priceScale('rihgt').applyOptions({
       borderColor,
       scaleMargins: {
         top: 0.1,
@@ -226,7 +226,7 @@ export const TradingViewChart = ({
             dateTooltipFormatter?.(Number(param.time)) ??
             parseDate({ time: Number(param.time), timeFormat: 'MMM DD, HH:mm Z' }) ??
             '',
-          amount: parseFloat(String(param.seriesPrices.get(series))),
+          amount: 0, //parseFloat(String(param.seriesPrices.get(series))),
         })
         if (mainChartWrapperRef.current) {
           mainChartWrapperRef.current.style.setProperty('--translateX', `${param.point.x + 15}`)

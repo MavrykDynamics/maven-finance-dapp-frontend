@@ -86,14 +86,9 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
             <CommaNumber beginningText="$" value={lastSeria * mvkExchangeRate} />
           </div>
         </div>
-        <Chart
-          data={{ type: 'area', plots: CHART_TEST_DATA }}
-          settings={{
-            height: 260,
-          }}
-          className="portfolio"
-          tooltipAsset={'MVK'}
-        />
+        <div className="chart">
+          <Chart data={{ type: 'area', plots: CHART_TEST_DATA }} tooltipAsset={'MVK'} />
+        </div>
       </PortfolioChartStyled>
 
       <PortfolioWalletStyled>

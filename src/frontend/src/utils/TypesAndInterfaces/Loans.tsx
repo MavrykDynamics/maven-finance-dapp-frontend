@@ -1,4 +1,4 @@
-import { AreaChartPlotType } from 'app/App.components/Chart/Chart.types'
+import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
 import {
   ANY_USER,
   NONE_USER,

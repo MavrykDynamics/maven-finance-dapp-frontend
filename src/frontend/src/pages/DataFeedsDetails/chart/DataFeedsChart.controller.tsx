@@ -6,7 +6,7 @@ import { ChartCard } from './DataFeedsChart.style'
 import { cyanColor } from 'styles'
 
 // types;
-import { AreaChartPlotType } from 'app/App.components/Chart/Chart.types'
+import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
 
 type Props = {
   dataFeedsHistory: AreaChartPlotType[]
@@ -29,12 +29,7 @@ export function DataFeedsChart({ className, dataFeedsHistory, dataFeedsVolatilit
           areaBottomColor: 'rgba(119, 164, 242, 0)',
           textColor: '#CDCDCD',
         }}
-        settings={{
-          height: 300,
-          // tooltipAsset: activeTab === 1 ? tooltipAsset : '%',
-        }}
-        className="data-feeds-chart"
-        tooltipAsset={tooltipAsset}
+        tooltipAsset={activeTab === 1 ? tooltipAsset : '%'}
       />
     </ChartCard>
   )

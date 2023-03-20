@@ -70,15 +70,16 @@ export const Loans = () => {
         <span>Total Lending</span>
         <CommaNumber value={chartsData?.totalLended ?? 0} beginningText={'$'} />
       </div>
-      <Chart
-        data={{ type: 'area', plots: chartsData.lendingChartData }}
-        colors={CHART_COLORS}
-        className="loan-chart"
-        settings={CHART_SETTINGS}
-        numberOfItemsToDisplay={3}
-        tooltipAsset="$"
-      />
-      <div className="chart-interval">7 Days</div>
+      <div className="chart">
+        <Chart
+          data={{ type: 'area', plots: chartsData.lendingChartData }}
+          colors={CHART_COLORS}
+          settings={CHART_SETTINGS}
+          numberOfItemsToDisplay={3}
+          tooltipAsset="$"
+        />
+        <div className="chart-interval">7 Days</div>
+      </div>
     </div>
   )
 
@@ -88,15 +89,16 @@ export const Loans = () => {
         <span>Total Borrowing</span>
         <CommaNumber value={chartsData?.totalBorrowed ?? 0} beginningText={'$'} />
       </div>
-      <Chart
-        data={{ type: 'area', plots: chartsData.borrowingChartData }}
-        className="loan-chart"
-        colors={CHART_COLORS}
-        settings={CHART_SETTINGS}
-        numberOfItemsToDisplay={3}
-        tooltipAsset="$"
-      />
-      <div className="chart-interval">7 Days</div>
+      <div className="chart">
+        <Chart
+          data={{ type: 'area', plots: chartsData.borrowingChartData }}
+          colors={CHART_COLORS}
+          settings={CHART_SETTINGS}
+          numberOfItemsToDisplay={3}
+          tooltipAsset="$"
+        />
+        <div className="chart-interval">7 Days</div>
+      </div>
     </div>
   )
 

@@ -1,4 +1,4 @@
-import { AreaChartPlotType } from 'app/App.components/Chart/Chart.types'
+import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
 import { defaultAggregatorNameMaxLength } from 'app/App.components/Input/Input.constants'
 import { UTCTimestamp } from 'lightweight-charts'
 import { percentageDifference } from 'utils/calcFunctions'

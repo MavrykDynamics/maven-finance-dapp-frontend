@@ -1,5 +1,5 @@
 import { CandlestickData, SingleValueData, UTCTimestamp } from 'lightweight-charts'
-import { CHART_TOOLTIPS_TYPE } from './Tooltips/ChartTooltip'
+import { CHART_TOOLTIPS_TYPE } from '../Tooltips/ChartTooltip'
 
 export type AreaChartPlotType = SingleValueData
 export type CandlestickChartPlotType = CandlestickData
@@ -14,16 +14,18 @@ export type ChartColorsSettings = {
   chandleUpColor?: string
   chandleDownColor?: string
 
+  // histogram colors
+  barColor?: string
+
   // commom colors
   textColor?: string
   borderColor?: string
 }
 
 type ChartSettings = {
-  height: number
+  height?: number
   width?: number
   tickDateFormatter?: (date: number) => string
-  tickPriceFormatter?: (value: number) => string
   dateTooltipFormatter?: (date: number) => string
   valueTooltipFormatter?: (date: number) => string
   hideXAxis?: boolean
@@ -32,7 +34,7 @@ type ChartSettings = {
 
 type ChartBasePropsType = {
   colors?: ChartColorsSettings
-  settings: ChartSettings
+  settings?: ChartSettings
   tooltipName?: CHART_TOOLTIPS_TYPE
   tooltipAsset: string
 }
@@ -55,8 +57,12 @@ export type ChartWrapperPropsType = ChartBasePropsType & {
         type: 'candle'
         plots: Array<CandlestickChartPlotType>
       }
+    | {
+        type: 'histogram'
+        plots: Array<AreaChartPlotType>
+      }
+
   numberOfItemsToDisplay?: number
-  className?: string
   tooltipName?: CHART_TOOLTIPS_TYPE
   tooltipAsset: string
 }

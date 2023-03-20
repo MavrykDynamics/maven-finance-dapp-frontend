@@ -1,4 +1,4 @@
-import { ColorType } from 'lightweight-charts'
+import { ColorType, MouseEventParams } from 'lightweight-charts'
 
 export const CHART_GRID_SETTING = {
   vertLines: {
@@ -7,6 +7,10 @@ export const CHART_GRID_SETTING = {
   horzLines: {
     visible: false,
   },
+}
+
+export const CHART_LOCALE_SETTING = {
+  locale: 'en-US',
 }
 
 export const DEFAULT_LAYOUT_SETTING = {
@@ -34,4 +38,16 @@ export const getAxisSettings = (hideXAxis: boolean, hideYAxis: boolean) => {
         }
       : {}),
   }
+}
+
+export const checkWhetherHideTooltip = (param: MouseEventParams, chartRef: React.RefObject<HTMLDivElement | null>) => {
+  return (
+    !chartRef?.current ||
+    param.point === undefined ||
+    !param.time ||
+    param.point.x < 0 ||
+    param.point.x > chartRef?.current?.clientWidth ||
+    param.point.y < 0 ||
+    param.point.y > chartRef?.current?.clientHeight
+  )
 }

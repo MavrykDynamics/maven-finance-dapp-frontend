@@ -4,8 +4,8 @@ import { Card } from 'styles'
 import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 
 export const ChartCard = styled(Card)<{ theme: MavrykTheme }>`
-  padding: 30px 12px 14px 40px;
-  min-height: 415px;
+  padding: 30px 12px 14px 20px;
+  height: 415px;
 
   display: flex;
   flex-direction: column;

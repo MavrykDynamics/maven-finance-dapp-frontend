@@ -53,7 +53,6 @@ export function DoormanChart() {
             height: 370,
           }}
           tooltipAsset={'MVK'}
-          className="dorman-chart"
         />
       </ChartCard>
     </Wrapper>

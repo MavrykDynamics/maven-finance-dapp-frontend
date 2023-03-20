@@ -84,7 +84,7 @@ export const PortfolioChartStyled = styled(MediumBlockBase)<{ theme: MavrykTheme
     color: ${({ theme }) => theme.dataColor};
     .mvk {
       font-weight: 600;
-      font-size: 32px;
+      font-size: 27px;
 
       .suffix {
         color: ${({ theme }) => theme.textColor};
@@ -99,6 +99,11 @@ export const PortfolioChartStyled = styled(MediumBlockBase)<{ theme: MavrykTheme
     p {
       margin: 0;
     }
+  }
+
+  .chart {
+    margin-top: auto;
+    height: 230px;
   }
 `
 
