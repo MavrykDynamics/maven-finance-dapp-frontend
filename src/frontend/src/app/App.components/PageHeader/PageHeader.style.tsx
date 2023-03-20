@@ -163,6 +163,10 @@ export const PageHeaderForegroundImage = styled.img<{ page: string; src: string 
         return '190px'
       case 'break glass council':
         return '150px'
+      case 'loansEarn':
+        return '150px'
+      case 'loansBorrow':
+        return '150px'
       default:
         return '172px'
     }
@@ -182,6 +186,10 @@ export const PageHeaderForegroundImage = styled.img<{ page: string; src: string 
       case 'emergency governance':
         return '-2px'
       case 'break glass council':
+      case 'loansEarn':
+        return '-10px'
+      case 'loansBorrow':
+        return '-10px'
       default:
         return '0'
     }
