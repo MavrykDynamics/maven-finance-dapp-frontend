@@ -27,6 +27,8 @@ export const AreaChart = ({
     hideYAxis,
     yAxisSide = 'right',
     priceMargins,
+    rightOffset = 0,
+    crosshairOptions,
   } = {},
   colors: {
     lineColor = skyColor,
@@ -67,6 +69,7 @@ export const AreaChart = ({
       },
       localization: CHART_LOCALE_SETTING,
       grid: CHART_GRID_SETTING,
+      crosshair: crosshairOptions ?? {},
       ...getAxisSettings(Boolean(hideXAxis), Boolean(hideYAxis), yAxisSide),
     })
 
@@ -76,7 +79,7 @@ export const AreaChart = ({
       entireTextOnly: true,
       scaleMargins: {
         top: 0.1,
-        bottom: 0.1,
+        bottom: 0.03,
         ...(priceMargins ?? {}),
       },
     })
@@ -86,6 +89,9 @@ export const AreaChart = ({
       borderColor,
       fixRightEdge: true,
       fixLeftEdge: true,
+      rightOffset,
+      timeVisible: true,
+      secondsVisible: false,
       tickMarkFormatter: (time: BusinessDay | UTCTimestamp) => {
         if (tickDateFormatter) {
           return tickDateFormatter(Number(time))

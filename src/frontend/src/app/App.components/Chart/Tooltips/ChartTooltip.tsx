@@ -41,7 +41,7 @@ const MliFeeTooltip = ({ xAxis, yAxis, asset, dateTooltipFormatter, valueTooltip
           endingText={asset}
           value={valueTooltipFormatter ? parseFloat(valueTooltipFormatter(yAxis)) : yAxis}
           showDecimal
-          decimalsToShow={2}
+          decimalsToShow={4}
           className="value"
         />
       </div>

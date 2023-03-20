@@ -27,6 +27,8 @@ export const CandlestickChart = ({
     hideYAxis,
     yAxisSide = 'left',
     priceMargins,
+    rightOffset = 0,
+    crosshairOptions,
   } = {},
   colors: {
     textColor = lightTextColor,
@@ -66,6 +68,7 @@ export const CandlestickChart = ({
       },
       localization: CHART_LOCALE_SETTING,
       grid: CHART_GRID_SETTING,
+      crosshair: crosshairOptions ?? {},
       ...getAxisSettings(Boolean(hideXAxis), Boolean(hideYAxis), yAxisSide),
     })
 
@@ -85,6 +88,7 @@ export const CandlestickChart = ({
       borderColor,
       fixRightEdge: true,
       fixLeftEdge: true,
+      rightOffset,
       tickMarkFormatter: (time: BusinessDay | UTCTimestamp) => {
         if (tickDateFormatter) {
           return tickDateFormatter(Number(time))

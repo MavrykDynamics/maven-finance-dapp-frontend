@@ -84,7 +84,7 @@ export const AmountDateTooltipStyled = styled(BaseTooltipStyles)`
 `
 
 export const MliFeeTooltipStyled = styled(BaseTooltipStyles)`
-  width: 140px;
+  width: 150px;
   transform: translate(calc(var(--translateX, 0) * 1px + 65px), calc(var(--translateY, 0px) * 1px));
 
   > div {

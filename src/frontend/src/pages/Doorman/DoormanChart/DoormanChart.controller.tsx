@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react'
 import { State } from 'reducers'
 
 // styles
-import { ChartCard, Wrapper } from './DoormanChart.style'
+import { DoormanChartCard, Wrapper } from './DoormanChart.style'
 import { TabSwitcher } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 
 // components
@@ -45,24 +45,34 @@ export function DoormanChart() {
     <Wrapper>
       {tabsList?.length ? <TabSwitcher className="switcher" tabItems={tabsList} onClick={handleChangeTabs} /> : null}
 
-      <ChartCard>
+      <DoormanChartCard>
         {/* {activeTabId === tabsList[0].id ? null : null} */}
         {activeTabId === tabsList[0].id ? (
-          <Chart
-            data={{
-              type: 'area',
-              plots: MLI_FEE_CHART_DATA,
-            }}
-            settings={{
-              height: 370,
-              tickDateFormatter: (timeTick) => timeTick.toFixed(2),
-              priceMargins: { top: 0.05, bottom: 0 },
-              yAxisSide: 'left',
-            }}
-            tooltipAsset={'%'}
-            numberOfItemsToDisplay={10}
-            tooltipName={MLI_FEE_TOOLTIP}
-          />
+          <>
+            <div className="mli-label">MLI (%)</div>
+            <div className="fee-label">Exit Fee(%)</div>
+            <Chart
+              data={{
+                type: 'area',
+                plots: MLI_FEE_CHART_DATA,
+              }}
+              settings={{
+                height: 370,
+                tickDateFormatter: (timeTick) => timeTick.toFixed(0),
+                priceMargins: { top: 0.1, bottom: 0.01 },
+                rightOffset: 0.5,
+                yAxisSide: 'left',
+                crosshairOptions: {
+                  vertLine: {
+                    visible: true,
+                    labelVisible: false,
+                  },
+                },
+              }}
+              tooltipAsset={'%'}
+              tooltipName={MLI_FEE_TOOLTIP}
+            />
+          </>
         ) : null}
 
         {activeTabId === tabsList[1].id ? (
@@ -78,7 +88,7 @@ export function DoormanChart() {
             numberOfItemsToDisplay={10}
           />
         ) : null}
-      </ChartCard>
+      </DoormanChartCard>
     </Wrapper>
   )
 }

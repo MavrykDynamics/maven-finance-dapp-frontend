@@ -32,6 +32,17 @@ type ChartSettings = {
   hideYAxis?: boolean
   yAxisSide?: 'left' | 'right'
   priceMargins?: { top: number; bottom: number }
+  rightOffset?: number
+  crosshairOptions?: {
+    vertLine?: {
+      visible?: boolean
+      labelVisible?: boolean
+    }
+    horzLine?: {
+      visible?: boolean
+      labelVisible?: boolean
+    }
+  }
 }
 
 type ChartBasePropsType = {

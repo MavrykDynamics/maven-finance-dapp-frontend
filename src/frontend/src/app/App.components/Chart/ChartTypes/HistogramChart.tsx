@@ -27,6 +27,8 @@ export const HistogramChart = ({
     hideYAxis,
     yAxisSide = 'left',
     priceMargins,
+    rightOffset = 0,
+    crosshairOptions,
   } = {},
   colors: { barColor = 'rgba(119, 164, 242, 0.51)', textColor = lightTextColor, borderColor = headerColor } = {},
   data,
@@ -61,6 +63,7 @@ export const HistogramChart = ({
       },
       localization: CHART_LOCALE_SETTING,
       grid: CHART_GRID_SETTING,
+      crosshair: crosshairOptions ?? {},
       ...getAxisSettings(Boolean(hideXAxis), Boolean(hideYAxis), yAxisSide),
     })
 
@@ -80,6 +83,7 @@ export const HistogramChart = ({
       borderColor,
       fixRightEdge: true,
       fixLeftEdge: true,
+      rightOffset,
       tickMarkFormatter: (time: BusinessDay | UTCTimestamp) => {
         if (tickDateFormatter) {
           return tickDateFormatter(Number(time))

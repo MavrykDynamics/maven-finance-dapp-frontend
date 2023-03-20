@@ -102,4 +102,4 @@ export const MLI_FEE_CHART_DATA = [
   { value: 98, time: 2.56 },
   { value: 99, time: 2.5275 },
   { value: 100, time: 2.5 },
-].reverse() as Array<AreaChartPlotType>
+].map(({ value, time }) => ({ value: time, time: value })) as Array<AreaChartPlotType>
