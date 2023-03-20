@@ -51,6 +51,18 @@ export const mainNavigationLinks: MainNavigationRoute[] = [
         routeSubPath: '/loans/dashboard',
       },
       {
+        id: 57000,
+        subTitle: 'Earn',
+        subPath: `loans/earn`,
+        routeSubPath: '/loans/earn',
+      },
+      {
+        id: 57111,
+        subTitle: 'Borrow',
+        subPath: `loans/borrow`,
+        routeSubPath: '/loans/borrow',
+      },
+      {
         id: 57792,
         subTitle: 'Markets',
         subPath: `loans`,
