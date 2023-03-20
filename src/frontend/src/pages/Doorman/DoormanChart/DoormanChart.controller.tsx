@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { State } from 'reducers'
 
 // styles
@@ -13,28 +13,46 @@ import { cyanColor } from 'styles'
 
 const tabsList: TabItem[] = [
   {
-    text: 'MVK Total Supply',
+    text: 'Circulating MVK vs. sMVK',
     id: 1,
     active: true,
   },
   {
-    text: 'Staking History',
+    text: 'MLI and Exit Fee',
     id: 2,
+    active: false,
+  },
+  {
+    text: 'Staking History',
+    id: 3,
     active: false,
   },
 ]
 
+const exitFeeMliData = JSON.parse()
+
 export function DoormanChart() {
   const { smvkHistoryData, mvkMintHistoryData } = useSelector((state: State) => state.doorman)
 
-  const [activeTab, setActiveTab] = useState(tabsList[0].text)
-  const isStakingHistory = activeTab === tabsList[1].text
+  const [activeTabId, setActiveTabId] = useState(tabsList[0].id)
 
-  const handleChangeTabs = (tabId?: number) => {
-    setActiveTab(tabId === 1 ? tabsList[0].text : tabsList[1].text)
-  }
+  const handleChangeTabs = (tabId?: number) => setActiveTabId(tabsList.find(({ id }) => tabId === id)?.id ?? 1)
 
-  const plots = isStakingHistory ? smvkHistoryData : mvkMintHistoryData
+  const { plots, tooltipAsset } = useMemo(() => {
+    switch (activeTabId) {
+      // return double chart data
+      case tabsList[0].id:
+        return { plots: [], tooltipAsset: 'sMVK' }
+      // return MLI & exit fee chart data
+      case tabsList[1].id:
+        return { plots: [], tooltipAsset: 'sMVK' }
+      // return sMVK chart data
+      case tabsList[2].id:
+        return { plots: smvkHistoryData, tooltipAsset: 'sMVK' }
+      default:
+        return { plots: [], tooltipAsset: '' }
+    }
+  }, [smvkHistoryData, activeTabId])
 
   return (
     <Wrapper>
@@ -52,7 +70,7 @@ export function DoormanChart() {
           settings={{
             height: 370,
           }}
-          tooltipAsset={'MVK'}
+          tooltipAsset={tooltipAsset}
         />
       </ChartCard>
     </Wrapper>
