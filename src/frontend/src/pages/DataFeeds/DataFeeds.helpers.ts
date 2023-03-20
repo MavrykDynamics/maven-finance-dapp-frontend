@@ -1,4 +1,4 @@
-import { ChartPlotType } from 'app/App.components/Chart/Chart.view'
+import { AreaChartPlotType } from 'app/App.components/Chart/Chart.types'
 import { defaultAggregatorNameMaxLength } from 'app/App.components/Input/Input.constants'
 import { UTCTimestamp } from 'lightweight-charts'
 import { percentageDifference } from 'utils/calcFunctions'
@@ -89,7 +89,7 @@ export function normalizeDataFeedsHistory(historyData: DataFeedsHistoryGraphQL[]
 
 export function normalizeDataFeedsVolatility(historyData: DataFeedsHistoryGraphQL[]) {
   return historyData?.length >= 2
-    ? historyData.reduce<Array<ChartPlotType>>((acc, { data, aggregator: { decimals }, timestamp }, idx, arr) => {
+    ? historyData.reduce<Array<AreaChartPlotType>>((acc, { data, aggregator: { decimals }, timestamp }, idx, arr) => {
         if (!arr?.[idx - 1]) return acc
         acc.push({
           time: new Date(timestamp).getTime() as UTCTimestamp,

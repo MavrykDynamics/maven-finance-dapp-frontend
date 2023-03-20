@@ -15,7 +15,7 @@ import {
 } from '../DashboardPersonal.utils'
 
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { Chart } from 'app/App.components/Chart/Chart.view'
+import { Chart } from 'app/App.components/Chart/Chart'
 import { SlidingTabButtons, TabItem } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import { LoansTxTab } from './LoansTxTab'
 import Button from 'app/App.components/Button/NewButton'
@@ -87,11 +87,12 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
           </div>
         </div>
         <Chart
-          data={CHART_TEST_DATA}
+          data={{ type: 'area', plots: CHART_TEST_DATA }}
           settings={{
             height: 260,
           }}
           className="portfolio"
+          tooltipAsset={'MVK'}
         />
       </PortfolioChartStyled>
 

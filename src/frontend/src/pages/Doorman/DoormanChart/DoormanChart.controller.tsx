@@ -7,7 +7,7 @@ import { ChartCard, Wrapper } from './DoormanChart.style'
 import { TabSwitcher } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 
 // components
-import { Chart } from '../../../app/App.components/Chart/Chart.view'
+import { Chart } from '../../../app/App.components/Chart/Chart'
 import { TabItem } from '../../../app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import { cyanColor } from 'styles'
 
@@ -34,7 +34,7 @@ export function DoormanChart() {
     setActiveTab(tabId === 1 ? tabsList[0].text : tabsList[1].text)
   }
 
-  const shownData = isStakingHistory ? smvkHistoryData : mvkMintHistoryData
+  const plots = isStakingHistory ? smvkHistoryData : mvkMintHistoryData
 
   return (
     <Wrapper>
@@ -42,7 +42,7 @@ export function DoormanChart() {
 
       <ChartCard>
         <Chart
-          data={shownData}
+          data={{ type: 'area', plots }}
           colors={{
             lineColor: cyanColor,
             areaTopColor: cyanColor,
@@ -51,8 +51,8 @@ export function DoormanChart() {
           }}
           settings={{
             height: 370,
-            tooltipAsset: 'MVK',
           }}
+          tooltipAsset={'MVK'}
           className="dorman-chart"
         />
       </ChartCard>

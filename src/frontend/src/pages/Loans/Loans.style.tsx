@@ -15,6 +15,7 @@ export const MarketChartsContainer = styled.div<{ theme: MavrykTheme }>`
     display: flex;
     flex-direction: column;
     row-gap: 10px;
+    position: relative;
 
     .summary {
       display: flex;
@@ -35,8 +36,8 @@ export const MarketChartsContainer = styled.div<{ theme: MavrykTheme }>`
 
     .chart-interval {
       position: absolute;
-      top: 5px;
-      left: 10px;
+      top: 75px;
+      left: 15px;
       font-weight: 600;
       font-size: 10px;
       line-height: 18px;

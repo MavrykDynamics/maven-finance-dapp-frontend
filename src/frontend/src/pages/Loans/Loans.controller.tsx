@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 // view
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
 import { Button } from 'app/App.components/Button/Button.controller'
-import { Chart } from 'app/App.components/Chart/Chart.view'
+import { Chart } from 'app/App.components/Chart/Chart'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import Icon from 'app/App.components/Icon/Icon.view'
 
@@ -71,14 +71,14 @@ export const Loans = () => {
         <CommaNumber value={chartsData?.totalLended ?? 0} beginningText={'$'} />
       </div>
       <Chart
-        data={chartsData.lendingChartData}
+        data={{ type: 'area', plots: chartsData.lendingChartData }}
         colors={CHART_COLORS}
         className="loan-chart"
         settings={CHART_SETTINGS}
         numberOfItemsToDisplay={3}
-      >
-        <div className="chart-interval">7 Days</div>
-      </Chart>
+        tooltipAsset="$"
+      />
+      <div className="chart-interval">7 Days</div>
     </div>
   )
 
@@ -89,14 +89,14 @@ export const Loans = () => {
         <CommaNumber value={chartsData?.totalBorrowed ?? 0} beginningText={'$'} />
       </div>
       <Chart
-        data={chartsData.borrowingChartData}
-        colors={CHART_COLORS}
+        data={{ type: 'area', plots: chartsData.borrowingChartData }}
         className="loan-chart"
+        colors={CHART_COLORS}
         settings={CHART_SETTINGS}
         numberOfItemsToDisplay={3}
-      >
-        <div className="chart-interval">7 Days</div>
-      </Chart>
+        tooltipAsset="$"
+      />
+      <div className="chart-interval">7 Days</div>
     </div>
   )
 

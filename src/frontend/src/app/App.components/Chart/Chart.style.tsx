@@ -78,6 +78,10 @@ export const ChartStyled = styled.div<{ theme: MavrykTheme }>`
   position: relative;
   width: 100%;
 
+  background: ${({ theme }) => theme.containerColor};
+  border: 1px solid ${({ theme }) => theme.cardBorderColor};
+  border-radius: 10px;
+
   &.portfolio {
     margin-top: auto;
   }

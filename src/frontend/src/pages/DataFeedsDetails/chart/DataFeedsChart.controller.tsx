@@ -1,27 +1,28 @@
 // components
-import { Chart, ChartPlotType } from '../../../app/App.components/Chart/Chart.view'
+import { Chart } from '../../../app/App.components/Chart/Chart'
 
 // styles
 import { ChartCard } from './DataFeedsChart.style'
-
-// types;
 import { cyanColor } from 'styles'
 
+// types;
+import { AreaChartPlotType } from 'app/App.components/Chart/Chart.types'
+
 type Props = {
-  dataFeedsHistory: ChartPlotType[]
-  dataFeedsVolatility: ChartPlotType[]
+  dataFeedsHistory: AreaChartPlotType[]
+  dataFeedsVolatility: AreaChartPlotType[]
   className?: string
   tooltipAsset: string
   activeTab: number
 }
 
 export function DataFeedsChart({ className, dataFeedsHistory, dataFeedsVolatility, activeTab, tooltipAsset }: Props) {
-  const shownData = activeTab === 1 ? dataFeedsHistory : dataFeedsVolatility
+  const plots = activeTab === 1 ? dataFeedsHistory : dataFeedsVolatility
 
   return (
     <ChartCard className={className}>
       <Chart
-        data={shownData}
+        data={{ type: 'area', plots }}
         colors={{
           lineColor: cyanColor,
           areaTopColor: cyanColor,
@@ -30,9 +31,10 @@ export function DataFeedsChart({ className, dataFeedsHistory, dataFeedsVolatilit
         }}
         settings={{
           height: 300,
-          tooltipAsset: activeTab === 1 ? tooltipAsset : '%',
+          // tooltipAsset: activeTab === 1 ? tooltipAsset : '%',
         }}
         className="data-feeds-chart"
+        tooltipAsset={tooltipAsset}
       />
     </ChartCard>
   )
