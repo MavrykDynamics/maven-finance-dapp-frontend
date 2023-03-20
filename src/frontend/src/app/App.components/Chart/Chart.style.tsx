@@ -46,7 +46,7 @@ export const ChartStyled = styled.div<{ theme: MavrykTheme }>`
   position: relative;
 `
 
-export const TradingViewTooltipStyled = styled.div<{ theme: MavrykTheme }>`
+const BaseTooltipStyles = styled.div<{ theme: MavrykTheme }>`
   position: absolute;
   z-index: 100;
   padding: 7px 10px 7px 10px;
@@ -62,7 +62,9 @@ export const TradingViewTooltipStyled = styled.div<{ theme: MavrykTheme }>`
   transform: translate(calc(var(--translateX, 0) * 1px), calc(var(--translateY, 0px) * 1px));
   opacity: var(--translateX, 0);
   pointer-events: none;
+`
 
+export const AmountDateTooltipStyled = styled(BaseTooltipStyles)`
   .value {
     font-weight: 600;
     font-size: 18px;

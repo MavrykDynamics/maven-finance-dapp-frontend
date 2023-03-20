@@ -11,7 +11,7 @@ import {
   checkWhetherHideTooltip,
 } from '../helpers/Chart.const'
 
-import ChartTooltip, { PRICE_DATA_TOOLTIP } from '../Tooltips/ChartTooltip'
+import ChartTooltip, { AMOUNT_DATA_TOOLTIP } from '../Tooltips/ChartTooltip'
 import { ChartStyled } from '../Chart.style'
 
 import { AreaChartPlotType, AreaChartPropsType } from '../helpers/Chart.types'
@@ -34,7 +34,7 @@ export const AreaChart = ({
     borderColor = headerColor,
   } = {},
   data,
-  tooltipName = PRICE_DATA_TOOLTIP,
+  tooltipName = AMOUNT_DATA_TOOLTIP,
   tooltipAsset,
 }: AreaChartPropsType) => {
   const chartContainerRef = useRef<HTMLDivElement | null>(null)

@@ -1,9 +1,9 @@
-import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { parseDate } from 'utils/time'
-import { TradingViewTooltipStyled } from '../Chart.style'
+import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+import { AmountDateTooltipStyled } from '../Chart.style'
 
-export const PRICE_DATA_TOOLTIP = 'PriceDateTooltip'
-export type CHART_TOOLTIPS_TYPE = typeof PRICE_DATA_TOOLTIP
+export const AMOUNT_DATA_TOOLTIP = 'AmountDateTooltip'
+export type ChartTooltipsTypes = typeof AMOUNT_DATA_TOOLTIP
 
 type TooltipProps = {
   xAxis: number
@@ -13,9 +13,9 @@ type TooltipProps = {
   asset: string
 }
 
-const PriceDateTooltip = ({ xAxis, yAxis, asset, dateTooltipFormatter, valueTooltipFormatter }: TooltipProps) => {
+const AmountDateTooltip = ({ xAxis, yAxis, asset, dateTooltipFormatter, valueTooltipFormatter }: TooltipProps) => {
   return (
-    <TradingViewTooltipStyled>
+    <AmountDateTooltipStyled>
       <div className="value">
         <CommaNumber
           endingText={asset}
@@ -27,12 +27,12 @@ const PriceDateTooltip = ({ xAxis, yAxis, asset, dateTooltipFormatter, valueTool
       <div className="date">
         {dateTooltipFormatter?.(yAxis) ?? parseDate({ time: yAxis, timeFormat: 'MMM DD, HH:mm Z' })}
       </div>
-    </TradingViewTooltipStyled>
+    </AmountDateTooltipStyled>
   )
 }
 
 type TooltipsWrapperProps = Partial<TooltipProps> & {
-  tooltipName: CHART_TOOLTIPS_TYPE
+  tooltipName: ChartTooltipsTypes
   asset: string
 }
 
@@ -49,9 +49,9 @@ const ChartTooltip = ({
   }
 
   switch (tooltipName) {
-    case PRICE_DATA_TOOLTIP:
+    case AMOUNT_DATA_TOOLTIP:
       return (
-        <PriceDateTooltip
+        <AmountDateTooltip
           xAxis={xAxis}
           yAxis={yAxis}
           asset={asset}

@@ -11,7 +11,7 @@ import {
   checkWhetherHideTooltip,
 } from '../helpers/Chart.const'
 
-import ChartTooltip, { PRICE_DATA_TOOLTIP } from '../Tooltips/ChartTooltip'
+import ChartTooltip, { AMOUNT_DATA_TOOLTIP } from '../Tooltips/ChartTooltip'
 import { ChartStyled } from '../Chart.style'
 
 import { CandlestickChartPlotType, CandleStickPropsType } from '../helpers/Chart.types'
@@ -33,7 +33,7 @@ export const CandlestickChart = ({
     chandleDownColor = downColor,
   } = {},
   data,
-  tooltipName = PRICE_DATA_TOOLTIP,
+  tooltipName = AMOUNT_DATA_TOOLTIP,
   tooltipAsset,
 }: CandleStickPropsType) => {
   const chartContainerRef = useRef<HTMLDivElement | null>(null)

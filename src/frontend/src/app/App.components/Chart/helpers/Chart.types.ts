@@ -1,5 +1,5 @@
 import { CandlestickData, SingleValueData, UTCTimestamp } from 'lightweight-charts'
-import { CHART_TOOLTIPS_TYPE } from '../Tooltips/ChartTooltip'
+import { ChartTooltipsTypes } from '../Tooltips/ChartTooltip'
 
 export type AreaChartPlotType = SingleValueData
 export type CandlestickChartPlotType = CandlestickData
@@ -35,7 +35,7 @@ type ChartSettings = {
 type ChartBasePropsType = {
   colors?: ChartColorsSettings
   settings?: ChartSettings
-  tooltipName?: CHART_TOOLTIPS_TYPE
+  tooltipName?: ChartTooltipsTypes
   tooltipAsset: string
 }
 
@@ -63,7 +63,7 @@ export type ChartWrapperPropsType = ChartBasePropsType & {
       }
 
   numberOfItemsToDisplay?: number
-  tooltipName?: CHART_TOOLTIPS_TYPE
+  tooltipName?: ChartTooltipsTypes
   tooltipAsset: string
 }
 
