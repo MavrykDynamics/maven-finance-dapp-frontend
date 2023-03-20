@@ -1,5 +1,6 @@
+import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import styled from 'styled-components'
-import { boxShadowColor, cyanColor } from 'styles'
+import { boxShadowColor, Card, cyanColor } from 'styles'
 import { MavrykTheme } from '../../styles/interfaces'
 
 export const DataFeedsStyled = styled.div<{ theme: MavrykTheme }>`
@@ -253,5 +254,34 @@ export const UserSmallCard = styled.div<{ theme: MavrykTheme }>`
     border-color: ${cyanColor};
     box-shadow: 0px 4px 4px ${boxShadowColor};
     cursor: pointer;
+  }
+`
+
+export const FeedDetailsChartWrapper = styled(Card)<{ theme: MavrykTheme }>`
+  padding: 30px 12px 14px 20px;
+  height: 415px;
+
+  display: flex;
+  flex-direction: column;
+`
+
+export const ChartSlidingTabButtons = styled(SlidingTabButtons)`
+  display: flex;
+  width: 394px;
+  height: 40px;
+
+  > div {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  div {
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 14px;
+  }
+
+  button {
+    width: 100%;
   }
 `
