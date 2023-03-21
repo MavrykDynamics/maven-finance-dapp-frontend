@@ -1,6 +1,12 @@
 import { CandlestickData, SingleValueData, UTCTimestamp } from 'lightweight-charts'
 import { ChartTooltipsTypes } from '../Tooltips/ChartTooltip'
 
+// Chart types
+export const AREA_CHART_TYPE = 'area'
+export const CANDLESTICK_CHART_TYPE = 'candle'
+export const HISTOGRAM_CHART_TYPE = 'histogram'
+
+// Chart data prot types
 export type AreaChartPlotType = SingleValueData
 export type CandlestickChartPlotType = CandlestickData
 
@@ -32,7 +38,6 @@ type ChartSettings = {
   hideYAxis?: boolean
   yAxisSide?: 'left' | 'right'
   priceMargins?: { top: number; bottom: number }
-  rightOffset?: number
   crosshairOptions?: {
     vertLine?: {
       visible?: boolean
@@ -45,6 +50,7 @@ type ChartSettings = {
   }
 }
 
+// Base chart props, that are general to all types
 type ChartBasePropsType = {
   colors?: ChartColorsSettings
   settings?: ChartSettings
@@ -52,26 +58,29 @@ type ChartBasePropsType = {
   tooltipAsset: string
 }
 
+// AREA and HISTOGRAM chart props
 export type AreaChartPropsType = ChartBasePropsType & {
   data: Array<AreaChartPlotType>
 }
 
+// CANDLESTICK chart props
 export type CandleStickPropsType = ChartBasePropsType & {
   data: Array<CandlestickChartPlotType>
 }
 
+// Chart wrapper props
 export type ChartWrapperPropsType = ChartBasePropsType & {
   data:
     | {
-        type: 'area'
+        type: typeof AREA_CHART_TYPE
         plots: Array<AreaChartPlotType>
       }
     | {
-        type: 'candle'
+        type: typeof CANDLESTICK_CHART_TYPE
         plots: Array<CandlestickChartPlotType>
       }
     | {
-        type: 'histogram'
+        type: typeof HISTOGRAM_CHART_TYPE
         plots: Array<AreaChartPlotType>
       }
 
@@ -80,6 +89,7 @@ export type ChartWrapperPropsType = ChartBasePropsType & {
   tooltipAsset: string
 }
 
+// TODO: implement it
 export type DoubleChartPropsType = {
   firstChart: {
     data: Array<AreaChartPlotType>

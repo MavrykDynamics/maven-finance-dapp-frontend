@@ -11,7 +11,7 @@ import {
   checkWhetherHideTooltip,
 } from '../helpers/Chart.const'
 
-import ChartTooltip, { AMOUNT_DATA_TOOLTIP } from '../Tooltips/ChartTooltip'
+import ChartTooltip, { AMOUNT_DATE_TOOLTIP } from '../Tooltips/ChartTooltip'
 import { ChartStyled } from '../Chart.style'
 
 import { AreaChartPlotType, AreaChartPropsType } from '../helpers/Chart.types'
@@ -27,12 +27,11 @@ export const HistogramChart = ({
     hideYAxis,
     yAxisSide = 'left',
     priceMargins,
-    rightOffset = 0,
     crosshairOptions,
   } = {},
   colors: { barColor = 'rgba(119, 164, 242, 0.51)', textColor = lightTextColor, borderColor = headerColor } = {},
   data,
-  tooltipName = AMOUNT_DATA_TOOLTIP,
+  tooltipName = AMOUNT_DATE_TOOLTIP,
   tooltipAsset,
 }: AreaChartPropsType) => {
   const chartContainerRef = useRef<HTMLDivElement | null>(null)
@@ -53,7 +52,7 @@ export const HistogramChart = ({
       })
     }
 
-    // Setting sizes of the chart, removing grid and layout default lines, setting xAxis formatter
+    // Setting sizes of the chart, removing grid and layout default lines, disabling crosshair, hiding axises
     const chart = createChart(chartContainerRef.current, {
       width: width ?? chartContainerRef.current?.clientWidth ?? 0,
       height: height ?? mainChartWrapperRef.current?.clientHeight ?? 0,
@@ -67,7 +66,7 @@ export const HistogramChart = ({
       ...getAxisSettings(Boolean(hideXAxis), Boolean(hideYAxis), yAxisSide),
     })
 
-    // Setting the border color for the vertical axis and paddings for it
+    // Setting the border color for the vertical axis and paddings for it, and show label only if it's full visible
     chart.priceScale(yAxisSide).applyOptions({
       borderColor,
       entireTextOnly: true,
@@ -78,12 +77,11 @@ export const HistogramChart = ({
       },
     })
 
-    // Setting the border color for the horizontal axis, and disabling overscroll to left | right
+    // Setting the border color for the horizontal axis, and disabling overscroll to left | right, add formatter for xAxis
     chart.timeScale().applyOptions({
       borderColor,
       fixRightEdge: true,
       fixLeftEdge: true,
-      rightOffset,
       tickMarkFormatter: (time: BusinessDay | UTCTimestamp) => {
         if (tickDateFormatter) {
           return tickDateFormatter(Number(time))
@@ -153,6 +151,7 @@ export const HistogramChart = ({
     width,
     priceMargins,
     yAxisSide,
+    crosshairOptions,
   ])
 
   return (

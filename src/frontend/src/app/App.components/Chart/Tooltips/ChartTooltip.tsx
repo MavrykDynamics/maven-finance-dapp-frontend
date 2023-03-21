@@ -2,9 +2,9 @@ import { parseDate } from 'utils/time'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { AmountDateTooltipStyled, MliFeeTooltipStyled } from '../Chart.style'
 
-export const AMOUNT_DATA_TOOLTIP = 'AmountDateTooltip'
+export const AMOUNT_DATE_TOOLTIP = 'AmountDateTooltip'
 export const MLI_FEE_TOOLTIP = 'MliFeeTooltip'
-export type ChartTooltipsTypes = typeof AMOUNT_DATA_TOOLTIP | typeof MLI_FEE_TOOLTIP
+export type ChartTooltipsTypes = typeof AMOUNT_DATE_TOOLTIP | typeof MLI_FEE_TOOLTIP
 
 type TooltipProps = {
   xAxis: number
@@ -77,7 +77,7 @@ const ChartTooltip = ({
   }
 
   switch (tooltipName) {
-    case AMOUNT_DATA_TOOLTIP:
+    case AMOUNT_DATE_TOOLTIP:
       return (
         <AmountDateTooltip
           xAxis={xAxis}

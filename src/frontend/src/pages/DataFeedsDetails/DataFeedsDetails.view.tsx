@@ -44,6 +44,7 @@ import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import colors from 'styles/colors'
 import { Chart } from 'app/App.components/Chart/Chart'
+import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.types'
 
 type FeedDetailsProps = {
   feed: Feed | null
@@ -275,7 +276,7 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsPr
 
               <FeedDetailsChartWrapper>
                 <Chart
-                  data={{ type: 'area', plots: chartPlots }}
+                  data={{ type: AREA_CHART_TYPE, plots: chartPlots }}
                   colors={{
                     lineColor: cyanColor,
                     areaTopColor: cyanColor,

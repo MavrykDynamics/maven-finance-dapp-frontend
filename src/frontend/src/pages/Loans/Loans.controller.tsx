@@ -32,6 +32,7 @@ import { getLoansStorage } from './Actions/getLoansData.actions'
 import { useEffect } from 'react'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import colors from 'styles/colors'
+import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.types'
 
 const CHART_SETTINGS = {
   width: 450,
@@ -72,7 +73,7 @@ export const Loans = () => {
       </div>
       <div className="chart">
         <Chart
-          data={{ type: 'area', plots: chartsData.lendingChartData }}
+          data={{ type: AREA_CHART_TYPE, plots: chartsData.lendingChartData }}
           colors={CHART_COLORS}
           settings={CHART_SETTINGS}
           numberOfItemsToDisplay={3}
@@ -91,7 +92,7 @@ export const Loans = () => {
       </div>
       <div className="chart">
         <Chart
-          data={{ type: 'area', plots: chartsData.borrowingChartData }}
+          data={{ type: AREA_CHART_TYPE, plots: chartsData.borrowingChartData }}
           colors={CHART_COLORS}
           settings={CHART_SETTINGS}
           numberOfItemsToDisplay={3}

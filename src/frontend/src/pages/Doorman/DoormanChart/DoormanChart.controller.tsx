@@ -11,7 +11,7 @@ import { Chart } from '../../../app/App.components/Chart/Chart'
 import { TabItem } from '../../../app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import { cyanColor } from 'styles'
 
-import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
+import { AreaChartPlotType, AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.types'
 import { MLI_FEE_CHART_DATA } from './MliFee-chart-data'
 import { CHART_TEST_DATA } from 'pages/DashboardPersonal/tabs.const'
 import { MLI_FEE_TOOLTIP } from 'app/App.components/Chart/Tooltips/ChartTooltip'
@@ -53,14 +53,13 @@ export function DoormanChart() {
             <div className="fee-label">Exit Fee(%)</div>
             <Chart
               data={{
-                type: 'area',
+                type: AREA_CHART_TYPE,
                 plots: MLI_FEE_CHART_DATA,
               }}
               settings={{
                 height: 370,
                 tickDateFormatter: (timeTick) => timeTick.toFixed(0),
                 priceMargins: { top: 0.1, bottom: 0.01 },
-                rightOffset: 0.5,
                 yAxisSide: 'left',
                 crosshairOptions: {
                   vertLine: {
@@ -78,7 +77,7 @@ export function DoormanChart() {
         {activeTabId === tabsList[1].id ? (
           <Chart
             data={{
-              type: 'area',
+              type: AREA_CHART_TYPE,
               plots: smvkHistoryData,
             }}
             settings={{

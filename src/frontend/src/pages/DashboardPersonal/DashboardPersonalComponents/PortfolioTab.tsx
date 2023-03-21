@@ -23,6 +23,7 @@ import Button from 'app/App.components/Button/NewButton'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { PortfolioWalletStyled, PortfolioChartStyled } from './DashboardPersonalComponents.style'
 import { LendBorrowPosition } from './LendBorrowPosition'
+import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.types'
 
 type PortfolioTabProps = {
   xtzAmount: number
@@ -87,7 +88,7 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
           </div>
         </div>
         <div className="chart">
-          <Chart data={{ type: 'area', plots: CHART_TEST_DATA }} tooltipAsset={'MVK'} />
+          <Chart data={{ type: AREA_CHART_TYPE, plots: CHART_TEST_DATA }} tooltipAsset={'MVK'} />
         </div>
       </PortfolioChartStyled>
 
