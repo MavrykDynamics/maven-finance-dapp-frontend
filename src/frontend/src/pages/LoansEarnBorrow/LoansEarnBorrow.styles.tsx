@@ -41,6 +41,7 @@ export const EarnBorrowCards = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   flex-wrap: wrap;
   margin-top: 20px;
+  gap: 20px;
 `
 
 export const EarnBorrowCardStyled = styled(CardHover)<{ theme: MavrykTheme }>`

@@ -34,7 +34,6 @@ export const EarnBorrowChart = ({ data }: Props) => {
       <Chart
         data={data}
         colors={CHART_COLORS}
-        className="loan-chart"
         settings={MINI_CHART_SETTINGS}
         numberOfItemsToDisplay={3}
       />
