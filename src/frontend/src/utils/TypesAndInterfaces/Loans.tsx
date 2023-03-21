@@ -1,4 +1,4 @@
-import { ChartPlotType } from 'app/App.components/Chart/Chart.view'
+import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
 import {
   ANY_USER,
   NONE_USER,
@@ -37,9 +37,9 @@ export type CollateralType = BaseLoansAssetDataType & {
 
 export type LoansChartsDataType = {
   totalBorrowed: number
-  borrowingChartData: Array<ChartPlotType>
+  borrowingChartData: Array<AreaChartPlotType>
   totalLended: number
-  lendingChartData: Array<ChartPlotType>
+  lendingChartData: Array<AreaChartPlotType>
   lendBorrow24hDiff: {
     last48hLending: number
     last24hLending: number
