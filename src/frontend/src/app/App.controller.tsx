@@ -16,6 +16,7 @@ import { PopupChangeNode } from './App.components/SettingsPopup/SettingsPopup.co
 import { ActionLoader, LoaderRocket, WertLoader } from './App.components/Loader/Loader.view'
 import { AppRoutes } from './App.components/AppRoutes/AppRoutes.controller'
 import { AppStyled } from './App.style'
+import LoansPopupsProvider from 'pages/Loans/Components/Modals/LoansModals.provider'
 
 // actions
 import { toggleSidebarCollapsing } from './App.components/Menu/Menu.actions'
@@ -90,7 +91,10 @@ const AppContainer = () => {
         <WertLoader />
         <Menu />
         <PopupChangeNode isModalOpened={changeNodePopupOpen} closeModal={closeModalHandler} />
-        <AppRoutes />
+
+        <LoansPopupsProvider>
+          <AppRoutes />
+        </LoansPopupsProvider>
       </AppStyled>
       <Toaster />
     </Router>

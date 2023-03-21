@@ -34,6 +34,7 @@ import ProtectedRoute from './ProtectedRoute'
 import DashboardPersonal from 'pages/DashboardPersonal/DashboardPersonal.controller'
 import { LENDING_TAB_ID } from 'pages/Dashboard/Dashboard.utils'
 import { Market } from 'pages/Loans/Market.controller'
+import { LoansDashboard } from 'pages/LoansDashboard/LoansDashboard'
 
 export const AppRoutes = () => {
   const { pathname } = useLocation()
@@ -133,7 +134,7 @@ export const AppRoutes = () => {
         <Farms />
       </Route>
 
-      {/* LEND/BORROW */}
+      {/* LEND & BORROW */}
       <Route exact path="/loans/:assetId/:tabId">
         <Market />
       </Route>
@@ -142,6 +143,9 @@ export const AppRoutes = () => {
       </Route>
       <Route exact path="/vaults/:tabId">
         <Vaults />
+      </Route>
+      <Route exact path="/loans/dashboard">
+        <LoansDashboard />
       </Route>
 
       {/* NOT READY PAGES */}

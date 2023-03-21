@@ -143,7 +143,7 @@ export const ConnectedWalletBlock = ({
       <div className={`wallet-details ${detailsShown ? 'visible' : ''} ${isMobile ? 'mobile' : ''}`}>
         <div className='wallet-details-header'>
           <div className="top-visible-part ">
-            <Icon id="wallet" className="wallet hover" />
+            <Icon id="wallet" className="inner-wallet hover" />
             <var className='wallet-details-address hover'>
               <TzAddress tzAddress={accountPkh} hasIcon={false} type={BLUE} />
               <Icon id='copyToClipboard' className='icon-copy hover' />

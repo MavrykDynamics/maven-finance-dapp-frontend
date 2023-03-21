@@ -320,7 +320,7 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
       border-bottom-right-radius: 0;
     }
 
-    &:hover {
+    &:has(input:hover) {
       .pinned-child {
         background-color: ${({ theme }) => theme.containerColor};
       }
@@ -331,6 +331,10 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
       border-top-right-radius: 10px;
       border-bottom-right-radius: 10px;
       background-color: ${({ theme }) => theme.backgroundColor};
+
+      &:hover {
+        background-color: ${({ theme }) => theme.backgroundColor};
+      }
     }
   }
 
@@ -359,6 +363,10 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
     top: -20px;
     right: 0px;
     font-size: 14px;
+  }
+
+  .pointer {
+    cursor: pointer;
   }
 `
 

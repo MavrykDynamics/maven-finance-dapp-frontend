@@ -84,7 +84,7 @@ export const PortfolioChartStyled = styled(MediumBlockBase)<{ theme: MavrykTheme
     color: ${({ theme }) => theme.dataColor};
     .mvk {
       font-weight: 600;
-      font-size: 32px;
+      font-size: 27px;
 
       .suffix {
         color: ${({ theme }) => theme.textColor};
@@ -99,6 +99,11 @@ export const PortfolioChartStyled = styled(MediumBlockBase)<{ theme: MavrykTheme
     p {
       margin: 0;
     }
+  }
+
+  .chart {
+    margin-top: auto;
+    height: 230px;
   }
 `
 
@@ -204,6 +209,10 @@ export const LBHInfoBlock = styled(MediumBlockBase)<{ theme: MavrykTheme }>`
   padding-right: 0px;
   position: relative;
 
+  p {
+    margin: 0;
+  }
+
   .loader-wrapper {
     height: 100%;
     display: flex;
@@ -215,6 +224,35 @@ export const LBHInfoBlock = styled(MediumBlockBase)<{ theme: MavrykTheme }>`
     position: absolute;
     top: 30px;
     right: 30px;
+  }
+
+  .acc-stats {
+    margin-top: 30px;
+    display: flex;
+    align-items: center;
+
+    .stats {
+      margin-left: 60px;
+      display: flex;
+      align-items: center;
+      column-gap: 110px;
+
+      .name {
+        font-weight: 600;
+        font-size: 14px;
+      }
+
+      .value {
+        margin-top: 7px;
+        font-weight: 700;
+        font-size: 25px;
+      }
+    }
+  }
+
+  &.position-tab {
+    height: fit-content;
+    padding-right: 30px;
   }
 `
 

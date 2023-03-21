@@ -15,7 +15,7 @@ import {
 } from '../DashboardPersonal.utils'
 
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { Chart } from 'app/App.components/Chart/Chart.view'
+import { Chart } from 'app/App.components/Chart/Chart'
 import { SlidingTabButtons, TabItem } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import { LoansTxTab } from './LoansTxTab'
 import Button from 'app/App.components/Button/NewButton'
@@ -23,6 +23,7 @@ import Button from 'app/App.components/Button/NewButton'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { PortfolioWalletStyled, PortfolioChartStyled } from './DashboardPersonalComponents.style'
 import { LendBorrowPosition } from './LendBorrowPosition'
+import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.types'
 
 type PortfolioTabProps = {
   xtzAmount: number
@@ -51,8 +52,9 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
     tokensPrices: { mvk: mvkExchangeRate = 0 },
   } = useSelector((state: State) => state.tokens)
   const {
-    user: { userLoansData },
+    user: { userLoansData, myLendingRewardsAmount },
   } = useSelector((state: State) => state.wallet)
+  const { loanTokens } = useSelector((state: State) => state.loans)
 
   const [toggleItems, setToggleItems] = useState<TabItem[]>(TOGGLE_VALUES)
   const lastSeria = CHART_TEST_DATA.at(-1)?.value ?? 0
@@ -85,13 +87,9 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
             <CommaNumber beginningText="$" value={lastSeria * mvkExchangeRate} />
           </div>
         </div>
-        <Chart
-          data={CHART_TEST_DATA}
-          settings={{
-            height: 260,
-          }}
-          className="portfolio"
-        />
+        <div className="chart">
+          <Chart data={{ type: AREA_CHART_TYPE, plots: CHART_TEST_DATA }} tooltipAsset={'MVK'} />
+        </div>
       </PortfolioChartStyled>
 
       <PortfolioWalletStyled>
@@ -137,12 +135,11 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
       </PortfolioWalletStyled>
 
       <div className="tabs-switchers">
-        {/* TODO: add link when tab is ready */}
-        {/* <Link to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`}>
-        <Button selected={portfolioActiveTab === PORTFOLIO_POSITION_TAB_ID} kind={BUTTON_NAVIGATION} disabled>
-          Lend/Borrow Position
-        </Button>
-        </Link> */}
+        <Link to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`}>
+          <Button selected={portfolioActiveTab === PORTFOLIO_POSITION_TAB_ID} kind={BUTTON_NAVIGATION}>
+            Lend/Borrow Position
+          </Button>
+        </Link>
         <Link to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_LENDING_TAB_ID}`}>
           <Button selected={portfolioActiveTab === PORTFOLIO_LENDING_TAB_ID} kind={BUTTON_NAVIGATION}>
             Lending TXs
@@ -157,7 +154,11 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
 
       <Switch>
         <Route exact path={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`}>
-          <LendBorrowPosition />
+          <LendBorrowPosition
+            markets={loanTokens}
+            userLoansData={userLoansData}
+            userLoansRewards={myLendingRewardsAmount}
+          />
         </Route>
         <Route exact path={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_LENDING_TAB_ID}`}>
           <LoansTxTab txVariant="lending" userLoansData={userLoansData} isUserLoansLoading={isUserLoansLoading} />

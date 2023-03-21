@@ -700,6 +700,7 @@ export const normalizeUserLending = ({
         })
 
         if (!assetData) return acc
+        const convertedAmount = convertNumberForClient({ number: amount, grage: assetData.decimals })
 
         switch (type) {
           case 0:
@@ -707,7 +708,8 @@ export const normalizeUserLending = ({
             acc.userLendings.push({
               icon: assetData.icon,
               id,
-              amount: convertNumberForClient({ number: amount, grage: assetData.decimals }),
+              amount: convertedAmount,
+              usdAmount: convertedAmount * assetData.rate,
               date: timestamp,
               annualPecentage: calcLendingAPY(
                 calcWithoutDecimals(loan_token.current_interest_rate, interest_rate_decimals),
@@ -723,7 +725,8 @@ export const normalizeUserLending = ({
               icon: assetData.icon,
               id,
               date: timestamp,
-              amount: convertNumberForClient({ number: amount, grage: assetData.decimals }),
+              amount: convertedAmount,
+              usdAmount: convertedAmount * assetData.rate,
               annualPecentage: calcWithoutDecimals(loan_token.current_interest_rate, interest_rate_decimals) * 100,
               operationHash: operation_hash,
               symbol: assetData.symbol,

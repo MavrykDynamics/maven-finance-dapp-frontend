@@ -1,0 +1,27 @@
+const Gradient = ({ className = '' }: { className?: string }) => (
+  <svg width={125} height={66} viewBox="0 0 125 66" fill="none" className={className}>
+    <path
+      d="M121 62C121 29.9675 94.8087 4 62.5 4C30.1913 4 4 29.9675 4 62"
+      stroke="url(#paint0_linear_20943_173371)"
+      strokeWidth={8}
+      strokeLinecap="round"
+    />
+    <defs>
+      <linearGradient
+        id="paint0_linear_20943_173371"
+        x1={111.225}
+        y1={3.9239}
+        x2={1.25066}
+        y2={3.9239}
+        gradientUnits="userSpaceOnUse"
+      >
+        <stop stopColor="#FF4E43" />
+        <stop offset={0.354167} stopColor="#FF9D43" />
+        <stop offset={0.671875} stopColor="#FBFF43" />
+        <stop offset={1} stopColor="#03D463" />
+      </linearGradient>
+    </defs>
+  </svg>
+)
+
+export default Gradient

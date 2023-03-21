@@ -7,7 +7,10 @@ export const IPFSUploaderStyled = styled.div<{ theme: MavrykTheme }>`
   margin-top: 19px;
 
   label {
-    margin-bottom: 10px;
+    position: relative;
+    bottom: 5px;
+    left: 10px;
+   
     color: ${({ theme }) => theme.textColor};
     font-weight: 700;
   }

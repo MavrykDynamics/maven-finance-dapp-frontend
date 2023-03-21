@@ -23,7 +23,7 @@ import {
   TableBody,
   TableCell,
   TableScrollable,
-} from 'app/App.components/Table/Table.style'
+} from 'app/App.components/Table'
 import { Plug } from 'app/App.components/Chart/Chart.style'
 
 type Props = {
@@ -135,7 +135,7 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
                 <Icon id="cow" className="icon-cow" />
               </div>
 
-              <p>There is not enough data to display the chart</p>
+              <p>There is not active treasuries</p>
             </Plug>
           ) : null}
         </div>

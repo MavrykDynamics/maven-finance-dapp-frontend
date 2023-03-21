@@ -15,7 +15,7 @@ const VISIBLE_PART_CONNECTED_WALLET = (theme: MavrykTheme, isMobileDetails?: boo
   var {
     font-weight: 400;
     font-size: 14px;
-    color: ${theme.headerSkyColor};
+    color: ${theme.valueColor};
   }
 
   .end-icon {
@@ -23,7 +23,7 @@ const VISIBLE_PART_CONNECTED_WALLET = (theme: MavrykTheme, isMobileDetails?: boo
     width: 10px;
     transform: rotate(-90deg);
     margin-left: 3px;
-    stroke: ${theme.textColor};
+    stroke: ${theme.valueColor};
   }
 
   .openLink {
@@ -31,11 +31,16 @@ const VISIBLE_PART_CONNECTED_WALLET = (theme: MavrykTheme, isMobileDetails?: boo
     width: 20px;
   }
 
+  .inner-wallet,
   .wallet {
     width: 22px;
     height: 20px;
     stroke: none;
-    fill: ${theme.headerSkyColor};
+    fill: ${theme.valueColor};
+  }
+
+  .inner-wallet {
+    fill: ${theme.dataColor};
   }
 
   .icon-copy {
@@ -159,7 +164,7 @@ export const ConnectedWalletStyled = styled.div<{ theme: MavrykTheme }>`
     .icon-send {
       width: 16px;
       height: 16px;
-      fill:  ${({ theme }) => theme.textColor};
+      fill: ${({ theme }) => theme.textColor};
       cursor: pointer;
       transition: fill 0.6s;
 

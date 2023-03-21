@@ -6,7 +6,7 @@ import { AppDispatch, GetState } from 'app/App.controller'
 import { State } from 'reducers'
 import { LoanVaultAllowanceType } from 'utils/TypesAndInterfaces/Loans'
 import { VAULT_ALLOWANCE_ACCOUNTS, VAULT_ALLOWANCE_ANY } from '../Loans.const'
-import { getLoansStorage } from './getLoansData.actions'
+import { getLoansVaultsData } from './getLoansData.actions'
 
 export const changeBakerAction =
   (bakerAddress: string, vaultAddress: string, callback: () => void) =>
@@ -36,7 +36,7 @@ export const changeBakerAction =
       await transaction?.confirmation()
 
       // refetch data we need
-      await dispatch(getLoansStorage())
+      await dispatch(getLoansVaultsData())
       dispatch(showToaster(SUCCESS, 'Baker changed.', 'All good :)'))
       dispatch(toggleActionLoader(false))
     } catch (error) {
@@ -140,7 +140,7 @@ export const managePermissionsAction =
       await transaction?.confirmation()
 
       // refetch data we need
-      await dispatch(getLoansStorage())
+      await dispatch(getLoansVaultsData())
       dispatch(showToaster(SUCCESS, 'Depositors updated.', 'All good :)'))
       dispatch(toggleActionLoader(false))
     } catch (error) {
@@ -179,7 +179,7 @@ export const updateOperatorsAction = (callback: () => void) => async (dispatch: 
     // await transaction?.confirmation()
 
     // refetch data we need
-    await dispatch(getLoansStorage())
+    await dispatch(getLoansVaultsData())
     dispatch(showToaster(SUCCESS, 'Asset borrowed.', 'All good :)'))
     dispatch(toggleActionLoader(false))
   } catch (error) {
