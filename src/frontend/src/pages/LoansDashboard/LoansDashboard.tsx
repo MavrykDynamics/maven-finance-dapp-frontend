@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { State } from 'reducers'
 
-import { BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { BUTTON_LARGE, BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { calcDiffBetweenTwoNumbersInPersentage } from 'utils/calcFunctions'
 import { getVaultSimpleStatus } from './helpers/position.helpers'
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
@@ -22,6 +22,10 @@ import { LBHInfoBlock } from 'pages/DashboardPersonal/DashboardPersonalComponent
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { Page } from 'styles'
 import { AccountStyledStyled, LoansDashboardStyled, TotalVolumeStyled } from './LoansDashboard.styles'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import colors from 'styles/colors'
+import { connect } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
+import Icon from 'app/App.components/Icon/Icon.view'
 
 export type GaugeChartStateType = {
   maxValue: number
@@ -57,7 +61,7 @@ export const GAUGE_STATE_APY_PART = {
 
 export const LoansDashboard = () => {
   const dispatch = useDispatch()
-
+  const { themeSelected } = useSelector((state: State) => state.preferences)
   const {
     isDataLoaded: isLoansLoaded,
     loanTokens,
@@ -205,22 +209,28 @@ export const LoansDashboard = () => {
 
               <AccountStyledStyled>
                 <GovRightContainerTitleArea>
-                  <h2>Total Volume</h2>
+                  <h2>Account Status</h2>
                 </GovRightContainerTitleArea>
 
                 <div className="content">
-                  <div
-                    className="gauge-chart"
-                    onMouseEnter={() => setGaugeData(apyGaugeData)}
-                    onMouseLeave={() => setGaugeData(vaultRiskGaugeData)}
-                  >
+                  <div className="gauge-chart">
+                    <CustomTooltip
+                      iconId="info"
+                      text="dummy"
+                      defaultStrokeColor={colors[themeSelected].textColor}
+                      className="tooltip"
+                    />
                     <GaugeChart
                       maxValue={gaugeData.maxValue}
                       minValue={gaugeData.minValue}
                       currentValue={gaugeData.currentValue}
                       isReversed
                     >
-                      <div className={`lend-borrow-position ${gaugeData.status ?? ''}`}>
+                      <div
+                        className={`lend-borrow-position ${gaugeData.status ?? ''}`}
+                        onMouseEnter={() => setGaugeData(apyGaugeData)}
+                        onMouseLeave={() => setGaugeData(vaultRiskGaugeData)}
+                      >
                         <CommaNumber
                           value={gaugeData.currentValue}
                           className="amount"
@@ -255,9 +265,18 @@ export const LoansDashboard = () => {
                 <h2>Your Positions</h2>
               </GovRightContainerTitleArea>
               <div className="view-markets">
-                <Link to={'/loans'}>
-                  <Button kind={BUTTON_PRIMARY}>View markets</Button>
-                </Link>
+                {accountPkh ? (
+                  <Link to={'/loans'}>
+                    <Button kind={BUTTON_PRIMARY} size={BUTTON_LARGE}>
+                      View Markets
+                    </Button>
+                  </Link>
+                ) : (
+                  <Button kind={BUTTON_PRIMARY} size={BUTTON_LARGE} onClick={() => dispatch(connect())}>
+                    <Icon id="wallet" />
+                    Connect Wallet
+                  </Button>
+                )}
               </div>
               <LoansPositionTable markets={loanTokens} />
             </LBHInfoBlock>

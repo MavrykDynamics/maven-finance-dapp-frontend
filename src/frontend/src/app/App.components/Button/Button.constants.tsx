@@ -53,5 +53,9 @@ export const BUTTON_ROUND = 'round'
 export const BUTTON_WIDE = 'wide'
 export type ButtonForm = typeof BUTTON_ROUND | typeof BUTTON_WIDE
 
+export const BUTTON_LARGE = 'large'
+export const BUTTON_REGULAR = 'regular'
+export type ButtonSize = typeof BUTTON_LARGE | typeof BUTTON_REGULAR
+
 export const BUTTON_PULSE = 'pulse'
 export type ButtonAnimation = typeof BUTTON_PULSE

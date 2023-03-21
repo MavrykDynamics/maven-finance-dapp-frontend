@@ -248,6 +248,17 @@ export const LBHInfoBlock = styled(MediumBlockBase)<{ theme: MavrykTheme }>`
         font-size: 25px;
       }
     }
+
+    .gauge-chart {
+      position: relative;
+
+      .tooltip {
+        position: absolute;
+        right: 0px;
+        top: 0px;
+        z-index: 100;
+      }
+    }
   }
 
   &.position-tab {

@@ -89,6 +89,15 @@ export const AccountStyledStyled = styled(SmallBlockBase)<{ theme: MavrykTheme }
     width: 125px;
     height: 125px;
     display: flex;
+
+    position: relative;
+
+    .tooltip {
+      position: absolute;
+      right: 0px;
+      top: 0px;
+      z-index: 100;
+    }
   }
 
   .details {

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 
-import { BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { BUTTON_LARGE, BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
 
 import Button from 'app/App.components/Button/NewButton'
 
@@ -13,6 +13,9 @@ import { GaugeChart } from 'app/App.components/GaugeChart/GaugeChart'
 import { getVaultSimpleStatus } from 'pages/LoansDashboard/helpers/position.helpers'
 import { GaugeChartStateType, GAUGE_STATE_RISK_PART, GAUGE_STATE_APY_PART } from 'pages/LoansDashboard/LoansDashboard'
 import { useMemo, useState, useEffect } from 'react'
+import { useSelector } from 'react-redux'
+import colors from 'styles/colors'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 export const LendBorrowPosition = ({
   markets,
@@ -23,6 +26,7 @@ export const LendBorrowPosition = ({
   userLoansData: State['wallet']['user']['userLoansData']
   userLoansRewards: State['wallet']['user']['myLendingRewardsAmount']
 }) => {
+  const { themeSelected } = useSelector((state: State) => state.preferences)
   // Calcuating total lended and borrowed by user
   const { totalUserLended, totalUserBorrowed } = useMemo(() => {
     const totalUserLended = userLoansData.userLendings.reduce((acc, { usdAmount }) => (acc += usdAmount), 0)
@@ -97,23 +101,31 @@ export const LendBorrowPosition = ({
       </GovRightContainerTitleArea>
       <div className="view-markets">
         <Link to={'/loans'}>
-          <Button kind={BUTTON_PRIMARY}>View markets</Button>
+          <Button kind={BUTTON_PRIMARY} size={BUTTON_LARGE}>
+            View Markets
+          </Button>
         </Link>
       </div>
 
       <div className="acc-stats">
-        <div
-          className="gauge-chart"
-          onMouseEnter={() => setGaugeData(apyGaugeData)}
-          onMouseLeave={() => setGaugeData(vaultRiskGaugeData)}
-        >
+        <div className="gauge-chart">
+          <CustomTooltip
+            iconId="info"
+            text="dummy"
+            defaultStrokeColor={colors[themeSelected].textColor}
+            className="tooltip"
+          />
           <GaugeChart
             maxValue={gaugeData.maxValue}
             minValue={gaugeData.minValue}
             currentValue={gaugeData.currentValue}
             isReversed
           >
-            <div className={`lend-borrow-position ${gaugeData.status ?? ''}`}>
+            <div
+              className={`lend-borrow-position ${gaugeData.status ?? ''}`}
+              onMouseEnter={() => setGaugeData(apyGaugeData)}
+              onMouseLeave={() => setGaugeData(vaultRiskGaugeData)}
+            >
               <CommaNumber
                 value={gaugeData.currentValue}
                 className="amount"

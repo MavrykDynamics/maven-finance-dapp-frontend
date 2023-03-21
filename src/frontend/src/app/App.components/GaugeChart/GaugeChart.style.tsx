@@ -60,6 +60,9 @@ export const ValueWrapper = styled.div<{ theme: MavrykTheme }>`
   }
 
   .lend-borrow-position {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;

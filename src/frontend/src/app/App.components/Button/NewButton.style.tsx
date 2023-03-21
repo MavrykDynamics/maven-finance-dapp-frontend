@@ -14,6 +14,8 @@ import {
   VOTING_AGAINST,
   VOTING_FOR,
   VOTING_PASS,
+  BUTTON_LARGE,
+  BUTTON_REGULAR,
 } from './Button.constants'
 
 const BUTTONS_KIND_STYLES = css`
@@ -133,6 +135,16 @@ const BUTTONS_FORMS_STYLES = css`
   }
 `
 
+const BUTTONS_SIZES_STYLES = css`
+  &.${BUTTON_LARGE} {
+    padding: 0 35px;
+  }
+
+  &.${BUTTON_REGULAR} {
+    padding: 0 20px;
+  }
+`
+
 const BUTTONS_ANIMATIONS_STYLES = css`
   &.${BUTTON_PULSE} {
     animation: pulse 2s infinite;
@@ -148,6 +160,7 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
 
   cursor: pointer;
   user-select: none;
+  position: relative;
 
   display: flex;
   align-items: center;
@@ -156,13 +169,19 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
   height: 50px;
 
   border-radius: ${BUTTON_RADIUS};
-  padding: 0 20px;
 
   .child {
     display: flex;
     align-items: center;
     justify-content: center;
     column-gap: 10px;
+  }
+
+  .circle-spinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
 
   /* Icon styling */
@@ -192,16 +211,19 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
 
   &.isLoading {
     .child {
-      display: none;
+      visibility: hidden;
     }
   }
+
+  /* styling for buttons sizes */
+  ${BUTTONS_SIZES_STYLES}
 
   /* styling for buttons forms */
   ${BUTTONS_FORMS_STYLES}
 
   /* styling for main button kinds */
   ${BUTTONS_KIND_STYLES}
-
+  
   /* additional kinds */
   ${BUTTONS_ANIMATIONS_STYLES}
 `
