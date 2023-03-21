@@ -21,10 +21,18 @@ export const EarnBorrowChartStyled = styled.div<{ theme: MavrykTheme }>`
     color: ${({ theme }) => theme.textColor};
 
     svg {
-      padding: 5px;
-
+      position: relative;
+      top: 1px;
+      left: 2px;
+      
       width: 30px;
       height: 30px;
+    }
+  }
+
+  &.isGraph {
+    svg {
+      fill: ${({ theme }) => theme.lPurple_dPurple_lPuprple};
     }
   }
 `

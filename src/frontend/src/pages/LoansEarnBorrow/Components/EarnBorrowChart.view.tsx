@@ -12,20 +12,22 @@ import { BUTTON_THIRD, BUTTON_ROUND } from 'app/App.components/Button/Button.con
 
 // types
 import { ChartPlotType } from 'app/App.components/Chart/Chart.view'
+import { useState } from 'react'
 
 type Props = {
   data: ChartPlotType[]
 }
 
 export const EarnBorrowChart = ({ data }: Props) => {
+  const [isGraph, setIsGraph] = useState(false)
+
   return (
-    <EarnBorrowChartStyled>
+    <EarnBorrowChartStyled className={isGraph ? 'isGraph' : ''}>
       <div className="switchMenu">
         <span>Supply Vol / 14 Days</span>
 
-        <Button kind={BUTTON_THIRD} form={BUTTON_ROUND}>
-          {/* // TODO: update to valid icon */}
-          <Icon id="loans" />
+        <Button kind={BUTTON_THIRD} form={BUTTON_ROUND} onClick={() => setIsGraph(!isGraph)}>
+          <Icon id={isGraph ? 'graph' : 'chart'} />
         </Button>
       </div>
 
