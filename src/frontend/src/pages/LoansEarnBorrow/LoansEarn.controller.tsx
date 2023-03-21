@@ -6,9 +6,19 @@ import { Page } from 'styles'
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
 import { LoansEarnBorrow } from './LoansEarnBorrow.view'
 import { EarnBorrowTotalCharts } from './Components/EarnBorrowTotalCharts.view'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
+
+// styles
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 
 // types
 import { CardSettingsType, cards } from './LoansEarnBorrow.consts'
+
+// helpers
+import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
+
+// actions
+import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 
 const cardSettings: CardSettingsType = {
   priceName: 'Oracle Price',
@@ -18,23 +28,45 @@ const cardSettings: CardSettingsType = {
 
 export const LoansEarn = () => {
   const dispatch = useDispatch()
-  // TODO: chartsData - testing data
-  const { chartsData } = useSelector((state: State) => state.loans)
+
+  const {
+    isDataLoaded,
+    chartsData: { lendingChartData, borrowingChartData, totalLended, totalBorrowed },
+  } = useSelector((state: State) => state.loans)
+
+  const { isLoading } = useDataLoader(async () => {
+    try {
+      if (!isDataLoaded) {
+        await dispatch(getLoansStorage())
+      }
+    } catch (e) {}
+  }, [isDataLoaded])
 
   return (
     <Page>
       <PageHeader page={'loansEarn'} />
-      <EarnBorrowTotalCharts
-        // left chart
-        leftChartData={chartsData.collateralChartData}
-        leftChartTitle="Total Earning"
-        leftTotalAmount={chartsData.totalLended}
-        // right chart
-        rightChartData={chartsData.borrowingChartData}
-        rightChartTitle="Total Borrowing"
-        rightTotalAmount={chartsData.totalBorrowed}
-      />
-      <LoansEarnBorrow title="Earn" cards={cards} cardSettings={cardSettings} />
+
+      {isLoading ? (
+        <DataLoaderWrapper>
+          <ClockLoader width={150} height={150} />
+          <div className="text">Loading charts of earnings</div>
+        </DataLoaderWrapper>
+      ) : (
+        <>
+          <EarnBorrowTotalCharts
+            // left chart
+            leftChartData={lendingChartData}
+            leftChartTitle="Total Earning"
+            leftTotalAmount={totalLended}
+            // right chart
+            rightChartData={borrowingChartData}
+            rightChartTitle="Total Borrowing"
+            rightTotalAmount={totalBorrowed}
+          />
+
+          <LoansEarnBorrow title="Earn" cards={cards} cardSettings={cardSettings} />
+        </>
+      )}
     </Page>
   )
 }

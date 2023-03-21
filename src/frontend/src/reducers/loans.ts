@@ -21,6 +21,7 @@ const loansDefaultState: LoansState = {
   loanTokens: [],
   loansControllerAddress: '',
   chartsData: {
+    totalCollateraled: 0,
     totalBorrowed: 0,
     borrowingChartData: [],
     collateralChartData: [],

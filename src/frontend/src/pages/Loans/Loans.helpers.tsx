@@ -297,6 +297,7 @@ const getChartData = (
         // Deposit collateral
         if (type === 4 || type === 6) {
           const collateralAmount = (amount / 10 ** assetMetadata.decimals) * assetMetadata.rate
+          acc.totalCollateraled += collateralAmount
           acc.collateralChartData.push({
             value: (acc.collateralChartData.at(-1)?.value ?? 0) + collateralAmount,
             time: new Date(timestamp).getTime() as UTCTimestamp,
@@ -306,6 +307,7 @@ const getChartData = (
         // Withdraw collateral
         if (type === 5 || type === 7) {
           const collateralAmount = (amount / 10 ** assetMetadata.decimals) * assetMetadata.rate
+          acc.totalCollateraled -= collateralAmount
           acc.collateralChartData.push({
             value: (acc.collateralChartData.at(-1)?.value ?? 0) - collateralAmount,
             time: new Date(timestamp).getTime() as UTCTimestamp,
@@ -317,10 +319,11 @@ const getChartData = (
     },
     {
       totalBorrowed: 0,
-      borrowingChartData: [],
-      collateralChartData: [],
       totalLended: 0,
+      totalCollateraled: 0,
+      borrowingChartData: [],
       lendingChartData: [],
+      collateralChartData: [],
       lendBorrow24hDiff: {
         last48hLending: 0,
         last24hLending: 0,

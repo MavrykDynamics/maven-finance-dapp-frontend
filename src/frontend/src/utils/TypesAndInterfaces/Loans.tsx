@@ -36,6 +36,7 @@ export type CollateralType = BaseLoansAssetDataType & {
 }
 
 export type LoansChartsDataType = {
+  totalCollateraled: number
   totalBorrowed: number
   borrowingChartData: Array<AreaChartPlotType>
   collateralChartData: Array<AreaChartPlotType>
