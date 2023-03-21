@@ -16,6 +16,15 @@ export const MarketChartsContainer = styled.div<{ theme: MavrykTheme }>`
     flex-direction: column;
     row-gap: 10px;
 
+    .chart {
+      width: 100%;
+      height: 270px;
+      position: relative;
+      background: ${({ theme }) => theme.containerColor};
+      border: 1px solid ${({ theme }) => theme.cardBorderColor};
+      border-radius: 10px;
+    }
+
     .summary {
       display: flex;
       flex-direction: column;
@@ -35,8 +44,8 @@ export const MarketChartsContainer = styled.div<{ theme: MavrykTheme }>`
 
     .chart-interval {
       position: absolute;
-      top: 5px;
-      left: 10px;
+      top: 15px;
+      left: 15px;
       font-weight: 600;
       font-size: 10px;
       line-height: 18px;

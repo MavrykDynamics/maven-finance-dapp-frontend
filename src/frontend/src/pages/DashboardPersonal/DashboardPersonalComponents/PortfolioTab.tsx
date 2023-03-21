@@ -15,7 +15,7 @@ import {
 } from '../DashboardPersonal.utils'
 
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { Chart } from 'app/App.components/Chart/Chart.view'
+import { Chart } from 'app/App.components/Chart/Chart'
 import { SlidingTabButtons, TabItem } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import { LoansTxTab } from './LoansTxTab'
 import Button from 'app/App.components/Button/NewButton'
@@ -23,6 +23,7 @@ import Button from 'app/App.components/Button/NewButton'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { PortfolioWalletStyled, PortfolioChartStyled } from './DashboardPersonalComponents.style'
 import { LendBorrowPosition } from './LendBorrowPosition'
+import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.types'
 
 type PortfolioTabProps = {
   xtzAmount: number
@@ -86,13 +87,9 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
             <CommaNumber beginningText="$" value={lastSeria * mvkExchangeRate} />
           </div>
         </div>
-        <Chart
-          data={CHART_TEST_DATA}
-          settings={{
-            height: 260,
-          }}
-          className="portfolio"
-        />
+        <div className="chart">
+          <Chart data={{ type: AREA_CHART_TYPE, plots: CHART_TEST_DATA }} tooltipAsset={'MVK'} />
+        </div>
       </PortfolioChartStyled>
 
       <PortfolioWalletStyled>

@@ -1,4 +1,4 @@
-import { ChartPlotType } from 'app/App.components/Chart/Chart.view'
+import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
 import { normalizeFeeds } from 'pages/DataFeeds/DataFeeds.helpers'
 import { Aggregator, Aggregator_History_Data } from 'utils/generated/graphqlTypes'
 
@@ -10,8 +10,8 @@ export type FeedGQL = Omit<Aggregator, '__typename' | 'history_data'> & {
 }
 
 export type Feed = FeedGQL & {
-  dataFeedsHistory: Array<ChartPlotType>
-  dataFeedsVolatility: Array<ChartPlotType>
+  dataFeedsHistory: Array<AreaChartPlotType>
+  dataFeedsVolatility: Array<AreaChartPlotType>
   amount: number
   icon?: string
 }
