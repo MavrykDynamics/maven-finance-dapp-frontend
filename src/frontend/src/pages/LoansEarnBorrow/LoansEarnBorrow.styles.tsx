@@ -132,6 +132,10 @@ export const EarnBorrowCardBody = styled.div<{ theme: MavrykTheme }>`
     row-gap: 20px;
     padding: 0 30px;
 
+    span {
+      text-transform: uppercase;
+    }
+
     .arrowIcon {
       width: 14px;
       height: 14px;

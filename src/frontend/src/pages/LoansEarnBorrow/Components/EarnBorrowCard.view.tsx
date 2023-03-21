@@ -21,9 +21,8 @@ type Props = {
 }
 
 export const EarnBorrowCard = ({ card, settings, userAddress }: Props) => {
-  const { priceName, totalName, buttonName } = settings
+  const { priceName, totalName, buttonName, buttonSymbol } = settings
   const { title, symbol, apy, price, total, data } = card
-  console.log(userAddress)
 
   return (
     <EarnBorrowCardStyled>
@@ -57,6 +56,7 @@ export const EarnBorrowCard = ({ card, settings, userAddress }: Props) => {
           <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE} disabled={!userAddress}>
             <Icon id="loans" />
             {buttonName}
+            {buttonSymbol && <span>{symbol}</span>}
           </Button>
 
           <Button kind={BUTTON_SIMPLE} form={BUTTON_WIDE}>
