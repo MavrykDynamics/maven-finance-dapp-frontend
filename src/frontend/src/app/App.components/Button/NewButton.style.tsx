@@ -215,11 +215,11 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
     }
   }
 
-  /* styling for buttons forms */
-  ${BUTTONS_FORMS_STYLES}
-
   /* styling for buttons sizes */
   ${BUTTONS_SIZES_STYLES}
+
+  /* styling for buttons forms */
+  ${BUTTONS_FORMS_STYLES}
 
   /* styling for main button kinds */
   ${BUTTONS_KIND_STYLES}
