@@ -6,6 +6,8 @@ export const LoansEarnBorrowStyled = styled.div<{ theme: MavrykTheme }>``
 
 export const EarnBorrowChartStyled = styled.div<{ theme: MavrykTheme }>`
   margin: 30px 0;
+  height: 152px;
+  
   border: 1px solid ${({ theme }) => theme.borderColor};
   border-radius: 10px;
 

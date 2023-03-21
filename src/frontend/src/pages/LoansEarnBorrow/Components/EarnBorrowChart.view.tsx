@@ -1,3 +1,5 @@
+import { useState } from 'react'
+
 // components
 import { Chart } from 'app/App.components/Chart/Chart'
 import Button from 'app/App.components/Button/NewButton'
@@ -9,11 +11,15 @@ import { EarnBorrowChartStyled } from '../LoansEarnBorrow.styles'
 // helpers
 import { CHART_COLORS, MINI_CHART_SETTINGS } from '../LoansEarnBorrow.consts'
 import { BUTTON_THIRD, BUTTON_ROUND } from 'app/App.components/Button/Button.constants'
-import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.types'
+import { AREA_CHART_TYPE, HISTOGRAM_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.types'
 
 // types
 import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
-import { useState } from 'react'
+
+type ChartDataType = {
+  type: typeof AREA_CHART_TYPE | typeof HISTOGRAM_CHART_TYPE
+  plots: AreaChartPlotType[]
+}
 
 type Props = {
   data: AreaChartPlotType[]
@@ -21,6 +27,8 @@ type Props = {
 
 export const EarnBorrowChart = ({ data }: Props) => {
   const [isGraph, setIsGraph] = useState(false)
+
+  const chartData: ChartDataType = { type: isGraph ? HISTOGRAM_CHART_TYPE : AREA_CHART_TYPE, plots: data }
 
   return (
     <EarnBorrowChartStyled className={isGraph ? 'isGraph' : ''}>
@@ -33,7 +41,7 @@ export const EarnBorrowChart = ({ data }: Props) => {
       </div>
 
       <Chart
-        data={{ type: AREA_CHART_TYPE, plots: data }}
+        data={chartData}
         colors={CHART_COLORS}
         settings={MINI_CHART_SETTINGS}
         numberOfItemsToDisplay={3}
