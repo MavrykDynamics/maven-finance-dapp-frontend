@@ -131,7 +131,7 @@ export const HistogramChart = ({
       }
     })
 
-    window.addEventListener('resize', handleResize)
+    window.addEventListener('resize', handleResize, { passive: true })
     chart.timeScale().fitContent()
 
     return () => {
