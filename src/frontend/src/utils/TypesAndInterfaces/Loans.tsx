@@ -38,6 +38,7 @@ export type CollateralType = BaseLoansAssetDataType & {
 export type LoansChartsDataType = {
   totalBorrowed: number
   borrowingChartData: Array<AreaChartPlotType>
+  collateralChartData: Array<AreaChartPlotType>
   totalLended: number
   lendingChartData: Array<AreaChartPlotType>
   lendBorrow24hDiff: {
@@ -116,6 +117,8 @@ export type LoanMarketType = {
   lendingItem: LendingItemType
   myBorrowingList: Array<LoansVaultType>
   permissionedBorrowingList: Array<LoansVaultType>
+  marketCollateralChartData: Array<AreaChartPlotType>
+  marketLiquidityChartData: Array<AreaChartPlotType>
   utilisationRate: number
   borrowers: number
   suppliers: number

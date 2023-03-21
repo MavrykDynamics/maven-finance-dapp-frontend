@@ -23,6 +23,7 @@ const loansDefaultState: LoansState = {
   chartsData: {
     totalBorrowed: 0,
     borrowingChartData: [],
+    collateralChartData: [],
     totalLended: 0,
     lendingChartData: [],
     lendBorrow24hDiff: {
