@@ -17,11 +17,13 @@ import { CardSettingsType, CardType } from '../LoansEarnBorrow.consts'
 type Props = {
   settings: CardSettingsType
   card: CardType
+  userAddress?: string
 }
 
-export const EarnBorrowCard = ({ card, settings }: Props) => {
+export const EarnBorrowCard = ({ card, settings, userAddress }: Props) => {
   const { priceName, totalName, buttonName } = settings
   const { title, symbol, apy, price, total, data } = card
+  console.log(userAddress)
 
   return (
     <EarnBorrowCardStyled>
@@ -52,7 +54,7 @@ export const EarnBorrowCard = ({ card, settings }: Props) => {
         <EarnBorrowChart data={data} />
 
         <div className="buttons">
-          <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE}>
+          <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE} disabled={!userAddress}>
             <Icon id="loans" />
             {buttonName}
           </Button>

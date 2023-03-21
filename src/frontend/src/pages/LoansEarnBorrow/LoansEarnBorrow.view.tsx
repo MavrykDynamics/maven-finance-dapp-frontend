@@ -1,3 +1,6 @@
+import { useSelector } from 'react-redux'
+import { State } from 'reducers'
+
 // components
 import { EarnBorrowCard } from './Components/EarnBorrowCard.view'
 
@@ -18,6 +21,8 @@ type Props = {
 }
 
 export const LoansEarnBorrow = ({ title, cardSettings, cards }: Props) => {
+  const { accountPkh } = useSelector((state: State) => state.wallet)
+
   return (
     <LoansEarnBorrowStyled>
       <MarketsOverviewContainer>
@@ -28,7 +33,7 @@ export const LoansEarnBorrow = ({ title, cardSettings, cards }: Props) => {
 
       <EarnBorrowCards>
         {cards.map((item) => (
-          <EarnBorrowCard key={item.id} card={item} settings={cardSettings} />
+          <EarnBorrowCard key={item.id} card={item} settings={cardSettings} userAddress={accountPkh} />
         ))}
       </EarnBorrowCards>
     </LoansEarnBorrowStyled>
