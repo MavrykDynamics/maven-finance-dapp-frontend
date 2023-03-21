@@ -6,11 +6,16 @@ export const DashboardPersonalStyled = styled.div`
   .top {
     display: flex;
     column-gap: 20px;
+    margin-bottom: 25px;
+  }
+
+  .bottom-grid {
+    margin-top: 25px;
   }
 
   .tabs-switchers {
     display: flex;
-    margin: 30px 0;
     column-gap: 15px;
+    margin: 5px 0;
   }
 `

@@ -59,7 +59,7 @@ export const dark = {
   secondaryColor: '#73d7c3',
   dataColor: '#77a4f2',
   blockNameTitleColor: silverColor,
-  textColor: '#D0CFD9',
+  textColor: '#CDCDCD',
   upColor,
   downColor,
   newUpColor,

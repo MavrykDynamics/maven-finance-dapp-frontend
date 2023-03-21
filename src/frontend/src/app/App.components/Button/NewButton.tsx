@@ -2,7 +2,15 @@ import React, { useCallback, useState } from 'react'
 import { AppDispatch } from 'app/App.controller'
 import { SimpleCircleSpinnerLoader } from '../Loader/Loader.view'
 
-import { ButtonForm, BUTTON, ButtonKind, ButtonTypes, ButtonAnimation } from './Button.constants'
+import {
+  ButtonForm,
+  BUTTON,
+  ButtonKind,
+  ButtonTypes,
+  ButtonAnimation,
+  ButtonSize,
+  BUTTON_REGULAR,
+} from './Button.constants'
 import { ButtonStyled } from './NewButton.style'
 import classNames from 'classnames'
 
@@ -11,6 +19,7 @@ export type ButtonProps = {
   kind: ButtonKind
   form?: ButtonForm
   type?: ButtonTypes
+  size?: ButtonSize
   selected?: boolean
   animation?: ButtonAnimation | null
   disabled?: boolean
@@ -36,6 +45,7 @@ const Button = ({
   disabled = false,
   selected = false,
   isThin = false,
+  size = BUTTON_REGULAR,
   type = BUTTON,
 }: ButtonProps) => {
   const [isLoading, setLoading] = useState(false)
@@ -59,7 +69,7 @@ const Button = ({
     [onClick],
   )
 
-  const buttonClasses = classNames(kind, form, animation, {
+  const buttonClasses = classNames(kind, form, animation, size, {
     disabled: isDisabled,
     isThin,
     selected,
@@ -68,7 +78,11 @@ const Button = ({
 
   return (
     <ButtonStyled className={buttonClasses} onClick={loadingWrappedClickHandler} type={type} disabled={isDisabled}>
-      {isLoading ? <SimpleCircleSpinnerLoader /> : null}
+      {isLoading ? (
+        <div className="circle-spinner">
+          <SimpleCircleSpinnerLoader />
+        </div>
+      ) : null}
       <div className="child">{children}</div>
     </ButtonStyled>
   )
