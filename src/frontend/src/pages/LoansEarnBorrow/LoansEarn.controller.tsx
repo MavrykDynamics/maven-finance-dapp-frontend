@@ -24,7 +24,16 @@ export const LoansEarn = () => {
   return (
     <Page>
       <PageHeader page={'loansEarn'} />
-      <EarnBorrowTotalCharts chartsData={chartsData} leftChartTitle="Total Earning" rightChartTitle="Total Borrowing" />
+      <EarnBorrowTotalCharts
+        // left chart
+        leftChartData={chartsData.collateralChartData}
+        leftChartTitle="Total Earning"
+        leftTotalAmount={chartsData.totalLended}
+        // right chart
+        rightChartData={chartsData.borrowingChartData}
+        rightChartTitle="Total Borrowing"
+        rightTotalAmount={chartsData.totalBorrowed}
+      />
       <LoansEarnBorrow title="Earn" cards={cards} cardSettings={cardSettings} />
     </Page>
   )

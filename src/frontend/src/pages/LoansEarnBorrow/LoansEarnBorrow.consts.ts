@@ -1,5 +1,5 @@
 import { skyColor } from 'styles'
-import { ChartPlotType } from 'app/App.components/Chart/Chart.view'
+import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
 
 export const MINI_CHART_SETTINGS = {
   width: 305,
@@ -36,7 +36,7 @@ export type CardType = {
   price: number
   total: number
   id: number
-  data: ChartPlotType[]
+  data: AreaChartPlotType[]
 }
 
 // TODO: testing data

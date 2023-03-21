@@ -1,5 +1,5 @@
 // components
-import { Chart } from 'app/App.components/Chart/Chart.view'
+import { Chart } from 'app/App.components/Chart/Chart'
 import Button from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 
@@ -9,13 +9,14 @@ import { EarnBorrowChartStyled } from '../LoansEarnBorrow.styles'
 // helpers
 import { CHART_COLORS, MINI_CHART_SETTINGS } from '../LoansEarnBorrow.consts'
 import { BUTTON_THIRD, BUTTON_ROUND } from 'app/App.components/Button/Button.constants'
+import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.types'
 
 // types
-import { ChartPlotType } from 'app/App.components/Chart/Chart.view'
+import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
 import { useState } from 'react'
 
 type Props = {
-  data: ChartPlotType[]
+  data: AreaChartPlotType[]
 }
 
 export const EarnBorrowChart = ({ data }: Props) => {
@@ -32,10 +33,11 @@ export const EarnBorrowChart = ({ data }: Props) => {
       </div>
 
       <Chart
-        data={data}
+        data={{ type: AREA_CHART_TYPE, plots: data }}
         colors={CHART_COLORS}
         settings={MINI_CHART_SETTINGS}
         numberOfItemsToDisplay={3}
+        tooltipAsset="$"
       />
     </EarnBorrowChartStyled>
   )

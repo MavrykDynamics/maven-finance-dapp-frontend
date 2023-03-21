@@ -62,8 +62,12 @@ export const MarketChartsContainer = styled.div<{ theme: MavrykTheme }>`
     border-radius: 10px;
   }
 
-  &.largeGap {
+  &.earn-borrow-chart {
     column-gap: 150px;
+
+    .chart {
+      height: fit-content;
+    }
   }
 `
 
