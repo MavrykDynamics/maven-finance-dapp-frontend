@@ -96,6 +96,7 @@ type TransactionHistoryReduceType = {
 
 // Normalizing transaction history
 const DAY_IN_MS = 86400000
+const TWO_WEEK_IN_MS = DAY_IN_MS * 14
 const getTransactionHistory = (
   history_data: Lending_Controller_History_Data[],
   dipDupTokens: State['tokens']['dipDupTokens'],
@@ -135,8 +136,7 @@ const getTransactionHistory = (
             acc.lending24hVolume += transformedAmount * assetMetadata.rate
           }
 
-          // TODO: add valid time diff checking
-          if (dayjs().diff(timestamp) <= DAY_IN_MS) {
+          if (dayjs().diff(timestamp) <= TWO_WEEK_IN_MS) {
             acc.marketLiquidityChartData.push({
               value: (acc.marketLiquidityChartData.at(-1)?.value ?? 0) + transformedAmount * assetMetadata.rate,
               time: new Date(timestamp).getTime() as UTCTimestamp,
@@ -152,8 +152,7 @@ const getTransactionHistory = (
             acc.lending24hVolume -= transformedAmount * assetMetadata.rate
           }
 
-          // TODO: add valid time diff checking
-          if (dayjs().diff(timestamp) <= DAY_IN_MS) {
+          if (dayjs().diff(timestamp) <= TWO_WEEK_IN_MS) {
             acc.marketCollateralChartData.push({
               value: (acc.marketLiquidityChartData.at(-1)?.value ?? 0) - transformedAmount * assetMetadata.rate,
               time: new Date(timestamp).getTime() as UTCTimestamp,
@@ -179,18 +178,16 @@ const getTransactionHistory = (
           }
         }
 
-        // TODO: add valid time diff checking
         // Deposit collateral
-        if ((type === 4 || type === 6) && dayjs().diff(timestamp) <= DAY_IN_MS) {
+        if ((type === 4 || type === 6) && dayjs().diff(timestamp) <= TWO_WEEK_IN_MS) {
           acc.marketCollateralChartData.push({
             value: (acc.marketCollateralChartData.at(-1)?.value ?? 0) + transformedAmount * assetMetadata.rate,
             time: new Date(timestamp).getTime() as UTCTimestamp,
           })
         }
 
-        // TODO: add valid time diff checking
         // Withdraw collateral
-        if ((type === 5 || type === 7) && dayjs().diff(timestamp) <= DAY_IN_MS) {
+        if ((type === 5 || type === 7) && dayjs().diff(timestamp) <= TWO_WEEK_IN_MS) {
           acc.marketCollateralChartData.push({
             value: (acc.marketCollateralChartData.at(-1)?.value ?? 0) - transformedAmount * assetMetadata.rate,
             time: new Date(timestamp).getTime() as UTCTimestamp,
