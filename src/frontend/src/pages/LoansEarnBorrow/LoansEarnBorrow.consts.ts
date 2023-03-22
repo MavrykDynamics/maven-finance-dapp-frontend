@@ -38,4 +38,5 @@ export type MarketType = {
   totalAmount: number
   price: number
   chartData: AreaChartPlotType[]
+  onClick: () => void
 }

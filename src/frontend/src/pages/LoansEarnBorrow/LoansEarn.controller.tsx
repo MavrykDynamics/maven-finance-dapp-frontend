@@ -1,3 +1,4 @@
+import { useContext } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
@@ -17,6 +18,7 @@ import { MarketSettingsType } from './LoansEarnBorrow.consts'
 
 // helpers
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
+import { loansPopupsContext } from 'pages/Loans/Components/Modals/LoansModals.provider'
 
 // actions
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
@@ -38,6 +40,8 @@ export const LoansEarn = () => {
     loanTokens,
     chartsData: { lendingChartData, borrowingChartData, totalLended, totalBorrowed },
   } = useSelector((state: State) => state.loans)
+
+  const { openAddLendingAssetPopup } = useContext(loansPopupsContext)
 
   const { isLoading } = useDataLoader(async () => {
     try {
@@ -81,6 +85,13 @@ export const LoansEarn = () => {
                   totalAmount: item.totalLended,
                   price: item.loanTokenData.rate,
                   chartData: item.marketLiquidityChartData,
+                  onClick: () => {
+                    openAddLendingAssetPopup({
+                      mBalance: item.lendingItem?.mBalance ?? 0,
+                      lendingAPY: item.lendingAPY,
+                      ...item.loanTokenData,
+                    })
+                  },
                 }}
                 settings={marketSettings}
                 userAddress={accountPkh}
