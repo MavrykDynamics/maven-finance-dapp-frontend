@@ -66,7 +66,7 @@ export const mainNavigationLinks: MainNavigationRoute[] = [
         id: 57792,
         subTitle: 'Markets',
         subPath: `loans`,
-        routeSubPath: ['/loans', '/market/:assetId/:tabId'],
+        routeSubPath: ['/loans', '/loans/:assetId/:tabId'],
       },
     ],
   },
