@@ -51,7 +51,7 @@ const BaseTooltipStyles = styled.div<{ theme: MavrykTheme }>`
   z-index: 100;
   padding: 7px 10px 7px 10px;
   background: ${({ theme }) => theme.containerColor};
-  border: 1px solid ${({ theme }) => theme.secondaryColor};
+  border: 1px solid ${({ theme }) => theme.cardBorderColor};
   border-radius: 10px;
   display: flex;
   flex-direction: column;
@@ -68,7 +68,7 @@ export const AmountDateTooltipStyled = styled(BaseTooltipStyles)`
   .value {
     font-weight: 600;
     font-size: 18px;
-    color: ${({ theme }) => theme.headerColor};
+    color: ${({ theme }) => theme.dataColor};
     white-space: pre;
     p {
       margin: 0;
@@ -80,6 +80,15 @@ export const AmountDateTooltipStyled = styled(BaseTooltipStyles)`
     font-size: 12px;
     color: ${({ theme }) => theme.textColor};
     white-space: pre;
+  }
+`
+
+export const DoubleAmountDateTooltipStyled = styled(AmountDateTooltipStyled)`
+  .values {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    row-gap: 7px;
   }
 `
 

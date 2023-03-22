@@ -1,6 +1,6 @@
 import { parseDate } from 'utils/time'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { AmountDateTooltipStyled, MliFeeTooltipStyled } from '../Chart.style'
+import { DoubleAmountDateTooltipStyled, MliFeeTooltipStyled } from '../Chart.style'
 
 export const DOUBLE_AMOUNT_DATE_TOOLTIP = 'DoubleAmountDateTooltip'
 export type DoubleChartTooltipsTypes = typeof DOUBLE_AMOUNT_DATE_TOOLTIP
@@ -25,31 +25,33 @@ const DoubleAmountDateTooltip = ({
   valueTooltipFormatter,
 }: DoubleChartTootipProps) => {
   return (
-    <AmountDateTooltipStyled>
-      {yAxisFirst ? (
-        <div className="value">
-          <CommaNumber
-            endingText={assetFirst}
-            value={valueTooltipFormatter ? parseFloat(valueTooltipFormatter(yAxisFirst)) : yAxisFirst}
-            showDecimal
-            decimalsToShow={6}
-          />
-        </div>
-      ) : null}
-      {yAxisSecond ? (
-        <div className="value">
-          <CommaNumber
-            endingText={assetSecond}
-            value={valueTooltipFormatter ? parseFloat(valueTooltipFormatter(yAxisSecond)) : yAxisSecond}
-            showDecimal
-            decimalsToShow={6}
-          />
-        </div>
-      ) : null}
+    <DoubleAmountDateTooltipStyled>
+      <div className="values">
+        {yAxisFirst ? (
+          <div className="value">
+            <CommaNumber
+              endingText={assetFirst}
+              value={valueTooltipFormatter ? parseFloat(valueTooltipFormatter(yAxisFirst)) : yAxisFirst}
+              showDecimal
+              decimalsToShow={2}
+            />
+          </div>
+        ) : null}
+        {yAxisSecond ? (
+          <div className="value">
+            <CommaNumber
+              endingText={assetSecond}
+              value={valueTooltipFormatter ? parseFloat(valueTooltipFormatter(yAxisSecond)) : yAxisSecond}
+              showDecimal
+              decimalsToShow={2}
+            />
+          </div>
+        ) : null}
+      </div>
       <div className="date">
         {dateTooltipFormatter?.(xAxis) ?? parseDate({ time: xAxis, timeFormat: 'MMM DD, HH:mm Z' })}
       </div>
-    </AmountDateTooltipStyled>
+    </DoubleAmountDateTooltipStyled>
   )
 }
 

@@ -46,13 +46,10 @@ export const CHART_SERIES_OPTIONS = {
   lastValueVisible: false,
   priceLineVisible: false,
   priceFormat: {
-    minMove: 0.00000001,
+    // Commented cuz can't adjust yAis line format, ensure we don't need this
+    // minMove: 0.000000001,
     type: 'custom' as 'custom',
-    formatter: (price: any) => {
-      const res = yAxisValuesFormatter(price)
-      console.log({ res, price })
-      return res
-    },
+    formatter: yAxisValuesFormatter,
   },
 }
 
