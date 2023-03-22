@@ -1,4 +1,31 @@
+import { formatNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { ColorType, MouseEventParams } from 'lightweight-charts'
+import { DECIMALS_TO_SHOW } from 'utils/constants'
+import { CandlestickChartPlotType } from './Chart.types'
+
+/**
+ *
+ * @param price can be any from lightweight typings
+ *
+ * @returns formatted number in string type
+ *
+ * @todo add decimals showing based on current visible range currently no api for it (https://github.com/tradingview/lightweight-charts/issues/621)
+ * @todo mb add props to show decimals or not
+ */
+export const yAxisValuesFormatter = (price: any) => {
+  if (Number(price) > 2 || Number(price) <= -2)
+    return formatNumber({
+      number: Number(price),
+      showDecimal: false,
+      decimalsToShow: 0,
+    })
+
+  return formatNumber({
+    number: Number(price),
+    showDecimal: true,
+    decimalsToShow: 2,
+  })
+}
 
 export const CHART_GRID_SETTING = {
   vertLines: {
@@ -6,6 +33,26 @@ export const CHART_GRID_SETTING = {
   },
   horzLines: {
     visible: false,
+  },
+}
+
+export const DEFAULT_CROSSHAIR_SETTING = {
+  vertLine: {
+    labelVisible: false,
+  },
+}
+
+export const CHART_SERIES_OPTIONS = {
+  lastValueVisible: false,
+  priceLineVisible: false,
+  priceFormat: {
+    minMove: 0.00000001,
+    type: 'custom' as 'custom',
+    formatter: (price: any) => {
+      const res = yAxisValuesFormatter(price)
+      console.log({ res, price })
+      return res
+    },
   },
 }
 
@@ -72,3 +119,5 @@ export const checkWhetherHideTooltip = (param: MouseEventParams, chartRef: React
     param.point.y > chartRef?.current?.clientHeight
   )
 }
+
+export const isCandleData = (plot: any): plot is CandlestickChartPlotType => Boolean(plot?.close)

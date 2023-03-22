@@ -1,5 +1,6 @@
-import { CandlestickData, SingleValueData, UTCTimestamp } from 'lightweight-charts'
+import { CandlestickData, SingleValueData } from 'lightweight-charts'
 import { ChartTooltipsTypes } from '../Tooltips/ChartTooltip'
+import { DoubleChartTooltipsTypes } from '../Tooltips/DoubleChartTooltip'
 
 // Chart types
 export const AREA_CHART_TYPE = 'area'
@@ -22,10 +23,6 @@ export type ChartColorsSettings = {
 
   // histogram colors
   barColor?: string
-
-  // commom colors
-  textColor?: string
-  borderColor?: string
 }
 
 type ChartSettings = {
@@ -48,6 +45,8 @@ type ChartSettings = {
       labelVisible?: boolean
     }
   }
+  textColor?: string
+  borderColor?: string
 }
 
 // Base chart props, that are general to all types
@@ -89,16 +88,58 @@ export type ChartWrapperPropsType = ChartBasePropsType & {
   tooltipAsset: string
 }
 
-// TODO: implement it
+// Double chart props
+
+type DoubleChartColorsType = {
+  // area colors
+  lineColor?: string
+  areaTopColor?: string
+  areaBottomColor?: string
+
+  // candlestick colors
+  chandleUpColor?: string
+  chandleDownColor?: string
+
+  // histogram colors
+  barColor?: string
+}
+
 export type DoubleChartPropsType = {
   firstChart: {
-    data: Array<AreaChartPlotType>
-    colors: ChartColorsSettings
+    data:
+      | {
+          type: typeof AREA_CHART_TYPE
+          plots: Array<AreaChartPlotType>
+        }
+      | {
+          type: typeof CANDLESTICK_CHART_TYPE
+          plots: Array<CandlestickChartPlotType>
+        }
+      | {
+          type: typeof HISTOGRAM_CHART_TYPE
+          plots: Array<AreaChartPlotType>
+        }
+    colors: DoubleChartColorsType
   }
   secondChart: {
-    data: Array<AreaChartPlotType>
-    colors: ChartColorsSettings
+    data:
+      | {
+          type: typeof AREA_CHART_TYPE
+          plots: Array<AreaChartPlotType>
+        }
+      | {
+          type: typeof CANDLESTICK_CHART_TYPE
+          plots: Array<CandlestickChartPlotType>
+        }
+      | {
+          type: typeof HISTOGRAM_CHART_TYPE
+          plots: Array<AreaChartPlotType>
+        }
+    colors: DoubleChartColorsType
   }
 
   settings: ChartSettings
+  tooltipName?: DoubleChartTooltipsTypes
+  tooltipAssetFirst: string
+  tooltipAssetSecond: string
 }

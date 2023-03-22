@@ -9,6 +9,8 @@ import {
   getAxisSettings,
   CHART_LOCALE_SETTING,
   checkWhetherHideTooltip,
+  CHART_SERIES_OPTIONS,
+  DEFAULT_CROSSHAIR_SETTING,
 } from '../helpers/Chart.const'
 
 import ChartTooltip, { AMOUNT_DATE_TOOLTIP } from '../Tooltips/ChartTooltip'
@@ -25,17 +27,13 @@ export const AreaChart = ({
     valueTooltipFormatter,
     hideXAxis,
     hideYAxis,
-    yAxisSide = 'right',
     priceMargins,
-    crosshairOptions,
-  } = {},
-  colors: {
-    lineColor = skyColor,
-    areaTopColor = skyColor,
-    areaBottomColor = 'transparent',
+    yAxisSide = 'right',
+    crosshairOptions = DEFAULT_CROSSHAIR_SETTING,
     textColor = lightTextColor,
     borderColor = headerColor,
   } = {},
+  colors: { lineColor = skyColor, areaTopColor = skyColor, areaBottomColor = 'transparent' } = {},
   data,
   tooltipName = AMOUNT_DATE_TOOLTIP,
   tooltipAsset,
@@ -107,16 +105,7 @@ export const AreaChart = ({
 
     // Setting data
     series.setData(data)
-
-    // Setting yAxis data format
-    series.applyOptions({
-      lastValueVisible: false,
-      priceLineVisible: false,
-      priceFormat: {
-        minMove: 0.00000001,
-        type: 'price',
-      },
-    })
+    series.applyOptions(CHART_SERIES_OPTIONS)
 
     // Subscribe for tooltip update
     chart.subscribeCrosshairMove((param) => {

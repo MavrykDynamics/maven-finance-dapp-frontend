@@ -39,4 +39,39 @@ export const DoormanChartCard = styled(Card)<{ theme: MavrykTheme }>`
     top: 20px;
     left: 45px;
   }
+
+  .double-chart-legend {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    flex-direction: column;
+    row-gap: 5px;
+
+    .row {
+      display: flex;
+      align-items: center;
+      column-gap: 7px;
+      font-size: 12px;
+      color: ${({ theme }) => theme.textColor};
+
+      &.mvk {
+        .circle {
+          background: ${({ theme }) => theme.dataColor};
+        }
+      }
+
+      &.smvk {
+        .circle {
+          background: ${({ theme }) => theme.valueColor};
+        }
+      }
+    }
+
+    .circle {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+  }
 `

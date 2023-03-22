@@ -9,6 +9,8 @@ import {
   getAxisSettings,
   CHART_LOCALE_SETTING,
   checkWhetherHideTooltip,
+  CHART_SERIES_OPTIONS,
+  DEFAULT_CROSSHAIR_SETTING,
 } from '../helpers/Chart.const'
 
 import ChartTooltip, { AMOUNT_DATE_TOOLTIP } from '../Tooltips/ChartTooltip'
@@ -27,9 +29,11 @@ export const HistogramChart = ({
     hideYAxis,
     yAxisSide = 'left',
     priceMargins,
-    crosshairOptions,
+    crosshairOptions = DEFAULT_CROSSHAIR_SETTING,
+    textColor = lightTextColor,
+    borderColor = headerColor,
   } = {},
-  colors: { barColor = 'rgba(119, 164, 242, 0.51)', textColor = lightTextColor, borderColor = headerColor } = {},
+  colors: { barColor = 'rgba(119, 164, 242, 0.51)' } = {},
   data,
   tooltipName = AMOUNT_DATE_TOOLTIP,
   tooltipAsset,
@@ -97,16 +101,7 @@ export const HistogramChart = ({
 
     // Setting data
     series.setData(data)
-
-    // Setting yAxis data format
-    series.applyOptions({
-      lastValueVisible: false,
-      priceLineVisible: false,
-      priceFormat: {
-        minMove: 0.00000001,
-        type: 'price',
-      },
-    })
+    series.applyOptions(CHART_SERIES_OPTIONS)
 
     // Subscribe for tooltip update
     chart.subscribeCrosshairMove((param) => {
