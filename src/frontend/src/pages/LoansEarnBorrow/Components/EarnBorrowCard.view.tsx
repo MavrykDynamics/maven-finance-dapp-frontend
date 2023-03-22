@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 // components
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
@@ -21,7 +23,7 @@ type Props = {
 }
 
 export const EarnBorrowCard = ({ market, settings, userAddress }: Props) => {
-  const { priceName, totalName, buttonName, buttonSymbol } = settings
+  const { priceName, totalName, buttonName, isButtonSymbol, marketTabName } = settings
   const { icon, symbol, annualRate, annualRateName, totalAmount, price, chartData } = market
 
   return (
@@ -29,7 +31,7 @@ export const EarnBorrowCard = ({ market, settings, userAddress }: Props) => {
       <EarnBorrowCardHeader>
         <div className="flex">
           <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} />
-          <h4 className='truncated-text'>{symbol}</h4>
+          <h4 className="truncated-text">{symbol}</h4>
         </div>
 
         <div className="flex commaNumber">
@@ -54,13 +56,15 @@ export const EarnBorrowCard = ({ market, settings, userAddress }: Props) => {
           <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE} disabled={!userAddress}>
             <Icon id="loans" />
             {buttonName}
-            {buttonSymbol && <span>{symbol}</span>}
+            {isButtonSymbol && <span>{symbol}</span>}
           </Button>
 
-          <Button kind={BUTTON_SIMPLE} form={BUTTON_WIDE}>
-            View Stats
-            <Icon id="arrow" className="arrowIcon" />
-          </Button>
+          <Link to={`/loans/${symbol}/${marketTabName}`}>
+            <Button kind={BUTTON_SIMPLE} form={BUTTON_WIDE}>
+              View Stats
+              <Icon id="arrow" className="arrowIcon" />
+            </Button>
+          </Link>
         </div>
       </EarnBorrowCardBody>
     </EarnBorrowCardStyled>

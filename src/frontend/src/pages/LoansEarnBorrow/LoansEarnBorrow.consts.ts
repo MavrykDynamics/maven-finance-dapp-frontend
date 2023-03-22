@@ -26,7 +26,8 @@ export type MarketSettingsType = {
   priceName: string
   totalName: string
   buttonName: string
-  buttonSymbol?: boolean
+  isButtonSymbol?: boolean
+  marketTabName: string
 }
 
 export type MarketType = {

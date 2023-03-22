@@ -25,7 +25,8 @@ const marketSettings: MarketSettingsType = {
   priceName: 'Oracle Price',
   totalName: 'Total Borrowed',
   buttonName: 'Borrow',
-  buttonSymbol: true,
+  isButtonSymbol: true,
+  marketTabName: 'borrowTab',
 }
 
 export const LoansBorrow = () => {

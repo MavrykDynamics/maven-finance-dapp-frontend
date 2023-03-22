@@ -25,6 +25,7 @@ const marketSettings: MarketSettingsType = {
   priceName: 'Oracle Price',
   totalName: 'Total Earning',
   buttonName: 'Deposit & Earn',
+  marketTabName: 'lendingTab',
 }
 
 export const LoansEarn = () => {
