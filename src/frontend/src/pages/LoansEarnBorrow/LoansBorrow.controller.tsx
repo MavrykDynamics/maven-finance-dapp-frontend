@@ -6,13 +6,14 @@ import { Page } from 'styles'
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
 import { LoansEarnBorrow } from './LoansEarnBorrow.view'
 import { EarnBorrowTotalCharts } from './Components/EarnBorrowTotalCharts.view'
+import { EarnBorrowCard } from './Components/EarnBorrowCard.view'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 
 // styles
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 
 // types
-import { CardSettingsType, cards } from './LoansEarnBorrow.consts'
+import { MarketSettingsType } from './LoansEarnBorrow.consts'
 
 // helpers
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
@@ -20,7 +21,7 @@ import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 // actions
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 
-const cardSettings: CardSettingsType = {
+const marketSettings: MarketSettingsType = {
   priceName: 'Oracle Price',
   totalName: 'Total Borrowed',
   buttonName: 'Borrow',
@@ -30,8 +31,11 @@ const cardSettings: CardSettingsType = {
 export const LoansBorrow = () => {
   const dispatch = useDispatch()
 
+  const { accountPkh } = useSelector((state: State) => state.wallet)
+
   const {
     isDataLoaded,
+    loanTokens,
     chartsData: { collateralChartData, borrowingChartData, totalCollateraled, totalBorrowed },
   } = useSelector((state: State) => state.loans)
 
@@ -65,7 +69,25 @@ export const LoansBorrow = () => {
             rightTotalAmount={totalBorrowed}
           />
 
-          <LoansEarnBorrow title="Borrow" cards={cards} cardSettings={cardSettings} />
+          <LoansEarnBorrow title="Borrow" cards={loanTokens} cardSettings={marketSettings}>
+            {loanTokens.map((item) => (
+              <EarnBorrowCard
+                key={item.loanTokenData.name}
+                market={{
+                  name: item.loanTokenData.name,
+                  icon: item.loanTokenData.icon,
+                  symbol: item.loanTokenData.symbol,
+                  annualRate: item.borrowAPR,
+                  annualRateName: 'APR',
+                  totalAmount: item.totalBorrowed,
+                  price: item.loanTokenData.rate,
+                  chartData: item.marketCollateralChartData,
+                }}
+                settings={marketSettings}
+                userAddress={accountPkh}
+              />
+            ))}
+          </LoansEarnBorrow>
         </>
       )}
     </Page>

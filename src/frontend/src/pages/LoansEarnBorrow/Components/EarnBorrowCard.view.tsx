@@ -12,30 +12,30 @@ import { EarnBorrowCardStyled, EarnBorrowCardHeader, EarnBorrowCardBody } from '
 import { BUTTON_PRIMARY, BUTTON_WIDE, BUTTON_SIMPLE } from 'app/App.components/Button/Button.constants'
 
 // types
-import { CardSettingsType, CardType } from '../LoansEarnBorrow.consts'
+import { MarketSettingsType, MarketType } from '../LoansEarnBorrow.consts'
 
 type Props = {
-  settings: CardSettingsType
-  card: CardType
+  market: MarketType
+  settings: MarketSettingsType
   userAddress?: string
 }
 
-export const EarnBorrowCard = ({ card, settings, userAddress }: Props) => {
+export const EarnBorrowCard = ({ market, settings, userAddress }: Props) => {
   const { priceName, totalName, buttonName, buttonSymbol } = settings
-  const { title, symbol, apy, price, total, data } = card
+  const { name, icon, symbol, annualRate, annualRateName, totalAmount, price, chartData } = market
 
   return (
     <EarnBorrowCardStyled>
       <EarnBorrowCardHeader>
         <div className="flex">
-          <ImageWithPlug imageLink={symbol} alt={`${symbol} icon`} />
-          <h4>{title}</h4>
+          <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} />
+          <h4>{name}</h4>
           &nbsp;
           <span>({symbol})</span>
         </div>
 
         <div className="flex commaNumber">
-          <CommaNumber value={apy} />% &nbsp;APY
+          <CommaNumber value={annualRate} />% &nbsp;{annualRateName}
         </div>
       </EarnBorrowCardHeader>
 
@@ -47,10 +47,10 @@ export const EarnBorrowCard = ({ card, settings, userAddress }: Props) => {
 
         <div className="info">
           <CommaNumber beginningText="$" value={price} />
-          <CommaNumber beginningText="$" value={total} />
+          <CommaNumber beginningText="$" value={totalAmount} />
         </div>
 
-        <EarnBorrowChart data={data} />
+        <EarnBorrowChart data={chartData} />
 
         <div className="buttons">
           <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE} disabled={!userAddress}>

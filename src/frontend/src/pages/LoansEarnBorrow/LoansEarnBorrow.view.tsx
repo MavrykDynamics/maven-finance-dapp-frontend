@@ -1,26 +1,23 @@
 import { useSelector } from 'react-redux'
 import { State } from 'reducers'
 
-// components
-import { EarnBorrowCard } from './Components/EarnBorrowCard.view'
-
 // styles
 import { LoansEarnBorrowStyled, EarnBorrowCards } from './LoansEarnBorrow.styles'
 import { MarketsOverviewContainer } from 'pages/Loans/Loans.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 
-// helpers
-
 // types
-import { CardSettingsType, CardType } from './LoansEarnBorrow.consts'
+import { MarketSettingsType } from './LoansEarnBorrow.consts'
+import { LoansStorage } from 'utils/TypesAndInterfaces/Loans'
 
 type Props = {
   title: string
-  cardSettings: CardSettingsType
-  cards: CardType[]
+  cardSettings: MarketSettingsType
+  cards: LoansStorage['loanTokens']
+  children: React.ReactNode
 }
 
-export const LoansEarnBorrow = ({ title, cardSettings, cards }: Props) => {
+export const LoansEarnBorrow = ({ title, cardSettings, cards, children: markets }: Props) => {
   const { accountPkh } = useSelector((state: State) => state.wallet)
 
   return (
@@ -31,11 +28,7 @@ export const LoansEarnBorrow = ({ title, cardSettings, cards }: Props) => {
         </GovRightContainerTitleArea>
       </MarketsOverviewContainer>
 
-      <EarnBorrowCards>
-        {cards.map((item) => (
-          <EarnBorrowCard key={item.id} card={item} settings={cardSettings} userAddress={accountPkh} />
-        ))}
-      </EarnBorrowCards>
+      <EarnBorrowCards>{markets}</EarnBorrowCards>
     </LoansEarnBorrowStyled>
   )
 }
