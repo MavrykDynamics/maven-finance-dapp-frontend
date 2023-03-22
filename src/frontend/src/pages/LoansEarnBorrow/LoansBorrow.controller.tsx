@@ -20,6 +20,8 @@ import { LoanMarketType } from 'utils/TypesAndInterfaces/Loans'
 // helpers
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { loansPopupsContext } from 'pages/Loans/Components/Modals/LoansModals.provider'
+import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
+import { ERROR } from 'app/App.components/Toaster/Toaster.constants'
 
 // actions
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
@@ -48,7 +50,11 @@ export const LoansBorrow = () => {
 
   const handleBorrow = (item: LoanMarketType) => {
     const validVault = item.myBorrowingList.find((item) => item.collateralRatio > 200)
-    if (!validVault) return
+
+    if (!validVault) {
+      dispatch(showToaster(ERROR, 'Error', 'The market does not have a vault to borrow'))
+      return
+    }
 
     openBorrowPopup?.({
       vaultId: validVault.vaultId,
