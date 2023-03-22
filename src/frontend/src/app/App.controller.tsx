@@ -32,6 +32,8 @@ import {
   getTokensPrices,
   getMTokensStorage,
 } from 'reducers/actions/dipDupActions.actions'
+import { getCouncilMembers } from 'pages/Council/Council.actions'
+import { getBreakGlassCouncilMembers } from 'pages/BreakGlassCouncil/BreakGlassCouncil.actions'
 
 // export const { store, persistor } = configureStore({})
 export const { store } = configureStore({})
@@ -59,6 +61,10 @@ const AppContainer = () => {
         dispatch(getDipDupTokensStorage()),
         dispatch(getWhitelistTokensStorage()),
         dispatch(getMTokensStorage()),
+
+        // Used to retrieve user avatar
+        dispatch(getCouncilMembers()),
+        dispatch(getBreakGlassCouncilMembers()),
       ])
 
       // Depends on data feeds (getFeedsStorage())

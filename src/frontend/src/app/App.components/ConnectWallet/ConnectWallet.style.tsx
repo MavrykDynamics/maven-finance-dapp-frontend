@@ -396,15 +396,16 @@ export const WalletNotConnectedButton = styled.button<{ theme: MavrykTheme }>`
   cursor: pointer;
   border-radius: ${BUTTON_RADIUS};
   text-align: center;
-  font-weight: bold;
-  line-height: 50px;
-  font-size: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 220px;
   color: ${({ theme }) => theme.containerColor};
   background-color: ${({ theme }) => theme.actionPrimaryBtnColor};
+
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 16px;
 
   &:hover {
     opacity: 0.8;

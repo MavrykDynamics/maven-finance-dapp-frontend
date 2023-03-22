@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
@@ -9,6 +10,7 @@ import { BreakGlassCouncilForm, actions } from './BreakGlassCouncilForms/BreakGl
 import { FormUpdateCouncilMemberView } from './BreakGlassCouncilForms/FormUpdateCouncilMember.view'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
+import { getUserAvatar } from 'app/App.components/Avatar/Avatar.helpers'
 
 // helpers
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
@@ -53,7 +55,9 @@ export function BreakGlassCouncil() {
     isBreakGlassCouncilMembersLoaded,
     isBreakGlassCouncilPendingActionsLoaded,
     isBreakGlassCouncilPastActionsLoaded,
+    councilMembers,
   } = useSelector((state: State) => state.council)
+  const { satelliteMapper } = useSelector((state: State) => state.satellites)
 
   const handleSignAction = (id: number) => {
     dispatch(signAction(id))
@@ -62,6 +66,25 @@ export function BreakGlassCouncil() {
   const handleDropAction = (id: number) => {
     dispatch(dropBreakGlass(id))
   }
+
+  const isBreakGlassCouncilMember = Boolean(breakGlassCouncilMembers.find((item) => item.userId === accountPkh))
+
+  const userImage = useMemo(
+    () =>
+      getUserAvatar({
+        accountPkh,
+        satelliteMapper,
+        councilMembers,
+        breakGlassCouncilMembers,
+        priorityImage: 'breakGlassCouncil',
+      }),
+    [accountPkh, breakGlassCouncilMembers, councilMembers, satelliteMapper],
+  )
+
+  const breackGlassCouncilUserImage = useMemo(
+    () => (isBreakGlassCouncilMember ? userImage : undefined),
+    [isBreakGlassCouncilMember, userImage],
+  )
 
   const { isLoading } = useDataLoader(async () => {
     try {
@@ -92,7 +115,7 @@ export function BreakGlassCouncil() {
 
   return (
     <Page>
-      <PageHeader page={'break glass council'} />
+      <PageHeader page={'break glass council'} avatar={breackGlassCouncilUserImage} />
 
       {isLoading ? (
         <DataLoaderWrapper>
