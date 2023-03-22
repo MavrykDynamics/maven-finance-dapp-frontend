@@ -1,6 +1,7 @@
 import { InputStatusType, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { State } from 'reducers'
 import { isNotAllWhitespace, isValidLength, validatePublicKey } from 'utils/validatorFunctions'
+import { defaultOraclePeerIdMaxLength } from 'app/App.components/Input/Input.constants'
 
 export const getFormTextBasedOnUserRole = (isUserSatellite: boolean) => ({
   pageTitle: isUserSatellite ? 'Edit Satellite Profile' : 'Become a Satellite',
@@ -40,7 +41,9 @@ export const getInputValidationStatus = (
     case 'image':
       return value ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
     case 'oraclePeerId':
-      return value ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
+      return isValidLength(value, defaultOraclePeerIdMaxLength, defaultOraclePeerIdMaxLength)
+        ? INPUT_STATUS_SUCCESS
+        : INPUT_STATUS_ERROR
     case 'oraclePublicKey':
       return validatePublicKey(value) ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
   }

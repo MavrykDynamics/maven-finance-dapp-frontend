@@ -131,6 +131,11 @@ const CELL_CONTENT_STYLES = css`
       column-gap: 5px;
     }
 
+    &.asset-name {
+      font-size: 16px;
+      column-gap: 7px;
+    }
+
     &.with-icon {
       svg {
         fill: ${({ theme }) => theme.textColor};

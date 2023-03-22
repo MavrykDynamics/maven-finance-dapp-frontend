@@ -49,10 +49,6 @@ export const TopBarLinksStyled = styled.div<{ useClickOpening?: boolean; selecte
         color: ${({ theme }) => theme.topBarLinkColorActive};
       }
     }
-
-    @media screen and (max-width: 1380px) {
-      font-size: 18px;
-    }
   }
 
   .group-links {
@@ -85,7 +81,7 @@ export const TopBarLinksStyled = styled.div<{ useClickOpening?: boolean; selecte
           content: '✓';
           position: absolute;
           right: -20px;
-          font-size: 18px;
+
           top: 50%;
           transform: translateY(-50%);
           color: ${({ theme }) => theme.topBarLinkColorActive};
@@ -97,7 +93,7 @@ export const TopBarLinksStyled = styled.div<{ useClickOpening?: boolean; selecte
       text-transform: capitalize;
       position: relative;
       white-space: nowrap;
-      font-size: 18px;
+      font-size: 20px;
       transition: 0.35s all;
       width: 120%;
       padding: 6px 0;

@@ -90,9 +90,14 @@ export const LoansPositionTable = ({ markets }: { markets: State['loans']['loanT
                 const averageVaultStatus = getVaultSimpleStatus(vaultsData.collateralRatio / myBorrowingList.length)
 
                 return (
-                  <TableRow rowHeight={60} borderColor="dataColor" className="add-hover" key={loanTokenData.symbol}>
+                  <TableRow
+                    rowHeight={60}
+                    borderColor="cardBorderColor"
+                    className="add-hover"
+                    key={loanTokenData.symbol}
+                  >
                     <TableCell width="15%">
-                      <div className="cell-content row">
+                      <div className="cell-content row with-icon asset-name">
                         <ImageWithPlug imageLink={loanTokenData.icon} alt={`${loanTokenData.symbol} logo`} />
                         {loanTokenData.symbol}
                       </div>

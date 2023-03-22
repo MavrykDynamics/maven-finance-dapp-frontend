@@ -23,7 +23,7 @@ export const PAGE_HEADER_DATA = new Map<string, PageHeaderContent>([
     'loansDashboard',
     {
       title: 'Lend/Borrow Dashboard',
-      subText: 'View all available markets and see details to lend and borrow assets..',
+      subText: 'View all available markets and see details to lend and borrow assets.',
       foregroundImageSrc: '/images/lending-header.svg',
       backgroundImageSrc: '/images/dapp-header-bg.svg',
     },

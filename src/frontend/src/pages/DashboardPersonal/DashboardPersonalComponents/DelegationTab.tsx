@@ -1,29 +1,50 @@
 import { Link } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { State } from 'reducers'
 
-import { BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import { BUTTON_SECONDARY, BUTTON_WIDE, BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { distributeProposalRewards } from 'pages/Satellites/Satellites.actions'
 
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { DelegationStatusBlock } from './DashboardPersonalComponents.style'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { UserActionHistory } from './UserOperationsHistory'
+import { DashboardCardHeader } from '../DashboardPersonal.style'
 
 const DelegationTab = () => {
-  const { satelliteMvkIsDelegatedTo, mySMvkTokenBalance } = useSelector((state: State) => state.wallet.user)
+  const dispatch = useDispatch()
+  const {
+    satelliteMvkIsDelegatedTo,
+    mySMvkTokenBalance,
+    mySatelliteRewardsData: { myAvailableSatelliteRewards },
+  } = useSelector((state: State) => state.wallet.user)
   const { satelliteMapper } = useSelector((state: State) => state.satellites)
   const satelliteInfo = satelliteMapper[satelliteMvkIsDelegatedTo]
+
+  const handleDistributeRewards = () => {
+    // TODO: add valid data
+    dispatch(distributeProposalRewards('', []))
+  }
 
   return (
     <>
       <DelegationStatusBlock>
-        <GovRightContainerTitleArea>
+        <DashboardCardHeader>
           <h2>Delegation Status</h2>
-        </GovRightContainerTitleArea>
+
+          <NewButton
+            kind={BUTTON_PRIMARY}
+            form={BUTTON_WIDE}
+            onClick={handleDistributeRewards}
+            disabled={myAvailableSatelliteRewards === 0}
+          >
+            <Icon id="loans" />
+            Distribute Gov. Rewards
+          </NewButton>
+        </DashboardCardHeader>
         {satelliteInfo ? (
           <>
             <div className="delegated-to">Delegated To</div>
