@@ -94,7 +94,7 @@ export const LoansEarn = () => {
                   },
                 }}
                 settings={marketSettings}
-                userAddress={accountPkh}
+                isDisabledButton={!accountPkh}
               />
             ))}
           </LoansEarnBorrow>

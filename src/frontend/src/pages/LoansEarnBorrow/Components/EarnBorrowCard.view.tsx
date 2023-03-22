@@ -19,10 +19,10 @@ import { MarketSettingsType, MarketType } from '../LoansEarnBorrow.consts'
 type Props = {
   market: MarketType
   settings: MarketSettingsType
-  userAddress?: string
+  isDisabledButton?: boolean
 }
 
-export const EarnBorrowCard = ({ market, settings, userAddress }: Props) => {
+export const EarnBorrowCard = ({ market, settings, isDisabledButton }: Props) => {
   const { priceName, totalName, buttonName, isButtonSymbol, marketTabName } = settings
   const { icon, symbol, annualRate, annualRateName, totalAmount, price, chartData, onClick } = market
 
@@ -53,7 +53,7 @@ export const EarnBorrowCard = ({ market, settings, userAddress }: Props) => {
         <EarnBorrowChart data={chartData} />
 
         <div className="buttons">
-          <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE} disabled={!userAddress} onClick={onClick}>
+          <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE} disabled={isDisabledButton} onClick={onClick}>
             <Icon id="loans" />
             {buttonName}
             {isButtonSymbol && <span>{symbol}</span>}

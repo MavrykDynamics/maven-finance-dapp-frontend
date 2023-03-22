@@ -15,6 +15,7 @@ import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 
 // types
 import { MarketSettingsType } from './LoansEarnBorrow.consts'
+import { LoanMarketType } from 'utils/TypesAndInterfaces/Loans'
 
 // helpers
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
@@ -39,12 +40,28 @@ export const LoansBorrow = () => {
   const {
     isDataLoaded,
     loanTokens,
+    config: { DAOFee },
     chartsData: { collateralChartData, borrowingChartData, totalCollateraled, totalBorrowed },
   } = useSelector((state: State) => state.loans)
 
   const { openBorrowPopup } = useContext(loansPopupsContext)
 
-  const handleBorrow = () => {}
+  const handleBorrow = (item: LoanMarketType) => {
+    const validVault = item.myBorrowingList.find((item) => item.collateralRatio > 200)
+    if (!validVault) return
+
+    openBorrowPopup?.({
+      vaultId: validVault.vaultId,
+      borrowedAsset: validVault.borrowedAsset,
+      collateralRatio: validVault.collateralRatio,
+      borrowAPR: validVault.apr,
+      currentCollateralBalance: validVault.collateralData.at(-1)?.amount ?? 0,
+      hasUserBorrowed: false,
+      borrowCapacity: validVault.borrowCapacity,
+      currentBorrowedAmount: validVault.borrowedAmount,
+      DAOFee,
+    })
+  }
 
   const { isLoading } = useDataLoader(async () => {
     try {
@@ -88,10 +105,10 @@ export const LoansBorrow = () => {
                   totalAmount: item.totalBorrowed,
                   price: item.loanTokenData.rate,
                   chartData: item.marketCollateralChartData,
-                  onClick: handleBorrow,
+                  onClick: () => handleBorrow(item),
                 }}
                 settings={marketSettings}
-                userAddress={accountPkh}
+                isDisabledButton={!accountPkh}
               />
             ))}
           </LoansEarnBorrow>
