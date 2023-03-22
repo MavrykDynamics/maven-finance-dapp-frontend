@@ -10,7 +10,6 @@ import { CandlestickChartPlotType } from './Chart.types'
  * @returns formatted number in string type
  *
  * @todo add decimals showing based on current visible range currently no api for it (https://github.com/tradingview/lightweight-charts/issues/621)
- * @todo mb add props to show decimals or not
  */
 export const yAxisValuesFormatter = (price: any) => {
   if (Number(price) > 2 || Number(price) <= -2)
