@@ -68,7 +68,7 @@ export const LoansEarn = () => {
             rightTotalAmount={totalBorrowed}
           />
 
-          <LoansEarnBorrow title="Earn" cards={loanTokens} cardSettings={marketSettings}>
+          <LoansEarnBorrow title="Earn">
             {loanTokens.map((item) => (
               <EarnBorrowCard
                 key={item.loanTokenData.name}

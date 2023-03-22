@@ -2,12 +2,14 @@ import styled from 'styled-components'
 import { CardHover } from 'styles'
 import { MavrykTheme } from 'styles/interfaces'
 
-export const LoansEarnBorrowStyled = styled.div<{ theme: MavrykTheme }>``
+export const LoansEarnBorrowStyled = styled.div<{ theme: MavrykTheme }>`
+  margin-top: 30px;
+`
 
 export const EarnBorrowChartStyled = styled.div<{ theme: MavrykTheme }>`
   margin: 30px 0;
   height: 152px;
-  
+
   border: 1px solid ${({ theme }) => theme.borderColor};
   border-radius: 10px;
 
@@ -26,9 +28,17 @@ export const EarnBorrowChartStyled = styled.div<{ theme: MavrykTheme }>`
       position: relative;
       top: 1px;
       left: 2px;
-      
+
       width: 30px;
       height: 30px;
+    }
+  }
+
+  .chartPlug {
+    row-gap: 0;
+
+    p {
+      font-size: 14px;
     }
   }
 

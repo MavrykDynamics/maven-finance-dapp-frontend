@@ -16,6 +16,8 @@ import { AREA_CHART_TYPE, HISTOGRAM_CHART_TYPE } from 'app/App.components/Chart/
 // types
 import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
 
+const numberOfItemsToDisplay = 3
+
 type ChartDataType = {
   type: typeof AREA_CHART_TYPE | typeof HISTOGRAM_CHART_TYPE
   plots: AreaChartPlotType[]
@@ -29,22 +31,25 @@ export const EarnBorrowChart = ({ data }: Props) => {
   const [isGraph, setIsGraph] = useState(false)
 
   const chartData: ChartDataType = { type: isGraph ? HISTOGRAM_CHART_TYPE : AREA_CHART_TYPE, plots: data }
+  const showChart = chartData.plots.length >= numberOfItemsToDisplay
 
   return (
     <EarnBorrowChartStyled className={isGraph ? 'isGraph' : ''}>
-      <div className="switchMenu">
-        <span>Supply Vol / 14 Days</span>
+      {showChart && (
+        <div className="switchMenu">
+          <span>Supply Vol / 14 Days</span>
 
-        <Button kind={BUTTON_THIRD} form={BUTTON_ROUND} onClick={() => setIsGraph(!isGraph)}>
-          <Icon id={isGraph ? 'graph' : 'chart'} />
-        </Button>
-      </div>
+          <Button kind={BUTTON_THIRD} form={BUTTON_ROUND} onClick={() => setIsGraph(!isGraph)}>
+            <Icon id={isGraph ? 'graph' : 'chart'} />
+          </Button>
+        </div>
+      )}
 
       <Chart
         data={chartData}
         colors={CHART_COLORS}
         settings={MINI_CHART_SETTINGS}
-        numberOfItemsToDisplay={3}
+        numberOfItemsToDisplay={numberOfItemsToDisplay}
         tooltipAsset="$"
       />
     </EarnBorrowChartStyled>
