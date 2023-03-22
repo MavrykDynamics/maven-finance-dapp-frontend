@@ -22,16 +22,14 @@ type Props = {
 
 export const EarnBorrowCard = ({ market, settings, userAddress }: Props) => {
   const { priceName, totalName, buttonName, buttonSymbol } = settings
-  const { name, icon, symbol, annualRate, annualRateName, totalAmount, price, chartData } = market
+  const { icon, symbol, annualRate, annualRateName, totalAmount, price, chartData } = market
 
   return (
     <EarnBorrowCardStyled>
       <EarnBorrowCardHeader>
         <div className="flex">
           <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} />
-          <h4>{name}</h4>
-          &nbsp;
-          <span>({symbol})</span>
+          <h4 className='truncated-text'>{symbol}</h4>
         </div>
 
         <div className="flex commaNumber">

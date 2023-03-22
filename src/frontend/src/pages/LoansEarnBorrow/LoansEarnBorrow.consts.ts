@@ -30,7 +30,6 @@ export type MarketSettingsType = {
 }
 
 export type MarketType = {
-  name: string
   icon: string
   symbol: string
   annualRate: number

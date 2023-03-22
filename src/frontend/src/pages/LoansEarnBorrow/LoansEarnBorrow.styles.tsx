@@ -76,12 +76,6 @@ export const EarnBorrowCardHeader = styled.div<{ theme: MavrykTheme }>`
   border-top-right-radius: inherit;
   border-bottom: 1px solid ${({ theme }) => theme.borderColor};
 
-  h4,
-  span {
-    font-weight: 600;
-    font-size: 22px;
-  }
-
   img,
   svg {
     width: 36px;
@@ -95,11 +89,10 @@ export const EarnBorrowCardHeader = styled.div<{ theme: MavrykTheme }>`
   }
 
   h4 {
-    text-transform: capitalize;
-  }
-
-  span {
     text-transform: uppercase;
+
+    font-weight: 600;
+    font-size: 22px;
   }
 
   .commaNumber {

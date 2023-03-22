@@ -73,7 +73,6 @@ export const LoansEarn = () => {
               <EarnBorrowCard
                 key={item.loanTokenData.name}
                 market={{
-                  name: item.loanTokenData.name,
                   icon: item.loanTokenData.icon,
                   symbol: item.loanTokenData.symbol,
                   annualRate: item.lendingAPY,
