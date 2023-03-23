@@ -34,6 +34,7 @@ import { TextArea } from 'app/App.components/TextArea/TextArea.controller'
 import { IPFSUploader } from 'app/App.components/IPFSUploader/IPFSUploader.controller'
 import NewButton from 'app/App.components/Button/NewButton'
 import Checkbox from 'app/App.components/Checkbox/Checkbox.view'
+import { Info } from 'app/App.components/Info/Info.view'
 
 // Styled components
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
@@ -83,6 +84,7 @@ export const BecomeSatellite = () => {
   const [isChecked, setIsChecked] = useState(false)
   const pageText = getFormTextBasedOnUserRole(Boolean(usersSatelliteProfile))
   const isUserOracle = Boolean(usersSatelliteProfile?.peerId || usersSatelliteProfile?.publicKey)
+  const showOracleWarning = isUserOracle && !isChecked
 
   // Disable update button when no user connected, not enoght sMVK to become a satellite, not full valid form, or user is satellite, but hasn't changed nothing
   const isUpdateButtonDisabled = useMemo(() => {
@@ -368,6 +370,16 @@ export const BecomeSatellite = () => {
                       }}
                     />
                   </div>
+                )}
+
+                {showOracleWarning && (
+                  <Info
+                    text={
+                      'Text here that shows what happen if user is going to unregister as oracle and click the button “update satellite info”. '
+                    }
+                    type="warning"
+                    className="oracleWarning"
+                  ></Info>
                 )}
               </BecomeSatelliteRegisterAsOracle>
 

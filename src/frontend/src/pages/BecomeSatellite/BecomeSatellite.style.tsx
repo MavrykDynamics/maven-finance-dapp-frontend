@@ -117,4 +117,9 @@ export const BecomeSatelliteRegisterAsOracle = styled.div<{ theme: MavrykTheme }
     row-gap: 40px;
     margin-top: 40px;
   }
+
+  .oracleWarning {
+    padding: 10px 20px;
+    margin-top: 30px;
+  }
 `
