@@ -4,6 +4,8 @@ import { CommaNumber } from '../CommaNumber/CommaNumber.controller'
 import { InputSizeType, InputStatusType } from './Input.constants'
 import { InputOneChange } from './Input.controller'
 import { InputPinnedChild, InputStyledStatus, InputWrapper, NewInputLabel, StyledInput } from './Input.style'
+import { CustomTooltip } from '../Tooltip/Tooltip.view'
+import { textColor } from 'styles'
 
 type InputViewProps = {
   children?: React.ReactNode
@@ -15,6 +17,7 @@ type InputViewProps = {
     useMaxHandler?: () => void
     balanceHandler?: () => void
     label?: string
+    tooltipText?: string
     inputStatus: InputStatusType
     convertedValue?: number
     inputSize?: InputSizeType
@@ -45,6 +48,7 @@ export const Input = ({
     balanceHandler,
     convertedValue,
     label,
+    tooltipText,
     balanceName = 'Balance',
     inputStatus,
     inputSize,
@@ -52,7 +56,16 @@ export const Input = ({
 }: InputViewProps) => {
   return (
     <InputWrapper className={`${className} ${inputStatus} ${inputSize}`} id={'inputStyled'}>
-      {label ? <NewInputLabel>{label}</NewInputLabel> : null}
+      {label ? (
+        <NewInputLabel>
+          {label}
+
+          {Boolean(tooltipText) && (
+            <CustomTooltip text={tooltipText} iconId="info" className="info-tooltip" defaultStrokeColor={textColor} />
+          )}
+        </NewInputLabel>
+      ) : null}
+
       <StyledInput {...inputProps} className={inputStatus} autoComplete={inputProps.name} />
       {Boolean(children) ? null : <InputStyledStatus className={`${inputStatus}`} />}
 

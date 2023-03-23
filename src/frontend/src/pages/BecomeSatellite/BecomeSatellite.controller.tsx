@@ -322,14 +322,11 @@ export const BecomeSatellite = () => {
               />
 
               <BecomeSatelliteRegisterAsOracle>
-                <Checkbox
-                  id="show_dropped"
-                  onChangeHandler={() => setIsChecked(!isChecked)}
-                  checked={isChecked}
-                  className="checkbox"
-                >
-                  <>{pageText.registerAsOracle}</>
-                </Checkbox>
+                <div className="checkbox">
+                  {pageText.registerAsOracle}
+
+                  <Checkbox id="show_dropped" onChangeHandler={() => setIsChecked(!isChecked)} checked={isChecked} />
+                </div>
 
                 <BecomeSatelliteOracleText>
                   Text here that shows if they are going to register as oracle. Will have some explainer about the
@@ -344,6 +341,7 @@ export const BecomeSatellite = () => {
                     <Input
                       settings={{
                         label: pageText.oraclePeerId,
+                        tooltipText: 'something text',
                         inputStatus: form.oraclePeerId.status,
                       }}
                       inputProps={{
@@ -358,6 +356,7 @@ export const BecomeSatellite = () => {
                     <Input
                       settings={{
                         label: pageText.oraclePublicKey,
+                        tooltipText: 'something text',
                         inputStatus: form.oraclePublicKey.status,
                       }}
                       inputProps={{

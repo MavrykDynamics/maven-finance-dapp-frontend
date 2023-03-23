@@ -17,7 +17,7 @@ export const infoColor = '#00C2FF'
 export const awaitingColor = '#FFCA43'
 
 export const borderColor = '#4F457C'
-export const textColor = '#29264C'
+export const textColor = '#CDCDCD'
 export const backgroundTextColor = '#F7F9FD'
 export const placeholderColor = '#F7F9FD'
 export const secondaryColor = '#73d7c3'

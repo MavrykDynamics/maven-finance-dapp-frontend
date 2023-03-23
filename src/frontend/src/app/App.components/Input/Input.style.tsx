@@ -379,6 +379,12 @@ export const NewInputLabel = styled.label`
   position: absolute;
   top: -20px;
   left: 12px;
+
+  .info-tooltip {
+      position: relative;
+      top: 1px;
+      white-space: normal;
+  }
 `
 
 export const InputStyledStatus = styled.div<{ theme: MavrykTheme }>`

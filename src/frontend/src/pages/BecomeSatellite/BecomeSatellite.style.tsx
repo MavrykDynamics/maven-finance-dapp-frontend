@@ -105,6 +105,12 @@ export const BecomeSatelliteRegisterAsOracle = styled.div<{ theme: MavrykTheme }
     padding: 20px 0 0 0;
   }
 
+  .checkbox {
+    display: flex;
+    align-items: center;
+    column-gap: 10px;
+  }
+
   .inputs {
     display: flex;
     flex-direction: column;
