@@ -7,7 +7,7 @@ import { State } from 'reducers'
 
 import { BUTTON_LARGE, BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { calcDiffBetweenTwoNumbersInPersentage } from 'utils/calcFunctions'
-import { getVaultSimpleStatus } from './helpers/position.helpers'
+import { getAccountVaultSimpleStatus } from './helpers/position.helpers'
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 
 import Button from 'app/App.components/Button/NewButton'
@@ -38,13 +38,13 @@ export type GaugeChartStateType = {
 }
 
 export const GAUGE_STATE_RISK_PART = {
-  maxValue: 250,
-  minValue: 100,
+  maxValue: 100,
+  minValue: 0,
   isAPY: false,
 }
 
 export const GAUGE_STATE_APY_PART = {
-  maxValue: 50,
+  maxValue: 100,
   minValue: 0,
   isAPY: true,
   text: 'Net APY',
@@ -117,48 +117,57 @@ export const LoansDashboard = () => {
     return { lendingPersentDiff, borrowingPersentDiff }
   }, [borrowingChartData, lendingChartData, totalBorrowed, totalLended])
 
-  // calc averageCollateralRatio for gauge chart
-  const vaultRiskGaugeData = useMemo((): GaugeChartStateType => {
-    const { ratioSum, vaultsAmount } = loanTokens.reduce<{
-      ratioSum: number
-      vaultsAmount: number
-    }>(
-      (acc, { myBorrowingList }) => {
-        acc.ratioSum += myBorrowingList.reduce(
-          (acc, { collateralRatio }) => (acc += Math.max(0, Math.min(250, collateralRatio))),
-          0,
-        )
-        acc.vaultsAmount += myBorrowingList.length
-        return acc
-      },
-      { ratioSum: 0, vaultsAmount: 0 },
-    )
+  // calc data for gauge chart
+  const { vaultRiskGaugeData, apyGaugeData } = useMemo((): {
+    vaultRiskGaugeData: GaugeChartStateType
+    apyGaugeData: GaugeChartStateType
+  } => {
+    const { borrowedAmount, borrowCapacity, totalSuppliedValue, sumOfRatioSuppliedToAPY, sumOfRatioBorrowedToAPR } =
+      loanTokens.reduce<{
+        borrowedAmount: number
+        borrowCapacity: number
+        totalSuppliedValue: number
+        sumOfRatioSuppliedToAPY: number
+        sumOfRatioBorrowedToAPR: number
+      }>(
+        (acc, { myBorrowingList, borrowAPR, lendingAPY, lendingItem, loanTokenData: { rate } }) => {
+          let borrowedPerMarket = 0
 
-    const averageCollateralRatio = ratioSum / vaultsAmount
+          // calculating value risk data & how much borrowed per vault
+          myBorrowingList.forEach(({ borrowedAmount, borrowCapacity }) => {
+            acc.borrowCapacity += borrowCapacity
+            acc.borrowedAmount += borrowedAmount
+            borrowedPerMarket += borrowedAmount
+          })
+
+          // calculating net APY supplied & borrowed ratio's
+          acc.sumOfRatioSuppliedToAPY += (lendingItem?.lendValue ?? 0 * rate) * lendingAPY
+          acc.sumOfRatioBorrowedToAPR += borrowedPerMarket * borrowAPR
+          acc.totalSuppliedValue += lendingItem?.lendValue ?? 0 * rate
+          return acc
+        },
+        {
+          borrowedAmount: 0,
+          borrowCapacity: 0,
+          totalSuppliedValue: 0,
+          sumOfRatioSuppliedToAPY: 0,
+          sumOfRatioBorrowedToAPR: 0,
+        },
+      )
+    const vaultRiskValue = (borrowedAmount / borrowCapacity) * 100
+    const apyNet = (sumOfRatioSuppliedToAPY - sumOfRatioBorrowedToAPR) / totalSuppliedValue
 
     return {
-      ...GAUGE_STATE_RISK_PART,
-      currentValue: isNaN(averageCollateralRatio) ? 0 : averageCollateralRatio,
-      ...getVaultSimpleStatus(isNaN(averageCollateralRatio) ? 0 : averageCollateralRatio),
-    }
-  }, [loanTokens])
-
-  // calc average apy for user's markets for gauge chart
-  const apyGaugeData = useMemo((): GaugeChartStateType => {
-    const { apySum, apyMarkets } = loanTokens.reduce<{ apySum: number; apyMarkets: number }>(
-      (acc, { lendingAPY, lendingItem }) => {
-        if (lendingItem) {
-          acc.apySum += lendingAPY
-          acc.apyMarkets += 1
-        }
-        return acc
+      vaultRiskGaugeData: {
+        ...GAUGE_STATE_RISK_PART,
+        currentValue: vaultRiskValue,
+        ...getAccountVaultSimpleStatus(vaultRiskValue),
       },
-      { apySum: 0, apyMarkets: 0 },
-    )
-
-    const averageAPY = apySum / apyMarkets
-
-    return { ...GAUGE_STATE_APY_PART, currentValue: isNaN(averageAPY) ? 0 : averageAPY }
+      apyGaugeData: {
+        ...GAUGE_STATE_APY_PART,
+        currentValue: apyNet,
+      },
+    }
   }, [loanTokens])
 
   // Default data for gauge chart will be for vault risk
@@ -238,7 +247,7 @@ export const LoansDashboard = () => {
                       maxValue={gaugeData.maxValue}
                       minValue={gaugeData.minValue}
                       currentValue={gaugeData.currentValue}
-                      isReversed
+                      isProgress={gaugeData.isAPY}
                     >
                       <div
                         className={`lend-borrow-position ${gaugeData.status ?? ''}`}

@@ -1,10 +1,13 @@
-const Gradient = ({ className = '' }: { className?: string }) => (
+const Gradient = ({ className = '', offset }: { className?: string; offset: number }) => (
   <svg width={125} height={66} viewBox="0 0 125 66" fill="none" className={className}>
     <path
       d="M121 62C121 29.9675 94.8087 4 62.5 4C30.1913 4 4 29.9675 4 62"
       stroke="url(#paint0_linear_20943_173371)"
       strokeWidth={8}
       strokeLinecap="round"
+      strokeDasharray={200}
+      strokeDashoffset={offset}
+      style={{ transition: '2s stroke-dashoffset' }}
     />
     <defs>
       <linearGradient

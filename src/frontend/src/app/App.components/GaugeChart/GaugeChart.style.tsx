@@ -14,9 +14,14 @@ export const GaugeChartStyled = styled.div<{ theme: MavrykTheme }>`
     width: 100%;
   }
 
-  .gradient {
+  .colored-arc {
     width: 125px;
     z-index: 3;
+
+    &.hide {
+      visibility: hidden;
+      opacity: 0;
+    }
   }
 
   .backdrop {
