@@ -7,7 +7,7 @@ import { State } from 'reducers'
 
 import { BUTTON_LARGE, BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { calcDiffBetweenTwoNumbersInPersentage } from 'utils/calcFunctions'
-import { getAccountVaultSimpleStatus } from './helpers/position.helpers'
+import { getGaugeVaultRiskSimpleStatus } from './helpers/position.helpers'
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 
 import Button from 'app/App.components/Button/NewButton'
@@ -162,7 +162,7 @@ export const LoansDashboard = () => {
       vaultRiskGaugeData: {
         ...GAUGE_STATE_RISK_PART,
         currentValue: vaultRiskValue,
-        ...getAccountVaultSimpleStatus(vaultRiskValue),
+        ...getGaugeVaultRiskSimpleStatus(vaultRiskValue),
       },
       apyGaugeData: {
         ...GAUGE_STATE_APY_PART,

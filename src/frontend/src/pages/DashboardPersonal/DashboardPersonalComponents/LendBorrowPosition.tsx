@@ -10,7 +10,7 @@ import { LoansPositionTable } from 'pages/LoansDashboard/components/PositionTabl
 import { State } from 'reducers'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { GaugeChart } from 'app/App.components/GaugeChart/GaugeChart'
-import { getAccountVaultSimpleStatus } from 'pages/LoansDashboard/helpers/position.helpers'
+import { getGaugeVaultRiskSimpleStatus } from 'pages/LoansDashboard/helpers/position.helpers'
 import { GaugeChartStateType, GAUGE_STATE_RISK_PART, GAUGE_STATE_APY_PART } from 'pages/LoansDashboard/LoansDashboard'
 import { useMemo, useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
@@ -79,7 +79,7 @@ export const LendBorrowPosition = ({
       vaultRiskGaugeData: {
         ...GAUGE_STATE_RISK_PART,
         currentValue: vaultRiskValue,
-        ...getAccountVaultSimpleStatus(vaultRiskValue),
+        ...getGaugeVaultRiskSimpleStatus(vaultRiskValue),
       },
       apyGaugeData: {
         ...GAUGE_STATE_APY_PART,
