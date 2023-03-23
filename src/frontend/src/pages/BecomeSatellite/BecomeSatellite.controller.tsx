@@ -74,7 +74,7 @@ export const BecomeSatellite = () => {
         ),
       )
     } catch (error) {}
-  }, [])
+  }, [accountPkh])
 
   const balanceOverMinStakedMvk = mySMvkTokenBalance >= minimumStakedMvkBalance
   const usersSatelliteProfile = satelliteMapper[accountPkh] ?? null
