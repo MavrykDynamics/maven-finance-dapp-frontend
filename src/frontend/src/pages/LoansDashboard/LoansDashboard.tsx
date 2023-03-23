@@ -134,8 +134,8 @@ export const LoansDashboard = () => {
           let borrowedPerMarket = 0
 
           // calculating value risk data & how much borrowed per vault
-          myBorrowingList.forEach(({ borrowedAmount, borrowCapacity }) => {
-            acc.borrowCapacity += borrowCapacity
+          myBorrowingList.forEach(({ borrowedAmount, collateralBalance }) => {
+            acc.borrowCapacity += collateralBalance / 2 - borrowedAmount
             acc.borrowedAmount += borrowedAmount
             borrowedPerMarket += borrowedAmount
           })
@@ -155,7 +155,8 @@ export const LoansDashboard = () => {
         },
       )
     const vaultRiskValue = !accountPkh ? 0 : borrowCapacity ? (borrowedAmount / borrowCapacity) * 100 : 100
-    const apyNet = totalSuppliedValue ? (sumOfRatioSuppliedToAPY - sumOfRatioBorrowedToAPR) / totalSuppliedValue : 0
+    const apyNet =
+      !accountPkh || totalSuppliedValue ? (sumOfRatioSuppliedToAPY - sumOfRatioBorrowedToAPR) / totalSuppliedValue : 0
 
     return {
       vaultRiskGaugeData: {
@@ -168,7 +169,7 @@ export const LoansDashboard = () => {
         currentValue: apyNet,
       },
     }
-  }, [loanTokens])
+  }, [loanTokens, accountPkh])
 
   // Default data for gauge chart will be for vault risk
   const [gaugeData, setGaugeData] = useState<GaugeChartStateType>({

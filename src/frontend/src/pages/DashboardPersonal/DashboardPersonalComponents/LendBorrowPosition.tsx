@@ -52,8 +52,8 @@ export const LendBorrowPosition = ({
           let borrowedPerMarket = 0
 
           // calculating value risk data & how much borrowed per vault
-          myBorrowingList.forEach(({ borrowedAmount, borrowCapacity }) => {
-            acc.borrowCapacity += borrowCapacity
+          myBorrowingList.forEach(({ borrowedAmount, collateralBalance }) => {
+            acc.borrowCapacity += collateralBalance / 2 - borrowedAmount
             acc.borrowedAmount += borrowedAmount
             borrowedPerMarket += borrowedAmount
           })
