@@ -154,8 +154,8 @@ export const LoansDashboard = () => {
           sumOfRatioBorrowedToAPR: 0,
         },
       )
-    const vaultRiskValue = (borrowedAmount / borrowCapacity) * 100
-    const apyNet = (sumOfRatioSuppliedToAPY - sumOfRatioBorrowedToAPR) / totalSuppliedValue
+    const vaultRiskValue = borrowCapacity ? (borrowedAmount / borrowCapacity) * 100 : 100
+    const apyNet = totalSuppliedValue ? (sumOfRatioSuppliedToAPY - sumOfRatioBorrowedToAPR) / totalSuppliedValue : 0
 
     return {
       vaultRiskGaugeData: {
