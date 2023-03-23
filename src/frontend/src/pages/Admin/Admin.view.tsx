@@ -8,6 +8,7 @@ type AdminViewProps = {
   handleChangeAllAdminsFromGov: () => void
     handleAddAllLoanTokensToLendBorrow: () => void
     handleAddAllCollateralTokensToLendBorrow: () => void
+    handleCreateAllTreasuries: () => void
 }
 
 export const AdminView = ({
@@ -15,7 +16,8 @@ export const AdminView = ({
                               handleCreateFarm,
                               handleChangeAllAdminsFromGov,
                               handleAddAllLoanTokensToLendBorrow,
-                              handleAddAllCollateralTokensToLendBorrow
+                              handleAddAllCollateralTokensToLendBorrow,
+                              handleCreateAllTreasuries
 }: AdminViewProps) => {
   return (
     <AdminStyled>
@@ -38,6 +40,7 @@ export const AdminView = ({
       <Button text={'Add All Loan tokens'} kind='actionPrimary' onClick={handleAddAllLoanTokensToLendBorrow} />
       <Button text={'Add All Collateral tokens'} kind='actionPrimary' onClick={handleAddAllCollateralTokensToLendBorrow} />
       <Button text={'ChangeAdminsFromGov'} kind='actionPrimary' onClick={handleChangeAllAdminsFromGov} />
+      <Button text={'Create All Treasuries'} kind='actionPrimary' onClick={handleCreateAllTreasuries} />
     </AdminStyled>
   )
 }
