@@ -48,15 +48,15 @@ export const calcArcAngle = ({
  * For current purposes we need to only handle 0 - 180 angles
  */
 export const GaugeChart = ({ children, maxValue, minValue, currentValue, isProgress }: GaugeChartProps) => {
-  const arrowAngle = getNumberInBounds(0, 180, calcArrowAngle({ maxValue, currentValue, minValue }))
+  const arrowAngle = Math.ceil(getNumberInBounds(0, 180, calcArrowAngle({ maxValue, currentValue, minValue })))
   // negative value for progress offset to place offset on the right side, from end to start
-  const progressArcAngle = -getNumberInBounds(0, 180, calcArcAngle({ maxValue, currentValue, minValue }))
+  const progressArcAngle = Math.ceil(getNumberInBounds(0, 180, calcArcAngle({ maxValue, currentValue, minValue })))
 
   return (
     <GaugeChartStyled>
       <Progress className={`colored-arc ${isProgress ? '' : 'hide'}`} offset={progressArcAngle} />
       {/* passing arcAngle when showing progress arc, to add smooth transition */}
-      <Gradient className={`colored-arc ${isProgress ? 'hide' : ''}`} offset={isProgress ? -200 : 0} />
+      <Gradient className={`colored-arc ${isProgress ? 'hide' : ''}`} offset={isProgress ? 200 : 0} />
 
       <Backdrop className="backdrop" />
       <ValueWrapper>{children}</ValueWrapper>

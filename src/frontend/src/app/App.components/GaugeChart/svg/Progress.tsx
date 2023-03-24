@@ -14,7 +14,7 @@ const Progress = ({ className = '', color = cyanColor, offset }: ProgressSvgProp
       stroke={color}
       strokeWidth={8}
       strokeLinecap="round"
-      strokeDasharray={180}
+      strokeDasharray={185}
       strokeDashoffset={offset}
       style={{ transition: 'stroke-dashoffset 500ms ease-in-out' }}
     />
