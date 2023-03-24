@@ -281,7 +281,6 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsPr
                     lineColor: cyanColor,
                     areaTopColor: cyanColor,
                     areaBottomColor: 'rgba(119, 164, 242, 0)',
-                    textColor: '#CDCDCD',
                   }}
                   tooltipAsset={activeTab === 1 ? feed.name.split('/')?.[1] : '%'}
                 />

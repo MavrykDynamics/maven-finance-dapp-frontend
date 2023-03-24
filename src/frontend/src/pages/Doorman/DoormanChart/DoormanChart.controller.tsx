@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { State } from 'reducers'
 
 // styles
@@ -9,23 +9,24 @@ import { TabSwitcher } from 'app/App.components/TabSwitcher/TabSwitcher.controll
 // components
 import { Chart } from '../../../app/App.components/Chart/Chart'
 import { TabItem } from '../../../app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
-import { cyanColor } from 'styles'
+import { cyanColor, skyColor } from 'styles'
 
-import { AreaChartPlotType, AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.types'
+import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.types'
 import { MLI_FEE_CHART_DATA } from './MliFee-chart-data'
 import { CHART_TEST_DATA } from 'pages/DashboardPersonal/tabs.const'
 import { MLI_FEE_TOOLTIP } from 'app/App.components/Chart/Tooltips/ChartTooltip'
+import { DoubleChart } from 'app/App.components/Chart/ChartTypes/DoubleChart'
 
 const tabsList: TabItem[] = [
-  // {
-  //   text: 'MVK vs. sMVK',
-  //   id: 1,
-  //   active: true,
-  // },
+  {
+    text: 'MVK vs. sMVK',
+    id: 1,
+    active: true,
+  },
   {
     text: 'MLI and Exit Fee',
     id: 2,
-    active: true,
+    active: false,
   },
   {
     text: 'Staking History',
@@ -35,7 +36,7 @@ const tabsList: TabItem[] = [
 ]
 
 export function DoormanChart() {
-  const { smvkHistoryData, mvkMintHistoryData } = useSelector((state: State) => state.doorman)
+  const { smvkHistoryData, mvkHistoryData } = useSelector((state: State) => state.doorman)
 
   const [activeTabId, setActiveTabId] = useState(tabsList[0].id)
 
@@ -46,8 +47,47 @@ export function DoormanChart() {
       {tabsList?.length ? <TabSwitcher className="switcher" tabItems={tabsList} onClick={handleChangeTabs} /> : null}
 
       <DoormanChartCard>
-        {/* {activeTabId === tabsList[0].id ? null : null} */}
         {activeTabId === tabsList[0].id ? (
+          <>
+            <div className="double-chart-legend">
+              <div className="row mvk">
+                <div className="circle" /> MVK
+              </div>
+              <div className="row smvk">
+                <div className="circle" /> sMVK
+              </div>
+            </div>
+
+            <DoubleChart
+              firstChart={{
+                data: {
+                  type: 'area',
+                  plots: mvkHistoryData,
+                },
+                colors: {
+                  lineColor: skyColor,
+                  areaTopColor: skyColor,
+                  areaBottomColor: 'rgba(119, 164, 242, 0.01)',
+                },
+              }}
+              secondChart={{
+                data: {
+                  type: 'area',
+                  plots: smvkHistoryData,
+                },
+                colors: {
+                  lineColor: cyanColor,
+                  areaTopColor: cyanColor,
+                  areaBottomColor: 'rgba(134, 212, 201, 0.01)',
+                },
+              }}
+              tooltipAssetFirst={'MVK'}
+              tooltipAssetSecond={'sMVK'}
+              settings={{}}
+            />
+          </>
+        ) : null}
+        {activeTabId === tabsList[1].id ? (
           <>
             <div className="mli-label">MLI (%)</div>
             <div className="fee-label">Exit Fee(%)</div>
@@ -74,7 +114,7 @@ export function DoormanChart() {
           </>
         ) : null}
 
-        {activeTabId === tabsList[1].id ? (
+        {activeTabId === tabsList[2].id ? (
           <Chart
             data={{
               type: AREA_CHART_TYPE,
