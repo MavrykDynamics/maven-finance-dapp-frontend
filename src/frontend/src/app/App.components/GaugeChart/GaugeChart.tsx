@@ -56,7 +56,7 @@ export const GaugeChart = ({ children, maxValue, minValue, currentValue, isProgr
     <GaugeChartStyled>
       <Progress className={`colored-arc ${isProgress ? '' : 'hide'}`} offset={progressArcAngle} />
       {/* passing arcAngle when showing progress arc, to add smooth transition */}
-      <Gradient className={`colored-arc ${isProgress ? 'hide' : ''}`} offset={isProgress ? progressArcAngle : 0} />
+      <Gradient className={`colored-arc ${isProgress ? 'hide' : ''}`} offset={isProgress ? -200 : 0} />
 
       <Backdrop className="backdrop" />
       <ValueWrapper>{children}</ValueWrapper>

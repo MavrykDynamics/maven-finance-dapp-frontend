@@ -15,13 +15,11 @@ export const yAxisValuesFormatter = (price: any) => {
   if (Number(price) > 2 || Number(price) <= -2)
     return formatNumber({
       number: Number(price),
-      showDecimal: false,
       decimalsToShow: 0,
     })
 
   return formatNumber({
     number: Number(price),
-    showDecimal: true,
     decimalsToShow: 2,
   })
 }

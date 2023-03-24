@@ -117,7 +117,7 @@ export const ArrowStyled = styled.div<{ theme: MavrykTheme; angle: number }>`
   left: 50%;
   top: 50%;
   z-index: 2;
-  transition: transform 2s;
+  transition: transform 500ms ease-in-out;
 
   ${({ angle }) =>
     css`

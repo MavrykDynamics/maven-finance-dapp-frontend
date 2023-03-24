@@ -7,7 +7,7 @@ const Gradient = ({ className = '', offset }: { className?: string; offset: numb
       strokeLinecap="round"
       strokeDasharray={200}
       strokeDashoffset={offset}
-      style={{ transition: '2s stroke-dashoffset' }}
+      style={{ transition: 'stroke-dashoffset 500ms ease-in-out' }}
     />
     <defs>
       <linearGradient
