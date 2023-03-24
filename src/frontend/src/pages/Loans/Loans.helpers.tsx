@@ -542,6 +542,7 @@ const getBorrowings = async (
           tokenType: vault.loan_token.loan_token_contract_standard as TokenType,
           userBalance,
         },
+        name: vault.vault.name,
 
         collateralBalance: vaultCollateral.totalRow.amount,
         borrowCapacity,

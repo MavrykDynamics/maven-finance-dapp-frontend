@@ -61,6 +61,7 @@ export const BorrowingExpandCard = ({
   operators,
   sMVKDelegatedTo,
   vaultId,
+  name,
   depositors,
   deporsitorsFlag,
   headerSufix,
@@ -144,7 +145,7 @@ export const BorrowingExpandCard = ({
             <ThreeLevelListItem className="borrow-asset-header">
               <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} />
               <div className="data">
-                <div className="value">{borrowedAsset.symbol}</div>
+                <div className="value">{name ? name : borrowedAsset.symbol}</div>
                 <div className="value">
                   <TzAddress tzAddress={address} shouldCopy hasIcon amountFromStart={4} amountFromEnd={4} />
                 </div>

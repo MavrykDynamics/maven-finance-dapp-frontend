@@ -204,6 +204,7 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
           tokenType: item.loan_token.loan_token_contract_standard as TokenType,
           userBalance,
         },
+        name: item.vault.name,
         borrowCapacity: vaultCollateral.totalRow.amount / 2,
         collateralBalance: vaultCollateral.totalRow.amount,
         collateralRatio,

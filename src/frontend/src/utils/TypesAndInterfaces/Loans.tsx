@@ -94,6 +94,7 @@ export type LoansVaultType = {
   fee: number
   repayFee: number
   address: string
+  name: string
   vaultId: number
   xtzDelegatedTo: string | null
   operators?: Array<string>

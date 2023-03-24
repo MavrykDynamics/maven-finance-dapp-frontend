@@ -8,7 +8,7 @@ import {
   INPUT_STATUS_ERROR,
   INPUT_STATUS_SUCCESS,
 } from 'app/App.components/Input/Input.constants'
-import { CreateVaultPopupDataType } from './Modals.helpers'
+import { CreateVaultPopupDataType, VaultNameInputStateType } from './Modals.helpers'
 import { isTezosAsset } from 'pages/Loans/Loans.helpers'
 import { AvaliableCollateralType, XtzBakerType } from 'utils/TypesAndInterfaces/Loans'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
@@ -84,6 +84,7 @@ export const CreateNewVault = ({
   const [shownScreen, setShownScreen] = useState<CurrentActiveModalScreen>(INITIAL_SCREEN_ID)
   const [collateralsToSelect, setCollateralsToSelect] = useState<Record<DDItemId, DropDownCollateralAssetType>>({})
   const [collaterals, setCollaterals] = useState<Array<InputCollateral>>([])
+  const [vaultName, setVaultName] = useState<VaultNameInputStateType>({ name: '', validationStatus: '' })
   const [isVaultCreating, setVaultCreating] = useState(false)
   const [newVaultAddress, setNewVaultAddress] = useState('')
 
