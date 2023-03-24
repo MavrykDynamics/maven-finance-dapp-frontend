@@ -9,14 +9,12 @@ import Icon from 'app/App.components/Icon/Icon.view'
 import { EarnBorrowChartStyled } from '../LoansEarnBorrow.styles'
 
 // helpers
-import { CHART_COLORS, MINI_CHART_SETTINGS } from '../LoansEarnBorrow.consts'
+import { CHART_COLORS, MINI_CHART_SETTINGS, numberOfItemsToDisplay } from '../LoansEarnBorrow.consts'
 import { BUTTON_THIRD, BUTTON_ROUND } from 'app/App.components/Button/Button.constants'
 import { AREA_CHART_TYPE, HISTOGRAM_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.types'
 
 // types
 import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
-
-const numberOfItemsToDisplay = 3
 
 type ChartDataType = {
   type: typeof AREA_CHART_TYPE | typeof HISTOGRAM_CHART_TYPE

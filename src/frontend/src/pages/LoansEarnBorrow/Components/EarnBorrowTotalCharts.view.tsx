@@ -4,7 +4,7 @@ import { MarketChartsContainer } from 'pages/Loans/Loans.style'
 // helpers
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { Chart } from 'app/App.components/Chart/Chart'
-import { CHART_COLORS, CHART_SETTINGS } from '../LoansEarnBorrow.consts'
+import { CHART_COLORS, CHART_SETTINGS, numberOfItemsToDisplay } from '../LoansEarnBorrow.consts'
 import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.types'
 
 // types
@@ -63,7 +63,7 @@ export const EarnBorrowTotalCharts = ({
           data={{ type: AREA_CHART_TYPE, plots: rightChartData }}
           colors={CHART_COLORS}
           settings={CHART_SETTINGS}
-          numberOfItemsToDisplay={3}
+          numberOfItemsToDisplay={numberOfItemsToDisplay}
           tooltipAsset="$"
         />
         <div className="chart-interval">30 Days</div>

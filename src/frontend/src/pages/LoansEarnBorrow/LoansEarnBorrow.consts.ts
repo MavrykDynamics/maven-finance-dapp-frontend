@@ -1,6 +1,8 @@
 import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
 import { skyColor } from 'styles'
 
+export const numberOfItemsToDisplay = 3
+
 export const MINI_CHART_SETTINGS = {
   width: 305,
   height: 103,
@@ -38,5 +40,4 @@ export type MarketType = {
   totalAmount: number
   price: number
   chartData: AreaChartPlotType[]
-  onClick: () => void
 }

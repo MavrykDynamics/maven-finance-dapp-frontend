@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useContext, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
@@ -7,15 +7,13 @@ import { Page } from 'styles'
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
 import { LoansEarnBorrow } from './LoansEarnBorrow.view'
 import { EarnBorrowTotalCharts } from './Components/EarnBorrowTotalCharts.view'
-import { EarnBorrowCard } from './Components/EarnBorrowCard.view'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 
 // styles
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 
 // types
-import { MarketSettingsType } from './LoansEarnBorrow.consts'
-import { LoanMarketType } from 'utils/TypesAndInterfaces/Loans'
+import { MarketSettingsType, MarketType } from './LoansEarnBorrow.consts'
 
 // helpers
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
@@ -48,8 +46,25 @@ export const LoansBorrow = () => {
 
   const { openBorrowPopup } = useContext(loansPopupsContext)
 
-  const handleBorrow = (item: LoanMarketType) => {
-    const validVault = item.myBorrowingList.find((item) => item.collateralRatio > 200)
+  const markets: MarketType[] = useMemo(
+    () =>
+      loanTokens.map((item) => ({
+        icon: item.loanTokenData.icon,
+        symbol: item.loanTokenData.symbol,
+        annualRate: item.borrowAPR,
+        annualRateName: 'APR',
+        totalAmount: item.totalBorrowed,
+        price: item.loanTokenData.rate,
+        chartData: item.marketCollateralChartData,
+      })),
+    [loanTokens],
+  )
+
+  const handleBorrow = (marketSymbol: string) => {
+    const market = loanTokens.find((item) => item.loanTokenData.symbol === marketSymbol)
+    if (!market) return
+
+    const validVault = market.myBorrowingList.find((item) => item.collateralRatio > 200)
 
     if (!validVault) {
       dispatch(showToaster(ERROR, 'Error', 'The market does not have a vault to borrow'))
@@ -99,25 +114,13 @@ export const LoansBorrow = () => {
             rightTotalAmount={totalBorrowed}
           />
 
-          <LoansEarnBorrow title="Borrow">
-            {loanTokens.map((item) => (
-              <EarnBorrowCard
-                key={item.loanTokenData.name}
-                market={{
-                  icon: item.loanTokenData.icon,
-                  symbol: item.loanTokenData.symbol,
-                  annualRate: item.borrowAPR,
-                  annualRateName: 'APR',
-                  totalAmount: item.totalBorrowed,
-                  price: item.loanTokenData.rate,
-                  chartData: item.marketCollateralChartData,
-                  onClick: () => handleBorrow(item),
-                }}
-                settings={marketSettings}
-                isDisabledButton={!accountPkh}
-              />
-            ))}
-          </LoansEarnBorrow>
+          <LoansEarnBorrow
+            title="Borrow"
+            markets={markets}
+            settings={marketSettings}
+            handleClick={handleBorrow}
+            isDisabledButton={!accountPkh}
+          />
         </>
       )}
     </Page>

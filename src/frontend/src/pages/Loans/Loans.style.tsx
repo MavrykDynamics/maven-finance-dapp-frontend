@@ -10,7 +10,7 @@ export const MarketChartsContainer = styled.div<{ theme: MavrykTheme }>`
   margin-top: 30px;
 
   .chart-wrapper {
-    width: fit-content;
+    width: 45%;
     max-width: 450px;
     display: flex;
     flex-direction: column;
@@ -64,6 +64,10 @@ export const MarketChartsContainer = styled.div<{ theme: MavrykTheme }>`
 
   &.earn-borrow-chart {
     column-gap: 150px;
+
+    .chart-wrapper {
+      width: fit-content;
+    }
 
     .chart {
       height: fit-content;

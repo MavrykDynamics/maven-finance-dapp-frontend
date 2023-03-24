@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useContext, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
@@ -7,14 +7,14 @@ import { Page } from 'styles'
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
 import { LoansEarnBorrow } from './LoansEarnBorrow.view'
 import { EarnBorrowTotalCharts } from './Components/EarnBorrowTotalCharts.view'
-import { EarnBorrowCard } from './Components/EarnBorrowCard.view'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 
 // styles
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 
 // types
-import { MarketSettingsType } from './LoansEarnBorrow.consts'
+import { MarketSettingsType, MarketType } from './LoansEarnBorrow.consts'
+import { LoanMarketType } from 'utils/TypesAndInterfaces/Loans'
 
 // helpers
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
@@ -42,6 +42,31 @@ export const LoansEarn = () => {
   } = useSelector((state: State) => state.loans)
 
   const { openAddLendingAssetPopup } = useContext(loansPopupsContext)
+
+  const markets: MarketType[] = useMemo(
+    () =>
+      loanTokens.map((item) => ({
+        icon: item.loanTokenData.icon,
+        symbol: item.loanTokenData.symbol,
+        annualRate: item.lendingAPY,
+        annualRateName: 'APY',
+        totalAmount: item.totalLended,
+        price: item.loanTokenData.rate,
+        chartData: item.marketLiquidityChartData,
+      })),
+    [loanTokens],
+  )
+
+  const handleEarn = (marketSymbol: string) => {
+    const market = loanTokens.find((item) => item.loanTokenData.symbol === marketSymbol)
+    if (!market) return
+
+    openAddLendingAssetPopup({
+      mBalance: market.lendingItem?.mBalance ?? 0,
+      lendingAPY: market.lendingAPY,
+      ...market.loanTokenData,
+    })
+  }
 
   const { isLoading } = useDataLoader(async () => {
     try {
@@ -73,31 +98,13 @@ export const LoansEarn = () => {
             rightTotalAmount={totalBorrowed}
           />
 
-          <LoansEarnBorrow title="Earn">
-            {loanTokens.map((item) => (
-              <EarnBorrowCard
-                key={item.loanTokenData.name}
-                market={{
-                  icon: item.loanTokenData.icon,
-                  symbol: item.loanTokenData.symbol,
-                  annualRate: item.lendingAPY,
-                  annualRateName: 'APY',
-                  totalAmount: item.totalLended,
-                  price: item.loanTokenData.rate,
-                  chartData: item.marketLiquidityChartData,
-                  onClick: () => {
-                    openAddLendingAssetPopup({
-                      mBalance: item.lendingItem?.mBalance ?? 0,
-                      lendingAPY: item.lendingAPY,
-                      ...item.loanTokenData,
-                    })
-                  },
-                }}
-                settings={marketSettings}
-                isDisabledButton={!accountPkh}
-              />
-            ))}
-          </LoansEarnBorrow>
+          <LoansEarnBorrow
+            title="Earn"
+            markets={markets}
+            settings={marketSettings}
+            handleClick={handleEarn}
+            isDisabledButton={!accountPkh}
+          />
         </>
       )}
     </Page>

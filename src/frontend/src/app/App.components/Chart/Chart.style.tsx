@@ -51,7 +51,7 @@ const BaseTooltipStyles = styled.div<{ theme: MavrykTheme }>`
   z-index: 100;
   padding: 7px 10px 7px 10px;
   background: ${({ theme }) => theme.containerColor};
-  border: 1px solid ${({ theme }) => theme.borderColor};
+  border: 1px solid ${({ theme }) => theme.secondaryColor};
   border-radius: 10px;
   display: flex;
   flex-direction: column;
