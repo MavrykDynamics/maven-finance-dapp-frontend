@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState } from 'react'
-import { createChart, BusinessDay, UTCTimestamp } from 'lightweight-charts'
+import { createChart, BusinessDay, UTCTimestamp, CandlestickData } from 'lightweight-charts'
 
 import { upColor, downColor, lightTextColor, headerColor } from 'styles'
 import { parseDate } from 'utils/time'
@@ -11,6 +11,7 @@ import {
   checkWhetherHideTooltip,
   CHART_SERIES_OPTIONS,
   DEFAULT_CROSSHAIR_SETTING,
+  checkPlotType,
 } from '../helpers/Chart.const'
 
 import ChartTooltip, { AMOUNT_DATE_TOOLTIP } from '../Tooltips/ChartTooltip'
@@ -113,7 +114,10 @@ export const CandlestickChart = ({
         }
       } else {
         // set tooltip values
-        const { close, time } = (param.seriesData.get(series) ?? {}) as CandlestickChartPlotType
+        const plot = param.seriesData.get(series) ?? {}
+        if (!checkPlotType<CandlestickData>(plot, ['close'])) return
+        const { close, time } = plot
+
         setTooltipData({
           yAxis: Number(time),
           xAxis: parseFloat(String(close)),

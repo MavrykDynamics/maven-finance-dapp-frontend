@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState } from 'react'
-import { createChart, BusinessDay, UTCTimestamp } from 'lightweight-charts'
+import { createChart, BusinessDay, UTCTimestamp, SingleValueData, CandlestickData } from 'lightweight-charts'
 
 import { lightTextColor, headerColor } from 'styles'
 import { parseDate } from 'utils/time'
@@ -9,18 +9,16 @@ import {
   getAxisSettings,
   CHART_LOCALE_SETTING,
   checkWhetherHideTooltip,
-  isCandleData,
   DEFAULT_CROSSHAIR_SETTING,
   CHART_SERIES_OPTIONS,
+  checkPlotType,
 } from '../helpers/Chart.const'
 
 import { ChartStyled } from '../Chart.style'
 import DoubleChartTooltip, { DOUBLE_AMOUNT_DATE_TOOLTIP } from '../Tooltips/DoubleChartTooltip'
 
 import {
-  AreaChartPlotType,
   AREA_CHART_TYPE,
-  CandlestickChartPlotType,
   CANDLESTICK_CHART_TYPE,
   DoubleChartPropsType,
   HISTOGRAM_CHART_TYPE,
@@ -174,19 +172,36 @@ export const DoubleChart = ({
         }
       } else {
         // set tooltip values
+        const newTooltiData = {
+          firstChartYAxis: 0,
+          secondChartYAxis: 0,
+          xAxis: 0,
+        }
 
-        const fistChartData = (param.seriesData.get(seriesFirstChart) ?? {}) as
-          | AreaChartPlotType
-          | CandlestickChartPlotType
-        const secondChartData = (param.seriesData.get(seriesSecondChart) ?? {}) as
-          | AreaChartPlotType
-          | CandlestickChartPlotType
+        const fistChartPlot = param.seriesData.get(seriesFirstChart) ?? {}
+        if (checkPlotType<SingleValueData>(fistChartPlot, ['value'])) {
+          newTooltiData.firstChartYAxis = fistChartPlot.value
+          newTooltiData.xAxis = Number(fistChartPlot.time)
+        }
 
-        setTooltipData({
-          xAxis: Number(fistChartData?.time ?? secondChartData?.time ?? 0),
-          firstChartYAxis: isCandleData(fistChartData) ? fistChartData?.close : fistChartData?.value,
-          secondChartYAxis: isCandleData(secondChartData) ? secondChartData?.close : secondChartData?.value,
-        })
+        if (checkPlotType<CandlestickData>(fistChartPlot, ['close'])) {
+          newTooltiData.firstChartYAxis = fistChartPlot.close
+          newTooltiData.xAxis = Number(fistChartPlot.time)
+        }
+
+        const secondChartPlot = param.seriesData.get(seriesSecondChart) ?? {}
+
+        if (checkPlotType<SingleValueData>(secondChartPlot, ['value'])) {
+          newTooltiData.firstChartYAxis = secondChartPlot.value
+          newTooltiData.xAxis = Number(secondChartPlot.time)
+        }
+
+        if (checkPlotType<CandlestickData>(secondChartPlot, ['close'])) {
+          newTooltiData.firstChartYAxis = secondChartPlot.close
+          newTooltiData.xAxis = Number(secondChartPlot.time)
+        }
+
+        setTooltipData(newTooltiData)
 
         if (mainChartWrapperRef.current && param.point) {
           mainChartWrapperRef.current.style.setProperty('--translateX', `${param.point.x + 15}`)

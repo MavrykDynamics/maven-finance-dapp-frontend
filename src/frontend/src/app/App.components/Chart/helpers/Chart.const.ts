@@ -1,5 +1,5 @@
 import { formatNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { ColorType, MouseEventParams } from 'lightweight-charts'
+import { CandlestickData, ColorType, MouseEventParams, SingleValueData } from 'lightweight-charts'
 import { DECIMALS_TO_SHOW } from 'utils/constants'
 import { CandlestickChartPlotType } from './Chart.types'
 
@@ -114,4 +114,6 @@ export const checkWhetherHideTooltip = (param: MouseEventParams, chartRef: React
   )
 }
 
-export const isCandleData = (plot: any): plot is CandlestickChartPlotType => Boolean(plot?.close)
+export const checkPlotType = function <T>(plot: any, fieldsToCheck: Array<string>): plot is T {
+  return fieldsToCheck.every((field) => field in plot)
+}

@@ -102,4 +102,6 @@ export const MLI_FEE_CHART_DATA = [
   { time: 98, value: 2.56 },
   { time: 99, value: 2.5275 },
   { time: 100, value: 2.5275 },
+  { time: 100.001 },
+  { time: 100.002 },
 ] as Array<AreaChartPlotType>
