@@ -170,6 +170,18 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
 
   border-radius: ${BUTTON_RADIUS};
 
+  /* styling for buttons sizes */
+  ${BUTTONS_SIZES_STYLES}
+
+    /* styling for buttons forms */
+  ${BUTTONS_FORMS_STYLES}
+
+  /* styling for main button kinds */
+  ${BUTTONS_KIND_STYLES}
+
+  /* additional kinds */
+  ${BUTTONS_ANIMATIONS_STYLES}
+
   .child {
     display: flex;
     align-items: center;
@@ -193,6 +205,7 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
 
   &.isThin {
     height: 36px;
+    border-width: 1px;
 
     svg {
       width: 20px;
@@ -214,16 +227,4 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
       visibility: hidden;
     }
   }
-
-  /* styling for buttons sizes */
-  ${BUTTONS_SIZES_STYLES}
-
-  /* styling for buttons forms */
-  ${BUTTONS_FORMS_STYLES}
-
-  /* styling for main button kinds */
-  ${BUTTONS_KIND_STYLES}
-  
-  /* additional kinds */
-  ${BUTTONS_ANIMATIONS_STYLES}
 `
