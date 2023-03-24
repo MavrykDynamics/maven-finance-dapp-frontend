@@ -116,6 +116,12 @@ export const BecomeSatelliteRegisterAsOracle = styled.div<{ theme: MavrykTheme }
     flex-direction: column;
     row-gap: 40px;
     margin-top: 40px;
+
+    .info-tooltip {
+      position: relative;
+      top: 1px;
+      white-space: normal;
+    }
   }
 
   .oracleWarning {

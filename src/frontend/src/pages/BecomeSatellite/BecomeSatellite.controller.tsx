@@ -35,10 +35,12 @@ import { IPFSUploader } from 'app/App.components/IPFSUploader/IPFSUploader.contr
 import NewButton from 'app/App.components/Button/NewButton'
 import Checkbox from 'app/App.components/Checkbox/Checkbox.view'
 import { Info } from 'app/App.components/Info/Info.view'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 // Styled components
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { Page, PageContent } from 'styles'
+import colors from 'styles/colors'
 import {
   BecomeSatelliteForm,
   BecomeSatelliteFormBalanceCheck,
@@ -66,6 +68,7 @@ export const BecomeSatellite = () => {
     config: { minimumStakedMvkBalance, isConfigLoaded, ...restSatelliteConfig },
   } = useSelector((state: State) => state.satellites)
   const { isLoaded: isDoormanLoaded } = useSelector((state: State) => state.doorman)
+  const { themeSelected } = useSelector((state: State) => state.preferences)
 
   const { isLoading } = useDataLoader(async () => {
     try {
@@ -199,6 +202,15 @@ export const BecomeSatellite = () => {
       ? dispatch(updateSatelliteRecord(requestData))
       : dispatch(registerAsSatellite(requestData))
   }
+
+  const tooltip = (
+    <CustomTooltip
+      text="something text"
+      iconId="info"
+      className="info-tooltip"
+      defaultStrokeColor={colors[themeSelected]['textColor']}
+    />
+  )
 
   return (
     <Page>
@@ -343,7 +355,7 @@ export const BecomeSatellite = () => {
                     <Input
                       settings={{
                         label: pageText.oraclePeerId,
-                        tooltipText: 'something text',
+                        tooltip: tooltip,
                         inputStatus: form.oraclePeerId.status,
                       }}
                       inputProps={{
@@ -358,7 +370,7 @@ export const BecomeSatellite = () => {
                     <Input
                       settings={{
                         label: pageText.oraclePublicKey,
-                        tooltipText: 'something text',
+                        tooltip: tooltip,
                         inputStatus: form.oraclePublicKey.status,
                       }}
                       inputProps={{

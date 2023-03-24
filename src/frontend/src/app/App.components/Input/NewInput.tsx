@@ -4,8 +4,6 @@ import { CommaNumber } from '../CommaNumber/CommaNumber.controller'
 import { InputSizeType, InputStatusType } from './Input.constants'
 import { InputOneChange } from './Input.controller'
 import { InputPinnedChild, InputStyledStatus, InputWrapper, NewInputLabel, StyledInput } from './Input.style'
-import { CustomTooltip } from '../Tooltip/Tooltip.view'
-import { textColor } from 'styles'
 
 type InputViewProps = {
   children?: React.ReactNode
@@ -17,7 +15,7 @@ type InputViewProps = {
     useMaxHandler?: () => void
     balanceHandler?: () => void
     label?: string
-    tooltipText?: string
+    tooltip?: React.ReactNode
     inputStatus: InputStatusType
     convertedValue?: number
     inputSize?: InputSizeType
@@ -48,7 +46,7 @@ export const Input = ({
     balanceHandler,
     convertedValue,
     label,
-    tooltipText,
+    tooltip,
     balanceName = 'Balance',
     inputStatus,
     inputSize,
@@ -60,9 +58,7 @@ export const Input = ({
         <NewInputLabel>
           {label}
 
-          {Boolean(tooltipText) && (
-            <CustomTooltip text={tooltipText} iconId="info" className="info-tooltip" defaultStrokeColor={textColor} />
-          )}
+          <>{tooltip}</>
         </NewInputLabel>
       ) : null}
 
