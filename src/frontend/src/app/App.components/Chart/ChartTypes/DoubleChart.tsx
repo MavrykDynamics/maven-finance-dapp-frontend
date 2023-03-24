@@ -192,12 +192,12 @@ export const DoubleChart = ({
         const secondChartPlot = param.seriesData.get(seriesSecondChart) ?? {}
 
         if (checkPlotType<SingleValueData>(secondChartPlot, ['value'])) {
-          newTooltiData.firstChartYAxis = secondChartPlot.value
+          newTooltiData.secondChartYAxis = secondChartPlot.value
           newTooltiData.xAxis = Number(secondChartPlot.time)
         }
 
         if (checkPlotType<CandlestickData>(secondChartPlot, ['close'])) {
-          newTooltiData.firstChartYAxis = secondChartPlot.close
+          newTooltiData.secondChartYAxis = secondChartPlot.close
           newTooltiData.xAxis = Number(secondChartPlot.time)
         }
 
