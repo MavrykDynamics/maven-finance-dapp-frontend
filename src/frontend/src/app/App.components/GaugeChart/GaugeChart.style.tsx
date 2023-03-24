@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components'
+import styled, { css, keyframes } from 'styled-components'
 import { MavrykTheme } from 'styles/interfaces'
 
 export const GaugeChartStyled = styled.div<{ theme: MavrykTheme }>`
@@ -17,6 +17,8 @@ export const GaugeChartStyled = styled.div<{ theme: MavrykTheme }>`
   .colored-arc {
     width: 125px;
     z-index: 3;
+    left: 0;
+    transform: scale(-1, 1);
 
     &.hide {
       visibility: hidden;
@@ -48,6 +50,7 @@ export const GaugeChartStyled = styled.div<{ theme: MavrykTheme }>`
     }
   }
 `
+
 export const ValueWrapper = styled.div<{ theme: MavrykTheme }>`
   width: 82px;
   height: 82px;
@@ -117,7 +120,7 @@ export const ArrowStyled = styled.div<{ theme: MavrykTheme; angle: number }>`
   left: 50%;
   top: 50%;
   z-index: 2;
-  transition: transform 2s;
+  transition: transform 500ms ease-in;
 
   ${({ angle }) =>
     css`

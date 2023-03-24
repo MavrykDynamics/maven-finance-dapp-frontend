@@ -27,6 +27,8 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import colors from 'styles/colors'
 import { connect } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 import Icon from 'app/App.components/Icon/Icon.view'
+import { checkPlotType } from 'app/App.components/Chart/helpers/Chart.const'
+import { SingleValueData } from 'lightweight-charts'
 
 export type GaugeChartStateType = {
   maxValue: number
@@ -104,14 +106,14 @@ export const LoansDashboard = () => {
 
   // Calcuating persents of total lended and borrowed changed since last operation
   const { lendingPersentDiff, borrowingPersentDiff } = useMemo(() => {
-    const { value: secondLastLending } = lendingChartData.at(-2) ?? {},
-      { value: secondLastBorrowing } = borrowingChartData.at(-2) ?? {}
+    const secondLastLending = lendingChartData.at(-2) ?? {},
+      secondLastBorrowing = borrowingChartData.at(-2) ?? {}
 
-    const lendingPersentDiff = secondLastLending
-      ? calcDiffBetweenTwoNumbersInPersentage(totalLended, secondLastLending)
+    const lendingPersentDiff = checkPlotType<SingleValueData>(secondLastLending, ['value'])
+      ? calcDiffBetweenTwoNumbersInPersentage(totalLended, secondLastLending.value)
       : 100
-    const borrowingPersentDiff = secondLastBorrowing
-      ? calcDiffBetweenTwoNumbersInPersentage(totalBorrowed, secondLastBorrowing)
+    const borrowingPersentDiff = checkPlotType<SingleValueData>(secondLastBorrowing, ['value'])
+      ? calcDiffBetweenTwoNumbersInPersentage(totalBorrowed, secondLastBorrowing.value)
       : 100
 
     return { lendingPersentDiff, borrowingPersentDiff }
@@ -154,9 +156,10 @@ export const LoansDashboard = () => {
           sumOfRatioBorrowedToAPR: 0,
         },
       )
+
     const vaultRiskValue = !accountPkh ? 0 : borrowCapacity ? (borrowedAmount / borrowCapacity) * 100 : 100
     const apyNet =
-      !accountPkh || totalSuppliedValue ? (sumOfRatioSuppliedToAPY - sumOfRatioBorrowedToAPR) / totalSuppliedValue : 0
+      !accountPkh || !totalSuppliedValue ? 0 : (sumOfRatioSuppliedToAPY - sumOfRatioBorrowedToAPR) / totalSuppliedValue
 
     return {
       vaultRiskGaugeData: {

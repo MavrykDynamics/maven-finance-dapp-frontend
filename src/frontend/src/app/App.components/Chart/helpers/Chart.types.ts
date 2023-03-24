@@ -1,4 +1,4 @@
-import { CandlestickData, SingleValueData } from 'lightweight-charts'
+import { CandlestickData, SingleValueData, WhitespaceData } from 'lightweight-charts'
 import { ChartTooltipsTypes } from '../Tooltips/ChartTooltip'
 import { DoubleChartTooltipsTypes } from '../Tooltips/DoubleChartTooltip'
 
@@ -8,8 +8,8 @@ export const CANDLESTICK_CHART_TYPE = 'candle'
 export const HISTOGRAM_CHART_TYPE = 'histogram'
 
 // Chart data prot types
-export type AreaChartPlotType = SingleValueData
-export type CandlestickChartPlotType = CandlestickData
+export type AreaChartPlotType = SingleValueData | WhitespaceData
+export type CandlestickChartPlotType = CandlestickData | WhitespaceData
 
 export type ChartColorsSettings = {
   // area colors

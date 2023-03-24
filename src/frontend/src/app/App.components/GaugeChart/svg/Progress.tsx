@@ -1,4 +1,5 @@
 import { cyanColor } from 'styles'
+import { DASH_ARRAY } from '../GaugeChart'
 
 type ProgressSvgProps = {
   className?: string
@@ -14,9 +15,9 @@ const Progress = ({ className = '', color = cyanColor, offset }: ProgressSvgProp
       stroke={color}
       strokeWidth={8}
       strokeLinecap="round"
-      strokeDasharray={180}
+      strokeDasharray={DASH_ARRAY}
       strokeDashoffset={offset}
-      style={{ transition: '2s stroke-dashoffset' }}
+      style={{ transition: 'stroke-dashoffset 500ms ease-in-out' }}
     />
   </svg>
 )

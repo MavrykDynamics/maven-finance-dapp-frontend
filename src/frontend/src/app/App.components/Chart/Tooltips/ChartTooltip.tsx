@@ -32,14 +32,14 @@ const AmountDateTooltip = ({ xAxis, yAxis, asset, dateTooltipFormatter, valueToo
   )
 }
 
-const MliFeeTooltip = ({ xAxis, yAxis, asset, dateTooltipFormatter, valueTooltipFormatter }: TooltipProps) => {
+const MliFeeTooltip = ({ xAxis, yAxis, asset, valueTooltipFormatter }: TooltipProps) => {
   return (
     <MliFeeTooltipStyled>
       <div>
         <div className="name">Fee:</div>
         <CommaNumber
           endingText={asset}
-          value={valueTooltipFormatter ? parseFloat(valueTooltipFormatter(yAxis)) : yAxis}
+          value={valueTooltipFormatter ? parseFloat(valueTooltipFormatter(xAxis)) : xAxis}
           showDecimal
           decimalsToShow={4}
           className="value"
@@ -49,7 +49,7 @@ const MliFeeTooltip = ({ xAxis, yAxis, asset, dateTooltipFormatter, valueTooltip
         <div className="name">MLI:</div>
         <CommaNumber
           endingText={asset}
-          value={valueTooltipFormatter ? parseFloat(valueTooltipFormatter(xAxis)) : xAxis}
+          value={valueTooltipFormatter ? parseFloat(valueTooltipFormatter(yAxis)) : yAxis}
           showDecimal
           decimalsToShow={2}
           className="value"

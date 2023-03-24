@@ -140,7 +140,6 @@ export const RepayFull = ({
                     <p>
                       To Repay in Full & Close Vault you need at least{' '}
                       {formatNumber({
-                        showDecimal: true,
                         decimalsToShow: 2,
                         number: totalOutstanding - Number(borrowedAsset?.userBalance),
                       })}{' '}

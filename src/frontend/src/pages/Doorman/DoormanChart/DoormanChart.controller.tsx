@@ -16,6 +16,8 @@ import { MLI_FEE_CHART_DATA } from './MliFee-chart-data'
 import { CHART_TEST_DATA } from 'pages/DashboardPersonal/tabs.const'
 import { MLI_FEE_TOOLTIP } from 'app/App.components/Chart/Tooltips/ChartTooltip'
 import { DoubleChart } from 'app/App.components/Chart/ChartTypes/DoubleChart'
+import { formatNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+import { DECIMALS_TO_SHOW } from 'utils/constants'
 
 const tabsList: TabItem[] = [
   {
@@ -98,12 +100,16 @@ export function DoormanChart() {
               }}
               settings={{
                 height: 370,
-                tickDateFormatter: (timeTick) => timeTick.toFixed(0),
-                priceMargins: { top: 0.1, bottom: 0.01 },
+                tickDateFormatter: (timeTick) => formatNumber({ number: timeTick, decimalsToShow: 0 }),
+                valueTooltipFormatter: (amount) => formatNumber({ number: amount, decimalsToShow: DECIMALS_TO_SHOW }),
+                // as data is static we can set margins we want, but if data will change we will need to check those margins
+                priceMargins: { top: 0.72, bottom: 0.01 },
                 yAxisSide: 'left',
                 crosshairOptions: {
                   vertLine: {
-                    visible: true,
+                    labelVisible: false,
+                  },
+                  horzLine: {
                     labelVisible: false,
                   },
                 },
