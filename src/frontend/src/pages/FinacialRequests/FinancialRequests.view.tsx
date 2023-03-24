@@ -11,7 +11,6 @@ import {
   PAGINATION_SIDE_RIGHT,
   PAST_REQUESTS_FINANCIAL_REQUESTS_LIST,
 } from '../../app/App.components/Pagination/pagination.consts'
-import { calcWithoutMu, calcWithoutPrecision } from 'utils/calcFunctions'
 import { votingRinancialRequestVote } from 'pages/Governance/Governance.actions'
 import { VotingTypes } from 'app/App.components/VotingArea/helpers/voting.const'
 import { parseDate } from 'utils/time'
@@ -46,7 +45,6 @@ export const FinancialRequestsView = ({
   const dispatch = useDispatch()
   const { search } = useLocation()
 
-  const { dipDupTokens } = useSelector((state: State) => state.tokens)
   const {
     accountPkh,
     user: { isSatellite: isUserSatellite },
@@ -72,6 +70,9 @@ export const FinancialRequestsView = ({
 
   // Full view item data handling
   const rightItemStatus = rightSideContent && getRequestStatus(rightSideContent)
+
+  // Do not show voting buttons for past requests
+  const isActiveVotingButtons = rightItemStatus === ProposalStatus.ONGOING
 
   const [votingStats, setVoteStatistics] = useState({
     forVotesMVKTotal: 0,
@@ -134,7 +135,11 @@ export const FinancialRequestsView = ({
           voteStatistics={votingStats}
           isVotingActive={true || (rightItemStatus === ProposalStatus.ONGOING && Boolean(isUserSatellite))}
           handleVote={handleVotingRoundVote}
-          buttonsToShow={{ forBtn: { text: 'Approve' }, againsBtn: { text: 'Disapprove' } }}
+          buttonsToShow={
+            isActiveVotingButtons
+              ? { forBtn: { text: 'Approve' }, againsBtn: { text: 'Disapprove' } }
+              : { forBtn: undefined, againsBtn: undefined }
+          }
           className={'fr-voting'}
           disableVotingButtons={Boolean(rightSideContent?.votes?.find(({ voter_id }) => voter_id === accountPkh))}
         />

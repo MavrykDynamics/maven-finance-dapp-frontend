@@ -146,3 +146,41 @@ export const undelegate = (delegateAddress: string) => async (dispatch: AppDispa
     dispatch(toggleActionLoader(false))
   }
 }
+
+export const distributeProposalRewards =
+  (satelliteAddress: string, proposals: string[]) => async (dispatch: AppDispatch, getState: GetState) => {
+    const state: State = getState()
+
+    if (!state.wallet.accountPkh) {
+      dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
+      return
+    }
+
+    if (state.loading.isActionLoading) {
+      dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
+      return
+    }
+
+    try {
+      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.delegationAddress.address)
+      const transaction = await contract?.methods.distributeProposalRewards(satelliteAddress, proposals).send()
+
+      dispatch(toggleActionLoader(true))
+      dispatch(showToaster(INFO, 'Distributing proposal rewards...', 'Please wait 30s'))
+
+      await transaction?.confirmation()
+
+      dispatch(showToaster(SUCCESS, 'Distributing proposal rewards done', 'All good :)'))
+
+      await Promise.all([dispatch(getSatellitesStorage()), dispatch(getDoormanStorage())])
+      await dispatch(updateUserData())
+
+      await dispatch(toggleActionLoader(false))
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error(error)
+        dispatch(showToaster(ERROR, 'Error', error.message))
+      }
+      dispatch(toggleActionLoader(false))
+    }
+  }

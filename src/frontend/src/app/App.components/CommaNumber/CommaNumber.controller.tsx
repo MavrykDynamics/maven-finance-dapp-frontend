@@ -25,6 +25,7 @@ export const formatNumber = ({
     maximumFractionDigits: showDecimal ? decimalsToShow : 0,
   })
 }
+
 export const CommaNumber = ({
   value,
   endingText,

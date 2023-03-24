@@ -1,8 +1,9 @@
 // type
 import {
   MvkTokenGraphQL,
-  MvkMintHistoryDataGraphQl,
+  MvkHistoryData,
   SmvkHistoryDataGraphQl,
+  MvkHistoryDataGraphQl,
 } from '../../utils/TypesAndInterfaces/Doorman'
 
 // helpers
@@ -44,17 +45,22 @@ export function normalizeSmvkHistoryData(storage: SmvkHistoryDataProps) {
     : []
 }
 
-type MvkMintHistoryDataProps = {
-  mvk_mint_history_data: MvkMintHistoryDataGraphQl[]
+type MvkHistoryDataProps = {
+  mvk_token: Array<{
+    transfer_history_data: MvkHistoryDataGraphQl[]
+  }>
 }
 
-export function normalizeMvkMintHistoryData(storage: MvkMintHistoryDataProps) {
-  const { mvk_mint_history_data } = storage
+export function normalizeMvkHistoryData(storage: MvkHistoryDataProps) {
+  const {
+    mvk_token: [{ transfer_history_data }],
+  } = storage
 
-  return mvk_mint_history_data?.length
-    ? mvk_mint_history_data?.map((item) => {
+  return transfer_history_data?.length
+    ? transfer_history_data?.map((item) => {
         return {
-          value: parseFloat(calcWithoutPrecision(item.mvk_total_supply).toFixed(2)),
+          // TODO: temp solution while it's not correct data
+          value: parseFloat(calcWithoutPrecision(item.amount).toFixed(2)) * 10,
           time: new Date(item.timestamp).getTime() as UTCTimestamp,
         }
       })
