@@ -211,6 +211,14 @@ export const CreateNewVault = ({
     }
   }
 
+  //handle vaultName input
+  const handleVaultNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target
+    const validationStatus = value && value.length <= 15 ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
+
+    setVaultName({ name: value, validationStatus })
+  }
+
   // stuff to handle collateral input dropdown
   const handleCollateralInputDdClick = (collateralIdx: number, listItemId: DDItemId, currentInputId: number) => {
     const selectedItem = collateralsToSelect[listItemId]
@@ -295,8 +303,7 @@ export const CreateNewVault = ({
       try {
         setVaultCreating(true)
         //TODO: connect this value to an input
-        const vaultName = 'TestVaultName'
-        const newVaultData = await dispatch(triggerInitialVaultCreation(currentMarketAsset, vaultName))
+        const newVaultData = await dispatch(triggerInitialVaultCreation(currentMarketAsset, vaultName.name))
         setCreatedVaultAddress?.(String(newVaultData))
         setNewVaultAddress(String(newVaultData))
       } catch (e) {
@@ -390,19 +397,36 @@ export const CreateNewVault = ({
 
           {/* showing initial screen */}
           {shownScreen === 'initial' ? (
-            <div className="manage-btn">
-              <NewButton
-                kind={BUTTON_PRIMARY}
-                form={BUTTON_WIDE}
-                onClick={() => {
-                  setShownScreen(ADD_COLLATERAL_SCREEN_ID)
-                  createVaultAction()
+            <>
+              <Input
+                className={`vault-name`}
+                inputProps={{
+                  value: vaultName.name,
+                  type: 'text',
+                  onChange: handleVaultNameChange,
+                  placeholder: 'Enter Vault Name',
                 }}
-              >
-                Continue
-                <Icon id="arrowRight" />
-              </NewButton>
-            </div>
+                settings={{
+                  inputStatus: vaultName.validationStatus,
+                  label: 'Vault name',
+                  inputSize: INPUT_LARGE,
+                }}
+              />
+              <div className="manage-btn">
+                <NewButton
+                  kind={BUTTON_PRIMARY}
+                  form={BUTTON_WIDE}
+                  onClick={() => {
+                    setShownScreen(ADD_COLLATERAL_SCREEN_ID)
+                    createVaultAction()
+                  }}
+                  disabled={vaultName.validationStatus !== INPUT_STATUS_SUCCESS}
+                >
+                  Continue
+                  <Icon id="arrowRight" />
+                </NewButton>
+              </div>
+            </>
           ) : null}
 
           {/* showing add collateral screen */}
