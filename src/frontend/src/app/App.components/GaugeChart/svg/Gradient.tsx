@@ -1,3 +1,5 @@
+import { DASH_ARRAY } from '../GaugeChart'
+
 const Gradient = ({ className = '', offset }: { className?: string; offset: number }) => (
   <svg width={125} height={66} viewBox="0 0 125 66" fill="none" className={className}>
     <path
@@ -5,7 +7,7 @@ const Gradient = ({ className = '', offset }: { className?: string; offset: numb
       stroke="url(#paint0_linear_20943_173371)"
       strokeWidth={8}
       strokeLinecap="round"
-      strokeDasharray={200}
+      strokeDasharray={DASH_ARRAY}
       strokeDashoffset={offset}
       style={{ transition: 'stroke-dashoffset 500ms ease-in-out' }}
     />
