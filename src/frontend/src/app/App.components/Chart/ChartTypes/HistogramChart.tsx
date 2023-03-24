@@ -17,7 +17,7 @@ import {
 import ChartTooltip, { AMOUNT_DATE_TOOLTIP } from '../Tooltips/ChartTooltip'
 import { ChartStyled } from '../Chart.style'
 
-import { AreaChartPlotType, AreaChartPropsType } from '../helpers/Chart.types'
+import { AreaChartPropsType } from '../helpers/Chart.types'
 
 export const HistogramChart = ({
   settings: {
