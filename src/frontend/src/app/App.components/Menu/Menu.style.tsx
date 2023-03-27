@@ -177,9 +177,6 @@ export const MenuFooter = styled.div<{ theme: MavrykTheme }>`
       }
     }
 
-    .padding {
-      padding: 4px;
-    }
   }
 
   @media screen and (max-width: 1460px) {
