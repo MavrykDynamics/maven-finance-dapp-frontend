@@ -13,7 +13,8 @@ import {
   PENDING_ACTIONS,
   PAST_ACTIONS,
 } from './Council.helpers'
-import { convertNumberForContractCall, getTokenDecimals } from 'utils/calcFunctions'
+import { convertNumberForContractCall } from 'utils/calcFunctions'
+import { MVK_DECIMALS } from 'utils/constants'
 
 // gql
 import {
@@ -218,7 +219,7 @@ export const addVestee =
       const transaction = await contract?.methods
         .councilActionAddVestee(
           vesteeAddress,
-          convertNumberForContractCall({ number: totalAllocated }),
+          convertNumberForContractCall({ number: totalAllocated, grage: MVK_DECIMALS }),
           cliffInMonths,
           vestingInMonths,
         )
@@ -297,7 +298,7 @@ export const updateVestee =
       const transaction = await contract?.methods
         .councilActionUpdateVestee(
           vesteeAddress,
-          convertNumberForContractCall({ number: totalAllocated }),
+          convertNumberForContractCall({ number: totalAllocated, grage: MVK_DECIMALS }),
           cliffInMonths,
           vestingInMonths,
         )
@@ -603,7 +604,11 @@ export const requestTokenMint =
     try {
       const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.councilAddress.address)
       const transaction = await contract?.methods
-        .councilActionRequestMint(treasuryAddress, convertNumberForContractCall({ number: tokenAmount }), purpose)
+        .councilActionRequestMint(
+          treasuryAddress,
+          convertNumberForContractCall({ number: tokenAmount, grage: MVK_DECIMALS }),
+          purpose,
+        )
         .send()
       await dispatch(toggleActionLoader(true))
 
