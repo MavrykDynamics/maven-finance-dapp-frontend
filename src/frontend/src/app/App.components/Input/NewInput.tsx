@@ -15,6 +15,7 @@ type InputViewProps = {
     useMaxHandler?: () => void
     balanceHandler?: () => void
     label?: string
+    tooltip?: React.ReactNode
     inputStatus: InputStatusType
     convertedValue?: number
     inputSize?: InputSizeType
@@ -45,6 +46,7 @@ export const Input = ({
     balanceHandler,
     convertedValue,
     label,
+    tooltip,
     balanceName = 'Balance',
     inputStatus,
     inputSize,
@@ -52,7 +54,14 @@ export const Input = ({
 }: InputViewProps) => {
   return (
     <InputWrapper className={`${className} ${inputStatus} ${inputSize}`} id={'inputStyled'}>
-      {label ? <NewInputLabel>{label}</NewInputLabel> : null}
+      {label ? (
+        <NewInputLabel>
+          {label}
+
+          <>{tooltip}</>
+        </NewInputLabel>
+      ) : null}
+
       <StyledInput {...inputProps} className={inputStatus} autoComplete={inputProps.name} />
       {Boolean(children) ? null : <InputStyledStatus className={`${inputStatus}`} />}
 

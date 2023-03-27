@@ -34,10 +34,13 @@ import { TextArea } from 'app/App.components/TextArea/TextArea.controller'
 import { IPFSUploader } from 'app/App.components/IPFSUploader/IPFSUploader.controller'
 import NewButton from 'app/App.components/Button/NewButton'
 import Checkbox from 'app/App.components/Checkbox/Checkbox.view'
+import { Info } from 'app/App.components/Info/Info.view'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 // Styled components
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { Page, PageContent } from 'styles'
+import colors from 'styles/colors'
 import {
   BecomeSatelliteForm,
   BecomeSatelliteFormBalanceCheck,
@@ -65,6 +68,7 @@ export const BecomeSatellite = () => {
     config: { minimumStakedMvkBalance, isConfigLoaded, ...restSatelliteConfig },
   } = useSelector((state: State) => state.satellites)
   const { isLoaded: isDoormanLoaded } = useSelector((state: State) => state.doorman)
+  const { themeSelected } = useSelector((state: State) => state.preferences)
 
   const { isLoading } = useDataLoader(async () => {
     try {
@@ -74,7 +78,7 @@ export const BecomeSatellite = () => {
         ),
       )
     } catch (error) {}
-  }, [])
+  }, [accountPkh])
 
   const balanceOverMinStakedMvk = mySMvkTokenBalance >= minimumStakedMvkBalance
   const usersSatelliteProfile = satelliteMapper[accountPkh] ?? null
@@ -83,6 +87,7 @@ export const BecomeSatellite = () => {
   const [isChecked, setIsChecked] = useState(false)
   const pageText = getFormTextBasedOnUserRole(Boolean(usersSatelliteProfile))
   const isUserOracle = Boolean(usersSatelliteProfile?.peerId || usersSatelliteProfile?.publicKey)
+  const showOracleWarning = isUserOracle && !isChecked
 
   // Disable update button when no user connected, not enoght sMVK to become a satellite, not full valid form, or user is satellite, but hasn't changed nothing
   const isUpdateButtonDisabled = useMemo(() => {
@@ -197,6 +202,15 @@ export const BecomeSatellite = () => {
       ? dispatch(updateSatelliteRecord(requestData))
       : dispatch(registerAsSatellite(requestData))
   }
+
+  const tooltip = (
+    <CustomTooltip
+      text="something text"
+      iconId="info"
+      className="info-tooltip"
+      defaultStrokeColor={colors[themeSelected]['textColor']}
+    />
+  )
 
   return (
     <Page>
@@ -322,14 +336,11 @@ export const BecomeSatellite = () => {
               />
 
               <BecomeSatelliteRegisterAsOracle>
-                <Checkbox
-                  id="show_dropped"
-                  onChangeHandler={() => setIsChecked(!isChecked)}
-                  checked={isChecked}
-                  className="checkbox"
-                >
-                  <>{pageText.registerAsOracle}</>
-                </Checkbox>
+                <div className="checkbox">
+                  {pageText.registerAsOracle}
+
+                  <Checkbox id="show_dropped" onChangeHandler={() => setIsChecked(!isChecked)} checked={isChecked} />
+                </div>
 
                 <BecomeSatelliteOracleText>
                   Text here that shows if they are going to register as oracle. Will have some explainer about the
@@ -344,6 +355,7 @@ export const BecomeSatellite = () => {
                     <Input
                       settings={{
                         label: pageText.oraclePeerId,
+                        tooltip: tooltip,
                         inputStatus: form.oraclePeerId.status,
                       }}
                       inputProps={{
@@ -358,6 +370,7 @@ export const BecomeSatellite = () => {
                     <Input
                       settings={{
                         label: pageText.oraclePublicKey,
+                        tooltip: tooltip,
                         inputStatus: form.oraclePublicKey.status,
                       }}
                       inputProps={{
@@ -369,6 +382,16 @@ export const BecomeSatellite = () => {
                       }}
                     />
                   </div>
+                )}
+
+                {showOracleWarning && (
+                  <Info
+                    text={
+                      'Text here that shows what happen if user is going to unregister as oracle and click the button “update satellite info”. '
+                    }
+                    type="warning"
+                    className="oracleWarning"
+                  ></Info>
                 )}
               </BecomeSatelliteRegisterAsOracle>
 

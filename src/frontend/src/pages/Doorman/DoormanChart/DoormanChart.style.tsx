@@ -37,7 +37,7 @@ export const DoormanChartCard = styled(Card)<{ theme: MavrykTheme }>`
   .fee-label {
     position: absolute;
     top: 20px;
-    left: 45px;
+    left: 35px;
   }
 
   .double-chart-legend {

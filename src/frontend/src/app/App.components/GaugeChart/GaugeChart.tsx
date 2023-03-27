@@ -1,10 +1,10 @@
 import Arrow from './svg/Arrow'
 import Backdrop from './svg/Backdrop'
-import Gradient from './svg/Gradient'
 
 import { GaugeChartStyled, ArrowStyled, ValueWrapper } from './GaugeChart.style'
-import Progress from './svg/Progress'
+import BackgroundArc, { GRADIENT_NAME } from './svg/BackgroundArc'
 import { getNumberInBounds } from 'utils/calcFunctions'
+import { cyanColor } from 'styles'
 
 type GaugeChartProps = {
   children: React.ReactNode
@@ -16,6 +16,7 @@ type GaugeChartProps = {
 
 const MAX_ANGLE = 180
 const MIN_ANGLE = 0
+export const DASH_ARRAY = 185
 
 const calcArrowAngle = ({
   maxValue,
@@ -46,17 +47,19 @@ export const calcArcAngle = ({
 
 /**
  * For current purposes we need to only handle 0 - 180 angles
+ * @todo: if need add color as a prop
  */
 export const GaugeChart = ({ children, maxValue, minValue, currentValue, isProgress }: GaugeChartProps) => {
-  const arrowAngle = getNumberInBounds(0, 180, calcArrowAngle({ maxValue, currentValue, minValue }))
-  // negative value for progress offset to place offset on the right side, from end to start
-  const progressArcAngle = -getNumberInBounds(0, 180, calcArcAngle({ maxValue, currentValue, minValue }))
+  const arrowAngle = Math.ceil(getNumberInBounds(0, 180, calcArrowAngle({ maxValue, currentValue, minValue })))
+  const progressArcAngle = Math.ceil(getNumberInBounds(0, 180, calcArcAngle({ maxValue, currentValue, minValue })))
 
   return (
     <GaugeChartStyled>
-      <Progress className={`colored-arc ${isProgress ? '' : 'hide'}`} offset={progressArcAngle} />
-      {/* passing arcAngle when showing progress arc, to add smooth transition */}
-      <Gradient className={`colored-arc ${isProgress ? 'hide' : ''}`} offset={isProgress ? progressArcAngle : 0} />
+      <BackgroundArc
+        className={`colored-arc`}
+        offset={isProgress ? progressArcAngle : 0}
+        paint={isProgress ? cyanColor : `url(#${GRADIENT_NAME})`}
+      />
 
       <Backdrop className="backdrop" />
       <ValueWrapper>{children}</ValueWrapper>

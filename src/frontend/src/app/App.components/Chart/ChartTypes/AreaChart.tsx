@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState } from 'react'
-import { createChart, BusinessDay, UTCTimestamp } from 'lightweight-charts'
+import { createChart, BusinessDay, UTCTimestamp, SingleValueData } from 'lightweight-charts'
 
 import { skyColor, lightTextColor, headerColor } from 'styles'
 import { parseDate } from 'utils/time'
@@ -11,12 +11,13 @@ import {
   checkWhetherHideTooltip,
   CHART_SERIES_OPTIONS,
   DEFAULT_CROSSHAIR_SETTING,
+  checkPlotType,
 } from '../helpers/Chart.const'
 
 import ChartTooltip, { AMOUNT_DATE_TOOLTIP } from '../Tooltips/ChartTooltip'
 import { ChartStyled } from '../Chart.style'
 
-import { AreaChartPlotType, AreaChartPropsType } from '../helpers/Chart.types'
+import { AreaChartPropsType } from '../helpers/Chart.types'
 
 export const AreaChart = ({
   settings: {
@@ -117,7 +118,9 @@ export const AreaChart = ({
         }
       } else {
         // set tooltip values
-        const { value, time } = (param.seriesData.get(series) ?? {}) as AreaChartPlotType
+        const plot = param.seriesData.get(series) ?? {}
+        if (!checkPlotType<SingleValueData>(plot, ['value'])) return
+        const { value, time } = plot
 
         setTooltipData({
           yAxis: Number(time),
