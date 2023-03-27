@@ -240,6 +240,11 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
       font-weight: 500;
       font-size: 14px;
     }
+
+    input::placeholder {
+      font-weight: 400;
+      font-size: 12px;
+    }
   }
 
   &.${INPUT_LARGE} {
@@ -249,6 +254,11 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
       font-weight: 600;
       font-size: 22px;
     }
+
+    input::placeholder {
+      font-weight: 400;
+      font-size: 16px;
+    }
   }
 
   &.${INPUT_BIG} {
@@ -257,6 +267,11 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
     input {
       font-weight: 600;
       font-size: 22px;
+    }
+
+    input::placeholder {
+      font-weight: 400;
+      font-size: 16px;
     }
   }
 
@@ -367,6 +382,10 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
 
   .pointer {
     cursor: pointer;
+  }
+
+  &.vault-name {
+    margin-top: 45px;
   }
 `
 
