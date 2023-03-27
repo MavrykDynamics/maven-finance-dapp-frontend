@@ -69,6 +69,7 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
         <div className="chart-periods">
           <SlidingTabButtons
             tabItems={toggleItems}
+            disabled
             onClick={(tabId) =>
               setToggleItems(
                 toggleItems.map((item) => ({
@@ -79,16 +80,16 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
             }
           />
         </div>
-        <div className="last-seria">
+        {/* <div className="last-seria">
           <div className="mvk">
             <CommaNumber endingText="MVK" value={lastSeria} />
           </div>
           <div className="usd">
             <CommaNumber beginningText="$" value={lastSeria * mvkExchangeRate} />
           </div>
-        </div>
+        </div> */}
         <div className="chart">
-          <Chart data={{ type: AREA_CHART_TYPE, plots: CHART_TEST_DATA }} tooltipAsset={'MVK'} />
+          <Chart data={{ type: AREA_CHART_TYPE, plots: CHART_TEST_DATA }} tooltipAsset={'MVK'} comingSoon />
         </div>
       </PortfolioChartStyled>
 

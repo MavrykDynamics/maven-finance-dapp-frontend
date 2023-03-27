@@ -292,7 +292,6 @@ export default function RoiCalculator({
               className="tab-component values-tabs"
               tabItems={TOGGLE_BALANCE_TABS}
               onClick={handleChangeValues}
-              disableAll={shouldDisableBalanceTabs}
             />
           </div>
 
@@ -319,7 +318,6 @@ export default function RoiCalculator({
                 tabItems={COMPOUNDING_ITEMS}
                 onClick={handleChangeCompounding}
                 disabled={!compoundEverythingActive}
-                disableAll={!compoundEverythingActive}
               />
             </div>
           </div>

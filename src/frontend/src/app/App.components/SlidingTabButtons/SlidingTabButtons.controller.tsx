@@ -11,7 +11,6 @@ export interface TabItem {
 type SlidingTabButtonsProps = {
   className?: string
   onClick: (tabId: number) => void
-  disableAll?: boolean
   tabItems: TabItem[]
   disabled?: boolean
 }
@@ -20,7 +19,6 @@ export const SlidingTabButtons = ({
   onClick,
   className = '',
   tabItems = [],
-  disableAll = false,
   disabled = false,
 }: SlidingTabButtonsProps) => {
   // if we found active item by default set it, othervise set first item active, if it's not disabled
@@ -36,12 +34,6 @@ export const SlidingTabButtons = ({
       setActiveTab(foundActiveTabId)
     }
   }, [tabItems])
-
-  useEffect(() => {
-    if (disableAll) {
-      setActiveTab(undefined)
-    }
-  }, [disableAll])
 
   const clickHandler = (tabId: number) => {
     if (disabled) return
