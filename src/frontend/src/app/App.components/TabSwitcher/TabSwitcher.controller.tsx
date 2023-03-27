@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react'
 
 // styles
-import { TabSwitcherStyled, ButtonStyled } from "./TabSwitcher.style";
+import { TabSwitcherStyled, ButtonStyled } from './TabSwitcher.style'
 
 export type TabItem = {
   text: string
@@ -15,17 +15,10 @@ type Props = {
   onClick: (tabId: number) => void
   tabItems: TabItem[]
   disabled?: boolean
-  disableAll?: boolean
   className?: string
 }
 
-export function TabSwitcher({ 
-  onClick,
-  tabItems,
-  disabled = false,
-  disableAll = false,
-  className,
- }: Props) {
+export function TabSwitcher({ onClick, tabItems, disabled = false, className }: Props) {
   // if we found active item by default set it, othervise set first item active, if it's not disabled
   const [activeTab, setActiveTab] = useState<number | undefined>(
     tabItems.find(({ active, isDisabled }) => active && !isDisabled)?.id ?? tabItems[0]?.isDisabled
@@ -40,18 +33,12 @@ export function TabSwitcher({
     }
   }, [tabItems])
 
-  useEffect(() => {
-    if (disableAll) {
-      setActiveTab(undefined)
-    }
-  }, [disableAll])
-
   const clickHandler = (tabId: number) => {
     if (disabled) return
     setActiveTab(tabId)
     onClick(tabId)
   }
-    
+
   return (
     <TabSwitcherStyled className={`${className} ${disabled && 'disabled'}`}>
       {tabItems.map((tabItem) => (

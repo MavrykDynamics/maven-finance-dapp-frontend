@@ -1,6 +1,6 @@
 import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
 import dayjs from 'dayjs'
-import { UTCTimestamp } from 'lightweight-charts'
+import { SingleValueData, UTCTimestamp } from 'lightweight-charts'
 import { State } from 'reducers'
 import { UserState } from 'reducers/wallet'
 import { BLOCKS_PER_MINUTE } from 'utils/constants'
@@ -90,8 +90,8 @@ type TransactionHistoryReduceType = {
   totalLended: number
   lending24hVolume: number
   borrowing24hVolume: number
-  marketCollateralChartData: Array<AreaChartPlotType>
-  marketLiquidityChartData: Array<AreaChartPlotType>
+  marketCollateralChartData: Array<SingleValueData>
+  marketLiquidityChartData: Array<SingleValueData>
 }
 
 // Normalizing transaction history

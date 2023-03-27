@@ -86,6 +86,7 @@ export type ChartWrapperPropsType = ChartBasePropsType & {
   numberOfItemsToDisplay?: number
   tooltipName?: ChartTooltipsTypes
   tooltipAsset: string
+  comingSoon?: boolean
 }
 
 // Double chart props
