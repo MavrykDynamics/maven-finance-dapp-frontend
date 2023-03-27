@@ -1,4 +1,4 @@
-import styled, { css, keyframes } from 'styled-components'
+import styled, { css } from 'styled-components'
 import { MavrykTheme } from 'styles/interfaces'
 
 export const GaugeChartStyled = styled.div<{ theme: MavrykTheme }>`
@@ -19,11 +19,6 @@ export const GaugeChartStyled = styled.div<{ theme: MavrykTheme }>`
     z-index: 3;
     left: 0;
     transform: scale(-1, 1);
-
-    &.hide {
-      visibility: hidden;
-      opacity: 0;
-    }
   }
 
   .backdrop {
@@ -44,7 +39,7 @@ export const GaugeChartStyled = styled.div<{ theme: MavrykTheme }>`
 
     svg {
       position: absolute;
-      left: -11px;
+      left: -10px;
       top: 50%;
       transform: translateY(-50%);
     }
