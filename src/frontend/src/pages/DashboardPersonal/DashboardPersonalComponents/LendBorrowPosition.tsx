@@ -72,7 +72,7 @@ export const LendBorrowPosition = ({
           sumOfRatioBorrowedToAPR: 0,
         },
       )
-    const vaultRiskValue = borrowCapacity ? (borrowedAmount / borrowCapacity) * 100 : 100
+    const vaultRiskValue = borrowCapacity ? (borrowedAmount / borrowCapacity) * 100 : 0
     const apyNet = totalSuppliedValue ? (sumOfRatioSuppliedToAPY - sumOfRatioBorrowedToAPR) / totalSuppliedValue : 0
 
     return {

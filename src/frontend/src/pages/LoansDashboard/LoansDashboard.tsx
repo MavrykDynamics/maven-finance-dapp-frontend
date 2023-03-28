@@ -157,7 +157,7 @@ export const LoansDashboard = () => {
         },
       )
 
-    const vaultRiskValue = !accountPkh ? 0 : borrowCapacity ? (borrowedAmount / borrowCapacity) * 100 : 100
+    const vaultRiskValue = !accountPkh || !borrowCapacity ? 0 : (borrowedAmount / borrowCapacity) * 100
     const apyNet =
       !accountPkh || !totalSuppliedValue ? 0 : (sumOfRatioSuppliedToAPY - sumOfRatioBorrowedToAPR) / totalSuppliedValue
 
