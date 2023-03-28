@@ -11,7 +11,6 @@ import {
   PAGINATION_SIDE_RIGHT,
   PAST_REQUESTS_FINANCIAL_REQUESTS_LIST,
 } from '../../app/App.components/Pagination/pagination.consts'
-import { votingRinancialRequestVote } from 'pages/Governance/Governance.actions'
 import { VotingTypes } from 'app/App.components/VotingArea/helpers/voting.const'
 import { parseDate } from 'utils/time'
 
@@ -36,6 +35,7 @@ import {
   InfoBlockName,
 } from './FinancialRequests.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
+import { votingRinancialRequestVote } from 'pages/Governance/actions/GovernanceInteraction.actions'
 
 export const FinancialRequestsView = ({
   financialRequestsList = [],

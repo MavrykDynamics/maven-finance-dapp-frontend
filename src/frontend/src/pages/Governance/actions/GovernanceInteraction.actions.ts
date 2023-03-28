@@ -1,77 +1,11 @@
-import { showToaster } from '../../app/App.components/Toaster/Toaster.actions'
-import { ERROR, INFO, SUCCESS } from '../../app/App.components/Toaster/Toaster.constants'
-import { normalizeGovernanceStorage, normalizeProposals } from './Governance.helpers'
-import { fetchFromIndexer } from '../../gql/fetchGraphQL'
-import type { AppDispatch, GetState } from '../../app/App.controller'
-import {
-  GOVERNANCE_STORAGE_QUERY,
-  GOVERNANCE_STORAGE_QUERY_NAME,
-  GOVERNANCE_STORAGE_QUERY_VARIABLE,
-  CURRENT_ROUND_PROPOSALS_QUERY,
-  CURRENT_ROUND_PROPOSALS_QUERY_NAME,
-  CURRENT_ROUND_PROPOSALS_QUERY_VARIABLE,
-} from '../../gql/queries/getGovernanceStorage'
-import { State } from '../../reducers'
-import { ProposalRecordType } from 'utils/TypesAndInterfaces/Governance'
+import { State } from 'reducers'
+import { AppDispatch, GetState } from 'app/App.controller'
+
+import { ERROR, INFO, SUCCESS } from 'app/App.components/Toaster/Toaster.constants'
+
 import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
-import { ROCKET_LOADER } from 'utils/constants'
-
-export const SET_GOVERNANCE_PHASE = 'SET_GOVERNANCE_PHASE'
-export const GET_GOVERNANCE_STORAGE = 'GET_GOVERNANCE_STORAGE'
-export const SET_PAST_PROPOSALS = 'SET_PAST_PROPOSALS'
-export const getGovernanceStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
-  const { dipDupTokens } = getState().tokens
-  try {
-    const storage = await fetchFromIndexer(
-      GOVERNANCE_STORAGE_QUERY,
-      GOVERNANCE_STORAGE_QUERY_NAME,
-      GOVERNANCE_STORAGE_QUERY_VARIABLE,
-    )
-
-    const convertedStorage = normalizeGovernanceStorage(storage, dipDupTokens)
-
-    dispatch({
-      type: GET_GOVERNANCE_STORAGE,
-      governanceStorage: convertedStorage,
-    })
-
-    dispatch({
-      type: SET_GOVERNANCE_PHASE,
-      phase: convertedStorage.currentRound,
-    })
-
-    const pastProposals = convertedStorage.proposalLedger.reduce<Array<ProposalRecordType>>((acc, proposal) => {
-      if (proposal.status === 1 || proposal.executed || !proposal.currentRoundProposal) {
-        acc.push(proposal)
-      }
-      return acc
-    }, [])
-
-    dispatch({ type: SET_PAST_PROPOSALS, pastProposals })
-  } catch (e) {
-    console.error('getGovernanceStorage error: ', e)
-  }
-}
-
-export const GET_CURRENT_ROUND_PROPOSALS = 'GET_CURRENT_ROUND_PROPOSALS'
-export const getCurrentRoundProposals = () => async (dispatch: AppDispatch, getState: GetState) => {
-  try {
-    const storage = await fetchFromIndexer(
-      CURRENT_ROUND_PROPOSALS_QUERY,
-      CURRENT_ROUND_PROPOSALS_QUERY_NAME,
-      CURRENT_ROUND_PROPOSALS_QUERY_VARIABLE,
-    )
-
-    const currentRoundProposals = normalizeProposals(storage.governance_proposal)
-
-    dispatch({
-      type: GET_CURRENT_ROUND_PROPOSALS,
-      currentRoundProposals,
-    })
-  } catch (e) {
-    console.error('getCurrentRoundProposals error: ', e)
-  }
-}
+import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
+import { getGovernanceConfig, getGovernanceProposals } from './GovernanseData.actions'
 
 export const proposalRoundVote = (proposalId: number) => async (dispatch: AppDispatch, getState: GetState) => {
   const state: State = getState()
@@ -96,8 +30,8 @@ export const proposalRoundVote = (proposalId: number) => async (dispatch: AppDis
     await transaction?.confirmation()
 
     await dispatch(showToaster(SUCCESS, 'Voting done', 'All good :)'))
-    await dispatch(getGovernanceStorage())
-    await dispatch(getCurrentRoundProposals())
+    await dispatch(getGovernanceProposals())
+    await dispatch(getGovernanceConfig())
     await dispatch(toggleActionLoader(false))
   } catch (error) {
     console.error('proposalRoundVote error: ', error)
@@ -161,7 +95,7 @@ export const votingRinancialRequestVote =
       await transaction?.confirmation()
 
       await dispatch(showToaster(SUCCESS, 'Voting done', 'All good :)'))
-      await dispatch(getGovernanceStorage())
+      await dispatch(getGovernanceProposals())
       await dispatch(toggleActionLoader(false))
     } catch (error) {
       if (error instanceof Error) {
@@ -195,8 +129,8 @@ export const votingRoundVote = (vote: string) => async (dispatch: AppDispatch, g
     await transaction?.confirmation()
 
     await dispatch(showToaster(SUCCESS, 'Voting done', 'All good :)'))
-    await dispatch(getGovernanceStorage())
-    await dispatch(getCurrentRoundProposals())
+    await dispatch(getGovernanceProposals())
+    await dispatch(getGovernanceConfig())
     await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {
@@ -230,8 +164,8 @@ export const startProposalRound = () => async (dispatch: AppDispatch, getState: 
     await transaction?.confirmation()
 
     await dispatch(showToaster(SUCCESS, 'Request confirmed', 'All good :)'))
-    await dispatch(getGovernanceStorage())
-    await dispatch(getCurrentRoundProposals())
+    await dispatch(getGovernanceProposals())
+    await dispatch(getGovernanceConfig())
     await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {
@@ -265,8 +199,8 @@ export const startVotingRound = () => async (dispatch: AppDispatch, getState: Ge
     await transaction?.confirmation()
 
     await dispatch(showToaster(SUCCESS, 'Request confirmed', 'All good :)'))
-    await dispatch(getGovernanceStorage())
-    await dispatch(getCurrentRoundProposals())
+    await dispatch(getGovernanceProposals())
+    await dispatch(getGovernanceConfig())
     await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {
@@ -275,27 +209,6 @@ export const startVotingRound = () => async (dispatch: AppDispatch, getState: Ge
     }
     await dispatch(toggleActionLoader(false))
   }
-}
-
-export const getTimestampByLevel = async (level: number): Promise<string> => {
-  if (level) {
-    try {
-      const timestamp = await (
-        await fetch(`https://api.ghostnet.tzkt.io/v1/blocks/${level}/timestamp`, {
-          method: 'GET',
-          headers: {
-            'Content-type': 'application/json',
-            Accept: 'application/json',
-          },
-        })
-      ).json()
-
-      return timestamp
-    } catch (error) {
-      console.error('getTimestampByLevel', error)
-    }
-  }
-  return ''
 }
 
 export const startNextRound = (executePastProposal: boolean) => async (dispatch: AppDispatch, getState: GetState) => {
@@ -320,8 +233,8 @@ export const startNextRound = (executePastProposal: boolean) => async (dispatch:
     await transaction?.confirmation()
 
     await dispatch(showToaster(SUCCESS, 'Request confirmed', 'All good :)'))
-    await dispatch(getGovernanceStorage())
-    await dispatch(getCurrentRoundProposals())
+    await dispatch(getGovernanceProposals())
+    await dispatch(getGovernanceConfig())
     await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {
@@ -344,8 +257,8 @@ export const executeProposal = (proposalId: number) => async (dispatch: AppDispa
     await transaction?.confirmation()
 
     await dispatch(showToaster(SUCCESS, 'Request confirmed', 'All good :)'))
-    await dispatch(getGovernanceStorage())
-    await dispatch(getCurrentRoundProposals())
+    await dispatch(getGovernanceProposals())
+    await dispatch(getGovernanceConfig())
     await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {
@@ -368,8 +281,8 @@ export const processProposalPayment = (proposalId: number) => async (dispatch: A
     await transaction?.confirmation()
 
     await dispatch(showToaster(SUCCESS, 'Process Proposal Payment confirmed', 'All good :)'))
-    await dispatch(getGovernanceStorage())
-    await dispatch(getCurrentRoundProposals())
+    await dispatch(getGovernanceProposals())
+    await dispatch(getGovernanceConfig())
     await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {
