@@ -6,7 +6,6 @@ import { Link, Redirect, Route, Switch } from 'react-router-dom'
 import { State } from 'reducers'
 
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
-import { getGovernanceStorage } from 'pages/Governance/Governance.actions'
 import { getFeedsStorage } from 'pages/DataFeeds/DataFeeds.actions'
 import { claimAllRewardsAction } from './DashboardPersonal.actions'
 import { updateUserData } from 'reducers/actions/user.actions'
@@ -38,6 +37,7 @@ import VestingTab from './DashboardPersonalComponents/VestingTab'
 import { DashboardPersonalStyled } from './DashboardPersonal.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
+import { getGovernanceConfig, getGovernanceProposals } from 'pages/Governance/actions/GovernanseData.actions'
 
 const DashboardPersonal = () => {
   const dispatch = useDispatch()
@@ -78,7 +78,8 @@ const DashboardPersonal = () => {
     try {
       await Promise.all(
         [
-          dispatch(getGovernanceStorage()),
+          dispatch(getGovernanceConfig()),
+          dispatch(getGovernanceProposals()),
           !isEgovLoaded && dispatch(getEmergencyGovernanceStorage()),
           isVestee && !isVestingLoaded && dispatch(getVestingStorage()),
           !isFeedsLoaded && dispatch(getFeedsStorage()),

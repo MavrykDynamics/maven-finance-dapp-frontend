@@ -6,16 +6,16 @@ import { State } from 'reducers'
 import MoveToNextRound from '../MoveNextRound/MoveNextRound.controller'
 
 // actions
-import { getTimestampByLevel } from '../../Governance/Governance.actions'
 
 // styles
 import { Timer } from 'app/App.components/Timer/Timer.controller'
 import { TimeLeftAreaWrap } from './TimeRemaining.style'
 import { COLON_VIEW } from 'app/App.components/Timer/Timer.view'
-import { parseDate } from 'utils/time'
+import getTimestampByLevel from 'utils/Fetchers/getTimestampByLevel'
 
 export default function TimeRemaining() {
-  const { currentRoundEndLevel = 0 } = useSelector((state: State) => state.governance.governanceStorage)
+  // const { currentRoundEndLevel = 0 } = useSelector((state: State) => state.governance.governanceStorage)
+  const currentRoundEndLevel = 0
   const [timerDeadline, setTimerDeadline] = useState(0)
   const [timerActive, setTimerActive] = useState(false)
 

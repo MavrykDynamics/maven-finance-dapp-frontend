@@ -20,7 +20,7 @@ export const Proposals = ({
   type,
   listName,
 }: ProposalsProps) => {
-  const { governancePhase } = useSelector((state: State) => state.governance)
+  const { governancePhase } = useSelector((state: State) => state.governance.config)
   let proposalListTitle = ''
   switch (governancePhase) {
     case 'VOTING':

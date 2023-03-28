@@ -4,7 +4,6 @@ import { State } from 'reducers'
 
 // actions
 import { getEmergencyGovernanceStorage } from '../EmergencyGovernance/EmergencyGovernance.actions'
-import { getCurrentRoundProposals, executeProposal, getGovernanceStorage } from './Governance.actions'
 
 // view
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
@@ -12,8 +11,9 @@ import { GovernanceView } from './Governance.view'
 import { GovernanceTopBar } from './GovernanceTopBar/GovernanceTopBar.controller'
 
 // hooks
-import useGovernence from './UseGovernance'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
+import { executeProposal } from './actions/GovernanceInteraction.actions'
+import { getGovernanceConfig, getGovernanceProposals } from './actions/GovernanseData.actions'
 
 export type VoteStatistics = {
   passVotesMVKTotal: number
@@ -24,14 +24,15 @@ export type VoteStatistics = {
 }
 export const Governance = () => {
   const dispatch = useDispatch()
-  const { watingProposals, waitingForPaymentToBeProcessed } = useGovernence()
 
   const {
     accountPkh,
     user: { isSatellite },
   } = useSelector((state: State) => state.wallet)
-  const { governanceStorage, governancePhase, currentRoundProposals, pastProposals, isGovernanceStorageLoaded } =
-    useSelector((state: State) => state.governance)
+  const {
+    proposals: { isLoaded: isGovProposalsLoaded },
+    config: { isLoaded: isGovConfigLoaded, governancePhase },
+  } = useSelector((state: State) => state.governance)
   const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
 
   const { isLoading } = useDataLoader(async () => {
@@ -39,26 +40,14 @@ export const Governance = () => {
       await Promise.all(
         [
           !isEgovLoaded && dispatch(getEmergencyGovernanceStorage()),
-          dispatch(getCurrentRoundProposals()),
-          !isGovernanceStorageLoaded && dispatch(getGovernanceStorage()),
+          !isGovProposalsLoaded && dispatch(getGovernanceProposals()),
+          !isGovConfigLoaded && dispatch(getGovernanceConfig()),
         ].filter(Boolean),
       )
     } catch (e) {}
   }, [])
 
-  const isVotingRound = governancePhase === 'VOTING'
-  const isTimeLockRound = governancePhase === 'TIME_LOCK'
-
-  const ongoingProposals = currentRoundProposals?.filter(
-    (item) =>
-      (isVotingRound || isTimeLockRound) &&
-      Boolean(item.currentRoundProposal) &&
-      Boolean(item.id === governanceStorage.cycleHighestVotedProposalId),
-  )
-
-  const handleExecuteProposal = (id: number) => {
-    dispatch(executeProposal(id))
-  }
+  const handleExecuteProposal = (id: number) => dispatch(executeProposal(id))
 
   return (
     <Page>
@@ -68,11 +57,11 @@ export const Governance = () => {
         handleExecuteProposal={handleExecuteProposal}
         accountPkh={accountPkh}
         userIsSatellite={Boolean(isSatellite)}
-        ongoingProposals={ongoingProposals}
-        nextProposals={currentRoundProposals}
-        watingProposals={watingProposals}
-        waitingForPaymentToBeProcessed={waitingForPaymentToBeProcessed}
-        pastProposals={pastProposals}
+        ongoingProposals={[]}
+        nextProposals={[]}
+        watingProposals={[]}
+        waitingForPaymentToBeProcessed={[]}
+        pastProposals={[]}
         governancePhase={governancePhase}
       />
     </Page>

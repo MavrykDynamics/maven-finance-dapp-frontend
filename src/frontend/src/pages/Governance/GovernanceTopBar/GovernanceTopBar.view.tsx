@@ -3,7 +3,6 @@ import TimeRemaining from '../TimeRemaining/TimeRemaining.controller'
 import { GovernancePhase } from '../../../reducers/governance'
 
 // hooks
-import useGovernence from '../UseGovernance'
 
 import { GovernanceTopBarStyled, GovTopBarPhaseText, GovTopBarSidewaysArrowIcon } from './GovernanceTopBar.style'
 
@@ -11,8 +10,7 @@ export type GovernanceTopBarViewProps = {
   governancePhase: GovernancePhase
 }
 export const GovernanceTopBarView = ({ governancePhase }: GovernanceTopBarViewProps) => {
-  const { watingProposals } = useGovernence()
-  const isInExecution = governancePhase === 'PROPOSAL' && Boolean(watingProposals?.length)
+  const isInExecution = governancePhase === 'PROPOSAL' //&& Boolean(watingProposals?.length)
 
   return (
     <GovernanceTopBarStyled id="governanceTopBar">

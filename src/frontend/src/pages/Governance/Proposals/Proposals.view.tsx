@@ -50,10 +50,9 @@ export const ProposalsView = ({
   showVotersList,
   isHistoryPage,
 }: ProposalsViewProps) => {
-  const {
-    governancePhase,
-    governanceStorage: { cycle, timelockProposalId, cycleHighestVotedProposalId, cycleCounter },
-  } = useSelector((state: State) => state.governance)
+  const { governancePhase, cycle, timelockProposalId, cycleHighestVotedProposalId, cycleCounter } = useSelector(
+    (state: State) => state.governance.config,
+  )
   const { satelliteMapper } = useSelector((state: State) => state.satellites)
 
   const dropDownOptions = useMemo(

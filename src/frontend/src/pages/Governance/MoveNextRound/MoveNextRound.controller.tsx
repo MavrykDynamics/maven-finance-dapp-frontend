@@ -7,14 +7,14 @@ import { MoveNextRoundModal } from './MoveNextRoundModal.controller'
 import NewButton from 'app/App.components/Button/NewButton'
 import { BUTTON_SECONDARY } from 'app/App.components/Button/Button.constants'
 import Icon from 'app/App.components/Icon/Icon.view'
+import { startNextRound } from '../actions/GovernanceInteraction.actions'
 
 // actions
-import { startNextRound } from '../Governance.actions'
 
 export default function MoveToNextRound() {
   const dispatch = useDispatch()
   const { accountPkh } = useSelector((state: State) => state.wallet)
-  const { governanceStorage, governancePhase } = useSelector((state: State) => state.governance)
+  const { timelockProposalId, governancePhase } = useSelector((state: State) => state.governance.config)
 
   const [visibleModal, setVisibleModal] = useState(false)
   const [estimatedValues] = useState({ fee: 0, cost: 0 })
@@ -29,7 +29,7 @@ export default function MoveToNextRound() {
   }
 
   const handleMoveNextRound = () => {
-    if (isTimeLockRound && governanceStorage.timelockProposalId > 0) {
+    if (isTimeLockRound && timelockProposalId > 0) {
       setVisibleModal(true)
     } else {
       handleStartNextRound(false)

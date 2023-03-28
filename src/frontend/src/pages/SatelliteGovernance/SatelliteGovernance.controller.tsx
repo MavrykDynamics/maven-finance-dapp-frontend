@@ -80,185 +80,187 @@ export const SatelliteGovernance = () => {
   const { oraclesIds, activeSatellitesIds, allSatellitesIds, satelliteMapper } = useSelector(
     (state: State) => state.satellites,
   )
-  const {
-    governanceSatelliteStorage: { governance_satellite_action, governance_satellite },
-  } = useSelector((state: State) => state.governance)
-  const { feedNameMaxLength } = useSelector((state: State) => state.dataFeeds.config)
 
-  const [ddIsOpen, setDdIsOpen] = useState(false)
-  const [chosenDdItem, setChosenDdItem] = useState<string | undefined>()
-  const [activeTab, setActiveTab] = useState(1)
-  const [tabsList, setTabsList] = useState<TabItem[]>([])
-  const [separateRecord, setSeparateRecord] = useState<GovernanceSatelliteActionGraphQL[]>([])
+  return null
+  // const {
+  //   governanceSatelliteStorage: { governance_satellite_action, governance_satellite },
+  // } = useSelector((state: State) => state.governance)
+  // const { feedNameMaxLength } = useSelector((state: State) => state.dataFeeds.config)
 
-  useEffect(() => {
-    ;(async () => {
-      await dispatch(getGovernanceSatelliteStorage())
-    })()
-  }, [dispatch])
+  // const [ddIsOpen, setDdIsOpen] = useState(false)
+  // const [chosenDdItem, setChosenDdItem] = useState<string | undefined>()
+  // const [activeTab, setActiveTab] = useState(1)
+  // const [tabsList, setTabsList] = useState<TabItem[]>([])
+  // const [separateRecord, setSeparateRecord] = useState<GovernanceSatelliteActionGraphQL[]>([])
 
-  const listName = useMemo(() => getSatelliteGovernanceListName(activeTab), [activeTab])
-  const currentPage = getPageNumber(search, listName)
+  // useEffect(() => {
+  //   ;(async () => {
+  //     await dispatch(getGovernanceSatelliteStorage())
+  //   })()
+  // }, [dispatch])
 
-  const paginatedItemsList = useMemo(() => {
-    const [from, to] = calculateSlicePositions(currentPage, listName)
-    return separateRecord?.slice(from, to)
-  }, [currentPage, separateRecord])
+  // const listName = useMemo(() => getSatelliteGovernanceListName(activeTab), [activeTab])
+  // const currentPage = getPageNumber(search, listName)
 
-  const totalDelegatedMVK = getTotalDelegatedMVK(allSatellitesIds, satelliteMapper)
-  const ongoingActionsAmount = getOngoingActionsList(governance_satellite_action)?.length
+  // const paginatedItemsList = useMemo(() => {
+  //   const [from, to] = calculateSlicePositions(currentPage, listName)
+  //   return separateRecord?.slice(from, to)
+  // }, [currentPage, separateRecord])
 
-  const maxLength = {
-    purposeMaxLength: governance_satellite[0]?.gov_purpose_max_length || defaultGovPurposeMaxLength,
-    aggregatorNameMaxLength: feedNameMaxLength,
-  }
+  // const totalDelegatedMVK = getTotalDelegatedMVK(allSatellitesIds, satelliteMapper)
+  // const ongoingActionsAmount = getOngoingActionsList(governance_satellite_action)?.length
 
-  useEffect(() => {
-    const filterOngoing = getOngoingActionsList(governance_satellite_action)
-    const filterPast = getPastActionsList(governance_satellite_action)
+  // const maxLength = {
+  //   purposeMaxLength: governance_satellite[0]?.gov_purpose_max_length || defaultGovPurposeMaxLength,
+  //   aggregatorNameMaxLength: feedNameMaxLength,
+  // }
 
-    setSeparateRecord(filterOngoing?.length ? filterOngoing : filterPast)
-    setActiveTab(filterOngoing?.length ? 1 : 2)
+  // useEffect(() => {
+  //   const filterOngoing = getOngoingActionsList(governance_satellite_action)
+  //   const filterPast = getPastActionsList(governance_satellite_action)
 
-    const prevTabs = [
-      { text: 'Ongoing Actions', id: 1, active: Boolean(filterOngoing?.length) },
-      { text: 'Past Actions', id: 2, active: Boolean(!filterOngoing?.length) },
-    ]
+  //   setSeparateRecord(filterOngoing?.length ? filterOngoing : filterPast)
+  //   setActiveTab(filterOngoing?.length ? 1 : 2)
 
-    if (isSatellite) {
-      setTabsList([...prevTabs, { text: 'My Actions', id: 3, active: false }])
-    } else {
-      setTabsList([...prevTabs])
-    }
-  }, [governance_satellite_action, isSatellite])
+  //   const prevTabs = [
+  //     { text: 'Ongoing Actions', id: 1, active: Boolean(filterOngoing?.length) },
+  //     { text: 'Past Actions', id: 2, active: Boolean(!filterOngoing?.length) },
+  //   ]
 
-  const handleOnClickDropdownItem = (e: string) => {
-    const chosenItem = itemsForDropDown.find((item) => item === e)
-    if (chosenItem) {
-      setChosenDdItem(chosenItem)
-      setDdIsOpen(!ddIsOpen)
-    }
-  }
+  //   if (isSatellite) {
+  //     setTabsList([...prevTabs, { text: 'My Actions', id: 3, active: false }])
+  //   } else {
+  //     setTabsList([...prevTabs])
+  //   }
+  // }, [governance_satellite_action, isSatellite])
 
-  const handleChangeTabs = (tabId?: number) => {
-    if (tabId === 1) {
-      setActiveTab(tabId)
-      const filterOngoing = getOngoingActionsList(governance_satellite_action)
-      setSeparateRecord(filterOngoing)
-    }
+  // const handleOnClickDropdownItem = (e: string) => {
+  //   const chosenItem = itemsForDropDown.find((item) => item === e)
+  //   if (chosenItem) {
+  //     setChosenDdItem(chosenItem)
+  //     setDdIsOpen(!ddIsOpen)
+  //   }
+  // }
 
-    if (tabId === 2) {
-      setActiveTab(tabId)
-      const filterPast = getPastActionsList(governance_satellite_action)
-      setSeparateRecord(filterPast)
-    }
+  // const handleChangeTabs = (tabId?: number) => {
+  //   if (tabId === 1) {
+  //     setActiveTab(tabId)
+  //     const filterOngoing = getOngoingActionsList(governance_satellite_action)
+  //     setSeparateRecord(filterOngoing)
+  //   }
 
-    if (tabId === 3) {
-      setActiveTab(tabId)
-      const filterPast = governance_satellite_action.filter((item) => {
-        return accountPkh === item.initiator_id
-      })
-      setSeparateRecord(filterPast)
-    }
-  }
+  //   if (tabId === 2) {
+  //     setActiveTab(tabId)
+  //     const filterPast = getPastActionsList(governance_satellite_action)
+  //     setSeparateRecord(filterPast)
+  //   }
 
-  const emptyContainer = (
-    <EmptyContainer>
-      <img src="/images/not-found.svg" alt=" No proposals to show" />
-      <figcaption> No actions to show</figcaption>
-    </EmptyContainer>
-  )
+  //   if (tabId === 3) {
+  //     setActiveTab(tabId)
+  //     const filterPast = governance_satellite_action.filter((item) => {
+  //       return accountPkh === item.initiator_id
+  //     })
+  //     setSeparateRecord(filterPast)
+  //   }
+  // }
 
-  return (
-    <Page>
-      <PageHeader page={'satellite-governance'} />
-      <SatelliteGovernanceStyled>
-        <article className="satellite-governance-article">
-          <SmallInfoBlock>
-            <h3>Total Active Satellites</h3>
-            <div className="info-content">{activeSatellitesIds.length}</div>
-          </SmallInfoBlock>
-          <SmallInfoBlock>
-            <h3>Total Oracle Networks</h3>
-            <div className="info-content">{oraclesIds.length}</div>
-          </SmallInfoBlock>
-          <SmallInfoBlock>
-            <h3>Total Delegated MVK</h3>
-            <div className="info-content">
-              <CommaNumber value={totalDelegatedMVK} endingText={'MVK'} />
-              <CustomTooltip iconId="info" text="All staked MVK that is delegated to satellites by users" />
-            </div>
-          </SmallInfoBlock>
-          <SmallInfoBlock>
-            <h3>Ongoing Actions</h3>
-            <div className="info-content">{ongoingActionsAmount}</div>
-          </SmallInfoBlock>
-        </article>
-        {isSatellite ? (
-          <DropdownCard className="satellite-governance-dropdown">
-            <DropdownWrap>
-              <h2>Available Actions</h2>
-              <DropDown
-                placeholder="Choose action"
-                isOpen={ddIsOpen}
-                setIsOpen={setDdIsOpen}
-                itemSelected={chosenDdItem}
-                items={itemsForDropDown}
-                clickOnItem={(e) => handleOnClickDropdownItem(e)}
-              />
-            </DropdownWrap>
-            {chosenDdItem === 'Register Aggregator' ? (
-              <RegisterAggregatorForm maxLength={maxLength} />
-            ) : chosenDdItem === 'Fix Mistaken Transfer' ? (
-              <FixMistakenTransferForm maxLength={maxLength} />
-            ) : (
-              <SatelliteGovernanceForm maxLength={maxLength} variant={chosenDdItem || ''} />
-            )}
-          </DropdownCard>
-        ) : null}
-        {tabsList?.length ? (
-          <div className="buttons-selector">
-            {tabsList.map(({ id, text }) => (
-              <Button
-                kind={ACTION_SIMPLE}
-                onClick={() => {
-                  handleChangeTabs(id)
-                }}
-                text={text}
-                className={id === activeTab ? 'active' : ''}
-              />
-            ))}
-          </div>
-        ) : null}
-      </SatelliteGovernanceStyled>
+  // const emptyContainer = (
+  //   <EmptyContainer>
+  //     <img src="/images/not-found.svg" alt=" No proposals to show" />
+  //     <figcaption> No actions to show</figcaption>
+  //   </EmptyContainer>
+  // )
 
-      {paginatedItemsList?.length
-        ? paginatedItemsList.map((item: GovernanceSatelliteActionGraphQL) => {
-            return (
-              <SatelliteGovernanceCard
-                key={item.id}
-                id={item.id}
-                satelliteId={convertBytesAddressToAddress(item.parameters?.[0].value) ?? ''}
-                initiatorId={item.initiator_id}
-                date={item.expiration_datetime || ''}
-                executed={item.executed}
-                status={item.status}
-                purpose={item.governance_purpose}
-                governanceType={item.governance_type}
-                yayVotesSmvkTotal={item.yay_vote_smvk_total}
-                nayVotesSmvkTotal={item.nay_vote_smvk_total}
-                snapshotSmvkTotalSupply={item.snapshot_smvk_total_supply}
-                passVoteSmvkTotal={item.pass_vote_smvk_total}
-                smvkPercentageForApproval={item.smvk_percentage_for_approval}
-                accountPkh={accountPkh}
-              />
-            )
-          })
-        : emptyContainer}
+  // return (
+  //   <Page>
+  //     <PageHeader page={'satellite-governance'} />
+  //     <SatelliteGovernanceStyled>
+  //       <article className="satellite-governance-article">
+  //         <SmallInfoBlock>
+  //           <h3>Total Active Satellites</h3>
+  //           <div className="info-content">{activeSatellitesIds.length}</div>
+  //         </SmallInfoBlock>
+  //         <SmallInfoBlock>
+  //           <h3>Total Oracle Networks</h3>
+  //           <div className="info-content">{oraclesIds.length}</div>
+  //         </SmallInfoBlock>
+  //         <SmallInfoBlock>
+  //           <h3>Total Delegated MVK</h3>
+  //           <div className="info-content">
+  //             <CommaNumber value={totalDelegatedMVK} endingText={'MVK'} />
+  //             <CustomTooltip iconId="info" text="All staked MVK that is delegated to satellites by users" />
+  //           </div>
+  //         </SmallInfoBlock>
+  //         <SmallInfoBlock>
+  //           <h3>Ongoing Actions</h3>
+  //           <div className="info-content">{ongoingActionsAmount}</div>
+  //         </SmallInfoBlock>
+  //       </article>
+  //       {isSatellite ? (
+  //         <DropdownCard className="satellite-governance-dropdown">
+  //           <DropdownWrap>
+  //             <h2>Available Actions</h2>
+  //             <DropDown
+  //               placeholder="Choose action"
+  //               isOpen={ddIsOpen}
+  //               setIsOpen={setDdIsOpen}
+  //               itemSelected={chosenDdItem}
+  //               items={itemsForDropDown}
+  //               clickOnItem={(e) => handleOnClickDropdownItem(e)}
+  //             />
+  //           </DropdownWrap>
+  //           {chosenDdItem === 'Register Aggregator' ? (
+  //             <RegisterAggregatorForm maxLength={maxLength} />
+  //           ) : chosenDdItem === 'Fix Mistaken Transfer' ? (
+  //             <FixMistakenTransferForm maxLength={maxLength} />
+  //           ) : (
+  //             <SatelliteGovernanceForm maxLength={maxLength} variant={chosenDdItem || ''} />
+  //           )}
+  //         </DropdownCard>
+  //       ) : null}
+  //       {tabsList?.length ? (
+  //         <div className="buttons-selector">
+  //           {tabsList.map(({ id, text }) => (
+  //             <Button
+  //               kind={ACTION_SIMPLE}
+  //               onClick={() => {
+  //                 handleChangeTabs(id)
+  //               }}
+  //               text={text}
+  //               className={id === activeTab ? 'active' : ''}
+  //             />
+  //           ))}
+  //         </div>
+  //       ) : null}
+  //     </SatelliteGovernanceStyled>
 
-      <Pagination itemsCount={separateRecord?.length} listName={listName} />
-    </Page>
-  )
+  //     {paginatedItemsList?.length
+  //       ? paginatedItemsList.map((item: GovernanceSatelliteActionGraphQL) => {
+  //           return (
+  //             <SatelliteGovernanceCard
+  //               key={item.id}
+  //               id={item.id}
+  //               satelliteId={convertBytesAddressToAddress(item.parameters?.[0].value) ?? ''}
+  //               initiatorId={item.initiator_id}
+  //               date={item.expiration_datetime || ''}
+  //               executed={item.executed}
+  //               status={item.status}
+  //               purpose={item.governance_purpose}
+  //               governanceType={item.governance_type}
+  //               yayVotesSmvkTotal={item.yay_vote_smvk_total}
+  //               nayVotesSmvkTotal={item.nay_vote_smvk_total}
+  //               snapshotSmvkTotalSupply={item.snapshot_smvk_total_supply}
+  //               passVoteSmvkTotal={item.pass_vote_smvk_total}
+  //               smvkPercentageForApproval={item.smvk_percentage_for_approval}
+  //               accountPkh={accountPkh}
+  //             />
+  //           )
+  //         })
+  //       : emptyContainer}
+
+  //     <Pagination itemsCount={separateRecord?.length} listName={listName} />
+  //   </Page>
+  // )
 }
 
 export default SatelliteGovernance

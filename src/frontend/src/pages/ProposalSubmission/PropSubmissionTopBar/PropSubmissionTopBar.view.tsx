@@ -1,5 +1,4 @@
 // hooks
-import useGovernence from '../../Governance/UseGovernance'
 
 // components
 import TimeRemaining from '../../Governance/TimeRemaining/TimeRemaining.controller'

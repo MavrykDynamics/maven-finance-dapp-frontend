@@ -33,11 +33,14 @@ export const StageOneForm = ({
 }: StageOneFormProps) => {
   const {
     fee,
-    currentRound,
-    config: { successReward, proposalTitleMaxLength, proposalDescriptionMaxLength, proposalSourceCodeMaxLength },
-  } = useSelector((state: State) => state.governance.governanceStorage)
+    successReward,
+    proposalTitleMaxLength,
+    proposalDescriptionMaxLength,
+    proposalSourceCodeMaxLength,
+    governancePhase,
+  } = useSelector((state: State) => state.governance.config)
 
-  const isProposalRound = currentRound === 'PROPOSAL'
+  const isProposalRound = governancePhase === 'PROPOSAL'
   const isProposalSubmitted = proposalId >= 0
   const disabled = !isProposalRound || isProposalSubmitted
 

@@ -1,7 +1,6 @@
 // helpres
 import { ERROR, INFO, SUCCESS } from 'app/App.components/Toaster/Toaster.constants'
 import { getSatellitesStorage } from 'pages/Satellites/Satellites.actions'
-import { getGovernanceStorage, getCurrentRoundProposals } from '../Governance/Governance.actions'
 import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
 
 // types
@@ -12,6 +11,7 @@ import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 import { ROCKET_LOADER } from 'utils/constants'
 import { PaymentsDataChangesType, ProposalDataChangesType } from './ProposalSybmittion.types'
 import { ContractAbstraction, Wallet } from '@taquito/taquito'
+import { getGovernanceConfig, getGovernanceProposals } from 'pages/Governance/actions/GovernanseData.actions'
 
 export const submitProposal =
   (form: SubmitProposalForm, fee: number) => async (dispatch: AppDispatch, getState: GetState) => {
@@ -38,9 +38,9 @@ export const submitProposal =
       await query?.confirmation()
 
       await dispatch(showToaster(SUCCESS, 'Proposal Submitted.', 'All good :)'))
-      await dispatch(getGovernanceStorage())
+      await dispatch(getGovernanceConfig())
+      await dispatch(getGovernanceProposals())
       await dispatch(getSatellitesStorage())
-      await dispatch(getCurrentRoundProposals())
       await dispatch(toggleActionLoader(false))
     } catch (error) {
       console.error('submitProposal error:', error)
@@ -75,9 +75,9 @@ export const dropProposal = (proposalId: number) => async (dispatch: AppDispatch
     dispatch(showToaster(SUCCESS, 'Proposal Droped.', 'All good :)'))
     await dispatch(toggleActionLoader(false))
 
-    await dispatch(getGovernanceStorage())
+    await dispatch(getGovernanceConfig())
+    await dispatch(getGovernanceProposals())
     await dispatch(getSatellitesStorage())
-    await dispatch(getCurrentRoundProposals())
   } catch (error) {
     console.error('dropProposal error:', error)
     if (error instanceof Error) {
@@ -111,9 +111,9 @@ export const lockProposal = (proposalId: number) => async (dispatch: AppDispatch
     await dispatch(toggleActionLoader(false))
     await dispatch(showToaster(SUCCESS, 'Proposal locked.', 'All good :)'))
 
-    await dispatch(getGovernanceStorage())
+    await dispatch(getGovernanceConfig())
+    await dispatch(getGovernanceProposals())
     await dispatch(getSatellitesStorage())
-    await dispatch(getCurrentRoundProposals())
   } catch (error) {
     console.error('lockProposal error:', error)
     if (error instanceof Error) {
@@ -174,9 +174,9 @@ export const updateProposalData =
       await dispatch(showToaster(SUCCESS, 'Proposal updated.', 'All good :)'))
       await dispatch(toggleActionLoader(false))
 
-      await dispatch(getGovernanceStorage())
+      await dispatch(getGovernanceConfig())
+      await dispatch(getGovernanceProposals())
       await dispatch(getSatellitesStorage())
-      await dispatch(getCurrentRoundProposals())
     } catch (error) {
       if (error instanceof Error) {
         console.error(error)

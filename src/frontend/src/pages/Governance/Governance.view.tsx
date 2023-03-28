@@ -13,7 +13,6 @@ import {
 import { VoteStatistics } from 'app/App.components/VotingArea/helpers/voting'
 
 // actions
-import { proposalRoundVote, getTimestampByLevel, processProposalPayment, votingRoundVote } from './Governance.actions'
 import { showToaster } from '../../app/App.components/Toaster/Toaster.actions'
 import { VotingProposalsArea } from '../../app/App.components/VotingArea/VotingArea.controller'
 
@@ -54,6 +53,8 @@ import { Table, TableBody, TableCell, TableHeader, TableHeaderCell, TableRow } f
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { VotingTypes } from 'app/App.components/VotingArea/helpers/voting.const'
+import { proposalRoundVote, votingRoundVote, processProposalPayment } from './actions/GovernanceInteraction.actions'
+import getTimestampByLevel from 'utils/Fetchers/getTimestampByLevel'
 
 type GovernanceViewProps = {
   accountPkh: string | undefined
@@ -88,7 +89,7 @@ export const GovernanceView = ({
   const dispatch = useDispatch()
   const { pathname } = useLocation()
 
-  const { governanceStorage, currentRoundProposals } = useSelector((state: State) => state.governance)
+  // const { governanceStorage, currentRoundProposals } = useSelector((state: State) => state.governance)
   const { dipDupTokens, whitelistTokens } = useSelector((state: State) => state.tokens)
 
   const [votingEnding, setVotingEnding] = useState<string>('')
@@ -120,7 +121,7 @@ export const GovernanceView = ({
         quorum: rightSideContent.minQuorumPercentage,
       })
     }
-  }, [rightSideContent, currentRoundProposals])
+  }, [rightSideContent])
 
   const handleProposalRoundVote = async (proposalId: number) => {
     //TODO: Adjust for the number of votes * voting power each satellite has
@@ -198,10 +199,10 @@ export const GovernanceView = ({
   } = getProposalStatusInfo(
     governancePhase,
     rightSideContent,
-    governanceStorage.timelockProposalId,
+    0, //governanceStorage.timelockProposalId,
     !onProposalHistoryPage,
-    governanceStorage.cycleHighestVotedProposalId,
-    governanceStorage.cycleCounter,
+    0, //governanceStorage.cycleHighestVotedProposalId,
+    0, //governanceStorage.cycleCounter,
   )
 
   const isExecuteProposal = anyUserCanExecuteProposal && accountPkh

@@ -9,7 +9,7 @@ import type {
   Governance_Proposal_Payment,
   Governance_Proposal_Data,
 } from '../generated/graphqlTypes'
-import { normalizeGovernanceStorage, normalizeProposal } from '../../pages/Governance/Governance.helpers'
+import { normalizeProposal } from '../../pages/Governance/Governance.helpers'
 import { normalizeFinancialRequests } from 'pages/FinacialRequests/FinancialRequests.helpers'
 
 export type GovernanceGraphQL = Omit<Governance, '__typename'>
@@ -24,7 +24,6 @@ export type GovernanceStorageGraphQL = {
   governance_proposal: GovernanceProposalGraphQL[]
 }
 
-export type GovernanceStorage = ReturnType<typeof normalizeGovernanceStorage>
 export type ProposalRecordType = ReturnType<typeof normalizeProposal>
 
 export enum ProposalStatus {

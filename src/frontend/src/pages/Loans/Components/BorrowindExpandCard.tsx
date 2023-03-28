@@ -1,4 +1,6 @@
 import { useContext, useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import {
@@ -15,6 +17,8 @@ import {
   BUTTON_SIMPLE,
   BUTTON_WIDE,
 } from 'app/App.components/Button/Button.constants'
+import colors from 'styles/colors'
+import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
@@ -23,6 +27,8 @@ import Button from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { StatusMessage } from './StatusMessage.view'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
+import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 
 import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } from 'app/App.components/Table'
@@ -30,17 +36,12 @@ import { ThreeLevelListItem } from '../Loans.style'
 import { BorrowingTabListItemExpanded } from './LoansComponents.style'
 
 import { loansPopupsContext } from './Modals/LoansModals.provider'
-import { Link } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+
 import { State } from 'reducers'
-import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
-import { getTimestampByLevel } from 'pages/Governance/Governance.actions'
 import { calculateCollateralShare } from 'pages/Vaults/calcFunctionsForVault'
 import { isTezosAsset } from '../Loans.helpers'
-import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import colors from 'styles/colors'
 import { getDynamicDecimalsAmountForOutput } from 'utils/calcFunctions'
+import getTimestampByLevel from 'utils/Fetchers/getTimestampByLevel'
 
 type BorrowingExpandCardPropsType = LoansVaultType & {
   isOwner?: boolean

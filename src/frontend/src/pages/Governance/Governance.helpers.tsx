@@ -1,10 +1,9 @@
-import { MichelsonMap } from '@taquito/taquito'
-import { GovernancePhase } from '../../reducers/governance'
+import { GovernancePhase, GovernanceState } from '../../reducers/governance'
 import {
   ProposalStatus,
-  GovernanceStorageGraphQL,
   ProposalRecordType,
   GovernanceProposalGraphQL,
+  GovernanceGraphQL,
 } from '../../utils/TypesAndInterfaces/Governance'
 import { calcWithoutMu, calcWithoutPrecision } from '../../utils/calcFunctions'
 import { DipDupTokensGraphQl } from 'utils/TypesAndInterfaces/DipDupTokens'
@@ -77,7 +76,7 @@ export const getProposalStatusInfo = (
 
     if (isVotingRound) {
       // If proposal is of current round
-      // NEW: && if the proposal's id === the cycle_highest_voted_proposal_id in the governanceStorage
+      // NEW: && if the proposal's id === the cycle_highest_voted_proposal_id in the GovernanceState
       if (proposal?.currentRoundProposal && proposal.id === cycleHighestVotedProposalId) {
         statusFlag = ProposalStatus.ONGOING
         satelliteAbleToMakeVotingRoundVote = true
@@ -88,7 +87,7 @@ export const getProposalStatusInfo = (
     if (isTimeLockRound) {
       // Timelock Period
       // If proposal is of current round
-      // NEW: && if the proposal's id === the timelock_proposal_id in the governanceStorage
+      // NEW: && if the proposal's id === the timelock_proposal_id in the GovernanceState
       if (proposal?.currentRoundProposal && proposal.id === timelockProposalId) {
         statusFlag = ProposalStatus.TIMELOCK
       }
@@ -208,10 +207,6 @@ export const getShortByte = (
   return shortBype.join('')
 }
 
-function convertGovernanceRound(round: number) {
-  return round === 0 ? 'PROPOSAL' : round === 1 ? 'VOTING' : round === 2 ? 'TIME_LOCK' : ''
-}
-
 export const normalizeProposal = (item: GovernanceProposalGraphQL, dipDupTokens?: Array<DipDupTokensGraphQl>) => {
   return {
     id: item.id,
@@ -260,51 +255,62 @@ export const normalizeProposal = (item: GovernanceProposalGraphQL, dipDupTokens?
   }
 }
 
-export const normalizeProposals = (
-  proposalsList?: GovernanceProposalGraphQL[],
+export const normalizeGovernanceProposals = (
+  proposals: Array<GovernanceProposalGraphQL>,
   dipDupTokens?: Array<DipDupTokensGraphQl>,
-) => {
-  return proposalsList?.length ? proposalsList.map((item) => normalizeProposal(item, dipDupTokens)) : []
+): Omit<GovernanceState['proposals'], 'isLoaded'> => {
+  return proposals.reduce<Omit<GovernanceState['proposals'], 'isLoaded'>>(
+    (acc, proposalFromGQL) => {
+      const normalizedProposal = normalizeProposal(proposalFromGQL, dipDupTokens)
+
+      acc.proposalsMapper[normalizedProposal.id] = normalizedProposal
+      acc.allProposalsIds.push(normalizedProposal.id)
+
+      // Add id of current round proposal
+      if (normalizedProposal.currentRoundProposal && normalizedProposal.status === 0 && !normalizedProposal.executed) {
+        acc.currentRoundProposalsIds.push(normalizedProposal.id)
+      }
+
+      // Add id of past proposal
+      if (normalizedProposal.executed || !normalizedProposal.currentRoundProposal) {
+        acc.pastProposalsIds.push(normalizedProposal.id)
+      }
+
+      return acc
+    },
+    {
+      currentRoundProposalsIds: [],
+      pastProposalsIds: [],
+      allProposalsIds: [],
+      proposalsMapper: {},
+    },
+  )
 }
 
-export const normalizeGovernanceStorage = (
-  storage: GovernanceStorageGraphQL | null,
-  dipDupTokens?: Array<DipDupTokensGraphQl>,
-) => {
-  const currentGovernance = storage?.governance?.[0]
-  const proposalLedger = normalizeProposals(storage?.governance_proposal, dipDupTokens)
+const calcGovPhase = (round: number) => (round === 0 ? 'PROPOSAL' : round === 1 ? 'VOTING' : 'TIME_LOCK')
 
+export const normalizeGovernanceConfig = (
+  currentGovernance: GovernanceGraphQL,
+): Omit<GovernanceState['config'], 'isLoaded'> => {
   return {
-    address: currentGovernance?.address || '',
-    fee: currentGovernance?.proposal_submission_fee_mutez
-      ? calcWithoutMu(currentGovernance.proposal_submission_fee_mutez)
-      : 0,
-    config: {
-      successReward: calcWithoutPrecision(currentGovernance?.success_reward ?? 0),
-      minQuorumPercentage: currentGovernance?.min_quorum_percentage ?? 0,
-      minQuorumMvkTotal: currentGovernance?.min_yay_vote_percentage ?? 0,
-      blocksPerProposalRound: currentGovernance?.blocks_per_proposal_round ?? 0,
-      blocksPerVotingRound: currentGovernance?.blocks_per_voting_round ?? 0,
-      blocksPerTimelockRound: currentGovernance?.blocks_per_timelock_round,
-      proposalDescriptionMaxLength:
-        currentGovernance?.proposal_description_max_length || defaultProposalDescriptionMaxLength,
-      proposalInvoiceMaxLength: currentGovernance?.proposal_invoice_max_length || defaultProposalInvoiceMaxLength,
-      proposalMetadataTitleMaxLength:
-        currentGovernance?.proposal_metadata_title_max_length || defaultProposalMetadataTitleMaxLength,
-      proposalSourceCodeMaxLength:
-        currentGovernance?.proposal_source_code_max_length || defaultProposalSourceCodeMaxLength,
-      proposalTitleMaxLength: currentGovernance?.proposal_title_max_length || defaultProposalTitleMaxLength,
-    },
-    currentCycleEndLevel: currentGovernance?.current_cycle_end_level ?? 0,
-    currentRound: convertGovernanceRound(currentGovernance?.current_round ?? 0),
-    currentRoundEndLevel: currentGovernance?.current_round_end_level ?? 0,
-    currentRoundProposals: new MichelsonMap<string, ProposalRecordType>(),
-    currentRoundStartLevel: currentGovernance?.current_round_start_level ?? 0,
-    cycle: currentGovernance?.cycle_id ?? 0,
-    nextProposalId: currentGovernance?.next_proposal_id ?? 0,
-    proposalLedger,
-    timelockProposalId: currentGovernance?.timelock_proposal_id ?? 0,
-    cycleHighestVotedProposalId: currentGovernance?.cycle_highest_voted_proposal_id ?? 0,
+    address: currentGovernance.address,
+    fee: calcWithoutMu(currentGovernance.proposal_submission_fee_mutez),
+    successReward: calcWithoutPrecision(currentGovernance.success_reward),
+    proposalDescriptionMaxLength:
+      currentGovernance.proposal_description_max_length ?? defaultProposalDescriptionMaxLength,
+    proposalInvoiceMaxLength: currentGovernance.proposal_invoice_max_length ?? defaultProposalInvoiceMaxLength,
+    proposalMetadataTitleMaxLength:
+      currentGovernance.proposal_source_code_max_length ?? defaultProposalMetadataTitleMaxLength,
+    proposalSourceCodeMaxLength:
+      currentGovernance.proposal_source_code_max_length ?? defaultProposalSourceCodeMaxLength,
+    proposalTitleMaxLength: currentGovernance.proposal_title_max_length ?? defaultProposalTitleMaxLength,
+
+    currentRoundEndLevel: currentGovernance.current_round_end_level ?? 0,
+    cycle: currentGovernance.cycle_id ?? 0,
+    timelockProposalId: currentGovernance.timelock_proposal_id ?? 0,
+    cycleHighestVotedProposalId: currentGovernance.cycle_highest_voted_proposal_id ?? 0,
     cycleCounter: 0,
+
+    governancePhase: calcGovPhase(currentGovernance.current_round),
   }
 }

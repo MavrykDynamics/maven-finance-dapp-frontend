@@ -37,13 +37,9 @@ export const StageTwoForm = ({
   updateLocalProposalData,
   setProposalHasChange,
 }: StageTwoFormProps) => {
-  const {
-    governancePhase,
-    governanceStorage: {
-      fee,
-      config: { successReward, proposalMetadataTitleMaxLength },
-    },
-  } = useSelector((state: State) => state.governance)
+  const { governancePhase, fee, successReward, proposalMetadataTitleMaxLength } = useSelector(
+    (state: State) => state.governance.config,
+  )
   const isProposalPeriod = governancePhase === 'PROPOSAL'
 
   // effect to track change of proposal, by tab clicking, and default validate it // TODO: if need uncomment it
