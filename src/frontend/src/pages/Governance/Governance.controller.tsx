@@ -25,10 +25,7 @@ export type VoteStatistics = {
 export const Governance = () => {
   const dispatch = useDispatch()
 
-  const {
-    accountPkh,
-    user: { isSatellite },
-  } = useSelector((state: State) => state.wallet)
+  const { accountPkh } = useSelector((state: State) => state.wallet)
   const { isLoaded: isGovConfigLoaded, governancePhase } = useSelector((state: State) => state.governanceConfig)
   const { isLoaded: isGovProposalsLoaded } = useSelector((state: State) => state.governanceProposals)
   const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
@@ -53,8 +50,6 @@ export const Governance = () => {
       <GovernanceTopBar governancePhase={governancePhase} />
       <GovernanceView
         handleExecuteProposal={handleExecuteProposal}
-        accountPkh={accountPkh}
-        userIsSatellite={Boolean(isSatellite)}
         ongoingProposals={[]}
         nextProposals={[]}
         watingProposals={[]}

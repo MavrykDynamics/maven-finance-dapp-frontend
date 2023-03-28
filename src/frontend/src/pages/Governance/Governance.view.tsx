@@ -1,23 +1,10 @@
-import React, { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { useLocation } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
-import { State } from 'reducers'
 
 // types
-import {
-  ProposalRecordType,
-  ProposalStatus,
-  GovPhases,
-  GovernancePhaseType,
-} from '../../utils/TypesAndInterfaces/Governance'
-import { VoteStatistics } from 'app/App.components/VotingArea/helpers/voting'
-
-// actions
-import { showToaster } from '../../app/App.components/Toaster/Toaster.actions'
-import { VotingProposalsArea } from '../../app/App.components/VotingArea/VotingArea.controller'
+import { ProposalRecordType, GovPhases, GovernancePhaseType } from '../../utils/TypesAndInterfaces/Governance'
 
 // helpers
-import { getShortByte, getProposalStatusInfo } from './Governance.helpers'
 import {
   WAITING_PROPOSALS_LIST_NAME,
   WAITING_FOR_PAYMENT_PROPOSALS_LIST_NAME,
@@ -26,44 +13,21 @@ import {
   NEXT_PROPOSALS_LIST_NAME,
   HISTORY_PROPOSALS_LIST_NAME,
 } from 'app/App.components/Pagination/pagination.consts'
-import { PRECISION_NUMBER } from 'utils/constants'
-import { dropProposal } from '../ProposalSubmission/ProposalSubmission.actions'
-import { parseDate } from 'utils/time'
 
 // components
-import Icon from '../../app/App.components/Icon/Icon.view'
-import { StatusFlag } from '../../app/App.components/StatusFlag/StatusFlag.controller'
-import { TzAddress } from '../../app/App.components/TzAddress/TzAddress.view'
 import { Proposals } from './components/Proposals/Proposals.controller'
-import { Button } from 'app/App.components/Button/Button.controller'
 
 // styles
-import {
-  GovernanceLeftContainer,
-  GovernanceRightContainer,
-  GovernanceStyled,
-  GovRightContainerTitleArea,
-  RightSideSubContent,
-  RightSideSubHeader,
-  EmptyContainer,
-} from './Governance.style'
-import { InfoBlock } from '../../app/App.components/Info/info.style'
-import { Table, TableBody, TableCell, TableHeader, TableHeaderCell, TableRow } from 'app/App.components/Table'
-import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
-import { VotingTypes } from 'app/App.components/VotingArea/helpers/voting.const'
-import { proposalRoundVote, votingRoundVote, processProposalPayment } from './actions/GovernanceInteraction.actions'
-import getTimestampByLevel from 'utils/Fetchers/getTimestampByLevel'
+import { GovernanceLeftContainer, GovernanceStyled, EmptyContainer } from './Governance.style'
+import { ProposalDetails } from './components/ProposalDetails/ProposalDetails'
 
 type GovernanceViewProps = {
-  accountPkh: string | undefined
   ongoingProposals: any
   nextProposals: any
   pastProposals: any
   watingProposals: any
   waitingForPaymentToBeProcessed: any
   governancePhase: GovernancePhaseType
-  userIsSatellite: boolean
   handleExecuteProposal: (arg: number) => void
 }
 
@@ -75,100 +39,21 @@ const emptyContainer = (
 )
 
 export const GovernanceView = ({
-  accountPkh,
   ongoingProposals,
   nextProposals,
   pastProposals,
   governancePhase,
-  userIsSatellite,
   watingProposals,
   handleExecuteProposal,
   waitingForPaymentToBeProcessed,
 }: GovernanceViewProps) => {
-  const dispatch = useDispatch()
   const { pathname } = useLocation()
 
   // const { governanceStorage, currentRoundProposals } = useSelector((state: State) => state.governance)
-  const { dipDupTokens, whitelistTokens } = useSelector((state: State) => state.tokens)
 
-  const [votingEnding, setVotingEnding] = useState<string>('')
-  const [visibleMeta, setVisibleMeta] = useState<string>('')
   const [rightSideContent, setRightSideContent] = useState<ProposalRecordType | undefined>(undefined)
-  const [voteStatistics, setVoteStatistics] = useState<VoteStatistics>({
-    abstainVotesMVKTotal: 0,
-    againstVotesMVKTotal: 0,
-    forVotesMVKTotal: 0,
-    unusedVotesMVKTotal: 0,
-    quorum: 0,
-  })
 
   const onProposalHistoryPage = useMemo(() => pathname === '/proposal-history', [pathname])
-
-  useEffect(() => {
-    if (rightSideContent) {
-      setVoteStatistics({
-        abstainVotesMVKTotal: Number(rightSideContent.abstainMvkTotal),
-        againstVotesMVKTotal: Number(rightSideContent.downvoteMvkTotal),
-        forVotesMVKTotal: Number(rightSideContent.upvoteMvkTotal),
-        unusedVotesMVKTotal: Math.round(
-          rightSideContent.quorumMvkTotal / PRECISION_NUMBER -
-            rightSideContent.abstainMvkTotal -
-            rightSideContent.downvoteMvkTotal -
-            rightSideContent.upvoteMvkTotal,
-        ),
-        passVotesMVKTotal: Number(rightSideContent.passVoteMvkTotal),
-        quorum: rightSideContent.minQuorumPercentage,
-      })
-    }
-  }, [rightSideContent])
-
-  const handleProposalRoundVote = async (proposalId: number) => {
-    //TODO: Adjust for the number of votes * voting power each satellite has
-    // setVoteStatistics({
-    //   ...voteStatistics,
-    //   unusedVotesMVKTotal: voteStatistics.unusedVotesMVKTotal - 1,
-    //   forVotesMVKTotal: voteStatistics.forVotesMVKTotal + 1,
-    // })
-    await dispatch(proposalRoundVote(proposalId))
-  }
-
-  const handleVotingRoundVote = async (vote: string) => {
-    let voteType
-    switch (vote) {
-      case VotingTypes.YES:
-        voteType = VotingTypes.YES
-        setVoteStatistics({
-          ...voteStatistics,
-          forVotesMVKTotal: +voteStatistics.forVotesMVKTotal + 1,
-          unusedVotesMVKTotal: Math.max(+voteStatistics.unusedVotesMVKTotal - 1, 0),
-        })
-        break
-      case VotingTypes.NO:
-        voteType = VotingTypes.NO
-        setVoteStatistics({
-          ...voteStatistics,
-          againstVotesMVKTotal: Number(voteStatistics.againstVotesMVKTotal) + 1,
-          unusedVotesMVKTotal: Math.max(+voteStatistics.unusedVotesMVKTotal - 1, 0),
-        })
-        break
-      case VotingTypes.PASS:
-        voteType = VotingTypes.PASS
-        setVoteStatistics({
-          ...voteStatistics,
-          abstainVotesMVKTotal: Number(voteStatistics.abstainVotesMVKTotal) + 1,
-          unusedVotesMVKTotal: Math.max(+voteStatistics.unusedVotesMVKTotal - 1, 0),
-        })
-        break
-      default:
-        return
-    }
-
-    await dispatch(votingRoundVote(voteType))
-  }
-
-  const handleClickProcessPayment = async () => {
-    if (rightSideContent?.id) await dispatch(processProposalPayment(rightSideContent.id))
-  }
 
   const _handleItemSelect = (chosenProposal: ProposalRecordType | undefined) => {
     setRightSideContent(chosenProposal)
@@ -190,31 +75,8 @@ export const GovernanceView = ({
     history: false,
   })
 
-  const {
-    statusFlag,
-    anyUserCanExecuteProposal,
-    anyUserCanProcessProposalPayment,
-    satelliteAbleToMakeProposalRoundVote,
-  } = getProposalStatusInfo(
-    governancePhase,
-    rightSideContent,
-    0, //governanceStorage.timelockProposalId,
-    !onProposalHistoryPage,
-    0, //governanceStorage.cycleHighestVotedProposalId,
-    0, //governanceStorage.cycleCounter,
-  )
-
-  const isExecuteProposal = anyUserCanExecuteProposal && accountPkh
-  const isPaymentProposal = anyUserCanProcessProposalPayment && accountPkh
   const isVisibleWating = !onProposalHistoryPage && Boolean(watingProposals?.length)
   const isVisibleWatingPayment = !onProposalHistoryPage && Boolean(waitingForPaymentToBeProcessed?.length)
-  const isAbleToMakeProposalRoundVote = satelliteAbleToMakeProposalRoundVote
-  const canDropPhase = [
-    ProposalStatus.ACTIVE,
-    ProposalStatus.LOCKED,
-    ProposalStatus.ONGOING,
-    ProposalStatus.UNLOCKED,
-  ].includes(statusFlag)
 
   const someVisible = Object.values(visibleLists).some((item) => item)
 
@@ -261,51 +123,11 @@ export const GovernanceView = ({
     pastProposals,
   ])
 
-  const handleGetTimestampByLevel = async (level: number) => {
-    const res = await getTimestampByLevel(level)
-    setVotingEnding(res)
-  }
-  const handleClickExecuteProposal = () => {
-    if (rightSideContent?.id) {
-      handleExecuteProposal(rightSideContent.id)
-    }
-  }
-
-  useEffect(() => {
-    handleGetTimestampByLevel(rightSideContent?.currentCycleEndLevel ?? 0)
-  }, [rightSideContent?.currentCycleEndLevel])
-
   useEffect(() => {
     if (!someVisible) {
       setRightSideContent(undefined)
     }
   }, [someVisible])
-
-  const votingTime = new Date(votingEnding).getTime()
-  const isEndedVotingTime = votingTime < Date.now()
-
-  const handleCopyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text)
-    dispatch(showToaster('SUCCESS', 'Copied to Clipboard', `${getShortByte(text, 16, 16)}`))
-  }
-
-  const handleDeleteProposal = async () => {
-    if (rightSideContent?.proposerId === accountPkh && rightSideContent)
-      await dispatch(dropProposal(rightSideContent?.id))
-  }
-
-  const paymentMethods = useMemo(
-    () =>
-      whitelistTokens
-        .map((tokenInfo) => ({
-          symbol: tokenInfo.contract_name,
-          address: tokenInfo.contract_address,
-          shortSymbol: tokenInfo.token_contract_standard,
-          id: 0,
-        }))
-        .filter(({ shortSymbol }) => ['fa2', 'fa12', 'tez'].includes(shortSymbol)),
-    [whitelistTokens],
-  )
 
   return (
     <GovernanceStyled>
@@ -371,215 +193,217 @@ export const GovernanceView = ({
       ) : (
         emptyContainer
       )}
-      {rightSideContent && rightSideContent.id !== 0 ? (
-        <GovernanceRightContainer isAuthorized={Boolean(accountPkh)}>
-          <GovRightContainerTitleArea>
-            <h1>{rightSideContent.title}</h1>
-            <StatusFlag text={statusFlag} status={statusFlag} />
-          </GovRightContainerTitleArea>
-
-          {votingEnding ? (
-            <RightSideSubContent id="votingDeadline">
-              Voting {isEndedVotingTime ? 'ended' : 'ending'} on{' '}
-              {parseDate({ time: votingTime, timeFormat: 'MMMM Do HH:mm Z' })} CEST
-            </RightSideSubContent>
-          ) : null}
-
-          {statusFlag === 'UNLOCKED' ? (
-            <InfoBlock className="info-block">
-              <Icon id="info" />
-              {userIsSatellite ? (
-                <p>
-                  Your proposal isn’t locked yet and can’t be voted on. You can lock it on the proposal submission page.
-                </p>
-              ) : (
-                <p>
-                  This proposal isn’t locked yet and can’t be voted on until then. The proposer is still building it and
-                  will lock it in the coming days
-                </p>
-              )}
-            </InfoBlock>
-          ) : null}
-
-          <div className="voting-proposal">
-            <VotingProposalsArea
-              voteStatistics={voteStatistics}
-              currentProposalStage={{
-                isPastProposals: isVisibleHistoryProposal,
-                isTimeLock: isVisibleOngoingTimeLock,
-                isAbleToMakeProposalRoundVote,
-                isVotingPeriod: isVisibleOngoingVoting,
-              }}
-              votingPhaseHandler={handleVotingRoundVote}
-              handleProposalVote={handleProposalRoundVote}
-              selectedProposal={rightSideContent}
-              vote={rightSideContent.votes.find(
-                ({ voter_id, round }) =>
-                  voter_id === accountPkh && round === (governancePhase === GovPhases.PROPOSAL ? 0 : 1),
-              )}
-            />
-
-            {isExecuteProposal ? (
-              <Button
-                className="execute-proposal"
-                text="Execute Proposal"
-                onClick={handleClickExecuteProposal}
-                kind="actionPrimary"
-              />
-            ) : null}
-            {isPaymentProposal ? (
-              <Button
-                className="execute-proposal"
-                text="Process Payment"
-                onClick={handleClickProcessPayment}
-                kind="actionPrimary"
-              />
-            ) : null}
-          </div>
-          <hr />
-
-          {rightSideContent.description ? (
-            <article>
-              <RightSideSubHeader>Description</RightSideSubHeader>
-              <RightSideSubContent>{rightSideContent.description}</RightSideSubContent>
-            </article>
-          ) : null}
-
-          <article>
-            <RightSideSubHeader>Source Code</RightSideSubHeader>
-            <RightSideSubContent>
-              {rightSideContent.sourceCode ? (
-                <a href={rightSideContent.sourceCode} target="_blank" rel="noreferrer">
-                  {rightSideContent.sourceCode}
-                </a>
-              ) : (
-                'No link to source code given'
-              )}
-            </RightSideSubContent>
-          </article>
-
-          <article>
-            <RightSideSubHeader>Meta-Data</RightSideSubHeader>
-            {rightSideContent.proposalData?.length ? (
-              <ol className="proposal-list">
-                {rightSideContent.proposalData.map((item) => {
-                  if (!item || !item.encoded_code) return null
-                  const unique = `proposalDataItem${item.id}`
-                  return (
-                    <li key={item.id}>
-                      <div>
-                        <div>
-                          <b className="proposal-list-title">Title: {item.title}</b>
-                        </div>
-                        <div>
-                          <b className="proposal-list-title">Bytes: </b>
-                          <span className="proposal-list-bites">
-                            {visibleMeta === unique ? (
-                              <span className="byte">
-                                <button onClick={() => handleCopyToClipboard(item.encoded_code ?? '')}>
-                                  {item.encoded_code} <Icon id="copyToClipboard" />
-                                </button>
-                                <br />
-                                <button onClick={() => setVisibleMeta('')} className="visible-button">
-                                  hide
-                                </button>
-                              </span>
-                            ) : (
-                              <span className="short-byte">
-                                {getShortByte(item.encoded_code)}{' '}
-                                <button onClick={() => setVisibleMeta(unique)} className="visible-button">
-                                  see all
-                                </button>
-                              </span>
-                            )}
-                          </span>
-                        </div>
-                      </div>
-                    </li>
-                  )
-                })}
-              </ol>
-            ) : (
-              <RightSideSubContent>No proposal meta-data given</RightSideSubContent>
-            )}
-          </article>
-
-          <article className="payment-data">
-            <RightSideSubHeader>Payment Data</RightSideSubHeader>
-            {rightSideContent.proposalPayments?.length ? (
-              <Table className="editable-table">
-                <TableHeader className="editable-head">
-                  <TableRow>
-                    <TableHeaderCell className="no-right-border">Address</TableHeaderCell>
-                    <TableHeaderCell>Purpose</TableHeaderCell>
-                    <TableHeaderCell>Amount</TableHeaderCell>
-                    <TableHeaderCell className="right-border">Payment Type (XTZ/MVK)</TableHeaderCell>
-                  </TableRow>
-                </TableHeader>
-                <TableBody className="editable-body">
-                  {rightSideContent.proposalPayments.map((payment) => {
-                    const { symbol: selectedSymbol = 'MVK' } =
-                      paymentMethods.find(({ address }) => address === payment.token_address) ??
-                      paymentMethods?.[0] ??
-                      {}
-
-                    return (
-                      <TableRow className="editable-row">
-                        <TableCell width="25%">
-                          <TzAddress
-                            tzAddress={String(payment.to__id)}
-                            type={BLUE}
-                            hasIcon={true}
-                            className="table-cell-tzAddress"
-                          />
-                        </TableCell>
-                        <TableCell width="25%">{String(payment.title)}</TableCell>
-                        <TableCell width="25%">
-                          <CommaNumber value={Number(payment.token_amount)} endingText={selectedSymbol} />
-                        </TableCell>
-                        <TableCell className="no-right-border" width="25%">
-                          {selectedSymbol}
-                        </TableCell>
-                      </TableRow>
-                    )
-                  })}
-                </TableBody>
-              </Table>
-            ) : (
-              <RightSideSubContent>No payment data given</RightSideSubContent>
-            )}
-          </article>
-
-          {rightSideContent.proposerId ? (
-            <article>
-              <RightSideSubHeader>Proposer</RightSideSubHeader>
-              <RightSideSubContent>
-                <div className="address">
-                  <TzAddress tzAddress={rightSideContent.proposerId} hasIcon={true} isBold={true} />
-                </div>
-              </RightSideSubContent>
-            </article>
-          ) : null}
-
-          {rightSideContent.governanceId ? (
-            <article>
-              <RightSideSubHeader>Governance Info</RightSideSubHeader>
-              <div className="governance-contract">
-                <p>Governance Contract</p>
-                <TzAddress tzAddress={rightSideContent.governanceId} hasIcon={true} isBold={true} />
-              </div>
-            </article>
-          ) : null}
-          {userIsSatellite &&
-          !isVisibleHistoryProposal &&
-          canDropPhase &&
-          rightSideContent.proposerId === accountPkh ? (
-            <div className="drop-proposal">
-              <Button icon="close-stroke" text="Drop Proposal" kind="actionSecondary" onClick={handleDeleteProposal} />
-            </div>
-          ) : null}
-        </GovernanceRightContainer>
-      ) : null}
+      {rightSideContent && rightSideContent.id !== 0 ? <ProposalDetails proposal={rightSideContent} /> : null}
     </GovernanceStyled>
   )
 }
+
+// (
+//   <GovernanceRightContainer isAuthorized={Boolean(accountPkh)}>
+//     <GovRightContainerTitleArea>
+//       <h1>{rightSideContent.title}</h1>
+//       <StatusFlag text={statusFlag} status={statusFlag} />
+//     </GovRightContainerTitleArea>
+
+//     {votingEnding ? (
+//       <RightSideSubContent id="votingDeadline">
+//         Voting {isEndedVotingTime ? 'ended' : 'ending'} on{' '}
+//         {parseDate({ time: votingTime, timeFormat: 'MMMM Do HH:mm Z' })} CEST
+//       </RightSideSubContent>
+//     ) : null}
+
+//     {statusFlag === 'UNLOCKED' ? (
+//       <InfoBlock className="info-block">
+//         <Icon id="info" />
+//         {userIsSatellite ? (
+//           <p>
+//             Your proposal isn’t locked yet and can’t be voted on. You can lock it on the proposal submission page.
+//           </p>
+//         ) : (
+//           <p>
+//             This proposal isn’t locked yet and can’t be voted on until then. The proposer is still building it and
+//             will lock it in the coming days
+//           </p>
+//         )}
+//       </InfoBlock>
+//     ) : null}
+
+//     <div className="voting-proposal">
+//       <VotingProposalsArea
+//         voteStatistics={voteStatistics}
+//         currentProposalStage={{
+//           isPastProposals: isVisibleHistoryProposal,
+//           isTimeLock: isVisibleOngoingTimeLock,
+//           isAbleToMakeProposalRoundVote,
+//           isVotingPeriod: isVisibleOngoingVoting,
+//         }}
+//         votingPhaseHandler={handleVotingRoundVote}
+//         handleProposalVote={handleProposalRoundVote}
+//         selectedProposal={rightSideContent}
+//         vote={rightSideContent.votes.find(
+//           ({ voter_id, round }) =>
+//             voter_id === accountPkh && round === (governancePhase === GovPhases.PROPOSAL ? 0 : 1),
+//         )}
+//       />
+
+//       {isExecuteProposal ? (
+//         <Button
+//           className="execute-proposal"
+//           text="Execute Proposal"
+//           onClick={handleClickExecuteProposal}
+//           kind="actionPrimary"
+//         />
+//       ) : null}
+//       {isPaymentProposal ? (
+//         <Button
+//           className="execute-proposal"
+//           text="Process Payment"
+//           onClick={handleClickProcessPayment}
+//           kind="actionPrimary"
+//         />
+//       ) : null}
+//     </div>
+//     <hr />
+
+//     {rightSideContent.description ? (
+//       <article>
+//         <RightSideSubHeader>Description</RightSideSubHeader>
+//         <RightSideSubContent>{rightSideContent.description}</RightSideSubContent>
+//       </article>
+//     ) : null}
+
+//     <article>
+//       <RightSideSubHeader>Source Code</RightSideSubHeader>
+//       <RightSideSubContent>
+//         {rightSideContent.sourceCode ? (
+//           <a href={rightSideContent.sourceCode} target="_blank" rel="noreferrer">
+//             {rightSideContent.sourceCode}
+//           </a>
+//         ) : (
+//           'No link to source code given'
+//         )}
+//       </RightSideSubContent>
+//     </article>
+
+//     <article>
+//       <RightSideSubHeader>Meta-Data</RightSideSubHeader>
+//       {rightSideContent.proposalData?.length ? (
+//         <ol className="proposal-list">
+//           {rightSideContent.proposalData.map((item) => {
+//             if (!item || !item.encoded_code) return null
+//             const unique = `proposalDataItem${item.id}`
+//             return (
+//               <li key={item.id}>
+//                 <div>
+//                   <div>
+//                     <b className="proposal-list-title">Title: {item.title}</b>
+//                   </div>
+//                   <div>
+//                     <b className="proposal-list-title">Bytes: </b>
+//                     <span className="proposal-list-bites">
+//                       {visibleMeta === unique ? (
+//                         <span className="byte">
+//                           <button onClick={() => handleCopyToClipboard(item.encoded_code ?? '')}>
+//                             {item.encoded_code} <Icon id="copyToClipboard" />
+//                           </button>
+//                           <br />
+//                           <button onClick={() => setVisibleMeta('')} className="visible-button">
+//                             hide
+//                           </button>
+//                         </span>
+//                       ) : (
+//                         <span className="short-byte">
+//                           {getShortByte(item.encoded_code)}{' '}
+//                           <button onClick={() => setVisibleMeta(unique)} className="visible-button">
+//                             see all
+//                           </button>
+//                         </span>
+//                       )}
+//                     </span>
+//                   </div>
+//                 </div>
+//               </li>
+//             )
+//           })}
+//         </ol>
+//       ) : (
+//         <RightSideSubContent>No proposal meta-data given</RightSideSubContent>
+//       )}
+//     </article>
+
+//     <article className="payment-data">
+//       <RightSideSubHeader>Payment Data</RightSideSubHeader>
+//       {rightSideContent.proposalPayments?.length ? (
+//         <Table className="editable-table">
+//           <TableHeader className="editable-head">
+//             <TableRow>
+//               <TableHeaderCell className="no-right-border">Address</TableHeaderCell>
+//               <TableHeaderCell>Purpose</TableHeaderCell>
+//               <TableHeaderCell>Amount</TableHeaderCell>
+//               <TableHeaderCell className="right-border">Payment Type (XTZ/MVK)</TableHeaderCell>
+//             </TableRow>
+//           </TableHeader>
+//           <TableBody className="editable-body">
+//             {rightSideContent.proposalPayments.map((payment) => {
+//               const { symbol: selectedSymbol = 'MVK' } =
+//                 paymentMethods.find(({ address }) => address === payment.token_address) ??
+//                 paymentMethods?.[0] ??
+//                 {}
+
+//               return (
+//                 <TableRow className="editable-row">
+//                   <TableCell width="25%">
+//                     <TzAddress
+//                       tzAddress={String(payment.to__id)}
+//                       type={BLUE}
+//                       hasIcon={true}
+//                       className="table-cell-tzAddress"
+//                     />
+//                   </TableCell>
+//                   <TableCell width="25%">{String(payment.title)}</TableCell>
+//                   <TableCell width="25%">
+//                     <CommaNumber value={Number(payment.token_amount)} endingText={selectedSymbol} />
+//                   </TableCell>
+//                   <TableCell className="no-right-border" width="25%">
+//                     {selectedSymbol}
+//                   </TableCell>
+//                 </TableRow>
+//               )
+//             })}
+//           </TableBody>
+//         </Table>
+//       ) : (
+//         <RightSideSubContent>No payment data given</RightSideSubContent>
+//       )}
+//     </article>
+
+//     {rightSideContent.proposerId ? (
+//       <article>
+//         <RightSideSubHeader>Proposer</RightSideSubHeader>
+//         <RightSideSubContent>
+//           <div className="address">
+//             <TzAddress tzAddress={rightSideContent.proposerId} hasIcon={true} isBold={true} />
+//           </div>
+//         </RightSideSubContent>
+//       </article>
+//     ) : null}
+
+//     {rightSideContent.governanceId ? (
+//       <article>
+//         <RightSideSubHeader>Governance Info</RightSideSubHeader>
+//         <div className="governance-contract">
+//           <p>Governance Contract</p>
+//           <TzAddress tzAddress={rightSideContent.governanceId} hasIcon={true} isBold={true} />
+//         </div>
+//       </article>
+//     ) : null}
+//     {userIsSatellite &&
+//     !isVisibleHistoryProposal &&
+//     canDropPhase &&
+//     rightSideContent.proposerId === accountPkh ? (
+//       <div className="drop-proposal">
+//         <Button icon="close-stroke" text="Drop Proposal" kind="actionSecondary" onClick={handleDeleteProposal} />
+//       </div>
+//     ) : null}
+//   </GovernanceRightContainer>
+// )
