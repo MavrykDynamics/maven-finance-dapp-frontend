@@ -1,8 +1,8 @@
 import styled, { css } from 'styled-components/macro'
 import { CardHover, boxShadowColor, cyanColor, royalPurpleColor, skyColor } from 'styles'
 
-import { MavrykTheme } from '../../../styles/interfaces'
-import { ProposalStatus } from '../../../utils/TypesAndInterfaces/Governance'
+import { MavrykTheme } from '../../../../styles/interfaces'
+import { ProposalStatus } from '../../../../utils/TypesAndInterfaces/Governance'
 
 export const ProposalListContainer = styled.div<{ theme: MavrykTheme }>`
   margin-bottom: 38px;

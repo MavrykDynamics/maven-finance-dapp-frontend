@@ -8,7 +8,7 @@ import { getEmergencyGovernanceStorage } from '../EmergencyGovernance/EmergencyG
 // view
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
 import { GovernanceView } from './Governance.view'
-import { GovernanceTopBar } from './GovernanceTopBar/GovernanceTopBar.controller'
+import { GovernanceTopBar } from './components/GovernanceTopBar/GovernanceTopBar.controller'
 
 // hooks
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'

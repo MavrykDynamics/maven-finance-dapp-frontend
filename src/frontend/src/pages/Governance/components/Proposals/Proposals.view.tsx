@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux'
 import { State } from 'reducers'
 
 // helpers
-import { getProposalStatusInfo } from '../Governance.helpers'
+import { getProposalStatusInfo } from '../../Governance.helpers'
 import {
   calculateSlicePositions,
   GOVERNANCE_VOTERS_LIST_NAME,
@@ -13,9 +13,9 @@ import {
 } from 'app/App.components/Pagination/pagination.consts'
 
 // view
-import { CommaNumber } from '../../../app/App.components/CommaNumber/CommaNumber.controller'
-import { StatusFlag } from '../../../app/App.components/StatusFlag/StatusFlag.controller'
-import { ProposalRecordType, ProposalStatus } from '../../../utils/TypesAndInterfaces/Governance'
+import { CommaNumber } from '../../../../app/App.components/CommaNumber/CommaNumber.controller'
+import { StatusFlag } from '../../../../app/App.components/StatusFlag/StatusFlag.controller'
+import { ProposalRecordType, ProposalStatus } from '../../../../utils/TypesAndInterfaces/Governance'
 import Pagination from 'app/App.components/Pagination/Pagination.view'
 
 // style
@@ -26,7 +26,7 @@ import {
   VoterListItem,
   ProposalStatusFlag,
 } from './Proposals.style'
-import { EmptyContainer, GovRightContainerTitleArea } from '../Governance.style'
+import { EmptyContainer, GovRightContainerTitleArea } from '../../Governance.style'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import Checkbox from 'app/App.components/Checkbox/Checkbox.view'
 import { DropDown } from 'app/App.components/DropDown/DropDown.controller'

@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux'
 import { useLocation } from 'react-router-dom'
-import { State } from '../../../reducers'
-import { GovPhases, ProposalRecordType } from '../../../utils/TypesAndInterfaces/Governance'
+import { State } from '../../../../reducers'
+import { GovPhases, ProposalRecordType } from '../../../../utils/TypesAndInterfaces/Governance'
 import { ProposalsView } from './Proposals.view'
 
 type ProposalsProps = {

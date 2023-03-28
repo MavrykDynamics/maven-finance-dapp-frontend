@@ -1,19 +1,19 @@
 import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+
 import { State } from 'reducers'
+import { GovPhases } from 'utils/TypesAndInterfaces/Governance'
 
 // components
-import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import Icon from 'app/App.components/Icon/Icon.view'
-import { startNextRound } from '../actions/GovernanceInteraction.actions'
-import { GovPhases } from 'utils/TypesAndInterfaces/Governance'
-import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { MoveNextRoundModalBase } from './MoveNextRoundModal.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
-import { GovRightContainerTitleArea } from '../Governance.style'
+import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
+import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import Button from 'app/App.components/Button/NewButton'
+import Icon from 'app/App.components/Icon/Icon.view'
 
-// actions
+import { startNextRound } from 'pages/Governance/actions/GovernanceInteraction.actions'
+import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
 export default function MoveToNextRound() {
   const dispatch = useDispatch()

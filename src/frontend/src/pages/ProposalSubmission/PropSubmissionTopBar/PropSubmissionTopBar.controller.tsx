@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux'
 import { State } from '../../../reducers'
 
-import TimeRemaining from '../../Governance/TimeRemaining/TimeRemaining.controller'
+import TimeRemaining from '../../Governance/components/TimeRemaining/TimeRemaining.controller'
 import { SlidingTabButtons } from '../../../app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import { getSeparateSnakeCase } from '../../../utils/parse'
 

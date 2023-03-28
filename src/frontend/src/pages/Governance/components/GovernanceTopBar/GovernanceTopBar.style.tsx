@@ -1,7 +1,7 @@
 import styled from 'styled-components/macro'
 import { Card, cyanColor, darkPurpleColor } from 'styles'
 
-import { MavrykTheme } from '../../../styles/interfaces'
+import { MavrykTheme } from '../../../../styles/interfaces'
 
 export const GovernanceTopBarStyled = styled(Card)`
   margin: 30px auto 20px;
