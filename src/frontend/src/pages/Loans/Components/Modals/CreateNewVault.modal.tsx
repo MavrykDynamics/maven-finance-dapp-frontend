@@ -214,7 +214,8 @@ export const CreateNewVault = ({
   //handle vaultName input
   const handleVaultNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
-    const validationStatus = value && value.length <= 15 ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
+    const validationStatus =
+      value && value.length <= 15 && /^[A-Za-z\s]*$/g.test(value) ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
 
     setVaultName({ name: value, validationStatus })
   }
