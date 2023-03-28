@@ -34,7 +34,7 @@ import { getGovernanceProposals } from 'pages/Governance/actions/GovernanseData.
 
 const Satellites = () => {
   const dispatch = useDispatch()
-  const { isLoaded: isProposalsLoaded } = useSelector((state: State) => state.governance.proposals)
+  const { isLoaded: isProposalsLoaded } = useSelector((state: State) => state.governanceProposals)
   const { allSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
   const { feedsLedger, isLoaded: isFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
   const { isLoaded: isDoormanLoaded } = useSelector((state: State) => state.doorman)

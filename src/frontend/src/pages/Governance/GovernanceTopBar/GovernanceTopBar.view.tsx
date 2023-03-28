@@ -1,6 +1,6 @@
 // components
 import TimeRemaining from '../TimeRemaining/TimeRemaining.controller'
-import { GovernancePhase } from '../../../reducers/governance'
+import { GovernancePhase } from '../../../reducers/governanceProposals'
 
 // hooks
 

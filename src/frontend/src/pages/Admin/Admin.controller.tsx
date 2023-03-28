@@ -15,7 +15,7 @@ import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.contr
 import { AdminView } from './Admin.view'
 import { getLoansStorage } from '../Loans/Actions/getLoansData.actions'
 import { getVaultsStorage } from '../Vaults/Vaults.actions'
-import { getGovernanceConfig, getGovernanceProposals } from 'pages/Governance/actions/GovernanseData.actions'
+import { getGovernanceConfig } from 'pages/Governance/actions/GovernanseData.actions'
 
 export const Admin = () => {
   const dispatch = useDispatch()
@@ -23,7 +23,6 @@ export const Admin = () => {
   useEffect(() => {
     dispatch(getLoansStorage())
     dispatch(getGovernanceConfig())
-    dispatch(getGovernanceProposals())
     dispatch(getVaultsStorage())
   }, [dispatch])
 

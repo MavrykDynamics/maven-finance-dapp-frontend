@@ -3,7 +3,7 @@
 // components
 import TimeRemaining from '../../Governance/TimeRemaining/TimeRemaining.controller'
 import { SlidingTabButtons } from '../../../app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
-import { GovernancePhase } from '../../../reducers/governance'
+import { GovernancePhase } from '../../../reducers/governanceProposals'
 import { getSeparateSnakeCase } from '../../../utils/parse'
 
 import {

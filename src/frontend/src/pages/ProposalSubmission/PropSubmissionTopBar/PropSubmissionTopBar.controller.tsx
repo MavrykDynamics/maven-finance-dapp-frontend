@@ -7,7 +7,7 @@ export type PropSubmissionTopBarProps = {
   valueCallback?: (val?: number) => void
 }
 export const PropSubmissionTopBar = ({ value, valueCallback }: PropSubmissionTopBarProps) => {
-  const { governancePhase } = useSelector((state: State) => state.governance.config)
+  const { governancePhase } = useSelector((state: State) => state.governanceConfig)
 
   const handleChangeTab = (tabId?: number) => {
     // TODO: Implement function and dispatch action

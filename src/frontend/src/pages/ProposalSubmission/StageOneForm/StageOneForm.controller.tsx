@@ -38,7 +38,7 @@ export const StageOneForm = ({
     proposalDescriptionMaxLength,
     proposalSourceCodeMaxLength,
     governancePhase,
-  } = useSelector((state: State) => state.governance.config)
+  } = useSelector((state: State) => state.governanceConfig)
 
   const isProposalRound = governancePhase === 'PROPOSAL'
   const isProposalSubmitted = proposalId >= 0

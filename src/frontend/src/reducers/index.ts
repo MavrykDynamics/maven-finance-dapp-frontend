@@ -4,7 +4,7 @@ import { doorman, DoormanState } from './doorman'
 import { loading, LoadingState } from './loading'
 import { toaster, ToasterState } from './toaster'
 import { wallet, WalletState } from './wallet'
-import { governance, GovernanceState } from './governance'
+import { governanceProposals, GovernanceProposalsState } from './governanceProposals'
 import { emergencyGovernance, EmergencyGovernanceState } from './emergencyGovernance'
 import { treasury, TreasuryState } from './treasury'
 import { council, CouncilState } from './council'
@@ -19,6 +19,7 @@ import { loans, LoansState } from './loans'
 import { vaults, VaultsStateType } from './vaults'
 import { financialRequest, FinancialRequestStoreType } from './financialRequests'
 import { satellites, SatellitesState } from './satellites'
+import { governanceConfig, GovernanceConfigState } from './governanceConfig'
 
 export const reducers = combineReducers({
   loading,
@@ -28,7 +29,8 @@ export const reducers = combineReducers({
   preferences,
   contractAddresses,
 
-  governance,
+  governanceProposals,
+  governanceConfig,
   council,
   financialRequest,
   breakGlass,
@@ -50,7 +52,8 @@ export interface State {
   toaster: ToasterState
   wallet: WalletState
   doorman: DoormanState
-  governance: GovernanceState
+  governanceProposals: GovernanceProposalsState
+  governanceConfig: GovernanceConfigState
   financialRequest: FinancialRequestStoreType
   emergencyGovernance: EmergencyGovernanceState
   treasury: TreasuryState

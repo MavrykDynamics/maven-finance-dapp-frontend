@@ -34,7 +34,7 @@ import { parseDate } from 'utils/time'
 import Icon from '../../app/App.components/Icon/Icon.view'
 import { StatusFlag } from '../../app/App.components/StatusFlag/StatusFlag.controller'
 import { TzAddress } from '../../app/App.components/TzAddress/TzAddress.view'
-import { GovernancePhase } from '../../reducers/governance'
+import { GovernancePhase } from '../../reducers/governanceProposals'
 import { Proposals } from './Proposals/Proposals.controller'
 import { Button } from 'app/App.components/Button/Button.controller'
 

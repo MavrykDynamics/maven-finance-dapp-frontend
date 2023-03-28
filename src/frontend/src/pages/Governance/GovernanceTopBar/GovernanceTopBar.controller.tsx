@@ -1,4 +1,4 @@
-import { GovernancePhase } from '../../../reducers/governance'
+import { GovernancePhase } from '../../../reducers/governanceProposals'
 import { GovernanceTopBarView } from './GovernanceTopBar.view'
 
 export type GovernanceTopBarProps = {

@@ -29,10 +29,8 @@ export const Governance = () => {
     accountPkh,
     user: { isSatellite },
   } = useSelector((state: State) => state.wallet)
-  const {
-    proposals: { isLoaded: isGovProposalsLoaded },
-    config: { isLoaded: isGovConfigLoaded, governancePhase },
-  } = useSelector((state: State) => state.governance)
+  const { isLoaded: isGovConfigLoaded, governancePhase } = useSelector((state: State) => state.governanceConfig)
+  const { isLoaded: isGovProposalsLoaded } = useSelector((state: State) => state.governanceProposals)
   const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
 
   const { isLoading } = useDataLoader(async () => {

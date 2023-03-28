@@ -54,7 +54,7 @@ export const StageThreeForm = ({
 }: StageThreeFormProps) => {
   const { proposalPayments, locked, title } = currentProposal
 
-  const { fee, successReward, governancePhase } = useSelector((state: State) => state.governance.config)
+  const { fee, successReward, governancePhase } = useSelector((state: State) => state.governanceConfig)
 
   useEffect(() => {
     if (!proposalPayments.some(checkPaymentExists)) {

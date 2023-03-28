@@ -70,7 +70,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
       mySatelliteRewardsData: { myAvailableSatelliteRewards },
     },
   } = useSelector((state: State) => state.wallet)
-  const { proposalsMapper } = useSelector((state: State) => state.governance.proposals)
+  const { proposalsMapper } = useSelector((state: State) => state.governanceProposals)
 
   // Card buttons handlers
   const delegateCallback = () => dispatch(delegate(satellite.address))

@@ -1,4 +1,4 @@
-import { GovernancePhase, GovernanceState } from '../../reducers/governance'
+import { GovernancePhase, GovernanceProposalsState } from '../../reducers/governanceProposals'
 import {
   ProposalStatus,
   ProposalRecordType,
@@ -16,6 +16,7 @@ import {
   defaultProposalTitleMaxLength,
   defaultProposalSourceCodeMaxLength,
 } from 'app/App.components/Input/Input.constants'
+import { GovernanceConfigState } from 'reducers/governanceConfig'
 
 export const getProposalStatusInfo = (
   governancePhase: GovernancePhase,
@@ -258,8 +259,8 @@ export const normalizeProposal = (item: GovernanceProposalGraphQL, dipDupTokens?
 export const normalizeGovernanceProposals = (
   proposals: Array<GovernanceProposalGraphQL>,
   dipDupTokens?: Array<DipDupTokensGraphQl>,
-): Omit<GovernanceState['proposals'], 'isLoaded'> => {
-  return proposals.reduce<Omit<GovernanceState['proposals'], 'isLoaded'>>(
+): Omit<GovernanceProposalsState, 'isLoaded'> => {
+  return proposals.reduce<Omit<GovernanceProposalsState, 'isLoaded'>>(
     (acc, proposalFromGQL) => {
       const normalizedProposal = normalizeProposal(proposalFromGQL, dipDupTokens)
 
@@ -291,7 +292,7 @@ const calcGovPhase = (round: number) => (round === 0 ? 'PROPOSAL' : round === 1 
 
 export const normalizeGovernanceConfig = (
   currentGovernance: GovernanceGraphQL,
-): Omit<GovernanceState['config'], 'isLoaded'> => {
+): Omit<GovernanceConfigState, 'isLoaded'> => {
   return {
     address: currentGovernance.address,
     fee: calcWithoutMu(currentGovernance.proposal_submission_fee_mutez),
@@ -309,6 +310,7 @@ export const normalizeGovernanceConfig = (
     cycle: currentGovernance.cycle_id ?? 0,
     timelockProposalId: currentGovernance.timelock_proposal_id ?? 0,
     cycleHighestVotedProposalId: currentGovernance.cycle_highest_voted_proposal_id ?? 0,
+    // TODO: check this value usage
     cycleCounter: 0,
 
     governancePhase: calcGovPhase(currentGovernance.current_round),

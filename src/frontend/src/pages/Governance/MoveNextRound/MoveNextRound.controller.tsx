@@ -14,7 +14,7 @@ import { startNextRound } from '../actions/GovernanceInteraction.actions'
 export default function MoveToNextRound() {
   const dispatch = useDispatch()
   const { accountPkh } = useSelector((state: State) => state.wallet)
-  const { timelockProposalId, governancePhase } = useSelector((state: State) => state.governance.config)
+  const { timelockProposalId, governancePhase } = useSelector((state: State) => state.governanceConfig)
 
   const [visibleModal, setVisibleModal] = useState(false)
   const [estimatedValues] = useState({ fee: 0, cost: 0 })

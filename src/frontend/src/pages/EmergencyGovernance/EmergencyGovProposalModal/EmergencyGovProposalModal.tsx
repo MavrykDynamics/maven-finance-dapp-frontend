@@ -24,7 +24,7 @@ import { BUTTON_PRIMARY, BUTTON_SECONDARY } from 'app/App.components/Button/Butt
 
 export const EmergencyGovProposalModal = ({ show, closeHandler }: { show: boolean; closeHandler: () => void }) => {
   const dispatch = useDispatch()
-  const { fee } = useSelector((state: State) => state.governance.config)
+  const { fee } = useSelector((state: State) => state.governanceConfig)
   const {
     config: { proposalTitleMaxLength, proposalDescMaxLength },
   } = useSelector((state: State) => state.emergencyGovernance)
