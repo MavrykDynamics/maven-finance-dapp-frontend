@@ -30,25 +30,10 @@ export const PopupContainerWrapper = styled.div`
     cursor: pointer;
     transition: opacity 0.3s;
 
-    &:after,
     &:before {
-      content: '';
-      height: 2px;
-      width: 24px;
-      background-color: ${({ theme }) => theme.textColor};
-      position: absolute;
-    }
-
-    &:after {
-      top: 15px;
-      right: -2px;
-      transform: rotate(-180deg);
-    }
-
-    &:before {
-      top: 15px;
-      right: -2px;
-      transform: rotate(90deg);
+      content: '✕';
+      font-size: 25px;
+      color: ${({ theme }) => theme.textColor};
     }
 
     &:hover {
@@ -97,6 +82,21 @@ export const PopupContainerWrapper = styled.div`
     h1 {
       margin: 0;
       text-align: start;
+    }
+  }
+
+  &.wert-io-wrapper {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 535px;
+    width: 100%;
+    height: 660px;
+
+    @media (max-width: 550px) {
+      width: 100vw;
+      height: 100vh !important;
     }
   }
 
@@ -242,52 +242,6 @@ export const PopupContainer = styled.div<{ show?: boolean }>`
           }
         `
       : ''}
-
-  .close-modal {
-    font-size: 50px;
-    font-weight: 100;
-    height: 24px;
-    width: 24px;
-    color: ${({ theme }) => theme.textColor};
-    transform: rotate(45deg);
-    cursor: pointer;
-    transition: color 300ms;
-    position: absolute;
-    top: 5px;
-    right: 10px;
-
-    &:hover {
-      color: ${({ theme }) => theme.textColorHovered};
-    }
-  }
-
-  .wert-io-wrapper {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    max-width: 535px;
-    width: 100%;
-    height: 660px;
-
-    .close-modal {
-      position: absolute;
-      font-size: 60px;
-      font-weight: 100;
-      height: 35px;
-      width: 35px;
-      color: #8d86eb;
-      transform: unset;
-      top: 5px;
-      right: 15px;
-      cursor: pointer;
-    }
-
-    @media (max-width: 550px) {
-      width: 100vw;
-      height: 100vh !important;
-    }
-  }
 `
 
 export const PopupTitle = styled.div`

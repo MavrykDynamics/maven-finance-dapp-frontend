@@ -67,9 +67,7 @@ export const PopupChangeNodeView = ({ closeModal }: { closeModal: () => void }) 
   return (
     <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="settings">
       <div className="change-node-block">
-        <div onClick={closeModal} className="close-modal">
-          +
-        </div>
+        <button onClick={closeModal} className="close-modal" />
         <PopupTitle className="change_node">Change RPC Node</PopupTitle>
 
         <ChangeNodeNodesList className="scroll-block">
