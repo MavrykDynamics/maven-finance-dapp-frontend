@@ -8,7 +8,6 @@ import { RPCNodeType } from 'reducers/preferences'
 import { ACTION_PRIMARY, TRANSPARENT } from '../Button/Button.constants'
 import { isValidRPCNode } from 'utils/validatorFunctions'
 
-
 // actions
 import { selectNewRPCNode, setNewRPCNodes } from './SettingsPopup.actions'
 import {
@@ -26,7 +25,7 @@ import {
   DescrText,
   PopupContainerWrapper,
   PopupTitle,
-  Button
+  Button,
 } from './SettingsPopup.style'
 
 // types
@@ -68,7 +67,7 @@ export const PopupChangeNodeView = ({ closeModal }: { closeModal: () => void }) 
   return (
     <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="settings">
       <div className="change-node-block">
-        <div onClick={closeModal} className="close_modal">
+        <div onClick={closeModal} className="close-modal">
           +
         </div>
         <PopupTitle className="change_node">Change RPC Node</PopupTitle>

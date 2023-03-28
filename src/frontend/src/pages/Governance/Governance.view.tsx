@@ -7,8 +7,8 @@ import { State } from 'reducers'
 import {
   ProposalRecordType,
   ProposalStatus,
-  CurrentRoundProposalsStorageType,
   GovPhases,
+  GovernancePhaseType,
 } from '../../utils/TypesAndInterfaces/Governance'
 import { VoteStatistics } from 'app/App.components/VotingArea/helpers/voting'
 
@@ -34,7 +34,6 @@ import { parseDate } from 'utils/time'
 import Icon from '../../app/App.components/Icon/Icon.view'
 import { StatusFlag } from '../../app/App.components/StatusFlag/StatusFlag.controller'
 import { TzAddress } from '../../app/App.components/TzAddress/TzAddress.view'
-import { GovernancePhase } from '../../reducers/governanceProposals'
 import { Proposals } from './Proposals/Proposals.controller'
 import { Button } from 'app/App.components/Button/Button.controller'
 
@@ -58,12 +57,12 @@ import getTimestampByLevel from 'utils/Fetchers/getTimestampByLevel'
 
 type GovernanceViewProps = {
   accountPkh: string | undefined
-  ongoingProposals: CurrentRoundProposalsStorageType
-  nextProposals: CurrentRoundProposalsStorageType
-  pastProposals: CurrentRoundProposalsStorageType
-  watingProposals: CurrentRoundProposalsStorageType
-  waitingForPaymentToBeProcessed: CurrentRoundProposalsStorageType
-  governancePhase: GovernancePhase
+  ongoingProposals: any
+  nextProposals: any
+  pastProposals: any
+  watingProposals: any
+  waitingForPaymentToBeProcessed: any
+  governancePhase: GovernancePhaseType
   userIsSatellite: boolean
   handleExecuteProposal: (arg: number) => void
 }
@@ -176,11 +175,11 @@ export const GovernanceView = ({
   }
 
   const isVisibleOngoingVoting =
-    !onProposalHistoryPage && Boolean(ongoingProposals?.length) && governancePhase === 'VOTING'
+    !onProposalHistoryPage && Boolean(ongoingProposals?.length) && governancePhase === GovPhases.VOTING
   const isVisibleOngoingTimeLock =
-    !onProposalHistoryPage && Boolean(ongoingProposals?.length) && governancePhase === 'TIME_LOCK'
+    !onProposalHistoryPage && Boolean(ongoingProposals?.length) && governancePhase === GovPhases.TIMELOCK
   const isVisibleNextProposal =
-    !onProposalHistoryPage && Boolean(nextProposals?.length) && governancePhase === 'PROPOSAL'
+    !onProposalHistoryPage && Boolean(nextProposals?.length) && governancePhase === GovPhases.PROPOSAL
   const isVisibleHistoryProposal = onProposalHistoryPage && Boolean(pastProposals?.length)
 
   const [visibleLists, setVisibleLists] = useState<Record<string, boolean>>({

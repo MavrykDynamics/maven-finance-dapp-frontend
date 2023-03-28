@@ -3,11 +3,15 @@ import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
 // components
-import { MoveNextRoundModal } from './MoveNextRoundModal.controller'
-import NewButton from 'app/App.components/Button/NewButton'
-import { BUTTON_SECONDARY } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { startNextRound } from '../actions/GovernanceInteraction.actions'
+import { GovPhases } from 'utils/TypesAndInterfaces/Governance'
+import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+import { MoveNextRoundModalBase } from './MoveNextRoundModal.style'
+import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
+import { GovRightContainerTitleArea } from '../Governance.style'
+import Button from 'app/App.components/Button/NewButton'
 
 // actions
 
@@ -16,23 +20,28 @@ export default function MoveToNextRound() {
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const { timelockProposalId, governancePhase } = useSelector((state: State) => state.governanceConfig)
 
-  const [visibleModal, setVisibleModal] = useState(false)
+  const [showModal, setShowModal] = useState(true)
   const [estimatedValues] = useState({ fee: 0, cost: 0 })
-  const isTimeLockRound = governancePhase === 'TIME_LOCK'
 
   const handleCloseModal = () => {
-    setVisibleModal(false)
+    setShowModal(false)
   }
-  const handleStartNextRound = async (variant: boolean) => {
-    await dispatch(startNextRound(variant))
+
+  const modalMoveNext = () => {
+    dispatch(startNextRound(false))
+    handleCloseModal()
+  }
+
+  const modalExecute = () => {
+    dispatch(startNextRound(true))
     handleCloseModal()
   }
 
   const handleMoveNextRound = () => {
-    if (isTimeLockRound && timelockProposalId > 0) {
-      setVisibleModal(true)
+    if (governancePhase === GovPhases.TIMELOCK && timelockProposalId > 0) {
+      setShowModal(true)
     } else {
-      handleStartNextRound(false)
+      modalMoveNext()
     }
   }
 
@@ -48,18 +57,43 @@ export default function MoveToNextRound() {
 
   return (
     <>
-      <NewButton kind={BUTTON_SECONDARY} disabled={!accountPkh} onClick={handleMoveNextRound}>
+      <Button kind={BUTTON_SECONDARY} disabled={!accountPkh} onClick={handleMoveNextRound}>
         <Icon id="upload" />
         Move to next round
-      </NewButton>
+      </Button>
 
-      {visibleModal ? (
-        <MoveNextRoundModal
-          handleCloseModal={handleCloseModal}
-          handleExecuteProposal={() => handleStartNextRound(true)}
-          handleMoveNextRound={() => handleStartNextRound(false)}
-          estimatedValues={estimatedValues}
-        />
+      {showModal ? (
+        <PopupContainer onClick={handleCloseModal} show={showModal}>
+          <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="loans">
+            <MoveNextRoundModalBase>
+              <button onClick={handleCloseModal} className="close-modal" />
+              <GovRightContainerTitleArea>
+                <h2>Move to the next round</h2>
+              </GovRightContainerTitleArea>
+              <div className="descr">Do you want to Execute Proposal or move to the next round without execution?</div>
+
+              <div className="calcs">
+                <div className="row">
+                  <div className="name">Minimal Fee</div>
+                  <CommaNumber value={estimatedValues.fee} endingText="tez" decimalsToShow={4} className="value" />
+                </div>
+                <div className="row">
+                  <div className="name">Estimated total Cost</div>
+                  <CommaNumber value={estimatedValues.cost} endingText="tez" decimalsToShow={4} className="value" />
+                </div>
+              </div>
+
+              <div className="buttons">
+                <Button kind={BUTTON_SECONDARY} form={BUTTON_WIDE} onClick={modalMoveNext}>
+                  Move to the next round
+                </Button>
+                <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={modalExecute}>
+                  Execute Proposal
+                </Button>
+              </div>
+            </MoveNextRoundModalBase>
+          </PopupContainerWrapper>
+        </PopupContainer>
       ) : null}
     </>
   )

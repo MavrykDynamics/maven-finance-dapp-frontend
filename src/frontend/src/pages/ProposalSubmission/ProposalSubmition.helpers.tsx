@@ -3,7 +3,7 @@ import BigNumber from 'bignumber.js'
 import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { Governance_Proposal } from 'utils/generated/graphqlTypes'
 import { ValidSubmitProposalForm, SubmitProposalFormInputStatus } from 'utils/TypesAndInterfaces/Forms'
-import { CurrentRoundProposalsStorageType, ProposalRecordType } from 'utils/TypesAndInterfaces/Governance'
+import { ProposalRecordType } from 'utils/TypesAndInterfaces/Governance'
 import {
   PaymentsDataChangesType,
   ProposalDataChangesType,
@@ -218,7 +218,7 @@ export const PROPOSAL_BYTE = {
   governance_proposal_id: 0,
 }
 
-export const DEFAULT_PROPOSAL: CurrentRoundProposalsStorageType[number] = {
+export const DEFAULT_PROPOSAL: ProposalRecordType = {
   id: -1,
   proposerId: '',
   status: 0,

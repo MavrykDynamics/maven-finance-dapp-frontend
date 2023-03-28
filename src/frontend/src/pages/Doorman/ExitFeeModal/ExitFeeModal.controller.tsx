@@ -22,7 +22,7 @@ import { PopupContainer, PopupContainerWrapper } from 'app/App.components/Settin
 import NewButton from 'app/App.components/Button/NewButton'
 import { containerColor } from 'styles'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
-import {CustomTooltip} from "../../../app/App.components/Tooltip/Tooltip.view";
+import { CustomTooltip } from '../../../app/App.components/Tooltip/Tooltip.view'
 
 type ExitFeeModalPropsType = {
   closePopup: () => void
@@ -34,7 +34,7 @@ type ExitFeeModalPropsType = {
     myMvkTokenBalance: number
     totalStakedMvk: number
     totalMVKSupply: number
-    accountPkh?: string,
+    accountPkh?: string
   }
 }
 
@@ -116,7 +116,7 @@ export const ExitFeeModal = ({
   return (
     <PopupContainer onClick={closePopup} show={show}>
       <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="exitFee">
-        <div onClick={closePopup} className="close_modal">
+        <div onClick={closePopup} className="close-modal">
           +
         </div>
         <h1>Unstake your MVK</h1>
@@ -143,8 +143,8 @@ export const ExitFeeModal = ({
                   rel="noreferrer"
                 >
                   <CustomTooltip
-                      text="The Mavryk Loyalty Index is a metric that balances MVK & sMVK. The more MVK is staked v.s. MVK, the higher the MLI, and the lower the exit fee is. The less MVK staked v.s. MVK, the lower the MLI, and the exit fee will rise. Click here to read more."
-                      iconId={'info'}
+                    text="The Mavryk Loyalty Index is a metric that balances MVK & sMVK. The more MVK is staked v.s. MVK, the higher the MLI, and the lower the exit fee is. The less MVK staked v.s. MVK, the lower the MLI, and the exit fee will rise. Click here to read more."
+                    iconId={'info'}
                   />
                 </a>
               </h4>
@@ -162,8 +162,8 @@ export const ExitFeeModal = ({
                   rel="noreferrer"
                 >
                   <CustomTooltip
-                      text="The Exit Fee is dynamic, adjusts according to the MLI, and may modified by governance vote. Exit fees are paid directly to sMVK stakeholders for remaining active participants in securing the network. Click to read more."
-                      iconId={'info'}
+                    text="The Exit Fee is dynamic, adjusts according to the MLI, and may modified by governance vote. Exit fees are paid directly to sMVK stakeholders for remaining active participants in securing the network. Click to read more."
+                    iconId={'info'}
                   />
                 </a>
               </h4>

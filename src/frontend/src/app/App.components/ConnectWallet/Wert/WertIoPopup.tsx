@@ -8,7 +8,7 @@ const WertIoPopup = ({ closePopup, isOpened }: { closePopup: () => void; isOpene
   return (
     <PopupContainer onClick={closePopup} show={isOpened}>
       <div className="wert-io-wrapper">
-        <div onClick={closePopup} className="close_modal">
+        <div onClick={closePopup} className="close-modal">
           ×
         </div>
         <WertIo id="wert-io-popup-wrapper" />

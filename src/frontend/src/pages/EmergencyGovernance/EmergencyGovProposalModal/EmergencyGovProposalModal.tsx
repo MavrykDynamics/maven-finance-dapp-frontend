@@ -74,7 +74,7 @@ export const EmergencyGovProposalModal = ({ show, closeHandler }: { show: boolea
   return (
     <PopupContainer onClick={closeHandler} show={show}>
       <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="loans child-width">
-        <button onClick={closeHandler} className="close_modal">
+        <button onClick={closeHandler} className="close-modal">
           +
         </button>
         <EmergencyGovProposalModalContent>

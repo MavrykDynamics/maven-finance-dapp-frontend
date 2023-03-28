@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux'
 import { useLocation } from 'react-router-dom'
 import { State } from '../../../reducers'
-import { ProposalRecordType } from '../../../utils/TypesAndInterfaces/Governance'
+import { GovPhases, ProposalRecordType } from '../../../utils/TypesAndInterfaces/Governance'
 import { ProposalsView } from './Proposals.view'
 
 type ProposalsProps = {
@@ -23,13 +23,13 @@ export const Proposals = ({
   const { governancePhase } = useSelector((state: State) => state.governanceConfig)
   let proposalListTitle = ''
   switch (governancePhase) {
-    case 'VOTING':
+    case GovPhases.VOTING:
       proposalListTitle = 'Ongoing Proposals'
       break
-    case 'TIME_LOCK':
+    case GovPhases.TIMELOCK:
       proposalListTitle = 'Proposals on Timelock'
       break
-    case 'PROPOSAL':
+    case GovPhases.PROPOSAL:
       proposalListTitle = 'Poll for next proposals'
       break
     default:
@@ -49,7 +49,9 @@ export const Proposals = ({
       selectedProposal={selectedProposal}
       isHistoryPage={type === 'history'}
       listName={listName}
-      showVotersList={(governancePhase === 'TIME_LOCK' || governancePhase === 'VOTING') && type !== 'history'}
+      showVotersList={
+        (governancePhase === GovPhases.TIMELOCK || governancePhase === GovPhases.VOTING) && type !== 'history'
+      }
     />
   )
 }

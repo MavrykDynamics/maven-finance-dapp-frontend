@@ -6,12 +6,6 @@ import type {
 } from '../utils/TypesAndInterfaces/Governance'
 import { GET_PROPOSALS } from 'pages/Governance/actions/GovernanseData.actions'
 
-const PROPOSAL = 'PROPOSAL',
-  VOTING = 'VOTING',
-  TIME_LOCK = 'TIME_LOCK'
-
-export type GovernancePhase = typeof PROPOSAL | typeof VOTING | typeof TIME_LOCK
-
 export type GovernanceProposalsState = {
   currentRoundProposalsIds: Array<number>
   pastProposalsIds: Array<number>

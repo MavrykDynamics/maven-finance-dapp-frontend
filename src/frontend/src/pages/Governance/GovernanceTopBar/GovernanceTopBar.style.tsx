@@ -59,23 +59,3 @@ export const GovTopBarPhaseText = styled.div<{ isCorrectPhase?: boolean; theme: 
     text-align: left;
   }
 `
-export const GovTopBarEmergencyGovText = styled.div<{ theme: MavrykTheme }>`
-  margin: 0 auto;
-  color: ${({ theme }) => theme.warningColor};
-  font-weight: 800;
-  font-size: 25px;
-`
-export const TimeLeftArea = styled.div<{ theme: MavrykTheme }>`
-  border: 2px solid;
-  border-left-color: ${darkPurpleColor};
-  border-right: none;
-  border-top: none;
-  border-bottom: none;
-  padding: 5px 0 5px 10px;
-  color: ${cyanColor};
-  font-weight: 600;
-  font-size: 16px;
-  width: 100%;
-  text-align: right;
-  line-height: 28px;
-`

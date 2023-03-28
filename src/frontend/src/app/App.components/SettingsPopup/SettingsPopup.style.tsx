@@ -23,19 +23,38 @@ export const PopupContainerWrapper = styled.div`
     padding: 40px 20px;
   }
 
-  .close_modal {
+  .close-modal {
     position: absolute;
-    font-size: 35px;
-    font-weight: 100;
-    height: 18px;
-    width: 18px;
-    color: #8d86eb;
-    transform: rotate(45deg);
     top: 15px;
     right: 15px;
     cursor: pointer;
-  }
+    transition: opacity 0.3s;
 
+    &:after,
+    &:before {
+      content: '';
+      height: 2px;
+      width: 24px;
+      background-color: ${({ theme }) => theme.textColor};
+      position: absolute;
+    }
+
+    &:after {
+      top: 15px;
+      right: -2px;
+      transform: rotate(-180deg);
+    }
+
+    &:before {
+      top: 15px;
+      right: -2px;
+      transform: rotate(90deg);
+    }
+
+    &:hover {
+      opacity: 0.7;
+    }
+  }
   &.settings {
     .theme-switcher-block {
       display: flex;
@@ -224,7 +243,7 @@ export const PopupContainer = styled.div<{ show?: boolean }>`
         `
       : ''}
 
-  .close_modal {
+  .close-modal {
     font-size: 50px;
     font-weight: 100;
     height: 24px;
@@ -251,7 +270,7 @@ export const PopupContainer = styled.div<{ show?: boolean }>`
     width: 100%;
     height: 660px;
 
-    .close_modal {
+    .close-modal {
       position: absolute;
       font-size: 60px;
       font-weight: 100;

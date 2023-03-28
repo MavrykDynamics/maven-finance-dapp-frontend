@@ -13,7 +13,6 @@ import { Page } from 'styles'
 
 // types
 import { State } from 'reducers'
-import { CurrentRoundProposalsStorageType } from 'utils/TypesAndInterfaces/Governance'
 import { ProposalValidityObj, SubmittedProposalsMapper } from './ProposalSybmittion.types'
 
 // helpers

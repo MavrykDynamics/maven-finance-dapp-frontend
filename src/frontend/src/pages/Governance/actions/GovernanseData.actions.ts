@@ -10,7 +10,7 @@ import {
 } from 'gql/queries'
 
 import { fetchFromIndexer } from 'gql/fetchGraphQL'
-import { normalizeGovernanceConfig, normalizeGovernanceProposals } from '../Governance.helpers'
+import { normalizeGovernanceConfig, normalizeGovernanceProposals } from './governanceNormalizers'
 
 export const GET_GOVERNANCE_CONFIG = 'GET_GOVERNANCE_CONFIG'
 export const getGovernanceConfig = () => async (dispatch: AppDispatch, getState: GetState) => {

@@ -81,7 +81,7 @@ export const FarmDepositModal = ({
   return (
     <PopupContainer onClick={closeHandler} show={show}>
       <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="loans">
-        <button onClick={closeHandler} className="close_modal">
+        <button onClick={closeHandler} className="close-modal">
           +
         </button>
         <FarmLpActionsPopupsContent>

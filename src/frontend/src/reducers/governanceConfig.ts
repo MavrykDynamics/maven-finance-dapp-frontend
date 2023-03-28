@@ -8,12 +8,7 @@ import {
   defaultProposalTitleMaxLength,
 } from 'app/App.components/Input/Input.constants'
 import { GET_GOVERNANCE_CONFIG } from 'pages/Governance/actions/GovernanseData.actions'
-
-const PROPOSAL = 'PROPOSAL',
-  VOTING = 'VOTING',
-  TIME_LOCK = 'TIME_LOCK'
-
-export type GovernancePhase = typeof PROPOSAL | typeof VOTING | typeof TIME_LOCK
+import { GovernancePhaseType, GovPhases } from 'utils/TypesAndInterfaces/Governance'
 
 export type GovernanceConfigState = {
   isLoaded: boolean
@@ -32,7 +27,7 @@ export type GovernanceConfigState = {
   cycleHighestVotedProposalId: number
   cycleCounter: number
 
-  governancePhase: GovernancePhase
+  governancePhase: GovernancePhaseType
 }
 
 export const DEFAULT_GOVERNANCE_CONFIG_STORAGE: GovernanceConfigState = {
@@ -52,7 +47,7 @@ export const DEFAULT_GOVERNANCE_CONFIG_STORAGE: GovernanceConfigState = {
   cycleHighestVotedProposalId: 0,
   cycleCounter: 0,
 
-  governancePhase: 'PROPOSAL',
+  governancePhase: GovPhases.PROPOSAL,
 }
 
 export function governanceConfig(state = DEFAULT_GOVERNANCE_CONFIG_STORAGE, action: Action) {
