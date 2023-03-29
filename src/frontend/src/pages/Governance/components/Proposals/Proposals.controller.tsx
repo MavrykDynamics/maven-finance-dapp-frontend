@@ -30,139 +30,35 @@ import { ProposalsView } from './Proposals.view'
 
 type ProposalsProps = {
   proposalsList: Array<number>
-  handleItemSelect: (proposalListItem: ProposalRecordType | undefined) => void
+  handleItemSelect: (proposalListItem: ProposalRecordType) => void
   selectedProposal: ProposalRecordType | undefined
-  title?: string
+  title: string
   type: string
   listName: string
 }
-export const Proposals = ({
-  proposalsList,
-  handleItemSelect,
-  selectedProposal,
-  title = '',
-  type,
-  listName,
-}: ProposalsProps) => {
+
+export const Proposals = ({ proposalsList, handleItemSelect, selectedProposal, title, listName }: ProposalsProps) => {
   const {
-    config: { governancePhase, cycle, timelockProposalId, cycleHighestVotedProposalId, cycleCounter },
+    config: { governancePhase, timelockProposalId, cycleHighestVotedProposalId, cycleCounter },
     proposalsMapper,
   } = useSelector((state: State) => state.governance)
-  const { satelliteMapper } = useSelector((state: State) => state.satellites)
-
-  let proposalListTitle = ''
-  switch (governancePhase) {
-    case GovPhases.VOTING:
-      proposalListTitle = 'Ongoing Proposals'
-      break
-    case GovPhases.TIMELOCK:
-      proposalListTitle = 'Proposals on Timelock'
-      break
-    case GovPhases.PROPOSAL:
-      proposalListTitle = 'Poll for next proposals'
-      break
-    default:
-      proposalListTitle = 'Past Proposals'
-      break
-  }
-
-  if (type === 'history') {
-    proposalListTitle = 'Past Proposals'
-  }
-
-  const dropDownOptions = useMemo(
-    () => Array.from({ length: cycle - 1 }, (_, idx) => String(cycle - (idx + 1))),
-    [cycle],
-  )
-
-  const [showWithDroppped, setShowWithDroppped] = useState(false)
-  const [selectedCycle, setSelectedCycle] = useState<undefined | string>()
-  const [ddIsOpen, setDdIsOpen] = useState(false)
 
   const isHistoryPage = false
   const { search } = useLocation()
   const currentPage = getPageNumber(search, listName)
 
-  const filteredProposals = useMemo(() => {
-    return proposalsList.filter((proposalId) => {
-      const { status, cycle } = proposalsMapper[proposalId]
-      if (showWithDroppped && selectedCycle) {
-        return status === 0 && cycle === Number(selectedCycle)
-      }
-
-      if (showWithDroppped) {
-        return status === 0
-      }
-      if (selectedCycle) {
-        return cycle === Number(selectedCycle)
-      }
-
-      return true
-    })
-  }, [showWithDroppped, proposalsList, selectedCycle])
-
   const paginatedItemsList = useMemo(() => {
     const [from, to] = calculateSlicePositions(currentPage, listName)
-    return filteredProposals.slice(from, to)
-  }, [currentPage, filteredProposals, listName])
-
-  const votersList = useMemo(
-    () =>
-      selectedProposal?.votes?.reduce<
-        Array<{
-          vote: number
-          name: string
-          avatar: string
-          address: string
-        }>
-      >((acc, { voter_id, round, vote }) => {
-        const satelliteData = satelliteMapper[voter_id]
-
-        if (satelliteData && round === 1) {
-          acc.push({
-            vote,
-            name: satelliteData.name,
-            avatar: satelliteData.image,
-            address: voter_id,
-          })
-        }
-
-        return acc
-      }, []),
-    [satelliteMapper, selectedProposal],
-  )
+    return proposalsList.slice(from, to)
+  }, [currentPage, proposalsList, listName])
+  const selectedCycle = 4
 
   return (
     <ProposalListContainer>
       <GovRightContainerTitleArea>
-        <h1>{proposalListTitle}</h1>
+        <h1>{title}</h1>
       </GovRightContainerTitleArea>
-      {isHistoryPage ? (
-        <Checkbox
-          id={'show_dropped'}
-          onChangeHandler={() => {
-            setShowWithDroppped(!showWithDroppped)
-          }}
-          checked={showWithDroppped}
-          className={'proposal-history-checkbox'}
-        >
-          <span>Hide dropped proposals</span>
-        </Checkbox>
-      ) : null}
-      {isHistoryPage ? (
-        <DropDown
-          className="cycle-dropdown"
-          placeholder={'Choose cycle number'}
-          items={dropDownOptions}
-          clickOnItem={(value: string) => {
-            setSelectedCycle(value)
-            setDdIsOpen(false)
-          }}
-          isOpen={ddIsOpen}
-          setIsOpen={setDdIsOpen}
-          itemSelected={selectedCycle}
-        />
-      ) : null}
+
       {paginatedItemsList.length ? (
         paginatedItemsList.map((proposalId, index) => {
           const proposal = proposalsMapper[proposalId]
@@ -213,31 +109,6 @@ export const Proposals = ({
         </EmptyContainer>
       )}
       <Pagination itemsCount={proposalsList.length} listName={listName} />
-      {true && votersList?.length ? (
-        <div className="voters-list">
-          <GovRightContainerTitleArea>
-            <h1>Satellite Voting History</h1>
-          </GovRightContainerTitleArea>
-          {votersList.map(({ vote, address, name, avatar }) => {
-            const status = vote === 1 ? ProposalStatus.EXECUTED : vote === 2 ? ProposalStatus.DEFEATED : undefined
-            return (
-              <VoterListItem>
-                <div className="left">
-                  <div className="avatar">
-                    <img src={avatar} alt={`${name} avatar`} />
-                  </div>
-                  <div className="info">
-                    <span>{name}</span>
-                    <TzAddress tzAddress={address} />
-                  </div>
-                </div>
-                <ProposalStatusFlag status={status}>{getVoteText(vote)}</ProposalStatusFlag>
-              </VoterListItem>
-            )
-          })}
-          <Pagination itemsCount={votersList.length} listName={GOVERNANCE_VOTERS_LIST_NAME} />
-        </div>
-      ) : null}
     </ProposalListContainer>
   )
 }

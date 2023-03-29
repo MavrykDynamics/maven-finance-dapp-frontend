@@ -177,13 +177,13 @@ export const GovernanceView = ({ currentProposals, handleExecuteProposal }: Gove
               listName={HISTORY_PROPOSALS_LIST_NAME}
             />
           )} */}
-        <Proposals
+        {/* <Proposals
           proposalsList={currentProposals}
           handleItemSelect={_handleItemSelect}
           selectedProposal={rightSideContent}
           type="ongoingTimeLock"
           listName={ONGOING_PROPOSALS_LIST_NAME}
-        />
+        /> */}
       </GovernanceLeftContainer>
       {/*  ) : (
         emptyContainer
