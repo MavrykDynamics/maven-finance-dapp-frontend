@@ -406,9 +406,8 @@ export const calcCollateralRatio = (collateralAmount: number, borrowedAmount: nu
   // means we haven't borrowed, but we have deposited
   if (borrowedAmount === 0) return 251
 
-  const collateralRatio = String((collateralAmount / (borrowedAmount * borrowedAssetRate)) * 100)
-  const [intPart, decimalPart] = collateralRatio.split('.')
-  return Number(String(`${intPart}${decimalPart ? `.${decimalPart.toString().substring(0, 2)}` : ''}`))
+  const collateralRatio = (collateralAmount / Math.max(1, borrowedAmount * borrowedAssetRate)) * 100
+  return Number(collateralRatio.toFixed(1))
 }
 
 export const getMaxCollateralWithdraw = (
@@ -435,7 +434,6 @@ const getBorrowings = async (
   dipDupTokens: State['tokens']['dipDupTokens'],
   feeds: State['dataFeeds']['feedsLedger'],
   interestRateDecimals: number,
-  avaliableMarketLiquidity: number,
   userAddress?: string,
 ): Promise<BorrowingNormalizerReturnType> => {
   try {
@@ -497,6 +495,7 @@ const getBorrowings = async (
         await fetch(`https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/blocks/${dayjs().toISOString()}`)
       ).json()
 
+      // TODO: ensure in this value
       const fee =
         calculateCompoundedInterest(currentInterestRate, vault.last_updated_block_level, currentBlock?.level ?? 0) /
         10 ** interestRateDecimals
@@ -523,9 +522,7 @@ const getBorrowings = async (
         ? [...vaultCollateral.normalizedCollaterals, vaultCollateral.totalRow]
         : []
 
-      const borrowCapacity =
-        Math.min(vaultCollateral.totalRow.amount / 2 - borrowedAmount * vaultAsset.rate, avaliableMarketLiquidity) /
-        vaultAsset.rate
+      const borrowCapacity = vaultCollateral.totalRow.amount / 2 - borrowedAmount * vaultAsset.rate
 
       const depositors = (vault.vault?.depositors.map(({ depositor_id }) => depositor_id).filter(Boolean) ??
         []) as Array<string>
@@ -549,7 +546,6 @@ const getBorrowings = async (
         collateralRatio,
         apr: currentInterestRate * 100,
         fee: borrowedAmount === 0 ? 0 : fee,
-        repayFee: vault.loan_interest_total,
         address: vault.vault.address,
         vaultId: vault.id,
         collateralData,
@@ -657,7 +653,7 @@ export const normalizeLoans = async ({
           marketLiquidityChartData,
         } = getTransactionHistory(history_data, dipDupData, feeds)
         const { myBorrowingList, permissinedBorrowingList, totalCollateral, vaultsBorrowedAmount } =
-          await getBorrowings(vaults, dipDupData, feeds, interestRateDecimals, availableLiquidity, userAddres)
+          await getBorrowings(vaults, dipDupData, feeds, interestRateDecimals, userAddres)
         const lendingItem = getLendingItem(
           loanToken,
           userMTokens,

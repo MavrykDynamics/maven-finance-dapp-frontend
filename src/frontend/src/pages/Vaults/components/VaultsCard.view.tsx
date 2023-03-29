@@ -83,7 +83,6 @@ const findFooterText = (status: string, statusColor: StatusFlagStyle, timestamp?
 
 type Props = VaultType & {
   isOwner: boolean
-  isAllPage: boolean
   handleMarkForLiquidation: (vaultId: number, vaultOwner: string) => void
 }
 
@@ -98,7 +97,6 @@ export const VaultsCard = (props: Props) => {
     isOwner,
     liquidationMax,
     liquidationPrice,
-    isAllPage,
     handleMarkForLiquidation,
   } = props
 
@@ -143,7 +141,7 @@ export const VaultsCard = (props: Props) => {
   const isMarkStatus = vaultsStatuses.MARK === status
 
   const ref = useRef<HTMLDivElement | null>(null)
-  useClickAway(ref, () => (!isPopupOpen && isAllPage ? setExpanded(false) : null))
+  useClickAway(ref, () => (!isPopupOpen ? setExpanded(false) : null))
 
   const getCountdownTimestamp = async (levelOfEarly: number, levelOfLate: number) => {
     const [timestampOfEarly, timestampOfLate] = await Promise.all([
@@ -336,8 +334,7 @@ export const VaultsCard = (props: Props) => {
           getExpandedStatus={setExpanded}
           isOpenedVault={expanded}
           isOwner
-          // TODO: add this values as on loans
-          DAOFee={0}
+          DAOFee={props.daoFee}
         />
       ) : (
         <BorrowingExpandCard
@@ -346,8 +343,7 @@ export const VaultsCard = (props: Props) => {
           headerSufix={headerSufix}
           getExpandedStatus={setExpanded}
           isOpenedVault={expanded}
-          // TODO: add this values as on loans
-          DAOFee={0}
+          DAOFee={props.daoFee}
         >
           {generalExpand}
         </BorrowingExpandCard>

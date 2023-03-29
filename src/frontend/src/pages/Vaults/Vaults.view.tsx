@@ -43,7 +43,6 @@ export const VaultsView = () => {
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const {
     vaultsList: { myVaultsIds, allVaultsIds, vaultsMapper },
-    isLoaded,
   } = useSelector((state: State) => state.vaults)
   const { tabId } = useParams<{ tabId: string }>()
 
@@ -68,17 +67,10 @@ export const VaultsView = () => {
 
   const { isLoading } = useDataLoader(async () => {
     try {
-      if (!isLoaded) {
-        await dispatch(getVaultsStorage())
-      }
-    } catch (e) {}
-  }, [accountPkh])
-
-  useDataLoader(async () => {
-    try {
+      await dispatch(getVaultsStorage())
       await dispatch(getAvaliableCollaterals())
     } catch (e) {}
-  }, [])
+  }, [accountPkh])
 
   const [vaultsIds, setVaultsIds] = useState<string[]>([])
   const assets = useMemo(() => getVaultAssets(vaultsMapper), [vaultsMapper])
@@ -112,6 +104,10 @@ export const VaultsView = () => {
     handleChangeTabs(tabsList[0].id)
   }, [accountPkh])
 
+  useEffect(() => {
+    setVaultsIds(tabId === tabsId.ALL ? allVaultsIds : myVaultsIds)
+  }, [myVaultsIds, allVaultsIds])
+
   return (
     <VaultsStyled>
       <TabSwitcher tabItems={tabsList} onClick={handleChangeTabs} className="tabSwitcher" />
@@ -131,14 +127,14 @@ export const VaultsView = () => {
       ) : paginatedVaultsList.length ? (
         <div className="vaults">
           {paginatedVaultsList.map((item) => {
-            const isOwner = vaultsMapper[item].ownerId === accountPkh
+            if (!vaultsMapper[item]) return null
+            const isOwner = vaultsMapper[item]?.ownerId === accountPkh
 
             return (
               <VaultsCard
                 key={item}
                 isOwner={isOwner}
                 handleMarkForLiquidation={handleMarkForLiquidation}
-                isAllPage={tabId === tabsId.ALL}
                 {...vaultsMapper[item]}
               />
             )
