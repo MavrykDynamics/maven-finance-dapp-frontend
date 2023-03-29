@@ -181,6 +181,24 @@ export const USER_LENDING_DATA_QUERY = `
           decimals
         }
       }
+
+      lending_controller_vaults {
+        collateral_balances {
+          balance
+          token {
+            token_name
+            token_address
+            oracle_id
+          }
+        }
+        loan_decimals
+        loan_principal_total
+        loan_token {
+          loan_token_name
+          loan_token_address
+          oracle_id
+        }
+      }
     }
   }
 `

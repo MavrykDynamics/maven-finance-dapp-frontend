@@ -784,77 +784,125 @@ const getDescrByType = (type: number) => {
 
 export const normalizeUserLending = ({
   dipDupTokens,
-  userDataFromIndexer,
+  userDataLoansHistoryGql,
+  userVaultsDataGql,
   feeds,
 }: {
   dipDupTokens: State['tokens']['dipDupTokens']
   feeds: State['dataFeeds']['feedsLedger']
-  userDataFromIndexer: Mavryk_User['lending_controller_history_data_sender']
+  userDataLoansHistoryGql: Mavryk_User['lending_controller_history_data_sender']
+  userVaultsDataGql: Mavryk_User['lending_controller_vaults']
 }) => {
-  return (
-    userDataFromIndexer?.reduce<{
-      userLendings: Array<UserLendObjType>
-      userBorrowing: Array<UserLendObjType>
-    }>(
-      (
-        acc,
-        {
-          type,
-          loan_token,
-          id,
-          amount,
-          operation_hash,
-          timestamp,
-          lending_controller: { interest_rate_decimals, interest_treasury_share, decimals },
-        },
-      ) => {
-        if (!loan_token) return acc
-        const assetData = getAssetMetadata({
-          tokenAddress: loan_token.loan_token_address,
-          tokenName: loan_token.loan_token_name,
+  const { userLendings, userBorrowing } = userDataLoansHistoryGql?.reduce<{
+    userLendings: Array<UserLendObjType>
+    userBorrowing: Array<UserLendObjType>
+  }>(
+    (
+      acc,
+      {
+        type,
+        loan_token,
+        id,
+        amount,
+        operation_hash,
+        timestamp,
+        lending_controller: { interest_rate_decimals, interest_treasury_share, decimals },
+      },
+    ) => {
+      if (!loan_token) return acc
+      const assetData = getAssetMetadata({
+        tokenAddress: loan_token.loan_token_address,
+        tokenName: loan_token.loan_token_name,
+        dipDupTokens,
+        feeds,
+        oracleId: String(loan_token.oracle_id),
+      })
+
+      if (!assetData) return acc
+      const convertedAmount = convertNumberForClient({ number: amount, grage: assetData.decimals })
+
+      switch (type) {
+        case 0:
+        case 1:
+          acc.userLendings.push({
+            icon: assetData.icon,
+            id,
+            amount: convertedAmount,
+            usdAmount: convertedAmount * assetData.rate,
+            date: timestamp,
+            annualPecentage: calcLendingAPY(
+              calcWithoutDecimals(loan_token.current_interest_rate, interest_rate_decimals),
+              calcWithoutDecimals(interest_treasury_share, decimals),
+            ),
+            symbol: assetData.symbol,
+            operationHash: operation_hash,
+          })
+          break
+        case 2:
+        case 3:
+          acc.userBorrowing.push({
+            icon: assetData.icon,
+            id,
+            date: timestamp,
+            amount: convertedAmount,
+            usdAmount: convertedAmount * assetData.rate,
+            annualPecentage: calcWithoutDecimals(loan_token.current_interest_rate, interest_rate_decimals) * 100,
+            operationHash: operation_hash,
+            symbol: assetData.symbol,
+          })
+          break
+      }
+
+      return acc
+    },
+    { userLendings: [], userBorrowing: [] },
+  ) ?? { userLendings: [], userBorrowing: [] }
+
+  const userVaultsData = userVaultsDataGql.reduce<Record<string, { borrowedAmount: number; collateralAmount: number }>>(
+    (acc, { collateral_balances, loan_token, loan_principal_total }) => {
+      if (!loan_token) return acc
+      const vaultAssetData = getAssetMetadata({
+        tokenAddress: loan_token.loan_token_address,
+        tokenName: loan_token.loan_token_name,
+        dipDupTokens,
+        feeds,
+        oracleId: String(loan_token.oracle_id),
+      })
+
+      if (!vaultAssetData) return acc
+
+      const collateralAmount = collateral_balances.reduce((acc, { balance, token }) => {
+        if (!token) return acc
+        const collateralAssetData = getAssetMetadata({
+          tokenAddress: token.token_address,
+          tokenName: token.token_name,
           dipDupTokens,
           feeds,
-          oracleId: String(loan_token.oracle_id),
+          oracleId: String(token.oracle_id),
         })
 
-        if (!assetData) return acc
-        const convertedAmount = convertNumberForClient({ number: amount, grage: assetData.decimals })
+        if (!collateralAssetData) return acc
 
-        switch (type) {
-          case 0:
-          case 1:
-            acc.userLendings.push({
-              icon: assetData.icon,
-              id,
-              amount: convertedAmount,
-              usdAmount: convertedAmount * assetData.rate,
-              date: timestamp,
-              annualPecentage: calcLendingAPY(
-                calcWithoutDecimals(loan_token.current_interest_rate, interest_rate_decimals),
-                calcWithoutDecimals(interest_treasury_share, decimals),
-              ),
-              symbol: assetData.symbol,
-              operationHash: operation_hash,
-            })
-            break
-          case 2:
-          case 3:
-            acc.userBorrowing.push({
-              icon: assetData.icon,
-              id,
-              date: timestamp,
-              amount: convertedAmount,
-              usdAmount: convertedAmount * assetData.rate,
-              annualPecentage: calcWithoutDecimals(loan_token.current_interest_rate, interest_rate_decimals) * 100,
-              operationHash: operation_hash,
-              symbol: assetData.symbol,
-            })
-            break
-        }
-
+        acc +=
+          convertNumberForClient({ number: balance, grage: collateralAssetData.decimals }) * collateralAssetData.rate
         return acc
-      },
-      { userLendings: [], userBorrowing: [] },
-    ) ?? { userLendings: [], userBorrowing: [] }
+      }, 0)
+
+      acc[loan_token.loan_token_name] = {
+        borrowedAmount:
+          convertNumberForClient({ number: loan_principal_total, grage: vaultAssetData.decimals }) *
+          vaultAssetData.rate,
+        collateralAmount,
+      }
+
+      return acc
+    },
+    {},
   )
+
+  return {
+    userLendings,
+    userBorrowing,
+    userVaultsData,
+  }
 }

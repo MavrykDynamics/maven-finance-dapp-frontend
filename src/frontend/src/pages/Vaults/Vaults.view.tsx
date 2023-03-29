@@ -107,7 +107,7 @@ export const VaultsView = () => {
   }
 
   // switch to "all" tab if user is disabled
-  useEffect(() => {   
+  useEffect(() => {
     if (accountPkh) return
     handleChangeTabs(tabsList[0].id)
   }, [accountPkh])
@@ -138,6 +138,7 @@ export const VaultsView = () => {
                 key={item}
                 isOwner={isOwner}
                 handleMarkForLiquidation={handleMarkForLiquidation}
+                isAllPage={tabId === tabsId.ALL}
                 {...vaultsMapper[item]}
               />
             )

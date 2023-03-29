@@ -83,6 +83,7 @@ const findFooterText = (status: string, statusColor: StatusFlagStyle, timestamp?
 
 type Props = VaultType & {
   isOwner: boolean
+  isAllPage: boolean
   handleMarkForLiquidation: (vaultId: number, vaultOwner: string) => void
 }
 
@@ -97,10 +98,36 @@ export const VaultsCard = (props: Props) => {
     isOwner,
     liquidationMax,
     liquidationPrice,
+    isAllPage,
     handleMarkForLiquidation,
   } = props
 
-  const { openLiquidateVaultPopup } = useContext(loansPopupsContext)
+  const {
+    openLiquidateVaultPopup,
+    changeBakerPopup,
+    repayPartPopup,
+    repayFullPopup,
+    borrowAssetPopup,
+    addExistingCollateralPopup,
+    addNewCollateralPopup,
+    withdrawCollateralPopup,
+    updateMvkOperatorPopup,
+    managePermissionsPopup,
+    liquidateVaultPopup,
+  } = useContext(loansPopupsContext)
+
+  const isPopupOpen =
+    repayPartPopup.showModal ||
+    changeBakerPopup.showModal ||
+    repayFullPopup.showModal ||
+    borrowAssetPopup.showModal ||
+    addExistingCollateralPopup.showModal ||
+    addNewCollateralPopup.showModal ||
+    withdrawCollateralPopup.showModal ||
+    updateMvkOperatorPopup.showModal ||
+    managePermissionsPopup.showModal ||
+    liquidateVaultPopup.showModal
+
   const [expanded, setExpanded] = useState(false)
   const [timerTimestamp, setTimerTimestamp] = useState<number | undefined>(undefined)
 
@@ -116,7 +143,7 @@ export const VaultsCard = (props: Props) => {
   const isMarkStatus = vaultsStatuses.MARK === status
 
   const ref = useRef<HTMLDivElement | null>(null)
-  useClickAway(ref, () => setExpanded(false))
+  useClickAway(ref, () => (!isPopupOpen && isAllPage ? setExpanded(false) : null))
 
   const getCountdownTimestamp = async (levelOfEarly: number, levelOfLate: number) => {
     const [timestampOfEarly, timestampOfLate] = await Promise.all([

@@ -24,9 +24,15 @@ import { Table, TableBody, TableCell, TableHeader, TableHeaderCell, TableRow } f
 import { Plug } from 'app/App.components/Chart/Chart.style'
 import { PositionTableStyled } from '../LoansDashboard.styles'
 import { loansPopupsContext } from 'pages/Loans/Components/Modals/LoansModals.provider'
-import { getVaultSimpleStatus } from '../helpers/position.helpers'
+import { getGaugeVaultRiskSimpleStatus, getVaultSimpleStatus } from '../helpers/position.helpers'
 
-export const LoansPositionTable = ({ markets }: { markets: State['loans']['loanTokens'] }) => {
+export const LoansPositionTable = ({
+  markets,
+  userVaultsData,
+}: {
+  markets: State['loans']['loanTokens']
+  userVaultsData: State['wallet']['user']['userLoansData']['userVaultsData']
+}) => {
   const { themeSelected } = useSelector((state: State) => state.preferences)
   const { openCreateVaultPopup, openAddLendingAssetPopup } = useContext(loansPopupsContext)
 
@@ -75,19 +81,16 @@ export const LoansPositionTable = ({ markets }: { markets: State['loans']['loanT
             </TableHeader>
 
             <TableBody className={`treasury dashboard-loans-table`}>
-              {paginatedTableRows.map(({ lendingItem, myBorrowingList, loanTokenData, lendingAPY }) => {
+              {paginatedTableRows.map(({ lendingItem, myBorrowingList, loanTokenData, borrowAPR, lendingAPY }) => {
                 const { lendValue = 0, interestEarned = 0 } = lendingItem ?? {}
-                const vaultsData = myBorrowingList.reduce<{ apr: number; loan: number; collateralRatio: number }>(
-                  (acc, { apr, borrowedAmount, collateralRatio }) => {
-                    acc.apr += apr
-                    acc.loan += borrowedAmount
-                    acc.collateralRatio += collateralRatio
-                    return acc
-                  },
-                  { apr: 0, loan: 0, collateralRatio: 0 },
-                )
 
-                const averageVaultStatus = getVaultSimpleStatus(vaultsData.collateralRatio / myBorrowingList.length)
+                const marketVaultsUserData = userVaultsData[loanTokenData.gqlName.toLowerCase()]
+
+                const averageVaultStatus = getGaugeVaultRiskSimpleStatus(
+                  marketVaultsUserData
+                    ? (marketVaultsUserData.borrowedAmount / (marketVaultsUserData.collateralAmount / 2)) * 100
+                    : 0,
+                )
 
                 return (
                   <TableRow
@@ -138,10 +141,10 @@ export const LoansPositionTable = ({ markets }: { markets: State['loans']['loanT
                       className={`position-multy-cell borrowing ${myBorrowingList.length === 0 ? 'one-item' : ''}`}
                     >
                       <div className="cell-content">
-                        {myBorrowingList.length ? (
+                        {marketVaultsUserData ? (
                           <>
-                            <CommaNumber value={vaultsData.apr / myBorrowingList.length} endingText="%" />
-                            <CommaNumber value={vaultsData.loan / myBorrowingList.length} />
+                            <CommaNumber value={borrowAPR} endingText="%" />
+                            <CommaNumber value={marketVaultsUserData.borrowedAmount} />
                             <div className={`vault-status ${averageVaultStatus.status}`}>{averageVaultStatus.text}</div>
                             <Link to={`/loans/${loanTokenData.symbol}/${BORROW_TAB_ID}`}>
                               <Button kind={BUTTON_SIMPLE}>View</Button>

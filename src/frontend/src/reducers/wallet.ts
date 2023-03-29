@@ -26,6 +26,7 @@ export interface UserState {
   userLoansData: {
     userLendings: Array<UserLendObjType>
     userBorrowing: Array<UserLendObjType>
+    userVaultsData: Record<string, { borrowedAmount: number; collateralAmount: number }>
   }
   mTokens?: Array<M_Token_Account>
 
@@ -73,6 +74,7 @@ export const DEFAULT_USER: UserState = {
   userLoansData: {
     userLendings: [],
     userBorrowing: [],
+    userVaultsData: {},
   },
   myLendingRewardsAmount: 0,
 

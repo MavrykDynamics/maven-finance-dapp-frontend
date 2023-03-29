@@ -160,15 +160,17 @@ export const fetchUserData = async (
       USER_LENDING_DATA_QUERY_VARIABLE(accountPkh),
     )
 
-    const { userBorrowing, userLendings } = normalizeUserLending({
+    const { userBorrowing, userLendings, userVaultsData } = normalizeUserLending({
       dipDupTokens,
       feeds,
-      userDataFromIndexer: userLendingData.mavryk_user?.[0]?.lending_controller_history_data_sender,
+      userDataLoansHistoryGql: userLendingData.mavryk_user?.[0]?.lending_controller_history_data_sender,
+      userVaultsDataGql: userLendingData.mavryk_user?.[0]?.lending_controller_vaults,
     })
 
     userInfo.userLoansData = {
       userBorrowing,
       userLendings,
+      userVaultsData,
     }
 
     return userInfo

@@ -48,15 +48,15 @@ export const LendBorrowPosition = ({
         sumOfRatioSuppliedToAPY: number
         sumOfRatioBorrowedToAPR: number
       }>(
-        (acc, { myBorrowingList, borrowAPR, lendingAPY, lendingItem, loanTokenData: { rate } }) => {
+        (acc, { borrowAPR, lendingAPY, lendingItem, loanTokenData: { rate, gqlName } }) => {
           let borrowedPerMarket = 0
 
+          const { borrowedAmount = 0, collateralAmount = 0 } = userLoansData.userVaultsData[gqlName] ?? {}
+
           // calculating value risk data & how much borrowed per vault
-          myBorrowingList.forEach(({ borrowedAmount, collateralBalance }) => {
-            acc.borrowCapacity += collateralBalance / 2 - borrowedAmount
-            acc.borrowedAmount += borrowedAmount
-            borrowedPerMarket += borrowedAmount
-          })
+          acc.borrowCapacity += collateralAmount / 2
+          acc.borrowedAmount += borrowedAmount
+          borrowedPerMarket += borrowedAmount
 
           // calculating net APY supplied & borrowed ratio's
           acc.sumOfRatioSuppliedToAPY += (lendingItem?.lendValue ?? 0 * rate) * lendingAPY
@@ -86,7 +86,7 @@ export const LendBorrowPosition = ({
         currentValue: apyNet,
       },
     }
-  }, [markets])
+  }, [markets, userLoansData.userVaultsData])
 
   // Default data for gauge chart will be for vault risk
   const [gaugeData, setGaugeData] = useState<GaugeChartStateType>({
@@ -164,7 +164,7 @@ export const LendBorrowPosition = ({
         </div>
       </div>
 
-      <LoansPositionTable markets={markets} />
+      <LoansPositionTable markets={markets} userVaultsData={userLoansData.userVaultsData} />
     </LBHInfoBlock>
   )
 }

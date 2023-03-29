@@ -53,15 +53,6 @@ export const GAUGE_STATE_APY_PART = {
   status: null,
 }
 
-/**
- * @SAM
- * to manually change gauge chart values you need to play with maxValue & minValue, for apy and risk charts, they are declared above
- * @GAUGE_STATE_APY_PART & @GAUGE_STATE_RISK_PART respectively,
- * and to test this min & max you need to manually set @currentValue inside return objects in
- * @const apyGaugeData for apy chart
- * @const vaultRiskGaugeData for vault risk chart
- */
-
 export const LoansDashboard = () => {
   const dispatch = useDispatch()
   const { themeSelected } = useSelector((state: State) => state.preferences)
@@ -132,15 +123,15 @@ export const LoansDashboard = () => {
         sumOfRatioSuppliedToAPY: number
         sumOfRatioBorrowedToAPR: number
       }>(
-        (acc, { myBorrowingList, borrowAPR, lendingAPY, lendingItem, loanTokenData: { rate } }) => {
+        (acc, { borrowAPR, lendingAPY, lendingItem, loanTokenData: { rate, gqlName } }) => {
           let borrowedPerMarket = 0
 
+          const { borrowedAmount = 0, collateralAmount = 0 } = userLoansData.userVaultsData[gqlName] ?? {}
+
           // calculating value risk data & how much borrowed per vault
-          myBorrowingList.forEach(({ borrowedAmount, collateralBalance }) => {
-            acc.borrowCapacity += collateralBalance / 2 - borrowedAmount
-            acc.borrowedAmount += borrowedAmount
-            borrowedPerMarket += borrowedAmount
-          })
+          acc.borrowCapacity += collateralAmount / 2
+          acc.borrowedAmount += borrowedAmount
+          borrowedPerMarket += borrowedAmount
 
           // calculating net APY supplied & borrowed ratio's
           acc.sumOfRatioSuppliedToAPY += (lendingItem?.lendValue ?? 0 * rate) * lendingAPY
@@ -172,7 +163,7 @@ export const LoansDashboard = () => {
         currentValue: apyNet,
       },
     }
-  }, [loanTokens, accountPkh])
+  }, [loanTokens, accountPkh, userLoansData.userVaultsData])
 
   // Default data for gauge chart will be for vault risk
   const [gaugeData, setGaugeData] = useState<GaugeChartStateType>({
@@ -305,7 +296,7 @@ export const LoansDashboard = () => {
                   </Button>
                 )}
               </div>
-              <LoansPositionTable markets={loanTokens} />
+              <LoansPositionTable markets={loanTokens} userVaultsData={userLoansData.userVaultsData} />
             </LBHInfoBlock>
           </>
         )}
