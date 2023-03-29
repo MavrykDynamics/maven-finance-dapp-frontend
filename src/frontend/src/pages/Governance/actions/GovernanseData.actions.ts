@@ -12,44 +12,36 @@ import {
 import { fetchFromIndexer } from 'gql/fetchGraphQL'
 import { normalizeGovernanceConfig, normalizeGovernanceProposals } from './governanceNormalizers'
 
-export const GET_GOVERNANCE_CONFIG = 'GET_GOVERNANCE_CONFIG'
-export const getGovernanceConfig = () => async (dispatch: AppDispatch, getState: GetState) => {
-  try {
-    const storage = await fetchFromIndexer(
-      GOVERNANCE_CONFIG_QUERY,
-      GOVERNANCE_CONFIG_QUERY_NAME,
-      GOVERNANCE_CONFIG_QUERY_VARIABLE,
-    )
-
-    const currentGov = storage.governance?.[0]
-    const config = normalizeGovernanceConfig(currentGov)
-
-    dispatch({
-      type: GET_GOVERNANCE_CONFIG,
-      config,
-    })
-  } catch (e) {
-    console.error('getGovernanceStorage error: ', e)
-  }
-}
-
 export const GET_PROPOSALS = 'GET_PROPOSALS'
-export const getGovernanceProposals = () => async (dispatch: AppDispatch, getState: GetState) => {
-  const { dipDupTokens } = getState().tokens
+export const GET_GOVERNANCE_CONFIG = 'GET_GOVERNANCE_CONFIG'
+export const getGovernance = () => async (dispatch: AppDispatch, getState: GetState) => {
+  const {
+    tokens: { dipDupTokens },
+  } = getState()
   try {
-    const storage = await fetchFromIndexer(
-      GOVERNANCE_PROPOSALS_QUERY,
-      GOVERNANCE_PROPOSALS_QUERY_NAME,
-      GOVERNANCE_PROPOSALS_QUERY_VARIABLE,
-    )
+    const [configStorage, proposalStorage] = await Promise.all([
+      fetchFromIndexer(GOVERNANCE_CONFIG_QUERY, GOVERNANCE_CONFIG_QUERY_NAME, GOVERNANCE_CONFIG_QUERY_VARIABLE),
+      fetchFromIndexer(
+        GOVERNANCE_PROPOSALS_QUERY,
+        GOVERNANCE_PROPOSALS_QUERY_NAME,
+        GOVERNANCE_PROPOSALS_QUERY_VARIABLE,
+      ),
+    ])
 
-    console.log({ storage })
-    const proposalsFromGql = storage.governance_proposal
-    const proposals = normalizeGovernanceProposals(proposalsFromGql, dipDupTokens)
+    const currentGov = configStorage.governance?.[0]
+    const normalizedConfig = normalizeGovernanceConfig(currentGov)
+
+    const proposalsFromGql = proposalStorage.governance_proposal
+    const normalizedProposals = normalizeGovernanceProposals(proposalsFromGql, dipDupTokens, normalizedConfig)
 
     dispatch({
       type: GET_PROPOSALS,
-      proposals,
+      proposals: normalizedProposals,
+    })
+
+    dispatch({
+      type: GET_GOVERNANCE_CONFIG,
+      config: normalizedConfig,
     })
   } catch (e) {
     console.error('getGovernanceStorage error: ', e)

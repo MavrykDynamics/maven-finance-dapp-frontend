@@ -91,7 +91,7 @@ export const VotingProposalsArea = ({
   vote,
   handleProposalVote,
   voteStatistics,
-  currentProposalStage: { isPastProposals, isTimeLock, isAbleToMakeProposalRoundVote, isVotingPeriod },
+  shownBlock,
   votingPhaseHandler,
   className,
 }: VotingProposalsType) => {
@@ -100,11 +100,11 @@ export const VotingProposalsArea = ({
     user: { isSatellite },
   } = useSelector((state: State) => state.wallet)
 
-  if (isPastProposals || isTimeLock) {
+  if (shownBlock === 'bar') {
     return <VotingBar voteStatistics={voteStatistics} />
   }
 
-  if (isVotingPeriod && votingPhaseHandler) {
+  if (shownBlock === 'area') {
     return (
       <VotingArea
         voteStatistics={voteStatistics}
@@ -115,7 +115,7 @@ export const VotingProposalsArea = ({
     )
   }
 
-  if (isAbleToMakeProposalRoundVote) {
+  if (shownBlock === 'proposalRoundVote') {
     return (
       <VotingAreaStyled className={className}>
         <div className="voted-block">

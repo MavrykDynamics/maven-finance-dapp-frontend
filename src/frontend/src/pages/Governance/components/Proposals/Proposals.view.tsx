@@ -51,7 +51,7 @@ export const ProposalsView = ({
   isHistoryPage,
 }: ProposalsViewProps) => {
   const { governancePhase, cycle, timelockProposalId, cycleHighestVotedProposalId, cycleCounter } = useSelector(
-    (state: State) => state.governanceConfig,
+    (state: State) => state.governance.config,
   )
   const { satelliteMapper } = useSelector((state: State) => state.satellites)
 

@@ -22,11 +22,7 @@ import { GovernanceLeftContainer, GovernanceStyled, EmptyContainer } from './Gov
 import { ProposalDetails } from './components/ProposalDetails/ProposalDetails'
 
 type GovernanceViewProps = {
-  ongoingProposals: any
-  nextProposals: any
-  pastProposals: any
-  watingProposals: any
-  waitingForPaymentToBeProcessed: any
+  currentProposals: Array<number>
   governancePhase: GovernancePhaseType
   handleExecuteProposal: (arg: number) => void
 }
@@ -38,15 +34,7 @@ const emptyContainer = (
   </EmptyContainer>
 )
 
-export const GovernanceView = ({
-  ongoingProposals,
-  nextProposals,
-  pastProposals,
-  governancePhase,
-  watingProposals,
-  handleExecuteProposal,
-  waitingForPaymentToBeProcessed,
-}: GovernanceViewProps) => {
+export const GovernanceView = ({ currentProposals, handleExecuteProposal }: GovernanceViewProps) => {
   const { pathname } = useLocation()
 
   // const { governanceStorage, currentRoundProposals } = useSelector((state: State) => state.governance)
@@ -59,13 +47,13 @@ export const GovernanceView = ({
     setRightSideContent(chosenProposal)
   }
 
-  const isVisibleOngoingVoting =
-    !onProposalHistoryPage && Boolean(ongoingProposals?.length) && governancePhase === GovPhases.VOTING
-  const isVisibleOngoingTimeLock =
-    !onProposalHistoryPage && Boolean(ongoingProposals?.length) && governancePhase === GovPhases.TIMELOCK
-  const isVisibleNextProposal =
-    !onProposalHistoryPage && Boolean(nextProposals?.length) && governancePhase === GovPhases.PROPOSAL
-  const isVisibleHistoryProposal = onProposalHistoryPage && Boolean(pastProposals?.length)
+  // const isVisibleOngoingVoting =
+  //   !onProposalHistoryPage && Boolean(ongoingProposals?.length) && governancePhase === GovPhases.VOTING
+  // const isVisibleOngoingTimeLock =
+  //   !onProposalHistoryPage && Boolean(ongoingProposals?.length) && governancePhase === GovPhases.TIMELOCK
+  // const isVisibleNextProposal =
+  //   !onProposalHistoryPage && Boolean(nextProposals?.length) && governancePhase === GovPhases.PROPOSAL
+  // const isVisibleHistoryProposal = onProposalHistoryPage && Boolean(pastProposals?.length)
 
   const [visibleLists, setVisibleLists] = useState<Record<string, boolean>>({
     wating: false,
@@ -75,53 +63,53 @@ export const GovernanceView = ({
     history: false,
   })
 
-  const isVisibleWating = !onProposalHistoryPage && Boolean(watingProposals?.length)
-  const isVisibleWatingPayment = !onProposalHistoryPage && Boolean(waitingForPaymentToBeProcessed?.length)
+  // const isVisibleWating = !onProposalHistoryPage && Boolean(watingProposals?.length)
+  // const isVisibleWatingPayment = !onProposalHistoryPage && Boolean(waitingForPaymentToBeProcessed?.length)
 
   const someVisible = Object.values(visibleLists).some((item) => item)
 
-  useEffect(() => {
-    const visibleTypes: Record<string, boolean> = {
-      wating: isVisibleWating,
-      ongoingVoiting: isVisibleOngoingVoting,
-      ongoingTimeLock: isVisibleOngoingTimeLock,
-      next: isVisibleNextProposal,
-      history: isVisibleHistoryProposal,
-    }
-    setVisibleLists(visibleTypes)
+  // useEffect(() => {
+  //   const visibleTypes: Record<string, boolean> = {
+  //     wating: isVisibleWating,
+  //     ongoingVoiting: isVisibleOngoingVoting,
+  //     ongoingTimeLock: isVisibleOngoingTimeLock,
+  //     next: isVisibleNextProposal,
+  //     history: isVisibleHistoryProposal,
+  //   }
+  //   setVisibleLists(visibleTypes)
 
-    const defaultProposalSelectedListName = Object.keys(visibleTypes).find((key: string) =>
-      Boolean(visibleTypes[key]),
-    ) as 'wating' | 'ongoingVoiting' | 'ongoingTimeLock' | 'next' | 'history' | undefined
+  //   const defaultProposalSelectedListName = Object.keys(visibleTypes).find((key: string) =>
+  //     Boolean(visibleTypes[key]),
+  //   ) as 'wating' | 'ongoingVoiting' | 'ongoingTimeLock' | 'next' | 'history' | undefined
 
-    switch (defaultProposalSelectedListName) {
-      case 'wating':
-        setRightSideContent(watingProposals[0])
-        break
-      case 'ongoingVoiting':
-        setRightSideContent(ongoingProposals[0])
-        break
-      case 'ongoingTimeLock':
-        setRightSideContent(ongoingProposals[0])
-        break
-      case 'next':
-        setRightSideContent(nextProposals[0])
-        break
-      case 'history':
-        setRightSideContent(pastProposals[0])
-        break
-    }
-  }, [
-    isVisibleWating,
-    isVisibleOngoingVoting,
-    isVisibleOngoingTimeLock,
-    isVisibleNextProposal,
-    isVisibleHistoryProposal,
-    watingProposals,
-    ongoingProposals,
-    nextProposals,
-    pastProposals,
-  ])
+  //   switch (defaultProposalSelectedListName) {
+  //     case 'wating':
+  //       setRightSideContent(watingProposals[0])
+  //       break
+  //     case 'ongoingVoiting':
+  //       setRightSideContent(ongoingProposals[0])
+  //       break
+  //     case 'ongoingTimeLock':
+  //       setRightSideContent(ongoingProposals[0])
+  //       break
+  //     case 'next':
+  //       setRightSideContent(nextProposals[0])
+  //       break
+  //     case 'history':
+  //       setRightSideContent(pastProposals[0])
+  //       break
+  //   }
+  // }, [
+  //   isVisibleWating,
+  //   isVisibleOngoingVoting,
+  //   isVisibleOngoingTimeLock,
+  //   isVisibleNextProposal,
+  //   isVisibleHistoryProposal,
+  //   watingProposals,
+  //   ongoingProposals,
+  //   nextProposals,
+  //   pastProposals,
+  // ])
 
   useEffect(() => {
     if (!someVisible) {
@@ -131,9 +119,9 @@ export const GovernanceView = ({
 
   return (
     <GovernanceStyled>
-      {someVisible ? (
-        <GovernanceLeftContainer>
-          {isVisibleWating && (
+      {/* {someVisible ? ( */}
+      <GovernanceLeftContainer>
+        {/* {isVisibleWating && (
             <Proposals
               proposalsList={watingProposals}
               handleItemSelect={_handleItemSelect}
@@ -188,11 +176,18 @@ export const GovernanceView = ({
               type="history"
               listName={HISTORY_PROPOSALS_LIST_NAME}
             />
-          )}
-        </GovernanceLeftContainer>
-      ) : (
+          )} */}
+        <Proposals
+          proposalsList={currentProposals}
+          handleItemSelect={_handleItemSelect}
+          selectedProposal={rightSideContent}
+          type="ongoingTimeLock"
+          listName={ONGOING_PROPOSALS_LIST_NAME}
+        />
+      </GovernanceLeftContainer>
+      {/*  ) : (
         emptyContainer
-      )}
+       )} */}
       {rightSideContent && rightSideContent.id !== 0 ? <ProposalDetails proposal={rightSideContent} /> : null}
     </GovernanceStyled>
   )

@@ -20,6 +20,7 @@ import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
 import { getTotalDelegatedMVK } from './helpers/Satellites.consts'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { BUTTON_SIMPLE } from 'app/App.components/Button/Button.constants'
+import { getGovernance } from 'pages/Governance/actions/GovernanseData.actions'
 import { getFeedsStorage } from 'pages/DataFeeds/DataFeeds.actions'
 
 // view
@@ -30,11 +31,10 @@ import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { EmptyContainer } from 'app/App.style'
 import { Page, PageContent } from 'styles'
 import { InfoBlockWrapper, SatellitesOverviewStyled } from './Satellites.style'
-import { getGovernanceProposals } from 'pages/Governance/actions/GovernanseData.actions'
 
 const Satellites = () => {
   const dispatch = useDispatch()
-  const { isLoaded: isProposalsLoaded } = useSelector((state: State) => state.governanceProposals)
+  const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)
   const { allSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
   const { feedsLedger, isLoaded: isFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
   const { isLoaded: isDoormanLoaded } = useSelector((state: State) => state.doorman)
@@ -45,7 +45,7 @@ const Satellites = () => {
         [
           !isFeedsLoaded && dispatch(getFeedsStorage()),
           !isDoormanLoaded && dispatch(getDoormanStorage()),
-          !isProposalsLoaded && dispatch(getGovernanceProposals()),
+          !isGovernanceLoaded && dispatch(getGovernance()),
         ].filter(Boolean),
       )
     } catch (e) {}

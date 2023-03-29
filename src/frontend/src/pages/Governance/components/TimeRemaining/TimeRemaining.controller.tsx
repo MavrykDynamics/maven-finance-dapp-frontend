@@ -10,7 +10,7 @@ import { COLON_VIEW } from 'app/App.components/Timer/Timer.view'
 import getTimestampByLevel from 'utils/Fetchers/getTimestampByLevel'
 
 export default function TimeRemaining() {
-  const { currentRoundEndLevel } = useSelector((state: State) => state.governanceConfig)
+  const { currentRoundEndLevel } = useSelector((state: State) => state.governance.config)
   const [timerDeadline, setTimerDeadline] = useState(0)
   const [timerActive, setTimerActive] = useState(false)
 

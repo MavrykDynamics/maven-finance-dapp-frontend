@@ -100,7 +100,7 @@ export const AppRoutes = () => {
         <SatelliteGovernance />
       </Route>
       <Route exact path="/proposal-history">
-        <Governance />
+        <Governance isHistory />
       </Route>
       <Route exact path="/contract-status">
         <BreakGlass />

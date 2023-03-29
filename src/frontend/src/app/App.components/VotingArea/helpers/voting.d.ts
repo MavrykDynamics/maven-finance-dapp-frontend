@@ -32,16 +32,11 @@ export type VotingProps = {
 export type VotingProposalsProps = {
   voteStatistics: VoteStatistics
   selectedProposal: ProposalRecordType
-  currentProposalStage: {
-    isPastProposals: boolean
-    isTimeLock: boolean
-    isAbleToMakeProposalRoundVote: boolean
-    isVotingPeriod: boolean
-  }
   votingPhaseHandler?: (vote: string) => void
   isAbleToMakeProposalRoundVote?: boolean
   handleProposalVote: (vote: number) => void
   vote?: ProposalRecordType['votes'][number]
+  shownBlock: 'bar' | 'proposalRoundVote' | 'area'
 }
 
 export type VotingBarProps = {

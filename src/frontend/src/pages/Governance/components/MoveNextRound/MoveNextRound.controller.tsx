@@ -18,9 +18,9 @@ import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.component
 export default function MoveToNextRound() {
   const dispatch = useDispatch()
   const { accountPkh } = useSelector((state: State) => state.wallet)
-  const { timelockProposalId, governancePhase } = useSelector((state: State) => state.governanceConfig)
+  const { timelockProposalId, governancePhase } = useSelector((state: State) => state.governance.config)
 
-  const [showModal, setShowModal] = useState(true)
+  const [showModal, setShowModal] = useState(false)
   const [estimatedValues] = useState({ fee: 0, cost: 0 })
 
   const handleCloseModal = () => {

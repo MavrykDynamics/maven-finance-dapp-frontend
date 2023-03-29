@@ -21,6 +21,7 @@ import { TzAddress } from 'pages/Treasury/Treasury.style'
 import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { PRECISION_NUMBER } from 'utils/constants'
 import getTimestampByLevel from 'utils/Fetchers/getTimestampByLevel'
 import { parseDate } from 'utils/time'
@@ -32,7 +33,7 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
 
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const { whitelistTokens } = useSelector((state: State) => state.tokens)
-  const { governancePhase } = useSelector((state: State) => state.governanceConfig)
+  const { governancePhase } = useSelector((state: State) => state.governance.config)
 
   const isUserOwnerIfTheProposal = proposal.proposerId === accountPkh
 
@@ -114,11 +115,14 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
   const handleVotingRoundVote = async (vote: string) => {
     switch (vote) {
       case VotingTypes.YES:
-        return dispatch(votingRoundVote(VotingTypes.YES))
+        dispatch(votingRoundVote(VotingTypes.YES))
+        break
       case VotingTypes.NO:
-        return dispatch(votingRoundVote(VotingTypes.NO))
+        dispatch(votingRoundVote(VotingTypes.NO))
+        break
       case VotingTypes.PASS:
-        return dispatch(votingRoundVote(VotingTypes.PASS))
+        dispatch(votingRoundVote(VotingTypes.PASS))
+        break
     }
   }
 
@@ -144,7 +148,7 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
   return (
     <ProposalDetailsStyled isAuthorized={Boolean(accountPkh)}>
       <GovRightContainerTitleArea>
-        <h1>{proposal.title}</h1>
+        <H2Title>{proposal.title}</H2Title>
         <StatusFlag text={statusFlag} status={statusFlag} />
       </GovRightContainerTitleArea>
 
@@ -158,7 +162,6 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
       {statusFlag === 'UNLOCKED' ? (
         <InfoBlock className="info-block">
           <Icon id="info" />
-          {/* TODO: isCreator */}
           {isUserOwnerIfTheProposal ? (
             <p>
               Your proposal isn’t locked yet and can’t be voted on. You can lock it on the proposal submission page.
@@ -175,12 +178,7 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
       <div className="voting-proposal">
         <VotingProposalsArea
           voteStatistics={voteStatistics}
-          currentProposalStage={{
-            isPastProposals: isVisibleHistoryProposal,
-            isTimeLock: isVisibleOngoingTimeLock,
-            isAbleToMakeProposalRoundVote,
-            isVotingPeriod: isVisibleOngoingVoting,
-          }}
+          shownBlock={'bar'}
           votingPhaseHandler={handleVotingRoundVote}
           handleProposalVote={handleProposalRoundVote}
           selectedProposal={proposal}
@@ -340,11 +338,11 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
           </div>
         </article>
       ) : null}
-      {isUserOwnerIfTheProposal && !isVisibleHistoryProposal && canDropPhase && proposal.proposerId === accountPkh ? (
+      {/* {isUserOwnerIfTheProposal && !isVisibleHistoryProposal && canDropPhase && proposal.proposerId === accountPkh ? (
         <div className="drop-proposal">
           <Button icon="close-stroke" text="Drop Proposal" kind="actionSecondary" onClick={handleDeleteProposal} />
         </div>
-      ) : null}
+      ) : null} */}
     </ProposalDetailsStyled>
   )
 }

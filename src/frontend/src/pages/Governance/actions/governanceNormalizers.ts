@@ -5,8 +5,7 @@ import {
   defaultProposalSourceCodeMaxLength,
   defaultProposalTitleMaxLength,
 } from 'app/App.components/Input/Input.constants'
-import { GovernanceConfigState } from 'reducers/governanceConfig'
-import { GovernanceProposalsState } from 'reducers/governanceProposals'
+import { State } from 'reducers'
 import { calcWithoutPrecision, calcWithoutMu } from 'utils/calcFunctions'
 import { DipDupTokensGraphQl } from 'utils/TypesAndInterfaces/DipDupTokens'
 import { GovernanceProposalGraphQL, GovernanceGraphQL, GovPhases } from 'utils/TypesAndInterfaces/Governance'
@@ -61,23 +60,39 @@ export const normalizeProposal = (item: GovernanceProposalGraphQL, dipDupTokens?
 
 export const normalizeGovernanceProposals = (
   proposals: Array<GovernanceProposalGraphQL>,
-  dipDupTokens?: Array<DipDupTokensGraphQl>,
-): Omit<GovernanceProposalsState, 'isLoaded'> => {
-  return proposals.reduce<Omit<GovernanceProposalsState, 'isLoaded'>>(
+  dipDupTokens: Array<DipDupTokensGraphQl>,
+  governanceConfig: State['governance']['config'],
+): Omit<Omit<State['governance'], 'isLoaded'>, 'config'> => {
+  const { governancePhase, timelockProposalId } = governanceConfig
+  const isProposalRound = governancePhase === GovPhases.PROPOSAL
+
+  return proposals.reduce<Omit<Omit<State['governance'], 'isLoaded'>, 'config'>>(
     (acc, proposalFromGQL) => {
       const normalizedProposal = normalizeProposal(proposalFromGQL, dipDupTokens)
 
-      acc.proposalsMapper[normalizedProposal.id] = normalizedProposal
-      acc.allProposalsIds.push(normalizedProposal.id)
+      const { id, executed, status, currentRoundProposal, paymentProcessed, proposalPayments } = normalizedProposal
+
+      acc.proposalsMapper[id] = normalizedProposal
+      acc.allProposalsIds.push(id)
 
       // Add id of current round proposal
-      if (normalizedProposal.currentRoundProposal && normalizedProposal.status === 0 && !normalizedProposal.executed) {
-        acc.currentRoundProposalsIds.push(normalizedProposal.id)
+      if (currentRoundProposal && status === 0 && !executed) {
+        acc.currentRoundProposalsIds.push(id)
+      }
+
+      // Add id of proposal to be executed proposal
+      if (isProposalRound && !executed && timelockProposalId === id && status === 0) {
+        acc.waitingProposalsIdsToBeExecuted.push(id)
+      }
+
+      // Add id of proposal to be paid proposal
+      if (isProposalRound && executed && timelockProposalId === id && !paymentProcessed) {
+        acc.waitingProposalsIdsToBePaid.push(id)
       }
 
       // Add id of past proposal
-      if (normalizedProposal.executed || !normalizedProposal.currentRoundProposal) {
-        acc.pastProposalsIds.push(normalizedProposal.id)
+      if (executed || !currentRoundProposal || status === 1) {
+        acc.pastProposalsIds.push(id)
       }
 
       return acc
@@ -85,6 +100,8 @@ export const normalizeGovernanceProposals = (
     {
       currentRoundProposalsIds: [],
       pastProposalsIds: [],
+      waitingProposalsIdsToBeExecuted: [],
+      waitingProposalsIdsToBePaid: [],
       allProposalsIds: [],
       proposalsMapper: {},
     },
@@ -94,9 +111,7 @@ export const normalizeGovernanceProposals = (
 const calcGovPhase = (round: number) =>
   round === 0 ? GovPhases.PROPOSAL : round === 1 ? GovPhases.VOTING : GovPhases.TIMELOCK
 
-export const normalizeGovernanceConfig = (
-  currentGovernance: GovernanceGraphQL,
-): Omit<GovernanceConfigState, 'isLoaded'> => {
+export const normalizeGovernanceConfig = (currentGovernance: GovernanceGraphQL): State['governance']['config'] => {
   return {
     address: currentGovernance.address,
     fee: calcWithoutMu(currentGovernance.proposal_submission_fee_mutez),

@@ -38,7 +38,7 @@ export const StageTwoForm = ({
   setProposalHasChange,
 }: StageTwoFormProps) => {
   const { governancePhase, fee, successReward, proposalMetadataTitleMaxLength } = useSelector(
-    (state: State) => state.governanceConfig,
+    (state: State) => state.governance.config,
   )
   const isProposalPeriod = governancePhase === 'PROPOSAL'
 

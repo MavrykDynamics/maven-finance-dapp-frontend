@@ -12,7 +12,9 @@ export const adminChangeGovernancePeriod =
   (chosenPeriod: string, accountPkh?: string) => async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
 
-    const { governanceConfig } = state
+    const {
+      governance: { config },
+    } = state
 
     if (!state.wallet.accountPkh) {
       dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
@@ -29,7 +31,7 @@ export const adminChangeGovernancePeriod =
           dispatch({
             type: GET_GOVERNANCE_CONFIG,
             config: {
-              ...governanceConfig,
+              ...config,
               timelockProposalId: 0,
               governancePhase: 'PROPOSAL',
             },
@@ -40,7 +42,7 @@ export const adminChangeGovernancePeriod =
           dispatch({
             type: GET_GOVERNANCE_CONFIG,
             config: {
-              ...governanceConfig,
+              ...config,
               governancePhase: 'VOTING',
             },
           })
@@ -51,7 +53,7 @@ export const adminChangeGovernancePeriod =
           dispatch({
             type: GET_GOVERNANCE_CONFIG,
             config: {
-              ...governanceConfig,
+              ...config,
               governancePhase: 'TIME_LOCK',
             },
           })

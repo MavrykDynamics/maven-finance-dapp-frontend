@@ -37,7 +37,7 @@ import VestingTab from './DashboardPersonalComponents/VestingTab'
 import { DashboardPersonalStyled } from './DashboardPersonal.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
-import { getGovernanceConfig, getGovernanceProposals } from 'pages/Governance/actions/GovernanseData.actions'
+import { getGovernance } from 'pages/Governance/actions/GovernanseData.actions'
 
 const DashboardPersonal = () => {
   const dispatch = useDispatch()
@@ -50,6 +50,7 @@ const DashboardPersonal = () => {
   const { councilMembers, breakGlassCouncilMembers } = useSelector((state: State) => state.council)
   const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
   const { isLoaded: isFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
+  const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)
   const { isDataLoaded: isLoansLoaded } = useSelector((state: State) => state.loans)
   const { isLoaded: isVestingLoaded } = useSelector((state: State) => state.vesting)
   const {
@@ -78,8 +79,7 @@ const DashboardPersonal = () => {
     try {
       await Promise.all(
         [
-          dispatch(getGovernanceConfig()),
-          dispatch(getGovernanceProposals()),
+          !isGovernanceLoaded && dispatch(getGovernance()),
           !isEgovLoaded && dispatch(getEmergencyGovernanceStorage()),
           isVestee && !isVestingLoaded && dispatch(getVestingStorage()),
           !isFeedsLoaded && dispatch(getFeedsStorage()),

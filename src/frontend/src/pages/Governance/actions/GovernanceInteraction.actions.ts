@@ -5,7 +5,7 @@ import { ERROR, INFO, SUCCESS } from 'app/App.components/Toaster/Toaster.constan
 
 import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
-import { getGovernanceConfig, getGovernanceProposals } from './GovernanseData.actions'
+import { getGovernance } from './GovernanseData.actions'
 
 export const proposalRoundVote = (proposalId: number) => async (dispatch: AppDispatch, getState: GetState) => {
   const state: State = getState()
@@ -30,8 +30,7 @@ export const proposalRoundVote = (proposalId: number) => async (dispatch: AppDis
     await transaction?.confirmation()
 
     await dispatch(showToaster(SUCCESS, 'Voting done', 'All good :)'))
-    await dispatch(getGovernanceProposals())
-    await dispatch(getGovernanceConfig())
+    await dispatch(getGovernance())
     await dispatch(toggleActionLoader(false))
   } catch (error) {
     console.error('proposalRoundVote error: ', error)
@@ -95,7 +94,7 @@ export const votingRinancialRequestVote =
       await transaction?.confirmation()
 
       await dispatch(showToaster(SUCCESS, 'Voting done', 'All good :)'))
-      await dispatch(getGovernanceProposals())
+      await dispatch(getGovernance())
       await dispatch(toggleActionLoader(false))
     } catch (error) {
       if (error instanceof Error) {
@@ -129,8 +128,7 @@ export const votingRoundVote = (vote: string) => async (dispatch: AppDispatch, g
     await transaction?.confirmation()
 
     await dispatch(showToaster(SUCCESS, 'Voting done', 'All good :)'))
-    await dispatch(getGovernanceProposals())
-    await dispatch(getGovernanceConfig())
+    await dispatch(getGovernance())
     await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {
@@ -164,8 +162,7 @@ export const startProposalRound = () => async (dispatch: AppDispatch, getState: 
     await transaction?.confirmation()
 
     await dispatch(showToaster(SUCCESS, 'Request confirmed', 'All good :)'))
-    await dispatch(getGovernanceProposals())
-    await dispatch(getGovernanceConfig())
+    await dispatch(getGovernance())
     await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {
@@ -199,8 +196,7 @@ export const startVotingRound = () => async (dispatch: AppDispatch, getState: Ge
     await transaction?.confirmation()
 
     await dispatch(showToaster(SUCCESS, 'Request confirmed', 'All good :)'))
-    await dispatch(getGovernanceProposals())
-    await dispatch(getGovernanceConfig())
+    await dispatch(getGovernance())
     await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {
@@ -233,8 +229,7 @@ export const startNextRound = (executePastProposal: boolean) => async (dispatch:
     await transaction?.confirmation()
 
     await dispatch(showToaster(SUCCESS, 'Request confirmed', 'All good :)'))
-    await dispatch(getGovernanceProposals())
-    await dispatch(getGovernanceConfig())
+    await dispatch(getGovernance())
     await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {
@@ -257,8 +252,7 @@ export const executeProposal = (proposalId: number) => async (dispatch: AppDispa
     await transaction?.confirmation()
 
     await dispatch(showToaster(SUCCESS, 'Request confirmed', 'All good :)'))
-    await dispatch(getGovernanceProposals())
-    await dispatch(getGovernanceConfig())
+    await dispatch(getGovernance())
     await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {
@@ -281,8 +275,7 @@ export const processProposalPayment = (proposalId: number) => async (dispatch: A
     await transaction?.confirmation()
 
     await dispatch(showToaster(SUCCESS, 'Process Proposal Payment confirmed', 'All good :)'))
-    await dispatch(getGovernanceProposals())
-    await dispatch(getGovernanceConfig())
+    await dispatch(getGovernance())
     await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {

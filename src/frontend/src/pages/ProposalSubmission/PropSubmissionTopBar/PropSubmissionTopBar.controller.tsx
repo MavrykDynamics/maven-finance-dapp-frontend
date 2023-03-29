@@ -30,7 +30,7 @@ const GOV_PROPOSAL_SUBMISSION_ITEMS = [
 // TODO redo markup for it
 
 export const PropSubmissionTopBar = ({ value, valueCallback }: PropSubmissionTopBarProps) => {
-  const { governancePhase } = useSelector((state: State) => state.governanceConfig)
+  const { governancePhase } = useSelector((state: State) => state.governance.config)
 
   const handleChangeTab = (tabId?: number) => {
     // TODO: Implement function and dispatch action
