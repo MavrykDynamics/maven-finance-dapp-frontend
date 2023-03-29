@@ -20,7 +20,6 @@ import { getTokenDecimals, convertNumberForContractCall } from 'utils/calcFuncti
 
 // Vaults Store
 export const GET_VAULTS_STORAGE = 'GET_VAULTS_STORAGE'
-export const CLEAR_VAULTS_STORAGE = 'CLEAR_VAULTS_STORAGE'
 export const getVaultsStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
   try {
     const storage = await fetchFromIndexer(

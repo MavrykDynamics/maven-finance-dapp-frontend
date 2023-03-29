@@ -104,10 +104,6 @@ export const VaultsView = () => {
     handleChangeTabs(tabsList[0].id)
   }, [accountPkh])
 
-  useEffect(() => {
-    setVaultsIds(tabId === tabsId.ALL ? allVaultsIds : myVaultsIds)
-  }, [myVaultsIds, allVaultsIds])
-
   return (
     <VaultsStyled>
       <TabSwitcher tabItems={tabsList} onClick={handleChangeTabs} className="tabSwitcher" />
@@ -127,7 +123,6 @@ export const VaultsView = () => {
       ) : paginatedVaultsList.length ? (
         <div className="vaults">
           {paginatedVaultsList.map((item) => {
-            if (!vaultsMapper[item]) return null
             const isOwner = vaultsMapper[item]?.ownerId === accountPkh
 
             return (

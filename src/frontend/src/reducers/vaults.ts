@@ -1,4 +1,4 @@
-import { CLEAR_VAULTS_STORAGE, GET_VAULTS_STORAGE } from 'pages/Vaults/Vaults.actions'
+import { GET_VAULTS_STORAGE } from 'pages/Vaults/Vaults.actions'
 import { VaultsStorage } from 'utils/TypesAndInterfaces/Vaults'
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
 
@@ -23,10 +23,6 @@ export function vaults(state = defaultVaultsState, action: Action) {
         ...state,
         vaultsList: action.vaultsList,
         isLoaded: true,
-      }
-    case CLEAR_VAULTS_STORAGE:
-      return {
-        ...defaultVaultsState,
       }
     default:
       return state
