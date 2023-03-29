@@ -11,6 +11,7 @@ import { CLEAR_MY_BREAK_GLASS_COUNCIL_ACTIONS } from 'pages/BreakGlassCouncil/Br
 import { fetchUserData } from 'reducers/actions/user.actions'
 
 // TODO: check ts-ignores, here NetworkType is not compatible with  NetworkType | undefined
+
 export const Beacon_localStorage_keys = [
   'beacon:active-account',
   'beacon:postmessage-peers-dapp',
