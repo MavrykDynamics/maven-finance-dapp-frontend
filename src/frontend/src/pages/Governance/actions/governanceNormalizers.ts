@@ -61,7 +61,7 @@ export const normalizeProposal = (
     // voting data
     passVoteMvkTotal: calcWithoutPrecision(item.proposal_vote_smvk_total),
     upvoteMvkTotal: calcWithoutPrecision(item.yay_vote_smvk_total),
-    downvoteMvkTotal: calcWithoutPrecision(item.nay_vote_count),
+    downvoteMvkTotal: calcWithoutPrecision(item.nay_vote_smvk_total),
     abstainMvkTotal: calcWithoutPrecision(item.pass_vote_smvk_total),
     quorumMvkTotal: item.quorum_smvk_total,
     votes: item.votes,
