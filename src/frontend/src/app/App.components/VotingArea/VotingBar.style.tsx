@@ -22,7 +22,7 @@ export const QuorumBar = styled.div<{ width: number; theme: MavrykTheme }>`
     font-size: 12px;
     width: fit-content;
     position: absolute;
-    left: ${({ width }) => width}%;
+    left: ${({ width }) => Math.min(100, Math.max(0, width))}%;
     transform: translateX(-50%);
     padding-bottom: 15px;
     white-space: nowrap;

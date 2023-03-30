@@ -4,58 +4,26 @@ import { Card, cyanColor, darkPurpleColor } from 'styles'
 import { MavrykTheme } from '../../../../styles/interfaces'
 
 export const GovernanceTopBarStyled = styled(Card)`
-  margin: 30px auto 20px;
   display: flex;
+  align-items: center;
+  border-radius: 10px;
+
   width: 100%;
   height: 75px;
-  flex-direction: row;
-  border-radius: 10px;
-  padding: 10px 20px;
-  align-items: center;
 
-  > button {
-    max-width: 20%;
-    height: 40px;
+  margin: 30px auto 20px;
+  padding: 10px 20px 10px 40px;
+
+  > svg {
+    width: 24px;
+    height: 24px;
+    margin: 0 40px;
+    fill: ${({ theme }) => theme.textColor};
   }
-
-  .right-block {
-    margin-left: auto;
-    padding-right: 35px;
-    width: 223px;
-    display: flex;
-    justify-content: flex-end;
-  }
-
-  .move-to-next {
-    margin-left: auto;
-    height: 50px;
-    width: 250px;
-    max-width: none;
-    margin-right: 8px;
-  }
-`
-
-export const GovTopBarSidewaysArrowIcon = styled.svg<{ theme: MavrykTheme }>`
-  width: 24px;
-  height: 24px;
-  display: inline-block;
-  vertical-align: sub;
-  margin: 0;
-  fill: ${({ theme }) => theme.textColor};
 `
 
 export const GovTopBarPhaseText = styled.div<{ isCorrectPhase?: boolean; theme: MavrykTheme }>`
-  margin: 0 10px;
   color: ${({ isCorrectPhase, theme }) => (isCorrectPhase ? theme.valueColor : theme.textColor)};
   font-weight: 600;
   font-size: 18px;
-  width: 146px;
-  text-align: center;
-
-  &.first {
-    width: 140px;
-    width: 98px;
-    margin-left: 20px;
-    text-align: left;
-  }
 `

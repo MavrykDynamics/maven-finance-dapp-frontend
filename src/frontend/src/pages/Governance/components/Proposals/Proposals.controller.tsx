@@ -1,32 +1,19 @@
-import Checkbox from 'app/App.components/Checkbox/Checkbox.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { DropDown } from 'app/App.components/DropDown/DropDown.controller'
 import {
   getPageNumber,
   calculateSlicePositions,
   LIST_NAMES_MAPPER,
-  GOVERNANCE_VOTERS_LIST_NAME,
 } from 'app/App.components/Pagination/pagination.consts'
 import Pagination from 'app/App.components/Pagination/Pagination.view'
 import { StatusFlag } from 'app/App.components/StatusFlag/StatusFlag.controller'
-import { EmptyContainer } from 'app/App.style'
 import { getProposalStatusInfo } from 'pages/Governance/Governance.helpers'
-import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
-import { getVoteText } from 'pages/Satellites/helpers/Satellites.consts'
-import { TzAddress } from 'pages/Treasury/Treasury.style'
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { useLocation } from 'react-router-dom'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { State } from '../../../../reducers'
-import { GovPhases, ProposalRecordType, ProposalStatus } from '../../../../utils/TypesAndInterfaces/Governance'
-import {
-  ProposalListContainer,
-  ProposalListItem,
-  ProposalItemLeftSide,
-  VoterListItem,
-  ProposalStatusFlag,
-} from './Proposals.style'
-import { ProposalsView } from './Proposals.view'
+import { ProposalRecordType } from '../../../../utils/TypesAndInterfaces/Governance'
+import { ProposalListContainer, ProposalListItem, ProposalItemLeftSide } from './Proposals.style'
 
 type ProposalsProps = {
   proposalsList: Array<number>
@@ -37,7 +24,14 @@ type ProposalsProps = {
   listName: string
 }
 
-export const Proposals = ({ proposalsList, handleItemSelect, selectedProposal, title, listName }: ProposalsProps) => {
+export const Proposals = ({
+  proposalsList,
+  handleItemSelect,
+  selectedProposal,
+  title,
+  listName,
+  type,
+}: ProposalsProps) => {
   const {
     config: { governancePhase, timelockProposalId, cycleHighestVotedProposalId, cycleCounter },
     proposalsMapper,
@@ -51,16 +45,13 @@ export const Proposals = ({ proposalsList, handleItemSelect, selectedProposal, t
     const [from, to] = calculateSlicePositions(currentPage, listName)
     return proposalsList.slice(from, to)
   }, [currentPage, proposalsList, listName])
-  const selectedCycle = 4
 
   return (
-    <ProposalListContainer>
-      <GovRightContainerTitleArea>
-        <h1>{title}</h1>
-      </GovRightContainerTitleArea>
+    <ProposalListContainer className={type}>
+      <H2Title>{title}</H2Title>
 
-      {paginatedItemsList.length ? (
-        paginatedItemsList.map((proposalId, index) => {
+      <div className="proposals-list-wrapper">
+        {paginatedItemsList.map((proposalId, index) => {
           const proposal = proposalsMapper[proposalId]
           const { statusFlag } = getProposalStatusInfo(
             governancePhase,
@@ -97,17 +88,9 @@ export const Proposals = ({ proposalsList, handleItemSelect, selectedProposal, t
               <StatusFlag text={statusFlag} status={statusFlag} />
             </ProposalListItem>
           )
-        })
-      ) : (
-        <EmptyContainer className="empty">
-          <img src="/images/not-found.svg" alt=" No proposals to show" />
-          <figcaption>
-            {selectedCycle
-              ? `There was no propoposals on the cycle ${selectedCycle}`
-              : 'There are no history proposals'}
-          </figcaption>
-        </EmptyContainer>
-      )}
+        })}
+      </div>
+
       <Pagination itemsCount={proposalsList.length} listName={listName} />
     </ProposalListContainer>
   )

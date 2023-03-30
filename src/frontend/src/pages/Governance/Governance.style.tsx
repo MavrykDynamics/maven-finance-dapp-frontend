@@ -226,7 +226,28 @@ export const GovernanceRightContainer = styled(Card)<{ isAuthorized?: boolean; t
 
 export const GovernanceLeftContainer = styled.div<{ theme: MavrykTheme }>`
   width: 50%;
-  padding-top: 28px;
+  position: relative;
+  margin-top: 30px;
+
+  &.full-width {
+    width: 100%;
+  }
+
+  .cycle-dropdown {
+    max-width: 260px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 10;
+    margin: 0;
+  }
+
+  .proposal-history-checkbox {
+    position: absolute;
+    top: 50px;
+    left: 0;
+    z-index: 10;
+  }
 `
 
 export const GovRightContainerTitleArea = styled.div<{ theme: MavrykTheme }>`
@@ -279,11 +300,4 @@ export const RightSideSubContent = styled.div<{ theme: MavrykTheme }>`
     font-weight: 600;
     margin-bottom: 10px;
   }
-`
-
-export const EmptyContainer = styled(EmptyContainerBase)`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
 `

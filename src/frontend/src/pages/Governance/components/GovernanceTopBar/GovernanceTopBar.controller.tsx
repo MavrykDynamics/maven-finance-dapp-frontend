@@ -1,34 +1,31 @@
+import Icon from 'app/App.components/Icon/Icon.view'
 import { GovernancePhaseType, GovPhases } from 'utils/TypesAndInterfaces/Governance'
 
 import TimeRemaining from '../TimeRemaining/TimeRemaining.controller'
-import { GovernanceTopBarStyled, GovTopBarPhaseText, GovTopBarSidewaysArrowIcon } from './GovernanceTopBar.style'
+import { GovernanceTopBarStyled, GovTopBarPhaseText } from './GovernanceTopBar.style'
 
 export type GovernanceTopBarProps = {
   governancePhase: GovernancePhaseType
+  isWaitingToExecute: boolean
 }
-export const GovernanceTopBar = ({ governancePhase }: GovernanceTopBarProps) => {
-  // return <GovernanceTopBarView governancePhase={governancePhase} />
-  // const isInExecution = governancePhase === GovPhases.PROPOSAL //&& Boolean(watingProposals?.length)
-
+export const GovernanceTopBar = ({ governancePhase, isWaitingToExecute }: GovernanceTopBarProps) => {
   return (
     <GovernanceTopBarStyled>
-      <GovTopBarPhaseText className="first" isCorrectPhase={governancePhase === GovPhases.PROPOSAL}>
+      <GovTopBarPhaseText isCorrectPhase={governancePhase === GovPhases.PROPOSAL && !isWaitingToExecute}>
         Proposal
       </GovTopBarPhaseText>
 
-      <GovTopBarSidewaysArrowIcon>
-        <use xlinkHref="/icons/sprites.svg#greater-than" />
-      </GovTopBarSidewaysArrowIcon>
+      <Icon id="greater-than" />
       <GovTopBarPhaseText isCorrectPhase={governancePhase === GovPhases.VOTING}>Voting</GovTopBarPhaseText>
 
-      <GovTopBarSidewaysArrowIcon>
-        <use xlinkHref="/icons/sprites.svg#greater-than" />
-      </GovTopBarSidewaysArrowIcon>
+      <Icon id="greater-than" />
       <GovTopBarPhaseText isCorrectPhase={governancePhase === GovPhases.TIMELOCK}>Time Lock</GovTopBarPhaseText>
-      {/* <GovTopBarSidewaysArrowIcon>
-        <use xlinkHref="/icons/sprites.svg#greater-than" />
-      </GovTopBarSidewaysArrowIcon>
-      <GovTopBarPhaseText isCorrectPhase={governancePhase === GovPhases.PROPOSAL}>Execution</GovTopBarPhaseText> */}
+
+      <Icon id="greater-than" />
+      <GovTopBarPhaseText isCorrectPhase={governancePhase === GovPhases.PROPOSAL && isWaitingToExecute}>
+        Execution
+      </GovTopBarPhaseText>
+
       <TimeRemaining />
     </GovernanceTopBarStyled>
   )

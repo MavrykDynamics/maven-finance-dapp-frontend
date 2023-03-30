@@ -1,46 +1,52 @@
+import { useState, useMemo, useEffect } from 'react'
+import { useLocation } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
-import { Page } from 'styles'
-import { State } from 'reducers'
 
-// actions
+// types
+import { State } from 'reducers'
+import { ProposalVotersType, ProposalsListType } from './helpers/governanceTypes'
+import { GovPhases, ProposalRecordType, ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
+
+// actions & cs hooks
+import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
+import { getGovernance } from './actions/GovernanseData.actions'
 import { getEmergencyGovernanceStorage } from '../EmergencyGovernance/EmergencyGovernance.actions'
 
 // view
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
-import { GovernanceView } from './Governance.view'
 import { GovernanceTopBar } from './components/GovernanceTopBar/GovernanceTopBar.controller'
-
-// hooks
-import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
-import { executeProposal } from './actions/GovernanceInteraction.actions'
-import { getGovernance } from './actions/GovernanseData.actions'
-import {
-  GOVERNANCE_VOTERS_LIST_NAME,
-  ONGOING_PROPOSALS_LIST_NAME,
-  WAITING_PROPOSALS_LIST_NAME,
-} from 'app/App.components/Pagination/pagination.consts'
-import { useState, useMemo, useEffect } from 'react'
-import { useLocation } from 'react-router'
-import { GovPhases, ProposalRecordType, ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
 import { ProposalDetails } from './components/ProposalDetails/ProposalDetails'
 import { Proposals } from './components/Proposals/Proposals.controller'
-import { GovernanceStyled, GovernanceLeftContainer, GovRightContainerTitleArea } from './Governance.style'
+import { DropDownItemType, DropDown, DDItemId } from 'app/App.components/DropDown/NewDropdown'
 import Pagination from 'app/App.components/Pagination/Pagination.view'
+import Checkbox from 'app/App.components/Checkbox/Checkbox.view'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
+
+// actions, helpers, consts
+import {
+  calculateSlicePositions,
+  getPageNumber,
+  GOVERNANCE_VOTERS_LIST_NAME,
+  HISTORY_PROPOSALS_LIST_NAME,
+  ONGOING_PROPOSALS_LIST_NAME,
+  WAITING_EXECUTED_PROPOSALS_LIST_NAME,
+  WAITING_PAYMENT_PROPOSALS_LIST_NAME,
+} from 'app/App.components/Pagination/pagination.consts'
 import { getVoteText } from 'pages/Satellites/helpers/Satellites.consts'
+import { generateCyclesDdOptions, NONE_CYCLE_SELECTED_OPTION } from './helpers/governanceView.helpers'
+
+// styles
+import { Page } from 'styles'
+import { GovernanceStyled, GovernanceLeftContainer } from './Governance.style'
+import { EmptyContainer } from 'app/App.style'
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { TzAddress } from 'pages/Treasury/Treasury.style'
 import { VoterListItem, ProposalStatusFlag } from './components/Proposals/Proposals.style'
-import Checkbox from 'app/App.components/Checkbox/Checkbox.view'
-import { DropDown } from 'app/App.components/DropDown/DropDown.controller'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
-export type VoteStatistics = {
-  passVotesMVKTotal: number
-  forVotesMVKTotal: number
-  againstVotesMVKTotal: number
-  abstainVotesMVKTotal: number
-  unusedVotesMVKTotal: number
-}
 export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
   const dispatch = useDispatch()
+  const { search } = useLocation()
 
   const {
     isLoaded: isGovernanceLoaded,
@@ -65,43 +71,42 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
     } catch (e) {}
   }, [])
 
+  // Show details of the proposal
   const [rightSideContent, setRightSideContent] = useState<ProposalRecordType | undefined>(undefined)
-
   const handleItemSelect = (chosenProposal: ProposalRecordType) => setRightSideContent(chosenProposal)
 
-  // filters handlers TODO: add all cycles optionz
-  const dropDownOptions = useMemo(
-    () => Array.from({ length: cycle - 1 }, (_, idx) => String(cycle - (idx + 1))),
-    [cycle],
-  )
-
+  // filters handlers TODO: add all cycles option
+  const dropDownOptions = useMemo<Array<DropDownItemType>>(() => generateCyclesDdOptions(cycle), [cycle])
   const [showActive, setShowActive] = useState(false)
-  const [selectedCycle, setSelectedCycle] = useState<undefined | string>()
-  const [ddIsOpen, setDdIsOpen] = useState(false)
+  const [selectedCycle, setSelectedCycle] = useState<undefined | DropDownItemType>(NONE_CYCLE_SELECTED_OPTION)
 
-  const prpoposalsListsToShow = useMemo<
-    Array<{
-      title: string
-      proposalsIds: Array<number>
-    }>
-  >(() => {
-    // If history page show only history proposals
+  // Creating lists of proposals to show
+  const prpoposalsListsToShow = useMemo<ProposalsListType>(() => {
+    // If history page show only history proposals & apply filters to them
     if (isHistory)
       return [
-        {
-          title: 'History Proposals',
-          proposalsIds: pastProposalsIds.filter((proposalId) => {
-            const { status, cycle } = proposalsMapper[proposalId]
+        ...(pastProposalsIds.length
+          ? [
+              {
+                title: 'Past Proposals',
+                type: 'history',
+                listName: HISTORY_PROPOSALS_LIST_NAME,
+                proposalsIds: pastProposalsIds.filter((proposalId) => {
+                  const { status, cycle } = proposalsMapper[proposalId]
 
-            if (showActive && selectedCycle) return status === 0 && cycle === Number(selectedCycle)
+                  if (showActive && selectedCycle && selectedCycle?.id !== NONE_CYCLE_SELECTED_OPTION.id)
+                    return status === 0 && cycle === Number(selectedCycle.id)
 
-            if (showActive) return status === 0
+                  if (showActive) return status === 0
 
-            if (selectedCycle) return cycle === Number(selectedCycle)
+                  if (selectedCycle && selectedCycle?.id !== NONE_CYCLE_SELECTED_OPTION.id)
+                    return cycle === Number(selectedCycle.id)
 
-            return true
-          }),
-        },
+                  return true
+                }),
+              },
+            ]
+          : []),
       ]
 
     return [
@@ -110,6 +115,8 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
         ? [
             {
               title: 'Waiting to be paid',
+              type: 'waitingPaid',
+              listName: WAITING_PAYMENT_PROPOSALS_LIST_NAME,
               proposalsIds: waitingProposalsIdsToBePaid,
             },
           ]
@@ -120,20 +127,20 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
         ? [
             {
               title: 'Waiting to be executed',
+              type: 'waitingExecuted',
+              listName: WAITING_EXECUTED_PROPOSALS_LIST_NAME,
               proposalsIds: waitingProposalsIdsToBeExecuted,
             },
           ]
         : []),
 
-      // if we have current round proposals show them on proposals page
-      ...(currentRoundProposalsIds?.length
-        ? [
-            {
-              title: governancePhase === GovPhases.PROPOSAL ? 'Pool for Next round' : 'Ongoing proposal',
-              proposalsIds: currentRoundProposalsIds,
-            },
-          ]
-        : []),
+      // show current round proposals on proposals page
+      {
+        title: governancePhase === GovPhases.PROPOSAL ? 'Pool for Next round' : 'Ongoing proposal',
+        type: 'ongoing',
+        proposalsIds: currentRoundProposalsIds,
+        listName: ONGOING_PROPOSALS_LIST_NAME,
+      },
     ]
   }, [
     isHistory,
@@ -152,17 +159,10 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
     setRightSideContent(firstProposalId ? proposalsMapper[firstProposalId] : undefined)
   }, [proposalsMapper, prpoposalsListsToShow])
 
-  // TODO: add pagination to this list
+  // Generate proposal voters and paginate them
   const votersList = useMemo(
     () =>
-      rightSideContent?.votes?.reduce<
-        Array<{
-          vote: number
-          name: string
-          avatar: string
-          address: string
-        }>
-      >((acc, { voter_id, round, vote }) => {
+      rightSideContent?.votes?.reduce<ProposalVotersType>((acc, { voter_id, round, vote }) => {
         const satelliteData = satelliteMapper[voter_id]
 
         if (satelliteData && round === 1) {
@@ -175,19 +175,35 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
         }
 
         return acc
-      }, []),
+      }, []) ?? [],
     [satelliteMapper, rightSideContent],
   )
+
+  const paginatedVotersList = useMemo(() => {
+    const [from, to] = calculateSlicePositions(
+      getPageNumber(search, GOVERNANCE_VOTERS_LIST_NAME),
+      GOVERNANCE_VOTERS_LIST_NAME,
+    )
+    return votersList.slice(from, to)
+  }, [search, votersList])
 
   return (
     <Page>
       <PageHeader page={'governance'} />
-      <GovernanceTopBar governancePhase={governancePhase} />
+      <GovernanceTopBar
+        governancePhase={governancePhase}
+        isWaitingToExecute={Boolean(waitingProposalsIdsToBeExecuted.length)}
+      />
 
-      {isLoading ? null : (
+      {isLoading ? (
+        <DataLoaderWrapper>
+          <ClockLoader width={150} height={150} />
+          <div className="text">Loading proposals</div>
+        </DataLoaderWrapper>
+      ) : (
         <GovernanceStyled>
-          <GovernanceLeftContainer>
-            {isHistory ? (
+          <GovernanceLeftContainer className={!prpoposalsListsToShow.length ? 'full-width' : ''}>
+            {isHistory && prpoposalsListsToShow.length ? (
               <>
                 <Checkbox
                   id={'show_dropped'}
@@ -197,43 +213,53 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
                 >
                   <span>Hide dropped proposals</span>
                 </Checkbox>
-                {/* TODO: use new dd */}
+
                 <DropDown
                   className="cycle-dropdown"
                   placeholder={'Choose cycle number'}
                   items={dropDownOptions}
-                  clickOnItem={(value: string) => {
-                    setSelectedCycle(value)
-                    setDdIsOpen(false)
-                  }}
-                  isOpen={ddIsOpen}
-                  setIsOpen={setDdIsOpen}
-                  itemSelected={selectedCycle}
+                  clickItem={(ddId: DDItemId) => setSelectedCycle(dropDownOptions.find(({ id }) => id === ddId))}
+                  activeItem={selectedCycle}
                 />
               </>
             ) : null}
-            {prpoposalsListsToShow.length
-              ? prpoposalsListsToShow.map(({ title, proposalsIds }) => {
-                  return (
+
+            {prpoposalsListsToShow.length ? (
+              prpoposalsListsToShow.map(({ title, proposalsIds, listName, type }) => {
+                return (
+                  <>
                     <Proposals
                       proposalsList={proposalsIds}
                       handleItemSelect={handleItemSelect}
                       selectedProposal={rightSideContent}
                       title={title}
-                      type="wating"
-                      listName={WAITING_PROPOSALS_LIST_NAME}
+                      type={type}
+                      listName={listName}
                       key={`${proposalsIds.length}-${title}`}
                     />
-                  )
-                })
-              : 'no items'}
 
+                    {/* Show this plug when we use cycle dd filter and some of the cycles don't have proposals in it */}
+                    {isHistory && selectedCycle?.id !== NONE_CYCLE_SELECTED_OPTION.id && proposalsIds.length === 0 ? (
+                      <EmptyContainer className="empty">
+                        <img src="/images/not-found.svg" alt=" No proposals to show" />
+                        <figcaption>{`There is no propoposals on the cycle ${selectedCycle?.id}`}</figcaption>
+                      </EmptyContainer>
+                    ) : null}
+                  </>
+                )
+              })
+            ) : (
+              <EmptyContainer className="empty">
+                <img src="/images/not-found.svg" alt=" No proposals to show" />
+                <figcaption>There are no{isHistory ? ' history' : ''} proposals</figcaption>
+              </EmptyContainer>
+            )}
+
+            {/* Satellites who has voted for selected proposal */}
             {governancePhase === GovPhases.VOTING && votersList?.length ? (
               <div className="voters-list">
-                <GovRightContainerTitleArea>
-                  <h1>Satellite Voting History</h1>
-                </GovRightContainerTitleArea>
-                {votersList.map(({ vote, address, name, avatar }) => {
+                <H2Title>Satellite Voting History</H2Title>
+                {paginatedVotersList.map(({ vote, address, name, avatar }) => {
                   const status = vote === 1 ? ProposalStatus.EXECUTED : vote === 2 ? ProposalStatus.DEFEATED : undefined
                   return (
                     <VoterListItem>
@@ -255,6 +281,7 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
             ) : null}
           </GovernanceLeftContainer>
 
+          {/* Selected proposal */}
           {rightSideContent && rightSideContent.id !== 0 ? <ProposalDetails proposal={rightSideContent} /> : null}
         </GovernanceStyled>
       )}
