@@ -14,7 +14,6 @@ import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
 import { getVaultsStorage } from 'pages/Vaults/Vaults.actions'
 import { getFarmStorage } from 'pages/Farms/Farms.actions'
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
-import { getFeedsStorage } from 'pages/DataFeeds/DataFeeds.actions'
 
 export const Dashboard = () => {
   const dispatch = useDispatch()
@@ -31,7 +30,7 @@ export const Dashboard = () => {
   } = useSelector((state: State) => state.doorman)
   const { treasuryStorage, isLoaded: isTreasuryLoaded } = useSelector((state: State) => state.treasury)
   const { isLoaded: isVestingLoaded } = useSelector((state: State) => state.vesting)
-  const { isLoaded: isFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
+  const { isGovernanceStorageLoaded } = useSelector((state: State) => state.governance)
   const {
     vaultsList: { allVaultsIds, vaultsMapper },
     isLoaded: isVaultsLoaded,
@@ -74,9 +73,8 @@ export const Dashboard = () => {
     try {
       await Promise.all(
         [
-          isDepsChanged && dispatch(getGovernanceStorage()),
+          (!isGovernanceStorageLoaded || isDepsChanged) && dispatch(getGovernanceStorage()),
           (!isVaultsLoaded || isDepsChanged) && dispatch(getVaultsStorage()),
-          (!isFeedsLoaded || isDepsChanged) && dispatch(getFeedsStorage()),
           (!isVestingLoaded || isDepsChanged) && dispatch(getVestingStorage()),
           (!isTreasuryLoaded || isDepsChanged) && dispatch(fillTreasuryStorage()),
           (!isLoansLoaded || isDepsChanged) && dispatch(getLoansStorage()),

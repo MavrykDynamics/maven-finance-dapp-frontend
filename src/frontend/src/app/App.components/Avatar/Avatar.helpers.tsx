@@ -12,6 +12,7 @@ type Props = {
   priorityImage?: 'satellite' | 'council' | 'breakGlassCouncil' | 'default'
 }
 
+// TODO: move loading user avatar to fetchUserData
 export const getUserAvatar = ({
   accountPkh,
   satelliteMapper,
@@ -31,6 +32,8 @@ export const getUserAvatar = ({
     breakGlassCouncil: breakGlassCouncilImage,
     default: defaultUserImage,
   }
+
+  console.log(images)
 
   if (priorityImage && images[priorityImage]) return images[priorityImage]
 

@@ -39,7 +39,7 @@ export const Governance = () => {
       await Promise.all(
         [
           (!isEgovLoaded || isDepsChanged) && dispatch(getEmergencyGovernanceStorage()),
-          isDepsChanged && dispatch(getCurrentRoundProposals()),
+          (!isGovernanceStorageLoaded || isDepsChanged) && dispatch(getCurrentRoundProposals()),
           (!isGovernanceStorageLoaded || isDepsChanged) && dispatch(getGovernanceStorage()),
         ].filter(Boolean),
       )

@@ -9,6 +9,8 @@ import { usePrevious } from 'react-use'
  * @param deps array of deps to call callback on one of the deps changes
  * @returns flag of callback loading status
  */
+
+// TODO: add arg to callback of all loading statuses of all sections,
 export const useDataLoader = (callback: (isDepsChanged: boolean) => Promise<void>, deps: React.DependencyList) => {
   const { isInitialDataLoading } = useSelector((state: State) => state.loading)
   const [isLoading, setLoading] = useState(true)

@@ -7,7 +7,6 @@ import { State } from 'reducers'
 
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { getGovernanceStorage } from 'pages/Governance/Governance.actions'
-import { getFeedsStorage } from 'pages/DataFeeds/DataFeeds.actions'
 import { claimAllRewardsAction } from './DashboardPersonal.actions'
 import { updateUserData } from 'reducers/actions/user.actions'
 import { getEmergencyGovernanceStorage } from 'pages/EmergencyGovernance/EmergencyGovernance.actions'
@@ -49,7 +48,7 @@ const DashboardPersonal = () => {
   const { satelliteMapper } = useSelector((state: State) => state.satellites)
   const { councilMembers, breakGlassCouncilMembers } = useSelector((state: State) => state.council)
   const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
-  const { isLoaded: isFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
+  const { isGovernanceStorageLoaded } = useSelector((state: State) => state.governance)
   const { isDataLoaded: isLoansLoaded } = useSelector((state: State) => state.loans)
   const { isLoaded: isVestingLoaded } = useSelector((state: State) => state.vesting)
   const {
@@ -79,10 +78,9 @@ const DashboardPersonal = () => {
       try {
         await Promise.all(
           [
-            dispatch(getGovernanceStorage()),
+            (!isGovernanceStorageLoaded || isDepsChanged) && dispatch(getGovernanceStorage()),
             (!isEgovLoaded || isDepsChanged) && dispatch(getEmergencyGovernanceStorage()),
             isVestee && (!isVestingLoaded || isDepsChanged) && dispatch(getVestingStorage()),
-            (!isFeedsLoaded || isDepsChanged) && dispatch(getFeedsStorage()),
             (!isLoansLoaded || isDepsChanged) && dispatch(getLoansStorage()),
             (!isUserDataLoaded || isDepsChanged) && dispatch(updateUserData()),
           ].filter(Boolean),
