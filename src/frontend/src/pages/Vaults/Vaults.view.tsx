@@ -43,6 +43,7 @@ export const VaultsView = () => {
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const {
     vaultsList: { myVaultsIds, allVaultsIds, vaultsMapper },
+    isLoaded,
   } = useSelector((state: State) => state.vaults)
   const { tabId } = useParams<{ tabId: string }>()
 
@@ -65,12 +66,18 @@ export const VaultsView = () => {
     [accountPkh, tabId],
   )
 
-  const { isLoading } = useDataLoader(async () => {
-    try {
-      await dispatch(getVaultsStorage())
-      await dispatch(getAvaliableCollaterals())
-    } catch (e) {}
-  }, [accountPkh])
+  const { isLoading } = useDataLoader(
+    async (isDepsChanged) => {
+      try {
+        await Promise.all(
+          [(!isLoaded || isDepsChanged) && dispatch(getVaultsStorage()), dispatch(getAvaliableCollaterals())].filter(
+            Boolean,
+          ),
+        )
+      } catch (e) {}
+    },
+    [accountPkh],
+  )
 
   const [vaultsIds, setVaultsIds] = useState<string[]>([])
   const assets = useMemo(() => getVaultAssets(vaultsMapper), [vaultsMapper])

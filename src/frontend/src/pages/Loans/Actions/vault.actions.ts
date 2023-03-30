@@ -5,10 +5,11 @@ import { ERROR, INFO, SUCCESS } from 'app/App.components/Toaster/Toaster.constan
 import { AppDispatch, GetState } from 'app/App.controller'
 import { fetchFromIndexer } from 'gql/fetchGraphQL'
 import { NEW_VAULT_QUERY, NEW_VAULT_QUERY_NAME, NEW_VAULT_QUERY_VARIABLE } from 'gql/queries/getLoansStorage'
+import { getVaultsStorage } from 'pages/Vaults/Vaults.actions'
 import { State } from 'reducers'
 import { updateUserData } from 'reducers/actions/user.actions'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
-import { getAvaliableCollaterals, getLoansStorage, getLoansVaultsData } from './getLoansData.actions'
+import { getAvaliableCollaterals, getLoansStorage } from './getLoansData.actions'
 
 // trigger initial vault creation to get the id of future vault
 export const triggerInitialVaultCreation =
@@ -35,7 +36,8 @@ export const triggerInitialVaultCreation =
 
       // refetch data we need
       await dispatch(updateUserData())
-      await dispatch(getLoansStorage())
+      state.vaults.isLoaded && (await dispatch(getVaultsStorage()))
+      state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
       const newVaultData = await fetchFromIndexer(NEW_VAULT_QUERY, NEW_VAULT_QUERY_NAME, NEW_VAULT_QUERY_VARIABLE)
       return newVaultData.vault.at(-1)?.lending_controller_vaults[0].vault_id
     } catch (error) {
@@ -79,7 +81,8 @@ export const borrowVaultAssetAction =
       // refetch data we need
       await dispatch(updateUserData())
       await dispatch(getAvaliableCollaterals())
-      await dispatch(getLoansVaultsData())
+      state.vaults.isLoaded && (await dispatch(getVaultsStorage()))
+      state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
       await dispatch(showToaster(SUCCESS, 'Asset borrowed.', 'All good :)'))
       await dispatch(toggleActionLoader(false))
     } catch (error) {
@@ -124,7 +127,8 @@ export const repayPartOfVaultAction =
       // refetch data we need
       await dispatch(updateUserData())
       await dispatch(getAvaliableCollaterals())
-      await dispatch(getLoansVaultsData())
+      state.vaults.isLoaded && (await dispatch(getVaultsStorage()))
+      state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
       await dispatch(showToaster(SUCCESS, 'Asset repayed.', 'All good :)'))
       await dispatch(toggleActionLoader(false))
     } catch (error) {
@@ -180,7 +184,8 @@ export const repayFullAndCloseVaultAction =
       // refetch data we need
       await dispatch(updateUserData())
       await dispatch(getAvaliableCollaterals())
-      await dispatch(getLoansVaultsData())
+      state.vaults.isLoaded && (await dispatch(getVaultsStorage()))
+      state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
       await dispatch(showToaster(SUCCESS, 'Asset repayed.', 'All good :)'))
       await dispatch(toggleActionLoader(false))
     } catch (error) {

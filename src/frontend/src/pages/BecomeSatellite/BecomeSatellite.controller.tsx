@@ -70,15 +70,19 @@ export const BecomeSatellite = () => {
   const { isLoaded: isDoormanLoaded } = useSelector((state: State) => state.doorman)
   const { themeSelected } = useSelector((state: State) => state.preferences)
 
-  const { isLoading } = useDataLoader(async () => {
-    try {
-      await Promise.all(
-        [!isConfigLoaded && dispatch(getSatelliteConfig()), !isDoormanLoaded && dispatch(getDoormanStorage())].filter(
-          Boolean,
-        ),
-      )
-    } catch (error) {}
-  }, [accountPkh])
+  const { isLoading } = useDataLoader(
+    async (isDepsChanged) => {
+      try {
+        await Promise.all(
+          [
+            !isConfigLoaded || (isDepsChanged && dispatch(getSatelliteConfig())),
+            !isDoormanLoaded || (isDepsChanged && dispatch(getDoormanStorage())),
+          ].filter(Boolean),
+        )
+      } catch (error) {}
+    },
+    [accountPkh],
+  )
 
   const balanceOverMinStakedMvk = mySMvkTokenBalance >= minimumStakedMvkBalance
   const usersSatelliteProfile = satelliteMapper[accountPkh] ?? null
