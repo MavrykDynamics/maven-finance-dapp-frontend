@@ -75,8 +75,8 @@ export const BecomeSatellite = () => {
       try {
         await Promise.all(
           [
-            !isConfigLoaded || (isDepsChanged && dispatch(getSatelliteConfig())),
-            !isDoormanLoaded || (isDepsChanged && dispatch(getDoormanStorage())),
+            (!isConfigLoaded || isDepsChanged) && dispatch(getSatelliteConfig()),
+            (!isDoormanLoaded || isDepsChanged) && dispatch(getDoormanStorage()),
           ].filter(Boolean),
         )
       } catch (error) {}

@@ -100,18 +100,22 @@ export function BreakGlassCouncil() {
   }, [])
 
   // getting data after auth
-  useDataLoader(async () => {
-    if (!accountPkh) return
+  useDataLoader(
+    async (isDepsChanged) => {
+      if (!accountPkh) return
 
-    try {
-      await Promise.all(
-        [
-          !isBreakGlassCouncilPendingActionsLoaded && dispatch(getBreakGlassCouncilPendingActions()),
-          !isBreakGlassCouncilPastActionsLoaded && dispatch(getBreakGlassCouncilPastActions()),
-        ].filter(Boolean),
-      )
-    } catch (e) {}
-  }, [accountPkh])
+      try {
+        await Promise.all(
+          [
+            (!isBreakGlassCouncilPendingActionsLoaded || isDepsChanged) &&
+              dispatch(getBreakGlassCouncilPendingActions()),
+            (!isBreakGlassCouncilPastActionsLoaded || isDepsChanged) && dispatch(getBreakGlassCouncilPastActions()),
+          ].filter(Boolean),
+        )
+      } catch (e) {}
+    },
+    [accountPkh],
+  )
 
   return (
     <Page>

@@ -52,14 +52,18 @@ export const Loans = () => {
   const dispatch = useDispatch()
   const { isDataLoaded, loanTokens, chartsData } = useSelector((state: State) => state.loans)
   const { themeSelected } = useSelector((state: State) => state.preferences)
+  const { accountPkh } = useSelector((state: State) => state.wallet)
 
-  const { isLoading } = useDataLoader(async () => {
-    try {
-      if (!isDataLoaded) {
-        await dispatch(getLoansStorage())
-      }
-    } catch (e) {}
-  }, [isDataLoaded])
+  const { isLoading } = useDataLoader(
+    async (isDepsChanged) => {
+      try {
+        if (!isDataLoaded || isDepsChanged) {
+          await dispatch(getLoansStorage())
+        }
+      } catch (e) {}
+    },
+    [accountPkh],
+  )
 
   useEffect(() => {
     window.scrollTo(0, 0)

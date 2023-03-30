@@ -27,7 +27,6 @@ export const getVaultsStorage = () => async (dispatch: AppDispatch, getState: Ge
       VAULTS_STORAGE_QUERY_NAME,
       VAULTS_STORAGE_QUERY_VARIABLE,
     )
-    console.log({ storage })
     const lendingController: LendingControllerGQL = storage?.lending_controller[0] || {}
 
     const [, oracleLatestPrices] = await Promise.all([
@@ -50,8 +49,6 @@ export const getVaultsStorage = () => async (dispatch: AppDispatch, getState: Ge
       currentBlockLevel: headData?.level,
       lendingController,
     })
-
-    console.log({ normallaziedVaultsStorage })
 
     dispatch({
       type: GET_VAULTS_STORAGE,

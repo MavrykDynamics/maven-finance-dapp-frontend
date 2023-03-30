@@ -68,13 +68,16 @@ export const LoansDashboard = () => {
   const { satelliteMapper } = useSelector((state: State) => state.satellites)
   const { councilMembers, breakGlassCouncilMembers } = useSelector((state: State) => state.council)
 
-  const { isLoading } = useDataLoader(async () => {
-    try {
-      if (!isLoansLoaded) {
-        await dispatch(getLoansStorage())
-      }
-    } catch (e) {}
-  }, [accountPkh])
+  const { isLoading } = useDataLoader(
+    async (isDepsChanged) => {
+      try {
+        if (!isLoansLoaded || isDepsChanged) {
+          await dispatch(getLoansStorage())
+        }
+      } catch (e) {}
+    },
+    [accountPkh],
+  )
 
   const userImage = useMemo(
     () =>
@@ -234,7 +237,9 @@ export const LoansDashboard = () => {
                   <div className="gauge-chart">
                     <CustomTooltip
                       iconId="info"
-                      text="dummy"
+                      text="Risk value indicates how risky your portfolio is. When the risk value reaches 100, your collateral will be liquidated. 
+                      Risk value = Total Borrow/Borrow Limit*100 
+                      Net APY = [Σ(Value of Supplied Assets*Supply APY) - Σ(Value of Borrowed Assets*Borrow APY)] / Value of Supplied Assets"
                       defaultStrokeColor={colors[themeSelected].textColor}
                       className="tooltip"
                     />

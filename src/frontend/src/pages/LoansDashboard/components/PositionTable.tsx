@@ -55,12 +55,20 @@ export const LoansPositionTable = ({
                   <div className="cell-content" style={{ marginRight: '20px' }}>
                     <span>
                       Lend APY{' '}
-                      <CustomTooltip iconId="info" text="dummy" defaultStrokeColor={colors[themeSelected].textColor} />
+                      <CustomTooltip
+                        iconId="info"
+                        text="Current yield suppliers are earning on their deposits."
+                        defaultStrokeColor={colors[themeSelected].textColor}
+                      />
                     </span>
                     <span>Total Supplied</span>
                     <span>
                       Yield{' '}
-                      <CustomTooltip iconId="info" text="dummy" defaultStrokeColor={colors[themeSelected].textColor} />
+                      <CustomTooltip
+                        iconId="info"
+                        text="Rewards To Date"
+                        defaultStrokeColor={colors[themeSelected].textColor}
+                      />
                     </span>
                     <span></span>
                   </div>
@@ -71,8 +79,8 @@ export const LoansPositionTable = ({
                     <span>Borrow APR</span>
                     <span>Loan Balance</span>
                     <span>
-                      Vault Status{' '}
-                      <CustomTooltip iconId="info" text="dummy" defaultStrokeColor={colors[themeSelected].textColor} />
+                      Vault Status
+                      {/* <CustomTooltip iconId="info" text="dummy" defaultStrokeColor={colors[themeSelected].textColor} /> */}
                     </span>
                     <span></span>
                   </div>

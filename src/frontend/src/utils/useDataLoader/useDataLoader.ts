@@ -1,15 +1,19 @@
 import { useSelector } from 'react-redux'
-import { useEffect, useRef, useState } from 'react'
+import { useLayoutEffect, useState } from 'react'
 import { State } from 'reducers'
+import { usePrevious } from 'react-use'
 
 // TODO: add docs for this hook
 export const useDataLoader = (callback: (isDepsChanged?: boolean) => Promise<void>, deps: React.DependencyList) => {
   const { isInitialDataLoading } = useSelector((state: State) => state.loading)
   const [isLoading, setLoading] = useState(true)
-  useEffect(() => {
+
+  const isInitialDataLoadingPrev = usePrevious(isInitialDataLoading)
+
+  useLayoutEffect(() => {
     if (isInitialDataLoading === false) {
       setLoading(true)
-      callback(true).finally(() => {
+      callback(isInitialDataLoadingPrev === isInitialDataLoading).finally(() => {
         setLoading(false)
       })
     }
