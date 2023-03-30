@@ -6,7 +6,6 @@ import {
 } from 'app/App.components/Pagination/pagination.consts'
 import Pagination from 'app/App.components/Pagination/Pagination.view'
 import { StatusFlag } from 'app/App.components/StatusFlag/StatusFlag.controller'
-import { getProposalStatusInfo } from 'pages/Governance/Governance.helpers'
 import { useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { useLocation } from 'react-router-dom'
@@ -32,19 +31,15 @@ export const Proposals = ({
   listName,
   type,
 }: ProposalsProps) => {
-  const {
-    config: { governancePhase, timelockProposalId, cycleHighestVotedProposalId, cycleCounter },
-    proposalsMapper,
-  } = useSelector((state: State) => state.governance)
-
-  const isHistoryPage = false
   const { search } = useLocation()
-  const currentPage = getPageNumber(search, listName)
 
+  const { proposalsMapper } = useSelector((state: State) => state.governance)
+
+  const currentPage = getPageNumber(search, listName)
   const paginatedItemsList = useMemo(() => {
     const [from, to] = calculateSlicePositions(currentPage, listName)
     return proposalsList.slice(from, to)
-  }, [currentPage, proposalsList, listName])
+  }, [currentPage, listName, proposalsList])
 
   return (
     <ProposalListContainer className={type}>
@@ -53,14 +48,8 @@ export const Proposals = ({
       <div className="proposals-list-wrapper">
         {paginatedItemsList.map((proposalId, index) => {
           const proposal = proposalsMapper[proposalId]
-          const { statusFlag } = getProposalStatusInfo(
-            governancePhase,
-            proposal,
-            timelockProposalId,
-            !isHistoryPage,
-            cycleHighestVotedProposalId,
-            cycleCounter,
-          )
+
+          console.log('Proposals/Proposals.controller.tsx, proposals votes on small card', { proposal })
 
           const votedMVK = Math.floor(
             (proposal.abstainMvkTotal ?? 0) +
@@ -85,7 +74,7 @@ export const Proposals = ({
                 endingText={'voted MVK'}
                 showDecimal={false}
               />
-              <StatusFlag text={statusFlag} status={statusFlag} />
+              <StatusFlag text={proposal.status} status={proposal.status} />
             </ProposalListItem>
           )
         })}

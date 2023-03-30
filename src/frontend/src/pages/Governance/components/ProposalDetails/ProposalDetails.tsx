@@ -14,7 +14,6 @@ import {
   proposalRoundVote,
   votingRoundVote,
 } from 'pages/Governance/actions/GovernanceInteraction.actions'
-import { getProposalStatusInfo, getShortByte } from 'pages/Governance/Governance.helpers'
 import { GovRightContainerTitleArea, RightSideSubContent, RightSideSubHeader } from 'pages/Governance/Governance.style'
 import { dropProposal } from 'pages/ProposalSubmission/ProposalSubmission.actions'
 import { TzAddress } from 'pages/Treasury/Treasury.style'
@@ -37,30 +36,12 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
 
   const isUserOwnerIfTheProposal = proposal.proposerId === accountPkh
 
-  const {
-    statusFlag,
-    anyUserCanExecuteProposal,
-    anyUserCanProcessProposalPayment,
-    satelliteAbleToMakeProposalRoundVote,
-  } = getProposalStatusInfo(
-    governancePhase,
-    proposal,
-    0, //governanceStorage.timelockProposalId,
-    false, //!onProposalHistoryPage,
-    0, //governanceStorage.cycleHighestVotedProposalId,
-    0, //governanceStorage.cycleCounter,
+  const canDropPhase = [ProposalStatus.LOCKED, ProposalStatus.ONGOING, ProposalStatus.UNLOCKED].includes(
+    proposal.status,
   )
 
-  const isAbleToMakeProposalRoundVote = satelliteAbleToMakeProposalRoundVote
-  const canDropPhase = [
-    ProposalStatus.ACTIVE,
-    ProposalStatus.LOCKED,
-    ProposalStatus.ONGOING,
-    ProposalStatus.UNLOCKED,
-  ].includes(statusFlag)
-
-  const isExecuteProposal = anyUserCanExecuteProposal && accountPkh
-  const isPaymentProposal = anyUserCanProcessProposalPayment && accountPkh
+  const isExecuteProposal = proposal.anyCanExecute && accountPkh
+  const isPaymentProposal = proposal.anyCanPay && accountPkh
 
   // Proposal actions
   const handleDeleteProposal = async () => {
@@ -149,7 +130,7 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
     <ProposalDetailsStyled isAuthorized={Boolean(accountPkh)}>
       <GovRightContainerTitleArea>
         <H2Title>{proposal.title}</H2Title>
-        <StatusFlag text={statusFlag} status={statusFlag} />
+        <StatusFlag text={proposal.status} status={proposal.status} />
       </GovRightContainerTitleArea>
 
       {votingEnding ? (
@@ -159,7 +140,7 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
         </RightSideSubContent>
       ) : null}
 
-      {statusFlag === 'UNLOCKED' ? (
+      {proposal.status === ProposalStatus.UNLOCKED ? (
         <InfoBlock className="info-block">
           <Icon id="info" />
           {isUserOwnerIfTheProposal ? (

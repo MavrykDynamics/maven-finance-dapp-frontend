@@ -95,9 +95,9 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
                   const { status, cycle } = proposalsMapper[proposalId]
 
                   if (showActive && selectedCycle && selectedCycle?.id !== NONE_CYCLE_SELECTED_OPTION.id)
-                    return status === 0 && cycle === Number(selectedCycle.id)
+                    return status !== ProposalStatus.DROPPED && cycle === Number(selectedCycle.id)
 
-                  if (showActive) return status === 0
+                  if (showActive) return status !== ProposalStatus.DROPPED
 
                   if (selectedCycle && selectedCycle?.id !== NONE_CYCLE_SELECTED_OPTION.id)
                     return cycle === Number(selectedCycle.id)

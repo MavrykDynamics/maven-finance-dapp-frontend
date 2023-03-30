@@ -73,9 +73,7 @@ export const SatelliteGovernanceCard = ({
     ? ProposalStatus.DROPPED
     : isEndingVotingTime
     ? ProposalStatus.ONGOING
-    : expirationDatetime < timeNow
-    ? ProposalStatus.DEFEATED
-    : ProposalStatus.ACTIVE
+    : ProposalStatus.DEFEATED
 
   const voteStatistic = useMemo(
     () => ({

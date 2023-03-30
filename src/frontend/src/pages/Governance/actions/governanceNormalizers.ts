@@ -8,41 +8,72 @@ import {
 import { State } from 'reducers'
 import { calcWithoutPrecision, calcWithoutMu } from 'utils/calcFunctions'
 import { DipDupTokensGraphQl } from 'utils/TypesAndInterfaces/DipDupTokens'
-import { GovernanceProposalGraphQL, GovernanceGraphQL, GovPhases } from 'utils/TypesAndInterfaces/Governance'
+import {
+  GovernanceProposalGraphQL,
+  GovernanceGraphQL,
+  GovPhases,
+  ProposalStatus,
+} from 'utils/TypesAndInterfaces/Governance'
+import { getProposalStatus } from '../Governance.helpers'
 
-export const normalizeProposal = (item: GovernanceProposalGraphQL, dipDupTokens?: Array<DipDupTokensGraphQl>) => {
+export const normalizeProposal = (
+  item: GovernanceProposalGraphQL,
+  dipDupTokens: Array<DipDupTokensGraphQl>,
+  { governancePhase, cycleHighestVotedProposalId, timelockProposalId }: State['governance']['config'],
+) => {
+  const proposalConvertedStatus = getProposalStatus(
+    item,
+    governancePhase,
+    cycleHighestVotedProposalId,
+    timelockProposalId,
+  )
+
+  const anyCanExecute = !item.current_round_proposal && timelockProposalId === item.id && !item.executed
+  const anyCanPay =
+    !item.current_round_proposal &&
+    timelockProposalId === item.id &&
+    item.executed &&
+    item.payments.length &&
+    !item.payment_processed
+
   return {
     id: item.id,
     proposerId: item.proposer_id,
-    status: item.status,
+    governanceId: item.governance_id,
+
+    status: proposalConvertedStatus,
+    anyCanExecute,
+    anyCanPay,
+
     title: item.title,
     description: item.description,
-    invoice: item.invoice,
-    successReward: item.success_reward,
-    startDateTime: item.start_datetime,
+
+    paymentProcessed: item.payment_processed,
     executed: item.executed,
     locked: item.locked,
+    currentRoundProposal: item.current_round_proposal,
+
+    currentCycleEndLevel: item.current_cycle_end_level,
+    cycle: item.cycle,
+    successReward: item.success_reward,
     sourceCode: item.source_code,
+
+    // voting data
     passVoteMvkTotal: calcWithoutPrecision(item.proposal_vote_smvk_total),
     upvoteMvkTotal: calcWithoutPrecision(item.yay_vote_smvk_total),
     downvoteMvkTotal: calcWithoutPrecision(item.nay_vote_count),
     abstainMvkTotal: calcWithoutPrecision(item.pass_vote_smvk_total),
-    minProposalRoundVoteRequirement: item.min_proposal_round_vote_req,
-    minProposalRoundVotePercentage: item.min_proposal_round_vote_pct,
-    minQuorumPercentage: item.min_quorum_percentage,
-    minQuorumMvkTotal: item.min_yay_vote_percentage,
     quorumMvkTotal: item.quorum_smvk_total,
-    currentRoundProposal: item.current_round_proposal,
-    currentCycleStartLevel: item.current_cycle_start_level,
-    currentCycleEndLevel: item.current_cycle_end_level,
-    cycle: item.cycle,
     votes: item.votes,
+    minQuorumPercentage: item.min_quorum_percentage,
+
     proposalData: item.data.map((byte, idx) => ({
       ...byte,
       order: idx,
       isUnderTheDrop: false,
       isLocalBytes: false,
     })),
+
     proposalPayments: item.payments.map((paymentData) => {
       const decimals =
         dipDupTokens?.find(({ contract }) => contract === paymentData.token_address)?.metadata?.decimals ?? 0
@@ -53,8 +84,6 @@ export const normalizeProposal = (item: GovernanceProposalGraphQL, dipDupTokens?
         token_amount: Number(paymentData.token_amount) / Math.pow(10, Number(decimals)) ?? 0,
       }
     }),
-    governanceId: item.governance_id,
-    paymentProcessed: item.payment_processed,
   }
 }
 
@@ -68,20 +97,20 @@ export const normalizeGovernanceProposals = (
 
   return proposals.reduce<Omit<Omit<State['governance'], 'isLoaded'>, 'config'>>(
     (acc, proposalFromGQL) => {
-      const normalizedProposal = normalizeProposal(proposalFromGQL, dipDupTokens)
+      const normalizedProposal = normalizeProposal(proposalFromGQL, dipDupTokens, governanceConfig)
 
-      const { id, executed, status, currentRoundProposal, paymentProcessed, proposalPayments } = normalizedProposal
+      const { id, executed, status, currentRoundProposal, paymentProcessed } = normalizedProposal
 
       acc.proposalsMapper[id] = normalizedProposal
       acc.allProposalsIds.push(id)
 
       // Add id of current round proposal
-      if (currentRoundProposal && status === 0 && !executed) {
+      if (currentRoundProposal && status !== ProposalStatus.DROPPED && !executed) {
         acc.currentRoundProposalsIds.push(id)
       }
 
       // Add id of proposal to be executed proposal
-      if (isProposalRound && !executed && timelockProposalId === id && status === 0) {
+      if (isProposalRound && !executed && timelockProposalId === id && status !== ProposalStatus.DROPPED) {
         acc.waitingProposalsIdsToBeExecuted.push(id)
       }
 
@@ -91,7 +120,11 @@ export const normalizeGovernanceProposals = (
       }
 
       // Add id of past proposal
-      if (executed || !currentRoundProposal || status === 1) {
+      if (
+        status === ProposalStatus.DROPPED ||
+        status === ProposalStatus.EXECUTED ||
+        status === ProposalStatus.DEFEATED
+      ) {
         acc.pastProposalsIds.push(id)
       }
 
