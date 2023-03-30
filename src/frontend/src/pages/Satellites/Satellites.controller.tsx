@@ -39,13 +39,13 @@ const Satellites = () => {
   const { feedsLedger, isLoaded: isFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
   const { isLoaded: isDoormanLoaded } = useSelector((state: State) => state.doorman)
 
-  const { isLoading } = useDataLoader(async () => {
+  const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {
       await Promise.all(
         [
-          !isFeedsLoaded && dispatch(getFeedsStorage()),
-          !isDoormanLoaded && dispatch(getDoormanStorage()),
-          !isGovernanceStorageLoaded && dispatch(getGovernanceStorage()),
+          (!isFeedsLoaded || isDepsChanged) && dispatch(getFeedsStorage()),
+          (!isDoormanLoaded || isDepsChanged) && dispatch(getDoormanStorage()),
+          (!isGovernanceStorageLoaded || isDepsChanged) && dispatch(getGovernanceStorage()),
         ].filter(Boolean),
       )
     } catch (e) {}

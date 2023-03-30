@@ -70,9 +70,10 @@ export const VaultsView = () => {
     async (isDepsChanged) => {
       try {
         await Promise.all(
-          [(!isLoaded || isDepsChanged) && dispatch(getVaultsStorage()), dispatch(getAvaliableCollaterals())].filter(
-            Boolean,
-          ),
+          [
+            (!isLoaded || isDepsChanged) && dispatch(getVaultsStorage()),
+            isDepsChanged && dispatch(getAvaliableCollaterals()),
+          ].filter(Boolean),
         )
       } catch (e) {}
     },

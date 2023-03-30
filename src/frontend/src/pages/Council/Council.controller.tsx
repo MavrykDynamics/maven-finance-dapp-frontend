@@ -81,13 +81,13 @@ export const Council = () => {
 
   const councilUserImage = useMemo(() => (isCouncilMember ? userImage : undefined), [isCouncilMember, userImage])
 
-  const { isLoading } = useDataLoader(async () => {
+  const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {
       await Promise.all(
         [
-          !isStorageLoaded && dispatch(getCouncilStorage()),
-          !isCouncilMembersLoaded && dispatch(getCouncilMembers()),
-          !isCouncilPastActionsLoaded && dispatch(getCouncilPastActions()),
+          (!isStorageLoaded || isDepsChanged) && dispatch(getCouncilStorage()),
+          (!isCouncilMembersLoaded || isDepsChanged) && dispatch(getCouncilMembers()),
+          (!isCouncilPastActionsLoaded || isDepsChanged) && dispatch(getCouncilPastActions()),
         ].filter(Boolean),
       )
     } catch (e) {}

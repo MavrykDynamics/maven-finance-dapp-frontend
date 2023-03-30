@@ -86,14 +86,14 @@ export function BreakGlassCouncil() {
     [isBreakGlassCouncilMember, userImage],
   )
 
-  const { isLoading } = useDataLoader(async () => {
+  const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {
       await Promise.all(
         [
-          !isConfigLoaded && dispatch(getBreakGlassConfig()),
-          !isStorageLoaded && dispatch(getCouncilStorage()),
-          !isBreakGlassCouncilMembersLoaded && dispatch(getBreakGlassCouncilMembers()),
-          !isBreakGlassCouncilPastActionsLoaded && dispatch(getBreakGlassCouncilPastActions()),
+          (!isConfigLoaded || isDepsChanged) && dispatch(getBreakGlassConfig()),
+          (!isStorageLoaded || isDepsChanged) && dispatch(getCouncilStorage()),
+          (!isBreakGlassCouncilMembersLoaded || isDepsChanged) && dispatch(getBreakGlassCouncilMembers()),
+          (!isBreakGlassCouncilPastActionsLoaded || isDepsChanged) && dispatch(getBreakGlassCouncilPastActions()),
         ].filter(Boolean),
       )
     } catch (e) {}

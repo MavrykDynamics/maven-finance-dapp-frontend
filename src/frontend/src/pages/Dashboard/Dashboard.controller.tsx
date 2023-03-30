@@ -32,7 +32,10 @@ export const Dashboard = () => {
   const { treasuryStorage, isLoaded: isTreasuryLoaded } = useSelector((state: State) => state.treasury)
   const { isLoaded: isVestingLoaded } = useSelector((state: State) => state.vesting)
   const { isLoaded: isFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
-  const { allVaultsIds, vaultsMapper } = useSelector((state: State) => state.vaults.vaultsList)
+  const {
+    vaultsList: { allVaultsIds, vaultsMapper },
+    isLoaded: isVaultsLoaded,
+  } = useSelector((state: State) => state.vaults)
   const { farms, isLoaded: isFarmsLoaded } = useSelector((state: State) => state.farm)
   const {
     isDataLoaded: isLoansLoaded,
@@ -67,18 +70,18 @@ export const Dashboard = () => {
 
   const tvlValue = doormanTVL + treasuryTVL + farmsTVL + lendingTvl + vaultsTvl
 
-  const { isLoading } = useDataLoader(async () => {
+  const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {
       await Promise.all(
         [
-          dispatch(getVaultsStorage()),
-          dispatch(getGovernanceStorage()),
-          !isFeedsLoaded && dispatch(getFeedsStorage()),
-          !isVestingLoaded && dispatch(getVestingStorage()),
-          !isTreasuryLoaded && dispatch(fillTreasuryStorage()),
-          !isLoansLoaded && dispatch(getLoansStorage()),
-          !isFarmsLoaded && dispatch(getFarmStorage()),
-          !isDoormanLoaded && dispatch(getDoormanStorage()),
+          isDepsChanged && dispatch(getGovernanceStorage()),
+          (!isVaultsLoaded || isDepsChanged) && dispatch(getVaultsStorage()),
+          (!isFeedsLoaded || isDepsChanged) && dispatch(getFeedsStorage()),
+          (!isVestingLoaded || isDepsChanged) && dispatch(getVestingStorage()),
+          (!isTreasuryLoaded || isDepsChanged) && dispatch(fillTreasuryStorage()),
+          (!isLoansLoaded || isDepsChanged) && dispatch(getLoansStorage()),
+          (!isFarmsLoaded || isDepsChanged) && dispatch(getFarmStorage()),
+          (!isDoormanLoaded || isDepsChanged) && dispatch(getDoormanStorage()),
         ].filter(Boolean),
       )
     } catch (e) {}

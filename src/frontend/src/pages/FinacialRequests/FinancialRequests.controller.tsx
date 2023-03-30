@@ -22,8 +22,8 @@ export const FinancialRequests = () => {
     (state: State) => state.financialRequest,
   )
 
-  const { isLoading } = useDataLoader(async () => {
-    if (!isFinancialRequestsLoaded) {
+  const { isLoading } = useDataLoader(async (isDepsChanged) => {
+    if (!isFinancialRequestsLoaded || isDepsChanged) {
       await dispatch(getFinancialRequestStorage())
     }
   }, [])
