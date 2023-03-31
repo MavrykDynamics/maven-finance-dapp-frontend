@@ -80,7 +80,6 @@ export const BorrowingExpandCard = ({
   collateralRatio,
   borrowCapacity,
   DAOFee,
-  repayFee,
 }: BorrowingExpandCardPropsType) => {
   const { symbol, icon, rate = 1 } = borrowedAsset
 
@@ -261,7 +260,7 @@ export const BorrowingExpandCard = ({
                         vaultId,
                         borrowedAsset: borrowedAsset,
                         borrowedAmount,
-                        feesAmount: repayFee,
+                        feesAmount: fee,
                         currentCollateralBalance: collateralData.at(-1)?.amount ?? 0,
                         borrowCapacity,
                       })
@@ -553,7 +552,7 @@ export const BorrowingExpandCard = ({
                         borrowedAsset: borrowedAsset,
                         collateralRatio,
                         borrowedAmount,
-                        feesAmount: repayFee,
+                        feesAmount: fee,
                         currentCollateralBalance: collateralData.at(-1)?.amount ?? 0,
                         borrowCapacity,
                       })

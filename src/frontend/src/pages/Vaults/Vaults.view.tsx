@@ -66,19 +66,19 @@ export const VaultsView = () => {
     [accountPkh, tabId],
   )
 
-  const { isLoading } = useDataLoader(async () => {
-    try {
-      if (!isLoaded) {
-        await dispatch(getVaultsStorage())
-      }
-    } catch (e) {}
-  }, [accountPkh])
-
-  useDataLoader(async () => {
-    try {
-      await dispatch(getAvaliableCollaterals())
-    } catch (e) {}
-  }, [])
+  const { isLoading } = useDataLoader(
+    async (isDepsChanged) => {
+      try {
+        await Promise.all(
+          [
+            (!isLoaded || isDepsChanged) && dispatch(getVaultsStorage()),
+            isDepsChanged && dispatch(getAvaliableCollaterals()),
+          ].filter(Boolean),
+        )
+      } catch (e) {}
+    },
+    [accountPkh],
+  )
 
   const [vaultsIds, setVaultsIds] = useState<string[]>([])
   const assets = useMemo(() => getVaultAssets(vaultsMapper), [vaultsMapper])
@@ -131,14 +131,13 @@ export const VaultsView = () => {
       ) : paginatedVaultsList.length ? (
         <div className="vaults">
           {paginatedVaultsList.map((item) => {
-            const isOwner = vaultsMapper[item].ownerId === accountPkh
+            const isOwner = vaultsMapper[item]?.ownerId === accountPkh
 
             return (
               <VaultsCard
                 key={item}
                 isOwner={isOwner}
                 handleMarkForLiquidation={handleMarkForLiquidation}
-                isAllPage={tabId === tabsId.ALL}
                 {...vaultsMapper[item]}
               />
             )

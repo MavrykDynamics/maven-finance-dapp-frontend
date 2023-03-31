@@ -212,6 +212,8 @@ export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
 `
 export const StatusMessageStyled = styled.div<{ theme: MavrykTheme }>`
   display: flex;
+  align-items: center;
+  column-gap: 20px;
   padding: 15px 25px;
   margin: 15px 0 25px 0;
   background-color: ${({ theme }) => theme.dPurple_container_dPurple};
@@ -231,11 +233,7 @@ export const StatusMessageStyled = styled.div<{ theme: MavrykTheme }>`
   }
 
   svg {
-    display: block;
-    margin: auto 0;
-    margin-right: 20px;
-
-    width: 20px;
+    width: 50px;
     height: 20px;
   }
 

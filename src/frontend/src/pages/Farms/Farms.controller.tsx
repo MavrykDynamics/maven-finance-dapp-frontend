@@ -69,9 +69,9 @@ export const Farms = () => {
 
   const { farms, isLoaded } = useSelector((state: State) => state.farm)
 
-  const { isLoading } = useDataLoader(async () => {
+  const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {
-      if (!isLoaded) {
+      if (!isLoaded || isDepsChanged) {
         await dispatch(getFarmStorage())
       }
     } catch (error) {}

@@ -65,7 +65,7 @@ export const BorrowAsset = ({
       ? calcCollateralRatio(currentCollateralBalance, currentBorrowedAmount + inputAmount, borrowedAsset.rate)
       : 0
 
-    const futureBorrowCapacity = borrowCapacity - inputAmount
+    const futureBorrowCapacity = borrowCapacity / (borrowedAsset?.rate ?? 0) - inputAmount
     return { futureCollateralRatio, futureBorrowCapacity }
   }, [borrowedAsset, currentCollateralBalance, currentBorrowedAmount, inputAmount, borrowCapacity])
 
@@ -133,7 +133,7 @@ export const BorrowAsset = ({
               <div className="lending-stats" style={{ marginBottom: '30px' }}>
                 <ThreeLevelListItem>
                   <div className="name">Borrow Capacity</div>
-                  <CommaNumber value={borrowCapacity} className="value" />
+                  <CommaNumber value={borrowCapacity} className="value" beginningText="$" />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">Collateral Utilization</div>
@@ -166,12 +166,16 @@ export const BorrowAsset = ({
                     type: 'number',
                     onBlur: inputOnBlurHandle,
                     onFocus: onFocusHandler,
-                    onChange: (e) => inputOnChangeHandle(e.target.value, borrowCapacity),
+                    onChange: (e) => inputOnChangeHandle(e.target.value, borrowCapacity / borrowedAsset.rate),
                   }}
                   settings={{
                     balance: borrowedAsset.userBalance,
                     balanceAsset: borrowedAsset?.symbol,
-                    useMaxHandler: () => inputOnChangeHandle(String(borrowCapacity), borrowCapacity),
+                    useMaxHandler: () =>
+                      inputOnChangeHandle(
+                        String(borrowCapacity / borrowedAsset.rate),
+                        borrowCapacity / borrowedAsset.rate,
+                      ),
                     inputStatus: inputData.validationStatus,
                     convertedValue: inputAmount * borrowedAsset.rate,
                     inputSize: INPUT_LARGE,
@@ -252,19 +256,19 @@ export const BorrowAsset = ({
                   <div className="value">{borrowedAsset?.symbol}</div>
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
-                  <div className="name">
-                    Total Amount{' '}
-                    <CustomTooltip
-                      iconId="info"
-                      defaultStrokeColor={silverColor}
-                      text={`Full amount being borrowed included the DAO Fee`}
-                      className="tooltip"
-                    />
-                  </div>
+                  <div className="name">Total Amount</div>
                   <CommaNumber value={inputAmount} className="value" />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
-                  <div className="name">Amount Received</div>
+                  <div className="name">
+                    Amount Received{' '}
+                    <CustomTooltip
+                      iconId="info"
+                      defaultStrokeColor={silverColor}
+                      text={`Total Amount - DAO Fee`}
+                      className="tooltip"
+                    />
+                  </div>
                   <CommaNumber value={inputAmount * 0.99} className="value" />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>

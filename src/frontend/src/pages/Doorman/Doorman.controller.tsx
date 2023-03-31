@@ -46,9 +46,9 @@ export const Doorman = () => {
     accountPkh,
   }
 
-  const { isLoading } = useDataLoader(async () => {
+  const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {
-      if (!isDoormanLoaded) {
+      if (!isDoormanLoaded || isDepsChanged) {
         await dispatch(getDoormanStorage())
       }
     } catch (e) {}

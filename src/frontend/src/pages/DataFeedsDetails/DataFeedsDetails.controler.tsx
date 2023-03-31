@@ -18,9 +18,9 @@ const DataFeedDetails = () => {
   const { feedsLedger, isLoaded: isFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
   const { oraclesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
 
-  const { isLoading } = useDataLoader(async () => {
+  const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {
-      if (!isFeedsLoaded) {
+      if (!isFeedsLoaded || isDepsChanged) {
         await dispatch(getFeedsStorage())
       }
     } catch (e) {}

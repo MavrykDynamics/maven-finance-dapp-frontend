@@ -44,9 +44,9 @@ export const BorrowingTab = ({
       : borrowingItems
   }, [borrowingItems, showZeroVaults])
 
-  const { isLoading: loadingAvaliableCollaterals } = useDataLoader(async () => {
+  useDataLoader(async (isDepsChanged) => {
     try {
-      await dispatch(getAvaliableCollaterals())
+      if (isDepsChanged) await dispatch(getAvaliableCollaterals())
     } catch (e) {}
   }, [])
 

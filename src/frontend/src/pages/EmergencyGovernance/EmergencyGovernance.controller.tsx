@@ -26,13 +26,13 @@ export const EmergencyGovernance = () => {
 
   const [showInitiatePopup, setShowInitiatePopup] = useState(false)
 
-  const { isLoading } = useDataLoader(async () => {
+  const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {
       await Promise.all(
         [
-          !isBreakGlassConfigLoaded && dispatch(getBreakGlassConfig()),
-          !isDoormanLoaded && dispatch(getDoormanStorage()),
-          !isEgovLoaded && dispatch(getEmergencyGovernanceStorage()),
+          (!isBreakGlassConfigLoaded || isDepsChanged) && dispatch(getBreakGlassConfig()),
+          (!isDoormanLoaded || isDepsChanged) && dispatch(getDoormanStorage()),
+          (!isEgovLoaded || isDepsChanged) && dispatch(getEmergencyGovernanceStorage()),
         ].filter(Boolean),
       )
     } catch (e) {}

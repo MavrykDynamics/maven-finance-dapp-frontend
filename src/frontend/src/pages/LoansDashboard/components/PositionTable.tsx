@@ -55,12 +55,20 @@ export const LoansPositionTable = ({
                   <div className="cell-content" style={{ marginRight: '20px' }}>
                     <span>
                       Lend APY{' '}
-                      <CustomTooltip iconId="info" text="dummy" defaultStrokeColor={colors[themeSelected].textColor} />
+                      <CustomTooltip
+                        iconId="info"
+                        text="Current yield suppliers are earning on their deposits."
+                        defaultStrokeColor={colors[themeSelected].textColor}
+                      />
                     </span>
                     <span>Total Supplied</span>
                     <span>
                       Yield{' '}
-                      <CustomTooltip iconId="info" text="dummy" defaultStrokeColor={colors[themeSelected].textColor} />
+                      <CustomTooltip
+                        iconId="info"
+                        text="Rewards To Date"
+                        defaultStrokeColor={colors[themeSelected].textColor}
+                      />
                     </span>
                     <span></span>
                   </div>
@@ -71,8 +79,8 @@ export const LoansPositionTable = ({
                     <span>Borrow APR</span>
                     <span>Loan Balance</span>
                     <span>
-                      Vault Status{' '}
-                      <CustomTooltip iconId="info" text="dummy" defaultStrokeColor={colors[themeSelected].textColor} />
+                      Vault Status
+                      {/* <CustomTooltip iconId="info" text="dummy" defaultStrokeColor={colors[themeSelected].textColor} /> */}
                     </span>
                     <span></span>
                   </div>
@@ -111,7 +119,7 @@ export const LoansPositionTable = ({
                         {lendingItem ? (
                           <>
                             <CommaNumber value={lendingAPY} endingText="%" />
-                            <CommaNumber value={lendValue} />
+                            <CommaNumber value={lendValue * loanTokenData.rate} beginningText="$" />
                             <CommaNumber value={interestEarned} />
                             <Link to={`/loans/${loanTokenData.symbol}/${LEND_TAB_ID}`}>
                               <Button kind={BUTTON_SIMPLE}>View</Button>
@@ -144,7 +152,7 @@ export const LoansPositionTable = ({
                         {marketVaultsUserData ? (
                           <>
                             <CommaNumber value={borrowAPR} endingText="%" />
-                            <CommaNumber value={marketVaultsUserData.borrowedAmount} />
+                            <CommaNumber value={marketVaultsUserData.borrowedAmount} beginningText="$" />
                             <div className={`vault-status ${averageVaultStatus.status}`}>{averageVaultStatus.text}</div>
                             <Link to={`/loans/${loanTokenData.symbol}/${BORROW_TAB_ID}`}>
                               <Button kind={BUTTON_SIMPLE}>View</Button>

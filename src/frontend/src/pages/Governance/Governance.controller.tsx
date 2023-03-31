@@ -34,13 +34,13 @@ export const Governance = () => {
     useSelector((state: State) => state.governance)
   const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
 
-  const { isLoading } = useDataLoader(async () => {
+  const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {
       await Promise.all(
         [
-          !isEgovLoaded && dispatch(getEmergencyGovernanceStorage()),
-          dispatch(getCurrentRoundProposals()),
-          !isGovernanceStorageLoaded && dispatch(getGovernanceStorage()),
+          (!isEgovLoaded || isDepsChanged) && dispatch(getEmergencyGovernanceStorage()),
+          (!isGovernanceStorageLoaded || isDepsChanged) && dispatch(getCurrentRoundProposals()),
+          (!isGovernanceStorageLoaded || isDepsChanged) && dispatch(getGovernanceStorage()),
         ].filter(Boolean),
       )
     } catch (e) {}

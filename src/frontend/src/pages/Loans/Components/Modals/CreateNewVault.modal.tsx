@@ -619,7 +619,12 @@ export const CreateNewVault = ({
                 <ThreeLevelListItem>
                   <div className="name">
                     Borrowing Capacity{' '}
-                    <CustomTooltip iconId="info" defaultStrokeColor={silverColor} text="" className="tooltip" />
+                    <CustomTooltip
+                      iconId="info"
+                      defaultStrokeColor={silverColor}
+                      text="How much you are able to borrow given your current collateral ratio including the amount you wish to borrow and the total amount available to borrow from the pool."
+                      className="tooltip"
+                    />
                   </div>
                   <CommaNumber value={borrowingCapacity} className="value" beginningText="$" />
                 </ThreeLevelListItem>
