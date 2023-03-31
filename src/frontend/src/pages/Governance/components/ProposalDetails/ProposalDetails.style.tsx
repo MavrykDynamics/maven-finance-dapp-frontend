@@ -7,12 +7,10 @@ export const ProposalDetailsStyled = styled(Card)<{ isAuthorized?: boolean; them
   width: calc(50% - 30px);
   padding: 28px 30px;
   border-radius: 10px;
-  height: min-content;
-  margin-top: ${({ isAuthorized }) => (isAuthorized ? 0 : 28)}px;
   flex-shrink: 0;
-  margin-left: 30px;
+  margin: 0;
   position: relative;
-  padding-bottom: 55px;
+  padding-bottom: 50px;
 
   &::after {
     position: absolute;
@@ -20,32 +18,68 @@ export const ProposalDetailsStyled = styled(Card)<{ isAuthorized?: boolean; them
     width: 44px;
     height: 3px;
     border-radius: 10px;
-    bottom: 42px;
+    bottom: 22px;
     left: 50%;
     background-color: ${royalPurpleColor};
     transform: translateX(-50%);
   }
 
-  .info-block {
-    display: grid;
-    grid-template-columns: 16px auto;
-    column-gap: 20px;
-    margin-top: 40px;
+  .title-status {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .voting-ends {
+    color: ${({ theme }) => theme.dataColor};
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 21px;
     margin-bottom: 40px;
+  }
 
-    & + .voting-proposal {
-      display: none;
-    }
+  hr {
+    border: none;
+    height: 1px;
+    background-color: ${({ theme }) => theme.cardBorderColor};
+    margin: 30px 0;
+  }
 
-    svg {
-      stroke: none;
-      fill: ${({ theme }) => theme.headerColor};
+  .proposal-data-block-wrapper {
+    display: flex;
+    flex-direction: column;
+    row-gap: 5px;
+    margin-bottom: 30px;
+  }
 
-      width: 16px;
-      height: 16px;
+  .proposal-data-block-name {
+    color: ${({ theme }) => theme.textColor};
+    font-weight: 600;
+    font-size: 18px;
+  }
+
+  .proposal-data-block-value {
+    color: ${({ theme }) => theme.dataColor};
+    font-weight: 500;
+    font-size: 14px;
+  }
+
+  .drop-proposal {
+    margin-left: auto;
+    width: fit-content;
+  }
+
+  .gov-data {
+    display: flex;
+    justify-content: space-between;
+
+    .proposal-data-block-name {
+      font-weight: 500;
+      font-size: 14px;
     }
   }
 
+  /* OLD STYLES */
   .byte,
   .hide {
     svg {
@@ -63,149 +97,6 @@ export const ProposalDetailsStyled = styled(Card)<{ isAuthorized?: boolean; them
       text-align: left;
       line-height: inherit;
       font-size: inherit;
-    }
-  }
-
-  .byte-input {
-    visibility: hidden;
-    position: absolute;
-    width: 1px;
-    height: 1px;
-  }
-
-  .execute-proposal {
-    width: 194px;
-    align-self: flex-end;
-  }
-
-  .voting-proposal {
-    display: flex;
-    flex-direction: column;
-
-    .execute-proposal {
-      margin-top: 16px;
-    }
-  }
-
-  article {
-    margin-bottom: 18px;
-
-    a {
-      text-decoration: underline;
-    }
-
-    li {
-      &::marker {
-        color: ${({ theme }) => theme.textColor};
-      }
-    }
-
-    h4 {
-      font-weight: 500;
-      font-size: 14px;
-      line-height: 21px;
-      color: ${headerColor};
-    }
-
-    .governance-contract {
-      display: flex;
-      justify-content: space-between;
-      font-weight: 700;
-      font-size: 14px;
-      line-height: 14px;
-      color: ${({ theme }) => theme.dataColor};
-
-      svg {
-        stroke: ${({ theme }) => theme.dataColor};
-      }
-
-      p {
-        margin: 0;
-        color: ${({ theme }) => theme.textColor};
-      }
-    }
-
-    table {
-      table-layout: fixed;
-
-      td {
-        font-size: 12px;
-        word-break: break-all;
-        line-height: 17px;
-        padding-top: 4px;
-        padding-bottom: 5px;
-
-        * {
-          text-align: center;
-          width: 100%;
-        }
-      }
-    }
-  }
-
-  hr {
-    border: none;
-    height: 1px;
-    background-color: ${({ theme }) => theme.cardBorderColor};
-    margin-top: 16px;
-    margin-bottom: 40px;
-  }
-
-  .payment-data {
-    margin-bottom: 25px;
-  }
-
-  .proposal-list {
-    padding-left: 20px;
-    font-size: 14px;
-    line-height: 21px;
-    font-weight: 500;
-    margin-bottom: 30px;
-    color: ${({ theme }) => theme.textColor};
-
-    li {
-      margin-bottom: 6px;
-
-      svg {
-        stroke: ${({ theme }) => theme.textColorHovered};
-      }
-    }
-  }
-  .visible-button {
-    color: ${({ theme }) => theme.textColorHovered};
-    cursor: pointer;
-    position: relative;
-    font-weight: 500;
-    top: -1px;
-  }
-
-  .proposal-list-bites {
-    word-break: break-all;
-    color: ${({ theme }) => theme.dataColor};
-    button {
-      font-weight: 500;
-    }
-  }
-
-  .drop-proposal {
-    display: flex;
-    justify-content: flex-end;
-    padding-top: 20px;
-    padding-bottom: 20px;
-
-    font-weight: 600;
-    font-size: 16px;
-    line-height: 16px;
-
-    button {
-      width: 194px;
-    }
-
-    svg {
-      position: relative;
-      top: 3px;
-      width: 18px;
-      height: 18px;
     }
   }
 `

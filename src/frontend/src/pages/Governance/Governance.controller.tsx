@@ -135,12 +135,16 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
         : []),
 
       // show current round proposals on proposals page
-      {
-        title: governancePhase === GovPhases.PROPOSAL ? 'Pool for Next round' : 'Ongoing proposal',
-        type: 'ongoing',
-        proposalsIds: currentRoundProposalsIds,
-        listName: ONGOING_PROPOSALS_LIST_NAME,
-      },
+      ...(currentRoundProposalsIds.length
+        ? [
+            {
+              title: governancePhase === GovPhases.PROPOSAL ? 'Pool for Next round' : 'Ongoing proposal',
+              type: 'ongoing',
+              proposalsIds: currentRoundProposalsIds,
+              listName: ONGOING_PROPOSALS_LIST_NAME,
+            },
+          ]
+        : []),
     ]
   }, [
     isHistory,
@@ -153,6 +157,8 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
     showActive,
     selectedCycle,
   ])
+
+  console.log({ prpoposalsListsToShow })
 
   useEffect(() => {
     const firstProposalId = prpoposalsListsToShow?.[0]?.proposalsIds?.[0]

@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 import { MavrykTheme } from 'styles/interfaces'
 import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
+import { INFO } from 'app/App.components/StatusFlag/StatusFlag.constants'
 
 export const NoItemsInTabStyled = styled.div<{ theme: MavrykTheme }>`
   display: flex;
@@ -274,6 +275,14 @@ export const StatusMessageStyled = styled.div<{ theme: MavrykTheme }>`
 
     svg {
       fill: ${({ theme }) => theme.awaitingColor};
+    }
+  }
+
+  &.${INFO} {
+    border: 1px solid ${({ theme }) => theme.headerColor};
+
+    svg {
+      fill: ${({ theme }) => theme.headerColor};
     }
   }
 `

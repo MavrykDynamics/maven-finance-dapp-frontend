@@ -9,7 +9,7 @@ export const ProposalListContainer = styled.div<{ theme: MavrykTheme }>`
   position: relative;
 
   .proposals-list-wrapper {
-    margin-top: 5px;
+    margin-top: 15px;
     display: flex;
     flex-direction: column;
     row-gap: 10px;

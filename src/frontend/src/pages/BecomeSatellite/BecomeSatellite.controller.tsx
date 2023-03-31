@@ -47,6 +47,7 @@ import {
   BecomeSatelliteRegisterAsOracle,
   BecomeSatelliteOracleText,
 } from './BecomeSatellite.style'
+import { INFO_WARNING } from 'app/App.components/Info/info.constants'
 
 const connectWalletMessage = (
   <BecomeSatelliteFormBalanceCheck balanceOk={false}>
@@ -389,8 +390,7 @@ export const BecomeSatellite = () => {
                     text={
                       'Text here that shows what happen if user is going to unregister as oracle and click the button “update satellite info”. '
                     }
-                    type="warning"
-                    className="oracleWarning"
+                    type={INFO_WARNING}
                   ></Info>
                 )}
               </BecomeSatelliteRegisterAsOracle>
