@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux'
-import { useLayoutEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { State } from 'reducers'
 import { usePrevious } from 'react-use'
 
@@ -13,13 +13,14 @@ import { usePrevious } from 'react-use'
 // TODO: add arg to callback of all loading statuses of all sections,
 export const useDataLoader = (callback: (isDepsChanged: boolean) => Promise<void>, deps: React.DependencyList) => {
   const { isInitialDataLoading } = useSelector((state: State) => state.loading)
-  const [isLoading, setLoading] = useState(true)
+  const [isLoading, setLoading] = useState(false)
 
   const isInitialDataLoadingPrev = usePrevious(isInitialDataLoading)
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const depsChanged = isInitialDataLoadingPrev === isInitialDataLoading
     if (isInitialDataLoading === false) {
+      setLoading(true)
       callback(depsChanged).finally(() => {
         setLoading(false)
       })
