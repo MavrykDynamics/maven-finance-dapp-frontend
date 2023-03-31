@@ -131,6 +131,7 @@ export const MenuMobileBurger = styled.div<{ theme: MavrykTheme }>`
     width: 30px;
     height: 30px;
     transition: 0.6s all;
+    fill: ${({ theme }) => theme.valueColor};
   }
 
   @media screen and (min-width: 1401px) {

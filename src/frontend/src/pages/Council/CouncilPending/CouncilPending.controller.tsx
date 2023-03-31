@@ -14,6 +14,8 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { bytesToText, BytesType, BYTES_ADDRESS_TYPE } from 'utils/bytesToString'
 import { convertBytesAddressToAddress } from 'app/App.helpers'
 import { CYAN } from 'app/App.components/TzAddress/TzAddress.constants'
+import { MVK_DECIMALS } from 'utils/constants'
+import { convertNumberForClient } from 'utils/calcFunctions'
 
 // types
 import { CouncilAction } from 'utils/TypesAndInterfaces/Council'
@@ -671,7 +673,7 @@ export const CouncilPending = (props: Props) => {
 
   // 2/3
   if (isRequestMint) {
-    const tokenAmount = findActionByName('tokenAmount')
+    const tokenAmount = convertNumberForClient({ number: findActionByName('tokenAmount'), grage: MVK_DECIMALS })
     const treasuryAddress = findActionByName('treasuryAddress', BYTES_ADDRESS_TYPE)
 
     return (
