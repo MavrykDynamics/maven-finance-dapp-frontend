@@ -11,16 +11,17 @@ import { usePrevious } from 'react-use'
  */
 
 // TODO: add arg to callback of all loading statuses of all sections,
+// TODO: dynamic calc initial isLoading value
 export const useDataLoader = (callback: (isDepsChanged: boolean) => Promise<void>, deps: React.DependencyList) => {
   const { isInitialDataLoading } = useSelector((state: State) => state.loading)
-  const [isLoading, setLoading] = useState(false)
-
   const isInitialDataLoadingPrev = usePrevious(isInitialDataLoading)
+
+  const [isLoading, setLoading] = useState(false)
 
   useEffect(() => {
     const depsChanged = isInitialDataLoadingPrev === isInitialDataLoading
     if (isInitialDataLoading === false) {
-      setLoading(true)
+      // setLoading(true)
       callback(depsChanged).finally(() => {
         setLoading(false)
       })
