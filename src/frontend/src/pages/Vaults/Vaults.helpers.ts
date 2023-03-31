@@ -15,7 +15,12 @@ import { Lending_Controller_Vault } from 'utils/generated/graphqlTypes'
 import { symbolsAfterDecimalPoint } from 'utils/symbolsAfterDecimalPoint'
 import { getOracleAggregatorLatestPrice } from './Vaults.actions'
 import { statusSortPriority, vaultsStatuses } from './Vaults.consts'
-import { calcCollateralRatio, calculateCompoundedInterest, getAssetMetadata } from 'pages/Loans/Loans.helpers'
+import {
+  calcCollateralRatio,
+  calculateAccruedInterest,
+  calculateCompoundedInterest,
+  getAssetMetadata
+} from 'pages/Loans/Loans.helpers'
 import { calcWithoutDecimals } from 'utils/calcFunctions'
 import { BLOCKS_PER_MINUTE } from 'utils/constants'
 import { getUserBalanceForLoanAsset } from 'pages/Loans/LoansFethcers'
@@ -154,6 +159,7 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
       )
 
       // TODO: ensure in this value
+      console.log(item)
       const fee =
         calculateCompoundedInterest(currentInterestRate, item.last_updated_block_level, currentBlock?.level ?? 0) /
         10 ** interestRateDecimals
@@ -168,8 +174,10 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
 
       if (!vaultAsset) return acc
 
-      const borrowedAmount = item.loan_outstanding_total / 10 ** vaultAsset.decimals
-
+      const borrowedAmount = item.loan_principal_total / 10 ** vaultAsset.decimals
+      //TODO: @TIM, please take a look
+      const accruedInterest = calculateAccruedInterest(item.loan_outstanding_total / 10 ** vaultAsset.decimals, item.borrow_index, item.loan_token.borrow_index) - (item.loan_principal_total / 10 ** vaultAsset.decimals)
+      console.log(borrowedAmount, calculateAccruedInterest(borrowedAmount, item.borrow_index, item.loan_token.borrow_index), accruedInterest)
       const collateralRatio = calcCollateralRatio(vaultCollateral.totalRow.amount, borrowedAmount, vaultAsset.rate)
       const collateralData = vaultCollateral.normalizedCollaterals.length
         ? [...vaultCollateral.normalizedCollaterals, vaultCollateral.totalRow]
@@ -210,7 +218,7 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
         collateralBalance: vaultCollateral.totalRow.amount,
         collateralRatio,
         apr: currentInterestRate * 100,
-        fee: borrowedAmount === 0 ? 0 : fee,
+        fee: borrowedAmount === 0 ? 0 : accruedInterest,
         daoFee: (lendingController.minimum_loan_fee_pct ?? 0) / 100,
         collateralData,
         borrowedAmount,
@@ -230,6 +238,8 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
         sMVKDelegatedTo: '',
         depositors,
         deporsitorsFlag,
+        borrowIndex: item.borrow_index,
+        loanTokenBorrowIndex: item.loan_token.borrow_index
       }
 
       acc.vaultsMapper[item.vault.address] = normallizedVault
