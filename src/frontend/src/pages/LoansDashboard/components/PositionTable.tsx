@@ -119,7 +119,7 @@ export const LoansPositionTable = ({
                         {lendingItem ? (
                           <>
                             <CommaNumber value={lendingAPY} endingText="%" />
-                            <CommaNumber value={lendValue} />
+                            <CommaNumber value={lendValue * loanTokenData.rate} beginningText="$" />
                             <CommaNumber value={interestEarned} />
                             <Link to={`/loans/${loanTokenData.symbol}/${LEND_TAB_ID}`}>
                               <Button kind={BUTTON_SIMPLE}>View</Button>
@@ -152,7 +152,7 @@ export const LoansPositionTable = ({
                         {marketVaultsUserData ? (
                           <>
                             <CommaNumber value={borrowAPR} endingText="%" />
-                            <CommaNumber value={marketVaultsUserData.borrowedAmount} />
+                            <CommaNumber value={marketVaultsUserData.borrowedAmount} beginningText="$" />
                             <div className={`vault-status ${averageVaultStatus.status}`}>{averageVaultStatus.text}</div>
                             <Link to={`/loans/${loanTokenData.symbol}/${BORROW_TAB_ID}`}>
                               <Button kind={BUTTON_SIMPLE}>View</Button>

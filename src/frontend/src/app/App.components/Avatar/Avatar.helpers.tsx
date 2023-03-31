@@ -33,8 +33,6 @@ export const getUserAvatar = ({
     default: defaultUserImage,
   }
 
-  console.log(images)
-
   if (priorityImage && images[priorityImage]) return images[priorityImage]
 
   return satelliteImage || councilImage || breakGlassCouncilImage || defaultUserImage
