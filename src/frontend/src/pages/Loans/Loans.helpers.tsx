@@ -854,47 +854,48 @@ export const normalizeUserLending = ({
     { userLendings: [], userBorrowing: [] },
   ) ?? { userLendings: [], userBorrowing: [] }
 
-  const userVaultsData = userVaultsDataGql.reduce<Record<string, { borrowedAmount: number; collateralAmount: number }>>(
-    (acc, { collateral_balances, loan_token, loan_principal_total }) => {
-      if (!loan_token) return acc
-      const vaultAssetData = getAssetMetadata({
-        tokenAddress: loan_token.loan_token_address,
-        tokenName: loan_token.loan_token_name,
-        dipDupTokens,
-        feeds,
-        oracleId: String(loan_token.oracle_id),
-      })
-
-      if (!vaultAssetData) return acc
-
-      const collateralAmount = collateral_balances.reduce((acc, { balance, token }) => {
-        if (!token) return acc
-        const collateralAssetData = getAssetMetadata({
-          tokenAddress: token.token_address,
-          tokenName: token.token_name,
+  const userVaultsData =
+    userVaultsDataGql?.reduce<Record<string, { borrowedAmount: number; collateralAmount: number }>>(
+      (acc, { collateral_balances, loan_token, loan_principal_total }) => {
+        if (!loan_token) return acc
+        const vaultAssetData = getAssetMetadata({
+          tokenAddress: loan_token.loan_token_address,
+          tokenName: loan_token.loan_token_name,
           dipDupTokens,
           feeds,
-          oracleId: String(token.oracle_id),
+          oracleId: String(loan_token.oracle_id),
         })
 
-        if (!collateralAssetData) return acc
+        if (!vaultAssetData) return acc
 
-        acc +=
-          convertNumberForClient({ number: balance, grage: collateralAssetData.decimals }) * collateralAssetData.rate
+        const collateralAmount = collateral_balances.reduce((acc, { balance, token }) => {
+          if (!token) return acc
+          const collateralAssetData = getAssetMetadata({
+            tokenAddress: token.token_address,
+            tokenName: token.token_name,
+            dipDupTokens,
+            feeds,
+            oracleId: String(token.oracle_id),
+          })
+
+          if (!collateralAssetData) return acc
+
+          acc +=
+            convertNumberForClient({ number: balance, grage: collateralAssetData.decimals }) * collateralAssetData.rate
+          return acc
+        }, 0)
+
+        acc[loan_token.loan_token_name] = {
+          borrowedAmount:
+            convertNumberForClient({ number: loan_principal_total, grage: vaultAssetData.decimals }) *
+            vaultAssetData.rate,
+          collateralAmount,
+        }
+
         return acc
-      }, 0)
-
-      acc[loan_token.loan_token_name] = {
-        borrowedAmount:
-          convertNumberForClient({ number: loan_principal_total, grage: vaultAssetData.decimals }) *
-          vaultAssetData.rate,
-        collateralAmount,
-      }
-
-      return acc
-    },
-    {},
-  )
+      },
+      {},
+    ) ?? {}
 
   return {
     userLendings,
