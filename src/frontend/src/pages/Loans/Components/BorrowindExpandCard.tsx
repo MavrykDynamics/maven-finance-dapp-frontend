@@ -171,7 +171,7 @@ export const BorrowingExpandCard = ({
               />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
-              <div className="name">Amount</div>
+              <div className="name">Outstanding Debt</div>
               <CommaNumber value={borrowedAmount} className="value" showDecimal decimalsToShow={2} />
               {rate ? (
                 <CommaNumber
@@ -210,7 +210,7 @@ export const BorrowingExpandCard = ({
                 </div>
               </ThreeLevelListItem>
               <ThreeLevelListItem>
-                <div className="name">Amount</div>
+                <div className="name">Principal</div>
                 <CommaNumber value={borrowedAmount} decimalsToShow={2} className="value" />
                 {rate ? (
                   <CommaNumber value={borrowedAmount * rate} decimalsToShow={2} beginningText="$" className="rate" />
@@ -218,10 +218,10 @@ export const BorrowingExpandCard = ({
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">
-                  Fees{' '}
+                  Accrued Interest{' '}
                   <CustomTooltip
                     iconId="info"
-                    text="Origination Fee and Interest"
+                    text="Interest, compounded over time every time you borrow"
                     defaultStrokeColor={colors[themeSelected].textColor}
                   />
                 </div>
