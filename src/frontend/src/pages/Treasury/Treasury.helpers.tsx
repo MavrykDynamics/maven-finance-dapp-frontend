@@ -1,5 +1,4 @@
 import { VestingRecord } from 'reducers/vesting'
-import { calcWithoutPrecision } from 'utils/calcFunctions'
 import { Vesting_Vestee } from 'utils/generated/graphqlTypes'
 import { VestingGraphQL } from 'utils/TypesAndInterfaces/Vesting'
 import type {
@@ -8,6 +7,8 @@ import type {
   TreasuryType,
   TreasuryBalanceType,
 } from '../../utils/TypesAndInterfaces/Treasury'
+import { convertNumberForClient } from 'utils/calcFunctions'
+import { MVK_DECIMALS } from 'utils/constants'
 
 export const MIN_TREASURY_PERSENT_TO_DISPLAY = 0.1
 
@@ -57,8 +58,8 @@ export function normalizeVestingStorage(storage?: VestingGraphQL | null) {
         acc.vesteeIds.push(vestee.vestee_id)
         acc.vesteesMapper[vestee.vestee_id] = {
           address: vestee.vestee_id,
-          totalRemainded: calcWithoutPrecision(vestee.total_remainder),
-          totalAllocated: calcWithoutPrecision(vestee.total_allocated_amount),
+          totalRemainded: convertNumberForClient({ number: vestee.total_remainder, grage: MVK_DECIMALS }),
+          totalAllocated: convertNumberForClient({ number: vestee.total_allocated_amount, grage: MVK_DECIMALS }),
           rewardPerMonth: vestee.claim_amount_per_month,
           cliffMonth: vestee.cliff_months,
           vestingMonth: vestee.vesting_months,

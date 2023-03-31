@@ -3,7 +3,6 @@ import { BrowserRouter as Router } from 'react-router-dom'
 import { AnyAction } from 'redux'
 import { useDispatch, useSelector } from 'react-redux'
 import { useMedia } from 'react-use'
-import CoinGecko from 'coingecko-api'
 import { ThunkDispatch } from 'redux-thunk'
 import { configureStore } from './App.store'
 
@@ -17,6 +16,7 @@ import { PopupChangeNode } from './App.components/SettingsPopup/SettingsPopup.co
 import { ActionLoader, LoaderRocket, WertLoader } from './App.components/Loader/Loader.view'
 import { AppRoutes } from './App.components/AppRoutes/AppRoutes.controller'
 import { AppStyled } from './App.style'
+import LoansPopupsProvider from 'pages/Loans/Components/Modals/LoansModals.provider'
 
 // actions
 import { toggleSidebarCollapsing } from './App.components/Menu/Menu.actions'
@@ -32,12 +32,13 @@ import {
   getTokensPrices,
   getMTokensStorage,
 } from 'reducers/actions/dipDupActions.actions'
+import { getCouncilMembers } from 'pages/Council/Council.actions'
+import { getBreakGlassCouncilMembers } from 'pages/BreakGlassCouncil/BreakGlassCouncil.actions'
 
 // export const { store, persistor } = configureStore({})
 export const { store } = configureStore({})
 export type AppDispatch = ThunkDispatch<State, unknown, AnyAction>
 export type GetState = typeof store.getState
-export const coinGeckoClient = new CoinGecko()
 
 const AppContainer = () => {
   const dispatch = useDispatch()
@@ -53,15 +54,21 @@ const AppContainer = () => {
     ;(async () => {
       // Fetching initial&common data for DAPP
       await Promise.all([
-        // TODO: we can move out satellites loading to sections
         dispatch(getSatellitesStorage()),
+        dispatch(getFeedsStorage()),
+
         dispatch(getContractAddressesStorage()),
         dispatch(getDipDupTokensStorage()),
         dispatch(getWhitelistTokensStorage()),
-        dispatch(getTokensPrices()),
         dispatch(getMTokensStorage()),
-        dispatch(getFeedsStorage()),
+
+        // Used to retrieve user avatar
+        dispatch(getCouncilMembers()),
+        dispatch(getBreakGlassCouncilMembers()),
       ])
+
+      // Depends on data feeds (getFeedsStorage())
+      await dispatch(getTokensPrices())
 
       // For using Beacon wallet
       if (
@@ -90,7 +97,10 @@ const AppContainer = () => {
         <WertLoader />
         <Menu />
         <PopupChangeNode isModalOpened={changeNodePopupOpen} closeModal={closeModalHandler} />
-        <AppRoutes />
+
+        <LoansPopupsProvider>
+          <AppRoutes />
+        </LoansPopupsProvider>
       </AppStyled>
       <Toaster />
     </Router>

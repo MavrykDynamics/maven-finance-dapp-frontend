@@ -29,14 +29,15 @@ export const SMVK_HISTORY_DATA_QUERY = `
 export const SMVK_HISTORY_DATA_QUERY_NAME = 'GetSmvkHistoryData'
 export const SMVK_HISTORY_DATA_QUERY_VARIABLE = {}
 
-export const MVK_MINT_HISTORY_DATA_QUERY = `
-  query GetMvkMintData {
-    mvk_mint_history_data {
-      mvk_total_supply
-      minted_amount
-      timestamp
+export const MVK_HISTORY_DATA_QUERY = `
+  query GetMvkData {
+    mvk_token {
+      transfer_history_data {
+        amount
+        timestamp
+      }
     }
   }
 `
-export const MVK_MINT_HISTORY_DATA_QUERY_NAME = 'GetMvkMintData'
-export const MVK_MINT_HISTORY_DATA_QUERY_VARIABLE = {}
+export const MVK_HISTORY_DATA_QUERY_NAME = 'GetMvkData'
+export const MVK_HISTORY_DATA_QUERY_VARIABLE = {}

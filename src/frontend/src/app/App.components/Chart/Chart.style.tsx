@@ -1,28 +1,16 @@
-import styled, { css } from 'styled-components/macro'
+import styled from 'styled-components/macro'
 import { MavrykTheme } from '../../../styles/interfaces'
 
-export const ChartTooltip = styled.div<{ theme: MavrykTheme }>`
-  padding: 6px 10px;
-  text-align: center;
-
-  font-weight: 600;
-  font-size: 15px;
-  line-height: 15px;
-
-  color: ${({ theme }) => theme.secondaryColor};
-  background: ${({ theme }) => theme.containerColor};
-  border: 1px solid ${({ theme }) => theme.secondaryColor};
-  border-radius: 10px;
-
-  div {
-    font-weight: 500;
-    font-size: 9px;
-    line-height: 18px;
-    color: ${({ theme }) => theme.headerColor};
-  }
-`
-
 export const Plug = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  row-gap: 20px;
+
+  width: 100%;
+  height: 100%;
+
   div {
     position: relative;
     display: flex;
@@ -42,8 +30,7 @@ export const Plug = styled.div`
   }
 
   p {
-    margin-top: 55px;
-
+    margin: 0;
     font-weight: 600;
     font-size: 16px;
     line-height: 22px;
@@ -51,50 +38,20 @@ export const Plug = styled.div`
     text-align: center;
     color: ${({ theme }) => theme.textColor};
   }
-
-  &.dorman-chart,
-  &.data-feeds-chart {
-    margin-top: auto;
-    margin-bottom: auto;
-  }
-
-  &.loan-chart {
-    height: 270px;
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    justify-content: center;
-    row-gap: 25px;
-
-    p {
-      margin: 0;
-    }
-  }
 `
 
 export const ChartStyled = styled.div<{ theme: MavrykTheme }>`
-  width: fit-content;
-  height: fit-content;
-  position: relative;
   width: 100%;
-
-  &.portfolio {
-    margin-top: auto;
-  }
-
-  &.dorman-chart,
-  &.data-feeds-chart {
-    margin-top: auto;
-    margin-bottom: auto;
-  }
+  height: 100%;
+  position: relative;
 `
 
-export const TradingViewTooltipStyled = styled.div<{ theme: MavrykTheme }>`
+const BaseTooltipStyles = styled.div<{ theme: MavrykTheme }>`
   position: absolute;
   z-index: 100;
   padding: 7px 10px 7px 10px;
   background: ${({ theme }) => theme.containerColor};
-  border: 1px solid ${({ theme }) => theme.secondaryColor};
+  border: 1px solid ${({ theme }) => theme.cardBorderColor};
   border-radius: 10px;
   display: flex;
   flex-direction: column;
@@ -105,11 +62,13 @@ export const TradingViewTooltipStyled = styled.div<{ theme: MavrykTheme }>`
   transform: translate(calc(var(--translateX, 0) * 1px), calc(var(--translateY, 0px) * 1px));
   opacity: var(--translateX, 0);
   pointer-events: none;
+`
 
+export const AmountDateTooltipStyled = styled(BaseTooltipStyles)`
   .value {
     font-weight: 600;
     font-size: 18px;
-    color: ${({ theme }) => theme.headerColor};
+    color: ${({ theme }) => theme.dataColor};
     white-space: pre;
     p {
       margin: 0;
@@ -121,5 +80,42 @@ export const TradingViewTooltipStyled = styled.div<{ theme: MavrykTheme }>`
     font-size: 12px;
     color: ${({ theme }) => theme.textColor};
     white-space: pre;
+  }
+`
+
+export const DoubleAmountDateTooltipStyled = styled(AmountDateTooltipStyled)`
+  .values {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    row-gap: 7px;
+  }
+`
+
+export const MliFeeTooltipStyled = styled(BaseTooltipStyles)`
+  width: 150px;
+  transform: translate(calc(var(--translateX, 0) * 1px + 65px), calc(var(--translateY, 0px) * 1px));
+
+  > div {
+    display: flex;
+    justify-content: center;
+    column-gap: 5px;
+
+    p {
+      margin: 0;
+    }
+
+    > * {
+      font-weight: 600;
+      font-size: 18px;
+    }
+
+    .name {
+      color: ${({ theme }) => theme.textColor};
+    }
+
+    .value {
+      color: ${({ theme }) => theme.dataColor};
+    }
   }
 `

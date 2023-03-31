@@ -117,7 +117,7 @@ export const MenuLogo = styled.img`
     width: 160px;
   }
 
-  @media screen and (max-width: 950px) {
+  @media screen and (max-width: 900px) {
     &.desktop-logo {
       display: none;
     }
@@ -139,29 +139,44 @@ export const MenuGrid = styled.div`
 `
 
 export const MenuFooter = styled.div<{ theme: MavrykTheme }>`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   font-size: 11px;
   color: ${({ theme }) => theme.footerColor};
   font-weight: 600;
   padding: 0 14px;
+  row-gap: 20px;
+
+  span {
+    margin-bottom: 20px;
+    color: ${({ theme }) => theme.valueColor};
+  }
+
+  .feedbackLink {
+    width: 100%;
+  }
 
   .social-wrapper {
     display: flex;
-    margin-bottom: 10px;
     column-gap: 5px;
+
     a {
       width: 30px;
       height: 30px;
       display: flex;
       justify-content: center;
       align-items: center;
-      background: #080628;
+      border: 1px solid ${({ theme }) => theme.valueColor};
       border-radius: 10px;
+
       svg {
-        width: 27px;
-        height: 27px;
-        fill: ${cyanColor};
+        width: 30px;
+        height: 30px;
+        fill: ${({ theme }) => theme.valueColor};
       }
     }
+
   }
 
   @media screen and (max-width: 1460px) {
@@ -169,12 +184,11 @@ export const MenuFooter = styled.div<{ theme: MavrykTheme }>`
     font-size: 10px;
   }
 
-  > p {
-    display: inline-block;
-    font-weight: 500;
-  }
-
   &.menu-collapsed {
+    .feedbackLink {
+      width: auto;
+    }
+
     .social-wrapper {
       align-items: center;
       row-gap: 7px;

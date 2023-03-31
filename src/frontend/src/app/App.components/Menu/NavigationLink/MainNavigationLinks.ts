@@ -1,6 +1,6 @@
 import { LENDING_TAB_ID } from './../../../../pages/Dashboard/Dashboard.utils'
 import { MainNavigationRoute } from '../../../../utils/TypesAndInterfaces/Navigation'
-import { PORTFOLIO_TAB_ID } from 'pages/DashboardPersonal/DashboardPersonal.utils'
+import { PORTFOLIO_POSITION_TAB_ID, PORTFOLIO_TAB_ID } from 'pages/DashboardPersonal/DashboardPersonal.utils'
 
 export const mainNavigationLinks: MainNavigationRoute[] = [
   {
@@ -19,8 +19,8 @@ export const mainNavigationLinks: MainNavigationRoute[] = [
       {
         id: 84425,
         subTitle: 'Personal',
-        subPath: `dashboard-personal/${PORTFOLIO_TAB_ID}`,
-        routeSubPath: '/dashboard-personal/:tabId',
+        subPath: `dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`,
+        routeSubPath: '/dashboard-personal/:tabId/:secondaryTabId?',
         requires: {
           isAuth: true,
         },
@@ -45,17 +45,23 @@ export const mainNavigationLinks: MainNavigationRoute[] = [
     icon: 'coin-loan',
     subPages: [
       {
+        id: 57594,
+        subTitle: 'Dashboard',
+        subPath: `loans/dashboard`,
+        routeSubPath: '/loans/dashboard',
+      },
+      {
         id: 57792,
         subTitle: 'Markets',
         subPath: `loans`,
-        routeSubPath: ['/loans', '/market/:assetId/:tabId'],
+        routeSubPath: ['/loans', '/loans/:assetId/:tabId'],
       },
     ],
   },
   {
     title: 'Vaults',
     id: 8,
-    path: 'vaults/all',
+    path: 'vaults/my',
     routePath: '/vaults/:tabId',
     icon: 'vaults',
   },

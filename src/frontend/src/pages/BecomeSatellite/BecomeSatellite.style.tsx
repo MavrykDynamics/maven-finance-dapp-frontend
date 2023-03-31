@@ -56,13 +56,6 @@ export const BecomeSatelliteForm = styled(Card)`
     }
   }
 
-  label {
-    position: absolute;
-
-    top: -24px;
-    left: 0;
-  }
-
   .buttons-wrapper {
     display: flex;
     justify-content: flex-end;
@@ -98,4 +91,41 @@ export const BecomeSatelliteOracleText = styled.h3<{ theme: MavrykTheme }>`
   font-size: 14px;
   color: ${({ theme }) => theme.textColor};
   padding-bottom: 15px;
+
+  a {
+    color: ${({ theme }) => theme.valueColor};
+    text-decoration: underline;
+    cursor: pointer;
+  }
+`
+export const BecomeSatelliteRegisterAsOracle = styled.div<{ theme: MavrykTheme }>`
+  padding-top: 20px;
+
+  h3 {
+    padding: 20px 0 0 0;
+  }
+
+  .checkbox {
+    display: flex;
+    align-items: center;
+    column-gap: 10px;
+  }
+
+  .inputs {
+    display: flex;
+    flex-direction: column;
+    row-gap: 40px;
+    margin-top: 40px;
+
+    .info-tooltip {
+      position: relative;
+      top: 1px;
+      white-space: normal;
+    }
+  }
+
+  .oracleWarning {
+    padding: 10px 20px;
+    margin-top: 30px;
+  }
 `

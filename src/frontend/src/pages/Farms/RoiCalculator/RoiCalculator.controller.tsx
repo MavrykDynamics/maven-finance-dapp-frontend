@@ -50,9 +50,7 @@ export default function RoiCalculator({
   useLockBodyScroll(show)
   const { farms } = useSelector((state: State) => state.farm)
   const { accountPkh } = useSelector((state: State) => state.wallet)
-  const {
-    tokensPrices: { mvk: { usd: mvkExchangeRate = 0 } = {} },
-  } = useSelector((state: State) => state.tokens)
+  const { mvk: mvkExchangeRate = 0 } = useSelector((state: State) => state.tokens.tokensPrices)
 
   const farm = farms.find(({ address }) => selectedFarmAddress === address)
 
@@ -294,7 +292,6 @@ export default function RoiCalculator({
               className="tab-component values-tabs"
               tabItems={TOGGLE_BALANCE_TABS}
               onClick={handleChangeValues}
-              disableAll={shouldDisableBalanceTabs}
             />
           </div>
 
@@ -321,7 +318,6 @@ export default function RoiCalculator({
                 tabItems={COMPOUNDING_ITEMS}
                 onClick={handleChangeCompounding}
                 disabled={!compoundEverythingActive}
-                disableAll={!compoundEverythingActive}
               />
             </div>
           </div>

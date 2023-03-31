@@ -172,6 +172,7 @@ export const PageHeaderForegroundImage = styled.img<{ page: string; src: string 
       case 'satellites':
         return '-20px'
       case 'lending':
+      case 'loansDashboard':
         return '-13px'
       case 'governance':
       case 'council':

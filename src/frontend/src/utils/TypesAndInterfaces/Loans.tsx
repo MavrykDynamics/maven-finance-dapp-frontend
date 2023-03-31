@@ -1,4 +1,5 @@
-import { ChartPlotType } from 'app/App.components/Chart/Chart.view'
+import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
+import { SingleValueData } from 'lightweight-charts'
 import {
   ANY_USER,
   NONE_USER,
@@ -28,6 +29,7 @@ export type BaseLoansAssetDataType = {
 export type LoansAssetDataType = BaseLoansAssetDataType & {
   userBalance: number
   tokenType: TokenType
+  address: string
 }
 
 export type CollateralType = BaseLoansAssetDataType & {
@@ -37,9 +39,10 @@ export type CollateralType = BaseLoansAssetDataType & {
 
 export type LoansChartsDataType = {
   totalBorrowed: number
-  borrowingChartData: Array<ChartPlotType>
+  borrowingChartData: Array<AreaChartPlotType>
+  collateralChartData: Array<SingleValueData>
   totalLended: number
-  lendingChartData: Array<ChartPlotType>
+  lendingChartData: Array<AreaChartPlotType>
   lendBorrow24hDiff: {
     last48hLending: number
     last24hLending: number
@@ -73,9 +76,11 @@ export type XtzBakerType = {
 export type UserLendObjType = {
   icon: string
   amount: number
+  usdAmount: number
   id: number
   annualPecentage: number
-  earned: number
+  symbol: string
+  date: string
   operationHash: string
 }
 
@@ -89,8 +94,8 @@ export type LoansVaultType = {
   borrowCapacity: number
   apr: number
   fee: number
-  repayFee: number
   address: string
+  name: string
   vaultId: number
   xtzDelegatedTo: string | null
   operators?: Array<string>
@@ -114,6 +119,8 @@ export type LoanMarketType = {
   lendingItem: LendingItemType
   myBorrowingList: Array<LoansVaultType>
   permissionedBorrowingList: Array<LoansVaultType>
+  marketCollateralChartData: Array<AreaChartPlotType>
+  marketLiquidityChartData: Array<AreaChartPlotType>
   utilisationRate: number
   borrowers: number
   suppliers: number

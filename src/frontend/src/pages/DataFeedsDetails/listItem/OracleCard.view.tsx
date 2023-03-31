@@ -12,7 +12,7 @@ import { SatelliteOracleStatusComponent } from '../../Satellites/listItem/Satell
 
 export const OracleCard = ({ oracle }: { oracle: SatelliteRecordType }) => {
   const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
-  const { tezos: { usd: xtzExchangeRate = 0 } = {}, mvk: { usd: mvkExchangeRate = 0 } = {} } = useSelector(
+  const { tezos: xtzExchangeRate = 0, mvk: mvkExchangeRate = 0 } = useSelector(
     (state: State) => state.tokens.tokensPrices,
   )
   const oracleStatusType = getOracleStatus(oracle, feedsLedger)

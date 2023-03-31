@@ -240,6 +240,8 @@ export const normallizeSatellite = (
     website: satelliteRecord.website,
     image: satelliteRecord.image,
     name: satelliteRecord.name,
+    peerId: satelliteRecord?.peer_id ?? '',
+    publicKey: satelliteRecord?.public_key ?? '',
     isSatelliteReady: satelliteRecord.currently_registered && satelliteRecord.status === 0,
     currentlyRegistered: satelliteRecord.currently_registered,
     status: satelliteRecord.status,

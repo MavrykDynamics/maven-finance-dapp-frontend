@@ -7,7 +7,7 @@ export const LOANS_QUERY = `
       interest_rate_decimals
       minimum_loan_fee_pct
       decimals
-      history_data(where: {type: {_in: ["0", "1", "2", "3"]}}) {
+      history_data(where: {type: {_in: ["0", "1", "2", "3", "4", "5", "6", "7"]}}) {
         type
         amount
         timestamp
@@ -40,7 +40,7 @@ export const LOANS_QUERY = `
         current_interest_rate
         oracle_id
 
-        history_data(where: {type: {_in: ["0", "1", "2", "3"]}}) {
+        history_data(where: {type: {_in: ["0", "1", "2", "3", "4", "5", "6", "7"]}}) {
           type
           amount
           timestamp
@@ -179,6 +179,24 @@ export const USER_LENDING_DATA_QUERY = `
           interest_rate_decimals
           interest_treasury_share
           decimals
+        }
+      }
+
+      lending_controller_vaults {
+        collateral_balances {
+          balance
+          token {
+            token_name
+            token_address
+            oracle_id
+          }
+        }
+        loan_decimals
+        loan_principal_total
+        loan_token {
+          loan_token_name
+          loan_token_address
+          oracle_id
         }
       }
     }

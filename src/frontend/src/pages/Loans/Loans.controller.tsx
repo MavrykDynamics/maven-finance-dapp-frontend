@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 // view
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
 import { Button } from 'app/App.components/Button/Button.controller'
-import { Chart } from 'app/App.components/Chart/Chart.view'
+import { Chart } from 'app/App.components/Chart/Chart'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import Icon from 'app/App.components/Icon/Icon.view'
 
@@ -32,6 +32,7 @@ import { getLoansStorage } from './Actions/getLoansData.actions'
 import { useEffect } from 'react'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import colors from 'styles/colors'
+import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.types'
 
 const CHART_SETTINGS = {
   width: 450,
@@ -51,14 +52,18 @@ export const Loans = () => {
   const dispatch = useDispatch()
   const { isDataLoaded, loanTokens, chartsData } = useSelector((state: State) => state.loans)
   const { themeSelected } = useSelector((state: State) => state.preferences)
+  const { accountPkh } = useSelector((state: State) => state.wallet)
 
-  const { isLoading } = useDataLoader(async () => {
-    try {
-      if (!isDataLoaded) {
-        await dispatch(getLoansStorage())
-      }
-    } catch (e) {}
-  }, [isDataLoaded])
+  const { isLoading } = useDataLoader(
+    async (isDepsChanged) => {
+      try {
+        if (!isDataLoaded || isDepsChanged) {
+          await dispatch(getLoansStorage())
+        }
+      } catch (e) {}
+    },
+    [accountPkh],
+  )
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -70,15 +75,16 @@ export const Loans = () => {
         <span>Total Lending</span>
         <CommaNumber value={chartsData?.totalLended ?? 0} beginningText={'$'} />
       </div>
-      <Chart
-        data={chartsData.lendingChartData}
-        colors={CHART_COLORS}
-        className="loan-chart"
-        settings={CHART_SETTINGS}
-        numberOfItemsToDisplay={3}
-      >
+      <div className="chart">
+        <Chart
+          data={{ type: AREA_CHART_TYPE, plots: chartsData.lendingChartData }}
+          colors={CHART_COLORS}
+          settings={CHART_SETTINGS}
+          numberOfItemsToDisplay={3}
+          tooltipAsset="$"
+        />
         <div className="chart-interval">7 Days</div>
-      </Chart>
+      </div>
     </div>
   )
 
@@ -88,15 +94,16 @@ export const Loans = () => {
         <span>Total Borrowing</span>
         <CommaNumber value={chartsData?.totalBorrowed ?? 0} beginningText={'$'} />
       </div>
-      <Chart
-        data={chartsData.borrowingChartData}
-        colors={CHART_COLORS}
-        className="loan-chart"
-        settings={CHART_SETTINGS}
-        numberOfItemsToDisplay={3}
-      >
+      <div className="chart">
+        <Chart
+          data={{ type: AREA_CHART_TYPE, plots: chartsData.borrowingChartData }}
+          colors={CHART_COLORS}
+          settings={CHART_SETTINGS}
+          numberOfItemsToDisplay={3}
+          tooltipAsset="$"
+        />
         <div className="chart-interval">7 Days</div>
-      </Chart>
+      </div>
     </div>
   )
 

@@ -3,6 +3,7 @@ import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { ERROR, INFO, SUCCESS } from 'app/App.components/Toaster/Toaster.constants'
 import { AppDispatch, GetState } from 'app/App.controller'
+import { getVaultsStorage } from 'pages/Vaults/Vaults.actions'
 import { State } from 'reducers'
 import { LoanVaultAllowanceType } from 'utils/TypesAndInterfaces/Loans'
 import { VAULT_ALLOWANCE_ACCOUNTS, VAULT_ALLOWANCE_ANY } from '../Loans.const'
@@ -36,7 +37,8 @@ export const changeBakerAction =
       await transaction?.confirmation()
 
       // refetch data we need
-      await dispatch(getLoansStorage())
+      state.vaults.isLoaded && (await dispatch(getVaultsStorage()))
+      state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
       dispatch(showToaster(SUCCESS, 'Baker changed.', 'All good :)'))
       dispatch(toggleActionLoader(false))
     } catch (error) {
@@ -140,7 +142,8 @@ export const managePermissionsAction =
       await transaction?.confirmation()
 
       // refetch data we need
-      await dispatch(getLoansStorage())
+      state.vaults.isLoaded && (await dispatch(getVaultsStorage()))
+      state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
       dispatch(showToaster(SUCCESS, 'Depositors updated.', 'All good :)'))
       dispatch(toggleActionLoader(false))
     } catch (error) {
@@ -179,7 +182,8 @@ export const updateOperatorsAction = (callback: () => void) => async (dispatch: 
     // await transaction?.confirmation()
 
     // refetch data we need
-    await dispatch(getLoansStorage())
+    state.vaults.isLoaded && (await dispatch(getVaultsStorage()))
+    state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
     dispatch(showToaster(SUCCESS, 'Asset borrowed.', 'All good :)'))
     dispatch(toggleActionLoader(false))
   } catch (error) {

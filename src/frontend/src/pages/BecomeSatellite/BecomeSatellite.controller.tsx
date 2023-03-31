@@ -33,11 +33,20 @@ import SatellitesSideBar from 'pages/Satellites/SatellitesSideBar/SatellitesSide
 import { TextArea } from 'app/App.components/TextArea/TextArea.controller'
 import { IPFSUploader } from 'app/App.components/IPFSUploader/IPFSUploader.controller'
 import NewButton from 'app/App.components/Button/NewButton'
+import Checkbox from 'app/App.components/Checkbox/Checkbox.view'
+import { Info } from 'app/App.components/Info/Info.view'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 // Styled components
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { Page, PageContent } from 'styles'
-import {BecomeSatelliteForm, BecomeSatelliteFormBalanceCheck, BecomeSatelliteOracleText} from './BecomeSatellite.style'
+import colors from 'styles/colors'
+import {
+  BecomeSatelliteForm,
+  BecomeSatelliteFormBalanceCheck,
+  BecomeSatelliteRegisterAsOracle,
+  BecomeSatelliteOracleText,
+} from './BecomeSatellite.style'
 
 const connectWalletMessage = (
   <BecomeSatelliteFormBalanceCheck balanceOk={false}>
@@ -59,27 +68,51 @@ export const BecomeSatellite = () => {
     config: { minimumStakedMvkBalance, isConfigLoaded, ...restSatelliteConfig },
   } = useSelector((state: State) => state.satellites)
   const { isLoaded: isDoormanLoaded } = useSelector((state: State) => state.doorman)
+  const { themeSelected } = useSelector((state: State) => state.preferences)
 
-  const { isLoading } = useDataLoader(async () => {
-    try {
-      await Promise.all(
-        [!isConfigLoaded && dispatch(getSatelliteConfig()), !isDoormanLoaded && dispatch(getDoormanStorage())].filter(
-          Boolean,
-        ),
-      )
-    } catch (error) {}
-  }, [])
+  const { isLoading } = useDataLoader(
+    async (isDepsChanged) => {
+      try {
+        await Promise.all(
+          [
+            (!isConfigLoaded || isDepsChanged) && dispatch(getSatelliteConfig()),
+            (!isDoormanLoaded || isDepsChanged) && dispatch(getDoormanStorage()),
+          ].filter(Boolean),
+        )
+      } catch (error) {}
+    },
+    [accountPkh],
+  )
 
   const balanceOverMinStakedMvk = mySMvkTokenBalance >= minimumStakedMvkBalance
   const usersSatelliteProfile = satelliteMapper[accountPkh] ?? null
 
   const [form, setForm] = useState(DEFAULT_BECOME_SATELLITE_FORM)
+  const [isChecked, setIsChecked] = useState(false)
   const pageText = getFormTextBasedOnUserRole(Boolean(usersSatelliteProfile))
+  const isUserOracle = Boolean(usersSatelliteProfile?.peerId || usersSatelliteProfile?.publicKey)
+  const showOracleWarning = isUserOracle && !isChecked
 
   // Disable update button when no user connected, not enoght sMVK to become a satellite, not full valid form, or user is satellite, but hasn't changed nothing
   const isUpdateButtonDisabled = useMemo(() => {
-    const formIsValid = Object.values(form).every(({ status }) => status === INPUT_STATUS_SUCCESS)
-    const hasChangedValues = Object.entries(form).some(([key, { text }]) => {
+    // Remove oraclePeerId and oraclePublicKey fields from validation if checkbox 'Register as Oracle" not chosen
+    const formForValidation = isChecked
+      ? form
+      : Object.fromEntries(
+          Object.entries(form).filter((item) => {
+            switch (item[0]) {
+              case 'oraclePeerId':
+                return false
+              case 'oraclePublicKey':
+                return false
+              default:
+                return true
+            }
+          }),
+        )
+
+    const formIsValid = Object.values(formForValidation).every(({ status }) => status === INPUT_STATUS_SUCCESS)
+    const hasChangedValues = Object.entries(formForValidation).some(([key, { text }]) => {
       const existingSatelliteField = usersSatelliteProfile?.[key as keyof SatelliteRecordType]
 
       if (existingSatelliteField) {
@@ -90,7 +123,7 @@ export const BecomeSatellite = () => {
     })
 
     return !balanceOverMinStakedMvk || !accountPkh || !formIsValid || !hasChangedValues
-  }, [accountPkh, balanceOverMinStakedMvk, form, usersSatelliteProfile])
+  }, [accountPkh, balanceOverMinStakedMvk, form, isChecked, usersSatelliteProfile])
 
   // Set satellite data if user is satellite
   useEffect(() => {
@@ -101,9 +134,23 @@ export const BecomeSatellite = () => {
         website: { text: usersSatelliteProfile.website, status: INPUT_STATUS_SUCCESS },
         satelliteFee: { text: String(usersSatelliteProfile.satelliteFee + '%'), status: INPUT_STATUS_SUCCESS },
         image: { text: usersSatelliteProfile.image, status: INPUT_STATUS_SUCCESS },
+        oraclePeerId: {
+          text: usersSatelliteProfile.peerId,
+          status: usersSatelliteProfile.peerId ? INPUT_STATUS_SUCCESS : '',
+        },
+        oraclePublicKey: {
+          text: usersSatelliteProfile.publicKey,
+          status: usersSatelliteProfile.publicKey ? INPUT_STATUS_SUCCESS : '',
+        },
       })
     }
   }, [usersSatelliteProfile])
+
+  // Set checkbox === true if satellite is oracle
+  useEffect(() => {
+    if (isChecked === isUserOracle) return
+    setIsChecked(isUserOracle)
+  }, [isUserOracle])
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | { target: { name: string; value: string } },
@@ -142,7 +189,7 @@ export const BecomeSatellite = () => {
   const handleUnregisterSatellite = () => dispatch(unregisterAsSatellite())
 
   const handleRegisterOrUpdateSatellite = () => {
-    const parsedForm: RegisterAsSatelliteForm = {
+    const mainRequestForm: RegisterAsSatelliteForm = {
       name: form.name.text,
       description: form.description.text,
       website: form.website.text,
@@ -150,10 +197,24 @@ export const BecomeSatellite = () => {
       image: form.image.text,
     }
 
+    // Remove peerId and publicKey fields from request if checkbox 'Register as Oracle" not chosen
+    const requestData = isChecked
+      ? { ...mainRequestForm, peerId: form.oraclePeerId.text, publicKey: form.oraclePublicKey.text }
+      : mainRequestForm
+
     usersSatelliteProfile && usersSatelliteProfile.currentlyRegistered
-      ? dispatch(updateSatelliteRecord(parsedForm))
-      : dispatch(registerAsSatellite(parsedForm))
+      ? dispatch(updateSatelliteRecord(requestData))
+      : dispatch(registerAsSatellite(requestData))
   }
+
+  const tooltip = (
+    <CustomTooltip
+      text="something text"
+      iconId="info"
+      className="info-tooltip"
+      defaultStrokeColor={colors[themeSelected]['textColor']}
+    />
+  )
 
   return (
     <Page>
@@ -176,7 +237,16 @@ export const BecomeSatellite = () => {
           ) : (
             <BecomeSatelliteForm>
               <h2>{pageText.pageTitle}</h2>
-              <BecomeSatelliteOracleText>Important Note: Becoming a Satellite offers the operation an oracle node. Technically, one may become a Satellite without operating an oracle and take part in Governance. However, they will forgo all of the oracle rewards which are a major source of payments. For information on operating an oracle node for your Satellite, please read more on Gitbook here.</BecomeSatelliteOracleText>
+              <BecomeSatelliteOracleText>
+                Important Note: Becoming a Satellite offers the operation an oracle node. Technically, one may become a
+                Satellite without operating an oracle and take part in Governance. However, they will forgo all of the
+                oracle rewards which are a major source of payments. For information on operating an oracle node for
+                your Satellite, please read more on Gitbook{' '}
+                <a href="https://mavryk.finance/litepaper#the-decentralized-oracle" target="_blank" rel="noreferrer">
+                  here
+                </a>
+                .
+              </BecomeSatelliteOracleText>
               <CommaNumber
                 className="label"
                 value={Number(minimumStakedMvkBalance)}
@@ -268,6 +338,66 @@ export const BecomeSatellite = () => {
                 title={'Upload your photo'}
                 listNumber={6}
               />
+
+              <BecomeSatelliteRegisterAsOracle>
+                <div className="checkbox">
+                  {pageText.registerAsOracle}
+
+                  <Checkbox id="show_dropped" onChangeHandler={() => setIsChecked(!isChecked)} checked={isChecked} />
+                </div>
+
+                <BecomeSatelliteOracleText>
+                  Text here that shows if they are going to register as oracle. Will have some explainer about the
+                  process of setting up to become and oracle and a link to the Gitbook, please read more on Gitbook{' '}
+                  <a href="https://mavryk.finance/litepaper#the-decentralized-oracle" target="_blank" rel="noreferrer">
+                    here
+                  </a>
+                </BecomeSatelliteOracleText>
+
+                {isChecked && (
+                  <div className="inputs">
+                    <Input
+                      settings={{
+                        label: pageText.oraclePeerId,
+                        tooltip: tooltip,
+                        inputStatus: form.oraclePeerId.status,
+                      }}
+                      inputProps={{
+                        value: form.oraclePeerId.text,
+                        placeholder: 'Enter Oracle Peer ID',
+                        name: 'oraclePeerId',
+                        onChange: handleChange,
+                        required: true,
+                      }}
+                    />
+
+                    <Input
+                      settings={{
+                        label: pageText.oraclePublicKey,
+                        tooltip: tooltip,
+                        inputStatus: form.oraclePublicKey.status,
+                      }}
+                      inputProps={{
+                        value: form.oraclePublicKey.text,
+                        placeholder: 'Enter Public Key',
+                        name: 'oraclePublicKey',
+                        onChange: handleChange,
+                        required: true,
+                      }}
+                    />
+                  </div>
+                )}
+
+                {showOracleWarning && (
+                  <Info
+                    text={
+                      'Text here that shows what happen if user is going to unregister as oracle and click the button “update satellite info”. '
+                    }
+                    type="warning"
+                    className="oracleWarning"
+                  ></Info>
+                )}
+              </BecomeSatelliteRegisterAsOracle>
 
               <div className="buttons-wrapper">
                 {usersSatelliteProfile && usersSatelliteProfile.currentlyRegistered && (

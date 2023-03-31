@@ -19,9 +19,13 @@ type MenuTopBarProps = {
 
 export const PRODUCTS_LINKS = [
   { name: 'Dapp', href: 'https://front-dev.mavryk-dapp.pages.dev', disabled: false, path: '/' },
-  { name: 'Liquidity Baking (Soon)', href: 'mavryk.finance/liquidity-baking', disabled: true, path: '/liquidity-baking' },
-  { name: 'Mavryk Bakery (Soon)', href: '/', disabled: true },
-  { name: 'DAO Bakery (Soon)', href: '/', disabled: true },
+  {
+    name: 'Liquidity Baking',
+    href: 'https://mavryk.finance/liquidity-baking',
+    disabled: false,
+    path: '/liquidity-baking',
+  },
+  { name: 'Mavryk Bakeries', href: 'https://mavryk.finance/bakery', disabled: false },
 ]
 
 export const ABOUT_LINKS = [
@@ -35,7 +39,12 @@ export const ABOUT_LINKS = [
 export const BLOG_LINKS = []
 
 export const DOCS_LINKS = [
-  { name: 'Litepaper', href: 'https://mavryk.finance/litepaper', disabled: false, path: 'https://mavryk.finance/litepaper' },
+  {
+    name: 'Litepaper',
+    href: 'https://mavryk.finance/litepaper',
+    disabled: false,
+    path: 'https://mavryk.finance/litepaper',
+  },
   { name: 'DAO docs (Soon)', href: '/', disabled: true },
   { name: 'Security Audits (Soon)', href: '/', disabled: true },
   { name: 'Github (Soon)', href: 'https://github.com/mavrykfinance/', disabled: true },

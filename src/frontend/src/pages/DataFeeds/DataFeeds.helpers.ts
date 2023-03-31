@@ -1,4 +1,4 @@
-import { ChartPlotType } from 'app/App.components/Chart/Chart.view'
+import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
 import { defaultAggregatorNameMaxLength } from 'app/App.components/Input/Input.constants'
 import { UTCTimestamp } from 'lightweight-charts'
 import { percentageDifference } from 'utils/calcFunctions'
@@ -78,27 +78,31 @@ export function normalizeFeeds({
 
 export function normalizeDataFeedsHistory(historyData: DataFeedsHistoryGraphQL[]) {
   return historyData?.length
-    ? historyData.map((item) => {
-        return {
-          time: new Date(item.timestamp).getTime() as UTCTimestamp,
-          value: symbolsAfterDecimalPoint(item.data / 10 ** item.aggregator.decimals),
-        }
-      })
+    ? historyData
+        .map((item) => {
+          return {
+            time: new Date(item.timestamp).getTime() as UTCTimestamp,
+            value: symbolsAfterDecimalPoint(item.data / 10 ** item.aggregator.decimals),
+          }
+        })
+        .reverse()
     : []
 }
 
 export function normalizeDataFeedsVolatility(historyData: DataFeedsHistoryGraphQL[]) {
   return historyData?.length >= 2
-    ? historyData.reduce<Array<ChartPlotType>>((acc, { data, aggregator: { decimals }, timestamp }, idx, arr) => {
-        if (!arr?.[idx - 1]) return acc
-        acc.push({
-          time: new Date(timestamp).getTime() as UTCTimestamp,
-          value: percentageDifference(
-            symbolsAfterDecimalPoint(data / 10 ** decimals),
-            symbolsAfterDecimalPoint(arr[idx - 1]?.data / 10 ** decimals),
-          ),
-        })
-        return acc
-      }, [])
+    ? historyData
+        .reduce<Array<AreaChartPlotType>>((acc, { data, aggregator: { decimals }, timestamp }, idx, arr) => {
+          if (!arr?.[idx - 1]) return acc
+          acc.push({
+            time: new Date(timestamp).getTime() as UTCTimestamp,
+            value: percentageDifference(
+              symbolsAfterDecimalPoint(data / 10 ** decimals),
+              symbolsAfterDecimalPoint(arr[idx - 1]?.data / 10 ** decimals),
+            ),
+          })
+          return acc
+        }, [])
+        .reverse()
     : []
 }

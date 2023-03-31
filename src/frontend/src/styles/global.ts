@@ -60,6 +60,7 @@ fieldset {
 }
 
 button {
+  font-family: 'Metropolis', Helvetica, Arial, sans-serif;
   background: none;
   border: none;
   padding: 0;

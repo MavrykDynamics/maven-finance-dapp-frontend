@@ -42,12 +42,11 @@ export const MenuTopStyled = styled.div<{ theme: MavrykTheme }>`
         width: 28px;
         height: 28px;
         transition: 0.35s all;
+        fill: ${({ theme }) => theme.valueColor};
       }
 
       &:hover {
-        svg {
-          stroke: ${cyanColor};
-        }
+        opacity: 0.8;
       }
     }
   }
@@ -91,6 +90,7 @@ export const MenuTopStyled = styled.div<{ theme: MavrykTheme }>`
         width: 28px;
         height: 28px;
         transition: 0.35s all;
+        fill: ${({ theme }) => theme.valueColor};
       }
 
       &:hover {
@@ -131,6 +131,7 @@ export const MenuMobileBurger = styled.div<{ theme: MavrykTheme }>`
     width: 30px;
     height: 30px;
     transition: 0.6s all;
+    fill: ${({ theme }) => theme.valueColor};
   }
 
   @media screen and (min-width: 1401px) {

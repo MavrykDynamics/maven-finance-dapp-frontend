@@ -1,4 +1,5 @@
-import React, { useEffect, useState, useContext } from 'react'
+import React, { useEffect, useState, useContext, useRef } from 'react'
+import { useClickAway } from 'react-use'
 
 // components
 import { StatusFlag } from '../../../app/App.components/StatusFlag/StatusFlag.controller'
@@ -13,14 +14,7 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 // styles
 import { VaultsCardDropDown } from './../Vaults.style'
-import {
-  Table,
-  TableHeader,
-  TableRow,
-  TableHeaderCell,
-  TableBody,
-  TableCell,
-} from 'app/App.components/Table/Table.style'
+import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } from 'app/App.components/Table'
 
 // types
 import { VaultType } from 'utils/TypesAndInterfaces/Vaults'
@@ -32,6 +26,8 @@ import { vaultsStatuses } from '../Vaults.consts'
 import { getTimestampByLevel } from 'pages/Governance/Governance.actions'
 import { loansPopupsContext } from 'pages/Loans/Components/Modals/LoansModals.provider'
 import { calculateCollateralShare } from '../calcFunctionsForVault'
+import { useSelector } from 'react-redux'
+import { State } from 'reducers'
 
 const findStatusInfo = (status: string) => {
   switch (status) {
@@ -106,7 +102,35 @@ export const VaultsCard = (props: Props) => {
     handleMarkForLiquidation,
   } = props
 
-  const { openLiquidateVaultPopup } = useContext(loansPopupsContext)
+  const {
+    openLiquidateVaultPopup,
+    changeBakerPopup,
+    repayPartPopup,
+    repayFullPopup,
+    borrowAssetPopup,
+    addExistingCollateralPopup,
+    addNewCollateralPopup,
+    withdrawCollateralPopup,
+    updateMvkOperatorPopup,
+    managePermissionsPopup,
+    liquidateVaultPopup,
+  } = useContext(loansPopupsContext)
+
+  const { isActionLoading } = useSelector((state: State) => state.loading)
+
+  const notHandleClickAway =
+    repayPartPopup.showModal ||
+    changeBakerPopup.showModal ||
+    repayFullPopup.showModal ||
+    borrowAssetPopup.showModal ||
+    addExistingCollateralPopup.showModal ||
+    addNewCollateralPopup.showModal ||
+    withdrawCollateralPopup.showModal ||
+    updateMvkOperatorPopup.showModal ||
+    managePermissionsPopup.showModal ||
+    liquidateVaultPopup.showModal ||
+    isActionLoading
+
   const [expanded, setExpanded] = useState(false)
   const [timerTimestamp, setTimerTimestamp] = useState<number | undefined>(undefined)
 
@@ -120,6 +144,9 @@ export const VaultsCard = (props: Props) => {
     status === vaultsStatuses.LIQUIDATABLE || status === vaultsStatuses.GRACE_PERIOD || status === vaultsStatuses.MARK
 
   const isMarkStatus = vaultsStatuses.MARK === status
+
+  const ref = useRef<HTMLDivElement | null>(null)
+  useClickAway(ref, () => (notHandleClickAway ? null : setExpanded(false)))
 
   const getCountdownTimestamp = async (levelOfEarly: number, levelOfLate: number) => {
     const [timestampOfEarly, timestampOfLate] = await Promise.all([
@@ -303,16 +330,16 @@ export const VaultsCard = (props: Props) => {
   )
 
   return (
-    <>
+    <div ref={ref}>
       {isOwner ? (
         <BorrowingExpandCard
           {...props}
           className={`expand-vault ${expanded ? 'openVault' : ''}`}
           headerSufix={headerSufix}
           getExpandedStatus={setExpanded}
+          isOpenedVault={expanded}
           isOwner
-          // TODO: add this values as on loans
-          DAOFee={0}
+          DAOFee={props.daoFee}
         />
       ) : (
         <BorrowingExpandCard
@@ -320,12 +347,12 @@ export const VaultsCard = (props: Props) => {
           className={`expand-vault ${expanded ? 'openVault' : ''}`}
           headerSufix={headerSufix}
           getExpandedStatus={setExpanded}
-          // TODO: add this values as on loans
-          DAOFee={0}
+          isOpenedVault={expanded}
+          DAOFee={props.daoFee}
         >
           {generalExpand}
         </BorrowingExpandCard>
       )}
-    </>
+    </div>
   )
 }

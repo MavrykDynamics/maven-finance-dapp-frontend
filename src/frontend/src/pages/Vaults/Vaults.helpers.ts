@@ -153,6 +153,7 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
         accountPkh,
       )
 
+      // TODO: ensure in this value
       const fee =
         calculateCompoundedInterest(currentInterestRate, item.last_updated_block_level, currentBlock?.level ?? 0) /
         10 ** interestRateDecimals
@@ -204,11 +205,13 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
           tokenType: item.loan_token.loan_token_contract_standard as TokenType,
           userBalance,
         },
-        borrowCapacity: vaultCollateral.totalRow.amount / 2,
+        name: item.vault.name,
+        borrowCapacity: vaultCollateral.totalRow.amount / 2 - borrowedAmount * vaultAsset.rate,
         collateralBalance: vaultCollateral.totalRow.amount,
         collateralRatio,
         apr: currentInterestRate * 100,
         fee: borrowedAmount === 0 ? 0 : fee,
+        daoFee: (lendingController.minimum_loan_fee_pct ?? 0) / 100,
         collateralData,
         borrowedAmount,
         address: item.vault?.address,
@@ -222,8 +225,6 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
         liquidationReward,
         adminLiquidateFee,
         liquidationPrice,
-        repayFee: item.loan_interest_total,
-
         xtzDelegatedTo: vaultXtzDelegatedTo?.delegate?.address ?? null,
         operators: [],
         sMVKDelegatedTo: '',

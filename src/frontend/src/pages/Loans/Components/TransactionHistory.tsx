@@ -22,14 +22,7 @@ import {
 import { TransactionHistoryStyled } from '../Loans.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { TzAddress } from 'pages/Treasury/Treasury.style'
-import {
-  Table,
-  TableHeader,
-  TableRow,
-  TableHeaderCell,
-  TableBody,
-  TableCell,
-} from 'app/App.components/Table/Table.style'
+import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } from 'app/App.components/Table'
 import { EmptyContainer } from 'app/App.style'
 import Pagination from 'app/App.components/Pagination/Pagination.view'
 
@@ -84,7 +77,7 @@ export const TransactionHistory = ({ currentToken }: TransactionHistoryPropsType
                 <TableHeaderCell>Amount</TableHeaderCell>
                 <TableHeaderCell>Date</TableHeaderCell>
                 <TableHeaderCell>User</TableHeaderCell>
-                <TableHeaderCell className="right">View TX</TableHeaderCell>
+                <TableHeaderCell contentPosition="right">View TX</TableHeaderCell>
               </TableRow>
             </TableHeader>
 
@@ -94,22 +87,20 @@ export const TransactionHistory = ({ currentToken }: TransactionHistoryPropsType
 
                 return (
                   <TableRow rowHeight={45} className="add-hover" key={`${operationHash}-${date}`}>
-                    <TableCell width={`25%`} className="vert-middle">
+                    <TableCell width={`21%`} className="vert-middle">
                       <span>{descr}</span>
                     </TableCell>
-                    <TableCell width={`18%`}>
+                    <TableCell width={`21%`}>
                       <CommaNumber value={amount} className="value" endingText={tokenSymbol} />
                     </TableCell>
                     <TableCell width={`28%`}>{date}</TableCell>
-                    <TableCell width={`10%`}>
+                    <TableCell width={`11%`}>
                       <TzAddress tzAddress={userAddress} type={BLUE} />
                     </TableCell>
-                    <TableCell className="buttons right">
-                      <div className="cell-content row">
-                        <Link to={{ pathname: `https://ghostnet.tzkt.io/${operationHash}` }} target="_blank">
-                          <Button text="View TX" kind={TRANSPARENT} className="link" />
-                        </Link>
-                      </div>
+                    <TableCell contentPosition="right">
+                      <Link to={{ pathname: `https://ghostnet.tzkt.io/${operationHash}` }} target="_blank">
+                        <Button text="View TX" kind={TRANSPARENT} className="link" />
+                      </Link>
                     </TableCell>
                   </TableRow>
                 )

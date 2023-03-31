@@ -8,7 +8,7 @@ import {
   INPUT_STATUS_ERROR,
   INPUT_STATUS_SUCCESS,
 } from 'app/App.components/Input/Input.constants'
-import { CreateVaultPopupDataType } from './Modals.helpers'
+import { CreateVaultPopupDataType, VaultNameInputStateType } from './Modals.helpers'
 import { isTezosAsset } from 'pages/Loans/Loans.helpers'
 import { AvaliableCollateralType, XtzBakerType } from 'utils/TypesAndInterfaces/Loans'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
@@ -28,14 +28,7 @@ import { InputPinnedDropDown } from 'app/App.components/Input/Input.style'
 import { State } from 'reducers'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { silverColor } from 'styles'
-import {
-  Table,
-  TableHeader,
-  TableRow,
-  TableHeaderCell,
-  TableBody,
-  TableCell,
-} from 'app/App.components/Table/Table.style'
+import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } from 'app/App.components/Table'
 import { triggerInitialVaultCreation } from 'pages/Loans/Actions/vault.actions'
 import { depositCollateralAction } from 'pages/Loans/Actions/vaultCollateral.actions'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
@@ -91,6 +84,7 @@ export const CreateNewVault = ({
   const [shownScreen, setShownScreen] = useState<CurrentActiveModalScreen>(INITIAL_SCREEN_ID)
   const [collateralsToSelect, setCollateralsToSelect] = useState<Record<DDItemId, DropDownCollateralAssetType>>({})
   const [collaterals, setCollaterals] = useState<Array<InputCollateral>>([])
+  const [vaultName, setVaultName] = useState<VaultNameInputStateType>({ name: '', validationStatus: '' })
   const [isVaultCreating, setVaultCreating] = useState(false)
   const [newVaultAddress, setNewVaultAddress] = useState('')
 
@@ -217,6 +211,15 @@ export const CreateNewVault = ({
     }
   }
 
+  //handle vaultName input
+  const handleVaultNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target
+    const validationStatus =
+      value && value.length <= 15 && /^[A-Za-z\s]*$/g.test(value) ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
+
+    setVaultName({ name: value, validationStatus })
+  }
+
   // stuff to handle collateral input dropdown
   const handleCollateralInputDdClick = (collateralIdx: number, listItemId: DDItemId, currentInputId: number) => {
     const selectedItem = collateralsToSelect[listItemId]
@@ -301,8 +304,7 @@ export const CreateNewVault = ({
       try {
         setVaultCreating(true)
         //TODO: connect this value to an input
-        const vaultName = 'TestVaultName'
-        const newVaultData = await dispatch(triggerInitialVaultCreation(currentMarketAsset, vaultName))
+        const newVaultData = await dispatch(triggerInitialVaultCreation(currentMarketAsset, vaultName.name))
         setCreatedVaultAddress?.(String(newVaultData))
         setNewVaultAddress(String(newVaultData))
       } catch (e) {
@@ -396,19 +398,36 @@ export const CreateNewVault = ({
 
           {/* showing initial screen */}
           {shownScreen === 'initial' ? (
-            <div className="manage-btn">
-              <NewButton
-                kind={BUTTON_PRIMARY}
-                form={BUTTON_WIDE}
-                onClick={() => {
-                  setShownScreen(ADD_COLLATERAL_SCREEN_ID)
-                  createVaultAction()
+            <>
+              <Input
+                className={`vault-name`}
+                inputProps={{
+                  value: vaultName.name,
+                  type: 'text',
+                  onChange: handleVaultNameChange,
+                  placeholder: 'Enter Vault Name',
                 }}
-              >
-                Continue
-                <Icon id="arrowRight" />
-              </NewButton>
-            </div>
+                settings={{
+                  inputStatus: vaultName.validationStatus,
+                  label: 'Vault name',
+                  inputSize: INPUT_LARGE,
+                }}
+              />
+              <div className="manage-btn">
+                <NewButton
+                  kind={BUTTON_PRIMARY}
+                  form={BUTTON_WIDE}
+                  onClick={() => {
+                    setShownScreen(ADD_COLLATERAL_SCREEN_ID)
+                    createVaultAction()
+                  }}
+                  disabled={vaultName.validationStatus !== INPUT_STATUS_SUCCESS}
+                >
+                  Continue
+                  <Icon id="arrowRight" />
+                </NewButton>
+              </div>
+            </>
           ) : null}
 
           {/* showing add collateral screen */}
@@ -572,7 +591,7 @@ export const CreateNewVault = ({
                           <TableCell width="28%">
                             <CommaNumber value={Number(inputAmount)} />
                           </TableCell>
-                          <TableCell className="right" width="28%">
+                          <TableCell contentPosition="right" width="28%">
                             {collateralMetadata?.rate ? (
                               <CommaNumber
                                 value={Number(inputAmount) * Number(collateralMetadata?.rate)}
@@ -600,7 +619,12 @@ export const CreateNewVault = ({
                 <ThreeLevelListItem>
                   <div className="name">
                     Borrowing Capacity{' '}
-                    <CustomTooltip iconId="info" defaultStrokeColor={silverColor} text="" className="tooltip" />
+                    <CustomTooltip
+                      iconId="info"
+                      defaultStrokeColor={silverColor}
+                      text="How much you are able to borrow given your current collateral ratio including the amount you wish to borrow and the total amount available to borrow from the pool."
+                      className="tooltip"
+                    />
                   </div>
                   <CommaNumber value={borrowingCapacity} className="value" beginningText="$" />
                 </ThreeLevelListItem>

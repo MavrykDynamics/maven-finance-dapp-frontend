@@ -1,27 +1,29 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
+import { Link, Redirect, Route, Switch, useParams } from 'react-router-dom'
 
 import { State } from 'reducers'
 
 import { CHART_TEST_DATA } from '../tabs.const'
-import { BUTTON_PRIMARY, BUTTON_SIMPLE, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import { BUTTON_NAVIGATION, BUTTON_SIMPLE } from 'app/App.components/Button/Button.constants'
+import {
+  isValidPersonalDashboardSecondaryTabId,
+  PORTFOLIO_BORROWING_TAB_ID,
+  PORTFOLIO_LENDING_TAB_ID,
+  PORTFOLIO_POSITION_TAB_ID,
+  PORTFOLIO_TAB_ID,
+} from '../DashboardPersonal.utils'
 
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { Chart } from 'app/App.components/Chart/Chart.view'
-import { ClockLoader } from 'app/App.components/Loader/Loader.view'
+import { Chart } from 'app/App.components/Chart/Chart'
 import { SlidingTabButtons, TabItem } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
-import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
+import { LoansTxTab } from './LoansTxTab'
 import Button from 'app/App.components/Button/NewButton'
-import Icon from 'app/App.components/Icon/Icon.view'
 
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
-import {
-  LBHInfoBlock,
-  ListItem,
-  PortfolioWalletStyled,
-  PortfolioChartStyled,
-} from './DashboardPersonalComponents.style'
+import { PortfolioWalletStyled, PortfolioChartStyled } from './DashboardPersonalComponents.style'
+import { LendBorrowPosition } from './LendBorrowPosition'
+import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.types'
 
 type PortfolioTabProps = {
   xtzAmount: number
@@ -40,14 +42,19 @@ const TOGGLE_VALUES: TabItem[] = [
 ]
 
 const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUserLoansLoading }: PortfolioTabProps) => {
+  const { secondaryTabId } = useParams<{ secondaryTabId: string }>()
+  const portfolioActiveTab = useMemo(
+    () => (isValidPersonalDashboardSecondaryTabId(secondaryTabId) ? secondaryTabId : PORTFOLIO_LENDING_TAB_ID),
+    [secondaryTabId],
+  )
+
   const {
-    tokensPrices: { mvk: { usd: mvkExchangeRate = 0 } = {} },
+    tokensPrices: { mvk: mvkExchangeRate = 0 },
   } = useSelector((state: State) => state.tokens)
   const {
-    user: {
-      userLoansData: { userBorrowing, userLendings },
-    },
+    user: { userLoansData, myLendingRewardsAmount },
   } = useSelector((state: State) => state.wallet)
+  const { loanTokens } = useSelector((state: State) => state.loans)
 
   const [toggleItems, setToggleItems] = useState<TabItem[]>(TOGGLE_VALUES)
   const lastSeria = CHART_TEST_DATA.at(-1)?.value ?? 0
@@ -62,6 +69,7 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
         <div className="chart-periods">
           <SlidingTabButtons
             tabItems={toggleItems}
+            disabled
             onClick={(tabId) =>
               setToggleItems(
                 toggleItems.map((item) => ({
@@ -72,21 +80,17 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
             }
           />
         </div>
-        <div className="last-seria">
+        {/* <div className="last-seria">
           <div className="mvk">
             <CommaNumber endingText="MVK" value={lastSeria} />
           </div>
           <div className="usd">
             <CommaNumber beginningText="$" value={lastSeria * mvkExchangeRate} />
           </div>
+        </div> */}
+        <div className="chart">
+          <Chart data={{ type: AREA_CHART_TYPE, plots: CHART_TEST_DATA }} tooltipAsset={'MVK'} comingSoon />
         </div>
-        <Chart
-          data={CHART_TEST_DATA}
-          settings={{
-            height: 260,
-          }}
-          className="portfolio"
-        />
       </PortfolioChartStyled>
 
       <PortfolioWalletStyled>
@@ -131,120 +135,41 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
         </div>
       </PortfolioWalletStyled>
 
-      <LBHInfoBlock>
-        <GovRightContainerTitleArea>
-          <h2>My Lending</h2>
-        </GovRightContainerTitleArea>
-        {isUserLoansLoading ? (
-          <div className="loader-wrapper">
-            <ClockLoader />
-          </div>
-        ) : userLendings.length ? (
-          <div className="list scroll-block">
-            {userLendings.map(({ icon, amount, annualPecentage, earned, operationHash, id }) => {
-              return (
-                // TODO: temp solution while earn column is disabled
-                // <ListItem columsTemplate="60px 0.9fr 0.7fr 0.8fr 0.7fr" key={id + operationHash}>
-                <ListItem columsTemplate="60px 0.9fr 0.7fr 1.5fr" key={id + operationHash}>
-                  <ImageWithPlug imageLink={icon} alt={`lended asset logo`} />
-                  <div className="list-part">
-                    <div className="name">Supplied</div>
-                    <div className="value">
-                      <CommaNumber value={amount} beginningText="$" />
-                    </div>
-                  </div>
-                  <div className="list-part">
-                    <div className="name">APY</div>
-                    <div className="value">
-                      <CommaNumber value={annualPecentage} endingText="%" />
-                    </div>
-                  </div>
-                  {/* <div className="list-part">
-                    <div className="name">Earned</div>
-                    <div className="value">
-                      <CommaNumber value={earned} />
-                    </div>
-                  </div> */}
-                  <div className="list-part  view-tx-link">
-                    <Link to={{ pathname: `https://ghostnet.tzkt.io/${operationHash}` }} target="_blank">
-                      <Button kind={BUTTON_SIMPLE}>View TX</Button>
-                    </Link>
-                  </div>
-                </ListItem>
-              )
-            })}
-          </div>
-        ) : (
-          <div className="no-data">
-            <span>Nothing supplied at this time</span>
-            <div className="nav-button">
-              <Link to="/loans">
-                <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE}>
-                  <Icon id="lend" />
-                  Lend Asset{' '}
-                </Button>
-              </Link>
-            </div>
-          </div>
-        )}
-      </LBHInfoBlock>
-      <LBHInfoBlock>
-        <GovRightContainerTitleArea>
-          <h2>My Borrowing</h2>
-        </GovRightContainerTitleArea>
-        {isUserLoansLoading ? (
-          <div className="loader-wrapper">
-            <ClockLoader />
-          </div>
-        ) : userBorrowing.length ? (
-          <div className="list scroll-block">
-            {userBorrowing.map(({ icon, amount, annualPecentage, earned, operationHash, id }) => {
-              return (
-                // TODO: temp solution while earn column is disabled
-                // <ListItem columsTemplate="60px 0.9fr 0.7fr 0.8fr 0.7fr" key={id + operationHash}>
-                <ListItem columsTemplate="60px 0.9fr 0.7fr 1.5fr" key={id + operationHash}>
-                  <ImageWithPlug imageLink={icon} alt={`borrowed asset logo`} />
-                  <div className="list-part">
-                    <div className="name">Borrowed</div>
-                    <div className="value">
-                      <CommaNumber value={amount} beginningText="$" />
-                    </div>
-                  </div>
-                  <div className="list-part">
-                    <div className="name">APR</div>
-                    <div className="value">
-                      <CommaNumber value={annualPecentage} endingText="%" />
-                    </div>
-                  </div>
-                  {/* <div className="list-part">
-                    <div className="name">Earned</div>
-                    <div className="value">
-                      <CommaNumber value={earned} />
-                    </div>
-                  </div> */}
-                  <div className="list-part view-tx-link">
-                    <Link to={{ pathname: `https://ghostnet.tzkt.io/${operationHash}` }} target="_blank">
-                      <Button kind={BUTTON_SIMPLE}>View TX</Button>
-                    </Link>
-                  </div>
-                </ListItem>
-              )
-            })}
-          </div>
-        ) : (
-          <div className="no-data">
-            <span>Nothing borrowed at this time</span>
-            <div className="nav-button">
-              <Link to="/loans">
-                <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE}>
-                  <Icon id="borrow" />
-                  Borrow Asset{' '}
-                </Button>
-              </Link>
-            </div>
-          </div>
-        )}
-      </LBHInfoBlock>
+      <div className="tabs-switchers">
+        <Link to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`}>
+          <Button selected={portfolioActiveTab === PORTFOLIO_POSITION_TAB_ID} kind={BUTTON_NAVIGATION}>
+            Lend/Borrow Position
+          </Button>
+        </Link>
+        <Link to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_LENDING_TAB_ID}`}>
+          <Button selected={portfolioActiveTab === PORTFOLIO_LENDING_TAB_ID} kind={BUTTON_NAVIGATION}>
+            Lending TXs
+          </Button>
+        </Link>
+        <Link to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_BORROWING_TAB_ID}`}>
+          <Button selected={portfolioActiveTab === PORTFOLIO_BORROWING_TAB_ID} kind={BUTTON_NAVIGATION}>
+            Borrow TXs
+          </Button>
+        </Link>
+      </div>
+
+      <Switch>
+        <Route exact path={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`}>
+          <LendBorrowPosition
+            markets={loanTokens}
+            userLoansData={userLoansData}
+            userLoansRewards={myLendingRewardsAmount}
+          />
+        </Route>
+        <Route exact path={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_LENDING_TAB_ID}`}>
+          <LoansTxTab txVariant="lending" userLoansData={userLoansData} isUserLoansLoading={isUserLoansLoading} />
+        </Route>
+        <Route exact path={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_BORROWING_TAB_ID}`}>
+          <LoansTxTab txVariant="borrowing" userLoansData={userLoansData} isUserLoansLoading={isUserLoansLoading} />
+        </Route>
+
+        <Redirect to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`} />
+      </Switch>
     </>
   )
 }

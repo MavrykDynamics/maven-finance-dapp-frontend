@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useLocation, useHistory, useParams } from 'react-router'
 
@@ -43,6 +43,7 @@ export const VaultsView = () => {
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const {
     vaultsList: { myVaultsIds, allVaultsIds, vaultsMapper },
+    isLoaded,
   } = useSelector((state: State) => state.vaults)
   const { tabId } = useParams<{ tabId: string }>()
 
@@ -65,21 +66,19 @@ export const VaultsView = () => {
     [accountPkh, tabId],
   )
 
-  const { isLoading } = useDataLoader(async () => {
-    try {
-      await dispatch(getVaultsStorage())
-    } catch (e) {
-      //TODO: handle fetch error
-    }
-  }, [accountPkh])
-
-  useDataLoader(async () => {
-    try {
-      await dispatch(getAvaliableCollaterals())
-    } catch (e) {
-      //TODO: handle fetch error
-    }
-  }, [])
+  const { isLoading } = useDataLoader(
+    async (isDepsChanged) => {
+      try {
+        await Promise.all(
+          [
+            (!isLoaded || isDepsChanged) && dispatch(getVaultsStorage()),
+            isDepsChanged && dispatch(getAvaliableCollaterals()),
+          ].filter(Boolean),
+        )
+      } catch (e) {}
+    },
+    [accountPkh],
+  )
 
   const [vaultsIds, setVaultsIds] = useState<string[]>([])
   const assets = useMemo(() => getVaultAssets(vaultsMapper), [vaultsMapper])
@@ -90,7 +89,9 @@ export const VaultsView = () => {
 
   const handleChangeTabs = (id: number) => {
     const foundTab = tabsList.find((item) => item.id === id)
-    if (!foundTab?.path) return
+    const currentTabId = tabsList.find((item) => item.path === tabId)?.id
+
+    if (!foundTab?.path || currentTabId === id) return
 
     history.replace(`${pathname}/${foundTab.path}`)
     setVaultsIds(foundTab.path === tabsId.ALL ? allVaultsIds : myVaultsIds)
@@ -104,6 +105,12 @@ export const VaultsView = () => {
   const handleMarkForLiquidation = (vaultId: number, vaultOwner: string) => {
     dispatch(markForLiquidation(vaultId, vaultOwner))
   }
+
+  // switch to "all" tab if user is disabled
+  useEffect(() => {
+    if (accountPkh) return
+    handleChangeTabs(tabsList[0].id)
+  }, [accountPkh])
 
   return (
     <VaultsStyled>
@@ -124,7 +131,7 @@ export const VaultsView = () => {
       ) : paginatedVaultsList.length ? (
         <div className="vaults">
           {paginatedVaultsList.map((item) => {
-            const isOwner = vaultsMapper[item].ownerId === accountPkh
+            const isOwner = vaultsMapper[item]?.ownerId === accountPkh
 
             return (
               <VaultsCard

@@ -123,7 +123,7 @@ export const BreakGlassView = ({
 
           <BGWhitelist>
             Whitelist Developers
-            <div className="adress-list">{whitelistDev ? <TzAddress tzAddress={whitelistDev} hasIcon /> : '-'}</div>
+            <div className="adress-list">{whitelistDev ? <TzAddress tzAddress={whitelistDev} hasIcon /> : <div>None</div>}</div>
           </BGWhitelist>
           <div className="line"></div>
         </BGInfo>

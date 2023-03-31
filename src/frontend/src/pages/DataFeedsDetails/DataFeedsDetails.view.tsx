@@ -22,7 +22,6 @@ import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import DataFeedsPagination from './pagination/DataFeedsPagination.controler'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import { DataFeedsChart } from './chart/DataFeedsChart.controller'
 import { OracleCard } from 'pages/DataFeedsDetails/listItem/OracleCard.view'
 import Pagination from 'app/App.components/Pagination/Pagination.view'
 
@@ -38,11 +37,14 @@ import {
   DataFeedsStyled,
   DataFeedValueText,
   FeedInfo,
+  FeedDetailsChartWrapper,
 } from './DataFeedsDetails.style'
 import { EmptyContainer } from 'app/App.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import colors from 'styles/colors'
+import { Chart } from 'app/App.components/Chart/Chart'
+import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.types'
 
 type FeedDetailsProps = {
   feed: Feed | null
@@ -73,6 +75,8 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsPr
   const isTrustedAnswer = feed && feed.last_completed_data_pct_oracle_resp >= feed.pct_oracle_threshold
 
   const imageLink = dipDupContracts.find(({ contract }) => contract === feed?.address)?.metadata?.icon
+
+  const chartPlots = (activeTab === 1 ? feed?.dataFeedsHistory : feed?.dataFeedsVolatility) ?? []
 
   return (
     <Page>
@@ -270,12 +274,17 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsPr
                   : null}
               </div>
 
-              <DataFeedsChart
-                activeTab={activeTab}
-                dataFeedsHistory={feed.dataFeedsHistory}
-                dataFeedsVolatility={feed.dataFeedsVolatility}
-                tooltipAsset={feed.name.split('/')?.[1]}
-              />
+              <FeedDetailsChartWrapper>
+                <Chart
+                  data={{ type: AREA_CHART_TYPE, plots: chartPlots }}
+                  colors={{
+                    lineColor: cyanColor,
+                    areaTopColor: cyanColor,
+                    areaBottomColor: 'rgba(119, 164, 242, 0)',
+                  }}
+                  tooltipAsset={activeTab === 1 ? feed.name.split('/')?.[1] : '%'}
+                />
+              </FeedDetailsChartWrapper>
             </div>
 
             {feedsSatellites.length ? (

@@ -71,7 +71,7 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
 
   const lending24hPersentChange = calcDiffBetweenTwoNumbersInPersentage(last24hLending, last48hLending)
   const borrowing24hPersentChange = calcDiffBetweenTwoNumbersInPersentage(last24hBorrowing, last48hBorrowing)
-  console.log({ lending24hPersentChange, borrowing24hPersentChange })
+
   return (
     <TabWrapperStyled backgroundImage="dashboard_lendingTab_bg.png">
       <div className="top">
@@ -130,7 +130,7 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
                     <Icon id="noImage" />
                   )}
 
-                  {mostLendedAsset?.name || '-'}
+                  {mostLendedAsset?.symbol || '-'}
                 </div>
               </StatBlock>
             </div>
@@ -175,7 +175,7 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
                     <Icon id="noImage" />
                   )}
 
-                  {mostBorrowedAsset?.name ?? ''}
+                  {mostBorrowedAsset?.symbol ?? ''}
                 </div>
               </StatBlock>
             </div>

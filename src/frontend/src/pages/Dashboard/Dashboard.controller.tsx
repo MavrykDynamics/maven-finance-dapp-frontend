@@ -7,21 +7,20 @@ import { Page } from 'styles'
 
 import { State } from '../../reducers'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
-import { mvkStatsType, isValidId, LENDING_TAB_ID } from './Dashboard.utils'
+import { mvkStatsType, isValidPersonalDashboardTabId, LENDING_TAB_ID } from './Dashboard.utils'
 import { fillTreasuryStorage, getVestingStorage } from '../Treasury/Treasury.actions'
 import { getGovernanceStorage } from 'pages/Governance/Governance.actions'
 import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
 import { getVaultsStorage } from 'pages/Vaults/Vaults.actions'
 import { getFarmStorage } from 'pages/Farms/Farms.actions'
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
-import { getFeedsStorage } from 'pages/DataFeeds/DataFeeds.actions'
 
 export const Dashboard = () => {
   const dispatch = useDispatch()
   const { tabId } = useParams<{ tabId: string }>()
 
   const {
-    tokensPrices: { mvk: { usd: mvkExchangeRate = 0 } = {} },
+    tokensPrices: { mvk: mvkExchangeRate = 0 },
   } = useSelector((state: State) => state.tokens)
   const {
     totalStakedMvk,
@@ -31,8 +30,11 @@ export const Dashboard = () => {
   } = useSelector((state: State) => state.doorman)
   const { treasuryStorage, isLoaded: isTreasuryLoaded } = useSelector((state: State) => state.treasury)
   const { isLoaded: isVestingLoaded } = useSelector((state: State) => state.vesting)
-  const { isLoaded: isFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
-  const { allVaultsIds, vaultsMapper } = useSelector((state: State) => state.vaults.vaultsList)
+  const { isGovernanceStorageLoaded } = useSelector((state: State) => state.governance)
+  const {
+    vaultsList: { allVaultsIds, vaultsMapper },
+    isLoaded: isVaultsLoaded,
+  } = useSelector((state: State) => state.vaults)
   const { farms, isLoaded: isFarmsLoaded } = useSelector((state: State) => state.farm)
   const {
     isDataLoaded: isLoansLoaded,
@@ -67,18 +69,17 @@ export const Dashboard = () => {
 
   const tvlValue = doormanTVL + treasuryTVL + farmsTVL + lendingTvl + vaultsTvl
 
-  const { isLoading } = useDataLoader(async () => {
+  const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {
       await Promise.all(
         [
-          dispatch(getVaultsStorage()),
-          dispatch(getGovernanceStorage()),
-          !isFeedsLoaded && dispatch(getFeedsStorage()),
-          !isVestingLoaded && dispatch(getVestingStorage()),
-          !isTreasuryLoaded && dispatch(fillTreasuryStorage()),
-          !isLoansLoaded && dispatch(getLoansStorage()),
-          !isFarmsLoaded && dispatch(getFarmStorage()),
-          !isDoormanLoaded && dispatch(getDoormanStorage()),
+          (!isGovernanceStorageLoaded || isDepsChanged) && dispatch(getGovernanceStorage()),
+          (!isVaultsLoaded || isDepsChanged) && dispatch(getVaultsStorage()),
+          (!isVestingLoaded || isDepsChanged) && dispatch(getVestingStorage()),
+          (!isTreasuryLoaded || isDepsChanged) && dispatch(fillTreasuryStorage()),
+          (!isLoansLoaded || isDepsChanged) && dispatch(getLoansStorage()),
+          (!isFarmsLoaded || isDepsChanged) && dispatch(getFarmStorage()),
+          (!isDoormanLoaded || isDepsChanged) && dispatch(getDoormanStorage()),
         ].filter(Boolean),
       )
     } catch (e) {}
@@ -99,7 +100,7 @@ export const Dashboard = () => {
       <DashboardView
         tvl={tvlValue}
         mvkStatsBlock={mvkStatsBlock}
-        activeTab={isValidId(tabId) ? tabId : LENDING_TAB_ID}
+        activeTab={isValidPersonalDashboardTabId(tabId) ? tabId : LENDING_TAB_ID}
         isLoading={isLoading}
       />
     </Page>

@@ -1,7 +1,7 @@
 import styled from 'styled-components/macro'
 import { Card } from 'styles'
 
-import { cyanColor, downColor } from '../../../styles/colors'
+import { downColor } from '../../../styles/colors'
 import { MavrykTheme } from '../../../styles/interfaces'
 
 export const StakeUnstakeStyled = styled.div`
@@ -100,10 +100,20 @@ export const StakeUnstakeInputWithCoin = styled.div`
 export const StakeUnstakeAmount = styled.div`
   display: flex;
   color: ${({ theme }) => theme.dataColor};
+  cursor: pointer;
 
   p {
     margin: 0;
     color: ${({ theme }) => theme.navTitleColor};
+  }
+`
+
+export const StakeUnstakeRate = styled(StakeUnstakeAmount)`
+  margin: 7px 0 0 70px;
+  cursor: auto;
+
+  p {
+    color: ${({ theme }) => theme.dataColor};
   }
 `
 
@@ -134,25 +144,6 @@ export const StakeUnstakeInputLabel = styled.div<{ theme: MavrykTheme }>`
   color: ${({ theme }) => theme.subTextColor};
   font-size: 22px;
   font-weight: 600;
-`
-
-export const StakeUnstakeRate = styled.div`
-  display: flex;
-  max-width: 300px;
-
-  color: ${({ theme }) => theme.headerSkyColor};
-
-  overflow: hidden;
-  text-overflow: ellipsis;
-
-  span {
-    flex-shrink: 0;
-  }
-
-  p {
-    margin: 0;
-    white-space: nowrap;
-  }
 `
 
 export const StakeUnstakeButtonGrid = styled.div`

@@ -28,7 +28,7 @@ export const SmallBlockBase = styled.div<{ theme: MavrykTheme }>`
 `
 
 export const MediumBlockBase = styled(SmallBlockBase)<{ theme: MavrykTheme }>`
-  height: 382px;
+  height: 361px;
   display: flex;
   flex-direction: column;
 
@@ -84,7 +84,7 @@ export const PortfolioChartStyled = styled(MediumBlockBase)<{ theme: MavrykTheme
     color: ${({ theme }) => theme.dataColor};
     .mvk {
       font-weight: 600;
-      font-size: 32px;
+      font-size: 27px;
 
       .suffix {
         color: ${({ theme }) => theme.textColor};
@@ -99,6 +99,11 @@ export const PortfolioChartStyled = styled(MediumBlockBase)<{ theme: MavrykTheme
     p {
       margin: 0;
     }
+  }
+
+  .chart {
+    margin-top: auto;
+    height: 230px;
   }
 `
 
@@ -200,15 +205,12 @@ export const EarnHistoryStyled = styled(SmallBlockBase)<{ theme: MavrykTheme }>`
 `
 
 export const LBHInfoBlock = styled(MediumBlockBase)<{ theme: MavrykTheme }>`
-  .list {
-    display: flex;
-    flex-direction: column;
-    row-gap: 24px;
-    margin-top: 20px;
-    overflow: auto;
-    position: relative;
-    width: calc(100% + 30px);
-    padding-right: 30px;
+  width: 100%;
+  padding-right: 0px;
+  position: relative;
+
+  p {
+    margin: 0;
   }
 
   .loader-wrapper {
@@ -216,6 +218,52 @@ export const LBHInfoBlock = styled(MediumBlockBase)<{ theme: MavrykTheme }>`
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  .view-markets {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+  }
+
+  .acc-stats {
+    margin-top: 30px;
+    display: flex;
+    align-items: center;
+
+    .stats {
+      margin-left: 60px;
+      display: flex;
+      align-items: center;
+      column-gap: 110px;
+
+      .name {
+        font-weight: 600;
+        font-size: 14px;
+      }
+
+      .value {
+        margin-top: 7px;
+        font-weight: 700;
+        font-size: 25px;
+      }
+    }
+
+    .gauge-chart {
+      position: relative;
+
+      .tooltip {
+        position: absolute;
+        right: 0px;
+        top: 0px;
+        z-index: 100;
+      }
+    }
+  }
+
+  &.position-tab {
+    height: fit-content;
+    padding-right: 30px;
   }
 `
 
@@ -233,74 +281,6 @@ export const HistoryBlock = styled(MediumBlockBase)<{ theme: MavrykTheme }>`
       width: 13px;
       height: 13px;
     }
-  }
-`
-
-export const ListItem = styled.div<{ theme: MavrykTheme; columsTemplate: string }>`
-  display: grid;
-  grid-template-columns: ${({ columsTemplate }) => columsTemplate};
-  position: relative;
-
-  svg,
-  .image-wrapper,
-  .img-wrapper {
-    height: 40px;
-    width: 40px;
-    fill: ${({ theme }) => theme.lPurple_dPurple_lPuprple};
-
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-  }
-
-  .list-part {
-    display: flex;
-    flex-direction: column;
-    row-gap: 5px;
-    p {
-      margin: 0;
-    }
-
-    &.user {
-      display: flex;
-      justify-content: flex-end;
-      flex-direction: row;
-      column-gap: 15px;
-
-      .user-info {
-        display: flex;
-        flex-direction: column;
-        row-gap: 5px;
-
-        .user-address {
-          svg {
-            width: 16px;
-            height: 16px;
-            fill: unset;
-            stroke: ${({ theme }) => theme.dataColor};
-          }
-        }
-      }
-    }
-
-    &.view-tx-link {
-      align-items: center;
-      justify-content: center;
-
-      /* TODO: temp solution while earn column is disabled */
-      margin-left: auto;
-    }
-  }
-
-  &:not(:last-child)::before {
-    content: '';
-    position: absolute;
-    bottom: -12px;
-    width: 100%;
-    height: 1px;
-    background-color: ${({ theme }) => theme.cardBorderColor};
   }
 `
 

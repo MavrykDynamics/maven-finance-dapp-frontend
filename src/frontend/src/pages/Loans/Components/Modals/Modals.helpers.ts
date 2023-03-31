@@ -4,6 +4,7 @@ import LoansPopupsProvider from './LoansModals.provider'
 import { VaultType } from 'utils/TypesAndInterfaces/Vaults'
 
 export type LoansPopupsInputStateType = { amount: string; validationStatus: InputStatusType }
+export type VaultNameInputStateType = { name: string; validationStatus: InputStatusType }
 export type LoansPopupsAddressInputStateType = { address: string; validationStatus: InputStatusType }
 export const DEFAULT_LOANS_INPUT_VALUE: LoansPopupsInputStateType = {
   amount: '0',
@@ -90,7 +91,7 @@ export type ChangeBakerPopupDataType = {
 
 export type CreateVaultPopupDataType = {
   currentMarketAsset: string
-  setCreatedVaultAddress: (address: string) => void
+  setCreatedVaultAddress?: (address: string) => void
 } | null
 
 export type LiquidateVaultDataType = VaultType | null

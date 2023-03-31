@@ -1,4 +1,4 @@
-import { useLocation, useParams } from 'react-router'
+import { useParams } from 'react-router'
 import { useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, Redirect, Route, Switch } from 'react-router-dom'
@@ -7,69 +7,52 @@ import { State } from 'reducers'
 
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { getGovernanceStorage } from 'pages/Governance/Governance.actions'
-import { getFeedsStorage } from 'pages/DataFeeds/DataFeeds.actions'
 import { claimAllRewardsAction } from './DashboardPersonal.actions'
 import { updateUserData } from 'reducers/actions/user.actions'
 import { getEmergencyGovernanceStorage } from 'pages/EmergencyGovernance/EmergencyGovernance.actions'
 import {
-  isValidId,
+  isValidPersonalDashboardTabId,
   PORTFOLIO_TAB_ID,
   DELEGATION_TAB_ID,
   SATELLITE_TAB_ID,
   VESTING_TAB_ID,
+  PORTFOLIO_POSITION_TAB_ID,
 } from './DashboardPersonal.utils'
-import {
-  USER_ACTIONS_HISTORY,
-  calculateSlicePositions,
-  PAGINATION_SIDE_CENTER,
-  getPageNumber,
-} from 'app/App.components/Pagination/pagination.consts'
+import { BUTTON_NAVIGATION } from 'app/App.components/Button/Button.constants'
 
+import Button from 'app/App.components/Button/NewButton'
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
 import { Page } from 'styles/components'
 import DashboardPersonalEarningsHistory from './DashboardPersonalComponents/DashboardPersonalEarningsHistory'
 import DashboardPersonalMyRewards from './DashboardPersonalComponents/DashboardPersonalMyRewards'
 import DelegationTab from './DashboardPersonalComponents/DelegationTab'
 import PortfolioTab from './DashboardPersonalComponents/PortfolioTab'
-import { DashboardPersonalStyled } from './DashboardPersonal.style'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import SatelliteTab from './DashboardPersonalComponents/SatelliteTab'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import Pagination from 'app/App.components/Pagination/Pagination.view'
-import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+import { getUserAvatar } from 'app/App.components/Avatar/Avatar.helpers'
 
-import {
-  Table,
-  TableHeader,
-  TableRow,
-  TableHeaderCell,
-  TableBody,
-  TableCell,
-} from 'app/App.components/Table/Table.style'
-import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
-import {
-  DashboardPersonalTabStyled,
-  HistoryBlock,
-} from './DashboardPersonalComponents/DashboardPersonalComponents.style'
+import { DashboardPersonalTabStyled } from './DashboardPersonalComponents/DashboardPersonalComponents.style'
 import { getVestingStorage } from 'pages/Treasury/Treasury.actions'
 import VestingTab from './DashboardPersonalComponents/VestingTab'
+import { DashboardPersonalStyled } from './DashboardPersonal.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
-import { ClockLoader } from 'app/App.components/Loader/Loader.view'
+import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 
 const DashboardPersonal = () => {
   const dispatch = useDispatch()
   const { tabId } = useParams<{ tabId: string }>()
 
   const {
-    tokensPrices: { tezos, mvk: { usd: mvkExchangeRate = 0 } = {} },
+    tokensPrices: { tezos: xtzExchangeRate = 0, mvk: mvkExchangeRate = 0 },
   } = useSelector((state: State) => state.tokens)
+  const { satelliteMapper } = useSelector((state: State) => state.satellites)
+  const { councilMembers, breakGlassCouncilMembers } = useSelector((state: State) => state.council)
   const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
-  const {
-    accountPkh,
-    user: { isVestee },
-  } = useSelector((state: State) => state.wallet)
-  const { isLoaded: isFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
+  const { isGovernanceStorageLoaded } = useSelector((state: State) => state.governance)
+  const { isDataLoaded: isLoansLoaded } = useSelector((state: State) => state.loans)
   const { isLoaded: isVestingLoaded } = useSelector((state: State) => state.vesting)
   const {
+    accountPkh,
     user: {
       myMvkTokenBalance,
       mySMvkTokenBalance,
@@ -77,11 +60,11 @@ const DashboardPersonal = () => {
       mytzBTCTokenBalance,
       myLendingRewardsAmount,
       isSatellite,
+      isVestee,
       myDoormanRewardsData: { myAvailableDoormanRewards },
       myFarmRewardsData,
       mySatelliteRewardsData: { myAvailableSatelliteRewards },
       userRewardsToDate: { satelliteRewards, farmRewards, doormanRewards },
-      actionsHistory,
       isLoaded: isUserDataLoaded,
     },
   } = useSelector((state: State) => state.wallet)
@@ -90,26 +73,22 @@ const DashboardPersonal = () => {
     await dispatch(claimAllRewardsAction())
   }
 
-  const { isLoading } = useDataLoader(async () => {
-    try {
-      await Promise.all(
-        [
-          dispatch(getGovernanceStorage()),
-          !isEgovLoaded && dispatch(getEmergencyGovernanceStorage()),
-          isVestee && !isVestingLoaded && dispatch(getVestingStorage()),
-          !isFeedsLoaded && dispatch(getFeedsStorage()),
-        ].filter(Boolean),
-      )
-    } catch (e) {}
-  }, [accountPkh])
-
-  const { isLoading: isUserLoansLoading } = useDataLoader(async () => {
-    try {
-      if (!isUserDataLoaded) {
-        await dispatch(updateUserData())
-      }
-    } catch (e) {}
-  }, [accountPkh])
+  const { isLoading } = useDataLoader(
+    async (isDepsChanged) => {
+      try {
+        await Promise.all(
+          [
+            (!isGovernanceStorageLoaded || isDepsChanged) && dispatch(getGovernanceStorage()),
+            (!isEgovLoaded || isDepsChanged) && dispatch(getEmergencyGovernanceStorage()),
+            isVestee && (!isVestingLoaded || isDepsChanged) && dispatch(getVestingStorage()),
+            (!isLoansLoaded || isDepsChanged) && dispatch(getLoansStorage()),
+            (!isUserDataLoaded || isDepsChanged) && dispatch(updateUserData()),
+          ].filter(Boolean),
+        )
+      } catch (e) {}
+    },
+    [accountPkh],
+  )
 
   const rewards = {
     rewardsToClaim:
@@ -121,7 +100,7 @@ const DashboardPersonal = () => {
 
   const earnings = {
     mvkRate: mvkExchangeRate,
-    xtzRate: tezos?.usd ?? 0,
+    xtzRate: xtzExchangeRate,
     satelliteRewards: satelliteRewards,
     farmsRewards: farmRewards,
     exitRewards: doormanRewards,
@@ -135,20 +114,22 @@ const DashboardPersonal = () => {
     tzBTCAmount: mytzBTCTokenBalance,
   }
 
-  const activeTab = useMemo(() => (isValidId(tabId) ? tabId : PORTFOLIO_TAB_ID), [tabId])
+  const activeTab = useMemo(() => (isValidPersonalDashboardTabId(tabId) ? tabId : PORTFOLIO_TAB_ID), [tabId])
 
-  const { search, pathname } = useLocation()
-  const currentPage = getPageNumber(search, USER_ACTIONS_HISTORY)
-  const paginatedTableRows = useMemo(() => {
-    const [from, to] = calculateSlicePositions(currentPage, USER_ACTIONS_HISTORY)
-    return actionsHistory?.slice(from, to)
-  }, [currentPage, actionsHistory])
-
-  const showHistoryData = pathname !== `/dashboard-personal/${PORTFOLIO_TAB_ID}`
+  const userImage = useMemo(
+    () =>
+      getUserAvatar({
+        accountPkh,
+        satelliteMapper,
+        councilMembers,
+        breakGlassCouncilMembers,
+      }),
+    [accountPkh, breakGlassCouncilMembers, councilMembers, satelliteMapper],
+  )
 
   return (
     <Page>
-      <PageHeader page={'dashboard'} avatar={'/images/default-avatar.png'} />
+      <PageHeader page={'dashboard'} avatar={userImage} />
 
       <DashboardPersonalStyled>
         <div className="top">
@@ -164,24 +145,24 @@ const DashboardPersonal = () => {
         ) : (
           <>
             <div className="tabs-switchers">
-              <Link
-                to={`/dashboard-personal/${PORTFOLIO_TAB_ID}`}
-                className={activeTab === PORTFOLIO_TAB_ID ? 'selected' : ''}
-              >
-                Portfolio
+              <Link to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`}>
+                <Button selected={activeTab === PORTFOLIO_TAB_ID} kind={BUTTON_NAVIGATION}>
+                  Portfolio
+                </Button>
               </Link>
-              <Link
-                to={`/dashboard-personal/${isSatellite ? SATELLITE_TAB_ID : DELEGATION_TAB_ID}`}
-                className={activeTab === (isSatellite ? SATELLITE_TAB_ID : DELEGATION_TAB_ID) ? 'selected' : ''}
-              >
-                {isSatellite ? 'Satellite' : 'Delegation'}
+              <Link to={`/dashboard-personal/${isSatellite ? SATELLITE_TAB_ID : DELEGATION_TAB_ID}`}>
+                <Button
+                  selected={activeTab === (isSatellite ? SATELLITE_TAB_ID : DELEGATION_TAB_ID)}
+                  kind={BUTTON_NAVIGATION}
+                >
+                  {isSatellite ? 'Satellite' : 'Delegation'}
+                </Button>
               </Link>
               {isVestee ? (
-                <Link
-                  to={`/dashboard-personal/${VESTING_TAB_ID}`}
-                  className={activeTab === VESTING_TAB_ID ? 'selected' : ''}
-                >
-                  Vesting
+                <Link to={`/dashboard-personal/${VESTING_TAB_ID}`}>
+                  <Button selected={activeTab === VESTING_TAB_ID} kind={BUTTON_NAVIGATION}>
+                    Vesting
+                  </Button>
                 </Link>
               ) : null}
             </div>
@@ -189,8 +170,8 @@ const DashboardPersonal = () => {
             <div className={`bottom-grid ${activeTab}`}>
               <DashboardPersonalTabStyled>
                 <Switch>
-                  <Route exact path={`/dashboard-personal/${PORTFOLIO_TAB_ID}`}>
-                    <PortfolioTab {...walletData} isUserLoansLoading={isUserLoansLoading} />
+                  <Route exact path={`/dashboard-personal/${PORTFOLIO_TAB_ID}/:secondaryTabId?`}>
+                    <PortfolioTab {...walletData} isUserLoansLoading={isLoading} />
                   </Route>
                   <Route exact path={`/dashboard-personal/${DELEGATION_TAB_ID}`}>
                     <DelegationTab />
@@ -202,64 +183,8 @@ const DashboardPersonal = () => {
                     <VestingTab />
                   </Route>
 
-                  <Redirect to={`/dashboard-personal/${PORTFOLIO_TAB_ID}`} />
+                  <Redirect to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`} />
                 </Switch>
-
-                {showHistoryData ? (
-                  <HistoryBlock>
-                    <GovRightContainerTitleArea>
-                      <h2>History</h2>
-                    </GovRightContainerTitleArea>
-                    {actionsHistory.length ? (
-                      <Table className="treasury-table">
-                        <TableHeader className="treasury">
-                          <TableRow>
-                            <TableHeaderCell>Action</TableHeaderCell>
-                            <TableHeaderCell>Amount: MVK</TableHeaderCell>
-                            <TableHeaderCell>
-                              Total: MVK{' '}
-                              <CustomTooltip
-                                iconId="info"
-                                className="history-tooltip"
-                                text='For unstake, this is the amount received in MVK after the fee is deducted. For the rest, same as the "Amount, MVK" column'
-                              />
-                            </TableHeaderCell>
-                            <TableHeaderCell contentPosition="right">Fee</TableHeaderCell>
-                          </TableRow>
-                        </TableHeader>
-
-                        <TableBody className="treasury">
-                          {paginatedTableRows.map(({ action, amount, fee, totalAmount, id }) => {
-                            return (
-                              <TableRow rowHeight={40} borderColor="dataColor" className="add-hover" key={id}>
-                                <TableCell width="25%">{action}</TableCell>
-                                <TableCell width="30%">
-                                  <CommaNumber value={amount} />
-                                </TableCell>
-                                <TableCell width="30%">
-                                  <CommaNumber value={totalAmount} />
-                                </TableCell>
-                                <TableCell width="20%" contentPosition="right">
-                                  <CommaNumber value={fee} endingText="%" />
-                                </TableCell>
-                              </TableRow>
-                            )
-                          })}
-                        </TableBody>
-                      </Table>
-                    ) : (
-                      <div className="no-data">
-                        <span>You do not have any previous actions history</span>
-                      </div>
-                    )}
-
-                    <Pagination
-                      itemsCount={actionsHistory?.length ?? 0}
-                      listName={USER_ACTIONS_HISTORY}
-                      side={PAGINATION_SIDE_CENTER}
-                    />
-                  </HistoryBlock>
-                ) : null}
               </DashboardPersonalTabStyled>
             </div>
           </>

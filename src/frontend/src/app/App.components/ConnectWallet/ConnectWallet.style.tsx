@@ -13,9 +13,9 @@ const VISIBLE_PART_CONNECTED_WALLET = (theme: MavrykTheme, isMobileDetails?: boo
   height: 100%;
 
   var {
-    font-weight: 400;
-    font-size: 14px;
-    color: ${theme.headerSkyColor};
+    font-weight: 600;
+    font-size: 16px;
+    color: ${theme.valueColor};
   }
 
   .end-icon {
@@ -23,7 +23,7 @@ const VISIBLE_PART_CONNECTED_WALLET = (theme: MavrykTheme, isMobileDetails?: boo
     width: 10px;
     transform: rotate(-90deg);
     margin-left: 3px;
-    stroke: ${theme.textColor};
+    stroke: ${theme.valueColor};
   }
 
   .openLink {
@@ -31,11 +31,16 @@ const VISIBLE_PART_CONNECTED_WALLET = (theme: MavrykTheme, isMobileDetails?: boo
     width: 20px;
   }
 
+  .inner-wallet,
   .wallet {
     width: 22px;
-    height: 20px;
+    height: 17px;
     stroke: none;
-    fill: ${theme.headerSkyColor};
+    fill: ${theme.valueColor};
+  }
+
+  .inner-wallet {
+    fill: ${theme.dataColor};
   }
 
   .icon-copy {
@@ -159,7 +164,7 @@ export const ConnectedWalletStyled = styled.div<{ theme: MavrykTheme }>`
     .icon-send {
       width: 16px;
       height: 16px;
-      fill:  ${({ theme }) => theme.textColor};
+      fill: ${({ theme }) => theme.textColor};
       cursor: pointer;
       transition: fill 0.6s;
 
@@ -391,15 +396,16 @@ export const WalletNotConnectedButton = styled.button<{ theme: MavrykTheme }>`
   cursor: pointer;
   border-radius: ${BUTTON_RADIUS};
   text-align: center;
-  font-weight: bold;
-  line-height: 50px;
-  font-size: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 220px;
   color: ${({ theme }) => theme.containerColor};
   background-color: ${({ theme }) => theme.actionPrimaryBtnColor};
+
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 16px;
 
   &:hover {
     opacity: 0.8;

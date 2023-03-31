@@ -25,14 +25,7 @@ import { StatusMessage } from './StatusMessage.view'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 
-import {
-  Table,
-  TableHeader,
-  TableRow,
-  TableHeaderCell,
-  TableBody,
-  TableCell,
-} from 'app/App.components/Table/Table.style'
+import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } from 'app/App.components/Table'
 import { ThreeLevelListItem } from '../Loans.style'
 import { BorrowingTabListItemExpanded } from './LoansComponents.style'
 
@@ -68,6 +61,7 @@ export const BorrowingExpandCard = ({
   operators,
   sMVKDelegatedTo,
   vaultId,
+  name,
   depositors,
   deporsitorsFlag,
   headerSufix,
@@ -86,7 +80,6 @@ export const BorrowingExpandCard = ({
   collateralRatio,
   borrowCapacity,
   DAOFee,
-  repayFee,
 }: BorrowingExpandCardPropsType) => {
   const { symbol, icon, rate = 1 } = borrowedAsset
 
@@ -151,7 +144,7 @@ export const BorrowingExpandCard = ({
             <ThreeLevelListItem className="borrow-asset-header">
               <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} />
               <div className="data">
-                <div className="value">{borrowedAsset.symbol}</div>
+                <div className="value">{name ? name : borrowedAsset.symbol}</div>
                 <div className="value">
                   <TzAddress tzAddress={address} shouldCopy hasIcon amountFromStart={4} amountFromEnd={4} />
                 </div>
@@ -267,7 +260,7 @@ export const BorrowingExpandCard = ({
                         vaultId,
                         borrowedAsset: borrowedAsset,
                         borrowedAmount,
-                        feesAmount: repayFee,
+                        feesAmount: fee,
                         currentCollateralBalance: collateralData.at(-1)?.amount ?? 0,
                         borrowCapacity,
                       })
@@ -559,7 +552,7 @@ export const BorrowingExpandCard = ({
                         borrowedAsset: borrowedAsset,
                         collateralRatio,
                         borrowedAmount,
-                        feesAmount: repayFee,
+                        feesAmount: fee,
                         currentCollateralBalance: collateralData.at(-1)?.amount ?? 0,
                         borrowCapacity,
                       })

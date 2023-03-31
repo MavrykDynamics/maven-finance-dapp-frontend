@@ -13,6 +13,8 @@ import {
 } from 'gql/queries/getLoansStorage'
 import { normalizeLoans } from '../Loans.helpers'
 import { getXTZBakers, getCollateralTokens } from '../LoansFethcers'
+import { State } from 'reducers'
+import { getVaultsStorage } from 'pages/Vaults/Vaults.actions'
 
 export const GET_LOANS_STORAGE = 'GET_LOANS_STORAGE'
 export const CLEAR_LOANS_STORAGE = 'CLEAR_LOANS_STORAGE'

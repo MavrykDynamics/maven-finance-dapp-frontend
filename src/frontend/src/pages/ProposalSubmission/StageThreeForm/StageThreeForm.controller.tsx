@@ -34,7 +34,7 @@ import {
   TableHeader,
   TableHeaderCell,
   TableRow,
-} from 'app/App.components/Table/Table.style'
+} from 'app/App.components/Table'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { Input } from 'app/App.components/Input/Input.controller'
@@ -216,12 +216,16 @@ export const StageThreeForm = ({
               <TableRow className="editable-row">
                 <TableCell width="25%">
                   {isTableDisabled ? (
-                    <TzAddress
-                      tzAddress={String(payment.to__id)}
-                      type={BLUE}
-                      hasIcon={true}
-                      className="table-cell-tzAddress"
-                    />
+                    payment.to__id ? (
+                      <TzAddress
+                        tzAddress={String(payment.to__id)}
+                        type={BLUE}
+                        hasIcon={true}
+                        className="table-cell-tzAddress"
+                      />
+                    ) : (
+                      ''
+                    )
                   ) : (
                     <Input
                       value={String(payment.to__id)}
@@ -295,7 +299,7 @@ export const StageThreeForm = ({
           })}
         </TableBody>
         <AddRowBtn
-          className={`button-wrap add ${isTableDisabled ? 'disabled' : ''}`}
+          className={`button-wrap ${isTableDisabled ? 'disabled' : ''}`}
           {...(!isTableDisabled ? { onClick: handleAddRow } : {})}
         >
           <CustomTooltip text="Insert 1 row below">

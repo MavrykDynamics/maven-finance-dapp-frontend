@@ -3,6 +3,7 @@ import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { ERROR, INFO, SUCCESS } from 'app/App.components/Toaster/Toaster.constants'
 import { AppDispatch, GetState } from 'app/App.controller'
+import { getVaultsStorage } from 'pages/Vaults/Vaults.actions'
 import { State } from 'reducers'
 import { updateUserData } from 'reducers/actions/user.actions'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
@@ -49,7 +50,8 @@ export const withdrawCollateralAction =
       // refetch data we need
       await dispatch(updateUserData())
       await dispatch(getAvaliableCollaterals())
-      await dispatch(getLoansStorage())
+      state.vaults.isLoaded && (await dispatch(getVaultsStorage()))
+      state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
       await dispatch(showToaster(SUCCESS, 'Collateral withdrawn.', 'All good :)'))
       await dispatch(toggleActionLoader(false))
     } catch (error) {
@@ -193,7 +195,8 @@ export const depositCollateralAction =
       // refetch data we need
       await dispatch(updateUserData())
       await dispatch(getAvaliableCollaterals())
-      await dispatch(getLoansStorage())
+      state.vaults.isLoaded && (await dispatch(getVaultsStorage()))
+      state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
       await dispatch(showToaster(SUCCESS, 'Collateral added.', 'All good :)'))
       await dispatch(toggleActionLoader(false))
     } catch (error) {
