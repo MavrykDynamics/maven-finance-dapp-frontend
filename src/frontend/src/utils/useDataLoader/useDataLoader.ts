@@ -16,12 +16,12 @@ export const useDataLoader = (callback: (isDepsChanged: boolean) => Promise<void
   const { isInitialDataLoading } = useSelector((state: State) => state.loading)
   const isInitialDataLoadingPrev = usePrevious(isInitialDataLoading)
 
-  const [isLoading, setLoading] = useState(false)
+  const [isLoading, setLoading] = useState(isInitialDataLoading === false)
 
   useEffect(() => {
     const depsChanged = isInitialDataLoadingPrev === isInitialDataLoading
     if (isInitialDataLoading === false) {
-      // setLoading(true)
+      setLoading(true)
       callback(depsChanged).finally(() => {
         setLoading(false)
       })

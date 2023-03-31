@@ -98,7 +98,16 @@ export const Repay = ({
 
   const repayBtnHandler = async () => {
     if (vaultId && borrowedAsset) {
-      await dispatch(repayPartOfVaultAction(vaultId, inputAmount, borrowedAsset.decimals, closePopup))
+      await dispatch(
+        repayPartOfVaultAction(
+          vaultId,
+          inputAmount,
+          borrowedAsset.decimals,
+          borrowedAsset.tokenType,
+          borrowedAsset.address,
+          closePopup,
+        ),
+      )
     }
   }
 
