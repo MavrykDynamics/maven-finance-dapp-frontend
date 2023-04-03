@@ -105,10 +105,10 @@ export const LoansDashboard = () => {
 
     const lendingPersentDiff = checkPlotType<SingleValueData>(secondLastLending, ['value'])
       ? calcDiffBetweenTwoNumbersInPersentage(totalLended, secondLastLending.value)
-      : 100
+      : 0
     const borrowingPersentDiff = checkPlotType<SingleValueData>(secondLastBorrowing, ['value'])
       ? calcDiffBetweenTwoNumbersInPersentage(totalBorrowed, secondLastBorrowing.value)
-      : 100
+      : 0
 
     return { lendingPersentDiff, borrowingPersentDiff }
   }, [borrowingChartData, lendingChartData, totalBorrowed, totalLended])
@@ -206,26 +206,30 @@ export const LoansDashboard = () => {
                 <div className="details">
                   <div className="column">
                     <div className="label">Total Lending</div>
-                    <CommaNumber value={totalLended} beginningText="$" className="value" />
-                    <CommaNumber
-                      value={lendingPersentDiff}
-                      endingText="%"
-                      beginningText={lendingPersentDiff > 0 ? '+' : ''}
-                      className={`diff ${lendingPersentDiff ? (lendingPersentDiff > 0 ? 'up' : 'down') : 'neutral'}`}
-                    />
+                    <div className="value-wrap">
+                      <CommaNumber value={totalLended} beginningText="$" className="value" />
+                      <CommaNumber
+                        value={lendingPersentDiff}
+                        endingText="%"
+                        beginningText={lendingPersentDiff > 0 ? '+' : ''}
+                        className={`diff ${lendingPersentDiff ? (lendingPersentDiff > 0 ? 'up' : 'down') : 'neutral'}`}
+                      />
+                    </div>
                   </div>
 
                   <div className="column">
                     <div className="label">Total Borroved</div>
-                    <CommaNumber value={totalBorrowed} beginningText="$" className="value" />
-                    <CommaNumber
-                      value={borrowingPersentDiff}
-                      endingText="%"
-                      beginningText={borrowingPersentDiff > 0 ? '+' : ''}
-                      className={`diff ${
-                        borrowingPersentDiff ? (borrowingPersentDiff > 0 ? 'up' : 'down') : 'neutral'
-                      }`}
-                    />
+                    <div className="value-wrap">
+                      <CommaNumber value={totalBorrowed} beginningText="$" className="value" />
+                      <CommaNumber
+                        value={borrowingPersentDiff}
+                        endingText="%"
+                        beginningText={borrowingPersentDiff > 0 ? '+' : ''}
+                        className={`diff ${
+                          borrowingPersentDiff ? (borrowingPersentDiff > 0 ? 'up' : 'down') : 'neutral'
+                        }`}
+                      />
+                    </div>
                   </div>
                 </div>
               </TotalVolumeStyled>
