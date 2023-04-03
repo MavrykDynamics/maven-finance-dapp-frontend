@@ -69,12 +69,9 @@ export const VaultsView = () => {
   const { isLoading } = useDataLoader(
     async (isDepsChanged) => {
       try {
-        await Promise.all(
-          [
-            (!isLoaded || isDepsChanged) && dispatch(getVaultsStorage()),
-            isDepsChanged && dispatch(getAvaliableCollaterals()),
-          ].filter(Boolean),
-        )
+        if (!isLoaded || isDepsChanged) {
+          await dispatch(getVaultsStorage())
+        }
       } catch (e) {}
     },
     [accountPkh],

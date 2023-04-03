@@ -34,6 +34,7 @@ import {
 } from 'reducers/actions/dipDupActions.actions'
 import { getCouncilMembers } from 'pages/Council/Council.actions'
 import { getBreakGlassCouncilMembers } from 'pages/BreakGlassCouncil/BreakGlassCouncil.actions'
+import { getAvaliableCollaterals } from 'pages/Loans/Actions/getLoansData.actions'
 
 // export const { store, persistor } = configureStore({})
 export const { store } = configureStore({})
@@ -52,6 +53,14 @@ const AppContainer = () => {
 
   useEffect(() => {
     ;(async () => {
+      // For using Beacon wallet
+      if (
+        localStorage.getItem('beacon:active-account') &&
+        localStorage.getItem('beacon:active-account') !== 'undefined'
+      ) {
+        await dispatch(connect())
+      }
+
       // Fetching initial&common data for DAPP
       await Promise.all([
         dispatch(getSatellitesStorage()),
@@ -69,15 +78,9 @@ const AppContainer = () => {
 
       // Depends on data feeds (getFeedsStorage())
       await dispatch(getTokensPrices())
+      dispatch(getAvaliableCollaterals())
 
-      // For using Beacon wallet
-      if (
-        localStorage.getItem('beacon:active-account') &&
-        localStorage.getItem('beacon:active-account') !== 'undefined'
-      ) {
-        await dispatch(connect())
-      }
-
+      // Turn off loader
       await dispatch(toggleInitialDataLoading(false))
     })()
   }, [dispatch])

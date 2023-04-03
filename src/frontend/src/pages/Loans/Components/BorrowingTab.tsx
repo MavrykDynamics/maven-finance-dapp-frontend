@@ -6,9 +6,7 @@ import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
 import { loansPopupsContext } from './Modals/LoansModals.provider'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
-import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { State } from 'reducers'
-import { getAvaliableCollaterals } from '../Actions/getLoansData.actions'
 
 import { Button } from 'app/App.components/Button/Button.controller'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
@@ -43,12 +41,6 @@ export const BorrowingTab = ({
       ? borrowingItems.filter(({ collateralBalance, borrowedAmount }) => collateralBalance || borrowedAmount)
       : borrowingItems
   }, [borrowingItems, showZeroVaults])
-
-  useDataLoader(async (isDepsChanged) => {
-    try {
-      if (isDepsChanged) await dispatch(getAvaliableCollaterals())
-    } catch (e) {}
-  }, [])
 
   return (
     <LoansTabStyled>

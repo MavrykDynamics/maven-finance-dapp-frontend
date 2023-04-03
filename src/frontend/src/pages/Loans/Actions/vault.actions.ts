@@ -30,7 +30,7 @@ export const triggerInitialVaultCreation =
     try {
       // prepare and send query
       const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.vaultFactory.address)
-      const transaction = await contract?.methods.createVault(undefined, loanTokenName, vaultName, 'any').send()
+      const transaction = await contract?.methods.createVault(null, loanTokenName, vaultName, [], 'any').send()
 
       // confirm query completion
       await transaction?.confirmation()
