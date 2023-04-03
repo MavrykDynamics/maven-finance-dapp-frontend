@@ -59,6 +59,7 @@ export function normalizeFeeds({
       ...restOfTheItem,
       ...getCategoryAndNetwork(item.address),
       amount: item.last_completed_data / 10 ** item.decimals,
+      oraclesResponces: item.last_completed_data_pct_oracle_resp / 100,
       dataFeedsHistory: dataFeedsHistory,
       dataFeedsVolatility: dataFeedsVolatility,
       icon,

@@ -209,7 +209,7 @@ export const BecomeSatellite = () => {
 
   const tooltip = (
     <CustomTooltip
-      text="something text"
+      text="By registering as an oracle, you will be taking part in signing the oracle data feeds and earning rewards for doing so."
       iconId="info"
       className="info-tooltip"
       defaultStrokeColor={colors[themeSelected]['textColor']}
@@ -391,7 +391,7 @@ export const BecomeSatellite = () => {
                 {showOracleWarning && (
                   <Info
                     text={
-                      'Text here that shows what happen if user is going to unregister as oracle and click the button “update satellite info”. '
+                      'You are unregistering for being an oracle. This means you will no longer be able to sign price feeds and subsequently no longer receive rewards for participation in the oracle network.'
                     }
                     type="warning"
                     className="oracleWarning"

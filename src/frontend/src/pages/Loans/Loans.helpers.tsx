@@ -118,7 +118,7 @@ const getTransactionHistory = (
         const descrByType = getDescrByType(type)
         if (descrByType) {
           acc.transactionHistory.push({
-            amount: transformedAmount * assetMetadata.rate,
+            amount: transformedAmount,
             date: parseDate({ time: new Date(timestamp).getTime(), timeFormat: 'MMM Do, YYYY, HH:mm:ss UTC' }),
             userAddress: sender_id,
             operationHash: operation_hash,

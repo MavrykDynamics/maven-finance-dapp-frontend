@@ -142,7 +142,12 @@ export const Loans = () => {
                 lendingAPY,
               } = loanAsset
 
-              const totalCorratealColor = loanTokenTotalCollaterals / loanTokenVaultsTotalBorrowed > 2 ? 'up' : 'down'
+              const totalCorratealColor =
+                loanTokenTotalCollaterals && loanTokenVaultsTotalBorrowed
+                  ? loanTokenTotalCollaterals / loanTokenVaultsTotalBorrowed > 2
+                    ? 'up'
+                    : 'down'
+                  : 'neutral'
               return (
                 <MarketOverview key={`${name}-${symbol}`}>
                   <div className="asset-info">

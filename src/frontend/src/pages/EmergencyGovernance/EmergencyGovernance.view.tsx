@@ -98,13 +98,7 @@ export const EmergencyGovernanceView = ({
         <CardContent>
           <CardContentLeftSide>
             <h2>Trigger Emergency Governance Vote</h2>
-            <div>
-              Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
-              industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
-              scrambled it to make. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem
-              Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a
-              galley of type and scrambled it to make.
-            </div>
+            <div>Coming Soon…</div>
           </CardContentLeftSide>
           <CardContentRightSide>
             {accountPkh ? (
@@ -113,7 +107,8 @@ export const EmergencyGovernanceView = ({
                 kind={ACTION_PRIMARY}
                 icon={'auction'}
                 onClick={handleTriggerEmergencyProposal}
-                disabled={isGlassBroken || activeItems.length !== 0}
+                // disabled={isGlassBroken || activeItems.length !== 0}
+                disabled
               />
             ) : (
               <ConnectWallet className="connect-wallet" />
