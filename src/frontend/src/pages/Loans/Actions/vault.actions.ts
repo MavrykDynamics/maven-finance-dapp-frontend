@@ -1,4 +1,5 @@
 import { OpKind } from '@taquito/taquito'
+import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { ERROR, INFO, SUCCESS } from 'app/App.components/Toaster/Toaster.constants'
@@ -29,7 +30,8 @@ export const triggerInitialVaultCreation =
 
     try {
       // prepare and send query
-      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.vaultFactory.address)
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(state.contractAddresses.vaultFactory.address)
       const transaction = await contract?.methods.createVault(null, loanTokenName, vaultName, [], 'any').send()
 
       // confirm query completion
@@ -69,7 +71,8 @@ export const borrowVaultAssetAction =
     try {
       const convertedAssetAmount = convertNumberForContractCall({ number: amountToBorrow, grage: assetDecimals })
       // prepare and send query
-      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.lendingController.address)
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(state.contractAddresses.lendingController.address)
       const transaction = await contract?.methods.borrow(vaultId, convertedAssetAmount).send()
 
       callback()
@@ -122,11 +125,12 @@ export const repayPartOfVaultAction =
     try {
       const convertedAssetAmount = convertNumberForContractCall({ number: repayAmount, grage: assetDecimals })
       // prepare and send query
-      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.lendingController.address)
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(state.contractAddresses.lendingController.address)
       let transaction = null
 
       if (tokenType === 'fa2') {
-        const assetContract = await state.wallet.tezos?.wallet.at(tokenAddress)
+        const assetContract = await tezos.wallet.at(tokenAddress)
         const batchArr = [
           {
             kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
@@ -162,7 +166,7 @@ export const repayPartOfVaultAction =
           },
         ]
 
-        const batch = await state.wallet.tezos?.wallet.batch(batchArr)
+        const batch = await tezos.wallet.batch(batchArr)
         transaction = await batch.send()
       } else {
         transaction = await contract?.methods.repay(vaultId, convertedAssetAmount).send()
@@ -218,11 +222,12 @@ export const repayFullAndCloseVaultAction =
     try {
       const convertedAssetAmount = convertNumberForContractCall({ number: repayAmount, grage: assetDecimals })
       // prepare and send query
-      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.lendingController.address)
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(state.contractAddresses.lendingController.address)
       let transaction = null
 
       if (tokenType === 'fa2') {
-        const assetContract = await state.wallet.tezos?.wallet.at(tokenAddress)
+        const assetContract = await tezos.wallet.at(tokenAddress)
         const batchArr = [
           {
             kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
@@ -258,10 +263,10 @@ export const repayFullAndCloseVaultAction =
           },
         ]
 
-        const batch = await state.wallet.tezos?.wallet.batch(batchArr)
+        const batch = await tezos.wallet.batch(batchArr)
         transaction = await batch.send()
       } else {
-        transaction = await state.wallet.tezos?.wallet
+        transaction = await tezos.wallet
           .batch([
             {
               kind: OpKind.TRANSACTION,

@@ -9,11 +9,11 @@ import { State } from 'reducers'
 import { updateUserData } from 'reducers/actions/user.actions'
 import { OpKind, WalletParamsWithKind } from '@taquito/taquito'
 import { getVestingStorage } from 'pages/Treasury/Treasury.actions'
+import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 
 export const claimAllRewardsAction = () => async (dispatch: AppDispatch, getState: GetState) => {
   const {
     wallet: {
-      tezos,
       accountPkh,
       user: { myFarmRewardsData, myDoormanRewardsData, mySatelliteRewardsData },
     },
@@ -32,6 +32,7 @@ export const claimAllRewardsAction = () => async (dispatch: AppDispatch, getStat
   }
 
   try {
+    const tezos = await DAPP_INSTANCE.tezos()
     // if user has farm rewards to claim it will transfrom this rewards to batch call getting rewards array
     const farmsRewardsBatchPart = await Promise.all(
       Object.keys(myFarmRewardsData)
@@ -87,7 +88,7 @@ export const claimAllRewardsAction = () => async (dispatch: AppDispatch, getStat
 
 export const claimVestingReward = () => async (dispatch: AppDispatch, getState: GetState) => {
   const {
-    wallet: { tezos, accountPkh },
+    wallet: { accountPkh },
     loading: { isActionLoading },
     contractAddresses: { vestingAddress },
   }: State = getState()
@@ -103,6 +104,7 @@ export const claimVestingReward = () => async (dispatch: AppDispatch, getState: 
   }
 
   try {
+    const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos?.wallet.at(vestingAddress.address)
     const transaction = await contract?.methods.claim().send()
 

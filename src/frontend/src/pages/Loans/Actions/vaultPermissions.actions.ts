@@ -1,4 +1,5 @@
 import { OpKind } from '@taquito/taquito'
+import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { ERROR, INFO, SUCCESS } from 'app/App.components/Toaster/Toaster.constants'
@@ -26,7 +27,8 @@ export const changeBakerAction =
 
     try {
       // prepare and send query
-      const contract = await state.wallet.tezos?.wallet.at(vaultAddress)
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(vaultAddress)
       const transaction = await contract?.methods.initVaultAction('delegateTezToBaker', bakerAddress).send()
 
       callback()
@@ -74,7 +76,8 @@ export const managePermissionsAction =
 
     try {
       // prepare and send query
-      const contract = await state.wallet.tezos?.wallet.at(vaultAddress)
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(vaultAddress)
       let transaction = null
 
       // if depostiorAllowance === VAULT_ALLOWANCE_ANY call updateDepositor with any 2 args and VAULT_ALLOWANCE_ANY config
@@ -84,7 +87,7 @@ export const managePermissionsAction =
 
       // if newDepositorsAddresses is empty means we need to remove all depositors
       if (depostiorAllowance === VAULT_ALLOWANCE_ACCOUNTS && newDepositorsAddresses.length === 0) {
-        const batch = state.wallet.tezos?.wallet.batch(
+        const batch = tezos.wallet.batch(
           vaultOriginalDepositros.length === 0
             ? [
                 {
@@ -130,7 +133,7 @@ export const managePermissionsAction =
           })),
         ]
 
-        const batch = state.wallet.tezos?.wallet.batch(batchArr)
+        const batch = tezos.wallet.batch(batchArr)
         transaction = await batch?.send()
       }
 
@@ -171,7 +174,8 @@ export const updateOperatorsAction = (callback: () => void) => async (dispatch: 
 
   try {
     // prepare and send query
-    const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.lendingController.address)
+    const tezos = await DAPP_INSTANCE.tezos()
+    const contract = await tezos.wallet.at(state.contractAddresses.lendingController.address)
     // const transaction  = await contract?.methods.any.send()
 
     callback()

@@ -1,13 +1,13 @@
-import { TezosToolkit } from '@taquito/taquito'
-import { BeaconWallet } from '@taquito/beacon-wallet'
-
-import { M_Token_Account } from './../utils/generated/graphqlTypes'
+import type { M_Token_Account } from './../utils/generated/graphqlTypes'
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
-import { UserDoormanRewardsData, UserFarmRewardsData, UserSatelliteRewardsData } from 'utils/TypesAndInterfaces/User'
-import { UserLendObjType } from 'utils/TypesAndInterfaces/Loans'
+import type {
+  UserDoormanRewardsData,
+  UserFarmRewardsData,
+  UserSatelliteRewardsData,
+} from 'utils/TypesAndInterfaces/User'
+import type { UserLendObjType } from 'utils/TypesAndInterfaces/Loans'
 
 import { CONNECT, DISCONNECT } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
-import { preferencesDefaultState } from './preferences'
 import { UPDATE_USER_DATA } from './actions/user.actions'
 
 export interface UserState {
@@ -51,11 +51,7 @@ export interface UserState {
   }>
 }
 
-const RpcNetwork = preferencesDefaultState.REACT_APP_RPC_PROVIDER
-
 export interface WalletState {
-  wallet?: BeaconWallet
-  tezos: TezosToolkit
   accountPkh?: string
   user: UserState
 }
@@ -102,8 +98,6 @@ export const DEFAULT_USER: UserState = {
 }
 
 export const walletDefaultState: WalletState = {
-  wallet: undefined,
-  tezos: new TezosToolkit(RpcNetwork),
   accountPkh: undefined,
   user: DEFAULT_USER,
 }
@@ -113,10 +107,7 @@ export function wallet(state = walletDefaultState, action: Action) {
     case CONNECT:
       return {
         ...state,
-        wallet: action.wallet,
-        tezos: action.tezos,
         accountPkh: action.accountPkh,
-        user: { ...action.userData, isLoaded: true },
       }
     case UPDATE_USER_DATA:
       return {
@@ -125,11 +116,7 @@ export function wallet(state = walletDefaultState, action: Action) {
       }
     case DISCONNECT:
       return {
-        ...state,
-        user: {
-          ...walletDefaultState.user,
-        },
-        accountPkh: undefined,
+        ...walletDefaultState,
       }
     default:
       return state

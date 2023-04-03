@@ -18,6 +18,7 @@ import { normalizeDoormanStorage, normalizeSmvkHistoryData, normalizeMvkHistoryD
 import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 import { updateUserData } from 'reducers/actions/user.actions'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
+import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 
 export const GET_DOORMAN_STORAGE = 'GET_DOORMAN_STORAGE'
 export const getDoormanStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
@@ -86,8 +87,9 @@ export const stake = (amount: number) => async (dispatch: AppDispatch, getState:
   }
 
   try {
-    const mvkTokenContract = await state.wallet.tezos?.wallet.at(state.contractAddresses.mvkTokenAddress.address)
-    const doormanContract = await state.wallet.tezos?.wallet.at(state.contractAddresses.doormanAddress.address)
+    const tezos = await DAPP_INSTANCE.tezos()
+    const mvkTokenContract = await tezos?.wallet.at(state.contractAddresses.mvkTokenAddress.address)
+    const doormanContract = await tezos?.wallet.at(state.contractAddresses.doormanAddress.address)
 
     const addOperators = [
         {
@@ -111,7 +113,7 @@ export const stake = (amount: number) => async (dispatch: AppDispatch, getState:
     const batch =
       mvkTokenContract &&
       doormanContract &&
-      (await state.wallet.tezos?.wallet
+      (await tezos.wallet
         .batch()
         .withContractCall(mvkTokenContract.methods.update_operators(addOperators))
         .withContractCall(doormanContract.methods.stake(convertNumberForContractCall({ number: amount })))
@@ -155,7 +157,8 @@ export const unstake = (amount: number) => async (dispatch: AppDispatch, getStat
   }
 
   try {
-    const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.doormanAddress.address)
+    const tezos = await DAPP_INSTANCE.tezos()
+    const contract = await tezos.wallet.at(state.contractAddresses.doormanAddress.address)
     const transaction = await contract?.methods.unstake(convertNumberForContractCall({ number: amount })).send()
 
     await dispatch(toggleActionLoader(true))
@@ -190,7 +193,8 @@ export const rewardsCompound = (address: string) => async (dispatch: AppDispatch
   }
 
   try {
-    const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.doormanAddress.address)
+    const tezos = await DAPP_INSTANCE.tezos()
+    const contract = await tezos?.wallet.at(state.contractAddresses.doormanAddress.address)
     const transaction = await contract?.methods.compound(address).send()
 
     await dispatch(toggleActionLoader(true))
