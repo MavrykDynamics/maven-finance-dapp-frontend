@@ -56,39 +56,44 @@ export function dappClient() {
   }
 
   async function swapAccount() {
-    const client = getDAppClient()
+    try {
+      const client = getDAppClient()
 
-    const currentAccount = await client.getActiveAccount()
-    let newAccount
+      const currentAccount = await client.getActiveAccount()
+      let newAccount
 
-    // if user has connected wallet we can change it
-    if (currentAccount) {
-      try {
-        // Clear connected wallet
-        await client.clearActiveAccount()
+      // if user has connected wallet we can change it
+      if (currentAccount) {
+        try {
+          // Clear connected wallet
+          await client.clearActiveAccount()
 
-        // Call beakon popup to choose new wallet
-        await client.requestPermissions({
-          network: {
-            type: WALLET_NETWORK,
-            rpcUrl: getRpcNode(),
-          },
-        })
+          // Call beakon popup to choose new wallet
+          await client.requestPermissions({
+            network: {
+              type: WALLET_NETWORK,
+              rpcUrl: getRpcNode(),
+            },
+          })
 
-        // Choosen wallet in popup
-        newAccount = await client.getActiveAccount()
+          // Choosen wallet in popup
+          newAccount = await client.getActiveAccount()
 
-        // Update dapp instance wallet with newly selected one
-        await client.setActiveAccount(newAccount)
-      } catch (e) {
-        // If no wallet choosen set back prev selected wallet to dapp instance
-        await client.setActiveAccount(currentAccount)
-        console.log('choosing wallet error: ', e)
+          // Update dapp instance wallet with newly selected one
+          await client.setActiveAccount(newAccount)
+        } catch (e) {
+          // If no wallet choosen set back prev selected wallet to dapp instance
+          await client.setActiveAccount(currentAccount)
+          console.log('choosing wallet error: ', e)
+        }
       }
-    }
 
-    // Return new wallet address if it was selected or prev selected wallet address
-    return newAccount?.address ?? currentAccount?.address
+      // Return new wallet address if it was selected or prev selected wallet address
+      return newAccount?.address ?? currentAccount?.address
+    } catch (error) {
+      console.log('swapAccount error:', error)
+      throw error
+    }
   }
 
   function tezos() {
