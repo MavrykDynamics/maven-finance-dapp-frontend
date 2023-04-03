@@ -210,8 +210,8 @@ export const LoansDashboard = () => {
                     <CommaNumber
                       value={lendingPersentDiff}
                       endingText="%"
-                      beginningText={borrowingPersentDiff >= 0 ? '+' : ''}
-                      className={`diff ${borrowingPersentDiff >= 0 ? 'up' : 'down'}`}
+                      beginningText={lendingPersentDiff > 0 ? '+' : ''}
+                      className={`diff ${lendingPersentDiff ? (lendingPersentDiff > 0 ? 'up' : 'down') : 'neutral'}`}
                     />
                   </div>
 
@@ -221,8 +221,10 @@ export const LoansDashboard = () => {
                     <CommaNumber
                       value={borrowingPersentDiff}
                       endingText="%"
-                      beginningText={borrowingPersentDiff >= 0 ? '+' : ''}
-                      className={`diff ${borrowingPersentDiff >= 0 ? 'up' : 'down'}`}
+                      beginningText={borrowingPersentDiff > 0 ? '+' : ''}
+                      className={`diff ${
+                        borrowingPersentDiff ? (borrowingPersentDiff > 0 ? 'up' : 'down') : 'neutral'
+                      }`}
                     />
                   </div>
                 </div>

@@ -41,6 +41,10 @@ export const LoansDashboardStyled = styled.div`
       &.down {
         color: ${({ theme }) => theme.downColor};
       }
+
+      &.neutral {
+        color: ${({ theme }) => theme.dataColor};
+      }
     }
   }
 
