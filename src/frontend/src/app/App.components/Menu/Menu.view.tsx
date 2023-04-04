@@ -19,11 +19,10 @@ import { MenuFooter, MenuGrid, MenuSidebarContent, MenuSidebarStyled } from './M
 import { toggleSidebarCollapsing } from './Menu.actions'
 import { mainNavigationLinks } from './NavigationLink/MainNavigationLinks'
 import { checkIfLinkSelected } from './NavigationLink/NavigationLink.constants'
-import {BUTTON_PRIMARY, BUTTON_ROUND, BUTTON_SECONDARY, BUTTON_WIDE} from 'app/App.components/Button/Button.constants'
-import {getMVKTokensFromFaucet} from "../../../pages/Doorman/Doorman.actions";
+import { BUTTON_PRIMARY, BUTTON_ROUND, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import { getMVKTokensFromFaucet } from '../../../pages/Doorman/Doorman.actions'
 
 type MenuViewProps = {
-  accountPkh?: string
   openChangeNodePopupHandler: () => void
 }
 
@@ -54,12 +53,12 @@ export const SocialIcons = () => (
   </div>
 )
 
-export const MenuView = ({ accountPkh, openChangeNodePopupHandler }: MenuViewProps) => {
+export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
   const dispatch = useDispatch()
   const { pathname } = useLocation()
   const { sidebarOpened } = useSelector((state: State) => state.preferences)
-    const { user } = useSelector((state: State) => state.wallet)
-  const [hasMVK, setHasMVK] = useState(false)
+  const { user } = useSelector((state: State) => state.wallet)
+  const [canGetInitThouthand, setCanGetInitThouthand] = useState(false)
 
   useEffect(() => {
     const selectedMainRoute = mainNavigationLinks.find(({ routePath = '', subPages = null }) => {
@@ -71,8 +70,8 @@ export const MenuView = ({ accountPkh, openChangeNodePopupHandler }: MenuViewPro
     })
 
     setSelectedMainLink(selectedMainRoute?.id || 0)
-      if (user.myMvkTokenBalance > 0 || user.mySMvkTokenBalance > 0) setHasMVK(true)
-  }, [pathname])
+    setCanGetInitThouthand(Math.floor(user.myMvkTokenBalance) === 0 || Math.floor(user.mySMvkTokenBalance) === 0)
+  }, [pathname, user.myMvkTokenBalance, user.mySMvkTokenBalance])
 
   const [selectedMainLink, setSelectedMainLink] = useState<number>(0)
 
@@ -90,9 +89,8 @@ export const MenuView = ({ accountPkh, openChangeNodePopupHandler }: MenuViewPro
     }
   }, [burgerClickHandler, sidebarOpened])
 
-    const handleGetMVKTokensFromFaucet = () => {
-      dispatch(getMVKTokensFromFaucet())
-    }
+  const handleGetMVKTokensFromFaucet = useCallback(() => dispatch(getMVKTokensFromFaucet()), [])
+
   return (
     <>
       <MenuTopBar
@@ -120,10 +118,16 @@ export const MenuView = ({ accountPkh, openChangeNodePopupHandler }: MenuViewPro
             })}
           </MenuGrid>
           <MenuFooter className={`${sidebarOpened ? '' : 'menu-collapsed'}`}>
-              <NewButton kind={BUTTON_PRIMARY} form={sidebarOpened ? BUTTON_WIDE : BUTTON_ROUND} isThin onClick={handleGetMVKTokensFromFaucet} disabled={!hasMVK}>
-                  {sidebarOpened ? 'Get MVK Tokens' : 'mvk'}
-              </NewButton>
-            <a className='feedbackLink' href="https://forms.gle/bwmTfpoLKBhaf7yD6" target="_blank" rel="noreferrer">
+            <NewButton
+              kind={BUTTON_PRIMARY}
+              form={sidebarOpened ? BUTTON_WIDE : BUTTON_ROUND}
+              isThin
+              onClick={handleGetMVKTokensFromFaucet}
+              disabled={!canGetInitThouthand}
+            >
+              {sidebarOpened ? 'Get MVK Tokens' : 'mvk'}
+            </NewButton>
+            <a className="feedbackLink" href="https://forms.gle/bwmTfpoLKBhaf7yD6" target="_blank" rel="noreferrer">
               <NewButton kind={BUTTON_SECONDARY} form={sidebarOpened ? BUTTON_WIDE : BUTTON_ROUND} isThin>
                 {sidebarOpened ? 'Submit Feedback' : 'F'}
               </NewButton>
