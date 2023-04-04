@@ -913,8 +913,8 @@ export const calculateAccruedInterest = (
   tokenBorrowIndex: number,
 ) => {
   let newLoanOutstandingTotal = currentLoanOutstandingTotal
-  const vBorrowIndex = vaultBorrowIndex / FIXED_POINT_ACCURACY
-  const loanTokenBorrowIndex = tokenBorrowIndex / FIXED_POINT_ACCURACY
+  const vBorrowIndex = vaultBorrowIndex
+  const loanTokenBorrowIndex = tokenBorrowIndex
 
   if (currentLoanOutstandingTotal > 0) {
     if (vBorrowIndex > 0) {
