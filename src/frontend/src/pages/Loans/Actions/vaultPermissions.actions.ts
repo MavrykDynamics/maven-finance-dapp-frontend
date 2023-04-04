@@ -29,7 +29,7 @@ export const changeBakerAction =
       // prepare and send query
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(vaultAddress)
-      const transaction = await contract?.methods.initVaultAction('delegateTezToBaker', bakerAddress).send()
+      const transaction = await contract?.methods.initVaultAction('setBaker', bakerAddress).send()
 
       callback()
       dispatch(toggleActionLoader(true))
