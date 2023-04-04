@@ -12,8 +12,7 @@ import { State } from 'reducers'
 
 export const Menu = () => {
   const dispatch = useDispatch()
-  const { accountPkh } = useSelector((state: State) => state.wallet)
   const openChangeNodePopup = useCallback(() => dispatch(toggleRPCNodePopup(true)), [])
 
-  return <MenuView accountPkh={accountPkh} openChangeNodePopupHandler={openChangeNodePopup} />
+  return <MenuView openChangeNodePopupHandler={openChangeNodePopup} />
 }

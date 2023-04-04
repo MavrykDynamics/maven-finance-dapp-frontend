@@ -24,7 +24,7 @@ const defaultTokensInfoState: TokensType = {
   dipDupContracts: [],
   whitelistTokens: [],
   avaliableCollaterals: [],
-  tokensPrices: { mvk: 0.25 },
+  tokensPrices: { mvk: 1 },
   mTokens: [],
 }
 
