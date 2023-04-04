@@ -105,7 +105,7 @@ export const depositCollateralAction =
           ? [
               {
                 kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
-                ...contract.methods.initVaultAction('delegateTezToBaker', bakerAddress).toTransferParams(),
+                ...contract.methods.initVaultAction('setBaker', bakerAddress).toTransferParams(),
               },
             ]
           : []

@@ -27,7 +27,7 @@ export const changeBakerAction =
     try {
       // prepare and send query
       const contract = await state.wallet.tezos?.wallet.at(vaultAddress)
-      const transaction = await contract?.methods.initVaultAction('delegateTezToBaker', bakerAddress).send()
+      const transaction = await contract?.methods.initVaultAction('setBaker', bakerAddress).send()
 
       callback()
       dispatch(toggleActionLoader(true))
