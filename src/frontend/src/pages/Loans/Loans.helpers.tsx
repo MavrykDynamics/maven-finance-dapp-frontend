@@ -349,11 +349,18 @@ const getLendingItem = (
   interestRateDecimals: number,
   accountPkh?: string,
 ): LendingItemType => {
+  console.log({
+    userMTokens,
+    loanToken,
+    accountPkh,
+  })
   if (userMTokens && loanToken && accountPkh) {
     const mTokenAsset = userMTokens?.find(
       ({ m_token_id, m_token: { loan_token_name } }) =>
         m_token_id === loanToken.loan_token_address || loan_token_name === loanToken.loan_token_name,
     )
+
+    console.log({ mTokenAsset })
     if (mTokenAsset) {
       return {
         lendValue: Number(mTokenAsset.balance) / 10 ** loanTokenDecimals,

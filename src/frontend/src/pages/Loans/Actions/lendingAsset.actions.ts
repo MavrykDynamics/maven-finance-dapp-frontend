@@ -166,9 +166,9 @@ export const withdrawLendingAssetAction =
       await transaction?.confirmation()
 
       // refetch data we need
-      await dispatch(updateUserData())
       await dispatch(getMTokensStorage())
       await dispatch(getLoansStorage())
+      await dispatch(updateUserData())
       await dispatch(showToaster(SUCCESS, 'Liquidity removed.', 'All good :)'))
       await dispatch(toggleActionLoader(false))
     } catch (error) {
