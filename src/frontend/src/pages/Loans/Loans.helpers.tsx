@@ -440,6 +440,7 @@ const getBorrowings = async (
   dipDupTokens: State['tokens']['dipDupTokens'],
   feeds: State['dataFeeds']['feedsLedger'],
   interestRateDecimals: number,
+  avaliableLiq: number,
   userAddress?: string,
 ): Promise<BorrowingNormalizerReturnType> => {
   try {
@@ -531,7 +532,10 @@ const getBorrowings = async (
         ? [...vaultCollateral.normalizedCollaterals, vaultCollateral.totalRow]
         : []
 
-      const borrowCapacity = vaultCollateral.totalRow.amount / 2 - borrowedAmount * vaultAsset.rate
+      const borrowCapacity = Math.min(
+        vaultCollateral.totalRow.amount / 2 - borrowedAmount * vaultAsset.rate,
+        avaliableLiq,
+      )
 
       const depositors = (vault.vault?.depositors.map(({ depositor_id }) => depositor_id).filter(Boolean) ??
         []) as Array<string>
@@ -662,7 +666,7 @@ export const normalizeLoans = async ({
           marketLiquidityChartData,
         } = getTransactionHistory(history_data, dipDupData, feeds)
         const { myBorrowingList, permissinedBorrowingList, totalCollateral, vaultsBorrowedAmount } =
-          await getBorrowings(vaults, dipDupData, feeds, interestRateDecimals, userAddres)
+          await getBorrowings(vaults, dipDupData, feeds, interestRateDecimals, availableLiquidity, userAddres)
         const lendingItem = getLendingItem(
           loanToken,
           userMTokens,
