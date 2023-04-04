@@ -57,7 +57,7 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
   const dispatch = useDispatch()
   const { pathname } = useLocation()
   const { sidebarOpened } = useSelector((state: State) => state.preferences)
-  const { user } = useSelector((state: State) => state.wallet)
+  const { user, accountPkh } = useSelector((state: State) => state.wallet)
   const [canGetInitThouthand, setCanGetInitThouthand] = useState(false)
 
   useEffect(() => {
@@ -70,7 +70,7 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
     })
 
     setSelectedMainLink(selectedMainRoute?.id || 0)
-    setCanGetInitThouthand(Math.floor(user.myMvkTokenBalance) === 0 || Math.floor(user.mySMvkTokenBalance) === 0)
+    setCanGetInitThouthand(Boolean(accountPkh && (user.myMvkTokenBalance === 0 || user.mySMvkTokenBalance === 0)))
   }, [pathname, user.myMvkTokenBalance, user.mySMvkTokenBalance])
 
   const [selectedMainLink, setSelectedMainLink] = useState<number>(0)
