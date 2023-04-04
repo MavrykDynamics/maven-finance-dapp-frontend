@@ -102,6 +102,7 @@ export const LOANS_QUERY = `
           loan_interest_total
           owner_id
           loan_outstanding_total
+          borrow_index
         }
       }
     }

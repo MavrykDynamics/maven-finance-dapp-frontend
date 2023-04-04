@@ -19,10 +19,10 @@ import {
   calcCollateralRatio,
   calculateAccruedInterest,
   calculateCompoundedInterest,
-  getAssetMetadata
+  getAssetMetadata,
 } from 'pages/Loans/Loans.helpers'
 import { calcWithoutDecimals } from 'utils/calcFunctions'
-import {BLOCKS_PER_MINUTE, FIXED_POINT_ACCURACY} from 'utils/constants'
+import { BLOCKS_PER_MINUTE, FIXED_POINT_ACCURACY } from 'utils/constants'
 import { getUserBalanceForLoanAsset } from 'pages/Loans/LoansFethcers'
 import { CollateralType, DepositorsFlagType } from 'utils/TypesAndInterfaces/Loans'
 import { ANY_USER, WHITELIST_USERS, NONE_USER } from 'pages/Loans/Loans.const'
@@ -158,12 +158,6 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
         accountPkh,
       )
 
-      // TODO: ensure in this value
-      console.log(item)
-      const fee =
-        calculateCompoundedInterest(currentInterestRate, item.last_updated_block_level, currentBlock?.level ?? 0) /
-        10 ** interestRateDecimals
-
       const vaultAsset = getAssetMetadata({
         tokenName: item.loan_token.loan_token_name,
         tokenAddress: item.loan_token.loan_token_address,
@@ -174,11 +168,14 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
 
       if (!vaultAsset) return acc
 
-      //TODO: @Maksym, the accrued interest is the value needed for the Fee. Also changed the naming of it in the vaults
-      const loanOutstandingBigNumber = item.loan_outstanding_total
-      const accruedInterest = (calculateAccruedInterest(loanOutstandingBigNumber, item.borrow_index, item.loan_token.borrow_index) / FIXED_POINT_ACCURACY)
-
       const borrowedAmount = item.loan_principal_total / 10 ** vaultAsset.decimals
+
+      // Calculating Fee of the vault
+      const accruedInterest =
+        borrowedAmount === 0
+          ? 0
+          : calculateAccruedInterest(item.loan_outstanding_total, item.borrow_index, item.loan_token.borrow_index) /
+            FIXED_POINT_ACCURACY
 
       const collateralRatio = calcCollateralRatio(vaultCollateral.totalRow.amount, borrowedAmount, vaultAsset.rate)
       const collateralData = vaultCollateral.normalizedCollaterals.length
@@ -220,7 +217,7 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
         collateralBalance: vaultCollateral.totalRow.amount,
         collateralRatio,
         apr: currentInterestRate * 100,
-        fee: borrowedAmount === 0 ? 0 : accruedInterest,
+        fee: accruedInterest,
         daoFee: (lendingController.minimum_loan_fee_pct ?? 0) / 100,
         collateralData,
         borrowedAmount,
@@ -240,8 +237,6 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
         sMVKDelegatedTo: '',
         depositors,
         deporsitorsFlag,
-        borrowIndex: item.borrow_index,
-        loanTokenBorrowIndex: item.loan_token.borrow_index
       }
 
       acc.vaultsMapper[item.vault.address] = normallizedVault
