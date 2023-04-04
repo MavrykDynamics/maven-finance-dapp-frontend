@@ -143,8 +143,12 @@ export const BecomeSatellite = () => {
           status: usersSatelliteProfile.publicKey ? INPUT_STATUS_SUCCESS : '',
         },
       })
+    } else {
+      setForm(DEFAULT_BECOME_SATELLITE_FORM)
     }
-  }, [usersSatelliteProfile])
+  }, [usersSatelliteProfile, accountPkh])
+
+  console.log({ form })
 
   // Set checkbox === true if satellite is oracle
   useEffect(() => {
