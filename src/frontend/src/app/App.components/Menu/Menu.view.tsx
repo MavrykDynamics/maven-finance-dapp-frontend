@@ -19,7 +19,8 @@ import { MenuFooter, MenuGrid, MenuSidebarContent, MenuSidebarStyled } from './M
 import { toggleSidebarCollapsing } from './Menu.actions'
 import { mainNavigationLinks } from './NavigationLink/MainNavigationLinks'
 import { checkIfLinkSelected } from './NavigationLink/NavigationLink.constants'
-import { BUTTON_ROUND, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import {BUTTON_PRIMARY, BUTTON_ROUND, BUTTON_SECONDARY, BUTTON_WIDE} from 'app/App.components/Button/Button.constants'
+import {getMVKTokensFromFaucet} from "../../../pages/Doorman/Doorman.actions";
 
 type MenuViewProps = {
   accountPkh?: string
@@ -57,6 +58,8 @@ export const MenuView = ({ accountPkh, openChangeNodePopupHandler }: MenuViewPro
   const dispatch = useDispatch()
   const { pathname } = useLocation()
   const { sidebarOpened } = useSelector((state: State) => state.preferences)
+    const { user } = useSelector((state: State) => state.wallet)
+  const [hasMVK, setHasMVK] = useState(false)
 
   useEffect(() => {
     const selectedMainRoute = mainNavigationLinks.find(({ routePath = '', subPages = null }) => {
@@ -68,6 +71,7 @@ export const MenuView = ({ accountPkh, openChangeNodePopupHandler }: MenuViewPro
     })
 
     setSelectedMainLink(selectedMainRoute?.id || 0)
+      if (user.myMvkTokenBalance > 0 || user.mySMvkTokenBalance > 0) setHasMVK(true)
   }, [pathname])
 
   const [selectedMainLink, setSelectedMainLink] = useState<number>(0)
@@ -86,6 +90,9 @@ export const MenuView = ({ accountPkh, openChangeNodePopupHandler }: MenuViewPro
     }
   }, [burgerClickHandler, sidebarOpened])
 
+    const handleGetMVKTokensFromFaucet = () => {
+      dispatch(getMVKTokensFromFaucet())
+    }
   return (
     <>
       <MenuTopBar
@@ -113,6 +120,9 @@ export const MenuView = ({ accountPkh, openChangeNodePopupHandler }: MenuViewPro
             })}
           </MenuGrid>
           <MenuFooter className={`${sidebarOpened ? '' : 'menu-collapsed'}`}>
+              <NewButton kind={BUTTON_PRIMARY} form={sidebarOpened ? BUTTON_WIDE : BUTTON_ROUND} isThin onClick={handleGetMVKTokensFromFaucet} disabled={!hasMVK}>
+                  {sidebarOpened ? 'Get MVK Tokens' : 'mvk'}
+              </NewButton>
             <a className='feedbackLink' href="https://forms.gle/bwmTfpoLKBhaf7yD6" target="_blank" rel="noreferrer">
               <NewButton kind={BUTTON_SECONDARY} form={sidebarOpened ? BUTTON_WIDE : BUTTON_ROUND} isThin>
                 {sidebarOpened ? 'Submit Feedback' : 'F'}

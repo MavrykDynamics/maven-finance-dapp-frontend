@@ -210,3 +210,44 @@ export const rewardsCompound = (address: string) => async (dispatch: AppDispatch
     dispatch(toggleActionLoader(false))
   }
 }
+
+export const GET_MVK_TOKENS = 'GET_MVK_TOKENS'
+export const getMVKTokensFromFaucet =  (accountPkh?: string) => async (dispatch: AppDispatch, getState: GetState) => {
+  const state: State = getState()
+
+  if (!state.wallet.accountPkh) {
+    dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
+    return
+  }
+  if (state.loading.isActionLoading) {
+    dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
+    return
+  }
+  if (state.wallet.user.myMvkTokenBalance > 0 || state.wallet.user.mySMvkTokenBalance > 0) {
+    dispatch(showToaster(ERROR, 'You have already claimed MVK', 'You are unable to claim MVK, you have already claimed'))
+    return
+  }
+  try {
+    const contract = await state.wallet.tezos?.wallet.at('KT1Mf2kFGce8BaC5zMTCuzg2pbYdgtBtn1Ng')
+    console.log('contract', contract)
+    const operation = await contract.methods.requestMvk().send();
+    await operation.confirmation()
+    console.log('transaction', operation)
+    dispatch(showToaster(INFO, 'Requesting MVK...', 'Please wait 15s'))
+    const done = await operation?.confirmation()
+    console.log('done', done)
+
+    await dispatch(toggleActionLoader(true))
+    dispatch(showToaster(SUCCESS, 'Received 1,000 MVK...', 'Enjoy using Mavryk Finance :)'))
+    await dispatch(updateUserData())
+    await dispatch(toggleActionLoader(false))
+    dispatch({
+      type: GET_MVK_TOKENS,
+    })
+  } catch (error) {
+    if (error instanceof Error) {
+      dispatch(showToaster(ERROR, 'Error', error.message))
+      dispatch(toggleActionLoader(false))
+    }
+  }
+}

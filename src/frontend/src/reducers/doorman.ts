@@ -1,4 +1,4 @@
-import { GET_DOORMAN_STORAGE } from 'pages/Doorman/Doorman.actions'
+import { GET_DOORMAN_STORAGE, GET_MVK_TOKENS } from 'pages/Doorman/Doorman.actions'
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
 import { DoormanStorage, MvkHistoryData, SmvkHistoryData } from '../utils/TypesAndInterfaces/Doorman'
 
@@ -34,6 +34,11 @@ export function doorman(state = doormanDefaultState, action: Action) {
         maximumTotalSupply: action.maximumTotalSupply,
         mvkHistoryData: action.mvkHistoryData,
         smvkHistoryData: action.smvkHistoryData,
+        isLoaded: true,
+      }
+    case GET_MVK_TOKENS:
+      return {
+        ...state,
         isLoaded: true,
       }
     default:
