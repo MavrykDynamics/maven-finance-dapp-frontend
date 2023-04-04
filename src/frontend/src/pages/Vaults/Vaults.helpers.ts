@@ -22,7 +22,7 @@ import {
   getAssetMetadata
 } from 'pages/Loans/Loans.helpers'
 import { calcWithoutDecimals } from 'utils/calcFunctions'
-import { BLOCKS_PER_MINUTE } from 'utils/constants'
+import {BLOCKS_PER_MINUTE, FIXED_POINT_ACCURACY} from 'utils/constants'
 import { getUserBalanceForLoanAsset } from 'pages/Loans/LoansFethcers'
 import { CollateralType, DepositorsFlagType } from 'utils/TypesAndInterfaces/Loans'
 import { ANY_USER, WHITELIST_USERS, NONE_USER } from 'pages/Loans/Loans.const'
@@ -174,10 +174,12 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
 
       if (!vaultAsset) return acc
 
+      //TODO: @Maksym, the accrued interest is the value needed for the Fee. Also changed the naming of it in the vaults
+      const loanOutstandingBigNumber = item.loan_outstanding_total
+      const accruedInterest = (calculateAccruedInterest(loanOutstandingBigNumber, item.borrow_index, item.loan_token.borrow_index) / FIXED_POINT_ACCURACY)
+
       const borrowedAmount = item.loan_principal_total / 10 ** vaultAsset.decimals
-      //TODO: @TIM, please take a look
-      const accruedInterest = calculateAccruedInterest(item.loan_outstanding_total / 10 ** vaultAsset.decimals, item.borrow_index, item.loan_token.borrow_index) - (item.loan_principal_total / 10 ** vaultAsset.decimals)
-      console.log(borrowedAmount, calculateAccruedInterest(borrowedAmount, item.borrow_index, item.loan_token.borrow_index), accruedInterest)
+
       const collateralRatio = calcCollateralRatio(vaultCollateral.totalRow.amount, borrowedAmount, vaultAsset.rate)
       const collateralData = vaultCollateral.normalizedCollaterals.length
         ? [...vaultCollateral.normalizedCollaterals, vaultCollateral.totalRow]

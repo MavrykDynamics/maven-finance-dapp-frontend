@@ -172,10 +172,10 @@ export const BorrowingExpandCard = ({
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Outstanding Debt</div>
-              <CommaNumber value={borrowedAmount} className="value" showDecimal decimalsToShow={2} />
+              <CommaNumber value={(borrowedAmount + fee)} className="value" showDecimal decimalsToShow={2} />
               {rate ? (
                 <CommaNumber
-                  value={borrowedAmount * rate}
+                  value={(borrowedAmount + fee) * rate}
                   beginningText="$"
                   className="rate"
                   showDecimal
