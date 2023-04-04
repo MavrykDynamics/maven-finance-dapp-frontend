@@ -53,14 +53,6 @@ const AppContainer = () => {
 
   useEffect(() => {
     ;(async () => {
-      // For using Beacon wallet
-      if (
-        localStorage.getItem('beacon:active-account') &&
-        localStorage.getItem('beacon:active-account') !== 'undefined'
-      ) {
-        await dispatch(connect())
-      }
-
       // Fetching initial&common data for DAPP
       await Promise.all([
         dispatch(getSatellitesStorage()),
@@ -75,6 +67,14 @@ const AppContainer = () => {
         dispatch(getCouncilMembers()),
         dispatch(getBreakGlassCouncilMembers()),
       ])
+
+      // For using Beacon wallet
+      if (
+        localStorage.getItem('beacon:active-account') &&
+        localStorage.getItem('beacon:active-account') !== 'undefined'
+      ) {
+        await dispatch(connect())
+      }
 
       // Depends on data feeds (getFeedsStorage())
       await dispatch(getTokensPrices())
