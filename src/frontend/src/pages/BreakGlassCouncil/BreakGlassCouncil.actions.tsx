@@ -28,6 +28,7 @@ import { parseDate } from 'utils/time'
 
 // actions
 import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
+import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 
 const time = String(new Date())
 const timeFormat = 'YYYY-MM-DD'
@@ -151,7 +152,8 @@ export const setAllContractsAdmin = (newAdminAddress: string) => async (dispatch
 
   try {
     dispatch(toggleActionLoader(true))
-    const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.breakGlassAddress.address)
+    const tezos = await DAPP_INSTANCE.tezos()
+    const contract = await tezos.wallet.at(state.contractAddresses.breakGlassAddress.address)
     const transaction = await contract?.methods.setAllContractsAdmin(newAdminAddress).send()
     dispatch(showToaster(INFO, 'Set All Contracts Admin...', 'Please wait 30s'))
 
@@ -186,7 +188,8 @@ export const setSingleContractAdmin =
 
     try {
       dispatch(toggleActionLoader(true))
-      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.breakGlassAddress.address)
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(state.contractAddresses.breakGlassAddress.address)
       const transaction = await contract?.methods.setSingleContractAdmin(newAdminAddress, targetContract).send()
       dispatch(showToaster(INFO, 'Set Single Contract Admin...', 'Please wait 30s'))
 
@@ -220,7 +223,8 @@ export const signAction = (breakGlassActionID: number) => async (dispatch: AppDi
 
   try {
     dispatch(toggleActionLoader(true))
-    const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.breakGlassAddress.address)
+    const tezos = await DAPP_INSTANCE.tezos()
+    const contract = await tezos.wallet.at(state.contractAddresses.breakGlassAddress.address)
     const transaction = await contract?.methods.signAction(breakGlassActionID).send()
     dispatch(showToaster(INFO, 'Sign action...', 'Please wait 30s'))
 
@@ -256,7 +260,8 @@ export const addCouncilMember =
 
     try {
       dispatch(toggleActionLoader(true))
-      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.breakGlassAddress.address)
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(state.contractAddresses.breakGlassAddress.address)
       const transaction = await contract?.methods
         .addCouncilMember(memberAddress, newMemberName, newMemberWebsite, newMemberImage)
         .send()
@@ -294,7 +299,8 @@ export const updateCouncilMember =
 
     try {
       dispatch(toggleActionLoader(true))
-      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.breakGlassAddress.address)
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(state.contractAddresses.breakGlassAddress.address)
       const transaction = await contract?.methods
         .updateCouncilMemberInfo(newMemberName, newMemberWebsite, newMemberImage)
         .send()
@@ -338,7 +344,8 @@ export const changeCouncilMember =
 
     try {
       dispatch(toggleActionLoader(true))
-      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.breakGlassAddress.address)
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(state.contractAddresses.breakGlassAddress.address)
       const transaction = await contract?.methods
         .changeCouncilMember(
           oldCouncilMemberAddress,
@@ -380,7 +387,8 @@ export const removeCouncilMember = (memberAddress: string) => async (dispatch: A
 
   try {
     dispatch(toggleActionLoader(true))
-    const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.breakGlassAddress.address)
+    const tezos = await DAPP_INSTANCE.tezos()
+    const contract = await tezos.wallet.at(state.contractAddresses.breakGlassAddress.address)
     const transaction = await contract?.methods.removeCouncilMember(memberAddress).send()
     dispatch(showToaster(INFO, 'Remove Council Member...', 'Please wait 30s'))
 
@@ -414,7 +422,8 @@ export const propagateBreakGlass = () => async (dispatch: AppDispatch, getState:
 
   try {
     dispatch(toggleActionLoader(true))
-    const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.breakGlassAddress.address)
+    const tezos = await DAPP_INSTANCE.tezos()
+    const contract = await tezos.wallet.at(state.contractAddresses.breakGlassAddress.address)
     const transaction = await contract?.methods.propagateBreakGlass().send()
     dispatch(showToaster(INFO, 'Propagate Break Glass...', 'Please wait 30s'))
 
@@ -452,7 +461,8 @@ export const dropBreakGlass = (breakGlassActionID: number) => async (dispatch: A
 
   try {
     dispatch(toggleActionLoader(true))
-    const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.breakGlassAddress.address)
+    const tezos = await DAPP_INSTANCE.tezos()
+    const contract = await tezos.wallet.at(state.contractAddresses.breakGlassAddress.address)
     const transaction = await contract?.methods.flushAction(breakGlassActionID).send()
     dispatch(showToaster(INFO, 'Drop Action...', 'Please wait 30s'))
 

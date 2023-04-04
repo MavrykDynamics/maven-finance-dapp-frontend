@@ -17,6 +17,7 @@ import {
   SATELLITE_CONFIG_QUERY_NAME,
   SATELLITE_CONFIG_QUERY_VARIABLE,
 } from 'gql/queries'
+import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 
 export const GET_SATELLITES_STORAGE = 'GET_SATELLITES_STORAGE'
 export const getSatellitesStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
@@ -87,7 +88,8 @@ export const delegate = (satelliteAddress: string) => async (dispatch: AppDispat
   }
 
   try {
-    const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.delegationAddress.address)
+    const tezos = await DAPP_INSTANCE.tezos()
+    const contract = await tezos.wallet.at(state.contractAddresses.delegationAddress.address)
     const transaction = await contract?.methods.delegateToSatellite(state.wallet.accountPkh, satelliteAddress).send()
 
     dispatch(toggleActionLoader(true))
@@ -124,7 +126,8 @@ export const undelegate = (delegateAddress: string) => async (dispatch: AppDispa
   }
 
   try {
-    const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.delegationAddress.address)
+    const tezos = await DAPP_INSTANCE.tezos()
+    const contract = await tezos.wallet.at(state.contractAddresses.delegationAddress.address)
     const transaction = await contract?.methods.undelegateFromSatellite(state.wallet.accountPkh, delegateAddress).send()
 
     dispatch(toggleActionLoader(true))
@@ -162,7 +165,8 @@ export const distributeProposalRewards =
     }
 
     try {
-      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.delegationAddress.address)
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(state.contractAddresses.delegationAddress.address)
       const transaction = await contract?.methods.distributeProposalRewards(satelliteAddress, proposals).send()
 
       dispatch(toggleActionLoader(true))

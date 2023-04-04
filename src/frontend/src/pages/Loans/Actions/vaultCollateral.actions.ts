@@ -1,4 +1,5 @@
 import { OpKind, WalletParamsWithKind } from '@taquito/taquito'
+import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { ERROR, INFO, SUCCESS } from 'app/App.components/Toaster/Toaster.constants'
@@ -35,7 +36,8 @@ export const withdrawCollateralAction =
     try {
       const convertedAssetAmount = convertNumberForContractCall({ number: withdrawAmount, grage: assetDecimals })
       // prepare and send query
-      const contract = await state.wallet.tezos?.wallet.at(vaultAddress)
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(vaultAddress)
       const transaction = await contract.methods
         .initVaultAction('withdraw', convertedAssetAmount, collateralAssetName)
         .send()
@@ -97,7 +99,8 @@ export const depositCollateralAction =
       const convertedAssetAmount = convertNumberForContractCall({ number: amount, grage: decimals })
 
       // prepare and send query
-      const contract = await state.wallet.tezos?.wallet.at(vaultAddress)
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(vaultAddress)
       let transaction = null
 
       if (tokenType === 'tez') {
@@ -109,7 +112,7 @@ export const depositCollateralAction =
               },
             ]
           : []
-        const batch = state.wallet.tezos?.wallet.batch([
+        const batch = tezos.wallet.batch([
           {
             kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
             ...contract.methods.initVaultAction('deposit', convertedAssetAmount, 'tez').toTransferParams(),
@@ -123,7 +126,7 @@ export const depositCollateralAction =
       }
 
       if (tokenType === 'fa12') {
-        const assetContract = await state.wallet.tezos?.wallet.at(assetAddress)
+        const assetContract = await tezos.wallet.at(assetAddress)
         const batchArr = [
           {
             kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
@@ -139,12 +142,12 @@ export const depositCollateralAction =
           },
         ]
 
-        const batch = await state.wallet.tezos?.wallet.batch(batchArr)
+        const batch = await tezos.wallet.batch(batchArr)
         transaction = await batch.send()
       }
 
       if (tokenType === 'fa2') {
-        const assetContract = await state.wallet.tezos?.wallet.at(assetAddress)
+        const assetContract = await tezos.wallet.at(assetAddress)
 
         const batchArr = [
           {
@@ -181,7 +184,7 @@ export const depositCollateralAction =
           },
         ]
 
-        const batch = await state.wallet.tezos?.wallet.batch(batchArr)
+        const batch = await tezos.wallet.batch(batchArr)
         transaction = await batch.send()
       }
 
