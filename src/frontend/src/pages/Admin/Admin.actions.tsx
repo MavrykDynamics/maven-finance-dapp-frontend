@@ -248,9 +248,9 @@ export const addAllLoanTokensToMarkets = (accountPkh?: string) => async (dispatc
   //TODO: Before using this function, ensure that the oracle and mToken addresses are correct
   const allowedLoanTokens = ['usdt', 'tez', 'eurl']
   const oracleAndMTokenIDsMap = new Map<string, { oracleId: string, mTokenId: string }>([
-    ['usdt', {oracleId:'KT1T8qNkrkU4yRMu9s8YbA5GcwiXKak5j4iK', mTokenId: 'KT1AUCdcGBZ7CJmtvVhPKxoC12wtivW9pKgH'}],
-    ['tez', {oracleId:'KT1L2uQvUHnumcd2cVPAiHhSg2zr1npPWvJf', mTokenId: 'KT1CRqkynE2rayCCrapBsbAm7R8nGnsdjBTR'}],
-    ['eurl', {oracleId:'KT1UsV9auGvp51BkNGBUaoKrtHup6KgWBNYR', mTokenId: 'KT1VVU3CjEBJRxKJQDt5Msc6ps9yZNjmAQFs'}]
+    ['usdt', {oracleId:'KT1H3UrThDhoDWx3x8BirqxtDFAQDa8MENrX', mTokenId: 'KT1CsED3cRAzpRXA3PwsqhqXa4Qiif9UrBED'}],
+    ['tez', {oracleId:'KT18qwZq87AwmL1orDyhrTBa7fwTnzcCoqKo', mTokenId: 'KT1MxJzA7xoKMT2ZjmFwpFx6ovNWgRqnXg6R'}],
+    ['eurl', {oracleId:'KT1Np2yJNXtAkAeNb3LEVJCD9vtQtRN2vHLE', mTokenId: 'KT18m5XfF9UKYT54uADH2dAZLQt77jrQitfS'}]
   ])
   const batchArray: any = []
 
@@ -258,15 +258,16 @@ export const addAllLoanTokensToMarkets = (accountPkh?: string) => async (dispatc
     console.log(state.contractAddresses)
     const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.lendingController.address)
 
+    console.log('Here is the contract')
     allowedLoanTokens.forEach((loanToken: string) => {
-      if (state.tokens.avaliableCollaterals.some(e => e.gqlName === loanToken)) {
         const oracleAndMTokenItem = oracleAndMTokenIDsMap.get(loanToken)
         let tokenBatchObject = null
         if(oracleAndMTokenItem !== undefined) {
           tokenBatchObject = createLoanTokenBatchMethodObject(contract, oracleAndMTokenItem.oracleId, oracleAndMTokenItem.mTokenId, loanToken)
         }
+
+        console.log('Got to here in function')
         if (tokenBatchObject !== null) batchArray.push(tokenBatchObject)
-      }
     })
     if (batchArray.length == 0) {
       dispatch(showToaster(SUCCESS, 'All loan tokens currently added', 'All good :)'))
@@ -296,8 +297,9 @@ function createLoanTokenBatchMethodObject(lendingControllerContract: any, oracle
       tokenType = 'tez'
       break;
     case 'usdt':
-      tokenType = 'fa12';
+      tokenType = 'fa2';
       tokenContractAddress = 'KT1H9hKtcqcMHuCoaisu8Qy7wutoUPFELcLm';
+      tokenId = 0;
       break;
     case 'eurl':
       tokenType = 'fa2';
@@ -358,7 +360,8 @@ function createLoanTokenBatchMethodObject(lendingControllerContract: any, oracle
           loanTokenObject.interestRateAboveOptimalUtilisation,
           loanTokenObject.minRepaymentAmount,
           loanTokenObject.tokenType,
-          loanTokenObject.tokenContractAddress).toTransferParams(),
+          loanTokenObject.tokenContractAddress,
+          loanTokenObject.tokenId).toTransferParams(),
     }
   } else if (tokenName === 'eurl') {
     return {
@@ -394,10 +397,10 @@ export const addAllCollateralTokensToMarkets = (accountPkh?: string) => async (d
   //TODO: Before using this function, ensure that the oracle addresses are correct
   const allowedCollaterals = ['usdt', 'tez', 'eurl', 'tzbtc']
   const oracleIDMap = new Map<string, string>([
-      ['usdt', 'KT1T8qNkrkU4yRMu9s8YbA5GcwiXKak5j4iK'],
-      ['tez', 'KT1L2uQvUHnumcd2cVPAiHhSg2zr1npPWvJf'],
-      ['eurl', 'KT1UsV9auGvp51BkNGBUaoKrtHup6KgWBNYR'],
-      ['tzbtc', 'KT1GnYkHRiXPnvhctooTjTnF3SABJf13DN3F']
+      ['usdt', 'KT1H3UrThDhoDWx3x8BirqxtDFAQDa8MENrX'],
+      ['tez', 'KT18qwZq87AwmL1orDyhrTBa7fwTnzcCoqKo'],
+      ['eurl', 'KT1Np2yJNXtAkAeNb3LEVJCD9vtQtRN2vHLE'],
+      ['tzbtc', 'KT1AWhMLFpZsKJpM2u3WPZYLzBP9NpyPu6py']
   ])
   const batchArray: any = []
 
@@ -405,11 +408,9 @@ export const addAllCollateralTokensToMarkets = (accountPkh?: string) => async (d
     const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.lendingController.address)
 
     allowedCollaterals.forEach((collateralToken: string) => {
-      if (state.tokens.avaliableCollaterals.some(e => e.gqlName === collateralToken)) {
         const tokenOracleId = oracleIDMap.get(collateralToken) ?? ''
         const tokenBatchObject = createCollateralTokenBatchMethodObject(contract, tokenOracleId, collateralToken)
         if (tokenBatchObject !== null) batchArray.push(tokenBatchObject)
-      }
     })
 
     if (batchArray.length == 0) {
@@ -592,10 +593,10 @@ export const createTreasuries = (accountPkh?: string) => async (dispatch: AppDis
     console.log('contract', contract)
     const batch = await state.wallet.tezos?.wallet
             .batch()
-            .withContractCall(contract.methods.createTreasury(rAndDTreasuryData.name, true, rAndDTreasuryMetadataBase))
-            .withContractCall(contract.methods.createTreasury(investmentTreasuryData.name, true, investmentTreasuryMetadataBase))
-            .withContractCall(contract.methods.createTreasury(mvkBuyBackTreasuryData.name, true, mvkBuyBackTreasuryMetadataBase))
-        .withContractCall(contract.methods.createTreasury(daoValidatorFundTreasuryData.name, true, daoValidatorFundTreasuryMetadataBase))
+            .withContractCall(contract.methods.createTreasury(null, rAndDTreasuryData.name, true, rAndDTreasuryMetadataBase))
+            .withContractCall(contract.methods.createTreasury(null, investmentTreasuryData.name, true, investmentTreasuryMetadataBase))
+            .withContractCall(contract.methods.createTreasury(null, mvkBuyBackTreasuryData.name, true, mvkBuyBackTreasuryMetadataBase))
+        .withContractCall(contract.methods.createTreasury(null, daoValidatorFundTreasuryData.name, true, daoValidatorFundTreasuryMetadataBase))
     const batchOp = await batch?.send()
 
     await dispatch(showToaster(INFO, 'Creating Treasuries...', 'Please wait 30s'))
