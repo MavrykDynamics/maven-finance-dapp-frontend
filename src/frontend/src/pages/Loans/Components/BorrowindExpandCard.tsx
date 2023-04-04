@@ -172,7 +172,7 @@ export const BorrowingExpandCard = ({
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Outstanding Debt</div>
-              <CommaNumber value={(borrowedAmount + fee)} className="value" showDecimal decimalsToShow={2} />
+              <CommaNumber value={borrowedAmount + fee} className="value" showDecimal decimalsToShow={2} />
               {rate ? (
                 <CommaNumber
                   value={(borrowedAmount + fee) * rate}
@@ -297,7 +297,7 @@ export const BorrowingExpandCard = ({
 
                       const collateralShare = isTotalRow
                         ? 100
-                        : calculateCollateralShare(amount * rate, collateralTotalBalance)
+                        : Math.max(0, Math.max(100, calculateCollateralShare(amount * rate, collateralTotalBalance)))
 
                       if (isTotalRow && collateralData.length < 3) return null
                       const collateralDecimalsLength = getDynamicDecimalsAmountForOutput(amount)
