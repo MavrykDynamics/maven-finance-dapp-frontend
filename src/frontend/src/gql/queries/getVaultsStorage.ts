@@ -38,15 +38,18 @@ export const VAULTS_STORAGE_QUERY = `
         marked_for_liquidation_level
         loan_outstanding_total
         loan_interest_total
+        loan_principal_total
         loan_decimals
         liquidation_end_level
         internal_id
+        borrow_index
         loan_token {
           loan_token_name
           loan_token_address
           loan_token_contract_standard
           oracle_id
           current_interest_rate
+          borrow_index
         }
       }
     }

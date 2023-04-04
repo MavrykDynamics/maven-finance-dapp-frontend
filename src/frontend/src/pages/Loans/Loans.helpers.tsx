@@ -1,9 +1,8 @@
-import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
 import dayjs from 'dayjs'
 import { SingleValueData, UTCTimestamp } from 'lightweight-charts'
 import { State } from 'reducers'
 import { UserState } from 'reducers/wallet'
-import { BLOCKS_PER_MINUTE } from 'utils/constants'
+import { BLOCKS_PER_MINUTE, FIXED_POINT_ACCURACY, SECONDS_PER_YEAR } from 'utils/constants'
 import {
   Lending_Controller_History_Data,
   Lending_Controller_Loan_Token,
@@ -381,20 +380,20 @@ export const calculateCompoundedInterest = (
   lastUpdatedBlockLevel: number,
   blockLevel: number,
 ) => {
-  let interestRateOverSecondsInYear = Math.trunc(interestRate / 31536000)
+  let interestRateOverSecondsInYear = Math.trunc(interestRate / SECONDS_PER_YEAR)
   let exp = blockLevel - lastUpdatedBlockLevel
 
   let expMinusOne = exp - 1
   let expMinusTwo = exp - 2
 
-  let basePowerTwo = Math.trunc(interestRateOverSecondsInYear ** 2 / 31536000 ** 2)
-  let basePowerThree = Math.trunc(interestRateOverSecondsInYear ** 3 / 31536000 ** 3)
+  let basePowerTwo = Math.trunc(interestRateOverSecondsInYear ** 2 / SECONDS_PER_YEAR ** 2)
+  let basePowerThree = Math.trunc(interestRateOverSecondsInYear ** 3 / SECONDS_PER_YEAR ** 3)
 
   let firstTerm = Math.trunc(exp * interestRateOverSecondsInYear)
   let secondTerm = Math.trunc((exp * expMinusOne * basePowerTwo) / 2)
   let thirdTerm = Math.trunc((exp * expMinusOne * expMinusTwo * basePowerThree) / 6)
 
-  let compoundedInterest = 10 ** 27 + firstTerm + secondTerm + thirdTerm
+  let compoundedInterest = FIXED_POINT_ACCURACY + firstTerm + secondTerm + thirdTerm
 
   return compoundedInterest
 }
@@ -487,6 +486,7 @@ const getBorrowings = async (
         vault.loan_token?.current_interest_rate ?? 0,
         interestRateDecimals,
       )
+
       const vaultXtzDelegatedTo = await (
         await fetch(`https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/contracts/${vault.vault.address}`)
       ).json()
@@ -494,11 +494,6 @@ const getBorrowings = async (
       const currentBlock = await (
         await fetch(`https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/blocks/${dayjs().toISOString()}`)
       ).json()
-
-      // TODO: ensure in this value
-      const fee =
-        calculateCompoundedInterest(currentInterestRate, vault.last_updated_block_level, currentBlock?.level ?? 0) /
-        10 ** interestRateDecimals
 
       const vaultAsset = getAssetMetadata({
         tokenName: vault.loan_token.loan_token_name,
@@ -516,6 +511,13 @@ const getBorrowings = async (
       if (!vaultAsset) return acc
 
       const borrowedAmount = vault.vault.lending_controller_vaults[0].loan_outstanding_total / 10 ** vaultAsset.decimals
+
+      // Calculating Fee of the vault
+      const accruedInterest =
+        borrowedAmount === 0
+          ? 0
+          : calculateAccruedInterest(vault.loan_outstanding_total, vault.borrow_index, vault.loan_token.borrow_index) /
+            FIXED_POINT_ACCURACY
 
       const collateralRatio = calcCollateralRatio(vaultCollateral.totalRow.amount, borrowedAmount, vaultAsset.rate)
       const collateralData = vaultCollateral.normalizedCollaterals.length
@@ -545,7 +547,7 @@ const getBorrowings = async (
         borrowCapacity,
         collateralRatio,
         apr: currentInterestRate * 100,
-        fee: borrowedAmount === 0 ? 0 : fee,
+        fee: accruedInterest,
         address: vault.vault.address,
         vaultId: vault.id,
         collateralData,
@@ -902,4 +904,23 @@ export const normalizeUserLending = ({
     userBorrowing,
     userVaultsData,
   }
+}
+
+// fn to calculate fee of the vault
+export const calculateAccruedInterest = (
+  currentLoanOutstandingTotal: number,
+  vaultBorrowIndex: number,
+  tokenBorrowIndex: number,
+) => {
+  let newLoanOutstandingTotal = currentLoanOutstandingTotal
+  const vBorrowIndex = vaultBorrowIndex
+  const loanTokenBorrowIndex = tokenBorrowIndex
+
+  if (currentLoanOutstandingTotal > 0) {
+    if (vBorrowIndex > 0) {
+      newLoanOutstandingTotal = Math.trunc((currentLoanOutstandingTotal * loanTokenBorrowIndex) / vBorrowIndex)
+    }
+  }
+
+  return newLoanOutstandingTotal
 }
