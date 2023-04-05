@@ -81,7 +81,7 @@ export const CreateNewVault = ({
   const { avaliableCollaterals } = useSelector((state: State) => state.tokens)
   const { isActionLoading } = useSelector((state: State) => state.loading)
 
-  const [shownScreen, setShownScreen] = useState<CurrentActiveModalScreen>('confirmation') //INITIAL_SCREEN_ID)
+  const [shownScreen, setShownScreen] = useState<CurrentActiveModalScreen>(INITIAL_SCREEN_ID)
   const [collateralsToSelect, setCollateralsToSelect] = useState<Record<DDItemId, DropDownCollateralAssetType>>({})
   const [collaterals, setCollaterals] = useState<Array<InputCollateral>>([])
   const [vaultName, setVaultName] = useState<VaultNameInputStateType>({ name: '', validationStatus: '' })
