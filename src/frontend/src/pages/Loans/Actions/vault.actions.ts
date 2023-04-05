@@ -37,11 +37,12 @@ export const triggerInitialVaultCreation =
       // confirm query completion
       await transaction?.confirmation()
 
-      // refetch data we need
       await dispatch(updateUserData())
+
+      const newVaultData = await fetchFromIndexer(NEW_VAULT_QUERY, NEW_VAULT_QUERY_NAME, NEW_VAULT_QUERY_VARIABLE)
       state.vaults.isLoaded && (await dispatch(getVaultsStorage()))
       state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
-      const newVaultData = await fetchFromIndexer(NEW_VAULT_QUERY, NEW_VAULT_QUERY_NAME, NEW_VAULT_QUERY_VARIABLE)
+
       return newVaultData.vault.at(-1)?.lending_controller_vaults[0].vault_id
     } catch (error) {
       console.error('triggerInitialVaultCreation error:', error)
