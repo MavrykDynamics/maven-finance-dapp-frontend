@@ -185,7 +185,7 @@ export const USER_LENDING_DATA_QUERY = `
         }
       }
 
-      lending_controller_vaults {
+      lending_controller_vaults(where: {lending_controller: {mock_time: {_eq: false}}}) {
         collateral_balances {
           balance
           token {
