@@ -37,7 +37,7 @@ export const USER_REWARDS_QUERY = `
       }
     }
 
-    lending_controller(where: {mock_time: {_eq: false}}) {
+    lending_controller(where: {mock_time: {_eq: true}}) {
       interest_rate_decimals
 
       loan_tokens {

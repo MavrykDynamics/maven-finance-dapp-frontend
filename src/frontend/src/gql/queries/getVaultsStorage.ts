@@ -1,6 +1,6 @@
 export const VAULTS_STORAGE_QUERY = `
   query GetAllVaultsStorage {
-    lending_controller(where: {mock_time: {_eq: false}}) {
+    lending_controller(where: {mock_time: {_eq: true}}) {
       address
       interest_rate_decimals
       liquidation_delay_in_minutes
