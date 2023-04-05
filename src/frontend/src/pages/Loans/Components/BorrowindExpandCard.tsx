@@ -301,7 +301,6 @@ export const BorrowingExpandCard = ({
 
                       if (isTotalRow && collateralData.length < 3) return null
                       const collateralDecimalsLength = getDynamicDecimalsAmountForOutput(amount)
-                      const collateralRateDecimalsLength = getDynamicDecimalsAmountForOutput(amount * rate)
 
                       return (
                         <TableRow rowHeight={65} key={gqlName + '-' + idx}>
@@ -315,6 +314,7 @@ export const BorrowingExpandCard = ({
                               </div>
                             )}
                           </TableCell>
+
                           <TableCell width={'22%'}>
                             <div className="cell-content">
                               <CommaNumber
@@ -325,13 +325,7 @@ export const BorrowingExpandCard = ({
                                 beginningText={isTotalRow ? '$' : ''}
                               />
                               {rate ? (
-                                <CommaNumber
-                                  value={amount * rate}
-                                  className="rate"
-                                  beginningText="$"
-                                  showDecimal
-                                  decimalsToShow={collateralRateDecimalsLength}
-                                />
+                                <CommaNumber value={amount * rate} className="rate" beginningText="$" showDecimal />
                               ) : null}
                             </div>
                           </TableCell>
