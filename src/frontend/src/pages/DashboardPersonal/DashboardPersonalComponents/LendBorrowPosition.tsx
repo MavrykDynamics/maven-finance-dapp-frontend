@@ -48,15 +48,15 @@ export const LendBorrowPosition = ({
         sumOfRatioSuppliedToAPY: number
         sumOfRatioBorrowedToAPR: number
       }>(
-        (acc, { myBorrowingList, borrowAPR, lendingAPY, lendingItem, loanTokenData: { rate } }) => {
+        (acc, { borrowAPR, lendingAPY, lendingItem, loanTokenData: { rate, gqlName } }) => {
           let borrowedPerMarket = 0
 
+          const { borrowedAmount = 0, collateralAmount = 0 } = userLoansData.userVaultsData[gqlName] ?? {}
+
           // calculating value risk data & how much borrowed per vault
-          myBorrowingList.forEach(({ borrowedAmount, collateralBalance }) => {
-            acc.borrowCapacity += collateralBalance / 2 - borrowedAmount
-            acc.borrowedAmount += borrowedAmount
-            borrowedPerMarket += borrowedAmount
-          })
+          acc.borrowCapacity += collateralAmount / 2
+          acc.borrowedAmount += borrowedAmount
+          borrowedPerMarket += borrowedAmount
 
           // calculating net APY supplied & borrowed ratio's
           acc.sumOfRatioSuppliedToAPY += (lendingItem?.lendValue ?? 0 * rate) * lendingAPY
@@ -72,7 +72,7 @@ export const LendBorrowPosition = ({
           sumOfRatioBorrowedToAPR: 0,
         },
       )
-    const vaultRiskValue = borrowCapacity ? (borrowedAmount / borrowCapacity) * 100 : 100
+    const vaultRiskValue = borrowCapacity ? (borrowedAmount / borrowCapacity) * 100 : 0
     const apyNet = totalSuppliedValue ? (sumOfRatioSuppliedToAPY - sumOfRatioBorrowedToAPR) / totalSuppliedValue : 0
 
     return {
@@ -86,7 +86,7 @@ export const LendBorrowPosition = ({
         currentValue: apyNet,
       },
     }
-  }, [markets])
+  }, [markets, userLoansData.userVaultsData])
 
   // Default data for gauge chart will be for vault risk
   const [gaugeData, setGaugeData] = useState<GaugeChartStateType>({
@@ -120,7 +120,9 @@ export const LendBorrowPosition = ({
         <div className="gauge-chart">
           <CustomTooltip
             iconId="info"
-            text="dummy"
+            text="Risk value indicates how risky your portfolio is. When the risk value reaches 100, your collateral will be liquidated. 
+                      Risk value = Total Borrow/Borrow Limit*100 
+                      Net APY = [Σ(Value of Supplied Assets*Supply APY) - Σ(Value of Borrowed Assets*Borrow APY)] / Value of Supplied Assets"
             defaultStrokeColor={colors[themeSelected].textColor}
             className="tooltip"
           />
@@ -164,7 +166,7 @@ export const LendBorrowPosition = ({
         </div>
       </div>
 
-      <LoansPositionTable markets={markets} />
+      <LoansPositionTable markets={markets} userVaultsData={userLoansData.userVaultsData} />
     </LBHInfoBlock>
   )
 }

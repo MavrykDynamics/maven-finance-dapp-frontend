@@ -53,15 +53,6 @@ export const GAUGE_STATE_APY_PART = {
   status: null,
 }
 
-/**
- * @SAM
- * to manually change gauge chart values you need to play with maxValue & minValue, for apy and risk charts, they are declared above
- * @GAUGE_STATE_APY_PART & @GAUGE_STATE_RISK_PART respectively,
- * and to test this min & max you need to manually set @currentValue inside return objects in
- * @const apyGaugeData for apy chart
- * @const vaultRiskGaugeData for vault risk chart
- */
-
 export const LoansDashboard = () => {
   const dispatch = useDispatch()
   const { themeSelected } = useSelector((state: State) => state.preferences)
@@ -77,13 +68,16 @@ export const LoansDashboard = () => {
   const { satelliteMapper } = useSelector((state: State) => state.satellites)
   const { councilMembers, breakGlassCouncilMembers } = useSelector((state: State) => state.council)
 
-  const { isLoading } = useDataLoader(async () => {
-    try {
-      if (!isLoansLoaded) {
-        await dispatch(getLoansStorage())
-      }
-    } catch (e) {}
-  }, [accountPkh])
+  const { isLoading } = useDataLoader(
+    async (isDepsChanged) => {
+      try {
+        if (!isLoansLoaded || isDepsChanged) {
+          await dispatch(getLoansStorage())
+        }
+      } catch (e) {}
+    },
+    [accountPkh],
+  )
 
   const userImage = useMemo(
     () =>
@@ -111,10 +105,10 @@ export const LoansDashboard = () => {
 
     const lendingPersentDiff = checkPlotType<SingleValueData>(secondLastLending, ['value'])
       ? calcDiffBetweenTwoNumbersInPersentage(totalLended, secondLastLending.value)
-      : 100
+      : 0
     const borrowingPersentDiff = checkPlotType<SingleValueData>(secondLastBorrowing, ['value'])
       ? calcDiffBetweenTwoNumbersInPersentage(totalBorrowed, secondLastBorrowing.value)
-      : 100
+      : 0
 
     return { lendingPersentDiff, borrowingPersentDiff }
   }, [borrowingChartData, lendingChartData, totalBorrowed, totalLended])
@@ -132,15 +126,15 @@ export const LoansDashboard = () => {
         sumOfRatioSuppliedToAPY: number
         sumOfRatioBorrowedToAPR: number
       }>(
-        (acc, { myBorrowingList, borrowAPR, lendingAPY, lendingItem, loanTokenData: { rate } }) => {
+        (acc, { borrowAPR, lendingAPY, lendingItem, loanTokenData: { rate, gqlName } }) => {
           let borrowedPerMarket = 0
 
+          const { borrowedAmount = 0, collateralAmount = 0 } = userLoansData.userVaultsData[gqlName] ?? {}
+
           // calculating value risk data & how much borrowed per vault
-          myBorrowingList.forEach(({ borrowedAmount, collateralBalance }) => {
-            acc.borrowCapacity += collateralBalance / 2 - borrowedAmount
-            acc.borrowedAmount += borrowedAmount
-            borrowedPerMarket += borrowedAmount
-          })
+          acc.borrowCapacity += collateralAmount / 2
+          acc.borrowedAmount += borrowedAmount
+          borrowedPerMarket += borrowedAmount
 
           // calculating net APY supplied & borrowed ratio's
           acc.sumOfRatioSuppliedToAPY += (lendingItem?.lendValue ?? 0 * rate) * lendingAPY
@@ -157,7 +151,7 @@ export const LoansDashboard = () => {
         },
       )
 
-    const vaultRiskValue = !accountPkh ? 0 : borrowCapacity ? (borrowedAmount / borrowCapacity) * 100 : 100
+    const vaultRiskValue = !accountPkh || !borrowCapacity ? 0 : (borrowedAmount / borrowCapacity) * 100
     const apyNet =
       !accountPkh || !totalSuppliedValue ? 0 : (sumOfRatioSuppliedToAPY - sumOfRatioBorrowedToAPR) / totalSuppliedValue
 
@@ -172,7 +166,7 @@ export const LoansDashboard = () => {
         currentValue: apyNet,
       },
     }
-  }, [loanTokens, accountPkh])
+  }, [loanTokens, accountPkh, userLoansData.userVaultsData])
 
   // Default data for gauge chart will be for vault risk
   const [gaugeData, setGaugeData] = useState<GaugeChartStateType>({
@@ -212,24 +206,30 @@ export const LoansDashboard = () => {
                 <div className="details">
                   <div className="column">
                     <div className="label">Total Lending</div>
-                    <CommaNumber value={totalLended} beginningText="$" className="value" />
-                    <CommaNumber
-                      value={lendingPersentDiff}
-                      endingText="%"
-                      beginningText={borrowingPersentDiff >= 0 ? '+' : ''}
-                      className={`diff ${borrowingPersentDiff >= 0 ? 'up' : 'down'}`}
-                    />
+                    <div className="value-wrap">
+                      <CommaNumber value={totalLended} beginningText="$" className="value" />
+                      <CommaNumber
+                        value={lendingPersentDiff}
+                        endingText="%"
+                        beginningText={lendingPersentDiff > 0 ? '+' : ''}
+                        className={`diff ${lendingPersentDiff ? (lendingPersentDiff > 0 ? 'up' : 'down') : 'neutral'}`}
+                      />
+                    </div>
                   </div>
 
                   <div className="column">
                     <div className="label">Total Borroved</div>
-                    <CommaNumber value={totalBorrowed} beginningText="$" className="value" />
-                    <CommaNumber
-                      value={borrowingPersentDiff}
-                      endingText="%"
-                      beginningText={borrowingPersentDiff >= 0 ? '+' : ''}
-                      className={`diff ${borrowingPersentDiff >= 0 ? 'up' : 'down'}`}
-                    />
+                    <div className="value-wrap">
+                      <CommaNumber value={totalBorrowed} beginningText="$" className="value" />
+                      <CommaNumber
+                        value={borrowingPersentDiff}
+                        endingText="%"
+                        beginningText={borrowingPersentDiff > 0 ? '+' : ''}
+                        className={`diff ${
+                          borrowingPersentDiff ? (borrowingPersentDiff > 0 ? 'up' : 'down') : 'neutral'
+                        }`}
+                      />
+                    </div>
                   </div>
                 </div>
               </TotalVolumeStyled>
@@ -243,7 +243,9 @@ export const LoansDashboard = () => {
                   <div className="gauge-chart">
                     <CustomTooltip
                       iconId="info"
-                      text="dummy"
+                      text="Risk value indicates how risky your portfolio is. When the risk value reaches 100, your collateral will be liquidated. 
+                      Risk value = Total Borrow/Borrow Limit*100 
+                      Net APY = [Σ(Value of Supplied Assets*Supply APY) - Σ(Value of Borrowed Assets*Borrow APY)] / Value of Supplied Assets"
                       defaultStrokeColor={colors[themeSelected].textColor}
                       className="tooltip"
                     />
@@ -305,7 +307,7 @@ export const LoansDashboard = () => {
                   </Button>
                 )}
               </div>
-              <LoansPositionTable markets={loanTokens} />
+              <LoansPositionTable markets={loanTokens} userVaultsData={userLoansData.userVaultsData} />
             </LBHInfoBlock>
           </>
         )}

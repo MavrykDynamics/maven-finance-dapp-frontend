@@ -214,7 +214,8 @@ export const CreateNewVault = ({
   //handle vaultName input
   const handleVaultNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
-    const validationStatus = value && value.length <= 15 ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
+    const validationStatus =
+      value && value.length <= 15 && /^[A-Za-z\s]*$/g.test(value) ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
 
     setVaultName({ name: value, validationStatus })
   }
@@ -618,7 +619,12 @@ export const CreateNewVault = ({
                 <ThreeLevelListItem>
                   <div className="name">
                     Borrowing Capacity{' '}
-                    <CustomTooltip iconId="info" defaultStrokeColor={silverColor} text="" className="tooltip" />
+                    <CustomTooltip
+                      iconId="info"
+                      defaultStrokeColor={silverColor}
+                      text="How much you are able to borrow given your current collateral ratio including the amount you wish to borrow and the total amount available to borrow from the pool."
+                      className="tooltip"
+                    />
                   </div>
                   <CommaNumber value={borrowingCapacity} className="value" beginningText="$" />
                 </ThreeLevelListItem>

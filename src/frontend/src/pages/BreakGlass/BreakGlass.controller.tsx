@@ -19,12 +19,12 @@ export const BreakGlass = () => {
     isLoaded: isContractStatusesLoaded,
   } = useSelector((state: State) => state.breakGlass)
 
-  const { isLoading } = useDataLoader(async () => {
+  const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {
       await Promise.all(
         [
-          !isConfigLoaded && dispatch(getBreakGlassConfig()),
-          !isContractStatusesLoaded && dispatch(getContractStatuses()),
+          (!isConfigLoaded || isDepsChanged) && dispatch(getBreakGlassConfig()),
+          (!isContractStatusesLoaded || isDepsChanged) && dispatch(getContractStatuses()),
         ].filter(Boolean),
       )
     } catch (e) {}

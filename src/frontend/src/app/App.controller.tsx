@@ -34,6 +34,7 @@ import {
 } from 'reducers/actions/dipDupActions.actions'
 import { getCouncilMembers } from 'pages/Council/Council.actions'
 import { getBreakGlassCouncilMembers } from 'pages/BreakGlassCouncil/BreakGlassCouncil.actions'
+import { getAvaliableCollaterals } from 'pages/Loans/Actions/getLoansData.actions'
 
 // export const { store, persistor } = configureStore({})
 export const { store } = configureStore({})
@@ -67,9 +68,6 @@ const AppContainer = () => {
         dispatch(getBreakGlassCouncilMembers()),
       ])
 
-      // Depends on data feeds (getFeedsStorage())
-      await dispatch(getTokensPrices())
-
       // For using Beacon wallet
       if (
         localStorage.getItem('beacon:active-account') &&
@@ -78,6 +76,11 @@ const AppContainer = () => {
         await dispatch(connect())
       }
 
+      // Depends on data feeds (getFeedsStorage())
+      await dispatch(getTokensPrices())
+      dispatch(getAvaliableCollaterals())
+
+      // Turn off loader
       await dispatch(toggleInitialDataLoading(false))
     })()
   }, [dispatch])

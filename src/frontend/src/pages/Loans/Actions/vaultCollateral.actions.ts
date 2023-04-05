@@ -1,13 +1,15 @@
 import { OpKind, WalletParamsWithKind } from '@taquito/taquito'
+import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { ERROR, INFO, SUCCESS } from 'app/App.components/Toaster/Toaster.constants'
 import { AppDispatch, GetState } from 'app/App.controller'
+import { getVaultsStorage } from 'pages/Vaults/Vaults.actions'
 import { State } from 'reducers'
 import { updateUserData } from 'reducers/actions/user.actions'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { TokenType } from 'utils/TypesAndInterfaces/General'
-import { getAvaliableCollaterals, getLoansVaultsData } from './getLoansData.actions'
+import { getAvaliableCollaterals, getLoansStorage } from './getLoansData.actions'
 
 // remove collateral from the vault
 export const withdrawCollateralAction =
@@ -34,7 +36,8 @@ export const withdrawCollateralAction =
     try {
       const convertedAssetAmount = convertNumberForContractCall({ number: withdrawAmount, grage: assetDecimals })
       // prepare and send query
-      const contract = await state.wallet.tezos?.wallet.at(vaultAddress)
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(vaultAddress)
       const transaction = await contract.methods
         .initVaultAction('withdraw', convertedAssetAmount, collateralAssetName)
         .send()
@@ -49,7 +52,8 @@ export const withdrawCollateralAction =
       // refetch data we need
       await dispatch(updateUserData())
       await dispatch(getAvaliableCollaterals())
-      await dispatch(getLoansVaultsData())
+      state.vaults.isLoaded && (await dispatch(getVaultsStorage()))
+      state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
       await dispatch(showToaster(SUCCESS, 'Collateral withdrawn.', 'All good :)'))
       await dispatch(toggleActionLoader(false))
     } catch (error) {
@@ -95,7 +99,8 @@ export const depositCollateralAction =
       const convertedAssetAmount = convertNumberForContractCall({ number: amount, grage: decimals })
 
       // prepare and send query
-      const contract = await state.wallet.tezos?.wallet.at(vaultAddress)
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(vaultAddress)
       let transaction = null
 
       if (tokenType === 'tez') {
@@ -103,11 +108,11 @@ export const depositCollateralAction =
           ? [
               {
                 kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
-                ...contract.methods.initVaultAction('delegateTezToBaker', bakerAddress).toTransferParams(),
+                ...contract.methods.initVaultAction('setBaker', bakerAddress).toTransferParams(),
               },
             ]
           : []
-        const batch = state.wallet.tezos?.wallet.batch([
+        const batch = tezos.wallet.batch([
           {
             kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
             ...contract.methods.initVaultAction('deposit', convertedAssetAmount, 'tez').toTransferParams(),
@@ -121,7 +126,7 @@ export const depositCollateralAction =
       }
 
       if (tokenType === 'fa12') {
-        const assetContract = await state.wallet.tezos?.wallet.at(assetAddress)
+        const assetContract = await tezos.wallet.at(assetAddress)
         const batchArr = [
           {
             kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
@@ -137,12 +142,12 @@ export const depositCollateralAction =
           },
         ]
 
-        const batch = await state.wallet.tezos?.wallet.batch(batchArr)
+        const batch = await tezos.wallet.batch(batchArr)
         transaction = await batch.send()
       }
 
       if (tokenType === 'fa2') {
-        const assetContract = await state.wallet.tezos?.wallet.at(assetAddress)
+        const assetContract = await tezos.wallet.at(assetAddress)
 
         const batchArr = [
           {
@@ -179,7 +184,7 @@ export const depositCollateralAction =
           },
         ]
 
-        const batch = await state.wallet.tezos?.wallet.batch(batchArr)
+        const batch = await tezos.wallet.batch(batchArr)
         transaction = await batch.send()
       }
 
@@ -193,7 +198,8 @@ export const depositCollateralAction =
       // refetch data we need
       await dispatch(updateUserData())
       await dispatch(getAvaliableCollaterals())
-      await dispatch(getLoansVaultsData())
+      state.vaults.isLoaded && (await dispatch(getVaultsStorage()))
+      state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
       await dispatch(showToaster(SUCCESS, 'Collateral added.', 'All good :)'))
       await dispatch(toggleActionLoader(false))
     } catch (error) {

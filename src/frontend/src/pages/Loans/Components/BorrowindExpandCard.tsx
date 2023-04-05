@@ -81,7 +81,6 @@ export const BorrowingExpandCard = ({
   collateralRatio,
   borrowCapacity,
   DAOFee,
-  repayFee,
 }: BorrowingExpandCardPropsType) => {
   const { symbol, icon, rate = 1 } = borrowedAsset
 
@@ -173,11 +172,11 @@ export const BorrowingExpandCard = ({
               />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
-              <div className="name">Amount</div>
-              <CommaNumber value={borrowedAmount} className="value" showDecimal decimalsToShow={2} />
+              <div className="name">Outstanding Debt</div>
+              <CommaNumber value={borrowedAmount + fee} className="value" showDecimal decimalsToShow={2} />
               {rate ? (
                 <CommaNumber
-                  value={borrowedAmount * rate}
+                  value={(borrowedAmount + fee) * rate}
                   beginningText="$"
                   className="rate"
                   showDecimal
@@ -212,7 +211,7 @@ export const BorrowingExpandCard = ({
                 </div>
               </ThreeLevelListItem>
               <ThreeLevelListItem>
-                <div className="name">Amount</div>
+                <div className="name">Principal</div>
                 <CommaNumber value={borrowedAmount} decimalsToShow={2} className="value" />
                 {rate ? (
                   <CommaNumber value={borrowedAmount * rate} decimalsToShow={2} beginningText="$" className="rate" />
@@ -220,10 +219,10 @@ export const BorrowingExpandCard = ({
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">
-                  Fees{' '}
+                  Accrued Interest{' '}
                   <CustomTooltip
                     iconId="info"
-                    text="Origination Fee and Interest"
+                    text="Interest, compounded over time every time you borrow"
                     defaultStrokeColor={colors[themeSelected].textColor}
                   />
                 </div>
@@ -262,7 +261,7 @@ export const BorrowingExpandCard = ({
                         vaultId,
                         borrowedAsset: borrowedAsset,
                         borrowedAmount,
-                        feesAmount: repayFee,
+                        feesAmount: fee,
                         currentCollateralBalance: collateralData.at(-1)?.amount ?? 0,
                         borrowCapacity,
                       })
@@ -299,7 +298,7 @@ export const BorrowingExpandCard = ({
 
                       const collateralShare = isTotalRow
                         ? 100
-                        : calculateCollateralShare(amount * rate, collateralTotalBalance)
+                        : Math.max(0, Math.max(100, calculateCollateralShare(amount * rate, collateralTotalBalance)))
 
                       if (isTotalRow && collateralData.length < 3) return null
                       const collateralDecimalsLength = getDynamicDecimalsAmountForOutput(amount)
@@ -554,7 +553,7 @@ export const BorrowingExpandCard = ({
                         borrowedAsset: borrowedAsset,
                         collateralRatio,
                         borrowedAmount,
-                        feesAmount: repayFee,
+                        feesAmount: fee,
                         currentCollateralBalance: collateralData.at(-1)?.amount ?? 0,
                         borrowCapacity,
                       })

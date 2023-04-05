@@ -384,6 +384,10 @@ export const ThreeLevelListItem = styled.div<{ theme: MavrykTheme; customColor?:
     &.down {
       color: ${({ theme }) => theme.downColor};
     }
+
+    &.neutral {
+      fill: ${({ theme }) => theme.dataColor};
+    }
   }
 
   .rate {

@@ -27,7 +27,7 @@ import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Inp
 import { Button } from 'app/App.components/Button/Button.controller'
 import { ACTION_PRIMARY, ACTION_SECONDARY } from 'app/App.components/Button/Button.constants'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
-import { getGovernance } from 'pages/Governance/actions/GovernanseData.actions'
+import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
 import { ProposalRecordType } from 'utils/TypesAndInterfaces/Governance'
 
 export const ProposalSubmission = () => {
@@ -48,7 +48,7 @@ export const ProposalSubmission = () => {
   const { isLoading } = useDataLoader(async () => {
     try {
       if (isGovernanceLoaded) {
-        await dispatch(getGovernance())
+        await dispatch(getGovernanceStorage())
       }
     } catch (e) {}
   }, [])

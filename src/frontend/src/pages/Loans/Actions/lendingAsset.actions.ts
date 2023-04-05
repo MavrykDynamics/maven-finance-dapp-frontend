@@ -1,4 +1,5 @@
 import { OpKind } from '@taquito/taquito'
+import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { ERROR, INFO, SUCCESS } from 'app/App.components/Toaster/Toaster.constants'
@@ -35,9 +36,10 @@ export const depositLendingAssetAction =
     }
 
     try {
+      const tezos = await DAPP_INSTANCE.tezos()
       const convertedAssetAmount = convertNumberForContractCall({ number: addLiquidityAmount, grage: assetDecimals })
       // prepare and send query
-      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.lendingController.address)
+      const contract = await tezos.wallet.at(state.contractAddresses.lendingController.address)
 
       let transaction = null
 
@@ -48,7 +50,7 @@ export const depositLendingAssetAction =
       }
 
       if (tokenType === 'fa12') {
-        const assetContract = await state.wallet.tezos?.wallet.at(tokenAddress)
+        const assetContract = await tezos.wallet.at(tokenAddress)
         const batchArr = [
           {
             kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
@@ -66,12 +68,12 @@ export const depositLendingAssetAction =
           },
         ]
 
-        const batch = await state.wallet.tezos?.wallet.batch(batchArr)
+        const batch = await tezos.wallet.batch(batchArr)
         transaction = await batch.send()
       }
 
       if (tokenType === 'fa2') {
-        const assetContract = await state.wallet.tezos?.wallet.at(tokenAddress)
+        const assetContract = await tezos.wallet.at(tokenAddress)
         const batchArr = [
           {
             kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
@@ -107,7 +109,7 @@ export const depositLendingAssetAction =
           },
         ]
 
-        const batch = await state.wallet.tezos?.wallet.batch(batchArr)
+        const batch = await tezos.wallet.batch(batchArr)
         transaction = await batch.send()
       }
 
@@ -119,9 +121,9 @@ export const depositLendingAssetAction =
       await transaction?.confirmation()
 
       // refetch data we need
-      await dispatch(updateUserData())
       await dispatch(getMTokensStorage())
       await dispatch(getLoansStorage())
+      await dispatch(updateUserData())
       await dispatch(showToaster(SUCCESS, 'Liquidity added.', 'All good :)'))
       await dispatch(toggleActionLoader(false))
     } catch (error) {
@@ -152,7 +154,8 @@ export const withdrawLendingAssetAction =
     try {
       const convertedAssetAmount = convertNumberForContractCall({ number: removeLiquidityAmount, grage: assetDecimals })
       // prepare and send query
-      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.lendingController.address)
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(state.contractAddresses.lendingController.address)
       const transaction = await contract?.methods.removeLiquidity(loanTokenName, convertedAssetAmount).send()
 
       callback()
@@ -163,9 +166,9 @@ export const withdrawLendingAssetAction =
       await transaction?.confirmation()
 
       // refetch data we need
-      await dispatch(updateUserData())
       await dispatch(getMTokensStorage())
       await dispatch(getLoansStorage())
+      await dispatch(updateUserData())
       await dispatch(showToaster(SUCCESS, 'Liquidity removed.', 'All good :)'))
       await dispatch(toggleActionLoader(false))
     } catch (error) {

@@ -13,8 +13,7 @@ import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
 import { getVaultsStorage } from 'pages/Vaults/Vaults.actions'
 import { getFarmStorage } from 'pages/Farms/Farms.actions'
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
-import { getFeedsStorage } from 'pages/DataFeeds/DataFeeds.actions'
-import { getGovernance } from 'pages/Governance/actions/GovernanseData.actions'
+import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
 
 export const Dashboard = () => {
   const dispatch = useDispatch()
@@ -33,7 +32,10 @@ export const Dashboard = () => {
   const { isLoaded: isVestingLoaded } = useSelector((state: State) => state.vesting)
   const { isLoaded: isFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
   const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)
-  const { allVaultsIds, vaultsMapper } = useSelector((state: State) => state.vaults.vaultsList)
+  const {
+    vaultsList: { allVaultsIds, vaultsMapper },
+    isLoaded: isVaultsLoaded,
+  } = useSelector((state: State) => state.vaults)
   const { farms, isLoaded: isFarmsLoaded } = useSelector((state: State) => state.farm)
   const {
     isDataLoaded: isLoansLoaded,
@@ -68,18 +70,17 @@ export const Dashboard = () => {
 
   const tvlValue = doormanTVL + treasuryTVL + farmsTVL + lendingTvl + vaultsTvl
 
-  const { isLoading } = useDataLoader(async () => {
+  const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {
       await Promise.all(
         [
-          dispatch(getVaultsStorage()),
-          !isGovernanceLoaded && dispatch(getGovernance()),
-          !isFeedsLoaded && dispatch(getFeedsStorage()),
-          !isVestingLoaded && dispatch(getVestingStorage()),
-          !isTreasuryLoaded && dispatch(fillTreasuryStorage()),
-          !isLoansLoaded && dispatch(getLoansStorage()),
-          !isFarmsLoaded && dispatch(getFarmStorage()),
-          !isDoormanLoaded && dispatch(getDoormanStorage()),
+          (!isGovernanceLoaded || isDepsChanged) && dispatch(getGovernanceStorage()),
+          (!isVaultsLoaded || isDepsChanged) && dispatch(getVaultsStorage()),
+          (!isVestingLoaded || isDepsChanged) && dispatch(getVestingStorage()),
+          (!isTreasuryLoaded || isDepsChanged) && dispatch(fillTreasuryStorage()),
+          (!isLoansLoaded || isDepsChanged) && dispatch(getLoansStorage()),
+          (!isFarmsLoaded || isDepsChanged) && dispatch(getFarmStorage()),
+          (!isDoormanLoaded || isDepsChanged) && dispatch(getDoormanStorage()),
         ].filter(Boolean),
       )
     } catch (e) {}

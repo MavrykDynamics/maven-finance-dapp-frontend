@@ -5,6 +5,7 @@ import { State } from 'reducers'
 import { RegisterAsSatelliteForm } from '../../utils/TypesAndInterfaces/Forms'
 import type { AppDispatch, GetState } from '../../app/App.controller'
 import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
+import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 
 export const registerAsSatellite =
   (form: RegisterAsSatelliteForm) => async (dispatch: AppDispatch, getState: GetState) => {
@@ -21,7 +22,8 @@ export const registerAsSatellite =
     }
 
     try {
-      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.delegationAddress.address)
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(state.contractAddresses.delegationAddress.address)
 
       const transaction = await contract?.methods
         .registerAsSatellite(
@@ -67,7 +69,8 @@ export const updateSatelliteRecord =
     }
 
     try {
-      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.delegationAddress.address)
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(state.contractAddresses.delegationAddress.address)
 
       const transaction = await contract?.methods
         .updateSatelliteRecord(
@@ -112,7 +115,8 @@ export const unregisterAsSatellite = () => async (dispatch: AppDispatch, getStat
   }
 
   try {
-    const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.delegationAddress.address)
+    const tezos = await DAPP_INSTANCE.tezos()
+    const contract = await tezos.wallet.at(state.contractAddresses.delegationAddress.address)
 
     const transaction = await contract?.methods.unregisterAsSatellite(state.wallet.accountPkh).send()
 

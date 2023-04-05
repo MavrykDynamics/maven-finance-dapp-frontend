@@ -9,7 +9,8 @@ import { SubmitProposalForm } from '../../utils/TypesAndInterfaces/Forms'
 import { State } from 'reducers'
 import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 import { PaymentsDataChangesType, ProposalDataChangesType } from './ProposalSybmittion.types'
-import { getGovernance } from 'pages/Governance/actions/GovernanseData.actions'
+import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
+import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 
 export const submitProposal =
   (form: SubmitProposalForm, fee: number) => async (dispatch: AppDispatch, getState: GetState) => {
@@ -27,7 +28,8 @@ export const submitProposal =
 
     try {
       const { title, description, ipfs, sourceCode } = form
-      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.governanceAddress.address)
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(state.contractAddresses.governanceAddress.address)
       const query = await contract?.methods.propose(title, description, ipfs, sourceCode).send({ amount: fee })
 
       await dispatch(toggleActionLoader(true))
@@ -36,7 +38,7 @@ export const submitProposal =
       await query?.confirmation()
 
       await dispatch(showToaster(SUCCESS, 'Proposal Submitted.', 'All good :)'))
-      await dispatch(getGovernance())
+      await dispatch(getGovernanceStorage())
       await dispatch(getSatellitesStorage())
       await dispatch(toggleActionLoader(false))
     } catch (error) {
@@ -62,7 +64,8 @@ export const dropProposal = (proposalId: number) => async (dispatch: AppDispatch
   }
 
   try {
-    const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.governanceAddress.address)
+    const tezos = await DAPP_INSTANCE.tezos()
+    const contract = await tezos.wallet.at(state.contractAddresses.governanceAddress.address)
 
     await dispatch(toggleActionLoader(true))
     await dispatch(showToaster(INFO, 'Drop proposal...', 'Please wait 30s'))
@@ -72,7 +75,7 @@ export const dropProposal = (proposalId: number) => async (dispatch: AppDispatch
     dispatch(showToaster(SUCCESS, 'Proposal Droped.', 'All good :)'))
     await dispatch(toggleActionLoader(false))
 
-    await dispatch(getGovernance())
+    await dispatch(getGovernanceStorage())
     await dispatch(getSatellitesStorage())
   } catch (error) {
     console.error('dropProposal error:', error)
@@ -97,7 +100,8 @@ export const lockProposal = (proposalId: number) => async (dispatch: AppDispatch
   }
 
   try {
-    const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.governanceAddress.address)
+    const tezos = await DAPP_INSTANCE.tezos()
+    const contract = await tezos.wallet.at(state.contractAddresses.governanceAddress.address)
 
     await dispatch(toggleActionLoader(true))
     await dispatch(showToaster(INFO, 'Locking proposal...', 'Please wait 30s'))
@@ -107,7 +111,7 @@ export const lockProposal = (proposalId: number) => async (dispatch: AppDispatch
     await dispatch(toggleActionLoader(false))
     await dispatch(showToaster(SUCCESS, 'Proposal locked.', 'All good :)'))
 
-    await dispatch(getGovernance())
+    await dispatch(getGovernanceStorage())
     await dispatch(getSatellitesStorage())
   } catch (error) {
     console.error('lockProposal error:', error)
@@ -144,14 +148,16 @@ export const updateProposalData =
     }
 
     try {
-      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.governanceAddress.address)
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(state.contractAddresses.governanceAddress.address)
 
       if (!contract) {
         throw new Error(`No contract provided`)
       }
 
       try {
-        const operationEstimate = await state.wallet.tezos?.estimate.transfer(
+        const tezos = await DAPP_INSTANCE.tezos()
+        const operationEstimate = await tezos.estimate.transfer(
           contract.methods.updateProposalData(proposalId, bytesChanges, paymentChanges).toTransferParams(),
         )
 
@@ -169,7 +175,7 @@ export const updateProposalData =
       await dispatch(showToaster(SUCCESS, 'Proposal updated.', 'All good :)'))
       await dispatch(toggleActionLoader(false))
 
-      await dispatch(getGovernance())
+      await dispatch(getGovernanceStorage())
       await dispatch(getSatellitesStorage())
     } catch (error) {
       if (error instanceof Error) {

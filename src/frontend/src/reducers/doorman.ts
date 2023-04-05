@@ -1,6 +1,6 @@
 import { GET_DOORMAN_STORAGE } from 'pages/Doorman/Doorman.actions'
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
-import { DoormanStorage, MvkHistoryData, SmvkHistoryData } from '../utils/TypesAndInterfaces/Doorman'
+import { MvkHistoryData, SmvkHistoryData } from '../utils/TypesAndInterfaces/Doorman'
 
 export const STAKE = 'STAKE'
 export const UNSTAKE = 'UNSTAKE'

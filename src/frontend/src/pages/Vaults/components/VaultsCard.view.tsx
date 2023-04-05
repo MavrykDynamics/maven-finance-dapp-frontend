@@ -1,4 +1,6 @@
 import React, { useEffect, useState, useContext, useRef } from 'react'
+import { State } from 'reducers'
+import { useSelector } from 'react-redux'
 import { useClickAway } from 'react-use'
 
 // components
@@ -100,7 +102,35 @@ export const VaultsCard = (props: Props) => {
     handleMarkForLiquidation,
   } = props
 
-  const { openLiquidateVaultPopup } = useContext(loansPopupsContext)
+  const {
+    openLiquidateVaultPopup,
+    changeBakerPopup,
+    repayPartPopup,
+    repayFullPopup,
+    borrowAssetPopup,
+    addExistingCollateralPopup,
+    addNewCollateralPopup,
+    withdrawCollateralPopup,
+    updateMvkOperatorPopup,
+    managePermissionsPopup,
+    liquidateVaultPopup,
+  } = useContext(loansPopupsContext)
+
+  const { isActionLoading } = useSelector((state: State) => state.loading)
+
+  const notHandleClickAway =
+    repayPartPopup.showModal ||
+    changeBakerPopup.showModal ||
+    repayFullPopup.showModal ||
+    borrowAssetPopup.showModal ||
+    addExistingCollateralPopup.showModal ||
+    addNewCollateralPopup.showModal ||
+    withdrawCollateralPopup.showModal ||
+    updateMvkOperatorPopup.showModal ||
+    managePermissionsPopup.showModal ||
+    liquidateVaultPopup.showModal ||
+    isActionLoading
+
   const [expanded, setExpanded] = useState(false)
   const [timerTimestamp, setTimerTimestamp] = useState<number | undefined>(undefined)
 
@@ -116,7 +146,7 @@ export const VaultsCard = (props: Props) => {
   const isMarkStatus = vaultsStatuses.MARK === status
 
   const ref = useRef<HTMLDivElement | null>(null)
-  useClickAway(ref, () => setExpanded(false))
+  useClickAway(ref, () => (notHandleClickAway ? null : setExpanded(false)))
 
   const getCountdownTimestamp = async (levelOfEarly: number, levelOfLate: number) => {
     const [timestampOfEarly, timestampOfLate] = await Promise.all([
@@ -309,8 +339,7 @@ export const VaultsCard = (props: Props) => {
           getExpandedStatus={setExpanded}
           isOpenedVault={expanded}
           isOwner
-          // TODO: add this values as on loans
-          DAOFee={0}
+          DAOFee={props.daoFee}
         />
       ) : (
         <BorrowingExpandCard
@@ -319,8 +348,7 @@ export const VaultsCard = (props: Props) => {
           headerSufix={headerSufix}
           getExpandedStatus={setExpanded}
           isOpenedVault={expanded}
-          // TODO: add this values as on loans
-          DAOFee={0}
+          DAOFee={props.daoFee}
         >
           {generalExpand}
         </BorrowingExpandCard>

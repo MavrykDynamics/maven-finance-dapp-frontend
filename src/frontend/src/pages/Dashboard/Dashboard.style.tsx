@@ -148,17 +148,26 @@ export const StatBlock = styled.div`
       border-radius: 5px;
       font-weight: 400;
       font-size: 12px;
-      padding: 2px 3px;
+      padding: 3px 3px;
       height: fit-content;
+      min-width: 55px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
 
       &.up {
-        color: #4bcf83;
-        background: rgba(39, 174, 96, 0.4);
+        color: ${({ theme }) => theme.upColor};
+        background: rgba(52, 246, 106, 0.2);
       }
 
       &.down {
-        color: #ff4343;
-        background: rgba(174, 48, 39, 0.4);
+        color: ${({ theme }) => theme.downColor};
+        background: rgba(255, 67, 67, 0.2);
+      }
+
+      &.neutral {
+        color: ${({ theme }) => theme.dataColor};
+        background: rgba(119, 164, 242, 0.2);
       }
     }
   }

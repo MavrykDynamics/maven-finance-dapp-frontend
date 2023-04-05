@@ -81,6 +81,7 @@ export const LOANS_QUERY = `
               loan_principal_total
               loan_outstanding_total
               loan_interest_total
+              borrow_index
             }
           }
           loan_token {
@@ -89,6 +90,7 @@ export const LOANS_QUERY = `
             loan_token_contract_standard
             oracle_id
             current_interest_rate
+            borrow_index
           }
           lending_controller {
             liquidation_delay_in_minutes
@@ -100,6 +102,7 @@ export const LOANS_QUERY = `
           loan_interest_total
           owner_id
           loan_outstanding_total
+          borrow_index
         }
       }
     }
@@ -179,6 +182,24 @@ export const USER_LENDING_DATA_QUERY = `
           interest_rate_decimals
           interest_treasury_share
           decimals
+        }
+      }
+
+      lending_controller_vaults {
+        collateral_balances {
+          balance
+          token {
+            token_name
+            token_address
+            oracle_id
+          }
+        }
+        loan_decimals
+        loan_principal_total
+        loan_token {
+          loan_token_name
+          loan_token_address
+          oracle_id
         }
       }
     }

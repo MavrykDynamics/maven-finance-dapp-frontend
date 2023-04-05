@@ -98,7 +98,16 @@ export const Repay = ({
 
   const repayBtnHandler = async () => {
     if (vaultId && borrowedAsset) {
-      await dispatch(repayPartOfVaultAction(vaultId, inputAmount, borrowedAsset.decimals, closePopup))
+      await dispatch(
+        repayPartOfVaultAction(
+          vaultId,
+          inputAmount,
+          borrowedAsset.decimals,
+          borrowedAsset.tokenType,
+          borrowedAsset.address,
+          closePopup,
+        ),
+      )
     }
   }
 
@@ -156,11 +165,7 @@ export const Repay = ({
                   settings={{
                     balance: borrowedAsset.userBalance,
                     balanceAsset: borrowedAsset?.symbol,
-                    useMaxHandler: () =>
-                      inputOnChangeHandle(
-                        String(Math.min(borrowedAsset.userBalance, totalOutstanding)),
-                        Math.min(borrowedAsset.userBalance, totalOutstanding),
-                      ),
+                    useMaxHandler: () => inputOnChangeHandle(String(totalOutstanding), totalOutstanding),
                     inputStatus: inputData.validationStatus,
                     convertedValue: inputAmount * borrowedAsset.rate,
                     inputSize: INPUT_LARGE,

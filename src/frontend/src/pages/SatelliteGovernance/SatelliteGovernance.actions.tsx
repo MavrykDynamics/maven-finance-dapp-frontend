@@ -13,6 +13,7 @@ import {
 
 import { SatelliteGovernanceTransfer } from '../../utils/TypesAndInterfaces/Satellites'
 import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
+import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 
 //getGovernanceSatelliteStorage
 export const GET_GOVERNANCE_SATELLITE_STORAGE = 'GET_GOVERNANCE_SATELLITE_STORAGE'
@@ -59,7 +60,8 @@ export const suspendSatellite =
 
     try {
       await dispatch(toggleActionLoader(true))
-      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
       const transaction = await contract?.methods.suspendSatellite(satelliteAddress, purpose).send()
       dispatch(showToaster(INFO, 'Suspend Satellite...', 'Please wait 30s'))
 
@@ -95,7 +97,8 @@ export const unsuspendSatellite =
 
     try {
       await dispatch(toggleActionLoader(true))
-      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
       const transaction = await contract?.methods.restoreSatellite(satelliteAddress, purpose).send()
 
       await dispatch(showToaster(INFO, 'Unsuspend Satellite...', 'Please wait 30s'))
@@ -131,7 +134,8 @@ export const banSatellite =
 
     try {
       await dispatch(toggleActionLoader(true))
-      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
       const transaction = await contract?.methods.banSatellite(satelliteAddress, purpose).send()
 
       await dispatch(showToaster(INFO, 'Ban Satellite...', 'Please wait 30s'))
@@ -168,7 +172,8 @@ export const unbanSatellite =
 
     try {
       await dispatch(toggleActionLoader(true))
-      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
       const transaction = await contract?.methods.unbanSatellite(satelliteAddress, purpose).send()
 
       await dispatch(showToaster(INFO, 'Unban Satellite...', 'Please wait 30s'))
@@ -205,7 +210,8 @@ export const removeOracles =
 
     try {
       await dispatch(toggleActionLoader(true))
-      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
       const transaction = await contract?.methods.removeAllSatelliteOracles(satelliteAddress, purpose).send()
 
       await dispatch(showToaster(INFO, 'Remove all Oracles from Satellite...', 'Please wait 30s'))
@@ -243,7 +249,8 @@ export const removeOracleInAggregator =
 
     try {
       await dispatch(toggleActionLoader(true))
-      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
       const transaction = await contract?.methods
         .removeOracleInAggregator(oracleAddress, satelliteAddress, purpose)
         .send()
@@ -283,7 +290,8 @@ export const addOracleToAggregator =
 
     try {
       await dispatch(toggleActionLoader(true))
-      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
       const transaction = await contract?.methods.addOracleToAggregator(oracleAddress, satelliteAddress, purpose).send()
 
       await dispatch(showToaster(INFO, 'Add Oracle to Aggregator...', 'Please wait 30s'))
@@ -321,7 +329,8 @@ export const setAggregatorMaintainer =
 
     try {
       await dispatch(toggleActionLoader(true))
-      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
       const transaction = await contract?.methods
         .setAggregatorMaintainer(oracleAddress, satelliteAddress, purpose)
         .send()
@@ -360,7 +369,8 @@ export const dropAction =
 
     try {
       await dispatch(toggleActionLoader(true))
-      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
       const transaction = await contract?.methods.dropAction(actionId).send()
 
       dispatch(showToaster(INFO, 'Drop Action...', 'Please wait 30s'))
@@ -398,7 +408,8 @@ export const voteForAction =
 
     try {
       await dispatch(toggleActionLoader(true))
-      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
       const transaction = await contract?.methods.voteForAction(actionId, voteType).send()
 
       await dispatch(showToaster(INFO, 'Vote YES...', 'Please wait 30s'))
@@ -436,7 +447,8 @@ export const restoreSatellite =
 
     try {
       await dispatch(toggleActionLoader(true))
-      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
       const transaction = await contract?.methods.restoreSatellite(satelliteAddress, purpose).send()
 
       await dispatch(showToaster(INFO, 'Restore Satellite...', 'Please wait 30s'))
@@ -473,7 +485,8 @@ export const updateAggregatorStatus =
 
     try {
       await dispatch(toggleActionLoader(true))
-      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
       const transaction = await contract?.methods.updateAggregatorStatus(aggregatorAddress, status, purpose).send()
 
       await dispatch(showToaster(INFO, 'Update Aggregator Status...', 'Please wait 30s'))
@@ -510,7 +523,8 @@ export const registerAggregator =
 
     try {
       await dispatch(toggleActionLoader(true))
-      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
       const transaction = await contract?.methods.registerAggregator(aggregatorPair, aggregatorAddress).send()
 
       await dispatch(showToaster(INFO, 'Register Aggregator...', 'Please wait 30s'))
@@ -548,7 +562,8 @@ export const fixMistakenTransfer =
 
     try {
       await dispatch(toggleActionLoader(true))
-      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
       const transaction = await contract?.methods
         .fixMistakenTransfer(targetContractAddress, purpose, transferList)
         .send()

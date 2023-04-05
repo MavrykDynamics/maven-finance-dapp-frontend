@@ -39,9 +39,9 @@ export const DataFeeds = () => {
   const { search } = useLocation()
   const { feedsLedger, feedCategories, isLoaded: isDataFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
 
-  const { isLoading } = useDataLoader(async () => {
+  const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {
-      if (!isDataFeedsLoaded) {
+      if (!isDataFeedsLoaded || isDepsChanged) {
         await dispatch(getFeedsStorage())
       }
     } catch (e) {}

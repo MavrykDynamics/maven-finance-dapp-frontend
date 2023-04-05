@@ -14,7 +14,7 @@ import { normalizeGovernanceConfig, normalizeGovernanceProposals } from './gover
 
 export const GET_PROPOSALS = 'GET_PROPOSALS'
 export const GET_GOVERNANCE_CONFIG = 'GET_GOVERNANCE_CONFIG'
-export const getGovernance = () => async (dispatch: AppDispatch, getState: GetState) => {
+export const getGovernanceStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
   const {
     tokens: { dipDupTokens },
   } = getState()

@@ -34,14 +34,18 @@ export const Market = () => {
   const dispatch = useDispatch()
   const { assetId, tabId } = useParams<{ assetId: string; tabId: string }>()
   const { loanTokens, loansControllerAddress, isDataLoaded } = useSelector((state: State) => state.loans)
+  const { accountPkh } = useSelector((state: State) => state.wallet)
 
-  const { isLoading } = useDataLoader(async () => {
-    try {
-      if (!isDataLoaded) {
-        await dispatch(getLoansStorage())
-      }
-    } catch (e) {}
-  }, [isDataLoaded])
+  const { isLoading } = useDataLoader(
+    async (isDepsChanged) => {
+      try {
+        if (!isDataLoaded || isDepsChanged) {
+          await dispatch(getLoansStorage())
+        }
+      } catch (e) {}
+    },
+    [accountPkh],
+  )
 
   useEffect(() => {
     window.scrollTo(0, 0)

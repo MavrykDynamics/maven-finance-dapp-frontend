@@ -16,7 +16,7 @@ const BackgroundArc = ({ className = '', paint = cyanColor, offset }: Background
       stroke={paint}
       strokeWidth={8}
       strokeLinecap="round"
-      strokeDasharray={180}
+      strokeDasharray={183}
       strokeDashoffset={offset}
       style={{ transition: 'stroke-dashoffset 500ms ease-in-out' }}
     />
@@ -30,10 +30,10 @@ const BackgroundArc = ({ className = '', paint = cyanColor, offset }: Background
         y2={3.9239}
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#FF4E43" />
-        <stop offset={0.354167} stopColor="#FF9D43" />
-        <stop offset={0.671875} stopColor="#FBFF43" />
-        <stop offset={1} stopColor="#03D463" />
+        <stop stopColor="#03D463" />
+        <stop offset={0.354167} stopColor="#FBFF43" />
+        <stop offset={0.671875} stopColor="#FF9D43" />
+        <stop offset={1} stopColor="#FF4E43" />
       </linearGradient>
     </defs>
   </svg>

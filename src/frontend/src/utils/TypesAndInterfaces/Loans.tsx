@@ -29,6 +29,7 @@ export type BaseLoansAssetDataType = {
 export type LoansAssetDataType = BaseLoansAssetDataType & {
   userBalance: number
   tokenType: TokenType
+  address: string
 }
 
 export type CollateralType = BaseLoansAssetDataType & {
@@ -93,7 +94,6 @@ export type LoansVaultType = {
   borrowCapacity: number
   apr: number
   fee: number
-  repayFee: number
   address: string
   name: string
   vaultId: number

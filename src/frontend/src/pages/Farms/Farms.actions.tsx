@@ -17,6 +17,7 @@ import { getDoormanStorage } from '../Doorman/Doorman.actions'
 import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 import { updateUserData } from 'reducers/actions/user.actions'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
+import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 
 export const GET_FARM_STORAGE = 'GET_FARM_STORAGE'
 export const getFarmStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
@@ -90,7 +91,8 @@ export const harvest = (farmAddress: string) => async (dispatch: AppDispatch, ge
   }
 
   try {
-    const contract = await state.wallet.tezos?.wallet.at(farmAddress)
+    const tezos = await DAPP_INSTANCE.tezos()
+    const contract = await tezos.wallet.at(farmAddress)
     const transaction = await contract?.methods.claim(farmAddress).send()
 
     await dispatch(toggleActionLoader(true))
@@ -130,7 +132,8 @@ export const deposit = (farmAddress: string, amount: number) => async (dispatch:
   }
 
   try {
-    const contract = await state.wallet.tezos?.wallet.at(farmAddress)
+    const tezos = await DAPP_INSTANCE.tezos()
+    const contract = await tezos.wallet.at(farmAddress)
     const transaction = await contract?.methods.deposit(convertNumberForContractCall({ number: amount })).send()
 
     await dispatch(toggleActionLoader(true))
@@ -170,7 +173,8 @@ export const withdraw = (farmAddress: string, amount: number) => async (dispatch
   }
 
   try {
-    const contract = await state.wallet.tezos?.wallet.at(farmAddress)
+    const tezos = await DAPP_INSTANCE.tezos()
+    const contract = await tezos.wallet.at(farmAddress)
     const transaction = await contract?.methods.withdraw(convertNumberForContractCall({ number: amount })).send()
 
     await dispatch(toggleActionLoader(true))

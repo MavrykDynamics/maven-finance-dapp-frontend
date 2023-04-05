@@ -14,4 +14,5 @@ export const ACCURATE_DECIMALS_TO_SHOW = 9
 
 export const BLOCKS_PER_MINUTE = 2
 export const SECONDS_PER_BLOCK = 30
-export const FIXED_POINT_ACCURACY = 10 ** 36
+export const FIXED_POINT_ACCURACY = 10 ** 27
+export const SECONDS_PER_YEAR = 60 * 60 * 24 * 365

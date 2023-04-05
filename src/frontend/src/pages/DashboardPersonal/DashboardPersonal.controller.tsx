@@ -6,7 +6,6 @@ import { Link, Redirect, Route, Switch } from 'react-router-dom'
 import { State } from 'reducers'
 
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
-import { getFeedsStorage } from 'pages/DataFeeds/DataFeeds.actions'
 import { claimAllRewardsAction } from './DashboardPersonal.actions'
 import { updateUserData } from 'reducers/actions/user.actions'
 import { getEmergencyGovernanceStorage } from 'pages/EmergencyGovernance/EmergencyGovernance.actions'
@@ -37,7 +36,7 @@ import VestingTab from './DashboardPersonalComponents/VestingTab'
 import { DashboardPersonalStyled } from './DashboardPersonal.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
-import { getGovernance } from 'pages/Governance/actions/GovernanseData.actions'
+import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
 
 const DashboardPersonal = () => {
   const dispatch = useDispatch()
@@ -75,27 +74,22 @@ const DashboardPersonal = () => {
     await dispatch(claimAllRewardsAction())
   }
 
-  const { isLoading } = useDataLoader(async () => {
-    try {
-      await Promise.all(
-        [
-          !isGovernanceLoaded && dispatch(getGovernance()),
-          !isEgovLoaded && dispatch(getEmergencyGovernanceStorage()),
-          isVestee && !isVestingLoaded && dispatch(getVestingStorage()),
-          !isFeedsLoaded && dispatch(getFeedsStorage()),
-          !isLoansLoaded && dispatch(getLoansStorage()),
-        ].filter(Boolean),
-      )
-    } catch (e) {}
-  }, [accountPkh])
-
-  const { isLoading: isUserLoansLoading } = useDataLoader(async () => {
-    try {
-      if (!isUserDataLoaded) {
-        await dispatch(updateUserData())
-      }
-    } catch (e) {}
-  }, [accountPkh])
+  const { isLoading } = useDataLoader(
+    async (isDepsChanged) => {
+      try {
+        await Promise.all(
+          [
+            (!isGovernanceLoaded || isDepsChanged) && dispatch(getGovernanceStorage()),
+            (!isEgovLoaded || isDepsChanged) && dispatch(getEmergencyGovernanceStorage()),
+            isVestee && (!isVestingLoaded || isDepsChanged) && dispatch(getVestingStorage()),
+            (!isLoansLoaded || isDepsChanged) && dispatch(getLoansStorage()),
+            (!isUserDataLoaded || isDepsChanged) && dispatch(updateUserData()),
+          ].filter(Boolean),
+        )
+      } catch (e) {}
+    },
+    [accountPkh],
+  )
 
   const rewards = {
     rewardsToClaim:
@@ -178,7 +172,7 @@ const DashboardPersonal = () => {
               <DashboardPersonalTabStyled>
                 <Switch>
                   <Route exact path={`/dashboard-personal/${PORTFOLIO_TAB_ID}/:secondaryTabId?`}>
-                    <PortfolioTab {...walletData} isUserLoansLoading={isUserLoansLoading} />
+                    <PortfolioTab {...walletData} isUserLoansLoading={isLoading} />
                   </Route>
                   <Route exact path={`/dashboard-personal/${DELEGATION_TAB_ID}`}>
                     <DelegationTab />

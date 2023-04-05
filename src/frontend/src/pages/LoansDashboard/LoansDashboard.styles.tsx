@@ -20,6 +20,14 @@ export const LoansDashboardStyled = styled.div`
       color: ${({ theme }) => theme.textColor};
     }
 
+    .value-wrap {
+      width: fit-content;
+
+      > * {
+        width: fit-content;
+      }
+    }
+
     .value {
       font-weight: 600;
       font-size: 18px;
@@ -40,6 +48,10 @@ export const LoansDashboardStyled = styled.div`
 
       &.down {
         color: ${({ theme }) => theme.downColor};
+      }
+
+      &.neutral {
+        color: ${({ theme }) => theme.dataColor};
       }
     }
   }

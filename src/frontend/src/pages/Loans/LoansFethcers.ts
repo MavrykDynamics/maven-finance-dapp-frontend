@@ -46,7 +46,7 @@ export const getXTZBakers = async () => {
         ? [
             {
               logo: 'https://tezos-nodes.com/storage/images/BBOZYYLQpLfTzbXzu0jvk4CublJzMgLM8GNz152M.png',
-              name: 'Puss in Buts',
+              name: 'Puss in Boots',
               address: 'tz1bQMn5xYFbX6geRxqvuAiTywsCtNywawxH',
               fee: 0.14,
               yield: 4.91,

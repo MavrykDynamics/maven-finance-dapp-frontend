@@ -472,6 +472,10 @@ export type Aggregator_Factory = {
   __typename?: 'aggregator_factory';
   address: Scalars['String'];
   admin: Scalars['String'];
+  /** An array relationship */
+  aggregator_lambdas: Array<Aggregator_Factory_Aggregator_Lambda>;
+  /** An aggregate relationship */
+  aggregator_lambdas_aggregate: Aggregator_Factory_Aggregator_Lambda_Aggregate;
   aggregator_name_max_length: Scalars['smallint'];
   /** An array relationship */
   aggregators: Array<Aggregator>;
@@ -492,16 +496,32 @@ export type Aggregator_Factory = {
   /** An aggregate relationship */
   lambdas_aggregate: Aggregator_Factory_Lambda_Aggregate;
   last_updated_at?: Maybe<Scalars['timestamptz']>;
-  /** An array relationship */
-  product_lambdas: Array<Aggregator_Factory_Product_Lambda>;
-  /** An aggregate relationship */
-  product_lambdas_aggregate: Aggregator_Factory_Product_Lambda_Aggregate;
   track_aggregator_paused: Scalars['Boolean'];
   untrack_aggregator_paused: Scalars['Boolean'];
   /** An array relationship */
   whitelist_contracts: Array<Aggregator_Factory_Whitelist_Contract>;
   /** An aggregate relationship */
   whitelist_contracts_aggregate: Aggregator_Factory_Whitelist_Contract_Aggregate;
+};
+
+
+/** columns and relationships of "aggregator_factory" */
+export type Aggregator_FactoryAggregator_LambdasArgs = {
+  distinct_on?: InputMaybe<Array<Aggregator_Factory_Aggregator_Lambda_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Aggregator_Factory_Aggregator_Lambda_Order_By>>;
+  where?: InputMaybe<Aggregator_Factory_Aggregator_Lambda_Bool_Exp>;
+};
+
+
+/** columns and relationships of "aggregator_factory" */
+export type Aggregator_FactoryAggregator_Lambdas_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Aggregator_Factory_Aggregator_Lambda_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Aggregator_Factory_Aggregator_Lambda_Order_By>>;
+  where?: InputMaybe<Aggregator_Factory_Aggregator_Lambda_Bool_Exp>;
 };
 
 
@@ -562,26 +582,6 @@ export type Aggregator_FactoryLambdas_AggregateArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   order_by?: InputMaybe<Array<Aggregator_Factory_Lambda_Order_By>>;
   where?: InputMaybe<Aggregator_Factory_Lambda_Bool_Exp>;
-};
-
-
-/** columns and relationships of "aggregator_factory" */
-export type Aggregator_FactoryProduct_LambdasArgs = {
-  distinct_on?: InputMaybe<Array<Aggregator_Factory_Product_Lambda_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Aggregator_Factory_Product_Lambda_Order_By>>;
-  where?: InputMaybe<Aggregator_Factory_Product_Lambda_Bool_Exp>;
-};
-
-
-/** columns and relationships of "aggregator_factory" */
-export type Aggregator_FactoryProduct_Lambdas_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Aggregator_Factory_Product_Lambda_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Aggregator_Factory_Product_Lambda_Order_By>>;
-  where?: InputMaybe<Aggregator_Factory_Product_Lambda_Bool_Exp>;
 };
 
 
@@ -676,6 +676,254 @@ export type Aggregator_Factory_Aggregate_Order_By = {
   variance?: InputMaybe<Aggregator_Factory_Variance_Order_By>;
 };
 
+/** columns and relationships of "aggregator_factory_aggregator_lambda" */
+export type Aggregator_Factory_Aggregator_Lambda = {
+  __typename?: 'aggregator_factory_aggregator_lambda';
+  /** An object relationship */
+  contract: Aggregator_Factory;
+  contract_id: Scalars['String'];
+  id: Scalars['bigint'];
+  lambda_bytes: Scalars['String'];
+  lambda_name: Scalars['String'];
+  last_updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregated selection of "aggregator_factory_aggregator_lambda" */
+export type Aggregator_Factory_Aggregator_Lambda_Aggregate = {
+  __typename?: 'aggregator_factory_aggregator_lambda_aggregate';
+  aggregate?: Maybe<Aggregator_Factory_Aggregator_Lambda_Aggregate_Fields>;
+  nodes: Array<Aggregator_Factory_Aggregator_Lambda>;
+};
+
+export type Aggregator_Factory_Aggregator_Lambda_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Aggregator_Factory_Aggregator_Lambda_Aggregate_Bool_Exp_Count>;
+};
+
+export type Aggregator_Factory_Aggregator_Lambda_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Aggregator_Factory_Aggregator_Lambda_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Aggregator_Factory_Aggregator_Lambda_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+/** aggregate fields of "aggregator_factory_aggregator_lambda" */
+export type Aggregator_Factory_Aggregator_Lambda_Aggregate_Fields = {
+  __typename?: 'aggregator_factory_aggregator_lambda_aggregate_fields';
+  avg?: Maybe<Aggregator_Factory_Aggregator_Lambda_Avg_Fields>;
+  count: Scalars['Int'];
+  max?: Maybe<Aggregator_Factory_Aggregator_Lambda_Max_Fields>;
+  min?: Maybe<Aggregator_Factory_Aggregator_Lambda_Min_Fields>;
+  stddev?: Maybe<Aggregator_Factory_Aggregator_Lambda_Stddev_Fields>;
+  stddev_pop?: Maybe<Aggregator_Factory_Aggregator_Lambda_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<Aggregator_Factory_Aggregator_Lambda_Stddev_Samp_Fields>;
+  sum?: Maybe<Aggregator_Factory_Aggregator_Lambda_Sum_Fields>;
+  var_pop?: Maybe<Aggregator_Factory_Aggregator_Lambda_Var_Pop_Fields>;
+  var_samp?: Maybe<Aggregator_Factory_Aggregator_Lambda_Var_Samp_Fields>;
+  variance?: Maybe<Aggregator_Factory_Aggregator_Lambda_Variance_Fields>;
+};
+
+
+/** aggregate fields of "aggregator_factory_aggregator_lambda" */
+export type Aggregator_Factory_Aggregator_Lambda_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Aggregator_Factory_Aggregator_Lambda_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "aggregator_factory_aggregator_lambda" */
+export type Aggregator_Factory_Aggregator_Lambda_Aggregate_Order_By = {
+  avg?: InputMaybe<Aggregator_Factory_Aggregator_Lambda_Avg_Order_By>;
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<Aggregator_Factory_Aggregator_Lambda_Max_Order_By>;
+  min?: InputMaybe<Aggregator_Factory_Aggregator_Lambda_Min_Order_By>;
+  stddev?: InputMaybe<Aggregator_Factory_Aggregator_Lambda_Stddev_Order_By>;
+  stddev_pop?: InputMaybe<Aggregator_Factory_Aggregator_Lambda_Stddev_Pop_Order_By>;
+  stddev_samp?: InputMaybe<Aggregator_Factory_Aggregator_Lambda_Stddev_Samp_Order_By>;
+  sum?: InputMaybe<Aggregator_Factory_Aggregator_Lambda_Sum_Order_By>;
+  var_pop?: InputMaybe<Aggregator_Factory_Aggregator_Lambda_Var_Pop_Order_By>;
+  var_samp?: InputMaybe<Aggregator_Factory_Aggregator_Lambda_Var_Samp_Order_By>;
+  variance?: InputMaybe<Aggregator_Factory_Aggregator_Lambda_Variance_Order_By>;
+};
+
+/** aggregate avg on columns */
+export type Aggregator_Factory_Aggregator_Lambda_Avg_Fields = {
+  __typename?: 'aggregator_factory_aggregator_lambda_avg_fields';
+  id?: Maybe<Scalars['Float']>;
+};
+
+/** order by avg() on columns of table "aggregator_factory_aggregator_lambda" */
+export type Aggregator_Factory_Aggregator_Lambda_Avg_Order_By = {
+  id?: InputMaybe<Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "aggregator_factory_aggregator_lambda". All fields are combined with a logical 'AND'. */
+export type Aggregator_Factory_Aggregator_Lambda_Bool_Exp = {
+  _and?: InputMaybe<Array<Aggregator_Factory_Aggregator_Lambda_Bool_Exp>>;
+  _not?: InputMaybe<Aggregator_Factory_Aggregator_Lambda_Bool_Exp>;
+  _or?: InputMaybe<Array<Aggregator_Factory_Aggregator_Lambda_Bool_Exp>>;
+  contract?: InputMaybe<Aggregator_Factory_Bool_Exp>;
+  contract_id?: InputMaybe<String_Comparison_Exp>;
+  id?: InputMaybe<Bigint_Comparison_Exp>;
+  lambda_bytes?: InputMaybe<String_Comparison_Exp>;
+  lambda_name?: InputMaybe<String_Comparison_Exp>;
+  last_updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+};
+
+/** aggregate max on columns */
+export type Aggregator_Factory_Aggregator_Lambda_Max_Fields = {
+  __typename?: 'aggregator_factory_aggregator_lambda_max_fields';
+  contract_id?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['bigint']>;
+  lambda_bytes?: Maybe<Scalars['String']>;
+  lambda_name?: Maybe<Scalars['String']>;
+  last_updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "aggregator_factory_aggregator_lambda" */
+export type Aggregator_Factory_Aggregator_Lambda_Max_Order_By = {
+  contract_id?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  lambda_bytes?: InputMaybe<Order_By>;
+  lambda_name?: InputMaybe<Order_By>;
+  last_updated_at?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Aggregator_Factory_Aggregator_Lambda_Min_Fields = {
+  __typename?: 'aggregator_factory_aggregator_lambda_min_fields';
+  contract_id?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['bigint']>;
+  lambda_bytes?: Maybe<Scalars['String']>;
+  lambda_name?: Maybe<Scalars['String']>;
+  last_updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "aggregator_factory_aggregator_lambda" */
+export type Aggregator_Factory_Aggregator_Lambda_Min_Order_By = {
+  contract_id?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  lambda_bytes?: InputMaybe<Order_By>;
+  lambda_name?: InputMaybe<Order_By>;
+  last_updated_at?: InputMaybe<Order_By>;
+};
+
+/** Ordering options when selecting data from "aggregator_factory_aggregator_lambda". */
+export type Aggregator_Factory_Aggregator_Lambda_Order_By = {
+  contract?: InputMaybe<Aggregator_Factory_Order_By>;
+  contract_id?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  lambda_bytes?: InputMaybe<Order_By>;
+  lambda_name?: InputMaybe<Order_By>;
+  last_updated_at?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "aggregator_factory_aggregator_lambda" */
+export enum Aggregator_Factory_Aggregator_Lambda_Select_Column {
+  /** column name */
+  ContractId = 'contract_id',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  LambdaBytes = 'lambda_bytes',
+  /** column name */
+  LambdaName = 'lambda_name',
+  /** column name */
+  LastUpdatedAt = 'last_updated_at'
+}
+
+/** aggregate stddev on columns */
+export type Aggregator_Factory_Aggregator_Lambda_Stddev_Fields = {
+  __typename?: 'aggregator_factory_aggregator_lambda_stddev_fields';
+  id?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev() on columns of table "aggregator_factory_aggregator_lambda" */
+export type Aggregator_Factory_Aggregator_Lambda_Stddev_Order_By = {
+  id?: InputMaybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Aggregator_Factory_Aggregator_Lambda_Stddev_Pop_Fields = {
+  __typename?: 'aggregator_factory_aggregator_lambda_stddev_pop_fields';
+  id?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_pop() on columns of table "aggregator_factory_aggregator_lambda" */
+export type Aggregator_Factory_Aggregator_Lambda_Stddev_Pop_Order_By = {
+  id?: InputMaybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Aggregator_Factory_Aggregator_Lambda_Stddev_Samp_Fields = {
+  __typename?: 'aggregator_factory_aggregator_lambda_stddev_samp_fields';
+  id?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_samp() on columns of table "aggregator_factory_aggregator_lambda" */
+export type Aggregator_Factory_Aggregator_Lambda_Stddev_Samp_Order_By = {
+  id?: InputMaybe<Order_By>;
+};
+
+/** Streaming cursor of the table "aggregator_factory_aggregator_lambda" */
+export type Aggregator_Factory_Aggregator_Lambda_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Aggregator_Factory_Aggregator_Lambda_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Aggregator_Factory_Aggregator_Lambda_Stream_Cursor_Value_Input = {
+  contract_id?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['bigint']>;
+  lambda_bytes?: InputMaybe<Scalars['String']>;
+  lambda_name?: InputMaybe<Scalars['String']>;
+  last_updated_at?: InputMaybe<Scalars['timestamptz']>;
+};
+
+/** aggregate sum on columns */
+export type Aggregator_Factory_Aggregator_Lambda_Sum_Fields = {
+  __typename?: 'aggregator_factory_aggregator_lambda_sum_fields';
+  id?: Maybe<Scalars['bigint']>;
+};
+
+/** order by sum() on columns of table "aggregator_factory_aggregator_lambda" */
+export type Aggregator_Factory_Aggregator_Lambda_Sum_Order_By = {
+  id?: InputMaybe<Order_By>;
+};
+
+/** aggregate var_pop on columns */
+export type Aggregator_Factory_Aggregator_Lambda_Var_Pop_Fields = {
+  __typename?: 'aggregator_factory_aggregator_lambda_var_pop_fields';
+  id?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_pop() on columns of table "aggregator_factory_aggregator_lambda" */
+export type Aggregator_Factory_Aggregator_Lambda_Var_Pop_Order_By = {
+  id?: InputMaybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type Aggregator_Factory_Aggregator_Lambda_Var_Samp_Fields = {
+  __typename?: 'aggregator_factory_aggregator_lambda_var_samp_fields';
+  id?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_samp() on columns of table "aggregator_factory_aggregator_lambda" */
+export type Aggregator_Factory_Aggregator_Lambda_Var_Samp_Order_By = {
+  id?: InputMaybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type Aggregator_Factory_Aggregator_Lambda_Variance_Fields = {
+  __typename?: 'aggregator_factory_aggregator_lambda_variance_fields';
+  id?: Maybe<Scalars['Float']>;
+};
+
+/** order by variance() on columns of table "aggregator_factory_aggregator_lambda" */
+export type Aggregator_Factory_Aggregator_Lambda_Variance_Order_By = {
+  id?: InputMaybe<Order_By>;
+};
+
 /** aggregate avg on columns */
 export type Aggregator_Factory_Avg_Fields = {
   __typename?: 'aggregator_factory_avg_fields';
@@ -694,6 +942,8 @@ export type Aggregator_Factory_Bool_Exp = {
   _or?: InputMaybe<Array<Aggregator_Factory_Bool_Exp>>;
   address?: InputMaybe<String_Comparison_Exp>;
   admin?: InputMaybe<String_Comparison_Exp>;
+  aggregator_lambdas?: InputMaybe<Aggregator_Factory_Aggregator_Lambda_Bool_Exp>;
+  aggregator_lambdas_aggregate?: InputMaybe<Aggregator_Factory_Aggregator_Lambda_Aggregate_Bool_Exp>;
   aggregator_name_max_length?: InputMaybe<Smallint_Comparison_Exp>;
   aggregators?: InputMaybe<Aggregator_Bool_Exp>;
   aggregators_aggregate?: InputMaybe<Aggregator_Aggregate_Bool_Exp>;
@@ -707,8 +957,6 @@ export type Aggregator_Factory_Bool_Exp = {
   lambdas?: InputMaybe<Aggregator_Factory_Lambda_Bool_Exp>;
   lambdas_aggregate?: InputMaybe<Aggregator_Factory_Lambda_Aggregate_Bool_Exp>;
   last_updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
-  product_lambdas?: InputMaybe<Aggregator_Factory_Product_Lambda_Bool_Exp>;
-  product_lambdas_aggregate?: InputMaybe<Aggregator_Factory_Product_Lambda_Aggregate_Bool_Exp>;
   track_aggregator_paused?: InputMaybe<Boolean_Comparison_Exp>;
   untrack_aggregator_paused?: InputMaybe<Boolean_Comparison_Exp>;
   whitelist_contracts?: InputMaybe<Aggregator_Factory_Whitelist_Contract_Bool_Exp>;
@@ -1243,6 +1491,7 @@ export type Aggregator_Factory_Min_Order_By = {
 export type Aggregator_Factory_Order_By = {
   address?: InputMaybe<Order_By>;
   admin?: InputMaybe<Order_By>;
+  aggregator_lambdas_aggregate?: InputMaybe<Aggregator_Factory_Aggregator_Lambda_Aggregate_Order_By>;
   aggregator_name_max_length?: InputMaybe<Order_By>;
   aggregators_aggregate?: InputMaybe<Aggregator_Aggregate_Order_By>;
   create_aggregator_paused?: InputMaybe<Order_By>;
@@ -1253,258 +1502,9 @@ export type Aggregator_Factory_Order_By = {
   governance_id?: InputMaybe<Order_By>;
   lambdas_aggregate?: InputMaybe<Aggregator_Factory_Lambda_Aggregate_Order_By>;
   last_updated_at?: InputMaybe<Order_By>;
-  product_lambdas_aggregate?: InputMaybe<Aggregator_Factory_Product_Lambda_Aggregate_Order_By>;
   track_aggregator_paused?: InputMaybe<Order_By>;
   untrack_aggregator_paused?: InputMaybe<Order_By>;
   whitelist_contracts_aggregate?: InputMaybe<Aggregator_Factory_Whitelist_Contract_Aggregate_Order_By>;
-};
-
-/** columns and relationships of "aggregator_factory_product_lambda" */
-export type Aggregator_Factory_Product_Lambda = {
-  __typename?: 'aggregator_factory_product_lambda';
-  /** An object relationship */
-  contract: Aggregator_Factory;
-  contract_id: Scalars['String'];
-  id: Scalars['bigint'];
-  lambda_bytes: Scalars['String'];
-  lambda_name: Scalars['String'];
-  last_updated_at?: Maybe<Scalars['timestamptz']>;
-};
-
-/** aggregated selection of "aggregator_factory_product_lambda" */
-export type Aggregator_Factory_Product_Lambda_Aggregate = {
-  __typename?: 'aggregator_factory_product_lambda_aggregate';
-  aggregate?: Maybe<Aggregator_Factory_Product_Lambda_Aggregate_Fields>;
-  nodes: Array<Aggregator_Factory_Product_Lambda>;
-};
-
-export type Aggregator_Factory_Product_Lambda_Aggregate_Bool_Exp = {
-  count?: InputMaybe<Aggregator_Factory_Product_Lambda_Aggregate_Bool_Exp_Count>;
-};
-
-export type Aggregator_Factory_Product_Lambda_Aggregate_Bool_Exp_Count = {
-  arguments?: InputMaybe<Array<Aggregator_Factory_Product_Lambda_Select_Column>>;
-  distinct?: InputMaybe<Scalars['Boolean']>;
-  filter?: InputMaybe<Aggregator_Factory_Product_Lambda_Bool_Exp>;
-  predicate: Int_Comparison_Exp;
-};
-
-/** aggregate fields of "aggregator_factory_product_lambda" */
-export type Aggregator_Factory_Product_Lambda_Aggregate_Fields = {
-  __typename?: 'aggregator_factory_product_lambda_aggregate_fields';
-  avg?: Maybe<Aggregator_Factory_Product_Lambda_Avg_Fields>;
-  count: Scalars['Int'];
-  max?: Maybe<Aggregator_Factory_Product_Lambda_Max_Fields>;
-  min?: Maybe<Aggregator_Factory_Product_Lambda_Min_Fields>;
-  stddev?: Maybe<Aggregator_Factory_Product_Lambda_Stddev_Fields>;
-  stddev_pop?: Maybe<Aggregator_Factory_Product_Lambda_Stddev_Pop_Fields>;
-  stddev_samp?: Maybe<Aggregator_Factory_Product_Lambda_Stddev_Samp_Fields>;
-  sum?: Maybe<Aggregator_Factory_Product_Lambda_Sum_Fields>;
-  var_pop?: Maybe<Aggregator_Factory_Product_Lambda_Var_Pop_Fields>;
-  var_samp?: Maybe<Aggregator_Factory_Product_Lambda_Var_Samp_Fields>;
-  variance?: Maybe<Aggregator_Factory_Product_Lambda_Variance_Fields>;
-};
-
-
-/** aggregate fields of "aggregator_factory_product_lambda" */
-export type Aggregator_Factory_Product_Lambda_Aggregate_FieldsCountArgs = {
-  columns?: InputMaybe<Array<Aggregator_Factory_Product_Lambda_Select_Column>>;
-  distinct?: InputMaybe<Scalars['Boolean']>;
-};
-
-/** order by aggregate values of table "aggregator_factory_product_lambda" */
-export type Aggregator_Factory_Product_Lambda_Aggregate_Order_By = {
-  avg?: InputMaybe<Aggregator_Factory_Product_Lambda_Avg_Order_By>;
-  count?: InputMaybe<Order_By>;
-  max?: InputMaybe<Aggregator_Factory_Product_Lambda_Max_Order_By>;
-  min?: InputMaybe<Aggregator_Factory_Product_Lambda_Min_Order_By>;
-  stddev?: InputMaybe<Aggregator_Factory_Product_Lambda_Stddev_Order_By>;
-  stddev_pop?: InputMaybe<Aggregator_Factory_Product_Lambda_Stddev_Pop_Order_By>;
-  stddev_samp?: InputMaybe<Aggregator_Factory_Product_Lambda_Stddev_Samp_Order_By>;
-  sum?: InputMaybe<Aggregator_Factory_Product_Lambda_Sum_Order_By>;
-  var_pop?: InputMaybe<Aggregator_Factory_Product_Lambda_Var_Pop_Order_By>;
-  var_samp?: InputMaybe<Aggregator_Factory_Product_Lambda_Var_Samp_Order_By>;
-  variance?: InputMaybe<Aggregator_Factory_Product_Lambda_Variance_Order_By>;
-};
-
-/** aggregate avg on columns */
-export type Aggregator_Factory_Product_Lambda_Avg_Fields = {
-  __typename?: 'aggregator_factory_product_lambda_avg_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by avg() on columns of table "aggregator_factory_product_lambda" */
-export type Aggregator_Factory_Product_Lambda_Avg_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** Boolean expression to filter rows from the table "aggregator_factory_product_lambda". All fields are combined with a logical 'AND'. */
-export type Aggregator_Factory_Product_Lambda_Bool_Exp = {
-  _and?: InputMaybe<Array<Aggregator_Factory_Product_Lambda_Bool_Exp>>;
-  _not?: InputMaybe<Aggregator_Factory_Product_Lambda_Bool_Exp>;
-  _or?: InputMaybe<Array<Aggregator_Factory_Product_Lambda_Bool_Exp>>;
-  contract?: InputMaybe<Aggregator_Factory_Bool_Exp>;
-  contract_id?: InputMaybe<String_Comparison_Exp>;
-  id?: InputMaybe<Bigint_Comparison_Exp>;
-  lambda_bytes?: InputMaybe<String_Comparison_Exp>;
-  lambda_name?: InputMaybe<String_Comparison_Exp>;
-  last_updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
-};
-
-/** aggregate max on columns */
-export type Aggregator_Factory_Product_Lambda_Max_Fields = {
-  __typename?: 'aggregator_factory_product_lambda_max_fields';
-  contract_id?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['bigint']>;
-  lambda_bytes?: Maybe<Scalars['String']>;
-  lambda_name?: Maybe<Scalars['String']>;
-  last_updated_at?: Maybe<Scalars['timestamptz']>;
-};
-
-/** order by max() on columns of table "aggregator_factory_product_lambda" */
-export type Aggregator_Factory_Product_Lambda_Max_Order_By = {
-  contract_id?: InputMaybe<Order_By>;
-  id?: InputMaybe<Order_By>;
-  lambda_bytes?: InputMaybe<Order_By>;
-  lambda_name?: InputMaybe<Order_By>;
-  last_updated_at?: InputMaybe<Order_By>;
-};
-
-/** aggregate min on columns */
-export type Aggregator_Factory_Product_Lambda_Min_Fields = {
-  __typename?: 'aggregator_factory_product_lambda_min_fields';
-  contract_id?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['bigint']>;
-  lambda_bytes?: Maybe<Scalars['String']>;
-  lambda_name?: Maybe<Scalars['String']>;
-  last_updated_at?: Maybe<Scalars['timestamptz']>;
-};
-
-/** order by min() on columns of table "aggregator_factory_product_lambda" */
-export type Aggregator_Factory_Product_Lambda_Min_Order_By = {
-  contract_id?: InputMaybe<Order_By>;
-  id?: InputMaybe<Order_By>;
-  lambda_bytes?: InputMaybe<Order_By>;
-  lambda_name?: InputMaybe<Order_By>;
-  last_updated_at?: InputMaybe<Order_By>;
-};
-
-/** Ordering options when selecting data from "aggregator_factory_product_lambda". */
-export type Aggregator_Factory_Product_Lambda_Order_By = {
-  contract?: InputMaybe<Aggregator_Factory_Order_By>;
-  contract_id?: InputMaybe<Order_By>;
-  id?: InputMaybe<Order_By>;
-  lambda_bytes?: InputMaybe<Order_By>;
-  lambda_name?: InputMaybe<Order_By>;
-  last_updated_at?: InputMaybe<Order_By>;
-};
-
-/** select columns of table "aggregator_factory_product_lambda" */
-export enum Aggregator_Factory_Product_Lambda_Select_Column {
-  /** column name */
-  ContractId = 'contract_id',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  LambdaBytes = 'lambda_bytes',
-  /** column name */
-  LambdaName = 'lambda_name',
-  /** column name */
-  LastUpdatedAt = 'last_updated_at'
-}
-
-/** aggregate stddev on columns */
-export type Aggregator_Factory_Product_Lambda_Stddev_Fields = {
-  __typename?: 'aggregator_factory_product_lambda_stddev_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by stddev() on columns of table "aggregator_factory_product_lambda" */
-export type Aggregator_Factory_Product_Lambda_Stddev_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** aggregate stddev_pop on columns */
-export type Aggregator_Factory_Product_Lambda_Stddev_Pop_Fields = {
-  __typename?: 'aggregator_factory_product_lambda_stddev_pop_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by stddev_pop() on columns of table "aggregator_factory_product_lambda" */
-export type Aggregator_Factory_Product_Lambda_Stddev_Pop_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** aggregate stddev_samp on columns */
-export type Aggregator_Factory_Product_Lambda_Stddev_Samp_Fields = {
-  __typename?: 'aggregator_factory_product_lambda_stddev_samp_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by stddev_samp() on columns of table "aggregator_factory_product_lambda" */
-export type Aggregator_Factory_Product_Lambda_Stddev_Samp_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** Streaming cursor of the table "aggregator_factory_product_lambda" */
-export type Aggregator_Factory_Product_Lambda_Stream_Cursor_Input = {
-  /** Stream column input with initial value */
-  initial_value: Aggregator_Factory_Product_Lambda_Stream_Cursor_Value_Input;
-  /** cursor ordering */
-  ordering?: InputMaybe<Cursor_Ordering>;
-};
-
-/** Initial value of the column from where the streaming should start */
-export type Aggregator_Factory_Product_Lambda_Stream_Cursor_Value_Input = {
-  contract_id?: InputMaybe<Scalars['String']>;
-  id?: InputMaybe<Scalars['bigint']>;
-  lambda_bytes?: InputMaybe<Scalars['String']>;
-  lambda_name?: InputMaybe<Scalars['String']>;
-  last_updated_at?: InputMaybe<Scalars['timestamptz']>;
-};
-
-/** aggregate sum on columns */
-export type Aggregator_Factory_Product_Lambda_Sum_Fields = {
-  __typename?: 'aggregator_factory_product_lambda_sum_fields';
-  id?: Maybe<Scalars['bigint']>;
-};
-
-/** order by sum() on columns of table "aggregator_factory_product_lambda" */
-export type Aggregator_Factory_Product_Lambda_Sum_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** aggregate var_pop on columns */
-export type Aggregator_Factory_Product_Lambda_Var_Pop_Fields = {
-  __typename?: 'aggregator_factory_product_lambda_var_pop_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by var_pop() on columns of table "aggregator_factory_product_lambda" */
-export type Aggregator_Factory_Product_Lambda_Var_Pop_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** aggregate var_samp on columns */
-export type Aggregator_Factory_Product_Lambda_Var_Samp_Fields = {
-  __typename?: 'aggregator_factory_product_lambda_var_samp_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by var_samp() on columns of table "aggregator_factory_product_lambda" */
-export type Aggregator_Factory_Product_Lambda_Var_Samp_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** aggregate variance on columns */
-export type Aggregator_Factory_Product_Lambda_Variance_Fields = {
-  __typename?: 'aggregator_factory_product_lambda_variance_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by variance() on columns of table "aggregator_factory_product_lambda" */
-export type Aggregator_Factory_Product_Lambda_Variance_Order_By = {
-  id?: InputMaybe<Order_By>;
 };
 
 /** select columns of table "aggregator_factory" */
@@ -17233,12 +17233,14 @@ export type Farm = {
   infinite: Scalars['Boolean'];
   init: Scalars['Boolean'];
   init_block: Scalars['bigint'];
+  is_m_farm: Scalars['Boolean'];
   /** An array relationship */
   lambdas: Array<Farm_Lambda>;
   /** An aggregate relationship */
   lambdas_aggregate: Farm_Lambda_Aggregate;
   last_block_update: Scalars['bigint'];
   last_updated_at?: Maybe<Scalars['timestamptz']>;
+  loan_token_name?: Maybe<Scalars['String']>;
   lp_token_address: Scalars['String'];
   lp_token_balance: Scalars['bigint'];
   min_block_time_snapshot: Scalars['smallint'];
@@ -17347,6 +17349,7 @@ export type Farm_Account = {
   farm_id: Scalars['String'];
   id: Scalars['bigint'];
   participation_rewards_per_share: Scalars['float8'];
+  token_reward_index?: Maybe<Scalars['float8']>;
   unclaimed_rewards: Scalars['float8'];
   /** An object relationship */
   user: Mavryk_User;
@@ -17490,6 +17493,7 @@ export type Farm_Account_Avg_Fields = {
   deposited_amount?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
   participation_rewards_per_share?: Maybe<Scalars['Float']>;
+  token_reward_index?: Maybe<Scalars['Float']>;
   unclaimed_rewards?: Maybe<Scalars['Float']>;
 };
 
@@ -17499,6 +17503,7 @@ export type Farm_Account_Avg_Order_By = {
   deposited_amount?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   participation_rewards_per_share?: InputMaybe<Order_By>;
+  token_reward_index?: InputMaybe<Order_By>;
   unclaimed_rewards?: InputMaybe<Order_By>;
 };
 
@@ -17513,6 +17518,7 @@ export type Farm_Account_Bool_Exp = {
   farm_id?: InputMaybe<String_Comparison_Exp>;
   id?: InputMaybe<Bigint_Comparison_Exp>;
   participation_rewards_per_share?: InputMaybe<Float8_Comparison_Exp>;
+  token_reward_index?: InputMaybe<Float8_Comparison_Exp>;
   unclaimed_rewards?: InputMaybe<Float8_Comparison_Exp>;
   user?: InputMaybe<Mavryk_User_Bool_Exp>;
   user_id?: InputMaybe<String_Comparison_Exp>;
@@ -17526,6 +17532,7 @@ export type Farm_Account_Max_Fields = {
   farm_id?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['bigint']>;
   participation_rewards_per_share?: Maybe<Scalars['float8']>;
+  token_reward_index?: Maybe<Scalars['float8']>;
   unclaimed_rewards?: Maybe<Scalars['float8']>;
   user_id?: Maybe<Scalars['String']>;
 };
@@ -17537,6 +17544,7 @@ export type Farm_Account_Max_Order_By = {
   farm_id?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   participation_rewards_per_share?: InputMaybe<Order_By>;
+  token_reward_index?: InputMaybe<Order_By>;
   unclaimed_rewards?: InputMaybe<Order_By>;
   user_id?: InputMaybe<Order_By>;
 };
@@ -17549,6 +17557,7 @@ export type Farm_Account_Min_Fields = {
   farm_id?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['bigint']>;
   participation_rewards_per_share?: Maybe<Scalars['float8']>;
+  token_reward_index?: Maybe<Scalars['float8']>;
   unclaimed_rewards?: Maybe<Scalars['float8']>;
   user_id?: Maybe<Scalars['String']>;
 };
@@ -17560,6 +17569,7 @@ export type Farm_Account_Min_Order_By = {
   farm_id?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   participation_rewards_per_share?: InputMaybe<Order_By>;
+  token_reward_index?: InputMaybe<Order_By>;
   unclaimed_rewards?: InputMaybe<Order_By>;
   user_id?: InputMaybe<Order_By>;
 };
@@ -17572,6 +17582,7 @@ export type Farm_Account_Order_By = {
   farm_id?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   participation_rewards_per_share?: InputMaybe<Order_By>;
+  token_reward_index?: InputMaybe<Order_By>;
   unclaimed_rewards?: InputMaybe<Order_By>;
   user?: InputMaybe<Mavryk_User_Order_By>;
   user_id?: InputMaybe<Order_By>;
@@ -17590,6 +17601,8 @@ export enum Farm_Account_Select_Column {
   /** column name */
   ParticipationRewardsPerShare = 'participation_rewards_per_share',
   /** column name */
+  TokenRewardIndex = 'token_reward_index',
+  /** column name */
   UnclaimedRewards = 'unclaimed_rewards',
   /** column name */
   UserId = 'user_id'
@@ -17602,6 +17615,8 @@ export enum Farm_Account_Select_Column_Farm_Account_Aggregate_Bool_Exp_Avg_Argum
   /** column name */
   ParticipationRewardsPerShare = 'participation_rewards_per_share',
   /** column name */
+  TokenRewardIndex = 'token_reward_index',
+  /** column name */
   UnclaimedRewards = 'unclaimed_rewards'
 }
 
@@ -17611,6 +17626,8 @@ export enum Farm_Account_Select_Column_Farm_Account_Aggregate_Bool_Exp_Corr_Argu
   ClaimedRewards = 'claimed_rewards',
   /** column name */
   ParticipationRewardsPerShare = 'participation_rewards_per_share',
+  /** column name */
+  TokenRewardIndex = 'token_reward_index',
   /** column name */
   UnclaimedRewards = 'unclaimed_rewards'
 }
@@ -17622,6 +17639,8 @@ export enum Farm_Account_Select_Column_Farm_Account_Aggregate_Bool_Exp_Covar_Sam
   /** column name */
   ParticipationRewardsPerShare = 'participation_rewards_per_share',
   /** column name */
+  TokenRewardIndex = 'token_reward_index',
+  /** column name */
   UnclaimedRewards = 'unclaimed_rewards'
 }
 
@@ -17631,6 +17650,8 @@ export enum Farm_Account_Select_Column_Farm_Account_Aggregate_Bool_Exp_Max_Argum
   ClaimedRewards = 'claimed_rewards',
   /** column name */
   ParticipationRewardsPerShare = 'participation_rewards_per_share',
+  /** column name */
+  TokenRewardIndex = 'token_reward_index',
   /** column name */
   UnclaimedRewards = 'unclaimed_rewards'
 }
@@ -17642,6 +17663,8 @@ export enum Farm_Account_Select_Column_Farm_Account_Aggregate_Bool_Exp_Min_Argum
   /** column name */
   ParticipationRewardsPerShare = 'participation_rewards_per_share',
   /** column name */
+  TokenRewardIndex = 'token_reward_index',
+  /** column name */
   UnclaimedRewards = 'unclaimed_rewards'
 }
 
@@ -17651,6 +17674,8 @@ export enum Farm_Account_Select_Column_Farm_Account_Aggregate_Bool_Exp_Stddev_Sa
   ClaimedRewards = 'claimed_rewards',
   /** column name */
   ParticipationRewardsPerShare = 'participation_rewards_per_share',
+  /** column name */
+  TokenRewardIndex = 'token_reward_index',
   /** column name */
   UnclaimedRewards = 'unclaimed_rewards'
 }
@@ -17662,6 +17687,8 @@ export enum Farm_Account_Select_Column_Farm_Account_Aggregate_Bool_Exp_Sum_Argum
   /** column name */
   ParticipationRewardsPerShare = 'participation_rewards_per_share',
   /** column name */
+  TokenRewardIndex = 'token_reward_index',
+  /** column name */
   UnclaimedRewards = 'unclaimed_rewards'
 }
 
@@ -17671,6 +17698,8 @@ export enum Farm_Account_Select_Column_Farm_Account_Aggregate_Bool_Exp_Var_Samp_
   ClaimedRewards = 'claimed_rewards',
   /** column name */
   ParticipationRewardsPerShare = 'participation_rewards_per_share',
+  /** column name */
+  TokenRewardIndex = 'token_reward_index',
   /** column name */
   UnclaimedRewards = 'unclaimed_rewards'
 }
@@ -17682,6 +17711,7 @@ export type Farm_Account_Stddev_Fields = {
   deposited_amount?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
   participation_rewards_per_share?: Maybe<Scalars['Float']>;
+  token_reward_index?: Maybe<Scalars['Float']>;
   unclaimed_rewards?: Maybe<Scalars['Float']>;
 };
 
@@ -17691,6 +17721,7 @@ export type Farm_Account_Stddev_Order_By = {
   deposited_amount?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   participation_rewards_per_share?: InputMaybe<Order_By>;
+  token_reward_index?: InputMaybe<Order_By>;
   unclaimed_rewards?: InputMaybe<Order_By>;
 };
 
@@ -17701,6 +17732,7 @@ export type Farm_Account_Stddev_Pop_Fields = {
   deposited_amount?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
   participation_rewards_per_share?: Maybe<Scalars['Float']>;
+  token_reward_index?: Maybe<Scalars['Float']>;
   unclaimed_rewards?: Maybe<Scalars['Float']>;
 };
 
@@ -17710,6 +17742,7 @@ export type Farm_Account_Stddev_Pop_Order_By = {
   deposited_amount?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   participation_rewards_per_share?: InputMaybe<Order_By>;
+  token_reward_index?: InputMaybe<Order_By>;
   unclaimed_rewards?: InputMaybe<Order_By>;
 };
 
@@ -17720,6 +17753,7 @@ export type Farm_Account_Stddev_Samp_Fields = {
   deposited_amount?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
   participation_rewards_per_share?: Maybe<Scalars['Float']>;
+  token_reward_index?: Maybe<Scalars['Float']>;
   unclaimed_rewards?: Maybe<Scalars['Float']>;
 };
 
@@ -17729,6 +17763,7 @@ export type Farm_Account_Stddev_Samp_Order_By = {
   deposited_amount?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   participation_rewards_per_share?: InputMaybe<Order_By>;
+  token_reward_index?: InputMaybe<Order_By>;
   unclaimed_rewards?: InputMaybe<Order_By>;
 };
 
@@ -17747,6 +17782,7 @@ export type Farm_Account_Stream_Cursor_Value_Input = {
   farm_id?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['bigint']>;
   participation_rewards_per_share?: InputMaybe<Scalars['float8']>;
+  token_reward_index?: InputMaybe<Scalars['float8']>;
   unclaimed_rewards?: InputMaybe<Scalars['float8']>;
   user_id?: InputMaybe<Scalars['String']>;
 };
@@ -17758,6 +17794,7 @@ export type Farm_Account_Sum_Fields = {
   deposited_amount?: Maybe<Scalars['bigint']>;
   id?: Maybe<Scalars['bigint']>;
   participation_rewards_per_share?: Maybe<Scalars['float8']>;
+  token_reward_index?: Maybe<Scalars['float8']>;
   unclaimed_rewards?: Maybe<Scalars['float8']>;
 };
 
@@ -17767,6 +17804,7 @@ export type Farm_Account_Sum_Order_By = {
   deposited_amount?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   participation_rewards_per_share?: InputMaybe<Order_By>;
+  token_reward_index?: InputMaybe<Order_By>;
   unclaimed_rewards?: InputMaybe<Order_By>;
 };
 
@@ -17777,6 +17815,7 @@ export type Farm_Account_Var_Pop_Fields = {
   deposited_amount?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
   participation_rewards_per_share?: Maybe<Scalars['Float']>;
+  token_reward_index?: Maybe<Scalars['Float']>;
   unclaimed_rewards?: Maybe<Scalars['Float']>;
 };
 
@@ -17786,6 +17825,7 @@ export type Farm_Account_Var_Pop_Order_By = {
   deposited_amount?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   participation_rewards_per_share?: InputMaybe<Order_By>;
+  token_reward_index?: InputMaybe<Order_By>;
   unclaimed_rewards?: InputMaybe<Order_By>;
 };
 
@@ -17796,6 +17836,7 @@ export type Farm_Account_Var_Samp_Fields = {
   deposited_amount?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
   participation_rewards_per_share?: Maybe<Scalars['Float']>;
+  token_reward_index?: Maybe<Scalars['Float']>;
   unclaimed_rewards?: Maybe<Scalars['Float']>;
 };
 
@@ -17805,6 +17846,7 @@ export type Farm_Account_Var_Samp_Order_By = {
   deposited_amount?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   participation_rewards_per_share?: InputMaybe<Order_By>;
+  token_reward_index?: InputMaybe<Order_By>;
   unclaimed_rewards?: InputMaybe<Order_By>;
 };
 
@@ -17815,6 +17857,7 @@ export type Farm_Account_Variance_Fields = {
   deposited_amount?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
   participation_rewards_per_share?: Maybe<Scalars['Float']>;
+  token_reward_index?: Maybe<Scalars['Float']>;
   unclaimed_rewards?: Maybe<Scalars['Float']>;
 };
 
@@ -17824,6 +17867,7 @@ export type Farm_Account_Variance_Order_By = {
   deposited_amount?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   participation_rewards_per_share?: InputMaybe<Order_By>;
+  token_reward_index?: InputMaybe<Order_By>;
   unclaimed_rewards?: InputMaybe<Order_By>;
 };
 
@@ -18026,10 +18070,12 @@ export type Farm_Bool_Exp = {
   infinite?: InputMaybe<Boolean_Comparison_Exp>;
   init?: InputMaybe<Boolean_Comparison_Exp>;
   init_block?: InputMaybe<Bigint_Comparison_Exp>;
+  is_m_farm?: InputMaybe<Boolean_Comparison_Exp>;
   lambdas?: InputMaybe<Farm_Lambda_Bool_Exp>;
   lambdas_aggregate?: InputMaybe<Farm_Lambda_Aggregate_Bool_Exp>;
   last_block_update?: InputMaybe<Bigint_Comparison_Exp>;
   last_updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  loan_token_name?: InputMaybe<String_Comparison_Exp>;
   lp_token_address?: InputMaybe<String_Comparison_Exp>;
   lp_token_balance?: InputMaybe<Bigint_Comparison_Exp>;
   min_block_time_snapshot?: InputMaybe<Smallint_Comparison_Exp>;
@@ -18051,7 +18097,12 @@ export type Farm_Factory = {
   __typename?: 'farm_factory';
   address: Scalars['String'];
   admin: Scalars['String'];
+  create_farm_m_token_paused: Scalars['Boolean'];
   create_farm_paused: Scalars['Boolean'];
+  /** An array relationship */
+  farm_lambdas: Array<Farm_Factory_Farm_Lambda>;
+  /** An aggregate relationship */
+  farm_lambdas_aggregate: Farm_Factory_Farm_Lambda_Aggregate;
   farm_name_max_length: Scalars['smallint'];
   /** An array relationship */
   farms: Array<Farm>;
@@ -18070,15 +18121,35 @@ export type Farm_Factory = {
   lambdas_aggregate: Farm_Factory_Lambda_Aggregate;
   last_updated_at?: Maybe<Scalars['timestamptz']>;
   /** An array relationship */
-  product_lambdas: Array<Farm_Factory_Product_Lambda>;
+  m_farm_lambdas: Array<Farm_Factory_M_Farm_Lambda>;
   /** An aggregate relationship */
-  product_lambdas_aggregate: Farm_Factory_Product_Lambda_Aggregate;
+  m_farm_lambdas_aggregate: Farm_Factory_M_Farm_Lambda_Aggregate;
   track_farm_paused: Scalars['Boolean'];
   untrack_farm_paused: Scalars['Boolean'];
   /** An array relationship */
   whitelist_contracts: Array<Farm_Factory_Whitelist_Contract>;
   /** An aggregate relationship */
   whitelist_contracts_aggregate: Farm_Factory_Whitelist_Contract_Aggregate;
+};
+
+
+/** columns and relationships of "farm_factory" */
+export type Farm_FactoryFarm_LambdasArgs = {
+  distinct_on?: InputMaybe<Array<Farm_Factory_Farm_Lambda_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Farm_Factory_Farm_Lambda_Order_By>>;
+  where?: InputMaybe<Farm_Factory_Farm_Lambda_Bool_Exp>;
+};
+
+
+/** columns and relationships of "farm_factory" */
+export type Farm_FactoryFarm_Lambdas_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Farm_Factory_Farm_Lambda_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Farm_Factory_Farm_Lambda_Order_By>>;
+  where?: InputMaybe<Farm_Factory_Farm_Lambda_Bool_Exp>;
 };
 
 
@@ -18143,22 +18214,22 @@ export type Farm_FactoryLambdas_AggregateArgs = {
 
 
 /** columns and relationships of "farm_factory" */
-export type Farm_FactoryProduct_LambdasArgs = {
-  distinct_on?: InputMaybe<Array<Farm_Factory_Product_Lambda_Select_Column>>;
+export type Farm_FactoryM_Farm_LambdasArgs = {
+  distinct_on?: InputMaybe<Array<Farm_Factory_M_Farm_Lambda_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Farm_Factory_Product_Lambda_Order_By>>;
-  where?: InputMaybe<Farm_Factory_Product_Lambda_Bool_Exp>;
+  order_by?: InputMaybe<Array<Farm_Factory_M_Farm_Lambda_Order_By>>;
+  where?: InputMaybe<Farm_Factory_M_Farm_Lambda_Bool_Exp>;
 };
 
 
 /** columns and relationships of "farm_factory" */
-export type Farm_FactoryProduct_Lambdas_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Farm_Factory_Product_Lambda_Select_Column>>;
+export type Farm_FactoryM_Farm_Lambdas_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Farm_Factory_M_Farm_Lambda_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Farm_Factory_Product_Lambda_Order_By>>;
-  where?: InputMaybe<Farm_Factory_Product_Lambda_Bool_Exp>;
+  order_by?: InputMaybe<Array<Farm_Factory_M_Farm_Lambda_Order_By>>;
+  where?: InputMaybe<Farm_Factory_M_Farm_Lambda_Bool_Exp>;
 };
 
 
@@ -18271,7 +18342,10 @@ export type Farm_Factory_Bool_Exp = {
   _or?: InputMaybe<Array<Farm_Factory_Bool_Exp>>;
   address?: InputMaybe<String_Comparison_Exp>;
   admin?: InputMaybe<String_Comparison_Exp>;
+  create_farm_m_token_paused?: InputMaybe<Boolean_Comparison_Exp>;
   create_farm_paused?: InputMaybe<Boolean_Comparison_Exp>;
+  farm_lambdas?: InputMaybe<Farm_Factory_Farm_Lambda_Bool_Exp>;
+  farm_lambdas_aggregate?: InputMaybe<Farm_Factory_Farm_Lambda_Aggregate_Bool_Exp>;
   farm_name_max_length?: InputMaybe<Smallint_Comparison_Exp>;
   farms?: InputMaybe<Farm_Bool_Exp>;
   farms_aggregate?: InputMaybe<Farm_Aggregate_Bool_Exp>;
@@ -18282,12 +18356,260 @@ export type Farm_Factory_Bool_Exp = {
   lambdas?: InputMaybe<Farm_Factory_Lambda_Bool_Exp>;
   lambdas_aggregate?: InputMaybe<Farm_Factory_Lambda_Aggregate_Bool_Exp>;
   last_updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
-  product_lambdas?: InputMaybe<Farm_Factory_Product_Lambda_Bool_Exp>;
-  product_lambdas_aggregate?: InputMaybe<Farm_Factory_Product_Lambda_Aggregate_Bool_Exp>;
+  m_farm_lambdas?: InputMaybe<Farm_Factory_M_Farm_Lambda_Bool_Exp>;
+  m_farm_lambdas_aggregate?: InputMaybe<Farm_Factory_M_Farm_Lambda_Aggregate_Bool_Exp>;
   track_farm_paused?: InputMaybe<Boolean_Comparison_Exp>;
   untrack_farm_paused?: InputMaybe<Boolean_Comparison_Exp>;
   whitelist_contracts?: InputMaybe<Farm_Factory_Whitelist_Contract_Bool_Exp>;
   whitelist_contracts_aggregate?: InputMaybe<Farm_Factory_Whitelist_Contract_Aggregate_Bool_Exp>;
+};
+
+/** columns and relationships of "farm_factory_farm_lambda" */
+export type Farm_Factory_Farm_Lambda = {
+  __typename?: 'farm_factory_farm_lambda';
+  /** An object relationship */
+  contract: Farm_Factory;
+  contract_id: Scalars['String'];
+  id: Scalars['bigint'];
+  lambda_bytes: Scalars['String'];
+  lambda_name: Scalars['String'];
+  last_updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregated selection of "farm_factory_farm_lambda" */
+export type Farm_Factory_Farm_Lambda_Aggregate = {
+  __typename?: 'farm_factory_farm_lambda_aggregate';
+  aggregate?: Maybe<Farm_Factory_Farm_Lambda_Aggregate_Fields>;
+  nodes: Array<Farm_Factory_Farm_Lambda>;
+};
+
+export type Farm_Factory_Farm_Lambda_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Farm_Factory_Farm_Lambda_Aggregate_Bool_Exp_Count>;
+};
+
+export type Farm_Factory_Farm_Lambda_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Farm_Factory_Farm_Lambda_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Farm_Factory_Farm_Lambda_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+/** aggregate fields of "farm_factory_farm_lambda" */
+export type Farm_Factory_Farm_Lambda_Aggregate_Fields = {
+  __typename?: 'farm_factory_farm_lambda_aggregate_fields';
+  avg?: Maybe<Farm_Factory_Farm_Lambda_Avg_Fields>;
+  count: Scalars['Int'];
+  max?: Maybe<Farm_Factory_Farm_Lambda_Max_Fields>;
+  min?: Maybe<Farm_Factory_Farm_Lambda_Min_Fields>;
+  stddev?: Maybe<Farm_Factory_Farm_Lambda_Stddev_Fields>;
+  stddev_pop?: Maybe<Farm_Factory_Farm_Lambda_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<Farm_Factory_Farm_Lambda_Stddev_Samp_Fields>;
+  sum?: Maybe<Farm_Factory_Farm_Lambda_Sum_Fields>;
+  var_pop?: Maybe<Farm_Factory_Farm_Lambda_Var_Pop_Fields>;
+  var_samp?: Maybe<Farm_Factory_Farm_Lambda_Var_Samp_Fields>;
+  variance?: Maybe<Farm_Factory_Farm_Lambda_Variance_Fields>;
+};
+
+
+/** aggregate fields of "farm_factory_farm_lambda" */
+export type Farm_Factory_Farm_Lambda_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Farm_Factory_Farm_Lambda_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "farm_factory_farm_lambda" */
+export type Farm_Factory_Farm_Lambda_Aggregate_Order_By = {
+  avg?: InputMaybe<Farm_Factory_Farm_Lambda_Avg_Order_By>;
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<Farm_Factory_Farm_Lambda_Max_Order_By>;
+  min?: InputMaybe<Farm_Factory_Farm_Lambda_Min_Order_By>;
+  stddev?: InputMaybe<Farm_Factory_Farm_Lambda_Stddev_Order_By>;
+  stddev_pop?: InputMaybe<Farm_Factory_Farm_Lambda_Stddev_Pop_Order_By>;
+  stddev_samp?: InputMaybe<Farm_Factory_Farm_Lambda_Stddev_Samp_Order_By>;
+  sum?: InputMaybe<Farm_Factory_Farm_Lambda_Sum_Order_By>;
+  var_pop?: InputMaybe<Farm_Factory_Farm_Lambda_Var_Pop_Order_By>;
+  var_samp?: InputMaybe<Farm_Factory_Farm_Lambda_Var_Samp_Order_By>;
+  variance?: InputMaybe<Farm_Factory_Farm_Lambda_Variance_Order_By>;
+};
+
+/** aggregate avg on columns */
+export type Farm_Factory_Farm_Lambda_Avg_Fields = {
+  __typename?: 'farm_factory_farm_lambda_avg_fields';
+  id?: Maybe<Scalars['Float']>;
+};
+
+/** order by avg() on columns of table "farm_factory_farm_lambda" */
+export type Farm_Factory_Farm_Lambda_Avg_Order_By = {
+  id?: InputMaybe<Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "farm_factory_farm_lambda". All fields are combined with a logical 'AND'. */
+export type Farm_Factory_Farm_Lambda_Bool_Exp = {
+  _and?: InputMaybe<Array<Farm_Factory_Farm_Lambda_Bool_Exp>>;
+  _not?: InputMaybe<Farm_Factory_Farm_Lambda_Bool_Exp>;
+  _or?: InputMaybe<Array<Farm_Factory_Farm_Lambda_Bool_Exp>>;
+  contract?: InputMaybe<Farm_Factory_Bool_Exp>;
+  contract_id?: InputMaybe<String_Comparison_Exp>;
+  id?: InputMaybe<Bigint_Comparison_Exp>;
+  lambda_bytes?: InputMaybe<String_Comparison_Exp>;
+  lambda_name?: InputMaybe<String_Comparison_Exp>;
+  last_updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+};
+
+/** aggregate max on columns */
+export type Farm_Factory_Farm_Lambda_Max_Fields = {
+  __typename?: 'farm_factory_farm_lambda_max_fields';
+  contract_id?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['bigint']>;
+  lambda_bytes?: Maybe<Scalars['String']>;
+  lambda_name?: Maybe<Scalars['String']>;
+  last_updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "farm_factory_farm_lambda" */
+export type Farm_Factory_Farm_Lambda_Max_Order_By = {
+  contract_id?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  lambda_bytes?: InputMaybe<Order_By>;
+  lambda_name?: InputMaybe<Order_By>;
+  last_updated_at?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Farm_Factory_Farm_Lambda_Min_Fields = {
+  __typename?: 'farm_factory_farm_lambda_min_fields';
+  contract_id?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['bigint']>;
+  lambda_bytes?: Maybe<Scalars['String']>;
+  lambda_name?: Maybe<Scalars['String']>;
+  last_updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "farm_factory_farm_lambda" */
+export type Farm_Factory_Farm_Lambda_Min_Order_By = {
+  contract_id?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  lambda_bytes?: InputMaybe<Order_By>;
+  lambda_name?: InputMaybe<Order_By>;
+  last_updated_at?: InputMaybe<Order_By>;
+};
+
+/** Ordering options when selecting data from "farm_factory_farm_lambda". */
+export type Farm_Factory_Farm_Lambda_Order_By = {
+  contract?: InputMaybe<Farm_Factory_Order_By>;
+  contract_id?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  lambda_bytes?: InputMaybe<Order_By>;
+  lambda_name?: InputMaybe<Order_By>;
+  last_updated_at?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "farm_factory_farm_lambda" */
+export enum Farm_Factory_Farm_Lambda_Select_Column {
+  /** column name */
+  ContractId = 'contract_id',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  LambdaBytes = 'lambda_bytes',
+  /** column name */
+  LambdaName = 'lambda_name',
+  /** column name */
+  LastUpdatedAt = 'last_updated_at'
+}
+
+/** aggregate stddev on columns */
+export type Farm_Factory_Farm_Lambda_Stddev_Fields = {
+  __typename?: 'farm_factory_farm_lambda_stddev_fields';
+  id?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev() on columns of table "farm_factory_farm_lambda" */
+export type Farm_Factory_Farm_Lambda_Stddev_Order_By = {
+  id?: InputMaybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Farm_Factory_Farm_Lambda_Stddev_Pop_Fields = {
+  __typename?: 'farm_factory_farm_lambda_stddev_pop_fields';
+  id?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_pop() on columns of table "farm_factory_farm_lambda" */
+export type Farm_Factory_Farm_Lambda_Stddev_Pop_Order_By = {
+  id?: InputMaybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Farm_Factory_Farm_Lambda_Stddev_Samp_Fields = {
+  __typename?: 'farm_factory_farm_lambda_stddev_samp_fields';
+  id?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_samp() on columns of table "farm_factory_farm_lambda" */
+export type Farm_Factory_Farm_Lambda_Stddev_Samp_Order_By = {
+  id?: InputMaybe<Order_By>;
+};
+
+/** Streaming cursor of the table "farm_factory_farm_lambda" */
+export type Farm_Factory_Farm_Lambda_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Farm_Factory_Farm_Lambda_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Farm_Factory_Farm_Lambda_Stream_Cursor_Value_Input = {
+  contract_id?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['bigint']>;
+  lambda_bytes?: InputMaybe<Scalars['String']>;
+  lambda_name?: InputMaybe<Scalars['String']>;
+  last_updated_at?: InputMaybe<Scalars['timestamptz']>;
+};
+
+/** aggregate sum on columns */
+export type Farm_Factory_Farm_Lambda_Sum_Fields = {
+  __typename?: 'farm_factory_farm_lambda_sum_fields';
+  id?: Maybe<Scalars['bigint']>;
+};
+
+/** order by sum() on columns of table "farm_factory_farm_lambda" */
+export type Farm_Factory_Farm_Lambda_Sum_Order_By = {
+  id?: InputMaybe<Order_By>;
+};
+
+/** aggregate var_pop on columns */
+export type Farm_Factory_Farm_Lambda_Var_Pop_Fields = {
+  __typename?: 'farm_factory_farm_lambda_var_pop_fields';
+  id?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_pop() on columns of table "farm_factory_farm_lambda" */
+export type Farm_Factory_Farm_Lambda_Var_Pop_Order_By = {
+  id?: InputMaybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type Farm_Factory_Farm_Lambda_Var_Samp_Fields = {
+  __typename?: 'farm_factory_farm_lambda_var_samp_fields';
+  id?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_samp() on columns of table "farm_factory_farm_lambda" */
+export type Farm_Factory_Farm_Lambda_Var_Samp_Order_By = {
+  id?: InputMaybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type Farm_Factory_Farm_Lambda_Variance_Fields = {
+  __typename?: 'farm_factory_farm_lambda_variance_fields';
+  id?: Maybe<Scalars['Float']>;
+};
+
+/** order by variance() on columns of table "farm_factory_farm_lambda" */
+export type Farm_Factory_Farm_Lambda_Variance_Order_By = {
+  id?: InputMaybe<Order_By>;
 };
 
 /** columns and relationships of "farm_factory_general_contract" */
@@ -18776,6 +19098,254 @@ export type Farm_Factory_Lambda_Variance_Order_By = {
   id?: InputMaybe<Order_By>;
 };
 
+/** columns and relationships of "farm_factory_m_farm_lambda" */
+export type Farm_Factory_M_Farm_Lambda = {
+  __typename?: 'farm_factory_m_farm_lambda';
+  /** An object relationship */
+  contract: Farm_Factory;
+  contract_id: Scalars['String'];
+  id: Scalars['bigint'];
+  lambda_bytes: Scalars['String'];
+  lambda_name: Scalars['String'];
+  last_updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregated selection of "farm_factory_m_farm_lambda" */
+export type Farm_Factory_M_Farm_Lambda_Aggregate = {
+  __typename?: 'farm_factory_m_farm_lambda_aggregate';
+  aggregate?: Maybe<Farm_Factory_M_Farm_Lambda_Aggregate_Fields>;
+  nodes: Array<Farm_Factory_M_Farm_Lambda>;
+};
+
+export type Farm_Factory_M_Farm_Lambda_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Farm_Factory_M_Farm_Lambda_Aggregate_Bool_Exp_Count>;
+};
+
+export type Farm_Factory_M_Farm_Lambda_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Farm_Factory_M_Farm_Lambda_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Farm_Factory_M_Farm_Lambda_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+/** aggregate fields of "farm_factory_m_farm_lambda" */
+export type Farm_Factory_M_Farm_Lambda_Aggregate_Fields = {
+  __typename?: 'farm_factory_m_farm_lambda_aggregate_fields';
+  avg?: Maybe<Farm_Factory_M_Farm_Lambda_Avg_Fields>;
+  count: Scalars['Int'];
+  max?: Maybe<Farm_Factory_M_Farm_Lambda_Max_Fields>;
+  min?: Maybe<Farm_Factory_M_Farm_Lambda_Min_Fields>;
+  stddev?: Maybe<Farm_Factory_M_Farm_Lambda_Stddev_Fields>;
+  stddev_pop?: Maybe<Farm_Factory_M_Farm_Lambda_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<Farm_Factory_M_Farm_Lambda_Stddev_Samp_Fields>;
+  sum?: Maybe<Farm_Factory_M_Farm_Lambda_Sum_Fields>;
+  var_pop?: Maybe<Farm_Factory_M_Farm_Lambda_Var_Pop_Fields>;
+  var_samp?: Maybe<Farm_Factory_M_Farm_Lambda_Var_Samp_Fields>;
+  variance?: Maybe<Farm_Factory_M_Farm_Lambda_Variance_Fields>;
+};
+
+
+/** aggregate fields of "farm_factory_m_farm_lambda" */
+export type Farm_Factory_M_Farm_Lambda_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Farm_Factory_M_Farm_Lambda_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "farm_factory_m_farm_lambda" */
+export type Farm_Factory_M_Farm_Lambda_Aggregate_Order_By = {
+  avg?: InputMaybe<Farm_Factory_M_Farm_Lambda_Avg_Order_By>;
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<Farm_Factory_M_Farm_Lambda_Max_Order_By>;
+  min?: InputMaybe<Farm_Factory_M_Farm_Lambda_Min_Order_By>;
+  stddev?: InputMaybe<Farm_Factory_M_Farm_Lambda_Stddev_Order_By>;
+  stddev_pop?: InputMaybe<Farm_Factory_M_Farm_Lambda_Stddev_Pop_Order_By>;
+  stddev_samp?: InputMaybe<Farm_Factory_M_Farm_Lambda_Stddev_Samp_Order_By>;
+  sum?: InputMaybe<Farm_Factory_M_Farm_Lambda_Sum_Order_By>;
+  var_pop?: InputMaybe<Farm_Factory_M_Farm_Lambda_Var_Pop_Order_By>;
+  var_samp?: InputMaybe<Farm_Factory_M_Farm_Lambda_Var_Samp_Order_By>;
+  variance?: InputMaybe<Farm_Factory_M_Farm_Lambda_Variance_Order_By>;
+};
+
+/** aggregate avg on columns */
+export type Farm_Factory_M_Farm_Lambda_Avg_Fields = {
+  __typename?: 'farm_factory_m_farm_lambda_avg_fields';
+  id?: Maybe<Scalars['Float']>;
+};
+
+/** order by avg() on columns of table "farm_factory_m_farm_lambda" */
+export type Farm_Factory_M_Farm_Lambda_Avg_Order_By = {
+  id?: InputMaybe<Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "farm_factory_m_farm_lambda". All fields are combined with a logical 'AND'. */
+export type Farm_Factory_M_Farm_Lambda_Bool_Exp = {
+  _and?: InputMaybe<Array<Farm_Factory_M_Farm_Lambda_Bool_Exp>>;
+  _not?: InputMaybe<Farm_Factory_M_Farm_Lambda_Bool_Exp>;
+  _or?: InputMaybe<Array<Farm_Factory_M_Farm_Lambda_Bool_Exp>>;
+  contract?: InputMaybe<Farm_Factory_Bool_Exp>;
+  contract_id?: InputMaybe<String_Comparison_Exp>;
+  id?: InputMaybe<Bigint_Comparison_Exp>;
+  lambda_bytes?: InputMaybe<String_Comparison_Exp>;
+  lambda_name?: InputMaybe<String_Comparison_Exp>;
+  last_updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+};
+
+/** aggregate max on columns */
+export type Farm_Factory_M_Farm_Lambda_Max_Fields = {
+  __typename?: 'farm_factory_m_farm_lambda_max_fields';
+  contract_id?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['bigint']>;
+  lambda_bytes?: Maybe<Scalars['String']>;
+  lambda_name?: Maybe<Scalars['String']>;
+  last_updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "farm_factory_m_farm_lambda" */
+export type Farm_Factory_M_Farm_Lambda_Max_Order_By = {
+  contract_id?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  lambda_bytes?: InputMaybe<Order_By>;
+  lambda_name?: InputMaybe<Order_By>;
+  last_updated_at?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Farm_Factory_M_Farm_Lambda_Min_Fields = {
+  __typename?: 'farm_factory_m_farm_lambda_min_fields';
+  contract_id?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['bigint']>;
+  lambda_bytes?: Maybe<Scalars['String']>;
+  lambda_name?: Maybe<Scalars['String']>;
+  last_updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "farm_factory_m_farm_lambda" */
+export type Farm_Factory_M_Farm_Lambda_Min_Order_By = {
+  contract_id?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  lambda_bytes?: InputMaybe<Order_By>;
+  lambda_name?: InputMaybe<Order_By>;
+  last_updated_at?: InputMaybe<Order_By>;
+};
+
+/** Ordering options when selecting data from "farm_factory_m_farm_lambda". */
+export type Farm_Factory_M_Farm_Lambda_Order_By = {
+  contract?: InputMaybe<Farm_Factory_Order_By>;
+  contract_id?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  lambda_bytes?: InputMaybe<Order_By>;
+  lambda_name?: InputMaybe<Order_By>;
+  last_updated_at?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "farm_factory_m_farm_lambda" */
+export enum Farm_Factory_M_Farm_Lambda_Select_Column {
+  /** column name */
+  ContractId = 'contract_id',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  LambdaBytes = 'lambda_bytes',
+  /** column name */
+  LambdaName = 'lambda_name',
+  /** column name */
+  LastUpdatedAt = 'last_updated_at'
+}
+
+/** aggregate stddev on columns */
+export type Farm_Factory_M_Farm_Lambda_Stddev_Fields = {
+  __typename?: 'farm_factory_m_farm_lambda_stddev_fields';
+  id?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev() on columns of table "farm_factory_m_farm_lambda" */
+export type Farm_Factory_M_Farm_Lambda_Stddev_Order_By = {
+  id?: InputMaybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Farm_Factory_M_Farm_Lambda_Stddev_Pop_Fields = {
+  __typename?: 'farm_factory_m_farm_lambda_stddev_pop_fields';
+  id?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_pop() on columns of table "farm_factory_m_farm_lambda" */
+export type Farm_Factory_M_Farm_Lambda_Stddev_Pop_Order_By = {
+  id?: InputMaybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Farm_Factory_M_Farm_Lambda_Stddev_Samp_Fields = {
+  __typename?: 'farm_factory_m_farm_lambda_stddev_samp_fields';
+  id?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_samp() on columns of table "farm_factory_m_farm_lambda" */
+export type Farm_Factory_M_Farm_Lambda_Stddev_Samp_Order_By = {
+  id?: InputMaybe<Order_By>;
+};
+
+/** Streaming cursor of the table "farm_factory_m_farm_lambda" */
+export type Farm_Factory_M_Farm_Lambda_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Farm_Factory_M_Farm_Lambda_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Farm_Factory_M_Farm_Lambda_Stream_Cursor_Value_Input = {
+  contract_id?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['bigint']>;
+  lambda_bytes?: InputMaybe<Scalars['String']>;
+  lambda_name?: InputMaybe<Scalars['String']>;
+  last_updated_at?: InputMaybe<Scalars['timestamptz']>;
+};
+
+/** aggregate sum on columns */
+export type Farm_Factory_M_Farm_Lambda_Sum_Fields = {
+  __typename?: 'farm_factory_m_farm_lambda_sum_fields';
+  id?: Maybe<Scalars['bigint']>;
+};
+
+/** order by sum() on columns of table "farm_factory_m_farm_lambda" */
+export type Farm_Factory_M_Farm_Lambda_Sum_Order_By = {
+  id?: InputMaybe<Order_By>;
+};
+
+/** aggregate var_pop on columns */
+export type Farm_Factory_M_Farm_Lambda_Var_Pop_Fields = {
+  __typename?: 'farm_factory_m_farm_lambda_var_pop_fields';
+  id?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_pop() on columns of table "farm_factory_m_farm_lambda" */
+export type Farm_Factory_M_Farm_Lambda_Var_Pop_Order_By = {
+  id?: InputMaybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type Farm_Factory_M_Farm_Lambda_Var_Samp_Fields = {
+  __typename?: 'farm_factory_m_farm_lambda_var_samp_fields';
+  id?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_samp() on columns of table "farm_factory_m_farm_lambda" */
+export type Farm_Factory_M_Farm_Lambda_Var_Samp_Order_By = {
+  id?: InputMaybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type Farm_Factory_M_Farm_Lambda_Variance_Fields = {
+  __typename?: 'farm_factory_m_farm_lambda_variance_fields';
+  id?: Maybe<Scalars['Float']>;
+};
+
+/** order by variance() on columns of table "farm_factory_m_farm_lambda" */
+export type Farm_Factory_M_Farm_Lambda_Variance_Order_By = {
+  id?: InputMaybe<Order_By>;
+};
+
 /** aggregate max on columns */
 export type Farm_Factory_Max_Fields = {
   __typename?: 'farm_factory_max_fields';
@@ -18818,7 +19388,9 @@ export type Farm_Factory_Min_Order_By = {
 export type Farm_Factory_Order_By = {
   address?: InputMaybe<Order_By>;
   admin?: InputMaybe<Order_By>;
+  create_farm_m_token_paused?: InputMaybe<Order_By>;
   create_farm_paused?: InputMaybe<Order_By>;
+  farm_lambdas_aggregate?: InputMaybe<Farm_Factory_Farm_Lambda_Aggregate_Order_By>;
   farm_name_max_length?: InputMaybe<Order_By>;
   farms_aggregate?: InputMaybe<Farm_Aggregate_Order_By>;
   general_contracts_aggregate?: InputMaybe<Farm_Factory_General_Contract_Aggregate_Order_By>;
@@ -18826,258 +19398,10 @@ export type Farm_Factory_Order_By = {
   governance_id?: InputMaybe<Order_By>;
   lambdas_aggregate?: InputMaybe<Farm_Factory_Lambda_Aggregate_Order_By>;
   last_updated_at?: InputMaybe<Order_By>;
-  product_lambdas_aggregate?: InputMaybe<Farm_Factory_Product_Lambda_Aggregate_Order_By>;
+  m_farm_lambdas_aggregate?: InputMaybe<Farm_Factory_M_Farm_Lambda_Aggregate_Order_By>;
   track_farm_paused?: InputMaybe<Order_By>;
   untrack_farm_paused?: InputMaybe<Order_By>;
   whitelist_contracts_aggregate?: InputMaybe<Farm_Factory_Whitelist_Contract_Aggregate_Order_By>;
-};
-
-/** columns and relationships of "farm_factory_product_lambda" */
-export type Farm_Factory_Product_Lambda = {
-  __typename?: 'farm_factory_product_lambda';
-  /** An object relationship */
-  contract: Farm_Factory;
-  contract_id: Scalars['String'];
-  id: Scalars['bigint'];
-  lambda_bytes: Scalars['String'];
-  lambda_name: Scalars['String'];
-  last_updated_at?: Maybe<Scalars['timestamptz']>;
-};
-
-/** aggregated selection of "farm_factory_product_lambda" */
-export type Farm_Factory_Product_Lambda_Aggregate = {
-  __typename?: 'farm_factory_product_lambda_aggregate';
-  aggregate?: Maybe<Farm_Factory_Product_Lambda_Aggregate_Fields>;
-  nodes: Array<Farm_Factory_Product_Lambda>;
-};
-
-export type Farm_Factory_Product_Lambda_Aggregate_Bool_Exp = {
-  count?: InputMaybe<Farm_Factory_Product_Lambda_Aggregate_Bool_Exp_Count>;
-};
-
-export type Farm_Factory_Product_Lambda_Aggregate_Bool_Exp_Count = {
-  arguments?: InputMaybe<Array<Farm_Factory_Product_Lambda_Select_Column>>;
-  distinct?: InputMaybe<Scalars['Boolean']>;
-  filter?: InputMaybe<Farm_Factory_Product_Lambda_Bool_Exp>;
-  predicate: Int_Comparison_Exp;
-};
-
-/** aggregate fields of "farm_factory_product_lambda" */
-export type Farm_Factory_Product_Lambda_Aggregate_Fields = {
-  __typename?: 'farm_factory_product_lambda_aggregate_fields';
-  avg?: Maybe<Farm_Factory_Product_Lambda_Avg_Fields>;
-  count: Scalars['Int'];
-  max?: Maybe<Farm_Factory_Product_Lambda_Max_Fields>;
-  min?: Maybe<Farm_Factory_Product_Lambda_Min_Fields>;
-  stddev?: Maybe<Farm_Factory_Product_Lambda_Stddev_Fields>;
-  stddev_pop?: Maybe<Farm_Factory_Product_Lambda_Stddev_Pop_Fields>;
-  stddev_samp?: Maybe<Farm_Factory_Product_Lambda_Stddev_Samp_Fields>;
-  sum?: Maybe<Farm_Factory_Product_Lambda_Sum_Fields>;
-  var_pop?: Maybe<Farm_Factory_Product_Lambda_Var_Pop_Fields>;
-  var_samp?: Maybe<Farm_Factory_Product_Lambda_Var_Samp_Fields>;
-  variance?: Maybe<Farm_Factory_Product_Lambda_Variance_Fields>;
-};
-
-
-/** aggregate fields of "farm_factory_product_lambda" */
-export type Farm_Factory_Product_Lambda_Aggregate_FieldsCountArgs = {
-  columns?: InputMaybe<Array<Farm_Factory_Product_Lambda_Select_Column>>;
-  distinct?: InputMaybe<Scalars['Boolean']>;
-};
-
-/** order by aggregate values of table "farm_factory_product_lambda" */
-export type Farm_Factory_Product_Lambda_Aggregate_Order_By = {
-  avg?: InputMaybe<Farm_Factory_Product_Lambda_Avg_Order_By>;
-  count?: InputMaybe<Order_By>;
-  max?: InputMaybe<Farm_Factory_Product_Lambda_Max_Order_By>;
-  min?: InputMaybe<Farm_Factory_Product_Lambda_Min_Order_By>;
-  stddev?: InputMaybe<Farm_Factory_Product_Lambda_Stddev_Order_By>;
-  stddev_pop?: InputMaybe<Farm_Factory_Product_Lambda_Stddev_Pop_Order_By>;
-  stddev_samp?: InputMaybe<Farm_Factory_Product_Lambda_Stddev_Samp_Order_By>;
-  sum?: InputMaybe<Farm_Factory_Product_Lambda_Sum_Order_By>;
-  var_pop?: InputMaybe<Farm_Factory_Product_Lambda_Var_Pop_Order_By>;
-  var_samp?: InputMaybe<Farm_Factory_Product_Lambda_Var_Samp_Order_By>;
-  variance?: InputMaybe<Farm_Factory_Product_Lambda_Variance_Order_By>;
-};
-
-/** aggregate avg on columns */
-export type Farm_Factory_Product_Lambda_Avg_Fields = {
-  __typename?: 'farm_factory_product_lambda_avg_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by avg() on columns of table "farm_factory_product_lambda" */
-export type Farm_Factory_Product_Lambda_Avg_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** Boolean expression to filter rows from the table "farm_factory_product_lambda". All fields are combined with a logical 'AND'. */
-export type Farm_Factory_Product_Lambda_Bool_Exp = {
-  _and?: InputMaybe<Array<Farm_Factory_Product_Lambda_Bool_Exp>>;
-  _not?: InputMaybe<Farm_Factory_Product_Lambda_Bool_Exp>;
-  _or?: InputMaybe<Array<Farm_Factory_Product_Lambda_Bool_Exp>>;
-  contract?: InputMaybe<Farm_Factory_Bool_Exp>;
-  contract_id?: InputMaybe<String_Comparison_Exp>;
-  id?: InputMaybe<Bigint_Comparison_Exp>;
-  lambda_bytes?: InputMaybe<String_Comparison_Exp>;
-  lambda_name?: InputMaybe<String_Comparison_Exp>;
-  last_updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
-};
-
-/** aggregate max on columns */
-export type Farm_Factory_Product_Lambda_Max_Fields = {
-  __typename?: 'farm_factory_product_lambda_max_fields';
-  contract_id?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['bigint']>;
-  lambda_bytes?: Maybe<Scalars['String']>;
-  lambda_name?: Maybe<Scalars['String']>;
-  last_updated_at?: Maybe<Scalars['timestamptz']>;
-};
-
-/** order by max() on columns of table "farm_factory_product_lambda" */
-export type Farm_Factory_Product_Lambda_Max_Order_By = {
-  contract_id?: InputMaybe<Order_By>;
-  id?: InputMaybe<Order_By>;
-  lambda_bytes?: InputMaybe<Order_By>;
-  lambda_name?: InputMaybe<Order_By>;
-  last_updated_at?: InputMaybe<Order_By>;
-};
-
-/** aggregate min on columns */
-export type Farm_Factory_Product_Lambda_Min_Fields = {
-  __typename?: 'farm_factory_product_lambda_min_fields';
-  contract_id?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['bigint']>;
-  lambda_bytes?: Maybe<Scalars['String']>;
-  lambda_name?: Maybe<Scalars['String']>;
-  last_updated_at?: Maybe<Scalars['timestamptz']>;
-};
-
-/** order by min() on columns of table "farm_factory_product_lambda" */
-export type Farm_Factory_Product_Lambda_Min_Order_By = {
-  contract_id?: InputMaybe<Order_By>;
-  id?: InputMaybe<Order_By>;
-  lambda_bytes?: InputMaybe<Order_By>;
-  lambda_name?: InputMaybe<Order_By>;
-  last_updated_at?: InputMaybe<Order_By>;
-};
-
-/** Ordering options when selecting data from "farm_factory_product_lambda". */
-export type Farm_Factory_Product_Lambda_Order_By = {
-  contract?: InputMaybe<Farm_Factory_Order_By>;
-  contract_id?: InputMaybe<Order_By>;
-  id?: InputMaybe<Order_By>;
-  lambda_bytes?: InputMaybe<Order_By>;
-  lambda_name?: InputMaybe<Order_By>;
-  last_updated_at?: InputMaybe<Order_By>;
-};
-
-/** select columns of table "farm_factory_product_lambda" */
-export enum Farm_Factory_Product_Lambda_Select_Column {
-  /** column name */
-  ContractId = 'contract_id',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  LambdaBytes = 'lambda_bytes',
-  /** column name */
-  LambdaName = 'lambda_name',
-  /** column name */
-  LastUpdatedAt = 'last_updated_at'
-}
-
-/** aggregate stddev on columns */
-export type Farm_Factory_Product_Lambda_Stddev_Fields = {
-  __typename?: 'farm_factory_product_lambda_stddev_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by stddev() on columns of table "farm_factory_product_lambda" */
-export type Farm_Factory_Product_Lambda_Stddev_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** aggregate stddev_pop on columns */
-export type Farm_Factory_Product_Lambda_Stddev_Pop_Fields = {
-  __typename?: 'farm_factory_product_lambda_stddev_pop_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by stddev_pop() on columns of table "farm_factory_product_lambda" */
-export type Farm_Factory_Product_Lambda_Stddev_Pop_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** aggregate stddev_samp on columns */
-export type Farm_Factory_Product_Lambda_Stddev_Samp_Fields = {
-  __typename?: 'farm_factory_product_lambda_stddev_samp_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by stddev_samp() on columns of table "farm_factory_product_lambda" */
-export type Farm_Factory_Product_Lambda_Stddev_Samp_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** Streaming cursor of the table "farm_factory_product_lambda" */
-export type Farm_Factory_Product_Lambda_Stream_Cursor_Input = {
-  /** Stream column input with initial value */
-  initial_value: Farm_Factory_Product_Lambda_Stream_Cursor_Value_Input;
-  /** cursor ordering */
-  ordering?: InputMaybe<Cursor_Ordering>;
-};
-
-/** Initial value of the column from where the streaming should start */
-export type Farm_Factory_Product_Lambda_Stream_Cursor_Value_Input = {
-  contract_id?: InputMaybe<Scalars['String']>;
-  id?: InputMaybe<Scalars['bigint']>;
-  lambda_bytes?: InputMaybe<Scalars['String']>;
-  lambda_name?: InputMaybe<Scalars['String']>;
-  last_updated_at?: InputMaybe<Scalars['timestamptz']>;
-};
-
-/** aggregate sum on columns */
-export type Farm_Factory_Product_Lambda_Sum_Fields = {
-  __typename?: 'farm_factory_product_lambda_sum_fields';
-  id?: Maybe<Scalars['bigint']>;
-};
-
-/** order by sum() on columns of table "farm_factory_product_lambda" */
-export type Farm_Factory_Product_Lambda_Sum_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** aggregate var_pop on columns */
-export type Farm_Factory_Product_Lambda_Var_Pop_Fields = {
-  __typename?: 'farm_factory_product_lambda_var_pop_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by var_pop() on columns of table "farm_factory_product_lambda" */
-export type Farm_Factory_Product_Lambda_Var_Pop_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** aggregate var_samp on columns */
-export type Farm_Factory_Product_Lambda_Var_Samp_Fields = {
-  __typename?: 'farm_factory_product_lambda_var_samp_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by var_samp() on columns of table "farm_factory_product_lambda" */
-export type Farm_Factory_Product_Lambda_Var_Samp_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** aggregate variance on columns */
-export type Farm_Factory_Product_Lambda_Variance_Fields = {
-  __typename?: 'farm_factory_product_lambda_variance_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by variance() on columns of table "farm_factory_product_lambda" */
-export type Farm_Factory_Product_Lambda_Variance_Order_By = {
-  id?: InputMaybe<Order_By>;
 };
 
 /** select columns of table "farm_factory" */
@@ -19086,6 +19410,8 @@ export enum Farm_Factory_Select_Column {
   Address = 'address',
   /** column name */
   Admin = 'admin',
+  /** column name */
+  CreateFarmMTokenPaused = 'create_farm_m_token_paused',
   /** column name */
   CreateFarmPaused = 'create_farm_paused',
   /** column name */
@@ -19103,6 +19429,8 @@ export enum Farm_Factory_Select_Column {
 /** select "farm_factory_aggregate_bool_exp_bool_and_arguments_columns" columns of table "farm_factory" */
 export enum Farm_Factory_Select_Column_Farm_Factory_Aggregate_Bool_Exp_Bool_And_Arguments_Columns {
   /** column name */
+  CreateFarmMTokenPaused = 'create_farm_m_token_paused',
+  /** column name */
   CreateFarmPaused = 'create_farm_paused',
   /** column name */
   TrackFarmPaused = 'track_farm_paused',
@@ -19112,6 +19440,8 @@ export enum Farm_Factory_Select_Column_Farm_Factory_Aggregate_Bool_Exp_Bool_And_
 
 /** select "farm_factory_aggregate_bool_exp_bool_or_arguments_columns" columns of table "farm_factory" */
 export enum Farm_Factory_Select_Column_Farm_Factory_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns {
+  /** column name */
+  CreateFarmMTokenPaused = 'create_farm_m_token_paused',
   /** column name */
   CreateFarmPaused = 'create_farm_paused',
   /** column name */
@@ -19165,6 +19495,7 @@ export type Farm_Factory_Stream_Cursor_Input = {
 export type Farm_Factory_Stream_Cursor_Value_Input = {
   address?: InputMaybe<Scalars['String']>;
   admin?: InputMaybe<Scalars['String']>;
+  create_farm_m_token_paused?: InputMaybe<Scalars['Boolean']>;
   create_farm_paused?: InputMaybe<Scalars['Boolean']>;
   farm_name_max_length?: InputMaybe<Scalars['smallint']>;
   governance_id?: InputMaybe<Scalars['String']>;
@@ -19954,6 +20285,7 @@ export type Farm_Max_Fields = {
   init_block?: Maybe<Scalars['bigint']>;
   last_block_update?: Maybe<Scalars['bigint']>;
   last_updated_at?: Maybe<Scalars['timestamptz']>;
+  loan_token_name?: Maybe<Scalars['String']>;
   lp_token_address?: Maybe<Scalars['String']>;
   lp_token_balance?: Maybe<Scalars['bigint']>;
   min_block_time_snapshot?: Maybe<Scalars['smallint']>;
@@ -19978,6 +20310,7 @@ export type Farm_Max_Order_By = {
   init_block?: InputMaybe<Order_By>;
   last_block_update?: InputMaybe<Order_By>;
   last_updated_at?: InputMaybe<Order_By>;
+  loan_token_name?: InputMaybe<Order_By>;
   lp_token_address?: InputMaybe<Order_By>;
   lp_token_balance?: InputMaybe<Order_By>;
   min_block_time_snapshot?: InputMaybe<Order_By>;
@@ -20003,6 +20336,7 @@ export type Farm_Min_Fields = {
   init_block?: Maybe<Scalars['bigint']>;
   last_block_update?: Maybe<Scalars['bigint']>;
   last_updated_at?: Maybe<Scalars['timestamptz']>;
+  loan_token_name?: Maybe<Scalars['String']>;
   lp_token_address?: Maybe<Scalars['String']>;
   lp_token_balance?: Maybe<Scalars['bigint']>;
   min_block_time_snapshot?: Maybe<Scalars['smallint']>;
@@ -20027,6 +20361,7 @@ export type Farm_Min_Order_By = {
   init_block?: InputMaybe<Order_By>;
   last_block_update?: InputMaybe<Order_By>;
   last_updated_at?: InputMaybe<Order_By>;
+  loan_token_name?: InputMaybe<Order_By>;
   lp_token_address?: InputMaybe<Order_By>;
   lp_token_balance?: InputMaybe<Order_By>;
   min_block_time_snapshot?: InputMaybe<Order_By>;
@@ -20058,9 +20393,11 @@ export type Farm_Order_By = {
   infinite?: InputMaybe<Order_By>;
   init?: InputMaybe<Order_By>;
   init_block?: InputMaybe<Order_By>;
+  is_m_farm?: InputMaybe<Order_By>;
   lambdas_aggregate?: InputMaybe<Farm_Lambda_Aggregate_Order_By>;
   last_block_update?: InputMaybe<Order_By>;
   last_updated_at?: InputMaybe<Order_By>;
+  loan_token_name?: InputMaybe<Order_By>;
   lp_token_address?: InputMaybe<Order_By>;
   lp_token_balance?: InputMaybe<Order_By>;
   min_block_time_snapshot?: InputMaybe<Order_By>;
@@ -20105,9 +20442,13 @@ export enum Farm_Select_Column {
   /** column name */
   InitBlock = 'init_block',
   /** column name */
+  IsMFarm = 'is_m_farm',
+  /** column name */
   LastBlockUpdate = 'last_block_update',
   /** column name */
   LastUpdatedAt = 'last_updated_at',
+  /** column name */
+  LoanTokenName = 'loan_token_name',
   /** column name */
   LpTokenAddress = 'lp_token_address',
   /** column name */
@@ -20161,6 +20502,8 @@ export enum Farm_Select_Column_Farm_Aggregate_Bool_Exp_Bool_And_Arguments_Column
   /** column name */
   Init = 'init',
   /** column name */
+  IsMFarm = 'is_m_farm',
+  /** column name */
   Open = 'open',
   /** column name */
   WithdrawPaused = 'withdraw_paused'
@@ -20178,6 +20521,8 @@ export enum Farm_Select_Column_Farm_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns
   Infinite = 'infinite',
   /** column name */
   Init = 'init',
+  /** column name */
+  IsMFarm = 'is_m_farm',
   /** column name */
   Open = 'open',
   /** column name */
@@ -20392,8 +20737,10 @@ export type Farm_Stream_Cursor_Value_Input = {
   infinite?: InputMaybe<Scalars['Boolean']>;
   init?: InputMaybe<Scalars['Boolean']>;
   init_block?: InputMaybe<Scalars['bigint']>;
+  is_m_farm?: InputMaybe<Scalars['Boolean']>;
   last_block_update?: InputMaybe<Scalars['bigint']>;
   last_updated_at?: InputMaybe<Scalars['timestamptz']>;
+  loan_token_name?: InputMaybe<Scalars['String']>;
   lp_token_address?: InputMaybe<Scalars['String']>;
   lp_token_balance?: InputMaybe<Scalars['bigint']>;
   min_block_time_snapshot?: InputMaybe<Scalars['smallint']>;
@@ -26795,6 +27142,7 @@ export type Governance_Proposal_Vote = {
   voter: Mavryk_User;
   voter_id: Scalars['String'];
   voting_power: Scalars['float8'];
+  voting_reward_claimed: Scalars['Boolean'];
 };
 
 /** aggregated selection of "governance_proposal_vote" */
@@ -26981,6 +27329,7 @@ export type Governance_Proposal_Vote_Bool_Exp = {
   voter?: InputMaybe<Mavryk_User_Bool_Exp>;
   voter_id?: InputMaybe<String_Comparison_Exp>;
   voting_power?: InputMaybe<Float8_Comparison_Exp>;
+  voting_reward_claimed?: InputMaybe<Boolean_Comparison_Exp>;
 };
 
 /** aggregate max on columns */
@@ -27049,6 +27398,7 @@ export type Governance_Proposal_Vote_Order_By = {
   voter?: InputMaybe<Mavryk_User_Order_By>;
   voter_id?: InputMaybe<Order_By>;
   voting_power?: InputMaybe<Order_By>;
+  voting_reward_claimed?: InputMaybe<Order_By>;
 };
 
 /** select columns of table "governance_proposal_vote" */
@@ -27068,7 +27418,9 @@ export enum Governance_Proposal_Vote_Select_Column {
   /** column name */
   VoterId = 'voter_id',
   /** column name */
-  VotingPower = 'voting_power'
+  VotingPower = 'voting_power',
+  /** column name */
+  VotingRewardClaimed = 'voting_reward_claimed'
 }
 
 /** select "governance_proposal_vote_aggregate_bool_exp_avg_arguments_columns" columns of table "governance_proposal_vote" */
@@ -27080,13 +27432,17 @@ export enum Governance_Proposal_Vote_Select_Column_Governance_Proposal_Vote_Aggr
 /** select "governance_proposal_vote_aggregate_bool_exp_bool_and_arguments_columns" columns of table "governance_proposal_vote" */
 export enum Governance_Proposal_Vote_Select_Column_Governance_Proposal_Vote_Aggregate_Bool_Exp_Bool_And_Arguments_Columns {
   /** column name */
-  CurrentRoundVote = 'current_round_vote'
+  CurrentRoundVote = 'current_round_vote',
+  /** column name */
+  VotingRewardClaimed = 'voting_reward_claimed'
 }
 
 /** select "governance_proposal_vote_aggregate_bool_exp_bool_or_arguments_columns" columns of table "governance_proposal_vote" */
 export enum Governance_Proposal_Vote_Select_Column_Governance_Proposal_Vote_Aggregate_Bool_Exp_Bool_Or_Arguments_Columns {
   /** column name */
-  CurrentRoundVote = 'current_round_vote'
+  CurrentRoundVote = 'current_round_vote',
+  /** column name */
+  VotingRewardClaimed = 'voting_reward_claimed'
 }
 
 /** select "governance_proposal_vote_aggregate_bool_exp_corr_arguments_columns" columns of table "governance_proposal_vote" */
@@ -27220,6 +27576,7 @@ export type Governance_Proposal_Vote_Stream_Cursor_Value_Input = {
   vote?: InputMaybe<Scalars['smallint']>;
   voter_id?: InputMaybe<Scalars['String']>;
   voting_power?: InputMaybe<Scalars['float8']>;
+  voting_reward_claimed?: InputMaybe<Scalars['Boolean']>;
 };
 
 /** aggregate sum on columns */
@@ -27319,10 +27676,6 @@ export type Governance_Proxy = {
   __typename?: 'governance_proxy';
   address: Scalars['String'];
   admin: Scalars['String'];
-  /** An array relationship */
-  general_contracts: Array<Governance_Proxy_General_Contract>;
-  /** An aggregate relationship */
-  general_contracts_aggregate: Governance_Proxy_General_Contract_Aggregate;
   /** An object relationship */
   governance: Governance;
   governance_id: Scalars['String'];
@@ -27331,38 +27684,6 @@ export type Governance_Proxy = {
   /** An aggregate relationship */
   lambdas_aggregate: Governance_Proxy_Lambda_Aggregate;
   last_updated_at?: Maybe<Scalars['timestamptz']>;
-  /** An array relationship */
-  proxy_lambdas: Array<Governance_Proxy_Proxy_Lambda>;
-  /** An aggregate relationship */
-  proxy_lambdas_aggregate: Governance_Proxy_Proxy_Lambda_Aggregate;
-  /** An array relationship */
-  whitelist_contracts: Array<Governance_Proxy_Whitelist_Contract>;
-  /** An aggregate relationship */
-  whitelist_contracts_aggregate: Governance_Proxy_Whitelist_Contract_Aggregate;
-  /** An array relationship */
-  whitelist_token_contracts: Array<Governance_Proxy_Whitelist_Token_Contract>;
-  /** An aggregate relationship */
-  whitelist_token_contracts_aggregate: Governance_Proxy_Whitelist_Token_Contract_Aggregate;
-};
-
-
-/** columns and relationships of "governance_proxy" */
-export type Governance_ProxyGeneral_ContractsArgs = {
-  distinct_on?: InputMaybe<Array<Governance_Proxy_General_Contract_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Governance_Proxy_General_Contract_Order_By>>;
-  where?: InputMaybe<Governance_Proxy_General_Contract_Bool_Exp>;
-};
-
-
-/** columns and relationships of "governance_proxy" */
-export type Governance_ProxyGeneral_Contracts_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Governance_Proxy_General_Contract_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Governance_Proxy_General_Contract_Order_By>>;
-  where?: InputMaybe<Governance_Proxy_General_Contract_Bool_Exp>;
 };
 
 
@@ -27383,66 +27704,6 @@ export type Governance_ProxyLambdas_AggregateArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   order_by?: InputMaybe<Array<Governance_Proxy_Lambda_Order_By>>;
   where?: InputMaybe<Governance_Proxy_Lambda_Bool_Exp>;
-};
-
-
-/** columns and relationships of "governance_proxy" */
-export type Governance_ProxyProxy_LambdasArgs = {
-  distinct_on?: InputMaybe<Array<Governance_Proxy_Proxy_Lambda_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Governance_Proxy_Proxy_Lambda_Order_By>>;
-  where?: InputMaybe<Governance_Proxy_Proxy_Lambda_Bool_Exp>;
-};
-
-
-/** columns and relationships of "governance_proxy" */
-export type Governance_ProxyProxy_Lambdas_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Governance_Proxy_Proxy_Lambda_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Governance_Proxy_Proxy_Lambda_Order_By>>;
-  where?: InputMaybe<Governance_Proxy_Proxy_Lambda_Bool_Exp>;
-};
-
-
-/** columns and relationships of "governance_proxy" */
-export type Governance_ProxyWhitelist_ContractsArgs = {
-  distinct_on?: InputMaybe<Array<Governance_Proxy_Whitelist_Contract_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Governance_Proxy_Whitelist_Contract_Order_By>>;
-  where?: InputMaybe<Governance_Proxy_Whitelist_Contract_Bool_Exp>;
-};
-
-
-/** columns and relationships of "governance_proxy" */
-export type Governance_ProxyWhitelist_Contracts_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Governance_Proxy_Whitelist_Contract_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Governance_Proxy_Whitelist_Contract_Order_By>>;
-  where?: InputMaybe<Governance_Proxy_Whitelist_Contract_Bool_Exp>;
-};
-
-
-/** columns and relationships of "governance_proxy" */
-export type Governance_ProxyWhitelist_Token_ContractsArgs = {
-  distinct_on?: InputMaybe<Array<Governance_Proxy_Whitelist_Token_Contract_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Governance_Proxy_Whitelist_Token_Contract_Order_By>>;
-  where?: InputMaybe<Governance_Proxy_Whitelist_Token_Contract_Bool_Exp>;
-};
-
-
-/** columns and relationships of "governance_proxy" */
-export type Governance_ProxyWhitelist_Token_Contracts_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Governance_Proxy_Whitelist_Token_Contract_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Governance_Proxy_Whitelist_Token_Contract_Order_By>>;
-  where?: InputMaybe<Governance_Proxy_Whitelist_Token_Contract_Bool_Exp>;
 };
 
 /** aggregated selection of "governance_proxy" */
@@ -27492,257 +27753,11 @@ export type Governance_Proxy_Bool_Exp = {
   _or?: InputMaybe<Array<Governance_Proxy_Bool_Exp>>;
   address?: InputMaybe<String_Comparison_Exp>;
   admin?: InputMaybe<String_Comparison_Exp>;
-  general_contracts?: InputMaybe<Governance_Proxy_General_Contract_Bool_Exp>;
-  general_contracts_aggregate?: InputMaybe<Governance_Proxy_General_Contract_Aggregate_Bool_Exp>;
   governance?: InputMaybe<Governance_Bool_Exp>;
   governance_id?: InputMaybe<String_Comparison_Exp>;
   lambdas?: InputMaybe<Governance_Proxy_Lambda_Bool_Exp>;
   lambdas_aggregate?: InputMaybe<Governance_Proxy_Lambda_Aggregate_Bool_Exp>;
   last_updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
-  proxy_lambdas?: InputMaybe<Governance_Proxy_Proxy_Lambda_Bool_Exp>;
-  proxy_lambdas_aggregate?: InputMaybe<Governance_Proxy_Proxy_Lambda_Aggregate_Bool_Exp>;
-  whitelist_contracts?: InputMaybe<Governance_Proxy_Whitelist_Contract_Bool_Exp>;
-  whitelist_contracts_aggregate?: InputMaybe<Governance_Proxy_Whitelist_Contract_Aggregate_Bool_Exp>;
-  whitelist_token_contracts?: InputMaybe<Governance_Proxy_Whitelist_Token_Contract_Bool_Exp>;
-  whitelist_token_contracts_aggregate?: InputMaybe<Governance_Proxy_Whitelist_Token_Contract_Aggregate_Bool_Exp>;
-};
-
-/** columns and relationships of "governance_proxy_general_contract" */
-export type Governance_Proxy_General_Contract = {
-  __typename?: 'governance_proxy_general_contract';
-  /** An object relationship */
-  contract: Governance_Proxy;
-  contract_address: Scalars['String'];
-  contract_id: Scalars['String'];
-  contract_name: Scalars['String'];
-  id: Scalars['bigint'];
-};
-
-/** aggregated selection of "governance_proxy_general_contract" */
-export type Governance_Proxy_General_Contract_Aggregate = {
-  __typename?: 'governance_proxy_general_contract_aggregate';
-  aggregate?: Maybe<Governance_Proxy_General_Contract_Aggregate_Fields>;
-  nodes: Array<Governance_Proxy_General_Contract>;
-};
-
-export type Governance_Proxy_General_Contract_Aggregate_Bool_Exp = {
-  count?: InputMaybe<Governance_Proxy_General_Contract_Aggregate_Bool_Exp_Count>;
-};
-
-export type Governance_Proxy_General_Contract_Aggregate_Bool_Exp_Count = {
-  arguments?: InputMaybe<Array<Governance_Proxy_General_Contract_Select_Column>>;
-  distinct?: InputMaybe<Scalars['Boolean']>;
-  filter?: InputMaybe<Governance_Proxy_General_Contract_Bool_Exp>;
-  predicate: Int_Comparison_Exp;
-};
-
-/** aggregate fields of "governance_proxy_general_contract" */
-export type Governance_Proxy_General_Contract_Aggregate_Fields = {
-  __typename?: 'governance_proxy_general_contract_aggregate_fields';
-  avg?: Maybe<Governance_Proxy_General_Contract_Avg_Fields>;
-  count: Scalars['Int'];
-  max?: Maybe<Governance_Proxy_General_Contract_Max_Fields>;
-  min?: Maybe<Governance_Proxy_General_Contract_Min_Fields>;
-  stddev?: Maybe<Governance_Proxy_General_Contract_Stddev_Fields>;
-  stddev_pop?: Maybe<Governance_Proxy_General_Contract_Stddev_Pop_Fields>;
-  stddev_samp?: Maybe<Governance_Proxy_General_Contract_Stddev_Samp_Fields>;
-  sum?: Maybe<Governance_Proxy_General_Contract_Sum_Fields>;
-  var_pop?: Maybe<Governance_Proxy_General_Contract_Var_Pop_Fields>;
-  var_samp?: Maybe<Governance_Proxy_General_Contract_Var_Samp_Fields>;
-  variance?: Maybe<Governance_Proxy_General_Contract_Variance_Fields>;
-};
-
-
-/** aggregate fields of "governance_proxy_general_contract" */
-export type Governance_Proxy_General_Contract_Aggregate_FieldsCountArgs = {
-  columns?: InputMaybe<Array<Governance_Proxy_General_Contract_Select_Column>>;
-  distinct?: InputMaybe<Scalars['Boolean']>;
-};
-
-/** order by aggregate values of table "governance_proxy_general_contract" */
-export type Governance_Proxy_General_Contract_Aggregate_Order_By = {
-  avg?: InputMaybe<Governance_Proxy_General_Contract_Avg_Order_By>;
-  count?: InputMaybe<Order_By>;
-  max?: InputMaybe<Governance_Proxy_General_Contract_Max_Order_By>;
-  min?: InputMaybe<Governance_Proxy_General_Contract_Min_Order_By>;
-  stddev?: InputMaybe<Governance_Proxy_General_Contract_Stddev_Order_By>;
-  stddev_pop?: InputMaybe<Governance_Proxy_General_Contract_Stddev_Pop_Order_By>;
-  stddev_samp?: InputMaybe<Governance_Proxy_General_Contract_Stddev_Samp_Order_By>;
-  sum?: InputMaybe<Governance_Proxy_General_Contract_Sum_Order_By>;
-  var_pop?: InputMaybe<Governance_Proxy_General_Contract_Var_Pop_Order_By>;
-  var_samp?: InputMaybe<Governance_Proxy_General_Contract_Var_Samp_Order_By>;
-  variance?: InputMaybe<Governance_Proxy_General_Contract_Variance_Order_By>;
-};
-
-/** aggregate avg on columns */
-export type Governance_Proxy_General_Contract_Avg_Fields = {
-  __typename?: 'governance_proxy_general_contract_avg_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by avg() on columns of table "governance_proxy_general_contract" */
-export type Governance_Proxy_General_Contract_Avg_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** Boolean expression to filter rows from the table "governance_proxy_general_contract". All fields are combined with a logical 'AND'. */
-export type Governance_Proxy_General_Contract_Bool_Exp = {
-  _and?: InputMaybe<Array<Governance_Proxy_General_Contract_Bool_Exp>>;
-  _not?: InputMaybe<Governance_Proxy_General_Contract_Bool_Exp>;
-  _or?: InputMaybe<Array<Governance_Proxy_General_Contract_Bool_Exp>>;
-  contract?: InputMaybe<Governance_Proxy_Bool_Exp>;
-  contract_address?: InputMaybe<String_Comparison_Exp>;
-  contract_id?: InputMaybe<String_Comparison_Exp>;
-  contract_name?: InputMaybe<String_Comparison_Exp>;
-  id?: InputMaybe<Bigint_Comparison_Exp>;
-};
-
-/** aggregate max on columns */
-export type Governance_Proxy_General_Contract_Max_Fields = {
-  __typename?: 'governance_proxy_general_contract_max_fields';
-  contract_address?: Maybe<Scalars['String']>;
-  contract_id?: Maybe<Scalars['String']>;
-  contract_name?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['bigint']>;
-};
-
-/** order by max() on columns of table "governance_proxy_general_contract" */
-export type Governance_Proxy_General_Contract_Max_Order_By = {
-  contract_address?: InputMaybe<Order_By>;
-  contract_id?: InputMaybe<Order_By>;
-  contract_name?: InputMaybe<Order_By>;
-  id?: InputMaybe<Order_By>;
-};
-
-/** aggregate min on columns */
-export type Governance_Proxy_General_Contract_Min_Fields = {
-  __typename?: 'governance_proxy_general_contract_min_fields';
-  contract_address?: Maybe<Scalars['String']>;
-  contract_id?: Maybe<Scalars['String']>;
-  contract_name?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['bigint']>;
-};
-
-/** order by min() on columns of table "governance_proxy_general_contract" */
-export type Governance_Proxy_General_Contract_Min_Order_By = {
-  contract_address?: InputMaybe<Order_By>;
-  contract_id?: InputMaybe<Order_By>;
-  contract_name?: InputMaybe<Order_By>;
-  id?: InputMaybe<Order_By>;
-};
-
-/** Ordering options when selecting data from "governance_proxy_general_contract". */
-export type Governance_Proxy_General_Contract_Order_By = {
-  contract?: InputMaybe<Governance_Proxy_Order_By>;
-  contract_address?: InputMaybe<Order_By>;
-  contract_id?: InputMaybe<Order_By>;
-  contract_name?: InputMaybe<Order_By>;
-  id?: InputMaybe<Order_By>;
-};
-
-/** select columns of table "governance_proxy_general_contract" */
-export enum Governance_Proxy_General_Contract_Select_Column {
-  /** column name */
-  ContractAddress = 'contract_address',
-  /** column name */
-  ContractId = 'contract_id',
-  /** column name */
-  ContractName = 'contract_name',
-  /** column name */
-  Id = 'id'
-}
-
-/** aggregate stddev on columns */
-export type Governance_Proxy_General_Contract_Stddev_Fields = {
-  __typename?: 'governance_proxy_general_contract_stddev_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by stddev() on columns of table "governance_proxy_general_contract" */
-export type Governance_Proxy_General_Contract_Stddev_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** aggregate stddev_pop on columns */
-export type Governance_Proxy_General_Contract_Stddev_Pop_Fields = {
-  __typename?: 'governance_proxy_general_contract_stddev_pop_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by stddev_pop() on columns of table "governance_proxy_general_contract" */
-export type Governance_Proxy_General_Contract_Stddev_Pop_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** aggregate stddev_samp on columns */
-export type Governance_Proxy_General_Contract_Stddev_Samp_Fields = {
-  __typename?: 'governance_proxy_general_contract_stddev_samp_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by stddev_samp() on columns of table "governance_proxy_general_contract" */
-export type Governance_Proxy_General_Contract_Stddev_Samp_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** Streaming cursor of the table "governance_proxy_general_contract" */
-export type Governance_Proxy_General_Contract_Stream_Cursor_Input = {
-  /** Stream column input with initial value */
-  initial_value: Governance_Proxy_General_Contract_Stream_Cursor_Value_Input;
-  /** cursor ordering */
-  ordering?: InputMaybe<Cursor_Ordering>;
-};
-
-/** Initial value of the column from where the streaming should start */
-export type Governance_Proxy_General_Contract_Stream_Cursor_Value_Input = {
-  contract_address?: InputMaybe<Scalars['String']>;
-  contract_id?: InputMaybe<Scalars['String']>;
-  contract_name?: InputMaybe<Scalars['String']>;
-  id?: InputMaybe<Scalars['bigint']>;
-};
-
-/** aggregate sum on columns */
-export type Governance_Proxy_General_Contract_Sum_Fields = {
-  __typename?: 'governance_proxy_general_contract_sum_fields';
-  id?: Maybe<Scalars['bigint']>;
-};
-
-/** order by sum() on columns of table "governance_proxy_general_contract" */
-export type Governance_Proxy_General_Contract_Sum_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** aggregate var_pop on columns */
-export type Governance_Proxy_General_Contract_Var_Pop_Fields = {
-  __typename?: 'governance_proxy_general_contract_var_pop_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by var_pop() on columns of table "governance_proxy_general_contract" */
-export type Governance_Proxy_General_Contract_Var_Pop_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** aggregate var_samp on columns */
-export type Governance_Proxy_General_Contract_Var_Samp_Fields = {
-  __typename?: 'governance_proxy_general_contract_var_samp_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by var_samp() on columns of table "governance_proxy_general_contract" */
-export type Governance_Proxy_General_Contract_Var_Samp_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** aggregate variance on columns */
-export type Governance_Proxy_General_Contract_Variance_Fields = {
-  __typename?: 'governance_proxy_general_contract_variance_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by variance() on columns of table "governance_proxy_general_contract" */
-export type Governance_Proxy_General_Contract_Variance_Order_By = {
-  id?: InputMaybe<Order_By>;
 };
 
 /** columns and relationships of "governance_proxy_lambda" */
@@ -28031,262 +28046,10 @@ export type Governance_Proxy_Min_Order_By = {
 export type Governance_Proxy_Order_By = {
   address?: InputMaybe<Order_By>;
   admin?: InputMaybe<Order_By>;
-  general_contracts_aggregate?: InputMaybe<Governance_Proxy_General_Contract_Aggregate_Order_By>;
   governance?: InputMaybe<Governance_Order_By>;
   governance_id?: InputMaybe<Order_By>;
   lambdas_aggregate?: InputMaybe<Governance_Proxy_Lambda_Aggregate_Order_By>;
   last_updated_at?: InputMaybe<Order_By>;
-  proxy_lambdas_aggregate?: InputMaybe<Governance_Proxy_Proxy_Lambda_Aggregate_Order_By>;
-  whitelist_contracts_aggregate?: InputMaybe<Governance_Proxy_Whitelist_Contract_Aggregate_Order_By>;
-  whitelist_token_contracts_aggregate?: InputMaybe<Governance_Proxy_Whitelist_Token_Contract_Aggregate_Order_By>;
-};
-
-/** columns and relationships of "governance_proxy_proxy_lambda" */
-export type Governance_Proxy_Proxy_Lambda = {
-  __typename?: 'governance_proxy_proxy_lambda';
-  /** An object relationship */
-  contract: Governance_Proxy;
-  contract_id: Scalars['String'];
-  id: Scalars['bigint'];
-  lambda_bytes: Scalars['String'];
-  lambda_name: Scalars['String'];
-  last_updated_at?: Maybe<Scalars['timestamptz']>;
-};
-
-/** aggregated selection of "governance_proxy_proxy_lambda" */
-export type Governance_Proxy_Proxy_Lambda_Aggregate = {
-  __typename?: 'governance_proxy_proxy_lambda_aggregate';
-  aggregate?: Maybe<Governance_Proxy_Proxy_Lambda_Aggregate_Fields>;
-  nodes: Array<Governance_Proxy_Proxy_Lambda>;
-};
-
-export type Governance_Proxy_Proxy_Lambda_Aggregate_Bool_Exp = {
-  count?: InputMaybe<Governance_Proxy_Proxy_Lambda_Aggregate_Bool_Exp_Count>;
-};
-
-export type Governance_Proxy_Proxy_Lambda_Aggregate_Bool_Exp_Count = {
-  arguments?: InputMaybe<Array<Governance_Proxy_Proxy_Lambda_Select_Column>>;
-  distinct?: InputMaybe<Scalars['Boolean']>;
-  filter?: InputMaybe<Governance_Proxy_Proxy_Lambda_Bool_Exp>;
-  predicate: Int_Comparison_Exp;
-};
-
-/** aggregate fields of "governance_proxy_proxy_lambda" */
-export type Governance_Proxy_Proxy_Lambda_Aggregate_Fields = {
-  __typename?: 'governance_proxy_proxy_lambda_aggregate_fields';
-  avg?: Maybe<Governance_Proxy_Proxy_Lambda_Avg_Fields>;
-  count: Scalars['Int'];
-  max?: Maybe<Governance_Proxy_Proxy_Lambda_Max_Fields>;
-  min?: Maybe<Governance_Proxy_Proxy_Lambda_Min_Fields>;
-  stddev?: Maybe<Governance_Proxy_Proxy_Lambda_Stddev_Fields>;
-  stddev_pop?: Maybe<Governance_Proxy_Proxy_Lambda_Stddev_Pop_Fields>;
-  stddev_samp?: Maybe<Governance_Proxy_Proxy_Lambda_Stddev_Samp_Fields>;
-  sum?: Maybe<Governance_Proxy_Proxy_Lambda_Sum_Fields>;
-  var_pop?: Maybe<Governance_Proxy_Proxy_Lambda_Var_Pop_Fields>;
-  var_samp?: Maybe<Governance_Proxy_Proxy_Lambda_Var_Samp_Fields>;
-  variance?: Maybe<Governance_Proxy_Proxy_Lambda_Variance_Fields>;
-};
-
-
-/** aggregate fields of "governance_proxy_proxy_lambda" */
-export type Governance_Proxy_Proxy_Lambda_Aggregate_FieldsCountArgs = {
-  columns?: InputMaybe<Array<Governance_Proxy_Proxy_Lambda_Select_Column>>;
-  distinct?: InputMaybe<Scalars['Boolean']>;
-};
-
-/** order by aggregate values of table "governance_proxy_proxy_lambda" */
-export type Governance_Proxy_Proxy_Lambda_Aggregate_Order_By = {
-  avg?: InputMaybe<Governance_Proxy_Proxy_Lambda_Avg_Order_By>;
-  count?: InputMaybe<Order_By>;
-  max?: InputMaybe<Governance_Proxy_Proxy_Lambda_Max_Order_By>;
-  min?: InputMaybe<Governance_Proxy_Proxy_Lambda_Min_Order_By>;
-  stddev?: InputMaybe<Governance_Proxy_Proxy_Lambda_Stddev_Order_By>;
-  stddev_pop?: InputMaybe<Governance_Proxy_Proxy_Lambda_Stddev_Pop_Order_By>;
-  stddev_samp?: InputMaybe<Governance_Proxy_Proxy_Lambda_Stddev_Samp_Order_By>;
-  sum?: InputMaybe<Governance_Proxy_Proxy_Lambda_Sum_Order_By>;
-  var_pop?: InputMaybe<Governance_Proxy_Proxy_Lambda_Var_Pop_Order_By>;
-  var_samp?: InputMaybe<Governance_Proxy_Proxy_Lambda_Var_Samp_Order_By>;
-  variance?: InputMaybe<Governance_Proxy_Proxy_Lambda_Variance_Order_By>;
-};
-
-/** aggregate avg on columns */
-export type Governance_Proxy_Proxy_Lambda_Avg_Fields = {
-  __typename?: 'governance_proxy_proxy_lambda_avg_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by avg() on columns of table "governance_proxy_proxy_lambda" */
-export type Governance_Proxy_Proxy_Lambda_Avg_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** Boolean expression to filter rows from the table "governance_proxy_proxy_lambda". All fields are combined with a logical 'AND'. */
-export type Governance_Proxy_Proxy_Lambda_Bool_Exp = {
-  _and?: InputMaybe<Array<Governance_Proxy_Proxy_Lambda_Bool_Exp>>;
-  _not?: InputMaybe<Governance_Proxy_Proxy_Lambda_Bool_Exp>;
-  _or?: InputMaybe<Array<Governance_Proxy_Proxy_Lambda_Bool_Exp>>;
-  contract?: InputMaybe<Governance_Proxy_Bool_Exp>;
-  contract_id?: InputMaybe<String_Comparison_Exp>;
-  id?: InputMaybe<Bigint_Comparison_Exp>;
-  lambda_bytes?: InputMaybe<String_Comparison_Exp>;
-  lambda_name?: InputMaybe<String_Comparison_Exp>;
-  last_updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
-};
-
-/** aggregate max on columns */
-export type Governance_Proxy_Proxy_Lambda_Max_Fields = {
-  __typename?: 'governance_proxy_proxy_lambda_max_fields';
-  contract_id?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['bigint']>;
-  lambda_bytes?: Maybe<Scalars['String']>;
-  lambda_name?: Maybe<Scalars['String']>;
-  last_updated_at?: Maybe<Scalars['timestamptz']>;
-};
-
-/** order by max() on columns of table "governance_proxy_proxy_lambda" */
-export type Governance_Proxy_Proxy_Lambda_Max_Order_By = {
-  contract_id?: InputMaybe<Order_By>;
-  id?: InputMaybe<Order_By>;
-  lambda_bytes?: InputMaybe<Order_By>;
-  lambda_name?: InputMaybe<Order_By>;
-  last_updated_at?: InputMaybe<Order_By>;
-};
-
-/** aggregate min on columns */
-export type Governance_Proxy_Proxy_Lambda_Min_Fields = {
-  __typename?: 'governance_proxy_proxy_lambda_min_fields';
-  contract_id?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['bigint']>;
-  lambda_bytes?: Maybe<Scalars['String']>;
-  lambda_name?: Maybe<Scalars['String']>;
-  last_updated_at?: Maybe<Scalars['timestamptz']>;
-};
-
-/** order by min() on columns of table "governance_proxy_proxy_lambda" */
-export type Governance_Proxy_Proxy_Lambda_Min_Order_By = {
-  contract_id?: InputMaybe<Order_By>;
-  id?: InputMaybe<Order_By>;
-  lambda_bytes?: InputMaybe<Order_By>;
-  lambda_name?: InputMaybe<Order_By>;
-  last_updated_at?: InputMaybe<Order_By>;
-};
-
-/** Ordering options when selecting data from "governance_proxy_proxy_lambda". */
-export type Governance_Proxy_Proxy_Lambda_Order_By = {
-  contract?: InputMaybe<Governance_Proxy_Order_By>;
-  contract_id?: InputMaybe<Order_By>;
-  id?: InputMaybe<Order_By>;
-  lambda_bytes?: InputMaybe<Order_By>;
-  lambda_name?: InputMaybe<Order_By>;
-  last_updated_at?: InputMaybe<Order_By>;
-};
-
-/** select columns of table "governance_proxy_proxy_lambda" */
-export enum Governance_Proxy_Proxy_Lambda_Select_Column {
-  /** column name */
-  ContractId = 'contract_id',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  LambdaBytes = 'lambda_bytes',
-  /** column name */
-  LambdaName = 'lambda_name',
-  /** column name */
-  LastUpdatedAt = 'last_updated_at'
-}
-
-/** aggregate stddev on columns */
-export type Governance_Proxy_Proxy_Lambda_Stddev_Fields = {
-  __typename?: 'governance_proxy_proxy_lambda_stddev_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by stddev() on columns of table "governance_proxy_proxy_lambda" */
-export type Governance_Proxy_Proxy_Lambda_Stddev_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** aggregate stddev_pop on columns */
-export type Governance_Proxy_Proxy_Lambda_Stddev_Pop_Fields = {
-  __typename?: 'governance_proxy_proxy_lambda_stddev_pop_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by stddev_pop() on columns of table "governance_proxy_proxy_lambda" */
-export type Governance_Proxy_Proxy_Lambda_Stddev_Pop_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** aggregate stddev_samp on columns */
-export type Governance_Proxy_Proxy_Lambda_Stddev_Samp_Fields = {
-  __typename?: 'governance_proxy_proxy_lambda_stddev_samp_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by stddev_samp() on columns of table "governance_proxy_proxy_lambda" */
-export type Governance_Proxy_Proxy_Lambda_Stddev_Samp_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** Streaming cursor of the table "governance_proxy_proxy_lambda" */
-export type Governance_Proxy_Proxy_Lambda_Stream_Cursor_Input = {
-  /** Stream column input with initial value */
-  initial_value: Governance_Proxy_Proxy_Lambda_Stream_Cursor_Value_Input;
-  /** cursor ordering */
-  ordering?: InputMaybe<Cursor_Ordering>;
-};
-
-/** Initial value of the column from where the streaming should start */
-export type Governance_Proxy_Proxy_Lambda_Stream_Cursor_Value_Input = {
-  contract_id?: InputMaybe<Scalars['String']>;
-  id?: InputMaybe<Scalars['bigint']>;
-  lambda_bytes?: InputMaybe<Scalars['String']>;
-  lambda_name?: InputMaybe<Scalars['String']>;
-  last_updated_at?: InputMaybe<Scalars['timestamptz']>;
-};
-
-/** aggregate sum on columns */
-export type Governance_Proxy_Proxy_Lambda_Sum_Fields = {
-  __typename?: 'governance_proxy_proxy_lambda_sum_fields';
-  id?: Maybe<Scalars['bigint']>;
-};
-
-/** order by sum() on columns of table "governance_proxy_proxy_lambda" */
-export type Governance_Proxy_Proxy_Lambda_Sum_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** aggregate var_pop on columns */
-export type Governance_Proxy_Proxy_Lambda_Var_Pop_Fields = {
-  __typename?: 'governance_proxy_proxy_lambda_var_pop_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by var_pop() on columns of table "governance_proxy_proxy_lambda" */
-export type Governance_Proxy_Proxy_Lambda_Var_Pop_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** aggregate var_samp on columns */
-export type Governance_Proxy_Proxy_Lambda_Var_Samp_Fields = {
-  __typename?: 'governance_proxy_proxy_lambda_var_samp_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by var_samp() on columns of table "governance_proxy_proxy_lambda" */
-export type Governance_Proxy_Proxy_Lambda_Var_Samp_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** aggregate variance on columns */
-export type Governance_Proxy_Proxy_Lambda_Variance_Fields = {
-  __typename?: 'governance_proxy_proxy_lambda_variance_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by variance() on columns of table "governance_proxy_proxy_lambda" */
-export type Governance_Proxy_Proxy_Lambda_Variance_Order_By = {
-  id?: InputMaybe<Order_By>;
 };
 
 /** select columns of table "governance_proxy" */
@@ -28315,492 +28078,6 @@ export type Governance_Proxy_Stream_Cursor_Value_Input = {
   admin?: InputMaybe<Scalars['String']>;
   governance_id?: InputMaybe<Scalars['String']>;
   last_updated_at?: InputMaybe<Scalars['timestamptz']>;
-};
-
-/** columns and relationships of "governance_proxy_whitelist_contract" */
-export type Governance_Proxy_Whitelist_Contract = {
-  __typename?: 'governance_proxy_whitelist_contract';
-  /** An object relationship */
-  contract: Governance_Proxy;
-  contract_address: Scalars['String'];
-  contract_id: Scalars['String'];
-  contract_name: Scalars['String'];
-  id: Scalars['bigint'];
-};
-
-/** aggregated selection of "governance_proxy_whitelist_contract" */
-export type Governance_Proxy_Whitelist_Contract_Aggregate = {
-  __typename?: 'governance_proxy_whitelist_contract_aggregate';
-  aggregate?: Maybe<Governance_Proxy_Whitelist_Contract_Aggregate_Fields>;
-  nodes: Array<Governance_Proxy_Whitelist_Contract>;
-};
-
-export type Governance_Proxy_Whitelist_Contract_Aggregate_Bool_Exp = {
-  count?: InputMaybe<Governance_Proxy_Whitelist_Contract_Aggregate_Bool_Exp_Count>;
-};
-
-export type Governance_Proxy_Whitelist_Contract_Aggregate_Bool_Exp_Count = {
-  arguments?: InputMaybe<Array<Governance_Proxy_Whitelist_Contract_Select_Column>>;
-  distinct?: InputMaybe<Scalars['Boolean']>;
-  filter?: InputMaybe<Governance_Proxy_Whitelist_Contract_Bool_Exp>;
-  predicate: Int_Comparison_Exp;
-};
-
-/** aggregate fields of "governance_proxy_whitelist_contract" */
-export type Governance_Proxy_Whitelist_Contract_Aggregate_Fields = {
-  __typename?: 'governance_proxy_whitelist_contract_aggregate_fields';
-  avg?: Maybe<Governance_Proxy_Whitelist_Contract_Avg_Fields>;
-  count: Scalars['Int'];
-  max?: Maybe<Governance_Proxy_Whitelist_Contract_Max_Fields>;
-  min?: Maybe<Governance_Proxy_Whitelist_Contract_Min_Fields>;
-  stddev?: Maybe<Governance_Proxy_Whitelist_Contract_Stddev_Fields>;
-  stddev_pop?: Maybe<Governance_Proxy_Whitelist_Contract_Stddev_Pop_Fields>;
-  stddev_samp?: Maybe<Governance_Proxy_Whitelist_Contract_Stddev_Samp_Fields>;
-  sum?: Maybe<Governance_Proxy_Whitelist_Contract_Sum_Fields>;
-  var_pop?: Maybe<Governance_Proxy_Whitelist_Contract_Var_Pop_Fields>;
-  var_samp?: Maybe<Governance_Proxy_Whitelist_Contract_Var_Samp_Fields>;
-  variance?: Maybe<Governance_Proxy_Whitelist_Contract_Variance_Fields>;
-};
-
-
-/** aggregate fields of "governance_proxy_whitelist_contract" */
-export type Governance_Proxy_Whitelist_Contract_Aggregate_FieldsCountArgs = {
-  columns?: InputMaybe<Array<Governance_Proxy_Whitelist_Contract_Select_Column>>;
-  distinct?: InputMaybe<Scalars['Boolean']>;
-};
-
-/** order by aggregate values of table "governance_proxy_whitelist_contract" */
-export type Governance_Proxy_Whitelist_Contract_Aggregate_Order_By = {
-  avg?: InputMaybe<Governance_Proxy_Whitelist_Contract_Avg_Order_By>;
-  count?: InputMaybe<Order_By>;
-  max?: InputMaybe<Governance_Proxy_Whitelist_Contract_Max_Order_By>;
-  min?: InputMaybe<Governance_Proxy_Whitelist_Contract_Min_Order_By>;
-  stddev?: InputMaybe<Governance_Proxy_Whitelist_Contract_Stddev_Order_By>;
-  stddev_pop?: InputMaybe<Governance_Proxy_Whitelist_Contract_Stddev_Pop_Order_By>;
-  stddev_samp?: InputMaybe<Governance_Proxy_Whitelist_Contract_Stddev_Samp_Order_By>;
-  sum?: InputMaybe<Governance_Proxy_Whitelist_Contract_Sum_Order_By>;
-  var_pop?: InputMaybe<Governance_Proxy_Whitelist_Contract_Var_Pop_Order_By>;
-  var_samp?: InputMaybe<Governance_Proxy_Whitelist_Contract_Var_Samp_Order_By>;
-  variance?: InputMaybe<Governance_Proxy_Whitelist_Contract_Variance_Order_By>;
-};
-
-/** aggregate avg on columns */
-export type Governance_Proxy_Whitelist_Contract_Avg_Fields = {
-  __typename?: 'governance_proxy_whitelist_contract_avg_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by avg() on columns of table "governance_proxy_whitelist_contract" */
-export type Governance_Proxy_Whitelist_Contract_Avg_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** Boolean expression to filter rows from the table "governance_proxy_whitelist_contract". All fields are combined with a logical 'AND'. */
-export type Governance_Proxy_Whitelist_Contract_Bool_Exp = {
-  _and?: InputMaybe<Array<Governance_Proxy_Whitelist_Contract_Bool_Exp>>;
-  _not?: InputMaybe<Governance_Proxy_Whitelist_Contract_Bool_Exp>;
-  _or?: InputMaybe<Array<Governance_Proxy_Whitelist_Contract_Bool_Exp>>;
-  contract?: InputMaybe<Governance_Proxy_Bool_Exp>;
-  contract_address?: InputMaybe<String_Comparison_Exp>;
-  contract_id?: InputMaybe<String_Comparison_Exp>;
-  contract_name?: InputMaybe<String_Comparison_Exp>;
-  id?: InputMaybe<Bigint_Comparison_Exp>;
-};
-
-/** aggregate max on columns */
-export type Governance_Proxy_Whitelist_Contract_Max_Fields = {
-  __typename?: 'governance_proxy_whitelist_contract_max_fields';
-  contract_address?: Maybe<Scalars['String']>;
-  contract_id?: Maybe<Scalars['String']>;
-  contract_name?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['bigint']>;
-};
-
-/** order by max() on columns of table "governance_proxy_whitelist_contract" */
-export type Governance_Proxy_Whitelist_Contract_Max_Order_By = {
-  contract_address?: InputMaybe<Order_By>;
-  contract_id?: InputMaybe<Order_By>;
-  contract_name?: InputMaybe<Order_By>;
-  id?: InputMaybe<Order_By>;
-};
-
-/** aggregate min on columns */
-export type Governance_Proxy_Whitelist_Contract_Min_Fields = {
-  __typename?: 'governance_proxy_whitelist_contract_min_fields';
-  contract_address?: Maybe<Scalars['String']>;
-  contract_id?: Maybe<Scalars['String']>;
-  contract_name?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['bigint']>;
-};
-
-/** order by min() on columns of table "governance_proxy_whitelist_contract" */
-export type Governance_Proxy_Whitelist_Contract_Min_Order_By = {
-  contract_address?: InputMaybe<Order_By>;
-  contract_id?: InputMaybe<Order_By>;
-  contract_name?: InputMaybe<Order_By>;
-  id?: InputMaybe<Order_By>;
-};
-
-/** Ordering options when selecting data from "governance_proxy_whitelist_contract". */
-export type Governance_Proxy_Whitelist_Contract_Order_By = {
-  contract?: InputMaybe<Governance_Proxy_Order_By>;
-  contract_address?: InputMaybe<Order_By>;
-  contract_id?: InputMaybe<Order_By>;
-  contract_name?: InputMaybe<Order_By>;
-  id?: InputMaybe<Order_By>;
-};
-
-/** select columns of table "governance_proxy_whitelist_contract" */
-export enum Governance_Proxy_Whitelist_Contract_Select_Column {
-  /** column name */
-  ContractAddress = 'contract_address',
-  /** column name */
-  ContractId = 'contract_id',
-  /** column name */
-  ContractName = 'contract_name',
-  /** column name */
-  Id = 'id'
-}
-
-/** aggregate stddev on columns */
-export type Governance_Proxy_Whitelist_Contract_Stddev_Fields = {
-  __typename?: 'governance_proxy_whitelist_contract_stddev_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by stddev() on columns of table "governance_proxy_whitelist_contract" */
-export type Governance_Proxy_Whitelist_Contract_Stddev_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** aggregate stddev_pop on columns */
-export type Governance_Proxy_Whitelist_Contract_Stddev_Pop_Fields = {
-  __typename?: 'governance_proxy_whitelist_contract_stddev_pop_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by stddev_pop() on columns of table "governance_proxy_whitelist_contract" */
-export type Governance_Proxy_Whitelist_Contract_Stddev_Pop_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** aggregate stddev_samp on columns */
-export type Governance_Proxy_Whitelist_Contract_Stddev_Samp_Fields = {
-  __typename?: 'governance_proxy_whitelist_contract_stddev_samp_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by stddev_samp() on columns of table "governance_proxy_whitelist_contract" */
-export type Governance_Proxy_Whitelist_Contract_Stddev_Samp_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** Streaming cursor of the table "governance_proxy_whitelist_contract" */
-export type Governance_Proxy_Whitelist_Contract_Stream_Cursor_Input = {
-  /** Stream column input with initial value */
-  initial_value: Governance_Proxy_Whitelist_Contract_Stream_Cursor_Value_Input;
-  /** cursor ordering */
-  ordering?: InputMaybe<Cursor_Ordering>;
-};
-
-/** Initial value of the column from where the streaming should start */
-export type Governance_Proxy_Whitelist_Contract_Stream_Cursor_Value_Input = {
-  contract_address?: InputMaybe<Scalars['String']>;
-  contract_id?: InputMaybe<Scalars['String']>;
-  contract_name?: InputMaybe<Scalars['String']>;
-  id?: InputMaybe<Scalars['bigint']>;
-};
-
-/** aggregate sum on columns */
-export type Governance_Proxy_Whitelist_Contract_Sum_Fields = {
-  __typename?: 'governance_proxy_whitelist_contract_sum_fields';
-  id?: Maybe<Scalars['bigint']>;
-};
-
-/** order by sum() on columns of table "governance_proxy_whitelist_contract" */
-export type Governance_Proxy_Whitelist_Contract_Sum_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** aggregate var_pop on columns */
-export type Governance_Proxy_Whitelist_Contract_Var_Pop_Fields = {
-  __typename?: 'governance_proxy_whitelist_contract_var_pop_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by var_pop() on columns of table "governance_proxy_whitelist_contract" */
-export type Governance_Proxy_Whitelist_Contract_Var_Pop_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** aggregate var_samp on columns */
-export type Governance_Proxy_Whitelist_Contract_Var_Samp_Fields = {
-  __typename?: 'governance_proxy_whitelist_contract_var_samp_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by var_samp() on columns of table "governance_proxy_whitelist_contract" */
-export type Governance_Proxy_Whitelist_Contract_Var_Samp_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** aggregate variance on columns */
-export type Governance_Proxy_Whitelist_Contract_Variance_Fields = {
-  __typename?: 'governance_proxy_whitelist_contract_variance_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by variance() on columns of table "governance_proxy_whitelist_contract" */
-export type Governance_Proxy_Whitelist_Contract_Variance_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** columns and relationships of "governance_proxy_whitelist_token_contract" */
-export type Governance_Proxy_Whitelist_Token_Contract = {
-  __typename?: 'governance_proxy_whitelist_token_contract';
-  /** An object relationship */
-  contract: Governance_Proxy;
-  contract_address: Scalars['String'];
-  contract_id: Scalars['String'];
-  contract_name: Scalars['String'];
-  id: Scalars['bigint'];
-  token_contract_standard: Scalars['String'];
-};
-
-/** aggregated selection of "governance_proxy_whitelist_token_contract" */
-export type Governance_Proxy_Whitelist_Token_Contract_Aggregate = {
-  __typename?: 'governance_proxy_whitelist_token_contract_aggregate';
-  aggregate?: Maybe<Governance_Proxy_Whitelist_Token_Contract_Aggregate_Fields>;
-  nodes: Array<Governance_Proxy_Whitelist_Token_Contract>;
-};
-
-export type Governance_Proxy_Whitelist_Token_Contract_Aggregate_Bool_Exp = {
-  count?: InputMaybe<Governance_Proxy_Whitelist_Token_Contract_Aggregate_Bool_Exp_Count>;
-};
-
-export type Governance_Proxy_Whitelist_Token_Contract_Aggregate_Bool_Exp_Count = {
-  arguments?: InputMaybe<Array<Governance_Proxy_Whitelist_Token_Contract_Select_Column>>;
-  distinct?: InputMaybe<Scalars['Boolean']>;
-  filter?: InputMaybe<Governance_Proxy_Whitelist_Token_Contract_Bool_Exp>;
-  predicate: Int_Comparison_Exp;
-};
-
-/** aggregate fields of "governance_proxy_whitelist_token_contract" */
-export type Governance_Proxy_Whitelist_Token_Contract_Aggregate_Fields = {
-  __typename?: 'governance_proxy_whitelist_token_contract_aggregate_fields';
-  avg?: Maybe<Governance_Proxy_Whitelist_Token_Contract_Avg_Fields>;
-  count: Scalars['Int'];
-  max?: Maybe<Governance_Proxy_Whitelist_Token_Contract_Max_Fields>;
-  min?: Maybe<Governance_Proxy_Whitelist_Token_Contract_Min_Fields>;
-  stddev?: Maybe<Governance_Proxy_Whitelist_Token_Contract_Stddev_Fields>;
-  stddev_pop?: Maybe<Governance_Proxy_Whitelist_Token_Contract_Stddev_Pop_Fields>;
-  stddev_samp?: Maybe<Governance_Proxy_Whitelist_Token_Contract_Stddev_Samp_Fields>;
-  sum?: Maybe<Governance_Proxy_Whitelist_Token_Contract_Sum_Fields>;
-  var_pop?: Maybe<Governance_Proxy_Whitelist_Token_Contract_Var_Pop_Fields>;
-  var_samp?: Maybe<Governance_Proxy_Whitelist_Token_Contract_Var_Samp_Fields>;
-  variance?: Maybe<Governance_Proxy_Whitelist_Token_Contract_Variance_Fields>;
-};
-
-
-/** aggregate fields of "governance_proxy_whitelist_token_contract" */
-export type Governance_Proxy_Whitelist_Token_Contract_Aggregate_FieldsCountArgs = {
-  columns?: InputMaybe<Array<Governance_Proxy_Whitelist_Token_Contract_Select_Column>>;
-  distinct?: InputMaybe<Scalars['Boolean']>;
-};
-
-/** order by aggregate values of table "governance_proxy_whitelist_token_contract" */
-export type Governance_Proxy_Whitelist_Token_Contract_Aggregate_Order_By = {
-  avg?: InputMaybe<Governance_Proxy_Whitelist_Token_Contract_Avg_Order_By>;
-  count?: InputMaybe<Order_By>;
-  max?: InputMaybe<Governance_Proxy_Whitelist_Token_Contract_Max_Order_By>;
-  min?: InputMaybe<Governance_Proxy_Whitelist_Token_Contract_Min_Order_By>;
-  stddev?: InputMaybe<Governance_Proxy_Whitelist_Token_Contract_Stddev_Order_By>;
-  stddev_pop?: InputMaybe<Governance_Proxy_Whitelist_Token_Contract_Stddev_Pop_Order_By>;
-  stddev_samp?: InputMaybe<Governance_Proxy_Whitelist_Token_Contract_Stddev_Samp_Order_By>;
-  sum?: InputMaybe<Governance_Proxy_Whitelist_Token_Contract_Sum_Order_By>;
-  var_pop?: InputMaybe<Governance_Proxy_Whitelist_Token_Contract_Var_Pop_Order_By>;
-  var_samp?: InputMaybe<Governance_Proxy_Whitelist_Token_Contract_Var_Samp_Order_By>;
-  variance?: InputMaybe<Governance_Proxy_Whitelist_Token_Contract_Variance_Order_By>;
-};
-
-/** aggregate avg on columns */
-export type Governance_Proxy_Whitelist_Token_Contract_Avg_Fields = {
-  __typename?: 'governance_proxy_whitelist_token_contract_avg_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by avg() on columns of table "governance_proxy_whitelist_token_contract" */
-export type Governance_Proxy_Whitelist_Token_Contract_Avg_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** Boolean expression to filter rows from the table "governance_proxy_whitelist_token_contract". All fields are combined with a logical 'AND'. */
-export type Governance_Proxy_Whitelist_Token_Contract_Bool_Exp = {
-  _and?: InputMaybe<Array<Governance_Proxy_Whitelist_Token_Contract_Bool_Exp>>;
-  _not?: InputMaybe<Governance_Proxy_Whitelist_Token_Contract_Bool_Exp>;
-  _or?: InputMaybe<Array<Governance_Proxy_Whitelist_Token_Contract_Bool_Exp>>;
-  contract?: InputMaybe<Governance_Proxy_Bool_Exp>;
-  contract_address?: InputMaybe<String_Comparison_Exp>;
-  contract_id?: InputMaybe<String_Comparison_Exp>;
-  contract_name?: InputMaybe<String_Comparison_Exp>;
-  id?: InputMaybe<Bigint_Comparison_Exp>;
-  token_contract_standard?: InputMaybe<String_Comparison_Exp>;
-};
-
-/** aggregate max on columns */
-export type Governance_Proxy_Whitelist_Token_Contract_Max_Fields = {
-  __typename?: 'governance_proxy_whitelist_token_contract_max_fields';
-  contract_address?: Maybe<Scalars['String']>;
-  contract_id?: Maybe<Scalars['String']>;
-  contract_name?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['bigint']>;
-  token_contract_standard?: Maybe<Scalars['String']>;
-};
-
-/** order by max() on columns of table "governance_proxy_whitelist_token_contract" */
-export type Governance_Proxy_Whitelist_Token_Contract_Max_Order_By = {
-  contract_address?: InputMaybe<Order_By>;
-  contract_id?: InputMaybe<Order_By>;
-  contract_name?: InputMaybe<Order_By>;
-  id?: InputMaybe<Order_By>;
-  token_contract_standard?: InputMaybe<Order_By>;
-};
-
-/** aggregate min on columns */
-export type Governance_Proxy_Whitelist_Token_Contract_Min_Fields = {
-  __typename?: 'governance_proxy_whitelist_token_contract_min_fields';
-  contract_address?: Maybe<Scalars['String']>;
-  contract_id?: Maybe<Scalars['String']>;
-  contract_name?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['bigint']>;
-  token_contract_standard?: Maybe<Scalars['String']>;
-};
-
-/** order by min() on columns of table "governance_proxy_whitelist_token_contract" */
-export type Governance_Proxy_Whitelist_Token_Contract_Min_Order_By = {
-  contract_address?: InputMaybe<Order_By>;
-  contract_id?: InputMaybe<Order_By>;
-  contract_name?: InputMaybe<Order_By>;
-  id?: InputMaybe<Order_By>;
-  token_contract_standard?: InputMaybe<Order_By>;
-};
-
-/** Ordering options when selecting data from "governance_proxy_whitelist_token_contract". */
-export type Governance_Proxy_Whitelist_Token_Contract_Order_By = {
-  contract?: InputMaybe<Governance_Proxy_Order_By>;
-  contract_address?: InputMaybe<Order_By>;
-  contract_id?: InputMaybe<Order_By>;
-  contract_name?: InputMaybe<Order_By>;
-  id?: InputMaybe<Order_By>;
-  token_contract_standard?: InputMaybe<Order_By>;
-};
-
-/** select columns of table "governance_proxy_whitelist_token_contract" */
-export enum Governance_Proxy_Whitelist_Token_Contract_Select_Column {
-  /** column name */
-  ContractAddress = 'contract_address',
-  /** column name */
-  ContractId = 'contract_id',
-  /** column name */
-  ContractName = 'contract_name',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  TokenContractStandard = 'token_contract_standard'
-}
-
-/** aggregate stddev on columns */
-export type Governance_Proxy_Whitelist_Token_Contract_Stddev_Fields = {
-  __typename?: 'governance_proxy_whitelist_token_contract_stddev_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by stddev() on columns of table "governance_proxy_whitelist_token_contract" */
-export type Governance_Proxy_Whitelist_Token_Contract_Stddev_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** aggregate stddev_pop on columns */
-export type Governance_Proxy_Whitelist_Token_Contract_Stddev_Pop_Fields = {
-  __typename?: 'governance_proxy_whitelist_token_contract_stddev_pop_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by stddev_pop() on columns of table "governance_proxy_whitelist_token_contract" */
-export type Governance_Proxy_Whitelist_Token_Contract_Stddev_Pop_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** aggregate stddev_samp on columns */
-export type Governance_Proxy_Whitelist_Token_Contract_Stddev_Samp_Fields = {
-  __typename?: 'governance_proxy_whitelist_token_contract_stddev_samp_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by stddev_samp() on columns of table "governance_proxy_whitelist_token_contract" */
-export type Governance_Proxy_Whitelist_Token_Contract_Stddev_Samp_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** Streaming cursor of the table "governance_proxy_whitelist_token_contract" */
-export type Governance_Proxy_Whitelist_Token_Contract_Stream_Cursor_Input = {
-  /** Stream column input with initial value */
-  initial_value: Governance_Proxy_Whitelist_Token_Contract_Stream_Cursor_Value_Input;
-  /** cursor ordering */
-  ordering?: InputMaybe<Cursor_Ordering>;
-};
-
-/** Initial value of the column from where the streaming should start */
-export type Governance_Proxy_Whitelist_Token_Contract_Stream_Cursor_Value_Input = {
-  contract_address?: InputMaybe<Scalars['String']>;
-  contract_id?: InputMaybe<Scalars['String']>;
-  contract_name?: InputMaybe<Scalars['String']>;
-  id?: InputMaybe<Scalars['bigint']>;
-  token_contract_standard?: InputMaybe<Scalars['String']>;
-};
-
-/** aggregate sum on columns */
-export type Governance_Proxy_Whitelist_Token_Contract_Sum_Fields = {
-  __typename?: 'governance_proxy_whitelist_token_contract_sum_fields';
-  id?: Maybe<Scalars['bigint']>;
-};
-
-/** order by sum() on columns of table "governance_proxy_whitelist_token_contract" */
-export type Governance_Proxy_Whitelist_Token_Contract_Sum_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** aggregate var_pop on columns */
-export type Governance_Proxy_Whitelist_Token_Contract_Var_Pop_Fields = {
-  __typename?: 'governance_proxy_whitelist_token_contract_var_pop_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by var_pop() on columns of table "governance_proxy_whitelist_token_contract" */
-export type Governance_Proxy_Whitelist_Token_Contract_Var_Pop_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** aggregate var_samp on columns */
-export type Governance_Proxy_Whitelist_Token_Contract_Var_Samp_Fields = {
-  __typename?: 'governance_proxy_whitelist_token_contract_var_samp_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by var_samp() on columns of table "governance_proxy_whitelist_token_contract" */
-export type Governance_Proxy_Whitelist_Token_Contract_Var_Samp_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** aggregate variance on columns */
-export type Governance_Proxy_Whitelist_Token_Contract_Variance_Fields = {
-  __typename?: 'governance_proxy_whitelist_token_contract_variance_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by variance() on columns of table "governance_proxy_whitelist_token_contract" */
-export type Governance_Proxy_Whitelist_Token_Contract_Variance_Order_By = {
-  id?: InputMaybe<Order_By>;
 };
 
 /** columns and relationships of "governance_satellite" */
@@ -43160,6 +42437,14 @@ export type Mavryk_User = {
   /** An aggregate relationship */
   council_council_members_aggregate: Council_Council_Member_Aggregate;
   /** An array relationship */
+  delegated_treasuries: Array<Treasury>;
+  /** An aggregate relationship */
+  delegated_treasuries_aggregate: Treasury_Aggregate;
+  /** An array relationship */
+  delegated_vaults: Array<Vault>;
+  /** An aggregate relationship */
+  delegated_vaults_aggregate: Vault_Aggregate;
+  /** An array relationship */
   delegations: Array<Delegation_Record>;
   /** An aggregate relationship */
   delegations_aggregate: Delegation_Record_Aggregate;
@@ -43449,6 +42734,46 @@ export type Mavryk_UserCouncil_Council_Members_AggregateArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   order_by?: InputMaybe<Array<Council_Council_Member_Order_By>>;
   where?: InputMaybe<Council_Council_Member_Bool_Exp>;
+};
+
+
+/** columns and relationships of "mavryk_user" */
+export type Mavryk_UserDelegated_TreasuriesArgs = {
+  distinct_on?: InputMaybe<Array<Treasury_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Treasury_Order_By>>;
+  where?: InputMaybe<Treasury_Bool_Exp>;
+};
+
+
+/** columns and relationships of "mavryk_user" */
+export type Mavryk_UserDelegated_Treasuries_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Treasury_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Treasury_Order_By>>;
+  where?: InputMaybe<Treasury_Bool_Exp>;
+};
+
+
+/** columns and relationships of "mavryk_user" */
+export type Mavryk_UserDelegated_VaultsArgs = {
+  distinct_on?: InputMaybe<Array<Vault_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Vault_Order_By>>;
+  where?: InputMaybe<Vault_Bool_Exp>;
+};
+
+
+/** columns and relationships of "mavryk_user" */
+export type Mavryk_UserDelegated_Vaults_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Vault_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Vault_Order_By>>;
+  where?: InputMaybe<Vault_Bool_Exp>;
 };
 
 
@@ -44248,6 +43573,10 @@ export type Mavryk_User_Bool_Exp = {
   council_actions_signer_aggregate?: InputMaybe<Council_Action_Signer_Aggregate_Bool_Exp>;
   council_council_members?: InputMaybe<Council_Council_Member_Bool_Exp>;
   council_council_members_aggregate?: InputMaybe<Council_Council_Member_Aggregate_Bool_Exp>;
+  delegated_treasuries?: InputMaybe<Treasury_Bool_Exp>;
+  delegated_treasuries_aggregate?: InputMaybe<Treasury_Aggregate_Bool_Exp>;
+  delegated_vaults?: InputMaybe<Vault_Bool_Exp>;
+  delegated_vaults_aggregate?: InputMaybe<Vault_Aggregate_Bool_Exp>;
   delegations?: InputMaybe<Delegation_Record_Bool_Exp>;
   delegations_aggregate?: InputMaybe<Delegation_Record_Aggregate_Bool_Exp>;
   doorman_stake_accounts?: InputMaybe<Doorman_Stake_Account_Bool_Exp>;
@@ -44352,6 +43681,8 @@ export type Mavryk_User_Order_By = {
   council_actions_initiator_aggregate?: InputMaybe<Council_Action_Aggregate_Order_By>;
   council_actions_signer_aggregate?: InputMaybe<Council_Action_Signer_Aggregate_Order_By>;
   council_council_members_aggregate?: InputMaybe<Council_Council_Member_Aggregate_Order_By>;
+  delegated_treasuries_aggregate?: InputMaybe<Treasury_Aggregate_Order_By>;
+  delegated_vaults_aggregate?: InputMaybe<Vault_Aggregate_Order_By>;
   delegations_aggregate?: InputMaybe<Delegation_Record_Aggregate_Order_By>;
   doorman_stake_accounts_aggregate?: InputMaybe<Doorman_Stake_Account_Aggregate_Order_By>;
   emergency_governance_proposer_aggregate?: InputMaybe<Emergency_Governance_Record_Aggregate_Order_By>;
@@ -46514,6 +45845,12 @@ export type Query_Root = {
   aggregator_factory: Array<Aggregator_Factory>;
   /** fetch aggregated fields from the table: "aggregator_factory" */
   aggregator_factory_aggregate: Aggregator_Factory_Aggregate;
+  /** fetch data from the table: "aggregator_factory_aggregator_lambda" */
+  aggregator_factory_aggregator_lambda: Array<Aggregator_Factory_Aggregator_Lambda>;
+  /** fetch aggregated fields from the table: "aggregator_factory_aggregator_lambda" */
+  aggregator_factory_aggregator_lambda_aggregate: Aggregator_Factory_Aggregator_Lambda_Aggregate;
+  /** fetch data from the table: "aggregator_factory_aggregator_lambda" using primary key columns */
+  aggregator_factory_aggregator_lambda_by_pk?: Maybe<Aggregator_Factory_Aggregator_Lambda>;
   /** fetch data from the table: "aggregator_factory" using primary key columns */
   aggregator_factory_by_pk?: Maybe<Aggregator_Factory>;
   /** fetch data from the table: "aggregator_factory_general_contract" */
@@ -46528,12 +45865,6 @@ export type Query_Root = {
   aggregator_factory_lambda_aggregate: Aggregator_Factory_Lambda_Aggregate;
   /** fetch data from the table: "aggregator_factory_lambda" using primary key columns */
   aggregator_factory_lambda_by_pk?: Maybe<Aggregator_Factory_Lambda>;
-  /** fetch data from the table: "aggregator_factory_product_lambda" */
-  aggregator_factory_product_lambda: Array<Aggregator_Factory_Product_Lambda>;
-  /** fetch aggregated fields from the table: "aggregator_factory_product_lambda" */
-  aggregator_factory_product_lambda_aggregate: Aggregator_Factory_Product_Lambda_Aggregate;
-  /** fetch data from the table: "aggregator_factory_product_lambda" using primary key columns */
-  aggregator_factory_product_lambda_by_pk?: Maybe<Aggregator_Factory_Product_Lambda>;
   /** fetch data from the table: "aggregator_factory_whitelist_contract" */
   aggregator_factory_whitelist_contract: Array<Aggregator_Factory_Whitelist_Contract>;
   /** fetch aggregated fields from the table: "aggregator_factory_whitelist_contract" */
@@ -46838,6 +46169,12 @@ export type Query_Root = {
   farm_factory_aggregate: Farm_Factory_Aggregate;
   /** fetch data from the table: "farm_factory" using primary key columns */
   farm_factory_by_pk?: Maybe<Farm_Factory>;
+  /** fetch data from the table: "farm_factory_farm_lambda" */
+  farm_factory_farm_lambda: Array<Farm_Factory_Farm_Lambda>;
+  /** fetch aggregated fields from the table: "farm_factory_farm_lambda" */
+  farm_factory_farm_lambda_aggregate: Farm_Factory_Farm_Lambda_Aggregate;
+  /** fetch data from the table: "farm_factory_farm_lambda" using primary key columns */
+  farm_factory_farm_lambda_by_pk?: Maybe<Farm_Factory_Farm_Lambda>;
   /** fetch data from the table: "farm_factory_general_contract" */
   farm_factory_general_contract: Array<Farm_Factory_General_Contract>;
   /** fetch aggregated fields from the table: "farm_factory_general_contract" */
@@ -46850,12 +46187,12 @@ export type Query_Root = {
   farm_factory_lambda_aggregate: Farm_Factory_Lambda_Aggregate;
   /** fetch data from the table: "farm_factory_lambda" using primary key columns */
   farm_factory_lambda_by_pk?: Maybe<Farm_Factory_Lambda>;
-  /** fetch data from the table: "farm_factory_product_lambda" */
-  farm_factory_product_lambda: Array<Farm_Factory_Product_Lambda>;
-  /** fetch aggregated fields from the table: "farm_factory_product_lambda" */
-  farm_factory_product_lambda_aggregate: Farm_Factory_Product_Lambda_Aggregate;
-  /** fetch data from the table: "farm_factory_product_lambda" using primary key columns */
-  farm_factory_product_lambda_by_pk?: Maybe<Farm_Factory_Product_Lambda>;
+  /** fetch data from the table: "farm_factory_m_farm_lambda" */
+  farm_factory_m_farm_lambda: Array<Farm_Factory_M_Farm_Lambda>;
+  /** fetch aggregated fields from the table: "farm_factory_m_farm_lambda" */
+  farm_factory_m_farm_lambda_aggregate: Farm_Factory_M_Farm_Lambda_Aggregate;
+  /** fetch data from the table: "farm_factory_m_farm_lambda" using primary key columns */
+  farm_factory_m_farm_lambda_by_pk?: Maybe<Farm_Factory_M_Farm_Lambda>;
   /** fetch data from the table: "farm_factory_whitelist_contract" */
   farm_factory_whitelist_contract: Array<Farm_Factory_Whitelist_Contract>;
   /** fetch aggregated fields from the table: "farm_factory_whitelist_contract" */
@@ -46970,36 +46307,12 @@ export type Query_Root = {
   governance_proxy_aggregate: Governance_Proxy_Aggregate;
   /** fetch data from the table: "governance_proxy" using primary key columns */
   governance_proxy_by_pk?: Maybe<Governance_Proxy>;
-  /** fetch data from the table: "governance_proxy_general_contract" */
-  governance_proxy_general_contract: Array<Governance_Proxy_General_Contract>;
-  /** fetch aggregated fields from the table: "governance_proxy_general_contract" */
-  governance_proxy_general_contract_aggregate: Governance_Proxy_General_Contract_Aggregate;
-  /** fetch data from the table: "governance_proxy_general_contract" using primary key columns */
-  governance_proxy_general_contract_by_pk?: Maybe<Governance_Proxy_General_Contract>;
   /** fetch data from the table: "governance_proxy_lambda" */
   governance_proxy_lambda: Array<Governance_Proxy_Lambda>;
   /** fetch aggregated fields from the table: "governance_proxy_lambda" */
   governance_proxy_lambda_aggregate: Governance_Proxy_Lambda_Aggregate;
   /** fetch data from the table: "governance_proxy_lambda" using primary key columns */
   governance_proxy_lambda_by_pk?: Maybe<Governance_Proxy_Lambda>;
-  /** fetch data from the table: "governance_proxy_proxy_lambda" */
-  governance_proxy_proxy_lambda: Array<Governance_Proxy_Proxy_Lambda>;
-  /** fetch aggregated fields from the table: "governance_proxy_proxy_lambda" */
-  governance_proxy_proxy_lambda_aggregate: Governance_Proxy_Proxy_Lambda_Aggregate;
-  /** fetch data from the table: "governance_proxy_proxy_lambda" using primary key columns */
-  governance_proxy_proxy_lambda_by_pk?: Maybe<Governance_Proxy_Proxy_Lambda>;
-  /** fetch data from the table: "governance_proxy_whitelist_contract" */
-  governance_proxy_whitelist_contract: Array<Governance_Proxy_Whitelist_Contract>;
-  /** fetch aggregated fields from the table: "governance_proxy_whitelist_contract" */
-  governance_proxy_whitelist_contract_aggregate: Governance_Proxy_Whitelist_Contract_Aggregate;
-  /** fetch data from the table: "governance_proxy_whitelist_contract" using primary key columns */
-  governance_proxy_whitelist_contract_by_pk?: Maybe<Governance_Proxy_Whitelist_Contract>;
-  /** fetch data from the table: "governance_proxy_whitelist_token_contract" */
-  governance_proxy_whitelist_token_contract: Array<Governance_Proxy_Whitelist_Token_Contract>;
-  /** fetch aggregated fields from the table: "governance_proxy_whitelist_token_contract" */
-  governance_proxy_whitelist_token_contract_aggregate: Governance_Proxy_Whitelist_Token_Contract_Aggregate;
-  /** fetch data from the table: "governance_proxy_whitelist_token_contract" using primary key columns */
-  governance_proxy_whitelist_token_contract_by_pk?: Maybe<Governance_Proxy_Whitelist_Token_Contract>;
   /** fetch data from the table: "governance_satellite" */
   governance_satellite: Array<Governance_Satellite>;
   /** fetch data from the table: "governance_satellite_action" */
@@ -47294,6 +46607,12 @@ export type Query_Root = {
   treasury: Array<Treasury>;
   /** fetch aggregated fields from the table: "treasury" */
   treasury_aggregate: Treasury_Aggregate;
+  /** fetch data from the table: "treasury_balance" */
+  treasury_balance: Array<Treasury_Balance>;
+  /** fetch aggregated fields from the table: "treasury_balance" */
+  treasury_balance_aggregate: Treasury_Balance_Aggregate;
+  /** fetch data from the table: "treasury_balance" using primary key columns */
+  treasury_balance_by_pk?: Maybe<Treasury_Balance>;
   /** fetch data from the table: "treasury" using primary key columns */
   treasury_by_pk?: Maybe<Treasury>;
   /** fetch data from the table: "treasury_factory" */
@@ -47314,12 +46633,12 @@ export type Query_Root = {
   treasury_factory_lambda_aggregate: Treasury_Factory_Lambda_Aggregate;
   /** fetch data from the table: "treasury_factory_lambda" using primary key columns */
   treasury_factory_lambda_by_pk?: Maybe<Treasury_Factory_Lambda>;
-  /** fetch data from the table: "treasury_factory_product_lambda" */
-  treasury_factory_product_lambda: Array<Treasury_Factory_Product_Lambda>;
-  /** fetch aggregated fields from the table: "treasury_factory_product_lambda" */
-  treasury_factory_product_lambda_aggregate: Treasury_Factory_Product_Lambda_Aggregate;
-  /** fetch data from the table: "treasury_factory_product_lambda" using primary key columns */
-  treasury_factory_product_lambda_by_pk?: Maybe<Treasury_Factory_Product_Lambda>;
+  /** fetch data from the table: "treasury_factory_treasury_lambda" */
+  treasury_factory_treasury_lambda: Array<Treasury_Factory_Treasury_Lambda>;
+  /** fetch aggregated fields from the table: "treasury_factory_treasury_lambda" */
+  treasury_factory_treasury_lambda_aggregate: Treasury_Factory_Treasury_Lambda_Aggregate;
+  /** fetch data from the table: "treasury_factory_treasury_lambda" using primary key columns */
+  treasury_factory_treasury_lambda_by_pk?: Maybe<Treasury_Factory_Treasury_Lambda>;
   /** fetch data from the table: "treasury_factory_whitelist_contract" */
   treasury_factory_whitelist_contract: Array<Treasury_Factory_Whitelist_Contract>;
   /** fetch aggregated fields from the table: "treasury_factory_whitelist_contract" */
@@ -47392,12 +46711,12 @@ export type Query_Root = {
   vault_factory_lambda_aggregate: Vault_Factory_Lambda_Aggregate;
   /** fetch data from the table: "vault_factory_lambda" using primary key columns */
   vault_factory_lambda_by_pk?: Maybe<Vault_Factory_Lambda>;
-  /** fetch data from the table: "vault_factory_product_lambda" */
-  vault_factory_product_lambda: Array<Vault_Factory_Product_Lambda>;
-  /** fetch aggregated fields from the table: "vault_factory_product_lambda" */
-  vault_factory_product_lambda_aggregate: Vault_Factory_Product_Lambda_Aggregate;
-  /** fetch data from the table: "vault_factory_product_lambda" using primary key columns */
-  vault_factory_product_lambda_by_pk?: Maybe<Vault_Factory_Product_Lambda>;
+  /** fetch data from the table: "vault_factory_vault_lambda" */
+  vault_factory_vault_lambda: Array<Vault_Factory_Vault_Lambda>;
+  /** fetch aggregated fields from the table: "vault_factory_vault_lambda" */
+  vault_factory_vault_lambda_aggregate: Vault_Factory_Vault_Lambda_Aggregate;
+  /** fetch data from the table: "vault_factory_vault_lambda" using primary key columns */
+  vault_factory_vault_lambda_by_pk?: Maybe<Vault_Factory_Vault_Lambda>;
   /** fetch data from the table: "vault_factory_whitelist_contract" */
   vault_factory_whitelist_contract: Array<Vault_Factory_Whitelist_Contract>;
   /** fetch aggregated fields from the table: "vault_factory_whitelist_contract" */
@@ -47490,6 +46809,29 @@ export type Query_RootAggregator_Factory_AggregateArgs = {
 };
 
 
+export type Query_RootAggregator_Factory_Aggregator_LambdaArgs = {
+  distinct_on?: InputMaybe<Array<Aggregator_Factory_Aggregator_Lambda_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Aggregator_Factory_Aggregator_Lambda_Order_By>>;
+  where?: InputMaybe<Aggregator_Factory_Aggregator_Lambda_Bool_Exp>;
+};
+
+
+export type Query_RootAggregator_Factory_Aggregator_Lambda_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Aggregator_Factory_Aggregator_Lambda_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Aggregator_Factory_Aggregator_Lambda_Order_By>>;
+  where?: InputMaybe<Aggregator_Factory_Aggregator_Lambda_Bool_Exp>;
+};
+
+
+export type Query_RootAggregator_Factory_Aggregator_Lambda_By_PkArgs = {
+  id: Scalars['bigint'];
+};
+
+
 export type Query_RootAggregator_Factory_By_PkArgs = {
   address: Scalars['String'];
 };
@@ -47537,29 +46879,6 @@ export type Query_RootAggregator_Factory_Lambda_AggregateArgs = {
 
 
 export type Query_RootAggregator_Factory_Lambda_By_PkArgs = {
-  id: Scalars['bigint'];
-};
-
-
-export type Query_RootAggregator_Factory_Product_LambdaArgs = {
-  distinct_on?: InputMaybe<Array<Aggregator_Factory_Product_Lambda_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Aggregator_Factory_Product_Lambda_Order_By>>;
-  where?: InputMaybe<Aggregator_Factory_Product_Lambda_Bool_Exp>;
-};
-
-
-export type Query_RootAggregator_Factory_Product_Lambda_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Aggregator_Factory_Product_Lambda_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Aggregator_Factory_Product_Lambda_Order_By>>;
-  where?: InputMaybe<Aggregator_Factory_Product_Lambda_Bool_Exp>;
-};
-
-
-export type Query_RootAggregator_Factory_Product_Lambda_By_PkArgs = {
   id: Scalars['bigint'];
 };
 
@@ -48732,6 +48051,29 @@ export type Query_RootFarm_Factory_By_PkArgs = {
 };
 
 
+export type Query_RootFarm_Factory_Farm_LambdaArgs = {
+  distinct_on?: InputMaybe<Array<Farm_Factory_Farm_Lambda_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Farm_Factory_Farm_Lambda_Order_By>>;
+  where?: InputMaybe<Farm_Factory_Farm_Lambda_Bool_Exp>;
+};
+
+
+export type Query_RootFarm_Factory_Farm_Lambda_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Farm_Factory_Farm_Lambda_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Farm_Factory_Farm_Lambda_Order_By>>;
+  where?: InputMaybe<Farm_Factory_Farm_Lambda_Bool_Exp>;
+};
+
+
+export type Query_RootFarm_Factory_Farm_Lambda_By_PkArgs = {
+  id: Scalars['bigint'];
+};
+
+
 export type Query_RootFarm_Factory_General_ContractArgs = {
   distinct_on?: InputMaybe<Array<Farm_Factory_General_Contract_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
@@ -48778,25 +48120,25 @@ export type Query_RootFarm_Factory_Lambda_By_PkArgs = {
 };
 
 
-export type Query_RootFarm_Factory_Product_LambdaArgs = {
-  distinct_on?: InputMaybe<Array<Farm_Factory_Product_Lambda_Select_Column>>;
+export type Query_RootFarm_Factory_M_Farm_LambdaArgs = {
+  distinct_on?: InputMaybe<Array<Farm_Factory_M_Farm_Lambda_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Farm_Factory_Product_Lambda_Order_By>>;
-  where?: InputMaybe<Farm_Factory_Product_Lambda_Bool_Exp>;
+  order_by?: InputMaybe<Array<Farm_Factory_M_Farm_Lambda_Order_By>>;
+  where?: InputMaybe<Farm_Factory_M_Farm_Lambda_Bool_Exp>;
 };
 
 
-export type Query_RootFarm_Factory_Product_Lambda_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Farm_Factory_Product_Lambda_Select_Column>>;
+export type Query_RootFarm_Factory_M_Farm_Lambda_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Farm_Factory_M_Farm_Lambda_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Farm_Factory_Product_Lambda_Order_By>>;
-  where?: InputMaybe<Farm_Factory_Product_Lambda_Bool_Exp>;
+  order_by?: InputMaybe<Array<Farm_Factory_M_Farm_Lambda_Order_By>>;
+  where?: InputMaybe<Farm_Factory_M_Farm_Lambda_Bool_Exp>;
 };
 
 
-export type Query_RootFarm_Factory_Product_Lambda_By_PkArgs = {
+export type Query_RootFarm_Factory_M_Farm_Lambda_By_PkArgs = {
   id: Scalars['bigint'];
 };
 
@@ -49238,29 +48580,6 @@ export type Query_RootGovernance_Proxy_By_PkArgs = {
 };
 
 
-export type Query_RootGovernance_Proxy_General_ContractArgs = {
-  distinct_on?: InputMaybe<Array<Governance_Proxy_General_Contract_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Governance_Proxy_General_Contract_Order_By>>;
-  where?: InputMaybe<Governance_Proxy_General_Contract_Bool_Exp>;
-};
-
-
-export type Query_RootGovernance_Proxy_General_Contract_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Governance_Proxy_General_Contract_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Governance_Proxy_General_Contract_Order_By>>;
-  where?: InputMaybe<Governance_Proxy_General_Contract_Bool_Exp>;
-};
-
-
-export type Query_RootGovernance_Proxy_General_Contract_By_PkArgs = {
-  id: Scalars['bigint'];
-};
-
-
 export type Query_RootGovernance_Proxy_LambdaArgs = {
   distinct_on?: InputMaybe<Array<Governance_Proxy_Lambda_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
@@ -49280,75 +48599,6 @@ export type Query_RootGovernance_Proxy_Lambda_AggregateArgs = {
 
 
 export type Query_RootGovernance_Proxy_Lambda_By_PkArgs = {
-  id: Scalars['bigint'];
-};
-
-
-export type Query_RootGovernance_Proxy_Proxy_LambdaArgs = {
-  distinct_on?: InputMaybe<Array<Governance_Proxy_Proxy_Lambda_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Governance_Proxy_Proxy_Lambda_Order_By>>;
-  where?: InputMaybe<Governance_Proxy_Proxy_Lambda_Bool_Exp>;
-};
-
-
-export type Query_RootGovernance_Proxy_Proxy_Lambda_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Governance_Proxy_Proxy_Lambda_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Governance_Proxy_Proxy_Lambda_Order_By>>;
-  where?: InputMaybe<Governance_Proxy_Proxy_Lambda_Bool_Exp>;
-};
-
-
-export type Query_RootGovernance_Proxy_Proxy_Lambda_By_PkArgs = {
-  id: Scalars['bigint'];
-};
-
-
-export type Query_RootGovernance_Proxy_Whitelist_ContractArgs = {
-  distinct_on?: InputMaybe<Array<Governance_Proxy_Whitelist_Contract_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Governance_Proxy_Whitelist_Contract_Order_By>>;
-  where?: InputMaybe<Governance_Proxy_Whitelist_Contract_Bool_Exp>;
-};
-
-
-export type Query_RootGovernance_Proxy_Whitelist_Contract_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Governance_Proxy_Whitelist_Contract_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Governance_Proxy_Whitelist_Contract_Order_By>>;
-  where?: InputMaybe<Governance_Proxy_Whitelist_Contract_Bool_Exp>;
-};
-
-
-export type Query_RootGovernance_Proxy_Whitelist_Contract_By_PkArgs = {
-  id: Scalars['bigint'];
-};
-
-
-export type Query_RootGovernance_Proxy_Whitelist_Token_ContractArgs = {
-  distinct_on?: InputMaybe<Array<Governance_Proxy_Whitelist_Token_Contract_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Governance_Proxy_Whitelist_Token_Contract_Order_By>>;
-  where?: InputMaybe<Governance_Proxy_Whitelist_Token_Contract_Bool_Exp>;
-};
-
-
-export type Query_RootGovernance_Proxy_Whitelist_Token_Contract_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Governance_Proxy_Whitelist_Token_Contract_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Governance_Proxy_Whitelist_Token_Contract_Order_By>>;
-  where?: InputMaybe<Governance_Proxy_Whitelist_Token_Contract_Bool_Exp>;
-};
-
-
-export type Query_RootGovernance_Proxy_Whitelist_Token_Contract_By_PkArgs = {
   id: Scalars['bigint'];
 };
 
@@ -50497,6 +49747,29 @@ export type Query_RootTreasury_AggregateArgs = {
 };
 
 
+export type Query_RootTreasury_BalanceArgs = {
+  distinct_on?: InputMaybe<Array<Treasury_Balance_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Treasury_Balance_Order_By>>;
+  where?: InputMaybe<Treasury_Balance_Bool_Exp>;
+};
+
+
+export type Query_RootTreasury_Balance_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Treasury_Balance_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Treasury_Balance_Order_By>>;
+  where?: InputMaybe<Treasury_Balance_Bool_Exp>;
+};
+
+
+export type Query_RootTreasury_Balance_By_PkArgs = {
+  id: Scalars['bigint'];
+};
+
+
 export type Query_RootTreasury_By_PkArgs = {
   address: Scalars['String'];
 };
@@ -50571,25 +49844,25 @@ export type Query_RootTreasury_Factory_Lambda_By_PkArgs = {
 };
 
 
-export type Query_RootTreasury_Factory_Product_LambdaArgs = {
-  distinct_on?: InputMaybe<Array<Treasury_Factory_Product_Lambda_Select_Column>>;
+export type Query_RootTreasury_Factory_Treasury_LambdaArgs = {
+  distinct_on?: InputMaybe<Array<Treasury_Factory_Treasury_Lambda_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Treasury_Factory_Product_Lambda_Order_By>>;
-  where?: InputMaybe<Treasury_Factory_Product_Lambda_Bool_Exp>;
+  order_by?: InputMaybe<Array<Treasury_Factory_Treasury_Lambda_Order_By>>;
+  where?: InputMaybe<Treasury_Factory_Treasury_Lambda_Bool_Exp>;
 };
 
 
-export type Query_RootTreasury_Factory_Product_Lambda_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Treasury_Factory_Product_Lambda_Select_Column>>;
+export type Query_RootTreasury_Factory_Treasury_Lambda_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Treasury_Factory_Treasury_Lambda_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Treasury_Factory_Product_Lambda_Order_By>>;
-  where?: InputMaybe<Treasury_Factory_Product_Lambda_Bool_Exp>;
+  order_by?: InputMaybe<Array<Treasury_Factory_Treasury_Lambda_Order_By>>;
+  where?: InputMaybe<Treasury_Factory_Treasury_Lambda_Bool_Exp>;
 };
 
 
-export type Query_RootTreasury_Factory_Product_Lambda_By_PkArgs = {
+export type Query_RootTreasury_Factory_Treasury_Lambda_By_PkArgs = {
   id: Scalars['bigint'];
 };
 
@@ -50870,25 +50143,25 @@ export type Query_RootVault_Factory_Lambda_By_PkArgs = {
 };
 
 
-export type Query_RootVault_Factory_Product_LambdaArgs = {
-  distinct_on?: InputMaybe<Array<Vault_Factory_Product_Lambda_Select_Column>>;
+export type Query_RootVault_Factory_Vault_LambdaArgs = {
+  distinct_on?: InputMaybe<Array<Vault_Factory_Vault_Lambda_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Vault_Factory_Product_Lambda_Order_By>>;
-  where?: InputMaybe<Vault_Factory_Product_Lambda_Bool_Exp>;
+  order_by?: InputMaybe<Array<Vault_Factory_Vault_Lambda_Order_By>>;
+  where?: InputMaybe<Vault_Factory_Vault_Lambda_Bool_Exp>;
 };
 
 
-export type Query_RootVault_Factory_Product_Lambda_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Vault_Factory_Product_Lambda_Select_Column>>;
+export type Query_RootVault_Factory_Vault_Lambda_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Vault_Factory_Vault_Lambda_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Vault_Factory_Product_Lambda_Order_By>>;
-  where?: InputMaybe<Vault_Factory_Product_Lambda_Bool_Exp>;
+  order_by?: InputMaybe<Array<Vault_Factory_Vault_Lambda_Order_By>>;
+  where?: InputMaybe<Vault_Factory_Vault_Lambda_Bool_Exp>;
 };
 
 
-export type Query_RootVault_Factory_Product_Lambda_By_PkArgs = {
+export type Query_RootVault_Factory_Vault_Lambda_By_PkArgs = {
   id: Scalars['bigint'];
 };
 
@@ -52989,6 +52262,14 @@ export type Subscription_Root = {
   aggregator_factory: Array<Aggregator_Factory>;
   /** fetch aggregated fields from the table: "aggregator_factory" */
   aggregator_factory_aggregate: Aggregator_Factory_Aggregate;
+  /** fetch data from the table: "aggregator_factory_aggregator_lambda" */
+  aggregator_factory_aggregator_lambda: Array<Aggregator_Factory_Aggregator_Lambda>;
+  /** fetch aggregated fields from the table: "aggregator_factory_aggregator_lambda" */
+  aggregator_factory_aggregator_lambda_aggregate: Aggregator_Factory_Aggregator_Lambda_Aggregate;
+  /** fetch data from the table: "aggregator_factory_aggregator_lambda" using primary key columns */
+  aggregator_factory_aggregator_lambda_by_pk?: Maybe<Aggregator_Factory_Aggregator_Lambda>;
+  /** fetch data from the table in a streaming manner: "aggregator_factory_aggregator_lambda" */
+  aggregator_factory_aggregator_lambda_stream: Array<Aggregator_Factory_Aggregator_Lambda>;
   /** fetch data from the table: "aggregator_factory" using primary key columns */
   aggregator_factory_by_pk?: Maybe<Aggregator_Factory>;
   /** fetch data from the table: "aggregator_factory_general_contract" */
@@ -53007,14 +52288,6 @@ export type Subscription_Root = {
   aggregator_factory_lambda_by_pk?: Maybe<Aggregator_Factory_Lambda>;
   /** fetch data from the table in a streaming manner: "aggregator_factory_lambda" */
   aggregator_factory_lambda_stream: Array<Aggregator_Factory_Lambda>;
-  /** fetch data from the table: "aggregator_factory_product_lambda" */
-  aggregator_factory_product_lambda: Array<Aggregator_Factory_Product_Lambda>;
-  /** fetch aggregated fields from the table: "aggregator_factory_product_lambda" */
-  aggregator_factory_product_lambda_aggregate: Aggregator_Factory_Product_Lambda_Aggregate;
-  /** fetch data from the table: "aggregator_factory_product_lambda" using primary key columns */
-  aggregator_factory_product_lambda_by_pk?: Maybe<Aggregator_Factory_Product_Lambda>;
-  /** fetch data from the table in a streaming manner: "aggregator_factory_product_lambda" */
-  aggregator_factory_product_lambda_stream: Array<Aggregator_Factory_Product_Lambda>;
   /** fetch data from the table in a streaming manner: "aggregator_factory" */
   aggregator_factory_stream: Array<Aggregator_Factory>;
   /** fetch data from the table: "aggregator_factory_whitelist_contract" */
@@ -53421,6 +52694,14 @@ export type Subscription_Root = {
   farm_factory_aggregate: Farm_Factory_Aggregate;
   /** fetch data from the table: "farm_factory" using primary key columns */
   farm_factory_by_pk?: Maybe<Farm_Factory>;
+  /** fetch data from the table: "farm_factory_farm_lambda" */
+  farm_factory_farm_lambda: Array<Farm_Factory_Farm_Lambda>;
+  /** fetch aggregated fields from the table: "farm_factory_farm_lambda" */
+  farm_factory_farm_lambda_aggregate: Farm_Factory_Farm_Lambda_Aggregate;
+  /** fetch data from the table: "farm_factory_farm_lambda" using primary key columns */
+  farm_factory_farm_lambda_by_pk?: Maybe<Farm_Factory_Farm_Lambda>;
+  /** fetch data from the table in a streaming manner: "farm_factory_farm_lambda" */
+  farm_factory_farm_lambda_stream: Array<Farm_Factory_Farm_Lambda>;
   /** fetch data from the table: "farm_factory_general_contract" */
   farm_factory_general_contract: Array<Farm_Factory_General_Contract>;
   /** fetch aggregated fields from the table: "farm_factory_general_contract" */
@@ -53437,14 +52718,14 @@ export type Subscription_Root = {
   farm_factory_lambda_by_pk?: Maybe<Farm_Factory_Lambda>;
   /** fetch data from the table in a streaming manner: "farm_factory_lambda" */
   farm_factory_lambda_stream: Array<Farm_Factory_Lambda>;
-  /** fetch data from the table: "farm_factory_product_lambda" */
-  farm_factory_product_lambda: Array<Farm_Factory_Product_Lambda>;
-  /** fetch aggregated fields from the table: "farm_factory_product_lambda" */
-  farm_factory_product_lambda_aggregate: Farm_Factory_Product_Lambda_Aggregate;
-  /** fetch data from the table: "farm_factory_product_lambda" using primary key columns */
-  farm_factory_product_lambda_by_pk?: Maybe<Farm_Factory_Product_Lambda>;
-  /** fetch data from the table in a streaming manner: "farm_factory_product_lambda" */
-  farm_factory_product_lambda_stream: Array<Farm_Factory_Product_Lambda>;
+  /** fetch data from the table: "farm_factory_m_farm_lambda" */
+  farm_factory_m_farm_lambda: Array<Farm_Factory_M_Farm_Lambda>;
+  /** fetch aggregated fields from the table: "farm_factory_m_farm_lambda" */
+  farm_factory_m_farm_lambda_aggregate: Farm_Factory_M_Farm_Lambda_Aggregate;
+  /** fetch data from the table: "farm_factory_m_farm_lambda" using primary key columns */
+  farm_factory_m_farm_lambda_by_pk?: Maybe<Farm_Factory_M_Farm_Lambda>;
+  /** fetch data from the table in a streaming manner: "farm_factory_m_farm_lambda" */
+  farm_factory_m_farm_lambda_stream: Array<Farm_Factory_M_Farm_Lambda>;
   /** fetch data from the table in a streaming manner: "farm_factory" */
   farm_factory_stream: Array<Farm_Factory>;
   /** fetch data from the table: "farm_factory_whitelist_contract" */
@@ -53597,14 +52878,6 @@ export type Subscription_Root = {
   governance_proxy_aggregate: Governance_Proxy_Aggregate;
   /** fetch data from the table: "governance_proxy" using primary key columns */
   governance_proxy_by_pk?: Maybe<Governance_Proxy>;
-  /** fetch data from the table: "governance_proxy_general_contract" */
-  governance_proxy_general_contract: Array<Governance_Proxy_General_Contract>;
-  /** fetch aggregated fields from the table: "governance_proxy_general_contract" */
-  governance_proxy_general_contract_aggregate: Governance_Proxy_General_Contract_Aggregate;
-  /** fetch data from the table: "governance_proxy_general_contract" using primary key columns */
-  governance_proxy_general_contract_by_pk?: Maybe<Governance_Proxy_General_Contract>;
-  /** fetch data from the table in a streaming manner: "governance_proxy_general_contract" */
-  governance_proxy_general_contract_stream: Array<Governance_Proxy_General_Contract>;
   /** fetch data from the table: "governance_proxy_lambda" */
   governance_proxy_lambda: Array<Governance_Proxy_Lambda>;
   /** fetch aggregated fields from the table: "governance_proxy_lambda" */
@@ -53613,32 +52886,8 @@ export type Subscription_Root = {
   governance_proxy_lambda_by_pk?: Maybe<Governance_Proxy_Lambda>;
   /** fetch data from the table in a streaming manner: "governance_proxy_lambda" */
   governance_proxy_lambda_stream: Array<Governance_Proxy_Lambda>;
-  /** fetch data from the table: "governance_proxy_proxy_lambda" */
-  governance_proxy_proxy_lambda: Array<Governance_Proxy_Proxy_Lambda>;
-  /** fetch aggregated fields from the table: "governance_proxy_proxy_lambda" */
-  governance_proxy_proxy_lambda_aggregate: Governance_Proxy_Proxy_Lambda_Aggregate;
-  /** fetch data from the table: "governance_proxy_proxy_lambda" using primary key columns */
-  governance_proxy_proxy_lambda_by_pk?: Maybe<Governance_Proxy_Proxy_Lambda>;
-  /** fetch data from the table in a streaming manner: "governance_proxy_proxy_lambda" */
-  governance_proxy_proxy_lambda_stream: Array<Governance_Proxy_Proxy_Lambda>;
   /** fetch data from the table in a streaming manner: "governance_proxy" */
   governance_proxy_stream: Array<Governance_Proxy>;
-  /** fetch data from the table: "governance_proxy_whitelist_contract" */
-  governance_proxy_whitelist_contract: Array<Governance_Proxy_Whitelist_Contract>;
-  /** fetch aggregated fields from the table: "governance_proxy_whitelist_contract" */
-  governance_proxy_whitelist_contract_aggregate: Governance_Proxy_Whitelist_Contract_Aggregate;
-  /** fetch data from the table: "governance_proxy_whitelist_contract" using primary key columns */
-  governance_proxy_whitelist_contract_by_pk?: Maybe<Governance_Proxy_Whitelist_Contract>;
-  /** fetch data from the table in a streaming manner: "governance_proxy_whitelist_contract" */
-  governance_proxy_whitelist_contract_stream: Array<Governance_Proxy_Whitelist_Contract>;
-  /** fetch data from the table: "governance_proxy_whitelist_token_contract" */
-  governance_proxy_whitelist_token_contract: Array<Governance_Proxy_Whitelist_Token_Contract>;
-  /** fetch aggregated fields from the table: "governance_proxy_whitelist_token_contract" */
-  governance_proxy_whitelist_token_contract_aggregate: Governance_Proxy_Whitelist_Token_Contract_Aggregate;
-  /** fetch data from the table: "governance_proxy_whitelist_token_contract" using primary key columns */
-  governance_proxy_whitelist_token_contract_by_pk?: Maybe<Governance_Proxy_Whitelist_Token_Contract>;
-  /** fetch data from the table in a streaming manner: "governance_proxy_whitelist_token_contract" */
-  governance_proxy_whitelist_token_contract_stream: Array<Governance_Proxy_Whitelist_Token_Contract>;
   /** fetch data from the table: "governance_satellite" */
   governance_satellite: Array<Governance_Satellite>;
   /** fetch data from the table: "governance_satellite_action" */
@@ -54035,6 +53284,14 @@ export type Subscription_Root = {
   treasury: Array<Treasury>;
   /** fetch aggregated fields from the table: "treasury" */
   treasury_aggregate: Treasury_Aggregate;
+  /** fetch data from the table: "treasury_balance" */
+  treasury_balance: Array<Treasury_Balance>;
+  /** fetch aggregated fields from the table: "treasury_balance" */
+  treasury_balance_aggregate: Treasury_Balance_Aggregate;
+  /** fetch data from the table: "treasury_balance" using primary key columns */
+  treasury_balance_by_pk?: Maybe<Treasury_Balance>;
+  /** fetch data from the table in a streaming manner: "treasury_balance" */
+  treasury_balance_stream: Array<Treasury_Balance>;
   /** fetch data from the table: "treasury" using primary key columns */
   treasury_by_pk?: Maybe<Treasury>;
   /** fetch data from the table: "treasury_factory" */
@@ -54059,16 +53316,16 @@ export type Subscription_Root = {
   treasury_factory_lambda_by_pk?: Maybe<Treasury_Factory_Lambda>;
   /** fetch data from the table in a streaming manner: "treasury_factory_lambda" */
   treasury_factory_lambda_stream: Array<Treasury_Factory_Lambda>;
-  /** fetch data from the table: "treasury_factory_product_lambda" */
-  treasury_factory_product_lambda: Array<Treasury_Factory_Product_Lambda>;
-  /** fetch aggregated fields from the table: "treasury_factory_product_lambda" */
-  treasury_factory_product_lambda_aggregate: Treasury_Factory_Product_Lambda_Aggregate;
-  /** fetch data from the table: "treasury_factory_product_lambda" using primary key columns */
-  treasury_factory_product_lambda_by_pk?: Maybe<Treasury_Factory_Product_Lambda>;
-  /** fetch data from the table in a streaming manner: "treasury_factory_product_lambda" */
-  treasury_factory_product_lambda_stream: Array<Treasury_Factory_Product_Lambda>;
   /** fetch data from the table in a streaming manner: "treasury_factory" */
   treasury_factory_stream: Array<Treasury_Factory>;
+  /** fetch data from the table: "treasury_factory_treasury_lambda" */
+  treasury_factory_treasury_lambda: Array<Treasury_Factory_Treasury_Lambda>;
+  /** fetch aggregated fields from the table: "treasury_factory_treasury_lambda" */
+  treasury_factory_treasury_lambda_aggregate: Treasury_Factory_Treasury_Lambda_Aggregate;
+  /** fetch data from the table: "treasury_factory_treasury_lambda" using primary key columns */
+  treasury_factory_treasury_lambda_by_pk?: Maybe<Treasury_Factory_Treasury_Lambda>;
+  /** fetch data from the table in a streaming manner: "treasury_factory_treasury_lambda" */
+  treasury_factory_treasury_lambda_stream: Array<Treasury_Factory_Treasury_Lambda>;
   /** fetch data from the table: "treasury_factory_whitelist_contract" */
   treasury_factory_whitelist_contract: Array<Treasury_Factory_Whitelist_Contract>;
   /** fetch aggregated fields from the table: "treasury_factory_whitelist_contract" */
@@ -54163,16 +53420,16 @@ export type Subscription_Root = {
   vault_factory_lambda_by_pk?: Maybe<Vault_Factory_Lambda>;
   /** fetch data from the table in a streaming manner: "vault_factory_lambda" */
   vault_factory_lambda_stream: Array<Vault_Factory_Lambda>;
-  /** fetch data from the table: "vault_factory_product_lambda" */
-  vault_factory_product_lambda: Array<Vault_Factory_Product_Lambda>;
-  /** fetch aggregated fields from the table: "vault_factory_product_lambda" */
-  vault_factory_product_lambda_aggregate: Vault_Factory_Product_Lambda_Aggregate;
-  /** fetch data from the table: "vault_factory_product_lambda" using primary key columns */
-  vault_factory_product_lambda_by_pk?: Maybe<Vault_Factory_Product_Lambda>;
-  /** fetch data from the table in a streaming manner: "vault_factory_product_lambda" */
-  vault_factory_product_lambda_stream: Array<Vault_Factory_Product_Lambda>;
   /** fetch data from the table in a streaming manner: "vault_factory" */
   vault_factory_stream: Array<Vault_Factory>;
+  /** fetch data from the table: "vault_factory_vault_lambda" */
+  vault_factory_vault_lambda: Array<Vault_Factory_Vault_Lambda>;
+  /** fetch aggregated fields from the table: "vault_factory_vault_lambda" */
+  vault_factory_vault_lambda_aggregate: Vault_Factory_Vault_Lambda_Aggregate;
+  /** fetch data from the table: "vault_factory_vault_lambda" using primary key columns */
+  vault_factory_vault_lambda_by_pk?: Maybe<Vault_Factory_Vault_Lambda>;
+  /** fetch data from the table in a streaming manner: "vault_factory_vault_lambda" */
+  vault_factory_vault_lambda_stream: Array<Vault_Factory_Vault_Lambda>;
   /** fetch data from the table: "vault_factory_whitelist_contract" */
   vault_factory_whitelist_contract: Array<Vault_Factory_Whitelist_Contract>;
   /** fetch aggregated fields from the table: "vault_factory_whitelist_contract" */
@@ -54283,6 +53540,36 @@ export type Subscription_RootAggregator_Factory_AggregateArgs = {
 };
 
 
+export type Subscription_RootAggregator_Factory_Aggregator_LambdaArgs = {
+  distinct_on?: InputMaybe<Array<Aggregator_Factory_Aggregator_Lambda_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Aggregator_Factory_Aggregator_Lambda_Order_By>>;
+  where?: InputMaybe<Aggregator_Factory_Aggregator_Lambda_Bool_Exp>;
+};
+
+
+export type Subscription_RootAggregator_Factory_Aggregator_Lambda_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Aggregator_Factory_Aggregator_Lambda_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Aggregator_Factory_Aggregator_Lambda_Order_By>>;
+  where?: InputMaybe<Aggregator_Factory_Aggregator_Lambda_Bool_Exp>;
+};
+
+
+export type Subscription_RootAggregator_Factory_Aggregator_Lambda_By_PkArgs = {
+  id: Scalars['bigint'];
+};
+
+
+export type Subscription_RootAggregator_Factory_Aggregator_Lambda_StreamArgs = {
+  batch_size: Scalars['Int'];
+  cursor: Array<InputMaybe<Aggregator_Factory_Aggregator_Lambda_Stream_Cursor_Input>>;
+  where?: InputMaybe<Aggregator_Factory_Aggregator_Lambda_Bool_Exp>;
+};
+
+
 export type Subscription_RootAggregator_Factory_By_PkArgs = {
   address: Scalars['String'];
 };
@@ -54345,36 +53632,6 @@ export type Subscription_RootAggregator_Factory_Lambda_StreamArgs = {
   batch_size: Scalars['Int'];
   cursor: Array<InputMaybe<Aggregator_Factory_Lambda_Stream_Cursor_Input>>;
   where?: InputMaybe<Aggregator_Factory_Lambda_Bool_Exp>;
-};
-
-
-export type Subscription_RootAggregator_Factory_Product_LambdaArgs = {
-  distinct_on?: InputMaybe<Array<Aggregator_Factory_Product_Lambda_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Aggregator_Factory_Product_Lambda_Order_By>>;
-  where?: InputMaybe<Aggregator_Factory_Product_Lambda_Bool_Exp>;
-};
-
-
-export type Subscription_RootAggregator_Factory_Product_Lambda_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Aggregator_Factory_Product_Lambda_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Aggregator_Factory_Product_Lambda_Order_By>>;
-  where?: InputMaybe<Aggregator_Factory_Product_Lambda_Bool_Exp>;
-};
-
-
-export type Subscription_RootAggregator_Factory_Product_Lambda_By_PkArgs = {
-  id: Scalars['bigint'];
-};
-
-
-export type Subscription_RootAggregator_Factory_Product_Lambda_StreamArgs = {
-  batch_size: Scalars['Int'];
-  cursor: Array<InputMaybe<Aggregator_Factory_Product_Lambda_Stream_Cursor_Input>>;
-  where?: InputMaybe<Aggregator_Factory_Product_Lambda_Bool_Exp>;
 };
 
 
@@ -55903,6 +55160,36 @@ export type Subscription_RootFarm_Factory_By_PkArgs = {
 };
 
 
+export type Subscription_RootFarm_Factory_Farm_LambdaArgs = {
+  distinct_on?: InputMaybe<Array<Farm_Factory_Farm_Lambda_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Farm_Factory_Farm_Lambda_Order_By>>;
+  where?: InputMaybe<Farm_Factory_Farm_Lambda_Bool_Exp>;
+};
+
+
+export type Subscription_RootFarm_Factory_Farm_Lambda_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Farm_Factory_Farm_Lambda_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Farm_Factory_Farm_Lambda_Order_By>>;
+  where?: InputMaybe<Farm_Factory_Farm_Lambda_Bool_Exp>;
+};
+
+
+export type Subscription_RootFarm_Factory_Farm_Lambda_By_PkArgs = {
+  id: Scalars['bigint'];
+};
+
+
+export type Subscription_RootFarm_Factory_Farm_Lambda_StreamArgs = {
+  batch_size: Scalars['Int'];
+  cursor: Array<InputMaybe<Farm_Factory_Farm_Lambda_Stream_Cursor_Input>>;
+  where?: InputMaybe<Farm_Factory_Farm_Lambda_Bool_Exp>;
+};
+
+
 export type Subscription_RootFarm_Factory_General_ContractArgs = {
   distinct_on?: InputMaybe<Array<Farm_Factory_General_Contract_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
@@ -55963,33 +55250,33 @@ export type Subscription_RootFarm_Factory_Lambda_StreamArgs = {
 };
 
 
-export type Subscription_RootFarm_Factory_Product_LambdaArgs = {
-  distinct_on?: InputMaybe<Array<Farm_Factory_Product_Lambda_Select_Column>>;
+export type Subscription_RootFarm_Factory_M_Farm_LambdaArgs = {
+  distinct_on?: InputMaybe<Array<Farm_Factory_M_Farm_Lambda_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Farm_Factory_Product_Lambda_Order_By>>;
-  where?: InputMaybe<Farm_Factory_Product_Lambda_Bool_Exp>;
+  order_by?: InputMaybe<Array<Farm_Factory_M_Farm_Lambda_Order_By>>;
+  where?: InputMaybe<Farm_Factory_M_Farm_Lambda_Bool_Exp>;
 };
 
 
-export type Subscription_RootFarm_Factory_Product_Lambda_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Farm_Factory_Product_Lambda_Select_Column>>;
+export type Subscription_RootFarm_Factory_M_Farm_Lambda_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Farm_Factory_M_Farm_Lambda_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Farm_Factory_Product_Lambda_Order_By>>;
-  where?: InputMaybe<Farm_Factory_Product_Lambda_Bool_Exp>;
+  order_by?: InputMaybe<Array<Farm_Factory_M_Farm_Lambda_Order_By>>;
+  where?: InputMaybe<Farm_Factory_M_Farm_Lambda_Bool_Exp>;
 };
 
 
-export type Subscription_RootFarm_Factory_Product_Lambda_By_PkArgs = {
+export type Subscription_RootFarm_Factory_M_Farm_Lambda_By_PkArgs = {
   id: Scalars['bigint'];
 };
 
 
-export type Subscription_RootFarm_Factory_Product_Lambda_StreamArgs = {
+export type Subscription_RootFarm_Factory_M_Farm_Lambda_StreamArgs = {
   batch_size: Scalars['Int'];
-  cursor: Array<InputMaybe<Farm_Factory_Product_Lambda_Stream_Cursor_Input>>;
-  where?: InputMaybe<Farm_Factory_Product_Lambda_Bool_Exp>;
+  cursor: Array<InputMaybe<Farm_Factory_M_Farm_Lambda_Stream_Cursor_Input>>;
+  where?: InputMaybe<Farm_Factory_M_Farm_Lambda_Bool_Exp>;
 };
 
 
@@ -56563,36 +55850,6 @@ export type Subscription_RootGovernance_Proxy_By_PkArgs = {
 };
 
 
-export type Subscription_RootGovernance_Proxy_General_ContractArgs = {
-  distinct_on?: InputMaybe<Array<Governance_Proxy_General_Contract_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Governance_Proxy_General_Contract_Order_By>>;
-  where?: InputMaybe<Governance_Proxy_General_Contract_Bool_Exp>;
-};
-
-
-export type Subscription_RootGovernance_Proxy_General_Contract_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Governance_Proxy_General_Contract_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Governance_Proxy_General_Contract_Order_By>>;
-  where?: InputMaybe<Governance_Proxy_General_Contract_Bool_Exp>;
-};
-
-
-export type Subscription_RootGovernance_Proxy_General_Contract_By_PkArgs = {
-  id: Scalars['bigint'];
-};
-
-
-export type Subscription_RootGovernance_Proxy_General_Contract_StreamArgs = {
-  batch_size: Scalars['Int'];
-  cursor: Array<InputMaybe<Governance_Proxy_General_Contract_Stream_Cursor_Input>>;
-  where?: InputMaybe<Governance_Proxy_General_Contract_Bool_Exp>;
-};
-
-
 export type Subscription_RootGovernance_Proxy_LambdaArgs = {
   distinct_on?: InputMaybe<Array<Governance_Proxy_Lambda_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
@@ -56623,100 +55880,10 @@ export type Subscription_RootGovernance_Proxy_Lambda_StreamArgs = {
 };
 
 
-export type Subscription_RootGovernance_Proxy_Proxy_LambdaArgs = {
-  distinct_on?: InputMaybe<Array<Governance_Proxy_Proxy_Lambda_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Governance_Proxy_Proxy_Lambda_Order_By>>;
-  where?: InputMaybe<Governance_Proxy_Proxy_Lambda_Bool_Exp>;
-};
-
-
-export type Subscription_RootGovernance_Proxy_Proxy_Lambda_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Governance_Proxy_Proxy_Lambda_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Governance_Proxy_Proxy_Lambda_Order_By>>;
-  where?: InputMaybe<Governance_Proxy_Proxy_Lambda_Bool_Exp>;
-};
-
-
-export type Subscription_RootGovernance_Proxy_Proxy_Lambda_By_PkArgs = {
-  id: Scalars['bigint'];
-};
-
-
-export type Subscription_RootGovernance_Proxy_Proxy_Lambda_StreamArgs = {
-  batch_size: Scalars['Int'];
-  cursor: Array<InputMaybe<Governance_Proxy_Proxy_Lambda_Stream_Cursor_Input>>;
-  where?: InputMaybe<Governance_Proxy_Proxy_Lambda_Bool_Exp>;
-};
-
-
 export type Subscription_RootGovernance_Proxy_StreamArgs = {
   batch_size: Scalars['Int'];
   cursor: Array<InputMaybe<Governance_Proxy_Stream_Cursor_Input>>;
   where?: InputMaybe<Governance_Proxy_Bool_Exp>;
-};
-
-
-export type Subscription_RootGovernance_Proxy_Whitelist_ContractArgs = {
-  distinct_on?: InputMaybe<Array<Governance_Proxy_Whitelist_Contract_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Governance_Proxy_Whitelist_Contract_Order_By>>;
-  where?: InputMaybe<Governance_Proxy_Whitelist_Contract_Bool_Exp>;
-};
-
-
-export type Subscription_RootGovernance_Proxy_Whitelist_Contract_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Governance_Proxy_Whitelist_Contract_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Governance_Proxy_Whitelist_Contract_Order_By>>;
-  where?: InputMaybe<Governance_Proxy_Whitelist_Contract_Bool_Exp>;
-};
-
-
-export type Subscription_RootGovernance_Proxy_Whitelist_Contract_By_PkArgs = {
-  id: Scalars['bigint'];
-};
-
-
-export type Subscription_RootGovernance_Proxy_Whitelist_Contract_StreamArgs = {
-  batch_size: Scalars['Int'];
-  cursor: Array<InputMaybe<Governance_Proxy_Whitelist_Contract_Stream_Cursor_Input>>;
-  where?: InputMaybe<Governance_Proxy_Whitelist_Contract_Bool_Exp>;
-};
-
-
-export type Subscription_RootGovernance_Proxy_Whitelist_Token_ContractArgs = {
-  distinct_on?: InputMaybe<Array<Governance_Proxy_Whitelist_Token_Contract_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Governance_Proxy_Whitelist_Token_Contract_Order_By>>;
-  where?: InputMaybe<Governance_Proxy_Whitelist_Token_Contract_Bool_Exp>;
-};
-
-
-export type Subscription_RootGovernance_Proxy_Whitelist_Token_Contract_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Governance_Proxy_Whitelist_Token_Contract_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Governance_Proxy_Whitelist_Token_Contract_Order_By>>;
-  where?: InputMaybe<Governance_Proxy_Whitelist_Token_Contract_Bool_Exp>;
-};
-
-
-export type Subscription_RootGovernance_Proxy_Whitelist_Token_Contract_By_PkArgs = {
-  id: Scalars['bigint'];
-};
-
-
-export type Subscription_RootGovernance_Proxy_Whitelist_Token_Contract_StreamArgs = {
-  batch_size: Scalars['Int'];
-  cursor: Array<InputMaybe<Governance_Proxy_Whitelist_Token_Contract_Stream_Cursor_Input>>;
-  where?: InputMaybe<Governance_Proxy_Whitelist_Token_Contract_Bool_Exp>;
 };
 
 
@@ -58221,6 +57388,36 @@ export type Subscription_RootTreasury_AggregateArgs = {
 };
 
 
+export type Subscription_RootTreasury_BalanceArgs = {
+  distinct_on?: InputMaybe<Array<Treasury_Balance_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Treasury_Balance_Order_By>>;
+  where?: InputMaybe<Treasury_Balance_Bool_Exp>;
+};
+
+
+export type Subscription_RootTreasury_Balance_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Treasury_Balance_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Treasury_Balance_Order_By>>;
+  where?: InputMaybe<Treasury_Balance_Bool_Exp>;
+};
+
+
+export type Subscription_RootTreasury_Balance_By_PkArgs = {
+  id: Scalars['bigint'];
+};
+
+
+export type Subscription_RootTreasury_Balance_StreamArgs = {
+  batch_size: Scalars['Int'];
+  cursor: Array<InputMaybe<Treasury_Balance_Stream_Cursor_Input>>;
+  where?: InputMaybe<Treasury_Balance_Bool_Exp>;
+};
+
+
 export type Subscription_RootTreasury_By_PkArgs = {
   address: Scalars['String'];
 };
@@ -58309,40 +57506,40 @@ export type Subscription_RootTreasury_Factory_Lambda_StreamArgs = {
 };
 
 
-export type Subscription_RootTreasury_Factory_Product_LambdaArgs = {
-  distinct_on?: InputMaybe<Array<Treasury_Factory_Product_Lambda_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Treasury_Factory_Product_Lambda_Order_By>>;
-  where?: InputMaybe<Treasury_Factory_Product_Lambda_Bool_Exp>;
-};
-
-
-export type Subscription_RootTreasury_Factory_Product_Lambda_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Treasury_Factory_Product_Lambda_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Treasury_Factory_Product_Lambda_Order_By>>;
-  where?: InputMaybe<Treasury_Factory_Product_Lambda_Bool_Exp>;
-};
-
-
-export type Subscription_RootTreasury_Factory_Product_Lambda_By_PkArgs = {
-  id: Scalars['bigint'];
-};
-
-
-export type Subscription_RootTreasury_Factory_Product_Lambda_StreamArgs = {
-  batch_size: Scalars['Int'];
-  cursor: Array<InputMaybe<Treasury_Factory_Product_Lambda_Stream_Cursor_Input>>;
-  where?: InputMaybe<Treasury_Factory_Product_Lambda_Bool_Exp>;
-};
-
-
 export type Subscription_RootTreasury_Factory_StreamArgs = {
   batch_size: Scalars['Int'];
   cursor: Array<InputMaybe<Treasury_Factory_Stream_Cursor_Input>>;
   where?: InputMaybe<Treasury_Factory_Bool_Exp>;
+};
+
+
+export type Subscription_RootTreasury_Factory_Treasury_LambdaArgs = {
+  distinct_on?: InputMaybe<Array<Treasury_Factory_Treasury_Lambda_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Treasury_Factory_Treasury_Lambda_Order_By>>;
+  where?: InputMaybe<Treasury_Factory_Treasury_Lambda_Bool_Exp>;
+};
+
+
+export type Subscription_RootTreasury_Factory_Treasury_Lambda_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Treasury_Factory_Treasury_Lambda_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Treasury_Factory_Treasury_Lambda_Order_By>>;
+  where?: InputMaybe<Treasury_Factory_Treasury_Lambda_Bool_Exp>;
+};
+
+
+export type Subscription_RootTreasury_Factory_Treasury_Lambda_By_PkArgs = {
+  id: Scalars['bigint'];
+};
+
+
+export type Subscription_RootTreasury_Factory_Treasury_Lambda_StreamArgs = {
+  batch_size: Scalars['Int'];
+  cursor: Array<InputMaybe<Treasury_Factory_Treasury_Lambda_Stream_Cursor_Input>>;
+  where?: InputMaybe<Treasury_Factory_Treasury_Lambda_Bool_Exp>;
 };
 
 
@@ -58699,40 +57896,40 @@ export type Subscription_RootVault_Factory_Lambda_StreamArgs = {
 };
 
 
-export type Subscription_RootVault_Factory_Product_LambdaArgs = {
-  distinct_on?: InputMaybe<Array<Vault_Factory_Product_Lambda_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Vault_Factory_Product_Lambda_Order_By>>;
-  where?: InputMaybe<Vault_Factory_Product_Lambda_Bool_Exp>;
-};
-
-
-export type Subscription_RootVault_Factory_Product_Lambda_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Vault_Factory_Product_Lambda_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Vault_Factory_Product_Lambda_Order_By>>;
-  where?: InputMaybe<Vault_Factory_Product_Lambda_Bool_Exp>;
-};
-
-
-export type Subscription_RootVault_Factory_Product_Lambda_By_PkArgs = {
-  id: Scalars['bigint'];
-};
-
-
-export type Subscription_RootVault_Factory_Product_Lambda_StreamArgs = {
-  batch_size: Scalars['Int'];
-  cursor: Array<InputMaybe<Vault_Factory_Product_Lambda_Stream_Cursor_Input>>;
-  where?: InputMaybe<Vault_Factory_Product_Lambda_Bool_Exp>;
-};
-
-
 export type Subscription_RootVault_Factory_StreamArgs = {
   batch_size: Scalars['Int'];
   cursor: Array<InputMaybe<Vault_Factory_Stream_Cursor_Input>>;
   where?: InputMaybe<Vault_Factory_Bool_Exp>;
+};
+
+
+export type Subscription_RootVault_Factory_Vault_LambdaArgs = {
+  distinct_on?: InputMaybe<Array<Vault_Factory_Vault_Lambda_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Vault_Factory_Vault_Lambda_Order_By>>;
+  where?: InputMaybe<Vault_Factory_Vault_Lambda_Bool_Exp>;
+};
+
+
+export type Subscription_RootVault_Factory_Vault_Lambda_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Vault_Factory_Vault_Lambda_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Vault_Factory_Vault_Lambda_Order_By>>;
+  where?: InputMaybe<Vault_Factory_Vault_Lambda_Bool_Exp>;
+};
+
+
+export type Subscription_RootVault_Factory_Vault_Lambda_By_PkArgs = {
+  id: Scalars['bigint'];
+};
+
+
+export type Subscription_RootVault_Factory_Vault_Lambda_StreamArgs = {
+  batch_size: Scalars['Int'];
+  cursor: Array<InputMaybe<Vault_Factory_Vault_Lambda_Stream_Cursor_Input>>;
+  where?: InputMaybe<Vault_Factory_Vault_Lambda_Bool_Exp>;
 };
 
 
@@ -61085,6 +60282,13 @@ export type Treasury = {
   __typename?: 'treasury';
   address: Scalars['String'];
   admin: Scalars['String'];
+  /** An object relationship */
+  baker?: Maybe<Mavryk_User>;
+  baker_id?: Maybe<Scalars['String']>;
+  /** An array relationship */
+  balances: Array<Treasury_Balance>;
+  /** An aggregate relationship */
+  balances_aggregate: Treasury_Balance_Aggregate;
   creation_timestamp?: Maybe<Scalars['timestamptz']>;
   /** An object relationship */
   factory?: Maybe<Treasury_Factory>;
@@ -61122,6 +60326,26 @@ export type Treasury = {
   whitelist_token_contracts: Array<Treasury_Whitelist_Token_Contract>;
   /** An aggregate relationship */
   whitelist_token_contracts_aggregate: Treasury_Whitelist_Token_Contract_Aggregate;
+};
+
+
+/** columns and relationships of "treasury" */
+export type TreasuryBalancesArgs = {
+  distinct_on?: InputMaybe<Array<Treasury_Balance_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Treasury_Balance_Order_By>>;
+  where?: InputMaybe<Treasury_Balance_Bool_Exp>;
+};
+
+
+/** columns and relationships of "treasury" */
+export type TreasuryBalances_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Treasury_Balance_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Treasury_Balance_Order_By>>;
+  where?: InputMaybe<Treasury_Balance_Bool_Exp>;
 };
 
 
@@ -61300,6 +60524,476 @@ export type Treasury_Aggregate_Order_By = {
   min?: InputMaybe<Treasury_Min_Order_By>;
 };
 
+/** columns and relationships of "treasury_balance" */
+export type Treasury_Balance = {
+  __typename?: 'treasury_balance';
+  balance: Scalars['float8'];
+  icon?: Maybe<Scalars['String']>;
+  id: Scalars['bigint'];
+  metadata?: Maybe<Scalars['jsonb']>;
+  name?: Maybe<Scalars['String']>;
+  token_address: Scalars['String'];
+  token_id?: Maybe<Scalars['smallint']>;
+  token_standard?: Maybe<Scalars['String']>;
+  /** An object relationship */
+  treasury: Treasury;
+  treasury_id: Scalars['String'];
+  tzkt_token_id: Scalars['bigint'];
+};
+
+
+/** columns and relationships of "treasury_balance" */
+export type Treasury_BalanceMetadataArgs = {
+  path?: InputMaybe<Scalars['String']>;
+};
+
+/** aggregated selection of "treasury_balance" */
+export type Treasury_Balance_Aggregate = {
+  __typename?: 'treasury_balance_aggregate';
+  aggregate?: Maybe<Treasury_Balance_Aggregate_Fields>;
+  nodes: Array<Treasury_Balance>;
+};
+
+export type Treasury_Balance_Aggregate_Bool_Exp = {
+  avg?: InputMaybe<Treasury_Balance_Aggregate_Bool_Exp_Avg>;
+  corr?: InputMaybe<Treasury_Balance_Aggregate_Bool_Exp_Corr>;
+  count?: InputMaybe<Treasury_Balance_Aggregate_Bool_Exp_Count>;
+  covar_samp?: InputMaybe<Treasury_Balance_Aggregate_Bool_Exp_Covar_Samp>;
+  max?: InputMaybe<Treasury_Balance_Aggregate_Bool_Exp_Max>;
+  min?: InputMaybe<Treasury_Balance_Aggregate_Bool_Exp_Min>;
+  stddev_samp?: InputMaybe<Treasury_Balance_Aggregate_Bool_Exp_Stddev_Samp>;
+  sum?: InputMaybe<Treasury_Balance_Aggregate_Bool_Exp_Sum>;
+  var_samp?: InputMaybe<Treasury_Balance_Aggregate_Bool_Exp_Var_Samp>;
+};
+
+export type Treasury_Balance_Aggregate_Bool_Exp_Avg = {
+  arguments: Treasury_Balance_Select_Column_Treasury_Balance_Aggregate_Bool_Exp_Avg_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Treasury_Balance_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Treasury_Balance_Aggregate_Bool_Exp_Corr = {
+  arguments: Treasury_Balance_Aggregate_Bool_Exp_Corr_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Treasury_Balance_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Treasury_Balance_Aggregate_Bool_Exp_Corr_Arguments = {
+  X: Treasury_Balance_Select_Column_Treasury_Balance_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+  Y: Treasury_Balance_Select_Column_Treasury_Balance_Aggregate_Bool_Exp_Corr_Arguments_Columns;
+};
+
+export type Treasury_Balance_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Treasury_Balance_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Treasury_Balance_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+export type Treasury_Balance_Aggregate_Bool_Exp_Covar_Samp = {
+  arguments: Treasury_Balance_Aggregate_Bool_Exp_Covar_Samp_Arguments;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Treasury_Balance_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Treasury_Balance_Aggregate_Bool_Exp_Covar_Samp_Arguments = {
+  X: Treasury_Balance_Select_Column_Treasury_Balance_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+  Y: Treasury_Balance_Select_Column_Treasury_Balance_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns;
+};
+
+export type Treasury_Balance_Aggregate_Bool_Exp_Max = {
+  arguments: Treasury_Balance_Select_Column_Treasury_Balance_Aggregate_Bool_Exp_Max_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Treasury_Balance_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Treasury_Balance_Aggregate_Bool_Exp_Min = {
+  arguments: Treasury_Balance_Select_Column_Treasury_Balance_Aggregate_Bool_Exp_Min_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Treasury_Balance_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Treasury_Balance_Aggregate_Bool_Exp_Stddev_Samp = {
+  arguments: Treasury_Balance_Select_Column_Treasury_Balance_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Treasury_Balance_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Treasury_Balance_Aggregate_Bool_Exp_Sum = {
+  arguments: Treasury_Balance_Select_Column_Treasury_Balance_Aggregate_Bool_Exp_Sum_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Treasury_Balance_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+export type Treasury_Balance_Aggregate_Bool_Exp_Var_Samp = {
+  arguments: Treasury_Balance_Select_Column_Treasury_Balance_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Treasury_Balance_Bool_Exp>;
+  predicate: Float8_Comparison_Exp;
+};
+
+/** aggregate fields of "treasury_balance" */
+export type Treasury_Balance_Aggregate_Fields = {
+  __typename?: 'treasury_balance_aggregate_fields';
+  avg?: Maybe<Treasury_Balance_Avg_Fields>;
+  count: Scalars['Int'];
+  max?: Maybe<Treasury_Balance_Max_Fields>;
+  min?: Maybe<Treasury_Balance_Min_Fields>;
+  stddev?: Maybe<Treasury_Balance_Stddev_Fields>;
+  stddev_pop?: Maybe<Treasury_Balance_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<Treasury_Balance_Stddev_Samp_Fields>;
+  sum?: Maybe<Treasury_Balance_Sum_Fields>;
+  var_pop?: Maybe<Treasury_Balance_Var_Pop_Fields>;
+  var_samp?: Maybe<Treasury_Balance_Var_Samp_Fields>;
+  variance?: Maybe<Treasury_Balance_Variance_Fields>;
+};
+
+
+/** aggregate fields of "treasury_balance" */
+export type Treasury_Balance_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Treasury_Balance_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "treasury_balance" */
+export type Treasury_Balance_Aggregate_Order_By = {
+  avg?: InputMaybe<Treasury_Balance_Avg_Order_By>;
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<Treasury_Balance_Max_Order_By>;
+  min?: InputMaybe<Treasury_Balance_Min_Order_By>;
+  stddev?: InputMaybe<Treasury_Balance_Stddev_Order_By>;
+  stddev_pop?: InputMaybe<Treasury_Balance_Stddev_Pop_Order_By>;
+  stddev_samp?: InputMaybe<Treasury_Balance_Stddev_Samp_Order_By>;
+  sum?: InputMaybe<Treasury_Balance_Sum_Order_By>;
+  var_pop?: InputMaybe<Treasury_Balance_Var_Pop_Order_By>;
+  var_samp?: InputMaybe<Treasury_Balance_Var_Samp_Order_By>;
+  variance?: InputMaybe<Treasury_Balance_Variance_Order_By>;
+};
+
+/** aggregate avg on columns */
+export type Treasury_Balance_Avg_Fields = {
+  __typename?: 'treasury_balance_avg_fields';
+  balance?: Maybe<Scalars['Float']>;
+  id?: Maybe<Scalars['Float']>;
+  token_id?: Maybe<Scalars['Float']>;
+  tzkt_token_id?: Maybe<Scalars['Float']>;
+};
+
+/** order by avg() on columns of table "treasury_balance" */
+export type Treasury_Balance_Avg_Order_By = {
+  balance?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  token_id?: InputMaybe<Order_By>;
+  tzkt_token_id?: InputMaybe<Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "treasury_balance". All fields are combined with a logical 'AND'. */
+export type Treasury_Balance_Bool_Exp = {
+  _and?: InputMaybe<Array<Treasury_Balance_Bool_Exp>>;
+  _not?: InputMaybe<Treasury_Balance_Bool_Exp>;
+  _or?: InputMaybe<Array<Treasury_Balance_Bool_Exp>>;
+  balance?: InputMaybe<Float8_Comparison_Exp>;
+  icon?: InputMaybe<String_Comparison_Exp>;
+  id?: InputMaybe<Bigint_Comparison_Exp>;
+  metadata?: InputMaybe<Jsonb_Comparison_Exp>;
+  name?: InputMaybe<String_Comparison_Exp>;
+  token_address?: InputMaybe<String_Comparison_Exp>;
+  token_id?: InputMaybe<Smallint_Comparison_Exp>;
+  token_standard?: InputMaybe<String_Comparison_Exp>;
+  treasury?: InputMaybe<Treasury_Bool_Exp>;
+  treasury_id?: InputMaybe<String_Comparison_Exp>;
+  tzkt_token_id?: InputMaybe<Bigint_Comparison_Exp>;
+};
+
+/** aggregate max on columns */
+export type Treasury_Balance_Max_Fields = {
+  __typename?: 'treasury_balance_max_fields';
+  balance?: Maybe<Scalars['float8']>;
+  icon?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['bigint']>;
+  name?: Maybe<Scalars['String']>;
+  token_address?: Maybe<Scalars['String']>;
+  token_id?: Maybe<Scalars['smallint']>;
+  token_standard?: Maybe<Scalars['String']>;
+  treasury_id?: Maybe<Scalars['String']>;
+  tzkt_token_id?: Maybe<Scalars['bigint']>;
+};
+
+/** order by max() on columns of table "treasury_balance" */
+export type Treasury_Balance_Max_Order_By = {
+  balance?: InputMaybe<Order_By>;
+  icon?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  name?: InputMaybe<Order_By>;
+  token_address?: InputMaybe<Order_By>;
+  token_id?: InputMaybe<Order_By>;
+  token_standard?: InputMaybe<Order_By>;
+  treasury_id?: InputMaybe<Order_By>;
+  tzkt_token_id?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Treasury_Balance_Min_Fields = {
+  __typename?: 'treasury_balance_min_fields';
+  balance?: Maybe<Scalars['float8']>;
+  icon?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['bigint']>;
+  name?: Maybe<Scalars['String']>;
+  token_address?: Maybe<Scalars['String']>;
+  token_id?: Maybe<Scalars['smallint']>;
+  token_standard?: Maybe<Scalars['String']>;
+  treasury_id?: Maybe<Scalars['String']>;
+  tzkt_token_id?: Maybe<Scalars['bigint']>;
+};
+
+/** order by min() on columns of table "treasury_balance" */
+export type Treasury_Balance_Min_Order_By = {
+  balance?: InputMaybe<Order_By>;
+  icon?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  name?: InputMaybe<Order_By>;
+  token_address?: InputMaybe<Order_By>;
+  token_id?: InputMaybe<Order_By>;
+  token_standard?: InputMaybe<Order_By>;
+  treasury_id?: InputMaybe<Order_By>;
+  tzkt_token_id?: InputMaybe<Order_By>;
+};
+
+/** Ordering options when selecting data from "treasury_balance". */
+export type Treasury_Balance_Order_By = {
+  balance?: InputMaybe<Order_By>;
+  icon?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  metadata?: InputMaybe<Order_By>;
+  name?: InputMaybe<Order_By>;
+  token_address?: InputMaybe<Order_By>;
+  token_id?: InputMaybe<Order_By>;
+  token_standard?: InputMaybe<Order_By>;
+  treasury?: InputMaybe<Treasury_Order_By>;
+  treasury_id?: InputMaybe<Order_By>;
+  tzkt_token_id?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "treasury_balance" */
+export enum Treasury_Balance_Select_Column {
+  /** column name */
+  Balance = 'balance',
+  /** column name */
+  Icon = 'icon',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Metadata = 'metadata',
+  /** column name */
+  Name = 'name',
+  /** column name */
+  TokenAddress = 'token_address',
+  /** column name */
+  TokenId = 'token_id',
+  /** column name */
+  TokenStandard = 'token_standard',
+  /** column name */
+  TreasuryId = 'treasury_id',
+  /** column name */
+  TzktTokenId = 'tzkt_token_id'
+}
+
+/** select "treasury_balance_aggregate_bool_exp_avg_arguments_columns" columns of table "treasury_balance" */
+export enum Treasury_Balance_Select_Column_Treasury_Balance_Aggregate_Bool_Exp_Avg_Arguments_Columns {
+  /** column name */
+  Balance = 'balance'
+}
+
+/** select "treasury_balance_aggregate_bool_exp_corr_arguments_columns" columns of table "treasury_balance" */
+export enum Treasury_Balance_Select_Column_Treasury_Balance_Aggregate_Bool_Exp_Corr_Arguments_Columns {
+  /** column name */
+  Balance = 'balance'
+}
+
+/** select "treasury_balance_aggregate_bool_exp_covar_samp_arguments_columns" columns of table "treasury_balance" */
+export enum Treasury_Balance_Select_Column_Treasury_Balance_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns {
+  /** column name */
+  Balance = 'balance'
+}
+
+/** select "treasury_balance_aggregate_bool_exp_max_arguments_columns" columns of table "treasury_balance" */
+export enum Treasury_Balance_Select_Column_Treasury_Balance_Aggregate_Bool_Exp_Max_Arguments_Columns {
+  /** column name */
+  Balance = 'balance'
+}
+
+/** select "treasury_balance_aggregate_bool_exp_min_arguments_columns" columns of table "treasury_balance" */
+export enum Treasury_Balance_Select_Column_Treasury_Balance_Aggregate_Bool_Exp_Min_Arguments_Columns {
+  /** column name */
+  Balance = 'balance'
+}
+
+/** select "treasury_balance_aggregate_bool_exp_stddev_samp_arguments_columns" columns of table "treasury_balance" */
+export enum Treasury_Balance_Select_Column_Treasury_Balance_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns {
+  /** column name */
+  Balance = 'balance'
+}
+
+/** select "treasury_balance_aggregate_bool_exp_sum_arguments_columns" columns of table "treasury_balance" */
+export enum Treasury_Balance_Select_Column_Treasury_Balance_Aggregate_Bool_Exp_Sum_Arguments_Columns {
+  /** column name */
+  Balance = 'balance'
+}
+
+/** select "treasury_balance_aggregate_bool_exp_var_samp_arguments_columns" columns of table "treasury_balance" */
+export enum Treasury_Balance_Select_Column_Treasury_Balance_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns {
+  /** column name */
+  Balance = 'balance'
+}
+
+/** aggregate stddev on columns */
+export type Treasury_Balance_Stddev_Fields = {
+  __typename?: 'treasury_balance_stddev_fields';
+  balance?: Maybe<Scalars['Float']>;
+  id?: Maybe<Scalars['Float']>;
+  token_id?: Maybe<Scalars['Float']>;
+  tzkt_token_id?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev() on columns of table "treasury_balance" */
+export type Treasury_Balance_Stddev_Order_By = {
+  balance?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  token_id?: InputMaybe<Order_By>;
+  tzkt_token_id?: InputMaybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Treasury_Balance_Stddev_Pop_Fields = {
+  __typename?: 'treasury_balance_stddev_pop_fields';
+  balance?: Maybe<Scalars['Float']>;
+  id?: Maybe<Scalars['Float']>;
+  token_id?: Maybe<Scalars['Float']>;
+  tzkt_token_id?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_pop() on columns of table "treasury_balance" */
+export type Treasury_Balance_Stddev_Pop_Order_By = {
+  balance?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  token_id?: InputMaybe<Order_By>;
+  tzkt_token_id?: InputMaybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Treasury_Balance_Stddev_Samp_Fields = {
+  __typename?: 'treasury_balance_stddev_samp_fields';
+  balance?: Maybe<Scalars['Float']>;
+  id?: Maybe<Scalars['Float']>;
+  token_id?: Maybe<Scalars['Float']>;
+  tzkt_token_id?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_samp() on columns of table "treasury_balance" */
+export type Treasury_Balance_Stddev_Samp_Order_By = {
+  balance?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  token_id?: InputMaybe<Order_By>;
+  tzkt_token_id?: InputMaybe<Order_By>;
+};
+
+/** Streaming cursor of the table "treasury_balance" */
+export type Treasury_Balance_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Treasury_Balance_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Treasury_Balance_Stream_Cursor_Value_Input = {
+  balance?: InputMaybe<Scalars['float8']>;
+  icon?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['bigint']>;
+  metadata?: InputMaybe<Scalars['jsonb']>;
+  name?: InputMaybe<Scalars['String']>;
+  token_address?: InputMaybe<Scalars['String']>;
+  token_id?: InputMaybe<Scalars['smallint']>;
+  token_standard?: InputMaybe<Scalars['String']>;
+  treasury_id?: InputMaybe<Scalars['String']>;
+  tzkt_token_id?: InputMaybe<Scalars['bigint']>;
+};
+
+/** aggregate sum on columns */
+export type Treasury_Balance_Sum_Fields = {
+  __typename?: 'treasury_balance_sum_fields';
+  balance?: Maybe<Scalars['float8']>;
+  id?: Maybe<Scalars['bigint']>;
+  token_id?: Maybe<Scalars['smallint']>;
+  tzkt_token_id?: Maybe<Scalars['bigint']>;
+};
+
+/** order by sum() on columns of table "treasury_balance" */
+export type Treasury_Balance_Sum_Order_By = {
+  balance?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  token_id?: InputMaybe<Order_By>;
+  tzkt_token_id?: InputMaybe<Order_By>;
+};
+
+/** aggregate var_pop on columns */
+export type Treasury_Balance_Var_Pop_Fields = {
+  __typename?: 'treasury_balance_var_pop_fields';
+  balance?: Maybe<Scalars['Float']>;
+  id?: Maybe<Scalars['Float']>;
+  token_id?: Maybe<Scalars['Float']>;
+  tzkt_token_id?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_pop() on columns of table "treasury_balance" */
+export type Treasury_Balance_Var_Pop_Order_By = {
+  balance?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  token_id?: InputMaybe<Order_By>;
+  tzkt_token_id?: InputMaybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type Treasury_Balance_Var_Samp_Fields = {
+  __typename?: 'treasury_balance_var_samp_fields';
+  balance?: Maybe<Scalars['Float']>;
+  id?: Maybe<Scalars['Float']>;
+  token_id?: Maybe<Scalars['Float']>;
+  tzkt_token_id?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_samp() on columns of table "treasury_balance" */
+export type Treasury_Balance_Var_Samp_Order_By = {
+  balance?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  token_id?: InputMaybe<Order_By>;
+  tzkt_token_id?: InputMaybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type Treasury_Balance_Variance_Fields = {
+  __typename?: 'treasury_balance_variance_fields';
+  balance?: Maybe<Scalars['Float']>;
+  id?: Maybe<Scalars['Float']>;
+  token_id?: Maybe<Scalars['Float']>;
+  tzkt_token_id?: Maybe<Scalars['Float']>;
+};
+
+/** order by variance() on columns of table "treasury_balance" */
+export type Treasury_Balance_Variance_Order_By = {
+  balance?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  token_id?: InputMaybe<Order_By>;
+  tzkt_token_id?: InputMaybe<Order_By>;
+};
+
 /** Boolean expression to filter rows from the table "treasury". All fields are combined with a logical 'AND'. */
 export type Treasury_Bool_Exp = {
   _and?: InputMaybe<Array<Treasury_Bool_Exp>>;
@@ -61307,6 +61001,10 @@ export type Treasury_Bool_Exp = {
   _or?: InputMaybe<Array<Treasury_Bool_Exp>>;
   address?: InputMaybe<String_Comparison_Exp>;
   admin?: InputMaybe<String_Comparison_Exp>;
+  baker?: InputMaybe<Mavryk_User_Bool_Exp>;
+  baker_id?: InputMaybe<String_Comparison_Exp>;
+  balances?: InputMaybe<Treasury_Balance_Bool_Exp>;
+  balances_aggregate?: InputMaybe<Treasury_Balance_Aggregate_Bool_Exp>;
   creation_timestamp?: InputMaybe<Timestamptz_Comparison_Exp>;
   factory?: InputMaybe<Treasury_Factory_Bool_Exp>;
   factory_id?: InputMaybe<String_Comparison_Exp>;
@@ -61350,15 +61048,15 @@ export type Treasury_Factory = {
   /** An aggregate relationship */
   lambdas_aggregate: Treasury_Factory_Lambda_Aggregate;
   last_updated_at?: Maybe<Scalars['timestamptz']>;
-  /** An array relationship */
-  product_lambdas: Array<Treasury_Factory_Product_Lambda>;
-  /** An aggregate relationship */
-  product_lambdas_aggregate: Treasury_Factory_Product_Lambda_Aggregate;
   track_treasury_paused: Scalars['Boolean'];
   /** An array relationship */
   treasuries: Array<Treasury>;
   /** An aggregate relationship */
   treasuries_aggregate: Treasury_Aggregate;
+  /** An array relationship */
+  treasury_lambdas: Array<Treasury_Factory_Treasury_Lambda>;
+  /** An aggregate relationship */
+  treasury_lambdas_aggregate: Treasury_Factory_Treasury_Lambda_Aggregate;
   treasury_name_max_length: Scalars['smallint'];
   untrack_treasury_paused: Scalars['Boolean'];
   /** An array relationship */
@@ -61413,26 +61111,6 @@ export type Treasury_FactoryLambdas_AggregateArgs = {
 
 
 /** columns and relationships of "treasury_factory" */
-export type Treasury_FactoryProduct_LambdasArgs = {
-  distinct_on?: InputMaybe<Array<Treasury_Factory_Product_Lambda_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Treasury_Factory_Product_Lambda_Order_By>>;
-  where?: InputMaybe<Treasury_Factory_Product_Lambda_Bool_Exp>;
-};
-
-
-/** columns and relationships of "treasury_factory" */
-export type Treasury_FactoryProduct_Lambdas_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Treasury_Factory_Product_Lambda_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Treasury_Factory_Product_Lambda_Order_By>>;
-  where?: InputMaybe<Treasury_Factory_Product_Lambda_Bool_Exp>;
-};
-
-
-/** columns and relationships of "treasury_factory" */
 export type Treasury_FactoryTreasuriesArgs = {
   distinct_on?: InputMaybe<Array<Treasury_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
@@ -61449,6 +61127,26 @@ export type Treasury_FactoryTreasuries_AggregateArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   order_by?: InputMaybe<Array<Treasury_Order_By>>;
   where?: InputMaybe<Treasury_Bool_Exp>;
+};
+
+
+/** columns and relationships of "treasury_factory" */
+export type Treasury_FactoryTreasury_LambdasArgs = {
+  distinct_on?: InputMaybe<Array<Treasury_Factory_Treasury_Lambda_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Treasury_Factory_Treasury_Lambda_Order_By>>;
+  where?: InputMaybe<Treasury_Factory_Treasury_Lambda_Bool_Exp>;
+};
+
+
+/** columns and relationships of "treasury_factory" */
+export type Treasury_FactoryTreasury_Lambdas_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Treasury_Factory_Treasury_Lambda_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Treasury_Factory_Treasury_Lambda_Order_By>>;
+  where?: InputMaybe<Treasury_Factory_Treasury_Lambda_Bool_Exp>;
 };
 
 
@@ -61589,11 +61287,11 @@ export type Treasury_Factory_Bool_Exp = {
   lambdas?: InputMaybe<Treasury_Factory_Lambda_Bool_Exp>;
   lambdas_aggregate?: InputMaybe<Treasury_Factory_Lambda_Aggregate_Bool_Exp>;
   last_updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
-  product_lambdas?: InputMaybe<Treasury_Factory_Product_Lambda_Bool_Exp>;
-  product_lambdas_aggregate?: InputMaybe<Treasury_Factory_Product_Lambda_Aggregate_Bool_Exp>;
   track_treasury_paused?: InputMaybe<Boolean_Comparison_Exp>;
   treasuries?: InputMaybe<Treasury_Bool_Exp>;
   treasuries_aggregate?: InputMaybe<Treasury_Aggregate_Bool_Exp>;
+  treasury_lambdas?: InputMaybe<Treasury_Factory_Treasury_Lambda_Bool_Exp>;
+  treasury_lambdas_aggregate?: InputMaybe<Treasury_Factory_Treasury_Lambda_Aggregate_Bool_Exp>;
   treasury_name_max_length?: InputMaybe<Smallint_Comparison_Exp>;
   untrack_treasury_paused?: InputMaybe<Boolean_Comparison_Exp>;
   whitelist_contracts?: InputMaybe<Treasury_Factory_Whitelist_Contract_Bool_Exp>;
@@ -62136,261 +61834,13 @@ export type Treasury_Factory_Order_By = {
   governance_id?: InputMaybe<Order_By>;
   lambdas_aggregate?: InputMaybe<Treasury_Factory_Lambda_Aggregate_Order_By>;
   last_updated_at?: InputMaybe<Order_By>;
-  product_lambdas_aggregate?: InputMaybe<Treasury_Factory_Product_Lambda_Aggregate_Order_By>;
   track_treasury_paused?: InputMaybe<Order_By>;
   treasuries_aggregate?: InputMaybe<Treasury_Aggregate_Order_By>;
+  treasury_lambdas_aggregate?: InputMaybe<Treasury_Factory_Treasury_Lambda_Aggregate_Order_By>;
   treasury_name_max_length?: InputMaybe<Order_By>;
   untrack_treasury_paused?: InputMaybe<Order_By>;
   whitelist_contracts_aggregate?: InputMaybe<Treasury_Factory_Whitelist_Contract_Aggregate_Order_By>;
   whitelist_token_contracts_aggregate?: InputMaybe<Treasury_Factory_Whitelist_Token_Contract_Aggregate_Order_By>;
-};
-
-/** columns and relationships of "treasury_factory_product_lambda" */
-export type Treasury_Factory_Product_Lambda = {
-  __typename?: 'treasury_factory_product_lambda';
-  /** An object relationship */
-  contract: Treasury_Factory;
-  contract_id: Scalars['String'];
-  id: Scalars['bigint'];
-  lambda_bytes: Scalars['String'];
-  lambda_name: Scalars['String'];
-  last_updated_at?: Maybe<Scalars['timestamptz']>;
-};
-
-/** aggregated selection of "treasury_factory_product_lambda" */
-export type Treasury_Factory_Product_Lambda_Aggregate = {
-  __typename?: 'treasury_factory_product_lambda_aggregate';
-  aggregate?: Maybe<Treasury_Factory_Product_Lambda_Aggregate_Fields>;
-  nodes: Array<Treasury_Factory_Product_Lambda>;
-};
-
-export type Treasury_Factory_Product_Lambda_Aggregate_Bool_Exp = {
-  count?: InputMaybe<Treasury_Factory_Product_Lambda_Aggregate_Bool_Exp_Count>;
-};
-
-export type Treasury_Factory_Product_Lambda_Aggregate_Bool_Exp_Count = {
-  arguments?: InputMaybe<Array<Treasury_Factory_Product_Lambda_Select_Column>>;
-  distinct?: InputMaybe<Scalars['Boolean']>;
-  filter?: InputMaybe<Treasury_Factory_Product_Lambda_Bool_Exp>;
-  predicate: Int_Comparison_Exp;
-};
-
-/** aggregate fields of "treasury_factory_product_lambda" */
-export type Treasury_Factory_Product_Lambda_Aggregate_Fields = {
-  __typename?: 'treasury_factory_product_lambda_aggregate_fields';
-  avg?: Maybe<Treasury_Factory_Product_Lambda_Avg_Fields>;
-  count: Scalars['Int'];
-  max?: Maybe<Treasury_Factory_Product_Lambda_Max_Fields>;
-  min?: Maybe<Treasury_Factory_Product_Lambda_Min_Fields>;
-  stddev?: Maybe<Treasury_Factory_Product_Lambda_Stddev_Fields>;
-  stddev_pop?: Maybe<Treasury_Factory_Product_Lambda_Stddev_Pop_Fields>;
-  stddev_samp?: Maybe<Treasury_Factory_Product_Lambda_Stddev_Samp_Fields>;
-  sum?: Maybe<Treasury_Factory_Product_Lambda_Sum_Fields>;
-  var_pop?: Maybe<Treasury_Factory_Product_Lambda_Var_Pop_Fields>;
-  var_samp?: Maybe<Treasury_Factory_Product_Lambda_Var_Samp_Fields>;
-  variance?: Maybe<Treasury_Factory_Product_Lambda_Variance_Fields>;
-};
-
-
-/** aggregate fields of "treasury_factory_product_lambda" */
-export type Treasury_Factory_Product_Lambda_Aggregate_FieldsCountArgs = {
-  columns?: InputMaybe<Array<Treasury_Factory_Product_Lambda_Select_Column>>;
-  distinct?: InputMaybe<Scalars['Boolean']>;
-};
-
-/** order by aggregate values of table "treasury_factory_product_lambda" */
-export type Treasury_Factory_Product_Lambda_Aggregate_Order_By = {
-  avg?: InputMaybe<Treasury_Factory_Product_Lambda_Avg_Order_By>;
-  count?: InputMaybe<Order_By>;
-  max?: InputMaybe<Treasury_Factory_Product_Lambda_Max_Order_By>;
-  min?: InputMaybe<Treasury_Factory_Product_Lambda_Min_Order_By>;
-  stddev?: InputMaybe<Treasury_Factory_Product_Lambda_Stddev_Order_By>;
-  stddev_pop?: InputMaybe<Treasury_Factory_Product_Lambda_Stddev_Pop_Order_By>;
-  stddev_samp?: InputMaybe<Treasury_Factory_Product_Lambda_Stddev_Samp_Order_By>;
-  sum?: InputMaybe<Treasury_Factory_Product_Lambda_Sum_Order_By>;
-  var_pop?: InputMaybe<Treasury_Factory_Product_Lambda_Var_Pop_Order_By>;
-  var_samp?: InputMaybe<Treasury_Factory_Product_Lambda_Var_Samp_Order_By>;
-  variance?: InputMaybe<Treasury_Factory_Product_Lambda_Variance_Order_By>;
-};
-
-/** aggregate avg on columns */
-export type Treasury_Factory_Product_Lambda_Avg_Fields = {
-  __typename?: 'treasury_factory_product_lambda_avg_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by avg() on columns of table "treasury_factory_product_lambda" */
-export type Treasury_Factory_Product_Lambda_Avg_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** Boolean expression to filter rows from the table "treasury_factory_product_lambda". All fields are combined with a logical 'AND'. */
-export type Treasury_Factory_Product_Lambda_Bool_Exp = {
-  _and?: InputMaybe<Array<Treasury_Factory_Product_Lambda_Bool_Exp>>;
-  _not?: InputMaybe<Treasury_Factory_Product_Lambda_Bool_Exp>;
-  _or?: InputMaybe<Array<Treasury_Factory_Product_Lambda_Bool_Exp>>;
-  contract?: InputMaybe<Treasury_Factory_Bool_Exp>;
-  contract_id?: InputMaybe<String_Comparison_Exp>;
-  id?: InputMaybe<Bigint_Comparison_Exp>;
-  lambda_bytes?: InputMaybe<String_Comparison_Exp>;
-  lambda_name?: InputMaybe<String_Comparison_Exp>;
-  last_updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
-};
-
-/** aggregate max on columns */
-export type Treasury_Factory_Product_Lambda_Max_Fields = {
-  __typename?: 'treasury_factory_product_lambda_max_fields';
-  contract_id?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['bigint']>;
-  lambda_bytes?: Maybe<Scalars['String']>;
-  lambda_name?: Maybe<Scalars['String']>;
-  last_updated_at?: Maybe<Scalars['timestamptz']>;
-};
-
-/** order by max() on columns of table "treasury_factory_product_lambda" */
-export type Treasury_Factory_Product_Lambda_Max_Order_By = {
-  contract_id?: InputMaybe<Order_By>;
-  id?: InputMaybe<Order_By>;
-  lambda_bytes?: InputMaybe<Order_By>;
-  lambda_name?: InputMaybe<Order_By>;
-  last_updated_at?: InputMaybe<Order_By>;
-};
-
-/** aggregate min on columns */
-export type Treasury_Factory_Product_Lambda_Min_Fields = {
-  __typename?: 'treasury_factory_product_lambda_min_fields';
-  contract_id?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['bigint']>;
-  lambda_bytes?: Maybe<Scalars['String']>;
-  lambda_name?: Maybe<Scalars['String']>;
-  last_updated_at?: Maybe<Scalars['timestamptz']>;
-};
-
-/** order by min() on columns of table "treasury_factory_product_lambda" */
-export type Treasury_Factory_Product_Lambda_Min_Order_By = {
-  contract_id?: InputMaybe<Order_By>;
-  id?: InputMaybe<Order_By>;
-  lambda_bytes?: InputMaybe<Order_By>;
-  lambda_name?: InputMaybe<Order_By>;
-  last_updated_at?: InputMaybe<Order_By>;
-};
-
-/** Ordering options when selecting data from "treasury_factory_product_lambda". */
-export type Treasury_Factory_Product_Lambda_Order_By = {
-  contract?: InputMaybe<Treasury_Factory_Order_By>;
-  contract_id?: InputMaybe<Order_By>;
-  id?: InputMaybe<Order_By>;
-  lambda_bytes?: InputMaybe<Order_By>;
-  lambda_name?: InputMaybe<Order_By>;
-  last_updated_at?: InputMaybe<Order_By>;
-};
-
-/** select columns of table "treasury_factory_product_lambda" */
-export enum Treasury_Factory_Product_Lambda_Select_Column {
-  /** column name */
-  ContractId = 'contract_id',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  LambdaBytes = 'lambda_bytes',
-  /** column name */
-  LambdaName = 'lambda_name',
-  /** column name */
-  LastUpdatedAt = 'last_updated_at'
-}
-
-/** aggregate stddev on columns */
-export type Treasury_Factory_Product_Lambda_Stddev_Fields = {
-  __typename?: 'treasury_factory_product_lambda_stddev_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by stddev() on columns of table "treasury_factory_product_lambda" */
-export type Treasury_Factory_Product_Lambda_Stddev_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** aggregate stddev_pop on columns */
-export type Treasury_Factory_Product_Lambda_Stddev_Pop_Fields = {
-  __typename?: 'treasury_factory_product_lambda_stddev_pop_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by stddev_pop() on columns of table "treasury_factory_product_lambda" */
-export type Treasury_Factory_Product_Lambda_Stddev_Pop_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** aggregate stddev_samp on columns */
-export type Treasury_Factory_Product_Lambda_Stddev_Samp_Fields = {
-  __typename?: 'treasury_factory_product_lambda_stddev_samp_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by stddev_samp() on columns of table "treasury_factory_product_lambda" */
-export type Treasury_Factory_Product_Lambda_Stddev_Samp_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** Streaming cursor of the table "treasury_factory_product_lambda" */
-export type Treasury_Factory_Product_Lambda_Stream_Cursor_Input = {
-  /** Stream column input with initial value */
-  initial_value: Treasury_Factory_Product_Lambda_Stream_Cursor_Value_Input;
-  /** cursor ordering */
-  ordering?: InputMaybe<Cursor_Ordering>;
-};
-
-/** Initial value of the column from where the streaming should start */
-export type Treasury_Factory_Product_Lambda_Stream_Cursor_Value_Input = {
-  contract_id?: InputMaybe<Scalars['String']>;
-  id?: InputMaybe<Scalars['bigint']>;
-  lambda_bytes?: InputMaybe<Scalars['String']>;
-  lambda_name?: InputMaybe<Scalars['String']>;
-  last_updated_at?: InputMaybe<Scalars['timestamptz']>;
-};
-
-/** aggregate sum on columns */
-export type Treasury_Factory_Product_Lambda_Sum_Fields = {
-  __typename?: 'treasury_factory_product_lambda_sum_fields';
-  id?: Maybe<Scalars['bigint']>;
-};
-
-/** order by sum() on columns of table "treasury_factory_product_lambda" */
-export type Treasury_Factory_Product_Lambda_Sum_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** aggregate var_pop on columns */
-export type Treasury_Factory_Product_Lambda_Var_Pop_Fields = {
-  __typename?: 'treasury_factory_product_lambda_var_pop_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by var_pop() on columns of table "treasury_factory_product_lambda" */
-export type Treasury_Factory_Product_Lambda_Var_Pop_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** aggregate var_samp on columns */
-export type Treasury_Factory_Product_Lambda_Var_Samp_Fields = {
-  __typename?: 'treasury_factory_product_lambda_var_samp_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by var_samp() on columns of table "treasury_factory_product_lambda" */
-export type Treasury_Factory_Product_Lambda_Var_Samp_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** aggregate variance on columns */
-export type Treasury_Factory_Product_Lambda_Variance_Fields = {
-  __typename?: 'treasury_factory_product_lambda_variance_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by variance() on columns of table "treasury_factory_product_lambda" */
-export type Treasury_Factory_Product_Lambda_Variance_Order_By = {
-  id?: InputMaybe<Order_By>;
 };
 
 /** select columns of table "treasury_factory" */
@@ -62495,6 +61945,254 @@ export type Treasury_Factory_Sum_Fields = {
 /** order by sum() on columns of table "treasury_factory" */
 export type Treasury_Factory_Sum_Order_By = {
   treasury_name_max_length?: InputMaybe<Order_By>;
+};
+
+/** columns and relationships of "treasury_factory_treasury_lambda" */
+export type Treasury_Factory_Treasury_Lambda = {
+  __typename?: 'treasury_factory_treasury_lambda';
+  /** An object relationship */
+  contract: Treasury_Factory;
+  contract_id: Scalars['String'];
+  id: Scalars['bigint'];
+  lambda_bytes: Scalars['String'];
+  lambda_name: Scalars['String'];
+  last_updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregated selection of "treasury_factory_treasury_lambda" */
+export type Treasury_Factory_Treasury_Lambda_Aggregate = {
+  __typename?: 'treasury_factory_treasury_lambda_aggregate';
+  aggregate?: Maybe<Treasury_Factory_Treasury_Lambda_Aggregate_Fields>;
+  nodes: Array<Treasury_Factory_Treasury_Lambda>;
+};
+
+export type Treasury_Factory_Treasury_Lambda_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Treasury_Factory_Treasury_Lambda_Aggregate_Bool_Exp_Count>;
+};
+
+export type Treasury_Factory_Treasury_Lambda_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Treasury_Factory_Treasury_Lambda_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Treasury_Factory_Treasury_Lambda_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+/** aggregate fields of "treasury_factory_treasury_lambda" */
+export type Treasury_Factory_Treasury_Lambda_Aggregate_Fields = {
+  __typename?: 'treasury_factory_treasury_lambda_aggregate_fields';
+  avg?: Maybe<Treasury_Factory_Treasury_Lambda_Avg_Fields>;
+  count: Scalars['Int'];
+  max?: Maybe<Treasury_Factory_Treasury_Lambda_Max_Fields>;
+  min?: Maybe<Treasury_Factory_Treasury_Lambda_Min_Fields>;
+  stddev?: Maybe<Treasury_Factory_Treasury_Lambda_Stddev_Fields>;
+  stddev_pop?: Maybe<Treasury_Factory_Treasury_Lambda_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<Treasury_Factory_Treasury_Lambda_Stddev_Samp_Fields>;
+  sum?: Maybe<Treasury_Factory_Treasury_Lambda_Sum_Fields>;
+  var_pop?: Maybe<Treasury_Factory_Treasury_Lambda_Var_Pop_Fields>;
+  var_samp?: Maybe<Treasury_Factory_Treasury_Lambda_Var_Samp_Fields>;
+  variance?: Maybe<Treasury_Factory_Treasury_Lambda_Variance_Fields>;
+};
+
+
+/** aggregate fields of "treasury_factory_treasury_lambda" */
+export type Treasury_Factory_Treasury_Lambda_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Treasury_Factory_Treasury_Lambda_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "treasury_factory_treasury_lambda" */
+export type Treasury_Factory_Treasury_Lambda_Aggregate_Order_By = {
+  avg?: InputMaybe<Treasury_Factory_Treasury_Lambda_Avg_Order_By>;
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<Treasury_Factory_Treasury_Lambda_Max_Order_By>;
+  min?: InputMaybe<Treasury_Factory_Treasury_Lambda_Min_Order_By>;
+  stddev?: InputMaybe<Treasury_Factory_Treasury_Lambda_Stddev_Order_By>;
+  stddev_pop?: InputMaybe<Treasury_Factory_Treasury_Lambda_Stddev_Pop_Order_By>;
+  stddev_samp?: InputMaybe<Treasury_Factory_Treasury_Lambda_Stddev_Samp_Order_By>;
+  sum?: InputMaybe<Treasury_Factory_Treasury_Lambda_Sum_Order_By>;
+  var_pop?: InputMaybe<Treasury_Factory_Treasury_Lambda_Var_Pop_Order_By>;
+  var_samp?: InputMaybe<Treasury_Factory_Treasury_Lambda_Var_Samp_Order_By>;
+  variance?: InputMaybe<Treasury_Factory_Treasury_Lambda_Variance_Order_By>;
+};
+
+/** aggregate avg on columns */
+export type Treasury_Factory_Treasury_Lambda_Avg_Fields = {
+  __typename?: 'treasury_factory_treasury_lambda_avg_fields';
+  id?: Maybe<Scalars['Float']>;
+};
+
+/** order by avg() on columns of table "treasury_factory_treasury_lambda" */
+export type Treasury_Factory_Treasury_Lambda_Avg_Order_By = {
+  id?: InputMaybe<Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "treasury_factory_treasury_lambda". All fields are combined with a logical 'AND'. */
+export type Treasury_Factory_Treasury_Lambda_Bool_Exp = {
+  _and?: InputMaybe<Array<Treasury_Factory_Treasury_Lambda_Bool_Exp>>;
+  _not?: InputMaybe<Treasury_Factory_Treasury_Lambda_Bool_Exp>;
+  _or?: InputMaybe<Array<Treasury_Factory_Treasury_Lambda_Bool_Exp>>;
+  contract?: InputMaybe<Treasury_Factory_Bool_Exp>;
+  contract_id?: InputMaybe<String_Comparison_Exp>;
+  id?: InputMaybe<Bigint_Comparison_Exp>;
+  lambda_bytes?: InputMaybe<String_Comparison_Exp>;
+  lambda_name?: InputMaybe<String_Comparison_Exp>;
+  last_updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+};
+
+/** aggregate max on columns */
+export type Treasury_Factory_Treasury_Lambda_Max_Fields = {
+  __typename?: 'treasury_factory_treasury_lambda_max_fields';
+  contract_id?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['bigint']>;
+  lambda_bytes?: Maybe<Scalars['String']>;
+  lambda_name?: Maybe<Scalars['String']>;
+  last_updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "treasury_factory_treasury_lambda" */
+export type Treasury_Factory_Treasury_Lambda_Max_Order_By = {
+  contract_id?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  lambda_bytes?: InputMaybe<Order_By>;
+  lambda_name?: InputMaybe<Order_By>;
+  last_updated_at?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Treasury_Factory_Treasury_Lambda_Min_Fields = {
+  __typename?: 'treasury_factory_treasury_lambda_min_fields';
+  contract_id?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['bigint']>;
+  lambda_bytes?: Maybe<Scalars['String']>;
+  lambda_name?: Maybe<Scalars['String']>;
+  last_updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "treasury_factory_treasury_lambda" */
+export type Treasury_Factory_Treasury_Lambda_Min_Order_By = {
+  contract_id?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  lambda_bytes?: InputMaybe<Order_By>;
+  lambda_name?: InputMaybe<Order_By>;
+  last_updated_at?: InputMaybe<Order_By>;
+};
+
+/** Ordering options when selecting data from "treasury_factory_treasury_lambda". */
+export type Treasury_Factory_Treasury_Lambda_Order_By = {
+  contract?: InputMaybe<Treasury_Factory_Order_By>;
+  contract_id?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  lambda_bytes?: InputMaybe<Order_By>;
+  lambda_name?: InputMaybe<Order_By>;
+  last_updated_at?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "treasury_factory_treasury_lambda" */
+export enum Treasury_Factory_Treasury_Lambda_Select_Column {
+  /** column name */
+  ContractId = 'contract_id',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  LambdaBytes = 'lambda_bytes',
+  /** column name */
+  LambdaName = 'lambda_name',
+  /** column name */
+  LastUpdatedAt = 'last_updated_at'
+}
+
+/** aggregate stddev on columns */
+export type Treasury_Factory_Treasury_Lambda_Stddev_Fields = {
+  __typename?: 'treasury_factory_treasury_lambda_stddev_fields';
+  id?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev() on columns of table "treasury_factory_treasury_lambda" */
+export type Treasury_Factory_Treasury_Lambda_Stddev_Order_By = {
+  id?: InputMaybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Treasury_Factory_Treasury_Lambda_Stddev_Pop_Fields = {
+  __typename?: 'treasury_factory_treasury_lambda_stddev_pop_fields';
+  id?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_pop() on columns of table "treasury_factory_treasury_lambda" */
+export type Treasury_Factory_Treasury_Lambda_Stddev_Pop_Order_By = {
+  id?: InputMaybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Treasury_Factory_Treasury_Lambda_Stddev_Samp_Fields = {
+  __typename?: 'treasury_factory_treasury_lambda_stddev_samp_fields';
+  id?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_samp() on columns of table "treasury_factory_treasury_lambda" */
+export type Treasury_Factory_Treasury_Lambda_Stddev_Samp_Order_By = {
+  id?: InputMaybe<Order_By>;
+};
+
+/** Streaming cursor of the table "treasury_factory_treasury_lambda" */
+export type Treasury_Factory_Treasury_Lambda_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Treasury_Factory_Treasury_Lambda_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Treasury_Factory_Treasury_Lambda_Stream_Cursor_Value_Input = {
+  contract_id?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['bigint']>;
+  lambda_bytes?: InputMaybe<Scalars['String']>;
+  lambda_name?: InputMaybe<Scalars['String']>;
+  last_updated_at?: InputMaybe<Scalars['timestamptz']>;
+};
+
+/** aggregate sum on columns */
+export type Treasury_Factory_Treasury_Lambda_Sum_Fields = {
+  __typename?: 'treasury_factory_treasury_lambda_sum_fields';
+  id?: Maybe<Scalars['bigint']>;
+};
+
+/** order by sum() on columns of table "treasury_factory_treasury_lambda" */
+export type Treasury_Factory_Treasury_Lambda_Sum_Order_By = {
+  id?: InputMaybe<Order_By>;
+};
+
+/** aggregate var_pop on columns */
+export type Treasury_Factory_Treasury_Lambda_Var_Pop_Fields = {
+  __typename?: 'treasury_factory_treasury_lambda_var_pop_fields';
+  id?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_pop() on columns of table "treasury_factory_treasury_lambda" */
+export type Treasury_Factory_Treasury_Lambda_Var_Pop_Order_By = {
+  id?: InputMaybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type Treasury_Factory_Treasury_Lambda_Var_Samp_Fields = {
+  __typename?: 'treasury_factory_treasury_lambda_var_samp_fields';
+  id?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_samp() on columns of table "treasury_factory_treasury_lambda" */
+export type Treasury_Factory_Treasury_Lambda_Var_Samp_Order_By = {
+  id?: InputMaybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type Treasury_Factory_Treasury_Lambda_Variance_Fields = {
+  __typename?: 'treasury_factory_treasury_lambda_variance_fields';
+  id?: Maybe<Scalars['Float']>;
+};
+
+/** order by variance() on columns of table "treasury_factory_treasury_lambda" */
+export type Treasury_Factory_Treasury_Lambda_Variance_Order_By = {
+  id?: InputMaybe<Order_By>;
 };
 
 /** aggregate var_pop on columns */
@@ -63507,6 +63205,7 @@ export type Treasury_Max_Fields = {
   __typename?: 'treasury_max_fields';
   address?: Maybe<Scalars['String']>;
   admin?: Maybe<Scalars['String']>;
+  baker_id?: Maybe<Scalars['String']>;
   creation_timestamp?: Maybe<Scalars['timestamptz']>;
   factory_id?: Maybe<Scalars['String']>;
   governance_id?: Maybe<Scalars['String']>;
@@ -63518,6 +63217,7 @@ export type Treasury_Max_Fields = {
 export type Treasury_Max_Order_By = {
   address?: InputMaybe<Order_By>;
   admin?: InputMaybe<Order_By>;
+  baker_id?: InputMaybe<Order_By>;
   creation_timestamp?: InputMaybe<Order_By>;
   factory_id?: InputMaybe<Order_By>;
   governance_id?: InputMaybe<Order_By>;
@@ -63530,6 +63230,7 @@ export type Treasury_Min_Fields = {
   __typename?: 'treasury_min_fields';
   address?: Maybe<Scalars['String']>;
   admin?: Maybe<Scalars['String']>;
+  baker_id?: Maybe<Scalars['String']>;
   creation_timestamp?: Maybe<Scalars['timestamptz']>;
   factory_id?: Maybe<Scalars['String']>;
   governance_id?: Maybe<Scalars['String']>;
@@ -63541,6 +63242,7 @@ export type Treasury_Min_Fields = {
 export type Treasury_Min_Order_By = {
   address?: InputMaybe<Order_By>;
   admin?: InputMaybe<Order_By>;
+  baker_id?: InputMaybe<Order_By>;
   creation_timestamp?: InputMaybe<Order_By>;
   factory_id?: InputMaybe<Order_By>;
   governance_id?: InputMaybe<Order_By>;
@@ -63552,6 +63254,9 @@ export type Treasury_Min_Order_By = {
 export type Treasury_Order_By = {
   address?: InputMaybe<Order_By>;
   admin?: InputMaybe<Order_By>;
+  baker?: InputMaybe<Mavryk_User_Order_By>;
+  baker_id?: InputMaybe<Order_By>;
+  balances_aggregate?: InputMaybe<Treasury_Balance_Aggregate_Order_By>;
   creation_timestamp?: InputMaybe<Order_By>;
   factory?: InputMaybe<Treasury_Factory_Order_By>;
   factory_id?: InputMaybe<Order_By>;
@@ -63577,6 +63282,8 @@ export enum Treasury_Select_Column {
   Address = 'address',
   /** column name */
   Admin = 'admin',
+  /** column name */
+  BakerId = 'baker_id',
   /** column name */
   CreationTimestamp = 'creation_timestamp',
   /** column name */
@@ -63633,6 +63340,7 @@ export type Treasury_Stream_Cursor_Input = {
 export type Treasury_Stream_Cursor_Value_Input = {
   address?: InputMaybe<Scalars['String']>;
   admin?: InputMaybe<Scalars['String']>;
+  baker_id?: InputMaybe<Scalars['String']>;
   creation_timestamp?: InputMaybe<Scalars['timestamptz']>;
   factory_id?: InputMaybe<Scalars['String']>;
   governance_id?: InputMaybe<Scalars['String']>;
@@ -64415,6 +64123,9 @@ export type Vault = {
   admin: Scalars['String'];
   /** ANY: 0\nWHITELIST: 1 */
   allowance: Scalars['smallint'];
+  /** An object relationship */
+  baker?: Maybe<Mavryk_User>;
+  baker_id?: Maybe<Scalars['String']>;
   creation_timestamp?: Maybe<Scalars['timestamptz']>;
   /** An array relationship */
   depositors: Array<Vault_Depositor>;
@@ -64572,6 +64283,8 @@ export type Vault_Bool_Exp = {
   address?: InputMaybe<String_Comparison_Exp>;
   admin?: InputMaybe<String_Comparison_Exp>;
   allowance?: InputMaybe<Smallint_Comparison_Exp>;
+  baker?: InputMaybe<Mavryk_User_Bool_Exp>;
+  baker_id?: InputMaybe<String_Comparison_Exp>;
   creation_timestamp?: InputMaybe<Timestamptz_Comparison_Exp>;
   depositors?: InputMaybe<Vault_Depositor_Bool_Exp>;
   depositors_aggregate?: InputMaybe<Vault_Depositor_Aggregate_Bool_Exp>;
@@ -64836,9 +64549,9 @@ export type Vault_Factory = {
   lambdas_aggregate: Vault_Factory_Lambda_Aggregate;
   last_updated_at?: Maybe<Scalars['timestamptz']>;
   /** An array relationship */
-  product_lambdas: Array<Vault_Factory_Product_Lambda>;
+  vault_lambdas: Array<Vault_Factory_Vault_Lambda>;
   /** An aggregate relationship */
-  product_lambdas_aggregate: Vault_Factory_Product_Lambda_Aggregate;
+  vault_lambdas_aggregate: Vault_Factory_Vault_Lambda_Aggregate;
   vault_name_max_length: Scalars['smallint'];
   /** An array relationship */
   vaults: Array<Vault>;
@@ -64892,22 +64605,22 @@ export type Vault_FactoryLambdas_AggregateArgs = {
 
 
 /** columns and relationships of "vault_factory" */
-export type Vault_FactoryProduct_LambdasArgs = {
-  distinct_on?: InputMaybe<Array<Vault_Factory_Product_Lambda_Select_Column>>;
+export type Vault_FactoryVault_LambdasArgs = {
+  distinct_on?: InputMaybe<Array<Vault_Factory_Vault_Lambda_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Vault_Factory_Product_Lambda_Order_By>>;
-  where?: InputMaybe<Vault_Factory_Product_Lambda_Bool_Exp>;
+  order_by?: InputMaybe<Array<Vault_Factory_Vault_Lambda_Order_By>>;
+  where?: InputMaybe<Vault_Factory_Vault_Lambda_Bool_Exp>;
 };
 
 
 /** columns and relationships of "vault_factory" */
-export type Vault_FactoryProduct_Lambdas_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Vault_Factory_Product_Lambda_Select_Column>>;
+export type Vault_FactoryVault_Lambdas_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Vault_Factory_Vault_Lambda_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Vault_Factory_Product_Lambda_Order_By>>;
-  where?: InputMaybe<Vault_Factory_Product_Lambda_Bool_Exp>;
+  order_by?: InputMaybe<Array<Vault_Factory_Vault_Lambda_Order_By>>;
+  where?: InputMaybe<Vault_Factory_Vault_Lambda_Bool_Exp>;
 };
 
 
@@ -65048,8 +64761,8 @@ export type Vault_Factory_Bool_Exp = {
   lambdas?: InputMaybe<Vault_Factory_Lambda_Bool_Exp>;
   lambdas_aggregate?: InputMaybe<Vault_Factory_Lambda_Aggregate_Bool_Exp>;
   last_updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
-  product_lambdas?: InputMaybe<Vault_Factory_Product_Lambda_Bool_Exp>;
-  product_lambdas_aggregate?: InputMaybe<Vault_Factory_Product_Lambda_Aggregate_Bool_Exp>;
+  vault_lambdas?: InputMaybe<Vault_Factory_Vault_Lambda_Bool_Exp>;
+  vault_lambdas_aggregate?: InputMaybe<Vault_Factory_Vault_Lambda_Aggregate_Bool_Exp>;
   vault_name_max_length?: InputMaybe<Smallint_Comparison_Exp>;
   vaults?: InputMaybe<Vault_Bool_Exp>;
   vaults_aggregate?: InputMaybe<Vault_Aggregate_Bool_Exp>;
@@ -65591,258 +65304,10 @@ export type Vault_Factory_Order_By = {
   governance_id?: InputMaybe<Order_By>;
   lambdas_aggregate?: InputMaybe<Vault_Factory_Lambda_Aggregate_Order_By>;
   last_updated_at?: InputMaybe<Order_By>;
-  product_lambdas_aggregate?: InputMaybe<Vault_Factory_Product_Lambda_Aggregate_Order_By>;
+  vault_lambdas_aggregate?: InputMaybe<Vault_Factory_Vault_Lambda_Aggregate_Order_By>;
   vault_name_max_length?: InputMaybe<Order_By>;
   vaults_aggregate?: InputMaybe<Vault_Aggregate_Order_By>;
   whitelist_contracts_aggregate?: InputMaybe<Vault_Factory_Whitelist_Contract_Aggregate_Order_By>;
-};
-
-/** columns and relationships of "vault_factory_product_lambda" */
-export type Vault_Factory_Product_Lambda = {
-  __typename?: 'vault_factory_product_lambda';
-  /** An object relationship */
-  contract: Vault_Factory;
-  contract_id: Scalars['String'];
-  id: Scalars['bigint'];
-  lambda_bytes: Scalars['String'];
-  lambda_name: Scalars['String'];
-  last_updated_at?: Maybe<Scalars['timestamptz']>;
-};
-
-/** aggregated selection of "vault_factory_product_lambda" */
-export type Vault_Factory_Product_Lambda_Aggregate = {
-  __typename?: 'vault_factory_product_lambda_aggregate';
-  aggregate?: Maybe<Vault_Factory_Product_Lambda_Aggregate_Fields>;
-  nodes: Array<Vault_Factory_Product_Lambda>;
-};
-
-export type Vault_Factory_Product_Lambda_Aggregate_Bool_Exp = {
-  count?: InputMaybe<Vault_Factory_Product_Lambda_Aggregate_Bool_Exp_Count>;
-};
-
-export type Vault_Factory_Product_Lambda_Aggregate_Bool_Exp_Count = {
-  arguments?: InputMaybe<Array<Vault_Factory_Product_Lambda_Select_Column>>;
-  distinct?: InputMaybe<Scalars['Boolean']>;
-  filter?: InputMaybe<Vault_Factory_Product_Lambda_Bool_Exp>;
-  predicate: Int_Comparison_Exp;
-};
-
-/** aggregate fields of "vault_factory_product_lambda" */
-export type Vault_Factory_Product_Lambda_Aggregate_Fields = {
-  __typename?: 'vault_factory_product_lambda_aggregate_fields';
-  avg?: Maybe<Vault_Factory_Product_Lambda_Avg_Fields>;
-  count: Scalars['Int'];
-  max?: Maybe<Vault_Factory_Product_Lambda_Max_Fields>;
-  min?: Maybe<Vault_Factory_Product_Lambda_Min_Fields>;
-  stddev?: Maybe<Vault_Factory_Product_Lambda_Stddev_Fields>;
-  stddev_pop?: Maybe<Vault_Factory_Product_Lambda_Stddev_Pop_Fields>;
-  stddev_samp?: Maybe<Vault_Factory_Product_Lambda_Stddev_Samp_Fields>;
-  sum?: Maybe<Vault_Factory_Product_Lambda_Sum_Fields>;
-  var_pop?: Maybe<Vault_Factory_Product_Lambda_Var_Pop_Fields>;
-  var_samp?: Maybe<Vault_Factory_Product_Lambda_Var_Samp_Fields>;
-  variance?: Maybe<Vault_Factory_Product_Lambda_Variance_Fields>;
-};
-
-
-/** aggregate fields of "vault_factory_product_lambda" */
-export type Vault_Factory_Product_Lambda_Aggregate_FieldsCountArgs = {
-  columns?: InputMaybe<Array<Vault_Factory_Product_Lambda_Select_Column>>;
-  distinct?: InputMaybe<Scalars['Boolean']>;
-};
-
-/** order by aggregate values of table "vault_factory_product_lambda" */
-export type Vault_Factory_Product_Lambda_Aggregate_Order_By = {
-  avg?: InputMaybe<Vault_Factory_Product_Lambda_Avg_Order_By>;
-  count?: InputMaybe<Order_By>;
-  max?: InputMaybe<Vault_Factory_Product_Lambda_Max_Order_By>;
-  min?: InputMaybe<Vault_Factory_Product_Lambda_Min_Order_By>;
-  stddev?: InputMaybe<Vault_Factory_Product_Lambda_Stddev_Order_By>;
-  stddev_pop?: InputMaybe<Vault_Factory_Product_Lambda_Stddev_Pop_Order_By>;
-  stddev_samp?: InputMaybe<Vault_Factory_Product_Lambda_Stddev_Samp_Order_By>;
-  sum?: InputMaybe<Vault_Factory_Product_Lambda_Sum_Order_By>;
-  var_pop?: InputMaybe<Vault_Factory_Product_Lambda_Var_Pop_Order_By>;
-  var_samp?: InputMaybe<Vault_Factory_Product_Lambda_Var_Samp_Order_By>;
-  variance?: InputMaybe<Vault_Factory_Product_Lambda_Variance_Order_By>;
-};
-
-/** aggregate avg on columns */
-export type Vault_Factory_Product_Lambda_Avg_Fields = {
-  __typename?: 'vault_factory_product_lambda_avg_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by avg() on columns of table "vault_factory_product_lambda" */
-export type Vault_Factory_Product_Lambda_Avg_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** Boolean expression to filter rows from the table "vault_factory_product_lambda". All fields are combined with a logical 'AND'. */
-export type Vault_Factory_Product_Lambda_Bool_Exp = {
-  _and?: InputMaybe<Array<Vault_Factory_Product_Lambda_Bool_Exp>>;
-  _not?: InputMaybe<Vault_Factory_Product_Lambda_Bool_Exp>;
-  _or?: InputMaybe<Array<Vault_Factory_Product_Lambda_Bool_Exp>>;
-  contract?: InputMaybe<Vault_Factory_Bool_Exp>;
-  contract_id?: InputMaybe<String_Comparison_Exp>;
-  id?: InputMaybe<Bigint_Comparison_Exp>;
-  lambda_bytes?: InputMaybe<String_Comparison_Exp>;
-  lambda_name?: InputMaybe<String_Comparison_Exp>;
-  last_updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
-};
-
-/** aggregate max on columns */
-export type Vault_Factory_Product_Lambda_Max_Fields = {
-  __typename?: 'vault_factory_product_lambda_max_fields';
-  contract_id?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['bigint']>;
-  lambda_bytes?: Maybe<Scalars['String']>;
-  lambda_name?: Maybe<Scalars['String']>;
-  last_updated_at?: Maybe<Scalars['timestamptz']>;
-};
-
-/** order by max() on columns of table "vault_factory_product_lambda" */
-export type Vault_Factory_Product_Lambda_Max_Order_By = {
-  contract_id?: InputMaybe<Order_By>;
-  id?: InputMaybe<Order_By>;
-  lambda_bytes?: InputMaybe<Order_By>;
-  lambda_name?: InputMaybe<Order_By>;
-  last_updated_at?: InputMaybe<Order_By>;
-};
-
-/** aggregate min on columns */
-export type Vault_Factory_Product_Lambda_Min_Fields = {
-  __typename?: 'vault_factory_product_lambda_min_fields';
-  contract_id?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['bigint']>;
-  lambda_bytes?: Maybe<Scalars['String']>;
-  lambda_name?: Maybe<Scalars['String']>;
-  last_updated_at?: Maybe<Scalars['timestamptz']>;
-};
-
-/** order by min() on columns of table "vault_factory_product_lambda" */
-export type Vault_Factory_Product_Lambda_Min_Order_By = {
-  contract_id?: InputMaybe<Order_By>;
-  id?: InputMaybe<Order_By>;
-  lambda_bytes?: InputMaybe<Order_By>;
-  lambda_name?: InputMaybe<Order_By>;
-  last_updated_at?: InputMaybe<Order_By>;
-};
-
-/** Ordering options when selecting data from "vault_factory_product_lambda". */
-export type Vault_Factory_Product_Lambda_Order_By = {
-  contract?: InputMaybe<Vault_Factory_Order_By>;
-  contract_id?: InputMaybe<Order_By>;
-  id?: InputMaybe<Order_By>;
-  lambda_bytes?: InputMaybe<Order_By>;
-  lambda_name?: InputMaybe<Order_By>;
-  last_updated_at?: InputMaybe<Order_By>;
-};
-
-/** select columns of table "vault_factory_product_lambda" */
-export enum Vault_Factory_Product_Lambda_Select_Column {
-  /** column name */
-  ContractId = 'contract_id',
-  /** column name */
-  Id = 'id',
-  /** column name */
-  LambdaBytes = 'lambda_bytes',
-  /** column name */
-  LambdaName = 'lambda_name',
-  /** column name */
-  LastUpdatedAt = 'last_updated_at'
-}
-
-/** aggregate stddev on columns */
-export type Vault_Factory_Product_Lambda_Stddev_Fields = {
-  __typename?: 'vault_factory_product_lambda_stddev_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by stddev() on columns of table "vault_factory_product_lambda" */
-export type Vault_Factory_Product_Lambda_Stddev_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** aggregate stddev_pop on columns */
-export type Vault_Factory_Product_Lambda_Stddev_Pop_Fields = {
-  __typename?: 'vault_factory_product_lambda_stddev_pop_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by stddev_pop() on columns of table "vault_factory_product_lambda" */
-export type Vault_Factory_Product_Lambda_Stddev_Pop_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** aggregate stddev_samp on columns */
-export type Vault_Factory_Product_Lambda_Stddev_Samp_Fields = {
-  __typename?: 'vault_factory_product_lambda_stddev_samp_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by stddev_samp() on columns of table "vault_factory_product_lambda" */
-export type Vault_Factory_Product_Lambda_Stddev_Samp_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** Streaming cursor of the table "vault_factory_product_lambda" */
-export type Vault_Factory_Product_Lambda_Stream_Cursor_Input = {
-  /** Stream column input with initial value */
-  initial_value: Vault_Factory_Product_Lambda_Stream_Cursor_Value_Input;
-  /** cursor ordering */
-  ordering?: InputMaybe<Cursor_Ordering>;
-};
-
-/** Initial value of the column from where the streaming should start */
-export type Vault_Factory_Product_Lambda_Stream_Cursor_Value_Input = {
-  contract_id?: InputMaybe<Scalars['String']>;
-  id?: InputMaybe<Scalars['bigint']>;
-  lambda_bytes?: InputMaybe<Scalars['String']>;
-  lambda_name?: InputMaybe<Scalars['String']>;
-  last_updated_at?: InputMaybe<Scalars['timestamptz']>;
-};
-
-/** aggregate sum on columns */
-export type Vault_Factory_Product_Lambda_Sum_Fields = {
-  __typename?: 'vault_factory_product_lambda_sum_fields';
-  id?: Maybe<Scalars['bigint']>;
-};
-
-/** order by sum() on columns of table "vault_factory_product_lambda" */
-export type Vault_Factory_Product_Lambda_Sum_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** aggregate var_pop on columns */
-export type Vault_Factory_Product_Lambda_Var_Pop_Fields = {
-  __typename?: 'vault_factory_product_lambda_var_pop_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by var_pop() on columns of table "vault_factory_product_lambda" */
-export type Vault_Factory_Product_Lambda_Var_Pop_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** aggregate var_samp on columns */
-export type Vault_Factory_Product_Lambda_Var_Samp_Fields = {
-  __typename?: 'vault_factory_product_lambda_var_samp_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by var_samp() on columns of table "vault_factory_product_lambda" */
-export type Vault_Factory_Product_Lambda_Var_Samp_Order_By = {
-  id?: InputMaybe<Order_By>;
-};
-
-/** aggregate variance on columns */
-export type Vault_Factory_Product_Lambda_Variance_Fields = {
-  __typename?: 'vault_factory_product_lambda_variance_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** order by variance() on columns of table "vault_factory_product_lambda" */
-export type Vault_Factory_Product_Lambda_Variance_Order_By = {
-  id?: InputMaybe<Order_By>;
 };
 
 /** select columns of table "vault_factory" */
@@ -65966,6 +65431,254 @@ export type Vault_Factory_Variance_Fields = {
 /** order by variance() on columns of table "vault_factory" */
 export type Vault_Factory_Variance_Order_By = {
   vault_name_max_length?: InputMaybe<Order_By>;
+};
+
+/** columns and relationships of "vault_factory_vault_lambda" */
+export type Vault_Factory_Vault_Lambda = {
+  __typename?: 'vault_factory_vault_lambda';
+  /** An object relationship */
+  contract: Vault_Factory;
+  contract_id: Scalars['String'];
+  id: Scalars['bigint'];
+  lambda_bytes: Scalars['String'];
+  lambda_name: Scalars['String'];
+  last_updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** aggregated selection of "vault_factory_vault_lambda" */
+export type Vault_Factory_Vault_Lambda_Aggregate = {
+  __typename?: 'vault_factory_vault_lambda_aggregate';
+  aggregate?: Maybe<Vault_Factory_Vault_Lambda_Aggregate_Fields>;
+  nodes: Array<Vault_Factory_Vault_Lambda>;
+};
+
+export type Vault_Factory_Vault_Lambda_Aggregate_Bool_Exp = {
+  count?: InputMaybe<Vault_Factory_Vault_Lambda_Aggregate_Bool_Exp_Count>;
+};
+
+export type Vault_Factory_Vault_Lambda_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<Vault_Factory_Vault_Lambda_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+  filter?: InputMaybe<Vault_Factory_Vault_Lambda_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+/** aggregate fields of "vault_factory_vault_lambda" */
+export type Vault_Factory_Vault_Lambda_Aggregate_Fields = {
+  __typename?: 'vault_factory_vault_lambda_aggregate_fields';
+  avg?: Maybe<Vault_Factory_Vault_Lambda_Avg_Fields>;
+  count: Scalars['Int'];
+  max?: Maybe<Vault_Factory_Vault_Lambda_Max_Fields>;
+  min?: Maybe<Vault_Factory_Vault_Lambda_Min_Fields>;
+  stddev?: Maybe<Vault_Factory_Vault_Lambda_Stddev_Fields>;
+  stddev_pop?: Maybe<Vault_Factory_Vault_Lambda_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<Vault_Factory_Vault_Lambda_Stddev_Samp_Fields>;
+  sum?: Maybe<Vault_Factory_Vault_Lambda_Sum_Fields>;
+  var_pop?: Maybe<Vault_Factory_Vault_Lambda_Var_Pop_Fields>;
+  var_samp?: Maybe<Vault_Factory_Vault_Lambda_Var_Samp_Fields>;
+  variance?: Maybe<Vault_Factory_Vault_Lambda_Variance_Fields>;
+};
+
+
+/** aggregate fields of "vault_factory_vault_lambda" */
+export type Vault_Factory_Vault_Lambda_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Vault_Factory_Vault_Lambda_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "vault_factory_vault_lambda" */
+export type Vault_Factory_Vault_Lambda_Aggregate_Order_By = {
+  avg?: InputMaybe<Vault_Factory_Vault_Lambda_Avg_Order_By>;
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<Vault_Factory_Vault_Lambda_Max_Order_By>;
+  min?: InputMaybe<Vault_Factory_Vault_Lambda_Min_Order_By>;
+  stddev?: InputMaybe<Vault_Factory_Vault_Lambda_Stddev_Order_By>;
+  stddev_pop?: InputMaybe<Vault_Factory_Vault_Lambda_Stddev_Pop_Order_By>;
+  stddev_samp?: InputMaybe<Vault_Factory_Vault_Lambda_Stddev_Samp_Order_By>;
+  sum?: InputMaybe<Vault_Factory_Vault_Lambda_Sum_Order_By>;
+  var_pop?: InputMaybe<Vault_Factory_Vault_Lambda_Var_Pop_Order_By>;
+  var_samp?: InputMaybe<Vault_Factory_Vault_Lambda_Var_Samp_Order_By>;
+  variance?: InputMaybe<Vault_Factory_Vault_Lambda_Variance_Order_By>;
+};
+
+/** aggregate avg on columns */
+export type Vault_Factory_Vault_Lambda_Avg_Fields = {
+  __typename?: 'vault_factory_vault_lambda_avg_fields';
+  id?: Maybe<Scalars['Float']>;
+};
+
+/** order by avg() on columns of table "vault_factory_vault_lambda" */
+export type Vault_Factory_Vault_Lambda_Avg_Order_By = {
+  id?: InputMaybe<Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "vault_factory_vault_lambda". All fields are combined with a logical 'AND'. */
+export type Vault_Factory_Vault_Lambda_Bool_Exp = {
+  _and?: InputMaybe<Array<Vault_Factory_Vault_Lambda_Bool_Exp>>;
+  _not?: InputMaybe<Vault_Factory_Vault_Lambda_Bool_Exp>;
+  _or?: InputMaybe<Array<Vault_Factory_Vault_Lambda_Bool_Exp>>;
+  contract?: InputMaybe<Vault_Factory_Bool_Exp>;
+  contract_id?: InputMaybe<String_Comparison_Exp>;
+  id?: InputMaybe<Bigint_Comparison_Exp>;
+  lambda_bytes?: InputMaybe<String_Comparison_Exp>;
+  lambda_name?: InputMaybe<String_Comparison_Exp>;
+  last_updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+};
+
+/** aggregate max on columns */
+export type Vault_Factory_Vault_Lambda_Max_Fields = {
+  __typename?: 'vault_factory_vault_lambda_max_fields';
+  contract_id?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['bigint']>;
+  lambda_bytes?: Maybe<Scalars['String']>;
+  lambda_name?: Maybe<Scalars['String']>;
+  last_updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by max() on columns of table "vault_factory_vault_lambda" */
+export type Vault_Factory_Vault_Lambda_Max_Order_By = {
+  contract_id?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  lambda_bytes?: InputMaybe<Order_By>;
+  lambda_name?: InputMaybe<Order_By>;
+  last_updated_at?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Vault_Factory_Vault_Lambda_Min_Fields = {
+  __typename?: 'vault_factory_vault_lambda_min_fields';
+  contract_id?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['bigint']>;
+  lambda_bytes?: Maybe<Scalars['String']>;
+  lambda_name?: Maybe<Scalars['String']>;
+  last_updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "vault_factory_vault_lambda" */
+export type Vault_Factory_Vault_Lambda_Min_Order_By = {
+  contract_id?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  lambda_bytes?: InputMaybe<Order_By>;
+  lambda_name?: InputMaybe<Order_By>;
+  last_updated_at?: InputMaybe<Order_By>;
+};
+
+/** Ordering options when selecting data from "vault_factory_vault_lambda". */
+export type Vault_Factory_Vault_Lambda_Order_By = {
+  contract?: InputMaybe<Vault_Factory_Order_By>;
+  contract_id?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  lambda_bytes?: InputMaybe<Order_By>;
+  lambda_name?: InputMaybe<Order_By>;
+  last_updated_at?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "vault_factory_vault_lambda" */
+export enum Vault_Factory_Vault_Lambda_Select_Column {
+  /** column name */
+  ContractId = 'contract_id',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  LambdaBytes = 'lambda_bytes',
+  /** column name */
+  LambdaName = 'lambda_name',
+  /** column name */
+  LastUpdatedAt = 'last_updated_at'
+}
+
+/** aggregate stddev on columns */
+export type Vault_Factory_Vault_Lambda_Stddev_Fields = {
+  __typename?: 'vault_factory_vault_lambda_stddev_fields';
+  id?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev() on columns of table "vault_factory_vault_lambda" */
+export type Vault_Factory_Vault_Lambda_Stddev_Order_By = {
+  id?: InputMaybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Vault_Factory_Vault_Lambda_Stddev_Pop_Fields = {
+  __typename?: 'vault_factory_vault_lambda_stddev_pop_fields';
+  id?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_pop() on columns of table "vault_factory_vault_lambda" */
+export type Vault_Factory_Vault_Lambda_Stddev_Pop_Order_By = {
+  id?: InputMaybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Vault_Factory_Vault_Lambda_Stddev_Samp_Fields = {
+  __typename?: 'vault_factory_vault_lambda_stddev_samp_fields';
+  id?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_samp() on columns of table "vault_factory_vault_lambda" */
+export type Vault_Factory_Vault_Lambda_Stddev_Samp_Order_By = {
+  id?: InputMaybe<Order_By>;
+};
+
+/** Streaming cursor of the table "vault_factory_vault_lambda" */
+export type Vault_Factory_Vault_Lambda_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Vault_Factory_Vault_Lambda_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Vault_Factory_Vault_Lambda_Stream_Cursor_Value_Input = {
+  contract_id?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['bigint']>;
+  lambda_bytes?: InputMaybe<Scalars['String']>;
+  lambda_name?: InputMaybe<Scalars['String']>;
+  last_updated_at?: InputMaybe<Scalars['timestamptz']>;
+};
+
+/** aggregate sum on columns */
+export type Vault_Factory_Vault_Lambda_Sum_Fields = {
+  __typename?: 'vault_factory_vault_lambda_sum_fields';
+  id?: Maybe<Scalars['bigint']>;
+};
+
+/** order by sum() on columns of table "vault_factory_vault_lambda" */
+export type Vault_Factory_Vault_Lambda_Sum_Order_By = {
+  id?: InputMaybe<Order_By>;
+};
+
+/** aggregate var_pop on columns */
+export type Vault_Factory_Vault_Lambda_Var_Pop_Fields = {
+  __typename?: 'vault_factory_vault_lambda_var_pop_fields';
+  id?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_pop() on columns of table "vault_factory_vault_lambda" */
+export type Vault_Factory_Vault_Lambda_Var_Pop_Order_By = {
+  id?: InputMaybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type Vault_Factory_Vault_Lambda_Var_Samp_Fields = {
+  __typename?: 'vault_factory_vault_lambda_var_samp_fields';
+  id?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_samp() on columns of table "vault_factory_vault_lambda" */
+export type Vault_Factory_Vault_Lambda_Var_Samp_Order_By = {
+  id?: InputMaybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type Vault_Factory_Vault_Lambda_Variance_Fields = {
+  __typename?: 'vault_factory_vault_lambda_variance_fields';
+  id?: Maybe<Scalars['Float']>;
+};
+
+/** order by variance() on columns of table "vault_factory_vault_lambda" */
+export type Vault_Factory_Vault_Lambda_Variance_Order_By = {
+  id?: InputMaybe<Order_By>;
 };
 
 /** columns and relationships of "vault_factory_whitelist_contract" */
@@ -66461,6 +66174,7 @@ export type Vault_Max_Fields = {
   admin?: Maybe<Scalars['String']>;
   /** ANY: 0\nWHITELIST: 1 */
   allowance?: Maybe<Scalars['smallint']>;
+  baker_id?: Maybe<Scalars['String']>;
   creation_timestamp?: Maybe<Scalars['timestamptz']>;
   factory_id?: Maybe<Scalars['String']>;
   last_updated_at?: Maybe<Scalars['timestamptz']>;
@@ -66473,6 +66187,7 @@ export type Vault_Max_Order_By = {
   admin?: InputMaybe<Order_By>;
   /** ANY: 0\nWHITELIST: 1 */
   allowance?: InputMaybe<Order_By>;
+  baker_id?: InputMaybe<Order_By>;
   creation_timestamp?: InputMaybe<Order_By>;
   factory_id?: InputMaybe<Order_By>;
   last_updated_at?: InputMaybe<Order_By>;
@@ -66486,6 +66201,7 @@ export type Vault_Min_Fields = {
   admin?: Maybe<Scalars['String']>;
   /** ANY: 0\nWHITELIST: 1 */
   allowance?: Maybe<Scalars['smallint']>;
+  baker_id?: Maybe<Scalars['String']>;
   creation_timestamp?: Maybe<Scalars['timestamptz']>;
   factory_id?: Maybe<Scalars['String']>;
   last_updated_at?: Maybe<Scalars['timestamptz']>;
@@ -66498,6 +66214,7 @@ export type Vault_Min_Order_By = {
   admin?: InputMaybe<Order_By>;
   /** ANY: 0\nWHITELIST: 1 */
   allowance?: InputMaybe<Order_By>;
+  baker_id?: InputMaybe<Order_By>;
   creation_timestamp?: InputMaybe<Order_By>;
   factory_id?: InputMaybe<Order_By>;
   last_updated_at?: InputMaybe<Order_By>;
@@ -66509,6 +66226,8 @@ export type Vault_Order_By = {
   address?: InputMaybe<Order_By>;
   admin?: InputMaybe<Order_By>;
   allowance?: InputMaybe<Order_By>;
+  baker?: InputMaybe<Mavryk_User_Order_By>;
+  baker_id?: InputMaybe<Order_By>;
   creation_timestamp?: InputMaybe<Order_By>;
   depositors_aggregate?: InputMaybe<Vault_Depositor_Aggregate_Order_By>;
   factory?: InputMaybe<Vault_Factory_Order_By>;
@@ -66527,6 +66246,8 @@ export enum Vault_Select_Column {
   Admin = 'admin',
   /** column name */
   Allowance = 'allowance',
+  /** column name */
+  BakerId = 'baker_id',
   /** column name */
   CreationTimestamp = 'creation_timestamp',
   /** column name */
@@ -66590,6 +66311,7 @@ export type Vault_Stream_Cursor_Value_Input = {
   admin?: InputMaybe<Scalars['String']>;
   /** ANY: 0\nWHITELIST: 1 */
   allowance?: InputMaybe<Scalars['smallint']>;
+  baker_id?: InputMaybe<Scalars['String']>;
   creation_timestamp?: InputMaybe<Scalars['timestamptz']>;
   factory_id?: InputMaybe<Scalars['String']>;
   last_updated_at?: InputMaybe<Scalars['timestamptz']>;

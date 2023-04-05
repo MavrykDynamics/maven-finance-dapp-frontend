@@ -9,7 +9,7 @@ import { GovPhases, ProposalRecordType, ProposalStatus } from 'utils/TypesAndInt
 
 // actions & cs hooks
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
-import { getGovernance } from './actions/GovernanseData.actions'
+import { getGovernanceStorage } from './actions/GovernanseData.actions'
 import { getEmergencyGovernanceStorage } from '../EmergencyGovernance/EmergencyGovernance.actions'
 
 // view
@@ -60,12 +60,13 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
   const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
   const { satelliteMapper } = useSelector((state: State) => state.satellites)
 
-  const { isLoading } = useDataLoader(async () => {
+  const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {
       await Promise.all(
         [
-          !isEgovLoaded && dispatch(getEmergencyGovernanceStorage()),
-          !isGovernanceLoaded && dispatch(getGovernance()),
+          (!isEgovLoaded || isDepsChanged) && dispatch(getEmergencyGovernanceStorage()),
+          (!isGovernanceLoaded || isDepsChanged) && dispatch(getGovernanceStorage()),
+          (!isEgovLoaded || isDepsChanged) && dispatch(getEmergencyGovernanceStorage()),
         ].filter(Boolean),
       )
     } catch (e) {}
