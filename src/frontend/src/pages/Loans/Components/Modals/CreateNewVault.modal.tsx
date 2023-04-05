@@ -81,7 +81,7 @@ export const CreateNewVault = ({
   const { avaliableCollaterals } = useSelector((state: State) => state.tokens)
   const { isActionLoading } = useSelector((state: State) => state.loading)
 
-  const [shownScreen, setShownScreen] = useState<CurrentActiveModalScreen>(INITIAL_SCREEN_ID)
+  const [shownScreen, setShownScreen] = useState<CurrentActiveModalScreen>('confirmation') //INITIAL_SCREEN_ID)
   const [collateralsToSelect, setCollateralsToSelect] = useState<Record<DDItemId, DropDownCollateralAssetType>>({})
   const [collaterals, setCollaterals] = useState<Array<InputCollateral>>([])
   const [vaultName, setVaultName] = useState<VaultNameInputStateType>({ name: '', validationStatus: '' })
@@ -571,44 +571,52 @@ export const CreateNewVault = ({
                     <TableRow>
                       <TableHeaderCell>Asset</TableHeaderCell>
                       <TableHeaderCell>Amount</TableHeaderCell>
-                      <TableHeaderCell className="right">USD Value</TableHeaderCell>
+                      <TableHeaderCell contentPosition="right">USD Value</TableHeaderCell>
                     </TableRow>
                   </TableHeader>
 
                   <TableBody className="treasury">
-                    {collaterals.map(({ inputAmount, id: collateralId }) => {
-                      const collateralMetadata = collateralsToSelect[collateralId]
-                      if (!collateralMetadata) return null
+                    {collaterals.length ? (
+                      collaterals.map(({ inputAmount, id: collateralId }) => {
+                        const collateralMetadata = collateralsToSelect[collateralId]
+                        if (!collateralMetadata) return null
 
-                      return (
-                        <TableRow
-                          rowHeight={40}
-                          borderColor="dataColor"
-                          className="add-hover"
-                          key={collateralId + collateralMetadata.name}
-                        >
-                          <TableCell width="42%">{collateralMetadata.symbol}</TableCell>
-                          <TableCell width="28%">
-                            <CommaNumber value={Number(inputAmount)} />
-                          </TableCell>
-                          <TableCell contentPosition="right" width="28%">
-                            {collateralMetadata?.rate ? (
-                              <CommaNumber
-                                value={Number(inputAmount) * Number(collateralMetadata?.rate)}
-                                className="value"
-                                beginningText="$"
-                              />
-                            ) : (
-                              <div className="value">-</div>
-                            )}
-                          </TableCell>
-                        </TableRow>
-                      )
-                    })}
+                        return (
+                          <TableRow
+                            rowHeight={40}
+                            borderColor="dataColor"
+                            className="add-hover"
+                            key={collateralId + collateralMetadata.name}
+                          >
+                            <TableCell width="42%">{collateralMetadata.symbol}</TableCell>
+                            <TableCell width="28%">
+                              <CommaNumber value={Number(inputAmount)} />
+                            </TableCell>
+                            <TableCell contentPosition="right" width="28%">
+                              {collateralMetadata?.rate ? (
+                                <CommaNumber
+                                  value={Number(inputAmount) * Number(collateralMetadata?.rate)}
+                                  className="value"
+                                  beginningText="$"
+                                />
+                              ) : (
+                                <div className="value">-</div>
+                              )}
+                            </TableCell>
+                          </TableRow>
+                        )
+                      })
+                    ) : (
+                      <TableRow rowHeight={10}>
+                        <TableCell width="42%" />
+                        <TableCell width="28%" />
+                        <TableCell width="28%" />
+                      </TableRow>
+                    )}
                   </TableBody>
                 </Table>
               )}
-              <div className="lending-stats" style={{ marginTop: '20px', justifyContent: 'space-around' }}>
+              <div className="confirm-collateral-deposit-cv">
                 {showBakerAddress && bakerChosenDdItem ? (
                   <ThreeLevelListItem>
                     <div className="name">Selected Baker</div>

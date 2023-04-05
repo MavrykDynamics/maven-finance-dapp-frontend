@@ -140,6 +140,12 @@ export const LoansModalBase = styled.div<{ theme: MavrykTheme }>`
     font-size: 16px;
     line-height: 20px;
   }
+
+  .confirm-collateral-deposit-cv {
+    display: grid;
+    grid-template-columns: 43% 43%;
+    margin-top: 20px;
+  }
 `
 
 export const VaultModalOverview = styled.div<{ theme: MavrykTheme }>`

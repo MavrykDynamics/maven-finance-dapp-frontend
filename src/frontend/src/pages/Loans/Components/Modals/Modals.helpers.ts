@@ -166,7 +166,7 @@ export const DEFAULT_LOANS_POPUPS_STATE = {
   withdrawCollateralPopup: DEFAULT_LOANS_POPUP_STATE,
   updateMvkOperatorPopup: DEFAULT_LOANS_POPUP_STATE,
   managePermissionsPopup: DEFAULT_LOANS_POPUP_STATE,
-  createVaultPopup: DEFAULT_LOANS_POPUP_STATE,
+  createVaultPopup: { ...DEFAULT_LOANS_POPUP_STATE, show: true },
   addLendingAssetPopup: DEFAULT_LOANS_POPUP_STATE,
   removeLendingAssetPopup: DEFAULT_LOANS_POPUP_STATE,
   liquidateVaultPopup: DEFAULT_LOANS_POPUP_STATE,
