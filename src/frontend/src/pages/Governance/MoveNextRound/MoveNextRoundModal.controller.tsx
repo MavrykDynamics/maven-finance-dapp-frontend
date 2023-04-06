@@ -27,7 +27,7 @@ export const MoveNextRoundModal = ({
         <ModalMask showing={true} onClick={handleCloseModal} />
         <ModalCard>
           <ModalClose onClick={handleCloseModal}>
-            <Icon id="error" />
+            <Icon id="navigation-menu_close" />
           </ModalClose>
           <ModalCardContent style={{ width: '586px' }}>
             <h1>Move to the next round</h1>

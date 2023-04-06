@@ -26,7 +26,7 @@ export const MoveNextRoundModalstyle = styled.div<{ theme: MavrykTheme }>`
     .name {
       font-weight: 500;
       font-size: 14px;
-      color: ${({ theme }) => theme.dataColor};
+      color: ${({ theme }) => theme.textColor};
     }
 
     .value {
@@ -34,7 +34,7 @@ export const MoveNextRoundModalstyle = styled.div<{ theme: MavrykTheme }>`
       font-size: 16px;
 
       p {
-        color: ${({ theme }) => theme.valueColor};
+        color: ${({ theme }) => theme.dataColor};
       }
     }
   }
