@@ -32,6 +32,10 @@ export const VAULTS_STORAGE_QUERY = `
           allowance
         }
 
+        lending_controller {
+          liquidation_delay_in_minutes
+        }
+        
         last_updated_block_level
         owner_id
         id

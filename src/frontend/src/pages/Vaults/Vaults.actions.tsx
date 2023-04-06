@@ -16,7 +16,7 @@ import { normalizeVaultsStorage, normalizeOracleLatestPrice } from './Vaults.hel
 import { LendingControllerGQL } from 'utils/TypesAndInterfaces/Vaults'
 import { getHeadData } from 'app/App.components/Menu/Menu.actions'
 import { getOracleLatestPrices } from './Vaults.helpers'
-import { getTokenDecimals, convertNumberForContractCall } from 'utils/calcFunctions'
+import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 
 // Vaults Store
@@ -38,7 +38,6 @@ export const getVaultsStorage = () => async (dispatch: AppDispatch, getState: Ge
     const {
       tokens: { dipDupTokens },
       wallet: { accountPkh },
-      preferences: { headData },
       dataFeeds: { feedsLedger },
     } = getState()
 
@@ -47,7 +46,6 @@ export const getVaultsStorage = () => async (dispatch: AppDispatch, getState: Ge
       dipDupTokens,
       feeds: feedsLedger,
       oracleLatestPrices,
-      currentBlockLevel: headData?.level,
       lendingController,
     })
 
