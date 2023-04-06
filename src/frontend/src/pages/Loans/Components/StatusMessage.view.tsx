@@ -33,9 +33,9 @@ const findStatusMessage = (status: string, timestamp?: number) => {
           <div>
             <p>
               This vault has been marked for liquidation and is in its <span>grace period</span>. You have {timer}{' '}
-              over-collateralize this vault or repay the
+              over-collateralize this vault
             </p>
-            <p>loan to prevent liquidation.</p>
+            <p> or repay the loan to prevent liquidation.</p>
           </div>
         </StatusMessageStyled>
       )
