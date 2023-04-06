@@ -248,7 +248,7 @@ export const BorrowingExpandCard = ({
                         DAOFee,
                       })
                     }
-                    kind={BUTTON_PRIMARY}
+                    kind={BUTTON_SECONDARY}
                     form={BUTTON_WIDE}
                     disabled={collateralRatio < 200}
                   >
@@ -265,7 +265,7 @@ export const BorrowingExpandCard = ({
                         borrowCapacity,
                       })
                     }
-                    kind={BUTTON_SECONDARY}
+                    kind={BUTTON_PRIMARY}
                     form={BUTTON_WIDE}
                     disabled={!borrowedAmount}
                   >
@@ -396,6 +396,7 @@ export const BorrowingExpandCard = ({
                                     }
                                     form={BUTTON_WIDE}
                                     kind={BUTTON_SECONDARY}
+                                    disabled={collateralRatio < 200}
                                   >
                                     <Icon id="minus" /> Remove
                                   </Button>
