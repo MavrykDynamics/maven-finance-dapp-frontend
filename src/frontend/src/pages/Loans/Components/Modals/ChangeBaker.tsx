@@ -199,6 +199,28 @@ export const ChangeBaker = ({
                 )
               ) : null}
             </ThreeLevelListItem>
+            {activeTab !== 3 && (
+              <ThreeLevelListItem>
+                <div className="name">Bakery Payout Address</div>
+                {activeTab === 1 ? (
+                  <TzAddress
+                    className="value"
+                    tzAddress="tz1WHZYyDqUEj5BLjofe3jctmb9wN61KeMco"
+                    type={BLUE}
+                    hasIcon={false}
+                  />
+                ) : null}
+
+                {activeTab === 2 ? (
+                  <TzAddress
+                    className="value"
+                    tzAddress="tz1LWEHti5PD7HZEgGrog6D5fxg8Pt8WSNyy"
+                    type={BLUE}
+                    hasIcon={false}
+                  />
+                ) : null}
+              </ThreeLevelListItem>
+            )}
             <ThreeLevelListItem>
               <div className="name">Yield</div>
               {activeTab === 1 ? (
