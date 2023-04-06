@@ -111,13 +111,14 @@ export const ModalCardContent = styled.div<{ width?: number; height?: number; th
 
 export const ModalClose = styled.div<{ theme: MavrykTheme }>`
   position: absolute;
-  top: 0;
-  right: -40px;
+  top: 15px;
+  right: 15px;
   cursor: pointer;
+  z-index: 1;
 
   > svg {
     height: 24px;
     width: 24px;
-    fill: ${({ theme }) => theme.navTitleColor};
+    fill: ${({ theme }) => theme.valueColor};
   }
 `

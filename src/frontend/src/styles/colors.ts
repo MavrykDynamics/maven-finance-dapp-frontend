@@ -32,7 +32,10 @@ export const silverColor = '#C0DBFF'
 export const lightTextColor = '#D0CFD9'
 export const ffff = 'rgba(119, 164, 242, 0)'
 export const dropDownColor = '#0000007a'
-export const modalsBackdropColor = 'rgba(0, 0, 0, 0.5); '
+export const modalsBackdropColor = 'rgba(0, 0, 0, 0.5)'
+export const upBgColor = 'rgba(52, 246, 106, 0.2)'
+export const downBgColor = 'rgba(255, 67, 67, 0.2)'
+export const neutralBgColor = 'rgba(119, 164, 242, 0.2)'
 
 export const dark = {
   backgroundColor: darkColor,
@@ -50,7 +53,6 @@ export const dark = {
   actionPrimaryBtnColor: cyanColor,
   stakedColor: cyanColor,
   infoColor,
-
   borderColor: '#4F457C',
   subTextColor: '#fff',
   backgroundTextColor: '#2B2B60',
@@ -63,6 +65,9 @@ export const dark = {
   upColor,
   downColor,
   newUpColor,
+  upBgColor,
+  downBgColor,
+  neutralBgColor,
   warningColor,
   darkWarningColor: '#FE630C',
   awaitingColor,
@@ -109,6 +114,9 @@ export const light = {
   upColor: '#27AE60',
   downColor: '#FF4343',
   newUpColor,
+  upBgColor,
+  downBgColor,
+  neutralBgColor,
   warningColor: '#FF7A00',
   darkWarningColor: '#FE630C',
   awaitingColor,

@@ -50,7 +50,7 @@ export const ExitFeeModal = ({
     validation: '',
   })
 
-  const inputAmount = Number(inputData.amount).toFixed(2)
+  const inputAmount = Number(inputData.amount)
   const convertedValue = mvkExchangeRate && inputData.amount ? Number(inputData.amount) * mvkExchangeRate : 0
 
   const mli = calcMLI(totalMVKSupply, totalStakedMvk)
@@ -61,7 +61,7 @@ export const ExitFeeModal = ({
   // Validating initial amount came from props
   useEffect(() => {
     setInputData({
-      amount: String(amount),
+      amount: amount.toFixed(2),
       validation: isValidNumberValue(
         amount,
         1,
@@ -80,17 +80,17 @@ export const ExitFeeModal = ({
   }, [show])
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = mathRoundTwoDigit(e.target.value)
-    setInputData({
-      amount: String(amount),
-      validation: isValidNumberValue(
-        +value,
-        1,
-        accountPkh ? Math.max(Number(myMvkTokenBalance), Number(mySMvkTokenBalance)) : undefined,
-      )
-        ? INPUT_STATUS_SUCCESS
-        : INPUT_STATUS_ERROR,
-    })
+    const { value } = e.target
+    
+    const validationStatus = isValidNumberValue(
+      Number(value),
+      1,
+      accountPkh ? Math.max(Number(myMvkTokenBalance), Number(mySMvkTokenBalance)) : undefined,
+    )
+      ? INPUT_STATUS_SUCCESS
+      : INPUT_STATUS_ERROR
+
+    setInputData({ ...inputData, amount: value, validation: validationStatus })
   }
 
   const handleFocus = () => {
