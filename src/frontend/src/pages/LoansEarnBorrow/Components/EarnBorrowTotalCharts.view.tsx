@@ -46,7 +46,7 @@ export const EarnBorrowTotalCharts = ({
           numberOfItemsToDisplay={3}
           tooltipAsset="$"
         />
-        <div className="chart-interval">30 Days</div>
+        <div className="chart-interval">7 Days</div>
       </div>
     </div>
   )
@@ -66,7 +66,7 @@ export const EarnBorrowTotalCharts = ({
           numberOfItemsToDisplay={numberOfItemsToDisplay}
           tooltipAsset="$"
         />
-        <div className="chart-interval">30 Days</div>
+        <div className="chart-interval">7 Days</div>
       </div>
     </div>
   )

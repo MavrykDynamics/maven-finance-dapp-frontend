@@ -56,6 +56,7 @@ export const LoansTabStyled = styled.div<{ theme: MavrykTheme }>`
 
   .factory-info {
     display: flex;
+    align-items: center;
     column-gap: 10px;
     font-weight: 600;
     font-size: 14px;
@@ -63,6 +64,10 @@ export const LoansTabStyled = styled.div<{ theme: MavrykTheme }>`
     position: absolute;
     bottom: 10px;
     right: 30px;
+
+    div {
+      font-size: 16px;
+    }
   }
 `
 
