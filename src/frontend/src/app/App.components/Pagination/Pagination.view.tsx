@@ -3,6 +3,7 @@ import { useHistory, useLocation } from 'react-router-dom'
 import qs from 'qs'
 
 import { Input } from 'app/App.components/Input/Input.controller'
+import Icon from '../Icon/Icon.view'
 
 import { PaginationArrow, PaginationWrapper } from './Pagination.style'
 
@@ -49,28 +50,24 @@ const Pagination = ({ itemsCount, side = PAGINATION_SIDE_RIGHT, listName, classN
       of {pagesCount}
       <PaginationArrow
         isDisabled={+currentPage === 1}
+        isLeft
         onClick={() => {
           if (currentPage > 1) {
             history.push(generateNewUrl(currentPage - 1))
           }
         }}
       >
-        <svg>
-          <use xlinkHref="/icons/sprites.svg#paginationArrowLeft" />
-        </svg>
+        <Icon id="paginationArrowRight" />
       </PaginationArrow>
       <PaginationArrow
         isDisabled={+currentPage === +pagesCount}
-        isRight
         onClick={() => {
           if (currentPage < pagesCount) {
             history.push(generateNewUrl(+currentPage + 1))
           }
         }}
       >
-        <svg>
-          <use xlinkHref="/icons/sprites.svg#paginationArrowLeft" />
-        </svg>
+        <Icon id="paginationArrowRight" />
       </PaginationArrow>
     </PaginationWrapper>
   ) : null

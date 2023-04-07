@@ -1,6 +1,5 @@
 import styled, { css } from 'styled-components/macro'
 import { MavrykTheme } from 'styles/interfaces'
-
 import { PaginationPlacementVariants, PAGINATION_SIDE_CENTER, PAGINATION_SIDE_RIGHT } from './pagination.consts'
 
 export const PaginationWrapper = styled.div<{ theme: MavrykTheme; side?: PaginationPlacementVariants }>`
@@ -10,7 +9,7 @@ export const PaginationWrapper = styled.div<{ theme: MavrykTheme; side?: Paginat
   font-weight: 400;
   font-size: 14px;
   line-height: 21px;
-  color: #8d86eb;
+  color: ${({ theme }) => theme.textColor};
   width: fit-content;
   margin-left: auto;
   margin-top: 20px;
@@ -37,14 +36,13 @@ export const PaginationWrapper = styled.div<{ theme: MavrykTheme; side?: Paginat
   }
 `
 
-export const PaginationArrow = styled.div<{ isRight?: boolean; isDisabled: boolean }>`
+export const PaginationArrow = styled.div<{ isLeft?: boolean; isDisabled: boolean; theme: MavrykTheme }>`
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 15px 0px;
-  border: 1px solid #86d4c9;
   border-radius: 10px;
-  border: 1px solid #503eaa;
+  border: 1px solid ${({ theme }) => theme.valueColor};
   height: 36px;
   width: 36px;
   cursor: pointer;
@@ -55,8 +53,8 @@ export const PaginationArrow = styled.div<{ isRight?: boolean; isDisabled: boole
   -webkit-user-select: none;
   -ms-user-select: none;
 
-  ${({ isRight }) =>
-    isRight
+  ${({ isLeft }) =>
+    isLeft
       ? css`
           transform: rotate(180deg);
         `
@@ -69,17 +67,14 @@ export const PaginationArrow = styled.div<{ isRight?: boolean; isDisabled: boole
         `
       : css`
           &:hover {
-            border: 1px solid #86d4c9;
-
-            svg {
-              fill: #86d4c9;
-              stroke: #86d4c9;
-            }
+            opacity: 0.8;
           }
         `}
 
   svg {
     height: 24px;
-    width: 10px;
+    width: 24px;
+
+    fill: ${({ theme }) => theme.valueColor};
   }
 `
