@@ -165,7 +165,11 @@ export const Repay = ({
                   settings={{
                     balance: borrowedAsset.userBalance,
                     balanceAsset: borrowedAsset?.symbol,
-                    useMaxHandler: () => inputOnChangeHandle(String(totalOutstanding), totalOutstanding),
+                    useMaxHandler: () =>
+                      inputOnChangeHandle(
+                        String(Math.min(borrowedAsset.userBalance, totalOutstanding)),
+                        Math.min(borrowedAsset.userBalance, totalOutstanding),
+                      ),
                     inputStatus: inputData.validationStatus,
                     convertedValue: inputAmount * borrowedAsset.rate,
                     inputSize: INPUT_LARGE,
