@@ -512,7 +512,7 @@ const getBorrowings = async (
       )
       if (!vaultAsset) return acc
 
-      const borrowedAmount = vault.vault.lending_controller_vaults[0].loan_outstanding_total / 10 ** vaultAsset.decimals
+      const borrowedAmount = vault.loan_principal_total / 10 ** vaultAsset.decimals
 
       // Calculating Fee of the vault
       const accruedInterest =
