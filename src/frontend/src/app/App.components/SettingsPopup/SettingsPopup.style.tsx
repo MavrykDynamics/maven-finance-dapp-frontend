@@ -70,6 +70,11 @@ export const PopupContainerWrapper = styled.div`
     padding: 0;
   }
 
+  &.council__request-purpose {
+    max-width: 586px;
+    padding: 30px 50px;
+  }
+
   &.exitFee {
     padding: 30px 40px 50px;
     width: 586px;
