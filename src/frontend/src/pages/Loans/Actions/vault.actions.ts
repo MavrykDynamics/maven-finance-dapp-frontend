@@ -12,6 +12,7 @@ import { updateUserData } from 'reducers/actions/user.actions'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { TokenType } from 'utils/TypesAndInterfaces/General'
 import { getAvaliableCollaterals, getLoansStorage } from './getLoansData.actions'
+import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
 
 // trigger initial vault creation to get the id of future vault
 export const triggerInitialVaultCreation =
@@ -37,19 +38,30 @@ export const triggerInitialVaultCreation =
       // confirm query completion
       await transaction?.confirmation()
 
-      await dispatch(updateUserData())
+      // @ts-ignore TODO: don't have proper type to acees data, type has only methods
+      const currentOperationLevel = transaction?.lastHead?.header?.level
 
-      const newVaultData = await fetchFromIndexer(NEW_VAULT_QUERY, NEW_VAULT_QUERY_NAME, NEW_VAULT_QUERY_VARIABLE)
-      state.vaults.isLoaded && (await dispatch(getVaultsStorage()))
-      state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
+      const { value } = await checkIndexerLevelAndRunDataUpdateCallback({
+        callback: async () => {
+          await dispatch(updateUserData())
+          state.vaults.isLoaded && (await dispatch(getVaultsStorage()))
+          state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
 
-      return newVaultData.vault.at(-1)?.lending_controller_vaults[0].vault_id
+          const newVaultData = await fetchFromIndexer(NEW_VAULT_QUERY, NEW_VAULT_QUERY_NAME, NEW_VAULT_QUERY_VARIABLE)
+
+          return newVaultData.vault.at(-1)?.lending_controller_vaults?.[0]?.vault_id
+        },
+        currentOperationLevel,
+      })
+
+      return value
     } catch (error) {
       console.error('triggerInitialVaultCreation error:', error)
       if (error instanceof Error) {
         dispatch(showToaster(ERROR, 'Error', error.message))
       }
       await dispatch(toggleActionLoader(false))
+      return
     }
   }
 
