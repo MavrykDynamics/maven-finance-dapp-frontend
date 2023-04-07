@@ -70,7 +70,7 @@ button {
 }
 
 h2 {
-  font-size: 20px;
+  font-size: 22px;
   display: block;
   margin: 0;
 }
