@@ -22,7 +22,7 @@ import { PopupContainer, PopupContainerWrapper } from 'app/App.components/Settin
 import NewButton from 'app/App.components/Button/NewButton'
 import { containerColor } from 'styles'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
-import {CustomTooltip} from "../../../app/App.components/Tooltip/Tooltip.view";
+import { CustomTooltip } from '../../../app/App.components/Tooltip/Tooltip.view'
 
 type ExitFeeModalPropsType = {
   closePopup: () => void
@@ -34,7 +34,7 @@ type ExitFeeModalPropsType = {
     myMvkTokenBalance: number
     totalStakedMvk: number
     totalMVKSupply: number
-    accountPkh?: string,
+    accountPkh?: string
   }
 }
 
@@ -50,7 +50,6 @@ export const ExitFeeModal = ({
     validation: '',
   })
 
-  const inputAmount = Number(inputData.amount)
   const convertedValue = mvkExchangeRate && inputData.amount ? Number(inputData.amount) * mvkExchangeRate : 0
 
   const mli = calcMLI(totalMVKSupply, totalStakedMvk)
@@ -61,7 +60,7 @@ export const ExitFeeModal = ({
   // Validating initial amount came from props
   useEffect(() => {
     setInputData({
-      amount: amount.toFixed(2),
+      amount: String(mathRoundTwoDigit(amount)),
       validation: isValidNumberValue(
         amount,
         1,
@@ -73,7 +72,7 @@ export const ExitFeeModal = ({
 
     return () => {
       setInputData({
-        amount: '0',
+        amount: '',
         validation: '',
       })
     }
@@ -81,7 +80,7 @@ export const ExitFeeModal = ({
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
-    
+
     const validationStatus = isValidNumberValue(
       Number(value),
       1,
@@ -92,14 +91,13 @@ export const ExitFeeModal = ({
 
     setInputData({ ...inputData, amount: value, validation: validationStatus })
   }
-
   const handleFocus = () => {
     if (inputData.amount === '0') {
       setInputData({ ...inputData, amount: '' })
     }
   }
 
-  const handleBlur = ({ target: { value } }: React.ChangeEvent<HTMLInputElement>) => {
+  const handleBlur = () => {
     if (inputData.amount === '') {
       setInputData({ ...inputData, amount: '0' })
     }
@@ -107,7 +105,7 @@ export const ExitFeeModal = ({
 
   const inputProps = {
     type: 'number',
-    value: inputAmount,
+    value: inputData.amount,
     onBlur: handleBlur,
     onFocus: handleFocus,
     onChange: onInputChange,
@@ -143,8 +141,8 @@ export const ExitFeeModal = ({
                   rel="noreferrer"
                 >
                   <CustomTooltip
-                      text="The Mavryk Loyalty Index is a metric that balances MVK & sMVK. The more MVK is staked v.s. MVK, the higher the MLI, and the lower the exit fee is. The less MVK staked v.s. MVK, the lower the MLI, and the exit fee will rise. Click here to read more."
-                      iconId={'info'}
+                    text="The Mavryk Loyalty Index is a metric that balances MVK & sMVK. The more MVK is staked v.s. MVK, the higher the MLI, and the lower the exit fee is. The less MVK staked v.s. MVK, the lower the MLI, and the exit fee will rise. Click here to read more."
+                    iconId={'info'}
                   />
                 </a>
               </h4>
@@ -162,8 +160,8 @@ export const ExitFeeModal = ({
                   rel="noreferrer"
                 >
                   <CustomTooltip
-                      text="The Exit Fee is dynamic, adjusts according to the MLI, and may modified by governance vote. Exit fees are paid directly to sMVK stakeholders for remaining active participants in securing the network. Click to read more."
-                      iconId={'info'}
+                    text="The Exit Fee is dynamic, adjusts according to the MLI, and may modified by governance vote. Exit fees are paid directly to sMVK stakeholders for remaining active participants in securing the network. Click to read more."
+                    iconId={'info'}
                   />
                 </a>
               </h4>
