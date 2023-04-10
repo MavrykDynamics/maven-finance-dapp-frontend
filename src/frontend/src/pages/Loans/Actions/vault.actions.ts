@@ -82,7 +82,7 @@ export const borrowVaultAssetAction =
     }
 
     try {
-      const convertedAssetAmount = convertNumberForContractCall({ number: amountToBorrow, grage: assetDecimals })
+      const convertedAssetAmount = convertNumberForContractCall({ number: amountToBorrow, grade: assetDecimals })
       // prepare and send query
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.lendingController.address)
@@ -146,7 +146,7 @@ export const repayPartOfVaultAction =
     }
 
     try {
-      const convertedAssetAmount = convertNumberForContractCall({ number: repayAmount, grage: assetDecimals })
+      const convertedAssetAmount = convertNumberForContractCall({ number: repayAmount, grade: assetDecimals })
       // prepare and send query
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.lendingController.address)
@@ -272,7 +272,7 @@ export const repayFullAndCloseVaultAction =
     }
 
     try {
-      const convertedAssetAmount = convertNumberForContractCall({ number: repayAmount, grage: assetDecimals })
+      const convertedAssetAmount = convertNumberForContractCall({ number: repayAmount, grade: assetDecimals })
       // prepare and send query
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.lendingController.address)

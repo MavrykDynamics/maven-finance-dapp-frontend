@@ -120,7 +120,7 @@ export const fillTreasuryStorage = () => async (dispatch: AppDispatch, getState:
             balance,
           }: FetchedTreasuryBalanceType): TreasuryBalanceType => {
             const assetData = treasurySymbolsMetadata[symbol.toLowerCase()]
-            const coinsAmount = convertNumberForClient({ number: parseFloat(balance), grage: parseInt(decimals) })
+            const coinsAmount = convertNumberForClient({ number: parseFloat(balance), grade: parseInt(decimals) })
             return {
               contract: address,
               usdValue: coinsAmount * (assetData.rate ?? 1),

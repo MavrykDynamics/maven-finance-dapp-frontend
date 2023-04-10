@@ -35,7 +35,7 @@ export const withdrawCollateralAction =
     }
 
     try {
-      const convertedAssetAmount = convertNumberForContractCall({ number: withdrawAmount, grage: assetDecimals })
+      const convertedAssetAmount = convertNumberForContractCall({ number: withdrawAmount, grade: assetDecimals })
       // prepare and send query
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(vaultAddress)
@@ -106,7 +106,7 @@ export const depositCollateralAction =
 
     try {
       const { amount, assetAddress, assetId, collateralName, tokenType, decimals } = collateralAssets
-      const convertedAssetAmount = convertNumberForContractCall({ number: amount, grage: decimals })
+      const convertedAssetAmount = convertNumberForContractCall({ number: amount, grade: decimals })
 
       // prepare and send query
       const tezos = await DAPP_INSTANCE.tezos()

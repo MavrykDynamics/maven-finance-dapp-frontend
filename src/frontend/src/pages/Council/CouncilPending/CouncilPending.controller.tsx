@@ -673,7 +673,7 @@ export const CouncilPending = (props: Props) => {
 
   // 2/3
   if (isRequestMint) {
-    const tokenAmount = convertNumberForClient({ number: findActionByName('tokenAmount'), grage: MVK_DECIMALS })
+    const tokenAmount = convertNumberForClient({ number: findActionByName('tokenAmount'), grade: MVK_DECIMALS })
     const treasuryAddress = findActionByName('treasuryAddress', BYTES_ADDRESS_TYPE)
 
     return (

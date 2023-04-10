@@ -38,7 +38,7 @@ export const depositLendingAssetAction =
 
     try {
       const tezos = await DAPP_INSTANCE.tezos()
-      const convertedAssetAmount = convertNumberForContractCall({ number: addLiquidityAmount, grage: assetDecimals })
+      const convertedAssetAmount = convertNumberForContractCall({ number: addLiquidityAmount, grade: assetDecimals })
       // prepare and send query
       const contract = await tezos.wallet.at(state.contractAddresses.lendingController.address)
       let transaction = null
@@ -153,7 +153,7 @@ export const withdrawLendingAssetAction =
     }
 
     try {
-      const convertedAssetAmount = convertNumberForContractCall({ number: removeLiquidityAmount, grage: assetDecimals })
+      const convertedAssetAmount = convertNumberForContractCall({ number: removeLiquidityAmount, grade: assetDecimals })
       // prepare and send query
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.lendingController.address)

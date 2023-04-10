@@ -630,7 +630,7 @@ export const normalizeLoans = async ({
 
         if (!loanTokenMetadata) return acc
         const reserveAmountMu =
-          convertNumberForClient({ number: token_pool_total, grage: loanTokenMetadata.decimals }) *
+          convertNumberForClient({ number: token_pool_total, grade: loanTokenMetadata.decimals }) *
           (reserve_ratio / 10000)
         const reserveAmount = isXTZ
           ? calcWithoutMu(reserveAmountMu)
@@ -676,8 +676,8 @@ export const normalizeLoans = async ({
           utilisationRate: utilisation_rate / 10 ** interestRateDecimals,
 
           availableLiquidity,
-          totalLended: convertNumberForClient({ number: token_pool_total, grage: loanTokenMetadata.decimals }),
-          totalBorrowed: convertNumberForClient({ number: total_borrowed, grage: loanTokenMetadata.decimals }),
+          totalLended: convertNumberForClient({ number: token_pool_total, grade: loanTokenMetadata.decimals }),
+          totalBorrowed: convertNumberForClient({ number: total_borrowed, grade: loanTokenMetadata.decimals }),
           loanTokenTotalCollaterals: totalCollateral,
           loanTokenVaultsTotalBorrowed: vaultsBorrowedAmount,
 
@@ -809,7 +809,7 @@ export const normalizeUserLending = ({
       })
 
       if (!assetData) return acc
-      const convertedAmount = convertNumberForClient({ number: amount, grage: assetData.decimals })
+      const convertedAmount = convertNumberForClient({ number: amount, grade: assetData.decimals })
 
       switch (type) {
         case 0:
@@ -875,13 +875,13 @@ export const normalizeUserLending = ({
           if (!collateralAssetData) return acc
 
           acc +=
-            convertNumberForClient({ number: balance, grage: collateralAssetData.decimals }) * collateralAssetData.rate
+            convertNumberForClient({ number: balance, grade: collateralAssetData.decimals }) * collateralAssetData.rate
           return acc
         }, 0)
 
         acc[loan_token.loan_token_name] = {
           borrowedAmount:
-            convertNumberForClient({ number: loan_principal_total, grage: vaultAssetData.decimals }) *
+            convertNumberForClient({ number: loan_principal_total, grade: vaultAssetData.decimals }) *
             vaultAssetData.rate,
           collateralAmount,
         }
