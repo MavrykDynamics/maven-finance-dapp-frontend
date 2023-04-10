@@ -21,10 +21,8 @@ const loansDefaultState: LoansState = {
   loanTokens: [],
   loansControllerAddress: '',
   chartsData: {
-    totalBorrowed: 0,
     borrowingChartData: [],
     collateralChartData: [],
-    totalLended: 0,
     lendingChartData: [],
     lendBorrow24hDiff: {
       last48hLending: 0,

@@ -77,8 +77,7 @@ const AppContainer = () => {
       }
 
       // Depends on data feeds (getFeedsStorage())
-      await dispatch(getTokensPrices())
-      dispatch(getAvaliableCollaterals())
+      await Promise.all([dispatch(getTokensPrices()), dispatch(getAvaliableCollaterals())])
 
       // Turn off loader
       await dispatch(toggleInitialDataLoading(false))
