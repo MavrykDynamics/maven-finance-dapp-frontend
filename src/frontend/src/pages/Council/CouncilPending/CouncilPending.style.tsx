@@ -1,4 +1,5 @@
 import styled from 'styled-components/macro'
+import { MavrykTheme } from 'styles/interfaces'
 import { Card } from 'styles'
 
 export const CouncilPendingStyled = styled(Card)`
@@ -208,5 +209,73 @@ export const CouncilPendingReviewStyled = styled(Card)`
 
   .review-btn:first-of-type {
     margin-bottom: 20px;
+  }
+`
+
+export const CouncilModalBase = styled.div<{ theme: MavrykTheme }>`
+  h1 {
+    margin: 0 0 30px 0;
+  }
+
+  p {
+    height: 460px;
+    overflow-y: auto;
+
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 27px;
+
+    &::-webkit-scrollbar {
+      position: relative;
+      width: 15px;
+      background-color: transparent;
+      left: 10px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-clip: padding-box;
+      border-left: 5px solid rgba(0, 0, 0, 0);
+      border-right: 5px solid rgba(0, 0, 0, 0);
+      border-radius: 6px;
+      -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+      background-color: ${({ theme }) => theme.cardBorderColor};
+    }
+  }
+
+  .shadow {
+    position: absolute;
+    bottom: 25px;
+    height: 50px;
+    width: 85%;
+    background: linear-gradient(to bottom, transparent 0%, #160e3f 60%);
+  }
+
+  .close-modal {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    cursor: pointer;
+    transition: opacity 0.3s;
+
+    &:after,
+    &:before {
+      content: '';
+      height: 30px;
+      width: 30px;
+      border-top: 3px solid ${({ theme }) => theme.valueColor};
+      position: absolute;
+      top: 10px;
+      right: -12px;
+      transform: rotate(-45deg);
+    }
+
+    &:before {
+      right: 9px;
+      transform: rotate(45deg);
+    }
+
+    &:hover {
+      opacity: 0.7;
+    }
   }
 `

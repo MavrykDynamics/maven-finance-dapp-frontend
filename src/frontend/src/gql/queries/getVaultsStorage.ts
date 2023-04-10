@@ -47,6 +47,7 @@ export const VAULTS_STORAGE_QUERY = `
         liquidation_end_level
         internal_id
         borrow_index
+
         loan_token {
           loan_token_name
           loan_token_address
@@ -54,6 +55,10 @@ export const VAULTS_STORAGE_QUERY = `
           oracle_id
           current_interest_rate
           borrow_index
+
+          total_remaining,
+          token_pool_total,
+          reserve_ratio
         }
       }
     }

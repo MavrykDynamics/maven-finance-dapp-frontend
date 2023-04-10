@@ -19,8 +19,9 @@ import {
   calcCollateralRatio,
   calculateAccruedInterest,
   getAssetMetadata,
+  isTezosAsset,
 } from 'pages/Loans/Loans.helpers'
-import { calcWithoutDecimals } from 'utils/calcFunctions'
+import { calcWithoutDecimals, calcWithoutMu } from 'utils/calcFunctions'
 import { BLOCKS_PER_MINUTE, FIXED_POINT_ACCURACY } from 'utils/constants'
 import { getUserBalanceForLoanAsset } from 'pages/Loans/LoansFethcers'
 import { CollateralType, DepositorsFlagType } from 'utils/TypesAndInterfaces/Loans'
@@ -55,7 +56,26 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
   >(
     async (promiseAcc, item) => {
       const acc = await promiseAcc
+
       if (!item.loan_token || !item.vault?.address) return acc
+
+      const loanTokenMetadata = getAssetMetadata({
+        tokenName: item.loan_token.loan_token_name,
+        tokenAddress: item.loan_token.loan_token_address,
+        dipDupTokens,
+        feeds,
+        oracleId: String(item.loan_token.oracle_id),
+      })
+
+      const vaultAsset = getAssetMetadata({
+        tokenName: item.loan_token.loan_token_name,
+        tokenAddress: item.loan_token.loan_token_address,
+        dipDupTokens,
+        feeds,
+        oracleId: String(item.loan_token.oracle_id),
+      })
+
+      if (!loanTokenMetadata || !vaultAsset) return acc
 
       const vaultCollateral = item.collateral_balances?.reduce<{
         normalizedCollaterals: Array<CollateralType>
@@ -126,17 +146,7 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
         accountPkh,
       )
 
-      const vaultAsset = getAssetMetadata({
-        tokenName: item.loan_token.loan_token_name,
-        tokenAddress: item.loan_token.loan_token_address,
-        dipDupTokens,
-        feeds,
-        oracleId: String(item.loan_token.oracle_id),
-      })
-
-      if (!vaultAsset) return acc
-
-      const borrowedAmount = item.loan_outstanding_total / 10 ** vaultAsset.decimals
+      const borrowedAmount = item.loan_principal_total / 10 ** vaultAsset.decimals
 
       // Calculating Fee of the vault
       const accruedInterest =
@@ -214,6 +224,22 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
       //   levelOfLate = item.liquidation_end_level
       // }
 
+      const isXTZ = isTezosAsset(item.loan_token.loan_token_name)
+
+      const reservePercent = item.loan_token.reserve_ratio / 10000
+      const reserveAmountMu = item.loan_token.token_pool_total * reservePercent
+      const availableLiquidity = isXTZ
+        ? calcWithoutMu(item.loan_token.total_remaining - reserveAmountMu)
+        : calcWithoutDecimals(
+            item.loan_token.total_remaining - reserveAmountMu,
+            Number(loanTokenMetadata.decimals ?? 1),
+          )
+
+      const borrowCapacity = Math.min(
+        vaultCollateral.totalRow.amount / 2 - borrowedAmount * vaultAsset.rate,
+        availableLiquidity,
+      )
+
       const normallizedVault = {
         borrowedAsset: {
           ...vaultAsset,
@@ -221,7 +247,7 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
           userBalance,
         },
         name: item.vault.name,
-        borrowCapacity: vaultCollateral.totalRow.amount / 2 - borrowedAmount * vaultAsset.rate,
+        borrowCapacity,
         collateralBalance: vaultCollateral.totalRow.amount,
         collateralRatio,
         apr: currentInterestRate * 100,

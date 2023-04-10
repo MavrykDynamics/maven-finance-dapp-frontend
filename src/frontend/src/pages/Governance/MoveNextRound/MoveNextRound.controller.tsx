@@ -53,14 +53,13 @@ export default function MoveToNextRound() {
         Move to next round
       </NewButton>
 
-      {visibleModal ? (
-        <MoveNextRoundModal
-          handleCloseModal={handleCloseModal}
-          handleExecuteProposal={() => handleStartNextRound(true)}
-          handleMoveNextRound={() => handleStartNextRound(false)}
-          estimatedValues={estimatedValues}
-        />
-      ) : null}
+      <MoveNextRoundModal
+        showModal={visibleModal}
+        handleCloseModal={handleCloseModal}
+        handleExecuteProposal={() => handleStartNextRound(true)}
+        handleMoveNextRound={() => handleStartNextRound(false)}
+        estimatedValues={estimatedValues}
+      />
     </>
   )
 }
