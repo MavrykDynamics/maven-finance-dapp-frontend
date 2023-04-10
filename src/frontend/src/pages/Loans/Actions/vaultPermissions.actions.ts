@@ -9,6 +9,7 @@ import { State } from 'reducers'
 import { LoanVaultAllowanceType } from 'utils/TypesAndInterfaces/Loans'
 import { VAULT_ALLOWANCE_ACCOUNTS, VAULT_ALLOWANCE_ANY } from '../Loans.const'
 import { getLoansStorage } from './getLoansData.actions'
+import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
 
 export const changeBakerAction =
   (bakerAddress: string, vaultAddress: string, callback: () => void) =>
@@ -38,9 +39,18 @@ export const changeBakerAction =
       // confirm query completion
       await transaction?.confirmation()
 
+      // @ts-ignore don't have proper type to acees data, type has only methods
+      const currentOperationLevel = transaction?.lastHead?.header?.level
+
       // refetch data we need
-      state.vaults.isLoaded && (await dispatch(getVaultsStorage()))
-      state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
+      await checkIndexerLevelAndRunDataUpdateCallback({
+        callback: async () => {
+          state.vaults.isLoaded && (await dispatch(getVaultsStorage()))
+          state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
+        },
+        currentOperationLevel,
+      })
+
       dispatch(showToaster(SUCCESS, 'Baker changed.', 'All good :)'))
       dispatch(toggleActionLoader(false))
     } catch (error) {
@@ -118,14 +128,12 @@ export const managePermissionsAction =
 
         const batchArr = [
           ...depositorsToRemove.map((depositorAddress) => ({
-            // TODO: idk what's wrong with the enum typings here it sets kind to OpKind type instead of OpKind.TRANSACTION
             kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
             ...contract.methods
               .initVaultAction('updateDepositor', VAULT_ALLOWANCE_ACCOUNTS, false, depositorAddress)
               .toTransferParams(),
           })),
           ...depositorsToAdd.map((depositorAddress) => ({
-            // TODO: idk what's wrong with the enum typings here it sets kind to OpKind type instead of OpKind.TRANSACTION
             kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
             ...contract.methods
               .initVaultAction('updateDepositor', VAULT_ALLOWANCE_ACCOUNTS, true, depositorAddress)
@@ -144,9 +152,18 @@ export const managePermissionsAction =
       // confirm query completion
       await transaction?.confirmation()
 
+      // @ts-ignore don't have proper type to acees data, type has only methods
+      const currentOperationLevel = transaction?.lastHead?.header?.level
+
       // refetch data we need
-      state.vaults.isLoaded && (await dispatch(getVaultsStorage()))
-      state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
+      await checkIndexerLevelAndRunDataUpdateCallback({
+        callback: async () => {
+          state.vaults.isLoaded && (await dispatch(getVaultsStorage()))
+          state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
+        },
+        currentOperationLevel,
+      })
+
       dispatch(showToaster(SUCCESS, 'Depositors updated.', 'All good :)'))
       dispatch(toggleActionLoader(false))
     } catch (error) {
@@ -185,9 +202,18 @@ export const updateOperatorsAction = (callback: () => void) => async (dispatch: 
     // confirm query completion
     // await transaction?.confirmation()
 
+    // @ts-ignore don't have proper type to acees data, type has only methods
+    const currentOperationLevel = transaction?.lastHead?.header?.level
+
     // refetch data we need
-    state.vaults.isLoaded && (await dispatch(getVaultsStorage()))
-    state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
+    await checkIndexerLevelAndRunDataUpdateCallback({
+      callback: async () => {
+        state.vaults.isLoaded && (await dispatch(getVaultsStorage()))
+        state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
+      },
+      currentOperationLevel,
+    })
+
     dispatch(showToaster(SUCCESS, 'Asset borrowed.', 'All good :)'))
     dispatch(toggleActionLoader(false))
   } catch (error) {

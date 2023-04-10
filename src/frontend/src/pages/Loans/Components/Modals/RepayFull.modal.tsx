@@ -32,6 +32,7 @@ export const RepayFull = ({
 }) => {
   const {
     vaultId,
+    vaultAddress,
     borrowedAsset,
     feesAmount = 0,
     currentCollateralBalance = 0,
@@ -71,10 +72,11 @@ export const RepayFull = ({
   }, [borrowedAsset, currentCollateralBalance, borrowCapacity, borrowedAmount])
 
   const repayBtnHandler = async () => {
-    if (vaultId && borrowedAsset) {
+    if (vaultId && borrowedAsset && vaultAddress) {
       await dispatch(
         repayFullAndCloseVaultAction(
           vaultId,
+          vaultAddress,
           totalOutstanding,
           borrowedAsset.decimals,
           borrowedAsset.tokenType,

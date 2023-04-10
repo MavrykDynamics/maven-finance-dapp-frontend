@@ -35,6 +35,7 @@ export const Repay = ({
 }) => {
   const {
     vaultId,
+    vaultAddress,
     borrowedAsset,
     feesAmount = 0,
     currentCollateralBalance = 0,
@@ -97,10 +98,11 @@ export const Repay = ({
   const backBtnHandler = () => setShownScreen('initial')
 
   const repayBtnHandler = async () => {
-    if (vaultId && borrowedAsset) {
+    if (vaultId && borrowedAsset && vaultAddress) {
       await dispatch(
         repayPartOfVaultAction(
           vaultId,
+          vaultAddress,
           inputAmount,
           borrowedAsset.decimals,
           borrowedAsset.tokenType,

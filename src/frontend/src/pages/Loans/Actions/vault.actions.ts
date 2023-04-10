@@ -38,7 +38,7 @@ export const triggerInitialVaultCreation =
       // confirm query completion
       await transaction?.confirmation()
 
-      // @ts-ignore TODO: don't have proper type to acees data, type has only methods
+      // @ts-ignore don't have proper type to acees data, type has only methods
       const currentOperationLevel = transaction?.lastHead?.header?.level
 
       const { value } = await checkIndexerLevelAndRunDataUpdateCallback({
@@ -95,11 +95,20 @@ export const borrowVaultAssetAction =
       // confirm query completion
       await transaction?.confirmation()
 
+      // @ts-ignore don't have proper type to acees data, type has only methods
+      const currentOperationLevel = transaction?.lastHead?.header?.level
+
       // refetch data we need
-      await dispatch(updateUserData())
-      await dispatch(getAvaliableCollaterals())
-      state.vaults.isLoaded && (await dispatch(getVaultsStorage()))
-      state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
+      await checkIndexerLevelAndRunDataUpdateCallback({
+        callback: async () => {
+          await dispatch(updateUserData())
+          await dispatch(getAvaliableCollaterals())
+          state.vaults.isLoaded && (await dispatch(getVaultsStorage()))
+          state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
+        },
+        currentOperationLevel,
+      })
+
       await dispatch(showToaster(SUCCESS, 'Asset borrowed.', 'All good :)'))
       await dispatch(toggleActionLoader(false))
     } catch (error) {
@@ -116,6 +125,7 @@ export const borrowVaultAssetAction =
 export const repayPartOfVaultAction =
   (
     vaultId: number,
+    vaultAddress: string,
     repayAmount: number,
     assetDecimals: number,
     tokenType: TokenType,
@@ -142,7 +152,26 @@ export const repayPartOfVaultAction =
       const contract = await tezos.wallet.at(state.contractAddresses.lendingController.address)
       let transaction = null
 
-      if (tokenType === 'fa2') {
+      if (tokenType === 'fa12') {
+        const assetContract = await tezos.wallet.at(tokenAddress)
+        const batchArr = [
+          {
+            kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+            ...assetContract.methods.approve(vaultAddress, 0).toTransferParams(),
+          },
+          {
+            kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+            ...assetContract.methods.approve(vaultAddress, convertedAssetAmount).toTransferParams(),
+          },
+          {
+            kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+            ...contract?.methods.repay(vaultId, convertedAssetAmount).toTransferParams(),
+          },
+        ]
+
+        const batch = await tezos.wallet.batch(batchArr)
+        transaction = await batch.send()
+      } else if (tokenType === 'fa2') {
         const assetContract = await tezos.wallet.at(tokenAddress)
         const batchArr = [
           {
@@ -192,11 +221,20 @@ export const repayPartOfVaultAction =
       // confirm query completion
       await transaction?.confirmation()
 
+      // @ts-ignore don't have proper type to acees data, type has only methods
+      const currentOperationLevel = transaction?.lastHead?.header?.level
+
       // refetch data we need
-      await dispatch(updateUserData())
-      await dispatch(getAvaliableCollaterals())
-      state.vaults.isLoaded && (await dispatch(getVaultsStorage()))
-      state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
+      await checkIndexerLevelAndRunDataUpdateCallback({
+        callback: async () => {
+          await dispatch(updateUserData())
+          await dispatch(getAvaliableCollaterals())
+          state.vaults.isLoaded && (await dispatch(getVaultsStorage()))
+          state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
+        },
+        currentOperationLevel,
+      })
+
       await dispatch(showToaster(SUCCESS, 'Asset repayed.', 'All good :)'))
       await dispatch(toggleActionLoader(false))
     } catch (error) {
@@ -213,6 +251,7 @@ export const repayPartOfVaultAction =
 export const repayFullAndCloseVaultAction =
   (
     vaultId: number,
+    vaultAddress: string,
     repayAmount: number,
     assetDecimals: number,
     tokenType: TokenType,
@@ -239,7 +278,30 @@ export const repayFullAndCloseVaultAction =
       const contract = await tezos.wallet.at(state.contractAddresses.lendingController.address)
       let transaction = null
 
-      if (tokenType === 'fa2') {
+      if (tokenType === 'fa12') {
+        const assetContract = await tezos.wallet.at(tokenAddress)
+        const batchArr = [
+          {
+            kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+            ...assetContract.methods.approve(vaultAddress, 0).toTransferParams(),
+          },
+          {
+            kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+            ...assetContract.methods.approve(vaultAddress, convertedAssetAmount).toTransferParams(),
+          },
+          {
+            kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+            ...contract?.methods.repay(vaultId, convertedAssetAmount).toTransferParams(),
+          },
+          {
+            kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+            ...contract.methods.closeVault(vaultId).toTransferParams(),
+          },
+        ]
+
+        const batch = await tezos.wallet.batch(batchArr)
+        transaction = await batch.send()
+      } else if (tokenType === 'fa2') {
         const assetContract = await tezos.wallet.at(tokenAddress)
         const batchArr = [
           {
@@ -274,6 +336,10 @@ export const repayFullAndCloseVaultAction =
               ])
               .toTransferParams(),
           },
+          {
+            kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+            ...contract.methods.closeVault(vaultId).toTransferParams(),
+          },
         ]
 
         const batch = await tezos.wallet.batch(batchArr)
@@ -300,11 +366,20 @@ export const repayFullAndCloseVaultAction =
       // confirm query completion
       await transaction?.confirmation()
 
+      // @ts-ignore don't have proper type to acees data, type has only methods
+      const currentOperationLevel = transaction?.lastHead?.header?.level
+
       // refetch data we need
-      await dispatch(updateUserData())
-      await dispatch(getAvaliableCollaterals())
-      state.vaults.isLoaded && (await dispatch(getVaultsStorage()))
-      state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
+      await checkIndexerLevelAndRunDataUpdateCallback({
+        callback: async () => {
+          await dispatch(updateUserData())
+          await dispatch(getAvaliableCollaterals())
+          state.vaults.isLoaded && (await dispatch(getVaultsStorage()))
+          state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
+        },
+        currentOperationLevel,
+      })
+
       await dispatch(showToaster(SUCCESS, 'Asset repayed.', 'All good :)'))
       await dispatch(toggleActionLoader(false))
     } catch (error) {
