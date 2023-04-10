@@ -62,17 +62,14 @@ export const VaultsSearchFilter = ({ assets: assetSymbols, vaultsMapper, current
   })
 
   const [filteredData, setFilteredData] = useState<string[]>([])
-  const [searchedData, setSearchedData] = useState<string[]>([])
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const data = Object.values(chosenDdItem).length ? filteredData : currentVaultsIds
-
-    const searchQuery = e.target.value.toLowerCase()
+  const handleSearch = (searchValue: string, searchData: string[]) => {
+    const searchQuery = searchValue.toLowerCase()
 
     let filteredVaultsIds: string[] = []
 
     if (searchQuery !== '') {
-      filteredVaultsIds = data.filter((vaultId) => {
+      filteredVaultsIds = searchData.filter((vaultId) => {
         const vault = vaultsMapper[vaultId]
         const isIncludedInLoanAddress = vault.address.toLowerCase().includes(searchQuery)
         const isIncludedInOwnerAddress = vault.ownerId.toLowerCase().includes(searchQuery)
@@ -80,12 +77,13 @@ export const VaultsSearchFilter = ({ assets: assetSymbols, vaultsMapper, current
         return isIncludedInLoanAddress || isIncludedInOwnerAddress
       })
     } else {
-      filteredVaultsIds = data
+      filteredVaultsIds = filteredData
     }
 
-    setSearchInput(e.target.value)
-    setSearchedData(filteredVaultsIds)
+    setSearchInput(searchValue)
     setVaultsIds(filteredVaultsIds)
+
+    return filteredVaultsIds
   }
 
   const handleDropdownSelect = (name: string) => (selectedOption: string) => {
@@ -106,7 +104,7 @@ export const VaultsSearchFilter = ({ assets: assetSymbols, vaultsMapper, current
 
   const applyFilters = useCallback(
     (filtersList: Filters) => {
-      const data = searchInputValue ? [...searchedData] : [...currentVaultsIds]
+      const data = searchInputValue ? handleSearch(searchInputValue, currentVaultsIds) : [...currentVaultsIds]
       let filteredVaultsIds: string[] = data
 
       // sort by statuses
@@ -227,7 +225,7 @@ export const VaultsSearchFilter = ({ assets: assetSymbols, vaultsMapper, current
       setFilteredData(filteredVaultsIds)
       setVaultsIds(filteredVaultsIds)
     },
-    [currentVaultsIds, history, restQP, searchInputValue, searchedData, setVaultsIds, tabId, vaultsMapper],
+    [currentVaultsIds, history, restQP, searchInputValue, setVaultsIds, tabId, vaultsMapper],
   )
 
   const handleDropdownStatus = (name: string) => (status: boolean) => {
@@ -241,11 +239,6 @@ export const VaultsSearchFilter = ({ assets: assetSymbols, vaultsMapper, current
     const status = filterStatuses[vaultsFilters.ZERO] ? '' : 'checked'
     handleDropdownSelect(vaultsFilters.ZERO)(status)
   }
-
-  useEffect(() => {
-    // clear query after switching tab
-    setChosenDdItem({})
-  }, [tabId])
 
   useEffect(() => {
     if (currentVaultsIds.length) {
@@ -266,7 +259,8 @@ export const VaultsSearchFilter = ({ assets: assetSymbols, vaultsMapper, current
           type="text"
           kind={'search'}
           placeholder="Search by address"
-          onChange={handleSearch}
+          // use filteredData to search because one of the sorting items is selected all the time
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleSearch(e.target.value, filteredData)}
           value={searchInputValue}
         />
         <VaultsFilters>
