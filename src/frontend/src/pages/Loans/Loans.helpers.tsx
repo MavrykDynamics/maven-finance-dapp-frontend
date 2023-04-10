@@ -232,8 +232,10 @@ const getChartData = (
           if (islast48hOperation) {
             acc.lendBorrow24hDiff.last48hLending += lendedAmount
           }
-          acc.totalLended += lendedAmount
-          acc.lendingChartData.push({ time: new Date(timestamp).getTime() as UTCTimestamp, value: acc.totalLended })
+          acc.lendingChartData.push({
+            time: new Date(timestamp).getTime() as UTCTimestamp,
+            value: (acc.lendingChartData.at(-1)?.value ?? 0) + lendedAmount,
+          })
         }
 
         // Removed liquidity (paid lended)
@@ -246,8 +248,10 @@ const getChartData = (
           if (islast48hOperation) {
             acc.lendBorrow24hDiff.last48hLending -= lendedAmount
           }
-          acc.totalLended += lendedAmount
-          acc.lendingChartData.push({ time: new Date(timestamp).getTime() as UTCTimestamp, value: acc.totalLended })
+          acc.lendingChartData.push({
+            time: new Date(timestamp).getTime() as UTCTimestamp,
+            value: (acc.lendingChartData.at(-1)?.value ?? 0) - lendedAmount,
+          })
         }
 
         // Borrowed
@@ -260,10 +264,9 @@ const getChartData = (
           if (islast48hOperation) {
             acc.lendBorrow24hDiff.last48hBorrowing += borrowedAmount
           }
-          acc.totalBorrowed += borrowedAmount
           acc.borrowingChartData.push({
             time: new Date(timestamp).getTime() as UTCTimestamp,
-            value: acc.totalBorrowed,
+            value: (acc.borrowingChartData.at(-1)?.value ?? 0) + borrowedAmount,
           })
         }
 
@@ -277,10 +280,9 @@ const getChartData = (
           if (islast48hOperation) {
             acc.lendBorrow24hDiff.last48hBorrowing -= borrowedAmount
           }
-          acc.totalBorrowed += borrowedAmount
           acc.borrowingChartData.push({
             time: new Date(timestamp).getTime() as UTCTimestamp,
-            value: acc.totalBorrowed,
+            value: (acc.borrowingChartData.at(-1)?.value ?? 0) - borrowedAmount,
           })
         }
 
@@ -306,10 +308,8 @@ const getChartData = (
       return acc
     },
     {
-      totalBorrowed: 0,
       borrowingChartData: [],
       collateralChartData: [],
-      totalLended: 0,
       lendingChartData: [],
       lendBorrow24hDiff: {
         last48hLending: 0,

@@ -29,7 +29,7 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { getLoansStorage } from './Actions/getLoansData.actions'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import colors from 'styles/colors'
 import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.types'
@@ -54,6 +54,21 @@ export const Loans = () => {
   const { themeSelected } = useSelector((state: State) => state.preferences)
   const { accountPkh } = useSelector((state: State) => state.wallet)
 
+  const { totalBorrowed, totalLended } = loanTokens.reduce<{
+    totalLended: number
+    totalBorrowed: number
+  }>(
+    (acc, { totalBorrowed, totalLended }) => {
+      acc.totalBorrowed += totalBorrowed
+      acc.totalLended += totalLended
+      return acc
+    },
+    {
+      totalLended: 0,
+      totalBorrowed: 0,
+    },
+  )
+
   const { isLoading } = useDataLoader(
     async (isDepsChanged) => {
       try {
@@ -73,7 +88,7 @@ export const Loans = () => {
     <div className="chart-wrapper">
       <div className="summary">
         <span>Total Lending</span>
-        <CommaNumber value={chartsData?.totalLended ?? 0} beginningText={'$'} />
+        <CommaNumber value={totalLended} beginningText={'$'} />
       </div>
       <div className="chart">
         <Chart
@@ -92,7 +107,7 @@ export const Loans = () => {
     <div className="chart-wrapper">
       <div className="summary">
         <span>Total Borrowing</span>
-        <CommaNumber value={chartsData?.totalBorrowed ?? 0} beginningText={'$'} />
+        <CommaNumber value={totalBorrowed} beginningText={'$'} />
       </div>
       <div className="chart">
         <Chart
