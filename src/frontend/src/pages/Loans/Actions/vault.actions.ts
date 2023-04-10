@@ -68,7 +68,13 @@ export const triggerInitialVaultCreation =
 
 // borrow asset from the vault
 export const borrowVaultAssetAction =
-  (vaultId: number, amountToBorrow: number, assetDecimals: number, callback: () => void) =>
+  (
+    vaultId: number,
+    amountToBorrow: number,
+    assetDecimals: number,
+    callback: () => void,
+    scrollToCurrentVault: () => void,
+  ) =>
   async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
 
@@ -112,6 +118,7 @@ export const borrowVaultAssetAction =
 
       await dispatch(showToaster(SUCCESS, 'Asset borrowed.', 'All good :)'))
       await dispatch(toggleActionLoader(false))
+      scrollToCurrentVault()
     } catch (error) {
       console.error('borrowVaultAssetAction error:', error)
       if (error instanceof Error) {
@@ -132,6 +139,7 @@ export const repayPartOfVaultAction =
     tokenType: TokenType,
     tokenAddress: string,
     callback: () => void,
+    scrollToCurrentVault: () => void,
   ) =>
   async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
@@ -238,6 +246,7 @@ export const repayPartOfVaultAction =
 
       await dispatch(showToaster(SUCCESS, 'Asset repayed.', 'All good :)'))
       await dispatch(toggleActionLoader(false))
+      scrollToCurrentVault()
     } catch (error) {
       console.error('borrowVaultAssetAction error:', error)
       if (error instanceof Error) {

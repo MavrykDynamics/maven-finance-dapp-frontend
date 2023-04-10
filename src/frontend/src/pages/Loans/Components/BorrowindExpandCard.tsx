@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import {
@@ -24,6 +24,7 @@ import Icon from 'app/App.components/Icon/Icon.view'
 import { StatusMessage } from './StatusMessage.view'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
+import { scrollToFullView } from 'utils/scrollToFullView'
 
 import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } from 'app/App.components/Table'
 import { ThreeLevelListItem } from '../Loans.style'
@@ -98,6 +99,14 @@ export const BorrowingExpandCard = ({
     openWithdrawCollateralPopup,
   } = useContext(loansPopupsContext)
 
+  const ref = useRef<HTMLDivElement | null>(null)
+
+  // use for borrow or repay
+  // it scrolls until the current vault after the transaction and changing position
+  const scrollToCurrentVault = () => {
+    scrollToFullView(ref.current, 'nearest')
+  }
+
   const mappedMVKOperators = {
     firstAddress: operators?.[0],
     ...(operators ? { amount: operators.length - 1 } : {}),
@@ -133,7 +142,7 @@ export const BorrowingExpandCard = ({
   }, [vaultStatus, levelOfEarly, levelOfLate])
 
   return (
-    <>
+    <div ref={ref}>
       <Expand
         getExpandedStatus={getExpandedStatus}
         isExpandedByDefault={isOpenedVault}
@@ -246,6 +255,7 @@ export const BorrowingExpandCard = ({
                         borrowCapacity,
                         currentBorrowedAmount: borrowedAmount,
                         DAOFee,
+                        scrollToCurrentVault,
                       })
                     }
                     kind={BUTTON_SECONDARY}
@@ -264,6 +274,7 @@ export const BorrowingExpandCard = ({
                         feesAmount: fee,
                         currentCollateralBalance: collateralData.at(-1)?.amount ?? 0,
                         borrowCapacity,
+                        scrollToCurrentVault,
                       })
                     }
                     kind={BUTTON_PRIMARY}
@@ -563,6 +574,6 @@ export const BorrowingExpandCard = ({
           </BorrowingTabListItemExpanded>
         )}
       </Expand>
-    </>
+    </div>
   )
 }

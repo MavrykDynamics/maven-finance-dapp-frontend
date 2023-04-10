@@ -48,6 +48,7 @@ export const BorrowAsset = ({
     currentBorrowedAmount = 0,
     currentCollateralBalance = 0,
     DAOFee = 0,
+    scrollToCurrentVault,
   } = data ?? {}
 
   useLockBodyScroll(show)
@@ -106,8 +107,16 @@ export const BorrowAsset = ({
   const backBtnHandler = () => setShownScreen('initial')
 
   const borrowAsserHandler = async () => {
-    if (vaultId && borrowedAsset) {
-      await dispatch(borrowVaultAssetAction(vaultId, Number(inputData.amount), borrowedAsset.decimals, closePopup))
+    if (vaultId && borrowedAsset && scrollToCurrentVault) {
+      await dispatch(
+        borrowVaultAssetAction(
+          vaultId,
+          Number(inputData.amount),
+          borrowedAsset.decimals,
+          closePopup,
+          scrollToCurrentVault,
+        ),
+      )
     }
   }
 
