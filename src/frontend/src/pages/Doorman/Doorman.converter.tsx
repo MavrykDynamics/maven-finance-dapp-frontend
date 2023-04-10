@@ -7,9 +7,11 @@ import {
 } from '../../utils/TypesAndInterfaces/Doorman'
 
 // helpers
+import { isValidNumberValue } from 'utils/validatorFunctions'
 import { calcWithoutPrecision } from '../../utils/calcFunctions'
 import { UTCTimestamp } from 'lightweight-charts'
 import { Mavryk_User } from 'utils/generated/graphqlTypes'
+import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 
 export function normalizeDoormanStorage(storage: {
   mavryk_user: Array<Mavryk_User>
@@ -65,4 +67,26 @@ export function normalizeMvkHistoryData(storage: MvkHistoryDataProps) {
         }
       })
     : []
+}
+
+export const stakingInputValidation = ({
+  amount,
+  myMvkTokenBalance,
+  mySMvkTokenBalance,
+  accountPkh,
+}: {
+  amount: number
+  myMvkTokenBalance: number
+  mySMvkTokenBalance: number
+  accountPkh?: string
+}) => {
+  if (amount === 0) return ''
+
+  return isValidNumberValue(
+    amount,
+    1,
+    accountPkh ? Math.max(Number(myMvkTokenBalance), Number(mySMvkTokenBalance)) : undefined,
+  )
+    ? INPUT_STATUS_SUCCESS
+    : INPUT_STATUS_ERROR
 }
