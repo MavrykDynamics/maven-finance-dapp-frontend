@@ -85,8 +85,6 @@ export const getAssetMetadata = ({
 
 type TransactionHistoryReduceType = {
   transactionHistory: LoanMarketType['transactionHistory']
-  totalBorrowed: number
-  totalLended: number
   lending24hVolume: number
   borrowing24hVolume: number
   marketCollateralChartData: Array<SingleValueData>
@@ -128,8 +126,6 @@ const getTransactionHistory = (
 
         // Added liquidity (lended)
         if (type === 0) {
-          acc.totalLended += transformedAmount
-
           if (dayjs().diff(timestamp) <= DAY_IN_MS) {
             acc.lending24hVolume += transformedAmount * assetMetadata.rate
           }
@@ -145,8 +141,6 @@ const getTransactionHistory = (
 
         // Removed liquidity (paid lended)
         if (type === 1) {
-          acc.totalLended -= transformedAmount
-
           if (dayjs().diff(timestamp) <= DAY_IN_MS) {
             acc.lending24hVolume -= transformedAmount * assetMetadata.rate
           }
@@ -162,8 +156,6 @@ const getTransactionHistory = (
 
         // Borrowed
         if (type === 2) {
-          acc.totalBorrowed += transformedAmount
-
           if (dayjs().diff(timestamp) <= DAY_IN_MS) {
             acc.borrowing24hVolume += transformedAmount * assetMetadata.rate
           }
@@ -171,8 +163,6 @@ const getTransactionHistory = (
 
         // Paid borrowed (repaid)
         if (type === 3) {
-          acc.totalBorrowed -= transformedAmount
-
           if (dayjs().diff(timestamp) <= DAY_IN_MS) {
             acc.borrowing24hVolume -= transformedAmount * assetMetadata.rate
           }
@@ -203,8 +193,6 @@ const getTransactionHistory = (
       transactionHistory: [],
       marketCollateralChartData: [],
       marketLiquidityChartData: [],
-      totalBorrowed: 0,
-      totalLended: 0,
       lending24hVolume: 0,
       borrowing24hVolume: 0,
     },
@@ -620,6 +608,7 @@ export const normalizeLoans = async ({
           vaults,
           reserve_ratio,
           token_pool_total,
+          total_borrowed,
           loan_token_address,
           loan_token_contract_standard,
           oracle_id,
@@ -640,20 +629,18 @@ export const normalizeLoans = async ({
         )
 
         if (!loanTokenMetadata) return acc
-
-        const reservePercent = reserve_ratio / 10000
-        const reserveAmountMu = token_pool_total * reservePercent
+        const reserveAmountMu =
+          convertNumberForClient({ number: token_pool_total, grade: loanTokenMetadata.decimals }) *
+          (reserve_ratio / 10000)
         const reserveAmount = isXTZ
           ? calcWithoutMu(reserveAmountMu)
-          : calcWithoutDecimals(reserveAmountMu, Number(loanTokenMetadata.decimals ?? 1))
+          : calcWithoutDecimals(reserveAmountMu, loanTokenMetadata.decimals)
         const availableLiquidity = isXTZ
           ? calcWithoutMu(total_remaining - reserveAmountMu)
-          : calcWithoutDecimals(total_remaining - reserveAmountMu, Number(loanTokenMetadata.decimals ?? 1))
+          : calcWithoutDecimals(total_remaining - reserveAmountMu, loanTokenMetadata.decimals)
 
         const {
           transactionHistory,
-          totalBorrowed,
-          totalLended,
           lending24hVolume,
           borrowing24hVolume,
           marketCollateralChartData,
@@ -689,8 +676,8 @@ export const normalizeLoans = async ({
           utilisationRate: utilisation_rate / 10 ** interestRateDecimals,
 
           availableLiquidity,
-          totalLended: totalLended,
-          totalBorrowed: totalBorrowed,
+          totalLended: convertNumberForClient({ number: token_pool_total, grade: loanTokenMetadata.decimals }),
+          totalBorrowed: convertNumberForClient({ number: total_borrowed, grade: loanTokenMetadata.decimals }),
           loanTokenTotalCollaterals: totalCollateral,
           loanTokenVaultsTotalBorrowed: vaultsBorrowedAmount,
 
@@ -822,7 +809,7 @@ export const normalizeUserLending = ({
       })
 
       if (!assetData) return acc
-      const convertedAmount = convertNumberForClient({ number: amount, grage: assetData.decimals })
+      const convertedAmount = convertNumberForClient({ number: amount, grade: assetData.decimals })
 
       switch (type) {
         case 0:
@@ -888,13 +875,13 @@ export const normalizeUserLending = ({
           if (!collateralAssetData) return acc
 
           acc +=
-            convertNumberForClient({ number: balance, grage: collateralAssetData.decimals }) * collateralAssetData.rate
+            convertNumberForClient({ number: balance, grade: collateralAssetData.decimals }) * collateralAssetData.rate
           return acc
         }, 0)
 
         acc[loan_token.loan_token_name] = {
           borrowedAmount:
-            convertNumberForClient({ number: loan_principal_total, grage: vaultAssetData.decimals }) *
+            convertNumberForClient({ number: loan_principal_total, grade: vaultAssetData.decimals }) *
             vaultAssetData.rate,
           collateralAmount,
         }

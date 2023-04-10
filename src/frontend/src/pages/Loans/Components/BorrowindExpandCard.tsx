@@ -258,6 +258,7 @@ export const BorrowingExpandCard = ({
                     onClick={() =>
                       openRepayPopup?.({
                         vaultId,
+                        vaultAddress: address,
                         borrowedAsset: borrowedAsset,
                         borrowedAmount,
                         feesAmount: fee,
@@ -544,6 +545,7 @@ export const BorrowingExpandCard = ({
                     onClick={() =>
                       openRepayFullPopup?.({
                         vaultId,
+                        vaultAddress: address,
                         borrowedAsset: borrowedAsset,
                         collateralRatio,
                         borrowedAmount,

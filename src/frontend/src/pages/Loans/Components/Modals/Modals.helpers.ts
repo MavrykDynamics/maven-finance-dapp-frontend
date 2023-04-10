@@ -43,6 +43,7 @@ export type WithdrawCollateralPopupDataType =
 
 export type RepayCollateralPopupDataBaseType = {
   vaultId: number
+  vaultAddress: string
   borrowedAsset: LoansVaultType['borrowedAsset']
   feesAmount: number
   borrowedAmount: number

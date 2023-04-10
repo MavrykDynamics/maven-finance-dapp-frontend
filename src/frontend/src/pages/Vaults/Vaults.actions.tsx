@@ -89,7 +89,7 @@ export const liquidateVault =
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.lendingController.address)
       const transaction = await contract?.methods
-        .liquidateVault(vaultId, vaultOwner, convertNumberForContractCall({ number: liquidateAmount, grage: decimals }))
+        .liquidateVault(vaultId, vaultOwner, convertNumberForContractCall({ number: liquidateAmount, grade: decimals }))
         .send()
       dispatch(showToaster(INFO, 'Liquidating vault...', 'Please wait 30s'))
 

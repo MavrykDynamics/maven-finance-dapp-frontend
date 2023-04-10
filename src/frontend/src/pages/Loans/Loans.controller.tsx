@@ -110,18 +110,19 @@ export const Loans = () => {
   return (
     <Page>
       <PageHeader page={'lending'} />
-      <LoansStyled>
-        <MarketChartsContainer>
-          {lendingPart}
-          {borrowingPart}
-        </MarketChartsContainer>
 
-        {isLoading ? (
-          <DataLoaderWrapper>
-            <ClockLoader width={150} height={150} />
-            <div className="text">Loading loans markets</div>
-          </DataLoaderWrapper>
-        ) : loanTokens.length ? (
+      {isLoading ? (
+        <DataLoaderWrapper>
+          <ClockLoader width={150} height={150} />
+          <div className="text">Loading loans markets</div>
+        </DataLoaderWrapper>
+      ) : loanTokens.length ? (
+        <LoansStyled>
+          <MarketChartsContainer>
+            {lendingPart}
+            {borrowingPart}
+          </MarketChartsContainer>
+
           <MarketsOverviewContainer>
             <GovRightContainerTitleArea>
               <h2>Markets</h2>
@@ -238,17 +239,17 @@ export const Loans = () => {
               )
             })}
           </MarketsOverviewContainer>
-        ) : (
-          <EmptyContainer
-            style={{
-              paddingTop: '80px',
-            }}
-          >
-            <img src="/images/not-found.svg" alt=" No active markets to show" />
-            <figcaption> No active markets to show</figcaption>
-          </EmptyContainer>
-        )}
-      </LoansStyled>
+        </LoansStyled>
+      ) : (
+        <EmptyContainer
+          style={{
+            paddingTop: '80px',
+          }}
+        >
+          <img src="/images/not-found.svg" alt=" No active markets to show" />
+          <figcaption> No active markets to show</figcaption>
+        </EmptyContainer>
+      )}
     </Page>
   )
 }

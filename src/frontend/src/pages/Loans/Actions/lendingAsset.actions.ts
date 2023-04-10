@@ -10,6 +10,7 @@ import { updateUserData } from 'reducers/actions/user.actions'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { TokenType } from 'utils/TypesAndInterfaces/General'
 import { getLoansStorage } from './getLoansData.actions'
+import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
 
 export const depositLendingAssetAction =
   (
@@ -37,21 +38,18 @@ export const depositLendingAssetAction =
 
     try {
       const tezos = await DAPP_INSTANCE.tezos()
-      const convertedAssetAmount = convertNumberForContractCall({ number: addLiquidityAmount, grage: assetDecimals })
+      const convertedAssetAmount = convertNumberForContractCall({ number: addLiquidityAmount, grade: assetDecimals })
       // prepare and send query
       const contract = await tezos.wallet.at(state.contractAddresses.lendingController.address)
-
       let transaction = null
 
       if (tokenType === 'tez') {
         transaction = await contract?.methods
           .addLiquidity(loanTokenName, convertedAssetAmount)
           .send({ amount: convertedAssetAmount, mutez: true })
-      }
-
-      if (tokenType === 'fa12') {
+      } else if (tokenType === 'fa12') {
         const assetContract = await tezos.wallet.at(tokenAddress)
-        const batchArr = [
+        const batch = await tezos.wallet.batch([
           {
             kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
             ...assetContract.methods.approve(state.contractAddresses.lendingController.address, 0).toTransferParams(),
@@ -66,15 +64,11 @@ export const depositLendingAssetAction =
             kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
             ...contract?.methods.addLiquidity(convertedAssetAmount, loanTokenName).toTransferParams(),
           },
-        ]
-
-        const batch = await tezos.wallet.batch(batchArr)
+        ])
         transaction = await batch.send()
-      }
-
-      if (tokenType === 'fa2') {
+      } else {
         const assetContract = await tezos.wallet.at(tokenAddress)
-        const batchArr = [
+        const batch = await tezos.wallet.batch([
           {
             kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
             ...assetContract.methods
@@ -107,9 +101,7 @@ export const depositLendingAssetAction =
               ])
               .toTransferParams(),
           },
-        ]
-
-        const batch = await tezos.wallet.batch(batchArr)
+        ])
         transaction = await batch.send()
       }
 
@@ -120,10 +112,19 @@ export const depositLendingAssetAction =
       // confirm query completion
       await transaction?.confirmation()
 
+      // @ts-ignore don't have proper type to acees data, type has only methods
+      const currentOperationLevel = transaction?.lastHead?.header?.level
+
       // refetch data we need
-      await dispatch(getMTokensStorage())
-      await dispatch(getLoansStorage())
-      await dispatch(updateUserData())
+      await checkIndexerLevelAndRunDataUpdateCallback({
+        callback: async () => {
+          await dispatch(getMTokensStorage())
+          await dispatch(getLoansStorage())
+          await dispatch(updateUserData())
+        },
+        currentOperationLevel,
+      })
+
       await dispatch(showToaster(SUCCESS, 'Liquidity added.', 'All good :)'))
       await dispatch(toggleActionLoader(false))
     } catch (error) {
@@ -152,7 +153,7 @@ export const withdrawLendingAssetAction =
     }
 
     try {
-      const convertedAssetAmount = convertNumberForContractCall({ number: removeLiquidityAmount, grage: assetDecimals })
+      const convertedAssetAmount = convertNumberForContractCall({ number: removeLiquidityAmount, grade: assetDecimals })
       // prepare and send query
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.lendingController.address)
@@ -169,6 +170,20 @@ export const withdrawLendingAssetAction =
       await dispatch(getMTokensStorage())
       await dispatch(getLoansStorage())
       await dispatch(updateUserData())
+
+      // @ts-ignore don't have proper type to acees data, type has only methods
+      const currentOperationLevel = transaction?.lastHead?.header?.level
+
+      // refetch data we need
+      await checkIndexerLevelAndRunDataUpdateCallback({
+        callback: async () => {
+          await dispatch(getMTokensStorage())
+          await dispatch(getLoansStorage())
+          await dispatch(updateUserData())
+        },
+        currentOperationLevel,
+      })
+
       await dispatch(showToaster(SUCCESS, 'Liquidity removed.', 'All good :)'))
       await dispatch(toggleActionLoader(false))
     } catch (error) {

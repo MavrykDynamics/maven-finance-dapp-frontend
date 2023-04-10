@@ -89,7 +89,7 @@ export const getTokensPrices = () => async (dispatch: AppDispatch, getState: Get
     const tokenPricesFromFeeds = feedsLedger.reduce<State['tokens']['tokensPrices']>(
       (acc, { name, last_completed_data, decimals }) => {
         const assetSymbol = getSymbolFromFeedName(name)
-        const rate = convertNumberForClient({ number: last_completed_data, grage: decimals })
+        const rate = convertNumberForClient({ number: last_completed_data, grade: decimals })
         acc[assetSymbol] = rate
         return acc
       },
