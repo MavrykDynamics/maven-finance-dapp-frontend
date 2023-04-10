@@ -48,7 +48,7 @@ export const MoveNextRoundModal = ({
             <NewButton kind={BUTTON_SECONDARY} form={BUTTON_WIDE} onClick={handleMoveNextRound}>
               Move to the next round
             </NewButton>
-            <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={() => handleExecuteProposal()}>
+            <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={handleExecuteProposal}>
               Execute Proposal
             </NewButton>
           </div>
