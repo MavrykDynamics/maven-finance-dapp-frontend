@@ -56,11 +56,14 @@ export const StageThreeForm = ({
 
   const { fee, successReward, governancePhase } = useSelector((state: State) => state.governance.config)
 
+  const isProposalRound = governancePhase === 'PROPOSAL'
+
+  // is no bytes payments on proposal change add empty pair on client
   useEffect(() => {
     if (!proposalPayments.some(checkPaymentExists)) {
       handleAddRow()
     }
-  }, [proposalId, proposalPayments])
+  }, [proposalId])
 
   const ddItems = useMemo(() => {
     return paymentMethods.map((method) => ({
@@ -69,30 +72,14 @@ export const StageThreeForm = ({
     }))
   }, [paymentMethods])
 
-  const isProposalRound = governancePhase === 'PROPOSAL'
-
-  const handleOnBlur = (e: React.ChangeEvent<HTMLInputElement>, itemIdx: number, maxLength?: number) => {
-    const { name, value } = e.target
-    const validationResult = getValidityStageThreeTable(name as StageThreeValidityItem, value, maxLength)
-      ? INPUT_STATUS_SUCCESS
-      : INPUT_STATUS_ERROR
-
-    updateLocalProposalValidation(
-      {
-        paymentsValidation: currentProposalValidation.paymentsValidation.map((paymentValidation, idx) =>
-          idx === itemIdx ? { ...paymentValidation, [name]: validationResult } : paymentValidation,
-        ),
-      },
-      proposalId,
-    )
-  }
-
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement> | { target: { name: string; value: string | number } },
     row: number,
+    maxLength?: number,
   ) => {
     let { name, value } = e.target
 
+    // update input value
     updateLocalProposalData(
       {
         proposalPayments: proposalPayments.map((item, idx) => {
@@ -106,6 +93,23 @@ export const StageThreeForm = ({
       },
       proposalId,
     )
+
+    // we don't need validation for token address, cuz it's not used on backend, and it's dd value
+    if (name !== 'token_address') {
+      // update validation
+      const validationResult = getValidityStageThreeTable(name as StageThreeValidityItem, value, maxLength)
+        ? INPUT_STATUS_SUCCESS
+        : INPUT_STATUS_ERROR
+
+      updateLocalProposalValidation(
+        {
+          paymentsValidation: currentProposalValidation.paymentsValidation.map((paymentValidation, idx) =>
+            idx === row ? { ...paymentValidation, [name]: validationResult } : paymentValidation,
+          ),
+        },
+        proposalId,
+      )
+    }
 
     setProposalHasChange(true)
   }
@@ -167,7 +171,7 @@ export const StageThreeForm = ({
       <FormHeaderGroup>
         <h1>Stage 3</h1>
         <StatusFlag
-          text={locked ? 'LOCKED' : 'UNLOCKED'}
+          text={locked ? ProposalStatus.LOCKED : ProposalStatus.UNLOCKED}
           status={locked ? ProposalStatus.DEFEATED : ProposalStatus.EXECUTED}
         />
         <a className="info-link" href="https://mavryk.finance/litepaper#governance" target="_blank" rel="noreferrer">
@@ -225,7 +229,6 @@ export const StageThreeForm = ({
                       value={String(payment.to__id)}
                       inputStatus={validationObj?.to__id}
                       onChange={(e) => handleChange(e, rowIdx)}
-                      onBlur={(e) => handleOnBlur(e, rowIdx)}
                       name={'to__id'}
                       type={'text'}
                     />
@@ -239,7 +242,6 @@ export const StageThreeForm = ({
                       value={String(payment.title)}
                       inputStatus={validationObj?.title}
                       onChange={(e) => handleChange(e, rowIdx)}
-                      onBlur={(e) => handleOnBlur(e, rowIdx)}
                       name={'title'}
                       type={'text'}
                     />
@@ -253,7 +255,6 @@ export const StageThreeForm = ({
                       value={String(payment.token_amount)}
                       inputStatus={validationObj?.token_amount}
                       onChange={(e) => handleChange(e, rowIdx)}
-                      onBlur={(e) => handleOnBlur(e, rowIdx)}
                       name={'token_amount'}
                       type={'number'}
                     />

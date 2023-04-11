@@ -13,6 +13,7 @@ import {
 } from '../ProposalSubmission.style'
 import { Input } from 'app/App.components/Input/Input.controller'
 import Icon from 'app/App.components/Icon/Icon.view'
+import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 
 // types
 import { ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
@@ -20,9 +21,9 @@ import { StageOneFormProps, ValidationResult } from '../ProposalSybmittion.types
 
 // helpers, constants
 import { isValidLength, isValidHttpUrl } from '../../../utils/validatorFunctions'
-
 import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
-import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+
+// TODO: Update markup
 
 export const StageOneForm = ({
   proposalId,
@@ -44,66 +45,6 @@ export const StageOneForm = ({
   const isProposalSubmitted = proposalId >= 0
   const disabled = !isProposalRound || isProposalSubmitted
 
-  const handleOnBlur = (
-    e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>,
-    formField: string,
-  ) => {
-    let validityCheckResult: ValidationResult
-    switch (formField) {
-      case 'TITLE':
-        validityCheckResult = isValidLength(currentProposal.title, 1, proposalTitleMaxLength)
-          ? INPUT_STATUS_SUCCESS
-          : INPUT_STATUS_ERROR
-        updateLocalProposalValidation(
-          {
-            title: validityCheckResult,
-          },
-          proposalId,
-        )
-        break
-      case 'DESCRIPTION':
-        validityCheckResult = isValidLength(currentProposal.description, 1, proposalDescriptionMaxLength)
-          ? INPUT_STATUS_SUCCESS
-          : INPUT_STATUS_ERROR
-        updateLocalProposalValidation(
-          {
-            description: validityCheckResult,
-          },
-          proposalId,
-        )
-        break
-      case 'SUCCESS_MVK_REWARD':
-        updateLocalProposalValidation(
-          {
-            successMVKReward: currentProposal.successReward >= 0 ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
-          },
-          proposalId,
-        )
-        break
-      case 'SOURCE_CODE_LINK':
-        validityCheckResult =
-          isValidHttpUrl(currentProposal.sourceCode) &&
-          isValidLength(currentProposal.sourceCode, 1, proposalSourceCodeMaxLength)
-            ? INPUT_STATUS_SUCCESS
-            : INPUT_STATUS_ERROR
-        updateLocalProposalValidation(
-          {
-            sourceCode: validityCheckResult,
-          },
-          proposalId,
-        )
-        break
-      case 'IPFS':
-        updateLocalProposalValidation(
-          {
-            ipfs: Boolean(e) ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
-          },
-          proposalId,
-        )
-        break
-    }
-  }
-
   // update local state value and parent state due to inputted info
   const inputHandler = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -113,6 +54,59 @@ export const StageOneForm = ({
       },
       proposalId,
     )
+
+    switch (name) {
+      case 'title':
+        updateLocalProposalValidation(
+          {
+            title: isValidLength(currentProposal.title, 1, proposalTitleMaxLength)
+              ? INPUT_STATUS_SUCCESS
+              : INPUT_STATUS_ERROR,
+          },
+          proposalId,
+        )
+        break
+      case 'description':
+        updateLocalProposalValidation(
+          {
+            description: isValidLength(currentProposal.description, 1, proposalDescriptionMaxLength)
+              ? INPUT_STATUS_SUCCESS
+              : INPUT_STATUS_ERROR,
+          },
+          proposalId,
+        )
+        break
+
+      case 'sourceCode':
+        updateLocalProposalValidation(
+          {
+            sourceCode:
+              isValidHttpUrl(currentProposal.sourceCode) &&
+              isValidLength(currentProposal.sourceCode, 1, proposalSourceCodeMaxLength)
+                ? INPUT_STATUS_SUCCESS
+                : INPUT_STATUS_ERROR,
+          },
+          proposalId,
+        )
+        break
+      // TODO: remove if no need
+      // case 'SUCCESS_MVK_REWARD':
+      //   updateLocalProposalValidation(
+      //     {
+      //       successMVKReward: currentProposal.successReward >= 0 ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
+      //     },
+      //     proposalId,
+      //   )
+      //   break
+      // case 'IPFS':
+      //   updateLocalProposalValidation(
+      //     {
+      //       ipfs: Boolean(e) ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
+      //     },
+      //     proposalId,
+      //   )
+      //   break
+    }
   }
 
   return (
@@ -120,7 +114,7 @@ export const StageOneForm = ({
       <FormHeaderGroup>
         <h1>Stage 1 </h1>
         <StatusFlag
-          text={currentProposal.locked ? 'LOCKED' : 'UNLOCKED'}
+          text={currentProposal.locked ? ProposalStatus.LOCKED : ProposalStatus.UNLOCKED}
           status={currentProposal.locked ? ProposalStatus.DEFEATED : ProposalStatus.EXECUTED}
         />
         <a className="info-link" href="https://mavryk.finance/litepaper#governance" target="_blank" rel="noreferrer">
@@ -142,7 +136,6 @@ export const StageOneForm = ({
                 name="title"
                 value={currentProposal.title}
                 onChange={inputHandler}
-                onBlur={(e: React.ChangeEvent<HTMLInputElement>) => handleOnBlur(e, 'TITLE')}
                 inputStatus={currentProposalValidation.title}
                 disabled={disabled}
               />
@@ -175,7 +168,6 @@ export const StageOneForm = ({
             name="description"
             value={currentProposal.description}
             onChange={inputHandler}
-            onBlur={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleOnBlur(e, 'DESCRIPTION')}
             inputStatus={currentProposalValidation.description}
             disabled={disabled}
             textAreaMaxLimit={proposalDescriptionMaxLength}
@@ -198,7 +190,6 @@ export const StageOneForm = ({
             value={currentProposal.sourceCode}
             name="sourceCode"
             onChange={inputHandler}
-            onBlur={(e: React.ChangeEvent<HTMLInputElement>) => handleOnBlur(e, 'SOURCE_CODE_LINK')}
             inputStatus={currentProposalValidation.sourceCode}
             disabled={disabled}
           />

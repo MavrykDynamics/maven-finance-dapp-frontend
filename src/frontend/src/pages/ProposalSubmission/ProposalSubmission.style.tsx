@@ -34,10 +34,6 @@ export const ProposalSubmissionForm = styled(Card)<{ theme: MavrykTheme }>`
     margin-bottom: 19px;
   }
 
-  .document-uploader-wrap {
-    padding-top: 18px;
-  }
-
   .step-2-textarea {
     textarea {
       height: 189px;
@@ -131,19 +127,6 @@ export const ProposalSubmissionForm = styled(Card)<{ theme: MavrykTheme }>`
     }
   }
 
-  .step-plus-bytes {
-    position: absolute;
-    color: ${({ theme }) => theme.textColor};
-    font-size: 24px;
-    right: 0;
-    bottom: -26px;
-
-    &:disabled {
-      cursor: default;
-      opacity: 0.6;
-    }
-  }
-
   .desr-block {
     margin-bottom: 30px;
   }
@@ -173,10 +156,6 @@ export const FormTitleAndFeeContainer = styled.div<{ theme: MavrykTheme }>`
   grid-template-columns: 517px 1fr 170px;
   column-gap: 30px;
   font-weight: 500;
-
-  &.eGov-modal {
-    grid-template-columns: 1.2fr 0.4fr;
-  }
 `
 export const FormTitleContainer = styled.div<{ theme: MavrykTheme }>``
 

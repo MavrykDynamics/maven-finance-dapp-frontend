@@ -166,11 +166,6 @@ export const withdrawLendingAssetAction =
       // confirm query completion
       await transaction?.confirmation()
 
-      // refetch data we need
-      await dispatch(getMTokensStorage())
-      await dispatch(getLoansStorage())
-      await dispatch(updateUserData())
-
       // @ts-ignore don't have proper type to acees data, type has only methods
       const currentOperationLevel = transaction?.lastHead?.header?.level
 

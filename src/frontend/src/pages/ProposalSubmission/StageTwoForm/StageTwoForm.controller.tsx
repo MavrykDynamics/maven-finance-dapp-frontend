@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { State } from 'reducers'
 
 // types
-import { StageTwoFormProps, ProposalBytesType, ValidationResult } from '../ProposalSybmittion.types'
+import { StageTwoFormProps, ProposalBytesType } from '../ProposalSybmittion.types'
 
 // components
 import Icon from '../../../app/App.components/Icon/Icon.view'
@@ -28,7 +28,9 @@ import {
   FormTitleEntry,
 } from '../ProposalSubmission.style'
 
-// TODO: valid bytes text for testing: 05050505080508050805050505050505080505050507070017050505050508030b
+// TODO: Update markup
+// valid bytes text for testing: 05050505080508050805050505050505080505050507070017050505050508030b
+
 export const StageTwoForm = ({
   proposalId,
   currentProposal: { proposalData = [], title, locked },
@@ -42,50 +44,15 @@ export const StageTwoForm = ({
   )
   const isProposalPeriod = governancePhase === 'PROPOSAL'
 
-  // effect to track change of proposal, by tab clicking, and default validate it // TODO: if need uncomment it
+  // is no bytes pair on proposal change add empty pair on client
   useEffect(() => {
     if (!proposalData.some(checkBytesPairExists)) {
       handleCreateNewByte()
     }
-  }, [proposalId, proposalData])
-
-  const handleOnBlur = (byte: ProposalBytesType, text: string, type: 'validTitle' | 'validBytes') => {
-    let validationStatus: ValidationResult
-
-    switch (type) {
-      case 'validTitle':
-        validationStatus =
-          isValidLength(text, 1, proposalMetadataTitleMaxLength) &&
-          getBytesPairValidationStatus(text, type) === INPUT_STATUS_SUCCESS
-            ? INPUT_STATUS_SUCCESS
-            : INPUT_STATUS_ERROR
-        updateLocalProposalValidation(
-          {
-            bytesValidation: currentProposalValidation.bytesValidation.map((byteValidity) =>
-              byteValidity.byteId === byte.id ? { ...byteValidity, validTitle: validationStatus } : byteValidity,
-            ),
-          },
-          proposalId,
-        )
-        break
-      case 'validBytes':
-        validationStatus =
-          isHexadecimal(text) && getBytesPairValidationStatus(text, type) === INPUT_STATUS_SUCCESS
-            ? INPUT_STATUS_SUCCESS
-            : INPUT_STATUS_ERROR
-        updateLocalProposalValidation(
-          {
-            bytesValidation: currentProposalValidation.bytesValidation.map((byteValidity) =>
-              byteValidity.byteId === byte.id ? { ...byteValidity, validBytes: validationStatus } : byteValidity,
-            ),
-          },
-          proposalId,
-        )
-        break
-    }
-  }
+  }, [proposalId])
 
   const handleOnChange = (byte: ProposalBytesType, text: string, type: 'title' | 'encoded_code') => {
+    // update input value
     updateLocalProposalData(
       {
         proposalData: proposalData.map((oldByte) =>
@@ -94,6 +61,47 @@ export const StageTwoForm = ({
       },
       proposalId,
     )
+
+    // update validation for input
+    switch (type) {
+      case 'title':
+        updateLocalProposalValidation(
+          {
+            bytesValidation: currentProposalValidation.bytesValidation.map((byteValidity) =>
+              byteValidity.byteId === byte.id
+                ? {
+                    ...byteValidity,
+                    validTitle:
+                      isValidLength(text, 1, proposalMetadataTitleMaxLength) &&
+                      getBytesPairValidationStatus(text, 'validTitle') === INPUT_STATUS_SUCCESS
+                        ? INPUT_STATUS_SUCCESS
+                        : INPUT_STATUS_ERROR,
+                  }
+                : byteValidity,
+            ),
+          },
+          proposalId,
+        )
+        break
+      case 'encoded_code':
+        updateLocalProposalValidation(
+          {
+            bytesValidation: currentProposalValidation.bytesValidation.map((byteValidity) =>
+              byteValidity.byteId === byte.id
+                ? {
+                    ...byteValidity,
+                    validBytes:
+                      isHexadecimal(text) && getBytesPairValidationStatus(text, 'validBytes') === INPUT_STATUS_SUCCESS
+                        ? INPUT_STATUS_SUCCESS
+                        : INPUT_STATUS_ERROR,
+                  }
+                : byteValidity,
+            ),
+          },
+          proposalId,
+        )
+        break
+    }
 
     setProposalHasChange(true)
   }
@@ -116,6 +124,7 @@ export const StageTwoForm = ({
       },
       proposalId,
     )
+    // add validation field for new bytes pair
     updateLocalProposalValidation(
       {
         bytesValidation: (currentProposalValidation.bytesValidation ?? []).concat({
@@ -220,7 +229,7 @@ export const StageTwoForm = ({
       <FormHeaderGroup>
         <h1>Stage 2</h1>
         <StatusFlag
-          text={locked ? 'LOCKED' : 'UNLOCKED'}
+          text={locked ? ProposalStatus.LOCKED : ProposalStatus.UNLOCKED}
           status={locked ? ProposalStatus.DEFEATED : ProposalStatus.EXECUTED}
         />
         <a className="info-link" href="https://mavryk.finance/litepaper#governance" target="_blank" rel="noreferrer">
@@ -271,7 +280,6 @@ export const StageTwoForm = ({
                   value={item.title ?? ''}
                   required
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleOnChange(item, e.target.value, 'title')}
-                  onBlur={(e: React.ChangeEvent<HTMLInputElement>) => handleOnBlur(item, e.target.value, 'validTitle')}
                   inputStatus={validityObject?.validTitle}
                   disabled={existInServer || locked}
                 />
@@ -284,7 +292,6 @@ export const StageTwoForm = ({
                 onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                   handleOnChange(item, e.target.value, 'encoded_code')
                 }
-                onBlur={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleOnBlur(item, e.target.value, 'validBytes')}
                 inputStatus={validityObject?.validBytes}
                 disabled={!isProposalPeriod || locked}
               />

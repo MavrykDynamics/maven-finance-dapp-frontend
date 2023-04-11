@@ -29,6 +29,8 @@ import { ACTION_PRIMARY, ACTION_SECONDARY } from 'app/App.components/Button/Butt
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
 import { ProposalRecordType } from 'utils/TypesAndInterfaces/Governance'
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 
 export const ProposalSubmission = () => {
   const dispatch = useDispatch()
@@ -272,80 +274,90 @@ export const ProposalSubmission = () => {
   return (
     <Page>
       <PageHeader page={'proposal submission'} />
-      {usersProposalsToSwitch.length > 1 ? (
-        <MultyProposals switchItems={usersProposalsToSwitch} switchProposal={changeActiveProposal} />
-      ) : null}
-      <PropSubmissionTopBar value={activeTab} valueCallback={handleChangeTab} />
+      {isLoading ? (
+        <DataLoaderWrapper>
+          <ClockLoader width={150} height={150} />
+          <div className="text">Loading your proposals</div>
+        </DataLoaderWrapper>
+      ) : (
+        <>
+          {usersProposalsToSwitch.length > 1 ? (
+            <MultyProposals switchItems={usersProposalsToSwitch} switchProposal={changeActiveProposal} />
+          ) : null}
 
-      <ProposalSubmissionForm>
-        {activeTab === 1 && (
-          <StageOneForm
-            proposalId={selectedUserProposalId}
-            currentProposal={currentProposal}
-            currentProposalValidation={currentProposalValidation}
-            updateLocalProposalValidation={updateLocalProposalValidation}
-            updateLocalProposalData={updateLocalProposalData}
-          />
-        )}
-        {activeTab === 2 && (
-          <StageTwoForm
-            proposalId={selectedUserProposalId}
-            currentProposal={currentProposal}
-            currentProposalValidation={currentProposalValidation}
-            updateLocalProposalValidation={updateLocalProposalValidation}
-            updateLocalProposalData={updateLocalProposalData}
-            setProposalHasChange={setProposalHasChange}
-          />
-        )}
-        {activeTab === 3 && (
-          <StageThreeForm
-            proposalId={selectedUserProposalId}
-            currentProposal={currentProposal}
-            paymentMethods={paymentMethods}
-            currentProposalValidation={currentProposalValidation}
-            updateLocalProposalValidation={updateLocalProposalValidation}
-            updateLocalProposalData={updateLocalProposalData}
-            setProposalHasChange={setProposalHasChange}
-          />
-        )}
+          <PropSubmissionTopBar value={activeTab} valueCallback={handleChangeTab} />
 
-        <FormButtonContainer>
-          <Button
-            icon="close-stroke"
-            className="delete-pair"
-            text="Drop Proposal"
-            kind={ACTION_SECONDARY}
-            disabled={!isProposalSubmitted || !isProposalPeriod}
-            onClick={() => handleDropProposal(selectedUserProposalId)}
-          />
-          <Button
-            icon="lock"
-            className="lock"
-            text={'Lock Proposal'}
-            disabled={!isProposalSubmitted || !isProposalPeriod || currentProposal.locked || proposalHasChange}
-            onClick={() => handleLockProposal(selectedUserProposalId)}
-            kind={ACTION_SECONDARY}
-          />
-          {isProposalSubmitted ? (
-            <Button
-              icon="bytes"
-              className="bytes"
-              text="Save Changes"
-              kind={ACTION_PRIMARY}
-              disabled={!proposalHasChange || currentProposal.locked || !isBytesValid || !isPaymentsValid}
-              onClick={() => handleUpdateData(selectedUserProposalId)}
-            />
-          ) : (
-            <Button
-              icon="auction"
-              kind={ACTION_PRIMARY}
-              text={'Submit Proposal'}
-              disabled={!isStageOneDataValid || !isBytesValid || !isPaymentsValid}
-              onClick={handleSubmitProposal}
-            />
-          )}
-        </FormButtonContainer>
-      </ProposalSubmissionForm>
+          <ProposalSubmissionForm>
+            {activeTab === 1 && (
+              <StageOneForm
+                proposalId={selectedUserProposalId}
+                currentProposal={currentProposal}
+                currentProposalValidation={currentProposalValidation}
+                updateLocalProposalValidation={updateLocalProposalValidation}
+                updateLocalProposalData={updateLocalProposalData}
+              />
+            )}
+            {activeTab === 2 && (
+              <StageTwoForm
+                proposalId={selectedUserProposalId}
+                currentProposal={currentProposal}
+                currentProposalValidation={currentProposalValidation}
+                updateLocalProposalValidation={updateLocalProposalValidation}
+                updateLocalProposalData={updateLocalProposalData}
+                setProposalHasChange={setProposalHasChange}
+              />
+            )}
+            {activeTab === 3 && (
+              <StageThreeForm
+                proposalId={selectedUserProposalId}
+                currentProposal={currentProposal}
+                paymentMethods={paymentMethods}
+                currentProposalValidation={currentProposalValidation}
+                updateLocalProposalValidation={updateLocalProposalValidation}
+                updateLocalProposalData={updateLocalProposalData}
+                setProposalHasChange={setProposalHasChange}
+              />
+            )}
+
+            <FormButtonContainer>
+              <Button
+                icon="close-stroke"
+                className="delete-pair"
+                text="Drop Proposal"
+                kind={ACTION_SECONDARY}
+                disabled={!isProposalSubmitted || !isProposalPeriod}
+                onClick={() => handleDropProposal(selectedUserProposalId)}
+              />
+              <Button
+                icon="lock"
+                className="lock"
+                text={'Lock Proposal'}
+                disabled={!isProposalSubmitted || !isProposalPeriod || currentProposal.locked || proposalHasChange}
+                onClick={() => handleLockProposal(selectedUserProposalId)}
+                kind={ACTION_SECONDARY}
+              />
+              {isProposalSubmitted ? (
+                <Button
+                  icon="bytes"
+                  className="bytes"
+                  text="Save Changes"
+                  kind={ACTION_PRIMARY}
+                  disabled={!proposalHasChange || currentProposal.locked || !isBytesValid || !isPaymentsValid}
+                  onClick={() => handleUpdateData(selectedUserProposalId)}
+                />
+              ) : (
+                <Button
+                  icon="auction"
+                  kind={ACTION_PRIMARY}
+                  text={'Submit Proposal'}
+                  disabled={!isStageOneDataValid || !isBytesValid || !isPaymentsValid}
+                  onClick={handleSubmitProposal}
+                />
+              )}
+            </FormButtonContainer>
+          </ProposalSubmissionForm>
+        </>
+      )}
     </Page>
   )
 }
