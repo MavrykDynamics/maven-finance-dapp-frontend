@@ -21,6 +21,7 @@ export const DoormanChartCard = styled(Card)<{ theme: MavrykTheme }>`
   align-items: center;
   justify-content: center;
   position: relative;
+  z-index: 0;
 
   > div {
     color: ${({ theme }) => theme.textColor};
