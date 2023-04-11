@@ -562,7 +562,7 @@ const getBorrowings = async (
         acc.myBorrowingList.push(normallizedVault)
       }
 
-      if (vault.vault?.depositors.find(({ depositor_id }) => depositor_id === userAddress)) {
+      if (depositors.find((depositorId) => depositorId === userAddress) || deporsitorsFlag === ANY_USER) {
         acc.permissinedBorrowingList.push(normallizedVault)
       }
 
