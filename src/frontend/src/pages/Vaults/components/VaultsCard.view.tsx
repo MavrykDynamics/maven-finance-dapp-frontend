@@ -290,7 +290,7 @@ export const VaultsCard = (props: Props) => {
                         <div className="cell-content">
                           <CommaNumber
                             value={amount}
-                            decimalsToShow={2}
+                            decimalsToShow={isTotalRow ? 2 : 4}
                             beginningText={isTotalRow ? '$' : ''}
                             className="balance"
                           />

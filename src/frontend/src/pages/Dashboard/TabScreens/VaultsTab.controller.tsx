@@ -96,7 +96,7 @@ export const VaultsTab = ({ isLoading }: { isLoading: boolean }) => {
                         <TableRow key={symbol} rowHeight={25} borderColor="dataColor" className="add-hover">
                           <TableCell width="33%">{symbol}</TableCell>
                           <TableCell width="33%">
-                            <CommaNumber value={balance} useAccurateParsing />
+                            <CommaNumber value={balance} decimalsToShow={4} useAccurateParsing />
                           </TableCell>
                           <TableCell width="33%" contentPosition="right">
                             <CommaNumber value={usdValue} beginningText={rate ? '$' : symbol} useAccurateParsing />
