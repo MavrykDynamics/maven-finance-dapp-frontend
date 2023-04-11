@@ -71,7 +71,7 @@ export const CreateNewVault = ({
   const dispatch = useDispatch()
   const {
     xtzBakers: { otherBakers, dao, mavrykDynamics },
-  } = useSelector((state: State) => state.loans)
+  } = useSelector((state: State) => state.tokens)
   const xtzBakers: Array<XtzBakerType & { isDisabled?: boolean }> = [
     ...otherBakers,
     ...(dao ? [dao] : []),

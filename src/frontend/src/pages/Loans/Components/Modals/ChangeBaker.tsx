@@ -21,7 +21,6 @@ import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { DropDownJsxChild, LoansModalBase } from './Modals.style'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
-
 const MAVRYK_DYNAMICS_BAKERY = 1
 const DAO_BAKERY = 2
 const OTHER_BAKERY = 3
@@ -40,7 +39,7 @@ export const ChangeBaker = ({
 
   const {
     xtzBakers: { otherBakers, dao, mavrykDynamics },
-  } = useSelector((state: State) => state.loans)
+  } = useSelector((state: State) => state.tokens)
 
   const dispatch = useDispatch()
   const [activeTab, setActiveSliding] = useState(MAVRYK_DYNAMICS_BAKERY)
