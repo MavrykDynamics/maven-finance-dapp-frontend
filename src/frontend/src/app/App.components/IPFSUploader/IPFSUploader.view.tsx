@@ -60,8 +60,6 @@ export const IPFSUploaderView = ({
   const isTypeFileImage = typeFile === 'image'
   const [validationStatus, setValidationStatus] = useState<InputStatusType>(imageIpfsUrl ? INPUT_STATUS_SUCCESS : '')
 
-  console.log({ fileName, validationStatus, imageIpfsUrl, isUploading })
-
   const [file, setFile] = useState<File | null>(null)
 
   const handleChange = useCallback(

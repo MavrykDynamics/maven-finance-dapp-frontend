@@ -31,24 +31,24 @@ export function calcExitFee(totalMvkSupply: number | undefined, totalStakedMVK: 
 
 /**
  * @param number -> number in regular form that we wan't to convert for usage in contract call
- * @param grage -> grage for 10, that we'll need to multiply number to convert it for usage in contract call
+ * @param grade -> grade for 10, that we'll need to multiply number to convert it for usage in contract call
  *
  * By default fn will use MVK decimals amount
  * Math.floor is used to remove decimals that are more that allowed amount for token
  */
 export const convertNumberForContractCall = ({
   number,
-  grage = MVK_DECIMALS,
+  grade = MVK_DECIMALS,
 }: {
   number: number
-  grage?: number
+  grade?: number
 }): number => {
-  return Math.floor(number * Math.pow(10, grage))
+  return Math.floor(number * Math.pow(10, grade))
 }
 
 /**
  * @param number -> number in contract form that we wan't to convert for usage on client output
- * @param grage -> grage for 10, that we'll need to divide number to convert it for usage on client
+ * @param grade -> grade for 10, that we'll need to divide number to convert it for usage on client
  *
  * contract number form is number without decimals, this form is reached by multiplying reqular number by 10^(decimals amount different between different types of tokens)
  *
@@ -56,12 +56,12 @@ export const convertNumberForContractCall = ({
  */
 export const convertNumberForClient = ({
   number,
-  grage = MVK_DECIMALS,
+  grade = MVK_DECIMALS,
 }: {
   number: number
-  grage?: number
+  grade?: number
 }): number => {
-  return number / Math.pow(10, grage)
+  return number / Math.pow(10, grade)
 }
 
 export const getDynamicDecimalsAmountForOutput = (number: number): number => {

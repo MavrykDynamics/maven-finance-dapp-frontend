@@ -65,6 +65,12 @@ export const LoansTabStyled = styled.div<{ theme: MavrykTheme }>`
     bottom: 10px;
     right: 30px;
   }
+
+  &.permissioned {
+    .list-wrapper {
+      margin-top: 20px;
+    }
+  }
 `
 
 export const LendingTabListItem = styled.div<{ theme: MavrykTheme }>`

@@ -28,11 +28,24 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
   const {
     loanTokens,
     chartsData: {
-      totalLended,
-      totalBorrowed,
       lendBorrow24hDiff: { last24hLending, last48hLending, last24hBorrowing, last48hBorrowing },
     },
   } = useSelector((state: State) => state.loans)
+
+  const { totalBorrowed, totalLended } = loanTokens.reduce<{
+    totalLended: number
+    totalBorrowed: number
+  }>(
+    (acc, { totalBorrowed, totalLended }) => {
+      acc.totalBorrowed += totalBorrowed
+      acc.totalLended += totalLended
+      return acc
+    },
+    {
+      totalLended: 0,
+      totalBorrowed: 0,
+    },
+  )
 
   const { lendingSuppliers, borrowers, mostBorrowedAsset, mostLendedAsset } = useMemo(() => {
     return loanTokens.reduce<{

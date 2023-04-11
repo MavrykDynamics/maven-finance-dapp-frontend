@@ -35,11 +35,13 @@ export const Repay = ({
 }) => {
   const {
     vaultId,
+    vaultAddress,
     borrowedAsset,
     feesAmount = 0,
     currentCollateralBalance = 0,
     borrowCapacity = 0,
     borrowedAmount = 0,
+    scrollToCurrentVault,
   } = data ?? {}
 
   const totalOutstanding = feesAmount + Number(borrowedAmount)
@@ -97,15 +99,17 @@ export const Repay = ({
   const backBtnHandler = () => setShownScreen('initial')
 
   const repayBtnHandler = async () => {
-    if (vaultId && borrowedAsset) {
+    if (vaultId && borrowedAsset && vaultAddress && scrollToCurrentVault) {
       await dispatch(
         repayPartOfVaultAction(
           vaultId,
+          vaultAddress,
           inputAmount,
           borrowedAsset.decimals,
           borrowedAsset.tokenType,
           borrowedAsset.address,
           closePopup,
+          scrollToCurrentVault,
         ),
       )
     }
@@ -165,7 +169,11 @@ export const Repay = ({
                   settings={{
                     balance: borrowedAsset.userBalance,
                     balanceAsset: borrowedAsset?.symbol,
-                    useMaxHandler: () => inputOnChangeHandle(String(totalOutstanding), totalOutstanding),
+                    useMaxHandler: () =>
+                      inputOnChangeHandle(
+                        String(Math.min(borrowedAsset.userBalance, totalOutstanding)),
+                        Math.min(borrowedAsset.userBalance, totalOutstanding),
+                      ),
                     inputStatus: inputData.validationStatus,
                     convertedValue: inputAmount * borrowedAsset.rate,
                     inputSize: INPUT_LARGE,

@@ -26,7 +26,6 @@ import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 
 // actions
 import { getVaultsStorage, markForLiquidation } from './Vaults.actions'
-import { getAvaliableCollaterals } from 'pages/Loans/Actions/getLoansData.actions'
 
 const pathname = '/vaults'
 

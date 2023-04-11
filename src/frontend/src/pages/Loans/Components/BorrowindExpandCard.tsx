@@ -1,6 +1,6 @@
-import { useContext, useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useContext, useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
 
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import {
@@ -30,6 +30,7 @@ import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/Gradien
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
+import { scrollToFullView } from 'utils/scrollToFullView'
 
 import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } from 'app/App.components/Table'
 import { ThreeLevelListItem } from '../Loans.style'
@@ -40,8 +41,8 @@ import { loansPopupsContext } from './Modals/LoansModals.provider'
 import { State } from 'reducers'
 import { calculateCollateralShare } from 'pages/Vaults/calcFunctionsForVault'
 import { isTezosAsset } from '../Loans.helpers'
-import { getDynamicDecimalsAmountForOutput } from 'utils/calcFunctions'
 import getTimestampByLevel from 'utils/Fetchers/getTimestampByLevel'
+import { getDynamicDecimalsAmountForOutput, getNumberInBounds } from 'utils/calcFunctions'
 
 type BorrowingExpandCardPropsType = LoansVaultType & {
   isOwner?: boolean
@@ -99,6 +100,14 @@ export const BorrowingExpandCard = ({
     openWithdrawCollateralPopup,
   } = useContext(loansPopupsContext)
 
+  const ref = useRef<HTMLDivElement | null>(null)
+
+  // use for borrow or repay
+  // it scrolls until the current vault after the transaction and changing position
+  const scrollToCurrentVault = () => {
+    scrollToFullView(ref.current, 'nearest')
+  }
+
   const mappedMVKOperators = {
     firstAddress: operators?.[0],
     ...(operators ? { amount: operators.length - 1 } : {}),
@@ -134,7 +143,7 @@ export const BorrowingExpandCard = ({
   }, [vaultStatus, levelOfEarly, levelOfLate])
 
   return (
-    <>
+    <div ref={ref}>
       <Expand
         getExpandedStatus={getExpandedStatus}
         isExpandedByDefault={isOpenedVault}
@@ -247,9 +256,10 @@ export const BorrowingExpandCard = ({
                         borrowCapacity,
                         currentBorrowedAmount: borrowedAmount,
                         DAOFee,
+                        scrollToCurrentVault,
                       })
                     }
-                    kind={BUTTON_PRIMARY}
+                    kind={BUTTON_SECONDARY}
                     form={BUTTON_WIDE}
                     disabled={collateralRatio < 200}
                   >
@@ -259,14 +269,16 @@ export const BorrowingExpandCard = ({
                     onClick={() =>
                       openRepayPopup?.({
                         vaultId,
+                        vaultAddress: address,
                         borrowedAsset: borrowedAsset,
                         borrowedAmount,
                         feesAmount: fee,
                         currentCollateralBalance: collateralData.at(-1)?.amount ?? 0,
                         borrowCapacity,
+                        scrollToCurrentVault,
                       })
                     }
-                    kind={BUTTON_SECONDARY}
+                    kind={BUTTON_PRIMARY}
                     form={BUTTON_WIDE}
                     disabled={!borrowedAmount}
                   >
@@ -298,11 +310,10 @@ export const BorrowingExpandCard = ({
 
                       const collateralShare = isTotalRow
                         ? 100
-                        : Math.max(0, Math.max(100, calculateCollateralShare(amount * rate, collateralTotalBalance)))
+                        : getNumberInBounds(0, 100, calculateCollateralShare(amount * rate, collateralTotalBalance))
 
                       if (isTotalRow && collateralData.length < 3) return null
                       const collateralDecimalsLength = getDynamicDecimalsAmountForOutput(amount)
-                      const collateralRateDecimalsLength = getDynamicDecimalsAmountForOutput(amount * rate)
 
                       return (
                         <TableRow rowHeight={65} key={gqlName + '-' + idx}>
@@ -316,6 +327,7 @@ export const BorrowingExpandCard = ({
                               </div>
                             )}
                           </TableCell>
+
                           <TableCell width={'22%'}>
                             <div className="cell-content">
                               <CommaNumber
@@ -326,13 +338,7 @@ export const BorrowingExpandCard = ({
                                 beginningText={isTotalRow ? '$' : ''}
                               />
                               {rate ? (
-                                <CommaNumber
-                                  value={amount * rate}
-                                  className="rate"
-                                  beginningText="$"
-                                  showDecimal
-                                  decimalsToShow={collateralRateDecimalsLength}
-                                />
+                                <CommaNumber value={amount * rate} className="rate" beginningText="$" showDecimal />
                               ) : null}
                             </div>
                           </TableCell>
@@ -403,6 +409,7 @@ export const BorrowingExpandCard = ({
                                     }
                                     form={BUTTON_WIDE}
                                     kind={BUTTON_SECONDARY}
+                                    disabled={collateralRatio < 200}
                                   >
                                     <Icon id="minus" /> Remove
                                   </Button>
@@ -550,6 +557,7 @@ export const BorrowingExpandCard = ({
                     onClick={() =>
                       openRepayFullPopup?.({
                         vaultId,
+                        vaultAddress: address,
                         borrowedAsset: borrowedAsset,
                         collateralRatio,
                         borrowedAmount,
@@ -567,6 +575,6 @@ export const BorrowingExpandCard = ({
           </BorrowingTabListItemExpanded>
         )}
       </Expand>
-    </>
+    </div>
   )
 }

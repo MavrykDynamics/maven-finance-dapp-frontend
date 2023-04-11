@@ -37,10 +37,22 @@ export const Dashboard = () => {
     isLoaded: isVaultsLoaded,
   } = useSelector((state: State) => state.vaults)
   const { farms, isLoaded: isFarmsLoaded } = useSelector((state: State) => state.farm)
-  const {
-    isDataLoaded: isLoansLoaded,
-    chartsData: { totalBorrowed, totalLended },
-  } = useSelector((state: State) => state.loans)
+  const { isDataLoaded: isLoansLoaded, loanTokens } = useSelector((state: State) => state.loans)
+
+  const { totalBorrowed, totalLended } = loanTokens.reduce<{
+    totalLended: number
+    totalBorrowed: number
+  }>(
+    (acc, { totalBorrowed, totalLended, loanTokenData: { rate } }) => {
+      acc.totalBorrowed += totalBorrowed * rate
+      acc.totalLended += totalLended * rate
+      return acc
+    },
+    {
+      totalLended: 0,
+      totalBorrowed: 0,
+    },
+  )
 
   const marketCapValue = mvkExchangeRate ? mvkExchangeRate * totalSupply : 0
 

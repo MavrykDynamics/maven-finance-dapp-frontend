@@ -1,6 +1,6 @@
 export const VAULTS_STORAGE_QUERY = `
   query GetAllVaultsStorage {
-    lending_controller(where: {mock_time: {_eq: true}}) {
+    lending_controller(where: {mock_time: {_eq: false}}) {
       address
       interest_rate_decimals
       liquidation_delay_in_minutes
@@ -12,7 +12,7 @@ export const VAULTS_STORAGE_QUERY = `
       decimals
       minimum_loan_fee_pct
 
-      vaults {
+      vaults(order_by: {vault: {creation_timestamp: desc}}, where: {open: {_eq: true}}) {
         collateral_balances {
           balance
           token {
@@ -32,6 +32,10 @@ export const VAULTS_STORAGE_QUERY = `
           allowance
         }
 
+        lending_controller {
+          liquidation_delay_in_minutes
+        }
+        
         last_updated_block_level
         owner_id
         id
@@ -43,6 +47,7 @@ export const VAULTS_STORAGE_QUERY = `
         liquidation_end_level
         internal_id
         borrow_index
+
         loan_token {
           loan_token_name
           loan_token_address
@@ -50,6 +55,10 @@ export const VAULTS_STORAGE_QUERY = `
           oracle_id
           current_interest_rate
           borrow_index
+
+          total_remaining,
+          token_pool_total,
+          reserve_ratio
         }
       }
     }

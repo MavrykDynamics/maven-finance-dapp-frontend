@@ -34,7 +34,7 @@ import {
 } from 'reducers/actions/dipDupActions.actions'
 import { getCouncilMembers } from 'pages/Council/Council.actions'
 import { getBreakGlassCouncilMembers } from 'pages/BreakGlassCouncil/BreakGlassCouncil.actions'
-import { getAvaliableCollaterals } from 'pages/Loans/Actions/getLoansData.actions'
+import { getAvaliableCollaterals, getXtzBakers } from 'pages/Loans/Actions/getLoansData.actions'
 
 // export const { store, persistor } = configureStore({})
 export const { store } = configureStore({})
@@ -62,6 +62,7 @@ const AppContainer = () => {
         dispatch(getDipDupTokensStorage()),
         dispatch(getWhitelistTokensStorage()),
         dispatch(getMTokensStorage()),
+        dispatch(getXtzBakers()),
 
         // Used to retrieve user avatar
         dispatch(getCouncilMembers()),
@@ -77,8 +78,7 @@ const AppContainer = () => {
       }
 
       // Depends on data feeds (getFeedsStorage())
-      await dispatch(getTokensPrices())
-      dispatch(getAvaliableCollaterals())
+      await Promise.all([dispatch(getTokensPrices()), dispatch(getAvaliableCollaterals())])
 
       // Turn off loader
       await dispatch(toggleInitialDataLoading(false))

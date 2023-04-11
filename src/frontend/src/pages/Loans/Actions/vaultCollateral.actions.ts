@@ -10,6 +10,7 @@ import { updateUserData } from 'reducers/actions/user.actions'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { TokenType } from 'utils/TypesAndInterfaces/General'
 import { getAvaliableCollaterals, getLoansStorage } from './getLoansData.actions'
+import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
 
 // remove collateral from the vault
 export const withdrawCollateralAction =
@@ -34,7 +35,7 @@ export const withdrawCollateralAction =
     }
 
     try {
-      const convertedAssetAmount = convertNumberForContractCall({ number: withdrawAmount, grage: assetDecimals })
+      const convertedAssetAmount = convertNumberForContractCall({ number: withdrawAmount, grade: assetDecimals })
       // prepare and send query
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(vaultAddress)
@@ -49,11 +50,20 @@ export const withdrawCollateralAction =
       // confirm query completion
       await transaction?.confirmation()
 
+      // @ts-ignore don't have proper type to acees data, type has only methods
+      const currentOperationLevel = transaction?.lastHead?.header?.level
+
       // refetch data we need
-      await dispatch(updateUserData())
-      await dispatch(getAvaliableCollaterals())
-      state.vaults.isLoaded && (await dispatch(getVaultsStorage()))
-      state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
+      await checkIndexerLevelAndRunDataUpdateCallback({
+        callback: async () => {
+          await dispatch(updateUserData())
+          await dispatch(getAvaliableCollaterals())
+          state.vaults.isLoaded && (await dispatch(getVaultsStorage()))
+          state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
+        },
+        currentOperationLevel,
+      })
+
       await dispatch(showToaster(SUCCESS, 'Collateral withdrawn.', 'All good :)'))
       await dispatch(toggleActionLoader(false))
     } catch (error) {
@@ -96,7 +106,7 @@ export const depositCollateralAction =
 
     try {
       const { amount, assetAddress, assetId, collateralName, tokenType, decimals } = collateralAssets
-      const convertedAssetAmount = convertNumberForContractCall({ number: amount, grage: decimals })
+      const convertedAssetAmount = convertNumberForContractCall({ number: amount, grade: decimals })
 
       // prepare and send query
       const tezos = await DAPP_INSTANCE.tezos()
@@ -157,7 +167,7 @@ export const depositCollateralAction =
                 {
                   add_operator: {
                     owner: state.wallet.accountPkh,
-                    operator: state.contractAddresses.lendingController.address,
+                    operator: vaultAddress,
                     token_id: 0, // Should be a number, usually 0
                   },
                 },
@@ -175,7 +185,7 @@ export const depositCollateralAction =
                 {
                   remove_operator: {
                     owner: state.wallet.accountPkh,
-                    operator: state.contractAddresses.lendingController.address,
+                    operator: vaultAddress,
                     token_id: 0, // Should be a number, usually 0
                   },
                 },
@@ -195,11 +205,20 @@ export const depositCollateralAction =
       // confirm query completion
       await transaction?.confirmation()
 
+      // @ts-ignore don't have proper type to acees data, type has only methods
+      const currentOperationLevel = transaction?.lastHead?.header?.level
+
       // refetch data we need
-      await dispatch(updateUserData())
-      await dispatch(getAvaliableCollaterals())
-      state.vaults.isLoaded && (await dispatch(getVaultsStorage()))
-      state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
+      await checkIndexerLevelAndRunDataUpdateCallback({
+        callback: async () => {
+          await dispatch(updateUserData())
+          await dispatch(getAvaliableCollaterals())
+          state.vaults.isLoaded && (await dispatch(getVaultsStorage()))
+          state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
+        },
+        currentOperationLevel,
+      })
+
       await dispatch(showToaster(SUCCESS, 'Collateral added.', 'All good :)'))
       await dispatch(toggleActionLoader(false))
     } catch (error) {

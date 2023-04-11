@@ -41,17 +41,22 @@ export const LoansDashboardStyled = styled.div`
       font-size: 14px;
       width: fit-content;
       margin-top: 3px;
+      padding: 3px;
+      border-radius: 5px;
 
       &.up {
-        color: ${({ theme }) => theme.upColor};
+        color: ${({ theme }) => theme.newUpColor};
+        background-color: ${({ theme }) => theme.upBgColor};
       }
 
       &.down {
         color: ${({ theme }) => theme.downColor};
+        background-color: ${({ theme }) => theme.downBgColor};
       }
 
       &.neutral {
         color: ${({ theme }) => theme.dataColor};
+        background-color: ${({ theme }) => theme.neutralBgColor};
       }
     }
   }

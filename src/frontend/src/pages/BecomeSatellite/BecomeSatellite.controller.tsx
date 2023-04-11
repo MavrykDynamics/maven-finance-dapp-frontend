@@ -149,8 +149,6 @@ export const BecomeSatellite = () => {
     }
   }, [usersSatelliteProfile, accountPkh])
 
-  console.log({ form })
-
   // Set checkbox === true if satellite is oracle
   useEffect(() => {
     if (isChecked === isUserOracle) return

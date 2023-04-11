@@ -48,6 +48,7 @@ export const BorrowAsset = ({
     currentBorrowedAmount = 0,
     currentCollateralBalance = 0,
     DAOFee = 0,
+    scrollToCurrentVault,
   } = data ?? {}
 
   useLockBodyScroll(show)
@@ -65,7 +66,8 @@ export const BorrowAsset = ({
       ? calcCollateralRatio(currentCollateralBalance, currentBorrowedAmount + inputAmount, borrowedAsset.rate)
       : 0
 
-    const futureBorrowCapacity = borrowCapacity / (borrowedAsset?.rate ?? 0) - inputAmount
+    const futureBorrowCapacity = borrowCapacity - inputAmount * (borrowedAsset?.rate ?? 0)
+
     return { futureCollateralRatio, futureBorrowCapacity }
   }, [borrowedAsset, currentCollateralBalance, currentBorrowedAmount, inputAmount, borrowCapacity])
 
@@ -106,8 +108,16 @@ export const BorrowAsset = ({
   const backBtnHandler = () => setShownScreen('initial')
 
   const borrowAsserHandler = async () => {
-    if (vaultId && borrowedAsset) {
-      await dispatch(borrowVaultAssetAction(vaultId, Number(inputData.amount), borrowedAsset.decimals, closePopup))
+    if (vaultId && borrowedAsset && scrollToCurrentVault) {
+      await dispatch(
+        borrowVaultAssetAction(
+          vaultId,
+          Number(inputData.amount),
+          borrowedAsset.decimals,
+          closePopup,
+          scrollToCurrentVault,
+        ),
+      )
     }
   }
 
@@ -220,7 +230,7 @@ export const BorrowAsset = ({
                 </ThreeLevelListItem>
               </VaultModalOverview>
 
-              {inputAmount > borrowCapacity || futureCollateralRatio < 200 ? (
+              {inputAmount > borrowCapacity / (borrowedAsset?.rate ?? 0) || futureCollateralRatio < 200 ? (
                 <StatusMessageStyled className={`${vaultsStatuses.LIQUIDATABLE} borrow-message`}>
                   <Icon id="error-triangle" />
                   {futureCollateralRatio < 200

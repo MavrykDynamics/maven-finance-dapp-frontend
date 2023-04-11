@@ -161,7 +161,7 @@ export const getPaymentsDiff = (
               to_: item1.to__id ?? '',
               token,
               amount: new BigNumber(
-                convertNumberForContractCall({ number: item1.token_amount, grage: Number(decimals) }),
+                convertNumberForContractCall({ number: item1.token_amount, grade: Number(decimals) }),
               ),
             },
           },
@@ -185,7 +185,7 @@ export const getPaymentsDiff = (
               to_: item1.to__id ?? '',
               token,
               amount: new BigNumber(
-                convertNumberForContractCall({ number: item1.token_amount, grage: Number(decimals) }),
+                convertNumberForContractCall({ number: item1.token_amount, grade: Number(decimals) }),
               ),
             },
             index: String(originalIdx++),

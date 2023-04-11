@@ -43,6 +43,7 @@ export type WithdrawCollateralPopupDataType =
 
 export type RepayCollateralPopupDataBaseType = {
   vaultId: number
+  vaultAddress: string
   borrowedAsset: LoansVaultType['borrowedAsset']
   feesAmount: number
   borrowedAmount: number
@@ -50,7 +51,11 @@ export type RepayCollateralPopupDataBaseType = {
   borrowCapacity: number
 }
 
-export type RepayPartPopupDataType = RepayCollateralPopupDataBaseType | null
+export type RepayPartPopupDataType =
+  | (RepayCollateralPopupDataBaseType & {
+      scrollToCurrentVault: () => void
+    })
+  | null
 
 export type RepayFullPopupDataType =
   | (RepayCollateralPopupDataBaseType & {
@@ -68,6 +73,7 @@ export type BorrowPopupDataType = {
   currentCollateralBalance: number
   DAOFee: number
   currentBorrowedAmount: number
+  scrollToCurrentVault: () => void
 } | null
 
 export type AddLendingAssetDataType =

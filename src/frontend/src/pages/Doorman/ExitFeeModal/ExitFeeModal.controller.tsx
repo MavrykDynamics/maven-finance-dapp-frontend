@@ -2,16 +2,12 @@ import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 
 // helpers
-import { isValidNumberValue, mathRoundTwoDigit } from '../../../utils/validatorFunctions'
+import { mathRoundTwoDigit } from '../../../utils/validatorFunctions'
 import { unstake } from '../Doorman.actions'
 import { calcExitFee, calcMLI } from '../../../utils/calcFunctions'
-import {
-  InputStatusType,
-  INPUT_STATUS_ERROR,
-  INPUT_STATUS_SUCCESS,
-  INPUT_LARGE,
-} from 'app/App.components/Input/Input.constants'
+import { InputStatusType, INPUT_STATUS_SUCCESS, INPUT_LARGE } from 'app/App.components/Input/Input.constants'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from '../../../app/App.components/Button/Button.constants'
+import { stakingInputValidation } from '../Doorman.converter'
 
 // components
 import { CommaNumber } from '../../../app/App.components/CommaNumber/CommaNumber.controller'
@@ -50,7 +46,6 @@ export const ExitFeeModal = ({
     validation: '',
   })
 
-  const inputAmount = Number(inputData.amount).toFixed(2)
   const convertedValue = mvkExchangeRate && inputData.amount ? Number(inputData.amount) * mvkExchangeRate : 0
 
   const mli = calcMLI(totalMVKSupply, totalStakedMvk)
@@ -61,45 +56,42 @@ export const ExitFeeModal = ({
   // Validating initial amount came from props
   useEffect(() => {
     setInputData({
-      amount: String(amount),
-      validation: isValidNumberValue(
+      amount: String(mathRoundTwoDigit(amount)),
+      validation: stakingInputValidation({
         amount,
-        1,
-        accountPkh ? Math.max(Number(myMvkTokenBalance), Number(mySMvkTokenBalance)) : undefined,
-      )
-        ? INPUT_STATUS_SUCCESS
-        : INPUT_STATUS_ERROR,
+        myMvkTokenBalance,
+        mySMvkTokenBalance,
+        accountPkh,
+      }),
     })
 
     return () => {
       setInputData({
-        amount: '0',
+        amount: '',
         validation: '',
       })
     }
   }, [show])
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = mathRoundTwoDigit(e.target.value)
-    setInputData({
-      amount: String(amount),
-      validation: isValidNumberValue(
-        +value,
-        1,
-        accountPkh ? Math.max(Number(myMvkTokenBalance), Number(mySMvkTokenBalance)) : undefined,
-      )
-        ? INPUT_STATUS_SUCCESS
-        : INPUT_STATUS_ERROR,
-    })
-  }
+    const { value } = e.target
 
+    const validationStatus = stakingInputValidation({
+      amount: Number(value),
+      myMvkTokenBalance,
+      mySMvkTokenBalance,
+      accountPkh,
+    })
+
+    setInputData({ ...inputData, amount: value, validation: validationStatus })
+  }
   const handleFocus = () => {
     if (inputData.amount === '0') {
       setInputData({ ...inputData, amount: '' })
     }
   }
 
-  const handleBlur = ({ target: { value } }: React.ChangeEvent<HTMLInputElement>) => {
+  const handleBlur = () => {
     if (inputData.amount === '') {
       setInputData({ ...inputData, amount: '0' })
     }
@@ -107,7 +99,7 @@ export const ExitFeeModal = ({
 
   const inputProps = {
     type: 'number',
-    value: inputAmount,
+    value: inputData.amount,
     onBlur: handleBlur,
     onFocus: handleFocus,
     onChange: onInputChange,

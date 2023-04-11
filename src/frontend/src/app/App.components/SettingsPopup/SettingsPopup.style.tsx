@@ -40,6 +40,7 @@ export const PopupContainerWrapper = styled.div`
       opacity: 0.7;
     }
   }
+
   &.settings {
     .theme-switcher-block {
       display: flex;
@@ -72,6 +73,11 @@ export const PopupContainerWrapper = styled.div`
   &.council {
     max-width: 750px;
     padding: 0;
+  }
+
+  &.council__request-purpose {
+    max-width: 586px;
+    padding: 30px 50px;
   }
 
   &.exitFee {

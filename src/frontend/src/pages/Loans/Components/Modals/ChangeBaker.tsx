@@ -13,7 +13,6 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { DDItemId, DropDown } from 'app/App.components/DropDown/NewDropdown'
-import Icon from 'app/App.components/Icon/Icon.view'
 import { DropDownXTZBakerType } from './CreateNewVault.modal'
 
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
@@ -38,10 +37,11 @@ export const ChangeBaker = ({
 }) => {
   const { bakerAddress = null, vaultAddress = '' } = data ?? {}
 
-  const dispatch = useDispatch()
   const {
     xtzBakers: { otherBakers, dao, mavrykDynamics },
-  } = useSelector((state: State) => state.loans)
+  } = useSelector((state: State) => state.tokens)
+
+  const dispatch = useDispatch()
   const [activeTab, setActiveSliding] = useState(MAVRYK_DYNAMICS_BAKERY)
   const [selectedAddress, setSelectedAddress] = useState<string | null>(null)
 
@@ -199,6 +199,28 @@ export const ChangeBaker = ({
                 )
               ) : null}
             </ThreeLevelListItem>
+            {activeTab !== 3 && (
+              <ThreeLevelListItem>
+                <div className="name">Bakery Payout Address</div>
+                {activeTab === 1 ? (
+                  <TzAddress
+                    className="value"
+                    tzAddress="tz1WHZYyDqUEj5BLjofe3jctmb9wN61KeMco"
+                    type={BLUE}
+                    hasIcon={false}
+                  />
+                ) : null}
+
+                {activeTab === 2 ? (
+                  <TzAddress
+                    className="value"
+                    tzAddress="tz1LWEHti5PD7HZEgGrog6D5fxg8Pt8WSNyy"
+                    type={BLUE}
+                    hasIcon={false}
+                  />
+                ) : null}
+              </ThreeLevelListItem>
+            )}
             <ThreeLevelListItem>
               <div className="name">Yield</div>
               {activeTab === 1 ? (

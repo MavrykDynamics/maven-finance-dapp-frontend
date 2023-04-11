@@ -95,7 +95,7 @@ export const LoansPositionTable = ({
                 const marketVaultsUserData = userVaultsData[loanTokenData.gqlName.toLowerCase()]
 
                 const averageVaultStatus = getGaugeVaultRiskSimpleStatus(
-                  marketVaultsUserData
+                  marketVaultsUserData?.collateralAmount
                     ? (marketVaultsUserData.borrowedAmount / (marketVaultsUserData.collateralAmount / 2)) * 100
                     : 0,
                 )
@@ -146,7 +146,7 @@ export const LoansPositionTable = ({
 
                     <TableCell
                       width="41%"
-                      className={`position-multy-cell borrowing ${myBorrowingList.length === 0 ? 'one-item' : ''}`}
+                      className={`position-multy-cell borrowing ${!marketVaultsUserData ? 'one-item' : ''}`}
                     >
                       <div className="cell-content">
                         {marketVaultsUserData ? (

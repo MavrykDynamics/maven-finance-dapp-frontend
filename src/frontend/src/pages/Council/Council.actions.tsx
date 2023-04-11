@@ -222,7 +222,7 @@ export const addVestee =
       const transaction = await contract?.methods
         .councilActionAddVestee(
           vesteeAddress,
-          convertNumberForContractCall({ number: totalAllocated, grage: MVK_DECIMALS }),
+          convertNumberForContractCall({ number: totalAllocated, grade: MVK_DECIMALS }),
           cliffInMonths,
           vestingInMonths,
         )
@@ -303,7 +303,7 @@ export const updateVestee =
       const transaction = await contract?.methods
         .councilActionUpdateVestee(
           vesteeAddress,
-          convertNumberForContractCall({ number: totalAllocated, grage: MVK_DECIMALS }),
+          convertNumberForContractCall({ number: totalAllocated, grade: MVK_DECIMALS }),
           cliffInMonths,
           vestingInMonths,
         )
@@ -516,7 +516,7 @@ export const transferTokens =
         .councilActionTransfer(
           receiverAddress,
           tokenContractAddress,
-          convertNumberForContractCall({ number: tokenAmount, grage: decimals }),
+          convertNumberForContractCall({ number: tokenAmount, grade: decimals }),
           tokenType,
           tokenId,
           purpose,
@@ -572,7 +572,7 @@ export const requestTokens =
           treasuryAddress,
           tokenContractAddress,
           tokenName,
-          convertNumberForContractCall({ number: tokenAmount, grage: decimals }),
+          convertNumberForContractCall({ number: tokenAmount, grade: decimals }),
           tokenType,
           tokenId,
           purpose,
@@ -618,7 +618,7 @@ export const requestTokenMint =
       const transaction = await contract?.methods
         .councilActionRequestMint(
           treasuryAddress,
-          convertNumberForContractCall({ number: tokenAmount, grage: MVK_DECIMALS }),
+          convertNumberForContractCall({ number: tokenAmount, grade: MVK_DECIMALS }),
           purpose,
         )
         .send()
