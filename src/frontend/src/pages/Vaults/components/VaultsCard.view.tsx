@@ -267,7 +267,6 @@ export const VaultsCard = (props: Props) => {
                     : calculateCollateralShare(amount * rate, collateralTotalBalance)
 
                   if (isTotalRow && collateralData.length < 3) return null
-                  const collateralDecimalsLength = getDynamicDecimalsAmountForOutput(amount)
 
                   return (
                     <TableRow rowHeight={44} key={symbol + '-' + index}>
@@ -294,7 +293,7 @@ export const VaultsCard = (props: Props) => {
                         <div className="cell-content">
                           <CommaNumber
                             value={amount}
-                            decimalsToShow={collateralDecimalsLength}
+                            decimalsToShow={isTotalRow ? 2 : 4}
                             beginningText={isTotalRow ? '$' : ''}
                             className="balance"
                           />

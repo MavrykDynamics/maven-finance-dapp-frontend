@@ -26,7 +26,6 @@ import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
 import { StatBlock, BlockName } from '../Dashboard.style'
 import { TabWrapperStyled, VaultsContentStyled } from './DashboardTabs.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
-import { getDynamicDecimalsAmountForOutput } from 'utils/calcFunctions'
 
 export const VaultsTab = ({ isLoading }: { isLoading: boolean }) => {
   const [hoveredPath, setHoveredPath] = useState<null | string>(null)
@@ -93,13 +92,11 @@ export const VaultsTab = ({ isLoading }: { isLoading: boolean }) => {
 
                   <TableBody className="treasury">
                     {assetsBalances.map(({ symbol, balance, usdValue, rate }) => {
-                      const balanceDecimalsLength = getDynamicDecimalsAmountForOutput(balance)
-
                       return (
                         <TableRow key={symbol} rowHeight={25} borderColor="dataColor" className="add-hover">
                           <TableCell width="33%">{symbol}</TableCell>
                           <TableCell width="33%">
-                            <CommaNumber value={balance} decimalsToShow={balanceDecimalsLength} useAccurateParsing />
+                            <CommaNumber value={balance} decimalsToShow={4} useAccurateParsing />
                           </TableCell>
                           <TableCell width="33%" contentPosition="right">
                             <CommaNumber value={usdValue} beginningText={rate ? '$' : symbol} useAccurateParsing />
