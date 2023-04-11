@@ -28,7 +28,6 @@ export const BorrowingTab = ({
   currentMarketAsset,
 }: BorrowingTabPropsType) => {
   const { openCreateVaultPopup } = useContext(loansPopupsContext)
-  const { xtzBakers } = useSelector((state: State) => state.loans)
 
   const [createdVaultId, setCreatedVaultAddress] = useState<null | string>(null)
   const [showZeroVaults, setShowZeroVaults] = useState(false)
@@ -77,7 +76,6 @@ export const BorrowingTab = ({
                   key={item.borrowedAsset.symbol + '-' + idx}
                   isOpenedVault={createdVaultId === item.address}
                   DAOFee={DAOFee}
-                  xtzBakers={xtzBakers}
                 />
               )
             })}

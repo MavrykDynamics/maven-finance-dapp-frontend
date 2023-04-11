@@ -1,9 +1,10 @@
 import { useLockBodyScroll } from 'react-use'
 import { useState, useMemo, useEffect } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+import { State } from 'reducers'
 import { changeBakerAction } from 'pages/Loans/Actions/vaultPermissions.actions'
 import { ChangeBakerPopupDataType } from './Modals.helpers'
 
@@ -20,6 +21,7 @@ import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { DropDownJsxChild, LoansModalBase } from './Modals.style'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
+
 const MAVRYK_DYNAMICS_BAKERY = 1
 const DAO_BAKERY = 2
 const OTHER_BAKERY = 3
@@ -34,8 +36,11 @@ export const ChangeBaker = ({
   show: boolean
   data: ChangeBakerPopupDataType
 }) => {
-  const { bakerAddress = null, vaultAddress = '', xtzBakers } = data ?? {}
-  const { otherBakers = [], dao, mavrykDynamics } = xtzBakers ?? {}
+  const { bakerAddress = null, vaultAddress = '' } = data ?? {}
+
+  const {
+    xtzBakers: { otherBakers, dao, mavrykDynamics },
+  } = useSelector((state: State) => state.loans)
 
   const dispatch = useDispatch()
   const [activeTab, setActiveSliding] = useState(MAVRYK_DYNAMICS_BAKERY)

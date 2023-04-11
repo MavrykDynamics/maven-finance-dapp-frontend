@@ -41,7 +41,6 @@ export const VaultsView = () => {
 
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const {
-    xtzBakers,
     vaultsList: { myVaultsIds, allVaultsIds, vaultsMapper },
     isLoaded,
   } = useSelector((state: State) => state.vaults)
@@ -135,7 +134,6 @@ export const VaultsView = () => {
                 key={item}
                 isOwner={isOwner}
                 handleMarkForLiquidation={handleMarkForLiquidation}
-                xtzBakers={xtzBakers}
                 {...vaultsMapper[item]}
               />
             )

@@ -18,7 +18,6 @@ type PermissionVaultsPropsType = {
 export const PermissionVaults = ({ permissionVaults, lendingControllerAddress }: PermissionVaultsPropsType) => {
   const {
     config: { DAOFee },
-    xtzBakers,
   } = useSelector((state: State) => state.loans)
 
   return (
@@ -30,7 +29,7 @@ export const PermissionVaults = ({ permissionVaults, lendingControllerAddress }:
       {permissionVaults.length ? (
         <div className="list-wrapper">
           {permissionVaults.map((item) => {
-            return <BorrowingExpandCard {...item} xtzBakers={xtzBakers} DAOFee={DAOFee} />
+            return <BorrowingExpandCard {...item} DAOFee={DAOFee} />
           })}
         </div>
       ) : (

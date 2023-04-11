@@ -1,5 +1,5 @@
 import { InputStatusType } from 'app/App.components/Input/Input.constants'
-import { CollateralType, DepositorsFlagType, LoansAssetDataType, LoansVaultType, XtzBakersType } from 'utils/TypesAndInterfaces/Loans'
+import { CollateralType, DepositorsFlagType, LoansAssetDataType, LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
 import LoansPopupsProvider from './LoansModals.provider'
 import { VaultType } from 'utils/TypesAndInterfaces/Vaults'
 
@@ -93,7 +93,6 @@ export type RemoveLendingAssetDataType =
 export type ChangeBakerPopupDataType = {
   bakerAddress: string | null
   vaultAddress: string
-  xtzBakers: XtzBakersType
 } | null
 
 export type CreateVaultPopupDataType = {
