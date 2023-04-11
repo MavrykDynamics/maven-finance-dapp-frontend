@@ -21,7 +21,7 @@ export const PermissionVaults = ({ permissionVaults, lendingControllerAddress }:
   } = useSelector((state: State) => state.loans)
 
   return (
-    <LoansTabStyled>
+    <LoansTabStyled className="permissioned">
       <GovRightContainerTitleArea>
         <h2>Permissioned Vaults</h2>
       </GovRightContainerTitleArea>

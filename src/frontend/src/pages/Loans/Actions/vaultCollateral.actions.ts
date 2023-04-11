@@ -167,7 +167,7 @@ export const depositCollateralAction =
                 {
                   add_operator: {
                     owner: state.wallet.accountPkh,
-                    operator: state.contractAddresses.lendingController.address,
+                    operator: vaultAddress,
                     token_id: 0, // Should be a number, usually 0
                   },
                 },
@@ -185,7 +185,7 @@ export const depositCollateralAction =
                 {
                   remove_operator: {
                     owner: state.wallet.accountPkh,
-                    operator: state.contractAddresses.lendingController.address,
+                    operator: vaultAddress,
                     token_id: 0, // Should be a number, usually 0
                   },
                 },

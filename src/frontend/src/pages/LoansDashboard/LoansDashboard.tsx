@@ -59,7 +59,7 @@ export const LoansDashboard = () => {
   const {
     isDataLoaded: isLoansLoaded,
     loanTokens,
-    chartsData: { totalBorrowed, totalLended, lendingChartData, borrowingChartData },
+    chartsData: { lendingChartData, borrowingChartData },
   } = useSelector((state: State) => state.loans)
   const {
     accountPkh,
@@ -67,6 +67,21 @@ export const LoansDashboard = () => {
   } = useSelector((state: State) => state.wallet)
   const { satelliteMapper } = useSelector((state: State) => state.satellites)
   const { councilMembers, breakGlassCouncilMembers } = useSelector((state: State) => state.council)
+
+  const { totalBorrowed, totalLended } = loanTokens.reduce<{
+    totalLended: number
+    totalBorrowed: number
+  }>(
+    (acc, { totalBorrowed, totalLended }) => {
+      acc.totalBorrowed += totalBorrowed
+      acc.totalLended += totalLended
+      return acc
+    },
+    {
+      totalLended: 0,
+      totalBorrowed: 0,
+    },
+  )
 
   const { isLoading } = useDataLoader(
     async (isDepsChanged) => {
