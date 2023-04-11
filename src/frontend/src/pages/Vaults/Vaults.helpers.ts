@@ -15,12 +15,17 @@ import { Lending_Controller_Vault } from 'utils/generated/graphqlTypes'
 import { symbolsAfterDecimalPoint } from 'utils/symbolsAfterDecimalPoint'
 import { getOracleAggregatorLatestPrice } from './Vaults.actions'
 import { statusSortPriority, vaultsStatuses } from './Vaults.consts'
-import { calcCollateralRatio, calculateCompoundedInterest, getAssetMetadata } from 'pages/Loans/Loans.helpers'
-import { calcWithoutDecimals } from 'utils/calcFunctions'
-import { BLOCKS_PER_MINUTE } from 'utils/constants'
+import {
+  calcCollateralRatio,
+  calculateAccruedInterest,
+  getAssetMetadata,
+  isTezosAsset,
+} from 'pages/Loans/Loans.helpers'
+import { calcWithoutDecimals, calcWithoutMu } from 'utils/calcFunctions'
+import { BLOCKS_PER_MINUTE, FIXED_POINT_ACCURACY } from 'utils/constants'
 import { getUserBalanceForLoanAsset } from 'pages/Loans/LoansFethcers'
 import { CollateralType, DepositorsFlagType } from 'utils/TypesAndInterfaces/Loans'
-import { ANY_USER, WHITELIST_USERS, NONE_USER } from 'pages/Loans/Loans.const'
+import { ANY_USER, WHITELIST_USERS, NONE_USER, getStatusByCollateralRatio } from 'pages/Loans/Loans.const'
 import { TokenType } from 'utils/TypesAndInterfaces/General'
 
 type VaultsStorageProps = {
@@ -28,12 +33,11 @@ type VaultsStorageProps = {
   feeds: State['dataFeeds']['feedsLedger']
   accountPkh?: string
   dipDupTokens: State['tokens']['dipDupTokens']
-  currentBlockLevel?: number
   oracleLatestPrices: Record<string, number>
 }
 
 export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
-  const { lendingController, feeds, accountPkh, dipDupTokens, currentBlockLevel, oracleLatestPrices } = storage
+  const { lendingController, feeds, accountPkh, dipDupTokens, oracleLatestPrices } = storage
   if (!lendingController.vaults.length)
     return {
       myVaultsIds: [],
@@ -52,7 +56,26 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
   >(
     async (promiseAcc, item) => {
       const acc = await promiseAcc
+
       if (!item.loan_token || !item.vault?.address) return acc
+
+      const loanTokenMetadata = getAssetMetadata({
+        tokenName: item.loan_token.loan_token_name,
+        tokenAddress: item.loan_token.loan_token_address,
+        dipDupTokens,
+        feeds,
+        oracleId: String(item.loan_token.oracle_id),
+      })
+
+      const vaultAsset = getAssetMetadata({
+        tokenName: item.loan_token.loan_token_name,
+        tokenAddress: item.loan_token.loan_token_address,
+        dipDupTokens,
+        feeds,
+        oracleId: String(item.loan_token.oracle_id),
+      })
+
+      if (!loanTokenMetadata || !vaultAsset) return acc
 
       const vaultCollateral = item.collateral_balances?.reduce<{
         normalizedCollaterals: Array<CollateralType>
@@ -96,6 +119,16 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
         },
       )
 
+      const currentInterestRate = calcWithoutDecimals(item.loan_token?.current_interest_rate ?? 0, interestRateDecimals)
+
+      const vaultXtzDelegatedTo = await (
+        await fetch(`https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/accounts/${item.vault.address}`)
+      ).json()
+
+      const currentBlock = await (
+        await fetch(`https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/blocks/${dayjs().toISOString()}`)
+      ).json()
+
       const normalizeCollateralTokens = item.collateral_balances.length
         ? item.collateral_balances.map((collateralToken) => {
             return {
@@ -107,68 +140,20 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
           })
         : []
 
-      const status =
-        currentBlockLevel && lendingController?.liquidation_delay_in_minutes && item.loan_token?.oracle_id
-          ? vaultStatusChecker({
-              currentBlockLevel,
-              liquidationEndLevel: item.liquidation_end_level,
-              markedForLiquidationLevel: item.marked_for_liquidation_level,
-              liquidationDelayInMinutes: lendingController.liquidation_delay_in_minutes,
-              loanOutstandingTotal: item.loan_outstanding_total / 10 ** item.loan_decimals,
-              loanTokenOracleAddress: item.loan_token.oracle_id,
-              liquidationRatio: lendingController.liquidation_ratio,
-              vaultCollateralTokens: normalizeCollateralTokens,
-              collateralRatio: lendingController.collateral_ratio,
-              oracleLatestPrices,
-            })
-          : 'no status'
-
-      const creationTimestamp = item.vault.creation_timestamp ? String(item.vault.creation_timestamp) : undefined
-
-      let levelOfEarly = 0
-      let levelOfLate = 0
-
-      if (status === vaultsStatuses.GRACE_PERIOD && currentBlockLevel) {
-        levelOfEarly = currentBlockLevel
-        levelOfLate =
-          item.marked_for_liquidation_level + lendingController.liquidation_delay_in_minutes * BLOCKS_PER_MINUTE
-      } else if (status === vaultsStatuses.LIQUIDATABLE && currentBlockLevel && item.liquidation_end_level) {
-        levelOfEarly = currentBlockLevel
-        levelOfLate = item.liquidation_end_level
-      }
-
-      const currentInterestRate = calcWithoutDecimals(item.loan_token?.current_interest_rate ?? 0, interestRateDecimals)
-
-      const vaultXtzDelegatedTo = await (
-        await fetch(`https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/accounts/${item.vault.address}`)
-      ).json()
-
-      const currentBlock = await (
-        await fetch(`https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/blocks/${dayjs().toISOString()}`)
-      ).json()
-
       const userBalance = await getUserBalanceForLoanAsset(
         item.loan_token.loan_token_address,
         item.loan_token.loan_token_name,
         accountPkh,
       )
 
-      // TODO: ensure in this value
-      const fee =
-        calculateCompoundedInterest(currentInterestRate, item.last_updated_block_level, currentBlock?.level ?? 0) /
-        10 ** interestRateDecimals
+      const borrowedAmount = item.loan_principal_total / 10 ** vaultAsset.decimals
 
-      const vaultAsset = getAssetMetadata({
-        tokenName: item.loan_token.loan_token_name,
-        tokenAddress: item.loan_token.loan_token_address,
-        dipDupTokens,
-        feeds,
-        oracleId: String(item.loan_token.oracle_id),
-      })
-
-      if (!vaultAsset) return acc
-
-      const borrowedAmount = item.loan_outstanding_total / 10 ** vaultAsset.decimals
+      // Calculating Fee of the vault
+      const accruedInterest =
+        borrowedAmount === 0
+          ? 0
+          : calculateAccruedInterest(item.loan_outstanding_total, item.borrow_index, item.loan_token.borrow_index) /
+            FIXED_POINT_ACCURACY
 
       const collateralRatio = calcCollateralRatio(vaultCollateral.totalRow.amount, borrowedAmount, vaultAsset.rate)
       const collateralData = vaultCollateral.normalizedCollaterals.length
@@ -199,6 +184,62 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
           ? WHITELIST_USERS
           : NONE_USER
 
+      const gotStatusByCollateralRatio = getStatusByCollateralRatio(collateralRatio)
+
+      // Need one source to get status like vaults or loans.
+      // Because at the moment the data is different for the same items
+
+      const status =
+        gotStatusByCollateralRatio !== 'no status'
+          ? gotStatusByCollateralRatio
+          : item.loan_token?.oracle_id
+          ? vaultStatusChecker({
+              currentBlockLevel: currentBlock?.level ?? 0,
+              liquidationEndLevel: item.liquidation_end_level,
+              markedForLiquidationLevel: item.marked_for_liquidation_level,
+              liquidationDelayInMinutes: lendingController.liquidation_delay_in_minutes,
+              loanOutstandingTotal: item.loan_outstanding_total / 10 ** item.loan_decimals,
+              loanTokenOracleAddress: item.loan_token.oracle_id,
+              liquidationRatio: lendingController.liquidation_ratio,
+              vaultCollateralTokens: normalizeCollateralTokens,
+              collateralRatio: lendingController.collateral_ratio,
+              oracleLatestPrices,
+            })
+          : 'no status'
+
+      const creationTimestamp = item.vault.creation_timestamp ? String(item.vault.creation_timestamp) : undefined
+
+      // Need one source to get levelOfEarly and levelOfLate like vaults or loans.
+      // Because at the moment the data is different for the same items
+
+      // let levelOfEarly = 0
+      // let levelOfLate = 0
+
+      // if (status === vaultsStatuses.GRACE_PERIOD && currentBlock?.level) {
+      //   levelOfEarly = currentBlock?.level ?? 0
+      //   levelOfLate =
+      //     item.marked_for_liquidation_level + lendingController.liquidation_delay_in_minutes * BLOCKS_PER_MINUTE
+      // } else if (status === vaultsStatuses.LIQUIDATABLE && currentBlock?.level && item.liquidation_end_level) {
+      //   levelOfEarly = currentBlock?.level ?? 0
+      //   levelOfLate = item.liquidation_end_level
+      // }
+
+      const isXTZ = isTezosAsset(item.loan_token.loan_token_name)
+
+      const reservePercent = item.loan_token.reserve_ratio / 10000
+      const reserveAmountMu = item.loan_token.token_pool_total * reservePercent
+      const availableLiquidity = isXTZ
+        ? calcWithoutMu(item.loan_token.total_remaining - reserveAmountMu)
+        : calcWithoutDecimals(
+            item.loan_token.total_remaining - reserveAmountMu,
+            Number(loanTokenMetadata.decimals ?? 1),
+          )
+
+      const borrowCapacity = Math.min(
+        vaultCollateral.totalRow.amount / 2 - borrowedAmount * vaultAsset.rate,
+        availableLiquidity,
+      )
+
       const normallizedVault = {
         borrowedAsset: {
           ...vaultAsset,
@@ -206,11 +247,11 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
           userBalance,
         },
         name: item.vault.name,
-        borrowCapacity: vaultCollateral.totalRow.amount / 2 - borrowedAmount * vaultAsset.rate,
+        borrowCapacity,
         collateralBalance: vaultCollateral.totalRow.amount,
         collateralRatio,
         apr: currentInterestRate * 100,
-        fee: borrowedAmount === 0 ? 0 : fee,
+        fee: accruedInterest,
         daoFee: (lendingController.minimum_loan_fee_pct ?? 0) / 100,
         collateralData,
         borrowedAmount,
@@ -219,8 +260,12 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
         vaultId: item.internal_id,
         creationTimestamp,
         status,
-        levelOfEarly,
-        levelOfLate,
+
+        levelOfEarly: currentBlock?.level ?? 0,
+        levelOfLate:
+          item.marked_for_liquidation_level +
+          Number(item.lending_controller?.liquidation_delay_in_minutes) * BLOCKS_PER_MINUTE,
+
         liquidationMax,
         liquidationReward,
         adminLiquidateFee,

@@ -59,7 +59,7 @@ export const LoansDashboard = () => {
   const {
     isDataLoaded: isLoansLoaded,
     loanTokens,
-    chartsData: { totalBorrowed, totalLended, lendingChartData, borrowingChartData },
+    chartsData: { lendingChartData, borrowingChartData },
   } = useSelector((state: State) => state.loans)
   const {
     accountPkh,
@@ -67,6 +67,21 @@ export const LoansDashboard = () => {
   } = useSelector((state: State) => state.wallet)
   const { satelliteMapper } = useSelector((state: State) => state.satellites)
   const { councilMembers, breakGlassCouncilMembers } = useSelector((state: State) => state.council)
+
+  const { totalBorrowed, totalLended } = loanTokens.reduce<{
+    totalLended: number
+    totalBorrowed: number
+  }>(
+    (acc, { totalBorrowed, totalLended, loanTokenData: { rate } }) => {
+      acc.totalBorrowed += totalBorrowed * rate
+      acc.totalLended += totalLended * rate
+      return acc
+    },
+    {
+      totalLended: 0,
+      totalBorrowed: 0,
+    },
+  )
 
   const { isLoading } = useDataLoader(
     async (isDepsChanged) => {
@@ -105,10 +120,10 @@ export const LoansDashboard = () => {
 
     const lendingPersentDiff = checkPlotType<SingleValueData>(secondLastLending, ['value'])
       ? calcDiffBetweenTwoNumbersInPersentage(totalLended, secondLastLending.value)
-      : 100
+      : 0
     const borrowingPersentDiff = checkPlotType<SingleValueData>(secondLastBorrowing, ['value'])
       ? calcDiffBetweenTwoNumbersInPersentage(totalBorrowed, secondLastBorrowing.value)
-      : 100
+      : 0
 
     return { lendingPersentDiff, borrowingPersentDiff }
   }, [borrowingChartData, lendingChartData, totalBorrowed, totalLended])
@@ -206,24 +221,30 @@ export const LoansDashboard = () => {
                 <div className="details">
                   <div className="column">
                     <div className="label">Total Lending</div>
-                    <CommaNumber value={totalLended} beginningText="$" className="value" />
-                    <CommaNumber
-                      value={lendingPersentDiff}
-                      endingText="%"
-                      beginningText={borrowingPersentDiff >= 0 ? '+' : ''}
-                      className={`diff ${borrowingPersentDiff >= 0 ? 'up' : 'down'}`}
-                    />
+                    <div className="value-wrap">
+                      <CommaNumber value={totalLended} beginningText="$" className="value" />
+                      <CommaNumber
+                        value={lendingPersentDiff}
+                        endingText="%"
+                        beginningText={lendingPersentDiff > 0 ? '+' : ''}
+                        className={`diff ${lendingPersentDiff ? (lendingPersentDiff > 0 ? 'up' : 'down') : 'neutral'}`}
+                      />
+                    </div>
                   </div>
 
                   <div className="column">
-                    <div className="label">Total Borroved</div>
-                    <CommaNumber value={totalBorrowed} beginningText="$" className="value" />
-                    <CommaNumber
-                      value={borrowingPersentDiff}
-                      endingText="%"
-                      beginningText={borrowingPersentDiff >= 0 ? '+' : ''}
-                      className={`diff ${borrowingPersentDiff >= 0 ? 'up' : 'down'}`}
-                    />
+                    <div className="label">Total Borrowed</div>
+                    <div className="value-wrap">
+                      <CommaNumber value={totalBorrowed} beginningText="$" className="value" />
+                      <CommaNumber
+                        value={borrowingPersentDiff}
+                        endingText="%"
+                        beginningText={borrowingPersentDiff > 0 ? '+' : ''}
+                        className={`diff ${
+                          borrowingPersentDiff ? (borrowingPersentDiff > 0 ? 'up' : 'down') : 'neutral'
+                        }`}
+                      />
+                    </div>
                   </div>
                 </div>
               </TotalVolumeStyled>

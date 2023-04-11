@@ -1,9 +1,8 @@
-import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
 import dayjs from 'dayjs'
 import { SingleValueData, UTCTimestamp } from 'lightweight-charts'
 import { State } from 'reducers'
 import { UserState } from 'reducers/wallet'
-import { BLOCKS_PER_MINUTE } from 'utils/constants'
+import { BLOCKS_PER_MINUTE, FIXED_POINT_ACCURACY, SECONDS_PER_YEAR } from 'utils/constants'
 import {
   Lending_Controller_History_Data,
   Lending_Controller_Loan_Token,
@@ -86,8 +85,6 @@ export const getAssetMetadata = ({
 
 type TransactionHistoryReduceType = {
   transactionHistory: LoanMarketType['transactionHistory']
-  totalBorrowed: number
-  totalLended: number
   lending24hVolume: number
   borrowing24hVolume: number
   marketCollateralChartData: Array<SingleValueData>
@@ -118,7 +115,7 @@ const getTransactionHistory = (
         const descrByType = getDescrByType(type)
         if (descrByType) {
           acc.transactionHistory.push({
-            amount: transformedAmount * assetMetadata.rate,
+            amount: transformedAmount,
             date: parseDate({ time: new Date(timestamp).getTime(), timeFormat: 'MMM Do, YYYY, HH:mm:ss UTC' }),
             userAddress: sender_id,
             operationHash: operation_hash,
@@ -129,8 +126,6 @@ const getTransactionHistory = (
 
         // Added liquidity (lended)
         if (type === 0) {
-          acc.totalLended += transformedAmount
-
           if (dayjs().diff(timestamp) <= DAY_IN_MS) {
             acc.lending24hVolume += transformedAmount * assetMetadata.rate
           }
@@ -146,8 +141,6 @@ const getTransactionHistory = (
 
         // Removed liquidity (paid lended)
         if (type === 1) {
-          acc.totalLended -= transformedAmount
-
           if (dayjs().diff(timestamp) <= DAY_IN_MS) {
             acc.lending24hVolume -= transformedAmount * assetMetadata.rate
           }
@@ -163,8 +156,6 @@ const getTransactionHistory = (
 
         // Borrowed
         if (type === 2) {
-          acc.totalBorrowed += transformedAmount
-
           if (dayjs().diff(timestamp) <= DAY_IN_MS) {
             acc.borrowing24hVolume += transformedAmount * assetMetadata.rate
           }
@@ -172,8 +163,6 @@ const getTransactionHistory = (
 
         // Paid borrowed (repaid)
         if (type === 3) {
-          acc.totalBorrowed -= transformedAmount
-
           if (dayjs().diff(timestamp) <= DAY_IN_MS) {
             acc.borrowing24hVolume -= transformedAmount * assetMetadata.rate
           }
@@ -204,8 +193,6 @@ const getTransactionHistory = (
       transactionHistory: [],
       marketCollateralChartData: [],
       marketLiquidityChartData: [],
-      totalBorrowed: 0,
-      totalLended: 0,
       lending24hVolume: 0,
       borrowing24hVolume: 0,
     },
@@ -245,8 +232,10 @@ const getChartData = (
           if (islast48hOperation) {
             acc.lendBorrow24hDiff.last48hLending += lendedAmount
           }
-          acc.totalLended += lendedAmount
-          acc.lendingChartData.push({ time: new Date(timestamp).getTime() as UTCTimestamp, value: acc.totalLended })
+          acc.lendingChartData.push({
+            time: new Date(timestamp).getTime() as UTCTimestamp,
+            value: (acc.lendingChartData.at(-1)?.value ?? 0) + lendedAmount,
+          })
         }
 
         // Removed liquidity (paid lended)
@@ -259,8 +248,10 @@ const getChartData = (
           if (islast48hOperation) {
             acc.lendBorrow24hDiff.last48hLending -= lendedAmount
           }
-          acc.totalLended += lendedAmount
-          acc.lendingChartData.push({ time: new Date(timestamp).getTime() as UTCTimestamp, value: acc.totalLended })
+          acc.lendingChartData.push({
+            time: new Date(timestamp).getTime() as UTCTimestamp,
+            value: (acc.lendingChartData.at(-1)?.value ?? 0) - lendedAmount,
+          })
         }
 
         // Borrowed
@@ -273,10 +264,9 @@ const getChartData = (
           if (islast48hOperation) {
             acc.lendBorrow24hDiff.last48hBorrowing += borrowedAmount
           }
-          acc.totalBorrowed += borrowedAmount
           acc.borrowingChartData.push({
             time: new Date(timestamp).getTime() as UTCTimestamp,
-            value: acc.totalBorrowed,
+            value: (acc.borrowingChartData.at(-1)?.value ?? 0) + borrowedAmount,
           })
         }
 
@@ -290,10 +280,9 @@ const getChartData = (
           if (islast48hOperation) {
             acc.lendBorrow24hDiff.last48hBorrowing -= borrowedAmount
           }
-          acc.totalBorrowed += borrowedAmount
           acc.borrowingChartData.push({
             time: new Date(timestamp).getTime() as UTCTimestamp,
-            value: acc.totalBorrowed,
+            value: (acc.borrowingChartData.at(-1)?.value ?? 0) - borrowedAmount,
           })
         }
 
@@ -319,10 +308,8 @@ const getChartData = (
       return acc
     },
     {
-      totalBorrowed: 0,
       borrowingChartData: [],
       collateralChartData: [],
-      totalLended: 0,
       lendingChartData: [],
       lendBorrow24hDiff: {
         last48hLending: 0,
@@ -355,6 +342,7 @@ const getLendingItem = (
       ({ m_token_id, m_token: { loan_token_name } }) =>
         m_token_id === loanToken.loan_token_address || loan_token_name === loanToken.loan_token_name,
     )
+
     if (mTokenAsset) {
       return {
         lendValue: Number(mTokenAsset.balance) / 10 ** loanTokenDecimals,
@@ -381,20 +369,20 @@ export const calculateCompoundedInterest = (
   lastUpdatedBlockLevel: number,
   blockLevel: number,
 ) => {
-  let interestRateOverSecondsInYear = Math.trunc(interestRate / 31536000)
+  let interestRateOverSecondsInYear = Math.trunc(interestRate / SECONDS_PER_YEAR)
   let exp = blockLevel - lastUpdatedBlockLevel
 
   let expMinusOne = exp - 1
   let expMinusTwo = exp - 2
 
-  let basePowerTwo = Math.trunc(interestRateOverSecondsInYear ** 2 / 31536000 ** 2)
-  let basePowerThree = Math.trunc(interestRateOverSecondsInYear ** 3 / 31536000 ** 3)
+  let basePowerTwo = Math.trunc(interestRateOverSecondsInYear ** 2 / SECONDS_PER_YEAR ** 2)
+  let basePowerThree = Math.trunc(interestRateOverSecondsInYear ** 3 / SECONDS_PER_YEAR ** 3)
 
   let firstTerm = Math.trunc(exp * interestRateOverSecondsInYear)
   let secondTerm = Math.trunc((exp * expMinusOne * basePowerTwo) / 2)
   let thirdTerm = Math.trunc((exp * expMinusOne * expMinusTwo * basePowerThree) / 6)
 
-  let compoundedInterest = 10 ** 27 + firstTerm + secondTerm + thirdTerm
+  let compoundedInterest = FIXED_POINT_ACCURACY + firstTerm + secondTerm + thirdTerm
 
   return compoundedInterest
 }
@@ -434,6 +422,7 @@ const getBorrowings = async (
   dipDupTokens: State['tokens']['dipDupTokens'],
   feeds: State['dataFeeds']['feedsLedger'],
   interestRateDecimals: number,
+  avaliableLiq: number,
   userAddress?: string,
 ): Promise<BorrowingNormalizerReturnType> => {
   try {
@@ -487,6 +476,7 @@ const getBorrowings = async (
         vault.loan_token?.current_interest_rate ?? 0,
         interestRateDecimals,
       )
+
       const vaultXtzDelegatedTo = await (
         await fetch(`https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/contracts/${vault.vault.address}`)
       ).json()
@@ -494,11 +484,6 @@ const getBorrowings = async (
       const currentBlock = await (
         await fetch(`https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/blocks/${dayjs().toISOString()}`)
       ).json()
-
-      // TODO: ensure in this value
-      const fee =
-        calculateCompoundedInterest(currentInterestRate, vault.last_updated_block_level, currentBlock?.level ?? 0) /
-        10 ** interestRateDecimals
 
       const vaultAsset = getAssetMetadata({
         tokenName: vault.loan_token.loan_token_name,
@@ -515,14 +500,24 @@ const getBorrowings = async (
       )
       if (!vaultAsset) return acc
 
-      const borrowedAmount = vault.vault.lending_controller_vaults[0].loan_outstanding_total / 10 ** vaultAsset.decimals
+      const borrowedAmount = vault.loan_principal_total / 10 ** vaultAsset.decimals
+
+      // Calculating Fee of the vault
+      const accruedInterest =
+        borrowedAmount === 0
+          ? 0
+          : calculateAccruedInterest(vault.loan_outstanding_total, vault.borrow_index, vault.loan_token.borrow_index) /
+            FIXED_POINT_ACCURACY
 
       const collateralRatio = calcCollateralRatio(vaultCollateral.totalRow.amount, borrowedAmount, vaultAsset.rate)
       const collateralData = vaultCollateral.normalizedCollaterals.length
         ? [...vaultCollateral.normalizedCollaterals, vaultCollateral.totalRow]
         : []
 
-      const borrowCapacity = vaultCollateral.totalRow.amount / 2 - borrowedAmount * vaultAsset.rate
+      const borrowCapacity = Math.min(
+        vaultCollateral.totalRow.amount / 2 - borrowedAmount * vaultAsset.rate,
+        avaliableLiq,
+      )
 
       const depositors = (vault.vault?.depositors.map(({ depositor_id }) => depositor_id).filter(Boolean) ??
         []) as Array<string>
@@ -545,7 +540,7 @@ const getBorrowings = async (
         borrowCapacity,
         collateralRatio,
         apr: currentInterestRate * 100,
-        fee: borrowedAmount === 0 ? 0 : fee,
+        fee: accruedInterest,
         address: vault.vault.address,
         vaultId: vault.id,
         collateralData,
@@ -567,7 +562,7 @@ const getBorrowings = async (
         acc.myBorrowingList.push(normallizedVault)
       }
 
-      if (vault.vault?.depositors.find(({ depositor_id }) => depositor_id === userAddress)) {
+      if (depositors.find((depositorId) => depositorId === userAddress) || deporsitorsFlag === ANY_USER) {
         acc.permissinedBorrowingList.push(normallizedVault)
       }
 
@@ -613,6 +608,7 @@ export const normalizeLoans = async ({
           vaults,
           reserve_ratio,
           token_pool_total,
+          total_borrowed,
           loan_token_address,
           loan_token_contract_standard,
           oracle_id,
@@ -633,27 +629,25 @@ export const normalizeLoans = async ({
         )
 
         if (!loanTokenMetadata) return acc
-
-        const reservePercent = reserve_ratio / 10000
-        const reserveAmountMu = token_pool_total * reservePercent
+        const reserveAmountMu =
+          convertNumberForClient({ number: token_pool_total, grade: loanTokenMetadata.decimals }) *
+          (reserve_ratio / 10000)
         const reserveAmount = isXTZ
           ? calcWithoutMu(reserveAmountMu)
-          : calcWithoutDecimals(reserveAmountMu, Number(loanTokenMetadata.decimals ?? 1))
+          : calcWithoutDecimals(reserveAmountMu, loanTokenMetadata.decimals)
         const availableLiquidity = isXTZ
           ? calcWithoutMu(total_remaining - reserveAmountMu)
-          : calcWithoutDecimals(total_remaining - reserveAmountMu, Number(loanTokenMetadata.decimals ?? 1))
+          : calcWithoutDecimals(total_remaining - reserveAmountMu, loanTokenMetadata.decimals)
 
         const {
           transactionHistory,
-          totalBorrowed,
-          totalLended,
           lending24hVolume,
           borrowing24hVolume,
           marketCollateralChartData,
           marketLiquidityChartData,
         } = getTransactionHistory(history_data, dipDupData, feeds)
         const { myBorrowingList, permissinedBorrowingList, totalCollateral, vaultsBorrowedAmount } =
-          await getBorrowings(vaults, dipDupData, feeds, interestRateDecimals, userAddres)
+          await getBorrowings(vaults, dipDupData, feeds, interestRateDecimals, availableLiquidity, userAddres)
         const lendingItem = getLendingItem(
           loanToken,
           userMTokens,
@@ -682,8 +676,8 @@ export const normalizeLoans = async ({
           utilisationRate: utilisation_rate / 10 ** interestRateDecimals,
 
           availableLiquidity,
-          totalLended: totalLended,
-          totalBorrowed: totalBorrowed,
+          totalLended: convertNumberForClient({ number: token_pool_total, grade: loanTokenMetadata.decimals }),
+          totalBorrowed: convertNumberForClient({ number: total_borrowed, grade: loanTokenMetadata.decimals }),
           loanTokenTotalCollaterals: totalCollateral,
           loanTokenVaultsTotalBorrowed: vaultsBorrowedAmount,
 
@@ -815,7 +809,7 @@ export const normalizeUserLending = ({
       })
 
       if (!assetData) return acc
-      const convertedAmount = convertNumberForClient({ number: amount, grage: assetData.decimals })
+      const convertedAmount = convertNumberForClient({ number: amount, grade: assetData.decimals })
 
       switch (type) {
         case 0:
@@ -881,13 +875,13 @@ export const normalizeUserLending = ({
           if (!collateralAssetData) return acc
 
           acc +=
-            convertNumberForClient({ number: balance, grage: collateralAssetData.decimals }) * collateralAssetData.rate
+            convertNumberForClient({ number: balance, grade: collateralAssetData.decimals }) * collateralAssetData.rate
           return acc
         }, 0)
 
         acc[loan_token.loan_token_name] = {
           borrowedAmount:
-            convertNumberForClient({ number: loan_principal_total, grage: vaultAssetData.decimals }) *
+            convertNumberForClient({ number: loan_principal_total, grade: vaultAssetData.decimals }) *
             vaultAssetData.rate,
           collateralAmount,
         }
@@ -902,4 +896,23 @@ export const normalizeUserLending = ({
     userBorrowing,
     userVaultsData,
   }
+}
+
+// fn to calculate fee of the vault
+export const calculateAccruedInterest = (
+  currentLoanOutstandingTotal: number,
+  vaultBorrowIndex: number,
+  tokenBorrowIndex: number,
+) => {
+  let newLoanOutstandingTotal = currentLoanOutstandingTotal
+  const vBorrowIndex = vaultBorrowIndex
+  const loanTokenBorrowIndex = tokenBorrowIndex
+
+  if (currentLoanOutstandingTotal > 0) {
+    if (vBorrowIndex > 0) {
+      newLoanOutstandingTotal = Math.trunc((currentLoanOutstandingTotal * loanTokenBorrowIndex) / vBorrowIndex)
+    }
+  }
+
+  return newLoanOutstandingTotal
 }

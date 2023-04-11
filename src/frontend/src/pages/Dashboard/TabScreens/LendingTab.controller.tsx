@@ -28,11 +28,24 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
   const {
     loanTokens,
     chartsData: {
-      totalLended,
-      totalBorrowed,
       lendBorrow24hDiff: { last24hLending, last48hLending, last24hBorrowing, last48hBorrowing },
     },
   } = useSelector((state: State) => state.loans)
+
+  const { totalBorrowed, totalLended } = loanTokens.reduce<{
+    totalLended: number
+    totalBorrowed: number
+  }>(
+    (acc, { totalBorrowed, totalLended }) => {
+      acc.totalBorrowed += totalBorrowed
+      acc.totalLended += totalLended
+      return acc
+    },
+    {
+      totalLended: 0,
+      totalBorrowed: 0,
+    },
+  )
 
   const { lendingSuppliers, borrowers, mostBorrowedAsset, mostLendedAsset } = useMemo(() => {
     return loanTokens.reduce<{
@@ -96,7 +109,11 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
               <div className="name">Total Supplied</div>
               <div className="value">
                 <CommaNumber beginningText="$" value={totalLended} />
-                <div className={`impact ${lending24hPersentChange > 0 ? 'up' : 'down'}`}>
+                <div
+                  className={`impact ${
+                    lending24hPersentChange ? (lending24hPersentChange > 0 ? 'up' : 'down') : 'neutral'
+                  }`}
+                >
                   <CommaNumber
                     value={lending24hPersentChange}
                     beginningText={lending24hPersentChange > 0 ? '+' : ''}
@@ -141,7 +158,11 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
               <div className="name">Total Borrowed</div>
               <div className="value">
                 <CommaNumber beginningText="$" value={totalBorrowed} />
-                <div className={`impact ${borrowing24hPersentChange > 0 ? 'up' : 'down'}`}>
+                <div
+                  className={`impact ${
+                    borrowing24hPersentChange ? (borrowing24hPersentChange > 0 ? 'up' : 'down') : 'neutral'
+                  }`}
+                >
                   <CommaNumber
                     value={borrowing24hPersentChange}
                     beginningText={borrowing24hPersentChange > 0 ? '+' : ''}

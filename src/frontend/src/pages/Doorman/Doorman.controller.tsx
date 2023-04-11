@@ -46,13 +46,16 @@ export const Doorman = () => {
     accountPkh,
   }
 
-  const { isLoading } = useDataLoader(async (isDepsChanged) => {
-    try {
-      if (!isDoormanLoaded || isDepsChanged) {
-        await dispatch(getDoormanStorage())
-      }
-    } catch (e) {}
-  }, [])
+  const { isLoading } = useDataLoader(
+    async (isDepsChanged) => {
+      try {
+        if (!isDoormanLoaded || isDepsChanged) {
+          await dispatch(getDoormanStorage())
+        }
+      } catch (e) {}
+    },
+    [accountPkh],
+  )
 
   const stakeCallback = (amount: number) => dispatch(stake(amount))
   const unstakeCallback = (amount: number) => setAmount(amount)

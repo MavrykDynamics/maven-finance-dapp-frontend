@@ -26,7 +26,6 @@ import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 
 // actions
 import { getVaultsStorage, markForLiquidation } from './Vaults.actions'
-import { getAvaliableCollaterals } from 'pages/Loans/Actions/getLoansData.actions'
 
 const pathname = '/vaults'
 
@@ -69,12 +68,9 @@ export const VaultsView = () => {
   const { isLoading } = useDataLoader(
     async (isDepsChanged) => {
       try {
-        await Promise.all(
-          [
-            (!isLoaded || isDepsChanged) && dispatch(getVaultsStorage()),
-            isDepsChanged && dispatch(getAvaliableCollaterals()),
-          ].filter(Boolean),
-        )
+        if (!isLoaded || isDepsChanged) {
+          await dispatch(getVaultsStorage())
+        }
       } catch (e) {}
     },
     [accountPkh],

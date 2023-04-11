@@ -58,8 +58,8 @@ export function normalizeVestingStorage(storage?: VestingGraphQL | null) {
         acc.vesteeIds.push(vestee.vestee_id)
         acc.vesteesMapper[vestee.vestee_id] = {
           address: vestee.vestee_id,
-          totalRemainded: convertNumberForClient({ number: vestee.total_remainder, grage: MVK_DECIMALS }),
-          totalAllocated: convertNumberForClient({ number: vestee.total_allocated_amount, grage: MVK_DECIMALS }),
+          totalRemainded: convertNumberForClient({ number: vestee.total_remainder, grade: MVK_DECIMALS }),
+          totalAllocated: convertNumberForClient({ number: vestee.total_allocated_amount, grade: MVK_DECIMALS }),
           rewardPerMonth: vestee.claim_amount_per_month,
           cliffMonth: vestee.cliff_months,
           vestingMonth: vestee.vesting_months,

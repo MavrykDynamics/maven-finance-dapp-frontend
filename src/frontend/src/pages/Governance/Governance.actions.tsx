@@ -15,6 +15,7 @@ import { State } from '../../reducers'
 import { ProposalRecordType } from 'utils/TypesAndInterfaces/Governance'
 import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 import { ROCKET_LOADER } from 'utils/constants'
+import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 
 export const SET_GOVERNANCE_PHASE = 'SET_GOVERNANCE_PHASE'
 export const GET_GOVERNANCE_STORAGE = 'GET_GOVERNANCE_STORAGE'
@@ -87,7 +88,8 @@ export const proposalRoundVote = (proposalId: number) => async (dispatch: AppDis
       return
     }
 
-    const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.governanceAddress.address)
+    const tezos = await DAPP_INSTANCE.tezos()
+    const contract = await tezos.wallet.at(state.contractAddresses.governanceAddress.address)
     const transaction = await contract?.methods.proposalRoundVote(proposalId).send()
 
     await dispatch(toggleActionLoader(true))
@@ -109,33 +111,33 @@ export const proposalRoundVote = (proposalId: number) => async (dispatch: AppDis
 }
 
 // TODO: finish implementing execution estimation
-export const estimateExecution = async (
-  proposalId: number,
-  tezos: State['wallet']['tezos'],
-  govAddress: string,
-): Promise<{ minimalFeeMutez: number; totalCost: number }> => {
-  try {
-    if (!tezos) {
-      throw new Error('no tezos provided')
-    }
+// export const estimateExecution = async (
+//   proposalId: number,
+//   tezos: State['wallet']['tezos'],
+//   govAddress: string,
+// ): Promise<{ minimalFeeMutez: number; totalCost: number }> => {
+//   try {
+//     if (!tezos) {
+//       throw new Error('no tezos provided')
+//     }
 
-    const contract = await tezos?.wallet.at(govAddress)
-    console.log('contract', contract)
+//     const contract = await tezos?.wallet.at(govAddress)
+//     console.log('contract', contract)
 
-    const operationEstimate = await tezos?.estimate.transfer(
-      contract.methods.executeProposal(proposalId).toTransferParams(),
-    )
+//     const operationEstimate = await tezos?.estimate.transfer(
+//       contract.methods.executeProposal(proposalId).toTransferParams(),
+//     )
 
-    console.log('operationEstimate', operationEstimate)
-    return operationEstimate
-  } catch (e) {
-    console.error('estimateExecution error', e)
-    return {
-      minimalFeeMutez: 0,
-      totalCost: 0,
-    }
-  }
-}
+//     console.log('operationEstimate', operationEstimate)
+//     return operationEstimate
+//   } catch (e) {
+//     console.error('estimateExecution error', e)
+//     return {
+//       minimalFeeMutez: 0,
+//       totalCost: 0,
+//     }
+//   }
+// }
 
 export const votingRinancialRequestVote =
   (vote: string, requestId: number) => async (dispatch: AppDispatch, getState: GetState) => {
@@ -152,7 +154,8 @@ export const votingRinancialRequestVote =
         return
       }
 
-      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.governanceFinancialAddress.address)
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(state.contractAddresses.governanceFinancialAddress.address)
       const transaction = await contract?.methods.voteForRequest(requestId, vote).send()
 
       await dispatch(toggleActionLoader(true))
@@ -185,8 +188,8 @@ export const votingRoundVote = (vote: string) => async (dispatch: AppDispatch, g
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
-
-    const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.governanceAddress.address)
+    const tezos = await DAPP_INSTANCE.tezos()
+    const contract = await tezos.wallet.at(state.contractAddresses.governanceAddress.address)
     const transaction = await contract?.methods.votingRoundVote(vote).send()
 
     await dispatch(toggleActionLoader(true))
@@ -221,7 +224,8 @@ export const startProposalRound = () => async (dispatch: AppDispatch, getState: 
       return
     }
 
-    const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.governanceAddress.address)
+    const tezos = await DAPP_INSTANCE.tezos()
+    const contract = await tezos.wallet.at(state.contractAddresses.governanceAddress.address)
     const transaction = await contract?.methods.startProposalRound().send()
 
     await dispatch(toggleActionLoader(true))
@@ -256,7 +260,8 @@ export const startVotingRound = () => async (dispatch: AppDispatch, getState: Ge
       return
     }
 
-    const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.governanceAddress.address)
+    const tezos = await DAPP_INSTANCE.tezos()
+    const contract = await tezos.wallet.at(state.contractAddresses.governanceAddress.address)
     const transaction = await contract?.methods.startProposalRound().send()
 
     await dispatch(toggleActionLoader(true))
@@ -311,7 +316,8 @@ export const startNextRound = (executePastProposal: boolean) => async (dispatch:
       return
     }
 
-    const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.governanceAddress.address)
+    const tezos = await DAPP_INSTANCE.tezos()
+    const contract = await tezos.wallet.at(state.contractAddresses.governanceAddress.address)
     const transaction = await contract?.methods.startNextRound(executePastProposal).send()
 
     await dispatch(toggleActionLoader(true))
@@ -335,7 +341,8 @@ export const startNextRound = (executePastProposal: boolean) => async (dispatch:
 export const executeProposal = (proposalId: number) => async (dispatch: AppDispatch, getState: GetState) => {
   const state: State = getState()
   try {
-    const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.governanceAddress.address)
+    const tezos = await DAPP_INSTANCE.tezos()
+    const contract = await tezos.wallet.at(state.contractAddresses.governanceAddress.address)
     const transaction = await contract?.methods.executeProposal(proposalId).send()
 
     await dispatch(toggleActionLoader(true))
@@ -359,7 +366,8 @@ export const executeProposal = (proposalId: number) => async (dispatch: AppDispa
 export const processProposalPayment = (proposalId: number) => async (dispatch: AppDispatch, getState: GetState) => {
   const state: State = getState()
   try {
-    const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.governanceAddress.address)
+    const tezos = await DAPP_INSTANCE.tezos()
+    const contract = await tezos.wallet.at(state.contractAddresses.governanceAddress.address)
     const transaction = await contract?.methods.processProposalPayment(proposalId).send()
 
     await dispatch(toggleActionLoader(true))

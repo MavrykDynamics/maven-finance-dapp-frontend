@@ -1,14 +1,18 @@
 import styled from 'styled-components/macro'
 import { MavrykTheme } from 'styles/interfaces'
 
-export const MoveNextRoundModalstyle = styled.div<{ theme: MavrykTheme }>`
+export const MoveNextRoundModalStyled = styled.div<{ theme: MavrykTheme }>`
+  h1 {
+    margin: 0 0 20px 0;
+  }
+
   p {
     font-weight: 600;
     font-size: 18px;
     line-height: 27px;
     color: ${({ theme }) => theme.textColor};
     text-align: center;
-    margin-top: 10px;
+    margin-top: 0;
     margin-bottom: 20px;
   }
 
@@ -26,7 +30,7 @@ export const MoveNextRoundModalstyle = styled.div<{ theme: MavrykTheme }>`
     .name {
       font-weight: 500;
       font-size: 14px;
-      color: ${({ theme }) => theme.dataColor};
+      color: ${({ theme }) => theme.textColor};
     }
 
     .value {
@@ -34,20 +38,15 @@ export const MoveNextRoundModalstyle = styled.div<{ theme: MavrykTheme }>`
       font-size: 16px;
 
       p {
-        color: ${({ theme }) => theme.valueColor};
+        color: ${({ theme }) => theme.dataColor};
       }
     }
   }
 
   .btn-group {
     display: flex;
-    justify-content: center;
-    margin-bottom: 27px;
+    margin-bottom: 10px;
     margin-top: 20px;
-
-    button {
-      margin: 0 5px;
-      width: 220px;
-    }
+    column-gap: 10px;
   }
 `

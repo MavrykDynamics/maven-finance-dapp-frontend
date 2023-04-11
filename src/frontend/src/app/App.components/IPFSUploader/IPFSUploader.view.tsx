@@ -18,6 +18,7 @@ import {
   UploaderFileSelector,
   UploadIconContainer,
 } from './IPFSUploader.style'
+import { InputStatusType, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from '../Input/Input.constants'
 
 type IPFSUploaderViewProps = {
   title?: string
@@ -57,7 +58,8 @@ export const IPFSUploaderView = ({
   const [isDocument, setIsDocument] = useState(false)
   const [fileName, setFileName] = useState('')
   const isTypeFileImage = typeFile === 'image'
-  const isUploaded = Boolean(imageIpfsUrl && !isUploading)
+  const [validationStatus, setValidationStatus] = useState<InputStatusType>(imageIpfsUrl ? INPUT_STATUS_SUCCESS : '')
+
   const [file, setFile] = useState<File | null>(null)
 
   const handleChange = useCallback(
@@ -70,9 +72,11 @@ export const IPFSUploaderView = ({
 
       if (fileSize <= IMG_MAX_SIZE) {
         setUploadIsFailed(false)
+        setValidationStatus(INPUT_STATUS_SUCCESS)
         setFile(uploadedFile)
       } else {
         setUploadIsFailed(true)
+        setValidationStatus(INPUT_STATUS_ERROR)
         dispatch(showToaster(INFO, 'File is too big!', `Max size is ${IMG_MAX_SIZE}MB`))
       }
 
@@ -108,7 +112,10 @@ export const IPFSUploaderView = ({
         </label>
       )}
       <div style={{ opacity: disabled ? 0.4 : 1 }}>
-        <UploaderFileSelector isUploaded={isUploaded} className={disabled ? 'disabled' : ''}>
+        <UploaderFileSelector
+          validation={validationStatus ?? ''}
+          className={`${disabled ? 'disabled' : ''} ${validationStatus}`}
+        >
           <div>
             <input
               value=""
@@ -162,7 +169,7 @@ export const IPFSUploaderView = ({
                 </figure>
               )}
             </UploadIconContainer>
-            {isUploaded ? (
+            {Boolean(imageIpfsUrl && !isUploading) ? (
               <div onClick={handleDelete}>
                 <Icon className="delete-icon" id="delete" />
               </div>

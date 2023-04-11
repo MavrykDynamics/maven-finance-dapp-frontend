@@ -16,7 +16,8 @@ import { normalizeVaultsStorage, normalizeOracleLatestPrice } from './Vaults.hel
 import { LendingControllerGQL } from 'utils/TypesAndInterfaces/Vaults'
 import { getHeadData } from 'app/App.components/Menu/Menu.actions'
 import { getOracleLatestPrices } from './Vaults.helpers'
-import { getTokenDecimals, convertNumberForContractCall } from 'utils/calcFunctions'
+import { convertNumberForContractCall } from 'utils/calcFunctions'
+import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 
 // Vaults Store
 export const GET_VAULTS_STORAGE = 'GET_VAULTS_STORAGE'
@@ -37,7 +38,6 @@ export const getVaultsStorage = () => async (dispatch: AppDispatch, getState: Ge
     const {
       tokens: { dipDupTokens },
       wallet: { accountPkh },
-      preferences: { headData },
       dataFeeds: { feedsLedger },
     } = getState()
 
@@ -46,7 +46,6 @@ export const getVaultsStorage = () => async (dispatch: AppDispatch, getState: Ge
       dipDupTokens,
       feeds: feedsLedger,
       oracleLatestPrices,
-      currentBlockLevel: headData?.level,
       lendingController,
     })
 
@@ -87,9 +86,10 @@ export const liquidateVault =
 
     try {
       dispatch(toggleActionLoader(true))
-      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.lendingController.address)
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(state.contractAddresses.lendingController.address)
       const transaction = await contract?.methods
-        .liquidateVault(vaultId, vaultOwner, convertNumberForContractCall({ number: liquidateAmount, grage: decimals }))
+        .liquidateVault(vaultId, vaultOwner, convertNumberForContractCall({ number: liquidateAmount, grade: decimals }))
         .send()
       dispatch(showToaster(INFO, 'Liquidating vault...', 'Please wait 30s'))
 
@@ -123,7 +123,8 @@ export const markForLiquidation =
 
     try {
       dispatch(toggleActionLoader(true))
-      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.lendingController.address)
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(state.contractAddresses.lendingController.address)
       const transaction = await contract?.methods.markForLiquidation(vaultId, vaultOwner).send()
       dispatch(showToaster(INFO, 'Marking vault for Liquidation...', 'Please wait 30s'))
 

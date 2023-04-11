@@ -69,7 +69,7 @@ export const AddNewCollateral = ({
   const dispatch = useDispatch()
   const {
     xtzBakers: { otherBakers, dao, mavrykDynamics },
-  } = useSelector((state: State) => state.loans)
+  } = useSelector((state: State) => state.tokens)
   const { avaliableCollaterals } = useSelector((state: State) => state.tokens)
   const { isActionLoading } = useSelector((state: State) => state.loading)
 

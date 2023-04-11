@@ -13,6 +13,7 @@ export type Feed = FeedGQL & {
   dataFeedsHistory: Array<AreaChartPlotType>
   dataFeedsVolatility: Array<AreaChartPlotType>
   amount: number
+  oraclesResponces: number
   icon?: string
 }
 

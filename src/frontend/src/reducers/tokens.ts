@@ -9,13 +9,19 @@ import {
   GET_WHITELIST_TOKENS,
 } from './actions/dipDupActions.actions'
 import { AvaliableCollateralType } from 'utils/TypesAndInterfaces/Loans'
-import { GET_AVALIABLE_COLLATERALS } from 'pages/Loans/Actions/getLoansData.actions'
+import { GET_AVALIABLE_COLLATERALS, GET_XTZ_BAKERS } from 'pages/Loans/Actions/getLoansData.actions'
+import { XtzBakerType } from 'utils/TypesAndInterfaces/Loans'
 
 export type TokensType = {
   dipDupTokens: Array<DipDupTokensGraphQl>
   dipDupContracts: Array<DipDupTokensGraphQl>
   tokensPrices: Record<string, number>
   avaliableCollaterals: Array<AvaliableCollateralType>
+  xtzBakers: {
+    otherBakers: Array<XtzBakerType>
+    dao: (XtzBakerType & { description: string; isDisabled: boolean }) | null
+    mavrykDynamics: (XtzBakerType & { description: string; isDisabled: boolean }) | null
+  }
   whitelistTokens: Array<Governance_Financial_Whitelist_Token_Contract>
   mTokens: Array<M_Token>
 }
@@ -24,7 +30,12 @@ const defaultTokensInfoState: TokensType = {
   dipDupContracts: [],
   whitelistTokens: [],
   avaliableCollaterals: [],
-  tokensPrices: { mvk: 0.25 },
+  xtzBakers: {
+    otherBakers: [],
+    dao: null,
+    mavrykDynamics: null,
+  },
+  tokensPrices: { mvk: 1 },
   mTokens: [],
 }
 
@@ -36,6 +47,8 @@ export function tokens(state = defaultTokensInfoState, action: Action) {
       return { ...state, whitelistTokens: action.whitelistTokens }
     case GET_AVALIABLE_COLLATERALS:
       return { ...state, avaliableCollaterals: action.avaliableCollaterals }
+    case GET_XTZ_BAKERS:
+      return { ...state, xtzBakers: action.xtzBakers }
     case GET_M_TOKENS:
       return { ...state, mTokens: action.mTokens }
     case GET_TOKENS_PRICES:

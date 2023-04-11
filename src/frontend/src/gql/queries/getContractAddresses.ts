@@ -51,7 +51,7 @@ export const CONTRACT_ADDRESSES_QUERY = `
     governance_financial {
       address
     }
-    lending_controller(where: {mock_time: {_eq: true}}) {
+    lending_controller(where: {mock_time: {_eq: false}}) {
       address
     }
     vault_factory {
