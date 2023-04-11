@@ -62,6 +62,7 @@ const AppContainer = () => {
         dispatch(getDipDupTokensStorage()),
         dispatch(getWhitelistTokensStorage()),
         dispatch(getMTokensStorage()),
+        dispatch(getXtzBakers()),
 
         // Used to retrieve user avatar
         dispatch(getCouncilMembers()),
@@ -79,9 +80,6 @@ const AppContainer = () => {
       // Depends on data feeds (getFeedsStorage())
       await dispatch(getTokensPrices())
       await dispatch(getAvaliableCollaterals())
-      
-      // Used for vaults and loans
-      await dispatch(getXtzBakers())
 
       // Turn off loader
       await dispatch(toggleInitialDataLoading(false))
