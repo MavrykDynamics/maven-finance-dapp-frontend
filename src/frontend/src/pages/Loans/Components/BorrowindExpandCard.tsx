@@ -17,7 +17,7 @@ import {
 } from 'app/App.components/Button/Button.constants'
 
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
+import { LoansVaultType, XtzBakersType } from 'utils/TypesAndInterfaces/Loans'
 import Expand from 'app/App.components/Expand/Expand.view'
 import Button from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
@@ -52,6 +52,7 @@ type BorrowingExpandCardPropsType = LoansVaultType & {
   status?: string
   isOpenedVault?: boolean
   DAOFee: number
+  xtzBakers: XtzBakersType
 }
 
 export const BorrowingExpandCard = ({
@@ -81,6 +82,7 @@ export const BorrowingExpandCard = ({
   collateralRatio,
   borrowCapacity,
   DAOFee,
+  xtzBakers,
 }: BorrowingExpandCardPropsType) => {
   const { symbol, icon, rate = 1 } = borrowedAsset
 
@@ -467,6 +469,7 @@ export const BorrowingExpandCard = ({
                         openChangeBakerPopup?.({
                           bakerAddress: xtzDelegatedTo,
                           vaultAddress: address,
+                          xtzBakers,
                         })
                       }
                     >

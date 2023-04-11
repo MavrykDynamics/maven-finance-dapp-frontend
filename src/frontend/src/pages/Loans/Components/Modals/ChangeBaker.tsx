@@ -1,10 +1,9 @@
 import { useLockBodyScroll } from 'react-use'
 import { useState, useMemo, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
-import { State } from 'reducers'
 import { changeBakerAction } from 'pages/Loans/Actions/vaultPermissions.actions'
 import { ChangeBakerPopupDataType } from './Modals.helpers'
 
@@ -13,7 +12,6 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { DDItemId, DropDown } from 'app/App.components/DropDown/NewDropdown'
-import Icon from 'app/App.components/Icon/Icon.view'
 import { DropDownXTZBakerType } from './CreateNewVault.modal'
 
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
@@ -36,12 +34,10 @@ export const ChangeBaker = ({
   show: boolean
   data: ChangeBakerPopupDataType
 }) => {
-  const { bakerAddress = null, vaultAddress = '' } = data ?? {}
+  const { bakerAddress = null, vaultAddress = '', xtzBakers } = data ?? {}
+  const { otherBakers = [], dao, mavrykDynamics } = xtzBakers ?? {}
 
   const dispatch = useDispatch()
-  const {
-    xtzBakers: { otherBakers, dao, mavrykDynamics },
-  } = useSelector((state: State) => state.loans)
   const [activeTab, setActiveSliding] = useState(MAVRYK_DYNAMICS_BAKERY)
   const [selectedAddress, setSelectedAddress] = useState<string | null>(null)
 

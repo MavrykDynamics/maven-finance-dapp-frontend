@@ -18,6 +18,7 @@ import { getHeadData } from 'app/App.components/Menu/Menu.actions'
 import { getOracleLatestPrices } from './Vaults.helpers'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
+import { getXTZBakers } from 'pages/Loans/LoansFethcers'
 
 // Vaults Store
 export const GET_VAULTS_STORAGE = 'GET_VAULTS_STORAGE'
@@ -41,6 +42,8 @@ export const getVaultsStorage = () => async (dispatch: AppDispatch, getState: Ge
       dataFeeds: { feedsLedger },
     } = getState()
 
+    const xtzBakers = await getXTZBakers()
+
     const normallaziedVaultsStorage = await normalizeVaultsStorage({
       accountPkh,
       dipDupTokens,
@@ -52,6 +55,7 @@ export const getVaultsStorage = () => async (dispatch: AppDispatch, getState: Ge
     dispatch({
       type: GET_VAULTS_STORAGE,
       vaultsList: normallaziedVaultsStorage,
+      xtzBakers,
     })
   } catch (e) {
     console.error('getVaultsStorage error: ', e)

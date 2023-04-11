@@ -73,6 +73,12 @@ export type XtzBakerType = {
   freespace: number
 }
 
+export type XtzBakersType = {
+  otherBakers: Array<XtzBakerType>
+  dao: (XtzBakerType & { description: string; isDisabled: boolean }) | null
+  mavrykDynamics: (XtzBakerType & { description: string; isDisabled: boolean }) | null
+}
+
 export type UserLendObjType = {
   icon: string
   amount: number

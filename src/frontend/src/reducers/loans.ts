@@ -1,16 +1,12 @@
 import { GET_LOANS_STORAGE, CLEAR_LOANS_STORAGE } from 'pages/Loans/Actions/getLoansData.actions'
-import { LoansChartsDataType, LoansStorage, XtzBakerType } from 'utils/TypesAndInterfaces/Loans'
+import { LoansChartsDataType, LoansStorage, XtzBakersType } from 'utils/TypesAndInterfaces/Loans'
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
 
 export interface LoansState {
   loanTokens: LoansStorage['loanTokens']
   chartsData: LoansChartsDataType
   loansControllerAddress: string
-  xtzBakers: {
-    otherBakers: Array<XtzBakerType>
-    dao: (XtzBakerType & { description: string; isDisabled: boolean }) | null
-    mavrykDynamics: (XtzBakerType & { description: string; isDisabled: boolean }) | null
-  }
+  xtzBakers: XtzBakersType
   isDataLoaded: boolean
   config: {
     DAOFee: number

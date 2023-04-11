@@ -26,7 +26,6 @@ import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 
 // actions
 import { getVaultsStorage, markForLiquidation } from './Vaults.actions'
-import { getAvaliableCollaterals } from 'pages/Loans/Actions/getLoansData.actions'
 
 const pathname = '/vaults'
 
@@ -42,6 +41,7 @@ export const VaultsView = () => {
 
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const {
+    xtzBakers,
     vaultsList: { myVaultsIds, allVaultsIds, vaultsMapper },
     isLoaded,
   } = useSelector((state: State) => state.vaults)
@@ -135,6 +135,7 @@ export const VaultsView = () => {
                 key={item}
                 isOwner={isOwner}
                 handleMarkForLiquidation={handleMarkForLiquidation}
+                xtzBakers={xtzBakers}
                 {...vaultsMapper[item]}
               />
             )

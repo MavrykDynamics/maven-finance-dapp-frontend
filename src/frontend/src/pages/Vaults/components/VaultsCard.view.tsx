@@ -19,6 +19,7 @@ import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } f
 // types
 import { VaultType } from 'utils/TypesAndInterfaces/Vaults'
 import { StatusFlagStyle } from '../../../app/App.components/StatusFlag/StatusFlag.constants'
+import { XtzBakersType } from 'utils/TypesAndInterfaces/Loans'
 
 // helpers
 import { CYAN } from 'app/App.components/TzAddress/TzAddress.constants'
@@ -87,6 +88,7 @@ const findFooterText = (status: string, statusColor: StatusFlagStyle, timestamp?
 type Props = VaultType & {
   isOwner: boolean
   handleMarkForLiquidation: (vaultId: number, vaultOwner: string) => void
+  xtzBakers: XtzBakersType
 }
 
 export const VaultsCard = (props: Props) => {

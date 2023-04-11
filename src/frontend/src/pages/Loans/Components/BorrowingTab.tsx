@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { useContext, useState } from 'react'
 
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
@@ -27,8 +27,9 @@ export const BorrowingTab = ({
   lendingControllerAddress,
   currentMarketAsset,
 }: BorrowingTabPropsType) => {
-  const dispatch = useDispatch()
   const { openCreateVaultPopup } = useContext(loansPopupsContext)
+  const { xtzBakers } = useSelector((state: State) => state.loans)
+
   const [createdVaultId, setCreatedVaultAddress] = useState<null | string>(null)
   const [showZeroVaults, setShowZeroVaults] = useState(false)
   const { accountPkh } = useSelector((state: State) => state.wallet)
@@ -76,6 +77,7 @@ export const BorrowingTab = ({
                   key={item.borrowedAsset.symbol + '-' + idx}
                   isOpenedVault={createdVaultId === item.address}
                   DAOFee={DAOFee}
+                  xtzBakers={xtzBakers}
                 />
               )
             })}
