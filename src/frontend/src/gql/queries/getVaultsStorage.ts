@@ -12,7 +12,7 @@ export const VAULTS_STORAGE_QUERY = `
       decimals
       minimum_loan_fee_pct
 
-      vaults {
+      vaults(order_by: {vault: {creation_timestamp: desc}}, where: {open: {_eq: true}}) {
         collateral_balances {
           balance
           token {

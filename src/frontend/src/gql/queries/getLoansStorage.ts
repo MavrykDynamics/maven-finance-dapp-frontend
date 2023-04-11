@@ -60,7 +60,7 @@ export const LOANS_QUERY = `
           }
         }
 
-        vaults(order_by: {vault: {creation_timestamp: desc}}) {
+        vaults(order_by: {vault: {creation_timestamp: desc}}, where: {open: {_eq: true}}) {
           collateral_balances {
             token {
               token_address
