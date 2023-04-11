@@ -13,6 +13,7 @@ import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { TokenType } from 'utils/TypesAndInterfaces/General'
 import { getAvaliableCollaterals, getLoansStorage } from './getLoansData.actions'
 import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
+import { scrollUpPage } from 'utils/scrollUpPage'
 
 // trigger initial vault creation to get the id of future vault
 export const triggerInitialVaultCreation =
@@ -67,7 +68,13 @@ export const triggerInitialVaultCreation =
 
 // borrow asset from the vault
 export const borrowVaultAssetAction =
-  (vaultId: number, amountToBorrow: number, assetDecimals: number, callback: () => void) =>
+  (
+    vaultId: number,
+    amountToBorrow: number,
+    assetDecimals: number,
+    callback: () => void,
+    scrollToCurrentVault: () => void,
+  ) =>
   async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
 
@@ -111,6 +118,7 @@ export const borrowVaultAssetAction =
 
       await dispatch(showToaster(SUCCESS, 'Asset borrowed.', 'All good :)'))
       await dispatch(toggleActionLoader(false))
+      scrollToCurrentVault()
     } catch (error) {
       console.error('borrowVaultAssetAction error:', error)
       if (error instanceof Error) {
@@ -131,6 +139,7 @@ export const repayPartOfVaultAction =
     tokenType: TokenType,
     tokenAddress: string,
     callback: () => void,
+    scrollToCurrentVault: () => void,
   ) =>
   async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
@@ -237,6 +246,7 @@ export const repayPartOfVaultAction =
 
       await dispatch(showToaster(SUCCESS, 'Asset repayed.', 'All good :)'))
       await dispatch(toggleActionLoader(false))
+      scrollToCurrentVault()
     } catch (error) {
       console.error('borrowVaultAssetAction error:', error)
       if (error instanceof Error) {
@@ -382,6 +392,9 @@ export const repayFullAndCloseVaultAction =
 
       await dispatch(showToaster(SUCCESS, 'Asset repayed.', 'All good :)'))
       await dispatch(toggleActionLoader(false))
+
+      // scroll up to top of page, after closing vault
+      scrollUpPage()
     } catch (error) {
       console.error('borrowVaultAssetAction error:', error)
       if (error instanceof Error) {

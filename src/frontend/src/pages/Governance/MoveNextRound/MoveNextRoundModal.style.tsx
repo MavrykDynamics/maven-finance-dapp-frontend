@@ -49,33 +49,4 @@ export const MoveNextRoundModalStyled = styled.div<{ theme: MavrykTheme }>`
     margin-top: 20px;
     column-gap: 10px;
   }
-
-  .close-modal {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    cursor: pointer;
-    transition: opacity 0.3s;
-
-    &:after,
-    &:before {
-      content: '';
-      height: 30px;
-      width: 30px;
-      border-top: 3px solid ${({ theme }) => theme.valueColor};
-      position: absolute;
-      top: 10px;
-      right: -12px;
-      transform: rotate(-45deg);
-    }
-
-    &:before {
-      right: 9px;
-      transform: rotate(45deg);
-    }
-
-    &:hover {
-      opacity: 0.7;
-    }
-  }
 `

@@ -41,6 +41,7 @@ export const Repay = ({
     currentCollateralBalance = 0,
     borrowCapacity = 0,
     borrowedAmount = 0,
+    scrollToCurrentVault,
   } = data ?? {}
 
   const totalOutstanding = feesAmount + Number(borrowedAmount)
@@ -98,7 +99,7 @@ export const Repay = ({
   const backBtnHandler = () => setShownScreen('initial')
 
   const repayBtnHandler = async () => {
-    if (vaultId && borrowedAsset && vaultAddress) {
+    if (vaultId && borrowedAsset && vaultAddress && scrollToCurrentVault) {
       await dispatch(
         repayPartOfVaultAction(
           vaultId,
@@ -108,6 +109,7 @@ export const Repay = ({
           borrowedAsset.tokenType,
           borrowedAsset.address,
           closePopup,
+          scrollToCurrentVault,
         ),
       )
     }

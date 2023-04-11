@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useContext, useRef } from 'react'
 import { useClickAway } from 'react-use'
+import { useSelector } from 'react-redux'
 
 // components
 import { StatusFlag } from '../../../app/App.components/StatusFlag/StatusFlag.controller'
@@ -17,6 +18,7 @@ import { VaultsCardDropDown } from './../Vaults.style'
 import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } from 'app/App.components/Table'
 
 // types
+import { State } from 'reducers'
 import { VaultType } from 'utils/TypesAndInterfaces/Vaults'
 import { StatusFlagStyle } from '../../../app/App.components/StatusFlag/StatusFlag.constants'
 
@@ -26,8 +28,6 @@ import { vaultsStatuses } from '../Vaults.consts'
 import { getTimestampByLevel } from 'pages/Governance/Governance.actions'
 import { loansPopupsContext } from 'pages/Loans/Components/Modals/LoansModals.provider'
 import { calculateCollateralShare } from '../calcFunctionsForVault'
-import { useSelector } from 'react-redux'
-import { State } from 'reducers'
 
 const findStatusInfo = (status: string) => {
   switch (status) {
@@ -290,7 +290,7 @@ export const VaultsCard = (props: Props) => {
                         <div className="cell-content">
                           <CommaNumber
                             value={amount}
-                            decimalsToShow={2}
+                            decimalsToShow={isTotalRow ? 2 : 4}
                             beginningText={isTotalRow ? '$' : ''}
                             className="balance"
                           />

@@ -2,16 +2,12 @@ import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 
 // helpers
-import { isValidNumberValue, mathRoundTwoDigit } from '../../../utils/validatorFunctions'
+import { mathRoundTwoDigit } from '../../../utils/validatorFunctions'
 import { unstake } from '../Doorman.actions'
 import { calcExitFee, calcMLI } from '../../../utils/calcFunctions'
-import {
-  InputStatusType,
-  INPUT_STATUS_ERROR,
-  INPUT_STATUS_SUCCESS,
-  INPUT_LARGE,
-} from 'app/App.components/Input/Input.constants'
+import { InputStatusType, INPUT_STATUS_SUCCESS, INPUT_LARGE } from 'app/App.components/Input/Input.constants'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from '../../../app/App.components/Button/Button.constants'
+import { stakingInputValidation } from '../Doorman.converter'
 
 // components
 import { CommaNumber } from '../../../app/App.components/CommaNumber/CommaNumber.controller'
@@ -61,13 +57,12 @@ export const ExitFeeModal = ({
   useEffect(() => {
     setInputData({
       amount: String(mathRoundTwoDigit(amount)),
-      validation: isValidNumberValue(
+      validation: stakingInputValidation({
         amount,
-        1,
-        accountPkh ? Math.max(Number(myMvkTokenBalance), Number(mySMvkTokenBalance)) : undefined,
-      )
-        ? INPUT_STATUS_SUCCESS
-        : INPUT_STATUS_ERROR,
+        myMvkTokenBalance,
+        mySMvkTokenBalance,
+        accountPkh,
+      }),
     })
 
     return () => {
@@ -81,13 +76,12 @@ export const ExitFeeModal = ({
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
 
-    const validationStatus = isValidNumberValue(
-      Number(value),
-      1,
-      accountPkh ? Math.max(Number(myMvkTokenBalance), Number(mySMvkTokenBalance)) : undefined,
-    )
-      ? INPUT_STATUS_SUCCESS
-      : INPUT_STATUS_ERROR
+    const validationStatus = stakingInputValidation({
+      amount: Number(value),
+      myMvkTokenBalance,
+      mySMvkTokenBalance,
+      accountPkh,
+    })
 
     setInputData({ ...inputData, amount: value, validation: validationStatus })
   }
