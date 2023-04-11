@@ -95,3 +95,17 @@ export const getAvaliableCollaterals = () => async (dispatch: AppDispatch, getSt
     console.log('getNewVaultData error: ', e)
   }
 }
+
+export const GET_XTZ_BAKERS = 'GET_XTZ_BAKERS'
+export const getXtzBakers = () => async (dispatch: AppDispatch, getState: GetState) => {
+  try {
+    const xtzBakers = await getXTZBakers()
+
+    await dispatch({
+      type: GET_XTZ_BAKERS,
+      xtzBakers,
+    })
+  } catch (e) {
+    console.log('getXtzBakers error: ', e)
+  }
+}

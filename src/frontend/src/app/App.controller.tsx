@@ -34,7 +34,7 @@ import {
 } from 'reducers/actions/dipDupActions.actions'
 import { getCouncilMembers } from 'pages/Council/Council.actions'
 import { getBreakGlassCouncilMembers } from 'pages/BreakGlassCouncil/BreakGlassCouncil.actions'
-import { getAvaliableCollaterals } from 'pages/Loans/Actions/getLoansData.actions'
+import { getAvaliableCollaterals, getXtzBakers } from 'pages/Loans/Actions/getLoansData.actions'
 
 // export const { store, persistor } = configureStore({})
 export const { store } = configureStore({})
@@ -78,7 +78,10 @@ const AppContainer = () => {
 
       // Depends on data feeds (getFeedsStorage())
       await dispatch(getTokensPrices())
-      dispatch(getAvaliableCollaterals())
+      await dispatch(getAvaliableCollaterals())
+      
+      // Used for vaults and loans
+      await dispatch(getXtzBakers())
 
       // Turn off loader
       await dispatch(toggleInitialDataLoading(false))
