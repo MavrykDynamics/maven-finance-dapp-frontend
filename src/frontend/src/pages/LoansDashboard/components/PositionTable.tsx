@@ -95,7 +95,7 @@ export const LoansPositionTable = ({
                 const marketVaultsUserData = userVaultsData[loanTokenData.gqlName.toLowerCase()]
 
                 const averageVaultStatus = getGaugeVaultRiskSimpleStatus(
-                  marketVaultsUserData
+                  marketVaultsUserData?.borrowedAmount || marketVaultsUserData?.collateralAmount
                     ? (marketVaultsUserData.borrowedAmount / (marketVaultsUserData.collateralAmount / 2)) * 100
                     : 0,
                 )
