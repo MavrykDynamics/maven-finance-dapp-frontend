@@ -42,9 +42,9 @@ export const Dashboard = () => {
     totalLended: number
     totalBorrowed: number
   }>(
-    (acc, { totalBorrowed, totalLended }) => {
-      acc.totalBorrowed += totalBorrowed
-      acc.totalLended += totalLended
+    (acc, { totalBorrowed, totalLended, loanTokenData: { rate } }) => {
+      acc.totalBorrowed += totalBorrowed * rate
+      acc.totalLended += totalLended * rate
       return acc
     },
     {
