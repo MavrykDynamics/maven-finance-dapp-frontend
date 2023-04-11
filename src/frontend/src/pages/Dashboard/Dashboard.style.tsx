@@ -156,7 +156,7 @@ export const StatBlock = styled.div`
       align-items: center;
 
       &.up {
-        color: ${({ theme }) => theme.upColor};
+        color: ${({ theme }) => theme.newUpColor};
         background: rgba(52, 246, 106, 0.2);
       }
 
