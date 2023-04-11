@@ -28,6 +28,7 @@ import { loansPopupsContext } from 'pages/Loans/Components/Modals/LoansModals.pr
 import { calculateCollateralShare } from '../calcFunctionsForVault'
 import { useSelector } from 'react-redux'
 import { State } from 'reducers'
+import { getDynamicDecimalsAmountForOutput } from 'utils/calcFunctions'
 
 const findStatusInfo = (status: string) => {
   switch (status) {
@@ -264,6 +265,7 @@ export const VaultsCard = (props: Props) => {
                     : calculateCollateralShare(amount * rate, collateralTotalBalance)
 
                   if (isTotalRow && collateralData.length < 3) return null
+                  const collateralDecimalsLength = getDynamicDecimalsAmountForOutput(amount)
 
                   return (
                     <TableRow rowHeight={44} key={symbol + '-' + index}>
@@ -290,7 +292,7 @@ export const VaultsCard = (props: Props) => {
                         <div className="cell-content">
                           <CommaNumber
                             value={amount}
-                            decimalsToShow={isTotalRow ? 2 : 4}
+                            decimalsToShow={collateralDecimalsLength}
                             beginningText={isTotalRow ? '$' : ''}
                             className="balance"
                           />

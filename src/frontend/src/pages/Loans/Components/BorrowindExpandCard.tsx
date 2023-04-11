@@ -309,7 +309,7 @@ export const BorrowingExpandCard = ({
 
                       const collateralShare = isTotalRow
                         ? 100
-                        : Math.max(0, Math.max(100, calculateCollateralShare(amount * rate, collateralTotalBalance)))
+                        : calculateCollateralShare(amount * rate, collateralTotalBalance)
 
                       if (isTotalRow && collateralData.length < 3) return null
                       const collateralDecimalsLength = getDynamicDecimalsAmountForOutput(amount)
