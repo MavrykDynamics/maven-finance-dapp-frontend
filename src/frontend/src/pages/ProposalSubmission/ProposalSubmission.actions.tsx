@@ -12,6 +12,7 @@ import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 import { ROCKET_LOADER } from 'utils/constants'
 import { PaymentsDataChangesType, ProposalDataChangesType } from './ProposalSybmittion.types'
 import { ContractAbstraction, Wallet } from '@taquito/taquito'
+import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 
 export const submitProposal =
   (form: SubmitProposalForm, fee: number) => async (dispatch: AppDispatch, getState: GetState) => {
@@ -29,7 +30,8 @@ export const submitProposal =
 
     try {
       const { title, description, ipfs, sourceCode } = form
-      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.governanceAddress.address)
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(state.contractAddresses.governanceAddress.address)
       const query = await contract?.methods.propose(title, description, ipfs, sourceCode).send({ amount: fee })
 
       await dispatch(toggleActionLoader(true))
@@ -65,7 +67,8 @@ export const dropProposal = (proposalId: number) => async (dispatch: AppDispatch
   }
 
   try {
-    const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.governanceAddress.address)
+    const tezos = await DAPP_INSTANCE.tezos()
+    const contract = await tezos.wallet.at(state.contractAddresses.governanceAddress.address)
 
     await dispatch(toggleActionLoader(true))
     await dispatch(showToaster(INFO, 'Drop proposal...', 'Please wait 30s'))
@@ -101,7 +104,8 @@ export const lockProposal = (proposalId: number) => async (dispatch: AppDispatch
   }
 
   try {
-    const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.governanceAddress.address)
+    const tezos = await DAPP_INSTANCE.tezos()
+    const contract = await tezos.wallet.at(state.contractAddresses.governanceAddress.address)
 
     await dispatch(toggleActionLoader(true))
     await dispatch(showToaster(INFO, 'Locking proposal...', 'Please wait 30s'))
@@ -149,14 +153,16 @@ export const updateProposalData =
     }
 
     try {
-      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.governanceAddress.address)
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(state.contractAddresses.governanceAddress.address)
 
       if (!contract) {
         throw new Error(`No contract provided`)
       }
 
       try {
-        const operationEstimate = await state.wallet.tezos?.estimate.transfer(
+        const tezos = await DAPP_INSTANCE.tezos()
+        const operationEstimate = await tezos.estimate.transfer(
           contract.methods.updateProposalData(proposalId, bytesChanges, paymentChanges).toTransferParams(),
         )
 

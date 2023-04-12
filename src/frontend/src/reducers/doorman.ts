@@ -1,6 +1,6 @@
 import { GET_DOORMAN_STORAGE } from 'pages/Doorman/Doorman.actions'
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
-import { DoormanStorage, MvkMintHistoryData, SmvkHistoryData } from '../utils/TypesAndInterfaces/Doorman'
+import { MvkHistoryData, SmvkHistoryData } from '../utils/TypesAndInterfaces/Doorman'
 
 export const STAKE = 'STAKE'
 export const UNSTAKE = 'UNSTAKE'
@@ -8,7 +8,7 @@ export const COMPOUND = 'COMPOUND'
 
 export interface DoormanState {
   totalStakedMvk: number
-  mvkMintHistoryData: MvkMintHistoryData
+  mvkHistoryData: MvkHistoryData
   smvkHistoryData: SmvkHistoryData
   isLoaded: boolean
   totalSupply: number
@@ -19,7 +19,7 @@ const doormanDefaultState: DoormanState = {
   totalStakedMvk: 0,
   totalSupply: 0,
   maximumTotalSupply: 0,
-  mvkMintHistoryData: [],
+  mvkHistoryData: [],
   smvkHistoryData: [],
   isLoaded: false,
 }
@@ -32,7 +32,7 @@ export function doorman(state = doormanDefaultState, action: Action) {
         totalStakedMvk: action.totalStakedMvk,
         totalSupply: action.totalSupply,
         maximumTotalSupply: action.maximumTotalSupply,
-        mvkMintHistoryData: action.mvkMintHistoryData,
+        mvkHistoryData: action.mvkHistoryData,
         smvkHistoryData: action.smvkHistoryData,
         isLoaded: true,
       }

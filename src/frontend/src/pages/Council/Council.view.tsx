@@ -22,7 +22,6 @@ import { EmptyContainer } from 'app/App.style'
 import {
   BUTTON_PRIMARY,
   BUTTON_SECONDARY,
-  BUTTON_SIMPLE,
   BUTTON_WIDE,
 } from '../../app/App.components/Button/Button.constants'
 import { getSeparateSnakeCase } from 'utils/parse'

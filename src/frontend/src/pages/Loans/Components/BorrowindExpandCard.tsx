@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import {
@@ -24,6 +24,7 @@ import Icon from 'app/App.components/Icon/Icon.view'
 import { StatusMessage } from './StatusMessage.view'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
+import { scrollToFullView } from 'utils/scrollToFullView'
 
 import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } from 'app/App.components/Table'
 import { ThreeLevelListItem } from '../Loans.style'
@@ -40,7 +41,7 @@ import { isTezosAsset } from '../Loans.helpers'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import colors from 'styles/colors'
-import { getDynamicDecimalsAmountForOutput } from 'utils/calcFunctions'
+import { getDynamicDecimalsAmountForOutput, getNumberInBounds } from 'utils/calcFunctions'
 
 type BorrowingExpandCardPropsType = LoansVaultType & {
   isOwner?: boolean
@@ -61,6 +62,7 @@ export const BorrowingExpandCard = ({
   operators,
   sMVKDelegatedTo,
   vaultId,
+  name,
   depositors,
   deporsitorsFlag,
   headerSufix,
@@ -79,7 +81,6 @@ export const BorrowingExpandCard = ({
   collateralRatio,
   borrowCapacity,
   DAOFee,
-  repayFee,
 }: BorrowingExpandCardPropsType) => {
   const { symbol, icon, rate = 1 } = borrowedAsset
 
@@ -97,6 +98,14 @@ export const BorrowingExpandCard = ({
     openUpdateMvkOperatorsPopup,
     openWithdrawCollateralPopup,
   } = useContext(loansPopupsContext)
+
+  const ref = useRef<HTMLDivElement | null>(null)
+
+  // use for borrow or repay
+  // it scrolls until the current vault after the transaction and changing position
+  const scrollToCurrentVault = () => {
+    scrollToFullView(ref.current, 'nearest')
+  }
 
   const mappedMVKOperators = {
     firstAddress: operators?.[0],
@@ -133,7 +142,7 @@ export const BorrowingExpandCard = ({
   }, [vaultStatus, levelOfEarly, levelOfLate])
 
   return (
-    <>
+    <div ref={ref}>
       <Expand
         getExpandedStatus={getExpandedStatus}
         isExpandedByDefault={isOpenedVault}
@@ -144,7 +153,7 @@ export const BorrowingExpandCard = ({
             <ThreeLevelListItem className="borrow-asset-header">
               <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} />
               <div className="data">
-                <div className="value">{borrowedAsset.symbol}</div>
+                <div className="value">{name ? name : borrowedAsset.symbol}</div>
                 <div className="value">
                   <TzAddress tzAddress={address} shouldCopy hasIcon amountFromStart={4} amountFromEnd={4} />
                 </div>
@@ -171,11 +180,11 @@ export const BorrowingExpandCard = ({
               />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
-              <div className="name">Amount</div>
-              <CommaNumber value={borrowedAmount} className="value" showDecimal decimalsToShow={2} />
+              <div className="name">Outstanding Debt</div>
+              <CommaNumber value={borrowedAmount + fee} className="value" showDecimal decimalsToShow={2} />
               {rate ? (
                 <CommaNumber
-                  value={borrowedAmount * rate}
+                  value={(borrowedAmount + fee) * rate}
                   beginningText="$"
                   className="rate"
                   showDecimal
@@ -210,7 +219,7 @@ export const BorrowingExpandCard = ({
                 </div>
               </ThreeLevelListItem>
               <ThreeLevelListItem>
-                <div className="name">Amount</div>
+                <div className="name">Principal</div>
                 <CommaNumber value={borrowedAmount} decimalsToShow={2} className="value" />
                 {rate ? (
                   <CommaNumber value={borrowedAmount * rate} decimalsToShow={2} beginningText="$" className="rate" />
@@ -218,10 +227,10 @@ export const BorrowingExpandCard = ({
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">
-                  Fees{' '}
+                  Accrued Interest{' '}
                   <CustomTooltip
                     iconId="info"
-                    text="Origination Fee and Interest"
+                    text="Interest, compounded over time every time you borrow"
                     defaultStrokeColor={colors[themeSelected].textColor}
                   />
                 </div>
@@ -246,9 +255,10 @@ export const BorrowingExpandCard = ({
                         borrowCapacity,
                         currentBorrowedAmount: borrowedAmount,
                         DAOFee,
+                        scrollToCurrentVault,
                       })
                     }
-                    kind={BUTTON_PRIMARY}
+                    kind={BUTTON_SECONDARY}
                     form={BUTTON_WIDE}
                     disabled={collateralRatio < 200}
                   >
@@ -258,14 +268,16 @@ export const BorrowingExpandCard = ({
                     onClick={() =>
                       openRepayPopup?.({
                         vaultId,
+                        vaultAddress: address,
                         borrowedAsset: borrowedAsset,
                         borrowedAmount,
-                        feesAmount: repayFee,
+                        feesAmount: fee,
                         currentCollateralBalance: collateralData.at(-1)?.amount ?? 0,
                         borrowCapacity,
+                        scrollToCurrentVault,
                       })
                     }
-                    kind={BUTTON_SECONDARY}
+                    kind={BUTTON_PRIMARY}
                     form={BUTTON_WIDE}
                     disabled={!borrowedAmount}
                   >
@@ -297,11 +309,10 @@ export const BorrowingExpandCard = ({
 
                       const collateralShare = isTotalRow
                         ? 100
-                        : calculateCollateralShare(amount * rate, collateralTotalBalance)
+                        : getNumberInBounds(0, 100, calculateCollateralShare(amount * rate, collateralTotalBalance))
 
                       if (isTotalRow && collateralData.length < 3) return null
                       const collateralDecimalsLength = getDynamicDecimalsAmountForOutput(amount)
-                      const collateralRateDecimalsLength = getDynamicDecimalsAmountForOutput(amount * rate)
 
                       return (
                         <TableRow rowHeight={65} key={gqlName + '-' + idx}>
@@ -315,6 +326,7 @@ export const BorrowingExpandCard = ({
                               </div>
                             )}
                           </TableCell>
+
                           <TableCell width={'22%'}>
                             <div className="cell-content">
                               <CommaNumber
@@ -325,13 +337,7 @@ export const BorrowingExpandCard = ({
                                 beginningText={isTotalRow ? '$' : ''}
                               />
                               {rate ? (
-                                <CommaNumber
-                                  value={amount * rate}
-                                  className="rate"
-                                  beginningText="$"
-                                  showDecimal
-                                  decimalsToShow={collateralRateDecimalsLength}
-                                />
+                                <CommaNumber value={amount * rate} className="rate" beginningText="$" showDecimal />
                               ) : null}
                             </div>
                           </TableCell>
@@ -402,6 +408,7 @@ export const BorrowingExpandCard = ({
                                     }
                                     form={BUTTON_WIDE}
                                     kind={BUTTON_SECONDARY}
+                                    disabled={collateralRatio < 200}
                                   >
                                     <Icon id="minus" /> Remove
                                   </Button>
@@ -543,16 +550,17 @@ export const BorrowingExpandCard = ({
 
                 <div className="repay-full">
                   <Button
-                    disabled={!borrowedAmount}
+                    disabled={true || !borrowedAmount}
                     isThin
                     kind={BUTTON_SECONDARY}
                     onClick={() =>
                       openRepayFullPopup?.({
                         vaultId,
+                        vaultAddress: address,
                         borrowedAsset: borrowedAsset,
                         collateralRatio,
                         borrowedAmount,
-                        feesAmount: repayFee,
+                        feesAmount: fee,
                         currentCollateralBalance: collateralData.at(-1)?.amount ?? 0,
                         borrowCapacity,
                       })
@@ -566,6 +574,6 @@ export const BorrowingExpandCard = ({
           </BorrowingTabListItemExpanded>
         )}
       </Expand>
-    </>
+    </div>
   )
 }

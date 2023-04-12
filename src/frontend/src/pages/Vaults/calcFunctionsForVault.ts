@@ -234,6 +234,5 @@ export const calculateLiquidationPrice = (
 
   const loanTokenLatestPrice = oracleLatestPrices[loanTokenOracleAddress]
   const loanOutstandingInUSD = loanOutstandingTotal * loanTokenLatestPrice
-  console.log('Here in calculateLiquidationPrice', loanOutstandingInUSD, liquidationRatio)
   return loanOutstandingInUSD * (liquidationRatio / 1000)
 }

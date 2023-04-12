@@ -11,9 +11,9 @@ const defaultVaultsState: VaultsStateType = {
   vaultsList: {
     myVaultsIds: [],
     allVaultsIds: [],
-    vaultsMapper: {}
+    vaultsMapper: {},
   },
-  isLoaded: false
+  isLoaded: false,
 }
 
 export function vaults(state = defaultVaultsState, action: Action) {
@@ -22,7 +22,7 @@ export function vaults(state = defaultVaultsState, action: Action) {
       return {
         ...state,
         vaultsList: action.vaultsList,
-        isLoaded: true
+        isLoaded: true,
       }
     default:
       return state

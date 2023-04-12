@@ -29,7 +29,7 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { getLoansStorage } from './Actions/getLoansData.actions'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import colors from 'styles/colors'
 import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.types'
@@ -52,14 +52,33 @@ export const Loans = () => {
   const dispatch = useDispatch()
   const { isDataLoaded, loanTokens, chartsData } = useSelector((state: State) => state.loans)
   const { themeSelected } = useSelector((state: State) => state.preferences)
+  const { accountPkh } = useSelector((state: State) => state.wallet)
 
-  const { isLoading } = useDataLoader(async () => {
-    try {
-      if (!isDataLoaded) {
-        await dispatch(getLoansStorage())
-      }
-    } catch (e) {}
-  }, [isDataLoaded])
+  const { totalBorrowed, totalLended } = loanTokens.reduce<{
+    totalLended: number
+    totalBorrowed: number
+  }>(
+    (acc, { totalBorrowed, totalLended, loanTokenData: { rate } }) => {
+      acc.totalBorrowed += totalBorrowed * rate
+      acc.totalLended += totalLended * rate
+      return acc
+    },
+    {
+      totalLended: 0,
+      totalBorrowed: 0,
+    },
+  )
+
+  const { isLoading } = useDataLoader(
+    async (isDepsChanged) => {
+      try {
+        if (!isDataLoaded || isDepsChanged) {
+          await dispatch(getLoansStorage())
+        }
+      } catch (e) {}
+    },
+    [accountPkh],
+  )
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -69,7 +88,7 @@ export const Loans = () => {
     <div className="chart-wrapper">
       <div className="summary">
         <span>Total Lending</span>
-        <CommaNumber value={chartsData?.totalLended ?? 0} beginningText={'$'} />
+        <CommaNumber value={totalLended} beginningText={'$'} />
       </div>
       <div className="chart">
         <Chart
@@ -88,7 +107,7 @@ export const Loans = () => {
     <div className="chart-wrapper">
       <div className="summary">
         <span>Total Borrowing</span>
-        <CommaNumber value={chartsData?.totalBorrowed ?? 0} beginningText={'$'} />
+        <CommaNumber value={totalBorrowed} beginningText={'$'} />
       </div>
       <div className="chart">
         <Chart
@@ -106,18 +125,19 @@ export const Loans = () => {
   return (
     <Page>
       <PageHeader page={'lending'} />
-      <LoansStyled>
-        <MarketChartsContainer>
-          {lendingPart}
-          {borrowingPart}
-        </MarketChartsContainer>
 
-        {isLoading ? (
-          <DataLoaderWrapper>
-            <ClockLoader width={150} height={150} />
-            <div className="text">Loading loans markets</div>
-          </DataLoaderWrapper>
-        ) : loanTokens.length ? (
+      {isLoading ? (
+        <DataLoaderWrapper>
+          <ClockLoader width={150} height={150} />
+          <div className="text">Loading loans markets</div>
+        </DataLoaderWrapper>
+      ) : loanTokens.length ? (
+        <LoansStyled>
+          <MarketChartsContainer>
+            {lendingPart}
+            {borrowingPart}
+          </MarketChartsContainer>
+
           <MarketsOverviewContainer>
             <GovRightContainerTitleArea>
               <h2>Markets</h2>
@@ -138,7 +158,12 @@ export const Loans = () => {
                 lendingAPY,
               } = loanAsset
 
-              const totalCorratealColor = loanTokenTotalCollaterals / loanTokenVaultsTotalBorrowed > 2 ? 'up' : 'down'
+              const totalCorratealColor =
+                loanTokenTotalCollaterals && loanTokenVaultsTotalBorrowed
+                  ? loanTokenTotalCollaterals / loanTokenVaultsTotalBorrowed > 2
+                    ? 'up'
+                    : 'down'
+                  : 'neutral'
               return (
                 <MarketOverview key={`${name}-${symbol}`}>
                   <div className="asset-info">
@@ -229,17 +254,17 @@ export const Loans = () => {
               )
             })}
           </MarketsOverviewContainer>
-        ) : (
-          <EmptyContainer
-            style={{
-              paddingTop: '80px',
-            }}
-          >
-            <img src="/images/not-found.svg" alt=" No active markets to show" />
-            <figcaption> No active markets to show</figcaption>
-          </EmptyContainer>
-        )}
-      </LoansStyled>
+        </LoansStyled>
+      ) : (
+        <EmptyContainer
+          style={{
+            paddingTop: '80px',
+          }}
+        >
+          <img src="/images/not-found.svg" alt=" No active markets to show" />
+          <figcaption> No active markets to show</figcaption>
+        </EmptyContainer>
+      )}
     </Page>
   )
 }

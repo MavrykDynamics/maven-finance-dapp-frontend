@@ -22,6 +22,16 @@ export const DoormanChartCard = styled(Card)<{ theme: MavrykTheme }>`
   justify-content: center;
   position: relative;
 
+  // Use z-index with hover
+  // Because in this block, there’s a canvas that overrides the CustomTooltip from the next block.
+  // But when we’re inside the chart, we want the ChartTooltip to overrides the neighboring blocks.
+  // Task - [MAV-1279]
+  z-index: 0;
+
+  &:hover {
+    z-index: 1;
+  }
+
   > div {
     color: ${({ theme }) => theme.textColor};
     font-weight: 500;
@@ -37,6 +47,41 @@ export const DoormanChartCard = styled(Card)<{ theme: MavrykTheme }>`
   .fee-label {
     position: absolute;
     top: 20px;
-    left: 45px;
+    left: 35px;
+  }
+
+  .double-chart-legend {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    flex-direction: column;
+    row-gap: 5px;
+
+    .row {
+      display: flex;
+      align-items: center;
+      column-gap: 7px;
+      font-size: 12px;
+      color: ${({ theme }) => theme.textColor};
+
+      &.mvk {
+        .circle {
+          background: ${({ theme }) => theme.dataColor};
+        }
+      }
+
+      &.smvk {
+        .circle {
+          background: ${({ theme }) => theme.valueColor};
+        }
+      }
+    }
+
+    .circle {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
   }
 `

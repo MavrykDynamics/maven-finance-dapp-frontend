@@ -1,6 +1,6 @@
 export const LOANS_QUERY = `
   query GetLoansStorage {
-    lending_controller(where: {mock_time: {_eq: true}}) {
+    lending_controller(where: {mock_time: {_eq: false}}) {
       address
       collateral_ratio
       interest_treasury_share
@@ -60,7 +60,7 @@ export const LOANS_QUERY = `
           }
         }
 
-        vaults(order_by: {vault: {creation_timestamp: desc}}) {
+        vaults(order_by: {vault: {creation_timestamp: desc}}, where: {open: {_eq: true}}) {
           collateral_balances {
             token {
               token_address
@@ -81,6 +81,7 @@ export const LOANS_QUERY = `
               loan_principal_total
               loan_outstanding_total
               loan_interest_total
+              borrow_index
             }
           }
           loan_token {
@@ -89,6 +90,7 @@ export const LOANS_QUERY = `
             loan_token_contract_standard
             oracle_id
             current_interest_rate
+            borrow_index
           }
           lending_controller {
             liquidation_delay_in_minutes
@@ -100,6 +102,7 @@ export const LOANS_QUERY = `
           loan_interest_total
           owner_id
           loan_outstanding_total
+          borrow_index
         }
       }
     }
@@ -111,7 +114,7 @@ export const LOANS_QUERY_VARIABLE = {}
 
 export const AVALIABLE_COLLATERALS_QUERY = `
   query GetAvaliableCollaterals {
-    lending_controller(where: {mock_time: {_eq: true}}) {
+    lending_controller(where: {mock_time: {_eq: false}}) {
       collateral_tokens {
         token_address
         id
@@ -149,7 +152,7 @@ export const AVALIABLE_COLLATERALS_QUERY_VARIABLE = {}
 export const NEW_VAULT_QUERY = `
   query GetNewVault {
     vault {
-      lending_controller_vaults(order_by: {last_updated_timestamp: asc}, where: {lending_controller: {mock_time: {_eq: true}}}) {
+      lending_controller_vaults(order_by: {last_updated_timestamp: asc}, where: {lending_controller: {mock_time: {_eq: false}}}) {
         last_updated_timestamp
         vault_id
       }
@@ -163,7 +166,7 @@ export const NEW_VAULT_QUERY_VARIABLE = {}
 export const USER_LENDING_DATA_QUERY = `
   query GetLendBorrowHistoryPerUser($userAddress: String = "", $_in: [smallint!] = ["0", "1", "2", "3"]) {
     mavryk_user(where: {address: {_eq: $userAddress}}) {
-      lending_controller_history_data_sender(where: {lending_controller: {mock_time: {_eq: true}}, type: {_in: $_in}}, order_by: {type: asc, timestamp: asc}) {
+      lending_controller_history_data_sender(where: {lending_controller: {mock_time: {_eq: false}}, type: {_in: $_in}}, order_by: {type: asc, timestamp: asc}) {
         type
         timestamp
         operation_hash
@@ -179,6 +182,24 @@ export const USER_LENDING_DATA_QUERY = `
           interest_rate_decimals
           interest_treasury_share
           decimals
+        }
+      }
+
+      lending_controller_vaults(where: {lending_controller: {mock_time: {_eq: false}}}) {
+        collateral_balances {
+          balance
+          token {
+            token_name
+            token_address
+            oracle_id
+          }
+        }
+        loan_decimals
+        loan_principal_total
+        loan_token {
+          loan_token_name
+          loan_token_address
+          oracle_id
         }
       }
     }

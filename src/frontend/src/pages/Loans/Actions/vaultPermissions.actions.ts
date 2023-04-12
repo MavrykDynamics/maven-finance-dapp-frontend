@@ -1,12 +1,15 @@
 import { OpKind } from '@taquito/taquito'
+import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { ERROR, INFO, SUCCESS } from 'app/App.components/Toaster/Toaster.constants'
 import { AppDispatch, GetState } from 'app/App.controller'
+import { getVaultsStorage } from 'pages/Vaults/Vaults.actions'
 import { State } from 'reducers'
 import { LoanVaultAllowanceType } from 'utils/TypesAndInterfaces/Loans'
 import { VAULT_ALLOWANCE_ACCOUNTS, VAULT_ALLOWANCE_ANY } from '../Loans.const'
-import { getLoansVaultsData } from './getLoansData.actions'
+import { getLoansStorage } from './getLoansData.actions'
+import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
 
 export const changeBakerAction =
   (bakerAddress: string, vaultAddress: string, callback: () => void) =>
@@ -25,8 +28,9 @@ export const changeBakerAction =
 
     try {
       // prepare and send query
-      const contract = await state.wallet.tezos?.wallet.at(vaultAddress)
-      const transaction = await contract?.methods.initVaultAction('delegateTezToBaker', bakerAddress).send()
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(vaultAddress)
+      const transaction = await contract?.methods.initVaultAction('setBaker', bakerAddress).send()
 
       callback()
       dispatch(toggleActionLoader(true))
@@ -35,8 +39,18 @@ export const changeBakerAction =
       // confirm query completion
       await transaction?.confirmation()
 
+      // @ts-ignore don't have proper type to acees data, type has only methods
+      const currentOperationLevel = transaction?.lastHead?.header?.level
+
       // refetch data we need
-      await dispatch(getLoansVaultsData())
+      await checkIndexerLevelAndRunDataUpdateCallback({
+        callback: async () => {
+          state.vaults.isLoaded && (await dispatch(getVaultsStorage()))
+          state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
+        },
+        currentOperationLevel,
+      })
+
       dispatch(showToaster(SUCCESS, 'Baker changed.', 'All good :)'))
       dispatch(toggleActionLoader(false))
     } catch (error) {
@@ -72,7 +86,8 @@ export const managePermissionsAction =
 
     try {
       // prepare and send query
-      const contract = await state.wallet.tezos?.wallet.at(vaultAddress)
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(vaultAddress)
       let transaction = null
 
       // if depostiorAllowance === VAULT_ALLOWANCE_ANY call updateDepositor with any 2 args and VAULT_ALLOWANCE_ANY config
@@ -82,7 +97,7 @@ export const managePermissionsAction =
 
       // if newDepositorsAddresses is empty means we need to remove all depositors
       if (depostiorAllowance === VAULT_ALLOWANCE_ACCOUNTS && newDepositorsAddresses.length === 0) {
-        const batch = state.wallet.tezos?.wallet.batch(
+        const batch = tezos.wallet.batch(
           vaultOriginalDepositros.length === 0
             ? [
                 {
@@ -113,14 +128,12 @@ export const managePermissionsAction =
 
         const batchArr = [
           ...depositorsToRemove.map((depositorAddress) => ({
-            // TODO: idk what's wrong with the enum typings here it sets kind to OpKind type instead of OpKind.TRANSACTION
             kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
             ...contract.methods
               .initVaultAction('updateDepositor', VAULT_ALLOWANCE_ACCOUNTS, false, depositorAddress)
               .toTransferParams(),
           })),
           ...depositorsToAdd.map((depositorAddress) => ({
-            // TODO: idk what's wrong with the enum typings here it sets kind to OpKind type instead of OpKind.TRANSACTION
             kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
             ...contract.methods
               .initVaultAction('updateDepositor', VAULT_ALLOWANCE_ACCOUNTS, true, depositorAddress)
@@ -128,7 +141,7 @@ export const managePermissionsAction =
           })),
         ]
 
-        const batch = state.wallet.tezos?.wallet.batch(batchArr)
+        const batch = tezos.wallet.batch(batchArr)
         transaction = await batch?.send()
       }
 
@@ -139,8 +152,18 @@ export const managePermissionsAction =
       // confirm query completion
       await transaction?.confirmation()
 
+      // @ts-ignore don't have proper type to acees data, type has only methods
+      const currentOperationLevel = transaction?.lastHead?.header?.level
+
       // refetch data we need
-      await dispatch(getLoansVaultsData())
+      await checkIndexerLevelAndRunDataUpdateCallback({
+        callback: async () => {
+          state.vaults.isLoaded && (await dispatch(getVaultsStorage()))
+          state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
+        },
+        currentOperationLevel,
+      })
+
       dispatch(showToaster(SUCCESS, 'Depositors updated.', 'All good :)'))
       dispatch(toggleActionLoader(false))
     } catch (error) {
@@ -168,7 +191,8 @@ export const updateOperatorsAction = (callback: () => void) => async (dispatch: 
 
   try {
     // prepare and send query
-    const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.lendingController.address)
+    const tezos = await DAPP_INSTANCE.tezos()
+    const contract = await tezos.wallet.at(state.contractAddresses.lendingController.address)
     // const transaction  = await contract?.methods.any.send()
 
     callback()
@@ -178,8 +202,18 @@ export const updateOperatorsAction = (callback: () => void) => async (dispatch: 
     // confirm query completion
     // await transaction?.confirmation()
 
+    // @ts-ignore don't have proper type to acees data, type has only methods
+    const currentOperationLevel = transaction?.lastHead?.header?.level
+
     // refetch data we need
-    await dispatch(getLoansVaultsData())
+    await checkIndexerLevelAndRunDataUpdateCallback({
+      callback: async () => {
+        state.vaults.isLoaded && (await dispatch(getVaultsStorage()))
+        state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
+      },
+      currentOperationLevel,
+    })
+
     dispatch(showToaster(SUCCESS, 'Asset borrowed.', 'All good :)'))
     dispatch(toggleActionLoader(false))
   } catch (error) {

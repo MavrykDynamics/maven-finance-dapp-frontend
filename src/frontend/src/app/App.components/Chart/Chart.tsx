@@ -67,7 +67,21 @@ export const Chart = ({
   numberOfItemsToDisplay = 15,
   tooltipName,
   tooltipAsset,
+  comingSoon = false,
 }: ChartWrapperPropsType) => {
+  if (comingSoon) {
+    return (
+      <Plug>
+        <div>
+          <Icon id="stars" className="icon-stars" />
+          <Icon id="cow" className="icon-cow" />
+        </div>
+
+        <p>Coming soon</p>
+      </Plug>
+    )
+  }
+
   if (data.plots.length < numberOfItemsToDisplay) {
     return (
       <Plug className='chartPlug'>

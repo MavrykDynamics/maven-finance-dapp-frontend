@@ -53,12 +53,14 @@ export const StakeUnstakeActionCard = styled(Card)<{ theme: MavrykTheme }>`
   padding-right: 30px;
 `
 export const StakeUnstakeInputColumn = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
 
   .errorMessage {
-    position: relative;
-    top: 16px;
+    position: absolute;
+    bottom: -45px;
+    left: 100px;
   }
 `
 export const StakeUnstakeInputLabels = styled.div`

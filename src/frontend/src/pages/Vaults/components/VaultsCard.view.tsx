@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useContext, useRef } from 'react'
 import { useClickAway } from 'react-use'
+import { useSelector } from 'react-redux'
 
 // components
 import { StatusFlag } from '../../../app/App.components/StatusFlag/StatusFlag.controller'
@@ -17,6 +18,7 @@ import { VaultsCardDropDown } from './../Vaults.style'
 import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } from 'app/App.components/Table'
 
 // types
+import { State } from 'reducers'
 import { VaultType } from 'utils/TypesAndInterfaces/Vaults'
 import { StatusFlagStyle } from '../../../app/App.components/StatusFlag/StatusFlag.constants'
 
@@ -100,7 +102,35 @@ export const VaultsCard = (props: Props) => {
     handleMarkForLiquidation,
   } = props
 
-  const { openLiquidateVaultPopup } = useContext(loansPopupsContext)
+  const {
+    openLiquidateVaultPopup,
+    changeBakerPopup,
+    repayPartPopup,
+    repayFullPopup,
+    borrowAssetPopup,
+    addExistingCollateralPopup,
+    addNewCollateralPopup,
+    withdrawCollateralPopup,
+    updateMvkOperatorPopup,
+    managePermissionsPopup,
+    liquidateVaultPopup,
+  } = useContext(loansPopupsContext)
+
+  const { isActionLoading } = useSelector((state: State) => state.loading)
+
+  const notHandleClickAway =
+    repayPartPopup.showModal ||
+    changeBakerPopup.showModal ||
+    repayFullPopup.showModal ||
+    borrowAssetPopup.showModal ||
+    addExistingCollateralPopup.showModal ||
+    addNewCollateralPopup.showModal ||
+    withdrawCollateralPopup.showModal ||
+    updateMvkOperatorPopup.showModal ||
+    managePermissionsPopup.showModal ||
+    liquidateVaultPopup.showModal ||
+    isActionLoading
+
   const [expanded, setExpanded] = useState(false)
   const [timerTimestamp, setTimerTimestamp] = useState<number | undefined>(undefined)
 
@@ -116,7 +146,7 @@ export const VaultsCard = (props: Props) => {
   const isMarkStatus = vaultsStatuses.MARK === status
 
   const ref = useRef<HTMLDivElement | null>(null)
-  useClickAway(ref, () => setExpanded(false))
+  useClickAway(ref, () => (notHandleClickAway ? null : setExpanded(false)))
 
   const getCountdownTimestamp = async (levelOfEarly: number, levelOfLate: number) => {
     const [timestampOfEarly, timestampOfLate] = await Promise.all([
@@ -260,7 +290,7 @@ export const VaultsCard = (props: Props) => {
                         <div className="cell-content">
                           <CommaNumber
                             value={amount}
-                            decimalsToShow={2}
+                            decimalsToShow={isTotalRow ? 2 : 4}
                             beginningText={isTotalRow ? '$' : ''}
                             className="balance"
                           />
@@ -309,8 +339,7 @@ export const VaultsCard = (props: Props) => {
           getExpandedStatus={setExpanded}
           isOpenedVault={expanded}
           isOwner
-          // TODO: add this values as on loans
-          DAOFee={0}
+          DAOFee={props.daoFee}
         />
       ) : (
         <BorrowingExpandCard
@@ -319,8 +348,7 @@ export const VaultsCard = (props: Props) => {
           headerSufix={headerSufix}
           getExpandedStatus={setExpanded}
           isOpenedVault={expanded}
-          // TODO: add this values as on loans
-          DAOFee={0}
+          DAOFee={props.daoFee}
         >
           {generalExpand}
         </BorrowingExpandCard>

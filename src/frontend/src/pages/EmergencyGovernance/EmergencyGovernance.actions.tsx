@@ -12,6 +12,7 @@ import { normalizeEmergencyGovernance } from '../EmergencyGovernance/EmergencyGo
 import { EmergencyGovernanceProposalForm } from '../../utils/TypesAndInterfaces/Forms'
 import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 import { getBreakGlassConfig } from 'pages/BreakGlass/BreakGlass.actions'
+import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 
 export const GET_EMERGENCY_GOVERNANCE_STORAGE = 'GET_EMERGENCY_GOVERNANCE_STORAGE'
 export const getEmergencyGovernanceStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
@@ -46,7 +47,8 @@ export const submitEmergencyGovernanceProposal =
     }
 
     try {
-      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.emergencyGovernanceAddress.address)
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(state.contractAddresses.emergencyGovernanceAddress.address)
       const transaction = await contract?.methods
         .triggerEmergencyControl(form.title, form.description)
         .send({ amount: state.emergencyGovernance.config.requiredFeeMutez ?? 0 })
@@ -86,7 +88,8 @@ export const voteEmergencyGovernanceProposal = () => async (dispatch: AppDispatc
   }
 
   try {
-    const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.emergencyGovernanceAddress.address)
+    const tezos = await DAPP_INSTANCE.tezos()
+    const contract = await tezos.wallet.at(state.contractAddresses.emergencyGovernanceAddress.address)
     const transaction = await contract?.methods.voteForEmergencyControl().send()
 
     await dispatch(toggleActionLoader(true))
@@ -121,7 +124,8 @@ export const dropEmergencyGovernanceProposal = () => async (dispatch: AppDispatc
   }
 
   try {
-    const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.emergencyGovernanceAddress.address)
+    const tezos = await DAPP_INSTANCE.tezos()
+    const contract = await tezos.wallet.at(state.contractAddresses.emergencyGovernanceAddress.address)
     const transaction = await contract?.methods.dropEmergencyGovernance().send()
 
     await dispatch(toggleActionLoader(true))

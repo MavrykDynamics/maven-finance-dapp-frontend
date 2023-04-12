@@ -1,57 +1,59 @@
 import * as React from 'react'
 
 // view
-import { Button } from '../../../app/App.components/Button/Button.controller'
-import Icon from '../../../app/App.components/Icon/Icon.view'
+import NewButton from 'app/App.components/Button/NewButton'
+import { BUTTON_SECONDARY, BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
 // style
-import { ModalCard, ModalCardContent, ModalStyled, ModalMask, ModalClose } from 'styles'
-import { MoveNextRoundModalstyle } from './MoveNextRoundModal.style'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
+import { MoveNextRoundModalStyled } from './MoveNextRoundModal.style'
 
 // TODO: add estimation before calling this modal
 export const MoveNextRoundModal = ({
+  showModal,
   handleMoveNextRound,
   handleExecuteProposal,
   handleCloseModal,
   estimatedValues: { fee, cost },
 }: {
+  showModal: boolean
   handleMoveNextRound: () => void
   handleExecuteProposal: () => void
   handleCloseModal: () => void
   estimatedValues: { fee: number; cost: number }
 }) => {
   return (
-    <MoveNextRoundModalstyle>
-      <ModalStyled showing={true}>
-        <ModalMask showing={true} onClick={handleCloseModal} />
-        <ModalCard>
-          <ModalClose onClick={handleCloseModal}>
-            <Icon id="error" />
-          </ModalClose>
-          <ModalCardContent style={{ width: '586px' }}>
-            <h1>Move to the next round</h1>
-            <p>Do you want to Execute Proposal or move to the next round without execution?</p>
+    <PopupContainer onClick={handleCloseModal} show={showModal}>
+      <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="loans">
+        <MoveNextRoundModalStyled>
+          <button onClick={handleCloseModal} className="close-modal" />
 
-            <div className="step-info">
-              <div className="name">Minimal Fee</div>
-              <div className="value">
-                <CommaNumber value={fee} endingText="tez" decimalsToShow={4} />
-              </div>
+          <h1>Move to the next round</h1>
+          <p>Do you want to Execute Proposal or move to the next round without execution?</p>
+
+          <div className="step-info">
+            <div className="name">Minimal Fee</div>
+            <div className="value">
+              <CommaNumber value={fee} endingText="tez" decimalsToShow={4} />
             </div>
-            <div className="step-info">
-              <div className="name">Estimated total Cost</div>
-              <div className="value">
-                <CommaNumber value={cost} endingText="tez" decimalsToShow={4} />
-              </div>
+          </div>
+          <div className="step-info">
+            <div className="name">Estimated total Cost</div>
+            <div className="value">
+              <CommaNumber value={cost} endingText="tez" decimalsToShow={4} />
             </div>
-            <div className="btn-group">
-              <Button text="Move to the next round" kind="actionSecondary" onClick={handleMoveNextRound} />
-              <Button text="Execute Proposal" kind="actionPrimary" onClick={() => handleExecuteProposal()} />
-            </div>
-          </ModalCardContent>
-        </ModalCard>
-      </ModalStyled>
-    </MoveNextRoundModalstyle>
+          </div>
+          <div className="btn-group">
+            <NewButton kind={BUTTON_SECONDARY} form={BUTTON_WIDE} onClick={handleMoveNextRound}>
+              Move to the next round
+            </NewButton>
+            <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={handleExecuteProposal}>
+              Execute Proposal
+            </NewButton>
+          </div>
+        </MoveNextRoundModalStyled>
+      </PopupContainerWrapper>
+    </PopupContainer>
   )
 }

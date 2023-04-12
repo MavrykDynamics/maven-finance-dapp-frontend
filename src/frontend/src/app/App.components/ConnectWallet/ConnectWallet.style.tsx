@@ -13,8 +13,8 @@ const VISIBLE_PART_CONNECTED_WALLET = (theme: MavrykTheme, isMobileDetails?: boo
   height: 100%;
 
   var {
-    font-weight: 400;
-    font-size: 14px;
+    font-weight: 600;
+    font-size: 16px;
     color: ${theme.valueColor};
   }
 
@@ -34,7 +34,7 @@ const VISIBLE_PART_CONNECTED_WALLET = (theme: MavrykTheme, isMobileDetails?: boo
   .inner-wallet,
   .wallet {
     width: 22px;
-    height: 20px;
+    height: 17px;
     stroke: none;
     fill: ${theme.valueColor};
   }

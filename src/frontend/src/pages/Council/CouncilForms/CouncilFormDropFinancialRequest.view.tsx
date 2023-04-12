@@ -27,9 +27,9 @@ export const CouncilFormDropFinancialRequest = () => {
     (state: State) => state.financialRequest,
   )
 
-  useDataLoader(async () => {
+  useDataLoader(async (isDepsChanged) => {
     try {
-      if (!isFinancialRequestsLoaded) {
+      if (!isFinancialRequestsLoaded || isDepsChanged) {
         await dispatch(getFinancialRequestStorage())
       }
     } catch (e) {}

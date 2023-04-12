@@ -15,6 +15,7 @@ import {
   USER_LENDING_DATA_QUERY_NAME,
   USER_LENDING_DATA_QUERY_VARIABLE,
 } from 'gql/queries/getLoansStorage'
+import { getAvaliableCollaterals } from 'pages/Loans/Actions/getLoansData.actions'
 import { getAssetMetadata, normalizeUserLending } from 'pages/Loans/Loans.helpers'
 import { State } from 'reducers'
 import { UserState, DEFAULT_USER } from 'reducers/wallet'
@@ -160,15 +161,17 @@ export const fetchUserData = async (
       USER_LENDING_DATA_QUERY_VARIABLE(accountPkh),
     )
 
-    const { userBorrowing, userLendings } = normalizeUserLending({
+    const { userBorrowing, userLendings, userVaultsData } = normalizeUserLending({
       dipDupTokens,
       feeds,
-      userDataFromIndexer: userLendingData.mavryk_user?.[0]?.lending_controller_history_data_sender,
+      userDataLoansHistoryGql: userLendingData.mavryk_user?.[0]?.lending_controller_history_data_sender,
+      userVaultsDataGql: userLendingData.mavryk_user?.[0]?.lending_controller_vaults,
     })
 
     userInfo.userLoansData = {
       userBorrowing,
       userLendings,
+      userVaultsData,
     }
 
     return userInfo
@@ -198,6 +201,8 @@ export const updateUserData = () => async (dispatch: AppDispatch, getState: GetS
         type: UPDATE_USER_DATA,
         userData: userData,
       })
+
+      await dispatch(getAvaliableCollaterals())
     }
   } catch (error) {
     if (error instanceof Error) {

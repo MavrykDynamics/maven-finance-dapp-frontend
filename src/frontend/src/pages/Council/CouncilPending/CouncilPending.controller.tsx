@@ -1,6 +1,4 @@
 import { useState, useCallback, useRef, useMemo } from 'react'
-import { createPortal } from 'react-dom'
-import { ModalCard, ModalCardContent, ModalClose, ModalMask, ModalStyled } from 'styles'
 
 // components
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
@@ -14,13 +12,16 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { bytesToText, BytesType, BYTES_ADDRESS_TYPE } from 'utils/bytesToString'
 import { convertBytesAddressToAddress } from 'app/App.helpers'
 import { CYAN } from 'app/App.components/TzAddress/TzAddress.constants'
+import { MVK_DECIMALS } from 'utils/constants'
+import { convertNumberForClient } from 'utils/calcFunctions'
 
 // types
 import { CouncilAction } from 'utils/TypesAndInterfaces/Council'
 
 // styles
-import { CouncilPendingStyled } from './CouncilPending.style'
+import { CouncilPendingStyled, CouncilModalBase } from './CouncilPending.style'
 import { AvatarStyle } from '../../../app/App.components/Avatar/Avatar.style'
+import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
 
 type Props = CouncilAction & {
   numCouncilMembers: number
@@ -41,7 +42,7 @@ export const CouncilPending = (props: Props) => {
     handleSignAction,
   } = props
 
-  const [showing, setShowing] = useState(false)
+  const [showPopup, setShowPopup] = useState(false)
   const { name, value } = parameters?.[0] || {}
   const cardNumber = index + 1
 
@@ -51,6 +52,9 @@ export const CouncilPending = (props: Props) => {
     [ref.current?.offsetHeight, ref.current?.scrollWidth],
   )
 
+  const closePopup = () => {
+    setShowPopup(false)
+  }
   const onClickSign = () => {
     if (id) {
       handleSignAction(id)
@@ -100,31 +104,17 @@ export const CouncilPending = (props: Props) => {
     }
   }
 
-  const modal = (
-    <ModalStyled showing={true}>
-      <ModalMask
-        showing={true}
-        onClick={() => {
-          setShowing(false)
-        }}
-      />
-      <ModalCard>
-        <ModalClose
-          onClick={() => {
-            setShowing(false)
-          }}
-        >
-          <Icon id="navigation-menu_close" />
-        </ModalClose>
-        <ModalCardContent style={{ width: 586 }}>
+  const purposeRequestPopup = (
+    <PopupContainer onClick={closePopup} show={!showPopup}>
+      <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="council__request-purpose">
+        <CouncilModalBase>
+          <button onClick={closePopup} className="close-modal" />
           <h1>Purpose for Request</h1>
-          <div ref={ref} className="text-box">
-            {purpose}
-          </div>
-          <div style={{ display: showScrollInModal ? 'block' : 'none' }} className="shadow-box"></div>
-        </ModalCardContent>
-      </ModalCard>
-    </ModalStyled>
+          <p ref={ref}>{purpose}</p>
+          {showScrollInModal && <div className="shadow"></div>}
+        </CouncilModalBase>
+      </PopupContainerWrapper>
+    </PopupContainer>
   )
 
   // 2/3
@@ -197,7 +187,7 @@ export const CouncilPending = (props: Props) => {
             </div>
           </div>
         </CouncilPendingStyled>
-        {showing ? createPortal(modal, document?.body) : null}
+        {purposeRequestPopup}
       </>
     )
   }
@@ -575,7 +565,7 @@ export const CouncilPending = (props: Props) => {
             {purpose && (
               <article>
                 <p>Purpose for Request</p>
-                <button className="parameters-link" onClick={() => setShowing(true)}>
+                <button className="parameters-link" onClick={() => setShowPopup(true)}>
                   Read Request
                 </button>
               </article>
@@ -588,7 +578,7 @@ export const CouncilPending = (props: Props) => {
             </div>
           </div>
         </CouncilPendingStyled>
-        {showing ? createPortal(modal, document?.body) : null}
+        {purposeRequestPopup}
       </>
     )
   }
@@ -651,7 +641,7 @@ export const CouncilPending = (props: Props) => {
             {purpose && (
               <article>
                 <p>Purpose for Request</p>
-                <button className="parameters-link" onClick={() => setShowing(true)}>
+                <button className="parameters-link" onClick={() => setShowPopup(true)}>
                   Read Request
                 </button>
               </article>
@@ -664,14 +654,14 @@ export const CouncilPending = (props: Props) => {
             </div>
           </div>
         </CouncilPendingStyled>
-        {showing ? createPortal(modal, document?.body) : null}
+        {purposeRequestPopup}
       </>
     )
   }
 
   // 2/3
   if (isRequestMint) {
-    const tokenAmount = findActionByName('tokenAmount')
+    const tokenAmount = convertNumberForClient({ number: findActionByName('tokenAmount'), grade: MVK_DECIMALS })
     const treasuryAddress = findActionByName('treasuryAddress', BYTES_ADDRESS_TYPE)
 
     return (
@@ -707,7 +697,7 @@ export const CouncilPending = (props: Props) => {
           {purpose && (
             <article>
               <p>Purpose for Request</p>
-              <button className="parameters-link" onClick={() => setShowing(true)}>
+              <button className="parameters-link" onClick={() => setShowPopup(true)}>
                 Read Request
               </button>
             </article>
@@ -721,7 +711,7 @@ export const CouncilPending = (props: Props) => {
             </NewButton>
           </div>
         </div>
-        {showing ? createPortal(modal, document?.body) : null}
+        {purposeRequestPopup}
       </CouncilPendingStyled>
     )
   }

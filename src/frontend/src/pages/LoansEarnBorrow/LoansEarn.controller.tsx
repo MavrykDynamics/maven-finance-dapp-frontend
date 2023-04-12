@@ -38,8 +38,23 @@ export const LoansEarn = () => {
   const {
     isDataLoaded,
     loanTokens,
-    chartsData: { lendingChartData, borrowingChartData, totalLended, totalBorrowed },
+    chartsData: { lendingChartData, borrowingChartData },
   } = useSelector((state: State) => state.loans)
+
+  const { totalBorrowed, totalLended } = loanTokens.reduce<{
+    totalLended: number
+    totalBorrowed: number
+  }>(
+    (acc, { totalBorrowed, totalLended, loanTokenData: { rate } }) => {
+      acc.totalBorrowed += totalBorrowed * rate
+      acc.totalLended += totalLended * rate
+      return acc
+    },
+    {
+      totalLended: 0,
+      totalBorrowed: 0,
+    },
+  )
 
   const { openAddLendingAssetPopup } = useContext(loansPopupsContext)
 

@@ -14,9 +14,11 @@ export const GaugeChartStyled = styled.div<{ theme: MavrykTheme }>`
     width: 100%;
   }
 
-  .gradient {
+  .colored-arc {
     width: 125px;
     z-index: 3;
+    left: 0;
+    transform: scale(-1, 1);
   }
 
   .backdrop {
@@ -37,12 +39,13 @@ export const GaugeChartStyled = styled.div<{ theme: MavrykTheme }>`
 
     svg {
       position: absolute;
-      left: -11px;
+      left: -10px;
       top: 50%;
       transform: translateY(-50%);
     }
   }
 `
+
 export const ValueWrapper = styled.div<{ theme: MavrykTheme }>`
   width: 82px;
   height: 82px;
@@ -112,7 +115,7 @@ export const ArrowStyled = styled.div<{ theme: MavrykTheme; angle: number }>`
   left: 50%;
   top: 50%;
   z-index: 2;
-  transition: transform 2s;
+  transition: transform 500ms ease-in-out;
 
   ${({ angle }) =>
     css`

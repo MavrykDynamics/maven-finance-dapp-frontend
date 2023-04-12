@@ -1,13 +1,16 @@
 import { OpKind, WalletParamsWithKind } from '@taquito/taquito'
+import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { ERROR, INFO, SUCCESS } from 'app/App.components/Toaster/Toaster.constants'
 import { AppDispatch, GetState } from 'app/App.controller'
+import { getVaultsStorage } from 'pages/Vaults/Vaults.actions'
 import { State } from 'reducers'
 import { updateUserData } from 'reducers/actions/user.actions'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { TokenType } from 'utils/TypesAndInterfaces/General'
-import { getAvaliableCollaterals, getLoansVaultsData } from './getLoansData.actions'
+import { getAvaliableCollaterals, getLoansStorage } from './getLoansData.actions'
+import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
 
 // remove collateral from the vault
 export const withdrawCollateralAction =
@@ -32,9 +35,10 @@ export const withdrawCollateralAction =
     }
 
     try {
-      const convertedAssetAmount = convertNumberForContractCall({ number: withdrawAmount, grage: assetDecimals })
+      const convertedAssetAmount = convertNumberForContractCall({ number: withdrawAmount, grade: assetDecimals })
       // prepare and send query
-      const contract = await state.wallet.tezos?.wallet.at(vaultAddress)
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(vaultAddress)
       const transaction = await contract.methods
         .initVaultAction('withdraw', convertedAssetAmount, collateralAssetName)
         .send()
@@ -46,10 +50,20 @@ export const withdrawCollateralAction =
       // confirm query completion
       await transaction?.confirmation()
 
+      // @ts-ignore don't have proper type to acees data, type has only methods
+      const currentOperationLevel = transaction?.lastHead?.header?.level
+
       // refetch data we need
-      await dispatch(updateUserData())
-      await dispatch(getAvaliableCollaterals())
-      await dispatch(getLoansVaultsData())
+      await checkIndexerLevelAndRunDataUpdateCallback({
+        callback: async () => {
+          await dispatch(updateUserData())
+          await dispatch(getAvaliableCollaterals())
+          state.vaults.isLoaded && (await dispatch(getVaultsStorage()))
+          state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
+        },
+        currentOperationLevel,
+      })
+
       await dispatch(showToaster(SUCCESS, 'Collateral withdrawn.', 'All good :)'))
       await dispatch(toggleActionLoader(false))
     } catch (error) {
@@ -92,10 +106,11 @@ export const depositCollateralAction =
 
     try {
       const { amount, assetAddress, assetId, collateralName, tokenType, decimals } = collateralAssets
-      const convertedAssetAmount = convertNumberForContractCall({ number: amount, grage: decimals })
+      const convertedAssetAmount = convertNumberForContractCall({ number: amount, grade: decimals })
 
       // prepare and send query
-      const contract = await state.wallet.tezos?.wallet.at(vaultAddress)
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(vaultAddress)
       let transaction = null
 
       if (tokenType === 'tez') {
@@ -103,11 +118,11 @@ export const depositCollateralAction =
           ? [
               {
                 kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
-                ...contract.methods.initVaultAction('delegateTezToBaker', bakerAddress).toTransferParams(),
+                ...contract.methods.initVaultAction('setBaker', bakerAddress).toTransferParams(),
               },
             ]
           : []
-        const batch = state.wallet.tezos?.wallet.batch([
+        const batch = tezos.wallet.batch([
           {
             kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
             ...contract.methods.initVaultAction('deposit', convertedAssetAmount, 'tez').toTransferParams(),
@@ -121,7 +136,7 @@ export const depositCollateralAction =
       }
 
       if (tokenType === 'fa12') {
-        const assetContract = await state.wallet.tezos?.wallet.at(assetAddress)
+        const assetContract = await tezos.wallet.at(assetAddress)
         const batchArr = [
           {
             kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
@@ -137,12 +152,12 @@ export const depositCollateralAction =
           },
         ]
 
-        const batch = await state.wallet.tezos?.wallet.batch(batchArr)
+        const batch = await tezos.wallet.batch(batchArr)
         transaction = await batch.send()
       }
 
       if (tokenType === 'fa2') {
-        const assetContract = await state.wallet.tezos?.wallet.at(assetAddress)
+        const assetContract = await tezos.wallet.at(assetAddress)
 
         const batchArr = [
           {
@@ -152,7 +167,7 @@ export const depositCollateralAction =
                 {
                   add_operator: {
                     owner: state.wallet.accountPkh,
-                    operator: state.contractAddresses.lendingController.address,
+                    operator: vaultAddress,
                     token_id: 0, // Should be a number, usually 0
                   },
                 },
@@ -170,7 +185,7 @@ export const depositCollateralAction =
                 {
                   remove_operator: {
                     owner: state.wallet.accountPkh,
-                    operator: state.contractAddresses.lendingController.address,
+                    operator: vaultAddress,
                     token_id: 0, // Should be a number, usually 0
                   },
                 },
@@ -179,7 +194,7 @@ export const depositCollateralAction =
           },
         ]
 
-        const batch = await state.wallet.tezos?.wallet.batch(batchArr)
+        const batch = await tezos.wallet.batch(batchArr)
         transaction = await batch.send()
       }
 
@@ -190,10 +205,20 @@ export const depositCollateralAction =
       // confirm query completion
       await transaction?.confirmation()
 
+      // @ts-ignore don't have proper type to acees data, type has only methods
+      const currentOperationLevel = transaction?.lastHead?.header?.level
+
       // refetch data we need
-      await dispatch(updateUserData())
-      await dispatch(getAvaliableCollaterals())
-      await dispatch(getLoansVaultsData())
+      await checkIndexerLevelAndRunDataUpdateCallback({
+        callback: async () => {
+          await dispatch(updateUserData())
+          await dispatch(getAvaliableCollaterals())
+          state.vaults.isLoaded && (await dispatch(getVaultsStorage()))
+          state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
+        },
+        currentOperationLevel,
+      })
+
       await dispatch(showToaster(SUCCESS, 'Collateral added.', 'All good :)'))
       await dispatch(toggleActionLoader(false))
     } catch (error) {

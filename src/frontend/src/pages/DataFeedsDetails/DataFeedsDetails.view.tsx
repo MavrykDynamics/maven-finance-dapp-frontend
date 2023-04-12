@@ -72,7 +72,7 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsPr
 
   const [activeTab, setActiveTab] = useState(tabsList[0].id)
 
-  const isTrustedAnswer = feed && feed.last_completed_data_pct_oracle_resp >= feed.pct_oracle_threshold
+  const isTrustedAnswer = feed && feed.oraclesResponces >= feed.pct_oracle_threshold
 
   const imageLink = dipDupContracts.find(({ contract }) => contract === feed?.address)?.metadata?.icon
 
@@ -163,7 +163,7 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsPr
                             options={{
                               short: true,
                               showZeros: false,
-                              negativeColor: isTrustedAnswer ? cyanColor : downColor,
+                              negativeColor: downColor,
                               defaultColor: skyColor,
                             }}
                             timestamp={
@@ -188,7 +188,7 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsPr
                     </h3>
                     <h4>Minimum of {feed.pct_oracle_threshold}%</h4>
                     <DataFeedValueText fontSize={16} fontWeidth={600}>
-                      {feed.last_completed_data_pct_oracle_resp}%
+                      {feed.oraclesResponces}%
                     </DataFeedValueText>
                   </DataFeedInfoBlock>
 
@@ -281,7 +281,6 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsPr
                     lineColor: cyanColor,
                     areaTopColor: cyanColor,
                     areaBottomColor: 'rgba(119, 164, 242, 0)',
-                    textColor: '#CDCDCD',
                   }}
                   tooltipAsset={activeTab === 1 ? feed.name.split('/')?.[1] : '%'}
                 />

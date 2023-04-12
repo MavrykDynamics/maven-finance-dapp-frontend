@@ -105,10 +105,27 @@ export const BecomeSatelliteRegisterAsOracle = styled.div<{ theme: MavrykTheme }
     padding: 20px 0 0 0;
   }
 
+  .checkbox {
+    display: flex;
+    align-items: center;
+    column-gap: 10px;
+  }
+
   .inputs {
     display: flex;
     flex-direction: column;
     row-gap: 40px;
     margin-top: 40px;
+
+    .info-tooltip {
+      position: relative;
+      top: 1px;
+      white-space: normal;
+    }
+  }
+
+  .oracleWarning {
+    padding: 10px 20px;
+    margin-top: 30px;
   }
 `

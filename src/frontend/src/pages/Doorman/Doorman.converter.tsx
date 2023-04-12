@@ -1,14 +1,17 @@
 // type
 import {
   MvkTokenGraphQL,
-  MvkMintHistoryDataGraphQl,
+  MvkHistoryData,
   SmvkHistoryDataGraphQl,
+  MvkHistoryDataGraphQl,
 } from '../../utils/TypesAndInterfaces/Doorman'
 
 // helpers
+import { isValidNumberValue } from 'utils/validatorFunctions'
 import { calcWithoutPrecision } from '../../utils/calcFunctions'
 import { UTCTimestamp } from 'lightweight-charts'
 import { Mavryk_User } from 'utils/generated/graphqlTypes'
+import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 
 export function normalizeDoormanStorage(storage: {
   mavryk_user: Array<Mavryk_User>
@@ -44,19 +47,46 @@ export function normalizeSmvkHistoryData(storage: SmvkHistoryDataProps) {
     : []
 }
 
-type MvkMintHistoryDataProps = {
-  mvk_mint_history_data: MvkMintHistoryDataGraphQl[]
+type MvkHistoryDataProps = {
+  mvk_token: Array<{
+    transfer_history_data: MvkHistoryDataGraphQl[]
+  }>
 }
 
-export function normalizeMvkMintHistoryData(storage: MvkMintHistoryDataProps) {
-  const { mvk_mint_history_data } = storage
+export function normalizeMvkHistoryData(storage: MvkHistoryDataProps) {
+  const {
+    mvk_token: [{ transfer_history_data }],
+  } = storage
 
-  return mvk_mint_history_data?.length
-    ? mvk_mint_history_data?.map((item) => {
+  return transfer_history_data?.length
+    ? transfer_history_data?.map((item) => {
         return {
-          value: parseFloat(calcWithoutPrecision(item.mvk_total_supply).toFixed(2)),
+          // TODO: temp solution while it's not correct data
+          value: parseFloat(calcWithoutPrecision(item.amount).toFixed(2)) * 10,
           time: new Date(item.timestamp).getTime() as UTCTimestamp,
         }
       })
     : []
+}
+
+export const stakingInputValidation = ({
+  amount,
+  myMvkTokenBalance,
+  mySMvkTokenBalance,
+  accountPkh,
+}: {
+  amount: number
+  myMvkTokenBalance: number
+  mySMvkTokenBalance: number
+  accountPkh?: string
+}) => {
+  if (amount === 0) return ''
+
+  return isValidNumberValue(
+    amount,
+    1,
+    accountPkh ? Math.max(Number(myMvkTokenBalance), Number(mySMvkTokenBalance)) : undefined,
+  )
+    ? INPUT_STATUS_SUCCESS
+    : INPUT_STATUS_ERROR
 }

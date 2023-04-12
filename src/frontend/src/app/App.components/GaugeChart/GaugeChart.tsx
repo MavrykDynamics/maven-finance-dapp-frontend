@@ -1,19 +1,22 @@
 import Arrow from './svg/Arrow'
 import Backdrop from './svg/Backdrop'
-import Gradient from './svg/Gradient'
 
 import { GaugeChartStyled, ArrowStyled, ValueWrapper } from './GaugeChart.style'
+import BackgroundArc, { GRADIENT_NAME } from './svg/BackgroundArc'
+import { getNumberInBounds } from 'utils/calcFunctions'
+import { cyanColor } from 'styles'
 
 type GaugeChartProps = {
   children: React.ReactNode
   maxValue: number
   minValue: number
   currentValue: number
-  isReversed?: boolean
+  isProgress?: boolean
 }
 
 const MAX_ANGLE = 180
 const MIN_ANGLE = 0
+export const DASH_ARRAY = 185
 
 const calcArrowAngle = ({
   maxValue,
@@ -29,7 +32,7 @@ const calcArrowAngle = ({
   return (currentValue - minValue) * (MAX_ANGLE / (maxValue - minValue))
 }
 
-export const calcReversedAngle = ({
+export const calcArcAngle = ({
   maxValue,
   currentValue,
   minValue,
@@ -44,25 +47,23 @@ export const calcReversedAngle = ({
 
 /**
  * For current purposes we need to only handle 0 - 180 angles
+ * @todo: if need add color as a prop
  */
-export const GaugeChart = ({ children, maxValue, minValue, currentValue, isReversed }: GaugeChartProps) => {
-  const angle = Math.max(
-    0,
-    Math.min(
-      180,
-      isReversed
-        ? calcReversedAngle({ maxValue, currentValue, minValue })
-        : calcArrowAngle({ maxValue, currentValue, minValue }),
-    ),
-  )
+export const GaugeChart = ({ children, maxValue, minValue, currentValue, isProgress }: GaugeChartProps) => {
+  const arrowAngle = Math.ceil(getNumberInBounds(0, 180, calcArrowAngle({ maxValue, currentValue, minValue })))
+  const progressArcAngle = Math.ceil(getNumberInBounds(0, 180, calcArcAngle({ maxValue, currentValue, minValue })))
 
   return (
     <GaugeChartStyled>
-      <Gradient className="gradient" />
-      <Backdrop className="backdrop" />
+      <BackgroundArc
+        className={`colored-arc`}
+        offset={isProgress ? progressArcAngle : 0}
+        paint={isProgress ? cyanColor : `url(#${GRADIENT_NAME})`}
+      />
 
+      <Backdrop className="backdrop" />
       <ValueWrapper>{children}</ValueWrapper>
-      <ArrowStyled angle={angle}>
+      <ArrowStyled angle={arrowAngle}>
         <Arrow />
       </ArrowStyled>
     </GaugeChartStyled>

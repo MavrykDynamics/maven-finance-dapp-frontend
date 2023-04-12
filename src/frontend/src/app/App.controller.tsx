@@ -34,6 +34,7 @@ import {
 } from 'reducers/actions/dipDupActions.actions'
 import { getCouncilMembers } from 'pages/Council/Council.actions'
 import { getBreakGlassCouncilMembers } from 'pages/BreakGlassCouncil/BreakGlassCouncil.actions'
+import { getAvaliableCollaterals, getXtzBakers } from 'pages/Loans/Actions/getLoansData.actions'
 
 // export const { store, persistor } = configureStore({})
 export const { store } = configureStore({})
@@ -61,14 +62,12 @@ const AppContainer = () => {
         dispatch(getDipDupTokensStorage()),
         dispatch(getWhitelistTokensStorage()),
         dispatch(getMTokensStorage()),
+        dispatch(getXtzBakers()),
 
         // Used to retrieve user avatar
         dispatch(getCouncilMembers()),
         dispatch(getBreakGlassCouncilMembers()),
       ])
-
-      // Depends on data feeds (getFeedsStorage())
-      await dispatch(getTokensPrices())
 
       // For using Beacon wallet
       if (
@@ -78,6 +77,10 @@ const AppContainer = () => {
         await dispatch(connect())
       }
 
+      // Depends on data feeds (getFeedsStorage())
+      await Promise.all([dispatch(getTokensPrices()), dispatch(getAvaliableCollaterals())])
+
+      // Turn off loader
       await dispatch(toggleInitialDataLoading(false))
     })()
   }, [dispatch])

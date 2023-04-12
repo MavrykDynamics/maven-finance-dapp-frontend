@@ -7,7 +7,7 @@ export const ORACLE_STORAGE_QUERY = `
       factory {
         address
       }
-      history_data(distinct_on: timestamp) {
+      history_data(distinct_on: timestamp, order_by: {timestamp: desc}) {
         data
         timestamp
         aggregator {

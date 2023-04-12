@@ -14,7 +14,6 @@ import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
 import { getVaultsStorage } from 'pages/Vaults/Vaults.actions'
 import { getFarmStorage } from 'pages/Farms/Farms.actions'
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
-import { getFeedsStorage } from 'pages/DataFeeds/DataFeeds.actions'
 
 export const Dashboard = () => {
   const dispatch = useDispatch()
@@ -31,13 +30,28 @@ export const Dashboard = () => {
   } = useSelector((state: State) => state.doorman)
   const { treasuryStorage, isLoaded: isTreasuryLoaded } = useSelector((state: State) => state.treasury)
   const { isLoaded: isVestingLoaded } = useSelector((state: State) => state.vesting)
-  const { isLoaded: isFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
-  const { allVaultsIds, vaultsMapper } = useSelector((state: State) => state.vaults.vaultsList)
-  const { farms, isLoaded: isFarmsLoaded } = useSelector((state: State) => state.farm)
+  const { isGovernanceStorageLoaded } = useSelector((state: State) => state.governance)
   const {
-    isDataLoaded: isLoansLoaded,
-    chartsData: { totalBorrowed, totalLended },
-  } = useSelector((state: State) => state.loans)
+    vaultsList: { allVaultsIds, vaultsMapper },
+    isLoaded: isVaultsLoaded,
+  } = useSelector((state: State) => state.vaults)
+  const { farms, isLoaded: isFarmsLoaded } = useSelector((state: State) => state.farm)
+  const { isDataLoaded: isLoansLoaded, loanTokens } = useSelector((state: State) => state.loans)
+
+  const { totalBorrowed, totalLended } = loanTokens.reduce<{
+    totalLended: number
+    totalBorrowed: number
+  }>(
+    (acc, { totalBorrowed, totalLended, loanTokenData: { rate } }) => {
+      acc.totalBorrowed += totalBorrowed * rate
+      acc.totalLended += totalLended * rate
+      return acc
+    },
+    {
+      totalLended: 0,
+      totalBorrowed: 0,
+    },
+  )
 
   const marketCapValue = mvkExchangeRate ? mvkExchangeRate * totalSupply : 0
 
@@ -67,18 +81,17 @@ export const Dashboard = () => {
 
   const tvlValue = doormanTVL + treasuryTVL + farmsTVL + lendingTvl + vaultsTvl
 
-  const { isLoading } = useDataLoader(async () => {
+  const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {
       await Promise.all(
         [
-          dispatch(getVaultsStorage()),
-          dispatch(getGovernanceStorage()),
-          !isFeedsLoaded && dispatch(getFeedsStorage()),
-          !isVestingLoaded && dispatch(getVestingStorage()),
-          !isTreasuryLoaded && dispatch(fillTreasuryStorage()),
-          !isLoansLoaded && dispatch(getLoansStorage()),
-          !isFarmsLoaded && dispatch(getFarmStorage()),
-          !isDoormanLoaded && dispatch(getDoormanStorage()),
+          (!isGovernanceStorageLoaded || isDepsChanged) && dispatch(getGovernanceStorage()),
+          (!isVaultsLoaded || isDepsChanged) && dispatch(getVaultsStorage()),
+          (!isVestingLoaded || isDepsChanged) && dispatch(getVestingStorage()),
+          (!isTreasuryLoaded || isDepsChanged) && dispatch(fillTreasuryStorage()),
+          (!isLoansLoaded || isDepsChanged) && dispatch(getLoansStorage()),
+          (!isFarmsLoaded || isDepsChanged) && dispatch(getFarmStorage()),
+          (!isDoormanLoaded || isDepsChanged) && dispatch(getDoormanStorage()),
         ].filter(Boolean),
       )
     } catch (e) {}

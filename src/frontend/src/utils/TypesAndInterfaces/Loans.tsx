@@ -1,4 +1,5 @@
 import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
+import { SingleValueData } from 'lightweight-charts'
 import {
   ANY_USER,
   NONE_USER,
@@ -28,6 +29,7 @@ export type BaseLoansAssetDataType = {
 export type LoansAssetDataType = BaseLoansAssetDataType & {
   userBalance: number
   tokenType: TokenType
+  address: string
 }
 
 export type CollateralType = BaseLoansAssetDataType & {
@@ -36,12 +38,9 @@ export type CollateralType = BaseLoansAssetDataType & {
 }
 
 export type LoansChartsDataType = {
-  totalCollateraled: number
-  totalBorrowed: number
-  borrowingChartData: Array<AreaChartPlotType>
-  collateralChartData: Array<AreaChartPlotType>
-  totalLended: number
-  lendingChartData: Array<AreaChartPlotType>
+  borrowingChartData: Array<SingleValueData>
+  collateralChartData: Array<SingleValueData>
+  lendingChartData: Array<SingleValueData>
   lendBorrow24hDiff: {
     last48hLending: number
     last24hLending: number
@@ -93,8 +92,8 @@ export type LoansVaultType = {
   borrowCapacity: number
   apr: number
   fee: number
-  repayFee: number
   address: string
+  name: string
   vaultId: number
   xtzDelegatedTo: string | null
   operators?: Array<string>

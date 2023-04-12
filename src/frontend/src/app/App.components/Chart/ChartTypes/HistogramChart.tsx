@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState } from 'react'
-import { createChart, BusinessDay, UTCTimestamp } from 'lightweight-charts'
+import { createChart, BusinessDay, UTCTimestamp, SingleValueData } from 'lightweight-charts'
 
 import { lightTextColor, headerColor } from 'styles'
 import { parseDate } from 'utils/time'
@@ -9,12 +9,15 @@ import {
   getAxisSettings,
   CHART_LOCALE_SETTING,
   checkWhetherHideTooltip,
+  CHART_SERIES_OPTIONS,
+  DEFAULT_CROSSHAIR_SETTING,
+  checkPlotType,
 } from '../helpers/Chart.const'
 
 import ChartTooltip, { AMOUNT_DATE_TOOLTIP } from '../Tooltips/ChartTooltip'
 import { ChartStyled } from '../Chart.style'
 
-import { AreaChartPlotType, AreaChartPropsType } from '../helpers/Chart.types'
+import { AreaChartPropsType } from '../helpers/Chart.types'
 
 export const HistogramChart = ({
   settings: {
@@ -27,9 +30,11 @@ export const HistogramChart = ({
     hideYAxis,
     yAxisSide = 'left',
     priceMargins,
-    crosshairOptions,
+    crosshairOptions = DEFAULT_CROSSHAIR_SETTING,
+    textColor = lightTextColor,
+    borderColor = headerColor,
   } = {},
-  colors: { barColor = 'rgba(119, 164, 242, 0.51)', textColor = lightTextColor, borderColor = headerColor } = {},
+  colors: { barColor = 'rgba(119, 164, 242, 0.51)' } = {},
   data,
   tooltipName = AMOUNT_DATE_TOOLTIP,
   tooltipAsset,
@@ -97,16 +102,7 @@ export const HistogramChart = ({
 
     // Setting data
     series.setData(data)
-
-    // Setting yAxis data format
-    series.applyOptions({
-      lastValueVisible: false,
-      priceLineVisible: false,
-      priceFormat: {
-        minMove: 0.00000001,
-        type: 'price',
-      },
-    })
+    series.applyOptions(CHART_SERIES_OPTIONS)
 
     // Subscribe for tooltip update
     chart.subscribeCrosshairMove((param) => {
@@ -118,7 +114,10 @@ export const HistogramChart = ({
         }
       } else {
         // set tooltip values
-        const { value, time } = (param.seriesData.get(series) ?? {}) as AreaChartPlotType
+        const plot = param.seriesData.get(series) ?? {}
+        if (!checkPlotType<SingleValueData>(plot, ['value'])) return
+        const { value, time } = plot
+
         setTooltipData({
           yAxis: Number(time),
           xAxis: parseFloat(String(value)),

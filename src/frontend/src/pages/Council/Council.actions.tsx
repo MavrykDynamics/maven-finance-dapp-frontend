@@ -13,7 +13,8 @@ import {
   PENDING_ACTIONS,
   PAST_ACTIONS,
 } from './Council.helpers'
-import { convertNumberForContractCall, getTokenDecimals } from 'utils/calcFunctions'
+import { convertNumberForContractCall } from 'utils/calcFunctions'
+import { MVK_DECIMALS } from 'utils/constants'
 
 // gql
 import {
@@ -34,6 +35,7 @@ import {
 // actions
 import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 import { TokenType } from 'utils/TypesAndInterfaces/General'
+import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 
 // types
 
@@ -179,7 +181,8 @@ export const sign = (actionID: number) => async (dispatch: AppDispatch, getState
   }
 
   try {
-    const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.councilAddress.address)
+    const tezos = await DAPP_INSTANCE.tezos()
+    const contract = await tezos.wallet.at(state.contractAddresses.councilAddress.address)
     const transaction = await contract?.methods.signAction(actionID).send()
     await dispatch(toggleActionLoader(true))
 
@@ -214,11 +217,12 @@ export const addVestee =
     }
 
     try {
-      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.councilAddress.address)
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(state.contractAddresses.councilAddress.address)
       const transaction = await contract?.methods
         .councilActionAddVestee(
           vesteeAddress,
-          convertNumberForContractCall({ number: totalAllocated }),
+          convertNumberForContractCall({ number: totalAllocated, grade: MVK_DECIMALS }),
           cliffInMonths,
           vestingInMonths,
         )
@@ -256,7 +260,8 @@ export const addCouncilMember =
     }
 
     try {
-      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.councilAddress.address)
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(state.contractAddresses.councilAddress.address)
       const transaction = await contract?.methods
         .councilActionAddMember(newMemberAddress, newMemberName, newMemberWebsite, newMemberImage)
         .send()
@@ -293,11 +298,12 @@ export const updateVestee =
     }
 
     try {
-      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.councilAddress.address)
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(state.contractAddresses.councilAddress.address)
       const transaction = await contract?.methods
         .councilActionUpdateVestee(
           vesteeAddress,
-          convertNumberForContractCall({ number: totalAllocated }),
+          convertNumberForContractCall({ number: totalAllocated, grade: MVK_DECIMALS }),
           cliffInMonths,
           vestingInMonths,
         )
@@ -334,7 +340,8 @@ export const toggleVesteeLock = (vesteeAddress: string) => async (dispatch: AppD
   }
 
   try {
-    const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.councilAddress.address)
+    const tezos = await DAPP_INSTANCE.tezos()
+    const contract = await tezos.wallet.at(state.contractAddresses.councilAddress.address)
     const transaction = await contract?.methods.councilActionToggleVesteeLock(vesteeAddress).send()
     await dispatch(toggleActionLoader(true))
 
@@ -376,7 +383,8 @@ export const changeCouncilMember =
     }
 
     try {
-      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.councilAddress.address)
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(state.contractAddresses.councilAddress.address)
       const transaction = await contract?.methods
         .councilActionChangeMember(
           oldCouncilMemberAddress,
@@ -418,7 +426,8 @@ export const removeCouncilMember = (memberAddress: string) => async (dispatch: A
   }
 
   try {
-    const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.councilAddress.address)
+    const tezos = await DAPP_INSTANCE.tezos()
+    const contract = await tezos.wallet.at(state.contractAddresses.councilAddress.address)
     const transaction = await contract?.methods.councilActionRemoveMember(memberAddress).send()
     await dispatch(toggleActionLoader(true))
 
@@ -454,7 +463,8 @@ export const updateCouncilMemberInfo =
     }
 
     try {
-      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.councilAddress.address)
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(state.contractAddresses.councilAddress.address)
       const transaction = await contract?.methods
         .updateCouncilMemberInfo(newMemberName, newMemberWebsite, newMemberImage)
         .send()
@@ -500,12 +510,13 @@ export const transferTokens =
     }
 
     try {
-      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.councilAddress.address)
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(state.contractAddresses.councilAddress.address)
       const transaction = await contract?.methods
         .councilActionTransfer(
           receiverAddress,
           tokenContractAddress,
-          convertNumberForContractCall({ number: tokenAmount, grage: decimals }),
+          convertNumberForContractCall({ number: tokenAmount, grade: decimals }),
           tokenType,
           tokenId,
           purpose,
@@ -554,13 +565,14 @@ export const requestTokens =
     }
 
     try {
-      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.councilAddress.address)
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(state.contractAddresses.councilAddress.address)
       const transaction = await contract?.methods
         .councilActionRequestTokens(
           treasuryAddress,
           tokenContractAddress,
           tokenName,
-          convertNumberForContractCall({ number: tokenAmount, grage: decimals }),
+          convertNumberForContractCall({ number: tokenAmount, grade: decimals }),
           tokenType,
           tokenId,
           purpose,
@@ -601,9 +613,14 @@ export const requestTokenMint =
     }
 
     try {
-      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.councilAddress.address)
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(state.contractAddresses.councilAddress.address)
       const transaction = await contract?.methods
-        .councilActionRequestMint(treasuryAddress, convertNumberForContractCall({ number: tokenAmount }), purpose)
+        .councilActionRequestMint(
+          treasuryAddress,
+          convertNumberForContractCall({ number: tokenAmount, grade: MVK_DECIMALS }),
+          purpose,
+        )
         .send()
       await dispatch(toggleActionLoader(true))
 
@@ -637,7 +654,8 @@ export const dropFinancialRequest = (financialReqID: number) => async (dispatch:
   }
 
   try {
-    const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.councilAddress.address)
+    const tezos = await DAPP_INSTANCE.tezos()
+    const contract = await tezos.wallet.at(state.contractAddresses.councilAddress.address)
     const transaction = await contract?.methods.councilActionDropFinancialReq(financialReqID).send()
     await dispatch(toggleActionLoader(true))
 
@@ -671,7 +689,8 @@ export const removeVesteeRequest = (vesteeAddress: string) => async (dispatch: A
   }
 
   try {
-    const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.councilAddress.address)
+    const tezos = await DAPP_INSTANCE.tezos()
+    const contract = await tezos.wallet.at(state.contractAddresses.councilAddress.address)
     const transaction = await contract?.methods.councilActionRemoveVestee(vesteeAddress).send()
     await dispatch(toggleActionLoader(true))
 
@@ -705,7 +724,8 @@ export const setBakerRequest = (bakerHash: string) => async (dispatch: AppDispat
   }
 
   try {
-    const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.councilAddress.address)
+    const tezos = await DAPP_INSTANCE.tezos()
+    const contract = await tezos.wallet.at(state.contractAddresses.councilAddress.address)
     const transaction = await contract?.methods.councilActionSetBaker(bakerHash).send()
     await dispatch(toggleActionLoader(true))
 
@@ -740,7 +760,8 @@ export const setContractBakerRequest =
     }
 
     try {
-      const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.councilAddress.address)
+      const tezos = await DAPP_INSTANCE.tezos()
+      const contract = await tezos.wallet.at(state.contractAddresses.councilAddress.address)
       const transaction = await contract?.methods.councilActionSetContractBaker(targetContractAddress, keyHash).send()
       await dispatch(toggleActionLoader(true))
 
@@ -775,7 +796,8 @@ export const dropRequest = (actionID: number) => async (dispatch: AppDispatch, g
 
   try {
     await dispatch(toggleActionLoader(true))
-    const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.councilAddress.address)
+    const tezos = await DAPP_INSTANCE.tezos()
+    const contract = await tezos.wallet.at(state.contractAddresses.councilAddress.address)
     console.log('contract', contract)
     const transaction = await contract?.methods.flushAction(actionID).send()
     console.log('transaction', transaction)

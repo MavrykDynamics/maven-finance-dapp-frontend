@@ -32,6 +32,7 @@ export const RepayFull = ({
 }) => {
   const {
     vaultId,
+    vaultAddress,
     borrowedAsset,
     feesAmount = 0,
     currentCollateralBalance = 0,
@@ -71,8 +72,18 @@ export const RepayFull = ({
   }, [borrowedAsset, currentCollateralBalance, borrowCapacity, borrowedAmount])
 
   const repayBtnHandler = async () => {
-    if (vaultId && borrowedAsset) {
-      await dispatch(repayFullAndCloseVaultAction(vaultId, totalOutstanding, borrowedAsset.decimals, closePopup))
+    if (vaultId && borrowedAsset && vaultAddress) {
+      await dispatch(
+        repayFullAndCloseVaultAction(
+          vaultId,
+          vaultAddress,
+          totalOutstanding,
+          borrowedAsset.decimals,
+          borrowedAsset.tokenType,
+          borrowedAsset.address,
+          closePopup,
+        ),
+      )
     }
   }
 
@@ -140,7 +151,6 @@ export const RepayFull = ({
                     <p>
                       To Repay in Full & Close Vault you need at least{' '}
                       {formatNumber({
-                        showDecimal: true,
                         decimalsToShow: 2,
                         number: totalOutstanding - Number(borrowedAsset?.userBalance),
                       })}{' '}

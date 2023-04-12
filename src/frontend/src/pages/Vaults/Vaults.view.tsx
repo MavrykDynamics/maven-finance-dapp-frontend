@@ -26,7 +26,6 @@ import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 
 // actions
 import { getVaultsStorage, markForLiquidation } from './Vaults.actions'
-import { getAvaliableCollaterals } from 'pages/Loans/Actions/getLoansData.actions'
 
 const pathname = '/vaults'
 
@@ -66,19 +65,16 @@ export const VaultsView = () => {
     [accountPkh, tabId],
   )
 
-  const { isLoading } = useDataLoader(async () => {
-    try {
-      if (!isLoaded) {
-        await dispatch(getVaultsStorage())
-      }
-    } catch (e) {}
-  }, [accountPkh])
-
-  useDataLoader(async () => {
-    try {
-      await dispatch(getAvaliableCollaterals())
-    } catch (e) {}
-  }, [])
+  const { isLoading } = useDataLoader(
+    async (isDepsChanged) => {
+      try {
+        if (!isLoaded || isDepsChanged) {
+          await dispatch(getVaultsStorage())
+        }
+      } catch (e) {}
+    },
+    [accountPkh],
+  )
 
   const [vaultsIds, setVaultsIds] = useState<string[]>([])
   const assets = useMemo(() => getVaultAssets(vaultsMapper), [vaultsMapper])
@@ -107,7 +103,7 @@ export const VaultsView = () => {
   }
 
   // switch to "all" tab if user is disabled
-  useEffect(() => {   
+  useEffect(() => {
     if (accountPkh) return
     handleChangeTabs(tabsList[0].id)
   }, [accountPkh])
@@ -131,7 +127,7 @@ export const VaultsView = () => {
       ) : paginatedVaultsList.length ? (
         <div className="vaults">
           {paginatedVaultsList.map((item) => {
-            const isOwner = vaultsMapper[item].ownerId === accountPkh
+            const isOwner = vaultsMapper[item]?.ownerId === accountPkh
 
             return (
               <VaultsCard

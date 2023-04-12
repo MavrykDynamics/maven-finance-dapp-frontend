@@ -41,8 +41,23 @@ export const LoansBorrow = () => {
     isDataLoaded,
     loanTokens,
     config: { DAOFee },
-    chartsData: { collateralChartData, borrowingChartData, totalCollateraled, totalBorrowed },
+    chartsData: { collateralChartData, borrowingChartData, },
   } = useSelector((state: State) => state.loans)
+
+  const { totalBorrowed, totalLended } = loanTokens.reduce<{
+    totalLended: number
+    totalBorrowed: number
+  }>(
+    (acc, { totalBorrowed, totalLended, loanTokenData: { rate } }) => {
+      acc.totalBorrowed += totalBorrowed * rate
+      acc.totalLended += totalLended * rate
+      return acc
+    },
+    {
+      totalLended: 0,
+      totalBorrowed: 0,
+    },
+  )
 
   const { openBorrowPopup } = useContext(loansPopupsContext)
 
@@ -107,7 +122,7 @@ export const LoansBorrow = () => {
             // left chart
             leftChartData={collateralChartData}
             leftChartTitle="Total Collateral"
-            leftTotalAmount={totalCollateraled}
+            leftTotalAmount={0} // TODO: Add valid data
             // right chart
             rightChartData={borrowingChartData}
             rightChartTitle="Total Borrowing"
