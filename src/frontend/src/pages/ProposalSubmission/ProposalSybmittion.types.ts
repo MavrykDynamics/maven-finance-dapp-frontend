@@ -57,7 +57,6 @@ export type StageTwoFormProps = {
   currentProposal: ProposalRecordType
   currentProposalValidation: ProposalValidityObj
   updateLocalProposalValidation: ChangeProposalValidationFnType
-  setProposalHasChange: (arg: boolean) => void
   updateLocalProposalData: ChangeProposalFnType
 }
 
@@ -67,7 +66,6 @@ export type StageThreeFormProps = {
   paymentMethods: Array<{ symbol: string; address: string; shortSymbol: string; id: number }>
   currentProposalValidation: ProposalValidityObj
   updateLocalProposalValidation: ChangeProposalValidationFnType
-  setProposalHasChange: (arg: boolean) => void
   updateLocalProposalData: ChangeProposalFnType
 }
 
@@ -116,3 +114,5 @@ export type ProposalChangesStateType = Record<
     proposalPaymentsChanges: PaymentsDataChangesType
   }
 >
+
+export type MultyProposalItem = { text: string; active: boolean; value: number }

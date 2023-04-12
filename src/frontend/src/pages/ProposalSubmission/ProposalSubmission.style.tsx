@@ -30,10 +30,6 @@ export const ProposalSubmissionForm = styled(Card)<{ theme: MavrykTheme }>`
     }
   }
 
-  .description-textarea {
-    margin-bottom: 19px;
-  }
-
   .step-2-textarea {
     textarea {
       height: 189px;
@@ -47,84 +43,6 @@ export const ProposalSubmissionForm = styled(Card)<{ theme: MavrykTheme }>`
 
   .source-code-input-wrap {
     width: 517px;
-  }
-
-  .step-bytes {
-    position: relative;
-    padding-bottom: 15px;
-
-    article {
-      margin-top: 27px;
-      display: flex;
-      flex-direction: column;
-      background: ${({ theme }) => theme.backgroundColor};
-      border-radius: 10px;
-      padding: 22px 50px 20px 40px;
-      position: relative;
-      border: 1px solid transparent;
-
-      .idx {
-        position: absolute;
-        left: 15px;
-        top: 50%;
-        transform: translateY(-50%);
-        font-weight: 500;
-        font-size: 14px;
-        line-height: 14px;
-        color: ${({ theme }) => theme.textColor};
-      }
-
-      &:hover {
-        border-color: ${cyanColor};
-        box-shadow: 0px 4px 4px ${boxShadowColor};
-      }
-
-      .remove-byte {
-        position: absolute;
-        right: 15px;
-        top: 50%;
-        transform: translateY(-50%);
-
-        svg {
-          margin-top: 6px;
-          width: 20px;
-          height: 20px;
-          fill: ${({ theme }) => theme.headerColor};
-          transition: 0.3s all;
-        }
-        &:hover {
-          svg {
-            fill: ${cyanColor};
-          }
-        }
-
-        &.disabled {
-          pointer-events: none;
-          opacity: 0.7;
-          cursor: not-allowed;
-        }
-      }
-
-      &.draggabe {
-        cursor: grab;
-      }
-
-      &.underDrop {
-        border-color: ${cyanColor};
-        box-shadow: 0px 4px 4px ${boxShadowColor};
-      }
-    }
-
-    .delete-pair {
-      width: auto;
-      align-self: flex-end;
-      padding: 0 40px;
-      margin-top: 20px;
-
-      svg {
-        stroke: ${cyanColor};
-      }
-    }
   }
 
   .desr-block {
@@ -177,48 +95,157 @@ export const FormTitleEntry = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const FormButtonContainer = styled.div<{ theme: MavrykTheme }>`
-  margin-top: 50px;
-  display: flex;
-  justify-content: flex-end;
+// Proposal submittion stage 1 styles
+export const ProposalSubmittionStageOneBody = styled.div<{ theme: MavrykTheme }>`
+  margin-top: 40px;
 
-  > button {
-    max-width: 250px;
-    margin-left: 10px;
+  display: grid;
+  grid-template-columns: 50% 25% 15%;
+  grid-template-rows: 40px minmax(40px, 2fr) 40px;
 
-    &.bytes,
-    &.financial {
+  justify-content: space-between;
+  row-gap: 50px;
+
+  .submitted-data {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+    position: relative;
+
+    p {
+      margin: 0;
+    }
+
+    .value {
+      font-size: 14px;
+      font-weight: 700;
+      color: ${({ theme }) => theme.textColor};
+    }
+  }
+
+  .label,
+  label {
+    position: absolute;
+    top: -20px;
+    left: 0;
+    font-size: 14px;
+    font-weight: 500;
+    color: ${({ theme }) => theme.textColor};
+  }
+
+  .description {
+    grid-column-start: 1;
+    grid-column-end: 4;
+  }
+`
+
+// Proposal submittion stage 2 styles
+export const SubmitProposalBytes = styled.div<{ theme: MavrykTheme }>`
+  margin-top: 20px;
+  position: relative;
+  padding-bottom: 15px;
+
+  article {
+    margin-top: 27px;
+    display: flex;
+    flex-direction: column;
+    background: ${({ theme }) => theme.backgroundColor};
+    border-radius: 10px;
+    padding: 22px 50px 20px 40px;
+    position: relative;
+    border: 1px solid transparent;
+
+    .idx {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-weight: 500;
+      font-size: 14px;
+      line-height: 14px;
+      color: ${({ theme }) => theme.textColor};
+    }
+
+    &:hover {
+      border-color: ${cyanColor};
+      box-shadow: 0px 4px 4px ${boxShadowColor};
+    }
+
+    .remove-byte {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+
       svg {
-        fill: ${({ theme }) => theme.backgroundColor};
-        stroke: transparent;
+        margin-top: 6px;
+        width: 20px;
+        height: 20px;
+        fill: ${({ theme }) => theme.headerColor};
+        transition: 0.3s all;
+      }
+      &:hover {
+        svg {
+          fill: ${cyanColor};
+        }
+      }
+
+      &.disabled {
+        pointer-events: none;
+        opacity: 0.7;
+        cursor: not-allowed;
       }
     }
 
-    &.lock {
-      svg {
-        fill: ${({ theme }) => theme.valueColor};
-        stroke: transparent;
-      }
+    &.draggabe {
+      cursor: grab;
+    }
+
+    &.underDrop {
+      border-color: ${cyanColor};
+      box-shadow: 0px 4px 4px ${boxShadowColor};
+    }
+  }
+
+  .delete-pair {
+    width: auto;
+    align-self: flex-end;
+    padding: 0 40px;
+    margin-top: 20px;
+
+    svg {
+      stroke: ${cyanColor};
     }
   }
 `
 
-export const BytesWarning = styled.div<{ theme: MavrykTheme }>`
-  width: 100%;
-  padding: 10px 20px;
-  border: 1px solid ${({ theme }) => theme.infoColor};
-  background: ${({ theme }) => theme.dPurple_container_dPurple};
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  color: ${({ theme }) => theme.textColor};
-  border-radius: 10px;
-  font-weight: 500;
+// Proposal submittion stage 3 styles
 
-  svg {
-    fill: ${({ theme }) => theme.infoColor};
-    width: 16px;
-    height: 16px;
-    margin-right: 20px;
-  }
+// Proposal submittion general styles
+export const ProposalSubmittionButtons = styled.div<{ theme: MavrykTheme }>`
+  margin-top: 30px;
+  display: grid;
+  grid-template-columns: 220px 220px 220px;
+  justify-content: flex-end;
+  column-gap: 10px;
+`
+
+export const SubmitProposalHeader = styled.div<{ theme: MavrykTheme }>`
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+`
+
+export const SubmitProposalGeneralData = styled(ProposalSubmittionStageOneBody)<{ theme: MavrykTheme }>`
+  grid-template-rows: 40px;
+  margin-bottom: 20px;
+`
+
+// Created proposals swither styles
+export const MultyProposalsStyled = styled.div<{ theme: MavrykTheme }>`
+  display: flex;
+  column-gap: 15px;
+  margin-top: 30px;
+  margin-left: 5px;
 `

@@ -1,7 +1,7 @@
 import styled from 'styled-components/macro'
 import { zoomIn, slideDown } from 'styles/animations'
 import { MavrykTheme } from '../../../styles/interfaces'
-import { INPUT_BIG, INPUT_LARGE, INPUT_MEDIUM } from './Input.constants'
+import { INPUT_BIG, INPUT_LARGE, INPUT_MEDIUM, INPUT_SMALL } from './Input.constants'
 
 export const InputStyled = styled.div`
   position: relative;
@@ -205,6 +205,13 @@ export const StyledInput = styled.input<{ theme: MavrykTheme }>`
   &:hover:not(:disabled) {
     background-color: ${({ theme }) => theme.containerColor};
   }
+
+  &:-webkit-autofill,
+  &:-webkit-autofill:hover,
+  &:-webkit-autofill:focus {
+    -webkit-text-fill-color: ${({ theme }) => theme.textColor};
+    -webkit-box-shadow: 0 0 0px 1000px ${({ theme }) => theme.backgroundColor} inset;
+  }
 `
 
 export const InputPinnedChild = styled.div<{ theme: MavrykTheme }>`
@@ -275,6 +282,20 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
     }
   }
 
+  &.${INPUT_SMALL} {
+    height: 40px;
+
+    input {
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    input::placeholder {
+      font-weight: 400;
+      font-size: 12px;
+    }
+  }
+
   &:focus-within {
     box-shadow: 0 0 0 2px ${({ theme }) => theme.primaryColor}19;
     border-color: ${({ theme }) => theme.primaryColor}7F;
@@ -287,6 +308,16 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
       &::placeholder {
         color: ${({ theme }) => theme.downColor};
       }
+
+      &:-webkit-autofill,
+      &:-webkit-autofill:hover,
+      &:-webkit-autofill:focus {
+        -webkit-text-fill-color: ${({ theme }) => theme.downColor};
+        -webkit-box-shadow: 0 0 0px 1000px ${({ theme }) => theme.backgroundColor} inset;
+      }
+      &:focus {
+        box-shadow: 0 0 0 2px ${({ theme }) => theme.downColor}7F;
+      }
     }
   }
 
@@ -296,6 +327,16 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
       color: ${({ theme }) => theme.upColor};
       &::placeholder {
         color: ${({ theme }) => theme.upColor};
+      }
+
+      &:-webkit-autofill,
+      &:-webkit-autofill:hover,
+      &:-webkit-autofill:focus {
+        -webkit-text-fill-color: ${({ theme }) => theme.upColor};
+        -webkit-box-shadow: 0 0 0px 1000px ${({ theme }) => theme.backgroundColor} inset;
+      }
+      &:focus {
+        box-shadow: 0 0 0 2px ${({ theme }) => theme.upColor}7F;
       }
     }
   }

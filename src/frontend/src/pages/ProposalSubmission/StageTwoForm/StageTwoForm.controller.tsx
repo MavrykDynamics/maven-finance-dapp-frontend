@@ -21,12 +21,18 @@ import { isHexadecimal } from 'utils/validatorFunctions'
 
 // styles
 import {
-  BytesWarning,
   FormHeaderGroup,
   FormTitleAndFeeContainer,
   FormTitleContainer,
   FormTitleEntry,
+  SubmitProposalBytes,
+  SubmitProposalGeneralData,
+  SubmitProposalHeader,
 } from '../ProposalSubmission.style'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+import { INFO_DEFAULT } from 'app/App.components/Info/info.constants'
+import { Info } from 'app/App.components/Info/Info.view'
 
 // TODO: Update markup
 // valid bytes text for testing: 05050505080508050805050505050505080505050507070017050505050508030b
@@ -37,7 +43,6 @@ export const StageTwoForm = ({
   currentProposalValidation,
   updateLocalProposalValidation,
   updateLocalProposalData,
-  setProposalHasChange,
 }: StageTwoFormProps) => {
   const { governancePhase, fee, successReward, proposalMetadataTitleMaxLength } = useSelector(
     (state: State) => state.governance.config,
@@ -102,8 +107,6 @@ export const StageTwoForm = ({
         )
         break
     }
-
-    setProposalHasChange(true)
   }
 
   // adding new empty bytes pair
@@ -135,7 +138,6 @@ export const StageTwoForm = ({
       },
       proposalId,
     )
-    setProposalHasChange(true)
   }
 
   // removing bytes pair
@@ -155,7 +157,6 @@ export const StageTwoForm = ({
         },
         proposalId,
       )
-      setProposalHasChange(true)
     }
   }
 
@@ -226,36 +227,31 @@ export const StageTwoForm = ({
 
   return (
     <>
-      <FormHeaderGroup>
-        <h1>Stage 2</h1>
-        <StatusFlag
-          text={locked ? ProposalStatus.LOCKED : ProposalStatus.UNLOCKED}
-          status={locked ? ProposalStatus.DEFEATED : ProposalStatus.EXECUTED}
-        />
-        <a className="info-link" href="https://mavryk.finance/litepaper#governance" target="_blank" rel="noreferrer">
-          <Icon id="question" />
-        </a>
-      </FormHeaderGroup>
-      <FormTitleAndFeeContainer>
-        <FormTitleContainer>
-          <label>1 - Enter Proposal Title</label>
-          <FormTitleEntry>{title}</FormTitleEntry>
-        </FormTitleContainer>
-        <div>
-          <label>2 - Proposal Success Reward</label>
-          <FormTitleEntry>{successReward} MVK</FormTitleEntry>
+      <SubmitProposalGeneralData>
+        <div className="submitted-data">
+          <div className="label">1 - Proposal Title</div>
+          <div className="value">{title}</div>
         </div>
-        <div>
-          <label>3 - Fee</label>
-          <FormTitleEntry>{fee} XTZ</FormTitleEntry>
+
+        <div className="submitted-data">
+          <div className="label">2 - Proposal Success Reward</div>
+          <CommaNumber className="value" value={successReward} endingText="MVK" />
         </div>
-      </FormTitleAndFeeContainer>
-      <BytesWarning>
-        <Icon id="info" />
-        Bytes are executed in FILO. If you want to change the order of execution of the bytes, drag the pair to the
-        desired position.
-      </BytesWarning>
-      <div className="step-bytes">
+
+        <div className="submitted-data">
+          <div className="label">3 - Fee</div>
+          <CommaNumber className="value" value={fee} endingText="XTZ" />
+        </div>
+      </SubmitProposalGeneralData>
+
+      <Info
+        type={INFO_DEFAULT}
+        text={
+          'Bytes are executed in FILO. If you want to change the order of execution of the bytes, drag the pair to thedesired position.'
+        }
+      />
+
+      <SubmitProposalBytes>
         {dndBytes.map((item, i) => {
           if (!checkBytesPairExists(item)) return null
           const existInServer = Boolean(proposalData?.find(({ id }) => item.id === id && !item.isLocalBytes))
@@ -311,7 +307,7 @@ export const StageTwoForm = ({
             +
           </button>
         </CustomTooltip>
-      </div>
+      </SubmitProposalBytes>
     </>
   )
 }

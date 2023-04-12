@@ -7,13 +7,17 @@ import { PropSubmissionTopBar } from './PropSubmissionTopBar/PropSubmissionTopBa
 import { StageOneForm } from './StageOneForm/StageOneForm.controller'
 import { StageThreeForm } from './StageThreeForm/StageThreeForm.controller'
 import { StageTwoForm } from './StageTwoForm/StageTwoForm.controller'
-import { MultyProposalItem, MultyProposals } from './MultyProposals/MultyProposals.controller'
-import { FormButtonContainer, ProposalSubmissionForm } from './ProposalSubmission.style'
+import {
+  ProposalSubmittionButtons,
+  MultyProposalsStyled,
+  ProposalSubmissionForm,
+  SubmitProposalHeader,
+} from './ProposalSubmission.style'
 import { Page } from 'styles'
 
 // types
 import { State } from 'reducers'
-import { ProposalValidityObj, SubmittedProposalsMapper } from './ProposalSybmittion.types'
+import { MultyProposalItem, ProposalValidityObj, SubmittedProposalsMapper } from './ProposalSybmittion.types'
 
 // helpers
 import {
@@ -24,13 +28,21 @@ import {
 } from './ProposalSubmition.helpers'
 import { dropProposal, lockProposal, submitProposal, updateProposalData } from './ProposalSubmission.actions'
 import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
-import { Button } from 'app/App.components/Button/Button.controller'
-import { ACTION_PRIMARY, ACTION_SECONDARY } from 'app/App.components/Button/Button.constants'
+import {
+  BUTTON_PRIMARY,
+  BUTTON_SECONDARY,
+  BUTTON_NAVIGATION,
+  BUTTON_WIDE,
+} from 'app/App.components/Button/Button.constants'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
-import { ProposalRecordType } from 'utils/TypesAndInterfaces/Governance'
+import { ProposalRecordType, ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
+import Button from 'app/App.components/Button/NewButton'
+import Icon from 'app/App.components/Icon/Icon.view'
+import { StatusFlag } from 'app/App.components/StatusFlag/StatusFlag.controller'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
 export const ProposalSubmission = () => {
   const dispatch = useDispatch()
@@ -39,7 +51,7 @@ export const ProposalSubmission = () => {
   const {
     currentRoundProposalsIds,
     proposalsMapper,
-    config: { fee, proposalTitleMaxLength, proposalDescriptionMaxLength, governancePhase },
+    config: { fee, governancePhase },
     isLoaded: isGovernanceLoaded,
   } = useSelector((state: State) => state.governance)
   const { whitelistTokens, dipDupTokens } = useSelector((state: State) => state.tokens)
@@ -47,9 +59,9 @@ export const ProposalSubmission = () => {
   const [activeTab, setActiveTab] = useState(1)
   const [selectedUserProposalId, setSeletedUserProposalId] = useState(-1)
 
-  const { isLoading } = useDataLoader(async () => {
+  const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {
-      if (isGovernanceLoaded) {
+      if (!isGovernanceLoaded || isDepsChanged) {
         await dispatch(getGovernanceStorage())
       }
     } catch (e) {}
@@ -101,13 +113,14 @@ export const ProposalSubmission = () => {
           value: id,
         }))
         .concat(
-          proposalKeys.length < 2
+          proposalKeys.length < 2 && governancePhase === 'PROPOSAL'
             ? [{ text: 'Create new Proposal', active: selectedUserProposalId === -1, value: -1 }]
             : [],
         ),
-    [selectedUserProposalId, proposalKeys, mappedProposals],
+    [proposalKeys, governancePhase, selectedUserProposalId, mappedProposals],
   )
 
+  // TODO: check it
   const paymentMethods = useMemo(
     () =>
       whitelistTokens
@@ -120,14 +133,46 @@ export const ProposalSubmission = () => {
         .filter(({ shortSymbol }) => ['fa2', 'fa12', 'tez'].includes(shortSymbol)),
     [whitelistTokens],
   )
+  console.log({
+    paymentMethods,
+    whitelistTokens,
+  })
 
   const [proposalState, setProposalsState] = useState(mappedProposals)
   const [proposalsValidation, setProposalsValidation] = useState<Record<number, ProposalValidityObj>>({})
-  const [proposalHasChange, setProposalHasChange] = useState(false)
+
   const currentOriginalProposalId = useMemo(
     () => currentRoundProposalsIds.find((id) => selectedUserProposalId === id),
     [selectedUserProposalId, currentRoundProposalsIds],
   )
+
+  const proposalHasChange = useMemo(() => {
+    const submitProposalBody = proposalState[currentOriginalProposalId ?? -1]
+    const remoteProposal = mappedProposals[currentOriginalProposalId ?? -1]
+
+    const isTitleDiff = submitProposalBody?.title !== remoteProposal?.title,
+      isDescrDiff = submitProposalBody?.description !== remoteProposal?.description,
+      isSourceLinkDiff = submitProposalBody?.sourceCode !== remoteProposal?.sourceCode
+
+    const isBytesSame =
+      submitProposalBody?.proposalData.length === remoteProposal?.proposalData.length &&
+      submitProposalBody?.proposalData.every(({ title, encoded_code }, idx) => {
+        const remoteProposalByte = remoteProposal?.proposalData?.[idx]
+        return title !== remoteProposalByte?.title || encoded_code !== remoteProposalByte?.encoded_code
+      })
+    const isPaymentsSame =
+      submitProposalBody?.proposalPayments.length === remoteProposal?.proposalPayments.length &&
+      submitProposalBody?.proposalPayments.every(({ token_amount, token_address, to__id }, idx) => {
+        const remoteProposalPayment = remoteProposal?.proposalPayments?.[idx]
+        return (
+          to__id !== remoteProposalPayment?.to__id ||
+          token_amount !== remoteProposalPayment?.token_amount ||
+          token_address !== remoteProposalPayment?.token_address
+        )
+      })
+
+    return isTitleDiff || isDescrDiff || isSourceLinkDiff || !isBytesSame || !isPaymentsSame
+  }, [currentOriginalProposalId, mappedProposals, proposalState])
 
   const handleChangeTab = useCallback((tabId?: number) => {
     setActiveTab(tabId ?? 0)
@@ -282,12 +327,41 @@ export const ProposalSubmission = () => {
       ) : (
         <>
           {usersProposalsToSwitch.length > 1 ? (
-            <MultyProposals switchItems={usersProposalsToSwitch} switchProposal={changeActiveProposal} />
+            <MultyProposalsStyled>
+              {usersProposalsToSwitch.map(({ text, active, value }) => (
+                <Button
+                  key={value}
+                  onClick={() => changeActiveProposal(value)}
+                  kind={BUTTON_NAVIGATION}
+                  selected={active}
+                >
+                  {text}
+                </Button>
+              ))}
+            </MultyProposalsStyled>
           ) : null}
 
           <PropSubmissionTopBar value={activeTab} valueCallback={handleChangeTab} />
 
           <ProposalSubmissionForm>
+            {/* TODO: add styles to tooltip */}
+            <a
+              className="info-link"
+              href="https://mavryk.finance/litepaper#governance"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <Icon id="question" />
+            </a>
+
+            <SubmitProposalHeader>
+              <H2Title>Stage {activeTab}</H2Title>
+              <StatusFlag
+                text={currentProposal.locked ? ProposalStatus.LOCKED : ProposalStatus.UNLOCKED}
+                status={currentProposal.locked ? ProposalStatus.DEFEATED : ProposalStatus.EXECUTED}
+              />
+            </SubmitProposalHeader>
+
             {activeTab === 1 && (
               <StageOneForm
                 proposalId={selectedUserProposalId}
@@ -304,7 +378,6 @@ export const ProposalSubmission = () => {
                 currentProposalValidation={currentProposalValidation}
                 updateLocalProposalValidation={updateLocalProposalValidation}
                 updateLocalProposalData={updateLocalProposalData}
-                setProposalHasChange={setProposalHasChange}
               />
             )}
             {activeTab === 3 && (
@@ -315,46 +388,46 @@ export const ProposalSubmission = () => {
                 currentProposalValidation={currentProposalValidation}
                 updateLocalProposalValidation={updateLocalProposalValidation}
                 updateLocalProposalData={updateLocalProposalData}
-                setProposalHasChange={setProposalHasChange}
               />
             )}
 
-            <FormButtonContainer>
+            <ProposalSubmittionButtons>
               <Button
-                icon="close-stroke"
-                className="delete-pair"
-                text="Drop Proposal"
-                kind={ACTION_SECONDARY}
+                kind={BUTTON_SECONDARY}
+                form={BUTTON_WIDE}
                 disabled={!isProposalSubmitted || !isProposalPeriod}
                 onClick={() => handleDropProposal(selectedUserProposalId)}
-              />
+              >
+                <Icon id="navigation-menu_close" /> Drop Proposal
+              </Button>
               <Button
-                icon="lock"
-                className="lock"
-                text={'Lock Proposal'}
                 disabled={!isProposalSubmitted || !isProposalPeriod || currentProposal.locked || proposalHasChange}
                 onClick={() => handleLockProposal(selectedUserProposalId)}
-                kind={ACTION_SECONDARY}
-              />
+                kind={BUTTON_SECONDARY}
+                form={BUTTON_WIDE}
+              >
+                <Icon id="lock" /> Lock Proposal
+              </Button>
               {isProposalSubmitted ? (
                 <Button
-                  icon="bytes"
-                  className="bytes"
-                  text="Save Changes"
-                  kind={ACTION_PRIMARY}
+                  kind={BUTTON_PRIMARY}
+                  form={BUTTON_WIDE}
                   disabled={!proposalHasChange || currentProposal.locked || !isBytesValid || !isPaymentsValid}
                   onClick={() => handleUpdateData(selectedUserProposalId)}
-                />
+                >
+                  <Icon id="bytes" /> Save Changes
+                </Button>
               ) : (
                 <Button
-                  icon="auction"
-                  kind={ACTION_PRIMARY}
-                  text={'Submit Proposal'}
+                  kind={BUTTON_PRIMARY}
+                  form={BUTTON_WIDE}
                   disabled={!isStageOneDataValid || !isBytesValid || !isPaymentsValid}
                   onClick={handleSubmitProposal}
-                />
+                >
+                  <Icon id="auction" /> Submit Proposal
+                </Button>
               )}
-            </FormButtonContainer>
+            </ProposalSubmittionButtons>
           </ProposalSubmissionForm>
         </>
       )}

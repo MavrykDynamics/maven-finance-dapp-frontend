@@ -24,6 +24,7 @@ import {
   FormTitleContainer,
   FormTitleEntry,
   SubmissionStyled,
+  SubmitProposalGeneralData,
 } from '../ProposalSubmission.style'
 import {
   AddRowBtn,
@@ -49,7 +50,6 @@ export const StageThreeForm = ({
   paymentMethods,
   currentProposalValidation,
   updateLocalProposalValidation,
-  setProposalHasChange,
   updateLocalProposalData,
 }: StageThreeFormProps) => {
   const { proposalPayments, locked, title } = currentProposal
@@ -110,8 +110,6 @@ export const StageThreeForm = ({
         proposalId,
       )
     }
-
-    setProposalHasChange(true)
   }
 
   const handleAddRow = () => {
@@ -145,7 +143,6 @@ export const StageThreeForm = ({
       },
       proposalId,
     )
-    setProposalHasChange(true)
   }
 
   const handleDeleteRow = (rowIdx: number) => {
@@ -161,38 +158,29 @@ export const StageThreeForm = ({
       },
       proposalId,
     )
-    setProposalHasChange(true)
   }
 
   const isTableDisabled = useMemo(() => !isProposalRound || locked, [isProposalRound, locked])
 
   return (
-    <SubmissionStyled>
-      <FormHeaderGroup>
-        <h1>Stage 3</h1>
-        <StatusFlag
-          text={locked ? ProposalStatus.LOCKED : ProposalStatus.UNLOCKED}
-          status={locked ? ProposalStatus.DEFEATED : ProposalStatus.EXECUTED}
-        />
-        <a className="info-link" href="https://mavryk.finance/litepaper#governance" target="_blank" rel="noreferrer">
-          <Icon id="question" />
-        </a>
-      </FormHeaderGroup>
-      <FormTitleAndFeeContainer>
-        <FormTitleContainer>
-          <label>1 - Enter Proposal Title</label>
-          <FormTitleEntry>{title}</FormTitleEntry>
-        </FormTitleContainer>
-        <div>
-          <label>2 - Proposal Success Reward</label>
-          <FormTitleEntry>{successReward} MVK</FormTitleEntry>
+    <>
+      <SubmitProposalGeneralData>
+        <div className="submitted-data">
+          <div className="label">1 - Proposal Title</div>
+          <div className="value">{title}</div>
         </div>
-        <div>
-          <label>3 - Fee</label>
-          <FormTitleEntry>{fee} XTZ</FormTitleEntry>
+
+        <div className="submitted-data">
+          <div className="label">2 - Proposal Success Reward</div>
+          <CommaNumber className="value" value={successReward} endingText="MVK" />
         </div>
-      </FormTitleAndFeeContainer>
-      <label>4 - Enter Proposal Data</label>
+
+        <div className="submitted-data">
+          <div className="label">3 - Fee</div>
+          <CommaNumber className="value" value={fee} endingText="XTZ" />
+        </div>
+      </SubmitProposalGeneralData>
+
       <Table className="editable-table with-header">
         <TableHeader className="editable-head">
           <TableRow>
@@ -302,6 +290,6 @@ export const StageThreeForm = ({
           </CustomTooltip>
         </AddRowBtn>
       </Table>
-    </SubmissionStyled>
+    </>
   )
 }

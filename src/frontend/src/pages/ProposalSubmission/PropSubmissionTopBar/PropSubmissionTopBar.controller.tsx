@@ -8,7 +8,6 @@ import { getSeparateSnakeCase } from '../../../utils/parse'
 import {
   CurrentPhaseContainer,
   PropSubmissionTopBarStyled,
-  PropSubTopBarEmergencyGovText,
   PropSubTopBarPhaseText,
   PropSubTopBarTabsContainer,
   PropSubTopBarTabsText,
@@ -18,7 +17,7 @@ import {
 
 export type PropSubmissionTopBarProps = {
   value?: number
-  valueCallback?: (val?: number) => void
+  valueCallback: (val?: number) => void
 }
 
 const GOV_PROPOSAL_SUBMISSION_ITEMS = [
@@ -28,20 +27,14 @@ const GOV_PROPOSAL_SUBMISSION_ITEMS = [
 ]
 
 // TODO redo markup for it
-
 export const PropSubmissionTopBar = ({ value, valueCallback }: PropSubmissionTopBarProps) => {
   const { governancePhase } = useSelector((state: State) => state.governance.config)
-
-  const handleChangeTab = (tabId?: number) => {
-    // TODO: Implement function and dispatch action
-    if (valueCallback) valueCallback(tabId)
-  }
 
   return (
     <PropSubmissionTopBarStyled>
       <PropSubTopBarTabsContainer>
         <PropSubTopBarTabsText>Submission Process:</PropSubTopBarTabsText>
-        <SlidingTabButtons tabItems={GOV_PROPOSAL_SUBMISSION_ITEMS} onClick={handleChangeTab} />
+        <SlidingTabButtons tabItems={GOV_PROPOSAL_SUBMISSION_ITEMS} onClick={valueCallback} />
       </PropSubTopBarTabsContainer>
 
       <PropSubTopBarTimeContainer>
