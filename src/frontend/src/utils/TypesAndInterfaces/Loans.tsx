@@ -116,7 +116,6 @@ export type LoanMarketType = {
   }>
   lendingItem: LendingItemType
   myBorrowingList: Array<LoansVaultType>
-  permissionedBorrowingList: Array<LoansVaultType>
   marketCollateralChartData: Array<AreaChartPlotType>
   marketLiquidityChartData: Array<AreaChartPlotType>
   utilisationRate: number

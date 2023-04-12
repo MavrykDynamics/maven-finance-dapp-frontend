@@ -96,7 +96,7 @@ export const VaultsView = () => {
 
   const currentVaultsIds =
     tabId === tabsId.ALL ? allVaultsIds : tabId === tabsId.MY ? myVaultsIds : permissinedVaultsIds
-  console.log({ currentListName, currentVaultsIds })
+
   const currentPage = getPageNumber(search, currentListName)
 
   const handleChangeTabs = (id: number) => {

@@ -359,7 +359,6 @@ const getLendingItem = (
 // Normalizing borrowed items for loan asset
 type BorrowingNormalizerReturnType = {
   myBorrowingList: Array<LoansVaultType>
-  permissinedBorrowingList: Array<LoansVaultType>
   totalCollateral: number
   vaultsBorrowedAmount: number
 }
@@ -562,18 +561,14 @@ const getBorrowings = async (
         acc.myBorrowingList.push(normallizedVault)
       }
 
-      if (depositors.find((depositorId) => depositorId === userAddress) || deporsitorsFlag === ANY_USER) {
-        acc.permissinedBorrowingList.push(normallizedVault)
-      }
-
       acc.totalCollateral += vaultCollateral.totalRow.amount
       acc.vaultsBorrowedAmount += normallizedVault.borrowedAmount * normallizedVault.borrowedAsset.rate
 
       return acc
-    }, Promise.resolve({ myBorrowingList: [], permissinedBorrowingList: [], totalCollateral: 0, vaultsBorrowedAmount: 0 }))
+    }, Promise.resolve({ myBorrowingList: [], totalCollateral: 0, vaultsBorrowedAmount: 0 }))
   } catch (e) {
     console.log('getBorrowings error', e)
-    return { myBorrowingList: [], permissinedBorrowingList: [], totalCollateral: 0, vaultsBorrowedAmount: 0 }
+    return { myBorrowingList: [], totalCollateral: 0, vaultsBorrowedAmount: 0 }
   }
 }
 
@@ -646,7 +641,7 @@ export const normalizeLoans = async ({
           marketCollateralChartData,
           marketLiquidityChartData,
         } = getTransactionHistory(history_data, dipDupData, feeds)
-        const { myBorrowingList, permissinedBorrowingList, totalCollateral, vaultsBorrowedAmount } =
+        const { myBorrowingList, totalCollateral, vaultsBorrowedAmount } =
           await getBorrowings(vaults, dipDupData, feeds, interestRateDecimals, availableLiquidity, userAddres)
         const lendingItem = getLendingItem(
           loanToken,
@@ -668,7 +663,6 @@ export const normalizeLoans = async ({
             userBalance: loanTokenUserBalance,
           },
           myBorrowingList,
-          permissionedBorrowingList: permissinedBorrowingList,
           lendingItem,
           transactionHistory,
           marketCollateralChartData,
