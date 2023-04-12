@@ -41,19 +41,23 @@ export const LoansEarn = () => {
     chartsData: { lendingChartData, borrowingChartData },
   } = useSelector((state: State) => state.loans)
 
-  const { totalBorrowed, totalLended } = loanTokens.reduce<{
-    totalLended: number
-    totalBorrowed: number
-  }>(
-    (acc, { totalBorrowed, totalLended, loanTokenData: { rate } }) => {
-      acc.totalBorrowed += totalBorrowed * rate
-      acc.totalLended += totalLended * rate
-      return acc
-    },
-    {
-      totalLended: 0,
-      totalBorrowed: 0,
-    },
+  const { totalBorrowed, totalLended } = useMemo(
+    () =>
+      loanTokens.reduce<{
+        totalLended: number
+        totalBorrowed: number
+      }>(
+        (acc, { totalBorrowed, totalLended, loanTokenData: { rate } }) => {
+          acc.totalBorrowed += totalBorrowed * rate
+          acc.totalLended += totalLended * rate
+          return acc
+        },
+        {
+          totalLended: 0,
+          totalBorrowed: 0,
+        },
+      ),
+    [loanTokens],
   )
 
   const { openAddLendingAssetPopup } = useContext(loansPopupsContext)
