@@ -275,7 +275,7 @@ export const BorrowAsset = ({
                     <CustomTooltip
                       iconId="info"
                       defaultStrokeColor={silverColor}
-                      text={`Total Amount - DAO Fee`}
+                      text={`Total Amount minus DAO Fee`}
                       className="tooltip"
                     />
                   </div>
