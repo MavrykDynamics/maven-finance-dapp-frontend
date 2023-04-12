@@ -7,7 +7,7 @@ import type {
 } from 'utils/TypesAndInterfaces/User'
 import type { UserLendObjType } from 'utils/TypesAndInterfaces/Loans'
 
-import { CONNECT, DISCONNECT } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
+import { DISCONNECT } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 import { UPDATE_USER_DATA } from './actions/user.actions'
 
 export interface UserState {
@@ -104,14 +104,10 @@ export const walletDefaultState: WalletState = {
 
 export function wallet(state = walletDefaultState, action: Action) {
   switch (action.type) {
-    case CONNECT:
-      return {
-        ...state,
-        accountPkh: action.accountPkh,
-      }
     case UPDATE_USER_DATA:
       return {
         ...state,
+        accountPkh: action.accountPkh,
         user: { ...action.userData, isLoaded: true },
       }
     case DISCONNECT:
