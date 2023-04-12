@@ -397,7 +397,12 @@ export const CouncilPending = (props: Props) => {
   if (isAddVestee) {
     const cliffInMonths = findActionByName('cliffInMonths')
     const vestingInMonths = findActionByName('vestingInMonths')
-    const totalAllocatedAmount = findActionByName('totalAllocatedAmount')
+
+    const totalAllocatedAmount = convertNumberForClient({
+      number: findActionByName('totalAllocatedAmount'),
+      grade: MVK_DECIMALS,
+    })
+
     const vesteeAddress = findActionByName('vesteeAddress', BYTES_ADDRESS_TYPE)
 
     return (
@@ -454,7 +459,12 @@ export const CouncilPending = (props: Props) => {
   if (isUpdateVestee) {
     const newCliffInMonths = findActionByName('newCliffInMonths')
     const newVestingInMonths = findActionByName('newVestingInMonths')
-    const newTotalAllocatedAmount = findActionByName('newTotalAllocatedAmount')
+
+    const newTotalAllocatedAmount = convertNumberForClient({
+      number: findActionByName('newTotalAllocatedAmount'),
+      grade: MVK_DECIMALS,
+    })
+
     const vesteeAddress = findActionByName('vesteeAddress', BYTES_ADDRESS_TYPE)
 
     return (
