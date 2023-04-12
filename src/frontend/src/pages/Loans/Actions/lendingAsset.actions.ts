@@ -118,9 +118,8 @@ export const depositLendingAssetAction =
       // refetch data we need
       await checkIndexerLevelAndRunDataUpdateCallback({
         callback: async () => {
-          await dispatch(getMTokensStorage())
-          await dispatch(getLoansStorage())
           await dispatch(updateUserData())
+          await dispatch(getLoansStorage())
         },
         currentOperationLevel,
       })
@@ -172,9 +171,8 @@ export const withdrawLendingAssetAction =
       // refetch data we need
       await checkIndexerLevelAndRunDataUpdateCallback({
         callback: async () => {
-          await dispatch(getMTokensStorage())
-          await dispatch(getLoansStorage())
           await dispatch(updateUserData())
+          await dispatch(getLoansStorage())
         },
         currentOperationLevel,
       })

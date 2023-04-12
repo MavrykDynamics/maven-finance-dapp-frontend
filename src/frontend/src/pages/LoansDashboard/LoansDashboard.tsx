@@ -233,7 +233,7 @@ export const LoansDashboard = () => {
                   </div>
 
                   <div className="column">
-                    <div className="label">Total Borroved</div>
+                    <div className="label">Total Borrowed</div>
                     <div className="value-wrap">
                       <CommaNumber value={totalBorrowed} beginningText="$" className="value" />
                       <CommaNumber

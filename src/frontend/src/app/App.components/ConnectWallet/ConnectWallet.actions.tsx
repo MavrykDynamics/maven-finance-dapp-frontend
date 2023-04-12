@@ -5,13 +5,11 @@ import { updateUserData } from 'reducers/actions/user.actions'
 import { dappClient } from 'reducers/wallet/WalletCore'
 
 import { ERROR } from '../Toaster/Toaster.constants'
-import { getAvaliableCollaterals } from 'pages/Loans/Actions/getLoansData.actions'
 
 // Instance of Dapp wallet
 export const DAPP_INSTANCE = dappClient()
 
 // Wallet action types
-export const CONNECT = 'CONNECT'
 export const DISCONNECT = 'DISCONNECT'
 
 // Action to change wallet
@@ -22,13 +20,7 @@ export const changeWallet = () => async (dispatch: AppDispatch, getState: GetSta
 
     // If they are equal wallet changed, need to update user data
     if (accountAddress && accountAddress !== state.wallet.accountPkh) {
-      await dispatch({
-        type: CONNECT,
-        accountPkh: accountAddress,
-      })
-
-      await dispatch(updateUserData())
-      await dispatch(getAvaliableCollaterals())
+      await dispatch(updateUserData(accountAddress))
     }
   } catch (e) {
     console.error(`Failed to change wallet: `, e)
@@ -41,16 +33,11 @@ export const changeWallet = () => async (dispatch: AppDispatch, getState: GetSta
 // Action to connect wallet
 export const connect = () => async (dispatch: AppDispatch, getState: GetState) => {
   try {
-    const account = await DAPP_INSTANCE.connectAccount()
+    const accountAddress = await DAPP_INSTANCE.connectAccount()
 
     // if choosen wallet in popup
-    if (account) {
-      await dispatch({
-        type: CONNECT,
-        accountPkh: account.address,
-      })
-
-      await dispatch(updateUserData())
+    if (accountAddress) {
+      await dispatch(updateUserData(accountAddress))
     } else {
       throw new Error('No account choosen')
     }

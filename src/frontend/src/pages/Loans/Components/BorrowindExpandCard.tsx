@@ -551,7 +551,7 @@ export const BorrowingExpandCard = ({
 
                 <div className="repay-full">
                   <Button
-                    disabled={!borrowedAmount}
+                    disabled={true || !borrowedAmount}
                     isThin
                     kind={BUTTON_SECONDARY}
                     onClick={() =>

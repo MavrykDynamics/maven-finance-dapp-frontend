@@ -185,7 +185,7 @@ export const fetchUserData = async (
 }
 
 export const UPDATE_USER_DATA = 'UPDATE_USER_DATA'
-export const updateUserData = () => async (dispatch: AppDispatch, getState: GetState) => {
+export const updateUserData = (newAccAddress?: string) => async (dispatch: AppDispatch, getState: GetState) => {
   const {
     preferences: { headData: { level = 0 } = {} },
     wallet: { accountPkh },
@@ -193,13 +193,16 @@ export const updateUserData = () => async (dispatch: AppDispatch, getState: GetS
     dataFeeds: { feedsLedger },
   } = getState()
 
+  const userAddressToLoadData = newAccAddress ?? accountPkh
+
   try {
-    if (accountPkh) {
-      const userData = await fetchUserData(accountPkh, dipDupTokens, feedsLedger, level)
+    if (userAddressToLoadData) {
+      const userData = await fetchUserData(userAddressToLoadData, dipDupTokens, feedsLedger, level)
 
       dispatch({
         type: UPDATE_USER_DATA,
         userData: userData,
+        accountPkh: userAddressToLoadData,
       })
 
       await dispatch(getAvaliableCollaterals())
