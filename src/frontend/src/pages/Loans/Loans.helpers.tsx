@@ -629,15 +629,12 @@ export const normalizeLoans = async ({
         )
 
         if (!loanTokenMetadata) return acc
-        const reserveAmountMu =
+        const reserveAmount =
           convertNumberForClient({ number: token_pool_total, grade: loanTokenMetadata.decimals }) *
           (reserve_ratio / 10000)
-        const reserveAmount = isXTZ
-          ? calcWithoutMu(reserveAmountMu)
-          : calcWithoutDecimals(reserveAmountMu, loanTokenMetadata.decimals)
-        const availableLiquidity = isXTZ
-          ? calcWithoutMu(total_remaining - reserveAmountMu)
-          : calcWithoutDecimals(total_remaining - reserveAmountMu, loanTokenMetadata.decimals)
+        const availableLiquidity =
+          (convertNumberForClient({ number: total_remaining, grade: loanTokenMetadata.decimals }) - reserveAmount) *
+          loanTokenMetadata.rate
 
         const {
           transactionHistory,
