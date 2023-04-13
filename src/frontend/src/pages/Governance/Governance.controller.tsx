@@ -159,8 +159,6 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
     selectedCycle,
   ])
 
-  console.log({ prpoposalsListsToShow })
-
   useEffect(() => {
     const firstProposalId = prpoposalsListsToShow?.[0]?.proposalsIds?.[0]
     setRightSideContent(firstProposalId ? proposalsMapper[firstProposalId] : undefined)

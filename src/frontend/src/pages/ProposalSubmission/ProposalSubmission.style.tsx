@@ -1,6 +1,6 @@
 import styled from 'styled-components/macro'
 
-import { Card, downColor, cyanColor, boxShadowColor, CardHover } from '../../styles'
+import { Card, boxShadowColor, CardHover } from '../../styles'
 import { MavrykTheme } from '../../styles/interfaces'
 
 export const SubmissionStyled = styled.section<{ theme: MavrykTheme }>`
