@@ -67,19 +67,6 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
     dispatch(processProposalPayment(proposal.id))
   }
 
-  const paymentMethods = useMemo(
-    () =>
-      whitelistTokens
-        .map((tokenInfo) => ({
-          symbol: tokenInfo.contract_name,
-          address: tokenInfo.contract_address,
-          shortSymbol: tokenInfo.token_contract_standard,
-          id: 0,
-        }))
-        .filter(({ shortSymbol }) => ['fa2', 'fa12', 'tez'].includes(shortSymbol)),
-    [whitelistTokens],
-  )
-
   // Voting stuff
   const voteStatistics = useMemo<VoteStatistics>(
     () => ({
@@ -268,7 +255,7 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
             <TableBody className="editable-body">
               {proposal.proposalPayments.map((payment) => {
                 const { symbol: selectedSymbol = 'MVK' } =
-                  paymentMethods.find(({ address }) => address === payment.token_address) ?? paymentMethods?.[0] ?? {}
+                  whitelistTokens.find(({ address }) => address === payment.token_address) ?? whitelistTokens?.[0] ?? {}
 
                 return (
                   <TableRow className="editable-row">

@@ -13,11 +13,18 @@ import {
   ProposalSubmissionForm,
   SubmitProposalHeader,
 } from './ProposalSubmission.style'
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
+import Button from 'app/App.components/Button/NewButton'
+import Icon from 'app/App.components/Icon/Icon.view'
+import { StatusFlag } from 'app/App.components/StatusFlag/StatusFlag.controller'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { Page } from 'styles'
 
 // types
 import { State } from 'reducers'
 import { MultyProposalItem, ProposalValidityObj, SubmittedProposalsMapper } from './ProposalSybmittion.types'
+import { ProposalRecordType, ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
 
 // helpers
 import {
@@ -36,13 +43,8 @@ import {
 } from 'app/App.components/Button/Button.constants'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
-import { ProposalRecordType, ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
-import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
-import { ClockLoader } from 'app/App.components/Loader/Loader.view'
-import Button from 'app/App.components/Button/NewButton'
-import Icon from 'app/App.components/Icon/Icon.view'
-import { StatusFlag } from 'app/App.components/StatusFlag/StatusFlag.controller'
-import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+
+// TODO: add not counting empty bytes items as item for validation and for data updating
 
 export const ProposalSubmission = () => {
   const dispatch = useDispatch()
@@ -119,24 +121,6 @@ export const ProposalSubmission = () => {
         ),
     [proposalKeys, governancePhase, selectedUserProposalId, mappedProposals],
   )
-
-  // TODO: check it
-  const paymentMethods = useMemo(
-    () =>
-      whitelistTokens
-        .map((tokenInfo) => ({
-          symbol: tokenInfo.contract_name,
-          address: tokenInfo.contract_address,
-          shortSymbol: tokenInfo.token_contract_standard,
-          id: 0,
-        }))
-        .filter(({ shortSymbol }) => ['fa2', 'fa12', 'tez'].includes(shortSymbol)),
-    [whitelistTokens],
-  )
-  console.log({
-    paymentMethods,
-    whitelistTokens,
-  })
 
   const [proposalState, setProposalsState] = useState(mappedProposals)
   const [proposalsValidation, setProposalsValidation] = useState<Record<number, ProposalValidityObj>>({})
@@ -236,7 +220,7 @@ export const ProposalSubmission = () => {
       const paymentsDiff = getPaymentsDiff(
         currentOriginalProposal?.proposalPayments ?? [],
         currentProposal.proposalPayments,
-        paymentMethods,
+        whitelistTokens,
         dipDupTokens,
       )
       await dispatch(updateProposalData(proposalId, bytesDiff, paymentsDiff))
@@ -384,7 +368,7 @@ export const ProposalSubmission = () => {
               <StageThreeForm
                 proposalId={selectedUserProposalId}
                 currentProposal={currentProposal}
-                paymentMethods={paymentMethods}
+                paymentMethods={whitelistTokens}
                 currentProposalValidation={currentProposalValidation}
                 updateLocalProposalValidation={updateLocalProposalValidation}
                 updateLocalProposalData={updateLocalProposalData}

@@ -8,14 +8,14 @@ import { StageTwoFormProps, ProposalBytesType } from '../ProposalSybmittion.type
 // components
 import Icon from '../../../app/App.components/Icon/Icon.view'
 import { CustomTooltip } from '../../../app/App.components/Tooltip/Tooltip.view'
-import { Input } from '../../../app/App.components/Input/Input.controller'
+import { Input } from '../../../app/App.components/Input/NewInput'
 import { StatusFlag } from '../../../app/App.components/StatusFlag/StatusFlag.controller'
 import { TextArea } from '../../../app/App.components/TextArea/TextArea.controller'
 
 // const
 import { checkBytesPairExists, getBytesPairValidationStatus, PROPOSAL_BYTE } from '../ProposalSubmition.helpers'
 import { ProposalStatus } from '../../../utils/TypesAndInterfaces/Governance'
-import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import { INPUT_MEDIUM, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { isValidLength } from 'utils/validatorFunctions'
 import { isHexadecimal } from 'utils/validatorFunctions'
 
@@ -26,6 +26,7 @@ import {
   FormTitleContainer,
   FormTitleEntry,
   SubmitProposalBytes,
+  SubmitProposalBytesPair,
   SubmitProposalGeneralData,
   SubmitProposalHeader,
 } from '../ProposalSubmission.style'
@@ -33,6 +34,8 @@ import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { INFO_DEFAULT } from 'app/App.components/Info/info.constants'
 import { Info } from 'app/App.components/Info/Info.view'
+import Button from 'app/App.components/Button/NewButton'
+import { BUTTON_SIMPLE, BUTTON_SIMPLE_SMALL } from 'app/App.components/Button/Button.constants'
 
 // TODO: Update markup
 // valid bytes text for testing: 05050505080508050805050505050505080505050507070017050505050508030b
@@ -56,7 +59,7 @@ export const StageTwoForm = ({
     }
   }, [proposalId])
 
-  const handleOnChange = (byte: ProposalBytesType, text: string, type: 'title' | 'encoded_code') => {
+  const handleOnChange = (byte: ProposalBytesType, text: string, type: string) => {
     // update input value
     updateLocalProposalData(
       {
@@ -253,12 +256,19 @@ export const StageTwoForm = ({
 
       <SubmitProposalBytes>
         {dndBytes.map((item, i) => {
-          if (!checkBytesPairExists(item)) return null
+          if (
+            !checkBytesPairExists(item) ||
+            !item ||
+            typeof item.title !== 'string' ||
+            typeof item.encoded_code !== 'string'
+          )
+            return null
+          const { title = '', encoded_code = '' } = item
           const existInServer = Boolean(proposalData?.find(({ id }) => item.id === id && !item.isLocalBytes))
           const validityObject = currentProposalValidation.bytesValidation?.find(({ byteId }) => byteId === item.id)
 
           return (
-            <article
+            <SubmitProposalBytesPair
               key={item.id}
               className={`${isDraggable ? 'draggabe' : ''} ${item.isUnderTheDrop ? 'underDrop' : ''}`}
               draggable={isDraggable}
@@ -269,44 +279,51 @@ export const StageTwoForm = ({
               onDrop={(e) => dropHandler(e, item)}
             >
               <div className="idx">{i + 1}</div>
-              <div className="step-bytes-title">
-                <label>Enter Proposal Bytes Title</label>
-                <Input
-                  type="text"
-                  value={item.title ?? ''}
-                  required
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleOnChange(item, e.target.value, 'title')}
-                  inputStatus={validityObject?.validTitle}
-                  disabled={existInServer || locked}
-                />
-              </div>
 
-              <label>Enter Proposal Bytes Data</label>
+              <Input
+                settings={{
+                  label: 'Enter Proposal Bytes Title',
+                  inputStatus: currentProposalValidation.title,
+                  inputSize: INPUT_MEDIUM,
+                }}
+                inputProps={{
+                  disabled: existInServer || locked,
+                  value: title,
+                  type: 'text',
+                  name: 'title',
+                  onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
+                    handleOnChange(item, e.target.value, e.target.name),
+                }}
+              />
+
               <TextArea
-                className="step-2-textarea"
-                value={item.encoded_code ?? ''}
+                name="encoded_code"
+                label="Enter Proposal Bytes Data"
+                value={encoded_code}
                 onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                  handleOnChange(item, e.target.value, 'encoded_code')
+                  handleOnChange(item, e.target.value, e.target.name)
                 }
                 inputStatus={validityObject?.validBytes}
                 disabled={!isProposalPeriod || locked}
               />
 
               <div className={`remove-byte ${!isProposalPeriod || locked ? 'disabled' : ''}`}>
-                <CustomTooltip text="Delete bytes pair" className="delete-bytes">
-                  <button onClick={() => handleDeletePair(item.id)}>
+                <CustomTooltip text="Delete bytes pair" className="tooltip">
+                  <Button kind={BUTTON_SIMPLE} onClick={() => handleDeletePair(item.id)}>
                     <Icon id="delete" />
-                  </button>
+                  </Button>
                 </CustomTooltip>
               </div>
-            </article>
+            </SubmitProposalBytesPair>
           )
         })}
-        <CustomTooltip text="Add bytes pair" className="add-bytes">
-          <button disabled={!isProposalPeriod || locked} onClick={handleCreateNewByte}>
-            +
-          </button>
-        </CustomTooltip>
+        <div className="add-byte">
+          <CustomTooltip text="Add bytes pair" className="tooltip">
+            <Button kind={BUTTON_SIMPLE_SMALL} disabled={!isProposalPeriod || locked} onClick={handleCreateNewByte}>
+              <Icon id="plus" />
+            </Button>
+          </CustomTooltip>
+        </div>
       </SubmitProposalBytes>
     </>
   )

@@ -53,12 +53,13 @@ const AppContainer = () => {
 
   useEffect(() => {
     ;(async () => {
+      // Needs to be fetched before promise all
+      await dispatch(getContractAddressesStorage())
       // Fetching initial&common data for DAPP
       await Promise.all([
         dispatch(getSatellitesStorage()),
         dispatch(getFeedsStorage()),
 
-        dispatch(getContractAddressesStorage()),
         dispatch(getDipDupTokensStorage()),
         dispatch(getWhitelistTokensStorage()),
         dispatch(getMTokensStorage()),

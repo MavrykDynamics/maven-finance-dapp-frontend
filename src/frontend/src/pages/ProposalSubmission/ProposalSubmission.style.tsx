@@ -1,6 +1,6 @@
 import styled from 'styled-components/macro'
 
-import { Card, downColor, cyanColor, boxShadowColor } from '../../styles'
+import { Card, downColor, cyanColor, boxShadowColor, CardHover } from '../../styles'
 import { MavrykTheme } from '../../styles/interfaces'
 
 export const SubmissionStyled = styled.section<{ theme: MavrykTheme }>`
@@ -146,77 +146,90 @@ export const SubmitProposalBytes = styled.div<{ theme: MavrykTheme }>`
   position: relative;
   padding-bottom: 15px;
 
-  article {
-    margin-top: 27px;
-    display: flex;
-    flex-direction: column;
-    background: ${({ theme }) => theme.backgroundColor};
-    border-radius: 10px;
-    padding: 22px 50px 20px 40px;
-    position: relative;
-    border: 1px solid transparent;
+  .add-byte {
+    left: -20px;
+    bottom: 5px;
+    position: absolute;
+    width: fit-content;
+    height: fit-content;
 
-    .idx {
-      position: absolute;
-      left: 15px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-weight: 500;
-      font-size: 14px;
-      line-height: 14px;
-      color: ${({ theme }) => theme.textColor};
+    .tooltip {
+      margin-left: 0;
+      .text {
+        bottom: 150%;
+      }
+    }
+  }
+`
+
+export const SubmitProposalBytesPair = styled(CardHover)<{ theme: MavrykTheme }>`
+  display: flex;
+  flex-direction: column;
+  row-gap: 40px;
+
+  margin-top: 30px;
+  padding: 40px 50px 30px 40px;
+
+  background: ${({ theme }) => theme.backgroundColor};
+  position: relative;
+
+  .idx {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-weight: 500;
+    font-size: 14px;
+    color: ${({ theme }) => theme.textColor};
+  }
+
+  label {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .remove-byte {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+
+    svg {
+      width: 20px;
+      height: 20px;
+      fill: ${({ theme }) => theme.headerColor};
+      transition: 0.3s all;
     }
 
     &:hover {
-      border-color: ${cyanColor};
-      box-shadow: 0px 4px 4px ${boxShadowColor};
-    }
-
-    .remove-byte {
-      position: absolute;
-      right: 15px;
-      top: 50%;
-      transform: translateY(-50%);
-
       svg {
-        margin-top: 6px;
-        width: 20px;
-        height: 20px;
-        fill: ${({ theme }) => theme.headerColor};
-        transition: 0.3s all;
-      }
-      &:hover {
-        svg {
-          fill: ${cyanColor};
-        }
-      }
-
-      &.disabled {
-        pointer-events: none;
-        opacity: 0.7;
-        cursor: not-allowed;
+        fill: ${({ theme }) => theme.valueColor};
       }
     }
 
-    &.draggabe {
-      cursor: grab;
+    &.disabled {
+      pointer-events: none;
+      opacity: 0.7;
+      cursor: not-allowed;
     }
 
-    &.underDrop {
-      border-color: ${cyanColor};
-      box-shadow: 0px 4px 4px ${boxShadowColor};
+    .tooltip {
+      margin-left: 0;
+      .text {
+        bottom: 130%;
+      }
     }
   }
 
-  .delete-pair {
-    width: auto;
-    align-self: flex-end;
-    padding: 0 40px;
-    margin-top: 20px;
+  &.draggabe {
+    cursor: grab;
+  }
 
-    svg {
-      stroke: ${cyanColor};
-    }
+  &.underDrop {
+    border-color: ${({ theme }) => theme.valueColor};
+    box-shadow: 0px 4px 4px ${boxShadowColor};
   }
 `
 

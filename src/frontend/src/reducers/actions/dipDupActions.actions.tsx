@@ -19,6 +19,7 @@ import {
 } from 'gql/queries/getTokensData'
 import { State } from 'reducers'
 import { convertNumberForClient } from 'utils/calcFunctions'
+import { Governance_Financial_Whitelist_Token_Contract } from 'utils/generated/graphqlTypes'
 import { getSymbolFromFeedName } from 'utils/parse'
 
 export const GET_DIP_DUP_TOKENS = 'GET_DIP_DUP_TOKENS'
@@ -69,7 +70,14 @@ export const getWhitelistTokensStorage = () => async (dispatch: AppDispatch, get
       WHITELIST_TOKENS_VARIABLE(address),
     )
 
-    const whitelistTokens = storage?.treasury?.[0]?.whitelist_token_contracts ?? []
+    const whitelistTokens = (
+      (storage?.treasury?.[0]?.whitelist_token_contracts ?? []) as Array<Governance_Financial_Whitelist_Token_Contract>
+    ).map((tokenInfo) => ({
+      symbol: tokenInfo.contract_name,
+      address: tokenInfo.contract_address,
+      shortSymbol: tokenInfo.token_contract_standard,
+      id: 0,
+    }))
 
     dispatch({
       type: GET_WHITELIST_TOKENS,
