@@ -207,7 +207,7 @@ export const BorrowAsset = ({
                   <div className={`percentage`}>
                     Collateral Ratio:{' '}
                     <CommaNumber
-                      beginningText={`${futureCollateralRatio > 250 ? '+' : ''}`}
+                      beginningText={`${futureCollateralRatio >= 250 ? '+' : ''}`}
                       value={Math.max(0, Math.min(futureCollateralRatio, 250))}
                       endingText="%"
                       showDecimal
@@ -296,7 +296,7 @@ export const BorrowAsset = ({
                   <div className={`percentage`}>
                     Collateral Ratio:{' '}
                     <CommaNumber
-                      beginningText={`${futureCollateralRatio > 250 ? '+' : ''}`}
+                      beginningText={`${futureCollateralRatio >= 250 ? '+' : ''}`}
                       value={Math.max(0, Math.min(futureCollateralRatio, 250))}
                       endingText="%"
                       showDecimal

@@ -22,7 +22,12 @@ import {
   BaseLoansAssetDataType,
   DepositorsFlagType,
 } from 'utils/TypesAndInterfaces/Loans'
-import { calcWithoutDecimals, calcWithoutMu, convertNumberForClient } from '../../utils/calcFunctions'
+import {
+  calcWithoutDecimals,
+  calcWithoutMu,
+  convertNumberForClient,
+  getNumberInBounds,
+} from '../../utils/calcFunctions'
 import { ANY_USER, NONE_USER, WHITELIST_USERS } from './Loans.const'
 import { getUserBalanceForLoanAsset } from './LoansFethcers'
 
@@ -392,10 +397,10 @@ export const calcCollateralRatio = (collateralAmount: number, borrowedAmount: nu
   if (collateralAmount === 0) return 0
 
   // means we haven't borrowed, but we have deposited
-  if (borrowedAmount === 0) return 251
+  if (borrowedAmount === 0) return 250
 
   const collateralRatio = (collateralAmount / Math.max(1, borrowedAmount * borrowedAssetRate)) * 100
-  return Number(collateralRatio.toFixed(1))
+  return getNumberInBounds(0, 250, Number(collateralRatio.toFixed(1)))
 }
 
 export const getMaxCollateralWithdraw = (

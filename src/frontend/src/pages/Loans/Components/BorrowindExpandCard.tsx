@@ -166,7 +166,7 @@ export const BorrowingExpandCard = ({
               <div className={`percentage`}>
                 Collateral Ratio:{' '}
                 <CommaNumber
-                  beginningText={`${collateralRatio > 250 ? '+' : ''}`}
+                  beginningText={`${collateralRatio >= 250 ? '+' : ''}`}
                   value={Math.max(0, Math.min(collateralRatio, 250))}
                   endingText="%"
                   showDecimal
