@@ -28,6 +28,7 @@ import { vaultsStatuses } from '../Vaults.consts'
 import { getTimestampByLevel } from 'pages/Governance/Governance.actions'
 import { loansPopupsContext } from 'pages/Loans/Components/Modals/LoansModals.provider'
 import { calculateCollateralShare } from '../calcFunctionsForVault'
+import { vaultTabs } from '../Vaults.view'
 
 const findStatusInfo = (status: string) => {
   switch (status) {
@@ -86,6 +87,7 @@ const findFooterText = (status: string, statusColor: StatusFlagStyle, timestamp?
 type Props = VaultType & {
   isOwner: boolean
   handleMarkForLiquidation: (vaultId: number, vaultOwner: string) => void
+  vaultTab: string
 }
 
 export const VaultsCard = (props: Props) => {
@@ -100,6 +102,7 @@ export const VaultsCard = (props: Props) => {
     liquidationMax,
     liquidationPrice,
     handleMarkForLiquidation,
+    vaultTab,
   } = props
 
   const {
@@ -331,27 +334,29 @@ export const VaultsCard = (props: Props) => {
 
   return (
     <div ref={ref}>
-      {isOwner ? (
+      {(vaultTab === vaultTabs.ALL || vaultTab === vaultTabs.MY) && (
         <BorrowingExpandCard
           {...props}
           className={`expand-vault ${expanded ? 'openVault' : ''}`}
           headerSufix={headerSufix}
           getExpandedStatus={setExpanded}
           isOpenedVault={expanded}
-          isOwner
+          DAOFee={props.daoFee}
+          isOwner={isOwner}
+        >
+          {!isOwner && generalExpand}
+        </BorrowingExpandCard>
+      )}
+
+      {vaultTab === vaultTabs.PERMISSIONED && (
+        <BorrowingExpandCard
+          {...props}
+          className={`expand-vault ${expanded ? 'openVault' : ''}`}
+          headerSufix={headerSufix}
+          getExpandedStatus={setExpanded}
+          isOpenedVault={expanded}
           DAOFee={props.daoFee}
         />
-      ) : (
-        <BorrowingExpandCard
-          {...props}
-          className={`expand-vault ${expanded ? 'openVault' : ''}`}
-          headerSufix={headerSufix}
-          getExpandedStatus={setExpanded}
-          isOpenedVault={expanded}
-          DAOFee={props.daoFee}
-        >
-          {generalExpand}
-        </BorrowingExpandCard>
       )}
     </div>
   )
