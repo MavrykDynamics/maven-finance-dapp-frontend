@@ -286,7 +286,10 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
         acc.myVaultsIds.push(item.vault.address)
       }
 
-      if (depositors.find((depositorId) => depositorId === accountPkh) || deporsitorsFlag === ANY_USER) {
+      if (
+        (depositors.some((depositorId) => depositorId === accountPkh) || deporsitorsFlag === ANY_USER) &&
+        accountPkh !== item.owner_id
+      ) {
         acc.permissinedVaultsIds.push(item.vault.address)
       }
 
