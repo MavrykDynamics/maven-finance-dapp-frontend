@@ -34,7 +34,7 @@ const findStatusInfo = (status: string) => {
     case vaultsStatuses.LIQUIDATABLE:
       return { color: 'down', text: 'Liquidation Armed' }
     case vaultsStatuses.GRACE_PERIOD:
-      return { color: 'darkWarning', text: 'Grace Period' }
+      return { color: 'warning', text: 'Grace Period' }
     case vaultsStatuses.MARK:
       return { color: 'warning', text: 'Ready to Arm' }
     case vaultsStatuses.AT_RISK:
