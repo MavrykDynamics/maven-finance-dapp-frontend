@@ -164,14 +164,7 @@ export const BorrowingExpandCard = ({
               customColor={getCollateralRationPersent(collateralRatio)}
             >
               <div className={`percentage`}>
-                Collateral Ratio:{' '}
-                <CommaNumber
-                  beginningText={`${collateralRatio >= 250 ? '+' : ''}`}
-                  value={Math.max(0, Math.min(collateralRatio, 250))}
-                  endingText="%"
-                  showDecimal
-                  decimalsToShow={2}
-                />
+                Collateral Ratio: <CommaNumber value={collateralRatio} endingText="%" showDecimal decimalsToShow={2} />
               </div>
               <GradientDiagram
                 className="diagram"

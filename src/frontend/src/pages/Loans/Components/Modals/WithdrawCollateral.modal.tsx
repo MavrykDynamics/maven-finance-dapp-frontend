@@ -167,13 +167,7 @@ export const WithdrawCollateral = ({
             >
               <div className={`percentage`}>
                 Collateral Ratio:{' '}
-                <CommaNumber
-                  beginningText={`${currentCollateralRatio >= 250 ? '+' : ''}`}
-                  value={Math.max(0, Math.min(currentCollateralRatio, 250))}
-                  endingText="%"
-                  showDecimal
-                  decimalsToShow={2}
-                />
+                <CommaNumber value={currentCollateralRatio} endingText="%" showDecimal decimalsToShow={2} />
               </div>
               <GradientDiagram
                 className="diagram"
@@ -226,13 +220,7 @@ export const WithdrawCollateral = ({
             >
               <div className={`percentage`}>
                 Collateral Ratio:{' '}
-                <CommaNumber
-                  beginningText={`${futureCollateralRatio >= 250 ? '+' : ''}`}
-                  value={Math.max(0, Math.min(futureCollateralRatio, 250))}
-                  endingText="%"
-                  showDecimal
-                  decimalsToShow={2}
-                />
+                <CommaNumber value={futureCollateralRatio} endingText="%" showDecimal decimalsToShow={2} />
               </div>
               <GradientDiagram
                 className="diagram"
