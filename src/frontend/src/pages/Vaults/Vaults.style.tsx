@@ -43,7 +43,7 @@ export const VaultsStyled = styled.div<{ theme: MavrykTheme }>`
 
   .tabSwitcher {
     margin-bottom: 0;
-    width: 175px;
+    width: 350px;
   }
 
   .vaults:has(.openVault) {

@@ -40,6 +40,7 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
   const { lendingController, feeds, accountPkh, dipDupTokens, oracleLatestPrices } = storage
   if (!lendingController.vaults.length)
     return {
+      permissinedVaultsIds: [],
       myVaultsIds: [],
       allVaultsIds: [],
       vaultsMapper: {},
@@ -49,6 +50,7 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
 
   const data = await lendingController.vaults.reduce<
     Promise<{
+      permissinedVaultsIds: string[]
       myVaultsIds: string[]
       allVaultsIds: string[]
       vaultsMapper: Record<string, VaultType>
@@ -284,9 +286,14 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
         acc.myVaultsIds.push(item.vault.address)
       }
 
+      if (depositors.find((depositorId) => depositorId === accountPkh) || deporsitorsFlag === ANY_USER) {
+        acc.permissinedVaultsIds.push(item.vault.address)
+      }
+
       return acc
     },
     Promise.resolve({
+      permissinedVaultsIds: [],
       myVaultsIds: [],
       allVaultsIds: [],
       vaultsMapper: {},

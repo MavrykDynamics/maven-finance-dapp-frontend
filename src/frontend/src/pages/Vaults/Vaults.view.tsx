@@ -15,7 +15,12 @@ import { EmptyContainer } from 'app/App.style'
 import { VaultsStyled } from './Vaults.style'
 
 // helpers
-import { VAULTS_LIST_NAME, getPageNumber, MY_VAULTS_LIST_NAME } from 'app/App.components/Pagination/pagination.consts'
+import {
+  VAULTS_LIST_NAME,
+  getPageNumber,
+  MY_VAULTS_LIST_NAME,
+  PERMISSIONED_VAULTS_LIST_NAME,
+} from 'app/App.components/Pagination/pagination.consts'
 import { calculateSlicePositions } from 'app/App.components/Pagination/pagination.consts'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { getVaultAssets } from './Vaults.helpers'
@@ -32,6 +37,7 @@ const pathname = '/vaults'
 const tabsId = {
   ALL: 'all',
   MY: 'my',
+  PERMISSIONED: 'permissioned',
 }
 
 export const VaultsView = () => {
@@ -41,7 +47,7 @@ export const VaultsView = () => {
 
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const {
-    vaultsList: { myVaultsIds, allVaultsIds, vaultsMapper },
+    vaultsList: { permissinedVaultsIds, myVaultsIds, allVaultsIds, vaultsMapper },
     isLoaded,
   } = useSelector((state: State) => state.vaults)
   const { tabId } = useParams<{ tabId: string }>()
@@ -61,6 +67,12 @@ export const VaultsView = () => {
         path: tabsId.MY,
         isDisabled: !accountPkh,
       },
+      {
+        text: 'Permissioned Vaults',
+        id: 3,
+        active: tabsId.PERMISSIONED === tabId,
+        path: tabsId.PERMISSIONED,
+      },
     ],
     [accountPkh, tabId],
   )
@@ -79,8 +91,12 @@ export const VaultsView = () => {
   const [vaultsIds, setVaultsIds] = useState<string[]>([])
   const assets = useMemo(() => getVaultAssets(vaultsMapper), [vaultsMapper])
 
-  const currentListName = tabId === tabsId.ALL ? VAULTS_LIST_NAME : MY_VAULTS_LIST_NAME
-  const currentVaultsIds = tabId === tabsId.ALL ? allVaultsIds : myVaultsIds
+  const currentListName =
+    tabId === tabsId.ALL ? VAULTS_LIST_NAME : tabId === tabsId.MY ? MY_VAULTS_LIST_NAME : PERMISSIONED_VAULTS_LIST_NAME
+
+  const currentVaultsIds =
+    tabId === tabsId.ALL ? allVaultsIds : tabId === tabsId.MY ? myVaultsIds : permissinedVaultsIds
+
   const currentPage = getPageNumber(search, currentListName)
 
   const handleChangeTabs = (id: number) => {

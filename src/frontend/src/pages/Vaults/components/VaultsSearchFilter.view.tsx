@@ -240,16 +240,21 @@ export const VaultsSearchFilter = ({ assets: assetSymbols, vaultsMapper, current
     handleDropdownSelect(vaultsFilters.ZERO)(status)
   }
 
+  // apply filter to new data or clean data
   useEffect(() => {
-    if (currentVaultsIds.length) {
-      const filtersFromQp = {
-        sort,
-        assets,
-        zero,
-      } as Filters
-
-      applyFilters(filtersFromQp)
+    if (currentVaultsIds.length === 0) {
+      setFilteredData([])
+      setVaultsIds([])
+      return
     }
+
+    const filtersFromQp = {
+      sort,
+      assets,
+      zero,
+    } as Filters
+
+    applyFilters(filtersFromQp)
   }, [currentVaultsIds])
 
   return (
