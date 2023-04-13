@@ -32,7 +32,7 @@ const EDITABLE_TABLE_ROW_STYLES = css`
       vertical-align: middle;
       text-align: center;
 
-      div {
+      > div {
         margin: 0 auto;
       }
     }

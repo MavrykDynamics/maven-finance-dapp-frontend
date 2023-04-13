@@ -9,37 +9,23 @@ import { StageTwoFormProps, ProposalBytesType } from '../ProposalSybmittion.type
 import Icon from '../../../app/App.components/Icon/Icon.view'
 import { CustomTooltip } from '../../../app/App.components/Tooltip/Tooltip.view'
 import { Input } from '../../../app/App.components/Input/NewInput'
-import { StatusFlag } from '../../../app/App.components/StatusFlag/StatusFlag.controller'
 import { TextArea } from '../../../app/App.components/TextArea/TextArea.controller'
+import Button from 'app/App.components/Button/NewButton'
+import { Info } from 'app/App.components/Info/Info.view'
+import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 
-// const
+// const, helpers
 import { checkBytesPairExists, getBytesPairValidationStatus, PROPOSAL_BYTE } from '../ProposalSubmition.helpers'
-import { ProposalStatus } from '../../../utils/TypesAndInterfaces/Governance'
 import { INPUT_MEDIUM, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { isValidLength } from 'utils/validatorFunctions'
+import { INFO_DEFAULT } from 'app/App.components/Info/info.constants'
+import { BUTTON_SIMPLE, BUTTON_SIMPLE_SMALL } from 'app/App.components/Button/Button.constants'
 import { isHexadecimal } from 'utils/validatorFunctions'
 
 // styles
-import {
-  FormHeaderGroup,
-  FormTitleAndFeeContainer,
-  FormTitleContainer,
-  FormTitleEntry,
-  SubmitProposalBytes,
-  SubmitProposalBytesPair,
-  SubmitProposalGeneralData,
-  SubmitProposalHeader,
-} from '../ProposalSubmission.style'
-import { H2Title } from 'styles/generalStyledComponents/Titles.style'
-import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { INFO_DEFAULT } from 'app/App.components/Info/info.constants'
-import { Info } from 'app/App.components/Info/Info.view'
-import Button from 'app/App.components/Button/NewButton'
-import { BUTTON_SIMPLE, BUTTON_SIMPLE_SMALL } from 'app/App.components/Button/Button.constants'
+import { SubmitProposalBytes, SubmitProposalBytesPair, SubmitProposalGeneralData } from '../ProposalSubmission.style'
 
-// TODO: Update markup
 // valid bytes text for testing: 05050505080508050805050505050505080505050507070017050505050508030b
-
 export const StageTwoForm = ({
   proposalId,
   currentProposal: { proposalData = [], title, locked },

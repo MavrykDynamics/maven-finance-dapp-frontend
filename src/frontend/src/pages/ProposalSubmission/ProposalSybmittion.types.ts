@@ -63,7 +63,6 @@ export type StageTwoFormProps = {
 export type StageThreeFormProps = {
   proposalId: number
   currentProposal: ProposalRecordType
-  paymentMethods: Array<{ symbol: string; address: string; shortSymbol: string; id: number }>
   currentProposalValidation: ProposalValidityObj
   updateLocalProposalValidation: ChangeProposalValidationFnType
   updateLocalProposalData: ChangeProposalFnType

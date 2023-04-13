@@ -26,14 +26,8 @@ import { State } from 'reducers'
 import { MultyProposalItem, ProposalValidityObj, SubmittedProposalsMapper } from './ProposalSybmittion.types'
 import { ProposalRecordType, ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
 
-// helpers
-import {
-  DEFAULT_PROPOSAL,
-  DEFAULT_PROPOSAL_VALIDATION,
-  getBytesDiff,
-  getPaymentsDiff,
-} from './ProposalSubmition.helpers'
-import { dropProposal, lockProposal, submitProposal, updateProposalData } from './ProposalSubmission.actions'
+// consts
+import { DEFAULT_PROPOSAL, DEFAULT_PROPOSAL_VALIDATION } from './ProposalSubmition.helpers'
 import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import {
   BUTTON_PRIMARY,
@@ -41,11 +35,14 @@ import {
   BUTTON_NAVIGATION,
   BUTTON_WIDE,
 } from 'app/App.components/Button/Button.constants'
+
+// helpers
+import { getBytesDiff, getPaymentsDiff } from './ProposalSubmition.helpers'
+import { dropProposal, lockProposal, submitProposal, updateProposalData } from './ProposalSubmission.actions'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
 
 // TODO: add not counting empty bytes items as item for validation and for data updating
-
 export const ProposalSubmission = () => {
   const dispatch = useDispatch()
 
@@ -328,7 +325,6 @@ export const ProposalSubmission = () => {
           <PropSubmissionTopBar value={activeTab} valueCallback={handleChangeTab} />
 
           <ProposalSubmissionForm>
-            {/* TODO: add styles to tooltip */}
             <a
               className="info-link"
               href="https://mavryk.finance/litepaper#governance"
@@ -368,7 +364,6 @@ export const ProposalSubmission = () => {
               <StageThreeForm
                 proposalId={selectedUserProposalId}
                 currentProposal={currentProposal}
-                paymentMethods={whitelistTokens}
                 currentProposalValidation={currentProposalValidation}
                 updateLocalProposalValidation={updateLocalProposalValidation}
                 updateLocalProposalData={updateLocalProposalData}

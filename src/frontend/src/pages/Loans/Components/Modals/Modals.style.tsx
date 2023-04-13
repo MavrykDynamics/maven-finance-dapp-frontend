@@ -142,6 +142,7 @@ export const DropDownJsxChild = styled.div`
   align-items: center;
   display: flex;
   justify-content: space-between;
+  margin: 0;
 
   .flex-row {
     display: flex;
