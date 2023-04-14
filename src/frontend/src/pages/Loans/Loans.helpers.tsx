@@ -543,6 +543,7 @@ const getBorrowings = async (
 
         collateralBalance: vaultCollateral.totalRow.amount,
         borrowCapacity,
+        avaliableLiq,
         collateralRatio,
         apr: currentInterestRate * 100,
         fee: accruedInterest,
