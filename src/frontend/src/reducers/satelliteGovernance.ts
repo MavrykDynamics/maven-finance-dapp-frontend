@@ -1,28 +1,42 @@
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
-import type {
-  GovernanceSatelliteActionGraphQL,
-  GovernanceSatelliteGraphQL,
-} from '../utils/TypesAndInterfaces/Governance'
+import type { GovernanceSatellite } from '../utils/TypesAndInterfaces/Governance'
+import { GET_GOVERNANCE_SATELLITE_STORAGE } from 'pages/SatelliteGovernance/SatelliteGovernance.actions'
+import { defaultGovPurposeMaxLength } from 'app/App.components/Input/Input.constants'
 
 export type SatelliteGovernanceState = {
-  governance_satellite: GovernanceSatelliteGraphQL[]
-  governance_satellite_action: GovernanceSatelliteActionGraphQL[]
+  config: GovernanceSatellite['config']
+  ongoingGovSatelliteIds: string[]
+  pastGovSatelliteIds: string[]
+  myGovSatelliteIds: string[]
+  govSatelliteIdsMapper: GovernanceSatellite['govSatelliteIdsMapper']
   isLoaded: boolean
 }
 
-export const DEFAULT_SATELLITE_GOVERNANCE_STORAGE: SatelliteGovernanceState = {
+export const defaultSatelliteGovernanceStorage: SatelliteGovernanceState = {
+  config: {
+    address: '',
+    admin: '',
+    purposeMaxLength: defaultGovPurposeMaxLength,
+    approvalPercentage: 0,
+    durationInDays: 0,
+    counter: 0,
+    governanceId: '',
+  },
+  ongoingGovSatelliteIds: [],
+  pastGovSatelliteIds: [],
+  myGovSatelliteIds: [],
+  govSatelliteIdsMapper: {},
   isLoaded: false,
-  governance_satellite: [],
-  governance_satellite_action: [],
 }
 
-export function satelliteGovernance(state = DEFAULT_SATELLITE_GOVERNANCE_STORAGE, action: Action) {
+export function satelliteGovernance(state = defaultSatelliteGovernanceStorage, action: Action) {
   switch (action.type) {
-    // case GET_GOVERNANCE_SATELLITE_STORAGE:
-    //   return {
-    //     ...state,
-    //     governanceSatelliteStorage: action.governanceSatelliteStorage,
-    //   }
+    case GET_GOVERNANCE_SATELLITE_STORAGE:
+      return {
+        ...state,
+        ...action.governanceSatelliteStorage,
+        isLoaded: true,
+      }
 
     default:
       return state

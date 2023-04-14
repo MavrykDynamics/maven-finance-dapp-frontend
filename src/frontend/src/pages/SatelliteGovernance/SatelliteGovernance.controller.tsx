@@ -81,6 +81,10 @@ export const SatelliteGovernance = () => {
     (state: State) => state.satellites,
   )
 
+  useEffect(() => {
+    dispatch(getGovernanceSatelliteStorage())
+  }, [])
+
   return null
   // const {
   //   governanceSatelliteStorage: { governance_satellite_action, governance_satellite },

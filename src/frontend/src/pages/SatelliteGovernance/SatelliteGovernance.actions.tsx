@@ -1,8 +1,17 @@
-import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
-import { ERROR, INFO, SUCCESS } from 'app/App.components/Toaster/Toaster.constants'
-import type { AppDispatch, GetState } from '../../app/App.controller'
+// types
 import { State } from 'reducers'
+import type { AppDispatch, GetState } from '../../app/App.controller'
+import { SatelliteGovernanceTransfer } from '../../utils/TypesAndInterfaces/Satellites'
+
+// helpers
 import { fetchFromIndexerWithPromise } from '../../gql/fetchGraphQL'
+import { ERROR, INFO, SUCCESS } from 'app/App.components/Toaster/Toaster.constants'
+import { normalizerSatelliteGovernance } from './SatelliteGovernance.helpers'
+
+// actions
+import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
+import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
+import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
 
 // gql
 import {
@@ -11,21 +20,19 @@ import {
   GOVERNANCE_SATELLITE_STORAGE_QUERY_VARIABLE,
 } from '../../gql/queries/getGovernanceSatelliteStorage'
 
-import { SatelliteGovernanceTransfer } from '../../utils/TypesAndInterfaces/Satellites'
-import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
-import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
-
 //getGovernanceSatelliteStorage
 export const GET_GOVERNANCE_SATELLITE_STORAGE = 'GET_GOVERNANCE_SATELLITE_STORAGE'
 export const getGovernanceSatelliteStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
   const state: State = getState()
 
   try {
-    const governanceSatelliteStorage = await fetchFromIndexerWithPromise(
+    const storage = await fetchFromIndexerWithPromise(
       GOVERNANCE_SATELLITE_STORAGE_QUERY,
       GOVERNANCE_SATELLITE_STORAGE_QUERY_NAME,
       GOVERNANCE_SATELLITE_STORAGE_QUERY_VARIABLE,
     )
+
+    const governanceSatelliteStorage = normalizerSatelliteGovernance({ storage })
 
     await dispatch({
       type: GET_GOVERNANCE_SATELLITE_STORAGE,
