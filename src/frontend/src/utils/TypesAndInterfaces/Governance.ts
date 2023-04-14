@@ -36,7 +36,7 @@ export enum GovPhases {
 }
 
 // Satellite governance types
-export type GovernanceSatellite = ReturnType<typeof normalizerSatelliteGovernance>
+export type SatelliteGovernance = ReturnType<typeof normalizerSatelliteGovernance>
 export type GovernanceSatelliteGraphQL = Omit<Governance_Satellite, '__typename'>
 export type GovernanceSatelliteActionGraphQL = Omit<Governance_Satellite_Action, '__typename'>
 

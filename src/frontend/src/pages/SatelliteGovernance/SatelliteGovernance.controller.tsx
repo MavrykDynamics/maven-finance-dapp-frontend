@@ -27,7 +27,7 @@ import { TabItem } from '../../app/App.components/SlidingTabButtons/SlidingTabBu
 import { RegisterAggregatorForm } from './RegisterAggregator.form'
 
 // actions
-import { getGovernanceSatelliteStorage } from './SatelliteGovernance.actions'
+import { getSatelliteGovernanceStorage } from './SatelliteGovernance.actions'
 import { getTotalDelegatedMVK } from 'pages/Satellites/helpers/Satellites.consts'
 
 // style
@@ -82,7 +82,7 @@ export const SatelliteGovernance = () => {
   )
 
   useEffect(() => {
-    dispatch(getGovernanceSatelliteStorage())
+    dispatch(getSatelliteGovernanceStorage())
   }, [])
 
   return null

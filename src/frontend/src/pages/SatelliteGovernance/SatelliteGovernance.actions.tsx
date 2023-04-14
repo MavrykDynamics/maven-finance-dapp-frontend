@@ -20,10 +20,14 @@ import {
   GOVERNANCE_SATELLITE_STORAGE_QUERY_VARIABLE,
 } from '../../gql/queries/getGovernanceSatelliteStorage'
 
-//getGovernanceSatelliteStorage
-export const GET_GOVERNANCE_SATELLITE_STORAGE = 'GET_GOVERNANCE_SATELLITE_STORAGE'
-export const getGovernanceSatelliteStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
+//getSatelliteGovernanceStorage
+export const GET_SATELLITE_GOVERNANCE_STORAGE = 'GET_SATELLITE_GOVERNANCE_STORAGE'
+export const getSatelliteGovernanceStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
   const state: State = getState()
+
+  const {
+    wallet: { accountPkh },
+  } = state
 
   try {
     const storage = await fetchFromIndexerWithPromise(
@@ -32,21 +36,19 @@ export const getGovernanceSatelliteStorage = () => async (dispatch: AppDispatch,
       GOVERNANCE_SATELLITE_STORAGE_QUERY_VARIABLE,
     )
 
-    const governanceSatelliteStorage = normalizerSatelliteGovernance({ storage })
+    const satelliteGovernanceStorage = normalizerSatelliteGovernance({ storage, userAddress: accountPkh })
 
     await dispatch({
-      type: GET_GOVERNANCE_SATELLITE_STORAGE,
-      governanceSatelliteStorage,
+      type: GET_SATELLITE_GOVERNANCE_STORAGE,
+      satelliteGovernanceStorage,
     })
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
       dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    dispatch({
-      type: GET_GOVERNANCE_SATELLITE_STORAGE,
-      error,
-    })
+
+    await dispatch(toggleActionLoader(false))
   }
 }
 
@@ -76,7 +78,7 @@ export const suspendSatellite =
 
       await dispatch(showToaster(SUCCESS, 'Suspend Satellite done', 'All good :)'))
 
-      await dispatch(getGovernanceSatelliteStorage())
+      await dispatch(getSatelliteGovernanceStorage())
       await dispatch(toggleActionLoader(false))
     } catch (error) {
       if (error instanceof Error) {
@@ -112,7 +114,7 @@ export const unsuspendSatellite =
       await transaction?.confirmation()
 
       await dispatch(showToaster(SUCCESS, 'Unsuspend Satellite done', 'All good :)'))
-      await dispatch(getGovernanceSatelliteStorage())
+      await dispatch(getSatelliteGovernanceStorage())
 
       await dispatch(toggleActionLoader(false))
     } catch (error) {
@@ -151,7 +153,7 @@ export const banSatellite =
 
       await dispatch(showToaster(SUCCESS, 'Ban Satellite done', 'All good :)'))
 
-      await dispatch(getGovernanceSatelliteStorage())
+      await dispatch(getSatelliteGovernanceStorage())
       await dispatch(toggleActionLoader(false))
     } catch (error) {
       if (error instanceof Error) {
@@ -189,7 +191,7 @@ export const unbanSatellite =
 
       await dispatch(showToaster(SUCCESS, 'Unban Satellite done', 'All good :)'))
 
-      await dispatch(getGovernanceSatelliteStorage())
+      await dispatch(getSatelliteGovernanceStorage())
       await dispatch(toggleActionLoader(false))
     } catch (error) {
       if (error instanceof Error) {
@@ -227,7 +229,7 @@ export const removeOracles =
 
       await dispatch(showToaster(SUCCESS, 'Remove all Oracles from Satellite done', 'All good :)'))
 
-      await dispatch(getGovernanceSatelliteStorage())
+      await dispatch(getSatelliteGovernanceStorage())
       await dispatch(toggleActionLoader(false))
     } catch (error) {
       if (error instanceof Error) {
@@ -268,7 +270,7 @@ export const removeOracleInAggregator =
 
       dispatch(showToaster(SUCCESS, 'Remove from Aggregator done', 'All good :)'))
 
-      await dispatch(getGovernanceSatelliteStorage())
+      await dispatch(getSatelliteGovernanceStorage())
       await dispatch(toggleActionLoader(false))
     } catch (error) {
       if (error instanceof Error) {
@@ -307,7 +309,7 @@ export const addOracleToAggregator =
 
       await dispatch(showToaster(SUCCESS, 'Add Oracle to Aggregator done', 'All good :)'))
 
-      await dispatch(getGovernanceSatelliteStorage())
+      await dispatch(getSatelliteGovernanceStorage())
       await dispatch(toggleActionLoader(false))
     } catch (error) {
       if (error instanceof Error) {
@@ -348,7 +350,7 @@ export const setAggregatorMaintainer =
 
       await dispatch(showToaster(SUCCESS, 'Set Aggregator Maintainer done', 'All good :)'))
 
-      await dispatch(getGovernanceSatelliteStorage())
+      await dispatch(getSatelliteGovernanceStorage())
       await dispatch(toggleActionLoader(false))
     } catch (error) {
       if (error instanceof Error) {
@@ -386,7 +388,7 @@ export const dropAction =
 
       await dispatch(showToaster(SUCCESS, 'Drop Action done', 'All good :)'))
 
-      await dispatch(getGovernanceSatelliteStorage())
+      await dispatch(getSatelliteGovernanceStorage())
       await dispatch(toggleActionLoader(false))
       callback()
     } catch (error) {
@@ -425,7 +427,7 @@ export const voteForAction =
 
       await dispatch(showToaster(SUCCESS, 'Vote YES done', 'All good :)'))
 
-      await dispatch(getGovernanceSatelliteStorage())
+      await dispatch(getSatelliteGovernanceStorage())
       await dispatch(toggleActionLoader(false))
       callback()
     } catch (error) {
@@ -464,7 +466,7 @@ export const restoreSatellite =
 
       await dispatch(showToaster(SUCCESS, 'Restore Satellite done', 'All good :)'))
 
-      await dispatch(getGovernanceSatelliteStorage())
+      await dispatch(getSatelliteGovernanceStorage())
       await dispatch(toggleActionLoader(false))
     } catch (error) {
       if (error instanceof Error) {
@@ -502,7 +504,7 @@ export const updateAggregatorStatus =
 
       await dispatch(showToaster(SUCCESS, 'Update Aggregator Status done', 'All good :)'))
 
-      await dispatch(getGovernanceSatelliteStorage())
+      await dispatch(getSatelliteGovernanceStorage())
       await dispatch(toggleActionLoader(false))
     } catch (error) {
       if (error instanceof Error) {
@@ -540,7 +542,7 @@ export const registerAggregator =
 
       await dispatch(showToaster(SUCCESS, 'Register Aggregator done', 'All good :)'))
 
-      await dispatch(getGovernanceSatelliteStorage())
+      await dispatch(getSatelliteGovernanceStorage())
       await dispatch(toggleActionLoader(false))
     } catch (error) {
       if (error instanceof Error) {
@@ -580,7 +582,7 @@ export const fixMistakenTransfer =
       await transaction?.confirmation()
 
       await dispatch(showToaster(SUCCESS, 'Fix Mistaken Transfer done', 'All good :)'))
-      await dispatch(getGovernanceSatelliteStorage())
+      await dispatch(getSatelliteGovernanceStorage())
       await dispatch(toggleActionLoader(false))
     } catch (error) {
       if (error instanceof Error) {

@@ -22,10 +22,10 @@ type SatelliteGovernanceActionType = {
 }
 
 type SatelliteGovernanceActionsType = {
-  ongoingGovSatelliteIds: string[]
-  pastGovSatelliteIds: string[]
-  myGovSatelliteIds: string[]
-  govSatelliteIdsMapper: Record<string, SatelliteGovernanceActionType>
+  ongoingSatelliteGovIds: string[]
+  pastSatelliteGovIds: string[]
+  mySatelliteGovIds: string[]
+  satelliteGovIdsMapper: Record<string, SatelliteGovernanceActionType>
 }
 
 type SatelliteGovernanceType = {
@@ -76,26 +76,26 @@ export const normalizerSatelliteGovernance = ({ storage, userAddress }: Satellit
       }
 
       if (action.executed) {
-        acc.pastGovSatelliteIds.push(action.satelliteId)
+        acc.pastSatelliteGovIds.push(action.satelliteId)
       }
 
       if (!action.executed) {
-        acc.ongoingGovSatelliteIds.push(action.satelliteId)
+        acc.ongoingSatelliteGovIds.push(action.satelliteId)
       }
 
       if (action.initiatorId === userAddress) {
-        acc.myGovSatelliteIds.push(action.satelliteId)
+        acc.mySatelliteGovIds.push(action.satelliteId)
       }
 
-      acc.govSatelliteIdsMapper[action.satelliteId] = action
+      acc.satelliteGovIdsMapper[action.satelliteId] = action
 
       return acc
     },
     {
-      ongoingGovSatelliteIds: [],
-      pastGovSatelliteIds: [],
-      myGovSatelliteIds: [],
-      govSatelliteIdsMapper: {},
+      ongoingSatelliteGovIds: [],
+      pastSatelliteGovIds: [],
+      mySatelliteGovIds: [],
+      satelliteGovIdsMapper: {},
     },
   )
 

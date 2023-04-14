@@ -1,14 +1,16 @@
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
-import type { GovernanceSatellite } from '../utils/TypesAndInterfaces/Governance'
-import { GET_GOVERNANCE_SATELLITE_STORAGE } from 'pages/SatelliteGovernance/SatelliteGovernance.actions'
+import type { SatelliteGovernance } from '../utils/TypesAndInterfaces/Governance'
+import { GET_SATELLITE_GOVERNANCE_STORAGE } from 'pages/SatelliteGovernance/SatelliteGovernance.actions'
 import { defaultGovPurposeMaxLength } from 'app/App.components/Input/Input.constants'
 
 export type SatelliteGovernanceState = {
-  config: GovernanceSatellite['config']
-  ongoingGovSatelliteIds: string[]
-  pastGovSatelliteIds: string[]
-  myGovSatelliteIds: string[]
-  govSatelliteIdsMapper: GovernanceSatellite['govSatelliteIdsMapper']
+  config: SatelliteGovernance['config']
+
+  ongoingSatelliteGovIds: string[]
+  pastSatelliteGovIds: string[]
+  mySatelliteGovIds: string[]
+  satelliteGovIdsMapper: SatelliteGovernance['satelliteGovIdsMapper']
+
   isLoaded: boolean
 }
 
@@ -22,19 +24,19 @@ export const defaultSatelliteGovernanceStorage: SatelliteGovernanceState = {
     counter: 0,
     governanceId: '',
   },
-  ongoingGovSatelliteIds: [],
-  pastGovSatelliteIds: [],
-  myGovSatelliteIds: [],
-  govSatelliteIdsMapper: {},
+  ongoingSatelliteGovIds: [],
+  pastSatelliteGovIds: [],
+  mySatelliteGovIds: [],
+  satelliteGovIdsMapper: {},
   isLoaded: false,
 }
 
 export function satelliteGovernance(state = defaultSatelliteGovernanceStorage, action: Action) {
   switch (action.type) {
-    case GET_GOVERNANCE_SATELLITE_STORAGE:
+    case GET_SATELLITE_GOVERNANCE_STORAGE:
       return {
         ...state,
-        ...action.governanceSatelliteStorage,
+        ...action.satelliteGovernanceStorage,
         isLoaded: true,
       }
 
