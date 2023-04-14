@@ -79,7 +79,7 @@ export const WithdrawCollateral = ({
         collateralRate,
       )
 
-      const futureCollateralWithdraw = currentCollateralToWithdraw * collateralRate - inputAmount * collateralRate
+      const futureCollateralWithdraw = currentCollateralToWithdraw - inputAmount
       const futureVaultCollateralBalance = vaultCollateralBalance - inputAmount * collateralRate
 
       return {
