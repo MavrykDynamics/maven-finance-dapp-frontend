@@ -135,7 +135,7 @@ export const AddNewCollateral = ({
       const futureCollateralBalance = vaultCollateralBalance + inputAmount * collateralRate
       const futureBorrowCapacity = Math.min(
         avaliableLiq,
-        futureCollateralBalance / 2 - borrowedAmount * (selectedAsset?.rate ?? 1),
+        futureCollateralBalance / 2 - borrowedAmount * borrowedAssetRate,
       )
 
       return { futureCollateralRatio, futureBorrowCapacity, futureCollateralBalance }
