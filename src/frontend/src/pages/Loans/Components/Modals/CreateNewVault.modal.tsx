@@ -368,11 +368,12 @@ export const CreateNewVault = ({
 
   const descrText =
     shownScreen === 'initial'
-      ? `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec euismod tincidunt felis, ac vehicula tellus
-  auctor id. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;
-  Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Morbi et ligula
-  fringilla, tempus sapien eget, pellentesque orci. Donec finibus quam rhoncus, fringilla ex ut, feugiat
-  nulla. Curabitur tristique augue non ante hendrerit ultrices`
+      ? `Create a personal vault to begin borrowing.
+        You are able to borrow one asset type per vault (Ex: If you would like to borrow
+        USDT & EURL, you will need one vault for each). As collateral to back your loan,
+        you may deposit multiple assets together into a single vault, and borrow against
+        a basket of assets (Ex: You may borrow USDT against your portfolio of XTZ & tzBTC
+        in a single vault).`
       : shownScreen === 'addCollateral'
       ? `Select an one or multiple assets to add as collateral. If you are providing XTZ as collateral, make sure you
       select a baker.`
