@@ -62,6 +62,8 @@ export const AddNewCollateral = ({
     currentCollateralRatio = 0,
     borrowedAmount = 0,
     borrowedAssetRate = 0,
+    avaliableLiq = 0,
+    borrowCapacity = 0,
     existingCollaterals,
   } = data ?? {}
 
@@ -120,7 +122,7 @@ export const AddNewCollateral = ({
     }
   }, [avaliableCollaterals, show, existingCollaterals])
 
-  const { futureCollateralRatio, futureCollateralWithdraw, futureCollateralBalance } = useMemo(() => {
+  const { futureCollateralRatio, futureBorrowCapacity, futureCollateralBalance } = useMemo(() => {
     if (inputData) {
       const inputAmount = isNaN(parseFloat(inputData.amount)) ? 0 : parseFloat(inputData.amount)
       const selectedAsset = avaliableCollaterals.find(({ id }) => id === inputData?.id)
@@ -130,21 +132,16 @@ export const AddNewCollateral = ({
         ? calcCollateralRatio(vaultCollateralBalance + inputAmount, borrowedAmount, borrowedAssetRate)
         : 0
 
-      const futureCollateralWithdraw =
-        getMaxCollateralWithdraw(
-          inputAmount * collateralRate,
-          vaultCollateralBalance + inputAmount * collateralRate,
-          borrowedAmount,
-          borrowedAssetRate,
-          collateralRate,
-        ) * collateralRate
-
       const futureCollateralBalance = vaultCollateralBalance + inputAmount * collateralRate
+      const futureBorrowCapacity = Math.min(
+        avaliableLiq,
+        futureCollateralBalance / 2 - borrowedAmount * borrowedAssetRate,
+      )
 
-      return { futureCollateralRatio, futureCollateralWithdraw, futureCollateralBalance }
+      return { futureCollateralRatio, futureBorrowCapacity, futureCollateralBalance }
     }
-    return { futureCollateralRatio: 0, futureCollateralWithdraw: 0, futureCollateralBalance: 0 }
-  }, [inputData, avaliableCollaterals, vaultCollateralBalance, borrowedAmount, borrowedAssetRate])
+    return { futureCollateralRatio: 0, futureBorrowCapacity: 0, futureCollateralBalance: 0 }
+  }, [inputData, avaliableCollaterals, vaultCollateralBalance, borrowedAmount, borrowedAssetRate, avaliableLiq])
 
   // select baker for an xtz collateral, used only when we selected one collateral XTZ
   const bakerItemsForDropDown = useMemo<DropDownXTZBakerType[]>(
@@ -293,8 +290,8 @@ export const AddNewCollateral = ({
               <CommaNumber value={vaultCollateralBalance} beginningText="$" className="value" />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
-              <div className="name">Available To Withdraw</div>
-              <CommaNumber value={0} className="value" beginningText="$" />
+              <div className="name">Available to Borrow</div>
+              <CommaNumber value={borrowCapacity} className="value" beginningText="$" />
             </ThreeLevelListItem>
           </VaultModalOverview>
 
@@ -395,8 +392,8 @@ export const AddNewCollateral = ({
               <CommaNumber value={futureCollateralBalance} className="value" beginningText="$" />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
-              <div className="name">Available To Withdraw</div>
-              <CommaNumber value={futureCollateralWithdraw} className="value" beginningText="$" />
+              <div className="name">Available to Borrow</div>
+              <CommaNumber value={futureBorrowCapacity} className="value" beginningText="$" />
             </ThreeLevelListItem>
           </VaultModalOverview>
 

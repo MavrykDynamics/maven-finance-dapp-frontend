@@ -256,12 +256,8 @@ export const BorrowAsset = ({
 
               <div className="lending-stats" style={{ marginBottom: '30px' }}>
                 <ThreeLevelListItem>
-                  <div className="name">Asset</div>
-                  <div className="value">{borrowedAsset?.symbol}</div>
-                </ThreeLevelListItem>
-                <ThreeLevelListItem>
                   <div className="name">Total Amount</div>
-                  <CommaNumber value={inputAmount} className="value" />
+                  <CommaNumber value={inputAmount} className="value" endingText={borrowedAsset?.symbol} />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">
@@ -273,11 +269,27 @@ export const BorrowAsset = ({
                       className="tooltip"
                     />
                   </div>
-                  <CommaNumber value={inputAmount * 0.99} className="value" />
+                  <CommaNumber
+                    value={inputAmount - inputAmount * (DAOFee / 100)}
+                    className="value"
+                    endingText={borrowedAsset?.symbol}
+                  />
+                </ThreeLevelListItem>
+                <ThreeLevelListItem>
+                  <div className="name">DAO Fee</div>
+                  <CommaNumber
+                    value={inputAmount * (DAOFee / 100)}
+                    className="value"
+                    endingText={borrowedAsset?.symbol}
+                  />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">USD Value</div>
-                  <CommaNumber value={inputAmount * Number(borrowedAsset?.rate)} className="value" beginningText="$" />
+                  <CommaNumber
+                    value={(inputAmount - inputAmount * (DAOFee / 100)) * Number(borrowedAsset?.rate)}
+                    className="value"
+                    beginningText="$"
+                  />
                 </ThreeLevelListItem>
               </div>
 

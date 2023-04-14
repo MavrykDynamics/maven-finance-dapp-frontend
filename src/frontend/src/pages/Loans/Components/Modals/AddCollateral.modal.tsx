@@ -45,7 +45,8 @@ export const AddCollateral = ({
     currentCollateralRatio = 0,
     borrowedAmount = 0,
     borrowedAssetRate = 0,
-    currentCollateralBalance = 0,
+    borrowCapacity = 0,
+    avaliableLiq = 0,
   } = data ?? {}
 
   useLockBodyScroll(show)
@@ -64,33 +65,26 @@ export const AddCollateral = ({
   const inputAmount = isNaN(parseFloat(inputData.amount)) ? 0 : parseFloat(inputData.amount)
   const collateralRate = Number(selectedAsset?.rate)
 
-  const { futureCollateralRatio, futureCollateralWithdraw, futureCollateralBalance, currentCollateralToWithdraw } =
-    useMemo(() => {
-      const futureCollateralRatio = selectedAsset
-        ? calcCollateralRatio(vaultCollateralBalance + inputAmount * collateralRate, borrowedAmount, borrowedAssetRate)
-        : 0
+  const { futureCollateralRatio, futureBorrowCapacity, futureCollateralBalance } = useMemo(() => {
+    const futureCollateralRatio = selectedAsset
+      ? calcCollateralRatio(vaultCollateralBalance + inputAmount * collateralRate, borrowedAmount, borrowedAssetRate)
+      : 0
 
-      const currentCollateralToWithdraw = getMaxCollateralWithdraw(
-        currentCollateralBalance * collateralRate,
-        vaultCollateralBalance,
-        borrowedAmount,
-        borrowedAssetRate,
-        collateralRate,
-      )
-
-      const futureCollateralWithdraw = currentCollateralToWithdraw * collateralRate + inputAmount * collateralRate
-
-      const futureCollateralBalance = vaultCollateralBalance + inputAmount * collateralRate
-      return { futureCollateralRatio, futureCollateralWithdraw, futureCollateralBalance, currentCollateralToWithdraw }
-    }, [
-      selectedAsset,
-      vaultCollateralBalance,
-      inputAmount,
-      borrowedAmount,
-      borrowedAssetRate,
-      currentCollateralBalance,
-      collateralRate,
-    ])
+    const futureCollateralBalance = vaultCollateralBalance + inputAmount * collateralRate
+    const futureBorrowCapacity = Math.min(
+      avaliableLiq,
+      futureCollateralBalance / 2 - borrowedAmount * borrowedAssetRate,
+    )
+    return { futureCollateralRatio, futureBorrowCapacity, futureCollateralBalance }
+  }, [
+    selectedAsset,
+    vaultCollateralBalance,
+    inputAmount,
+    collateralRate,
+    borrowedAmount,
+    borrowedAssetRate,
+    avaliableLiq,
+  ])
 
   useEffect(() => {
     if (!show) {
@@ -171,8 +165,8 @@ export const AddCollateral = ({
               <CommaNumber value={vaultCollateralBalance} className="value" beginningText="$" />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
-              <div className="name">Available To Withdraw</div>
-              <CommaNumber value={currentCollateralToWithdraw * collateralRate} className="value" beginningText="$" />
+              <div className="name">Available to Borrow</div>
+              <CommaNumber value={borrowCapacity} className="value" beginningText="$" />
             </ThreeLevelListItem>
           </VaultModalOverview>
 
@@ -224,8 +218,8 @@ export const AddCollateral = ({
               <CommaNumber value={futureCollateralBalance} className="value" beginningText="$" />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
-              <div className="name">Available To Withdraw</div>
-              <CommaNumber value={futureCollateralWithdraw} className="value" beginningText="$" />
+              <div className="name">Available to Borrow</div>
+              <CommaNumber value={futureBorrowCapacity} className="value" beginningText="$" />
             </ThreeLevelListItem>
           </VaultModalOverview>
 
