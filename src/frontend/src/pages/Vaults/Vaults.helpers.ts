@@ -402,22 +402,21 @@ export const sortByVaultCategory = ({ vaultsMapper, vaultsIds, status }: SortByV
   })
 }
 
-type VaultAssetBalances = {
+export type VaultAssetData = {
+  balance: number
+  usdValue: number
+  rate: number
+  decimals: number
+  name: string
+  chartColor: string
+  symbol: string
+}
+
+export type VaultAssetBalances = {
   globalVaultTVL: number
   collateralRatio: number
   avgCollateralRatio: number
-  assets: Record<
-    string,
-    {
-      balance: number
-      usdValue: number
-      rate: number
-      decimals: number
-      name: string
-      chartColor: string
-      symbol: string
-    }
-  >
+  assets: Record<string, VaultAssetData>
 }
 
 export const reduceVaultsAssets = (vaultIds: string[], vaultsMapper: Record<string, VaultType>) => {
