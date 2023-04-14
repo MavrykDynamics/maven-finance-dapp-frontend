@@ -128,7 +128,7 @@ export const LiquidateVaultModalStyled = styled.div<{ showAsPercentage: boolean;
   }
 
   .upColor {
-    color: ${({ theme }) => theme.newUpColor};
+    color: ${({ theme }) => theme.upColor};
   }
 
   .downColor {
