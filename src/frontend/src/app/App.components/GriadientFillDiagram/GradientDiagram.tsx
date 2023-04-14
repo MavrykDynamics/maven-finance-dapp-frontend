@@ -20,10 +20,9 @@ export type GradientDiagramPropsType = {
 
 // because we cut the background inside the diagram instead of
 // calculating the gradient for different percentages
-const percentageForGradient = 100
 
 export const GradientDiagram = ({ colorBreakpoints, currentPersentage, className = '' }: GradientDiagramPropsType) => {
-  const gradient = getGradient({ colorBreakpoints, currentPersentage: percentageForGradient })
+  const gradient = getGradient({ colorBreakpoints })
 
   return (
     <GradientDiagramStyled gradient={gradient} gradientWidth={currentPersentage} className={className}>

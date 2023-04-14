@@ -1,4 +1,4 @@
-import { GradientDiagramPropsType } from './GradientDiagram'
+import { ColorBreakpoint } from './GradientDiagram'
 
 const getMixedColorPart = (prevColorNumber: number, nextColorNumber: number, intervalPersent: number) => {
   return (
@@ -7,16 +7,16 @@ const getMixedColorPart = (prevColorNumber: number, nextColorNumber: number, int
   )
 }
 
-export const getGradient = ({ colorBreakpoints, currentPersentage }: GradientDiagramPropsType) => {
+export const getGradient = ({ colorBreakpoints }: { colorBreakpoints: Array<ColorBreakpoint> }) => {
   let counterFinished = false
   const gradientColorsFillling = colorBreakpoints.reduce<Array<string>>((acc, { persentage, color }, idx, arr) => {
     if (counterFinished === false) {
-      if (persentage <= currentPersentage) {
+      if (persentage <= 100) {
         acc.push(` ${`rgb(${color.r}, ${color.g}, ${color.b})`} ${persentage}%`)
       } else {
         if (!arr?.[idx - 1]) return acc
         const { color: prevColor, persentage: prevPersentage } = arr?.[idx - 1]
-        const currentIntervalPersentage = (currentPersentage - prevPersentage) / (persentage - prevPersentage)
+        const currentIntervalPersentage = (100 - prevPersentage) / (persentage - prevPersentage)
 
         const mixedColor = {
           r: getMixedColorPart(prevColor.r, color.r, currentIntervalPersentage),
@@ -24,7 +24,7 @@ export const getGradient = ({ colorBreakpoints, currentPersentage }: GradientDia
           b: getMixedColorPart(prevColor.b, color.b, currentIntervalPersentage),
         }
 
-        acc.push(` ${`rgb(${mixedColor.r}, ${mixedColor.g}, ${mixedColor.b})`} ${currentPersentage}%`)
+        acc.push(` ${`rgb(${mixedColor.r}, ${mixedColor.g}, ${mixedColor.b})`} ${100}%`)
         counterFinished = true
       }
     }
