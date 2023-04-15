@@ -27,7 +27,7 @@ import {
 import { Plug } from 'app/App.components/Chart/Chart.style'
 
 type Props = {
-  treasury: TreasuryType
+  treasury: TreasuryType[number]
   isGlobal?: boolean
   factoryAddress?: string
 }

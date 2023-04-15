@@ -168,13 +168,7 @@ export const RepayFull = ({
                     >
                       <div className={`percentage`}>
                         Collateral Ratio:{' '}
-                        <CommaNumber
-                          beginningText={`${collateralRatio > 250 ? '+' : ''}`}
-                          value={Math.max(0, Math.min(collateralRatio, 250))}
-                          endingText="%"
-                          showDecimal
-                          decimalsToShow={2}
-                        />
+                        <CommaNumber value={collateralRatio} endingText="%" showDecimal decimalsToShow={2} />
                       </div>
                       <GradientDiagram
                         className="diagram"
@@ -229,13 +223,7 @@ export const RepayFull = ({
                 >
                   <div className={`percentage`}>
                     Collateral Ratio:{' '}
-                    <CommaNumber
-                      beginningText={`${futureCollateralRatio > 250 ? '+' : ''}`}
-                      value={Math.max(0, Math.min(futureCollateralRatio, 250))}
-                      endingText="%"
-                      showDecimal
-                      decimalsToShow={2}
-                    />
+                    <CommaNumber value={futureCollateralRatio} endingText="%" showDecimal decimalsToShow={2} />
                   </div>
                   <GradientDiagram
                     className="diagram"

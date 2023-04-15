@@ -80,6 +80,7 @@ export const BorrowingExpandCard = ({
   borrowedAmount,
   collateralRatio,
   borrowCapacity,
+  avaliableLiq,
   DAOFee,
 }: BorrowingExpandCardPropsType) => {
   const { symbol, icon, rate = 1 } = borrowedAsset
@@ -164,14 +165,7 @@ export const BorrowingExpandCard = ({
               customColor={getCollateralRationPersent(collateralRatio)}
             >
               <div className={`percentage`}>
-                Collateral Ratio:{' '}
-                <CommaNumber
-                  beginningText={`${collateralRatio > 250 ? '+' : ''}`}
-                  value={Math.max(0, Math.min(collateralRatio, 250))}
-                  endingText="%"
-                  showDecimal
-                  decimalsToShow={2}
-                />
+                Collateral Ratio: <CommaNumber value={collateralRatio} endingText="%" showDecimal decimalsToShow={2} />
               </div>
               <GradientDiagram
                 className="diagram"
@@ -359,6 +353,8 @@ export const BorrowingExpandCard = ({
                                         borrowedAmount,
                                         existingCollaterals: collateralData,
                                         borrowedAssetRate: borrowedAsset.rate,
+                                        borrowCapacity,
+                                        avaliableLiq,
                                       })
                                     }
                                     kind={BUTTON_PRIMARY}
@@ -384,8 +380,9 @@ export const BorrowingExpandCard = ({
                                       selectedAsset: collateralData[idx],
                                       currentCollateralRatio: collateralRatio,
                                       borrowedAmount,
-                                      currentCollateralBalance: amount,
                                       borrowedAssetRate: borrowedAsset.rate,
+                                      borrowCapacity,
+                                      avaliableLiq,
                                     })
                                   }
                                   form={BUTTON_WIDE}
@@ -432,6 +429,8 @@ export const BorrowingExpandCard = ({
                           borrowedAmount,
                           existingCollaterals: collateralData,
                           borrowedAssetRate: borrowedAsset.rate,
+                          avaliableLiq,
+                          borrowCapacity,
                         })
                       }
                       kind={BUTTON_PRIMARY}

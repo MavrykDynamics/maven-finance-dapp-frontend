@@ -45,10 +45,10 @@ export function dappClient() {
             rpcUrl: getRpcNode(),
           },
         })
-        return await client.getActiveAccount()
+        return (await client.getActiveAccount())?.address
       }
 
-      return account
+      return account?.address
     } catch (error) {
       console.log('connectAccount error:', error)
       throw error

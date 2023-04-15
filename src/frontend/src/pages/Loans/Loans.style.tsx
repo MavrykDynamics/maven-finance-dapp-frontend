@@ -378,7 +378,7 @@ export const ThreeLevelListItem = styled.div<{ theme: MavrykTheme; customColor?:
     }
 
     &.up {
-      color: ${({ theme }) => theme.newUpColor};
+      color: ${({ theme }) => theme.upColor};
     }
 
     &.down {

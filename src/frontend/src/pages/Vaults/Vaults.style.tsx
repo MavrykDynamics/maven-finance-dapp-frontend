@@ -4,15 +4,7 @@ import styled from 'styled-components/macro'
 import { Card } from 'styles'
 
 // helpers
-import {
-  DOWN,
-  INFO,
-  PRIMARY,
-  UP,
-  WAITING,
-  WARNING,
-  DARK_WARNING,
-} from 'app/App.components/StatusFlag/StatusFlag.constants'
+import { DOWN, INFO, PRIMARY, UP, WAITING, WARNING } from 'app/App.components/StatusFlag/StatusFlag.constants'
 
 // types
 import { MavrykTheme } from '../../styles/interfaces'
@@ -43,7 +35,7 @@ export const VaultsStyled = styled.div<{ theme: MavrykTheme }>`
 
   .tabSwitcher {
     margin-bottom: 0;
-    width: 175px;
+    width: 350px;
   }
 
   .vaults:has(.openVault) {
@@ -221,7 +213,7 @@ export const VaultsCardDropDown = styled.div<{ theme: MavrykTheme }>`
   .info-icon {
     position: relative;
     bottom: 2px;
-    
+
     svg {
       fill: ${({ theme }) => theme.textColor};
     }
@@ -247,11 +239,7 @@ export const VaultsCardDropDown = styled.div<{ theme: MavrykTheme }>`
     color: ${({ theme }) => theme.warningColor};
   }
 
-  .${DARK_WARNING} {
-    color: ${({ theme }) => theme.darkWarningColor};
-  }
-
   .${WAITING} {
-    color: ${({ theme }) => theme.awaitingColor};
+    color: ${({ theme }) => theme.riskColor};
   }
 `

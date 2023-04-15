@@ -15,7 +15,12 @@ import { EmptyContainer } from 'app/App.style'
 import { VaultsStyled } from './Vaults.style'
 
 // helpers
-import { VAULTS_LIST_NAME, getPageNumber, MY_VAULTS_LIST_NAME } from 'app/App.components/Pagination/pagination.consts'
+import {
+  VAULTS_LIST_NAME,
+  getPageNumber,
+  MY_VAULTS_LIST_NAME,
+  PERMISSIONED_VAULTS_LIST_NAME,
+} from 'app/App.components/Pagination/pagination.consts'
 import { calculateSlicePositions } from 'app/App.components/Pagination/pagination.consts'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { getVaultAssets } from './Vaults.helpers'
@@ -29,9 +34,10 @@ import { getVaultsStorage, markForLiquidation } from './Vaults.actions'
 
 const pathname = '/vaults'
 
-const tabsId = {
+export const vaultTabs = {
   ALL: 'all',
   MY: 'my',
+  PERMISSIONED: 'permissioned',
 }
 
 export const VaultsView = () => {
@@ -41,7 +47,7 @@ export const VaultsView = () => {
 
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const {
-    vaultsList: { myVaultsIds, allVaultsIds, vaultsMapper },
+    vaultsList: { permissinedVaultsIds, myVaultsIds, allVaultsIds, vaultsMapper },
     isLoaded,
   } = useSelector((state: State) => state.vaults)
   const { tabId } = useParams<{ tabId: string }>()
@@ -51,15 +57,21 @@ export const VaultsView = () => {
       {
         text: 'All Vaults',
         id: 1,
-        active: tabsId.ALL === tabId,
-        path: tabsId.ALL,
+        active: vaultTabs.ALL === tabId,
+        path: vaultTabs.ALL,
       },
       {
         text: 'My Vaults',
         id: 2,
-        active: tabsId.MY === tabId,
-        path: tabsId.MY,
+        active: vaultTabs.MY === tabId,
+        path: vaultTabs.MY,
         isDisabled: !accountPkh,
+      },
+      {
+        text: 'Permissioned Vaults',
+        id: 3,
+        active: vaultTabs.PERMISSIONED === tabId,
+        path: vaultTabs.PERMISSIONED,
       },
     ],
     [accountPkh, tabId],
@@ -79,8 +91,12 @@ export const VaultsView = () => {
   const [vaultsIds, setVaultsIds] = useState<string[]>([])
   const assets = useMemo(() => getVaultAssets(vaultsMapper), [vaultsMapper])
 
-  const currentListName = tabId === tabsId.ALL ? VAULTS_LIST_NAME : MY_VAULTS_LIST_NAME
-  const currentVaultsIds = tabId === tabsId.ALL ? allVaultsIds : myVaultsIds
+  const currentListName =
+    tabId === vaultTabs.ALL ? VAULTS_LIST_NAME : tabId === vaultTabs.MY ? MY_VAULTS_LIST_NAME : PERMISSIONED_VAULTS_LIST_NAME
+
+  const currentVaultsIds =
+    tabId === vaultTabs.ALL ? allVaultsIds : tabId === vaultTabs.MY ? myVaultsIds : permissinedVaultsIds
+
   const currentPage = getPageNumber(search, currentListName)
 
   const handleChangeTabs = (id: number) => {
@@ -90,7 +106,7 @@ export const VaultsView = () => {
     if (!foundTab?.path || currentTabId === id) return
 
     history.replace(`${pathname}/${foundTab.path}`)
-    setVaultsIds(foundTab.path === tabsId.ALL ? allVaultsIds : myVaultsIds)
+    setVaultsIds(foundTab.path === vaultTabs.ALL ? allVaultsIds : myVaultsIds)
   }
 
   const paginatedVaultsList = useMemo(() => {
@@ -134,6 +150,7 @@ export const VaultsView = () => {
                 key={item}
                 isOwner={isOwner}
                 handleMarkForLiquidation={handleMarkForLiquidation}
+                vaultTab={tabId}
                 {...vaultsMapper[item]}
               />
             )

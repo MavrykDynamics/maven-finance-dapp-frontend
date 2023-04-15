@@ -151,5 +151,9 @@ export const TableBody = styled.tbody<{ theme: MavrykTheme }>`
     * {
       font-size: 14px;
     }
+
+    .descr {
+      font-size: 16px;
+    }
   }
 `
