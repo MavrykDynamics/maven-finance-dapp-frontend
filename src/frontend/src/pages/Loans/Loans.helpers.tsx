@@ -2,7 +2,7 @@ import dayjs from 'dayjs'
 import { SingleValueData, UTCTimestamp } from 'lightweight-charts'
 import { State } from 'reducers'
 import { UserState } from 'reducers/wallet'
-import { BLOCKS_PER_MINUTE, FIXED_POINT_ACCURACY, SECONDS_PER_YEAR } from 'utils/constants'
+import { BLOCKS_PER_MINUTE, DECIMALS_TO_SHOW, FIXED_POINT_ACCURACY, SECONDS_PER_YEAR } from 'utils/constants'
 import {
   Lending_Controller_History_Data,
   Lending_Controller_Loan_Token,
@@ -22,16 +22,21 @@ import {
   BaseLoansAssetDataType,
   DepositorsFlagType,
 } from 'utils/TypesAndInterfaces/Loans'
-import {
-  calcWithoutDecimals,
-  calcWithoutMu,
-  convertNumberForClient,
-  getNumberInBounds,
-} from '../../utils/calcFunctions'
+import { calcWithoutDecimals, convertNumberForClient, getNumberInBounds } from '../../utils/calcFunctions'
 import { ANY_USER, NONE_USER, WHITELIST_USERS } from './Loans.const'
 import { getUserBalanceForLoanAsset } from './LoansFethcers'
+import { DropDownCollateralAssetType } from './Components/Modals/CreateNewVault.modal'
 
 export const isTezosAsset = (tokenName: string) => tokenName === 'tez' || tokenName === 'tezos'
+
+export const decimalsToShow = (collateralMetadata?: DropDownCollateralAssetType) => {
+  switch (collateralMetadata?.symbol.toLowerCase()) {
+    case 'tzbtc':
+      return 8
+    default:
+      return DECIMALS_TO_SHOW
+  }
+}
 
 export const getAssetMetadata = ({
   tokenName,
