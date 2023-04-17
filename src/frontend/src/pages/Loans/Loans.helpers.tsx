@@ -25,16 +25,16 @@ import {
 import { calcWithoutDecimals, convertNumberForClient, getNumberInBounds } from '../../utils/calcFunctions'
 import { ANY_USER, NONE_USER, WHITELIST_USERS } from './Loans.const'
 import { getUserBalanceForLoanAsset } from './LoansFethcers'
-import { DropDownCollateralAssetType } from './Components/Modals/CreateNewVault.modal'
+import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 
 export const isTezosAsset = (tokenName: string) => tokenName === 'tez' || tokenName === 'tezos'
 
-export const decimalsToShow = (collateralMetadata?: DropDownCollateralAssetType) => {
-  switch (collateralMetadata?.symbol.toLowerCase()) {
+export const decimalsToShow = (symbol?: string, defaultDecimals: number = DECIMALS_TO_SHOW) => {
+  switch (symbol?.toLowerCase()) {
     case 'tzbtc':
       return 8
     default:
-      return DECIMALS_TO_SHOW
+      return defaultDecimals
   }
 }
 
@@ -926,4 +926,17 @@ export const calculateAccruedInterest = (
   }
 
   return newLoanOutstandingTotal
+}
+
+export const loansInputValidation = (newInputAmount: string, userAssetBalance: number, symbol?: string) => {
+  const validationStatus =
+    Number(newInputAmount) > 0 && Number(newInputAmount) <= userAssetBalance ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
+
+  if (symbol?.toLowerCase() === 'tzbtc') {
+    const numberOfDecimalPlaces = newInputAmount.match(/\.(\d+)/)?.[1].length ?? 0
+
+    return numberOfDecimalPlaces > 8 ? INPUT_STATUS_ERROR : validationStatus
+  }
+
+  return validationStatus
 }
