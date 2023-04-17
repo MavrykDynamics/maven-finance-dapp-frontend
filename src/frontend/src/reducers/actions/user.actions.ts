@@ -15,7 +15,7 @@ import {
   USER_LENDING_DATA_QUERY_NAME,
   USER_LENDING_DATA_QUERY_VARIABLE,
 } from 'gql/queries/getLoansStorage'
-import { getAvaliableCollaterals } from 'pages/Loans/Actions/getLoansData.actions'
+import { CLEAR_LOANS_STORAGE, getAvaliableCollaterals, getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 import { getAssetMetadata, normalizeUserLending } from 'pages/Loans/Loans.helpers'
 import { State } from 'reducers'
 import { UserState, DEFAULT_USER } from 'reducers/wallet'
@@ -191,6 +191,7 @@ export const updateUserData = (newAccAddress?: string) => async (dispatch: AppDi
     wallet: { accountPkh },
     tokens: { dipDupTokens },
     dataFeeds: { feedsLedger },
+    loans: { isDataLoaded: isLoansLoaded },
   } = getState()
 
   const userAddressToLoadData = newAccAddress ?? accountPkh
@@ -206,6 +207,10 @@ export const updateUserData = (newAccAddress?: string) => async (dispatch: AppDi
       })
 
       await dispatch(getAvaliableCollaterals())
+
+      if (isLoansLoaded) {
+        await dispatch({ type: CLEAR_LOANS_STORAGE })
+      }
     }
   } catch (error) {
     if (error instanceof Error) {
