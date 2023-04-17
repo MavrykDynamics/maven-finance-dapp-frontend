@@ -11,6 +11,7 @@ import {
   getOnBlurValue,
   getOnFocusValue,
   WithdrawCollateralPopupDataType,
+  loansInputValidation,
 } from './Modals.helpers'
 import { withdrawCollateralAction } from 'pages/Loans/Actions/vaultCollateral.actions'
 
@@ -110,10 +111,9 @@ export const WithdrawCollateral = ({
     }
   }, [show])
 
-  const inputOnChangeHandle = (newInputAmount: string, maxAmount: number) => {
+  const inputOnChangeHandle = (newInputAmount: string, maxAmount: number, symbol?: string) => {
     const parsedNewInputAmount = isNaN(parseFloat(newInputAmount)) ? 0 : parseFloat(newInputAmount)
-    const validationStatus =
-      parsedNewInputAmount > 0 && parsedNewInputAmount <= maxAmount ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
+    const validationStatus = loansInputValidation({ inputAmount: String(parsedNewInputAmount), maxAmount, symbol })
 
     setInputData({
       ...inputData,
@@ -204,13 +204,18 @@ export const WithdrawCollateral = ({
                 type: 'number',
                 onBlur: inputOnBlurHandle,
                 onFocus: onFocusHandler,
-                onChange: (e) => inputOnChangeHandle(e.target.value, currentCollateralToWithdraw),
+                onChange: (e) =>
+                  inputOnChangeHandle(e.target.value, currentCollateralToWithdraw, collateralData.symbol),
               }}
               settings={{
                 balance: collateralData.userBalance,
                 balanceAsset: collateralData.symbol,
                 useMaxHandler: () =>
-                  inputOnChangeHandle(String(currentCollateralToWithdraw), currentCollateralToWithdraw),
+                  inputOnChangeHandle(
+                    String(currentCollateralToWithdraw),
+                    currentCollateralToWithdraw,
+                    collateralData.symbol,
+                  ),
                 inputStatus: inputData.validationStatus,
                 convertedValue: inputAmount * collateralRate,
                 inputSize: INPUT_LARGE,

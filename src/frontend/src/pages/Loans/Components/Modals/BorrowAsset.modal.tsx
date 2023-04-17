@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 
 import { INPUT_LARGE, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
-import { BorrowPopupDataType, DEFAULT_LOANS_INPUT_VALUE, getOnBlurValue, getOnFocusValue } from './Modals.helpers'
+import { BorrowPopupDataType, DEFAULT_LOANS_INPUT_VALUE, getOnBlurValue, getOnFocusValue, loansInputValidation } from './Modals.helpers'
 import { State } from 'reducers'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
@@ -79,9 +79,8 @@ export const BorrowAsset = ({
   }, [show])
 
   // stuff to handle inputs
-  const inputOnChangeHandle = (newInputAmount: string, maxAmount: number) => {
-    const validationStatus =
-      Number(newInputAmount) > 0 && Number(newInputAmount) <= maxAmount ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
+  const inputOnChangeHandle = (newInputAmount: string, maxAmount: number, symbol?: string) => {
+    const validationStatus = loansInputValidation({ inputAmount: newInputAmount, maxAmount, symbol })
 
     setInputData({
       ...inputData,
@@ -176,7 +175,8 @@ export const BorrowAsset = ({
                     type: 'number',
                     onBlur: inputOnBlurHandle,
                     onFocus: onFocusHandler,
-                    onChange: (e) => inputOnChangeHandle(e.target.value, borrowCapacity / borrowedAsset.rate),
+                    onChange: (e) =>
+                      inputOnChangeHandle(e.target.value, borrowCapacity / borrowedAsset.rate, borrowedAsset?.symbol),
                   }}
                   settings={{
                     balance: borrowedAsset.userBalance,
@@ -185,6 +185,7 @@ export const BorrowAsset = ({
                       inputOnChangeHandle(
                         String(borrowCapacity / borrowedAsset.rate),
                         borrowCapacity / borrowedAsset.rate,
+                        borrowedAsset?.symbol,
                       ),
                     inputStatus: inputData.validationStatus,
                     convertedValue: inputAmount * borrowedAsset.rate,

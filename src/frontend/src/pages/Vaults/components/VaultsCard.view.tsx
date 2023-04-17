@@ -269,7 +269,6 @@ export const VaultsCard = (props: Props) => {
                     ? 100
                     : calculateCollateralShare(amount * rate, collateralTotalBalance)
 
-                  console.log({ collateralShare, amount, rate, collateralTotalBalance })
                   if (isTotalRow && collateralData.length < 3) return null
 
                   return (

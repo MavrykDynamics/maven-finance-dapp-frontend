@@ -16,6 +16,7 @@ import {
   getOnBlurValue,
   getOnFocusValue,
   RemoveLendingAssetDataType,
+  loansInputValidation,
 } from './Modals.helpers'
 import { State } from 'reducers'
 
@@ -66,9 +67,8 @@ export const RemoveAssetsFromLending = ({
   const continueBtnHandler = () => setShownScreen('confitmation')
   const backBtnHandler = () => setShownScreen('initial')
 
-  const onChangeHandler = (inputAmount: string, maxAmount: number) => {
-    const validationStatus =
-      Number(inputAmount) > 0 && Number(inputAmount) <= maxAmount ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
+  const onChangeHandler = (inputAmount: string, maxAmount: number, symbol?: string) => {
+    const validationStatus = loansInputValidation({ inputAmount, maxAmount, symbol })
 
     setInputData({
       ...inputData,
@@ -151,7 +151,7 @@ export const RemoveAssetsFromLending = ({
                   type: 'number',
                   onBlur: inputOnBlurHandle,
                   onFocus: onFocusHandler,
-                  onChange: (e) => onChangeHandler(e.target.value, Math.min(mBalance, currentLendedAmount)),
+                  onChange: (e) => onChangeHandler(e.target.value, Math.min(mBalance, currentLendedAmount), symbol),
                 }}
                 settings={{
                   balance: userBalance,
@@ -160,6 +160,7 @@ export const RemoveAssetsFromLending = ({
                     onChangeHandler(
                       String(Math.min(mBalance, currentLendedAmount)),
                       Math.min(mBalance, currentLendedAmount),
+                      symbol,
                     ),
                   inputStatus: inputData.validationStatus,
                   convertedValue: Number(inputData.amount) * rate,
