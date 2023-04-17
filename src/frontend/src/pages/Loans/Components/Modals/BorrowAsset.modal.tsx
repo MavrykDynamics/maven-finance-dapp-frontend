@@ -121,6 +121,8 @@ export const BorrowAsset = ({
     }
   }
 
+  console.log({ borrowedAsset })
+
   return (
     <PopupContainer onClick={closePopup} show={show}>
       <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="loans">
@@ -147,7 +149,11 @@ export const BorrowAsset = ({
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">Collateral Utilization</div>
-                  <CommaNumber value={collateralRatio} className="value" endingText="%" />
+                  {hasUserBorrowed ? (
+                    <CommaNumber value={collateralRatio} className="value" endingText="%" />
+                  ) : (
+                    <div className="value">Not Relevant</div>
+                  )}
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">Borrow APR</div>
