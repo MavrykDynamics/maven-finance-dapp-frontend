@@ -17,7 +17,7 @@ import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { depositCollateralAction } from 'pages/Loans/Actions/vaultCollateral.actions'
-import { AddNewCollateralDataProps, getOnBlurValue, getOnFocusValue } from './Modals.helpers'
+import { AddNewCollateralDataProps, getOnBlurValue, getOnFocusValue, loansInputValidation } from './Modals.helpers'
 import {
   InputStatusType,
   INPUT_LARGE,
@@ -172,11 +172,8 @@ export const AddNewCollateral = ({
     setAssetChosenDdItem(bakerItemsForDropDown.find(({ id }) => id === itemId))
 
   // stuff to handle inputs
-  const inputOnChangeHandle = (newInputAmount: string, userAssetBalance: number) => {
-    const validationStatus =
-      Number(newInputAmount) > 0 && Number(newInputAmount) <= userAssetBalance
-        ? INPUT_STATUS_SUCCESS
-        : INPUT_STATUS_ERROR
+  const inputOnChangeHandle = (newInputAmount: string, userAssetBalance: number, symbol?: string) => {
+    const validationStatus = loansInputValidation({ inputAmount: newInputAmount, maxAmount: userAssetBalance, symbol })
 
     if (inputData) {
       setInputData({
@@ -304,7 +301,12 @@ export const AddNewCollateral = ({
                   type: 'number',
                   onBlur: inputOnBlurHandle,
                   onFocus: onFocusHandler,
-                  onChange: (e) => inputOnChangeHandle(e.target.value, inputData.userBalance),
+                  onChange: (e) =>
+                    inputOnChangeHandle(
+                      e.target.value,
+                      inputData.userBalance,
+                      isTezosAsset(inputData.assetName) ? 'XTZ' : inputData.assetSymbol,
+                    ),
                 }}
                 settings={{
                   balance: inputData.userBalance,

@@ -11,6 +11,7 @@ import {
   DEFAULT_LOANS_INPUT_VALUE,
   getOnBlurValue,
   getOnFocusValue,
+  loansInputValidation
 } from './Modals.helpers'
 
 import { Input } from 'app/App.components/Input/NewInput'
@@ -93,9 +94,8 @@ export const AddCollateral = ({
   }, [show])
 
   // stuff to handle inputs
-  const inputOnChangeHandle = (newInputAmount: string, maxAmount: number) => {
-    const validationStatus =
-      Number(newInputAmount) > 0 && Number(newInputAmount) <= maxAmount ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
+  const inputOnChangeHandle = (newInputAmount: string, maxAmount: number, symbol?: string) => {
+    const validationStatus = loansInputValidation({ inputAmount: newInputAmount, maxAmount, symbol })
 
     setInputData({
       ...inputData,
@@ -179,13 +179,18 @@ export const AddCollateral = ({
               type: 'number',
               onFocus: onFocusHandler,
               onBlur: inputOnBlurHandle,
-              onChange: (e) => inputOnChangeHandle(e.target.value, collateralData?.userBalance ?? 0),
+              onChange: (e) =>
+                inputOnChangeHandle(e.target.value, collateralData?.userBalance ?? 0, selectedAsset?.symbol),
             }}
             settings={{
               balance: collateralData?.userBalance ?? 0,
               balanceAsset: selectedAsset?.symbol,
               useMaxHandler: () =>
-                inputOnChangeHandle(String(collateralData?.userBalance ?? 0), collateralData?.userBalance ?? 0),
+                inputOnChangeHandle(
+                  String(collateralData?.userBalance ?? 0),
+                  collateralData?.userBalance ?? 0,
+                  selectedAsset?.symbol,
+                ),
               inputStatus: inputData.validationStatus,
               convertedValue: inputAmount * (collateralData?.rate ?? 1),
               inputSize: INPUT_LARGE,

@@ -308,7 +308,9 @@ export const BorrowingExpandCard = ({
                         : getNumberInBounds(0, 100, calculateCollateralShare(amount * rate, collateralTotalBalance))
 
                       if (isTotalRow && collateralData.length < 3) return null
-                      const collateralDecimalsLength = getDynamicDecimalsAmountForOutput(amount)
+
+                      const collateralDecimalsLength =
+                        symbol.toLowerCase() === 'tzbtc' ? 8 : getDynamicDecimalsAmountForOutput(amount)
 
                       return (
                         <TableRow rowHeight={65} key={gqlName + '-' + idx}>
