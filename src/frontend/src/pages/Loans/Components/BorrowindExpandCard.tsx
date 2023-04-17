@@ -246,7 +246,7 @@ export const BorrowingExpandCard = ({
                         collateralRatio,
                         borrowAPR: apr,
                         currentCollateralBalance: collateralData.at(-1)?.amount ?? 0,
-                        hasUserBorrowed: false,
+                        hasUserBorrowed: Boolean(borrowedAmount),
                         borrowCapacity,
                         currentBorrowedAmount: borrowedAmount,
                         DAOFee,
