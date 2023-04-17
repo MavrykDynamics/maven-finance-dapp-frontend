@@ -144,7 +144,7 @@ export const mainNavigationLinks: MainNavigationRoute[] = [
         id: 47294,
         subTitle: 'Satellite Gov.',
         subPath: 'satellite-governance',
-        routeSubPath: '/satellite-governance',
+        routeSubPath: ['/satellite-governance', '/satellite-governance/:tabId'],
       },
       {
         id: 79754,
