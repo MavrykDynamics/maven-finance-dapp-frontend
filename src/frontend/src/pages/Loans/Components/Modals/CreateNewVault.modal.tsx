@@ -9,7 +9,7 @@ import {
   INPUT_STATUS_SUCCESS,
 } from 'app/App.components/Input/Input.constants'
 import { CreateVaultPopupDataType, VaultNameInputStateType } from './Modals.helpers'
-import { decimalsToShow, isTezosAsset } from 'pages/Loans/Loans.helpers'
+import { decimalsToShow, isTezosAsset, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import { AvaliableCollateralType, XtzBakerType } from 'utils/TypesAndInterfaces/Loans'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
@@ -255,10 +255,7 @@ export const CreateNewVault = ({
 
   // stuff to handle inputs
   const inputOnChangeHandle = (newInputAmount: string, inputIdx: number, userAssetBalance: number) => {
-    const validationStatus =
-      Number(newInputAmount) > 0 && Number(newInputAmount) <= userAssetBalance
-        ? INPUT_STATUS_SUCCESS
-        : INPUT_STATUS_ERROR
+    const validationStatus = loansInputValidation(newInputAmount, userAssetBalance, firstCollateralMetadata?.symbol)
 
     setCollaterals(
       collaterals.map((collateral, updateCollateralIdx) =>
@@ -359,7 +356,10 @@ export const CreateNewVault = ({
     }
   }
 
-  const decimalcsForCommaNumber = useMemo(() => decimalsToShow(firstCollateralMetadata), [firstCollateralMetadata])
+  const decimalcsForCommaNumber = useMemo(
+    () => decimalsToShow(firstCollateralMetadata?.symbol),
+    [firstCollateralMetadata],
+  )
 
   const titleText =
     shownScreen === 'initial'

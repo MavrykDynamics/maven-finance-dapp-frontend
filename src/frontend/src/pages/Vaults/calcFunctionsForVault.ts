@@ -221,14 +221,15 @@ export const calculateAdminLiquidationFee = (adminLiquidationFeePercent: number,
 }
 
 export const calculateCollateralShare = (collateralAmount: number, totalAmount: number) => {
+  if (totalAmount === 0) return 100
   return Number(((collateralAmount / totalAmount) * 100).toFixed(2))
 }
 
 export const calculateLiquidationPrice = (
-    loanOutstandingTotal: number,
-    loanTokenOracleAddress: string,
-    liquidationRatio: number,
-    oracleLatestPrices: Record<string, number>
+  loanOutstandingTotal: number,
+  loanTokenOracleAddress: string,
+  liquidationRatio: number,
+  oracleLatestPrices: Record<string, number>,
 ) => {
   // Solve for x, loanValue * liquidation
 

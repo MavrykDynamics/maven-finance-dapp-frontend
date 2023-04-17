@@ -12,6 +12,7 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { emptyContainer } from './LendingTab.controller'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import PieChartView from 'app/App.components/PieСhart/PieСhart.view'
+import { decimalsToShow } from 'pages/Loans/Loans.helpers'
 
 import {
   Table,
@@ -92,11 +93,13 @@ export const VaultsTab = ({ isLoading }: { isLoading: boolean }) => {
 
                   <TableBody className="treasury">
                     {assetsBalances.map(({ symbol, balance, usdValue, rate }) => {
+                      const decimalcsForCommaNumber = decimalsToShow(symbol, 4)
+
                       return (
                         <TableRow key={symbol} rowHeight={25} borderColor="dataColor" className="add-hover">
                           <TableCell width="33%">{symbol}</TableCell>
                           <TableCell width="33%">
-                            <CommaNumber value={balance} decimalsToShow={4} useAccurateParsing />
+                            <CommaNumber value={balance} decimalsToShow={decimalcsForCommaNumber} useAccurateParsing />
                           </TableCell>
                           <TableCell width="33%" contentPosition="right">
                             <CommaNumber value={usdValue} beginningText={rate ? '$' : symbol} useAccurateParsing />
