@@ -71,14 +71,14 @@ export const CreateNewVault = ({
   const dispatch = useDispatch()
   const {
     xtzBakers: { otherBakers, dao, mavrykDynamics },
+    avaliableCollaterals,
   } = useSelector((state: State) => state.tokens)
-  const xtzBakers: Array<XtzBakerType & { isDisabled?: boolean }> = [
-    ...otherBakers,
-    ...(dao ? [dao] : []),
-    ...(mavrykDynamics ? [mavrykDynamics] : []),
-  ]
 
-  const { avaliableCollaterals } = useSelector((state: State) => state.tokens)
+  const xtzBakers: Array<XtzBakerType & { isDisabled?: boolean }> = useMemo(
+    () => [...otherBakers, ...(dao ? [dao] : []), ...(mavrykDynamics ? [mavrykDynamics] : [])],
+    [dao, mavrykDynamics, otherBakers],
+  )
+
   const { isActionLoading } = useSelector((state: State) => state.loading)
 
   const [shownScreen, setShownScreen] = useState<CurrentActiveModalScreen>(INITIAL_SCREEN_ID)
@@ -120,8 +120,9 @@ export const CreateNewVault = ({
       setAssetChosenDdItem(undefined)
       setVaultCreating(false)
       setNewVaultAddress('')
+      setVaultName({ name: '', validationStatus: '' })
     }
-  }, [avaliableCollaterals, show])
+  }, [show])
 
   // Data for 3rd screen, in case we have only 1 collateral to add
   const firstCollateralMetadata = useMemo(
