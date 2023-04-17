@@ -8,8 +8,8 @@ import {
   INPUT_STATUS_ERROR,
   INPUT_STATUS_SUCCESS,
 } from 'app/App.components/Input/Input.constants'
-import { CreateVaultPopupDataType, VaultNameInputStateType } from './Modals.helpers'
-import { decimalsToShow, isTezosAsset, loansInputValidation } from 'pages/Loans/Loans.helpers'
+import { CreateVaultPopupDataType, VaultNameInputStateType, loansInputValidation } from './Modals.helpers'
+import { decimalsToShow, isTezosAsset } from 'pages/Loans/Loans.helpers'
 import { AvaliableCollateralType, XtzBakerType } from 'utils/TypesAndInterfaces/Loans'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
@@ -255,8 +255,8 @@ export const CreateNewVault = ({
   }
 
   // stuff to handle inputs
-  const inputOnChangeHandle = (newInputAmount: string, inputIdx: number, userAssetBalance: number) => {
-    const validationStatus = loansInputValidation(newInputAmount, userAssetBalance, firstCollateralMetadata?.symbol)
+  const inputOnChangeHandle = (newInputAmount: string, inputIdx: number, userAssetBalance: number, symbol?: string) => {
+    const validationStatus = loansInputValidation({ inputAmount: newInputAmount, maxAmount: userAssetBalance, symbol })
 
     setCollaterals(
       collaterals.map((collateral, updateCollateralIdx) =>
@@ -452,7 +452,13 @@ export const CreateNewVault = ({
                         inputProps={{
                           value: inputAmount,
                           type: 'number',
-                          onChange: (e) => inputOnChangeHandle(e.target.value, idx, collateralMetadata.userBalance),
+                          onChange: (e) =>
+                            inputOnChangeHandle(
+                              e.target.value,
+                              idx,
+                              collateralMetadata.userBalance,
+                              collateralMetadata.symbol,
+                            ),
                           onBlur: (e) => inputOnBlurHandle(e.target.value, idx),
                           onFocus: () => onFocusHandler(idx),
                         }}
@@ -463,6 +469,7 @@ export const CreateNewVault = ({
                               String(collateralMetadata.userBalance),
                               idx,
                               collateralMetadata.userBalance,
+                              collateralMetadata.symbol,
                             ),
                           inputStatus: validationField,
                           ...(collateralMetadata.rate

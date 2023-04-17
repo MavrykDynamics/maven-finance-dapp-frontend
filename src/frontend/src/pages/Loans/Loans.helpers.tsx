@@ -25,7 +25,6 @@ import {
 import { calcWithoutDecimals, convertNumberForClient, getNumberInBounds } from '../../utils/calcFunctions'
 import { ANY_USER, NONE_USER, WHITELIST_USERS } from './Loans.const'
 import { getUserBalanceForLoanAsset } from './LoansFethcers'
-import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 
 export const isTezosAsset = (tokenName: string) => tokenName === 'tez' || tokenName === 'tezos'
 
@@ -926,17 +925,4 @@ export const calculateAccruedInterest = (
   }
 
   return newLoanOutstandingTotal
-}
-
-export const loansInputValidation = (newInputAmount: string, userAssetBalance: number, symbol?: string) => {
-  const validationStatus =
-    Number(newInputAmount) > 0 && Number(newInputAmount) <= userAssetBalance ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
-
-  if (symbol?.toLowerCase() === 'tzbtc') {
-    const numberOfDecimalPlaces = newInputAmount.match(/\.(\d+)/)?.[1].length ?? 0
-
-    return numberOfDecimalPlaces > 8 ? INPUT_STATUS_ERROR : validationStatus
-  }
-
-  return validationStatus
 }
