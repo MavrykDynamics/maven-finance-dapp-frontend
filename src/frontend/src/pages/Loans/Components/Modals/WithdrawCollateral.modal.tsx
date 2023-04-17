@@ -112,8 +112,8 @@ export const WithdrawCollateral = ({
   }, [show])
 
   const inputOnChangeHandle = (newInputAmount: string, maxAmount: number, symbol?: string) => {
-    const parsedNewInputAmount = isNaN(parseFloat(newInputAmount)) ? 0 : parseFloat(newInputAmount)
-    const validationStatus = loansInputValidation({ inputAmount: String(parsedNewInputAmount), maxAmount, symbol })
+    // const parsedNewInputAmount = isNaN(parseFloat(newInputAmount)) ? 0 : parseFloat(newInputAmount)
+    const validationStatus = loansInputValidation({ inputAmount: newInputAmount, maxAmount, symbol })
 
     setInputData({
       ...inputData,
