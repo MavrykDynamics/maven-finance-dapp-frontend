@@ -40,6 +40,7 @@ export const Repay = ({
     feesAmount = 0,
     currentCollateralBalance = 0,
     borrowCapacity = 0,
+    minimumRepay = 0,
     borrowedAmount = 0,
     scrollToCurrentVault,
   } = data ?? {}
@@ -72,7 +73,9 @@ export const Repay = ({
 
   const inputOnChangeHandle = (newInputAmount: string, maxAmount: number) => {
     const validationStatus =
-      Number(newInputAmount) > 0 && Number(newInputAmount) <= maxAmount ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
+      Number(newInputAmount) > minimumRepay && Number(newInputAmount) <= maxAmount
+        ? INPUT_STATUS_SUCCESS
+        : INPUT_STATUS_ERROR
 
     setInputData({
       ...inputData,

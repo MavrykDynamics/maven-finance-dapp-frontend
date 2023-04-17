@@ -21,7 +21,7 @@ import {
   getAssetMetadata,
   isTezosAsset,
 } from 'pages/Loans/Loans.helpers'
-import { calcWithoutDecimals, calcWithoutMu } from 'utils/calcFunctions'
+import { calcWithoutDecimals, calcWithoutMu, convertNumberForClient } from 'utils/calcFunctions'
 import { BLOCKS_PER_MINUTE, FIXED_POINT_ACCURACY } from 'utils/constants'
 import { getUserBalanceForLoanAsset } from 'pages/Loans/LoansFethcers'
 import { CollateralType, DepositorsFlagType } from 'utils/TypesAndInterfaces/Loans'
@@ -263,6 +263,10 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
         vaultId: item.internal_id,
         creationTimestamp,
         status,
+        minimumRepay: convertNumberForClient({
+          number: item.loan_token.min_repayment_amount,
+          grade: loanTokenMetadata.decimals,
+        }),
 
         levelOfEarly: currentBlock?.level ?? 0,
         levelOfLate:

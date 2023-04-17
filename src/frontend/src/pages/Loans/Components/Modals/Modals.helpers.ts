@@ -50,6 +50,7 @@ export type RepayCollateralPopupDataBaseType = {
   borrowedAsset: LoansVaultType['borrowedAsset']
   feesAmount: number
   borrowedAmount: number
+  minimumRepay: number
   currentCollateralBalance: number
   borrowCapacity: number
 }
