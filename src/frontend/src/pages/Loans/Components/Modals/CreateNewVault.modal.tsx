@@ -9,7 +9,7 @@ import {
   INPUT_STATUS_SUCCESS,
 } from 'app/App.components/Input/Input.constants'
 import { CreateVaultPopupDataType, VaultNameInputStateType } from './Modals.helpers'
-import { isTezosAsset } from 'pages/Loans/Loans.helpers'
+import { decimalsToShow, isTezosAsset } from 'pages/Loans/Loans.helpers'
 import { AvaliableCollateralType, XtzBakerType } from 'utils/TypesAndInterfaces/Loans'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
@@ -359,6 +359,8 @@ export const CreateNewVault = ({
     }
   }
 
+  const decimalcsForCommaNumber = useMemo(() => decimalsToShow(firstCollateralMetadata), [firstCollateralMetadata])
+
   const titleText =
     shownScreen === 'initial'
       ? 'Create New Vault'
@@ -551,7 +553,11 @@ export const CreateNewVault = ({
                   </ThreeLevelListItem>
                   <ThreeLevelListItem>
                     <div className="name">Amount</div>
-                    <CommaNumber value={Number(collaterals[0].inputAmount)} className="value" />
+                    <CommaNumber
+                      value={Number(collaterals[0].inputAmount)}
+                      decimalsToShow={decimalcsForCommaNumber}
+                      className="value"
+                    />
                   </ThreeLevelListItem>
                   <ThreeLevelListItem>
                     <div className="name">USD Value</div>
