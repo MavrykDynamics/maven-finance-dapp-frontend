@@ -427,6 +427,7 @@ const getBorrowings = async (
   feeds: State['dataFeeds']['feedsLedger'],
   interestRateDecimals: number,
   avaliableLiq: number,
+  minimumRepay: number,
   userAddress?: string,
 ): Promise<BorrowingNormalizerReturnType> => {
   try {
@@ -550,6 +551,7 @@ const getBorrowings = async (
         vaultId: vault.id,
         collateralData,
         borrowedAmount,
+        minimumRepay,
 
         levelOfEarly: currentBlock?.level ?? 0,
         levelOfLate:
@@ -614,9 +616,9 @@ export const normalizeLoans = async ({
           loan_token_contract_standard,
           oracle_id,
           vaults_aggregate: { aggregate },
+          min_repayment_amount,
         } = loanToken
 
-        const isXTZ = isTezosAsset(loan_token_name)
         const loanTokenMetadata = getAssetMetadata({
           tokenName: loan_token_name,
           tokenAddress: loan_token_address,
@@ -644,8 +646,15 @@ export const normalizeLoans = async ({
           marketCollateralChartData,
           marketLiquidityChartData,
         } = getTransactionHistory(history_data, dipDupData, feeds)
-        const { myBorrowingList, totalCollateral, vaultsBorrowedAmount } =
-          await getBorrowings(vaults, dipDupData, feeds, interestRateDecimals, availableLiquidity, userAddres)
+        const { myBorrowingList, totalCollateral, vaultsBorrowedAmount } = await getBorrowings(
+          vaults,
+          dipDupData,
+          feeds,
+          interestRateDecimals,
+          availableLiquidity,
+          convertNumberForClient({ number: min_repayment_amount, grade: loanTokenMetadata.decimals }),
+          userAddres,
+        )
         const lendingItem = getLendingItem(
           loanToken,
           userMTokens,
