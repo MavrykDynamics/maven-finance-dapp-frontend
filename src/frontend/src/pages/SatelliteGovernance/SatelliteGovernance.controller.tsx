@@ -63,24 +63,17 @@ const tabsId = {
   MY: 'my',
 }
 
-type CurrentListNameType = {
-  tabId: string
-  ongoing: string | string[]
-  past: string | string[]
-  my: string | string[]
-}
-
-const getCurrentDataById = ({ tabId, ongoing, past, my }: CurrentListNameType) => {
+const getCurrentListNameById = (tabId?: string) => {
   switch (tabId) {
     case tabsId.ONGOING:
-      return ongoing
+      return ONGOING_ACTIONS_SATELLITE_GOVERNANCE_LIST
     case tabsId.PAST:
-      return past
+      return PAST_ACTIONS_SATELLITE_GOVERNANCE_LIST
     case tabsId.MY:
-      return my
+      return MY_ACTIONS_SATELLITE_GOVERNANCE_LIST
 
     default:
-      return ongoing
+      return ONGOING_ACTIONS_SATELLITE_GOVERNANCE_LIST
   }
 }
 
@@ -113,18 +106,13 @@ export const SatelliteGovernance = () => {
   const [chosenDdItem, setChosenDdItem] = useState<string | undefined>()
   const [separateRecord, setSeparateRecord] = useState<GovernanceSatelliteActionGraphQL[]>([])
 
-  const currentListName = getCurrentDataById({
-    tabId,
-    ongoing: ONGOING_ACTIONS_SATELLITE_GOVERNANCE_LIST,
-    past: PAST_ACTIONS_SATELLITE_GOVERNANCE_LIST,
-    my: MY_ACTIONS_SATELLITE_GOVERNANCE_LIST,
-  })
+  const currentListName = getCurrentListNameById(tabId)
 
   const currentSatelliteGovIds = tabId === tabsId.ALL ? allVaultsIds : myVaultsIds
-  const currentPage = getPageNumber(search, listName)
+  const currentPage = getPageNumber(search, currentListName)
 
   const paginatedItemsList = useMemo(() => {
-    const [from, to] = calculateSlicePositions(currentPage, listName)
+    const [from, to] = calculateSlicePositions(currentPage, currentListName)
     return separateRecord?.slice(from, to)
   }, [currentPage, separateRecord])
 
