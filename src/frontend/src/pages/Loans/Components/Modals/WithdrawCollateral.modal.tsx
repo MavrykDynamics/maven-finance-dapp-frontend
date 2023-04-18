@@ -3,7 +3,7 @@ import { useLockBodyScroll } from 'react-use'
 import { useEffect, useMemo, useState } from 'react'
 
 import { INPUT_LARGE, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
-import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
+import { COLLATERAL_RATIO_GRADIENT, assetDecimalsToShow, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { State } from 'reducers'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import {
@@ -11,7 +11,6 @@ import {
   getOnBlurValue,
   getOnFocusValue,
   WithdrawCollateralPopupDataType,
-  loansInputValidation,
 } from './Modals.helpers'
 import { withdrawCollateralAction } from 'pages/Loans/Actions/vaultCollateral.actions'
 
@@ -26,7 +25,12 @@ import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
-import { calcCollateralRatio, getMaxCollateralWithdraw } from 'pages/Loans/Loans.helpers'
+import {
+  calcCollateralRatio,
+  getLoansInputMaxAmount,
+  getMaxCollateralWithdraw,
+  loansInputValidation,
+} from 'pages/Loans/Loans.helpers'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import colors from 'styles/colors'
@@ -111,9 +115,14 @@ export const WithdrawCollateral = ({
     }
   }, [show])
 
-  const inputOnChangeHandle = (newInputAmount: string, maxAmount: number, symbol?: string) => {
-    const parsedNewInputAmount = isNaN(parseFloat(newInputAmount)) ? 0 : parseFloat(newInputAmount)
-    const validationStatus = loansInputValidation({ inputAmount: String(parsedNewInputAmount), maxAmount, symbol })
+  const inputOnChangeHandle = (newInputAmount: string, maxAmount: number) => {
+    const validationStatus = loansInputValidation({
+      inputAmount: newInputAmount,
+      maxAmount,
+      options: {
+        byDecimalPlaces: collateralData?.decimals || assetDecimalsToShow,
+      },
+    })
 
     setInputData({
       ...inputData,
@@ -204,17 +213,15 @@ export const WithdrawCollateral = ({
                 type: 'number',
                 onBlur: inputOnBlurHandle,
                 onFocus: onFocusHandler,
-                onChange: (e) =>
-                  inputOnChangeHandle(e.target.value, currentCollateralToWithdraw, collateralData.symbol),
+                onChange: (e) => inputOnChangeHandle(e.target.value, currentCollateralToWithdraw),
               }}
               settings={{
                 balance: collateralData.userBalance,
                 balanceAsset: collateralData.symbol,
                 useMaxHandler: () =>
                   inputOnChangeHandle(
-                    String(currentCollateralToWithdraw),
+                    getLoansInputMaxAmount(currentCollateralToWithdraw, collateralData.decimals),
                     currentCollateralToWithdraw,
-                    collateralData.symbol,
                   ),
                 inputStatus: inputData.validationStatus,
                 convertedValue: inputAmount * collateralRate,

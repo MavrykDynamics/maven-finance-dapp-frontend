@@ -25,6 +25,7 @@ import { StatusMessage } from './StatusMessage.view'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { scrollToFullView } from 'utils/scrollToFullView'
+import { assetDecimalsToShow } from '../Loans.const'
 
 import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } from 'app/App.components/Table'
 import { ThreeLevelListItem } from '../Loans.style'
@@ -41,16 +42,16 @@ import { isTezosAsset } from '../Loans.helpers'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import colors from 'styles/colors'
-import { getDynamicDecimalsAmountForOutput, getNumberInBounds } from 'utils/calcFunctions'
+import { getNumberInBounds } from 'utils/calcFunctions'
+import { useClickAway } from 'react-use'
 
 type BorrowingExpandCardPropsType = LoansVaultType & {
   isOwner?: boolean
+  isOpenedVault?: boolean
   headerSufix?: React.ReactNode
-  getExpandedStatus?: (arg: boolean) => void
   className?: string
   children?: React.ReactNode
   status?: string
-  isOpenedVault?: boolean
   DAOFee: number
 }
 
@@ -66,7 +67,6 @@ export const BorrowingExpandCard = ({
   depositors,
   deporsitorsFlag,
   headerSufix,
-  getExpandedStatus,
   className,
   address,
   children,
@@ -88,6 +88,9 @@ export const BorrowingExpandCard = ({
 
   const { avaliableCollaterals } = useSelector((state: State) => state.tokens)
   const { themeSelected } = useSelector((state: State) => state.preferences)
+  const { isActionLoading } = useSelector((state: State) => state.loading)
+
+  const [expanded, setExpanded] = useState(false)
 
   const {
     openChangeBakerPopup,
@@ -99,9 +102,34 @@ export const BorrowingExpandCard = ({
     openRepayPopup,
     openUpdateMvkOperatorsPopup,
     openWithdrawCollateralPopup,
+    changeBakerPopup,
+    repayPartPopup,
+    repayFullPopup,
+    borrowAssetPopup,
+    addExistingCollateralPopup,
+    addNewCollateralPopup,
+    withdrawCollateralPopup,
+    updateMvkOperatorPopup,
+    managePermissionsPopup,
+    liquidateVaultPopup,
   } = useContext(loansPopupsContext)
 
+  const notHandleClickAway =
+    repayPartPopup.showModal ||
+    changeBakerPopup.showModal ||
+    repayFullPopup.showModal ||
+    borrowAssetPopup.showModal ||
+    addExistingCollateralPopup.showModal ||
+    addNewCollateralPopup.showModal ||
+    withdrawCollateralPopup.showModal ||
+    updateMvkOperatorPopup.showModal ||
+    managePermissionsPopup.showModal ||
+    liquidateVaultPopup.showModal ||
+    isActionLoading
+
   const ref = useRef<HTMLDivElement | null>(null)
+
+  useClickAway(ref, () => (notHandleClickAway ? null : setExpanded(false)))
 
   // use for borrow or repay
   // it scrolls until the current vault after the transaction and changing position
@@ -143,12 +171,16 @@ export const BorrowingExpandCard = ({
     }
   }, [vaultStatus, levelOfEarly, levelOfLate])
 
+  useEffect(() => {
+    setExpanded(Boolean(isOpenedVault))
+  }, [isOpenedVault])
+
   return (
     <div ref={ref}>
       <Expand
-        getExpandedStatus={getExpandedStatus}
-        isExpandedByDefault={isOpenedVault}
-        className={className || 'expand-borrow-tab'}
+        getExpandedStatus={setExpanded}
+        isExpandedByDefault={expanded}
+        className={`expand-borrow-tab  ${expanded ? 'expandedCard' : ''}`}
         sufix={headerSufix}
         header={
           <>
@@ -309,9 +341,6 @@ export const BorrowingExpandCard = ({
 
                       if (isTotalRow && collateralData.length < 3) return null
 
-                      const collateralDecimalsLength =
-                        symbol.toLowerCase() === 'tzbtc' ? 8 : getDynamicDecimalsAmountForOutput(amount)
-
                       return (
                         <TableRow rowHeight={65} key={gqlName + '-' + idx}>
                           <TableCell width={'22%'} className="vert-middle">
@@ -331,7 +360,7 @@ export const BorrowingExpandCard = ({
                                 value={amount}
                                 className="value"
                                 showDecimal
-                                decimalsToShow={collateralDecimalsLength}
+                                decimalsToShow={isTotalRow ? 2 : assetDecimalsToShow}
                                 beginningText={isTotalRow ? '$' : ''}
                               />
                               {rate ? (

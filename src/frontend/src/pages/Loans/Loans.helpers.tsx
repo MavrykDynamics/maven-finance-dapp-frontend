@@ -23,19 +23,11 @@ import {
   DepositorsFlagType,
 } from 'utils/TypesAndInterfaces/Loans'
 import { calcWithoutDecimals, convertNumberForClient, getNumberInBounds } from '../../utils/calcFunctions'
-import { ANY_USER, NONE_USER, WHITELIST_USERS } from './Loans.const'
+import { ANY_USER, NONE_USER, WHITELIST_USERS, assetDecimalsToShow } from './Loans.const'
 import { getUserBalanceForLoanAsset } from './LoansFethcers'
+import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 
 export const isTezosAsset = (tokenName: string) => tokenName === 'tez' || tokenName === 'tezos'
-
-export const decimalsToShow = (symbol?: string, defaultDecimals: number = DECIMALS_TO_SHOW) => {
-  switch (symbol?.toLowerCase()) {
-    case 'tzbtc':
-      return 8
-    default:
-      return defaultDecimals
-  }
-}
 
 export const getAssetMetadata = ({
   tokenName,
@@ -926,4 +918,43 @@ export const calculateAccruedInterest = (
   }
 
   return newLoanOutstandingTotal
+}
+
+export const loansInputValidation = ({
+  inputAmount,
+  minAmount = 0,
+  maxAmount,
+  options = {},
+}: {
+  inputAmount: string
+  minAmount?: number
+  maxAmount: number
+  options?: {
+    byDecimalPlaces?: number
+  }
+}) => {
+  const { byDecimalPlaces } = options
+  const numberOfDecimalPlaces = inputAmount.match(/\.(\d+)/)?.[1].length ?? 0
+
+  // check amount by min/max value
+  if (Number(inputAmount) > minAmount && Number(inputAmount) <= maxAmount) {
+    // check amount by number of decimal places
+    if (byDecimalPlaces) {
+      return numberOfDecimalPlaces <= byDecimalPlaces ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
+    }
+
+    return INPUT_STATUS_SUCCESS
+  }
+
+  return INPUT_STATUS_ERROR
+}
+
+// use for get max amount for input field
+// using an amount without this function will result in a validation error,
+// as input is validated by the number of decimal places, and the value
+// without processing may be greater
+export const getLoansInputMaxAmount = (amount: number = 0, decimals: number = assetDecimalsToShow) => {
+  if (!amount) return '0'
+
+  return String(Math.trunc(amount * 10 ** decimals) / 10 ** decimals)
 }

@@ -110,3 +110,5 @@ export const COLLATERAL_RATIO_GRADIENT: Array<ColorBreakpoint> = [
     value: 250,
   },
 ]
+
+export const assetDecimalsToShow = 8
