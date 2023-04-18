@@ -25,7 +25,7 @@ import { StatusMessage } from './StatusMessage.view'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { scrollToFullView } from 'utils/scrollToFullView'
-import { assetDecimalToShow } from '../Loans.const' 
+import { assetDecimalsToShow } from '../Loans.const'
 
 import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } from 'app/App.components/Table'
 import { ThreeLevelListItem } from '../Loans.style'
@@ -177,7 +177,12 @@ export const BorrowingExpandCard = ({
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Outstanding Debt</div>
-              <CommaNumber value={borrowedAmount + fee} className="value" showDecimal decimalsToShow={assetDecimalToShow} />
+              <CommaNumber
+                value={borrowedAmount + fee}
+                className="value"
+                showDecimal
+                decimalsToShow={assetDecimalsToShow}
+              />
               {rate ? (
                 <CommaNumber
                   value={(borrowedAmount + fee) * rate}
@@ -216,7 +221,7 @@ export const BorrowingExpandCard = ({
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">Principal</div>
-                <CommaNumber value={borrowedAmount} decimalsToShow={assetDecimalToShow} className="value" />
+                <CommaNumber value={borrowedAmount} decimalsToShow={assetDecimalsToShow} className="value" />
                 {rate ? (
                   <CommaNumber value={borrowedAmount * rate} decimalsToShow={2} beginningText="$" className="rate" />
                 ) : null}
@@ -230,7 +235,7 @@ export const BorrowingExpandCard = ({
                     defaultStrokeColor={colors[themeSelected].textColor}
                   />
                 </div>
-                <CommaNumber value={fee} decimalsToShow={assetDecimalToShow} className="value" />
+                <CommaNumber value={fee} decimalsToShow={assetDecimalsToShow} className="value" />
                 {rate ? <CommaNumber value={fee * rate} decimalsToShow={2} beginningText="$" className="rate" /> : null}
               </ThreeLevelListItem>
               <ThreeLevelListItem>
@@ -332,7 +337,7 @@ export const BorrowingExpandCard = ({
                                 value={amount}
                                 className="value"
                                 showDecimal
-                                decimalsToShow={isTotalRow ? 2 : assetDecimalToShow}
+                                decimalsToShow={isTotalRow ? 2 : assetDecimalsToShow}
                                 beginningText={isTotalRow ? '$' : ''}
                               />
                               {rate ? (

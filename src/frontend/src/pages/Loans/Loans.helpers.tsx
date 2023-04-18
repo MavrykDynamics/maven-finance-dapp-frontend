@@ -29,15 +29,6 @@ import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Inp
 
 export const isTezosAsset = (tokenName: string) => tokenName === 'tez' || tokenName === 'tezos'
 
-export const decimalsToShow = (symbol?: string, defaultDecimals: number = DECIMALS_TO_SHOW) => {
-  switch (symbol?.toLowerCase()) {
-    case 'tzbtc':
-      return 8
-    default:
-      return defaultDecimals
-  }
-}
-
 export const getAssetMetadata = ({
   tokenName,
   tokenAddress,

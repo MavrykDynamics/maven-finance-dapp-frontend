@@ -3,7 +3,7 @@ import { useLockBodyScroll } from 'react-use'
 import { useEffect, useMemo, useState } from 'react'
 
 import { INPUT_LARGE, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
-import { COLLATERAL_RATIO_GRADIENT, assetDecimalToShow, getCollateralRationPersent } from 'pages/Loans/Loans.const'
+import { COLLATERAL_RATIO_GRADIENT, assetDecimalsToShow, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { BorrowPopupDataType, DEFAULT_LOANS_INPUT_VALUE, getOnBlurValue, getOnFocusValue } from './Modals.helpers'
 import { State } from 'reducers'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
@@ -264,7 +264,7 @@ export const BorrowAsset = ({
                   <div className="name">Total Amount</div>
                   <CommaNumber
                     value={inputAmount}
-                    decimalsToShow={assetDecimalToShow}
+                    decimalsToShow={assetDecimalsToShow}
                     className="value"
                     endingText={borrowedAsset?.symbol}
                   />
@@ -281,7 +281,7 @@ export const BorrowAsset = ({
                   </div>
                   <CommaNumber
                     value={inputAmount - inputAmount * (DAOFee / 100)}
-                    decimalsToShow={assetDecimalToShow}
+                    decimalsToShow={assetDecimalsToShow}
                     className="value"
                     endingText={borrowedAsset?.symbol}
                   />
@@ -290,7 +290,7 @@ export const BorrowAsset = ({
                   <div className="name">DAO Fee</div>
                   <CommaNumber
                     value={inputAmount * (DAOFee / 100)}
-                    decimalsToShow={assetDecimalToShow}
+                    decimalsToShow={assetDecimalsToShow}
                     className="value"
                     endingText={borrowedAsset?.symbol}
                   />

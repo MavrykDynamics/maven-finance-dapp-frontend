@@ -11,7 +11,7 @@ import { loansPopupsContext } from './Modals/LoansModals.provider'
 import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import Icon from 'app/App.components/Icon/Icon.view'
-import { assetDecimalToShow } from '../Loans.const'
+import { assetDecimalsToShow } from '../Loans.const'
 
 import { ThreeLevelListItem } from '../Loans.style'
 import { LendingTabListItem, LoansTabStyled, NoItemsInTabStyled } from './LoansComponents.style'
@@ -47,7 +47,7 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Lending</div>
-              <CommaNumber value={lendingItem.lendValue} decimalsToShow={assetDecimalToShow} className="value" />
+              <CommaNumber value={lendingItem.lendValue} decimalsToShow={assetDecimalsToShow} className="value" />
               {assetData.rate ? (
                 <CommaNumber value={lendingItem.lendValue * assetData.rate} beginningText="$" className="rate" />
               ) : null}
@@ -65,14 +65,14 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Wallet Balance</div>
-              <CommaNumber value={assetData.userBalance} decimalsToShow={assetDecimalToShow} className="value" />
+              <CommaNumber value={assetData.userBalance} decimalsToShow={assetDecimalsToShow} className="value" />
               {assetData.rate ? (
                 <CommaNumber value={assetData.userBalance * assetData.rate} beginningText="$" className="rate" />
               ) : null}
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">m{assetData.symbol} Balance</div>
-              <CommaNumber value={lendingItem.mBalance} decimalsToShow={assetDecimalToShow} className="value" />
+              <CommaNumber value={lendingItem.mBalance} decimalsToShow={assetDecimalsToShow} className="value" />
             </ThreeLevelListItem>
             <Button
               text="Add"

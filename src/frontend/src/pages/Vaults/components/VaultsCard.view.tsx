@@ -29,8 +29,7 @@ import { getTimestampByLevel } from 'pages/Governance/Governance.actions'
 import { loansPopupsContext } from 'pages/Loans/Components/Modals/LoansModals.provider'
 import { calculateCollateralShare } from '../calcFunctionsForVault'
 import { vaultTabs } from '../Vaults.view'
-import { decimalsToShow } from 'pages/Loans/Loans.helpers'
-import { assetDecimalToShow } from 'pages/Loans/Loans.const'
+import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
 
 const findStatusInfo = (status: string) => {
   switch (status) {
@@ -264,8 +263,6 @@ export const VaultsCard = (props: Props) => {
                   const columnWidth = '33%'
                   const isTotalRow = collateralData.length - 1 === index
 
-                  const decimalcsForCommaNumber = decimalsToShow(symbol, 4)
-
                   const collateralShare = isTotalRow
                     ? 100
                     : calculateCollateralShare(amount * rate, collateralTotalBalance)
@@ -297,7 +294,7 @@ export const VaultsCard = (props: Props) => {
                         <div className="cell-content">
                           <CommaNumber
                             value={amount}
-                            decimalsToShow={isTotalRow ? 2 : assetDecimalToShow}
+                            decimalsToShow={isTotalRow ? 2 : assetDecimalsToShow}
                             beginningText={isTotalRow ? '$' : ''}
                             className="balance"
                           />
