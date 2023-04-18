@@ -13,6 +13,7 @@ import { EmptyContainer } from 'app/App.style'
 
 // styles
 import { VaultsStyled } from './Vaults.style'
+import { VaultsList } from 'pages/Loans/Components/LoansComponents.style'
 
 // helpers
 import {
@@ -92,7 +93,11 @@ export const VaultsView = () => {
   const assets = useMemo(() => getVaultAssets(vaultsMapper), [vaultsMapper])
 
   const currentListName =
-    tabId === vaultTabs.ALL ? VAULTS_LIST_NAME : tabId === vaultTabs.MY ? MY_VAULTS_LIST_NAME : PERMISSIONED_VAULTS_LIST_NAME
+    tabId === vaultTabs.ALL
+      ? VAULTS_LIST_NAME
+      : tabId === vaultTabs.MY
+      ? MY_VAULTS_LIST_NAME
+      : PERMISSIONED_VAULTS_LIST_NAME
 
   const currentVaultsIds =
     tabId === vaultTabs.ALL ? allVaultsIds : tabId === vaultTabs.MY ? myVaultsIds : permissinedVaultsIds
@@ -141,7 +146,7 @@ export const VaultsView = () => {
           <div className="text">Loading vaults</div>
         </DataLoaderWrapper>
       ) : paginatedVaultsList.length ? (
-        <div className="vaults">
+        <VaultsList>
           {paginatedVaultsList.map((item) => {
             const isOwner = vaultsMapper[item]?.ownerId === accountPkh
 
@@ -157,7 +162,7 @@ export const VaultsView = () => {
           })}
 
           <Pagination itemsCount={vaultsIds.length} listName={currentListName} />
-        </div>
+        </VaultsList>
       ) : (
         <EmptyContainer className="centered">
           <img src="/images/not-found.svg" alt=" No financial requests to show" />

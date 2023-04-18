@@ -14,7 +14,7 @@ import Icon from 'app/App.components/Icon/Icon.view'
 import { assetDecimalsToShow } from '../Loans.const'
 
 import { ThreeLevelListItem } from '../Loans.style'
-import { LendingTabListItem, LoansTabStyled, NoItemsInTabStyled } from './LoansComponents.style'
+import { LendingTabListItem, LoansTabStyled, NoItemsInTabStyled, VaultsList } from './LoansComponents.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
@@ -36,7 +36,7 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
       </GovRightContainerTitleArea>
 
       {lendingItem ? (
-        <div className="list-wrapper">
+        <VaultsList>
           <LendingTabListItem>
             <ThreeLevelListItem>
               <div className="name">Asset</div>
@@ -104,7 +104,7 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
               className="lending-btn"
             />
           </LendingTabListItem>
-        </div>
+        </VaultsList>
       ) : (
         <NoItemsInTabStyled>
           <span>Lend assets to earn interest.</span>
