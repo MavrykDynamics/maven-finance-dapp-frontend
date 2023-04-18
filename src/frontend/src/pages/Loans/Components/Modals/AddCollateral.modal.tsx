@@ -25,7 +25,12 @@ import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { depositCollateralAction } from 'pages/Loans/Actions/vaultCollateral.actions'
-import { calcCollateralRatio, getMaxCollateralWithdraw, loansInputValidation } from 'pages/Loans/Loans.helpers'
+import {
+  calcCollateralRatio,
+  getLoansInputMaxAmount,
+  getMaxCollateralWithdraw,
+  loansInputValidation,
+} from 'pages/Loans/Loans.helpers'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239476&t=Sx2aEpp3ifrGxBtQ-0
@@ -190,7 +195,10 @@ export const AddCollateral = ({
               balance: collateralData?.userBalance ?? 0,
               balanceAsset: selectedAsset?.symbol,
               useMaxHandler: () =>
-                inputOnChangeHandle(String(collateralData?.userBalance ?? 0), collateralData?.userBalance ?? 0),
+                inputOnChangeHandle(
+                  getLoansInputMaxAmount(collateralData?.userBalance, collateralData?.decimals),
+                  collateralData?.userBalance ?? 0,
+                ),
               inputStatus: inputData.validationStatus,
               convertedValue: inputAmount * (collateralData?.rate ?? 1),
               inputSize: INPUT_LARGE,

@@ -42,7 +42,7 @@ import { isTezosAsset } from '../Loans.helpers'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import colors from 'styles/colors'
-import { getDynamicDecimalsAmountForOutput, getNumberInBounds } from 'utils/calcFunctions'
+import { getNumberInBounds } from 'utils/calcFunctions'
 
 type BorrowingExpandCardPropsType = LoansVaultType & {
   isOwner?: boolean
@@ -314,9 +314,6 @@ export const BorrowingExpandCard = ({
                         : getNumberInBounds(0, 100, calculateCollateralShare(amount * rate, collateralTotalBalance))
 
                       if (isTotalRow && collateralData.length < 3) return null
-
-                      const collateralDecimalsLength =
-                        symbol.toLowerCase() === 'tzbtc' ? 8 : getDynamicDecimalsAmountForOutput(amount)
 
                       return (
                         <TableRow rowHeight={65} key={gqlName + '-' + idx}>

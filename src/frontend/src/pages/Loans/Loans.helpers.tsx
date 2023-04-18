@@ -23,7 +23,7 @@ import {
   DepositorsFlagType,
 } from 'utils/TypesAndInterfaces/Loans'
 import { calcWithoutDecimals, convertNumberForClient, getNumberInBounds } from '../../utils/calcFunctions'
-import { ANY_USER, NONE_USER, WHITELIST_USERS } from './Loans.const'
+import { ANY_USER, NONE_USER, WHITELIST_USERS, assetDecimalsToShow } from './Loans.const'
 import { getUserBalanceForLoanAsset } from './LoansFethcers'
 import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 
@@ -946,4 +946,14 @@ export const loansInputValidation = ({
   }
 
   return INPUT_STATUS_ERROR
+}
+
+// use for get max amount for input field
+// using an amount without this function will result in a validation error,
+// as input is validated by the number of decimal places, and the value
+// without processing may be greater
+export const getLoansInputMaxAmount = (amount: number = 0, decimals: number = assetDecimalsToShow) => {
+  if (!amount) return '0'
+
+  return String(Math.trunc(amount * 10 ** decimals) / 10 ** decimals)
 }

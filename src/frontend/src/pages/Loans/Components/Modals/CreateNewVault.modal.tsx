@@ -9,7 +9,7 @@ import {
   INPUT_STATUS_SUCCESS,
 } from 'app/App.components/Input/Input.constants'
 import { CreateVaultPopupDataType, VaultNameInputStateType } from './Modals.helpers'
-import { isTezosAsset, loansInputValidation } from 'pages/Loans/Loans.helpers'
+import { getLoansInputMaxAmount, isTezosAsset, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import { AvaliableCollateralType, XtzBakerType } from 'utils/TypesAndInterfaces/Loans'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
@@ -254,7 +254,7 @@ export const CreateNewVault = ({
     })
   }
 
-  const { decimals, address, tokenType, gqlName } = collateralsToSelect[collaterals[0].id]
+  const { decimals, address, tokenType, gqlName } = collateralsToSelect[collaterals[0]?.id] || {}
 
   // stuff to handle inputs
   const inputOnChangeHandle = (newInputAmount: string, inputIdx: number, userAssetBalance: number) => {
@@ -461,7 +461,7 @@ export const CreateNewVault = ({
                           balanceAsset: collateralMetadata.symbol,
                           useMaxHandler: () =>
                             inputOnChangeHandle(
-                              String(collateralMetadata.userBalance),
+                              getLoansInputMaxAmount(collateralMetadata.userBalance, collateralMetadata.decimals),
                               idx,
                               collateralMetadata.userBalance,
                             ),

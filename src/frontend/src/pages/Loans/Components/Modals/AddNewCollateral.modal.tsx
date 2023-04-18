@@ -14,6 +14,7 @@ import NewButton from 'app/App.components/Button/NewButton'
 
 import {
   calcCollateralRatio,
+  getLoansInputMaxAmount,
   getMaxCollateralWithdraw,
   isTezosAsset,
   loansInputValidation,
@@ -320,7 +321,7 @@ export const AddNewCollateral = ({
                   useMaxHandler: () =>
                     setInputData({
                       ...inputData,
-                      amount: String(inputData.userBalance),
+                      amount: getLoansInputMaxAmount(inputData.userBalance, inputData.selectedDdItem.decimals),
                       validationStatus: INPUT_STATUS_SUCCESS,
                     }),
                   inputSize: INPUT_LARGE,

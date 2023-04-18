@@ -17,7 +17,7 @@ import {
   getOnFocusValue,
   RemoveLendingAssetDataType,
 } from './Modals.helpers'
-import { loansInputValidation } from 'pages/Loans/Loans.helpers'
+import { getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import { State } from 'reducers'
 
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
@@ -165,7 +165,7 @@ export const RemoveAssetsFromLending = ({
                   balanceAsset: symbol,
                   useMaxHandler: () =>
                     onChangeHandler(
-                      String(Math.min(mBalance, currentLendedAmount)),
+                      getLoansInputMaxAmount(Math.min(mBalance, currentLendedAmount), decimals),
                       Math.min(mBalance, currentLendedAmount),
                     ),
                   inputStatus: inputData.validationStatus,

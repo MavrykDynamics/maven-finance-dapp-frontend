@@ -12,7 +12,7 @@ import { INPUT_LARGE, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.c
 import { State } from 'reducers'
 import { AddLendingAssetDataType, DEFAULT_LOANS_INPUT_VALUE, getOnBlurValue, getOnFocusValue } from './Modals.helpers'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { loansInputValidation } from 'pages/Loans/Loans.helpers'
+import { getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
 
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
@@ -126,7 +126,7 @@ export const AddLendingAsset = ({
             settings={{
               balance: userBalance,
               balanceAsset: symbol,
-              useMaxHandler: () => onChangeHandler(String(userBalance), userBalance),
+              useMaxHandler: () => onChangeHandler(getLoansInputMaxAmount(userBalance, decimals), userBalance),
               inputStatus: inputData.validationStatus,
               inputSize: INPUT_LARGE,
               ...(rate ? { convertedValue: rate * Number(inputData.amount) } : {}),

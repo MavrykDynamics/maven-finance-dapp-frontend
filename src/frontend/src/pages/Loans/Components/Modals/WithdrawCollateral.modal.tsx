@@ -25,7 +25,12 @@ import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
-import { calcCollateralRatio, getMaxCollateralWithdraw, loansInputValidation } from 'pages/Loans/Loans.helpers'
+import {
+  calcCollateralRatio,
+  getLoansInputMaxAmount,
+  getMaxCollateralWithdraw,
+  loansInputValidation,
+} from 'pages/Loans/Loans.helpers'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import colors from 'styles/colors'
@@ -214,7 +219,10 @@ export const WithdrawCollateral = ({
                 balance: collateralData.userBalance,
                 balanceAsset: collateralData.symbol,
                 useMaxHandler: () =>
-                  inputOnChangeHandle(String(currentCollateralToWithdraw), currentCollateralToWithdraw),
+                  inputOnChangeHandle(
+                    getLoansInputMaxAmount(currentCollateralToWithdraw, collateralData.decimals),
+                    currentCollateralToWithdraw,
+                  ),
                 inputStatus: inputData.validationStatus,
                 convertedValue: inputAmount * collateralRate,
                 inputSize: INPUT_LARGE,

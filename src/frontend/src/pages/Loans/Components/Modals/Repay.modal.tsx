@@ -20,7 +20,7 @@ import { PopupContainer, PopupContainerWrapper } from 'app/App.components/Settin
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase, VaultModalOverview } from './Modals.style'
-import { calcCollateralRatio, loansInputValidation } from 'pages/Loans/Loans.helpers'
+import { calcCollateralRatio, getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17953%3A224110&t=Sx2aEpp3ifrGxBtQ-0
@@ -177,7 +177,10 @@ export const Repay = ({
                     balanceAsset: borrowedAsset?.symbol,
                     useMaxHandler: () =>
                       inputOnChangeHandle(
-                        String(Math.min(borrowedAsset.userBalance, totalOutstanding)),
+                        getLoansInputMaxAmount(
+                          Math.min(borrowedAsset.userBalance, totalOutstanding),
+                          borrowedAsset.decimals,
+                        ),
                         Math.min(borrowedAsset.userBalance, totalOutstanding),
                       ),
                     inputStatus: inputData.validationStatus,

@@ -22,7 +22,7 @@ import { LoansModalBase, VaultModalOverview } from './Modals.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { silverColor } from 'styles'
 import { borrowVaultAssetAction } from 'pages/Loans/Actions/vault.actions'
-import { calcCollateralRatio, loansInputValidation } from 'pages/Loans/Loans.helpers'
+import { calcCollateralRatio, getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { StatusMessageStyled } from '../LoansComponents.style'
 import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
@@ -188,7 +188,7 @@ export const BorrowAsset = ({
                     balanceAsset: borrowedAsset?.symbol,
                     useMaxHandler: () =>
                       inputOnChangeHandle(
-                        String(borrowCapacity / borrowedAsset.rate),
+                        getLoansInputMaxAmount(borrowCapacity / borrowedAsset.rate, borrowedAsset.decimals),
                         borrowCapacity / borrowedAsset.rate,
                       ),
                     inputStatus: inputData.validationStatus,
