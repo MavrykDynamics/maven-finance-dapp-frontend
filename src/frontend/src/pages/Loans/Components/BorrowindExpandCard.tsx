@@ -208,19 +208,14 @@ export const BorrowingExpandCard = ({
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Outstanding Debt</div>
-              <CommaNumber
-                value={borrowedAmount + fee}
-                className="value"
-                showDecimal
-                decimalsToShow={assetDecimalsToShow}
-              />
+              <CommaNumber value={borrowedAmount + fee} className="value" showDecimal decimalsToShow={borrowedAsset.decimals} />
               {rate ? (
                 <CommaNumber
                   value={(borrowedAmount + fee) * rate}
                   beginningText="$"
                   className="rate"
                   showDecimal
-                  decimalsToShow={2}
+                  decimalsToShow={borrowedAsset.decimals}
                 />
               ) : null}
             </ThreeLevelListItem>
@@ -252,7 +247,7 @@ export const BorrowingExpandCard = ({
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">Principal</div>
-                <CommaNumber value={borrowedAmount} decimalsToShow={assetDecimalsToShow} className="value" />
+                <CommaNumber value={borrowedAmount} decimalsToShow={borrowedAsset.decimals} className="value" />
                 {rate ? (
                   <CommaNumber value={borrowedAmount * rate} decimalsToShow={2} beginningText="$" className="rate" />
                 ) : null}
@@ -266,7 +261,7 @@ export const BorrowingExpandCard = ({
                     defaultStrokeColor={colors[themeSelected].textColor}
                   />
                 </div>
-                <CommaNumber value={fee} decimalsToShow={assetDecimalsToShow} className="value" />
+                <CommaNumber value={fee} decimalsToShow={borrowedAsset.decimals} className="value" />
                 {rate ? <CommaNumber value={fee * rate} decimalsToShow={2} beginningText="$" className="rate" /> : null}
               </ThreeLevelListItem>
               <ThreeLevelListItem>

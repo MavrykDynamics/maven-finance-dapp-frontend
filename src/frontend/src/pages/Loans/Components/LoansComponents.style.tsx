@@ -211,8 +211,7 @@ export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
   }
 
   .add-first-collateral {
-    margin-left: auto;
-    margin-top: 3px;
+    margin: 3px 0 60px auto;
     width: 270px;
     min-height: 100px;
   }

@@ -502,12 +502,13 @@ const getBorrowings = async (
       if (!vaultAsset) return acc
 
       const borrowedAmount = vault.loan_principal_total / 10 ** vaultAsset.decimals
+      const currentLoanInterest = vault.loan_interest_total / 10 ** vaultAsset.decimals
 
       // Calculating Fee of the vault
       const accruedInterest =
         borrowedAmount === 0
-          ? 0
-          : calculateAccruedInterest(vault.loan_outstanding_total, vault.borrow_index, vault.loan_token.borrow_index) /
+          ? currentLoanInterest
+          : currentLoanInterest + calculateAccruedInterest(vault.loan_outstanding_total, vault.borrow_index, vault.loan_token.borrow_index) /
             FIXED_POINT_ACCURACY
 
       const collateralRatio = calcCollateralRatio(vaultCollateral.totalRow.amount, borrowedAmount, vaultAsset.rate)

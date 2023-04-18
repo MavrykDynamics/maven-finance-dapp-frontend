@@ -191,7 +191,6 @@ export const updateUserData = (newAccAddress?: string) => async (dispatch: AppDi
     wallet: { accountPkh },
     tokens: { dipDupTokens },
     dataFeeds: { feedsLedger },
-    loans: { isDataLoaded: isLoansLoaded },
   } = getState()
 
   const userAddressToLoadData = newAccAddress ?? accountPkh
@@ -207,10 +206,6 @@ export const updateUserData = (newAccAddress?: string) => async (dispatch: AppDi
       })
 
       await dispatch(getAvaliableCollaterals())
-
-      if (isLoansLoaded) {
-        await dispatch({ type: CLEAR_LOANS_STORAGE })
-      }
     }
   } catch (error) {
     if (error instanceof Error) {
