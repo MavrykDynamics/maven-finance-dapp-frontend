@@ -72,6 +72,7 @@ export const FeedsListItem = styled.div<{ theme: MavrykTheme }>`
     font-size: 16px;
     display: flex;
     column-gap: 10px;
+    white-space: nowrap;
 
     div {
       line-height: 100%;

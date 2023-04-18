@@ -10,7 +10,13 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 import { INPUT_LARGE, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { State } from 'reducers'
-import { AddLendingAssetDataType, DEFAULT_LOANS_INPUT_VALUE, getOnBlurValue, getOnFocusValue } from './Modals.helpers'
+import {
+  AddLendingAssetDataType,
+  DEFAULT_LOANS_INPUT_VALUE,
+  getOnBlurValue,
+  getOnFocusValue,
+  loansInputValidation,
+} from './Modals.helpers'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
@@ -51,9 +57,8 @@ export const AddLendingAsset = ({
   const { isActionLoading } = useSelector((state: State) => state.loading)
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
 
-  const onChangeHandler = (inputAmount: string, userBalance: number) => {
-    const validationStatus =
-      Number(inputAmount) > 0 && Number(inputAmount) <= userBalance ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
+  const onChangeHandler = (inputAmount: string, userBalance: number, symbol?: string) => {
+    const validationStatus = loansInputValidation({ inputAmount, maxAmount: userBalance, symbol })
 
     setInputData({
       ...inputData,
@@ -112,14 +117,14 @@ export const AddLendingAsset = ({
             inputProps={{
               value: inputData.amount,
               type: 'number',
-              onChange: (e) => onChangeHandler(e.target.value, userBalance),
+              onChange: (e) => onChangeHandler(e.target.value, userBalance, symbol),
               onBlur: inputOnBlurHandle,
               onFocus: onFocusHandler,
             }}
             settings={{
               balance: userBalance,
               balanceAsset: symbol,
-              useMaxHandler: () => onChangeHandler(String(userBalance), userBalance),
+              useMaxHandler: () => onChangeHandler(String(userBalance), userBalance, symbol),
               inputStatus: inputData.validationStatus,
               inputSize: INPUT_LARGE,
               ...(rate ? { convertedValue: rate * Number(inputData.amount) } : {}),

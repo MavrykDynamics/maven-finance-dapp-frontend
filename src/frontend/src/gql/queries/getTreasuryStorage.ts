@@ -10,6 +10,17 @@ export const GET_TREASURY_DATA = `
       stake_mvk_paused
       transfer_paused
       unstake_mvk_paused
+
+      balances {
+        balance
+        id
+        metadata
+        token_address
+        token_id
+        token_standard
+        treasury_id
+        tzkt_token_id
+      }
     }
     
     treasury_factory {

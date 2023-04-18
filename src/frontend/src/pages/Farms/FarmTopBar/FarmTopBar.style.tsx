@@ -33,11 +33,12 @@ export const FarmTopBarStyled = styled(Card)<{ theme: MavrykTheme }>`
     margin-left: 30px;
 
     .drop-down {
-      min-width: 290px;
+      min-width: 250px;
     }
   }
 
   .tab-bar {
+    min-width: 220px;
     margin-right: 15px;
   }
 

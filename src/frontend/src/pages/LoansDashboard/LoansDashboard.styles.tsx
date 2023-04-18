@@ -45,7 +45,7 @@ export const LoansDashboardStyled = styled.div`
       border-radius: 5px;
 
       &.up {
-        color: ${({ theme }) => theme.newUpColor};
+        color: ${({ theme }) => theme.upColor};
         background-color: ${({ theme }) => theme.upBgColor};
       }
 

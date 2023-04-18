@@ -81,6 +81,8 @@ export const BorrowingExpandCard = ({
   borrowedAmount,
   collateralRatio,
   borrowCapacity,
+  avaliableLiq,
+  minimumRepay,
   DAOFee,
 }: BorrowingExpandCardPropsType) => {
   const { symbol, icon, rate = 1 } = borrowedAsset
@@ -165,14 +167,7 @@ export const BorrowingExpandCard = ({
               customColor={getCollateralRationPersent(collateralRatio)}
             >
               <div className={`percentage`}>
-                Collateral Ratio:{' '}
-                <CommaNumber
-                  beginningText={`${collateralRatio > 250 ? '+' : ''}`}
-                  value={Math.max(0, Math.min(collateralRatio, 250))}
-                  endingText="%"
-                  showDecimal
-                  decimalsToShow={2}
-                />
+                Collateral Ratio: <CommaNumber value={collateralRatio} endingText="%" showDecimal decimalsToShow={2} />
               </div>
               <GradientDiagram
                 className="diagram"
@@ -252,7 +247,7 @@ export const BorrowingExpandCard = ({
                         collateralRatio,
                         borrowAPR: apr,
                         currentCollateralBalance: collateralData.at(-1)?.amount ?? 0,
-                        hasUserBorrowed: false,
+                        hasUserBorrowed: Boolean(borrowedAmount),
                         borrowCapacity,
                         currentBorrowedAmount: borrowedAmount,
                         DAOFee,
@@ -273,6 +268,7 @@ export const BorrowingExpandCard = ({
                         borrowedAsset: borrowedAsset,
                         borrowedAmount,
                         feesAmount: fee,
+                        minimumRepay,
                         currentCollateralBalance: collateralData.at(-1)?.amount ?? 0,
                         borrowCapacity,
                         scrollToCurrentVault,
@@ -313,7 +309,9 @@ export const BorrowingExpandCard = ({
                         : getNumberInBounds(0, 100, calculateCollateralShare(amount * rate, collateralTotalBalance))
 
                       if (isTotalRow && collateralData.length < 3) return null
-                      const collateralDecimalsLength = getDynamicDecimalsAmountForOutput(amount)
+
+                      const collateralDecimalsLength =
+                        symbol.toLowerCase() === 'tzbtc' ? 8 : getDynamicDecimalsAmountForOutput(amount)
 
                       return (
                         <TableRow rowHeight={65} key={gqlName + '-' + idx}>
@@ -360,6 +358,8 @@ export const BorrowingExpandCard = ({
                                         borrowedAmount,
                                         existingCollaterals: collateralData,
                                         borrowedAssetRate: borrowedAsset.rate,
+                                        borrowCapacity,
+                                        avaliableLiq,
                                       })
                                     }
                                     kind={BUTTON_PRIMARY}
@@ -385,8 +385,9 @@ export const BorrowingExpandCard = ({
                                       selectedAsset: collateralData[idx],
                                       currentCollateralRatio: collateralRatio,
                                       borrowedAmount,
-                                      currentCollateralBalance: amount,
                                       borrowedAssetRate: borrowedAsset.rate,
+                                      borrowCapacity,
+                                      avaliableLiq,
                                     })
                                   }
                                   form={BUTTON_WIDE}
@@ -433,6 +434,8 @@ export const BorrowingExpandCard = ({
                           borrowedAmount,
                           existingCollaterals: collateralData,
                           borrowedAssetRate: borrowedAsset.rate,
+                          avaliableLiq,
+                          borrowCapacity,
                         })
                       }
                       kind={BUTTON_PRIMARY}
@@ -492,7 +495,7 @@ export const BorrowingExpandCard = ({
                   </div>
                 ) : null}
 
-                <div
+                {/* <div
                   className={`block-name ${
                     vaultHasXtzCollateral || vaultHasSmvkCollateral ? 'margin-top-20' : 'margin-top'
                   }`}
@@ -547,7 +550,7 @@ export const BorrowingExpandCard = ({
                       Update <Icon id="paginationArrowLeft" />
                     </Button>
                   </div>
-                ) : null}
+                ) : null} */}
 
                 <div className="repay-full">
                   <Button
@@ -562,6 +565,7 @@ export const BorrowingExpandCard = ({
                         collateralRatio,
                         borrowedAmount,
                         feesAmount: fee,
+                        minimumRepay,
                         currentCollateralBalance: collateralData.at(-1)?.amount ?? 0,
                         borrowCapacity,
                       })

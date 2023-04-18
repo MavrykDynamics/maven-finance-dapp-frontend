@@ -4,7 +4,13 @@ import { useEffect, useMemo, useState } from 'react'
 
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { INPUT_STATUS_SUCCESS, INPUT_STATUS_ERROR, INPUT_LARGE } from 'app/App.components/Input/Input.constants'
-import { DEFAULT_LOANS_INPUT_VALUE, getOnBlurValue, getOnFocusValue, RepayPartPopupDataType } from './Modals.helpers'
+import {
+  DEFAULT_LOANS_INPUT_VALUE,
+  getOnBlurValue,
+  getOnFocusValue,
+  RepayPartPopupDataType,
+  loansInputValidation,
+} from './Modals.helpers'
 import { State } from 'reducers'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { repayPartOfVaultAction } from 'pages/Loans/Actions/vault.actions'
@@ -22,6 +28,8 @@ import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase, VaultModalOverview } from './Modals.style'
 import { calcCollateralRatio } from 'pages/Loans/Loans.helpers'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
+import { StatusMessageStyled } from '../LoansComponents.style'
+import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17953%3A224110&t=Sx2aEpp3ifrGxBtQ-0
 export const Repay = ({
@@ -40,6 +48,7 @@ export const Repay = ({
     feesAmount = 0,
     currentCollateralBalance = 0,
     borrowCapacity = 0,
+    minimumRepay = 0,
     borrowedAmount = 0,
     scrollToCurrentVault,
   } = data ?? {}
@@ -70,9 +79,13 @@ export const Repay = ({
     }
   }, [show])
 
-  const inputOnChangeHandle = (newInputAmount: string, maxAmount: number) => {
-    const validationStatus =
-      Number(newInputAmount) > 0 && Number(newInputAmount) <= maxAmount ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
+  const inputOnChangeHandle = (newInputAmount: string, maxAmount: number, symbol?: string) => {
+    const validationStatus = loansInputValidation({
+      inputAmount: newInputAmount,
+      maxAmount,
+      symbol,
+      minAmount: minimumRepay,
+    })
 
     setInputData({
       ...inputData,
@@ -164,7 +177,11 @@ export const Repay = ({
                     onBlur: inputOnBlurHandle,
                     onFocus: onFocusHandler,
                     onChange: (e) =>
-                      inputOnChangeHandle(e.target.value, Math.min(borrowedAsset.userBalance, totalOutstanding)),
+                      inputOnChangeHandle(
+                        e.target.value,
+                        Math.min(borrowedAsset.userBalance, totalOutstanding),
+                        borrowedAsset?.symbol,
+                      ),
                   }}
                   settings={{
                     balance: borrowedAsset.userBalance,
@@ -173,6 +190,7 @@ export const Repay = ({
                       inputOnChangeHandle(
                         String(Math.min(borrowedAsset.userBalance, totalOutstanding)),
                         Math.min(borrowedAsset.userBalance, totalOutstanding),
+                        borrowedAsset?.symbol,
                       ),
                     inputStatus: inputData.validationStatus,
                     convertedValue: inputAmount * borrowedAsset.rate,
@@ -184,6 +202,15 @@ export const Repay = ({
                     {borrowedAsset?.symbol}
                   </InputPinnedTokenInfo>
                 </Input>
+              ) : null}
+
+              {inputData.validationStatus === INPUT_STATUS_ERROR && inputAmount <= minimumRepay ? (
+                <StatusMessageStyled className={`${vaultsStatuses.LIQUIDATABLE} borrow-message`}>
+                  <Icon id="error-triangle" />
+                  {
+                    'Your outstanding debt is less than the minimum repayment amount set by the smart contracts. We will have you repay the minimum repayment amount and the amount you are overpaying will automatically be refunded by the smart contract.'
+                  }
+                </StatusMessageStyled>
               ) : null}
 
               <div className="manage-btn">
@@ -228,13 +255,7 @@ export const Repay = ({
                 >
                   <div className={`percentage`}>
                     Collateral Ratio:{' '}
-                    <CommaNumber
-                      beginningText={`${futureCollateralRatio > 250 ? '+' : ''}`}
-                      value={Math.max(0, Math.min(futureCollateralRatio, 250))}
-                      endingText="%"
-                      showDecimal
-                      decimalsToShow={2}
-                    />
+                    <CommaNumber value={futureCollateralRatio} endingText="%" showDecimal decimalsToShow={2} />
                   </div>
                   <GradientDiagram
                     className="diagram"

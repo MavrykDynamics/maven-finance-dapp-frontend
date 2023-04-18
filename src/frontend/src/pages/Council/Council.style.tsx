@@ -7,6 +7,22 @@ import { MavrykTheme } from '../../styles/interfaces'
 
 export const CounsilPageWrapper = styled.div`
   margin-top: 30px;
+
+  &,
+  .left-block,
+  .right-block {
+    display: flex;
+    flex-direction: column;
+    row-gap: 30px;
+  }
+
+  h1 {
+    margin: 0;
+
+    &::after {
+      margin-bottom: 0;
+    }
+  }
 `
 
 export const CouncilStyled = styled.div<{ theme: MavrykTheme }>`
@@ -15,10 +31,6 @@ export const CouncilStyled = styled.div<{ theme: MavrykTheme }>`
 
   .left-block {
     width: 750px;
-
-    & > h1 {
-      margin-bottom: 11px;
-    }
 
     .pending {
       display: flex;
@@ -29,15 +41,14 @@ export const CouncilStyled = styled.div<{ theme: MavrykTheme }>`
     .pending-items {
       width: 750px;
     }
+
+    .tabSwitcher {
+      margin: 0;
+    }
   }
 
   .right-block {
     width: 310px;
-
-    & > h1 {
-      margin-top: 30px;
-      margin-bottom: 10px;
-    }
   }
 `
 
@@ -49,12 +60,8 @@ export const PropagateBreakGlassCouncilCard = styled(Card)<{ theme: MavrykTheme 
   height: 75px;
   margin: 0;
 
-  h1 {
-    margin: 0;
-
-    &::after {
-      display: none;
-    }
+  h1::after {
+    display: none;
   }
 
   button {
@@ -63,15 +70,13 @@ export const PropagateBreakGlassCouncilCard = styled(Card)<{ theme: MavrykTheme 
 `
 
 export const ReviewCard = styled(Card)<{
-  displayPendingSignature: boolean
   theme: MavrykTheme
 }>`
   display: flex;
   flex-direction: column;
   justify-content: space-around;
   padding: 30px;
-  margin-top: ${({ displayPendingSignature }) => (displayPendingSignature ? 0 : 30)}px;
-  margin-bottom: 23px;
+  margin: 0;
   height: 201px;
 `
 
@@ -93,6 +98,7 @@ export const GoBack = styled(Card)`
 `
 
 export const AvaliableActions = styled(Card)<{ theme: MavrykTheme }>`
+  margin: 0;
   padding: 0;
 
   .top-bar {

@@ -206,8 +206,7 @@ export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
   }
 
   .add-first-collateral {
-    margin-left: auto;
-    margin-top: 3px;
+    margin: 3px 0 60px auto;
     width: 270px;
   }
 
@@ -263,22 +262,22 @@ export const StatusMessageStyled = styled.div<{ theme: MavrykTheme }>`
   }
 
   &.${vaultsStatuses.GRACE_PERIOD} {
-    border: 1px solid ${({ theme }) => theme.darkWarningColor};
+    border: 1px solid ${({ theme }) => theme.warningColor};
 
     svg {
-      fill: ${({ theme }) => theme.darkWarningColor};
+      fill: ${({ theme }) => theme.warningColor};
     }
 
     span {
-      color: ${({ theme }) => theme.darkWarningColor};
+      color: ${({ theme }) => theme.warningColor};
     }
   }
 
   &.${vaultsStatuses.AT_RISK} {
-    border: 1px solid ${({ theme }) => theme.awaitingColor};
+    border: 1px solid ${({ theme }) => theme.riskColor};
 
     svg {
-      fill: ${({ theme }) => theme.awaitingColor};
+      fill: ${({ theme }) => theme.riskColor};
     }
   }
 

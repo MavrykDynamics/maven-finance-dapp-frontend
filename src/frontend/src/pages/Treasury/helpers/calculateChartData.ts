@@ -1,9 +1,10 @@
 import { HIGHLIGHTED_STROKE_WIDTH, DEFAULT_STROKE_WIDTH } from 'app/App.components/PieСhart/pieChart.const'
 import { TreasuryBalanceType, TreasuryChartType } from 'utils/TypesAndInterfaces/Treasury'
 import { calcPersent } from './treasury.utils'
+import { VaultAssetData } from 'pages/Vaults/Vaults.helpers'
 
 export const getPieChartData = (
-  balances: Array<TreasuryBalanceType>,
+  balances: Array<TreasuryBalanceType | VaultAssetData>,
   reducedBalance: number,
   hoveredPath: string | null,
 ) => {

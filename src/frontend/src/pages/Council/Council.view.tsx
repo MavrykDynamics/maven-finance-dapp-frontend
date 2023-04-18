@@ -19,11 +19,7 @@ import Pagination from 'app/App.components/Pagination/Pagination.view'
 import { EmptyContainer } from 'app/App.style'
 
 // helpers
-import {
-  BUTTON_PRIMARY,
-  BUTTON_SECONDARY,
-  BUTTON_WIDE,
-} from '../../app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from '../../app/App.components/Button/Button.constants'
 import { getSeparateSnakeCase } from 'utils/parse'
 import { memberIsFirstOfList } from 'pages/Council/Council.helpers'
 import {
@@ -298,8 +294,10 @@ export function CouncilView({
               {isPastActionsTab ? (
                 <>
                   <h1>{titles.allPastActions}</h1>
-                  {paginatedAllPastActions.length
-                    ? paginatedAllPastActions.map((item) => {
+
+                  {paginatedAllPastActions.length ? (
+                    <div>
+                      {paginatedAllPastActions.map((item) => {
                         const action = actionsMapper[item]
 
                         return (
@@ -312,16 +310,20 @@ export function CouncilView({
                             councilId={action.councilId}
                           />
                         )
-                      })
-                    : councilEmptyContainer}
+                      })}
+                    </div>
+                  ) : (
+                    councilEmptyContainer
+                  )}
                 </>
               ) : null}
 
               {!isPastActionsTab ? (
                 <>
                   <h1>Pending Signature Council Actions</h1>
-                  {paginatedAllPendingActions.length
-                    ? paginatedAllPendingActions.map((item) => {
+                  {paginatedAllPendingActions.length ? (
+                    <div>
+                      {paginatedAllPendingActions.map((item) => {
                         const action = actionsMapper[item]
 
                         return (
@@ -334,8 +336,11 @@ export function CouncilView({
                             councilId={action.councilId}
                           />
                         )
-                      })
-                    : councilEmptyContainer}
+                      })}
+                    </div>
+                  ) : (
+                    councilEmptyContainer
+                  )}
                 </>
               ) : null}
 
@@ -384,7 +389,7 @@ export function CouncilView({
 
         <div className="right-block">
           {!tabId && (
-            <ReviewCard displayPendingSignature={displayPendingSignature}>
+            <ReviewCard>
               <Link to={`${queryParameters.pathname}${queryParameters.pastActions}`}>
                 <NewButton form={BUTTON_WIDE} kind={BUTTON_SECONDARY}>
                   Review Past Actions
@@ -403,16 +408,18 @@ export function CouncilView({
             <>
               <h1>{titles.membersName}</h1>
 
-              {sortedCouncilMembers.map((item) => (
-                <CouncilMemberView
-                  key={item.id}
-                  image={item.image}
-                  name={item.name}
-                  userId={item.userId}
-                  openModal={handleOpenleModal}
-                  showUpdateInfo={isCouncilMember}
-                />
-              ))}
+              <div>
+                {sortedCouncilMembers.map((item) => (
+                  <CouncilMemberView
+                    key={item.id}
+                    image={item.image}
+                    name={item.name}
+                    userId={item.userId}
+                    openModal={handleOpenleModal}
+                    showUpdateInfo={isCouncilMember}
+                  />
+                ))}
+              </div>
             </>
           )}
         </div>

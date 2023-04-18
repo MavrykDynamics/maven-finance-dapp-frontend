@@ -2,7 +2,7 @@ import dayjs from 'dayjs'
 import { SingleValueData, UTCTimestamp } from 'lightweight-charts'
 import { State } from 'reducers'
 import { UserState } from 'reducers/wallet'
-import { BLOCKS_PER_MINUTE, FIXED_POINT_ACCURACY, SECONDS_PER_YEAR } from 'utils/constants'
+import { BLOCKS_PER_MINUTE, DECIMALS_TO_SHOW, FIXED_POINT_ACCURACY, SECONDS_PER_YEAR } from 'utils/constants'
 import {
   Lending_Controller_History_Data,
   Lending_Controller_Loan_Token,
@@ -22,11 +22,20 @@ import {
   BaseLoansAssetDataType,
   DepositorsFlagType,
 } from 'utils/TypesAndInterfaces/Loans'
-import { calcWithoutDecimals, calcWithoutMu, convertNumberForClient } from '../../utils/calcFunctions'
+import { calcWithoutDecimals, convertNumberForClient, getNumberInBounds } from '../../utils/calcFunctions'
 import { ANY_USER, NONE_USER, WHITELIST_USERS } from './Loans.const'
 import { getUserBalanceForLoanAsset } from './LoansFethcers'
 
 export const isTezosAsset = (tokenName: string) => tokenName === 'tez' || tokenName === 'tezos'
+
+export const decimalsToShow = (symbol?: string, defaultDecimals: number = DECIMALS_TO_SHOW) => {
+  switch (symbol?.toLowerCase()) {
+    case 'tzbtc':
+      return 8
+    default:
+      return defaultDecimals
+  }
+}
 
 export const getAssetMetadata = ({
   tokenName,
@@ -359,7 +368,6 @@ const getLendingItem = (
 // Normalizing borrowed items for loan asset
 type BorrowingNormalizerReturnType = {
   myBorrowingList: Array<LoansVaultType>
-  permissinedBorrowingList: Array<LoansVaultType>
   totalCollateral: number
   vaultsBorrowedAmount: number
 }
@@ -392,10 +400,10 @@ export const calcCollateralRatio = (collateralAmount: number, borrowedAmount: nu
   if (collateralAmount === 0) return 0
 
   // means we haven't borrowed, but we have deposited
-  if (borrowedAmount === 0) return 251
+  if (borrowedAmount === 0) return 250
 
   const collateralRatio = (collateralAmount / Math.max(1, borrowedAmount * borrowedAssetRate)) * 100
-  return Number(collateralRatio.toFixed(1))
+  return getNumberInBounds(0, 250, Number(collateralRatio.toFixed(1)))
 }
 
 export const getMaxCollateralWithdraw = (
@@ -423,6 +431,7 @@ const getBorrowings = async (
   feeds: State['dataFeeds']['feedsLedger'],
   interestRateDecimals: number,
   avaliableLiq: number,
+  minimumRepay: number,
   userAddress?: string,
 ): Promise<BorrowingNormalizerReturnType> => {
   try {
@@ -538,6 +547,7 @@ const getBorrowings = async (
 
         collateralBalance: vaultCollateral.totalRow.amount,
         borrowCapacity,
+        avaliableLiq,
         collateralRatio,
         apr: currentInterestRate * 100,
         fee: accruedInterest,
@@ -545,6 +555,7 @@ const getBorrowings = async (
         vaultId: vault.id,
         collateralData,
         borrowedAmount,
+        minimumRepay,
 
         levelOfEarly: currentBlock?.level ?? 0,
         levelOfLate:
@@ -562,18 +573,14 @@ const getBorrowings = async (
         acc.myBorrowingList.push(normallizedVault)
       }
 
-      if (depositors.find((depositorId) => depositorId === userAddress) || deporsitorsFlag === ANY_USER) {
-        acc.permissinedBorrowingList.push(normallizedVault)
-      }
-
       acc.totalCollateral += vaultCollateral.totalRow.amount
       acc.vaultsBorrowedAmount += normallizedVault.borrowedAmount * normallizedVault.borrowedAsset.rate
 
       return acc
-    }, Promise.resolve({ myBorrowingList: [], permissinedBorrowingList: [], totalCollateral: 0, vaultsBorrowedAmount: 0 }))
+    }, Promise.resolve({ myBorrowingList: [], totalCollateral: 0, vaultsBorrowedAmount: 0 }))
   } catch (e) {
     console.log('getBorrowings error', e)
-    return { myBorrowingList: [], permissinedBorrowingList: [], totalCollateral: 0, vaultsBorrowedAmount: 0 }
+    return { myBorrowingList: [], totalCollateral: 0, vaultsBorrowedAmount: 0 }
   }
 }
 
@@ -613,9 +620,9 @@ export const normalizeLoans = async ({
           loan_token_contract_standard,
           oracle_id,
           vaults_aggregate: { aggregate },
+          min_repayment_amount,
         } = loanToken
 
-        const isXTZ = isTezosAsset(loan_token_name)
         const loanTokenMetadata = getAssetMetadata({
           tokenName: loan_token_name,
           tokenAddress: loan_token_address,
@@ -629,15 +636,12 @@ export const normalizeLoans = async ({
         )
 
         if (!loanTokenMetadata) return acc
-        const reserveAmountMu =
+        const reserveAmount =
           convertNumberForClient({ number: token_pool_total, grade: loanTokenMetadata.decimals }) *
           (reserve_ratio / 10000)
-        const reserveAmount = isXTZ
-          ? calcWithoutMu(reserveAmountMu)
-          : calcWithoutDecimals(reserveAmountMu, loanTokenMetadata.decimals)
-        const availableLiquidity = isXTZ
-          ? calcWithoutMu(total_remaining - reserveAmountMu)
-          : calcWithoutDecimals(total_remaining - reserveAmountMu, loanTokenMetadata.decimals)
+        const availableLiquidity =
+          (convertNumberForClient({ number: total_remaining, grade: loanTokenMetadata.decimals }) - reserveAmount) *
+          loanTokenMetadata.rate
 
         const {
           transactionHistory,
@@ -646,8 +650,15 @@ export const normalizeLoans = async ({
           marketCollateralChartData,
           marketLiquidityChartData,
         } = getTransactionHistory(history_data, dipDupData, feeds)
-        const { myBorrowingList, permissinedBorrowingList, totalCollateral, vaultsBorrowedAmount } =
-          await getBorrowings(vaults, dipDupData, feeds, interestRateDecimals, availableLiquidity, userAddres)
+        const { myBorrowingList, totalCollateral, vaultsBorrowedAmount } = await getBorrowings(
+          vaults,
+          dipDupData,
+          feeds,
+          interestRateDecimals,
+          availableLiquidity,
+          convertNumberForClient({ number: min_repayment_amount, grade: loanTokenMetadata.decimals }),
+          userAddres,
+        )
         const lendingItem = getLendingItem(
           loanToken,
           userMTokens,
@@ -668,7 +679,6 @@ export const normalizeLoans = async ({
             userBalance: loanTokenUserBalance,
           },
           myBorrowingList,
-          permissionedBorrowingList: permissinedBorrowingList,
           lendingItem,
           transactionHistory,
           marketCollateralChartData,

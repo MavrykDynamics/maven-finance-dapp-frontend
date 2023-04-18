@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 
 import { INPUT_LARGE, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
-import { BorrowPopupDataType, DEFAULT_LOANS_INPUT_VALUE, getOnBlurValue, getOnFocusValue } from './Modals.helpers'
+import { BorrowPopupDataType, DEFAULT_LOANS_INPUT_VALUE, getOnBlurValue, getOnFocusValue, loansInputValidation } from './Modals.helpers'
 import { State } from 'reducers'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
@@ -79,9 +79,8 @@ export const BorrowAsset = ({
   }, [show])
 
   // stuff to handle inputs
-  const inputOnChangeHandle = (newInputAmount: string, maxAmount: number) => {
-    const validationStatus =
-      Number(newInputAmount) > 0 && Number(newInputAmount) <= maxAmount ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
+  const inputOnChangeHandle = (newInputAmount: string, maxAmount: number, symbol?: string) => {
+    const validationStatus = loansInputValidation({ inputAmount: newInputAmount, maxAmount, symbol })
 
     setInputData({
       ...inputData,
@@ -147,7 +146,11 @@ export const BorrowAsset = ({
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">Collateral Utilization</div>
-                  <CommaNumber value={collateralRatio} className="value" endingText="%" />
+                  {hasUserBorrowed ? (
+                    <CommaNumber value={collateralRatio} className="value" endingText="%" />
+                  ) : (
+                    <div className="value">Not Relevant</div>
+                  )}
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">Borrow APR</div>
@@ -176,7 +179,8 @@ export const BorrowAsset = ({
                     type: 'number',
                     onBlur: inputOnBlurHandle,
                     onFocus: onFocusHandler,
-                    onChange: (e) => inputOnChangeHandle(e.target.value, borrowCapacity / borrowedAsset.rate),
+                    onChange: (e) =>
+                      inputOnChangeHandle(e.target.value, borrowCapacity / borrowedAsset.rate, borrowedAsset?.symbol),
                   }}
                   settings={{
                     balance: borrowedAsset.userBalance,
@@ -185,6 +189,7 @@ export const BorrowAsset = ({
                       inputOnChangeHandle(
                         String(borrowCapacity / borrowedAsset.rate),
                         borrowCapacity / borrowedAsset.rate,
+                        borrowedAsset?.symbol,
                       ),
                     inputStatus: inputData.validationStatus,
                     convertedValue: inputAmount * borrowedAsset.rate,
@@ -206,13 +211,7 @@ export const BorrowAsset = ({
                 >
                   <div className={`percentage`}>
                     Collateral Ratio:{' '}
-                    <CommaNumber
-                      beginningText={`${futureCollateralRatio > 250 ? '+' : ''}`}
-                      value={Math.max(0, Math.min(futureCollateralRatio, 250))}
-                      endingText="%"
-                      showDecimal
-                      decimalsToShow={2}
-                    />
+                    <CommaNumber value={futureCollateralRatio} endingText="%" showDecimal decimalsToShow={2} />
                   </div>
                   <GradientDiagram
                     className="diagram"
@@ -262,12 +261,8 @@ export const BorrowAsset = ({
 
               <div className="lending-stats" style={{ marginBottom: '30px' }}>
                 <ThreeLevelListItem>
-                  <div className="name">Asset</div>
-                  <div className="value">{borrowedAsset?.symbol}</div>
-                </ThreeLevelListItem>
-                <ThreeLevelListItem>
                   <div className="name">Total Amount</div>
-                  <CommaNumber value={inputAmount} className="value" />
+                  <CommaNumber value={inputAmount} className="value" endingText={borrowedAsset?.symbol} />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">
@@ -275,15 +270,31 @@ export const BorrowAsset = ({
                     <CustomTooltip
                       iconId="info"
                       defaultStrokeColor={silverColor}
-                      text={`Total Amount - DAO Fee`}
+                      text={`Total Amount minus DAO Fee`}
                       className="tooltip"
                     />
                   </div>
-                  <CommaNumber value={inputAmount * 0.99} className="value" />
+                  <CommaNumber
+                    value={inputAmount - inputAmount * (DAOFee / 100)}
+                    className="value"
+                    endingText={borrowedAsset?.symbol}
+                  />
+                </ThreeLevelListItem>
+                <ThreeLevelListItem>
+                  <div className="name">DAO Fee</div>
+                  <CommaNumber
+                    value={inputAmount * (DAOFee / 100)}
+                    className="value"
+                    endingText={borrowedAsset?.symbol}
+                  />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">USD Value</div>
-                  <CommaNumber value={inputAmount * Number(borrowedAsset?.rate)} className="value" beginningText="$" />
+                  <CommaNumber
+                    value={(inputAmount - inputAmount * (DAOFee / 100)) * Number(borrowedAsset?.rate)}
+                    className="value"
+                    beginningText="$"
+                  />
                 </ThreeLevelListItem>
               </div>
 
@@ -295,13 +306,7 @@ export const BorrowAsset = ({
                 >
                   <div className={`percentage`}>
                     Collateral Ratio:{' '}
-                    <CommaNumber
-                      beginningText={`${futureCollateralRatio > 250 ? '+' : ''}`}
-                      value={Math.max(0, Math.min(futureCollateralRatio, 250))}
-                      endingText="%"
-                      showDecimal
-                      decimalsToShow={2}
-                    />
+                    <CommaNumber value={futureCollateralRatio} endingText="%" showDecimal decimalsToShow={2} />
                   </div>
                   <GradientDiagram
                     className="diagram"
