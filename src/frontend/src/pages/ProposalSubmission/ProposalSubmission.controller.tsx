@@ -137,20 +137,25 @@ export const ProposalSubmission = () => {
 
     const isBytesSame =
       submitProposalBody?.proposalData.length === remoteProposal?.proposalData.length &&
-      submitProposalBody?.proposalData.every(({ title, encoded_code }, idx) => {
-        const remoteProposalByte = remoteProposal?.proposalData?.[idx]
-        return title !== remoteProposalByte?.title || encoded_code !== remoteProposalByte?.encoded_code
-      })
+      submitProposalBody?.proposalData
+        .filter(({ title, encoded_code }) => title || encoded_code)
+        .every(({ title, encoded_code }, idx) => {
+          const remoteProposalByte = remoteProposal?.proposalData?.[idx]
+          return title !== remoteProposalByte?.title || encoded_code !== remoteProposalByte?.encoded_code
+        })
+
     const isPaymentsSame =
       submitProposalBody?.proposalPayments.length === remoteProposal?.proposalPayments.length &&
-      submitProposalBody?.proposalPayments.every(({ token_amount, token_address, to__id }, idx) => {
-        const remoteProposalPayment = remoteProposal?.proposalPayments?.[idx]
-        return (
-          to__id !== remoteProposalPayment?.to__id ||
-          token_amount !== remoteProposalPayment?.token_amount ||
-          token_address !== remoteProposalPayment?.token_address
-        )
-      })
+      submitProposalBody?.proposalPayments
+        .filter(({ token_amount, to__id }) => token_amount || to__id)
+        .every(({ token_amount, token_address, to__id }, idx) => {
+          const remoteProposalPayment = remoteProposal?.proposalPayments?.[idx]
+          return (
+            to__id !== remoteProposalPayment?.to__id ||
+            token_amount !== remoteProposalPayment?.token_amount ||
+            token_address !== remoteProposalPayment?.token_address
+          )
+        })
 
     return isTitleDiff || isDescrDiff || isSourceLinkDiff || !isBytesSame || !isPaymentsSame
   }, [currentOriginalProposalId, mappedProposals, proposalState])
@@ -213,10 +218,13 @@ export const ProposalSubmission = () => {
   const handleUpdateData = async (proposalId: number) => {
     const currentOriginalProposal = currentOriginalProposalId ? proposalsMapper[currentOriginalProposalId] : null
     if (currentOriginalProposal) {
-      const bytesDiff = getBytesDiff(currentOriginalProposal.proposalData ?? [], currentProposal.proposalData)
+      const bytesDiff = getBytesDiff(
+        currentOriginalProposal.proposalData ?? [],
+        currentProposal.proposalData.filter(({ title, encoded_code }) => title || encoded_code),
+      )
       const paymentsDiff = getPaymentsDiff(
         currentOriginalProposal?.proposalPayments ?? [],
-        currentProposal.proposalPayments,
+        currentProposal.proposalPayments.filter(({ token_amount, to__id }) => token_amount || to__id),
         whitelistTokens,
         dipDupTokens,
       )
@@ -269,23 +277,34 @@ export const ProposalSubmission = () => {
 
   const isBytesValid = useMemo(
     () =>
-      currentProposalValidation.bytesValidation?.every(({ validBytes, validTitle, byteId }) => {
-        const isSavedBytes = currentOriginalProposalId
-          ? proposalsMapper[currentOriginalProposalId]?.proposalData?.find(({ id }) => id === byteId)
-          : false
-        return isSavedBytes
-          ? validBytes !== INPUT_STATUS_ERROR
-          : validBytes === INPUT_STATUS_SUCCESS && validTitle === INPUT_STATUS_SUCCESS
-      }) ?? true,
+      currentProposalValidation.bytesValidation
+        ?.filter(({ byteId }) => {
+          const byteData = currentProposal.proposalData.find(({ id }) => id === byteId)
+          return byteData?.title || byteData?.encoded_code
+        })
+        .every(({ validBytes, validTitle, byteId }) => {
+          const isSavedBytes = currentOriginalProposalId
+            ? proposalsMapper[currentOriginalProposalId]?.proposalData?.find(({ id }) => id === byteId)
+            : false
+          return isSavedBytes
+            ? validBytes !== INPUT_STATUS_ERROR
+            : validBytes === INPUT_STATUS_SUCCESS && validTitle === INPUT_STATUS_SUCCESS
+        }) ?? true,
     [currentOriginalProposalId, currentProposalValidation.bytesValidation, proposalsMapper],
   )
 
   const isPaymentsValid = useMemo(
     () =>
-      currentProposalValidation.paymentsValidation?.every(
-        ({ to__id, title, token_amount }) =>
-          to__id === INPUT_STATUS_SUCCESS || (title === INPUT_STATUS_SUCCESS && token_amount === INPUT_STATUS_SUCCESS),
-      ) ?? true,
+      currentProposalValidation.paymentsValidation
+        ?.filter(({ paymentId }) => {
+          const paymentData = currentProposal.proposalPayments.find(({ id }) => id === paymentId)
+          return paymentData?.to__id || paymentData?.token_amount
+        })
+        .every(
+          ({ to__id, title, token_amount }) =>
+            to__id === INPUT_STATUS_SUCCESS ||
+            (title === INPUT_STATUS_SUCCESS && token_amount === INPUT_STATUS_SUCCESS),
+        ) ?? true,
     [currentProposalValidation.paymentsValidation],
   )
 
