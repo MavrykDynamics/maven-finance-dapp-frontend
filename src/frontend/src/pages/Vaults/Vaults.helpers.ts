@@ -149,13 +149,14 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
       )
 
       const borrowedAmount = item.loan_principal_total / 10 ** vaultAsset.decimals
+      const currentLoanInterest = item.loan_interest_total / 10 ** vaultAsset.decimals
 
       // Calculating Fee of the vault
       const accruedInterest =
-        borrowedAmount === 0
-          ? 0
-          : calculateAccruedInterest(item.loan_outstanding_total, item.borrow_index, item.loan_token.borrow_index) /
-            FIXED_POINT_ACCURACY
+          borrowedAmount === 0
+              ? currentLoanInterest
+              : currentLoanInterest + calculateAccruedInterest(item.loan_outstanding_total, item.borrow_index, item.loan_token.borrow_index) /
+              FIXED_POINT_ACCURACY
 
       const collateralRatio = calcCollateralRatio(vaultCollateral.totalRow.amount, borrowedAmount, vaultAsset.rate)
       const collateralData = vaultCollateral.normalizedCollaterals.length
