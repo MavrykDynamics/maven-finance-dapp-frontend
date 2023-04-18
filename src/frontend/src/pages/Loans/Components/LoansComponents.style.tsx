@@ -113,6 +113,10 @@ export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
   position: relative;
   cursor: default;
 
+  &.more-padding {
+    padding-bottom: 80px;
+  }
+
   .block-name {
     font-weight: 600;
     font-size: 18px;
@@ -211,9 +215,8 @@ export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
   }
 
   .add-first-collateral {
-    margin: 3px 0 60px auto;
+    margin: 3px 0 0 auto;
     width: 270px;
-    min-height: 100px;
   }
 
   .repay-full {

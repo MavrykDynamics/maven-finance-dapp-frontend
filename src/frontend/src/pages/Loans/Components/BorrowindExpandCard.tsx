@@ -208,7 +208,12 @@ export const BorrowingExpandCard = ({
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Outstanding Debt</div>
-              <CommaNumber value={borrowedAmount + fee} className="value" showDecimal decimalsToShow={borrowedAsset.decimals} />
+              <CommaNumber
+                value={borrowedAmount + fee}
+                className="value"
+                showDecimal
+                decimalsToShow={borrowedAsset.decimals}
+              />
               {rate ? (
                 <CommaNumber
                   value={(borrowedAmount + fee) * rate}
@@ -233,7 +238,11 @@ export const BorrowingExpandCard = ({
         }
       >
         {children || (
-          <BorrowingTabListItemExpanded className="expand-borrow-tab-container">
+          <BorrowingTabListItemExpanded
+            className={`expand-borrow-tab-container ${
+              vaultHasXtzCollateral || vaultHasSmvkCollateral ? '' : 'more-padding'
+            }`}
+          >
             {vaultStatus && <StatusMessage status={vaultStatus} timestamp={timerTimestamp} />}
 
             <div className="block-name">Borrowed</div>
