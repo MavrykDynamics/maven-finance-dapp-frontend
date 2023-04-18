@@ -81,21 +81,24 @@ export const Dashboard = () => {
 
   const tvlValue = doormanTVL + treasuryTVL + farmsTVL + lendingTvl + vaultsTvl
 
-  const { isLoading } = useDataLoader(async (isDepsChanged) => {
-    try {
-      await Promise.all(
-        [
-          (!isGovernanceStorageLoaded || isDepsChanged) && dispatch(getGovernanceStorage()),
-          (!isVaultsLoaded || isDepsChanged) && dispatch(getVaultsStorage()),
-          (!isVestingLoaded || isDepsChanged) && dispatch(getVestingStorage()),
-          (!isTreasuryLoaded || isDepsChanged) && dispatch(fillTreasuryStorage()),
-          (!isLoansLoaded || isDepsChanged) && dispatch(getLoansStorage()),
-          (!isFarmsLoaded || isDepsChanged) && dispatch(getFarmStorage()),
-          (!isDoormanLoaded || isDepsChanged) && dispatch(getDoormanStorage()),
-        ].filter(Boolean),
-      )
-    } catch (e) {}
-  }, [])
+  const { isLoading } = useDataLoader(
+    async (isDepsChanged) => {
+      try {
+        await Promise.all(
+          [
+            (!isGovernanceStorageLoaded || isDepsChanged) && dispatch(getGovernanceStorage()),
+            (!isVaultsLoaded || isDepsChanged) && dispatch(getVaultsStorage()),
+            (!isVestingLoaded || isDepsChanged) && dispatch(getVestingStorage()),
+            (!isTreasuryLoaded || isDepsChanged) && dispatch(fillTreasuryStorage()),
+            (!isLoansLoaded || isDepsChanged) && dispatch(getLoansStorage()),
+            (!isFarmsLoaded || isDepsChanged) && dispatch(getFarmStorage()),
+            (!isDoormanLoaded || isDepsChanged) && dispatch(getDoormanStorage()),
+          ].filter(Boolean),
+        )
+      } catch (e) {}
+    },
+    [isLoansLoaded],
+  )
 
   const mvkStatsBlock: mvkStatsType = {
     marketCap: marketCapValue,
