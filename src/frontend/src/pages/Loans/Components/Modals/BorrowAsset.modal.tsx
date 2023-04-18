@@ -3,7 +3,7 @@ import { useLockBodyScroll } from 'react-use'
 import { useEffect, useMemo, useState } from 'react'
 
 import { INPUT_LARGE, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
-import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
+import { COLLATERAL_RATIO_GRADIENT, assetDecimalsToShow, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { BorrowPopupDataType, DEFAULT_LOANS_INPUT_VALUE, getOnBlurValue, getOnFocusValue } from './Modals.helpers'
 import { State } from 'reducers'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
@@ -22,7 +22,7 @@ import { LoansModalBase, VaultModalOverview } from './Modals.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { silverColor } from 'styles'
 import { borrowVaultAssetAction } from 'pages/Loans/Actions/vault.actions'
-import { calcCollateralRatio } from 'pages/Loans/Loans.helpers'
+import { calcCollateralRatio, getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { StatusMessageStyled } from '../LoansComponents.style'
 import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
@@ -80,8 +80,13 @@ export const BorrowAsset = ({
 
   // stuff to handle inputs
   const inputOnChangeHandle = (newInputAmount: string, maxAmount: number) => {
-    const validationStatus =
-      Number(newInputAmount) > 0 && Number(newInputAmount) <= maxAmount ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
+    const validationStatus = loansInputValidation({
+      inputAmount: newInputAmount,
+      maxAmount,
+      options: {
+        byDecimalPlaces: borrowedAsset?.decimals || assetDecimalsToShow,
+      },
+    })
 
     setInputData({
       ...inputData,
@@ -147,7 +152,11 @@ export const BorrowAsset = ({
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">Collateral Utilization</div>
-                  <CommaNumber value={collateralRatio} className="value" endingText="%" />
+                  {hasUserBorrowed ? (
+                    <CommaNumber value={collateralRatio} className="value" endingText="%" />
+                  ) : (
+                    <div className="value">Not Relevant</div>
+                  )}
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">Borrow APR</div>
@@ -183,7 +192,7 @@ export const BorrowAsset = ({
                     balanceAsset: borrowedAsset?.symbol,
                     useMaxHandler: () =>
                       inputOnChangeHandle(
-                        String(borrowCapacity / borrowedAsset.rate),
+                        getLoansInputMaxAmount(borrowCapacity / borrowedAsset.rate, borrowedAsset.decimals),
                         borrowCapacity / borrowedAsset.rate,
                       ),
                     inputStatus: inputData.validationStatus,
@@ -257,7 +266,12 @@ export const BorrowAsset = ({
               <div className="lending-stats" style={{ marginBottom: '30px' }}>
                 <ThreeLevelListItem>
                   <div className="name">Total Amount</div>
-                  <CommaNumber value={inputAmount} className="value" endingText={borrowedAsset?.symbol} />
+                  <CommaNumber
+                    value={inputAmount}
+                    decimalsToShow={assetDecimalsToShow}
+                    className="value"
+                    endingText={borrowedAsset?.symbol}
+                  />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">
@@ -271,6 +285,7 @@ export const BorrowAsset = ({
                   </div>
                   <CommaNumber
                     value={inputAmount - inputAmount * (DAOFee / 100)}
+                    decimalsToShow={assetDecimalsToShow}
                     className="value"
                     endingText={borrowedAsset?.symbol}
                   />
@@ -279,6 +294,7 @@ export const BorrowAsset = ({
                   <div className="name">DAO Fee</div>
                   <CommaNumber
                     value={inputAmount * (DAOFee / 100)}
+                    decimalsToShow={assetDecimalsToShow}
                     className="value"
                     endingText={borrowedAsset?.symbol}
                   />

@@ -59,6 +59,7 @@ export const VAULTS_STORAGE_QUERY = `
           total_remaining,
           token_pool_total,
           reserve_ratio
+          min_repayment_amount
         }
       }
     }

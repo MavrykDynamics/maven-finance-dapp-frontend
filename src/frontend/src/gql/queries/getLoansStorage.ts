@@ -39,6 +39,7 @@ export const LOANS_QUERY = `
         reserve_ratio
         current_interest_rate
         oracle_id
+        min_repayment_amount
 
         history_data(where: {type: {_in: ["0", "1", "2", "3", "4", "5", "6", "7"]}}) {
           type

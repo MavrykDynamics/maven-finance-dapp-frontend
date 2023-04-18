@@ -50,6 +50,7 @@ export type RepayCollateralPopupDataBaseType = {
   borrowedAsset: LoansVaultType['borrowedAsset']
   feesAmount: number
   borrowedAmount: number
+  minimumRepay: number
   currentCollateralBalance: number
   borrowCapacity: number
 }
@@ -180,3 +181,4 @@ export const DEFAULT_LOANS_POPUPS_STATE = {
   removeLendingAssetPopup: DEFAULT_LOANS_POPUP_STATE,
   liquidateVaultPopup: DEFAULT_LOANS_POPUP_STATE,
 }
+

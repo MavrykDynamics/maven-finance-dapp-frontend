@@ -17,6 +17,7 @@ import {
   getOnFocusValue,
   RemoveLendingAssetDataType,
 } from './Modals.helpers'
+import { getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import { State } from 'reducers'
 
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
@@ -27,6 +28,7 @@ import { LoansModalBase } from './Modals.style'
 import { withdrawLendingAssetAction } from 'pages/Loans/Actions/lendingAsset.actions'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import colors from 'styles/colors'
+import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A238846&t=Sx2aEpp3ifrGxBtQ-0
 export const RemoveAssetsFromLending = ({
@@ -67,8 +69,13 @@ export const RemoveAssetsFromLending = ({
   const backBtnHandler = () => setShownScreen('initial')
 
   const onChangeHandler = (inputAmount: string, maxAmount: number) => {
-    const validationStatus =
-      Number(inputAmount) > 0 && Number(inputAmount) <= maxAmount ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
+    const validationStatus = loansInputValidation({
+      inputAmount,
+      maxAmount,
+      options: {
+        byDecimalPlaces: decimals || assetDecimalsToShow,
+      },
+    })
 
     setInputData({
       ...inputData,
@@ -158,7 +165,7 @@ export const RemoveAssetsFromLending = ({
                   balanceAsset: symbol,
                   useMaxHandler: () =>
                     onChangeHandler(
-                      String(Math.min(mBalance, currentLendedAmount)),
+                      getLoansInputMaxAmount(Math.min(mBalance, currentLendedAmount), decimals),
                       Math.min(mBalance, currentLendedAmount),
                     ),
                   inputStatus: inputData.validationStatus,

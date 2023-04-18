@@ -37,6 +37,7 @@ export const RepayFull = ({
     feesAmount = 0,
     currentCollateralBalance = 0,
     collateralRatio = 0,
+    minimumRepay = 0,
     borrowCapacity = 0,
     borrowedAmount = 0,
   } = data ?? {}
@@ -47,10 +48,8 @@ export const RepayFull = ({
   const dispatch = useDispatch()
   const { isActionLoading } = useSelector((state: State) => state.loading)
 
-  const canRepay = useMemo(
-    () => totalOutstanding <= (borrowedAsset?.userBalance ?? 0),
-    [borrowedAsset, totalOutstanding],
-  )
+  const canRepay = totalOutstanding <= (borrowedAsset?.userBalance ?? 0) && totalOutstanding > minimumRepay
+
   const [screenShown, setShownScreen] = useState<'initial' | 'confitmation'>('initial')
 
   useEffect(() => {
