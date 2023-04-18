@@ -494,7 +494,7 @@ export const BorrowingExpandCard = ({
                   </div>
                 ) : null}
 
-                <div
+                {/* <div
                   className={`block-name ${
                     vaultHasXtzCollateral || vaultHasSmvkCollateral ? 'margin-top-20' : 'margin-top'
                   }`}
@@ -549,7 +549,7 @@ export const BorrowingExpandCard = ({
                       Update <Icon id="paginationArrowLeft" />
                     </Button>
                   </div>
-                ) : null}
+                ) : null} */}
 
                 <div className="repay-full">
                   <Button
