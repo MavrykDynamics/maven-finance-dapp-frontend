@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react'
 
 import { IPFSUploaderView } from './IPFSUploader.view'
-import {create} from 'ipfs-http-client'
+import { create } from 'ipfs-http-client'
 import { showToaster } from '../Toaster/Toaster.actions'
 import { ERROR } from '../Toaster/Toaster.constants'
 import { useDispatch } from 'react-redux'
@@ -53,7 +53,7 @@ export const IPFSUploader = ({
     try {
       setIsUploading(true)
       const added = await client.add(file)
-      const image = `https://infura-ipfs.io/ipfs/${added.path}`
+      const image = `https://cloudflare-ipfs.com/ipfs/${added.path}`
 
       setIpfsImageUrl(image)
       setIsUploading(false)
