@@ -120,8 +120,6 @@ export const BorrowAsset = ({
     }
   }
 
-  console.log({ borrowedAsset })
-
   return (
     <PopupContainer onClick={closePopup} show={show}>
       <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="loans">
