@@ -28,6 +28,8 @@ import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase, VaultModalOverview } from './Modals.style'
 import { calcCollateralRatio } from 'pages/Loans/Loans.helpers'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
+import { StatusMessageStyled } from '../LoansComponents.style'
+import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17953%3A224110&t=Sx2aEpp3ifrGxBtQ-0
 export const Repay = ({
@@ -78,7 +80,12 @@ export const Repay = ({
   }, [show])
 
   const inputOnChangeHandle = (newInputAmount: string, maxAmount: number, symbol?: string) => {
-    const validationStatus = loansInputValidation({ inputAmount: newInputAmount, maxAmount, symbol })
+    const validationStatus = loansInputValidation({
+      inputAmount: newInputAmount,
+      maxAmount,
+      symbol,
+      minAmount: minimumRepay,
+    })
 
     setInputData({
       ...inputData,
@@ -195,6 +202,15 @@ export const Repay = ({
                     {borrowedAsset?.symbol}
                   </InputPinnedTokenInfo>
                 </Input>
+              ) : null}
+
+              {inputData.validationStatus === INPUT_STATUS_ERROR && inputAmount <= minimumRepay ? (
+                <StatusMessageStyled className={`${vaultsStatuses.LIQUIDATABLE} borrow-message`}>
+                  <Icon id="error-triangle" />
+                  {
+                    'Your outstanding debt is less than the minimum repayment amount set by the smart contracts. We will have you repay the minimum repayment amount and the amount you are overpaying will automatically be refunded by the smart contract.'
+                  }
+                </StatusMessageStyled>
               ) : null}
 
               <div className="manage-btn">
