@@ -275,6 +275,7 @@ export const ProposalSubmission = () => {
   const isProposalSubmitted = selectedUserProposalId >= 0
   const isProposalPeriod = governancePhase === 'PROPOSAL'
 
+  // Validate bytes, validate only non empty bytes
   const isBytesValid = useMemo(
     () =>
       currentProposalValidation.bytesValidation
@@ -290,9 +291,15 @@ export const ProposalSubmission = () => {
             ? validBytes !== INPUT_STATUS_ERROR
             : validBytes === INPUT_STATUS_SUCCESS && validTitle === INPUT_STATUS_SUCCESS
         }) ?? true,
-    [currentOriginalProposalId, currentProposalValidation.bytesValidation, proposalsMapper],
+    [
+      currentOriginalProposalId,
+      currentProposal.proposalData,
+      currentProposalValidation.bytesValidation,
+      proposalsMapper,
+    ],
   )
 
+  // Validate payments, validate only non empty payments
   const isPaymentsValid = useMemo(
     () =>
       currentProposalValidation.paymentsValidation
@@ -305,7 +312,7 @@ export const ProposalSubmission = () => {
             to__id === INPUT_STATUS_SUCCESS ||
             (title === INPUT_STATUS_SUCCESS && token_amount === INPUT_STATUS_SUCCESS),
         ) ?? true,
-    [currentProposalValidation.paymentsValidation],
+    [currentProposal.proposalPayments, currentProposalValidation.paymentsValidation],
   )
 
   const isStageOneDataValid = useMemo(
