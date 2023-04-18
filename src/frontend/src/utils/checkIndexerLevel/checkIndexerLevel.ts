@@ -24,7 +24,7 @@ export const checkIndexerLevelAndRunDataUpdateCallback = ({
   new Promise((resolve, reject) => {
     // if no indexer level at operation, we can't compare, return error
     if (!currentOperationLevel) {
-      reject(new Error("We can't update data, please try to reload page (operation level is missing)"))
+      reject(new Error('Data update error, please refresh the page (operation level is missing)'))
     }
 
     // coun of calls to stop calls indexer when we reached max update calls
@@ -56,7 +56,7 @@ export const checkIndexerLevelAndRunDataUpdateCallback = ({
         // if calls are exceeded return error obj and clear interval
         if (callsCounter >= MAX_CALLS_AMOUNT) {
           clearInterval(intervalId)
-          reject(new Error('Max update length exceeded'))
+          reject(new Error('Data update timeout, please refresh page'))
         }
 
         // increase counter as we runned 1 call
@@ -64,7 +64,7 @@ export const checkIndexerLevelAndRunDataUpdateCallback = ({
       } catch (e) {
         console.log('checkIndexerLevelAndRunDataUpdateCallback error: ', e)
         clearInterval(intervalId)
-        reject(new Error("We can't update data, please try to reload page"))
+        reject(new Error('Data update error, please refresh the page'))
       }
     }, 1000)
   })

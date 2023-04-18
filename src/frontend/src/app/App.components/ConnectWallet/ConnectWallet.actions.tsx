@@ -23,7 +23,8 @@ export const changeWallet = () => async (dispatch: AppDispatch, getState: GetSta
     if (accountAddress && accountAddress !== state.wallet.accountPkh) {
       await dispatch(updateUserData(accountAddress))
 
-      if (state.loans.isDataLoaded) await dispatch(getLoansStorage)
+      // Update loans data on wallet manipulations if it's loaded, cuz it's user centric data
+      if (state.loans.isDataLoaded) await dispatch(getLoansStorage())
     }
   } catch (e) {
     console.error(`Failed to change wallet: `, e)
@@ -43,7 +44,8 @@ export const connect = () => async (dispatch: AppDispatch, getState: GetState) =
     if (accountAddress) {
       await dispatch(updateUserData(accountAddress))
 
-      if (state.loans.isDataLoaded) await dispatch(getLoansStorage)
+      // Update loans data on wallet manipulations if it's loaded, cuz it's user centric data
+      if (state.loans.isDataLoaded) await dispatch(getLoansStorage())
     } else {
       throw new Error('No account choosen')
     }
@@ -56,12 +58,16 @@ export const connect = () => async (dispatch: AppDispatch, getState: GetState) =
 }
 
 // Action to disconnect wallet
-export const disconnect = () => async (dispatch: AppDispatch) => {
+export const disconnect = () => async (dispatch: AppDispatch, getState: GetState) => {
+  const state = getState()
   try {
     await dappClient().disconnectWallet()
 
     // Clear user data in redux
     await dispatch({ type: DISCONNECT })
+
+    // Update loans data on wallet manipulations if it's loaded, cuz it's user centric data
+    if (state.loans.isDataLoaded) await dispatch(getLoansStorage())
   } catch (e) {
     console.error(`Failed to disconnect TempleWallet: `, e)
     if (e instanceof Error) {
