@@ -57,8 +57,14 @@ export const AddLendingAsset = ({
   const { isActionLoading } = useSelector((state: State) => state.loading)
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
 
-  const onChangeHandler = (inputAmount: string, userBalance: number, symbol?: string) => {
-    const validationStatus = loansInputValidation({ inputAmount, maxAmount: userBalance, symbol })
+  const onChangeHandler = (inputAmount: string, userBalance: number) => {
+    const validationStatus = loansInputValidation({
+      inputAmount,
+      maxAmount: userBalance,
+      options: {
+        byDecimalPlaces: 8,
+      },
+    })
 
     setInputData({
       ...inputData,
@@ -117,14 +123,14 @@ export const AddLendingAsset = ({
             inputProps={{
               value: inputData.amount,
               type: 'number',
-              onChange: (e) => onChangeHandler(e.target.value, userBalance, symbol),
+              onChange: (e) => onChangeHandler(e.target.value, userBalance),
               onBlur: inputOnBlurHandle,
               onFocus: onFocusHandler,
             }}
             settings={{
               balance: userBalance,
               balanceAsset: symbol,
-              useMaxHandler: () => onChangeHandler(String(userBalance), userBalance, symbol),
+              useMaxHandler: () => onChangeHandler(String(userBalance), userBalance),
               inputStatus: inputData.validationStatus,
               inputSize: INPUT_LARGE,
               ...(rate ? { convertedValue: rate * Number(inputData.amount) } : {}),

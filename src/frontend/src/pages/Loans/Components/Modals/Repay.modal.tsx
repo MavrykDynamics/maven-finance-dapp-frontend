@@ -77,8 +77,14 @@ export const Repay = ({
     }
   }, [show])
 
-  const inputOnChangeHandle = (newInputAmount: string, maxAmount: number, symbol?: string) => {
-    const validationStatus = loansInputValidation({ inputAmount: newInputAmount, maxAmount, symbol })
+  const inputOnChangeHandle = (newInputAmount: string, maxAmount: number) => {
+    const validationStatus = loansInputValidation({
+      inputAmount: newInputAmount,
+      maxAmount,
+      options: {
+        byDecimalPlaces: 8,
+      },
+    })
 
     setInputData({
       ...inputData,
@@ -170,11 +176,7 @@ export const Repay = ({
                     onBlur: inputOnBlurHandle,
                     onFocus: onFocusHandler,
                     onChange: (e) =>
-                      inputOnChangeHandle(
-                        e.target.value,
-                        Math.min(borrowedAsset.userBalance, totalOutstanding),
-                        borrowedAsset?.symbol,
-                      ),
+                      inputOnChangeHandle(e.target.value, Math.min(borrowedAsset.userBalance, totalOutstanding)),
                   }}
                   settings={{
                     balance: borrowedAsset.userBalance,
@@ -183,7 +185,6 @@ export const Repay = ({
                       inputOnChangeHandle(
                         String(Math.min(borrowedAsset.userBalance, totalOutstanding)),
                         Math.min(borrowedAsset.userBalance, totalOutstanding),
-                        borrowedAsset?.symbol,
                       ),
                     inputStatus: inputData.validationStatus,
                     convertedValue: inputAmount * borrowedAsset.rate,

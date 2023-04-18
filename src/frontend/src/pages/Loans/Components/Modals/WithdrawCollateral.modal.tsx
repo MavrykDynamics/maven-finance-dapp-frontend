@@ -111,9 +111,15 @@ export const WithdrawCollateral = ({
     }
   }, [show])
 
-  const inputOnChangeHandle = (newInputAmount: string, maxAmount: number, symbol?: string) => {
+  const inputOnChangeHandle = (newInputAmount: string, maxAmount: number) => {
     // const parsedNewInputAmount = isNaN(parseFloat(newInputAmount)) ? 0 : parseFloat(newInputAmount)
-    const validationStatus = loansInputValidation({ inputAmount: newInputAmount, maxAmount, symbol })
+    const validationStatus = loansInputValidation({
+      inputAmount: newInputAmount,
+      maxAmount,
+      options: {
+        byDecimalPlaces: 8,
+      },
+    })
 
     setInputData({
       ...inputData,
@@ -204,18 +210,13 @@ export const WithdrawCollateral = ({
                 type: 'number',
                 onBlur: inputOnBlurHandle,
                 onFocus: onFocusHandler,
-                onChange: (e) =>
-                  inputOnChangeHandle(e.target.value, currentCollateralToWithdraw, collateralData.symbol),
+                onChange: (e) => inputOnChangeHandle(e.target.value, currentCollateralToWithdraw),
               }}
               settings={{
                 balance: collateralData.userBalance,
                 balanceAsset: collateralData.symbol,
                 useMaxHandler: () =>
-                  inputOnChangeHandle(
-                    String(currentCollateralToWithdraw),
-                    currentCollateralToWithdraw,
-                    collateralData.symbol,
-                  ),
+                  inputOnChangeHandle(String(currentCollateralToWithdraw), currentCollateralToWithdraw),
                 inputStatus: inputData.validationStatus,
                 convertedValue: inputAmount * collateralRate,
                 inputSize: INPUT_LARGE,

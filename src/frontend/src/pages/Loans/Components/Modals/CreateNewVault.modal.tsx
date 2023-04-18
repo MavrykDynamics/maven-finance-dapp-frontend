@@ -254,8 +254,14 @@ export const CreateNewVault = ({
   }
 
   // stuff to handle inputs
-  const inputOnChangeHandle = (newInputAmount: string, inputIdx: number, userAssetBalance: number, symbol?: string) => {
-    const validationStatus = loansInputValidation({ inputAmount: newInputAmount, maxAmount: userAssetBalance, symbol })
+  const inputOnChangeHandle = (newInputAmount: string, inputIdx: number, userAssetBalance: number) => {
+    const validationStatus = loansInputValidation({
+      inputAmount: newInputAmount,
+      maxAmount: userAssetBalance,
+      options: {
+        byDecimalPlaces: 8,
+      },
+    })
 
     setCollaterals(
       collaterals.map((collateral, updateCollateralIdx) =>
@@ -451,13 +457,7 @@ export const CreateNewVault = ({
                         inputProps={{
                           value: inputAmount,
                           type: 'number',
-                          onChange: (e) =>
-                            inputOnChangeHandle(
-                              e.target.value,
-                              idx,
-                              collateralMetadata.userBalance,
-                              collateralMetadata.symbol,
-                            ),
+                          onChange: (e) => inputOnChangeHandle(e.target.value, idx, collateralMetadata.userBalance),
                           onBlur: (e) => inputOnBlurHandle(e.target.value, idx),
                           onFocus: () => onFocusHandler(idx),
                         }}
@@ -468,7 +468,6 @@ export const CreateNewVault = ({
                               String(collateralMetadata.userBalance),
                               idx,
                               collateralMetadata.userBalance,
-                              collateralMetadata.symbol,
                             ),
                           inputStatus: validationField,
                           ...(collateralMetadata.rate

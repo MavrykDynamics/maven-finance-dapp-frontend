@@ -67,8 +67,14 @@ export const RemoveAssetsFromLending = ({
   const continueBtnHandler = () => setShownScreen('confitmation')
   const backBtnHandler = () => setShownScreen('initial')
 
-  const onChangeHandler = (inputAmount: string, maxAmount: number, symbol?: string) => {
-    const validationStatus = loansInputValidation({ inputAmount, maxAmount, symbol })
+  const onChangeHandler = (inputAmount: string, maxAmount: number) => {
+    const validationStatus = loansInputValidation({
+      inputAmount,
+      maxAmount,
+      options: {
+        byDecimalPlaces: 8,
+      },
+    })
 
     setInputData({
       ...inputData,
@@ -151,7 +157,7 @@ export const RemoveAssetsFromLending = ({
                   type: 'number',
                   onBlur: inputOnBlurHandle,
                   onFocus: onFocusHandler,
-                  onChange: (e) => onChangeHandler(e.target.value, Math.min(mBalance, currentLendedAmount), symbol),
+                  onChange: (e) => onChangeHandler(e.target.value, Math.min(mBalance, currentLendedAmount)),
                 }}
                 settings={{
                   balance: userBalance,
@@ -160,7 +166,6 @@ export const RemoveAssetsFromLending = ({
                     onChangeHandler(
                       String(Math.min(mBalance, currentLendedAmount)),
                       Math.min(mBalance, currentLendedAmount),
-                      symbol,
                     ),
                   inputStatus: inputData.validationStatus,
                   convertedValue: Number(inputData.amount) * rate,

@@ -172,8 +172,14 @@ export const AddNewCollateral = ({
     setAssetChosenDdItem(bakerItemsForDropDown.find(({ id }) => id === itemId))
 
   // stuff to handle inputs
-  const inputOnChangeHandle = (newInputAmount: string, userAssetBalance: number, symbol?: string) => {
-    const validationStatus = loansInputValidation({ inputAmount: newInputAmount, maxAmount: userAssetBalance, symbol })
+  const inputOnChangeHandle = (newInputAmount: string, userAssetBalance: number) => {
+    const validationStatus = loansInputValidation({
+      inputAmount: newInputAmount,
+      maxAmount: userAssetBalance,
+      options: {
+        byDecimalPlaces: 8,
+      },
+    })
 
     if (inputData) {
       setInputData({
@@ -301,12 +307,7 @@ export const AddNewCollateral = ({
                   type: 'number',
                   onBlur: inputOnBlurHandle,
                   onFocus: onFocusHandler,
-                  onChange: (e) =>
-                    inputOnChangeHandle(
-                      e.target.value,
-                      inputData.userBalance,
-                      isTezosAsset(inputData.assetName) ? 'XTZ' : inputData.assetSymbol,
-                    ),
+                  onChange: (e) => inputOnChangeHandle(e.target.value, inputData.userBalance),
                 }}
                 settings={{
                   balance: inputData.userBalance,

@@ -187,21 +187,27 @@ export const loansInputValidation = ({
   inputAmount,
   minAmount = 0,
   maxAmount,
-  symbol,
+  options = {},
 }: {
   inputAmount: string
   minAmount?: number
   maxAmount: number
-  symbol?: string
+  options?: {
+    byDecimalPlaces?: number
+  }
 }) => {
-  const validationStatus =
-    Number(inputAmount) > minAmount && Number(inputAmount) <= maxAmount ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
+  const { byDecimalPlaces } = options
+  const numberOfDecimalPlaces = inputAmount.match(/\.(\d+)/)?.[1].length ?? 0
 
-  if (symbol?.toLowerCase() === 'tzbtc') {
-    const numberOfDecimalPlaces = inputAmount.match(/\.(\d+)/)?.[1].length ?? 0
+  // check amount by min/max value
+  if (Number(inputAmount) > minAmount && Number(inputAmount) <= maxAmount) {
+    // check amount by number of decimal places
+    if (byDecimalPlaces) {
+      return numberOfDecimalPlaces <= byDecimalPlaces ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
+    }
 
-    return numberOfDecimalPlaces > 8 ? INPUT_STATUS_ERROR : validationStatus
+    return INPUT_STATUS_SUCCESS
   }
 
-  return validationStatus
+  return INPUT_STATUS_ERROR
 }
