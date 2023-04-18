@@ -12,12 +12,17 @@ import { Input } from 'app/App.components/Input/NewInput'
 import { DropDownCollateralAssetType, DropDownXTZBakerType } from './CreateNewVault.modal'
 import NewButton from 'app/App.components/Button/NewButton'
 
-import { calcCollateralRatio, getMaxCollateralWithdraw, isTezosAsset } from 'pages/Loans/Loans.helpers'
+import {
+  calcCollateralRatio,
+  getMaxCollateralWithdraw,
+  isTezosAsset,
+  loansInputValidation,
+} from 'pages/Loans/Loans.helpers'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { depositCollateralAction } from 'pages/Loans/Actions/vaultCollateral.actions'
-import { AddNewCollateralDataProps, getOnBlurValue, getOnFocusValue, loansInputValidation } from './Modals.helpers'
+import { AddNewCollateralDataProps, getOnBlurValue, getOnFocusValue } from './Modals.helpers'
 import {
   InputStatusType,
   INPUT_LARGE,

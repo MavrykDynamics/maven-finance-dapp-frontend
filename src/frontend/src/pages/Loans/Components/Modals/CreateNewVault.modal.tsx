@@ -8,8 +8,8 @@ import {
   INPUT_STATUS_ERROR,
   INPUT_STATUS_SUCCESS,
 } from 'app/App.components/Input/Input.constants'
-import { CreateVaultPopupDataType, VaultNameInputStateType, loansInputValidation } from './Modals.helpers'
-import { decimalsToShow, isTezosAsset } from 'pages/Loans/Loans.helpers'
+import { CreateVaultPopupDataType, VaultNameInputStateType } from './Modals.helpers'
+import { decimalsToShow, isTezosAsset, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import { AvaliableCollateralType, XtzBakerType } from 'utils/TypesAndInterfaces/Loans'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 

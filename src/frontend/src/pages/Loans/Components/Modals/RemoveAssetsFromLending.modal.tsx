@@ -16,8 +16,8 @@ import {
   getOnBlurValue,
   getOnFocusValue,
   RemoveLendingAssetDataType,
-  loansInputValidation,
 } from './Modals.helpers'
+import { loansInputValidation } from 'pages/Loans/Loans.helpers'
 import { State } from 'reducers'
 
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'

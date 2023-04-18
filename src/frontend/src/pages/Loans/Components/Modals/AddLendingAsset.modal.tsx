@@ -10,14 +10,9 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 import { INPUT_LARGE, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { State } from 'reducers'
-import {
-  AddLendingAssetDataType,
-  DEFAULT_LOANS_INPUT_VALUE,
-  getOnBlurValue,
-  getOnFocusValue,
-  loansInputValidation,
-} from './Modals.helpers'
+import { AddLendingAssetDataType, DEFAULT_LOANS_INPUT_VALUE, getOnBlurValue, getOnFocusValue } from './Modals.helpers'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import { loansInputValidation } from 'pages/Loans/Loans.helpers'
 
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'

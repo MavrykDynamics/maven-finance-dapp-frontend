@@ -2,7 +2,6 @@ import { InputStatusType } from 'app/App.components/Input/Input.constants'
 import { CollateralType, DepositorsFlagType, LoansAssetDataType, LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
 import LoansPopupsProvider from './LoansModals.provider'
 import { VaultType } from 'utils/TypesAndInterfaces/Vaults'
-import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 
 export type LoansPopupsInputStateType = { amount: string; validationStatus: InputStatusType }
 export type VaultNameInputStateType = { name: string; validationStatus: InputStatusType }
@@ -183,31 +182,3 @@ export const DEFAULT_LOANS_POPUPS_STATE = {
   liquidateVaultPopup: DEFAULT_LOANS_POPUP_STATE,
 }
 
-export const loansInputValidation = ({
-  inputAmount,
-  minAmount = 0,
-  maxAmount,
-  options = {},
-}: {
-  inputAmount: string
-  minAmount?: number
-  maxAmount: number
-  options?: {
-    byDecimalPlaces?: number
-  }
-}) => {
-  const { byDecimalPlaces } = options
-  const numberOfDecimalPlaces = inputAmount.match(/\.(\d+)/)?.[1].length ?? 0
-
-  // check amount by min/max value
-  if (Number(inputAmount) > minAmount && Number(inputAmount) <= maxAmount) {
-    // check amount by number of decimal places
-    if (byDecimalPlaces) {
-      return numberOfDecimalPlaces <= byDecimalPlaces ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
-    }
-
-    return INPUT_STATUS_SUCCESS
-  }
-
-  return INPUT_STATUS_ERROR
-}

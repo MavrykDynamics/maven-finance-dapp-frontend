@@ -9,7 +9,6 @@ import {
   DEFAULT_LOANS_INPUT_VALUE,
   getOnBlurValue,
   getOnFocusValue,
-  loansInputValidation,
 } from './Modals.helpers'
 import { State } from 'reducers'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
@@ -28,7 +27,7 @@ import { LoansModalBase, VaultModalOverview } from './Modals.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { silverColor } from 'styles'
 import { borrowVaultAssetAction } from 'pages/Loans/Actions/vault.actions'
-import { calcCollateralRatio } from 'pages/Loans/Loans.helpers'
+import { calcCollateralRatio, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { StatusMessageStyled } from '../LoansComponents.style'
 import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'

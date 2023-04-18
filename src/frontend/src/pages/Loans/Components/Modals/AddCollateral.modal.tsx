@@ -11,7 +11,6 @@ import {
   DEFAULT_LOANS_INPUT_VALUE,
   getOnBlurValue,
   getOnFocusValue,
-  loansInputValidation,
 } from './Modals.helpers'
 
 import { Input } from 'app/App.components/Input/NewInput'
@@ -26,7 +25,7 @@ import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { depositCollateralAction } from 'pages/Loans/Actions/vaultCollateral.actions'
-import { calcCollateralRatio, getMaxCollateralWithdraw } from 'pages/Loans/Loans.helpers'
+import { calcCollateralRatio, getMaxCollateralWithdraw, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239476&t=Sx2aEpp3ifrGxBtQ-0

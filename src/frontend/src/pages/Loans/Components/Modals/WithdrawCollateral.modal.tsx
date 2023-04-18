@@ -11,7 +11,6 @@ import {
   getOnBlurValue,
   getOnFocusValue,
   WithdrawCollateralPopupDataType,
-  loansInputValidation,
 } from './Modals.helpers'
 import { withdrawCollateralAction } from 'pages/Loans/Actions/vaultCollateral.actions'
 
@@ -26,7 +25,7 @@ import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
-import { calcCollateralRatio, getMaxCollateralWithdraw } from 'pages/Loans/Loans.helpers'
+import { calcCollateralRatio, getMaxCollateralWithdraw, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import colors from 'styles/colors'
