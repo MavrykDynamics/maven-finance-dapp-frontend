@@ -28,6 +28,7 @@ import { LoansModalBase } from './Modals.style'
 import { withdrawLendingAssetAction } from 'pages/Loans/Actions/lendingAsset.actions'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import colors from 'styles/colors'
+import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A238846&t=Sx2aEpp3ifrGxBtQ-0
 export const RemoveAssetsFromLending = ({
@@ -72,7 +73,7 @@ export const RemoveAssetsFromLending = ({
       inputAmount,
       maxAmount,
       options: {
-        byDecimalPlaces: 8,
+        byDecimalPlaces: decimals || assetDecimalsToShow,
       },
     })
 

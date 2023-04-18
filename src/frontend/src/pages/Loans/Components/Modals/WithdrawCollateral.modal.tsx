@@ -3,7 +3,7 @@ import { useLockBodyScroll } from 'react-use'
 import { useEffect, useMemo, useState } from 'react'
 
 import { INPUT_LARGE, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
-import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
+import { COLLATERAL_RATIO_GRADIENT, assetDecimalsToShow, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { State } from 'reducers'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import {
@@ -111,12 +111,11 @@ export const WithdrawCollateral = ({
   }, [show])
 
   const inputOnChangeHandle = (newInputAmount: string, maxAmount: number) => {
-    // const parsedNewInputAmount = isNaN(parseFloat(newInputAmount)) ? 0 : parseFloat(newInputAmount)
     const validationStatus = loansInputValidation({
       inputAmount: newInputAmount,
       maxAmount,
       options: {
-        byDecimalPlaces: 8,
+        byDecimalPlaces: collateralData?.decimals || assetDecimalsToShow,
       },
     })
 

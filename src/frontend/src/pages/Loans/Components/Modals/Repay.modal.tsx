@@ -76,7 +76,7 @@ export const Repay = ({
       inputAmount: newInputAmount,
       maxAmount,
       options: {
-        byDecimalPlaces: 8,
+        byDecimalPlaces: borrowedAsset?.decimals || assetDecimalsToShow,
       },
     })
 

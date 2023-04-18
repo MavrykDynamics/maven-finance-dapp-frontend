@@ -20,7 +20,7 @@ import {
 } from 'pages/Loans/Loans.helpers'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
+import { COLLATERAL_RATIO_GRADIENT, assetDecimalsToShow, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { depositCollateralAction } from 'pages/Loans/Actions/vaultCollateral.actions'
 import { AddNewCollateralDataProps, getOnBlurValue, getOnFocusValue } from './Modals.helpers'
 import {
@@ -182,7 +182,7 @@ export const AddNewCollateral = ({
       inputAmount: newInputAmount,
       maxAmount: userAssetBalance,
       options: {
-        byDecimalPlaces: 8,
+        byDecimalPlaces: inputData?.selectedDdItem.decimals || assetDecimalsToShow,
       },
     })
 

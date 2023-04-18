@@ -254,13 +254,15 @@ export const CreateNewVault = ({
     })
   }
 
+  const { decimals, address, tokenType, gqlName } = collateralsToSelect[collaterals[0].id]
+
   // stuff to handle inputs
   const inputOnChangeHandle = (newInputAmount: string, inputIdx: number, userAssetBalance: number) => {
     const validationStatus = loansInputValidation({
       inputAmount: newInputAmount,
       maxAmount: userAssetBalance,
       options: {
-        byDecimalPlaces: 8,
+        byDecimalPlaces: decimals || assetDecimalsToShow,
       },
     })
 
@@ -344,8 +346,6 @@ export const CreateNewVault = ({
 
     //   return acc
     // }, [])
-
-    const { decimals, address, tokenType, gqlName } = collateralsToSelect[collaterals[0].id]
 
     const collaretalToDeposit = {
       collateralName: gqlName,

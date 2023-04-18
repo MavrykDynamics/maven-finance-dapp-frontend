@@ -4,7 +4,7 @@ import { State } from 'reducers'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
+import { COLLATERAL_RATIO_GRADIENT, assetDecimalsToShow, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { INPUT_LARGE, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import {
   AddCollateralPopupDataType,
@@ -98,7 +98,7 @@ export const AddCollateral = ({
       inputAmount: newInputAmount,
       maxAmount,
       options: {
-        byDecimalPlaces: 8,
+        byDecimalPlaces: collateralData?.decimals || assetDecimalsToShow,
       },
     })
 
