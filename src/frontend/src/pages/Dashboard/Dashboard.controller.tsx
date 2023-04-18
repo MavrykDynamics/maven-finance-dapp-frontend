@@ -30,7 +30,6 @@ export const Dashboard = () => {
   } = useSelector((state: State) => state.doorman)
   const { treasuryStorage, isLoaded: isTreasuryLoaded } = useSelector((state: State) => state.treasury)
   const { isLoaded: isVestingLoaded } = useSelector((state: State) => state.vesting)
-  const { accountPkh } = useSelector((state: State) => state.wallet)
   const { isGovernanceStorageLoaded } = useSelector((state: State) => state.governance)
   const {
     vaultsList: { allVaultsIds, vaultsMapper },
