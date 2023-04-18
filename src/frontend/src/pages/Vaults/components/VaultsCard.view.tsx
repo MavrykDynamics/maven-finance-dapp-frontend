@@ -30,6 +30,7 @@ import { loansPopupsContext } from 'pages/Loans/Components/Modals/LoansModals.pr
 import { calculateCollateralShare } from '../calcFunctionsForVault'
 import { vaultTabs } from '../Vaults.view'
 import { decimalsToShow } from 'pages/Loans/Loans.helpers'
+import { assetDecimalToShow } from 'pages/Loans/Loans.const'
 
 const findStatusInfo = (status: string) => {
   switch (status) {
@@ -296,7 +297,7 @@ export const VaultsCard = (props: Props) => {
                         <div className="cell-content">
                           <CommaNumber
                             value={amount}
-                            decimalsToShow={decimalcsForCommaNumber}
+                            decimalsToShow={isTotalRow ? 2 : assetDecimalToShow}
                             beginningText={isTotalRow ? '$' : ''}
                             className="balance"
                           />
