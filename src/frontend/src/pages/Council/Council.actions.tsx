@@ -15,6 +15,7 @@ import {
 } from './Council.helpers'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { MVK_DECIMALS } from 'utils/constants'
+import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
 
 // gql
 import {
@@ -36,8 +37,6 @@ import {
 import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 import { TokenType } from 'utils/TypesAndInterfaces/General'
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
-
-// types
 
 const time = String(new Date())
 const timeFormat = 'YYYY-MM-DD'
@@ -187,14 +186,24 @@ export const sign = (actionID: number) => async (dispatch: AppDispatch, getState
     await dispatch(toggleActionLoader(true))
 
     dispatch(showToaster(INFO, 'Sign...', 'Please wait 30s'))
+    // confirm query completion
     await transaction?.confirmation()
     dispatch(showToaster(SUCCESS, 'Sign is done', 'All good :)'))
 
-    await Promise.all([
-      dispatch(getCouncilPendingActions()),
-      dispatch(getCouncilPastActions()),
-      dispatch(getCouncilMembers()),
-    ])
+    // @ts-ignore don't have proper type to acees data, type has only methods
+    const currentOperationLevel = transaction?.lastHead?.header?.level
+
+    // refetch data we need
+    await checkIndexerLevelAndRunDataUpdateCallback({
+      callback: async () => {
+        await Promise.all([
+          dispatch(getCouncilPendingActions()),
+          dispatch(getCouncilPastActions()),
+          dispatch(getCouncilMembers()),
+        ])
+      },
+      currentOperationLevel,
+    })
 
     await dispatch(toggleActionLoader(false))
   } catch (error) {

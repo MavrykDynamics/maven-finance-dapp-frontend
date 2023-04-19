@@ -25,6 +25,7 @@ import {
   PAST_ACTIONS,
 } from 'pages/Council/Council.helpers'
 import { parseDate } from 'utils/time'
+import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
 
 // actions
 import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
@@ -228,12 +229,23 @@ export const signAction = (breakGlassActionID: number) => async (dispatch: AppDi
     const transaction = await contract?.methods.signAction(breakGlassActionID).send()
     dispatch(showToaster(INFO, 'Sign action...', 'Please wait 30s'))
 
+    // confirm query completion
     await transaction?.confirmation()
-    await Promise.all([
-      dispatch(getBreakGlassCouncilPendingActions()),
-      dispatch(getBreakGlassCouncilPastActions()),
-      dispatch(getBreakGlassCouncilMembers()),
-    ])
+
+    // @ts-ignore don't have proper type to acees data, type has only methods
+    const currentOperationLevel = transaction?.lastHead?.header?.level
+
+    // refetch data we need
+    await checkIndexerLevelAndRunDataUpdateCallback({
+      callback: async () => {
+        await Promise.all([
+          dispatch(getBreakGlassCouncilPendingActions()),
+          dispatch(getBreakGlassCouncilPastActions()),
+          dispatch(getBreakGlassCouncilMembers()),
+        ])
+      },
+      currentOperationLevel,
+    })
 
     dispatch(showToaster(SUCCESS, 'Sign Action is done', 'All good :)'))
     dispatch(toggleActionLoader(false))
