@@ -190,7 +190,12 @@ export const sign = (actionID: number) => async (dispatch: AppDispatch, getState
     await transaction?.confirmation()
     dispatch(showToaster(SUCCESS, 'Sign is done', 'All good :)'))
 
-    await Promise.all([dispatch(getCouncilPendingActions()), dispatch(getCouncilPastActions())])
+    await Promise.all([
+      dispatch(getCouncilPendingActions()),
+      dispatch(getCouncilPastActions()),
+      dispatch(getCouncilMembers()),
+    ])
+
     await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {
@@ -271,7 +276,7 @@ export const addCouncilMember =
       await transaction?.confirmation()
       dispatch(showToaster(SUCCESS, 'Add Council Member is done', 'All good :)'))
 
-      await Promise.all([dispatch(getCouncilPendingActions()), dispatch(getCouncilMembers())])
+      await dispatch(getCouncilPendingActions())
       await dispatch(toggleActionLoader(false))
     } catch (error) {
       if (error instanceof Error) {
@@ -400,7 +405,7 @@ export const changeCouncilMember =
       await transaction?.confirmation()
       dispatch(showToaster(SUCCESS, 'Change Council Member is done', 'All good :)'))
 
-      await Promise.all([dispatch(getCouncilPendingActions()), dispatch(getCouncilMembers())])
+      await dispatch(getCouncilPendingActions())
       await dispatch(toggleActionLoader(false))
     } catch (error) {
       if (error instanceof Error) {
@@ -435,7 +440,7 @@ export const removeCouncilMember = (memberAddress: string) => async (dispatch: A
     await transaction?.confirmation()
     dispatch(showToaster(SUCCESS, 'Remove Council Member is done', 'All good :)'))
 
-    await Promise.all([dispatch(getCouncilPendingActions()), dispatch(getCouncilMembers())])
+    await dispatch(getCouncilPendingActions())
     await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {
@@ -474,7 +479,7 @@ export const updateCouncilMemberInfo =
       await transaction?.confirmation()
       await dispatch(showToaster(SUCCESS, 'Update Council Member Info is done', 'All good :)'))
 
-      await Promise.all([dispatch(getCouncilPendingActions()), dispatch(getCouncilMembers())])
+      await dispatch(getCouncilMembers())
       await dispatch(toggleActionLoader(false))
     } catch (error) {
       if (error instanceof Error) {

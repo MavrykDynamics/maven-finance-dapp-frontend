@@ -1,4 +1,5 @@
 import { useState, useCallback, useRef, useMemo } from 'react'
+import { createPortal } from 'react-dom'
 
 // components
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
@@ -104,8 +105,8 @@ export const CouncilPending = (props: Props) => {
     }
   }
 
-  const purposeRequestPopup = (
-    <PopupContainer onClick={closePopup} show={!showPopup}>
+  const purposeRequestPopup = createPortal(
+    <PopupContainer onClick={closePopup} show={showPopup}>
       <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="council__request-purpose">
         <CouncilModalBase>
           <button onClick={closePopup} className="close-modal" />
@@ -114,7 +115,8 @@ export const CouncilPending = (props: Props) => {
           {showScrollInModal && <div className="shadow"></div>}
         </CouncilModalBase>
       </PopupContainerWrapper>
-    </PopupContainer>
+    </PopupContainer>,
+    document.body,
   )
 
   // 2/3

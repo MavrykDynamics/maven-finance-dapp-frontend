@@ -218,7 +218,7 @@ export const CouncilModalBase = styled.div<{ theme: MavrykTheme }>`
   }
 
   p {
-    height: 460px;
+    max-height: 460px;
     overflow-y: auto;
 
     font-weight: 600;

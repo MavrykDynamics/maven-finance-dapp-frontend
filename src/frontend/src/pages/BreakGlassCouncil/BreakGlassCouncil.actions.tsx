@@ -229,7 +229,11 @@ export const signAction = (breakGlassActionID: number) => async (dispatch: AppDi
     dispatch(showToaster(INFO, 'Sign action...', 'Please wait 30s'))
 
     await transaction?.confirmation()
-    await Promise.all([dispatch(getBreakGlassCouncilPendingActions()), dispatch(getBreakGlassCouncilPastActions())])
+    await Promise.all([
+      dispatch(getBreakGlassCouncilPendingActions()),
+      dispatch(getBreakGlassCouncilPastActions()),
+      dispatch(getBreakGlassCouncilMembers()),
+    ])
 
     dispatch(showToaster(SUCCESS, 'Sign Action is done', 'All good :)'))
     dispatch(toggleActionLoader(false))
@@ -268,7 +272,7 @@ export const addCouncilMember =
       dispatch(showToaster(INFO, 'Add Council Member...', 'Please wait 30s'))
 
       await transaction?.confirmation()
-      await Promise.all([dispatch(getBreakGlassCouncilPendingActions()), dispatch(getBreakGlassCouncilMembers())])
+      await dispatch(getBreakGlassCouncilPendingActions())
 
       dispatch(showToaster(SUCCESS, 'Add Council Member is done', 'All good :)'))
       dispatch(toggleActionLoader(false))
@@ -307,7 +311,7 @@ export const updateCouncilMember =
       dispatch(showToaster(INFO, 'Update Council Member...', 'Please wait 30s'))
 
       await transaction?.confirmation()
-      await Promise.all([dispatch(getBreakGlassCouncilPendingActions()), dispatch(getBreakGlassCouncilMembers())])
+      await dispatch(getBreakGlassCouncilMembers())
 
       dispatch(showToaster(SUCCESS, 'Update Council Member is done', 'All good :)'))
       dispatch(toggleActionLoader(false))
@@ -358,7 +362,7 @@ export const changeCouncilMember =
       dispatch(showToaster(INFO, 'Change Council Member...', 'Please wait 30s'))
 
       await transaction?.confirmation()
-      await Promise.all([dispatch(getBreakGlassCouncilPendingActions()), dispatch(getBreakGlassCouncilMembers())])
+      await dispatch(getBreakGlassCouncilPendingActions())
 
       dispatch(showToaster(SUCCESS, 'Change Council Member is done', 'All good :)'))
       dispatch(toggleActionLoader(false))
@@ -393,7 +397,7 @@ export const removeCouncilMember = (memberAddress: string) => async (dispatch: A
     dispatch(showToaster(INFO, 'Remove Council Member...', 'Please wait 30s'))
 
     await transaction?.confirmation()
-    await Promise.all([dispatch(getBreakGlassCouncilPendingActions()), dispatch(getBreakGlassCouncilMembers())])
+    await dispatch(getBreakGlassCouncilPendingActions())
 
     dispatch(showToaster(SUCCESS, 'Remove Council Member is done', 'All good :)'))
     dispatch(toggleActionLoader(false))
