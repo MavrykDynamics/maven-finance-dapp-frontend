@@ -10800,6 +10800,7 @@ export type Delegation_Record = {
   /** An object relationship */
   satellite?: Maybe<Satellite>;
   satellite_id?: Maybe<Scalars['bigint']>;
+  satellite_registration_timestamp?: Maybe<Scalars['timestamptz']>;
   /** An object relationship */
   user: Mavryk_User;
   user_id: Scalars['String'];
@@ -10884,6 +10885,7 @@ export type Delegation_Record_Bool_Exp = {
   id?: InputMaybe<Bigint_Comparison_Exp>;
   satellite?: InputMaybe<Satellite_Bool_Exp>;
   satellite_id?: InputMaybe<Bigint_Comparison_Exp>;
+  satellite_registration_timestamp?: InputMaybe<Timestamptz_Comparison_Exp>;
   user?: InputMaybe<Mavryk_User_Bool_Exp>;
   user_id?: InputMaybe<String_Comparison_Exp>;
 };
@@ -10894,6 +10896,7 @@ export type Delegation_Record_Max_Fields = {
   delegation_id?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['bigint']>;
   satellite_id?: Maybe<Scalars['bigint']>;
+  satellite_registration_timestamp?: Maybe<Scalars['timestamptz']>;
   user_id?: Maybe<Scalars['String']>;
 };
 
@@ -10902,6 +10905,7 @@ export type Delegation_Record_Max_Order_By = {
   delegation_id?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   satellite_id?: InputMaybe<Order_By>;
+  satellite_registration_timestamp?: InputMaybe<Order_By>;
   user_id?: InputMaybe<Order_By>;
 };
 
@@ -10911,6 +10915,7 @@ export type Delegation_Record_Min_Fields = {
   delegation_id?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['bigint']>;
   satellite_id?: Maybe<Scalars['bigint']>;
+  satellite_registration_timestamp?: Maybe<Scalars['timestamptz']>;
   user_id?: Maybe<Scalars['String']>;
 };
 
@@ -10919,6 +10924,7 @@ export type Delegation_Record_Min_Order_By = {
   delegation_id?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   satellite_id?: InputMaybe<Order_By>;
+  satellite_registration_timestamp?: InputMaybe<Order_By>;
   user_id?: InputMaybe<Order_By>;
 };
 
@@ -10929,6 +10935,7 @@ export type Delegation_Record_Order_By = {
   id?: InputMaybe<Order_By>;
   satellite?: InputMaybe<Satellite_Order_By>;
   satellite_id?: InputMaybe<Order_By>;
+  satellite_registration_timestamp?: InputMaybe<Order_By>;
   user?: InputMaybe<Mavryk_User_Order_By>;
   user_id?: InputMaybe<Order_By>;
 };
@@ -10941,6 +10948,8 @@ export enum Delegation_Record_Select_Column {
   Id = 'id',
   /** column name */
   SatelliteId = 'satellite_id',
+  /** column name */
+  SatelliteRegistrationTimestamp = 'satellite_registration_timestamp',
   /** column name */
   UserId = 'user_id'
 }
@@ -10997,6 +11006,7 @@ export type Delegation_Record_Stream_Cursor_Value_Input = {
   delegation_id?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['bigint']>;
   satellite_id?: InputMaybe<Scalars['bigint']>;
+  satellite_registration_timestamp?: InputMaybe<Scalars['timestamptz']>;
   user_id?: InputMaybe<Scalars['String']>;
 };
 
@@ -40371,6 +40381,7 @@ export type M_Token = {
   /** An aggregate relationship */
   operators_aggregate: M_Token_Operator_Aggregate;
   token_reward_index: Scalars['float8'];
+  total_supply: Scalars['float8'];
   /** An array relationship */
   whitelist_contracts: Array<M_Token_Whitelist_Contract>;
   /** An aggregate relationship */
@@ -41658,11 +41669,13 @@ export type M_Token_Aggregate_Order_By = {
 export type M_Token_Avg_Fields = {
   __typename?: 'm_token_avg_fields';
   token_reward_index?: Maybe<Scalars['Float']>;
+  total_supply?: Maybe<Scalars['Float']>;
 };
 
 /** order by avg() on columns of table "m_token" */
 export type M_Token_Avg_Order_By = {
   token_reward_index?: InputMaybe<Order_By>;
+  total_supply?: InputMaybe<Order_By>;
 };
 
 /** Boolean expression to filter rows from the table "m_token". All fields are combined with a logical 'AND'. */
@@ -41684,6 +41697,7 @@ export type M_Token_Bool_Exp = {
   operators?: InputMaybe<M_Token_Operator_Bool_Exp>;
   operators_aggregate?: InputMaybe<M_Token_Operator_Aggregate_Bool_Exp>;
   token_reward_index?: InputMaybe<Float8_Comparison_Exp>;
+  total_supply?: InputMaybe<Float8_Comparison_Exp>;
   whitelist_contracts?: InputMaybe<M_Token_Whitelist_Contract_Bool_Exp>;
   whitelist_contracts_aggregate?: InputMaybe<M_Token_Whitelist_Contract_Aggregate_Bool_Exp>;
 };
@@ -41697,6 +41711,7 @@ export type M_Token_Max_Fields = {
   last_updated_at?: Maybe<Scalars['timestamptz']>;
   loan_token_name?: Maybe<Scalars['String']>;
   token_reward_index?: Maybe<Scalars['float8']>;
+  total_supply?: Maybe<Scalars['float8']>;
 };
 
 /** order by max() on columns of table "m_token" */
@@ -41707,6 +41722,7 @@ export type M_Token_Max_Order_By = {
   last_updated_at?: InputMaybe<Order_By>;
   loan_token_name?: InputMaybe<Order_By>;
   token_reward_index?: InputMaybe<Order_By>;
+  total_supply?: InputMaybe<Order_By>;
 };
 
 /** aggregate min on columns */
@@ -41718,6 +41734,7 @@ export type M_Token_Min_Fields = {
   last_updated_at?: Maybe<Scalars['timestamptz']>;
   loan_token_name?: Maybe<Scalars['String']>;
   token_reward_index?: Maybe<Scalars['float8']>;
+  total_supply?: Maybe<Scalars['float8']>;
 };
 
 /** order by min() on columns of table "m_token" */
@@ -41728,6 +41745,7 @@ export type M_Token_Min_Order_By = {
   last_updated_at?: InputMaybe<Order_By>;
   loan_token_name?: InputMaybe<Order_By>;
   token_reward_index?: InputMaybe<Order_By>;
+  total_supply?: InputMaybe<Order_By>;
 };
 
 /** columns and relationships of "m_token_operator" */
@@ -41989,6 +42007,7 @@ export type M_Token_Order_By = {
   loan_token_name?: InputMaybe<Order_By>;
   operators_aggregate?: InputMaybe<M_Token_Operator_Aggregate_Order_By>;
   token_reward_index?: InputMaybe<Order_By>;
+  total_supply?: InputMaybe<Order_By>;
   whitelist_contracts_aggregate?: InputMaybe<M_Token_Whitelist_Contract_Aggregate_Order_By>;
 };
 
@@ -42007,13 +42026,17 @@ export enum M_Token_Select_Column {
   /** column name */
   LoanTokenName = 'loan_token_name',
   /** column name */
-  TokenRewardIndex = 'token_reward_index'
+  TokenRewardIndex = 'token_reward_index',
+  /** column name */
+  TotalSupply = 'total_supply'
 }
 
 /** select "m_token_aggregate_bool_exp_avg_arguments_columns" columns of table "m_token" */
 export enum M_Token_Select_Column_M_Token_Aggregate_Bool_Exp_Avg_Arguments_Columns {
   /** column name */
-  TokenRewardIndex = 'token_reward_index'
+  TokenRewardIndex = 'token_reward_index',
+  /** column name */
+  TotalSupply = 'total_supply'
 }
 
 /** select "m_token_aggregate_bool_exp_bool_and_arguments_columns" columns of table "m_token" */
@@ -42031,76 +42054,96 @@ export enum M_Token_Select_Column_M_Token_Aggregate_Bool_Exp_Bool_Or_Arguments_C
 /** select "m_token_aggregate_bool_exp_corr_arguments_columns" columns of table "m_token" */
 export enum M_Token_Select_Column_M_Token_Aggregate_Bool_Exp_Corr_Arguments_Columns {
   /** column name */
-  TokenRewardIndex = 'token_reward_index'
+  TokenRewardIndex = 'token_reward_index',
+  /** column name */
+  TotalSupply = 'total_supply'
 }
 
 /** select "m_token_aggregate_bool_exp_covar_samp_arguments_columns" columns of table "m_token" */
 export enum M_Token_Select_Column_M_Token_Aggregate_Bool_Exp_Covar_Samp_Arguments_Columns {
   /** column name */
-  TokenRewardIndex = 'token_reward_index'
+  TokenRewardIndex = 'token_reward_index',
+  /** column name */
+  TotalSupply = 'total_supply'
 }
 
 /** select "m_token_aggregate_bool_exp_max_arguments_columns" columns of table "m_token" */
 export enum M_Token_Select_Column_M_Token_Aggregate_Bool_Exp_Max_Arguments_Columns {
   /** column name */
-  TokenRewardIndex = 'token_reward_index'
+  TokenRewardIndex = 'token_reward_index',
+  /** column name */
+  TotalSupply = 'total_supply'
 }
 
 /** select "m_token_aggregate_bool_exp_min_arguments_columns" columns of table "m_token" */
 export enum M_Token_Select_Column_M_Token_Aggregate_Bool_Exp_Min_Arguments_Columns {
   /** column name */
-  TokenRewardIndex = 'token_reward_index'
+  TokenRewardIndex = 'token_reward_index',
+  /** column name */
+  TotalSupply = 'total_supply'
 }
 
 /** select "m_token_aggregate_bool_exp_stddev_samp_arguments_columns" columns of table "m_token" */
 export enum M_Token_Select_Column_M_Token_Aggregate_Bool_Exp_Stddev_Samp_Arguments_Columns {
   /** column name */
-  TokenRewardIndex = 'token_reward_index'
+  TokenRewardIndex = 'token_reward_index',
+  /** column name */
+  TotalSupply = 'total_supply'
 }
 
 /** select "m_token_aggregate_bool_exp_sum_arguments_columns" columns of table "m_token" */
 export enum M_Token_Select_Column_M_Token_Aggregate_Bool_Exp_Sum_Arguments_Columns {
   /** column name */
-  TokenRewardIndex = 'token_reward_index'
+  TokenRewardIndex = 'token_reward_index',
+  /** column name */
+  TotalSupply = 'total_supply'
 }
 
 /** select "m_token_aggregate_bool_exp_var_samp_arguments_columns" columns of table "m_token" */
 export enum M_Token_Select_Column_M_Token_Aggregate_Bool_Exp_Var_Samp_Arguments_Columns {
   /** column name */
-  TokenRewardIndex = 'token_reward_index'
+  TokenRewardIndex = 'token_reward_index',
+  /** column name */
+  TotalSupply = 'total_supply'
 }
 
 /** aggregate stddev on columns */
 export type M_Token_Stddev_Fields = {
   __typename?: 'm_token_stddev_fields';
   token_reward_index?: Maybe<Scalars['Float']>;
+  total_supply?: Maybe<Scalars['Float']>;
 };
 
 /** order by stddev() on columns of table "m_token" */
 export type M_Token_Stddev_Order_By = {
   token_reward_index?: InputMaybe<Order_By>;
+  total_supply?: InputMaybe<Order_By>;
 };
 
 /** aggregate stddev_pop on columns */
 export type M_Token_Stddev_Pop_Fields = {
   __typename?: 'm_token_stddev_pop_fields';
   token_reward_index?: Maybe<Scalars['Float']>;
+  total_supply?: Maybe<Scalars['Float']>;
 };
 
 /** order by stddev_pop() on columns of table "m_token" */
 export type M_Token_Stddev_Pop_Order_By = {
   token_reward_index?: InputMaybe<Order_By>;
+  total_supply?: InputMaybe<Order_By>;
 };
 
 /** aggregate stddev_samp on columns */
 export type M_Token_Stddev_Samp_Fields = {
   __typename?: 'm_token_stddev_samp_fields';
   token_reward_index?: Maybe<Scalars['Float']>;
+  total_supply?: Maybe<Scalars['Float']>;
 };
 
 /** order by stddev_samp() on columns of table "m_token" */
 export type M_Token_Stddev_Samp_Order_By = {
   token_reward_index?: InputMaybe<Order_By>;
+  total_supply?: InputMaybe<Order_By>;
 };
 
 /** Streaming cursor of the table "m_token" */
@@ -42120,50 +42163,59 @@ export type M_Token_Stream_Cursor_Value_Input = {
   last_updated_at?: InputMaybe<Scalars['timestamptz']>;
   loan_token_name?: InputMaybe<Scalars['String']>;
   token_reward_index?: InputMaybe<Scalars['float8']>;
+  total_supply?: InputMaybe<Scalars['float8']>;
 };
 
 /** aggregate sum on columns */
 export type M_Token_Sum_Fields = {
   __typename?: 'm_token_sum_fields';
   token_reward_index?: Maybe<Scalars['float8']>;
+  total_supply?: Maybe<Scalars['float8']>;
 };
 
 /** order by sum() on columns of table "m_token" */
 export type M_Token_Sum_Order_By = {
   token_reward_index?: InputMaybe<Order_By>;
+  total_supply?: InputMaybe<Order_By>;
 };
 
 /** aggregate var_pop on columns */
 export type M_Token_Var_Pop_Fields = {
   __typename?: 'm_token_var_pop_fields';
   token_reward_index?: Maybe<Scalars['Float']>;
+  total_supply?: Maybe<Scalars['Float']>;
 };
 
 /** order by var_pop() on columns of table "m_token" */
 export type M_Token_Var_Pop_Order_By = {
   token_reward_index?: InputMaybe<Order_By>;
+  total_supply?: InputMaybe<Order_By>;
 };
 
 /** aggregate var_samp on columns */
 export type M_Token_Var_Samp_Fields = {
   __typename?: 'm_token_var_samp_fields';
   token_reward_index?: Maybe<Scalars['Float']>;
+  total_supply?: Maybe<Scalars['Float']>;
 };
 
 /** order by var_samp() on columns of table "m_token" */
 export type M_Token_Var_Samp_Order_By = {
   token_reward_index?: InputMaybe<Order_By>;
+  total_supply?: InputMaybe<Order_By>;
 };
 
 /** aggregate variance on columns */
 export type M_Token_Variance_Fields = {
   __typename?: 'm_token_variance_fields';
   token_reward_index?: Maybe<Scalars['Float']>;
+  total_supply?: Maybe<Scalars['Float']>;
 };
 
 /** order by variance() on columns of table "m_token" */
 export type M_Token_Variance_Order_By = {
   token_reward_index?: InputMaybe<Order_By>;
+  total_supply?: InputMaybe<Order_By>;
 };
 
 /** columns and relationships of "m_token_whitelist_contract" */
@@ -50367,6 +50419,7 @@ export type Satellite = {
   name: Scalars['String'];
   peer_id?: Maybe<Scalars['String']>;
   public_key?: Maybe<Scalars['String']>;
+  registration_timestamp?: Maybe<Scalars['timestamptz']>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status: Scalars['smallint'];
   /** An object relationship */
@@ -50501,6 +50554,7 @@ export type Satellite_Bool_Exp = {
   name?: InputMaybe<String_Comparison_Exp>;
   peer_id?: InputMaybe<String_Comparison_Exp>;
   public_key?: InputMaybe<String_Comparison_Exp>;
+  registration_timestamp?: InputMaybe<Timestamptz_Comparison_Exp>;
   status?: InputMaybe<Smallint_Comparison_Exp>;
   user?: InputMaybe<Mavryk_User_Bool_Exp>;
   user_id?: InputMaybe<String_Comparison_Exp>;
@@ -50518,6 +50572,7 @@ export type Satellite_Max_Fields = {
   name?: Maybe<Scalars['String']>;
   peer_id?: Maybe<Scalars['String']>;
   public_key?: Maybe<Scalars['String']>;
+  registration_timestamp?: Maybe<Scalars['timestamptz']>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: Maybe<Scalars['smallint']>;
   user_id?: Maybe<Scalars['String']>;
@@ -50534,6 +50589,7 @@ export type Satellite_Max_Order_By = {
   name?: InputMaybe<Order_By>;
   peer_id?: InputMaybe<Order_By>;
   public_key?: InputMaybe<Order_By>;
+  registration_timestamp?: InputMaybe<Order_By>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: InputMaybe<Order_By>;
   user_id?: InputMaybe<Order_By>;
@@ -50551,6 +50607,7 @@ export type Satellite_Min_Fields = {
   name?: Maybe<Scalars['String']>;
   peer_id?: Maybe<Scalars['String']>;
   public_key?: Maybe<Scalars['String']>;
+  registration_timestamp?: Maybe<Scalars['timestamptz']>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: Maybe<Scalars['smallint']>;
   user_id?: Maybe<Scalars['String']>;
@@ -50567,6 +50624,7 @@ export type Satellite_Min_Order_By = {
   name?: InputMaybe<Order_By>;
   peer_id?: InputMaybe<Order_By>;
   public_key?: InputMaybe<Order_By>;
+  registration_timestamp?: InputMaybe<Order_By>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: InputMaybe<Order_By>;
   user_id?: InputMaybe<Order_By>;
@@ -50586,6 +50644,7 @@ export type Satellite_Order_By = {
   name?: InputMaybe<Order_By>;
   peer_id?: InputMaybe<Order_By>;
   public_key?: InputMaybe<Order_By>;
+  registration_timestamp?: InputMaybe<Order_By>;
   status?: InputMaybe<Order_By>;
   user?: InputMaybe<Mavryk_User_Order_By>;
   user_id?: InputMaybe<Order_By>;
@@ -51176,6 +51235,8 @@ export enum Satellite_Select_Column {
   /** column name */
   PublicKey = 'public_key',
   /** column name */
+  RegistrationTimestamp = 'registration_timestamp',
+  /** column name */
   Status = 'status',
   /** column name */
   UserId = 'user_id',
@@ -51265,6 +51326,7 @@ export type Satellite_Stream_Cursor_Value_Input = {
   name?: InputMaybe<Scalars['String']>;
   peer_id?: InputMaybe<Scalars['String']>;
   public_key?: InputMaybe<Scalars['String']>;
+  registration_timestamp?: InputMaybe<Scalars['timestamptz']>;
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status?: InputMaybe<Scalars['smallint']>;
   user_id?: InputMaybe<Scalars['String']>;
@@ -60528,10 +60590,8 @@ export type Treasury_Aggregate_Order_By = {
 export type Treasury_Balance = {
   __typename?: 'treasury_balance';
   balance: Scalars['float8'];
-  icon?: Maybe<Scalars['String']>;
   id: Scalars['bigint'];
   metadata?: Maybe<Scalars['jsonb']>;
-  name?: Maybe<Scalars['String']>;
   token_address: Scalars['String'];
   token_id?: Maybe<Scalars['smallint']>;
   token_standard?: Maybe<Scalars['String']>;
@@ -60700,10 +60760,8 @@ export type Treasury_Balance_Bool_Exp = {
   _not?: InputMaybe<Treasury_Balance_Bool_Exp>;
   _or?: InputMaybe<Array<Treasury_Balance_Bool_Exp>>;
   balance?: InputMaybe<Float8_Comparison_Exp>;
-  icon?: InputMaybe<String_Comparison_Exp>;
   id?: InputMaybe<Bigint_Comparison_Exp>;
   metadata?: InputMaybe<Jsonb_Comparison_Exp>;
-  name?: InputMaybe<String_Comparison_Exp>;
   token_address?: InputMaybe<String_Comparison_Exp>;
   token_id?: InputMaybe<Smallint_Comparison_Exp>;
   token_standard?: InputMaybe<String_Comparison_Exp>;
@@ -60716,9 +60774,7 @@ export type Treasury_Balance_Bool_Exp = {
 export type Treasury_Balance_Max_Fields = {
   __typename?: 'treasury_balance_max_fields';
   balance?: Maybe<Scalars['float8']>;
-  icon?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['bigint']>;
-  name?: Maybe<Scalars['String']>;
   token_address?: Maybe<Scalars['String']>;
   token_id?: Maybe<Scalars['smallint']>;
   token_standard?: Maybe<Scalars['String']>;
@@ -60729,9 +60785,7 @@ export type Treasury_Balance_Max_Fields = {
 /** order by max() on columns of table "treasury_balance" */
 export type Treasury_Balance_Max_Order_By = {
   balance?: InputMaybe<Order_By>;
-  icon?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
-  name?: InputMaybe<Order_By>;
   token_address?: InputMaybe<Order_By>;
   token_id?: InputMaybe<Order_By>;
   token_standard?: InputMaybe<Order_By>;
@@ -60743,9 +60797,7 @@ export type Treasury_Balance_Max_Order_By = {
 export type Treasury_Balance_Min_Fields = {
   __typename?: 'treasury_balance_min_fields';
   balance?: Maybe<Scalars['float8']>;
-  icon?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['bigint']>;
-  name?: Maybe<Scalars['String']>;
   token_address?: Maybe<Scalars['String']>;
   token_id?: Maybe<Scalars['smallint']>;
   token_standard?: Maybe<Scalars['String']>;
@@ -60756,9 +60808,7 @@ export type Treasury_Balance_Min_Fields = {
 /** order by min() on columns of table "treasury_balance" */
 export type Treasury_Balance_Min_Order_By = {
   balance?: InputMaybe<Order_By>;
-  icon?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
-  name?: InputMaybe<Order_By>;
   token_address?: InputMaybe<Order_By>;
   token_id?: InputMaybe<Order_By>;
   token_standard?: InputMaybe<Order_By>;
@@ -60769,10 +60819,8 @@ export type Treasury_Balance_Min_Order_By = {
 /** Ordering options when selecting data from "treasury_balance". */
 export type Treasury_Balance_Order_By = {
   balance?: InputMaybe<Order_By>;
-  icon?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   metadata?: InputMaybe<Order_By>;
-  name?: InputMaybe<Order_By>;
   token_address?: InputMaybe<Order_By>;
   token_id?: InputMaybe<Order_By>;
   token_standard?: InputMaybe<Order_By>;
@@ -60786,13 +60834,9 @@ export enum Treasury_Balance_Select_Column {
   /** column name */
   Balance = 'balance',
   /** column name */
-  Icon = 'icon',
-  /** column name */
   Id = 'id',
   /** column name */
   Metadata = 'metadata',
-  /** column name */
-  Name = 'name',
   /** column name */
   TokenAddress = 'token_address',
   /** column name */
@@ -60915,10 +60959,8 @@ export type Treasury_Balance_Stream_Cursor_Input = {
 /** Initial value of the column from where the streaming should start */
 export type Treasury_Balance_Stream_Cursor_Value_Input = {
   balance?: InputMaybe<Scalars['float8']>;
-  icon?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['bigint']>;
   metadata?: InputMaybe<Scalars['jsonb']>;
-  name?: InputMaybe<Scalars['String']>;
   token_address?: InputMaybe<Scalars['String']>;
   token_id?: InputMaybe<Scalars['smallint']>;
   token_standard?: InputMaybe<Scalars['String']>;

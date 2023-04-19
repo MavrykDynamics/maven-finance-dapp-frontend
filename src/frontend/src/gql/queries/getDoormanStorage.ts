@@ -20,6 +20,7 @@ export function DOORMAN_STORAGE_QUERY_VARIABLE(address: string) {
 export const SMVK_HISTORY_DATA_QUERY = `
   query GetSmvkHistoryData {
     smvk_history_data {
+      mvk_total_supply
       smvk_total_supply
       timestamp
     }

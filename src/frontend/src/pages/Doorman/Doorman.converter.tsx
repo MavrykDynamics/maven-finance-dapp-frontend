@@ -12,6 +12,7 @@ import { calcWithoutPrecision } from '../../utils/calcFunctions'
 import { UTCTimestamp } from 'lightweight-charts'
 import { Mavryk_User } from 'utils/generated/graphqlTypes'
 import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import {AreaChartPlotType, CandlestickChartPlotType} from "../../app/App.components/Chart/helpers/Chart.types";
 
 export function normalizeDoormanStorage(storage: {
   mavryk_user: Array<Mavryk_User>
@@ -53,22 +54,18 @@ type MvkHistoryDataProps = {
   }>
 }
 
-export function normalizeMvkHistoryData(storage: MvkHistoryDataProps) {
-  const {
-    mvk_token: [{ transfer_history_data }],
-  } = storage
-
-  return transfer_history_data?.length
-    ? transfer_history_data?.map((item) => {
+export function normalizeMvkHistoryData(storage: SmvkHistoryDataProps) {
+  const { smvk_history_data } = storage
+  // TODO: I did this fast and dirty, def a better way to do it inside the normalizeSmvkHistoryData function
+  return smvk_history_data?.length
+      ? smvk_history_data?.map((item) => {
         return {
-          // TODO: temp solution while it's not correct data
-          value: parseFloat(calcWithoutPrecision(item.amount).toFixed(2)) * 10,
+          value: parseFloat(calcWithoutPrecision(item.mvk_total_supply - item.smvk_total_supply).toFixed(2)),
           time: new Date(item.timestamp).getTime() as UTCTimestamp,
         }
       })
-    : []
+      : []
 }
-
 export const stakingInputValidation = ({
   amount,
   myMvkTokenBalance,
