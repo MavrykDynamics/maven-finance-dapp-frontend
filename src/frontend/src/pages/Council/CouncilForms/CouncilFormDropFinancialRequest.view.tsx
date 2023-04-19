@@ -50,10 +50,10 @@ export const CouncilFormDropFinancialRequest = () => {
           id: frId,
         }
       }),
-    [financialRequestsIds],
+    [financialRequestMapper, financialRequestsIds],
   )
 
-  type DropDownItemType = (typeof dropDownItems)[0]
+  type DropDownItemType = (typeof dropDownItems)[number]
   const [chosenDdItem, setChosenDdItem] = useState<DropDownItemType | undefined>()
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
