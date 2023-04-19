@@ -3,7 +3,7 @@ import { SET_TREASURY_STORAGE } from '../pages/Treasury/Treasury.actions'
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
 
 export interface TreasuryState {
-  treasuryStorage: Array<TreasuryType>
+  treasuryStorage: TreasuryType
   treasuryFactoryAddress: string
   isLoaded: boolean
 }

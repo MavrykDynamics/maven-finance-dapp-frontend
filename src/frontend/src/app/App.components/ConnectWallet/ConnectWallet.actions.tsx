@@ -5,6 +5,7 @@ import { updateUserData } from 'reducers/actions/user.actions'
 import { dappClient } from 'reducers/wallet/WalletCore'
 
 import { ERROR } from '../Toaster/Toaster.constants'
+import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 
 // Instance of Dapp wallet
 export const DAPP_INSTANCE = dappClient()
@@ -21,6 +22,9 @@ export const changeWallet = () => async (dispatch: AppDispatch, getState: GetSta
     // If they are equal wallet changed, need to update user data
     if (accountAddress && accountAddress !== state.wallet.accountPkh) {
       await dispatch(updateUserData(accountAddress))
+
+      // Update loans data on wallet manipulations if it's loaded, cuz it's user centric data
+      if (state.loans.isDataLoaded) await dispatch(getLoansStorage())
     }
   } catch (e) {
     console.error(`Failed to change wallet: `, e)
@@ -32,12 +36,16 @@ export const changeWallet = () => async (dispatch: AppDispatch, getState: GetSta
 
 // Action to connect wallet
 export const connect = () => async (dispatch: AppDispatch, getState: GetState) => {
+  const state = getState()
   try {
     const accountAddress = await DAPP_INSTANCE.connectAccount()
 
     // if choosen wallet in popup
     if (accountAddress) {
       await dispatch(updateUserData(accountAddress))
+
+      // Update loans data on wallet manipulations if it's loaded, cuz it's user centric data
+      if (state.loans.isDataLoaded) await dispatch(getLoansStorage())
     } else {
       throw new Error('No account choosen')
     }
@@ -50,12 +58,16 @@ export const connect = () => async (dispatch: AppDispatch, getState: GetState) =
 }
 
 // Action to disconnect wallet
-export const disconnect = () => async (dispatch: AppDispatch) => {
+export const disconnect = () => async (dispatch: AppDispatch, getState: GetState) => {
+  const state = getState()
   try {
     await dappClient().disconnectWallet()
 
     // Clear user data in redux
     await dispatch({ type: DISCONNECT })
+
+    // Update loans data on wallet manipulations if it's loaded, cuz it's user centric data
+    if (state.loans.isDataLoaded) await dispatch(getLoansStorage())
   } catch (e) {
     console.error(`Failed to disconnect TempleWallet: `, e)
     if (e instanceof Error) {

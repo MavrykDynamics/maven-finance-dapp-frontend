@@ -11,7 +11,7 @@ import { State } from 'reducers'
 import { updateUserData } from 'reducers/actions/user.actions'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { TokenType } from 'utils/TypesAndInterfaces/General'
-import { getAvaliableCollaterals, getLoansStorage } from './getLoansData.actions'
+import { getLoansStorage } from './getLoansData.actions'
 import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
 import { scrollUpPage } from 'utils/scrollUpPage'
 
@@ -109,7 +109,6 @@ export const borrowVaultAssetAction =
       await checkIndexerLevelAndRunDataUpdateCallback({
         callback: async () => {
           await dispatch(updateUserData())
-          await dispatch(getAvaliableCollaterals())
           state.vaults.isLoaded && (await dispatch(getVaultsStorage()))
           state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
         },
@@ -237,7 +236,6 @@ export const repayPartOfVaultAction =
       await checkIndexerLevelAndRunDataUpdateCallback({
         callback: async () => {
           await dispatch(updateUserData())
-          await dispatch(getAvaliableCollaterals())
           state.vaults.isLoaded && (await dispatch(getVaultsStorage()))
           state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
         },
@@ -383,7 +381,6 @@ export const repayFullAndCloseVaultAction =
       await checkIndexerLevelAndRunDataUpdateCallback({
         callback: async () => {
           await dispatch(updateUserData())
-          await dispatch(getAvaliableCollaterals())
           state.vaults.isLoaded && (await dispatch(getVaultsStorage()))
           state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
         },

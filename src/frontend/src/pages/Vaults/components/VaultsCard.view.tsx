@@ -29,6 +29,7 @@ import { getTimestampByLevel } from 'pages/Governance/Governance.actions'
 import { loansPopupsContext } from 'pages/Loans/Components/Modals/LoansModals.provider'
 import { calculateCollateralShare } from '../calcFunctionsForVault'
 import { vaultTabs } from '../Vaults.view'
+import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
 
 const findStatusInfo = (status: string) => {
   switch (status) {
@@ -107,34 +108,8 @@ export const VaultsCard = (props: Props) => {
 
   const {
     openLiquidateVaultPopup,
-    changeBakerPopup,
-    repayPartPopup,
-    repayFullPopup,
-    borrowAssetPopup,
-    addExistingCollateralPopup,
-    addNewCollateralPopup,
-    withdrawCollateralPopup,
-    updateMvkOperatorPopup,
-    managePermissionsPopup,
-    liquidateVaultPopup,
   } = useContext(loansPopupsContext)
 
-  const { isActionLoading } = useSelector((state: State) => state.loading)
-
-  const notHandleClickAway =
-    repayPartPopup.showModal ||
-    changeBakerPopup.showModal ||
-    repayFullPopup.showModal ||
-    borrowAssetPopup.showModal ||
-    addExistingCollateralPopup.showModal ||
-    addNewCollateralPopup.showModal ||
-    withdrawCollateralPopup.showModal ||
-    updateMvkOperatorPopup.showModal ||
-    managePermissionsPopup.showModal ||
-    liquidateVaultPopup.showModal ||
-    isActionLoading
-
-  const [expanded, setExpanded] = useState(false)
   const [timerTimestamp, setTimerTimestamp] = useState<number | undefined>(undefined)
 
   const statusColor = findStatusInfo(status).color as StatusFlagStyle
@@ -147,9 +122,6 @@ export const VaultsCard = (props: Props) => {
     status === vaultsStatuses.LIQUIDATABLE || status === vaultsStatuses.GRACE_PERIOD || status === vaultsStatuses.MARK
 
   const isMarkStatus = vaultsStatuses.MARK === status
-
-  const ref = useRef<HTMLDivElement | null>(null)
-  useClickAway(ref, () => (notHandleClickAway ? null : setExpanded(false)))
 
   const getCountdownTimestamp = async (levelOfEarly: number, levelOfLate: number) => {
     const [timestampOfEarly, timestampOfLate] = await Promise.all([
@@ -168,8 +140,6 @@ export const VaultsCard = (props: Props) => {
   }
 
   useEffect(() => {
-    if (!expanded) return
-
     if (status === vaultsStatuses.GRACE_PERIOD || status === vaultsStatuses.LIQUIDATABLE) {
       ;(async () => {
         if (!levelOfEarly || !levelOfLate) {
@@ -186,7 +156,7 @@ export const VaultsCard = (props: Props) => {
         setTimerTimestamp(timestamp)
       })()
     }
-  }, [status, expanded, levelOfEarly, levelOfLate])
+  }, [status, levelOfEarly, levelOfLate])
 
   const headerSufix = <StatusFlag status={statusColor} text={status} className="sufix" />
 
@@ -293,7 +263,7 @@ export const VaultsCard = (props: Props) => {
                         <div className="cell-content">
                           <CommaNumber
                             value={amount}
-                            decimalsToShow={isTotalRow ? 2 : 4}
+                            decimalsToShow={isTotalRow ? 2 : assetDecimalsToShow}
                             beginningText={isTotalRow ? '$' : ''}
                             className="balance"
                           />
@@ -333,31 +303,16 @@ export const VaultsCard = (props: Props) => {
   )
 
   return (
-    <div ref={ref}>
+    <>
       {(vaultTab === vaultTabs.ALL || vaultTab === vaultTabs.MY) && (
-        <BorrowingExpandCard
-          {...props}
-          className={`expand-vault ${expanded ? 'openVault' : ''}`}
-          headerSufix={headerSufix}
-          getExpandedStatus={setExpanded}
-          isOpenedVault={expanded}
-          DAOFee={props.daoFee}
-          isOwner={isOwner}
-        >
+        <BorrowingExpandCard {...props} headerSufix={headerSufix} DAOFee={props.daoFee} isOwner={isOwner}>
           {!isOwner && generalExpand}
         </BorrowingExpandCard>
       )}
 
       {vaultTab === vaultTabs.PERMISSIONED && (
-        <BorrowingExpandCard
-          {...props}
-          className={`expand-vault ${expanded ? 'openVault' : ''}`}
-          headerSufix={headerSufix}
-          getExpandedStatus={setExpanded}
-          isOpenedVault={expanded}
-          DAOFee={props.daoFee}
-        />
+        <BorrowingExpandCard {...props} headerSufix={headerSufix} DAOFee={props.daoFee} />
       )}
-    </div>
+    </>
   )
 }

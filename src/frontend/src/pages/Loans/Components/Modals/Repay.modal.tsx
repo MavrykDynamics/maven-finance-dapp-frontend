@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useLockBodyScroll } from 'react-use'
 import { useEffect, useMemo, useState } from 'react'
 
-import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
+import { COLLATERAL_RATIO_GRADIENT, assetDecimalsToShow, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { INPUT_STATUS_SUCCESS, INPUT_STATUS_ERROR, INPUT_LARGE } from 'app/App.components/Input/Input.constants'
 import { DEFAULT_LOANS_INPUT_VALUE, getOnBlurValue, getOnFocusValue, RepayPartPopupDataType } from './Modals.helpers'
 import { State } from 'reducers'
@@ -20,8 +20,10 @@ import { PopupContainer, PopupContainerWrapper } from 'app/App.components/Settin
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase, VaultModalOverview } from './Modals.style'
-import { calcCollateralRatio } from 'pages/Loans/Loans.helpers'
+import { calcCollateralRatio, getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
+import { StatusMessageStyled } from '../LoansComponents.style'
+import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17953%3A224110&t=Sx2aEpp3ifrGxBtQ-0
 export const Repay = ({
@@ -40,6 +42,7 @@ export const Repay = ({
     feesAmount = 0,
     currentCollateralBalance = 0,
     borrowCapacity = 0,
+    minimumRepay = 0,
     borrowedAmount = 0,
     scrollToCurrentVault,
   } = data ?? {}
@@ -71,8 +74,14 @@ export const Repay = ({
   }, [show])
 
   const inputOnChangeHandle = (newInputAmount: string, maxAmount: number) => {
-    const validationStatus =
-      Number(newInputAmount) > 0 && Number(newInputAmount) <= maxAmount ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
+    const validationStatus = loansInputValidation({
+      inputAmount: newInputAmount,
+      maxAmount,
+      minAmount: minimumRepay,
+      options: {
+        byDecimalPlaces: borrowedAsset?.decimals || assetDecimalsToShow,
+      },
+    })
 
     setInputData({
       ...inputData,
@@ -171,7 +180,10 @@ export const Repay = ({
                     balanceAsset: borrowedAsset?.symbol,
                     useMaxHandler: () =>
                       inputOnChangeHandle(
-                        String(Math.min(borrowedAsset.userBalance, totalOutstanding)),
+                        getLoansInputMaxAmount(
+                          Math.min(borrowedAsset.userBalance, totalOutstanding),
+                          borrowedAsset.decimals,
+                        ),
                         Math.min(borrowedAsset.userBalance, totalOutstanding),
                       ),
                     inputStatus: inputData.validationStatus,
@@ -184,6 +196,15 @@ export const Repay = ({
                     {borrowedAsset?.symbol}
                   </InputPinnedTokenInfo>
                 </Input>
+              ) : null}
+
+              {inputData.validationStatus === INPUT_STATUS_ERROR && inputAmount <= minimumRepay ? (
+                <StatusMessageStyled className={`${vaultsStatuses.LIQUIDATABLE} borrow-message`}>
+                  <Icon id="error-triangle" />
+                  {
+                    'Your outstanding debt is less than the minimum repayment amount set by the smart contracts. We will have you repay the minimum repayment amount and the amount you are overpaying will automatically be refunded by the smart contract.'
+                  }
+                </StatusMessageStyled>
               ) : null}
 
               <div className="manage-btn">
@@ -212,7 +233,7 @@ export const Repay = ({
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">Amount</div>
-                  <CommaNumber value={inputAmount} className="value" />
+                  <CommaNumber value={inputAmount} decimalsToShow={assetDecimalsToShow} className="value" />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem className="right">
                   <div className="name">USD Value</div>
@@ -228,13 +249,7 @@ export const Repay = ({
                 >
                   <div className={`percentage`}>
                     Collateral Ratio:{' '}
-                    <CommaNumber
-                      beginningText={`${futureCollateralRatio > 250 ? '+' : ''}`}
-                      value={Math.max(0, Math.min(futureCollateralRatio, 250))}
-                      endingText="%"
-                      showDecimal
-                      decimalsToShow={2}
-                    />
+                    <CommaNumber value={futureCollateralRatio} endingText="%" showDecimal decimalsToShow={2} />
                   </div>
                   <GradientDiagram
                     className="diagram"

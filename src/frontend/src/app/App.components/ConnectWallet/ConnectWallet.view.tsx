@@ -164,6 +164,7 @@ export const ConnectedWalletBlock = ({
             buttonHandler={detailsHandlers.buyMVKHandler}
             subtextAmount={coinsInfo.userMVKBalance * coinsInfo.MVKExchangeRate}
             icon="mvkTokenGold"
+            isBtnDisabled
           />
           <ConnectedWalletDetailsItem
             buttonText={'Stake MVK'}
@@ -180,6 +181,7 @@ export const ConnectedWalletBlock = ({
             buttonHandler={detailsHandlers.buyXTZHandler}
             subtextAmount={coinsInfo.userXTZBalance * coinsInfo.XTZExchnageRate}
             icon="xtzTezos"
+            isBtnDisabled
           />
         </div>
 
@@ -234,6 +236,7 @@ type ConnectedWalletDetailsItemProps = {
   subtextInfo?: string
   subtextAmount?: number
   icon?: string
+  isBtnDisabled?: boolean
 }
 
 const ConnectedWalletDetailsItem = ({
@@ -244,6 +247,7 @@ const ConnectedWalletDetailsItem = ({
   subtextInfo,
   subtextAmount,
   icon,
+  isBtnDisabled = false,
 }: ConnectedWalletDetailsItemProps) => {
   return (
     <ConnectedWalletDetailsItemStyled>
@@ -262,7 +266,13 @@ const ConnectedWalletDetailsItem = ({
       </div>
 
       <div className="btn-wrapper">
-        <Button text={buttonText} kind={TRANSPARENT} onClick={buttonHandler} className="connect-wallet-details" />
+        <Button
+          text={buttonText}
+          kind={TRANSPARENT}
+          onClick={buttonHandler}
+          disabled={isBtnDisabled}
+          className="connect-wallet-details"
+        />
         <Icon id="paginationArrowLeft" />
       </div>
     </ConnectedWalletDetailsItemStyled>

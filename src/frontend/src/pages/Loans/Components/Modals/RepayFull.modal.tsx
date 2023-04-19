@@ -37,6 +37,7 @@ export const RepayFull = ({
     feesAmount = 0,
     currentCollateralBalance = 0,
     collateralRatio = 0,
+    minimumRepay = 0,
     borrowCapacity = 0,
     borrowedAmount = 0,
   } = data ?? {}
@@ -47,10 +48,8 @@ export const RepayFull = ({
   const dispatch = useDispatch()
   const { isActionLoading } = useSelector((state: State) => state.loading)
 
-  const canRepay = useMemo(
-    () => totalOutstanding <= (borrowedAsset?.userBalance ?? 0),
-    [borrowedAsset, totalOutstanding],
-  )
+  const canRepay = totalOutstanding <= (borrowedAsset?.userBalance ?? 0) && totalOutstanding > minimumRepay
+
   const [screenShown, setShownScreen] = useState<'initial' | 'confitmation'>('initial')
 
   useEffect(() => {
@@ -168,13 +167,7 @@ export const RepayFull = ({
                     >
                       <div className={`percentage`}>
                         Collateral Ratio:{' '}
-                        <CommaNumber
-                          beginningText={`${collateralRatio > 250 ? '+' : ''}`}
-                          value={Math.max(0, Math.min(collateralRatio, 250))}
-                          endingText="%"
-                          showDecimal
-                          decimalsToShow={2}
-                        />
+                        <CommaNumber value={collateralRatio} endingText="%" showDecimal decimalsToShow={2} />
                       </div>
                       <GradientDiagram
                         className="diagram"
@@ -229,13 +222,7 @@ export const RepayFull = ({
                 >
                   <div className={`percentage`}>
                     Collateral Ratio:{' '}
-                    <CommaNumber
-                      beginningText={`${futureCollateralRatio > 250 ? '+' : ''}`}
-                      value={Math.max(0, Math.min(futureCollateralRatio, 250))}
-                      endingText="%"
-                      showDecimal
-                      decimalsToShow={2}
-                    />
+                    <CommaNumber value={futureCollateralRatio} endingText="%" showDecimal decimalsToShow={2} />
                   </div>
                   <GradientDiagram
                     className="diagram"
