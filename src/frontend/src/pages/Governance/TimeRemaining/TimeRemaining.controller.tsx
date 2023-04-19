@@ -24,6 +24,7 @@ export default function TimeRemaining() {
       const duration = await getTimestampByLevel(currentRoundEndLevel)
       setTimerDeadline(new Date(duration).getTime())
       setTimerActive(Boolean(currentRoundEndLevel) && timerDeadline > Date.now())
+      console.log(duration)
     })()
   }, [currentRoundEndLevel, timerDeadline])
 
@@ -39,7 +40,7 @@ export default function TimeRemaining() {
               showZeros: true,
               shownParts: ['h', 'm', 's'],
               timerView: COLON_VIEW,
-              showFullDay: true,
+              showFullDay: false,
               endText: 'remaining',
               defaultColor: '#77A4F2',
             }}
