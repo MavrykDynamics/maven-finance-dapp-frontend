@@ -137,16 +137,16 @@ export const ConnectedWalletBlock = ({
         <var>
           <TzAddress tzAddress={accountPkh} hasIcon={false} shouldCopy={false} />
         </var>
-        <Icon id="paginationArrowLeft" className="end-icon hover"/>
+        <Icon id="paginationArrowLeft" className="end-icon hover" />
       </div>
 
       <div className={`wallet-details ${detailsShown ? 'visible' : ''} ${isMobile ? 'mobile' : ''}`}>
-        <div className='wallet-details-header'>
+        <div className="wallet-details-header">
           <div className="top-visible-part ">
             <Icon id="wallet" className="inner-wallet hover" />
-            <var className='wallet-details-address hover'>
+            <var className="wallet-details-address hover">
               <TzAddress tzAddress={accountPkh} hasIcon={false} type={BLUE} />
-              <Icon id='copyToClipboard' className='icon-copy hover' />
+              <Icon id="copyToClipboard" className="icon-copy hover" />
             </var>
           </div>
 
@@ -157,7 +157,7 @@ export const ConnectedWalletBlock = ({
 
         <hr />
 
-        <div className='wallet-details-body'>
+        <div className="wallet-details-body">
           <ConnectedWalletDetailsItem
             buttonText={'Buy MVK'}
             coinAmount={coinsInfo.userMVKBalance}
@@ -165,6 +165,7 @@ export const ConnectedWalletBlock = ({
             buttonHandler={detailsHandlers.buyMVKHandler}
             subtextAmount={coinsInfo.userMVKBalance * coinsInfo.MVKExchangeRate}
             icon="mvkTokenGold"
+            isBtnDisabled
           />
           <ConnectedWalletDetailsItem
             buttonText={'Stake MVK'}
@@ -181,16 +182,12 @@ export const ConnectedWalletBlock = ({
             buttonHandler={detailsHandlers.buyXTZHandler}
             subtextAmount={coinsInfo.userXTZBalance * coinsInfo.XTZExchnageRate}
             icon="xtzTezos"
+            isBtnDisabled
           />
         </div>
 
         <div className="wallet-details-footer">
-          <Button
-            text="Sign out"
-            onClick={signOutHandler}
-            kind={ACTION_SECONDARY}
-            icon="exit"
-          />
+          <Button text="Sign out" onClick={signOutHandler} kind={ACTION_SECONDARY} icon="exit" />
 
           <Button
             text="Change Wallet"
@@ -240,6 +237,7 @@ type ConnectedWalletDetailsItemProps = {
   subtextInfo?: string
   subtextAmount?: number
   icon?: string
+  isBtnDisabled?: boolean
 }
 
 const ConnectedWalletDetailsItem = ({
@@ -250,16 +248,16 @@ const ConnectedWalletDetailsItem = ({
   subtextInfo,
   subtextAmount,
   icon,
+  isBtnDisabled = false,
 }: ConnectedWalletDetailsItemProps) => {
   return (
     <ConnectedWalletDetailsItemStyled>
-      <div className='left-part'>
+      <div className="left-part">
         {icon && <Icon id={icon} />}
 
         <div className="left-part-info">
           <CommaNumber value={coinAmount} endingText={coinName} showDecimal className="main" />
-          
-  
+
           {subtextAmount !== undefined ? (
             <CommaNumber value={subtextAmount} endingText={'USD'} showDecimal className="subtext" />
           ) : (
@@ -268,9 +266,14 @@ const ConnectedWalletDetailsItem = ({
         </div>
       </div>
 
-
       <div className="btn-wrapper">
-        <Button text={buttonText} kind={TRANSPARENT} onClick={buttonHandler} className="connect-wallet-details" />
+        <Button
+          text={buttonText}
+          kind={TRANSPARENT}
+          onClick={buttonHandler}
+          disabled={isBtnDisabled}
+          className="connect-wallet-details"
+        />
         <Icon id="paginationArrowLeft" />
       </div>
     </ConnectedWalletDetailsItemStyled>
