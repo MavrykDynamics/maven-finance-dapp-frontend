@@ -99,7 +99,7 @@ export const CouncilPendingStyled = styled(Card)`
     font-weight: 600;
     font-size: 18px;
     line-height: 18px;
-    color: ${({ theme }) => theme.headerColor};
+    color: ${({ theme }) => theme.textColor};
     margin-bottom: 20px;
 
     &::first-letter {
@@ -131,6 +131,10 @@ export const CouncilPendingStyled = styled(Card)`
     justify-content: space-between;
     gap: 16px;
 
+    article p {
+      white-space: nowrap;
+    }
+
     &:first-of-type {
       padding-bottom: 20px;
     }
@@ -142,12 +146,14 @@ export const CouncilPendingStyled = styled(Card)`
       text-overflow: ellipsis;
       white-space: nowrap;
       overflow: hidden;
+
+      color: ${({ theme }) => theme.textColor};
     }
 
     .parameters-value,
     .parameters-value p {
       margin: 0;
-      color: ${({ theme }) => theme.textColorHovered};
+      color: ${({ theme }) => theme.dataColor};
       font-weight: 600;
       font-size: 16px;
       line-height: 16px;
@@ -166,7 +172,7 @@ export const CouncilPendingStyled = styled(Card)`
       font-weight: 400;
       font-size: 12px;
       line-height: 12px;
-      color: ${({ theme }) => theme.headerSkyColor};
+      color: ${({ theme }) => theme.textColor};
       margin-top: 0;
       margin-bottom: 10px;
     }
