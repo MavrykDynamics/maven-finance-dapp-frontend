@@ -4,96 +4,76 @@ import { BUTTON_RADIUS } from 'styles/constants'
 import { MavrykTheme } from 'styles/interfaces'
 
 // Common style parts START
-const VISIBLE_PART_CONNECTED_WALLET = (theme: MavrykTheme, isMobileDetails?: boolean) => `
-.top-visible-part {
-  display: flex;
-  align-items: center;
-  column-gap: 10px;
-  cursor: pointer;
-  height: 100%;
+const VISIBLE_PART_CONNECTED_WALLET = (theme: MavrykTheme, isMobileDetails?: boolean) => css`
+  .top-visible-part {
+    display: flex;
+    align-items: center;
+    column-gap: 10px;
+    cursor: pointer;
+    height: 100%;
 
-  var {
-    font-weight: 600;
-    font-size: 16px;
-    color: ${theme.valueColor};
-  }
-
-  .end-icon {
-    height: 15px;
-    width: 10px;
-    transform: rotate(-90deg);
-    margin-left: 3px;
-    stroke: ${theme.valueColor};
-  }
-
-  .openLink {
-    height: 15px;
-    width: 20px;
-  }
-
-  .inner-wallet,
-  .wallet {
-    width: 22px;
-    height: 17px;
-    stroke: none;
-    fill: ${theme.valueColor};
-  }
-
-  .inner-wallet {
-    fill: ${theme.dataColor};
-  }
-
-  .icon-copy {
-    margin-left: 5px;
-    width: 15px;
-    height: 15px;
-    stroke: transparent;
-  }
-
-  .hover {
-    transition: 0.6s all;
-  }
-
-  ${
-    isMobileDetails
-      ? ''
-      : ` &:hover {
-      .hover {
-        color: ${cyanColor};
-        fill: ${cyanColor};
-
-        div {
-          color: ${cyanColor};
-        }
-
-        svg {
-          fill: ${cyanColor};
-        }
-
-        .icon-copy {
-          stroke: ${cyanColor};
-        }
-      }
-    }
-  `
-  }
-
-  @media screen and (max-width: 870px) {
     var {
-      font-size: 20px;
+      font-weight: 600;
+      font-size: 16px;
+      color: ${theme.valueColor};
+    }
+
+    .end-icon {
+      height: 15px;
+      width: 10px;
+      transform: rotate(-90deg);
+      margin-left: 3px;
+      stroke: ${theme.valueColor};
     }
 
     .openLink {
-      height: 20px;
+      height: 15px;
       width: 20px;
     }
-  
+
+    .inner-wallet,
     .wallet {
-      width: 25px;
-      height: 20px;
+      width: 22px;
+      height: 17px;
+      stroke: none;
+      fill: ${theme.valueColor};
+      transition: 0.6s fill;
+    }
+
+    .inner-wallet {
+      fill: ${theme.dataColor};
+    }
+
+    ${isMobileDetails
+      ? ''
+      : `
+          &:hover {
+            div {
+              color: ${cyanColor};
+            }
+
+            svg {
+              fill: ${cyanColor};
+            }
+          }
+        `}
+
+    @media screen and (max-width: 870px) {
+      var {
+        font-size: 20px;
+      }
+
+      .openLink {
+        height: 20px;
+        width: 20px;
+      }
+
+      .wallet {
+        width: 25px;
+        height: 20px;
+      }
     }
   }
-}
 `
 
 const BUTTONS_WRAPPER_CONNECTED_WALLET = `

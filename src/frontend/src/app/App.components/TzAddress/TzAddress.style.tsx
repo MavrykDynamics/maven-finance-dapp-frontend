@@ -52,29 +52,36 @@ export const TzAddressIcon = styled.svg<{ theme: MavrykTheme }>`
   display: inline-block;
   vertical-align: sub;
   margin-left: 6px;
-  transition: stroke 0.4s ease-in-out;
+  transition: fill 0.4s ease-in-out;
+
+  &.largeIcon {
+    // TODO: remove important after clearing all cases of usage for this icon
+    width: 17px !important;
+    height: 17px !important;
+    margin-bottom: 2px;
+  }
 
   &.${PRIMARY} {
-    stroke: ${({ theme }) => theme.backgroundTextColor};
+    fill: ${({ theme }) => theme.backgroundTextColor};
   }
 
   &.${SECONDARY} {
-    stroke: ${({ theme }) => theme.headerColor};
+    fill: ${({ theme }) => theme.headerColor};
   }
 
   &.${TRANSPARENT} {
-    stroke: ${({ theme }) => theme.primaryColor};
+    fill: ${({ theme }) => theme.primaryColor};
   }
 
   &.${BLUE} {
-    stroke: ${({ theme }) => theme.dataColor};
+    fill: ${({ theme }) => theme.dataColor};
   }
 
   &.${CYAN} {
-    stroke: ${({ theme }) => theme.navIconColor};
+    fill: ${({ theme }) => theme.navIconColor};
   }
 
   &.${BLUE} {
-    stroke: ${({ theme }) => theme.headerSkyColor};
+    fill: ${({ theme }) => theme.headerSkyColor};
   }
 `

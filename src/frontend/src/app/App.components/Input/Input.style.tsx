@@ -39,7 +39,7 @@ export const InputComponentContainer = styled.div<{ theme: MavrykTheme }>`
     }
 
     &.search {
-      color: ${({ theme }) => theme.headerColor};
+      color: ${({ theme }) => theme.textColor};
     }
 
     &::placeholder:not(.search) {
