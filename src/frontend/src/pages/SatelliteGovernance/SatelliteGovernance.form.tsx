@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 
 // view
@@ -47,6 +47,19 @@ type Props = {
   variant: string
   maxLength: MaxLength
 }
+
+type InputStatus = Record<string, InputStatusType>
+type InputValue = {
+  oracleAddress: string
+  satelliteAddress: string
+  purpose: string
+}
+
+const initialData = {
+  oracleAddress: '',
+  satelliteAddress: '',
+  purpose: '',
+} as InputValue & InputStatus
 
 const CONTENT_FORM = new Map<string, Record<string, string>>([
   [
@@ -133,26 +146,18 @@ const CONTENT_FORM = new Map<string, Record<string, string>>([
 
 export const SatelliteGovernanceForm = ({ variant, maxLength }: Props) => {
   const dispatch = useDispatch()
-  const [form, setForm] = useState({
-    oracleAddress: '',
-    satelliteAddress: '',
-    purpose: '',
-  })
-  const [formInputStatus, setFormInputStatus] = useState<Record<string, InputStatusType>>({
-    oracleAddress: '',
-    satelliteAddress: '',
-    purpose: '',
-  })
+  const [form, setForm] = useState<InputValue>(initialData)
+  const [formInputStatus, setFormInputStatus] = useState<InputStatus>(initialData)
 
   const { oracleAddress, satelliteAddress, purpose } = form
 
   const content = CONTENT_FORM.get(variant)
 
   const isFieldOracleAddress =
-  compareValues(variant, 'removeFromAggregator') ||
-  compareValues(variant, 'addToAggregator') ||
-  compareValues(variant, 'setAggregatorMaintainer') ||
-  compareValues(variant, 'updateAggregatorStatus')
+    compareValues(variant, 'removeFromAggregator') ||
+    compareValues(variant, 'addToAggregator') ||
+    compareValues(variant, 'setAggregatorMaintainer') ||
+    compareValues(variant, 'updateAggregatorStatus')
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -172,22 +177,22 @@ export const SatelliteGovernanceForm = ({ variant, maxLength }: Props) => {
           break
         case handleComparingValue('removeOracles'):
           await dispatch(removeOracles(satelliteAddress, purpose))
-          break;
+          break
         case handleComparingValue('restoreSatellite'):
           await dispatch(restoreSatellite(satelliteAddress, purpose))
-          break;
+          break
         case handleComparingValue('removeFromAggregator'):
           await dispatch(removeOracleInAggregator(oracleAddress, satelliteAddress, purpose))
-          break;
+          break
         case handleComparingValue('addToAggregator'):
           await dispatch(addOracleToAggregator(oracleAddress, satelliteAddress, purpose))
-          break;
+          break
         case handleComparingValue('setAggregatorMaintainer'):
           await dispatch(setAggregatorMaintainer(oracleAddress, satelliteAddress, purpose))
-          break;
+          break
         case handleComparingValue('updateAggregatorStatus'):
           await dispatch(updateAggregatorStatus(oracleAddress, satelliteAddress, purpose))
-          break;
+          break
       }
 
       setForm({
@@ -213,6 +218,11 @@ export const SatelliteGovernanceForm = ({ variant, maxLength }: Props) => {
 
   const handleBlur = validateFormField(setFormInputStatus)
   const handleBlurAddress = validateFormAddress(setFormInputStatus)
+
+  useEffect(() => {
+    setForm(initialData)
+    setFormInputStatus(initialData)
+  }, [variant])
 
   if (!variant) return null
 

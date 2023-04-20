@@ -1,14 +1,14 @@
 import { GET_FINANCIAL_REQUEST_STORAGE } from 'pages/FinacialRequests/FiancialRequest.actions'
-import { FinancialRequestRecord } from 'utils/TypesAndInterfaces/Governance'
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
+import { normalizeFinancialRequests } from 'pages/FinacialRequests/FinancialRequests.helpers'
 
-export type FinancialRequestStoreType = {
-  financialRequests: Array<FinancialRequestRecord>
+export type FinancialRequestStoreType = ReturnType<typeof normalizeFinancialRequests> & {
   isLoaded: boolean
 }
 
 const financialReqDefaultState: FinancialRequestStoreType = {
-  financialRequests: [],
+  financialRequestsIds: [],
+  financialRequestMapper: {},
   isLoaded: false,
 }
 
@@ -18,7 +18,8 @@ export function financialRequest(state = financialReqDefaultState, action: Actio
       return {
         ...state,
         isLoaded: true,
-        financialRequests: action.financialRequests,
+        financialRequestsIds: action.financialRequestsIds,
+        financialRequestMapper: action.financialRequestMapper,
       }
     default:
       return state

@@ -182,7 +182,7 @@ export const StageThreeForm = ({
       </FormHeaderGroup>
       <FormTitleAndFeeContainer>
         <FormTitleContainer>
-          <label>1 - Enter Proposal Title</label>
+          <label>1 - Proposal Title</label>
           <FormTitleEntry>{title}</FormTitleEntry>
         </FormTitleContainer>
         <div>
@@ -270,7 +270,7 @@ export const StageThreeForm = ({
                     selectedSymbol
                   ) : (
                     <DropDown
-                      placeholder={'Select paymeth method'}
+                      placeholder={'Select payment method'}
                       className="stage-3-dropDown"
                       items={ddItems}
                       activeItem={ddItems.find(({ id }) => address === id) ?? ddItems[0]}

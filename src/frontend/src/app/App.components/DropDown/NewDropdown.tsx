@@ -45,7 +45,7 @@ export const DropDown = ({ placeholder, clickItem, items, activeItem, className,
   return (
     <DropDownStyled ref={refDropdownWrapper} className={`drop-down ${className} ${disabled ? 'disabled' : ''}`}>
       <DropDownMenu id={'selected-option'} onClick={() => setIsDropDownOpen(!isDropDownOpen)}>
-        {activeItem?.content ?? placeholder}
+        <div>{activeItem?.content ?? placeholder}</div>
         <span>
           <Icon className={isDropDownOpen ? 'open' : ''} id="arrow-down" />
         </span>

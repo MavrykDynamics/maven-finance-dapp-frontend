@@ -69,18 +69,18 @@ export const dropProposal = (proposalId: number) => async (dispatch: AppDispatch
   try {
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(state.contractAddresses.governanceAddress.address)
-
+    const transaction = await contract?.methods.dropProposal(proposalId).send()
     await dispatch(toggleActionLoader(true))
     await dispatch(showToaster(INFO, 'Drop proposal...', 'Please wait 30s'))
 
-    await (await contract?.methods.dropProposal(proposalId).send())?.confirmation()
+    await transaction?.confirmation()
 
-    dispatch(showToaster(SUCCESS, 'Proposal Droped.', 'All good :)'))
-    await dispatch(toggleActionLoader(false))
+    dispatch(showToaster(SUCCESS, 'Proposal Dropped.', 'All good :)'))
 
     await dispatch(getGovernanceStorage())
     await dispatch(getSatellitesStorage())
     await dispatch(getCurrentRoundProposals())
+    await dispatch(toggleActionLoader(false))
   } catch (error) {
     console.error('dropProposal error:', error)
     if (error instanceof Error) {
@@ -106,18 +106,18 @@ export const lockProposal = (proposalId: number) => async (dispatch: AppDispatch
   try {
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(state.contractAddresses.governanceAddress.address)
-
+    const transaction = await contract?.methods.lockProposal(proposalId).send()
     await dispatch(toggleActionLoader(true))
     await dispatch(showToaster(INFO, 'Locking proposal...', 'Please wait 30s'))
 
-    await (await contract?.methods.lockProposal(proposalId).send())?.confirmation()
+    await transaction?.confirmation()
 
-    await dispatch(toggleActionLoader(false))
     await dispatch(showToaster(SUCCESS, 'Proposal locked.', 'All good :)'))
 
     await dispatch(getGovernanceStorage())
     await dispatch(getSatellitesStorage())
     await dispatch(getCurrentRoundProposals())
+    await dispatch(toggleActionLoader(false))
   } catch (error) {
     console.error('lockProposal error:', error)
     if (error instanceof Error) {

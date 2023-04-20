@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "start": "PORT=3000 NODE_ENV=development REACT_APP_BACKEND_URL=http://localhost:8080 react-scripts -r @cypress/instrument-cra start && open http://localhost:3000",
+    "start:evenlop": "export NODE_OPTIONS=--openssl-legacy-provider && PORT=3000 NODE_ENV=development REACT_APP_BACKEND_URL=http://localhost:8080 react-scripts -r @cypress/instrument-cra start && open http://localhost:3000",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "analyze": "react-scripts build && source-map-explorer 'build/static/js/*.js'",
@@ -37,6 +38,7 @@
     "react": "^17.0.2",
     "react-avatar-editor": "^13.0.0",
     "react-collapsed": "^3.3.0",
+    "react-cookie": "^4.1.1",
     "react-dom": "^17.0.2",
     "react-ga": "^3.3.0",
     "react-google-recaptcha-v3": "^1.9.5",
@@ -65,6 +67,7 @@
     "@types/react-dom": "^17.0.9",
     "@types/react-redux": "^7.1.18",
     "@types/react-router-dom": "^5.3.0",
+    "@types/react-transition-group": "^4.4.5",
     "@types/styled-components": "^5.1.14",
     "babel-plugin-styled-components": "^1.13.2",
     "cypress": "^8.4.1",

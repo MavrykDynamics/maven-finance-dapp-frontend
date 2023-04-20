@@ -90,6 +90,15 @@ export const CouncilFormStyled = styled.form`
     color: ${({ theme }) => theme.textColor};
   }
 
+  .drop-down {
+    & > div > div {
+      max-width: 250px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+  }
+
   &.update-council-member-info {
     border: none;
 
