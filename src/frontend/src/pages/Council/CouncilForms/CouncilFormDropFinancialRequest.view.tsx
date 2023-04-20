@@ -23,9 +23,11 @@ import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 
 export const CouncilFormDropFinancialRequest = () => {
   const dispatch = useDispatch()
-  const { financialRequests, isLoaded: isFinancialRequestsLoaded } = useSelector(
-    (state: State) => state.financialRequest,
-  )
+  const {
+    financialRequestMapper,
+    financialRequestsIds,
+    isLoaded: isFinancialRequestsLoaded,
+  } = useSelector((state: State) => state.financialRequest)
 
   useDataLoader(async (isDepsChanged) => {
     try {
@@ -37,18 +39,21 @@ export const CouncilFormDropFinancialRequest = () => {
 
   const dropDownItems = useMemo(
     () =>
-      distinctRequestsByExecuting(financialRequests).ongoing.map((item) => ({
-        content: (
-          <div className="truncated-text">
-            {item.type} {item.purpose}
-          </div>
-        ),
-        id: item.id,
-      })),
-    [financialRequests],
+      distinctRequestsByExecuting(financialRequestsIds, financialRequestMapper).ongoing.map((frId) => {
+        const fr = financialRequestMapper[frId]
+        return {
+          content: (
+            <div className="truncated-text">
+              {fr.type} {fr.purpose}
+            </div>
+          ),
+          id: frId,
+        }
+      }),
+    [financialRequestMapper, financialRequestsIds],
   )
 
-  type DropDownItemType = typeof dropDownItems[0]
+  type DropDownItemType = (typeof dropDownItems)[number]
   const [chosenDdItem, setChosenDdItem] = useState<DropDownItemType | undefined>()
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {

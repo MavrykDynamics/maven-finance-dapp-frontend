@@ -16,6 +16,8 @@ import { ProposalRecordType } from 'utils/TypesAndInterfaces/Governance'
 import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 import { ROCKET_LOADER } from 'utils/constants'
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
+import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
+import { getFinancialRequestStorage } from 'pages/FinacialRequests/FiancialRequest.actions'
 
 export const SET_GOVERNANCE_PHASE = 'SET_GOVERNANCE_PHASE'
 export const GET_GOVERNANCE_STORAGE = 'GET_GOVERNANCE_STORAGE'
@@ -163,8 +165,18 @@ export const votingRinancialRequestVote =
 
       await transaction?.confirmation()
 
+      // @ts-ignore don't have proper type to acees data, type has only methods
+      const currentOperationLevel = transaction?.lastHead?.header?.level
+
+      // refetch data we need
+      await checkIndexerLevelAndRunDataUpdateCallback({
+        callback: async () => {
+          await dispatch(getFinancialRequestStorage())
+        },
+        currentOperationLevel,
+      })
+
       await dispatch(showToaster(SUCCESS, 'Voting done', 'All good :)'))
-      await dispatch(getGovernanceStorage())
       await dispatch(toggleActionLoader(false))
     } catch (error) {
       if (error instanceof Error) {
