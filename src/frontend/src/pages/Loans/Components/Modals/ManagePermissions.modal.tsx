@@ -48,7 +48,7 @@ export const ManagePermissions = ({
 
   useLockBodyScroll(show)
   const dispatch = useDispatch()
-  const { isActionLoading } = useSelector((state: State) => state.loading)
+  const { isActiveFullScreenLoader } = useSelector((state: State) => state.loading)
   const { accountPkh } = useSelector((state: State) => state.wallet)
 
   const [tableData, setTableData] = useState<Array<LoansPopupsAddressInputStateType>>([
@@ -95,8 +95,8 @@ export const ManagePermissions = ({
       tableData.every(({ address }) => depositors.includes(address)) &&
       deporsitorsFlag === chosenDdItem?.id
 
-    return isActionLoading || isInvalidTable || !chosenDdItem || !vaultAddress || isNoChanges
-  }, [chosenDdItem, deporsitorsFlag, depositors, isActionLoading, tableData, vaultAddress])
+    return isActiveFullScreenLoader || isInvalidTable || !chosenDdItem || !vaultAddress || isNoChanges
+  }, [chosenDdItem, deporsitorsFlag, depositors, isActiveFullScreenLoader, tableData, vaultAddress])
 
   const handleAddRow = () => {
     setTableData(tableData.concat([{ address: '', validationStatus: '' }]))

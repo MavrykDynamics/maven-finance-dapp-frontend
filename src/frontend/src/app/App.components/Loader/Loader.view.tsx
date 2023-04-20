@@ -110,9 +110,9 @@ export const SimpleCircleSpinnerLoader = () => {
 }
 
 export const ActionLoader = () => {
-  const { isActionLoading } = useSelector((state: State) => state.loading)
-  useLockBodyScroll(isActionLoading)
-  return isActionLoading ? <LoaderRocket /> : null
+  const { isActiveFullScreenLoader } = useSelector((state: State) => state.loading)
+  useLockBodyScroll(isActiveFullScreenLoader)
+  return isActiveFullScreenLoader ? <LoaderRocket /> : null
 }
 
 export const WertLoader = () => {

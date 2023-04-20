@@ -5,7 +5,7 @@ import type { AppDispatch, GetState } from '../../app/App.controller'
 import farmFactoryAddress from '../../deployments/farmFactoryAddress.json'
 
 import { GET_GOVERNANCE_STORAGE, SET_GOVERNANCE_PHASE } from '../Governance/Governance.actions'
-import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
+import { toggleActionFulScreenLoader } from 'app/App.components/Loader/Loader.action'
 import { OpKind } from '@taquito/taquito'
 import { convertNumberForContractCall } from '../../utils/calcFunctions'
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
@@ -57,7 +57,7 @@ export const adminChangeGovernancePeriod =
           break
       }
 
-      dispatch(toggleActionLoader(true))
+      dispatch(toggleActionFulScreenLoader(true))
 
       // dispatch(showToaster(INFO, 'Changing Period...', 'Please wait 30s'))
 
@@ -65,13 +65,13 @@ export const adminChangeGovernancePeriod =
       // console.log('done', done)
       dispatch(showToaster(SUCCESS, 'Changing Governance Period done...', 'All good :)'))
 
-      dispatch(toggleActionLoader(false))
+      dispatch(toggleActionFulScreenLoader(false))
       // dispatch(getGovernanceStorage())
     } catch (error) {
       if (error instanceof Error) {
         dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      dispatch(toggleActionLoader(false))
+      dispatch(toggleActionFulScreenLoader(false))
     }
   }
 
@@ -133,7 +133,7 @@ export const createFarm = (accountPkh?: string) => async (dispatch: AppDispatch,
   } catch (error) {
     if (error instanceof Error) {
       dispatch(showToaster(ERROR, 'Error', error.message))
-      dispatch(toggleActionLoader(false))
+      dispatch(toggleActionFulScreenLoader(false))
     }
   }
 }
@@ -237,7 +237,7 @@ export const ChangeAllAdminsFromGovernance =
     } catch (error) {
       if (error instanceof Error) {
         dispatch(showToaster(ERROR, 'Error', error.message))
-        dispatch(toggleActionLoader(false))
+        dispatch(toggleActionFulScreenLoader(false))
       }
     }
   }
@@ -294,7 +294,7 @@ export const addAllLoanTokensToMarkets = (accountPkh?: string) => async (dispatc
   } catch (error) {
     if (error instanceof Error) {
       dispatch(showToaster(ERROR, 'Error', error.message))
-      dispatch(toggleActionLoader(false))
+      dispatch(toggleActionFulScreenLoader(false))
     }
   }
 }
@@ -464,7 +464,7 @@ export const addAllCollateralTokensToMarkets =
     } catch (error) {
       if (error instanceof Error) {
         dispatch(showToaster(ERROR, 'Error', error.message))
-        dispatch(toggleActionLoader(false))
+        dispatch(toggleActionFulScreenLoader(false))
       }
     }
   }
@@ -684,7 +684,7 @@ export const createTreasuries = (accountPkh?: string) => async (dispatch: AppDis
   } catch (error) {
     if (error instanceof Error) {
       dispatch(showToaster(ERROR, 'Error', error.message))
-      dispatch(toggleActionLoader(false))
+      dispatch(toggleActionFulScreenLoader(false))
     }
   }
 }

@@ -33,7 +33,7 @@ export const UpdateMVKOperator = ({
 
   useLockBodyScroll(show)
   const dispatch = useDispatch()
-  const { isActionLoading } = useSelector((state: State) => state.loading)
+  const { isActiveFullScreenLoader } = useSelector((state: State) => state.loading)
   const { accountPkh } = useSelector((state: State) => state.wallet)
 
   const [tableData, setTableData] = useState<Array<LoansPopupsAddressInputStateType>>([
@@ -47,8 +47,10 @@ export const UpdateMVKOperator = ({
   }, [show])
 
   const isActionDisabled = useMemo(() => {
-    return isActionLoading || tableData.some(({ validationStatus }) => validationStatus !== INPUT_STATUS_SUCCESS)
-  }, [isActionLoading, tableData])
+    return (
+      isActiveFullScreenLoader || tableData.some(({ validationStatus }) => validationStatus !== INPUT_STATUS_SUCCESS)
+    )
+  }, [isActiveFullScreenLoader, tableData])
 
   const handleAddRow = () => setTableData(tableData.concat([{ address: '', validationStatus: '' }]))
   const handleDeleteRow = (rowId: number) => setTableData(tableData.filter((_, idx) => idx !== rowId))

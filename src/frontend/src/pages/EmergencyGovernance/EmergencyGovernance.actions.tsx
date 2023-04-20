@@ -10,7 +10,7 @@ import {
 import { State } from '../../reducers'
 import { normalizeEmergencyGovernance } from '../EmergencyGovernance/EmergencyGovernance.helpers'
 import { EmergencyGovernanceProposalForm } from '../../utils/TypesAndInterfaces/Forms'
-import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
+import { toggleActionFulScreenLoader } from 'app/App.components/Loader/Loader.action'
 import { getBreakGlassConfig } from 'pages/BreakGlass/BreakGlass.actions'
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 
@@ -41,7 +41,7 @@ export const submitEmergencyGovernanceProposal =
       return
     }
 
-    if (state.loading.isActionLoading) {
+    if (state.loading.isActiveFullScreenLoader) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
@@ -55,7 +55,7 @@ export const submitEmergencyGovernanceProposal =
 
       callback?.()
 
-      await dispatch(toggleActionLoader(true))
+      await dispatch(toggleActionFulScreenLoader(true))
       await dispatch(showToaster(INFO, 'Submitting emergency proposal...', 'Please wait 30s'))
 
       await transaction?.confirmation()
@@ -64,13 +64,13 @@ export const submitEmergencyGovernanceProposal =
 
       await dispatch(getBreakGlassConfig())
       await dispatch(getEmergencyGovernanceStorage())
-      await dispatch(toggleActionLoader(false))
+      await dispatch(toggleActionFulScreenLoader(false))
     } catch (error) {
       if (error instanceof Error) {
         console.error(error)
         await dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionLoader(false))
+      await dispatch(toggleActionFulScreenLoader(false))
     }
   }
 
@@ -82,7 +82,7 @@ export const voteEmergencyGovernanceProposal = () => async (dispatch: AppDispatc
     return
   }
 
-  if (state.loading.isActionLoading) {
+  if (state.loading.isActiveFullScreenLoader) {
     dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
     return
   }
@@ -92,7 +92,7 @@ export const voteEmergencyGovernanceProposal = () => async (dispatch: AppDispatc
     const contract = await tezos.wallet.at(state.contractAddresses.emergencyGovernanceAddress.address)
     const transaction = await contract?.methods.voteForEmergencyControl().send()
 
-    await dispatch(toggleActionLoader(true))
+    await dispatch(toggleActionFulScreenLoader(true))
     await dispatch(showToaster(INFO, 'Voting for emergency proposal...', 'Please wait 30s'))
 
     await transaction?.confirmation()
@@ -100,13 +100,13 @@ export const voteEmergencyGovernanceProposal = () => async (dispatch: AppDispatc
     await dispatch(showToaster(SUCCESS, 'Emergency Proposal voted', 'All good :)'))
 
     await dispatch(getEmergencyGovernanceStorage())
-    await dispatch(toggleActionLoader(false))
+    await dispatch(toggleActionFulScreenLoader(false))
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
       await dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    await dispatch(toggleActionLoader(false))
+    await dispatch(toggleActionFulScreenLoader(false))
   }
 }
 
@@ -118,7 +118,7 @@ export const dropEmergencyGovernanceProposal = () => async (dispatch: AppDispatc
     return
   }
 
-  if (state.loading.isActionLoading) {
+  if (state.loading.isActiveFullScreenLoader) {
     dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
     return
   }
@@ -128,7 +128,7 @@ export const dropEmergencyGovernanceProposal = () => async (dispatch: AppDispatc
     const contract = await tezos.wallet.at(state.contractAddresses.emergencyGovernanceAddress.address)
     const transaction = await contract?.methods.dropEmergencyGovernance().send()
 
-    await dispatch(toggleActionLoader(true))
+    await dispatch(toggleActionFulScreenLoader(true))
     await dispatch(showToaster(INFO, 'Dropping emergency proposal...', 'Please wait 30s'))
 
     await transaction?.confirmation()
@@ -136,12 +136,12 @@ export const dropEmergencyGovernanceProposal = () => async (dispatch: AppDispatc
     await dispatch(showToaster(SUCCESS, 'Emergency Proposal dropped', 'All good :)'))
 
     await dispatch(getEmergencyGovernanceStorage())
-    await dispatch(toggleActionLoader(false))
+    await dispatch(toggleActionFulScreenLoader(false))
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
       await dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    await dispatch(toggleActionLoader(false))
+    await dispatch(toggleActionFulScreenLoader(false))
   }
 }

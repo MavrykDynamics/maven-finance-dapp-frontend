@@ -1,17 +1,26 @@
-import { TOGGLE_WERT_LOADER } from './../app/App.components/Loader/Loader.action'
-import { TOGGLE_ACTION_LOADER, TOGGLE_INITIAL_DATA_LOADING } from 'app/App.components/Loader/Loader.action'
+import {
+  TOGGLE_INITIAL_DATA_LOADING,
+  TOGGLE_ACTION_FULL_SCREEN_LOADER,
+  TOGGLE_ACTION_TOASTER_LOADER,
+  TOGGLE_WERT_LOADER,
+} from './../app/App.components/Loader/Loader.action'
 
 export type LoadingState = {
-  isActionLoading: boolean
+  isActiveFullScreenLoader: boolean
+  isActiveToasterLoader: boolean
   isWertLoading: boolean
   isInitialDataLoading: boolean
 }
 
-// TODO: add docs for loading
 const loadingInitialState: LoadingState = {
+  // isWertLoading – used for wert io payment system initialization
   isWertLoading: false,
-  isActionLoading: false,
+  // isInitialDataLoading – user for full screen rocket loader to load initial DAPP data, by default on DAPP init true
   isInitialDataLoading: true,
+  // isActiveFullScreenLoader – user for full screen rocket loader after operation confirmed
+  isActiveFullScreenLoader: false,
+  // isActiveToasterLoader – user for toaster loader, while data after operation is updating
+  isActiveToasterLoader: false,
 }
 
 export function loading(
@@ -19,10 +28,15 @@ export function loading(
   action: { type: string; showLoader: boolean; isWertLoading: boolean; isInitialDataLoading: boolean },
 ): LoadingState {
   switch (action.type) {
-    case TOGGLE_ACTION_LOADER:
+    case TOGGLE_ACTION_FULL_SCREEN_LOADER:
       return {
         ...state,
-        isActionLoading: action.showLoader,
+        isActiveFullScreenLoader: action.showLoader,
+      }
+    case TOGGLE_ACTION_TOASTER_LOADER:
+      return {
+        ...state,
+        isActiveToasterLoader: action.showLoader,
       }
     case TOGGLE_WERT_LOADER:
       return {

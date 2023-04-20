@@ -51,7 +51,7 @@ export const Repay = ({
 
   useLockBodyScroll(show)
   const dispatch = useDispatch()
-  const { isActionLoading } = useSelector((state: State) => state.loading)
+  const { isActiveFullScreenLoader } = useSelector((state: State) => state.loading)
 
   const [screenShown, setShownScreen] = useState<'initial' | 'confitmation'>('initial')
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
@@ -276,7 +276,7 @@ export const Repay = ({
                   kind={BUTTON_PRIMARY}
                   form={BUTTON_WIDE}
                   onClick={repayBtnHandler}
-                  disabled={isActionLoading}
+                  disabled={isActiveFullScreenLoader}
                 >
                   <Icon id="okIcon" />
                   Repay

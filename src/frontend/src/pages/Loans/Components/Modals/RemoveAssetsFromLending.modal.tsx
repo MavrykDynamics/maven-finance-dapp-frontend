@@ -55,7 +55,7 @@ export const RemoveAssetsFromLending = ({
   useLockBodyScroll(show)
 
   const dispatch = useDispatch()
-  const { isActionLoading } = useSelector((state: State) => state.loading)
+  const { isActiveFullScreenLoader } = useSelector((state: State) => state.loading)
   const { themeSelected } = useSelector((state: State) => state.preferences)
   const [screenShown, setShownScreen] = useState<'initial' | 'confitmation'>('initial')
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
@@ -106,8 +106,8 @@ export const RemoveAssetsFromLending = ({
   }, [show])
 
   const isWithdrawDisabled = useMemo(() => {
-    return inputData.validationStatus !== INPUT_STATUS_SUCCESS || isActionLoading
-  }, [inputData.validationStatus, isActionLoading])
+    return inputData.validationStatus !== INPUT_STATUS_SUCCESS || isActiveFullScreenLoader
+  }, [inputData.validationStatus, isActiveFullScreenLoader])
 
   const withdrawHandler = () =>
     dispatch(withdrawLendingAssetAction(gqlName, Number(inputData.amount), decimals, closePopup))

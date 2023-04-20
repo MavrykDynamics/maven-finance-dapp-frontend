@@ -1,6 +1,6 @@
 import { OpKind } from '@taquito/taquito'
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
-import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
+import { toggleActionFulScreenLoader } from 'app/App.components/Loader/Loader.action'
 import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { ERROR, INFO, SUCCESS } from 'app/App.components/Toaster/Toaster.constants'
 import { AppDispatch, GetState } from 'app/App.controller'
@@ -25,7 +25,7 @@ export const triggerInitialVaultCreation =
       return
     }
 
-    if (state.loading.isActionLoading) {
+    if (state.loading.isActiveFullScreenLoader) {
       await dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
@@ -61,7 +61,7 @@ export const triggerInitialVaultCreation =
       if (error instanceof Error) {
         dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionLoader(false))
+      await dispatch(toggleActionFulScreenLoader(false))
       return
     }
   }
@@ -83,7 +83,7 @@ export const borrowVaultAssetAction =
       return
     }
 
-    if (state.loading.isActionLoading) {
+    if (state.loading.isActiveFullScreenLoader) {
       await dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
@@ -96,7 +96,7 @@ export const borrowVaultAssetAction =
       const transaction = await contract?.methods.borrow(vaultId, convertedAssetAmount).send()
 
       callback()
-      await dispatch(toggleActionLoader(true))
+      await dispatch(toggleActionFulScreenLoader(true))
       await dispatch(showToaster(INFO, 'Borrowing from the vault...', 'Please wait 30s'))
 
       // confirm query completion
@@ -116,7 +116,7 @@ export const borrowVaultAssetAction =
       })
 
       await dispatch(showToaster(SUCCESS, 'Asset borrowed.', 'All good :)'))
-      await dispatch(toggleActionLoader(false))
+      await dispatch(toggleActionFulScreenLoader(false))
       scrollToCurrentVault()
     } catch (error) {
       console.error('borrowVaultAssetAction error:', error)
@@ -124,7 +124,7 @@ export const borrowVaultAssetAction =
         dispatch(showToaster(ERROR, 'Error', error.message))
         callback()
       }
-      await dispatch(toggleActionLoader(false))
+      await dispatch(toggleActionFulScreenLoader(false))
     }
   }
 
@@ -148,7 +148,7 @@ export const repayPartOfVaultAction =
       return
     }
 
-    if (state.loading.isActionLoading) {
+    if (state.loading.isActiveFullScreenLoader) {
       await dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
@@ -223,7 +223,7 @@ export const repayPartOfVaultAction =
       }
 
       callback()
-      await dispatch(toggleActionLoader(true))
+      await dispatch(toggleActionFulScreenLoader(true))
       await dispatch(showToaster(INFO, 'Repaying asset...', 'Please wait 30s'))
 
       // confirm query completion
@@ -243,7 +243,7 @@ export const repayPartOfVaultAction =
       })
 
       await dispatch(showToaster(SUCCESS, 'Asset repayed.', 'All good :)'))
-      await dispatch(toggleActionLoader(false))
+      await dispatch(toggleActionFulScreenLoader(false))
       scrollToCurrentVault()
     } catch (error) {
       console.error('borrowVaultAssetAction error:', error)
@@ -251,7 +251,7 @@ export const repayPartOfVaultAction =
         dispatch(showToaster(ERROR, 'Error', error.message))
         callback()
       }
-      await dispatch(toggleActionLoader(false))
+      await dispatch(toggleActionFulScreenLoader(false))
     }
   }
 
@@ -274,7 +274,7 @@ export const repayFullAndCloseVaultAction =
       return
     }
 
-    if (state.loading.isActionLoading) {
+    if (state.loading.isActiveFullScreenLoader) {
       await dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
@@ -368,7 +368,7 @@ export const repayFullAndCloseVaultAction =
       }
 
       callback()
-      await dispatch(toggleActionLoader(true))
+      await dispatch(toggleActionFulScreenLoader(true))
       await dispatch(showToaster(INFO, 'Repaying asset...', 'Please wait 30s'))
 
       // confirm query completion
@@ -388,7 +388,7 @@ export const repayFullAndCloseVaultAction =
       })
 
       await dispatch(showToaster(SUCCESS, 'Asset repayed.', 'All good :)'))
-      await dispatch(toggleActionLoader(false))
+      await dispatch(toggleActionFulScreenLoader(false))
 
       // scroll up to top of page, after closing vault
       scrollUpPage()
@@ -398,6 +398,6 @@ export const repayFullAndCloseVaultAction =
         dispatch(showToaster(ERROR, 'Error', error.message))
         callback()
       }
-      await dispatch(toggleActionLoader(false))
+      await dispatch(toggleActionFulScreenLoader(false))
     }
   }

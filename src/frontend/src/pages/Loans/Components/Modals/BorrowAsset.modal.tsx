@@ -53,7 +53,7 @@ export const BorrowAsset = ({
 
   useLockBodyScroll(show)
   const dispatch = useDispatch()
-  const { isActionLoading } = useSelector((state: State) => state.loading)
+  const { isActiveFullScreenLoader } = useSelector((state: State) => state.loading)
   const { themeSelected } = useSelector((state: State) => state.preferences)
 
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
@@ -344,7 +344,7 @@ export const BorrowAsset = ({
                   kind={BUTTON_PRIMARY}
                   form={BUTTON_WIDE}
                   onClick={borrowAsserHandler}
-                  disabled={isActionLoading}
+                  disabled={isActiveFullScreenLoader}
                 >
                   <Icon id="coin-loan" />
                   Borrow {borrowedAsset?.symbol}

@@ -3,7 +3,7 @@ import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
 import { fetchFromIndexer } from '../../gql/fetchGraphQL'
 import { nomalizeSatelliteConfig, normalizeSatellitesLedger } from './helpers/Satellites.normalizer'
 import { updateUserData } from 'reducers/actions/user.actions'
-import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
+import { toggleActionFulScreenLoader } from 'app/App.components/Loader/Loader.action'
 
 import { State } from 'reducers'
 import type { AppDispatch, GetState } from '../../app/App.controller'
@@ -72,7 +72,7 @@ export const delegate = (satelliteAddress: string) => async (dispatch: AppDispat
     return
   }
 
-  if (state.loading.isActionLoading) {
+  if (state.loading.isActiveFullScreenLoader) {
     dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
     return
   }
@@ -92,7 +92,7 @@ export const delegate = (satelliteAddress: string) => async (dispatch: AppDispat
     const contract = await tezos.wallet.at(state.contractAddresses.delegationAddress.address)
     const transaction = await contract?.methods.delegateToSatellite(state.wallet.accountPkh, satelliteAddress).send()
 
-    dispatch(toggleActionLoader(true))
+    dispatch(toggleActionFulScreenLoader(true))
     dispatch(showToaster(INFO, 'Delegating...', 'Please wait 30s'))
 
     await transaction?.confirmation()
@@ -102,13 +102,13 @@ export const delegate = (satelliteAddress: string) => async (dispatch: AppDispat
     await Promise.all([dispatch(getSatellitesStorage()), dispatch(getDoormanStorage())])
 
     await dispatch(updateUserData())
-    await dispatch(toggleActionLoader(false))
+    await dispatch(toggleActionFulScreenLoader(false))
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
       dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    dispatch(toggleActionLoader(false))
+    dispatch(toggleActionFulScreenLoader(false))
   }
 }
 
@@ -120,7 +120,7 @@ export const undelegate = (delegateAddress: string) => async (dispatch: AppDispa
     return
   }
 
-  if (state.loading.isActionLoading) {
+  if (state.loading.isActiveFullScreenLoader) {
     dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
     return
   }
@@ -130,7 +130,7 @@ export const undelegate = (delegateAddress: string) => async (dispatch: AppDispa
     const contract = await tezos.wallet.at(state.contractAddresses.delegationAddress.address)
     const transaction = await contract?.methods.undelegateFromSatellite(state.wallet.accountPkh, delegateAddress).send()
 
-    dispatch(toggleActionLoader(true))
+    dispatch(toggleActionFulScreenLoader(true))
     dispatch(showToaster(INFO, 'Undelegating...', 'Please wait 30s'))
 
     await transaction?.confirmation()
@@ -140,13 +140,13 @@ export const undelegate = (delegateAddress: string) => async (dispatch: AppDispa
     await Promise.all([dispatch(getSatellitesStorage()), dispatch(getDoormanStorage())])
 
     await dispatch(updateUserData())
-    await dispatch(toggleActionLoader(false))
+    await dispatch(toggleActionFulScreenLoader(false))
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
       dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    dispatch(toggleActionLoader(false))
+    dispatch(toggleActionFulScreenLoader(false))
   }
 }
 
@@ -159,7 +159,7 @@ export const distributeProposalRewards =
       return
     }
 
-    if (state.loading.isActionLoading) {
+    if (state.loading.isActiveFullScreenLoader) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
@@ -169,7 +169,7 @@ export const distributeProposalRewards =
       const contract = await tezos.wallet.at(state.contractAddresses.delegationAddress.address)
       const transaction = await contract?.methods.distributeProposalRewards(satelliteAddress, proposals).send()
 
-      dispatch(toggleActionLoader(true))
+      dispatch(toggleActionFulScreenLoader(true))
       dispatch(showToaster(INFO, 'Distributing proposal rewards...', 'Please wait 30s'))
 
       await transaction?.confirmation()
@@ -179,12 +179,12 @@ export const distributeProposalRewards =
       await Promise.all([dispatch(getSatellitesStorage()), dispatch(getDoormanStorage())])
       await dispatch(updateUserData())
 
-      await dispatch(toggleActionLoader(false))
+      await dispatch(toggleActionFulScreenLoader(false))
     } catch (error) {
       if (error instanceof Error) {
         console.error(error)
         dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      dispatch(toggleActionLoader(false))
+      dispatch(toggleActionFulScreenLoader(false))
     }
   }

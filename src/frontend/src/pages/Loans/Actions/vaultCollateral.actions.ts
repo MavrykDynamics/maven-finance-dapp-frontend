@@ -1,6 +1,6 @@
 import { OpKind, WalletParamsWithKind } from '@taquito/taquito'
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
-import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
+import { toggleActionFulScreenLoader } from 'app/App.components/Loader/Loader.action'
 import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { ERROR, INFO, SUCCESS } from 'app/App.components/Toaster/Toaster.constants'
 import { AppDispatch, GetState } from 'app/App.controller'
@@ -29,7 +29,7 @@ export const withdrawCollateralAction =
       return
     }
 
-    if (state.loading.isActionLoading) {
+    if (state.loading.isActiveFullScreenLoader) {
       await dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
@@ -44,7 +44,7 @@ export const withdrawCollateralAction =
         .send()
 
       callback()
-      await dispatch(toggleActionLoader(true))
+      await dispatch(toggleActionFulScreenLoader(true))
       await dispatch(showToaster(INFO, 'Withdrawing collateral from the vault...', 'Please wait 30s'))
 
       // confirm query completion
@@ -65,14 +65,14 @@ export const withdrawCollateralAction =
       })
 
       await dispatch(showToaster(SUCCESS, 'Collateral withdrawn.', 'All good :)'))
-      await dispatch(toggleActionLoader(false))
+      await dispatch(toggleActionFulScreenLoader(false))
     } catch (error) {
       console.error('borrowVaultAssetAction error:', error)
       if (error instanceof Error) {
         dispatch(showToaster(ERROR, 'Error', error.message))
         callback()
       }
-      await dispatch(toggleActionLoader(false))
+      await dispatch(toggleActionFulScreenLoader(false))
     }
   }
 
@@ -99,7 +99,7 @@ export const depositCollateralAction =
       return
     }
 
-    if (state.loading.isActionLoading) {
+    if (state.loading.isActiveFullScreenLoader) {
       await dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
@@ -199,7 +199,7 @@ export const depositCollateralAction =
       }
 
       callback()
-      await dispatch(toggleActionLoader(true))
+      await dispatch(toggleActionFulScreenLoader(true))
       await dispatch(showToaster(INFO, 'Depositing collateral th the vault...', 'Please wait 30s'))
 
       // confirm query completion
@@ -220,13 +220,13 @@ export const depositCollateralAction =
       })
 
       await dispatch(showToaster(SUCCESS, 'Collateral added.', 'All good :)'))
-      await dispatch(toggleActionLoader(false))
+      await dispatch(toggleActionFulScreenLoader(false))
     } catch (error) {
       console.error('depositCollateralAction error:', error)
       callback()
       if (error instanceof Error) {
         dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionLoader(false))
+      await dispatch(toggleActionFulScreenLoader(false))
     }
   }

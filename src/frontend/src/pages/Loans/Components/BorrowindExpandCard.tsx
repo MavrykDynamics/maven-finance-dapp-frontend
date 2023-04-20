@@ -88,7 +88,7 @@ export const BorrowingExpandCard = ({
 
   const { avaliableCollaterals } = useSelector((state: State) => state.tokens)
   const { themeSelected } = useSelector((state: State) => state.preferences)
-  const { isActionLoading } = useSelector((state: State) => state.loading)
+  const { isActiveFullScreenLoader } = useSelector((state: State) => state.loading)
 
   const [expanded, setExpanded] = useState(false)
 
@@ -125,7 +125,7 @@ export const BorrowingExpandCard = ({
     updateMvkOperatorPopup.showModal ||
     managePermissionsPopup.showModal ||
     liquidateVaultPopup.showModal ||
-    isActionLoading
+    isActiveFullScreenLoader
 
   const ref = useRef<HTMLDivElement | null>(null)
 

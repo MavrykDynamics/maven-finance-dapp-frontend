@@ -28,7 +28,7 @@ export const registerFeedAction = () => async (dispatch: AppDispatch, getState: 
     return
   }
 
-  if (state.loading.isActionLoading) {
+  if (state.loading.isActiveFullScreenLoader) {
     dispatch(showToaster(ERROR, 'Cannot register feed', ''))
     return
   }
