@@ -15,7 +15,6 @@ import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.component
 
 import NewButton from 'app/App.components/Button/NewButton'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import { SimpleCircleSpinnerLoader } from 'app/App.components/Loader/Loader.view'
 import { DDItemId, DropDown, DropdownInputCustomChild, DropDownItemType } from 'app/App.components/DropDown/NewDropdown'
 import { Input } from 'app/App.components/Input/NewInput'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
@@ -33,6 +32,7 @@ import { triggerInitialVaultCreation } from 'pages/Loans/Actions/vault.actions'
 import { depositCollateralAction } from 'pages/Loans/Actions/vaultCollateral.actions'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
+import { SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
 
 export type DropDownCollateralAssetType = DropDownItemType & AvaliableCollateralType
 
@@ -539,7 +539,7 @@ export const CreateNewVault = ({
               {isVaultCreating ? (
                 <div className="creating-vault-loader-wrapper">
                   Creating Vault
-                  <SimpleCircleSpinnerLoader />
+                  <SpinnerCircleLoaderStyled />
                 </div>
               ) : null}
             </>

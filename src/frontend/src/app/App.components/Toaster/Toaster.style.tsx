@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components/macro'
 import { decreaseBar } from 'styles/animations'
 import { MavrykTheme } from '../../../styles/interfaces'
-import { ERROR, INFO, TOASTER_ERROR, TOASTER_INFO, TOASTER_LOADING, TOASTER_SUCCESS } from './Toaster.constants'
+import { TOASTER_LOADING, getColorByToasterStatus } from './Toaster.constants'
 
 export const ToasterStyled = styled.div<{ showing: boolean; theme: MavrykTheme }>`
   position: fixed;
@@ -14,6 +14,7 @@ export const ToasterStyled = styled.div<{ showing: boolean; theme: MavrykTheme }
   border-radius: 4px;
 
   display: flex;
+  align-items: center;
   column-gap: 15px;
 
   background-color: ${({ theme }) => theme.containerColor};
@@ -27,48 +28,22 @@ export const ToasterStyled = styled.div<{ showing: boolean; theme: MavrykTheme }
     css`
       transform: translateX(-480px);
     `}
-
-  .close {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    cursor: pointer;
-    margin-top: 13px;
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-
-    > svg {
-      fill: ${({ theme }) => theme.textColor};
-      height: 14px;
-      width: 14px;
-    }
-  }
 `
 
 export const ToasterCountdown = styled.div<{ showing: boolean; status?: string; theme: MavrykTheme }>`
   position: absolute;
   bottom: 0;
   right: 0;
+
   height: 4px;
-  width: 400px;
-  max-width: calc(100vw - 20px);
+  width: 100%;
   border-radius: 0 0 4px 0;
-  will-change: transform;
-  transform: translate3d(470px, 0, 0);
-  background-color: ${(props) => {
-    switch (props.status) {
-      case INFO:
-        return ({ theme }) => theme.infoColor
-      case ERROR:
-        return ({ theme }) => theme.downColor
-      default:
-        return ({ theme }) => theme.upColor
-    }
-  }};
+
+  background-color: ${({ status, theme }) => getColorByToasterStatus({ toasterStatus: status, theme })};
 
   ${(props) =>
     props.showing &&
+    props.status !== TOASTER_LOADING &&
     css`
       animation: ${decreaseBar} ease-in-out 1;
       animation-fill-mode: forwards;
@@ -79,29 +54,24 @@ export const ToasterCountdown = styled.div<{ showing: boolean; status?: string; 
 export const ToasterIcon = styled.div<{ status?: string; theme: MavrykTheme }>`
   display: flex;
   align-items: center;
-  justify-content: space-around;
+  justify-content: center;
+  width: fit-content;
+  width: 40px;
+  height: 40px;
+
+  .toaster-loader {
+    transform: scale(0.175);
+    color: ${({ theme }) => theme.primaryColor};
+  }
 
   > svg {
-    height: 14px;
-    width: 14px;
-    fill: ${(props) => {
-      switch (props.status) {
-        case TOASTER_SUCCESS:
-          return ({ theme }) => theme.infoColor
-        case TOASTER_ERROR:
-          return ({ theme }) => theme.downColor
-        case TOASTER_INFO:
-          return ({ theme }) => theme.downColor
-        default:
-          return ({ theme }) => theme.downColor
-        // case TOASTER_LOADING:
-        //   return ({ theme }) => theme.downColor
-      }
-    }};
+    height: 16px;
+    width: 16px;
+    fill: ${({ status, theme }) => getColorByToasterStatus({ toasterStatus: status, theme })};
   }
 `
 
-export const ToasterContent = styled.div`
+export const ToasterContent = styled.div<{ status?: string; theme: MavrykTheme }>`
   padding: 8px;
   max-width: 300px;
   width: 100%;
@@ -111,12 +81,15 @@ export const ToasterContent = styled.div`
   }
 
   .title {
-    color: ${({ theme }) => theme.textColor};
-    font-weight: 700;
+    color: ${({ status, theme }) => getColorByToasterStatus({ toasterStatus: status, theme })};
+    font-weight: 600;
+    font-size: 18px;
     margin-bottom: 8px;
   }
 
   .message {
-    color: ${({ theme }) => theme.subTextColor};
+    font-weight: 500;
+    font-size: 14px;
+    color: ${({ theme }) => theme.textColor};
   }
 `
