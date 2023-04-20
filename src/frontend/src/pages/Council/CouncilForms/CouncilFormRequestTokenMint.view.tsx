@@ -126,6 +126,7 @@ export const CouncilFormRequestTokenMint = (maxLength: CouncilMaxLength) => {
           name="purpose"
           onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
             handleChange(e)
+            handleBlur(e, maxLength.requestPurposeMaxLength)
           }}
           onBlur={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleBlur(e, maxLength.requestPurposeMaxLength)}
           inputStatus={formInputStatus.purpose}

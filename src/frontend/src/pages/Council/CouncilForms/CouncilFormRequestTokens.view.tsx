@@ -52,7 +52,7 @@ export const CouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
     [],
   )
 
-  type DropDownItemType = typeof dropDownItems[0]
+  type DropDownItemType = (typeof dropDownItems)[0]
   const [chosenDdItem, setChosenDdItem] = useState<DropDownItemType | undefined>()
 
   const [tokenDecimals, setTokenDecimals] = useState<number | null>(null)
@@ -258,6 +258,7 @@ export const CouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
           name="purpose"
           onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
             handleChange(e)
+            handleBlur(e, maxLength.requestPurposeMaxLength)
           }}
           onBlur={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleBlur(e, maxLength.requestPurposeMaxLength)}
           inputStatus={formInputStatus.purpose}
