@@ -9,7 +9,7 @@ import { TokenType } from 'utils/TypesAndInterfaces/General'
 
 // helpers
 import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
-import { BUTTON_PRIMARY, SUBMIT } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
 import { getTokenDecimals } from 'utils/calcFunctions'
 
 // view
@@ -253,7 +253,7 @@ export const CouncilFormTransferTokens = (maxLength: CouncilMaxLength) => {
         />
       </div>
       <div className="btn-group">
-        <NewButton kind={BUTTON_PRIMARY} type={SUBMIT}>
+        <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT}>
           <Icon id="transfer_tokens" />
           Transfer Tokens
         </NewButton>

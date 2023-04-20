@@ -4,7 +4,7 @@ import { State } from 'reducers'
 
 // const
 import { distinctRequestsByExecuting } from 'pages/FinacialRequests/FinancialRequests.helpers'
-import { BUTTON_PRIMARY, SUBMIT } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
 
 // view
 import NewButton from 'app/App.components/Button/NewButton'
@@ -94,7 +94,7 @@ export const CouncilFormDropFinancialRequest = () => {
           />
         </div>
         <div className="button-aligment">
-          <NewButton kind={BUTTON_PRIMARY} type={SUBMIT}>
+          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT}>
             <Icon id="navigation-menu_close" />
             Drop Financial Request
           </NewButton>
