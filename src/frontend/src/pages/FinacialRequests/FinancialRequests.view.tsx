@@ -68,7 +68,7 @@ export const FinancialRequestsView = ({
     return ongoing.slice(from, to)
   }, [currentOngoingPage, ongoing])
 
-  const [rightSideContentId, setRightSideContentId] = useState(ongoing[0] ?? past[0])
+  const [rightSideContentId, setRightSideContentId] = useState(ongoing[0] ?? past[0] ?? 0)
   const rightSideContent = financialRequestMapper[rightSideContentId]
 
   // Full view item data handling
