@@ -189,7 +189,7 @@ export const StyledInput = styled.input<{ theme: MavrykTheme }>`
   border-radius: 10px;
   line-height: 100%;
   margin: 0;
-  color: ${({ theme }) => theme.textColor};
+  color: ${({ theme }) => theme.blockNameTitleColor};
   display: block;
   padding: 13px 45px 13px 20px;
 

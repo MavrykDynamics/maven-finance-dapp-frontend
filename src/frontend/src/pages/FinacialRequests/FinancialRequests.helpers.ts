@@ -30,6 +30,7 @@ export const normalizeFinancialRequests = (
         tokensAmount: tokenName === 'MVK' ? calcWithoutPrecision(item.token_amount) : calcWithoutMu(item.token_amount),
         tokenName: tokenName,
         executed: item.executed,
+        status: item.status,
 
         // Votes data
         votes: item.votes,
@@ -60,7 +61,9 @@ export const distinctRequestsByExecuting = (
     (acc, requestId) => {
       const request = mixedUpRequestsMapper[requestId]
       const isPastRequest =
-        request.executed || (request.votingTillTime && new Date(request.votingTillTime).getTime() < +Date.now())
+        request.executed ||
+        (request.votingTillTime && new Date(request.votingTillTime).getTime() < +Date.now()) ||
+        request.status === 1
       acc[isPastRequest ? 'past' : 'ongoing'].push(requestId)
 
       return acc

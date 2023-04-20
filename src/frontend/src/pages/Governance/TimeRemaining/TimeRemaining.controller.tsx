@@ -39,7 +39,7 @@ export default function TimeRemaining() {
               showZeros: true,
               shownParts: ['h', 'm', 's'],
               timerView: COLON_VIEW,
-              showFullDay: true,
+              showFullDay: false,
               endText: 'remaining',
               defaultColor: '#77A4F2',
             }}
