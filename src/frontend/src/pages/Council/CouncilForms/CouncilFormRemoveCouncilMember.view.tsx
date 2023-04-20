@@ -4,9 +4,10 @@ import { State } from 'reducers'
 
 // helpers
 import { getShortTzAddress } from '../../../utils/tzAdress'
+import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
 
 // view
-import { Button } from '../../../app/App.components/Button/Button.controller'
+import NewButton from 'app/App.components/Button/NewButton'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 import { DDItemId, DropDown } from 'app/App.components/DropDown/NewDropdown'
 
@@ -34,7 +35,7 @@ export const CouncilFormRemoveCouncilMember = () => {
     [councilMembers],
   )
 
-  type DropDownItemType = typeof dropDownItems[0]
+  type DropDownItemType = (typeof dropDownItems)[0]
   const [chosenDdItem, setChosenDdItem] = useState<DropDownItemType | undefined>()
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -75,7 +76,10 @@ export const CouncilFormRemoveCouncilMember = () => {
           />
         </div>
         <div className="button-aligment">
-          <Button text="Remove Council Member" className="plus-btn" kind={'actionPrimary'} icon="minus" type="submit" />
+          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT}>
+            <Icon id="minus" />
+            Remove Council Member
+          </NewButton>
         </div>
       </div>
     </CouncilFormStyled>

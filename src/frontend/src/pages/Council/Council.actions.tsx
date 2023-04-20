@@ -183,12 +183,12 @@ export const sign = (actionID: number) => async (dispatch: AppDispatch, getState
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(state.contractAddresses.councilAddress.address)
     const transaction = await contract?.methods.signAction(actionID).send()
-    await dispatch(toggleActionLoader(true))
 
-    dispatch(showToaster(INFO, 'Sign...', 'Please wait 30s'))
+    await dispatch(toggleActionLoader(true))
+    await dispatch(showToaster(INFO, 'Sign...', 'Please wait 30s'))
+
     // confirm query completion
     await transaction?.confirmation()
-    dispatch(showToaster(SUCCESS, 'Sign is done', 'All good :)'))
 
     // @ts-ignore don't have proper type to acees data, type has only methods
     const currentOperationLevel = transaction?.lastHead?.header?.level
@@ -205,6 +205,7 @@ export const sign = (actionID: number) => async (dispatch: AppDispatch, getState
       currentOperationLevel,
     })
 
+    await dispatch(showToaster(SUCCESS, 'Sign is done', 'All good :)'))
     await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {
