@@ -115,6 +115,7 @@ const AppContainer = () => {
     <Router>
       <AppStyled isExpandedMenu={sidebarOpened}>
         <ActionLoader />
+        <Toaster />
         <WertLoader />
         <Menu />
 
@@ -125,7 +126,6 @@ const AppContainer = () => {
           <AppRoutes />
         </LoansPopupsProvider>
       </AppStyled>
-      <Toaster />
     </Router>
   )
 }
