@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
 
 // components
-import { BUTTON_PRIMARY, SUBMIT } from '../../../app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from '../../../app/App.components/Button/Button.constants'
 import NewButton from 'app/App.components/Button/NewButton'
 import { Input } from 'app/App.components/Input/NewInput'
 import { IPFSUploader } from '../../../app/App.components/IPFSUploader/IPFSUploader.controller'
@@ -152,7 +152,7 @@ export function FormAddCouncilMemberView(maxLength: CouncilMaxLength) {
         />
 
         <div className="align-to-right">
-          <NewButton kind={BUTTON_PRIMARY} type={SUBMIT}>
+          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT}>
             <Icon id="plus" />
             Add Council Member
           </NewButton>

@@ -15,7 +15,7 @@ import {
   MVK_HISTORY_DATA_QUERY_VARIABLE,
 } from '../../gql/queries'
 import { normalizeDoormanStorage, normalizeSmvkHistoryData, normalizeMvkHistoryData } from './Doorman.converter'
-import { toggleActionFulScreenLoader } from 'app/App.components/Loader/Loader.action'
+import { toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 import { updateUserData } from 'reducers/actions/user.actions'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
@@ -120,7 +120,7 @@ export const stake = (amount: number) => async (dispatch: AppDispatch, getState:
         .withContractCall(mvkTokenContract.methods.update_operators(removeOperators)))
     const batchOp = await batch?.send()
 
-    await dispatch(toggleActionFulScreenLoader(true))
+    await dispatch(toggleActionFullScreenLoader(true))
     await dispatch(showToaster(INFO, 'Staking...', 'Please wait 30s'))
 
     await batchOp?.confirmation()
@@ -128,13 +128,13 @@ export const stake = (amount: number) => async (dispatch: AppDispatch, getState:
     await dispatch(showToaster(SUCCESS, 'Staking done', 'All good :)'))
     await dispatch(updateUserData())
     await dispatch(getDoormanStorage())
-    await dispatch(toggleActionFulScreenLoader(false))
+    await dispatch(toggleActionFullScreenLoader(false))
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
       dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    dispatch(toggleActionFulScreenLoader(false))
+    dispatch(toggleActionFullScreenLoader(false))
   }
 }
 
@@ -161,7 +161,7 @@ export const unstake = (amount: number) => async (dispatch: AppDispatch, getStat
     const contract = await tezos.wallet.at(state.contractAddresses.doormanAddress.address)
     const transaction = await contract?.methods.unstake(convertNumberForContractCall({ number: amount })).send()
 
-    await dispatch(toggleActionFulScreenLoader(true))
+    await dispatch(toggleActionFullScreenLoader(true))
     await dispatch(showToaster(INFO, 'Unstaking...', 'Please wait 30s'))
 
     await transaction?.confirmation()
@@ -169,13 +169,13 @@ export const unstake = (amount: number) => async (dispatch: AppDispatch, getStat
     await dispatch(showToaster(SUCCESS, 'Unstaking done', 'All good :)'))
     await dispatch(updateUserData())
     await dispatch(getDoormanStorage())
-    await dispatch(toggleActionFulScreenLoader(false))
+    await dispatch(toggleActionFullScreenLoader(false))
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
       dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    dispatch(toggleActionFulScreenLoader(false))
+    dispatch(toggleActionFullScreenLoader(false))
   }
 }
 
@@ -197,7 +197,7 @@ export const rewardsCompound = (address: string) => async (dispatch: AppDispatch
     const contract = await tezos?.wallet.at(state.contractAddresses.doormanAddress.address)
     const transaction = await contract?.methods.compound(address).send()
 
-    await dispatch(toggleActionFulScreenLoader(true))
+    await dispatch(toggleActionFullScreenLoader(true))
     await dispatch(showToaster(INFO, 'Compounding rewards...', 'Please wait 30s'))
 
     await transaction?.confirmation()
@@ -205,13 +205,13 @@ export const rewardsCompound = (address: string) => async (dispatch: AppDispatch
     await dispatch(showToaster(SUCCESS, 'Compounding done', 'All good :)'))
     await dispatch(updateUserData())
     await dispatch(getDoormanStorage())
-    await dispatch(toggleActionFulScreenLoader(false))
+    await dispatch(toggleActionFullScreenLoader(false))
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
       dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    dispatch(toggleActionFulScreenLoader(false))
+    dispatch(toggleActionFullScreenLoader(false))
   }
 }
 
@@ -233,7 +233,7 @@ export const getMVKTokensFromFaucet = () => async (dispatch: AppDispatch, getSta
     return
   }
   try {
-    await dispatch(toggleActionFulScreenLoader(true))
+    await dispatch(toggleActionFullScreenLoader(true))
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at('KT1Mf2kFGce8BaC5zMTCuzg2pbYdgtBtn1Ng')
     const operation = await contract.methods.requestMvk().send()
@@ -245,11 +245,11 @@ export const getMVKTokensFromFaucet = () => async (dispatch: AppDispatch, getSta
     dispatch(showToaster(SUCCESS, 'Received 1,000 MVK...', 'Enjoy using Mavryk Finance :)'))
     await dispatch(updateUserData())
     await dispatch(getDoormanStorage())
-    await dispatch(toggleActionFulScreenLoader(false))
+    await dispatch(toggleActionFullScreenLoader(false))
   } catch (error) {
     if (error instanceof Error) {
       dispatch(showToaster(ERROR, 'Error', error.message))
-      dispatch(toggleActionFulScreenLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
     }
   }
 }

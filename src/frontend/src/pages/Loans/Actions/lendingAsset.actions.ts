@@ -1,6 +1,6 @@
 import { OpKind } from '@taquito/taquito'
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
-import { toggleActionFulScreenLoader } from 'app/App.components/Loader/Loader.action'
+import { toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { ERROR, INFO, SUCCESS } from 'app/App.components/Toaster/Toaster.constants'
 import { AppDispatch, GetState } from 'app/App.controller'
@@ -106,7 +106,7 @@ export const depositLendingAssetAction =
       }
 
       callback()
-      await dispatch(toggleActionFulScreenLoader(true))
+      await dispatch(toggleActionFullScreenLoader(true))
       await dispatch(showToaster(INFO, 'Adding liquidity...', 'Please wait 30s'))
 
       // confirm query completion
@@ -125,14 +125,14 @@ export const depositLendingAssetAction =
       })
 
       await dispatch(showToaster(SUCCESS, 'Liquidity added.', 'All good :)'))
-      await dispatch(toggleActionFulScreenLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     } catch (error) {
       console.error('depositLendingAssetAction error:', error)
       if (error instanceof Error) {
         dispatch(showToaster(ERROR, 'Error', error.message))
         callback()
       }
-      await dispatch(toggleActionFulScreenLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     }
   }
 
@@ -159,7 +159,7 @@ export const withdrawLendingAssetAction =
       const transaction = await contract?.methods.removeLiquidity(loanTokenName, convertedAssetAmount).send()
 
       callback()
-      await dispatch(toggleActionFulScreenLoader(true))
+      await dispatch(toggleActionFullScreenLoader(true))
       await dispatch(showToaster(INFO, 'Removing liquidity...', 'Please wait 30s'))
 
       // confirm query completion
@@ -178,13 +178,13 @@ export const withdrawLendingAssetAction =
       })
 
       await dispatch(showToaster(SUCCESS, 'Liquidity removed.', 'All good :)'))
-      await dispatch(toggleActionFulScreenLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     } catch (error) {
       console.error('withdrawLendingAssetAction error:', error)
       if (error instanceof Error) {
         dispatch(showToaster(ERROR, 'Error', error.message))
         callback()
       }
-      await dispatch(toggleActionFulScreenLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     }
   }

@@ -8,7 +8,7 @@ import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import type { AppDispatch, GetState } from '../../app/App.controller'
 import { SubmitProposalForm } from '../../utils/TypesAndInterfaces/Forms'
 import { State } from 'reducers'
-import { toggleActionFulScreenLoader } from 'app/App.components/Loader/Loader.action'
+import { toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 import { ROCKET_LOADER } from 'utils/constants'
 import { PaymentsDataChangesType, ProposalDataChangesType } from './ProposalSybmittion.types'
 import { ContractAbstraction, Wallet } from '@taquito/taquito'
@@ -34,7 +34,7 @@ export const submitProposal =
       const contract = await tezos.wallet.at(state.contractAddresses.governanceAddress.address)
       const query = await contract?.methods.propose(title, description, ipfs, sourceCode).send({ amount: fee })
 
-      await dispatch(toggleActionFulScreenLoader(true))
+      await dispatch(toggleActionFullScreenLoader(true))
       await dispatch(showToaster(INFO, 'Submitting proposal...', 'Please wait 30s'))
 
       await query?.confirmation()
@@ -43,13 +43,13 @@ export const submitProposal =
       await dispatch(getGovernanceStorage())
       await dispatch(getSatellitesStorage())
       await dispatch(getCurrentRoundProposals())
-      await dispatch(toggleActionFulScreenLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     } catch (error) {
       console.error('submitProposal error:', error)
       if (error instanceof Error) {
         dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionFulScreenLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     }
   }
 
@@ -70,7 +70,7 @@ export const dropProposal = (proposalId: number) => async (dispatch: AppDispatch
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(state.contractAddresses.governanceAddress.address)
     const transaction = await contract?.methods.dropProposal(proposalId).send()
-    await dispatch(toggleActionFulScreenLoader(true))
+    await dispatch(toggleActionFullScreenLoader(true))
     await dispatch(showToaster(INFO, 'Drop proposal...', 'Please wait 30s'))
 
     await transaction?.confirmation()
@@ -80,13 +80,13 @@ export const dropProposal = (proposalId: number) => async (dispatch: AppDispatch
     await dispatch(getGovernanceStorage())
     await dispatch(getSatellitesStorage())
     await dispatch(getCurrentRoundProposals())
-    await dispatch(toggleActionFulScreenLoader(false))
+    await dispatch(toggleActionFullScreenLoader(false))
   } catch (error) {
     console.error('dropProposal error:', error)
     if (error instanceof Error) {
       dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    await dispatch(toggleActionFulScreenLoader(false))
+    await dispatch(toggleActionFullScreenLoader(false))
   }
 }
 
@@ -107,7 +107,7 @@ export const lockProposal = (proposalId: number) => async (dispatch: AppDispatch
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(state.contractAddresses.governanceAddress.address)
     const transaction = await contract?.methods.lockProposal(proposalId).send()
-    await dispatch(toggleActionFulScreenLoader(true))
+    await dispatch(toggleActionFullScreenLoader(true))
     await dispatch(showToaster(INFO, 'Locking proposal...', 'Please wait 30s'))
 
     await transaction?.confirmation()
@@ -117,13 +117,13 @@ export const lockProposal = (proposalId: number) => async (dispatch: AppDispatch
     await dispatch(getGovernanceStorage())
     await dispatch(getSatellitesStorage())
     await dispatch(getCurrentRoundProposals())
-    await dispatch(toggleActionFulScreenLoader(false))
+    await dispatch(toggleActionFullScreenLoader(false))
   } catch (error) {
     console.error('lockProposal error:', error)
     if (error instanceof Error) {
       dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    await dispatch(toggleActionFulScreenLoader(false))
+    await dispatch(toggleActionFullScreenLoader(false))
   }
 }
 
@@ -172,13 +172,13 @@ export const updateProposalData =
       }
 
       await dispatch(showToaster(INFO, 'Updating proposal...', 'Please wait 30s'))
-      await dispatch(toggleActionFulScreenLoader(true))
+      await dispatch(toggleActionFullScreenLoader(true))
 
       const query = await contract.methods.updateProposalData(proposalId, bytesChanges, paymentChanges).send()
       await query?.confirmation()
 
       await dispatch(showToaster(SUCCESS, 'Proposal updated.', 'All good :)'))
-      await dispatch(toggleActionFulScreenLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
 
       await dispatch(getGovernanceStorage())
       await dispatch(getSatellitesStorage())
@@ -188,6 +188,6 @@ export const updateProposalData =
         console.error(error)
         dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionFulScreenLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     }
   }

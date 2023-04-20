@@ -1,6 +1,6 @@
 import { OpKind } from '@taquito/taquito'
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
-import { toggleActionFulScreenLoader } from 'app/App.components/Loader/Loader.action'
+import { toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { ERROR, INFO, SUCCESS } from 'app/App.components/Toaster/Toaster.constants'
 import { AppDispatch, GetState } from 'app/App.controller'
@@ -33,7 +33,7 @@ export const changeBakerAction =
       const transaction = await contract?.methods.initVaultAction('setBaker', bakerAddress).send()
 
       callback()
-      dispatch(toggleActionFulScreenLoader(true))
+      dispatch(toggleActionFullScreenLoader(true))
       dispatch(showToaster(INFO, 'Changing XTZ Baker...', 'Please wait 30s'))
 
       // confirm query completion
@@ -52,14 +52,14 @@ export const changeBakerAction =
       })
 
       dispatch(showToaster(SUCCESS, 'Baker changed.', 'All good :)'))
-      dispatch(toggleActionFulScreenLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
     } catch (error) {
       console.error('changeBakerAction error:', error)
       if (error instanceof Error) {
         dispatch(showToaster(ERROR, 'Error', error.message))
         callback()
       }
-      dispatch(toggleActionFulScreenLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
     }
   }
 
@@ -146,7 +146,7 @@ export const managePermissionsAction =
       }
 
       callback()
-      dispatch(toggleActionFulScreenLoader(true))
+      dispatch(toggleActionFullScreenLoader(true))
       dispatch(showToaster(INFO, 'Updating depositors...', 'Please wait 30s'))
 
       // confirm query completion
@@ -165,14 +165,14 @@ export const managePermissionsAction =
       })
 
       dispatch(showToaster(SUCCESS, 'Depositors updated.', 'All good :)'))
-      dispatch(toggleActionFulScreenLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
     } catch (error) {
       console.error('managePermissionsAction error:', error)
       if (error instanceof Error) {
         dispatch(showToaster(ERROR, 'Error', error.message))
         callback()
       }
-      dispatch(toggleActionFulScreenLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
     }
   }
 
@@ -196,7 +196,7 @@ export const updateOperatorsAction = (callback: () => void) => async (dispatch: 
     // const transaction  = await contract?.methods.any.send()
 
     callback()
-    dispatch(toggleActionFulScreenLoader(true))
+    dispatch(toggleActionFullScreenLoader(true))
     dispatch(showToaster(INFO, 'Borrowing from the vault...', 'Please wait 30s'))
 
     // confirm query completion
@@ -215,13 +215,13 @@ export const updateOperatorsAction = (callback: () => void) => async (dispatch: 
     })
 
     dispatch(showToaster(SUCCESS, 'Asset borrowed.', 'All good :)'))
-    dispatch(toggleActionFulScreenLoader(false))
+    dispatch(toggleActionFullScreenLoader(false))
   } catch (error) {
     console.error('borrowVaultAssetAction error:', error)
     if (error instanceof Error) {
       dispatch(showToaster(ERROR, 'Error', error.message))
       callback()
     }
-    dispatch(toggleActionFulScreenLoader(false))
+    dispatch(toggleActionFullScreenLoader(false))
   }
 }

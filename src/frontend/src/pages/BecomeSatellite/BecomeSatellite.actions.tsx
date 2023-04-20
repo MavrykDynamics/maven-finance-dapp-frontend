@@ -4,7 +4,7 @@ import { getSatellitesStorage } from 'pages/Satellites/Satellites.actions'
 import { State } from 'reducers'
 import { RegisterAsSatelliteForm } from '../../utils/TypesAndInterfaces/Forms'
 import type { AppDispatch, GetState } from '../../app/App.controller'
-import { toggleActionFulScreenLoader } from 'app/App.components/Loader/Loader.action'
+import { toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 
 export const registerAsSatellite =
@@ -37,7 +37,7 @@ export const registerAsSatellite =
         )
         .send()
 
-      dispatch(toggleActionFulScreenLoader(true))
+      dispatch(toggleActionFullScreenLoader(true))
       dispatch(showToaster(INFO, 'Registering...', 'Please wait 30s'))
 
       await transaction?.confirmation()
@@ -45,12 +45,12 @@ export const registerAsSatellite =
       dispatch(showToaster(SUCCESS, 'Satellite Registered.', 'All good :)'))
 
       dispatch(getSatellitesStorage())
-      dispatch(toggleActionFulScreenLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
     } catch (error) {
       if (error instanceof Error) {
         dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      dispatch(toggleActionFulScreenLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
     }
   }
 
@@ -84,7 +84,7 @@ export const updateSatelliteRecord =
         )
         .send()
 
-      dispatch(toggleActionFulScreenLoader(true))
+      dispatch(toggleActionFullScreenLoader(true))
       dispatch(showToaster(INFO, 'Registering...', 'Please wait 30s'))
 
       await transaction?.confirmation()
@@ -92,12 +92,12 @@ export const updateSatelliteRecord =
       dispatch(showToaster(SUCCESS, 'Satellite Registered.', 'All good :)'))
 
       dispatch(getSatellitesStorage())
-      dispatch(toggleActionFulScreenLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
     } catch (error) {
       if (error instanceof Error) {
         dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      dispatch(toggleActionFulScreenLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
     }
   }
 
@@ -120,7 +120,7 @@ export const unregisterAsSatellite = () => async (dispatch: AppDispatch, getStat
 
     const transaction = await contract?.methods.unregisterAsSatellite(state.wallet.accountPkh).send()
 
-    dispatch(toggleActionFulScreenLoader(true))
+    dispatch(toggleActionFullScreenLoader(true))
     dispatch(showToaster(INFO, 'Unregistering...', 'Please wait 30s'))
 
     await transaction?.confirmation()
@@ -128,11 +128,11 @@ export const unregisterAsSatellite = () => async (dispatch: AppDispatch, getStat
     dispatch(showToaster(SUCCESS, 'Satellite is no longer registered.', 'All good :)'))
 
     dispatch(getSatellitesStorage())
-    dispatch(toggleActionFulScreenLoader(false))
+    dispatch(toggleActionFullScreenLoader(false))
   } catch (error) {
     if (error instanceof Error) {
       dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    dispatch(toggleActionFulScreenLoader(false))
+    dispatch(toggleActionFullScreenLoader(false))
   }
 }

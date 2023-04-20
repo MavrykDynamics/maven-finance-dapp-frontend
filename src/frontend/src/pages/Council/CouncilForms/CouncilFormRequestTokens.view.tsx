@@ -9,7 +9,7 @@ import { TokenType } from 'utils/TypesAndInterfaces/General'
 
 // helpers
 import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
-import { BUTTON_PRIMARY, SUBMIT } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
 import { getTokenDecimals } from 'utils/calcFunctions'
 
 // view
@@ -52,7 +52,7 @@ export const CouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
     [],
   )
 
-  type DropDownItemType = typeof dropDownItems[0]
+  type DropDownItemType = (typeof dropDownItems)[0]
   const [chosenDdItem, setChosenDdItem] = useState<DropDownItemType | undefined>()
 
   const [tokenDecimals, setTokenDecimals] = useState<number | null>(null)
@@ -258,6 +258,7 @@ export const CouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
           name="purpose"
           onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
             handleChange(e)
+            handleBlur(e, maxLength.requestPurposeMaxLength)
           }}
           onBlur={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleBlur(e, maxLength.requestPurposeMaxLength)}
           inputStatus={formInputStatus.purpose}
@@ -265,7 +266,7 @@ export const CouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
         />
       </div>
       <div className="btn-group">
-        <NewButton kind={BUTTON_PRIMARY} type={SUBMIT}>
+        <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT}>
           <Icon id="request_token" />
           Request Tokens
         </NewButton>

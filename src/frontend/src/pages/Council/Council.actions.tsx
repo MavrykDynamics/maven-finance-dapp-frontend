@@ -34,7 +34,7 @@ import {
 } from '../../gql/queries/getCouncilStorage'
 
 // actions
-import { toggleActionFulScreenLoader } from 'app/App.components/Loader/Loader.action'
+import { toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 import { TokenType } from 'utils/TypesAndInterfaces/General'
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 
@@ -183,12 +183,12 @@ export const sign = (actionID: number) => async (dispatch: AppDispatch, getState
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(state.contractAddresses.councilAddress.address)
     const transaction = await contract?.methods.signAction(actionID).send()
-    await dispatch(toggleActionFulScreenLoader(true))
 
-    dispatch(showToaster(INFO, 'Sign...', 'Please wait 30s'))
+    await dispatch(toggleActionFullScreenLoader(true))
+    await dispatch(showToaster(INFO, 'Sign...', 'Please wait 30s'))
+
     // confirm query completion
     await transaction?.confirmation()
-    dispatch(showToaster(SUCCESS, 'Sign is done', 'All good :)'))
 
     // @ts-ignore don't have proper type to acees data, type has only methods
     const currentOperationLevel = transaction?.lastHead?.header?.level
@@ -205,12 +205,13 @@ export const sign = (actionID: number) => async (dispatch: AppDispatch, getState
       currentOperationLevel,
     })
 
-    await dispatch(toggleActionFulScreenLoader(false))
+    await dispatch(showToaster(SUCCESS, 'Sign is done', 'All good :)'))
+    await dispatch(toggleActionFullScreenLoader(false))
   } catch (error) {
     if (error instanceof Error) {
       dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    await dispatch(toggleActionFulScreenLoader(false))
+    await dispatch(toggleActionFullScreenLoader(false))
   }
 }
 
@@ -241,19 +242,19 @@ export const addVestee =
           vestingInMonths,
         )
         .send()
-      await dispatch(toggleActionFulScreenLoader(true))
+      await dispatch(toggleActionFullScreenLoader(true))
 
       dispatch(showToaster(INFO, 'Add Vestee...', 'Please wait 30s'))
       await transaction?.confirmation()
       dispatch(showToaster(SUCCESS, 'Add Vestee is done', 'All good :)'))
 
       await dispatch(getCouncilPendingActions())
-      await dispatch(toggleActionFulScreenLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     } catch (error) {
       if (error instanceof Error) {
         dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionFulScreenLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     }
   }
 
@@ -279,19 +280,19 @@ export const addCouncilMember =
       const transaction = await contract?.methods
         .councilActionAddMember(newMemberAddress, newMemberName, newMemberWebsite, newMemberImage)
         .send()
-      await dispatch(toggleActionFulScreenLoader(true))
+      await dispatch(toggleActionFullScreenLoader(true))
 
       dispatch(showToaster(INFO, 'Add Council Member...', 'Please wait 30s'))
       await transaction?.confirmation()
       dispatch(showToaster(SUCCESS, 'Add Council Member is done', 'All good :)'))
 
       await dispatch(getCouncilPendingActions())
-      await dispatch(toggleActionFulScreenLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     } catch (error) {
       if (error instanceof Error) {
         dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionFulScreenLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     }
   }
 
@@ -322,20 +323,20 @@ export const updateVestee =
           vestingInMonths,
         )
         .send()
-      await dispatch(toggleActionFulScreenLoader(true))
+      await dispatch(toggleActionFullScreenLoader(true))
 
       dispatch(showToaster(INFO, 'Update Vestee...', 'Please wait 30s'))
       await transaction?.confirmation()
       dispatch(showToaster(SUCCESS, 'Update Vestee is done', 'All good :)'))
 
       await dispatch(getCouncilPendingActions())
-      await dispatch(toggleActionFulScreenLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     } catch (error) {
       if (error instanceof Error) {
         console.error(error)
         dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionFulScreenLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     }
   }
 
@@ -357,20 +358,20 @@ export const toggleVesteeLock = (vesteeAddress: string) => async (dispatch: AppD
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(state.contractAddresses.councilAddress.address)
     const transaction = await contract?.methods.councilActionToggleVesteeLock(vesteeAddress).send()
-    await dispatch(toggleActionFulScreenLoader(true))
+    await dispatch(toggleActionFullScreenLoader(true))
 
     dispatch(showToaster(INFO, 'Toggle Vestee Lock...', 'Please wait 30s'))
     await transaction?.confirmation()
     dispatch(showToaster(SUCCESS, 'Toggle Vestee Lock is done', 'All good :)'))
 
     await dispatch(getCouncilPendingActions())
-    await dispatch(toggleActionFulScreenLoader(false))
+    await dispatch(toggleActionFullScreenLoader(false))
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
       dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    await dispatch(toggleActionFulScreenLoader(false))
+    await dispatch(toggleActionFullScreenLoader(false))
   }
 }
 
@@ -408,20 +409,20 @@ export const changeCouncilMember =
           newMemberImage,
         )
         .send()
-      await dispatch(toggleActionFulScreenLoader(true))
+      await dispatch(toggleActionFullScreenLoader(true))
 
       dispatch(showToaster(INFO, 'Change Council Member...', 'Please wait 30s'))
       await transaction?.confirmation()
       dispatch(showToaster(SUCCESS, 'Change Council Member is done', 'All good :)'))
 
       await dispatch(getCouncilPendingActions())
-      await dispatch(toggleActionFulScreenLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     } catch (error) {
       if (error instanceof Error) {
         console.error(error)
         dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionFulScreenLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     }
   }
 
@@ -443,20 +444,20 @@ export const removeCouncilMember = (memberAddress: string) => async (dispatch: A
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(state.contractAddresses.councilAddress.address)
     const transaction = await contract?.methods.councilActionRemoveMember(memberAddress).send()
-    await dispatch(toggleActionFulScreenLoader(true))
+    await dispatch(toggleActionFullScreenLoader(true))
 
     dispatch(showToaster(INFO, 'Remove Council Member...', 'Please wait 30s'))
     await transaction?.confirmation()
     dispatch(showToaster(SUCCESS, 'Remove Council Member is done', 'All good :)'))
 
     await dispatch(getCouncilPendingActions())
-    await dispatch(toggleActionFulScreenLoader(false))
+    await dispatch(toggleActionFullScreenLoader(false))
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
       dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    await dispatch(toggleActionFulScreenLoader(false))
+    await dispatch(toggleActionFullScreenLoader(false))
   }
 }
 
@@ -482,20 +483,20 @@ export const updateCouncilMemberInfo =
       const transaction = await contract?.methods
         .updateCouncilMemberInfo(newMemberName, newMemberWebsite, newMemberImage)
         .send()
-      await dispatch(toggleActionFulScreenLoader(true))
+      await dispatch(toggleActionFullScreenLoader(true))
 
       await dispatch(showToaster(INFO, 'Update Council Member Info...', 'Please wait 30s'))
       await transaction?.confirmation()
       await dispatch(showToaster(SUCCESS, 'Update Council Member Info is done', 'All good :)'))
 
       await dispatch(getCouncilMembers())
-      await dispatch(toggleActionFulScreenLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     } catch (error) {
       if (error instanceof Error) {
         console.error(error)
         dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionFulScreenLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     }
   }
 
@@ -536,20 +537,20 @@ export const transferTokens =
           purpose,
         )
         .send()
-      await dispatch(toggleActionFulScreenLoader(true))
+      await dispatch(toggleActionFullScreenLoader(true))
 
       dispatch(showToaster(INFO, 'Transfer Tokens...', 'Please wait 30s'))
       await transaction?.confirmation()
       dispatch(showToaster(SUCCESS, 'Transfer Tokens is done', 'All good :)'))
 
       await dispatch(getCouncilPendingActions())
-      await dispatch(toggleActionFulScreenLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     } catch (error) {
       if (error instanceof Error) {
         console.error(error)
         await dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionFulScreenLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     }
   }
 
@@ -593,20 +594,20 @@ export const requestTokens =
         )
         .send()
 
-      await dispatch(toggleActionFulScreenLoader(true))
+      await dispatch(toggleActionFullScreenLoader(true))
 
       dispatch(showToaster(INFO, 'Request Tokens...', 'Please wait 30s'))
       await transaction?.confirmation()
       dispatch(showToaster(SUCCESS, 'Request Tokens is done', 'All good :)'))
 
       await dispatch(getCouncilPendingActions())
-      await dispatch(toggleActionFulScreenLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     } catch (error) {
       if (error instanceof Error) {
         console.error(error)
         await dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionFulScreenLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     }
   }
 
@@ -636,20 +637,20 @@ export const requestTokenMint =
           purpose,
         )
         .send()
-      await dispatch(toggleActionFulScreenLoader(true))
+      await dispatch(toggleActionFullScreenLoader(true))
 
       dispatch(showToaster(INFO, 'Request Tokens...', 'Please wait 30s'))
       await transaction?.confirmation()
       dispatch(showToaster(SUCCESS, 'Request Tokens is done', 'All good :)'))
 
       await dispatch(getCouncilPendingActions())
-      await dispatch(toggleActionFulScreenLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     } catch (error) {
       if (error instanceof Error) {
         console.error(error)
         dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionFulScreenLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     }
   }
 
@@ -671,20 +672,20 @@ export const dropFinancialRequest = (financialReqID: number) => async (dispatch:
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(state.contractAddresses.councilAddress.address)
     const transaction = await contract?.methods.councilActionDropFinancialReq(financialReqID).send()
-    await dispatch(toggleActionFulScreenLoader(true))
+    await dispatch(toggleActionFullScreenLoader(true))
 
     dispatch(showToaster(INFO, 'Drop Financial Request...', 'Please wait 30s'))
     await transaction?.confirmation()
     dispatch(showToaster(SUCCESS, 'Drop Financial Request is done', 'All good :)'))
 
     await dispatch(getCouncilPendingActions())
-    await dispatch(toggleActionFulScreenLoader(false))
+    await dispatch(toggleActionFullScreenLoader(false))
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
       dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    await dispatch(toggleActionFulScreenLoader(false))
+    await dispatch(toggleActionFullScreenLoader(false))
   }
 }
 
@@ -706,20 +707,20 @@ export const removeVesteeRequest = (vesteeAddress: string) => async (dispatch: A
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(state.contractAddresses.councilAddress.address)
     const transaction = await contract?.methods.councilActionRemoveVestee(vesteeAddress).send()
-    await dispatch(toggleActionFulScreenLoader(true))
+    await dispatch(toggleActionFullScreenLoader(true))
 
     dispatch(showToaster(INFO, 'Remove Vestee Request...', 'Please wait 30s'))
     await transaction?.confirmation()
     dispatch(showToaster(SUCCESS, 'Remove Vestee Request is done', 'All good :)'))
 
     await dispatch(getCouncilPendingActions())
-    await dispatch(toggleActionFulScreenLoader(false))
+    await dispatch(toggleActionFullScreenLoader(false))
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
       dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    await dispatch(toggleActionFulScreenLoader(false))
+    await dispatch(toggleActionFullScreenLoader(false))
   }
 }
 
@@ -741,20 +742,20 @@ export const setBakerRequest = (bakerHash: string) => async (dispatch: AppDispat
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(state.contractAddresses.councilAddress.address)
     const transaction = await contract?.methods.councilActionSetBaker(bakerHash).send()
-    await dispatch(toggleActionFulScreenLoader(true))
+    await dispatch(toggleActionFullScreenLoader(true))
 
     dispatch(showToaster(INFO, 'Set Baker Request...', 'Please wait 30s'))
     await transaction?.confirmation()
     dispatch(showToaster(SUCCESS, 'Set Baker Request is done', 'All good :)'))
 
     await dispatch(getCouncilPendingActions())
-    await dispatch(toggleActionFulScreenLoader(false))
+    await dispatch(toggleActionFullScreenLoader(false))
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
       dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    await dispatch(toggleActionFulScreenLoader(false))
+    await dispatch(toggleActionFullScreenLoader(false))
   }
 }
 
@@ -777,20 +778,20 @@ export const setContractBakerRequest =
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.councilAddress.address)
       const transaction = await contract?.methods.councilActionSetContractBaker(targetContractAddress, keyHash).send()
-      await dispatch(toggleActionFulScreenLoader(true))
+      await dispatch(toggleActionFullScreenLoader(true))
 
       dispatch(showToaster(INFO, 'Set Contract Baker Request...', 'Please wait 30s'))
       await transaction?.confirmation()
       dispatch(showToaster(SUCCESS, 'Set Contract Baker Request is done', 'All good :)'))
 
       await dispatch(getCouncilPendingActions())
-      await dispatch(toggleActionFulScreenLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     } catch (error) {
       if (error instanceof Error) {
         console.error(error)
         dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionFulScreenLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     }
   }
 
@@ -809,7 +810,7 @@ export const dropRequest = (actionID: number) => async (dispatch: AppDispatch, g
   }
 
   try {
-    await dispatch(toggleActionFulScreenLoader(true))
+    await dispatch(toggleActionFullScreenLoader(true))
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(state.contractAddresses.councilAddress.address)
     console.log('contract', contract)
@@ -823,12 +824,12 @@ export const dropRequest = (actionID: number) => async (dispatch: AppDispatch, g
     dispatch(showToaster(SUCCESS, 'Set Contract Baker Request is done', 'All good :)'))
 
     await dispatch(getCouncilPendingActions())
-    await dispatch(toggleActionFulScreenLoader(false))
+    await dispatch(toggleActionFullScreenLoader(false))
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
       dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    await dispatch(toggleActionFulScreenLoader(false))
+    await dispatch(toggleActionFullScreenLoader(false))
   }
 }

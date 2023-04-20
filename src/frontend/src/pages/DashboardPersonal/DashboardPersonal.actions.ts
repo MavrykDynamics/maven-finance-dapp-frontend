@@ -1,4 +1,4 @@
-import { toggleActionFulScreenLoader } from 'app/App.components/Loader/Loader.action'
+import { toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { ERROR, INFO, SUCCESS } from 'app/App.components/Toaster/Toaster.constants'
 import { AppDispatch, GetState } from 'app/App.controller'
@@ -66,7 +66,7 @@ export const claimAllRewardsAction = () => async (dispatch: AppDispatch, getStat
     const batch = tezos?.wallet.batch(bachArr)
     const transaction = await batch.send()
 
-    await dispatch(toggleActionFulScreenLoader(true))
+    await dispatch(toggleActionFullScreenLoader(true))
     await dispatch(showToaster(INFO, 'Submitting emergency proposal...', 'Please wait 30s'))
 
     await transaction?.confirmation()
@@ -76,13 +76,13 @@ export const claimAllRewardsAction = () => async (dispatch: AppDispatch, getStat
     await dispatch(updateUserData())
     await dispatch(getDoormanStorage())
     await dispatch(getFarmStorage())
-    await dispatch(toggleActionFulScreenLoader(false))
+    await dispatch(toggleActionFullScreenLoader(false))
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
       await dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    await dispatch(toggleActionFulScreenLoader(false))
+    await dispatch(toggleActionFullScreenLoader(false))
   }
 }
 
@@ -108,7 +108,7 @@ export const claimVestingReward = () => async (dispatch: AppDispatch, getState: 
     const contract = await tezos?.wallet.at(vestingAddress.address)
     const transaction = await contract?.methods.claim().send()
 
-    await dispatch(toggleActionFulScreenLoader(true))
+    await dispatch(toggleActionFullScreenLoader(true))
     await dispatch(showToaster(INFO, 'Claiming vesting reward...', 'Please wait 30s'))
 
     await transaction?.confirmation()
@@ -116,12 +116,12 @@ export const claimVestingReward = () => async (dispatch: AppDispatch, getState: 
     await dispatch(showToaster(SUCCESS, 'Vesting reward claimed', 'All good :)'))
     await dispatch(updateUserData())
     await dispatch(getVestingStorage())
-    await dispatch(toggleActionFulScreenLoader(false))
+    await dispatch(toggleActionFullScreenLoader(false))
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
       await dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    await dispatch(toggleActionFulScreenLoader(false))
+    await dispatch(toggleActionFullScreenLoader(false))
   }
 }

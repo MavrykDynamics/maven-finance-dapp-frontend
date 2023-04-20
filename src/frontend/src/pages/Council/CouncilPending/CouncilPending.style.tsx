@@ -34,7 +34,8 @@ export const CouncilPendingStyled = styled(Card)`
     }
 
     .sign-action {
-      margin-left: -37px;
+      margin-left: -30px;
+      width: 180px;
     }
   }
 
@@ -169,9 +170,9 @@ export const CouncilPendingStyled = styled(Card)`
     }
 
     p {
-      font-weight: 400;
-      font-size: 12px;
-      line-height: 12px;
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 14px;
       color: ${({ theme }) => theme.textColor};
       margin-top: 0;
       margin-bottom: 10px;

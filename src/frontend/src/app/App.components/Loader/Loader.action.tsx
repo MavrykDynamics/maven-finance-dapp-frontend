@@ -2,7 +2,7 @@ import { AppDispatch } from 'app/App.controller'
 import { ROCKET_LOADER, WERT_IO_LOADER } from 'utils/constants'
 
 export const TOGGLE_ACTION_FULL_SCREEN_LOADER = 'TOGGLE_ACTION_FULL_SCREEN_LOADER'
-export const toggleActionFulScreenLoader = (showLoader: boolean) => (dispatch: AppDispatch) => {
+export const toggleActionFullScreenLoader = (showLoader: boolean) => (dispatch: AppDispatch) => {
   dispatch({
     type: TOGGLE_ACTION_FULL_SCREEN_LOADER,
     showLoader,
