@@ -14,7 +14,6 @@ export function toaster(state = toasterDefaultState, action: Action) {
   switch (action.type) {
     case SHOW_TOASTER:
       return {
-        ...state,
         ...action,
       }
     case HIDE_TOASTER:
