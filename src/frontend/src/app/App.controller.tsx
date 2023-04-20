@@ -28,7 +28,7 @@ import { getContractAddressesStorage } from 'reducers/actions/contractAddresses.
 import { getFeedsStorage } from 'pages/DataFeeds/DataFeeds.actions'
 import { connect } from './App.components/ConnectWallet/ConnectWallet.actions'
 import { toggleInitialDataLoading } from './App.components/Loader/Loader.action'
-import { togglePolicyPopup, toggleRPCNodePopup } from './App.components/SettingsPopup/SettingsPopup.actions'
+import { toggleRPCNodePopup } from './App.components/SettingsPopup/SettingsPopup.actions'
 import {
   getDipDupTokensStorage,
   getWhitelistTokensStorage,
@@ -107,7 +107,6 @@ const AppContainer = () => {
 
   const proccedPolicy = useCallback(() => {
     setCookie('policyPopup', true)
-    dispatch(togglePolicyPopup(false))
   }, [])
 
   return isInitialDataLoading ? (
