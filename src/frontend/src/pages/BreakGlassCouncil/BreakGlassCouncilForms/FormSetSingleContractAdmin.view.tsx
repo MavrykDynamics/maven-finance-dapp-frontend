@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
 
 // components
-import { BUTTON_PRIMARY, SUBMIT } from '../../../app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from '../../../app/App.components/Button/Button.constants'
 import { Input } from 'app/App.components/Input/NewInput'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
@@ -104,10 +104,12 @@ export function FormSetSingleContractAdminView() {
           <Input inputProps={targetContractProps} settings={targetContracSettings} />
         </div>
 
-        <NewButton kind={BUTTON_PRIMARY} type={SUBMIT}>
-          <Icon id="profile" />
-          Set Contract Admin
-        </NewButton>
+        <div className="btn-wrapper">
+          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT}>
+            <Icon id="profile" />
+            Set Contract Admin
+          </NewButton>
+        </div>
       </form>
     </FormStyled>
   )

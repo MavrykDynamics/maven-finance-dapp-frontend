@@ -18,6 +18,7 @@ type Props = {
 
 const Carousel = (props: Props) => {
   const { children, itemLength } = props
+
   const [selectedIndex, setSelectedIndex] = useState(0)
   const options: Partial<EmblaOptionsType> = { containScroll: 'trimSnaps', dragFree: true }
   // for scroll 3 items
@@ -28,10 +29,10 @@ const Carousel = (props: Props) => {
   const [nextBtnEnabled, setNextBtnEnabled] = useState(false)
 
   const containerRef = useRef<HTMLDivElement | null>(null)
-  const showGradient = useMemo(() => compareValues(containerRef.current), [
-    containerRef.current?.offsetHeight,
-    containerRef.current?.scrollWidth
-  ])
+  const showGradient = useMemo(
+    () => compareValues(containerRef.current),
+    [containerRef.current?.offsetHeight, containerRef.current?.scrollWidth],
+  )
 
   const scrollPrev = useCallback(() => embla && embla.scrollPrev(), [embla])
   const scrollNext = useCallback(() => embla && embla.scrollNext(), [embla])
@@ -40,7 +41,7 @@ const Carousel = (props: Props) => {
     setPrevBtnEnabled(embla.canScrollPrev())
     setNextBtnEnabled(embla.canScrollNext())
     setSelectedIndex(embla.selectedScrollSnap())
-  }, [embla, selectedIndex])
+  }, [children, embla, selectedIndex])
 
   useEffect(() => {
     if (!embla) return
@@ -60,7 +61,7 @@ const Carousel = (props: Props) => {
   )
 
   return (
-    <CarouselStyle>    
+    <CarouselStyle>
       <small className="selected">
         {selectedIndex + 1} from {itemLength}
       </small>
@@ -75,12 +76,12 @@ const Carousel = (props: Props) => {
         {arrowIcon}
       </CarouselButton>
 
-
-      {showGradient &&
+      {showGradient && (
         <>
-          {prevBtnEnabled && <div className='gradient-left'></div>}
-          <div className='gradient-right'></div>
-        </>}
+          {prevBtnEnabled && <div className="gradient-left"></div>}
+          <div className="gradient-right"></div>
+        </>
+      )}
     </CarouselStyle>
   )
 }

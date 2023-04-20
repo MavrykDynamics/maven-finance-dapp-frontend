@@ -61,17 +61,17 @@ export const CouncilFormStyled = styled.form`
   }
 
   .btn-group {
-    display: flex;
-    justify-content: flex-end;
     padding-top: 40px;
     padding-bottom: 15px;
+    margin: 0 0 0 auto;
+    width: 300px;
   }
 
   .button-aligment {
     display: flex;
-    justify-content: flex-end;
-    align-items: flex-end;
-    margin-bottom: -3px;
+    align-items: end;
+    margin: 0 0 -5px auto;
+    width: 300px;
   }
 
   .textarea-group {
