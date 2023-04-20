@@ -2,6 +2,7 @@ import {
   TOGGLE_RPC_NODE_POPUP,
   SELECT_NEW_RPC_APP_NODE,
   SET_RPC_NODES,
+  TOOGLE_POLICY_POPUP,
 } from 'app/App.components/SettingsPopup/SettingsPopup.actions'
 import { ThemeType, TOGGLE_DARK_THEME } from '../app/App.components/DarkThemeProvider/DarkThemeProvider.actions'
 import { GET_HEAD_DATA, TOGGLE_SIDEBAR } from '../app/App.components/Menu/Menu.actions'
@@ -24,6 +25,7 @@ export interface PreferencesState {
   themeSelected: ThemeType
   headData?: HeadDataType
   changeNodePopupOpen: boolean
+  policyPopup: boolean
   RPC_NODES: Array<RPCNodeType>
   REACT_APP_RPC_PROVIDER: string
   sidebarOpened: boolean
@@ -32,6 +34,7 @@ export interface PreferencesState {
 export const preferencesDefaultState: PreferencesState = {
   themeSelected: getItemFromStorage('theme') || 'space',
   changeNodePopupOpen: false,
+  policyPopup: false,
   sidebarOpened: false,
   RPC_NODES: [
     { title: 'MARIGOLD', url: 'https://ghostnet.tezos.marigold.dev/', nodeLogoUrl: 'marigold_logo.png' },
@@ -48,6 +51,8 @@ export function preferences(state = preferencesDefaultState, action: Action) {
       return { ...state, headData: action.headData }
     case TOGGLE_RPC_NODE_POPUP:
       return { ...state, changeNodePopupOpen: action.isOpened }
+    case TOOGLE_POLICY_POPUP:
+      return { ...state, policyPopup: action.policyPopup }
     case SELECT_NEW_RPC_APP_NODE:
       return { ...state, REACT_APP_RPC_PROVIDER: action.newRPCNode }
     case SET_RPC_NODES:

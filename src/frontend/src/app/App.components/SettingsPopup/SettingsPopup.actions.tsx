@@ -12,6 +12,14 @@ export const toggleRPCNodePopup = (isOpened: boolean) => (dispatch: AppDispatch)
   })
 }
 
+export const TOOGLE_POLICY_POPUP = 'TOOGLE_POLICY_POPUP'
+export const togglePolicyPopup = (policyPopup: boolean) => (dispatch: AppDispatch) => {
+  dispatch({
+    type: TOOGLE_POLICY_POPUP,
+    policyPopup,
+  })
+}
+
 export const SELECT_NEW_RPC_APP_NODE = 'SET_NEW_RPC_APP_NODE'
 export const selectNewRPCNode = (newRPCNode: string) => (dispatch: AppDispatch) => {
   dispatch({
