@@ -15,7 +15,6 @@ import NewButton from 'app/App.components/Button/NewButton'
 import {
   calcCollateralRatio,
   getLoansInputMaxAmount,
-  getMaxCollateralWithdraw,
   isTezosAsset,
   loansInputValidation,
 } from 'pages/Loans/Loans.helpers'
@@ -35,9 +34,10 @@ import { InputPinnedDropDown } from 'app/App.components/Input/Input.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
-import { DropDownJsxChild, LoansModalBase, VaultModalOverview } from './Modals.style'
+import { LoansModalBase, VaultModalOverview } from './Modals.style'
 import { XtzBakerType } from 'utils/TypesAndInterfaces/Loans'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
+import { DropDownJsxChild } from 'app/App.components/DropDown/DropDown.style'
 
 type InputState =
   | {

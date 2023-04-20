@@ -17,7 +17,7 @@ import { Input } from 'app/App.components/Input/NewInput'
 import NewButton from 'app/App.components/Button/NewButton'
 import { TextArea } from '../../../app/App.components/TextArea/TextArea.controller'
 import Icon from '../../../app/App.components/Icon/Icon.view'
-import { DDItemId, DropDown } from 'app/App.components/DropDown/NewDropdown'
+import { DDItemId, DropDown, DropdownTruncateOption } from 'app/App.components/DropDown/NewDropdown'
 
 // action
 import { requestTokens } from '../Council.actions'
@@ -45,7 +45,7 @@ export const CouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
   const dropDownItems = useMemo(
     () =>
       tokenTypes.map((item, index) => ({
-        content: <div>{item}</div>,
+        content: <DropdownTruncateOption text={item} />,
         value: item.toLowerCase(),
         id: index,
       })),

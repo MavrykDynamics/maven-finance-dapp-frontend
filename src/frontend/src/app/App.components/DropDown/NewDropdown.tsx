@@ -2,14 +2,21 @@ import { useRef, useEffect, useState } from 'react'
 import { useClickAway } from 'react-use'
 
 // styles
-import { DropDownStyled, DropDownMenu, DropDownListContainer, DropDownList, DropDownListItem } from './DropDown.style'
+import {
+  DropDownStyled,
+  DropDownMenu,
+  DropDownListContainer,
+  DropDownList,
+  DropDownListItem,
+  DropDownJsxChild,
+  DropDownTruncatedChild,
+} from './DropDown.style'
 
 // components
 import Icon from '../Icon/Icon.view'
 
 // helpers
 import { scrollToFullView } from 'utils/scrollToFullView'
-import { DropDownJsxChild } from 'pages/Loans/Components/Modals/Modals.style'
 import { ImageWithPlug } from '../Icon/ImageWithPlug'
 
 export type DDItemId = number | string
@@ -45,7 +52,7 @@ export const DropDown = ({ placeholder, clickItem, items, activeItem, className,
   return (
     <DropDownStyled ref={refDropdownWrapper} className={`drop-down ${className} ${disabled ? 'disabled' : ''}`}>
       <DropDownMenu id={'selected-option'} onClick={() => setIsDropDownOpen(!isDropDownOpen)}>
-        <div>{activeItem?.content ?? placeholder}</div>
+        {activeItem?.content ?? placeholder}
         <span>
           <Icon className={isDropDownOpen ? 'open' : ''} id="arrow-down" />
         </span>
@@ -83,4 +90,8 @@ export const DropdownInputCustomChild = ({ iconSrc, symbol }: { iconSrc: string;
       {symbol}
     </div>
   </DropDownJsxChild>
+)
+
+export const DropdownTruncateOption = ({ text }: { text: string }) => (
+  <DropDownTruncatedChild>{text}</DropDownTruncatedChild>
 )

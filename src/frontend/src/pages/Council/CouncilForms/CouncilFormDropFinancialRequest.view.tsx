@@ -9,7 +9,7 @@ import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/B
 // view
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from '../../../app/App.components/Icon/Icon.view'
-import { DDItemId, DropDown } from 'app/App.components/DropDown/NewDropdown'
+import { DDItemId, DropDown, DropdownTruncateOption } from 'app/App.components/DropDown/NewDropdown'
 
 // action
 import { dropFinancialRequest } from '../Council.actions'
@@ -18,8 +18,6 @@ import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 
 // style
 import { CouncilFormStyled } from './CouncilForm.style'
-import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
-import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 
 export const CouncilFormDropFinancialRequest = () => {
   const dispatch = useDispatch()
@@ -42,11 +40,7 @@ export const CouncilFormDropFinancialRequest = () => {
       distinctRequestsByExecuting(financialRequestsIds, financialRequestMapper).ongoing.map((frId) => {
         const fr = financialRequestMapper[frId]
         return {
-          content: (
-            <div className="truncated-text">
-              {fr.type} {fr.purpose}
-            </div>
-          ),
+          content: <DropdownTruncateOption text={`${fr.type} ${fr.purpose}`} />,
           id: frId,
         }
       }),
