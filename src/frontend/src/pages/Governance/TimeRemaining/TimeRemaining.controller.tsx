@@ -24,7 +24,6 @@ export default function TimeRemaining() {
       const duration = await getTimestampByLevel(currentRoundEndLevel)
       setTimerDeadline(new Date(duration).getTime())
       setTimerActive(Boolean(currentRoundEndLevel) && timerDeadline > Date.now())
-      console.log(duration)
     })()
   }, [currentRoundEndLevel, timerDeadline])
 
