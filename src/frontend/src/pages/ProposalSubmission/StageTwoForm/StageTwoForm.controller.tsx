@@ -233,7 +233,7 @@ export const StageTwoForm = ({
       </FormHeaderGroup>
       <FormTitleAndFeeContainer>
         <FormTitleContainer>
-          <label>1 - Enter Proposal Title</label>
+          <label>1 - Proposal Title</label>
           <FormTitleEntry>{title}</FormTitleEntry>
         </FormTitleContainer>
         <div>
