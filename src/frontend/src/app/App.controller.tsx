@@ -38,7 +38,6 @@ import {
 import { getCouncilMembers } from 'pages/Council/Council.actions'
 import { getBreakGlassCouncilMembers } from 'pages/BreakGlassCouncil/BreakGlassCouncil.actions'
 import { getAvaliableCollaterals, getXtzBakers } from 'pages/Loans/Actions/getLoansData.actions'
-import { PolicyPopupContent } from './App.components/PolicyPopup/PolicyPopupContent.controller'
 
 // export const { store, persistor } = configureStore({})
 export const { store } = configureStore({})
@@ -49,9 +48,9 @@ const AppContainer = () => {
   const dispatch = useDispatch()
 
   const showSidebarOpened = useMedia('(min-width: 1400px)')
-  const [{ policyPopup: policyPopupFromCookie = null }, setCookie] = useCookies(['policyPopup'])
+  const [{ policyPopup }, setCookie] = useCookies(['policyPopup'])
 
-  const { changeNodePopupOpen, sidebarOpened, policyPopup } = useSelector((state: State) => state.preferences)
+  const { changeNodePopupOpen, sidebarOpened } = useSelector((state: State) => state.preferences)
   const { isInitialDataLoading } = useSelector((state: State) => state.loading)
 
   const [isIOS, setIsIOS] = useState(true)
@@ -104,20 +103,12 @@ const AppContainer = () => {
     )
   }, [])
 
-  useEffect(() => {
-    dispatch(togglePolicyPopup(!Boolean(policyPopupFromCookie)))
-  }, [policyPopupFromCookie])
-
   const closeModalHandler = useCallback(() => dispatch(toggleRPCNodePopup(false)), [])
 
   const proccedPolicy = useCallback(() => {
     setCookie('policyPopup', true)
     dispatch(togglePolicyPopup(false))
   }, [])
-
-  if (isIOS && policyPopup) {
-    return <PolicyPopupContent proccedPolicy={proccedPolicy} />
-  }
 
   return isInitialDataLoading ? (
     <LoaderRocket />
@@ -129,7 +120,7 @@ const AppContainer = () => {
         <Menu />
 
         <PopupChangeNode isModalOpened={changeNodePopupOpen} closeModal={closeModalHandler} />
-        <PolicyPopup isModalOpened={!isIOS && policyPopup} proccedPolicy={proccedPolicy} />
+        <PolicyPopup isModalOpened={!isIOS && !policyPopup} proccedPolicy={proccedPolicy} />
 
         <LoansPopupsProvider>
           <AppRoutes />

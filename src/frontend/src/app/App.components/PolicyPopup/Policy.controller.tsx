@@ -1,4 +1,3 @@
-import { CSSTransition } from 'react-transition-group'
 import { useLockBodyScroll } from 'react-use'
 
 import { PopupContainer } from '../SettingsPopup/SettingsPopup.style'
@@ -14,10 +13,8 @@ export const PolicyPopup = ({
   useLockBodyScroll(isModalOpened)
 
   return (
-    <CSSTransition in={isModalOpened} timeout={200} unmountOnExit>
-      <PopupContainer show={isModalOpened}>
-        <PolicyPopupContent proccedPolicy={proccedPolicy} />
-      </PopupContainer>
-    </CSSTransition>
+    <PopupContainer show={isModalOpened}>
+      <PolicyPopupContent proccedPolicy={proccedPolicy} />
+    </PopupContainer>
   )
 }

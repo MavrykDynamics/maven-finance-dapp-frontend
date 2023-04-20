@@ -115,6 +115,10 @@ export const PopupContainerWrapper = styled.div`
       margin: 0;
     }
 
+    ol {
+      padding-left: 15px;
+    }
+
     h1:after {
       margin-bottom: 30px;
     }
