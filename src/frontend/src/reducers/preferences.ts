@@ -2,6 +2,7 @@ import {
   TOGGLE_RPC_NODE_POPUP,
   SELECT_NEW_RPC_APP_NODE,
   SET_RPC_NODES,
+  TOOGLE_POLICY_POPUP,
 } from 'app/App.components/SettingsPopup/SettingsPopup.actions'
 import { ThemeType, TOGGLE_DARK_THEME } from '../app/App.components/DarkThemeProvider/DarkThemeProvider.actions'
 import { GET_HEAD_DATA, TOGGLE_SIDEBAR } from '../app/App.components/Menu/Menu.actions'
