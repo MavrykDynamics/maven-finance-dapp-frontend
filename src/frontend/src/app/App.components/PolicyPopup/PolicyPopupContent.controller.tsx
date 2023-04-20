@@ -12,40 +12,43 @@ export const PolicyPopupContent = ({ proccedPolicy }: { proccedPolicy: () => voi
 
   return (
     <PopupContainerWrapper onClick={(e: React.MouseEvent) => e.stopPropagation()} className="policy">
-      <h1>Welcome to the Mavryk Finance Alpha</h1>
+      <h1>Welcome to the Mavryk Finance Public Beta!</h1>
 
       <p>
-        TLDR: This is the Mavryk Finance Alpha v0.1. It is undergoing heavy internal testing and bug fixes and we are
-        constantly updating the DAPP. That being said, would love for you to take a look at what we have been building.
-        We only ask that you reach out to us about any issues you may have ASAP. More than have to hop on a call and
-        discuss them.
+        TLDR: We’re super excited to present Mavryk Finance’s Beta v0.1!! This stage is to showcase our platform to the
+        community and for public testing & feedback. Please keep in mind we are undergoing continuous internal testing &
+        bug fixes, and we are constantly updating the Dapp. That being said, we would love for you explore, test, and
+        become familiar with Mavryk Finance, and everything our team is building. We only ask that you reach out to us
+        about any issues you may have ASAP via the form on the site, and are more than happy to hop on a call and
+        discuss them. If you love it, we would greatly appreciate your support in the community, tweets on Twitter, and
+        wider social media.
       </p>
-
-      <h3>Known Major Bugs & UX/UI issues:</h3>
-
-      <ol>
-        <li>
-          Random wallet issue where loader after triggering transactions lasts for 1 sec and data doesn't update. Please
-          refresh a few seconds later
-        </li>
-        <li>Slow data updates</li>
-        <li>
-          Governance Proposal Submission - bit buggy and doesn’t always update data straight after TX action + lock
-          proposal btn disabled
-        </li>
-      </ol>
 
       <h3>Incoming Updates & Fixes:</h3>
 
       <ol>
-        <li>Governance voting system refactor and fixes</li>
-        <li>Governance Proposal Submission fixes</li>
-        <li>MVK VS. sMVK graph - new data query to show correct data - w/updated indexer</li>
+        <li>Governance voting system refactor and fixes.</li>
+        <li>Governance Proposal Submission fixes.</li>
+        <li>Independent Earn & Borrow pages for simpler on-boarding.</li>
+      </ol>
+
+      <h3>Known UX/UI Issues & Bugs:</h3>
+
+      <ol>
+        <li>
+          Random wallet issue after triggering transactions where the spaceship loader lasts for 1 sec and data doesn't
+          update. If this occurs to you, please refresh the page a few seconds later.
+        </li>
+        <li>Slow data display updates.</li>
+        <li>
+          Governance Proposal Submission: A bit buggy and doesn’t always update data straight after TX action and lock
+          proposal button is disabled.
+        </li>
       </ol>
 
       <div className="checkbox">
         <Checkbox id="show_dropped" onChangeHandler={() => setCheckbox(!checkbox)} checked={checkbox} />I understand
-        that Mavryk is in Alpha and want to have some fun
+        that Mavryk is in Beta and want to have some fun.
       </div>
 
       <div className="procced-btn">
