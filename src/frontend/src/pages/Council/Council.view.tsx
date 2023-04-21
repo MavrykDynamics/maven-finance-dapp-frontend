@@ -94,7 +94,7 @@ type Props = {
   handleDropAction: (id: number) => void
 
   getFormComponent: () => React.ReactNode
-  getFormUpdateMemberInfo: (maxLength: CouncilMaxLength) => React.ReactNode
+  getFormUpdateMemberInfo: (maxLength: CouncilMaxLength, callback: () => void) => React.ReactNode
 }
 
 export function CouncilView({
@@ -427,7 +427,7 @@ export function CouncilView({
 
       <PopupContainer onClick={closePopup} show={isUpdateCouncilMemberInfo}>
         <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="council">
-          {getFormUpdateMemberInfo(maxLength)}
+          {getFormUpdateMemberInfo(maxLength, closePopup)}
         </PopupContainerWrapper>
       </PopupContainer>
     </CounsilPageWrapper>

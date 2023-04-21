@@ -23,7 +23,12 @@ import { updateCouncilMemberInfo } from '../Council.actions'
 // style
 import { CouncilFormStyled } from './CouncilForm.style'
 
-export const CouncilFormUpdateCouncilMemberInfo = (maxLength: CouncilMaxLength) => {
+type Props = {
+  maxLength: CouncilMaxLength
+  callback: () => void
+}
+
+export const CouncilFormUpdateCouncilMemberInfo = ({ maxLength, callback }: Props) => {
   const dispatch = useDispatch()
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const { councilMembers } = useSelector((state: State) => state.council)
@@ -93,7 +98,7 @@ export const CouncilFormUpdateCouncilMemberInfo = (maxLength: CouncilMaxLength) 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     try {
-      await dispatch(updateCouncilMemberInfo(newMemberName, newMemberWebsite, newMemberImage))
+      await dispatch(updateCouncilMemberInfo(newMemberName, newMemberWebsite, newMemberImage, callback))
     } catch (error) {
       console.error(error)
     }

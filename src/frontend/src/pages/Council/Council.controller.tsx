@@ -141,8 +141,8 @@ export const Council = () => {
           handleDropAction={handleDropAction}
           // components
           getFormComponent={() => <CouncilForm />}
-          getFormUpdateMemberInfo={(maxLength: CouncilMaxLength) => (
-            <CouncilFormUpdateCouncilMemberInfo {...maxLength} />
+          getFormUpdateMemberInfo={(maxLength: CouncilMaxLength, callback: () => void) => (
+            <CouncilFormUpdateCouncilMemberInfo maxLength={maxLength} callback={callback} />
           )}
         />
       )}
