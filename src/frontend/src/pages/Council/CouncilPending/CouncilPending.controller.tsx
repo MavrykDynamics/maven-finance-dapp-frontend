@@ -56,6 +56,7 @@ export const CouncilPending = (props: Props) => {
   const closePopup = () => {
     setShowPopup(false)
   }
+
   const onClickSign = () => {
     if (id) {
       handleSignAction(id)
@@ -133,7 +134,7 @@ export const CouncilPending = (props: Props) => {
           <h3>{getSeparateCamelCase(actionType)}</h3>
           <div className="parameters">
             <article>
-              <p>Council Member Address</p>
+              <p>Council Member</p>
               <span className="parameters-value content-width">
                 <TzAddress tzAddress={councilMemberAddress} type={BLUE} hasIcon />
               </span>
@@ -286,7 +287,7 @@ export const CouncilPending = (props: Props) => {
               </span>
             </article>
             <article>
-              <p>Council Member Address</p>
+              <p className="without-margin">Council Member Address</p>
               <span className="parameters-value content-width">
                 <TzAddress tzAddress={newCouncilMemberAddress} type={BLUE} hasIcon />
               </span>
