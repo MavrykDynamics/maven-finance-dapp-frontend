@@ -9,6 +9,14 @@ export const toggleActionFullScreenLoader = (showLoader: boolean) => (dispatch: 
   })
 }
 
+export const TOGGLE_ACTION_COMPLETION = 'TOGGLE_ACTION_COMPLETION'
+export const toggleActionToasterLoader = (showLoader: boolean) => (dispatch: AppDispatch) => {
+  dispatch({
+    type: TOGGLE_ACTION_COMPLETION,
+    showLoader,
+  })
+}
+
 export const TOGGLE_WERT_LOADER = 'TOGGLE_WERT_LOADER'
 export const toggleWertLoader = (isWertLoading: boolean) => (dispatch: AppDispatch) => {
   dispatch({

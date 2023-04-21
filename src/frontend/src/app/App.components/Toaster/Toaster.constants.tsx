@@ -1,5 +1,6 @@
 import { dark } from 'styles'
 
+// DEPRECATED USE TOASTER STATUSES WITH TOASTER_ PREFIX !!!!
 export const SUCCESS = 'success'
 export const ERROR = 'error'
 export const INFO = 'info-reg'
@@ -15,6 +16,7 @@ export type ToasterStatusType =
   | typeof TOASTER_ERROR
   | typeof TOASTER_INFO
   | typeof TOASTER_LOADING
+  // TODO: remove after we will use statuses only with TOASTER_ prefix
   | string
 
 export const getColorByToasterStatus = ({
@@ -32,10 +34,13 @@ export const getColorByToasterStatus = ({
     case TOASTER_INFO:
       return theme.infoColor
     case TOASTER_LOADING:
-    default:
       return theme.primaryColor
+    default:
+      return 'transparent'
   }
 }
+
+// COMMONT TEXTS ACROSS LOADERS
 
 export const TOASTER_UPDATE_DATA_AFTER_ACTION_DATA = {
   title: 'Processing',

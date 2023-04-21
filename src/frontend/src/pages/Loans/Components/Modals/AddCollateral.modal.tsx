@@ -57,7 +57,6 @@ export const AddCollateral = ({
   useLockBodyScroll(show)
 
   const dispatch = useDispatch()
-  const { isActiveFullScreenLoader } = useSelector((state: State) => state.loading)
   const { avaliableCollaterals } = useSelector((state: State) => state.tokens)
 
   const collateralData = useMemo(
@@ -241,7 +240,7 @@ export const AddCollateral = ({
               kind={BUTTON_PRIMARY}
               onClick={depositCollateralHandler}
               form={BUTTON_WIDE}
-              disabled={inputData.validationStatus === INPUT_STATUS_ERROR || isActiveFullScreenLoader}
+              disabled={inputData.validationStatus === INPUT_STATUS_ERROR}
             >
               <Icon id="plus" />
               Deposit

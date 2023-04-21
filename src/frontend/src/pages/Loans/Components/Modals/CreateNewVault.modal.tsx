@@ -81,8 +81,6 @@ export const CreateNewVault = ({
     [dao, mavrykDynamics, otherBakers],
   )
 
-  const { isActiveFullScreenLoader } = useSelector((state: State) => state.loading)
-
   const [shownScreen, setShownScreen] = useState<CurrentActiveModalScreen>(INITIAL_SCREEN_ID)
   const [collateralsToSelect, setCollateralsToSelect] = useState<Record<DDItemId, DropDownCollateralAssetType>>({})
   const [collaterals, setCollaterals] = useState<Array<InputCollateral>>([])
@@ -657,12 +655,7 @@ export const CreateNewVault = ({
                   <Icon id="arrowLeft" />
                   Back
                 </NewButton>
-                <NewButton
-                  kind={BUTTON_PRIMARY}
-                  form={BUTTON_WIDE}
-                  onClick={depositCollateralHandler}
-                  disabled={isActiveFullScreenLoader}
-                >
+                <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={depositCollateralHandler}>
                   <Icon id="plus" />
                   Deposit
                 </NewButton>
