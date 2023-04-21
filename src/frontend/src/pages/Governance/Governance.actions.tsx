@@ -85,7 +85,7 @@ export const proposalRoundVote = (proposalId: number) => async (dispatch: AppDis
       return
     }
 
-    if (state.loading.isActiveFullScreenLoader) {
+    if (state.loading.isActionActive) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
@@ -151,7 +151,7 @@ export const votingRinancialRequestVote =
         return
       }
 
-      if (state.loading.isActiveFullScreenLoader) {
+      if (state.loading.isActionActive) {
         dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
         return
       }
@@ -196,7 +196,7 @@ export const votingRoundVote = (vote: string) => async (dispatch: AppDispatch, g
       return
     }
 
-    if (state.loading.isActiveFullScreenLoader) {
+    if (state.loading.isActionActive) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
@@ -231,7 +231,7 @@ export const startProposalRound = () => async (dispatch: AppDispatch, getState: 
       return
     }
 
-    if (state.loading.isActiveFullScreenLoader) {
+    if (state.loading.isActionActive) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
@@ -267,7 +267,7 @@ export const startVotingRound = () => async (dispatch: AppDispatch, getState: Ge
       return
     }
 
-    if (state.loading.isActiveFullScreenLoader) {
+    if (state.loading.isActionActive) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
@@ -323,7 +323,7 @@ export const startNextRound = (executePastProposal: boolean) => async (dispatch:
       return
     }
 
-    if (state.loading.isActiveFullScreenLoader) {
+    if (state.loading.isActionActive) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }

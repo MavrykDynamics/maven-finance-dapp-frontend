@@ -85,7 +85,7 @@ export const harvest = (farmAddress: string) => async (dispatch: AppDispatch, ge
     return
   }
 
-  if (state.loading.isActiveFullScreenLoader) {
+  if (state.loading.isActionActive) {
     dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
     return
   }
@@ -126,7 +126,7 @@ export const deposit = (farmAddress: string, amount: number) => async (dispatch:
     dispatch(showToaster(ERROR, 'Incorrect amount', 'Please enter an amount superior to zero'))
     return
   }
-  if (state.loading.isActiveFullScreenLoader) {
+  if (state.loading.isActionActive) {
     dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
     return
   }
@@ -167,7 +167,7 @@ export const withdraw = (farmAddress: string, amount: number) => async (dispatch
     dispatch(showToaster(ERROR, 'Incorrect amount', 'Please enter an amount superior to zero'))
     return
   }
-  if (state.loading.isActiveFullScreenLoader) {
+  if (state.loading.isActionActive) {
     dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
     return
   }

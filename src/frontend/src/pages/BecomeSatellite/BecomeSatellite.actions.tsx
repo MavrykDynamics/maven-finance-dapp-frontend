@@ -16,7 +16,7 @@ export const registerAsSatellite =
       return
     }
 
-    if (state.loading.isActiveFullScreenLoader) {
+    if (state.loading.isActionActive) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
@@ -63,7 +63,7 @@ export const updateSatelliteRecord =
       return
     }
 
-    if (state.loading.isActiveFullScreenLoader) {
+    if (state.loading.isActionActive) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
@@ -109,7 +109,7 @@ export const unregisterAsSatellite = () => async (dispatch: AppDispatch, getStat
     return
   }
 
-  if (state.loading.isActiveFullScreenLoader) {
+  if (state.loading.isActionActive) {
     dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
     return
   }

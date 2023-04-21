@@ -41,7 +41,7 @@ export const submitEmergencyGovernanceProposal =
       return
     }
 
-    if (state.loading.isActiveFullScreenLoader) {
+    if (state.loading.isActionActive) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
@@ -82,7 +82,7 @@ export const voteEmergencyGovernanceProposal = () => async (dispatch: AppDispatc
     return
   }
 
-  if (state.loading.isActiveFullScreenLoader) {
+  if (state.loading.isActionActive) {
     dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
     return
   }
@@ -118,7 +118,7 @@ export const dropEmergencyGovernanceProposal = () => async (dispatch: AppDispatc
     return
   }
 
-  if (state.loading.isActiveFullScreenLoader) {
+  if (state.loading.isActionActive) {
     dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
     return
   }

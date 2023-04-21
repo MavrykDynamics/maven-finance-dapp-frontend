@@ -174,7 +174,7 @@ export const sign = (actionID: number) => async (dispatch: AppDispatch, getState
     return
   }
 
-  if (state.loading.isActiveFullScreenLoader) {
+  if (state.loading.isActionActive) {
     dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
     return
   }
@@ -226,7 +226,7 @@ export const addVestee =
       return
     }
 
-    if (state.loading.isActiveFullScreenLoader) {
+    if (state.loading.isActionActive) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
@@ -269,7 +269,7 @@ export const addCouncilMember =
       return
     }
 
-    if (state.loading.isActiveFullScreenLoader) {
+    if (state.loading.isActionActive) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
@@ -307,7 +307,7 @@ export const updateVestee =
       return
     }
 
-    if (state.loading.isActiveFullScreenLoader) {
+    if (state.loading.isActionActive) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
@@ -349,7 +349,7 @@ export const toggleVesteeLock = (vesteeAddress: string) => async (dispatch: AppD
     return
   }
 
-  if (state.loading.isActiveFullScreenLoader) {
+  if (state.loading.isActionActive) {
     dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
     return
   }
@@ -392,7 +392,7 @@ export const changeCouncilMember =
       return
     }
 
-    if (state.loading.isActiveFullScreenLoader) {
+    if (state.loading.isActionActive) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
@@ -435,7 +435,7 @@ export const removeCouncilMember = (memberAddress: string) => async (dispatch: A
     return
   }
 
-  if (state.loading.isActiveFullScreenLoader) {
+  if (state.loading.isActionActive) {
     dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
     return
   }
@@ -472,7 +472,7 @@ export const updateCouncilMemberInfo =
       return
     }
 
-    if (state.loading.isActiveFullScreenLoader) {
+    if (state.loading.isActionActive) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
@@ -521,7 +521,7 @@ export const transferTokens =
       return
     }
 
-    if (state.loading.isActiveFullScreenLoader) {
+    if (state.loading.isActionActive) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
@@ -576,7 +576,7 @@ export const requestTokens =
       return
     }
 
-    if (state.loading.isActiveFullScreenLoader) {
+    if (state.loading.isActionActive) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
@@ -624,7 +624,7 @@ export const requestTokenMint =
       return
     }
 
-    if (state.loading.isActiveFullScreenLoader) {
+    if (state.loading.isActionActive) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
@@ -665,7 +665,7 @@ export const dropFinancialRequest = (financialReqID: number) => async (dispatch:
     return
   }
 
-  if (state.loading.isActiveFullScreenLoader) {
+  if (state.loading.isActionActive) {
     dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
     return
   }
@@ -700,7 +700,7 @@ export const removeVesteeRequest = (vesteeAddress: string) => async (dispatch: A
     return
   }
 
-  if (state.loading.isActiveFullScreenLoader) {
+  if (state.loading.isActionActive) {
     dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
     return
   }
@@ -735,7 +735,7 @@ export const setBakerRequest = (bakerHash: string) => async (dispatch: AppDispat
     return
   }
 
-  if (state.loading.isActiveFullScreenLoader) {
+  if (state.loading.isActionActive) {
     dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
     return
   }
@@ -771,7 +771,7 @@ export const setContractBakerRequest =
       return
     }
 
-    if (state.loading.isActiveFullScreenLoader) {
+    if (state.loading.isActionActive) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
@@ -806,7 +806,7 @@ export const dropRequest = (actionID: number) => async (dispatch: AppDispatch, g
     return
   }
 
-  if (state.loading.isActiveFullScreenLoader) {
+  if (state.loading.isActionActive) {
     dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
     return
   }

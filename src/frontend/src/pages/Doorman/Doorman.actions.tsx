@@ -81,7 +81,7 @@ export const stake = (amount: number) => async (dispatch: AppDispatch, getState:
     return
   }
 
-  if (state.loading.isActiveFullScreenLoader) {
+  if (state.loading.isActionActive) {
     dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
     return
   }
@@ -151,7 +151,7 @@ export const unstake = (amount: number) => async (dispatch: AppDispatch, getStat
     return
   }
 
-  if (state.loading.isActiveFullScreenLoader) {
+  if (state.loading.isActionActive) {
     dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
     return
   }
@@ -187,7 +187,7 @@ export const rewardsCompound = (address: string) => async (dispatch: AppDispatch
     return
   }
 
-  if (state.loading.isActiveFullScreenLoader) {
+  if (state.loading.isActionActive) {
     dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
     return
   }
@@ -222,7 +222,7 @@ export const getMVKTokensFromFaucet = () => async (dispatch: AppDispatch, getSta
     dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
     return
   }
-  if (state.loading.isActiveFullScreenLoader) {
+  if (state.loading.isActionActive) {
     dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
     return
   }

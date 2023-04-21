@@ -79,7 +79,7 @@ export const liquidateVault =
       return
     }
 
-    if (state.loading.isActiveFullScreenLoader) {
+    if (state.loading.isActionActive) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
@@ -116,7 +116,7 @@ export const markForLiquidation =
       return
     }
 
-    if (state.loading.isActiveFullScreenLoader) {
+    if (state.loading.isActionActive) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }

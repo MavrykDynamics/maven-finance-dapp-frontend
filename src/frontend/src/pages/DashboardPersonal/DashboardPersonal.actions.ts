@@ -18,7 +18,7 @@ export const claimAllRewardsAction = () => async (dispatch: AppDispatch, getStat
       user: { myFarmRewardsData, myDoormanRewardsData, mySatelliteRewardsData },
     },
     contractAddresses: { doormanAddress },
-    loading: { isActiveFullScreenLoader },
+    loading: { isActionActive },
   }: State = getState()
 
   if (!accountPkh) {
@@ -26,7 +26,7 @@ export const claimAllRewardsAction = () => async (dispatch: AppDispatch, getStat
     return
   }
 
-  if (isActiveFullScreenLoader) {
+  if (isActionActive) {
     dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
     return
   }
@@ -89,7 +89,7 @@ export const claimAllRewardsAction = () => async (dispatch: AppDispatch, getStat
 export const claimVestingReward = () => async (dispatch: AppDispatch, getState: GetState) => {
   const {
     wallet: { accountPkh },
-    loading: { isActiveFullScreenLoader },
+    loading: { isActionActive },
     contractAddresses: { vestingAddress },
   }: State = getState()
 
@@ -98,7 +98,7 @@ export const claimVestingReward = () => async (dispatch: AppDispatch, getState: 
     return
   }
 
-  if (isActiveFullScreenLoader) {
+  if (isActionActive) {
     dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
     return
   }
