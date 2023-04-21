@@ -121,6 +121,11 @@ export const ProposalItemLeftSide = styled.div<{ theme: MavrykTheme }>`
   > h4 {
     font-weight: 600;
     padding-right: 8px;
+
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 `
 

@@ -124,7 +124,7 @@ export const CouncilFormAddVestee = () => {
   }
 
   const vestingInMonthsSettings = {
-    inputStatus: formInputStatus.totalAllocated,
+    inputStatus: formInputStatus.vestingInMonths,
   }
 
   return (
