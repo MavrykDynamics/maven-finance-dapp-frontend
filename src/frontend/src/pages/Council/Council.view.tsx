@@ -6,7 +6,7 @@ import { useParams } from 'react-router'
 import qs from 'qs'
 
 // components
-import { DropDown, DDItemId } from 'app/App.components/DropDown/NewDropdown'
+import { DropDown, DDItemId, DropdownTruncateOption } from 'app/App.components/DropDown/NewDropdown'
 import NewButton from 'app/App.components/Button/NewButton'
 import { CouncilPastActionView } from 'pages/Council/CouncilActions/CouncilPastAction.view'
 import Carousel from '../../app/App.components/Carousel/Carousel.view'
@@ -94,7 +94,7 @@ type Props = {
   handleDropAction: (id: number) => void
 
   getFormComponent: () => React.ReactNode
-  getFormUpdateMemberInfo: (maxLength: CouncilMaxLength) => React.ReactNode
+  getFormUpdateMemberInfo: (maxLength: CouncilMaxLength, callback: () => void) => React.ReactNode
 }
 
 export function CouncilView({
@@ -136,14 +136,14 @@ export function CouncilView({
   const dropDownItems = useMemo(
     () =>
       Object.values(dropdowndActions).map((item, index) => ({
-        content: <div>{getSeparateSnakeCase(item)}</div>,
+        content: <DropdownTruncateOption text={getSeparateSnakeCase(item)} />,
         value: item,
         id: index,
       })),
     [dropdowndActions],
   )
 
-  type DropDownItemType = typeof dropDownItems[0]
+  type DropDownItemType = (typeof dropDownItems)[0]
 
   const [chosenDdItem, setChosenDdItem] = useState<DropDownItemType | undefined>()
   const [isUpdateCouncilMemberInfo, setIsUpdateCouncilMemberInfo] = useState(false)
@@ -427,7 +427,7 @@ export function CouncilView({
 
       <PopupContainer onClick={closePopup} show={isUpdateCouncilMemberInfo}>
         <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="council">
-          {getFormUpdateMemberInfo(maxLength)}
+          {getFormUpdateMemberInfo(maxLength, closePopup)}
         </PopupContainerWrapper>
       </PopupContainer>
     </CounsilPageWrapper>

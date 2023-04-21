@@ -288,6 +288,10 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
         color: ${({ theme }) => theme.downColor};
       }
     }
+
+    .pinned-child {
+      border-left: 1px solid ${({ theme }) => theme.downColor};
+    }
   }
 
   &.success {
@@ -297,6 +301,10 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
       &::placeholder {
         color: ${({ theme }) => theme.upColor};
       }
+    }
+
+    .pinned-child {
+      border-left: 1px solid ${({ theme }) => theme.upColor};
     }
   }
 

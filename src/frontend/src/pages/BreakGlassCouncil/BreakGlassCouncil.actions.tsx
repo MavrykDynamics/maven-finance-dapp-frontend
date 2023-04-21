@@ -299,7 +299,7 @@ export const addCouncilMember =
 
 // Update Council Member
 export const updateCouncilMember =
-  (newMemberName: string, newMemberWebsite: string, newMemberImage: string) =>
+  (newMemberName: string, newMemberWebsite: string, newMemberImage: string, callback: () => void) =>
   async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
 
@@ -314,12 +314,14 @@ export const updateCouncilMember =
     }
 
     try {
-      dispatch(toggleActionLoader(true))
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.breakGlassAddress.address)
       const transaction = await contract?.methods
         .updateCouncilMemberInfo(newMemberName, newMemberWebsite, newMemberImage)
         .send()
+
+      callback()
+      dispatch(toggleActionLoader(true))
       dispatch(showToaster(INFO, 'Update Council Member...', 'Please wait 30s'))
 
       await transaction?.confirmation()

@@ -9,7 +9,7 @@ import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/B
 // view
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from '../../../app/App.components/Icon/Icon.view'
-import { DDItemId, DropDown } from 'app/App.components/DropDown/NewDropdown'
+import { DDItemId, DropDown, DropdownTruncateOption } from 'app/App.components/DropDown/NewDropdown'
 
 // action
 import { removeCouncilMember } from '../Council.actions'
@@ -24,11 +24,7 @@ export const CouncilFormRemoveCouncilMember = () => {
   const dropDownItems = useMemo(
     () =>
       councilMembers.map((item, index) => ({
-        content: (
-          <div>
-            {item.name} - {getShortTzAddress({ tzAddress: item.userId })}
-          </div>
-        ),
+        content: <DropdownTruncateOption text={`${item.name} - ${getShortTzAddress({ tzAddress: item.userId })}`} />,
         tzAddress: item.userId,
         id: index,
       })),

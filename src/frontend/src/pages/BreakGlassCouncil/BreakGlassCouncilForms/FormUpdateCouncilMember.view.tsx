@@ -29,7 +29,12 @@ const INIT_FORM = {
   newMemberImage: '',
 }
 
-export function FormUpdateCouncilMemberView(maxLength: CouncilMaxLength) {
+type Props = {
+  maxLength: CouncilMaxLength
+  callback: () => void
+}
+
+export function FormUpdateCouncilMemberView({ maxLength, callback }: Props) {
   const dispatch = useDispatch()
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const { breakGlassCouncilMembers } = useSelector((state: State) => state.council)
@@ -49,7 +54,7 @@ export function FormUpdateCouncilMemberView(maxLength: CouncilMaxLength) {
     e.preventDefault()
 
     try {
-      await dispatch(updateCouncilMember(newMemberName, newMemberWebsite, newMemberImage))
+      await dispatch(updateCouncilMember(newMemberName, newMemberWebsite, newMemberImage, callback))
 
       setForm(INIT_FORM)
       setFormInputStatus({
