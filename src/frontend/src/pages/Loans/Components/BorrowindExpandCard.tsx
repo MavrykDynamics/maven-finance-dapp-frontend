@@ -88,7 +88,8 @@ export const BorrowingExpandCard = ({
 
   const { avaliableCollaterals } = useSelector((state: State) => state.tokens)
   const { themeSelected } = useSelector((state: State) => state.preferences)
-  const { isActiveFullScreenLoader } = useSelector((state: State) => state.loading)
+  const { isActiveFullScreenLoader, isActiveToasterLoader } = useSelector((state: State) => state.loading)
+  const isActionLive = isActiveFullScreenLoader || isActiveToasterLoader
 
   const [expanded, setExpanded] = useState(false)
 
@@ -296,7 +297,7 @@ export const BorrowingExpandCard = ({
                     }
                     kind={BUTTON_SECONDARY}
                     form={BUTTON_WIDE}
-                    disabled={collateralRatio < 200}
+                    disabled={collateralRatio < 200 || isActionLive}
                   >
                     <Icon id="coin-loan" /> Borrow
                   </Button>
@@ -316,7 +317,7 @@ export const BorrowingExpandCard = ({
                     }
                     kind={BUTTON_PRIMARY}
                     form={BUTTON_WIDE}
-                    disabled={!borrowedAmount}
+                    disabled={!borrowedAmount || isActionLive}
                   >
                     <Icon id="okIcon" /> Repay
                   </Button>
@@ -403,7 +404,8 @@ export const BorrowingExpandCard = ({
                                     form={BUTTON_WIDE}
                                     disabled={
                                       avaliableCollaterals.length === 0 ||
-                                      avaliableCollaterals.length === collateralData.length - 1
+                                      avaliableCollaterals.length === collateralData.length - 1 ||
+                                      isActionLive
                                     }
                                   >
                                     <Icon id="plus" /> Add Collateral
@@ -429,6 +431,7 @@ export const BorrowingExpandCard = ({
                                   }
                                   form={BUTTON_WIDE}
                                   kind={BUTTON_SECONDARY}
+                                  disabled={isActionLive}
                                 >
                                   <Icon id="plus" /> Add
                                 </Button>
@@ -447,7 +450,7 @@ export const BorrowingExpandCard = ({
                                     }
                                     form={BUTTON_WIDE}
                                     kind={BUTTON_SECONDARY}
-                                    disabled={collateralRatio < 200}
+                                    disabled={collateralRatio <= 200 || isActionLive}
                                   >
                                     <Icon id="minus" /> Remove
                                   </Button>
@@ -479,7 +482,9 @@ export const BorrowingExpandCard = ({
                       form={BUTTON_WIDE}
                       isThin
                       disabled={
-                        avaliableCollaterals.length === 0 || avaliableCollaterals.length === collateralData.length - 1
+                        avaliableCollaterals.length === 0 ||
+                        avaliableCollaterals.length === collateralData.length - 1 ||
+                        isActionLive
                       }
                     >
                       <Icon id="plus" /> Add Collateral
@@ -503,7 +508,7 @@ export const BorrowingExpandCard = ({
                     </div>
                     <Button
                       kind={BUTTON_SIMPLE}
-                      disabled={!collateralData.find(({ gqlName }) => isTezosAsset(gqlName))}
+                      disabled={!collateralData.find(({ gqlName }) => isTezosAsset(gqlName)) || isActionLive}
                       onClick={() =>
                         openChangeBakerPopup?.({
                           bakerAddress: xtzDelegatedTo,
@@ -556,6 +561,7 @@ export const BorrowingExpandCard = ({
 
                   <Button
                     kind={BUTTON_SIMPLE}
+                    disabled={isActionLive}
                     onClick={() =>
                       openManagePermissionsPopup?.({
                         vaultAddress: address,
@@ -583,7 +589,7 @@ export const BorrowingExpandCard = ({
                           ` ${mappedMVKOperators.amount ?? ''}`
                         : 'None'}
                     </div>
-                    <Button kind={BUTTON_SIMPLE} disabled onClick={() => openUpdateMvkOperatorsPopup?.({})}>
+                    <Button kind={BUTTON_SIMPLE} disabled={true || isActionLive} onClick={() => openUpdateMvkOperatorsPopup?.({})}>
                       Update <Icon id="paginationArrowLeft" />
                     </Button>
                   </div>
@@ -591,7 +597,7 @@ export const BorrowingExpandCard = ({
 
                 <div className="repay-full">
                   <Button
-                    disabled={true || !borrowedAmount}
+                    disabled={true || !borrowedAmount || isActionLive}
                     isThin
                     kind={BUTTON_SECONDARY}
                     onClick={() =>
