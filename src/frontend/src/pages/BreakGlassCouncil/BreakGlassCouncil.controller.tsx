@@ -151,7 +151,9 @@ export function BreakGlassCouncil() {
           handleDropAction={handleDropAction}
           // components
           getFormComponent={() => <BreakGlassCouncilForm />}
-          getFormUpdateMemberInfo={(maxLength: CouncilMaxLength) => <FormUpdateCouncilMemberView {...maxLength} />}
+          getFormUpdateMemberInfo={(maxLength: CouncilMaxLength, callback: () => void) => (
+            <FormUpdateCouncilMemberView maxLength={maxLength} callback={callback} />
+          )}
         />
       )}
     </Page>
