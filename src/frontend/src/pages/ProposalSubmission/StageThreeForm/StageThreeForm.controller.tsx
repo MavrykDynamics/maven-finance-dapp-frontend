@@ -41,7 +41,7 @@ import { Input } from 'app/App.components/Input/Input.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { DDItemId, DropDown } from 'app/App.components/DropDown/NewDropdown'
-import { DropDownJsxChild } from 'pages/Loans/Components/Modals/Modals.style'
+import { DropDownJsxChild } from 'app/App.components/DropDown/DropDown.style'
 
 export const StageThreeForm = ({
   proposalId,

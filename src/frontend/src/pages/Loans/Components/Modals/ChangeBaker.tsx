@@ -18,8 +18,9 @@ import { DropDownXTZBakerType } from './CreateNewVault.modal'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
-import { DropDownJsxChild, LoansModalBase } from './Modals.style'
+import { LoansModalBase } from './Modals.style'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
+import { DropDownJsxChild } from 'app/App.components/DropDown/DropDown.style'
 
 const MAVRYK_DYNAMICS_BAKERY = 1
 const DAO_BAKERY = 2

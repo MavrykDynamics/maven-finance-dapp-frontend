@@ -463,7 +463,7 @@ export const removeCouncilMember = (memberAddress: string) => async (dispatch: A
 
 // Update Council Member Info
 export const updateCouncilMemberInfo =
-  (newMemberName: string, newMemberWebsite: string, newMemberImage: string) =>
+  (newMemberName: string, newMemberWebsite: string, newMemberImage: string, callback: () => void) =>
   async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
 
@@ -483,6 +483,8 @@ export const updateCouncilMemberInfo =
       const transaction = await contract?.methods
         .updateCouncilMemberInfo(newMemberName, newMemberWebsite, newMemberImage)
         .send()
+
+      callback()
       await dispatch(toggleActionFullScreenLoader(true))
 
       await dispatch(showToaster(INFO, 'Update Council Member Info...', 'Please wait 30s'))
