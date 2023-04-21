@@ -65,6 +65,10 @@ export const FinancialRequestsRightContainer = styled(Card)<{ theme: MavrykTheme
     margin-bottom: 10px;
   }
 
+  hr:last-of-type {
+    margin: 20px 0;
+  }
+
   .info_section_wrapper {
     display: flex;
     column-gap: 50px;

@@ -165,6 +165,10 @@ export const GovernanceRightContainer = styled(Card)<{ isAuthorized?: boolean; t
     margin-bottom: 40px;
   }
 
+  hr:last-of-type {
+    margin: 20px 0;
+  }
+
   .payment-data {
     margin-bottom: 25px;
   }

@@ -164,6 +164,8 @@ export const FinancialRequestsView = ({
           </InfoBlockName>
         </div>
 
+        <hr />
+
         <div className="info_section">
           <InfoBlockTitle>Governance Info</InfoBlockTitle>
           <div className="list">
