@@ -1,0 +1,24 @@
+query getStakingData ($doormanContractAddress: String = "KT1Kw1VkHtG42znqqPe12vDnNND3qaNa3RAe") {
+
+    smvk_history_data {
+     smvk_total_supply
+     timestamp
+   }
+
+   mavryk_user(where: {address: {_eq: $doormanContractAddress}}) {
+     mvk_balance
+   }
+}
+
+
+query GetUserInfo ($_eq: String = "tz1ezDb77a9jaFMHDWs8QXrKEDkpgGdgsjPD") {
+ mavryk_user(where: {address: {_eq: $_eq}}) {
+   address
+   mvk_balance
+   smvk_balance
+ }
+    smvk_history_data {
+     smvk_total_supply
+     timestamp
+   }
+}

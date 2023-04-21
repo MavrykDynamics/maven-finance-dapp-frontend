@@ -2,6 +2,7 @@ import * as React from 'react'
 import ReactDOM from 'react-dom'
 import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3'
 import { Provider } from 'react-redux'
+import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client'
 // import { PersistGate } from "redux-persist/integration/react";
 
 import DarkThemeProvider from './app/App.components/DarkThemeProvider/DarkThemeProvider.view'
@@ -16,18 +17,26 @@ import Mobile from './app/App.components/Mobile/Mobile.view'
 import './styles/fonts.css'
 import './styles/animations.css'
 
+// apollo client setup
+const client = new ApolloClient({
+  uri: process.env.REACT_APP_GRAPHQL_API ?? '',
+  cache: new InMemoryCache(),
+})
+
 export const Root = () => {
   const reCaptchaKey = process.env.REACT_APP_RECAPTCHA_SITE_KEY ?? ''
   return (
     <GoogleReCaptchaProvider reCaptchaKey={reCaptchaKey} language="en">
-      <Provider store={store}>
-        {/* <PersistGate loading={null} persistor={persistor}> */}
-        <DarkThemeProvider>
-          <GlobalStyle />
-          {isMobile ? <Mobile /> : <App />}
-        </DarkThemeProvider>
-        {/* </PersistGate> */}
-      </Provider>
+      <ApolloProvider client={client}>
+        <Provider store={store}>
+          {/* <PersistGate loading={null} persistor={persistor}> */}
+          <DarkThemeProvider>
+            <GlobalStyle />
+            {isMobile ? <Mobile /> : <App />}
+          </DarkThemeProvider>
+          {/* </PersistGate> */}
+        </Provider>
+      </ApolloProvider>
     </GoogleReCaptchaProvider>
   )
 }

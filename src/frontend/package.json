@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@airgap/beacon-sdk": "^3.3.0",
+    "@apollo/client": "^3.7.12",
     "@graphql-codegen/cli": "2.11.6",
     "@taquito/beacon-wallet": "^15.0.1",
     "@taquito/signer": "^15.0.1",

@@ -1,3 +1,5 @@
+// import { gql } from '@apollo/client'
+
 export const LOANS_QUERY = `
   query GetLoansStorage {
     lending_controller(where: {mock_time: {_eq: false}}) {

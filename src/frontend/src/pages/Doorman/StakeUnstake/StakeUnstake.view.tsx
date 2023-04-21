@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
+import { gql, useSubscription } from '@apollo/client'
 
 // view
 import NewButton from 'app/App.components/Button/NewButton'
@@ -42,6 +43,33 @@ import {
   StakeUnstakeAmount,
 } from './StakeUnstake.style'
 
+const TEMP_TOTAL = gql`
+  subscription getStakingData($doormanContractAddress: String = "KT1Kw1VkHtG42znqqPe12vDnNND3qaNa3RAe") {
+    smvk_history_data {
+      smvk_total_supply
+      timestamp
+    }
+
+    mavryk_user(where: { address: { _eq: $doormanContractAddress } }) {
+      mvk_balance
+    }
+  }
+`
+
+const TEMP_USER = gql`
+  subscription GetUserInfo($_eq: String = "tz1ezDb77a9jaFMHDWs8QXrKEDkpgGdgsjPD") {
+    mavryk_user(where: { address: { _eq: $_eq } }) {
+      address
+      mvk_balance
+      smvk_balance
+    }
+    smvk_history_data {
+      smvk_total_supply
+      timestamp
+    }
+  }
+`
+
 type StakeUnstakeViewProps = {
   stakeCallback: (amount: number) => void
   unstakeCallback: (amount: number) => void
@@ -51,6 +79,12 @@ type StakeUnstakeViewProps = {
 export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeRate }: StakeUnstakeViewProps) => {
   const dispatch = useDispatch()
   const history = useHistory()
+
+  const { data, loading } = useSubscription(TEMP_TOTAL)
+  const { data: data2, loading: loading2 } = useSubscription(TEMP_USER)
+
+  console.log(data, loading, '--------------------------1')
+  console.log(data2, loading2, '------------------------2')
 
   const {
     accountPkh,
