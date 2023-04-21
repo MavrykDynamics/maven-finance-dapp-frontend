@@ -27,6 +27,10 @@ export const FinancialRequestsRightContainer = styled(Card)<{ theme: MavrykTheme
   position: relative;
   padding-bottom: 86px;
 
+  hr {
+    margin: 20px 0;
+  }
+
   &::after {
     position: absolute;
     content: '';
