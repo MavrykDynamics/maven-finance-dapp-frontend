@@ -103,6 +103,7 @@ export const borrowVaultAssetAction =
       dispatch(toggleActionFullScreenLoader(true))
       dispatch(showToaster(TOASTER_INFO, 'Borrowing from the vault...', 'Please wait 30s'))
 
+      // turn off fs actions loader and start data updating after 5s after operation started
       setTimeout(async () => {
         await dispatch(toggleActionFullScreenLoader(false))
         await dispatch(showToaster(TOASTER_LOADING, 'Processing', 'Waiting for transaction confirmation... '))
@@ -230,6 +231,7 @@ export const repayPartOfVaultAction =
       dispatch(toggleActionFullScreenLoader(true))
       await dispatch(showToaster(TOASTER_INFO, 'Repaying asset...', 'Please wait 30s'))
 
+      // turn off fs actions loader and start data updating after 5s after operation started
       setTimeout(async () => {
         await dispatch(toggleActionFullScreenLoader(false))
         await dispatch(showToaster(TOASTER_LOADING, 'Processing', 'Waiting for transaction confirmation... '))
@@ -375,6 +377,7 @@ export const repayFullAndCloseVaultAction =
       dispatch(toggleActionFullScreenLoader(true))
       dispatch(showToaster(TOASTER_INFO, 'Repaying asset...', 'Please wait 30s'))
 
+      // turn off fs actions loader and start data updating after 5s after operation started
       setTimeout(async () => {
         await dispatch(toggleActionFullScreenLoader(false))
         await dispatch(showToaster(TOASTER_LOADING, 'Processing', 'Waiting for transaction confirmation... '))
