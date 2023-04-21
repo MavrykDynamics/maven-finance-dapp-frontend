@@ -39,7 +39,8 @@ const defaultTokensInfoState: TokensType = {
   },
   tokensPrices: { mvk: 1 },
   mTokens: [],
-  mvkFaucetAddress: null,
+  // TODO: set default address to null, when contracts are updated
+  mvkFaucetAddress: 'KT1A6EJRMuz8TZWeSxaqvU2UsqxRjopvo8Nh', //null,
 }
 
 export function tokens(state = defaultTokensInfoState, action: Action) {
