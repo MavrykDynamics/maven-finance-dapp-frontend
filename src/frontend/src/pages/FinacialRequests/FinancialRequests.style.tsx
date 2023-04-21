@@ -145,6 +145,7 @@ export const FRListItem = styled(CardHover)<{ selected: boolean; theme: MavrykTh
     font-size: 14px;
     color: ${({ theme }) => theme.dataColor};
     margin-right: 10px;
+    white-space: nowrap;
   }
 
   .id-and-title {
@@ -163,7 +164,7 @@ export const FRListItem = styled(CardHover)<{ selected: boolean; theme: MavrykTh
       font-weight: 500;
       color: ${({ theme }) => theme.textColor};
       padding-right: 8px;
-      max-width: 280px;
+      max-width: 220px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
