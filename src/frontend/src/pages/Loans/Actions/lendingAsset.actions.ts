@@ -1,24 +1,28 @@
+import { BatchWalletOperation } from '@taquito/taquito/dist/types/wallet/batch-operation'
 import { OpKind, TransactionWalletOperation } from '@taquito/taquito'
+
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 import { toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
+import { updateUserData } from 'reducers/actions/user.actions'
+import { getLoansStorage } from './getLoansData.actions'
 import { hideToaster, showToaster } from 'app/App.components/Toaster/Toaster.actions'
+
 import {
-  ERROR,
-  INFO,
-  SUCCESS,
+  ACTION_COMPLETION_MESSAGE_TEXT,
+  ACTION_START_MESSAGE_TEXT,
   TOASTER_ERROR,
   TOASTER_INFO,
   TOASTER_LOADING,
   TOASTER_SUCCESS,
+  TOASTER_UPDATE_DATA_AFTER_ACTION_DATA,
 } from 'app/App.components/Toaster/Toaster.constants'
+
 import { AppDispatch, GetState } from 'app/App.controller'
 import { State } from 'reducers'
-import { updateUserData } from 'reducers/actions/user.actions'
-import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { TokenType } from 'utils/TypesAndInterfaces/General'
-import { getLoansStorage } from './getLoansData.actions'
+
+import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
-import { BatchWalletOperation } from '@taquito/taquito/dist/types/wallet/batch-operation'
 
 export const depositLendingAssetAction =
   (
@@ -112,12 +116,18 @@ export const depositLendingAssetAction =
       // close popup
       callback()
       dispatch(toggleActionFullScreenLoader(true))
-      dispatch(showToaster(TOASTER_INFO, 'Adding liquidity...', 'Please wait 30s'))
+      dispatch(showToaster(TOASTER_INFO, 'Adding liquidity...', ACTION_START_MESSAGE_TEXT))
 
       // turn off fs actions loader and start data updating after 5s after operation started
       setTimeout(async () => {
         await dispatch(toggleActionFullScreenLoader(false))
-        await dispatch(showToaster(TOASTER_LOADING, 'Processing', 'Waiting for transaction confirmation... '))
+        await dispatch(
+          showToaster(
+            TOASTER_LOADING,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+          ),
+        )
 
         // @ts-ignore don't have proper type to acees data, type has only methods
         const currentOperationLevel = transaction?.lastHead?.header?.level
@@ -129,7 +139,7 @@ export const depositLendingAssetAction =
             await dispatch(getLoansStorage())
 
             await dispatch(hideToaster())
-            await dispatch(showToaster(TOASTER_SUCCESS, 'Liquidity added.', 'All good :)'))
+            await dispatch(showToaster(TOASTER_SUCCESS, 'Liquidity added.', ACTION_COMPLETION_MESSAGE_TEXT))
           },
           currentOperationLevel,
         })
@@ -165,12 +175,18 @@ export const withdrawLendingAssetAction =
       // close popup
       callback()
       dispatch(toggleActionFullScreenLoader(true))
-      dispatch(showToaster(TOASTER_INFO, 'Removing liquidity...', 'Please wait 30s'))
+      dispatch(showToaster(TOASTER_INFO, 'Removing liquidity...', ACTION_START_MESSAGE_TEXT))
 
       // turn off fs actions loader and start data updating after 5s after operation started
       setTimeout(async () => {
         await dispatch(toggleActionFullScreenLoader(false))
-        await dispatch(showToaster(TOASTER_LOADING, 'Processing', 'Waiting for transaction confirmation... '))
+        await dispatch(
+          showToaster(
+            TOASTER_LOADING,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+          ),
+        )
 
         // @ts-ignore don't have proper type to acees data, type has only methods
         const currentOperationLevel = transaction?.lastHead?.header?.level
@@ -182,7 +198,7 @@ export const withdrawLendingAssetAction =
             await dispatch(getLoansStorage())
 
             await dispatch(hideToaster())
-            await dispatch(showToaster(TOASTER_SUCCESS, 'Liquidity removed.', 'All good :)'))
+            await dispatch(showToaster(TOASTER_SUCCESS, 'Liquidity removed.', ACTION_COMPLETION_MESSAGE_TEXT))
           },
           currentOperationLevel,
         })

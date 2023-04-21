@@ -9,10 +9,13 @@ import { updateUserData } from 'reducers/actions/user.actions'
 import { getLoansStorage } from './getLoansData.actions'
 
 import {
+  ACTION_COMPLETION_MESSAGE_TEXT,
+  ACTION_START_MESSAGE_TEXT,
   TOASTER_ERROR,
   TOASTER_INFO,
   TOASTER_LOADING,
   TOASTER_SUCCESS,
+  TOASTER_UPDATE_DATA_AFTER_ACTION_DATA,
 } from 'app/App.components/Toaster/Toaster.constants'
 
 import { NEW_VAULT_QUERY, NEW_VAULT_QUERY_NAME, NEW_VAULT_QUERY_VARIABLE } from 'gql/queries/getLoansStorage'
@@ -101,12 +104,18 @@ export const borrowVaultAssetAction =
       // close popup
       callback()
       dispatch(toggleActionFullScreenLoader(true))
-      dispatch(showToaster(TOASTER_INFO, 'Borrowing from the vault...', 'Please wait 30s'))
+      dispatch(showToaster(TOASTER_INFO, 'Borrowing from the vault...', ACTION_START_MESSAGE_TEXT))
 
       // turn off fs actions loader and start data updating after 5s after operation started
       setTimeout(async () => {
         await dispatch(toggleActionFullScreenLoader(false))
-        await dispatch(showToaster(TOASTER_LOADING, 'Processing', 'Waiting for transaction confirmation... '))
+        await dispatch(
+          showToaster(
+            TOASTER_LOADING,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+          ),
+        )
 
         // @ts-ignore don't have proper type to acees data, type has only methods
         const currentOperationLevel = transaction?.lastHead?.header?.level
@@ -119,7 +128,7 @@ export const borrowVaultAssetAction =
             state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
 
             await dispatch(hideToaster())
-            await dispatch(showToaster(TOASTER_SUCCESS, 'Asset borrowed.', 'All good :)'))
+            await dispatch(showToaster(TOASTER_SUCCESS, 'Asset borrowed.', ACTION_COMPLETION_MESSAGE_TEXT))
           },
           currentOperationLevel,
         })
@@ -229,12 +238,18 @@ export const repayPartOfVaultAction =
       // close popup
       callback()
       dispatch(toggleActionFullScreenLoader(true))
-      await dispatch(showToaster(TOASTER_INFO, 'Repaying asset...', 'Please wait 30s'))
+      await dispatch(showToaster(TOASTER_INFO, 'Repaying asset...', ACTION_START_MESSAGE_TEXT))
 
       // turn off fs actions loader and start data updating after 5s after operation started
       setTimeout(async () => {
         await dispatch(toggleActionFullScreenLoader(false))
-        await dispatch(showToaster(TOASTER_LOADING, 'Processing', 'Waiting for transaction confirmation... '))
+        await dispatch(
+          showToaster(
+            TOASTER_LOADING,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+          ),
+        )
 
         // @ts-ignore don't have proper type to acees data, type has only methods
         const currentOperationLevel = transaction?.lastHead?.header?.level
@@ -247,7 +262,7 @@ export const repayPartOfVaultAction =
             state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
 
             await dispatch(hideToaster())
-            await dispatch(showToaster(TOASTER_SUCCESS, 'Asset repayed.', 'All good :)'))
+            await dispatch(showToaster(TOASTER_SUCCESS, 'Asset repayed.', ACTION_COMPLETION_MESSAGE_TEXT))
           },
           currentOperationLevel,
         })
@@ -375,12 +390,18 @@ export const repayFullAndCloseVaultAction =
       // close popup
       callback()
       dispatch(toggleActionFullScreenLoader(true))
-      dispatch(showToaster(TOASTER_INFO, 'Repaying asset...', 'Please wait 30s'))
+      dispatch(showToaster(TOASTER_INFO, 'Repaying asset...', ACTION_START_MESSAGE_TEXT))
 
       // turn off fs actions loader and start data updating after 5s after operation started
       setTimeout(async () => {
         await dispatch(toggleActionFullScreenLoader(false))
-        await dispatch(showToaster(TOASTER_LOADING, 'Processing', 'Waiting for transaction confirmation... '))
+        await dispatch(
+          showToaster(
+            TOASTER_LOADING,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+          ),
+        )
 
         // @ts-ignore don't have proper type to acees data, type has only methods
         const currentOperationLevel = transaction?.lastHead?.header?.level
@@ -393,7 +414,7 @@ export const repayFullAndCloseVaultAction =
             state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
 
             await dispatch(hideToaster())
-            await dispatch(showToaster(TOASTER_SUCCESS, 'Asset repayed.', 'All good :)'))
+            await dispatch(showToaster(TOASTER_SUCCESS, 'Asset repayed.', ACTION_COMPLETION_MESSAGE_TEXT))
           },
           currentOperationLevel,
         })

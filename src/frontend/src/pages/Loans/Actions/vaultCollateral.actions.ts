@@ -1,25 +1,29 @@
+import { BatchWalletOperation } from '@taquito/taquito/dist/types/wallet/batch-operation'
 import { OpKind, WalletParamsWithKind } from '@taquito/taquito'
+
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 import { toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 import { hideToaster, showToaster } from 'app/App.components/Toaster/Toaster.actions'
+import { getAvaliableCollaterals, getLoansStorage } from './getLoansData.actions'
+import { getVaultsStorage } from 'pages/Vaults/Vaults.actions'
+import { updateUserData } from 'reducers/actions/user.actions'
+
 import {
-  ERROR,
-  INFO,
-  SUCCESS,
+  ACTION_COMPLETION_MESSAGE_TEXT,
+  ACTION_START_MESSAGE_TEXT,
   TOASTER_ERROR,
   TOASTER_INFO,
   TOASTER_LOADING,
   TOASTER_SUCCESS,
+  TOASTER_UPDATE_DATA_AFTER_ACTION_DATA,
 } from 'app/App.components/Toaster/Toaster.constants'
+
 import { AppDispatch, GetState } from 'app/App.controller'
-import { getVaultsStorage } from 'pages/Vaults/Vaults.actions'
 import { State } from 'reducers'
-import { updateUserData } from 'reducers/actions/user.actions'
-import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { TokenType } from 'utils/TypesAndInterfaces/General'
-import { getAvaliableCollaterals, getLoansStorage } from './getLoansData.actions'
+
+import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
-import { BatchWalletOperation } from '@taquito/taquito/dist/types/wallet/batch-operation'
 
 // remove collateral from the vault
 export const withdrawCollateralAction =
@@ -51,12 +55,18 @@ export const withdrawCollateralAction =
       // close popup
       callback()
       dispatch(toggleActionFullScreenLoader(true))
-      dispatch(showToaster(TOASTER_INFO, 'Withdrawing collateral from the vault...', 'Please wait 30s'))
+      dispatch(showToaster(TOASTER_INFO, 'Withdrawing collateral from the vault...', ACTION_START_MESSAGE_TEXT))
 
       // turn off fs actions loader and start data updating after 5s after operation started
       setTimeout(async () => {
         await dispatch(toggleActionFullScreenLoader(false))
-        await dispatch(showToaster(TOASTER_LOADING, 'Processing', 'Waiting for transaction confirmation... '))
+        await dispatch(
+          showToaster(
+            TOASTER_LOADING,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+          ),
+        )
 
         // @ts-ignore don't have proper type to acees data, type has only methods
         const currentOperationLevel = transaction?.lastHead?.header?.level
@@ -70,7 +80,7 @@ export const withdrawCollateralAction =
             state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
 
             await dispatch(hideToaster())
-            await dispatch(showToaster(TOASTER_SUCCESS, 'Collateral withdrawn.', 'All good :)'))
+            await dispatch(showToaster(TOASTER_SUCCESS, 'Collateral withdrawn.', ACTION_COMPLETION_MESSAGE_TEXT))
           },
           currentOperationLevel,
         })
@@ -78,7 +88,7 @@ export const withdrawCollateralAction =
     } catch (error) {
       console.error('withdrawCollateralAction error:', error)
       if (error instanceof Error) {
-        dispatch(showToaster(ERROR, 'Error', error.message))
+        dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
         callback()
       }
       await dispatch(toggleActionFullScreenLoader(false))
@@ -205,12 +215,18 @@ export const depositCollateralAction =
       // close popup
       callback()
       dispatch(toggleActionFullScreenLoader(true))
-      dispatch(showToaster(TOASTER_INFO, 'Depositing collateral th the vault...', 'Please wait 30s'))
+      dispatch(showToaster(TOASTER_INFO, 'Depositing collateral th the vault...', ACTION_START_MESSAGE_TEXT))
 
       // turn off fs actions loader and start data updating after 5s after operation started
       setTimeout(async () => {
         await dispatch(toggleActionFullScreenLoader(false))
-        await dispatch(showToaster(TOASTER_LOADING, 'Processing', 'Waiting for transaction confirmation... '))
+        await dispatch(
+          showToaster(
+            TOASTER_LOADING,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+          ),
+        )
 
         // @ts-ignore don't have proper type to acees data, type has only methods
         const currentOperationLevel = transaction?.lastHead?.header?.level
@@ -224,7 +240,7 @@ export const depositCollateralAction =
             state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
 
             await dispatch(hideToaster())
-            await dispatch(showToaster(TOASTER_SUCCESS, 'Collateral added.', 'All good :)'))
+            await dispatch(showToaster(TOASTER_SUCCESS, 'Collateral added.', ACTION_COMPLETION_MESSAGE_TEXT))
           },
           currentOperationLevel,
         })
@@ -233,7 +249,7 @@ export const depositCollateralAction =
       console.error('depositCollateralAction error:', error)
       callback()
       if (error instanceof Error) {
-        dispatch(showToaster(ERROR, 'Error', error.message))
+        dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
       }
       await dispatch(toggleActionFullScreenLoader(false))
     }
