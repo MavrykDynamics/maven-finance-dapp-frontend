@@ -296,7 +296,7 @@ export const BorrowingExpandCard = ({
                     }
                     kind={BUTTON_SECONDARY}
                     form={BUTTON_WIDE}
-                    disabled={collateralRatio < 200}
+                    disabled={collateralRatio <= 200}
                   >
                     <Icon id="coin-loan" /> Borrow
                   </Button>
