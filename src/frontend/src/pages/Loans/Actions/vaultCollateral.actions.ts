@@ -2,7 +2,7 @@ import { BatchWalletOperation } from '@taquito/taquito/dist/types/wallet/batch-o
 import { OpKind, WalletParamsWithKind } from '@taquito/taquito'
 
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
-import { toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
+import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 import { hideToaster, showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { getAvaliableCollaterals, getLoansStorage } from './getLoansData.actions'
 import { getVaultsStorage } from 'pages/Vaults/Vaults.actions'
@@ -55,6 +55,7 @@ export const withdrawCollateralAction =
       // close popup
       callback()
       dispatch(toggleActionFullScreenLoader(true))
+      dispatch(toggleActionCompletion(true))
       dispatch(showToaster(TOASTER_INFO, 'Withdrawing collateral from the vault...', ACTION_START_MESSAGE_TEXT))
 
       // turn off fs actions loader and start data updating after 5s after operation started
@@ -81,6 +82,7 @@ export const withdrawCollateralAction =
 
             await dispatch(hideToaster())
             await dispatch(showToaster(TOASTER_SUCCESS, 'Collateral withdrawn.', ACTION_COMPLETION_MESSAGE_TEXT))
+            await dispatch(toggleActionCompletion(false))
           },
           currentOperationLevel,
         })
@@ -215,6 +217,7 @@ export const depositCollateralAction =
       // close popup
       callback()
       dispatch(toggleActionFullScreenLoader(true))
+      dispatch(toggleActionCompletion(true))
       dispatch(showToaster(TOASTER_INFO, 'Depositing collateral th the vault...', ACTION_START_MESSAGE_TEXT))
 
       // turn off fs actions loader and start data updating after 5s after operation started
@@ -241,6 +244,7 @@ export const depositCollateralAction =
 
             await dispatch(hideToaster())
             await dispatch(showToaster(TOASTER_SUCCESS, 'Collateral added.', ACTION_COMPLETION_MESSAGE_TEXT))
+            await dispatch(toggleActionCompletion(false))
           },
           currentOperationLevel,
         })

@@ -31,6 +31,7 @@ export async function getChainInfo() {
 
       //callback() if we need to do some outside of the action after action fire
       dispatch(toggleActionFullScreenLoader(true))
+      dispatch(toggleActionCompletion(true))
       dispatch(showToaster(TOASTER_INFO, 'Borrowing from the vault...', ACTION_START_MESSAGE_TEXT))
 
       // turn off fs actions loader and start data updating after 5s after operation started
@@ -53,6 +54,7 @@ export async function getChainInfo() {
             // Add here call for update data actions
             await dispatch(hideToaster())
             await dispatch(showToaster(TOASTER_SUCCESS, 'Asset borrowed.', ACTION_COMPLETION_MESSAGE_TEXT))
+            await dispatch(toggleActionCompletion(false))
           },
           currentOperationLevel,
         })

@@ -2,7 +2,7 @@ import { OpKind, TransactionWalletOperation } from '@taquito/taquito'
 import { BatchWalletOperation } from '@taquito/taquito/dist/types/wallet/batch-operation'
 
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
-import { toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
+import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 import { hideToaster, showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { getVaultsStorage } from 'pages/Vaults/Vaults.actions'
 import { updateUserData } from 'reducers/actions/user.actions'
@@ -104,6 +104,7 @@ export const borrowVaultAssetAction =
       // close popup
       callback()
       dispatch(toggleActionFullScreenLoader(true))
+      dispatch(toggleActionCompletion(true))
       dispatch(showToaster(TOASTER_INFO, 'Borrowing from the vault...', ACTION_START_MESSAGE_TEXT))
 
       // turn off fs actions loader and start data updating after 5s after operation started
@@ -129,6 +130,7 @@ export const borrowVaultAssetAction =
 
             await dispatch(hideToaster())
             await dispatch(showToaster(TOASTER_SUCCESS, 'Asset borrowed.', ACTION_COMPLETION_MESSAGE_TEXT))
+            await dispatch(toggleActionCompletion(false))
           },
           currentOperationLevel,
         })
@@ -238,7 +240,8 @@ export const repayPartOfVaultAction =
       // close popup
       callback()
       dispatch(toggleActionFullScreenLoader(true))
-      await dispatch(showToaster(TOASTER_INFO, 'Repaying asset...', ACTION_START_MESSAGE_TEXT))
+      dispatch(toggleActionCompletion(true))
+      dispatch(showToaster(TOASTER_INFO, 'Repaying asset...', ACTION_START_MESSAGE_TEXT))
 
       // turn off fs actions loader and start data updating after 5s after operation started
       setTimeout(async () => {
@@ -263,6 +266,7 @@ export const repayPartOfVaultAction =
 
             await dispatch(hideToaster())
             await dispatch(showToaster(TOASTER_SUCCESS, 'Asset repayed.', ACTION_COMPLETION_MESSAGE_TEXT))
+            await dispatch(toggleActionCompletion(false))
           },
           currentOperationLevel,
         })
@@ -390,6 +394,7 @@ export const repayFullAndCloseVaultAction =
       // close popup
       callback()
       dispatch(toggleActionFullScreenLoader(true))
+      dispatch(toggleActionCompletion(true))
       dispatch(showToaster(TOASTER_INFO, 'Repaying asset...', ACTION_START_MESSAGE_TEXT))
 
       // turn off fs actions loader and start data updating after 5s after operation started
@@ -415,6 +420,7 @@ export const repayFullAndCloseVaultAction =
 
             await dispatch(hideToaster())
             await dispatch(showToaster(TOASTER_SUCCESS, 'Asset repayed.', ACTION_COMPLETION_MESSAGE_TEXT))
+            await dispatch(toggleActionCompletion(true))
           },
           currentOperationLevel,
         })

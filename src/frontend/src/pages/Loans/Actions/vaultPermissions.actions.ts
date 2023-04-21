@@ -2,7 +2,7 @@ import { OpKind, TransactionWalletOperation } from '@taquito/taquito'
 import { BatchWalletOperation } from '@taquito/taquito/dist/types/wallet/batch-operation'
 
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
-import { toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
+import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 import { getLoansStorage } from './getLoansData.actions'
 import { getVaultsStorage } from 'pages/Vaults/Vaults.actions'
 import { hideToaster, showToaster } from 'app/App.components/Toaster/Toaster.actions'
@@ -44,6 +44,7 @@ export const changeBakerAction =
       // close popup
       callback()
       dispatch(toggleActionFullScreenLoader(true))
+      dispatch(toggleActionCompletion(true))
       dispatch(showToaster(TOASTER_INFO, 'Changing XTZ Baker...', ACTION_START_MESSAGE_TEXT))
 
       // turn off fs actions loader and start data updating after 5s after operation started
@@ -68,6 +69,7 @@ export const changeBakerAction =
 
             await dispatch(hideToaster())
             await dispatch(showToaster(TOASTER_SUCCESS, 'Baker changed.', ACTION_COMPLETION_MESSAGE_TEXT))
+            await dispatch(toggleActionCompletion(false))
           },
           currentOperationLevel,
         })
@@ -163,6 +165,7 @@ export const managePermissionsAction =
       // close popup
       callback()
       dispatch(toggleActionFullScreenLoader(true))
+      dispatch(toggleActionCompletion(true))
       dispatch(showToaster(TOASTER_INFO, 'Updating depositors...', ACTION_START_MESSAGE_TEXT))
 
       // turn off fs actions loader and start data updating after 5s after operation started
@@ -187,6 +190,7 @@ export const managePermissionsAction =
 
             await dispatch(hideToaster())
             await dispatch(showToaster(TOASTER_SUCCESS, 'Depositors updated.', ACTION_COMPLETION_MESSAGE_TEXT))
+            await dispatch(toggleActionCompletion(false))
           },
           currentOperationLevel,
         })
@@ -219,6 +223,7 @@ export const updateOperatorsAction = (callback: () => void) => async (dispatch: 
     // close popup
     callback()
     dispatch(toggleActionFullScreenLoader(true))
+    dispatch(toggleActionCompletion(true))
     dispatch(showToaster(TOASTER_INFO, 'Updating operators...', ACTION_START_MESSAGE_TEXT))
 
     // turn off fs actions loader and start data updating after 5s after operation started
@@ -243,6 +248,7 @@ export const updateOperatorsAction = (callback: () => void) => async (dispatch: 
 
           await dispatch(hideToaster())
           await dispatch(showToaster(TOASTER_SUCCESS, 'Operators updated.', ACTION_COMPLETION_MESSAGE_TEXT))
+          await dispatch(toggleActionCompletion(false))
         },
         currentOperationLevel,
       })

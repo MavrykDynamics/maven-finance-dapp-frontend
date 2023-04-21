@@ -10,7 +10,7 @@ export const toggleActionFullScreenLoader = (showLoader: boolean) => (dispatch: 
 }
 
 export const TOGGLE_ACTION_COMPLETION = 'TOGGLE_ACTION_COMPLETION'
-export const toggleActionToasterLoader = (showLoader: boolean) => (dispatch: AppDispatch) => {
+export const toggleActionCompletion = (showLoader: boolean) => (dispatch: AppDispatch) => {
   dispatch({
     type: TOGGLE_ACTION_COMPLETION,
     showLoader,
