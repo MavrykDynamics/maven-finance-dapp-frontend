@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { gql, useSubscription } from '@apollo/client'
+import { gql, useSubscription, useQuery } from '@apollo/client'
 
 // view
 import NewButton from 'app/App.components/Button/NewButton'
@@ -43,29 +43,37 @@ import {
   StakeUnstakeAmount,
 } from './StakeUnstake.style'
 
-const TEMP_TOTAL = gql`
-  subscription getStakingData($doormanContractAddress: String = "KT1Kw1VkHtG42znqqPe12vDnNND3qaNa3RAe") {
+const QUERY_STAKE = gql`
+  query getStakeHistoryData {
     smvk_history_data {
       smvk_total_supply
       timestamp
     }
+  }
+`
 
-    mavryk_user(where: { address: { _eq: $doormanContractAddress } }) {
-      mvk_balance
+const SUBSCRIPTION_STAKE = gql`
+  subscription subscribeStakeHistoryData {
+    smvk_history_data {
+      smvk_total_supply
+      timestamp
     }
   }
 `
 
-const TEMP_USER = gql`
-  subscription GetUserInfo($_eq: String = "tz1ezDb77a9jaFMHDWs8QXrKEDkpgGdgsjPD") {
+const ADDRESS_BALANCE_DATA = gql`
+  subscription subscribeAdressBalance($_eq: String) {
     mavryk_user(where: { address: { _eq: $_eq } }) {
       address
       mvk_balance
       smvk_balance
     }
-    smvk_history_data {
-      smvk_total_supply
-      timestamp
+  }
+`
+const DOORMAN_ADDRESS_BALANCE = gql`
+  subscription subscribeDoormanAddressBalance($doormanContractAddress: String) {
+    mavryk_user(where: { address: { _eq: $doormanContractAddress } }) {
+      mvk_balance
     }
   }
 `
@@ -80,11 +88,26 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
   const dispatch = useDispatch()
   const history = useHistory()
 
-  const { data, loading } = useSubscription(TEMP_TOTAL)
-  const { data: data2, loading: loading2 } = useSubscription(TEMP_USER)
+  // const { data, loading } = useSubscription(DOORMAN_ADDRESS_BALANCE, {
+  //   variables: {
+  //     doormanContractAddress: 'KT1Kw1VkHtG42znqqPe12vDnNND3qaNa3RAe',
+  //   },
+  // })
+  // const { data: data2, loading: loading2 } = useSubscription(ADDRESS_BALANCE_DATA, {
+  //   variables: {
+  //     _eq: 'tz1ezDb77a9jaFMHDWs8QXrKEDkpgGdgsjPD',
+  //   },
+  // })
 
-  console.log(data, loading, '--------------------------1')
-  console.log(data2, loading2, '------------------------2')
+  // const { data: qdata, error, loading: qloading } = useQuery(QUERY_STAKE)
+
+  // console.log(qdata, error, qloading, 'query')
+
+  const { data, loading, error } = useSubscription(SUBSCRIPTION_STAKE)
+
+  // console.log(data, loading, 'doormanContractAddress')
+  // console.log(data2, loading2, '_eq')
+  console.log(data, loading, error, 'stakeHistoryData')
 
   const {
     accountPkh,
