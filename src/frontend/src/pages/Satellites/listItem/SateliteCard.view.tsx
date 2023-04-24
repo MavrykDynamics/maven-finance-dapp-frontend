@@ -76,11 +76,11 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
   } = useSelector((state: State) => state.governance)
 
   // Card buttons handlers
-  const delegateCallback = () => dispatch(delegate(satellite.address))
-  const undelegateCallback = () => dispatch(undelegate(satellite.address))
+  const delegateCallback = async () => await dispatch(delegate(satellite.address))
+  const undelegateCallback = async () => await dispatch(undelegate(satellite.address))
   const claimRewardsCallback = async () => (accountPkh ? await dispatch(rewardsCompound(accountPkh)) : null)
   // TODO: add valid data
-  const distributeRewardsCallback = () => dispatch(distributeProposalRewards('', []))
+  const distributeRewardsCallback = async () => await dispatch(distributeProposalRewards('', []))
 
   const freesMVKSpace = Math.max(satellite.sMvkBalance * satellite.delegationRatio - satellite.totalDelegatedAmount, 0)
   const isUserDelegatedToThisSatellite = satellite.address === satelliteMvkIsDelegatedTo
@@ -108,7 +108,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
         icon="man-close"
         kind={ACTION_SECONDARY}
         onClick={undelegateCallback}
-        disabled={!accountPkh}
+        disabled={!accountPkh || isActionActive}
       />
       {isDetailsPage && myAvailableSatelliteRewards > 0 ? (
         <Button
@@ -125,7 +125,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
           kind={BUTTON_PRIMARY}
           form={BUTTON_WIDE}
           onClick={distributeRewardsCallback}
-          disabled={myAvailableSatelliteRewards === 0}
+          disabled={myAvailableSatelliteRewards === 0 || isActionActive}
         >
           <Icon id="commision" />
           Distribute Rewards
@@ -138,7 +138,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
       icon="man-check"
       kind={ACTION_PRIMARY}
       onClick={delegateCallback}
-      disabled={!accountPkh || !balanceOver1SMvk}
+      disabled={!accountPkh || !balanceOver1SMvk || isActionActive}
     />
   )
 
