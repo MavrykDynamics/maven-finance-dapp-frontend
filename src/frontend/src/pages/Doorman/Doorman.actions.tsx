@@ -10,11 +10,8 @@ import {
   SMVK_HISTORY_DATA_QUERY,
   SMVK_HISTORY_DATA_QUERY_NAME,
   SMVK_HISTORY_DATA_QUERY_VARIABLE,
-  MVK_HISTORY_DATA_QUERY,
-  MVK_HISTORY_DATA_QUERY_NAME,
-  MVK_HISTORY_DATA_QUERY_VARIABLE,
 } from '../../gql/queries'
-import { normalizeDoormanStorage, normalizeSmvkHistoryData, normalizeMvkHistoryData } from './Doorman.converter'
+import { normalizeDoormanStorage, normalizeSmvkHistoryData } from './Doorman.converter'
 import { toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 import { updateUserData } from 'reducers/actions/user.actions'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
@@ -34,19 +31,7 @@ export const getDoormanStorage = () => async (dispatch: AppDispatch, getState: G
       SMVK_HISTORY_DATA_QUERY_VARIABLE,
     )
 
-    const smvkHistoryData = normalizeSmvkHistoryData(smvkStorage)
-
-    //TODO: @maksym, Cleanup and explore it being normalized at the same time in the
-    // normalizeSmvkHistoryData(smvkStorage) call. Should be able to as its the same query.
-    // there is no need to do a separate query for the mvkHistoryData given the updated smvk_history_data
-    // schema in the indexer
-    const mvkStorage = await fetchFromIndexer(
-      MVK_HISTORY_DATA_QUERY,
-      MVK_HISTORY_DATA_QUERY_NAME,
-      MVK_HISTORY_DATA_QUERY_VARIABLE,
-    )
-
-    const mvkHistoryData = normalizeMvkHistoryData(smvkStorage)
+    const { smvkHistoryData, mvkHistoryData } = normalizeSmvkHistoryData(smvkStorage)
 
     const storage = await fetchFromIndexer(
       DOORMAN_STORAGE_QUERY,
