@@ -126,6 +126,7 @@ export const fetchUserData = async (
      * and general decimal places for loans in general, and if we have all decimals we can calc correct number, the formula is:
      * (reward amount in blockchain number) / (10 ** decimals for loanasset + decimals for loans in general) * (rate of the loan asset to convert it all to $)
      */
+    if(userInfo.mTokens) console.log(userInfo.mTokens)
     userInfo.myLendingRewardsAmount =
       userInfo.mTokens?.reduce((acc, { rewards_earned, m_token: { loan_token_name: mTokenName, address } }) => {
         const { oracle_id } = loanTokens?.find(({ loan_token_name }) => loan_token_name === mTokenName) ?? {}
