@@ -240,7 +240,7 @@ export const getMVKTokensFromFaucet = () => async (dispatch: AppDispatch, getSta
   try {
     await dispatch(toggleActionFullScreenLoader(true))
     const tezos = await DAPP_INSTANCE.tezos()
-    const contract = await tezos.wallet.at(state.tokens.mvkFaucetAddress)
+    const contract = await tezos.wallet.at('KT1A6EJRMuz8TZWeSxaqvU2UsqxRjopvo8Nh')
     const operation = await contract.methods.requestMvk().send()
 
     dispatch(showToaster(INFO, 'Requesting MVK...', 'Please wait 15s'))
