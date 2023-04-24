@@ -10,8 +10,8 @@ import type { GovernanceSatelliteActionGraphQL } from '../../utils/TypesAndInter
 // const
 import {
   calculateSlicePositions,
-  getSatelliteGovernanceListName,
   getPageNumber,
+  getSatelliteGovernanceListName,
 } from 'app/App.components/Pagination/pagination.consts'
 import { defaultGovPurposeMaxLength } from 'app/App.components/Input/Input.constants'
 
@@ -37,7 +37,7 @@ import { EmptyContainer } from '../../app/App.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { Button } from 'app/App.components/Button/Button.controller'
 import { ACTION_SIMPLE } from 'app/App.components/Button/Button.constants'
-import { convertBytesAddressToAddress, convertBytesStringToText } from '../../app/App.helpers'
+import { convertBytesAddressToAddress } from '../../app/App.helpers'
 
 const itemsForDropDown = [
   'Suspend Satellite',
@@ -84,6 +84,7 @@ export const SatelliteGovernance = () => {
     governanceSatelliteStorage: { governance_satellite_action, governance_satellite },
   } = useSelector((state: State) => state.governance)
   const { feedNameMaxLength } = useSelector((state: State) => state.dataFeeds.config)
+  const { isActionActive } = useSelector((state: State) => state.loading)
 
   const [ddIsOpen, setDdIsOpen] = useState(false)
   const [chosenDdItem, setChosenDdItem] = useState<string | undefined>()
@@ -208,11 +209,15 @@ export const SatelliteGovernance = () => {
               />
             </DropdownWrap>
             {chosenDdItem === 'Register Aggregator' ? (
-              <RegisterAggregatorForm maxLength={maxLength} />
+              <RegisterAggregatorForm maxLength={maxLength} isActionActive={isActionActive} />
             ) : chosenDdItem === 'Fix Mistaken Transfer' ? (
-              <FixMistakenTransferForm maxLength={maxLength} />
+              <FixMistakenTransferForm maxLength={maxLength} isActionActive={isActionActive} />
             ) : (
-              <SatelliteGovernanceForm maxLength={maxLength} variant={chosenDdItem || ''} />
+              <SatelliteGovernanceForm
+                maxLength={maxLength}
+                variant={chosenDdItem || ''}
+                isActionActive={isActionActive}
+              />
             )}
           </DropdownCard>
         ) : null}
@@ -251,6 +256,7 @@ export const SatelliteGovernance = () => {
                 passVoteSmvkTotal={item.pass_vote_smvk_total}
                 smvkPercentageForApproval={item.smvk_percentage_for_approval}
                 accountPkh={accountPkh}
+                isActionActive={isActionActive}
               />
             )
           })
