@@ -61,6 +61,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
   const dispatch = useDispatch()
 
   const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
+  const { isActionActive } = useSelector((state: State) => state.loading)
   const {
     accountPkh,
     user: {
@@ -77,7 +78,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
   // Card buttons handlers
   const delegateCallback = () => dispatch(delegate(satellite.address))
   const undelegateCallback = () => dispatch(undelegate(satellite.address))
-  const claimRewardsCallback = () => (accountPkh ? dispatch(rewardsCompound(accountPkh)) : null)
+  const claimRewardsCallback = async () => (accountPkh ? await dispatch(rewardsCompound(accountPkh)) : null)
   // TODO: add valid data
   const distributeRewardsCallback = () => dispatch(distributeProposalRewards('', []))
 
@@ -115,7 +116,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
           icon="rewards"
           kind={ACTION_PRIMARY}
           onClick={claimRewardsCallback}
-          disabled={!accountPkh}
+          disabled={!accountPkh || isActionActive}
           strokeWidth={0.3}
         />
       ) : null}
