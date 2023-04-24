@@ -218,6 +218,11 @@ export const rewardsCompound = (address: string) => async (dispatch: AppDispatch
 export const getMVKTokensFromFaucet = () => async (dispatch: AppDispatch, getState: GetState) => {
   const state: State = getState()
 
+  if (!state.tokens.mvkFaucetAddress) {
+    dispatch(showToaster(ERROR, 'Cannot send transaction', 'No faucet address provided'))
+    return
+  }
+
   if (!state.wallet.accountPkh) {
     dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
     return
@@ -235,7 +240,7 @@ export const getMVKTokensFromFaucet = () => async (dispatch: AppDispatch, getSta
   try {
     await dispatch(toggleActionFullScreenLoader(true))
     const tezos = await DAPP_INSTANCE.tezos()
-    const contract = await tezos.wallet.at('KT1Mf2kFGce8BaC5zMTCuzg2pbYdgtBtn1Ng')
+    const contract = await tezos.wallet.at(state.tokens.mvkFaucetAddress)
     const operation = await contract.methods.requestMvk().send()
 
     dispatch(showToaster(INFO, 'Requesting MVK...', 'Please wait 15s'))

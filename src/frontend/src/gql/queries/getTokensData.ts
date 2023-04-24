@@ -72,3 +72,12 @@ export const M_TOKENS_QUERY = `
   }
 `
 export const M_TOKENS_QUERY_NAME = 'getMTokensForContract'
+
+export const MVK_FAUCET_QUERY = `
+query MVKFaucet {
+  mvk_faucet{
+    address
+  }
+}
+`
+export const MVK_FAUCET_QUERY_NAME = 'MVKFaucet'
