@@ -79,24 +79,83 @@ export const ProposalDetailsStyled = styled(Card)<{ isAuthorized?: boolean; them
     }
   }
 
-  /* OLD STYLES */
-  .byte,
-  .hide {
-    svg {
-      width: 16px;
-      height: 16px;
-      display: inline-block;
-      vertical-align: sub;
-      margin-left: 4px;
-      stroke: ${cyanColor};
+  // bytes styles
+  .bytes-list {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    padding-left: 15px;
+    margin: 0;
+    margin-top: 10px;
+    row-gap: 15px;
+
+    list-style: none;
+    counter-reset: index;
+
+    li {
+      counter-increment: index;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      row-gap: 7px;
+
+      .title {
+        color: ${({ theme }) => theme.textColor};
+        font-size: 16px;
+        white-space: nowrap;
+      }
+
+      .byte {
+        display: flex;
+
+        &.opened {
+          flex-direction: column;
+          row-gap: 5px;
+
+          .byte-text {
+            max-width: 100%;
+            overflow: visible;
+            word-break: break-all;
+
+            &:hover {
+              opacity: 0.8;
+              cursor: pointer;
+            }
+          }
+        }
+
+        .byte-content {
+          display: flex;
+        }
+
+        .byte-text {
+          max-width: 335px;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          font-size: 16px;
+          font-weight: 400;
+          color: ${({ theme }) => theme.dataColor};
+          transition: 0.5s opacity;
+
+          svg {
+            width: 16px;
+            height: 16px;
+            vertical-align: sub;
+            margin-left: 4px;
+            stroke: ${cyanColor};
+          }
+        }
+      }
     }
 
-    button {
-      margin: 0;
-      padding: 0;
-      text-align: left;
-      line-height: inherit;
-      font-size: inherit;
+    li:before {
+      position: absolute;
+      top: 3px;
+      left: 0px;
+      content: counter(index) '. ';
+      font-size: 14px;
+      color: ${({ theme }) => theme.textColor};
+      font-weight: 400;
     }
   }
 `

@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 // consts
-import { BUTTON_SECONDARY } from 'app/App.components/Button/Button.constants'
+import { BUTTON_SECONDARY, BUTTON_SIMPLE, BUTTON_SIMPLE_SMALL } from 'app/App.components/Button/Button.constants'
 import { INFO_DEFAULT } from 'app/App.components/Info/info.constants'
 import { PRECISION_NUMBER } from 'utils/constants'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
@@ -34,7 +34,7 @@ import {
   proposalRoundVote,
   votingRoundVote,
 } from 'pages/Governance/actions/Proposals.actions'
-import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
+import { TzAddress, handleCopyToClipboard } from 'app/App.components/TzAddress/TzAddress.view'
 
 export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) => {
   const dispatch = useDispatch()
@@ -91,6 +91,9 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
       ignore = true
     }
   }, [proposal])
+
+  // store bytes that are opened
+  const [openedBytes, setOpenedBytes] = useState<Array<number>>([])
 
   return (
     <ProposalDetailsStyled isAuthorized={Boolean(accountPkh)}>
@@ -167,45 +170,46 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
       <div className="proposal-data-block-wrapper">
         <div className="proposal-data-block-name">Meta-Data</div>
         {proposal.proposalData?.length ? (
-          <div className="bytes-list">
+          <ol className="bytes-list">
             {proposal.proposalData.map((item) => {
-              // if (!item || !item.encoded_code) return null
-              // const unique = `proposalDataItem${item.id}`
-              // return (
-              //   <li key={item.id}>
-              //     <div>
-              //       <div>
-              //         <b className="proposal-list-title">Title: {item.title}</b>
-              //       </div>
-              //       <div>
-              //         <b className="proposal-list-title">Bytes: </b>
-              //         <span className="proposal-list-bites">
-              //          {visibleMeta === unique ? (
-              //             <span className="byte">
-              //               <button onClick={() => handleCopyToClipboard(item.encoded_code ?? '')}>
-              //                 {item.encoded_code} <Icon id="copyToClipboard" />
-              //               </button>
-              //               <br />
-              //               <button onClick={() => setVisibleMeta('')} className="visible-button">
-              //                 hide
-              //               </button>
-              //             </span>
-              //           ) : (
-              //             <span className="short-byte">
-              //               {getShortByte(item.encoded_code)}{' '}
-              //               <button onClick={() => setVisibleMeta(unique)} className="visible-button">
-              //                 see all
-              //               </button>
-              //             </span>
-              //           )}
-              //         </span>
-              //       </div>
-              //     </div>
-              //   </li>
-              // )
-              return <div className="bytes-list-item">byte</div>
+              if (!item || !item.encoded_code) return null
+              const isByteOpened = openedBytes.includes(item.id)
+              const byteText = item.encoded_code
+              return (
+                <li key={item.id}>
+                  <div className="title" style={{ paddingLeft: '15px' }}>
+                    {item.title}
+                  </div>
+
+                  <div className={`byte ${isByteOpened ? 'opened' : ''}`}>
+                    <div className="title" style={{ marginRight: '5px' }}>
+                      Bytes:
+                    </div>
+
+                    <div className={`byte-content`}>
+                      <div
+                        className="byte-text"
+                        onClick={isByteOpened ? () => dispatch(handleCopyToClipboard(byteText)) : undefined}
+                      >
+                        {byteText} {isByteOpened ? <Icon id="copyToClipboard" /> : null}
+                      </div>
+                    </div>
+
+                    <Button
+                      kind={BUTTON_SIMPLE_SMALL}
+                      onClick={() =>
+                        setOpenedBytes(
+                          isByteOpened ? openedBytes.filter((id) => id !== item.id) : [...openedBytes, item.id],
+                        )
+                      }
+                    >
+                      {isByteOpened ? 'hide' : 'see all'}
+                    </Button>
+                  </div>
+                </li>
+              )
             })}
-          </div>
+          </ol>
         ) : (
           <div className="proposal-data-block-value">No proposal meta-data given</div>
         )}
