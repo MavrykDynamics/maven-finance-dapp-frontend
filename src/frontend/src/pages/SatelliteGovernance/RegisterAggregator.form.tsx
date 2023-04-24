@@ -16,7 +16,7 @@ import { registerAggregator } from './SatelliteGovernance.actions'
 import { AvailableActionsStyle } from './SatelliteGovernance.style'
 
 // helpers
-import { validateFormField, validateFormAddress } from 'utils/validatorFunctions' 
+import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
 
 type MaxLength = {
   purposeMaxLength: number
@@ -25,9 +25,10 @@ type MaxLength = {
 
 type Props = {
   maxLength: MaxLength
+  isActionActive: boolean
 }
 
-export const RegisterAggregatorForm = ({ maxLength }: Props) => {
+export const RegisterAggregatorForm = ({ maxLength, isActionActive }: Props) => {
   const dispatch = useDispatch()
 
   const [form, setForm] = useState({
@@ -120,6 +121,7 @@ export const RegisterAggregatorForm = ({ maxLength }: Props) => {
             kind="actionPrimary"
             text={'Register Aggregator'}
             type="submit"
+            disabled={isActionActive}
           />
         </div>
       </form>
