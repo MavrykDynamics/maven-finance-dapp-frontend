@@ -119,8 +119,8 @@ export const VaultsView = () => {
     return vaultsIds?.slice(from, to)
   }, [currentListName, currentPage, vaultsIds])
 
-  const handleMarkForLiquidation = (vaultId: number, vaultOwner: string) => {
-    dispatch(markForLiquidation(vaultId, vaultOwner))
+  const handleMarkForLiquidation = async (vaultId: number, vaultOwner: string) => {
+    await dispatch(markForLiquidation(vaultId, vaultOwner))
   }
 
   // switch to "all" tab if user is disabled

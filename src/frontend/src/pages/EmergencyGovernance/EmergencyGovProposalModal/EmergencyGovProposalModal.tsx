@@ -30,6 +30,7 @@ export const EmergencyGovProposalModal = ({ show, closeHandler }: { show: boolea
   const {
     config: { proposalTitleMaxLength, proposalDescMaxLength },
   } = useSelector((state: State) => state.emergencyGovernance)
+  const { isActionActive } = useSelector((state: State) => state.loading)
 
   const [proposalData, setProposalData] = useState<{
     title: { text: string; validation: InputStatusType }
@@ -45,12 +46,10 @@ export const EmergencyGovProposalModal = ({ show, closeHandler }: { show: boolea
     },
   })
 
-  const isActionDisabled = useMemo(
-    () =>
-      proposalData.title.validation !== INPUT_STATUS_SUCCESS &&
-      proposalData.description.validation !== INPUT_STATUS_SUCCESS,
-    [proposalData],
-  )
+  const isActionDisabled =
+    (proposalData.title.validation !== INPUT_STATUS_SUCCESS &&
+      proposalData.description.validation !== INPUT_STATUS_SUCCESS) ||
+    isActionActive
 
   const handleOnChange = ({ target: { name, value } }: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const validationStatus = isValidLength(value, 1, name === 'title' ? proposalTitleMaxLength : proposalDescMaxLength)
@@ -112,7 +111,7 @@ export const EmergencyGovProposalModal = ({ show, closeHandler }: { show: boolea
           />
 
           <div className="buttons-container">
-            <NewButton kind={BUTTON_SECONDARY} onClick={closeHandler}>
+            <NewButton kind={BUTTON_SECONDARY} onClick={closeHandler} disabled={isActionActive}>
               <Icon id="navigation-menu_close" /> Cancel
             </NewButton>
             <NewButton kind={BUTTON_PRIMARY} disabled={isActionDisabled} onClick={submitEmergencyGovProposalCallback}>

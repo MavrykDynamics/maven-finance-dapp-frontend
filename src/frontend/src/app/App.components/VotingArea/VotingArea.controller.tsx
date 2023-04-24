@@ -34,6 +34,7 @@ export const VotingArea = ({
     accountPkh,
     user: { isSatellite },
   } = useSelector((state: State) => state.wallet)
+  const { isActionActive } = useSelector((state: State) => state.loading)
 
   const votingButtons = accountPkh ? (
     isSatellite && handleVote ? (
@@ -43,7 +44,7 @@ export const VotingArea = ({
             onClick={() => handleVote(VotingTypes.YES)}
             kind={VOTING_FOR}
             form={BUTTON_WIDE}
-            disabled={disableVotingButtons}
+            disabled={disableVotingButtons || isActionActive}
           >
             {forBtn.text ?? 'Vote YES'}
           </Button>
@@ -53,7 +54,7 @@ export const VotingArea = ({
             onClick={() => handleVote(VotingTypes.PASS)}
             kind={VOTING_PASS}
             form={BUTTON_WIDE}
-            disabled={disableVotingButtons}
+            disabled={disableVotingButtons || isActionActive}
           >
             {passBtn.text ?? 'Vote PASS'}
           </Button>
@@ -63,7 +64,7 @@ export const VotingArea = ({
             onClick={() => handleVote(VotingTypes.NO)}
             kind={VOTING_AGAINST}
             form={BUTTON_WIDE}
-            disabled={disableVotingButtons}
+            disabled={disableVotingButtons || isActionActive}
           >
             {againsBtn.text ?? 'Vote NO'}
           </Button>
@@ -99,6 +100,7 @@ export const VotingProposalsArea = ({
     accountPkh,
     user: { isSatellite },
   } = useSelector((state: State) => state.wallet)
+  const { isActionActive } = useSelector((state: State) => state.loading)
 
   if (isPastProposals || isTimeLock) {
     return <VotingBar voteStatistics={voteStatistics} />
@@ -124,7 +126,7 @@ export const VotingProposalsArea = ({
             <Button
               onClick={() => handleProposalVote(Number(selectedProposal.id))}
               kind={BUTTON_PRIMARY}
-              disabled={vote?.round === 0 || !isSatellite}
+              disabled={vote?.round === 0 || !isSatellite || isActionActive}
             >
               Vote for this Proposal
             </Button>
