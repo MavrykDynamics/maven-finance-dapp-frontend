@@ -11,13 +11,13 @@ import { useSelector } from 'react-redux'
 import { useLocation } from 'react-router-dom'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { State } from '../../../../reducers'
-import { ProposalRecordType } from '../../../../utils/TypesAndInterfaces/Governance'
+import { GovPhases, ProposalRecordType } from '../../../../utils/TypesAndInterfaces/Governance'
 import { ProposalListContainer, ProposalListItem, ProposalItemLeftSide } from './Proposals.style'
 
 type ProposalsProps = {
   proposalsList: Array<number>
   handleItemSelect: (proposalListItem: ProposalRecordType) => void
-  selectedProposal: ProposalRecordType | undefined
+  selectedProposalId: number | undefined
   title: string
   type: string
   listName: string
@@ -26,14 +26,17 @@ type ProposalsProps = {
 export const Proposals = ({
   proposalsList,
   handleItemSelect,
-  selectedProposal,
+  selectedProposalId,
   title,
   listName,
   type,
 }: ProposalsProps) => {
   const { search } = useLocation()
 
-  const { proposalsMapper } = useSelector((state: State) => state.governance)
+  const {
+    proposalsMapper,
+    config: { governancePhase },
+  } = useSelector((state: State) => state.governance)
 
   const currentPage = getPageNumber(search, listName)
   const paginatedItemsList = useMemo(() => {
@@ -49,20 +52,11 @@ export const Proposals = ({
         {paginatedItemsList.map((proposalId, index) => {
           const proposal = proposalsMapper[proposalId]
 
-          console.log('Proposals/Proposals.controller.tsx, proposals votes on small card', { proposal })
-
-          const votedMVK = Math.floor(
-            (proposal.abstainMvkTotal ?? 0) +
-              (proposal.downvoteMvkTotal ?? 0) +
-              (proposal.upvoteMvkTotal ?? 0) +
-              (proposal?.passVoteMvkTotal ?? 0),
-          )
-
           return (
             <ProposalListItem
               key={proposal.id}
               onClick={() => handleItemSelect(proposal)}
-              selected={selectedProposal ? selectedProposal.id === proposal.id : proposal.id === 1}
+              selected={selectedProposalId === proposal.id}
             >
               <ProposalItemLeftSide>
                 <span>{index + 1 + (Number(currentPage) - 1) * LIST_NAMES_MAPPER[listName]}</span>
@@ -70,7 +64,7 @@ export const Proposals = ({
               </ProposalItemLeftSide>
               <CommaNumber
                 className="proposal-voted-mvk"
-                value={votedMVK}
+                value={governancePhase === GovPhases.PROPOSAL ? proposal.upvoteMvkTotal : proposal.quorumMvkTotal}
                 endingText={'voted MVK'}
                 showDecimal={false}
               />

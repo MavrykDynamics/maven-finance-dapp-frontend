@@ -1,4 +1,5 @@
-import type { ProposalRecordType } from 'utils/TypesAndInterfaces/Governance'
+import type { GovPhases, ProposalRecordType } from 'utils/TypesAndInterfaces/Governance'
+import { VotingTypes } from './voting.const'
 
 export type VoteStatistics = {
   forVotesMVKTotal: number
@@ -14,7 +15,7 @@ export type VotingProps = {
   isVotingActive: boolean
   showVotingButtons?: boolean
   disableVotingButtons?: boolean
-  handleVote?: (vote: string) => void
+  handleVote?: (vote: `${VotingTypes}`) => void
   quorumText?: string
   buttonsToShow?: {
     forBtn?: {
@@ -32,11 +33,11 @@ export type VotingProps = {
 export type VotingProposalsProps = {
   voteStatistics: VoteStatistics
   selectedProposal: ProposalRecordType
-  votingPhaseHandler?: (vote: string) => void
+  votingPhaseHandler?: (vote: `${VotingTypes}`) => void
   isAbleToMakeProposalRoundVote?: boolean
   handleProposalVote: (vote: number) => void
   vote?: ProposalRecordType['votes'][number]
-  shownBlock: 'bar' | 'proposalRoundVote' | 'area'
+  govPhase: `${GovPhases}`
 }
 
 export type VotingBarProps = {

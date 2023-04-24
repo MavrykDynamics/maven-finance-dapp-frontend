@@ -2,7 +2,12 @@ import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 // consts
-import { BUTTON_SECONDARY, BUTTON_SIMPLE, BUTTON_SIMPLE_SMALL } from 'app/App.components/Button/Button.constants'
+import {
+  BUTTON_PRIMARY,
+  BUTTON_SECONDARY,
+  BUTTON_SIMPLE,
+  BUTTON_SIMPLE_SMALL,
+} from 'app/App.components/Button/Button.constants'
 import { INFO_DEFAULT } from 'app/App.components/Info/info.constants'
 import { PRECISION_NUMBER } from 'utils/constants'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
@@ -15,7 +20,7 @@ import { dropProposal } from 'pages/ProposalSubmission/ProposalSubmission.action
 
 // types
 import { State } from 'reducers'
-import { ProposalRecordType, ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
+import { GovPhases, ProposalRecordType, ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
 import { VotingTypes } from 'app/App.components/VotingArea/helpers/voting.const'
 
 // compoents
@@ -40,7 +45,9 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
   const dispatch = useDispatch()
 
   const { accountPkh } = useSelector((state: State) => state.wallet)
+  const { isActionActive } = useSelector((state: State) => state.loading)
   const { whitelistTokens } = useSelector((state: State) => state.tokens)
+  const { governancePhase } = useSelector((state: State) => state.governance.config)
 
   const isUserOwnerIfTheProposal = proposal.proposerId === accountPkh
 
@@ -90,7 +97,7 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
     return () => {
       ignore = true
     }
-  }, [proposal])
+  }, [proposal.currentCycleEndLevel])
 
   // store bytes that are opened
   const [openedBytes, setOpenedBytes] = useState<Array<number>>([])
@@ -120,37 +127,34 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
         />
       ) : null}
 
-      {/* TODO: pass new set of props to it and consider take out all voting and button in separate compnent */}
-      {/* <div className="voting-proposal">
-        <VotingProposalsArea
-          voteStatistics={voteStatistics}
-          shownBlock={'bar'}
-          votingPhaseHandler={handleVotingRoundVote}
-          handleProposalVote={handleProposalRoundVote}
-          selectedProposal={proposal}
-          vote={proposal.votes.find(
-            ({ voter_id, round }) =>
-              voter_id === accountPkh && round === (governancePhase === GovPhases.PROPOSAL ? 0 : 1),
-          )}
-        />
+      <VotingProposalsArea
+        voteStatistics={voteStatistics}
+        votingPhaseHandler={handleVotingRoundVote}
+        handleProposalVote={handleProposalRoundVote}
+        selectedProposal={proposal}
+        vote={proposal.votes.find(
+          ({ voter_id, round }) =>
+            voter_id === accountPkh && round === (governancePhase === GovPhases.PROPOSAL ? 0 : 1),
+        )}
+        govPhase={governancePhase}
+      />
 
-        {isExecuteProposal ? (
-          <Button
-            className="execute-proposal"
-            text="Execute Proposal"
-            onClick={handleClickExecuteProposal}
-            kind="actionPrimary"
-          />
-        ) : null}
-        {isPaymentProposal ? (
-          <Button
-            className="execute-proposal"
-            text="Process Payment"
-            onClick={handleClickProcessPayment}
-            kind="actionPrimary"
-          />
-        ) : null}
-      </div> */}
+      {isExecuteProposal ? (
+        <div className="proposal-button-action">
+          <Button onClick={handleClickExecuteProposal} disabled={isActionActive} kind={BUTTON_PRIMARY}>
+            Execute Proposal
+          </Button>
+        </div>
+      ) : null}
+
+      {isPaymentProposal ? (
+        <div className="proposal-button-action">
+          <Button onClick={handleClickProcessPayment} disabled={isActionActive} kind={BUTTON_PRIMARY}>
+            Process Payment
+          </Button>
+        </div>
+      ) : null}
+
       <hr />
 
       <div className="proposal-data-block-wrapper">
@@ -233,7 +237,7 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
                   whitelistTokens.find(({ address }) => address === payment.token_address) ?? whitelistTokens?.[0] ?? {}
 
                 return (
-                  <TableRow className="editable-row proposal-details-payments">
+                  <TableRow className="editable-row proposal-details-payments" key={payment.id}>
                     <TableCell width="25%">
                       <TzAddress tzAddress={String(payment.to__id)} type={BLUE} hasIcon={false} />
                     </TableCell>

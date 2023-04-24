@@ -35,7 +35,12 @@ export const ProposalDetailsStyled = styled(Card)<{ isAuthorized?: boolean; them
     font-weight: 600;
     font-size: 14px;
     line-height: 21px;
-    margin-bottom: 40px;
+    margin-bottom: 30px;
+  }
+
+  .proposal-button-action {
+    margin-left: auto;
+    width: fit-content;
   }
 
   hr {

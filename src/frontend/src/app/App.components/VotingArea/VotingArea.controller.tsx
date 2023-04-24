@@ -14,6 +14,7 @@ import { VotingBar } from './VotingBar.controller'
 import { CommaNumber } from '../CommaNumber/CommaNumber.controller'
 import { ConnectWallet } from '../ConnectWallet/ConnectWallet.controller'
 import Button from '../Button/NewButton'
+import { GovPhases } from 'utils/TypesAndInterfaces/Governance'
 
 type VotingType = VotingProps & {
   className?: string
@@ -89,12 +90,12 @@ type VotingProposalsType = VotingProposalsProps & {
 
 export const VotingProposalsArea = ({
   selectedProposal,
+  govPhase,
   vote,
-  handleProposalVote,
   voteStatistics,
-  shownBlock,
-  votingPhaseHandler,
   className,
+  handleProposalVote,
+  votingPhaseHandler,
 }: VotingProposalsType) => {
   const {
     accountPkh,
@@ -102,22 +103,9 @@ export const VotingProposalsArea = ({
   } = useSelector((state: State) => state.wallet)
   const { isActionActive } = useSelector((state: State) => state.loading)
 
-  if (shownBlock === 'bar') {
-    return <VotingBar voteStatistics={voteStatistics} />
-  }
+  if (!selectedProposal.locked) return null
 
-  if (shownBlock === 'area') {
-    return (
-      <VotingArea
-        voteStatistics={voteStatistics}
-        isVotingActive={true}
-        handleVote={votingPhaseHandler}
-        disableVotingButtons={vote?.round === 1}
-      />
-    )
-  }
-
-  if (shownBlock === 'proposalRoundVote') {
+  if (selectedProposal.locked && govPhase === GovPhases.PROPOSAL) {
     return (
       <VotingAreaStyled className={className}>
         <div className="voted-block">
@@ -138,5 +126,16 @@ export const VotingProposalsArea = ({
     )
   }
 
-  return null
+  if (govPhase === GovPhases.VOTING) {
+    return (
+      <VotingArea
+        voteStatistics={voteStatistics}
+        isVotingActive={true}
+        handleVote={votingPhaseHandler}
+        disableVotingButtons={vote?.round === 1}
+      />
+    )
+  }
+
+  return <VotingBar voteStatistics={voteStatistics} />
 }

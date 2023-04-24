@@ -73,8 +73,8 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
   }, [])
 
   // Show details of the proposal
-  const [rightSideContent, setRightSideContent] = useState<ProposalRecordType | undefined>(undefined)
-  const handleItemSelect = (chosenProposal: ProposalRecordType) => setRightSideContent(chosenProposal)
+  const [rightSideContentId, setRightSideContentId] = useState<number | undefined>(undefined)
+  const handleItemSelect = (chosenProposal: ProposalRecordType) => setRightSideContentId(chosenProposal.id)
 
   // filters handlers TODO: add all cycles option
   const dropDownOptions = useMemo<Array<DropDownItemType>>(() => generateCyclesDdOptions(cycle), [cycle])
@@ -161,13 +161,14 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
 
   useEffect(() => {
     const firstProposalId = prpoposalsListsToShow?.[0]?.proposalsIds?.[0]
-    setRightSideContent(firstProposalId ? proposalsMapper[firstProposalId] : undefined)
+    setRightSideContentId(firstProposalId ? proposalsMapper[firstProposalId]?.id : undefined)
   }, [proposalsMapper, prpoposalsListsToShow])
 
   // Generate proposal voters and paginate them
-  const votersList = useMemo(
-    () =>
-      rightSideContent?.votes?.reduce<ProposalVotersType>((acc, { voter_id, round, vote }) => {
+  const votersList = useMemo(() => {
+    const selectedProposalVotes = rightSideContentId ? proposalsMapper[rightSideContentId].votes : []
+    return (
+      selectedProposalVotes?.reduce<ProposalVotersType>((acc, { voter_id, round, vote }) => {
         const satelliteData = satelliteMapper[voter_id]
 
         if (satelliteData && round === 1) {
@@ -180,9 +181,9 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
         }
 
         return acc
-      }, []) ?? [],
-    [satelliteMapper, rightSideContent],
-  )
+      }, []) ?? []
+    )
+  }, [satelliteMapper, proposalsMapper, rightSideContentId])
 
   const paginatedVotersList = useMemo(() => {
     const [from, to] = calculateSlicePositions(
@@ -236,7 +237,7 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
                     <Proposals
                       proposalsList={proposalsIds}
                       handleItemSelect={handleItemSelect}
-                      selectedProposal={rightSideContent}
+                      selectedProposalId={rightSideContentId}
                       title={title}
                       type={type}
                       listName={listName}
@@ -287,7 +288,9 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
           </GovernanceLeftContainer>
 
           {/* Selected proposal */}
-          {rightSideContent && rightSideContent.id !== 0 ? <ProposalDetails proposal={rightSideContent} /> : null}
+          {rightSideContentId && rightSideContentId !== 0 ? (
+            <ProposalDetails proposal={proposalsMapper[rightSideContentId]} />
+          ) : null}
         </GovernanceStyled>
       )}
     </Page>
