@@ -138,11 +138,11 @@ export const ProposalSubmission = () => {
     const filteredBytes = submitProposalBody?.proposalData.filter(({ title, encoded_code }) => title || encoded_code)
 
     const isBytesDiff =
-      filteredBytes.length === 0 && remoteProposal?.proposalData.length === 0
+      filteredBytes?.length === 0 && remoteProposal?.proposalData?.length === 0
         ? false
-        : filteredBytes.length !== remoteProposal?.proposalData.length
+        : filteredBytes?.length !== remoteProposal?.proposalData?.length
         ? true
-        : filteredBytes.every(({ title, encoded_code }, idx) => {
+        : filteredBytes?.every(({ title, encoded_code }, idx) => {
             const remoteProposalByte = remoteProposal?.proposalData?.[idx]
             return title !== remoteProposalByte?.title || encoded_code !== remoteProposalByte?.encoded_code
           })
@@ -152,11 +152,11 @@ export const ProposalSubmission = () => {
     )
 
     const isPaymentsDiff =
-      filteredPayments.length === 0 && remoteProposal?.proposalPayments.length === 0
+      filteredPayments?.length === 0 && remoteProposal?.proposalPayments?.length === 0
         ? false
-        : filteredPayments.length !== remoteProposal?.proposalPayments.length
+        : filteredPayments?.length !== remoteProposal?.proposalPayments?.length
         ? true
-        : filteredPayments.every(({ token_amount, token_address, to__id }, idx) => {
+        : filteredPayments?.every(({ token_amount, token_address, to__id }, idx) => {
             const remoteProposalPayment = remoteProposal?.proposalPayments?.[idx]
             return (
               to__id !== remoteProposalPayment?.to__id ||
@@ -164,15 +164,6 @@ export const ProposalSubmission = () => {
               token_address !== remoteProposalPayment?.token_address
             )
           })
-
-    console.log({
-      isTitleDiff,
-      isDescrDiff,
-      isSourceLinkDiff,
-      isBytesDiff,
-      filteredBytes,
-      isPaymentsDiff,
-    })
 
     return isTitleDiff || isDescrDiff || isSourceLinkDiff || isBytesDiff || isPaymentsDiff
   }, [currentOriginalProposalId, mappedProposals, proposalState])

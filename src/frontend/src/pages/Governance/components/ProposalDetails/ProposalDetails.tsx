@@ -26,7 +26,6 @@ import { Info } from 'app/App.components/Info/Info.view'
 import { StatusFlag } from 'app/App.components/StatusFlag/StatusFlag.controller'
 import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } from 'app/App.components/Table'
 import { VotingProposalsArea } from 'app/App.components/VotingArea/VotingArea.controller'
-import { TzAddress } from 'pages/Treasury/Treasury.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { ProposalDetailsStyled } from './ProposalDetails.style'
 import {
@@ -35,6 +34,7 @@ import {
   proposalRoundVote,
   votingRoundVote,
 } from 'pages/Governance/actions/Proposals.actions'
+import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 
 export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) => {
   const dispatch = useDispatch()
@@ -55,55 +55,26 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
   const isPaymentProposal = proposal.anyCanPay && accountPkh
 
   // Proposal actions
-  const handleDeleteProposal = async () => {
-    if (isUserOwnerIfTheProposal) await dispatch(dropProposal(proposal.id))
-  }
-
-  const handleClickExecuteProposal = () => {
-    dispatch(executeProposal(proposal.id))
-  }
-
-  const handleClickProcessPayment = async () => {
-    dispatch(processProposalPayment(proposal.id))
-  }
+  const handleDeleteProposal = async () => await dispatch(dropProposal(proposal.id))
+  const handleClickExecuteProposal = async () => await dispatch(executeProposal(proposal.id))
+  const handleClickProcessPayment = async () => await dispatch(processProposalPayment(proposal.id))
+  const handleProposalRoundVote = async (proposalId: number) => await dispatch(proposalRoundVote(proposalId))
+  const handleVotingRoundVote = async (vote: `${VotingTypes}`) => await dispatch(votingRoundVote(vote))
 
   // Voting stuff
   const voteStatistics = useMemo<VoteStatistics>(
     () => ({
-      abstainVotesMVKTotal: Number(proposal.abstainMvkTotal),
-      againstVotesMVKTotal: Number(proposal.downvoteMvkTotal),
-      forVotesMVKTotal: Number(proposal.upvoteMvkTotal),
+      abstainVotesMVKTotal: proposal.abstainMvkTotal,
+      againstVotesMVKTotal: proposal.downvoteMvkTotal,
+      forVotesMVKTotal: proposal.upvoteMvkTotal,
       unusedVotesMVKTotal: Math.round(
-        proposal.quorumMvkTotal / PRECISION_NUMBER -
-          proposal.abstainMvkTotal -
-          proposal.downvoteMvkTotal -
-          proposal.upvoteMvkTotal,
+        proposal.quorumMvkTotal - proposal.abstainMvkTotal - proposal.downvoteMvkTotal - proposal.upvoteMvkTotal,
       ),
-      passVotesMVKTotal: Number(proposal.passVoteMvkTotal),
+      passVotesMVKTotal: proposal.passVoteMvkTotal,
       quorum: proposal.minQuorumPercentage,
     }),
     [proposal],
   )
-
-  //TODO: add voting power to the vote
-  const handleProposalRoundVote = async (proposalId: number) => {
-    await dispatch(proposalRoundVote(proposalId))
-  }
-
-  //TODO: add voting power to the vote
-  const handleVotingRoundVote = async (vote: string) => {
-    switch (vote) {
-      case VotingTypes.YES:
-        dispatch(votingRoundVote(VotingTypes.YES))
-        break
-      case VotingTypes.NO:
-        dispatch(votingRoundVote(VotingTypes.NO))
-        break
-      case VotingTypes.PASS:
-        dispatch(votingRoundVote(VotingTypes.PASS))
-        break
-    }
-  }
 
   // Loading voting till time for proposal
   const [votingTill, setVotingTill] = useState<null | number>(null)
@@ -243,8 +214,8 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
       <div className="proposal-data-block-wrapper">
         <div className="proposal-data-block-name">Payment Data</div>
         {proposal.proposalPayments?.length ? (
-          <Table className="editable-table">
-            <TableHeader className="editable-head">
+          <Table className="editable-table with-header">
+            <TableHeader className="editable-head proposal-details-payments">
               <TableRow>
                 <TableHeaderCell className="no-right-border">Address</TableHeaderCell>
                 <TableHeaderCell>Purpose</TableHeaderCell>
@@ -252,20 +223,15 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
                 <TableHeaderCell className="right-border">Payment Type (XTZ/MVK)</TableHeaderCell>
               </TableRow>
             </TableHeader>
-            <TableBody className="editable-body">
+            <TableBody>
               {proposal.proposalPayments.map((payment) => {
                 const { symbol: selectedSymbol = 'MVK' } =
                   whitelistTokens.find(({ address }) => address === payment.token_address) ?? whitelistTokens?.[0] ?? {}
 
                 return (
-                  <TableRow className="editable-row">
+                  <TableRow className="editable-row proposal-details-payments">
                     <TableCell width="25%">
-                      <TzAddress
-                        tzAddress={String(payment.to__id)}
-                        type={BLUE}
-                        hasIcon={true}
-                        className="table-cell-tzAddress"
-                      />
+                      <TzAddress tzAddress={String(payment.to__id)} type={BLUE} hasIcon={false} />
                     </TableCell>
                     <TableCell width="25%">{String(payment.title)}</TableCell>
                     <TableCell width="25%">
@@ -287,7 +253,7 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
       <div className="proposal-data-block-wrapper">
         <div className="proposal-data-block-name">Proposer</div>
         <div className="proposal-data-block-value">
-          <TzAddress tzAddress={proposal.proposerId} hasIcon isBold={true} />
+          <TzAddress tzAddress={proposal.proposerId} type={BLUE} isBold />
         </div>
       </div>
 
@@ -296,7 +262,7 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
         <div className="gov-data">
           <div className="proposal-data-block-name">Governance Contract</div>
           <div className="proposal-data-block-value">
-            <TzAddress tzAddress={proposal.governanceId} hasIcon isBold={true} />
+            <TzAddress tzAddress={proposal.governanceId} type={BLUE} isBold />
           </div>
         </div>
       </div>

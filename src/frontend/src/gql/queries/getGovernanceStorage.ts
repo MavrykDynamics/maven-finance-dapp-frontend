@@ -43,6 +43,7 @@ export const GOVERNANCE_PROPOSALS_QUERY = `
       payment_processed
       
       min_quorum_percentage
+      quorum_smvk_total
       nay_vote_smvk_total
       pass_vote_smvk_total
       yay_vote_smvk_total

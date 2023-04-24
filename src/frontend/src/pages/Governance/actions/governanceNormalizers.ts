@@ -6,7 +6,7 @@ import {
   defaultProposalTitleMaxLength,
 } from 'app/App.components/Input/Input.constants'
 import { State } from 'reducers'
-import { calcWithoutPrecision, calcWithoutMu } from 'utils/calcFunctions'
+import { calcWithoutPrecision, calcWithoutMu, convertNumberForClient } from 'utils/calcFunctions'
 import { DipDupTokensGraphQl } from 'utils/TypesAndInterfaces/DipDupTokens'
 import {
   GovernanceProposalGraphQL,
@@ -15,6 +15,7 @@ import {
   ProposalStatus,
 } from 'utils/TypesAndInterfaces/Governance'
 import { getProposalStatus } from '../Governance.helpers'
+import { MVK_DECIMALS } from 'utils/constants'
 
 export const normalizeProposal = (
   item: GovernanceProposalGraphQL,
@@ -59,11 +60,11 @@ export const normalizeProposal = (
     sourceCode: item.source_code,
 
     // voting data
-    passVoteMvkTotal: calcWithoutPrecision(item.proposal_vote_smvk_total),
-    upvoteMvkTotal: calcWithoutPrecision(item.yay_vote_smvk_total),
-    downvoteMvkTotal: calcWithoutPrecision(item.nay_vote_smvk_total),
-    abstainMvkTotal: calcWithoutPrecision(item.pass_vote_smvk_total),
-    quorumMvkTotal: item.quorum_smvk_total,
+    passVoteMvkTotal: convertNumberForClient({ number: item.proposal_vote_smvk_total, grade: MVK_DECIMALS }),
+    upvoteMvkTotal: convertNumberForClient({ number: item.yay_vote_smvk_total, grade: MVK_DECIMALS }),
+    downvoteMvkTotal: convertNumberForClient({ number: item.nay_vote_smvk_total, grade: MVK_DECIMALS }),
+    abstainMvkTotal: convertNumberForClient({ number: item.pass_vote_smvk_total, grade: MVK_DECIMALS }),
+    quorumMvkTotal: convertNumberForClient({ number: item.quorum_smvk_total, grade: MVK_DECIMALS }),
     votes: item.votes,
     minQuorumPercentage: item.min_quorum_percentage,
 
