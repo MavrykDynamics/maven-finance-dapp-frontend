@@ -13,9 +13,11 @@ import {
 } from '../../gql/queries/getGovernanceStorage'
 import { State } from '../../reducers'
 import { ProposalRecordType } from 'utils/TypesAndInterfaces/Governance'
-import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
+import { toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 import { ROCKET_LOADER } from 'utils/constants'
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
+import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
+import { getFinancialRequestStorage } from 'pages/FinacialRequests/FiancialRequest.actions'
 
 export const SET_GOVERNANCE_PHASE = 'SET_GOVERNANCE_PHASE'
 export const GET_GOVERNANCE_STORAGE = 'GET_GOVERNANCE_STORAGE'
@@ -83,7 +85,7 @@ export const proposalRoundVote = (proposalId: number) => async (dispatch: AppDis
       return
     }
 
-    if (state.loading.isActionLoading) {
+    if (state.loading.isActionActive) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
@@ -92,7 +94,7 @@ export const proposalRoundVote = (proposalId: number) => async (dispatch: AppDis
     const contract = await tezos.wallet.at(state.contractAddresses.governanceAddress.address)
     const transaction = await contract?.methods.proposalRoundVote(proposalId).send()
 
-    await dispatch(toggleActionLoader(true))
+    await dispatch(toggleActionFullScreenLoader(true))
     await dispatch(showToaster(INFO, 'Proposal Vote executing...', 'Please wait 30s'))
 
     await transaction?.confirmation()
@@ -100,13 +102,13 @@ export const proposalRoundVote = (proposalId: number) => async (dispatch: AppDis
     await dispatch(showToaster(SUCCESS, 'Voting done', 'All good :)'))
     await dispatch(getGovernanceStorage())
     await dispatch(getCurrentRoundProposals())
-    await dispatch(toggleActionLoader(false))
+    await dispatch(toggleActionFullScreenLoader(false))
   } catch (error) {
     console.error('proposalRoundVote error: ', error)
     if (error instanceof Error) {
       await dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    await dispatch(toggleActionLoader(false))
+    await dispatch(toggleActionFullScreenLoader(false))
   }
 }
 
@@ -149,7 +151,7 @@ export const votingRinancialRequestVote =
         return
       }
 
-      if (state.loading.isActionLoading) {
+      if (state.loading.isActionActive) {
         dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
         return
       }
@@ -158,20 +160,30 @@ export const votingRinancialRequestVote =
       const contract = await tezos.wallet.at(state.contractAddresses.governanceFinancialAddress.address)
       const transaction = await contract?.methods.voteForRequest(requestId, vote).send()
 
-      await dispatch(toggleActionLoader(true))
+      await dispatch(toggleActionFullScreenLoader(true))
       await dispatch(showToaster(INFO, 'Voting...', 'Please wait 30s'))
 
       await transaction?.confirmation()
 
+      // @ts-ignore don't have proper type to acees data, type has only methods
+      const currentOperationLevel = transaction?.lastHead?.header?.level
+
+      // refetch data we need
+      await checkIndexerLevelAndRunDataUpdateCallback({
+        callback: async () => {
+          await dispatch(getFinancialRequestStorage())
+        },
+        currentOperationLevel,
+      })
+
       await dispatch(showToaster(SUCCESS, 'Voting done', 'All good :)'))
-      await dispatch(getGovernanceStorage())
-      await dispatch(toggleActionLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     } catch (error) {
       if (error instanceof Error) {
         console.error(error)
         await dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     }
   }
 
@@ -184,7 +196,7 @@ export const votingRoundVote = (vote: string) => async (dispatch: AppDispatch, g
       return
     }
 
-    if (state.loading.isActionLoading) {
+    if (state.loading.isActionActive) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
@@ -192,7 +204,7 @@ export const votingRoundVote = (vote: string) => async (dispatch: AppDispatch, g
     const contract = await tezos.wallet.at(state.contractAddresses.governanceAddress.address)
     const transaction = await contract?.methods.votingRoundVote(vote).send()
 
-    await dispatch(toggleActionLoader(true))
+    await dispatch(toggleActionFullScreenLoader(true))
     await dispatch(showToaster(INFO, 'Voting...', 'Please wait 30s'))
 
     await transaction?.confirmation()
@@ -200,13 +212,13 @@ export const votingRoundVote = (vote: string) => async (dispatch: AppDispatch, g
     await dispatch(showToaster(SUCCESS, 'Voting done', 'All good :)'))
     await dispatch(getGovernanceStorage())
     await dispatch(getCurrentRoundProposals())
-    await dispatch(toggleActionLoader(false))
+    await dispatch(toggleActionFullScreenLoader(false))
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
       await dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    await dispatch(toggleActionLoader(false))
+    await dispatch(toggleActionFullScreenLoader(false))
   }
 }
 
@@ -219,7 +231,7 @@ export const startProposalRound = () => async (dispatch: AppDispatch, getState: 
       return
     }
 
-    if (state.loading.isActionLoading) {
+    if (state.loading.isActionActive) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
@@ -228,7 +240,7 @@ export const startProposalRound = () => async (dispatch: AppDispatch, getState: 
     const contract = await tezos.wallet.at(state.contractAddresses.governanceAddress.address)
     const transaction = await contract?.methods.startProposalRound().send()
 
-    await dispatch(toggleActionLoader(true))
+    await dispatch(toggleActionFullScreenLoader(true))
     await dispatch(showToaster(INFO, 'Request Proposal round start...', 'Please wait 30s'))
 
     await transaction?.confirmation()
@@ -236,13 +248,13 @@ export const startProposalRound = () => async (dispatch: AppDispatch, getState: 
     await dispatch(showToaster(SUCCESS, 'Request confirmed', 'All good :)'))
     await dispatch(getGovernanceStorage())
     await dispatch(getCurrentRoundProposals())
-    await dispatch(toggleActionLoader(false))
+    await dispatch(toggleActionFullScreenLoader(false))
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
       await dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    await dispatch(toggleActionLoader(false))
+    await dispatch(toggleActionFullScreenLoader(false))
   }
 }
 
@@ -255,7 +267,7 @@ export const startVotingRound = () => async (dispatch: AppDispatch, getState: Ge
       return
     }
 
-    if (state.loading.isActionLoading) {
+    if (state.loading.isActionActive) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
@@ -264,7 +276,7 @@ export const startVotingRound = () => async (dispatch: AppDispatch, getState: Ge
     const contract = await tezos.wallet.at(state.contractAddresses.governanceAddress.address)
     const transaction = await contract?.methods.startProposalRound().send()
 
-    await dispatch(toggleActionLoader(true))
+    await dispatch(toggleActionFullScreenLoader(true))
     await dispatch(showToaster(INFO, 'Request Voting round start...', 'Please wait 30s'))
 
     await transaction?.confirmation()
@@ -272,13 +284,13 @@ export const startVotingRound = () => async (dispatch: AppDispatch, getState: Ge
     await dispatch(showToaster(SUCCESS, 'Request confirmed', 'All good :)'))
     await dispatch(getGovernanceStorage())
     await dispatch(getCurrentRoundProposals())
-    await dispatch(toggleActionLoader(false))
+    await dispatch(toggleActionFullScreenLoader(false))
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
       await dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    await dispatch(toggleActionLoader(false))
+    await dispatch(toggleActionFullScreenLoader(false))
   }
 }
 
@@ -311,7 +323,7 @@ export const startNextRound = (executePastProposal: boolean) => async (dispatch:
       return
     }
 
-    if (state.loading.isActionLoading) {
+    if (state.loading.isActionActive) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
@@ -320,7 +332,7 @@ export const startNextRound = (executePastProposal: boolean) => async (dispatch:
     const contract = await tezos.wallet.at(state.contractAddresses.governanceAddress.address)
     const transaction = await contract?.methods.startNextRound(executePastProposal).send()
 
-    await dispatch(toggleActionLoader(true))
+    await dispatch(toggleActionFullScreenLoader(true))
     await dispatch(showToaster(INFO, 'Request Next round start...', 'Please wait 30s'))
 
     await transaction?.confirmation()
@@ -328,13 +340,13 @@ export const startNextRound = (executePastProposal: boolean) => async (dispatch:
     await dispatch(showToaster(SUCCESS, 'Request confirmed', 'All good :)'))
     await dispatch(getGovernanceStorage())
     await dispatch(getCurrentRoundProposals())
-    await dispatch(toggleActionLoader(false))
+    await dispatch(toggleActionFullScreenLoader(false))
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
       dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    await dispatch(toggleActionLoader(false))
+    await dispatch(toggleActionFullScreenLoader(false))
   }
 }
 
@@ -345,7 +357,7 @@ export const executeProposal = (proposalId: number) => async (dispatch: AppDispa
     const contract = await tezos.wallet.at(state.contractAddresses.governanceAddress.address)
     const transaction = await contract?.methods.executeProposal(proposalId).send()
 
-    await dispatch(toggleActionLoader(true))
+    await dispatch(toggleActionFullScreenLoader(true))
     await dispatch(showToaster(INFO, 'Request Execute Proposal round start...', 'Please wait 30s'))
 
     await transaction?.confirmation()
@@ -353,13 +365,13 @@ export const executeProposal = (proposalId: number) => async (dispatch: AppDispa
     await dispatch(showToaster(SUCCESS, 'Request confirmed', 'All good :)'))
     await dispatch(getGovernanceStorage())
     await dispatch(getCurrentRoundProposals())
-    await dispatch(toggleActionLoader(false))
+    await dispatch(toggleActionFullScreenLoader(false))
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
       dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    await dispatch(toggleActionLoader(false))
+    await dispatch(toggleActionFullScreenLoader(false))
   }
 }
 
@@ -370,7 +382,7 @@ export const processProposalPayment = (proposalId: number) => async (dispatch: A
     const contract = await tezos.wallet.at(state.contractAddresses.governanceAddress.address)
     const transaction = await contract?.methods.processProposalPayment(proposalId).send()
 
-    await dispatch(toggleActionLoader(true))
+    await dispatch(toggleActionFullScreenLoader(true))
     await dispatch(showToaster(INFO, 'Process Proposal Payment round start...', 'Please wait 30s'))
 
     await transaction?.confirmation()
@@ -378,12 +390,12 @@ export const processProposalPayment = (proposalId: number) => async (dispatch: A
     await dispatch(showToaster(SUCCESS, 'Process Proposal Payment confirmed', 'All good :)'))
     await dispatch(getGovernanceStorage())
     await dispatch(getCurrentRoundProposals())
-    await dispatch(toggleActionLoader(false))
+    await dispatch(toggleActionFullScreenLoader(false))
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
       dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    await dispatch(toggleActionLoader(false))
+    await dispatch(toggleActionFullScreenLoader(false))
   }
 }

@@ -70,6 +70,7 @@ export const UserProfileEditor = ({ file, getFile, show: showEditor, closeEditor
   return (
     <PopupContainer onClick={closeEditor} show={showEditor}>
       <PopupContainerWrapper onClick={(e) => e.stopPropagation()}>
+        <button onClick={closeEditor} className="close-modal" />
         <UserProfileEditorStyled>
           <div className="avatar">
             <AvatarEditor
@@ -88,20 +89,11 @@ export const UserProfileEditor = ({ file, getFile, show: showEditor, closeEditor
               <NewButton isThin kind={BUTTON_THIRD} form={BUTTON_ROUND} onClick={() => handleRotate(rotateSides.LEFT)}>
                 <Icon id="rotate-left-outlined" />
               </NewButton>
-              <NewButton
-                isThin
-                kind={BUTTON_THIRD}
-                form={BUTTON_ROUND}
-                onClick={() => handleRotate(rotateSides.RIGHT)}
-              >
+              <NewButton isThin kind={BUTTON_THIRD} form={BUTTON_ROUND} onClick={() => handleRotate(rotateSides.RIGHT)}>
                 <Icon id="rotate-right-outlined" />
               </NewButton>
             </UserProfileEditorRotate>
           </div>
-
-          <NewButton kind={BUTTON_SIMPLE} onClick={closeEditor}>
-            <Icon className="close-btn" id="navigation-menu_close" />
-          </NewButton>
 
           <UserProfileEditorZoom>
             <div className="setting-title">Zoom:</div>

@@ -454,7 +454,7 @@ const getBorrowings = async (
             amount: collateralBalance,
           })
 
-          acc.totalRow.amount += Number((collateralBalance * collateralAsset.rate).toFixed(2))
+          acc.totalRow.amount += collateralBalance * collateralAsset.rate
 
           return acc
         },
@@ -508,8 +508,9 @@ const getBorrowings = async (
       const accruedInterest =
         borrowedAmount === 0
           ? currentLoanInterest
-          : currentLoanInterest + calculateAccruedInterest(vault.loan_outstanding_total, vault.borrow_index, vault.loan_token.borrow_index) /
-            FIXED_POINT_ACCURACY
+          : currentLoanInterest +
+            calculateAccruedInterest(vault.loan_outstanding_total, vault.borrow_index, vault.loan_token.borrow_index) /
+              FIXED_POINT_ACCURACY
 
       const collateralRatio = calcCollateralRatio(vaultCollateral.totalRow.amount, borrowedAmount, vaultAsset.rate)
       const collateralData = vaultCollateral.normalizedCollaterals.length

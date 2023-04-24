@@ -2,7 +2,7 @@ import { AppDispatch, GetState } from '../../app/App.controller'
 import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { ERROR, INFO, SUCCESS } from 'app/App.components/Toaster/Toaster.constants'
 import { State } from 'reducers'
-import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
+import { toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 import { fetchFromIndexer } from 'gql/fetchGraphQL'
 import {
   VAULTS_STORAGE_QUERY_NAME,
@@ -79,13 +79,13 @@ export const liquidateVault =
       return
     }
 
-    if (state.loading.isActionLoading) {
+    if (state.loading.isActionActive) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
 
     try {
-      dispatch(toggleActionLoader(true))
+      dispatch(toggleActionFullScreenLoader(true))
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.lendingController.address)
       const transaction = await contract?.methods
@@ -96,13 +96,13 @@ export const liquidateVault =
       await transaction?.confirmation()
 
       dispatch(showToaster(SUCCESS, 'Vault Liquidated', 'All good :)'))
-      dispatch(toggleActionLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
     } catch (error) {
       if (error instanceof Error) {
         console.error('liquidateVault - ERROR ', error)
         dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      dispatch(toggleActionLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
     }
   }
 
@@ -116,13 +116,13 @@ export const markForLiquidation =
       return
     }
 
-    if (state.loading.isActionLoading) {
+    if (state.loading.isActionActive) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
 
     try {
-      dispatch(toggleActionLoader(true))
+      dispatch(toggleActionFullScreenLoader(true))
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.lendingController.address)
       const transaction = await contract?.methods.markForLiquidation(vaultId, vaultOwner).send()
@@ -131,13 +131,13 @@ export const markForLiquidation =
       await transaction?.confirmation()
 
       dispatch(showToaster(SUCCESS, 'Vault marked for Liquidation', 'All good :)'))
-      dispatch(toggleActionLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
     } catch (error) {
       if (error instanceof Error) {
         console.error('markForLiquidation - ERROR ', error)
         dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      dispatch(toggleActionLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
     }
   }
 

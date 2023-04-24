@@ -15,7 +15,6 @@ import NewButton from 'app/App.components/Button/NewButton'
 import {
   calcCollateralRatio,
   getLoansInputMaxAmount,
-  getMaxCollateralWithdraw,
   isTezosAsset,
   loansInputValidation,
 } from 'pages/Loans/Loans.helpers'
@@ -35,9 +34,10 @@ import { InputPinnedDropDown } from 'app/App.components/Input/Input.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
-import { DropDownJsxChild, LoansModalBase, VaultModalOverview } from './Modals.style'
+import { LoansModalBase, VaultModalOverview } from './Modals.style'
 import { XtzBakerType } from 'utils/TypesAndInterfaces/Loans'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
+import { DropDownJsxChild } from 'app/App.components/DropDown/DropDown.style'
 
 type InputState =
   | {
@@ -79,7 +79,6 @@ export const AddNewCollateral = ({
     xtzBakers: { otherBakers, dao, mavrykDynamics },
   } = useSelector((state: State) => state.tokens)
   const { avaliableCollaterals } = useSelector((state: State) => state.tokens)
-  const { isActionLoading } = useSelector((state: State) => state.loading)
 
   const xtzBakers: Array<XtzBakerType & { isDisabled?: boolean }> = useMemo(
     () => [...otherBakers, ...(dao ? [dao] : []), ...(mavrykDynamics ? [mavrykDynamics] : [])],
@@ -243,10 +242,9 @@ export const AddNewCollateral = ({
 
   const isDepositBtnDisabled = useMemo(
     () =>
-      isActionLoading ||
       (isTezosAsset(inputData?.assetName ?? '') && !bakerChosenDdItem) ||
       inputData?.validationStatus === INPUT_STATUS_ERROR,
-    [bakerChosenDdItem, inputData?.assetName, inputData?.validationStatus, isActionLoading],
+    [bakerChosenDdItem, inputData?.assetName, inputData?.validationStatus],
   )
 
   const depositCollateralHandler = () => {

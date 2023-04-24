@@ -50,7 +50,6 @@ export const AddLendingAsset = ({
   useLockBodyScroll(show)
 
   const dispatch = useDispatch()
-  const { isActionLoading } = useSelector((state: State) => state.loading)
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
 
   const onChangeHandler = (inputAmount: string, userBalance: number) => {
@@ -89,8 +88,8 @@ export const AddLendingAsset = ({
     }
   }, [show])
   const isDepositDisabled = useMemo(() => {
-    return inputData.validationStatus !== INPUT_STATUS_SUCCESS || isActionLoading
-  }, [inputData.validationStatus, isActionLoading])
+    return inputData.validationStatus !== INPUT_STATUS_SUCCESS
+  }, [inputData.validationStatus])
 
   const depositHandler = () => {
     if (tokenType && address) {

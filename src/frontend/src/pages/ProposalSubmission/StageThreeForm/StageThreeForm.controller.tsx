@@ -41,7 +41,7 @@ import { Input } from 'app/App.components/Input/Input.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { DDItemId, DropDown } from 'app/App.components/DropDown/NewDropdown'
-import { DropDownJsxChild } from 'pages/Loans/Components/Modals/Modals.style'
+import { DropDownJsxChild } from 'app/App.components/DropDown/DropDown.style'
 
 export const StageThreeForm = ({
   proposalId,
@@ -182,7 +182,7 @@ export const StageThreeForm = ({
       </FormHeaderGroup>
       <FormTitleAndFeeContainer>
         <FormTitleContainer>
-          <label>1 - Enter Proposal Title</label>
+          <label>1 - Proposal Title</label>
           <FormTitleEntry>{title}</FormTitleEntry>
         </FormTitleContainer>
         <div>
@@ -270,7 +270,7 @@ export const StageThreeForm = ({
                     selectedSymbol
                   ) : (
                     <DropDown
-                      placeholder={'Select paymeth method'}
+                      placeholder={'Select payment method'}
                       className="stage-3-dropDown"
                       items={ddItems}
                       activeItem={ddItems.find(({ id }) => address === id) ?? ddItems[0]}

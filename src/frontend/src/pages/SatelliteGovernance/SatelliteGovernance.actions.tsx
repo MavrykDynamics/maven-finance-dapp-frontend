@@ -12,7 +12,7 @@ import {
 } from '../../gql/queries/getGovernanceSatelliteStorage'
 
 import { SatelliteGovernanceTransfer } from '../../utils/TypesAndInterfaces/Satellites'
-import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
+import { toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 
 //getGovernanceSatelliteStorage
@@ -53,13 +53,13 @@ export const suspendSatellite =
       return
     }
 
-    if (state.loading.isActionLoading) {
+    if (state.loading.isActionActive) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
 
     try {
-      await dispatch(toggleActionLoader(true))
+      await dispatch(toggleActionFullScreenLoader(true))
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
       const transaction = await contract?.methods.suspendSatellite(satelliteAddress, purpose).send()
@@ -70,13 +70,13 @@ export const suspendSatellite =
       await dispatch(showToaster(SUCCESS, 'Suspend Satellite done', 'All good :)'))
 
       await dispatch(getGovernanceSatelliteStorage())
-      await dispatch(toggleActionLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     } catch (error) {
       if (error instanceof Error) {
         console.error(error)
         dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     }
   }
 
@@ -90,13 +90,13 @@ export const unsuspendSatellite =
       return
     }
 
-    if (state.loading.isActionLoading) {
+    if (state.loading.isActionActive) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
 
     try {
-      await dispatch(toggleActionLoader(true))
+      await dispatch(toggleActionFullScreenLoader(true))
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
       const transaction = await contract?.methods.restoreSatellite(satelliteAddress, purpose).send()
@@ -107,13 +107,13 @@ export const unsuspendSatellite =
       await dispatch(showToaster(SUCCESS, 'Unsuspend Satellite done', 'All good :)'))
       await dispatch(getGovernanceSatelliteStorage())
 
-      await dispatch(toggleActionLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     } catch (error) {
       if (error instanceof Error) {
         console.error(error)
         dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     }
   }
 
@@ -127,13 +127,13 @@ export const banSatellite =
       return
     }
 
-    if (state.loading.isActionLoading) {
+    if (state.loading.isActionActive) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
 
     try {
-      await dispatch(toggleActionLoader(true))
+      await dispatch(toggleActionFullScreenLoader(true))
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
       const transaction = await contract?.methods.banSatellite(satelliteAddress, purpose).send()
@@ -145,13 +145,13 @@ export const banSatellite =
       await dispatch(showToaster(SUCCESS, 'Ban Satellite done', 'All good :)'))
 
       await dispatch(getGovernanceSatelliteStorage())
-      await dispatch(toggleActionLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     } catch (error) {
       if (error instanceof Error) {
         console.error(error)
         dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     }
   }
 
@@ -165,13 +165,13 @@ export const unbanSatellite =
       return
     }
 
-    if (state.loading.isActionLoading) {
+    if (state.loading.isActionActive) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
 
     try {
-      await dispatch(toggleActionLoader(true))
+      await dispatch(toggleActionFullScreenLoader(true))
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
       const transaction = await contract?.methods.unbanSatellite(satelliteAddress, purpose).send()
@@ -183,13 +183,13 @@ export const unbanSatellite =
       await dispatch(showToaster(SUCCESS, 'Unban Satellite done', 'All good :)'))
 
       await dispatch(getGovernanceSatelliteStorage())
-      await dispatch(toggleActionLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     } catch (error) {
       if (error instanceof Error) {
         console.error(error)
         dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     }
   }
 
@@ -203,13 +203,13 @@ export const removeOracles =
       return
     }
 
-    if (state.loading.isActionLoading) {
+    if (state.loading.isActionActive) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
 
     try {
-      await dispatch(toggleActionLoader(true))
+      await dispatch(toggleActionFullScreenLoader(true))
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
       const transaction = await contract?.methods.removeAllSatelliteOracles(satelliteAddress, purpose).send()
@@ -221,13 +221,13 @@ export const removeOracles =
       await dispatch(showToaster(SUCCESS, 'Remove all Oracles from Satellite done', 'All good :)'))
 
       await dispatch(getGovernanceSatelliteStorage())
-      await dispatch(toggleActionLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     } catch (error) {
       if (error instanceof Error) {
         console.error(error)
         dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     }
   }
 
@@ -242,13 +242,13 @@ export const removeOracleInAggregator =
       return
     }
 
-    if (state.loading.isActionLoading) {
+    if (state.loading.isActionActive) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
 
     try {
-      await dispatch(toggleActionLoader(true))
+      await dispatch(toggleActionFullScreenLoader(true))
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
       const transaction = await contract?.methods
@@ -262,13 +262,13 @@ export const removeOracleInAggregator =
       dispatch(showToaster(SUCCESS, 'Remove from Aggregator done', 'All good :)'))
 
       await dispatch(getGovernanceSatelliteStorage())
-      await dispatch(toggleActionLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     } catch (error) {
       if (error instanceof Error) {
         console.error(error)
         dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     }
   }
 
@@ -283,13 +283,13 @@ export const addOracleToAggregator =
       return
     }
 
-    if (state.loading.isActionLoading) {
+    if (state.loading.isActionActive) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
 
     try {
-      await dispatch(toggleActionLoader(true))
+      await dispatch(toggleActionFullScreenLoader(true))
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
       const transaction = await contract?.methods.addOracleToAggregator(oracleAddress, satelliteAddress, purpose).send()
@@ -301,13 +301,13 @@ export const addOracleToAggregator =
       await dispatch(showToaster(SUCCESS, 'Add Oracle to Aggregator done', 'All good :)'))
 
       await dispatch(getGovernanceSatelliteStorage())
-      await dispatch(toggleActionLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     } catch (error) {
       if (error instanceof Error) {
         console.error(error)
         dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     }
   }
 
@@ -322,13 +322,13 @@ export const setAggregatorMaintainer =
       return
     }
 
-    if (state.loading.isActionLoading) {
+    if (state.loading.isActionActive) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
 
     try {
-      await dispatch(toggleActionLoader(true))
+      await dispatch(toggleActionFullScreenLoader(true))
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
       const transaction = await contract?.methods
@@ -342,13 +342,13 @@ export const setAggregatorMaintainer =
       await dispatch(showToaster(SUCCESS, 'Set Aggregator Maintainer done', 'All good :)'))
 
       await dispatch(getGovernanceSatelliteStorage())
-      await dispatch(toggleActionLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     } catch (error) {
       if (error instanceof Error) {
         console.error(error)
         dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     }
   }
 
@@ -362,13 +362,13 @@ export const dropAction =
       return
     }
 
-    if (state.loading.isActionLoading) {
+    if (state.loading.isActionActive) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
 
     try {
-      await dispatch(toggleActionLoader(true))
+      await dispatch(toggleActionFullScreenLoader(true))
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
       const transaction = await contract?.methods.dropAction(actionId).send()
@@ -380,14 +380,14 @@ export const dropAction =
       await dispatch(showToaster(SUCCESS, 'Drop Action done', 'All good :)'))
 
       await dispatch(getGovernanceSatelliteStorage())
-      await dispatch(toggleActionLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
       callback()
     } catch (error) {
       if (error instanceof Error) {
         console.error(error)
         dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     }
   }
 
@@ -401,13 +401,13 @@ export const voteForAction =
       return
     }
 
-    if (state.loading.isActionLoading) {
+    if (state.loading.isActionActive) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
 
     try {
-      await dispatch(toggleActionLoader(true))
+      await dispatch(toggleActionFullScreenLoader(true))
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
       const transaction = await contract?.methods.voteForAction(actionId, voteType).send()
@@ -419,14 +419,14 @@ export const voteForAction =
       await dispatch(showToaster(SUCCESS, 'Vote YES done', 'All good :)'))
 
       await dispatch(getGovernanceSatelliteStorage())
-      await dispatch(toggleActionLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
       callback()
     } catch (error) {
       if (error instanceof Error) {
         console.error(error)
         dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     }
   }
 
@@ -440,13 +440,13 @@ export const restoreSatellite =
       return
     }
 
-    if (state.loading.isActionLoading) {
+    if (state.loading.isActionActive) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
 
     try {
-      await dispatch(toggleActionLoader(true))
+      await dispatch(toggleActionFullScreenLoader(true))
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
       const transaction = await contract?.methods.restoreSatellite(satelliteAddress, purpose).send()
@@ -458,13 +458,13 @@ export const restoreSatellite =
       await dispatch(showToaster(SUCCESS, 'Restore Satellite done', 'All good :)'))
 
       await dispatch(getGovernanceSatelliteStorage())
-      await dispatch(toggleActionLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     } catch (error) {
       if (error instanceof Error) {
         console.error(error)
         dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     }
   }
 
@@ -478,13 +478,13 @@ export const updateAggregatorStatus =
       return
     }
 
-    if (state.loading.isActionLoading) {
+    if (state.loading.isActionActive) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
 
     try {
-      await dispatch(toggleActionLoader(true))
+      await dispatch(toggleActionFullScreenLoader(true))
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
       const transaction = await contract?.methods.updateAggregatorStatus(aggregatorAddress, status, purpose).send()
@@ -496,13 +496,13 @@ export const updateAggregatorStatus =
       await dispatch(showToaster(SUCCESS, 'Update Aggregator Status done', 'All good :)'))
 
       await dispatch(getGovernanceSatelliteStorage())
-      await dispatch(toggleActionLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     } catch (error) {
       if (error instanceof Error) {
         console.error(error)
         dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     }
   }
 
@@ -516,13 +516,13 @@ export const registerAggregator =
       return
     }
 
-    if (state.loading.isActionLoading) {
+    if (state.loading.isActionActive) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
 
     try {
-      await dispatch(toggleActionLoader(true))
+      await dispatch(toggleActionFullScreenLoader(true))
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
       const transaction = await contract?.methods.registerAggregator(aggregatorPair, aggregatorAddress).send()
@@ -534,13 +534,13 @@ export const registerAggregator =
       await dispatch(showToaster(SUCCESS, 'Register Aggregator done', 'All good :)'))
 
       await dispatch(getGovernanceSatelliteStorage())
-      await dispatch(toggleActionLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     } catch (error) {
       if (error instanceof Error) {
         console.error(error)
         dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     }
   }
 
@@ -555,13 +555,13 @@ export const fixMistakenTransfer =
       return
     }
 
-    if (state.loading.isActionLoading) {
+    if (state.loading.isActionActive) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
 
     try {
-      await dispatch(toggleActionLoader(true))
+      await dispatch(toggleActionFullScreenLoader(true))
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
       const transaction = await contract?.methods
@@ -574,12 +574,12 @@ export const fixMistakenTransfer =
 
       await dispatch(showToaster(SUCCESS, 'Fix Mistaken Transfer done', 'All good :)'))
       await dispatch(getGovernanceSatelliteStorage())
-      await dispatch(toggleActionLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     } catch (error) {
       if (error instanceof Error) {
         console.error(error)
         dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     }
   }

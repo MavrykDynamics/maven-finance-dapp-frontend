@@ -246,3 +246,48 @@ export const DropdownCard = styled(Card)`
     margin-top: 30px;
   }
 `
+
+export const DropDownTruncatedChild = styled.div`
+  max-width: 90%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+`
+
+export const DropDownJsxChild = styled.div`
+  width: 95%;
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+
+  .flex-row {
+    display: flex;
+    align-items: center;
+    column-gap: 10px;
+    font-weight: 500;
+    font-size: 16px;
+    color: ${({ theme }) => theme.textColor};
+
+    &.with-image {
+      svg,
+      .img-wrapper {
+        width: 24px;
+        height: 24px;
+        fill: ${({ theme }) => theme.textColor};
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+      }
+    }
+  }
+
+  .baker-fee {
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 21px;
+    color: ${({ theme }) => theme.dataColor};
+  }
+`

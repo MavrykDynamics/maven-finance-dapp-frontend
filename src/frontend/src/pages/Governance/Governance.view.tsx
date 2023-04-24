@@ -562,13 +562,17 @@ export const GovernanceView = ({
           ) : null}
 
           {rightSideContent.governanceId ? (
-            <article>
-              <RightSideSubHeader>Governance Info</RightSideSubHeader>
-              <div className="governance-contract">
-                <p>Governance Contract</p>
-                <TzAddress tzAddress={rightSideContent.governanceId} hasIcon={true} isBold={true} />
-              </div>
-            </article>
+            <>
+              <hr />
+              
+              <article>
+                <RightSideSubHeader>Governance Info</RightSideSubHeader>
+                <div className="governance-contract">
+                  <p>Governance Contract</p>
+                  <TzAddress tzAddress={rightSideContent.governanceId} hasIcon={true} isBold={true} />
+                </div>
+              </article>
+            </>
           ) : null}
           {userIsSatellite &&
           !isVisibleHistoryProposal &&

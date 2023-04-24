@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useLockBodyScroll } from 'react-use'
 import { useEffect, useMemo, useState } from 'react'
 
-import { INPUT_LARGE, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import { INPUT_LARGE, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { COLLATERAL_RATIO_GRADIENT, assetDecimalsToShow, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { BorrowPopupDataType, DEFAULT_LOANS_INPUT_VALUE, getOnBlurValue, getOnFocusValue } from './Modals.helpers'
 import { State } from 'reducers'
@@ -53,7 +53,6 @@ export const BorrowAsset = ({
 
   useLockBodyScroll(show)
   const dispatch = useDispatch()
-  const { isActionLoading } = useSelector((state: State) => state.loading)
   const { themeSelected } = useSelector((state: State) => state.preferences)
 
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
@@ -340,12 +339,7 @@ export const BorrowAsset = ({
                   <Icon id="arrowLeft" />
                   Back
                 </NewButton>
-                <NewButton
-                  kind={BUTTON_PRIMARY}
-                  form={BUTTON_WIDE}
-                  onClick={borrowAsserHandler}
-                  disabled={isActionLoading}
-                >
+                <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={borrowAsserHandler}>
                   <Icon id="coin-loan" />
                   Borrow {borrowedAsset?.symbol}
                 </NewButton>

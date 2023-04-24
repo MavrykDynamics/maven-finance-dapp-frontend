@@ -39,7 +39,7 @@ export const InputComponentContainer = styled.div<{ theme: MavrykTheme }>`
     }
 
     &.search {
-      color: ${({ theme }) => theme.headerColor};
+      color: ${({ theme }) => theme.textColor};
     }
 
     &::placeholder:not(.search) {
@@ -189,7 +189,7 @@ export const StyledInput = styled.input<{ theme: MavrykTheme }>`
   border-radius: 10px;
   line-height: 100%;
   margin: 0;
-  color: ${({ theme }) => theme.textColor};
+  color: ${({ theme }) => theme.blockNameTitleColor};
   display: block;
   padding: 13px 45px 13px 20px;
 
@@ -288,6 +288,10 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
         color: ${({ theme }) => theme.downColor};
       }
     }
+
+    .pinned-child {
+      border-left: 1px solid ${({ theme }) => theme.downColor};
+    }
   }
 
   &.success {
@@ -297,6 +301,10 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
       &::placeholder {
         color: ${({ theme }) => theme.upColor};
       }
+    }
+
+    .pinned-child {
+      border-left: 1px solid ${({ theme }) => theme.upColor};
     }
   }
 

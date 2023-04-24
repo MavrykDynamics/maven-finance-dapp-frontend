@@ -8,7 +8,7 @@ import type { CouncilMaxLength } from '../../../utils/TypesAndInterfaces/Council
 
 // helpers
 import { validateFormField } from 'utils/validatorFunctions'
-import { BUTTON_PRIMARY, SUBMIT } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
 import { TzAddress } from '../../../app/App.components/TzAddress/TzAddress.view'
 
 // view
@@ -23,7 +23,12 @@ import { updateCouncilMemberInfo } from '../Council.actions'
 // style
 import { CouncilFormStyled } from './CouncilForm.style'
 
-export const CouncilFormUpdateCouncilMemberInfo = (maxLength: CouncilMaxLength) => {
+type Props = {
+  maxLength: CouncilMaxLength
+  callback: () => void
+}
+
+export const CouncilFormUpdateCouncilMemberInfo = ({ maxLength, callback }: Props) => {
   const dispatch = useDispatch()
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const { councilMembers } = useSelector((state: State) => state.council)
@@ -93,7 +98,7 @@ export const CouncilFormUpdateCouncilMemberInfo = (maxLength: CouncilMaxLength) 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     try {
-      await dispatch(updateCouncilMemberInfo(newMemberName, newMemberWebsite, newMemberImage))
+      await dispatch(updateCouncilMemberInfo(newMemberName, newMemberWebsite, newMemberImage, callback))
     } catch (error) {
       console.error(error)
     }
@@ -143,7 +148,7 @@ export const CouncilFormUpdateCouncilMemberInfo = (maxLength: CouncilMaxLength) 
         title={'Upload Profile Pic'}
       />
       <div className="btn-group">
-        <NewButton kind={BUTTON_PRIMARY} type={SUBMIT}>
+        <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT}>
           <Icon id="upload" />
           Update Council Member Info
         </NewButton>

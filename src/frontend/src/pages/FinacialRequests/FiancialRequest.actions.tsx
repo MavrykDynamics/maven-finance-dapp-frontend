@@ -21,11 +21,12 @@ export const getFinancialRequestStorage = () => async (dispatch: AppDispatch, ge
       FINANCIAL_REQUESTS_STORAGE_QUERY_VARIABLE,
     )
 
-    const financialRequests = normalizeFinancialRequests(storage, dipDupTokens)
+    const { financialRequestMapper, financialRequestsIds } = normalizeFinancialRequests(storage, dipDupTokens)
 
     dispatch({
       type: GET_FINANCIAL_REQUEST_STORAGE,
-      financialRequests,
+      financialRequestMapper,
+      financialRequestsIds,
     })
   } catch (error) {
     dispatch(showToaster(ERROR, 'Error while loading financial requests', 'Please try to reload page'))
