@@ -15,6 +15,7 @@ export const GOVERNANCE_CONFIG_QUERY = `
       proposal_submission_fee_mutez
       timelock_proposal_id
       cycle_highest_voted_proposal_id
+      current_round_end_level
     }
   }
 `

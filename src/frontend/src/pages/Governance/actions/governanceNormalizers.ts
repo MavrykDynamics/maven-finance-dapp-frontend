@@ -146,6 +146,7 @@ const calcGovPhase = (round: number) =>
   round === 0 ? GovPhases.PROPOSAL : round === 1 ? GovPhases.VOTING : GovPhases.TIMELOCK
 
 export const normalizeGovernanceConfig = (currentGovernance: GovernanceGraphQL): State['governance']['config'] => {
+  console.log({ currentGovernance })
   return {
     address: currentGovernance.address,
     fee: calcWithoutMu(currentGovernance.proposal_submission_fee_mutez),
@@ -163,9 +164,6 @@ export const normalizeGovernanceConfig = (currentGovernance: GovernanceGraphQL):
     cycle: currentGovernance.cycle_id ?? 0,
     timelockProposalId: currentGovernance.timelock_proposal_id ?? 0,
     cycleHighestVotedProposalId: currentGovernance.cycle_highest_voted_proposal_id ?? 0,
-
-    // TODO: check this value usage
-    cycleCounter: 0,
 
     governancePhase: calcGovPhase(currentGovernance.current_round),
   }

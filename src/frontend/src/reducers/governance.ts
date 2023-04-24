@@ -29,7 +29,6 @@ export type GovernanceState = {
     cycle: number
     timelockProposalId: number
     cycleHighestVotedProposalId: number
-    cycleCounter: number
 
     governancePhase: GovernancePhaseType
   }
@@ -58,7 +57,6 @@ export const DEFAULT_GOVERNANCE_STORAGE: GovernanceState = {
     cycle: 0,
     timelockProposalId: 0,
     cycleHighestVotedProposalId: 0,
-    cycleCounter: 0,
 
     governancePhase: GovPhases.PROPOSAL,
   },
