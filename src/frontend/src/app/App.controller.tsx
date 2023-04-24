@@ -34,6 +34,7 @@ import {
   getWhitelistTokensStorage,
   getTokensPrices,
   getMTokensStorage,
+  getMvkFaucet,
 } from 'reducers/actions/dipDupActions.actions'
 import { getCouncilMembers } from 'pages/Council/Council.actions'
 import { getBreakGlassCouncilMembers } from 'pages/BreakGlassCouncil/BreakGlassCouncil.actions'
@@ -71,6 +72,8 @@ const AppContainer = () => {
         dispatch(getWhitelistTokensStorage()),
         dispatch(getMTokensStorage()),
         dispatch(getXtzBakers()),
+        // TODO: uncomment it when contracts are updated
+        // dispatch(getMvkFaucet()),
 
         // Used to retrieve user avatar
         dispatch(getCouncilMembers()),
@@ -115,6 +118,7 @@ const AppContainer = () => {
     <Router>
       <AppStyled isExpandedMenu={sidebarOpened}>
         <ActionLoader />
+        <Toaster />
         <WertLoader />
         <Menu />
 
@@ -125,7 +129,6 @@ const AppContainer = () => {
           <AppRoutes />
         </LoansPopupsProvider>
       </AppStyled>
-      <Toaster />
     </Router>
   )
 }

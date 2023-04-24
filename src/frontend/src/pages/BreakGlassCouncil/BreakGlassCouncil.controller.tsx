@@ -58,6 +58,9 @@ export function BreakGlassCouncil() {
     councilMembers,
   } = useSelector((state: State) => state.council)
   const { satelliteMapper } = useSelector((state: State) => state.satellites)
+  const {
+    config: { emergencyGovActive },
+  } = useSelector((state: State) => state.emergencyGovernance)
 
   const handleSignAction = (id: number) => {
     dispatch(signAction(id))
@@ -131,7 +134,7 @@ export function BreakGlassCouncil() {
           // general info
           pathnameOfPage="/break-glass-council"
           maxLength={councilMaxLength}
-          glassBroken={glassBroken}
+          glassBroken={!emergencyGovActive}
           showPropagateBreakGlass
           titles={titles}
           // pending actions
