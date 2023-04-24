@@ -12,12 +12,17 @@ import { Input } from 'app/App.components/Input/NewInput'
 import { DropDownCollateralAssetType, DropDownXTZBakerType } from './CreateNewVault.modal'
 import NewButton from 'app/App.components/Button/NewButton'
 
-import { calcCollateralRatio, getMaxCollateralWithdraw, isTezosAsset } from 'pages/Loans/Loans.helpers'
+import {
+  calcCollateralRatio,
+  getLoansInputMaxAmount,
+  isTezosAsset,
+  loansInputValidation,
+} from 'pages/Loans/Loans.helpers'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
+import { COLLATERAL_RATIO_GRADIENT, assetDecimalsToShow, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { depositCollateralAction } from 'pages/Loans/Actions/vaultCollateral.actions'
-import { AddNewCollateralDataProps, getOnBlurValue, getOnFocusValue, loansInputValidation } from './Modals.helpers'
+import { AddNewCollateralDataProps, getOnBlurValue, getOnFocusValue } from './Modals.helpers'
 import {
   InputStatusType,
   INPUT_LARGE,
@@ -29,9 +34,10 @@ import { InputPinnedDropDown } from 'app/App.components/Input/Input.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
-import { DropDownJsxChild, LoansModalBase, VaultModalOverview } from './Modals.style'
+import { LoansModalBase, VaultModalOverview } from './Modals.style'
 import { XtzBakerType } from 'utils/TypesAndInterfaces/Loans'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
+import { DropDownJsxChild } from 'app/App.components/DropDown/DropDown.style'
 
 type InputState =
   | {
@@ -172,8 +178,14 @@ export const AddNewCollateral = ({
     setAssetChosenDdItem(bakerItemsForDropDown.find(({ id }) => id === itemId))
 
   // stuff to handle inputs
-  const inputOnChangeHandle = (newInputAmount: string, userAssetBalance: number, symbol?: string) => {
-    const validationStatus = loansInputValidation({ inputAmount: newInputAmount, maxAmount: userAssetBalance, symbol })
+  const inputOnChangeHandle = (newInputAmount: string, userAssetBalance: number) => {
+    const validationStatus = loansInputValidation({
+      inputAmount: newInputAmount,
+      maxAmount: userAssetBalance,
+      options: {
+        byDecimalPlaces: inputData?.selectedDdItem.decimals || assetDecimalsToShow,
+      },
+    })
 
     if (inputData) {
       setInputData({
@@ -301,12 +313,7 @@ export const AddNewCollateral = ({
                   type: 'number',
                   onBlur: inputOnBlurHandle,
                   onFocus: onFocusHandler,
-                  onChange: (e) =>
-                    inputOnChangeHandle(
-                      e.target.value,
-                      inputData.userBalance,
-                      isTezosAsset(inputData.assetName) ? 'XTZ' : inputData.assetSymbol,
-                    ),
+                  onChange: (e) => inputOnChangeHandle(e.target.value, inputData.userBalance),
                 }}
                 settings={{
                   balance: inputData.userBalance,
@@ -314,7 +321,7 @@ export const AddNewCollateral = ({
                   useMaxHandler: () =>
                     setInputData({
                       ...inputData,
-                      amount: String(inputData.userBalance),
+                      amount: getLoansInputMaxAmount(inputData.userBalance, inputData.selectedDdItem.decimals),
                       validationStatus: INPUT_STATUS_SUCCESS,
                     }),
                   inputSize: INPUT_LARGE,

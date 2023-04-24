@@ -77,12 +77,12 @@ export const dropProposal = (proposalId: number) => async (dispatch: AppDispatch
   }
 
   try {
-    await dispatch(toggleActionLoader(true))
-    await dispatch(showToaster(INFO, 'Drop proposal...', 'Please wait 30s'))
-
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(state.contractAddresses.governanceAddress.address)
     const transaction = await contract?.methods.dropProposal(proposalId).send()
+
+    await dispatch(toggleActionLoader(true))
+    await dispatch(showToaster(INFO, 'Drop proposal...', 'Please wait 30s'))
 
     await transaction.confirmation()
 
@@ -123,12 +123,13 @@ export const lockProposal = (proposalId: number) => async (dispatch: AppDispatch
   }
 
   try {
-    await dispatch(toggleActionLoader(true))
-    await dispatch(showToaster(INFO, 'Locking proposal...', 'Please wait 30s'))
-
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(state.contractAddresses.governanceAddress.address)
     const transaction = await contract?.methods.lockProposal(proposalId).send()
+
+    await dispatch(toggleActionLoader(true))
+    await dispatch(showToaster(INFO, 'Locking proposal...', 'Please wait 30s'))
+
     await transaction.confirmation()
 
     // @ts-ignore don't have proper type to acees data, type has only methods

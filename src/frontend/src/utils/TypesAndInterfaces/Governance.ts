@@ -40,4 +40,26 @@ export type GovernanceSatelliteGraphQL = Omit<Governance_Satellite, '__typename'
 
 // Financical request types
 export type GovernanceFinancialRequestGraphQL = Omit<Governance_Financial_Request, '__typename'>
-export type FinancialRequestRecord = ReturnType<typeof normalizeFinancialRequests>[number]
+export type FinancialRequestRecord = {
+  tokenAddress: string
+  id: number
+  type: string
+  purpose: string
+  requesterAddress: string
+  requestedTime?: string | null
+  governanceContract: string
+  governanceFinId: string
+  treasuryContract: string
+  votingTillTime?: string | null
+  tokensAmount: number
+  status: number
+  tokenName: string
+  executed: boolean
+
+  // Votes data
+  votes: Governance_Financial_Request['votes']
+  forVotesMVKTotal: number
+  againstVotesMVKTotal: number
+  sMVKTotakSupply: number
+  quorum: number
+}

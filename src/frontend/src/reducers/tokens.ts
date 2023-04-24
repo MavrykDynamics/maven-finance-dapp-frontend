@@ -2,6 +2,7 @@ import { M_Token } from './../utils/generated/graphqlTypes'
 import { DipDupTokensGraphQl } from 'utils/TypesAndInterfaces/DipDupTokens'
 import {
   GET_DIP_DUP_TOKENS,
+  GET_MVK_FAUCET,
   GET_M_TOKENS,
   GET_TOKENS_PRICES,
   GET_WHITELIST_TOKENS,
@@ -29,6 +30,7 @@ export type TokensType = {
     id: number
   }>
   mTokens: Array<M_Token>
+  mvkFaucetAddress: string | null
 }
 const defaultTokensInfoState: TokensType = {
   dipDupTokens: [],
@@ -55,6 +57,8 @@ const defaultTokensInfoState: TokensType = {
   },
   tokensPrices: { mvk: 1 },
   mTokens: [],
+  // TODO: set default address to null, when contracts are updated
+  mvkFaucetAddress: 'KT1A6EJRMuz8TZWeSxaqvU2UsqxRjopvo8Nh', //null,
 }
 
 export function tokens(state = defaultTokensInfoState, action: AnyAction) {
@@ -69,6 +73,8 @@ export function tokens(state = defaultTokensInfoState, action: AnyAction) {
       return { ...state, xtzBakers: action.xtzBakers }
     case GET_M_TOKENS:
       return { ...state, mTokens: action.mTokens }
+    case GET_MVK_FAUCET:
+      return { ...state, mvkFaucetAddress: action.mvkFaucet }
     case GET_TOKENS_PRICES:
       return {
         ...state,

@@ -2,7 +2,6 @@ import { InputStatusType } from 'app/App.components/Input/Input.constants'
 import { CollateralType, DepositorsFlagType, LoansAssetDataType, LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
 import LoansPopupsProvider from './LoansModals.provider'
 import { VaultType } from 'utils/TypesAndInterfaces/Vaults'
-import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 
 export type LoansPopupsInputStateType = { amount: string; validationStatus: InputStatusType }
 export type VaultNameInputStateType = { name: string; validationStatus: InputStatusType }
@@ -183,25 +182,3 @@ export const DEFAULT_LOANS_POPUPS_STATE = {
   liquidateVaultPopup: DEFAULT_LOANS_POPUP_STATE,
 }
 
-export const loansInputValidation = ({
-  inputAmount,
-  minAmount = 0,
-  maxAmount,
-  symbol,
-}: {
-  inputAmount: string
-  minAmount?: number
-  maxAmount: number
-  symbol?: string
-}) => {
-  const validationStatus =
-    Number(inputAmount) > minAmount && Number(inputAmount) <= maxAmount ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
-
-  if (symbol?.toLowerCase() === 'tzbtc') {
-    const numberOfDecimalPlaces = inputAmount.match(/\.(\d+)/)?.[1].length ?? 0
-
-    return numberOfDecimalPlaces > 8 ? INPUT_STATUS_ERROR : validationStatus
-  }
-
-  return validationStatus
-}

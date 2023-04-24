@@ -9,23 +9,6 @@ export const UserProfileEditorStyled = styled.div<{ theme: MavrykTheme }>`
     flex-direction: column;
     align-items: center;
   }
-
-  .close-btn {
-    position: absolute;
-    right: 15px;
-    top: 15px;
-
-    width: 24px;
-    height: 24px;
-
-    fill: ${({ theme }) => theme.valueColor};
-
-    transition: opacity 0.3s;
-
-    &:hover {
-      opacity: 0.6;
-    }
-  }
 `
 
 export const UserProfileEditorSaveButton = styled.div`

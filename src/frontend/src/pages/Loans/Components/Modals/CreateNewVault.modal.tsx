@@ -8,8 +8,8 @@ import {
   INPUT_STATUS_ERROR,
   INPUT_STATUS_SUCCESS,
 } from 'app/App.components/Input/Input.constants'
-import { CreateVaultPopupDataType, VaultNameInputStateType, loansInputValidation } from './Modals.helpers'
-import { decimalsToShow, isTezosAsset } from 'pages/Loans/Loans.helpers'
+import { CreateVaultPopupDataType, VaultNameInputStateType } from './Modals.helpers'
+import { getLoansInputMaxAmount, isTezosAsset, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import { AvaliableCollateralType, XtzBakerType } from 'utils/TypesAndInterfaces/Loans'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
@@ -21,7 +21,7 @@ import { Input } from 'app/App.components/Input/NewInput'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import Icon from 'app/App.components/Icon/Icon.view'
 
-import { DropDownJsxChild, LoansModalBase } from './Modals.style'
+import { LoansModalBase } from './Modals.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { InputPinnedDropDown } from 'app/App.components/Input/Input.style'
@@ -32,6 +32,8 @@ import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } f
 import { triggerInitialVaultCreation } from 'pages/Loans/Actions/vault.actions'
 import { depositCollateralAction } from 'pages/Loans/Actions/vaultCollateral.actions'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
+import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
+import { DropDownJsxChild } from 'app/App.components/DropDown/DropDown.style'
 
 export type DropDownCollateralAssetType = DropDownItemType & AvaliableCollateralType
 
@@ -254,9 +256,17 @@ export const CreateNewVault = ({
     })
   }
 
+  const { decimals, address, tokenType, gqlName } = collateralsToSelect[collaterals[0]?.id] || {}
+
   // stuff to handle inputs
-  const inputOnChangeHandle = (newInputAmount: string, inputIdx: number, userAssetBalance: number, symbol?: string) => {
-    const validationStatus = loansInputValidation({ inputAmount: newInputAmount, maxAmount: userAssetBalance, symbol })
+  const inputOnChangeHandle = (newInputAmount: string, inputIdx: number, userAssetBalance: number) => {
+    const validationStatus = loansInputValidation({
+      inputAmount: newInputAmount,
+      maxAmount: userAssetBalance,
+      options: {
+        byDecimalPlaces: decimals || assetDecimalsToShow,
+      },
+    })
 
     setCollaterals(
       collaterals.map((collateral, updateCollateralIdx) =>
@@ -339,8 +349,6 @@ export const CreateNewVault = ({
     //   return acc
     // }, [])
 
-    const { decimals, address, tokenType, gqlName } = collateralsToSelect[collaterals[0].id]
-
     const collaretalToDeposit = {
       collateralName: gqlName,
       assetId: collaterals[0].id,
@@ -356,11 +364,6 @@ export const CreateNewVault = ({
       )
     }
   }
-
-  const decimalcsForCommaNumber = useMemo(
-    () => decimalsToShow(firstCollateralMetadata?.symbol),
-    [firstCollateralMetadata],
-  )
 
   const titleText =
     shownScreen === 'initial'
@@ -452,13 +455,7 @@ export const CreateNewVault = ({
                         inputProps={{
                           value: inputAmount,
                           type: 'number',
-                          onChange: (e) =>
-                            inputOnChangeHandle(
-                              e.target.value,
-                              idx,
-                              collateralMetadata.userBalance,
-                              collateralMetadata.symbol,
-                            ),
+                          onChange: (e) => inputOnChangeHandle(e.target.value, idx, collateralMetadata.userBalance),
                           onBlur: (e) => inputOnBlurHandle(e.target.value, idx),
                           onFocus: () => onFocusHandler(idx),
                         }}
@@ -466,10 +463,9 @@ export const CreateNewVault = ({
                           balanceAsset: collateralMetadata.symbol,
                           useMaxHandler: () =>
                             inputOnChangeHandle(
-                              String(collateralMetadata.userBalance),
+                              getLoansInputMaxAmount(collateralMetadata.userBalance, collateralMetadata.decimals),
                               idx,
                               collateralMetadata.userBalance,
-                              collateralMetadata.symbol,
                             ),
                           inputStatus: validationField,
                           ...(collateralMetadata.rate
@@ -563,7 +559,7 @@ export const CreateNewVault = ({
                     <div className="name">Amount</div>
                     <CommaNumber
                       value={Number(collaterals[0].inputAmount)}
-                      decimalsToShow={decimalcsForCommaNumber}
+                      decimalsToShow={assetDecimalsToShow}
                       className="value"
                     />
                   </ThreeLevelListItem>

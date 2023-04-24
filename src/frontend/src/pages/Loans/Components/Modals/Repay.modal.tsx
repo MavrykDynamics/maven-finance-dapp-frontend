@@ -2,15 +2,9 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useLockBodyScroll } from 'react-use'
 import { useEffect, useMemo, useState } from 'react'
 
-import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
+import { COLLATERAL_RATIO_GRADIENT, assetDecimalsToShow, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { INPUT_STATUS_SUCCESS, INPUT_STATUS_ERROR, INPUT_LARGE } from 'app/App.components/Input/Input.constants'
-import {
-  DEFAULT_LOANS_INPUT_VALUE,
-  getOnBlurValue,
-  getOnFocusValue,
-  RepayPartPopupDataType,
-  loansInputValidation,
-} from './Modals.helpers'
+import { DEFAULT_LOANS_INPUT_VALUE, getOnBlurValue, getOnFocusValue, RepayPartPopupDataType } from './Modals.helpers'
 import { State } from 'reducers'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { repayPartOfVaultAction } from 'pages/Loans/Actions/vault.actions'
@@ -26,7 +20,7 @@ import { PopupContainer, PopupContainerWrapper } from 'app/App.components/Settin
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase, VaultModalOverview } from './Modals.style'
-import { calcCollateralRatio } from 'pages/Loans/Loans.helpers'
+import { calcCollateralRatio, getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { StatusMessageStyled } from '../LoansComponents.style'
 import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
@@ -79,12 +73,14 @@ export const Repay = ({
     }
   }, [show])
 
-  const inputOnChangeHandle = (newInputAmount: string, maxAmount: number, symbol?: string) => {
+  const inputOnChangeHandle = (newInputAmount: string, maxAmount: number) => {
     const validationStatus = loansInputValidation({
       inputAmount: newInputAmount,
       maxAmount,
-      symbol,
       minAmount: minimumRepay,
+      options: {
+        byDecimalPlaces: borrowedAsset?.decimals || assetDecimalsToShow,
+      },
     })
 
     setInputData({
@@ -177,20 +173,18 @@ export const Repay = ({
                     onBlur: inputOnBlurHandle,
                     onFocus: onFocusHandler,
                     onChange: (e) =>
-                      inputOnChangeHandle(
-                        e.target.value,
-                        Math.min(borrowedAsset.userBalance, totalOutstanding),
-                        borrowedAsset?.symbol,
-                      ),
+                      inputOnChangeHandle(e.target.value, Math.min(borrowedAsset.userBalance, totalOutstanding)),
                   }}
                   settings={{
                     balance: borrowedAsset.userBalance,
                     balanceAsset: borrowedAsset?.symbol,
                     useMaxHandler: () =>
                       inputOnChangeHandle(
-                        String(Math.min(borrowedAsset.userBalance, totalOutstanding)),
+                        getLoansInputMaxAmount(
+                          Math.min(borrowedAsset.userBalance, totalOutstanding),
+                          borrowedAsset.decimals,
+                        ),
                         Math.min(borrowedAsset.userBalance, totalOutstanding),
-                        borrowedAsset?.symbol,
                       ),
                     inputStatus: inputData.validationStatus,
                     convertedValue: inputAmount * borrowedAsset.rate,
@@ -239,7 +233,7 @@ export const Repay = ({
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">Amount</div>
-                  <CommaNumber value={inputAmount} className="value" />
+                  <CommaNumber value={inputAmount} decimalsToShow={assetDecimalsToShow} className="value" />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem className="right">
                   <div className="name">USD Value</div>

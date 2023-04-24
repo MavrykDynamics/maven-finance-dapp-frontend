@@ -4,14 +4,13 @@ import { State } from 'reducers'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
+import { COLLATERAL_RATIO_GRADIENT, assetDecimalsToShow, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { INPUT_LARGE, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import {
   AddCollateralPopupDataType,
   DEFAULT_LOANS_INPUT_VALUE,
   getOnBlurValue,
   getOnFocusValue,
-  loansInputValidation
 } from './Modals.helpers'
 
 import { Input } from 'app/App.components/Input/NewInput'
@@ -26,7 +25,12 @@ import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { depositCollateralAction } from 'pages/Loans/Actions/vaultCollateral.actions'
-import { calcCollateralRatio, getMaxCollateralWithdraw } from 'pages/Loans/Loans.helpers'
+import {
+  calcCollateralRatio,
+  getLoansInputMaxAmount,
+  getMaxCollateralWithdraw,
+  loansInputValidation,
+} from 'pages/Loans/Loans.helpers'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239476&t=Sx2aEpp3ifrGxBtQ-0
@@ -94,8 +98,14 @@ export const AddCollateral = ({
   }, [show])
 
   // stuff to handle inputs
-  const inputOnChangeHandle = (newInputAmount: string, maxAmount: number, symbol?: string) => {
-    const validationStatus = loansInputValidation({ inputAmount: newInputAmount, maxAmount, symbol })
+  const inputOnChangeHandle = (newInputAmount: string, maxAmount: number) => {
+    const validationStatus = loansInputValidation({
+      inputAmount: newInputAmount,
+      maxAmount,
+      options: {
+        byDecimalPlaces: collateralData?.decimals || assetDecimalsToShow,
+      },
+    })
 
     setInputData({
       ...inputData,
@@ -179,17 +189,15 @@ export const AddCollateral = ({
               type: 'number',
               onFocus: onFocusHandler,
               onBlur: inputOnBlurHandle,
-              onChange: (e) =>
-                inputOnChangeHandle(e.target.value, collateralData?.userBalance ?? 0, selectedAsset?.symbol),
+              onChange: (e) => inputOnChangeHandle(e.target.value, collateralData?.userBalance ?? 0),
             }}
             settings={{
               balance: collateralData?.userBalance ?? 0,
               balanceAsset: selectedAsset?.symbol,
               useMaxHandler: () =>
                 inputOnChangeHandle(
-                  String(collateralData?.userBalance ?? 0),
+                  getLoansInputMaxAmount(collateralData?.userBalance, collateralData?.decimals),
                   collateralData?.userBalance ?? 0,
-                  selectedAsset?.symbol,
                 ),
               inputStatus: inputData.validationStatus,
               convertedValue: inputAmount * (collateralData?.rate ?? 1),

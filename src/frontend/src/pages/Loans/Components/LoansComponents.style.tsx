@@ -49,12 +49,6 @@ export const LoansTabStyled = styled.div<{ theme: MavrykTheme }>`
     margin: 25px 0 10px 0;
   }
 
-  .list-wrapper {
-    display: flex;
-    flex-direction: column;
-    row-gap: 20px;
-  }
-
   .factory-info {
     display: flex;
     column-gap: 10px;
@@ -65,10 +59,22 @@ export const LoansTabStyled = styled.div<{ theme: MavrykTheme }>`
     bottom: 10px;
     right: 30px;
   }
+`
 
-  &.permissioned {
-    .list-wrapper {
-      margin-top: 20px;
+export const VaultsList = styled.div<{ theme: MavrykTheme }>`
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+
+  &:has(.expandedCard) {
+    .expand-borrow-tab {
+      opacity: 0.3;
+      pointer-events: none;
+    }
+
+    .expandedCard {
+      opacity: 1;
+      pointer-events: auto;
     }
   }
 `
@@ -107,6 +113,10 @@ export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
   flex-direction: column;
   position: relative;
   cursor: default;
+
+  &.more-padding {
+    padding-bottom: 80px;
+  }
 
   .block-name {
     font-weight: 600;
@@ -206,7 +216,7 @@ export const BorrowingTabListItemExpanded = styled.div<{ theme: MavrykTheme }>`
   }
 
   .add-first-collateral {
-    margin: 3px 0 60px auto;
+    margin: 3px 0 0 auto;
     width: 270px;
   }
 

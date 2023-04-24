@@ -14,7 +14,7 @@ import { BorrowingExpandCard } from './BorrowindExpandCard'
 import Checkbox from 'app/App.components/Checkbox/Checkbox.view'
 
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
-import { LoansTabStyled, NoItemsInTabStyled } from './LoansComponents.style'
+import { LoansTabStyled, NoItemsInTabStyled, VaultsList } from './LoansComponents.style'
 
 type BorrowingTabPropsType = {
   borrowingItems: Array<LoansVaultType>
@@ -67,7 +67,7 @@ export const BorrowingTab = ({
             kind={ACTION_PRIMARY}
             className="lending-tab-no-items-btn has-items-borrow-btn"
           />
-          <div className="list-wrapper">
+          <VaultsList>
             {vaults.map((item, idx) => {
               return (
                 <BorrowingExpandCard
@@ -79,7 +79,7 @@ export const BorrowingTab = ({
                 />
               )
             })}
-          </div>
+          </VaultsList>
         </>
       ) : (
         <NoItemsInTabStyled>

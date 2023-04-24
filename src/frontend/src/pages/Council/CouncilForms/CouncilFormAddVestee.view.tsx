@@ -6,7 +6,7 @@ import type { InputStatusType } from '../../../app/App.components/Input/Input.co
 
 // helpers
 import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
-import { BUTTON_PRIMARY, SUBMIT } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
 
 // view
 import { Input } from 'app/App.components/Input/NewInput'
@@ -124,7 +124,7 @@ export const CouncilFormAddVestee = () => {
   }
 
   const vestingInMonthsSettings = {
-    inputStatus: formInputStatus.totalAllocated,
+    inputStatus: formInputStatus.vestingInMonths,
   }
 
   return (
@@ -160,7 +160,7 @@ export const CouncilFormAddVestee = () => {
         </div>
       </div>
       <div className="btn-group">
-        <NewButton kind={BUTTON_PRIMARY} type={SUBMIT}>
+        <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT}>
           <Icon id="plus" />
           Add Vestee
         </NewButton>

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useLocation } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -11,11 +11,10 @@ import {
   PAGINATION_SIDE_RIGHT,
   PAST_REQUESTS_FINANCIAL_REQUESTS_LIST,
 } from '../../app/App.components/Pagination/pagination.consts'
-import { VotingTypes } from 'app/App.components/VotingArea/helpers/voting.const'
 import { parseDate } from 'utils/time'
 
 // types
-import { FinancialRequestRecord, ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
+import { ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
 import { State } from 'reducers'
 
 // view
@@ -36,11 +35,14 @@ import {
 } from './FinancialRequests.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { votingRinancialRequestVote } from 'pages/Governance/actions/GovernanceInteraction.actions'
+import { FinancialRequestStoreType } from 'reducers/financialRequests'
 
 export const FinancialRequestsView = ({
-  financialRequestsList = [],
+  financialRequestsIds,
+  financialRequestMapper,
 }: {
-  financialRequestsList: Array<FinancialRequestRecord>
+  financialRequestsIds: FinancialRequestStoreType['financialRequestsIds']
+  financialRequestMapper: FinancialRequestStoreType['financialRequestMapper']
 }) => {
   const dispatch = useDispatch()
   const { search } = useLocation()
@@ -51,7 +53,7 @@ export const FinancialRequestsView = ({
   } = useSelector((state: State) => state.wallet)
 
   // Handling lists data
-  const { ongoing, past } = distinctRequestsByExecuting(financialRequestsList)
+  const { ongoing, past } = distinctRequestsByExecuting(financialRequestsIds, financialRequestMapper)
 
   const currentOngoingPage = getPageNumber(search, ONGOING_REQUESTS_FINANCIAL_REQUESTS_LIST)
   const currentPastPage = getPageNumber(search, PAST_REQUESTS_FINANCIAL_REQUESTS_LIST)
@@ -66,7 +68,8 @@ export const FinancialRequestsView = ({
     return ongoing.slice(from, to)
   }, [currentOngoingPage, ongoing])
 
-  const [rightSideContent, setRightSideContent] = useState(ongoing[0] ?? past[0])
+  const [rightSideContentId, setRightSideContentId] = useState(ongoing[0] ?? past[0] ?? 0)
+  const rightSideContent = financialRequestMapper[rightSideContentId]
 
   // Full view item data handling
   const rightItemStatus = rightSideContent && getRequestStatus(rightSideContent)
@@ -74,44 +77,16 @@ export const FinancialRequestsView = ({
   // Do not show voting buttons for past requests
   const isActiveVotingButtons = rightItemStatus === ProposalStatus.ONGOING
 
-  const [votingStats, setVoteStatistics] = useState({
-    forVotesMVKTotal: 0,
-    againstVotesMVKTotal: 0,
-    unusedVotesMVKTotal: 0,
-    quorum: 0,
-  })
-
-  useEffect(() => {
-    setVoteStatistics({
-      forVotesMVKTotal: rightSideContent.forVotesMVKTotal,
-      againstVotesMVKTotal: rightSideContent.againstVotesMVKTotal,
-      unusedVotesMVKTotal: Math.round(
-        rightSideContent.sMVKTotakSupply - rightSideContent.forVotesMVKTotal - rightSideContent.againstVotesMVKTotal,
-      ),
-      quorum: rightSideContent.quorum,
-    })
-  }, [rightSideContent])
+  const votingStats = {
+    forVotesMVKTotal: rightSideContent.forVotesMVKTotal,
+    againstVotesMVKTotal: rightSideContent.againstVotesMVKTotal,
+    unusedVotesMVKTotal: Math.round(
+      rightSideContent.sMVKTotakSupply - rightSideContent.forVotesMVKTotal - rightSideContent.againstVotesMVKTotal,
+    ),
+    quorum: rightSideContent.quorum,
+  }
 
   const handleVotingRoundVote = (vote: string) => {
-    switch (vote) {
-      case VotingTypes.YES:
-        setVoteStatistics({
-          ...votingStats,
-          forVotesMVKTotal: +votingStats.forVotesMVKTotal + 1,
-          unusedVotesMVKTotal: +votingStats.unusedVotesMVKTotal - 1,
-        })
-        break
-      case VotingTypes.NO:
-        setVoteStatistics({
-          ...votingStats,
-          againstVotesMVKTotal: +votingStats.againstVotesMVKTotal + 1,
-          unusedVotesMVKTotal: +votingStats.unusedVotesMVKTotal - 1,
-        })
-        break
-      default:
-        return
-    }
-
     dispatch(votingRinancialRequestVote(vote, rightSideContent.id))
   }
 
@@ -133,7 +108,7 @@ export const FinancialRequestsView = ({
 
         <VotingArea
           voteStatistics={votingStats}
-          isVotingActive={true || (rightItemStatus === ProposalStatus.ONGOING && Boolean(isUserSatellite))}
+          isVotingActive={rightItemStatus === ProposalStatus.ONGOING && Boolean(isUserSatellite)}
           handleVote={handleVotingRoundVote}
           buttonsToShow={
             isActiveVotingButtons
@@ -189,6 +164,8 @@ export const FinancialRequestsView = ({
           </InfoBlockName>
         </div>
 
+        <hr />
+
         <div className="info_section">
           <InfoBlockTitle>Governance Info</InfoBlockTitle>
           <div className="list">
@@ -226,13 +203,13 @@ export const FinancialRequestsView = ({
               <h1>Ongoing Requests</h1>
             </GovRightContainerTitleArea>
             <div className="list">
-              {paginatedOngoingItemsList.map((item, idx) => (
+              {paginatedOngoingItemsList.map((frId, idx) => (
                 <FRSListItem
-                  key={item.id}
+                  key={frId}
                   id={idx + 1}
-                  onClickHandler={() => setRightSideContent(item)}
-                  request={item}
-                  selected={rightSideContent?.id === item.id}
+                  onClickHandler={() => setRightSideContentId(frId)}
+                  request={financialRequestMapper[frId]}
+                  selected={rightSideContent?.id === frId}
                 />
               ))}
 
@@ -251,13 +228,13 @@ export const FinancialRequestsView = ({
               <h1>Past Requests</h1>
             </GovRightContainerTitleArea>
             <div className="list">
-              {paginatedPastItemsList.map((item, idx) => (
+              {paginatedPastItemsList.map((frId, idx) => (
                 <FRSListItem
-                  key={item.id}
+                  key={frId}
                   id={idx + 1}
-                  onClickHandler={() => setRightSideContent(item)}
-                  request={item}
-                  selected={rightSideContent?.id === item.id}
+                  onClickHandler={() => setRightSideContentId(frId)}
+                  request={financialRequestMapper[frId]}
+                  selected={rightSideContent?.id === frId}
                 />
               ))}
 

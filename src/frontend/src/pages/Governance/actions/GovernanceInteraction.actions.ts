@@ -7,6 +7,8 @@ import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { getGovernanceStorage } from './GovernanseData.actions'
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
+import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
+import { getFinancialRequestStorage } from 'pages/FinacialRequests/FiancialRequest.actions'
 
 export const proposalRoundVote = (proposalId: number) => async (dispatch: AppDispatch, getState: GetState) => {
   const state: State = getState()
@@ -96,8 +98,18 @@ export const votingRinancialRequestVote =
 
       await transaction?.confirmation()
 
+      // @ts-ignore don't have proper type to acees data, type has only methods
+      const currentOperationLevel = transaction?.lastHead?.header?.level
+
+      // refetch data we need
+      await checkIndexerLevelAndRunDataUpdateCallback({
+        callback: async () => {
+          await dispatch(getFinancialRequestStorage())
+        },
+        currentOperationLevel,
+      })
+
       await dispatch(showToaster(SUCCESS, 'Voting done', 'All good :)'))
-      await dispatch(getGovernanceStorage())
       await dispatch(toggleActionLoader(false))
     } catch (error) {
       if (error instanceof Error) {

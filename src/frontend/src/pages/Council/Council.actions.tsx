@@ -15,6 +15,7 @@ import {
 } from './Council.helpers'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { MVK_DECIMALS } from 'utils/constants'
+import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
 
 // gql
 import {
@@ -36,8 +37,6 @@ import {
 import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 import { TokenType } from 'utils/TypesAndInterfaces/General'
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
-
-// types
 
 const time = String(new Date())
 const timeFormat = 'YYYY-MM-DD'
@@ -184,13 +183,29 @@ export const sign = (actionID: number) => async (dispatch: AppDispatch, getState
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(state.contractAddresses.councilAddress.address)
     const transaction = await contract?.methods.signAction(actionID).send()
+
     await dispatch(toggleActionLoader(true))
+    await dispatch(showToaster(INFO, 'Sign...', 'Please wait 30s'))
 
-    dispatch(showToaster(INFO, 'Sign...', 'Please wait 30s'))
+    // confirm query completion
     await transaction?.confirmation()
-    dispatch(showToaster(SUCCESS, 'Sign is done', 'All good :)'))
 
-    await Promise.all([dispatch(getCouncilPendingActions()), dispatch(getCouncilPastActions())])
+    // @ts-ignore don't have proper type to acees data, type has only methods
+    const currentOperationLevel = transaction?.lastHead?.header?.level
+
+    // refetch data we need
+    await checkIndexerLevelAndRunDataUpdateCallback({
+      callback: async () => {
+        await Promise.all([
+          dispatch(getCouncilPendingActions()),
+          dispatch(getCouncilPastActions()),
+          dispatch(getCouncilMembers()),
+        ])
+      },
+      currentOperationLevel,
+    })
+
+    await dispatch(showToaster(SUCCESS, 'Sign is done', 'All good :)'))
     await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {
@@ -271,7 +286,7 @@ export const addCouncilMember =
       await transaction?.confirmation()
       dispatch(showToaster(SUCCESS, 'Add Council Member is done', 'All good :)'))
 
-      await Promise.all([dispatch(getCouncilPendingActions()), dispatch(getCouncilMembers())])
+      await dispatch(getCouncilPendingActions())
       await dispatch(toggleActionLoader(false))
     } catch (error) {
       if (error instanceof Error) {
@@ -400,7 +415,7 @@ export const changeCouncilMember =
       await transaction?.confirmation()
       dispatch(showToaster(SUCCESS, 'Change Council Member is done', 'All good :)'))
 
-      await Promise.all([dispatch(getCouncilPendingActions()), dispatch(getCouncilMembers())])
+      await dispatch(getCouncilPendingActions())
       await dispatch(toggleActionLoader(false))
     } catch (error) {
       if (error instanceof Error) {
@@ -435,7 +450,7 @@ export const removeCouncilMember = (memberAddress: string) => async (dispatch: A
     await transaction?.confirmation()
     dispatch(showToaster(SUCCESS, 'Remove Council Member is done', 'All good :)'))
 
-    await Promise.all([dispatch(getCouncilPendingActions()), dispatch(getCouncilMembers())])
+    await dispatch(getCouncilPendingActions())
     await dispatch(toggleActionLoader(false))
   } catch (error) {
     if (error instanceof Error) {
@@ -448,7 +463,7 @@ export const removeCouncilMember = (memberAddress: string) => async (dispatch: A
 
 // Update Council Member Info
 export const updateCouncilMemberInfo =
-  (newMemberName: string, newMemberWebsite: string, newMemberImage: string) =>
+  (newMemberName: string, newMemberWebsite: string, newMemberImage: string, callback: () => void) =>
   async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
 
@@ -468,13 +483,15 @@ export const updateCouncilMemberInfo =
       const transaction = await contract?.methods
         .updateCouncilMemberInfo(newMemberName, newMemberWebsite, newMemberImage)
         .send()
+
+      callback()
       await dispatch(toggleActionLoader(true))
 
       await dispatch(showToaster(INFO, 'Update Council Member Info...', 'Please wait 30s'))
       await transaction?.confirmation()
       await dispatch(showToaster(SUCCESS, 'Update Council Member Info is done', 'All good :)'))
 
-      await Promise.all([dispatch(getCouncilPendingActions()), dispatch(getCouncilMembers())])
+      await dispatch(getCouncilMembers())
       await dispatch(toggleActionLoader(false))
     } catch (error) {
       if (error instanceof Error) {

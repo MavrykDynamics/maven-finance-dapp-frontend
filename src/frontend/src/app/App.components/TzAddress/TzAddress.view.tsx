@@ -14,6 +14,7 @@ type TzAddressProps = {
   hasIcon?: boolean
   iconToLeft?: boolean | undefined
   isBold?: boolean
+  isLargeIcon?: boolean
   shouldCopy?: boolean
   className?: string
   amountFromStart?: number
@@ -28,11 +29,12 @@ export const TzAddress = ({
   hasIcon = true,
   iconToLeft,
   isBold,
+  isLargeIcon,
   shouldCopy = true,
   amountFromStart = 4,
   amountFromEnd = 4,
 }: TzAddressProps) => {
-  const addrClasses = `${type} ${isBold ? 'bold' : ''} copyIcon`
+  const addrClasses = `${type} ${isBold ? 'bold' : ''}  ${isLargeIcon ? 'largeIcon' : ''} copyIcon`
   const dispatch = useDispatch()
 
   const handleCopyToClipboard = () => {

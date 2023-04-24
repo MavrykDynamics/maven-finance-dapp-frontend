@@ -98,7 +98,12 @@ export const FormStyled = styled.div<{ theme: MavrykTheme }>`
   }
 
   .align-to-right {
-    display: flex;
-    justify-content: flex-end;
+    margin: 0 0 0 auto;
+    width: 300px;
+  }
+
+  .btn-wrapper {
+    width: 300px;
+    margin-bottom: -5px;
   }
 `

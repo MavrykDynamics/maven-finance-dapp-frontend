@@ -106,6 +106,54 @@ export const PopupContainerWrapper = styled.div`
     }
   }
 
+  &.policy {
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+    padding: 40px 50px 30px;
+    max-width: 950px;
+
+    h1,
+    p,
+    ol {
+      margin: 0;
+    }
+
+    ol {
+      padding-left: 15px;
+    }
+
+    h1:after {
+      margin-bottom: 30px;
+    }
+
+    p,
+    h3,
+    li {
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 21px;
+    }
+
+    li,
+    div {
+      font-weight: 500;
+      line-height: 24px;
+    }
+
+    .checkbox {
+      display: flex;
+      align-items: center;
+      column-gap: 10px;
+    }
+
+    .procced-btn {
+      width: 270px;
+      margin: 0 auto;
+      padding-top: 30px;
+    }
+  }
+
   @media (max-width: 500px) {
     &.settings {
       .theme-switcher-block {
