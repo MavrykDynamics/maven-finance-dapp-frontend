@@ -5,7 +5,6 @@ import { State } from 'reducers'
 // types
 import { StageThreeFormProps, StageThreeValidityItem } from '../ProposalSybmittion.types'
 import { Governance_Proposal } from 'utils/generated/graphqlTypes'
-import { DropDownJsxChild } from 'pages/Loans/Components/Modals/Modals.style'
 
 // helpers
 import { checkPaymentExists, getValidityStageThreeTable } from '../ProposalSubmition.helpers'
@@ -36,6 +35,7 @@ import {
   TableHeaderCell,
   TableRow,
 } from 'app/App.components/Table'
+import { DropDownJsxChild } from 'app/App.components/DropDown/DropDown.style'
 
 export const StageThreeForm = ({
   proposalId,
