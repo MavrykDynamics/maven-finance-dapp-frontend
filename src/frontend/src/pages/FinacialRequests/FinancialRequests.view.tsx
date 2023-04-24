@@ -11,11 +11,13 @@ import {
   PAGINATION_SIDE_RIGHT,
   PAST_REQUESTS_FINANCIAL_REQUESTS_LIST,
 } from '../../app/App.components/Pagination/pagination.consts'
+import { votingFinancialRequestVote } from './FinancialRequest.actions'
 import { parseDate } from 'utils/time'
 
 // types
 import { ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
 import { State } from 'reducers'
+import { FinancialRequestStoreType } from 'reducers/financialRequests'
 
 // view
 import { StatusFlag } from '../../app/App.components/StatusFlag/StatusFlag.controller'
@@ -34,8 +36,6 @@ import {
   InfoBlockName,
 } from './FinancialRequests.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
-import { votingRinancialRequestVote } from 'pages/Governance/actions/GovernanceInteraction.actions'
-import { FinancialRequestStoreType } from 'reducers/financialRequests'
 
 export const FinancialRequestsView = ({
   financialRequestsIds,
@@ -87,7 +87,7 @@ export const FinancialRequestsView = ({
   }
 
   const handleVotingRoundVote = (vote: string) => {
-    dispatch(votingRinancialRequestVote(vote, rightSideContent.id))
+    dispatch(votingFinancialRequestVote(vote, rightSideContent.id))
   }
 
   const RightSideBlock = () =>

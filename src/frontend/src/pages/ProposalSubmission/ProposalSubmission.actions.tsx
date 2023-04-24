@@ -1,12 +1,20 @@
 // helpres, actions
 import { getSatellitesStorage } from 'pages/Satellites/Satellites.actions'
-import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
-import { toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
+import { hideToaster, showToaster } from 'app/App.components/Toaster/Toaster.actions'
+import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
 import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
 
 // consts
-import { ERROR, INFO, SUCCESS } from 'app/App.components/Toaster/Toaster.constants'
+import {
+  ACTION_COMPLETION_MESSAGE_TEXT,
+  ACTION_START_MESSAGE_TEXT,
+  TOASTER_ERROR,
+  TOASTER_INFO,
+  TOASTER_LOADING,
+  TOASTER_SUCCESS,
+  TOASTER_UPDATE_DATA_AFTER_ACTION_DATA,
+} from 'app/App.components/Toaster/Toaster.constants'
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 
 // types
@@ -20,46 +28,53 @@ export const submitProposal =
     const state: State = getState()
 
     if (!state.wallet.accountPkh) {
-      await dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
-      return
-    }
-
-    if (state.loading.isActionActive) {
-      await dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
+      await dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
       return
     }
 
     try {
+      // prepare and send transaction
       const { title, description, ipfs, sourceCode } = form
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.governanceAddress.address)
       const transaction = await contract?.methods.propose(title, description, ipfs, sourceCode).send({ amount: fee })
 
-      await dispatch(toggleActionFullScreenLoader(true))
-      await dispatch(showToaster(INFO, 'Submitting proposal...', 'Please wait 30s'))
+      dispatch(toggleActionFullScreenLoader(true))
+      dispatch(toggleActionCompletion(true))
+      dispatch(showToaster(TOASTER_INFO, 'Submitting proposal...', ACTION_START_MESSAGE_TEXT))
 
-      await transaction?.confirmation()
+      // turn off fs actions loader and start data updating after 5s after operation started
+      setTimeout(async () => {
+        await dispatch(toggleActionFullScreenLoader(false))
+        await dispatch(
+          showToaster(
+            TOASTER_LOADING,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+          ),
+        )
 
-      // @ts-ignore don't have proper type to acees data, type has only methods
-      const currentOperationLevel = transaction?.lastHead?.header?.level
+        // @ts-ignore don't have proper type to acees data, type has only methods
+        const currentOperationLevel = transaction?.lastHead?.header?.level
 
-      // refetch data we need
-      await checkIndexerLevelAndRunDataUpdateCallback({
-        callback: async () => {
-          await dispatch(getGovernanceStorage())
-          await dispatch(getSatellitesStorage())
-        },
-        currentOperationLevel,
-      })
+        // refetch data we need
+        await checkIndexerLevelAndRunDataUpdateCallback({
+          callback: async () => {
+            await dispatch(getGovernanceStorage())
+            await dispatch(getSatellitesStorage())
 
-      await dispatch(showToaster(SUCCESS, 'Proposal Submitted.', 'All good :)'))
-      await dispatch(getGovernanceStorage())
-      await dispatch(getSatellitesStorage())
-      await dispatch(toggleActionFullScreenLoader(false))
+            // Add here call for update data actions
+            await dispatch(hideToaster())
+            await dispatch(showToaster(TOASTER_SUCCESS, 'Proposal Submitted.', ACTION_COMPLETION_MESSAGE_TEXT))
+            await dispatch(toggleActionCompletion(false))
+          },
+          currentOperationLevel,
+        })
+      }, 5000)
     } catch (error) {
       console.error('submitProposal error:', error)
       if (error instanceof Error) {
-        dispatch(showToaster(ERROR, 'Error', error.message))
+        dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
       }
       await dispatch(toggleActionFullScreenLoader(false))
     }
@@ -69,34 +84,52 @@ export const dropProposal = (proposalId: number) => async (dispatch: AppDispatch
   const state: State = getState()
 
   if (!state.wallet.accountPkh) {
-    await dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
-    return
-  }
-
-  if (state.loading.isActionActive) {
-    await dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
+    await dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
     return
   }
 
   try {
+    // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(state.contractAddresses.governanceAddress.address)
     const transaction = await contract?.methods.dropProposal(proposalId).send()
-    await dispatch(toggleActionFullScreenLoader(true))
-    await dispatch(showToaster(INFO, 'Drop proposal...', 'Please wait 30s'))
 
-    await transaction.confirmation()
+    dispatch(toggleActionFullScreenLoader(true))
+    dispatch(toggleActionCompletion(true))
+    dispatch(showToaster(TOASTER_INFO, 'Drop proposal...', ACTION_START_MESSAGE_TEXT))
 
-    // @ts-ignore don't have proper type to acees data, type has only methods
-    const currentOperationLevel = transaction?.lastHead?.header?.level
+    // turn off fs actions loader and start data updating after 5s after operation started
+    setTimeout(async () => {
+      await dispatch(toggleActionFullScreenLoader(false))
+      await dispatch(
+        showToaster(
+          TOASTER_LOADING,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+        ),
+      )
 
-    await dispatch(getGovernanceStorage())
-    await dispatch(getSatellitesStorage())
-    await dispatch(toggleActionFullScreenLoader(false))
+      // @ts-ignore don't have proper type to acees data, type has only methods
+      const currentOperationLevel = transaction?.lastHead?.header?.level
+
+      // refetch data we need
+      await checkIndexerLevelAndRunDataUpdateCallback({
+        callback: async () => {
+          await dispatch(getGovernanceStorage())
+          await dispatch(getSatellitesStorage())
+
+          // Add here call for update data actions
+          await dispatch(hideToaster())
+          await dispatch(showToaster(TOASTER_SUCCESS, 'Proposal dropped.', ACTION_COMPLETION_MESSAGE_TEXT))
+          await dispatch(toggleActionCompletion(false))
+        },
+        currentOperationLevel,
+      })
+    }, 5000)
   } catch (error) {
     console.error('dropProposal error:', error)
     if (error instanceof Error) {
-      dispatch(showToaster(ERROR, 'Error', error.message))
+      dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
     }
     await dispatch(toggleActionFullScreenLoader(false))
   }
@@ -106,45 +139,52 @@ export const lockProposal = (proposalId: number) => async (dispatch: AppDispatch
   const state: State = getState()
 
   if (!state.wallet.accountPkh) {
-    await dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
-    return
-  }
-
-  if (state.loading.isActionActive) {
-    await dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
+    await dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
     return
   }
 
   try {
+    // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(state.contractAddresses.governanceAddress.address)
     const transaction = await contract?.methods.lockProposal(proposalId).send()
-    await dispatch(toggleActionFullScreenLoader(true))
-    await dispatch(showToaster(INFO, 'Locking proposal...', 'Please wait 30s'))
 
-    await transaction.confirmation()
+    dispatch(toggleActionFullScreenLoader(true))
+    dispatch(toggleActionCompletion(true))
+    dispatch(showToaster(TOASTER_INFO, 'Locking proposal...', ACTION_START_MESSAGE_TEXT))
 
-    // @ts-ignore don't have proper type to acees data, type has only methods
-    const currentOperationLevel = transaction?.lastHead?.header?.level
+    // turn off fs actions loader and start data updating after 5s after operation started
+    setTimeout(async () => {
+      await dispatch(toggleActionFullScreenLoader(false))
+      await dispatch(
+        showToaster(
+          TOASTER_LOADING,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+        ),
+      )
 
-    // refetch data we need
-    await checkIndexerLevelAndRunDataUpdateCallback({
-      callback: async () => {
-        await dispatch(getGovernanceStorage())
-        await dispatch(getSatellitesStorage())
-      },
-      currentOperationLevel,
-    })
+      // @ts-ignore don't have proper type to acees data, type has only methods
+      const currentOperationLevel = transaction?.lastHead?.header?.level
 
-    await dispatch(showToaster(SUCCESS, 'Proposal locked.', 'All good :)'))
+      // refetch data we need
+      await checkIndexerLevelAndRunDataUpdateCallback({
+        callback: async () => {
+          await dispatch(getGovernanceStorage())
+          await dispatch(getSatellitesStorage())
 
-    await dispatch(getGovernanceStorage())
-    await dispatch(getSatellitesStorage())
-    await dispatch(toggleActionFullScreenLoader(false))
+          // Add here call for update data actions
+          await dispatch(hideToaster())
+          await dispatch(showToaster(TOASTER_SUCCESS, 'Proposal locked.', ACTION_COMPLETION_MESSAGE_TEXT))
+          await dispatch(toggleActionCompletion(false))
+        },
+        currentOperationLevel,
+      })
+    }, 5000)
   } catch (error) {
     console.error('lockProposal error:', error)
     if (error instanceof Error) {
-      dispatch(showToaster(ERROR, 'Error', error.message))
+      dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
     }
     await dispatch(toggleActionFullScreenLoader(false))
   }
@@ -161,26 +201,19 @@ export const updateProposalData =
     const state: State = getState()
 
     if (!state.wallet.accountPkh) {
-      dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
-      return
-    }
-
-    if (state.loading.isActionActive) {
-      dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
-      return
-    }
-
-    if (!bytesChanges?.length && !paymentChanges?.length) {
-      dispatch(showToaster(ERROR, 'Cannot send transaction', "Don't have changes to save"))
+      dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
       return
     }
 
     try {
-      await dispatch(showToaster(INFO, 'Updating proposal...', 'Please wait 30s'))
-      await dispatch(toggleActionFullScreenLoader(true))
-
+      // prepare and send transaction
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.governanceAddress.address)
+      const transaction = await contract.methods.updateProposalData(proposalId, bytesChanges, paymentChanges).send()
+
+      dispatch(toggleActionFullScreenLoader(true))
+      dispatch(toggleActionCompletion(true))
+      dispatch(showToaster(TOASTER_INFO, 'Updating proposal...', ACTION_START_MESSAGE_TEXT))
 
       // TODO: if need uncomment, estimation for transaction
       // try {
@@ -194,30 +227,38 @@ export const updateProposalData =
       //   console.log('estimate error', e)
       // }
 
-      const transaction = await contract.methods.updateProposalData(proposalId, bytesChanges, paymentChanges).send()
-      await transaction?.confirmation()
+      // turn off fs actions loader and start data updating after 5s after operation started
+      setTimeout(async () => {
+        await dispatch(toggleActionFullScreenLoader(false))
+        await dispatch(
+          showToaster(
+            TOASTER_LOADING,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+          ),
+        )
 
-      // @ts-ignore don't have proper type to acees data, type has only methods
-      const currentOperationLevel = transaction?.lastHead?.header?.level
+        // @ts-ignore don't have proper type to acees data, type has only methods
+        const currentOperationLevel = transaction?.lastHead?.header?.level
 
-      // refetch data we need
-      await checkIndexerLevelAndRunDataUpdateCallback({
-        callback: async () => {
-          await dispatch(getGovernanceStorage())
-          await dispatch(getSatellitesStorage())
-        },
-        currentOperationLevel,
-      })
+        // refetch data we need
+        await checkIndexerLevelAndRunDataUpdateCallback({
+          callback: async () => {
+            await dispatch(getGovernanceStorage())
+            await dispatch(getSatellitesStorage())
 
-      await dispatch(showToaster(SUCCESS, 'Proposal updated.', 'All good :)'))
-      await dispatch(toggleActionFullScreenLoader(false))
-
-      await dispatch(getGovernanceStorage())
-      await dispatch(getSatellitesStorage())
+            // Add here call for update data actions
+            await dispatch(hideToaster())
+            await dispatch(showToaster(TOASTER_SUCCESS, 'Proposal updated.', ACTION_COMPLETION_MESSAGE_TEXT))
+            await dispatch(toggleActionCompletion(false))
+          },
+          currentOperationLevel,
+        })
+      }, 5000)
     } catch (error) {
       if (error instanceof Error) {
         console.error(error)
-        dispatch(showToaster(ERROR, 'Error', error.message))
+        dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
       }
       await dispatch(toggleActionFullScreenLoader(false))
     }

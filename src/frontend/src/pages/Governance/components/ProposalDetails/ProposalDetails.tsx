@@ -9,12 +9,6 @@ import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 
 // helpers & actions
 import { VoteStatistics } from 'app/App.components/VotingArea/helpers/voting'
-import {
-  executeProposal,
-  processProposalPayment,
-  proposalRoundVote,
-  votingRoundVote,
-} from 'pages/Governance/actions/GovernanceInteraction.actions'
 import { parseDate } from 'utils/time'
 import getTimestampByLevel from 'utils/Fetchers/getTimestampByLevel'
 import { dropProposal } from 'pages/ProposalSubmission/ProposalSubmission.actions'
@@ -35,6 +29,12 @@ import { VotingProposalsArea } from 'app/App.components/VotingArea/VotingArea.co
 import { TzAddress } from 'pages/Treasury/Treasury.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { ProposalDetailsStyled } from './ProposalDetails.style'
+import {
+  executeProposal,
+  processProposalPayment,
+  proposalRoundVote,
+  votingRoundVote,
+} from 'pages/Governance/actions/Proposals.actions'
 
 export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) => {
   const dispatch = useDispatch()
