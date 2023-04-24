@@ -135,29 +135,46 @@ export const ProposalSubmission = () => {
       isDescrDiff = submitProposalBody?.description !== remoteProposal?.description,
       isSourceLinkDiff = submitProposalBody?.sourceCode !== remoteProposal?.sourceCode
 
-    const isBytesSame =
-      submitProposalBody?.proposalData.length === remoteProposal?.proposalData.length &&
-      submitProposalBody?.proposalData
-        .filter(({ title, encoded_code }) => title || encoded_code)
-        .every(({ title, encoded_code }, idx) => {
-          const remoteProposalByte = remoteProposal?.proposalData?.[idx]
-          return title !== remoteProposalByte?.title || encoded_code !== remoteProposalByte?.encoded_code
-        })
+    const filteredBytes = submitProposalBody?.proposalData.filter(({ title, encoded_code }) => title || encoded_code)
 
-    const isPaymentsSame =
-      submitProposalBody?.proposalPayments.length === remoteProposal?.proposalPayments.length &&
-      submitProposalBody?.proposalPayments
-        .filter(({ token_amount, to__id }) => token_amount || to__id)
-        .every(({ token_amount, token_address, to__id }, idx) => {
-          const remoteProposalPayment = remoteProposal?.proposalPayments?.[idx]
-          return (
-            to__id !== remoteProposalPayment?.to__id ||
-            token_amount !== remoteProposalPayment?.token_amount ||
-            token_address !== remoteProposalPayment?.token_address
-          )
-        })
+    const isBytesDiff =
+      filteredBytes.length === 0 && remoteProposal?.proposalData.length === 0
+        ? false
+        : filteredBytes.length !== remoteProposal?.proposalData.length
+        ? true
+        : filteredBytes.every(({ title, encoded_code }, idx) => {
+            const remoteProposalByte = remoteProposal?.proposalData?.[idx]
+            return title !== remoteProposalByte?.title || encoded_code !== remoteProposalByte?.encoded_code
+          })
 
-    return isTitleDiff || isDescrDiff || isSourceLinkDiff || !isBytesSame || !isPaymentsSame
+    const filteredPayments = submitProposalBody?.proposalPayments.filter(
+      ({ token_amount, to__id }) => token_amount || to__id,
+    )
+
+    const isPaymentsDiff =
+      filteredPayments.length === 0 && remoteProposal?.proposalPayments.length === 0
+        ? false
+        : filteredPayments.length !== remoteProposal?.proposalPayments.length
+        ? true
+        : filteredPayments.every(({ token_amount, token_address, to__id }, idx) => {
+            const remoteProposalPayment = remoteProposal?.proposalPayments?.[idx]
+            return (
+              to__id !== remoteProposalPayment?.to__id ||
+              token_amount !== remoteProposalPayment?.token_amount ||
+              token_address !== remoteProposalPayment?.token_address
+            )
+          })
+
+    console.log({
+      isTitleDiff,
+      isDescrDiff,
+      isSourceLinkDiff,
+      isBytesDiff,
+      filteredBytes,
+      isPaymentsDiff,
+    })
+
+    return isTitleDiff || isDescrDiff || isSourceLinkDiff || isBytesDiff || isPaymentsDiff
   }, [currentOriginalProposalId, mappedProposals, proposalState])
 
   const handleChangeTab = useCallback((tabId?: number) => {
@@ -406,7 +423,13 @@ export const ProposalSubmission = () => {
                 <Icon id="navigation-menu_close" /> Drop Proposal
               </Button>
               <Button
-                disabled={!isProposalSubmitted || !isProposalPeriod || currentProposal.locked || proposalHasChange}
+                disabled={
+                  !isProposalSubmitted ||
+                  !isProposalPeriod ||
+                  currentProposal.locked ||
+                  proposalHasChange ||
+                  !mappedProposals[currentOriginalProposalId ?? -1]?.proposalData.length
+                }
                 onClick={() => handleLockProposal(selectedUserProposalId)}
                 kind={BUTTON_SECONDARY}
                 form={BUTTON_WIDE}
