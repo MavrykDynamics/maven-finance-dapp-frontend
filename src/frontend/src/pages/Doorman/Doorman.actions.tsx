@@ -2,9 +2,6 @@ import { hideToaster, showToaster } from 'app/App.components/Toaster/Toaster.act
 import {
   ACTION_COMPLETION_MESSAGE_TEXT,
   ACTION_START_MESSAGE_TEXT,
-  ERROR,
-  INFO,
-  SUCCESS,
   TOASTER_ERROR,
   TOASTER_INFO,
   TOASTER_LOADING,
@@ -75,7 +72,7 @@ export const getDoormanStorage = () => async (dispatch: AppDispatch, getState: G
   } catch (error) {
     if (error instanceof Error) {
       console.error('smvkHistoryData', error)
-      dispatch(showToaster(ERROR, 'Error', error.message))
+      dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
     }
   }
 }
@@ -90,7 +87,7 @@ export const stake = (amount: number) => async (dispatch: AppDispatch, getState:
   }
 
   if (!(amount > 0)) {
-    dispatch(showToaster(ERROR, 'Incorrect amount', 'Please enter an amount superior to zero'))
+    dispatch(showToaster(TOASTER_ERROR, 'Incorrect amount', 'Please enter an amount superior to zero'))
     return
   }
 
@@ -164,7 +161,7 @@ export const stake = (amount: number) => async (dispatch: AppDispatch, getState:
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
-      dispatch(showToaster(ERROR, 'Error', error.message))
+      dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
     }
     dispatch(toggleActionFullScreenLoader(false))
   }
@@ -179,7 +176,7 @@ export const unstake = (amount: number) => async (dispatch: AppDispatch, getStat
   }
 
   if (!(amount > 0)) {
-    dispatch(showToaster(ERROR, 'Incorrect amount', 'Please enter an amount superior to zero'))
+    dispatch(showToaster(TOASTER_ERROR, 'Incorrect amount', 'Please enter an amount superior to zero'))
     return
   }
 
@@ -224,7 +221,7 @@ export const unstake = (amount: number) => async (dispatch: AppDispatch, getStat
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
-      dispatch(showToaster(ERROR, 'Error', error.message))
+      dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
     }
     dispatch(toggleActionFullScreenLoader(false))
   }
@@ -279,7 +276,7 @@ export const rewardsCompound = (address: string) => async (dispatch: AppDispatch
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
-      dispatch(showToaster(ERROR, 'Error', error.message))
+      dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
     }
     dispatch(toggleActionFullScreenLoader(false))
   }
@@ -290,7 +287,7 @@ export const getMVKTokensFromFaucet = () => async (dispatch: AppDispatch, getSta
 
   // check whether we can send transaction
   if (!state.tokens.mvkFaucetAddress) {
-    dispatch(showToaster(ERROR, 'Cannot send transaction', 'No faucet address provided'))
+    dispatch(showToaster(TOASTER_ERROR, 'Cannot send transaction', 'No faucet address provided'))
     return
   }
 
@@ -301,7 +298,11 @@ export const getMVKTokensFromFaucet = () => async (dispatch: AppDispatch, getSta
 
   if (state.wallet.user.myMvkTokenBalance > 0 || state.wallet.user.mySMvkTokenBalance > 0) {
     dispatch(
-      showToaster(ERROR, 'You have already claimed MVK', 'You are unable to claim MVK, you have already claimed'),
+      showToaster(
+        TOASTER_ERROR,
+        'You have already claimed MVK',
+        'You are unable to claim MVK, you have already claimed',
+      ),
     )
     return
   }
@@ -346,7 +347,7 @@ export const getMVKTokensFromFaucet = () => async (dispatch: AppDispatch, getSta
     }, 5000)
   } catch (error) {
     if (error instanceof Error) {
-      dispatch(showToaster(ERROR, 'Error', error.message))
+      dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
       dispatch(toggleActionFullScreenLoader(false))
     }
   }
