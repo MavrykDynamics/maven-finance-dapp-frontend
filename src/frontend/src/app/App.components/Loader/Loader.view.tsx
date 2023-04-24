@@ -10,22 +10,7 @@ import { State } from 'reducers'
 import { useLockBodyScroll } from 'react-use'
 import { lightTextColor } from 'styles'
 
-export const LoaderRocket = () => (
-  <LoaderStyledWithBackdrop>
-    <figure>
-      <div>
-        <img src={`/icons/lottie-rocket.gif?v=0`} alt={`Loader Image`} />
-      </div>
-    </figure>
-  </LoaderStyledWithBackdrop>
-)
-
-const LoaderWertIo = () => (
-  <LoaderStyledWithBackdrop backdropAlpha={0.8}>
-    <LoaderShineTextAnimation>Initializating Wert IO widget...</LoaderShineTextAnimation>
-  </LoaderStyledWithBackdrop>
-)
-
+// Details page loader
 export const SpinnerLoader = () => (
   <LoaderStyled>
     <div className="loading">
@@ -40,6 +25,7 @@ export const SpinnerLoader = () => (
   </LoaderStyled>
 )
 
+// Page data loader
 export const ClockLoader = ({
   width = 75,
   height = 75,
@@ -105,18 +91,30 @@ export const ClockLoader = ({
   )
 }
 
-export const SimpleCircleSpinnerLoader = () => {
-  return <SpinnerCircleLoaderStyled></SpinnerCircleLoaderStyled>
-}
+// Action full screen & initial data loader
+export const LoaderRocket = () => (
+  <LoaderStyledWithBackdrop>
+    <figure>
+      <div>
+        <img src={`/icons/lottie-rocket.gif?v=0`} alt={`Loader Image`} />
+      </div>
+    </figure>
+  </LoaderStyledWithBackdrop>
+)
 
 export const ActionLoader = () => {
-  const { isActionLoading } = useSelector((state: State) => state.loading)
-  useLockBodyScroll(isActionLoading)
-  return isActionLoading ? <LoaderRocket /> : null
+  const { isActiveFullScreenLoader } = useSelector((state: State) => state.loading)
+  useLockBodyScroll(isActiveFullScreenLoader)
+  return isActiveFullScreenLoader ? <LoaderRocket /> : null
 }
 
+// Wert initialization loader
 export const WertLoader = () => {
   const { isWertLoading } = useSelector((state: State) => state.loading)
   useLockBodyScroll(isWertLoading)
-  return isWertLoading ? <LoaderWertIo /> : null
+  return isWertLoading ? (
+    <LoaderStyledWithBackdrop backdropAlpha={0.8}>
+      <LoaderShineTextAnimation>Initializating Wert IO widget...</LoaderShineTextAnimation>
+    </LoaderStyledWithBackdrop>
+  ) : null
 }

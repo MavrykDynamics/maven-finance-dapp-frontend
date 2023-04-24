@@ -28,7 +28,7 @@ import { parseDate } from 'utils/time'
 import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
 
 // actions
-import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
+import { toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 
 const time = String(new Date())
@@ -146,13 +146,13 @@ export const setAllContractsAdmin = (newAdminAddress: string) => async (dispatch
     return
   }
 
-  if (state.loading.isActionLoading) {
+  if (state.loading.isActionActive) {
     dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
     return
   }
 
   try {
-    dispatch(toggleActionLoader(true))
+    dispatch(toggleActionFullScreenLoader(true))
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(state.contractAddresses.breakGlassAddress.address)
     const transaction = await contract?.methods.setAllContractsAdmin(newAdminAddress).send()
@@ -162,13 +162,13 @@ export const setAllContractsAdmin = (newAdminAddress: string) => async (dispatch
     await dispatch(getBreakGlassCouncilPendingActions())
 
     dispatch(showToaster(SUCCESS, 'Set All Contracts Admin is done', 'All good :)'))
-    dispatch(toggleActionLoader(false))
+    dispatch(toggleActionFullScreenLoader(false))
   } catch (error) {
     if (error instanceof Error) {
       console.error('propagateBreakGlass - ERROR ', error)
       dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    dispatch(toggleActionLoader(false))
+    dispatch(toggleActionFullScreenLoader(false))
   }
 }
 
@@ -182,13 +182,13 @@ export const setSingleContractAdmin =
       return
     }
 
-    if (state.loading.isActionLoading) {
+    if (state.loading.isActionActive) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
 
     try {
-      dispatch(toggleActionLoader(true))
+      dispatch(toggleActionFullScreenLoader(true))
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.breakGlassAddress.address)
       const transaction = await contract?.methods.setSingleContractAdmin(newAdminAddress, targetContract).send()
@@ -198,13 +198,13 @@ export const setSingleContractAdmin =
       await dispatch(getBreakGlassCouncilPendingActions())
 
       dispatch(showToaster(SUCCESS, 'Set Single Contract Admin is done', 'All good :)'))
-      dispatch(toggleActionLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
     } catch (error) {
       if (error instanceof Error) {
         console.error('propagateBreakGlass - ERROR ', error)
         dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      dispatch(toggleActionLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
     }
   }
 
@@ -217,13 +217,13 @@ export const signAction = (breakGlassActionID: number) => async (dispatch: AppDi
     return
   }
 
-  if (state.loading.isActionLoading) {
+  if (state.loading.isActionActive) {
     dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
     return
   }
 
   try {
-    dispatch(toggleActionLoader(true))
+    dispatch(toggleActionFullScreenLoader(true))
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(state.contractAddresses.breakGlassAddress.address)
     const transaction = await contract?.methods.signAction(breakGlassActionID).send()
@@ -248,13 +248,13 @@ export const signAction = (breakGlassActionID: number) => async (dispatch: AppDi
     })
 
     dispatch(showToaster(SUCCESS, 'Sign Action is done', 'All good :)'))
-    dispatch(toggleActionLoader(false))
+    dispatch(toggleActionFullScreenLoader(false))
   } catch (error) {
     if (error instanceof Error) {
       console.error('signAction - ERROR ', error)
       dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    dispatch(toggleActionLoader(false))
+    dispatch(toggleActionFullScreenLoader(false))
   }
 }
 
@@ -269,13 +269,13 @@ export const addCouncilMember =
       return
     }
 
-    if (state.loading.isActionLoading) {
+    if (state.loading.isActionActive) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
 
     try {
-      dispatch(toggleActionLoader(true))
+      dispatch(toggleActionFullScreenLoader(true))
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.breakGlassAddress.address)
       const transaction = await contract?.methods
@@ -287,13 +287,13 @@ export const addCouncilMember =
       await dispatch(getBreakGlassCouncilPendingActions())
 
       dispatch(showToaster(SUCCESS, 'Add Council Member is done', 'All good :)'))
-      dispatch(toggleActionLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
     } catch (error) {
       if (error instanceof Error) {
         console.error('propagateBreakGlass - ERROR ', error)
         dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      dispatch(toggleActionLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
     }
   }
 
@@ -308,7 +308,7 @@ export const updateCouncilMember =
       return
     }
 
-    if (state.loading.isActionLoading) {
+    if (state.loading.isActionActive) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
@@ -321,20 +321,20 @@ export const updateCouncilMember =
         .send()
 
       callback()
-      dispatch(toggleActionLoader(true))
+      dispatch(toggleActionFullScreenLoader(true))
       dispatch(showToaster(INFO, 'Update Council Member...', 'Please wait 30s'))
 
       await transaction?.confirmation()
       await dispatch(getBreakGlassCouncilMembers())
 
       dispatch(showToaster(SUCCESS, 'Update Council Member is done', 'All good :)'))
-      dispatch(toggleActionLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
     } catch (error) {
       if (error instanceof Error) {
         console.error('propagateBreakGlass - ERROR ', error)
         dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      dispatch(toggleActionLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
     }
   }
 
@@ -355,13 +355,13 @@ export const changeCouncilMember =
       return
     }
 
-    if (state.loading.isActionLoading) {
+    if (state.loading.isActionActive) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
 
     try {
-      dispatch(toggleActionLoader(true))
+      dispatch(toggleActionFullScreenLoader(true))
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.breakGlassAddress.address)
       const transaction = await contract?.methods
@@ -379,13 +379,13 @@ export const changeCouncilMember =
       await dispatch(getBreakGlassCouncilPendingActions())
 
       dispatch(showToaster(SUCCESS, 'Change Council Member is done', 'All good :)'))
-      dispatch(toggleActionLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
     } catch (error) {
       if (error instanceof Error) {
         console.error('propagateBreakGlass - ERROR ', error)
         dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      dispatch(toggleActionLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
     }
   }
 
@@ -398,13 +398,13 @@ export const removeCouncilMember = (memberAddress: string) => async (dispatch: A
     return
   }
 
-  if (state.loading.isActionLoading) {
+  if (state.loading.isActionActive) {
     dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
     return
   }
 
   try {
-    dispatch(toggleActionLoader(true))
+    dispatch(toggleActionFullScreenLoader(true))
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(state.contractAddresses.breakGlassAddress.address)
     const transaction = await contract?.methods.removeCouncilMember(memberAddress).send()
@@ -414,13 +414,13 @@ export const removeCouncilMember = (memberAddress: string) => async (dispatch: A
     await dispatch(getBreakGlassCouncilPendingActions())
 
     dispatch(showToaster(SUCCESS, 'Remove Council Member is done', 'All good :)'))
-    dispatch(toggleActionLoader(false))
+    dispatch(toggleActionFullScreenLoader(false))
   } catch (error) {
     if (error instanceof Error) {
       console.error('propagateBreakGlass - ERROR ', error)
       dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    dispatch(toggleActionLoader(false))
+    dispatch(toggleActionFullScreenLoader(false))
   }
 }
 
@@ -433,13 +433,13 @@ export const propagateBreakGlass = () => async (dispatch: AppDispatch, getState:
     return
   }
 
-  if (state.loading.isActionLoading) {
+  if (state.loading.isActionActive) {
     dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
     return
   }
 
   try {
-    dispatch(toggleActionLoader(true))
+    dispatch(toggleActionFullScreenLoader(true))
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(state.contractAddresses.breakGlassAddress.address)
     const transaction = await contract?.methods.propagateBreakGlass().send()
@@ -453,13 +453,13 @@ export const propagateBreakGlass = () => async (dispatch: AppDispatch, getState:
     ])
 
     dispatch(showToaster(SUCCESS, 'Propagate Break Glass is done', 'All good :)'))
-    dispatch(toggleActionLoader(false))
+    dispatch(toggleActionFullScreenLoader(false))
   } catch (error) {
     if (error instanceof Error) {
       console.error('propagateBreakGlass - ERROR ', error)
       dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    dispatch(toggleActionLoader(false))
+    dispatch(toggleActionFullScreenLoader(false))
   }
 }
 
@@ -472,13 +472,13 @@ export const dropBreakGlass = (breakGlassActionID: number) => async (dispatch: A
     return
   }
 
-  if (state.loading.isActionLoading) {
+  if (state.loading.isActionActive) {
     dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
     return
   }
 
   try {
-    dispatch(toggleActionLoader(true))
+    dispatch(toggleActionFullScreenLoader(true))
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(state.contractAddresses.breakGlassAddress.address)
     const transaction = await contract?.methods.flushAction(breakGlassActionID).send()
@@ -488,12 +488,12 @@ export const dropBreakGlass = (breakGlassActionID: number) => async (dispatch: A
     await dispatch(getBreakGlassCouncilPendingActions())
 
     dispatch(showToaster(SUCCESS, 'Drop Action is done', 'All good :)'))
-    dispatch(toggleActionLoader(false))
+    dispatch(toggleActionFullScreenLoader(false))
   } catch (error) {
     if (error instanceof Error) {
       console.error('dropBreakGlass - ERROR ', error)
       dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    dispatch(toggleActionLoader(false))
+    dispatch(toggleActionFullScreenLoader(false))
   }
 }

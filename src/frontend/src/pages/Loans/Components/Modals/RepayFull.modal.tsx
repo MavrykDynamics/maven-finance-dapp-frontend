@@ -46,7 +46,6 @@ export const RepayFull = ({
 
   useLockBodyScroll(show)
   const dispatch = useDispatch()
-  const { isActionLoading } = useSelector((state: State) => state.loading)
 
   const canRepay = totalOutstanding <= (borrowedAsset?.userBalance ?? 0) && totalOutstanding > minimumRepay
 
@@ -245,12 +244,7 @@ export const RepayFull = ({
                   <Icon id="arrowLeft" />
                   Back
                 </NewButton>
-                <NewButton
-                  kind={BUTTON_PRIMARY}
-                  form={BUTTON_WIDE}
-                  onClick={repayBtnHandler}
-                  disabled={isActionLoading}
-                >
+                <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={repayBtnHandler}>
                   <Icon id="close" />
                   Repay And Close
                 </NewButton>

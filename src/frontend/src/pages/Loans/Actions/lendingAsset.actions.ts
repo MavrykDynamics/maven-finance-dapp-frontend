@@ -1,15 +1,27 @@
-import { OpKind } from '@taquito/taquito'
+import { BatchWalletOperation } from '@taquito/taquito/dist/types/wallet/batch-operation'
+import { OpKind, TransactionWalletOperation } from '@taquito/taquito'
+
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
-import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
-import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
-import { ERROR, INFO, SUCCESS } from 'app/App.components/Toaster/Toaster.constants'
+import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
+import { updateUserData } from 'reducers/actions/user.actions'
+import { getLoansStorage } from './getLoansData.actions'
+import { hideToaster, showToaster } from 'app/App.components/Toaster/Toaster.actions'
+
+import {
+  ACTION_COMPLETION_MESSAGE_TEXT,
+  ACTION_START_MESSAGE_TEXT,
+  TOASTER_ERROR,
+  TOASTER_INFO,
+  TOASTER_LOADING,
+  TOASTER_SUCCESS,
+  TOASTER_UPDATE_DATA_AFTER_ACTION_DATA,
+} from 'app/App.components/Toaster/Toaster.constants'
+
 import { AppDispatch, GetState } from 'app/App.controller'
 import { State } from 'reducers'
-import { getMTokensStorage } from 'reducers/actions/dipDupActions.actions'
-import { updateUserData } from 'reducers/actions/user.actions'
-import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { TokenType } from 'utils/TypesAndInterfaces/General'
-import { getLoansStorage } from './getLoansData.actions'
+
+import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
 
 export const depositLendingAssetAction =
@@ -26,22 +38,18 @@ export const depositLendingAssetAction =
   async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
 
+    // check whether we can send transaction
     if (!state.wallet.accountPkh) {
-      await dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
-      return
-    }
-
-    if (state.loading.isActionLoading) {
-      await dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
+      await dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
       return
     }
 
     try {
+      // prepare and send transaction
       const tezos = await DAPP_INSTANCE.tezos()
       const convertedAssetAmount = convertNumberForContractCall({ number: addLiquidityAmount, grade: assetDecimals })
-      // prepare and send query
       const contract = await tezos.wallet.at(state.contractAddresses.lendingController.address)
-      let transaction = null
+      let transaction: TransactionWalletOperation | BatchWalletOperation | null = null
 
       if (tokenType === 'tez') {
         transaction = await contract?.methods
@@ -105,34 +113,46 @@ export const depositLendingAssetAction =
         transaction = await batch.send()
       }
 
+      // close popup
       callback()
-      await dispatch(toggleActionLoader(true))
-      await dispatch(showToaster(INFO, 'Adding liquidity...', 'Please wait 30s'))
+      dispatch(toggleActionFullScreenLoader(true))
+      dispatch(toggleActionCompletion(true))
+      dispatch(showToaster(TOASTER_INFO, 'Adding liquidity...', ACTION_START_MESSAGE_TEXT))
 
-      // confirm query completion
-      await transaction?.confirmation()
+      // turn off fs actions loader and start data updating after 5s after operation started
+      setTimeout(async () => {
+        await dispatch(toggleActionFullScreenLoader(false))
+        await dispatch(
+          showToaster(
+            TOASTER_LOADING,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+          ),
+        )
 
-      // @ts-ignore don't have proper type to acees data, type has only methods
-      const currentOperationLevel = transaction?.lastHead?.header?.level
+        // @ts-ignore don't have proper type to acees data, type has only methods
+        const currentOperationLevel = transaction?.lastHead?.header?.level
 
-      // refetch data we need
-      await checkIndexerLevelAndRunDataUpdateCallback({
-        callback: async () => {
-          await dispatch(updateUserData())
-          await dispatch(getLoansStorage())
-        },
-        currentOperationLevel,
-      })
+        // refetch data we need
+        await checkIndexerLevelAndRunDataUpdateCallback({
+          callback: async () => {
+            await dispatch(updateUserData())
+            await dispatch(getLoansStorage())
 
-      await dispatch(showToaster(SUCCESS, 'Liquidity added.', 'All good :)'))
-      await dispatch(toggleActionLoader(false))
+            await dispatch(hideToaster())
+            await dispatch(showToaster(TOASTER_SUCCESS, 'Liquidity added.', ACTION_COMPLETION_MESSAGE_TEXT))
+            await dispatch(toggleActionCompletion(false))
+          },
+          currentOperationLevel,
+        })
+      }, 5000)
     } catch (error) {
       console.error('depositLendingAssetAction error:', error)
       if (error instanceof Error) {
-        dispatch(showToaster(ERROR, 'Error', error.message))
+        dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
         callback()
       }
-      await dispatch(toggleActionLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     }
   }
 
@@ -141,50 +161,58 @@ export const withdrawLendingAssetAction =
   async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
 
+    // check whether we can send transaction
     if (!state.wallet.accountPkh) {
-      await dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
-      return
-    }
-
-    if (state.loading.isActionLoading) {
-      await dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
+      await dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
       return
     }
 
     try {
+      // prepare and send transaction
       const convertedAssetAmount = convertNumberForContractCall({ number: removeLiquidityAmount, grade: assetDecimals })
-      // prepare and send query
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.lendingController.address)
       const transaction = await contract?.methods.removeLiquidity(loanTokenName, convertedAssetAmount).send()
 
+      // close popup
       callback()
-      await dispatch(toggleActionLoader(true))
-      await dispatch(showToaster(INFO, 'Removing liquidity...', 'Please wait 30s'))
+      dispatch(toggleActionFullScreenLoader(true))
+      dispatch(toggleActionCompletion(true))
+      dispatch(showToaster(TOASTER_INFO, 'Removing liquidity...', ACTION_START_MESSAGE_TEXT))
 
-      // confirm query completion
-      await transaction?.confirmation()
+      // turn off fs actions loader and start data updating after 5s after operation started
+      setTimeout(async () => {
+        await dispatch(toggleActionFullScreenLoader(false))
+        await dispatch(
+          showToaster(
+            TOASTER_LOADING,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+          ),
+        )
 
-      // @ts-ignore don't have proper type to acees data, type has only methods
-      const currentOperationLevel = transaction?.lastHead?.header?.level
+        // @ts-ignore don't have proper type to acees data, type has only methods
+        const currentOperationLevel = transaction?.lastHead?.header?.level
 
-      // refetch data we need
-      await checkIndexerLevelAndRunDataUpdateCallback({
-        callback: async () => {
-          await dispatch(updateUserData())
-          await dispatch(getLoansStorage())
-        },
-        currentOperationLevel,
-      })
+        // refetch data we need
+        await checkIndexerLevelAndRunDataUpdateCallback({
+          callback: async () => {
+            await dispatch(updateUserData())
+            await dispatch(getLoansStorage())
 
-      await dispatch(showToaster(SUCCESS, 'Liquidity removed.', 'All good :)'))
-      await dispatch(toggleActionLoader(false))
+            await dispatch(hideToaster())
+            await dispatch(showToaster(TOASTER_SUCCESS, 'Liquidity removed.', ACTION_COMPLETION_MESSAGE_TEXT))
+            await dispatch(toggleActionCompletion(false))
+          },
+          currentOperationLevel,
+        })
+      }, 5000)
     } catch (error) {
       console.error('withdrawLendingAssetAction error:', error)
       if (error instanceof Error) {
-        dispatch(showToaster(ERROR, 'Error', error.message))
+        dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
         callback()
       }
-      await dispatch(toggleActionLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     }
   }
