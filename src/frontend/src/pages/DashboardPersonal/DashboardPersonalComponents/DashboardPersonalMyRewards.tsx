@@ -7,12 +7,14 @@ import { MyRewardsStyled } from './DashboardPersonalComponents.style'
 type DashboardPersonalMyRewardsProps = {
   earnedRewards: number
   rewardsToClaim: number
+  isActionActive: boolean
   claimRewardsHandler: () => void
 }
 
 const DashboardPersonalMyRewards = ({
   earnedRewards,
   rewardsToClaim,
+  isActionActive,
   claimRewardsHandler,
 }: DashboardPersonalMyRewardsProps) => {
   return (
@@ -21,7 +23,7 @@ const DashboardPersonalMyRewards = ({
         <h1>My MVK Earnings</h1>
       </GovRightContainerTitleArea>
       <div className="claim-rewards">
-        <Button disabled={rewardsToClaim === 0} onClick={claimRewardsHandler} kind={BUTTON_PRIMARY}>
+        <Button disabled={rewardsToClaim === 0 || isActionActive} onClick={claimRewardsHandler} kind={BUTTON_PRIMARY}>
           Claim Rewards
         </Button>
       </div>

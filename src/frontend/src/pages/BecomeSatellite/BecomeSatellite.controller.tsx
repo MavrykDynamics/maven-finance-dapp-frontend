@@ -68,6 +68,7 @@ export const BecomeSatellite = () => {
     config: { minimumStakedMvkBalance, isConfigLoaded, ...restSatelliteConfig },
   } = useSelector((state: State) => state.satellites)
   const { isLoaded: isDoormanLoaded } = useSelector((state: State) => state.doorman)
+  const { isActionActive } = useSelector((state: State) => state.loading)
   const { themeSelected } = useSelector((state: State) => state.preferences)
 
   const { isLoading } = useDataLoader(
@@ -188,9 +189,9 @@ export const BecomeSatellite = () => {
   }
 
   // Handlers for register/unregister and update data
-  const handleUnregisterSatellite = () => dispatch(unregisterAsSatellite())
+  const handleUnregisterSatellite = async () => await dispatch(unregisterAsSatellite())
 
-  const handleRegisterOrUpdateSatellite = () => {
+  const handleRegisterOrUpdateSatellite = async () => {
     const mainRequestForm: RegisterAsSatelliteForm = {
       name: form.name.text,
       description: form.description.text,
@@ -205,8 +206,8 @@ export const BecomeSatellite = () => {
       : mainRequestForm
 
     usersSatelliteProfile && usersSatelliteProfile.currentlyRegistered
-      ? dispatch(updateSatelliteRecord(requestData))
-      : dispatch(registerAsSatellite(requestData))
+      ? await dispatch(updateSatelliteRecord(requestData))
+      : await dispatch(registerAsSatellite(requestData))
   }
 
   const tooltipPublicKey = (
@@ -411,7 +412,7 @@ export const BecomeSatellite = () => {
                 {usersSatelliteProfile && usersSatelliteProfile.currentlyRegistered && (
                   <NewButton
                     kind={BUTTON_SECONDARY}
-                    disabled={!usersSatelliteProfile.currentlyRegistered}
+                    disabled={!usersSatelliteProfile.currentlyRegistered || isActionActive}
                     onClick={handleUnregisterSatellite}
                   >
                     <Icon id="navigation-menu_close" /> Unregister Satellite
@@ -421,7 +422,7 @@ export const BecomeSatellite = () => {
                 <NewButton
                   disabled={isUpdateButtonDisabled}
                   kind={BUTTON_PRIMARY}
-                  onClick={handleRegisterOrUpdateSatellite}
+                  onClick={handleRegisterOrUpdateSatellite || isActionActive}
                 >
                   <Icon id="satellite-small" />
                   {usersSatelliteProfile

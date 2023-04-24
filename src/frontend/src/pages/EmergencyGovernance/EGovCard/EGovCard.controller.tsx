@@ -34,6 +34,7 @@ type EGovCardProps = {
 export const EGovCard = ({ emergencyGovernance }: EGovCardProps) => {
   const dispatch = useDispatch()
   const { totalStakedMvk } = useSelector((state: State) => state.doorman)
+  const { isActionActive } = useSelector((state: State) => state.loading)
   const {
     config: { minStakedMvkRequiredToVote },
   } = useSelector((state: State) => state.emergencyGovernance)
@@ -47,13 +48,8 @@ export const EGovCard = ({ emergencyGovernance }: EGovCardProps) => {
     !emergencyGovernance.dropped &&
     emergencyGovernance.expirationTimestamp > Date.now()
 
-  const handleProposalVote = async () => {
-    await dispatch(voteEmergencyGovernanceProposal())
-  }
-
-  const dropProposalHandler = async () => {
-    await dispatch(dropEmergencyGovernanceProposal())
-  }
+  const handleProposalVote = async () => await dispatch(voteEmergencyGovernanceProposal())
+  const dropProposalHandler = async () => await dispatch(dropEmergencyGovernanceProposal())
 
   const status = isActiveProposal
     ? ProposalStatus.WAITING
@@ -93,7 +89,7 @@ export const EGovCard = ({ emergencyGovernance }: EGovCardProps) => {
             text="Drop Proposal"
             onClick={dropProposalHandler}
             kind={ACTION_SECONDARY}
-            disabled={emergencyGovernance.proposerId !== accountPkh}
+            disabled={emergencyGovernance.proposerId !== accountPkh || isActionActive}
           />
         </div>
         <VotingArea
