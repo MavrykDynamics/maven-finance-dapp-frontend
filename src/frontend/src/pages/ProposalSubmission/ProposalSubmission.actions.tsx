@@ -1,7 +1,7 @@
 // helpres, actions
 import { getSatellitesStorage } from 'pages/Satellites/Satellites.actions'
 import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
-import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
+import { toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
 import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
 
@@ -24,19 +24,19 @@ export const submitProposal =
       return
     }
 
-    if (state.loading.isActionLoading) {
+    if (state.loading.isActionActive) {
       await dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
 
     try {
-      await dispatch(toggleActionLoader(true))
-      await dispatch(showToaster(INFO, 'Submitting proposal...', 'Please wait 30s'))
-
       const { title, description, ipfs, sourceCode } = form
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.governanceAddress.address)
       const transaction = await contract?.methods.propose(title, description, ipfs, sourceCode).send({ amount: fee })
+
+      await dispatch(toggleActionFullScreenLoader(true))
+      await dispatch(showToaster(INFO, 'Submitting proposal...', 'Please wait 30s'))
 
       await transaction?.confirmation()
 
@@ -53,13 +53,15 @@ export const submitProposal =
       })
 
       await dispatch(showToaster(SUCCESS, 'Proposal Submitted.', 'All good :)'))
-      await dispatch(toggleActionLoader(false))
+      await dispatch(getGovernanceStorage())
+      await dispatch(getSatellitesStorage())
+      await dispatch(toggleActionFullScreenLoader(false))
     } catch (error) {
       console.error('submitProposal error:', error)
       if (error instanceof Error) {
         dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     }
   }
 
@@ -71,7 +73,7 @@ export const dropProposal = (proposalId: number) => async (dispatch: AppDispatch
     return
   }
 
-  if (state.loading.isActionLoading) {
+  if (state.loading.isActionActive) {
     await dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
     return
   }
@@ -80,8 +82,7 @@ export const dropProposal = (proposalId: number) => async (dispatch: AppDispatch
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(state.contractAddresses.governanceAddress.address)
     const transaction = await contract?.methods.dropProposal(proposalId).send()
-
-    await dispatch(toggleActionLoader(true))
+    await dispatch(toggleActionFullScreenLoader(true))
     await dispatch(showToaster(INFO, 'Drop proposal...', 'Please wait 30s'))
 
     await transaction.confirmation()
@@ -89,23 +90,15 @@ export const dropProposal = (proposalId: number) => async (dispatch: AppDispatch
     // @ts-ignore don't have proper type to acees data, type has only methods
     const currentOperationLevel = transaction?.lastHead?.header?.level
 
-    // refetch data we need
-    await checkIndexerLevelAndRunDataUpdateCallback({
-      callback: async () => {
-        await dispatch(getGovernanceStorage())
-        await dispatch(getSatellitesStorage())
-      },
-      currentOperationLevel,
-    })
-
-    await dispatch(showToaster(SUCCESS, 'Proposal Droped.', 'All good :)'))
-    await dispatch(toggleActionLoader(false))
+    await dispatch(getGovernanceStorage())
+    await dispatch(getSatellitesStorage())
+    await dispatch(toggleActionFullScreenLoader(false))
   } catch (error) {
     console.error('dropProposal error:', error)
     if (error instanceof Error) {
       dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    await dispatch(toggleActionLoader(false))
+    await dispatch(toggleActionFullScreenLoader(false))
   }
 }
 
@@ -117,7 +110,7 @@ export const lockProposal = (proposalId: number) => async (dispatch: AppDispatch
     return
   }
 
-  if (state.loading.isActionLoading) {
+  if (state.loading.isActionActive) {
     await dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
     return
   }
@@ -126,8 +119,7 @@ export const lockProposal = (proposalId: number) => async (dispatch: AppDispatch
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(state.contractAddresses.governanceAddress.address)
     const transaction = await contract?.methods.lockProposal(proposalId).send()
-
-    await dispatch(toggleActionLoader(true))
+    await dispatch(toggleActionFullScreenLoader(true))
     await dispatch(showToaster(INFO, 'Locking proposal...', 'Please wait 30s'))
 
     await transaction.confirmation()
@@ -145,13 +137,16 @@ export const lockProposal = (proposalId: number) => async (dispatch: AppDispatch
     })
 
     await dispatch(showToaster(SUCCESS, 'Proposal locked.', 'All good :)'))
-    await dispatch(toggleActionLoader(false))
+
+    await dispatch(getGovernanceStorage())
+    await dispatch(getSatellitesStorage())
+    await dispatch(toggleActionFullScreenLoader(false))
   } catch (error) {
     console.error('lockProposal error:', error)
     if (error instanceof Error) {
       dispatch(showToaster(ERROR, 'Error', error.message))
     }
-    await dispatch(toggleActionLoader(false))
+    await dispatch(toggleActionFullScreenLoader(false))
   }
 }
 
@@ -170,7 +165,7 @@ export const updateProposalData =
       return
     }
 
-    if (state.loading.isActionLoading) {
+    if (state.loading.isActionActive) {
       dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
       return
     }
@@ -182,7 +177,7 @@ export const updateProposalData =
 
     try {
       await dispatch(showToaster(INFO, 'Updating proposal...', 'Please wait 30s'))
-      await dispatch(toggleActionLoader(true))
+      await dispatch(toggleActionFullScreenLoader(true))
 
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.governanceAddress.address)
@@ -215,12 +210,15 @@ export const updateProposalData =
       })
 
       await dispatch(showToaster(SUCCESS, 'Proposal updated.', 'All good :)'))
-      await dispatch(toggleActionLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
+
+      await dispatch(getGovernanceStorage())
+      await dispatch(getSatellitesStorage())
     } catch (error) {
       if (error instanceof Error) {
         console.error(error)
         dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionLoader(false))
+      await dispatch(toggleActionFullScreenLoader(false))
     }
   }

@@ -1,10 +1,12 @@
-import { State } from 'reducers'
+import type { State } from 'reducers'
 import type { AppDispatch, GetState } from '../../App.controller'
+import { TOASTER_LOADING, ToasterStatusType } from './Toaster.constants'
+
 export const SHOW_TOASTER = 'SHOW_TOASTER'
 export const HIDE_TOASTER = 'HIDE_TOASTER'
 
 export const showToaster =
-  (status: string, title: string, message: string, timeout: number = 4000) =>
+  (status: ToasterStatusType, title: string, message: string, timeout: number = 4000) =>
   (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
 
@@ -16,14 +18,16 @@ export const showToaster =
         message,
       })
 
-      setTimeout(() => {
-        dispatch(hideToaster())
-      }, timeout)
+      // Loader toaster should be turned off by hide action, cuz we don't know when loading finisheings
+      if (status !== TOASTER_LOADING) {
+        setTimeout(() => {
+          dispatch(hideToaster())
+        }, timeout)
+      }
     }
   }
 
-export const hideToaster = () => (dispatch: AppDispatch) => {
+export const hideToaster = () => (dispatch: AppDispatch) =>
   dispatch({
     type: HIDE_TOASTER,
   })
-}
