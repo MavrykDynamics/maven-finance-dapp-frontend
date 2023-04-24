@@ -1,6 +1,5 @@
-import React, { useEffect, useState, useContext, useRef } from 'react'
+import { useEffect, useState, useContext } from 'react'
 import { useSelector } from 'react-redux'
-import { useClickAway } from 'react-use'
 
 // components
 import { StatusFlag } from '../../../app/App.components/StatusFlag/StatusFlag.controller'
@@ -106,9 +105,9 @@ export const VaultsCard = (props: Props) => {
     vaultTab,
   } = props
 
-  const {
-    openLiquidateVaultPopup,
-  } = useContext(loansPopupsContext)
+  const { isActionActive } = useSelector((state: State) => state.loading)
+
+  const { openLiquidateVaultPopup } = useContext(loansPopupsContext)
 
   const [timerTimestamp, setTimerTimestamp] = useState<number | undefined>(undefined)
 
@@ -295,7 +294,7 @@ export const VaultsCard = (props: Props) => {
             onClick={() => {
               return isMarkStatus ? handleMarkForLiquidation(vaultId, ownerId) : liquidateModalHandler()
             }}
-            disabled={vaultsStatuses.GRACE_PERIOD === status}
+            disabled={vaultsStatuses.GRACE_PERIOD === status || isActionActive}
           />
         </div>
       )}

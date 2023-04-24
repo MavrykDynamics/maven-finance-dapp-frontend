@@ -66,6 +66,7 @@ const tabsList = [
 const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsProps) => {
   const dispatch = useDispatch()
   const { dipDupContracts } = useSelector((state: State) => state.tokens)
+  const { isActionActive } = useSelector((state: State) => state.loading)
   const { themeSelected } = useSelector((state: State) => state.preferences)
 
   const registerFeedHandler = () => dispatch(registerFeedAction())
@@ -250,6 +251,7 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsPr
                   <Button
                     text="Register"
                     kind={ACTION_PRIMARY}
+                    disabled={isActionActive}
                     onClick={() => {
                       // registerFeedHandler()
                       dispatch(showToaster(INFO, 'Coming soon', 'Register to Oracle Feature coming soon'))

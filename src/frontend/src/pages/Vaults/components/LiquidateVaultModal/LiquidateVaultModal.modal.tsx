@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 // components
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
@@ -25,6 +25,7 @@ import { InputStatusType } from 'app/App.components/Input/Input.constants'
 
 // actions
 import { liquidateVault } from 'pages/Vaults/Vaults.actions'
+import { State } from 'reducers'
 
 const columnWidth = '33%'
 const rowHeight = 30
@@ -36,6 +37,8 @@ type Props = {
 }
 
 export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
+  const { isActionActive } = useSelector((state: State) => state.loading)
+
   const {
     vaultId,
     ownerId,
@@ -86,10 +89,10 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
     setShowAsPercentage(!showAsPercentage)
   }
 
-  const handleLiquidateVault = () => {
+  const handleLiquidateVault = async () => {
     if (!vaultId || !ownerId || !borrowedAsset?.decimals) return
 
-    dispatch(
+    await dispatch(
       liquidateVault({
         vaultId,
         vaultOwner: ownerId,
@@ -311,7 +314,12 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
           )}
 
           <div className="g-centering-group">
-            <Button text="Liquidate" kind={ACTION_PRIMARY} disabled={!costToLiquidate} onClick={handleLiquidateVault} />
+            <Button
+              text="Liquidate"
+              kind={ACTION_PRIMARY}
+              disabled={!costToLiquidate || isActionActive}
+              onClick={handleLiquidateVault}
+            />
           </div>
         </LiquidateVaultModalStyled>
       </PopupContainerWrapper>
