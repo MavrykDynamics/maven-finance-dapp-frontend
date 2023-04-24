@@ -2,7 +2,6 @@ import { hideToaster, showToaster } from 'app/App.components/Toaster/Toaster.act
 import {
   ACTION_COMPLETION_MESSAGE_TEXT,
   ACTION_START_MESSAGE_TEXT,
-  ERROR,
   TOASTER_ERROR,
   TOASTER_INFO,
   TOASTER_LOADING,
@@ -24,6 +23,7 @@ import { SatelliteGovernanceTransfer } from '../../utils/TypesAndInterfaces/Sate
 import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 import { checkIndexerLevelAndRunDataUpdateCallback } from '../../utils/checkIndexerLevel/checkIndexerLevel'
+import { getSatellitesStorage } from '../Satellites/Satellites.actions'
 
 //getGovernanceSatelliteStorage
 export const GET_GOVERNANCE_SATELLITE_STORAGE = 'GET_GOVERNANCE_SATELLITE_STORAGE'
@@ -36,7 +36,7 @@ export const getGovernanceSatelliteStorage = () => async (dispatch: AppDispatch,
       GOVERNANCE_SATELLITE_STORAGE_QUERY_NAME,
       GOVERNANCE_SATELLITE_STORAGE_QUERY_VARIABLE,
     )
-    console.log(governanceSatelliteStorage)
+
     await dispatch({
       type: GET_GOVERNANCE_SATELLITE_STORAGE,
       governanceSatelliteStorage,
@@ -44,7 +44,7 @@ export const getGovernanceSatelliteStorage = () => async (dispatch: AppDispatch,
   } catch (error) {
     if (error instanceof Error) {
       console.error(error)
-      dispatch(showToaster(ERROR, 'Error', error.message))
+      dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
     }
     dispatch({
       type: GET_GOVERNANCE_SATELLITE_STORAGE,
@@ -230,15 +230,10 @@ export const unbanSatellite =
       return
     }
 
-    // if (state.loading.isActionActive) {
-    //   dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
-    //   return
-    // }
-
     try {
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.governanceSatelliteAddress.address)
-      const transaction = await contract?.methods.unbanSatellite(satelliteAddress, purpose).send()
+      const transaction = await contract?.methods.restoreSatellite(satelliteAddress, purpose).send()
 
       dispatch(toggleActionFullScreenLoader(true))
       dispatch(toggleActionCompletion(true))
@@ -401,7 +396,7 @@ export const addOracleToAggregator =
     const state: State = getState()
 
     if (!state.wallet.accountPkh) {
-      dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
+      dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
       return
     }
 
@@ -605,6 +600,7 @@ export const voteForAction =
           callback: async () => {
             // Add here call for update data actions
             await dispatch(getGovernanceSatelliteStorage())
+            await dispatch(getSatellitesStorage())
             await dispatch(hideToaster())
             await dispatch(showToaster(TOASTER_SUCCESS, `${voteType} vote registered`, ACTION_COMPLETION_MESSAGE_TEXT))
             await dispatch(toggleActionCompletion(false))
