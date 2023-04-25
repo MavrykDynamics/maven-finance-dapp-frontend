@@ -391,10 +391,6 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
   .pointer {
     cursor: pointer;
   }
-
-  &.vault-name {
-    margin-top: 45px;
-  }
 `
 
 export const NewInputLabel = styled.label`
@@ -436,6 +432,10 @@ export const InputStyledStatus = styled.div<{ theme: MavrykTheme }>`
     animation: ${zoomIn} 0.3s cubic-bezier(0.12, 0.4, 0.29, 1.46);
     height: 12px;
     width: 17px;
+  }
+
+  &.${INPUT_LARGE} {
+    top: 19.5px;
   }
 `
 

@@ -63,7 +63,7 @@ export const Input = ({
       ) : null}
 
       <StyledInput {...inputProps} className={inputStatus} autoComplete={inputProps.name} />
-      {Boolean(children) ? null : <InputStyledStatus className={`${inputStatus}`} />}
+      {Boolean(children) ? null : <InputStyledStatus className={`${inputStatus} ${inputSize}`} />}
 
       {balance !== undefined && balanceAsset ? (
         <div onClick={balanceHandler}>

@@ -8,7 +8,7 @@ export const LoansModalBase = styled.div<{ theme: MavrykTheme }>`
     font-size: 14px;
     line-height: 21px;
     color: ${({ theme }) => theme.textColor};
-    margin-bottom: 25px;
+    margin-bottom: 30px;
 
     p {
       margin: 0;

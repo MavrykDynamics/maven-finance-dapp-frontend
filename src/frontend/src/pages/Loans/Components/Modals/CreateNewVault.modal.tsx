@@ -410,16 +410,14 @@ export const CreateNewVault = ({
           {shownScreen === 'initial' ? (
             <>
               <Input
-                className={`vault-name`}
                 inputProps={{
                   value: vaultName.name,
                   type: 'text',
                   onChange: handleVaultNameChange,
-                  placeholder: 'Enter Vault Name',
+                  placeholder: 'e.g. Satoshi’s Personal Vault',
                 }}
                 settings={{
                   inputStatus: vaultName.validationStatus,
-                  label: 'Vault name',
                   inputSize: INPUT_LARGE,
                 }}
               />
