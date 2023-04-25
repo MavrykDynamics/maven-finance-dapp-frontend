@@ -10,8 +10,8 @@ import type { GovernanceSatelliteActionGraphQL } from '../../utils/TypesAndInter
 // const
 import {
   calculateSlicePositions,
-  getSatelliteGovernanceListName,
   getPageNumber,
+  getSatelliteGovernanceListName,
 } from 'app/App.components/Pagination/pagination.consts'
 import { defaultGovPurposeMaxLength } from 'app/App.components/Input/Input.constants'
 
@@ -37,7 +37,7 @@ import { EmptyContainer } from '../../app/App.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { Button } from 'app/App.components/Button/Button.controller'
 import { ACTION_SIMPLE } from 'app/App.components/Button/Button.constants'
-import { convertBytesAddressToAddress, convertBytesStringToText } from '../../app/App.helpers'
+import { convertBytesAddressToAddress } from '../../app/App.helpers'
 
 const itemsForDropDown = [
   'Suspend Satellite',
@@ -80,6 +80,9 @@ export const SatelliteGovernance = () => {
   const { oraclesIds, activeSatellitesIds, allSatellitesIds, satelliteMapper } = useSelector(
     (state: State) => state.satellites,
   )
+
+  const { feedNameMaxLength } = useSelector((state: State) => state.dataFeeds.config)
+  const { isActionActive } = useSelector((state: State) => state.loading)
 
   return null
   // const {
@@ -164,13 +167,6 @@ export const SatelliteGovernance = () => {
   //   }
   // }
 
-  // const emptyContainer = (
-  //   <EmptyContainer>
-  //     <img src="/images/not-found.svg" alt=" No proposals to show" />
-  //     <figcaption> No actions to show</figcaption>
-  //   </EmptyContainer>
-  // )
-
   // return (
   //   <Page>
   //     <PageHeader page={'satellite-governance'} />
@@ -210,11 +206,15 @@ export const SatelliteGovernance = () => {
   //             />
   //           </DropdownWrap>
   //           {chosenDdItem === 'Register Aggregator' ? (
-  //             <RegisterAggregatorForm maxLength={maxLength} />
+  //             <RegisterAggregatorForm maxLength={maxLength} isActionActive={isActionActive} />
   //           ) : chosenDdItem === 'Fix Mistaken Transfer' ? (
-  //             <FixMistakenTransferForm maxLength={maxLength} />
+  //             <FixMistakenTransferForm maxLength={maxLength} isActionActive={isActionActive} />
   //           ) : (
-  //             <SatelliteGovernanceForm maxLength={maxLength} variant={chosenDdItem || ''} />
+  //             <SatelliteGovernanceForm
+  //               maxLength={maxLength}
+  //               variant={chosenDdItem || ''}
+  //               isActionActive={isActionActive}
+  //             />
   //           )}
   //         </DropdownCard>
   //       ) : null}
@@ -233,6 +233,31 @@ export const SatelliteGovernance = () => {
   //         </div>
   //       ) : null}
   //     </SatelliteGovernanceStyled>
+
+  //     {paginatedItemsList?.length
+  //       ? paginatedItemsList.map((item: GovernanceSatelliteActionGraphQL) => {
+  //           return (
+  //             <SatelliteGovernanceCard
+  //               key={item.id}
+  //               id={item.id}
+  //               satelliteId={convertBytesAddressToAddress(item.parameters?.[0].value) ?? ''}
+  //               initiatorId={item.initiator_id}
+  //               date={item.expiration_datetime || ''}
+  //               executed={item.executed}
+  //               status={item.status}
+  //               purpose={item.governance_purpose}
+  //               governanceType={item.governance_type}
+  //               yayVotesSmvkTotal={item.yay_vote_smvk_total}
+  //               nayVotesSmvkTotal={item.nay_vote_smvk_total}
+  //               snapshotSmvkTotalSupply={item.snapshot_smvk_total_supply}
+  //               passVoteSmvkTotal={item.pass_vote_smvk_total}
+  //               smvkPercentageForApproval={item.smvk_percentage_for_approval}
+  //               accountPkh={accountPkh}
+  //               isActionActive={isActionActive}
+  //             />
+  //           )
+  //         })
+  //       : emptyContainer}
 
   //     {paginatedItemsList?.length
   //       ? paginatedItemsList.map((item: GovernanceSatelliteActionGraphQL) => {
