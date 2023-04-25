@@ -371,17 +371,22 @@ export const CreateNewVault = ({
       : 'Confirm Collateral Deposit'
 
   const descrText =
-    shownScreen === 'initial'
-      ? `Create a personal vault to begin borrowing.
-        You are able to borrow one asset type per vault (Ex: If you would like to borrow
-        USDT & EURL, you will need one vault for each). As collateral to back your loan,
-        you may deposit multiple assets together into a single vault, and borrow against
-        a basket of assets (Ex: You may borrow USDT against your portfolio of XTZ & tzBTC
-        in a single vault).`
-      : shownScreen === 'addCollateral'
-      ? `Select an one or multiple assets to add as collateral. If you are providing XTZ as collateral, make sure you
+    shownScreen === 'initial' ? (
+      <>
+        <p>
+          Create a personal vault to begin borrowing. You may only choose one asset (USDT, EURL, or XTZ) to be borrowed
+          per vault.
+        </p>
+        <p>
+          In your vault, you may deposit a basket of assets such as XTZ, tzBTC, USDT, and EURL together as collateral.
+        </p>
+      </>
+    ) : shownScreen === 'addCollateral' ? (
+      `Select an one or multiple assets to add as collateral. If you are providing XTZ as collateral, make sure you
       select a baker.`
-      : `Please confirm the following details.`
+    ) : (
+      `Please confirm the following details.`
+    )
 
   return (
     <PopupContainer onClick={closePopup} show={show}>
@@ -405,16 +410,14 @@ export const CreateNewVault = ({
           {shownScreen === 'initial' ? (
             <>
               <Input
-                className={`vault-name`}
                 inputProps={{
                   value: vaultName.name,
                   type: 'text',
                   onChange: handleVaultNameChange,
-                  placeholder: 'Enter Vault Name',
+                  placeholder: 'e.g. Satoshi’s Personal Vault',
                 }}
                 settings={{
                   inputStatus: vaultName.validationStatus,
-                  label: 'Vault name',
                   inputSize: INPUT_LARGE,
                 }}
               />

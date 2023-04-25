@@ -269,7 +269,6 @@ export const BorrowAsset = ({
                     value={inputAmount}
                     decimalsToShow={assetDecimalsToShow}
                     className="value"
-                    endingText={borrowedAsset?.symbol}
                   />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
@@ -286,7 +285,6 @@ export const BorrowAsset = ({
                     value={inputAmount - inputAmount * (DAOFee / 100)}
                     decimalsToShow={assetDecimalsToShow}
                     className="value"
-                    endingText={borrowedAsset?.symbol}
                   />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
@@ -295,7 +293,6 @@ export const BorrowAsset = ({
                     value={inputAmount * (DAOFee / 100)}
                     decimalsToShow={assetDecimalsToShow}
                     className="value"
-                    endingText={borrowedAsset?.symbol}
                   />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
