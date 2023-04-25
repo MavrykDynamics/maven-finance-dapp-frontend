@@ -35,17 +35,14 @@ export const TransactionHistory = ({ currentToken }: TransactionHistoryPropsType
   const { accountPkh } = useSelector((state: State) => state.wallet)
 
   const [switcherState, setSwitcherState] = useState<'all' | 'personal'>('all')
-  const [transactionHistory, setTransactionHistory] = useState<LoanMarketType['transactionHistory'] | undefined>(
-    currentToken?.transactionHistory,
-  )
 
-  useEffect(() => {
-    setTransactionHistory(
+  const transactionHistory = useMemo(
+    () =>
       switcherState === 'all'
         ? currentToken?.transactionHistory
         : currentToken?.transactionHistory.filter(({ userAddress }) => accountPkh === userAddress),
-    )
-  }, [accountPkh, currentToken?.transactionHistory, switcherState])
+    [switcherState, accountPkh, currentToken?.transactionHistory],
+  )
 
   const currentPage = getPageNumber(search, TRANSACTION_HISTORY_TABLE_NAME)
 
