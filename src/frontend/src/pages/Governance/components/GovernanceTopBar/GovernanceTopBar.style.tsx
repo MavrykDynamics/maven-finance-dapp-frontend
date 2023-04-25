@@ -20,6 +20,10 @@ export const GovernanceTopBarStyled = styled(Card)`
     margin: 0 40px;
     fill: ${({ theme }) => theme.textColor};
   }
+
+  .action {
+    margin-left: auto;
+  }
 `
 
 export const GovTopBarPhaseText = styled.div<{ isCorrectPhase?: boolean; theme: MavrykTheme }>`

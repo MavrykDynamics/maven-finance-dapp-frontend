@@ -42,7 +42,6 @@ import { dropProposal, lockProposal, submitProposal, updateProposalData } from '
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
 
-// TODO: add not counting empty bytes items as item for validation and for data updating
 export const ProposalSubmission = () => {
   const dispatch = useDispatch()
 
@@ -356,7 +355,7 @@ export const ProposalSubmission = () => {
             </MultyProposalsStyled>
           ) : null}
 
-          <PropSubmissionTopBar value={activeTab} valueCallback={handleChangeTab} />
+          <PropSubmissionTopBar valueCallback={handleChangeTab} />
 
           <ProposalSubmissionForm>
             <a

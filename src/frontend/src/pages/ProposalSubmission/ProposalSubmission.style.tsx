@@ -3,11 +3,6 @@ import styled from 'styled-components/macro'
 import { Card, boxShadowColor, CardHover } from '../../styles'
 import { MavrykTheme } from '../../styles/interfaces'
 
-export const SubmissionStyled = styled.section<{ theme: MavrykTheme }>`
-  display: flex;
-  flex-direction: column;
-`
-
 export const ProposalSubmissionForm = styled(Card)<{ theme: MavrykTheme }>`
   padding-bottom: 30px;
   position: relative;
