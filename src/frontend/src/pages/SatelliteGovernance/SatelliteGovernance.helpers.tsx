@@ -1,6 +1,7 @@
 import { GovernanceSatelliteGraphQL, GovernanceSatelliteActionGraphQL } from 'utils/TypesAndInterfaces/Governance'
 
 type SatelliteGovernanceActionType = {
+  id: number
   executed: boolean
   purpose: string
   type: string
@@ -22,10 +23,10 @@ type SatelliteGovernanceActionType = {
 }
 
 type SatelliteGovernanceActionsType = {
-  ongoingSatelliteGovIds: string[]
-  pastSatelliteGovIds: string[]
-  mySatelliteGovIds: string[]
-  satelliteGovIdsMapper: Record<string, SatelliteGovernanceActionType>
+  ongoingSatelliteGovIds: number[]
+  pastSatelliteGovIds: number[]
+  mySatelliteGovIds: number[]
+  satelliteGovIdsMapper: Record<number, SatelliteGovernanceActionType>
 }
 
 type SatelliteGovernanceType = {
@@ -58,6 +59,7 @@ export const normalizerSatelliteGovernance = ({ storage, userAddress }: Satellit
       }))
 
       const action = {
+        id: item.id,
         executed: item.executed,
         purpose: item.governance_purpose,
         type: item.governance_type,
@@ -76,18 +78,18 @@ export const normalizerSatelliteGovernance = ({ storage, userAddress }: Satellit
       }
 
       if (action.executed) {
-        acc.pastSatelliteGovIds.push(action.satelliteId)
+        acc.pastSatelliteGovIds.push(action.id)
       }
 
       if (!action.executed) {
-        acc.ongoingSatelliteGovIds.push(action.satelliteId)
+        acc.ongoingSatelliteGovIds.push(action.id)
       }
 
       if (action.initiatorId === userAddress) {
-        acc.mySatelliteGovIds.push(action.satelliteId)
+        acc.mySatelliteGovIds.push(action.id)
       }
 
-      acc.satelliteGovIdsMapper[action.satelliteId] = action
+      acc.satelliteGovIdsMapper[action.id] = action
 
       return acc
     },

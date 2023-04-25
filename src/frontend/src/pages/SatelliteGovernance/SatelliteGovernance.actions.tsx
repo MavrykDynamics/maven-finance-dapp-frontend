@@ -15,12 +15,12 @@ import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
 
 // gql
 import {
-  GOVERNANCE_SATELLITE_STORAGE_QUERY,
-  GOVERNANCE_SATELLITE_STORAGE_QUERY_NAME,
-  GOVERNANCE_SATELLITE_STORAGE_QUERY_VARIABLE,
-} from '../../gql/queries/getGovernanceSatelliteStorage'
+  SATELLITE_GOVERNANCE_STORAGE_QUERY,
+  SATELLITE_GOVERNANCE_STORAGE_QUERY_NAME,
+  SATELLITE_GOVERNANCE_STORAGE_QUERY_VARIABLE,
+} from '../../gql/queries/getSatelliteGovernanceStorage'
 
-//getSatelliteGovernanceStorage
+// getSatelliteGovernanceStorage
 export const GET_SATELLITE_GOVERNANCE_STORAGE = 'GET_SATELLITE_GOVERNANCE_STORAGE'
 export const getSatelliteGovernanceStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
   const state: State = getState()
@@ -31,9 +31,9 @@ export const getSatelliteGovernanceStorage = () => async (dispatch: AppDispatch,
 
   try {
     const storage = await fetchFromIndexerWithPromise(
-      GOVERNANCE_SATELLITE_STORAGE_QUERY,
-      GOVERNANCE_SATELLITE_STORAGE_QUERY_NAME,
-      GOVERNANCE_SATELLITE_STORAGE_QUERY_VARIABLE,
+      SATELLITE_GOVERNANCE_STORAGE_QUERY,
+      SATELLITE_GOVERNANCE_STORAGE_QUERY_NAME,
+      SATELLITE_GOVERNANCE_STORAGE_QUERY_VARIABLE,
     )
 
     const satelliteGovernanceStorage = normalizerSatelliteGovernance({ storage, userAddress: accountPkh })

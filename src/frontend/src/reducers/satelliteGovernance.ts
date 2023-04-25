@@ -6,9 +6,9 @@ import { defaultGovPurposeMaxLength } from 'app/App.components/Input/Input.const
 export type SatelliteGovernanceState = {
   config: SatelliteGovernance['config']
 
-  ongoingSatelliteGovIds: string[]
-  pastSatelliteGovIds: string[]
-  mySatelliteGovIds: string[]
+  ongoingSatelliteGovIds: number[]
+  pastSatelliteGovIds: number[]
+  mySatelliteGovIds: number[]
   satelliteGovIdsMapper: SatelliteGovernance['satelliteGovIdsMapper']
 
   isLoaded: boolean

@@ -1,11 +1,9 @@
-import React, { useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { Page } from 'styles'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 import { useLocation, useParams } from 'react-router'
-
-// types
-import type { GovernanceSatelliteActionGraphQL } from '../../utils/TypesAndInterfaces/Governance'
+import { Link } from 'react-router-dom'
 
 // const
 import { calculateSlicePositions, getPageNumber } from 'app/App.components/Pagination/pagination.consts'
@@ -22,6 +20,7 @@ import { TabItem } from '../../app/App.components/SlidingTabButtons/SlidingTabBu
 import { RegisterAggregatorForm } from './RegisterAggregator.form'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { Button } from 'app/App.components/Button/Button.controller'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 
 // actions
 import { getSatelliteGovernanceStorage } from './SatelliteGovernance.actions'
@@ -31,16 +30,21 @@ import { getTotalDelegatedMVK } from 'pages/Satellites/helpers/Satellites.consts
 import { SatelliteGovernanceStyled, SmallInfoBlock } from './SatelliteGovernance.style'
 import { DropdownCard, DropdownWrap } from '../../app/App.components/DropDown/DropDown.style'
 import { EmptyContainer } from '../../app/App.style'
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 
 // helpers
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { ACTION_SIMPLE } from 'app/App.components/Button/Button.constants'
-import { convertBytesAddressToAddress, convertBytesStringToText } from '../../app/App.helpers'
+import { convertBytesAddressToAddress } from '../../app/App.helpers'
 import {
   ONGOING_ACTIONS_SATELLITE_GOVERNANCE_LIST,
   PAST_ACTIONS_SATELLITE_GOVERNANCE_LIST,
   MY_ACTIONS_SATELLITE_GOVERNANCE_LIST,
 } from '../../app/App.components/Pagination/pagination.consts'
+
+type ExtendedTabItem = TabItem & {
+  path: string
+}
 
 const itemsForDropDown = [
   'Suspend Satellite',
@@ -63,7 +67,7 @@ const tabsId = {
   MY: 'my',
 }
 
-const getCurrentListNameById = (tabId?: string) => {
+const getCurrentListNameById = (tabId: string) => {
   switch (tabId) {
     case tabsId.ONGOING:
       return ONGOING_ACTIONS_SATELLITE_GOVERNANCE_LIST
@@ -81,7 +85,7 @@ export const SatelliteGovernance = () => {
   const { search } = useLocation()
   const dispatch = useDispatch()
 
-  const { tabId } = useParams<{ tabId: string }>()
+  const { tabId = tabsId.ONGOING } = useParams<{ tabId: string }>()
 
   const {
     accountPkh,
@@ -97,24 +101,41 @@ export const SatelliteGovernance = () => {
     ongoingSatelliteGovIds,
     pastSatelliteGovIds,
     mySatelliteGovIds,
+    satelliteGovIdsMapper,
     config: { purposeMaxLength },
   } = useSelector((state: State) => state.satelliteGovernance)
-
   const { feedNameMaxLength } = useSelector((state: State) => state.dataFeeds.config)
+
+  const getCurrentIdsById = useCallback(
+    (tabId: string) => {
+      switch (tabId) {
+        case tabsId.ONGOING:
+          return ongoingSatelliteGovIds
+        case tabsId.PAST:
+          return pastSatelliteGovIds
+        case tabsId.MY:
+          return mySatelliteGovIds
+
+        default:
+          return ongoingSatelliteGovIds
+      }
+    },
+    [mySatelliteGovIds, ongoingSatelliteGovIds, pastSatelliteGovIds],
+  )
+
+  const [tabsList, setTabsList] = useState<ExtendedTabItem[]>([])
 
   const [ddIsOpen, setDdIsOpen] = useState(false)
   const [chosenDdItem, setChosenDdItem] = useState<string | undefined>()
-  const [separateRecord, setSeparateRecord] = useState<GovernanceSatelliteActionGraphQL[]>([])
 
   const currentListName = getCurrentListNameById(tabId)
-
-  const currentSatelliteGovIds = tabId === tabsId.ALL ? allVaultsIds : myVaultsIds
+  const currentSatelliteGovIds = getCurrentIdsById(tabId)
   const currentPage = getPageNumber(search, currentListName)
 
   const paginatedItemsList = useMemo(() => {
     const [from, to] = calculateSlicePositions(currentPage, currentListName)
-    return separateRecord?.slice(from, to)
-  }, [currentPage, separateRecord])
+    return currentSatelliteGovIds?.slice(from, to)
+  }, [currentListName, currentPage, currentSatelliteGovIds])
 
   const totalDelegatedMVK = getTotalDelegatedMVK(allSatellitesIds, satelliteMapper)
   const ongoingActionsAmount = ongoingSatelliteGovIds.length
@@ -124,93 +145,44 @@ export const SatelliteGovernance = () => {
     aggregatorNameMaxLength: feedNameMaxLength,
   }
 
-  const tabsList: TabItem[] = useMemo(
-    () => [
+  // set tabs list
+  useEffect(() => {
+    const prevTabs = [
       {
-        text: 'All Vaults',
+        text: 'Ongoing Actions',
         id: 1,
-        active: tabsId.ALL === tabId,
-        path: tabsId.ALL,
+        active: tabsId.ONGOING === tabId,
+        path: tabsId.ONGOING,
       },
       {
-        text: 'My Vaults',
+        text: 'Past Actions',
         id: 2,
-        active: tabsId.MY === tabId,
-        path: tabsId.MY,
-        isDisabled: !accountPkh,
+        active: tabsId.PAST === tabId,
+        path: tabsId.PAST,
       },
-    ],
-    [accountPkh, tabId],
-  )
+    ]
 
-  // useEffect(() => {
-  //   const filterOngoing = getOngoingActionsList(governance_satellite_action)
-  //   const filterPast = getPastActionsList(governance_satellite_action)
-
-  //   setSeparateRecord(filterOngoing?.length ? filterOngoing : filterPast)
-  //   setActiveTab(filterOngoing?.length ? 1 : 2)
-
-  //   const prevTabs = [
-  //     { text: 'Ongoing Actions', id: 1, active: Boolean(filterOngoing?.length) },
-  //     { text: 'Past Actions', id: 2, active: Boolean(!filterOngoing?.length) },
-  //   ]
-
-  //   if (isSatellite) {
-  //     setTabsList([...prevTabs, { text: 'My Actions', id: 3, active: false }])
-  //   } else {
-  //     setTabsList([...prevTabs])
-  //   }
-  // }, [governance_satellite_action, isSatellite])
+    if (isSatellite) {
+      setTabsList([
+        ...prevTabs,
+        {
+          text: 'My Actions',
+          id: 3,
+          active: tabsId.MY === tabId,
+          path: tabsId.MY,
+          isDisabled: !accountPkh,
+        },
+      ])
+    } else {
+      setTabsList([...prevTabs])
+    }
+  }, [accountPkh, isSatellite, tabId])
 
   const handleOnClickDropdownItem = (e: string) => {
     const chosenItem = itemsForDropDown.find((item) => item === e)
     if (chosenItem) {
       setChosenDdItem(chosenItem)
       setDdIsOpen(!ddIsOpen)
-    }
-  }
-
-  // const handleChangeTabs = (tabId?: number) => {
-  //   if (tabId === 1) {
-  //     setActiveTab(tabId)
-  //     const filterOngoing = getOngoingActionsList(governance_satellite_action)
-  //     setSeparateRecord(filterOngoing)
-  //   }
-
-  //   if (tabId === 2) {
-  //     setActiveTab(tabId)
-  //     const filterPast = getPastActionsList(governance_satellite_action)
-  //     setSeparateRecord(filterPast)
-  //   }
-
-  //   if (tabId === 3) {
-  //     setActiveTab(tabId)
-  //     const filterPast = governance_satellite_action.filter((item) => {
-  //       return accountPkh === item.initiator_id
-  //     })
-  //     setSeparateRecord(filterPast)
-  //   }
-  // }
-
-  const handleChangeTab = (tabId?: number) => {
-    if (tabId === 1) {
-      setActiveTab(tabId)
-      const filterOngoing = getOngoingActionsList(governance_satellite_action)
-      setSeparateRecord(filterOngoing)
-    }
-
-    if (tabId === 2) {
-      setActiveTab(tabId)
-      const filterPast = getPastActionsList(governance_satellite_action)
-      setSeparateRecord(filterPast)
-    }
-
-    if (tabId === 3) {
-      setActiveTab(tabId)
-      const filterPast = governance_satellite_action.filter((item) => {
-        return accountPkh === item.initiator_id
-      })
-      setSeparateRecord(filterPast)
     }
   }
 
@@ -235,6 +207,7 @@ export const SatelliteGovernance = () => {
   return (
     <Page>
       <PageHeader page={'satellite-governance'} />
+
       <SatelliteGovernanceStyled>
         <article className="satellite-governance-article">
           <SmallInfoBlock>
@@ -257,6 +230,7 @@ export const SatelliteGovernance = () => {
             <div className="info-content">{ongoingActionsAmount}</div>
           </SmallInfoBlock>
         </article>
+
         {isSatellite ? (
           <DropdownCard className="satellite-governance-dropdown">
             <DropdownWrap>
@@ -279,45 +253,52 @@ export const SatelliteGovernance = () => {
             )}
           </DropdownCard>
         ) : null}
+
         {tabsList?.length ? (
           <div className="buttons-selector">
-            {tabsList.map(({ id, text }) => (
-              <Button
-                kind={ACTION_SIMPLE}
-                onClick={() => handleChangeTab(id)}
-                text={text}
-                className={id === activeTab ? 'active' : ''}
-              />
+            {tabsList.map(({ text, active, path }) => (
+              <Link key={path} to={`/satellite-governance/${path}`}>
+                <Button kind={ACTION_SIMPLE} text={text} className={active ? 'active' : ''} />
+              </Link>
             ))}
           </div>
         ) : null}
       </SatelliteGovernanceStyled>
 
-      {paginatedItemsList?.length
-        ? paginatedItemsList.map((item: GovernanceSatelliteActionGraphQL) => {
-            return (
-              <SatelliteGovernanceCard
-                key={item.id}
-                id={item.id}
-                satelliteId={convertBytesAddressToAddress(item.parameters?.[0].value) ?? ''}
-                initiatorId={item.initiator_id}
-                date={item.expiration_datetime || ''}
-                executed={item.executed}
-                status={item.status}
-                purpose={item.governance_purpose}
-                governanceType={item.governance_type}
-                yayVotesSmvkTotal={item.yay_vote_smvk_total}
-                nayVotesSmvkTotal={item.nay_vote_smvk_total}
-                snapshotSmvkTotalSupply={item.snapshot_smvk_total_supply}
-                passVoteSmvkTotal={item.pass_vote_smvk_total}
-                smvkPercentageForApproval={item.smvk_percentage_for_approval}
-                accountPkh={accountPkh}
-              />
-            )
-          })
-        : emptyContainer}
+      {isLoading ? (
+        <DataLoaderWrapper>
+          <ClockLoader width={150} height={150} />
+          <div className="text">Loading vaults</div>
+        </DataLoaderWrapper>
+      ) : paginatedItemsList.length ? (
+        paginatedItemsList.map((itemId) => {
+          const action = satelliteGovIdsMapper[itemId]
 
-      <Pagination itemsCount={separateRecord?.length} listName={currentListName} />
+          return (
+            <SatelliteGovernanceCard
+              key={`${action.id}`}
+              id={action.id}
+              satelliteId={convertBytesAddressToAddress(action.parameters[0].value)}
+              initiatorId={action.initiatorId}
+              date={action.expirationDatetime}
+              executed={action.executed}
+              status={action.status}
+              purpose={action.purpose}
+              governanceType={action.type}
+              snapshotSmvkTotalSupply={action.snapshotSmvkTotalSupply}
+              smvkPercentageForApproval={action.smvkPercentageForApproval}
+              yayVotesSmvkTotal={action.yayVoteSmvkTotal}
+              nayVotesSmvkTotal={action.nayVoteSmvkTotal}
+              passVoteSmvkTotal={action.passVoteSmvkTotal}
+              accountPkh={accountPkh}
+            />
+          )
+        })
+      ) : (
+        emptyContainer
+      )}
+
+      <Pagination itemsCount={currentSatelliteGovIds.length} listName={currentListName} />
     </Page>
   )
 }
