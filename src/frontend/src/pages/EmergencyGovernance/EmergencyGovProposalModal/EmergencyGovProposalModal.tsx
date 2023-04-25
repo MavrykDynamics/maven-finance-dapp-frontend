@@ -24,9 +24,7 @@ import { BUTTON_PRIMARY, BUTTON_SECONDARY } from 'app/App.components/Button/Butt
 
 export const EmergencyGovProposalModal = ({ show, closeHandler }: { show: boolean; closeHandler: () => void }) => {
   const dispatch = useDispatch()
-  const {
-    governanceStorage: { fee },
-  } = useSelector((state: State) => state.governance)
+  const { fee } = useSelector((state: State) => state.governance.config)
   const {
     config: { proposalTitleMaxLength, proposalDescMaxLength },
   } = useSelector((state: State) => state.emergencyGovernance)
@@ -75,9 +73,7 @@ export const EmergencyGovProposalModal = ({ show, closeHandler }: { show: boolea
   return (
     <PopupContainer onClick={closeHandler} show={show}>
       <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="loans child-width">
-        <button onClick={closeHandler} className="close_modal">
-          +
-        </button>
+        <button onClick={closeHandler} className="close-modal" />
         <EmergencyGovProposalModalContent>
           <h1>Trigger Emergency Governance Vote & Break Glass</h1>
           <div className="top-content">

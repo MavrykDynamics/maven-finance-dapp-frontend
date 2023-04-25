@@ -40,7 +40,8 @@ export const ToasterCountdown = styled.div<{ showing: boolean; status?: string; 
   width: 100%;
   border-radius: 0 0 4px 0;
 
-  background-color: ${({ status, theme }) => getColorByToasterStatus({ toasterStatus: status, theme })};
+  background-color: ${({ status, theme, showing }) =>
+    showing ? getColorByToasterStatus({ toasterStatus: status, theme }) : 'transparent'};
 
   ${(props) =>
     props.showing &&

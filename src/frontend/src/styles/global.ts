@@ -137,7 +137,12 @@ a {
   opacity: 1;
   transition: opacity 0.15s ease-in-out-out;
   will-change: opacity;
+
+  &.isCyan {
+    color: ${({ theme }) => theme.valueColor};
+  }
 }
+
 
 a:hover:not(.full-opacity) {
   opacity: 0.9;

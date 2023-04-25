@@ -1,12 +1,6 @@
-import { InputStatusType, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import BigNumber from 'bignumber.js'
 import { ProposalRecordType } from 'utils/TypesAndInterfaces/Governance'
-
-export type ValidationStateType = {
-  validTitle: InputStatusType
-  validBytes: InputStatusType
-  pairId: number
-}[]
 
 export type ProposalBytesType = ProposalRecordType['proposalData'][number]
 
@@ -57,17 +51,14 @@ export type StageTwoFormProps = {
   currentProposal: ProposalRecordType
   currentProposalValidation: ProposalValidityObj
   updateLocalProposalValidation: ChangeProposalValidationFnType
-  setProposalHasChange: (arg: boolean) => void
   updateLocalProposalData: ChangeProposalFnType
 }
 
 export type StageThreeFormProps = {
   proposalId: number
   currentProposal: ProposalRecordType
-  paymentMethods: Array<{ symbol: string; address: string; shortSymbol: string; id: number }>
   currentProposalValidation: ProposalValidityObj
   updateLocalProposalValidation: ChangeProposalValidationFnType
-  setProposalHasChange: (arg: boolean) => void
   updateLocalProposalData: ChangeProposalFnType
 }
 
@@ -116,3 +107,5 @@ export type ProposalChangesStateType = Record<
     proposalPaymentsChanges: PaymentsDataChangesType
   }
 >
+
+export type MultyProposalItem = { text: string; active: boolean; value: number }

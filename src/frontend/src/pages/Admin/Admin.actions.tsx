@@ -4,17 +4,19 @@ import { ERROR, INFO, SUCCESS } from '../../app/App.components/Toaster/Toaster.c
 import type { AppDispatch, GetState } from '../../app/App.controller'
 import farmFactoryAddress from '../../deployments/farmFactoryAddress.json'
 
-import { GET_GOVERNANCE_STORAGE, SET_GOVERNANCE_PHASE } from '../Governance/Governance.actions'
-import { toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 import { OpKind } from '@taquito/taquito'
 import { convertNumberForContractCall } from '../../utils/calcFunctions'
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
+import { GET_GOVERNANCE_CONFIG } from 'pages/Governance/actions/GovernanseData.actions'
+import { toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 
 export const adminChangeGovernancePeriod =
   (chosenPeriod: string, accountPkh?: string) => async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
 
-    const { governance } = state
+    const {
+      governance: { config },
+    } = state
 
     if (!state.wallet.accountPkh) {
       dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
@@ -29,30 +31,33 @@ export const adminChangeGovernancePeriod =
         case 'PROPOSAL':
           //transaction = await contract?.methods.startProposalRound().send()
           dispatch({
-            type: SET_GOVERNANCE_PHASE,
-            phase: 'PROPOSAL',
-          })
-          dispatch({
-            type: GET_GOVERNANCE_STORAGE,
-            governanceStorage: {
-              ...governance.governanceStorage,
+            type: GET_GOVERNANCE_CONFIG,
+            config: {
+              ...config,
               timelockProposalId: 0,
+              governancePhase: 'PROPOSAL',
             },
           })
           break
         case 'VOTING':
           // transaction = await contract?.methods.startVotingRound().send()
           dispatch({
-            type: SET_GOVERNANCE_PHASE,
-            phase: 'VOTING',
+            type: GET_GOVERNANCE_CONFIG,
+            config: {
+              ...config,
+              governancePhase: 'VOTING',
+            },
           })
           break
         case 'TIME_LOCK':
         default:
           //transaction = await contract?.methods.StartTimelockRound().send()
           dispatch({
-            type: SET_GOVERNANCE_PHASE,
-            phase: 'TIME_LOCK',
+            type: GET_GOVERNANCE_CONFIG,
+            config: {
+              ...config,
+              governancePhase: 'TIME_LOCK',
+            },
           })
           break
       }
@@ -607,7 +612,6 @@ export const createTreasuries = (accountPkh?: string) => async (dispatch: AppDis
       name: 'DAO Validator Fund',
       description: 'MAVRYK DAO Validator Fund Treasury Contract',
     }
-
   // TODO: Change address used to that of the Farm Factory address when possible
   const rAndDTreasuryMetadataBase = Buffer.from(
     JSON.stringify({

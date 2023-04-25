@@ -88,9 +88,7 @@ export const FarmWithdrawModal = ({
   return (
     <PopupContainer onClick={closeHandler} show={show}>
       <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="loans">
-        <button onClick={closeHandler} className="close_modal">
-          +
-        </button>
+        <button onClick={closeHandler} className="close-modal" />
         <FarmLpActionsPopupsContent>
           <div className="popup-header">
             <CoinsIcons />

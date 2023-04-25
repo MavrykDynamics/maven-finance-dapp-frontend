@@ -86,7 +86,7 @@ const BUTTONS_KIND_STYLES = css`
     &:hover:not(:disabled) {
       &::before {
         position: absolute;
-        bottom: -3px;
+        bottom: -7px;
         left: 50%;
         transform: translateX(-50%);
         transition: 0.3s all;
@@ -173,7 +173,7 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
   /* styling for buttons sizes */
   ${BUTTONS_SIZES_STYLES}
 
-    /* styling for buttons forms */
+  /* styling for buttons forms */
   ${BUTTONS_FORMS_STYLES}
 
   /* styling for main button kinds */

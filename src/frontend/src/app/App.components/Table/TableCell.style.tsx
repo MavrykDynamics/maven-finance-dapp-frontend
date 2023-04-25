@@ -31,9 +31,10 @@ const TABLE_CELL_DEFAULT_TAGS_STYLES = css`
   input.success,
   input.error:focus,
   input.success:focus,
-  input:focus {
+  input:focus,
+  #inputStyled {
     border: unset;
-    border-radius: 0;
+    border-radius: 0px;
     box-shadow: none;
   }
 `
@@ -213,6 +214,10 @@ export const TableCell = styled.td<TableCellStyledProps>`
 
   &.vert-middle {
     vertical-align: middle;
+  }
+
+  &.hide-overflow {
+    overflow: hidden;
   }
 
   ${TABLE_CELL_DEFAULT_TAGS_STYLES}

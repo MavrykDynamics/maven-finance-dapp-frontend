@@ -13,7 +13,7 @@ import { DDItemId, DropDown, DropdownTruncateOption } from 'app/App.components/D
 
 // action
 import { dropFinancialRequest } from '../Council.actions'
-import { getFinancialRequestStorage } from 'pages/FinacialRequests/FiancialRequest.actions'
+import { getFinancialRequestStorage } from 'pages/FinacialRequests/FinancialRequest.actions'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 
 // style
