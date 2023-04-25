@@ -66,7 +66,7 @@ export const normalizeProposal = (
     abstainMvkTotal: convertNumberForClient({ number: item.pass_vote_smvk_total, grade: MVK_DECIMALS }),
     quorumMvkTotal: convertNumberForClient({ number: item.quorum_smvk_total, grade: MVK_DECIMALS }),
     votes: item.votes,
-    minQuorumPercentage: item.min_quorum_percentage,
+    minQuorumPercentage: convertNumberForClient({ number: item.min_quorum_percentage, grade: 4 }),
 
     proposalData: item.data.map((byte, idx) => ({
       ...byte,

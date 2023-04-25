@@ -64,7 +64,6 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
     try {
       await Promise.all(
         [
-          (!isEgovLoaded || isDepsChanged) && dispatch(getEmergencyGovernanceStorage()),
           (!isGovernanceLoaded || isDepsChanged) && dispatch(getGovernanceStorage()),
           (!isEgovLoaded || isDepsChanged) && dispatch(getEmergencyGovernanceStorage()),
         ].filter(Boolean),

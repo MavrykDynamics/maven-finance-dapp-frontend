@@ -47,21 +47,3 @@ export const getProposalStatus = (
   // default case, cuz all condiitons above are not true
   return ProposalStatus.DEFEATED
 }
-
-const BEFORE_DIGIT = 24
-const AFTER_DIGIT = 12
-export const getShortByte = (
-  byte: string,
-  beforeDigit: number = BEFORE_DIGIT,
-  afterDigit: number = AFTER_DIGIT,
-): string => {
-  const shortBype = byte.length
-    ? [
-        byte.substring(0, beforeDigit),
-        byte.length > beforeDigit ? '...' : '',
-        byte.length > beforeDigit ? byte.substring(byte.length - afterDigit) : '',
-      ]
-    : []
-
-  return shortBype.join('')
-}

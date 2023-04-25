@@ -2,14 +2,8 @@ import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 // consts
-import {
-  BUTTON_PRIMARY,
-  BUTTON_SECONDARY,
-  BUTTON_SIMPLE,
-  BUTTON_SIMPLE_SMALL,
-} from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_SIMPLE_SMALL } from 'app/App.components/Button/Button.constants'
 import { INFO_DEFAULT } from 'app/App.components/Info/info.constants'
-import { PRECISION_NUMBER } from 'utils/constants'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 
 // helpers & actions
@@ -17,6 +11,12 @@ import { VoteStatistics } from 'app/App.components/VotingArea/helpers/voting'
 import { parseDate } from 'utils/time'
 import getTimestampByLevel from 'utils/Fetchers/getTimestampByLevel'
 import { dropProposal } from 'pages/ProposalSubmission/ProposalSubmission.actions'
+import {
+  executeProposal,
+  processProposalPayment,
+  proposalRoundVote,
+  votingRoundVote,
+} from 'pages/Governance/actions/Proposals.actions'
 
 // types
 import { State } from 'reducers'
@@ -33,12 +33,6 @@ import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } f
 import { VotingProposalsArea } from 'app/App.components/VotingArea/VotingArea.controller'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { ProposalDetailsStyled } from './ProposalDetails.style'
-import {
-  executeProposal,
-  processProposalPayment,
-  proposalRoundVote,
-  votingRoundVote,
-} from 'pages/Governance/actions/Proposals.actions'
 import { TzAddress, handleCopyToClipboard } from 'app/App.components/TzAddress/TzAddress.view'
 
 export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) => {
@@ -122,7 +116,7 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
           text={
             isUserOwnerIfTheProposal
               ? 'Your proposal isn’t locked yet and can’t be voted on. You can lock it on the proposal submission page.'
-              : 'This proposal isn’t locked yet and can’t be voted on until then. The proposer is still building it and will lock it in the coming days.'
+              : 'This proposal hasn’t be locked yet for voting. The proposer is currently working on the proposal and fine-tuning it. It will be available to vote on in the near future.'
           }
         />
       ) : null}

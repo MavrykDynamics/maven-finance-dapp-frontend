@@ -103,8 +103,10 @@ export const VotingProposalsArea = ({
   } = useSelector((state: State) => state.wallet)
   const { isActionActive } = useSelector((state: State) => state.loading)
 
+  // Proposal isn't locked, can't vote
   if (!selectedProposal.locked) return null
 
+  // Proposal is locked and phase is proposal, (phase we can only vote yes, and most voted go to the next phase)
   if (selectedProposal.locked && govPhase === GovPhases.PROPOSAL) {
     return (
       <VotingAreaStyled className={className}>
@@ -126,6 +128,7 @@ export const VotingProposalsArea = ({
     )
   }
 
+  // stage voting, user can vote, yes, no, pass
   if (govPhase === GovPhases.VOTING) {
     return (
       <VotingArea
@@ -137,5 +140,6 @@ export const VotingProposalsArea = ({
     )
   }
 
+  // on timelock phase show only voting bar, witout voting buttons
   return <VotingBar voteStatistics={voteStatistics} />
 }
