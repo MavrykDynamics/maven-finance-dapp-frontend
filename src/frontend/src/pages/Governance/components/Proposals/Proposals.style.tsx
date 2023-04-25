@@ -68,9 +68,12 @@ export const VoterListItem = styled(CardHover)<{ theme: MavrykTheme }>`
     display: flex;
     column-gap: 10px;
 
-    .avatar {
+    .img-wrapper,
+    svg {
       width: 45px;
       height: 45px;
+      fill: ${({ theme }) => theme.textColor};
+
       img {
         width: 100%;
         height: 100%;
@@ -78,6 +81,7 @@ export const VoterListItem = styled(CardHover)<{ theme: MavrykTheme }>`
         border-radius: 50%;
       }
     }
+
     .info {
       display: flex;
       flex-direction: column;

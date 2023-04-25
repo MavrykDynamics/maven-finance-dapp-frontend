@@ -227,8 +227,10 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
             </TableHeader>
             <TableBody>
               {proposal.proposalPayments.map((payment) => {
-                const { symbol: selectedSymbol = 'MVK' } =
-                  whitelistTokens.find(({ address }) => address === payment.token_address) ?? whitelistTokens?.[0] ?? {}
+                const selectedSymbol =
+                  whitelistTokens.find(({ address }) => address === payment.token_address)?.symbol?.toUpperCase() ??
+                  whitelistTokens?.[0]?.symbol?.toUpperCase() ??
+                  'MVK'
 
                 return (
                   <TableRow className="editable-row proposal-details-payments" key={payment.id}>
@@ -237,7 +239,12 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
                     </TableCell>
                     <TableCell width="25%">{String(payment.title)}</TableCell>
                     <TableCell width="25%">
-                      <CommaNumber value={Number(payment.token_amount)} endingText={selectedSymbol} />
+                      <CommaNumber
+                        value={Number(payment.token_amount)}
+                        // TODO: add decimals of max asset decimals, and check design with large decimals amount
+                        decimalsToShow={4}
+                        endingText={selectedSymbol}
+                      />
                     </TableCell>
                     <TableCell className="no-right-border" width="25%">
                       {selectedSymbol}

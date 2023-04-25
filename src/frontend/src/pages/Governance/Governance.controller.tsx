@@ -43,6 +43,7 @@ import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { TzAddress } from 'pages/Treasury/Treasury.style'
 import { VoterListItem, ProposalStatusFlag } from './components/Proposals/Proposals.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
 export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
   const dispatch = useDispatch()
@@ -269,9 +270,7 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
                   return (
                     <VoterListItem>
                       <div className="left">
-                        <div className="avatar">
-                          <img src={avatar} alt={`${name} avatar`} />
-                        </div>
+                        <ImageWithPlug imageLink={avatar} alt={`${name} avatar`} />
                         <div className="info">
                           <span>{name}</span>
                           <TzAddress tzAddress={address} />
