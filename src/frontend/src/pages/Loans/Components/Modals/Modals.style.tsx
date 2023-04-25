@@ -9,6 +9,10 @@ export const LoansModalBase = styled.div<{ theme: MavrykTheme }>`
     line-height: 21px;
     color: ${({ theme }) => theme.textColor};
     margin-bottom: 25px;
+
+    p {
+      margin: 0;
+    }
   }
 
   .block-name {
