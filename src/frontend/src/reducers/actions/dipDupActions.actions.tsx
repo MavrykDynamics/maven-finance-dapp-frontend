@@ -88,12 +88,15 @@ export const getWhitelistTokensStorage = () => async (dispatch: AppDispatch, get
 
     const whitelistTokens = (
       (storage?.treasury?.[0]?.whitelist_token_contracts ?? []) as Array<Governance_Financial_Whitelist_Token_Contract>
-    ).map((tokenInfo) => ({
-      symbol: tokenInfo.contract_name,
-      address: tokenInfo.contract_address,
-      shortSymbol: tokenInfo.token_contract_standard,
-      id: 0,
-    }))
+    )
+      .map((tokenInfo) => ({
+        symbol: tokenInfo.contract_name,
+        address: tokenInfo.contract_address,
+        shortSymbol: tokenInfo.token_contract_standard,
+        id: 0,
+      }))
+      // TODO: remove this filter when back-end is ready for this
+      .filter(({ symbol }) => symbol.toLowerCase() === 'mvk')
 
     dispatch({
       type: GET_WHITELIST_TOKENS,
