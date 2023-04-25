@@ -7,7 +7,7 @@ export const CouncilPendingStyled = styled(Card)`
   margin: 0;
   height: 200px;
   padding: 25px;
-  min-width: 237px;
+  min-width: 247px;
 
   .number {
     position: absolute;
@@ -208,6 +208,17 @@ export const CouncilPendingStyled = styled(Card)`
       width: 50px;
       object-fit: cover;
       border-radius: 50%;
+    }
+  }
+
+  .sign-action {
+    margin: 0 auto;
+    width: 180px;
+
+    button {
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 14px;
     }
   }
 `
