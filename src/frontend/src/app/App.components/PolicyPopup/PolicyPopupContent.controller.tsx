@@ -47,7 +47,8 @@ export const PolicyPopupContent = ({ proccedPolicy }: { proccedPolicy: () => voi
       </ol>
 
       <div className="checkbox">
-        <Checkbox id="show_dropped" onChangeHandler={() => setCheckbox(!checkbox)} checked={checkbox} />I understand
+        {/* // TODO: find out why it works only without id */}
+        <Checkbox id="" onChangeHandler={() => setCheckbox(!checkbox)} checked={checkbox} />I understand
         that Mavryk is in Beta and want to have some fun.
       </div>
 
