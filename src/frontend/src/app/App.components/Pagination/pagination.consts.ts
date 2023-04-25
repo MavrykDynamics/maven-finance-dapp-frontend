@@ -11,9 +11,9 @@ export const EMERGENCY_GOVERNANCE_HISTORY_LIST_NAME = 'emergencyGovHistory'
 export const PAST_REQUESTS_FINANCIAL_REQUESTS_LIST = 'pastFR'
 export const ONGOING_REQUESTS_FINANCIAL_REQUESTS_LIST = 'ongoingFR'
 
-export const ONGOING_ACTIONS_SATELLITE_GOVERNANCE_LIST = 'ongoingActionsSatellitesGov'
-export const PAST_ACTIONS_SATELLITE_GOVERNANCE_LIST = 'pastActionsSatellitesGov'
-export const MY_ACTIONS_SATELLITE_GOVERNANCE_LIST = 'myActionsSatellitesGov'
+export const ONGOING_ACTIONS_SATELLITE_GOVERNANCE_LIST = 'ongoingActionsSatelliteGov'
+export const PAST_ACTIONS_SATELLITE_GOVERNANCE_LIST = 'pastActionsSatelliteGov'
+export const MY_ACTIONS_SATELLITE_GOVERNANCE_LIST = 'myActionsSatelliteGov'
 
 export const TRANSACTION_HISTORY_TABLE_NAME = 'transactionHistoryTable'
 export const USER_ACTIONS_HISTORY = 'userActionsHistory'
@@ -27,12 +27,10 @@ export const USER_DATA_FEEDS_LIST_NAME = 'userDataFeeds'
 export const SATELITES_NODES_LIST_NAME = 'satelitesNodes'
 export const SATELLITES_OVERVIEW_LIST_NAME = 'satellitesOverviewList'
 
-export const WAITING_PROPOSALS_LIST_NAME = 'waitingProposals'
-export const WAITING_FOR_PAYMENT_PROPOSALS_LIST_NAME = 'waitingFPProposals'
+export const WAITING_EXECUTED_PROPOSALS_LIST_NAME = 'waitingProposals'
+export const WAITING_PAYMENT_PROPOSALS_LIST_NAME = 'waitingFPProposals'
 export const HISTORY_PROPOSALS_LIST_NAME = 'historyProposals'
 export const ONGOING_PROPOSALS_LIST_NAME = 'ongoingProposals'
-export const NEXT_PROPOSALS_LIST_NAME = 'nextProposals'
-export const ONGOING_VOTING_PROPOSALS_LIST_NAME = 'ongoingVotingProposals'
 export const GOVERNANCE_VOTERS_LIST_NAME = 'govVotets'
 
 export const FARMS_VERTICAL_CARDS = 'farmsVertical'
@@ -59,14 +57,12 @@ export const LIST_NAMES_MAPPER: Record<string, number> = {
   [ONGOING_ACTIONS_SATELLITE_GOVERNANCE_LIST]: 7,
   [PAST_ACTIONS_SATELLITE_GOVERNANCE_LIST]: 7,
   [MY_ACTIONS_SATELLITE_GOVERNANCE_LIST]: 7,
-  [WAITING_PROPOSALS_LIST_NAME]: 10,
-  [WAITING_FOR_PAYMENT_PROPOSALS_LIST_NAME]: 10,
+  [WAITING_EXECUTED_PROPOSALS_LIST_NAME]: 10,
+  [WAITING_PAYMENT_PROPOSALS_LIST_NAME]: 10,
   [LOANS_POSITION_TABLE]: 10,
   [HISTORY_PROPOSALS_LIST_NAME]: 10,
   [ONGOING_PROPOSALS_LIST_NAME]: 10,
   [GOVERNANCE_VOTERS_LIST_NAME]: 10,
-  [NEXT_PROPOSALS_LIST_NAME]: 10,
-  [ONGOING_VOTING_PROPOSALS_LIST_NAME]: 10,
   [SATELITES_TOP_LIST_NAME]: 3,
   [SATELITES_NODES_LIST_NAME]: 5,
   [FEEDS_TOP_LIST_NAME]: 5,
@@ -116,18 +112,6 @@ export const updatePageInUrl = ({
     page: newPageParams,
   }
   return pathname + qs.stringify(newQueryParams, { addQueryPrefix: true })
-}
-
-export const getSatelliteGovernanceListName = (tabId: number) => {
-  switch (tabId) {
-    case 2:
-      return PAST_ACTIONS_SATELLITE_GOVERNANCE_LIST
-    case 1:
-      return ONGOING_ACTIONS_SATELLITE_GOVERNANCE_LIST
-    case 3:
-    default:
-      return MY_ACTIONS_SATELLITE_GOVERNANCE_LIST
-  }
 }
 
 export const PAGINATION_SIDE_RIGHT = 'right'

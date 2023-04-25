@@ -14,6 +14,7 @@ import { VotingBar } from './VotingBar.controller'
 import { CommaNumber } from '../CommaNumber/CommaNumber.controller'
 import { ConnectWallet } from '../ConnectWallet/ConnectWallet.controller'
 import Button from '../Button/NewButton'
+import { GovPhases } from 'utils/TypesAndInterfaces/Governance'
 
 type VotingType = VotingProps & {
   className?: string
@@ -89,12 +90,12 @@ type VotingProposalsType = VotingProposalsProps & {
 
 export const VotingProposalsArea = ({
   selectedProposal,
+  govPhase,
   vote,
-  handleProposalVote,
   voteStatistics,
-  currentProposalStage: { isPastProposals, isTimeLock, isAbleToMakeProposalRoundVote, isVotingPeriod },
-  votingPhaseHandler,
   className,
+  handleProposalVote,
+  votingPhaseHandler,
 }: VotingProposalsType) => {
   const {
     accountPkh,
@@ -102,22 +103,11 @@ export const VotingProposalsArea = ({
   } = useSelector((state: State) => state.wallet)
   const { isActionActive } = useSelector((state: State) => state.loading)
 
-  if (isPastProposals || isTimeLock) {
-    return <VotingBar voteStatistics={voteStatistics} />
-  }
+  // Proposal isn't locked, can't vote
+  if (!selectedProposal.locked) return null
 
-  if (isVotingPeriod && votingPhaseHandler) {
-    return (
-      <VotingArea
-        voteStatistics={voteStatistics}
-        isVotingActive={true}
-        handleVote={votingPhaseHandler}
-        disableVotingButtons={vote?.round === 1}
-      />
-    )
-  }
-
-  if (isAbleToMakeProposalRoundVote) {
+  // Proposal is locked and phase is proposal, (phase we can only vote yes, and most voted go to the next phase)
+  if (selectedProposal.locked && govPhase === GovPhases.PROPOSAL) {
     return (
       <VotingAreaStyled className={className}>
         <div className="voted-block">
@@ -138,5 +128,18 @@ export const VotingProposalsArea = ({
     )
   }
 
-  return null
+  // stage voting, user can vote, yes, no, pass
+  if (govPhase === GovPhases.VOTING) {
+    return (
+      <VotingArea
+        voteStatistics={voteStatistics}
+        isVotingActive={true}
+        handleVote={votingPhaseHandler}
+        disableVotingButtons={vote?.round === 1}
+      />
+    )
+  }
+
+  // on timelock phase show only voting bar, witout voting buttons
+  return <VotingBar voteStatistics={voteStatistics} />
 }

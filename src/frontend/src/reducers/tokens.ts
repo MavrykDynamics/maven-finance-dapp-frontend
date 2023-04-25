@@ -1,7 +1,5 @@
 import { M_Token } from './../utils/generated/graphqlTypes'
-import { Governance_Financial_Whitelist_Token_Contract } from 'utils/generated/graphqlTypes'
 import { DipDupTokensGraphQl } from 'utils/TypesAndInterfaces/DipDupTokens'
-import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
 import {
   GET_DIP_DUP_TOKENS,
   GET_MVK_FAUCET,
@@ -12,6 +10,8 @@ import {
 import { AvaliableCollateralType } from 'utils/TypesAndInterfaces/Loans'
 import { GET_AVALIABLE_COLLATERALS, GET_XTZ_BAKERS } from 'pages/Loans/Actions/getLoansData.actions'
 import { XtzBakerType } from 'utils/TypesAndInterfaces/Loans'
+import { TokenType } from 'utils/TypesAndInterfaces/General'
+import { AnyAction } from 'redux'
 
 export type TokensType = {
   dipDupTokens: Array<DipDupTokensGraphQl>
@@ -23,14 +23,26 @@ export type TokensType = {
     dao: (XtzBakerType & { description: string; isDisabled: boolean }) | null
     mavrykDynamics: (XtzBakerType & { description: string; isDisabled: boolean }) | null
   }
-  whitelistTokens: Array<Governance_Financial_Whitelist_Token_Contract>
+  whitelistTokens: Array<{
+    symbol: string
+    address: string
+    shortSymbol: TokenType
+    id: number
+  }>
   mTokens: Array<M_Token>
   mvkFaucetAddress: string | null
 }
 const defaultTokensInfoState: TokensType = {
   dipDupTokens: [],
   dipDupContracts: [],
-  whitelistTokens: [],
+  whitelistTokens: [
+    {
+      symbol: 'xtz',
+      address: 'KT1XYiqkAE2BtSeujKsiHBuRAAt3kmeuK4pP',
+      shortSymbol: 'tez',
+      id: 0,
+    },
+  ],
   avaliableCollaterals: [],
   xtzBakers: {
     otherBakers: [],
@@ -43,12 +55,12 @@ const defaultTokensInfoState: TokensType = {
   mvkFaucetAddress: 'KT1A6EJRMuz8TZWeSxaqvU2UsqxRjopvo8Nh', //null,
 }
 
-export function tokens(state = defaultTokensInfoState, action: Action) {
+export function tokens(state = defaultTokensInfoState, action: AnyAction) {
   switch (action.type) {
     case GET_DIP_DUP_TOKENS:
       return { ...state, dipDupTokens: action.dipDupTokens, dipDupContracts: action.dipDupContracts }
     case GET_WHITELIST_TOKENS:
-      return { ...state, whitelistTokens: action.whitelistTokens }
+      return { ...state, whitelistTokens: state.whitelistTokens.concat(action.whitelistTokens) }
     case GET_AVALIABLE_COLLATERALS:
       return { ...state, avaliableCollaterals: action.avaliableCollaterals }
     case GET_XTZ_BAKERS:

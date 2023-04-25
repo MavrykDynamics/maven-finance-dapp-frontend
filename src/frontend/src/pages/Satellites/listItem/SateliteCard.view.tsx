@@ -71,9 +71,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
       mySatelliteRewardsData: { myAvailableSatelliteRewards },
     },
   } = useSelector((state: State) => state.wallet)
-  const {
-    governanceStorage: { proposalLedger },
-  } = useSelector((state: State) => state.governance)
+  const { proposalsMapper } = useSelector((state: State) => state.governance)
 
   // Card buttons handlers
   const delegateCallback = async () => await dispatch(delegate(satellite.address))
@@ -88,10 +86,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
 
   // Latest vote data
   const currentlySupportingProposalVote = satellite.proposalVotingHistory?.at(0)?.vote ?? null
-  const currentlySupportingProposalId = satellite.proposalVotingHistory?.at(0)?.proposalId ?? null
-  const currentlySupportingProposal = proposalLedger?.length
-    ? proposalLedger.find((proposal) => proposal.id === currentlySupportingProposalId)
-    : null
+  const lastSupportedgProposalId = satellite.proposalVotingHistory?.at(0)?.proposalId ?? null
 
   // Satellite status data
   const oracleStatusType = getOracleStatus(satellite, feedsLedger)
@@ -215,12 +210,13 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
 
       {children
         ? children
-        : currentlySupportingProposal?.id !== undefined &&
+        : lastSupportedgProposalId &&
+          proposalsMapper[lastSupportedgProposalId] &&
           currentlySupportingProposalVote !== null && (
             <SatelliteCardRow>
               <div>
                 Voted {renderVotingHistoryItem(currentlySupportingProposalVote)} on current Proposal{' '}
-                {currentlySupportingProposal.id} - {currentlySupportingProposal.title}
+                {lastSupportedgProposalId} - {proposalsMapper[lastSupportedgProposalId].title}
               </div>
             </SatelliteCardRow>
           )}

@@ -1,19 +1,12 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { Page } from 'styles'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
-import { useLocation } from 'react-router'
-
-// types
-import type { GovernanceSatelliteActionGraphQL } from '../../utils/TypesAndInterfaces/Governance'
+import { useLocation, useParams } from 'react-router'
+import { Link } from 'react-router-dom'
 
 // const
-import {
-  calculateSlicePositions,
-  getPageNumber,
-  getSatelliteGovernanceListName,
-} from 'app/App.components/Pagination/pagination.consts'
-import { defaultGovPurposeMaxLength } from 'app/App.components/Input/Input.constants'
+import { calculateSlicePositions, getPageNumber } from 'app/App.components/Pagination/pagination.consts'
 
 // view
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
@@ -25,19 +18,33 @@ import { CommaNumber } from '../../app/App.components/CommaNumber/CommaNumber.co
 import Pagination from 'app/App.components/Pagination/Pagination.view'
 import { TabItem } from '../../app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import { RegisterAggregatorForm } from './RegisterAggregator.form'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import { Button } from 'app/App.components/Button/Button.controller'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 
 // actions
-import { getGovernanceSatelliteStorage } from './SatelliteGovernance.actions'
+import { getSatelliteGovernanceStorage } from './SatelliteGovernance.actions'
 import { getTotalDelegatedMVK } from 'pages/Satellites/helpers/Satellites.consts'
 
 // style
 import { SatelliteGovernanceStyled, SmallInfoBlock } from './SatelliteGovernance.style'
 import { DropdownCard, DropdownWrap } from '../../app/App.components/DropDown/DropDown.style'
 import { EmptyContainer } from '../../app/App.style'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import { Button } from 'app/App.components/Button/Button.controller'
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+
+// helpers
+import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { ACTION_SIMPLE } from 'app/App.components/Button/Button.constants'
 import { convertBytesAddressToAddress } from '../../app/App.helpers'
+import {
+  ONGOING_ACTIONS_SATELLITE_GOVERNANCE_LIST,
+  PAST_ACTIONS_SATELLITE_GOVERNANCE_LIST,
+  MY_ACTIONS_SATELLITE_GOVERNANCE_LIST,
+} from '../../app/App.components/Pagination/pagination.consts'
+
+type ExtendedTabItem = TabItem & {
+  path: string
+}
 
 const itemsForDropDown = [
   'Suspend Satellite',
@@ -55,84 +62,124 @@ const itemsForDropDown = [
   'Fix Mistaken Transfer',
 ]
 
-const getOngoingActionsList = (list: GovernanceSatelliteActionGraphQL[]): GovernanceSatelliteActionGraphQL[] => {
-  return list?.filter((item) => {
-    const timeNow = Date.now()
-    const expirationDatetime = new Date(item.expiration_datetime as string).getTime()
-    return expirationDatetime > timeNow && item.status !== 1 && !item.executed
-  })
+const tabsId = {
+  ONGOING: 'ongoing',
+  PAST: 'past',
+  MY: 'my',
 }
 
-const getPastActionsList = (list: GovernanceSatelliteActionGraphQL[]): GovernanceSatelliteActionGraphQL[] => {
-  return list?.filter((item) => {
-    const timeNow = Date.now()
-    const expirationDatetime = new Date(item.expiration_datetime as string).getTime()
-    return expirationDatetime < timeNow
-  })
+const getCurrentListNameById = (tabId: string) => {
+  switch (tabId) {
+    case tabsId.ONGOING:
+      return ONGOING_ACTIONS_SATELLITE_GOVERNANCE_LIST
+    case tabsId.PAST:
+      return PAST_ACTIONS_SATELLITE_GOVERNANCE_LIST
+    case tabsId.MY:
+      return MY_ACTIONS_SATELLITE_GOVERNANCE_LIST
+
+    default:
+      return ONGOING_ACTIONS_SATELLITE_GOVERNANCE_LIST
+  }
 }
 
 export const SatelliteGovernance = () => {
   const { search } = useLocation()
   const dispatch = useDispatch()
+
+  const { tabId = tabsId.ONGOING } = useParams<{ tabId: string }>()
+
   const {
     accountPkh,
     user: { isSatellite },
   } = useSelector((state: State) => state.wallet)
+
   const { oraclesIds, activeSatellitesIds, allSatellitesIds, satelliteMapper } = useSelector(
     (state: State) => state.satellites,
   )
-  const {
-    governanceSatelliteStorage: { governance_satellite_action, governance_satellite },
-  } = useSelector((state: State) => state.governance)
-  const { feedNameMaxLength } = useSelector((state: State) => state.dataFeeds.config)
+
   const { isActionActive } = useSelector((state: State) => state.loading)
+
+  const {
+    isLoaded,
+    ongoingSatelliteGovIds,
+    pastSatelliteGovIds,
+    mySatelliteGovIds,
+    satelliteGovIdsMapper,
+    config: { purposeMaxLength },
+  } = useSelector((state: State) => state.satelliteGovernance)
+  const { feedNameMaxLength } = useSelector((state: State) => state.dataFeeds.config)
+
+  const getCurrentIdsById = useCallback(
+    (tabId: string) => {
+      switch (tabId) {
+        case tabsId.ONGOING:
+          return ongoingSatelliteGovIds
+        case tabsId.PAST:
+          return pastSatelliteGovIds
+        case tabsId.MY:
+          return mySatelliteGovIds
+
+        default:
+          return ongoingSatelliteGovIds
+      }
+    },
+    [mySatelliteGovIds, ongoingSatelliteGovIds, pastSatelliteGovIds],
+  )
+
+  const [tabsList, setTabsList] = useState<ExtendedTabItem[]>([])
 
   const [ddIsOpen, setDdIsOpen] = useState(false)
   const [chosenDdItem, setChosenDdItem] = useState<string | undefined>()
-  const [activeTab, setActiveTab] = useState(1)
-  const [tabsList, setTabsList] = useState<TabItem[]>([])
-  const [separateRecord, setSeparateRecord] = useState<GovernanceSatelliteActionGraphQL[]>([])
 
-  useEffect(() => {
-    ;(async () => {
-      await dispatch(getGovernanceSatelliteStorage())
-    })()
-  }, [dispatch])
-
-  const listName = useMemo(() => getSatelliteGovernanceListName(activeTab), [activeTab])
-  const currentPage = getPageNumber(search, listName)
+  const currentListName = getCurrentListNameById(tabId)
+  const currentSatelliteGovIds = getCurrentIdsById(tabId)
+  const currentPage = getPageNumber(search, currentListName)
 
   const paginatedItemsList = useMemo(() => {
-    const [from, to] = calculateSlicePositions(currentPage, listName)
-    return separateRecord?.slice(from, to)
-  }, [currentPage, separateRecord])
+    const [from, to] = calculateSlicePositions(currentPage, currentListName)
+    return currentSatelliteGovIds?.slice(from, to)
+  }, [currentListName, currentPage, currentSatelliteGovIds])
 
   const totalDelegatedMVK = getTotalDelegatedMVK(allSatellitesIds, satelliteMapper)
-  const ongoingActionsAmount = getOngoingActionsList(governance_satellite_action)?.length
+  const ongoingActionsAmount = ongoingSatelliteGovIds.length
 
   const maxLength = {
-    purposeMaxLength: governance_satellite[0]?.gov_purpose_max_length || defaultGovPurposeMaxLength,
+    purposeMaxLength,
     aggregatorNameMaxLength: feedNameMaxLength,
   }
 
+  // set tabs list
   useEffect(() => {
-    const filterOngoing = getOngoingActionsList(governance_satellite_action)
-    const filterPast = getPastActionsList(governance_satellite_action)
-
-    setSeparateRecord(filterOngoing?.length ? filterOngoing : filterPast)
-    setActiveTab(filterOngoing?.length ? 1 : 2)
-
     const prevTabs = [
-      { text: 'Ongoing Actions', id: 1, active: Boolean(filterOngoing?.length) },
-      { text: 'Past Actions', id: 2, active: Boolean(!filterOngoing?.length) },
+      {
+        text: 'Ongoing Actions',
+        id: 1,
+        active: tabsId.ONGOING === tabId,
+        path: tabsId.ONGOING,
+      },
+      {
+        text: 'Past Actions',
+        id: 2,
+        active: tabsId.PAST === tabId,
+        path: tabsId.PAST,
+      },
     ]
 
     if (isSatellite) {
-      setTabsList([...prevTabs, { text: 'My Actions', id: 3, active: false }])
+      setTabsList([
+        ...prevTabs,
+        {
+          text: 'My Actions',
+          id: 3,
+          active: tabsId.MY === tabId,
+          path: tabsId.MY,
+          isDisabled: !accountPkh,
+        },
+      ])
     } else {
       setTabsList([...prevTabs])
     }
-  }, [governance_satellite_action, isSatellite])
+  }, [accountPkh, isSatellite, tabId])
 
   const handleOnClickDropdownItem = (e: string) => {
     const chosenItem = itemsForDropDown.find((item) => item === e)
@@ -142,27 +189,16 @@ export const SatelliteGovernance = () => {
     }
   }
 
-  const handleChangeTabs = (tabId?: number) => {
-    if (tabId === 1) {
-      setActiveTab(tabId)
-      const filterOngoing = getOngoingActionsList(governance_satellite_action)
-      setSeparateRecord(filterOngoing)
-    }
-
-    if (tabId === 2) {
-      setActiveTab(tabId)
-      const filterPast = getPastActionsList(governance_satellite_action)
-      setSeparateRecord(filterPast)
-    }
-
-    if (tabId === 3) {
-      setActiveTab(tabId)
-      const filterPast = governance_satellite_action.filter((item) => {
-        return accountPkh === item.initiator_id
-      })
-      setSeparateRecord(filterPast)
-    }
-  }
+  const { isLoading } = useDataLoader(
+    async (isDepsChanged) => {
+      try {
+        if (!isLoaded || isDepsChanged) {
+          await dispatch(getSatelliteGovernanceStorage())
+        }
+      } catch (e) {}
+    },
+    [accountPkh],
+  )
 
   const emptyContainer = (
     <EmptyContainer>
@@ -174,6 +210,7 @@ export const SatelliteGovernance = () => {
   return (
     <Page>
       <PageHeader page={'satellite-governance'} />
+
       <SatelliteGovernanceStyled>
         <article className="satellite-governance-article">
           <SmallInfoBlock>
@@ -196,6 +233,7 @@ export const SatelliteGovernance = () => {
             <div className="info-content">{ongoingActionsAmount}</div>
           </SmallInfoBlock>
         </article>
+
         {isSatellite ? (
           <DropdownCard className="satellite-governance-dropdown">
             <DropdownWrap>
@@ -216,54 +254,59 @@ export const SatelliteGovernance = () => {
             ) : (
               <SatelliteGovernanceForm
                 maxLength={maxLength}
-                variant={chosenDdItem || ''}
                 isActionActive={isActionActive}
+                variant={chosenDdItem || ''}
               />
             )}
           </DropdownCard>
         ) : null}
+
         {tabsList?.length ? (
           <div className="buttons-selector">
-            {tabsList.map(({ id, text }) => (
-              <Button
-                kind={ACTION_SIMPLE}
-                onClick={() => {
-                  handleChangeTabs(id)
-                }}
-                text={text}
-                className={id === activeTab ? 'active' : ''}
-              />
+            {tabsList.map(({ text, active, path }) => (
+              <Link key={path} to={`/satellite-governance/${path}`}>
+                <Button kind={ACTION_SIMPLE} text={text} className={active ? 'active' : ''} />
+              </Link>
             ))}
           </div>
         ) : null}
       </SatelliteGovernanceStyled>
 
-      {paginatedItemsList?.length
-        ? paginatedItemsList.map((item: GovernanceSatelliteActionGraphQL) => {
-            return (
-              <SatelliteGovernanceCard
-                key={item.id}
-                id={item.id}
-                satelliteId={convertBytesAddressToAddress(item.parameters?.[0].value) ?? ''}
-                initiatorId={item.initiator_id}
-                date={item.expiration_datetime || ''}
-                executed={item.executed}
-                status={item.status}
-                purpose={item.governance_purpose}
-                governanceType={item.governance_type}
-                yayVotesSmvkTotal={item.yay_vote_smvk_total}
-                nayVotesSmvkTotal={item.nay_vote_smvk_total}
-                snapshotSmvkTotalSupply={item.snapshot_smvk_total_supply}
-                passVoteSmvkTotal={item.pass_vote_smvk_total}
-                smvkPercentageForApproval={item.smvk_percentage_for_approval}
-                accountPkh={accountPkh}
-                isActionActive={isActionActive}
-              />
-            )
-          })
-        : emptyContainer}
+      {isLoading ? (
+        <DataLoaderWrapper>
+          <ClockLoader width={150} height={150} />
+          <div className="text">Loading vaults</div>
+        </DataLoaderWrapper>
+      ) : paginatedItemsList.length ? (
+        paginatedItemsList.map((itemId) => {
+          const action = satelliteGovIdsMapper[itemId]
 
-      <Pagination itemsCount={separateRecord?.length} listName={listName} />
+          return (
+            <SatelliteGovernanceCard
+              key={`${action.id}`}
+              id={action.id}
+              satelliteId={convertBytesAddressToAddress(action.parameters[0].value)}
+              initiatorId={action.initiatorId}
+              date={action.expirationDatetime}
+              executed={action.executed}
+              status={action.status}
+              purpose={action.purpose}
+              governanceType={action.type}
+              snapshotSmvkTotalSupply={action.snapshotSmvkTotalSupply}
+              smvkPercentageForApproval={action.smvkPercentageForApproval}
+              yayVotesSmvkTotal={action.yayVoteSmvkTotal}
+              nayVotesSmvkTotal={action.nayVoteSmvkTotal}
+              passVoteSmvkTotal={action.passVoteSmvkTotal}
+              accountPkh={accountPkh}
+              isActionActive={isActionActive}
+            />
+          )
+        })
+      ) : (
+        emptyContainer
+      )}
+
+      <Pagination itemsCount={currentSatelliteGovIds.length} listName={currentListName} />
     </Page>
   )
 }

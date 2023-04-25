@@ -6,7 +6,6 @@ import { Link, Redirect, Route, Switch } from 'react-router-dom'
 import { State } from 'reducers'
 
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
-import { getGovernanceStorage } from 'pages/Governance/Governance.actions'
 import { claimAllRewardsAction } from './DashboardPersonal.actions'
 import { updateUserData } from 'reducers/actions/user.actions'
 import { getEmergencyGovernanceStorage } from 'pages/EmergencyGovernance/EmergencyGovernance.actions'
@@ -37,6 +36,7 @@ import VestingTab from './DashboardPersonalComponents/VestingTab'
 import { DashboardPersonalStyled } from './DashboardPersonal.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
+import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
 
 const DashboardPersonal = () => {
   const dispatch = useDispatch()
@@ -49,7 +49,8 @@ const DashboardPersonal = () => {
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { councilMembers, breakGlassCouncilMembers } = useSelector((state: State) => state.council)
   const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
-  const { isGovernanceStorageLoaded } = useSelector((state: State) => state.governance)
+  const { isLoaded: isFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
+  const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)
   const { isDataLoaded: isLoansLoaded } = useSelector((state: State) => state.loans)
   const { isLoaded: isVestingLoaded } = useSelector((state: State) => state.vesting)
   const {
@@ -77,7 +78,7 @@ const DashboardPersonal = () => {
       try {
         await Promise.all(
           [
-            (!isGovernanceStorageLoaded || isDepsChanged) && dispatch(getGovernanceStorage()),
+            (!isGovernanceLoaded || isDepsChanged) && dispatch(getGovernanceStorage()),
             (!isEgovLoaded || isDepsChanged) && dispatch(getEmergencyGovernanceStorage()),
             isVestee && (!isVestingLoaded || isDepsChanged) && dispatch(getVestingStorage()),
             (!isLoansLoaded || isDepsChanged) && dispatch(getLoansStorage()),

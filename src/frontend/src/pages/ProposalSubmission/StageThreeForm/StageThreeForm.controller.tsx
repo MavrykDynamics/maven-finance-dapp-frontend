@@ -11,20 +11,20 @@ import { checkPaymentExists, getValidityStageThreeTable } from '../ProposalSubmi
 
 // components
 import Icon from '../../../app/App.components/Icon/Icon.view'
-import { StatusFlag } from '../../../app/App.components/StatusFlag/StatusFlag.controller'
+import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import { DDItemId, DropDown } from 'app/App.components/DropDown/NewDropdown'
+import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+import { Input } from 'app/App.components/Input/NewInput'
+import Button from 'app/App.components/Button/NewButton'
 
 // const
-import { ProposalStatus } from '../../../utils/TypesAndInterfaces/Governance'
-import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import { INPUT_SMALL, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import { BUTTON_SIMPLE_SMALL } from 'app/App.components/Button/Button.constants'
+import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 
 // styles
-import {
-  FormHeaderGroup,
-  FormTitleAndFeeContainer,
-  FormTitleContainer,
-  FormTitleEntry,
-  SubmissionStyled,
-} from '../ProposalSubmission.style'
+import { SubmitProposalGeneralData } from '../ProposalSubmission.style'
 import {
   AddRowBtn,
   RemoveRowBtn,
@@ -35,70 +35,44 @@ import {
   TableHeaderCell,
   TableRow,
 } from 'app/App.components/Table'
-import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
-import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
-import { Input } from 'app/App.components/Input/Input.controller'
-import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import { DDItemId, DropDown } from 'app/App.components/DropDown/NewDropdown'
 import { DropDownJsxChild } from 'app/App.components/DropDown/DropDown.style'
 
 export const StageThreeForm = ({
   proposalId,
   currentProposal,
-  paymentMethods,
   currentProposalValidation,
   updateLocalProposalValidation,
-  setProposalHasChange,
   updateLocalProposalData,
 }: StageThreeFormProps) => {
   const { proposalPayments, locked, title } = currentProposal
 
-  const {
-    governanceStorage: {
-      fee,
-      config: { successReward },
-    },
-    governancePhase,
-  } = useSelector((state: State) => state.governance)
-
-  useEffect(() => {
-    if (!proposalPayments.some(checkPaymentExists)) {
-      handleAddRow()
-    }
-  }, [proposalId, proposalPayments])
-
-  const ddItems = useMemo(() => {
-    return paymentMethods.map((method) => ({
-      content: <DropDownJsxChild>{method.symbol}</DropDownJsxChild>,
-      id: method.address,
-    }))
-  }, [paymentMethods])
+  const { fee, successReward, governancePhase } = useSelector((state: State) => state.governance.config)
+  const { whitelistTokens } = useSelector((state: State) => state.tokens)
 
   const isProposalRound = governancePhase === 'PROPOSAL'
 
-  const handleOnBlur = (e: React.ChangeEvent<HTMLInputElement>, itemIdx: number, maxLength?: number) => {
-    const { name, value } = e.target
-    const validationResult = getValidityStageThreeTable(name as StageThreeValidityItem, value, maxLength)
-      ? INPUT_STATUS_SUCCESS
-      : INPUT_STATUS_ERROR
+  // is no bytes payments on proposal change add empty pair on client
+  useEffect(() => {
+    if (!proposalPayments.some(checkPaymentExists) && !currentProposal.locked) {
+      handleAddRow()
+    }
+  }, [proposalId, currentProposal.locked])
 
-    updateLocalProposalValidation(
-      {
-        paymentsValidation: currentProposalValidation.paymentsValidation.map((paymentValidation, idx) =>
-          idx === itemIdx ? { ...paymentValidation, [name]: validationResult } : paymentValidation,
-        ),
-      },
-      proposalId,
-    )
-  }
+  const ddItems = useMemo(() => {
+    return whitelistTokens.map((method) => ({
+      content: <DropDownJsxChild>{method.symbol.toUpperCase()}</DropDownJsxChild>,
+      id: method.address,
+    }))
+  }, [whitelistTokens])
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement> | { target: { name: string; value: string | number } },
     row: number,
+    maxLength?: number,
   ) => {
     let { name, value } = e.target
 
+    // update input value
     updateLocalProposalData(
       {
         proposalPayments: proposalPayments.map((item, idx) => {
@@ -113,11 +87,26 @@ export const StageThreeForm = ({
       proposalId,
     )
 
-    setProposalHasChange(true)
+    // we don't need validation for token address, cuz it's not used on backend, and it's dd value
+    if (name !== 'token_address') {
+      // update validation
+      const validationResult = getValidityStageThreeTable(name as StageThreeValidityItem, value, maxLength)
+        ? INPUT_STATUS_SUCCESS
+        : INPUT_STATUS_ERROR
+
+      updateLocalProposalValidation(
+        {
+          paymentsValidation: currentProposalValidation.paymentsValidation.map((paymentValidation, idx) =>
+            idx === row ? { ...paymentValidation, [name]: validationResult } : paymentValidation,
+          ),
+        },
+        proposalId,
+      )
+    }
   }
 
   const handleAddRow = () => {
-    const { address = '', id = 0 } = paymentMethods?.[0] ?? {}
+    const { address = '', id = 0 } = whitelistTokens?.[0] ?? {}
     const newId = -(proposalPayments.length + 1)
     updateLocalProposalData(
       {
@@ -147,7 +136,6 @@ export const StageThreeForm = ({
       },
       proposalId,
     )
-    setProposalHasChange(true)
   }
 
   const handleDeleteRow = (rowIdx: number) => {
@@ -163,109 +151,131 @@ export const StageThreeForm = ({
       },
       proposalId,
     )
-    setProposalHasChange(true)
   }
 
   const isTableDisabled = useMemo(() => !isProposalRound || locked, [isProposalRound, locked])
 
   return (
-    <SubmissionStyled>
-      <FormHeaderGroup>
-        <h1>Stage 3</h1>
-        <StatusFlag
-          text={locked ? 'LOCKED' : 'UNLOCKED'}
-          status={locked ? ProposalStatus.DEFEATED : ProposalStatus.EXECUTED}
-        />
-        <a className="info-link" href="https://mavryk.finance/litepaper#governance" target="_blank" rel="noreferrer">
-          <Icon id="question" />
-        </a>
-      </FormHeaderGroup>
-      <FormTitleAndFeeContainer>
-        <FormTitleContainer>
-          <label>1 - Proposal Title</label>
-          <FormTitleEntry>{title}</FormTitleEntry>
-        </FormTitleContainer>
-        <div>
-          <label>2 - Proposal Success Reward</label>
-          <FormTitleEntry>{successReward} MVK</FormTitleEntry>
+    <>
+      <SubmitProposalGeneralData>
+        <div className="submitted-data">
+          <div className="label">1 - Proposal Title</div>
+          <div className="value">{title}</div>
         </div>
-        <div>
-          <label>3 - Fee</label>
-          <FormTitleEntry>{fee} XTZ</FormTitleEntry>
+
+        <div className="submitted-data">
+          <div className="label">2 - Proposal Success Reward</div>
+          <CommaNumber className="value" value={successReward} endingText="MVK" />
         </div>
-      </FormTitleAndFeeContainer>
-      <label>4 - Enter Proposal Data</label>
+
+        <div className="submitted-data">
+          <div className="label">3 - Fee</div>
+          <CommaNumber className="value" value={fee} endingText="XTZ" />
+        </div>
+      </SubmitProposalGeneralData>
+
       <Table className="editable-table with-header">
         <TableHeader className="editable-head">
           <TableRow>
-            <TableHeaderCell className="no-right-border">Address</TableHeaderCell>
+            <TableHeaderCell
+              style={
+                proposalPayments.length === 0
+                  ? {
+                      borderBottomLeftRadius: '10px',
+                    }
+                  : undefined
+              }
+            >
+              Address
+            </TableHeaderCell>
             <TableHeaderCell>Purpose</TableHeaderCell>
             <TableHeaderCell>Amount</TableHeaderCell>
-            <TableHeaderCell className="right-border">Payment Type (XTZ/MVK)</TableHeaderCell>
+            <TableHeaderCell
+              style={
+                proposalPayments.length === 0
+                  ? {
+                      borderBottomRightRadius: '10px',
+                    }
+                  : undefined
+              }
+            >
+              Payment Type (XTZ/MVK)
+            </TableHeaderCell>
           </TableRow>
         </TableHeader>
-        <TableBody className="editable-body">
+
+        <TableBody>
           {proposalPayments.map((payment, rowIdx) => {
             const validationObj = currentProposalValidation.paymentsValidation?.find(
               ({ paymentId }) => paymentId === payment.id,
             )
             const { symbol: selectedSymbol = 'MVK', address } =
-              paymentMethods.find(({ address }) => address === payment.token_address) ?? paymentMethods?.[0] ?? {}
+              whitelistTokens.find(({ address }) => address === payment.token_address) ?? whitelistTokens?.[0] ?? {}
 
             return (
               <TableRow className="editable-row">
-                <TableCell width="25%">
+                <TableCell width="25%" className="hide-overflow">
                   {isTableDisabled ? (
                     payment.to__id ? (
-                      <TzAddress
-                        tzAddress={String(payment.to__id)}
-                        type={BLUE}
-                        hasIcon={true}
-                        className="table-cell-tzAddress"
-                      />
+                      <TzAddress tzAddress={String(payment.to__id)} type={BLUE} hasIcon />
                     ) : (
-                      ''
+                      '-'
                     )
                   ) : (
                     <Input
-                      value={String(payment.to__id)}
-                      inputStatus={validationObj?.to__id}
-                      onChange={(e) => handleChange(e, rowIdx)}
-                      onBlur={(e) => handleOnBlur(e, rowIdx)}
-                      name={'to__id'}
-                      type={'text'}
+                      settings={{
+                        inputStatus: validationObj?.to__id,
+                        inputSize: INPUT_SMALL,
+                      }}
+                      inputProps={{
+                        value: String(payment.to__id),
+                        type: 'text',
+                        name: 'to__id',
+                        onChange: (e) => handleChange(e, rowIdx),
+                      }}
                     />
                   )}
                 </TableCell>
-                <TableCell width="25%">
+
+                <TableCell width="25%" className="hide-overflow">
                   {isTableDisabled ? (
                     String(payment.title)
                   ) : (
                     <Input
-                      value={String(payment.title)}
-                      inputStatus={validationObj?.title}
-                      onChange={(e) => handleChange(e, rowIdx)}
-                      onBlur={(e) => handleOnBlur(e, rowIdx)}
-                      name={'title'}
-                      type={'text'}
+                      settings={{
+                        inputStatus: validationObj?.title,
+                        inputSize: INPUT_SMALL,
+                      }}
+                      inputProps={{
+                        value: String(payment.title),
+                        type: 'text',
+                        name: 'title',
+                        onChange: (e) => handleChange(e, rowIdx),
+                      }}
                     />
                   )}
                 </TableCell>
-                <TableCell width="25%">
+
+                <TableCell width="25%" className="hide-overflow">
                   {isTableDisabled ? (
                     <CommaNumber value={Number(payment.token_amount)} endingText={selectedSymbol} />
                   ) : (
                     <Input
-                      value={String(payment.token_amount)}
-                      inputStatus={validationObj?.token_amount}
-                      onChange={(e) => handleChange(e, rowIdx)}
-                      onBlur={(e) => handleOnBlur(e, rowIdx)}
-                      name={'token_amount'}
-                      type={'number'}
+                      settings={{
+                        inputStatus: validationObj?.token_amount,
+                        inputSize: INPUT_SMALL,
+                      }}
+                      inputProps={{
+                        value: String(payment.token_amount),
+                        type: 'number',
+                        name: 'token_amount',
+                        onChange: (e) => handleChange(e, rowIdx),
+                      }}
                     />
                   )}
                 </TableCell>
-                <TableCell className="no-right-border" width="25%">
+
+                <TableCell width="25%">
                   {isTableDisabled ? (
                     selectedSymbol
                   ) : (
@@ -286,27 +296,29 @@ export const StageThreeForm = ({
                   )}
                 </TableCell>
 
-                <RemoveRowBtn
-                  className={`button-wrap remove ${isTableDisabled ? 'disabled' : ''}`}
-                  {...(!isTableDisabled ? { onClick: () => handleDeleteRow(rowIdx) } : {})}
-                >
-                  <CustomTooltip text="Delete row">
-                    <Icon id="delete" />
+                <RemoveRowBtn>
+                  <CustomTooltip text="Delete row" className="tooltip">
+                    <Button
+                      kind={BUTTON_SIMPLE_SMALL}
+                      onClick={() => handleDeleteRow(rowIdx)}
+                      disabled={isTableDisabled}
+                    >
+                      <Icon id="delete" />
+                    </Button>
                   </CustomTooltip>
                 </RemoveRowBtn>
               </TableRow>
             )
           })}
         </TableBody>
-        <AddRowBtn
-          className={`button-wrap ${isTableDisabled ? 'disabled' : ''}`}
-          {...(!isTableDisabled ? { onClick: handleAddRow } : {})}
-        >
-          <CustomTooltip text="Insert 1 row below">
-            <span>+</span>
+        <AddRowBtn>
+          <CustomTooltip text="Insert 1 row below" className="tooltip">
+            <Button kind={BUTTON_SIMPLE_SMALL} onClick={handleAddRow} disabled={isTableDisabled}>
+              <Icon id="plus" />
+            </Button>
           </CustomTooltip>
         </AddRowBtn>
       </Table>
-    </SubmissionStyled>
+    </>
   )
 }

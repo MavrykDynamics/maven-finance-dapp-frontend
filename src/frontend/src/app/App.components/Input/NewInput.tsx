@@ -62,7 +62,7 @@ export const Input = ({
         </NewInputLabel>
       ) : null}
 
-      <StyledInput {...inputProps} className={inputStatus} autoComplete={inputProps.name} />
+      <StyledInput {...inputProps} className={inputStatus} autoComplete={'off'} />
       {Boolean(children) ? null : <InputStyledStatus className={`${inputStatus} ${inputSize}`} />}
 
       {balance !== undefined && balanceAsset ? (

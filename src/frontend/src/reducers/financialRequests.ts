@@ -1,4 +1,4 @@
-import { GET_FINANCIAL_REQUEST_STORAGE } from 'pages/FinacialRequests/FiancialRequest.actions'
+import { GET_FINANCIAL_REQUEST_STORAGE } from 'pages/FinacialRequests/FinancialRequest.actions'
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
 import { normalizeFinancialRequests } from 'pages/FinacialRequests/FinancialRequests.helpers'
 
