@@ -3,21 +3,13 @@ import { State } from '../../../reducers'
 
 import TimeRemaining from '../../Governance/components/TimeRemaining/TimeRemaining.controller'
 import { SlidingTabButtons } from '../../../app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
+
 import { getSeparateSnakeCase } from '../../../utils/parse'
 
-import {
-  CurrentPhaseContainer,
-  PropSubmissionTopBarStyled,
-  PropSubTopBarPhaseText,
-  PropSubTopBarTabsContainer,
-  PropSubTopBarTabsText,
-  PropSubTopBarTimeContainer,
-  PropSubTopBarValueText,
-} from './PropSubmissionTopBar.style'
+import { CurrentPhaseContainer, PropSubmissionTopBarStyled } from './PropSubmissionTopBar.style'
 
 export type PropSubmissionTopBarProps = {
-  value?: number
-  valueCallback: (val?: number) => void
+  valueCallback: (val: number) => void
 }
 
 const GOV_PROPOSAL_SUBMISSION_ITEMS = [
@@ -26,24 +18,24 @@ const GOV_PROPOSAL_SUBMISSION_ITEMS = [
   { text: 'Stage 3', id: 3, active: false },
 ]
 
-// TODO redo markup for it
-export const PropSubmissionTopBar = ({ value, valueCallback }: PropSubmissionTopBarProps) => {
+export const PropSubmissionTopBar = ({ valueCallback }: PropSubmissionTopBarProps) => {
   const { governancePhase } = useSelector((state: State) => state.governance.config)
 
   return (
     <PropSubmissionTopBarStyled>
-      <PropSubTopBarTabsContainer>
-        <PropSubTopBarTabsText>Submission Process:</PropSubTopBarTabsText>
+      <div className="left-side">
+        <div className="title">Submission Process:</div>
         <SlidingTabButtons tabItems={GOV_PROPOSAL_SUBMISSION_ITEMS} onClick={valueCallback} />
-      </PropSubTopBarTabsContainer>
+      </div>
 
-      <PropSubTopBarTimeContainer>
+      <div className="right-side">
         <CurrentPhaseContainer>
-          <PropSubTopBarPhaseText>Current Period: </PropSubTopBarPhaseText>
-          <PropSubTopBarValueText>{getSeparateSnakeCase(governancePhase)}</PropSubTopBarValueText>
+          <div className="title">Current Period: </div>
+          <div className="phase">{getSeparateSnakeCase(governancePhase)}</div>
         </CurrentPhaseContainer>
+
         <TimeRemaining />
-      </PropSubTopBarTimeContainer>
+      </div>
     </PropSubmissionTopBarStyled>
   )
 }

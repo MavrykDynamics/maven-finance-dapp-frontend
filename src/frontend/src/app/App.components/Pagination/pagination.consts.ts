@@ -40,6 +40,7 @@ export const BREAK_GLASS_LIST_NAME = 'breakGlass'
 
 export const VAULTS_LIST_NAME = 'vaults'
 export const MY_VAULTS_LIST_NAME = 'myVaults'
+export const PERMISSIONED_VAULTS_LIST_NAME = 'permissionedVaults'
 
 export const LOANS_POSITION_TABLE = 'loansPositionTable'
 
@@ -74,6 +75,7 @@ export const LIST_NAMES_MAPPER: Record<string, number> = {
   [BREAK_GLASS_LIST_NAME]: 8,
   [VAULTS_LIST_NAME]: 14,
   [MY_VAULTS_LIST_NAME]: 14,
+  [PERMISSIONED_VAULTS_LIST_NAME]: 14,
 }
 
 export const calculateSlicePositions = (currentPage: number, listName: string) => {

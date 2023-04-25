@@ -5,7 +5,7 @@ import { State } from '../../reducers'
 
 //  actions
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
-import { getFinancialRequestStorage } from './FiancialRequest.actions'
+import { getFinancialRequestStorage } from './FinancialRequest.actions'
 
 // view
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
@@ -18,9 +18,11 @@ import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 export const FinancialRequests = () => {
   const dispatch = useDispatch()
 
-  const { financialRequests, isLoaded: isFinancialRequestsLoaded } = useSelector(
-    (state: State) => state.financialRequest,
-  )
+  const {
+    financialRequestsIds,
+    financialRequestMapper,
+    isLoaded: isFinancialRequestsLoaded,
+  } = useSelector((state: State) => state.financialRequest)
 
   const { isLoading } = useDataLoader(async (isDepsChanged) => {
     if (!isFinancialRequestsLoaded || isDepsChanged) {
@@ -36,8 +38,11 @@ export const FinancialRequests = () => {
           <ClockLoader width={150} height={150} />
           <div className="text">Loading financial requests</div>
         </DataLoaderWrapper>
-      ) : financialRequests?.length ? (
-        <FinancialRequestsView financialRequestsList={financialRequests} />
+      ) : financialRequestsIds?.length ? (
+        <FinancialRequestsView
+          financialRequestsIds={financialRequestsIds}
+          financialRequestMapper={financialRequestMapper}
+        />
       ) : (
         <EmptyContainer className="centered">
           <img src="/images/not-found.svg" alt=" No financial requests to show" />

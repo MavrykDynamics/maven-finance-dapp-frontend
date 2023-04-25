@@ -26,7 +26,9 @@ export const GovernanceTopBar = ({ governancePhase, isWaitingToExecute }: Govern
         Execution
       </GovTopBarPhaseText>
 
-      <TimeRemaining />
+      <div className="action">
+        <TimeRemaining />
+      </div>
     </GovernanceTopBarStyled>
   )
 }

@@ -88,7 +88,7 @@ export const TransactionHistory = ({ currentToken }: TransactionHistoryPropsType
                 return (
                   <TableRow rowHeight={45} className="add-hover" key={`${operationHash}-${date}`}>
                     <TableCell width={`21%`} className="vert-middle">
-                      <span>{descr}</span>
+                      <span className="descr">{descr}</span>
                     </TableCell>
                     <TableCell width={`21%`}>
                       <CommaNumber value={amount} className="value" endingText={tokenSymbol} />

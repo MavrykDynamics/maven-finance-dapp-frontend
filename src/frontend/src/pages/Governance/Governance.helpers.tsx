@@ -19,8 +19,10 @@ export const getProposalStatus = (
 
   // if proposal is not in current round and it's matching with the timelockProposalId and it's not executed, or it has unpaind payments it's waiting proposal
   if (
-    (!proposal.current_round_proposal && proposal.id === timelockProposalId) ||
-    (!proposal.payment_processed && proposal.payments.length)
+    !proposal.current_round_proposal &&
+    proposal.id === timelockProposalId &&
+    !proposal.payment_processed &&
+    proposal.payments.length
   )
     return ProposalStatus.WAITING
 
@@ -44,22 +46,4 @@ export const getProposalStatus = (
 
   // default case, cuz all condiitons above are not true
   return ProposalStatus.DEFEATED
-}
-
-const BEFORE_DIGIT = 24
-const AFTER_DIGIT = 12
-export const getShortByte = (
-  byte: string,
-  beforeDigit: number = BEFORE_DIGIT,
-  afterDigit: number = AFTER_DIGIT,
-): string => {
-  const shortBype = byte.length
-    ? [
-        byte.substring(0, beforeDigit),
-        byte.length > beforeDigit ? '...' : '',
-        byte.length > beforeDigit ? byte.substring(byte.length - afterDigit) : '',
-      ]
-    : []
-
-  return shortBype.join('')
 }

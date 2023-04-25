@@ -141,7 +141,7 @@ export const TextareaStyled = styled.textarea`
   line-height: 20px;
   resize: none;
   background-color: ${({ theme }) => theme.backgroundColor};
-  color: ${({ theme }) => theme.headerColor};
+  color: ${({ theme }) => theme.blockNameTitleColor};
   border: unset;
   width: 100%;
   min-height: 85px;

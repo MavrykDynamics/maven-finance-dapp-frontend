@@ -21,7 +21,7 @@ import {
   getAssetMetadata,
   isTezosAsset,
 } from 'pages/Loans/Loans.helpers'
-import { calcWithoutDecimals, calcWithoutMu } from 'utils/calcFunctions'
+import { calcWithoutDecimals, calcWithoutMu, convertNumberForClient } from 'utils/calcFunctions'
 import { BLOCKS_PER_MINUTE, FIXED_POINT_ACCURACY } from 'utils/constants'
 import { getUserBalanceForLoanAsset } from 'pages/Loans/LoansFethcers'
 import { CollateralType, DepositorsFlagType } from 'utils/TypesAndInterfaces/Loans'
@@ -40,6 +40,7 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
   const { lendingController, feeds, accountPkh, dipDupTokens, oracleLatestPrices } = storage
   if (!lendingController.vaults.length)
     return {
+      permissinedVaultsIds: [],
       myVaultsIds: [],
       allVaultsIds: [],
       vaultsMapper: {},
@@ -49,6 +50,7 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
 
   const data = await lendingController.vaults.reduce<
     Promise<{
+      permissinedVaultsIds: string[]
       myVaultsIds: string[]
       allVaultsIds: string[]
       vaultsMapper: Record<string, VaultType>
@@ -147,13 +149,14 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
       )
 
       const borrowedAmount = item.loan_principal_total / 10 ** vaultAsset.decimals
+      const currentLoanInterest = item.loan_interest_total / 10 ** vaultAsset.decimals
 
       // Calculating Fee of the vault
       const accruedInterest =
-        borrowedAmount === 0
-          ? 0
-          : calculateAccruedInterest(item.loan_outstanding_total, item.borrow_index, item.loan_token.borrow_index) /
-            FIXED_POINT_ACCURACY
+          borrowedAmount === 0
+              ? currentLoanInterest
+              : currentLoanInterest + calculateAccruedInterest(item.loan_outstanding_total, item.borrow_index, item.loan_token.borrow_index) /
+              FIXED_POINT_ACCURACY
 
       const collateralRatio = calcCollateralRatio(vaultCollateral.totalRow.amount, borrowedAmount, vaultAsset.rate)
       const collateralData = vaultCollateral.normalizedCollaterals.length
@@ -248,6 +251,7 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
         },
         name: item.vault.name,
         borrowCapacity,
+        avaliableLiq: availableLiquidity,
         collateralBalance: vaultCollateral.totalRow.amount,
         collateralRatio,
         apr: currentInterestRate * 100,
@@ -260,6 +264,10 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
         vaultId: item.internal_id,
         creationTimestamp,
         status,
+        minimumRepay: convertNumberForClient({
+          number: item.loan_token.min_repayment_amount,
+          grade: loanTokenMetadata.decimals,
+        }),
 
         levelOfEarly: currentBlock?.level ?? 0,
         levelOfLate:
@@ -284,9 +292,17 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
         acc.myVaultsIds.push(item.vault.address)
       }
 
+      if (
+        (depositors.some((depositorId) => depositorId === accountPkh) || deporsitorsFlag === ANY_USER) &&
+        accountPkh !== item.owner_id
+      ) {
+        acc.permissinedVaultsIds.push(item.vault.address)
+      }
+
       return acc
     },
     Promise.resolve({
+      permissinedVaultsIds: [],
       myVaultsIds: [],
       allVaultsIds: [],
       vaultsMapper: {},
@@ -391,22 +407,21 @@ export const sortByVaultCategory = ({ vaultsMapper, vaultsIds, status }: SortByV
   })
 }
 
-type VaultAssetBalances = {
+export type VaultAssetData = {
+  balance: number
+  usdValue: number
+  rate: number
+  decimals: number
+  name: string
+  chartColor: string
+  symbol: string
+}
+
+export type VaultAssetBalances = {
   globalVaultTVL: number
   collateralRatio: number
   avgCollateralRatio: number
-  assets: Record<
-    string,
-    {
-      balance: number
-      usdValue: number
-      rate: number
-      decimals: number
-      name: string
-      chartColor: string
-      symbol: string
-    }
-  >
+  assets: Record<string, VaultAssetData>
 }
 
 export const reduceVaultsAssets = (vaultIds: string[], vaultsMapper: Record<string, VaultType>) => {

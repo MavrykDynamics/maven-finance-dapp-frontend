@@ -89,7 +89,9 @@ export type LoansVaultType = {
   borrowedAmount: number
   collateralBalance: number
   collateralRatio: number
+  minimumRepay: number
   borrowCapacity: number
+  avaliableLiq: number
   apr: number
   fee: number
   address: string
@@ -116,7 +118,6 @@ export type LoanMarketType = {
   }>
   lendingItem: LendingItemType
   myBorrowingList: Array<LoansVaultType>
-  permissionedBorrowingList: Array<LoansVaultType>
   marketCollateralChartData: Array<AreaChartPlotType>
   marketLiquidityChartData: Array<AreaChartPlotType>
   utilisationRate: number

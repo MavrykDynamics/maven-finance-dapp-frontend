@@ -11,9 +11,10 @@ import { loansPopupsContext } from './Modals/LoansModals.provider'
 import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import Icon from 'app/App.components/Icon/Icon.view'
+import { assetDecimalsToShow } from '../Loans.const'
 
 import { ThreeLevelListItem } from '../Loans.style'
-import { LendingTabListItem, LoansTabStyled, NoItemsInTabStyled } from './LoansComponents.style'
+import { LendingTabListItem, LoansTabStyled, NoItemsInTabStyled, VaultsList } from './LoansComponents.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
@@ -35,7 +36,7 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
       </GovRightContainerTitleArea>
 
       {lendingItem ? (
-        <div className="list-wrapper">
+        <VaultsList>
           <LendingTabListItem>
             <ThreeLevelListItem>
               <div className="name">Asset</div>
@@ -46,7 +47,7 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Lending</div>
-              <CommaNumber value={lendingItem.lendValue} className="value" />
+              <CommaNumber value={lendingItem.lendValue} decimalsToShow={assetDecimalsToShow} className="value" />
               {assetData.rate ? (
                 <CommaNumber value={lendingItem.lendValue * assetData.rate} beginningText="$" className="rate" />
               ) : null}
@@ -64,14 +65,14 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Wallet Balance</div>
-              <CommaNumber value={assetData.userBalance} className="value" />
+              <CommaNumber value={assetData.userBalance} decimalsToShow={assetDecimalsToShow} className="value" />
               {assetData.rate ? (
                 <CommaNumber value={assetData.userBalance * assetData.rate} beginningText="$" className="rate" />
               ) : null}
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">m{assetData.symbol} Balance</div>
-              <CommaNumber value={lendingItem.mBalance} className="value" />
+              <CommaNumber value={lendingItem.mBalance} decimalsToShow={assetDecimalsToShow} className="value" />
             </ThreeLevelListItem>
             <Button
               text="Add"
@@ -103,7 +104,7 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
               className="lending-btn"
             />
           </LendingTabListItem>
-        </div>
+        </VaultsList>
       ) : (
         <NoItemsInTabStyled>
           <span>Lend assets to earn interest.</span>

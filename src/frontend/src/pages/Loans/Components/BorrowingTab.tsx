@@ -14,7 +14,7 @@ import { BorrowingExpandCard } from './BorrowindExpandCard'
 import Checkbox from 'app/App.components/Checkbox/Checkbox.view'
 
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
-import { LoansTabStyled, NoItemsInTabStyled } from './LoansComponents.style'
+import { LoansTabStyled, NoItemsInTabStyled, VaultsList } from './LoansComponents.style'
 
 type BorrowingTabPropsType = {
   borrowingItems: Array<LoansVaultType>
@@ -32,6 +32,7 @@ export const BorrowingTab = ({
   const [createdVaultId, setCreatedVaultAddress] = useState<null | string>(null)
   const [showZeroVaults, setShowZeroVaults] = useState(false)
   const { accountPkh } = useSelector((state: State) => state.wallet)
+  const { isActionActive } = useSelector((state: State) => state.loading)
   const {
     config: { DAOFee },
   } = useSelector((state: State) => state.loans)
@@ -62,12 +63,12 @@ export const BorrowingTab = ({
           <Button
             text="New Vault"
             icon="plus"
-            disabled={!Boolean(accountPkh)}
+            disabled={!Boolean(accountPkh) || isActionActive}
             onClick={() => openCreateVaultPopup({ currentMarketAsset, setCreatedVaultAddress })}
             kind={ACTION_PRIMARY}
             className="lending-tab-no-items-btn has-items-borrow-btn"
           />
-          <div className="list-wrapper">
+          <VaultsList>
             {vaults.map((item, idx) => {
               return (
                 <BorrowingExpandCard
@@ -79,7 +80,7 @@ export const BorrowingTab = ({
                 />
               )
             })}
-          </div>
+          </VaultsList>
         </>
       ) : (
         <NoItemsInTabStyled>

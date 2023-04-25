@@ -46,6 +46,7 @@ const DashboardPersonal = () => {
     tokensPrices: { tezos: xtzExchangeRate = 0, mvk: mvkExchangeRate = 0 },
   } = useSelector((state: State) => state.tokens)
   const { satelliteMapper } = useSelector((state: State) => state.satellites)
+  const { isActionActive } = useSelector((state: State) => state.loading)
   const { councilMembers, breakGlassCouncilMembers } = useSelector((state: State) => state.council)
   const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
   const { isLoaded: isFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
@@ -70,9 +71,7 @@ const DashboardPersonal = () => {
     },
   } = useSelector((state: State) => state.wallet)
 
-  const claimRewards = async () => {
-    await dispatch(claimAllRewardsAction())
-  }
+  const claimRewards = async () => await dispatch(claimAllRewardsAction())
 
   const { isLoading } = useDataLoader(
     async (isDepsChanged) => {
@@ -134,7 +133,7 @@ const DashboardPersonal = () => {
 
       <DashboardPersonalStyled>
         <div className="top">
-          <DashboardPersonalMyRewards {...rewards} claimRewardsHandler={claimRewards} />
+          <DashboardPersonalMyRewards {...rewards} claimRewardsHandler={claimRewards} isActionActive={isActionActive} />
           <DashboardPersonalEarningsHistory {...earnings} />
         </div>
 

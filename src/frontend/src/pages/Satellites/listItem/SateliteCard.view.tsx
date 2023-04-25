@@ -61,6 +61,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
   const dispatch = useDispatch()
 
   const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
+  const { isActionActive } = useSelector((state: State) => state.loading)
   const {
     accountPkh,
     user: {
@@ -73,12 +74,11 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
   const { proposalsMapper } = useSelector((state: State) => state.governance)
 
   // Card buttons handlers
-  const delegateCallback = () => dispatch(delegate(satellite.address))
-  const undelegateCallback = () => dispatch(undelegate(satellite.address))
-  const claimRewardsCallback = () => (accountPkh ? dispatch(rewardsCompound(accountPkh)) : null)
-
+  const delegateCallback = async () => await dispatch(delegate(satellite.address))
+  const undelegateCallback = async () => await dispatch(undelegate(satellite.address))
+  const claimRewardsCallback = async () => (accountPkh ? await dispatch(rewardsCompound(accountPkh)) : null)
   // TODO: add valid data
-  const distributeRewardsCallback = () => dispatch(distributeProposalRewards('', []))
+  const distributeRewardsCallback = async () => await dispatch(distributeProposalRewards('', []))
 
   const freesMVKSpace = Math.max(satellite.sMvkBalance * satellite.delegationRatio - satellite.totalDelegatedAmount, 0)
   const isUserDelegatedToThisSatellite = satellite.address === satelliteMvkIsDelegatedTo
@@ -103,7 +103,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
         icon="man-close"
         kind={ACTION_SECONDARY}
         onClick={undelegateCallback}
-        disabled={!accountPkh}
+        disabled={!accountPkh || isActionActive}
       />
       {isDetailsPage && myAvailableSatelliteRewards > 0 ? (
         <Button
@@ -111,7 +111,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
           icon="rewards"
           kind={ACTION_PRIMARY}
           onClick={claimRewardsCallback}
-          disabled={!accountPkh}
+          disabled={!accountPkh || isActionActive}
           strokeWidth={0.3}
         />
       ) : null}
@@ -120,7 +120,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
           kind={BUTTON_PRIMARY}
           form={BUTTON_WIDE}
           onClick={distributeRewardsCallback}
-          disabled={myAvailableSatelliteRewards === 0}
+          disabled={myAvailableSatelliteRewards === 0 || isActionActive}
         >
           <Icon id="commision" />
           Distribute Rewards
@@ -133,7 +133,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
       icon="man-check"
       kind={ACTION_PRIMARY}
       onClick={delegateCallback}
-      disabled={!accountPkh || !balanceOver1SMvk}
+      disabled={!accountPkh || !balanceOver1SMvk || isActionActive}
     />
   )
 
@@ -211,6 +211,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
       {children
         ? children
         : lastSupportedgProposalId &&
+          proposalsMapper[lastSupportedgProposalId] &&
           currentlySupportingProposalVote !== null && (
             <SatelliteCardRow>
               <div>

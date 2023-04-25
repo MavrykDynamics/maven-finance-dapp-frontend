@@ -269,7 +269,7 @@ export const StageTwoForm = ({
               <Input
                 settings={{
                   label: 'Enter Proposal Bytes Title',
-                  inputStatus: currentProposalValidation.title,
+                  inputStatus: validityObject?.validTitle,
                   inputSize: INPUT_MEDIUM,
                 }}
                 inputProps={{

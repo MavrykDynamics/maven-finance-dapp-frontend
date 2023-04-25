@@ -17,10 +17,6 @@ import { validateTzAddress, isValidLength } from 'utils/validatorFunctions'
 import { defaultProposalDescriptionMaxLength } from 'app/App.components/Input/Input.constants'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 
-export const checkWhetherBytesIsValid = (proposalData: ProposalRecordType['proposalData']): boolean => {
-  return proposalData.every(({ encoded_code, title }) => Boolean(encoded_code) && Boolean(title))
-}
-
 export const getBytesPairValidationStatus = (
   newText: string,
   fieldToValidate: 'validTitle' | 'validBytes',

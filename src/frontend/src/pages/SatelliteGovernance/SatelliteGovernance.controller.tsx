@@ -96,6 +96,8 @@ export const SatelliteGovernance = () => {
     (state: State) => state.satellites,
   )
 
+  const { isActionActive } = useSelector((state: State) => state.loading)
+
   const {
     isLoaded,
     ongoingSatelliteGovIds,
@@ -245,11 +247,15 @@ export const SatelliteGovernance = () => {
               />
             </DropdownWrap>
             {chosenDdItem === 'Register Aggregator' ? (
-              <RegisterAggregatorForm maxLength={maxLength} />
+              <RegisterAggregatorForm maxLength={maxLength} isActionActive={isActionActive} />
             ) : chosenDdItem === 'Fix Mistaken Transfer' ? (
-              <FixMistakenTransferForm maxLength={maxLength} />
+              <FixMistakenTransferForm maxLength={maxLength} isActionActive={isActionActive} />
             ) : (
-              <SatelliteGovernanceForm maxLength={maxLength} variant={chosenDdItem || ''} />
+              <SatelliteGovernanceForm
+                maxLength={maxLength}
+                isActionActive={isActionActive}
+                variant={chosenDdItem || ''}
+              />
             )}
           </DropdownCard>
         ) : null}
@@ -291,6 +297,7 @@ export const SatelliteGovernance = () => {
               nayVotesSmvkTotal={action.nayVoteSmvkTotal}
               passVoteSmvkTotal={action.passVoteSmvkTotal}
               accountPkh={accountPkh}
+              isActionActive={isActionActive}
             />
           )
         })

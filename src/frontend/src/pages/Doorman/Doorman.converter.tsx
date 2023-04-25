@@ -1,10 +1,5 @@
 // type
-import {
-  MvkTokenGraphQL,
-  MvkHistoryData,
-  SmvkHistoryDataGraphQl,
-  MvkHistoryDataGraphQl,
-} from '../../utils/TypesAndInterfaces/Doorman'
+import { MvkTokenGraphQL, SmvkHistoryDataGraphQl } from '../../utils/TypesAndInterfaces/Doorman'
 
 // helpers
 import { isValidNumberValue } from 'utils/validatorFunctions'
@@ -30,43 +25,42 @@ export function normalizeDoormanStorage(storage: {
   }
 }
 
+type HistoryItemType = {
+  value: number
+  time: UTCTimestamp
+}
+
 type SmvkHistoryDataProps = {
   smvk_history_data: SmvkHistoryDataGraphQl[]
 }
 
 export function normalizeSmvkHistoryData(storage: SmvkHistoryDataProps) {
-  const { smvk_history_data } = storage
+  const { smvk_history_data = [] } = storage
 
-  return smvk_history_data?.length
-    ? smvk_history_data?.map((item) => {
-        return {
-          value: parseFloat(calcWithoutPrecision(item.smvk_total_supply).toFixed(2)),
-          time: new Date(item.timestamp).getTime() as UTCTimestamp,
-        }
+  const history = smvk_history_data.reduce<{
+    mvkHistoryData: HistoryItemType[]
+    smvkHistoryData: HistoryItemType[]
+  }>(
+    (acc, item) => {
+      acc.mvkHistoryData.push({
+        value: parseFloat(calcWithoutPrecision(item.mvk_total_supply - item.smvk_total_supply).toFixed(2)),
+        time: new Date(item.timestamp).getTime() as UTCTimestamp,
       })
-    : []
-}
 
-type MvkHistoryDataProps = {
-  mvk_token: Array<{
-    transfer_history_data: MvkHistoryDataGraphQl[]
-  }>
-}
-
-export function normalizeMvkHistoryData(storage: MvkHistoryDataProps) {
-  const {
-    mvk_token: [{ transfer_history_data }],
-  } = storage
-
-  return transfer_history_data?.length
-    ? transfer_history_data?.map((item) => {
-        return {
-          // TODO: temp solution while it's not correct data
-          value: parseFloat(calcWithoutPrecision(item.amount).toFixed(2)) * 10,
-          time: new Date(item.timestamp).getTime() as UTCTimestamp,
-        }
+      acc.smvkHistoryData.push({
+        value: parseFloat(calcWithoutPrecision(item.smvk_total_supply).toFixed(2)),
+        time: new Date(item.timestamp).getTime() as UTCTimestamp,
       })
-    : []
+
+      return acc
+    },
+    {
+      mvkHistoryData: [],
+      smvkHistoryData: [],
+    },
+  )
+
+  return history
 }
 
 export const stakingInputValidation = ({

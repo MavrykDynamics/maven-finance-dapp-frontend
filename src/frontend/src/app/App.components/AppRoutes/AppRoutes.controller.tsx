@@ -123,7 +123,7 @@ export const AppRoutes = () => {
         isAuthorized={Boolean(accountPkh)}
         canCheck={!isInitialDataLoading}
         hasAccess={Boolean(isSatellite)}
-        redirectPath={'/'}
+        redirectPath={'/governance'}
       />
 
       <Route exact path="/treasury">

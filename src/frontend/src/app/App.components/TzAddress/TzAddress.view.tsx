@@ -4,9 +4,10 @@ import { useDispatch } from 'react-redux'
 import { getShortTzAddress } from '../../../utils/tzAdress'
 
 import { showToaster } from '../Toaster/Toaster.actions'
-import { SUCCESS } from '../Toaster/Toaster.constants'
+import { SUCCESS, TOASTER_SUCCESS } from '../Toaster/Toaster.constants'
 import { TzAddressStyles } from './TzAddress.constants'
 import { TzAddressContainer, TzAddressIcon, TzAddressStyled } from './TzAddress.style'
+import { AppDispatch } from 'app/App.controller'
 
 type TzAddressProps = {
   tzAddress: string
@@ -14,10 +15,23 @@ type TzAddressProps = {
   hasIcon?: boolean
   iconToLeft?: boolean | undefined
   isBold?: boolean
+  isLargeIcon?: boolean
   shouldCopy?: boolean
   className?: string
   amountFromStart?: number
   amountFromEnd?: number
+}
+
+// Action to copy to clipboard
+export const handleCopyToClipboard = (textToCopy: string) => async (dispatch: AppDispatch) => {
+  try {
+    if (textToCopy) {
+      navigator.clipboard.writeText(textToCopy)
+      dispatch(showToaster(TOASTER_SUCCESS, 'Copied to Clipboard', `${textToCopy}`))
+    }
+  } catch (e) {
+    console.error('copy to clipboard error: ', e)
+  }
 }
 
 // TODO: make classes via classNames lib, check classes usage for styling
@@ -28,24 +42,20 @@ export const TzAddress = ({
   hasIcon = true,
   iconToLeft,
   isBold,
+  isLargeIcon,
   shouldCopy = true,
   amountFromStart = 4,
   amountFromEnd = 4,
 }: TzAddressProps) => {
-  const addrClasses = `${type} ${isBold ? 'bold' : ''} copyIcon`
+  const addrClasses = `${type} ${isBold ? 'bold' : ''}  ${isLargeIcon ? 'largeIcon' : ''} copyIcon`
   const dispatch = useDispatch()
 
-  const handleCopyToClipboard = () => {
-    if (shouldCopy) {
-      navigator.clipboard.writeText(tzAddress)
-      dispatch(showToaster(SUCCESS, 'Copied to Clipboard', `${tzAddress}`))
-    }
-  }
+  const handleCopy = () => dispatch(handleCopyToClipboard(tzAddress))
 
   return (
     <TzAddressContainer
       className={`${className} tzAddressToClick ${!shouldCopy ? 'notCopy' : ''}`}
-      onClick={handleCopyToClipboard}
+      onClick={shouldCopy ? handleCopy : undefined}
     >
       {hasIcon && iconToLeft && shouldCopy && (
         <TzAddressIcon className={addrClasses}>

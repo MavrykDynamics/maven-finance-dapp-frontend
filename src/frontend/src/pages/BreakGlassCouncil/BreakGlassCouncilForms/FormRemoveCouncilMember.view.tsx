@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
 // components
-import { BUTTON_PRIMARY, SUBMIT } from '../../../app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from '../../../app/App.components/Button/Button.constants'
 import NewButton from 'app/App.components/Button/NewButton'
 import { DropDown, DDItemId } from 'app/App.components/DropDown/NewDropdown'
 import Icon from '../../../app/App.components/Icon/Icon.view'
@@ -35,7 +35,7 @@ export function FormRemoveCouncilMemberView() {
     [breakGlassCouncilMembers],
   )
 
-  type DropDownItemType = typeof dropDownItems[0]
+  type DropDownItemType = (typeof dropDownItems)[0]
 
   const [chosenDdItem, setChosenDdItem] = useState<DropDownItemType | undefined>()
 
@@ -78,10 +78,12 @@ export function FormRemoveCouncilMemberView() {
           />
         </div>
 
-        <NewButton kind={BUTTON_PRIMARY} type={SUBMIT}>
-          <Icon id="minus" />
-          Remove Council Member
-        </NewButton>
+        <div className="btn-wrapper">
+          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT}>
+            <Icon id="minus" />
+            Remove Council Member
+          </NewButton>
+        </div>
       </form>
     </FormStyled>
   )

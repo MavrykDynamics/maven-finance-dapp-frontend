@@ -42,7 +42,6 @@ import { dropProposal, lockProposal, submitProposal, updateProposalData } from '
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
 
-// TODO: add not counting empty bytes items as item for validation and for data updating
 export const ProposalSubmission = () => {
   const dispatch = useDispatch()
 
@@ -135,24 +134,37 @@ export const ProposalSubmission = () => {
       isDescrDiff = submitProposalBody?.description !== remoteProposal?.description,
       isSourceLinkDiff = submitProposalBody?.sourceCode !== remoteProposal?.sourceCode
 
-    const isBytesSame =
-      submitProposalBody?.proposalData.length === remoteProposal?.proposalData.length &&
-      submitProposalBody?.proposalData.every(({ title, encoded_code }, idx) => {
-        const remoteProposalByte = remoteProposal?.proposalData?.[idx]
-        return title !== remoteProposalByte?.title || encoded_code !== remoteProposalByte?.encoded_code
-      })
-    const isPaymentsSame =
-      submitProposalBody?.proposalPayments.length === remoteProposal?.proposalPayments.length &&
-      submitProposalBody?.proposalPayments.every(({ token_amount, token_address, to__id }, idx) => {
-        const remoteProposalPayment = remoteProposal?.proposalPayments?.[idx]
-        return (
-          to__id !== remoteProposalPayment?.to__id ||
-          token_amount !== remoteProposalPayment?.token_amount ||
-          token_address !== remoteProposalPayment?.token_address
-        )
-      })
+    const filteredBytes = submitProposalBody?.proposalData.filter(({ title, encoded_code }) => title || encoded_code)
 
-    return isTitleDiff || isDescrDiff || isSourceLinkDiff || !isBytesSame || !isPaymentsSame
+    const isBytesDiff =
+      filteredBytes?.length === 0 && remoteProposal?.proposalData?.length === 0
+        ? false
+        : filteredBytes?.length !== remoteProposal?.proposalData?.length
+        ? true
+        : filteredBytes?.every(({ title, encoded_code }, idx) => {
+            const remoteProposalByte = remoteProposal?.proposalData?.[idx]
+            return title !== remoteProposalByte?.title || encoded_code !== remoteProposalByte?.encoded_code
+          })
+
+    const filteredPayments = submitProposalBody?.proposalPayments.filter(
+      ({ token_amount, to__id }) => token_amount || to__id,
+    )
+
+    const isPaymentsDiff =
+      filteredPayments?.length === 0 && remoteProposal?.proposalPayments?.length === 0
+        ? false
+        : filteredPayments?.length !== remoteProposal?.proposalPayments?.length
+        ? true
+        : filteredPayments?.every(({ token_amount, token_address, to__id }, idx) => {
+            const remoteProposalPayment = remoteProposal?.proposalPayments?.[idx]
+            return (
+              to__id !== remoteProposalPayment?.to__id ||
+              token_amount !== remoteProposalPayment?.token_amount ||
+              token_address !== remoteProposalPayment?.token_address
+            )
+          })
+
+    return isTitleDiff || isDescrDiff || isSourceLinkDiff || isBytesDiff || isPaymentsDiff
   }, [currentOriginalProposalId, mappedProposals, proposalState])
 
   const handleChangeTab = useCallback((tabId?: number) => {
@@ -213,10 +225,13 @@ export const ProposalSubmission = () => {
   const handleUpdateData = async (proposalId: number) => {
     const currentOriginalProposal = currentOriginalProposalId ? proposalsMapper[currentOriginalProposalId] : null
     if (currentOriginalProposal) {
-      const bytesDiff = getBytesDiff(currentOriginalProposal.proposalData ?? [], currentProposal.proposalData)
+      const bytesDiff = getBytesDiff(
+        currentOriginalProposal.proposalData ?? [],
+        currentProposal.proposalData.filter(({ title, encoded_code }) => title || encoded_code),
+      )
       const paymentsDiff = getPaymentsDiff(
         currentOriginalProposal?.proposalPayments ?? [],
-        currentProposal.proposalPayments,
+        currentProposal.proposalPayments.filter(({ token_amount, to__id }) => token_amount || to__id),
         whitelistTokens,
         dipDupTokens,
       )
@@ -267,26 +282,44 @@ export const ProposalSubmission = () => {
   const isProposalSubmitted = selectedUserProposalId >= 0
   const isProposalPeriod = governancePhase === 'PROPOSAL'
 
+  // Validate bytes, validate only non empty bytes
   const isBytesValid = useMemo(
     () =>
-      currentProposalValidation.bytesValidation?.every(({ validBytes, validTitle, byteId }) => {
-        const isSavedBytes = currentOriginalProposalId
-          ? proposalsMapper[currentOriginalProposalId]?.proposalData?.find(({ id }) => id === byteId)
-          : false
-        return isSavedBytes
-          ? validBytes !== INPUT_STATUS_ERROR
-          : validBytes === INPUT_STATUS_SUCCESS && validTitle === INPUT_STATUS_SUCCESS
-      }) ?? true,
-    [currentOriginalProposalId, currentProposalValidation.bytesValidation, proposalsMapper],
+      currentProposalValidation.bytesValidation
+        ?.filter(({ byteId }) => {
+          const byteData = currentProposal.proposalData.find(({ id }) => id === byteId)
+          return byteData?.title || byteData?.encoded_code
+        })
+        .every(({ validBytes, validTitle, byteId }) => {
+          const isSavedBytes = currentOriginalProposalId
+            ? proposalsMapper[currentOriginalProposalId]?.proposalData?.find(({ id }) => id === byteId)
+            : false
+          return isSavedBytes
+            ? validBytes !== INPUT_STATUS_ERROR
+            : validBytes === INPUT_STATUS_SUCCESS && validTitle === INPUT_STATUS_SUCCESS
+        }) ?? true,
+    [
+      currentOriginalProposalId,
+      currentProposal.proposalData,
+      currentProposalValidation.bytesValidation,
+      proposalsMapper,
+    ],
   )
 
+  // Validate payments, validate only non empty payments
   const isPaymentsValid = useMemo(
     () =>
-      currentProposalValidation.paymentsValidation?.every(
-        ({ to__id, title, token_amount }) =>
-          to__id === INPUT_STATUS_SUCCESS || (title === INPUT_STATUS_SUCCESS && token_amount === INPUT_STATUS_SUCCESS),
-      ) ?? true,
-    [currentProposalValidation.paymentsValidation],
+      currentProposalValidation.paymentsValidation
+        ?.filter(({ paymentId }) => {
+          const paymentData = currentProposal.proposalPayments.find(({ id }) => id === paymentId)
+          return paymentData?.to__id || paymentData?.token_amount
+        })
+        .every(
+          ({ to__id, title, token_amount }) =>
+            to__id === INPUT_STATUS_SUCCESS ||
+            (title === INPUT_STATUS_SUCCESS && token_amount === INPUT_STATUS_SUCCESS),
+        ) ?? true,
+    [currentProposal.proposalPayments, currentProposalValidation.paymentsValidation],
   )
 
   const isStageOneDataValid = useMemo(
@@ -322,7 +355,7 @@ export const ProposalSubmission = () => {
             </MultyProposalsStyled>
           ) : null}
 
-          <PropSubmissionTopBar value={activeTab} valueCallback={handleChangeTab} />
+          <PropSubmissionTopBar valueCallback={handleChangeTab} />
 
           <ProposalSubmissionForm>
             <a
@@ -380,7 +413,13 @@ export const ProposalSubmission = () => {
                 <Icon id="navigation-menu_close" /> Drop Proposal
               </Button>
               <Button
-                disabled={!isProposalSubmitted || !isProposalPeriod || currentProposal.locked || proposalHasChange}
+                disabled={
+                  !isProposalSubmitted ||
+                  !isProposalPeriod ||
+                  currentProposal.locked ||
+                  proposalHasChange ||
+                  !mappedProposals[currentOriginalProposalId ?? -1]?.proposalData.length
+                }
                 onClick={() => handleLockProposal(selectedUserProposalId)}
                 kind={BUTTON_SECONDARY}
                 form={BUTTON_WIDE}

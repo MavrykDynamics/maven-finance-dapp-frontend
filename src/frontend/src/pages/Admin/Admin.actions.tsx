@@ -4,11 +4,11 @@ import { ERROR, INFO, SUCCESS } from '../../app/App.components/Toaster/Toaster.c
 import type { AppDispatch, GetState } from '../../app/App.controller'
 import farmFactoryAddress from '../../deployments/farmFactoryAddress.json'
 
-import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
 import { OpKind } from '@taquito/taquito'
 import { convertNumberForContractCall } from '../../utils/calcFunctions'
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 import { GET_GOVERNANCE_CONFIG } from 'pages/Governance/actions/GovernanseData.actions'
+import { toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 
 export const adminChangeGovernancePeriod =
   (chosenPeriod: string, accountPkh?: string) => async (dispatch: AppDispatch, getState: GetState) => {
@@ -62,7 +62,7 @@ export const adminChangeGovernancePeriod =
           break
       }
 
-      dispatch(toggleActionLoader(true))
+      dispatch(toggleActionFullScreenLoader(true))
 
       // dispatch(showToaster(INFO, 'Changing Period...', 'Please wait 30s'))
 
@@ -70,13 +70,13 @@ export const adminChangeGovernancePeriod =
       // console.log('done', done)
       dispatch(showToaster(SUCCESS, 'Changing Governance Period done...', 'All good :)'))
 
-      dispatch(toggleActionLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
       // dispatch(getGovernanceStorage())
     } catch (error) {
       if (error instanceof Error) {
         dispatch(showToaster(ERROR, 'Error', error.message))
       }
-      dispatch(toggleActionLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
     }
   }
 
@@ -138,7 +138,7 @@ export const createFarm = (accountPkh?: string) => async (dispatch: AppDispatch,
   } catch (error) {
     if (error instanceof Error) {
       dispatch(showToaster(ERROR, 'Error', error.message))
-      dispatch(toggleActionLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
     }
   }
 }
@@ -242,7 +242,7 @@ export const ChangeAllAdminsFromGovernance =
     } catch (error) {
       if (error instanceof Error) {
         dispatch(showToaster(ERROR, 'Error', error.message))
-        dispatch(toggleActionLoader(false))
+        dispatch(toggleActionFullScreenLoader(false))
       }
     }
   }
@@ -299,7 +299,7 @@ export const addAllLoanTokensToMarkets = (accountPkh?: string) => async (dispatc
   } catch (error) {
     if (error instanceof Error) {
       dispatch(showToaster(ERROR, 'Error', error.message))
-      dispatch(toggleActionLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
     }
   }
 }
@@ -469,7 +469,7 @@ export const addAllCollateralTokensToMarkets =
     } catch (error) {
       if (error instanceof Error) {
         dispatch(showToaster(ERROR, 'Error', error.message))
-        dispatch(toggleActionLoader(false))
+        dispatch(toggleActionFullScreenLoader(false))
       }
     }
   }
@@ -688,7 +688,7 @@ export const createTreasuries = (accountPkh?: string) => async (dispatch: AppDis
   } catch (error) {
     if (error instanceof Error) {
       dispatch(showToaster(ERROR, 'Error', error.message))
-      dispatch(toggleActionLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
     }
   }
 }

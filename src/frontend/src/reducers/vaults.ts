@@ -9,6 +9,7 @@ export type VaultsStateType = {
 
 const defaultVaultsState: VaultsStateType = {
   vaultsList: {
+    permissinedVaultsIds: [],
     myVaultsIds: [],
     allVaultsIds: [],
     vaultsMapper: {},

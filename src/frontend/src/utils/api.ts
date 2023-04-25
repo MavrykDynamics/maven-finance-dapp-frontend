@@ -1,5 +1,3 @@
-import { FetchedTreasuryBalanceType } from "./TypesAndInterfaces/Treasury"
-
 // const network = process.env.REACT_APP_API_NETWORK
 export const network = 'ghostnet'
 
@@ -17,27 +15,57 @@ export async function getChainInfo() {
   return await (await fetch(`https://api.${network}.tzkt.io/v1/head`)).json()
 }
 
-export async function getTreasuryAssetsByAddress(treasuryAddress: string): Promise<FetchedTreasuryBalanceType[]> {
-  try {
-    const fetchedTreasuryAssets = await (
-      await fetch(`https://api.${network}.tzkt.io/v1/tokens/balances?account.eq=${treasuryAddress}`)
-    ).json()
+// action boilerplate
+/*
+  export const actionBoilerplate = () => async (dispatch: AppDispatch, getState: GetState) => {
+    const state: State = getState()
 
-    const fetchedXtzTreasuryAsset = await (
-      await fetch(`https://api.${network}.tzkt.io/v1/accounts/${treasuryAddress}/balance`)
-    ).json()
-
-    const xtzAssetObject: FetchedTreasuryBalanceType = {
-      account: { address: treasuryAddress },
-      balance: fetchedXtzTreasuryAsset,
-      token: {
-        metadata: { symbol: 'tezos', name: 'XTZ', decimals: '6' },
-      },
+    // check whether we can send transaction
+    if (!state.wallet.accountPkh) {
+      await dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
+      return
     }
 
-    return [...fetchedTreasuryAssets].concat(fetchedXtzTreasuryAsset ? [xtzAssetObject] : [])
-  } catch (e) {
-    console.error('getTreasuryAssetsByAddress error: ', e)
-    return []
+    try {
+      // prepare and send transaction
+
+      //callback() if we need to do some outside of the action after action fire
+      dispatch(toggleActionFullScreenLoader(true))
+      dispatch(toggleActionCompletion(true))
+      dispatch(showToaster(TOASTER_INFO, 'Borrowing from the vault...', ACTION_START_MESSAGE_TEXT))
+
+      // turn off fs actions loader and start data updating after 5s after operation started
+      setTimeout(async () => {
+        await dispatch(toggleActionFullScreenLoader(false))
+        await dispatch(
+          showToaster(
+            TOASTER_LOADING,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+          ),
+        )
+
+        // @ts-ignore don't have proper type to acees data, type has only methods
+        const currentOperationLevel = transaction?.lastHead?.header?.level
+
+        // refetch data we need
+        await checkIndexerLevelAndRunDataUpdateCallback({
+          callback: async () => {
+            // Add here call for update data actions
+            await dispatch(hideToaster())
+            await dispatch(showToaster(TOASTER_SUCCESS, 'Asset borrowed.', ACTION_COMPLETION_MESSAGE_TEXT))
+            await dispatch(toggleActionCompletion(false))
+          },
+          currentOperationLevel,
+        })
+      }, 5000)
+    } catch (error) {
+      console.error('actionBoilerplate error:', error)
+      if (error instanceof Error) {
+        dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
+        callback()
+      }
+      await dispatch(toggleActionFullScreenLoader(false))
+    }
   }
-}
+*/

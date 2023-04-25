@@ -48,11 +48,12 @@ export function MyCouncilActions({
   }
   return (
     <>
-      <TabSwitcher tabItems={tabsList} onClick={handleChangeTabs} />
+      <TabSwitcher tabItems={tabsList} onClick={handleChangeTabs} className="tabSwitcher" />
       {activeActionTab === tabsList[1].text && (
         <>
-          {myPastCouncilAction.length
-            ? myPastCouncilAction.map((item) => {
+          {myPastCouncilAction.length ? (
+            <div>
+              {myPastCouncilAction.map((item) => {
                 const action = actionsMapper[item]
 
                 return (
@@ -65,8 +66,11 @@ export function MyCouncilActions({
                     councilId={action.councilId}
                   />
                 )
-              })
-            : councilEmptyContainer}
+              })}
+            </div>
+          ) : (
+            councilEmptyContainer
+          )}
 
           <Pagination itemsCount={myPastCouncilActionLength} listName={listNameMyPastActions} />
         </>
@@ -74,8 +78,9 @@ export function MyCouncilActions({
 
       {activeActionTab === tabsList[0].text && (
         <>
-          {actionPendingSignature.length
-            ? actionPendingSignature.map((item) => {
+          {actionPendingSignature.length ? (
+            <div>
+              {actionPendingSignature.map((item) => {
                 const action = actionsMapper[item]
 
                 return (
@@ -87,8 +92,11 @@ export function MyCouncilActions({
                     cardIdName={cardIdName}
                   />
                 )
-              })
-            : councilEmptyContainer}
+              })}
+            </div>
+          ) : (
+            councilEmptyContainer
+          )}
 
           <Pagination itemsCount={actionPendingSignatureLength} listName={listNameMyOngoingActions} />
         </>

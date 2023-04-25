@@ -361,6 +361,7 @@ export const ThreeLevelListItem = styled.div<{ theme: MavrykTheme; customColor?:
     line-height: 100%;
     color: ${({ theme }) => theme.dataColor};
     display: flex;
+    align-items: center;
 
     .img-wrapper,
     .no-icon {
@@ -378,7 +379,7 @@ export const ThreeLevelListItem = styled.div<{ theme: MavrykTheme; customColor?:
     }
 
     &.up {
-      color: ${({ theme }) => theme.newUpColor};
+      color: ${({ theme }) => theme.upColor};
     }
 
     &.down {

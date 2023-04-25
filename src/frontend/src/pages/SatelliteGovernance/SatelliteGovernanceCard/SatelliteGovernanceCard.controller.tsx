@@ -32,6 +32,7 @@ type Props = {
   passVoteSmvkTotal: number
   snapshotSmvkTotalSupply: number
   accountPkh?: string
+  isActionActive: boolean
 }
 
 export const SatelliteGovernanceCard = ({
@@ -49,6 +50,7 @@ export const SatelliteGovernanceCard = ({
   passVoteSmvkTotal,
   snapshotSmvkTotalSupply,
   accountPkh,
+  isActionActive,
 }: Props) => {
   const dispatch = useDispatch()
   const [expanded, setExpanded] = useState(false)
@@ -60,6 +62,7 @@ export const SatelliteGovernanceCard = ({
   }
 
   const handleClick = async () => {
+    console.log('Logging is actionActive', isActionActive)
     await dispatch(dropAction(id, open))
   }
 
@@ -136,6 +139,7 @@ export const SatelliteGovernanceCard = ({
               icon="close-stroke"
               kind={'actionSecondary'}
               onClick={handleClick}
+              disabled={isActionActive}
             />
           ) : null}
         </div>
@@ -150,6 +154,7 @@ export const SatelliteGovernanceCard = ({
             voteStatistics={voteStatistic}
             isVotingActive={statusFlag === ProposalStatus.ONGOING}
             handleVote={handleVotingRoundVote}
+            disableVotingButtons={isActionActive}
           />
         </div>
       </SatelliteGovernanceCardDropDown>

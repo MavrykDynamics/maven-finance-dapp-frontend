@@ -2,8 +2,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useLockBodyScroll } from 'react-use'
 import { useEffect, useMemo, useState } from 'react'
 
-import { INPUT_LARGE, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
-import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
+import { INPUT_LARGE, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import { COLLATERAL_RATIO_GRADIENT, assetDecimalsToShow, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { BorrowPopupDataType, DEFAULT_LOANS_INPUT_VALUE, getOnBlurValue, getOnFocusValue } from './Modals.helpers'
 import { State } from 'reducers'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
@@ -22,7 +22,7 @@ import { LoansModalBase, VaultModalOverview } from './Modals.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { silverColor } from 'styles'
 import { borrowVaultAssetAction } from 'pages/Loans/Actions/vault.actions'
-import { calcCollateralRatio } from 'pages/Loans/Loans.helpers'
+import { calcCollateralRatio, getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { StatusMessageStyled } from '../LoansComponents.style'
 import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
@@ -53,7 +53,6 @@ export const BorrowAsset = ({
 
   useLockBodyScroll(show)
   const dispatch = useDispatch()
-  const { isActionLoading } = useSelector((state: State) => state.loading)
   const { themeSelected } = useSelector((state: State) => state.preferences)
 
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
@@ -80,8 +79,13 @@ export const BorrowAsset = ({
 
   // stuff to handle inputs
   const inputOnChangeHandle = (newInputAmount: string, maxAmount: number) => {
-    const validationStatus =
-      Number(newInputAmount) > 0 && Number(newInputAmount) <= maxAmount ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
+    const validationStatus = loansInputValidation({
+      inputAmount: newInputAmount,
+      maxAmount,
+      options: {
+        byDecimalPlaces: borrowedAsset?.decimals || assetDecimalsToShow,
+      },
+    })
 
     setInputData({
       ...inputData,
@@ -147,7 +151,11 @@ export const BorrowAsset = ({
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">Collateral Utilization</div>
-                  <CommaNumber value={collateralRatio} className="value" endingText="%" />
+                  {hasUserBorrowed ? (
+                    <CommaNumber value={collateralRatio} className="value" endingText="%" />
+                  ) : (
+                    <div className="value">Not Relevant</div>
+                  )}
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">Borrow APR</div>
@@ -183,7 +191,7 @@ export const BorrowAsset = ({
                     balanceAsset: borrowedAsset?.symbol,
                     useMaxHandler: () =>
                       inputOnChangeHandle(
-                        String(borrowCapacity / borrowedAsset.rate),
+                        getLoansInputMaxAmount(borrowCapacity / borrowedAsset.rate, borrowedAsset.decimals),
                         borrowCapacity / borrowedAsset.rate,
                       ),
                     inputStatus: inputData.validationStatus,
@@ -206,13 +214,7 @@ export const BorrowAsset = ({
                 >
                   <div className={`percentage`}>
                     Collateral Ratio:{' '}
-                    <CommaNumber
-                      beginningText={`${futureCollateralRatio > 250 ? '+' : ''}`}
-                      value={Math.max(0, Math.min(futureCollateralRatio, 250))}
-                      endingText="%"
-                      showDecimal
-                      decimalsToShow={2}
-                    />
+                    <CommaNumber value={futureCollateralRatio} endingText="%" showDecimal decimalsToShow={2} />
                   </div>
                   <GradientDiagram
                     className="diagram"
@@ -262,12 +264,13 @@ export const BorrowAsset = ({
 
               <div className="lending-stats" style={{ marginBottom: '30px' }}>
                 <ThreeLevelListItem>
-                  <div className="name">Asset</div>
-                  <div className="value">{borrowedAsset?.symbol}</div>
-                </ThreeLevelListItem>
-                <ThreeLevelListItem>
                   <div className="name">Total Amount</div>
-                  <CommaNumber value={inputAmount} className="value" />
+                  <CommaNumber
+                    value={inputAmount}
+                    decimalsToShow={assetDecimalsToShow}
+                    className="value"
+                    endingText={borrowedAsset?.symbol}
+                  />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">
@@ -275,15 +278,33 @@ export const BorrowAsset = ({
                     <CustomTooltip
                       iconId="info"
                       defaultStrokeColor={silverColor}
-                      text={`Total Amount - DAO Fee`}
+                      text={`Total Amount minus DAO Fee`}
                       className="tooltip"
                     />
                   </div>
-                  <CommaNumber value={inputAmount * 0.99} className="value" />
+                  <CommaNumber
+                    value={inputAmount - inputAmount * (DAOFee / 100)}
+                    decimalsToShow={assetDecimalsToShow}
+                    className="value"
+                    endingText={borrowedAsset?.symbol}
+                  />
+                </ThreeLevelListItem>
+                <ThreeLevelListItem>
+                  <div className="name">DAO Fee</div>
+                  <CommaNumber
+                    value={inputAmount * (DAOFee / 100)}
+                    decimalsToShow={assetDecimalsToShow}
+                    className="value"
+                    endingText={borrowedAsset?.symbol}
+                  />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">USD Value</div>
-                  <CommaNumber value={inputAmount * Number(borrowedAsset?.rate)} className="value" beginningText="$" />
+                  <CommaNumber
+                    value={(inputAmount - inputAmount * (DAOFee / 100)) * Number(borrowedAsset?.rate)}
+                    className="value"
+                    beginningText="$"
+                  />
                 </ThreeLevelListItem>
               </div>
 
@@ -295,13 +316,7 @@ export const BorrowAsset = ({
                 >
                   <div className={`percentage`}>
                     Collateral Ratio:{' '}
-                    <CommaNumber
-                      beginningText={`${futureCollateralRatio > 250 ? '+' : ''}`}
-                      value={Math.max(0, Math.min(futureCollateralRatio, 250))}
-                      endingText="%"
-                      showDecimal
-                      decimalsToShow={2}
-                    />
+                    <CommaNumber value={futureCollateralRatio} endingText="%" showDecimal decimalsToShow={2} />
                   </div>
                   <GradientDiagram
                     className="diagram"
@@ -324,12 +339,7 @@ export const BorrowAsset = ({
                   <Icon id="arrowLeft" />
                   Back
                 </NewButton>
-                <NewButton
-                  kind={BUTTON_PRIMARY}
-                  form={BUTTON_WIDE}
-                  onClick={borrowAsserHandler}
-                  disabled={isActionLoading}
-                >
+                <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={borrowAsserHandler}>
                   <Icon id="coin-loan" />
                   Borrow {borrowedAsset?.symbol}
                 </NewButton>

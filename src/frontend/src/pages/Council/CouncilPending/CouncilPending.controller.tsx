@@ -1,4 +1,5 @@
 import { useState, useCallback, useRef, useMemo } from 'react'
+import { createPortal } from 'react-dom'
 
 // components
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
@@ -11,7 +12,7 @@ import { getSeparateCamelCase } from '../../../utils/parse'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { bytesToText, BytesType, BYTES_ADDRESS_TYPE } from 'utils/bytesToString'
 import { convertBytesAddressToAddress } from 'app/App.helpers'
-import { CYAN } from 'app/App.components/TzAddress/TzAddress.constants'
+import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { MVK_DECIMALS } from 'utils/constants'
 import { convertNumberForClient } from 'utils/calcFunctions'
 
@@ -55,6 +56,7 @@ export const CouncilPending = (props: Props) => {
   const closePopup = () => {
     setShowPopup(false)
   }
+
   const onClickSign = () => {
     if (id) {
       handleSignAction(id)
@@ -94,18 +96,17 @@ export const CouncilPending = (props: Props) => {
 
   const findAddress = (type: string) => {
     switch (type) {
-      // TODO: remove setBaker conditions after fix bakery address
       case 'setBaker':
-        return 'in progress...'
+        return findActionByName('keyHash', BYTES_ADDRESS_TYPE)
       case 'setContractBaker':
-        return findActionByName('targetContractAddress', BYTES_ADDRESS_TYPE)
+        return findActionByName('keyHash', BYTES_ADDRESS_TYPE)
       default:
         return convertBytesAddressToAddress(value)
     }
   }
 
-  const purposeRequestPopup = (
-    <PopupContainer onClick={closePopup} show={!showPopup}>
+  const purposeRequestPopup = createPortal(
+    <PopupContainer onClick={closePopup} show={showPopup}>
       <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="council__request-purpose">
         <CouncilModalBase>
           <button onClick={closePopup} className="close-modal" />
@@ -114,7 +115,8 @@ export const CouncilPending = (props: Props) => {
           {showScrollInModal && <div className="shadow"></div>}
         </CouncilModalBase>
       </PopupContainerWrapper>
-    </PopupContainer>
+    </PopupContainer>,
+    document.body,
   )
 
   // 2/3
@@ -131,9 +133,9 @@ export const CouncilPending = (props: Props) => {
           <h3>{getSeparateCamelCase(actionType)}</h3>
           <div className="parameters">
             <article>
-              <p>Council Member Address</p>
+              <p>Council Member</p>
               <span className="parameters-value content-width">
-                <TzAddress tzAddress={councilMemberAddress} type={CYAN} hasIcon />
+                <TzAddress tzAddress={councilMemberAddress} type={BLUE} hasIcon />
               </span>
             </article>
             {councilMemberName ? (
@@ -207,7 +209,7 @@ export const CouncilPending = (props: Props) => {
             <article>
               <p>Council Member</p>
               <span className="parameters-value content-width">
-                <TzAddress tzAddress={newCouncilMemberAddress} type={CYAN} hasIcon />
+                <TzAddress tzAddress={newCouncilMemberAddress} type={BLUE} hasIcon />
               </span>
             </article>
 
@@ -280,13 +282,13 @@ export const CouncilPending = (props: Props) => {
             <article>
               <p className="without-margin">Council Member to change</p>
               <span className="parameters-value content-width">
-                <TzAddress tzAddress={oldCouncilMemberAddress} type={CYAN} hasIcon />
+                <TzAddress tzAddress={oldCouncilMemberAddress} type={BLUE} hasIcon />
               </span>
             </article>
             <article>
-              <p>Council Member Address</p>
+              <p className="without-margin">Council Member Address</p>
               <span className="parameters-value content-width">
-                <TzAddress tzAddress={newCouncilMemberAddress} type={CYAN} hasIcon />
+                <TzAddress tzAddress={newCouncilMemberAddress} type={BLUE} hasIcon />
               </span>
             </article>
 
@@ -359,7 +361,7 @@ export const CouncilPending = (props: Props) => {
           <article>
             <p>New Admin Address</p>
             <span className="parameters-value content-width">
-              <TzAddress tzAddress={newAdminAddress} type={CYAN} hasIcon />
+              <TzAddress tzAddress={newAdminAddress} type={BLUE} hasIcon />
             </span>
           </article>
 
@@ -378,7 +380,7 @@ export const CouncilPending = (props: Props) => {
             <div>
               <p>Target Contract</p>
               <span className="parameters-value content-width">
-                <TzAddress tzAddress={targetContractAddress} type={CYAN} hasIcon />
+                <TzAddress tzAddress={targetContractAddress} type={BLUE} hasIcon />
               </span>
             </div>
           </article>
@@ -397,7 +399,12 @@ export const CouncilPending = (props: Props) => {
   if (isAddVestee) {
     const cliffInMonths = findActionByName('cliffInMonths')
     const vestingInMonths = findActionByName('vestingInMonths')
-    const totalAllocatedAmount = findActionByName('totalAllocatedAmount')
+
+    const totalAllocatedAmount = convertNumberForClient({
+      number: findActionByName('totalAllocatedAmount'),
+      grade: MVK_DECIMALS,
+    })
+
     const vesteeAddress = findActionByName('vesteeAddress', BYTES_ADDRESS_TYPE)
 
     return (
@@ -408,7 +415,7 @@ export const CouncilPending = (props: Props) => {
           <article>
             <p>Vestee Address</p>
             <span className="parameters-value content-width">
-              <TzAddress tzAddress={vesteeAddress} type={CYAN} hasIcon />
+              <TzAddress tzAddress={vesteeAddress} type={BLUE} hasIcon />
             </span>
           </article>
 
@@ -454,7 +461,12 @@ export const CouncilPending = (props: Props) => {
   if (isUpdateVestee) {
     const newCliffInMonths = findActionByName('newCliffInMonths')
     const newVestingInMonths = findActionByName('newVestingInMonths')
-    const newTotalAllocatedAmount = findActionByName('newTotalAllocatedAmount')
+
+    const newTotalAllocatedAmount = convertNumberForClient({
+      number: findActionByName('newTotalAllocatedAmount'),
+      grade: MVK_DECIMALS,
+    })
+
     const vesteeAddress = findActionByName('vesteeAddress', BYTES_ADDRESS_TYPE)
 
     return (
@@ -465,7 +477,7 @@ export const CouncilPending = (props: Props) => {
           <article>
             <p>Vestee Address</p>
             <span className="parameters-value content-width">
-              <TzAddress tzAddress={vesteeAddress} type={CYAN} hasIcon />
+              <TzAddress tzAddress={vesteeAddress} type={BLUE} hasIcon />
             </span>
           </article>
 
@@ -524,13 +536,13 @@ export const CouncilPending = (props: Props) => {
             <article>
               <p>Treasury Address</p>
               <span className="parameters-value content-width">
-                <TzAddress tzAddress={treasuryAddress} type={CYAN} hasIcon />
+                <TzAddress tzAddress={treasuryAddress} type={BLUE} hasIcon />
               </span>
             </article>
             <article>
               <p>Token Contract Address</p>
               <span className="parameters-value content-width">
-                <TzAddress tzAddress={tokenContractAddress} type={CYAN} hasIcon />
+                <TzAddress tzAddress={tokenContractAddress} type={BLUE} hasIcon />
               </span>
             </article>
 
@@ -600,13 +612,13 @@ export const CouncilPending = (props: Props) => {
             <article>
               <p>Receiver Address</p>
               <span className="parameters-value content-width">
-                <TzAddress tzAddress={receiverAddress} type={CYAN} hasIcon />
+                <TzAddress tzAddress={receiverAddress} type={BLUE} hasIcon />
               </span>
             </article>
             <article>
               <p>Token Contract Address</p>
               <span className="parameters-value content-width">
-                <TzAddress tzAddress={tokenContractAddress} type={CYAN} hasIcon />
+                <TzAddress tzAddress={tokenContractAddress} type={BLUE} hasIcon />
               </span>
             </article>
 
@@ -667,12 +679,12 @@ export const CouncilPending = (props: Props) => {
     return (
       <CouncilPendingStyled className={`${actionType} ${councilPendingActionsLength > 1 ? 'more' : ''}`}>
         <span className="number">{cardNumber}</span>
-        <h3>{getSeparateCamelCase(actionType)}</h3>
+        <h3>Request Token Mint</h3>
         <div className="parameters">
           <article>
             <p>Treasury Address</p>
             <span className="parameters-value content-width">
-              <TzAddress tzAddress={treasuryAddress} type={CYAN} hasIcon />
+              <TzAddress tzAddress={treasuryAddress} type={BLUE} hasIcon />
             </span>
           </article>
 
@@ -738,10 +750,7 @@ export const CouncilPending = (props: Props) => {
           <div>
             <p className="parameters-name">{getSeparateCamelCase(name)}</p>
             <span className="parameters-value content-width">
-              {
-                // TODO: remove isSetBaker condition after fix baker address
-              }
-              {isSetBaker ? address : <TzAddress tzAddress={address} type={CYAN} hasIcon />}
+              <TzAddress tzAddress={address} type={BLUE} hasIcon />
             </span>
           </div>
           <div>
@@ -752,13 +761,11 @@ export const CouncilPending = (props: Props) => {
           </div>
         </div>
 
-        <div className="g-centering">
-          <div className="sign-action">
-            <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={onClickSign}>
-              <Icon id="sign" />
-              Sign
-            </NewButton>
-          </div>
+        <div className="sign-action">
+          <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={onClickSign}>
+            <Icon id="sign" />
+            Sign
+          </NewButton>
         </div>
       </CouncilPendingStyled>
     )
@@ -783,13 +790,11 @@ export const CouncilPending = (props: Props) => {
         </div>
       </div>
 
-      <div className="g-centering">
-        <div className="sign-action">
-          <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={onClickSign}>
-            <Icon id="sign" />
-            Sign
-          </NewButton>
-        </div>
+      <div className="sign-action">
+        <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={onClickSign}>
+          <Icon id="sign" />
+          Sign
+        </NewButton>
       </div>
     </CouncilPendingStyled>
   )

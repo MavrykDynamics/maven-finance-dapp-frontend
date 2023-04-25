@@ -7,7 +7,7 @@ export const LOANS_QUERY = `
       interest_rate_decimals
       minimum_loan_fee_pct
       decimals
-      history_data(where: {type: {_in: ["0", "1", "2", "3", "4", "5", "6", "7"]}}) {
+      history_data(where: {type: {_in: ["0", "1", "2", "3", "4", "5", "6", "7"]}}, distinct_on: timestamp) {
         type
         amount
         timestamp
@@ -39,8 +39,9 @@ export const LOANS_QUERY = `
         reserve_ratio
         current_interest_rate
         oracle_id
+        min_repayment_amount
 
-        history_data(where: {type: {_in: ["0", "1", "2", "3", "4", "5", "6", "7"]}}) {
+        history_data(where: {type: {_in: ["0", "1", "2", "3", "4", "5", "6", "7"]}}, distinct_on: timestamp) {
           type
           amount
           timestamp

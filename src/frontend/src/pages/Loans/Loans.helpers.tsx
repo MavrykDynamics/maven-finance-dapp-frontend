@@ -2,7 +2,7 @@ import dayjs from 'dayjs'
 import { SingleValueData, UTCTimestamp } from 'lightweight-charts'
 import { State } from 'reducers'
 import { UserState } from 'reducers/wallet'
-import { BLOCKS_PER_MINUTE, FIXED_POINT_ACCURACY, SECONDS_PER_YEAR } from 'utils/constants'
+import { BLOCKS_PER_MINUTE, DECIMALS_TO_SHOW, FIXED_POINT_ACCURACY, SECONDS_PER_YEAR } from 'utils/constants'
 import {
   Lending_Controller_History_Data,
   Lending_Controller_Loan_Token,
@@ -22,9 +22,10 @@ import {
   BaseLoansAssetDataType,
   DepositorsFlagType,
 } from 'utils/TypesAndInterfaces/Loans'
-import { calcWithoutDecimals, calcWithoutMu, convertNumberForClient } from '../../utils/calcFunctions'
-import { ANY_USER, NONE_USER, WHITELIST_USERS } from './Loans.const'
+import { calcWithoutDecimals, convertNumberForClient, getNumberInBounds } from '../../utils/calcFunctions'
+import { ANY_USER, NONE_USER, WHITELIST_USERS, assetDecimalsToShow } from './Loans.const'
 import { getUserBalanceForLoanAsset } from './LoansFethcers'
+import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 
 export const isTezosAsset = (tokenName: string) => tokenName === 'tez' || tokenName === 'tezos'
 
@@ -359,7 +360,6 @@ const getLendingItem = (
 // Normalizing borrowed items for loan asset
 type BorrowingNormalizerReturnType = {
   myBorrowingList: Array<LoansVaultType>
-  permissinedBorrowingList: Array<LoansVaultType>
   totalCollateral: number
   vaultsBorrowedAmount: number
 }
@@ -392,10 +392,10 @@ export const calcCollateralRatio = (collateralAmount: number, borrowedAmount: nu
   if (collateralAmount === 0) return 0
 
   // means we haven't borrowed, but we have deposited
-  if (borrowedAmount === 0) return 251
+  if (borrowedAmount === 0) return 250
 
   const collateralRatio = (collateralAmount / Math.max(1, borrowedAmount * borrowedAssetRate)) * 100
-  return Number(collateralRatio.toFixed(1))
+  return getNumberInBounds(0, 250, Number(collateralRatio.toFixed(1)))
 }
 
 export const getMaxCollateralWithdraw = (
@@ -423,6 +423,7 @@ const getBorrowings = async (
   feeds: State['dataFeeds']['feedsLedger'],
   interestRateDecimals: number,
   avaliableLiq: number,
+  minimumRepay: number,
   userAddress?: string,
 ): Promise<BorrowingNormalizerReturnType> => {
   try {
@@ -453,7 +454,7 @@ const getBorrowings = async (
             amount: collateralBalance,
           })
 
-          acc.totalRow.amount += Number((collateralBalance * collateralAsset.rate).toFixed(2))
+          acc.totalRow.amount += collateralBalance * collateralAsset.rate
 
           return acc
         },
@@ -501,13 +502,15 @@ const getBorrowings = async (
       if (!vaultAsset) return acc
 
       const borrowedAmount = vault.loan_principal_total / 10 ** vaultAsset.decimals
+      const currentLoanInterest = vault.loan_interest_total / 10 ** vaultAsset.decimals
 
       // Calculating Fee of the vault
       const accruedInterest =
         borrowedAmount === 0
-          ? 0
-          : calculateAccruedInterest(vault.loan_outstanding_total, vault.borrow_index, vault.loan_token.borrow_index) /
-            FIXED_POINT_ACCURACY
+          ? currentLoanInterest
+          : currentLoanInterest +
+            calculateAccruedInterest(vault.loan_outstanding_total, vault.borrow_index, vault.loan_token.borrow_index) /
+              FIXED_POINT_ACCURACY
 
       const collateralRatio = calcCollateralRatio(vaultCollateral.totalRow.amount, borrowedAmount, vaultAsset.rate)
       const collateralData = vaultCollateral.normalizedCollaterals.length
@@ -538,6 +541,7 @@ const getBorrowings = async (
 
         collateralBalance: vaultCollateral.totalRow.amount,
         borrowCapacity,
+        avaliableLiq,
         collateralRatio,
         apr: currentInterestRate * 100,
         fee: accruedInterest,
@@ -545,6 +549,7 @@ const getBorrowings = async (
         vaultId: vault.id,
         collateralData,
         borrowedAmount,
+        minimumRepay,
 
         levelOfEarly: currentBlock?.level ?? 0,
         levelOfLate:
@@ -562,18 +567,14 @@ const getBorrowings = async (
         acc.myBorrowingList.push(normallizedVault)
       }
 
-      if (depositors.find((depositorId) => depositorId === userAddress) || deporsitorsFlag === ANY_USER) {
-        acc.permissinedBorrowingList.push(normallizedVault)
-      }
-
       acc.totalCollateral += vaultCollateral.totalRow.amount
       acc.vaultsBorrowedAmount += normallizedVault.borrowedAmount * normallizedVault.borrowedAsset.rate
 
       return acc
-    }, Promise.resolve({ myBorrowingList: [], permissinedBorrowingList: [], totalCollateral: 0, vaultsBorrowedAmount: 0 }))
+    }, Promise.resolve({ myBorrowingList: [], totalCollateral: 0, vaultsBorrowedAmount: 0 }))
   } catch (e) {
     console.log('getBorrowings error', e)
-    return { myBorrowingList: [], permissinedBorrowingList: [], totalCollateral: 0, vaultsBorrowedAmount: 0 }
+    return { myBorrowingList: [], totalCollateral: 0, vaultsBorrowedAmount: 0 }
   }
 }
 
@@ -613,9 +614,9 @@ export const normalizeLoans = async ({
           loan_token_contract_standard,
           oracle_id,
           vaults_aggregate: { aggregate },
+          min_repayment_amount,
         } = loanToken
 
-        const isXTZ = isTezosAsset(loan_token_name)
         const loanTokenMetadata = getAssetMetadata({
           tokenName: loan_token_name,
           tokenAddress: loan_token_address,
@@ -629,15 +630,12 @@ export const normalizeLoans = async ({
         )
 
         if (!loanTokenMetadata) return acc
-        const reserveAmountMu =
+        const reserveAmount =
           convertNumberForClient({ number: token_pool_total, grade: loanTokenMetadata.decimals }) *
           (reserve_ratio / 10000)
-        const reserveAmount = isXTZ
-          ? calcWithoutMu(reserveAmountMu)
-          : calcWithoutDecimals(reserveAmountMu, loanTokenMetadata.decimals)
-        const availableLiquidity = isXTZ
-          ? calcWithoutMu(total_remaining - reserveAmountMu)
-          : calcWithoutDecimals(total_remaining - reserveAmountMu, loanTokenMetadata.decimals)
+        const availableLiquidity =
+          (convertNumberForClient({ number: total_remaining, grade: loanTokenMetadata.decimals }) - reserveAmount) *
+          loanTokenMetadata.rate
 
         const {
           transactionHistory,
@@ -646,8 +644,15 @@ export const normalizeLoans = async ({
           marketCollateralChartData,
           marketLiquidityChartData,
         } = getTransactionHistory(history_data, dipDupData, feeds)
-        const { myBorrowingList, permissinedBorrowingList, totalCollateral, vaultsBorrowedAmount } =
-          await getBorrowings(vaults, dipDupData, feeds, interestRateDecimals, availableLiquidity, userAddres)
+        const { myBorrowingList, totalCollateral, vaultsBorrowedAmount } = await getBorrowings(
+          vaults,
+          dipDupData,
+          feeds,
+          interestRateDecimals,
+          availableLiquidity,
+          convertNumberForClient({ number: min_repayment_amount, grade: loanTokenMetadata.decimals }),
+          userAddres,
+        )
         const lendingItem = getLendingItem(
           loanToken,
           userMTokens,
@@ -668,7 +673,6 @@ export const normalizeLoans = async ({
             userBalance: loanTokenUserBalance,
           },
           myBorrowingList,
-          permissionedBorrowingList: permissinedBorrowingList,
           lendingItem,
           transactionHistory,
           marketCollateralChartData,
@@ -915,4 +919,43 @@ export const calculateAccruedInterest = (
   }
 
   return newLoanOutstandingTotal
+}
+
+export const loansInputValidation = ({
+  inputAmount,
+  minAmount = 0,
+  maxAmount,
+  options = {},
+}: {
+  inputAmount: string
+  minAmount?: number
+  maxAmount: number
+  options?: {
+    byDecimalPlaces?: number
+  }
+}) => {
+  const { byDecimalPlaces } = options
+  const numberOfDecimalPlaces = inputAmount.match(/\.(\d+)/)?.[1].length ?? 0
+
+  // check amount by min/max value
+  if (Number(inputAmount) > minAmount && Number(inputAmount) <= maxAmount) {
+    // check amount by number of decimal places
+    if (byDecimalPlaces) {
+      return numberOfDecimalPlaces <= byDecimalPlaces ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
+    }
+
+    return INPUT_STATUS_SUCCESS
+  }
+
+  return INPUT_STATUS_ERROR
+}
+
+// use for get max amount for input field
+// using an amount without this function will result in a validation error,
+// as input is validated by the number of decimal places, and the value
+// without processing may be greater
+export const getLoansInputMaxAmount = (amount: number = 0, decimals: number = assetDecimalsToShow) => {
+  if (!amount) return '0'
+
+  return String(Math.trunc(amount * 10 ** decimals) / 10 ** decimals)
 }

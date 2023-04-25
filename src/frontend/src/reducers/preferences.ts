@@ -37,7 +37,7 @@ export const preferencesDefaultState: PreferencesState = {
     { title: 'MARIGOLD', url: 'https://ghostnet.tezos.marigold.dev/', nodeLogoUrl: 'marigold_logo.png' },
     { title: 'ECADLABS', url: 'https://ghostnet.smartpy.io', nodeLogoUrl: 'ECAD_logo.png' },
   ],
-  REACT_APP_RPC_PROVIDER: 'https://ghostnet.tezos.marigold.dev/',
+  REACT_APP_RPC_PROVIDER: 'https://ghostnet.smartpy.io',
 }
 
 export function preferences(state = preferencesDefaultState, action: Action) {

@@ -2,26 +2,25 @@ import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 // consts
-import { BUTTON_SECONDARY } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_SIMPLE_SMALL } from 'app/App.components/Button/Button.constants'
 import { INFO_DEFAULT } from 'app/App.components/Info/info.constants'
-import { PRECISION_NUMBER } from 'utils/constants'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 
 // helpers & actions
 import { VoteStatistics } from 'app/App.components/VotingArea/helpers/voting'
+import { parseDate } from 'utils/time'
+import getTimestampByLevel from 'utils/Fetchers/getTimestampByLevel'
+import { dropProposal } from 'pages/ProposalSubmission/ProposalSubmission.actions'
 import {
   executeProposal,
   processProposalPayment,
   proposalRoundVote,
   votingRoundVote,
-} from 'pages/Governance/actions/GovernanceInteraction.actions'
-import { parseDate } from 'utils/time'
-import getTimestampByLevel from 'utils/Fetchers/getTimestampByLevel'
-import { dropProposal } from 'pages/ProposalSubmission/ProposalSubmission.actions'
+} from 'pages/Governance/actions/Proposals.actions'
 
 // types
 import { State } from 'reducers'
-import { ProposalRecordType, ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
+import { GovPhases, ProposalRecordType, ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
 import { VotingTypes } from 'app/App.components/VotingArea/helpers/voting.const'
 
 // compoents
@@ -32,15 +31,17 @@ import { Info } from 'app/App.components/Info/Info.view'
 import { StatusFlag } from 'app/App.components/StatusFlag/StatusFlag.controller'
 import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } from 'app/App.components/Table'
 import { VotingProposalsArea } from 'app/App.components/VotingArea/VotingArea.controller'
-import { TzAddress } from 'pages/Treasury/Treasury.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { ProposalDetailsStyled } from './ProposalDetails.style'
+import { TzAddress, handleCopyToClipboard } from 'app/App.components/TzAddress/TzAddress.view'
 
 export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) => {
   const dispatch = useDispatch()
 
   const { accountPkh } = useSelector((state: State) => state.wallet)
+  const { isActionActive } = useSelector((state: State) => state.loading)
   const { whitelistTokens } = useSelector((state: State) => state.tokens)
+  const { governancePhase } = useSelector((state: State) => state.governance.config)
 
   const isUserOwnerIfTheProposal = proposal.proposerId === accountPkh
 
@@ -55,55 +56,26 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
   const isPaymentProposal = proposal.anyCanPay && accountPkh
 
   // Proposal actions
-  const handleDeleteProposal = async () => {
-    if (isUserOwnerIfTheProposal) await dispatch(dropProposal(proposal.id))
-  }
-
-  const handleClickExecuteProposal = () => {
-    dispatch(executeProposal(proposal.id))
-  }
-
-  const handleClickProcessPayment = async () => {
-    dispatch(processProposalPayment(proposal.id))
-  }
+  const handleDeleteProposal = async () => await dispatch(dropProposal(proposal.id))
+  const handleClickExecuteProposal = async () => await dispatch(executeProposal(proposal.id))
+  const handleClickProcessPayment = async () => await dispatch(processProposalPayment(proposal.id))
+  const handleProposalRoundVote = async (proposalId: number) => await dispatch(proposalRoundVote(proposalId))
+  const handleVotingRoundVote = async (vote: `${VotingTypes}`) => await dispatch(votingRoundVote(vote))
 
   // Voting stuff
   const voteStatistics = useMemo<VoteStatistics>(
     () => ({
-      abstainVotesMVKTotal: Number(proposal.abstainMvkTotal),
-      againstVotesMVKTotal: Number(proposal.downvoteMvkTotal),
-      forVotesMVKTotal: Number(proposal.upvoteMvkTotal),
+      abstainVotesMVKTotal: proposal.abstainMvkTotal,
+      againstVotesMVKTotal: proposal.downvoteMvkTotal,
+      forVotesMVKTotal: proposal.upvoteMvkTotal,
       unusedVotesMVKTotal: Math.round(
-        proposal.quorumMvkTotal / PRECISION_NUMBER -
-          proposal.abstainMvkTotal -
-          proposal.downvoteMvkTotal -
-          proposal.upvoteMvkTotal,
+        proposal.quorumMvkTotal - proposal.abstainMvkTotal - proposal.downvoteMvkTotal - proposal.upvoteMvkTotal,
       ),
-      passVotesMVKTotal: Number(proposal.passVoteMvkTotal),
+      passVotesMVKTotal: proposal.passVoteMvkTotal,
       quorum: proposal.minQuorumPercentage,
     }),
     [proposal],
   )
-
-  //TODO: add voting power to the vote
-  const handleProposalRoundVote = async (proposalId: number) => {
-    await dispatch(proposalRoundVote(proposalId))
-  }
-
-  //TODO: add voting power to the vote
-  const handleVotingRoundVote = async (vote: string) => {
-    switch (vote) {
-      case VotingTypes.YES:
-        dispatch(votingRoundVote(VotingTypes.YES))
-        break
-      case VotingTypes.NO:
-        dispatch(votingRoundVote(VotingTypes.NO))
-        break
-      case VotingTypes.PASS:
-        dispatch(votingRoundVote(VotingTypes.PASS))
-        break
-    }
-  }
 
   // Loading voting till time for proposal
   const [votingTill, setVotingTill] = useState<null | number>(null)
@@ -119,7 +91,10 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
     return () => {
       ignore = true
     }
-  }, [proposal])
+  }, [proposal.currentCycleEndLevel])
+
+  // store bytes that are opened
+  const [openedBytes, setOpenedBytes] = useState<Array<number>>([])
 
   return (
     <ProposalDetailsStyled isAuthorized={Boolean(accountPkh)}>
@@ -141,42 +116,39 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
           text={
             isUserOwnerIfTheProposal
               ? 'Your proposal isn’t locked yet and can’t be voted on. You can lock it on the proposal submission page.'
-              : 'This proposal isn’t locked yet and can’t be voted on until then. The proposer is still building it and will lock it in the coming days.'
+              : 'This proposal hasn’t be locked yet for voting. The proposer is currently working on the proposal and fine-tuning it. It will be available to vote on in the near future.'
           }
         />
       ) : null}
 
-      {/* TODO: pass new set of props to it and consider take out all voting and button in separate compnent */}
-      {/* <div className="voting-proposal">
-        <VotingProposalsArea
-          voteStatistics={voteStatistics}
-          shownBlock={'bar'}
-          votingPhaseHandler={handleVotingRoundVote}
-          handleProposalVote={handleProposalRoundVote}
-          selectedProposal={proposal}
-          vote={proposal.votes.find(
-            ({ voter_id, round }) =>
-              voter_id === accountPkh && round === (governancePhase === GovPhases.PROPOSAL ? 0 : 1),
-          )}
-        />
+      <VotingProposalsArea
+        voteStatistics={voteStatistics}
+        votingPhaseHandler={handleVotingRoundVote}
+        handleProposalVote={handleProposalRoundVote}
+        selectedProposal={proposal}
+        vote={proposal.votes.find(
+          ({ voter_id, round }) =>
+            voter_id === accountPkh && round === (governancePhase === GovPhases.PROPOSAL ? 0 : 1),
+        )}
+        govPhase={governancePhase}
+      />
 
-        {isExecuteProposal ? (
-          <Button
-            className="execute-proposal"
-            text="Execute Proposal"
-            onClick={handleClickExecuteProposal}
-            kind="actionPrimary"
-          />
-        ) : null}
-        {isPaymentProposal ? (
-          <Button
-            className="execute-proposal"
-            text="Process Payment"
-            onClick={handleClickProcessPayment}
-            kind="actionPrimary"
-          />
-        ) : null}
-      </div> */}
+      {isExecuteProposal ? (
+        <div className="proposal-button-action">
+          <Button onClick={handleClickExecuteProposal} disabled={isActionActive} kind={BUTTON_PRIMARY}>
+            Execute Proposal
+          </Button>
+        </div>
+      ) : null}
+
+      {isPaymentProposal ? (
+        <div className="proposal-button-action">
+          <Button onClick={handleClickProcessPayment} disabled={isActionActive} kind={BUTTON_PRIMARY}>
+            Process Payment
+          </Button>
+        </div>
+      ) : null}
+
       <hr />
 
       <div className="proposal-data-block-wrapper">
@@ -196,45 +168,46 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
       <div className="proposal-data-block-wrapper">
         <div className="proposal-data-block-name">Meta-Data</div>
         {proposal.proposalData?.length ? (
-          <div className="bytes-list">
+          <ol className="bytes-list">
             {proposal.proposalData.map((item) => {
-              // if (!item || !item.encoded_code) return null
-              // const unique = `proposalDataItem${item.id}`
-              // return (
-              //   <li key={item.id}>
-              //     <div>
-              //       <div>
-              //         <b className="proposal-list-title">Title: {item.title}</b>
-              //       </div>
-              //       <div>
-              //         <b className="proposal-list-title">Bytes: </b>
-              //         <span className="proposal-list-bites">
-              //          {visibleMeta === unique ? (
-              //             <span className="byte">
-              //               <button onClick={() => handleCopyToClipboard(item.encoded_code ?? '')}>
-              //                 {item.encoded_code} <Icon id="copyToClipboard" />
-              //               </button>
-              //               <br />
-              //               <button onClick={() => setVisibleMeta('')} className="visible-button">
-              //                 hide
-              //               </button>
-              //             </span>
-              //           ) : (
-              //             <span className="short-byte">
-              //               {getShortByte(item.encoded_code)}{' '}
-              //               <button onClick={() => setVisibleMeta(unique)} className="visible-button">
-              //                 see all
-              //               </button>
-              //             </span>
-              //           )}
-              //         </span>
-              //       </div>
-              //     </div>
-              //   </li>
-              // )
-              return <div className="bytes-list-item">byte</div>
+              if (!item || !item.encoded_code) return null
+              const isByteOpened = openedBytes.includes(item.id)
+              const byteText = item.encoded_code
+              return (
+                <li key={item.id}>
+                  <div className="title" style={{ paddingLeft: '15px' }}>
+                    {item.title}
+                  </div>
+
+                  <div className={`byte ${isByteOpened ? 'opened' : ''}`}>
+                    <div className="title" style={{ marginRight: '5px' }}>
+                      Bytes:
+                    </div>
+
+                    <div className={`byte-content`}>
+                      <div
+                        className="byte-text"
+                        onClick={isByteOpened ? () => dispatch(handleCopyToClipboard(byteText)) : undefined}
+                      >
+                        {byteText} {isByteOpened ? <Icon id="copyToClipboard" /> : null}
+                      </div>
+                    </div>
+
+                    <Button
+                      kind={BUTTON_SIMPLE_SMALL}
+                      onClick={() =>
+                        setOpenedBytes(
+                          isByteOpened ? openedBytes.filter((id) => id !== item.id) : [...openedBytes, item.id],
+                        )
+                      }
+                    >
+                      {isByteOpened ? 'hide' : 'see all'}
+                    </Button>
+                  </div>
+                </li>
+              )
             })}
-          </div>
+          </ol>
         ) : (
           <div className="proposal-data-block-value">No proposal meta-data given</div>
         )}
@@ -243,8 +216,8 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
       <div className="proposal-data-block-wrapper">
         <div className="proposal-data-block-name">Payment Data</div>
         {proposal.proposalPayments?.length ? (
-          <Table className="editable-table">
-            <TableHeader className="editable-head">
+          <Table className="editable-table with-header">
+            <TableHeader className="editable-head proposal-details-payments">
               <TableRow>
                 <TableHeaderCell className="no-right-border">Address</TableHeaderCell>
                 <TableHeaderCell>Purpose</TableHeaderCell>
@@ -252,20 +225,15 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
                 <TableHeaderCell className="right-border">Payment Type (XTZ/MVK)</TableHeaderCell>
               </TableRow>
             </TableHeader>
-            <TableBody className="editable-body">
+            <TableBody>
               {proposal.proposalPayments.map((payment) => {
                 const { symbol: selectedSymbol = 'MVK' } =
                   whitelistTokens.find(({ address }) => address === payment.token_address) ?? whitelistTokens?.[0] ?? {}
 
                 return (
-                  <TableRow className="editable-row">
+                  <TableRow className="editable-row proposal-details-payments" key={payment.id}>
                     <TableCell width="25%">
-                      <TzAddress
-                        tzAddress={String(payment.to__id)}
-                        type={BLUE}
-                        hasIcon={true}
-                        className="table-cell-tzAddress"
-                      />
+                      <TzAddress tzAddress={String(payment.to__id)} type={BLUE} hasIcon={false} />
                     </TableCell>
                     <TableCell width="25%">{String(payment.title)}</TableCell>
                     <TableCell width="25%">
@@ -287,7 +255,7 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
       <div className="proposal-data-block-wrapper">
         <div className="proposal-data-block-name">Proposer</div>
         <div className="proposal-data-block-value">
-          <TzAddress tzAddress={proposal.proposerId} hasIcon isBold={true} />
+          <TzAddress tzAddress={proposal.proposerId} type={BLUE} isBold />
         </div>
       </div>
 
@@ -296,7 +264,7 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
         <div className="gov-data">
           <div className="proposal-data-block-name">Governance Contract</div>
           <div className="proposal-data-block-value">
-            <TzAddress tzAddress={proposal.governanceId} hasIcon isBold={true} />
+            <TzAddress tzAddress={proposal.governanceId} type={BLUE} isBold />
           </div>
         </div>
       </div>
