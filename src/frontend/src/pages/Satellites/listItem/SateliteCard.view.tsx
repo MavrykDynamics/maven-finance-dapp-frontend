@@ -211,6 +211,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
       {children
         ? children
         : lastSupportedgProposalId &&
+          proposalsMapper[lastSupportedgProposalId] &&
           currentlySupportingProposalVote !== null && (
             <SatelliteCardRow>
               <div>
