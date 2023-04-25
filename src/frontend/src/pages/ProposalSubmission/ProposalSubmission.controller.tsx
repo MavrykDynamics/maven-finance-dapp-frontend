@@ -287,8 +287,7 @@ export const ProposalSubmission = () => {
     () =>
       currentProposalValidation.bytesValidation
         ?.filter(({ byteId }) => {
-          const byteData = currentProposal.proposalData.find(({ id }) => id === byteId)
-          return byteData?.title || byteData?.encoded_code
+          return !mappedProposals?.[currentOriginalProposalId ?? -1]?.proposalData?.find(({ id }) => id === byteId)
         })
         .every(({ validBytes, validTitle, byteId }) => {
           const isSavedBytes = currentOriginalProposalId
@@ -298,12 +297,7 @@ export const ProposalSubmission = () => {
             ? validBytes !== INPUT_STATUS_ERROR
             : validBytes === INPUT_STATUS_SUCCESS && validTitle === INPUT_STATUS_SUCCESS
         }) ?? true,
-    [
-      currentOriginalProposalId,
-      currentProposal.proposalData,
-      currentProposalValidation.bytesValidation,
-      proposalsMapper,
-    ],
+    [currentOriginalProposalId, currentProposalValidation.bytesValidation, mappedProposals, proposalsMapper],
   )
 
   // Validate payments, validate only non empty payments
@@ -311,15 +305,16 @@ export const ProposalSubmission = () => {
     () =>
       currentProposalValidation.paymentsValidation
         ?.filter(({ paymentId }) => {
-          const paymentData = currentProposal.proposalPayments.find(({ id }) => id === paymentId)
-          return paymentData?.to__id || paymentData?.token_amount
+          return !mappedProposals?.[currentOriginalProposalId ?? -1]?.proposalPayments?.find(
+            ({ id }) => id === paymentId,
+          )
         })
         .every(
           ({ to__id, title, token_amount }) =>
             to__id === INPUT_STATUS_SUCCESS ||
             (title === INPUT_STATUS_SUCCESS && token_amount === INPUT_STATUS_SUCCESS),
         ) ?? true,
-    [currentProposal.proposalPayments, currentProposalValidation.paymentsValidation],
+    [currentOriginalProposalId, currentProposalValidation.paymentsValidation, mappedProposals],
   )
 
   const isStageOneDataValid = useMemo(

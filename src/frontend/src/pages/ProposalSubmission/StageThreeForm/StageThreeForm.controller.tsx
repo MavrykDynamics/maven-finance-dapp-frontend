@@ -53,10 +53,10 @@ export const StageThreeForm = ({
 
   // is no bytes payments on proposal change add empty pair on client
   useEffect(() => {
-    if (!proposalPayments.some(checkPaymentExists)) {
+    if (!proposalPayments.some(checkPaymentExists) && !currentProposal.locked) {
       handleAddRow()
     }
-  }, [proposalId])
+  }, [proposalId, currentProposal.locked])
 
   const ddItems = useMemo(() => {
     return whitelistTokens.map((method) => ({

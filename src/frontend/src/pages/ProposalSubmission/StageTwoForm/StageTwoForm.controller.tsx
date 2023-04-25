@@ -40,10 +40,10 @@ export const StageTwoForm = ({
 
   // is no bytes pair on proposal change add empty pair on client
   useEffect(() => {
-    if (!proposalData.some(checkBytesPairExists)) {
+    if (!proposalData.some(checkBytesPairExists) && !locked) {
       handleCreateNewByte()
     }
-  }, [proposalId])
+  }, [proposalId, locked])
 
   const handleOnChange = (byte: ProposalBytesType, text: string, type: string) => {
     // update input value
