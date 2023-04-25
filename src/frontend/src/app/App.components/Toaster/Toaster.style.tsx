@@ -6,16 +6,17 @@ import { TOASTER_LOADING, getColorByToasterStatus } from './Toaster.constants'
 export const ToasterStyled = styled.div<{ showing: boolean; theme: MavrykTheme }>`
   position: fixed;
   top: 10px;
-  right: -470px;
+  right: -500px;
   z-index: 13;
 
-  width: 470px;
-  padding: 21px 20px;
+  width: 500px;
+  padding: 0 20px;
   border-radius: 4px;
 
   display: flex;
   align-items: center;
   column-gap: 15px;
+  min-height: 90px;
 
   background-color: ${({ theme }) => theme.containerColor};
   box-shadow: 1px 7px 14px -5px rgba(0, 0, 0, 0.2);
@@ -26,7 +27,7 @@ export const ToasterStyled = styled.div<{ showing: boolean; theme: MavrykTheme }
   ${(props) =>
     props.showing &&
     css`
-      transform: translateX(-480px);
+      transform: translateX(-510px);
     `}
 `
 
