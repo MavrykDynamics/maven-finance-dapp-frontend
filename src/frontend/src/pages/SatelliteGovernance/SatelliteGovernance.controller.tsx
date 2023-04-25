@@ -48,9 +48,10 @@ const itemsForDropDown = [
   'Remove from Aggregator',
   'Add to Aggregator',
   'Restore Satellite',
-  'Set Aggregator Maintainer',
-  'Update Aggregator Status',
-  'Register Aggregator',
+  // TODO: commented according to [MAV-1404]
+  // 'Set Aggregator Maintainer',
+  // 'Update Aggregator Status',
+  // 'Register Aggregator',
   'Fix Mistaken Transfer',
 ]
 
