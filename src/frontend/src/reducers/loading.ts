@@ -20,7 +20,8 @@ const loadingInitialState: LoadingState = {
   // isActiveFullScreenLoader – used for full screen rocket loader after operation confirmed
   isActiveFullScreenLoader: false,
   // isActionActive – user to track whether action is fullfilled with data update and we can unlock buttons
-  isActionActive: false,
+  // TODO: set it false after testing
+  isActionActive: true,
 }
 
 export function loading(
