@@ -24,9 +24,13 @@ type TzAddressProps = {
 
 // Action to copy to clipboard
 export const handleCopyToClipboard = (textToCopy: string) => async (dispatch: AppDispatch) => {
-  if (textToCopy) {
-    navigator.clipboard.writeText(textToCopy)
-    dispatch(showToaster(TOASTER_SUCCESS, 'Copied to Clipboard', `${textToCopy}`))
+  try {
+    if (textToCopy) {
+      navigator.clipboard.writeText(textToCopy)
+      dispatch(showToaster(TOASTER_SUCCESS, 'Copied to Clipboard', `${textToCopy}`))
+    }
+  } catch (e) {
+    console.error('copy to clipboard error: ', e)
   }
 }
 
