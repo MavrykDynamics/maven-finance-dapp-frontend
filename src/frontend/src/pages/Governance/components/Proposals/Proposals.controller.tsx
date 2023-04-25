@@ -64,7 +64,7 @@ export const Proposals = ({
               </ProposalItemLeftSide>
               <CommaNumber
                 className="proposal-voted-mvk"
-                value={governancePhase === GovPhases.PROPOSAL ? proposal.upvoteMvkTotal : proposal.quorumMvkTotal}
+                value={governancePhase === GovPhases.PROPOSAL ? proposal.passVoteMvkTotal : proposal.quorumMvkTotal}
                 endingText={'voted MVK'}
                 showDecimal={false}
               />
