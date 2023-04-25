@@ -37,12 +37,6 @@ const defaultTokensInfoState: TokensType = {
   dipDupContracts: [],
   whitelistTokens: [
     {
-      symbol: 'mvk',
-      address: 'KT1LHCdywMqHbaNdC2tRYxDKZAVxBXb6ra7o',
-      shortSymbol: 'fa2',
-      id: 0,
-    },
-    {
       symbol: 'xtz',
       address: 'KT1XYiqkAE2BtSeujKsiHBuRAAt3kmeuK4pP',
       shortSymbol: 'tez',
@@ -66,7 +60,7 @@ export function tokens(state = defaultTokensInfoState, action: AnyAction) {
     case GET_DIP_DUP_TOKENS:
       return { ...state, dipDupTokens: action.dipDupTokens, dipDupContracts: action.dipDupContracts }
     case GET_WHITELIST_TOKENS:
-      return { ...state, whitelistTokens: [...state.whitelistTokens, ...action.whitelistTokens] }
+      return { ...state, whitelistTokens: state.whitelistTokens.concat(action.whitelistTokens) }
     case GET_AVALIABLE_COLLATERALS:
       return { ...state, avaliableCollaterals: action.avaliableCollaterals }
     case GET_XTZ_BAKERS:
