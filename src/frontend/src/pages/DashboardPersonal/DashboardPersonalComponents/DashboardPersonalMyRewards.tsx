@@ -1,8 +1,8 @@
 import { BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
 import Button from 'app/App.components/Button/NewButton'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { MyRewardsStyled } from './DashboardPersonalComponents.style'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
 type DashboardPersonalMyRewardsProps = {
   earnedRewards: number
@@ -19,9 +19,7 @@ const DashboardPersonalMyRewards = ({
 }: DashboardPersonalMyRewardsProps) => {
   return (
     <MyRewardsStyled>
-      <GovRightContainerTitleArea>
-        <h1>My MVK Earnings</h1>
-      </GovRightContainerTitleArea>
+      <H2Title>My MVK Earnings</H2Title>
       <div className="claim-rewards">
         <Button disabled={rewardsToClaim === 0 || isActionActive} onClick={claimRewardsHandler} kind={BUTTON_PRIMARY}>
           Claim Rewards
