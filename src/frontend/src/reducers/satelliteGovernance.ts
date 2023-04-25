@@ -1,28 +1,44 @@
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
-import type {
-  GovernanceSatelliteActionGraphQL,
-  GovernanceSatelliteGraphQL,
-} from '../utils/TypesAndInterfaces/Governance'
+import type { SatelliteGovernance } from '../utils/TypesAndInterfaces/Governance'
+import { GET_SATELLITE_GOVERNANCE_STORAGE } from 'pages/SatelliteGovernance/SatelliteGovernance.actions'
+import { defaultGovPurposeMaxLength } from 'app/App.components/Input/Input.constants'
 
 export type SatelliteGovernanceState = {
-  governance_satellite: GovernanceSatelliteGraphQL[]
-  governance_satellite_action: GovernanceSatelliteActionGraphQL[]
+  config: SatelliteGovernance['config']
+
+  ongoingSatelliteGovIds: number[]
+  pastSatelliteGovIds: number[]
+  mySatelliteGovIds: number[]
+  satelliteGovIdsMapper: SatelliteGovernance['satelliteGovIdsMapper']
+
   isLoaded: boolean
 }
 
-export const DEFAULT_SATELLITE_GOVERNANCE_STORAGE: SatelliteGovernanceState = {
+export const defaultSatelliteGovernanceStorage: SatelliteGovernanceState = {
+  config: {
+    address: '',
+    admin: '',
+    purposeMaxLength: defaultGovPurposeMaxLength,
+    approvalPercentage: 0,
+    durationInDays: 0,
+    counter: 0,
+    governanceId: '',
+  },
+  ongoingSatelliteGovIds: [],
+  pastSatelliteGovIds: [],
+  mySatelliteGovIds: [],
+  satelliteGovIdsMapper: {},
   isLoaded: false,
-  governance_satellite: [],
-  governance_satellite_action: [],
 }
 
-export function satelliteGovernance(state = DEFAULT_SATELLITE_GOVERNANCE_STORAGE, action: Action) {
+export function satelliteGovernance(state = defaultSatelliteGovernanceStorage, action: Action) {
   switch (action.type) {
-    // case GET_GOVERNANCE_SATELLITE_STORAGE:
-    //   return {
-    //     ...state,
-    //     governanceSatelliteStorage: action.governanceSatelliteStorage,
-    //   }
+    case GET_SATELLITE_GOVERNANCE_STORAGE:
+      return {
+        ...state,
+        ...action.satelliteGovernanceStorage,
+        isLoaded: true,
+      }
 
     default:
       return state

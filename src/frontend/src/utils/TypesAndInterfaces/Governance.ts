@@ -8,6 +8,7 @@ import type {
 
 import { normalizeFinancialRequests } from 'pages/FinacialRequests/FinancialRequests.helpers'
 import { normalizeProposal } from 'pages/Governance/actions/governanceNormalizers'
+import { normalizerSatelliteGovernance } from 'pages/SatelliteGovernance/SatelliteGovernance.helpers'
 
 // Governance proposals types
 export type GovernanceProposalGraphQL = Omit<Governance_Proposal, '__typename'>
@@ -35,8 +36,9 @@ export enum GovPhases {
 }
 
 // Satellite governance types
-export type GovernanceSatelliteActionGraphQL = Omit<Governance_Satellite_Action, '__typename'>
+export type SatelliteGovernance = ReturnType<typeof normalizerSatelliteGovernance>
 export type GovernanceSatelliteGraphQL = Omit<Governance_Satellite, '__typename'>
+export type GovernanceSatelliteActionGraphQL = Omit<Governance_Satellite_Action, '__typename'>
 
 // Financical request types
 export type GovernanceFinancialRequestGraphQL = Omit<Governance_Financial_Request, '__typename'>

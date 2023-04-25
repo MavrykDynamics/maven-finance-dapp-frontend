@@ -11,9 +11,9 @@ export const EMERGENCY_GOVERNANCE_HISTORY_LIST_NAME = 'emergencyGovHistory'
 export const PAST_REQUESTS_FINANCIAL_REQUESTS_LIST = 'pastFR'
 export const ONGOING_REQUESTS_FINANCIAL_REQUESTS_LIST = 'ongoingFR'
 
-export const ONGOING_ACTIONS_SATELLITE_GOVERNANCE_LIST = 'ongoingActionsSatellitesGov'
-export const PAST_ACTIONS_SATELLITE_GOVERNANCE_LIST = 'pastActionsSatellitesGov'
-export const MY_ACTIONS_SATELLITE_GOVERNANCE_LIST = 'myActionsSatellitesGov'
+export const ONGOING_ACTIONS_SATELLITE_GOVERNANCE_LIST = 'ongoingActionsSatelliteGov'
+export const PAST_ACTIONS_SATELLITE_GOVERNANCE_LIST = 'pastActionsSatelliteGov'
+export const MY_ACTIONS_SATELLITE_GOVERNANCE_LIST = 'myActionsSatelliteGov'
 
 export const TRANSACTION_HISTORY_TABLE_NAME = 'transactionHistoryTable'
 export const USER_ACTIONS_HISTORY = 'userActionsHistory'
@@ -112,18 +112,6 @@ export const updatePageInUrl = ({
     page: newPageParams,
   }
   return pathname + qs.stringify(newQueryParams, { addQueryPrefix: true })
-}
-
-export const getSatelliteGovernanceListName = (tabId: number) => {
-  switch (tabId) {
-    case 2:
-      return PAST_ACTIONS_SATELLITE_GOVERNANCE_LIST
-    case 1:
-      return ONGOING_ACTIONS_SATELLITE_GOVERNANCE_LIST
-    case 3:
-    default:
-      return MY_ACTIONS_SATELLITE_GOVERNANCE_LIST
-  }
 }
 
 export const PAGINATION_SIDE_RIGHT = 'right'
