@@ -205,13 +205,6 @@ export const StyledInput = styled.input<{ theme: MavrykTheme }>`
   &:hover:not(:disabled) {
     background-color: ${({ theme }) => theme.containerColor};
   }
-
-  &:-webkit-autofill,
-  &:-webkit-autofill:hover,
-  &:-webkit-autofill:focus {
-    -webkit-text-fill-color: ${({ theme }) => theme.textColor};
-    -webkit-box-shadow: 0 0 0px 1000px ${({ theme }) => theme.backgroundColor} inset;
-  }
 `
 
 export const InputPinnedChild = styled.div<{ theme: MavrykTheme }>`
@@ -305,16 +298,11 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
     border: 1px solid ${({ theme }) => theme.downColor};
     input {
       color: ${({ theme }) => theme.downColor};
+
       &::placeholder {
         color: ${({ theme }) => theme.downColor};
       }
 
-      &:-webkit-autofill,
-      &:-webkit-autofill:hover,
-      &:-webkit-autofill:focus {
-        -webkit-text-fill-color: ${({ theme }) => theme.downColor};
-        -webkit-box-shadow: 0 0 0px 1000px ${({ theme }) => theme.backgroundColor} inset;
-      }
       &:focus {
         box-shadow: 0 0 0 2px ${({ theme }) => theme.downColor}7F;
       }
@@ -329,16 +317,11 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
     border: 1px solid ${({ theme }) => theme.upColor};
     input {
       color: ${({ theme }) => theme.upColor};
+
       &::placeholder {
         color: ${({ theme }) => theme.upColor};
       }
 
-      &:-webkit-autofill,
-      &:-webkit-autofill:hover,
-      &:-webkit-autofill:focus {
-        -webkit-text-fill-color: ${({ theme }) => theme.upColor};
-        -webkit-box-shadow: 0 0 0px 1000px ${({ theme }) => theme.backgroundColor} inset;
-      }
       &:focus {
         box-shadow: 0 0 0 2px ${({ theme }) => theme.upColor}7F;
       }
