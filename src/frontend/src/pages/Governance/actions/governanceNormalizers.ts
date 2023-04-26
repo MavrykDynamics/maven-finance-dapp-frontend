@@ -106,7 +106,12 @@ export const normalizeGovernanceProposals = (
       acc.allProposalsIds.push(id)
 
       // Add id of current round proposal
-      if (currentRoundProposal && status !== ProposalStatus.DROPPED && !executed) {
+      if (
+        currentRoundProposal &&
+        status !== ProposalStatus.DROPPED &&
+        status !== ProposalStatus.DEFEATED &&
+        !executed
+      ) {
         acc.currentRoundProposalsIds.push(id)
       }
 
