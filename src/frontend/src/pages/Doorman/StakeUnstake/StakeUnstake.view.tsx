@@ -41,6 +41,8 @@ import {
   StakeDelegatedUser,
   StakeUnstakeAmount,
 } from './StakeUnstake.style'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import { silverColor } from 'styles'
 
 type StakeUnstakeViewProps = {
   stakeCallback: (amount: number) => void
@@ -269,7 +271,14 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
           <StakeUnstakeBalance>
             <ImageWithPlug imageLink={'/images/coin-bronze.svg'} alt="coin" />
             <div>
-              <h3>Total MVK Earned</h3>
+              <h3>
+                Total MVK Earned{' '}
+                <CustomTooltip
+                  text="Amount of MVK you have earned and not yet claimed. This resets every time you stake, unstake, or compound as doing one of those actions will automatically credit your staked MVK balance with any unclaimed rewards."
+                  iconId="info"
+                  defaultStrokeColor={silverColor}
+                />
+              </h3>
               <CommaNumber value={earnedValue} className="amount" />
             </div>
           </StakeUnstakeBalance>

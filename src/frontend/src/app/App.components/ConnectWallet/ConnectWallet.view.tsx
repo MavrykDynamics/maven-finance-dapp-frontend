@@ -13,6 +13,7 @@ import {
   ConnectedWalletDetailsItemStyled,
   MobileDetailsStyled,
 } from './ConnectWallet.style'
+import { useLocation } from 'react-router'
 
 export type CoinsInfoType = {
   MVKExchangeRate: number
@@ -110,6 +111,7 @@ export const ConnectedWalletBlock = ({
   isMobile,
   closeMobileMenu,
 }: ConnectedWalletBlockProps) => {
+  const { pathname } = useLocation()
   const [detailsShown, setDetailsShown] = useState(false)
 
   const mouseOverHanlder = useCallback(() => (isMobile ? undefined : setDetailsShown(true)), [isMobile])
@@ -170,7 +172,7 @@ export const ConnectedWalletBlock = ({
             buttonText={'Stake MVK'}
             coinAmount={coinsInfo.userMVKStaked}
             coinName={'MVK'}
-            buttonHandler={detailsHandlers.stakeMVKHandler}
+            buttonHandler={pathname === '/' ? () => setDetailsShown(false) : detailsHandlers.stakeMVKHandler}
             subtextInfo="Total staked MVK"
             icon="mvkTokenSilver"
           />
