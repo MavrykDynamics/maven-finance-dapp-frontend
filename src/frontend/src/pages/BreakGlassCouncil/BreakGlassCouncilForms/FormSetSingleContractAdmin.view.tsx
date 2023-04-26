@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 // components
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from '../../../app/App.components/Button/Button.constants'
@@ -18,6 +18,7 @@ import { setSingleContractAdmin } from '../BreakGlassCouncil.actions'
 
 // helpers
 import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
+import { State } from 'reducers'
 
 const INIT_FORM = {
   newAdminAddress: '',
@@ -26,6 +27,7 @@ const INIT_FORM = {
 
 export function FormSetSingleContractAdminView() {
   const dispatch = useDispatch()
+  const { isActionActive } = useSelector((state: State) => state.loading)
 
   const [form, setForm] = useState(INIT_FORM)
   const [formInputStatus, setFormInputStatus] = useState<Record<string, InputStatusType>>({
@@ -105,7 +107,7 @@ export function FormSetSingleContractAdminView() {
         </div>
 
         <div className="btn-wrapper">
-          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT}>
+          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isActionActive}>
             <Icon id="profile" />
             Set Contract Admin
           </NewButton>

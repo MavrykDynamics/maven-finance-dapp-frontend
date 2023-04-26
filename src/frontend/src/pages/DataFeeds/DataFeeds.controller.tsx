@@ -38,6 +38,7 @@ export const DataFeeds = () => {
   const dispatch = useDispatch()
   const { search } = useLocation()
   const { feedsLedger, feedCategories, isLoaded: isDataFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
+  const { isActionActive } = useSelector((state: State) => state.loading)
 
   const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {
@@ -122,6 +123,7 @@ export const DataFeeds = () => {
             <Button
               text="Request data feed"
               icon="requestFeed"
+              disabled={isActionActive}
               kind={ACTION_PRIMARY}
               onClick={() => {
                 dispatch(showToaster(INFO, 'Coming soon', 'Request feed Feature coming soon'))

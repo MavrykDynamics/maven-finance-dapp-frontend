@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 // type
 import type { InputStatusType } from '../../../app/App.components/Input/Input.constants'
@@ -18,6 +18,7 @@ import { addVestee } from '../Council.actions'
 
 // style
 import { CouncilFormStyled } from './CouncilForm.style'
+import { State } from 'reducers'
 
 const INIT_FORM = {
   vesteeAddress: '',
@@ -28,6 +29,8 @@ const INIT_FORM = {
 
 export const CouncilFormAddVestee = () => {
   const dispatch = useDispatch()
+  const { isActionActive } = useSelector((state: State) => state.loading)
+
   const [form, setForm] = useState(INIT_FORM)
 
   const [formInputStatus, setFormInputStatus] = useState<Record<string, InputStatusType>>({
@@ -160,7 +163,7 @@ export const CouncilFormAddVestee = () => {
         </div>
       </div>
       <div className="btn-group">
-        <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT}>
+        <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isActionActive}>
           <Icon id="plus" />
           Add Vestee
         </NewButton>

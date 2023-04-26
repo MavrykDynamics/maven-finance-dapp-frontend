@@ -1,8 +1,8 @@
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import Toggle from 'app/App.components/Toggle/Toggle.view'
-import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { useState } from 'react'
 import { EarnHistoryStyled } from './DashboardPersonalComponents.style'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
 export type DashboardPersonalEarningsHistoryProps = {
   mvkRate: number
@@ -26,9 +26,7 @@ const DashboardPersonalEarningsHistory = ({
   return (
     <EarnHistoryStyled>
       <div className="top">
-        <GovRightContainerTitleArea>
-          <h1>Earnings History</h1>
-        </GovRightContainerTitleArea>
+        <H2Title>Earnings History</H2Title>
         <Toggle
           prefix={'USD'}
           sufix={'MVK'}

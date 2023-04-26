@@ -18,6 +18,14 @@ const EDITABLE_TABLE_HEADER_STYLES = css`
   }
 `
 
+const PROPOSAL_PAYMENTS_DETAILS_HEADER_STYLES = css`
+  &.proposal-details-payments {
+    th {
+      font-size: 12px;
+    }
+  }
+`
+
 export const TableHeader = styled.thead<{ theme: MavrykTheme }>`
   z-index: 100;
 
@@ -57,6 +65,7 @@ export const TableHeader = styled.thead<{ theme: MavrykTheme }>`
   }
 
   ${EDITABLE_TABLE_HEADER_STYLES}
+  ${PROPOSAL_PAYMENTS_DETAILS_HEADER_STYLES}
 `
 
 const LOANS_DASHBOARD_TABLE_HEADER_CELL_STYLES = css`

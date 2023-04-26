@@ -19,6 +19,7 @@ import { loans, LoansState } from './loans'
 import { vaults, VaultsStateType } from './vaults'
 import { financialRequest, FinancialRequestStoreType } from './financialRequests'
 import { satellites, SatellitesState } from './satellites'
+import { satelliteGovernance, SatelliteGovernanceState } from './satelliteGovernance'
 
 export const reducers = combineReducers({
   loading,
@@ -34,6 +35,7 @@ export const reducers = combineReducers({
   breakGlass,
   emergencyGovernance,
 
+  satelliteGovernance,
   satellites,
   dataFeeds,
 
@@ -65,4 +67,5 @@ export interface State {
   loans: LoansState
   vaults: VaultsStateType
   satellites: SatellitesState
+  satelliteGovernance: SatelliteGovernanceState
 }

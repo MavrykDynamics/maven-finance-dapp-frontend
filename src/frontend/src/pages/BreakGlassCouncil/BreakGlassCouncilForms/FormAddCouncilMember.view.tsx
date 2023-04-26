@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 // components
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from '../../../app/App.components/Button/Button.constants'
@@ -20,6 +20,7 @@ import { FormStyled } from './BreakGlassCouncilForm.style'
 
 // actions
 import { addCouncilMember } from '../BreakGlassCouncil.actions'
+import { State } from 'reducers'
 
 const INIT_FORM = {
   memberAddress: '',
@@ -30,6 +31,7 @@ const INIT_FORM = {
 
 export function FormAddCouncilMemberView(maxLength: CouncilMaxLength) {
   const dispatch = useDispatch()
+  const { isActionActive } = useSelector((state: State) => state.loading)
 
   const [form, setForm] = useState(INIT_FORM)
   const [formInputStatus, setFormInputStatus] = useState<Record<string, InputStatusType>>({
@@ -152,7 +154,7 @@ export function FormAddCouncilMemberView(maxLength: CouncilMaxLength) {
         />
 
         <div className="align-to-right">
-          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT}>
+          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isActionActive}>
             <Icon id="plus" />
             Add Council Member
           </NewButton>

@@ -32,7 +32,7 @@ const EDITABLE_TABLE_ROW_STYLES = css`
       vertical-align: middle;
       text-align: center;
 
-      div {
+      > div {
         margin: 0 auto;
       }
     }
@@ -51,6 +51,20 @@ const EDITABLE_TABLE_ROW_STYLES = css`
   }
 `
 
+const PROPOSAL_DETAILS_PAYMENTS_ROW_STYLES = css`
+  &.proposal-details-payments {
+    td {
+      font-size: 14px;
+      font-weight: 400;
+
+      > div {
+        margin: 0 auto;
+        width: fit-content;
+      }
+    }
+  }
+`
+
 export const TableRow = styled.tr<{ theme: MavrykTheme; borderColor?: string; rowHeight?: number }>`
   height: ${({ rowHeight = 55 }) => `${rowHeight}px`};
   transition: border-bottom 0.4s;
@@ -62,4 +76,6 @@ export const TableRow = styled.tr<{ theme: MavrykTheme; borderColor?: string; ro
   ${HOVERABLE_TABLE_ROW_STYLES}
 
   ${EDITABLE_TABLE_ROW_STYLES}
+
+  ${PROPOSAL_DETAILS_PAYMENTS_ROW_STYLES}
 `

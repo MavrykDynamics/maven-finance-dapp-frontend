@@ -116,8 +116,8 @@ export const DropDownMenu = styled.div<{ theme: MavrykTheme }>`
     margin-left: 3px;
 
     > svg {
-      height: 15px;
-      width: 20px;
+      height: 12px;
+      width: 16px;
       stroke: ${({ theme }) => theme.textColor};
       stroke-width: 3px;
       fill: none;
@@ -165,7 +165,7 @@ export const DropDownListItem = styled.li<{ disabled?: boolean }>`
   cursor: pointer;
   justify-content: space-between;
 
-  > svg {
+  .selectedIcon {
     stroke: ${({ theme }) => theme.textColor};
     width: 10px;
     height: 10px;

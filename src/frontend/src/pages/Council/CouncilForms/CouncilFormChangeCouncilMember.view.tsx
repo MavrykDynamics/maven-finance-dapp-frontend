@@ -27,6 +27,7 @@ import { CouncilFormStyled } from './CouncilForm.style'
 export const CouncilFormChangeCouncilMember = (maxLength: CouncilMaxLength) => {
   const dispatch = useDispatch()
   const { councilMembers } = useSelector((state: State) => state.council)
+  const { isActionActive } = useSelector((state: State) => state.loading)
 
   const dropDownItems = useMemo(
     () =>
@@ -197,7 +198,7 @@ export const CouncilFormChangeCouncilMember = (maxLength: CouncilMaxLength) => {
         title={'Upload Profile Pic'}
       />
       <div className="btn-group">
-        <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT}>
+        <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isActionActive}>
           <Icon id="exchange" />
           Change Council Member
         </NewButton>

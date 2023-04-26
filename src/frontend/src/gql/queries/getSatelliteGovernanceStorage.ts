@@ -1,4 +1,4 @@
-export const GOVERNANCE_SATELLITE_STORAGE_QUERY = `
+export const SATELLITE_GOVERNANCE_STORAGE_QUERY = `
   query GetGovernanceSatelliteStorageQuery {
     governance_satellite {
       address
@@ -60,5 +60,5 @@ export const GOVERNANCE_SATELLITE_STORAGE_QUERY = `
   }
 `
 
-export const GOVERNANCE_SATELLITE_STORAGE_QUERY_NAME = 'GetGovernanceSatelliteStorageQuery'
-export const GOVERNANCE_SATELLITE_STORAGE_QUERY_VARIABLE = {}
+export const SATELLITE_GOVERNANCE_STORAGE_QUERY_NAME = 'GetGovernanceSatelliteStorageQuery'
+export const SATELLITE_GOVERNANCE_STORAGE_QUERY_VARIABLE = {}

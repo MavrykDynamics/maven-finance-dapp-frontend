@@ -157,5 +157,7 @@ export const TextareaStyled = styled.textarea`
 
   &::placeholder {
     color: ${({ theme }) => theme.blockNameTitleColor};
+    font-weight: 400;
+    font-size: 12px;
   }
 `

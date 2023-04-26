@@ -39,6 +39,11 @@ export const FinancialRequestsRightContainer = styled(Card)<{ theme: MavrykTheme
     transform: translateX(-50%);
   }
 
+  .title-status {
+    display: flex;
+    justify-content: space-between;
+  }
+
   .voting_ending {
     margin-top: 10px;
     font-weight: 600;
