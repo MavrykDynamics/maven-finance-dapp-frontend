@@ -35,7 +35,7 @@ import {
   InfoBlockTitle,
   InfoBlockName,
 } from './FinancialRequests.style'
-import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
 export const FinancialRequestsView = ({
   financialRequestsIds,
@@ -93,10 +93,10 @@ export const FinancialRequestsView = ({
   const RightSideBlock = () =>
     rightSideContent ? (
       <FinancialRequestsRightContainer>
-        <GovRightContainerTitleArea className="financial-request">
-          <h1>{rightSideContent.type}</h1>
+        <div className="title-status">
+          <H2Title>{rightSideContent.type}</H2Title>
           <StatusFlag text={rightItemStatus} status={rightItemStatus} />
-        </GovRightContainerTitleArea>
+        </div>
 
         <div className="voting_ending">
           Voting {rightItemStatus !== ProposalStatus.ONGOING ? 'ended' : 'ending'} on{' '}
@@ -199,9 +199,7 @@ export const FinancialRequestsView = ({
       <div className="list-container">
         {ongoing.length ? (
           <>
-            <GovRightContainerTitleArea>
-              <h1>Ongoing Requests</h1>
-            </GovRightContainerTitleArea>
+            <H2Title>Ongoing Requests</H2Title>
             <div className="list">
               {paginatedOngoingItemsList.map((frId, idx) => (
                 <FRSListItem
@@ -224,9 +222,7 @@ export const FinancialRequestsView = ({
 
         {past.length ? (
           <>
-            <GovRightContainerTitleArea>
-              <h1>Past Requests</h1>
-            </GovRightContainerTitleArea>
+            <H2Title>Past Requests</H2Title>
             <div className="list">
               {paginatedPastItemsList.map((frId, idx) => (
                 <FRSListItem

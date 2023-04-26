@@ -266,6 +266,8 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
         </div>
       </div>
 
+      <hr />
+
       <div className="proposal-data-block-wrapper">
         <div className="proposal-data-block-name">Governance Info</div>
         <div className="gov-data">
@@ -276,12 +278,14 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
         </div>
       </div>
 
-      <div className="drop-proposal">
-        <Button kind={BUTTON_SECONDARY} onClick={handleDeleteProposal} disabled={!userCanDropProposal}>
-          <Icon id="navigation-menu_close" />
-          Drop Proposal
-        </Button>
-      </div>
+      {isUserOwnerIfTheProposal ? (
+        <div className="drop-proposal">
+          <Button kind={BUTTON_SECONDARY} onClick={handleDeleteProposal} disabled={!userCanDropProposal}>
+            <Icon id="navigation-menu_close" />
+            Drop Proposal
+          </Button>
+        </div>
+      ) : null}
     </ProposalDetailsStyled>
   )
 }
