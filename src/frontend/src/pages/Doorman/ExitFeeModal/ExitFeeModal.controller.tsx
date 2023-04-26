@@ -130,7 +130,7 @@ export const ExitFeeModal = ({
               <h4>
                 MVK Loyalty Index
                 <a
-                  href="https://mavryk.finance/litepaper#converting-vmvk-back-to-mvk-exit-fees"
+                  href="https://mavryk.finance/litepaper#converting-smvk-back-to-mvk-exit-fees"
                   target="_blank"
                   rel="noreferrer"
                 >
@@ -149,7 +149,7 @@ export const ExitFeeModal = ({
               <h4>
                 Exit Fee
                 <a
-                  href="https://mavryk.finance/litepaper#converting-vmvk-back-to-mvk-exit-fees"
+                  href="https://mavryk.finance/litepaper#converting-smvk-back-to-mvk-exit-fees"
                   target="_blank"
                   rel="noreferrer"
                 >
