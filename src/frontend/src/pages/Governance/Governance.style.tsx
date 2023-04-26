@@ -18,7 +18,6 @@ export const GovernanceStyled = styled.div<{ theme: MavrykTheme }>`
 export const GovernanceLeftContainer = styled.div<{ theme: MavrykTheme }>`
   width: 50%;
   position: relative;
-  margin-top: 30px;
 
   &.full-width {
     width: 100%;

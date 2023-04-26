@@ -138,6 +138,7 @@ export const ProposalStatusFlag = styled.div<{ status?: ProposalStatus; theme: M
   display: flex;
   align-items: center;
   justify-content: center;
+  text-transform: uppercase;
   height: 28px;
   width: 110px;
   border-color: ${({ status }) => {
