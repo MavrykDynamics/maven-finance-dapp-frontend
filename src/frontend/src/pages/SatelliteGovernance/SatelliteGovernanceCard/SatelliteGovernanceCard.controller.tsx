@@ -124,18 +124,22 @@ export const SatelliteGovernanceCard = ({
       sufix={<StatusFlag className="expand-gov-status" status={statusFlag} text={statusFlag} />}
     >
       <SatelliteGovernanceCardDropDown>
-        <div className="left">
-          <h3>Purpose</h3>
-          <p className="purpose">{purpose}</p>
-          {initiatorId ? (
-            <Link className={'view-satellite'} to={`/satellites/satellite-details/${satelliteId}`}>
-              Profile Details
-            </Link>
-          ) : null}
+        <div className="purpose-block">
+          <div>
+            <h3>Purpose</h3>
+            <p className="purpose">{purpose}</p>
+
+            {initiatorId ? (
+              <Link className={'view-satellite'} to={`/satellites/satellite-details/${satelliteId}`}>
+                Profile Details
+              </Link>
+            ) : null}
+          </div>
+
           {statusFlag === ProposalStatus.ONGOING && accountPkh === initiatorId ? (
             <Button
               text="Drop Action"
-              className="brop-btn"
+              className="drop-btn"
               icon="close-stroke"
               kind={'actionSecondary'}
               onClick={handleClick}
