@@ -152,7 +152,8 @@ export const depositLendingAssetAction =
         dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
         callback()
       }
-      await dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionCompletion(false))
     }
   }
 
@@ -213,6 +214,7 @@ export const withdrawLendingAssetAction =
         dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
         callback()
       }
-      await dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionCompletion(false))
     }
   }

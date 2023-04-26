@@ -27,7 +27,7 @@ export const GovernanceTopBarStyled = styled(Card)`
 `
 
 export const GovTopBarPhaseText = styled.div<{ isCorrectPhase?: boolean; theme: MavrykTheme }>`
-  color: ${({ isCorrectPhase, theme }) => (isCorrectPhase ? theme.valueColor : theme.textColor)};
+  color: ${({ isCorrectPhase, theme }) => (isCorrectPhase ? theme.headerColor : theme.textColor)};
   font-weight: 600;
   font-size: 18px;
 `

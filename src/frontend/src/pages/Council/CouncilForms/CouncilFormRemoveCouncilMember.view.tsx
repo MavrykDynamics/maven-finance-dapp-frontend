@@ -20,6 +20,7 @@ import { CouncilFormStyled } from './CouncilForm.style'
 export const CouncilFormRemoveCouncilMember = () => {
   const dispatch = useDispatch()
   const { councilMembers } = useSelector((state: State) => state.council)
+  const { isActionActive } = useSelector((state: State) => state.loading)
 
   const dropDownItems = useMemo(
     () =>
@@ -72,7 +73,7 @@ export const CouncilFormRemoveCouncilMember = () => {
           />
         </div>
         <div className="button-aligment">
-          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT}>
+          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isActionActive}>
             <Icon id="minus" />
             Remove Council Member
           </NewButton>

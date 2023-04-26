@@ -151,22 +151,23 @@ export const BreakGlassView = ({
       </BGMiddleWrapper>
 
       <BGCardsWrapper>
-        {paginatedMyPastCouncilActions.map((item) => {
-          const trimmedTitle = item.title.trim()
-          const address = item.address.trim()
-          const isCardActive = activeCard === address
-          return (
-            <ContractCard
-              isActive={isCardActive}
-              contract={item}
-              key={trimmedTitle + address}
-              onClick={() => setActiveCard(isCardActive ? null : address)}
-              isExpanded={openedAccordeon === item.address}
-              handleExpandAccordeon={setOpenedAcordeon}
-            />
-          )
-        })}
-
+        <div className="cards-list">
+          {paginatedMyPastCouncilActions.map((item) => {
+            const trimmedTitle = item.title.trim()
+            const address = item.address.trim()
+            const isCardActive = activeCard === address
+            return (
+              <ContractCard
+                isActive={isCardActive}
+                contract={item}
+                key={trimmedTitle + address}
+                onClick={() => setActiveCard(isCardActive ? null : address)}
+                isExpanded={openedAccordeon === item.address}
+                handleExpandAccordeon={setOpenedAcordeon}
+              />
+            )
+          })}
+        </div>
         <Pagination itemsCount={filteredBreakGlassStatuses.length} listName={BREAK_GLASS_LIST_NAME} />
       </BGCardsWrapper>
     </BGStyled>

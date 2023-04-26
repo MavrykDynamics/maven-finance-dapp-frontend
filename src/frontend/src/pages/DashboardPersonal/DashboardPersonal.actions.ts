@@ -112,7 +112,8 @@ export const claimAllRewardsAction = () => async (dispatch: AppDispatch, getStat
       console.error(error)
       await dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
     }
-    await dispatch(toggleActionFullScreenLoader(false))
+    dispatch(toggleActionFullScreenLoader(false))
+    dispatch(toggleActionCompletion(false))
   }
 }
 
@@ -170,6 +171,7 @@ export const claimVestingReward = () => async (dispatch: AppDispatch, getState: 
       console.error(error)
       await dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
     }
-    await dispatch(toggleActionFullScreenLoader(false))
+    dispatch(toggleActionFullScreenLoader(false))
+    dispatch(toggleActionCompletion(false))
   }
 }

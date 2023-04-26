@@ -4,7 +4,7 @@ import { INFO_ERROR, INFO_WARNING } from './info.constants'
 
 export const InfoBlock = styled.blockquote<{ theme: MavrykTheme }>`
   background-color: ${({ theme }) => theme.connectInfoColor};
-  border: 1px solid ${({ theme }) => theme.valueColor};
+  border: 1px solid ${({ theme }) => theme.dataColor};
   border-radius: 10px;
   margin: 0;
   padding: 10px 20px;
@@ -27,7 +27,7 @@ export const InfoBlock = styled.blockquote<{ theme: MavrykTheme }>`
   }
 
   svg {
-    fill: ${({ theme }) => theme.textColor};
+    fill: ${({ theme }) => theme.dataColor};
     height: 16px;
     width: 16px;
     flex-shrink: 0;
@@ -36,7 +36,7 @@ export const InfoBlock = styled.blockquote<{ theme: MavrykTheme }>`
   &.${INFO_ERROR} {
     border-color: ${({ theme }) => theme.downColor};
 
-    .infoIcon {
+    svg {
       fill: ${({ theme }) => theme.textColor};
     }
   }
@@ -44,7 +44,7 @@ export const InfoBlock = styled.blockquote<{ theme: MavrykTheme }>`
   &.${INFO_WARNING} {
     border-color: ${({ theme }) => theme.downColor};
 
-    .infoIcon {
+    svg {
       fill: ${({ theme }) => theme.downColor};
     }
   }

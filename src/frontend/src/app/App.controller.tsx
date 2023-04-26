@@ -98,10 +98,6 @@ const AppContainer = () => {
   }, [dispatch])
 
   useEffect(() => {
-    dispatch(toggleSidebarCollapsing(showSidebarOpened))
-  }, [showSidebarOpened])
-
-  useEffect(() => {
     setIsIOS(
       ['iPad Simulator', 'iPhone Simulator', 'iPod Simulator', 'iPad', 'iPhone', 'iPod'].includes(navigator.platform),
     )

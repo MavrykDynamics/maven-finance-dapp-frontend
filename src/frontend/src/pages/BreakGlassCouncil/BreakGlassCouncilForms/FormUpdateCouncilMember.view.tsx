@@ -38,6 +38,7 @@ export function FormUpdateCouncilMemberView({ maxLength, callback }: Props) {
   const dispatch = useDispatch()
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const { breakGlassCouncilMembers } = useSelector((state: State) => state.council)
+  const { isActionActive } = useSelector((state: State) => state.loading)
 
   const [form, setForm] = useState(INIT_FORM)
   const myInfo = breakGlassCouncilMembers.find((item) => item.userId === accountPkh)
@@ -160,7 +161,7 @@ export function FormUpdateCouncilMemberView({ maxLength, callback }: Props) {
         />
 
         <div className="align-to-right">
-          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT}>
+          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isActionActive}>
             <Icon id="upload" />
             Update Council Member
           </NewButton>

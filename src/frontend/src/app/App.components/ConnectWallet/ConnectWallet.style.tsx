@@ -123,10 +123,11 @@ export const ConnectedWalletStyled = styled.div<{ theme: MavrykTheme }>`
   .wallet-details {
     position: absolute;
     visibility: hidden;
-    top: 85px;
+    top: 80px;
     opacity: 0;
     right: 15px;
-    transition: 0.3s all;
+    // TODO: if need to add transition, use this
+    /* transition: 400ms opacity ease-out, 400ms visibility ease-in; */
     width: 375px;
     background: #160e3f;
     border: 1px solid #86d4c9;

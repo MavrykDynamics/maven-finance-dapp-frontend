@@ -20,7 +20,7 @@ import { parseDate } from 'utils/time'
 type Props = {
   satelliteId: string
   initiatorId: string
-  date: string
+  date: string | null
   executed: boolean
   status: number
   id: number
@@ -71,7 +71,7 @@ export const SatelliteGovernanceCard = ({
   }
 
   const timeNow = Date.now()
-  const expirationDatetime = new Date(date).getTime()
+  const expirationDatetime = new Date(date ?? 0).getTime()
   const isEndingVotingTime = expirationDatetime > timeNow
 
   const statusFlag = executed

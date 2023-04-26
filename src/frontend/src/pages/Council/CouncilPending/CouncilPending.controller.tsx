@@ -23,6 +23,8 @@ import { CouncilAction } from 'utils/TypesAndInterfaces/Council'
 import { CouncilPendingStyled, CouncilModalBase } from './CouncilPending.style'
 import { AvatarStyle } from '../../../app/App.components/Avatar/Avatar.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
+import { useSelector } from 'react-redux'
+import { State } from 'reducers'
 
 type Props = CouncilAction & {
   numCouncilMembers: number
@@ -42,6 +44,8 @@ export const CouncilPending = (props: Props) => {
     index,
     handleSignAction,
   } = props
+
+  const { isActionActive } = useSelector((state: State) => state.loading)
 
   const [showPopup, setShowPopup] = useState(false)
   const { name, value } = parameters?.[0] || {}
@@ -182,7 +186,7 @@ export const CouncilPending = (props: Props) => {
             </article>
 
             <div className="sign-action">
-              <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={onClickSign}>
+              <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={onClickSign} disabled={isActionActive}>
                 <Icon id="sign" />
                 Sign
               </NewButton>
@@ -255,7 +259,7 @@ export const CouncilPending = (props: Props) => {
               )}
             </article>
             <div className="sign-action">
-              <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={onClickSign}>
+              <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={onClickSign} disabled={isActionActive}>
                 <Icon id="sign" />
                 Sign
               </NewButton>
@@ -337,7 +341,7 @@ export const CouncilPending = (props: Props) => {
             </article>
 
             <div className="sign-action">
-              <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={onClickSign}>
+              <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={onClickSign} disabled={isActionActive}>
                 <Icon id="sign" />
                 Sign
               </NewButton>
@@ -385,7 +389,7 @@ export const CouncilPending = (props: Props) => {
             </div>
           </article>
           <div className="sign-action">
-            <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={onClickSign}>
+            <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={onClickSign} disabled={isActionActive}>
               <Icon id="sign" />
               Sign
             </NewButton>
@@ -447,7 +451,7 @@ export const CouncilPending = (props: Props) => {
             <span className="parameters-value">{vestingInMonths} months</span>
           </article>
           <div className="sign-action">
-            <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={onClickSign}>
+            <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={onClickSign} disabled={isActionActive}>
               <Icon id="sign" />
               Sign
             </NewButton>
@@ -509,7 +513,7 @@ export const CouncilPending = (props: Props) => {
             <span className="parameters-value">{newVestingInMonths} months</span>
           </article>
           <div className="sign-action">
-            <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={onClickSign}>
+            <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={onClickSign} disabled={isActionActive}>
               <Icon id="sign" />
               Sign
             </NewButton>
@@ -583,7 +587,7 @@ export const CouncilPending = (props: Props) => {
               </article>
             )}
             <div className="sign-action">
-              <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={onClickSign}>
+              <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={onClickSign} disabled={isActionActive}>
                 <Icon id="sign" />
                 Sign
               </NewButton>
@@ -659,7 +663,7 @@ export const CouncilPending = (props: Props) => {
               </article>
             )}
             <div className="sign-action">
-              <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={onClickSign}>
+              <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={onClickSign} disabled={isActionActive}>
                 <Icon id="sign" />
                 Sign
               </NewButton>
@@ -717,7 +721,7 @@ export const CouncilPending = (props: Props) => {
 
           <article />
           <div className="sign-action">
-            <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={onClickSign}>
+            <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={onClickSign} disabled={isActionActive}>
               <Icon id="sign" />
               Sign
             </NewButton>
@@ -762,7 +766,7 @@ export const CouncilPending = (props: Props) => {
         </div>
 
         <div className="sign-action">
-          <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={onClickSign}>
+          <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={onClickSign} disabled={isActionActive}>
             <Icon id="sign" />
             Sign
           </NewButton>
@@ -791,7 +795,7 @@ export const CouncilPending = (props: Props) => {
       </div>
 
       <div className="sign-action">
-        <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={onClickSign}>
+        <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={onClickSign} disabled={isActionActive}>
           <Icon id="sign" />
           Sign
         </NewButton>

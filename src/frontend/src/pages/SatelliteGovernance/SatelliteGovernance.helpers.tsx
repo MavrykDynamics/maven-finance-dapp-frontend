@@ -8,8 +8,8 @@ type SatelliteGovernanceActionType = {
   status: number
   satelliteId: string
   initiatorId: string
-  expirationDatetime: string
-  startDatetime: string
+  expirationDatetime: string | null
+  startDatetime: string | null
   smvkPercentageForApproval: number
   smvkRequiredForApproval: number
   snapshotSmvkTotalSupply: number
@@ -23,7 +23,7 @@ type SatelliteGovernanceActionType = {
   votes: {
     actionId: number
     id: number
-    timestamp: string
+    timestamp: string | null
     vote: number
     voterId: string
   }[]
@@ -68,7 +68,7 @@ export const normalizerSatelliteGovernance = ({ storage, userAddress }: Satellit
       const votes = item.votes.map((item) => ({
         actionId: item.governance_satellite_action_id,
         id: item.id,
-        timestamp: item.timestamp ?? '',
+        timestamp: item.timestamp ?? null,
         vote: item.vote,
         voterId: item.voter_id,
       }))
@@ -81,8 +81,8 @@ export const normalizerSatelliteGovernance = ({ storage, userAddress }: Satellit
         status: item.status,
         satelliteId: item.governance_satellite_id,
         initiatorId: item.initiator_id,
-        expirationDatetime: item.expiration_datetime ?? '',
-        startDatetime: item.start_datetime ?? '',
+        expirationDatetime: item.expiration_datetime ?? null,
+        startDatetime: item.start_datetime ?? null,
         smvkPercentageForApproval: item.smvk_percentage_for_approval,
         smvkRequiredForApproval: item.smvk_required_for_approval,
         snapshotSmvkTotalSupply: item.snapshot_smvk_total_supply,
