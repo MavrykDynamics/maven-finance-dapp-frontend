@@ -212,7 +212,7 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
             {isHistory && prpoposalsListsToShow.length ? (
               <>
                 <Checkbox
-                  id={'show_dropped'}
+                  id="dropped-proposals"
                   onChangeHandler={() => setShowActive(!showActive)}
                   checked={showActive}
                   className={'proposal-history-checkbox'}

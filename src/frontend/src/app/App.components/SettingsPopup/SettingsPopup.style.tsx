@@ -141,12 +141,6 @@ export const PopupContainerWrapper = styled.div`
       line-height: 24px;
     }
 
-    .checkbox {
-      display: flex;
-      align-items: center;
-      column-gap: 10px;
-    }
-
     .procced-btn {
       width: 270px;
       margin: 0 auto;

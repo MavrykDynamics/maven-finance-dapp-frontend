@@ -77,7 +77,7 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
           {!isGlobal && treasury.balances.length ? (
             <>
               <Checkbox
-                id={'show_dropped'}
+                id={'treasury-zero-filter'}
                 onChangeHandler={() => {
                   setShowZeroTreasuries(!showZeroTreasuries)
                 }}

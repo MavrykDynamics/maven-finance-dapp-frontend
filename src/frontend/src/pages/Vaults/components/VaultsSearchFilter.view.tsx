@@ -297,7 +297,7 @@ export const VaultsSearchFilter = ({ assets: assetSymbols, vaultsMapper, current
         </VaultsFilters>
       </VaultsSearchFilterStyled>
       <Checkbox
-        id="show_dropped"
+        id="vaults-zero-filter"
         onChangeHandler={handleClickCheckbox}
         checked={chosenDdItem[vaultsFilters.ZERO] === 'checked'}
         className="checkbox"

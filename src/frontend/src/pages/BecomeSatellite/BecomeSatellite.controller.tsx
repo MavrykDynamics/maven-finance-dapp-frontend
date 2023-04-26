@@ -356,7 +356,7 @@ export const BecomeSatellite = () => {
                 <div className="checkbox">
                   {pageText.registerAsOracle}
 
-                  <Checkbox id="show_dropped" onChangeHandler={() => setIsChecked(!isChecked)} checked={isChecked} />
+                  <Checkbox id="become-satellite-is-oracle" onChangeHandler={() => setIsChecked(!isChecked)} checked={isChecked} />
                 </div>
 
                 <BecomeSatelliteOracleText>
