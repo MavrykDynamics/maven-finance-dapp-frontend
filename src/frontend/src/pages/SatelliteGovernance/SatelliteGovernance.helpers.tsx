@@ -10,16 +10,23 @@ type SatelliteGovernanceActionType = {
   initiatorId: string
   expirationDatetime: string
   startDatetime: string
-  parameters: {
-    name: string
-    value: string
-  }[]
   smvkPercentageForApproval: number
   smvkRequiredForApproval: number
   snapshotSmvkTotalSupply: number
   yayVoteSmvkTotal: number
   nayVoteSmvkTotal: number
   passVoteSmvkTotal: number
+  parameters: {
+    name: string
+    value: string
+  }[]
+  votes: {
+    actionId: number
+    id: number
+    timestamp: string
+    vote: number
+    voterId: string
+  }[]
 }
 
 type SatelliteGovernanceActionsType = {
@@ -58,6 +65,14 @@ export const normalizerSatelliteGovernance = ({ storage, userAddress }: Satellit
         name: parameter.name,
       }))
 
+      const votes = item.votes.map((item) => ({
+        actionId: item.governance_satellite_action_id,
+        id: item.id,
+        timestamp: item.timestamp ?? '',
+        vote: item.vote,
+        voterId: item.voter_id,
+      }))
+
       const action = {
         id: item.id,
         executed: item.executed,
@@ -68,13 +83,14 @@ export const normalizerSatelliteGovernance = ({ storage, userAddress }: Satellit
         initiatorId: item.initiator_id,
         expirationDatetime: item.expiration_datetime ?? '',
         startDatetime: item.start_datetime ?? '',
-        parameters,
         smvkPercentageForApproval: item.smvk_percentage_for_approval,
         smvkRequiredForApproval: item.smvk_required_for_approval,
         snapshotSmvkTotalSupply: item.snapshot_smvk_total_supply,
         yayVoteSmvkTotal: item.yay_vote_smvk_total,
         nayVoteSmvkTotal: item.nay_vote_smvk_total,
         passVoteSmvkTotal: item.pass_vote_smvk_total,
+        parameters,
+        votes,
       }
 
       if (action.executed) {

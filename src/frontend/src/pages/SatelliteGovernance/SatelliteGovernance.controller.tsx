@@ -299,6 +299,7 @@ export const SatelliteGovernance = () => {
               passVoteSmvkTotal={action.passVoteSmvkTotal}
               accountPkh={accountPkh}
               isActionActive={isActionActive}
+              votes={action.votes}
             />
           )
         })

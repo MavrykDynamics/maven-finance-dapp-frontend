@@ -6,7 +6,7 @@ import { Button } from '../../../app/App.components/Button/Button.controller'
 import { StatusFlag } from '../../../app/App.components/StatusFlag/StatusFlag.controller'
 import { TzAddress } from '../../../app/App.components/TzAddress/TzAddress.view'
 import { getSeparateSnakeCase } from '../../../utils/parse'
-import { ProposalStatus } from '../../../utils/TypesAndInterfaces/Governance'
+import { ProposalStatus, SatelliteGovernance } from '../../../utils/TypesAndInterfaces/Governance'
 import Expand from '../../../app/App.components/Expand/Expand.view'
 
 // action
@@ -33,6 +33,7 @@ type Props = {
   snapshotSmvkTotalSupply: number
   accountPkh?: string
   isActionActive: boolean
+  votes: SatelliteGovernance['satelliteGovIdsMapper'][0]['votes']
 }
 
 export const SatelliteGovernanceCard = ({
@@ -51,10 +52,13 @@ export const SatelliteGovernanceCard = ({
   snapshotSmvkTotalSupply,
   accountPkh,
   isActionActive,
+  votes,
 }: Props) => {
   const dispatch = useDispatch()
+
   const [expanded, setExpanded] = useState(false)
 
+  const myVote = useMemo(() => votes.find((item) => item.voterId === accountPkh)?.vote, [accountPkh, votes])
   const open = () => setExpanded(!expanded)
 
   const handleVotingRoundVote = (type: string) => {
@@ -159,6 +163,7 @@ export const SatelliteGovernanceCard = ({
             isVotingActive={statusFlag === ProposalStatus.ONGOING}
             handleVote={handleVotingRoundVote}
             disableVotingButtons={isActionActive}
+            disableButtonByVote={myVote}
           />
         </div>
       </SatelliteGovernanceCardDropDown>
