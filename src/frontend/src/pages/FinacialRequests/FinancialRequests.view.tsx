@@ -35,7 +35,6 @@ import {
   InfoBlockTitle,
   InfoBlockName,
 } from './FinancialRequests.style'
-import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
 export const FinancialRequestsView = ({
