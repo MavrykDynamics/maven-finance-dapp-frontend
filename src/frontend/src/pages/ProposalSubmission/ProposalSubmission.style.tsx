@@ -32,8 +32,13 @@ export const ProposalSubmittionStageOneBody = styled.div<{ theme: MavrykTheme }>
       margin: 0;
     }
 
+    a {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
     .value {
-      font-size: 14px;
+      font-size: 16px;
       font-weight: 700;
       color: ${({ theme }) => theme.textColor};
     }
