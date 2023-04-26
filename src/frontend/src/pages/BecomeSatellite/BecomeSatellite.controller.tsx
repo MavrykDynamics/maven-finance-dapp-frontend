@@ -356,7 +356,11 @@ export const BecomeSatellite = () => {
                 <div className="checkbox">
                   {pageText.registerAsOracle}
 
-                  <Checkbox id="become-satellite-is-oracle" onChangeHandler={() => setIsChecked(!isChecked)} checked={isChecked} />
+                  <Checkbox
+                    id="become-satellite-is-oracle"
+                    onChangeHandler={() => setIsChecked(!isChecked)}
+                    checked={isChecked}
+                  />
                 </div>
 
                 <BecomeSatelliteOracleText>
@@ -399,12 +403,14 @@ export const BecomeSatellite = () => {
                 )}
 
                 {showOracleWarning && (
-                  <Info
-                    text={
-                      'You are unregistering for being an oracle. This means you will no longer be able to sign price feeds and subsequently no longer receive rewards for participation in the oracle network.'
-                    }
-                    type={INFO_WARNING}
-                  ></Info>
+                  <div className="warning">
+                    <Info
+                      text={
+                        'You are unregistering for being an oracle. This means you will no longer be able to sign price feeds and subsequently no longer receive rewards for participation in the oracle network.'
+                      }
+                      type={INFO_WARNING}
+                    ></Info>
+                  </div>
                 )}
               </BecomeSatelliteRegisterAsOracle>
 
