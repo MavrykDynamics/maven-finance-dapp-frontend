@@ -98,6 +98,7 @@ export const votingFinancialRequestVote =
         console.error(error)
         await dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionCompletion(false))
     }
   }

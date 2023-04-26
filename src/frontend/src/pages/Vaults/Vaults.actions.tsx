@@ -138,6 +138,7 @@ export const liquidateVault =
         dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
       }
       dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionCompletion(false))
     }
   }
 
@@ -192,6 +193,7 @@ export const markForLiquidation =
         dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
       }
       dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionCompletion(false))
     }
   }
 

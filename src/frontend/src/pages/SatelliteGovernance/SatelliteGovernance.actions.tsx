@@ -169,7 +169,8 @@ export const unsuspendSatellite =
       if (error instanceof Error) {
         dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionCompletion(false))
     }
   }
 
@@ -223,7 +224,8 @@ export const banSatellite =
       if (error instanceof Error) {
         dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionCompletion(false))
     }
   }
 
@@ -279,7 +281,8 @@ export const unbanSatellite =
       if (error instanceof Error) {
         dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionCompletion(false))
     }
   }
 
@@ -335,7 +338,8 @@ export const removeOracles =
       if (error instanceof Error) {
         dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionCompletion(false))
     }
   }
 
@@ -392,7 +396,8 @@ export const removeOracleInAggregator =
       if (error instanceof Error) {
         dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionCompletion(false))
     }
   }
 
@@ -449,7 +454,8 @@ export const addOracleToAggregator =
       if (error instanceof Error) {
         dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionCompletion(false))
     }
   }
 
@@ -508,7 +514,8 @@ export const setAggregatorMaintainer =
       if (error instanceof Error) {
         dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionCompletion(false))
     }
   }
 
@@ -564,7 +571,8 @@ export const dropAction =
         dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
         callback()
       }
-      await dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionCompletion(false))
     }
   }
 
@@ -621,7 +629,8 @@ export const voteForAction =
         dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
         callback()
       }
-      await dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionCompletion(false))
     }
   }
 
@@ -677,7 +686,8 @@ export const restoreSatellite =
       if (error instanceof Error) {
         dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionCompletion(false))
     }
   }
 
@@ -731,7 +741,8 @@ export const updateAggregatorStatus =
       if (error instanceof Error) {
         dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionCompletion(false))
     }
   }
 
@@ -785,7 +796,8 @@ export const registerAggregator =
       if (error instanceof Error) {
         dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionCompletion(false))
     }
   }
 
@@ -844,6 +856,7 @@ export const fixMistakenTransfer =
       if (error instanceof Error) {
         dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionCompletion(false))
     }
   }
