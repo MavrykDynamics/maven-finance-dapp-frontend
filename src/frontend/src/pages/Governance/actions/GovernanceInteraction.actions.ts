@@ -67,7 +67,8 @@ export const startProposalRound = () => async (dispatch: AppDispatch, getState: 
       console.error(error)
       await dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
     }
-    await dispatch(toggleActionFullScreenLoader(false))
+    dispatch(toggleActionFullScreenLoader(false))
+    dispatch(toggleActionCompletion(false))
   }
 }
 
@@ -120,7 +121,8 @@ export const startVotingRound = () => async (dispatch: AppDispatch, getState: Ge
       console.error(error)
       await dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
     }
-    await dispatch(toggleActionFullScreenLoader(false))
+    dispatch(toggleActionFullScreenLoader(false))
+    dispatch(toggleActionCompletion(false))
   }
 }
 
@@ -173,6 +175,7 @@ export const startNextRound = (executePastProposal: boolean) => async (dispatch:
       console.error(error)
       dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
     }
-    await dispatch(toggleActionFullScreenLoader(false))
+    dispatch(toggleActionFullScreenLoader(false))
+    dispatch(toggleActionCompletion(false))
   }
 }

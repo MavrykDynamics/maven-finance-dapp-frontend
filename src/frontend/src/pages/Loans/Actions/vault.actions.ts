@@ -71,7 +71,6 @@ export const triggerInitialVaultCreation =
       if (error instanceof Error) {
         dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionFullScreenLoader(false))
       return
     }
   }
@@ -143,7 +142,8 @@ export const borrowVaultAssetAction =
         dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
         callback()
       }
-      await dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionCompletion(false))
     }
   }
 
@@ -279,7 +279,8 @@ export const repayPartOfVaultAction =
         dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
         callback()
       }
-      await dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionCompletion(false))
     }
   }
 
@@ -429,11 +430,12 @@ export const repayFullAndCloseVaultAction =
       // scroll up to top of page, after closing vault
       scrollUpPage()
     } catch (error) {
-      console.error('borrowVaultAssetAction error:', error)
+      console.error('repayFullAndCloseVaultAction error:', error)
       if (error instanceof Error) {
         dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
         callback()
       }
-      await dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionCompletion(false))
     }
   }

@@ -76,7 +76,8 @@ export const submitProposal =
       if (error instanceof Error) {
         dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionCompletion(false))
     }
   }
 
@@ -131,7 +132,8 @@ export const dropProposal = (proposalId: number) => async (dispatch: AppDispatch
     if (error instanceof Error) {
       dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
     }
-    await dispatch(toggleActionFullScreenLoader(false))
+    dispatch(toggleActionFullScreenLoader(false))
+    dispatch(toggleActionCompletion(false))
   }
 }
 
@@ -186,7 +188,8 @@ export const lockProposal = (proposalId: number) => async (dispatch: AppDispatch
     if (error instanceof Error) {
       dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
     }
-    await dispatch(toggleActionFullScreenLoader(false))
+    dispatch(toggleActionFullScreenLoader(false))
+    dispatch(toggleActionCompletion(false))
   }
 }
 
@@ -260,6 +263,7 @@ export const updateProposalData =
         console.error(error)
         dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionCompletion(false))
     }
   }

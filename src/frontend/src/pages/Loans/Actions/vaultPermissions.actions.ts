@@ -81,6 +81,7 @@ export const changeBakerAction =
         callback()
       }
       dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionCompletion(false))
     }
   }
 
@@ -260,5 +261,6 @@ export const updateOperatorsAction = (callback: () => void) => async (dispatch: 
       callback()
     }
     dispatch(toggleActionFullScreenLoader(false))
+    dispatch(toggleActionCompletion(false))
   }
 }

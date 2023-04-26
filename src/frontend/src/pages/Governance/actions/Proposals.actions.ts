@@ -94,7 +94,8 @@ export const proposalRoundVote = (proposalId: number) => async (dispatch: AppDis
     if (error instanceof Error) {
       await dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
     }
-    await dispatch(toggleActionFullScreenLoader(false))
+    dispatch(toggleActionFullScreenLoader(false))
+    dispatch(toggleActionCompletion(false))
   }
 }
 
@@ -147,7 +148,8 @@ export const votingRoundVote = (vote: string) => async (dispatch: AppDispatch, g
       console.error(error)
       await dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
     }
-    await dispatch(toggleActionFullScreenLoader(false))
+    dispatch(toggleActionFullScreenLoader(false))
+    dispatch(toggleActionCompletion(false))
   }
 }
 
@@ -200,7 +202,8 @@ export const executeProposal = (proposalId: number) => async (dispatch: AppDispa
       console.error(error)
       dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
     }
-    await dispatch(toggleActionFullScreenLoader(false))
+    dispatch(toggleActionFullScreenLoader(false))
+    dispatch(toggleActionCompletion(false))
   }
 }
 
@@ -255,6 +258,7 @@ export const processProposalPayment = (proposalId: number) => async (dispatch: A
       console.error(error)
       dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
     }
-    await dispatch(toggleActionFullScreenLoader(false))
+    dispatch(toggleActionFullScreenLoader(false))
+    dispatch(toggleActionCompletion(false))
   }
 }

@@ -79,5 +79,8 @@ export const registerFeedAction = () => async (dispatch: AppDispatch, getState: 
       console.error(error)
       dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
     }
+
+    dispatch(toggleActionFullScreenLoader(false))
+    dispatch(toggleActionCompletion(false))
   }
 }
