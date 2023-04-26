@@ -103,7 +103,7 @@ export const RepayFull = ({
               <div className="lending-stats" style={{ marginBottom: '25px' }}>
                 <ThreeLevelListItem>
                   <div className="name">Borrowed</div>
-                  <CommaNumber value={borrowedAmount} className="value" endingText={borrowedAsset?.symbol} />
+                  <CommaNumber value={borrowedAmount} className="value" />
                   <CommaNumber
                     value={borrowedAmount * Number(borrowedAsset?.rate)}
                     className="rate"
@@ -112,12 +112,12 @@ export const RepayFull = ({
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">Fees Due</div>
-                  <CommaNumber value={feesAmount} className="value" endingText={borrowedAsset?.symbol} />
+                  <CommaNumber value={feesAmount} className="value" />
                   <CommaNumber value={feesAmount * Number(borrowedAsset?.rate)} className="rate" beginningText="$" />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem className="left-divider">
                   <div className="name">Total Outstanding</div>
-                  <CommaNumber value={totalOutstanding} className="value" endingText={borrowedAsset?.symbol} />
+                  <CommaNumber value={totalOutstanding} className="value" />
                   <CommaNumber
                     value={totalOutstanding * Number(borrowedAsset?.rate)}
                     className="rate"

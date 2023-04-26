@@ -11,7 +11,7 @@ export const TooltipStyled = styled.div<{ defaultStrokeColor?: string; theme: Ma
   height: 12px;
   width: 12px;
 
-  svg {
+  > svg {
     width: 12px;
     height: 12px;
     fill: ${({ theme, defaultStrokeColor }) => defaultStrokeColor ?? theme.dataColor};
@@ -67,24 +67,6 @@ export const TooltipStyled = styled.div<{ defaultStrokeColor?: string; theme: Ma
     width: 100%;
     .text {
       bottom: 200%;
-    }
-  }
-
-  &.add-bytes {
-    left: -24px;
-    button {
-      font-size: 26px;
-      color: ${({ theme }) => theme.valueColor};
-    }
-
-    .text {
-      bottom: 180%;
-    }
-  }
-
-  &.delete-bytes {
-    .text {
-      bottom: 210%;
     }
   }
 `

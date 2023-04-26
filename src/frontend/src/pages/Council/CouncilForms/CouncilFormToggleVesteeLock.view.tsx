@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 // type
 import type { InputStatusType } from '../../../app/App.components/Input/Input.constants'
@@ -18,9 +18,12 @@ import { toggleVesteeLock } from '../Council.actions'
 
 // style
 import { CouncilFormStyled } from './CouncilForm.style'
+import { State } from 'reducers'
 
 export const CouncilFormToggleVesteeLock = () => {
   const dispatch = useDispatch()
+  const { isActionActive } = useSelector((state: State) => state.loading)
+
   const [form, setForm] = useState({
     vesteeAddress: '',
   })
@@ -82,7 +85,7 @@ export const CouncilFormToggleVesteeLock = () => {
           <Input inputProps={vesteeAddressProps} settings={vesteeAddressSettings} />
         </div>
         <div className="button-aligment">
-          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT}>
+          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isActionActive}>
             <Icon id="lock" />
             Toggle Vestee Lock
           </NewButton>

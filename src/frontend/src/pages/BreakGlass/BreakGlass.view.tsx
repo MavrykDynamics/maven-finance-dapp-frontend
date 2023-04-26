@@ -113,7 +113,7 @@ export const BreakGlassView = ({
 
           <FAQLink className="BG-faq-link">
             <a
-              href="https://mavryk.finance/litepaper#satellites-governance-and-the-decentralized-oracle"
+              href="https://mavryk.finance/litepaper#emergency-governance--break-glass "
               target="_blank"
               rel="noreferrer"
             >
@@ -123,7 +123,9 @@ export const BreakGlassView = ({
 
           <BGWhitelist>
             Whitelist Developers
-            <div className="adress-list">{whitelistDev ? <TzAddress tzAddress={whitelistDev} hasIcon /> : <div>None</div>}</div>
+            <div className="adress-list">
+              {whitelistDev ? <TzAddress tzAddress={whitelistDev} hasIcon /> : <div>None</div>}
+            </div>
           </BGWhitelist>
           <div className="line"></div>
         </BGInfo>

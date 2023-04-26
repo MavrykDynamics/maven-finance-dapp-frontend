@@ -18,23 +18,22 @@ import { UserActionHistory } from './UserOperationsHistory'
 const VestingTab = () => {
   const dispatch = useDispatch()
   const { vesteesMapper } = useSelector((state: State) => state.vesting)
+  const { isActionActive } = useSelector((state: State) => state.loading)
   const { accountPkh = '' } = useSelector((state: State) => state.wallet)
 
   const vesteeRecord = vesteesMapper[accountPkh]
 
   if (!vesteeRecord) return <Redirect to={`/dashboard-personal/${PORTFOLIO_TAB_ID}`} />
 
-  const handleClaimVestingReward = () => {
-    // TODO: test claim vestee reward action
-    dispatch(claimVestingReward())
-  }
+  // TODO: test claim vestee reward action
+  const handleClaimVestingReward = async () => await dispatch(claimVestingReward())
 
   const { vestingMonth, totalAllocated, totalRemainded, rewardPerMonth, nextRewardDate, lastClaimDate } = vesteeRecord
 
   const lastClaimTime = dayjs(lastClaimDate),
     nextClaimTime = dayjs(nextRewardDate),
     hasRewardsFor = Math.max(0, nextClaimTime.diff(lastClaimTime, 'month')),
-    isClaimBtnDisabled = rewardPerMonth === 0 || hasRewardsFor === 0
+    isClaimBtnDisabled = rewardPerMonth === 0 || hasRewardsFor === 0 || isActionActive
 
   return (
     <>

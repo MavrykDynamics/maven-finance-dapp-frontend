@@ -11,15 +11,15 @@ import type { InputStatusType } from '../../app/App.components/Input/Input.const
 
 // actions
 import {
-  suspendSatellite,
-  unsuspendSatellite,
-  banSatellite,
-  unbanSatellite,
-  removeOracles,
-  removeOracleInAggregator,
   addOracleToAggregator,
+  banSatellite,
+  removeOracleInAggregator,
+  removeOracles,
   restoreSatellite,
   setAggregatorMaintainer,
+  suspendSatellite,
+  unbanSatellite,
+  unsuspendSatellite,
   updateAggregatorStatus,
 } from './SatelliteGovernance.actions'
 
@@ -27,7 +27,7 @@ import {
 import { AvailableActionsStyle } from './SatelliteGovernance.style'
 
 // helpers
-import { validateFormField, validateFormAddress } from 'utils/validatorFunctions'
+import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 const handleComparingValue = (value: string) => {
@@ -46,6 +46,7 @@ type MaxLength = {
 type Props = {
   variant: string
   maxLength: MaxLength
+  isActionActive: boolean
 }
 
 type InputStatus = Record<string, InputStatusType>
@@ -144,7 +145,7 @@ const CONTENT_FORM = new Map<string, Record<string, string>>([
   ],
 ])
 
-export const SatelliteGovernanceForm = ({ variant, maxLength }: Props) => {
+export const SatelliteGovernanceForm = ({ variant, maxLength, isActionActive }: Props) => {
   const dispatch = useDispatch()
   const [form, setForm] = useState<InputValue>(initialData)
   const [formInputStatus, setFormInputStatus] = useState<InputStatus>(initialData)
@@ -305,6 +306,7 @@ export const SatelliteGovernanceForm = ({ variant, maxLength }: Props) => {
             kind="actionPrimary"
             text={content?.btnText || ''}
             type="submit"
+            disabled={isActionActive}
           />
         </div>
       </form>

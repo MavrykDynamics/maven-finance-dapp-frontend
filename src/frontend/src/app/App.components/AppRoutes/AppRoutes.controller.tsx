@@ -96,11 +96,11 @@ export const AppRoutes = () => {
       <Route exact path="/governance">
         <Governance />
       </Route>
-      <Route exact path="/satellite-governance">
+      <Route exact path="/satellite-governance/:tabId?">
         <SatelliteGovernance />
       </Route>
       <Route exact path="/proposal-history">
-        <Governance />
+        <Governance isHistory />
       </Route>
       <Route exact path="/contract-status">
         <BreakGlass />

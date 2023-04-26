@@ -1,7 +1,7 @@
 import styled from 'styled-components/macro'
 import { zoomIn, slideDown } from 'styles/animations'
 import { MavrykTheme } from '../../../styles/interfaces'
-import { INPUT_BIG, INPUT_LARGE, INPUT_MEDIUM } from './Input.constants'
+import { INPUT_BIG, INPUT_LARGE, INPUT_MEDIUM, INPUT_SMALL } from './Input.constants'
 
 export const InputStyled = styled.div`
   position: relative;
@@ -275,6 +275,20 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
     }
   }
 
+  &.${INPUT_SMALL} {
+    height: 40px;
+
+    input {
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    input::placeholder {
+      font-weight: 400;
+      font-size: 12px;
+    }
+  }
+
   &:focus-within {
     box-shadow: 0 0 0 2px ${({ theme }) => theme.primaryColor}19;
     border-color: ${({ theme }) => theme.primaryColor}7F;
@@ -284,8 +298,13 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
     border: 1px solid ${({ theme }) => theme.downColor};
     input {
       color: ${({ theme }) => theme.downColor};
+
       &::placeholder {
         color: ${({ theme }) => theme.downColor};
+      }
+
+      &:focus {
+        box-shadow: 0 0 0 2px ${({ theme }) => theme.downColor}7F;
       }
     }
 
@@ -298,8 +317,13 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
     border: 1px solid ${({ theme }) => theme.upColor};
     input {
       color: ${({ theme }) => theme.upColor};
+
       &::placeholder {
         color: ${({ theme }) => theme.upColor};
+      }
+
+      &:focus {
+        box-shadow: 0 0 0 2px ${({ theme }) => theme.upColor}7F;
       }
     }
 
@@ -391,10 +415,6 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
   .pointer {
     cursor: pointer;
   }
-
-  &.vault-name {
-    margin-top: 45px;
-  }
 `
 
 export const NewInputLabel = styled.label`
@@ -436,6 +456,10 @@ export const InputStyledStatus = styled.div<{ theme: MavrykTheme }>`
     animation: ${zoomIn} 0.3s cubic-bezier(0.12, 0.4, 0.29, 1.46);
     height: 12px;
     width: 17px;
+  }
+
+  &.${INPUT_LARGE} {
+    top: 19.5px;
   }
 `
 

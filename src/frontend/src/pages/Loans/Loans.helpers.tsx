@@ -674,7 +674,7 @@ export const normalizeLoans = async ({
           },
           myBorrowingList,
           lendingItem,
-          transactionHistory,
+          transactionHistory: [...transactionHistory].reverse(),
           marketCollateralChartData,
           marketLiquidityChartData,
           utilisationRate: utilisation_rate / 10 ** interestRateDecimals,

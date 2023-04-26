@@ -23,6 +23,8 @@ import { CouncilAction } from 'utils/TypesAndInterfaces/Council'
 import { CouncilPendingStyled, CouncilModalBase } from './CouncilPending.style'
 import { AvatarStyle } from '../../../app/App.components/Avatar/Avatar.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
+import { useSelector } from 'react-redux'
+import { State } from 'reducers'
 
 type Props = CouncilAction & {
   numCouncilMembers: number
@@ -42,6 +44,8 @@ export const CouncilPending = (props: Props) => {
     index,
     handleSignAction,
   } = props
+
+  const { isActionActive } = useSelector((state: State) => state.loading)
 
   const [showPopup, setShowPopup] = useState(false)
   const { name, value } = parameters?.[0] || {}
@@ -96,11 +100,10 @@ export const CouncilPending = (props: Props) => {
 
   const findAddress = (type: string) => {
     switch (type) {
-      // TODO: remove setBaker conditions after fix bakery address
       case 'setBaker':
-        return 'in progress...'
+        return findActionByName('keyHash', BYTES_ADDRESS_TYPE)
       case 'setContractBaker':
-        return findActionByName('targetContractAddress', BYTES_ADDRESS_TYPE)
+        return findActionByName('keyHash', BYTES_ADDRESS_TYPE)
       default:
         return convertBytesAddressToAddress(value)
     }
@@ -183,7 +186,7 @@ export const CouncilPending = (props: Props) => {
             </article>
 
             <div className="sign-action">
-              <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={onClickSign}>
+              <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={onClickSign} disabled={isActionActive}>
                 <Icon id="sign" />
                 Sign
               </NewButton>
@@ -256,7 +259,7 @@ export const CouncilPending = (props: Props) => {
               )}
             </article>
             <div className="sign-action">
-              <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={onClickSign}>
+              <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={onClickSign} disabled={isActionActive}>
                 <Icon id="sign" />
                 Sign
               </NewButton>
@@ -338,7 +341,7 @@ export const CouncilPending = (props: Props) => {
             </article>
 
             <div className="sign-action">
-              <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={onClickSign}>
+              <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={onClickSign} disabled={isActionActive}>
                 <Icon id="sign" />
                 Sign
               </NewButton>
@@ -386,7 +389,7 @@ export const CouncilPending = (props: Props) => {
             </div>
           </article>
           <div className="sign-action">
-            <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={onClickSign}>
+            <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={onClickSign} disabled={isActionActive}>
               <Icon id="sign" />
               Sign
             </NewButton>
@@ -448,7 +451,7 @@ export const CouncilPending = (props: Props) => {
             <span className="parameters-value">{vestingInMonths} months</span>
           </article>
           <div className="sign-action">
-            <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={onClickSign}>
+            <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={onClickSign} disabled={isActionActive}>
               <Icon id="sign" />
               Sign
             </NewButton>
@@ -510,7 +513,7 @@ export const CouncilPending = (props: Props) => {
             <span className="parameters-value">{newVestingInMonths} months</span>
           </article>
           <div className="sign-action">
-            <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={onClickSign}>
+            <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={onClickSign} disabled={isActionActive}>
               <Icon id="sign" />
               Sign
             </NewButton>
@@ -584,7 +587,7 @@ export const CouncilPending = (props: Props) => {
               </article>
             )}
             <div className="sign-action">
-              <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={onClickSign}>
+              <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={onClickSign} disabled={isActionActive}>
                 <Icon id="sign" />
                 Sign
               </NewButton>
@@ -660,7 +663,7 @@ export const CouncilPending = (props: Props) => {
               </article>
             )}
             <div className="sign-action">
-              <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={onClickSign}>
+              <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={onClickSign} disabled={isActionActive}>
                 <Icon id="sign" />
                 Sign
               </NewButton>
@@ -680,7 +683,7 @@ export const CouncilPending = (props: Props) => {
     return (
       <CouncilPendingStyled className={`${actionType} ${councilPendingActionsLength > 1 ? 'more' : ''}`}>
         <span className="number">{cardNumber}</span>
-        <h3>{getSeparateCamelCase(actionType)}</h3>
+        <h3>Request Token Mint</h3>
         <div className="parameters">
           <article>
             <p>Treasury Address</p>
@@ -718,7 +721,7 @@ export const CouncilPending = (props: Props) => {
 
           <article />
           <div className="sign-action">
-            <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={onClickSign}>
+            <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={onClickSign} disabled={isActionActive}>
               <Icon id="sign" />
               Sign
             </NewButton>
@@ -751,10 +754,7 @@ export const CouncilPending = (props: Props) => {
           <div>
             <p className="parameters-name">{getSeparateCamelCase(name)}</p>
             <span className="parameters-value content-width">
-              {
-                // TODO: remove isSetBaker condition after fix baker address
-              }
-              {isSetBaker ? address : <TzAddress tzAddress={address} type={BLUE} hasIcon />}
+              <TzAddress tzAddress={address} type={BLUE} hasIcon />
             </span>
           </div>
           <div>
@@ -766,7 +766,7 @@ export const CouncilPending = (props: Props) => {
         </div>
 
         <div className="sign-action">
-          <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={onClickSign}>
+          <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={onClickSign} disabled={isActionActive}>
             <Icon id="sign" />
             Sign
           </NewButton>
@@ -795,7 +795,7 @@ export const CouncilPending = (props: Props) => {
       </div>
 
       <div className="sign-action">
-        <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={onClickSign}>
+        <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={onClickSign} disabled={isActionActive}>
           <Icon id="sign" />
           Sign
         </NewButton>

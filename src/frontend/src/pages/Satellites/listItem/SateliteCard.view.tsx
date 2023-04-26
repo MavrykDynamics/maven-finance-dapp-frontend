@@ -61,6 +61,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
   const dispatch = useDispatch()
 
   const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
+  const { isActionActive } = useSelector((state: State) => state.loading)
   const {
     accountPkh,
     user: {
@@ -70,16 +71,14 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
       mySatelliteRewardsData: { myAvailableSatelliteRewards },
     },
   } = useSelector((state: State) => state.wallet)
-  const {
-    governanceStorage: { proposalLedger },
-  } = useSelector((state: State) => state.governance)
+  const { proposalsMapper } = useSelector((state: State) => state.governance)
 
   // Card buttons handlers
-  const delegateCallback = () => dispatch(delegate(satellite.address))
-  const undelegateCallback = () => dispatch(undelegate(satellite.address))
-  const claimRewardsCallback = () => (accountPkh ? dispatch(rewardsCompound(accountPkh)) : null)
+  const delegateCallback = async () => await dispatch(delegate(satellite.address))
+  const undelegateCallback = async () => await dispatch(undelegate(satellite.address))
+  const claimRewardsCallback = async () => (accountPkh ? await dispatch(rewardsCompound(accountPkh)) : null)
   // TODO: add valid data
-  const distributeRewardsCallback = () => dispatch(distributeProposalRewards('', []))
+  const distributeRewardsCallback = async () => await dispatch(distributeProposalRewards('', []))
 
   const freesMVKSpace = Math.max(satellite.sMvkBalance * satellite.delegationRatio - satellite.totalDelegatedAmount, 0)
   const isUserDelegatedToThisSatellite = satellite.address === satelliteMvkIsDelegatedTo
@@ -87,10 +86,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
 
   // Latest vote data
   const currentlySupportingProposalVote = satellite.proposalVotingHistory?.at(0)?.vote ?? null
-  const currentlySupportingProposalId = satellite.proposalVotingHistory?.at(0)?.proposalId ?? null
-  const currentlySupportingProposal = proposalLedger?.length
-    ? proposalLedger.find((proposal) => proposal.id === currentlySupportingProposalId)
-    : null
+  const lastSupportedgProposalId = satellite.proposalVotingHistory?.at(0)?.proposalId ?? null
 
   // Satellite status data
   const oracleStatusType = getOracleStatus(satellite, feedsLedger)
@@ -107,7 +103,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
         icon="man-close"
         kind={ACTION_SECONDARY}
         onClick={undelegateCallback}
-        disabled={!accountPkh}
+        disabled={!accountPkh || isActionActive}
       />
       {isDetailsPage && myAvailableSatelliteRewards > 0 ? (
         <Button
@@ -115,7 +111,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
           icon="rewards"
           kind={ACTION_PRIMARY}
           onClick={claimRewardsCallback}
-          disabled={!accountPkh}
+          disabled={!accountPkh || isActionActive}
           strokeWidth={0.3}
         />
       ) : null}
@@ -124,7 +120,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
           kind={BUTTON_PRIMARY}
           form={BUTTON_WIDE}
           onClick={distributeRewardsCallback}
-          disabled={myAvailableSatelliteRewards === 0}
+          disabled={myAvailableSatelliteRewards === 0 || isActionActive}
         >
           <Icon id="commision" />
           Distribute Rewards
@@ -137,7 +133,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
       icon="man-check"
       kind={ACTION_PRIMARY}
       onClick={delegateCallback}
-      disabled={!accountPkh || !balanceOver1SMvk}
+      disabled={!accountPkh || !balanceOver1SMvk || isActionActive}
     />
   )
 
@@ -214,12 +210,13 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
 
       {children
         ? children
-        : currentlySupportingProposal?.id !== undefined &&
+        : lastSupportedgProposalId &&
+          proposalsMapper[lastSupportedgProposalId] &&
           currentlySupportingProposalVote !== null && (
             <SatelliteCardRow>
               <div>
                 Voted {renderVotingHistoryItem(currentlySupportingProposalVote)} on current Proposal{' '}
-                {currentlySupportingProposal.id} - {currentlySupportingProposal.title}
+                {lastSupportedgProposalId} - {proposalsMapper[lastSupportedgProposalId].title}
               </div>
             </SatelliteCardRow>
           )}

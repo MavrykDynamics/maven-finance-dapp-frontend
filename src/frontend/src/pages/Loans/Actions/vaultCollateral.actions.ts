@@ -93,7 +93,8 @@ export const withdrawCollateralAction =
         dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
         callback()
       }
-      await dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionCompletion(false))
     }
   }
 
@@ -255,6 +256,7 @@ export const depositCollateralAction =
       if (error instanceof Error) {
         dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionCompletion(false))
     }
   }

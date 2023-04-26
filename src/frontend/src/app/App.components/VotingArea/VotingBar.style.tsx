@@ -2,6 +2,7 @@ import styled from 'styled-components/macro'
 import { dropShadow } from 'styles/animations'
 import { subTextColor, upColor, skyColor } from 'styles'
 import { MavrykTheme } from 'styles/interfaces'
+import { getNumberInBounds } from 'utils/calcFunctions'
 
 export const VotingContainer = styled.aside<{ theme: MavrykTheme; showButtons?: boolean }>`
   display: flex;
@@ -22,7 +23,7 @@ export const QuorumBar = styled.div<{ width: number; theme: MavrykTheme }>`
     font-size: 12px;
     width: fit-content;
     position: absolute;
-    left: ${({ width }) => width}%;
+    left: ${({ width }) => getNumberInBounds(0, 100, width)}%;
     transform: translateX(-50%);
     padding-bottom: 15px;
     white-space: nowrap;

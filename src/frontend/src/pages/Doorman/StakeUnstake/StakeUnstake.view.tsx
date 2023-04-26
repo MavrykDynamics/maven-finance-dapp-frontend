@@ -66,6 +66,7 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
   } = useSelector((state: State) => state.wallet)
 
   const { satelliteMapper } = useSelector((state: State) => state.satellites)
+  const { isActionActive } = useSelector((state: State) => state.loading)
 
   const delegatedUser = satelliteMapper[satelliteMvkIsDelegatedTo]
 
@@ -166,9 +167,9 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
     unstakeCallback(mySMvkTokenBalance)
   }
 
-  const handleCompound = () => {
+  const handleCompound = async () => {
     if (accountPkh) {
-      dispatch(rewardsCompound(accountPkh))
+      await dispatch(rewardsCompound(accountPkh))
     }
   }
 
@@ -209,7 +210,7 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
               <div className="balance-btn-group">
                 <CommaNumber value={myMvkTokenBalance} className="amount" />
                 {Boolean(myMvkTokenBalance) && (
-                  <NewButton onClick={handleStakeAll} kind={BUTTON_SIMPLE}>
+                  <NewButton onClick={handleStakeAll} kind={BUTTON_SIMPLE} disabled={isActionActive}>
                     Stake All
                   </NewButton>
                 )}
@@ -226,7 +227,7 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
               <div className="balance-btn-group">
                 <CommaNumber value={mySMvkTokenBalance} className="amount" />
                 {Boolean(mySMvkTokenBalance) && (
-                  <NewButton onClick={handleUnstakeAll} kind={BUTTON_SIMPLE}>
+                  <NewButton onClick={handleUnstakeAll} kind={BUTTON_SIMPLE} disabled={isActionActive}>
                     Unstake All
                   </NewButton>
                 )}
@@ -242,7 +243,7 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
                 onClick={handleDelegate}
                 kind={BUTTON_PRIMARY}
                 form={BUTTON_WIDE}
-                disabled={!accountPkh}
+                disabled={!accountPkh || isActionActive}
                 isThin
                 animation={accountPkh ? BUTTON_PULSE : null}
               >
@@ -279,7 +280,7 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
               form={BUTTON_WIDE}
               isThin
               onClick={handleCompound}
-              disabled={!userHasRewards}
+              disabled={!userHasRewards || isActionActive}
             >
               <Icon id="compound" /> Compound
             </NewButton>
@@ -328,11 +329,11 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
         </StakeUnstakeRate>
 
         <StakeUnstakeButtonGrid>
-          <NewButton kind={BUTTON_PRIMARY} onClick={handleStake} form={BUTTON_WIDE}>
+          <NewButton kind={BUTTON_PRIMARY} onClick={handleStake} form={BUTTON_WIDE} disabled={isActionActive}>
             <Icon id="in" /> Stake
           </NewButton>
 
-          <NewButton kind={BUTTON_SECONDARY} onClick={handleUnStake} form={BUTTON_WIDE}>
+          <NewButton kind={BUTTON_SECONDARY} onClick={handleUnStake} form={BUTTON_WIDE} disabled={isActionActive}>
             <Icon id="out" /> Unstake
           </NewButton>
         </StakeUnstakeButtonGrid>

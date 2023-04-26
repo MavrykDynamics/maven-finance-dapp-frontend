@@ -5,7 +5,7 @@ import { State } from '../../reducers'
 
 //  actions
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
-import { getFinancialRequestStorage } from './FiancialRequest.actions'
+import { getFinancialRequestStorage } from './FinancialRequest.actions'
 
 // view
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'

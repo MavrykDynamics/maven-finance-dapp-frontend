@@ -65,7 +65,8 @@ export async function getChainInfo() {
         dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
         callback()
       }
-      await dispatch(toggleActionFullScreenLoader(false))
+     dispatch(toggleActionFullScreenLoader(false))
+    dispatch(toggleActionCompletion(false))
     }
   }
 */

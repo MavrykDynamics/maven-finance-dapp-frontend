@@ -13,7 +13,6 @@ import { cyanColor, skyColor } from 'styles'
 
 import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.types'
 import { MLI_FEE_CHART_DATA } from './MliFee-chart-data'
-import { CHART_TEST_DATA } from 'pages/DashboardPersonal/tabs.const'
 import { MLI_FEE_TOOLTIP } from 'app/App.components/Chart/Tooltips/ChartTooltip'
 import { DoubleChart } from 'app/App.components/Chart/ChartTypes/DoubleChart'
 import { formatNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
