@@ -52,7 +52,7 @@ export const BorrowingTab = ({
       {vaults.length ? (
         <>
           <Checkbox
-            id="show_dropped"
+            id="borrowing-tab-zero-filter"
             onChangeHandler={() => setShowZeroVaults(!showZeroVaults)}
             checked={showZeroVaults}
             className="checkbox"

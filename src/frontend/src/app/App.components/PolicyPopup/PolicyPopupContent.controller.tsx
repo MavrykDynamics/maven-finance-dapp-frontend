@@ -46,11 +46,9 @@ export const PolicyPopupContent = ({ proccedPolicy }: { proccedPolicy: () => voi
         </li>
       </ol>
 
-      <div className="checkbox">
-        {/* // TODO: find out why it works only without id */}
-        <Checkbox id="" onChangeHandler={() => setCheckbox(!checkbox)} checked={checkbox} />I understand
-        that Mavryk is in Beta and want to have some fun.
-      </div>
+      <Checkbox id="policy" onChangeHandler={() => setCheckbox(!checkbox)} checked={checkbox}>
+        <span>I understand that Mavryk is in Beta and want to have some fun.</span>
+      </Checkbox>
 
       <div className="procced-btn">
         <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} disabled={!checkbox} onClick={proccedPolicy}>
