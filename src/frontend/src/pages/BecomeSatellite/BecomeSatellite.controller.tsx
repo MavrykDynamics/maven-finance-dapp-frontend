@@ -420,9 +420,9 @@ export const BecomeSatellite = () => {
                 )}
 
                 <NewButton
-                  disabled={isUpdateButtonDisabled}
+                  disabled={isUpdateButtonDisabled || isActionActive}
                   kind={BUTTON_PRIMARY}
-                  onClick={handleRegisterOrUpdateSatellite || isActionActive}
+                  onClick={handleRegisterOrUpdateSatellite}
                 >
                   <Icon id="satellite-small" />
                   {usersSatelliteProfile

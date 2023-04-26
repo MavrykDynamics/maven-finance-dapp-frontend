@@ -39,6 +39,7 @@ const tokenTypes = ['FA12', 'FA2', 'TEZ']
 export const CouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
   const dispatch = useDispatch()
   const { dipDupTokens } = useSelector((state: State) => state.tokens)
+  const { isActionActive } = useSelector((state: State) => state.loading)
 
   const [form, setForm] = useState(INIT_FORM)
 
@@ -266,7 +267,7 @@ export const CouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
         />
       </div>
       <div className="btn-group">
-        <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT}>
+        <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isActionActive}>
           <Icon id="request_token" />
           Request Tokens
         </NewButton>
