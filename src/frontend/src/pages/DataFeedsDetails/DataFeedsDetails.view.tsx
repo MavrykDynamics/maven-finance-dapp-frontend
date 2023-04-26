@@ -147,8 +147,8 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsPr
                     </DataFeedValueText>
                   </DataFeedInfoBlock>
 
-                  <DataFeedInfoBlock justifyContent={'flex-end'}>
-                    <h4>
+                  <DataFeedInfoBlock justifyContent={'space-between'}>
+                    <h3>
                       Heartbeat
                       <CustomTooltip
                         text={'Countdown until the next set data feed update.'}
@@ -156,7 +156,8 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsPr
                         className="info-icon"
                         defaultStrokeColor={colors[themeSelected].textColor}
                       />
-                    </h4>
+                    </h3>
+
                     <DataFeedValueText fontSize={16} fontWeidth={600}>
                       {feed.last_completed_data_last_updated_at ? (
                         <div className="timer">
