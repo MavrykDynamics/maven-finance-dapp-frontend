@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 // types, constants, helpers
 import { State } from 'reducers'
 import { VotingProposalsProps, VotingProps } from './helpers/voting'
-import { VotingTypes } from './helpers/voting.const'
+import { VotingTypes, VoteList } from './helpers/voting.const'
 import { VOTING_AGAINST, BUTTON_PRIMARY, VOTING_FOR, VOTING_PASS, BUTTON_WIDE } from '../Button/Button.constants'
 
 // styles
@@ -18,6 +18,7 @@ import { GovPhases } from 'utils/TypesAndInterfaces/Governance'
 
 type VotingType = VotingProps & {
   className?: string
+  disableButtonByVote?: number
 }
 
 export const VotingArea = ({
@@ -29,6 +30,7 @@ export const VotingArea = ({
   voteStatistics,
   className,
   buttonsToShow,
+  disableButtonByVote,
 }: VotingType) => {
   const { forBtn, againsBtn, passBtn } = buttonsToShow ?? { forBtn: {}, againsBtn: {}, passBtn: {} }
   const {
@@ -45,7 +47,7 @@ export const VotingArea = ({
             onClick={() => handleVote(VotingTypes.YES)}
             kind={VOTING_FOR}
             form={BUTTON_WIDE}
-            disabled={disableVotingButtons || isActionActive}
+            disabled={disableVotingButtons || isActionActive || disableButtonByVote === VoteList.YES}
           >
             {forBtn.text ?? 'Vote YES'}
           </Button>
@@ -55,7 +57,7 @@ export const VotingArea = ({
             onClick={() => handleVote(VotingTypes.PASS)}
             kind={VOTING_PASS}
             form={BUTTON_WIDE}
-            disabled={disableVotingButtons || isActionActive}
+            disabled={disableVotingButtons || isActionActive || disableButtonByVote === VoteList.PASS}
           >
             {passBtn.text ?? 'Vote PASS'}
           </Button>
@@ -65,7 +67,7 @@ export const VotingArea = ({
             onClick={() => handleVote(VotingTypes.NO)}
             kind={VOTING_AGAINST}
             form={BUTTON_WIDE}
-            disabled={disableVotingButtons || isActionActive}
+            disabled={disableVotingButtons || isActionActive || disableButtonByVote === VoteList.NO}
           >
             {againsBtn.text ?? 'Vote NO'}
           </Button>

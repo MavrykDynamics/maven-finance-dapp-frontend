@@ -21,9 +21,6 @@ export const mainNavigationLinks: MainNavigationRoute[] = [
         subTitle: 'Personal',
         subPath: `dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`,
         routeSubPath: '/dashboard-personal/:tabId/:secondaryTabId?',
-        requires: {
-          isAuth: true,
-        },
       },
       // {
       //   id: 59526,

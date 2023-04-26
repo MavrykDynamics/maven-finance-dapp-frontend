@@ -8,8 +8,8 @@ export const SATELLITE_GOVERNANCE_STORAGE_QUERY = `
       gov_sat_duration_in_days
       governance_id
       governance_satellite_counter
-     
     }
+
     governance_satellite_action(order_by: {expiration_datetime: desc}) {
       executed
       expiration_datetime
@@ -26,11 +26,13 @@ export const SATELLITE_GOVERNANCE_STORAGE_QUERY = `
       start_datetime
       status
       yay_vote_smvk_total
+
       parameters {
         name
         value
         id
         governance_satellite_action_id
+
         governance_satellite_action {
           executed
           expiration_datetime
@@ -47,14 +49,15 @@ export const SATELLITE_GOVERNANCE_STORAGE_QUERY = `
           start_datetime
           status
           yay_vote_smvk_total
-          votes {
-            governance_satellite_action_id
-            id
-            timestamp
-            vote
-            voter_id
-          }
         }
+      }
+
+      votes {
+        governance_satellite_action_id
+        id
+        timestamp
+        vote
+        voter_id
       }
     }
   }

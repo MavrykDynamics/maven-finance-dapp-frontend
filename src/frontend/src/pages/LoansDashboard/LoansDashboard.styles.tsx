@@ -137,4 +137,12 @@ export const PositionTableStyled = styled.div<{ theme: MavrykTheme }>`
       margin-top: 10px;
     }
   }
+
+  .not-connected {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 50px 0;
+    margin: 0 auto;
+  }
 `

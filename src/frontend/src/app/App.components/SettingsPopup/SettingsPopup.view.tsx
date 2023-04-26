@@ -79,7 +79,7 @@ export const PopupChangeNodeView = ({ closeModal }: { closeModal: () => void }) 
             >
               {nodeLogoUrl && (
                 <div className="img_wrapper">
-                  <img src={`./images/${nodeLogoUrl}`} alt={'node logo'} />
+                  <img src={`/images/${nodeLogoUrl}`} alt={'node logo'} />
                 </div>
               )}{' '}
               <span className={isUser ? 'user-url' : ''}>{isUser ? `Link: ${url}` : title}</span>

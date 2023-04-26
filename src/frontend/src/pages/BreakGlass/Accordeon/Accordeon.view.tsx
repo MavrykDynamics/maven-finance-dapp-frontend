@@ -1,7 +1,8 @@
+import { useMemo } from 'react'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { Truncate } from 'app/App.style'
-import * as React from 'react'
 import { AccordionContent, AccordionItem, AccordionToggler, AccordionWrapper } from './Accordeon.style'
+import { toCamelCase } from 'utils/toCamelCase'
 
 type AccordionViewProps = {
   accordionId: string
@@ -11,7 +12,11 @@ type AccordionViewProps = {
 }
 
 export const BGAccordion = ({ methods, accordionClickHandler, accordionId, isExpanded }: AccordionViewProps) => {
-  const methodsList = methods ? Object.keys(methods) : []
+  const methodsList = useMemo(
+    () => (methods ? Object.keys(methods).map((item) => `%${toCamelCase(item)}`) : []),
+    [methods],
+  )
+
   return (
     <AccordionWrapper>
       <AccordionToggler onClick={() => accordionClickHandler(accordionId)}>
