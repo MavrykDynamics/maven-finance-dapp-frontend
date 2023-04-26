@@ -105,19 +105,16 @@ export const normalizeGovernanceProposals = (
       acc.proposalsMapper[id] = normalizedProposal
       acc.allProposalsIds.push(id)
 
-      // Add id of current round proposal
-      if (currentRoundProposal && status !== ProposalStatus.DROPPED && !executed) {
-        acc.currentRoundProposalsIds.push(id)
-      }
-
       // Add id of proposal to be executed proposal
       if (isProposalRound && !executed && timelockProposalId === id && status !== ProposalStatus.DROPPED) {
         acc.waitingProposalsIdsToBeExecuted.push(id)
+        return acc
       }
 
       // Add id of proposal to be paid proposal
       if (isProposalRound && executed && timelockProposalId === id && !paymentProcessed) {
         acc.waitingProposalsIdsToBePaid.push(id)
+        return acc
       }
 
       // Add id of past proposal
@@ -127,6 +124,13 @@ export const normalizeGovernanceProposals = (
         status === ProposalStatus.DEFEATED
       ) {
         acc.pastProposalsIds.push(id)
+        return acc
+      }
+
+      // Add id of current round proposal
+      if (currentRoundProposal) {
+        acc.currentRoundProposalsIds.push(id)
+        return acc
       }
 
       return acc
