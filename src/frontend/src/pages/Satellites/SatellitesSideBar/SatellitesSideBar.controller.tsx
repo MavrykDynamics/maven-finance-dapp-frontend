@@ -31,17 +31,17 @@ export const SateliteSideBarFAQ = () => (
       </a>
     </FAQLink>
     <FAQLink>
-      <a href="https://mavryk.finance/litepaper#mvk-and-vmvk-doorman-module" target="_blank" rel="noreferrer">
+      <a href="https://mavryk.finance/litepaper#mvk-and-smvk-doorman-module" target="_blank" rel="noreferrer">
         MVK token holder’s delegation agreement
       </a>
     </FAQLink>
     <FAQLink>
-      <a href="https://mavryk.finance/litepaper#mvk-and-vmvk-doorman-module" target="_blank" rel="noreferrer">
+      <a href="https://mavryk.finance/litepaper#mvk-and-smvk-doorman-module" target="_blank" rel="noreferrer">
         The MVK holder’s guide to delegation
       </a>
     </FAQLink>
     <FAQLink>
-      <a href="https://mavryk.finance/litepaper#mvk-and-vmvk-doorman-module" target="_blank" rel="noreferrer">
+      <a href="https://mavryk.finance/litepaper#mvk-and-smvk-doorman-module" target="_blank" rel="noreferrer">
         Recognized delegate code of conduct
       </a>
     </FAQLink>

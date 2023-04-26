@@ -20,7 +20,7 @@ export const ProposalDetailsStyled = styled(Card)<{ isAuthorized?: boolean; them
     border-radius: 10px;
     bottom: 22px;
     left: 50%;
-    background-color: ${royalPurpleColor};
+    background-color: ${({ theme }) => theme.textColor};
     transform: translateX(-50%);
   }
 
@@ -89,7 +89,7 @@ export const ProposalDetailsStyled = styled(Card)<{ isAuthorized?: boolean; them
     display: flex;
     flex-direction: column;
     padding: 0;
-    padding-left: 15px;
+    padding-left: 7px;
     margin: 0;
     margin-top: 10px;
     row-gap: 15px;
