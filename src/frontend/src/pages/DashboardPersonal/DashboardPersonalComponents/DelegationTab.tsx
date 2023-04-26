@@ -13,14 +13,18 @@ import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { UserActionHistory } from './UserOperationsHistory'
 import { DashboardCardHeader } from '../DashboardPersonal.style'
+import { ConnectWallet } from 'app/App.components/ConnectWallet/ConnectWallet.controller'
 
 const DelegationTab = () => {
   const dispatch = useDispatch()
   const {
-    satelliteMvkIsDelegatedTo,
-    mySMvkTokenBalance,
-    mySatelliteRewardsData: { myAvailableSatelliteRewards },
-  } = useSelector((state: State) => state.wallet.user)
+    user: {
+      satelliteMvkIsDelegatedTo,
+      mySMvkTokenBalance,
+      mySatelliteRewardsData: { myAvailableSatelliteRewards },
+    },
+    accountPkh,
+  } = useSelector((state: State) => state.wallet)
   const { satelliteMapper } = useSelector((state: State) => state.satellites)
   const satelliteInfo = satelliteMapper[satelliteMvkIsDelegatedTo]
 
@@ -96,7 +100,7 @@ const DelegationTab = () => {
             </div>
             <Link to="/satellites">Satellites Overview</Link>
           </>
-        ) : mySMvkTokenBalance === 0 ? (
+        ) : mySMvkTokenBalance === 0 && accountPkh ? (
           <div className="no-data">
             <span>You don't have SMVK</span>
             <div className="nav-button">
@@ -107,7 +111,7 @@ const DelegationTab = () => {
               </Link>
             </div>
           </div>
-        ) : (
+        ) : accountPkh && mySMvkTokenBalance ? (
           <div className="no-data">
             <span>You are not delegated at this time</span>
             <div className="nav-button">
@@ -116,6 +120,12 @@ const DelegationTab = () => {
                   <Icon id="satellite" /> View Satellites
                 </NewButton>
               </Link>
+            </div>
+          </div>
+        ) : (
+          <div className="no-data">
+            <div className="nav-button">
+              <ConnectWallet />
             </div>
           </div>
         )}

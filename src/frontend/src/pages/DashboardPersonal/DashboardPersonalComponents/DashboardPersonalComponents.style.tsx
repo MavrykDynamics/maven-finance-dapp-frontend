@@ -44,7 +44,7 @@ export const MediumBlockBase = styled(SmallBlockBase)<{ theme: MavrykTheme }>`
       width: 220px;
     }
 
-    span {
+    > span {
       font-weight: 600;
       font-size: 18px;
       color: ${({ theme }) => theme.textColor};
@@ -113,8 +113,8 @@ export const PortfolioWalletStyled = styled(MediumBlockBase)<{ theme: MavrykThem
   .wallet-info {
     display: flex;
     flex-direction: column;
-    row-gap: 7px;
-    margin-top: 30px;
+    row-gap: 8px;
+    margin-top: 20px;
 
     .name {
       font-weight: 600;
@@ -274,6 +274,7 @@ export const HistoryBlock = styled(MediumBlockBase)<{ theme: MavrykTheme }>`
 
   .no-data {
     margin-top: 20px;
+    padding-bottom: 40px;
   }
 
   .history-tooltip {
