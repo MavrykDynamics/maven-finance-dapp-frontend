@@ -38,7 +38,6 @@ export const SatelliteGovernanceCardTitleTextGroup = styled.div<{ theme: MavrykT
 export const SatelliteGovernanceCardDropDown = styled.div<{ theme: MavrykTheme }>`
   width: 100%;
   justify-content: space-between;
-  align-items: flex-start;
   display: flex;
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
@@ -101,7 +100,7 @@ export const SatelliteGovernanceCardDropDown = styled.div<{ theme: MavrykTheme }
     color: ${({ theme }) => theme.navLinkTextActive};
   }
 
-  .brop-btn {
+  .drop-btn {
     width: 250px;
     margin-top: 40px;
     display: block;
@@ -134,5 +133,11 @@ export const SatelliteGovernanceCardDropDown = styled.div<{ theme: MavrykTheme }
     article {
       margin-bottom: 0;
     }
+  }
+
+  .purpose-block {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
   }
 `

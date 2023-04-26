@@ -37,7 +37,7 @@ const VISIBLE_PART_CONNECTED_WALLET = (theme: MavrykTheme, isMobileDetails?: boo
       height: 17px;
       stroke: none;
       fill: ${theme.valueColor};
-      transition: 0.6s fill;
+      transition: 0.3s fill;
     }
 
     .inner-wallet {
@@ -147,7 +147,7 @@ export const ConnectedWalletStyled = styled.div<{ theme: MavrykTheme }>`
       height: 16px;
       fill: ${({ theme }) => theme.textColor};
       cursor: pointer;
-      transition: fill 0.6s;
+      transition: fill 0.3s;
 
       &:hover {
         fill: ${({ theme }) => theme.headerSkyColor};
@@ -212,7 +212,7 @@ export const MobileDetailsStyled = styled.div<{ theme: MavrykTheme }>`
       width: 26px;
       height: 21px;
       stroke: #8d86eb;
-      transition: 0.6s all;
+      transition: 0.3s all;
     }
 
     &:hover {
