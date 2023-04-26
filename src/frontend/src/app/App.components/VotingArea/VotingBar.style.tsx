@@ -7,8 +7,8 @@ import { getNumberInBounds } from 'utils/calcFunctions'
 export const VotingContainer = styled.aside<{ theme: MavrykTheme; showButtons?: boolean }>`
   display: flex;
   flex-direction: column;
-  margin-top: 42px;
-  margin-bottom: ${({ showButtons }) => (showButtons ? 0 : '42px')};
+  margin-top: 30px;
+  margin-bottom: ${({ showButtons }) => (showButtons ? 0 : '30px')};
   text-align: end;
   width: 100%;
   position: relative;
