@@ -66,14 +66,6 @@ export const AppRoutes = () => {
       <Route exact path="/dashboard-personal/:tabId/:secondaryTabId?">
         <DashboardPersonal />
       </Route>
-      {/* <ProtectedRoute
-        path="/dashboard-personal/:tabId/:secondaryTabId?"
-        component={DashboardPersonal}
-        hasAccess={Boolean(accountPkh)}
-        isAuthorized={Boolean(accountPkh)}
-        canCheck={!isInitialDataLoading}
-        redirectPath={`/dashboard/${LENDING_TAB_ID}`}
-      /> */}
 
       {/* SATELLITES */}
       <Route exact path="/satellites">
