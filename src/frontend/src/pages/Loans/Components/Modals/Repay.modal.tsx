@@ -1,11 +1,10 @@
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useLockBodyScroll } from 'react-use'
 import { useEffect, useMemo, useState } from 'react'
 
 import { COLLATERAL_RATIO_GRADIENT, assetDecimalsToShow, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { INPUT_STATUS_SUCCESS, INPUT_STATUS_ERROR, INPUT_LARGE } from 'app/App.components/Input/Input.constants'
 import { DEFAULT_LOANS_INPUT_VALUE, getOnBlurValue, getOnFocusValue, RepayPartPopupDataType } from './Modals.helpers'
-import { State } from 'reducers'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { repayPartOfVaultAction } from 'pages/Loans/Actions/vault.actions'
 
@@ -132,7 +131,7 @@ export const Repay = ({
           {screenShown === 'initial' ? (
             <>
               <GovRightContainerTitleArea>
-                <h2>Repay Borrowed Funds</h2>
+                <h2>Repay Borrowed {borrowedAsset?.symbol}</h2>
               </GovRightContainerTitleArea>
               <div className="modalDescr">Repay the loan to withdraw your vault collateral.</div>
 
