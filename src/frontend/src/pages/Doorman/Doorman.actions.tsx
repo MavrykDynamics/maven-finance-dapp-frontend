@@ -153,6 +153,7 @@ export const stake = (amount: number) => async (dispatch: AppDispatch, getState:
       dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
     }
     dispatch(toggleActionFullScreenLoader(false))
+    dispatch(toggleActionCompletion(false))
   }
 }
 
@@ -213,6 +214,7 @@ export const unstake = (amount: number) => async (dispatch: AppDispatch, getStat
       dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
     }
     dispatch(toggleActionFullScreenLoader(false))
+    dispatch(toggleActionCompletion(false))
   }
 }
 
@@ -268,6 +270,7 @@ export const rewardsCompound = (address: string) => async (dispatch: AppDispatch
       dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
     }
     dispatch(toggleActionFullScreenLoader(false))
+    dispatch(toggleActionCompletion(false))
   }
 }
 
@@ -337,7 +340,8 @@ export const getMVKTokensFromFaucet = () => async (dispatch: AppDispatch, getSta
   } catch (error) {
     if (error instanceof Error) {
       dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
-      dispatch(toggleActionFullScreenLoader(false))
     }
+    dispatch(toggleActionFullScreenLoader(false))
+    dispatch(toggleActionCompletion(false))
   }
 }

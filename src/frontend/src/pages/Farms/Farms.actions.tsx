@@ -140,7 +140,8 @@ export const harvest = (farmAddress: string) => async (dispatch: AppDispatch, ge
       console.error(error)
       await dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
     }
-    await dispatch(toggleActionFullScreenLoader(false))
+    dispatch(toggleActionFullScreenLoader(false))
+    dispatch(toggleActionCompletion(false))
   }
 }
 
@@ -201,7 +202,8 @@ export const deposit = (farmAddress: string, amount: number) => async (dispatch:
       console.error(error)
       await dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
     }
-    await dispatch(toggleActionFullScreenLoader(false))
+    dispatch(toggleActionFullScreenLoader(false))
+    dispatch(toggleActionCompletion(false))
   }
 }
 
@@ -263,5 +265,6 @@ export const withdraw = (farmAddress: string, amount: number) => async (dispatch
       dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
     }
     dispatch(toggleActionFullScreenLoader(false))
+    dispatch(toggleActionCompletion(false))
   }
 }
