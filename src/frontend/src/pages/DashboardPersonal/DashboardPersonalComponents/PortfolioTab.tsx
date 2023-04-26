@@ -20,10 +20,10 @@ import { SlidingTabButtons, TabItem } from 'app/App.components/SlidingTabButtons
 import { LoansTxTab } from './LoansTxTab'
 import Button from 'app/App.components/Button/NewButton'
 
-import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { PortfolioWalletStyled, PortfolioChartStyled } from './DashboardPersonalComponents.style'
 import { LendBorrowPosition } from './LendBorrowPosition'
 import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.types'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
 type PortfolioTabProps = {
   xtzAmount: number
@@ -53,6 +53,7 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
   } = useSelector((state: State) => state.tokens)
   const {
     user: { userLoansData, myLendingRewardsAmount },
+    accountPkh,
   } = useSelector((state: State) => state.wallet)
   const { loanTokens } = useSelector((state: State) => state.loans)
 
@@ -63,9 +64,7 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
     <>
       {/* TODO: make this chart dynamic need data in indexer for it */}
       <PortfolioChartStyled>
-        <GovRightContainerTitleArea>
-          <h2>MVK Earning History</h2>
-        </GovRightContainerTitleArea>
+        <H2Title>MVK Earning History</H2Title>
         <div className="chart-periods">
           <SlidingTabButtons
             tabItems={toggleItems}
@@ -94,15 +93,15 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
       </PortfolioChartStyled>
 
       <PortfolioWalletStyled>
-        <GovRightContainerTitleArea>
-          <h2>Wallet</h2>
-        </GovRightContainerTitleArea>
+        <H2Title>Wallet</H2Title>
         <div className="wallet-info">
           <div className="name">Staked MVK</div>
           <div className="value">
             <CommaNumber value={sMVKAmount} />
-            <Link to="/">
-              <Button kind={BUTTON_SIMPLE}>View</Button>
+            <Link to={accountPkh ? '/' : '#'}>
+              <Button kind={BUTTON_SIMPLE} disabled={!accountPkh}>
+                View
+              </Button>
             </Link>
           </div>
         </div>
@@ -110,8 +109,10 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
           <div className="name">MVK Not Staked</div>
           <div className="value">
             <CommaNumber value={notsMVKAmount} />
-            <Link to="/">
-              <Button kind={BUTTON_SIMPLE}>Stake</Button>
+            <Link to={accountPkh ? '/' : '#'}>
+              <Button kind={BUTTON_SIMPLE} disabled={!accountPkh}>
+                Stake
+              </Button>
             </Link>
           </div>
         </div>
@@ -119,8 +120,14 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
           <div className="name">XTZ in Wallet</div>
           <div className="value">
             <CommaNumber value={xtzAmount} />
-            <a href="https://mavryk.finance/bakery" target="_blank" rel="noreferrer">
-              <Button kind={BUTTON_SIMPLE}>Delegate</Button>
+            <a
+              href={accountPkh ? 'https://mavryk.finance/bakery' : '#'}
+              target={accountPkh ? '_blank' : undefined}
+              rel="noreferrer"
+            >
+              <Button kind={BUTTON_SIMPLE} disabled={!accountPkh}>
+                Delegate
+              </Button>
             </a>
           </div>
         </div>
@@ -128,8 +135,10 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
           <div className="name">tzBTC in Wallet</div>
           <div className="value">
             <CommaNumber value={tzBTCAmount} />
-            <Link to="/loans">
-              <Button kind={BUTTON_SIMPLE}>Borrow</Button>
+            <Link to={accountPkh ? '/loans' : '#'}>
+              <Button kind={BUTTON_SIMPLE} disabled={!accountPkh}>
+                Borrow
+              </Button>
             </Link>
           </div>
         </div>
