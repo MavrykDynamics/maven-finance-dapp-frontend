@@ -262,7 +262,7 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
             )}
 
             {/* Satellites who has voted for selected proposal */}
-            {governancePhase === GovPhases.VOTING && votersList?.length ? (
+            {!isHistory && governancePhase !== GovPhases.PROPOSAL && votersList?.length ? (
               <div className="voters-list">
                 <H2Title>Satellite Voting History</H2Title>
                 {paginatedVotersList.map(({ vote, address, name, avatar }) => {
