@@ -1,4 +1,5 @@
-// types
+import { toCamelCase } from 'utils/toCamelCase'
+
 import {
   BreakGlassGraphQL,
   BreakGlassStatusGraphQL,
@@ -181,4 +182,8 @@ export function normalizeBreakGlassStatus(storage: BreakGlassStatusGraphQL): Bre
   ]
     .flat()
     .filter(Boolean)
+}
+
+export const getEntrypointText = (str: string) => {
+  return `%${toCamelCase(str).replace(/paused/i, '')}`
 }
