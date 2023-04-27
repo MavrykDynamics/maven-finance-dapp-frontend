@@ -58,6 +58,11 @@ export const ProposalSubmittionStageOneBody = styled.div<{ theme: MavrykTheme }>
     grid-column-start: 1;
     grid-column-end: 4;
   }
+
+  .source-code {
+    grid-column-start: 1;
+    grid-column-end: 4;
+  }
 `
 
 // Proposal submittion stage 2 styles
