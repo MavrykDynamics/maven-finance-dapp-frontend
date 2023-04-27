@@ -209,7 +209,7 @@ export const StyledInput = styled.input<{ theme: MavrykTheme }>`
 
 export const InputPinnedChild = styled.div<{ theme: MavrykTheme }>`
   height: 100%;
-  border-left: 1px solid ${({ theme }) => theme.dataColor};
+  border-left: 1px solid ${({ theme }) => theme.cardBorderColor};
 
   .img-wrapper,
   svg {
