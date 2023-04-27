@@ -434,7 +434,8 @@ export const ProposalSubmission = () => {
                 <Button
                   kind={BUTTON_PRIMARY}
                   form={BUTTON_WIDE}
-                  disabled={!isStageOneDataValid || !isBytesValid || !isPaymentsValid}
+                  // TODO: when add stage 2 and 3 to submit, add validation checking here
+                  disabled={!isStageOneDataValid}
                   onClick={handleSubmitProposal}
                 >
                   <Icon id="auction" /> Submit Proposal
