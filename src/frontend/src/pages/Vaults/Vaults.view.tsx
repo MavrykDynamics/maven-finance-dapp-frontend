@@ -73,6 +73,7 @@ export const VaultsView = () => {
         id: 3,
         active: vaultTabs.PERMISSIONED === tabId,
         path: vaultTabs.PERMISSIONED,
+        isDisabled: !accountPkh,
       },
     ],
     [accountPkh, tabId],
