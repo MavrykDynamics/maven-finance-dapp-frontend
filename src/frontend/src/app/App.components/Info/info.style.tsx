@@ -26,7 +26,7 @@ export const InfoBlock = styled.blockquote<{ theme: MavrykTheme }>`
     }
   }
 
-  svg {
+  .info-icon {
     fill: ${({ theme }) => theme.dataColor};
     height: 16px;
     width: 16px;
@@ -36,15 +36,15 @@ export const InfoBlock = styled.blockquote<{ theme: MavrykTheme }>`
   &.${INFO_ERROR} {
     border-color: ${({ theme }) => theme.downColor};
 
-    svg {
-      fill: ${({ theme }) => theme.textColor};
+    .info-icon {
+      fill: ${({ theme }) => theme.downColor};
     }
   }
 
   &.${INFO_WARNING} {
     border-color: ${({ theme }) => theme.downColor};
 
-    svg {
+    .info-icon {
       fill: ${({ theme }) => theme.downColor};
     }
   }

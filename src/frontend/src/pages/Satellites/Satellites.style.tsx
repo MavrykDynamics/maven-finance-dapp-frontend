@@ -60,4 +60,12 @@ export const NotStakinkBannerStyled = styled.div`
   button {
     width: 250px;
   }
+
+  &.become-satellite {
+    p {
+      font-weight: 500;
+      font-size: 14px;
+      line-height: 24px;
+    }
+  }
 `

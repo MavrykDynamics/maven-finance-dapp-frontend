@@ -41,7 +41,6 @@ export const SatelliteGovernanceCardDropDown = styled.div<{ theme: MavrykTheme }
   display: flex;
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
-  cursor: pointer;
   overflow: hidden;
   position: relative;
   padding: 30px 40px;

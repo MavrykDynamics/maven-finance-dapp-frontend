@@ -81,10 +81,9 @@ export const SatelliteGovernanceStyled = styled.section<{ theme: MavrykTheme }>`
   }
 
   .suspend-satellite-group {
-    display: flex;
-    width: 100%;
-    justify-content: flex-end;
     padding-top: 40px;
+    margin-left: auto;
+    width: 300px;
   }
 `
 
@@ -113,16 +112,6 @@ export const AvailableActionsStyle = styled.div<{ theme: MavrykTheme }>`
         fill: ${cyanColor};
         width: 16px;
         height: 16px;
-      }
-    }
-
-    button:not(.btn-add-row, .table-drop-btn-cur, .delete-button) {
-      width: 260px;
-      margin-left: 64px;
-      margin-bottom: 16px;
-
-      svg {
-        stroke: transparent;
       }
     }
 

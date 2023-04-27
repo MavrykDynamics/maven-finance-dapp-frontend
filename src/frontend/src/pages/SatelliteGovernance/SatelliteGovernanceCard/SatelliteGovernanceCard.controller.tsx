@@ -23,6 +23,7 @@ type Props = {
   date: string | null
   executed: boolean
   status: number
+  statusFlag: ProposalStatus
   id: number
   purpose: string
   governanceType: string
@@ -43,6 +44,7 @@ export const SatelliteGovernanceCard = ({
   date,
   executed,
   status,
+  statusFlag,
   purpose,
   governanceType,
   smvkPercentageForApproval,
@@ -73,14 +75,6 @@ export const SatelliteGovernanceCard = ({
   const timeNow = Date.now()
   const expirationDatetime = new Date(date ?? 0).getTime()
   const isEndingVotingTime = expirationDatetime > timeNow
-
-  const statusFlag = executed
-    ? ProposalStatus.EXECUTED
-    : status === 1
-    ? ProposalStatus.DROPPED
-    : isEndingVotingTime
-    ? ProposalStatus.ONGOING
-    : ProposalStatus.DEFEATED
 
   const voteStatistic = useMemo(
     () => ({

@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux'
 // view
 import Icon from '../../app/App.components/Icon/Icon.view'
 import { Input } from '../../app/App.components/Input/Input.controller'
-import { Button } from '../../app/App.components/Button/Button.controller'
+import NewButton from 'app/App.components/Button/NewButton'
 
 // type
 import {
@@ -23,7 +23,7 @@ import { fixMistakenTransfer } from './SatelliteGovernance.actions'
 // style
 import { AvailableActionsStyle } from './SatelliteGovernance.style'
 import { ValidationResult } from 'pages/ProposalSubmission/ProposalSybmittion.types'
-import { ACTION_PRIMARY, SUBMIT } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
 import { DropDown } from 'app/App.components/DropDown/DropDown.controller'
 import {
   AddRowBtn,
@@ -271,14 +271,11 @@ export const FixMistakenTransferForm = ({ maxLength, isActionActive }: Props) =>
             </CustomTooltip>
           </AddRowBtn>
         </Table>
+
         <div className="suspend-satellite-group">
-          <Button
-            icon="plus"
-            kind={ACTION_PRIMARY}
-            text={'Fix Mistaken Transfer'}
-            type={SUBMIT}
-            disabled={isActionActive}
-          />
+          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} disabled={isActionActive} type={SUBMIT}>
+            <Icon id="gear" /> Fix Mistaken Transfer
+          </NewButton>
         </div>
       </form>
     </AvailableActionsStyle>
