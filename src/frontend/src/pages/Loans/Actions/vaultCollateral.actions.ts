@@ -219,7 +219,7 @@ export const depositCollateralAction =
       callback()
       dispatch(toggleActionFullScreenLoader(true))
       dispatch(toggleActionCompletion(true))
-      dispatch(showToaster(TOASTER_INFO, 'Depositing collateral th the vault...', ACTION_START_MESSAGE_TEXT))
+      dispatch(showToaster(TOASTER_INFO, 'Depositing collateral in the vault...', ACTION_START_MESSAGE_TEXT))
 
       // turn off fs actions loader and start data updating after 5s after operation started
       setTimeout(async () => {
