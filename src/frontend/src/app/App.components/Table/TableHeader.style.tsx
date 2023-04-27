@@ -9,6 +9,7 @@ const EDITABLE_TABLE_HEADER_STYLES = css`
     th {
       vertical-align: middle;
       text-align: center;
+      font-size: 16px;
       border-right: 1px solid ${({ theme }) => theme.cardBorderColor};
 
       &:last-child {

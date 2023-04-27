@@ -72,9 +72,7 @@ export const SubmitProposalBytes = styled.div<{ theme: MavrykTheme }>`
   padding-bottom: 15px;
 
   .add-byte {
-    left: -20px;
-    bottom: 5px;
-    position: absolute;
+    margin: 20px 0 0 auto;
     width: fit-content;
     height: fit-content;
 
