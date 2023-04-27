@@ -237,7 +237,10 @@ export const BecomeSatellite = () => {
       />
 
       {!balanceOverMinStakedMvk && (
-        <NotStakingBanner text={`To become a satellite you need to stake ${minimumStakedMvkBalance} MVK`} />
+        <NotStakingBanner
+          className="become-satellite"
+          text={`To become a satellite you need to stake ${minimumStakedMvkBalance} MVK`}
+        />
       )}
 
       <PageContent>

@@ -12,7 +12,7 @@ export const Info = ({ children, text, type }: Props) => {
   return (
     <InfoBlock className={type}>
       <div className="content">
-        <Icon id="info" />
+        <Icon id="info" className='info-icon' />
         <p>{text}</p>
         <div className="child">{children}</div>
       </div>
