@@ -58,6 +58,11 @@ export const ProposalSubmittionStageOneBody = styled.div<{ theme: MavrykTheme }>
     grid-column-start: 1;
     grid-column-end: 4;
   }
+
+  .source-code {
+    grid-column-start: 1;
+    grid-column-end: 4;
+  }
 `
 
 // Proposal submittion stage 2 styles
@@ -67,9 +72,7 @@ export const SubmitProposalBytes = styled.div<{ theme: MavrykTheme }>`
   padding-bottom: 15px;
 
   .add-byte {
-    left: -20px;
-    bottom: 5px;
-    position: absolute;
+    margin: 20px 0 0 auto;
     width: fit-content;
     height: fit-content;
 

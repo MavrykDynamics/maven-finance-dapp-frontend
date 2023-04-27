@@ -118,6 +118,14 @@ const CELL_BUTTONS_STYLES = css`
   }
 `
 
+const COMPONENTS_ALIGNMENT_STYLES = css`
+  &.tz-address-cell-center {
+    div {
+      justify-content: center;
+    }
+  }
+`
+
 const CELL_CONTENT_STYLES = css`
   .cell-content {
     display: flex;
@@ -227,4 +235,6 @@ export const TableCell = styled.td<TableCellStyledProps>`
   ${CELL_BUTTONS_STYLES}
 
   ${CELL_CONTENT_STYLES}
+
+  ${COMPONENTS_ALIGNMENT_STYLES}
 `

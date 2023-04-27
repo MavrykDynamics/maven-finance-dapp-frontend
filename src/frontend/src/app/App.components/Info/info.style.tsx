@@ -4,14 +4,14 @@ import { INFO_ERROR, INFO_WARNING } from './info.constants'
 
 export const InfoBlock = styled.blockquote<{ theme: MavrykTheme }>`
   background-color: ${({ theme }) => theme.connectInfoColor};
-  border: 1px solid ${({ theme }) => theme.dataColor};
+  border: 1px solid ${({ theme }) => theme.infoColor};
   border-radius: 10px;
   margin: 0;
   padding: 10px 20px;
 
   p {
     font-weight: 400;
-    font-size: 12px;
+    font-size: 14px;
     line-height: 18px;
   }
 
@@ -27,7 +27,7 @@ export const InfoBlock = styled.blockquote<{ theme: MavrykTheme }>`
   }
 
   .info-icon {
-    fill: ${({ theme }) => theme.dataColor};
+    fill: ${({ theme }) => theme.infoColor};
     height: 16px;
     width: 16px;
     flex-shrink: 0;

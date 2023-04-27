@@ -316,7 +316,7 @@ export const StageTwoForm = ({
               disabled={!isProposalPeriod || locked || isDisabledActions}
               onClick={handleCreateNewByte}
             >
-              <Icon id="plus" />
+              <Icon id="plus" /> Add New Bytes
             </Button>
           </CustomTooltip>
         </div>
