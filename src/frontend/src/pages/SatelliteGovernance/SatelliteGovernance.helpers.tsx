@@ -1,4 +1,8 @@
-import { GovernanceSatelliteGraphQL, GovernanceSatelliteActionGraphQL } from 'utils/TypesAndInterfaces/Governance'
+import {
+  GovernanceSatelliteGraphQL,
+  GovernanceSatelliteActionGraphQL,
+  ProposalStatus,
+} from 'utils/TypesAndInterfaces/Governance'
 
 type SatelliteGovernanceActionType = {
   id: number
@@ -6,6 +10,7 @@ type SatelliteGovernanceActionType = {
   purpose: string
   type: string
   status: number
+  statusFlag: ProposalStatus
   satelliteId: string
   initiatorId: string
   expirationDatetime: string | null
@@ -73,12 +78,25 @@ export const normalizerSatelliteGovernance = ({ storage, userAddress }: Satellit
         voterId: item.voter_id,
       }))
 
+      const timeNow = Date.now()
+      const expirationDatetime = new Date(item.expiration_datetime ?? 0).getTime()
+      const isEndingVotingTime = expirationDatetime > timeNow
+
+      const statusFlag = item.executed
+        ? ProposalStatus.EXECUTED
+        : item.status === 1
+        ? ProposalStatus.DROPPED
+        : isEndingVotingTime
+        ? ProposalStatus.ONGOING
+        : ProposalStatus.DEFEATED
+
       const action = {
         id: item.id,
         executed: item.executed,
         purpose: item.governance_purpose,
         type: item.governance_type,
         status: item.status,
+        statusFlag,
         satelliteId: item.governance_satellite_id,
         initiatorId: item.initiator_id,
         expirationDatetime: item.expiration_datetime ?? null,
@@ -93,11 +111,15 @@ export const normalizerSatelliteGovernance = ({ storage, userAddress }: Satellit
         votes,
       }
 
-      if (action.executed) {
+      if (
+        action.statusFlag === ProposalStatus.EXECUTED ||
+        action.statusFlag === ProposalStatus.DROPPED ||
+        action.statusFlag === ProposalStatus.DEFEATED
+      ) {
         acc.pastSatelliteGovIds.push(action.id)
       }
 
-      if (!action.executed) {
+      if (action.statusFlag === ProposalStatus.ONGOING) {
         acc.ongoingSatelliteGovIds.push(action.id)
       }
 

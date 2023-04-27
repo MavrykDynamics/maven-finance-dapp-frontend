@@ -164,7 +164,7 @@ export const CouncilFormUpdateVestee = () => {
       </div>
       <div className="btn-group">
         <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isActionActive}>
-          <Icon id="upload" />
+          <Icon id="update" />
           Update Vestee
         </NewButton>
       </div>

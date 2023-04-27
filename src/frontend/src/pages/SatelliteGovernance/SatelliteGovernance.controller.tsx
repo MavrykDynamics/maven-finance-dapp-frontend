@@ -290,6 +290,7 @@ export const SatelliteGovernance = () => {
               date={action.expirationDatetime}
               executed={action.executed}
               status={action.status}
+              statusFlag={action.statusFlag}
               purpose={action.purpose}
               governanceType={action.type}
               snapshotSmvkTotalSupply={action.snapshotSmvkTotalSupply}

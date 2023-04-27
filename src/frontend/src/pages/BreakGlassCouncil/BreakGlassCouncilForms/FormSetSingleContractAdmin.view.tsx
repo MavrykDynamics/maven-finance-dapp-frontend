@@ -95,7 +95,7 @@ export function FormSetSingleContractAdminView() {
   return (
     <FormStyled>
       <h1>Set Single Contract Admin</h1>
-      <p>Please enter valid function parameters for adding a vestee</p>
+      <p>Please enter valid function parameters for setting admin</p>
 
       <form className="form" onSubmit={handleSubmit}>
         <div className="form-fields input-size-primary">
