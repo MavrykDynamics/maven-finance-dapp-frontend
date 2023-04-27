@@ -287,7 +287,8 @@ export const ProposalSubmission = () => {
     () =>
       currentProposalValidation.bytesValidation
         ?.filter(({ byteId }) => {
-          return !mappedProposals?.[currentOriginalProposalId ?? -1]?.proposalData?.find(({ id }) => id === byteId)
+          const byte = proposalState?.[currentOriginalProposalId ?? -1]?.proposalData?.find(({ id }) => id === byteId)
+          return byte && (byte.title || byte.encoded_code)
         })
         .every(({ validBytes, validTitle, byteId }) => {
           const isSavedBytes = currentOriginalProposalId
@@ -297,7 +298,7 @@ export const ProposalSubmission = () => {
             ? validBytes !== INPUT_STATUS_ERROR
             : validBytes === INPUT_STATUS_SUCCESS && validTitle === INPUT_STATUS_SUCCESS
         }) ?? true,
-    [currentOriginalProposalId, currentProposalValidation.bytesValidation, mappedProposals, proposalsMapper],
+    [currentOriginalProposalId, currentProposalValidation.bytesValidation, proposalState, proposalsMapper],
   )
 
   // Validate payments, validate only non empty payments
@@ -305,16 +306,16 @@ export const ProposalSubmission = () => {
     () =>
       currentProposalValidation.paymentsValidation
         ?.filter(({ paymentId }) => {
-          return !mappedProposals?.[currentOriginalProposalId ?? -1]?.proposalPayments?.find(
+          const payment = proposalState?.[currentOriginalProposalId ?? -1]?.proposalPayments?.find(
             ({ id }) => id === paymentId,
           )
+          return payment && (payment.title || payment.to__id || payment.token_amount)
         })
         .every(
           ({ to__id, title, token_amount }) =>
-            to__id === INPUT_STATUS_SUCCESS ||
-            (title === INPUT_STATUS_SUCCESS && token_amount === INPUT_STATUS_SUCCESS),
+            to__id === INPUT_STATUS_SUCCESS && title === INPUT_STATUS_SUCCESS && token_amount === INPUT_STATUS_SUCCESS,
         ) ?? true,
-    [currentOriginalProposalId, currentProposalValidation.paymentsValidation, mappedProposals],
+    [currentOriginalProposalId, currentProposalValidation.paymentsValidation, proposalState],
   )
 
   const isStageOneDataValid = useMemo(
