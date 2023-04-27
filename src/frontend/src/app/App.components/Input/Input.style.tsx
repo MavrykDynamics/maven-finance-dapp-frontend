@@ -388,7 +388,7 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
   .input-balance {
     position: absolute;
     bottom: -35px;
-    right: 0px;
+    right: 15px;
     font-weight: 600;
     font-size: 14px;
     line-height: 21px;
@@ -408,7 +408,7 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
   .useMax-btn {
     position: absolute;
     top: -20px;
-    right: 0px;
+    right: 15px;
     font-size: 14px;
 
     &::before {
