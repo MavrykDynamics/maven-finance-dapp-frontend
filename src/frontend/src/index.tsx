@@ -2,7 +2,11 @@ import * as React from 'react'
 import ReactDOM from 'react-dom'
 import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3'
 import { Provider } from 'react-redux'
-import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client'
+import { ApolloProvider, ApolloClient, InMemoryCache, split } from '@apollo/client'
+import { HttpLink } from '@apollo/client/link/http'
+import { GraphQLWsLink } from '@apollo/client/link/subscriptions'
+import { createClient } from 'graphql-ws'
+import { getMainDefinition } from '@apollo/client/utilities'
 // import { PersistGate } from "redux-persist/integration/react";
 
 import DarkThemeProvider from './app/App.components/DarkThemeProvider/DarkThemeProvider.view'
@@ -18,8 +22,27 @@ import './styles/fonts.css'
 import './styles/animations.css'
 
 // apollo client setup
+const httpLink = new HttpLink({
+  uri: process.env.REACT_APP_GRAPHQL_API ?? '', // try localhost
+})
+
+const wsLink = new GraphQLWsLink(
+  createClient({
+    url: 'ws://api.mavryk.finance/v1/graphql/subscriptions',
+  }),
+)
+
+const splitLink = split(
+  ({ query }) => {
+    const definition = getMainDefinition(query)
+    return definition.kind === 'OperationDefinition' && definition.operation === 'subscription'
+  },
+  wsLink,
+  httpLink,
+)
+
 const client = new ApolloClient({
-  uri: process.env.REACT_APP_GRAPHQL_API ?? '',
+  link: splitLink,
   cache: new InMemoryCache(),
 })
 
