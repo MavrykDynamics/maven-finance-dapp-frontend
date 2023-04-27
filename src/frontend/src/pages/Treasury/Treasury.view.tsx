@@ -167,7 +167,7 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
       </div>
       {(factoryAddress && isGlobal) || treasury.address ? (
         <div className="address-block">
-          <div className="text">Treasury Address</div>
+          <div className="text">Treasury{isGlobal ? ' Factory ' : ' '}Address</div>
           <div className="value">
             <TzAddress type={BLUE} tzAddress={isGlobal ? factoryAddress : treasury.address} hasIcon />
           </div>
