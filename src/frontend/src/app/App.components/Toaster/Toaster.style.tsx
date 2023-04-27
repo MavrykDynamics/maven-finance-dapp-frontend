@@ -75,7 +75,7 @@ export const ToasterIcon = styled.div<{ status?: string; theme: MavrykTheme }>`
 
 export const ToasterContent = styled.div<{ status?: string; theme: MavrykTheme }>`
   padding: 8px;
-  max-width: 300px;
+  max-width: calc(100% - 60px);
   width: 100%;
 
   div {
@@ -93,5 +93,8 @@ export const ToasterContent = styled.div<{ status?: string; theme: MavrykTheme }
     font-weight: 500;
     font-size: 14px;
     color: ${({ theme }) => theme.textColor};
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
   }
 `
