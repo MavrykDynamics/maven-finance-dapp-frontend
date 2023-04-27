@@ -1,16 +1,25 @@
-// const network = process.env.REACT_APP_API_NETWORK
-export const network = 'ghostnet'
+import { z, ZodSchema, objectOutputType, ZodNumber, ZodString, ZodType, ZodTypeAny } from 'zod'
 
-export async function getContractBigmapKeys(contractAddress: string, name: string) {
-  return await (
-    await fetch(`https://api.${network}.tzkt.io/v1/contracts/${contractAddress}/bigmaps/${name}/keys`)
-  ).json()
+export type APIReturnType<T> = objectOutputType<{ code: ZodNumber; status: ZodString; data: ZodType<T> }, ZodTypeAny>
+
+export type Options = {
+  method: 'POST' | 'PUT' | 'GET' | 'DELETE' | 'PATCH'
+  body?: BodyInit | null
+  signal?: AbortSignal
 }
 
-export async function getContractStorage(contractAddress: string) {
-  return await (await fetch(`https://api.${network}.tzkt.io/v1/contracts/${contractAddress}/storage`)).json()
-}
+export const api = async <T>(
+  url: string,
+  options: Options = { method: 'GET' },
+  schema: ZodSchema<T> = z.any(),
+): Promise<APIReturnType<T>> => {
+  try {
+    const response = await fetch(url, options)
+    const data = await response.json()
+    const parsedData = schema.parse(data)
 
-export async function getChainInfo() {
-  return await (await fetch(`https://api.${network}.tzkt.io/v1/head`)).json()
+    return { code: response.status, status: response.statusText, data: parsedData }
+  } catch (e) {
+    throw e
+  }
 }

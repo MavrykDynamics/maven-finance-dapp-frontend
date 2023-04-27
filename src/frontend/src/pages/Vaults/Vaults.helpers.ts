@@ -27,6 +27,7 @@ import { getUserBalanceForLoanAsset } from 'pages/Loans/LoansFethcers'
 import { CollateralType, DepositorsFlagType } from 'utils/TypesAndInterfaces/Loans'
 import { ANY_USER, WHITELIST_USERS, NONE_USER, getStatusByCollateralRatio } from 'pages/Loans/Loans.const'
 import { TokenType } from 'utils/TypesAndInterfaces/General'
+import { api } from 'utils/api'
 
 type VaultsStorageProps = {
   lendingController: LendingControllerGQL
@@ -123,13 +124,13 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
 
       const currentInterestRate = calcWithoutDecimals(item.loan_token?.current_interest_rate ?? 0, interestRateDecimals)
 
-      const vaultXtzDelegatedTo = await (
-        await fetch(`https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/accounts/${item.vault.address}`)
-      ).json()
+      const { data: vaultXtzDelegatedTo } = await api<any>(
+        `https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/accounts/${item.vault.address}`,
+      )
 
-      const currentBlock = await (
-        await fetch(`https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/blocks/${dayjs().toISOString()}`)
-      ).json()
+      const { data: currentBlock } = await api<any>(
+        `https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/blocks/${dayjs().toISOString()}`,
+      )
 
       const normalizeCollateralTokens = item.collateral_balances.length
         ? item.collateral_balances.map((collateralToken) => {
@@ -153,9 +154,10 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
 
       // Calculating Fee of the vault
       const accruedInterest =
-          borrowedAmount === 0
-              ? currentLoanInterest
-              : currentLoanInterest + calculateAccruedInterest(item.loan_outstanding_total, item.borrow_index, item.loan_token.borrow_index) /
+        borrowedAmount === 0
+          ? currentLoanInterest
+          : currentLoanInterest +
+            calculateAccruedInterest(item.loan_outstanding_total, item.borrow_index, item.loan_token.borrow_index) /
               FIXED_POINT_ACCURACY
 
       const collateralRatio = calcCollateralRatio(vaultCollateral.totalRow.amount, borrowedAmount, vaultAsset.rate)
