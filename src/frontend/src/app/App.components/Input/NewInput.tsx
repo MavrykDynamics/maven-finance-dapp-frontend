@@ -62,7 +62,11 @@ export const Input = ({
         </NewInputLabel>
       ) : null}
 
-      <StyledInput {...inputProps} className={inputStatus} autoComplete={'off'} />
+      <StyledInput
+        {...inputProps}
+        className={`${inputStatus} ${children ? 'remove-right-border-radius' : ''}`}
+        autoComplete={'off'}
+      />
       {Boolean(children) ? null : <InputStyledStatus className={`${inputStatus} ${inputSize}`} />}
 
       {balance !== undefined && balanceAsset ? (

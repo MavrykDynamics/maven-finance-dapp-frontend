@@ -205,11 +205,19 @@ export const StyledInput = styled.input<{ theme: MavrykTheme }>`
   &:hover:not(:disabled) {
     background-color: ${({ theme }) => theme.containerColor};
   }
+
+  &.remove-right-border-radius {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
 `
 
 export const InputPinnedChild = styled.div<{ theme: MavrykTheme }>`
   height: 100%;
   border-left: 1px solid ${({ theme }) => theme.cardBorderColor};
+  background-color: ${({ theme }) => theme.backgroundColor};
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
 
   .img-wrapper,
   svg {
