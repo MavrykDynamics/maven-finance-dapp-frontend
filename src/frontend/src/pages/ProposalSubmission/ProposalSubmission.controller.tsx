@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 // view
@@ -43,6 +43,7 @@ import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
 
 export const ProposalSubmission = () => {
+  const lastSelectedProposalId = useRef(-1)
   const dispatch = useDispatch()
 
   const { accountPkh } = useSelector((state: State) => state.wallet)
@@ -55,7 +56,7 @@ export const ProposalSubmission = () => {
   const { whitelistTokens, dipDupTokens } = useSelector((state: State) => state.tokens)
 
   const [activeTab, setActiveTab] = useState(1)
-  const [selectedUserProposalId, setSeletedUserProposalId] = useState(-1)
+  const [selectedUserProposalId, setSeletedUserProposalId] = useState(lastSelectedProposalId.current)
 
   const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {
@@ -97,7 +98,6 @@ export const ProposalSubmission = () => {
         },
         { keys: [], mapper: {}, validityObj: {} },
       )
-    setSeletedUserProposalId(keys?.[0])
     return [keys, mapper, validityObj]
   }, [accountPkh, currentRoundProposalsIds, proposalsMapper])
 
@@ -126,46 +126,42 @@ export const ProposalSubmission = () => {
     [selectedUserProposalId, currentRoundProposalsIds],
   )
 
-  const proposalHasChange = useMemo(() => {
-    const submitProposalBody = proposalState[currentOriginalProposalId ?? -1]
-    const remoteProposal = mappedProposals[currentOriginalProposalId ?? -1]
+  // if user removed all his submitted proposals, show him create proposal tab with empty proposal form to fill up
+  useEffect(() => {
+    // TODO: remove log, testing purposes
+    console.log({ proposalState, selectedUserProposalId, mappedProposals })
 
-    const isTitleDiff = submitProposalBody?.title !== remoteProposal?.title,
-      isDescrDiff = submitProposalBody?.description !== remoteProposal?.description,
-      isSourceLinkDiff = submitProposalBody?.sourceCode !== remoteProposal?.sourceCode
-
-    const filteredBytes = submitProposalBody?.proposalData.filter(({ title, encoded_code }) => title || encoded_code)
-
-    const isBytesDiff =
-      filteredBytes?.length === 0 && remoteProposal?.proposalData?.length === 0
-        ? false
-        : filteredBytes?.length !== remoteProposal?.proposalData?.length
-        ? true
-        : filteredBytes?.every(({ title, encoded_code }, idx) => {
-            const remoteProposalByte = remoteProposal?.proposalData?.[idx]
-            return title !== remoteProposalByte?.title || encoded_code !== remoteProposalByte?.encoded_code
-          })
-
-    const filteredPayments = submitProposalBody?.proposalPayments.filter(
-      ({ token_amount, to__id }) => token_amount || to__id,
+    setProposalsState(
+      proposalKeys.length
+        ? mappedProposals
+        : {
+            [DEFAULT_PROPOSAL.id]: DEFAULT_PROPOSAL,
+          },
+    )
+    setProposalsValidation(
+      proposalKeys.length
+        ? mappedValidation
+        : {
+            [DEFAULT_PROPOSAL.id]: DEFAULT_PROPOSAL_VALIDATION,
+          },
     )
 
-    const isPaymentsDiff =
-      filteredPayments?.length === 0 && remoteProposal?.proposalPayments?.length === 0
-        ? false
-        : filteredPayments?.length !== remoteProposal?.proposalPayments?.length
-        ? true
-        : filteredPayments?.every(({ token_amount, token_address, to__id }, idx) => {
-            const remoteProposalPayment = remoteProposal?.proposalPayments?.[idx]
-            return (
-              to__id !== remoteProposalPayment?.to__id ||
-              token_amount !== remoteProposalPayment?.token_amount ||
-              token_address !== remoteProposalPayment?.token_address
-            )
-          })
+    if (lastSelectedProposalId.current === -1 && proposalKeys?.[0]) {
+      setSeletedUserProposalId(proposalKeys[0])
+      lastSelectedProposalId.current = proposalKeys[0]
+    } else {
+      setSeletedUserProposalId(DEFAULT_PROPOSAL.id)
+      lastSelectedProposalId.current = DEFAULT_PROPOSAL.id
+    }
+  }, [mappedProposals, mappedValidation, proposalKeys])
 
-    return isTitleDiff || isDescrDiff || isSourceLinkDiff || isBytesDiff || isPaymentsDiff
-  }, [currentOriginalProposalId, mappedProposals, proposalState])
+  const [currentProposal, currentProposalValidation] = [
+    proposalState[selectedUserProposalId] ?? {},
+    proposalsValidation[selectedUserProposalId] ?? {},
+  ]
+
+  // TODO: remove log, testing purposes
+  console.log({ proposalState, selectedUserProposalId, mappedProposals })
 
   const handleChangeTab = useCallback((tabId?: number) => {
     setActiveTab(tabId ?? 0)
@@ -174,7 +170,7 @@ export const ProposalSubmission = () => {
   const changeActiveProposal = useCallback(
     (proposalId: number) => {
       setSeletedUserProposalId(proposalId)
-
+      lastSelectedProposalId.current = proposalId
       // it means that we choose create new proposal
       if (proposalId === -1 && !proposalState[-1]) {
         setProposalsState({
@@ -254,33 +250,54 @@ export const ProposalSubmission = () => {
     )
   }
 
-  // if user removed all his submitted proposals, show him create proposal tab with empty proposal form to fill up
-  useEffect(() => {
-    setProposalsState(
-      proposalKeys.length
-        ? mappedProposals
-        : {
-            [DEFAULT_PROPOSAL.id]: DEFAULT_PROPOSAL,
-          },
-    )
-    setProposalsValidation(
-      proposalKeys.length
-        ? mappedValidation
-        : {
-            [DEFAULT_PROPOSAL.id]: DEFAULT_PROPOSAL_VALIDATION,
-          },
-    )
-    setSeletedUserProposalId(proposalKeys?.[0] ?? DEFAULT_PROPOSAL.id)
-  }, [mappedProposals, mappedValidation, proposalKeys])
-
-  const [currentProposal, currentProposalValidation] = useMemo(
-    () => [proposalState[selectedUserProposalId] ?? {}, proposalsValidation[selectedUserProposalId] ?? {}],
-    [proposalState, proposalsValidation, selectedUserProposalId],
-  )
-
   // action buttons stuff for disabling
   const isProposalSubmitted = selectedUserProposalId >= 0
   const isProposalPeriod = governancePhase === 'PROPOSAL'
+
+  const proposalHasChange = useMemo(() => {
+    const submitProposalBody = proposalState[currentOriginalProposalId ?? -1]
+    const remoteProposal = mappedProposals[currentOriginalProposalId ?? -1]
+
+    const isTitleDiff = submitProposalBody?.title !== remoteProposal?.title,
+      isDescrDiff = submitProposalBody?.description !== remoteProposal?.description,
+      isSourceLinkDiff = submitProposalBody?.sourceCode !== remoteProposal?.sourceCode
+
+    const filteredBytes = submitProposalBody?.proposalData.filter(({ title, encoded_code }) => title || encoded_code)
+    const filteredRemoteBytes = remoteProposal?.proposalData.filter(({ title, encoded_code }) => encoded_code !== null)
+
+    const isBytesDiff =
+      filteredBytes?.length === 0 && filteredRemoteBytes?.length === 0
+        ? false
+        : filteredBytes?.length !== filteredRemoteBytes?.length
+        ? true
+        : filteredBytes?.every(({ title, encoded_code }, idx) => {
+            const remoteProposalByte = filteredRemoteBytes?.[idx]
+            return title !== remoteProposalByte?.title || encoded_code !== remoteProposalByte?.encoded_code
+          })
+
+    const filteredPayments = submitProposalBody?.proposalPayments.filter(
+      ({ token_amount, to__id }) => token_amount || to__id,
+    )
+    const filteredRemotePayments = remoteProposal?.proposalPayments.filter(
+      ({ token_amount, to__id }) => token_amount !== null || to__id !== null,
+    )
+
+    const isPaymentsDiff =
+      filteredPayments?.length === 0 && filteredRemotePayments?.length === 0
+        ? false
+        : filteredPayments?.length !== filteredRemotePayments?.length
+        ? true
+        : filteredPayments?.every(({ token_amount, token_address, to__id }, idx) => {
+            const remoteProposalPayment = filteredRemotePayments?.[idx]
+            return (
+              to__id !== remoteProposalPayment?.to__id ||
+              token_amount !== remoteProposalPayment?.token_amount ||
+              token_address !== remoteProposalPayment?.token_address
+            )
+          })
+
+    return isTitleDiff || isDescrDiff || isSourceLinkDiff || isBytesDiff || isPaymentsDiff
+  }, [currentOriginalProposalId, mappedProposals, proposalState])
 
   // Validate bytes, validate only non empty bytes
   const isBytesValid = useMemo(
@@ -311,11 +328,16 @@ export const ProposalSubmission = () => {
           )
           return payment && (payment.title || payment.to__id || payment.token_amount)
         })
-        .every(
-          ({ to__id, title, token_amount }) =>
-            to__id === INPUT_STATUS_SUCCESS && title === INPUT_STATUS_SUCCESS && token_amount === INPUT_STATUS_SUCCESS,
-        ) ?? true,
-    [currentOriginalProposalId, currentProposalValidation.paymentsValidation, proposalState],
+        .every(({ to__id, title, token_amount, paymentId }) => {
+          const isSavedPayment = currentOriginalProposalId
+            ? proposalsMapper[currentOriginalProposalId]?.proposalPayments?.find(({ id }) => id === paymentId)
+            : false
+
+          return isSavedPayment
+            ? to__id !== INPUT_STATUS_ERROR && title !== INPUT_STATUS_ERROR && token_amount !== INPUT_STATUS_ERROR
+            : to__id === INPUT_STATUS_SUCCESS && title === INPUT_STATUS_SUCCESS && token_amount === INPUT_STATUS_SUCCESS
+        }) ?? true,
+    [currentOriginalProposalId, currentProposalValidation.paymentsValidation, proposalState, proposalsMapper],
   )
 
   const isStageOneDataValid = useMemo(
