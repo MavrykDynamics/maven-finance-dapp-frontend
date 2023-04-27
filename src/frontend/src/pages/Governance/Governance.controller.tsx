@@ -139,7 +139,7 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
       ...(currentRoundProposalsIds.length
         ? [
             {
-              title: governancePhase === GovPhases.PROPOSAL ? 'Pool for Next round' : 'Ongoing proposal',
+              title: governancePhase === GovPhases.PROPOSAL ? 'Poll for Next round' : 'Ongoing proposal',
               type: 'ongoing',
               proposalsIds: currentRoundProposalsIds,
               listName: ONGOING_PROPOSALS_LIST_NAME,
