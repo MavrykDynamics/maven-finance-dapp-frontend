@@ -215,7 +215,7 @@ export const StageThreeForm = ({
 
             return (
               <TableRow className="editable-row">
-                <TableCell width="25%" className="hide-overflow">
+                <TableCell width="25%" className="hide-overflow tz-address-cell-center">
                   {isTableDisabled ? (
                     payment.to__id ? (
                       <TzAddress tzAddress={String(payment.to__id)} type={BLUE} hasIcon />
