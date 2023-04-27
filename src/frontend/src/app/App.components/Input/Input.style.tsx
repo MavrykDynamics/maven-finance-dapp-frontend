@@ -410,6 +410,17 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
     top: -20px;
     right: 0px;
     font-size: 14px;
+
+    &::before {
+      position: absolute;
+      background-color: ${({ theme }) => theme.valueColor};
+      width: 100%;
+      content: '';
+      height: 1px;
+      bottom: 0px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
   }
 
   .pointer {

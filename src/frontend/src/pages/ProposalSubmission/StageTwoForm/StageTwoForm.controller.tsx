@@ -15,7 +15,12 @@ import { Info } from 'app/App.components/Info/Info.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 
 // const, helpers
-import { checkBytesPairExists, getBytesPairValidationStatus, PROPOSAL_BYTE } from '../ProposalSubmition.helpers'
+import {
+  checkBytesPairExists,
+  DEFAULT_PROPOSAL,
+  getBytesPairValidationStatus,
+  PROPOSAL_BYTE,
+} from '../ProposalSubmition.helpers'
 import { INPUT_MEDIUM, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { isValidLength } from 'utils/validatorFunctions'
 import { INFO_DEFAULT } from 'app/App.components/Info/info.constants'
@@ -37,6 +42,7 @@ export const StageTwoForm = ({
     (state: State) => state.governance.config,
   )
   const isProposalPeriod = governancePhase === 'PROPOSAL'
+  const isDisabledActions = proposalId === DEFAULT_PROPOSAL.id
 
   // is no bytes pair on proposal change add empty pair on client
   useEffect(() => {
@@ -273,7 +279,7 @@ export const StageTwoForm = ({
                   inputSize: INPUT_MEDIUM,
                 }}
                 inputProps={{
-                  disabled: existInServer || locked,
+                  disabled: existInServer || locked || isDisabledActions,
                   value: title,
                   type: 'text',
                   name: 'title',
@@ -290,12 +296,12 @@ export const StageTwoForm = ({
                   handleOnChange(item, e.target.value, e.target.name)
                 }
                 inputStatus={validityObject?.validBytes}
-                disabled={!isProposalPeriod || locked}
+                disabled={!isProposalPeriod || locked || isDisabledActions}
               />
 
               <div className={`remove-byte ${!isProposalPeriod || locked ? 'disabled' : ''}`}>
                 <CustomTooltip text="Delete bytes pair" className="tooltip">
-                  <Button kind={BUTTON_SIMPLE} onClick={() => handleDeletePair(item.id)}>
+                  <Button kind={BUTTON_SIMPLE} onClick={() => handleDeletePair(item.id)} disabled={isDisabledActions}>
                     <Icon id="delete" />
                   </Button>
                 </CustomTooltip>
@@ -305,7 +311,11 @@ export const StageTwoForm = ({
         })}
         <div className="add-byte">
           <CustomTooltip text="Add bytes pair" className="tooltip">
-            <Button kind={BUTTON_SIMPLE_SMALL} disabled={!isProposalPeriod || locked} onClick={handleCreateNewByte}>
+            <Button
+              kind={BUTTON_SIMPLE_SMALL}
+              disabled={!isProposalPeriod || locked || isDisabledActions}
+              onClick={handleCreateNewByte}
+            >
               <Icon id="plus" />
             </Button>
           </CustomTooltip>

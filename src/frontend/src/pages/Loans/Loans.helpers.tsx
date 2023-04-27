@@ -814,35 +814,45 @@ export const normalizeUserLending = ({
 
       if (!assetData) return acc
       const convertedAmount = convertNumberForClient({ number: amount, grade: assetData.decimals })
+      const commonUserData = {
+        icon: assetData.icon,
+        id,
+        date: timestamp,
+        symbol: assetData.symbol,
+        operationHash: operation_hash,
+        annualPecentage: calcLendingAPY(
+          calcWithoutDecimals(loan_token.current_interest_rate, interest_rate_decimals),
+          calcWithoutDecimals(interest_treasury_share, decimals),
+        ),
+      }
 
       switch (type) {
         case 0:
-        case 1:
           acc.userLendings.push({
-            icon: assetData.icon,
-            id,
+            ...commonUserData,
             amount: convertedAmount,
             usdAmount: convertedAmount * assetData.rate,
-            date: timestamp,
-            annualPecentage: calcLendingAPY(
-              calcWithoutDecimals(loan_token.current_interest_rate, interest_rate_decimals),
-              calcWithoutDecimals(interest_treasury_share, decimals),
-            ),
-            symbol: assetData.symbol,
-            operationHash: operation_hash,
+          })
+          break
+        case 1:
+          acc.userLendings.push({
+            ...commonUserData,
+            amount: -convertedAmount,
+            usdAmount: -(convertedAmount * assetData.rate),
           })
           break
         case 2:
-        case 3:
           acc.userBorrowing.push({
-            icon: assetData.icon,
-            id,
-            date: timestamp,
+            ...commonUserData,
             amount: convertedAmount,
             usdAmount: convertedAmount * assetData.rate,
-            annualPecentage: calcWithoutDecimals(loan_token.current_interest_rate, interest_rate_decimals) * 100,
-            operationHash: operation_hash,
-            symbol: assetData.symbol,
+          })
+          break
+        case 3:
+          acc.userBorrowing.push({
+            ...commonUserData,
+            amount: convertedAmount,
+            usdAmount: -(convertedAmount * assetData.rate),
           })
           break
       }

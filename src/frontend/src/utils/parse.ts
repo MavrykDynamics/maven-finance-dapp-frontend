@@ -12,5 +12,6 @@ export const getSymbolFromFeedName = (feedName: string) => {
 
   if (symbol.toLowerCase() === 'btc') return 'tzbtc'
   if (symbol.toLowerCase() === 'xtz') return 'tezos'
+  if (symbol.toLowerCase() === 'euroc') return 'eurl'
   return symbol.toLowerCase()
 }

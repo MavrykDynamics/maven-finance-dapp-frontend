@@ -137,7 +137,7 @@ export const normalizeTreasuryStorage = (
           icon,
           rate,
           contract: treasuryData.address,
-          usdValue: coinsAmount * rate,
+          usdValue: coinsAmount * (rate ?? 1),
           decimals: parsedDecimals,
           name: isTezosAsset(symbol.toLowerCase()) ? 'XTZ' : symbol,
           symbol: symbol,
