@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 
 // view
+import Icon from '../../app/App.components/Icon/Icon.view'
 import { Input } from '../../app/App.components/Input/Input.controller'
+import NewButton from 'app/App.components/Button/NewButton'
 import { TextArea } from '../../app/App.components/TextArea/TextArea.controller'
-import { Button } from '../../app/App.components/Button/Button.controller'
 
 // type
 import type { InputStatusType } from '../../app/App.components/Input/Input.constants'
@@ -29,6 +30,7 @@ import { AvailableActionsStyle } from './SatelliteGovernance.style'
 // helpers
 import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
 
 const handleComparingValue = (value: string) => {
   return value.replaceAll(' ', '').toLowerCase()
@@ -84,7 +86,7 @@ const CONTENT_FORM = new Map<string, Record<string, string>>([
     {
       title: 'Ban Satellite',
       btnText: 'Ban Satellite',
-      btnIcon: 'close-stroke',
+      btnIcon: 'navigation-menu_close',
     },
   ],
   [
@@ -100,7 +102,7 @@ const CONTENT_FORM = new Map<string, Record<string, string>>([
     {
       title: 'Remove all Oracles from Satellite',
       btnText: 'Remove Oracles',
-      btnIcon: 'close-stroke',
+      btnIcon: 'minus',
     },
   ],
   [
@@ -108,7 +110,7 @@ const CONTENT_FORM = new Map<string, Record<string, string>>([
     {
       title: 'Remove from Aggregator',
       btnText: 'Remove from Aggregator',
-      btnIcon: 'close-stroke',
+      btnIcon: 'minus',
     },
   ],
   [
@@ -124,7 +126,7 @@ const CONTENT_FORM = new Map<string, Record<string, string>>([
     {
       title: 'Restore Satellite',
       btnText: 'Restore Satellite',
-      btnIcon: 'plus',
+      btnIcon: 'restore',
     },
   ],
   [
@@ -132,7 +134,7 @@ const CONTENT_FORM = new Map<string, Record<string, string>>([
     {
       title: 'Set Aggregator Maintainer',
       btnText: 'Set Aggregator Maintainer',
-      btnIcon: 'plus',
+      btnIcon: 'gear',
     },
   ],
   [
@@ -140,7 +142,7 @@ const CONTENT_FORM = new Map<string, Record<string, string>>([
     {
       title: 'Update Aggregator Status',
       btnText: 'Update Aggregator Status',
-      btnIcon: 'plus',
+      btnIcon: 'update',
     },
   ],
 ])
@@ -300,14 +302,9 @@ export const SatelliteGovernanceForm = ({ variant, maxLength, isActionActive }: 
           </div>
         </div>
         <div className="suspend-satellite-group">
-          <Button
-            className={`${variant} fill`}
-            icon={content?.btnIcon || ''}
-            kind="actionPrimary"
-            text={content?.btnText || ''}
-            type="submit"
-            disabled={isActionActive}
-          />
+          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} disabled={isActionActive} type={SUBMIT}>
+            <Icon id={content?.btnIcon || ''} /> {content?.btnText || ''}
+          </NewButton>
         </div>
       </form>
     </AvailableActionsStyle>
