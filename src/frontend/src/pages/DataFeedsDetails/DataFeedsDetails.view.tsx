@@ -66,6 +66,7 @@ const tabsList = [
 const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsProps) => {
   const dispatch = useDispatch()
   const { dipDupContracts } = useSelector((state: State) => state.tokens)
+  const { isActionActive } = useSelector((state: State) => state.loading)
   const { themeSelected } = useSelector((state: State) => state.preferences)
 
   const registerFeedHandler = () => dispatch(registerFeedAction())
@@ -146,8 +147,8 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsPr
                     </DataFeedValueText>
                   </DataFeedInfoBlock>
 
-                  <DataFeedInfoBlock justifyContent={'flex-end'}>
-                    <h4>
+                  <DataFeedInfoBlock justifyContent={'space-between'}>
+                    <h3>
                       Heartbeat
                       <CustomTooltip
                         text={'Countdown until the next set data feed update.'}
@@ -155,7 +156,8 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsPr
                         className="info-icon"
                         defaultStrokeColor={colors[themeSelected].textColor}
                       />
-                    </h4>
+                    </h3>
+
                     <DataFeedValueText fontSize={16} fontWeidth={600}>
                       {feed.last_completed_data_last_updated_at ? (
                         <div className="timer">
@@ -250,6 +252,7 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsPr
                   <Button
                     text="Register"
                     kind={ACTION_PRIMARY}
+                    disabled={isActionActive}
                     onClick={() => {
                       // registerFeedHandler()
                       dispatch(showToaster(INFO, 'Coming soon', 'Register to Oracle Feature coming soon'))

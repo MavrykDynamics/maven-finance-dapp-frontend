@@ -253,7 +253,13 @@ export function CouncilView({
 
       {!tabId && isCouncilMember && showPropagateBreakGlass && (
         <PropagateBreakGlassCouncilCard>
-          <h1>Propagate Break Glass</h1>
+          <div>
+            <h1>Propagate Break Glass</h1>
+            <p>
+              This action can only be taken to pause all contracts in the event of a successful emergency governance
+              where a critical flaw has been detected in the Mavryk Smart Contracts.
+            </p>
+          </div>
 
           <NewButton kind={BUTTON_PRIMARY} onClick={handleClickPropagateBreakGlass} disabled={glassBroken}>
             <Icon id="plus" />

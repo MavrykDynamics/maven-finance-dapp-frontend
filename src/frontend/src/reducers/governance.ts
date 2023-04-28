@@ -1,78 +1,92 @@
-import {
-  GET_GOVERNANCE_STORAGE,
-  SET_GOVERNANCE_PHASE,
-  SET_PAST_PROPOSALS,
-  GET_CURRENT_ROUND_PROPOSALS,
-} from 'pages/Governance/Governance.actions'
-import { GovernanceStorage, CurrentRoundProposalsStorageType } from '../utils/TypesAndInterfaces/Governance'
-import { GET_GOVERNANCE_SATELLITE_STORAGE } from 'pages/SatelliteGovernance/SatelliteGovernance.actions'
+import { GovernancePhaseType, GovPhases, ProposalRecordType } from '../utils/TypesAndInterfaces/Governance'
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
 import type {
   GovernanceSatelliteActionGraphQL,
   GovernanceSatelliteGraphQL,
 } from '../utils/TypesAndInterfaces/Governance'
-import { normalizeGovernanceStorage } from '../pages/Governance/Governance.helpers'
 
-const PROPOSAL = 'PROPOSAL',
-  VOTING = 'VOTING',
-  TIME_LOCK = 'TIME_LOCK'
+import { GET_GOVERNANCE_CONFIG, GET_PROPOSALS } from 'pages/Governance/actions/GovernanseData.actions'
+import {
+  defaultProposalDescriptionMaxLength,
+  defaultProposalInvoiceMaxLength,
+  defaultProposalMetadataTitleMaxLength,
+  defaultProposalSourceCodeMaxLength,
+  defaultProposalTitleMaxLength,
+} from 'app/App.components/Input/Input.constants'
+
+export type GovernanceState = {
+  config: {
+    address: string
+    fee: number
+    successReward: number
+    proposalDescriptionMaxLength: number
+    proposalInvoiceMaxLength: number
+    proposalMetadataTitleMaxLength: number
+    proposalSourceCodeMaxLength: number
+    proposalTitleMaxLength: number
+
+    currentRoundEndLevel: number
+    cycle: number
+    timelockProposalId: number
+    cycleHighestVotedProposalId: number
+
+    governancePhase: GovernancePhaseType
+  }
+
+  currentRoundProposalsIds: Array<number>
+  pastProposalsIds: Array<number>
+  allProposalsIds: Array<number>
+  waitingProposalsIdsToBeExecuted: Array<number>
+  waitingProposalsIdsToBePaid: Array<number>
+  proposalsMapper: Record<number, ProposalRecordType>
+  isLoaded: boolean
+}
+
+export const DEFAULT_GOVERNANCE_STORAGE: GovernanceState = {
+  config: {
+    address: '',
+    fee: 0,
+    successReward: 0,
+    proposalDescriptionMaxLength: defaultProposalDescriptionMaxLength,
+    proposalInvoiceMaxLength: defaultProposalInvoiceMaxLength,
+    proposalMetadataTitleMaxLength: defaultProposalMetadataTitleMaxLength,
+    proposalSourceCodeMaxLength: defaultProposalSourceCodeMaxLength,
+    proposalTitleMaxLength: defaultProposalTitleMaxLength,
+
+    currentRoundEndLevel: 0,
+    cycle: 0,
+    timelockProposalId: 0,
+    cycleHighestVotedProposalId: 0,
+
+    governancePhase: GovPhases.PROPOSAL,
+  },
+
+  currentRoundProposalsIds: [],
+  pastProposalsIds: [],
+  waitingProposalsIdsToBePaid: [],
+  waitingProposalsIdsToBeExecuted: [],
+  allProposalsIds: [],
+  proposalsMapper: {},
+  isLoaded: false,
+}
 
 export type GovernanceSatellite = {
   governance_satellite: GovernanceSatelliteGraphQL[]
   governance_satellite_action: GovernanceSatelliteActionGraphQL[]
 }
-export type GovernancePhase = typeof PROPOSAL | typeof VOTING | typeof TIME_LOCK
-export interface GovernanceState {
-  currentRoundProposals: CurrentRoundProposalsStorageType
-  governanceStorage: GovernanceStorage
-  governancePhase: GovernancePhase
-  proposalId?: number
-  pastProposals: CurrentRoundProposalsStorageType
-  vote?: number
-  governanceSatelliteStorage: GovernanceSatellite
-  isGovernanceStorageLoaded: boolean
-}
 
-const defaultGovernanceStorage = normalizeGovernanceStorage(null)
-const governanceDefaultState: GovernanceState = {
-  governanceStorage: defaultGovernanceStorage,
-  governancePhase: 'PROPOSAL',
-  currentRoundProposals: [],
-  pastProposals: [],
-  governanceSatelliteStorage: {
-    governance_satellite: [],
-    governance_satellite_action: [],
-  },
-  isGovernanceStorageLoaded: false,
-}
-
-export function governance(state = governanceDefaultState, action: Action) {
+export function governance(state = DEFAULT_GOVERNANCE_STORAGE, action: Action) {
   switch (action.type) {
-    case GET_GOVERNANCE_SATELLITE_STORAGE:
+    case GET_GOVERNANCE_CONFIG:
       return {
         ...state,
-        governanceSatelliteStorage: action.governanceSatelliteStorage,
+        config: { ...action.config },
       }
-    case GET_CURRENT_ROUND_PROPOSALS:
+    case GET_PROPOSALS:
       return {
         ...state,
-        currentRoundProposals: action.currentRoundProposals || [],
-      }
-    case GET_GOVERNANCE_STORAGE:
-      return {
-        ...state,
-        governanceStorage: action.governanceStorage,
-        isGovernanceStorageLoaded: true,
-      }
-    case SET_GOVERNANCE_PHASE:
-      return {
-        ...state,
-        governancePhase: action.phase,
-      }
-    case SET_PAST_PROPOSALS:
-      return {
-        ...state,
-        pastProposals: action.pastProposals,
+        ...action.proposals,
+        isLoaded: true,
       }
     default:
       return state

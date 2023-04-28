@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux'
 // view
 import Icon from '../../app/App.components/Icon/Icon.view'
 import { Input } from '../../app/App.components/Input/Input.controller'
-import { Button } from '../../app/App.components/Button/Button.controller'
+import NewButton from 'app/App.components/Button/NewButton'
 
 // type
 import type { InputStatusType } from '../../app/App.components/Input/Input.constants'
@@ -16,7 +16,8 @@ import { registerAggregator } from './SatelliteGovernance.actions'
 import { AvailableActionsStyle } from './SatelliteGovernance.style'
 
 // helpers
-import { validateFormField, validateFormAddress } from 'utils/validatorFunctions' 
+import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
+import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
 
 type MaxLength = {
   purposeMaxLength: number
@@ -25,9 +26,10 @@ type MaxLength = {
 
 type Props = {
   maxLength: MaxLength
+  isActionActive: boolean
 }
 
-export const RegisterAggregatorForm = ({ maxLength }: Props) => {
+export const RegisterAggregatorForm = ({ maxLength, isActionActive }: Props) => {
   const dispatch = useDispatch()
 
   const [form, setForm] = useState({
@@ -114,13 +116,9 @@ export const RegisterAggregatorForm = ({ maxLength }: Props) => {
         </div>
 
         <div className="suspend-satellite-group">
-          <Button
-            // className={variant}
-            icon="plus"
-            kind="actionPrimary"
-            text={'Register Aggregator'}
-            type="submit"
-          />
+          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} disabled={isActionActive} type={SUBMIT}>
+            <Icon id="plus" /> Register Aggregator
+          </NewButton>
         </div>
       </form>
     </AvailableActionsStyle>

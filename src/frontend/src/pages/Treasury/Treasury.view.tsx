@@ -77,7 +77,7 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
           {!isGlobal && treasury.balances.length ? (
             <>
               <Checkbox
-                id={'show_dropped'}
+                id={'treasury-zero-filter'}
                 onChangeHandler={() => {
                   setShowZeroTreasuries(!showZeroTreasuries)
                 }}
@@ -165,11 +165,11 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
           ))}
         </div>
       </div>
-      {factoryAddress || (!isGlobal && treasury.address) ? (
+      {(factoryAddress && isGlobal) || treasury.address ? (
         <div className="address-block">
-          <div className="text">Treasury Factory Address</div>
+          <div className="text">Treasury{isGlobal ? ' Factory ' : ' '}Address</div>
           <div className="value">
-            <TzAddress type={BLUE} tzAddress={isGlobal ? factoryAddress : treasury.address} hasIcon={true} />
+            <TzAddress type={BLUE} tzAddress={isGlobal ? factoryAddress : treasury.address} hasIcon />
           </div>
         </div>
       ) : null}

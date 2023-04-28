@@ -1,5 +1,4 @@
-import React, { useEffect, useState, useContext, useRef } from 'react'
-import { useClickAway } from 'react-use'
+import { useEffect, useState, useContext } from 'react'
 import { useSelector } from 'react-redux'
 
 // components
@@ -25,9 +24,9 @@ import { StatusFlagStyle } from '../../../app/App.components/StatusFlag/StatusFl
 // helpers
 import { CYAN } from 'app/App.components/TzAddress/TzAddress.constants'
 import { vaultsStatuses } from '../Vaults.consts'
-import { getTimestampByLevel } from 'pages/Governance/Governance.actions'
 import { loansPopupsContext } from 'pages/Loans/Components/Modals/LoansModals.provider'
 import { calculateCollateralShare } from '../calcFunctionsForVault'
+import getTimestampByLevel from 'utils/Fetchers/getTimestampByLevel'
 import { vaultTabs } from '../Vaults.view'
 import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
 
@@ -106,9 +105,9 @@ export const VaultsCard = (props: Props) => {
     vaultTab,
   } = props
 
-  const {
-    openLiquidateVaultPopup,
-  } = useContext(loansPopupsContext)
+  const { isActionActive } = useSelector((state: State) => state.loading)
+
+  const { openLiquidateVaultPopup } = useContext(loansPopupsContext)
 
   const [timerTimestamp, setTimerTimestamp] = useState<number | undefined>(undefined)
 
@@ -295,7 +294,7 @@ export const VaultsCard = (props: Props) => {
             onClick={() => {
               return isMarkStatus ? handleMarkForLiquidation(vaultId, ownerId) : liquidateModalHandler()
             }}
-            disabled={vaultsStatuses.GRACE_PERIOD === status}
+            disabled={vaultsStatuses.GRACE_PERIOD === status || isActionActive}
           />
         </div>
       )}

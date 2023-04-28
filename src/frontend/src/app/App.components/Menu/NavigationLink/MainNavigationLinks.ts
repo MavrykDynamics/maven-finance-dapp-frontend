@@ -21,9 +21,6 @@ export const mainNavigationLinks: MainNavigationRoute[] = [
         subTitle: 'Personal',
         subPath: `dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`,
         routeSubPath: '/dashboard-personal/:tabId/:secondaryTabId?',
-        requires: {
-          isAuth: true,
-        },
       },
       // {
       //   id: 59526,
@@ -144,7 +141,7 @@ export const mainNavigationLinks: MainNavigationRoute[] = [
         id: 47294,
         subTitle: 'Satellite Gov.',
         subPath: 'satellite-governance',
-        routeSubPath: '/satellite-governance',
+        routeSubPath: ['/satellite-governance', '/satellite-governance/:tabId'],
       },
       {
         id: 79754,

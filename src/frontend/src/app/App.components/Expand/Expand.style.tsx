@@ -44,6 +44,11 @@ export const ExpandStyled = styled(CardHover)`
 
       grid-template-columns: 0.6fr 0.9fr 0.6fr 0.6fr 0.4fr 0.4fr;
     }
+
+    article,
+    .expand-header {
+      cursor: auto;
+    }
   }
 
   &.expand-egov {
@@ -58,10 +63,14 @@ export const ExpandStyled = styled(CardHover)`
 
   &.expand-borrow-tab {
     .expand-header {
-      cursor: default;
       padding: 20px 25px;
       align-items: flex-start;
       grid-template-columns: 0.6fr 0.8fr 0.5fr 0.45fr 0.4fr;
+    }
+
+    article,
+    .expand-header {
+      cursor: auto;
     }
   }
 `

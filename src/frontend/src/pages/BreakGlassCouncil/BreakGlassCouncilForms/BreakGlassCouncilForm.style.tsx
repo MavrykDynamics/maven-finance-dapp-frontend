@@ -11,7 +11,7 @@ export const FormStyled = styled.div<{ theme: MavrykTheme }>`
   }
 
   h1 {
-    margin: 0;
+    margin-bottom: 10px;
   }
 
   p {
@@ -66,12 +66,10 @@ export const FormStyled = styled.div<{ theme: MavrykTheme }>`
 
     label {
       display: block;
-      margin-bottom: 6px;
+      padding-left: 0;
       font-weight: 700;
       font-size: 14px;
       line-height: 21px;
-
-      color: ${({ theme }) => theme.headerColor};
     }
   }
 

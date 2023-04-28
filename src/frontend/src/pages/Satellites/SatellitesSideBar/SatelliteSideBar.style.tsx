@@ -60,8 +60,12 @@ export const FAQLink = styled.div<{ theme: MavrykTheme }>`
   }
 
   &.BG-faq-link {
-    margin: 0;
-    margin-top: 10px;
+    margin: 10px 0 0 0;
+    padding-left: 0;
+
+    &::before {
+      content: none;
+    }
   }
 
   > a {

@@ -25,6 +25,8 @@ export const CouncilMemberView = (props: Props) => {
     user: { isSatellite },
   } = useSelector((state: State) => state.wallet)
 
+  const { isActionActive } = useSelector((state: State) => state.loading)
+
   const { image, name, userId, openModal, showUpdateInfo = true } = props
   const href = `/satellites/satellite-details/${userId}`
 
@@ -48,7 +50,7 @@ export const CouncilMemberView = (props: Props) => {
         </figcaption>
       </div>
       {isMe && showUpdateInfo ? (
-        <NewButton kind={BUTTON_SECONDARY} form={BUTTON_WIDE} onClick={openModal}>
+        <NewButton kind={BUTTON_SECONDARY} form={BUTTON_WIDE} onClick={openModal} disabled={isActionActive}>
           <Icon id="update" />
           Update Info
         </NewButton>

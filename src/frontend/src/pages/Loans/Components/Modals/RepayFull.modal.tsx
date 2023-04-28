@@ -46,7 +46,6 @@ export const RepayFull = ({
 
   useLockBodyScroll(show)
   const dispatch = useDispatch()
-  const { isActionLoading } = useSelector((state: State) => state.loading)
 
   const canRepay = totalOutstanding <= (borrowedAsset?.userBalance ?? 0) && totalOutstanding > minimumRepay
 
@@ -104,7 +103,7 @@ export const RepayFull = ({
               <div className="lending-stats" style={{ marginBottom: '25px' }}>
                 <ThreeLevelListItem>
                   <div className="name">Borrowed</div>
-                  <CommaNumber value={borrowedAmount} className="value" endingText={borrowedAsset?.symbol} />
+                  <CommaNumber value={borrowedAmount} className="value" />
                   <CommaNumber
                     value={borrowedAmount * Number(borrowedAsset?.rate)}
                     className="rate"
@@ -113,12 +112,12 @@ export const RepayFull = ({
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">Fees Due</div>
-                  <CommaNumber value={feesAmount} className="value" endingText={borrowedAsset?.symbol} />
+                  <CommaNumber value={feesAmount} className="value" />
                   <CommaNumber value={feesAmount * Number(borrowedAsset?.rate)} className="rate" beginningText="$" />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem className="left-divider">
                   <div className="name">Total Outstanding</div>
-                  <CommaNumber value={totalOutstanding} className="value" endingText={borrowedAsset?.symbol} />
+                  <CommaNumber value={totalOutstanding} className="value" />
                   <CommaNumber
                     value={totalOutstanding * Number(borrowedAsset?.rate)}
                     className="rate"
@@ -245,12 +244,7 @@ export const RepayFull = ({
                   <Icon id="arrowLeft" />
                   Back
                 </NewButton>
-                <NewButton
-                  kind={BUTTON_PRIMARY}
-                  form={BUTTON_WIDE}
-                  onClick={repayBtnHandler}
-                  disabled={isActionLoading}
-                >
+                <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={repayBtnHandler}>
                   <Icon id="close" />
                   Repay And Close
                 </NewButton>

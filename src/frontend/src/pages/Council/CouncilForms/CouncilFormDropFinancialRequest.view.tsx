@@ -13,7 +13,7 @@ import { DDItemId, DropDown, DropdownTruncateOption } from 'app/App.components/D
 
 // action
 import { dropFinancialRequest } from '../Council.actions'
-import { getFinancialRequestStorage } from 'pages/FinacialRequests/FiancialRequest.actions'
+import { getFinancialRequestStorage } from 'pages/FinacialRequests/FinancialRequest.actions'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 
 // style
@@ -21,6 +21,8 @@ import { CouncilFormStyled } from './CouncilForm.style'
 
 export const CouncilFormDropFinancialRequest = () => {
   const dispatch = useDispatch()
+  const { isActionActive } = useSelector((state: State) => state.loading)
+
   const {
     financialRequestMapper,
     financialRequestsIds,
@@ -88,7 +90,7 @@ export const CouncilFormDropFinancialRequest = () => {
           />
         </div>
         <div className="button-aligment">
-          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT}>
+          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isActionActive}>
             <Icon id="navigation-menu_close" />
             Drop Financial Request
           </NewButton>

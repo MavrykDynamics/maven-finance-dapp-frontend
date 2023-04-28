@@ -32,6 +32,7 @@ export const BorrowingTab = ({
   const [createdVaultId, setCreatedVaultAddress] = useState<null | string>(null)
   const [showZeroVaults, setShowZeroVaults] = useState(false)
   const { accountPkh } = useSelector((state: State) => state.wallet)
+  const { isActionActive } = useSelector((state: State) => state.loading)
   const {
     config: { DAOFee },
   } = useSelector((state: State) => state.loans)
@@ -51,7 +52,7 @@ export const BorrowingTab = ({
       {vaults.length ? (
         <>
           <Checkbox
-            id="show_dropped"
+            id="borrowing-tab-zero-filter"
             onChangeHandler={() => setShowZeroVaults(!showZeroVaults)}
             checked={showZeroVaults}
             className="checkbox"
@@ -62,7 +63,7 @@ export const BorrowingTab = ({
           <Button
             text="New Vault"
             icon="plus"
-            disabled={!Boolean(accountPkh)}
+            disabled={!Boolean(accountPkh) || isActionActive}
             onClick={() => openCreateVaultPopup({ currentMarketAsset, setCreatedVaultAddress })}
             kind={ACTION_PRIMARY}
             className="lending-tab-no-items-btn has-items-borrow-btn"

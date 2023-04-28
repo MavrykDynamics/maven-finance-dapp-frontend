@@ -38,6 +38,8 @@ import { LoansModalBase, VaultModalOverview } from './Modals.style'
 import { XtzBakerType } from 'utils/TypesAndInterfaces/Loans'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { DropDownJsxChild } from 'app/App.components/DropDown/DropDown.style'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import { silverColor } from 'styles'
 
 type InputState =
   | {
@@ -79,7 +81,6 @@ export const AddNewCollateral = ({
     xtzBakers: { otherBakers, dao, mavrykDynamics },
   } = useSelector((state: State) => state.tokens)
   const { avaliableCollaterals } = useSelector((state: State) => state.tokens)
-  const { isActionLoading } = useSelector((state: State) => state.loading)
 
   const xtzBakers: Array<XtzBakerType & { isDisabled?: boolean }> = useMemo(
     () => [...otherBakers, ...(dao ? [dao] : []), ...(mavrykDynamics ? [mavrykDynamics] : [])],
@@ -243,10 +244,9 @@ export const AddNewCollateral = ({
 
   const isDepositBtnDisabled = useMemo(
     () =>
-      isActionLoading ||
       (isTezosAsset(inputData?.assetName ?? '') && !bakerChosenDdItem) ||
       inputData?.validationStatus === INPUT_STATUS_ERROR,
-    [bakerChosenDdItem, inputData?.assetName, inputData?.validationStatus, isActionLoading],
+    [bakerChosenDdItem, inputData?.assetName, inputData?.validationStatus],
   )
 
   const depositCollateralHandler = () => {
@@ -299,7 +299,14 @@ export const AddNewCollateral = ({
               <CommaNumber value={vaultCollateralBalance} beginningText="$" className="value" />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
-              <div className="name">Available to Borrow</div>
+              <div className="name">
+                Available to Borrow{' '}
+                <CustomTooltip
+                  text="The available to borrow metric takes 2 separate values into account. The borrow capacity of your vault AND the availableLiquidity of the asset pool your vault is borrowing from. The equation used is: min(avaliableLiquidity, vaultCollateralValue / 2 - borrowedAmount)"
+                  iconId="info"
+                  defaultStrokeColor={silverColor}
+                />
+              </div>
               <CommaNumber value={borrowCapacity} className="value" beginningText="$" />
             </ThreeLevelListItem>
           </VaultModalOverview>
@@ -401,7 +408,14 @@ export const AddNewCollateral = ({
               <CommaNumber value={futureCollateralBalance} className="value" beginningText="$" />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
-              <div className="name">Available to Borrow</div>
+              <div className="name">
+                Available to Borrow{' '}
+                <CustomTooltip
+                  text="The available to borrow metric takes 2 separate values into account. The borrow capacity of your vault AND the availableLiquidity of the asset pool your vault is borrowing from. The equation used is: min(avaliableLiquidity, vaultCollateralValue / 2 - borrowedAmount)"
+                  iconId="info"
+                  defaultStrokeColor={silverColor}
+                />
+              </div>
               <CommaNumber value={futureBorrowCapacity} className="value" beginningText="$" />
             </ThreeLevelListItem>
           </VaultModalOverview>

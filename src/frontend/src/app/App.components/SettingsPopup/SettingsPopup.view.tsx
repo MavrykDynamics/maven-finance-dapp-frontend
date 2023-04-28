@@ -8,7 +8,6 @@ import { RPCNodeType } from 'reducers/preferences'
 import { ACTION_PRIMARY, TRANSPARENT } from '../Button/Button.constants'
 import { isValidRPCNode } from 'utils/validatorFunctions'
 
-
 // actions
 import { selectNewRPCNode, setNewRPCNodes } from './SettingsPopup.actions'
 import {
@@ -26,7 +25,7 @@ import {
   DescrText,
   PopupContainerWrapper,
   PopupTitle,
-  Button
+  Button,
 } from './SettingsPopup.style'
 
 // types
@@ -68,9 +67,7 @@ export const PopupChangeNodeView = ({ closeModal }: { closeModal: () => void }) 
   return (
     <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="settings">
       <div className="change-node-block">
-        <div onClick={closeModal} className="close_modal">
-          +
-        </div>
+        <button onClick={closeModal} className="close-modal" />
         <PopupTitle className="change_node">Change RPC Node</PopupTitle>
 
         <ChangeNodeNodesList className="scroll-block">
@@ -82,7 +79,7 @@ export const PopupChangeNodeView = ({ closeModal }: { closeModal: () => void }) 
             >
               {nodeLogoUrl && (
                 <div className="img_wrapper">
-                  <img src={`./images/${nodeLogoUrl}`} alt={'node logo'} />
+                  <img src={`/images/${nodeLogoUrl}`} alt={'node logo'} />
                 </div>
               )}{' '}
               <span className={isUser ? 'user-url' : ''}>{isUser ? `Link: ${url}` : title}</span>

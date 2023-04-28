@@ -1,7 +1,8 @@
+import { useMemo } from 'react'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { Truncate } from 'app/App.style'
-import * as React from 'react'
 import { AccordionContent, AccordionItem, AccordionToggler, AccordionWrapper } from './Accordeon.style'
+import { getEntrypointText } from '../BreakGlass.helpers'
 
 type AccordionViewProps = {
   accordionId: string
@@ -11,16 +12,26 @@ type AccordionViewProps = {
 }
 
 export const BGAccordion = ({ methods, accordionClickHandler, accordionId, isExpanded }: AccordionViewProps) => {
-  const methodsList = methods ? Object.keys(methods) : []
+  const methodsList = useMemo(
+    () =>
+      methods
+        ? Object.keys(methods).map((item) => ({
+            methodName: getEntrypointText(item),
+            method: item,
+          }))
+        : [],
+    [methods],
+  )
+
   return (
     <AccordionWrapper>
       <AccordionToggler onClick={() => accordionClickHandler(accordionId)}>
         Entrypoints {<Icon className={`accordion-icon ${isExpanded ? '' : 'down'}`} id="accordion_icon" />}
       </AccordionToggler>
       <AccordionContent className={`${isExpanded ? 'expanded' : ''}`}>
-        {methodsList.map((method: string) => (
-          <AccordionItem key={method} status={methods[method]}>
-            <Truncate>{method}</Truncate>
+        {methodsList.map((item) => (
+          <AccordionItem key={item.method} status={methods[item.method]}>
+            <Truncate>{item.methodName}</Truncate>
           </AccordionItem>
         ))}
       </AccordionContent>

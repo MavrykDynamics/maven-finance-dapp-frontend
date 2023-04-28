@@ -3,7 +3,7 @@ import BigNumber from 'bignumber.js'
 import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { Governance_Proposal } from 'utils/generated/graphqlTypes'
 import { ValidSubmitProposalForm, SubmitProposalFormInputStatus } from 'utils/TypesAndInterfaces/Forms'
-import { CurrentRoundProposalsStorageType, ProposalRecordType } from 'utils/TypesAndInterfaces/Governance'
+import { ProposalRecordType, ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
 import {
   PaymentsDataChangesType,
   ProposalDataChangesType,
@@ -16,10 +16,6 @@ import { State } from 'reducers'
 import { validateTzAddress, isValidLength } from 'utils/validatorFunctions'
 import { defaultProposalDescriptionMaxLength } from 'app/App.components/Input/Input.constants'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
-
-export const checkWhetherBytesIsValid = (proposalData: ProposalRecordType['proposalData']): boolean => {
-  return proposalData.every(({ encoded_code, title }) => Boolean(encoded_code) && Boolean(title))
-}
 
 export const getBytesPairValidationStatus = (
   newText: string,
@@ -218,36 +214,32 @@ export const PROPOSAL_BYTE = {
   governance_proposal_id: 0,
 }
 
-export const DEFAULT_PROPOSAL: CurrentRoundProposalsStorageType[number] = {
+export const DEFAULT_PROPOSAL: ProposalRecordType = {
   id: -1,
   proposerId: '',
-  status: 0,
+  governanceId: '',
+  status: ProposalStatus.UNLOCKED,
   title: '',
   description: '',
-  invoice: '',
-  successReward: 0,
-  startDateTime: '',
-  executed: false,
-  locked: false,
   sourceCode: '',
   passVoteMvkTotal: 0,
   upvoteMvkTotal: 0,
   downvoteMvkTotal: 0,
   abstainMvkTotal: 0,
-  minProposalRoundVoteRequirement: 0,
-  minProposalRoundVotePercentage: 0,
   minQuorumPercentage: 0,
-  minQuorumMvkTotal: 0,
   quorumMvkTotal: 0,
-  currentRoundProposal: true,
-  currentCycleStartLevel: 0,
   currentCycleEndLevel: 0,
   cycle: 0,
+  successReward: 0,
   proposalData: [],
   votes: [],
   proposalPayments: [],
-  governanceId: '',
+  currentRoundProposal: true,
   paymentProcessed: false,
+  anyCanExecute: false,
+  anyCanPay: false,
+  executed: false,
+  locked: false,
 }
 
 export const DEFAULT_PROPOSAL_VALIDATION: ProposalValidityObj = {

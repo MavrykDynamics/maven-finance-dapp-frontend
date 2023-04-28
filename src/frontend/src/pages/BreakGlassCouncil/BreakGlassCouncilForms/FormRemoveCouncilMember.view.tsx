@@ -20,6 +20,7 @@ import { removeCouncilMember } from '../BreakGlassCouncil.actions'
 export function FormRemoveCouncilMemberView() {
   const dispatch = useDispatch()
   const { breakGlassCouncilMembers } = useSelector((state: State) => state.council)
+  const { isActionActive } = useSelector((state: State) => state.loading)
 
   const dropDownItems = useMemo(
     () =>
@@ -79,7 +80,7 @@ export function FormRemoveCouncilMemberView() {
         </div>
 
         <div className="btn-wrapper">
-          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT}>
+          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isActionActive}>
             <Icon id="minus" />
             Remove Council Member
           </NewButton>

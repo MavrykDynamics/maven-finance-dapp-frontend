@@ -1,4 +1,7 @@
 import { useContext, useEffect, useRef, useState } from 'react'
+import { useSelector } from 'react-redux'
+import { useClickAway } from 'react-use'
+import { Link } from 'react-router-dom'
 
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import {
@@ -15,6 +18,8 @@ import {
   BUTTON_SIMPLE,
   BUTTON_WIDE,
 } from 'app/App.components/Button/Button.constants'
+import colors from 'styles/colors'
+import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
@@ -23,6 +28,8 @@ import Button from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { StatusMessage } from './StatusMessage.view'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
+import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { scrollToFullView } from 'utils/scrollToFullView'
 import { assetDecimalsToShow } from '../Loans.const'
@@ -32,18 +39,12 @@ import { ThreeLevelListItem } from '../Loans.style'
 import { BorrowingTabListItemExpanded } from './LoansComponents.style'
 
 import { loansPopupsContext } from './Modals/LoansModals.provider'
-import { Link } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+
 import { State } from 'reducers'
-import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
-import { getTimestampByLevel } from 'pages/Governance/Governance.actions'
 import { calculateCollateralShare } from 'pages/Vaults/calcFunctionsForVault'
 import { isTezosAsset } from '../Loans.helpers'
-import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import colors from 'styles/colors'
+import getTimestampByLevel from 'utils/Fetchers/getTimestampByLevel'
 import { getNumberInBounds } from 'utils/calcFunctions'
-import { useClickAway } from 'react-use'
 
 type BorrowingExpandCardPropsType = LoansVaultType & {
   isOwner?: boolean
@@ -88,7 +89,7 @@ export const BorrowingExpandCard = ({
 
   const { avaliableCollaterals } = useSelector((state: State) => state.tokens)
   const { themeSelected } = useSelector((state: State) => state.preferences)
-  const { isActionLoading } = useSelector((state: State) => state.loading)
+  const { isActionActive } = useSelector((state: State) => state.loading)
 
   const [expanded, setExpanded] = useState(false)
 
@@ -125,7 +126,7 @@ export const BorrowingExpandCard = ({
     updateMvkOperatorPopup.showModal ||
     managePermissionsPopup.showModal ||
     liquidateVaultPopup.showModal ||
-    isActionLoading
+    isActionActive
 
   const ref = useRef<HTMLDivElement | null>(null)
 
@@ -294,9 +295,9 @@ export const BorrowingExpandCard = ({
                         scrollToCurrentVault,
                       })
                     }
-                    kind={BUTTON_SECONDARY}
+                    kind={BUTTON_PRIMARY}
                     form={BUTTON_WIDE}
-                    disabled={collateralRatio < 200}
+                    disabled={collateralRatio <= 201 || isActionActive}
                   >
                     <Icon id="coin-loan" /> Borrow
                   </Button>
@@ -314,9 +315,9 @@ export const BorrowingExpandCard = ({
                         scrollToCurrentVault,
                       })
                     }
-                    kind={BUTTON_PRIMARY}
+                    kind={BUTTON_SECONDARY}
                     form={BUTTON_WIDE}
-                    disabled={!borrowedAmount}
+                    disabled={!borrowedAmount || isActionActive}
                   >
                     <Icon id="okIcon" /> Repay
                   </Button>
@@ -403,7 +404,8 @@ export const BorrowingExpandCard = ({
                                     form={BUTTON_WIDE}
                                     disabled={
                                       avaliableCollaterals.length === 0 ||
-                                      avaliableCollaterals.length === collateralData.length - 1
+                                      avaliableCollaterals.length === collateralData.length - 1 ||
+                                      isActionActive
                                     }
                                   >
                                     <Icon id="plus" /> Add Collateral
@@ -429,6 +431,7 @@ export const BorrowingExpandCard = ({
                                   }
                                   form={BUTTON_WIDE}
                                   kind={BUTTON_SECONDARY}
+                                  disabled={isActionActive}
                                 >
                                   <Icon id="plus" /> Add
                                 </Button>
@@ -447,7 +450,7 @@ export const BorrowingExpandCard = ({
                                     }
                                     form={BUTTON_WIDE}
                                     kind={BUTTON_SECONDARY}
-                                    disabled={collateralRatio < 200}
+                                    disabled={collateralRatio <= 200 || isActionActive}
                                   >
                                     <Icon id="minus" /> Remove
                                   </Button>
@@ -479,7 +482,9 @@ export const BorrowingExpandCard = ({
                       form={BUTTON_WIDE}
                       isThin
                       disabled={
-                        avaliableCollaterals.length === 0 || avaliableCollaterals.length === collateralData.length - 1
+                        avaliableCollaterals.length === 0 ||
+                        avaliableCollaterals.length === collateralData.length - 1 ||
+                        isActionActive
                       }
                     >
                       <Icon id="plus" /> Add Collateral
@@ -503,7 +508,7 @@ export const BorrowingExpandCard = ({
                     </div>
                     <Button
                       kind={BUTTON_SIMPLE}
-                      disabled={!collateralData.find(({ gqlName }) => isTezosAsset(gqlName))}
+                      disabled={!collateralData.find(({ gqlName }) => isTezosAsset(gqlName)) || isActionActive}
                       onClick={() =>
                         openChangeBakerPopup?.({
                           bakerAddress: xtzDelegatedTo,
@@ -563,6 +568,7 @@ export const BorrowingExpandCard = ({
                         depositors,
                       })
                     }
+                    disabled={isActionActive}
                   >
                     Update <Icon id="paginationArrowLeft" />
                   </Button>
@@ -583,7 +589,7 @@ export const BorrowingExpandCard = ({
                           ` ${mappedMVKOperators.amount ?? ''}`
                         : 'None'}
                     </div>
-                    <Button kind={BUTTON_SIMPLE} disabled onClick={() => openUpdateMvkOperatorsPopup?.({})}>
+                    <Button kind={BUTTON_SIMPLE} disabled={true || isActionActive} onClick={() => openUpdateMvkOperatorsPopup?.({})} >
                       Update <Icon id="paginationArrowLeft" />
                     </Button>
                   </div>
@@ -591,7 +597,7 @@ export const BorrowingExpandCard = ({
 
                 <div className="repay-full">
                   <Button
-                    disabled={true || !borrowedAmount}
+                    disabled={true || !borrowedAmount || isActionActive}
                     isThin
                     kind={BUTTON_SECONDARY}
                     onClick={() =>

@@ -119,13 +119,18 @@ export const BGInfo = styled(BGBlockBaseStyles)<{ theme: MavrykTheme }>`
 
 export const BGCardsWrapper = styled.div<{ theme: MavrykTheme }>`
   display: flex;
-  flex-wrap: wrap;
-  column-gap: 4%;
-  row-gap: 25px;
+  flex-direction: column;
   margin-top: 23px;
   grid-column-start: 1;
   grid-column-end: 3;
   grid-row-start: 2;
+
+  .cards-list {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 4%;
+    row-gap: 25px;
+  }
 `
 
 export const BGWhitelist = styled(BGBlockBaseStyles)<{ theme: MavrykTheme }>`

@@ -2,7 +2,6 @@
 import type {
   Doorman,
   Smvk_History_Data,
-  Mvk_Mint_History_Data,
   Mvk_Token,
   Mvk_Transfer_History_Data,
 } from '../generated/graphqlTypes'
@@ -10,7 +9,6 @@ import type {
 // conterters
 import {
   normalizeDoormanStorage,
-  normalizeMvkHistoryData,
   normalizeSmvkHistoryData,
 } from '../../pages/Doorman/Doorman.converter'
 
@@ -38,5 +36,3 @@ export type MvkTokenGraphQL = Omit<Mvk_Token, '__typename'>
 export type SmvkHistoryData = ReturnType<typeof normalizeSmvkHistoryData>
 export type SmvkHistoryDataGraphQl = Omit<Smvk_History_Data, '__typename'>
 
-export type MvkHistoryData = ReturnType<typeof normalizeMvkHistoryData>
-export type MvkHistoryDataGraphQl = Omit<Mvk_Transfer_History_Data, '__typename'>

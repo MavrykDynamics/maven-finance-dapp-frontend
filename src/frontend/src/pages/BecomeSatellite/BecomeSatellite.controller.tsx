@@ -47,6 +47,7 @@ import {
   BecomeSatelliteRegisterAsOracle,
   BecomeSatelliteOracleText,
 } from './BecomeSatellite.style'
+import { INFO_WARNING } from 'app/App.components/Info/info.constants'
 
 const connectWalletMessage = (
   <BecomeSatelliteFormBalanceCheck balanceOk={false}>
@@ -68,6 +69,7 @@ export const BecomeSatellite = () => {
     config: { minimumStakedMvkBalance, isConfigLoaded, ...restSatelliteConfig },
   } = useSelector((state: State) => state.satellites)
   const { isLoaded: isDoormanLoaded } = useSelector((state: State) => state.doorman)
+  const { isActionActive } = useSelector((state: State) => state.loading)
   const { themeSelected } = useSelector((state: State) => state.preferences)
 
   const { isLoading } = useDataLoader(
@@ -188,9 +190,9 @@ export const BecomeSatellite = () => {
   }
 
   // Handlers for register/unregister and update data
-  const handleUnregisterSatellite = () => dispatch(unregisterAsSatellite())
+  const handleUnregisterSatellite = async () => await dispatch(unregisterAsSatellite())
 
-  const handleRegisterOrUpdateSatellite = () => {
+  const handleRegisterOrUpdateSatellite = async () => {
     const mainRequestForm: RegisterAsSatelliteForm = {
       name: form.name.text,
       description: form.description.text,
@@ -205,8 +207,8 @@ export const BecomeSatellite = () => {
       : mainRequestForm
 
     usersSatelliteProfile && usersSatelliteProfile.currentlyRegistered
-      ? dispatch(updateSatelliteRecord(requestData))
-      : dispatch(registerAsSatellite(requestData))
+      ? await dispatch(updateSatelliteRecord(requestData))
+      : await dispatch(registerAsSatellite(requestData))
   }
 
   const tooltipPublicKey = (
@@ -235,7 +237,10 @@ export const BecomeSatellite = () => {
       />
 
       {!balanceOverMinStakedMvk && (
-        <NotStakingBanner text={`To become a satellite you need to stake ${minimumStakedMvkBalance} MVK`} />
+        <NotStakingBanner
+          className="become-satellite"
+          text={`To become a satellite you need to stake ${minimumStakedMvkBalance} MVK`}
+        />
       )}
 
       <PageContent>
@@ -354,7 +359,11 @@ export const BecomeSatellite = () => {
                 <div className="checkbox">
                   {pageText.registerAsOracle}
 
-                  <Checkbox id="show_dropped" onChangeHandler={() => setIsChecked(!isChecked)} checked={isChecked} />
+                  <Checkbox
+                    id="become-satellite-is-oracle"
+                    onChangeHandler={() => setIsChecked(!isChecked)}
+                    checked={isChecked}
+                  />
                 </div>
 
                 <BecomeSatelliteOracleText>
@@ -397,13 +406,14 @@ export const BecomeSatellite = () => {
                 )}
 
                 {showOracleWarning && (
-                  <Info
-                    text={
-                      'You are unregistering for being an oracle. This means you will no longer be able to sign price feeds and subsequently no longer receive rewards for participation in the oracle network.'
-                    }
-                    type="warning"
-                    className="oracleWarning"
-                  ></Info>
+                  <div className="warning">
+                    <Info
+                      text={
+                        'You are unregistering for being an oracle. This means you will no longer be able to sign price feeds and subsequently no longer receive rewards for participation in the oracle network.'
+                      }
+                      type={INFO_WARNING}
+                    ></Info>
+                  </div>
                 )}
               </BecomeSatelliteRegisterAsOracle>
 
@@ -411,7 +421,7 @@ export const BecomeSatellite = () => {
                 {usersSatelliteProfile && usersSatelliteProfile.currentlyRegistered && (
                   <NewButton
                     kind={BUTTON_SECONDARY}
-                    disabled={!usersSatelliteProfile.currentlyRegistered}
+                    disabled={!usersSatelliteProfile.currentlyRegistered || isActionActive}
                     onClick={handleUnregisterSatellite}
                   >
                     <Icon id="navigation-menu_close" /> Unregister Satellite
@@ -419,7 +429,7 @@ export const BecomeSatellite = () => {
                 )}
 
                 <NewButton
-                  disabled={isUpdateButtonDisabled}
+                  disabled={isUpdateButtonDisabled || isActionActive}
                   kind={BUTTON_PRIMARY}
                   onClick={handleRegisterOrUpdateSatellite}
                 >

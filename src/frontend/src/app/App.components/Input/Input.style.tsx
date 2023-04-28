@@ -1,7 +1,7 @@
 import styled from 'styled-components/macro'
 import { zoomIn, slideDown } from 'styles/animations'
 import { MavrykTheme } from '../../../styles/interfaces'
-import { INPUT_BIG, INPUT_LARGE, INPUT_MEDIUM } from './Input.constants'
+import { INPUT_BIG, INPUT_LARGE, INPUT_MEDIUM, INPUT_SMALL } from './Input.constants'
 
 export const InputStyled = styled.div`
   position: relative;
@@ -205,11 +205,19 @@ export const StyledInput = styled.input<{ theme: MavrykTheme }>`
   &:hover:not(:disabled) {
     background-color: ${({ theme }) => theme.containerColor};
   }
+
+  &.remove-right-border-radius {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
 `
 
 export const InputPinnedChild = styled.div<{ theme: MavrykTheme }>`
   height: 100%;
-  border-left: 1px solid ${({ theme }) => theme.dataColor};
+  border-left: 1px solid ${({ theme }) => theme.cardBorderColor};
+  background-color: ${({ theme }) => theme.backgroundColor};
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
 
   .img-wrapper,
   svg {
@@ -275,6 +283,20 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
     }
   }
 
+  &.${INPUT_SMALL} {
+    height: 40px;
+
+    input {
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    input::placeholder {
+      font-weight: 400;
+      font-size: 12px;
+    }
+  }
+
   &:focus-within {
     box-shadow: 0 0 0 2px ${({ theme }) => theme.primaryColor}19;
     border-color: ${({ theme }) => theme.primaryColor}7F;
@@ -284,8 +306,13 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
     border: 1px solid ${({ theme }) => theme.downColor};
     input {
       color: ${({ theme }) => theme.downColor};
+
       &::placeholder {
         color: ${({ theme }) => theme.downColor};
+      }
+
+      &:focus {
+        box-shadow: 0 0 0 2px ${({ theme }) => theme.downColor}7F;
       }
     }
 
@@ -298,8 +325,13 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
     border: 1px solid ${({ theme }) => theme.upColor};
     input {
       color: ${({ theme }) => theme.upColor};
+
       &::placeholder {
         color: ${({ theme }) => theme.upColor};
+      }
+
+      &:focus {
+        box-shadow: 0 0 0 2px ${({ theme }) => theme.upColor}7F;
       }
     }
 
@@ -364,7 +396,7 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
   .input-balance {
     position: absolute;
     bottom: -35px;
-    right: 0px;
+    right: 15px;
     font-weight: 600;
     font-size: 14px;
     line-height: 21px;
@@ -384,16 +416,23 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
   .useMax-btn {
     position: absolute;
     top: -20px;
-    right: 0px;
+    right: 15px;
     font-size: 14px;
+
+    &::before {
+      position: absolute;
+      background-color: ${({ theme }) => theme.valueColor};
+      width: 100%;
+      content: '';
+      height: 1px;
+      bottom: 0px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
   }
 
   .pointer {
     cursor: pointer;
-  }
-
-  &.vault-name {
-    margin-top: 45px;
   }
 `
 
@@ -436,6 +475,10 @@ export const InputStyledStatus = styled.div<{ theme: MavrykTheme }>`
     animation: ${zoomIn} 0.3s cubic-bezier(0.12, 0.4, 0.29, 1.46);
     height: 12px;
     width: 17px;
+  }
+
+  &.${INPUT_LARGE} {
+    top: 19.5px;
   }
 `
 

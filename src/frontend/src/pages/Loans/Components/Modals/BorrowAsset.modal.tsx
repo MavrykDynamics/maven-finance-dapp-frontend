@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useLockBodyScroll } from 'react-use'
 import { useEffect, useMemo, useState } from 'react'
 
-import { INPUT_LARGE, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import { INPUT_LARGE, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { COLLATERAL_RATIO_GRADIENT, assetDecimalsToShow, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { BorrowPopupDataType, DEFAULT_LOANS_INPUT_VALUE, getOnBlurValue, getOnFocusValue } from './Modals.helpers'
 import { State } from 'reducers'
@@ -53,7 +53,6 @@ export const BorrowAsset = ({
 
   useLockBodyScroll(show)
   const dispatch = useDispatch()
-  const { isActionLoading } = useSelector((state: State) => state.loading)
   const { themeSelected } = useSelector((state: State) => state.preferences)
 
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
@@ -259,44 +258,33 @@ export const BorrowAsset = ({
               <GovRightContainerTitleArea>
                 <h2>Confirm Borrow {borrowedAsset?.symbol}</h2>
               </GovRightContainerTitleArea>
-              <div className="modalDescr">
-                Select the asset you would like to borrow. You cannot borrow more than your borrow capacity.
-              </div>
+              <div className="modalDescr">Please confirm the following details.</div>
 
               <div className="lending-stats" style={{ marginBottom: '30px' }}>
                 <ThreeLevelListItem>
-                  <div className="name">Total Amount</div>
-                  <CommaNumber
-                    value={inputAmount}
-                    decimalsToShow={assetDecimalsToShow}
-                    className="value"
-                    endingText={borrowedAsset?.symbol}
-                  />
+                  <div className="name">
+                    Total Amount
+                    <CustomTooltip iconId="info" defaultStrokeColor={silverColor} text={``} className="tooltip" />
+                  </div>
+                  <CommaNumber value={inputAmount} decimalsToShow={assetDecimalsToShow} className="value" />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
-                  <div className="name">
-                    Amount Received{' '}
-                    <CustomTooltip
-                      iconId="info"
-                      defaultStrokeColor={silverColor}
-                      text={`Total Amount minus DAO Fee`}
-                      className="tooltip"
-                    />
-                  </div>
+                  <div className="name">Amount Received</div>
                   <CommaNumber
                     value={inputAmount - inputAmount * (DAOFee / 100)}
                     decimalsToShow={assetDecimalsToShow}
                     className="value"
-                    endingText={borrowedAsset?.symbol}
                   />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
-                  <div className="name">DAO Fee</div>
+                  <div className="name">
+                    DAO Fee
+                    <CustomTooltip iconId="info" defaultStrokeColor={silverColor} text={`Origination fee`} className="tooltip" />
+                  </div>
                   <CommaNumber
                     value={inputAmount * (DAOFee / 100)}
                     decimalsToShow={assetDecimalsToShow}
                     className="value"
-                    endingText={borrowedAsset?.symbol}
                   />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
@@ -340,12 +328,7 @@ export const BorrowAsset = ({
                   <Icon id="arrowLeft" />
                   Back
                 </NewButton>
-                <NewButton
-                  kind={BUTTON_PRIMARY}
-                  form={BUTTON_WIDE}
-                  onClick={borrowAsserHandler}
-                  disabled={isActionLoading}
-                >
+                <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={borrowAsserHandler}>
                   <Icon id="coin-loan" />
                   Borrow {borrowedAsset?.symbol}
                 </NewButton>
