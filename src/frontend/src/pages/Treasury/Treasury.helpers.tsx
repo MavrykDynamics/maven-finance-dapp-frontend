@@ -116,8 +116,9 @@ export const normalizeTreasuryStorage = (
 
     const treasuryNormalizedTokens = treasuryData.balances
       .map(({ balance, metadata }): TreasuryBalanceType => {
+        console.log({ metadata })
         // metadata has no type in indexer types so use 'as'
-        const { symbol, decimals, icon } = metadata as TreasuryAssetMapperType
+        const { symbol = '', decimals = '0', icon = '' } = (metadata ?? {}) as TreasuryAssetMapperType
         const parsedDecimals = parseInt(decimals)
 
         const coinsAmount = convertNumberForClient({ number: balance, grade: parsedDecimals })
@@ -148,7 +149,7 @@ export const normalizeTreasuryStorage = (
       // Add sMVK treasury asset if has
       .concat(sMVKAmount ?? [])
       // Filter zero balance assets in treasury
-      .filter(({ balance }: TreasuryBalanceType) => balance > 0 || balance.toString().includes('e'))
+      .filter(({ balance, symbol }: TreasuryBalanceType) => symbol && (balance > 0 || balance.toString().includes('e')))
       // Sort by most balance to top
       .sort((asset1, asset2) => asset2.balance * Number(asset2.rate) - asset1.balance * Number(asset1.rate))
 
