@@ -506,9 +506,9 @@ export const ConnectWalletClose = styled.button<{ theme: MavrykTheme }>`
   cursor: pointer;
 
   .close-connect-wallet {
-    stroke: ${({ theme }) => theme.headerColor};
-    width: 14px;
-    height: 14px;
+    fill: ${({ theme }) => theme.valueColor};
+    width: 24px;
+    height: 24px;
   }
 `
 
