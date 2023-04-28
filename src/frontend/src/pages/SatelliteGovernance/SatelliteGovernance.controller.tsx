@@ -130,9 +130,8 @@ export const SatelliteGovernance = () => {
   )
 
   const [tabsList, setTabsList] = useState<ExtendedTabItem[]>([])
-
-  const [ddIsOpen, setDdIsOpen] = useState(false)
-  const [chosenDdItem, setChosenDdItem] = useState('')
+  const [chosenDdItem, setChosenDdItem] = useState<string>()
+  const activeDdItem = useMemo(() => (chosenDdItem ? getDdItem(chosenDdItem) : undefined), [chosenDdItem])
 
   const currentListName = getCurrentListNameById(tabId)
   const currentSatelliteGovIds = getCurrentIdsById(tabId)
@@ -186,10 +185,7 @@ export const SatelliteGovernance = () => {
 
   const handleOnClickDropdownItem = (itemId: DDItemId) => {
     const chosenItem = ddItems.find((item) => item.id === itemId)
-    if (chosenItem) {
-      setChosenDdItem(chosenItem.id)
-      setDdIsOpen(!ddIsOpen)
-    }
+    setChosenDdItem(chosenItem?.id)
   }
 
   const { isLoading } = useDataLoader(
@@ -244,7 +240,7 @@ export const SatelliteGovernance = () => {
 
               <DropDown
                 placeholder="Choose action"
-                activeItem={getDdItem(chosenDdItem)}
+                activeItem={activeDdItem}
                 items={ddItems}
                 clickItem={handleOnClickDropdownItem}
               />
