@@ -83,46 +83,46 @@ export const DashboardView = ({
       </div>
 
       <div className="dashboard-navigation">
-        <Link to={`/dashboard/${LENDING_TAB_ID}`} className={activeTab === LENDING_TAB_ID ? 'selected' : ''}>
+        <Link to={`/${LENDING_TAB_ID}`} className={activeTab === LENDING_TAB_ID ? 'selected' : ''}>
           Lending
         </Link>
-        <Link to={`/dashboard/${VAULTS_TAB_ID}`} className={activeTab === VAULTS_TAB_ID ? 'selected' : ''}>
+        <Link to={`/${VAULTS_TAB_ID}`} className={activeTab === VAULTS_TAB_ID ? 'selected' : ''}>
           Vaults
         </Link>
-        <Link to={`/dashboard/${SATELLITES_TAB_ID}`} className={activeTab === SATELLITES_TAB_ID ? 'selected' : ''}>
+        <Link to={`/${SATELLITES_TAB_ID}`} className={activeTab === SATELLITES_TAB_ID ? 'selected' : ''}>
           Satellites
         </Link>
-        <Link to={`/dashboard/${TREASURY_TAB_ID}`} className={activeTab === TREASURY_TAB_ID ? 'selected' : ''}>
+        <Link to={`/${TREASURY_TAB_ID}`} className={activeTab === TREASURY_TAB_ID ? 'selected' : ''}>
           Treasury
         </Link>
-        <Link to={`/dashboard/${FARMS_TAB_ID}`} className={activeTab === FARMS_TAB_ID ? 'selected' : ''}>
+        <Link to={`/${FARMS_TAB_ID}`} className={activeTab === FARMS_TAB_ID ? 'selected' : ''}>
           Farms
         </Link>
-        <Link to={`/dashboard/${ORACLES_TAB_ID}`} className={activeTab === ORACLES_TAB_ID ? 'selected' : ''}>
+        <Link to={`/${ORACLES_TAB_ID}`} className={activeTab === ORACLES_TAB_ID ? 'selected' : ''}>
           Oracles
         </Link>
       </div>
 
       <Switch>
-        <Route exact path={`/dashboard/${FARMS_TAB_ID}`}>
+        <Route exact path={`/${FARMS_TAB_ID}`}>
           <FarmsTab isLoading={isLoading} />
         </Route>
-        <Route exact path={`/dashboard/${VAULTS_TAB_ID}`}>
+        <Route exact path={`/${VAULTS_TAB_ID}`}>
           <VaultsTab isLoading={isLoading} />
         </Route>
-        <Route exact path={`/dashboard/${SATELLITES_TAB_ID}`}>
+        <Route exact path={`/${SATELLITES_TAB_ID}`}>
           <SatellitesTab isLoading={isLoading} />
         </Route>
-        <Route exact path={`/dashboard/${ORACLES_TAB_ID}`}>
+        <Route exact path={`/${ORACLES_TAB_ID}`}>
           <OraclesTab isLoading={isLoading} />
         </Route>
-        <Route exact path={`/dashboard/${TREASURY_TAB_ID}`}>
+        <Route exact path={`/${TREASURY_TAB_ID}`}>
           <TreasuryTab isLoading={isLoading} />
         </Route>
-        <Route path={`/dashboard/${LENDING_TAB_ID}`}>
+        <Route path={`/${LENDING_TAB_ID}`}>
           <LendingTab isLoading={isLoading} />
         </Route>
-        <Redirect to={`/dashboard/${LENDING_TAB_ID}`} />
+        <Redirect to={`/${LENDING_TAB_ID}`} />
       </Switch>
     </DashboardStyled>
   )
