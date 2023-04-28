@@ -96,9 +96,9 @@ export const PageHeaderTextArea = styled.div`
 
   p {
     color: ${whiteColor};
-    font-weight: 400;
-    font-size: 12px;
-    line-height: 12px;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 24px;
     margin: 0;
     white-space: nowrap;
   }
