@@ -23,12 +23,12 @@ import './styles/animations.css'
 
 // apollo client setup
 const httpLink = new HttpLink({
-  uri: process.env.REACT_APP_GRAPHQL_API ?? '', // try localhost
+  uri: process.env.REACT_APP_GRAPHQL_API ?? '',
 })
 
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: 'ws://api.mavryk.finance/v1/graphql/subscriptions',
+    url: 'wss://api.mavryk.finance/v1/graphql',
   }),
 )
 

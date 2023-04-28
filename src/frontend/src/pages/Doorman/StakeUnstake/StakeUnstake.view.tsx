@@ -43,15 +43,6 @@ import {
   StakeUnstakeAmount,
 } from './StakeUnstake.style'
 
-const QUERY_STAKE = gql`
-  query getStakeHistoryData {
-    smvk_history_data {
-      smvk_total_supply
-      timestamp
-    }
-  }
-`
-
 const SUBSCRIPTION_STAKE = gql`
   subscription subscribeStakeHistoryData {
     smvk_history_data {
@@ -88,25 +79,8 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
   const dispatch = useDispatch()
   const history = useHistory()
 
-  // const { data, loading } = useSubscription(DOORMAN_ADDRESS_BALANCE, {
-  //   variables: {
-  //     doormanContractAddress: 'KT1Kw1VkHtG42znqqPe12vDnNND3qaNa3RAe',
-  //   },
-  // })
-  // const { data: data2, loading: loading2 } = useSubscription(ADDRESS_BALANCE_DATA, {
-  //   variables: {
-  //     _eq: 'tz1ezDb77a9jaFMHDWs8QXrKEDkpgGdgsjPD',
-  //   },
-  // })
-
-  // const { data: qdata, error, loading: qloading } = useQuery(QUERY_STAKE)
-
-  // console.log(qdata, error, qloading, 'query')
-
   const { data, loading, error } = useSubscription(SUBSCRIPTION_STAKE)
 
-  // console.log(data, loading, 'doormanContractAddress')
-  // console.log(data2, loading2, '_eq')
   console.log(data, loading, error, 'stakeHistoryData')
 
   const {
