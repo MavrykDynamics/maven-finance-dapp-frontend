@@ -81,9 +81,15 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
   const dispatch = useDispatch()
   const history = useHistory()
 
-  const { data, loading, error } = useSubscription(SUBSCRIPTION_STAKE)
+  useSubscription(SUBSCRIPTION_STAKE, {
+    onSubscriptionData: ({ subscriptionData }) => {
+      const { smvk_history_data: newSmvkHistoryData } = subscriptionData.data
+      const lastSmvkHistoryData = newSmvkHistoryData[newSmvkHistoryData.length - 1]
+      console.log(lastSmvkHistoryData, ' ----------------------')
+    },
+  })
 
-  console.log(data, loading, error, 'stakeHistoryData')
+  // console.log(data, loading, error, 'stakeHistoryData')
 
   const {
     accountPkh,
