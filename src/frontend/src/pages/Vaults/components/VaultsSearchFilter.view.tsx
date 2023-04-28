@@ -1,10 +1,10 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useMemo } from 'react'
 import qs from 'qs'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 
 // components
 import { Input } from 'app/App.components/Input/Input.controller'
-import { DropDown } from 'app/App.components/DropDown/DropDown.controller'
+import { DDItemId, DropDown, getDdItem } from 'app/App.components/DropDown/NewDropdown'
 import Checkbox from 'app/App.components/Checkbox/Checkbox.view'
 
 // styles
@@ -53,6 +53,9 @@ export const VaultsSearchFilter = ({ assets: assetSymbols, vaultsMapper, current
   const preparedLoanAssets = assetSymbols.loanAssets.map((asset) => `${LOAN_NAME}, ${asset}`)
   const preparedAssets = [ALL_VAULTS_FILTER].concat(preparedCollateralAssets).concat(preparedLoanAssets)
 
+  const filterDdItems = useMemo(() => preparedAssets.map((item) => getDdItem(item)), [preparedAssets])
+  const sortDdItems = useMemo(() => sortingList.map((item) => getDdItem(item)), [])
+
   const [searchInputValue, setSearchInput] = useState('')
 
   const [filterStatuses, setFilterStatuses] = useState<{ [key: string]: boolean }>({})
@@ -86,7 +89,7 @@ export const VaultsSearchFilter = ({ assets: assetSymbols, vaultsMapper, current
     return filteredVaultsIds
   }
 
-  const handleDropdownSelect = (name: string) => (selectedOption: string) => {
+  const handleDropdownSelect = (name: string) => (selectedOption: DDItemId) => {
     setFilterStatuses((prev) => ({
       ...prev,
       [name]: !prev[name],
@@ -94,7 +97,7 @@ export const VaultsSearchFilter = ({ assets: assetSymbols, vaultsMapper, current
 
     let updatedChosenDdItem = {
       ...chosenDdItem,
-      [name]: selectedOption,
+      [name]: selectedOption as string,
     }
 
     if (selectedOption === chosenDdItem[name]) return
@@ -228,13 +231,6 @@ export const VaultsSearchFilter = ({ assets: assetSymbols, vaultsMapper, current
     [currentVaultsIds, history, restQP, searchInputValue, setVaultsIds, tabId, vaultsMapper],
   )
 
-  const handleDropdownStatus = (name: string) => (status: boolean) => {
-    setFilterStatuses((prev) => ({
-      ...prev,
-      [name]: status,
-    }))
-  }
-
   const handleClickCheckbox = () => {
     const status = filterStatuses[vaultsFilters.ZERO] ? '' : 'checked'
     handleDropdownSelect(vaultsFilters.ZERO)(status)
@@ -271,27 +267,24 @@ export const VaultsSearchFilter = ({ assets: assetSymbols, vaultsMapper, current
         <VaultsFilters>
           <div className="filter">
             <h4>Filter by:</h4>
+
             <DropDown
               className="assetsFilter"
               placeholder="All Assets"
-              isOpen={filterStatuses[vaultsFilters.ASSETS]}
-              setIsOpen={handleDropdownStatus(vaultsFilters.ASSETS)}
-              itemSelected={chosenDdItem[vaultsFilters.ASSETS]}
-              items={preparedAssets}
-              clickOnItem={handleDropdownSelect(vaultsFilters.ASSETS)}
+              activeItem={getDdItem(chosenDdItem[vaultsFilters.ASSETS])}
+              items={filterDdItems}
+              clickItem={handleDropdownSelect(vaultsFilters.ASSETS)}
             />
           </div>
 
           <div className="filter">
             <h4>Order by:</h4>
-            {/* TODO: replace to new dd */}
+
             <DropDown
               placeholder={sortVaultItems.MOST_RECENT}
-              isOpen={filterStatuses[vaultsFilters.SORT]}
-              setIsOpen={handleDropdownStatus(vaultsFilters.SORT)}
-              itemSelected={chosenDdItem[vaultsFilters.SORT]}
-              items={sortingList}
-              clickOnItem={handleDropdownSelect(vaultsFilters.SORT)}
+              activeItem={getDdItem(chosenDdItem[vaultsFilters.SORT])}
+              items={sortDdItems}
+              clickItem={handleDropdownSelect(vaultsFilters.SORT)}
             />
           </div>
         </VaultsFilters>
