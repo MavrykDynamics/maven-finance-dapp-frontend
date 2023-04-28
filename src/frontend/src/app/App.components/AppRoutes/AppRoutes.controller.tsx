@@ -57,7 +57,7 @@ export const AppRoutes = () => {
       </Route>
 
       {/* DASHBOARD */}
-      <Route exact path="/:tabId">
+      <Route exact path="/dashboard/:tabId">
         <Dashboard />
       </Route>
       <Route exact path="/dashboard-personal/:tabId/:secondaryTabId?">
@@ -158,7 +158,7 @@ export const AppRoutes = () => {
 
       <Route exact path="/404">
         {/*TODO: Replace later on with actual 404 page*/}
-        <Redirect to="/" />
+        <Dashboard />
       </Route>
       <Redirect to="/404" />
     </Switch>

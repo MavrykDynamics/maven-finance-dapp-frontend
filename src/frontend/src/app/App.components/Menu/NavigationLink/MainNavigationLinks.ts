@@ -6,15 +6,15 @@ export const mainNavigationLinks: MainNavigationRoute[] = [
   {
     title: 'Dashboard',
     id: 1,
-    path: `/${LENDING_TAB_ID}`,
-    routePath: '/:tabId',
+    path: `dashboard/${LENDING_TAB_ID}`,
+    routePath: '/dashboard/:tabId',
     icon: 'menu-compass',
     subPages: [
       {
         id: 57483,
         subTitle: 'Overview',
-        subPath: `/${LENDING_TAB_ID}`,
-        routeSubPath: '/:tabId',
+        subPath: `dashboard/${LENDING_TAB_ID}`,
+        routeSubPath: '/dashboard/:tabId',
       },
       {
         id: 84425,
@@ -65,7 +65,7 @@ export const mainNavigationLinks: MainNavigationRoute[] = [
   {
     title: 'Staking',
     id: 2,
-    path: '',
+    path: 'staking',
     routePath: '/staking',
     icon: 'menu-staking',
   },

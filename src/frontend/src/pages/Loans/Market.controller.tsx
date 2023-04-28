@@ -57,7 +57,11 @@ export const Market = () => {
 
   const [prevMarket, nextMarket, currentAsset] = useMemo(() => {
     const currentAssetIdx = loanTokens.findIndex(({ loanTokenData: { symbol } }) => symbol === assetId)
-    return [loanTokens[currentAssetIdx - 1], loanTokens[currentAssetIdx + 1], loanTokens[currentAssetIdx]]
+    return [
+      loanTokens.at(currentAssetIdx - 1) ?? loanTokens.at(-1),
+      loanTokens.at(currentAssetIdx + 1) ?? loanTokens.at(0),
+      loanTokens.at(currentAssetIdx),
+    ]
   }, [assetId, loanTokens])
 
   if (isLoading) {
@@ -72,7 +76,7 @@ export const Market = () => {
     )
   }
 
-  if (!currentToken) {
+  if (!currentToken || !currentAsset) {
     return <Redirect to={'/loans'} />
   }
 
