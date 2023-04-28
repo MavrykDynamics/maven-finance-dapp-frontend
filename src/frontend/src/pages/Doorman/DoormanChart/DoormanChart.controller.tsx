@@ -147,7 +147,7 @@ export function DoormanChart() {
                 tickDateFormatter: (timeTick) => formatNumber({ number: timeTick, decimalsToShow: 0 }),
                 valueTooltipFormatter: (amount) => formatNumber({ number: amount, decimalsToShow: DECIMALS_TO_SHOW }),
                 // as data is static we can set margins we want, but if data will change we will need to check those margins
-                priceMargins: { top: 0.72, bottom: 0.01 },
+                priceMargins: { top: 0.61, bottom: 0.01 },
                 yAxisSide: 'left',
                 crosshairOptions: {
                   vertLine: {
