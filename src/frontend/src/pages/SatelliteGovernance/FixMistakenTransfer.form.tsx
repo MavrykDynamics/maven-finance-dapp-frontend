@@ -4,18 +4,18 @@ import { useDispatch } from 'react-redux'
 // view
 import Icon from '../../app/App.components/Icon/Icon.view'
 import { Input } from '../../app/App.components/Input/Input.controller'
-import { Button } from '../../app/App.components/Button/Button.controller'
+import NewButton from 'app/App.components/Button/NewButton'
 
 // type
 import {
-  InputStatusType,
   INPUT_STATUS_ERROR,
   INPUT_STATUS_SUCCESS,
+  InputStatusType,
 } from '../../app/App.components/Input/Input.constants'
 
 // helpers
 import { SatelliteGovernanceTransfer } from '../../utils/TypesAndInterfaces/Satellites'
-import { validateFormField, validateFormAddress, validateTzAddress } from 'utils/validatorFunctions'
+import { validateFormAddress, validateFormField, validateTzAddress } from 'utils/validatorFunctions'
 
 // actions
 import { fixMistakenTransfer } from './SatelliteGovernance.actions'
@@ -23,17 +23,17 @@ import { fixMistakenTransfer } from './SatelliteGovernance.actions'
 // style
 import { AvailableActionsStyle } from './SatelliteGovernance.style'
 import { ValidationResult } from 'pages/ProposalSubmission/ProposalSybmittion.types'
-import { ACTION_PRIMARY, SUBMIT } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
 import { DropDown } from 'app/App.components/DropDown/DropDown.controller'
 import {
+  AddRowBtn,
+  RemoveRowBtn,
   Table,
-  TableHeader,
-  TableRow,
-  TableHeaderCell,
   TableBody,
   TableCell,
-  RemoveRowBtn,
-  AddRowBtn,
+  TableHeader,
+  TableHeaderCell,
+  TableRow,
 } from 'app/App.components/Table'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { TokenType } from 'utils/TypesAndInterfaces/General'
@@ -58,9 +58,10 @@ const DEFAULT_FORM_VALIDATION: Record<string, InputStatusType> = {
 
 type Props = {
   maxLength: { purposeMaxLength: number }
+  isActionActive: boolean
 }
 
-export const FixMistakenTransferForm = ({ maxLength }: Props) => {
+export const FixMistakenTransferForm = ({ maxLength, isActionActive }: Props) => {
   const dispatch = useDispatch()
   const [tableData, setTableData] = useState(DEFAULT_TABLE)
   const [tableValidation, setTableValidation] = useState(DEFAULT_TABLE_VALIDATION)
@@ -111,7 +112,10 @@ export const FixMistakenTransferForm = ({ maxLength }: Props) => {
         setTableValidation(
           tableValidation.map((item, idx) =>
             idx === rowIdx
-              ? { ...item, [name]: validateTzAddress(value as string) ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR }
+              ? {
+                  ...item,
+                  [name]: validateTzAddress(value as string) ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
+                }
               : item,
           ),
         )
@@ -119,7 +123,12 @@ export const FixMistakenTransferForm = ({ maxLength }: Props) => {
       case 'amount':
         setTableValidation(
           tableValidation.map((item, idx) =>
-            idx === rowIdx ? { ...item, [name]: Number(value) > 0 ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR } : item,
+            idx === rowIdx
+              ? {
+                  ...item,
+                  [name]: Number(value) > 0 ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
+                }
+              : item,
           ),
         )
         break
@@ -262,8 +271,11 @@ export const FixMistakenTransferForm = ({ maxLength }: Props) => {
             </CustomTooltip>
           </AddRowBtn>
         </Table>
+
         <div className="suspend-satellite-group">
-          <Button icon="plus" kind={ACTION_PRIMARY} text={'Fix Mistaken Transfer'} type={SUBMIT} />
+          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} disabled={isActionActive} type={SUBMIT}>
+            <Icon id="gear" /> Fix Mistaken Transfer
+          </NewButton>
         </div>
       </form>
     </AvailableActionsStyle>

@@ -15,7 +15,6 @@ import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.component
 
 import NewButton from 'app/App.components/Button/NewButton'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import { SimpleCircleSpinnerLoader } from 'app/App.components/Loader/Loader.view'
 import { DDItemId, DropDown, DropdownInputCustomChild, DropDownItemType } from 'app/App.components/DropDown/NewDropdown'
 import { Input } from 'app/App.components/Input/NewInput'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
@@ -33,6 +32,7 @@ import { triggerInitialVaultCreation } from 'pages/Loans/Actions/vault.actions'
 import { depositCollateralAction } from 'pages/Loans/Actions/vaultCollateral.actions'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
+import { SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
 import { DropDownJsxChild } from 'app/App.components/DropDown/DropDown.style'
 
 export type DropDownCollateralAssetType = DropDownItemType & AvaliableCollateralType
@@ -80,8 +80,6 @@ export const CreateNewVault = ({
     () => [...otherBakers, ...(dao ? [dao] : []), ...(mavrykDynamics ? [mavrykDynamics] : [])],
     [dao, mavrykDynamics, otherBakers],
   )
-
-  const { isActionLoading } = useSelector((state: State) => state.loading)
 
   const [shownScreen, setShownScreen] = useState<CurrentActiveModalScreen>(INITIAL_SCREEN_ID)
   const [collateralsToSelect, setCollateralsToSelect] = useState<Record<DDItemId, DropDownCollateralAssetType>>({})
@@ -218,7 +216,8 @@ export const CreateNewVault = ({
   const handleVaultNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
     const validationStatus =
-      value && value.length <= 15 && /^[A-Za-z\s]*$/g.test(value) ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
+      // regExp to ASCII 32-127
+      value && value.length <= 15 && /[^\x20-\x7f\x0d\x1b]*$/g.test(value) ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
 
     setVaultName({ name: value, validationStatus })
   }
@@ -373,17 +372,22 @@ export const CreateNewVault = ({
       : 'Confirm Collateral Deposit'
 
   const descrText =
-    shownScreen === 'initial'
-      ? `Create a personal vault to begin borrowing.
-        You are able to borrow one asset type per vault (Ex: If you would like to borrow
-        USDT & EURL, you will need one vault for each). As collateral to back your loan,
-        you may deposit multiple assets together into a single vault, and borrow against
-        a basket of assets (Ex: You may borrow USDT against your portfolio of XTZ & tzBTC
-        in a single vault).`
-      : shownScreen === 'addCollateral'
-      ? `Select an one or multiple assets to add as collateral. If you are providing XTZ as collateral, make sure you
+    shownScreen === 'initial' ? (
+      <>
+        <p>
+          Create a personal vault to begin borrowing. You may only choose one asset (USDT, EURL, or XTZ) to be borrowed
+          per vault.
+        </p>
+        <p>
+          In your vault, you may deposit a basket of assets such as XTZ, tzBTC, USDT, and EURL together as collateral.
+        </p>
+      </>
+    ) : shownScreen === 'addCollateral' ? (
+      `Select an one or multiple assets to add as collateral. If you are providing XTZ as collateral, make sure you
       select a baker.`
-      : `Please confirm the following details.`
+    ) : (
+      `Please confirm the following details.`
+    )
 
   return (
     <PopupContainer onClick={closePopup} show={show}>
@@ -407,16 +411,14 @@ export const CreateNewVault = ({
           {shownScreen === 'initial' ? (
             <>
               <Input
-                className={`vault-name`}
                 inputProps={{
                   value: vaultName.name,
                   type: 'text',
                   onChange: handleVaultNameChange,
-                  placeholder: 'Enter Vault Name',
+                  placeholder: 'e.g. Satoshi’s Personal Vault',
                 }}
                 settings={{
                   inputStatus: vaultName.validationStatus,
-                  label: 'Vault name',
                   inputSize: INPUT_LARGE,
                 }}
               />
@@ -540,7 +542,7 @@ export const CreateNewVault = ({
               {isVaultCreating ? (
                 <div className="creating-vault-loader-wrapper">
                   Creating Vault
-                  <SimpleCircleSpinnerLoader />
+                  <SpinnerCircleLoaderStyled />
                 </div>
               ) : null}
             </>
@@ -657,12 +659,7 @@ export const CreateNewVault = ({
                   <Icon id="arrowLeft" />
                   Back
                 </NewButton>
-                <NewButton
-                  kind={BUTTON_PRIMARY}
-                  form={BUTTON_WIDE}
-                  onClick={depositCollateralHandler}
-                  disabled={isActionLoading}
-                >
+                <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={depositCollateralHandler}>
                   <Icon id="plus" />
                   Deposit
                 </NewButton>

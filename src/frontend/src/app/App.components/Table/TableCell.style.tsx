@@ -31,9 +31,10 @@ const TABLE_CELL_DEFAULT_TAGS_STYLES = css`
   input.success,
   input.error:focus,
   input.success:focus,
-  input:focus {
+  input:focus,
+  #inputStyled {
     border: unset;
-    border-radius: 0;
+    border-radius: 0px;
     box-shadow: none;
   }
 `
@@ -113,6 +114,14 @@ const CELL_BUTTONS_STYLES = css`
           grid-template-columns: 270px;
         }
       }
+    }
+  }
+`
+
+const COMPONENTS_ALIGNMENT_STYLES = css`
+  &.tz-address-cell-center {
+    div {
+      justify-content: center;
     }
   }
 `
@@ -215,6 +224,10 @@ export const TableCell = styled.td<TableCellStyledProps>`
     vertical-align: middle;
   }
 
+  &.hide-overflow {
+    overflow: hidden;
+  }
+
   ${TABLE_CELL_DEFAULT_TAGS_STYLES}
 
   ${LOANS_DASHBOARD_CELL_STYLES}
@@ -222,4 +235,6 @@ export const TableCell = styled.td<TableCellStyledProps>`
   ${CELL_BUTTONS_STYLES}
 
   ${CELL_CONTENT_STYLES}
+
+  ${COMPONENTS_ALIGNMENT_STYLES}
 `

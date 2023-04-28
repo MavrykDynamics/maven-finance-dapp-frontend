@@ -2,13 +2,21 @@ import styled from 'styled-components'
 import { MavrykTheme } from 'styles/interfaces'
 
 export const LoansModalBase = styled.div<{ theme: MavrykTheme }>`
+  h2 {
+    font-size: 22px;
+  }
+
   .modalDescr {
     margin-top: 7px;
     font-weight: 600;
     font-size: 14px;
     line-height: 21px;
     color: ${({ theme }) => theme.textColor};
-    margin-bottom: 25px;
+    margin-bottom: 30px;
+
+    p {
+      margin: 0;
+    }
   }
 
   .block-name {

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 // components
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from '../../../app/App.components/Button/Button.constants'
@@ -18,6 +18,7 @@ import { setAllContractsAdmin } from '../BreakGlassCouncil.actions'
 
 // helpers
 import { validateFormAddress } from 'utils/validatorFunctions'
+import { State } from 'reducers'
 
 const INIT_FORM = {
   newAdminAddress: '',
@@ -25,6 +26,7 @@ const INIT_FORM = {
 
 export function FormSetAllContractsAdminView() {
   const dispatch = useDispatch()
+  const { isActionActive } = useSelector((state: State) => state.loading)
 
   const [form, setForm] = useState(INIT_FORM)
   const [formInputStatus, setFormInputStatus] = useState<Record<string, InputStatusType>>({
@@ -74,7 +76,7 @@ export function FormSetAllContractsAdminView() {
   return (
     <FormStyled>
       <h1>Set All Contracts Admin</h1>
-      <p>Please enter valid function parameters for adding a vestee</p>
+      <p>Please enter valid function parameters for setting admin</p>
 
       <form className="form" onSubmit={handleSubmit}>
         <div className="form-fields input-size-primary">
@@ -84,7 +86,7 @@ export function FormSetAllContractsAdminView() {
         </div>
 
         <div className="btn-wrapper">
-          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT}>
+          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isActionActive}>
             <Icon id="profile" />
             Set Contracts Admin
           </NewButton>

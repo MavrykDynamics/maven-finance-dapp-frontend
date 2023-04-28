@@ -11,6 +11,8 @@ import {
   GOVERNANCE_CONTRACT_ADDRESS_NAME,
   GOVERNANCE_CONTRACT_ADDRESS_QUERY,
   GOVERNANCE_CONTRACT_ADDRESS_VARIABLE,
+  MVK_FAUCET_QUERY,
+  MVK_FAUCET_QUERY_NAME,
   M_TOKENS_QUERY,
   M_TOKENS_QUERY_NAME,
   WHITELIST_TOKENS_NAME,
@@ -19,7 +21,22 @@ import {
 } from 'gql/queries/getTokensData'
 import { State } from 'reducers'
 import { convertNumberForClient } from 'utils/calcFunctions'
+import { Governance_Financial_Whitelist_Token_Contract } from 'utils/generated/graphqlTypes'
 import { getSymbolFromFeedName } from 'utils/parse'
+
+export const GET_MVK_FAUCET = 'GET_MVK_FAUCET'
+export const getMvkFaucet = () => async (dispatch: AppDispatch, getState: GetState) => {
+  try {
+    const mvkFaucetResponce = await fetchFromIndexer(MVK_FAUCET_QUERY, MVK_FAUCET_QUERY_NAME, {})
+
+    dispatch({
+      type: GET_MVK_FAUCET,
+      mvkFaucet: mvkFaucetResponce?.[0]?.address ?? null,
+    })
+  } catch (e) {
+    console.error('getMvkFaucet error: ', e)
+  }
+}
 
 export const GET_DIP_DUP_TOKENS = 'GET_DIP_DUP_TOKENS'
 export const getDipDupTokensStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
@@ -69,7 +86,17 @@ export const getWhitelistTokensStorage = () => async (dispatch: AppDispatch, get
       WHITELIST_TOKENS_VARIABLE(address),
     )
 
-    const whitelistTokens = storage?.treasury?.[0]?.whitelist_token_contracts ?? []
+    const whitelistTokens = (
+      (storage?.treasury?.[0]?.whitelist_token_contracts ?? []) as Array<Governance_Financial_Whitelist_Token_Contract>
+    )
+      .map((tokenInfo) => ({
+        symbol: tokenInfo.contract_name,
+        address: tokenInfo.contract_address,
+        shortSymbol: tokenInfo.token_contract_standard,
+        id: 0,
+      }))
+      // TODO: remove this filter when back-end is ready for this
+      .filter(({ symbol }) => symbol.toLowerCase() === 'mvk')
 
     dispatch({
       type: GET_WHITELIST_TOKENS,

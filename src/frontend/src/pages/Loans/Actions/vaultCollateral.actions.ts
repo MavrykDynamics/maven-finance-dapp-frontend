@@ -1,15 +1,28 @@
+import { BatchWalletOperation } from '@taquito/taquito/dist/types/wallet/batch-operation'
 import { OpKind, WalletParamsWithKind } from '@taquito/taquito'
+
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
-import { toggleActionLoader } from 'app/App.components/Loader/Loader.action'
-import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
-import { ERROR, INFO, SUCCESS } from 'app/App.components/Toaster/Toaster.constants'
-import { AppDispatch, GetState } from 'app/App.controller'
-import { getVaultsStorage } from 'pages/Vaults/Vaults.actions'
-import { State } from 'reducers'
-import { updateUserData } from 'reducers/actions/user.actions'
-import { convertNumberForContractCall } from 'utils/calcFunctions'
-import { TokenType } from 'utils/TypesAndInterfaces/General'
+import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
+import { hideToaster, showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { getAvaliableCollaterals, getLoansStorage } from './getLoansData.actions'
+import { getVaultsStorage } from 'pages/Vaults/Vaults.actions'
+import { updateUserData } from 'reducers/actions/user.actions'
+
+import {
+  ACTION_COMPLETION_MESSAGE_TEXT,
+  ACTION_START_MESSAGE_TEXT,
+  TOASTER_ERROR,
+  TOASTER_INFO,
+  TOASTER_LOADING,
+  TOASTER_SUCCESS,
+  TOASTER_UPDATE_DATA_AFTER_ACTION_DATA,
+} from 'app/App.components/Toaster/Toaster.constants'
+
+import { AppDispatch, GetState } from 'app/App.controller'
+import { State } from 'reducers'
+import { TokenType } from 'utils/TypesAndInterfaces/General'
+
+import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
 
 // remove collateral from the vault
@@ -24,55 +37,64 @@ export const withdrawCollateralAction =
   async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
 
+    // check whether we can send transaction
     if (!state.wallet.accountPkh) {
-      await dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
-      return
-    }
-
-    if (state.loading.isActionLoading) {
-      await dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
+      await dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
       return
     }
 
     try {
+      // prepare and send transaction
       const convertedAssetAmount = convertNumberForContractCall({ number: withdrawAmount, grade: assetDecimals })
-      // prepare and send query
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(vaultAddress)
       const transaction = await contract.methods
         .initVaultAction('withdraw', convertedAssetAmount, collateralAssetName)
         .send()
 
+      // close popup
       callback()
-      await dispatch(toggleActionLoader(true))
-      await dispatch(showToaster(INFO, 'Withdrawing collateral from the vault...', 'Please wait 30s'))
+      dispatch(toggleActionFullScreenLoader(true))
+      dispatch(toggleActionCompletion(true))
+      dispatch(showToaster(TOASTER_INFO, 'Withdrawing collateral from the vault...', ACTION_START_MESSAGE_TEXT))
 
-      // confirm query completion
-      await transaction?.confirmation()
+      // turn off fs actions loader and start data updating after 5s after operation started
+      setTimeout(async () => {
+        await dispatch(toggleActionFullScreenLoader(false))
+        await dispatch(
+          showToaster(
+            TOASTER_LOADING,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+          ),
+        )
 
-      // @ts-ignore don't have proper type to acees data, type has only methods
-      const currentOperationLevel = transaction?.lastHead?.header?.level
+        // @ts-ignore don't have proper type to acees data, type has only methods
+        const currentOperationLevel = transaction?.lastHead?.header?.level
 
-      // refetch data we need
-      await checkIndexerLevelAndRunDataUpdateCallback({
-        callback: async () => {
-          await dispatch(updateUserData())
-          await dispatch(getAvaliableCollaterals())
-          state.vaults.isLoaded && (await dispatch(getVaultsStorage()))
-          state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
-        },
-        currentOperationLevel,
-      })
+        // refetch data we need
+        await checkIndexerLevelAndRunDataUpdateCallback({
+          callback: async () => {
+            await dispatch(updateUserData())
+            await dispatch(getAvaliableCollaterals())
+            state.vaults.isLoaded && (await dispatch(getVaultsStorage()))
+            state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
 
-      await dispatch(showToaster(SUCCESS, 'Collateral withdrawn.', 'All good :)'))
-      await dispatch(toggleActionLoader(false))
+            await dispatch(hideToaster())
+            await dispatch(showToaster(TOASTER_SUCCESS, 'Collateral withdrawn.', ACTION_COMPLETION_MESSAGE_TEXT))
+            await dispatch(toggleActionCompletion(false))
+          },
+          currentOperationLevel,
+        })
+      }, 5000)
     } catch (error) {
-      console.error('borrowVaultAssetAction error:', error)
+      console.error('withdrawCollateralAction error:', error)
       if (error instanceof Error) {
-        dispatch(showToaster(ERROR, 'Error', error.message))
+        dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
         callback()
       }
-      await dispatch(toggleActionLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionCompletion(false))
     }
   }
 
@@ -94,24 +116,19 @@ export const depositCollateralAction =
   async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
 
+    // check whether we can send transaction
     if (!state.wallet.accountPkh) {
-      await dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
-      return
-    }
-
-    if (state.loading.isActionLoading) {
-      await dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
+      await dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
       return
     }
 
     try {
+      // prepare and send transaction
       const { amount, assetAddress, assetId, collateralName, tokenType, decimals } = collateralAssets
       const convertedAssetAmount = convertNumberForContractCall({ number: amount, grade: decimals })
-
-      // prepare and send query
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(vaultAddress)
-      let transaction = null
+      let transaction: BatchWalletOperation | null = null
 
       if (tokenType === 'tez') {
         const delegateToBakerBatchPart: Array<WalletParamsWithKind> = bakerAddress
@@ -198,35 +215,48 @@ export const depositCollateralAction =
         transaction = await batch.send()
       }
 
+      // close popup
       callback()
-      await dispatch(toggleActionLoader(true))
-      await dispatch(showToaster(INFO, 'Depositing collateral th the vault...', 'Please wait 30s'))
+      dispatch(toggleActionFullScreenLoader(true))
+      dispatch(toggleActionCompletion(true))
+      dispatch(showToaster(TOASTER_INFO, 'Depositing collateral in the vault...', ACTION_START_MESSAGE_TEXT))
 
-      // confirm query completion
-      await transaction?.confirmation()
+      // turn off fs actions loader and start data updating after 5s after operation started
+      setTimeout(async () => {
+        await dispatch(toggleActionFullScreenLoader(false))
+        await dispatch(
+          showToaster(
+            TOASTER_LOADING,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+          ),
+        )
 
-      // @ts-ignore don't have proper type to acees data, type has only methods
-      const currentOperationLevel = transaction?.lastHead?.header?.level
+        // @ts-ignore don't have proper type to acees data, type has only methods
+        const currentOperationLevel = transaction?.lastHead?.header?.level
 
-      // refetch data we need
-      await checkIndexerLevelAndRunDataUpdateCallback({
-        callback: async () => {
-          await dispatch(updateUserData())
-          await dispatch(getAvaliableCollaterals())
-          state.vaults.isLoaded && (await dispatch(getVaultsStorage()))
-          state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
-        },
-        currentOperationLevel,
-      })
+        // refetch data we need
+        await checkIndexerLevelAndRunDataUpdateCallback({
+          callback: async () => {
+            await dispatch(updateUserData())
+            await dispatch(getAvaliableCollaterals())
+            state.vaults.isLoaded && (await dispatch(getVaultsStorage()))
+            state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
 
-      await dispatch(showToaster(SUCCESS, 'Collateral added.', 'All good :)'))
-      await dispatch(toggleActionLoader(false))
+            await dispatch(hideToaster())
+            await dispatch(showToaster(TOASTER_SUCCESS, 'Collateral added.', ACTION_COMPLETION_MESSAGE_TEXT))
+            await dispatch(toggleActionCompletion(false))
+          },
+          currentOperationLevel,
+        })
+      }, 5000)
     } catch (error) {
       console.error('depositCollateralAction error:', error)
       callback()
       if (error instanceof Error) {
-        dispatch(showToaster(ERROR, 'Error', error.message))
+        dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionCompletion(false))
     }
   }

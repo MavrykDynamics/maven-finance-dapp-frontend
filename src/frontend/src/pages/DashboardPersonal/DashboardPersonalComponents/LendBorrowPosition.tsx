@@ -4,7 +4,6 @@ import { BUTTON_LARGE, BUTTON_PRIMARY } from 'app/App.components/Button/Button.c
 
 import Button from 'app/App.components/Button/NewButton'
 
-import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { LBHInfoBlock } from './DashboardPersonalComponents.style'
 import { LoansPositionTable } from 'pages/LoansDashboard/components/PositionTable'
 import { State } from 'reducers'
@@ -16,6 +15,7 @@ import { useMemo, useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import colors from 'styles/colors'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
 export const LendBorrowPosition = ({
   markets,
@@ -105,9 +105,7 @@ export const LendBorrowPosition = ({
 
   return (
     <LBHInfoBlock className="position-tab">
-      <GovRightContainerTitleArea>
-        <h2>Lend/Borrow Position</h2>
-      </GovRightContainerTitleArea>
+      <H2Title>Lend/Borrow Position</H2Title>
       <div className="view-markets">
         <Link to={'/loans'}>
           <Button kind={BUTTON_PRIMARY} size={BUTTON_LARGE}>

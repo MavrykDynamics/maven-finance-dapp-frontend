@@ -63,14 +63,9 @@ export const AppRoutes = () => {
       <Route exact path="/dashboard/:tabId">
         <Dashboard />
       </Route>
-      <ProtectedRoute
-        path="/dashboard-personal/:tabId/:secondaryTabId?"
-        component={DashboardPersonal}
-        hasAccess={Boolean(accountPkh)}
-        isAuthorized={Boolean(accountPkh)}
-        canCheck={!isInitialDataLoading}
-        redirectPath={`/dashboard/${LENDING_TAB_ID}`}
-      />
+      <Route exact path="/dashboard-personal/:tabId/:secondaryTabId?">
+        <DashboardPersonal />
+      </Route>
 
       {/* SATELLITES */}
       <Route exact path="/satellites">
@@ -96,11 +91,11 @@ export const AppRoutes = () => {
       <Route exact path="/governance">
         <Governance />
       </Route>
-      <Route exact path="/satellite-governance">
+      <Route exact path="/satellite-governance/:tabId?">
         <SatelliteGovernance />
       </Route>
       <Route exact path="/proposal-history">
-        <Governance />
+        <Governance isHistory />
       </Route>
       <Route exact path="/contract-status">
         <BreakGlass />

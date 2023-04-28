@@ -51,6 +51,7 @@ const itemsForDropDown = [
 export const CouncilFormTransferTokens = (maxLength: CouncilMaxLength) => {
   const dispatch = useDispatch()
   const { dipDupTokens } = useSelector((state: State) => state.tokens)
+  const { isActionActive } = useSelector((state: State) => state.loading)
 
   const [form, setForm] = useState(INIT_FORM)
 
@@ -253,7 +254,7 @@ export const CouncilFormTransferTokens = (maxLength: CouncilMaxLength) => {
         />
       </div>
       <div className="btn-group">
-        <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT}>
+        <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isActionActive}>
           <Icon id="transfer_tokens" />
           Transfer Tokens
         </NewButton>

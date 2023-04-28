@@ -32,6 +32,7 @@ export const CouncilFormUpdateCouncilMemberInfo = ({ maxLength, callback }: Prop
   const dispatch = useDispatch()
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const { councilMembers } = useSelector((state: State) => state.council)
+  const { isActionActive } = useSelector((state: State) => state.loading)
 
   const myInfo = councilMembers.find((item) => item.userId === accountPkh)
 
@@ -148,7 +149,7 @@ export const CouncilFormUpdateCouncilMemberInfo = ({ maxLength, callback }: Prop
         title={'Upload Profile Pic'}
       />
       <div className="btn-group">
-        <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT}>
+        <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isActionActive}>
           <Icon id="upload" />
           Update Council Member Info
         </NewButton>

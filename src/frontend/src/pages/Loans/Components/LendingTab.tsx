@@ -28,6 +28,7 @@ type LendingTabPropsType = {
 export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, lendAPY }: LendingTabPropsType) => {
   const { openAddLendingAssetPopup, openRemoveLendingAssetPopup } = useContext(loansPopupsContext)
   const { accountPkh } = useSelector((state: State) => state.wallet)
+  const { isActionActive } = useSelector((state: State) => state.loading)
 
   return (
     <LoansTabStyled>
@@ -78,7 +79,7 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
               text="Add"
               icon="plus"
               kind={TRANSPARENT_WITH_BORDER}
-              disabled={!Boolean(accountPkh)}
+              disabled={!Boolean(accountPkh) || isActionActive}
               onClick={() => {
                 openAddLendingAssetPopup({
                   mBalance: lendingItem.mBalance,
@@ -92,7 +93,7 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
               text="Remove"
               icon="minus"
               kind={TRANSPARENT_WITH_BORDER}
-              disabled={!Boolean(accountPkh)}
+              disabled={!Boolean(accountPkh) || isActionActive}
               onClick={() => {
                 openRemoveLendingAssetPopup({
                   mBalance: lendingItem.mBalance,
@@ -112,7 +113,7 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
             text="Lend Asset"
             icon="plus"
             kind={ACTION_PRIMARY}
-            disabled={!Boolean(accountPkh)}
+            disabled={!Boolean(accountPkh) || isActionActive}
             onClick={() =>
               openAddLendingAssetPopup({
                 mBalance: 0,

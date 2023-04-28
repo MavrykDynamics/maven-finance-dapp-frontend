@@ -53,31 +53,6 @@ export const VaultsView = () => {
   } = useSelector((state: State) => state.vaults)
   const { tabId } = useParams<{ tabId: string }>()
 
-  const tabsList: TabItem[] = useMemo(
-    () => [
-      {
-        text: 'All Vaults',
-        id: 1,
-        active: vaultTabs.ALL === tabId,
-        path: vaultTabs.ALL,
-      },
-      {
-        text: 'My Vaults',
-        id: 2,
-        active: vaultTabs.MY === tabId,
-        path: vaultTabs.MY,
-        isDisabled: !accountPkh,
-      },
-      {
-        text: 'Permissioned Vaults',
-        id: 3,
-        active: vaultTabs.PERMISSIONED === tabId,
-        path: vaultTabs.PERMISSIONED,
-      },
-    ],
-    [accountPkh, tabId],
-  )
-
   const { isLoading } = useDataLoader(
     async (isDepsChanged) => {
       try {
@@ -88,7 +63,7 @@ export const VaultsView = () => {
     },
     [accountPkh],
   )
-
+  const [tabsList, setTabsList] = useState<TabItem[]>([])
   const [vaultsIds, setVaultsIds] = useState<string[]>([])
   const assets = useMemo(() => getVaultAssets(vaultsMapper), [vaultsMapper])
 
@@ -119,12 +94,42 @@ export const VaultsView = () => {
     return vaultsIds?.slice(from, to)
   }, [currentListName, currentPage, vaultsIds])
 
-  const handleMarkForLiquidation = (vaultId: number, vaultOwner: string) => {
-    dispatch(markForLiquidation(vaultId, vaultOwner))
+  const handleMarkForLiquidation = async (vaultId: number, vaultOwner: string) => {
+    await dispatch(markForLiquidation(vaultId, vaultOwner))
   }
 
-  // switch to "all" tab if user is disabled
+  // switch to "all" tab if user is disabled and set tabs
   useEffect(() => {
+    const baseTabs = [
+      {
+        text: 'All Vaults',
+        id: 1,
+        active: vaultTabs.ALL === tabId,
+        path: vaultTabs.ALL,
+      },
+    ]
+
+    setTabsList(
+      accountPkh
+        ? [
+            ...baseTabs,
+            {
+              text: 'My Vaults',
+              id: 2,
+              active: vaultTabs.MY === tabId,
+              path: vaultTabs.MY,
+            },
+            {
+              text: 'Permissioned Vaults',
+              id: 3,
+              active: vaultTabs.PERMISSIONED === tabId,
+              path: vaultTabs.PERMISSIONED,
+              isDisabled: !accountPkh,
+            },
+          ]
+        : baseTabs,
+    )
+
     if (accountPkh) return
     handleChangeTabs(tabsList[0].id)
   }, [accountPkh])

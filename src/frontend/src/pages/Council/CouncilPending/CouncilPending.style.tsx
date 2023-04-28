@@ -7,7 +7,7 @@ export const CouncilPendingStyled = styled(Card)`
   margin: 0;
   height: 200px;
   padding: 25px;
-  min-width: 237px;
+  min-width: 247px;
 
   .number {
     position: absolute;
@@ -28,14 +28,19 @@ export const CouncilPendingStyled = styled(Card)`
     min-width: 590px;
     .parameters {
       display: grid;
-      grid-template-columns: 160px 150px 150px;
-      column-gap: 20px;
+      grid-template-columns: 130px 170px 150px;
       align-items: center;
     }
 
     .sign-action {
       margin-left: -30px;
       width: 180px;
+    }
+  }
+
+  &.requestMint {
+    .parameters {
+      grid-template-columns: 150px 100px 150px;
     }
   }
 
@@ -83,8 +88,12 @@ export const CouncilPendingStyled = styled(Card)`
 
     .parameters {
       display: grid;
-      grid-template-columns: 135px 150px 150px 185px;
+      grid-template-columns: 140px 135px 171px 185px;
       align-items: center;
+
+      article p {
+        white-space: pre-wrap;
+      }
     }
   }
 
@@ -130,7 +139,7 @@ export const CouncilPendingStyled = styled(Card)`
   .parameters {
     display: flex;
     justify-content: space-between;
-    gap: 16px;
+    row-gap: 16px;
 
     article p {
       white-space: nowrap;
@@ -199,6 +208,17 @@ export const CouncilPendingStyled = styled(Card)`
       width: 50px;
       object-fit: cover;
       border-radius: 50%;
+    }
+  }
+
+  .sign-action {
+    margin: 0 auto;
+    width: 180px;
+
+    button {
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 14px;
     }
   }
 `

@@ -57,6 +57,7 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
   const dispatch = useDispatch()
   const { pathname } = useLocation()
   const { sidebarOpened } = useSelector((state: State) => state.preferences)
+  const { isActionActive } = useSelector((state: State) => state.loading)
   const { user, accountPkh } = useSelector((state: State) => state.wallet)
   const [canGetInitThouthand, setCanGetInitThouthand] = useState(false)
 
@@ -89,7 +90,7 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
     }
   }, [burgerClickHandler, sidebarOpened])
 
-  const handleGetMVKTokensFromFaucet = useCallback(() => dispatch(getMVKTokensFromFaucet()), [])
+  const handleGetMVKTokensFromFaucet = async () => await dispatch(getMVKTokensFromFaucet())
 
   return (
     <>
@@ -123,7 +124,7 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
               form={sidebarOpened ? BUTTON_WIDE : BUTTON_ROUND}
               isThin
               onClick={handleGetMVKTokensFromFaucet}
-              disabled={!canGetInitThouthand}
+              disabled={!canGetInitThouthand || isActionActive}
             >
               {sidebarOpened ? 'Get MVK Tokens' : 'mvk'}
             </NewButton>
