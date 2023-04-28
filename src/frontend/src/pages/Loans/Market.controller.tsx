@@ -50,11 +50,6 @@ export const Market = () => {
     window.scrollTo(0, 0)
   }, [])
 
-  const currentToken = useMemo(
-    () => loanTokens.find(({ loanTokenData: { symbol } }) => assetId === symbol),
-    [assetId, loanTokens],
-  )
-
   const [prevMarket, nextMarket, currentAsset] = useMemo(() => {
     const currentAssetIdx = loanTokens.findIndex(({ loanTokenData: { symbol } }) => symbol === assetId)
     return [
@@ -76,7 +71,7 @@ export const Market = () => {
     )
   }
 
-  if (!currentToken || !currentAsset) {
+  if (!currentAsset) {
     return <Redirect to={'/loans'} />
   }
 
@@ -128,13 +123,13 @@ export const Market = () => {
         <div className="gen-info">
           <div className="asset-info">
             <ImageWithPlug
-              imageLink={currentToken?.loanTokenData.icon}
-              alt={`${currentToken?.loanTokenData.icon} icon`}
+              imageLink={currentAsset?.loanTokenData.icon}
+              alt={`${currentAsset?.loanTokenData.icon} icon`}
             />
 
             <div className="text-wrapper">
-              <div className="symbol">{currentToken?.loanTokenData.name}</div>
-              <div className="full-name">{currentToken?.loanTokenData.symbol}</div>
+              <div className="symbol">{currentAsset?.loanTokenData.name}</div>
+              <div className="full-name">{currentAsset?.loanTokenData.symbol}</div>
             </div>
           </div>
           {tabId === LEND_TAB_ID ? (
@@ -142,7 +137,7 @@ export const Market = () => {
               <ThreeLevelListItem>
                 <div className="name">Oracle Price</div>
                 <CommaNumber
-                  value={currentToken.loanTokenData.rate}
+                  value={currentAsset.loanTokenData.rate}
                   beginningText="$"
                   className="value"
                   showDecimal
@@ -151,23 +146,23 @@ export const Market = () => {
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">Earn APY</div>
-                <CommaNumber value={currentToken.lendingAPY} endingText="%" className="value" />
+                <CommaNumber value={currentAsset.lendingAPY} endingText="%" className="value" />
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">Total Lending</div>
-                <CommaNumber value={currentToken.totalLended} className="value" />
+                <CommaNumber value={currentAsset.totalLended} className="value" />
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">Available Liquidity</div>
-                <CommaNumber value={currentToken.availableLiquidity} className="value" />
+                <CommaNumber value={currentAsset.availableLiquidity} className="value" />
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">Collateral Factor</div>
-                <CommaNumber value={currentToken.collateralFactor} endingText="%" className="value" />
+                <CommaNumber value={currentAsset.collateralFactor} endingText="%" className="value" />
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">Suppliers</div>
-                <CommaNumber value={currentToken.suppliers} className="value" />
+                <CommaNumber value={currentAsset.suppliers} className="value" />
               </ThreeLevelListItem>
             </>
           ) : (
@@ -175,7 +170,7 @@ export const Market = () => {
               <ThreeLevelListItem>
                 <div className="name">Oracle Price</div>
                 <CommaNumber
-                  value={currentToken.loanTokenData.rate}
+                  value={currentAsset.loanTokenData.rate}
                   beginningText="$"
                   className="value"
                   showDecimal
@@ -184,23 +179,23 @@ export const Market = () => {
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">Borrow APR</div>
-                <CommaNumber value={currentToken.borrowAPR} endingText="%" className="value" />
+                <CommaNumber value={currentAsset.borrowAPR} endingText="%" className="value" />
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">Total Borrowed</div>
-                <CommaNumber value={currentToken.totalBorrowed} className="value" />
+                <CommaNumber value={currentAsset.totalBorrowed} className="value" />
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">Reserve Amount</div>
-                <CommaNumber value={currentToken.reserveAmount} className="value" />
+                <CommaNumber value={currentAsset.reserveAmount} className="value" />
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">Reserve Factor</div>
-                <CommaNumber value={currentToken.reserveFactor} endingText="%" className="value" />
+                <CommaNumber value={currentAsset.reserveFactor} endingText="%" className="value" />
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">Borrowers</div>
-                <CommaNumber value={currentToken.borrowers} className="value" />
+                <CommaNumber value={currentAsset.borrowers} className="value" />
               </ThreeLevelListItem>
             </>
           )}
@@ -210,21 +205,21 @@ export const Market = () => {
 
         {tabId === LEND_TAB_ID ? (
           <LendingTab
-            lendingItem={currentToken.lendingItem}
+            lendingItem={currentAsset.lendingItem}
             lendingControllerAddress={loansControllerAddress}
-            assetData={currentToken.loanTokenData}
-            lendAPY={currentToken.lendingAPY}
+            assetData={currentAsset.loanTokenData}
+            lendAPY={currentAsset.lendingAPY}
           />
         ) : null}
         {tabId === BORROW_TAB_ID ? (
           <BorrowingTab
-            borrowingItems={currentToken.myBorrowingList}
+            borrowingItems={currentAsset.myBorrowingList}
             lendingControllerAddress={loansControllerAddress}
-            currentMarketAsset={currentToken.loanTokenData.gqlName}
+            currentMarketAsset={currentAsset.loanTokenData.gqlName}
           />
         ) : null}
 
-        <TransactionHistory currentToken={currentToken} />
+        <TransactionHistory currentToken={currentAsset} />
       </MarketStyled>
     </Page>
   )

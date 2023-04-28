@@ -10,7 +10,6 @@ import { MobileTopBar } from './TopBarLinks/MobileTopBar.controller'
 import { useCallback, useState } from 'react'
 import { useMedia } from 'react-use'
 import { LIGHT_THEME } from 'app/App.components/DarkThemeProvider/DarkThemeProvider.actions'
-import { LENDING_TAB_ID } from 'pages/Dashboard/Dashboard.utils'
 
 type MenuTopBarProps = {
   burgerClickHandler: () => void
@@ -19,7 +18,7 @@ type MenuTopBarProps = {
 }
 
 export const PRODUCTS_LINKS = [
-  { name: 'Dapp', href: 'https://front-dev.mavryk-dapp.pages.dev', disabled: false, path: `/${LENDING_TAB_ID}` },
+  { name: 'Dapp', href: 'https://front-dev.mavryk-dapp.pages.dev', disabled: false, path: `/` },
   {
     name: 'Liquidity Baking',
     href: 'https://mavryk.finance/liquidity-baking',

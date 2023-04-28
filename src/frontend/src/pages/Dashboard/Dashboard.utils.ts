@@ -7,7 +7,7 @@ export type mvkStatsType = {
   prevPrice: number
 }
 
-export const LENDING_TAB_ID = '' //'dashboard-lending'
+export const LENDING_TAB_ID = ''
 export const VAULTS_TAB_ID = 'dashboard-vaults'
 export const FARMS_TAB_ID = 'dashboard-farms'
 export const SATELLITES_TAB_ID = 'dashboard-satellites'
