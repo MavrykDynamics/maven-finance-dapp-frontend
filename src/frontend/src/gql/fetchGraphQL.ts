@@ -1,11 +1,15 @@
+import { api } from 'utils/api'
+
+// TODO fix fetch types & zod schema fir this function (cuz it returns different response data based on params)
 async function fetchGraphQL(operationsDoc: string, operationName: string, variables: Record<string, object | string>) {
   const developmentAPI = process.env.REACT_APP_DEV_GRAPHQL_API || 'https://api.mavryk.finance/v1/graphql'
 
   const prodictionAPI = process.env.REACT_APP_GRAPHQL_API || 'https://api.mavryk.finance/v1/graphql'
   const gqlAPINetwork = process.env.NODE_ENV === 'development' ? developmentAPI : prodictionAPI
 
-  return new Promise((resolve, reject) => {
-    fetch(gqlAPINetwork, {
+  try {
+
+    const { data } = await api<any>(gqlAPINetwork, {
       method: 'POST',
       headers: {
         'Content-type': 'application/json',
@@ -17,9 +21,10 @@ async function fetchGraphQL(operationsDoc: string, operationName: string, variab
         operationName: operationName,
       }),
     })
-      .then((res) => resolve(res.json()))
-      .catch((err) => reject(err))
-  })
+    return data
+  } catch (e) {
+    throw e
+  }
 }
 
 export async function fetchFromIndexer(
