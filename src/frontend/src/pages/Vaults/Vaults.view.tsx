@@ -132,7 +132,7 @@ export const VaultsView = () => {
 
     if (accountPkh) return
     handleChangeTabs(tabsToUse[0]?.id)
-  }, [accountPkh])
+  }, [accountPkh, tabId])
 
   return (
     <VaultsStyled>
