@@ -134,11 +134,11 @@ export const SatelliteDetails = () => {
                   <SatelliteMetricsBlock>
                     <h5>Satellite’s sMVK</h5>
                     <p>
-                      <CommaNumber value={mySMvkTokenBalance} showDecimal={true} />
+                      <CommaNumber value={currentSatellite.sMvkBalance} showDecimal />
                     </p>
                     <h5># Delegators</h5>
                     <p>
-                      <CommaNumber value={currentSatellite.delegatorCount} showDecimal={true} />
+                      <CommaNumber value={currentSatellite.delegatorCount} showDecimal={false} />
                     </p>
                     <h5># Oracle Feeds</h5>
                     <p>
