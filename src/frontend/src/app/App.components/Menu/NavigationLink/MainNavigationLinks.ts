@@ -1,4 +1,4 @@
-import { LENDING_TAB_ID } from './../../../../pages/Dashboard/Dashboard.utils'
+import { LENDING_TAB_ID } from 'pages/Dashboard/Dashboard.utils'
 import { MainNavigationRoute } from '../../../../utils/TypesAndInterfaces/Navigation'
 import { PORTFOLIO_POSITION_TAB_ID, PORTFOLIO_TAB_ID } from 'pages/DashboardPersonal/DashboardPersonal.utils'
 
@@ -6,15 +6,15 @@ export const mainNavigationLinks: MainNavigationRoute[] = [
   {
     title: 'Dashboard',
     id: 1,
-    path: `dashboard/${LENDING_TAB_ID}`,
-    routePath: '/dashboard/:tabId',
+    path: `${LENDING_TAB_ID}`,
+    routePath: `/${LENDING_TAB_ID}`,
     icon: 'menu-compass',
     subPages: [
       {
         id: 57483,
         subTitle: 'Overview',
-        subPath: `dashboard/${LENDING_TAB_ID}`,
-        routeSubPath: '/dashboard/:tabId',
+        subPath: `${LENDING_TAB_ID}`,
+        routeSubPath: `/${LENDING_TAB_ID}`,
       },
       {
         id: 84425,
