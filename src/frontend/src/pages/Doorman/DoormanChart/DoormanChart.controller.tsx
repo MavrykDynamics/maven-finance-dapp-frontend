@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { State } from 'reducers'
 
 // styles
-import { DoormanChartCard, Wrapper } from './DoormanChart.style'
+import { DoormanChartCard, DoormanExitFeeCurrentValues, Wrapper } from './DoormanChart.style'
 import { TabSwitcher } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 
 // components
@@ -11,12 +11,16 @@ import { Chart } from '../../../app/App.components/Chart/Chart'
 import { TabItem } from '../../../app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import { cyanColor, skyColor } from 'styles'
 
-import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.types'
+import { AREA_CHART_TYPE, AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
 import { MLI_FEE_CHART_DATA } from './MliFee-chart-data'
 import { MLI_FEE_TOOLTIP } from 'app/App.components/Chart/Tooltips/ChartTooltip'
 import { DoubleChart } from 'app/App.components/Chart/ChartTypes/DoubleChart'
-import { formatNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+import { CommaNumber, formatNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { DECIMALS_TO_SHOW } from 'utils/constants'
+import colors from 'styles/colors'
+import { SingleValueData, Time } from 'lightweight-charts'
+import { calcExitFee, calcMLI } from 'utils/calcFunctions'
+import { checkPlotType } from 'app/App.components/Chart/helpers/Chart.const'
 
 const tabsList: TabItem[] = [
   {
@@ -36,12 +40,41 @@ const tabsList: TabItem[] = [
   },
 ]
 
+const findExitFeeClosestTimePlot = (exitFeePlots: Array<AreaChartPlotType>, exitFeeValue: number): Time => {
+  const { smallesDiffTime } = exitFeePlots.reduce<{ diff: number; smallesDiffTime: Time }>(
+    (acc, plot) => {
+      if (!checkPlotType<SingleValueData>(plot, ['value'])) return acc
+      const { value, time } = plot
+
+      const timeDiff = Math.abs(value - exitFeeValue)
+
+      if (timeDiff < acc.diff) {
+        acc.diff = timeDiff
+        acc.smallesDiffTime = time
+      }
+
+      return acc
+    },
+    {
+      diff: Math.abs(Number(exitFeePlots[0].time) - exitFeeValue),
+      smallesDiffTime: exitFeePlots[0].time,
+    },
+  )
+
+  return smallesDiffTime
+}
+
 export function DoormanChart() {
-  const { smvkHistoryData, mvkHistoryData } = useSelector((state: State) => state.doorman)
+  const { smvkHistoryData, mvkHistoryData, totalStakedMvk, totalSupply } = useSelector((state: State) => state.doorman)
+  const { themeSelected } = useSelector((state: State) => state.preferences)
+
+  const currentExitFee = calcExitFee(totalSupply, totalStakedMvk)
+  const currentMLI = calcMLI(totalSupply, totalStakedMvk)
 
   const [activeTabId, setActiveTabId] = useState(tabsList[0].id)
 
   const handleChangeTabs = (tabId?: number) => setActiveTabId(tabsList.find(({ id }) => tabId === id)?.id ?? 1)
+  const exitFeeMarkerTime = findExitFeeClosestTimePlot(MLI_FEE_CHART_DATA, currentExitFee)
 
   return (
     <Wrapper>
@@ -90,6 +123,18 @@ export function DoormanChart() {
         ) : null}
         {activeTabId === tabsList[1].id ? (
           <>
+            <DoormanExitFeeCurrentValues>
+              <div className="row">
+                <div className="name">Current Exit Fee: </div>
+                <CommaNumber value={currentExitFee} endingText="%" className="value" />
+              </div>
+              <div className="row">
+                <div className="name">Current MLI: </div>
+
+                <CommaNumber value={currentMLI} className="value" />
+              </div>
+            </DoormanExitFeeCurrentValues>
+
             <div className="mli-label">MLI (%)</div>
             <div className="fee-label">Exit Fee(%)</div>
             <Chart
@@ -112,6 +157,14 @@ export function DoormanChart() {
                     labelVisible: false,
                   },
                 },
+                seriesMarkers: [
+                  {
+                    time: exitFeeMarkerTime,
+                    position: 'inBar',
+                    color: colors[themeSelected].valueColor,
+                    shape: 'circle',
+                  },
+                ],
               }}
               tooltipAsset={'%'}
               tooltipName={MLI_FEE_TOOLTIP}

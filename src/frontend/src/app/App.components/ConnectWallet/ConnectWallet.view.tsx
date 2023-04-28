@@ -114,7 +114,7 @@ export const ConnectedWalletBlock = ({
   const { pathname } = useLocation()
   const [detailsShown, setDetailsShown] = useState(false)
 
-  const isOnStakingPage = pathname === '/'
+  const isOnStakingPage = pathname === '/staking'
 
   const mouseOverHanlder = useCallback(() => (isMobile ? undefined : setDetailsShown(true)), [isMobile])
   const mobileClickOpenHanler = useCallback(() => (isMobile ? setDetailsShown(true) : undefined), [isMobile])
