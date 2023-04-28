@@ -1,8 +1,7 @@
-import { getAssetColor } from './../Treasury/helpers/treasury.utils'
 import dayjs from 'dayjs'
-import { VaultType, LendingControllerGQL } from 'utils/TypesAndInterfaces/Vaults'
-import { Aggregator } from 'utils/generated/graphqlTypes'
 import { State } from 'reducers'
+import { getAssetColor } from './../Treasury/helpers/treasury.utils'
+import { Aggregator } from 'utils/generated/graphqlTypes'
 import {
   checkVaultIsInGracePeriod,
   checkVaultIsAbleToMarkedForLiquidation,
@@ -11,23 +10,32 @@ import {
   calculateVaultMaxLiquidationAmount,
   calculateLiquidationPrice,
 } from './calcFunctionsForVault'
-import { Lending_Controller_Vault } from 'utils/generated/graphqlTypes'
-import { symbolsAfterDecimalPoint } from 'utils/symbolsAfterDecimalPoint'
+
 import { getOracleAggregatorLatestPrice } from './Vaults.actions'
 import { statusSortPriority, vaultsStatuses } from './Vaults.consts'
+import { ANY_USER, WHITELIST_USERS, NONE_USER, getStatusByCollateralRatio } from 'pages/Loans/Loans.const'
+import { getUserBalanceForLoanAsset } from 'pages/Loans/LoansFethcers'
 import {
   calcCollateralRatio,
   calculateAccruedInterest,
   getAssetMetadata,
   isTezosAsset,
 } from 'pages/Loans/Loans.helpers'
-import { calcWithoutDecimals, calcWithoutMu, convertNumberForClient } from 'utils/calcFunctions'
-import { BLOCKS_PER_MINUTE, FIXED_POINT_ACCURACY } from 'utils/constants'
-import { getUserBalanceForLoanAsset } from 'pages/Loans/LoansFethcers'
-import { CollateralType, DepositorsFlagType } from 'utils/TypesAndInterfaces/Loans'
-import { ANY_USER, WHITELIST_USERS, NONE_USER, getStatusByCollateralRatio } from 'pages/Loans/Loans.const'
-import { TokenType } from 'utils/TypesAndInterfaces/General'
+
+// utils
 import { api } from 'utils/api'
+import { CollateralType, DepositorsFlagType } from 'utils/TypesAndInterfaces/Loans'
+import { VaultType, LendingControllerGQL } from 'utils/TypesAndInterfaces/Vaults'
+import { Lending_Controller_Vault } from 'utils/generated/graphqlTypes'
+import { symbolsAfterDecimalPoint } from 'utils/symbolsAfterDecimalPoint'
+import { calcWithoutDecimals, calcWithoutMu, convertNumberForClient } from 'utils/calcFunctions'
+import { TokenType } from 'utils/TypesAndInterfaces/General'
+import { BLOCKS_PER_MINUTE, FIXED_POINT_ACCURACY } from 'utils/constants'
+
+// types
+import { vaultBlockSchema } from 'schemas/vaults/block.schema'
+import { xtzDelegationDataSchema } from 'schemas/vaults/xtzDelegationData.schema'
+import { VaultBlockType, XtzDelegationDataType } from 'types/vaults.type'
 
 type VaultsStorageProps = {
   lendingController: LendingControllerGQL
@@ -124,12 +132,16 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
 
       const currentInterestRate = calcWithoutDecimals(item.loan_token?.current_interest_rate ?? 0, interestRateDecimals)
 
-      const { data: vaultXtzDelegatedTo } = await api<any>(
+      const { data: vaultXtzDelegatedTo } = await api<XtzDelegationDataType>(
         `https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/accounts/${item.vault.address}`,
+        null,
+        xtzDelegationDataSchema,
       )
 
-      const { data: currentBlock } = await api<any>(
+      const { data: currentBlock } = await api<VaultBlockType>(
         `https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/blocks/${dayjs().toISOString()}`,
+        null,
+        vaultBlockSchema,
       )
 
       const normalizeCollateralTokens = item.collateral_balances.length

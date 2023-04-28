@@ -10,13 +10,16 @@ export type Options = {
 
 export const api = async <T>(
   url: string,
-  options: Options = { method: 'GET' },
-  schema: ZodSchema<T> = z.any(),
+  options?: Options | null,
+  schema?: ZodSchema<T> | null,
 ): Promise<APIReturnType<T>> => {
   try {
-    const response = await fetch(url, options)
+    const method = options?.method || 'GET'
+    const _schema = schema ?? z.any() 
+
+    const response = await fetch(url, { method, ...options })
     const data = await response.json()
-    const parsedData = schema.parse(data)
+    const parsedData = _schema.parse(data)
 
     return { code: response.status, status: response.statusText, data: parsedData }
   } catch (e) {
