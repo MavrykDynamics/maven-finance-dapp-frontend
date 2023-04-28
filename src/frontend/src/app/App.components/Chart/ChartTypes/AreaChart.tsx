@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState } from 'react'
-import { createChart, BusinessDay, UTCTimestamp, SingleValueData } from 'lightweight-charts'
+import { createChart, BusinessDay, UTCTimestamp, SingleValueData, Time } from 'lightweight-charts'
 
 import { skyColor, lightTextColor, headerColor } from 'styles'
 import { parseDate } from 'utils/time'
@@ -33,6 +33,7 @@ export const AreaChart = ({
     crosshairOptions = DEFAULT_CROSSHAIR_SETTING,
     textColor = lightTextColor,
     borderColor = headerColor,
+    seriesMarkers,
   } = {},
   colors: { lineColor = skyColor, areaTopColor = skyColor, areaBottomColor = 'transparent' } = {},
   data,
@@ -108,6 +109,11 @@ export const AreaChart = ({
     series.setData(data)
     series.applyOptions(CHART_SERIES_OPTIONS)
 
+    // set markers for series
+    if (seriesMarkers) {
+      series.setMarkers(seriesMarkers)
+    }
+
     // Subscribe for tooltip update
     chart.subscribeCrosshairMove((param) => {
       if (checkWhetherHideTooltip(param, chartContainerRef)) {
@@ -153,6 +159,7 @@ export const AreaChart = ({
     hideYAxis,
     lineColor,
     priceMargins,
+    seriesMarkers,
     textColor,
     tickDateFormatter,
     width,
