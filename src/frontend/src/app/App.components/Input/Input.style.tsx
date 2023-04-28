@@ -205,11 +205,19 @@ export const StyledInput = styled.input<{ theme: MavrykTheme }>`
   &:hover:not(:disabled) {
     background-color: ${({ theme }) => theme.containerColor};
   }
+
+  &.remove-right-border-radius {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
 `
 
 export const InputPinnedChild = styled.div<{ theme: MavrykTheme }>`
   height: 100%;
-  border-left: 1px solid ${({ theme }) => theme.dataColor};
+  border-left: 1px solid ${({ theme }) => theme.cardBorderColor};
+  background-color: ${({ theme }) => theme.backgroundColor};
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
 
   .img-wrapper,
   svg {
@@ -388,7 +396,7 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
   .input-balance {
     position: absolute;
     bottom: -35px;
-    right: 0px;
+    right: 15px;
     font-weight: 600;
     font-size: 14px;
     line-height: 21px;
@@ -408,7 +416,7 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
   .useMax-btn {
     position: absolute;
     top: -20px;
-    right: 0px;
+    right: 15px;
     font-size: 14px;
 
     &::before {

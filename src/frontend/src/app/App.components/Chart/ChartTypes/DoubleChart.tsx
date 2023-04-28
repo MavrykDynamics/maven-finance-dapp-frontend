@@ -38,6 +38,8 @@ export const DoubleChart = ({
     crosshairOptions = DEFAULT_CROSSHAIR_SETTING,
     textColor = lightTextColor,
     borderColor = headerColor,
+    firstChartSeriesMarkers,
+    secondChartSeriesMarkers,
   } = {},
   firstChart: {
     data: { type: firstChartType, plots: firstChartPlots },
@@ -136,6 +138,11 @@ export const DoubleChart = ({
     seriesFirstChart.setData(firstChartPlots)
     seriesFirstChart.applyOptions(CHART_SERIES_OPTIONS)
 
+    // set markers for series
+    if (firstChartSeriesMarkers) {
+      seriesFirstChart.setMarkers(firstChartSeriesMarkers)
+    }
+
     // Setting color of the second chart chart depends on it's type
     const seriesSecondChart =
       secondChartType === AREA_CHART_TYPE
@@ -161,6 +168,11 @@ export const DoubleChart = ({
     // Setting data for second chart
     seriesSecondChart.setData(secondChartPlots)
     seriesSecondChart.applyOptions(CHART_SERIES_OPTIONS)
+
+    // set markers for series
+    if (secondChartSeriesMarkers) {
+      seriesSecondChart.setMarkers(secondChartSeriesMarkers)
+    }
 
     // Subscribe for tooltip update
     chart.subscribeCrosshairMove((param) => {

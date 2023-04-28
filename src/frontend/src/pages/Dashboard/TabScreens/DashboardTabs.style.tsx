@@ -79,7 +79,7 @@ export const TabWrapperStyled = styled.div<{ theme: MavrykTheme; backgroundImage
 
   &.oracles {
     .descr {
-      max-width: 720px;
+      max-width: 800px;
     }
   }
 
@@ -129,7 +129,7 @@ export const SatellitesContentStyled = styled.div<{ theme: MavrykTheme }>`
   padding-left: 20px;
   grid-template-columns: repeat(3, auto);
   flex-direction: column;
-  margin-top: 25px;
+  margin-top: 20px;
   row-gap: 20px;
   column-gap: 50px;
   max-width: 600px;
@@ -138,7 +138,7 @@ export const SatellitesContentStyled = styled.div<{ theme: MavrykTheme }>`
 export const OraclesContentStyled = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   flex-direction: column;
-  margin-top: 25px;
+  margin-top: 20px;
 
   .top {
     width: fit-content;
@@ -184,7 +184,7 @@ export const OraclesContentStyled = styled.div<{ theme: MavrykTheme }>`
 
 export const TreasuryContentStyled = styled.div<{ theme: MavrykTheme }>`
   padding-left: 20px;
-  margin-top: 25px;
+  margin-top: 20px;
 
   .top {
     width: fit-content;
@@ -332,7 +332,7 @@ export const TreasuryVesting = styled.div<{
 
 export const VaultsContentStyled = styled.div<{ theme: MavrykTheme }>`
   padding-left: 20px;
-  margin-top: 25px;
+  margin-top: 20px;
 
   .top {
     width: fit-content;

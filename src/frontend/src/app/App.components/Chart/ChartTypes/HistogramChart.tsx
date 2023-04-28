@@ -33,6 +33,7 @@ export const HistogramChart = ({
     crosshairOptions = DEFAULT_CROSSHAIR_SETTING,
     textColor = lightTextColor,
     borderColor = headerColor,
+    seriesMarkers,
   } = {},
   colors: { barColor = 'rgba(119, 164, 242, 0.51)' } = {},
   data,
@@ -103,6 +104,11 @@ export const HistogramChart = ({
     // Setting data
     series.setData(data)
     series.applyOptions(CHART_SERIES_OPTIONS)
+
+    // set markers for series
+    if (seriesMarkers) {
+      series.setMarkers(seriesMarkers)
+    }
 
     // Subscribe for tooltip update
     chart.subscribeCrosshairMove((param) => {

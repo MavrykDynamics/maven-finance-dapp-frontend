@@ -167,7 +167,7 @@ export const BorrowAsset = ({
                     <CustomTooltip
                       iconId="info"
                       defaultStrokeColor={colors[themeSelected].textColor}
-                      text={`Origination fee`}
+                      text={`Amount paid to the DAO as the origination fee for borrowing. Each time you borrow, a fee is paid.`}
                       className="tooltip"
                     />
                   </div>
@@ -264,7 +264,12 @@ export const BorrowAsset = ({
                 <ThreeLevelListItem>
                   <div className="name">
                     Total Amount
-                    <CustomTooltip iconId="info" defaultStrokeColor={silverColor} text={``} className="tooltip" />
+                    <CustomTooltip
+                      iconId="info"
+                      defaultStrokeColor={silverColor}
+                      text={`Total amount you are borrowing, a portion of which is paid to the treasury as the DAO fee. The amount you will actually receive is the Total Amount minus the DAO fee.`}
+                      className="tooltip"
+                    />
                   </div>
                   <CommaNumber value={inputAmount} decimalsToShow={assetDecimalsToShow} className="value" />
                 </ThreeLevelListItem>
@@ -279,7 +284,12 @@ export const BorrowAsset = ({
                 <ThreeLevelListItem>
                   <div className="name">
                     DAO Fee
-                    <CustomTooltip iconId="info" defaultStrokeColor={silverColor} text={`Origination fee`} className="tooltip" />
+                    <CustomTooltip
+                      iconId="info"
+                      defaultStrokeColor={silverColor}
+                      text={`Amount paid to the DAO as the origination fee for borrowing. Each time you borrow, a fee is paid.`}
+                      className="tooltip"
+                    />
                   </div>
                   <CommaNumber
                     value={inputAmount * (DAOFee / 100)}

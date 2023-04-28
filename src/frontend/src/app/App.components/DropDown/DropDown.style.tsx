@@ -85,6 +85,24 @@ export const DropDownStyled = styled.div<{ theme: MavrykTheme }>`
       max-height: 400px;
     }
   }
+
+  &.stage-3-dropDown {
+    #selected-option {
+      div {
+        color: ${({ theme }) => theme.blockNameTitleColor};
+      }
+    }
+
+    #dropDownListContainer {
+      div {
+        color: ${({ theme }) => theme.blockNameTitleColor};
+      }
+    }
+
+    svg {
+      stroke: ${({ theme }) => theme.blockNameTitleColor};
+    }
+  }
 `
 
 export const DropDownMenu = styled.div<{ theme: MavrykTheme }>`

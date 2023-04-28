@@ -10,6 +10,10 @@ export const TimerStyled = styled.div<{
   margin: 0;
   color: ${({ defaultColor }) => defaultColor};
 
+  * {
+    font-size: 16px;
+  }
+
   ul {
     margin: 0;
     padding: 0;
