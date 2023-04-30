@@ -135,18 +135,18 @@ export const stake = (amount: number) => async (dispatch: AppDispatch, getState:
       const currentOperationLevel = transaction?.lastHead?.header?.level
 
       // refetch data we need
-      await checkIndexerLevelAndRunDataUpdateCallback({
-        callback: async () => {
-          // await dispatch(updateUserData())
-          // await dispatch(getDoormanStorage())
+      // await checkIndexerLevelAndRunDataUpdateCallback({
+      //   callback: async () => {
+      //     // await dispatch(updateUserData())
+      //     // await dispatch(getDoormanStorage())
 
-          // Add here call for update data actions
-          await dispatch(hideToaster())
-          await dispatch(showToaster(TOASTER_SUCCESS, 'Staking done', ACTION_COMPLETION_MESSAGE_TEXT))
-          await dispatch(toggleActionCompletion(false))
-        },
-        currentOperationLevel,
-      })
+      //     // Add here call for update data actions
+      //     await dispatch(hideToaster())
+      //     await dispatch(showToaster(TOASTER_SUCCESS, 'Staking done', ACTION_COMPLETION_MESSAGE_TEXT))
+      //     await dispatch(toggleActionCompletion(false))
+      //   },
+      //   currentOperationLevel,
+      // })
     }, 5000)
   } catch (error) {
     if (error instanceof Error) {
@@ -196,18 +196,18 @@ export const unstake = (amount: number) => async (dispatch: AppDispatch, getStat
       const currentOperationLevel = transaction?.lastHead?.header?.level
 
       // refetch data we need
-      await checkIndexerLevelAndRunDataUpdateCallback({
-        callback: async () => {
-          // await dispatch(updateUserData())
-          // await dispatch(getDoormanStorage())
+      // await checkIndexerLevelAndRunDataUpdateCallback({
+      //   callback: async () => {
+      //     // await dispatch(updateUserData())
+      //     // await dispatch(getDoormanStorage())
 
-          // Add here call for update data actions
-          await dispatch(hideToaster())
-          await dispatch(showToaster(TOASTER_SUCCESS, 'Unstaking done', ACTION_COMPLETION_MESSAGE_TEXT))
-          await dispatch(toggleActionCompletion(false))
-        },
-        currentOperationLevel,
-      })
+      //     // Add here call for update data actions
+      //     await dispatch(hideToaster())
+      //     await dispatch(showToaster(TOASTER_SUCCESS, 'Unstaking done', ACTION_COMPLETION_MESSAGE_TEXT))
+      //     await dispatch(toggleActionCompletion(false))
+      //   },
+      //   currentOperationLevel,
+      // })
     }, 5000)
   } catch (error) {
     if (error instanceof Error) {

@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 
+// context
+import { useStakeContext } from './Stake.provider'
+
 // view
 import NewButton from 'app/App.components/Button/NewButton'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
@@ -53,6 +56,7 @@ type StakeUnstakeViewProps = {
 export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeRate }: StakeUnstakeViewProps) => {
   const dispatch = useDispatch()
   const history = useHistory()
+  const { updateStakeContext } = useStakeContext()
 
   const {
     accountPkh,
@@ -119,6 +123,7 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
         ...inputData,
         errorMessage: '',
       })
+      updateStakeContext({ action: 'stake' })
       stakeCallback(Number(inputData.amount))
     } else {
       setInputData({
@@ -136,6 +141,7 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
         ...inputData,
         errorMessage: '',
       })
+      updateStakeContext({ action: 'unstake' })
       unstakeCallback(Number(inputData.amount))
     } else {
       setInputData({
@@ -154,6 +160,7 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
       validation: INPUT_STATUS_SUCCESS,
     })
 
+    updateStakeContext({ action: 'stake' })
     stakeCallback(myMvkTokenBalance)
   }
 
@@ -166,6 +173,7 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
       validation: INPUT_STATUS_SUCCESS,
     })
 
+    updateStakeContext({ action: 'unstake' })
     unstakeCallback(mySMvkTokenBalance)
   }
 

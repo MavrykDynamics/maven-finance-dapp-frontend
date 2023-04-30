@@ -15,7 +15,7 @@ import { DoormanStats } from './DoormanStats/DoormanStats.controller'
 import { StakeUnstakeView } from './StakeUnstake/StakeUnstake.view'
 
 // controllers
-import { StakeController } from './StakeUnstake/Stake.controller'
+import { StakeProvider } from './StakeUnstake/Stake.provider'
 
 // actions
 import { getDoormanStorage, stake } from './Doorman.actions'
@@ -76,13 +76,13 @@ export const Doorman = () => {
       ) : (
         <>
           <ExitFeeModal show={amount !== null} data={exitFeeModal} closePopup={closeExitFeePopup} />
-          <StakeController>
+          <StakeProvider>
             <StakeUnstakeView
               MVK_exchangeRate={mvkExchangeRate}
               stakeCallback={stakeCallback}
               unstakeCallback={unstakeCallback}
             />
-          </StakeController>
+          </StakeProvider>
           <DoormanInfoStyled>
             <DoormanChart />
             <DoormanStats
