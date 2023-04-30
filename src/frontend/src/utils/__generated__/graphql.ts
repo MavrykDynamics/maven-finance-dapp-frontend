@@ -1,3 +1,5 @@
+/* eslint-disable */
+import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -10,11 +12,11 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  bigint: number;
-  float8: number;
-  jsonb: unknown;
-  smallint: number;
-  timestamptz: string;
+  bigint: any;
+  float8: any;
+  jsonb: any;
+  smallint: any;
+  timestamptz: any;
 };
 
 /** Boolean expression to compare columns of type "Boolean". All fields are combined with logical 'AND'. */
@@ -69799,3 +69801,27 @@ export type Whitelist_Developer_Variance_Fields = {
 export type Whitelist_Developer_Variance_Order_By = {
   id?: InputMaybe<Order_By>;
 };
+
+export type SubscribeSmvkHistoryDataSubscriptionVariables = Exact<{ [key: string]: never; }>;
+
+
+export type SubscribeSmvkHistoryDataSubscription = { __typename?: 'subscription_root', smvk_history_data: Array<{ __typename?: 'smvk_history_data', mvk_total_supply: any, smvk_total_supply: any, timestamp: any }> };
+
+export type SubscribeAdressBalanceSubscriptionVariables = Exact<{
+  _eq?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type SubscribeAdressBalanceSubscription = { __typename?: 'subscription_root', mavryk_user: Array<{ __typename?: 'mavryk_user', address: string, mvk_balance: any, smvk_balance: any }> };
+
+export type SubscribeDoormanAddressBalanceSubscriptionVariables = Exact<{
+  doormanContractAddress?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type SubscribeDoormanAddressBalanceSubscription = { __typename?: 'subscription_root', mavryk_user: Array<{ __typename?: 'mavryk_user', mvk_balance: any }> };
+
+
+export const SubscribeSmvkHistoryDataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"subscribeSmvkHistoryData"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"smvk_history_data"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"distinct_on"},"value":{"kind":"EnumValue","value":"timestamp"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"mvk_total_supply"}},{"kind":"Field","name":{"kind":"Name","value":"smvk_total_supply"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}}]}}]}}]} as unknown as DocumentNode<SubscribeSmvkHistoryDataSubscription, SubscribeSmvkHistoryDataSubscriptionVariables>;
+export const SubscribeAdressBalanceDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"subscribeAdressBalance"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"_eq"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"mavryk_user"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"address"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"_eq"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"mvk_balance"}},{"kind":"Field","name":{"kind":"Name","value":"smvk_balance"}}]}}]}}]} as unknown as DocumentNode<SubscribeAdressBalanceSubscription, SubscribeAdressBalanceSubscriptionVariables>;
+export const SubscribeDoormanAddressBalanceDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"subscribeDoormanAddressBalance"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"doormanContractAddress"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"mavryk_user"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"address"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"doormanContractAddress"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"mvk_balance"}}]}}]}}]} as unknown as DocumentNode<SubscribeDoormanAddressBalanceSubscription, SubscribeDoormanAddressBalanceSubscriptionVariables>;

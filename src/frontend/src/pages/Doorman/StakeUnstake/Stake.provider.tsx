@@ -43,13 +43,15 @@ export const StakeProvider = ({ children }: { children: React.ReactNode }) => {
       if (error) {
         showStakeErrorMessage(dispatch, error.message)
       }
-      updateDoormanStakeHistoryData(dispatch, data)
-      const { action } = stakeContextData
-      const capital = action.charAt(0).toUpperCase()
-      const msg = capital + action.substring(1)
-      if (action) {
-        showStakeSuccessMessage(dispatch, msg)
-        updateStakeContext({ action: '' })
+      if (data) {
+        updateDoormanStakeHistoryData(dispatch, data)
+        const { action } = stakeContextData
+        const capital = action.charAt(0).toUpperCase()
+        const msg = capital + action.substring(1)
+        if (action) {
+          showStakeSuccessMessage(dispatch, msg)
+          updateStakeContext({ action: '' })
+        }
       }
     },
     skip: isInitialDataLoading,
@@ -64,7 +66,7 @@ export const StakeProvider = ({ children }: { children: React.ReactNode }) => {
       if (error) {
         showStakeErrorMessage(dispatch, error.message)
       }
-      updateUserStakeData(dispatch, user, data, accountPkh as string)
+      if (data) updateUserStakeData(dispatch, user, data, accountPkh as string)
     },
     shouldResubscribe: true,
     skip: isInitialDataLoading,
@@ -79,7 +81,7 @@ export const StakeProvider = ({ children }: { children: React.ReactNode }) => {
       if (error) {
         showStakeErrorMessage(dispatch, error.message)
       }
-      updateDoormanStorageData(dispatch, data)
+      if (data) updateDoormanStorageData(dispatch, data)
     },
     shouldResubscribe: true,
     skip: isInitialDataLoading,

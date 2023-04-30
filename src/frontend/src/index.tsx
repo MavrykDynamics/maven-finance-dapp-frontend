@@ -28,7 +28,7 @@ const httpLink = new HttpLink({
 
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: 'wss://api.mavryk.finance/v1/graphql',
+    url: process.env.REACT_APP_GRAPHQL_WSS_API ?? '',
   }),
 )
 

@@ -1,7 +1,6 @@
-import { gql } from '@apollo/client'
+import { gql } from 'utils/__generated__/gql'
 
-// for doorman -> pass to normalizeSmvkHistoryData
-export const SUBSCRIPTION_STAKE = gql`
+export const SUBSCRIPTION_STAKE = gql(/* GraphQL */ `
   subscription subscribeSmvkHistoryData {
     smvk_history_data(distinct_on: timestamp) {
       mvk_total_supply
@@ -9,10 +8,10 @@ export const SUBSCRIPTION_STAKE = gql`
       timestamp
     }
   }
-`
+  `
+)
 
-// for address
-export const ADDRESS_BALANCE_DATA = gql`
+export const ADDRESS_BALANCE_DATA = gql(/* GraphQL */ `
   subscription subscribeAdressBalance($_eq: String) {
     mavryk_user(where: { address: { _eq: $_eq } }) {
       address
@@ -20,12 +19,12 @@ export const ADDRESS_BALANCE_DATA = gql`
       smvk_balance
     }
   }
-`
-// for doorman normalizeDoormanStorage
-export const DOORMAN_ADDRESS_BALANCE = gql`
+`)
+
+export const DOORMAN_ADDRESS_BALANCE = gql(/* GraphQL */ `
   subscription subscribeDoormanAddressBalance($doormanContractAddress: String) {
     mavryk_user(where: { address: { _eq: $doormanContractAddress } }) {
       mvk_balance
     }
   }
-`
+`)

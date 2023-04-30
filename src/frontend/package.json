@@ -12,12 +12,13 @@
     "cypress:test": "cypress run -s 'cypress/integration/**/*-spec.js'",
     "import-contracts": "rm -Rf src/deployments && cp -R ../contracts/deployments src/deployments",
     "open-explorer": "open https://better-call.dev/hangzhou2net/KT1N4WXRdpxmqKVuukhQXX5kgc6JwJwyJrVH/",
-    "codegen": "graphql-codegen --config codegen.yml"
+    "graphql-compile": "graphql-codegen",
+    "graphql-watch": "graphql-codegen -w"
   },
   "dependencies": {
     "@airgap/beacon-sdk": "^3.3.0",
     "@apollo/client": "^3.7.12",
-    "@graphql-codegen/cli": "2.11.6",
+    "@graphql-codegen/cli": "^3.3.1",
     "@taquito/beacon-wallet": "^15.0.1",
     "@taquito/signer": "^15.0.1",
     "@taquito/taquito": "^15.0.1",
@@ -60,6 +61,7 @@
     "@cypress/code-coverage": "^3.9.11",
     "@cypress/instrument-cra": "^1.4.0",
     "@graphql-codegen/cli": "2.11.6",
+    "@graphql-codegen/client-preset": "^3.0.1",
     "@graphql-codegen/typescript": "2.7.3",
     "@types/coingecko-api": "^1.0.10",
     "@types/node": "^16.10.1",
@@ -76,7 +78,7 @@
     "eslint-config-react-app": "^6.0.0",
     "prettier": "2.8.7",
     "source-map-explorer": "^2.5.2",
-    "typescript": "^4.4.3"
+    "typescript": "^5.0.4"
   },
   "eslintConfig": {
     "extends": "react-app"
