@@ -1,4 +1,4 @@
-import { GET_DOORMAN_STORAGE } from 'pages/Doorman/Doorman.actions'
+import { GET_DOORMAN_STORAGE, UPDATE_DOORMAN_STORAGE } from 'pages/Doorman/Doorman.actions'
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
 import { SmvkHistoryData } from '../utils/TypesAndInterfaces/Doorman'
 
@@ -36,6 +36,10 @@ export function doorman(state = doormanDefaultState, action: Action) {
         smvkHistoryData: action.smvkHistoryData,
         isLoaded: true,
       }
+    case UPDATE_DOORMAN_STORAGE: 
+    return {
+      ...state, ...action.payload
+    }
     default:
       return state
   }

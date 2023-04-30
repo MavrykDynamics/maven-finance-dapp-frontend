@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { gql, useSubscription, useQuery } from '@apollo/client'
 
 // view
 import NewButton from 'app/App.components/Button/NewButton'
@@ -45,32 +44,6 @@ import {
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { silverColor } from 'styles'
 
-const SUBSCRIPTION_STAKE = gql`
-  subscription subscribeStakeHistoryData {
-    smvk_history_data {
-      smvk_total_supply
-      timestamp
-    }
-  }
-`
-
-const ADDRESS_BALANCE_DATA = gql`
-  subscription subscribeAdressBalance($_eq: String) {
-    mavryk_user(where: { address: { _eq: $_eq } }) {
-      address
-      mvk_balance
-      smvk_balance
-    }
-  }
-`
-const DOORMAN_ADDRESS_BALANCE = gql`
-  subscription subscribeDoormanAddressBalance($doormanContractAddress: String) {
-    mavryk_user(where: { address: { _eq: $doormanContractAddress } }) {
-      mvk_balance
-    }
-  }
-`
-
 type StakeUnstakeViewProps = {
   stakeCallback: (amount: number) => void
   unstakeCallback: (amount: number) => void
@@ -80,16 +53,6 @@ type StakeUnstakeViewProps = {
 export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeRate }: StakeUnstakeViewProps) => {
   const dispatch = useDispatch()
   const history = useHistory()
-
-  useSubscription(SUBSCRIPTION_STAKE, {
-    onSubscriptionData: ({ subscriptionData }) => {
-      const { smvk_history_data: newSmvkHistoryData } = subscriptionData.data
-      const lastSmvkHistoryData = newSmvkHistoryData[newSmvkHistoryData.length - 1]
-      console.log(lastSmvkHistoryData, ' ----------------------')
-    },
-  })
-
-  // console.log(data, loading, error, 'stakeHistoryData')
 
   const {
     accountPkh,

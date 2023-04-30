@@ -27,6 +27,7 @@ import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.ac
 import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
 
 export const GET_DOORMAN_STORAGE = 'GET_DOORMAN_STORAGE'
+export const UPDATE_DOORMAN_STORAGE = 'UPDATE_DOORMAN_STORAGE'
 export const getDoormanStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
   const {
     contractAddresses: {
@@ -136,8 +137,8 @@ export const stake = (amount: number) => async (dispatch: AppDispatch, getState:
       // refetch data we need
       await checkIndexerLevelAndRunDataUpdateCallback({
         callback: async () => {
-          await dispatch(updateUserData())
-          await dispatch(getDoormanStorage())
+          // await dispatch(updateUserData())
+          // await dispatch(getDoormanStorage())
 
           // Add here call for update data actions
           await dispatch(hideToaster())
@@ -197,8 +198,8 @@ export const unstake = (amount: number) => async (dispatch: AppDispatch, getStat
       // refetch data we need
       await checkIndexerLevelAndRunDataUpdateCallback({
         callback: async () => {
-          await dispatch(updateUserData())
-          await dispatch(getDoormanStorage())
+          // await dispatch(updateUserData())
+          // await dispatch(getDoormanStorage())
 
           // Add here call for update data actions
           await dispatch(hideToaster())

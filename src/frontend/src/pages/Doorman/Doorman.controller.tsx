@@ -14,6 +14,9 @@ import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { DoormanStats } from './DoormanStats/DoormanStats.controller'
 import { StakeUnstakeView } from './StakeUnstake/StakeUnstake.view'
 
+// controllers
+import { StakeController } from './StakeUnstake/Stake.controller'
+
 // actions
 import { getDoormanStorage, stake } from './Doorman.actions'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
@@ -73,11 +76,13 @@ export const Doorman = () => {
       ) : (
         <>
           <ExitFeeModal show={amount !== null} data={exitFeeModal} closePopup={closeExitFeePopup} />
-          <StakeUnstakeView
-            MVK_exchangeRate={mvkExchangeRate}
-            stakeCallback={stakeCallback}
-            unstakeCallback={unstakeCallback}
-          />
+          <StakeController>
+            <StakeUnstakeView
+              MVK_exchangeRate={mvkExchangeRate}
+              stakeCallback={stakeCallback}
+              unstakeCallback={unstakeCallback}
+            />
+          </StakeController>
           <DoormanInfoStyled>
             <DoormanChart />
             <DoormanStats
