@@ -149,17 +149,17 @@ export const ProposalSubmission = () => {
     )
 
     // If last selected proposal by user is not exists
-    if (!proposalKeys.includes(selectedUserProposalId)) {
-      // set first remote we have
-      if (proposalKeys.length) {
-        setSeletedUserProposalId(proposalKeys[0])
-        lastSelectedProposalId.current = proposalKeys[0]
-      } else {
-        // else set "Create new" proposal as initial seleced
-        setSeletedUserProposalId(DEFAULT_PROPOSAL.id)
-        lastSelectedProposalId.current = DEFAULT_PROPOSAL.id
-      }
-    }
+    // if (!proposalKeys.includes(selectedUserProposalId)) {
+    //   // set first remote we have
+    //   if (proposalKeys.length) {
+    //     setSeletedUserProposalId(proposalKeys[0])
+    //     lastSelectedProposalId.current = proposalKeys[0]
+    //   } else {
+    //     // else set "Create new" proposal as initial seleced
+    //     setSeletedUserProposalId(DEFAULT_PROPOSAL.id)
+    //     lastSelectedProposalId.current = DEFAULT_PROPOSAL.id
+    //   }
+    // }
   }, [mappedProposals, mappedValidation, proposalKeys, selectedUserProposalId])
 
   // Current proposal on client, used to show proposal data in stages
@@ -170,28 +170,21 @@ export const ProposalSubmission = () => {
 
   // ------ ACTIONS HANDLERDS START ------
   // Change proposal stage
-  const handleChangeTab = useCallback((tabId?: number) => {
-    setActiveTab(tabId ?? 0)
-  }, [])
+  const handleChangeTab = (tabId?: number) => setActiveTab(tabId ?? 0)
 
   // Change user's vieving proposal
-  const changeActiveProposal = useCallback(
-    (proposalId: number) => {
-      setSeletedUserProposalId(proposalId)
-      lastSelectedProposalId.current = proposalId
+  const changeActiveProposal = (proposalId: number) => {
+    setSeletedUserProposalId(proposalId)
+    lastSelectedProposalId.current = proposalId
 
-      // it means that we choose create new proposal
-      if (proposalId === -1 && !proposalState[-1]) {
-        setProposalsState({
-          ...proposalState,
-          ...(proposalState[DEFAULT_PROPOSAL.id]
-            ? { [DEFAULT_PROPOSAL.id - 1]: DEFAULT_PROPOSAL }
-            : { [DEFAULT_PROPOSAL.id]: DEFAULT_PROPOSAL }),
-        })
-      }
-    },
-    [proposalState],
-  )
+    // it means that we choose create new proposal
+    if (proposalId === -1 && !proposalState[-1]) {
+      setProposalsState({
+        ...proposalState,
+        [DEFAULT_PROPOSAL.id - 1]: { ...DEFAULT_PROPOSAL },
+      })
+    }
+  }
 
   const updateLocalProposalData = useCallback(
     (newProposalData: Partial<ProposalRecordType>, proposalId: number) => {

@@ -170,7 +170,8 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
         {proposal.proposalData?.length ? (
           <ol className="bytes-list">
             {proposal.proposalData.map((item) => {
-              if (!item || !item.encoded_code) return null
+              if (!item || typeof item.title !== 'string' || typeof item.encoded_code !== 'string') return null
+
               const isByteOpened = openedBytes.includes(item.id)
               const byteText = item.encoded_code
               return (
@@ -227,6 +228,8 @@ export const ProposalDetails = ({ proposal }: { proposal: ProposalRecordType }) 
             </TableHeader>
             <TableBody>
               {proposal.proposalPayments.map((payment) => {
+                if (payment.to__id === null || payment.title === null) return null
+
                 const selectedSymbol =
                   whitelistTokens.find(({ address }) => address === payment.token_address)?.symbol?.toUpperCase() ??
                   whitelistTokens?.[0]?.symbol?.toUpperCase() ??
