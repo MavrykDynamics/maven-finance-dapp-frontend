@@ -303,7 +303,8 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
                   : `Compounds your pending exit fee rewards and converts them to sMVK. You currently, do not have any pending exit fee rewards amounting to at least 2 sMVK.`
               }
               iconId="info"
-              defaultStrokeColor={colors[themeSelected].valueColor}
+              className="tooltip"
+              defaultStrokeColor={colors[themeSelected].textColor}
             />
           </StakeUnstakeRightPart>
         </StakeUnstakeCard>
