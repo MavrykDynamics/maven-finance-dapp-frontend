@@ -16,9 +16,10 @@ import { StakeUnstakeView } from './StakeUnstake/StakeUnstake.view'
 
 // providers
 import { useStakeContext } from 'providers/StakeProvider/stake.provider'
+import { stake } from 'providers/StakeProvider/actions/stake.actions'
 
 // actions
-import { getDoormanStorage, stake } from './Doorman.actions'
+import { getDoormanStorage } from './Doorman.actions'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { State } from 'reducers'
 

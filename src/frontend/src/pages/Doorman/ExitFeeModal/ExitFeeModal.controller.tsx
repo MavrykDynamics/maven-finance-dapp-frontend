@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 
 // helpers
 import { mathRoundTwoDigit } from '../../../utils/validatorFunctions'
-import { unstake } from '../Doorman.actions'
+import { unstake } from 'providers/StakeProvider/actions/stake.actions'
 import { calcExitFee, calcMLI } from '../../../utils/calcFunctions'
 import { InputStatusType, INPUT_STATUS_SUCCESS, INPUT_LARGE } from 'app/App.components/Input/Input.constants'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from '../../../app/App.components/Button/Button.constants'
