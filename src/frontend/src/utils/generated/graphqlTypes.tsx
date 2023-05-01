@@ -4969,6 +4969,7 @@ export type Break_Glass_Action = {
   /** An object relationship */
   break_glass: Break_Glass;
   break_glass_id: Scalars['String'];
+  council_size_snapshot: Scalars['smallint'];
   executed: Scalars['Boolean'];
   execution_datetime?: Maybe<Scalars['timestamptz']>;
   execution_level: Scalars['bigint'];
@@ -5107,6 +5108,7 @@ export type Break_Glass_Action_Aggregate_Order_By = {
 /** aggregate avg on columns */
 export type Break_Glass_Action_Avg_Fields = {
   __typename?: 'break_glass_action_avg_fields';
+  council_size_snapshot?: Maybe<Scalars['Float']>;
   execution_level?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
   internal_id?: Maybe<Scalars['Float']>;
@@ -5117,6 +5119,7 @@ export type Break_Glass_Action_Avg_Fields = {
 
 /** order by avg() on columns of table "break_glass_action" */
 export type Break_Glass_Action_Avg_Order_By = {
+  council_size_snapshot?: InputMaybe<Order_By>;
   execution_level?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   internal_id?: InputMaybe<Order_By>;
@@ -5133,6 +5136,7 @@ export type Break_Glass_Action_Bool_Exp = {
   action_type?: InputMaybe<String_Comparison_Exp>;
   break_glass?: InputMaybe<Break_Glass_Bool_Exp>;
   break_glass_id?: InputMaybe<String_Comparison_Exp>;
+  council_size_snapshot?: InputMaybe<Smallint_Comparison_Exp>;
   executed?: InputMaybe<Boolean_Comparison_Exp>;
   execution_datetime?: InputMaybe<Timestamptz_Comparison_Exp>;
   execution_level?: InputMaybe<Bigint_Comparison_Exp>;
@@ -5155,6 +5159,7 @@ export type Break_Glass_Action_Max_Fields = {
   __typename?: 'break_glass_action_max_fields';
   action_type?: Maybe<Scalars['String']>;
   break_glass_id?: Maybe<Scalars['String']>;
+  council_size_snapshot?: Maybe<Scalars['smallint']>;
   execution_datetime?: Maybe<Scalars['timestamptz']>;
   execution_level?: Maybe<Scalars['bigint']>;
   expiration_datetime?: Maybe<Scalars['timestamptz']>;
@@ -5171,6 +5176,7 @@ export type Break_Glass_Action_Max_Fields = {
 export type Break_Glass_Action_Max_Order_By = {
   action_type?: InputMaybe<Order_By>;
   break_glass_id?: InputMaybe<Order_By>;
+  council_size_snapshot?: InputMaybe<Order_By>;
   execution_datetime?: InputMaybe<Order_By>;
   execution_level?: InputMaybe<Order_By>;
   expiration_datetime?: InputMaybe<Order_By>;
@@ -5188,6 +5194,7 @@ export type Break_Glass_Action_Min_Fields = {
   __typename?: 'break_glass_action_min_fields';
   action_type?: Maybe<Scalars['String']>;
   break_glass_id?: Maybe<Scalars['String']>;
+  council_size_snapshot?: Maybe<Scalars['smallint']>;
   execution_datetime?: Maybe<Scalars['timestamptz']>;
   execution_level?: Maybe<Scalars['bigint']>;
   expiration_datetime?: Maybe<Scalars['timestamptz']>;
@@ -5204,6 +5211,7 @@ export type Break_Glass_Action_Min_Fields = {
 export type Break_Glass_Action_Min_Order_By = {
   action_type?: InputMaybe<Order_By>;
   break_glass_id?: InputMaybe<Order_By>;
+  council_size_snapshot?: InputMaybe<Order_By>;
   execution_datetime?: InputMaybe<Order_By>;
   execution_level?: InputMaybe<Order_By>;
   expiration_datetime?: InputMaybe<Order_By>;
@@ -5221,6 +5229,7 @@ export type Break_Glass_Action_Order_By = {
   action_type?: InputMaybe<Order_By>;
   break_glass?: InputMaybe<Break_Glass_Order_By>;
   break_glass_id?: InputMaybe<Order_By>;
+  council_size_snapshot?: InputMaybe<Order_By>;
   executed?: InputMaybe<Order_By>;
   execution_datetime?: InputMaybe<Order_By>;
   execution_level?: InputMaybe<Order_By>;
@@ -5496,6 +5505,8 @@ export enum Break_Glass_Action_Select_Column {
   ActionType = 'action_type',
   /** column name */
   BreakGlassId = 'break_glass_id',
+  /** column name */
+  CouncilSizeSnapshot = 'council_size_snapshot',
   /** column name */
   Executed = 'executed',
   /** column name */
@@ -5781,6 +5792,7 @@ export type Break_Glass_Action_Signer_Variance_Order_By = {
 /** aggregate stddev on columns */
 export type Break_Glass_Action_Stddev_Fields = {
   __typename?: 'break_glass_action_stddev_fields';
+  council_size_snapshot?: Maybe<Scalars['Float']>;
   execution_level?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
   internal_id?: Maybe<Scalars['Float']>;
@@ -5791,6 +5803,7 @@ export type Break_Glass_Action_Stddev_Fields = {
 
 /** order by stddev() on columns of table "break_glass_action" */
 export type Break_Glass_Action_Stddev_Order_By = {
+  council_size_snapshot?: InputMaybe<Order_By>;
   execution_level?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   internal_id?: InputMaybe<Order_By>;
@@ -5802,6 +5815,7 @@ export type Break_Glass_Action_Stddev_Order_By = {
 /** aggregate stddev_pop on columns */
 export type Break_Glass_Action_Stddev_Pop_Fields = {
   __typename?: 'break_glass_action_stddev_pop_fields';
+  council_size_snapshot?: Maybe<Scalars['Float']>;
   execution_level?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
   internal_id?: Maybe<Scalars['Float']>;
@@ -5812,6 +5826,7 @@ export type Break_Glass_Action_Stddev_Pop_Fields = {
 
 /** order by stddev_pop() on columns of table "break_glass_action" */
 export type Break_Glass_Action_Stddev_Pop_Order_By = {
+  council_size_snapshot?: InputMaybe<Order_By>;
   execution_level?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   internal_id?: InputMaybe<Order_By>;
@@ -5823,6 +5838,7 @@ export type Break_Glass_Action_Stddev_Pop_Order_By = {
 /** aggregate stddev_samp on columns */
 export type Break_Glass_Action_Stddev_Samp_Fields = {
   __typename?: 'break_glass_action_stddev_samp_fields';
+  council_size_snapshot?: Maybe<Scalars['Float']>;
   execution_level?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
   internal_id?: Maybe<Scalars['Float']>;
@@ -5833,6 +5849,7 @@ export type Break_Glass_Action_Stddev_Samp_Fields = {
 
 /** order by stddev_samp() on columns of table "break_glass_action" */
 export type Break_Glass_Action_Stddev_Samp_Order_By = {
+  council_size_snapshot?: InputMaybe<Order_By>;
   execution_level?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   internal_id?: InputMaybe<Order_By>;
@@ -5853,6 +5870,7 @@ export type Break_Glass_Action_Stream_Cursor_Input = {
 export type Break_Glass_Action_Stream_Cursor_Value_Input = {
   action_type?: InputMaybe<Scalars['String']>;
   break_glass_id?: InputMaybe<Scalars['String']>;
+  council_size_snapshot?: InputMaybe<Scalars['smallint']>;
   executed?: InputMaybe<Scalars['Boolean']>;
   execution_datetime?: InputMaybe<Scalars['timestamptz']>;
   execution_level?: InputMaybe<Scalars['bigint']>;
@@ -5869,6 +5887,7 @@ export type Break_Glass_Action_Stream_Cursor_Value_Input = {
 /** aggregate sum on columns */
 export type Break_Glass_Action_Sum_Fields = {
   __typename?: 'break_glass_action_sum_fields';
+  council_size_snapshot?: Maybe<Scalars['smallint']>;
   execution_level?: Maybe<Scalars['bigint']>;
   id?: Maybe<Scalars['bigint']>;
   internal_id?: Maybe<Scalars['bigint']>;
@@ -5879,6 +5898,7 @@ export type Break_Glass_Action_Sum_Fields = {
 
 /** order by sum() on columns of table "break_glass_action" */
 export type Break_Glass_Action_Sum_Order_By = {
+  council_size_snapshot?: InputMaybe<Order_By>;
   execution_level?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   internal_id?: InputMaybe<Order_By>;
@@ -5890,6 +5910,7 @@ export type Break_Glass_Action_Sum_Order_By = {
 /** aggregate var_pop on columns */
 export type Break_Glass_Action_Var_Pop_Fields = {
   __typename?: 'break_glass_action_var_pop_fields';
+  council_size_snapshot?: Maybe<Scalars['Float']>;
   execution_level?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
   internal_id?: Maybe<Scalars['Float']>;
@@ -5900,6 +5921,7 @@ export type Break_Glass_Action_Var_Pop_Fields = {
 
 /** order by var_pop() on columns of table "break_glass_action" */
 export type Break_Glass_Action_Var_Pop_Order_By = {
+  council_size_snapshot?: InputMaybe<Order_By>;
   execution_level?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   internal_id?: InputMaybe<Order_By>;
@@ -5911,6 +5933,7 @@ export type Break_Glass_Action_Var_Pop_Order_By = {
 /** aggregate var_samp on columns */
 export type Break_Glass_Action_Var_Samp_Fields = {
   __typename?: 'break_glass_action_var_samp_fields';
+  council_size_snapshot?: Maybe<Scalars['Float']>;
   execution_level?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
   internal_id?: Maybe<Scalars['Float']>;
@@ -5921,6 +5944,7 @@ export type Break_Glass_Action_Var_Samp_Fields = {
 
 /** order by var_samp() on columns of table "break_glass_action" */
 export type Break_Glass_Action_Var_Samp_Order_By = {
+  council_size_snapshot?: InputMaybe<Order_By>;
   execution_level?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   internal_id?: InputMaybe<Order_By>;
@@ -5932,6 +5956,7 @@ export type Break_Glass_Action_Var_Samp_Order_By = {
 /** aggregate variance on columns */
 export type Break_Glass_Action_Variance_Fields = {
   __typename?: 'break_glass_action_variance_fields';
+  council_size_snapshot?: Maybe<Scalars['Float']>;
   execution_level?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
   internal_id?: Maybe<Scalars['Float']>;
@@ -5942,6 +5967,7 @@ export type Break_Glass_Action_Variance_Fields = {
 
 /** order by variance() on columns of table "break_glass_action" */
 export type Break_Glass_Action_Variance_Order_By = {
+  council_size_snapshot?: InputMaybe<Order_By>;
   execution_level?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   internal_id?: InputMaybe<Order_By>;
@@ -7491,6 +7517,7 @@ export type Council_Action = {
   /** An object relationship */
   council: Council;
   council_id: Scalars['String'];
+  council_size_snapshot: Scalars['smallint'];
   executed: Scalars['Boolean'];
   execution_datetime?: Maybe<Scalars['timestamptz']>;
   execution_level: Scalars['bigint'];
@@ -7629,6 +7656,7 @@ export type Council_Action_Aggregate_Order_By = {
 /** aggregate avg on columns */
 export type Council_Action_Avg_Fields = {
   __typename?: 'council_action_avg_fields';
+  council_size_snapshot?: Maybe<Scalars['Float']>;
   execution_level?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
   internal_id?: Maybe<Scalars['Float']>;
@@ -7639,6 +7667,7 @@ export type Council_Action_Avg_Fields = {
 
 /** order by avg() on columns of table "council_action" */
 export type Council_Action_Avg_Order_By = {
+  council_size_snapshot?: InputMaybe<Order_By>;
   execution_level?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   internal_id?: InputMaybe<Order_By>;
@@ -7655,6 +7684,7 @@ export type Council_Action_Bool_Exp = {
   action_type?: InputMaybe<String_Comparison_Exp>;
   council?: InputMaybe<Council_Bool_Exp>;
   council_id?: InputMaybe<String_Comparison_Exp>;
+  council_size_snapshot?: InputMaybe<Smallint_Comparison_Exp>;
   executed?: InputMaybe<Boolean_Comparison_Exp>;
   execution_datetime?: InputMaybe<Timestamptz_Comparison_Exp>;
   execution_level?: InputMaybe<Bigint_Comparison_Exp>;
@@ -7677,6 +7707,7 @@ export type Council_Action_Max_Fields = {
   __typename?: 'council_action_max_fields';
   action_type?: Maybe<Scalars['String']>;
   council_id?: Maybe<Scalars['String']>;
+  council_size_snapshot?: Maybe<Scalars['smallint']>;
   execution_datetime?: Maybe<Scalars['timestamptz']>;
   execution_level?: Maybe<Scalars['bigint']>;
   expiration_datetime?: Maybe<Scalars['timestamptz']>;
@@ -7693,6 +7724,7 @@ export type Council_Action_Max_Fields = {
 export type Council_Action_Max_Order_By = {
   action_type?: InputMaybe<Order_By>;
   council_id?: InputMaybe<Order_By>;
+  council_size_snapshot?: InputMaybe<Order_By>;
   execution_datetime?: InputMaybe<Order_By>;
   execution_level?: InputMaybe<Order_By>;
   expiration_datetime?: InputMaybe<Order_By>;
@@ -7710,6 +7742,7 @@ export type Council_Action_Min_Fields = {
   __typename?: 'council_action_min_fields';
   action_type?: Maybe<Scalars['String']>;
   council_id?: Maybe<Scalars['String']>;
+  council_size_snapshot?: Maybe<Scalars['smallint']>;
   execution_datetime?: Maybe<Scalars['timestamptz']>;
   execution_level?: Maybe<Scalars['bigint']>;
   expiration_datetime?: Maybe<Scalars['timestamptz']>;
@@ -7726,6 +7759,7 @@ export type Council_Action_Min_Fields = {
 export type Council_Action_Min_Order_By = {
   action_type?: InputMaybe<Order_By>;
   council_id?: InputMaybe<Order_By>;
+  council_size_snapshot?: InputMaybe<Order_By>;
   execution_datetime?: InputMaybe<Order_By>;
   execution_level?: InputMaybe<Order_By>;
   expiration_datetime?: InputMaybe<Order_By>;
@@ -7743,6 +7777,7 @@ export type Council_Action_Order_By = {
   action_type?: InputMaybe<Order_By>;
   council?: InputMaybe<Council_Order_By>;
   council_id?: InputMaybe<Order_By>;
+  council_size_snapshot?: InputMaybe<Order_By>;
   executed?: InputMaybe<Order_By>;
   execution_datetime?: InputMaybe<Order_By>;
   execution_level?: InputMaybe<Order_By>;
@@ -8018,6 +8053,8 @@ export enum Council_Action_Select_Column {
   ActionType = 'action_type',
   /** column name */
   CouncilId = 'council_id',
+  /** column name */
+  CouncilSizeSnapshot = 'council_size_snapshot',
   /** column name */
   Executed = 'executed',
   /** column name */
@@ -8303,6 +8340,7 @@ export type Council_Action_Signer_Variance_Order_By = {
 /** aggregate stddev on columns */
 export type Council_Action_Stddev_Fields = {
   __typename?: 'council_action_stddev_fields';
+  council_size_snapshot?: Maybe<Scalars['Float']>;
   execution_level?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
   internal_id?: Maybe<Scalars['Float']>;
@@ -8313,6 +8351,7 @@ export type Council_Action_Stddev_Fields = {
 
 /** order by stddev() on columns of table "council_action" */
 export type Council_Action_Stddev_Order_By = {
+  council_size_snapshot?: InputMaybe<Order_By>;
   execution_level?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   internal_id?: InputMaybe<Order_By>;
@@ -8324,6 +8363,7 @@ export type Council_Action_Stddev_Order_By = {
 /** aggregate stddev_pop on columns */
 export type Council_Action_Stddev_Pop_Fields = {
   __typename?: 'council_action_stddev_pop_fields';
+  council_size_snapshot?: Maybe<Scalars['Float']>;
   execution_level?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
   internal_id?: Maybe<Scalars['Float']>;
@@ -8334,6 +8374,7 @@ export type Council_Action_Stddev_Pop_Fields = {
 
 /** order by stddev_pop() on columns of table "council_action" */
 export type Council_Action_Stddev_Pop_Order_By = {
+  council_size_snapshot?: InputMaybe<Order_By>;
   execution_level?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   internal_id?: InputMaybe<Order_By>;
@@ -8345,6 +8386,7 @@ export type Council_Action_Stddev_Pop_Order_By = {
 /** aggregate stddev_samp on columns */
 export type Council_Action_Stddev_Samp_Fields = {
   __typename?: 'council_action_stddev_samp_fields';
+  council_size_snapshot?: Maybe<Scalars['Float']>;
   execution_level?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
   internal_id?: Maybe<Scalars['Float']>;
@@ -8355,6 +8397,7 @@ export type Council_Action_Stddev_Samp_Fields = {
 
 /** order by stddev_samp() on columns of table "council_action" */
 export type Council_Action_Stddev_Samp_Order_By = {
+  council_size_snapshot?: InputMaybe<Order_By>;
   execution_level?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   internal_id?: InputMaybe<Order_By>;
@@ -8375,6 +8418,7 @@ export type Council_Action_Stream_Cursor_Input = {
 export type Council_Action_Stream_Cursor_Value_Input = {
   action_type?: InputMaybe<Scalars['String']>;
   council_id?: InputMaybe<Scalars['String']>;
+  council_size_snapshot?: InputMaybe<Scalars['smallint']>;
   executed?: InputMaybe<Scalars['Boolean']>;
   execution_datetime?: InputMaybe<Scalars['timestamptz']>;
   execution_level?: InputMaybe<Scalars['bigint']>;
@@ -8391,6 +8435,7 @@ export type Council_Action_Stream_Cursor_Value_Input = {
 /** aggregate sum on columns */
 export type Council_Action_Sum_Fields = {
   __typename?: 'council_action_sum_fields';
+  council_size_snapshot?: Maybe<Scalars['smallint']>;
   execution_level?: Maybe<Scalars['bigint']>;
   id?: Maybe<Scalars['bigint']>;
   internal_id?: Maybe<Scalars['bigint']>;
@@ -8401,6 +8446,7 @@ export type Council_Action_Sum_Fields = {
 
 /** order by sum() on columns of table "council_action" */
 export type Council_Action_Sum_Order_By = {
+  council_size_snapshot?: InputMaybe<Order_By>;
   execution_level?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   internal_id?: InputMaybe<Order_By>;
@@ -8412,6 +8458,7 @@ export type Council_Action_Sum_Order_By = {
 /** aggregate var_pop on columns */
 export type Council_Action_Var_Pop_Fields = {
   __typename?: 'council_action_var_pop_fields';
+  council_size_snapshot?: Maybe<Scalars['Float']>;
   execution_level?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
   internal_id?: Maybe<Scalars['Float']>;
@@ -8422,6 +8469,7 @@ export type Council_Action_Var_Pop_Fields = {
 
 /** order by var_pop() on columns of table "council_action" */
 export type Council_Action_Var_Pop_Order_By = {
+  council_size_snapshot?: InputMaybe<Order_By>;
   execution_level?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   internal_id?: InputMaybe<Order_By>;
@@ -8433,6 +8481,7 @@ export type Council_Action_Var_Pop_Order_By = {
 /** aggregate var_samp on columns */
 export type Council_Action_Var_Samp_Fields = {
   __typename?: 'council_action_var_samp_fields';
+  council_size_snapshot?: Maybe<Scalars['Float']>;
   execution_level?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
   internal_id?: Maybe<Scalars['Float']>;
@@ -8443,6 +8492,7 @@ export type Council_Action_Var_Samp_Fields = {
 
 /** order by var_samp() on columns of table "council_action" */
 export type Council_Action_Var_Samp_Order_By = {
+  council_size_snapshot?: InputMaybe<Order_By>;
   execution_level?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   internal_id?: InputMaybe<Order_By>;
@@ -8454,6 +8504,7 @@ export type Council_Action_Var_Samp_Order_By = {
 /** aggregate variance on columns */
 export type Council_Action_Variance_Fields = {
   __typename?: 'council_action_variance_fields';
+  council_size_snapshot?: Maybe<Scalars['Float']>;
   execution_level?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
   internal_id?: Maybe<Scalars['Float']>;
@@ -8464,6 +8515,7 @@ export type Council_Action_Variance_Fields = {
 
 /** order by variance() on columns of table "council_action" */
 export type Council_Action_Variance_Order_By = {
+  council_size_snapshot?: InputMaybe<Order_By>;
   execution_level?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   internal_id?: InputMaybe<Order_By>;
@@ -11950,6 +12002,166 @@ export type Dipdup_Contract_Stream_Cursor_Value_Input = {
   name?: InputMaybe<Scalars['String']>;
   typename?: InputMaybe<Scalars['String']>;
   updated_at?: InputMaybe<Scalars['timestamptz']>;
+};
+
+/** columns and relationships of "dipdup_exception" */
+export type Dipdup_Exception = {
+  __typename?: 'dipdup_exception';
+  id: Scalars['bigint'];
+  timestamp: Scalars['timestamptz'];
+  trace: Scalars['String'];
+  type: Scalars['String'];
+  value: Scalars['String'];
+};
+
+/** aggregated selection of "dipdup_exception" */
+export type Dipdup_Exception_Aggregate = {
+  __typename?: 'dipdup_exception_aggregate';
+  aggregate?: Maybe<Dipdup_Exception_Aggregate_Fields>;
+  nodes: Array<Dipdup_Exception>;
+};
+
+/** aggregate fields of "dipdup_exception" */
+export type Dipdup_Exception_Aggregate_Fields = {
+  __typename?: 'dipdup_exception_aggregate_fields';
+  avg?: Maybe<Dipdup_Exception_Avg_Fields>;
+  count: Scalars['Int'];
+  max?: Maybe<Dipdup_Exception_Max_Fields>;
+  min?: Maybe<Dipdup_Exception_Min_Fields>;
+  stddev?: Maybe<Dipdup_Exception_Stddev_Fields>;
+  stddev_pop?: Maybe<Dipdup_Exception_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<Dipdup_Exception_Stddev_Samp_Fields>;
+  sum?: Maybe<Dipdup_Exception_Sum_Fields>;
+  var_pop?: Maybe<Dipdup_Exception_Var_Pop_Fields>;
+  var_samp?: Maybe<Dipdup_Exception_Var_Samp_Fields>;
+  variance?: Maybe<Dipdup_Exception_Variance_Fields>;
+};
+
+
+/** aggregate fields of "dipdup_exception" */
+export type Dipdup_Exception_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Dipdup_Exception_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** aggregate avg on columns */
+export type Dipdup_Exception_Avg_Fields = {
+  __typename?: 'dipdup_exception_avg_fields';
+  id?: Maybe<Scalars['Float']>;
+};
+
+/** Boolean expression to filter rows from the table "dipdup_exception". All fields are combined with a logical 'AND'. */
+export type Dipdup_Exception_Bool_Exp = {
+  _and?: InputMaybe<Array<Dipdup_Exception_Bool_Exp>>;
+  _not?: InputMaybe<Dipdup_Exception_Bool_Exp>;
+  _or?: InputMaybe<Array<Dipdup_Exception_Bool_Exp>>;
+  id?: InputMaybe<Bigint_Comparison_Exp>;
+  timestamp?: InputMaybe<Timestamptz_Comparison_Exp>;
+  trace?: InputMaybe<String_Comparison_Exp>;
+  type?: InputMaybe<String_Comparison_Exp>;
+  value?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** aggregate max on columns */
+export type Dipdup_Exception_Max_Fields = {
+  __typename?: 'dipdup_exception_max_fields';
+  id?: Maybe<Scalars['bigint']>;
+  timestamp?: Maybe<Scalars['timestamptz']>;
+  trace?: Maybe<Scalars['String']>;
+  type?: Maybe<Scalars['String']>;
+  value?: Maybe<Scalars['String']>;
+};
+
+/** aggregate min on columns */
+export type Dipdup_Exception_Min_Fields = {
+  __typename?: 'dipdup_exception_min_fields';
+  id?: Maybe<Scalars['bigint']>;
+  timestamp?: Maybe<Scalars['timestamptz']>;
+  trace?: Maybe<Scalars['String']>;
+  type?: Maybe<Scalars['String']>;
+  value?: Maybe<Scalars['String']>;
+};
+
+/** Ordering options when selecting data from "dipdup_exception". */
+export type Dipdup_Exception_Order_By = {
+  id?: InputMaybe<Order_By>;
+  timestamp?: InputMaybe<Order_By>;
+  trace?: InputMaybe<Order_By>;
+  type?: InputMaybe<Order_By>;
+  value?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "dipdup_exception" */
+export enum Dipdup_Exception_Select_Column {
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Timestamp = 'timestamp',
+  /** column name */
+  Trace = 'trace',
+  /** column name */
+  Type = 'type',
+  /** column name */
+  Value = 'value'
+}
+
+/** aggregate stddev on columns */
+export type Dipdup_Exception_Stddev_Fields = {
+  __typename?: 'dipdup_exception_stddev_fields';
+  id?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Dipdup_Exception_Stddev_Pop_Fields = {
+  __typename?: 'dipdup_exception_stddev_pop_fields';
+  id?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Dipdup_Exception_Stddev_Samp_Fields = {
+  __typename?: 'dipdup_exception_stddev_samp_fields';
+  id?: Maybe<Scalars['Float']>;
+};
+
+/** Streaming cursor of the table "dipdup_exception" */
+export type Dipdup_Exception_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Dipdup_Exception_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Dipdup_Exception_Stream_Cursor_Value_Input = {
+  id?: InputMaybe<Scalars['bigint']>;
+  timestamp?: InputMaybe<Scalars['timestamptz']>;
+  trace?: InputMaybe<Scalars['String']>;
+  type?: InputMaybe<Scalars['String']>;
+  value?: InputMaybe<Scalars['String']>;
+};
+
+/** aggregate sum on columns */
+export type Dipdup_Exception_Sum_Fields = {
+  __typename?: 'dipdup_exception_sum_fields';
+  id?: Maybe<Scalars['bigint']>;
+};
+
+/** aggregate var_pop on columns */
+export type Dipdup_Exception_Var_Pop_Fields = {
+  __typename?: 'dipdup_exception_var_pop_fields';
+  id?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate var_samp on columns */
+export type Dipdup_Exception_Var_Samp_Fields = {
+  __typename?: 'dipdup_exception_var_samp_fields';
+  id?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate variance on columns */
+export type Dipdup_Exception_Variance_Fields = {
+  __typename?: 'dipdup_exception_variance_fields';
+  id?: Maybe<Scalars['Float']>;
 };
 
 /** columns and relationships of "dipdup_head" */
@@ -33051,6 +33263,10 @@ export type Lending_Controller_Collateral_Token = {
   balances: Array<Lending_Controller_Vault_Collateral_Balance>;
   /** An aggregate relationship */
   balances_aggregate: Lending_Controller_Vault_Collateral_Balance_Aggregate;
+  /** An array relationship */
+  history_data: Array<Lending_Controller_History_Data>;
+  /** An aggregate relationship */
+  history_data_aggregate: Lending_Controller_History_Data_Aggregate;
   id: Scalars['bigint'];
   is_scaled_token: Scalars['Boolean'];
   is_staked_token: Scalars['Boolean'];
@@ -33088,6 +33304,26 @@ export type Lending_Controller_Collateral_TokenBalances_AggregateArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   order_by?: InputMaybe<Array<Lending_Controller_Vault_Collateral_Balance_Order_By>>;
   where?: InputMaybe<Lending_Controller_Vault_Collateral_Balance_Bool_Exp>;
+};
+
+
+/** columns and relationships of "lending_controller_collateral_token" */
+export type Lending_Controller_Collateral_TokenHistory_DataArgs = {
+  distinct_on?: InputMaybe<Array<Lending_Controller_History_Data_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Lending_Controller_History_Data_Order_By>>;
+  where?: InputMaybe<Lending_Controller_History_Data_Bool_Exp>;
+};
+
+
+/** columns and relationships of "lending_controller_collateral_token" */
+export type Lending_Controller_Collateral_TokenHistory_Data_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Lending_Controller_History_Data_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Lending_Controller_History_Data_Order_By>>;
+  where?: InputMaybe<Lending_Controller_History_Data_Bool_Exp>;
 };
 
 /** aggregated selection of "lending_controller_collateral_token" */
@@ -33258,6 +33494,8 @@ export type Lending_Controller_Collateral_Token_Bool_Exp = {
   _or?: InputMaybe<Array<Lending_Controller_Collateral_Token_Bool_Exp>>;
   balances?: InputMaybe<Lending_Controller_Vault_Collateral_Balance_Bool_Exp>;
   balances_aggregate?: InputMaybe<Lending_Controller_Vault_Collateral_Balance_Aggregate_Bool_Exp>;
+  history_data?: InputMaybe<Lending_Controller_History_Data_Bool_Exp>;
+  history_data_aggregate?: InputMaybe<Lending_Controller_History_Data_Aggregate_Bool_Exp>;
   id?: InputMaybe<Bigint_Comparison_Exp>;
   is_scaled_token?: InputMaybe<Boolean_Comparison_Exp>;
   is_staked_token?: InputMaybe<Boolean_Comparison_Exp>;
@@ -33332,6 +33570,7 @@ export type Lending_Controller_Collateral_Token_Min_Order_By = {
 /** Ordering options when selecting data from "lending_controller_collateral_token". */
 export type Lending_Controller_Collateral_Token_Order_By = {
   balances_aggregate?: InputMaybe<Lending_Controller_Vault_Collateral_Balance_Aggregate_Order_By>;
+  history_data_aggregate?: InputMaybe<Lending_Controller_History_Data_Aggregate_Order_By>;
   id?: InputMaybe<Order_By>;
   is_scaled_token?: InputMaybe<Order_By>;
   is_staked_token?: InputMaybe<Order_By>;
@@ -33839,6 +34078,9 @@ export type Lending_Controller_General_Contract_Variance_Order_By = {
 export type Lending_Controller_History_Data = {
   __typename?: 'lending_controller_history_data';
   amount: Scalars['float8'];
+  /** An object relationship */
+  collateral_token?: Maybe<Lending_Controller_Collateral_Token>;
+  collateral_token_id?: Maybe<Scalars['bigint']>;
   id: Scalars['bigint'];
   /** An object relationship */
   lending_controller: Lending_Controller;
@@ -33993,6 +34235,7 @@ export type Lending_Controller_History_Data_Aggregate_Order_By = {
 export type Lending_Controller_History_Data_Avg_Fields = {
   __typename?: 'lending_controller_history_data_avg_fields';
   amount?: Maybe<Scalars['Float']>;
+  collateral_token_id?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
   level?: Maybe<Scalars['Float']>;
   loan_token_id?: Maybe<Scalars['Float']>;
@@ -34004,6 +34247,7 @@ export type Lending_Controller_History_Data_Avg_Fields = {
 /** order by avg() on columns of table "lending_controller_history_data" */
 export type Lending_Controller_History_Data_Avg_Order_By = {
   amount?: InputMaybe<Order_By>;
+  collateral_token_id?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   level?: InputMaybe<Order_By>;
   loan_token_id?: InputMaybe<Order_By>;
@@ -34018,6 +34262,8 @@ export type Lending_Controller_History_Data_Bool_Exp = {
   _not?: InputMaybe<Lending_Controller_History_Data_Bool_Exp>;
   _or?: InputMaybe<Array<Lending_Controller_History_Data_Bool_Exp>>;
   amount?: InputMaybe<Float8_Comparison_Exp>;
+  collateral_token?: InputMaybe<Lending_Controller_Collateral_Token_Bool_Exp>;
+  collateral_token_id?: InputMaybe<Bigint_Comparison_Exp>;
   id?: InputMaybe<Bigint_Comparison_Exp>;
   lending_controller?: InputMaybe<Lending_Controller_Bool_Exp>;
   lending_controller_id?: InputMaybe<String_Comparison_Exp>;
@@ -34037,6 +34283,7 @@ export type Lending_Controller_History_Data_Bool_Exp = {
 export type Lending_Controller_History_Data_Max_Fields = {
   __typename?: 'lending_controller_history_data_max_fields';
   amount?: Maybe<Scalars['float8']>;
+  collateral_token_id?: Maybe<Scalars['bigint']>;
   id?: Maybe<Scalars['bigint']>;
   lending_controller_id?: Maybe<Scalars['String']>;
   level?: Maybe<Scalars['bigint']>;
@@ -34052,6 +34299,7 @@ export type Lending_Controller_History_Data_Max_Fields = {
 /** order by max() on columns of table "lending_controller_history_data" */
 export type Lending_Controller_History_Data_Max_Order_By = {
   amount?: InputMaybe<Order_By>;
+  collateral_token_id?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   lending_controller_id?: InputMaybe<Order_By>;
   level?: InputMaybe<Order_By>;
@@ -34068,6 +34316,7 @@ export type Lending_Controller_History_Data_Max_Order_By = {
 export type Lending_Controller_History_Data_Min_Fields = {
   __typename?: 'lending_controller_history_data_min_fields';
   amount?: Maybe<Scalars['float8']>;
+  collateral_token_id?: Maybe<Scalars['bigint']>;
   id?: Maybe<Scalars['bigint']>;
   lending_controller_id?: Maybe<Scalars['String']>;
   level?: Maybe<Scalars['bigint']>;
@@ -34083,6 +34332,7 @@ export type Lending_Controller_History_Data_Min_Fields = {
 /** order by min() on columns of table "lending_controller_history_data" */
 export type Lending_Controller_History_Data_Min_Order_By = {
   amount?: InputMaybe<Order_By>;
+  collateral_token_id?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   lending_controller_id?: InputMaybe<Order_By>;
   level?: InputMaybe<Order_By>;
@@ -34098,6 +34348,8 @@ export type Lending_Controller_History_Data_Min_Order_By = {
 /** Ordering options when selecting data from "lending_controller_history_data". */
 export type Lending_Controller_History_Data_Order_By = {
   amount?: InputMaybe<Order_By>;
+  collateral_token?: InputMaybe<Lending_Controller_Collateral_Token_Order_By>;
+  collateral_token_id?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   lending_controller?: InputMaybe<Lending_Controller_Order_By>;
   lending_controller_id?: InputMaybe<Order_By>;
@@ -34117,6 +34369,8 @@ export type Lending_Controller_History_Data_Order_By = {
 export enum Lending_Controller_History_Data_Select_Column {
   /** column name */
   Amount = 'amount',
+  /** column name */
+  CollateralTokenId = 'collateral_token_id',
   /** column name */
   Id = 'id',
   /** column name */
@@ -34189,6 +34443,7 @@ export enum Lending_Controller_History_Data_Select_Column_Lending_Controller_His
 export type Lending_Controller_History_Data_Stddev_Fields = {
   __typename?: 'lending_controller_history_data_stddev_fields';
   amount?: Maybe<Scalars['Float']>;
+  collateral_token_id?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
   level?: Maybe<Scalars['Float']>;
   loan_token_id?: Maybe<Scalars['Float']>;
@@ -34200,6 +34455,7 @@ export type Lending_Controller_History_Data_Stddev_Fields = {
 /** order by stddev() on columns of table "lending_controller_history_data" */
 export type Lending_Controller_History_Data_Stddev_Order_By = {
   amount?: InputMaybe<Order_By>;
+  collateral_token_id?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   level?: InputMaybe<Order_By>;
   loan_token_id?: InputMaybe<Order_By>;
@@ -34212,6 +34468,7 @@ export type Lending_Controller_History_Data_Stddev_Order_By = {
 export type Lending_Controller_History_Data_Stddev_Pop_Fields = {
   __typename?: 'lending_controller_history_data_stddev_pop_fields';
   amount?: Maybe<Scalars['Float']>;
+  collateral_token_id?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
   level?: Maybe<Scalars['Float']>;
   loan_token_id?: Maybe<Scalars['Float']>;
@@ -34223,6 +34480,7 @@ export type Lending_Controller_History_Data_Stddev_Pop_Fields = {
 /** order by stddev_pop() on columns of table "lending_controller_history_data" */
 export type Lending_Controller_History_Data_Stddev_Pop_Order_By = {
   amount?: InputMaybe<Order_By>;
+  collateral_token_id?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   level?: InputMaybe<Order_By>;
   loan_token_id?: InputMaybe<Order_By>;
@@ -34235,6 +34493,7 @@ export type Lending_Controller_History_Data_Stddev_Pop_Order_By = {
 export type Lending_Controller_History_Data_Stddev_Samp_Fields = {
   __typename?: 'lending_controller_history_data_stddev_samp_fields';
   amount?: Maybe<Scalars['Float']>;
+  collateral_token_id?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
   level?: Maybe<Scalars['Float']>;
   loan_token_id?: Maybe<Scalars['Float']>;
@@ -34246,6 +34505,7 @@ export type Lending_Controller_History_Data_Stddev_Samp_Fields = {
 /** order by stddev_samp() on columns of table "lending_controller_history_data" */
 export type Lending_Controller_History_Data_Stddev_Samp_Order_By = {
   amount?: InputMaybe<Order_By>;
+  collateral_token_id?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   level?: InputMaybe<Order_By>;
   loan_token_id?: InputMaybe<Order_By>;
@@ -34265,6 +34525,7 @@ export type Lending_Controller_History_Data_Stream_Cursor_Input = {
 /** Initial value of the column from where the streaming should start */
 export type Lending_Controller_History_Data_Stream_Cursor_Value_Input = {
   amount?: InputMaybe<Scalars['float8']>;
+  collateral_token_id?: InputMaybe<Scalars['bigint']>;
   id?: InputMaybe<Scalars['bigint']>;
   lending_controller_id?: InputMaybe<Scalars['String']>;
   level?: InputMaybe<Scalars['bigint']>;
@@ -34281,6 +34542,7 @@ export type Lending_Controller_History_Data_Stream_Cursor_Value_Input = {
 export type Lending_Controller_History_Data_Sum_Fields = {
   __typename?: 'lending_controller_history_data_sum_fields';
   amount?: Maybe<Scalars['float8']>;
+  collateral_token_id?: Maybe<Scalars['bigint']>;
   id?: Maybe<Scalars['bigint']>;
   level?: Maybe<Scalars['bigint']>;
   loan_token_id?: Maybe<Scalars['bigint']>;
@@ -34292,6 +34554,7 @@ export type Lending_Controller_History_Data_Sum_Fields = {
 /** order by sum() on columns of table "lending_controller_history_data" */
 export type Lending_Controller_History_Data_Sum_Order_By = {
   amount?: InputMaybe<Order_By>;
+  collateral_token_id?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   level?: InputMaybe<Order_By>;
   loan_token_id?: InputMaybe<Order_By>;
@@ -34304,6 +34567,7 @@ export type Lending_Controller_History_Data_Sum_Order_By = {
 export type Lending_Controller_History_Data_Var_Pop_Fields = {
   __typename?: 'lending_controller_history_data_var_pop_fields';
   amount?: Maybe<Scalars['Float']>;
+  collateral_token_id?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
   level?: Maybe<Scalars['Float']>;
   loan_token_id?: Maybe<Scalars['Float']>;
@@ -34315,6 +34579,7 @@ export type Lending_Controller_History_Data_Var_Pop_Fields = {
 /** order by var_pop() on columns of table "lending_controller_history_data" */
 export type Lending_Controller_History_Data_Var_Pop_Order_By = {
   amount?: InputMaybe<Order_By>;
+  collateral_token_id?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   level?: InputMaybe<Order_By>;
   loan_token_id?: InputMaybe<Order_By>;
@@ -34327,6 +34592,7 @@ export type Lending_Controller_History_Data_Var_Pop_Order_By = {
 export type Lending_Controller_History_Data_Var_Samp_Fields = {
   __typename?: 'lending_controller_history_data_var_samp_fields';
   amount?: Maybe<Scalars['Float']>;
+  collateral_token_id?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
   level?: Maybe<Scalars['Float']>;
   loan_token_id?: Maybe<Scalars['Float']>;
@@ -34338,6 +34604,7 @@ export type Lending_Controller_History_Data_Var_Samp_Fields = {
 /** order by var_samp() on columns of table "lending_controller_history_data" */
 export type Lending_Controller_History_Data_Var_Samp_Order_By = {
   amount?: InputMaybe<Order_By>;
+  collateral_token_id?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   level?: InputMaybe<Order_By>;
   loan_token_id?: InputMaybe<Order_By>;
@@ -34350,6 +34617,7 @@ export type Lending_Controller_History_Data_Var_Samp_Order_By = {
 export type Lending_Controller_History_Data_Variance_Fields = {
   __typename?: 'lending_controller_history_data_variance_fields';
   amount?: Maybe<Scalars['Float']>;
+  collateral_token_id?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
   level?: Maybe<Scalars['Float']>;
   loan_token_id?: Maybe<Scalars['Float']>;
@@ -34361,6 +34629,7 @@ export type Lending_Controller_History_Data_Variance_Fields = {
 /** order by variance() on columns of table "lending_controller_history_data" */
 export type Lending_Controller_History_Data_Variance_Order_By = {
   amount?: InputMaybe<Order_By>;
+  collateral_token_id?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   level?: InputMaybe<Order_By>;
   loan_token_id?: InputMaybe<Order_By>;
@@ -44724,6 +44993,7 @@ export type Mvk_Faucet_Variance_Fields = {
 export type Mvk_Mint_History_Data = {
   __typename?: 'mvk_mint_history_data';
   id: Scalars['bigint'];
+  level: Scalars['bigint'];
   minted_amount: Scalars['float8'];
   /** An object relationship */
   mvk_token: Mvk_Token;
@@ -44869,6 +45139,7 @@ export type Mvk_Mint_History_Data_Aggregate_Order_By = {
 export type Mvk_Mint_History_Data_Avg_Fields = {
   __typename?: 'mvk_mint_history_data_avg_fields';
   id?: Maybe<Scalars['Float']>;
+  level?: Maybe<Scalars['Float']>;
   minted_amount?: Maybe<Scalars['Float']>;
   mvk_total_supply?: Maybe<Scalars['Float']>;
 };
@@ -44876,6 +45147,7 @@ export type Mvk_Mint_History_Data_Avg_Fields = {
 /** order by avg() on columns of table "mvk_mint_history_data" */
 export type Mvk_Mint_History_Data_Avg_Order_By = {
   id?: InputMaybe<Order_By>;
+  level?: InputMaybe<Order_By>;
   minted_amount?: InputMaybe<Order_By>;
   mvk_total_supply?: InputMaybe<Order_By>;
 };
@@ -44886,6 +45158,7 @@ export type Mvk_Mint_History_Data_Bool_Exp = {
   _not?: InputMaybe<Mvk_Mint_History_Data_Bool_Exp>;
   _or?: InputMaybe<Array<Mvk_Mint_History_Data_Bool_Exp>>;
   id?: InputMaybe<Bigint_Comparison_Exp>;
+  level?: InputMaybe<Bigint_Comparison_Exp>;
   minted_amount?: InputMaybe<Float8_Comparison_Exp>;
   mvk_token?: InputMaybe<Mvk_Token_Bool_Exp>;
   mvk_token_id?: InputMaybe<String_Comparison_Exp>;
@@ -44899,6 +45172,7 @@ export type Mvk_Mint_History_Data_Bool_Exp = {
 export type Mvk_Mint_History_Data_Max_Fields = {
   __typename?: 'mvk_mint_history_data_max_fields';
   id?: Maybe<Scalars['bigint']>;
+  level?: Maybe<Scalars['bigint']>;
   minted_amount?: Maybe<Scalars['float8']>;
   mvk_token_id?: Maybe<Scalars['String']>;
   mvk_total_supply?: Maybe<Scalars['float8']>;
@@ -44909,6 +45183,7 @@ export type Mvk_Mint_History_Data_Max_Fields = {
 /** order by max() on columns of table "mvk_mint_history_data" */
 export type Mvk_Mint_History_Data_Max_Order_By = {
   id?: InputMaybe<Order_By>;
+  level?: InputMaybe<Order_By>;
   minted_amount?: InputMaybe<Order_By>;
   mvk_token_id?: InputMaybe<Order_By>;
   mvk_total_supply?: InputMaybe<Order_By>;
@@ -44920,6 +45195,7 @@ export type Mvk_Mint_History_Data_Max_Order_By = {
 export type Mvk_Mint_History_Data_Min_Fields = {
   __typename?: 'mvk_mint_history_data_min_fields';
   id?: Maybe<Scalars['bigint']>;
+  level?: Maybe<Scalars['bigint']>;
   minted_amount?: Maybe<Scalars['float8']>;
   mvk_token_id?: Maybe<Scalars['String']>;
   mvk_total_supply?: Maybe<Scalars['float8']>;
@@ -44930,6 +45206,7 @@ export type Mvk_Mint_History_Data_Min_Fields = {
 /** order by min() on columns of table "mvk_mint_history_data" */
 export type Mvk_Mint_History_Data_Min_Order_By = {
   id?: InputMaybe<Order_By>;
+  level?: InputMaybe<Order_By>;
   minted_amount?: InputMaybe<Order_By>;
   mvk_token_id?: InputMaybe<Order_By>;
   mvk_total_supply?: InputMaybe<Order_By>;
@@ -44940,6 +45217,7 @@ export type Mvk_Mint_History_Data_Min_Order_By = {
 /** Ordering options when selecting data from "mvk_mint_history_data". */
 export type Mvk_Mint_History_Data_Order_By = {
   id?: InputMaybe<Order_By>;
+  level?: InputMaybe<Order_By>;
   minted_amount?: InputMaybe<Order_By>;
   mvk_token?: InputMaybe<Mvk_Token_Order_By>;
   mvk_token_id?: InputMaybe<Order_By>;
@@ -44953,6 +45231,8 @@ export type Mvk_Mint_History_Data_Order_By = {
 export enum Mvk_Mint_History_Data_Select_Column {
   /** column name */
   Id = 'id',
+  /** column name */
+  Level = 'level',
   /** column name */
   MintedAmount = 'minted_amount',
   /** column name */
@@ -45033,6 +45313,7 @@ export enum Mvk_Mint_History_Data_Select_Column_Mvk_Mint_History_Data_Aggregate_
 export type Mvk_Mint_History_Data_Stddev_Fields = {
   __typename?: 'mvk_mint_history_data_stddev_fields';
   id?: Maybe<Scalars['Float']>;
+  level?: Maybe<Scalars['Float']>;
   minted_amount?: Maybe<Scalars['Float']>;
   mvk_total_supply?: Maybe<Scalars['Float']>;
 };
@@ -45040,6 +45321,7 @@ export type Mvk_Mint_History_Data_Stddev_Fields = {
 /** order by stddev() on columns of table "mvk_mint_history_data" */
 export type Mvk_Mint_History_Data_Stddev_Order_By = {
   id?: InputMaybe<Order_By>;
+  level?: InputMaybe<Order_By>;
   minted_amount?: InputMaybe<Order_By>;
   mvk_total_supply?: InputMaybe<Order_By>;
 };
@@ -45048,6 +45330,7 @@ export type Mvk_Mint_History_Data_Stddev_Order_By = {
 export type Mvk_Mint_History_Data_Stddev_Pop_Fields = {
   __typename?: 'mvk_mint_history_data_stddev_pop_fields';
   id?: Maybe<Scalars['Float']>;
+  level?: Maybe<Scalars['Float']>;
   minted_amount?: Maybe<Scalars['Float']>;
   mvk_total_supply?: Maybe<Scalars['Float']>;
 };
@@ -45055,6 +45338,7 @@ export type Mvk_Mint_History_Data_Stddev_Pop_Fields = {
 /** order by stddev_pop() on columns of table "mvk_mint_history_data" */
 export type Mvk_Mint_History_Data_Stddev_Pop_Order_By = {
   id?: InputMaybe<Order_By>;
+  level?: InputMaybe<Order_By>;
   minted_amount?: InputMaybe<Order_By>;
   mvk_total_supply?: InputMaybe<Order_By>;
 };
@@ -45063,6 +45347,7 @@ export type Mvk_Mint_History_Data_Stddev_Pop_Order_By = {
 export type Mvk_Mint_History_Data_Stddev_Samp_Fields = {
   __typename?: 'mvk_mint_history_data_stddev_samp_fields';
   id?: Maybe<Scalars['Float']>;
+  level?: Maybe<Scalars['Float']>;
   minted_amount?: Maybe<Scalars['Float']>;
   mvk_total_supply?: Maybe<Scalars['Float']>;
 };
@@ -45070,6 +45355,7 @@ export type Mvk_Mint_History_Data_Stddev_Samp_Fields = {
 /** order by stddev_samp() on columns of table "mvk_mint_history_data" */
 export type Mvk_Mint_History_Data_Stddev_Samp_Order_By = {
   id?: InputMaybe<Order_By>;
+  level?: InputMaybe<Order_By>;
   minted_amount?: InputMaybe<Order_By>;
   mvk_total_supply?: InputMaybe<Order_By>;
 };
@@ -45085,6 +45371,7 @@ export type Mvk_Mint_History_Data_Stream_Cursor_Input = {
 /** Initial value of the column from where the streaming should start */
 export type Mvk_Mint_History_Data_Stream_Cursor_Value_Input = {
   id?: InputMaybe<Scalars['bigint']>;
+  level?: InputMaybe<Scalars['bigint']>;
   minted_amount?: InputMaybe<Scalars['float8']>;
   mvk_token_id?: InputMaybe<Scalars['String']>;
   mvk_total_supply?: InputMaybe<Scalars['float8']>;
@@ -45096,6 +45383,7 @@ export type Mvk_Mint_History_Data_Stream_Cursor_Value_Input = {
 export type Mvk_Mint_History_Data_Sum_Fields = {
   __typename?: 'mvk_mint_history_data_sum_fields';
   id?: Maybe<Scalars['bigint']>;
+  level?: Maybe<Scalars['bigint']>;
   minted_amount?: Maybe<Scalars['float8']>;
   mvk_total_supply?: Maybe<Scalars['float8']>;
 };
@@ -45103,6 +45391,7 @@ export type Mvk_Mint_History_Data_Sum_Fields = {
 /** order by sum() on columns of table "mvk_mint_history_data" */
 export type Mvk_Mint_History_Data_Sum_Order_By = {
   id?: InputMaybe<Order_By>;
+  level?: InputMaybe<Order_By>;
   minted_amount?: InputMaybe<Order_By>;
   mvk_total_supply?: InputMaybe<Order_By>;
 };
@@ -45111,6 +45400,7 @@ export type Mvk_Mint_History_Data_Sum_Order_By = {
 export type Mvk_Mint_History_Data_Var_Pop_Fields = {
   __typename?: 'mvk_mint_history_data_var_pop_fields';
   id?: Maybe<Scalars['Float']>;
+  level?: Maybe<Scalars['Float']>;
   minted_amount?: Maybe<Scalars['Float']>;
   mvk_total_supply?: Maybe<Scalars['Float']>;
 };
@@ -45118,6 +45408,7 @@ export type Mvk_Mint_History_Data_Var_Pop_Fields = {
 /** order by var_pop() on columns of table "mvk_mint_history_data" */
 export type Mvk_Mint_History_Data_Var_Pop_Order_By = {
   id?: InputMaybe<Order_By>;
+  level?: InputMaybe<Order_By>;
   minted_amount?: InputMaybe<Order_By>;
   mvk_total_supply?: InputMaybe<Order_By>;
 };
@@ -45126,6 +45417,7 @@ export type Mvk_Mint_History_Data_Var_Pop_Order_By = {
 export type Mvk_Mint_History_Data_Var_Samp_Fields = {
   __typename?: 'mvk_mint_history_data_var_samp_fields';
   id?: Maybe<Scalars['Float']>;
+  level?: Maybe<Scalars['Float']>;
   minted_amount?: Maybe<Scalars['Float']>;
   mvk_total_supply?: Maybe<Scalars['Float']>;
 };
@@ -45133,6 +45425,7 @@ export type Mvk_Mint_History_Data_Var_Samp_Fields = {
 /** order by var_samp() on columns of table "mvk_mint_history_data" */
 export type Mvk_Mint_History_Data_Var_Samp_Order_By = {
   id?: InputMaybe<Order_By>;
+  level?: InputMaybe<Order_By>;
   minted_amount?: InputMaybe<Order_By>;
   mvk_total_supply?: InputMaybe<Order_By>;
 };
@@ -45141,6 +45434,7 @@ export type Mvk_Mint_History_Data_Var_Samp_Order_By = {
 export type Mvk_Mint_History_Data_Variance_Fields = {
   __typename?: 'mvk_mint_history_data_variance_fields';
   id?: Maybe<Scalars['Float']>;
+  level?: Maybe<Scalars['Float']>;
   minted_amount?: Maybe<Scalars['Float']>;
   mvk_total_supply?: Maybe<Scalars['Float']>;
 };
@@ -45148,6 +45442,7 @@ export type Mvk_Mint_History_Data_Variance_Fields = {
 /** order by variance() on columns of table "mvk_mint_history_data" */
 export type Mvk_Mint_History_Data_Variance_Order_By = {
   id?: InputMaybe<Order_By>;
+  level?: InputMaybe<Order_By>;
   minted_amount?: InputMaybe<Order_By>;
   mvk_total_supply?: InputMaybe<Order_By>;
 };
@@ -46973,6 +47268,12 @@ export type Query_Root = {
   dipdup_contract_metadata_aggregate: Dipdup_Contract_Metadata_Aggregate;
   /** fetch data from the table: "dipdup_contract_metadata" using primary key columns */
   dipdup_contract_metadata_by_pk?: Maybe<Dipdup_Contract_Metadata>;
+  /** fetch data from the table: "dipdup_exception" */
+  dipdup_exception: Array<Dipdup_Exception>;
+  /** fetch aggregated fields from the table: "dipdup_exception" */
+  dipdup_exception_aggregate: Dipdup_Exception_Aggregate;
+  /** fetch data from the table: "dipdup_exception" using primary key columns */
+  dipdup_exception_by_pk?: Maybe<Dipdup_Exception>;
   /** fetch data from the table: "dipdup_head" */
   dipdup_head: Array<Dipdup_Head>;
   /** fetch aggregated fields from the table: "dipdup_head" */
@@ -48527,6 +48828,29 @@ export type Query_RootDipdup_Contract_Metadata_AggregateArgs = {
 
 export type Query_RootDipdup_Contract_Metadata_By_PkArgs = {
   id: Scalars['Int'];
+};
+
+
+export type Query_RootDipdup_ExceptionArgs = {
+  distinct_on?: InputMaybe<Array<Dipdup_Exception_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Dipdup_Exception_Order_By>>;
+  where?: InputMaybe<Dipdup_Exception_Bool_Exp>;
+};
+
+
+export type Query_RootDipdup_Exception_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Dipdup_Exception_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Dipdup_Exception_Order_By>>;
+  where?: InputMaybe<Dipdup_Exception_Bool_Exp>;
+};
+
+
+export type Query_RootDipdup_Exception_By_PkArgs = {
+  id: Scalars['bigint'];
 };
 
 
@@ -52350,6 +52674,7 @@ export type Smvk_History_Data = {
   doorman: Doorman;
   doorman_id: Scalars['String'];
   id: Scalars['bigint'];
+  level: Scalars['bigint'];
   mvk_total_supply: Scalars['float8'];
   smvk_total_supply: Scalars['float8'];
   timestamp: Scalars['timestamptz'];
@@ -52490,6 +52815,7 @@ export type Smvk_History_Data_Avg_Fields = {
   __typename?: 'smvk_history_data_avg_fields';
   avg_smvk_by_user?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
+  level?: Maybe<Scalars['Float']>;
   mvk_total_supply?: Maybe<Scalars['Float']>;
   smvk_total_supply?: Maybe<Scalars['Float']>;
 };
@@ -52498,6 +52824,7 @@ export type Smvk_History_Data_Avg_Fields = {
 export type Smvk_History_Data_Avg_Order_By = {
   avg_smvk_by_user?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  level?: InputMaybe<Order_By>;
   mvk_total_supply?: InputMaybe<Order_By>;
   smvk_total_supply?: InputMaybe<Order_By>;
 };
@@ -52511,6 +52838,7 @@ export type Smvk_History_Data_Bool_Exp = {
   doorman?: InputMaybe<Doorman_Bool_Exp>;
   doorman_id?: InputMaybe<String_Comparison_Exp>;
   id?: InputMaybe<Bigint_Comparison_Exp>;
+  level?: InputMaybe<Bigint_Comparison_Exp>;
   mvk_total_supply?: InputMaybe<Float8_Comparison_Exp>;
   smvk_total_supply?: InputMaybe<Float8_Comparison_Exp>;
   timestamp?: InputMaybe<Timestamptz_Comparison_Exp>;
@@ -52522,6 +52850,7 @@ export type Smvk_History_Data_Max_Fields = {
   avg_smvk_by_user?: Maybe<Scalars['float8']>;
   doorman_id?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['bigint']>;
+  level?: Maybe<Scalars['bigint']>;
   mvk_total_supply?: Maybe<Scalars['float8']>;
   smvk_total_supply?: Maybe<Scalars['float8']>;
   timestamp?: Maybe<Scalars['timestamptz']>;
@@ -52532,6 +52861,7 @@ export type Smvk_History_Data_Max_Order_By = {
   avg_smvk_by_user?: InputMaybe<Order_By>;
   doorman_id?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  level?: InputMaybe<Order_By>;
   mvk_total_supply?: InputMaybe<Order_By>;
   smvk_total_supply?: InputMaybe<Order_By>;
   timestamp?: InputMaybe<Order_By>;
@@ -52543,6 +52873,7 @@ export type Smvk_History_Data_Min_Fields = {
   avg_smvk_by_user?: Maybe<Scalars['float8']>;
   doorman_id?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['bigint']>;
+  level?: Maybe<Scalars['bigint']>;
   mvk_total_supply?: Maybe<Scalars['float8']>;
   smvk_total_supply?: Maybe<Scalars['float8']>;
   timestamp?: Maybe<Scalars['timestamptz']>;
@@ -52553,6 +52884,7 @@ export type Smvk_History_Data_Min_Order_By = {
   avg_smvk_by_user?: InputMaybe<Order_By>;
   doorman_id?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  level?: InputMaybe<Order_By>;
   mvk_total_supply?: InputMaybe<Order_By>;
   smvk_total_supply?: InputMaybe<Order_By>;
   timestamp?: InputMaybe<Order_By>;
@@ -52564,6 +52896,7 @@ export type Smvk_History_Data_Order_By = {
   doorman?: InputMaybe<Doorman_Order_By>;
   doorman_id?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  level?: InputMaybe<Order_By>;
   mvk_total_supply?: InputMaybe<Order_By>;
   smvk_total_supply?: InputMaybe<Order_By>;
   timestamp?: InputMaybe<Order_By>;
@@ -52577,6 +52910,8 @@ export enum Smvk_History_Data_Select_Column {
   DoormanId = 'doorman_id',
   /** column name */
   Id = 'id',
+  /** column name */
+  Level = 'level',
   /** column name */
   MvkTotalSupply = 'mvk_total_supply',
   /** column name */
@@ -52670,6 +53005,7 @@ export type Smvk_History_Data_Stddev_Fields = {
   __typename?: 'smvk_history_data_stddev_fields';
   avg_smvk_by_user?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
+  level?: Maybe<Scalars['Float']>;
   mvk_total_supply?: Maybe<Scalars['Float']>;
   smvk_total_supply?: Maybe<Scalars['Float']>;
 };
@@ -52678,6 +53014,7 @@ export type Smvk_History_Data_Stddev_Fields = {
 export type Smvk_History_Data_Stddev_Order_By = {
   avg_smvk_by_user?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  level?: InputMaybe<Order_By>;
   mvk_total_supply?: InputMaybe<Order_By>;
   smvk_total_supply?: InputMaybe<Order_By>;
 };
@@ -52687,6 +53024,7 @@ export type Smvk_History_Data_Stddev_Pop_Fields = {
   __typename?: 'smvk_history_data_stddev_pop_fields';
   avg_smvk_by_user?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
+  level?: Maybe<Scalars['Float']>;
   mvk_total_supply?: Maybe<Scalars['Float']>;
   smvk_total_supply?: Maybe<Scalars['Float']>;
 };
@@ -52695,6 +53033,7 @@ export type Smvk_History_Data_Stddev_Pop_Fields = {
 export type Smvk_History_Data_Stddev_Pop_Order_By = {
   avg_smvk_by_user?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  level?: InputMaybe<Order_By>;
   mvk_total_supply?: InputMaybe<Order_By>;
   smvk_total_supply?: InputMaybe<Order_By>;
 };
@@ -52704,6 +53043,7 @@ export type Smvk_History_Data_Stddev_Samp_Fields = {
   __typename?: 'smvk_history_data_stddev_samp_fields';
   avg_smvk_by_user?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
+  level?: Maybe<Scalars['Float']>;
   mvk_total_supply?: Maybe<Scalars['Float']>;
   smvk_total_supply?: Maybe<Scalars['Float']>;
 };
@@ -52712,6 +53052,7 @@ export type Smvk_History_Data_Stddev_Samp_Fields = {
 export type Smvk_History_Data_Stddev_Samp_Order_By = {
   avg_smvk_by_user?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  level?: InputMaybe<Order_By>;
   mvk_total_supply?: InputMaybe<Order_By>;
   smvk_total_supply?: InputMaybe<Order_By>;
 };
@@ -52729,6 +53070,7 @@ export type Smvk_History_Data_Stream_Cursor_Value_Input = {
   avg_smvk_by_user?: InputMaybe<Scalars['float8']>;
   doorman_id?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['bigint']>;
+  level?: InputMaybe<Scalars['bigint']>;
   mvk_total_supply?: InputMaybe<Scalars['float8']>;
   smvk_total_supply?: InputMaybe<Scalars['float8']>;
   timestamp?: InputMaybe<Scalars['timestamptz']>;
@@ -52739,6 +53081,7 @@ export type Smvk_History_Data_Sum_Fields = {
   __typename?: 'smvk_history_data_sum_fields';
   avg_smvk_by_user?: Maybe<Scalars['float8']>;
   id?: Maybe<Scalars['bigint']>;
+  level?: Maybe<Scalars['bigint']>;
   mvk_total_supply?: Maybe<Scalars['float8']>;
   smvk_total_supply?: Maybe<Scalars['float8']>;
 };
@@ -52747,6 +53090,7 @@ export type Smvk_History_Data_Sum_Fields = {
 export type Smvk_History_Data_Sum_Order_By = {
   avg_smvk_by_user?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  level?: InputMaybe<Order_By>;
   mvk_total_supply?: InputMaybe<Order_By>;
   smvk_total_supply?: InputMaybe<Order_By>;
 };
@@ -52756,6 +53100,7 @@ export type Smvk_History_Data_Var_Pop_Fields = {
   __typename?: 'smvk_history_data_var_pop_fields';
   avg_smvk_by_user?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
+  level?: Maybe<Scalars['Float']>;
   mvk_total_supply?: Maybe<Scalars['Float']>;
   smvk_total_supply?: Maybe<Scalars['Float']>;
 };
@@ -52764,6 +53109,7 @@ export type Smvk_History_Data_Var_Pop_Fields = {
 export type Smvk_History_Data_Var_Pop_Order_By = {
   avg_smvk_by_user?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  level?: InputMaybe<Order_By>;
   mvk_total_supply?: InputMaybe<Order_By>;
   smvk_total_supply?: InputMaybe<Order_By>;
 };
@@ -52773,6 +53119,7 @@ export type Smvk_History_Data_Var_Samp_Fields = {
   __typename?: 'smvk_history_data_var_samp_fields';
   avg_smvk_by_user?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
+  level?: Maybe<Scalars['Float']>;
   mvk_total_supply?: Maybe<Scalars['Float']>;
   smvk_total_supply?: Maybe<Scalars['Float']>;
 };
@@ -52781,6 +53128,7 @@ export type Smvk_History_Data_Var_Samp_Fields = {
 export type Smvk_History_Data_Var_Samp_Order_By = {
   avg_smvk_by_user?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  level?: InputMaybe<Order_By>;
   mvk_total_supply?: InputMaybe<Order_By>;
   smvk_total_supply?: InputMaybe<Order_By>;
 };
@@ -52790,6 +53138,7 @@ export type Smvk_History_Data_Variance_Fields = {
   __typename?: 'smvk_history_data_variance_fields';
   avg_smvk_by_user?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
+  level?: Maybe<Scalars['Float']>;
   mvk_total_supply?: Maybe<Scalars['Float']>;
   smvk_total_supply?: Maybe<Scalars['Float']>;
 };
@@ -52798,6 +53147,7 @@ export type Smvk_History_Data_Variance_Fields = {
 export type Smvk_History_Data_Variance_Order_By = {
   avg_smvk_by_user?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  level?: InputMaybe<Order_By>;
   mvk_total_supply?: InputMaybe<Order_By>;
   smvk_total_supply?: InputMaybe<Order_By>;
 };
@@ -53572,6 +53922,14 @@ export type Subscription_Root = {
   dipdup_contract_metadata_stream: Array<Dipdup_Contract_Metadata>;
   /** fetch data from the table in a streaming manner: "dipdup_contract" */
   dipdup_contract_stream: Array<Dipdup_Contract>;
+  /** fetch data from the table: "dipdup_exception" */
+  dipdup_exception: Array<Dipdup_Exception>;
+  /** fetch aggregated fields from the table: "dipdup_exception" */
+  dipdup_exception_aggregate: Dipdup_Exception_Aggregate;
+  /** fetch data from the table: "dipdup_exception" using primary key columns */
+  dipdup_exception_by_pk?: Maybe<Dipdup_Exception>;
+  /** fetch data from the table in a streaming manner: "dipdup_exception" */
+  dipdup_exception_stream: Array<Dipdup_Exception>;
   /** fetch data from the table: "dipdup_head" */
   dipdup_head: Array<Dipdup_Head>;
   /** fetch aggregated fields from the table: "dipdup_head" */
@@ -55624,6 +55982,36 @@ export type Subscription_RootDipdup_Contract_StreamArgs = {
   batch_size: Scalars['Int'];
   cursor: Array<InputMaybe<Dipdup_Contract_Stream_Cursor_Input>>;
   where?: InputMaybe<Dipdup_Contract_Bool_Exp>;
+};
+
+
+export type Subscription_RootDipdup_ExceptionArgs = {
+  distinct_on?: InputMaybe<Array<Dipdup_Exception_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Dipdup_Exception_Order_By>>;
+  where?: InputMaybe<Dipdup_Exception_Bool_Exp>;
+};
+
+
+export type Subscription_RootDipdup_Exception_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Dipdup_Exception_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Dipdup_Exception_Order_By>>;
+  where?: InputMaybe<Dipdup_Exception_Bool_Exp>;
+};
+
+
+export type Subscription_RootDipdup_Exception_By_PkArgs = {
+  id: Scalars['bigint'];
+};
+
+
+export type Subscription_RootDipdup_Exception_StreamArgs = {
+  batch_size: Scalars['Int'];
+  cursor: Array<InputMaybe<Dipdup_Exception_Stream_Cursor_Input>>;
+  where?: InputMaybe<Dipdup_Exception_Bool_Exp>;
 };
 
 
@@ -61644,7 +62032,7 @@ export type Treasury_Balance = {
   /** An object relationship */
   treasury: Treasury;
   treasury_id: Scalars['String'];
-  tzkt_token_id: Scalars['bigint'];
+  tzkt_token_id?: Maybe<Scalars['bigint']>;
 };
 
 
