@@ -4,7 +4,6 @@ import { State } from '../../reducers'
 
 import { getEmergencyGovernanceStorage } from './EmergencyGovernance.actions'
 import { getBreakGlassConfig } from '../BreakGlass/BreakGlass.actions'
-import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
@@ -16,6 +15,7 @@ import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 
 // providers
 import { useStakeContext } from 'providers/StakeProvider/stake.provider'
+import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
 
 export const EmergencyGovernance = () => {
   const dispatch = useDispatch()
@@ -29,12 +29,13 @@ export const EmergencyGovernance = () => {
 
   const [showInitiatePopup, setShowInitiatePopup] = useState(false)
 
+  useStakeUpdater(true)
+
   const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {
       await Promise.all(
         [
           (!isBreakGlassConfigLoaded || isDepsChanged) && dispatch(getBreakGlassConfig()),
-          (!isDoormanLoaded || isDepsChanged) && dispatch(getDoormanStorage()),
           (!isEgovLoaded || isDepsChanged) && dispatch(getEmergencyGovernanceStorage()),
         ].filter(Boolean),
       )

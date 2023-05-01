@@ -16,7 +16,6 @@ import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 
 // consts, helpers, actions
-import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
 import { getTotalDelegatedMVK } from './helpers/Satellites.consts'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { BUTTON_SIMPLE } from 'app/App.components/Button/Button.constants'
@@ -25,6 +24,7 @@ import { getFeedsStorage } from 'pages/DataFeeds/DataFeeds.actions'
 
 // providers
 import { useStakeContext } from 'providers/StakeProvider/stake.provider'
+import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
 
 // view
 import { SmallInfoBlock } from 'pages/SatelliteGovernance/SatelliteGovernance.style'
@@ -42,12 +42,13 @@ const Satellites = () => {
   const { feedsLedger, isLoaded: isFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
   const { isLoaded: isDoormanLoaded } = useStakeContext()
 
+  useStakeUpdater(true)
+
   const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {
       await Promise.all(
         [
           (!isFeedsLoaded || isDepsChanged) && dispatch(getFeedsStorage()),
-          (!isDoormanLoaded || isDepsChanged) && dispatch(getDoormanStorage()),
           (!isGovernanceLoaded || isDepsChanged) && dispatch(getGovernanceStorage()),
         ].filter(Boolean),
       )

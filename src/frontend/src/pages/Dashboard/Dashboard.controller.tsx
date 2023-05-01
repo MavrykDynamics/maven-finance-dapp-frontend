@@ -9,7 +9,6 @@ import { State } from '../../reducers'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { mvkStatsType, isValidPersonalDashboardTabId, LENDING_TAB_ID } from './Dashboard.utils'
 import { fillTreasuryStorage, getVestingStorage } from '../Treasury/Treasury.actions'
-import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
 import { getVaultsStorage } from 'pages/Vaults/Vaults.actions'
 import { getFarmStorage } from 'pages/Farms/Farms.actions'
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
@@ -17,6 +16,7 @@ import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.ac
 
 // providers
 import { useStakeContext } from 'providers/StakeProvider/stake.provider'
+import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
 
 export const Dashboard = () => {
   const dispatch = useDispatch()
@@ -80,6 +80,8 @@ export const Dashboard = () => {
 
   const tvlValue = doormanTVL + treasuryTVL + farmsTVL + lendingTvl + vaultsTvl
 
+  useStakeUpdater(true)
+
   const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {
       await Promise.all(
@@ -90,7 +92,6 @@ export const Dashboard = () => {
           (!isTreasuryLoaded || isDepsChanged) && dispatch(fillTreasuryStorage()),
           (!isLoansLoaded || isDepsChanged) && dispatch(getLoansStorage()),
           (!isFarmsLoaded || isDepsChanged) && dispatch(getFarmStorage()),
-          (!isDoormanLoaded || isDepsChanged) && dispatch(getDoormanStorage()),
         ].filter(Boolean),
       )
     } catch (e) {}

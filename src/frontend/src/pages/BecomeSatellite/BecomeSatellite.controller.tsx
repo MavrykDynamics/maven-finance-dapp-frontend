@@ -13,9 +13,9 @@ import {
 
 // providers
 import { useStakeContext } from 'providers/StakeProvider/stake.provider'
+import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
 
 // Actions
-import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
 import { registerAsSatellite, unregisterAsSatellite, updateSatelliteRecord } from './BecomeSatellite.actions'
 import { getSatelliteConfig } from 'pages/Satellites/Satellites.actions'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
@@ -75,15 +75,12 @@ export const BecomeSatellite = () => {
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { themeSelected } = useSelector((state: State) => state.preferences)
 
+  useStakeUpdater(true)
+
   const { isLoading } = useDataLoader(
     async (isDepsChanged) => {
       try {
-        await Promise.all(
-          [
-            (!isConfigLoaded || isDepsChanged) && dispatch(getSatelliteConfig()),
-            (!isDoormanLoaded || isDepsChanged) && dispatch(getDoormanStorage()),
-          ].filter(Boolean),
-        )
+        await Promise.all([(!isConfigLoaded || isDepsChanged) && dispatch(getSatelliteConfig())].filter(Boolean))
       } catch (error) {}
     },
     [accountPkh],
