@@ -315,10 +315,6 @@ export const ProposalSubmission = () => {
     ? checkStage1Validation({ proposalValidation: currentProposalValidation })
     : true
 
-  console.log('current selected proposal', currentProposal)
-  console.log('mapped proposals from redux in useMemo', proposalState)
-  console.log('proposals from redux', mappedProposals)
-
   return (
     <Page>
       <PageHeader page={'proposal submission'} />

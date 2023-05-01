@@ -232,7 +232,6 @@ export const getBytesDiff = (
       })),
     )
     .filter(Boolean) as ProposalDataChangesType
-  console.log('getBytesDiff: ', { originalData, updatedData, changes })
 
   return changes
 }
@@ -327,7 +326,6 @@ export const getPaymentsDiff = (
     )
     .filter(Boolean) as PaymentsDataChangesType
 
-  console.log('getPaymentsDiff: ', { originalData, updatedData, changes })
   return changes
 }
 
