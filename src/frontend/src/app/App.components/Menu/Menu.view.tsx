@@ -128,12 +128,22 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
             >
               {sidebarOpened ? 'Get MVK Tokens' : 'mvk'}
             </NewButton>
-            <a href="https://faucet.marigold.dev/ " target="_blank" rel="noreferrer">
+            <a
+              href="https://faucet.marigold.dev/ "
+              target="_blank"
+              rel="noreferrer"
+              className={sidebarOpened ? '' : 'small'}
+            >
               <NewButton kind={BUTTON_SECONDARY} form={sidebarOpened ? BUTTON_WIDE : BUTTON_ROUND} isThin>
                 {sidebarOpened ? ' Ghostnet Faucet' : 'GF'}
               </NewButton>
             </a>
-            <a href="https://forms.gle/bwmTfpoLKBhaf7yD6" target="_blank" rel="noreferrer">
+            <a
+              href="https://forms.gle/bwmTfpoLKBhaf7yD6"
+              target="_blank"
+              rel="noreferrer"
+              className={sidebarOpened ? '' : 'small'}
+            >
               <NewButton kind={BUTTON_SECONDARY} form={sidebarOpened ? BUTTON_WIDE : BUTTON_ROUND} isThin>
                 {sidebarOpened ? 'Submit Feedback' : 'SF'}
               </NewButton>

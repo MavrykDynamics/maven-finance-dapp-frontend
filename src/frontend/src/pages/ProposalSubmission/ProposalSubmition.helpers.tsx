@@ -72,7 +72,7 @@ export const isProposalHasChange = ({
   // check only not empty bytes, skip empty ones
   const filteredBytes = clientProposal?.proposalData.filter(({ title, encoded_code }) => title || encoded_code)
   // Need to filter remote bytes, cuz when we remowe byte pair backend sets its encoded_code to null
-  const filteredRemoteBytes = remoteProposal?.proposalData.filter(({ encoded_code }) => encoded_code !== null)
+  const filteredRemoteBytes = remoteProposal?.proposalData.filter(({ encoded_code }) => encoded_code)
 
   const isBytesDiff = Boolean(
     // if both are empty then there are no changes, need this cond to make every work valid
@@ -96,7 +96,7 @@ export const isProposalHasChange = ({
   const filteredPayments = clientProposal?.proposalPayments.filter(({ token_amount, to__id }) => token_amount || to__id)
   // Need to filter remote payments, cuz when we remowe payment backend sets it to nullable values
   const filteredRemotePayments = remoteProposal?.proposalPayments.filter(
-    ({ token_amount, to__id }) => token_amount !== null || to__id !== null,
+    ({ token_amount, to__id }) => token_amount || to__id,
   )
 
   const isPaymentsDiff = Boolean(
@@ -109,6 +109,7 @@ export const isProposalHasChange = ({
       : // Compare every receiver address, tokens amount, token adress to see whether they are eaqual
         filteredPayments?.some(({ token_amount, token_address, to__id, id }, idx) => {
           const remoteProposalPayment = filteredRemotePayments?.[idx]
+
           return (
             to__id !== remoteProposalPayment?.to__id ||
             token_amount !== remoteProposalPayment?.token_amount ||

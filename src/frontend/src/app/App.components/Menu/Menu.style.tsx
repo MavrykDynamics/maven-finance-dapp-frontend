@@ -155,6 +155,10 @@ export const MenuFooter = styled.div<{ theme: MavrykTheme }>`
 
   > a {
     width: 100%;
+
+    &.small {
+      width: fit-content;
+    }
   }
 
   .social-wrapper {
