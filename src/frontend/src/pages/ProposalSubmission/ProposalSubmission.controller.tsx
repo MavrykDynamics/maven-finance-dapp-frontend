@@ -27,8 +27,14 @@ import { MultyProposalItem, ProposalValidityObj, SubmittedProposalsMapper } from
 import { ProposalRecordType, ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
 
 // consts
-import { DEFAULT_PROPOSAL, DEFAULT_PROPOSAL_VALIDATION } from './ProposalSubmition.helpers'
-import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import {
+  DEFAULT_PROPOSAL,
+  DEFAULT_PROPOSAL_VALIDATION,
+  checkStage1Validation,
+  checkStage2Validation,
+  checkStage3Validation,
+  isProposalHasChange,
+} from './ProposalSubmition.helpers'
 import {
   BUTTON_PRIMARY,
   BUTTON_SECONDARY,
@@ -67,6 +73,7 @@ export const ProposalSubmission = () => {
   }, [])
 
   // proposals that user has submitted, reduced to object mapper and arr of keys for this object
+  // this object represents ds we can use with stages, to interact with in tables, inputs, etc
   const [proposalKeys, mappedProposals, mappedValidation] = useMemo(() => {
     const { keys, mapper, validityObj } = currentRoundProposalsIds
       .filter((proposalId) => proposalsMapper[proposalId].proposerId === accountPkh)
@@ -101,7 +108,7 @@ export const ProposalSubmission = () => {
     return [keys, mapper, validityObj]
   }, [accountPkh, currentRoundProposalsIds, proposalsMapper])
 
-  // mapping user created proposals to buttons data
+  // mapping user created proposals to tabs buttons data
   const usersProposalsToSwitch = useMemo(
     () =>
       (proposalKeys || [])
@@ -118,19 +125,19 @@ export const ProposalSubmission = () => {
     [proposalKeys, governancePhase, selectedUserProposalId, mappedProposals],
   )
 
+  // Proposals user can swith between and modify, and validation to it
   const [proposalState, setProposalsState] = useState(mappedProposals)
   const [proposalsValidation, setProposalsValidation] = useState<Record<number, ProposalValidityObj>>({})
 
+  // Id of current proposal user is looking but on remote
   const currentOriginalProposalId = useMemo(
     () => currentRoundProposalsIds.find((id) => selectedUserProposalId === id),
     [selectedUserProposalId, currentRoundProposalsIds],
   )
 
-  // if user removed all his submitted proposals, show him create proposal tab with empty proposal form to fill up
+  // Track proposals update on remote
   useEffect(() => {
-    // TODO: remove log, testing purposes
-    console.log({ proposalState, selectedUserProposalId, mappedProposals })
-
+    // if we have user's proposals on remote set them to view/update, else set default proposal
     setProposalsState(
       proposalKeys.length
         ? mappedProposals
@@ -138,6 +145,7 @@ export const ProposalSubmission = () => {
             [DEFAULT_PROPOSAL.id]: DEFAULT_PROPOSAL,
           },
     )
+    // set validation for proposals above
     setProposalsValidation(
       proposalKeys.length
         ? mappedValidation
@@ -146,31 +154,38 @@ export const ProposalSubmission = () => {
           },
     )
 
-    if (lastSelectedProposalId.current === -1 && proposalKeys?.[0]) {
-      setSeletedUserProposalId(proposalKeys[0])
-      lastSelectedProposalId.current = proposalKeys[0]
-    } else {
-      setSeletedUserProposalId(DEFAULT_PROPOSAL.id)
-      lastSelectedProposalId.current = DEFAULT_PROPOSAL.id
+    // If last selected prooposal by user is not exists set first remote we have
+    if (!proposalKeys.includes(selectedUserProposalId)) {
+      if (proposalKeys.length) {
+        setSeletedUserProposalId(proposalKeys[0])
+        lastSelectedProposalId.current = proposalKeys[0]
+      } else {
+        // else set "Create new" proposal as initial seleced
+
+        setSeletedUserProposalId(DEFAULT_PROPOSAL.id)
+        lastSelectedProposalId.current = DEFAULT_PROPOSAL.id
+      }
     }
-  }, [mappedProposals, mappedValidation, proposalKeys])
+  }, [mappedProposals, mappedValidation, proposalKeys, selectedUserProposalId])
 
-  const [currentProposal, currentProposalValidation] = [
-    proposalState[selectedUserProposalId] ?? {},
-    proposalsValidation[selectedUserProposalId] ?? {},
-  ]
+  // Current proposal on client, used to show proposal data in stages
+  const [currentProposal, currentProposalValidation] = useMemo(
+    () => [proposalState[selectedUserProposalId] ?? {}, proposalsValidation[selectedUserProposalId] ?? {}],
+    [proposalState, proposalsValidation, selectedUserProposalId],
+  )
 
-  // TODO: remove log, testing purposes
-  console.log({ proposalState, selectedUserProposalId, mappedProposals })
-
+  // ------ ACTIONS HANDLERDS START ------
+  // Change proposal stage
   const handleChangeTab = useCallback((tabId?: number) => {
     setActiveTab(tabId ?? 0)
   }, [])
 
+  // Change user's vieving proposal
   const changeActiveProposal = useCallback(
     (proposalId: number) => {
       setSeletedUserProposalId(proposalId)
       lastSelectedProposalId.current = proposalId
+
       // it means that we choose create new proposal
       if (proposalId === -1 && !proposalState[-1]) {
         setProposalsState({
@@ -249,104 +264,58 @@ export const ProposalSubmission = () => {
       ),
     )
   }
+  // ------ ACTIONS HANDLERDS END ------
 
   // action buttons stuff for disabling
   const isProposalSubmitted = selectedUserProposalId >= 0
   const isProposalPeriod = governancePhase === 'PROPOSAL'
 
-  const proposalHasChange = useMemo(() => {
-    const submitProposalBody = proposalState[currentOriginalProposalId ?? -1]
-    const remoteProposal = mappedProposals[currentOriginalProposalId ?? -1]
-
-    const isTitleDiff = submitProposalBody?.title !== remoteProposal?.title,
-      isDescrDiff = submitProposalBody?.description !== remoteProposal?.description,
-      isSourceLinkDiff = submitProposalBody?.sourceCode !== remoteProposal?.sourceCode
-
-    const filteredBytes = submitProposalBody?.proposalData.filter(({ title, encoded_code }) => title || encoded_code)
-    const filteredRemoteBytes = remoteProposal?.proposalData.filter(({ title, encoded_code }) => encoded_code !== null)
-
-    const isBytesDiff =
-      filteredBytes?.length === 0 && filteredRemoteBytes?.length === 0
-        ? false
-        : filteredBytes?.length !== filteredRemoteBytes?.length
-        ? true
-        : filteredBytes?.every(({ title, encoded_code }, idx) => {
-            const remoteProposalByte = filteredRemoteBytes?.[idx]
-            return title !== remoteProposalByte?.title || encoded_code !== remoteProposalByte?.encoded_code
+  const proposalHasChange = useMemo(
+    () =>
+      isProposalSubmitted && isProposalPeriod && !currentProposal.locked
+        ? isProposalHasChange({
+            clientProposal: proposalState[currentOriginalProposalId ?? -1],
+            remoteProposal: mappedProposals[currentOriginalProposalId ?? -1],
           })
+        : false,
+    [
+      currentOriginalProposalId,
+      currentProposal.locked,
+      isProposalPeriod,
+      isProposalSubmitted,
+      mappedProposals,
+      proposalState,
+    ],
+  )
 
-    const filteredPayments = submitProposalBody?.proposalPayments.filter(
-      ({ token_amount, to__id }) => token_amount || to__id,
-    )
-    const filteredRemotePayments = remoteProposal?.proposalPayments.filter(
-      ({ token_amount, to__id }) => token_amount !== null || to__id !== null,
-    )
-
-    const isPaymentsDiff =
-      filteredPayments?.length === 0 && filteredRemotePayments?.length === 0
-        ? false
-        : filteredPayments?.length !== filteredRemotePayments?.length
-        ? true
-        : filteredPayments?.every(({ token_amount, token_address, to__id }, idx) => {
-            const remoteProposalPayment = filteredRemotePayments?.[idx]
-            return (
-              to__id !== remoteProposalPayment?.to__id ||
-              token_amount !== remoteProposalPayment?.token_amount ||
-              token_address !== remoteProposalPayment?.token_address
-            )
-          })
-
-    return isTitleDiff || isDescrDiff || isSourceLinkDiff || isBytesDiff || isPaymentsDiff
-  }, [currentOriginalProposalId, mappedProposals, proposalState])
-
-  // Validate bytes, validate only non empty bytes
+  // Validate bytes
   const isBytesValid = useMemo(
     () =>
-      currentProposalValidation.bytesValidation
-        ?.filter(({ byteId }) => {
-          const byte = proposalState?.[currentOriginalProposalId ?? -1]?.proposalData?.find(({ id }) => id === byteId)
-          return byte && (byte.title || byte.encoded_code)
-        })
-        .every(({ validBytes, validTitle, byteId }) => {
-          const isSavedBytes = currentOriginalProposalId
-            ? proposalsMapper[currentOriginalProposalId]?.proposalData?.find(({ id }) => id === byteId)
-            : false
-          return isSavedBytes
-            ? validBytes !== INPUT_STATUS_ERROR
-            : validBytes === INPUT_STATUS_SUCCESS && validTitle === INPUT_STATUS_SUCCESS
-        }) ?? true,
-    [currentOriginalProposalId, currentProposalValidation.bytesValidation, proposalState, proposalsMapper],
+      checkStage2Validation({
+        proposalValidation: currentProposalValidation,
+        currentProposal,
+      }),
+    [currentProposal, currentProposalValidation],
   )
 
-  // Validate payments, validate only non empty payments
+  // Validate payments
   const isPaymentsValid = useMemo(
     () =>
-      currentProposalValidation.paymentsValidation
-        ?.filter(({ paymentId }) => {
-          const payment = proposalState?.[currentOriginalProposalId ?? -1]?.proposalPayments?.find(
-            ({ id }) => id === paymentId,
-          )
-          return payment && (payment.title || payment.to__id || payment.token_amount)
-        })
-        .every(({ to__id, title, token_amount, paymentId }) => {
-          const isSavedPayment = currentOriginalProposalId
-            ? proposalsMapper[currentOriginalProposalId]?.proposalPayments?.find(({ id }) => id === paymentId)
-            : false
-
-          return isSavedPayment
-            ? to__id !== INPUT_STATUS_ERROR && title !== INPUT_STATUS_ERROR && token_amount !== INPUT_STATUS_ERROR
-            : to__id === INPUT_STATUS_SUCCESS && title === INPUT_STATUS_SUCCESS && token_amount === INPUT_STATUS_SUCCESS
-        }) ?? true,
-    [currentOriginalProposalId, currentProposalValidation.paymentsValidation, proposalState, proposalsMapper],
+      checkStage3Validation({
+        proposalValidation: currentProposalValidation,
+        currentProposal,
+      }),
+    [currentProposal, currentProposalValidation],
   )
 
-  const isStageOneDataValid = useMemo(
-    () =>
-      currentProposalValidation.description === INPUT_STATUS_SUCCESS &&
-      currentProposalValidation.title === INPUT_STATUS_SUCCESS &&
-      currentProposalValidation.sourceCode === INPUT_STATUS_SUCCESS,
-    [currentProposalValidation.description, currentProposalValidation.title, currentProposalValidation.sourceCode],
-  )
+  // Validate stage 1, if porposal is submitted we can't change anything here
+  const isStageOneDataValid = isProposalSubmitted
+    ? checkStage1Validation({ proposalValidation: currentProposalValidation })
+    : true
+
+  console.log('current selected proposal', currentProposal)
+  console.log('mapped proposals from redux in useMemo', proposalState)
+  console.log('proposals from redux', mappedProposals)
 
   return (
     <Page>

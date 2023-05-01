@@ -537,7 +537,7 @@ export const BorrowingExpandCard = ({
                   </div>
                 ) : null}
 
-                {/* <div
+                <div
                   className={`block-name ${
                     vaultHasXtzCollateral || vaultHasSmvkCollateral ? 'margin-top-20' : 'margin-top'
                   }`}
@@ -589,11 +589,15 @@ export const BorrowingExpandCard = ({
                           ` ${mappedMVKOperators.amount ?? ''}`
                         : 'None'}
                     </div>
-                    <Button kind={BUTTON_SIMPLE} disabled={true || isActionActive} onClick={() => openUpdateMvkOperatorsPopup?.({})} >
+                    <Button
+                      kind={BUTTON_SIMPLE}
+                      disabled={true || isActionActive}
+                      onClick={() => openUpdateMvkOperatorsPopup?.({})}
+                    >
                       Update <Icon id="paginationArrowLeft" />
                     </Button>
                   </div>
-                ) : null} */}
+                ) : null}
 
                 <div className="repay-full">
                   <Button

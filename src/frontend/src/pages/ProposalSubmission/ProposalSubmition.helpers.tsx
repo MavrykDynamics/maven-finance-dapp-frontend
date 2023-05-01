@@ -17,6 +17,7 @@ import { validateTzAddress, isValidLength } from 'utils/validatorFunctions'
 import { defaultProposalDescriptionMaxLength } from 'app/App.components/Input/Input.constants'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 
+// VALIDATION FN'S
 export const getBytesPairValidationStatus = (
   newText: string,
   fieldToValidate: 'validTitle' | 'validBytes',
@@ -57,6 +58,117 @@ export const checkPaymentExists = (proposalPaymentMethod: ProposalRecordType['pr
   )
 }
 
+export const isProposalHasChange = ({
+  clientProposal,
+  remoteProposal,
+}: {
+  clientProposal?: ProposalRecordType
+  remoteProposal?: ProposalRecordType
+}): boolean => {
+  const isTitleDiff = clientProposal?.title !== remoteProposal?.title,
+    isDescrDiff = clientProposal?.description !== remoteProposal?.description,
+    isSourceLinkDiff = clientProposal?.sourceCode !== remoteProposal?.sourceCode
+
+  // check only not empty bytes, skip empty ones
+  const filteredBytes = clientProposal?.proposalData.filter(({ title, encoded_code }) => title || encoded_code)
+  // Need to filter remote bytes, cuz when we remowe byte pair backend sets its encoded_code to null
+  const filteredRemoteBytes = remoteProposal?.proposalData.filter(({ encoded_code }) => encoded_code !== null)
+
+  const isBytesDiff = Boolean(
+    // if both are empty then there are no changes, need this cond to make every work valid
+    filteredBytes?.length === 0 && filteredRemoteBytes?.length === 0
+      ? false
+      : // if they has different legth then they have changed
+      filteredBytes?.length !== filteredRemoteBytes?.length
+      ? true
+      : // Compare every title and byte code to see whether they are eaqual
+        filteredBytes?.every(({ title, encoded_code }, idx) => {
+          const remoteProposalByte = filteredRemoteBytes?.[idx]
+          return title !== remoteProposalByte?.title || encoded_code !== remoteProposalByte?.encoded_code
+        }),
+  )
+
+  // check only not empty payments, skip empty ones
+  const filteredPayments = clientProposal?.proposalPayments.filter(({ token_amount, to__id }) => token_amount || to__id)
+  // Need to filter remote payments, cuz when we remowe payment backend sets it to nullable values
+  const filteredRemotePayments = remoteProposal?.proposalPayments.filter(
+    ({ token_amount, to__id }) => token_amount !== null || to__id !== null,
+  )
+
+  const isPaymentsDiff = Boolean(
+    // if both are empty then there are no changes, need this cond to make every work valid
+    filteredPayments?.length === 0 && filteredRemotePayments?.length === 0
+      ? false
+      : // if they has different legth then they have changed
+      filteredPayments?.length !== filteredRemotePayments?.length
+      ? true
+      : // Compare every receiver address, tokens amount, token adress to see whether they are eaqual
+        filteredPayments?.every(({ token_amount, token_address, to__id }, idx) => {
+          const remoteProposalPayment = filteredRemotePayments?.[idx]
+          return (
+            to__id !== remoteProposalPayment?.to__id ||
+            token_amount !== remoteProposalPayment?.token_amount ||
+            token_address !== remoteProposalPayment?.token_address
+          )
+        }),
+  )
+
+  return isTitleDiff || isDescrDiff || isSourceLinkDiff || isBytesDiff || isPaymentsDiff
+}
+
+export const checkStage1Validation = ({ proposalValidation }: { proposalValidation: ProposalValidityObj }): boolean => {
+  return (
+    proposalValidation.description === INPUT_STATUS_SUCCESS &&
+    proposalValidation.title === INPUT_STATUS_SUCCESS &&
+    proposalValidation.sourceCode === INPUT_STATUS_SUCCESS
+  )
+}
+
+export const checkStage2Validation = ({
+  proposalValidation,
+  currentProposal,
+}: {
+  proposalValidation: ProposalValidityObj
+  currentProposal: ProposalRecordType
+}): boolean => {
+  // if proposal is locked we can't change anything in it
+  return currentProposal.locked
+    ? true
+    : proposalValidation.bytesValidation
+        // Filter empty bytes
+        ?.filter(({ byteId }) => {
+          const byte = currentProposal?.proposalData?.find(({ id }) => id === byteId)
+          return byte && (byte.title || byte.encoded_code)
+        })
+        // Validate every byte that is non empty, !== error, cuz initial validation status is '' and it's empty or already saved byte
+        .every(({ validBytes, validTitle }) => {
+          return validBytes !== INPUT_STATUS_ERROR && validTitle !== INPUT_STATUS_ERROR
+        }) ?? true
+}
+
+export const checkStage3Validation = ({
+  proposalValidation,
+  currentProposal,
+}: {
+  proposalValidation: ProposalValidityObj
+  currentProposal: ProposalRecordType
+}) => {
+  // if proposal is locked we can't change anything in it
+  return currentProposal.locked
+    ? true
+    : proposalValidation.paymentsValidation
+        // Filter empty payments
+        ?.filter(({ paymentId }) => {
+          const payment = currentProposal?.proposalPayments?.find(({ id }) => id === paymentId)
+          return payment && (payment.title || payment.to__id || payment.token_amount)
+        })
+        // Validate every paymnet that is non empty, !== error, cuz initial validation status is '' and it's empty or already saved payment
+        .every(({ to__id, title, token_amount }) => {
+          return to__id !== INPUT_STATUS_ERROR && title !== INPUT_STATUS_ERROR && token_amount !== INPUT_STATUS_ERROR
+        }) ?? true
+}
+
+// GET DIFFS FOR SAVE CHANGES
 export const getBytesDiff = (
   originalData: ProposalRecordType['proposalData'],
   updatedData: ProposalRecordType['proposalData'],
@@ -104,6 +216,7 @@ export const getBytesDiff = (
       })),
     )
     .filter(Boolean) as ProposalDataChangesType
+  console.log('getBytesDiff: ', { originalData, updatedData, changes })
 
   return changes
 }
@@ -198,8 +311,11 @@ export const getPaymentsDiff = (
     )
     .filter(Boolean) as PaymentsDataChangesType
 
+  console.log('getPaymentsDiff: ', { originalData, updatedData, changes })
   return changes
 }
+
+// CONSTS
 
 export const PROPOSAL_BYTE = {
   encoded_code: '',

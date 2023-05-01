@@ -113,6 +113,8 @@ export const managePermissionsAction =
         transaction = await contract?.methods.initVaultAction('updateDepositor', VAULT_ALLOWANCE_ANY, true).send()
       }
 
+      console.log({ vaultOriginalDepositros, newDepositorsAddresses, depostiorAllowance })
+
       // if newDepositorsAddresses is empty means we need to remove all depositors
       if (depostiorAllowance === VAULT_ALLOWANCE_ACCOUNTS && newDepositorsAddresses.length === 0) {
         const batch = tezos.wallet.batch(
@@ -121,7 +123,7 @@ export const managePermissionsAction =
                 {
                   kind: OpKind.TRANSACTION,
                   ...contract.methods
-                    .initVaultAction('updateDepositor', VAULT_ALLOWANCE_ACCOUNTS, false, state.wallet.accountPkh)
+                    .initVaultAction('updateDepositor', VAULT_ALLOWANCE_ACCOUNTS, true, state.wallet.accountPkh)
                     .toTransferParams(),
                 },
               ]
