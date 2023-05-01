@@ -82,9 +82,13 @@ export const isProposalHasChange = ({
       filteredBytes?.length !== filteredRemoteBytes?.length
       ? true
       : // Compare every title and byte code to see whether they are eaqual
-        filteredBytes?.every(({ title, encoded_code }, idx) => {
+        filteredBytes?.some(({ title, encoded_code, id }, idx) => {
           const remoteProposalByte = filteredRemoteBytes?.[idx]
-          return title !== remoteProposalByte?.title || encoded_code !== remoteProposalByte?.encoded_code
+          return (
+            title !== remoteProposalByte?.title ||
+            encoded_code !== remoteProposalByte?.encoded_code ||
+            id !== remoteProposalByte?.id
+          )
         }),
   )
 
@@ -103,12 +107,13 @@ export const isProposalHasChange = ({
       filteredPayments?.length !== filteredRemotePayments?.length
       ? true
       : // Compare every receiver address, tokens amount, token adress to see whether they are eaqual
-        filteredPayments?.every(({ token_amount, token_address, to__id }, idx) => {
+        filteredPayments?.some(({ token_amount, token_address, to__id, id }, idx) => {
           const remoteProposalPayment = filteredRemotePayments?.[idx]
           return (
             to__id !== remoteProposalPayment?.to__id ||
             token_amount !== remoteProposalPayment?.token_amount ||
-            token_address !== remoteProposalPayment?.token_address
+            token_address !== remoteProposalPayment?.token_address ||
+            id !== remoteProposalPayment?.id
           )
         }),
   )
@@ -127,9 +132,11 @@ export const checkStage1Validation = ({ proposalValidation }: { proposalValidati
 export const checkStage2Validation = ({
   proposalValidation,
   currentProposal,
+  remoteProposal,
 }: {
   proposalValidation: ProposalValidityObj
   currentProposal: ProposalRecordType
+  remoteProposal: ProposalRecordType
 }): boolean => {
   // if proposal is locked we can't change anything in it
   return currentProposal.locked
@@ -140,18 +147,23 @@ export const checkStage2Validation = ({
           const byte = currentProposal?.proposalData?.find(({ id }) => id === byteId)
           return byte && (byte.title || byte.encoded_code)
         })
-        // Validate every byte that is non empty, !== error, cuz initial validation status is '' and it's empty or already saved byte
-        .every(({ validBytes, validTitle }) => {
-          return validBytes !== INPUT_STATUS_ERROR && validTitle !== INPUT_STATUS_ERROR
+        // Validate every byte that is non empty
+        .every(({ validBytes, validTitle, byteId }) => {
+          const isRemoteByte = remoteProposal?.proposalData?.find(({ id }) => byteId === id)
+          return isRemoteByte
+            ? validBytes !== INPUT_STATUS_ERROR
+            : validBytes === INPUT_STATUS_SUCCESS && validTitle === INPUT_STATUS_SUCCESS
         }) ?? true
 }
 
 export const checkStage3Validation = ({
   proposalValidation,
   currentProposal,
+  remoteProposal,
 }: {
   proposalValidation: ProposalValidityObj
   currentProposal: ProposalRecordType
+  remoteProposal: ProposalRecordType
 }) => {
   // if proposal is locked we can't change anything in it
   return currentProposal.locked
@@ -162,9 +174,13 @@ export const checkStage3Validation = ({
           const payment = currentProposal?.proposalPayments?.find(({ id }) => id === paymentId)
           return payment && (payment.title || payment.to__id || payment.token_amount)
         })
-        // Validate every paymnet that is non empty, !== error, cuz initial validation status is '' and it's empty or already saved payment
-        .every(({ to__id, title, token_amount }) => {
-          return to__id !== INPUT_STATUS_ERROR && title !== INPUT_STATUS_ERROR && token_amount !== INPUT_STATUS_ERROR
+        // Validate every paymnet that is non empty
+        .every(({ to__id, title, token_amount, paymentId }) => {
+          const isRemotePayment = remoteProposal?.proposalPayments?.find(({ id }) => paymentId === id)
+
+          return isRemotePayment
+            ? to__id !== INPUT_STATUS_ERROR && title !== INPUT_STATUS_ERROR && token_amount !== INPUT_STATUS_ERROR
+            : to__id === INPUT_STATUS_SUCCESS && title === INPUT_STATUS_SUCCESS && token_amount === INPUT_STATUS_SUCCESS
         }) ?? true
 }
 

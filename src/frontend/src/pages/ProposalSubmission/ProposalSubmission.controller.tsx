@@ -294,8 +294,9 @@ export const ProposalSubmission = () => {
       checkStage2Validation({
         proposalValidation: currentProposalValidation,
         currentProposal,
+        remoteProposal: mappedProposals[currentProposal.id],
       }),
-    [currentProposal, currentProposalValidation],
+    [currentProposal, currentProposalValidation, mappedProposals],
   )
 
   // Validate payments
@@ -304,8 +305,9 @@ export const ProposalSubmission = () => {
       checkStage3Validation({
         proposalValidation: currentProposalValidation,
         currentProposal,
+        remoteProposal: mappedProposals[currentProposal.id],
       }),
-    [currentProposal, currentProposalValidation],
+    [currentProposal, currentProposalValidation, mappedProposals],
   )
 
   // Validate stage 1, if porposal is submitted we can't change anything here
