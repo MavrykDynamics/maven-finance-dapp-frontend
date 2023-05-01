@@ -1,6 +1,7 @@
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useLockBodyScroll } from 'react-use'
 import { useEffect, useMemo, useState } from 'react'
+import { State } from 'reducers'
 
 import { COLLATERAL_RATIO_GRADIENT, assetDecimalsToShow, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { INPUT_STATUS_SUCCESS, INPUT_STATUS_ERROR, INPUT_LARGE } from 'app/App.components/Input/Input.constants'
@@ -13,6 +14,7 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import Icon from 'app/App.components/Icon/Icon.view'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
 import { Input } from 'app/App.components/Input/NewInput'
+import colors from 'styles/colors'
 
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/SettingsPopup/SettingsPopup.style'
@@ -23,6 +25,7 @@ import { calcCollateralRatio, getLoansInputMaxAmount, loansInputValidation } fro
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { StatusMessageStyled } from '../LoansComponents.style'
 import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17953%3A224110&t=Sx2aEpp3ifrGxBtQ-0
 export const Repay = ({
@@ -50,6 +53,7 @@ export const Repay = ({
 
   useLockBodyScroll(show)
   const dispatch = useDispatch()
+  const { themeSelected } = useSelector((state: State) => state.preferences)
 
   const [screenShown, setShownScreen] = useState<'initial' | 'confitmation'>('initial')
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
@@ -146,9 +150,23 @@ export const Repay = ({
                   />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
-                  <div className="name">Fees Due</div>
-                  <CommaNumber value={feesAmount} className="value" />
-                  <CommaNumber value={feesAmount * Number(borrowedAsset?.rate)} className="rate" beginningText="$" />
+                  <div className="name">
+                    Fees Due
+                    <CustomTooltip
+                      iconId="info"
+                      defaultStrokeColor={colors[themeSelected].textColor}
+                      text={`Your current interest fee of ${feesAmount} was rounded to ${Math.ceil(
+                        feesAmount,
+                      )}. Any overpaid amount will automatically be refunded.`}
+                      className="tooltip"
+                    />
+                  </div>
+                  <CommaNumber value={Math.ceil(feesAmount)} decimalsToShow={0} className="value" />
+                  <CommaNumber
+                    value={Math.ceil(feesAmount) * Number(borrowedAsset?.rate)}
+                    className="rate"
+                    beginningText="$"
+                  />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem className="left-divider">
                   <div className="name">Total Outstanding</div>

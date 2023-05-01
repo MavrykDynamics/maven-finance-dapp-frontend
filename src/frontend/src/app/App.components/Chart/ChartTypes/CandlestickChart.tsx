@@ -33,6 +33,7 @@ export const CandlestickChart = ({
     crosshairOptions = DEFAULT_CROSSHAIR_SETTING,
     textColor = lightTextColor,
     borderColor = headerColor,
+    seriesMarkers,
   } = {},
   colors: { chandleUpColor = upColor, chandleDownColor = downColor } = {},
   data,
@@ -104,6 +105,11 @@ export const CandlestickChart = ({
     // Setting data
     series.setData(data)
     series.applyOptions(CHART_SERIES_OPTIONS)
+
+    // set markers for series
+    if (seriesMarkers) {
+      series.setMarkers(seriesMarkers)
+    }
 
     chart.subscribeCrosshairMove((param) => {
       if (checkWhetherHideTooltip(param, chartContainerRef)) {

@@ -48,7 +48,6 @@ const MliFeeTooltip = ({ xAxis, yAxis, asset, valueTooltipFormatter }: TooltipPr
       <div>
         <div className="name">MLI:</div>
         <CommaNumber
-          endingText={asset}
           value={valueTooltipFormatter ? parseFloat(valueTooltipFormatter(yAxis)) : yAxis}
           showDecimal
           decimalsToShow={2}
