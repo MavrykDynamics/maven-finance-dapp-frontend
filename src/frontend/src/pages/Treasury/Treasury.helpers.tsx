@@ -116,7 +116,6 @@ export const normalizeTreasuryStorage = (
 
     const treasuryNormalizedTokens = treasuryData.balances
       .map(({ balance, metadata }): TreasuryBalanceType => {
-        console.log({ metadata })
         // metadata has no type in indexer types so use 'as'
         const { symbol = '', decimals = '0', icon = '' } = (metadata ?? {}) as TreasuryAssetMapperType
         const parsedDecimals = parseInt(decimals)
