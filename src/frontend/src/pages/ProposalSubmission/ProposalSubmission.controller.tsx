@@ -149,18 +149,18 @@ export const ProposalSubmission = () => {
     )
 
     // If last selected proposal by user is not exists
-    // if (!proposalKeys.includes(selectedUserProposalId)) {
-    //   // set first remote we have
-    //   if (proposalKeys.length) {
-    //     setSeletedUserProposalId(proposalKeys[0])
-    //     lastSelectedProposalId.current = proposalKeys[0]
-    //   } else {
-    //     // else set "Create new" proposal as initial seleced
-    //     setSeletedUserProposalId(DEFAULT_PROPOSAL.id)
-    //     lastSelectedProposalId.current = DEFAULT_PROPOSAL.id
-    //   }
-    // }
-  }, [mappedProposals, mappedValidation, proposalKeys, selectedUserProposalId])
+    if (!proposalKeys.includes(lastSelectedProposalId.current)) {
+      // set first remote we have
+      if (proposalKeys.length) {
+        setSeletedUserProposalId(proposalKeys[0])
+        lastSelectedProposalId.current = proposalKeys[0]
+      } else {
+        // else set "Create new" proposal as initial seleced
+        setSeletedUserProposalId(DEFAULT_PROPOSAL.id)
+        lastSelectedProposalId.current = DEFAULT_PROPOSAL.id
+      }
+    }
+  }, [mappedProposals, mappedValidation, proposalKeys])
 
   // Current proposal on client, used to show proposal data in stages
   const [currentProposal, currentProposalValidation] = useMemo(
