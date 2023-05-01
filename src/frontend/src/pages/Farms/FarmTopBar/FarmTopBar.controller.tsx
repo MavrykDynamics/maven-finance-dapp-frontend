@@ -16,7 +16,7 @@ import Icon from '../../../app/App.components/Icon/Icon.view'
 import Toggle from '../../../app/App.components/Toggle/Toggle.view'
 import { SlidingTabButtons } from '../../../app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import { Input } from '../../../app/App.components/Input/Input.controller'
-import { DropDown, DropdownItemType } from '../../../app/App.components/DropDown/DropDown.controller'
+import { DDItemId, DropDown } from 'app/App.components/DropDown/NewDropdown'
 import { HandleClickArgsType } from '../Farms.controller'
 
 // style
@@ -36,18 +36,13 @@ export const FarmTopBar = ({
   farmsFilters: { isLive, isStaked, searchValue, sortBy },
   handleFilterClick,
 }: FarmTopBarViewProps) => {
-  const [ddItems, _] = useState(itemsForFarmsSortDD.map(({ text }) => text))
-  const [ddIsOpen, setDdIsOpen] = useState(false)
-  const [chosenDdItem, setChosenDdItem] = useState<DropdownItemType | undefined>(
-    itemsForFarmsSortDD.find((item) => item.value === sortBy),
-  )
+  const [chosenDdItem, setChosenDdItem] = useState(itemsForFarmsSortDD.find((item) => item.id === sortBy))
 
-  const handleOnClickDropdownItem = (e: string) => {
-    const chosenItem = itemsForFarmsSortDD.find((item) => item.text === e)
+  const handleOnClickDropdownItem = (itemId: DDItemId) => {
+    const chosenItem = itemsForFarmsSortDD.find((item) => item.id === itemId)
     if (chosenItem) {
       setChosenDdItem(chosenItem)
-      setDdIsOpen(!ddIsOpen)
-      handleFilterClick({ filterType: 'sort', newSortBy: chosenItem.value })
+      handleFilterClick({ filterType: 'sort', newSortBy: chosenItem.id })
     }
   }
 
@@ -92,13 +87,12 @@ export const FarmTopBar = ({
       />
       <DropdownContainer className="order-by">
         <h4>Order by:</h4>
+
         <DropDown
-          placeholder={'Choose order'}
-          isOpen={ddIsOpen}
-          setIsOpen={setDdIsOpen}
-          itemSelected={chosenDdItem?.text}
-          items={ddItems}
-          clickOnItem={(e) => handleOnClickDropdownItem(e)}
+          placeholder="Choose order"
+          activeItem={chosenDdItem}
+          items={itemsForFarmsSortDD}
+          clickItem={handleOnClickDropdownItem}
         />
       </DropdownContainer>
       <div className="change-view">

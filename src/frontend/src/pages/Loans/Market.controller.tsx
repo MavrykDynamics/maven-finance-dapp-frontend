@@ -50,14 +50,13 @@ export const Market = () => {
     window.scrollTo(0, 0)
   }, [])
 
-  const currentToken = useMemo(
-    () => loanTokens.find(({ loanTokenData: { symbol } }) => assetId === symbol),
-    [assetId, loanTokens],
-  )
-
-  const [prevMarket, nextMarket, currentAsset] = useMemo(() => {
-    const currentAssetIdx = loanTokens.findIndex(({ loanTokenData: { symbol } }) => symbol === assetId)
-    return [loanTokens[currentAssetIdx - 1], loanTokens[currentAssetIdx + 1], loanTokens[currentAssetIdx]]
+  const [prevMarket, nextMarket, currentToken] = useMemo(() => {
+    const currentTokenIdx = loanTokens.findIndex(({ loanTokenData: { symbol } }) => symbol === assetId)
+    return [
+      loanTokens.at(currentTokenIdx - 1) ?? loanTokens.at(-1),
+      loanTokens.at(currentTokenIdx + 1) ?? loanTokens.at(0),
+      loanTokens.at(currentTokenIdx),
+    ]
   }, [assetId, loanTokens])
 
   if (isLoading) {
@@ -116,7 +115,7 @@ export const Market = () => {
 
   return (
     <Page>
-      <MarketPageHeader assetId={assetId} currentAsset={currentAsset} />
+      <MarketPageHeader assetId={assetId} currentAsset={currentToken} />
 
       {marketPagination}
 

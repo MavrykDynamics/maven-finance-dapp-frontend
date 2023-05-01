@@ -19,6 +19,11 @@ import Icon from '../Icon/Icon.view'
 import { scrollToFullView } from 'utils/scrollToFullView'
 import { ImageWithPlug } from '../Icon/ImageWithPlug'
 
+export const getDdItem = (item: string) => ({
+  content: <DropdownTruncateOption text={item} />,
+  id: item,
+})
+
 export type DDItemId = number | string
 export type DropDownItemType = {
   content: React.ReactNode
