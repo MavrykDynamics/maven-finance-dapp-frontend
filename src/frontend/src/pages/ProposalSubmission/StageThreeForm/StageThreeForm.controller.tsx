@@ -213,6 +213,8 @@ export const StageThreeForm = ({
             const { symbol: selectedSymbol = 'MVK', address } =
               whitelistTokens.find(({ address }) => address === payment.token_address) ?? whitelistTokens?.[0] ?? {}
 
+            if (payment.to__id === null || payment.title === null) return null
+
             return (
               <TableRow className="editable-row">
                 <TableCell width="25%" className="hide-overflow tz-address-cell-center">

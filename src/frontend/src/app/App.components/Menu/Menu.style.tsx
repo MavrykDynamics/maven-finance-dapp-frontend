@@ -153,8 +153,12 @@ export const MenuFooter = styled.div<{ theme: MavrykTheme }>`
     color: ${({ theme }) => theme.valueColor};
   }
 
-  .feedbackLink {
+  > a {
     width: 100%;
+
+    &.small {
+      width: fit-content;
+    }
   }
 
   .social-wrapper {
@@ -176,7 +180,6 @@ export const MenuFooter = styled.div<{ theme: MavrykTheme }>`
         fill: ${({ theme }) => theme.valueColor};
       }
     }
-
   }
 
   @media screen and (max-width: 1460px) {
