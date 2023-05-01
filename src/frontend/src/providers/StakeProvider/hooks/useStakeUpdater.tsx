@@ -1,4 +1,4 @@
-import React from 'react'
+import { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useSubscription } from '@apollo/client'
 import { useStakeContext } from '../stake.provider'
@@ -15,7 +15,12 @@ import { hideToaster, showToaster } from 'app/App.components/Toaster/Toaster.act
 import { State } from 'reducers'
 
 // queries
-import { SUBSCRIPTION_STAKE, ADDRESS_BALANCE_DATA, DOORMAN_ADDRESS_BALANCE } from 'gql/subscriptions/stakingData'
+import {
+  SUBSCRIPTION_STAKE,
+  ADDRESS_BALANCE_DATA,
+  DOORMAN_ADDRESS_BALANCE,
+  MVK_TOKEN_TOTAL,
+} from 'gql/subscriptions/stakingData'
 
 // helpers
 function showStakeSuccessMessage(dispatch: AppDispatch, message: string) {
@@ -24,7 +29,7 @@ function showStakeSuccessMessage(dispatch: AppDispatch, message: string) {
   dispatch(toggleActionCompletion(false))
 }
 
-export const useStakeSubscription = () => {
+export const useStakeUpdater = (skip = false) => {
   const { doormanAddress } = useSelector((state: State) => state.contractAddresses)
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const { updateStakeHistoryData, updateTotalStakedMvk, updateUserStakeData, updateStakingAction, action } =
@@ -32,13 +37,17 @@ export const useStakeSubscription = () => {
 
   const dispatch = useDispatch()
 
-  useSubscription(SUBSCRIPTION_STAKE, {
+  const [shouldSkip, setShouldSkip] = useState(false)
+
+  const { loading: stakeLoading } = useSubscription(SUBSCRIPTION_STAKE, {
+    skip: shouldSkip,
     onData: ({ data: result }) => {
+      console.log('HELLO WORLD')
       const { data, error } = result
       if (error) {
         // showStakeErrorMessage(dispatch, error.message)
       }
-      if (data && action) {
+      if (data) {
         updateStakeHistoryData(data)
         const capital = action.charAt(0).toUpperCase()
         const msg = capital + action.substring(1)
@@ -48,7 +57,8 @@ export const useStakeSubscription = () => {
     },
   })
 
-  useSubscription(ADDRESS_BALANCE_DATA, {
+  const { loading: balanceLoading } = useSubscription(ADDRESS_BALANCE_DATA, {
+    skip: shouldSkip,
     variables: {
       _eq: accountPkh,
     },
@@ -62,7 +72,8 @@ export const useStakeSubscription = () => {
     shouldResubscribe: true,
   })
 
-  useSubscription(DOORMAN_ADDRESS_BALANCE, {
+  const { loading: doormanLoading } = useSubscription(DOORMAN_ADDRESS_BALANCE, {
+    skip: shouldSkip,
     variables: {
       doormanContractAddress: doormanAddress.address,
     },
@@ -75,5 +86,12 @@ export const useStakeSubscription = () => {
     },
     shouldResubscribe: true,
   })
-  return <div>useStakeSubscription</div>
+
+  useEffect(() => {
+    if (!stakeLoading && !balanceLoading && !doormanLoading && skip && !shouldSkip) {
+      setShouldSkip(skip)
+    }
+  }, [doormanLoading, balanceLoading, stakeLoading, skip, shouldSkip])
+
+  return { isLoading: stakeLoading && balanceLoading && doormanLoading }
 }

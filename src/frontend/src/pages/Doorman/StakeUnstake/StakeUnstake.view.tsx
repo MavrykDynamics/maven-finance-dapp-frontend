@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 
 // context
 import { useStakeContext } from 'providers/StakeProvider/stake.provider'
+import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
 
 // view
 import NewButton from 'app/App.components/Button/NewButton'
@@ -57,6 +58,8 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
   const dispatch = useDispatch()
   const history = useHistory()
   const { updateStakingAction } = useStakeContext()
+
+  useStakeUpdater()
 
   const {
     accountPkh,
