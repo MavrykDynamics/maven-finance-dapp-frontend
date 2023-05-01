@@ -292,15 +292,15 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
               form={BUTTON_WIDE}
               isThin
               onClick={handleCompound}
-              disabled={rewardsToClaim > 0 || isActionActive}
+              disabled={rewardsToClaim < 2 || isActionActive}
             >
               <Icon id="compound" /> Compound
             </NewButton>
             <CustomTooltip
               text={
-                rewardsToClaim > 0
-                  ? `Compounds your pending exit fee rewards and converts them to sMVK.`
-                  : `Compounds your pending exit fee rewards and converts them to sMVK. You currently, do not have any pending exit fee rewards amounting to at least 2 sMVK.`
+                rewardsToClaim < 2 || isActionActive
+                  ? `Compounds your pending exit fee rewards and converts them to sMVK. You currently, do not have any pending exit fee rewards amounting to at least 2 sMVK.`
+                  : `Compounds your pending exit fee rewards and converts them to sMVK.`
               }
               iconId="info"
               className="tooltip"
