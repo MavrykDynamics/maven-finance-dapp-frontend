@@ -14,6 +14,9 @@ import { EmergencyGovProposalModal } from './EmergencyGovProposalModal/Emergency
 import { Page } from 'styles'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 
+// providers
+import { useStakeContext } from 'providers/StakeProvider/stake.provider'
+
 export const EmergencyGovernance = () => {
   const dispatch = useDispatch()
 
@@ -22,7 +25,7 @@ export const EmergencyGovernance = () => {
   const { glassBroken, isConfigLoaded: isBreakGlassConfigLoaded } = useSelector(
     (state: State) => state.breakGlass.config,
   )
-  const { isLoaded: isDoormanLoaded } = useSelector((state: State) => state.doorman)
+  const { isLoaded: isDoormanLoaded } = useStakeContext()
 
   const [showInitiatePopup, setShowInitiatePopup] = useState(false)
 

@@ -8,8 +8,7 @@ export const SUBSCRIPTION_STAKE = gql(/* GraphQL */ `
       timestamp
     }
   }
-  `
-)
+`)
 
 export const ADDRESS_BALANCE_DATA = gql(/* GraphQL */ `
   subscription subscribeAdressBalance($_eq: String) {
@@ -27,4 +26,13 @@ export const DOORMAN_ADDRESS_BALANCE = gql(/* GraphQL */ `
       mvk_balance
     }
   }
+`)
+
+export const MVK_TOKEN_TOTAL = gql(`
+subscription subscribeMvkTokenTotal {
+  mvk_token {
+    total_supply
+    maximum_supply
+  }
+}
 `)

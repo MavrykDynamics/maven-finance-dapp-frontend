@@ -8,6 +8,9 @@ import { useCookies } from 'react-cookie'
 
 import { configureStore } from './App.store'
 
+// providers
+import { StakeProvider } from 'providers/StakeProvider/stake.provider'
+
 // types
 import { State } from '../reducers'
 
@@ -113,19 +116,21 @@ const AppContainer = () => {
     <LoaderRocket />
   ) : (
     <Router>
-      <AppStyled isExpandedMenu={sidebarOpened}>
-        <ActionLoader />
-        <Toaster />
-        <WertLoader />
-        <Menu />
+      <StakeProvider>
+        <AppStyled isExpandedMenu={sidebarOpened}>
+          <ActionLoader />
+          <Toaster />
+          <WertLoader />
+          <Menu />
 
-        <PopupChangeNode isModalOpened={changeNodePopupOpen} closeModal={closeModalHandler} />
-        <PolicyPopup isModalOpened={!isIOS && !policyPopup} proccedPolicy={proccedPolicy} />
+          <PopupChangeNode isModalOpened={changeNodePopupOpen} closeModal={closeModalHandler} />
+          <PolicyPopup isModalOpened={!isIOS && !policyPopup} proccedPolicy={proccedPolicy} />
 
-        <LoansPopupsProvider>
-          <AppRoutes />
-        </LoansPopupsProvider>
-      </AppStyled>
+          <LoansPopupsProvider>
+            <AppRoutes />
+          </LoansPopupsProvider>
+        </AppStyled>
+      </StakeProvider>
     </Router>
   )
 }

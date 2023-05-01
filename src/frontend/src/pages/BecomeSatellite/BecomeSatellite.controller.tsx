@@ -11,6 +11,9 @@ import {
   getInputValidationStatus,
 } from './BecomeSatellite.conts'
 
+// providers
+import { useStakeContext } from 'providers/StakeProvider/stake.provider'
+
 // Actions
 import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
 import { registerAsSatellite, unregisterAsSatellite, updateSatelliteRecord } from './BecomeSatellite.actions'
@@ -68,7 +71,7 @@ export const BecomeSatellite = () => {
     satelliteMapper,
     config: { minimumStakedMvkBalance, isConfigLoaded, ...restSatelliteConfig },
   } = useSelector((state: State) => state.satellites)
-  const { isLoaded: isDoormanLoaded } = useSelector((state: State) => state.doorman)
+  const { isLoaded: isDoormanLoaded } = useStakeContext()
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { themeSelected } = useSelector((state: State) => state.preferences)
 

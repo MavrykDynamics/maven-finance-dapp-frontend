@@ -23,6 +23,9 @@ import { BUTTON_SIMPLE } from 'app/App.components/Button/Button.constants'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
 import { getFeedsStorage } from 'pages/DataFeeds/DataFeeds.actions'
 
+// providers
+import { useStakeContext } from 'providers/StakeProvider/stake.provider'
+
 // view
 import { SmallInfoBlock } from 'pages/SatelliteGovernance/SatelliteGovernance.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
@@ -37,7 +40,7 @@ const Satellites = () => {
   const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)
   const { allSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
   const { feedsLedger, isLoaded: isFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
-  const { isLoaded: isDoormanLoaded } = useSelector((state: State) => state.doorman)
+  const { isLoaded: isDoormanLoaded } = useStakeContext()
 
   const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {

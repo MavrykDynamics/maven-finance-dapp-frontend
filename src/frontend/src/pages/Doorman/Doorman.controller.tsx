@@ -14,8 +14,8 @@ import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { DoormanStats } from './DoormanStats/DoormanStats.controller'
 import { StakeUnstakeView } from './StakeUnstake/StakeUnstake.view'
 
-// controllers
-import { StakeProvider } from './StakeUnstake/Stake.provider'
+// providers
+import { useStakeContext } from 'providers/StakeProvider/stake.provider'
 
 // actions
 import { getDoormanStorage, stake } from './Doorman.actions'
@@ -30,12 +30,7 @@ export const Doorman = () => {
     accountPkh,
     user: { mySMvkTokenBalance, myMvkTokenBalance },
   } = useSelector((state: State) => state.wallet)
-  const {
-    totalStakedMvk,
-    maximumTotalSupply,
-    totalSupply,
-    isLoaded: isDoormanLoaded,
-  } = useSelector((state: State) => state.doorman)
+  const { totalStakedMvk, maximumTotalSupply, totalSupply, isLoaded: isDoormanLoaded } = useStakeContext()
   const { mvk: mvkExchangeRate = 0 } = useSelector((state: State) => state.tokens.tokensPrices)
 
   const [amount, setAmount] = useState<null | number>(null)
@@ -76,13 +71,11 @@ export const Doorman = () => {
       ) : (
         <>
           <ExitFeeModal show={amount !== null} data={exitFeeModal} closePopup={closeExitFeePopup} />
-          <StakeProvider>
-            <StakeUnstakeView
-              MVK_exchangeRate={mvkExchangeRate}
-              stakeCallback={stakeCallback}
-              unstakeCallback={unstakeCallback}
-            />
-          </StakeProvider>
+          <StakeUnstakeView
+            MVK_exchangeRate={mvkExchangeRate}
+            stakeCallback={stakeCallback}
+            unstakeCallback={unstakeCallback}
+          />
           <DoormanInfoStyled>
             <DoormanChart />
             <DoormanStats

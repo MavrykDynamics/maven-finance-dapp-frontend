@@ -15,6 +15,9 @@ import { getFarmStorage } from 'pages/Farms/Farms.actions'
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
 
+// providers
+import { useStakeContext } from 'providers/StakeProvider/stake.provider'
+
 export const Dashboard = () => {
   const dispatch = useDispatch()
   const { tabId } = useParams<{ tabId: string }>()
@@ -22,12 +25,7 @@ export const Dashboard = () => {
   const {
     tokensPrices: { mvk: mvkExchangeRate = 0 },
   } = useSelector((state: State) => state.tokens)
-  const {
-    totalStakedMvk,
-    totalSupply,
-    maximumTotalSupply,
-    isLoaded: isDoormanLoaded,
-  } = useSelector((state: State) => state.doorman)
+  const { totalStakedMvk, totalSupply, maximumTotalSupply, isLoaded: isDoormanLoaded } = useStakeContext()
   const { treasuryStorage, isLoaded: isTreasuryLoaded } = useSelector((state: State) => state.treasury)
   const { isLoaded: isVestingLoaded } = useSelector((state: State) => state.vesting)
   const { isLoaded: isFeedsLoaded } = useSelector((state: State) => state.dataFeeds)

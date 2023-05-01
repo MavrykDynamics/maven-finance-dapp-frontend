@@ -6,6 +6,9 @@ import { State } from 'reducers'
 import { DoormanChartCard, Wrapper } from './DoormanChart.style'
 import { TabSwitcher } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 
+// providers
+import { useStakeContext } from 'providers/StakeProvider/stake.provider'
+
 // components
 import { Chart } from '../../../app/App.components/Chart/Chart'
 import { TabItem } from '../../../app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
@@ -37,7 +40,7 @@ const tabsList: TabItem[] = [
 ]
 
 export function DoormanChart() {
-  const { smvkHistoryData, mvkHistoryData } = useSelector((state: State) => state.doorman)
+  const { smvkHistoryData, mvkHistoryData } = useStakeContext()
 
   const [activeTabId, setActiveTabId] = useState(tabsList[0].id)
 
