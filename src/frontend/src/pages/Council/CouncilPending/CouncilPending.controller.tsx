@@ -17,7 +17,7 @@ import { MVK_DECIMALS } from 'utils/constants'
 import { convertNumberForClient } from 'utils/calcFunctions'
 
 // types
-import { CouncilAction } from 'utils/TypesAndInterfaces/Council'
+import { CouncilActionType } from 'utils/TypesAndInterfaces/Council'
 
 // styles
 import { CouncilPendingStyled, CouncilModalBase } from './CouncilPending.style'
@@ -26,7 +26,7 @@ import { PopupContainer, PopupContainerWrapper } from 'app/App.components/Settin
 import { useSelector } from 'react-redux'
 import { State } from 'reducers'
 
-type Props = CouncilAction & {
+type Props = CouncilActionType & {
   numCouncilMembers: number
   councilPendingActionsLength: number
   index: number

@@ -8,7 +8,7 @@ import qs from 'qs'
 // components
 import { DropDown, DDItemId, DropdownTruncateOption } from 'app/App.components/DropDown/NewDropdown'
 import NewButton from 'app/App.components/Button/NewButton'
-import { CouncilPastActionView } from 'pages/Council/CouncilActions/CouncilPastAction.view'
+import { CouncilAction } from 'pages/Council/CouncilActions/CouncilAction.view'
 import Carousel from '../../app/App.components/Carousel/Carousel.view'
 import { CouncilMemberView } from 'pages/Council/CouncilMember/CouncilMember.view'
 import { CouncilPending } from './CouncilPending/CouncilPending.controller'
@@ -41,7 +41,7 @@ import {
 } from './Council.style'
 
 // types
-import { CouncilMaxLength, CouncilAction, CouncilMembers } from 'utils/TypesAndInterfaces/Council'
+import { CouncilMaxLength, CouncilActionType, CouncilMembers } from 'utils/TypesAndInterfaces/Council'
 import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 
 // actions
@@ -85,7 +85,7 @@ type Props = {
   allPastActions: number[]
   myPastActions: number[]
 
-  actionsMapper: Record<number, CouncilAction>
+  actionsMapper: Record<number, CouncilActionType>
 
   members: CouncilMembers
   dropdowndActions: Record<string, string>
@@ -307,12 +307,12 @@ export function CouncilView({
                         const action = actionsMapper[item]
 
                         return (
-                          <CouncilPastActionView
+                          <CouncilAction
                             startDatetime={action.startDatetime}
                             key={action.id}
                             actionType={action.actionType}
                             signersCount={action.signersCount}
-                            numCouncilMembers={members.length}
+                            numCouncilMembers={action.signersCount}
                             councilId={action.councilId}
                           />
                         )
@@ -333,7 +333,7 @@ export function CouncilView({
                         const action = actionsMapper[item]
 
                         return (
-                          <CouncilPastActionView
+                          <CouncilAction
                             startDatetime={action.startDatetime}
                             key={action.id}
                             actionType={action.actionType}
