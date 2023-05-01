@@ -140,7 +140,10 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
             </a>
 
             <SocialIcons />
-            <span>MAVRYK App v1.0</span>
+            <span>
+              DAPP v1.0
+              <br />© Mavryk Finance 2023
+            </span>
           </MenuFooter>
         </MenuSidebarContent>
       </MenuSidebarStyled>
