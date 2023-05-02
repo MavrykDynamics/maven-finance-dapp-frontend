@@ -52,15 +52,12 @@ export const AppRoutes = () => {
   // TODO: add error boundaries
   return (
     <Switch>
-      <Route exact path="/">
-        <Doorman />
-      </Route>
-      <Route exact path="/stake">
+      <Route exact path="/staking">
         <Doorman />
       </Route>
 
       {/* DASHBOARD */}
-      <Route exact path="/dashboard/:tabId">
+      <Route exact path="/">
         <Dashboard />
       </Route>
       <Route exact path="/dashboard-personal/:tabId/:secondaryTabId?">
@@ -161,7 +158,7 @@ export const AppRoutes = () => {
 
       <Route exact path="/404">
         {/*TODO: Replace later on with actual 404 page*/}
-        <Doorman />
+        <Dashboard />
       </Route>
       <Redirect to="/404" />
     </Switch>

@@ -589,7 +589,11 @@ export const BorrowingExpandCard = ({
                           ` ${mappedMVKOperators.amount ?? ''}`
                         : 'None'}
                     </div>
-                    <Button kind={BUTTON_SIMPLE} disabled={true || isActionActive} onClick={() => openUpdateMvkOperatorsPopup?.({})} >
+                    <Button
+                      kind={BUTTON_SIMPLE}
+                      disabled={true || isActionActive}
+                      onClick={() => openUpdateMvkOperatorsPopup?.({})}
+                    >
                       Update <Icon id="paginationArrowLeft" />
                     </Button>
                   </div>

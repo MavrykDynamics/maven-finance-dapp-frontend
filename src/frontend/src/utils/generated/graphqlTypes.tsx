@@ -4969,6 +4969,7 @@ export type Break_Glass_Action = {
   /** An object relationship */
   break_glass: Break_Glass;
   break_glass_id: Scalars['String'];
+  council_size_snapshot: Scalars['smallint'];
   executed: Scalars['Boolean'];
   execution_datetime?: Maybe<Scalars['timestamptz']>;
   execution_level: Scalars['bigint'];
@@ -5107,6 +5108,7 @@ export type Break_Glass_Action_Aggregate_Order_By = {
 /** aggregate avg on columns */
 export type Break_Glass_Action_Avg_Fields = {
   __typename?: 'break_glass_action_avg_fields';
+  council_size_snapshot?: Maybe<Scalars['Float']>;
   execution_level?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
   internal_id?: Maybe<Scalars['Float']>;
@@ -5117,6 +5119,7 @@ export type Break_Glass_Action_Avg_Fields = {
 
 /** order by avg() on columns of table "break_glass_action" */
 export type Break_Glass_Action_Avg_Order_By = {
+  council_size_snapshot?: InputMaybe<Order_By>;
   execution_level?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   internal_id?: InputMaybe<Order_By>;
@@ -5133,6 +5136,7 @@ export type Break_Glass_Action_Bool_Exp = {
   action_type?: InputMaybe<String_Comparison_Exp>;
   break_glass?: InputMaybe<Break_Glass_Bool_Exp>;
   break_glass_id?: InputMaybe<String_Comparison_Exp>;
+  council_size_snapshot?: InputMaybe<Smallint_Comparison_Exp>;
   executed?: InputMaybe<Boolean_Comparison_Exp>;
   execution_datetime?: InputMaybe<Timestamptz_Comparison_Exp>;
   execution_level?: InputMaybe<Bigint_Comparison_Exp>;
@@ -5155,6 +5159,7 @@ export type Break_Glass_Action_Max_Fields = {
   __typename?: 'break_glass_action_max_fields';
   action_type?: Maybe<Scalars['String']>;
   break_glass_id?: Maybe<Scalars['String']>;
+  council_size_snapshot?: Maybe<Scalars['smallint']>;
   execution_datetime?: Maybe<Scalars['timestamptz']>;
   execution_level?: Maybe<Scalars['bigint']>;
   expiration_datetime?: Maybe<Scalars['timestamptz']>;
@@ -5171,6 +5176,7 @@ export type Break_Glass_Action_Max_Fields = {
 export type Break_Glass_Action_Max_Order_By = {
   action_type?: InputMaybe<Order_By>;
   break_glass_id?: InputMaybe<Order_By>;
+  council_size_snapshot?: InputMaybe<Order_By>;
   execution_datetime?: InputMaybe<Order_By>;
   execution_level?: InputMaybe<Order_By>;
   expiration_datetime?: InputMaybe<Order_By>;
@@ -5188,6 +5194,7 @@ export type Break_Glass_Action_Min_Fields = {
   __typename?: 'break_glass_action_min_fields';
   action_type?: Maybe<Scalars['String']>;
   break_glass_id?: Maybe<Scalars['String']>;
+  council_size_snapshot?: Maybe<Scalars['smallint']>;
   execution_datetime?: Maybe<Scalars['timestamptz']>;
   execution_level?: Maybe<Scalars['bigint']>;
   expiration_datetime?: Maybe<Scalars['timestamptz']>;
@@ -5204,6 +5211,7 @@ export type Break_Glass_Action_Min_Fields = {
 export type Break_Glass_Action_Min_Order_By = {
   action_type?: InputMaybe<Order_By>;
   break_glass_id?: InputMaybe<Order_By>;
+  council_size_snapshot?: InputMaybe<Order_By>;
   execution_datetime?: InputMaybe<Order_By>;
   execution_level?: InputMaybe<Order_By>;
   expiration_datetime?: InputMaybe<Order_By>;
@@ -5221,6 +5229,7 @@ export type Break_Glass_Action_Order_By = {
   action_type?: InputMaybe<Order_By>;
   break_glass?: InputMaybe<Break_Glass_Order_By>;
   break_glass_id?: InputMaybe<Order_By>;
+  council_size_snapshot?: InputMaybe<Order_By>;
   executed?: InputMaybe<Order_By>;
   execution_datetime?: InputMaybe<Order_By>;
   execution_level?: InputMaybe<Order_By>;
@@ -5496,6 +5505,8 @@ export enum Break_Glass_Action_Select_Column {
   ActionType = 'action_type',
   /** column name */
   BreakGlassId = 'break_glass_id',
+  /** column name */
+  CouncilSizeSnapshot = 'council_size_snapshot',
   /** column name */
   Executed = 'executed',
   /** column name */
@@ -5781,6 +5792,7 @@ export type Break_Glass_Action_Signer_Variance_Order_By = {
 /** aggregate stddev on columns */
 export type Break_Glass_Action_Stddev_Fields = {
   __typename?: 'break_glass_action_stddev_fields';
+  council_size_snapshot?: Maybe<Scalars['Float']>;
   execution_level?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
   internal_id?: Maybe<Scalars['Float']>;
@@ -5791,6 +5803,7 @@ export type Break_Glass_Action_Stddev_Fields = {
 
 /** order by stddev() on columns of table "break_glass_action" */
 export type Break_Glass_Action_Stddev_Order_By = {
+  council_size_snapshot?: InputMaybe<Order_By>;
   execution_level?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   internal_id?: InputMaybe<Order_By>;
@@ -5802,6 +5815,7 @@ export type Break_Glass_Action_Stddev_Order_By = {
 /** aggregate stddev_pop on columns */
 export type Break_Glass_Action_Stddev_Pop_Fields = {
   __typename?: 'break_glass_action_stddev_pop_fields';
+  council_size_snapshot?: Maybe<Scalars['Float']>;
   execution_level?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
   internal_id?: Maybe<Scalars['Float']>;
@@ -5812,6 +5826,7 @@ export type Break_Glass_Action_Stddev_Pop_Fields = {
 
 /** order by stddev_pop() on columns of table "break_glass_action" */
 export type Break_Glass_Action_Stddev_Pop_Order_By = {
+  council_size_snapshot?: InputMaybe<Order_By>;
   execution_level?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   internal_id?: InputMaybe<Order_By>;
@@ -5823,6 +5838,7 @@ export type Break_Glass_Action_Stddev_Pop_Order_By = {
 /** aggregate stddev_samp on columns */
 export type Break_Glass_Action_Stddev_Samp_Fields = {
   __typename?: 'break_glass_action_stddev_samp_fields';
+  council_size_snapshot?: Maybe<Scalars['Float']>;
   execution_level?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
   internal_id?: Maybe<Scalars['Float']>;
@@ -5833,6 +5849,7 @@ export type Break_Glass_Action_Stddev_Samp_Fields = {
 
 /** order by stddev_samp() on columns of table "break_glass_action" */
 export type Break_Glass_Action_Stddev_Samp_Order_By = {
+  council_size_snapshot?: InputMaybe<Order_By>;
   execution_level?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   internal_id?: InputMaybe<Order_By>;
@@ -5853,6 +5870,7 @@ export type Break_Glass_Action_Stream_Cursor_Input = {
 export type Break_Glass_Action_Stream_Cursor_Value_Input = {
   action_type?: InputMaybe<Scalars['String']>;
   break_glass_id?: InputMaybe<Scalars['String']>;
+  council_size_snapshot?: InputMaybe<Scalars['smallint']>;
   executed?: InputMaybe<Scalars['Boolean']>;
   execution_datetime?: InputMaybe<Scalars['timestamptz']>;
   execution_level?: InputMaybe<Scalars['bigint']>;
@@ -5869,6 +5887,7 @@ export type Break_Glass_Action_Stream_Cursor_Value_Input = {
 /** aggregate sum on columns */
 export type Break_Glass_Action_Sum_Fields = {
   __typename?: 'break_glass_action_sum_fields';
+  council_size_snapshot?: Maybe<Scalars['smallint']>;
   execution_level?: Maybe<Scalars['bigint']>;
   id?: Maybe<Scalars['bigint']>;
   internal_id?: Maybe<Scalars['bigint']>;
@@ -5879,6 +5898,7 @@ export type Break_Glass_Action_Sum_Fields = {
 
 /** order by sum() on columns of table "break_glass_action" */
 export type Break_Glass_Action_Sum_Order_By = {
+  council_size_snapshot?: InputMaybe<Order_By>;
   execution_level?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   internal_id?: InputMaybe<Order_By>;
@@ -5890,6 +5910,7 @@ export type Break_Glass_Action_Sum_Order_By = {
 /** aggregate var_pop on columns */
 export type Break_Glass_Action_Var_Pop_Fields = {
   __typename?: 'break_glass_action_var_pop_fields';
+  council_size_snapshot?: Maybe<Scalars['Float']>;
   execution_level?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
   internal_id?: Maybe<Scalars['Float']>;
@@ -5900,6 +5921,7 @@ export type Break_Glass_Action_Var_Pop_Fields = {
 
 /** order by var_pop() on columns of table "break_glass_action" */
 export type Break_Glass_Action_Var_Pop_Order_By = {
+  council_size_snapshot?: InputMaybe<Order_By>;
   execution_level?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   internal_id?: InputMaybe<Order_By>;
@@ -5911,6 +5933,7 @@ export type Break_Glass_Action_Var_Pop_Order_By = {
 /** aggregate var_samp on columns */
 export type Break_Glass_Action_Var_Samp_Fields = {
   __typename?: 'break_glass_action_var_samp_fields';
+  council_size_snapshot?: Maybe<Scalars['Float']>;
   execution_level?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
   internal_id?: Maybe<Scalars['Float']>;
@@ -5921,6 +5944,7 @@ export type Break_Glass_Action_Var_Samp_Fields = {
 
 /** order by var_samp() on columns of table "break_glass_action" */
 export type Break_Glass_Action_Var_Samp_Order_By = {
+  council_size_snapshot?: InputMaybe<Order_By>;
   execution_level?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   internal_id?: InputMaybe<Order_By>;
@@ -5932,6 +5956,7 @@ export type Break_Glass_Action_Var_Samp_Order_By = {
 /** aggregate variance on columns */
 export type Break_Glass_Action_Variance_Fields = {
   __typename?: 'break_glass_action_variance_fields';
+  council_size_snapshot?: Maybe<Scalars['Float']>;
   execution_level?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
   internal_id?: Maybe<Scalars['Float']>;
@@ -5942,6 +5967,7 @@ export type Break_Glass_Action_Variance_Fields = {
 
 /** order by variance() on columns of table "break_glass_action" */
 export type Break_Glass_Action_Variance_Order_By = {
+  council_size_snapshot?: InputMaybe<Order_By>;
   execution_level?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   internal_id?: InputMaybe<Order_By>;
@@ -7491,6 +7517,7 @@ export type Council_Action = {
   /** An object relationship */
   council: Council;
   council_id: Scalars['String'];
+  council_size_snapshot: Scalars['smallint'];
   executed: Scalars['Boolean'];
   execution_datetime?: Maybe<Scalars['timestamptz']>;
   execution_level: Scalars['bigint'];
@@ -7629,6 +7656,7 @@ export type Council_Action_Aggregate_Order_By = {
 /** aggregate avg on columns */
 export type Council_Action_Avg_Fields = {
   __typename?: 'council_action_avg_fields';
+  council_size_snapshot?: Maybe<Scalars['Float']>;
   execution_level?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
   internal_id?: Maybe<Scalars['Float']>;
@@ -7639,6 +7667,7 @@ export type Council_Action_Avg_Fields = {
 
 /** order by avg() on columns of table "council_action" */
 export type Council_Action_Avg_Order_By = {
+  council_size_snapshot?: InputMaybe<Order_By>;
   execution_level?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   internal_id?: InputMaybe<Order_By>;
@@ -7655,6 +7684,7 @@ export type Council_Action_Bool_Exp = {
   action_type?: InputMaybe<String_Comparison_Exp>;
   council?: InputMaybe<Council_Bool_Exp>;
   council_id?: InputMaybe<String_Comparison_Exp>;
+  council_size_snapshot?: InputMaybe<Smallint_Comparison_Exp>;
   executed?: InputMaybe<Boolean_Comparison_Exp>;
   execution_datetime?: InputMaybe<Timestamptz_Comparison_Exp>;
   execution_level?: InputMaybe<Bigint_Comparison_Exp>;
@@ -7677,6 +7707,7 @@ export type Council_Action_Max_Fields = {
   __typename?: 'council_action_max_fields';
   action_type?: Maybe<Scalars['String']>;
   council_id?: Maybe<Scalars['String']>;
+  council_size_snapshot?: Maybe<Scalars['smallint']>;
   execution_datetime?: Maybe<Scalars['timestamptz']>;
   execution_level?: Maybe<Scalars['bigint']>;
   expiration_datetime?: Maybe<Scalars['timestamptz']>;
@@ -7693,6 +7724,7 @@ export type Council_Action_Max_Fields = {
 export type Council_Action_Max_Order_By = {
   action_type?: InputMaybe<Order_By>;
   council_id?: InputMaybe<Order_By>;
+  council_size_snapshot?: InputMaybe<Order_By>;
   execution_datetime?: InputMaybe<Order_By>;
   execution_level?: InputMaybe<Order_By>;
   expiration_datetime?: InputMaybe<Order_By>;
@@ -7710,6 +7742,7 @@ export type Council_Action_Min_Fields = {
   __typename?: 'council_action_min_fields';
   action_type?: Maybe<Scalars['String']>;
   council_id?: Maybe<Scalars['String']>;
+  council_size_snapshot?: Maybe<Scalars['smallint']>;
   execution_datetime?: Maybe<Scalars['timestamptz']>;
   execution_level?: Maybe<Scalars['bigint']>;
   expiration_datetime?: Maybe<Scalars['timestamptz']>;
@@ -7726,6 +7759,7 @@ export type Council_Action_Min_Fields = {
 export type Council_Action_Min_Order_By = {
   action_type?: InputMaybe<Order_By>;
   council_id?: InputMaybe<Order_By>;
+  council_size_snapshot?: InputMaybe<Order_By>;
   execution_datetime?: InputMaybe<Order_By>;
   execution_level?: InputMaybe<Order_By>;
   expiration_datetime?: InputMaybe<Order_By>;
@@ -7743,6 +7777,7 @@ export type Council_Action_Order_By = {
   action_type?: InputMaybe<Order_By>;
   council?: InputMaybe<Council_Order_By>;
   council_id?: InputMaybe<Order_By>;
+  council_size_snapshot?: InputMaybe<Order_By>;
   executed?: InputMaybe<Order_By>;
   execution_datetime?: InputMaybe<Order_By>;
   execution_level?: InputMaybe<Order_By>;
@@ -8018,6 +8053,8 @@ export enum Council_Action_Select_Column {
   ActionType = 'action_type',
   /** column name */
   CouncilId = 'council_id',
+  /** column name */
+  CouncilSizeSnapshot = 'council_size_snapshot',
   /** column name */
   Executed = 'executed',
   /** column name */
@@ -8303,6 +8340,7 @@ export type Council_Action_Signer_Variance_Order_By = {
 /** aggregate stddev on columns */
 export type Council_Action_Stddev_Fields = {
   __typename?: 'council_action_stddev_fields';
+  council_size_snapshot?: Maybe<Scalars['Float']>;
   execution_level?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
   internal_id?: Maybe<Scalars['Float']>;
@@ -8313,6 +8351,7 @@ export type Council_Action_Stddev_Fields = {
 
 /** order by stddev() on columns of table "council_action" */
 export type Council_Action_Stddev_Order_By = {
+  council_size_snapshot?: InputMaybe<Order_By>;
   execution_level?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   internal_id?: InputMaybe<Order_By>;
@@ -8324,6 +8363,7 @@ export type Council_Action_Stddev_Order_By = {
 /** aggregate stddev_pop on columns */
 export type Council_Action_Stddev_Pop_Fields = {
   __typename?: 'council_action_stddev_pop_fields';
+  council_size_snapshot?: Maybe<Scalars['Float']>;
   execution_level?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
   internal_id?: Maybe<Scalars['Float']>;
@@ -8334,6 +8374,7 @@ export type Council_Action_Stddev_Pop_Fields = {
 
 /** order by stddev_pop() on columns of table "council_action" */
 export type Council_Action_Stddev_Pop_Order_By = {
+  council_size_snapshot?: InputMaybe<Order_By>;
   execution_level?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   internal_id?: InputMaybe<Order_By>;
@@ -8345,6 +8386,7 @@ export type Council_Action_Stddev_Pop_Order_By = {
 /** aggregate stddev_samp on columns */
 export type Council_Action_Stddev_Samp_Fields = {
   __typename?: 'council_action_stddev_samp_fields';
+  council_size_snapshot?: Maybe<Scalars['Float']>;
   execution_level?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
   internal_id?: Maybe<Scalars['Float']>;
@@ -8355,6 +8397,7 @@ export type Council_Action_Stddev_Samp_Fields = {
 
 /** order by stddev_samp() on columns of table "council_action" */
 export type Council_Action_Stddev_Samp_Order_By = {
+  council_size_snapshot?: InputMaybe<Order_By>;
   execution_level?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   internal_id?: InputMaybe<Order_By>;
@@ -8375,6 +8418,7 @@ export type Council_Action_Stream_Cursor_Input = {
 export type Council_Action_Stream_Cursor_Value_Input = {
   action_type?: InputMaybe<Scalars['String']>;
   council_id?: InputMaybe<Scalars['String']>;
+  council_size_snapshot?: InputMaybe<Scalars['smallint']>;
   executed?: InputMaybe<Scalars['Boolean']>;
   execution_datetime?: InputMaybe<Scalars['timestamptz']>;
   execution_level?: InputMaybe<Scalars['bigint']>;
@@ -8391,6 +8435,7 @@ export type Council_Action_Stream_Cursor_Value_Input = {
 /** aggregate sum on columns */
 export type Council_Action_Sum_Fields = {
   __typename?: 'council_action_sum_fields';
+  council_size_snapshot?: Maybe<Scalars['smallint']>;
   execution_level?: Maybe<Scalars['bigint']>;
   id?: Maybe<Scalars['bigint']>;
   internal_id?: Maybe<Scalars['bigint']>;
@@ -8401,6 +8446,7 @@ export type Council_Action_Sum_Fields = {
 
 /** order by sum() on columns of table "council_action" */
 export type Council_Action_Sum_Order_By = {
+  council_size_snapshot?: InputMaybe<Order_By>;
   execution_level?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   internal_id?: InputMaybe<Order_By>;
@@ -8412,6 +8458,7 @@ export type Council_Action_Sum_Order_By = {
 /** aggregate var_pop on columns */
 export type Council_Action_Var_Pop_Fields = {
   __typename?: 'council_action_var_pop_fields';
+  council_size_snapshot?: Maybe<Scalars['Float']>;
   execution_level?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
   internal_id?: Maybe<Scalars['Float']>;
@@ -8422,6 +8469,7 @@ export type Council_Action_Var_Pop_Fields = {
 
 /** order by var_pop() on columns of table "council_action" */
 export type Council_Action_Var_Pop_Order_By = {
+  council_size_snapshot?: InputMaybe<Order_By>;
   execution_level?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   internal_id?: InputMaybe<Order_By>;
@@ -8433,6 +8481,7 @@ export type Council_Action_Var_Pop_Order_By = {
 /** aggregate var_samp on columns */
 export type Council_Action_Var_Samp_Fields = {
   __typename?: 'council_action_var_samp_fields';
+  council_size_snapshot?: Maybe<Scalars['Float']>;
   execution_level?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
   internal_id?: Maybe<Scalars['Float']>;
@@ -8443,6 +8492,7 @@ export type Council_Action_Var_Samp_Fields = {
 
 /** order by var_samp() on columns of table "council_action" */
 export type Council_Action_Var_Samp_Order_By = {
+  council_size_snapshot?: InputMaybe<Order_By>;
   execution_level?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   internal_id?: InputMaybe<Order_By>;
@@ -8454,6 +8504,7 @@ export type Council_Action_Var_Samp_Order_By = {
 /** aggregate variance on columns */
 export type Council_Action_Variance_Fields = {
   __typename?: 'council_action_variance_fields';
+  council_size_snapshot?: Maybe<Scalars['Float']>;
   execution_level?: Maybe<Scalars['Float']>;
   id?: Maybe<Scalars['Float']>;
   internal_id?: Maybe<Scalars['Float']>;
@@ -8464,6 +8515,7 @@ export type Council_Action_Variance_Fields = {
 
 /** order by variance() on columns of table "council_action" */
 export type Council_Action_Variance_Order_By = {
+  council_size_snapshot?: InputMaybe<Order_By>;
   execution_level?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   internal_id?: InputMaybe<Order_By>;

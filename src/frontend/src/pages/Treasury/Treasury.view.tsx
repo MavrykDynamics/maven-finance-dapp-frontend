@@ -34,7 +34,7 @@ type Props = {
 
 export default function TreasuryView({ treasury, isGlobal = false, factoryAddress = '' }: Props) {
   const [hoveredPath, setHoveredPath] = useState<null | string>(null)
-  const [showZeroTreasuries, setShowZeroTreasuries] = useState<Boolean>(false)
+  const [showZeroTreasuries, setShowZeroTreasuries] = useState<boolean>(false)
   const ref = useRef<HTMLDivElement | null>(null)
 
   const filteredBalance = useMemo(
@@ -58,7 +58,12 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
 
   return (
     <TreasuryViewStyle ref={ref}>
-      <a href="https://mavryk.finance" target="_blank" rel="noreferrer" className="treasuryTooltip-link">
+      <a
+        href="https://mavryk.finance/litepaper#treasury "
+        target="_blank"
+        rel="noreferrer"
+        className="treasuryTooltip-link"
+      >
         <CustomTooltip iconId="question" className="treasuryTooltip" />
       </a>
 

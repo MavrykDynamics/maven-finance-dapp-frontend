@@ -18,8 +18,8 @@ const DataFeedsPagination = () => {
 
   const currentFeedIdx = useMemo(() => feedsLedger.findIndex((item) => item.address === feedId), [feedsLedger, feedId])
 
-  const prevFeed = feedsLedger[currentFeedIdx - 1]
-  const nextFeed = feedsLedger[currentFeedIdx + 1]
+  const prevFeed = feedsLedger.at(currentFeedIdx - 1) ?? feedsLedger.at(-1)
+  const nextFeed = feedsLedger.at(currentFeedIdx + 1) ?? feedsLedger.at(0)
 
   return (
     <SatellitePaginationStyled style={{ marginTop: '20px' }}>

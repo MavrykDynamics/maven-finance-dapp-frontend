@@ -453,10 +453,10 @@ export const ConnectWalletInfoStyled = styled.blockquote<{ theme: MavrykTheme }>
 
   p {
     width: 650px;
-    font-weight: 400;
+    font-weight: 500;
     font-size: 14px;
-    line-height: 21px;
-    color: ${({ theme }) => theme.headerColor};
+    line-height: 24px;
+    color: ${({ theme }) => theme.textColor};
     margin-top: 2px;
     margin-bottom: 2px;
 
@@ -506,9 +506,9 @@ export const ConnectWalletClose = styled.button<{ theme: MavrykTheme }>`
   cursor: pointer;
 
   .close-connect-wallet {
-    stroke: ${({ theme }) => theme.headerColor};
-    width: 14px;
-    height: 14px;
+    fill: ${({ theme }) => theme.valueColor};
+    width: 24px;
+    height: 24px;
   }
 `
 

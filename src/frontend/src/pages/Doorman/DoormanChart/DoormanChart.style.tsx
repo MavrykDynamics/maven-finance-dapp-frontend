@@ -13,6 +13,38 @@ export const Wrapper = styled.div`
   }
 `
 
+export const DoormanExitFeeCurrentValues = styled.div<{ theme: MavrykTheme }>`
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+
+  position: absolute;
+  right: 20px;
+  top: 15px;
+
+  .row {
+    display: flex;
+    column-gap: 15px;
+    justify-content: space-between;
+
+    p {
+      margin: 0;
+    }
+
+    .name {
+      font-weight: 600;
+      font-size: 12px;
+      color: ${({ theme }) => theme.textColor};
+    }
+
+    .value {
+      font-weight: 600;
+      font-size: 12px;
+      color: ${({ theme }) => theme.dataColor};
+    }
+  }
+`
+
 export const DoormanChartCard = styled(Card)<{ theme: MavrykTheme }>`
   padding: 40px 15px 0px 15px;
   margin-top: 20px;

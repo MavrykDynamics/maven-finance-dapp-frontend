@@ -109,30 +109,30 @@ export const VaultsView = () => {
       },
     ]
 
-    setTabsList(
-      accountPkh
-        ? [
-            ...baseTabs,
-            {
-              text: 'My Vaults',
-              id: 2,
-              active: vaultTabs.MY === tabId,
-              path: vaultTabs.MY,
-            },
-            {
-              text: 'Permissioned Vaults',
-              id: 3,
-              active: vaultTabs.PERMISSIONED === tabId,
-              path: vaultTabs.PERMISSIONED,
-              isDisabled: !accountPkh,
-            },
-          ]
-        : baseTabs,
-    )
+    const tabsToUse = accountPkh
+      ? [
+          ...baseTabs,
+          {
+            text: 'My Vaults',
+            id: 2,
+            active: vaultTabs.MY === tabId,
+            path: vaultTabs.MY,
+          },
+          {
+            text: 'Permissioned Vaults',
+            id: 3,
+            active: vaultTabs.PERMISSIONED === tabId,
+            path: vaultTabs.PERMISSIONED,
+            isDisabled: !accountPkh,
+          },
+        ]
+      : baseTabs
+
+    setTabsList(tabsToUse)
 
     if (accountPkh) return
-    handleChangeTabs(tabsList[0].id)
-  }, [accountPkh])
+    handleChangeTabs(tabsToUse[0]?.id)
+  }, [accountPkh, tabId])
 
   return (
     <VaultsStyled>

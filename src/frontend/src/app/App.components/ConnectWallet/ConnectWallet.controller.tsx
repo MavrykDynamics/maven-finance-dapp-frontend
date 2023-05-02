@@ -76,7 +76,7 @@ export const ConnectWallet = ({ className, closeMobileMenu }: ConnectWalletProps
   const detailsHandlers = {
     buyMVKHandler: () => mountWertWiget('MVK'),
     buyXTZHandler: () => mountWertWiget('XTZ'),
-    stakeMVKHandler: () => history.push('/'),
+    stakeMVKHandler: () => history.push('/staking'),
   }
 
   const closeAllForMobileMenu = useCallback((e: React.MouseEvent<HTMLElement>) => {

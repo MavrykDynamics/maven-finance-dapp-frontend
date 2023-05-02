@@ -50,7 +50,7 @@ import {
   BecomeSatelliteRegisterAsOracle,
   BecomeSatelliteOracleText,
 } from './BecomeSatellite.style'
-import { INFO_WARNING } from 'app/App.components/Info/info.constants'
+import { INFO_ERROR } from 'app/App.components/Info/info.constants'
 
 const connectWalletMessage = (
   <BecomeSatelliteFormBalanceCheck balanceOk={false}>
@@ -363,12 +363,20 @@ export const BecomeSatellite = () => {
                     id="become-satellite-is-oracle"
                     onChangeHandler={() => setIsChecked(!isChecked)}
                     checked={isChecked}
+                    disabled={process.env.REACT_APP_NETWORK === 'ghostnet'}
                   />
                 </div>
 
+                <Info
+                  type={INFO_ERROR}
+                  text={`Applying to become an Oracle for aggregators is disabled on testnet, it requires running hardware and software along with subscriptions to multiple API providers which are costly.`}
+                />
+
                 <BecomeSatelliteOracleText>
                   By registering as an oracle, you will be taking part in signing the oracle data feeds and earning
-                  rewards for doing so.
+                  rewards for doing so. Please make sure to check the Gitbook (coming soon) for setting up the oracle
+                  node. Upon registering, you need to be accepted via Satellite governance to start signing price feeds
+                  and earning.
                 </BecomeSatelliteOracleText>
 
                 {isChecked && (
@@ -411,7 +419,7 @@ export const BecomeSatellite = () => {
                       text={
                         'You are unregistering for being an oracle. This means you will no longer be able to sign price feeds and subsequently no longer receive rewards for participation in the oracle network.'
                       }
-                      type={INFO_WARNING}
+                      type={INFO_ERROR}
                     ></Info>
                   </div>
                 )}

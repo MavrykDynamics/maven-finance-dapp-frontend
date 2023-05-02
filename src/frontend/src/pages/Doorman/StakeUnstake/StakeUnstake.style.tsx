@@ -192,6 +192,12 @@ export const StakeUnstakeRightPart = styled.div`
   align-items: center;
   justify-content: center;
   min-width: 150px;
+  position: relative;
+
+  .tooltip {
+    position: absolute;
+    right: -17px;
+  }
 `
 
 export const StakeLabel = styled.blockquote`

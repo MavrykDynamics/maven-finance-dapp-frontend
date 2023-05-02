@@ -1,4 +1,3 @@
-import * as React from 'react'
 import ReactDOM from 'react-dom'
 import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3'
 import { Provider } from 'react-redux'
