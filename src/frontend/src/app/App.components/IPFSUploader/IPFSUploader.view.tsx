@@ -122,7 +122,7 @@ export const IPFSUploaderView = ({
               id="uploader"
               type="file"
               disabled={disabled || isUploading}
-              accept={'.jpeg, .png'}
+              accept={`.jpeg, .png, ${isTypeFileImage ? '' : '.pdf'}`}
               ref={inputFile}
               onChange={handleChange}
               onBlur={onBlur}
@@ -165,7 +165,9 @@ export const IPFSUploaderView = ({
                     )}
                   </div>
                   <figcaption>Upload {isTypeFileImage ? 'picture' : 'document'}</figcaption>
-                  <small className="tip">{`Supports: PNG. JPG. PDF. Max size is ${IMG_MAX_SIZE}MB`}</small>
+                  <small className="tip">{`Supports: PNG. JPG. ${
+                    isTypeFileImage ? '' : 'PDF.'
+                  } Max size is ${IMG_MAX_SIZE}MB`}</small>
                 </figure>
               )}
             </UploadIconContainer>
