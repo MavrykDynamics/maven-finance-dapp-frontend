@@ -53,7 +53,25 @@ export const DoormanStats = ({
         </div>
 
         <div>
-          <h4>Doorman Address</h4>
+          <h4>
+            Doorman Address{' '}
+            <CustomTooltip
+              text={
+                <>
+                  The Doorman contract controls the staking mechanism for MVK. Handles all actions connected to it and
+                  interacts with the other relevant contracts.{' '}
+                  <a
+                    href="https://mavryk.finance/litepaper#mvk-and-smvk-doorman-module"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Read more.
+                  </a>{' '}
+                </>
+              }
+              iconId="info"
+            />
+          </h4>
           <var className="click-address">
             <TzAddress type="blue" tzAddress={doormanAddress} hasIcon />
           </var>

@@ -10,8 +10,8 @@ export const getFormTextBasedOnUserRole = (isUserSatellite: boolean) => ({
   descrInputLabel: isUserSatellite ? '4 - Edit description' : '4 - Enter description',
   feeInputLabel: isUserSatellite ? '5 - Edit your fee (%)' : '5 - Enter your fee (%)',
   registerAsOracle: isUserSatellite ? '7 - Register as Oracle' : '7 - Register as Oracle',
-  oraclePeerId: isUserSatellite ? '7a - Oracle Peer ID' : '7a - Oracle Peer ID',
-  oraclePublicKey: isUserSatellite ? '7b - Oracle Public Key' : '7b - Oracle Public Key',
+  oraclePublicKey: isUserSatellite ? '7a - Oracle Public Key' : '7a - Oracle Public Key',
+  oraclePeerId: isUserSatellite ? '7b - Oracle Peer ID' : '7b - Oracle Peer ID',
 })
 
 export const getInputValidationStatus = (

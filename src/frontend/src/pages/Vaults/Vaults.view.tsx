@@ -131,7 +131,8 @@ export const VaultsView = () => {
     setTabsList(tabsToUse)
 
     if (accountPkh) return
-    handleChangeTabs(tabsToUse[0]?.id)
+    // return back to "all vaults" tab if user is not connected
+    history.replace(`${pathname}/${baseTabs[0].path}`)
   }, [accountPkh, tabId])
 
   return (

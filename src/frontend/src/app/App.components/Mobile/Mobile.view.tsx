@@ -1,16 +1,11 @@
 import {
   GlobalStyle,
   MobilePlugBackground,
-  SocialIconLink,
   MobilePlugWrapper,
-  MobilePLugLogo,
   MobilePlugLogoWrapper,
-  MobilePlugText,
-  SocialIconsWrapper,
-  MobilePlugBottomWrapper,
+  MobilePlugFooter,
 } from './Mobile.style'
 
-import { containerColor, darkPurpleColor } from 'styles/colors'
 import Icon from '../Icon/Icon.view'
 
 export default function Mobile() {
@@ -19,47 +14,41 @@ export default function Mobile() {
       <GlobalStyle />
       <MobilePlugWrapper>
         <MobilePlugLogoWrapper>
-          <MobilePLugLogo src="./mobile-plug-logo.png" />
+          <img src="./mobile-plug-logo.png" alt="mavryk logo" />
         </MobilePlugLogoWrapper>
-        <MobilePlugText textSize={'22px'} textColor={containerColor} topMargin={'125px'} topMarginMobile={'60px'}>
+
+        <div className="plug-message">
           Mobile and tablet version of our dapp is not available at this time.
-        </MobilePlugText>
-        <MobilePlugText textSize={'22px'} textColor={containerColor} topMargin={'10px'}>
+          <div className="space" />
           Please open on a desktop screen or laptop.
-        </MobilePlugText>
-        <MobilePlugBottomWrapper>
-          <SocialIconsWrapper>
-            <SocialIconLink href="https://twitter.com/Mavryk_Finance" id="twitter">
+        </div>
+
+        <MobilePlugFooter>
+          <div className="socials">
+            <a href="https://twitter.com/Mavryk_Finance" id="twitter">
               <Icon id="twitter" />
-            </SocialIconLink>
-            <SocialIconLink href="https://discord.com/invite/7VXPR4gkT6" id="discord">
+            </a>
+            <a href="https://discord.com/invite/7VXPR4gkT6" id="discord">
               <Icon id="discord" />
-            </SocialIconLink>
-            <SocialIconLink href="https://t.me/Mavryk_Finance" id="telegram">
+            </a>
+            <a href="https://t.me/Mavryk_Finance" id="telegram">
               <Icon id="telegram" />
-            </SocialIconLink>
-            <SocialIconLink href="https://medium.com/@Mavryk_Finance" id="medium">
+            </a>
+            <a href="https://medium.com/@Mavryk_Finance" id="medium">
               <Icon id="medium" />
-            </SocialIconLink>
-            <SocialIconLink href="https://github.com/mavrykfinance/" id="gitHub">
+            </a>
+            <a href="https://github.com/mavrykfinance/" id="gitHub">
               <Icon id="gitHub" />
-            </SocialIconLink>
-          </SocialIconsWrapper>
-          <MobilePlugText textSize={'18px'} textColor={darkPurpleColor} topMargin={'60px'} topMarginMobile={'35px'}>
+            </a>
+          </div>
+
+          <div className="dapp-descr">
             Mavryk is a DAO operated financial ecosystem that lets users borrow and earn on their terms, while
             participating in the governance of the platform.
-          </MobilePlugText>
+          </div>
 
-          <MobilePlugText
-            textSize={'18px'}
-            textColor={darkPurpleColor}
-            topMargin={'61px'}
-            topMarginMobile={'35px'}
-            fontWeight={'400'}
-          >
-            © Mavryk Finance 2022
-          </MobilePlugText>
-        </MobilePlugBottomWrapper>
+          <div className="copyright">© Mavryk Finance 2023</div>
+        </MobilePlugFooter>
       </MobilePlugWrapper>
     </MobilePlugBackground>
   )

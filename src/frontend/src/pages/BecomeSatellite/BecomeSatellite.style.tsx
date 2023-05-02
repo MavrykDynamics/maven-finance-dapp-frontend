@@ -109,6 +109,7 @@ export const BecomeSatelliteRegisterAsOracle = styled.div<{ theme: MavrykTheme }
     display: flex;
     align-items: center;
     column-gap: 10px;
+    margin-bottom: 20px;
   }
 
   .inputs {

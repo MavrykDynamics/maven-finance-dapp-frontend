@@ -1,11 +1,14 @@
 import styled from 'styled-components/macro'
 import { MavrykTheme } from 'styles/interfaces'
-import { INFO_ERROR, INFO_WARNING } from './info.constants'
+import { INFO_DEFAULT, INFO_ERROR, INFO_SUCCESS } from './info.constants'
 
 export const InfoBlock = styled.blockquote<{ theme: MavrykTheme }>`
   background-color: ${({ theme }) => theme.connectInfoColor};
-  border: 1px solid ${({ theme }) => theme.infoColor};
+
+  border-width: 1px;
+  border-style: solid;
   border-radius: 10px;
+
   margin: 0;
   padding: 10px 20px;
 
@@ -27,10 +30,17 @@ export const InfoBlock = styled.blockquote<{ theme: MavrykTheme }>`
   }
 
   .info-icon {
-    fill: ${({ theme }) => theme.infoColor};
     height: 16px;
     width: 16px;
     flex-shrink: 0;
+  }
+
+  &.${INFO_DEFAULT} {
+    border-color: ${({ theme }) => theme.infoColor};
+
+    .info-icon {
+      fill: ${({ theme }) => theme.infoColor};
+    }
   }
 
   &.${INFO_ERROR} {
@@ -41,11 +51,11 @@ export const InfoBlock = styled.blockquote<{ theme: MavrykTheme }>`
     }
   }
 
-  &.${INFO_WARNING} {
-    border-color: ${({ theme }) => theme.downColor};
+  &.${INFO_SUCCESS} {
+    border-color: ${({ theme }) => theme.upColor};
 
     .info-icon {
-      fill: ${({ theme }) => theme.downColor};
+      fill: ${({ theme }) => theme.upColor};
     }
   }
 `

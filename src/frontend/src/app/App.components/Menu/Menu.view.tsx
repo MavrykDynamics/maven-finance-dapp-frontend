@@ -126,7 +126,7 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
               onClick={handleGetMVKTokensFromFaucet}
               disabled={!canGetInitThouthand || isActionActive}
             >
-              {sidebarOpened ? 'Get MVK Tokens' : 'mvk'}
+              {sidebarOpened ? 'MVK Faucet' : 'mvk'}
             </NewButton>
             <a
               href="https://faucet.marigold.dev/ "
@@ -151,7 +151,7 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
 
             <SocialIcons />
             <span>
-              DAPP v1.0
+              DAPP v0.1
               <br />© Mavryk Finance 2023
             </span>
           </MenuFooter>

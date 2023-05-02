@@ -1,5 +1,5 @@
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
-import { CouncilAction, CouncilMembers, CouncilMaxLength } from '../utils/TypesAndInterfaces/Council'
+import { CouncilActionType, CouncilMembers, CouncilMaxLength } from '../utils/TypesAndInterfaces/Council'
 import {
   GET_COUNCIL_STORAGE,
   GET_COUNCIL_MEMBERS,
@@ -32,7 +32,7 @@ export type CouncilState = {
     myPendingActions: number[]
     allPastActions: number[]
     myPastActions: number[]
-    actionsMapper: Record<number, CouncilAction>
+    actionsMapper: Record<number, CouncilActionType>
   }
   breakGlassCouncilMembers: CouncilMembers
   breakGlassCouncilActions: {
@@ -41,7 +41,7 @@ export type CouncilState = {
     myPendingActions: number[]
     allPastActions: number[]
     myPastActions: number[]
-    actionsMapper: Record<number, CouncilAction>
+    actionsMapper: Record<number, CouncilActionType>
   }
   isStorageLoaded: boolean
   isCouncilMembersLoaded: boolean

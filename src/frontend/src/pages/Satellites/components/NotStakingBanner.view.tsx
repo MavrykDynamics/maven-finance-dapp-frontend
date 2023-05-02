@@ -8,7 +8,7 @@ import { NotStakinkBannerStyled as NotStakingBannerStyled } from '../Satellites.
 import Icon from 'app/App.components/Icon/Icon.view'
 
 import { BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
-import { INFO_WARNING } from 'app/App.components/Info/info.constants'
+import { INFO_ERROR } from 'app/App.components/Info/info.constants'
 
 type Props = {
   text: string
@@ -21,7 +21,7 @@ export const NotStakingBanner = ({ text, className }: Props) => {
   return (
     <NotStakingBannerStyled className={className}>
       {accountPkh ? (
-        <Info text={text} type={INFO_WARNING}>
+        <Info text={text} type={INFO_ERROR}>
           <Link to="/">
             <NewButton kind={BUTTON_PRIMARY}>
               <Icon id="staking" />
