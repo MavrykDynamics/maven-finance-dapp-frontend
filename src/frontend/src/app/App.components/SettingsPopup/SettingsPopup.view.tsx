@@ -1,10 +1,11 @@
 import React, { useCallback, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
-import { RPCNodeType } from 'reducers/preferences'
 
 // helpers
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_SECONDARY_PURPLE, BUTTON_WIDE } from '../Button/Button.constants'
+import { INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import { INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
 import { isValidRPCNode } from 'utils/validatorFunctions'
 
 // actions
@@ -25,14 +26,13 @@ import {
   PopupContainerWrapper,
   SettingsPopupWrapper,
 } from './SettingsPopup.style'
-
-// types
-import { InputStatusType } from 'app/App.components/Input/Input.constants'
 import Button from '../Button/NewButton'
 import Icon from '../Icon/Icon.view'
-import { INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
-import { INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
 import { Input } from '../Input/NewInput'
+
+// types
+import { RPCNodeType } from 'reducers/preferences'
+import { InputStatusType } from 'app/App.components/Input/Input.constants'
 
 export const PopupChangeNodeView = ({ closeModal }: { closeModal: () => void }) => {
   const dispatch = useDispatch()
