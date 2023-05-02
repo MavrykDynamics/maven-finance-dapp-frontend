@@ -375,21 +375,6 @@ export const BecomeSatellite = () => {
                   <div className="inputs">
                     <Input
                       settings={{
-                        label: pageText.oraclePeerId,
-                        tooltip: tooltipPeerId,
-                        inputStatus: form.oraclePeerId.status,
-                      }}
-                      inputProps={{
-                        value: form.oraclePeerId.text,
-                        placeholder: 'Enter Oracle Peer ID',
-                        name: 'oraclePeerId',
-                        onChange: handleChange,
-                        required: true,
-                      }}
-                    />
-
-                    <Input
-                      settings={{
                         label: pageText.oraclePublicKey,
                         tooltip: tooltipPublicKey,
                         inputStatus: form.oraclePublicKey.status,
@@ -398,6 +383,21 @@ export const BecomeSatellite = () => {
                         value: form.oraclePublicKey.text,
                         placeholder: 'Enter Public Key',
                         name: 'oraclePublicKey',
+                        onChange: handleChange,
+                        required: true,
+                      }}
+                    />
+
+                    <Input
+                      settings={{
+                        label: pageText.oraclePeerId,
+                        tooltip: tooltipPeerId,
+                        inputStatus: form.oraclePeerId.status,
+                      }}
+                      inputProps={{
+                        value: form.oraclePeerId.text,
+                        placeholder: 'Enter Oracle Peer ID',
+                        name: 'oraclePeerId',
                         onChange: handleChange,
                         required: true,
                       }}
