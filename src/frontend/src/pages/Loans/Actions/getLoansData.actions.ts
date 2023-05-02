@@ -51,16 +51,6 @@ export const getLoansStorage = () => async (dispatch: AppDispatch, getState: Get
   }
 }
 
-export const getNewVaultData = async () => {
-  try {
-    const newVaultData = await fetchFromIndexer(NEW_VAULT_QUERY, NEW_VAULT_QUERY_NAME, NEW_VAULT_QUERY_VARIABLE)
-
-    return newVaultData.vault.at(-1)?.lending_controller_vaults[0].vault_id
-  } catch (e) {
-    console.log('getNewVaultData error: ', e)
-  }
-}
-
 export const GET_AVALIABLE_COLLATERALS = 'GET_AVALIABLE_COLLATERALS'
 export const getAvaliableCollaterals = () => async (dispatch: AppDispatch, getState: GetState) => {
   const {
@@ -87,7 +77,7 @@ export const getAvaliableCollaterals = () => async (dispatch: AppDispatch, getSt
       avaliableCollaterals,
     })
   } catch (e) {
-    console.log('getNewVaultData error: ', e)
+    console.log('getAvaliableCollaterals error: ', e)
   }
 }
 
