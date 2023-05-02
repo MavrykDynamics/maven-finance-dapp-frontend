@@ -22,7 +22,12 @@ import {
   BaseLoansAssetDataType,
   DepositorsFlagType,
 } from 'utils/TypesAndInterfaces/Loans'
-import { calcWithoutDecimals, convertNumberForClient, getNumberInBounds } from '../../utils/calcFunctions'
+import {
+  calcWithoutDecimals,
+  convertNumberForClient,
+  convertNumberForContractCall,
+  getNumberInBounds,
+} from '../../utils/calcFunctions'
 import { ANY_USER, NONE_USER, WHITELIST_USERS, assetDecimalsToShow } from './Loans.const'
 import { getUserBalanceForLoanAsset } from './LoansFethcers'
 import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
@@ -406,7 +411,7 @@ export const getMaxCollateralWithdraw = (
   collarealAssetRate: number,
 ): number => {
   // If vault is not borrowed we can withdraw all amount
-  if (borrowedAmount === 0) return currentCollateralAmount / collarealAssetRate
+  if (borrowedAmount === 0) return currentCollateralAmount
   /**
    * @collateralNeedsToBe is now much collateralAmount i need to left for current borrowed amount
    * 200 ratio in persent the smallest we can get, <200 vault is under collateralization
@@ -414,7 +419,7 @@ export const getMaxCollateralWithdraw = (
    * (borrowedAmount * borrowedAssetRate) how much has been borrowed from the vault
    */
   const collateralNeedsToBe = (200 / 100) * (borrowedAmount * borrowedAssetRate)
-  return Math.min(totalCollateralAmount - collateralNeedsToBe, currentCollateralAmount) / collarealAssetRate
+  return Math.min((totalCollateralAmount - collateralNeedsToBe) / collarealAssetRate, currentCollateralAmount)
 }
 
 const getBorrowings = async (
@@ -967,5 +972,7 @@ export const loansInputValidation = ({
 export const getLoansInputMaxAmount = (amount: number = 0, decimals: number = assetDecimalsToShow) => {
   if (!amount) return '0'
 
-  return String(Math.trunc(amount * 10 ** decimals) / 10 ** decimals)
+  const blockchainNumberWithoutDecimals = Math.trunc(convertNumberForContractCall({ number: amount, grade: decimals }))
+
+  return String(convertNumberForClient({ number: blockchainNumberWithoutDecimals, grade: decimals }))
 }
