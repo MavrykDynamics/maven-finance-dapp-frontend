@@ -36,8 +36,8 @@ import {
   DataFeedInfoBlock,
   DataFeedsStyled,
   DataFeedValueText,
-  FeedInfo,
   FeedDetailsChartWrapper,
+  FeedInfo,
 } from './DataFeedsDetails.style'
 import { EmptyContainer } from 'app/App.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
@@ -293,7 +293,7 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsPr
             {feedsSatellites.length ? (
               <>
                 <GovRightContainerTitleArea>
-                  <h1>Oracles data</h1>
+                  <h1 style={{ marginLeft: '0' }}>Oracles Data</h1>
                 </GovRightContainerTitleArea>
 
                 <div className={`oracles-list`}>
