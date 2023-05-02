@@ -3,6 +3,7 @@ import { dropShadow } from 'styles/animations'
 import { subTextColor, upColor, skyColor } from 'styles'
 import { MavrykTheme } from 'styles/interfaces'
 import { getNumberInBounds } from 'utils/calcFunctions'
+import { DEFAULT_FOR_OVERLAP } from 'styles/constants'
 
 export const VotingContainer = styled.aside<{ theme: MavrykTheme; showButtons?: boolean }>`
   display: flex;
@@ -40,7 +41,7 @@ export const QuorumBar = styled.div<{ width: number; theme: MavrykTheme }>`
   }
 `
 export const VotingBarStyled = styled.div<{ theme: MavrykTheme }>`
-  z-index: 10;
+  z-index: ${DEFAULT_FOR_OVERLAP};
   height: 4px;
   display: flex;
   flex-direction: row;
