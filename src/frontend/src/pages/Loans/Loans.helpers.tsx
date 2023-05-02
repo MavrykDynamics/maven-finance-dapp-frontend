@@ -406,7 +406,7 @@ export const getMaxCollateralWithdraw = (
   collarealAssetRate: number,
 ): number => {
   // If vault is not borrowed we can withdraw all amount
-  if (borrowedAmount === 0) return currentCollateralAmount / collarealAssetRate
+  if (borrowedAmount === 0) return currentCollateralAmount
   /**
    * @collateralNeedsToBe is now much collateralAmount i need to left for current borrowed amount
    * 200 ratio in persent the smallest we can get, <200 vault is under collateralization
@@ -414,7 +414,7 @@ export const getMaxCollateralWithdraw = (
    * (borrowedAmount * borrowedAssetRate) how much has been borrowed from the vault
    */
   const collateralNeedsToBe = (200 / 100) * (borrowedAmount * borrowedAssetRate)
-  return Math.min(totalCollateralAmount - collateralNeedsToBe, currentCollateralAmount) / collarealAssetRate
+  return Math.min((totalCollateralAmount - collateralNeedsToBe) / collarealAssetRate, currentCollateralAmount)
 }
 
 const getBorrowings = async (
