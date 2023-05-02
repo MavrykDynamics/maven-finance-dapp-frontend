@@ -36,7 +36,7 @@ export const GovernanceLeftContainer = styled.div<{ theme: MavrykTheme }>`
     position: absolute;
     top: 50px;
     left: 0;
-    z-index: 10;
+    z-index: 9;
   }
 `
 
