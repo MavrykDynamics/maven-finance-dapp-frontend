@@ -47,7 +47,7 @@ import {
   BecomeSatelliteRegisterAsOracle,
   BecomeSatelliteOracleText,
 } from './BecomeSatellite.style'
-import { INFO_ERROR, INFO_WARNING } from 'app/App.components/Info/info.constants'
+import { INFO_ERROR } from 'app/App.components/Info/info.constants'
 
 const connectWalletMessage = (
   <BecomeSatelliteFormBalanceCheck balanceOk={false}>
@@ -419,7 +419,7 @@ export const BecomeSatellite = () => {
                       text={
                         'You are unregistering for being an oracle. This means you will no longer be able to sign price feeds and subsequently no longer receive rewards for participation in the oracle network.'
                       }
-                      type={INFO_WARNING}
+                      type={INFO_ERROR}
                     ></Info>
                   </div>
                 )}

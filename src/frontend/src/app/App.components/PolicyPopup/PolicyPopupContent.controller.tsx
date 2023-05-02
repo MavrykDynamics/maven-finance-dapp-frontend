@@ -49,7 +49,7 @@ export const PolicyPopupContent = ({ proccedPolicy }: { proccedPolicy: () => voi
 
       <div className="procced-btn">
         <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} disabled={!checkbox} onClick={proccedPolicy}>
-          <Icon id="doubleCheckmark" /> Procced
+          <Icon id="doubleCheckmark" /> Proceed
         </NewButton>
       </div>
     </PopupContainerWrapper>
