@@ -92,7 +92,7 @@ export const BecomeSatellite = () => {
 
   const [form, setForm] = useState(DEFAULT_BECOME_SATELLITE_FORM)
   const [isChecked, setIsChecked] = useState(false)
-  const pageText = getFormTextBasedOnUserRole(Boolean(usersSatelliteProfile))
+  const pageText = getFormTextBasedOnUserRole(isSatellite)
   const isUserOracle = Boolean(usersSatelliteProfile?.peerId || usersSatelliteProfile?.publicKey)
   const showOracleWarning = isUserOracle && !isChecked
 

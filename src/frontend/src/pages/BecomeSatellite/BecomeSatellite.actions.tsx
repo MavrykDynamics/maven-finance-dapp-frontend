@@ -17,6 +17,7 @@ import {
 import { State } from 'reducers'
 import { RegisterAsSatelliteForm } from '../../utils/TypesAndInterfaces/Forms'
 import type { AppDispatch, GetState } from '../../app/App.controller'
+import { updateUserData } from 'reducers/actions/user.actions'
 
 export const registerAsSatellite =
   (form: RegisterAsSatelliteForm) => async (dispatch: AppDispatch, getState: GetState) => {
@@ -65,6 +66,7 @@ export const registerAsSatellite =
         await checkIndexerLevelAndRunDataUpdateCallback({
           callback: async () => {
             await dispatch(getSatellitesStorage())
+            await dispatch(updateUserData())
 
             await dispatch(hideToaster())
             await dispatch(showToaster(TOASTER_SUCCESS, 'Satellite Registered.', ACTION_COMPLETION_MESSAGE_TEXT))
@@ -129,6 +131,7 @@ export const updateSatelliteRecord =
         await checkIndexerLevelAndRunDataUpdateCallback({
           callback: async () => {
             await dispatch(getSatellitesStorage())
+            await dispatch(updateUserData())
 
             await dispatch(hideToaster())
             await dispatch(showToaster(TOASTER_SUCCESS, 'Satellite record updated.', ACTION_COMPLETION_MESSAGE_TEXT))
@@ -182,6 +185,7 @@ export const unregisterAsSatellite = () => async (dispatch: AppDispatch, getStat
       await checkIndexerLevelAndRunDataUpdateCallback({
         callback: async () => {
           await dispatch(getSatellitesStorage())
+          await dispatch(updateUserData())
 
           await dispatch(hideToaster())
           await dispatch(
