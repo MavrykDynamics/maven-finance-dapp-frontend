@@ -36,7 +36,7 @@ type IPFSUploaderViewProps = {
   className?: string
 }
 
-const IMG_MAX_SIZE = 20
+const IMG_MAX_SIZE = 1
 
 export const IPFSUploaderView = ({
   title,
@@ -122,7 +122,7 @@ export const IPFSUploaderView = ({
               id="uploader"
               type="file"
               disabled={disabled || isUploading}
-              accept={'.jpeg, .png, .pdf'}
+              accept={'.jpeg, .png'}
               ref={inputFile}
               onChange={handleChange}
               onBlur={onBlur}
