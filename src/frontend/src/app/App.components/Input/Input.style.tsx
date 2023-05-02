@@ -1,7 +1,14 @@
 import styled from 'styled-components/macro'
 import { zoomIn, slideDown } from 'styles/animations'
 import { MavrykTheme } from '../../../styles/interfaces'
-import { INPUT_BIG, INPUT_LARGE, INPUT_MEDIUM, INPUT_SMALL } from './Input.constants'
+import {
+  INPUT_BIG,
+  INPUT_LARGE,
+  INPUT_MEDIUM,
+  INPUT_SMALL,
+  INPUT_STATUS_ERROR,
+  INPUT_STATUS_SUCCESS,
+} from './Input.constants'
 
 export const InputStyled = styled.div`
   position: relative;
@@ -210,6 +217,10 @@ export const StyledInput = styled.input<{ theme: MavrykTheme }>`
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
   }
+
+  &.${INPUT_STATUS_SUCCESS}, &.${INPUT_STATUS_ERROR} {
+    padding-right: 35px;
+  }
 `
 
 export const InputPinnedChild = styled.div<{ theme: MavrykTheme }>`
@@ -302,7 +313,7 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
     border-color: ${({ theme }) => theme.primaryColor}7F;
   }
 
-  &.error {
+  &.${INPUT_STATUS_ERROR} {
     border: 1px solid ${({ theme }) => theme.downColor};
     input {
       color: ${({ theme }) => theme.downColor};
@@ -321,7 +332,7 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
     }
   }
 
-  &.success {
+  &.${INPUT_STATUS_SUCCESS} {
     border: 1px solid ${({ theme }) => theme.upColor};
     input {
       color: ${({ theme }) => theme.upColor};
@@ -450,8 +461,9 @@ export const NewInputLabel = styled.label`
 export const InputStyledStatus = styled.div<{ theme: MavrykTheme }>`
   display: block;
   position: absolute;
-  top: 13px;
-  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 13px;
   z-index: 1;
   line-height: 13px;
   text-align: center;
@@ -459,26 +471,18 @@ export const InputStyledStatus = styled.div<{ theme: MavrykTheme }>`
   pointer-events: none;
   will-change: transform, opacity;
 
-  &.hasChild {
-    right: px;
-  }
-
-  &.error {
+  &.${INPUT_STATUS_ERROR} {
     background-image: url('/icons/input-error.svg');
     animation: ${zoomIn} 0.3s cubic-bezier(0.12, 0.4, 0.29, 1.46);
     height: 15px;
     width: 15px;
   }
 
-  &.success {
+  &.${INPUT_STATUS_SUCCESS} {
     background-image: url('/icons/input-success.svg');
     animation: ${zoomIn} 0.3s cubic-bezier(0.12, 0.4, 0.29, 1.46);
     height: 12px;
     width: 17px;
-  }
-
-  &.${INPUT_LARGE} {
-    top: 19.5px;
   }
 `
 

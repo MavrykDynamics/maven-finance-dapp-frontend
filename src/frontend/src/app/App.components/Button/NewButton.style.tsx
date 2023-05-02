@@ -16,6 +16,7 @@ import {
   VOTING_PASS,
   BUTTON_LARGE,
   BUTTON_REGULAR,
+  BUTTON_SECONDARY_PURPLE,
 } from './Button.constants'
 
 const BUTTONS_KIND_STYLES = css`
@@ -35,6 +36,15 @@ const BUTTONS_KIND_STYLES = css`
 
     svg {
       fill: ${({ theme }) => theme.valueColor};
+    }
+  }
+  &.${BUTTON_SECONDARY_PURPLE} {
+    color: ${({ theme }) => theme.textColor};
+    background-color: transparent;
+    border: 2px solid ${({ theme }) => theme.cardBorderColor};
+
+    svg {
+      fill: ${({ theme }) => theme.cardBorderColor};
     }
   }
 
@@ -132,6 +142,10 @@ const BUTTONS_FORMS_STYLES = css`
       height: 36px;
       width: 36px;
     }
+  }
+
+  &.isSquare {
+    border-radius: 10px;
   }
 `
 

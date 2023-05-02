@@ -24,6 +24,7 @@ export type ButtonProps = {
   animation?: ButtonAnimation | null
   disabled?: boolean
   isThin?: boolean
+  isSquare?: boolean
   children?: React.ReactNode
 }
 
@@ -45,6 +46,7 @@ const Button = ({
   disabled = false,
   selected = false,
   isThin = false,
+  isSquare = false,
   size = BUTTON_REGULAR,
   type = BUTTON,
 }: ButtonProps) => {
@@ -72,6 +74,7 @@ const Button = ({
   const buttonClasses = classNames(kind, form, animation, size, {
     disabled: isDisabled,
     isThin,
+    isSquare,
     selected,
     isLoading,
   })

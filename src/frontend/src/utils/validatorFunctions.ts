@@ -1,10 +1,11 @@
-import { TezosToolkit } from '@taquito/taquito'
 import { validateAddress, validatePublicKey as taquitoValidatePublicKey } from '@taquito/utils'
 import { showToaster } from '../app/App.components/Toaster/Toaster.actions'
 import { ERROR } from '../app/App.components/Toaster/Toaster.constants'
 import { AllValidFormTypes } from './TypesAndInterfaces/Forms'
 import type { AppDispatch } from '../app/App.controller'
 import { InputStatusType } from 'app/App.components/Input/Input.constants'
+import { RpcClient } from '@taquito/rpc'
+import { State } from 'reducers'
 
 const isIPFS = require('is-ipfs')
 
@@ -90,17 +91,23 @@ export function isValidLength(input: string, minLength: number, maxLength: numbe
   return input.length >= minLength && input.length <= maxLength
 }
 
-export const isValidRPCNode = (input: string): boolean => {
+export const isValidRPCNode = async (
+  input: string,
+  currentRpcNodes: State['preferences']['RPC_NODES'],
+): Promise<boolean> => {
   if (!input) return false
-  let result
+  if (currentRpcNodes.find(({ url }) => url.toLowerCase().trim() === input.toLowerCase().trim())) return false
 
   try {
-    result = Boolean(new TezosToolkit(input))
-  } catch {
-    result = false
+    const client = new RpcClient(input, 'NetXnHfVqm9iesp')
+    const chainID = await client.getChainId()
+    return chainID === 'NetXnHfVqm9iesp'
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error('RPC node error:', error.message)
+    }
+    return false
   }
-
-  return result
 }
 
 export const validateFormField =
