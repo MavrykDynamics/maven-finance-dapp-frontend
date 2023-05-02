@@ -71,6 +71,7 @@ export const BecomeSatellite = () => {
   const { isLoaded: isDoormanLoaded } = useSelector((state: State) => state.doorman)
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { themeSelected } = useSelector((state: State) => state.preferences)
+  const isGhostnet = process.env.REACT_APP_NETWORK === 'ghostnet'
 
   const { isLoading } = useDataLoader(
     async (isDepsChanged) => {
@@ -363,7 +364,7 @@ export const BecomeSatellite = () => {
                     id="become-satellite-is-oracle"
                     onChangeHandler={() => setIsChecked(!isChecked)}
                     checked={isChecked}
-                    disabled={process.env.REACT_APP_NETWORK === 'ghostnet'}
+                    disabled={isGhostnet}
                   />
                 </div>
 
@@ -393,6 +394,7 @@ export const BecomeSatellite = () => {
                         name: 'oraclePublicKey',
                         onChange: handleChange,
                         required: true,
+                        disabled: isGhostnet,
                       }}
                     />
 
@@ -408,6 +410,7 @@ export const BecomeSatellite = () => {
                         name: 'oraclePeerId',
                         onChange: handleChange,
                         required: true,
+                        disabled: isGhostnet,
                       }}
                     />
                   </div>
@@ -416,11 +419,9 @@ export const BecomeSatellite = () => {
                 {showOracleWarning && (
                   <div className="warning">
                     <Info
-                      text={
-                        'You are unregistering for being an oracle. This means you will no longer be able to sign price feeds and subsequently no longer receive rewards for participation in the oracle network.'
-                      }
+                      text={`You are unregistering for being an oracle. This means you will no longer be able to sign price feeds and subsequently no longer receive rewards for participation in the oracle network.`}
                       type={INFO_ERROR}
-                    ></Info>
+                    />
                   </div>
                 )}
               </BecomeSatelliteRegisterAsOracle>
