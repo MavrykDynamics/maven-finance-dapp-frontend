@@ -43,6 +43,7 @@ import {
   SatelliteCardButtons,
   SatelliteCardRow,
 } from './SatelliteCard.style'
+import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
 
 type SatelliteListItemProps = {
   satellite: SatelliteRecordType
@@ -72,6 +73,8 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
     },
   } = useSelector((state: State) => state.wallet)
   const { proposalsMapper } = useSelector((state: State) => state.governance)
+
+  useStakeUpdater(true)
 
   // Card buttons handlers
   const delegateCallback = async () => await dispatch(delegate(satellite.address))

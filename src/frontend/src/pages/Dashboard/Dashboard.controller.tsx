@@ -112,7 +112,12 @@ export const Dashboard = () => {
   return (
     <Page>
       <PageHeader page={'dashboard'} />
-      <DashboardView tvl={tvlValue} mvkStatsBlock={mvkStatsBlock} activeTab={activeTab} isLoading={isLoading} />
+      <DashboardView
+        tvl={tvlValue}
+        mvkStatsBlock={mvkStatsBlock}
+        activeTab={activeTab}
+        isLoading={isLoading && isDoormanLoaded}
+      />
     </Page>
   )
 }

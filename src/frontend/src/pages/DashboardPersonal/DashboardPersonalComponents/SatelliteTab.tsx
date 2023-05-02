@@ -17,6 +17,7 @@ import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { UserActionHistory } from './UserOperationsHistory'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
+import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
 
 const SatelliteTab = () => {
   const dispatch = useDispatch()
@@ -31,6 +32,8 @@ const SatelliteTab = () => {
 
   const satelliteRecord = satelliteMapper[accountPkh]
   const oracleStatusType = getOracleStatus(satelliteRecord, feedsLedger)
+
+  useStakeUpdater(true)
 
   const handleDistributeRewards = () => {
     // TODO: add valid data

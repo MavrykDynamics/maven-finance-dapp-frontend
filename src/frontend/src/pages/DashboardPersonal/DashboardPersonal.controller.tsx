@@ -37,6 +37,7 @@ import { DashboardPersonalStyled } from './DashboardPersonal.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
+import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
 
 const DashboardPersonal = () => {
   const dispatch = useDispatch()
@@ -70,6 +71,8 @@ const DashboardPersonal = () => {
   } = useSelector((state: State) => state.wallet)
 
   const claimRewards = async () => await dispatch(claimAllRewardsAction())
+
+  useStakeUpdater(true)
 
   const { isLoading } = useDataLoader(
     async (isDepsChanged) => {

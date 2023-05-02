@@ -245,7 +245,7 @@ export const BecomeSatellite = () => {
 
       <PageContent>
         <div>
-          {isLoading ? (
+          {isLoading && isDoormanLoaded ? (
             <DataLoaderWrapper>
               <ClockLoader width={150} height={150} />
               <div className="text">Loading satellite data</div>

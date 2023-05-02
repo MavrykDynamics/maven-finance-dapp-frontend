@@ -102,7 +102,7 @@ export const rewardsCompound = (address: string) => async (dispatch: AppDispatch
       await checkIndexerLevelAndRunDataUpdateCallback({
         callback: async () => {
           await dispatch(updateUserData())
-          await dispatch(getDoormanStorage())
+          // await dispatch(getDoormanStorage())
 
           // Add here call for update data actions
           await dispatch(hideToaster())
@@ -175,7 +175,7 @@ export const getMVKTokensFromFaucet = () => async (dispatch: AppDispatch, getSta
       await checkIndexerLevelAndRunDataUpdateCallback({
         callback: async () => {
           await dispatch(updateUserData())
-          await dispatch(getDoormanStorage())
+          // await dispatch(getDoormanStorage())
 
           // Add here call for update data actions
           await dispatch(hideToaster())

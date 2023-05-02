@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useSubscription } from '@apollo/client'
 import { useStakeContext } from '../stake.provider'
@@ -44,27 +44,28 @@ export const useStakeUpdater = (skip = false) => {
     updateStakeContext,
     updateTotalMvkToken,
     action,
+    isLoaded,
   } = useStakeContext()
 
   const dispatch = useDispatch()
 
   const [shouldSkip, setShouldSkip] = useState(false)
-  const initialLoadRef = useRef(false)
 
   const { loading: stakeLoading } = useSubscription(SUBSCRIPTION_STAKE, {
     skip: shouldSkip,
     onData: ({ data: result }) => {
-      console.log('HELLO WORLD')
       const { data, error } = result
       if (error) {
         // showStakeErrorMessage(dispatch, error.message)
       }
       if (data) {
         updateStakeHistoryData(data)
-        const capital = action.charAt(0).toUpperCase()
-        const msg = capital + action.substring(1)
-        showStakeSuccessMessage(dispatch, msg)
-        updateStakeContext({ action: '' })
+        if (action) {
+          const capital = action.charAt(0).toUpperCase()
+          const msg = capital + action.substring(1)
+          showStakeSuccessMessage(dispatch, msg)
+          updateStakeContext({ action: '' })
+        }
       }
     },
   })
@@ -112,15 +113,14 @@ export const useStakeUpdater = (skip = false) => {
   })
 
   useEffect(() => {
-    if (!stakeLoading && !balanceLoading && !doormanLoading && skip && !shouldSkip) {
+    if (!stakeLoading && !balanceLoading && !doormanLoading && !totalMvkloading && skip && !shouldSkip) {
       setShouldSkip(skip)
     }
 
-    if (!stakeLoading && !balanceLoading && !doormanLoading && !initialLoadRef.current) {
+    if (!isLoaded && !stakeLoading && !balanceLoading && !doormanLoading && !totalMvkloading) {
       updateStakeContext({ isLoaded: true })
-      initialLoadRef.current = true
     }
-  }, [doormanLoading, balanceLoading, stakeLoading, skip, shouldSkip, updateStakeContext])
+  }, [stakeLoading, balanceLoading, doormanLoading, totalMvkloading, skip, shouldSkip, isLoaded, updateStakeContext])
 
-  return { isLoading: stakeLoading && balanceLoading && doormanLoading }
+  return { isLoading: stakeLoading && balanceLoading && doormanLoading && totalMvkloading }
 }

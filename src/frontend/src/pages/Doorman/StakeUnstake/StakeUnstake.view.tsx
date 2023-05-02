@@ -57,7 +57,7 @@ type StakeUnstakeViewProps = {
 export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeRate }: StakeUnstakeViewProps) => {
   const dispatch = useDispatch()
   const history = useHistory()
-  const { updateStakingAction } = useStakeContext()
+  const { updateStakeContext } = useStakeContext()
 
   useStakeUpdater()
 
@@ -129,7 +129,7 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
         ...inputData,
         errorMessage: '',
       })
-      updateStakingAction('stake')
+      updateStakeContext({ action: 'stake' })
       stakeCallback(Number(inputData.amount))
     } else {
       setInputData({
@@ -147,7 +147,8 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
         ...inputData,
         errorMessage: '',
       })
-      updateStakingAction('unstake')
+      updateStakeContext({ action: 'unstake' })
+
       unstakeCallback(Number(inputData.amount))
     } else {
       setInputData({
@@ -166,7 +167,8 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
       validation: INPUT_STATUS_SUCCESS,
     })
 
-    updateStakingAction('stake')
+    updateStakeContext({ action: 'stake' })
+
     stakeCallback(myMvkTokenBalance)
   }
 
@@ -179,7 +181,8 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
       validation: INPUT_STATUS_SUCCESS,
     })
 
-    updateStakingAction('unstake')
+    updateStakeContext({ action: 'unstake' })
+
     unstakeCallback(mySMvkTokenBalance)
   }
 
