@@ -1,6 +1,9 @@
 import { z, ZodSchema, objectOutputType, ZodNumber, ZodString, ZodType, ZodTypeAny } from 'zod'
 
-export type APIReturnType<T> = objectOutputType<{ code: ZodNumber; status: ZodString; data: ZodType<T> }, ZodTypeAny>
+export type APIReturnType<T> = objectOutputType<
+  { code: ZodNumber; status: ZodType<'ok' | 'error'>; data: ZodType<T> },
+  ZodTypeAny
+>
 
 export const api = async <T>(
   url: string,
@@ -9,13 +12,13 @@ export const api = async <T>(
 ): Promise<APIReturnType<T>> => {
   try {
     const method = options?.method || 'GET'
-    const _schema = schema ?? z.any() 
+    const _schema = schema ?? z.any()
 
     const response = await fetch(url, { method, ...options })
     const data = await response.json()
     const parsedData = _schema.parse(data)
 
-    return { code: response.status, status: response.statusText, data: parsedData }
+    return { code: response.status, status: response.ok ? 'ok' : 'error', data: parsedData }
   } catch (e) {
     throw e
   }

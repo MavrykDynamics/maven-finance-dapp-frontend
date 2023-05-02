@@ -23,7 +23,7 @@ import {
 } from 'pages/Loans/Loans.helpers'
 
 // utils
-import { api } from 'utils/api'
+import { api } from 'utils/fetchers/api'
 import { CollateralType, DepositorsFlagType } from 'utils/TypesAndInterfaces/Loans'
 import { VaultType, LendingControllerGQL } from 'utils/TypesAndInterfaces/Vaults'
 import { Lending_Controller_Vault } from 'utils/generated/graphqlTypes'
