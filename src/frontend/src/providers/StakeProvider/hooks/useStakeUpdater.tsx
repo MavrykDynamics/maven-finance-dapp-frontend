@@ -30,7 +30,7 @@ function showStakeSuccessMessage(dispatch: AppDispatch, message: string) {
 }
 
 /**
- *
+ * Subscriptions are canceled on component unmount!
  * @param skip boolean, if you pass this param, the hook will be triggered only one time
  * @returns {isLoading: boolean} false if data is still loading, true if it's loaded
  */
@@ -113,10 +113,12 @@ export const useStakeUpdater = (skip = false) => {
   })
 
   useEffect(() => {
+    // to update data only one time
     if (!stakeLoading && !balanceLoading && !doormanLoading && !totalMvkloading && skip && !shouldSkip) {
       setShouldSkip(skip)
     }
 
+    // to updated isLoaded when initial data is null
     if (!isLoaded && !stakeLoading && !balanceLoading && !doormanLoading && !totalMvkloading) {
       updateStakeContext({ isLoaded: true })
     }

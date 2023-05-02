@@ -27,45 +27,47 @@ import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLev
 
 export const GET_DOORMAN_STORAGE = 'GET_DOORMAN_STORAGE'
 export const UPDATE_DOORMAN_STORAGE = 'UPDATE_DOORMAN_STORAGE'
-export const getDoormanStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
-  const {
-    contractAddresses: {
-      doormanAddress: { address },
-    },
-  } = getState()
-  try {
-    const smvkStorage = await fetchFromIndexer(
-      SMVK_HISTORY_DATA_QUERY,
-      SMVK_HISTORY_DATA_QUERY_NAME,
-      SMVK_HISTORY_DATA_QUERY_VARIABLE,
-    )
+// export const getDoormanStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
+//   const {
+//     contractAddresses: {
+//       doormanAddress: { address },
+//     },
+//   } = getState()
+//   try {
+//     const smvkStorage = await fetchFromIndexer(
+//       SMVK_HISTORY_DATA_QUERY,
+//       SMVK_HISTORY_DATA_QUERY_NAME,
+//       SMVK_HISTORY_DATA_QUERY_VARIABLE,
+//     )
 
-    const { smvkHistoryData, mvkHistoryData } = normalizeSmvkHistoryData(smvkStorage)
+//     const { smvkHistoryData, mvkHistoryData } = normalizeSmvkHistoryData(smvkStorage)
 
-    const storage = await fetchFromIndexer(
-      DOORMAN_STORAGE_QUERY,
-      DOORMAN_STORAGE_QUERY_NAME,
-      DOORMAN_STORAGE_QUERY_VARIABLE(address),
-    )
+//     const storage = await fetchFromIndexer(
+//       DOORMAN_STORAGE_QUERY,
+//       DOORMAN_STORAGE_QUERY_NAME,
+//       DOORMAN_STORAGE_QUERY_VARIABLE(address),
+//     )
 
-    const { totalStakedMvk, totalSupply, maximumTotalSupply } = normalizeDoormanStorage(storage)
+//     const { totalStakedMvk, totalSupply, maximumTotalSupply } = normalizeDoormanStorage(storage)
 
-    dispatch({
-      type: GET_DOORMAN_STORAGE,
-      totalStakedMvk,
-      totalSupply,
-      maximumTotalSupply,
-      mvkHistoryData,
-      smvkHistoryData,
-    })
-  } catch (error) {
-    if (error instanceof Error) {
-      console.error('smvkHistoryData', error)
-      dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
-    }
-  }
-}
+//     dispatch({
+//       type: GET_DOORMAN_STORAGE,
+//       totalStakedMvk,
+//       totalSupply,
+//       maximumTotalSupply,
+//       mvkHistoryData,
+//       smvkHistoryData,
+//     })
+//   } catch (error) {
+//     if (error instanceof Error) {
+//       console.error('smvkHistoryData', error)
+//       dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
+//     }
+//   }
+// }
 
+// there 3-4 places where we call doorman inside actions, so in components where are calling
+// those actions I placed useStakeUpdater(true), so it will be triggered when component is rerendered
 export const rewardsCompound = (address: string) => async (dispatch: AppDispatch, getState: GetState) => {
   const state: State = getState()
 
