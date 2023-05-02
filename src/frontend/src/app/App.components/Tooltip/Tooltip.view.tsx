@@ -37,6 +37,10 @@ export const TooltipStyled = styled.div<{ defaultStrokeColor?: string; theme: Ma
     width: max-content;
     max-width: 330px;
     z-index: 1000;
+
+    a {
+      color: ${({ theme }) => theme.valueColor};
+    }
   }
 
   .text::after {
@@ -78,8 +82,8 @@ export const CustomTooltip = ({
   iconId,
   children,
 }: {
-  children?: JSX.Element
-  text?: string
+  children?: React.ReactNode
+  text?: string | React.ReactNode
   defaultStrokeColor?: string
   className?: string
   iconId?: 'info' | 'question'
