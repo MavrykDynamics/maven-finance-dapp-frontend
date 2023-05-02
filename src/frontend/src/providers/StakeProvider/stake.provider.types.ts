@@ -18,7 +18,8 @@ export interface StakeContext {
   updateStakeHistoryData: InstanceType<typeof StakeProviderClass>['updateStakeHistoryData']
   updateTotalStakedMvk: InstanceType<typeof StakeProviderClass>['updateTotalStakedMvk']
   updateUserStakeData: InstanceType<typeof StakeProviderClass>['updateUserStakeData']
-  updateStakingAction: InstanceType<typeof StakeProviderClass>['updateStakingAction']
+  updateStakeContext: InstanceType<typeof StakeProviderClass>['updateStakeContext']
+  updateTotalMvkToken: InstanceType<typeof StakeProviderClass>['updateTotalMvkToken']
 }
 
 export type State = {

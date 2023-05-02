@@ -16,11 +16,10 @@ import { StakeUnstakeView } from './StakeUnstake/StakeUnstake.view'
 
 // providers
 import { useStakeContext } from 'providers/StakeProvider/stake.provider'
+import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
 import { stake } from 'providers/StakeProvider/actions/stake.actions'
 
 // actions
-import { getDoormanStorage } from './Doorman.actions'
-import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { State } from 'reducers'
 
 export const Doorman = () => {
@@ -45,16 +44,7 @@ export const Doorman = () => {
     accountPkh,
   }
 
-  const { isLoading } = useDataLoader(
-    async (isDepsChanged) => {
-      try {
-        if (!isDoormanLoaded || isDepsChanged) {
-          await dispatch(getDoormanStorage())
-        }
-      } catch (e) {}
-    },
-    [accountPkh],
-  )
+  useStakeUpdater(true)
 
   const stakeCallback = (amount: number) => dispatch(stake(amount))
   const unstakeCallback = (amount: number) => setAmount(amount)
@@ -64,7 +54,7 @@ export const Doorman = () => {
     <Page>
       <PageHeader page={'doorman'} />
 
-      {isLoading ? (
+      {!isDoormanLoaded ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
           <div className="text">Loading doorman data</div>

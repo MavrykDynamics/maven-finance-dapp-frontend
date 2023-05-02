@@ -10,6 +10,7 @@ import {
   SubscribeSmvkHistoryDataSubscription,
   SubscribeAdressBalanceSubscription,
   SubscribeDoormanAddressBalanceSubscription,
+  SubscribeMvkTokenTotalSubscription,
 } from 'utils/__generated__/graphql'
 
 // types
@@ -37,16 +38,17 @@ export class StakeProviderClass extends React.Component<Props, State> {
         updateStakeHistoryData: this.updateStakeHistoryData,
         updateTotalStakedMvk: this.updateTotalStakedMvk,
         updateUserStakeData: this.updateUserStakeData,
-        updateStakingAction: this.updateStakingAction,
+        updateStakeContext: this.updateStakeContext,
+        updateTotalMvkToken: this.updateTotalMvkToken,
       },
     }
   }
 
-  updateStakingAction = (action: 'stake' | 'unstake' | '') => {
+  updateStakeContext = (data: Partial<StakeContext>) => {
     this.setState({
       context: {
         ...this.state.context,
-        action,
+        ...data,
       },
     })
   }
@@ -71,6 +73,20 @@ export class StakeProviderClass extends React.Component<Props, State> {
       context: {
         ...this.state.context,
         totalStakedMvk,
+      },
+    })
+  }
+
+  updateTotalMvkToken = (storage: SubscribeMvkTokenTotalSubscription) => {
+    const {
+      mvk_token: [mvkTokenItem],
+    } = storage
+
+    this.setState({
+      context: {
+        ...this.state.context,
+        totalSupply: mvkTokenItem?.total_supply ? calcWithoutPrecision(mvkTokenItem?.total_supply) : 0,
+        maximumTotalSupply: mvkTokenItem?.maximum_supply ? calcWithoutPrecision(mvkTokenItem?.maximum_supply) : 0,
       },
     })
   }
