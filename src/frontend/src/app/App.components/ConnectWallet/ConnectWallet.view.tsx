@@ -153,7 +153,7 @@ export const ConnectedWalletBlock = ({
             </var>
           </div>
 
-          <a href={`https://tzstats.com/${accountPkh}`} target="_blank" rel="noreferrer">
+          <a href={`https://ghost.tzstats.com/${accountPkh}`} target="_blank" rel="noreferrer">
             <Icon id="send" className="icon-send" />
           </a>
         </div>

@@ -17,9 +17,9 @@ import { convertBytesAddressToAddress } from 'app/App.helpers'
 import { CouncilActionStyled } from '../Council.style'
 
 // types
-import { CouncilAction } from 'utils/TypesAndInterfaces/Council'
+import { CouncilActionType } from 'utils/TypesAndInterfaces/Council'
 
-type Props = CouncilAction & {
+type Props = CouncilActionType & {
   numCouncilMembers: number
   handleDropAction: (arg: number) => void
   cardIdName: string

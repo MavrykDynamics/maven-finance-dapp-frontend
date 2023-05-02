@@ -1,7 +1,7 @@
 import { CouncilOngoingAction } from './CouncilOngoingAction.view'
 
 // components
-import { CouncilPastActionView } from 'pages/Council/CouncilActions/CouncilPastAction.view'
+import { CouncilAction } from 'pages/Council/CouncilActions/CouncilAction.view'
 import Pagination from 'app/App.components/Pagination/Pagination.view'
 import { councilEmptyContainer } from '../Council.view'
 
@@ -9,7 +9,7 @@ import { councilEmptyContainer } from '../Council.view'
 import { TabSwitcher } from '../Council.style'
 
 // types
-import { CouncilAction } from 'utils/TypesAndInterfaces/Council'
+import { CouncilActionType } from 'utils/TypesAndInterfaces/Council'
 import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 
 type Props = {
@@ -17,7 +17,7 @@ type Props = {
   myPastCouncilActionLength: number
   actionPendingSignature: number[]
   actionPendingSignatureLength: number
-  actionsMapper: Record<number, CouncilAction>
+  actionsMapper: Record<number, CouncilActionType>
   numCouncilMembers: number
   activeActionTab: string
   setActiveActionTab: (arg: string) => void
@@ -57,7 +57,7 @@ export function MyCouncilActions({
                 const action = actionsMapper[item]
 
                 return (
-                  <CouncilPastActionView
+                  <CouncilAction
                     startDatetime={action.startDatetime}
                     key={action.id}
                     actionType={action.actionType}
