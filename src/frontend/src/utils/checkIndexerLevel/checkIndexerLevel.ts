@@ -6,7 +6,7 @@ type UpdateDataReturnType = {
   value: unknown | null
 }
 
-const MAX_CALLS_AMOUNT = 15
+const MAX_CALLS_AMOUNT = 16
 
 /**
  * @callback - async fn that will load data, when indexer is updated
@@ -47,7 +47,9 @@ export const checkIndexerLevelAndRunDataUpdateCallback = ({
         console.info({ indexerLevel, currentOperationLevel, callsCounter })
 
         // if indexer level in gql > current level in client => update data and clear interval
-        if (currentOperationLevel && indexerLevel && indexerLevel > currentOperationLevel) {
+        // if (currentOperationLevel && indexerLevel && indexerLevel > currentOperationLevel) { // prev cond indexer just > than client
+        if (currentOperationLevel && indexerLevel && Number(indexerLevel) - Number(currentOperationLevel) > 1) {
+          // new cond indexer lvl should be more than 1 diff to client one
           clearInterval(intervalId)
           const result = await callback()
           resolve({ value: result })
@@ -66,5 +68,5 @@ export const checkIndexerLevelAndRunDataUpdateCallback = ({
         clearInterval(intervalId)
         reject(new Error('Data update error, please refresh the page'))
       }
-    }, 1000)
+    }, 1500)
   })
