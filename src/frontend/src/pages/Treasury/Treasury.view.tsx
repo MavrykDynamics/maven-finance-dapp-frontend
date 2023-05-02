@@ -34,7 +34,7 @@ type Props = {
 
 export default function TreasuryView({ treasury, isGlobal = false, factoryAddress = '' }: Props) {
   const [hoveredPath, setHoveredPath] = useState<null | string>(null)
-  const [showZeroTreasuries, setShowZeroTreasuries] = useState<Boolean>(false)
+  const [showZeroTreasuries, setShowZeroTreasuries] = useState<boolean>(false)
   const ref = useRef<HTMLDivElement | null>(null)
 
   const filteredBalance = useMemo(

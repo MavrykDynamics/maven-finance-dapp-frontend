@@ -151,9 +151,11 @@ export const AVALIABLE_COLLATERALS_QUERY_NAME = 'GetAvaliableCollaterals'
 export const AVALIABLE_COLLATERALS_QUERY_VARIABLE = {}
 
 export const NEW_VAULT_QUERY = `
-  query GetNewVault {
-    vault {
-      lending_controller_vaults(order_by: {last_updated_timestamp: asc}, where: {lending_controller: {mock_time: {_eq: false}}}) {
+  query GetUsersLastestCreatedVault($userAddress: String = "", $vaultName: String = "") {
+    vault(order_by: {creation_timestamp: desc}, limit: 1, where: {name: {_eq: $vaultName}}) {
+      creation_timestamp
+      name
+      lending_controller_vaults(order_by: {last_updated_timestamp: asc}, where: {owner_id: {_eq: $userAddress}, lending_controller: {mock_time: {_eq: false}}}) {
         last_updated_timestamp
         vault_id
       }
@@ -161,8 +163,8 @@ export const NEW_VAULT_QUERY = `
   }
 `
 
-export const NEW_VAULT_QUERY_NAME = 'GetNewVault'
-export const NEW_VAULT_QUERY_VARIABLE = {}
+export const NEW_VAULT_QUERY_NAME = 'GetUsersLastestCreatedVault'
+export const NEW_VAULT_QUERY_VARIABLE = (userAddress: string, vaultName: string) => ({ userAddress, vaultName })
 
 export const USER_LENDING_DATA_QUERY = `
   query GetLendBorrowHistoryPerUser($userAddress: String = "", $_in: [smallint!] = ["0", "1", "2", "3"]) {

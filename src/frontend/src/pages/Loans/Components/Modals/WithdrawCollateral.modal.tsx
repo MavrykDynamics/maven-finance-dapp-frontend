@@ -77,7 +77,7 @@ export const WithdrawCollateral = ({
         : 0
 
       const currentCollateralToWithdraw = getMaxCollateralWithdraw(
-        currentCollateralBalance * collateralRate,
+        currentCollateralBalance,
         vaultCollateralBalance,
         borrowedAmount,
         borrowedAssetRate,

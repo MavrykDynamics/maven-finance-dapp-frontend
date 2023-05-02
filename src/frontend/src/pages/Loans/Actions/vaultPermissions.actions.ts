@@ -121,7 +121,7 @@ export const managePermissionsAction =
                 {
                   kind: OpKind.TRANSACTION,
                   ...contract.methods
-                    .initVaultAction('updateDepositor', VAULT_ALLOWANCE_ACCOUNTS, true, state.wallet.accountPkh)
+                    .initVaultAction('updateDepositor', VAULT_ALLOWANCE_ACCOUNTS, false, state.wallet.accountPkh)
                     .toTransferParams(),
                 },
               ]

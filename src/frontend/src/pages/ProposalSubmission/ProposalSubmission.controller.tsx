@@ -129,12 +129,6 @@ export const ProposalSubmission = () => {
   const [proposalState, setProposalsState] = useState(mappedProposals)
   const [proposalsValidation, setProposalsValidation] = useState<Record<number, ProposalValidityObj>>({})
 
-  // Id of current proposal user is looking but on remote
-  const currentOriginalProposalId = useMemo(
-    () => currentRoundProposalsIds.find((id) => selectedUserProposalId === id),
-    [selectedUserProposalId, currentRoundProposalsIds],
-  )
-
   // Track proposals update on remote
   useEffect(() => {
     // if we have user's proposals on remote set them to view/update, else set default proposal
@@ -154,19 +148,19 @@ export const ProposalSubmission = () => {
           },
     )
 
-    // If last selected prooposal by user is not exists set first remote we have
-    if (!proposalKeys.includes(selectedUserProposalId)) {
+    // If last selected proposal by user is not exists
+    if (!proposalKeys.includes(lastSelectedProposalId.current)) {
+      // set first remote we have
       if (proposalKeys.length) {
         setSeletedUserProposalId(proposalKeys[0])
         lastSelectedProposalId.current = proposalKeys[0]
       } else {
         // else set "Create new" proposal as initial seleced
-
         setSeletedUserProposalId(DEFAULT_PROPOSAL.id)
         lastSelectedProposalId.current = DEFAULT_PROPOSAL.id
       }
     }
-  }, [mappedProposals, mappedValidation, proposalKeys, selectedUserProposalId])
+  }, [mappedProposals, mappedValidation, proposalKeys])
 
   // Current proposal on client, used to show proposal data in stages
   const [currentProposal, currentProposalValidation] = useMemo(
@@ -176,28 +170,21 @@ export const ProposalSubmission = () => {
 
   // ------ ACTIONS HANDLERDS START ------
   // Change proposal stage
-  const handleChangeTab = useCallback((tabId?: number) => {
-    setActiveTab(tabId ?? 0)
-  }, [])
+  const handleChangeTab = (tabId?: number) => setActiveTab(tabId ?? 0)
 
   // Change user's vieving proposal
-  const changeActiveProposal = useCallback(
-    (proposalId: number) => {
-      setSeletedUserProposalId(proposalId)
-      lastSelectedProposalId.current = proposalId
+  const changeActiveProposal = (proposalId: number) => {
+    setSeletedUserProposalId(proposalId)
+    lastSelectedProposalId.current = proposalId
 
-      // it means that we choose create new proposal
-      if (proposalId === -1 && !proposalState[-1]) {
-        setProposalsState({
-          ...proposalState,
-          ...(proposalState[DEFAULT_PROPOSAL.id]
-            ? { [DEFAULT_PROPOSAL.id - 1]: DEFAULT_PROPOSAL }
-            : { [DEFAULT_PROPOSAL.id]: DEFAULT_PROPOSAL }),
-        })
-      }
-    },
-    [proposalState],
-  )
+    // it means that we choose create new proposal
+    if (proposalId === -1 && !proposalState[-1]) {
+      setProposalsState({
+        ...proposalState,
+        [DEFAULT_PROPOSAL.id - 1]: { ...DEFAULT_PROPOSAL },
+      })
+    }
+  }
 
   const updateLocalProposalData = useCallback(
     (newProposalData: Partial<ProposalRecordType>, proposalId: number) => {
@@ -234,7 +221,7 @@ export const ProposalSubmission = () => {
   }
 
   const handleUpdateData = async (proposalId: number) => {
-    const currentOriginalProposal = currentOriginalProposalId ? proposalsMapper[currentOriginalProposalId] : null
+    const currentOriginalProposal = selectedUserProposalId ? proposalsMapper[selectedUserProposalId] : null
     if (currentOriginalProposal) {
       const bytesDiff = getBytesDiff(
         currentOriginalProposal.proposalData ?? [],
@@ -274,12 +261,12 @@ export const ProposalSubmission = () => {
     () =>
       isProposalSubmitted && isProposalPeriod && !currentProposal.locked
         ? isProposalHasChange({
-            clientProposal: proposalState[currentOriginalProposalId ?? -1],
-            remoteProposal: mappedProposals[currentOriginalProposalId ?? -1],
+            clientProposal: proposalState[selectedUserProposalId],
+            remoteProposal: mappedProposals[selectedUserProposalId],
           })
         : false,
     [
-      currentOriginalProposalId,
+      selectedUserProposalId,
       currentProposal.locked,
       isProposalPeriod,
       isProposalSubmitted,
@@ -314,10 +301,6 @@ export const ProposalSubmission = () => {
   const isStageOneDataValid = isProposalSubmitted
     ? checkStage1Validation({ proposalValidation: currentProposalValidation })
     : true
-
-  console.log('current selected proposal', currentProposal)
-  console.log('mapped proposals from redux in useMemo', proposalState)
-  console.log('proposals from redux', mappedProposals)
 
   return (
     <Page>
@@ -407,7 +390,7 @@ export const ProposalSubmission = () => {
                   !isProposalPeriod ||
                   currentProposal.locked ||
                   proposalHasChange ||
-                  !mappedProposals[currentOriginalProposalId ?? -1]?.proposalData.length
+                  !mappedProposals[selectedUserProposalId]?.proposalData.length
                 }
                 onClick={() => handleLockProposal(selectedUserProposalId)}
                 kind={BUTTON_SECONDARY}

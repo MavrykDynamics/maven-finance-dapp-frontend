@@ -149,12 +149,19 @@ export const MenuFooter = styled.div<{ theme: MavrykTheme }>`
   row-gap: 20px;
 
   span {
+    font-weight: 500;
+    font-size: 12px;
+
     margin-bottom: 20px;
     color: ${({ theme }) => theme.valueColor};
   }
 
   > a {
     width: 100%;
+
+    &.small {
+      width: fit-content;
+    }
   }
 
   .social-wrapper {

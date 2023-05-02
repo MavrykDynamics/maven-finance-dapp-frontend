@@ -35,9 +35,9 @@ export const preferencesDefaultState: PreferencesState = {
   sidebarOpened: false,
   RPC_NODES: [
     { title: 'MARIGOLD', url: 'https://ghostnet.tezos.marigold.dev/', nodeLogoUrl: 'marigold_logo.png' },
-    { title: 'ECADLABS', url: 'https://ghostnet.smartpy.io', nodeLogoUrl: 'ECAD_logo.png' },
+    { title: 'ECADLABS', url: 'https://ghostnet.ecadinfra.com', nodeLogoUrl: 'ECAD_logo.png' },
   ],
-  REACT_APP_RPC_PROVIDER: 'https://ghostnet.smartpy.io',
+  REACT_APP_RPC_PROVIDER: 'https://ghostnet.ecadinfra.com',
 }
 
 export function preferences(state = preferencesDefaultState, action: Action) {

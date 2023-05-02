@@ -357,7 +357,7 @@ export const CreateNewVault = ({
       assetAddress: address,
     }
 
-    if (newVaultAddress && !isAddCollateralContinueDisabled) {
+    if (newVaultAddress && collaretalToDeposit.assetAddress && !isAddCollateralContinueDisabled) {
       dispatch(
         depositCollateralAction(newVaultAddress, collaretalToDeposit, closePopup, bakerChosenDdItem?.bakerAddress),
       )

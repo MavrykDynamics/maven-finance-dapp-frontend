@@ -32,7 +32,6 @@ export const getGovernanceStorage = () => async (dispatch: AppDispatch, getState
     const normalizedConfig = normalizeGovernanceConfig(currentGov)
 
     const proposalsFromGql = proposalStorage.governance_proposal
-    console.log('prpoposals from graphql', proposalsFromGql)
     const normalizedProposals = normalizeGovernanceProposals(proposalsFromGql, dipDupTokens, normalizedConfig)
 
     dispatch({

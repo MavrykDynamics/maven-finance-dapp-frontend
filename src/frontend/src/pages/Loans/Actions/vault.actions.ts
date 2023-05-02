@@ -33,9 +33,10 @@ import { scrollUpPage } from 'utils/scrollUpPage'
 export const triggerInitialVaultCreation =
   (loanTokenName: string, vaultName: string) => async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
+    const userAddress = state.wallet.accountPkh
 
     // check whether we can send transaction
-    if (!state.wallet.accountPkh) {
+    if (!userAddress) {
       await dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
       return
     }
@@ -58,7 +59,11 @@ export const triggerInitialVaultCreation =
           state.vaults.isLoaded && (await dispatch(getVaultsStorage()))
           state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
 
-          const newVaultData = await fetchFromIndexer(NEW_VAULT_QUERY, NEW_VAULT_QUERY_NAME, NEW_VAULT_QUERY_VARIABLE)
+          const newVaultData = await fetchFromIndexer(
+            NEW_VAULT_QUERY,
+            NEW_VAULT_QUERY_NAME,
+            NEW_VAULT_QUERY_VARIABLE(userAddress, vaultName),
+          )
 
           return newVaultData.vault.at(-1)?.lending_controller_vaults?.[0]?.vault_id
         },

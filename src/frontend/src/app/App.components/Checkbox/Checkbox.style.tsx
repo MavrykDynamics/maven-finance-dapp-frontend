@@ -58,4 +58,10 @@ export const CheckboxStyled = styled.div`
       }
     }
   }
+
+  &.disabled {
+    * {
+      cursor: not-allowed;
+    }
+  }
 `

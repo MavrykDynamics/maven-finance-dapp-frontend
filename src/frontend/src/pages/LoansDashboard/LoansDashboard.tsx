@@ -59,8 +59,13 @@ export const LoansDashboard = () => {
   const {
     isDataLoaded: isLoansLoaded,
     loanTokens,
-    chartsData: { lendingChartData, borrowingChartData },
+    chartsData: {
+      lendingChartData,
+      borrowingChartData,
+      lendBorrow24hDiff: { last24hLending, last48hLending, last24hBorrowing, last48hBorrowing },
+    },
   } = useSelector((state: State) => state.loans)
+
   const {
     accountPkh,
     user: { myLendingRewardsAmount, userLoansData },
@@ -114,19 +119,8 @@ export const LoansDashboard = () => {
   }, [userLoansData])
 
   // Calcuating persents of total lended and borrowed changed since last operation
-  const { lendingPersentDiff, borrowingPersentDiff } = useMemo(() => {
-    const secondLastLending = lendingChartData.at(-2) ?? {},
-      secondLastBorrowing = borrowingChartData.at(-2) ?? {}
-
-    const lendingPersentDiff = checkPlotType<SingleValueData>(secondLastLending, ['value'])
-      ? calcDiffBetweenTwoNumbersInPersentage(totalLended, secondLastLending.value)
-      : 0
-    const borrowingPersentDiff = checkPlotType<SingleValueData>(secondLastBorrowing, ['value'])
-      ? calcDiffBetweenTwoNumbersInPersentage(totalBorrowed, secondLastBorrowing.value)
-      : 0
-
-    return { lendingPersentDiff, borrowingPersentDiff }
-  }, [borrowingChartData, lendingChartData, totalBorrowed, totalLended])
+  const lending24hPersentChange = calcDiffBetweenTwoNumbersInPersentage(last24hLending, last48hLending)
+  const borrowing24hPersentChange = calcDiffBetweenTwoNumbersInPersentage(last24hBorrowing, last48hBorrowing)
 
   // calc data for gauge chart
   const { vaultRiskGaugeData, apyGaugeData } = useMemo((): {
@@ -224,10 +218,12 @@ export const LoansDashboard = () => {
                     <div className="value-wrap">
                       <CommaNumber value={totalLended} beginningText="$" className="value" />
                       <CommaNumber
-                        value={lendingPersentDiff}
-                        endingText="%"
-                        beginningText={lendingPersentDiff > 0 ? '+' : ''}
-                        className={`diff ${lendingPersentDiff ? (lendingPersentDiff > 0 ? 'up' : 'down') : 'neutral'}`}
+                        value={lending24hPersentChange}
+                        endingText="% 24h"
+                        beginningText={lending24hPersentChange > 0 ? '+' : ''}
+                        className={`diff ${
+                          lending24hPersentChange ? (lending24hPersentChange > 0 ? 'up' : 'down') : 'neutral'
+                        }`}
                       />
                     </div>
                   </div>
@@ -237,11 +233,11 @@ export const LoansDashboard = () => {
                     <div className="value-wrap">
                       <CommaNumber value={totalBorrowed} beginningText="$" className="value" />
                       <CommaNumber
-                        value={borrowingPersentDiff}
-                        endingText="%"
-                        beginningText={borrowingPersentDiff > 0 ? '+' : ''}
+                        value={borrowing24hPersentChange}
+                        endingText="% 24h"
+                        beginningText={borrowing24hPersentChange > 0 ? '+' : ''}
                         className={`diff ${
-                          borrowingPersentDiff ? (borrowingPersentDiff > 0 ? 'up' : 'down') : 'neutral'
+                          borrowing24hPersentChange ? (borrowing24hPersentChange > 0 ? 'up' : 'down') : 'neutral'
                         }`}
                       />
                     </div>
