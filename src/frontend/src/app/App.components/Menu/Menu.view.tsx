@@ -71,8 +71,11 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
     })
 
     setSelectedMainLink(selectedMainRoute?.id || 0)
+  }, [accountPkh, pathname, user.isSatellite])
+
+  useEffect(() => {
     setCanGetInitThouthand(Boolean(accountPkh && (user.myMvkTokenBalance === 0 || user.mySMvkTokenBalance === 0)))
-  }, [accountPkh, pathname, user.myMvkTokenBalance, user.mySMvkTokenBalance])
+  }, [accountPkh, user.myMvkTokenBalance, user.mySMvkTokenBalance])
 
   const [selectedMainLink, setSelectedMainLink] = useState<number>(0)
 
