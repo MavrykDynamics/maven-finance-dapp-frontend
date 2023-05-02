@@ -20,12 +20,12 @@ import {
 
 // styles
 import {
+  Button,
   ChangeNodeNodesList,
   ChangeNodeNodesListItem,
   DescrText,
   PopupContainerWrapper,
   PopupTitle,
-  Button,
 } from './SettingsPopup.style'
 
 // types
@@ -42,15 +42,17 @@ export const PopupChangeNodeView = ({ closeModal }: { closeModal: () => void }) 
     add_new_node_input: '',
   })
 
-  const handleBlur = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleBlur = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setExpandedInput(false)
-
+    const isValidRPC = await isValidRPCNode(e.target.value)
     setFormInputStatus((prev) => {
-      return { ...prev, [e.target.name]: isValidRPCNode(e.target.value) ? 'success' : 'error' }
+      return { ...prev, [e.target.name]: isValidRPC ? 'success' : 'error' }
     })
   }
 
   const confirmHandler = useCallback(() => {
+    //TODO: @maksym, we need to handle when the RPC node isn't valid, currently it doesn't. It still adds invalid nodes
+    // to the list of valid nodes. It should not. It needs to show the error in the input, and not add it to the list.
     if (inputData) {
       const newRPCNodes: Array<RPCNodeType> = [...RPC_NODES, { title: inputData, url: inputData, isUser: true }]
       dispatch(setNewRPCNodes(newRPCNodes))
