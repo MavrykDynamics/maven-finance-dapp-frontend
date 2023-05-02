@@ -23,7 +23,7 @@ import { BUTTON_SIMPLE } from 'app/App.components/Button/Button.constants'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
 import { getFeedsStorage } from 'pages/DataFeeds/DataFeeds.actions'
 
-// view
+// styles
 import { SmallInfoBlock } from 'pages/SatelliteGovernance/SatelliteGovernance.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import NewButton from 'app/App.components/Button/NewButton'
@@ -31,6 +31,7 @@ import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { EmptyContainer } from 'app/App.style'
 import { Page, PageContent } from 'styles'
 import { InfoBlockWrapper, SatellitesOverviewStyled } from './Satellites.style'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
 const Satellites = () => {
   const dispatch = useDispatch()
@@ -98,7 +99,7 @@ const Satellites = () => {
                 <>
                   <div className="top-list">
                     <GovRightContainerTitleArea>
-                      <h1>Top Satellites</h1>
+                      <H2Title>Top Satellites</H2Title>
                     </GovRightContainerTitleArea>
 
                     <Link to="/satellite-nodes">
@@ -121,7 +122,7 @@ const Satellites = () => {
                 <>
                   <div className="top-list">
                     <GovRightContainerTitleArea>
-                      <h1>Popular Feeds</h1>
+                      <H2Title>Popular Feeds</H2Title>
                     </GovRightContainerTitleArea>
 
                     <Link to="/data-feeds">
