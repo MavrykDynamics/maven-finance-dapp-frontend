@@ -24,14 +24,14 @@ import {
 import { stringFullCharsCompare } from 'utils/stringFullCharsCompare'
 
 // types
-import { VaultType } from 'utils/TypesAndInterfaces/Vaults'
+import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
 
 type Filters = Record<string, string>
 type AssetCategory = 'loanAssets' | 'collateralAssets'
 
 type Props = {
   assets: Record<AssetCategory, string[]>
-  vaultsMapper: Record<string, VaultType>
+  vaultsMapper: Record<string, LoansVaultType>
   currentVaultsIds: string[]
   setVaultsIds: (arg: string[]) => void
 }

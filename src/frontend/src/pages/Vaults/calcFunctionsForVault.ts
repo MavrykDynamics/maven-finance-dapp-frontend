@@ -227,13 +227,10 @@ export const calculateCollateralShare = (collateralAmount: number, totalAmount: 
 
 export const calculateLiquidationPrice = (
   loanOutstandingTotal: number,
-  loanTokenOracleAddress: string,
   liquidationRatio: number,
-  oracleLatestPrices: Record<string, number>,
+  loanTokenLatestPrice: number,
 ) => {
   // Solve for x, loanValue * liquidation
-
-  const loanTokenLatestPrice = oracleLatestPrices[loanTokenOracleAddress]
   const loanOutstandingInUSD = loanOutstandingTotal * loanTokenLatestPrice
   return loanOutstandingInUSD * (liquidationRatio / 1000)
 }

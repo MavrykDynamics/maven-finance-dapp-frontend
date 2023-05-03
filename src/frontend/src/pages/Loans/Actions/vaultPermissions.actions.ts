@@ -4,7 +4,6 @@ import { BatchWalletOperation } from '@taquito/taquito/dist/types/wallet/batch-o
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 import { getLoansStorage } from './getLoansData.actions'
-import { getVaultsStorage } from 'pages/Vaults/Vaults.actions'
 import { hideToaster, showToaster } from 'app/App.components/Toaster/Toaster.actions'
 
 import {
@@ -64,8 +63,7 @@ export const changeBakerAction =
         // refetch data we need
         await checkIndexerLevelAndRunDataUpdateCallback({
           callback: async () => {
-            state.vaults.isLoaded && (await dispatch(getVaultsStorage()))
-            state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
+            await dispatch(getLoansStorage())
 
             await dispatch(hideToaster())
             await dispatch(showToaster(TOASTER_SUCCESS, 'Baker changed.', ACTION_COMPLETION_MESSAGE_TEXT))
@@ -186,8 +184,7 @@ export const managePermissionsAction =
         // refetch data we need
         await checkIndexerLevelAndRunDataUpdateCallback({
           callback: async () => {
-            state.vaults.isLoaded && (await dispatch(getVaultsStorage()))
-            state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
+            await dispatch(getLoansStorage())
 
             await dispatch(hideToaster())
             await dispatch(showToaster(TOASTER_SUCCESS, 'Depositors updated.', ACTION_COMPLETION_MESSAGE_TEXT))
@@ -244,8 +241,7 @@ export const updateOperatorsAction = (callback: () => void) => async (dispatch: 
       // refetch data we need
       await checkIndexerLevelAndRunDataUpdateCallback({
         callback: async () => {
-          state.vaults.isLoaded && (await dispatch(getVaultsStorage()))
-          state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
+          await dispatch(getLoansStorage())
 
           await dispatch(hideToaster())
           await dispatch(showToaster(TOASTER_SUCCESS, 'Operators updated.', ACTION_COMPLETION_MESSAGE_TEXT))
