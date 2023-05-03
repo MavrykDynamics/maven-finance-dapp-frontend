@@ -215,7 +215,7 @@ export const CreateNewVault = ({
     }
   }
 
-  //handle vaultName input
+  //handle vaultName input TODO: mb add debounce cuz of find operation
   const handleVaultNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
     const validationStatus =
