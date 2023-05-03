@@ -20,15 +20,13 @@ import { getUserAvatar } from 'app/App.components/Avatar/Avatar.helpers'
 
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { LBHInfoBlock } from 'pages/DashboardPersonal/DashboardPersonalComponents/DashboardPersonalComponents.style'
-import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { Page } from 'styles'
 import { AccountStyledStyled, LoansDashboardStyled, TotalVolumeStyled } from './LoansDashboard.styles'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import colors from 'styles/colors'
 import { connect } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 import Icon from 'app/App.components/Icon/Icon.view'
-import { checkPlotType } from 'app/App.components/Chart/helpers/Chart.const'
-import { SingleValueData } from 'lightweight-charts'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
 export type GaugeChartStateType = {
   maxValue: number
@@ -206,9 +204,7 @@ export const LoansDashboard = () => {
           <>
             <div className="top">
               <TotalVolumeStyled>
-                <GovRightContainerTitleArea>
-                  <h2>Total Volume</h2>
-                </GovRightContainerTitleArea>
+                <H2Title>Total Volume</H2Title>
 
                 <CommaNumber value={totalLended + totalBorrowed} beginningText="$" className="total-amount" />
 
@@ -246,9 +242,7 @@ export const LoansDashboard = () => {
               </TotalVolumeStyled>
 
               <AccountStyledStyled>
-                <GovRightContainerTitleArea>
-                  <h2>Account Status</h2>
-                </GovRightContainerTitleArea>
+                <H2Title>Account Status</H2Title>
 
                 <div className="content">
                   <div className="gauge-chart">
@@ -301,9 +295,7 @@ export const LoansDashboard = () => {
             </div>
 
             <LBHInfoBlock className="position">
-              <GovRightContainerTitleArea>
-                <h2>Your Positions</h2>
-              </GovRightContainerTitleArea>
+              <H2Title>Your Positions</H2Title>
               <div className="view-markets">
                 {accountPkh ? (
                   <Link to={'/loans'}>

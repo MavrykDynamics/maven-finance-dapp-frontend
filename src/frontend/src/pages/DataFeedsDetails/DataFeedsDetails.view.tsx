@@ -41,10 +41,10 @@ import {
 } from './DataFeedsDetails.style'
 import { EmptyContainer } from 'app/App.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
-import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import colors from 'styles/colors'
 import { Chart } from 'app/App.components/Chart/Chart'
 import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.types'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
 type FeedDetailsProps = {
   feed: Feed | null
@@ -292,9 +292,7 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsPr
 
             {feedsSatellites.length ? (
               <>
-                <GovRightContainerTitleArea>
-                  <h1>Oracles data</h1>
-                </GovRightContainerTitleArea>
+                <H2Title>Oracles data</H2Title>
 
                 <div className={`oracles-list`}>
                   {feedsSatellites.map((item) => (
@@ -319,9 +317,7 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsPr
       )}
 
       {/* <UsersListWrapper className="oracle-list-wrapper">
-        <GovRightContainerTitleArea>
-          <h1>Users</h1>
-        </GovRightContainerTitleArea>
+          <H2Title>Users</H2Title>
 
         <Link to="oracles-users">
           <div className="see-all-link">

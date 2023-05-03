@@ -25,7 +25,6 @@ import { getFeedsStorage } from 'pages/DataFeeds/DataFeeds.actions'
 
 // styles
 import { SmallInfoBlock } from 'pages/SatelliteGovernance/SatelliteGovernance.style'
-import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import NewButton from 'app/App.components/Button/NewButton'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { EmptyContainer } from 'app/App.style'
@@ -98,9 +97,7 @@ const Satellites = () => {
               {allSatellitesIds.length ? (
                 <>
                   <div className="top-list">
-                    <GovRightContainerTitleArea>
-                      <H2Title>Top Satellites</H2Title>
-                    </GovRightContainerTitleArea>
+                    <H2Title>Top Satellites</H2Title>
 
                     <Link to="/satellite-nodes">
                       <NewButton kind={BUTTON_SIMPLE}>
@@ -121,9 +118,7 @@ const Satellites = () => {
               {feedsLedger.length ? (
                 <>
                   <div className="top-list">
-                    <GovRightContainerTitleArea>
-                      <H2Title>Popular Feeds</H2Title>
-                    </GovRightContainerTitleArea>
+                    <H2Title>Popular Feeds</H2Title>
 
                     <Link to="/data-feeds">
                       <NewButton kind={BUTTON_SIMPLE}>
