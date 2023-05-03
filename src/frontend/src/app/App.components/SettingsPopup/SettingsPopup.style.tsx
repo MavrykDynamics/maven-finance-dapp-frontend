@@ -207,7 +207,6 @@ export const ChangeNodeNodesListItem = styled.div<{ isSelected?: boolean }>`
     input {
       width: 100%;
       border: none;
-      padding: 0;
       padding-left: 7px;
       color: ${({ theme }) => theme.textColor};
       font-size: 16px;
@@ -292,38 +291,18 @@ export const PopupContainer = styled.div<{ show?: boolean }>`
       : ''}
 `
 
-export const PopupTitle = styled.div`
-  font-weight: 700;
-  font-size: 25px;
-  line-height: 25px;
-  color: ${({ theme }) => theme.textColor};
-  position: relative;
-
-  &.change_node {
-    margin: 0 auto;
-    width: fit-content;
-    &::before {
-      display: none;
-    }
+export const SettingsPopupWrapper = styled.div`
+  .title {
+    font-weight: 700;
+    font-size: 25px;
+    line-height: 25px;
+    color: ${({ theme }) => theme.textColor};
+    text-align: center;
   }
 
-  &::before {
-    content: '';
-    width: 77px;
-    height: 4px;
-    background: #503eaa;
-    position: absolute;
-    bottom: -10px;
-    left: 0;
-  }
-
-  @media (max-width: 500px) {
-    font-size: 20px;
-    /* text-align: center; */
-
-    &::before {
-      height: 2px;
-    }
+  .buttons-wrapper {
+    display: flex;
+    column-gap: 7px;
   }
 `
 

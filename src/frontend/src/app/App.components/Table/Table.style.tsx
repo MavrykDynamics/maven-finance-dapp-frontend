@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components'
+import { DEFAULT_FOR_OVERLAP } from 'styles/constants';
 import { MavrykTheme } from 'styles/interfaces'
 
 export const TableScrollable = styled.div<{ theme: MavrykTheme; bodyHeight: number }>`
@@ -13,7 +14,7 @@ export const TableScrollable = styled.div<{ theme: MavrykTheme; bodyHeight: numb
     position: sticky;
     background-color: ${({ theme }) => theme.containerColor};
     top: 0;
-    z-index: 100;
+    z-index: ${DEFAULT_FOR_OVERLAP};
   }
 
   &.treasury-table {
