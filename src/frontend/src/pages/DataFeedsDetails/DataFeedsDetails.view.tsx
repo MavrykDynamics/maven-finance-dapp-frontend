@@ -36,8 +36,8 @@ import {
   DataFeedInfoBlock,
   DataFeedsStyled,
   DataFeedValueText,
-  FeedInfo,
   FeedDetailsChartWrapper,
+  FeedInfo,
 } from './DataFeedsDetails.style'
 import { EmptyContainer } from 'app/App.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
