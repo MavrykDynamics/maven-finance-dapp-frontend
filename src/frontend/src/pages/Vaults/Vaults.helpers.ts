@@ -33,11 +33,10 @@ type VaultsStorageProps = {
   feeds: State['dataFeeds']['feedsLedger']
   accountPkh?: string
   dipDupTokens: State['tokens']['dipDupTokens']
-  oracleLatestPrices: Record<string, number>
 }
 
 export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
-  const { lendingController, feeds, accountPkh, dipDupTokens, oracleLatestPrices } = storage
+  const { lendingController, feeds, accountPkh, dipDupTokens } = storage
   if (!lendingController.vaults.length)
     return {
       permissinedVaultsIds: [],
@@ -153,9 +152,10 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
 
       // Calculating Fee of the vault
       const accruedInterest =
-          borrowedAmount === 0
-              ? currentLoanInterest
-              : currentLoanInterest + calculateAccruedInterest(item.loan_outstanding_total, item.borrow_index, item.loan_token.borrow_index) /
+        borrowedAmount === 0
+          ? currentLoanInterest
+          : currentLoanInterest +
+            calculateAccruedInterest(item.loan_outstanding_total, item.borrow_index, item.loan_token.borrow_index) /
               FIXED_POINT_ACCURACY
 
       const collateralRatio = calcCollateralRatio(vaultCollateral.totalRow.amount, borrowedAmount, vaultAsset.rate)
@@ -172,9 +172,8 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
       const liquidationPrice = item.loan_token?.oracle_id
         ? calculateLiquidationPrice(
             item.loan_outstanding_total / 10 ** item.loan_decimals,
-            item.loan_token.oracle_id,
             lendingController.liquidation_ratio,
-            oracleLatestPrices,
+            vaultAsset.rate,
           )
         : 0
 
@@ -187,28 +186,27 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
           ? WHITELIST_USERS
           : NONE_USER
 
-      const gotStatusByCollateralRatio = getStatusByCollateralRatio(collateralRatio)
-
       // Need one source to get status like vaults or loans.
       // Because at the moment the data is different for the same items
 
-      const status =
-        gotStatusByCollateralRatio !== 'no status'
-          ? gotStatusByCollateralRatio
-          : item.loan_token?.oracle_id
-          ? vaultStatusChecker({
-              currentBlockLevel: currentBlock?.level ?? 0,
-              liquidationEndLevel: item.liquidation_end_level,
-              markedForLiquidationLevel: item.marked_for_liquidation_level,
-              liquidationDelayInMinutes: lendingController.liquidation_delay_in_minutes,
-              loanOutstandingTotal: item.loan_outstanding_total / 10 ** item.loan_decimals,
-              loanTokenOracleAddress: item.loan_token.oracle_id,
-              liquidationRatio: lendingController.liquidation_ratio,
-              vaultCollateralTokens: normalizeCollateralTokens,
-              collateralRatio: lendingController.collateral_ratio,
-              oracleLatestPrices,
-            })
-          : 'no status'
+      const status = getStatusByCollateralRatio(collateralRatio)
+
+      // gotStatusByCollateralRatio !== 'no status'
+      //   ? gotStatusByCollateralRatio
+      //   : item.loan_token?.oracle_id
+      //   ? vaultStatusChecker({
+      //       currentBlockLevel: currentBlock?.level ?? 0,
+      //       liquidationEndLevel: item.liquidation_end_level,
+      //       markedForLiquidationLevel: item.marked_for_liquidation_level,
+      //       liquidationDelayInMinutes: lendingController.liquidation_delay_in_minutes,
+      //       loanOutstandingTotal: item.loan_outstanding_total / 10 ** item.loan_decimals,
+      //       loanTokenOracleAddress: item.loan_token.oracle_id,
+      //       liquidationRatio: lendingController.liquidation_ratio,
+      //       vaultCollateralTokens: normalizeCollateralTokens,
+      //       collateralRatio: lendingController.collateral_ratio,
+      //       oracleLatestPrices,
+      //     })
+      //   : 'no status'
 
       const creationTimestamp = item.vault.creation_timestamp ? String(item.vault.creation_timestamp) : undefined
 

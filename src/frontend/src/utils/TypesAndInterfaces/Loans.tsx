@@ -7,9 +7,9 @@ import {
   VAULT_ALLOWANCE_ANY,
   WHITELIST_USERS,
 } from 'pages/Loans/Loans.const'
-import { normalizeLoans } from 'pages/Loans/Loans.helpers'
 import { Lending_Controller } from 'utils/generated/graphqlTypes'
 import { TokenType } from './General'
+import { normalizeLoans } from 'pages/Loans/Loans.normalizer'
 
 export type LoansGQL = Omit<Lending_Controller, '__typename'>
 export type LoansStorage = Awaited<ReturnType<typeof normalizeLoans>>
@@ -117,14 +117,11 @@ export type LoanMarketType = {
     tokenSymbol: string | undefined
   }>
   lendingItem: LendingItemType
-  myBorrowingList: Array<LoansVaultType>
   marketCollateralChartData: Array<AreaChartPlotType>
   marketLiquidityChartData: Array<AreaChartPlotType>
   utilisationRate: number
   borrowers: number
   suppliers: number
-  loanTokenTotalCollaterals: number
-  loanTokenVaultsTotalBorrowed: number
   totalBorrowed: number
   availableLiquidity: number
   totalLended: number

@@ -1,10 +1,12 @@
-import { GET_LOANS_STORAGE, CLEAR_LOANS_STORAGE } from 'pages/Loans/Actions/getLoansData.actions'
+import { GET_LOANS_STORAGE } from 'pages/Loans/Actions/getLoansData.actions'
 import { LoansChartsDataType, LoansStorage } from 'utils/TypesAndInterfaces/Loans'
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
+import { VaultsStorage } from 'utils/TypesAndInterfaces/Vaults'
 
 export interface LoansState {
   loanTokens: LoansStorage['loanTokens']
   chartsData: LoansChartsDataType
+  vaults: VaultsStorage
   loansControllerAddress: string
   isDataLoaded: boolean
   config: {
@@ -14,6 +16,12 @@ export interface LoansState {
 
 const loansDefaultState: LoansState = {
   loanTokens: [],
+  vaults: {
+    permissinedVaultsIds: [],
+    myVaultsIds: [],
+    allVaultsIds: [],
+    vaultsMapper: {},
+  },
   loansControllerAddress: '',
   chartsData: {
     borrowingChartData: [],
@@ -39,11 +47,6 @@ export function loans(state = loansDefaultState, action: Action) {
         ...state,
         ...action.loansStorage,
         isDataLoaded: true,
-      }
-    case CLEAR_LOANS_STORAGE:
-      return {
-        ...state,
-        ...loansDefaultState,
       }
     default:
       return state

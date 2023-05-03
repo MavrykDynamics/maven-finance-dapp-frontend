@@ -50,7 +50,13 @@ const CHART_COLORS = {
 
 export const Loans = () => {
   const dispatch = useDispatch()
-  const { isDataLoaded, loanTokens, chartsData } = useSelector((state: State) => state.loans)
+  const {
+    isDataLoaded,
+    loanTokens,
+    chartsData,
+    vaults: { allVaultsIds, vaultsMapper },
+  } = useSelector((state: State) => state.loans)
+
   const { themeSelected } = useSelector((state: State) => state.preferences)
   const { accountPkh } = useSelector((state: State) => state.wallet)
 
@@ -144,12 +150,10 @@ export const Loans = () => {
             <H2Title>Markets</H2Title>
             {loanTokens.map((loanAsset) => {
               const {
-                loanTokenData: { name, symbol, icon, rate },
+                loanTokenData: { name, symbol, icon, rate, gqlName },
                 utilisationRate,
                 availableLiquidity,
                 borrowers,
-                loanTokenTotalCollaterals,
-                loanTokenVaultsTotalBorrowed,
                 totalBorrowed,
                 suppliers,
                 totalLended,
@@ -157,6 +161,25 @@ export const Loans = () => {
                 totalFeesEarned,
                 lendingAPY,
               } = loanAsset
+
+              const { loanTokenTotalCollaterals, loanTokenVaultsTotalBorrowed } = allVaultsIds.reduce<{
+                loanTokenTotalCollaterals: number
+                loanTokenVaultsTotalBorrowed: number
+              }>(
+                (acc, vaultId) => {
+                  const vault = vaultsMapper[vaultId]
+
+                  if (vault.borrowedAsset.gqlName !== gqlName) return acc
+
+                  acc.loanTokenTotalCollaterals += vault.collateralBalance
+                  acc.loanTokenVaultsTotalBorrowed += vault.borrowedAmount * vault.borrowedAsset.rate
+                  return acc
+                },
+                {
+                  loanTokenTotalCollaterals: 0,
+                  loanTokenVaultsTotalBorrowed: 0,
+                },
+              )
 
               const totalCorratealColor =
                 loanTokenTotalCollaterals && loanTokenVaultsTotalBorrowed
