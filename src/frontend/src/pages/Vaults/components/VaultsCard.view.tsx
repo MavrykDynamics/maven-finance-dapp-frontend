@@ -106,6 +106,7 @@ export const VaultsCard = (props: Props) => {
   } = props
 
   const { isActionActive } = useSelector((state: State) => state.loading)
+  const { DAOFee } = useSelector((state: State) => state.loans.config)
 
   const { openLiquidateVaultPopup } = useContext(loansPopupsContext)
 
@@ -304,13 +305,13 @@ export const VaultsCard = (props: Props) => {
   return (
     <>
       {(vaultTab === vaultTabs.ALL || vaultTab === vaultTabs.MY) && (
-        <BorrowingExpandCard {...props} headerSufix={headerSufix} DAOFee={props.daoFee} isOwner={isOwner}>
+        <BorrowingExpandCard {...props} headerSufix={headerSufix} DAOFee={DAOFee} isOwner={isOwner}>
           {!isOwner && generalExpand}
         </BorrowingExpandCard>
       )}
 
       {vaultTab === vaultTabs.PERMISSIONED && (
-        <BorrowingExpandCard {...props} headerSufix={headerSufix} DAOFee={props.daoFee} />
+        <BorrowingExpandCard {...props} headerSufix={headerSufix} DAOFee={DAOFee} />
       )}
     </>
   )

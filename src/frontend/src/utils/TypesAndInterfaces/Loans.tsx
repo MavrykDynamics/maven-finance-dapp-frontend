@@ -107,11 +107,11 @@ export type LoansVaultType = {
   depositors: Array<string>
   deporsitorsFlag: DepositorsFlagType
 
+  // Additional fields for vaults page
   status: string
   ownerId: string
   creationTimestamp?: string
   liquidationMax: number
-  daoFee: number
   liquidationReward: number
   adminLiquidateFee: number
   liquidationPrice?: number
