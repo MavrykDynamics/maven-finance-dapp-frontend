@@ -25,6 +25,7 @@ import {
   TableScrollable,
 } from 'app/App.components/Table'
 import { Plug } from 'app/App.components/Chart/Chart.style'
+import { silverColor } from 'styles'
 
 type Props = {
   treasury: TreasuryType[number]
@@ -72,7 +73,14 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
 
         <div>
           <div className="info-block">
-            <p className="text">TVL</p>
+            <p className="text">
+              TVL
+              <CustomTooltip
+                iconId="info"
+                defaultStrokeColor={silverColor}
+                text="Only tokens whitelisted by the DAO are shown in the treasuries. This is because the DAO can only interact with whitelisted tokens."
+              />
+            </p>
             <p className="value">
               <CommaNumber beginningText="$" value={treasury.treasuryTVL} />
             </p>
