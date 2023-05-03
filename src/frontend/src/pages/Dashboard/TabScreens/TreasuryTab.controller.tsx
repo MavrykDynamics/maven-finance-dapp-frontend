@@ -24,6 +24,8 @@ import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
 import { BlockName, StatBlock } from '../Dashboard.style'
 import { TabWrapperStyled, TreasuryContentStyled, TreasuryVesting } from './DashboardTabs.style'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import { silverColor } from 'styles'
 
 export const TreasuryTab = ({ isLoading }: { isLoading: boolean }) => {
   const { treasuryStorage } = useSelector((state: State) => state.treasury)
@@ -83,7 +85,14 @@ export const TreasuryTab = ({ isLoading }: { isLoading: boolean }) => {
           </div>
           <div className="container">
             <div>
-              <BlockName>Treasury Assets</BlockName>
+              <BlockName>
+                Treasury Assets
+                <CustomTooltip
+                  iconId="info"
+                  defaultStrokeColor={silverColor}
+                  text="Only tokens whitelisted by the DAO are shown in the treasuries. This is because the DAO can only interact with whitelisted tokens."
+                />
+              </BlockName>
 
               <TableScrollable bodyHeight={90} className="treasury-table scroll-block">
                 <Table>
