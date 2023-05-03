@@ -1,4 +1,4 @@
-import { z, ZodSchema, objectOutputType, ZodNumber, ZodString, ZodType, ZodTypeAny } from 'zod'
+import { z, ZodSchema, objectOutputType, ZodNumber, ZodType, ZodTypeAny } from 'zod'
 
 export type APIReturnType<T> = objectOutputType<
   { code: ZodNumber; status: ZodType<'ok' | 'error'>; data: ZodType<T> },
