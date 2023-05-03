@@ -33,6 +33,7 @@ import { useEffect, useMemo } from 'react'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import colors from 'styles/colors'
 import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.types'
+import { CURRENCY_AMOUNT_DATE_TOOLTIP } from 'app/App.components/Chart/Tooltips/ChartTooltip'
 
 const CHART_SETTINGS = {
   width: 450,
@@ -96,6 +97,7 @@ export const Loans = () => {
           colors={CHART_COLORS}
           settings={CHART_SETTINGS}
           numberOfItemsToDisplay={3}
+          tooltipName={CURRENCY_AMOUNT_DATE_TOOLTIP}
           tooltipAsset="$"
         />
         <div className="chart-interval">7 Days</div>
@@ -115,6 +117,7 @@ export const Loans = () => {
           colors={CHART_COLORS}
           settings={CHART_SETTINGS}
           numberOfItemsToDisplay={3}
+          tooltipName={CURRENCY_AMOUNT_DATE_TOOLTIP}
           tooltipAsset="$"
         />
         <div className="chart-interval">7 Days</div>
