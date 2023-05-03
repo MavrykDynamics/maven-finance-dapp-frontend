@@ -2,7 +2,7 @@
 import type { ContractAddressesState } from '../reducers/contractAddresses'
 import type { AddressesGraphQl } from '../utils/TypesAndInterfaces/Addresses'
 import { Dipdup_Token_Metadata, M_Token } from 'utils/generated/graphqlTypes'
-import { MichelsonType, unpackDataBytes } from '@taquito/michel-codec'
+import { MichelsonType, unpackDataBytes, decodePublicKeyHashBytes } from '@taquito/michel-codec'
 
 export function normalizeAddressesStorage(storage: AddressesGraphQl): ContractAddressesState {
   return {
@@ -68,10 +68,11 @@ const getAddressForDecoding = (address: string) => {
 const transformKeyHashWithTzPrefix = (keyHash: string) => {
   // TODO it is not a better way, but it will be working for tz address.
   // I am searching new solution for it.
-  const tzPrefix = '050a000000160000'
+  const prefix = '050a'
+  const publicKeyLength = '000000160000'
   const keyHashPrefixLength = 18
 
-  return tzPrefix + keyHash.slice(keyHashPrefixLength)
+  return prefix + publicKeyLength + keyHash.slice(keyHashPrefixLength)
 }
 
 export function convertBytesAddressToAddress(addressInBytes: string): string {
