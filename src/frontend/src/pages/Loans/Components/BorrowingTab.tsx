@@ -13,8 +13,8 @@ import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { BorrowingExpandCard } from './BorrowindExpandCard'
 import Checkbox from 'app/App.components/Checkbox/Checkbox.view'
 
-import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { LoansTabStyled, NoItemsInTabStyled, VaultsList } from './LoansComponents.style'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
 type BorrowingTabPropsType = {
   borrowingItems: Array<LoansVaultType>
@@ -45,9 +45,7 @@ export const BorrowingTab = ({
 
   return (
     <LoansTabStyled>
-      <GovRightContainerTitleArea>
-        <h2>My Borrowing</h2>
-      </GovRightContainerTitleArea>
+      <H2Title>My Borrowing</H2Title>
 
       {vaults.length ? (
         <>
