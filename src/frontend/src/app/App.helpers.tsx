@@ -56,12 +56,33 @@ export function normalizeMTokens(storage: { m_token: M_Token }) {
   return storage?.m_token || []
 }
 
+const getAddressForDecoding = (address: string) => {
+  switch (address.length) {
+    case 58: // 58 - keyHash length
+      return transformKeyHashWithTzPrefix(address)
+    default:
+      return address
+  }
+}
+
+const transformKeyHashWithTzPrefix = (keyHash: string) => {
+  // TODO it is not a better way, but it will be working for tz address.
+  // I am searching new solution for it.
+  const tzPrefix = '050a000000160000'
+  const keyHashPrefixLength = 18
+
+  return tzPrefix + keyHash.slice(keyHashPrefixLength)
+}
+
 export function convertBytesAddressToAddress(addressInBytes: string): string {
   try {
     const addressType: MichelsonType = {
       prim: 'address',
     }
-    const formattedBytes = { bytes: addressInBytes }
+
+    const address = getAddressForDecoding(addressInBytes)
+
+    const formattedBytes = { bytes: address }
     const unpackedBytes = unpackDataBytes(formattedBytes, addressType)
     const jsonString = JSON.parse(JSON.stringify(unpackedBytes))
     return jsonString['string']
