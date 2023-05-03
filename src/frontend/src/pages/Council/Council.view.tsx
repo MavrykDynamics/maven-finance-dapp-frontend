@@ -312,7 +312,7 @@ export function CouncilView({
                             key={action.id}
                             actionType={action.actionType}
                             signersCount={action.signersCount}
-                            numCouncilMembers={members.length}
+                            numCouncilMembers={action.councilSize}
                             councilId={action.councilId}
                           />
                         )

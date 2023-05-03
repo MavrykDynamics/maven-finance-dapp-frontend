@@ -48,6 +48,7 @@ export function normalizeCouncilActions(
       signersCount: item.signers_count,
       startDatetime: item.start_datetime ?? '',
       parameters: item.parameters,
+      councilSize: item.council_size_snapshot
     }
 
     acc.actionsMapper[action.id] = action
