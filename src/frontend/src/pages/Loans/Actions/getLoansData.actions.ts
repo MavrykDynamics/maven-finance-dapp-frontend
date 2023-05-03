@@ -1,7 +1,7 @@
 import { AppDispatch, GetState } from 'app/App.controller'
 import { normalizeLoans } from '../Loans.normalizer'
 import { getXTZBakers, getCollateralTokens } from '../LoansFethcers'
-import { normalizeVaultsStorage } from 'pages/Vaults/Vaults.helpers'
+import { normalizeVaultsStorage } from 'pages/Vaults/Vaults.normalizer'
 import { fetchFromIndexer } from 'gql/fetchGraphQL'
 import {
   AVALIABLE_COLLATERALS_QUERY,

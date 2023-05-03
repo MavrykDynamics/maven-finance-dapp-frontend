@@ -1,17 +1,18 @@
 import { GET_LOANS_STORAGE } from 'pages/Loans/Actions/getLoansData.actions'
-import { LoansChartsDataType, LoansStorage } from 'utils/TypesAndInterfaces/Loans'
+import { LoansChartsDataType, LoansStorage, VaultsStorage } from 'utils/TypesAndInterfaces/Loans'
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
-import { VaultsStorage } from 'utils/TypesAndInterfaces/Vaults'
 
 export interface LoansState {
   loanTokens: LoansStorage['loanTokens']
-  chartsData: LoansChartsDataType
   vaults: VaultsStorage
+
+  chartsData: LoansChartsDataType
   loansControllerAddress: string
-  isDataLoaded: boolean
   config: {
     DAOFee: number
   }
+
+  isDataLoaded: boolean
 }
 
 const loansDefaultState: LoansState = {
