@@ -18,7 +18,7 @@ export const SET_TREASURY_STORAGE = 'SET_TREASURY_STORAGE'
 export const fillTreasuryStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
   try {
     const {
-      tokens: { tokensPrices },
+      tokens: { tokensPrices, whitelistTokens },
     } = getState()
     const MVK_EXCHANGE_RATE = tokensPrices['mvk'] ?? 0
 
@@ -44,6 +44,7 @@ export const fillTreasuryStorage = () => async (dispatch: AppDispatch, getState:
       convertedStorage.treasury,
       MVK_EXCHANGE_RATE,
       tokensPrices,
+      whitelistTokens,
     )
 
     dispatch({

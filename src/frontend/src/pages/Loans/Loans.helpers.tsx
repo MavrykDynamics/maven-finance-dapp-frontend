@@ -22,7 +22,8 @@ import { assetDecimalsToShow } from './Loans.const'
 const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000
 
 // GET ASSET METADATA
-export const isTezosAsset = (tokenName: string) => tokenName === 'tez' || tokenName === 'tezos'
+export const isTezosAsset = (tokenName: string) =>
+  tokenName.toLowerCase() === 'tez' || tokenName.toLowerCase() === 'tezos' || tokenName.toLowerCase() === 'xtz'
 
 export const getAssetMetadata = ({
   tokenName,
