@@ -2,7 +2,7 @@
 import type { ContractAddressesState } from '../reducers/contractAddresses'
 import type { AddressesGraphQl } from '../utils/TypesAndInterfaces/Addresses'
 import { Dipdup_Token_Metadata, M_Token } from 'utils/generated/graphqlTypes'
-import { MichelsonType, unpackDataBytes, decodePublicKeyHashBytes } from '@taquito/michel-codec'
+import { MichelsonType, unpackDataBytes } from '@taquito/michel-codec'
 
 export function normalizeAddressesStorage(storage: AddressesGraphQl): ContractAddressesState {
   return {
