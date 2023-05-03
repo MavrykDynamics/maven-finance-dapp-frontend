@@ -161,9 +161,14 @@ export const normalizeLoans = async ({
   userAddres?: string
   feeds: State['dataFeeds']['feedsLedger']
 }) => {
+  const interestTreasuryShare = calcWithoutDecimals(storage?.interest_treasury_share, storage.decimals)
+  const interestRateDecimals = storage?.interest_rate_decimals ?? 0
+  const config = {
+    DAOFee: (storage?.minimum_loan_fee_pct ?? 0) / 100,
+    loansControllerAddress: storage?.address,
+  }
+
   try {
-    const interestTreasuryShare = calcWithoutDecimals(storage?.interest_treasury_share, storage.decimals)
-    const interestRateDecimals = storage?.interest_rate_decimals ?? 0
     const loanTokens = await storage?.loan_tokens?.reduce<Promise<Array<LoanMarketType>>>(
       async (promiseAcc, loanToken) => {
         const acc: LoanMarketType[] = await promiseAcc
@@ -265,22 +270,16 @@ export const normalizeLoans = async ({
     )
 
     return {
-      loansControllerAddress: storage?.address,
       loanTokens,
       chartsData: getChartData(storage?.history_data, dipDupData, feeds),
-      config: {
-        DAOFee: (storage?.minimum_loan_fee_pct ?? 0) / 100,
-      },
+      config,
     }
   } catch (e) {
     console.log('normalizeLoans error:', e)
     return {
-      loansControllerAddress: storage?.address,
       chartsData: getChartData(storage?.history_data, dipDupData, feeds),
       loanTokens: [],
-      config: {
-        DAOFee: (storage?.minimum_loan_fee_pct ?? 0) / 100,
-      },
+      config,
     }
   }
 }

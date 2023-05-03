@@ -1,4 +1,7 @@
 import { AppDispatch, GetState } from 'app/App.controller'
+import { normalizeLoans } from '../Loans.normalizer'
+import { getXTZBakers, getCollateralTokens } from '../LoansFethcers'
+import { normalizeVaultsStorage } from 'pages/Vaults/Vaults.helpers'
 import { fetchFromIndexer } from 'gql/fetchGraphQL'
 import {
   AVALIABLE_COLLATERALS_QUERY,
@@ -8,14 +11,11 @@ import {
   LOANS_QUERY_NAME,
   LOANS_QUERY_VARIABLE,
 } from 'gql/queries/getLoansStorage'
-import { getXTZBakers, getCollateralTokens } from '../LoansFethcers'
-import { normalizeLoans } from '../Loans.normalizer'
 import {
   VAULTS_STORAGE_QUERY,
   VAULTS_STORAGE_QUERY_NAME,
   VAULTS_STORAGE_QUERY_VARIABLE,
 } from 'gql/queries/getVaultsStorage'
-import { normalizeVaultsStorage } from 'pages/Vaults/Vaults.helpers'
 
 export const GET_LOANS_STORAGE = 'GET_LOANS_STORAGE'
 export const GET_VAULTS_STORAGE = 'GET_VAULTS_STORAGE'
@@ -32,7 +32,6 @@ export const getLoansStorage = () => async (dispatch: AppDispatch, getState: Get
     const [marketsStorage, vaultsStorage] = await Promise.all([
       fetchFromIndexer(LOANS_QUERY, LOANS_QUERY_NAME, LOANS_QUERY_VARIABLE),
       fetchFromIndexer(VAULTS_STORAGE_QUERY, VAULTS_STORAGE_QUERY_NAME, VAULTS_STORAGE_QUERY_VARIABLE),
-      // getOracleLatestPrices(lendingController.vaults),
     ])
 
     const normalizedLoansStorage = await normalizeLoans({
