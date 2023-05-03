@@ -14,7 +14,7 @@ import {
   isTezosAsset,
 } from 'pages/Loans/Loans.helpers'
 import { getUserBalanceForLoanAsset } from 'pages/Loans/LoansFethcers'
-import { calcWithoutDecimals, calcWithoutMu, convertNumberForClient } from 'utils/calcFunctions'
+import { convertNumberForClient } from 'utils/calcFunctions'
 import { calculateVaultMaxLiquidationAmount, calculateLiquidationPrice } from './calcFunctionsForVault'
 
 type VaultsStorageProps = {
