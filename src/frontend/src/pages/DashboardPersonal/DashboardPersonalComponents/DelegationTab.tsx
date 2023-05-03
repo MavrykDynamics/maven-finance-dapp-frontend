@@ -43,7 +43,8 @@ const DelegationTab = () => {
             kind={BUTTON_PRIMARY}
             form={BUTTON_WIDE}
             onClick={handleDistributeRewards}
-            disabled={myAvailableSatelliteRewards === 0}
+            // TODO:  we are waiting new Query for getting proposals
+            disabled={true || myAvailableSatelliteRewards === 0}
           >
             <Icon id="loans" />
             Distribute Gov. Rewards

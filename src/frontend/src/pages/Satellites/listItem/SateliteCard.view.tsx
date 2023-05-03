@@ -120,7 +120,8 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
           kind={BUTTON_PRIMARY}
           form={BUTTON_WIDE}
           onClick={distributeRewardsCallback}
-          disabled={myAvailableSatelliteRewards === 0 || isActionActive}
+          // TODO:  we are waiting new Query for getting proposals
+          disabled={true || myAvailableSatelliteRewards === 0 || isActionActive}
         >
           <Icon id="commision" />
           Distribute Rewards
