@@ -18,7 +18,7 @@ import {
   vaultsPathname,
   vaultsFilters,
   COLLATERAL_NAME,
-  LOAN_NAME,
+  BORROWED_NAME,
   ALL_VAULTS_FILTER,
 } from '../Vaults.consts'
 import { stringFullCharsCompare } from 'utils/stringFullCharsCompare'
@@ -50,7 +50,7 @@ export const VaultsSearchFilter = ({ assets: assetSymbols, vaultsMapper, current
   } = qs.parse(search, { ignoreQueryPrefix: true })
 
   const preparedCollateralAssets = assetSymbols.collateralAssets.map((asset) => `${COLLATERAL_NAME}, ${asset}`)
-  const preparedLoanAssets = assetSymbols.loanAssets.map((asset) => `${LOAN_NAME}, ${asset}`)
+  const preparedLoanAssets = assetSymbols.loanAssets.map((asset) => `${BORROWED_NAME}, ${asset}`)
   const preparedAssets = [ALL_VAULTS_FILTER].concat(preparedCollateralAssets).concat(preparedLoanAssets)
 
   const filterDdItems = useMemo(() => preparedAssets.map((item) => getDdItem(item)), [preparedAssets])
