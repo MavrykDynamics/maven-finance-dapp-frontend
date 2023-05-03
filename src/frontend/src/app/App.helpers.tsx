@@ -59,13 +59,13 @@ export function normalizeMTokens(storage: { m_token: M_Token }) {
 const getAddressForDecoding = (address: string) => {
   switch (address.length) {
     case 58: // 58 - keyHash length
-      return transformKeyHashWithTzPrefix(address)
+      return transformKeyHashWithPrefix(address)
     default:
       return address
   }
 }
 
-const transformKeyHashWithTzPrefix = (keyHash: string) => {
+const transformKeyHashWithPrefix = (keyHash: string) => {
   // TODO it is not a better way, but it will be working for tz address.
   // I am searching new solution for it.
   const prefix = '050a'
