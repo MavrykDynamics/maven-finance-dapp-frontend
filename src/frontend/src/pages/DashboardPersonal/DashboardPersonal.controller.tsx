@@ -7,7 +7,7 @@ import { State } from 'reducers'
 
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { claimAllRewardsAction } from './DashboardPersonal.actions'
-import { updateUserData } from 'reducers/actions/user.actions'
+import { MVK_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL, XTZ_TOKEN_SYMBOL, updateUserData } from 'reducers/actions/user.actions'
 import { getEmergencyGovernanceStorage } from 'pages/EmergencyGovernance/EmergencyGovernance.actions'
 import {
   isValidPersonalDashboardTabId,
@@ -54,10 +54,7 @@ const DashboardPersonal = () => {
   const {
     accountPkh,
     user: {
-      myMvkTokenBalance,
-      mySMvkTokenBalance,
-      myXTZTokenBalance,
-      mytzBTCTokenBalance,
+      userTokens,
       availableDoormanRewards: { myAvailableDoormanRewards },
       availableSatellitesRewards: { myAvailableSatelliteRewards },
       availableFarmRewards,
@@ -110,11 +107,24 @@ const DashboardPersonal = () => {
     lendingIncome: availableLoansRewards,
   }
 
+  const userTokensList = Object.values(userTokens)
+  const mostSuppliedUserTokenSymbol = userTokensList.reduce((acc, { symbol, balance }) => {
+    if (symbol === MVK_TOKEN_SYMBOL || symbol === SMVK_TOKEN_SYMBOL || symbol === XTZ_TOKEN_SYMBOL) return acc
+    return Number(userTokens[acc]?.balance ?? 0) > Number(balance) ? acc : symbol
+  }, '')
+
   const walletData = {
-    xtzAmount: myXTZTokenBalance,
-    sMVKAmount: mySMvkTokenBalance,
-    notsMVKAmount: myMvkTokenBalance,
-    tzBTCAmount: mytzBTCTokenBalance,
+    xtzAmount: userTokens[XTZ_TOKEN_SYMBOL].balance,
+    sMVKAmount: userTokens[SMVK_TOKEN_SYMBOL].balance,
+    MVKAmount: userTokens[MVK_TOKEN_SYMBOL].balance,
+    ...(mostSuppliedUserTokenSymbol
+      ? {
+          mostSuppliedUserToken: {
+            name: userTokens[mostSuppliedUserTokenSymbol].name,
+            amount: userTokens[mostSuppliedUserTokenSymbol].balance,
+          },
+        }
+      : {}),
   }
 
   const activeTab = useMemo(() => (isValidPersonalDashboardTabId(tabId) ? tabId : PORTFOLIO_TAB_ID), [tabId])

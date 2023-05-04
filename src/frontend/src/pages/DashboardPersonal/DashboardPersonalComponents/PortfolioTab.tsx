@@ -27,9 +27,9 @@ import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
 type PortfolioTabProps = {
   xtzAmount: number
-  tzBTCAmount: number
   sMVKAmount: number
-  notsMVKAmount: number
+  MVKAmount: number
+  mostSuppliedUserToken?: { amount: number; name: string }
   isUserLoansLoading: boolean
 }
 
@@ -41,16 +41,19 @@ const TOGGLE_VALUES: TabItem[] = [
   { id: 6, text: 'All', active: false },
 ]
 
-const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUserLoansLoading }: PortfolioTabProps) => {
+const PortfolioTab = ({
+  xtzAmount,
+  mostSuppliedUserToken,
+  sMVKAmount,
+  MVKAmount,
+  isUserLoansLoading,
+}: PortfolioTabProps) => {
   const { secondaryTabId } = useParams<{ secondaryTabId: string }>()
   const portfolioActiveTab = useMemo(
     () => (isValidPersonalDashboardSecondaryTabId(secondaryTabId) ? secondaryTabId : PORTFOLIO_LENDING_TAB_ID),
     [secondaryTabId],
   )
 
-  const {
-    tokensPrices: { mvk: mvkExchangeRate = 0 },
-  } = useSelector((state: State) => state.tokens)
   const {
     user: { userLoansData, availableLoansRewards },
     accountPkh,
@@ -108,7 +111,7 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
         <div className="wallet-info">
           <div className="name">MVK Not Staked</div>
           <div className="value">
-            <CommaNumber value={notsMVKAmount} />
+            <CommaNumber value={MVKAmount} />
             <Link to={accountPkh ? '/staking' : '#'}>
               <Button kind={BUTTON_SIMPLE} disabled={!accountPkh}>
                 Stake
@@ -131,17 +134,14 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
             </a>
           </div>
         </div>
-        <div className="wallet-info">
-          <div className="name">tzBTC in Wallet</div>
-          <div className="value">
-            <CommaNumber value={tzBTCAmount} />
-            <Link to={accountPkh ? '/loans' : '#'}>
-              <Button kind={BUTTON_SIMPLE} disabled={!accountPkh}>
-                Borrow
-              </Button>
-            </Link>
+        {mostSuppliedUserToken ? (
+          <div className="wallet-info">
+            <div className="name">{mostSuppliedUserToken.name} in Wallet</div>
+            <div className="value">
+              <CommaNumber value={mostSuppliedUserToken.amount} />
+            </div>
           </div>
-        </div>
+        ) : null}
       </PortfolioWalletStyled>
 
       <div className="tabs-switchers">

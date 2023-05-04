@@ -73,9 +73,6 @@ const SatellitesVotingHistory = ({
 
 export const SatelliteDetails = () => {
   const { satelliteId } = useParams<{ satelliteId: string }>()
-  const {
-    user: { mySMvkTokenBalance },
-  } = useSelector((state: State) => state.wallet)
   const { satelliteMapper } = useSelector((state: State) => state.satellites)
   const currentSatellite = satelliteMapper[satelliteId]
   if (!currentSatellite) return <Redirect to={'/currentSatellite-nodes'} />

@@ -43,6 +43,7 @@ import {
   SatelliteCardButtons,
   SatelliteCardRow,
 } from './SatelliteCard.style'
+import { SMVK_TOKEN_SYMBOL } from 'reducers/actions/user.actions'
 
 type SatelliteListItemProps = {
   satellite: SatelliteRecordType
@@ -66,7 +67,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
     accountPkh,
     user: {
       isSatellite,
-      mySMvkTokenBalance,
+      userTokens,
       satelliteMvkIsDelegatedTo,
       availableSatellitesRewards: { myAvailableSatelliteRewards },
     },
@@ -82,7 +83,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
 
   const freesMVKSpace = Math.max(satellite.sMvkBalance * satellite.delegationRatio - satellite.totalDelegatedAmount, 0)
   const isUserDelegatedToThisSatellite = satellite.address === satelliteMvkIsDelegatedTo
-  const balanceOver1SMvk = mySMvkTokenBalance >= 1
+  const balanceOver1SMvk = userTokens[SMVK_TOKEN_SYMBOL].balance >= 1
   const { currentlyRegistered } = satellite
 
   // Latest vote data

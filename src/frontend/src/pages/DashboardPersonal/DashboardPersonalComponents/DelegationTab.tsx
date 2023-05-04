@@ -14,13 +14,14 @@ import Icon from 'app/App.components/Icon/Icon.view'
 import { UserActionHistory } from './UserOperationsHistory'
 import { DashboardCardHeader } from '../DashboardPersonal.style'
 import { ConnectWallet } from 'app/App.components/ConnectWallet/ConnectWallet.controller'
+import { SMVK_TOKEN_SYMBOL } from 'reducers/actions/user.actions'
 
 const DelegationTab = () => {
   const dispatch = useDispatch()
   const {
     user: {
       satelliteMvkIsDelegatedTo,
-      mySMvkTokenBalance,
+      userTokens,
       availableSatellitesRewards: { myAvailableSatelliteRewards },
     },
     accountPkh,
@@ -101,7 +102,7 @@ const DelegationTab = () => {
             </div>
             <Link to="/satellites">Satellites Overview</Link>
           </>
-        ) : mySMvkTokenBalance === 0 && accountPkh ? (
+        ) : userTokens[SMVK_TOKEN_SYMBOL].balance === 0 && accountPkh ? (
           <div className="no-data">
             <span>You don't have SMVK</span>
             <div className="nav-button">
@@ -112,7 +113,7 @@ const DelegationTab = () => {
               </Link>
             </div>
           </div>
-        ) : accountPkh && mySMvkTokenBalance ? (
+        ) : accountPkh && userTokens[SMVK_TOKEN_SYMBOL].balance ? (
           <div className="no-data">
             <span>You are not delegated at this time</span>
             <div className="nav-button">

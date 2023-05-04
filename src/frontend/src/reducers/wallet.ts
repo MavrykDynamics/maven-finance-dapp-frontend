@@ -11,19 +11,13 @@ import { DISCONNECT } from 'app/App.components/ConnectWallet/ConnectWallet.actio
 import { UPDATE_USER_DATA } from './actions/user.actions'
 
 export interface UserState {
-  // user balance
-  myMvkTokenBalance: number
-  mySMvkTokenBalance: number
-  myXTZTokenBalance: number
-  mytzBTCTokenBalance: number
-
+  // user balances
   userTokens: Record<
     string,
     {
       balance: number
       symbol: string
       name: string
-      tokenAddress: string
     }
   >
 
@@ -66,11 +60,6 @@ export interface WalletState {
 }
 
 export const DEFAULT_USER: UserState = {
-  myMvkTokenBalance: 0,
-  mySMvkTokenBalance: 0,
-  myXTZTokenBalance: 0,
-  mytzBTCTokenBalance: 0,
-
   userTokens: {},
   userMTokens: [],
 

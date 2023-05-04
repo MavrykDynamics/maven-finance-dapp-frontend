@@ -43,6 +43,7 @@ import {
 } from './StakeUnstake.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import colors from 'styles/colors'
+import { SMVK_TOKEN_SYMBOL, MVK_TOKEN_SYMBOL } from 'reducers/actions/user.actions'
 
 type StakeUnstakeViewProps = {
   stakeCallback: (amount: number) => void
@@ -57,8 +58,7 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
   const {
     accountPkh,
     user: {
-      myMvkTokenBalance,
-      mySMvkTokenBalance,
+      userTokens,
       availableDoormanRewards: { myAvailableDoormanRewards },
       availableSatellitesRewards: { myAvailableSatelliteRewards },
       availableFarmRewards,
@@ -72,6 +72,8 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
   const { themeSelected } = useSelector((state: State) => state.preferences)
 
   const delegatedUser = satelliteMapper[satelliteMvkIsDelegatedTo]
+  const mySMvkTokenBalance = userTokens[SMVK_TOKEN_SYMBOL].balance,
+    myMvkTokenBalance = userTokens[MVK_TOKEN_SYMBOL].balance
 
   const [inputData, setInputData] = useState<{ amount: string; validation: InputStatusType; errorMessage: string }>({
     amount: '0',
