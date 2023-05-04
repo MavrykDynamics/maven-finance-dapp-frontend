@@ -5,10 +5,8 @@ import { DIP_DUP_HEAD_QUERY, DIP_DUP_HEAD_QUERY_NAME } from 'gql/queries/dipdup'
 import { DipDupGraphQLResponse } from 'types/dipDup.type'
 
 export const fetchGraphQL = (() => {
-  const { NODE_ENV, REACT_APP_DEV_GRAPHQL_API, REACT_APP_BACKUP_GRAPHQL_API, REACT_APP_GRAPHQL_API } = process.env
-  const developmentAPI = REACT_APP_DEV_GRAPHQL_API ?? ''
-  const productionAPI = REACT_APP_GRAPHQL_API ?? ''
-  let gqlAPINetwork = NODE_ENV === 'development' ? developmentAPI : productionAPI
+  const { REACT_APP_BACKUP_GRAPHQL_API, REACT_APP_GRAPHQL_API } = process.env
+  let gqlAPINetwork = REACT_APP_GRAPHQL_API ?? ''
 
   return async (
     operationsDoc: string,
