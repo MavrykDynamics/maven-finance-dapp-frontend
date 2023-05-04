@@ -13,14 +13,14 @@ import { SatellitePaginationStyled } from './SatellitePagination.style'
 
 const SatellitePagination = () => {
   const { satelliteId = '' }: { satelliteId: string } = useParams()
-  const { activeSatellitesIds } = useSelector((state: State) => state.satellites)
+  const { allSatellitesIds } = useSelector((state: State) => state.satellites)
 
-  const currentSatelliteIndex = activeSatellitesIds.findIndex(
+  const currentSatelliteIndex = allSatellitesIds.findIndex(
     (activeSatelliteAddress) => activeSatelliteAddress === satelliteId,
   )
 
-  const prevSatelliteAddress = activeSatellitesIds.at(currentSatelliteIndex - 1) ?? activeSatellitesIds.at(-1)
-  const nextSatelliteAddress = activeSatellitesIds.at(currentSatelliteIndex + 1) ?? activeSatellitesIds.at(0)
+  const prevSatelliteAddress = allSatellitesIds.at(currentSatelliteIndex - 1) ?? allSatellitesIds.at(-1)
+  const nextSatelliteAddress = allSatellitesIds.at(currentSatelliteIndex + 1) ?? allSatellitesIds.at(0)
 
   return (
     <SatellitePaginationStyled>

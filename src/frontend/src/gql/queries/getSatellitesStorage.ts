@@ -1,6 +1,6 @@
 export const SATELLITES_STORAGE_QUERY = `
   query SatellitesStorageQuery {
-    satellite {
+    satellite(order_by: {currently_registered: desc}) {
       description
       fee
       image

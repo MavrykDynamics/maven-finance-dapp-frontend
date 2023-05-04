@@ -38,9 +38,9 @@ const ddItems = itemsForDropDown.map(({ text }) => text)
 const SatelliteNodes = () => {
   const { pathname, search } = useLocation()
 
-  const { activeSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
+  const { allSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
 
-  const [filteredSatelliteList, setFilteredSatelliteList] = useState(activeSatellitesIds)
+  const [filteredSatelliteList, setFilteredSatelliteList] = useState(allSatellitesIds)
   const [ddIsOpen, setDdIsOpen] = useState(false)
   const [inputSearch, setInputSearch] = useState('')
   const [chosenDdItem, setChosenDdItem] = useState<DropdownItemType | undefined>()
@@ -53,12 +53,12 @@ const SatelliteNodes = () => {
   }, [currentPage, filteredSatelliteList])
 
   useEffect(() => {
-    const filteredSatellitesIds = [...activeSatellitesIds]
+    const filteredSatellitesIds = [...allSatellitesIds]
       .filter(handleFilterSatellites(inputSearch, satelliteMapper))
       .sort(handleSortSatellites(chosenDdItem?.text ?? '', satelliteMapper))
 
     setFilteredSatelliteList(filteredSatellitesIds)
-  }, [activeSatellitesIds, chosenDdItem?.text, inputSearch, satelliteMapper])
+  }, [allSatellitesIds, chosenDdItem?.text, inputSearch, satelliteMapper])
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => setInputSearch(e.target.value)
 
