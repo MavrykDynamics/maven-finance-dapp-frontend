@@ -1,5 +1,6 @@
 import { SmallBlockBase } from 'pages/DashboardPersonal/DashboardPersonalComponents/DashboardPersonalComponents.style'
 import styled from 'styled-components'
+import { DEFAULT_Z_INDEX_FOR_OVERLAP } from 'styles/constants'
 import { MavrykTheme } from 'styles/interfaces'
 
 export const LoansDashboardStyled = styled.div`
@@ -113,7 +114,7 @@ export const AccountStyledStyled = styled(SmallBlockBase)<{ theme: MavrykTheme }
       position: absolute;
       right: 0px;
       top: 0px;
-      z-index: 100;
+      z-index: ${DEFAULT_Z_INDEX_FOR_OVERLAP};
     }
   }
 

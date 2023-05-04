@@ -114,7 +114,7 @@ export const TreasuryViewStyle = styled(Card)<{ theme: MavrykTheme }>`
       }
     }
 
-    .text,
+    > .text,
     .value {
       font-weight: 600;
       font-size: 22px;

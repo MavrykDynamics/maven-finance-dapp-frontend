@@ -1,7 +1,7 @@
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
-import { FeedsListItem, FeedsOraclesCardStyled } from 'pages/DataFeeds/DataFeeds.styles'
+import { FeedsListItem, FeedsOraclesCardStyled, DataFeedListItemTextTruncated } from 'pages/DataFeeds/DataFeeds.styles'
 import { getOracleStatus, ORACLE_STATUSES_MAPPER } from 'pages/Satellites/helpers/Satellites.consts'
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
@@ -25,7 +25,7 @@ export const OracleCard = ({ oracle }: { oracle: SatelliteRecordType }) => {
       <FeedsOraclesCardStyled>
         <FeedsListItem>
           <h5>Oracle</h5>
-          <var>{oracle.name}</var>
+          <DataFeedListItemTextTruncated>{oracle.name}</DataFeedListItemTextTruncated>
         </FeedsListItem>
 
         <FeedsListItem>

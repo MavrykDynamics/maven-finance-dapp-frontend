@@ -92,6 +92,7 @@ export const normalizeTreasuryStorage = (
   treasury: TreasuryGraphQL[],
   mvkRate: number,
   tokenPrices: State['tokens']['tokensPrices'],
+  whitelistTokens: State['tokens']['whitelistTokens'],
 ) => {
   const treasuryAssetsColors: Record<string, string> = sMVKAmounts?.length ? { smvk: getAssetColor(0) } : {}
 
@@ -122,11 +123,13 @@ export const normalizeTreasuryStorage = (
 
         const coinsAmount = convertNumberForClient({ number: balance, grade: parsedDecimals })
 
+        const treasurySymbolToGetBalance = isTezosAsset(symbol.toLowerCase()) ? 'tezos' : symbol.toLowerCase()
+
         // get rates from feeds or no rate
         const rate =
-          symbol.toLowerCase() === 'mvk' || symbol.toLowerCase() === 'smvk'
+          treasurySymbolToGetBalance === 'mvk' || treasurySymbolToGetBalance === 'smvk'
             ? mvkRate
-            : tokenPrices[symbol.toLowerCase()] ?? null
+            : tokenPrices[treasurySymbolToGetBalance] ?? null
 
         // get color of the asset
         if (!treasuryAssetsColors[symbol.toLowerCase()]) {
@@ -148,7 +151,14 @@ export const normalizeTreasuryStorage = (
       // Add sMVK treasury asset if has
       .concat(sMVKAmount ?? [])
       // Filter zero balance assets in treasury
-      .filter(({ balance, symbol }: TreasuryBalanceType) => symbol && (balance > 0 || balance.toString().includes('e')))
+      .filter(
+        ({ balance, symbol }: TreasuryBalanceType) =>
+          symbol &&
+          whitelistTokens.find(
+            ({ symbol: whitelistTokenSymbol }) => symbol.toLowerCase() === whitelistTokenSymbol.toLowerCase(),
+          ) &&
+          (balance > 0 || balance.toString().includes('e')),
+      )
       // Sort by most balance to top
       .sort((asset1, asset2) => asset2.balance * Number(asset2.rate) - asset1.balance * Number(asset1.rate))
 

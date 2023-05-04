@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux'
-import { useLockBodyScroll } from 'react-use'
+import { useDebounce, useLockBodyScroll } from 'react-use'
 import { useEffect, useMemo, useState } from 'react'
 
 import {
@@ -75,6 +75,9 @@ export const CreateNewVault = ({
     xtzBakers: { otherBakers, dao, mavrykDynamics },
     avaliableCollaterals,
   } = useSelector((state: State) => state.tokens)
+  const {
+    vaults: { myVaultsIds, vaultsMapper },
+  } = useSelector((state: State) => state.loans)
 
   const xtzBakers: Array<XtzBakerType & { isDisabled?: boolean }> = useMemo(
     () => [...otherBakers, ...(dao ? [dao] : []), ...(mavrykDynamics ? [mavrykDynamics] : [])],
@@ -212,12 +215,17 @@ export const CreateNewVault = ({
     }
   }
 
-  //handle vaultName input
+  //handle vaultName input TODO: mb add debounce cuz of find operation
   const handleVaultNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
     const validationStatus =
       // regExp to ASCII 32-127
-      value && value.length <= 15 && /[^\x20-\x7f\x0d\x1b]*$/g.test(value) ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
+      value &&
+      value.length <= 15 &&
+      /[^\x20-\x7f\x0d\x1b]*$/g.test(value) &&
+      !myVaultsIds.find((vaultId) => vaultsMapper[vaultId].name.trim().toLowerCase() === value.trim().toLowerCase())
+        ? INPUT_STATUS_SUCCESS
+        : INPUT_STATUS_ERROR
 
     setVaultName({ name: value, validationStatus })
   }
@@ -310,7 +318,6 @@ export const CreateNewVault = ({
     if (currentMarketAsset) {
       try {
         setVaultCreating(true)
-        //TODO: connect this value to an input
         const newVaultData = await dispatch(triggerInitialVaultCreation(currentMarketAsset, vaultName.name))
         setCreatedVaultAddress?.(String(newVaultData))
         setNewVaultAddress(String(newVaultData))

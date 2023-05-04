@@ -1,9 +1,9 @@
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
-import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { Link } from 'react-router-dom'
 import { Page } from 'styles'
 import { UserCardWrapper, UsersListWrapper, UsersStyled } from './Users.styles'
 import { UserType } from '../../utils/TypesAndInterfaces/User'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
 const UsersView = ({ users }: { users: UserType[] }) => {
   return (
@@ -11,9 +11,7 @@ const UsersView = ({ users }: { users: UserType[] }) => {
       <PageHeader page={'oracles-users'} />
 
       <UsersStyled>
-        <GovRightContainerTitleArea>
-          <h1>Users</h1>
-        </GovRightContainerTitleArea>
+        <H2Title>Users</H2Title>
 
         <UsersListWrapper>
           {users.map((user) => (

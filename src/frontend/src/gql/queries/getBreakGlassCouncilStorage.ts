@@ -17,6 +17,7 @@ const BREAK_GLASS_ACTIONS_PARAMS = `
   action_type
   break_glass_id
   executed
+  council_size_snapshot
   id
   initiator_id
   signers_count

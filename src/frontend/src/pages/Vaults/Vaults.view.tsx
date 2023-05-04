@@ -31,7 +31,8 @@ import { State } from '../../reducers'
 import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 
 // actions
-import { getVaultsStorage, markForLiquidation } from './Vaults.actions'
+import { markForLiquidation } from './Vaults.actions'
+import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 
 const pathname = '/vaults'
 
@@ -48,16 +49,16 @@ export const VaultsView = () => {
 
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const {
-    vaultsList: { permissinedVaultsIds, myVaultsIds, allVaultsIds, vaultsMapper },
-    isLoaded,
-  } = useSelector((state: State) => state.vaults)
+    vaults: { permissinedVaultsIds, myVaultsIds, allVaultsIds, vaultsMapper },
+    isDataLoaded,
+  } = useSelector((state: State) => state.loans)
   const { tabId } = useParams<{ tabId: string }>()
 
   const { isLoading } = useDataLoader(
     async (isDepsChanged) => {
       try {
-        if (!isLoaded || isDepsChanged) {
-          await dispatch(getVaultsStorage())
+        if (!isDataLoaded || isDepsChanged) {
+          await dispatch(getLoansStorage())
         }
       } catch (e) {}
     },

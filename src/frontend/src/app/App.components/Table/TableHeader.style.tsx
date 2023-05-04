@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components'
-import { DEFAULT_FOR_OVERLAP } from 'styles/constants'
+import { DEFAULT_Z_INDEX_FOR_OVERLAP } from 'styles/constants'
 import { MavrykTheme } from 'styles/interfaces'
 
 const EDITABLE_TABLE_HEADER_STYLES = css`
@@ -29,7 +29,7 @@ const PROPOSAL_PAYMENTS_DETAILS_HEADER_STYLES = css`
 `
 
 export const TableHeader = styled.thead<{ theme: MavrykTheme }>`
-  z-index: ${DEFAULT_FOR_OVERLAP};
+  z-index: ${DEFAULT_Z_INDEX_FOR_OVERLAP};
 
   tr {
     height: fit-content;

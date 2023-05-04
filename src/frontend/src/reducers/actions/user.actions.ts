@@ -15,8 +15,9 @@ import {
   USER_LENDING_DATA_QUERY_NAME,
   USER_LENDING_DATA_QUERY_VARIABLE,
 } from 'gql/queries/getLoansStorage'
-import { CLEAR_LOANS_STORAGE, getAvaliableCollaterals, getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
-import { getAssetMetadata, normalizeUserLending } from 'pages/Loans/Loans.helpers'
+import { getAvaliableCollaterals } from 'pages/Loans/Actions/getLoansData.actions'
+import { getAssetMetadata } from 'pages/Loans/Loans.helpers'
+import { normalizeUserLending } from 'pages/Loans/Loans.normalizer'
 import { State } from 'reducers'
 import { UserState, DEFAULT_USER } from 'reducers/wallet'
 import {
