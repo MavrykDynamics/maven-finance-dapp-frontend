@@ -1,6 +1,5 @@
 import { hideToaster, showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
-// import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
 import { updateUserData } from 'reducers/actions/user.actions'
 import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 

@@ -20,7 +20,6 @@ import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 
 // consts, helpers, actions
-import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
 import { getTotalDelegatedMVK } from './helpers/Satellites.consts'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { BUTTON_SIMPLE } from 'app/App.components/Button/Button.constants'
