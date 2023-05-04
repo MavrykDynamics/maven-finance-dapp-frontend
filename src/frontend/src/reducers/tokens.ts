@@ -1,12 +1,6 @@
 import { M_Token } from './../utils/generated/graphqlTypes'
 import { DipDupTokensGraphQl } from 'utils/TypesAndInterfaces/DipDupTokens'
-import {
-  GET_DIP_DUP_TOKENS,
-  GET_MVK_FAUCET,
-  GET_M_TOKENS,
-  GET_TOKENS_PRICES,
-  GET_WHITELIST_TOKENS,
-} from './actions/dipDupActions.actions'
+import { GET_DAPP_TOKENS, GET_MVK_FAUCET, GET_TOKENS_PRICES } from './actions/getTokens.actions'
 import { AvaliableCollateralType } from 'utils/TypesAndInterfaces/Loans'
 import { GET_AVALIABLE_COLLATERALS, GET_XTZ_BAKERS } from 'pages/Loans/Actions/getLoansData.actions'
 import { XtzBakerType } from 'utils/TypesAndInterfaces/Loans'
@@ -57,16 +51,19 @@ const defaultTokensInfoState: TokensType = {
 
 export function tokens(state = defaultTokensInfoState, action: AnyAction) {
   switch (action.type) {
-    case GET_DIP_DUP_TOKENS:
-      return { ...state, dipDupTokens: action.dipDupTokens, dipDupContracts: action.dipDupContracts }
-    case GET_WHITELIST_TOKENS:
-      return { ...state, whitelistTokens: state.whitelistTokens.concat(action.whitelistTokens) }
+    case GET_DAPP_TOKENS:
+      return {
+        ...state,
+        dipDupTokens: action.dipDupTokens,
+        dipDupContracts: action.dipDupContracts,
+        whitelistTokens: state.whitelistTokens.concat(action.whitelistTokens),
+        mTokens: action.mTokens,
+      }
+
     case GET_AVALIABLE_COLLATERALS:
       return { ...state, avaliableCollaterals: action.avaliableCollaterals }
     case GET_XTZ_BAKERS:
       return { ...state, xtzBakers: action.xtzBakers }
-    case GET_M_TOKENS:
-      return { ...state, mTokens: action.mTokens }
     case GET_MVK_FAUCET:
       return { ...state, mvkFaucetAddress: action.mvkFaucet }
     case GET_TOKENS_PRICES:
