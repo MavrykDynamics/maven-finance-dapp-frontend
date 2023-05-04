@@ -54,6 +54,9 @@ export const BorrowAsset = ({
   useLockBodyScroll(show)
   const dispatch = useDispatch()
   const { themeSelected } = useSelector((state: State) => state.preferences)
+  const { userTokens } = useSelector((state: State) => state.wallet.user)
+
+  const userAssetBalance = userTokens[borrowedAsset?.symbol ?? '']?.balance ?? 0
 
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
   const [screenShown, setShownScreen] = useState<'initial' | 'confitmation'>('initial')
@@ -187,7 +190,7 @@ export const BorrowAsset = ({
                     onChange: (e) => inputOnChangeHandle(e.target.value, borrowCapacity / borrowedAsset.rate),
                   }}
                   settings={{
-                    balance: borrowedAsset.userBalance,
+                    balance: userAssetBalance,
                     balanceAsset: borrowedAsset?.symbol,
                     useMaxHandler: () =>
                       inputOnChangeHandle(

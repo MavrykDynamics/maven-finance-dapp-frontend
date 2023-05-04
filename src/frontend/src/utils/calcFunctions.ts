@@ -127,7 +127,7 @@ export function calcUsersDoormanRewards({
 }: {
   userDoormanRewardsFromGQL?: Doorman
   mySMvkTokenBalance: number
-}): UserDoormanRewardsData | undefined {
+}): UserDoormanRewardsData {
   const myDoormanRewardsData: UserDoormanRewardsData = {
     generalAccumulatedFeesPerShare: userDoormanRewardsFromGQL?.accumulated_fees_per_share ?? 0,
     generalUnclaimedRewards: userDoormanRewardsFromGQL?.unclaimed_rewards ?? 0,
@@ -150,7 +150,7 @@ export function calcUsersFarmRewards({
 }: {
   currentBlockLevel: number
   userFarmsRewardsFromGQL: Array<Farm>
-}): Record<string, UserFarmRewardsData> | undefined {
+}): Record<string, UserFarmRewardsData> {
   const myFarmRewardsData: Record<string, UserFarmRewardsData> = userFarmsRewardsFromGQL.reduce<
     Record<string, UserFarmRewardsData>
   >((acc, farm) => {
@@ -208,7 +208,7 @@ export function calcUsersSatelliteRewards({
 }: {
   mySMvkTokenBalance: number
   userSatelliteRewardsFromGQL?: Satellite_Rewards
-}): UserSatelliteRewardsData | undefined {
+}): UserSatelliteRewardsData {
   const mySatelliteRewardsData: UserSatelliteRewardsData = {
     unpaid: userSatelliteRewardsFromGQL?.unpaid ?? 0,
     paid: userSatelliteRewardsFromGQL?.paid ?? 0,
@@ -238,24 +238,25 @@ const USER_ACTIONS_TYPES = {
 }
 
 export function calcUsersRewardsToDate(usetStakesData?: Array<Stake_History_Data>) {
-  if (!usetStakesData) return { farmRewards: 0, satelliteRewards: 0, doormanRewards: 0, actionsHistory: [] }
+  if (!usetStakesData)
+    return { gatheredFarmRewards: 0, gatheredSatellitesRewards: 0, gatheredDoormanRewards: 0, actionsHistory: [] }
   return usetStakesData.reduce<{
-    farmRewards: number
-    satelliteRewards: number
-    doormanRewards: number
+    gatheredFarmRewards: number
+    gatheredSatellitesRewards: number
+    gatheredDoormanRewards: number
     actionsHistory: State['wallet']['user']['actionsHistory']
   }>(
     (acc, { type, final_amount, desired_amount, id }) => {
       if (type === USER_ACTIONS_TYPES.FARM_CLAIM) {
-        acc.farmRewards += calcWithoutPrecision(final_amount)
+        acc.gatheredFarmRewards += calcWithoutPrecision(final_amount)
       }
 
       if (type === USER_ACTIONS_TYPES.COMPOUND) {
-        acc.doormanRewards += calcWithoutPrecision(final_amount)
+        acc.gatheredDoormanRewards += calcWithoutPrecision(final_amount)
       }
 
       if (type === USER_ACTIONS_TYPES.SATELLITE_REWARD) {
-        acc.satelliteRewards += calcWithoutPrecision(final_amount)
+        acc.gatheredSatellitesRewards += calcWithoutPrecision(final_amount)
       }
 
       const isUnstake = type === USER_ACTIONS_TYPES.UNSTAKE
@@ -283,7 +284,7 @@ export function calcUsersRewardsToDate(usetStakesData?: Array<Stake_History_Data
       acc.actionsHistory.push(historyDataItem)
       return acc
     },
-    { farmRewards: 0, satelliteRewards: 0, doormanRewards: 0, actionsHistory: [] },
+    { gatheredFarmRewards: 0, gatheredSatellitesRewards: 0, gatheredDoormanRewards: 0, actionsHistory: [] },
   )
 }
 

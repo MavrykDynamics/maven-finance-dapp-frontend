@@ -1,7 +1,7 @@
 import { State } from 'reducers'
 import { AppDispatch, GetState } from 'app/App.controller'
 
-import { getSymbolFromFeedName } from 'utils/parse'
+import { getSymbolAndNameFromFeedName } from 'utils/parse'
 import { fetchFromIndexer } from 'gql/fetchGraphQL'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import {
@@ -87,7 +87,7 @@ export const getTokensPrices = () => async (dispatch: AppDispatch, getState: Get
   try {
     const tokenPricesFromFeeds = feedsLedger.reduce<State['tokens']['tokensPrices']>(
       (acc, { name, last_completed_data, decimals }) => {
-        const assetSymbol = getSymbolFromFeedName(name)
+        const assetSymbol = getSymbolAndNameFromFeedName(name).symbol
         const rate = convertNumberForClient({ number: last_completed_data, grade: decimals })
         acc[assetSymbol] = rate
         return acc

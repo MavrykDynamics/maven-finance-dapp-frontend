@@ -38,6 +38,7 @@ type Props = {
 
 export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
   const { isActionActive } = useSelector((state: State) => state.loading)
+  const { userTokens } = useSelector((state: State) => state.wallet.user)
 
   const {
     vaultId,
@@ -48,7 +49,8 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
     liquidationReward = 0,
     adminLiquidateFee = 0,
   } = data ?? {}
-  const { symbol = '', icon = '', rate = 0, userBalance = 0 } = borrowedAsset ?? {}
+  const { symbol = '', icon = '', rate = 0 } = borrowedAsset ?? {}
+  const userBalance = userTokens[symbol]?.balance ?? 0
 
   const dispatch = useDispatch()
 

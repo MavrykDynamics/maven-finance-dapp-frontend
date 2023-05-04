@@ -17,6 +17,18 @@ export interface UserState {
   myXTZTokenBalance: number
   mytzBTCTokenBalance: number
 
+  userTokens: Record<
+    string,
+    {
+      balance: number
+      symbol: string
+      name: string
+      tokenAddress: string
+    }
+  >
+
+  userMTokens: Array<M_Token_Account>
+
   satelliteMvkIsDelegatedTo: string
   isLoaded: boolean
   isSatellite: boolean
@@ -28,18 +40,15 @@ export interface UserState {
     userBorrowing: Array<UserLendObjType>
     userVaultsData: Record<string, { borrowedAmount: number; collateralAmount: number }>
   }
-  mTokens?: Array<M_Token_Account>
 
   // user rewards
-  userRewardsToDate: {
-    farmRewards: number
-    satelliteRewards: number
-    doormanRewards: number
-  }
-  myDoormanRewardsData: UserDoormanRewardsData
-  myFarmRewardsData: Record<string, UserFarmRewardsData>
-  mySatelliteRewardsData: UserSatelliteRewardsData
-  myLendingRewardsAmount: number
+  gatheredFarmRewards: number
+  gatheredSatellitesRewards: number
+  gatheredDoormanRewards: number
+  availableDoormanRewards: UserDoormanRewardsData
+  availableFarmRewards: Record<string, UserFarmRewardsData>
+  availableSatellitesRewards: UserSatelliteRewardsData
+  availableLoansRewards: number
 
   // user's actions history
   actionsHistory: Array<{
@@ -62,6 +71,9 @@ export const DEFAULT_USER: UserState = {
   myXTZTokenBalance: 0,
   mytzBTCTokenBalance: 0,
 
+  userTokens: {},
+  userMTokens: [],
+
   satelliteMvkIsDelegatedTo: '',
   isLoaded: false,
   isSatellite: false,
@@ -72,27 +84,26 @@ export const DEFAULT_USER: UserState = {
     userBorrowing: [],
     userVaultsData: {},
   },
-  myLendingRewardsAmount: 0,
 
-  myFarmRewardsData: {},
-  myDoormanRewardsData: {
+  availableLoansRewards: 0,
+  availableFarmRewards: {},
+  availableDoormanRewards: {
     generalAccumulatedFeesPerShare: 0,
     generalUnclaimedRewards: 0,
     myAvailableDoormanRewards: 0,
     myParticipationFeesPerShare: 0,
   },
-  mySatelliteRewardsData: {
+  availableSatellitesRewards: {
     myAvailableSatelliteRewards: 0,
     paid: 0,
     participationRewardsPerShare: 0,
     satelliteAccumulatedRewardPerShare: 0,
     unpaid: 0,
   },
-  userRewardsToDate: {
-    farmRewards: 0,
-    satelliteRewards: 0,
-    doormanRewards: 0,
-  },
+
+  gatheredFarmRewards: 0,
+  gatheredSatellitesRewards: 0,
+  gatheredDoormanRewards: 0,
 
   actionsHistory: [],
 }

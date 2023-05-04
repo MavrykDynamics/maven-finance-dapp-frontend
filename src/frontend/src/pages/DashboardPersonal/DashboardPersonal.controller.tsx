@@ -58,13 +58,15 @@ const DashboardPersonal = () => {
       mySMvkTokenBalance,
       myXTZTokenBalance,
       mytzBTCTokenBalance,
-      myLendingRewardsAmount,
+      availableDoormanRewards: { myAvailableDoormanRewards },
+      availableSatellitesRewards: { myAvailableSatelliteRewards },
+      availableFarmRewards,
+      availableLoansRewards,
+      gatheredDoormanRewards,
+      gatheredFarmRewards,
+      gatheredSatellitesRewards,
       isSatellite,
       isVestee,
-      myDoormanRewardsData: { myAvailableDoormanRewards },
-      myFarmRewardsData,
-      mySatelliteRewardsData: { myAvailableSatelliteRewards },
-      userRewardsToDate: { satelliteRewards, farmRewards, doormanRewards },
       isLoaded: isUserDataLoaded,
     },
   } = useSelector((state: State) => state.wallet)
@@ -92,17 +94,20 @@ const DashboardPersonal = () => {
     rewardsToClaim:
       myAvailableDoormanRewards +
       myAvailableSatelliteRewards +
-      Object.values(myFarmRewardsData).reduce((acc, { myAvailableFarmRewards }) => (acc += myAvailableFarmRewards), 0),
-    earnedRewards: satelliteRewards + farmRewards + doormanRewards,
+      Object.values(availableFarmRewards).reduce(
+        (acc, { myAvailableFarmRewards }) => (acc += myAvailableFarmRewards),
+        0,
+      ),
+    earnedRewards: gatheredSatellitesRewards + gatheredFarmRewards + gatheredDoormanRewards,
   }
 
   const earnings = {
     mvkRate: mvkExchangeRate,
     xtzRate: xtzExchangeRate,
-    satelliteRewards: satelliteRewards,
-    farmsRewards: farmRewards,
-    exitRewards: doormanRewards,
-    lendingIncome: myLendingRewardsAmount,
+    satelliteRewards: gatheredSatellitesRewards,
+    farmsRewards: gatheredFarmRewards,
+    exitRewards: gatheredDoormanRewards,
+    lendingIncome: availableLoansRewards,
   }
 
   const walletData = {

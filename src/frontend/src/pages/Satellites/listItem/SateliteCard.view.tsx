@@ -68,7 +68,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
       isSatellite,
       mySMvkTokenBalance,
       satelliteMvkIsDelegatedTo,
-      mySatelliteRewardsData: { myAvailableSatelliteRewards },
+      availableSatellitesRewards: { myAvailableSatelliteRewards },
     },
   } = useSelector((state: State) => state.wallet)
   const { proposalsMapper } = useSelector((state: State) => state.governance)

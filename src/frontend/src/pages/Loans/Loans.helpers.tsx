@@ -318,7 +318,7 @@ export const getChartData = (
 // GET LENDING ITEM FOR MARKET
 export const getLendingItem = (
   loanToken: Lending_Controller_Loan_Token,
-  userMTokens: UserState['mTokens'],
+  userMTokens: UserState['userMTokens'],
   loanTokenDecimals: number,
   interestRateDecimals: number,
   accountPkh?: string,

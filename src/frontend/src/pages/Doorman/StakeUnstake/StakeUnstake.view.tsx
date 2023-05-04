@@ -59,9 +59,9 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
     user: {
       myMvkTokenBalance,
       mySMvkTokenBalance,
-      myDoormanRewardsData: { myAvailableDoormanRewards },
-      mySatelliteRewardsData: { myAvailableSatelliteRewards },
-      myFarmRewardsData,
+      availableDoormanRewards: { myAvailableDoormanRewards },
+      availableSatellitesRewards: { myAvailableSatelliteRewards },
+      availableFarmRewards,
       satelliteMvkIsDelegatedTo,
       isSatellite,
     },
@@ -92,7 +92,7 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
   const rewardsToClaim =
     myAvailableDoormanRewards +
     myAvailableSatelliteRewards +
-    Object.values(myFarmRewardsData).reduce((acc, { myAvailableFarmRewards }) => (acc += myAvailableFarmRewards), 0)
+    Object.values(availableFarmRewards).reduce((acc, { myAvailableFarmRewards }) => (acc += myAvailableFarmRewards), 0)
   const showDelegateBtn = !isSatellite && !satelliteMvkIsDelegatedTo
 
   const onUseMaxBalance = (balance: 'smvk' | 'mvk') => () => {

@@ -24,7 +24,7 @@ const SatelliteTab = () => {
   const {
     accountPkh = '',
     user: {
-      mySatelliteRewardsData: { myAvailableSatelliteRewards },
+      availableSatellitesRewards: { myAvailableSatelliteRewards },
     },
   } = useSelector((state: State) => state.wallet)
   const { satelliteMapper } = useSelector((state: State) => state.satellites)

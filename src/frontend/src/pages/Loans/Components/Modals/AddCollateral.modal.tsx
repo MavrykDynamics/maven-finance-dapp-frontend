@@ -55,11 +55,14 @@ export const AddCollateral = ({
 
   const dispatch = useDispatch()
   const { avaliableCollaterals } = useSelector((state: State) => state.tokens)
+  const { userTokens } = useSelector((state: State) => state.wallet.user)
 
   const collateralData = useMemo(
     () => avaliableCollaterals.find(({ gqlName }) => selectedAsset?.gqlName === gqlName),
     [avaliableCollaterals, selectedAsset],
   )
+
+  const collateralBalance = userTokens[collateralData?.symbol.toLowerCase() ?? '']?.balance ?? 0
 
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
 
@@ -192,15 +195,15 @@ export const AddCollateral = ({
               type: 'number',
               onFocus: onFocusHandler,
               onBlur: inputOnBlurHandle,
-              onChange: (e) => inputOnChangeHandle(e.target.value, collateralData?.userBalance ?? 0),
+              onChange: (e) => inputOnChangeHandle(e.target.value, collateralBalance),
             }}
             settings={{
-              balance: collateralData?.userBalance ?? 0,
-              balanceAsset: selectedAsset?.symbol,
+              balance: collateralBalance,
+              balanceAsset: collateralData?.name,
               useMaxHandler: () =>
                 inputOnChangeHandle(
-                  getLoansInputMaxAmount(collateralData?.userBalance, collateralData?.decimals),
-                  collateralData?.userBalance ?? 0,
+                  getLoansInputMaxAmount(collateralBalance, collateralData?.decimals),
+                  collateralBalance,
                 ),
               inputStatus: inputData.validationStatus,
               convertedValue: inputAmount * (collateralData?.rate ?? 1),
@@ -208,8 +211,8 @@ export const AddCollateral = ({
             }}
           >
             <InputPinnedTokenInfo>
-              <ImageWithPlug imageLink={collateralData?.icon} alt={`${collateralData?.symbol} icon`} />{' '}
-              {selectedAsset?.symbol}
+              <ImageWithPlug imageLink={collateralData?.icon} alt={`${collateralData?.name} icon`} />{' '}
+              {collateralData?.name}
             </InputPinnedTokenInfo>
           </Input>
 

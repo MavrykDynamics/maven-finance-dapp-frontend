@@ -54,6 +54,9 @@ export const Repay = ({
   useLockBodyScroll(show)
   const dispatch = useDispatch()
   const { themeSelected } = useSelector((state: State) => state.preferences)
+  const { userTokens } = useSelector((state: State) => state.wallet.user)
+
+  const userAssetBalance = userTokens[borrowedAsset?.symbol ?? '']?.balance ?? 0
 
   const [screenShown, setShownScreen] = useState<'initial' | 'confitmation'>('initial')
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
@@ -188,19 +191,15 @@ export const Repay = ({
                     type: 'number',
                     onBlur: inputOnBlurHandle,
                     onFocus: onFocusHandler,
-                    onChange: (e) =>
-                      inputOnChangeHandle(e.target.value, Math.min(borrowedAsset.userBalance, totalOutstanding)),
+                    onChange: (e) => inputOnChangeHandle(e.target.value, Math.min(userAssetBalance, totalOutstanding)),
                   }}
                   settings={{
-                    balance: borrowedAsset.userBalance,
+                    balance: userAssetBalance,
                     balanceAsset: borrowedAsset?.symbol,
                     useMaxHandler: () =>
                       inputOnChangeHandle(
-                        getLoansInputMaxAmount(
-                          Math.min(borrowedAsset.userBalance, totalOutstanding),
-                          borrowedAsset.decimals,
-                        ),
-                        Math.min(borrowedAsset.userBalance, totalOutstanding),
+                        getLoansInputMaxAmount(Math.min(userAssetBalance, totalOutstanding), borrowedAsset.decimals),
+                        Math.min(userAssetBalance, totalOutstanding),
                       ),
                     inputStatus: inputData.validationStatus,
                     convertedValue: inputAmount * borrowedAsset.rate,

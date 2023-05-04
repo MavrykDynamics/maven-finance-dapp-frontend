@@ -52,7 +52,7 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
     tokensPrices: { mvk: mvkExchangeRate = 0 },
   } = useSelector((state: State) => state.tokens)
   const {
-    user: { userLoansData, myLendingRewardsAmount },
+    user: { userLoansData, availableLoansRewards },
     accountPkh,
   } = useSelector((state: State) => state.wallet)
   const { loanTokens } = useSelector((state: State) => state.loans)
@@ -167,7 +167,7 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
           <LendBorrowPosition
             markets={loanTokens}
             userLoansData={userLoansData}
-            userLoansRewards={myLendingRewardsAmount}
+            userLoansRewards={availableLoansRewards}
           />
         </Route>
         <Route exact path={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_LENDING_TAB_ID}`}>

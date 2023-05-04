@@ -58,15 +58,13 @@ export const LoansDashboard = () => {
     isDataLoaded: isLoansLoaded,
     loanTokens,
     chartsData: {
-      lendingChartData,
-      borrowingChartData,
       lendBorrow24hDiff: { last24hLending, last48hLending, last24hBorrowing, last48hBorrowing },
     },
   } = useSelector((state: State) => state.loans)
 
   const {
     accountPkh,
-    user: { myLendingRewardsAmount, userLoansData },
+    user: { availableLoansRewards, userLoansData },
   } = useSelector((state: State) => state.wallet)
   const { satelliteMapper } = useSelector((state: State) => state.satellites)
   const { councilMembers, breakGlassCouncilMembers } = useSelector((state: State) => state.council)
@@ -287,7 +285,7 @@ export const LoansDashboard = () => {
                     </div>
                     <div className="column">
                       <div className="label">Rewards to be Distrubuted</div>
-                      <CommaNumber value={myLendingRewardsAmount} beginningText="$" className="value" />
+                      <CommaNumber value={availableLoansRewards} beginningText="$" className="value" />
                     </div>
                   </div>
                 </div>

@@ -73,6 +73,9 @@ const AppContainer = () => {
         dispatch(getBreakGlassCouncilMembers()),
       ])
 
+      // Depends on data feeds (getFeedsStorage())
+      await Promise.all([dispatch(getTokensPrices()), dispatch(getAvaliableCollaterals())])
+
       // For using Beacon wallet
       if (
         localStorage.getItem('beacon:active-account') &&
@@ -80,9 +83,6 @@ const AppContainer = () => {
       ) {
         await dispatch(connect())
       }
-
-      // Depends on data feeds (getFeedsStorage())
-      await Promise.all([dispatch(getTokensPrices()), dispatch(getAvaliableCollaterals())])
 
       // Turn off loader
       await dispatch(toggleInitialDataLoading(false))

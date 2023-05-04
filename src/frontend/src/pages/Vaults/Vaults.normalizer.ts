@@ -13,7 +13,6 @@ import {
   calcCollateralRatio,
   isTezosAsset,
 } from 'pages/Loans/Loans.helpers'
-import { getUserBalanceForLoanAsset } from 'pages/Loans/LoansFethcers'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { calculateVaultMaxLiquidationAmount, calculateLiquidationPrice } from './calcFunctionsForVault'
 
@@ -80,13 +79,6 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
               await fetch(`https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/accounts/${item.vault.address}`)
             ).json()
           : null
-
-        // User balance of the market asset TODO: move to the wallet
-        const userBalance = await getUserBalanceForLoanAsset(
-          item.loan_token.loan_token_address,
-          item.loan_token.loan_token_name,
-          accountPkh,
-        )
 
         // Borrowed amount of the vault
         const borrowedAmount = convertNumberForClient({
@@ -192,7 +184,6 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
           borrowedAsset: {
             ...loanTokenMetadata,
             tokenType: item.loan_token.loan_token_contract_standard as TokenType,
-            userBalance,
           },
           name: item.vault.name,
           address: item.vault?.address,

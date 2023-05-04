@@ -61,4 +61,4 @@ query DappTokens($_whitelistTokensAddress: String) {
 }
 `
 export const DAPP_TOKENS_QUERY_NAME = 'DappTokens'
-export const DAPP_TOKENS_VARIABLE = (address: string) => ({ _contractAddress: address })
+export const DAPP_TOKENS_VARIABLE = (address: string) => ({ _whitelistTokensAddress: address })

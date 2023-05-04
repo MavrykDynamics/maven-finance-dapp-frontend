@@ -21,7 +21,7 @@ const DelegationTab = () => {
     user: {
       satelliteMvkIsDelegatedTo,
       mySMvkTokenBalance,
-      mySatelliteRewardsData: { myAvailableSatelliteRewards },
+      availableSatellitesRewards: { myAvailableSatelliteRewards },
     },
     accountPkh,
   } = useSelector((state: State) => state.wallet)

@@ -16,6 +16,7 @@ import {
   USER_LENDING_DATA_QUERY_VARIABLE,
 } from 'gql/queries/getLoansStorage'
 import { getAvaliableCollaterals } from 'pages/Loans/Actions/getLoansData.actions'
+import { isTezosAsset } from 'pages/Loans/Loans.helpers'
 import { getAssetMetadata } from 'pages/Loans/Loans.helpers'
 import { normalizeUserLending } from 'pages/Loans/Loans.normalizer'
 import { State } from 'reducers'
@@ -28,8 +29,11 @@ import {
   calcUsersSatelliteRewards,
   calcUsersFarmRewards,
   convertFromIndexerToRegNum,
+  convertNumberForClient,
 } from 'utils/calcFunctions'
+import { MVK_DECIMALS } from 'utils/constants'
 import { Lending_Controller_Loan_Token } from 'utils/generated/graphqlTypes'
+import { getSymbolAndNameFromCollaterealGqlname, getSymbolAndNameFromFeedName } from 'utils/parse'
 
 const TZBTC_CONTRACT_ADDRESS = 'KT1PWx2mnDueood7fEmfbBDKx1D9BAnnXitn'
 const getXtzAndTzbtcUserBalance = async (accountPkh: string) => {
@@ -64,6 +68,7 @@ export const fetchUserData = async (
   accountPkh: string,
   dipDupTokens: State['tokens']['dipDupTokens'],
   feeds: State['dataFeeds']['feedsLedger'],
+  avaliableCollaterals: State['tokens']['avaliableCollaterals'],
   currentBlockLevel: number | undefined = 0,
 ) => {
   try {
@@ -79,8 +84,6 @@ export const fetchUserData = async (
       USER_REWARDS_QUERY_VARIABLES(accountPkh),
     )
 
-    const { xtzBalance, tzbtcBalance } = await getXtzAndTzbtcUserBalance(accountPkh)
-
     const {
       mvk_balance = 0,
       smvk_balance = 0,
@@ -91,27 +94,24 @@ export const fetchUserData = async (
       vesteeRecord: [vesteeRecord = null] = [],
     } = userInfoFromIndexer?.mavryk_user?.[0] ?? {}
 
-    const userInfo: Partial<UserState> = {
-      myMvkTokenBalance: calcWithoutPrecision(mvk_balance),
-      mySMvkTokenBalance: calcWithoutPrecision(smvk_balance),
-      myXTZTokenBalance: xtzBalance,
-      mytzBTCTokenBalance: tzbtcBalance,
-      mTokens: m_token_accounts,
+    const userInfo: UserState = {
+      ...DEFAULT_USER,
+      userMTokens: m_token_accounts,
       satelliteMvkIsDelegatedTo: delegations?.[0]?.satellite?.user?.address ?? '',
       isSatellite: Boolean(activeSatelliteRecord),
       isVestee: Boolean(vesteeRecord),
     }
 
-    // getting user rewards
-    userInfo.myDoormanRewardsData = calcUsersDoormanRewards({
+    // ----- GETTING USER'S REWARDS *START* -----
+    userInfo.availableDoormanRewards = calcUsersDoormanRewards({
       mySMvkTokenBalance: userInfo.mySMvkTokenBalance ?? 0,
       userDoormanRewardsFromGQL: userRewardsData?.doorman?.[0],
     })
-    userInfo.mySatelliteRewardsData = calcUsersSatelliteRewards({
+    userInfo.availableSatellitesRewards = calcUsersSatelliteRewards({
       mySMvkTokenBalance: userInfo.mySMvkTokenBalance ?? 0,
       userSatelliteRewardsFromGQL: userRewardsData?.satellite_rewards?.[0],
     })
-    userInfo.myFarmRewardsData = calcUsersFarmRewards({
+    userInfo.availableFarmRewards = calcUsersFarmRewards({
       currentBlockLevel: currentBlockLevel,
       userFarmsRewardsFromGQL: userRewardsData?.farm ?? [],
     })
@@ -127,8 +127,8 @@ export const fetchUserData = async (
      * and general decimal places for loans in general, and if we have all decimals we can calc correct number, the formula is:
      * (reward amount in blockchain number) / (10 ** decimals for loanasset + decimals for loans in general) * (rate of the loan asset to convert it all to $)
      */
-    userInfo.myLendingRewardsAmount =
-      userInfo.mTokens?.reduce((acc, { rewards_earned, m_token: { loan_token_name: mTokenName, address } }) => {
+    userInfo.availableLoansRewards =
+      userInfo.userMTokens?.reduce((acc, { rewards_earned, m_token: { loan_token_name: mTokenName, address } }) => {
         const { oracle_id } = loanTokens?.find(({ loan_token_name }) => loan_token_name === mTokenName) ?? {}
 
         if (!oracle_id) return acc
@@ -150,12 +150,16 @@ export const fetchUserData = async (
         return acc
       }, 0) ?? 0
 
-    const { actionsHistory, ...userRewardsToDate } = calcUsersRewardsToDate(stakes_history_data)
+    const { actionsHistory, gatheredDoormanRewards, gatheredFarmRewards, gatheredSatellitesRewards } =
+      calcUsersRewardsToDate(stakes_history_data)
 
-    userInfo.userRewardsToDate = userRewardsToDate
+    userInfo.gatheredDoormanRewards = gatheredDoormanRewards
+    userInfo.gatheredFarmRewards = gatheredFarmRewards
+    userInfo.gatheredSatellitesRewards = gatheredSatellitesRewards
     userInfo.actionsHistory = actionsHistory
+    // ----- GETTING USER'S REWARDS *END* -----
 
-    // getting user lend/borrow history data
+    // ----- GETTING USER'S LOANS HISTORY DATA *START* -----
     const userLendingData = await fetchFromIndexer(
       USER_LENDING_DATA_QUERY,
       USER_LENDING_DATA_QUERY_NAME,
@@ -174,6 +178,103 @@ export const fetchUserData = async (
       userLendings,
       userVaultsData,
     }
+    // ----- GETTING USER'S LOANS HISTORY DATA *END* -----
+
+    // ----- GETTING USER'S TOKENS BALANCES, THAT ARE USED ACROSS DAPP *START* -----
+    // We 100% should have are mvk and smvk, need this set to not make 2+ same calls for balance
+    const userTokenNames = new Set<string>(['mvk', 'smvk'])
+
+    const collateralTokens = await avaliableCollaterals.reduce<Promise<UserState['userTokens']>>(
+      async (promiseAcc, { address, symbol: collateralSymbol, gqlName }) => {
+        const acc = await promiseAcc
+        const { name, symbol } = getSymbolAndNameFromCollaterealGqlname(collateralSymbol, gqlName)
+        if (userTokenNames.has(symbol)) return acc
+
+        const isAssetXtz = isTezosAsset(symbol)
+        const fetchedBalance = isAssetXtz
+          ? await (
+              await fetch(`https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/accounts/${accountPkh}/balance`)
+            ).json()
+          : await (
+              await fetch(
+                `https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/tokens/balances?account.eq=${accountPkh}&token.contract.in=${address}`,
+              )
+            ).json()
+
+        const balance =
+          (typeof fetchedBalance === 'number'
+            ? fetchedBalance / 10 ** 6
+            : Number(fetchedBalance?.[0]?.balance ?? 0) /
+              10 ** Number(fetchedBalance?.[0]?.token?.metadata?.decimals ?? 0)) ?? 0
+
+        acc[symbol] = {
+          balance,
+          name,
+          symbol,
+          tokenAddress: address,
+        }
+
+        userTokenNames.add(symbol)
+        return acc
+      },
+      Promise.resolve({}),
+    )
+
+    // TODO: clarify whether reduce feeds
+    // const feedsAssets = await feeds.reduce<Promise<UserState['userTokens']>>(
+    //   async (promiseAcc, { last_completed_data, decimals, name, address }) => {
+    //     const acc = await promiseAcc
+    //     const { symbol: tokenName, name: tokenDisplayName } = getSymbolAndNameFromFeedName(name)
+    //     if (!last_completed_data || !decimals || userTokenNames.has(tokenName)) return acc
+
+    //     const isAssetXtz = isTezosAsset(tokenName)
+    //     const fetchedBalance = isAssetXtz
+    //       ? await (
+    //           await fetch(`https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/accounts/${accountPkh}/balance`)
+    //         ).json()
+    //       : await (
+    //           await fetch(
+    //             `https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/tokens/balances?account.eq=${accountPkh}&token.contract.in=${address}`,
+    //           )
+    //         ).json()
+
+    //     const balance =
+    //       (typeof fetchedBalance === 'number'
+    //         ? fetchedBalance / 10 ** 6
+    //         : Number(fetchedBalance?.[0]?.balance ?? 0) /
+    //           10 ** Number(fetchedBalance?.[0]?.token?.metadata?.decimals ?? 0)) ?? 0
+
+    //     acc[tokenName] = {
+    //       balance,
+    //       tokenDisplayName,
+    //       tokenName,
+    //       tokenAddress: address,
+    //     }
+
+    //     userTokenNames.add(tokenName)
+    //     return acc
+    //   },
+    //   Promise.resolve({}),
+    // )
+
+    userInfo.userTokens = {
+      ...collateralTokens,
+      // ...feedsAssets,
+      mvk: {
+        balance: convertNumberForClient({ number: mvk_balance, grade: MVK_DECIMALS }),
+        name: 'MVK',
+        symbol: 'mvk',
+        tokenAddress: '',
+      },
+      smvk: {
+        balance: convertNumberForClient({ number: smvk_balance, grade: MVK_DECIMALS }),
+        name: 'sMVK',
+        symbol: 'smvk',
+        tokenAddress: '',
+      },
+    }
+
+    // ----- GETTING USER'S TOKENS BALANCES, THAT ARE USED ACROSS DAPP *END* -----
 
     return userInfo
   } catch (error) {
@@ -190,7 +291,7 @@ export const updateUserData = (newAccAddress?: string) => async (dispatch: AppDi
   const {
     preferences: { headData: { level = 0 } = {} },
     wallet: { accountPkh },
-    tokens: { dipDupTokens },
+    tokens: { dipDupTokens, avaliableCollaterals, whitelistTokens },
     dataFeeds: { feedsLedger },
   } = getState()
 
@@ -198,7 +299,13 @@ export const updateUserData = (newAccAddress?: string) => async (dispatch: AppDi
 
   try {
     if (userAddressToLoadData) {
-      const userData = await fetchUserData(userAddressToLoadData, dipDupTokens, feedsLedger, level)
+      const userData = await fetchUserData(
+        userAddressToLoadData,
+        dipDupTokens,
+        feedsLedger,
+        avaliableCollaterals,
+        level,
+      )
 
       dispatch({
         type: UPDATE_USER_DATA,

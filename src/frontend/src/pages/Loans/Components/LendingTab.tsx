@@ -10,7 +10,6 @@ import { loansPopupsContext } from './Modals/LoansModals.provider'
 
 import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import Icon from 'app/App.components/Icon/Icon.view'
 import { assetDecimalsToShow } from '../Loans.const'
 
 import { ThreeLevelListItem } from '../Loans.style'
@@ -27,8 +26,13 @@ type LendingTabPropsType = {
 
 export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, lendAPY }: LendingTabPropsType) => {
   const { openAddLendingAssetPopup, openRemoveLendingAssetPopup } = useContext(loansPopupsContext)
-  const { accountPkh } = useSelector((state: State) => state.wallet)
+  const {
+    accountPkh,
+    user: { userTokens },
+  } = useSelector((state: State) => state.wallet)
   const { isActionActive } = useSelector((state: State) => state.loading)
+
+  const balanceOfTheToken = userTokens[assetData.symbol.toLowerCase()]?.balance ?? 0
 
   return (
     <LoansTabStyled>
@@ -64,9 +68,9 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Wallet Balance</div>
-              <CommaNumber value={assetData.userBalance} decimalsToShow={assetDecimalsToShow} className="value" />
+              <CommaNumber value={balanceOfTheToken} decimalsToShow={assetDecimalsToShow} className="value" />
               {assetData.rate ? (
-                <CommaNumber value={assetData.userBalance * assetData.rate} beginningText="$" className="rate" />
+                <CommaNumber value={balanceOfTheToken * assetData.rate} beginningText="$" className="rate" />
               ) : null}
             </ThreeLevelListItem>
             <ThreeLevelListItem>
