@@ -34,7 +34,7 @@ export const GradientBreakpoint = styled.div<{ theme: MavrykTheme; background: s
   height: 8px;
   width: 8px;
   border-radius: 50%;
-  z-index: 10;
+  z-index: 6;
   position: relative;
 
   ${({ background }) =>

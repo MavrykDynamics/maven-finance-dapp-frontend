@@ -147,3 +147,11 @@ export const DataFeedsSearchFilter = styled(Card)<{ theme: MavrykTheme }>`
     }
   }
 `
+
+export const DataFeedListItemTextTruncated = styled.var<{ theme: MavrykTheme }>`
+  max-width: 180px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block !important;
+`

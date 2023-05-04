@@ -1,5 +1,6 @@
 import styled from 'styled-components/macro'
 import { MavrykTheme } from '../../styles/interfaces'
+import { DEFAULT_Z_INDEX_FOR_OVERLAP } from 'styles/constants'
 
 export const GovernanceStyled = styled.div<{ theme: MavrykTheme }>`
   display: flex;
@@ -28,7 +29,7 @@ export const GovernanceLeftContainer = styled.div<{ theme: MavrykTheme }>`
     position: absolute;
     top: 0;
     right: 0;
-    z-index: 10;
+    z-index: ${DEFAULT_Z_INDEX_FOR_OVERLAP};
     margin: 0;
   }
 
@@ -36,7 +37,7 @@ export const GovernanceLeftContainer = styled.div<{ theme: MavrykTheme }>`
     position: absolute;
     top: 50px;
     left: 0;
-    z-index: 10;
+    z-index: ${DEFAULT_Z_INDEX_FOR_OVERLAP};
   }
 `
 

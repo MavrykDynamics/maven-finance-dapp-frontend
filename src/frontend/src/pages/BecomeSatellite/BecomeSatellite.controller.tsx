@@ -74,6 +74,7 @@ export const BecomeSatellite = () => {
   const { isLoaded: isDoormanLoaded } = useStakeContext()
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { themeSelected } = useSelector((state: State) => state.preferences)
+  const isGhostnet = process.env.REACT_APP_NETWORK === 'ghostnet'
 
   useStakeUpdater(true)
 
@@ -91,7 +92,7 @@ export const BecomeSatellite = () => {
 
   const [form, setForm] = useState(DEFAULT_BECOME_SATELLITE_FORM)
   const [isChecked, setIsChecked] = useState(false)
-  const pageText = getFormTextBasedOnUserRole(Boolean(usersSatelliteProfile))
+  const pageText = getFormTextBasedOnUserRole(isSatellite)
   const isUserOracle = Boolean(usersSatelliteProfile?.peerId || usersSatelliteProfile?.publicKey)
   const showOracleWarning = isUserOracle && !isChecked
 
@@ -363,7 +364,7 @@ export const BecomeSatellite = () => {
                     id="become-satellite-is-oracle"
                     onChangeHandler={() => setIsChecked(!isChecked)}
                     checked={isChecked}
-                    disabled={process.env.REACT_APP_NETWORK === 'ghostnet'}
+                    disabled={isGhostnet}
                   />
                 </div>
 
@@ -383,21 +384,6 @@ export const BecomeSatellite = () => {
                   <div className="inputs">
                     <Input
                       settings={{
-                        label: pageText.oraclePeerId,
-                        tooltip: tooltipPeerId,
-                        inputStatus: form.oraclePeerId.status,
-                      }}
-                      inputProps={{
-                        value: form.oraclePeerId.text,
-                        placeholder: 'Enter Oracle Peer ID',
-                        name: 'oraclePeerId',
-                        onChange: handleChange,
-                        required: true,
-                      }}
-                    />
-
-                    <Input
-                      settings={{
                         label: pageText.oraclePublicKey,
                         tooltip: tooltipPublicKey,
                         inputStatus: form.oraclePublicKey.status,
@@ -408,6 +394,23 @@ export const BecomeSatellite = () => {
                         name: 'oraclePublicKey',
                         onChange: handleChange,
                         required: true,
+                        disabled: isGhostnet,
+                      }}
+                    />
+
+                    <Input
+                      settings={{
+                        label: pageText.oraclePeerId,
+                        tooltip: tooltipPeerId,
+                        inputStatus: form.oraclePeerId.status,
+                      }}
+                      inputProps={{
+                        value: form.oraclePeerId.text,
+                        placeholder: 'Enter Oracle Peer ID',
+                        name: 'oraclePeerId',
+                        onChange: handleChange,
+                        required: true,
+                        disabled: isGhostnet,
                       }}
                     />
                   </div>
@@ -416,11 +419,9 @@ export const BecomeSatellite = () => {
                 {showOracleWarning && (
                   <div className="warning">
                     <Info
-                      text={
-                        'You are unregistering for being an oracle. This means you will no longer be able to sign price feeds and subsequently no longer receive rewards for participation in the oracle network.'
-                      }
+                      text={`You are unregistering for being an oracle. This means you will no longer be able to sign price feeds and subsequently no longer receive rewards for participation in the oracle network.`}
                       type={INFO_ERROR}
-                    ></Info>
+                    />
                   </div>
                 )}
               </BecomeSatelliteRegisterAsOracle>

@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux'
 import { useContext, useState } from 'react'
 
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
-import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
 import { loansPopupsContext } from './Modals/LoansModals.provider'
 import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
 import { State } from 'reducers'
@@ -13,20 +12,15 @@ import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { BorrowingExpandCard } from './BorrowindExpandCard'
 import Checkbox from 'app/App.components/Checkbox/Checkbox.view'
 
-import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { LoansTabStyled, NoItemsInTabStyled, VaultsList } from './LoansComponents.style'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
 type BorrowingTabPropsType = {
-  borrowingItems: Array<LoansVaultType>
   lendingControllerAddress: string
   currentMarketAsset: string
 }
 
-export const BorrowingTab = ({
-  borrowingItems,
-  lendingControllerAddress,
-  currentMarketAsset,
-}: BorrowingTabPropsType) => {
+export const BorrowingTab = ({ lendingControllerAddress, currentMarketAsset }: BorrowingTabPropsType) => {
   const { openCreateVaultPopup } = useContext(loansPopupsContext)
 
   const [createdVaultId, setCreatedVaultAddress] = useState<null | string>(null)
@@ -35,21 +29,26 @@ export const BorrowingTab = ({
   const { isActionActive } = useSelector((state: State) => state.loading)
   const {
     config: { DAOFee },
+    vaults: { myVaultsIds, vaultsMapper },
   } = useSelector((state: State) => state.loans)
 
-  const vaults = useMemo(() => {
-    return showZeroVaults
-      ? borrowingItems.filter(({ collateralBalance, borrowedAmount }) => collateralBalance || borrowedAmount)
-      : borrowingItems
-  }, [borrowingItems, showZeroVaults])
+  const userMarketVaultsIds = useMemo(
+    () =>
+      myVaultsIds.filter((vaultId) => {
+        const vault = vaultsMapper[vaultId]
+
+        return showZeroVaults
+          ? currentMarketAsset === vault.borrowedAsset.gqlName
+          : currentMarketAsset === vault.borrowedAsset.gqlName && (vault.collateralBalance || vault.borrowedAmount)
+      }),
+    [currentMarketAsset, myVaultsIds, showZeroVaults, vaultsMapper],
+  )
 
   return (
     <LoansTabStyled>
-      <GovRightContainerTitleArea>
-        <h2>My Borrowing</h2>
-      </GovRightContainerTitleArea>
+      <H2Title>My Borrowing</H2Title>
 
-      {vaults.length ? (
+      {userMarketVaultsIds.length ? (
         <>
           <Checkbox
             id="borrowing-tab-zero-filter"
@@ -69,13 +68,14 @@ export const BorrowingTab = ({
             className="lending-tab-no-items-btn has-items-borrow-btn"
           />
           <VaultsList>
-            {vaults.map((item, idx) => {
+            {userMarketVaultsIds.map((vaultId, idx) => {
+              const vault = vaultsMapper[vaultId]
               return (
                 <BorrowingExpandCard
                   isOwner
-                  {...item}
-                  key={item.borrowedAsset.symbol + '-' + idx}
-                  isOpenedVault={createdVaultId === item.address}
+                  {...vault}
+                  key={vault.borrowedAsset.symbol + '-' + idx}
+                  isOpenedVault={createdVaultId === vault.address}
                   DAOFee={DAOFee}
                 />
               )

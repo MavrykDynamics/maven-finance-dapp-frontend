@@ -17,6 +17,8 @@ import {
 import { State } from 'reducers'
 import { RegisterAsSatelliteForm } from '../../utils/TypesAndInterfaces/Forms'
 import type { AppDispatch, GetState } from '../../app/App.controller'
+import { updateUserData } from 'reducers/actions/user.actions'
+import { OpKind, WalletParamsWithKind } from '@taquito/taquito'
 
 export const registerAsSatellite =
   (form: RegisterAsSatelliteForm) => async (dispatch: AppDispatch, getState: GetState) => {
@@ -28,19 +30,39 @@ export const registerAsSatellite =
     }
 
     try {
+      const userDelegatedToAddress = state.wallet.user.satelliteMvkIsDelegatedTo
       // prepare and send transaction
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.delegationAddress.address)
-      const transaction = await contract?.methods
-        .registerAsSatellite(
-          form.name,
-          form.description,
-          form.image,
-          form.website,
-          form.fee * 100,
-          form.publicKey,
-          form.peerId,
-        )
+
+      const transaction = tezos.wallet
+        .batch([
+          // Need to undelegate from satellite is user register himself as satellite and is delegated
+          ...((userDelegatedToAddress
+            ? [
+                {
+                  kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+                  ...contract?.methods
+                    .undelegateFromSatellite(state.wallet.accountPkh, userDelegatedToAddress)
+                    .toTransferParams(),
+                },
+              ]
+            : [{}]) as WalletParamsWithKind[]),
+          {
+            kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+            ...contract?.methods
+              .registerAsSatellite(
+                form.name,
+                form.description,
+                form.image,
+                form.website,
+                form.fee * 100,
+                form.publicKey,
+                form.peerId,
+              )
+              .toTransferParams(),
+          },
+        ])
         .send()
 
       dispatch(toggleActionFullScreenLoader(true))
@@ -65,6 +87,7 @@ export const registerAsSatellite =
         await checkIndexerLevelAndRunDataUpdateCallback({
           callback: async () => {
             await dispatch(getSatellitesStorage())
+            await dispatch(updateUserData())
 
             await dispatch(hideToaster())
             await dispatch(showToaster(TOASTER_SUCCESS, 'Satellite Registered.', ACTION_COMPLETION_MESSAGE_TEXT))
@@ -129,6 +152,7 @@ export const updateSatelliteRecord =
         await checkIndexerLevelAndRunDataUpdateCallback({
           callback: async () => {
             await dispatch(getSatellitesStorage())
+            await dispatch(updateUserData())
 
             await dispatch(hideToaster())
             await dispatch(showToaster(TOASTER_SUCCESS, 'Satellite record updated.', ACTION_COMPLETION_MESSAGE_TEXT))
@@ -182,6 +206,7 @@ export const unregisterAsSatellite = () => async (dispatch: AppDispatch, getStat
       await checkIndexerLevelAndRunDataUpdateCallback({
         callback: async () => {
           await dispatch(getSatellitesStorage())
+          await dispatch(updateUserData())
 
           await dispatch(hideToaster())
           await dispatch(

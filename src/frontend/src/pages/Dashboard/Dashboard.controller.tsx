@@ -5,19 +5,18 @@ import { DashboardView } from './Dashboard.view'
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
 import { Page } from 'styles'
 
+// providers
+import { useStakeContext } from 'providers/StakeProvider/stake.provider'
+import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
+
 import { State } from '../../reducers'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { mvkStatsType, isValidPersonalDashboardTabId, LENDING_TAB_ID } from './Dashboard.utils'
 import { fillTreasuryStorage, getVestingStorage } from '../Treasury/Treasury.actions'
-import { getVaultsStorage } from 'pages/Vaults/Vaults.actions'
 import { getFarmStorage } from 'pages/Farms/Farms.actions'
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
 import QueryString from 'qs'
-
-// providers
-import { useStakeContext } from 'providers/StakeProvider/stake.provider'
-import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
 
 export const Dashboard = () => {
   const dispatch = useDispatch()
@@ -33,12 +32,12 @@ export const Dashboard = () => {
   const { treasuryStorage, isLoaded: isTreasuryLoaded } = useSelector((state: State) => state.treasury)
   const { isLoaded: isVestingLoaded } = useSelector((state: State) => state.vesting)
   const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)
-  const {
-    vaultsList: { allVaultsIds, vaultsMapper },
-    isLoaded: isVaultsLoaded,
-  } = useSelector((state: State) => state.vaults)
   const { farms, isLoaded: isFarmsLoaded } = useSelector((state: State) => state.farm)
-  const { isDataLoaded: isLoansLoaded, loanTokens } = useSelector((state: State) => state.loans)
+  const {
+    isDataLoaded: isLoansLoaded,
+    loanTokens,
+    vaults: { vaultsMapper, allVaultsIds },
+  } = useSelector((state: State) => state.loans)
 
   const { totalBorrowed, totalLended } = loanTokens.reduce<{
     totalLended: number
@@ -90,7 +89,6 @@ export const Dashboard = () => {
       await Promise.all(
         [
           (!isGovernanceLoaded || isDepsChanged) && dispatch(getGovernanceStorage()),
-          (!isVaultsLoaded || isDepsChanged) && dispatch(getVaultsStorage()),
           (!isVestingLoaded || isDepsChanged) && dispatch(getVestingStorage()),
           (!isTreasuryLoaded || isDepsChanged) && dispatch(fillTreasuryStorage()),
           (!isLoansLoaded || isDepsChanged) && dispatch(getLoansStorage()),
@@ -112,12 +110,7 @@ export const Dashboard = () => {
   return (
     <Page>
       <PageHeader page={'dashboard'} />
-      <DashboardView
-        tvl={tvlValue}
-        mvkStatsBlock={mvkStatsBlock}
-        activeTab={activeTab}
-        isLoading={isLoading && isDoormanLoaded}
-      />
+      <DashboardView tvl={tvlValue} mvkStatsBlock={mvkStatsBlock} activeTab={activeTab} isLoading={isLoading} />
     </Page>
   )
 }

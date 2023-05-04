@@ -4,7 +4,6 @@ import dayjs from 'dayjs'
 
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 
-import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { VestingTabStyled } from './DashboardPersonalComponents.style'
 
 import { State } from 'reducers'
@@ -14,6 +13,7 @@ import { parseDate } from 'utils/time'
 import { PORTFOLIO_TAB_ID } from '../DashboardPersonal.utils'
 import { claimVestingReward } from '../DashboardPersonal.actions'
 import { UserActionHistory } from './UserOperationsHistory'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
 const VestingTab = () => {
   const dispatch = useDispatch()
@@ -38,9 +38,7 @@ const VestingTab = () => {
   return (
     <>
       <VestingTabStyled>
-        <GovRightContainerTitleArea>
-          <h2>My Vesting</h2>
-        </GovRightContainerTitleArea>
+        <H2Title>My Vesting</H2Title>
 
         <div className="vesting-data">
           <div className="column">

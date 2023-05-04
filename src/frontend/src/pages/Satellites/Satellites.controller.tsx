@@ -2,6 +2,10 @@ import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 
+// providers
+import { useStakeContext } from 'providers/StakeProvider/stake.provider'
+import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
+
 // types
 import { State } from 'reducers'
 
@@ -16,29 +20,26 @@ import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 
 // consts, helpers, actions
+import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
 import { getTotalDelegatedMVK } from './helpers/Satellites.consts'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { BUTTON_SIMPLE } from 'app/App.components/Button/Button.constants'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
 import { getFeedsStorage } from 'pages/DataFeeds/DataFeeds.actions'
 
-// providers
-import { useStakeContext } from 'providers/StakeProvider/stake.provider'
-import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
-
-// view
+// styles
 import { SmallInfoBlock } from 'pages/SatelliteGovernance/SatelliteGovernance.style'
-import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import NewButton from 'app/App.components/Button/NewButton'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { EmptyContainer } from 'app/App.style'
 import { Page, PageContent } from 'styles'
 import { InfoBlockWrapper, SatellitesOverviewStyled } from './Satellites.style'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
 const Satellites = () => {
   const dispatch = useDispatch()
   const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)
-  const { allSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
+  const { activeSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
   const { feedsLedger, isLoaded: isFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
   const { isLoaded: isDoormanLoaded } = useStakeContext()
 
@@ -58,12 +59,12 @@ const Satellites = () => {
   const tabsInfo = useMemo(
     () => ({
       totalDelegetedMVK: (
-        <CommaNumber value={getTotalDelegatedMVK(allSatellitesIds, satelliteMapper)} endingText={'MVK'} />
+        <CommaNumber value={getTotalDelegatedMVK(activeSatellitesIds, satelliteMapper)} endingText={'MVK'} />
       ),
-      totalSatelliteOracles: allSatellitesIds.length,
+      totalSatelliteOracles: activeSatellitesIds.length,
       numberOfDataFeeds: feedsLedger.length > 50 ? feedsLedger.length + '+' : feedsLedger.length,
     }),
-    [allSatellitesIds, feedsLedger, satelliteMapper],
+    [activeSatellitesIds, feedsLedger, satelliteMapper],
   )
 
   return (
@@ -98,12 +99,10 @@ const Satellites = () => {
             </DataLoaderWrapper>
           ) : (
             <>
-              {allSatellitesIds.length ? (
+              {activeSatellitesIds.length ? (
                 <>
                   <div className="top-list">
-                    <GovRightContainerTitleArea>
-                      <h1>Top Satellites</h1>
-                    </GovRightContainerTitleArea>
+                    <H2Title>Top Satellites</H2Title>
 
                     <Link to="/satellite-nodes">
                       <NewButton kind={BUTTON_SIMPLE}>
@@ -114,7 +113,7 @@ const Satellites = () => {
                   </div>
 
                   <div className={`satellitesList`}>
-                    {allSatellitesIds.slice(0, 3).map((satelliteAddress) => (
+                    {activeSatellitesIds.slice(0, 3).map((satelliteAddress) => (
                       <SatelliteListItem satellite={satelliteMapper[satelliteAddress]} key={satelliteAddress} />
                     ))}
                   </div>
@@ -124,9 +123,7 @@ const Satellites = () => {
               {feedsLedger.length ? (
                 <>
                   <div className="top-list">
-                    <GovRightContainerTitleArea>
-                      <h1>Popular Feeds</h1>
-                    </GovRightContainerTitleArea>
+                    <H2Title>Popular Feeds</H2Title>
 
                     <Link to="/data-feeds">
                       <NewButton kind={BUTTON_SIMPLE}>
@@ -144,7 +141,7 @@ const Satellites = () => {
                 </>
               ) : null}
 
-              {feedsLedger.length === 0 && allSatellitesIds.length === 0 ? (
+              {feedsLedger.length === 0 && activeSatellitesIds.length === 0 ? (
                 <EmptyContainer>
                   <img src="/images/not-found.svg" alt={`no satellites and data feeds`} />
                   <figcaption>No satellites and data feeds</figcaption>

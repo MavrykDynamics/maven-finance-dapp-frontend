@@ -18,8 +18,8 @@ import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } f
 
 // types
 import { State } from 'reducers'
-import { VaultType } from 'utils/TypesAndInterfaces/Vaults'
 import { StatusFlagStyle } from '../../../app/App.components/StatusFlag/StatusFlag.constants'
+import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
 
 // helpers
 import { CYAN } from 'app/App.components/TzAddress/TzAddress.constants'
@@ -84,7 +84,7 @@ const findFooterText = (status: string, statusColor: StatusFlagStyle, timestamp?
   }
 }
 
-type Props = VaultType & {
+type Props = LoansVaultType & {
   isOwner: boolean
   handleMarkForLiquidation: (vaultId: number, vaultOwner: string) => void
   vaultTab: string
@@ -106,6 +106,7 @@ export const VaultsCard = (props: Props) => {
   } = props
 
   const { isActionActive } = useSelector((state: State) => state.loading)
+  const { DAOFee } = useSelector((state: State) => state.loans.config)
 
   const { openLiquidateVaultPopup } = useContext(loansPopupsContext)
 
@@ -304,13 +305,13 @@ export const VaultsCard = (props: Props) => {
   return (
     <>
       {(vaultTab === vaultTabs.ALL || vaultTab === vaultTabs.MY) && (
-        <BorrowingExpandCard {...props} headerSufix={headerSufix} DAOFee={props.daoFee} isOwner={isOwner}>
+        <BorrowingExpandCard {...props} headerSufix={headerSufix} DAOFee={DAOFee} isOwner={isOwner}>
           {!isOwner && generalExpand}
         </BorrowingExpandCard>
       )}
 
       {vaultTab === vaultTabs.PERMISSIONED && (
-        <BorrowingExpandCard {...props} headerSufix={headerSufix} DAOFee={props.daoFee} />
+        <BorrowingExpandCard {...props} headerSufix={headerSufix} DAOFee={DAOFee} />
       )}
     </>
   )

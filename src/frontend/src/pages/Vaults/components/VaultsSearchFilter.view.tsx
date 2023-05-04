@@ -18,20 +18,20 @@ import {
   vaultsPathname,
   vaultsFilters,
   COLLATERAL_NAME,
-  LOAN_NAME,
+  BORROWED_NAME,
   ALL_VAULTS_FILTER,
 } from '../Vaults.consts'
 import { stringFullCharsCompare } from 'utils/stringFullCharsCompare'
 
 // types
-import { VaultType } from 'utils/TypesAndInterfaces/Vaults'
+import { LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
 
 type Filters = Record<string, string>
 type AssetCategory = 'loanAssets' | 'collateralAssets'
 
 type Props = {
   assets: Record<AssetCategory, string[]>
-  vaultsMapper: Record<string, VaultType>
+  vaultsMapper: Record<string, LoansVaultType>
   currentVaultsIds: string[]
   setVaultsIds: (arg: string[]) => void
 }
@@ -50,7 +50,7 @@ export const VaultsSearchFilter = ({ assets: assetSymbols, vaultsMapper, current
   } = qs.parse(search, { ignoreQueryPrefix: true })
 
   const preparedCollateralAssets = assetSymbols.collateralAssets.map((asset) => `${COLLATERAL_NAME}, ${asset}`)
-  const preparedLoanAssets = assetSymbols.loanAssets.map((asset) => `${LOAN_NAME}, ${asset}`)
+  const preparedLoanAssets = assetSymbols.loanAssets.map((asset) => `${BORROWED_NAME}, ${asset}`)
   const preparedAssets = [ALL_VAULTS_FILTER].concat(preparedCollateralAssets).concat(preparedLoanAssets)
 
   const filterDdItems = useMemo(() => preparedAssets.map((item) => getDdItem(item)), [preparedAssets])

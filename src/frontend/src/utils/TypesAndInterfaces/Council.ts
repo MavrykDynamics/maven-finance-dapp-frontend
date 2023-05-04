@@ -33,6 +33,7 @@ export type CouncilActionType = {
   actionType: string
   councilId: string
   executed: boolean
+  councilSize: number
   id: number
   initiatorId: string
   signersCount: number

@@ -62,7 +62,7 @@ export function MyCouncilActions({
                     key={action.id}
                     actionType={action.actionType}
                     signersCount={action.signersCount}
-                    numCouncilMembers={numCouncilMembers}
+                    numCouncilMembers={action.councilSize}
                     councilId={action.councilId}
                   />
                 )

@@ -117,7 +117,7 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
                   <CommaNumber
                     value={lending24hPersentChange}
                     beginningText={lending24hPersentChange > 0 ? '+' : ''}
-                    endingText={'%'}
+                    endingText={'% 24h'}
                   />
                 </div>
               </div>
@@ -166,7 +166,7 @@ export const LendingTab = ({ isLoading }: { isLoading: boolean }) => {
                   <CommaNumber
                     value={borrowing24hPersentChange}
                     beginningText={borrowing24hPersentChange > 0 ? '+' : ''}
-                    endingText={'%'}
+                    endingText={'% 24h'}
                   />
                 </div>
               </div>
