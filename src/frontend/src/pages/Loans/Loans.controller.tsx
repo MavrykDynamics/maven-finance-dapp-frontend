@@ -203,8 +203,8 @@ export const Loans = () => {
                     <div className="row">
                       <ThreeLevelListItem>
                         <div className="name">Total Lending</div>
-                        <CommaNumber value={totalLended} className="value" />
-                        {rate ? <CommaNumber value={totalLended * rate} beginningText="$" className="rate" /> : null}
+                        <CommaNumber beginningText="$" value={totalLended} className="value" />
+                        {rate ? <CommaNumber value={totalLended * rate} className="rate" /> : null}
                       </ThreeLevelListItem>
                       <ThreeLevelListItem>
                         <div className="name">Lend APY</div>
@@ -237,8 +237,8 @@ export const Loans = () => {
                     <div className="row">
                       <ThreeLevelListItem>
                         <div className="name">Total Borrowed</div>
-                        <CommaNumber value={totalBorrowed} className="value" />
-                        {rate ? <CommaNumber value={totalBorrowed * rate} beginningText="$" className="rate" /> : null}
+                        <CommaNumber beginningText="$" value={totalBorrowed} className="value" />
+                        {rate ? <CommaNumber value={totalBorrowed * rate} className="rate" /> : null}
                       </ThreeLevelListItem>
                       <ThreeLevelListItem>
                         <div className="name">Borrow APR</div>
