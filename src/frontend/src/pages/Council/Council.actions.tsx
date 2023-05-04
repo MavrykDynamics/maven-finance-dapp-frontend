@@ -1,8 +1,7 @@
-import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
-import { ERROR, INFO, SUCCESS } from 'app/App.components/Toaster/Toaster.constants'
-import { State } from 'reducers'
-import { fetchFromIndexerWithPromise } from '../../gql/fetchGraphQL'
+// types
 import type { AppDispatch, GetState } from '../../app/App.controller'
+import { State } from 'reducers'
+import { TokenType } from 'utils/TypesAndInterfaces/General'
 
 // helpers
 import { parseDate } from 'utils/time'
@@ -16,6 +15,17 @@ import {
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { MVK_DECIMALS } from 'utils/constants'
 import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
+import { TOASTER_SUCCESS } from 'app/App.components/Toaster/Toaster.constants'
+import { ACTION_COMPLETION_MESSAGE_TEXT } from 'app/App.components/Toaster/Toaster.constants'
+import { TOASTER_LOADING } from 'app/App.components/Toaster/Toaster.constants'
+import { TOASTER_UPDATE_DATA_AFTER_ACTION_DATA } from 'app/App.components/Toaster/Toaster.constants'
+import {
+  ACTION_START_MESSAGE_TEXT,
+  ERROR,
+  TOASTER_ERROR,
+  TOASTER_INFO,
+} from 'app/App.components/Toaster/Toaster.constants'
+import { fetchFromIndexerWithPromise } from '../../gql/fetchGraphQL'
 
 // gql
 import {
@@ -34,9 +44,9 @@ import {
 } from '../../gql/queries/getCouncilStorage'
 
 // actions
-import { toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
-import { TokenType } from 'utils/TypesAndInterfaces/General'
+import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
+import { hideToaster, showToaster } from 'app/App.components/Toaster/Toaster.actions'
 
 const time = String(new Date())
 const timeFormat = 'YYYY-MM-DD'
@@ -169,49 +179,57 @@ export const getCouncilMembers = () => async (dispatch: AppDispatch, getState: G
 export const sign = (actionID: number) => async (dispatch: AppDispatch, getState: GetState) => {
   const state: State = getState()
 
+  // check whether we can send transaction
   if (!state.wallet.accountPkh) {
-    dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
-    return
-  }
-
-  if (state.loading.isActionActive) {
-    dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
+    await dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
     return
   }
 
   try {
+    // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(state.contractAddresses.councilAddress.address)
     const transaction = await contract?.methods.signAction(actionID).send()
 
-    await dispatch(toggleActionFullScreenLoader(true))
-    await dispatch(showToaster(INFO, 'Sign...', 'Please wait 30s'))
+    dispatch(toggleActionFullScreenLoader(true))
+    dispatch(toggleActionCompletion(true))
+    dispatch(showToaster(TOASTER_INFO, 'Sign...', ACTION_START_MESSAGE_TEXT))
 
-    // confirm query completion
-    await transaction?.confirmation()
+    // turn off fs actions loader and start data updating after 5s after operation started
+    setTimeout(async () => {
+      await dispatch(toggleActionFullScreenLoader(false))
+      await dispatch(
+        showToaster(
+          TOASTER_LOADING,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+        ),
+      )
 
-    // @ts-ignore don't have proper type to acees data, type has only methods
-    const currentOperationLevel = transaction?.lastHead?.header?.level
+      // @ts-ignore don't have proper type to acees data, type has only methods
+      const currentOperationLevel = transaction?.lastHead?.header?.level
 
-    // refetch data we need
-    await checkIndexerLevelAndRunDataUpdateCallback({
-      callback: async () => {
-        await Promise.all([
-          dispatch(getCouncilPendingActions()),
-          dispatch(getCouncilPastActions()),
-          dispatch(getCouncilMembers()),
-        ])
-      },
-      currentOperationLevel,
-    })
+      // refetch data we need
+      await checkIndexerLevelAndRunDataUpdateCallback({
+        callback: async () => {
+          await dispatch(getCouncilPendingActions())
+          await dispatch(getCouncilPastActions())
+          await dispatch(getCouncilMembers())
 
-    await dispatch(showToaster(SUCCESS, 'Sign is done', 'All good :)'))
-    await dispatch(toggleActionFullScreenLoader(false))
+          await dispatch(hideToaster())
+          await dispatch(showToaster(TOASTER_SUCCESS, 'Sign is done.', ACTION_COMPLETION_MESSAGE_TEXT))
+          await dispatch(toggleActionCompletion(false))
+        },
+        currentOperationLevel,
+      })
+    }, 5000)
   } catch (error) {
+    console.error('Sign error:', error)
     if (error instanceof Error) {
-      dispatch(showToaster(ERROR, 'Error', error.message))
+      dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
     }
-    await dispatch(toggleActionFullScreenLoader(false))
+    dispatch(toggleActionFullScreenLoader(false))
+    dispatch(toggleActionCompletion(false))
   }
 }
 
@@ -221,17 +239,14 @@ export const addVestee =
   async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
 
+    // check whether we can send transaction
     if (!state.wallet.accountPkh) {
-      dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
-      return
-    }
-
-    if (state.loading.isActionActive) {
-      dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
+      await dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
       return
     }
 
     try {
+      // prepare and send transaction
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.councilAddress.address)
       const transaction = await contract?.methods
@@ -242,19 +257,44 @@ export const addVestee =
           vestingInMonths,
         )
         .send()
-      await dispatch(toggleActionFullScreenLoader(true))
 
-      dispatch(showToaster(INFO, 'Add Vestee...', 'Please wait 30s'))
-      await transaction?.confirmation()
-      dispatch(showToaster(SUCCESS, 'Add Vestee is done', 'All good :)'))
+      dispatch(toggleActionFullScreenLoader(true))
+      dispatch(toggleActionCompletion(true))
+      dispatch(showToaster(TOASTER_INFO, 'Add Vestee...', ACTION_START_MESSAGE_TEXT))
 
-      await dispatch(getCouncilPendingActions())
-      await dispatch(toggleActionFullScreenLoader(false))
+      // turn off fs actions loader and start data updating after 5s after operation started
+      setTimeout(async () => {
+        await dispatch(toggleActionFullScreenLoader(false))
+        await dispatch(
+          showToaster(
+            TOASTER_LOADING,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+          ),
+        )
+
+        // @ts-ignore don't have proper type to acees data, type has only methods
+        const currentOperationLevel = transaction?.lastHead?.header?.level
+
+        // refetch data we need
+        await checkIndexerLevelAndRunDataUpdateCallback({
+          callback: async () => {
+            await dispatch(getCouncilPendingActions())
+
+            await dispatch(hideToaster())
+            await dispatch(showToaster(TOASTER_SUCCESS, 'Add Vestee is done.', ACTION_COMPLETION_MESSAGE_TEXT))
+            await dispatch(toggleActionCompletion(false))
+          },
+          currentOperationLevel,
+        })
+      }, 5000)
     } catch (error) {
+      console.error('Add Vestee error:', error)
       if (error instanceof Error) {
-        dispatch(showToaster(ERROR, 'Error', error.message))
+        dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionCompletion(false))
     }
   }
 
@@ -264,35 +304,57 @@ export const addCouncilMember =
   async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
 
+    // check whether we can send transaction
     if (!state.wallet.accountPkh) {
-      dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
-      return
-    }
-
-    if (state.loading.isActionActive) {
-      dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
+      await dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
       return
     }
 
     try {
+      // prepare and send transaction
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.councilAddress.address)
       const transaction = await contract?.methods
         .councilActionAddMember(newMemberAddress, newMemberName, newMemberWebsite, newMemberImage)
         .send()
-      await dispatch(toggleActionFullScreenLoader(true))
 
-      dispatch(showToaster(INFO, 'Add Council Member...', 'Please wait 30s'))
-      await transaction?.confirmation()
-      dispatch(showToaster(SUCCESS, 'Add Council Member is done', 'All good :)'))
+      dispatch(toggleActionFullScreenLoader(true))
+      dispatch(toggleActionCompletion(true))
+      dispatch(showToaster(TOASTER_INFO, 'Add Member...', ACTION_START_MESSAGE_TEXT))
 
-      await dispatch(getCouncilPendingActions())
-      await dispatch(toggleActionFullScreenLoader(false))
+      // turn off fs actions loader and start data updating after 5s after operation started
+      setTimeout(async () => {
+        await dispatch(toggleActionFullScreenLoader(false))
+        await dispatch(
+          showToaster(
+            TOASTER_LOADING,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+          ),
+        )
+
+        // @ts-ignore don't have proper type to acees data, type has only methods
+        const currentOperationLevel = transaction?.lastHead?.header?.level
+
+        // refetch data we need
+        await checkIndexerLevelAndRunDataUpdateCallback({
+          callback: async () => {
+            await dispatch(getCouncilPendingActions())
+
+            await dispatch(hideToaster())
+            await dispatch(showToaster(TOASTER_SUCCESS, 'Add Member is done.', ACTION_COMPLETION_MESSAGE_TEXT))
+            await dispatch(toggleActionCompletion(false))
+          },
+          currentOperationLevel,
+        })
+      }, 5000)
     } catch (error) {
+      console.error('Add Member error:', error)
       if (error instanceof Error) {
-        dispatch(showToaster(ERROR, 'Error', error.message))
+        dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionCompletion(false))
     }
   }
 
@@ -302,17 +364,14 @@ export const updateVestee =
   async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
 
+    // check whether we can send transaction
     if (!state.wallet.accountPkh) {
-      dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
-      return
-    }
-
-    if (state.loading.isActionActive) {
-      dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
+      await dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
       return
     }
 
     try {
+      // prepare and send transaction
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.councilAddress.address)
       const transaction = await contract?.methods
@@ -323,20 +382,44 @@ export const updateVestee =
           vestingInMonths,
         )
         .send()
-      await dispatch(toggleActionFullScreenLoader(true))
 
-      dispatch(showToaster(INFO, 'Update Vestee...', 'Please wait 30s'))
-      await transaction?.confirmation()
-      dispatch(showToaster(SUCCESS, 'Update Vestee is done', 'All good :)'))
+      dispatch(toggleActionFullScreenLoader(true))
+      dispatch(toggleActionCompletion(true))
+      dispatch(showToaster(TOASTER_INFO, 'Update Vestee...', ACTION_START_MESSAGE_TEXT))
 
-      await dispatch(getCouncilPendingActions())
-      await dispatch(toggleActionFullScreenLoader(false))
+      // turn off fs actions loader and start data updating after 5s after operation started
+      setTimeout(async () => {
+        await dispatch(toggleActionFullScreenLoader(false))
+        await dispatch(
+          showToaster(
+            TOASTER_LOADING,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+          ),
+        )
+
+        // @ts-ignore don't have proper type to acees data, type has only methods
+        const currentOperationLevel = transaction?.lastHead?.header?.level
+
+        // refetch data we need
+        await checkIndexerLevelAndRunDataUpdateCallback({
+          callback: async () => {
+            await dispatch(getCouncilPendingActions())
+
+            await dispatch(hideToaster())
+            await dispatch(showToaster(TOASTER_SUCCESS, 'Update Vestee is done.', ACTION_COMPLETION_MESSAGE_TEXT))
+            await dispatch(toggleActionCompletion(false))
+          },
+          currentOperationLevel,
+        })
+      }, 5000)
     } catch (error) {
+      console.error('Update Vestee error:', error)
       if (error instanceof Error) {
-        console.error(error)
-        dispatch(showToaster(ERROR, 'Error', error.message))
+        dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionCompletion(false))
     }
   }
 
@@ -344,34 +427,55 @@ export const updateVestee =
 export const toggleVesteeLock = (vesteeAddress: string) => async (dispatch: AppDispatch, getState: GetState) => {
   const state: State = getState()
 
+  // check whether we can send transaction
   if (!state.wallet.accountPkh) {
-    dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
-    return
-  }
-
-  if (state.loading.isActionActive) {
-    dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
+    await dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
     return
   }
 
   try {
+    // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(state.contractAddresses.councilAddress.address)
     const transaction = await contract?.methods.councilActionToggleVesteeLock(vesteeAddress).send()
-    await dispatch(toggleActionFullScreenLoader(true))
 
-    dispatch(showToaster(INFO, 'Toggle Vestee Lock...', 'Please wait 30s'))
-    await transaction?.confirmation()
-    dispatch(showToaster(SUCCESS, 'Toggle Vestee Lock is done', 'All good :)'))
+    dispatch(toggleActionFullScreenLoader(true))
+    dispatch(toggleActionCompletion(true))
+    dispatch(showToaster(TOASTER_INFO, 'Toggle Vestee Lock...', ACTION_START_MESSAGE_TEXT))
 
-    await dispatch(getCouncilPendingActions())
-    await dispatch(toggleActionFullScreenLoader(false))
+    // turn off fs actions loader and start data updating after 5s after operation started
+    setTimeout(async () => {
+      await dispatch(toggleActionFullScreenLoader(false))
+      await dispatch(
+        showToaster(
+          TOASTER_LOADING,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+        ),
+      )
+
+      // @ts-ignore don't have proper type to acees data, type has only methods
+      const currentOperationLevel = transaction?.lastHead?.header?.level
+
+      // refetch data we need
+      await checkIndexerLevelAndRunDataUpdateCallback({
+        callback: async () => {
+          await dispatch(getCouncilPendingActions())
+
+          await dispatch(hideToaster())
+          await dispatch(showToaster(TOASTER_SUCCESS, 'Toggle Vestee Lock is done.', ACTION_COMPLETION_MESSAGE_TEXT))
+          await dispatch(toggleActionCompletion(false))
+        },
+        currentOperationLevel,
+      })
+    }, 5000)
   } catch (error) {
+    console.error('Toggle Vestee Lock error:', error)
     if (error instanceof Error) {
-      console.error(error)
-      dispatch(showToaster(ERROR, 'Error', error.message))
+      dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
     }
-    await dispatch(toggleActionFullScreenLoader(false))
+    dispatch(toggleActionFullScreenLoader(false))
+    dispatch(toggleActionCompletion(false))
   }
 }
 
@@ -387,17 +491,14 @@ export const changeCouncilMember =
   async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
 
+    // check whether we can send transaction
     if (!state.wallet.accountPkh) {
-      dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
-      return
-    }
-
-    if (state.loading.isActionActive) {
-      dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
+      await dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
       return
     }
 
     try {
+      // prepare and send transaction
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.councilAddress.address)
       const transaction = await contract?.methods
@@ -409,20 +510,46 @@ export const changeCouncilMember =
           newMemberImage,
         )
         .send()
-      await dispatch(toggleActionFullScreenLoader(true))
 
-      dispatch(showToaster(INFO, 'Change Council Member...', 'Please wait 30s'))
-      await transaction?.confirmation()
-      dispatch(showToaster(SUCCESS, 'Change Council Member is done', 'All good :)'))
+      dispatch(toggleActionFullScreenLoader(true))
+      dispatch(toggleActionCompletion(true))
+      dispatch(showToaster(TOASTER_INFO, 'Change Council Member...', ACTION_START_MESSAGE_TEXT))
 
-      await dispatch(getCouncilPendingActions())
-      await dispatch(toggleActionFullScreenLoader(false))
+      // turn off fs actions loader and start data updating after 5s after operation started
+      setTimeout(async () => {
+        await dispatch(toggleActionFullScreenLoader(false))
+        await dispatch(
+          showToaster(
+            TOASTER_LOADING,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+          ),
+        )
+
+        // @ts-ignore don't have proper type to acees data, type has only methods
+        const currentOperationLevel = transaction?.lastHead?.header?.level
+
+        // refetch data we need
+        await checkIndexerLevelAndRunDataUpdateCallback({
+          callback: async () => {
+            await dispatch(getCouncilPendingActions())
+
+            await dispatch(hideToaster())
+            await dispatch(
+              showToaster(TOASTER_SUCCESS, 'Change Council Member is done.', ACTION_COMPLETION_MESSAGE_TEXT),
+            )
+            await dispatch(toggleActionCompletion(false))
+          },
+          currentOperationLevel,
+        })
+      }, 5000)
     } catch (error) {
+      console.error('Change Council Member error:', error)
       if (error instanceof Error) {
-        console.error(error)
-        dispatch(showToaster(ERROR, 'Error', error.message))
+        dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionCompletion(false))
     }
   }
 
@@ -430,34 +557,55 @@ export const changeCouncilMember =
 export const removeCouncilMember = (memberAddress: string) => async (dispatch: AppDispatch, getState: GetState) => {
   const state: State = getState()
 
+  // check whether we can send transaction
   if (!state.wallet.accountPkh) {
-    dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
-    return
-  }
-
-  if (state.loading.isActionActive) {
-    dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
+    await dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
     return
   }
 
   try {
+    // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(state.contractAddresses.councilAddress.address)
     const transaction = await contract?.methods.councilActionRemoveMember(memberAddress).send()
-    await dispatch(toggleActionFullScreenLoader(true))
 
-    dispatch(showToaster(INFO, 'Remove Council Member...', 'Please wait 30s'))
-    await transaction?.confirmation()
-    dispatch(showToaster(SUCCESS, 'Remove Council Member is done', 'All good :)'))
+    dispatch(toggleActionFullScreenLoader(true))
+    dispatch(toggleActionCompletion(true))
+    dispatch(showToaster(TOASTER_INFO, 'Remove Council Member...', ACTION_START_MESSAGE_TEXT))
 
-    await dispatch(getCouncilPendingActions())
-    await dispatch(toggleActionFullScreenLoader(false))
+    // turn off fs actions loader and start data updating after 5s after operation started
+    setTimeout(async () => {
+      await dispatch(toggleActionFullScreenLoader(false))
+      await dispatch(
+        showToaster(
+          TOASTER_LOADING,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+        ),
+      )
+
+      // @ts-ignore don't have proper type to acees data, type has only methods
+      const currentOperationLevel = transaction?.lastHead?.header?.level
+
+      // refetch data we need
+      await checkIndexerLevelAndRunDataUpdateCallback({
+        callback: async () => {
+          await dispatch(getCouncilPendingActions())
+
+          await dispatch(hideToaster())
+          await dispatch(showToaster(TOASTER_SUCCESS, 'Remove Council Member is done.', ACTION_COMPLETION_MESSAGE_TEXT))
+          await dispatch(toggleActionCompletion(false))
+        },
+        currentOperationLevel,
+      })
+    }, 5000)
   } catch (error) {
+    console.error('Remove Council Member error:', error)
     if (error instanceof Error) {
-      console.error(error)
-      dispatch(showToaster(ERROR, 'Error', error.message))
+      dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
     }
-    await dispatch(toggleActionFullScreenLoader(false))
+    dispatch(toggleActionFullScreenLoader(false))
+    dispatch(toggleActionCompletion(false))
   }
 }
 
@@ -467,38 +615,60 @@ export const updateCouncilMemberInfo =
   async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
 
+    // check whether we can send transaction
     if (!state.wallet.accountPkh) {
-      dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
-      return
-    }
-
-    if (state.loading.isActionActive) {
-      dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
+      await dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
       return
     }
 
     try {
+      // prepare and send transaction
+      callback()
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.councilAddress.address)
       const transaction = await contract?.methods
         .updateCouncilMemberInfo(newMemberName, newMemberWebsite, newMemberImage)
         .send()
 
-      callback()
-      await dispatch(toggleActionFullScreenLoader(true))
+      dispatch(toggleActionFullScreenLoader(true))
+      dispatch(toggleActionCompletion(true))
+      dispatch(showToaster(TOASTER_INFO, 'Update Council Member Info...', ACTION_START_MESSAGE_TEXT))
 
-      await dispatch(showToaster(INFO, 'Update Council Member Info...', 'Please wait 30s'))
-      await transaction?.confirmation()
-      await dispatch(showToaster(SUCCESS, 'Update Council Member Info is done', 'All good :)'))
+      // turn off fs actions loader and start data updating after 5s after operation started
+      setTimeout(async () => {
+        await dispatch(toggleActionFullScreenLoader(false))
+        await dispatch(
+          showToaster(
+            TOASTER_LOADING,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+          ),
+        )
 
-      await dispatch(getCouncilMembers())
-      await dispatch(toggleActionFullScreenLoader(false))
+        // @ts-ignore don't have proper type to acees data, type has only methods
+        const currentOperationLevel = transaction?.lastHead?.header?.level
+
+        // refetch data we need
+        await checkIndexerLevelAndRunDataUpdateCallback({
+          callback: async () => {
+            await dispatch(getCouncilMembers())
+
+            await dispatch(hideToaster())
+            await dispatch(
+              showToaster(TOASTER_SUCCESS, 'Update Council Member Info is done.', ACTION_COMPLETION_MESSAGE_TEXT),
+            )
+            await dispatch(toggleActionCompletion(false))
+          },
+          currentOperationLevel,
+        })
+      }, 5000)
     } catch (error) {
+      console.error('Update Council Member Info error:', error)
       if (error instanceof Error) {
-        console.error(error)
-        dispatch(showToaster(ERROR, 'Error', error.message))
+        dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionCompletion(false))
     }
   }
 
@@ -516,17 +686,14 @@ export const transferTokens =
   async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
 
+    // check whether we can send transaction
     if (!state.wallet.accountPkh) {
-      dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
-      return
-    }
-
-    if (state.loading.isActionActive) {
-      dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
+      await dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
       return
     }
 
     try {
+      // prepare and send transaction
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.councilAddress.address)
       const transaction = await contract?.methods
@@ -539,20 +706,44 @@ export const transferTokens =
           purpose,
         )
         .send()
-      await dispatch(toggleActionFullScreenLoader(true))
 
-      dispatch(showToaster(INFO, 'Transfer Tokens...', 'Please wait 30s'))
-      await transaction?.confirmation()
-      dispatch(showToaster(SUCCESS, 'Transfer Tokens is done', 'All good :)'))
+      dispatch(toggleActionFullScreenLoader(true))
+      dispatch(toggleActionCompletion(true))
+      dispatch(showToaster(TOASTER_INFO, 'Transfer Tokens...', ACTION_START_MESSAGE_TEXT))
 
-      await dispatch(getCouncilPendingActions())
-      await dispatch(toggleActionFullScreenLoader(false))
+      // turn off fs actions loader and start data updating after 5s after operation started
+      setTimeout(async () => {
+        await dispatch(toggleActionFullScreenLoader(false))
+        await dispatch(
+          showToaster(
+            TOASTER_LOADING,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+          ),
+        )
+
+        // @ts-ignore don't have proper type to acees data, type has only methods
+        const currentOperationLevel = transaction?.lastHead?.header?.level
+
+        // refetch data we need
+        await checkIndexerLevelAndRunDataUpdateCallback({
+          callback: async () => {
+            await dispatch(getCouncilPendingActions())
+
+            await dispatch(hideToaster())
+            await dispatch(showToaster(TOASTER_SUCCESS, 'Transfer Tokens is done.', ACTION_COMPLETION_MESSAGE_TEXT))
+            await dispatch(toggleActionCompletion(false))
+          },
+          currentOperationLevel,
+        })
+      }, 5000)
     } catch (error) {
+      console.error('Transfer Tokens error:', error)
       if (error instanceof Error) {
-        console.error(error)
-        await dispatch(showToaster(ERROR, 'Error', error.message))
+        dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionCompletion(false))
     }
   }
 
@@ -571,17 +762,14 @@ export const requestTokens =
   async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
 
+    // check whether we can send transaction
     if (!state.wallet.accountPkh) {
-      dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
-      return
-    }
-
-    if (state.loading.isActionActive) {
-      dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
+      await dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
       return
     }
 
     try {
+      // prepare and send transaction
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.councilAddress.address)
       const transaction = await contract?.methods
@@ -596,20 +784,43 @@ export const requestTokens =
         )
         .send()
 
-      await dispatch(toggleActionFullScreenLoader(true))
+      dispatch(toggleActionFullScreenLoader(true))
+      dispatch(toggleActionCompletion(true))
+      dispatch(showToaster(TOASTER_INFO, 'Request Tokens...', ACTION_START_MESSAGE_TEXT))
 
-      dispatch(showToaster(INFO, 'Request Tokens...', 'Please wait 30s'))
-      await transaction?.confirmation()
-      dispatch(showToaster(SUCCESS, 'Request Tokens is done', 'All good :)'))
+      // turn off fs actions loader and start data updating after 5s after operation started
+      setTimeout(async () => {
+        await dispatch(toggleActionFullScreenLoader(false))
+        await dispatch(
+          showToaster(
+            TOASTER_LOADING,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+          ),
+        )
 
-      await dispatch(getCouncilPendingActions())
-      await dispatch(toggleActionFullScreenLoader(false))
+        // @ts-ignore don't have proper type to acees data, type has only methods
+        const currentOperationLevel = transaction?.lastHead?.header?.level
+
+        // refetch data we need
+        await checkIndexerLevelAndRunDataUpdateCallback({
+          callback: async () => {
+            await dispatch(getCouncilPendingActions())
+
+            await dispatch(hideToaster())
+            await dispatch(showToaster(TOASTER_SUCCESS, 'Request Tokens is done.', ACTION_COMPLETION_MESSAGE_TEXT))
+            await dispatch(toggleActionCompletion(false))
+          },
+          currentOperationLevel,
+        })
+      }, 5000)
     } catch (error) {
+      console.error('Request Tokens error:', error)
       if (error instanceof Error) {
-        console.error(error)
-        await dispatch(showToaster(ERROR, 'Error', error.message))
+        dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionCompletion(false))
     }
   }
 
@@ -619,17 +830,14 @@ export const requestTokenMint =
   async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
 
+    // check whether we can send transaction
     if (!state.wallet.accountPkh) {
-      dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
-      return
-    }
-
-    if (state.loading.isActionActive) {
-      dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
+      await dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
       return
     }
 
     try {
+      // prepare and send transaction
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.councilAddress.address)
       const transaction = await contract?.methods
@@ -639,20 +847,44 @@ export const requestTokenMint =
           purpose,
         )
         .send()
-      await dispatch(toggleActionFullScreenLoader(true))
 
-      dispatch(showToaster(INFO, 'Request Tokens...', 'Please wait 30s'))
-      await transaction?.confirmation()
-      dispatch(showToaster(SUCCESS, 'Request Tokens is done', 'All good :)'))
+      dispatch(toggleActionFullScreenLoader(true))
+      dispatch(toggleActionCompletion(true))
+      dispatch(showToaster(TOASTER_INFO, 'Request Token Mint...', ACTION_START_MESSAGE_TEXT))
 
-      await dispatch(getCouncilPendingActions())
-      await dispatch(toggleActionFullScreenLoader(false))
+      // turn off fs actions loader and start data updating after 5s after operation started
+      setTimeout(async () => {
+        await dispatch(toggleActionFullScreenLoader(false))
+        await dispatch(
+          showToaster(
+            TOASTER_LOADING,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+          ),
+        )
+
+        // @ts-ignore don't have proper type to acees data, type has only methods
+        const currentOperationLevel = transaction?.lastHead?.header?.level
+
+        // refetch data we need
+        await checkIndexerLevelAndRunDataUpdateCallback({
+          callback: async () => {
+            await dispatch(getCouncilPendingActions())
+
+            await dispatch(hideToaster())
+            await dispatch(showToaster(TOASTER_SUCCESS, 'Request Token Mint is done.', ACTION_COMPLETION_MESSAGE_TEXT))
+            await dispatch(toggleActionCompletion(false))
+          },
+          currentOperationLevel,
+        })
+      }, 5000)
     } catch (error) {
+      console.error('Request Token Mint error:', error)
       if (error instanceof Error) {
-        console.error(error)
-        dispatch(showToaster(ERROR, 'Error', error.message))
+        dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionCompletion(false))
     }
   }
 
@@ -660,34 +892,57 @@ export const requestTokenMint =
 export const dropFinancialRequest = (financialReqID: number) => async (dispatch: AppDispatch, getState: GetState) => {
   const state: State = getState()
 
+  // check whether we can send transaction
   if (!state.wallet.accountPkh) {
-    dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
-    return
-  }
-
-  if (state.loading.isActionActive) {
-    dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
+    await dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
     return
   }
 
   try {
+    // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(state.contractAddresses.councilAddress.address)
     const transaction = await contract?.methods.councilActionDropFinancialReq(financialReqID).send()
-    await dispatch(toggleActionFullScreenLoader(true))
 
-    dispatch(showToaster(INFO, 'Drop Financial Request...', 'Please wait 30s'))
-    await transaction?.confirmation()
-    dispatch(showToaster(SUCCESS, 'Drop Financial Request is done', 'All good :)'))
+    dispatch(toggleActionFullScreenLoader(true))
+    dispatch(toggleActionCompletion(true))
+    dispatch(showToaster(TOASTER_INFO, 'Drop Financial Request...', ACTION_START_MESSAGE_TEXT))
 
-    await dispatch(getCouncilPendingActions())
-    await dispatch(toggleActionFullScreenLoader(false))
+    // turn off fs actions loader and start data updating after 5s after operation started
+    setTimeout(async () => {
+      await dispatch(toggleActionFullScreenLoader(false))
+      await dispatch(
+        showToaster(
+          TOASTER_LOADING,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+        ),
+      )
+
+      // @ts-ignore don't have proper type to acees data, type has only methods
+      const currentOperationLevel = transaction?.lastHead?.header?.level
+
+      // refetch data we need
+      await checkIndexerLevelAndRunDataUpdateCallback({
+        callback: async () => {
+          await dispatch(getCouncilPendingActions())
+
+          await dispatch(hideToaster())
+          await dispatch(
+            showToaster(TOASTER_SUCCESS, 'Drop Financial Request is done.', ACTION_COMPLETION_MESSAGE_TEXT),
+          )
+          await dispatch(toggleActionCompletion(false))
+        },
+        currentOperationLevel,
+      })
+    }, 5000)
   } catch (error) {
+    console.error('Drop Financial Request error:', error)
     if (error instanceof Error) {
-      console.error(error)
-      dispatch(showToaster(ERROR, 'Error', error.message))
+      dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
     }
-    await dispatch(toggleActionFullScreenLoader(false))
+    dispatch(toggleActionFullScreenLoader(false))
+    dispatch(toggleActionCompletion(false))
   }
 }
 
@@ -695,34 +950,55 @@ export const dropFinancialRequest = (financialReqID: number) => async (dispatch:
 export const removeVesteeRequest = (vesteeAddress: string) => async (dispatch: AppDispatch, getState: GetState) => {
   const state: State = getState()
 
+  // check whether we can send transaction
   if (!state.wallet.accountPkh) {
-    dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
-    return
-  }
-
-  if (state.loading.isActionActive) {
-    dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
+    await dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
     return
   }
 
   try {
+    // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(state.contractAddresses.councilAddress.address)
     const transaction = await contract?.methods.councilActionRemoveVestee(vesteeAddress).send()
-    await dispatch(toggleActionFullScreenLoader(true))
 
-    dispatch(showToaster(INFO, 'Remove Vestee Request...', 'Please wait 30s'))
-    await transaction?.confirmation()
-    dispatch(showToaster(SUCCESS, 'Remove Vestee Request is done', 'All good :)'))
+    dispatch(toggleActionFullScreenLoader(true))
+    dispatch(toggleActionCompletion(true))
+    dispatch(showToaster(TOASTER_INFO, 'Remove Vestee Request...', ACTION_START_MESSAGE_TEXT))
 
-    await dispatch(getCouncilPendingActions())
-    await dispatch(toggleActionFullScreenLoader(false))
+    // turn off fs actions loader and start data updating after 5s after operation started
+    setTimeout(async () => {
+      await dispatch(toggleActionFullScreenLoader(false))
+      await dispatch(
+        showToaster(
+          TOASTER_LOADING,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+        ),
+      )
+
+      // @ts-ignore don't have proper type to acees data, type has only methods
+      const currentOperationLevel = transaction?.lastHead?.header?.level
+
+      // refetch data we need
+      await checkIndexerLevelAndRunDataUpdateCallback({
+        callback: async () => {
+          await dispatch(getCouncilPendingActions())
+
+          await dispatch(hideToaster())
+          await dispatch(showToaster(TOASTER_SUCCESS, 'Remove Vestee Request is done.', ACTION_COMPLETION_MESSAGE_TEXT))
+          await dispatch(toggleActionCompletion(false))
+        },
+        currentOperationLevel,
+      })
+    }, 5000)
   } catch (error) {
+    console.error('Remove Vestee Request error:', error)
     if (error instanceof Error) {
-      console.error(error)
-      dispatch(showToaster(ERROR, 'Error', error.message))
+      dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
     }
-    await dispatch(toggleActionFullScreenLoader(false))
+    dispatch(toggleActionFullScreenLoader(false))
+    dispatch(toggleActionCompletion(false))
   }
 }
 
@@ -730,34 +1006,55 @@ export const removeVesteeRequest = (vesteeAddress: string) => async (dispatch: A
 export const setBakerRequest = (bakerHash: string) => async (dispatch: AppDispatch, getState: GetState) => {
   const state: State = getState()
 
+  // check whether we can send transaction
   if (!state.wallet.accountPkh) {
-    dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
-    return
-  }
-
-  if (state.loading.isActionActive) {
-    dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
+    await dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
     return
   }
 
   try {
+    // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(state.contractAddresses.councilAddress.address)
     const transaction = await contract?.methods.councilActionSetBaker(bakerHash).send()
-    await dispatch(toggleActionFullScreenLoader(true))
 
-    dispatch(showToaster(INFO, 'Set Baker Request...', 'Please wait 30s'))
-    await transaction?.confirmation()
-    dispatch(showToaster(SUCCESS, 'Set Baker Request is done', 'All good :)'))
+    dispatch(toggleActionFullScreenLoader(true))
+    dispatch(toggleActionCompletion(true))
+    dispatch(showToaster(TOASTER_INFO, 'Set Baker...', ACTION_START_MESSAGE_TEXT))
 
-    await dispatch(getCouncilPendingActions())
-    await dispatch(toggleActionFullScreenLoader(false))
+    // turn off fs actions loader and start data updating after 5s after operation started
+    setTimeout(async () => {
+      await dispatch(toggleActionFullScreenLoader(false))
+      await dispatch(
+        showToaster(
+          TOASTER_LOADING,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+        ),
+      )
+
+      // @ts-ignore don't have proper type to acees data, type has only methods
+      const currentOperationLevel = transaction?.lastHead?.header?.level
+
+      // refetch data we need
+      await checkIndexerLevelAndRunDataUpdateCallback({
+        callback: async () => {
+          await dispatch(getCouncilPendingActions())
+
+          await dispatch(hideToaster())
+          await dispatch(showToaster(TOASTER_SUCCESS, 'Set Baker is done.', ACTION_COMPLETION_MESSAGE_TEXT))
+          await dispatch(toggleActionCompletion(false))
+        },
+        currentOperationLevel,
+      })
+    }, 5000)
   } catch (error) {
+    console.error('Set Baker error:', error)
     if (error instanceof Error) {
-      console.error(error)
-      dispatch(showToaster(ERROR, 'Error', error.message))
+      dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
     }
-    await dispatch(toggleActionFullScreenLoader(false))
+    dispatch(toggleActionFullScreenLoader(false))
+    dispatch(toggleActionCompletion(false))
   }
 }
 
@@ -766,34 +1063,55 @@ export const setContractBakerRequest =
   (targetContractAddress: string, keyHash: string) => async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
 
+    // check whether we can send transaction
     if (!state.wallet.accountPkh) {
-      dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
-      return
-    }
-
-    if (state.loading.isActionActive) {
-      dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
+      await dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
       return
     }
 
     try {
+      // prepare and send transaction
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.councilAddress.address)
       const transaction = await contract?.methods.councilActionSetContractBaker(targetContractAddress, keyHash).send()
-      await dispatch(toggleActionFullScreenLoader(true))
 
-      dispatch(showToaster(INFO, 'Set Contract Baker Request...', 'Please wait 30s'))
-      await transaction?.confirmation()
-      dispatch(showToaster(SUCCESS, 'Set Contract Baker Request is done', 'All good :)'))
+      dispatch(toggleActionFullScreenLoader(true))
+      dispatch(toggleActionCompletion(true))
+      dispatch(showToaster(TOASTER_INFO, 'Set Contract Baker...', ACTION_START_MESSAGE_TEXT))
 
-      await dispatch(getCouncilPendingActions())
-      await dispatch(toggleActionFullScreenLoader(false))
+      // turn off fs actions loader and start data updating after 5s after operation started
+      setTimeout(async () => {
+        await dispatch(toggleActionFullScreenLoader(false))
+        await dispatch(
+          showToaster(
+            TOASTER_LOADING,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+          ),
+        )
+
+        // @ts-ignore don't have proper type to acees data, type has only methods
+        const currentOperationLevel = transaction?.lastHead?.header?.level
+
+        // refetch data we need
+        await checkIndexerLevelAndRunDataUpdateCallback({
+          callback: async () => {
+            await dispatch(getCouncilPendingActions())
+
+            await dispatch(hideToaster())
+            await dispatch(showToaster(TOASTER_SUCCESS, 'Set Contract Baker is done.', ACTION_COMPLETION_MESSAGE_TEXT))
+            await dispatch(toggleActionCompletion(false))
+          },
+          currentOperationLevel,
+        })
+      }, 5000)
     } catch (error) {
+      console.error('Set Contract Baker error:', error)
       if (error instanceof Error) {
-        console.error(error)
-        dispatch(showToaster(ERROR, 'Error', error.message))
+        dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
       }
-      await dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionFullScreenLoader(false))
+      dispatch(toggleActionCompletion(false))
     }
   }
 
@@ -801,37 +1119,55 @@ export const setContractBakerRequest =
 export const dropRequest = (actionID: number) => async (dispatch: AppDispatch, getState: GetState) => {
   const state: State = getState()
 
+  // check whether we can send transaction
   if (!state.wallet.accountPkh) {
-    dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
-    return
-  }
-
-  if (state.loading.isActionActive) {
-    dispatch(showToaster(ERROR, 'Cannot send transaction', 'Previous transaction still pending...'))
+    await dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
     return
   }
 
   try {
+    // prepare and send transaction
     await dispatch(toggleActionFullScreenLoader(true))
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(state.contractAddresses.councilAddress.address)
-    console.log('contract', contract)
     const transaction = await contract?.methods.flushAction(actionID).send()
-    console.log('transaction', transaction)
 
-    dispatch(showToaster(INFO, 'Set Contract Baker Request...', 'Please wait 30s'))
+    dispatch(toggleActionFullScreenLoader(true))
+    dispatch(toggleActionCompletion(true))
+    dispatch(showToaster(TOASTER_INFO, 'Drop Request...', ACTION_START_MESSAGE_TEXT))
 
-    const done = await transaction?.confirmation()
-    console.log('done', done)
-    dispatch(showToaster(SUCCESS, 'Set Contract Baker Request is done', 'All good :)'))
+    // turn off fs actions loader and start data updating after 5s after operation started
+    setTimeout(async () => {
+      await dispatch(toggleActionFullScreenLoader(false))
+      await dispatch(
+        showToaster(
+          TOASTER_LOADING,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+          TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+        ),
+      )
 
-    await dispatch(getCouncilPendingActions())
-    await dispatch(toggleActionFullScreenLoader(false))
+      // @ts-ignore don't have proper type to acees data, type has only methods
+      const currentOperationLevel = transaction?.lastHead?.header?.level
+
+      // refetch data we need
+      await checkIndexerLevelAndRunDataUpdateCallback({
+        callback: async () => {
+          await dispatch(getCouncilPendingActions())
+
+          await dispatch(hideToaster())
+          await dispatch(showToaster(TOASTER_SUCCESS, 'Drop Request is done.', ACTION_COMPLETION_MESSAGE_TEXT))
+          await dispatch(toggleActionCompletion(false))
+        },
+        currentOperationLevel,
+      })
+    }, 5000)
   } catch (error) {
+    console.error('Drop Request error:', error)
     if (error instanceof Error) {
-      console.error(error)
-      dispatch(showToaster(ERROR, 'Error', error.message))
+      dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
     }
-    await dispatch(toggleActionFullScreenLoader(false))
+    dispatch(toggleActionFullScreenLoader(false))
+    dispatch(toggleActionCompletion(false))
   }
 }

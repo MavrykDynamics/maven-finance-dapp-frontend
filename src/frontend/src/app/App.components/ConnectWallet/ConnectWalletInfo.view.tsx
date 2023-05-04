@@ -31,7 +31,7 @@ export default function ConnectWalletInfo() {
         <ConnectWallet className="connect-wallet" />
 
         <ConnectWalletClose onClick={() => setIsClose(true)}>
-          <Icon className="close-connect-wallet" id="error" />
+          <Icon className="close-connect-wallet" id="navigation-menu_close" />
         </ConnectWalletClose>
       </ButtonBar>
     </ConnectWalletInfoStyled>

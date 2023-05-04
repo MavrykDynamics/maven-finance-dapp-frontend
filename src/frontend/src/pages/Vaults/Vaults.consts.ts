@@ -1,7 +1,7 @@
 export const vaultsPathname = '/vaults'
 
 export const COLLATERAL_NAME = 'Collateral Asset'
-export const LOAN_NAME = 'Loan Asset'
+export const BORROWED_NAME = 'Borrowed Asset'
 export const ALL_VAULTS_FILTER = 'All Assets'
 
 export const vaultsStatuses = {

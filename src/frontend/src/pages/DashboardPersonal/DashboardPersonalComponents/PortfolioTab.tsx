@@ -98,7 +98,7 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
           <div className="name">Staked MVK</div>
           <div className="value">
             <CommaNumber value={sMVKAmount} />
-            <Link to={accountPkh ? '/' : '#'}>
+            <Link to={accountPkh ? '/staking' : '#'}>
               <Button kind={BUTTON_SIMPLE} disabled={!accountPkh}>
                 View
               </Button>
@@ -109,7 +109,7 @@ const PortfolioTab = ({ xtzAmount, tzBTCAmount, sMVKAmount, notsMVKAmount, isUse
           <div className="name">MVK Not Staked</div>
           <div className="value">
             <CommaNumber value={notsMVKAmount} />
-            <Link to={accountPkh ? '/' : '#'}>
+            <Link to={accountPkh ? '/staking' : '#'}>
               <Button kind={BUTTON_SIMPLE} disabled={!accountPkh}>
                 Stake
               </Button>

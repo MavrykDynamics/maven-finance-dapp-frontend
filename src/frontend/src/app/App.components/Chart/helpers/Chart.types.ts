@@ -1,4 +1,4 @@
-import { CandlestickData, SingleValueData, WhitespaceData } from 'lightweight-charts'
+import { CandlestickData, SeriesMarker, SingleValueData, Time, WhitespaceData } from 'lightweight-charts'
 import { ChartTooltipsTypes } from '../Tooltips/ChartTooltip'
 import { DoubleChartTooltipsTypes } from '../Tooltips/DoubleChartTooltip'
 
@@ -52,7 +52,9 @@ type ChartSettings = {
 // Base chart props, that are general to all types
 type ChartBasePropsType = {
   colors?: ChartColorsSettings
-  settings?: ChartSettings
+  settings?: ChartSettings & {
+    seriesMarkers?: SeriesMarker<Time>[]
+  }
   tooltipName?: ChartTooltipsTypes
   tooltipAsset: string
 }
@@ -139,7 +141,10 @@ export type DoubleChartPropsType = {
     colors: DoubleChartColorsType
   }
 
-  settings: ChartSettings
+  settings: ChartSettings & {
+    firstChartSeriesMarkers?: SeriesMarker<Time>[]
+    secondChartSeriesMarkers?: SeriesMarker<Time>[]
+  }
   tooltipName?: DoubleChartTooltipsTypes
   tooltipAssetFirst: string
   tooltipAssetSecond: string

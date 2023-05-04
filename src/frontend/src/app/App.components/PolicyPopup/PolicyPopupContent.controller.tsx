@@ -27,9 +27,9 @@ export const PolicyPopupContent = ({ proccedPolicy }: { proccedPolicy: () => voi
       <h3>Incoming Updates & Fixes:</h3>
 
       <ol>
-        <li>Governance voting system refactor and fixes.</li>
-        <li>Governance Proposal Submission fixes.</li>
-        <li>Independent Earn & Borrow pages for simpler on-boarding.</li>
+        <li> Independent Earn & Borrow pages for simpler on-boarding.</li>
+        <li>Advanced Permissions for Vaults.</li>
+        <li>Improved UI/UX for Satellite operators.</li>
       </ol>
 
       <h3>Known UX/UI Issues & Bugs:</h3>
@@ -40,19 +40,16 @@ export const PolicyPopupContent = ({ proccedPolicy }: { proccedPolicy: () => voi
           update. If this occurs to you, please refresh the page a few seconds later.
         </li>
         <li>Slow data display updates.</li>
-        <li>
-          Governance Proposal Submission: A bit buggy and doesn’t always update data straight after TX action and lock
-          proposal button is disabled.
-        </li>
+        <li>Governance Proposal Submission - snapshot timing issue. Will need to wait to new round to vote.</li>
       </ol>
 
       <Checkbox id="policy" onChangeHandler={() => setCheckbox(!checkbox)} checked={checkbox}>
-        <span>I understand that Mavryk is in Beta and want to have some fun.</span>
+        <span>I understand that Mavryk Finance is in Beta and want to have some fun.</span>
       </Checkbox>
 
       <div className="procced-btn">
         <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} disabled={!checkbox} onClick={proccedPolicy}>
-          <Icon id="doubleCheckmark" /> Procced
+          <Icon id="doubleCheckmark" /> Proceed
         </NewButton>
       </div>
     </PopupContainerWrapper>

@@ -1,5 +1,5 @@
 import Icon from '../Icon/Icon.view'
-import { infoType } from './info.constants'
+import { getIconForInfoTyType, infoType } from './info.constants'
 import { InfoBlock } from './info.style'
 
 type Props = {
@@ -9,10 +9,12 @@ type Props = {
 }
 
 export const Info = ({ children, text, type }: Props) => {
+  const iconToUse = getIconForInfoTyType(type)
+
   return (
     <InfoBlock className={type}>
       <div className="content">
-        <Icon id="info" className='info-icon' />
+        <Icon id={iconToUse} className="info-icon" />
         <p>{text}</p>
         <div className="child">{children}</div>
       </div>

@@ -4,8 +4,8 @@ import {
   CouncilActionGraphQL,
   CouncilMemberGraphQL,
   CouncilMembers,
-  CouncilActions,
-  CouncilAction,
+  CouncilActionsType,
+  CouncilActionType,
 } from '../../utils/TypesAndInterfaces/Council'
 
 // helpers
@@ -27,7 +27,7 @@ export function normalizeCouncilActions(
   typeOfActions: FilterType,
   userAddress?: string,
 ) {
-  const initialData: CouncilActions = {
+  const initialData: CouncilActionsType = {
     allPendingActions: [],
     notMyPendingActions: [],
     myPendingActions: [],
@@ -38,8 +38,8 @@ export function normalizeCouncilActions(
 
   if (!storage?.length) return initialData
 
-  const normalizedActions = storage.reduce<CouncilActions>((acc, item) => {
-    const action: CouncilAction = {
+  const normalizedActions = storage.reduce<CouncilActionsType>((acc, item) => {
+    const action: CouncilActionType = {
       actionType: item.action_type,
       councilId: item.council_id ?? item.break_glass_id,
       executed: item.executed,
@@ -48,6 +48,7 @@ export function normalizeCouncilActions(
       signersCount: item.signers_count,
       startDatetime: item.start_datetime ?? '',
       parameters: item.parameters,
+      councilSize: item.council_size_snapshot
     }
 
     acc.actionsMapper[action.id] = action

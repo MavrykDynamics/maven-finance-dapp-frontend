@@ -3,8 +3,12 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { AmountDateTooltipStyled, MliFeeTooltipStyled } from '../Chart.style'
 
 export const AMOUNT_DATE_TOOLTIP = 'AmountDateTooltip'
+export const CURRENCY_AMOUNT_DATE_TOOLTIP = 'CurrencyAmountDateTooltip'
 export const MLI_FEE_TOOLTIP = 'MliFeeTooltip'
-export type ChartTooltipsTypes = typeof AMOUNT_DATE_TOOLTIP | typeof MLI_FEE_TOOLTIP
+export type ChartTooltipsTypes =
+  | typeof AMOUNT_DATE_TOOLTIP
+  | typeof MLI_FEE_TOOLTIP
+  | typeof CURRENCY_AMOUNT_DATE_TOOLTIP
 
 type TooltipProps = {
   xAxis: number
@@ -12,14 +16,23 @@ type TooltipProps = {
   dateTooltipFormatter?: (date: number) => string
   valueTooltipFormatter?: (date: number) => string
   asset: string
+  isCurrency?: boolean
 }
 
-const AmountDateTooltip = ({ xAxis, yAxis, asset, dateTooltipFormatter, valueTooltipFormatter }: TooltipProps) => {
+const AmountDateTooltip = ({
+  xAxis,
+  yAxis,
+  asset,
+  isCurrency,
+  dateTooltipFormatter,
+  valueTooltipFormatter,
+}: TooltipProps) => {
   return (
     <AmountDateTooltipStyled>
       <div className="value">
         <CommaNumber
-          endingText={asset}
+          endingText={isCurrency ? undefined : asset}
+          beginningText={isCurrency ? asset : undefined}
           value={valueTooltipFormatter ? parseFloat(valueTooltipFormatter(xAxis)) : xAxis}
           showDecimal
           decimalsToShow={6}
@@ -48,7 +61,6 @@ const MliFeeTooltip = ({ xAxis, yAxis, asset, valueTooltipFormatter }: TooltipPr
       <div>
         <div className="name">MLI:</div>
         <CommaNumber
-          endingText={asset}
           value={valueTooltipFormatter ? parseFloat(valueTooltipFormatter(yAxis)) : yAxis}
           showDecimal
           decimalsToShow={2}
@@ -79,10 +91,23 @@ const ChartTooltip = ({
   switch (tooltipName) {
     case AMOUNT_DATE_TOOLTIP:
       return (
+        // Amount of asset we show in format 100 XTZ
         <AmountDateTooltip
           xAxis={xAxis}
           yAxis={yAxis}
           asset={asset}
+          dateTooltipFormatter={dateTooltipFormatter}
+          valueTooltipFormatter={valueTooltipFormatter}
+        />
+      )
+    case CURRENCY_AMOUNT_DATE_TOOLTIP:
+      return (
+        // Amount of currency we show in format $ 100
+        <AmountDateTooltip
+          xAxis={xAxis}
+          yAxis={yAxis}
+          asset={asset}
+          isCurrency
           dateTooltipFormatter={dateTooltipFormatter}
           valueTooltipFormatter={valueTooltipFormatter}
         />

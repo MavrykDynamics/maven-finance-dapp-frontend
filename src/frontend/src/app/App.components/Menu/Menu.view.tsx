@@ -71,8 +71,11 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
     })
 
     setSelectedMainLink(selectedMainRoute?.id || 0)
+  }, [accountPkh, pathname, user.isSatellite])
+
+  useEffect(() => {
     setCanGetInitThouthand(Boolean(accountPkh && (user.myMvkTokenBalance === 0 || user.mySMvkTokenBalance === 0)))
-  }, [accountPkh, pathname, user.myMvkTokenBalance, user.mySMvkTokenBalance])
+  }, [accountPkh, user.myMvkTokenBalance, user.mySMvkTokenBalance])
 
   const [selectedMainLink, setSelectedMainLink] = useState<number>(0)
 
@@ -126,16 +129,34 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
               onClick={handleGetMVKTokensFromFaucet}
               disabled={!canGetInitThouthand || isActionActive}
             >
-              {sidebarOpened ? 'Get MVK Tokens' : 'mvk'}
+              {sidebarOpened ? 'MVK Faucet' : 'mvk'}
             </NewButton>
-            <a className="feedbackLink" href="https://forms.gle/bwmTfpoLKBhaf7yD6" target="_blank" rel="noreferrer">
+            <a
+              href="https://faucet.marigold.dev/ "
+              target="_blank"
+              rel="noreferrer"
+              className={sidebarOpened ? '' : 'small'}
+            >
               <NewButton kind={BUTTON_SECONDARY} form={sidebarOpened ? BUTTON_WIDE : BUTTON_ROUND} isThin>
-                {sidebarOpened ? 'Submit Feedback' : 'F'}
+                {sidebarOpened ? ' Ghostnet Faucet' : 'GF'}
+              </NewButton>
+            </a>
+            <a
+              href="https://forms.gle/bwmTfpoLKBhaf7yD6"
+              target="_blank"
+              rel="noreferrer"
+              className={sidebarOpened ? '' : 'small'}
+            >
+              <NewButton kind={BUTTON_SECONDARY} form={sidebarOpened ? BUTTON_WIDE : BUTTON_ROUND} isThin>
+                {sidebarOpened ? 'Submit Feedback' : 'SF'}
               </NewButton>
             </a>
 
             <SocialIcons />
-            <span>MAVRYK App v1.0</span>
+            <span>
+              DAPP v0.1
+              <br />© Mavryk Finance 2023
+            </span>
           </MenuFooter>
         </MenuSidebarContent>
       </MenuSidebarStyled>

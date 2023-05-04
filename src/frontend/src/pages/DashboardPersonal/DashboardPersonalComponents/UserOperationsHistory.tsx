@@ -8,12 +8,12 @@ import {
 import Pagination from 'app/App.components/Pagination/Pagination.view'
 import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } from 'app/App.components/Table'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { useLocation } from 'react-router'
 import { State } from 'reducers'
 import { HistoryBlock } from './DashboardPersonalComponents.style'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
 export const UserActionHistory = () => {
   const {
@@ -29,9 +29,7 @@ export const UserActionHistory = () => {
 
   return (
     <HistoryBlock>
-      <GovRightContainerTitleArea>
-        <h2>History</h2>
-      </GovRightContainerTitleArea>
+      <H2Title>History</H2Title>
       {actionsHistory.length ? (
         <Table className="treasury-table">
           <TableHeader className="treasury">

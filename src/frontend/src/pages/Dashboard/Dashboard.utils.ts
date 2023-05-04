@@ -7,12 +7,12 @@ export type mvkStatsType = {
   prevPrice: number
 }
 
-export const LENDING_TAB_ID = 'lending'
-export const VAULTS_TAB_ID = 'vaults'
-export const FARMS_TAB_ID = 'farms'
-export const SATELLITES_TAB_ID = 'satellites'
-export const ORACLES_TAB_ID = 'oracles'
-export const TREASURY_TAB_ID = 'treasury'
+export const LENDING_TAB_ID = ''
+export const VAULTS_TAB_ID = 'dashboard-vaults'
+export const FARMS_TAB_ID = 'dashboard-farms'
+export const SATELLITES_TAB_ID = 'dashboard-satellites'
+export const ORACLES_TAB_ID = 'dashboard-oracles'
+export const TREASURY_TAB_ID = 'dashboard-treasury'
 
 export type TabId =
   | typeof LENDING_TAB_ID

@@ -20,11 +20,11 @@ import {
 } from 'app/App.components/Pagination/pagination.consts'
 
 import { TransactionHistoryStyled } from '../Loans.style'
-import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { TzAddress } from 'pages/Treasury/Treasury.style'
 import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } from 'app/App.components/Table'
 import { EmptyContainer } from 'app/App.style'
 import Pagination from 'app/App.components/Pagination/Pagination.view'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
 type TransactionHistoryPropsType = {
   currentToken: LoanMarketType | undefined
@@ -54,9 +54,7 @@ export const TransactionHistory = ({ currentToken }: TransactionHistoryPropsType
   return (
     <TransactionHistoryStyled>
       <div className="top">
-        <GovRightContainerTitleArea>
-          <h2>Transaction History</h2>
-        </GovRightContainerTitleArea>
+        <H2Title>Transaction History</H2Title>
 
         <SlidingTabButtons
           onClick={(tabId: number) => setSwitcherState(tabId === 0 ? 'all' : 'personal')}

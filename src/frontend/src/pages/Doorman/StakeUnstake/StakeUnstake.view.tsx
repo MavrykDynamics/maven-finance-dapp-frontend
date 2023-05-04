@@ -42,7 +42,7 @@ import {
   StakeUnstakeAmount,
 } from './StakeUnstake.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import { silverColor } from 'styles'
+import colors from 'styles/colors'
 
 type StakeUnstakeViewProps = {
   stakeCallback: (amount: number) => void
@@ -59,9 +59,9 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
     user: {
       myMvkTokenBalance,
       mySMvkTokenBalance,
-      userRewardsToDate: { farmRewards, doormanRewards },
       myDoormanRewardsData: { myAvailableDoormanRewards },
       mySatelliteRewardsData: { myAvailableSatelliteRewards },
+      myFarmRewardsData,
       satelliteMvkIsDelegatedTo,
       isSatellite,
     },
@@ -69,6 +69,7 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
 
   const { satelliteMapper } = useSelector((state: State) => state.satellites)
   const { isActionActive } = useSelector((state: State) => state.loading)
+  const { themeSelected } = useSelector((state: State) => state.preferences)
 
   const delegatedUser = satelliteMapper[satelliteMvkIsDelegatedTo]
 
@@ -88,8 +89,10 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
 
   const mySMvkBalanceIsZero = mySMvkTokenBalance === 0
   const exchangeValue = MVK_exchangeRate && inputData.amount ? Number(inputData.amount) * MVK_exchangeRate : 0
-  const earnedValue = farmRewards + doormanRewards
-  const userHasRewards = myAvailableDoormanRewards + myAvailableSatelliteRewards > 2
+  const rewardsToClaim =
+    myAvailableDoormanRewards +
+    myAvailableSatelliteRewards +
+    Object.values(myFarmRewardsData).reduce((acc, { myAvailableFarmRewards }) => (acc += myAvailableFarmRewards), 0)
   const showDelegateBtn = !isSatellite && !satelliteMvkIsDelegatedTo
 
   const onUseMaxBalance = (balance: 'smvk' | 'mvk') => () => {
@@ -272,14 +275,14 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
             <ImageWithPlug imageLink={'/images/coin-bronze.svg'} alt="coin" />
             <div>
               <h3>
-                Total MVK Earned{' '}
+                Pending MVK Rewards{' '}
                 <CustomTooltip
                   text="Amount of MVK you have earned and not yet claimed. This resets every time you stake, unstake, or compound as doing one of those actions will automatically credit your staked MVK balance with any unclaimed rewards."
                   iconId="info"
-                  defaultStrokeColor={silverColor}
+                  defaultStrokeColor={colors[themeSelected].textColor}
                 />
               </h3>
-              <CommaNumber value={earnedValue} className="amount" />
+              <CommaNumber value={rewardsToClaim} className="amount" />
             </div>
           </StakeUnstakeBalance>
 
@@ -289,10 +292,20 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
               form={BUTTON_WIDE}
               isThin
               onClick={handleCompound}
-              disabled={!userHasRewards || isActionActive}
+              disabled={rewardsToClaim < 2 || isActionActive}
             >
               <Icon id="compound" /> Compound
             </NewButton>
+            <CustomTooltip
+              text={
+                rewardsToClaim < 2 || isActionActive
+                  ? `Compounds your pending exit fee rewards and converts them to sMVK. You currently, do not have any pending exit fee rewards amounting to at least 2 sMVK.`
+                  : `Compounds your pending exit fee rewards and converts them to sMVK.`
+              }
+              iconId="info"
+              className="tooltip"
+              defaultStrokeColor={colors[themeSelected].textColor}
+            />
           </StakeUnstakeRightPart>
         </StakeUnstakeCard>
       </StakeUnstakeCards>

@@ -25,6 +25,7 @@ import {
   TableScrollable,
 } from 'app/App.components/Table'
 import { Plug } from 'app/App.components/Chart/Chart.style'
+import { silverColor } from 'styles'
 
 type Props = {
   treasury: TreasuryType[number]
@@ -34,7 +35,7 @@ type Props = {
 
 export default function TreasuryView({ treasury, isGlobal = false, factoryAddress = '' }: Props) {
   const [hoveredPath, setHoveredPath] = useState<null | string>(null)
-  const [showZeroTreasuries, setShowZeroTreasuries] = useState<Boolean>(false)
+  const [showZeroTreasuries, setShowZeroTreasuries] = useState<boolean>(false)
   const ref = useRef<HTMLDivElement | null>(null)
 
   const filteredBalance = useMemo(
@@ -58,7 +59,12 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
 
   return (
     <TreasuryViewStyle ref={ref}>
-      <a href="https://mavryk.finance" target="_blank" rel="noreferrer" className="treasuryTooltip-link">
+      <a
+        href="https://mavryk.finance/litepaper#treasury "
+        target="_blank"
+        rel="noreferrer"
+        className="treasuryTooltip-link"
+      >
         <CustomTooltip iconId="question" className="treasuryTooltip" />
       </a>
 
@@ -67,7 +73,14 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
 
         <div>
           <div className="info-block">
-            <p className="text">TVL</p>
+            <p className="text">
+              TVL
+              <CustomTooltip
+                iconId="info"
+                defaultStrokeColor={silverColor}
+                text="Only tokens whitelisted by the DAO are shown in the treasuries. This is because the DAO can only interact with whitelisted tokens."
+              />
+            </p>
             <p className="value">
               <CommaNumber beginningText="$" value={treasury.treasuryTVL} />
             </p>

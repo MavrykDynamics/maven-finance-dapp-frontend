@@ -31,7 +31,8 @@ import { State } from '../../reducers'
 import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
 
 // actions
-import { getVaultsStorage, markForLiquidation } from './Vaults.actions'
+import { markForLiquidation } from './Vaults.actions'
+import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 
 const pathname = '/vaults'
 
@@ -48,16 +49,16 @@ export const VaultsView = () => {
 
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const {
-    vaultsList: { permissinedVaultsIds, myVaultsIds, allVaultsIds, vaultsMapper },
-    isLoaded,
-  } = useSelector((state: State) => state.vaults)
+    vaults: { permissinedVaultsIds, myVaultsIds, allVaultsIds, vaultsMapper },
+    isDataLoaded,
+  } = useSelector((state: State) => state.loans)
   const { tabId } = useParams<{ tabId: string }>()
 
   const { isLoading } = useDataLoader(
     async (isDepsChanged) => {
       try {
-        if (!isLoaded || isDepsChanged) {
-          await dispatch(getVaultsStorage())
+        if (!isDataLoaded || isDepsChanged) {
+          await dispatch(getLoansStorage())
         }
       } catch (e) {}
     },
@@ -109,30 +110,31 @@ export const VaultsView = () => {
       },
     ]
 
-    setTabsList(
-      accountPkh
-        ? [
-            ...baseTabs,
-            {
-              text: 'My Vaults',
-              id: 2,
-              active: vaultTabs.MY === tabId,
-              path: vaultTabs.MY,
-            },
-            {
-              text: 'Permissioned Vaults',
-              id: 3,
-              active: vaultTabs.PERMISSIONED === tabId,
-              path: vaultTabs.PERMISSIONED,
-              isDisabled: !accountPkh,
-            },
-          ]
-        : baseTabs,
-    )
+    const tabsToUse = accountPkh
+      ? [
+          ...baseTabs,
+          {
+            text: 'My Vaults',
+            id: 2,
+            active: vaultTabs.MY === tabId,
+            path: vaultTabs.MY,
+          },
+          {
+            text: 'Permissioned Vaults',
+            id: 3,
+            active: vaultTabs.PERMISSIONED === tabId,
+            path: vaultTabs.PERMISSIONED,
+            isDisabled: !accountPkh,
+          },
+        ]
+      : baseTabs
+
+    setTabsList(tabsToUse)
 
     if (accountPkh) return
-    handleChangeTabs(tabsList[0].id)
-  }, [accountPkh])
+    // return back to "all vaults" tab if user is not connected
+    history.replace(`${pathname}/${baseTabs[0].path}`)
+  }, [accountPkh, tabId])
 
   return (
     <VaultsStyled>

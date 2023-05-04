@@ -1,22 +1,28 @@
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
+import { useEffect } from 'react'
 
 // view
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
 import { Button } from 'app/App.components/Button/Button.controller'
 import { Chart } from 'app/App.components/Chart/Chart'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import Icon from 'app/App.components/Icon/Icon.view'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
+import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { BORROW_TAB_ID, LEND_TAB_ID } from './Loans.const'
+import colors from 'styles/colors'
+import { skyColor } from 'styles'
+import { CURRENCY_AMOUNT_DATE_TOOLTIP } from 'app/App.components/Chart/Tooltips/ChartTooltip'
+import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.types'
 
 import { State } from 'reducers'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
+import { getLoansStorage } from './Actions/getLoansData.actions'
 
 import { Page } from 'styles'
-import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
-import { skyColor } from 'styles'
 import {
   LoansStyled,
   MarketChartsContainer,
@@ -25,14 +31,8 @@ import {
   ThreeLevelListItem,
 } from './Loans.style'
 import { EmptyContainer } from 'app/App.style'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
-import { getLoansStorage } from './Actions/getLoansData.actions'
-import { useEffect, useMemo } from 'react'
-import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
-import colors from 'styles/colors'
-import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.types'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
 const CHART_SETTINGS = {
   width: 450,
@@ -50,7 +50,13 @@ const CHART_COLORS = {
 
 export const Loans = () => {
   const dispatch = useDispatch()
-  const { isDataLoaded, loanTokens, chartsData } = useSelector((state: State) => state.loans)
+  const {
+    isDataLoaded,
+    loanTokens,
+    chartsData,
+    vaults: { allVaultsIds, vaultsMapper },
+  } = useSelector((state: State) => state.loans)
+
   const { themeSelected } = useSelector((state: State) => state.preferences)
   const { accountPkh } = useSelector((state: State) => state.wallet)
 
@@ -96,6 +102,7 @@ export const Loans = () => {
           colors={CHART_COLORS}
           settings={CHART_SETTINGS}
           numberOfItemsToDisplay={3}
+          tooltipName={CURRENCY_AMOUNT_DATE_TOOLTIP}
           tooltipAsset="$"
         />
         <div className="chart-interval">7 Days</div>
@@ -115,6 +122,7 @@ export const Loans = () => {
           colors={CHART_COLORS}
           settings={CHART_SETTINGS}
           numberOfItemsToDisplay={3}
+          tooltipName={CURRENCY_AMOUNT_DATE_TOOLTIP}
           tooltipAsset="$"
         />
         <div className="chart-interval">7 Days</div>
@@ -139,17 +147,13 @@ export const Loans = () => {
           </MarketChartsContainer>
 
           <MarketsOverviewContainer>
-            <GovRightContainerTitleArea>
-              <h2>Markets</h2>
-            </GovRightContainerTitleArea>
+            <H2Title>Markets</H2Title>
             {loanTokens.map((loanAsset) => {
               const {
-                loanTokenData: { name, symbol, icon, rate },
+                loanTokenData: { name, symbol, icon, rate, gqlName },
                 utilisationRate,
                 availableLiquidity,
                 borrowers,
-                loanTokenTotalCollaterals,
-                loanTokenVaultsTotalBorrowed,
                 totalBorrowed,
                 suppliers,
                 totalLended,
@@ -157,6 +161,25 @@ export const Loans = () => {
                 totalFeesEarned,
                 lendingAPY,
               } = loanAsset
+
+              const { loanTokenTotalCollaterals, loanTokenVaultsTotalBorrowed } = allVaultsIds.reduce<{
+                loanTokenTotalCollaterals: number
+                loanTokenVaultsTotalBorrowed: number
+              }>(
+                (acc, vaultId) => {
+                  const vault = vaultsMapper[vaultId]
+
+                  if (vault.borrowedAsset.gqlName !== gqlName) return acc
+
+                  acc.loanTokenTotalCollaterals += vault.collateralBalance
+                  acc.loanTokenVaultsTotalBorrowed += vault.borrowedAmount * vault.borrowedAsset.rate
+                  return acc
+                },
+                {
+                  loanTokenTotalCollaterals: 0,
+                  loanTokenVaultsTotalBorrowed: 0,
+                },
+              )
 
               const totalCorratealColor =
                 loanTokenTotalCollaterals && loanTokenVaultsTotalBorrowed

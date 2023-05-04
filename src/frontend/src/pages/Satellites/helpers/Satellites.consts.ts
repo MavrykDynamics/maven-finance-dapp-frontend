@@ -21,7 +21,7 @@ export const findColorBasedOnStatus = (statusType: OracleStatusTypes, theme: Mav
 }
 
 export function getTotalDelegatedMVK(
-  satelliteIds: State['satellites']['allSatellitesIds'],
+  satelliteIds: State['satellites']['activeSatellitesIds'],
   satellitesMapper: State['satellites']['satelliteMapper'],
 ): number {
   if (!satelliteIds) return 0

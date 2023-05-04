@@ -4,7 +4,6 @@ import { BatchWalletOperation } from '@taquito/taquito/dist/types/wallet/batch-o
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 import { hideToaster, showToaster } from 'app/App.components/Toaster/Toaster.actions'
-import { getVaultsStorage } from 'pages/Vaults/Vaults.actions'
 import { updateUserData } from 'reducers/actions/user.actions'
 import { getLoansStorage } from './getLoansData.actions'
 
@@ -33,9 +32,10 @@ import { scrollUpPage } from 'utils/scrollUpPage'
 export const triggerInitialVaultCreation =
   (loanTokenName: string, vaultName: string) => async (dispatch: AppDispatch, getState: GetState) => {
     const state: State = getState()
+    const userAddress = state.wallet.accountPkh
 
     // check whether we can send transaction
-    if (!state.wallet.accountPkh) {
+    if (!userAddress) {
       await dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
       return
     }
@@ -55,10 +55,13 @@ export const triggerInitialVaultCreation =
       const { value } = await checkIndexerLevelAndRunDataUpdateCallback({
         callback: async () => {
           await dispatch(updateUserData())
-          state.vaults.isLoaded && (await dispatch(getVaultsStorage()))
-          state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
+          await dispatch(getLoansStorage())
 
-          const newVaultData = await fetchFromIndexer(NEW_VAULT_QUERY, NEW_VAULT_QUERY_NAME, NEW_VAULT_QUERY_VARIABLE)
+          const newVaultData = await fetchFromIndexer(
+            NEW_VAULT_QUERY,
+            NEW_VAULT_QUERY_NAME,
+            NEW_VAULT_QUERY_VARIABLE(userAddress, vaultName),
+          )
 
           return newVaultData.vault.at(-1)?.lending_controller_vaults?.[0]?.vault_id
         },
@@ -124,8 +127,7 @@ export const borrowVaultAssetAction =
         await checkIndexerLevelAndRunDataUpdateCallback({
           callback: async () => {
             await dispatch(updateUserData())
-            state.vaults.isLoaded && (await dispatch(getVaultsStorage()))
-            state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
+            await dispatch(getLoansStorage())
 
             await dispatch(hideToaster())
             await dispatch(showToaster(TOASTER_SUCCESS, 'Asset borrowed.', ACTION_COMPLETION_MESSAGE_TEXT))
@@ -261,8 +263,7 @@ export const repayPartOfVaultAction =
         await checkIndexerLevelAndRunDataUpdateCallback({
           callback: async () => {
             await dispatch(updateUserData())
-            state.vaults.isLoaded && (await dispatch(getVaultsStorage()))
-            state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
+            await dispatch(getLoansStorage())
 
             await dispatch(hideToaster())
             await dispatch(showToaster(TOASTER_SUCCESS, 'Asset repayed.', ACTION_COMPLETION_MESSAGE_TEXT))
@@ -416,8 +417,7 @@ export const repayFullAndCloseVaultAction =
         await checkIndexerLevelAndRunDataUpdateCallback({
           callback: async () => {
             await dispatch(updateUserData())
-            state.vaults.isLoaded && (await dispatch(getVaultsStorage()))
-            state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
+            await dispatch(getLoansStorage())
 
             await dispatch(hideToaster())
             await dispatch(showToaster(TOASTER_SUCCESS, 'Asset repayed.', ACTION_COMPLETION_MESSAGE_TEXT))

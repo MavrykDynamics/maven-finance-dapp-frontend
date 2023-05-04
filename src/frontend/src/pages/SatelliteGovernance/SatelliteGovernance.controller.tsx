@@ -10,7 +10,7 @@ import { calculateSlicePositions, getPageNumber } from 'app/App.components/Pagin
 
 // view
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
-import { DropDown } from '../../app/App.components/DropDown/DropDown.controller'
+import { DDItemId, DropDown, getDdItem } from 'app/App.components/DropDown/NewDropdown'
 import { FixMistakenTransferForm } from './FixMistakenTransfer.form'
 import { SatelliteGovernanceCard } from './SatelliteGovernanceCard/SatelliteGovernanceCard.controller'
 import { SatelliteGovernanceForm } from './SatelliteGovernance.form'
@@ -93,9 +93,7 @@ export const SatelliteGovernance = () => {
     user: { isSatellite },
   } = useSelector((state: State) => state.wallet)
 
-  const { oraclesIds, activeSatellitesIds, allSatellitesIds, satelliteMapper } = useSelector(
-    (state: State) => state.satellites,
-  )
+  const { oraclesIds, activeSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
 
   const { isActionActive } = useSelector((state: State) => state.loading)
 
@@ -107,7 +105,10 @@ export const SatelliteGovernance = () => {
     satelliteGovIdsMapper,
     config: { purposeMaxLength },
   } = useSelector((state: State) => state.satelliteGovernance)
+
   const { feedNameMaxLength } = useSelector((state: State) => state.dataFeeds.config)
+
+  const ddItems = useMemo(() => itemsForDropDown.map((item) => getDdItem(item)), [])
 
   const getCurrentIdsById = useCallback(
     (tabId: string) => {
@@ -127,9 +128,8 @@ export const SatelliteGovernance = () => {
   )
 
   const [tabsList, setTabsList] = useState<ExtendedTabItem[]>([])
-
-  const [ddIsOpen, setDdIsOpen] = useState(false)
-  const [chosenDdItem, setChosenDdItem] = useState<string | undefined>()
+  const [chosenDdItem, setChosenDdItem] = useState<string>()
+  const activeDdItem = useMemo(() => (chosenDdItem ? getDdItem(chosenDdItem) : undefined), [chosenDdItem])
 
   const currentListName = getCurrentListNameById(tabId)
   const currentSatelliteGovIds = getCurrentIdsById(tabId)
@@ -140,7 +140,7 @@ export const SatelliteGovernance = () => {
     return currentSatelliteGovIds?.slice(from, to)
   }, [currentListName, currentPage, currentSatelliteGovIds])
 
-  const totalDelegatedMVK = getTotalDelegatedMVK(allSatellitesIds, satelliteMapper)
+  const totalDelegatedMVK = getTotalDelegatedMVK(activeSatellitesIds, satelliteMapper)
   const ongoingActionsAmount = ongoingSatelliteGovIds.length
 
   const maxLength = {
@@ -181,12 +181,9 @@ export const SatelliteGovernance = () => {
     }
   }, [accountPkh, isSatellite, tabId])
 
-  const handleOnClickDropdownItem = (e: string) => {
-    const chosenItem = itemsForDropDown.find((item) => item === e)
-    if (chosenItem) {
-      setChosenDdItem(chosenItem)
-      setDdIsOpen(!ddIsOpen)
-    }
+  const handleOnClickDropdownItem = (itemId: DDItemId) => {
+    const chosenItem = ddItems.find((item) => item.id === itemId)
+    setChosenDdItem(chosenItem?.id)
   }
 
   const { isLoading } = useDataLoader(
@@ -238,13 +235,12 @@ export const SatelliteGovernance = () => {
           <DropdownCard className="satellite-governance-dropdown">
             <DropdownWrap>
               <h2>Available Actions</h2>
+
               <DropDown
                 placeholder="Choose action"
-                isOpen={ddIsOpen}
-                setIsOpen={setDdIsOpen}
-                itemSelected={chosenDdItem}
-                items={itemsForDropDown}
-                clickOnItem={(e) => handleOnClickDropdownItem(e)}
+                activeItem={activeDdItem}
+                items={ddItems}
+                clickItem={handleOnClickDropdownItem}
               />
             </DropdownWrap>
             {chosenDdItem === 'Register Aggregator' ? (

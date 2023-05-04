@@ -14,7 +14,6 @@ import { Page } from 'styles'
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
 import { AdminView } from './Admin.view'
 import { getLoansStorage } from '../Loans/Actions/getLoansData.actions'
-import { getVaultsStorage } from '../Vaults/Vaults.actions'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
 
 export const Admin = () => {
@@ -23,7 +22,6 @@ export const Admin = () => {
   useEffect(() => {
     dispatch(getLoansStorage())
     dispatch(getGovernanceStorage())
-    dispatch(getVaultsStorage())
   }, [dispatch])
 
   const handleChangeGovernancePeriod = (chosenPeriod: string) => {
