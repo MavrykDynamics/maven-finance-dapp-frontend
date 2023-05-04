@@ -39,7 +39,6 @@ export const LOANS_QUERY = `
         reserve_ratio
         current_interest_rate
         oracle_id
-        min_repayment_amount
 
         history_data(where: {type: {_in: ["0", "1", "2", "3", "4", "5", "6", "7"]}}, distinct_on: timestamp, order_by: {timestamp: asc}) {
           type
@@ -59,51 +58,6 @@ export const LOANS_QUERY = `
           aggregate {
             count(distinct: true, columns: owner_id)
           }
-        }
-
-        vaults(order_by: {vault: {creation_timestamp: desc}}, where: {open: {_eq: true}}) {
-          collateral_balances {
-            token {
-              token_address
-              token_name
-              oracle_id
-            }
-            balance
-          }
-          vault {
-            address
-            name
-            depositors {
-              depositor_id
-            }
-            allowance
-
-            lending_controller_vaults {
-              loan_principal_total
-              loan_outstanding_total
-              loan_interest_total
-              borrow_index
-            }
-          }
-          loan_token {
-            loan_token_address
-            loan_token_name
-            loan_token_contract_standard
-            oracle_id
-            current_interest_rate
-            borrow_index
-          }
-          lending_controller {
-            liquidation_delay_in_minutes
-          }
-          id
-          marked_for_liquidation_level
-          last_updated_block_level
-          loan_principal_total
-          loan_interest_total
-          owner_id
-          loan_outstanding_total
-          borrow_index
         }
       }
     }

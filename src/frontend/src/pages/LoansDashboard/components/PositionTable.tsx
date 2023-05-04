@@ -92,7 +92,7 @@ export const LoansPositionTable = ({
 
             {accountPkh ? (
               <TableBody className={`treasury dashboard-loans-table`}>
-                {paginatedTableRows.map(({ lendingItem, myBorrowingList, loanTokenData, borrowAPR, lendingAPY }) => {
+                {paginatedTableRows.map(({ lendingItem, loanTokenData, borrowAPR, lendingAPY }) => {
                   const { lendValue = 0, interestEarned = 0 } = lendingItem ?? {}
 
                   const marketVaultsUserData = userVaultsData[loanTokenData.gqlName.toLowerCase()]

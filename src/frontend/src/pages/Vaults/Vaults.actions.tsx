@@ -1,17 +1,14 @@
 import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
-import { getHeadData } from 'app/App.components/Menu/Menu.actions'
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 import { hideToaster, showToaster } from 'app/App.components/Toaster/Toaster.actions'
 
-import { normalizeVaultsStorage, normalizeOracleLatestPrice } from './Vaults.helpers'
+import { normalizeOracleLatestPrice } from './Vaults.helpers'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
-import { getOracleLatestPrices } from './Vaults.helpers'
 import { fetchFromIndexer } from 'gql/fetchGraphQL'
 
 import { AppDispatch, GetState } from '../../app/App.controller'
-import { LendingControllerGQL } from 'utils/TypesAndInterfaces/Vaults'
 import { State } from 'reducers'
 
 import {
@@ -24,52 +21,10 @@ import {
   TOASTER_UPDATE_DATA_AFTER_ACTION_DATA,
 } from 'app/App.components/Toaster/Toaster.constants'
 import {
-  VAULTS_STORAGE_QUERY_NAME,
-  VAULTS_STORAGE_QUERY_VARIABLE,
-  VAULTS_STORAGE_QUERY,
   ORACLE_AGGREGATOR_LATEST_PRICE_QUERY,
   ORACLE_AGGREGATOR_LATEST_PRICE_QUERY_NAME,
   ORACLE_AGGREGATOR_LATEST_PRICE_QUERY_VARIABLE,
 } from 'gql/queries/getVaultsStorage'
-
-// Vaults Store
-export const GET_VAULTS_STORAGE = 'GET_VAULTS_STORAGE'
-export const getVaultsStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
-  try {
-    const storage = await fetchFromIndexer(
-      VAULTS_STORAGE_QUERY,
-      VAULTS_STORAGE_QUERY_NAME,
-      VAULTS_STORAGE_QUERY_VARIABLE,
-    )
-    const lendingController: LendingControllerGQL = storage?.lending_controller[0] || {}
-
-    const [, oracleLatestPrices] = await Promise.all([
-      dispatch(getHeadData()),
-      getOracleLatestPrices(lendingController.vaults),
-    ])
-
-    const {
-      tokens: { dipDupTokens },
-      wallet: { accountPkh },
-      dataFeeds: { feedsLedger },
-    } = getState()
-
-    const normallaziedVaultsStorage = await normalizeVaultsStorage({
-      accountPkh,
-      dipDupTokens,
-      feeds: feedsLedger,
-      oracleLatestPrices,
-      lendingController,
-    })
-
-    dispatch({
-      type: GET_VAULTS_STORAGE,
-      vaultsList: normallaziedVaultsStorage,
-    })
-  } catch (e) {
-    console.error('getVaultsStorage error: ', e)
-  }
-}
 
 // Liquidate Vault
 export const liquidateVault =
@@ -121,8 +76,7 @@ export const liquidateVault =
         // refetch data we need
         await checkIndexerLevelAndRunDataUpdateCallback({
           callback: async () => {
-            state.vaults.isLoaded && (await dispatch(getVaultsStorage()))
-            state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
+            await dispatch(getLoansStorage())
 
             // Add here call for update data actions
             await dispatch(hideToaster())

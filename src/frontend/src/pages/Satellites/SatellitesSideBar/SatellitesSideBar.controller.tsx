@@ -61,7 +61,7 @@ const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
     config: { feedsFactoryAddress },
     feedsLedger,
   } = useSelector((state: State) => state.dataFeeds)
-  const { oraclesIds, allSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
+  const { oraclesIds, activeSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
   const { delegationAddress } = useSelector((state: State) => state.contractAddresses)
 
   const dataPointsCount = useMemo(
@@ -72,7 +72,7 @@ const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
       ).length,
     [feedsLedger],
   )
-  const totalDelegatedMVK = getTotalDelegatedMVK(allSatellitesIds, satelliteMapper)
+  const totalDelegatedMVK = getTotalDelegatedMVK(activeSatellitesIds, satelliteMapper)
 
   const averageRevard = calcWithoutPrecision(
     feedsLedger.reduce((acc, { reward_amount_smvk }) => {
@@ -113,7 +113,7 @@ const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
         <SideBarItem>
           <h3>Number of Satellites</h3>
           <var>
-            <CommaNumber value={allSatellitesIds.length} showDecimal={false} />
+            <CommaNumber value={activeSatellitesIds.length} showDecimal={false} />
           </var>
         </SideBarItem>
         <SideBarItem>

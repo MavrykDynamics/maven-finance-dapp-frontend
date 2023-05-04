@@ -93,9 +93,7 @@ export const SatelliteGovernance = () => {
     user: { isSatellite },
   } = useSelector((state: State) => state.wallet)
 
-  const { oraclesIds, activeSatellitesIds, allSatellitesIds, satelliteMapper } = useSelector(
-    (state: State) => state.satellites,
-  )
+  const { oraclesIds, activeSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
 
   const { isActionActive } = useSelector((state: State) => state.loading)
 
@@ -142,7 +140,7 @@ export const SatelliteGovernance = () => {
     return currentSatelliteGovIds?.slice(from, to)
   }, [currentListName, currentPage, currentSatelliteGovIds])
 
-  const totalDelegatedMVK = getTotalDelegatedMVK(allSatellitesIds, satelliteMapper)
+  const totalDelegatedMVK = getTotalDelegatedMVK(activeSatellitesIds, satelliteMapper)
   const ongoingActionsAmount = ongoingSatelliteGovIds.length
 
   const maxLength = {

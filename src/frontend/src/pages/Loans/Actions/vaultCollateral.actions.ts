@@ -5,7 +5,6 @@ import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.ac
 import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 import { hideToaster, showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { getAvaliableCollaterals, getLoansStorage } from './getLoansData.actions'
-import { getVaultsStorage } from 'pages/Vaults/Vaults.actions'
 import { updateUserData } from 'reducers/actions/user.actions'
 
 import {
@@ -77,8 +76,7 @@ export const withdrawCollateralAction =
           callback: async () => {
             await dispatch(updateUserData())
             await dispatch(getAvaliableCollaterals())
-            state.vaults.isLoaded && (await dispatch(getVaultsStorage()))
-            state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
+            await dispatch(getLoansStorage())
 
             await dispatch(hideToaster())
             await dispatch(showToaster(TOASTER_SUCCESS, 'Collateral withdrawn.', ACTION_COMPLETION_MESSAGE_TEXT))
@@ -240,8 +238,7 @@ export const depositCollateralAction =
           callback: async () => {
             await dispatch(updateUserData())
             await dispatch(getAvaliableCollaterals())
-            state.vaults.isLoaded && (await dispatch(getVaultsStorage()))
-            state.loans.isDataLoaded && (await dispatch(getLoansStorage()))
+            await dispatch(getLoansStorage())
 
             await dispatch(hideToaster())
             await dispatch(showToaster(TOASTER_SUCCESS, 'Collateral added.', ACTION_COMPLETION_MESSAGE_TEXT))

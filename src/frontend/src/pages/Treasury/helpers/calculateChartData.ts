@@ -15,78 +15,66 @@ export const getPieChartData = (
   let groupedSectorsValue = 0
   let groupedSectorsColor: null | string = null
 
-  const reducedChartData = balances
-    .reduce<TreasuryChartType>((acc, item) => {
-      // TODO: need this while some assets are test, and i can't fetch their rate
-      const tokenUsdValue = item.usdValue || 0
-      const tokenPersent = calcPersent(tokenUsdValue, reducedBalance)
+  return balances.reduce<TreasuryChartType>((acc, item) => {
+    // TODO: need this while some assets are test, and i can't fetch their rate
+    const tokenUsdValue = item.usdValue || 0
+    const tokenPersent = calcPersent(tokenUsdValue, reducedBalance)
 
-      if (tokenPersent < 10) {
-        const smallValuesAccIdx = acc.findIndex((item) => item.groupedSmall)
-        const smallValuesAccObj = acc?.[smallValuesAccIdx]
+    if (tokenPersent < 10 || !tokenUsdValue) {
+      const smallValuesAccIdx = acc.findIndex((item) => item.groupedSmall)
+      const smallValuesAccObj = acc?.[smallValuesAccIdx]
 
-        // calculating hover effect on segment
-        const isHoveredPathAsset = smallValuesAccObj?.isHoveredPathAsset || hoveredPath === item.symbol
+      // calculating hover effect on segment
+      const isHoveredPathAsset = smallValuesAccObj?.isHoveredPathAsset || hoveredPath === item.symbol
 
-        const smallSectorValue = isHoveredPathAsset
-          ? (reducedBalance / 100) * 20
-          : groupedSectorsValue + (reducedBalance / 100) * 2
+      const smallSectorValue = isHoveredPathAsset
+        ? (reducedBalance / 100) * 20
+        : groupedSectorsValue + (reducedBalance / 100) * 2
 
-        // if we don't have grouped assets object, create it
-        if (!smallValuesAccObj) {
-          groupedSectorsValue += tokenUsdValue
-          groupedSectorsColor = item.chartColor
-          acc.push({
-            title: item.symbol,
-            value: smallSectorValue,
-            color: groupedSectorsColor,
-            isHoveredPathAsset,
-            segmentStroke: isHoveredPathAsset ? HIGHLIGHTED_STROKE_WIDTH : DEFAULT_STROKE_WIDTH,
-            labelPersent: calcPersent(tokenUsdValue, reducedBalance),
-            groupedSmall: true,
-          })
-
-          return acc
-        }
-
-        // if we have grouped assets object and we have one more asset < 10%, just update it's title and balance in the acc
+      // if we don't have grouped assets object, create it
+      if (!smallValuesAccObj) {
         groupedSectorsValue += tokenUsdValue
-
-        const newSmallValuesObj = {
-          ...smallValuesAccObj,
-          ...(item.usdValue < 0.01 ? {} : { color: item.chartColor }),
-          title: `${smallValuesAccObj.title}, ${item.symbol}`,
-          isHoveredPathAsset,
+        groupedSectorsColor = item.chartColor
+        acc.push({
+          title: item.symbol,
           value: smallSectorValue,
-          labelPersent: calcPersent(groupedSectorsValue, reducedBalance),
+          color: groupedSectorsColor,
+          isHoveredPathAsset,
           segmentStroke: isHoveredPathAsset ? HIGHLIGHTED_STROKE_WIDTH : DEFAULT_STROKE_WIDTH,
-        }
+          labelPersent: calcPersent(tokenUsdValue, reducedBalance),
+          groupedSmall: true,
+        })
 
-        acc.splice(smallValuesAccIdx, 1, newSmallValuesObj)
         return acc
       }
 
-      // if asset is > 10%
-      acc.push({
-        title: item.symbol,
-        value: tokenUsdValue,
-        color: item.chartColor,
-        isHoveredPathAsset: hoveredPath === item.symbol,
-        segmentStroke: hoveredPath === item.symbol ? HIGHLIGHTED_STROKE_WIDTH : DEFAULT_STROKE_WIDTH,
-        labelPersent: calcPersent(tokenUsdValue, reducedBalance),
-        groupedSmall: false,
-      })
-      return acc
-    }, [])
-    .map((item, _, arr) => {
-      return item.groupedSmall
-        ? item
-        : { ...item, labelPersent: item.labelPersent - 1 / (groupedSectorsColor ? arr.length - 1 : arr.length - 1) }
-    })
+      // if we have grouped assets object and we have one more asset < 10%, just update it's title and balance in the acc
+      groupedSectorsValue += tokenUsdValue
 
-  return groupedSectorsColor
-    ? reducedChartData.map((item, _, arr) =>
-        item.groupedSmall ? item : { ...item, labelPersent: item.labelPersent - 1 / arr.length - 1 },
-      )
-    : reducedChartData
+      const newSmallValuesObj = {
+        ...smallValuesAccObj,
+        ...(item.usdValue < 0.01 ? {} : { color: item.chartColor }),
+        title: `${smallValuesAccObj.title}, ${item.symbol}`,
+        isHoveredPathAsset,
+        value: smallSectorValue,
+        labelPersent: calcPersent(groupedSectorsValue, reducedBalance),
+        segmentStroke: isHoveredPathAsset ? HIGHLIGHTED_STROKE_WIDTH : DEFAULT_STROKE_WIDTH,
+      }
+
+      acc.splice(smallValuesAccIdx, 1, newSmallValuesObj)
+      return acc
+    }
+
+    // if asset is > 10%
+    acc.push({
+      title: item.symbol,
+      value: tokenUsdValue,
+      color: item.chartColor,
+      isHoveredPathAsset: hoveredPath === item.symbol,
+      segmentStroke: hoveredPath === item.symbol ? HIGHLIGHTED_STROKE_WIDTH : DEFAULT_STROKE_WIDTH,
+      labelPersent: calcPersent(tokenUsdValue, reducedBalance),
+      groupedSmall: false,
+    })
+    return acc
+  }, [])
 }

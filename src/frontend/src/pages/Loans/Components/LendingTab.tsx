@@ -15,8 +15,8 @@ import { assetDecimalsToShow } from '../Loans.const'
 
 import { ThreeLevelListItem } from '../Loans.style'
 import { LendingTabListItem, LoansTabStyled, NoItemsInTabStyled, VaultsList } from './LoansComponents.style'
-import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
 type LendingTabPropsType = {
   lendingItem: LendingItemType
@@ -32,9 +32,7 @@ export const LendingTab = ({ lendingItem, lendingControllerAddress, assetData, l
 
   return (
     <LoansTabStyled>
-      <GovRightContainerTitleArea>
-        <h2>My Lending</h2>
-      </GovRightContainerTitleArea>
+      <H2Title>My Lending</H2Title>
 
       {lendingItem ? (
         <VaultsList>

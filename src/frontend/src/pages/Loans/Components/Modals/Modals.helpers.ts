@@ -1,7 +1,6 @@
 import { InputStatusType } from 'app/App.components/Input/Input.constants'
 import { CollateralType, DepositorsFlagType, LoansAssetDataType, LoansVaultType } from 'utils/TypesAndInterfaces/Loans'
 import LoansPopupsProvider from './LoansModals.provider'
-import { VaultType } from 'utils/TypesAndInterfaces/Vaults'
 
 export type LoansPopupsInputStateType = { amount: string; validationStatus: InputStatusType }
 export type VaultNameInputStateType = { name: string; validationStatus: InputStatusType }
@@ -104,7 +103,7 @@ export type CreateVaultPopupDataType = {
   setCreatedVaultAddress?: (address: string) => void
 } | null
 
-export type LiquidateVaultDataType = VaultType | null
+export type LiquidateVaultDataType = LoansVaultType | null
 
 export type ManagePermissionsPopupDataType = {
   vaultAddress: string
@@ -181,4 +180,3 @@ export const DEFAULT_LOANS_POPUPS_STATE = {
   removeLendingAssetPopup: DEFAULT_LOANS_POPUP_STATE,
   liquidateVaultPopup: DEFAULT_LOANS_POPUP_STATE,
 }
-
