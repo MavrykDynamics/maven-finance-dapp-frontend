@@ -76,7 +76,6 @@ export const fetchUserData = async (
       isVestee: Boolean(vesteeRecord),
     }
 
-    // TODO: add reducing whitelist tokens, and data feeds if need
     // ----- GETTING USER'S TOKENS BALANCES, THAT ARE USED ACROSS DAPP *START* -----
     // We 100% should have are mvk and smvk, need this set to not make 2+ same calls for balance
     const userTokenNames = new Set<string>([XTZ_TOKEN_SYMBOL, MVK_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL])
