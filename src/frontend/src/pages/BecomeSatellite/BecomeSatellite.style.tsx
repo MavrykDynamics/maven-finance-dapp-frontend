@@ -8,8 +8,8 @@ export const BecomeSatelliteStyled = styled.div<{ theme: MavrykTheme }>`
 
 export const BecomeSatelliteForm = styled(Card)`
   padding-bottom: 45px;
-  margin-top: 0;
   padding-top: 28px;
+  margin-top: 0;
 
   > h2 {
     margin: 0;

@@ -1,5 +1,5 @@
 // view
-import ConnectWalletInfo from '../../../app/App.components/ConnectWallet/ConnectWalletInfo.view'
+import ConnectWalletBanner from '../ConnectWallet/ConnectWalletBanner'
 
 // style
 import {
@@ -44,7 +44,7 @@ export const PageHeaderView = ({
           <PageHeaderForegroundImage page={page} src={foregroundImageSrc || '/images/portal.svg'} alt="portal" />
         </PageHeaderForegroundImageContainer>
       </PageHeaderStyled>
-      <ConnectWalletInfo />
+      <ConnectWalletBanner />
     </>
   )
 }

@@ -216,11 +216,3 @@ export const TreasurySelectStyle = styled(Card)<{ isSelectedTreasury?: boolean }
     }
   }
 `
-
-export const TzAddress = styled(TzAddressBase)`
-  transition: opacity 0.3s;
-
-  &:hover {
-    opacity: 0.8;
-  }
-`

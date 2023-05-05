@@ -1,4 +1,4 @@
-import { ConnectWallet } from 'app/App.components/ConnectWallet/ConnectWallet.controller'
+import { WalletDetails } from 'app/App.components/ConnectWallet/ConnectedWalletInfo'
 import React, { useState } from 'react'
 import { SocialIcons } from '../../Menu.view'
 import { ABOUT_LINKS, BLOG_LINKS, DOCS_LINKS, PRODUCTS_LINKS } from '../MenuTopBar.controller'
@@ -15,7 +15,7 @@ export const MobileTopBar = ({
   const [selectedLinksBlock, setSelectedLinksBlock] = useState<null | string>(null)
   return (
     <MobileTopBarStyled show={show}>
-      <ConnectWallet closeMobileMenu={closeMobileMenu} />
+      {/* <WalletDetails closeMobileMenu={closeMobileMenu} /> */}
 
       <div className="container">
         <TopBarLinks

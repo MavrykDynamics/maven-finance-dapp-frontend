@@ -1,4 +1,4 @@
-import ConnectWalletInfo from 'app/App.components/ConnectWallet/ConnectWalletInfo.view'
+import ConnectWalletInfo from 'app/App.components/ConnectWallet/ConnectWalletBanner'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { LoanMarketType } from 'utils/TypesAndInterfaces/Loans'
 

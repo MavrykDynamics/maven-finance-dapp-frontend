@@ -1,15 +1,26 @@
-import { ConnectWallet } from 'app/App.components/ConnectWallet/ConnectWallet.controller'
-import Icon from 'app/App.components/Icon/Icon.view'
-import { useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
-import { MenuLogo } from '../Menu.style'
-import { TopBarLinks } from './TopBarLinks/TopBarLinks.controller'
-import { MenuMobileBurger, MenuTopStyled } from './MenuTopBar.style'
-import { State } from 'reducers'
-import { MobileTopBar } from './TopBarLinks/MobileTopBar.controller'
 import { useCallback, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { useMedia } from 'react-use'
+import WertWidget from '@wert-io/widget-initializer'
+import { Link } from 'react-router-dom'
+
+import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
+import { toggleWertLoader } from 'app/App.components/Loader/Loader.action'
+import { State } from 'reducers'
+
 import { LIGHT_THEME } from 'app/App.components/DarkThemeProvider/DarkThemeProvider.actions'
+import { getWertOptions } from 'app/App.components/ConnectWallet/Wert/WertIO.const'
+import { TOASTER_ERROR } from 'app/App.components/Toaster/Toaster.constants'
+
+import { WalletDetails } from 'app/App.components/ConnectWallet/ConnectedWalletInfo'
+import ConnectWalletBtn from 'app/App.components/ConnectWallet/ConnectWalletBtn'
+import Icon from 'app/App.components/Icon/Icon.view'
+import WertIoPopup from 'app/App.components/ConnectWallet/Wert/WertIoPopup'
+import { TopBarLinks } from './TopBarLinks/TopBarLinks.controller'
+import { MobileTopBar } from './TopBarLinks/MobileTopBar.controller'
+
+import { MenuLogo } from '../Menu.style'
+import { MenuMobileBurger, MenuTopStyled } from './MenuTopBar.style'
 
 type MenuTopBarProps = {
   burgerClickHandler: () => void
@@ -51,8 +62,13 @@ export const DOCS_LINKS = [
 ]
 
 export const MenuTopBar = ({ burgerClickHandler, isExpandedMenu, openChangeNodePopupHandler }: MenuTopBarProps) => {
+  const dispatch = useDispatch()
   const { themeSelected } = useSelector((state: State) => state.preferences)
+  const { accountPkh } = useSelector((state: State) => state.wallet)
+
   const [showMobileTopBar, setShowMobileTopBar] = useState(false)
+  const [showWertIoPopup, setShowWertIoPopup] = useState(false)
+
   const isMobileView = useMedia('(max-width: 870px)')
 
   const logoImg = themeSelected === LIGHT_THEME ? '/logo-light.svg' : '/logo-dark.svg'
@@ -64,53 +80,79 @@ export const MenuTopBar = ({ burgerClickHandler, isExpandedMenu, openChangeNodeP
     burgerClickHandler()
   }, [])
 
+  const showWertIoErrorToaster = () => {
+    dispatch(
+      showToaster(
+        TOASTER_ERROR,
+        'Wert io interaction error',
+        'Error while interaction with wert io service happened, try later',
+      ),
+    )
+  }
+
+  const mountWertWiget = (commodity: string) => {
+    dispatch(toggleWertLoader(true))
+    const wertOptions = getWertOptions(commodity, setShowWertIoPopup, showWertIoErrorToaster, () =>
+      dispatch(toggleWertLoader(false)),
+    )
+    const wertWidgetInstance = new WertWidget(wertOptions)
+    wertWidgetInstance.mount()
+  }
+
   return (
-    <MenuTopStyled>
-      <div className="left-side">
-        <MenuMobileBurger onClick={burgerClickHandlerWrapped} className={isExpandedMenu ? 'expanded' : ''}>
-          <Icon id="menuOpen" />
-        </MenuMobileBurger>
-
-        <Link to="/">
-          <MenuLogo alt="logo" className={'desktop-logo'} src={logoImg} />
-          <MenuLogo alt="logo" className={'mobile-logo'} src={logoMobile} />
-        </Link>
-      </div>
-      <div className="grouped-links">
-        <TopBarLinks groupName={'Products'} groupLinks={PRODUCTS_LINKS} />
-        <TopBarLinks groupName={'About'} groupLinks={ABOUT_LINKS} />
-        <TopBarLinks groupName={'Blog 🔥'} groupLinks={BLOG_LINKS} groupNameLink="https://blogs.mavryk.finance/" />
-        <TopBarLinks groupName={'Docs'} groupLinks={DOCS_LINKS} />
-      </div>
-      <div className="right-side">
-        {/* Need this condition cuz of wert io container, technically without it will be 2 containers, and wert will take this container on mobile, not the mobile one */}
-        {!isMobileView ? <ConnectWallet /> : null}
-        <div className="settingsIcon" onClick={openChangeNodePopupHandler}>
-          <Icon id="gear" />
-        </div>
-      </div>
-
-      <div className="mobile-menu">
-        {showMobileTopBar ? (
-          <div className="settingsIcon" onClick={openChangeNodePopupHandler}>
-            <Icon id="gear" />
-          </div>
-        ) : (
+    <>
+      <MenuTopStyled>
+        <div className="left-side">
           <MenuMobileBurger onClick={burgerClickHandlerWrapped} className={isExpandedMenu ? 'expanded' : ''}>
             <Icon id="menuOpen" />
           </MenuMobileBurger>
-        )}
 
-        <Link to="/">
-          <MenuLogo alt="logo" className={'mobile-logo'} src={logoMobile} />
-        </Link>
-
-        <div className="top-bar-toggler" onClick={() => setShowMobileTopBar(!showMobileTopBar)}>
-          {showMobileTopBar ? <Icon id="close-stroke" /> : <Icon id="mobileTopBarToggler" />}
+          <Link to="/">
+            <MenuLogo alt="logo" className={'desktop-logo'} src={logoImg} />
+            <MenuLogo alt="logo" className={'mobile-logo'} src={logoMobile} />
+          </Link>
         </div>
-      </div>
+        <div className="grouped-links">
+          <TopBarLinks groupName={'Products'} groupLinks={PRODUCTS_LINKS} />
+          <TopBarLinks groupName={'About'} groupLinks={ABOUT_LINKS} />
+          <TopBarLinks groupName={'Blog 🔥'} groupLinks={BLOG_LINKS} groupNameLink="https://blogs.mavryk.finance/" />
+          <TopBarLinks groupName={'Docs'} groupLinks={DOCS_LINKS} />
+        </div>
+        <div className="right-side">
+          {!accountPkh ? <ConnectWalletBtn /> : <WalletDetails mountWertWiget={mountWertWiget} />}
+          {/* Need this condition cuz of wert io container, technically without it will be 2 containers, and wert will take this container on mobile, not the mobile one */}
+          {/* {!isMobileView ? <ConnectWallet /> : null} */}
+          <div className="settingsIcon" onClick={openChangeNodePopupHandler}>
+            <Icon id="gear" />
+          </div>
+        </div>
 
-      <MobileTopBar show={showMobileTopBar} closeMobileMenu={burgerClickHandlerWrapped} />
-    </MenuTopStyled>
+        <div className="mobile-menu">
+          {showMobileTopBar ? (
+            <div className="settingsIcon" onClick={openChangeNodePopupHandler}>
+              <Icon id="gear" />
+            </div>
+          ) : (
+            <MenuMobileBurger onClick={burgerClickHandlerWrapped} className={isExpandedMenu ? 'expanded' : ''}>
+              <Icon id="menuOpen" />
+            </MenuMobileBurger>
+          )}
+
+          <Link to="/">
+            <MenuLogo alt="logo" className={'mobile-logo'} src={logoMobile} />
+          </Link>
+
+          <div className="top-bar-toggler" onClick={() => setShowMobileTopBar(!showMobileTopBar)}>
+            {showMobileTopBar ? <Icon id="close-stroke" /> : <Icon id="mobileTopBarToggler" />}
+          </div>
+        </div>
+
+        <MobileTopBar show={showMobileTopBar} closeMobileMenu={burgerClickHandlerWrapped} />
+      </MenuTopStyled>
+      <WertIoPopup closePopup={() => setShowWertIoPopup(false)} isOpened={showWertIoPopup} />
+    </>
   )
+}
+function dispatch(arg0: any) {
+  throw new Error('Function not implemented.')
 }
