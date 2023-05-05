@@ -42,9 +42,7 @@ const DashboardPersonal = () => {
   const dispatch = useDispatch()
   const { tabId } = useParams<{ tabId: string }>()
 
-  const {
-    tokensPrices: { tezos: xtzExchangeRate = 0, mvk: mvkExchangeRate = 0 },
-  } = useSelector((state: State) => state.tokens)
+  const { tokensPrices } = useSelector((state: State) => state.tokens)
   const { satelliteMapper } = useSelector((state: State) => state.satellites)
   const { councilMembers, breakGlassCouncilMembers } = useSelector((state: State) => state.council)
   const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
@@ -99,8 +97,8 @@ const DashboardPersonal = () => {
   }
 
   const earnings = {
-    mvkRate: mvkExchangeRate,
-    xtzRate: xtzExchangeRate,
+    mvkRate: tokensPrices[MVK_TOKEN_SYMBOL],
+    xtzRate: tokensPrices[XTZ_TOKEN_SYMBOL],
     satelliteRewards: gatheredSatellitesRewards,
     farmsRewards: gatheredFarmRewards,
     exitRewards: gatheredDoormanRewards,
@@ -110,7 +108,9 @@ const DashboardPersonal = () => {
   const userTokensList = Object.values(userTokens)
   const mostSuppliedUserTokenSymbol = userTokensList.reduce((acc, { symbol, balance }) => {
     if (symbol === MVK_TOKEN_SYMBOL || symbol === SMVK_TOKEN_SYMBOL || symbol === XTZ_TOKEN_SYMBOL) return acc
-    return Number(userTokens[acc]?.balance ?? 0) > Number(balance) ? acc : symbol
+    const accAssetBalanceInUSD = Number(userTokens[acc]?.balance ?? 0) * (tokensPrices[acc] ?? 1)
+    const assetToCompareBalanceInUSD = Number(balance) * (tokensPrices[symbol] ?? 1)
+    return accAssetBalanceInUSD > assetToCompareBalanceInUSD ? acc : symbol
   }, '')
 
   const walletData = {
