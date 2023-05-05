@@ -31,13 +31,11 @@ import { AvatarStyle } from 'app/App.components/Avatar/Avatar.style'
 import {
   SatelliteCard,
   SatelliteCardInner,
-  SideBySideImageAndText,
   SatelliteProfileImageContainer,
   SatelliteProfileImage,
   SatelliteTextGroup,
   SatelliteMainText,
   SatelliteProfileDetails,
-  SatelliteCardTopRow,
   SatelliteSubText,
   SatelliteOracleStatusComponent,
   SatelliteCardButtons,
@@ -143,52 +141,63 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
   return (
     <SatelliteCard key={String(`satellite${satellite.address}`)}>
       <SatelliteCardInner isExtendedListItem={isDetailsPage}>
-        <div className="rows-wrapper">
-          <div>
-            <SideBySideImageAndText>
-              <SatelliteProfileImageContainer>
-                <AvatarStyle>
-                  <SatelliteProfileImage src={satellite.image} />
-                </AvatarStyle>
-              </SatelliteProfileImageContainer>
+        <div className="grid-container">
+          <div className="grid-item">
+            <SatelliteProfileImageContainer>
+              <AvatarStyle>
+                <SatelliteProfileImage src={satellite.image} />
+              </AvatarStyle>
+            </SatelliteProfileImageContainer>
 
-              <SatelliteTextGroup>
-                <SatelliteMainText>{satellite.name}</SatelliteMainText>
-                <TzAddress tzAddress={satellite.address} type={BLUE} hasIcon={true} isBold={true} />
-              </SatelliteTextGroup>
-            </SideBySideImageAndText>
-
-            {!isDetailsPage ? (
-              <SatelliteProfileDetails>
-                <Link to={`/satellites/satellite-details/${satellite.address}`}>
-                  <Button text={'Profile Details'} icon="man" kind="transparent" />
-                </Link>
-              </SatelliteProfileDetails>
-            ) : null}
+            <SatelliteTextGroup>
+              <SatelliteMainText>{satellite.name}</SatelliteMainText>
+              <TzAddress tzAddress={satellite.address} type={BLUE} hasIcon={true} isBold={true} />
+            </SatelliteTextGroup>
           </div>
 
-          <SatelliteCardTopRow isExtendedListItem={isDetailsPage}>
+          <div className="grid-item">
             <SatelliteTextGroup>
               <SatelliteMainText>Fee</SatelliteMainText>
               <SatelliteSubText>
                 <CommaNumber value={satellite.satelliteFee} endingText="%" />
               </SatelliteSubText>
             </SatelliteTextGroup>
-
+          </div>
+          <div className="grid-item">
             <SatelliteTextGroup>
               <SatelliteMainText>Free sMVK Space</SatelliteMainText>
               <SatelliteSubText>
                 <CommaNumber value={freesMVKSpace} />
               </SatelliteSubText>
             </SatelliteTextGroup>
+          </div>
 
+          <div className="grid-item grid-item-replaceable">
+            {!isDetailsPage ? (
+              <SatelliteProfileDetails>
+                <Link to={`/satellites/satellite-details/${satellite.address}`}>
+                  <Button text={'Profile Details'} icon="man" kind="transparent" />
+                </Link>
+              </SatelliteProfileDetails>
+            ) : (
+              <SatelliteTextGroup>
+                <SatelliteMainText>Total Voting Power</SatelliteMainText>
+                <SatelliteSubText>
+                  <CommaNumber value={satellite.sMvkBalance + satellite.totalDelegatedAmount} endingText="sMVK" />
+                </SatelliteSubText>
+              </SatelliteTextGroup>
+            )}
+          </div>
+
+          <div className="grid-item">
             <SatelliteTextGroup>
               <SatelliteMainText>Participation</SatelliteMainText>
               <SatelliteSubText>
                 <CommaNumber value={participation} endingText="%" />
               </SatelliteSubText>
             </SatelliteTextGroup>
-
+          </div>
+          <div className="grid-item">
             <SatelliteTextGroup className="oracle-status">
               <SatelliteMainText>Oracle Status</SatelliteMainText>
               <SatelliteSubText>
@@ -197,7 +206,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
                 </SatelliteOracleStatusComponent>
               </SatelliteSubText>
             </SatelliteTextGroup>
-          </SatelliteCardTopRow>
+          </div>
         </div>
 
         <SatelliteCardButtons>

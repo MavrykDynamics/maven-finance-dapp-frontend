@@ -24,24 +24,27 @@ export const SatelliteCard = styled(Card)<{ theme: MavrykTheme }>`
   margin: 0;
 `
 
-export const SatelliteCardTopRow = styled.div<{ isExtendedListItem?: boolean }>`
-  margin-top: 8px;
-  column-gap: ${({ isExtendedListItem }) => (isExtendedListItem ? '10px' : '30px')};
-  row-gap: 20px;
-  display: grid;
-  grid-template-columns: ${({ isExtendedListItem }) => (isExtendedListItem ? '121px 142px' : '121px 133px')};
-`
-
 export const SatelliteCardInner = styled.div<{ isExtendedListItem?: boolean }>`
   display: grid;
   grid-template-columns: ${({ isExtendedListItem }) => (isExtendedListItem ? 'auto 220px' : 'auto 180px')};
   column-gap: 10px;
   padding: 25px;
 
-  .rows-wrapper {
+  .grid-container {
     display: grid;
-    grid-template-columns: 190px auto;
-    column-gap: ${({ isExtendedListItem }) => (isExtendedListItem ? '10px' : '30px')};
+    grid-template-rows: repeat(2, auto);
+    /* grid-auto-flow: column; */
+    grid-template-columns: minmax(max-content, 1fr) minmax(max-content, 1fr) minmax(max-content, 1fr);
+    grid-column-gap: 34px;
+    grid-row-gap: 20px;
+  }
+
+  .grid-item:nth-child(1) {
+    display: flex;
+  }
+
+  .grid-item-replaceable {
+    padding-left: ${({ isExtendedListItem }) => (isExtendedListItem ? '55px' : '0')};
   }
 `
 
@@ -84,9 +87,13 @@ export const SatelliteCardRow = styled.div<{ theme: MavrykTheme }>`
 export const SatelliteProfileImageContainer = styled.div`
   display: flex;
   justify-content: space-around;
-  height: 50px;
-  width: 50px;
+  height: 45px;
+  width: 45px;
   margin-right: 10px;
+`
+
+export const SatelliteProfileInfoWrapper = styled.div`
+  display: flex;
 `
 
 export const SatelliteProfileImage = styled.div`
@@ -96,13 +103,6 @@ export const SatelliteProfileImage = styled.div`
   border-radius: 50%;
   width: 100%;
   height: 100%;
-`
-
-export const SideBySideImageAndText = styled.div<{ theme: MavrykTheme }>`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  margin-bottom: auto;
 `
 
 export const SatelliteTextGroup = styled.div<{ theme: MavrykTheme }>`
@@ -155,8 +155,7 @@ export const SatelliteSubText = styled.div<{ theme: MavrykTheme }>`
 
 export const SatelliteProfileDetails = styled.div<{ theme: MavrykTheme }>`
   display: flex;
-  margin-top: 7px;
-  margin-left: 20px;
+  margin-left: 7px;
   button.transparent {
     color: ${({ theme }) => theme.valueColor};
     font-weight: 600;
