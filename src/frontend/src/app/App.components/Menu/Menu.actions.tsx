@@ -1,5 +1,5 @@
 import { AppDispatch, GetState } from 'app/App.controller'
-import { getChainInfo } from '../../../utils/api'
+import { getChainInfo } from '../../../utils/blockchainApi'
 
 export const GET_HEAD_DATA = 'SET_HEAD_DATA'
 export const getHeadData = () => async (dispatch: AppDispatch, getState: GetState) => {
