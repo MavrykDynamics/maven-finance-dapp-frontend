@@ -28,14 +28,9 @@ import {
   convertFromIndexerToRegNum,
   convertNumberForClient,
 } from 'utils/calcFunctions'
-import { MVK_DECIMALS, XTZ_DECIMALS } from 'utils/constants'
+import { MVK_DECIMALS, MVK_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL, XTZ_DECIMALS, XTZ_TOKEN_SYMBOL } from 'utils/constants'
 import { Lending_Controller_Loan_Token } from 'utils/generated/graphqlTypes'
 import { getSymbolAndNameFromCollaterealGqlname } from 'utils/parse'
-
-// CONSTS FOR USER
-export const MVK_TOKEN_SYMBOL = 'mvk'
-export const SMVK_TOKEN_SYMBOL = 'smvk'
-export const XTZ_TOKEN_SYMBOL = 'tezos'
 
 export const fetchUserData = async (
   accountPkh: string,

@@ -26,7 +26,7 @@ import {
   SatelliteGovernanceCardDropDown,
   SatelliteGovernanceCardTitleTextGroup,
 } from 'pages/SatelliteGovernance/SatelliteGovernanceCard/SatelliteGovernanceCard.style'
-import { SMVK_TOKEN_SYMBOL } from 'reducers/actions/user.actions'
+import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
 
 type EGovCardProps = {
   emergencyGovernance: EmergergencyGovernanceItem

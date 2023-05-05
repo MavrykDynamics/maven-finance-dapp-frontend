@@ -48,7 +48,7 @@ import {
   BecomeSatelliteOracleText,
 } from './BecomeSatellite.style'
 import { INFO_ERROR } from 'app/App.components/Info/info.constants'
-import { SMVK_TOKEN_SYMBOL } from 'reducers/actions/user.actions'
+import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
 
 const connectWalletMessage = (
   <BecomeSatelliteFormBalanceCheck balanceOk={false}>

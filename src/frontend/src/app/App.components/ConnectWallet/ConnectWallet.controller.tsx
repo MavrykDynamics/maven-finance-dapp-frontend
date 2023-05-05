@@ -15,7 +15,7 @@ import { toggleSidebarCollapsing } from '../Menu/Menu.actions'
 import { showToaster } from '../Toaster/Toaster.actions'
 import { ERROR } from '../Toaster/Toaster.constants'
 import { toggleWertLoader } from '../Loader/Loader.action'
-import { MVK_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL, XTZ_TOKEN_SYMBOL } from 'reducers/actions/user.actions'
+import { MVK_TOKEN_SYMBOL, XTZ_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL } from 'utils/constants'
 
 type ConnectWalletProps = {
   className?: string

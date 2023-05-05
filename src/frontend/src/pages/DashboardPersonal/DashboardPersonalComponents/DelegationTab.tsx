@@ -14,7 +14,7 @@ import Icon from 'app/App.components/Icon/Icon.view'
 import { UserActionHistory } from './UserOperationsHistory'
 import { DashboardCardHeader } from '../DashboardPersonal.style'
 import { ConnectWallet } from 'app/App.components/ConnectWallet/ConnectWallet.controller'
-import { SMVK_TOKEN_SYMBOL } from 'reducers/actions/user.actions'
+import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
 
 const DelegationTab = () => {
   const dispatch = useDispatch()

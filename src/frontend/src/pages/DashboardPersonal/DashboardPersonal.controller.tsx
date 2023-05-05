@@ -7,7 +7,6 @@ import { State } from 'reducers'
 
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { claimAllRewardsAction } from './DashboardPersonal.actions'
-import { MVK_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL, XTZ_TOKEN_SYMBOL, updateUserData } from 'reducers/actions/user.actions'
 import { getEmergencyGovernanceStorage } from 'pages/EmergencyGovernance/EmergencyGovernance.actions'
 import {
   isValidPersonalDashboardTabId,
@@ -37,6 +36,8 @@ import { DashboardPersonalStyled } from './DashboardPersonal.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
+import { updateUserData } from 'reducers/actions/user.actions'
+import { MVK_TOKEN_SYMBOL, XTZ_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL } from 'utils/constants'
 
 const DashboardPersonal = () => {
   const dispatch = useDispatch()

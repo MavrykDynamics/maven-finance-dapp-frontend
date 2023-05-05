@@ -43,7 +43,7 @@ import {
 } from './StakeUnstake.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import colors from 'styles/colors'
-import { SMVK_TOKEN_SYMBOL, MVK_TOKEN_SYMBOL } from 'reducers/actions/user.actions'
+import { SMVK_TOKEN_SYMBOL, MVK_TOKEN_SYMBOL } from 'utils/constants'
 
 type StakeUnstakeViewProps = {
   stakeCallback: (amount: number) => void

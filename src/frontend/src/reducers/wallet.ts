@@ -4,6 +4,7 @@ import type { UserFarmRewardsData } from 'utils/TypesAndInterfaces/User'
 import type { UserLendObjType } from 'utils/TypesAndInterfaces/Loans'
 
 import { DISCONNECT } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
+import { MVK_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL, XTZ_TOKEN_SYMBOL } from 'utils/constants'
 import { UPDATE_USER_DATA } from './actions/user.actions'
 
 export interface UserState {
@@ -56,7 +57,23 @@ export interface WalletState {
 }
 
 export const DEFAULT_USER: UserState = {
-  userTokens: {},
+  userTokens: {
+    [MVK_TOKEN_SYMBOL]: {
+      balance: 0,
+      name: 'MVK',
+      symbol: MVK_TOKEN_SYMBOL,
+    },
+    [SMVK_TOKEN_SYMBOL]: {
+      balance: 0,
+      name: 'sMVK',
+      symbol: MVK_TOKEN_SYMBOL,
+    },
+    [XTZ_TOKEN_SYMBOL]: {
+      balance: 0,
+      name: 'XTZ',
+      symbol: XTZ_TOKEN_SYMBOL,
+    },
+  },
   userMTokens: [],
 
   satelliteMvkIsDelegatedTo: '',

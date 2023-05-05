@@ -1,7 +1,6 @@
 import { hideToaster, showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 import { getDoormanStorage } from 'pages/Doorman/Doorman.actions'
-import { MVK_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL, updateUserData } from 'reducers/actions/user.actions'
 import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 
 import { State } from 'reducers'
@@ -28,6 +27,8 @@ import {
   SATELLITE_CONFIG_QUERY_NAME,
   SATELLITE_CONFIG_QUERY_VARIABLE,
 } from 'gql/queries'
+import { updateUserData } from 'reducers/actions/user.actions'
+import { SMVK_TOKEN_SYMBOL, MVK_TOKEN_SYMBOL } from 'utils/constants'
 
 export const GET_SATELLITES_STORAGE = 'GET_SATELLITES_STORAGE'
 export const getSatellitesStorage = () => async (dispatch: AppDispatch, getState: GetState) => {

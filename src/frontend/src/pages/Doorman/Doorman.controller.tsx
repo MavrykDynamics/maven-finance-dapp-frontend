@@ -18,7 +18,7 @@ import { StakeUnstakeView } from './StakeUnstake/StakeUnstake.view'
 import { getDoormanStorage, stake } from './Doorman.actions'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { State } from 'reducers'
-import { MVK_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL } from 'reducers/actions/user.actions'
+import { SMVK_TOKEN_SYMBOL, MVK_TOKEN_SYMBOL } from 'utils/constants'
 
 export const Doorman = () => {
   const dispatch = useDispatch()

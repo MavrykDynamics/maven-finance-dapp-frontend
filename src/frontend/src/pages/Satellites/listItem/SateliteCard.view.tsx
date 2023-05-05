@@ -43,7 +43,7 @@ import {
   SatelliteCardButtons,
   SatelliteCardRow,
 } from './SatelliteCard.style'
-import { SMVK_TOKEN_SYMBOL } from 'reducers/actions/user.actions'
+import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
 
 type SatelliteListItemProps = {
   satellite: SatelliteRecordType
