@@ -3,7 +3,7 @@ import { FarmAccountsType, FarmContractType, FarmGraphQL, Normalizedfarm } from 
 import { DipDupTokensGraphQl } from 'utils/TypesAndInterfaces/DipDupTokens'
 
 // helpers
-import { getContractBigmapKeys, network } from 'utils/api'
+import { getContractBigmapKeys, network } from 'utils/blockchainApi'
 import { STAKED } from './Farms.const'
 
 type EndsInType = {
