@@ -63,10 +63,7 @@ export const claimAllRewardsAction = () => async (dispatch: AppDispatch, getStat
     const bachArr = [...farmsRewardsBatchPart]
 
     // if user has satelite/doorman reward batch part of getting this reward will be added to the batch array
-    if (
-      availableDoormanRewards.myAvailableDoormanRewards > 0 ||
-      availableSatellitesRewards.myAvailableSatelliteRewards > 0
-    ) {
+    if (availableDoormanRewards > 0 || availableSatellitesRewards > 0) {
       const doormanContractInstance = await tezos?.wallet.at(doormanAddress.address)
       bachArr.push({
         kind: OpKind.TRANSACTION,

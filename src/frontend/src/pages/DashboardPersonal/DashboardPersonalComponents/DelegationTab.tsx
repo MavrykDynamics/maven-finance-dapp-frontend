@@ -19,11 +19,7 @@ import { SMVK_TOKEN_SYMBOL } from 'reducers/actions/user.actions'
 const DelegationTab = () => {
   const dispatch = useDispatch()
   const {
-    user: {
-      satelliteMvkIsDelegatedTo,
-      userTokens,
-      availableSatellitesRewards: { myAvailableSatelliteRewards },
-    },
+    user: { satelliteMvkIsDelegatedTo, userTokens, availableSatellitesRewards },
     accountPkh,
   } = useSelector((state: State) => state.wallet)
   const { satelliteMapper } = useSelector((state: State) => state.satellites)
@@ -45,7 +41,7 @@ const DelegationTab = () => {
             form={BUTTON_WIDE}
             onClick={handleDistributeRewards}
             // TODO:  we are waiting new Query for getting proposals
-            disabled={true || myAvailableSatelliteRewards === 0}
+            disabled={true || availableSatellitesRewards === 0}
           >
             <Icon id="loans" />
             Distribute Gov. Rewards

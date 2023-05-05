@@ -55,8 +55,8 @@ const DashboardPersonal = () => {
     accountPkh,
     user: {
       userTokens,
-      availableDoormanRewards: { myAvailableDoormanRewards },
-      availableSatellitesRewards: { myAvailableSatelliteRewards },
+      availableDoormanRewards,
+      availableSatellitesRewards,
       availableFarmRewards,
       availableLoansRewards,
       gatheredDoormanRewards,
@@ -89,8 +89,8 @@ const DashboardPersonal = () => {
 
   const rewards = {
     rewardsToClaim:
-      myAvailableDoormanRewards +
-      myAvailableSatelliteRewards +
+      availableDoormanRewards +
+      availableSatellitesRewards +
       Object.values(availableFarmRewards).reduce(
         (acc, { myAvailableFarmRewards }) => (acc += myAvailableFarmRewards),
         0,

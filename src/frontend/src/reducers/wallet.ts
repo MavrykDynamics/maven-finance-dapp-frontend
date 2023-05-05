@@ -1,10 +1,6 @@
 import type { M_Token_Account } from './../utils/generated/graphqlTypes'
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
-import type {
-  UserDoormanRewardsData,
-  UserFarmRewardsData,
-  UserSatelliteRewardsData,
-} from 'utils/TypesAndInterfaces/User'
+import type { UserFarmRewardsData } from 'utils/TypesAndInterfaces/User'
 import type { UserLendObjType } from 'utils/TypesAndInterfaces/Loans'
 
 import { DISCONNECT } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
@@ -39,9 +35,9 @@ export interface UserState {
   gatheredFarmRewards: number
   gatheredSatellitesRewards: number
   gatheredDoormanRewards: number
-  availableDoormanRewards: UserDoormanRewardsData
+  availableDoormanRewards: number
   availableFarmRewards: Record<string, UserFarmRewardsData>
-  availableSatellitesRewards: UserSatelliteRewardsData
+  availableSatellitesRewards: number
   availableLoansRewards: number
 
   // user's actions history
@@ -75,20 +71,9 @@ export const DEFAULT_USER: UserState = {
   },
 
   availableLoansRewards: 0,
+  availableDoormanRewards: 0,
+  availableSatellitesRewards: 0,
   availableFarmRewards: {},
-  availableDoormanRewards: {
-    generalAccumulatedFeesPerShare: 0,
-    generalUnclaimedRewards: 0,
-    myAvailableDoormanRewards: 0,
-    myParticipationFeesPerShare: 0,
-  },
-  availableSatellitesRewards: {
-    myAvailableSatelliteRewards: 0,
-    paid: 0,
-    participationRewardsPerShare: 0,
-    satelliteAccumulatedRewardPerShare: 0,
-    unpaid: 0,
-  },
 
   gatheredFarmRewards: 0,
   gatheredSatellitesRewards: 0,

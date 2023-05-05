@@ -8,7 +8,7 @@ import {
   DECIMALS_TO_SHOW,
 } from './constants'
 import { Doorman, Farm, Satellite_Rewards, Stake_History_Data } from './generated/graphqlTypes'
-import { UserDoormanRewardsData, UserFarmRewardsData, UserSatelliteRewardsData } from './TypesAndInterfaces/User'
+import { UserFarmRewardsData } from './TypesAndInterfaces/User'
 import { TokenType } from './TypesAndInterfaces/General'
 
 /**
@@ -127,8 +127,8 @@ export function calcUsersDoormanRewards({
 }: {
   userDoormanRewardsFromGQL?: Doorman
   mySMvkTokenBalance: number
-}): UserDoormanRewardsData {
-  const myDoormanRewardsData: UserDoormanRewardsData = {
+}): number {
+  const myDoormanRewardsData = {
     generalAccumulatedFeesPerShare: userDoormanRewardsFromGQL?.accumulated_fees_per_share ?? 0,
     generalUnclaimedRewards: userDoormanRewardsFromGQL?.unclaimed_rewards ?? 0,
     myParticipationFeesPerShare: userDoormanRewardsFromGQL?.stake_accounts[0]?.participation_fees_per_share ?? 0,
@@ -141,7 +141,7 @@ export function calcUsersDoormanRewards({
   myDoormanRewardsData.myAvailableDoormanRewards = calcWithoutPrecision(
     String(Math.trunc(usersAvailableDoormanRewards)),
   )
-  return myDoormanRewardsData
+  return myDoormanRewardsData.myAvailableDoormanRewards
 }
 
 export function calcUsersFarmRewards({
@@ -208,8 +208,8 @@ export function calcUsersSatelliteRewards({
 }: {
   mySMvkTokenBalance: number
   userSatelliteRewardsFromGQL?: Satellite_Rewards
-}): UserSatelliteRewardsData {
-  const mySatelliteRewardsData: UserSatelliteRewardsData = {
+}): number {
+  const mySatelliteRewardsData = {
     unpaid: userSatelliteRewardsFromGQL?.unpaid ?? 0,
     paid: userSatelliteRewardsFromGQL?.paid ?? 0,
     participationRewardsPerShare: userSatelliteRewardsFromGQL?.participation_rewards_per_share ?? 0,
@@ -226,7 +226,7 @@ export function calcUsersSatelliteRewards({
   mySatelliteRewardsData.myAvailableSatelliteRewards = calcWithoutPrecision(
     String(Math.trunc(usersAvailableSatelliteRewards)),
   )
-  return mySatelliteRewardsData
+  return mySatelliteRewardsData.myAvailableSatelliteRewards
 }
 
 const USER_ACTIONS_TYPES = {
