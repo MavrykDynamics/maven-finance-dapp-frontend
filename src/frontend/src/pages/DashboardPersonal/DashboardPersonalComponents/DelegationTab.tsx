@@ -67,7 +67,7 @@ const DelegationTab = () => {
                 <div className="name">Total Voting Power</div>
                 <div className="value">
                   <CommaNumber
-                    value={satelliteInfo.sMvkBalance * satelliteInfo.totalDelegatedAmount}
+                    value={satelliteInfo.sMvkBalance + satelliteInfo.totalDelegatedAmount}
                     endingText="sMVK"
                   />
                 </div>
