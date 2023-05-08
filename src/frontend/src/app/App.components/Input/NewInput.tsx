@@ -32,7 +32,7 @@ type InputViewProps = {
   inputProps: {
     disabled?: boolean
     value: string | number
-    type?: string
+    type?: 'text' | 'number'
     placeholder?: string
     name?: string
     id?: string
