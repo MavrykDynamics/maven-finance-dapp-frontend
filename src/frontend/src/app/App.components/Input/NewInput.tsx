@@ -1,8 +1,17 @@
+import { useState, useCallback } from 'react'
 import { BUTTON_SIMPLE } from '../Button/Button.constants'
 import NewButton from '../Button/NewButton'
 import { CommaNumber } from '../CommaNumber/CommaNumber.controller'
 import { InputSizeType, InputStatusType } from './Input.constants'
 import { InputOneChange } from './Input.controller'
+
+// consts
+import { INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
+
+// helpers
+import { validateAsciiInput } from './helpers/validateAsciiInput'
+
+// styles
 import { InputPinnedChild, InputStyledStatus, InputWrapper, NewInputLabel, StyledInput } from './Input.style'
 
 type InputViewProps = {
@@ -52,8 +61,26 @@ export const Input = ({
     inputSize,
   },
 }: InputViewProps) => {
+  const [hasError, sethasError] = useState(false)
+
+  const internalInputStatus = hasError ? INPUT_STATUS_ERROR : inputStatus
+
+  const onChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { value } = e.target
+      if (validateAsciiInput(value)) {
+        if (hasError) sethasError(false)
+      } else {
+        if (!hasError) sethasError(true)
+      }
+
+      inputProps.onChange(e)
+    },
+    [hasError, inputProps.onChange],
+  )
+
   return (
-    <InputWrapper className={`${className} ${inputStatus} ${inputSize}`} id={'inputStyled'}>
+    <InputWrapper className={`${className} ${internalInputStatus} ${inputSize}`} id={'inputStyled'}>
       {label ? (
         <NewInputLabel>
           {label}
@@ -64,10 +91,11 @@ export const Input = ({
 
       <StyledInput
         {...inputProps}
-        className={`${inputStatus} ${children ? 'remove-right-border-radius' : ''}`}
+        onChange={onChange}
+        className={`${internalInputStatus} ${children ? 'remove-right-border-radius' : ''}`}
         autoComplete={'off'}
       />
-      {Boolean(children) ? null : <InputStyledStatus className={`${inputStatus} ${inputSize}`} />}
+      {Boolean(children) ? null : <InputStyledStatus className={`${internalInputStatus} ${inputSize}`} />}
 
       {balance !== undefined && balanceAsset ? (
         <div onClick={balanceHandler}>
