@@ -28,18 +28,20 @@ export const isTezosAsset = (tokenName: string) =>
 export const getAssetMetadata = ({
   tokenName,
   tokenAddress,
-  dipDupMapper,
+  dipDupTokens,
   feeds,
   oracleId,
 }: {
   tokenName: string
   tokenAddress: string
-  dipDupMapper: State['tokens']['dipDupMapper']
+  dipDupTokens: State['tokens']['dipDupTokens']
   feeds: Array<Feed>
   oracleId?: string
 }): (BaseLoansAssetDataType & { address: string }) | undefined => {
   const isXTZ = isTezosAsset(tokenName)
-  const foundAssetInDipDup = dipDupMapper[tokenAddress]
+  const foundAssetInDipDup = dipDupTokens.find(
+    ({ metadata: { name: dipDupName }, contract }) => tokenName === dipDupName || tokenAddress === contract,
+  )
 
   const { last_completed_data, decimals, icon } = feeds.find(({ address }) => address === oracleId) ?? {}
 
@@ -57,19 +59,18 @@ export const getAssetMetadata = ({
     }
   }
 
-  // TODO: remove icon & symbolCheck
-  if (foundAssetInDipDup && last_completed_data !== undefined && decimals !== undefined && foundAssetInDipDup.symbol) {
+  if (foundAssetInDipDup && last_completed_data !== undefined && decimals !== undefined) {
     return {
-      decimals: foundAssetInDipDup.decimals,
+      decimals: Number(foundAssetInDipDup.metadata.decimals),
       gqlName: tokenName,
-      name: foundAssetInDipDup.name,
-      symbol: foundAssetInDipDup.symbol,
+      name: foundAssetInDipDup.metadata.name,
+      symbol: foundAssetInDipDup.metadata.symbol,
       icon:
         tokenName === 'eurl'
           ? '/images/eurl.png'
           : tokenName === 'tzbtc'
           ? '/images/tzBTC.png'
-          : icon ?? foundAssetInDipDup.icon ?? '',
+          : icon ?? foundAssetInDipDup.metadata.icon ?? '',
       rate: last_completed_data / 10 ** decimals,
       address: tokenAddress,
       id: foundAssetInDipDup.id,
@@ -90,7 +91,7 @@ type TransactionHistoryReduceType = {
 
 export const getTransactionHistory = (
   history_data: Lending_Controller_History_Data[],
-  dipDupMapper: State['tokens']['dipDupMapper'],
+  dipDupTokens: State['tokens']['dipDupTokens'],
   feeds: State['dataFeeds']['feedsLedger'],
 ) =>
   history_data.reduce<TransactionHistoryReduceType>(
@@ -100,7 +101,7 @@ export const getTransactionHistory = (
       const assetMetadata = getAssetMetadata({
         tokenAddress: loan_token.loan_token_address,
         tokenName: loan_token.loan_token_name,
-        dipDupMapper,
+        dipDupTokens,
         feeds,
         oracleId: String(loan_token.oracle_id),
       })
@@ -196,7 +197,7 @@ export const getTransactionHistory = (
 // NORMALIZE CHART DATA FOR LEND/BORROW MARKETS
 export const getChartData = (
   history_data: Lending_Controller_History_Data[],
-  dipDupMapper: State['tokens']['dipDupMapper'],
+  dipDupTokens: State['tokens']['dipDupTokens'],
   feeds: State['dataFeeds']['feedsLedger'],
 ) =>
   history_data?.reduce<LoansChartsDataType>(
@@ -205,7 +206,7 @@ export const getChartData = (
       const assetMetadata = getAssetMetadata({
         tokenAddress: loan_token.loan_token_address,
         tokenName: loan_token.loan_token_name,
-        dipDupMapper,
+        dipDupTokens,
         feeds,
         oracleId: String(loan_token.oracle_id),
       })

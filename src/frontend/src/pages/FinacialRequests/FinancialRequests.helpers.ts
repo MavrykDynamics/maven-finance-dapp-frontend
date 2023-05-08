@@ -15,8 +15,7 @@ export const normalizeFinancialRequests = (
     frIds: number[]
   }>(
     (acc, item) => {
-      const tokenName =
-        dipDupTokens.find(({ contract }) => contract === item.token_address)?.metadata.symbol ?? 'MVK' ?? 'MVK'
+      const tokenName = dipDupTokens.find(({ contract }) => contract === item.token_address)?.metadata.symbol ?? 'MVK'
       const frItem = {
         tokenAddress: item.token_address,
         id: item.id,

@@ -107,36 +107,29 @@ export const getXTZBakers = async () => {
 
 export const getCollateralTokens = (
   collateralTokens: Array<Lending_Controller_Collateral_Token>,
-  tokensMetadata: State['tokens']['tokensMetadata'],
+  dipDupTokens: State['tokens']['dipDupTokens'],
   feeds: State['dataFeeds']['feedsLedger'],
 ): Array<AvaliableCollateralType> => {
   try {
     return collateralTokens.reduce<AvaliableCollateralType[]>(
       (acc, { token_address, token_contract_standard, token_name, protected: isProtected, oracle_id }) => {
-        const { rate, name, symbol, decimals, id, icon } = tokensMetadata[token_address] ?? {}
-        console.log({ tokensMetadata, token_address })
-        // getAssetMetadata({
-        //   tokenName: token_name,
-        //   tokenAddress: token_address,
-        //   dipDupMapper,
-        //   feeds,
-        //   oracleId: String(oracle_id),
-        // })
+        const assetMetadata = getAssetMetadata({
+          tokenName: token_name,
+          tokenAddress: token_address,
+          dipDupTokens,
+          feeds,
+          oracleId: String(oracle_id),
+        })
 
-        if (rate && icon) {
-          // const { name, symbol } = getSymbolAndNameFromCollaterealGqlname(assetMetadata.symbol, token_name)
+        if (assetMetadata) {
+          const { name, symbol } = getSymbolAndNameFromCollaterealGqlname(assetMetadata.symbol, assetMetadata.gqlName)
 
           acc.push({
-            rate,
-            address: token_address,
-            gqlName: token_name,
+            ...assetMetadata,
             name,
             symbol,
             tokenType: token_contract_standard as 'tez' | 'fa12' | 'fa2',
             isProtected,
-            decimals,
-            id,
-            icon,
           })
         }
 

@@ -25,7 +25,7 @@ export const DataFeedCard = ({ feed }: { feed: Feed }) => {
     [feed.address, oraclesIds, satelliteMapper],
   )
 
-  const imageLink = dipDupContracts.find(({ contract }) => contract === feed?.address)?.metadata?.icon
+  const imageLink = dipDupContracts.find(({ contract }) => contract === feed.address)?.metadata?.icon
   const showAllColumns = pathname === '/data-feeds'
 
   return (

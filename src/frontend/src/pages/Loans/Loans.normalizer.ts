@@ -9,12 +9,12 @@ import { calcLendingAPY, getAssetMetadata, getChartData, getLendingItem, getTran
 
 // Normalize user loans data
 export const normalizeUserLending = ({
-  dipDupMapper,
+  dipDupTokens,
   userDataLoansHistoryGql,
   userVaultsDataGql,
   feeds,
 }: {
-  dipDupMapper: State['tokens']['dipDupMapper']
+  dipDupTokens: State['tokens']['dipDupTokens']
   feeds: State['dataFeeds']['feedsLedger']
   userDataLoansHistoryGql: Mavryk_User['lending_controller_history_data_sender']
   userVaultsDataGql: Mavryk_User['lending_controller_vaults']
@@ -39,7 +39,7 @@ export const normalizeUserLending = ({
       const assetData = getAssetMetadata({
         tokenAddress: loan_token.loan_token_address,
         tokenName: loan_token.loan_token_name,
-        dipDupMapper,
+        dipDupTokens,
         feeds,
         oracleId: String(loan_token.oracle_id),
       })
@@ -101,7 +101,7 @@ export const normalizeUserLending = ({
         const vaultAssetData = getAssetMetadata({
           tokenAddress: loan_token.loan_token_address,
           tokenName: loan_token.loan_token_name,
-          dipDupMapper,
+          dipDupTokens,
           feeds,
           oracleId: String(loan_token.oracle_id),
         })
@@ -113,7 +113,7 @@ export const normalizeUserLending = ({
           const collateralAssetData = getAssetMetadata({
             tokenAddress: token.token_address,
             tokenName: token.token_name,
-            dipDupMapper,
+            dipDupTokens,
             feeds,
             oracleId: String(token.oracle_id),
           })
@@ -154,7 +154,7 @@ export const normalizeLoans = async ({
   feeds,
 }: {
   storage: LoansGQL
-  dipDupData: State['tokens']['dipDupMapper']
+  dipDupData: State['tokens']['dipDupTokens']
   mTokens: State['tokens']['mTokens']
   userMTokens: UserState['userMTokens']
   userAddres?: string
@@ -190,7 +190,7 @@ export const normalizeLoans = async ({
         const loanTokenMetadata = getAssetMetadata({
           tokenName: loan_token_name,
           tokenAddress: loan_token_address,
-          dipDupMapper: dipDupData,
+          dipDupTokens: dipDupData,
           feeds,
           oracleId: String(oracle_id),
         })

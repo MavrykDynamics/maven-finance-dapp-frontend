@@ -241,7 +241,7 @@ export const getPaymentsDiff = (
   originalData: ProposalRecordType['proposalPayments'],
   updatedData: ProposalRecordType['proposalPayments'],
   paymentMethods: Array<{ symbol: string; address: string; shortSymbol: string; id: number }>,
-  dipDupMapper: State['tokens']['dipDupMapper'],
+  dipDupTokens: State['tokens']['dipDupTokens'],
 ): PaymentsDataChangesType => {
   let originalIdx = 0
 
@@ -249,8 +249,8 @@ export const getPaymentsDiff = (
     .map<PaymentsDataChangesType[number] | null>((item1) => {
       const item2 = originalData?.[originalIdx]
 
-      // default decimals is 6 cuz 6 is xtz decimals, and dipDupMapper don't contain xtz asset
-      const decimals = item1.token_address ? dipDupMapper[item1.token_address]?.decimals ?? 6 : 0
+      // default decimals is 6 cuz 6 is xtz decimals, and dipDupTokens don't contain xtz asset
+      const decimals = dipDupTokens.find(({ contract }) => contract === item1.token_address)?.metadata?.decimals ?? 6
       const symbol = paymentMethods.find(({ address }) => address === item1.token_address)?.shortSymbol ?? 'fa2'
 
       let token = {}

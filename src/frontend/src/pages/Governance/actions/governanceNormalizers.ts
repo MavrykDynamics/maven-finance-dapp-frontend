@@ -18,7 +18,7 @@ import { MVK_DECIMALS } from 'utils/constants'
 
 export const normalizeProposal = (
   item: GovernanceProposalGraphQL,
-  dipDupTokens: State['tokens']['dipDupMapper'],
+  dipDupTokens: State['tokens']['dipDupTokens'],
   { governancePhase, cycleHighestVotedProposalId, timelockProposalId }: State['governance']['config'],
 ) => {
   const proposalConvertedStatus = getProposalStatus(
@@ -75,7 +75,8 @@ export const normalizeProposal = (
     })),
 
     proposalPayments: item.payments.map((paymentData) => {
-      const decimals = paymentData.token_address ? dipDupTokens[paymentData.token_address]?.decimals ?? 0 : 0
+      const decimals =
+        dipDupTokens?.find(({ contract }) => contract === paymentData.token_address)?.metadata?.decimals ?? 0
 
       return {
         ...paymentData,
@@ -88,7 +89,7 @@ export const normalizeProposal = (
 
 export const normalizeGovernanceProposals = (
   proposals: Array<GovernanceProposalGraphQL>,
-  dipDupTokens: State['tokens']['dipDupMapper'],
+  dipDupTokens: State['tokens']['dipDupTokens'],
   governanceConfig: State['governance']['config'],
 ): Omit<Omit<State['governance'], 'isLoaded'>, 'config'> => {
   const { governancePhase, timelockProposalId } = governanceConfig
