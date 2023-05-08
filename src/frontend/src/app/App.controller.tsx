@@ -63,6 +63,7 @@ const AppContainer = () => {
         dispatch(getSatellitesStorage()),
         dispatch(getFeedsStorage()),
 
+        dispatch(getTokensForDAPP()),
         dispatch(getXtzBakers()),
         // TODO: uncomment it when contracts are updated
         // dispatch(getMvkFaucet()),
@@ -73,11 +74,7 @@ const AppContainer = () => {
       ])
 
       // Depends on data feeds (getFeedsStorage())
-      await Promise.all([
-        dispatch(getTokensForDAPP()),
-        dispatch(getTokensPrices()),
-        dispatch(getAvaliableCollaterals()),
-      ])
+      await Promise.all([dispatch(getTokensPrices()), dispatch(getAvaliableCollaterals())])
 
       // For using Beacon wallet
       if (

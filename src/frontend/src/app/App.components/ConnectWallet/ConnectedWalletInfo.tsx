@@ -31,26 +31,16 @@ export const WalletDetails = ({ closeMobileMenu, mountWertWiget }: ConnectWallet
   const { tokensPrices } = useSelector((state: State) => state.tokens)
 
   const { pathname } = useLocation()
-  const isMobileView = useMedia('(max-width: 870px)')
+  // const isMobileView = useMedia('(max-width: 870px)')
 
   const [detailsShown, setDetailsShown] = useState(false)
 
   const isOnStakingPage = pathname === '/staking'
-  const tokensSymbols = Object.keys(userTokens)
 
   const handleChangeWallet = async () => await dispatch(changeWallet())
   const disconnectWallet = async () => await dispatch(disconnect())
   const closeDetailsHandler = () => setDetailsShown(false)
   const mouseOverHanlder = () => setDetailsShown(true)
-
-  // will implemented after Sam's answers about data for this block
-  const coinsInfo = {
-    MVKExchangeRate: tokensPrices?.mvk ?? 0,
-    userMVKBalance: userTokens[MVK_TOKEN_SYMBOL].balance,
-    userXTZBalance: userTokens[XTZ_TOKEN_SYMBOL].balance,
-    userMVKStaked: userTokens[SMVK_TOKEN_SYMBOL].balance,
-    XTZExchnageRate: tokensPrices?.tezos ?? 0,
-  }
 
   if (!accountPkh) return null
 
@@ -154,7 +144,7 @@ export const WalletDetails = ({ closeMobileMenu, mountWertWiget }: ConnectWallet
             </div>
           </div>
 
-          {tokensSymbols.map((tokenSymbol) => {
+          {/* {tokensSymbols.map((tokenSymbol) => {
             if (
               tokenSymbol === MVK_TOKEN_SYMBOL ||
               tokenSymbol === SMVK_TOKEN_SYMBOL ||
@@ -183,14 +173,14 @@ export const WalletDetails = ({ closeMobileMenu, mountWertWiget }: ConnectWallet
                     />
                   ) : null}
                 </div>
-                {/* <div className="action">
+                <div className="action">
                 <Button onClick={disconnectWallet} kind={BUTTON_SIMPLE} disabled>
                   Buy MVK <Icon id="paginationArrowRight" />
                 </Button>
-              </div> */}
+              </div> 
               </div>
             )
-          })}
+          })} */}
         </div>
 
         <div className="action-btn-wrapper">

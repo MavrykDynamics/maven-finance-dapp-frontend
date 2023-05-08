@@ -9,7 +9,6 @@ import { AnyAction } from 'redux'
 
 export type TokensType = {
   dipDupMapper: Record<string, DipDupTokenDataType>
-
   contractsMetadata: Record<string, ContractMetadataType>
   tokensMetadata: Record<string, TokenMetadataType>
 
@@ -31,7 +30,6 @@ export type TokensType = {
 }
 const defaultTokensInfoState: TokensType = {
   dipDupMapper: {},
-
   contractsMetadata: {},
   tokensMetadata: {},
   whitelistTokens: [
