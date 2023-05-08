@@ -8,7 +8,7 @@ import { INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
 
 // helpers
 import { validateAsciiInput } from './helpers/validateAsciiInput'
-import { hasSpaces } from './helpers/hasSpaces'
+import { trimSpacesFromEvent } from './helpers/trimSpacesFromEvent'
 
 // types
 import { InputViewProps } from './newInput.type'
@@ -39,14 +39,16 @@ export const Input = ({
 
   const onChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      const { value } = e.target
-      if (validateAsciiInput(value) && !hasSpaces(value)) {
+      const event = trimSpacesFromEvent(e)
+      const { value } = event.target
+
+      if (validateAsciiInput(value)) {
         if (hasError) sethasError(false)
       } else {
         if (!hasError) sethasError(true)
       }
 
-      inputProps.onChange(e)
+      inputProps.onChange(event)
     },
     [hasError, inputProps.onChange],
   )
