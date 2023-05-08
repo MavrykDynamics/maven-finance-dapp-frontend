@@ -22,6 +22,7 @@ import { calculateAdminLiquidationFee, calculateCollateralShare } from 'pages/Va
 // types
 import { LiquidateVaultDataType } from 'pages/Loans/Components/Modals/Modals.helpers'
 import { InputStatusType } from 'app/App.components/Input/Input.constants'
+import { InputProps } from 'app/App.components/Input/newInput.type'
 
 // actions
 import { liquidateVault } from 'pages/Vaults/Vaults.actions'
@@ -104,7 +105,7 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
     )
   }
 
-  const inputProps = {
+  const inputProps: InputProps = {
     value: inputAmount,
     type: 'number',
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => setInputAmount(e.target.value),

@@ -22,6 +22,9 @@ import { DDItemId, DropDown, DropdownTruncateOption } from 'app/App.components/D
 // action
 import { requestTokens } from '../Council.actions'
 
+// types
+import { InputProps } from 'app/App.components/Input/newInput.type'
+
 // style
 import { CouncilFormStyled } from './CouncilForm.style'
 
@@ -176,7 +179,7 @@ export const CouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
     inputStatus: formInputStatus.tokenName,
   }
 
-  const tokenAmountProps = {
+  const tokenAmountProps: InputProps = {
     type: 'number',
     name: 'tokenAmount',
     value: tokenAmount,
@@ -192,7 +195,7 @@ export const CouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
     inputStatus: formInputStatus.tokenAmount,
   }
 
-  const tokenIdProps = {
+  const tokenIdProps: InputProps = {
     type: 'number',
     name: 'tokenId',
     value: tokenId,
