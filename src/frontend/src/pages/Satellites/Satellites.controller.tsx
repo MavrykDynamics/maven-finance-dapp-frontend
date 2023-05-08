@@ -32,6 +32,7 @@ import { Page, PageContent } from 'styles'
 import { InfoBlockWrapper, SatellitesOverviewStyled } from './Satellites.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { NotStakingBanner } from './components/NotStakingBanner.view'
+import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
 
 const Satellites = () => {
   const dispatch = useDispatch()
@@ -39,7 +40,7 @@ const Satellites = () => {
   const { activeSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
   const { feedsLedger, isLoaded: isFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
   const {
-    user: { isSatellite, mySMvkTokenBalance },
+    user: { isSatellite, userTokens },
   } = useSelector((state: State) => state.wallet)
   const { isLoaded: isDoormanLoaded } = useSelector((state: State) => state.doorman)
 
@@ -69,7 +70,7 @@ const Satellites = () => {
   return (
     <Page>
       <PageHeader page={'satellites'} />
-      {!isSatellite || mySMvkTokenBalance === 0 ? (
+      {!isSatellite || userTokens[SMVK_TOKEN_SYMBOL].balance === 0 ? (
         <NotStakingBanner text="You are currently not staking MVK, please stake MVK in order to delegate to a satellite or become your own and take part in the platform’s governance" />
       ) : null}
       <PageContent>
