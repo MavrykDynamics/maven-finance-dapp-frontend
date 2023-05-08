@@ -166,9 +166,7 @@ export const WalletDetails = ({ closeMobileMenu, mountWertWiget }: ConnectWallet
 
             return (
               <div className="row">
-                <div className="icon">
-                  <Icon id={'noImage'} />
-                </div>
+                <div className="icon">{tokenData.icon ? <Icon id={tokenData.icon} /> : <Icon id={'noImage'} />}</div>
                 <div className="values">
                   <CommaNumber
                     value={tokenData.balance}

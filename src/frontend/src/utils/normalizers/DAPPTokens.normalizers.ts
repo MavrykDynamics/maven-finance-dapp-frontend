@@ -1,4 +1,10 @@
-import { DipDupTokenDataType, TokenMetadataFromGQLType } from 'utils/TypesAndInterfaces/DipDupTokens'
+import { isTezosAsset } from 'pages/Loans/Loans.helpers'
+import {
+  ContractMetadataType,
+  DipDupTokenDataType,
+  TokenMetadataFromGQLType,
+  TokenMetadataType,
+} from 'utils/TypesAndInterfaces/DipDupTokens'
 import {
   Dipdup_Token_Metadata,
   M_Token,
@@ -37,6 +43,47 @@ export function nomalizeDipDupTokensAndContracts(
     },
     {},
   )
+}
+
+export function nomalizeDipDupContracts(dipdup_contract_metadata: Array<Dipdup_Token_Metadata>) {
+  return dipdup_contract_metadata.reduce<Record<string, ContractMetadataType>>((acc, tokenData) => {
+    const { contract, metadata } = tokenData
+    const { icon = null } = (metadata ?? {}) as TokenMetadataFromGQLType
+
+    if (!icon) return acc
+
+    acc[contract] = {
+      icon,
+    }
+    return acc
+  }, {})
+}
+
+export function nomalizeDipDupTokens(dipdup_contract_metadata: Array<Dipdup_Token_Metadata>) {
+  return dipdup_contract_metadata.reduce<Record<string, TokenMetadataType>>((acc, tokenData) => {
+    const { contract, metadata, id } = tokenData
+    const { icon = null, name, symbol = null, decimals = null } = (metadata ?? {}) as TokenMetadataFromGQLType
+
+    if (!metadata || !name || !symbol || !decimals) return acc
+
+    const tempIcon = isTezosAsset(symbol.toLowerCase())
+      ? '/images/tezos.png'
+      : symbol.toLowerCase().includes('eurl')
+      ? '/images/eurl.png'
+      : symbol.toLowerCase().includes('tzbtc')
+      ? '/images/tzBTC.png'
+      : icon
+
+    acc[contract] = {
+      icon: tempIcon || null,
+      name,
+      symbol,
+      id,
+      decimals: parseInt(decimals),
+      rate: 1,
+    }
+    return acc
+  }, {})
 }
 
 export function normalizeMTokens(m_token: M_Token) {

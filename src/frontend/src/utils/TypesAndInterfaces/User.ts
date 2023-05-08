@@ -28,6 +28,7 @@ export type MTokenType = {
   lendedAmount: number
   balance: number
   usdBalance: number
+  icon: string | null
   // TODO: abjust to get it from tokenPrices in store
   tokenRate: number
   tokenSymbol: string

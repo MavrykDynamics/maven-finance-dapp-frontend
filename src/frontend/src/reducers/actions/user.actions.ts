@@ -112,10 +112,11 @@ export const fetchUserData = async (
         usdBalance: normalizedBalance + normalizedEarnedRewards * loanTokenMetadata.rate,
         tokenRate: loanTokenMetadata.rate,
         tokenSymbol: isTezosAsset(loanTokenMetadata.symbol) ? loanTokenMetadata.name : loanTokenMetadata.symbol,
-        tokenName: `m${isTezosAsset(loanTokenMetadata.symbol) ? loanTokenMetadata.symbol : loanTokenMetadata.name}`,
+        tokenName: isTezosAsset(loanTokenMetadata.symbol) ? `m${loanTokenMetadata.symbol}` : loanTokenMetadata.name,
         tokenAddress: tokenData.m_token.address,
         reward_index: normalizedIndexRewards,
         rewards_earned: normalizedEarnedRewards,
+        icon: loanTokenMetadata.icon ?? null,
       })
       return acc
     }, [])
@@ -151,11 +152,19 @@ export const fetchUserData = async (
             ? convertNumberForClient({ number: fetchedBalance, grade: fetchedDecimals })
             : 0
 
+        const icon =
+          (gqlName === 'eurl'
+            ? '/images/eurl.png'
+            : gqlName === 'tzbtc'
+            ? '/images/tzBTC.png'
+            : dipDupMapper[address]?.icon) ?? null
+
         acc[symbol] = {
           balance,
           name,
           symbol,
           type: USER_TOKEN_TYPE_COLLATERAL,
+          icon,
         }
 
         userTokenNames.add(symbol)
@@ -165,7 +174,7 @@ export const fetchUserData = async (
     )
 
     const mTokens = await normalizedMTokens.reduce<Promise<UserState['userTokens']>>(
-      async (promiseAcc, { tokenSymbol, tokenName, balance }) => {
+      async (promiseAcc, { tokenSymbol, tokenName, balance, icon }) => {
         const acc = await promiseAcc
         if (userTokenNames.has(tokenName)) return acc
 
@@ -174,6 +183,7 @@ export const fetchUserData = async (
           name: tokenName,
           symbol: tokenSymbol,
           type: USER_TOKEN_TYPE_MTOKEN,
+          icon,
         }
 
         userTokenNames.add(tokenName)
@@ -207,6 +217,7 @@ export const fetchUserData = async (
           name,
           symbol,
           type: USER_TOKEN_TYPE_WHITELIST,
+          icon: null,
         }
 
         userTokenNames.add(symbol)
@@ -226,18 +237,21 @@ export const fetchUserData = async (
       [MVK_TOKEN_SYMBOL]: {
         balance: convertNumberForClient({ number: mvk_balance, grade: MVK_DECIMALS }),
         name: 'MVK',
+        icon: 'mvkTokenGold',
         symbol: MVK_TOKEN_SYMBOL,
         type: USER_TOKEN_TYPE_DEFAULT,
       },
       [SMVK_TOKEN_SYMBOL]: {
         balance: convertNumberForClient({ number: smvk_balance, grade: MVK_DECIMALS }),
         name: 'sMVK',
+        icon: 'mvkTokenSilver',
         symbol: MVK_TOKEN_SYMBOL,
         type: USER_TOKEN_TYPE_DEFAULT,
       },
       [XTZ_TOKEN_SYMBOL]: {
         balance: convertNumberForClient({ number: fetchedUserXtzBalance, grade: XTZ_DECIMALS }),
         name: 'XTZ',
+        icon: 'xtzTezos',
         symbol: XTZ_TOKEN_SYMBOL,
         type: USER_TOKEN_TYPE_DEFAULT,
       },
