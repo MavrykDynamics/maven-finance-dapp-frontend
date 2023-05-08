@@ -29,6 +29,14 @@ export const FarmTopBarStyled = styled(Card)<{ theme: MavrykTheme }>`
     fill: ${headerColor};
   }
 
+  ul {
+    width: 275px;
+  }
+
+  ul > li {
+    font-size: 16px;
+  }
+
   .order-by {
     margin-left: 30px;
 
