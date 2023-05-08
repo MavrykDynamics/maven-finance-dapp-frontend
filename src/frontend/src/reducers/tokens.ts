@@ -8,10 +8,8 @@ import { TokenType } from 'utils/TypesAndInterfaces/General'
 import { AnyAction } from 'redux'
 
 export type TokensType = {
-  dipDupMapper: Record<string, DipDupTokenDataType>
-  contractsMetadata: Record<string, ContractMetadataType>
-  tokensMetadata: Record<string, TokenMetadataType>
-
+  dipDupTokens: Array<DipDupTokensGraphQl>
+  dipDupContracts: Array<DipDupTokensGraphQl>
   tokensPrices: Record<string, number>
   avaliableCollaterals: Array<AvaliableCollateralType>
   xtzBakers: {
@@ -29,9 +27,8 @@ export type TokensType = {
   mvkFaucetAddress: string | null
 }
 const defaultTokensInfoState: TokensType = {
-  dipDupMapper: {},
-  contractsMetadata: {},
-  tokensMetadata: {},
+  dipDupTokens: [],
+  dipDupContracts: [],
   whitelistTokens: [
     {
       symbol: 'xtz',
@@ -57,9 +54,8 @@ export function tokens(state = defaultTokensInfoState, action: AnyAction) {
     case GET_DAPP_TOKENS:
       return {
         ...state,
-        dipDupMapper: action.dipDupMapper,
-        contractsMetadata: action.contractsMetadata,
-        tokensMetadata: action.tokensMetadata,
+        dipDupTokens: action.dipDupTokens,
+        dipDupContracts: action.dipDupContracts,
         whitelistTokens: state.whitelistTokens.concat(action.whitelistTokens),
         mTokens: action.mTokens,
       }

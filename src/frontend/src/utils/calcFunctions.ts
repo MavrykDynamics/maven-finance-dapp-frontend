@@ -75,15 +75,15 @@ export const getDynamicDecimalsAmountForOutput = (number: number): number => {
 export const getTokenDecimals = ({
   tokenType,
   tokenAddress,
-  dipDupMapper,
+  dipDupTokens,
 }: {
   tokenType?: TokenType
   tokenAddress: string
-  dipDupMapper: State['tokens']['dipDupMapper']
+  dipDupTokens: State['tokens']['dipDupTokens']
 }): number | null => {
   if (tokenType === 'tez') return XTZ_DECIMALS
 
-  const { decimals = null } = dipDupMapper[tokenAddress] ?? {}
+  const { metadata: { decimals = null } = {} } = dipDupTokens.find(({ contract }) => tokenAddress === contract) ?? {}
 
   return decimals ? Number(decimals) : null
 }

@@ -9,9 +9,6 @@ import {
   normalizeDipDupContracts,
   normalizeMTokens,
   normalizeWhitelistTokens,
-  nomalizeDipDupTokensAndContracts,
-  nomalizeDipDupContracts,
-  nomalizeDipDupTokens,
 } from 'utils/normalizers/DAPPTokens.normalizers'
 
 import {
@@ -41,10 +38,6 @@ export const getMvkFaucet = () => async (dispatch: AppDispatch, getState: GetSta
 
 export const GET_DAPP_TOKENS = 'GET_DAPP_TOKENS'
 export const getTokensForDAPP = () => async (dispatch: AppDispatch, getState: GetState) => {
-  const {
-    dataFeeds: { feedsLedger },
-  } = getState()
-
   try {
     const govContract = await fetchFromIndexer(
       GOVERNANCE_CONTRACT_ADDRESS_QUERY,
@@ -69,20 +62,17 @@ export const getTokensForDAPP = () => async (dispatch: AppDispatch, getState: Ge
     const whitelistTokensStorage = storageTokens.treasury
     const mTokensStorage = storageTokens.m_token
 
-    const dipDupMapper = nomalizeDipDupTokensAndContracts(dipDupTokensStorage, dipDupContractsStorage)
-
-    const contractsMetadata = nomalizeDipDupContracts(dipDupContractsStorage)
-    const tokensMetadata = nomalizeDipDupTokens(dipDupTokensStorage, feedsLedger)
+    const dipDupTokens = normalizeDipDupTokens(dipDupTokensStorage)
+    const dipDupContracts = normalizeDipDupContracts(dipDupContractsStorage)
     const mTokens = normalizeMTokens(mTokensStorage)
     const whitelistTokens = normalizeWhitelistTokens(whitelistTokensStorage)
 
     dispatch({
       type: GET_DAPP_TOKENS,
-      dipDupMapper,
+      dipDupTokens,
+      dipDupContracts,
       whitelistTokens,
       mTokens,
-      contractsMetadata,
-      tokensMetadata,
     })
   } catch (e) {
     console.error('getTokensForDAPP error: ', e)
