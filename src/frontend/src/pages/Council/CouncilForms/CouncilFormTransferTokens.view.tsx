@@ -22,6 +22,9 @@ import { DropDown, DropdownItemType } from '../../../app/App.components/DropDown
 // action
 import { transferTokens } from '../Council.actions'
 
+// types
+import { InputProps } from 'app/App.components/Input/newInput.type'
+
 // style
 import { CouncilFormStyled } from './CouncilForm.style'
 
@@ -164,7 +167,7 @@ export const CouncilFormTransferTokens = (maxLength: CouncilMaxLength) => {
     inputStatus: formInputStatus.tokenContractAddress,
   }
 
-  const tokenAmountProps = {
+  const tokenAmountProps: InputProps = {
     type: 'number',
     name: 'tokenAmount',
     value: tokenAmount,
@@ -180,7 +183,7 @@ export const CouncilFormTransferTokens = (maxLength: CouncilMaxLength) => {
     inputStatus: formInputStatus.tokenAmount,
   }
 
-  const tokenIdProps = {
+  const tokenIdProps: InputProps = {
     type: 'number',
     name: 'tokenId',
     value: tokenId,

@@ -45,6 +45,9 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import colors from 'styles/colors'
 import { SMVK_TOKEN_SYMBOL, MVK_TOKEN_SYMBOL } from 'utils/constants'
 
+// types
+import { InputProps } from 'app/App.components/Input/newInput.type'
+
 type StakeUnstakeViewProps = {
   stakeCallback: (amount: number) => void
   unstakeCallback: (amount: number) => void
@@ -192,7 +195,7 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
     }
   }
 
-  const inputProps = {
+  const inputProps: InputProps = {
     type: 'number',
     value: inputData.amount,
     onBlur: handleBlur,

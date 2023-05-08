@@ -2,47 +2,19 @@ import { useState, useCallback } from 'react'
 import { BUTTON_SIMPLE } from '../Button/Button.constants'
 import NewButton from '../Button/NewButton'
 import { CommaNumber } from '../CommaNumber/CommaNumber.controller'
-import { InputSizeType, InputStatusType } from './Input.constants'
-import { InputOneChange } from './Input.controller'
 
 // consts
 import { INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
 
 // helpers
 import { validateAsciiInput } from './helpers/validateAsciiInput'
+import { hasSpaces } from './helpers/hasSpaces'
+
+// types
+import { InputViewProps } from './newInput.type'
 
 // styles
 import { InputPinnedChild, InputStyledStatus, InputWrapper, NewInputLabel, StyledInput } from './Input.style'
-
-type InputViewProps = {
-  children?: React.ReactNode
-  className?: string
-  settings: {
-    balance?: number
-    balanceAsset?: string
-    balanceName?: string
-    useMaxHandler?: () => void
-    balanceHandler?: () => void
-    label?: string
-    tooltip?: React.ReactNode
-    inputStatus: InputStatusType
-    convertedValue?: number
-    inputSize?: InputSizeType
-  }
-  inputProps: {
-    disabled?: boolean
-    value: string | number
-    type?: 'text' | 'number'
-    placeholder?: string
-    name?: string
-    id?: string
-    onChange: InputOneChange
-    onBlur?: InputOneChange
-    onKeyDown?: React.KeyboardEventHandler<HTMLInputElement>
-    onFocus?: InputOneChange
-    required?: boolean
-  }
-}
 
 export const Input = ({
   children,
@@ -68,7 +40,7 @@ export const Input = ({
   const onChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const { value } = e.target
-      if (validateAsciiInput(value)) {
+      if (validateAsciiInput(value) && !hasSpaces(value)) {
         if (hasError) sethasError(false)
       } else {
         if (!hasError) sethasError(true)

@@ -16,6 +16,9 @@ import Icon from '../../../app/App.components/Icon/Icon.view'
 // action
 import { updateVestee } from '../Council.actions'
 
+// types
+import { InputProps } from 'app/App.components/Input/newInput.type'
+
 // style
 import { CouncilFormStyled } from './CouncilForm.style'
 import { State } from 'reducers'
@@ -82,7 +85,7 @@ export const CouncilFormUpdateVestee = () => {
     inputStatus: formInputStatus.vesteeAddress,
   }
 
-  const totalAllocatedProps = {
+  const totalAllocatedProps: InputProps = {
     type: 'number',
     name: 'totalAllocated',
     value: totalAllocated,
@@ -98,7 +101,7 @@ export const CouncilFormUpdateVestee = () => {
     inputStatus: formInputStatus.totalAllocated,
   }
 
-  const cliffInMonthsProps = {
+  const cliffInMonthsProps: InputProps = {
     type: 'number',
     name: 'cliffInMonths',
     value: cliffInMonths,
@@ -114,7 +117,7 @@ export const CouncilFormUpdateVestee = () => {
     inputStatus: formInputStatus.cliffInMonths,
   }
 
-  const vestingInMonthsProps = {
+  const vestingInMonthsProps: InputProps = {
     type: 'number',
     name: 'vestingInMonths',
     value: vestingInMonths,
