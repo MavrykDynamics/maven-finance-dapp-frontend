@@ -1,4 +1,7 @@
-import React, { useLayoutEffect, useRef } from 'react'
+import React, { useLayoutEffect, useRef, useState, useCallback } from 'react'
+
+// utils
+import { validateAsciiInput, trimSpaces, recreateEventWithUpdatedTargetValue } from 'app/App.utils/input'
 
 import {
   TextAreaStyled,
@@ -42,6 +45,7 @@ export const TextArea = ({
   label,
   textAreaMaxLimit = 1000,
 }: TextAreaProps) => {
+  const [hasError, setHasError] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement | null>(null)
 
   useLayoutEffect(() => {
@@ -51,7 +55,26 @@ export const TextArea = ({
     }
   }, [value])
 
-  let status = inputStatus !== undefined ? inputStatus : 'none'
+  let status = hasError ? 'error' : inputStatus !== undefined ? inputStatus : 'none'
+
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      const { value } = e.target
+
+      const trimmedValue = trimSpaces(value)
+
+      if (validateAsciiInput(trimmedValue, true)) {
+        if (hasError) setHasError(false)
+      } else {
+        if (!hasError) setHasError(true)
+      }
+
+      const _event = recreateEventWithUpdatedTargetValue(e, trimmedValue)
+
+      onChange(_event)
+    },
+    [hasError, onChange],
+  )
   return (
     <TextAreaStyled className={className} id={'textAreaContainer'}>
       {label ? <NewInputLabel>{label}</NewInputLabel> : null}
@@ -64,7 +87,7 @@ export const TextArea = ({
         <TextareaStyled
           placeholder={placeholder}
           value={value}
-          onChange={onChange}
+          onChange={handleChange}
           className={`textarea`}
           name={name}
           onBlur={onBlur}

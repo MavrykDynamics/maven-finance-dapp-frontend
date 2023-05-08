@@ -6,9 +6,8 @@ import { CommaNumber } from '../CommaNumber/CommaNumber.controller'
 // consts
 import { INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
 
-// helpers
-import { validateAsciiInput } from './helpers/validateAsciiInput'
-import { trimSpaces } from './helpers/trimSpaces'
+// utils
+import { validateAsciiInput, trimSpaces, recreateEventWithUpdatedTargetValue } from 'app/App.utils/input'
 
 // types
 import { InputViewProps } from './newInput.type'
@@ -49,10 +48,7 @@ export const Input = ({
         if (!hasError) sethasError(true)
       }
 
-      // recreate same event with update target value
-      const _event = Object.assign({}, e)
-      _event.target = Object.assign({}, _event.target, { value: trimmedValue, name: _event.target.name })
-      _event.target.value = trimmedValue
+      const _event = recreateEventWithUpdatedTargetValue(e, trimmedValue)
 
       inputProps.onChange(_event)
     },
