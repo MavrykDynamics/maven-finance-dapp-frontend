@@ -183,6 +183,7 @@ export const normalizeLoans = async ({
           loan_token_address,
           loan_token_contract_standard,
           oracle_id,
+          m_token,
           vaults_aggregate: { aggregate },
         } = loanToken
 
@@ -214,13 +215,7 @@ export const normalizeLoans = async ({
           marketLiquidityChartData,
         } = getTransactionHistory(history_data, dipDupData, feeds)
 
-        const lendingItem = getLendingItem(
-          loanToken,
-          userMTokens,
-          loanTokenMetadata.decimals,
-          interestRateDecimals,
-          userAddres,
-        )
+        const lendingItem = getLendingItem(m_token?.address ?? null, userMTokens, userAddres)
 
         const tokenCurrentInterestRate = calcWithoutDecimals(loanToken.current_interest_rate, interestRateDecimals)
         const lendAPY = calcLendingAPY(tokenCurrentInterestRate, interestTreasuryShare)
@@ -246,14 +241,7 @@ export const normalizeLoans = async ({
           lending24hVolume,
           borrowing24hVolume,
 
-          totalFeesEarned:
-            userMTokens?.reduce((acc, { rewards_earned, m_token: { loan_token_name: mTokenLoanTokenName } }) => {
-              if (mTokenLoanTokenName === loan_token_name) {
-                acc += rewards_earned / 10 ** interestRateDecimals / 10 ** loanTokenMetadata.decimals
-              }
-
-              return acc
-            }, 0) ?? 0,
+          totalFeesEarned: lendingItem?.interestEarned ?? 0,
           collateralFactor: storage.collateral_ratio / 10,
           reserveFactor: reserve_ratio / 100,
           reserveAmount: reserveAmount,
