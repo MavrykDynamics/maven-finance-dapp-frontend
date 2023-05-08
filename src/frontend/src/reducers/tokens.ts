@@ -1,5 +1,5 @@
 import { M_Token } from './../utils/generated/graphqlTypes'
-import { ContractMetadataType, DipDupTokenDataType, TokenMetadataType } from 'utils/TypesAndInterfaces/DipDupTokens'
+import { DipDupTokensGraphQl } from 'utils/TypesAndInterfaces/DipDupTokens'
 import { GET_DAPP_TOKENS, GET_MVK_FAUCET, GET_TOKENS_PRICES } from './actions/getTokens.actions'
 import { AvaliableCollateralType } from 'utils/TypesAndInterfaces/Loans'
 import { GET_AVALIABLE_COLLATERALS, GET_XTZ_BAKERS } from 'pages/Loans/Actions/getLoansData.actions'

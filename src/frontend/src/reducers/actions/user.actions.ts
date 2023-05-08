@@ -26,7 +26,6 @@ import {
   calcUsersDoormanRewards,
   calcUsersSatelliteRewards,
   calcUsersFarmRewards,
-  convertFromIndexerToRegNum,
   convertNumberForClient,
 } from 'utils/calcFunctions'
 import {
@@ -40,12 +39,12 @@ import {
   XTZ_DECIMALS,
   XTZ_TOKEN_SYMBOL,
 } from 'utils/constants'
-import { Lending_Controller_Loan_Token, Mavryk_User } from 'utils/generated/graphqlTypes'
+import { Lending_Controller_Loan_Token } from 'utils/generated/graphqlTypes'
 import { getSymbolAndNameFromCollaterealGqlname } from 'utils/parse'
 
 export const fetchUserData = async (
   accountPkh: string,
-  dipDupMapper: State['tokens']['dipDupMapper'],
+  dipDupTokens: State['tokens']['dipDupTokens'],
   feeds: State['dataFeeds']['feedsLedger'],
   avaliableCollaterals: State['tokens']['avaliableCollaterals'],
   whitelistTokens: State['tokens']['whitelistTokens'],
@@ -89,7 +88,7 @@ export const fetchUserData = async (
       const loanTokenMetadata = getAssetMetadata({
         tokenName: tokenData.m_token.loan_token_name,
         tokenAddress: tokenData.m_token.address,
-        dipDupMapper,
+        dipDupTokens,
         feeds,
         oracleId: String(oracle_id),
       })
@@ -152,19 +151,11 @@ export const fetchUserData = async (
             ? convertNumberForClient({ number: fetchedBalance, grade: fetchedDecimals })
             : 0
 
-        const icon =
-          (gqlName === 'eurl'
-            ? '/images/eurl.png'
-            : gqlName === 'tzbtc'
-            ? '/images/tzBTC.png'
-            : dipDupMapper[address]?.icon) ?? null
-
         acc[symbol] = {
           balance,
           name,
           symbol,
           type: USER_TOKEN_TYPE_COLLATERAL,
-          icon,
         }
 
         userTokenNames.add(symbol)
@@ -183,7 +174,6 @@ export const fetchUserData = async (
           name: tokenName,
           symbol: tokenSymbol,
           type: USER_TOKEN_TYPE_MTOKEN,
-          icon,
         }
 
         userTokenNames.add(tokenName)
@@ -217,7 +207,6 @@ export const fetchUserData = async (
           name,
           symbol,
           type: USER_TOKEN_TYPE_WHITELIST,
-          icon: null,
         }
 
         userTokenNames.add(symbol)
@@ -237,21 +226,18 @@ export const fetchUserData = async (
       [MVK_TOKEN_SYMBOL]: {
         balance: convertNumberForClient({ number: mvk_balance, grade: MVK_DECIMALS }),
         name: 'MVK',
-        icon: 'mvkTokenGold',
         symbol: MVK_TOKEN_SYMBOL,
         type: USER_TOKEN_TYPE_DEFAULT,
       },
       [SMVK_TOKEN_SYMBOL]: {
         balance: convertNumberForClient({ number: smvk_balance, grade: MVK_DECIMALS }),
         name: 'sMVK',
-        icon: 'mvkTokenSilver',
         symbol: MVK_TOKEN_SYMBOL,
         type: USER_TOKEN_TYPE_DEFAULT,
       },
       [XTZ_TOKEN_SYMBOL]: {
         balance: convertNumberForClient({ number: fetchedUserXtzBalance, grade: XTZ_DECIMALS }),
         name: 'XTZ',
-        icon: 'xtzTezos',
         symbol: XTZ_TOKEN_SYMBOL,
         type: USER_TOKEN_TYPE_DEFAULT,
       },
@@ -305,7 +291,7 @@ export const fetchUserData = async (
     )
 
     const { userBorrowing, userLendings, userVaultsData } = normalizeUserLending({
-      dipDupMapper,
+      dipDupTokens,
       feeds,
       userDataLoansHistoryGql: userLendingData.mavryk_user?.[0]?.lending_controller_history_data_sender,
       userVaultsDataGql: userLendingData.mavryk_user?.[0]?.lending_controller_vaults,
@@ -333,7 +319,7 @@ export const updateUserData = (newAccAddress?: string) => async (dispatch: AppDi
   const {
     preferences: { headData: { level = 0 } = {} },
     wallet: { accountPkh },
-    tokens: { dipDupMapper, avaliableCollaterals, whitelistTokens },
+    tokens: { dipDupTokens, avaliableCollaterals, whitelistTokens },
     dataFeeds: { feedsLedger },
   } = getState()
 
@@ -343,7 +329,7 @@ export const updateUserData = (newAccAddress?: string) => async (dispatch: AppDi
     if (userAddressToLoadData) {
       const userData = await fetchUserData(
         userAddressToLoadData,
-        dipDupMapper,
+        dipDupTokens,
         feedsLedger,
         avaliableCollaterals,
         whitelistTokens,

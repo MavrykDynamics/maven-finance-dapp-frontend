@@ -1,4 +1,3 @@
-import type { M_Token_Account } from './../utils/generated/graphqlTypes'
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
 import type { MTokenType, UserFarmRewardsData } from 'utils/TypesAndInterfaces/User'
 import type { UserLendObjType } from 'utils/TypesAndInterfaces/Loans'
@@ -23,7 +22,6 @@ export interface UserState {
       balance: number
       symbol: string
       name: string
-      icon: null | string
       type:
         | typeof USER_TOKEN_TYPE_COLLATERAL
         | typeof USER_TOKEN_TYPE_WHITELIST
@@ -75,21 +73,18 @@ export const DEFAULT_USER: UserState = {
     [MVK_TOKEN_SYMBOL]: {
       balance: 0,
       name: 'MVK',
-      icon: 'mvkTokenGold',
       symbol: MVK_TOKEN_SYMBOL,
       type: USER_TOKEN_TYPE_DEFAULT,
     },
     [SMVK_TOKEN_SYMBOL]: {
       balance: 0,
       name: 'sMVK',
-      icon: 'mvkTokenSilver',
       symbol: MVK_TOKEN_SYMBOL,
       type: USER_TOKEN_TYPE_DEFAULT,
     },
     [XTZ_TOKEN_SYMBOL]: {
       balance: 0,
       name: 'XTZ',
-      icon: 'xtzTezos',
       symbol: XTZ_TOKEN_SYMBOL,
       type: USER_TOKEN_TYPE_DEFAULT,
     },

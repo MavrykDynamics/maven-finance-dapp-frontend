@@ -70,7 +70,7 @@ export const getAssetMetadata = ({
           ? '/images/eurl.png'
           : tokenName === 'tzbtc'
           ? '/images/tzBTC.png'
-          : icon ?? foundAssetInDipDup.metadata.icon ?? '',
+          : icon ?? foundAssetInDipDup.metadata.icon,
       rate: last_completed_data / 10 ** decimals,
       address: tokenAddress,
       id: foundAssetInDipDup.id,
