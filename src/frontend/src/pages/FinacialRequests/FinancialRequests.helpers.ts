@@ -8,14 +8,15 @@ export const normalizeFinancialRequests = (
   storage: {
     governance_financial_request: Array<GovernanceFinancialRequestGraphQL>
   },
-  dipDupMapper: State['tokens']['dipDupMapper'],
+  dipDupTokens: State['tokens']['dipDupTokens'],
 ) => {
   const { financialRequestMapper, frIds } = storage?.governance_financial_request.reduce<{
     financialRequestMapper: Record<number, FinancialRequestRecord>
     frIds: number[]
   }>(
     (acc, item) => {
-      const tokenName = dipDupMapper[item.token_address].symbol ?? 'MVK'
+      const tokenName =
+        dipDupTokens.find(({ contract }) => contract === item.token_address)?.metadata.symbol ?? 'MVK' ?? 'MVK'
       const frItem = {
         tokenAddress: item.token_address,
         id: item.id,

@@ -75,7 +75,7 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsPr
 
   const isTrustedAnswer = feed && feed.oraclesResponces >= feed.pct_oracle_threshold
 
-  const imageLink = dipDupContracts.find(({ contract }) => contract === feed.address)?.metadata?.icon
+  const imageLink = dipDupContracts.find(({ contract }) => contract === feed?.address)?.metadata?.icon
 
   const chartPlots = (activeTab === 1 ? feed?.dataFeedsHistory : feed?.dataFeedsVolatility) ?? []
 

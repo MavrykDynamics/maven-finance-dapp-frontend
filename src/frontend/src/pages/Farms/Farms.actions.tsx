@@ -33,7 +33,7 @@ import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.ac
 export const GET_FARM_STORAGE = 'GET_FARM_STORAGE'
 export const getFarmStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
   const {
-    tokens: { dipDupMapper },
+    tokens: { dipDupTokens },
   } = getState()
   // main try/catch to fetch endTime for farmsCards and farms cards from gql, if nested willl end up with error, it will set fetched card, of if this fail, will set []
   try {
@@ -60,7 +60,7 @@ export const getFarmStorage = () => async (dispatch: AppDispatch, getState: GetS
           urls.map(async (url) => await (await fetch(url)).json()),
         )
 
-        const farms = normalizeFarmStorage(storage?.farm, dipDupMapper, farmCardEndsIn, farmLPTokensInfo, farmContracts)
+        const farms = normalizeFarmStorage(storage?.farm, dipDupTokens, farmCardEndsIn, farmLPTokensInfo, farmContracts)
         dispatch({
           type: GET_FARM_STORAGE,
           farms,
@@ -68,7 +68,7 @@ export const getFarmStorage = () => async (dispatch: AppDispatch, getState: GetS
       } catch (e) {
         console.error('getFarmStorage, fetching contracts error: ', e)
 
-        const farms = normalizeFarmStorage(storage?.farm, dipDupMapper, farmCardEndsIn, farmLPTokensInfo, [])
+        const farms = normalizeFarmStorage(storage?.farm, dipDupTokens, farmCardEndsIn, farmLPTokensInfo, [])
         dispatch({
           type: GET_FARM_STORAGE,
           farms,
@@ -77,7 +77,7 @@ export const getFarmStorage = () => async (dispatch: AppDispatch, getState: GetS
     } catch (e) {
       console.error('getFarmStorage, fetching metadata error: ', e)
 
-      const farms = normalizeFarmStorage(storage?.farm, dipDupMapper, [], [], [])
+      const farms = normalizeFarmStorage(storage?.farm, dipDupTokens, [], [], [])
       dispatch({
         type: GET_FARM_STORAGE,
         farms,
