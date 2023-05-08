@@ -62,6 +62,7 @@ export const CouncilFormAddVestee = () => {
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(e.target.name, e.target.value)
     setForm((prev) => {
       return { ...prev, [e.target.name]: e.target.value }
     })
@@ -75,6 +76,7 @@ export const CouncilFormAddVestee = () => {
     value: vesteeAddress,
     onBlur: handleBlurAddress,
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+      console.log(e.target.value)
       handleChange(e)
       handleBlurAddress(e)
     },

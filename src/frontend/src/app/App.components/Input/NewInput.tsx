@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import React, { useState, useCallback } from 'react'
 import { BUTTON_SIMPLE } from '../Button/Button.constants'
 import NewButton from '../Button/NewButton'
 import { CommaNumber } from '../CommaNumber/CommaNumber.controller'
@@ -8,7 +8,7 @@ import { INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
 
 // helpers
 import { validateAsciiInput } from './helpers/validateAsciiInput'
-import { trimSpacesFromEvent } from './helpers/trimSpacesFromEvent'
+import { trimSpaces } from './helpers/trimSpaces'
 
 // types
 import { InputViewProps } from './newInput.type'
@@ -39,16 +39,22 @@ export const Input = ({
 
   const onChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      const event = trimSpacesFromEvent(e)
-      const { value } = event.target
+      const { value } = e.target
 
-      if (validateAsciiInput(value)) {
+      const trimmedValue = trimSpaces(value)
+
+      if (validateAsciiInput(trimmedValue)) {
         if (hasError) sethasError(false)
       } else {
         if (!hasError) sethasError(true)
       }
 
-      inputProps.onChange(event)
+      // recreate same event with update target value
+      const _event = Object.assign({}, e)
+      _event.target = Object.assign({}, _event.target, { value: trimmedValue, name: _event.target.name })
+      _event.target.value = trimmedValue
+
+      inputProps.onChange(_event)
     },
     [hasError, inputProps.onChange],
   )
