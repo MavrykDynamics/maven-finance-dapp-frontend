@@ -21,7 +21,7 @@ export const GET_LOANS_STORAGE = 'GET_LOANS_STORAGE'
 export const GET_VAULTS_STORAGE = 'GET_VAULTS_STORAGE'
 export const getLoansStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
   const {
-    tokens: { dipDupMapper, mTokens },
+    tokens: { tokensMetadata, mTokens, dipDupMapper },
     wallet: {
       accountPkh,
       user: { userMTokens },
@@ -36,7 +36,7 @@ export const getLoansStorage = () => async (dispatch: AppDispatch, getState: Get
 
     const normalizedLoansStorage = await normalizeLoans({
       storage: marketsStorage?.lending_controller?.[0],
-      dipDupData: dipDupMapper,
+      dipDupData: tokensMetadata,
       mTokens,
       userMTokens,
       userAddres: accountPkh,
@@ -62,7 +62,7 @@ export const getLoansStorage = () => async (dispatch: AppDispatch, getState: Get
 export const GET_AVALIABLE_COLLATERALS = 'GET_AVALIABLE_COLLATERALS'
 export const getAvaliableCollaterals = () => async (dispatch: AppDispatch, getState: GetState) => {
   const {
-    tokens: { dipDupMapper },
+    tokens: { tokensMetadata },
     dataFeeds: { feedsLedger },
   } = getState()
   try {
@@ -74,7 +74,7 @@ export const getAvaliableCollaterals = () => async (dispatch: AppDispatch, getSt
 
     const avaliableCollaterals = getCollateralTokens(
       storage?.lending_controller?.[0]?.collateral_tokens,
-      dipDupMapper,
+      tokensMetadata,
       feedsLedger,
     )
 

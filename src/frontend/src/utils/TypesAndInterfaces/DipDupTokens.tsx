@@ -16,9 +16,9 @@ export type ContractMetadataType = {
 
 export type TokenMetadataType = {
   icon: string | null
+  rate: number | null
   name: string
-  symbol: string | null
+  symbol: string
   id: number
   decimals: number
-  rate: number
 }

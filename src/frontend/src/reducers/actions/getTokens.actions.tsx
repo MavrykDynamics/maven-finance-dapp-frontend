@@ -72,7 +72,7 @@ export const getTokensForDAPP = () => async (dispatch: AppDispatch, getState: Ge
     const dipDupMapper = nomalizeDipDupTokensAndContracts(dipDupTokensStorage, dipDupContractsStorage)
 
     const contractsMetadata = nomalizeDipDupContracts(dipDupContractsStorage)
-    const tokensMetadata = nomalizeDipDupTokens(dipDupTokensStorage)
+    const tokensMetadata = nomalizeDipDupTokens(dipDupTokensStorage, feedsLedger)
     const mTokens = normalizeMTokens(mTokensStorage)
     const whitelistTokens = normalizeWhitelistTokens(whitelistTokensStorage)
 

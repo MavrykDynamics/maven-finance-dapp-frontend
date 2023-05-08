@@ -1,16 +1,20 @@
 import { isTezosAsset } from 'pages/Loans/Loans.helpers'
+import { State } from 'react-use/lib/useMouse'
+import { Feed } from 'utils/TypesAndInterfaces/DataFeeds'
 import {
   ContractMetadataType,
   DipDupTokenDataType,
   TokenMetadataFromGQLType,
   TokenMetadataType,
 } from 'utils/TypesAndInterfaces/DipDupTokens'
+import { convertNumberForClient } from 'utils/calcFunctions'
 import {
   Dipdup_Token_Metadata,
   M_Token,
   Treasury,
   Governance_Financial_Whitelist_Token_Contract,
 } from 'utils/generated/graphqlTypes'
+import { getSymbolAndNameFromFeedName } from 'utils/parse'
 
 // Normalize Tokens
 export function normalizeDipDupTokens(dipdup_token_metadata?: Array<Dipdup_Token_Metadata>) {
@@ -59,28 +63,45 @@ export function nomalizeDipDupContracts(dipdup_contract_metadata: Array<Dipdup_T
   }, {})
 }
 
-export function nomalizeDipDupTokens(dipdup_contract_metadata: Array<Dipdup_Token_Metadata>) {
+export function nomalizeDipDupTokens(dipdup_contract_metadata: Array<Dipdup_Token_Metadata>, feeds: Array<Feed>) {
+  const rates = feeds.reduce<Record<string, { rate: number; icon: string | undefined }>>(
+    (acc, { name, last_completed_data, decimals, icon }) => {
+      const assetSymbol = getSymbolAndNameFromFeedName(name).symbol
+      const rate = convertNumberForClient({ number: last_completed_data, grade: decimals })
+      acc[assetSymbol] = { rate, icon }
+      return acc
+    },
+    {},
+  )
+
   return dipdup_contract_metadata.reduce<Record<string, TokenMetadataType>>((acc, tokenData) => {
     const { contract, metadata, id } = tokenData
     const { icon = null, name, symbol = null, decimals = null } = (metadata ?? {}) as TokenMetadataFromGQLType
 
     if (!metadata || !name || !symbol || !decimals) return acc
 
-    const tempIcon = isTezosAsset(symbol.toLowerCase())
+    const symbolToSearch = symbol.toLowerCase()
+    const { rate = null, icon: feedIcon } = rates[symbolToSearch] ?? {}
+    const isXTZ = isTezosAsset(symbolToSearch)
+
+    const tempIcon = isXTZ
       ? '/images/tezos.png'
-      : symbol.toLowerCase().includes('eurl')
+      : symbolToSearch.includes('eurl')
       ? '/images/eurl.png'
-      : symbol.toLowerCase().includes('tzbtc')
+      : symbolToSearch.includes('tzbtc')
       ? '/images/tzBTC.png'
-      : icon
+      : icon ?? feedIcon ?? null
+
+    const nameToDisplay = isXTZ ? 'XTZ' : symbol
+    const symbolToDisplay = isXTZ ? 'tezos' : symbol
 
     acc[contract] = {
-      icon: tempIcon || null,
-      name,
-      symbol,
-      id,
+      icon: tempIcon,
+      name: nameToDisplay,
+      symbol: symbolToDisplay,
       decimals: parseInt(decimals),
-      rate: 1,
+      id,
+      rate,
     }
     return acc
   }, {})
