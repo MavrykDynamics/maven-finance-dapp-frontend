@@ -328,6 +328,21 @@ export const SatelliteStatusBlock = styled(MediumBlockBase)<{ theme: MavrykTheme
     justify-content: center;
   }
 
+  .container {
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    margin-top: 24px;
+  }
+
+  .grid-container {
+    display: grid;
+    /* grid-template-columns: repeat(5, minmax(1fr, max-content)); */
+    grid-template-rows: repeat(2, auto);
+    grid-row-gap: 30px;
+    grid-column-gap: 90px;
+  }
+
   .grid-item {
     display: flex;
     flex-direction: column;
@@ -381,6 +396,15 @@ export const SatelliteStatusBlock = styled(MediumBlockBase)<{ theme: MavrykTheme
         }
       }
     }
+  }
+
+  .grid-item-last {
+    grid-column: 4 / span 2;
+    grid-row: 2 / 3;
+  }
+
+  .grid-item-under-image {
+    padding-left: 50px;
   }
 
   > a {

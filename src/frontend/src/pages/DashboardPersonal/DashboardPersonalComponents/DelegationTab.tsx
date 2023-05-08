@@ -64,6 +64,15 @@ const DelegationTab = () => {
                 </div>
               </div>
               <div className="grid-item space">
+                <div className="name">Total Voting Power</div>
+                <div className="value">
+                  <CommaNumber
+                    value={satelliteInfo.sMvkBalance + satelliteInfo.totalDelegatedAmount}
+                    endingText="sMVK"
+                  />
+                </div>
+              </div>
+              <div className="grid-item space">
                 <div className="name">Free MVK Space</div>
                 <div className="value">
                   <CommaNumber
