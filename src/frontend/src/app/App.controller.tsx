@@ -29,13 +29,7 @@ import { getFeedsStorage } from 'pages/DataFeeds/DataFeeds.actions'
 import { connect } from './App.components/ConnectWallet/ConnectWallet.actions'
 import { toggleInitialDataLoading } from './App.components/Loader/Loader.action'
 import { toggleRPCNodePopup } from './App.components/SettingsPopup/SettingsPopup.actions'
-import {
-  getDipDupTokensStorage,
-  getWhitelistTokensStorage,
-  getTokensPrices,
-  getMTokensStorage,
-  getMvkFaucet,
-} from 'reducers/actions/dipDupActions.actions'
+import { getTokensForDAPP, getTokensPrices } from 'reducers/actions/getTokens.actions'
 import { getCouncilMembers } from 'pages/Council/Council.actions'
 import { getBreakGlassCouncilMembers } from 'pages/BreakGlassCouncil/BreakGlassCouncil.actions'
 import { getAvaliableCollaterals, getXtzBakers } from 'pages/Loans/Actions/getLoansData.actions'
@@ -69,9 +63,7 @@ const AppContainer = () => {
         dispatch(getSatellitesStorage()),
         dispatch(getFeedsStorage()),
 
-        dispatch(getDipDupTokensStorage()),
-        dispatch(getWhitelistTokensStorage()),
-        dispatch(getMTokensStorage()),
+        dispatch(getTokensForDAPP()),
         dispatch(getXtzBakers()),
         // TODO: uncomment it when contracts are updated
         // dispatch(getMvkFaucet()),
@@ -81,6 +73,9 @@ const AppContainer = () => {
         dispatch(getBreakGlassCouncilMembers()),
       ])
 
+      // Depends on data feeds (getFeedsStorage())
+      await Promise.all([dispatch(getTokensPrices()), dispatch(getAvaliableCollaterals())])
+
       // For using Beacon wallet
       if (
         localStorage.getItem('beacon:active-account') &&
@@ -88,9 +83,6 @@ const AppContainer = () => {
       ) {
         await dispatch(connect())
       }
-
-      // Depends on data feeds (getFeedsStorage())
-      await Promise.all([dispatch(getTokensPrices()), dispatch(getAvaliableCollaterals())])
 
       // Turn off loader
       await dispatch(toggleInitialDataLoading(false))

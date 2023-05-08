@@ -23,9 +23,7 @@ const SatelliteTab = () => {
   const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
   const {
     accountPkh = '',
-    user: {
-      mySatelliteRewardsData: { myAvailableSatelliteRewards },
-    },
+    user: { availableSatellitesRewards },
   } = useSelector((state: State) => state.wallet)
   const { satelliteMapper } = useSelector((state: State) => state.satellites)
 
@@ -49,7 +47,7 @@ const SatelliteTab = () => {
             form={BUTTON_WIDE}
             onClick={handleDistributeRewards}
             // TODO:  we are waiting new Query for getting proposals
-            disabled={true || myAvailableSatelliteRewards === 0}
+            disabled={true || availableSatellitesRewards === 0}
           >
             <Icon id="loans" />
             Distribute Gov. Rewards

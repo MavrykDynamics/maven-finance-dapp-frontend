@@ -24,7 +24,7 @@ export const getLoansStorage = () => async (dispatch: AppDispatch, getState: Get
     tokens: { dipDupTokens, mTokens },
     wallet: {
       accountPkh,
-      user: { mTokens: userMTokens },
+      user: { userMTokens },
     },
     dataFeeds: { feedsLedger },
   } = getState()
@@ -63,7 +63,6 @@ export const GET_AVALIABLE_COLLATERALS = 'GET_AVALIABLE_COLLATERALS'
 export const getAvaliableCollaterals = () => async (dispatch: AppDispatch, getState: GetState) => {
   const {
     tokens: { dipDupTokens },
-    wallet: { accountPkh },
     dataFeeds: { feedsLedger },
   } = getState()
   try {
@@ -73,11 +72,10 @@ export const getAvaliableCollaterals = () => async (dispatch: AppDispatch, getSt
       AVALIABLE_COLLATERALS_QUERY_VARIABLE,
     )
 
-    const avaliableCollaterals = await getCollateralTokens(
+    const avaliableCollaterals = getCollateralTokens(
       storage?.lending_controller?.[0]?.collateral_tokens,
       dipDupTokens,
       feedsLedger,
-      accountPkh,
     )
 
     await dispatch({

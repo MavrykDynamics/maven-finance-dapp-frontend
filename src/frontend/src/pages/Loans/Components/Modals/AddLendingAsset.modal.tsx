@@ -35,7 +35,6 @@ export const AddLendingAsset = ({
   data: AddLendingAssetDataType
 }) => {
   const {
-    userBalance = 0,
     mBalance = 0,
     rate = 0,
     decimals = 0,
@@ -48,6 +47,10 @@ export const AddLendingAsset = ({
     id = 0,
   } = data ?? {}
   useLockBodyScroll(show)
+
+  const { userTokens } = useSelector((state: State) => state.wallet.user)
+
+  const collateralBalance = userTokens[symbol.toLowerCase()]?.balance ?? 0
 
   const dispatch = useDispatch()
   const [inputData, setInputData] = useState(DEFAULT_LOANS_INPUT_VALUE)
@@ -118,14 +121,15 @@ export const AddLendingAsset = ({
             inputProps={{
               value: inputData.amount,
               type: 'number',
-              onChange: (e) => onChangeHandler(e.target.value, userBalance),
+              onChange: (e) => onChangeHandler(e.target.value, collateralBalance),
               onBlur: inputOnBlurHandle,
               onFocus: onFocusHandler,
             }}
             settings={{
-              balance: userBalance,
+              balance: collateralBalance,
               balanceAsset: symbol,
-              useMaxHandler: () => onChangeHandler(getLoansInputMaxAmount(userBalance, decimals), userBalance),
+              useMaxHandler: () =>
+                onChangeHandler(getLoansInputMaxAmount(collateralBalance, decimals), collateralBalance),
               inputStatus: inputData.validationStatus,
               inputSize: INPUT_LARGE,
               ...(rate ? { convertedValue: rate * Number(inputData.amount) } : {}),

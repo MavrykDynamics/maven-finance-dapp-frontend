@@ -21,6 +21,7 @@ import { mainNavigationLinks } from './NavigationLink/MainNavigationLinks'
 import { checkIfLinkSelected } from './NavigationLink/NavigationLink.constants'
 import { BUTTON_PRIMARY, BUTTON_ROUND, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { getMVKTokensFromFaucet } from '../../../pages/Doorman/Doorman.actions'
+import { MVK_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL } from 'utils/constants'
 
 type MenuViewProps = {
   openChangeNodePopupHandler: () => void
@@ -74,8 +75,13 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
   }, [accountPkh, pathname, user.isSatellite])
 
   useEffect(() => {
-    setCanGetInitThouthand(Boolean(accountPkh && (user.myMvkTokenBalance === 0 || user.mySMvkTokenBalance === 0)))
-  }, [accountPkh, user.myMvkTokenBalance, user.mySMvkTokenBalance])
+    setCanGetInitThouthand(
+      Boolean(
+        accountPkh &&
+          (user.userTokens[MVK_TOKEN_SYMBOL].balance === 0 || user.userTokens[SMVK_TOKEN_SYMBOL].balance === 0),
+      ),
+    )
+  }, [accountPkh, user.userTokens])
 
   const [selectedMainLink, setSelectedMainLink] = useState<number>(0)
 

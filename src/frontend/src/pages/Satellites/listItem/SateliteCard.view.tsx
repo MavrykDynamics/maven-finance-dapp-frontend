@@ -41,6 +41,7 @@ import {
   SatelliteCardButtons,
   SatelliteCardRow,
 } from './SatelliteCard.style'
+import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
 
 type SatelliteListItemProps = {
   satellite: SatelliteRecordType
@@ -62,12 +63,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
   const { isActionActive } = useSelector((state: State) => state.loading)
   const {
     accountPkh,
-    user: {
-      isSatellite,
-      mySMvkTokenBalance,
-      satelliteMvkIsDelegatedTo,
-      mySatelliteRewardsData: { myAvailableSatelliteRewards },
-    },
+    user: { isSatellite, userTokens, satelliteMvkIsDelegatedTo, availableSatellitesRewards },
   } = useSelector((state: State) => state.wallet)
   const { proposalsMapper } = useSelector((state: State) => state.governance)
 
@@ -80,7 +76,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
 
   const freesMVKSpace = Math.max(satellite.sMvkBalance * satellite.delegationRatio - satellite.totalDelegatedAmount, 0)
   const isUserDelegatedToThisSatellite = satellite.address === satelliteMvkIsDelegatedTo
-  const balanceOver1SMvk = mySMvkTokenBalance >= 1
+  const balanceOver1SMvk = userTokens[SMVK_TOKEN_SYMBOL].balance >= 1
   const { currentlyRegistered } = satellite
 
   // Latest vote data
@@ -105,7 +101,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
           onClick={undelegateCallback}
           disabled={!accountPkh || isActionActive}
         />
-        {isDetailsPage && myAvailableSatelliteRewards > 0 ? (
+        {isDetailsPage && availableSatellitesRewards > 0 ? (
           <Button
             text="Claim Rewards"
             icon="rewards"
@@ -121,7 +117,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
             form={BUTTON_WIDE}
             onClick={distributeRewardsCallback}
             // TODO:  we are waiting new Query for getting proposals
-            disabled={true || myAvailableSatelliteRewards === 0 || isActionActive}
+            disabled={true || availableSatellitesRewards === 0 || isActionActive}
           >
             <Icon id="commision" />
             Distribute Rewards

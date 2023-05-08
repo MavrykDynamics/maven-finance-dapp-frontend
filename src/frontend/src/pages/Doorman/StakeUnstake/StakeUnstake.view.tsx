@@ -43,6 +43,7 @@ import {
 } from './StakeUnstake.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import colors from 'styles/colors'
+import { SMVK_TOKEN_SYMBOL, MVK_TOKEN_SYMBOL } from 'utils/constants'
 
 type StakeUnstakeViewProps = {
   stakeCallback: (amount: number) => void
@@ -57,11 +58,10 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
   const {
     accountPkh,
     user: {
-      myMvkTokenBalance,
-      mySMvkTokenBalance,
-      myDoormanRewardsData: { myAvailableDoormanRewards },
-      mySatelliteRewardsData: { myAvailableSatelliteRewards },
-      myFarmRewardsData,
+      userTokens,
+      availableDoormanRewards,
+      availableSatellitesRewards,
+      availableFarmRewards,
       satelliteMvkIsDelegatedTo,
       isSatellite,
     },
@@ -72,6 +72,8 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
   const { themeSelected } = useSelector((state: State) => state.preferences)
 
   const delegatedUser = satelliteMapper[satelliteMvkIsDelegatedTo]
+  const mySMvkTokenBalance = userTokens[SMVK_TOKEN_SYMBOL].balance,
+    myMvkTokenBalance = userTokens[MVK_TOKEN_SYMBOL].balance
 
   const [inputData, setInputData] = useState<{ amount: string; validation: InputStatusType; errorMessage: string }>({
     amount: '0',
@@ -90,9 +92,9 @@ export const StakeUnstakeView = ({ stakeCallback, unstakeCallback, MVK_exchangeR
   const mySMvkBalanceIsZero = mySMvkTokenBalance === 0
   const exchangeValue = MVK_exchangeRate && inputData.amount ? Number(inputData.amount) * MVK_exchangeRate : 0
   const rewardsToClaim =
-    myAvailableDoormanRewards +
-    myAvailableSatelliteRewards +
-    Object.values(myFarmRewardsData).reduce((acc, { myAvailableFarmRewards }) => (acc += myAvailableFarmRewards), 0)
+    availableDoormanRewards +
+    availableSatellitesRewards +
+    Object.values(availableFarmRewards).reduce((acc, { myAvailableFarmRewards }) => (acc += myAvailableFarmRewards), 0)
   const showDelegateBtn = !isSatellite && !satelliteMvkIsDelegatedTo
 
   const onUseMaxBalance = (balance: 'smvk' | 'mvk') => () => {

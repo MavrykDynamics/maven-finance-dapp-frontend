@@ -29,7 +29,6 @@ export type BaseLoansAssetDataType = {
 }
 
 export type LoansAssetDataType = BaseLoansAssetDataType & {
-  userBalance: number
   tokenType: TokenType
   address: string
 }
