@@ -32,7 +32,7 @@ export const Input = ({
     inputSize,
   },
 }: InputViewProps) => {
-  const [hasError, sethasError] = useState(false)
+  const [hasError, setHasError] = useState(false)
 
   const internalInputStatus = hasError ? INPUT_STATUS_ERROR : inputStatus
 
@@ -43,9 +43,9 @@ export const Input = ({
       const trimmedValue = trimSpaces(value)
 
       if (validateAsciiInput(trimmedValue)) {
-        if (hasError) sethasError(false)
+        if (hasError) setHasError(false)
       } else {
-        if (!hasError) sethasError(true)
+        if (!hasError) setHasError(true)
       }
 
       const _event = recreateEventWithUpdatedTargetValue(e, trimmedValue)

@@ -1,5 +1,10 @@
-import { InputStatusType, InputKind } from './Input.constants'
+import { useCallback, useState } from 'react'
+import { InputStatusType, InputKind, INPUT_STATUS_ERROR } from './Input.constants'
 import { InputOneChange } from './Input.controller'
+
+// utils
+import { validateAsciiInput, trimSpaces, recreateEventWithUpdatedTargetValue } from 'app/App.utils/input'
+
 import {
   InputComponentContainer,
   InputErrorMessage,
@@ -40,7 +45,27 @@ export const InputView = ({
   className,
   inputProps,
 }: InputViewProps) => {
-  const classNames = `${kind ?? ''} ${inputStatus !== undefined ? inputStatus : 'none'}`
+  const [hasError, setHasError] = useState(false)
+  const classNames = `${kind ?? ''} ${hasError ? INPUT_STATUS_ERROR : inputStatus !== undefined ? inputStatus : 'none'}`
+
+  const onChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { value } = e.target
+
+      const trimmedValue = trimSpaces(value)
+
+      if (validateAsciiInput(trimmedValue)) {
+        if (hasError) setHasError(false)
+      } else {
+        if (!hasError) setHasError(true)
+      }
+
+      const _event = recreateEventWithUpdatedTargetValue(e, trimmedValue)
+
+      inputProps.onChange(_event)
+    },
+    [hasError, inputProps.onChange],
+  )
 
   return (
     <InputStyled className={className} id={'inputStyled'}>
@@ -50,7 +75,7 @@ export const InputView = ({
         </InputIcon>
       )}
       <InputComponentContainer>
-        <input {...inputProps} className={classNames} autoComplete={inputProps.name} />
+        <input {...inputProps} onChange={onChange} className={classNames} autoComplete={inputProps.name} />
         <InputStatus className={`${classNames} ${pinnedText ? 'with-text' : ''}`} />
         {pinnedText && <InputLabel className={`${classNames} pinned-text`}>{pinnedText}</InputLabel>}
       </InputComponentContainer>
