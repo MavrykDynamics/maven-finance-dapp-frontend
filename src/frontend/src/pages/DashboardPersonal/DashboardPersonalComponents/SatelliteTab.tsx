@@ -31,7 +31,6 @@ const SatelliteTab = () => {
 
   const satelliteRecord = satelliteMapper[accountPkh]
 
-  console.log(satelliteRecord, 'satelliteRecord')
   const oracleStatusType = getOracleStatus(satelliteRecord, feedsLedger)
 
   const handleDistributeRewards = () => {
