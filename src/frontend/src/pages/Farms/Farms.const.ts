@@ -17,8 +17,8 @@ export const itemsForFarmsSortDD = [
   { content: 'Active', id: 'active' },
   { content: 'Highest APY', id: 'highestAPY' },
   { content: 'Lowest APY', id: 'lowestAPY' },
-  { content: 'Highest liquidity (LPBalance)', id: 'highestLiquidity' },
-  { content: 'Lowest liquidity (LPBalance)', id: 'lowestLiquidity' },
+  { content: 'Highest Liquidity (LPBalance)', id: 'highestLiquidity' },
+  { content: 'Lowest Liquidity (LPBalance)', id: 'lowestLiquidity' },
   { content: 'Your Largest Stake', id: 'yourLargestStake' },
   { content: 'Rewards Per Block', id: 'rewardsPerBlock' },
 ]
