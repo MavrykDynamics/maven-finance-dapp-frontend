@@ -25,7 +25,7 @@ export const OraclesTab = ({ isLoading }: { isLoading: boolean }) => {
   const { feedsLedger } = useSelector((state: State) => state.dataFeeds)
   const { themeSelected } = useSelector((state: State) => state.preferences)
   const {
-    dipDupMapper,
+    dipDupContracts,
     tokensPrices: { mvk: mvkExchangeRate = 0 },
   } = useSelector((state: State) => state.tokens)
   const { satelliteMapper, oraclesIds } = useSelector((state: State) => state.satellites)
@@ -86,7 +86,7 @@ export const OraclesTab = ({ isLoading }: { isLoading: boolean }) => {
           {popularFeeds.length ? (
             <div className="feeds-grid">
               {popularFeeds.map((feed) => {
-                const imageLink = dipDupMapper[feed.address]?.icon
+                const imageLink = dipDupContracts.find(({ contract }) => contract === feed.address)?.metadata?.icon
 
                 return (
                   <Link key={feed.address} to={`/satellites/feed-details/${feed.address}`}>
