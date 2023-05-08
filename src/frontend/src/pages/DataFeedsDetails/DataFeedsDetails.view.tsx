@@ -65,7 +65,7 @@ const tabsList = [
 
 const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsProps) => {
   const dispatch = useDispatch()
-  const { dipDupContracts } = useSelector((state: State) => state.tokens)
+  const { dipDupMapper } = useSelector((state: State) => state.tokens)
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { themeSelected } = useSelector((state: State) => state.preferences)
 
@@ -75,7 +75,9 @@ const DataFeedDetailsView = ({ feed, feedsSatellites, isLoading }: FeedDetailsPr
 
   const isTrustedAnswer = feed && feed.oraclesResponces >= feed.pct_oracle_threshold
 
-  const imageLink = dipDupContracts.find(({ contract }) => contract === feed?.address)?.metadata?.icon
+  const imageLink = feed?.address ? dipDupMapper[feed.address]?.icon : null
+
+  console.log({ dipDupMapper, address: feed?.address })
 
   const chartPlots = (activeTab === 1 ? feed?.dataFeedsHistory : feed?.dataFeedsVolatility) ?? []
 

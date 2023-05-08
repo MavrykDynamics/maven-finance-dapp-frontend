@@ -14,7 +14,7 @@ import { DataFeedsCardStyled, FeedsListItem } from 'pages/DataFeeds/DataFeeds.st
 
 export const DataFeedCard = ({ feed }: { feed: Feed }) => {
   const { pathname } = useLocation()
-  const { dipDupContracts } = useSelector((state: State) => state.tokens)
+  const { dipDupMapper } = useSelector((state: State) => state.tokens)
   const { oraclesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
 
   const oracleNodes = useMemo(
@@ -25,7 +25,7 @@ export const DataFeedCard = ({ feed }: { feed: Feed }) => {
     [feed.address, oraclesIds, satelliteMapper],
   )
 
-  const imageLink = dipDupContracts.find(({ contract }) => contract === feed.address)?.metadata?.icon
+  const imageLink = feed?.address ? dipDupMapper[feed.address]?.icon : null
   const showAllColumns = pathname === '/data-feeds'
 
   return (

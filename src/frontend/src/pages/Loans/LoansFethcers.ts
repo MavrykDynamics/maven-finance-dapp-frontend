@@ -107,7 +107,7 @@ export const getXTZBakers = async () => {
 
 export const getCollateralTokens = (
   collateralTokens: Array<Lending_Controller_Collateral_Token>,
-  dipDupTokens: State['tokens']['dipDupTokens'],
+  dipDupMapper: State['tokens']['dipDupMapper'],
   feeds: State['dataFeeds']['feedsLedger'],
 ): Array<AvaliableCollateralType> => {
   try {
@@ -116,7 +116,7 @@ export const getCollateralTokens = (
         const assetMetadata = getAssetMetadata({
           tokenName: token_name,
           tokenAddress: token_address,
-          dipDupTokens,
+          dipDupMapper,
           feeds,
           oracleId: String(oracle_id),
         })

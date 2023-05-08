@@ -20,12 +20,12 @@ type VaultsStorageProps = {
   lendingController: LoansGQL
   accountPkh?: string
   feeds: State['dataFeeds']['feedsLedger']
-  dipDupTokens: State['tokens']['dipDupTokens']
+  dipDupMapper: State['tokens']['dipDupMapper']
 }
 
 export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
   try {
-    const { lendingController, feeds, accountPkh, dipDupTokens } = storage
+    const { lendingController, feeds, accountPkh, dipDupMapper } = storage
     if (!lendingController.vaults.length)
       return {
         permissinedVaultsIds: [],
@@ -58,7 +58,7 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
         const loanTokenMetadata = getAssetMetadata({
           tokenName: item.loan_token.loan_token_name,
           tokenAddress: item.loan_token.loan_token_address,
-          dipDupTokens,
+          dipDupMapper,
           feeds,
           oracleId: String(item.loan_token.oracle_id),
         })
@@ -68,7 +68,7 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
 
         // Normalize collaterals and check whether vault has xtz collateral
         const [vaultCollateral, hasXtz] = normalizeCollateralAssets({
-          dipDupTokens,
+          dipDupMapper,
           feeds,
           collateralAssets: item.collateral_balances,
         })
@@ -278,11 +278,11 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
 // Normalize collaterals of the vault
 const normalizeCollateralAssets = ({
   feeds,
-  dipDupTokens,
+  dipDupMapper,
   collateralAssets,
 }: {
   feeds: State['dataFeeds']['feedsLedger']
-  dipDupTokens: State['tokens']['dipDupTokens']
+  dipDupMapper: State['tokens']['dipDupMapper']
   collateralAssets: LoansGQL['vaults'][number]['collateral_balances']
 }): [
   {
@@ -302,7 +302,7 @@ const normalizeCollateralAssets = ({
       const collateralAsset = getAssetMetadata({
         tokenName: collateral.token.token_name,
         tokenAddress: collateral.token.token_address,
-        dipDupTokens,
+        dipDupMapper,
         feeds,
         oracleId: String(collateral.token.oracle_id),
       })

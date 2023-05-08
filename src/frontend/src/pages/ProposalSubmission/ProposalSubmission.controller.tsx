@@ -59,7 +59,7 @@ export const ProposalSubmission = () => {
     config: { fee, governancePhase },
     isLoaded: isGovernanceLoaded,
   } = useSelector((state: State) => state.governance)
-  const { whitelistTokens, dipDupTokens } = useSelector((state: State) => state.tokens)
+  const { whitelistTokens, dipDupMapper } = useSelector((state: State) => state.tokens)
 
   const [activeTab, setActiveTab] = useState(1)
   const [selectedUserProposalId, setSeletedUserProposalId] = useState(lastSelectedProposalId.current)
@@ -231,7 +231,7 @@ export const ProposalSubmission = () => {
         currentOriginalProposal?.proposalPayments ?? [],
         currentProposal.proposalPayments.filter(({ token_amount, to__id }) => token_amount || to__id),
         whitelistTokens,
-        dipDupTokens,
+        dipDupMapper,
       )
       await dispatch(updateProposalData(proposalId, bytesDiff, paymentsDiff))
     }

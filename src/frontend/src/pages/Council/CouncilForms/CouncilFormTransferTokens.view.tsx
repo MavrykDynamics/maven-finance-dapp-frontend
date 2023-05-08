@@ -50,7 +50,7 @@ const itemsForDropDown = [
 
 export const CouncilFormTransferTokens = (maxLength: CouncilMaxLength) => {
   const dispatch = useDispatch()
-  const { dipDupTokens } = useSelector((state: State) => state.tokens)
+  const { dipDupMapper } = useSelector((state: State) => state.tokens)
   const { isActionActive } = useSelector((state: State) => state.loading)
 
   const [form, setForm] = useState(INIT_FORM)
@@ -114,7 +114,7 @@ export const CouncilFormTransferTokens = (maxLength: CouncilMaxLength) => {
 
     const decimals = getTokenDecimals({
       tokenAddress: value,
-      dipDupTokens,
+      dipDupMapper,
     })
 
     setFormInputStatus((prev) => {

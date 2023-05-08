@@ -34,7 +34,7 @@ import { getSymbolAndNameFromCollaterealGqlname } from 'utils/parse'
 
 export const fetchUserData = async (
   accountPkh: string,
-  dipDupTokens: State['tokens']['dipDupTokens'],
+  dipDupMapper: State['tokens']['dipDupMapper'],
   feeds: State['dataFeeds']['feedsLedger'],
   avaliableCollaterals: State['tokens']['avaliableCollaterals'],
   whitelistTokens: State['tokens']['whitelistTokens'],
@@ -62,6 +62,10 @@ export const fetchUserData = async (
       activeSatelliteRecord: [activeSatelliteRecord = null] = [],
       vesteeRecord: [vesteeRecord = null] = [],
     } = userInfoFromIndexer?.mavryk_user?.[0] ?? {}
+
+    // const normalizedMTokens = m_token_accounts.reduce<Array<{balance: number, }>>((acc) => {
+    //   return acc
+    // }, [])
 
     const userInfo: UserState = {
       ...DEFAULT_USER,
@@ -105,6 +109,37 @@ export const fetchUserData = async (
       },
       Promise.resolve({}),
     )
+
+    // const mTokens = await userInfo.userMTokens.reduce<Promise<UserState['userTokens']>>(
+    //   async (promiseAcc, { address, symbol: collateralSymbol, gqlName }) => {
+    //     const acc = await promiseAcc
+    //     const { name, symbol } = getSymbolAndNameFromCollaterealGqlname(collateralSymbol, gqlName)
+    //     if (userTokenNames.has(symbol)) return acc
+
+    //     const fetchedTokenData = await (
+    //       await fetch(
+    //         `https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/tokens/balances?account.eq=${accountPkh}&token.contract.in=${address}`,
+    //       )
+    //     ).json()
+
+    //     const fetchedBalance = Number(fetchedTokenData?.[0]?.balance ?? 0)
+    //     const fetchedDecimals = Number(fetchedTokenData?.[0]?.token?.metadata?.decimals ?? 0)
+    //     const balance =
+    //       fetchedBalance && fetchedDecimals
+    //         ? convertNumberForClient({ number: fetchedBalance, grade: fetchedDecimals })
+    //         : 0
+
+    //     acc[symbol] = {
+    //       balance,
+    //       name,
+    //       symbol,
+    //     }
+
+    //     userTokenNames.add(symbol)
+    //     return acc
+    //   },
+    //   Promise.resolve({}),
+    // )
 
     const whitelistTokensBalances = await whitelistTokens.reduce<Promise<UserState['userTokens']>>(
       async (promiseAcc, { address, symbol: whitelistSymbol }) => {
@@ -197,7 +232,7 @@ export const fetchUserData = async (
         const loanTokenMetadata = getAssetMetadata({
           tokenName: mTokenName,
           tokenAddress: address,
-          dipDupTokens,
+          dipDupMapper,
           feeds,
           oracleId: String(oracle_id),
         })
@@ -228,7 +263,7 @@ export const fetchUserData = async (
     )
 
     const { userBorrowing, userLendings, userVaultsData } = normalizeUserLending({
-      dipDupTokens,
+      dipDupMapper,
       feeds,
       userDataLoansHistoryGql: userLendingData.mavryk_user?.[0]?.lending_controller_history_data_sender,
       userVaultsDataGql: userLendingData.mavryk_user?.[0]?.lending_controller_vaults,
@@ -256,7 +291,7 @@ export const updateUserData = (newAccAddress?: string) => async (dispatch: AppDi
   const {
     preferences: { headData: { level = 0 } = {} },
     wallet: { accountPkh },
-    tokens: { dipDupTokens, avaliableCollaterals, whitelistTokens },
+    tokens: { dipDupMapper, avaliableCollaterals, whitelistTokens },
     dataFeeds: { feedsLedger },
   } = getState()
 
@@ -266,7 +301,7 @@ export const updateUserData = (newAccAddress?: string) => async (dispatch: AppDi
     if (userAddressToLoadData) {
       const userData = await fetchUserData(
         userAddressToLoadData,
-        dipDupTokens,
+        dipDupMapper,
         feedsLedger,
         avaliableCollaterals,
         whitelistTokens,

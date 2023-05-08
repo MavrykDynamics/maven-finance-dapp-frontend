@@ -1,3 +1,4 @@
+import { DipDupTokenDataType, TokenMetadataFromGQLType } from 'utils/TypesAndInterfaces/DipDupTokens'
 import {
   Dipdup_Token_Metadata,
   M_Token,
@@ -12,6 +13,30 @@ export function normalizeDipDupTokens(dipdup_token_metadata?: Array<Dipdup_Token
 
 export function normalizeDipDupContracts(dipdup_contract_metadata?: Array<Dipdup_Token_Metadata>) {
   return dipdup_contract_metadata ?? []
+}
+
+export function nomalizeDipDupTokensAndContracts(
+  dipdup_token_metadata: Array<Dipdup_Token_Metadata>,
+  dipdup_contract_metadata: Array<Dipdup_Token_Metadata>,
+) {
+  return [...dipdup_token_metadata, ...dipdup_contract_metadata].reduce<Record<string, DipDupTokenDataType>>(
+    (acc, tokenData) => {
+      const { contract, metadata, id } = tokenData
+      const { icon = null, name, symbol = null, decimals = '0' } = (metadata ?? {}) as TokenMetadataFromGQLType
+
+      if (!metadata || !name) return acc
+
+      acc[contract] = {
+        icon,
+        name,
+        symbol,
+        id,
+        decimals: parseInt(decimals),
+      }
+      return acc
+    },
+    {},
+  )
 }
 
 export function normalizeMTokens(m_token: M_Token) {

@@ -1,5 +1,5 @@
 import { M_Token } from './../utils/generated/graphqlTypes'
-import { DipDupTokensGraphQl } from 'utils/TypesAndInterfaces/DipDupTokens'
+import { DipDupTokenDataType } from 'utils/TypesAndInterfaces/DipDupTokens'
 import { GET_DAPP_TOKENS, GET_MVK_FAUCET, GET_TOKENS_PRICES } from './actions/getTokens.actions'
 import { AvaliableCollateralType } from 'utils/TypesAndInterfaces/Loans'
 import { GET_AVALIABLE_COLLATERALS, GET_XTZ_BAKERS } from 'pages/Loans/Actions/getLoansData.actions'
@@ -8,8 +8,9 @@ import { TokenType } from 'utils/TypesAndInterfaces/General'
 import { AnyAction } from 'redux'
 
 export type TokensType = {
-  dipDupTokens: Array<DipDupTokensGraphQl>
-  dipDupContracts: Array<DipDupTokensGraphQl>
+  // dipDupTokens: Array<DipDupTokensGraphQl>
+  // dipDupContracts: Array<DipDupTokensGraphQl>
+  dipDupMapper: Record<string, DipDupTokenDataType>
   tokensPrices: Record<string, number>
   avaliableCollaterals: Array<AvaliableCollateralType>
   xtzBakers: {
@@ -27,8 +28,7 @@ export type TokensType = {
   mvkFaucetAddress: string | null
 }
 const defaultTokensInfoState: TokensType = {
-  dipDupTokens: [],
-  dipDupContracts: [],
+  dipDupMapper: {},
   whitelistTokens: [
     {
       symbol: 'xtz',
@@ -54,8 +54,7 @@ export function tokens(state = defaultTokensInfoState, action: AnyAction) {
     case GET_DAPP_TOKENS:
       return {
         ...state,
-        dipDupTokens: action.dipDupTokens,
-        dipDupContracts: action.dipDupContracts,
+        dipDupMapper: action.dipDupMapper,
         whitelistTokens: state.whitelistTokens.concat(action.whitelistTokens),
         mTokens: action.mTokens,
       }

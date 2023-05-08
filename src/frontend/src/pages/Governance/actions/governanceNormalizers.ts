@@ -7,7 +7,6 @@ import {
 } from 'app/App.components/Input/Input.constants'
 import { State } from 'reducers'
 import { calcWithoutPrecision, calcWithoutMu, convertNumberForClient } from 'utils/calcFunctions'
-import { DipDupTokensGraphQl } from 'utils/TypesAndInterfaces/DipDupTokens'
 import {
   GovernanceProposalGraphQL,
   GovernanceGraphQL,
@@ -19,7 +18,7 @@ import { MVK_DECIMALS } from 'utils/constants'
 
 export const normalizeProposal = (
   item: GovernanceProposalGraphQL,
-  dipDupTokens: Array<DipDupTokensGraphQl>,
+  dipDupTokens: State['tokens']['dipDupMapper'],
   { governancePhase, cycleHighestVotedProposalId, timelockProposalId }: State['governance']['config'],
 ) => {
   const proposalConvertedStatus = getProposalStatus(
@@ -76,8 +75,7 @@ export const normalizeProposal = (
     })),
 
     proposalPayments: item.payments.map((paymentData) => {
-      const decimals =
-        dipDupTokens?.find(({ contract }) => contract === paymentData.token_address)?.metadata?.decimals ?? 0
+      const decimals = paymentData.token_address ? dipDupTokens[paymentData.token_address]?.decimals ?? 0 : 0
 
       return {
         ...paymentData,
@@ -90,7 +88,7 @@ export const normalizeProposal = (
 
 export const normalizeGovernanceProposals = (
   proposals: Array<GovernanceProposalGraphQL>,
-  dipDupTokens: Array<DipDupTokensGraphQl>,
+  dipDupTokens: State['tokens']['dipDupMapper'],
   governanceConfig: State['governance']['config'],
 ): Omit<Omit<State['governance'], 'isLoaded'>, 'config'> => {
   const { governancePhase, timelockProposalId } = governanceConfig

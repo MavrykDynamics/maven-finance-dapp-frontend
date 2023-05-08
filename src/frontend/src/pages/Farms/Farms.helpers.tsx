@@ -1,10 +1,10 @@
 // types
 import { FarmAccountsType, FarmContractType, FarmGraphQL, Normalizedfarm } from '../../utils/TypesAndInterfaces/Farm'
-import { DipDupTokensGraphQl } from 'utils/TypesAndInterfaces/DipDupTokens'
 
 // helpers
 import { getContractBigmapKeys, network } from 'utils/blockchainApi'
 import { STAKED } from './Farms.const'
+import { State } from 'reducers'
 
 type EndsInType = {
   endsIn: any
@@ -32,7 +32,7 @@ type TokensInfoType = {
 
 export const normalizeFarmStorage = (
   farmList: FarmGraphQL[],
-  dipDupTokens: DipDupTokensGraphQl[],
+  dipDupMapper: State['tokens']['dipDupMapper'],
   farmCardEndsIn: EndsInType,
   farmLPTokensInfo: TokensInfoType,
   farmContracts: FarmContractType[],
@@ -47,7 +47,7 @@ export const normalizeFarmStorage = (
         lpTokenInfo?.liquidityPairToken?.tokenAddress?.[0] &&
         address === lpTokenInfo?.liquidityPairToken?.tokenAddress?.[0],
     )
-    const dipDupToken = dipDupTokens.find(({ contract }) => farmItem.lp_token_address === contract)
+    const dipDupToken = dipDupMapper[farmItem.lp_token_address]
 
     return {
       address: farmItem.address,
@@ -67,7 +67,7 @@ export const normalizeFarmStorage = (
       lastBlockUpdate: farmItem.last_block_update,
       lpTokenUserBalance,
       lpTokenAddress: lpTokenInfo?.liquidityPairToken?.tokenAddress?.[0] ?? '',
-      lpBalance: farmItem.lp_token_balance / Math.pow(10, Number(dipDupToken?.metadata.decimals)),
+      lpBalance: farmItem.lp_token_balance / Math.pow(10, dipDupToken?.decimals),
       lpToken1: {
         symbol: lpTokenInfo?.liquidityPairToken?.token0?.symbol?.[0],
         address: lpTokenInfo?.liquidityPairToken?.token0?.tokenAddress?.[0],
