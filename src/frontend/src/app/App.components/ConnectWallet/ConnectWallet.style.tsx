@@ -230,18 +230,26 @@ export const WertIo = styled.div`
 
 export const MobileWalletDetailsHiddenPart = styled(WalletDetailsHiddenPart)<{ theme: MavrykTheme; isShown: boolean }>`
   width: 100vw;
-  max-height: calc(100vh - 100px);
-  height: 100%;
+  max-height: 90vh;
 
   position: fixed;
-  top: 0;
+  top: -90vh;
   right: 0;
   z-index: 100;
 
   padding: 0 0 33px 0;
   border-radius: 0;
   border: unset;
-  transition: none;
+
+  opacity: 1;
+  visibility: visible;
+  transition: 1000ms transform;
+
+  ${({ isShown }) =>
+    css`
+      ${isShown ? 'transform: translateY(90vh);' : ''};
+      pointer-events: ${isShown ? 'initial' : 'none'};
+    `};
 
   .close-details-btn {
     display: flex;

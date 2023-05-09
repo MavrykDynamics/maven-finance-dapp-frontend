@@ -71,12 +71,9 @@ export const MenuTopBar = ({ burgerClickHandler, isExpandedMenu, openChangeNodeP
   const logoImg = themeSelected === LIGHT_THEME ? '/logo-light.svg' : '/logo-dark.svg'
   const logoMobile = '/logo-mobile.svg'
 
-  const burgerClickHandlerWrapped = () => {
-    setShowMobileTopBar(false)
-    burgerClickHandler()
-  }
+  const toggleSidebarOpen = () => burgerClickHandler()
 
-  const clickMenuHandlerWrapped = () => {
+  const closeAllMenusHander = () => {
     setShowMobileTopBar(false)
     if (isExpandedMenu) burgerClickHandler()
   }
@@ -104,7 +101,7 @@ export const MenuTopBar = ({ burgerClickHandler, isExpandedMenu, openChangeNodeP
     <>
       <MenuTopStyled>
         <div className="left-side">
-          <MenuMobileBurger onClick={burgerClickHandlerWrapped} className={isExpandedMenu ? 'expanded' : ''}>
+          <MenuMobileBurger onClick={toggleSidebarOpen} className={isExpandedMenu ? 'expanded' : ''}>
             <Icon id="menuOpen" />
           </MenuMobileBurger>
 
@@ -132,7 +129,7 @@ export const MenuTopBar = ({ burgerClickHandler, isExpandedMenu, openChangeNodeP
               <Icon id="gear" />
             </div>
           ) : (
-            <MenuMobileBurger onClick={burgerClickHandlerWrapped} className={isExpandedMenu ? 'expanded' : ''}>
+            <MenuMobileBurger onClick={toggleSidebarOpen} className={isExpandedMenu ? 'expanded' : ''}>
               <Icon id="menuOpen" />
             </MenuMobileBurger>
           )}
@@ -146,11 +143,7 @@ export const MenuTopBar = ({ burgerClickHandler, isExpandedMenu, openChangeNodeP
           </div>
         </div>
 
-        <MobileTopBar
-          show={showMobileTopBar}
-          closeMobileMenu={clickMenuHandlerWrapped}
-          mountWertWiget={mountWertWiget}
-        />
+        <MobileTopBar show={showMobileTopBar} closeMobileMenu={closeAllMenusHander} mountWertWiget={mountWertWiget} />
       </MenuTopStyled>
       <WertIoPopup closePopup={() => setShowWertIoPopup(false)} isOpened={showWertIoPopup} />
     </>
