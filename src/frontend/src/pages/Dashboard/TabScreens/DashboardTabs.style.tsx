@@ -123,6 +123,47 @@ export const LendingContentStyled = styled.div<{ theme: MavrykTheme }>`
     }
   }
 `
+export const StakingContentStyled = styled.div<{ theme: MavrykTheme }>`
+  display: flex;
+  justify-content: space-between;
+  padding: 0 20px;
+  column-gap: 48px;
+  margin-bottom: 40px;
+  position: relative;
+
+  .flexbox {
+    display: flex;
+    align-items: center;
+  }
+
+  .tooltip {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+
+    svg {
+      width: 18px;
+      height: 18px;
+      fill: ${({ theme }) => theme.textColor};
+    }
+  }
+
+  .left {
+    margin-top: 16px;
+    display: flex;
+    align-items: center;
+    column-gap: 40px;
+    width: 45%;
+  }
+
+  .left {
+    .stats-row {
+      margin-top: 54px;
+      display: flex;
+      justify-content: space-between;
+    }
+  }
+`
 
 export const SatellitesContentStyled = styled.div<{ theme: MavrykTheme }>`
   display: grid;
