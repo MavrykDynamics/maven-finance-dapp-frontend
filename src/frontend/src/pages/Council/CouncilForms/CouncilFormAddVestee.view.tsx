@@ -75,7 +75,6 @@ export const CouncilFormAddVestee = () => {
     value: vesteeAddress,
     onBlur: handleBlurAddress,
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-      console.log(e.target.value)
       handleChange(e)
       handleBlurAddress(e)
     },
