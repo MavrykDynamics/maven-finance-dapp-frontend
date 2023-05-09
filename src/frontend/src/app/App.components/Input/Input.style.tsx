@@ -170,12 +170,18 @@ export const InputIcon = styled.svg<{ theme: MavrykTheme }>`
 
 export const InputErrorMessage = styled.div<{ theme: MavrykTheme }>`
   color: ${({ theme }) => theme.downColor};
-  line-height: 24px;
+  line-height: 12px;
+  font-size: 12px;
+  font-weight: 400;
   will-change: transform, opacity;
   animation: ${slideDown} 0.3s cubic-bezier(0.12, 0.4, 0.29, 1.46);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+
+  position: absolute;
+  left: 0;
+  bottom: -16px;
 
   &:first-letter {
     text-transform: uppercase;
@@ -247,12 +253,6 @@ export const InputMainContainer = styled.div<{ theme: MavrykTheme }>`
   position: relative;
   display: flex;
   flex-direction: column;
-
-  .error-block {
-    position: absolute;
-    left: 0;
-    bottom: -26px;
-  }
 `
 
 export const InputWrapper = styled.div<{ theme: MavrykTheme }>`

@@ -112,7 +112,7 @@ export const Input = ({
 
         {children && <InputPinnedChild className="pinned-child">{children}</InputPinnedChild>}
       </InputWrapper>
-      {internalErrorMsg && <InputErrorMessage className="error-block">{internalErrorMsg}</InputErrorMessage>}
+      {internalErrorMsg && <InputErrorMessage>{internalErrorMsg}</InputErrorMessage>}
     </InputMainContainer>
   )
 }
