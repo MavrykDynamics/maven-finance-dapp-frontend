@@ -62,7 +62,6 @@ export const CouncilFormAddVestee = () => {
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target.name, e.target.value)
     setForm((prev) => {
       return { ...prev, [e.target.name]: e.target.value }
     })
