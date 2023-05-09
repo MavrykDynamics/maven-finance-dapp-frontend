@@ -243,6 +243,18 @@ export const InputPinnedChild = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
+export const InputMainContainer = styled.div<{ theme: MavrykTheme }>`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+
+  .error-block {
+    position: absolute;
+    left: 0;
+    bottom: -26px;
+  }
+`
+
 export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
   position: relative;
   display: flex;

@@ -4,16 +4,24 @@ import NewButton from '../Button/NewButton'
 import { CommaNumber } from '../CommaNumber/CommaNumber.controller'
 
 // consts
-import { INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
+import { INPUT_STATUS_ERROR, INPUT_ASCII_TEXT, INPUT_WHITE_SPACE_TEXT } from 'app/App.components/Input/Input.constants'
 
 // utils
-import { validateAsciiInput, trimSpaces, recreateEventWithUpdatedTargetValue } from 'app/App.utils/input'
+import { containsCharacterOnTheSides, validateAsciiInput } from 'app/App.utils/input'
 
 // types
 import { InputViewProps } from './newInput.type'
 
 // styles
-import { InputPinnedChild, InputStyledStatus, InputWrapper, NewInputLabel, StyledInput } from './Input.style'
+import {
+  InputPinnedChild,
+  InputStyledStatus,
+  InputWrapper,
+  NewInputLabel,
+  StyledInput,
+  InputErrorMessage,
+  InputMainContainer,
+} from './Input.style'
 
 export const Input = ({
   children,
@@ -30,73 +38,82 @@ export const Input = ({
     balanceName = 'Balance',
     inputStatus,
     inputSize,
+    errorMessage,
   },
 }: InputViewProps) => {
-  const [hasError, setHasError] = useState(false)
+  const [errorMsg, setErrorMsg] = useState('')
 
-  const internalInputStatus = hasError ? INPUT_STATUS_ERROR : inputStatus
+  const internalInputStatus = errorMsg ? INPUT_STATUS_ERROR : inputStatus
+  const internalErrorMsg = errorMsg ? errorMsg : errorMessage ? errorMessage : ''
 
   const onChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const { value } = e.target
 
-      const trimmedValue = trimSpaces(value)
-
-      if (validateAsciiInput(trimmedValue)) {
-        if (hasError) setHasError(false)
+      if (validateAsciiInput(value)) {
+        if (errorMsg) setErrorMsg('')
       } else {
-        if (!hasError) setHasError(true)
+        setErrorMsg(INPUT_ASCII_TEXT)
       }
 
-      const _event = recreateEventWithUpdatedTargetValue(e, trimmedValue)
+      if (!containsCharacterOnTheSides(value)) {
+        if (errorMsg) setErrorMsg('')
+      } else {
+        setErrorMsg(INPUT_WHITE_SPACE_TEXT)
+      }
 
-      inputProps.onChange(_event)
+      inputProps.onChange(e)
     },
-    [hasError, inputProps.onChange],
+    [errorMsg, inputProps.onChange],
   )
 
   return (
-    <InputWrapper className={`${className} ${internalInputStatus} ${inputSize}`} id={'inputStyled'}>
-      {label ? (
-        <NewInputLabel>
-          {label}
+    <InputMainContainer>
+      <InputWrapper className={`${className} ${internalInputStatus} ${inputSize}`} id={'inputStyled'}>
+        {label ? (
+          <NewInputLabel>
+            {label}
 
-          <>{tooltip}</>
-        </NewInputLabel>
+            <>{tooltip}</>
+          </NewInputLabel>
+        ) : null}
+
+        <StyledInput
+          {...inputProps}
+          onChange={onChange}
+          className={`${internalInputStatus} ${children ? 'remove-right-border-radius' : ''}`}
+          autoComplete={'off'}
+        />
+        {Boolean(children) ? null : <InputStyledStatus className={`${internalInputStatus} ${inputSize}`} />}
+
+        {balance !== undefined && balanceAsset ? (
+          <div onClick={balanceHandler}>
+            <CommaNumber
+              value={balance}
+              beginningText={`${balanceName}: `}
+              endingText={balanceAsset}
+              className={`input-balance ${balanceHandler ? 'pointer' : ''}`}
+            />
+          </div>
+        ) : null}
+
+        {useMaxHandler ? (
+          <div className="useMax-btn">
+            <NewButton onClick={useMaxHandler} kind={BUTTON_SIMPLE}>
+              Use Max
+            </NewButton>
+          </div>
+        ) : null}
+
+        {convertedValue !== undefined ? (
+          <CommaNumber value={convertedValue} beginningText={'= $'} className={'input-converted-amount'} />
+        ) : null}
+
+        {children && <InputPinnedChild className="pinned-child">{children}</InputPinnedChild>}
+      </InputWrapper>
+      {Boolean(internalErrorMsg) ? (
+        <InputErrorMessage className="error-block">{internalErrorMsg}</InputErrorMessage>
       ) : null}
-
-      <StyledInput
-        {...inputProps}
-        onChange={onChange}
-        className={`${internalInputStatus} ${children ? 'remove-right-border-radius' : ''}`}
-        autoComplete={'off'}
-      />
-      {Boolean(children) ? null : <InputStyledStatus className={`${internalInputStatus} ${inputSize}`} />}
-
-      {balance !== undefined && balanceAsset ? (
-        <div onClick={balanceHandler}>
-          <CommaNumber
-            value={balance}
-            beginningText={`${balanceName}: `}
-            endingText={balanceAsset}
-            className={`input-balance ${balanceHandler ? 'pointer' : ''}`}
-          />
-        </div>
-      ) : null}
-
-      {useMaxHandler ? (
-        <div className="useMax-btn">
-          <NewButton onClick={useMaxHandler} kind={BUTTON_SIMPLE}>
-            Use Max
-          </NewButton>
-        </div>
-      ) : null}
-
-      {convertedValue !== undefined ? (
-        <CommaNumber value={convertedValue} beginningText={'= $'} className={'input-converted-amount'} />
-      ) : null}
-
-      {children && <InputPinnedChild className="pinned-child">{children}</InputPinnedChild>}
-    </InputWrapper>
+    </InputMainContainer>
   )
 }
