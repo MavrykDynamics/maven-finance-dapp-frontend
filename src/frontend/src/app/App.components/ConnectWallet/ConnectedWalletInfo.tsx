@@ -1,5 +1,4 @@
 import { useDispatch, useSelector } from 'react-redux'
-import { useMedia } from 'react-use'
 import { useHistory, useLocation } from 'react-router-dom'
 import { useState } from 'react'
 
@@ -14,6 +13,7 @@ import { TzAddress } from '../TzAddress/TzAddress.view'
 import Button from '../Button/NewButton'
 import { CommaNumber } from '../CommaNumber/CommaNumber.controller'
 import {
+  MobileWalletDetailsHiddenPart,
   MobileWalletDetailsStyled,
   WalletDetailsHiddenPart,
   WalletDetailsStyled,
@@ -34,7 +34,6 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
   const { tokensPrices } = useSelector((state: State) => state.tokens)
 
   const { pathname } = useLocation()
-  // const isMobileView = useMedia('(max-width: 870px)')
 
   const [detailsShown, setDetailsShown] = useState(false)
 
@@ -201,7 +200,7 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
 }
 
 type MobileConnectWalletProps = ConnectWalletProps & {
-  closeMobileMenu: (e: React.MouseEvent<HTMLElement>) => void
+  closeMobileMenu: () => void
 }
 
 export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileConnectWalletProps) => {
@@ -233,7 +232,15 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
         <Icon id="paginationArrowLeft" className="end-icon" />
       </WalletDetailsVisiblePart>
 
-      <WalletDetailsHiddenPart isShown={detailsShown}>
+      <MobileWalletDetailsHiddenPart isShown={detailsShown}>
+        {detailsShown ? (
+          <div className="close-details-btn">
+            <Button kind={BUTTON_SIMPLE} onClick={() => setDetailsShown(false)}>
+              <Icon id="close-stroke" />
+            </Button>{' '}
+          </div>
+        ) : null}
+
         <div className="top">
           <Icon id="wallet" />
           <TzAddress tzAddress={accountPkh} type={BLUE} />
@@ -287,7 +294,14 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
 
             <div className="action">
               <Button
-                onClick={() => (isOnStakingPage ? setDetailsShown(false) : history.push('/staking'))}
+                onClick={(e) => {
+                  if (!isOnStakingPage) {
+                    history.push('/staking')
+                  }
+
+                  setDetailsShown(false)
+                  closeMobileMenu()
+                }}
                 kind={BUTTON_SIMPLE}
               >
                 Stake MVK <Icon id="paginationArrowLeft" />
@@ -369,7 +383,7 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
             <Icon id="exit" /> Sign out
           </Button>
         </div>
-      </WalletDetailsHiddenPart>
+      </MobileWalletDetailsHiddenPart>
     </MobileWalletDetailsStyled>
   )
 }

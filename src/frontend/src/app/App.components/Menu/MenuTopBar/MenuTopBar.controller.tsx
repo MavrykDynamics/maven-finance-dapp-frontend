@@ -1,6 +1,5 @@
-import { useCallback, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useMedia } from 'react-use'
 import WertWidget from '@wert-io/widget-initializer'
 import { Link } from 'react-router-dom'
 
@@ -72,11 +71,15 @@ export const MenuTopBar = ({ burgerClickHandler, isExpandedMenu, openChangeNodeP
   const logoImg = themeSelected === LIGHT_THEME ? '/logo-light.svg' : '/logo-dark.svg'
   const logoMobile = '/logo-mobile.svg'
 
-  const burgerClickHandlerWrapped = useCallback((e) => {
-    e.stopPropagation()
+  const burgerClickHandlerWrapped = () => {
     setShowMobileTopBar(false)
     burgerClickHandler()
-  }, [])
+  }
+
+  const clickMenuHandlerWrapped = () => {
+    setShowMobileTopBar(false)
+    if (isExpandedMenu) burgerClickHandler()
+  }
 
   const showWertIoErrorToaster = () => {
     dispatch(
@@ -145,7 +148,7 @@ export const MenuTopBar = ({ burgerClickHandler, isExpandedMenu, openChangeNodeP
 
         <MobileTopBar
           show={showMobileTopBar}
-          closeMobileMenu={burgerClickHandlerWrapped}
+          closeMobileMenu={clickMenuHandlerWrapped}
           mountWertWiget={mountWertWiget}
         />
       </MenuTopStyled>

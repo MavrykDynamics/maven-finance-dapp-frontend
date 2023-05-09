@@ -29,11 +29,6 @@ export const WalletDetailsHiddenPart = styled.div<{ theme: MavrykTheme; isShown:
       pointer-events: ${isShown ? 'initial' : 'none'};
     `}
 
-  &.visible {
-    visibility: visible;
-    opacity: 1;
-  }
-
   hr {
     width: 100%;
     height: 1px;
@@ -230,5 +225,57 @@ export const WertIo = styled.div`
     padding: 30px 0px;
     border-radius: 0;
     border: none;
+  }
+`
+
+export const MobileWalletDetailsHiddenPart = styled(WalletDetailsHiddenPart)<{ theme: MavrykTheme; isShown: boolean }>`
+  width: 100vw;
+  max-height: calc(100vh - 100px);
+  height: 100%;
+
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 100;
+
+  padding: 0 0 33px 0;
+  border-radius: 0;
+  border: unset;
+  transition: none;
+
+  .close-details-btn {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    height: 77px;
+    cursor: pointer;
+    width: fit-content;
+    margin-left: auto;
+    padding-right: 23px;
+
+    svg {
+      max-width: 26px;
+      height: 21px;
+      stroke: #8d86eb;
+      transition: 0.6s all;
+    }
+
+    &:hover {
+      svg {
+        stroke: ${({ theme }) => theme.valueColor};
+      }
+    }
+  }
+
+  .action-btn-wrapper {
+    display: grid;
+    max-width: 400px;
+    margin: 0 auto;
+    justify-content: space-between;
+    grid-template-columns: minmax(120px, 185px) minmax(90px, 140px);
+
+    @media (max-width: 375px) {
+      padding: 0 10px;
+    }
   }
 `

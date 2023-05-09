@@ -1,4 +1,4 @@
-import { MobileWalletDetails, WalletDetails } from 'app/App.components/ConnectWallet/ConnectedWalletInfo'
+import { MobileWalletDetails } from 'app/App.components/ConnectWallet/ConnectedWalletInfo'
 import React, { useState } from 'react'
 import { SocialIcons } from '../../Menu.view'
 import { ABOUT_LINKS, BLOG_LINKS, DOCS_LINKS, PRODUCTS_LINKS } from '../MenuTopBar.controller'
@@ -11,7 +11,7 @@ export const MobileTopBar = ({
   mountWertWiget,
 }: {
   show: boolean
-  closeMobileMenu: (e: React.MouseEvent<HTMLElement>) => void
+  closeMobileMenu: () => void
   mountWertWiget: (commodity: string) => void
 }) => {
   const [selectedLinksBlock, setSelectedLinksBlock] = useState<null | string>(null)
