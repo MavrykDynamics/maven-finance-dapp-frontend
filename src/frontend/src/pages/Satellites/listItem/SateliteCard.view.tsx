@@ -149,7 +149,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
             <SatelliteTextGroup>
               <SatelliteMainText>{satellite.name}</SatelliteMainText>
               <SatelliteSubText>
-                <TzAddress tzAddress={satellite.address} type={BLUE} hasIcon={true} isBold={true} />
+                <TzAddress tzAddress={satellite.address} type={BLUE} hasIcon isBold />
               </SatelliteSubText>
             </SatelliteTextGroup>
           </div>

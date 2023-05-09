@@ -156,6 +156,7 @@ export const SatelliteSubText = styled.div<{ theme: MavrykTheme }>`
 
   p {
     margin: 0;
+    white-space: break-spaces;
   }
 `
 
