@@ -87,7 +87,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
 
   // Satellite status data
   const oracleStatusType = getOracleStatus(satellite, feedsLedger)
-  const satelliteStatusColor = satellite.status === SatelliteStatus.BANNED ? DOWN : WARNING
+  const satelliteStatusColor = satellite.status === SatelliteStatus.BANNED || !currentlyRegistered ? DOWN : WARNING
   // if satellite is unregistered, show inactive status
   const isSatelliteInactive = satellite.status !== SatelliteStatus.ACTIVE || !currentlyRegistered
 
