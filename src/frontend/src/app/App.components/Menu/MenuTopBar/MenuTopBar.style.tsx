@@ -160,10 +160,8 @@ export const MobileTopBarStyled = styled.div<{ show: boolean }>`
     display: none; /* Safari and Chrome */
   }
 
-  #connectWalletButton {
-    height: fit-content;
-    margin: 20px auto 30px auto;
-    width: fit-content;
+  .connect-wallet {
+    margin-bottom: 30px;
   }
 
   .container {

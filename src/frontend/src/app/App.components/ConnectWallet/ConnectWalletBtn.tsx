@@ -7,7 +7,7 @@ import { ConnectWalletBtnWrap } from './ConnectWallet.style'
 
 const ConnectWalletBtn = () => {
   const dispatch = useDispatch()
-  const connectWalletHandler = () => dispatch(connect())
+  const connectWalletHandler = async () => await dispatch(connect())
 
   return (
     <ConnectWalletBtnWrap>
