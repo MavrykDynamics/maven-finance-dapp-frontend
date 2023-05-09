@@ -11,9 +11,16 @@ import Icon from 'app/App.components/Icon/Icon.view'
 import NewButton from 'app/App.components/Button/NewButton'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+import { Chart } from 'app/App.components/Chart/Chart'
+import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.types'
 
 import { StatBlock } from '../Dashboard.style'
-import { StakingContentStyled, TabWrapperStyled, EmptyContainer } from './DashboardTabs.style'
+import {
+  StakingContentStyled,
+  TabWrapperStyled,
+  EmptyContainer,
+  StakingHistoryChartWrapper,
+} from './DashboardTabs.style'
 import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
@@ -26,7 +33,7 @@ export const emptyContainer = (
 )
 
 export const StakingTab = ({ isLoading }: { isLoading: boolean }) => {
-  const { totalStakedMvk, totalSupply } = useSelector((state: State) => state.doorman)
+  const { totalStakedMvk, totalSupply, smvkHistoryData } = useSelector((state: State) => state.doorman)
 
   const mli = calcMLI(totalSupply, totalStakedMvk)
   const fee = calcExitFee(totalSupply, totalStakedMvk)
@@ -79,6 +86,22 @@ export const StakingTab = ({ isLoading }: { isLoading: boolean }) => {
                 <CommaNumber endingText="%" value={mli} />
               </div>
             </StatBlock>
+          </div>
+          <div className="chart-wrapper">
+            <div className="title chart-title">Staking History</div>
+            <StakingHistoryChartWrapper>
+              <Chart
+                data={{
+                  type: AREA_CHART_TYPE,
+                  plots: smvkHistoryData,
+                }}
+                settings={{
+                  height: 100,
+                }}
+                tooltipAsset={'sMVK'}
+                numberOfItemsToDisplay={5}
+              />
+            </StakingHistoryChartWrapper>
           </div>
         </StakingContentStyled>
       )}

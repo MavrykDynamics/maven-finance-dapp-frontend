@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { CardHover, cyanColor } from 'styles'
+import { CardHover, cyanColor, Card } from 'styles'
 import { MavrykTheme } from 'styles/interfaces'
 import { EmptyContainer as EmptyContainerBase } from 'app/App.style'
 
@@ -125,11 +125,27 @@ export const LendingContentStyled = styled.div<{ theme: MavrykTheme }>`
 `
 export const StakingContentStyled = styled.div<{ theme: MavrykTheme }>`
   display: flex;
-  justify-content: space-between;
-  padding: 0 20px;
+  flex-direction: column;
+  max-width: 600px;
   column-gap: 48px;
   margin-bottom: 40px;
   position: relative;
+
+  .chart-wrapper {
+    padding-left: 20px;
+    position: relative;
+  }
+
+  .chart-title {
+    position: absolute;
+    left: 40px;
+    top: 50px;
+
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 18px;
+    color: ${({ theme }) => theme.textColor};
+  }
 
   .flexbox {
     display: flex;
@@ -149,11 +165,12 @@ export const StakingContentStyled = styled.div<{ theme: MavrykTheme }>`
   }
 
   .left {
+    width: 100%;
+    padding: 0 20px;
     margin-top: 16px;
     display: flex;
     align-items: center;
-    column-gap: 40px;
-    width: 45%;
+    column-gap: 32px;
   }
 
   .left {
@@ -163,6 +180,13 @@ export const StakingContentStyled = styled.div<{ theme: MavrykTheme }>`
       justify-content: space-between;
     }
   }
+`
+export const StakingHistoryChartWrapper = styled(Card)<{ theme: MavrykTheme }>`
+  padding: 38px 0 15px 20px;
+  height: 148px;
+
+  display: flex;
+  flex-direction: column;
 `
 
 export const SatellitesContentStyled = styled.div<{ theme: MavrykTheme }>`
@@ -177,9 +201,12 @@ export const SatellitesContentStyled = styled.div<{ theme: MavrykTheme }>`
 `
 
 export const OraclesContentStyled = styled.div<{ theme: MavrykTheme }>`
-  display: flex;
-  flex-direction: column;
   margin-top: 20px;
+
+  .wrapper {
+    display: flex;
+    flex-direction: column;
+  }
 
   .top {
     width: fit-content;
