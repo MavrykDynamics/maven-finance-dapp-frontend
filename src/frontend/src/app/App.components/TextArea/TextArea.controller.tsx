@@ -1,7 +1,10 @@
 import React, { useLayoutEffect, useRef, useState, useCallback } from 'react'
 
 // utils
-import { validateAsciiInput, trimSpaces, recreateEventWithUpdatedTargetValue } from 'app/App.utils/input'
+import { validateAsciiInput, containsCharacterOnTheSides } from 'app/App.utils/input'
+
+// consts
+import { INPUT_ASCII_TEXT, INPUT_WHITE_SPACE_TEXT } from 'app/App.utils/input/input.consts'
 
 import {
   TextAreaStyled,
@@ -39,13 +42,13 @@ export const TextArea = ({
   onChange,
   onBlur,
   inputStatus,
-  errorMessage,
+  errorMessage: errorMessageFromProps,
   disabled,
   required,
   label,
   textAreaMaxLimit = 1000,
 }: TextAreaProps) => {
-  const [hasError, setHasError] = useState(false)
+  const [errorMsg, setErrorMsg] = useState('')
   const textareaRef = useRef<HTMLTextAreaElement | null>(null)
 
   useLayoutEffect(() => {
@@ -55,25 +58,28 @@ export const TextArea = ({
     }
   }, [value])
 
-  let status = hasError ? 'error' : inputStatus !== undefined ? inputStatus : 'none'
+  const status = errorMsg ? 'error' : inputStatus !== undefined ? inputStatus : 'none'
+  const internalErrorMsg = Boolean(errorMsg) ? errorMsg : Boolean(errorMessageFromProps) ? errorMessageFromProps : ''
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       const { value } = e.target
 
-      const trimmedValue = trimSpaces(value)
-
-      if (validateAsciiInput(trimmedValue, true)) {
-        if (hasError) setHasError(false)
+      if (validateAsciiInput(value, true)) {
+        if (errorMsg) setErrorMsg('')
       } else {
-        if (!hasError) setHasError(true)
+        setErrorMsg(INPUT_ASCII_TEXT)
       }
 
-      const _event = recreateEventWithUpdatedTargetValue(e, trimmedValue)
+      if (!containsCharacterOnTheSides(value)) {
+        if (errorMsg) setErrorMsg('')
+      } else {
+        setErrorMsg(INPUT_WHITE_SPACE_TEXT)
+      }
 
-      onChange(_event)
+      onChange(e)
     },
-    [hasError, onChange],
+    [errorMsg, onChange],
   )
   return (
     <TextAreaStyled className={className} id={'textAreaContainer'}>
@@ -102,7 +108,7 @@ export const TextArea = ({
         {String(value).length}/{textAreaMaxLimit}
       </TextAreaCounter>
       <TextAreaStatus className={status} />
-      {errorMessage && <TextAreaErrorMessage>{errorMessage}</TextAreaErrorMessage>}
+      {internalErrorMsg && <TextAreaErrorMessage>{internalErrorMsg}</TextAreaErrorMessage>}
     </TextAreaStyled>
   )
 }

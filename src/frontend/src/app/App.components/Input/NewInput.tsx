@@ -4,7 +4,8 @@ import NewButton from '../Button/NewButton'
 import { CommaNumber } from '../CommaNumber/CommaNumber.controller'
 
 // consts
-import { INPUT_STATUS_ERROR, INPUT_ASCII_TEXT, INPUT_WHITE_SPACE_TEXT } from 'app/App.components/Input/Input.constants'
+import { INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
+import { INPUT_ASCII_TEXT, INPUT_WHITE_SPACE_TEXT } from 'app/App.utils/input/input.consts'
 
 // utils
 import { containsCharacterOnTheSides, validateAsciiInput } from 'app/App.utils/input'
@@ -38,13 +39,13 @@ export const Input = ({
     balanceName = 'Balance',
     inputStatus,
     inputSize,
-    errorMessage,
+    errorMessage: errorMessageFromProps,
   },
 }: InputViewProps) => {
   const [errorMsg, setErrorMsg] = useState('')
 
   const internalInputStatus = errorMsg ? INPUT_STATUS_ERROR : inputStatus
-  const internalErrorMsg = errorMsg ? errorMsg : errorMessage ? errorMessage : ''
+  const internalErrorMsg = Boolean(errorMsg) ? errorMsg : Boolean(errorMessageFromProps) ? errorMessageFromProps : ''
 
   const onChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -111,9 +112,7 @@ export const Input = ({
 
         {children && <InputPinnedChild className="pinned-child">{children}</InputPinnedChild>}
       </InputWrapper>
-      {Boolean(internalErrorMsg) ? (
-        <InputErrorMessage className="error-block">{internalErrorMsg}</InputErrorMessage>
-      ) : null}
+      {internalErrorMsg && <InputErrorMessage className="error-block">{internalErrorMsg}</InputErrorMessage>}
     </InputMainContainer>
   )
 }

@@ -3,7 +3,10 @@ import { InputStatusType, InputKind, INPUT_STATUS_ERROR } from './Input.constant
 import { InputOneChange } from './Input.controller'
 
 // utils
-import { validateAsciiInput, trimSpaces, recreateEventWithUpdatedTargetValue } from 'app/App.utils/input'
+import { validateAsciiInput, containsCharacterOnTheSides } from 'app/App.utils/input'
+
+// consts
+import { INPUT_ASCII_TEXT, INPUT_WHITE_SPACE_TEXT } from 'app/App.utils/input/input.consts'
 
 import {
   InputComponentContainer,
@@ -39,32 +42,38 @@ type InputViewProps = {
 export const InputView = ({
   icon,
   inputStatus,
-  errorMessage,
+  errorMessage: errorMessageFromProps,
   pinnedText,
   kind,
   className,
   inputProps,
 }: InputViewProps) => {
-  const [hasError, setHasError] = useState(false)
-  const classNames = `${kind ?? ''} ${hasError ? INPUT_STATUS_ERROR : inputStatus !== undefined ? inputStatus : 'none'}`
+  const [errorMsg, setErrorMsg] = useState('')
+  const classNames = `${kind ?? ''} ${
+    Boolean(errorMsg) ? INPUT_STATUS_ERROR : inputStatus !== undefined ? inputStatus : 'none'
+  }`
+
+  const internalErrorMsg = Boolean(errorMsg) ? errorMsg : Boolean(errorMessageFromProps) ? errorMessageFromProps : ''
 
   const onChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const { value } = e.target
 
-      const trimmedValue = trimSpaces(value)
-
-      if (validateAsciiInput(trimmedValue)) {
-        if (hasError) setHasError(false)
+      if (validateAsciiInput(value)) {
+        if (errorMsg) setErrorMsg('')
       } else {
-        if (!hasError) setHasError(true)
+        setErrorMsg(INPUT_ASCII_TEXT)
       }
 
-      const _event = recreateEventWithUpdatedTargetValue(e, trimmedValue)
+      if (!containsCharacterOnTheSides(value)) {
+        if (errorMsg) setErrorMsg('')
+      } else {
+        setErrorMsg(INPUT_WHITE_SPACE_TEXT)
+      }
 
-      inputProps.onChange(_event)
+      inputProps.onChange(e)
     },
-    [hasError, inputProps.onChange],
+    [errorMsg, inputProps.onChange],
   )
 
   return (
@@ -79,7 +88,7 @@ export const InputView = ({
         <InputStatus className={`${classNames} ${pinnedText ? 'with-text' : ''}`} />
         {pinnedText && <InputLabel className={`${classNames} pinned-text`}>{pinnedText}</InputLabel>}
       </InputComponentContainer>
-      {errorMessage && <InputErrorMessage>{errorMessage}</InputErrorMessage>}
+      {internalErrorMsg && <InputErrorMessage>{internalErrorMsg}</InputErrorMessage>}
     </InputStyled>
   )
 }

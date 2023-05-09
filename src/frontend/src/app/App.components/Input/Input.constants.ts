@@ -8,10 +8,6 @@ export const INPUT_SMALL = 'small-input'
 export const INPUT_LARGE = 'large-input'
 export const INPUT_BIG = 'big-input'
 
-// messages
-export const INPUT_ASCII_TEXT = 'Invalid characters'
-export const INPUT_WHITE_SPACE_TEXT = 'White space should be used within words'
-
 export type InputSizeType = typeof INPUT_SMALL | typeof INPUT_MEDIUM | typeof INPUT_LARGE | typeof INPUT_BIG
 export type InputStatusType = typeof INPUT_STATUS_SUCCESS | typeof INPUT_STATUS_ERROR | '' | undefined
 export type InputKind = typeof INPUT_PRIMARY | typeof INPUT_SEARCH
