@@ -86,7 +86,8 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
   // Satellite status data
   const oracleStatusType = getOracleStatus(satellite, feedsLedger)
   const satelliteStatusColor = satellite.status === SatelliteStatus.BANNED ? DOWN : WARNING
-  const isSatelliteInactive = satellite.status !== SatelliteStatus.ACTIVE
+  // if satellite is unregistered, show inactive status
+  const isSatelliteInactive = satellite.status !== SatelliteStatus.ACTIVE || !currentlyRegistered
 
   const participation =
     (satellite.satelliteMetrics.proposalParticipation + satellite.satelliteMetrics.votingPartisipation) / 2
@@ -147,7 +148,9 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
 
             <SatelliteTextGroup>
               <SatelliteMainText>{satellite.name}</SatelliteMainText>
-              <TzAddress tzAddress={satellite.address} type={BLUE} hasIcon={true} isBold={true} />
+              <SatelliteSubText>
+                <TzAddress tzAddress={satellite.address} type={BLUE} hasIcon={true} isBold={true} />
+              </SatelliteSubText>
             </SatelliteTextGroup>
           </div>
 
@@ -208,7 +211,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
         <SatelliteCardButtons>
           {isSatelliteInactive && (
             <div>
-              <StatusFlag status={satelliteStatusColor} text={SatelliteStatus[satellite.status]} />
+              <StatusFlag status={satelliteStatusColor} text={SatelliteStatus[SatelliteStatus.INACTIVE]} />
             </div>
           )}
 

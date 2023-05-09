@@ -33,14 +33,19 @@ export const SatelliteCardInner = styled.div<{ isExtendedListItem?: boolean }>`
   .grid-container {
     display: grid;
     grid-template-rows: repeat(2, auto);
-    /* grid-auto-flow: column; */
-    grid-template-columns: minmax(max-content, 1fr) minmax(max-content, 1fr) minmax(max-content, 1fr);
+    grid-template-columns: 188px minmax(87px, 1fr) minmax(121px, 1fr);
     grid-column-gap: 34px;
     grid-row-gap: 20px;
   }
 
+  .grid-item {
+    /* white-space: nowrap; */
+  }
+
   .grid-item:nth-child(1) {
     display: flex;
+    position: relative;
+    padding-left: 55px;
   }
 
   .grid-item-replaceable {
@@ -85,6 +90,10 @@ export const SatelliteCardRow = styled.div<{ theme: MavrykTheme }>`
 `
 
 export const SatelliteProfileImageContainer = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translate(0, -50%);
   display: flex;
   justify-content: space-around;
   height: 45px;
@@ -114,7 +123,6 @@ export const SatelliteTextGroup = styled.div<{ theme: MavrykTheme }>`
 
   &.oracle-status {
     row-gap: 2px;
-    height: 120%;
   }
 
   &.voted {
@@ -126,8 +134,10 @@ export const SatelliteMainText = styled.div<{ theme: MavrykTheme }>`
   color: ${({ theme }) => theme.textColor};
   font-weight: 600;
   font-size: 14px;
+  max-width: 138px;
   width: 100%;
   overflow: hidden;
+  white-space: nowrap;
   text-overflow: ellipsis;
 
   * {
@@ -156,11 +166,14 @@ export const SatelliteSubText = styled.div<{ theme: MavrykTheme }>`
 export const SatelliteProfileDetails = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   margin-left: 7px;
+  margin-top: 5px;
+
   button.transparent {
     color: ${({ theme }) => theme.valueColor};
     font-weight: 600;
     font-size: 14px;
     line-height: 14px;
+    height: 24px;
 
     svg {
       stroke: ${({ theme }) => theme.valueColor};
