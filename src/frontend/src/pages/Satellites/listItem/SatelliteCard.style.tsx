@@ -165,24 +165,7 @@ export const SatelliteProfileDetails = styled.div<{ theme: MavrykTheme }>`
   margin-left: 7px;
   margin-top: 5px;
 
-  button.transparent {
-    color: ${({ theme }) => theme.valueColor};
-    font-weight: 600;
-    font-size: 14px;
-    line-height: 14px;
-    height: 24px;
-
-    svg {
-      stroke: ${({ theme }) => theme.valueColor};
-      margin-right: 0;
-    }
-
-    &:hover {
-      color: ${({ theme }) => theme.valueColor};
-
-      svg {
-        stroke: ${({ theme }) => theme.valueColor};
-      }
-    }
+  svg {
+    margin-right: -10px;
   }
 `

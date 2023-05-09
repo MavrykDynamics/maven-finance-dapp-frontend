@@ -10,6 +10,7 @@ import {
   ACTION_SECONDARY,
   BUTTON_WIDE,
   BUTTON_PRIMARY,
+  BUTTON_SIMPLE,
 } from 'app/App.components/Button/Button.constants'
 import { delegate, undelegate, distributeProposalRewards } from '../Satellites.actions'
 import { rewardsCompound } from 'pages/Doorman/Doorman.actions'
@@ -42,6 +43,7 @@ import {
   SatelliteCardRow,
 } from './SatelliteCard.style'
 import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
+import { ButtonIcon } from 'app/App.components/Button/Button.style'
 
 type SatelliteListItemProps = {
   satellite: SatelliteRecordType
@@ -175,7 +177,12 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
             {!isDetailsPage ? (
               <SatelliteProfileDetails>
                 <Link to={`/satellites/satellite-details/${satellite.address}`}>
-                  <Button text={'Profile Details'} icon="man" kind="transparent" />
+                  <NewButton kind={BUTTON_SIMPLE}>
+                    <ButtonIcon className={'actionSecondary icon'}>
+                      <use xlinkHref={`/icons/sprites.svg#man`} />
+                    </ButtonIcon>
+                    <span>Profile Details</span>
+                  </NewButton>
                 </Link>
               </SatelliteProfileDetails>
             ) : (
