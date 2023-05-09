@@ -38,10 +38,6 @@ export const SatelliteCardInner = styled.div<{ isExtendedListItem?: boolean }>`
     grid-row-gap: 20px;
   }
 
-  .grid-item {
-    /* white-space: nowrap; */
-  }
-
   .grid-item:nth-child(1) {
     display: flex;
     position: relative;
