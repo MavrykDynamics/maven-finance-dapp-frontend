@@ -153,7 +153,7 @@ export const MobileTopBarStyled = styled.div<{ show: boolean }>`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-bottom: 30px;
+  padding: 30px 0;
   overflow-y: scroll;
 
   &::-webkit-scrollbar {
@@ -183,6 +183,7 @@ export const MobileTopBarStyled = styled.div<{ show: boolean }>`
       svg {
         width: 35px;
         height: 35px;
+        fill: ${({ theme }) => theme.textColor};
       }
     }
   }

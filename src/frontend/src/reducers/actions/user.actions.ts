@@ -268,7 +268,6 @@ export const fetchUserData = async (
      */
     userInfo.availableLoansRewards =
       normalizedMTokens.reduce((acc, { rewards_earned, tokenSymbol }) => {
-        console.log({ tokenSymbol })
         acc += rewards_earned
 
         return acc

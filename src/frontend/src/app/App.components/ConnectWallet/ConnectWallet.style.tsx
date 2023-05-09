@@ -208,6 +208,11 @@ export const WalletDetailsStyled = styled.div`
   height: 100%;
 `
 
+export const MobileWalletDetailsStyled = styled.div`
+  height: fit-content;
+  margin: 0 0 30px 0;
+`
+
 export const WertIo = styled.div`
   width: 100%;
   background: #160e3f;
