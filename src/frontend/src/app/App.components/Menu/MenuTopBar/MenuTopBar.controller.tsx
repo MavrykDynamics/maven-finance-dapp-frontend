@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import WertWidget from '@wert-io/widget-initializer'
 import { Link } from 'react-router-dom'
