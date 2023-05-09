@@ -39,7 +39,7 @@ import {
   XTZ_DECIMALS,
   XTZ_TOKEN_SYMBOL,
 } from 'utils/constants'
-import { Lending_Controller_Loan_Token } from 'utils/generated/graphqlTypes'
+import { Lending_Controller_Loan_Token, Satellite, Vesting } from 'utils/generated/graphqlTypes'
 import { getSymbolAndNameFromCollaterealGqlname } from 'utils/parse'
 
 export const fetchUserData = async (
@@ -72,8 +72,8 @@ export const fetchUserData = async (
       activeSatelliteRecord: [activeSatelliteRecord = null] = [],
       vesteeRecord: [vesteeRecord = null] = [],
     } = (userInfoFromIndexer?.mavryk_user?.[0] ?? {}) as MavrykUserGraphQl & {
-      activeSatelliteRecord: any
-      vesteeRecord: any
+      activeSatelliteRecord: Array<Satellite>
+      vesteeRecord: Array<Vesting>
     }
 
     const loanTokens = userRewardsData?.lending_controller?.[0]?.loan_tokens as Array<Lending_Controller_Loan_Token>

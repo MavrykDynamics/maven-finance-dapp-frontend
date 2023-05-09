@@ -5,6 +5,11 @@ export const ConnectWalletBtnWrap = styled.div`
   min-width: 220px;
 `
 
+// WALLET INFO STYLING
+export const WalletDetailsStyled = styled.div`
+  height: 100%;
+`
+
 export const WalletDetailsHiddenPart = styled.div<{ theme: MavrykTheme; isShown: boolean }>`
   width: 375px;
 
@@ -199,15 +204,6 @@ export const WalletDetailsVisiblePart = styled.div<{ theme: MavrykTheme; isShown
   }
 `
 
-export const WalletDetailsStyled = styled.div`
-  height: 100%;
-`
-
-export const MobileWalletDetailsStyled = styled.div`
-  height: fit-content;
-  margin: 0 0 30px 0;
-`
-
 export const WertIo = styled.div`
   width: 100%;
   background: #160e3f;
@@ -226,6 +222,12 @@ export const WertIo = styled.div`
     border-radius: 0;
     border: none;
   }
+`
+
+// MOBILE WALLET STYLING
+export const MobileWalletDetailsStyled = styled.div`
+  height: fit-content;
+  margin: 0 0 30px 0;
 `
 
 export const MobileWalletDetailsHiddenPart = styled(WalletDetailsHiddenPart)<{ theme: MavrykTheme; isShown: boolean }>`
