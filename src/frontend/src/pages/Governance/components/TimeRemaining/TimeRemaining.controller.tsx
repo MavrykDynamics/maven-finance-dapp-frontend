@@ -19,7 +19,7 @@ import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.component
 import { GovPhases } from 'utils/TypesAndInterfaces/Governance'
 
 // Actions, helpers
-import getTimestampByLevel from 'utils/Fetchers/getTimestampByLevel'
+import getTimestampByLevel from 'utils/api/getTimestampByLevel'
 import { startNextRound } from 'pages/Governance/actions/GovernanceInteraction.actions'
 
 export default function TimeRemaining() {
