@@ -1,6 +1,5 @@
 import { hideToaster, showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
-import { updateUserData } from 'reducers/actions/user.actions'
 import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 
 import { State } from 'reducers'
@@ -27,6 +26,8 @@ import {
   SATELLITE_CONFIG_QUERY_NAME,
   SATELLITE_CONFIG_QUERY_VARIABLE,
 } from 'gql/queries'
+import { updateUserData } from 'reducers/actions/user.actions'
+import { SMVK_TOKEN_SYMBOL, MVK_TOKEN_SYMBOL } from 'utils/constants'
 
 export const GET_SATELLITES_STORAGE = 'GET_SATELLITES_STORAGE'
 export const getSatellitesStorage = () => async (dispatch: AppDispatch, getState: GetState) => {
@@ -81,12 +82,15 @@ export const delegate = (satelliteAddress: string) => async (dispatch: AppDispat
     return
   }
 
-  if (state.wallet.user?.myMvkTokenBalance === 0 && state.wallet.user?.mySMvkTokenBalance === 0) {
+  if (
+    state.wallet.user.userTokens[SMVK_TOKEN_SYMBOL].balance === 0 &&
+    state.wallet.user.userTokens[MVK_TOKEN_SYMBOL].balance === 0
+  ) {
     dispatch(showToaster(TOASTER_ERROR, 'Unable to Delegate', 'Please buy MVK and stake it'))
     return
   }
 
-  if (state.wallet.user?.mySMvkTokenBalance === 0) {
+  if (state.wallet.user.userTokens[SMVK_TOKEN_SYMBOL].balance === 0) {
     dispatch(showToaster(TOASTER_ERROR, 'Unable to Delegate', 'Please stake your MVK'))
     return
   }

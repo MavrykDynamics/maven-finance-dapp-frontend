@@ -22,6 +22,7 @@ import { calculateAdminLiquidationFee, calculateCollateralShare } from 'pages/Va
 // types
 import { LiquidateVaultDataType } from 'pages/Loans/Components/Modals/Modals.helpers'
 import { InputStatusType } from 'app/App.components/Input/Input.constants'
+import { InputProps } from 'app/App.components/Input/newInput.type'
 
 // actions
 import { liquidateVault } from 'pages/Vaults/Vaults.actions'
@@ -38,6 +39,7 @@ type Props = {
 
 export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
   const { isActionActive } = useSelector((state: State) => state.loading)
+  const { userTokens } = useSelector((state: State) => state.wallet.user)
 
   const {
     vaultId,
@@ -48,7 +50,8 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
     liquidationReward = 0,
     adminLiquidateFee = 0,
   } = data ?? {}
-  const { symbol = '', icon = '', rate = 0, userBalance = 0 } = borrowedAsset ?? {}
+  const { symbol = '', icon = '', rate = 0 } = borrowedAsset ?? {}
+  const userBalance = userTokens[symbol]?.balance ?? 0
 
   const dispatch = useDispatch()
 
@@ -102,7 +105,7 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
     )
   }
 
-  const inputProps = {
+  const inputProps: InputProps = {
     value: inputAmount,
     type: 'number',
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => setInputAmount(e.target.value),

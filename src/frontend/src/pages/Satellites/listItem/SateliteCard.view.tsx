@@ -10,6 +10,7 @@ import {
   ACTION_SECONDARY,
   BUTTON_WIDE,
   BUTTON_PRIMARY,
+  BUTTON_SIMPLE,
 } from 'app/App.components/Button/Button.constants'
 import { delegate, undelegate, distributeProposalRewards } from '../Satellites.actions'
 import { rewardsCompound } from 'pages/Doorman/Doorman.actions'
@@ -31,19 +32,19 @@ import { AvatarStyle } from 'app/App.components/Avatar/Avatar.style'
 import {
   SatelliteCard,
   SatelliteCardInner,
-  SideBySideImageAndText,
   SatelliteProfileImageContainer,
   SatelliteProfileImage,
   SatelliteTextGroup,
   SatelliteMainText,
   SatelliteProfileDetails,
-  SatelliteCardTopRow,
   SatelliteSubText,
   SatelliteOracleStatusComponent,
   SatelliteCardButtons,
   SatelliteCardRow,
 } from './SatelliteCard.style'
 import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
+import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
+import { ButtonIcon } from 'app/App.components/Button/Button.style'
 
 type SatelliteListItemProps = {
   satellite: SatelliteRecordType
@@ -65,12 +66,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
   const { isActionActive } = useSelector((state: State) => state.loading)
   const {
     accountPkh,
-    user: {
-      isSatellite,
-      mySMvkTokenBalance,
-      satelliteMvkIsDelegatedTo,
-      mySatelliteRewardsData: { myAvailableSatelliteRewards },
-    },
+    user: { isSatellite, userTokens, satelliteMvkIsDelegatedTo, availableSatellitesRewards },
   } = useSelector((state: State) => state.wallet)
   const { proposalsMapper } = useSelector((state: State) => state.governance)
 
@@ -85,7 +81,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
 
   const freesMVKSpace = Math.max(satellite.sMvkBalance * satellite.delegationRatio - satellite.totalDelegatedAmount, 0)
   const isUserDelegatedToThisSatellite = satellite.address === satelliteMvkIsDelegatedTo
-  const balanceOver1SMvk = mySMvkTokenBalance >= 1
+  const balanceOver1SMvk = userTokens[SMVK_TOKEN_SYMBOL].balance >= 1
   const { currentlyRegistered } = satellite
 
   // Latest vote data
@@ -94,8 +90,9 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
 
   // Satellite status data
   const oracleStatusType = getOracleStatus(satellite, feedsLedger)
-  const satelliteStatusColor = satellite.status === SatelliteStatus.BANNED ? DOWN : WARNING
-  const isSatelliteInactive = satellite.status !== SatelliteStatus.ACTIVE
+  const satelliteStatusColor = satellite.status === SatelliteStatus.BANNED || !currentlyRegistered ? DOWN : WARNING
+  // if satellite is unregistered, show inactive status
+  const isSatelliteInactive = satellite.status !== SatelliteStatus.ACTIVE || !currentlyRegistered
 
   const participation =
     (satellite.satelliteMetrics.proposalParticipation + satellite.satelliteMetrics.votingPartisipation) / 2
@@ -110,7 +107,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
           onClick={undelegateCallback}
           disabled={!accountPkh || isActionActive}
         />
-        {isDetailsPage && myAvailableSatelliteRewards > 0 ? (
+        {isDetailsPage && availableSatellitesRewards > 0 ? (
           <Button
             text="Claim Rewards"
             icon="rewards"
@@ -126,7 +123,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
             form={BUTTON_WIDE}
             onClick={distributeRewardsCallback}
             // TODO:  we are waiting new Query for getting proposals
-            disabled={true || myAvailableSatelliteRewards === 0 || isActionActive}
+            disabled={true || availableSatellitesRewards === 0 || isActionActive}
           >
             <Icon id="commision" />
             Distribute Rewards
@@ -146,52 +143,70 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
   return (
     <SatelliteCard key={String(`satellite${satellite.address}`)}>
       <SatelliteCardInner isExtendedListItem={isDetailsPage}>
-        <div className="rows-wrapper">
-          <div>
-            <SideBySideImageAndText>
-              <SatelliteProfileImageContainer>
-                <AvatarStyle>
-                  <SatelliteProfileImage src={satellite.image} />
-                </AvatarStyle>
-              </SatelliteProfileImageContainer>
+        <div className="grid-container">
+          <div className="grid-item">
+            <SatelliteProfileImageContainer>
+              <AvatarStyle>
+                <SatelliteProfileImage src={satellite.image} />
+              </AvatarStyle>
+            </SatelliteProfileImageContainer>
 
-              <SatelliteTextGroup>
-                <SatelliteMainText>{satellite.name}</SatelliteMainText>
-                <TzAddress tzAddress={satellite.address} type={BLUE} hasIcon={true} isBold={true} />
-              </SatelliteTextGroup>
-            </SideBySideImageAndText>
-
-            {!isDetailsPage ? (
-              <SatelliteProfileDetails>
-                <Link to={`/satellites/satellite-details/${satellite.address}`}>
-                  <Button text={'Profile Details'} icon="man" kind="transparent" />
-                </Link>
-              </SatelliteProfileDetails>
-            ) : null}
+            <SatelliteTextGroup>
+              <SatelliteMainText>{satellite.name}</SatelliteMainText>
+              <SatelliteSubText>
+                <TzAddress tzAddress={satellite.address} type={BLUE} hasIcon isBold />
+              </SatelliteSubText>
+            </SatelliteTextGroup>
           </div>
 
-          <SatelliteCardTopRow isExtendedListItem={isDetailsPage}>
+          <div className="grid-item">
             <SatelliteTextGroup>
               <SatelliteMainText>Fee</SatelliteMainText>
               <SatelliteSubText>
                 <CommaNumber value={satellite.satelliteFee} endingText="%" />
               </SatelliteSubText>
             </SatelliteTextGroup>
-
+          </div>
+          <div className="grid-item">
             <SatelliteTextGroup>
               <SatelliteMainText>Free sMVK Space</SatelliteMainText>
               <SatelliteSubText>
                 <CommaNumber value={freesMVKSpace} />
               </SatelliteSubText>
             </SatelliteTextGroup>
+          </div>
 
+          <div className="grid-item grid-item-replaceable">
+            {!isDetailsPage ? (
+              <SatelliteProfileDetails>
+                <Link to={`/satellites/satellite-details/${satellite.address}`}>
+                  <NewButton kind={BUTTON_SIMPLE}>
+                    <ButtonIcon className={'actionSecondary icon'}>
+                      <use xlinkHref={`/icons/sprites.svg#man`} />
+                    </ButtonIcon>
+                    <span>Profile Details</span>
+                  </NewButton>
+                </Link>
+              </SatelliteProfileDetails>
+            ) : (
+              <SatelliteTextGroup>
+                <SatelliteMainText>Total Voting Power</SatelliteMainText>
+                <SatelliteSubText>
+                  <CommaNumber value={satellite.sMvkBalance + satellite.totalDelegatedAmount} endingText="sMVK" />
+                </SatelliteSubText>
+              </SatelliteTextGroup>
+            )}
+          </div>
+
+          <div className="grid-item">
             <SatelliteTextGroup>
               <SatelliteMainText>Participation</SatelliteMainText>
               <SatelliteSubText>
                 <CommaNumber value={participation} endingText="%" />
               </SatelliteSubText>
             </SatelliteTextGroup>
-
+          </div>
+          <div className="grid-item">
             <SatelliteTextGroup className="oracle-status">
               <SatelliteMainText>Oracle Status</SatelliteMainText>
               <SatelliteSubText>
@@ -200,13 +215,13 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
                 </SatelliteOracleStatusComponent>
               </SatelliteSubText>
             </SatelliteTextGroup>
-          </SatelliteCardTopRow>
+          </div>
         </div>
 
         <SatelliteCardButtons>
           {isSatelliteInactive && (
             <div>
-              <StatusFlag status={satelliteStatusColor} text={SatelliteStatus[satellite.status]} />
+              <StatusFlag status={satelliteStatusColor} text={SatelliteStatus[SatelliteStatus.INACTIVE]} />
             </div>
           )}
 

@@ -46,8 +46,11 @@ export const RepayFull = ({
 
   useLockBodyScroll(show)
   const dispatch = useDispatch()
+  const { userTokens } = useSelector((state: State) => state.wallet.user)
 
-  const canRepay = totalOutstanding <= (borrowedAsset?.userBalance ?? 0) && totalOutstanding > minimumRepay
+  const userAssetBalance = userTokens[borrowedAsset?.symbol ?? '']?.balance ?? 0
+
+  const canRepay = totalOutstanding <= userAssetBalance && totalOutstanding > minimumRepay
 
   const [screenShown, setShownScreen] = useState<'initial' | 'confitmation'>('initial')
 
@@ -129,7 +132,7 @@ export const RepayFull = ({
               <ThreeLevelListItem>
                 <div className="name">My Balance</div>
                 <CommaNumber
-                  value={Number(borrowedAsset?.userBalance)}
+                  value={userAssetBalance}
                   className={`value ${canRepay ? 'up' : 'down'}`}
                   endingText={borrowedAsset?.symbol}
                 />
@@ -150,7 +153,7 @@ export const RepayFull = ({
                       To Repay in Full & Close Vault you need at least{' '}
                       {formatNumber({
                         decimalsToShow: 2,
-                        number: totalOutstanding - Number(borrowedAsset?.userBalance),
+                        number: totalOutstanding - userAssetBalance,
                       })}{' '}
                       {borrowedAsset?.symbol} on your Ballance
                     </p>

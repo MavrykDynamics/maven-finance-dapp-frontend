@@ -1,7 +1,6 @@
 // types
 import type { ContractAddressesState } from '../reducers/contractAddresses'
 import type { AddressesGraphQl } from '../utils/TypesAndInterfaces/Addresses'
-import { Dipdup_Token_Metadata, M_Token } from 'utils/generated/graphqlTypes'
 import { MichelsonType, unpackDataBytes } from '@taquito/michel-codec'
 
 export function normalizeAddressesStorage(storage: AddressesGraphQl): ContractAddressesState {
@@ -42,18 +41,6 @@ export function getEnumKeyByEnumValue<T extends { [index: string]: string }>(
 ): keyof T | null {
   let keys = Object.keys(myEnum).filter((x) => myEnum[x] === enumValue)
   return keys.length > 0 ? keys[0] : null
-}
-
-export function normalizeDipDupTokens(storage: { dipdup_token_metadata?: Array<Dipdup_Token_Metadata> }) {
-  return storage?.dipdup_token_metadata ?? []
-}
-
-export function normalizeDipDupContracts(storage: { dipdup_contract_metadata?: Array<Dipdup_Token_Metadata> }) {
-  return storage?.dipdup_contract_metadata ?? []
-}
-
-export function normalizeMTokens(storage: { m_token: M_Token }) {
-  return storage?.m_token || []
 }
 
 const getAddressForDecoding = (address: string) => {

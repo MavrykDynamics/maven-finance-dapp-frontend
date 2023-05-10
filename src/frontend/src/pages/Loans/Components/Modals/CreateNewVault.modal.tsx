@@ -78,6 +78,7 @@ export const CreateNewVault = ({
   const {
     vaults: { myVaultsIds, vaultsMapper },
   } = useSelector((state: State) => state.loans)
+  const { userTokens } = useSelector((state: State) => state.wallet.user)
 
   const xtzBakers: Array<XtzBakerType & { isDisabled?: boolean }> = useMemo(
     () => [...otherBakers, ...(dao ? [dao] : []), ...(mavrykDynamics ? [mavrykDynamics] : [])],
@@ -100,7 +101,7 @@ export const CreateNewVault = ({
       (acc, collateralData) => {
         acc[collateralData.id] = {
           ...collateralData,
-          content: <DropdownInputCustomChild iconSrc={collateralData.icon} symbol={collateralData.symbol} />,
+          content: <DropdownInputCustomChild iconSrc={collateralData.icon} symbol={collateralData.name} />,
           disabled: collateralData.isProtected,
         }
         return acc
@@ -219,10 +220,8 @@ export const CreateNewVault = ({
   const handleVaultNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
     const validationStatus =
-      // regExp to ASCII 32-127
       value &&
       value.length <= 15 &&
-      /[^\x20-\x7f\x0d\x1b]*$/g.test(value) &&
       !myVaultsIds.find((vaultId) => vaultsMapper[vaultId].name.trim().toLowerCase() === value.trim().toLowerCase())
         ? INPUT_STATUS_SUCCESS
         : INPUT_STATUS_ERROR
@@ -453,6 +452,8 @@ export const CreateNewVault = ({
                 {collaterals.map(({ inputAmount, validationField, id: inputCollateralId }, idx) => {
                   const collateralMetadata = collateralsToSelect[inputCollateralId]
 
+                  const userAssetBalance = userTokens[collateralMetadata.symbol.toLowerCase()]?.balance ?? 0
+
                   if (!collateralMetadata) return null
                   const isXTZCollateral = isTezosAsset(collateralMetadata.gqlName)
 
@@ -464,23 +465,23 @@ export const CreateNewVault = ({
                         inputProps={{
                           value: inputAmount,
                           type: 'number',
-                          onChange: (e) => inputOnChangeHandle(e.target.value, idx, collateralMetadata.userBalance),
+                          onChange: (e) => inputOnChangeHandle(e.target.value, idx, userAssetBalance),
                           onBlur: (e) => inputOnBlurHandle(e.target.value, idx),
                           onFocus: () => onFocusHandler(idx),
                         }}
                         settings={{
-                          balanceAsset: collateralMetadata.symbol,
+                          balanceAsset: collateralMetadata.name,
                           useMaxHandler: () =>
                             inputOnChangeHandle(
-                              getLoansInputMaxAmount(collateralMetadata.userBalance, collateralMetadata.decimals),
+                              getLoansInputMaxAmount(userAssetBalance, collateralMetadata.decimals),
                               idx,
-                              collateralMetadata.userBalance,
+                              userAssetBalance,
                             ),
                           inputStatus: validationField,
                           ...(collateralMetadata.rate
                             ? { convertedValue: Number(collateralMetadata.rate) * Number(inputAmount) }
                             : {}),
-                          balance: collateralMetadata.userBalance,
+                          balance: userAssetBalance,
                           inputSize: INPUT_LARGE,
                         }}
                       >
@@ -491,7 +492,7 @@ export const CreateNewVault = ({
                               content: (
                                 <DropdownInputCustomChild
                                   iconSrc={collateralMetadata.icon}
-                                  symbol={collateralMetadata.symbol}
+                                  symbol={collateralMetadata.name}
                                 />
                               ),
                               id: inputCollateralId,
@@ -562,7 +563,7 @@ export const CreateNewVault = ({
                 <div className="lending-stats" style={{ marginBottom: '30px' }}>
                   <ThreeLevelListItem>
                     <div className="name">Asset</div>
-                    <div className="value">{firstCollateralMetadata?.symbol}</div>
+                    <div className="value">{firstCollateralMetadata?.name}</div>
                   </ThreeLevelListItem>
                   <ThreeLevelListItem>
                     <div className="name">Amount</div>
@@ -608,7 +609,7 @@ export const CreateNewVault = ({
                             className="add-hover"
                             key={collateralId + collateralMetadata.name}
                           >
-                            <TableCell width="42%">{collateralMetadata.symbol}</TableCell>
+                            <TableCell width="42%">{collateralMetadata.name}</TableCell>
                             <TableCell width="28%">
                               <CommaNumber value={Number(inputAmount)} />
                             </TableCell>

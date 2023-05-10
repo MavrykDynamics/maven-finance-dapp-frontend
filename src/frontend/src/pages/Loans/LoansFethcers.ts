@@ -4,7 +4,7 @@ import { calcWithoutMu } from 'utils/calcFunctions'
 import { Lending_Controller_Collateral_Token } from 'utils/generated/graphqlTypes'
 import { AvaliableCollateralType } from 'utils/TypesAndInterfaces/Loans'
 import BakersMocked from './bakers.json'
-import { isTezosAsset } from './Loans.helpers'
+import { getSymbolAndNameFromCollaterealGqlname } from 'utils/parse'
 
 export type BakeryDelegateDataType = {
   balance: number
@@ -105,53 +105,14 @@ export const getXTZBakers = async () => {
   }
 }
 
-export const getUserBalanceForLoanAsset = async (
-  assetAddress: string,
-  assetName: string,
-  userAddress?: string,
-): Promise<number> => {
-  try {
-    if (!userAddress) return 0
-    const isXTZ = isTezosAsset(assetName)
-    const assetBalance = isXTZ
-      ? await (
-          await fetch(`https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/accounts/${userAddress}/balance`)
-        ).json()
-      : await (
-          await fetch(
-            `https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/tokens/balances?account.eq=${userAddress}&token.contract.in=${assetAddress}`,
-          )
-        ).json()
-
-    return (
-      (typeof assetBalance === 'number'
-        ? assetBalance / 10 ** 6
-        : Number(assetBalance?.[0]?.balance ?? 0) / 10 ** Number(assetBalance?.[0]?.token?.metadata?.decimals ?? 0)) ??
-      0
-    )
-  } catch (e) {
-    console.log('getUserBalanceForLoanAsset error:', e)
-    return 0
-  }
-}
-
-export const getCollateralTokens = async (
+export const getCollateralTokens = (
   collateralTokens: Array<Lending_Controller_Collateral_Token>,
   dipDupTokens: State['tokens']['dipDupTokens'],
   feeds: State['dataFeeds']['feedsLedger'],
-  accountPkh?: string,
-): Promise<Array<AvaliableCollateralType>> => {
-  if (!accountPkh) return []
-
+): Array<AvaliableCollateralType> => {
   try {
-    return await collateralTokens.reduce<Promise<AvaliableCollateralType[]>>(
-      async (
-        promiseAcc,
-        { id, token_address, token_contract_standard, token_name, protected: isProtected, oracle_id },
-      ) => {
-        const acc = await promiseAcc
-        const isXTZ = isTezosAsset(token_name)
-
+    return collateralTokens.reduce<AvaliableCollateralType[]>(
+      (acc, { token_address, token_contract_standard, token_name, protected: isProtected, oracle_id }) => {
         const assetMetadata = getAssetMetadata({
           tokenName: token_name,
           tokenAddress: token_address,
@@ -160,26 +121,13 @@ export const getCollateralTokens = async (
           oracleId: String(oracle_id),
         })
 
-        const lendingAssetBalance = isXTZ
-          ? await (
-              await fetch(`https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/accounts/${accountPkh}/balance`)
-            ).json()
-          : await (
-              await fetch(
-                `https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/tokens/balances?account.eq=${accountPkh}&token.contract.in=${token_address}`,
-              )
-            ).json()
-
-        const userBalance =
-          (typeof lendingAssetBalance === 'number'
-            ? lendingAssetBalance / 10 ** 6
-            : Number(lendingAssetBalance?.[0]?.balance ?? 0) /
-              10 ** Number(lendingAssetBalance?.[0]?.token?.metadata?.decimals ?? 0)) ?? 0
-
         if (assetMetadata) {
+          const { name, symbol } = getSymbolAndNameFromCollaterealGqlname(assetMetadata.symbol, assetMetadata.gqlName)
+
           acc.push({
             ...assetMetadata,
-            userBalance,
+            name,
+            symbol,
             tokenType: token_contract_standard as 'tez' | 'fa12' | 'fa2',
             isProtected,
           })
@@ -187,7 +135,7 @@ export const getCollateralTokens = async (
 
         return acc
       },
-      Promise.resolve([]),
+      [],
     )
   } catch (e) {
     console.log('getCollateralTokens error:', e)

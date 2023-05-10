@@ -51,6 +51,7 @@ import {
   BecomeSatelliteOracleText,
 } from './BecomeSatellite.style'
 import { INFO_ERROR } from 'app/App.components/Info/info.constants'
+import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
 
 const connectWalletMessage = (
   <BecomeSatelliteFormBalanceCheck balanceOk={false}>
@@ -65,7 +66,7 @@ export const BecomeSatellite = () => {
   const dispatch = useDispatch()
   const {
     accountPkh = '',
-    user: { mySMvkTokenBalance, isSatellite },
+    user: { userTokens, isSatellite },
   } = useSelector((state: State) => state.wallet)
   const {
     satelliteMapper,
@@ -87,7 +88,7 @@ export const BecomeSatellite = () => {
     [accountPkh],
   )
 
-  const balanceOverMinStakedMvk = mySMvkTokenBalance >= minimumStakedMvkBalance
+  const balanceOverMinStakedMvk = userTokens[SMVK_TOKEN_SYMBOL].balance >= minimumStakedMvkBalance
   const usersSatelliteProfile = satelliteMapper[accountPkh] ?? null
 
   const [form, setForm] = useState(DEFAULT_BECOME_SATELLITE_FORM)
@@ -275,7 +276,7 @@ export const BecomeSatellite = () => {
                 <BecomeSatelliteFormBalanceCheck balanceOk={balanceOverMinStakedMvk}>
                   <Icon id={balanceOverMinStakedMvk ? 'check-stroke' : 'close-stroke'} />
                   <CommaNumber
-                    value={Number(mySMvkTokenBalance)}
+                    value={userTokens[SMVK_TOKEN_SYMBOL].balance}
                     beginningText={'Currently staking'}
                     endingText={'MVK'}
                   />

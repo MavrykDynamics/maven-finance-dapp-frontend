@@ -6,7 +6,6 @@ import { Mavryk_User } from 'utils/generated/graphqlTypes'
 
 import { convertNumberForClient, calcWithoutDecimals } from 'utils/calcFunctions'
 import { calcLendingAPY, getAssetMetadata, getChartData, getLendingItem, getTransactionHistory } from './Loans.helpers'
-import { getUserBalanceForLoanAsset } from './LoansFethcers'
 
 // Normalize user loans data
 export const normalizeUserLending = ({
@@ -157,7 +156,7 @@ export const normalizeLoans = async ({
   storage: LoansGQL
   dipDupData: State['tokens']['dipDupTokens']
   mTokens: State['tokens']['mTokens']
-  userMTokens: UserState['mTokens']
+  userMTokens: UserState['userMTokens']
   userAddres?: string
   feeds: State['dataFeeds']['feedsLedger']
 }) => {
@@ -223,7 +222,6 @@ export const normalizeLoans = async ({
           userAddres,
         )
 
-        const loanTokenUserBalance = await getUserBalanceForLoanAsset(loan_token_address, loan_token_name, userAddres)
         const tokenCurrentInterestRate = calcWithoutDecimals(loanToken.current_interest_rate, interestRateDecimals)
         const lendAPY = calcLendingAPY(tokenCurrentInterestRate, interestTreasuryShare)
         const borrowAPR = tokenCurrentInterestRate * 100
@@ -232,7 +230,6 @@ export const normalizeLoans = async ({
           loanTokenData: {
             ...loanTokenMetadata,
             tokenType: loan_token_contract_standard as TokenType,
-            userBalance: loanTokenUserBalance,
           },
           lendingItem,
           transactionHistory: [...transactionHistory].reverse(),

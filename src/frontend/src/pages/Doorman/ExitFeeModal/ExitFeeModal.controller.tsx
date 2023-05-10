@@ -19,6 +19,9 @@ import NewButton from 'app/App.components/Button/NewButton'
 import { containerColor } from 'styles'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import { CustomTooltip } from '../../../app/App.components/Tooltip/Tooltip.view'
+
+// types
+import { InputProps } from 'app/App.components/Input/newInput.type'
 import { State } from 'reducers'
 
 type ExitFeeModalPropsType = {
@@ -99,7 +102,7 @@ export const ExitFeeModal = ({
     }
   }
 
-  const inputProps = {
+  const inputProps: InputProps = {
     type: 'number',
     value: inputData.amount,
     onBlur: handleBlur,

@@ -21,9 +21,11 @@ import {
 } from '../../gql/queries'
 import { normalizeDoormanStorage, normalizeSmvkHistoryData } from './Doorman.converter'
 import { toggleActionFullScreenLoader, toggleActionCompletion } from 'app/App.components/Loader/Loader.action'
-import { updateUserData } from 'reducers/actions/user.actions'
+import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { DAPP_INSTANCE } from 'app/App.components/ConnectWallet/ConnectWallet.actions'
 import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
+import { updateUserData } from 'reducers/actions/user.actions'
+import { MVK_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL } from 'utils/constants'
 
 export const GET_DOORMAN_STORAGE = 'GET_DOORMAN_STORAGE'
 export const UPDATE_DOORMAN_STORAGE = 'UPDATE_DOORMAN_STORAGE'
@@ -138,7 +140,10 @@ export const getMVKTokensFromFaucet = () => async (dispatch: AppDispatch, getSta
     return
   }
 
-  if (state.wallet.user.myMvkTokenBalance > 0 || state.wallet.user.mySMvkTokenBalance > 0) {
+  if (
+    state.wallet.user.userTokens[MVK_TOKEN_SYMBOL].balance > 0 ||
+    state.wallet.user.userTokens[SMVK_TOKEN_SYMBOL].balance > 0
+  ) {
     dispatch(
       showToaster(
         TOASTER_ERROR,

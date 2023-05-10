@@ -34,6 +34,8 @@ import { EmptyContainer } from 'app/App.style'
 import { Page, PageContent } from 'styles'
 import { InfoBlockWrapper, SatellitesOverviewStyled } from './Satellites.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import { NotStakingBanner } from './components/NotStakingBanner.view'
+import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
 
 const Satellites = () => {
   const dispatch = useDispatch()
@@ -43,6 +45,9 @@ const Satellites = () => {
   const { isLoaded: isDoormanLoaded } = useStakeContext()
 
   useStakeUpdater(true)
+  const {
+    user: { isSatellite, userTokens },
+  } = useSelector((state: State) => state.wallet)
 
   const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {
@@ -69,6 +74,9 @@ const Satellites = () => {
   return (
     <Page>
       <PageHeader page={'satellites'} />
+      {!isSatellite || userTokens[SMVK_TOKEN_SYMBOL].balance === 0 ? (
+        <NotStakingBanner text="You are currently not staking MVK, please stake MVK in order to delegate to a satellite or become your own and take part in the platform’s governance" />
+      ) : null}
       <PageContent>
         <SatellitesOverviewStyled>
           <InfoBlockWrapper>

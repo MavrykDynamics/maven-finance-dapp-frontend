@@ -2,6 +2,11 @@
 export const ROCKET_LOADER = 'rocket'
 export const WERT_IO_LOADER = 'wert-loader'
 
+// User tokens symbols
+export const MVK_TOKEN_SYMBOL = 'mvk'
+export const SMVK_TOKEN_SYMBOL = 'smvk'
+export const XTZ_TOKEN_SYMBOL = 'tezos'
+
 // Decimals contants
 export const PRECISION_NUMBER = 1_000_000_000 // (10^9) MVK decimals
 export const MU_NUMBER = 1_000_000 // (10^6) XTZ decimals
