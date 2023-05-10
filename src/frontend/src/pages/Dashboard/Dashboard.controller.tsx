@@ -7,7 +7,7 @@ import { Page } from 'styles'
 
 // providers
 import { useStakeContext } from 'providers/StakeProvider/stake.provider'
-import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
+import { DOORMAN_STATS_SUB, useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
 
 import { State } from '../../reducers'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
@@ -25,10 +25,11 @@ export const Dashboard = () => {
   const parsedQp = QueryString.parse(search, { ignoreQueryPrefix: true }) as { tab: string }
   const activeTab = isValidPersonalDashboardTabId(parsedQp.tab) ? parsedQp.tab : LENDING_TAB_ID
 
+  const { totalStakedMvk, totalSupply, maximumTotalSupply } = useStakeContext()
+
   const {
     tokensPrices: { mvk: mvkExchangeRate = 0 },
   } = useSelector((state: State) => state.tokens)
-  const { totalStakedMvk, totalSupply, maximumTotalSupply, isLoaded: isDoormanLoaded } = useStakeContext()
   const { treasuryStorage, isLoaded: isTreasuryLoaded } = useSelector((state: State) => state.treasury)
   const { isLoaded: isVestingLoaded } = useSelector((state: State) => state.vesting)
   const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)
@@ -82,7 +83,7 @@ export const Dashboard = () => {
 
   const tvlValue = doormanTVL + treasuryTVL + farmsTVL + lendingTvl + vaultsTvl
 
-  useStakeUpdater(true)
+  const { dormanStatsLoading } = useStakeUpdater(false, [DOORMAN_STATS_SUB])
 
   const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {

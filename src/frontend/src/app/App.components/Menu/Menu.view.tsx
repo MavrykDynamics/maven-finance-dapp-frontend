@@ -21,7 +21,6 @@ import { mainNavigationLinks } from './NavigationLink/MainNavigationLinks'
 import { checkIfLinkSelected } from './NavigationLink/NavigationLink.constants'
 import { BUTTON_PRIMARY, BUTTON_ROUND, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { getMVKTokensFromFaucet } from '../../../pages/Doorman/Doorman.actions'
-import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
 import { MVK_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL } from 'utils/constants'
 
 type MenuViewProps = {
@@ -62,8 +61,6 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
   const { isActionActive } = useSelector((state: State) => state.loading)
   const { user, accountPkh } = useSelector((state: State) => state.wallet)
   const [canGetInitThouthand, setCanGetInitThouthand] = useState(false)
-
-  useStakeUpdater(true)
 
   useEffect(() => {
     const selectedMainRoute = mainNavigationLinks.find(({ routePath = '', subPages = null }) => {

@@ -36,7 +36,7 @@ import { DashboardPersonalStyled } from './DashboardPersonal.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { getLoansStorage } from 'pages/Loans/Actions/getLoansData.actions'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
-import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
+import { DOORMAN_STATS_SUB, useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
 import { updateUserData } from 'reducers/actions/user.actions'
 import { MVK_TOKEN_SYMBOL, XTZ_TOKEN_SYMBOL, SMVK_TOKEN_SYMBOL } from 'utils/constants'
 
@@ -70,7 +70,7 @@ const DashboardPersonal = () => {
 
   const claimRewards = async () => await dispatch(claimAllRewardsAction())
 
-  useStakeUpdater(true)
+  const { dormanStatsLoading } = useStakeUpdater(false, [DOORMAN_STATS_SUB])
 
   const { isLoading } = useDataLoader(
     async (isDepsChanged) => {

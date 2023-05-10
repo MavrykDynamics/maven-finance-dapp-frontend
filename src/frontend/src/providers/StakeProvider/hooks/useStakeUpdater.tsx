@@ -28,12 +28,17 @@ function showStakeSuccessMessage(dispatch: AppDispatch, message: string) {
   dispatch(toggleActionCompletion(false))
 }
 
+export const DOORMAN_HISTORY_SUB = 'history'
+export const DOORMAN_STATS_SUB = 'doormanStats'
+export const USER_MVK_BALANCE_SUB = 'userMVK_balances'
+type StakingSubscriptionsTypes = typeof USER_MVK_BALANCE_SUB | typeof DOORMAN_STATS_SUB | typeof DOORMAN_HISTORY_SUB
+
 /**
  * Subscriptions are canceled on component unmount!
  * @param skip boolean, if you pass this param, the hook will be triggered only one time
  * @returns {isLoading: boolean} false if data is still loading, true if it's loaded
  */
-export const useStakeUpdater = (skip = false) => {
+export const useStakeUpdater = (skip = false, subsciptionsList: Array<StakingSubscriptionsTypes> = []) => {
   const { doormanAddress } = useSelector((state: State) => state.contractAddresses)
   const { accountPkh } = useSelector((state: State) => state.wallet)
   const {
@@ -48,9 +53,10 @@ export const useStakeUpdater = (skip = false) => {
   const dispatch = useDispatch()
 
   const [shouldSkip, setShouldSkip] = useState(false)
+  const isLoadAllQueries = subsciptionsList.length === 0
 
-  const { loading: stakeLoading } = useSubscription(SUBSCRIPTION_STAKE_HISTORY, {
-    skip: shouldSkip,
+  const { loading: historyLoading } = useSubscription(SUBSCRIPTION_STAKE_HISTORY, {
+    skip: shouldSkip || (!isLoadAllQueries && !subsciptionsList.includes(DOORMAN_HISTORY_SUB)),
     onData: ({ data: result }) => {
       const { data, error } = result
       if (error) {
@@ -62,8 +68,8 @@ export const useStakeUpdater = (skip = false) => {
     },
   })
 
-  const { loading: doormanLoading } = useSubscription(SUBSCRIPTION_ADDRESS_BALANCE_DATA, {
-    skip: shouldSkip,
+  const { loading: doormanBalanceLoading } = useSubscription(SUBSCRIPTION_ADDRESS_BALANCE_DATA, {
+    skip: shouldSkip || (!isLoadAllQueries && !subsciptionsList.includes(DOORMAN_STATS_SUB)),
     variables: {
       _eq: doormanAddress.address,
     },
@@ -77,8 +83,8 @@ export const useStakeUpdater = (skip = false) => {
     shouldResubscribe: true,
   })
 
-  const { loading: totalMvkloading } = useSubscription(SUBSCRIPTION_MVK_TOKEN_TOTAL, {
-    skip: shouldSkip,
+  const { loading: mvkStatsloading } = useSubscription(SUBSCRIPTION_MVK_TOKEN_TOTAL, {
+    skip: shouldSkip || (!isLoadAllQueries && !subsciptionsList.includes(DOORMAN_STATS_SUB)),
     onData: ({ data: result }) => {
       const { data, error } = result
       if (error) {
@@ -90,8 +96,8 @@ export const useStakeUpdater = (skip = false) => {
   })
 
   // TODO: will be moved to user context when user data will be transfered to context
-  const { loading: balanceLoading } = useSubscription(SUBSCRIPTION_ADDRESS_BALANCE_DATA, {
-    skip: shouldSkip,
+  const { loading: userBalanceLoading } = useSubscription(SUBSCRIPTION_ADDRESS_BALANCE_DATA, {
+    skip: shouldSkip || (!isLoadAllQueries && !subsciptionsList.includes(USER_MVK_BALANCE_SUB)),
     variables: {
       _eq: accountPkh,
     },
@@ -107,18 +113,23 @@ export const useStakeUpdater = (skip = false) => {
 
   useEffect(() => {
     // to update data only one time
-    if (!stakeLoading && !balanceLoading && !doormanLoading && !totalMvkloading && skip) {
+    if (!historyLoading && !userBalanceLoading && !doormanBalanceLoading && !mvkStatsloading && skip) {
       setShouldSkip(true)
     }
 
     // show toaster after action completion
-    if (!stakeLoading && !balanceLoading && !doormanLoading && !totalMvkloading && action) {
+    if (!historyLoading && !userBalanceLoading && !doormanBalanceLoading && !mvkStatsloading && action) {
       const capital = action.charAt(0).toUpperCase()
       const msg = capital + action.substring(1)
       showStakeSuccessMessage(dispatch, msg)
       updateStakeActionContext('')
     }
-  }, [stakeLoading, balanceLoading, doormanLoading, totalMvkloading, skip, action])
+  }, [historyLoading, userBalanceLoading, doormanBalanceLoading, mvkStatsloading, skip, action])
 
-  return { isLoading: stakeLoading || balanceLoading || doormanLoading || totalMvkloading }
+  return {
+    isLoading: historyLoading || userBalanceLoading || doormanBalanceLoading || mvkStatsloading,
+    userBalanceLoading,
+    dormanStatsLoading: doormanBalanceLoading || mvkStatsloading,
+    historyLoading,
+  }
 }
