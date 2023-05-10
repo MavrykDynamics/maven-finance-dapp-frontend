@@ -3,7 +3,7 @@ import { getIconForInfoTyType, infoType } from './info.constants'
 import { InfoBlock } from './info.style'
 
 type Props = {
-  text: string
+  text: string | JSX.Element
   type: infoType
   children?: React.ReactNode
 }

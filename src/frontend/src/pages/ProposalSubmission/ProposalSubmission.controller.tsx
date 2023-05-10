@@ -47,6 +47,8 @@ import { getBytesDiff, getPaymentsDiff } from './ProposalSubmition.helpers'
 import { dropProposal, lockProposal, submitProposal, updateProposalData } from './ProposalSubmission.actions'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
+import { Info } from 'app/App.components/Info/Info.view'
+import TimeRemainingSmall from 'pages/Governance/components/TimeRemaining/TimeRemainingSmall'
 
 export const ProposalSubmission = () => {
   const lastSelectedProposalId = useRef(-1)
@@ -302,6 +304,8 @@ export const ProposalSubmission = () => {
     ? checkStage1Validation({ proposalValidation: currentProposalValidation })
     : true
 
+  const isNewlyRegisteredSatellite = true
+
   return (
     <Page>
       <PageHeader page={'proposal submission'} />
@@ -346,6 +350,19 @@ export const ProposalSubmission = () => {
                 status={currentProposal.locked ? ProposalStatus.DEFEATED : ProposalStatus.EXECUTED}
               />
             </SubmitProposalHeader>
+
+            {isNewlyRegisteredSatellite && (
+              <Info
+                text={
+                  <>
+                    Thanks for registering as a Satellite during the current governance cycle. Please note that you are
+                    unable to vote, propose, or take part in any governance as a Satellite until the next governance
+                    cycle starts in <TimeRemainingSmall />
+                  </>
+                }
+                type="info"
+              />
+            )}
 
             {activeTab === 1 && (
               <StageOneForm
