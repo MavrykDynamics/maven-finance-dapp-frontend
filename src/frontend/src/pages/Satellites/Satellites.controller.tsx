@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 
 // providers
 import { useStakeContext } from 'providers/StakeProvider/stake.provider'
-import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
+import { USER_MVK_BALANCE_SUB, useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
 
 // types
 import { State } from 'reducers'
@@ -42,9 +42,8 @@ const Satellites = () => {
   const { isLoaded: isGovernanceLoaded } = useSelector((state: State) => state.governance)
   const { activeSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
   const { feedsLedger, isLoaded: isFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
-  const { isLoaded: isDoormanLoaded } = useStakeContext()
 
-  useStakeUpdater(true)
+  const { userBalanceLoading } = useStakeUpdater(false, [USER_MVK_BALANCE_SUB])
   const {
     user: { isSatellite, userTokens },
   } = useSelector((state: State) => state.wallet)
@@ -99,7 +98,7 @@ const Satellites = () => {
             </SmallInfoBlock>
           </InfoBlockWrapper>
 
-          {isLoading && isDoormanLoaded ? (
+          {isLoading || userBalanceLoading ? (
             <DataLoaderWrapper>
               <ClockLoader width={150} height={150} />
               <div className="text">Loading satellites and data feeds data</div>

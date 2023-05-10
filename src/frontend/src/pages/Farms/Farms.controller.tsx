@@ -46,7 +46,6 @@ import {
   FarmsFiltersStateType,
 } from './Farms.const'
 import FarmsPopupsProvider from './FarmsPopups/FarmsPopups.provider'
-import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
 
 const EmptyContainer = () => (
   <EmptyList>
@@ -69,8 +68,6 @@ export const Farms = () => {
   const { search, pathname } = useLocation()
 
   const { farms, isLoaded } = useSelector((state: State) => state.farm)
-
-  useStakeUpdater(true)
 
   const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {

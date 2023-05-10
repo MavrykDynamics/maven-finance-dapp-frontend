@@ -26,12 +26,13 @@ import { SMVK_TOKEN_SYMBOL, MVK_TOKEN_SYMBOL } from 'utils/constants'
 export const Doorman = () => {
   const dispatch = useDispatch()
 
+  const { totalStakedMvk, maximumTotalSupply, totalSupply } = useStakeContext()
+
   const { doormanAddress, mvkTokenAddress } = useSelector((state: State) => state.contractAddresses)
   const {
     accountPkh,
     user: { userTokens },
   } = useSelector((state: State) => state.wallet)
-  const { totalStakedMvk, maximumTotalSupply, totalSupply, isLoaded: isDoormanLoaded } = useStakeContext()
   const { mvk: mvkExchangeRate = 0 } = useSelector((state: State) => state.tokens.tokensPrices)
 
   const mySMvkTokenBalance = userTokens[SMVK_TOKEN_SYMBOL].balance,
@@ -47,7 +48,7 @@ export const Doorman = () => {
     accountPkh,
   }
 
-  useStakeUpdater(true)
+  const { isLoading } = useStakeUpdater()
 
   const stakeCallback = (amount: number) => dispatch(stake(amount))
   const unstakeCallback = (amount: number) => setAmount(amount)
@@ -57,7 +58,7 @@ export const Doorman = () => {
     <Page>
       <PageHeader page={'doorman'} />
 
-      {!isDoormanLoaded ? (
+      {isLoading ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
           <div className="text">Loading doorman data</div>

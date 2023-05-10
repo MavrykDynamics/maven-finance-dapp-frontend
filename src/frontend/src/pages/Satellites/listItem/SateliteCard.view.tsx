@@ -42,7 +42,6 @@ import {
   SatelliteCardButtons,
   SatelliteCardRow,
 } from './SatelliteCard.style'
-import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
 import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
 import { ButtonIcon } from 'app/App.components/Button/Button.style'
 
@@ -69,8 +68,6 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
     user: { isSatellite, userTokens, satelliteMvkIsDelegatedTo, availableSatellitesRewards },
   } = useSelector((state: State) => state.wallet)
   const { proposalsMapper } = useSelector((state: State) => state.governance)
-
-  useStakeUpdater(true)
 
   // Card buttons handlers
   const delegateCallback = async () => await dispatch(delegate(satellite.address))

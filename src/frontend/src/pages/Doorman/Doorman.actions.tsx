@@ -18,8 +18,6 @@ import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLev
 import { State } from 'reducers'
 import type { AppDispatch, GetState } from '../../app/App.controller'
 
-// there 3-4 places where we call doorman inside actions, so in components where are calling
-// those actions I placed useStakeUpdater(true), so it will be triggered when component is rerendered
 export const rewardsCompound = (address: string) => async (dispatch: AppDispatch, getState: GetState) => {
   const state: State = getState()
 

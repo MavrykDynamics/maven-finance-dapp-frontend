@@ -15,7 +15,7 @@ import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 
 // providers
 import { useStakeContext } from 'providers/StakeProvider/stake.provider'
-import { useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
+import { DOORMAN_STATS_SUB, useStakeUpdater } from 'providers/StakeProvider/hooks/useStakeUpdater'
 
 export const EmergencyGovernance = () => {
   const dispatch = useDispatch()
@@ -25,11 +25,10 @@ export const EmergencyGovernance = () => {
   const { glassBroken, isConfigLoaded: isBreakGlassConfigLoaded } = useSelector(
     (state: State) => state.breakGlass.config,
   )
-  const { isLoaded: isDoormanLoaded } = useStakeContext()
 
   const [showInitiatePopup, setShowInitiatePopup] = useState(false)
 
-  useStakeUpdater(true)
+  const { dormanStatsLoading } = useStakeUpdater(false, [DOORMAN_STATS_SUB])
 
   const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {
@@ -53,7 +52,7 @@ export const EmergencyGovernance = () => {
   return (
     <Page>
       <PageHeader page={'emergency governance'} />
-      {isLoading ? (
+      {isLoading || dormanStatsLoading ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
           <div className="text">Loading emergency governance proposals</div>
