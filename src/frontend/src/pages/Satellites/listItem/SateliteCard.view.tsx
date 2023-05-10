@@ -43,7 +43,6 @@ import {
   SatelliteCardRow,
 } from './SatelliteCard.style'
 import { SMVK_TOKEN_SYMBOL } from 'utils/constants'
-import { ButtonIcon } from 'app/App.components/Button/Button.style'
 
 type SatelliteListItemProps = {
   satellite: SatelliteRecordType
@@ -178,9 +177,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
               <SatelliteProfileDetails>
                 <Link to={`/satellites/satellite-details/${satellite.address}`}>
                   <NewButton kind={BUTTON_SIMPLE}>
-                    <ButtonIcon className={'actionSecondary icon'}>
-                      <use xlinkHref={`/icons/sprites.svg#man`} />
-                    </ButtonIcon>
+                    <Icon id="man" className="icon" />
                     <span>Profile Details</span>
                   </NewButton>
                 </Link>
