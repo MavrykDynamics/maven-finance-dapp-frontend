@@ -1,10 +1,7 @@
-import React, { useState, useCallback } from 'react'
+import React from 'react'
 import { BUTTON_SIMPLE } from '../Button/Button.constants'
 import NewButton from '../Button/NewButton'
 import { CommaNumber } from '../CommaNumber/CommaNumber.controller'
-
-// utils
-import { validateInput } from 'app/App.utils/input'
 
 // hooks
 import { useInputValidator } from 'app/App.hooks/useInputValidator'
@@ -41,29 +38,15 @@ export const Input = ({
     errorMessage: errorMessageFromProps,
   },
 }: InputViewProps) => {
-  const [errorMsg, setErrorMsg] = useState('')
-
-  const { finalStatus, finalErrorMessage } = useInputValidator({
+  const { status, errorMessage, handleChange } = useInputValidator({
     originalErrorMessage: errorMessageFromProps,
-    internalErrorMessage: errorMsg,
     status: inputStatus,
+    onChange: inputProps.onChange,
   })
-
-  const onChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const { value } = e.target
-
-      const errorMessage = validateInput(value)
-      setErrorMsg(errorMessage)
-
-      inputProps.onChange(e)
-    },
-    [errorMsg, inputProps.onChange],
-  )
 
   return (
     <InputMainContainer>
-      <InputWrapper className={`${className} ${finalStatus} ${inputSize}`} id={'inputStyled'}>
+      <InputWrapper className={`${className} ${status} ${inputSize}`} id={'inputStyled'}>
         {label ? (
           <NewInputLabel>
             {label}
@@ -74,11 +57,11 @@ export const Input = ({
 
         <StyledInput
           {...inputProps}
-          onChange={onChange}
-          className={`${finalStatus} ${children ? 'remove-right-border-radius' : ''}`}
+          onChange={handleChange}
+          className={`${status} ${children ? 'remove-right-border-radius' : ''}`}
           autoComplete={'off'}
         />
-        {Boolean(children) ? null : <InputStyledStatus className={`${finalStatus} ${inputSize}`} />}
+        {Boolean(children) ? null : <InputStyledStatus className={`${status} ${inputSize}`} />}
 
         {balance !== undefined && balanceAsset ? (
           <div onClick={balanceHandler}>
@@ -105,7 +88,7 @@ export const Input = ({
 
         {children && <InputPinnedChild className="pinned-child">{children}</InputPinnedChild>}
       </InputWrapper>
-      {finalErrorMessage && <InputErrorMessage>{finalErrorMessage}</InputErrorMessage>}
+      {errorMessage && <InputErrorMessage>{errorMessage}</InputErrorMessage>}
     </InputMainContainer>
   )
 }

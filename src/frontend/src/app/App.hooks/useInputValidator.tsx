@@ -1,18 +1,36 @@
+import { useState, useCallback } from 'react'
 import { INPUT_STATUS_ERROR, InputStatusType } from 'app/App.components/Input/Input.constants'
 
-export type InputValidatorProps = {
+// utils
+import { validateInput } from 'app/App.utils/input'
+
+export interface InputValidatorProps<T> {
   originalErrorMessage?: string
-  internalErrorMessage?: string
   status: InputStatusType
+  onChange: (e: React.ChangeEvent<T>) => void
 }
 
-export const useInputValidator = ({ originalErrorMessage, internalErrorMessage, status }: InputValidatorProps) => {
-  const internalErrorMsg = Boolean(internalErrorMessage)
-    ? internalErrorMessage
-    : Boolean(originalErrorMessage)
-    ? originalErrorMessage
-    : ''
+export function useInputValidator<G extends HTMLInputElement | HTMLTextAreaElement>({
+  originalErrorMessage,
+  status,
+  onChange,
+}: InputValidatorProps<G>) {
+  const [errorMsg, setErrorMsg] = useState('')
+
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<G>) => {
+      const { value } = e.target
+
+      const errorMessage = validateInput(value)
+      setErrorMsg(errorMessage)
+
+      onChange(e)
+    },
+    [errorMsg, onChange],
+  )
+
+  const internalErrorMsg = Boolean(errorMsg) ? errorMsg : Boolean(originalErrorMessage) ? originalErrorMessage : ''
   const internalInputStatus = internalErrorMsg ? INPUT_STATUS_ERROR : status
 
-  return { finalStatus: internalInputStatus, finalErrorMessage: internalErrorMsg }
+  return { status: internalInputStatus, errorMessage: internalErrorMsg, handleChange }
 }

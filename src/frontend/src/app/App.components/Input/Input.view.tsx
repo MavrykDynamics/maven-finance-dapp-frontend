@@ -1,9 +1,5 @@
-import { useCallback, useState } from 'react'
 import { InputStatusType, InputKind } from './Input.constants'
 import { InputOneChange } from './Input.controller'
-
-// utils
-import { validateInput } from 'app/App.utils/input'
 
 // hooks
 import { useInputValidator } from 'app/App.hooks/useInputValidator'
@@ -48,25 +44,11 @@ export const InputView = ({
   className,
   inputProps,
 }: InputViewProps) => {
-  const [errorMsg, setErrorMsg] = useState('')
-
-  const { finalStatus, finalErrorMessage } = useInputValidator({
+  const { status, errorMessage, handleChange } = useInputValidator({
     originalErrorMessage: errorMessageFromProps,
-    internalErrorMessage: errorMsg,
     status: inputStatus,
+    onChange: inputProps.onChange,
   })
-
-  const onChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const { value } = e.target
-
-      const errorMessage = validateInput(value)
-      setErrorMsg(errorMessage)
-
-      inputProps.onChange(e)
-    },
-    [errorMsg, inputProps.onChange],
-  )
 
   return (
     <InputStyled className={className} id={'inputStyled'}>
@@ -76,11 +58,11 @@ export const InputView = ({
         </InputIcon>
       )}
       <InputComponentContainer>
-        <input {...inputProps} onChange={onChange} className={finalStatus} autoComplete={inputProps.name} />
-        <InputStatus className={`${finalStatus} ${pinnedText ? 'with-text' : ''}`} />
-        {pinnedText && <InputLabel className={`${finalStatus} pinned-text`}>{pinnedText}</InputLabel>}
+        <input {...inputProps} onChange={handleChange} className={status} autoComplete={inputProps.name} />
+        <InputStatus className={`${status} ${pinnedText ? 'with-text' : ''}`} />
+        {pinnedText && <InputLabel className={`${status} pinned-text`}>{pinnedText}</InputLabel>}
       </InputComponentContainer>
-      {finalErrorMessage && <InputErrorMessage>{finalErrorMessage}</InputErrorMessage>}
+      {errorMessage && <InputErrorMessage>{errorMessage}</InputErrorMessage>}
     </InputStyled>
   )
 }

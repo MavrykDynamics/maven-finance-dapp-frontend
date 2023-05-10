@@ -1,7 +1,4 @@
-import React, { useLayoutEffect, useRef, useState, useCallback } from 'react'
-
-// utils
-import { validateInput } from 'app/App.utils/input'
+import React, { useRef } from 'react'
 
 // hooks
 import { useInputValidator } from 'app/App.hooks/useInputValidator'
@@ -48,33 +45,13 @@ export const TextArea = ({
   label,
   textAreaMaxLimit = 1000,
 }: TextAreaProps) => {
-  const [errorMsg, setErrorMsg] = useState('')
   const textareaRef = useRef<HTMLTextAreaElement | null>(null)
 
-  const { finalErrorMessage, finalStatus } = useInputValidator({
+  const { status, errorMessage, handleChange } = useInputValidator({
     originalErrorMessage: errorMessageFromProps,
-    internalErrorMessage: errorMsg,
     status: inputStatus,
+    onChange,
   })
-
-  useLayoutEffect(() => {
-    if (textareaRef && textareaRef.current) {
-      const scrollHeight = textareaRef.current.scrollHeight
-      textareaRef.current.style.height = Math.max(scrollHeight, 85) + 'px'
-    }
-  }, [value])
-
-  const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      const { value } = e.target
-
-      const errorMessage = validateInput(value)
-      setErrorMsg(errorMessage)
-
-      onChange(e)
-    },
-    [errorMsg, onChange],
-  )
   return (
     <TextAreaStyled className={className} id={'textAreaContainer'}>
       {label ? <NewInputLabel>{label}</NewInputLabel> : null}
@@ -83,7 +60,7 @@ export const TextArea = ({
           <use xlinkHref={`/icons/sprites.svg#${icon}`} />
         </TextAreaIcon>
       )}
-      <div className={`textArea-wrapper ${finalStatus} ${disabled ? 'disabled' : ''}`}>
+      <div className={`textArea-wrapper ${status} ${disabled ? 'disabled' : ''}`}>
         <TextareaStyled
           placeholder={placeholder}
           value={value}
@@ -98,11 +75,11 @@ export const TextArea = ({
         />
       </div>
 
-      <TextAreaCounter className={finalStatus}>
+      <TextAreaCounter className={status}>
         {String(value).length}/{textAreaMaxLimit}
       </TextAreaCounter>
-      <TextAreaStatus className={finalStatus} />
-      {finalErrorMessage && <TextAreaErrorMessage>{finalErrorMessage}</TextAreaErrorMessage>}
+      <TextAreaStatus className={status} />
+      {errorMessage && <TextAreaErrorMessage>{errorMessage}</TextAreaErrorMessage>}
     </TextAreaStyled>
   )
 }
