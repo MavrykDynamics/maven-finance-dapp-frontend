@@ -337,22 +337,26 @@ export const SatelliteStatusBlock = styled(MediumBlockBase)<{ theme: MavrykTheme
 
   .grid-container {
     display: grid;
-    /* grid-template-columns: repeat(5, minmax(1fr, max-content)); */
-    grid-template-rows: repeat(2, auto);
+    grid-template-columns: repeat(3, min-content) 115px min-content;
+    grid-auto-flow: dense;
     grid-row-gap: 30px;
-    grid-column-gap: 90px;
+    grid-column-gap: 80px;
   }
 
   .grid-item {
     display: flex;
     flex-direction: column;
     row-gap: 5px;
+    white-space: nowrap;
 
     p {
       margin: 0;
     }
 
     a {
+      display: block;
+      width: 100%;
+      word-wrap: break-word;
       font-weight: 500;
       font-size: 16px;
       color: ${({ theme }) => theme.valueColor};
@@ -399,8 +403,10 @@ export const SatelliteStatusBlock = styled(MediumBlockBase)<{ theme: MavrykTheme
   }
 
   .grid-item-last {
+    max-width: 366px;
     grid-column: 4 / span 2;
     grid-row: 2 / 3;
+    white-space: break-spaces;
   }
 
   .grid-item-under-image {

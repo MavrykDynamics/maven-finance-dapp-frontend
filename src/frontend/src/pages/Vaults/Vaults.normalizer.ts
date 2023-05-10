@@ -67,18 +67,11 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
         if (!loanTokenMetadata) return acc
 
         // Normalize collaterals and check whether vault has xtz collateral
-        const [vaultCollateral, hasXtz] = normalizeCollateralAssets({
+        const vaultCollateral = normalizeCollateralAssets({
           dipDupTokens,
           feeds,
           collateralAssets: item.collateral_balances,
         })
-
-        // If vault has xtz collateral, we need to call whether it's delegated to someone, or no
-        const vaultXtzDelegatedTo = hasXtz
-          ? await (
-              await fetch(`https://api.${process.env.REACT_APP_API_NETWORK}.tzkt.io/v1/accounts/${item.vault.address}`)
-            ).json()
-          : null
 
         // Borrowed amount of the vault
         const borrowedAmount = convertNumberForClient({
@@ -190,7 +183,7 @@ export const normalizeVaultsStorage = async (storage: VaultsStorageProps) => {
           ownerId: item.owner_id || '',
           vaultId: item.internal_id,
           creationTimestamp: item.vault.creation_timestamp ?? undefined,
-          xtzDelegatedTo: vaultXtzDelegatedTo?.delegate?.address ?? null,
+          xtzDelegatedTo: item.vault?.baker_id ?? null,
           status,
           apr:
             convertNumberForClient({
@@ -284,14 +277,10 @@ const normalizeCollateralAssets = ({
   feeds: State['dataFeeds']['feedsLedger']
   dipDupTokens: State['tokens']['dipDupTokens']
   collateralAssets: LoansGQL['vaults'][number]['collateral_balances']
-}): [
-  {
-    normalizedCollaterals: Array<CollateralType>
-    totalRow: CollateralType
-  },
-  boolean,
-] => {
-  let hasXtzCollateral = false
+}): {
+  normalizedCollaterals: Array<CollateralType>
+  totalRow: CollateralType
+} => {
   const normalizedCollaterals = collateralAssets?.reduce<{
     normalizedCollaterals: Array<CollateralType>
     totalRow: CollateralType
@@ -308,8 +297,6 @@ const normalizeCollateralAssets = ({
       })
 
       if (!collateralAsset) return acc
-
-      if (isTezosAsset(collateralAsset.gqlName)) hasXtzCollateral = true
 
       const collateralBalance = collateral.balance / 10 ** collateralAsset.decimals
 
@@ -336,5 +323,5 @@ const normalizeCollateralAssets = ({
     },
   )
 
-  return [normalizedCollaterals, hasXtzCollateral]
+  return normalizedCollaterals
 }
