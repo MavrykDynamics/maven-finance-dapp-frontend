@@ -1,4 +1,4 @@
-import { fetchGraphQL } from '../utils/api/fetchGraphQL'
+import { fetchGraphQL } from 'utils/api/fetchGraphQL'
 
 export async function fetchFromIndexer(
   operationsDoc: string,
