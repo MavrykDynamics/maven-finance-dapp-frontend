@@ -1,12 +1,12 @@
 import { useCallback, useState } from 'react'
-import { InputStatusType, InputKind, INPUT_STATUS_ERROR } from './Input.constants'
+import { InputStatusType, InputKind } from './Input.constants'
 import { InputOneChange } from './Input.controller'
 
 // utils
-import { validateAsciiInput, containsCharacterOnTheSides } from 'app/App.utils/input'
+import { validateInput } from 'app/App.utils/input'
 
-// consts
-import { INPUT_ASCII_TEXT, INPUT_WHITE_SPACE_TEXT } from 'app/App.utils/input/input.consts'
+// hooks
+import { useInputValidator } from 'app/App.hooks/useInputValidator'
 
 import {
   InputComponentContainer,
@@ -49,27 +49,19 @@ export const InputView = ({
   inputProps,
 }: InputViewProps) => {
   const [errorMsg, setErrorMsg] = useState('')
-  const classNames = `${kind ?? ''} ${
-    Boolean(errorMsg) ? INPUT_STATUS_ERROR : inputStatus !== undefined ? inputStatus : 'none'
-  }`
 
-  const internalErrorMsg = Boolean(errorMsg) ? errorMsg : Boolean(errorMessageFromProps) ? errorMessageFromProps : ''
+  const { finalStatus, finalErrorMessage } = useInputValidator({
+    originalErrorMessage: errorMessageFromProps,
+    internalErrorMessage: errorMsg,
+    status: inputStatus,
+  })
 
   const onChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const { value } = e.target
 
-      if (validateAsciiInput(value)) {
-        if (errorMsg) setErrorMsg('')
-      } else {
-        setErrorMsg(INPUT_ASCII_TEXT)
-      }
-
-      if (!containsCharacterOnTheSides(value)) {
-        if (errorMsg) setErrorMsg('')
-      } else {
-        setErrorMsg(INPUT_WHITE_SPACE_TEXT)
-      }
+      const errorMessage = validateInput(value)
+      setErrorMsg(errorMessage)
 
       inputProps.onChange(e)
     },
@@ -84,11 +76,11 @@ export const InputView = ({
         </InputIcon>
       )}
       <InputComponentContainer>
-        <input {...inputProps} onChange={onChange} className={classNames} autoComplete={inputProps.name} />
-        <InputStatus className={`${classNames} ${pinnedText ? 'with-text' : ''}`} />
-        {pinnedText && <InputLabel className={`${classNames} pinned-text`}>{pinnedText}</InputLabel>}
+        <input {...inputProps} onChange={onChange} className={finalStatus} autoComplete={inputProps.name} />
+        <InputStatus className={`${finalStatus} ${pinnedText ? 'with-text' : ''}`} />
+        {pinnedText && <InputLabel className={`${finalStatus} pinned-text`}>{pinnedText}</InputLabel>}
       </InputComponentContainer>
-      {internalErrorMsg && <InputErrorMessage>{internalErrorMsg}</InputErrorMessage>}
+      {finalErrorMessage && <InputErrorMessage>{finalErrorMessage}</InputErrorMessage>}
     </InputStyled>
   )
 }

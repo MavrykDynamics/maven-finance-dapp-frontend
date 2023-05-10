@@ -1,3 +1,4 @@
 export { validateAsciiInput } from './validateAsciiInput'
-export { containsCharacterOnTheSides } from './containsCharacterOnTheSides'
+export { containSpaces } from './containSpaces'
+export { validateInput } from './validateInput'
 export * from './input.consts'

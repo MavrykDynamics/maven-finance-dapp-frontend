@@ -1,10 +1,10 @@
 import React, { useLayoutEffect, useRef, useState, useCallback } from 'react'
 
 // utils
-import { validateAsciiInput, containsCharacterOnTheSides } from 'app/App.utils/input'
+import { validateInput } from 'app/App.utils/input'
 
-// consts
-import { INPUT_ASCII_TEXT, INPUT_WHITE_SPACE_TEXT } from 'app/App.utils/input/input.consts'
+// hooks
+import { useInputValidator } from 'app/App.hooks/useInputValidator'
 
 import {
   TextAreaStyled,
@@ -51,6 +51,12 @@ export const TextArea = ({
   const [errorMsg, setErrorMsg] = useState('')
   const textareaRef = useRef<HTMLTextAreaElement | null>(null)
 
+  const { finalErrorMessage, finalStatus } = useInputValidator({
+    originalErrorMessage: errorMessageFromProps,
+    internalErrorMessage: errorMsg,
+    status: inputStatus,
+  })
+
   useLayoutEffect(() => {
     if (textareaRef && textareaRef.current) {
       const scrollHeight = textareaRef.current.scrollHeight
@@ -58,24 +64,12 @@ export const TextArea = ({
     }
   }, [value])
 
-  const status = errorMsg ? 'error' : inputStatus !== undefined ? inputStatus : 'none'
-  const internalErrorMsg = Boolean(errorMsg) ? errorMsg : Boolean(errorMessageFromProps) ? errorMessageFromProps : ''
-
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       const { value } = e.target
 
-      if (validateAsciiInput(value, true)) {
-        if (errorMsg) setErrorMsg('')
-      } else {
-        setErrorMsg(INPUT_ASCII_TEXT)
-      }
-
-      if (!containsCharacterOnTheSides(value)) {
-        if (errorMsg) setErrorMsg('')
-      } else {
-        setErrorMsg(INPUT_WHITE_SPACE_TEXT)
-      }
+      const errorMessage = validateInput(value)
+      setErrorMsg(errorMessage)
 
       onChange(e)
     },
@@ -89,7 +83,7 @@ export const TextArea = ({
           <use xlinkHref={`/icons/sprites.svg#${icon}`} />
         </TextAreaIcon>
       )}
-      <div className={`textArea-wrapper ${status} ${disabled ? 'disabled' : ''}`}>
+      <div className={`textArea-wrapper ${finalStatus} ${disabled ? 'disabled' : ''}`}>
         <TextareaStyled
           placeholder={placeholder}
           value={value}
@@ -104,11 +98,11 @@ export const TextArea = ({
         />
       </div>
 
-      <TextAreaCounter className={status}>
+      <TextAreaCounter className={finalStatus}>
         {String(value).length}/{textAreaMaxLimit}
       </TextAreaCounter>
-      <TextAreaStatus className={status} />
-      {internalErrorMsg && <TextAreaErrorMessage>{internalErrorMsg}</TextAreaErrorMessage>}
+      <TextAreaStatus className={finalStatus} />
+      {finalErrorMessage && <TextAreaErrorMessage>{finalErrorMessage}</TextAreaErrorMessage>}
     </TextAreaStyled>
   )
 }
