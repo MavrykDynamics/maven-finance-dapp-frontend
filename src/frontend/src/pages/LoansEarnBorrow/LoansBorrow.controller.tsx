@@ -41,6 +41,7 @@ export const LoansBorrow = () => {
     isDataLoaded,
     loanTokens,
     config: { DAOFee },
+    vaults: { allVaultsIds, vaultsMapper },
     chartsData: { collateralChartData, borrowingChartData },
   } = useSelector((state: State) => state.loans)
 
@@ -50,9 +51,11 @@ export const LoansBorrow = () => {
         totalCollaterals: number
         totalBorrowed: number
       }>(
-        (acc, { totalBorrowed, loanTokenTotalCollaterals, loanTokenData: { rate } }) => {
+        // TODO: add total collateral
+        // (acc, { totalBorrowed, loanTokenTotalCollaterals, loanTokenData: { rate } }) => {
+        (acc, { totalBorrowed, loanTokenData: { rate } }) => {
           acc.totalBorrowed += totalBorrowed * rate
-          acc.totalCollaterals += loanTokenTotalCollaterals * rate
+          // acc.totalCollaterals += loanTokenTotalCollaterals * rate
           return acc
         },
         {
@@ -80,25 +83,27 @@ export const LoansBorrow = () => {
   )
 
   const handleBorrow = (marketSymbol: string) => {
-    const market = loanTokens.find((item) => item.loanTokenData.symbol === marketSymbol)
-    if (!market) return
+    const validVaultId = allVaultsIds.find((vaultId) => {
+      const vault = vaultsMapper[vaultId]
+      return marketSymbol === vault.borrowedAsset.symbol && vault.collateralRatio > 200
+    })
 
-    const validVault = market.myBorrowingList.find((item) => item.collateralRatio > 200)
-
-    if (!validVault) {
+    if (!validVaultId) {
       dispatch(showToaster(ERROR, 'Error', 'The market does not have a vault to borrow'))
       return
     }
 
+    const vault = vaultsMapper[validVaultId]
+
     openBorrowPopup?.({
-      vaultId: validVault.vaultId,
-      borrowedAsset: validVault.borrowedAsset,
-      collateralRatio: validVault.collateralRatio,
-      borrowAPR: validVault.apr,
-      currentCollateralBalance: validVault.collateralData.at(-1)?.amount ?? 0,
+      vaultId: vault.vaultId,
+      borrowedAsset: vault.borrowedAsset,
+      collateralRatio: vault.collateralRatio,
+      borrowAPR: vault.apr,
+      currentCollateralBalance: vault.collateralData.at(-1)?.amount ?? 0,
       hasUserBorrowed: false,
-      borrowCapacity: validVault.borrowCapacity,
-      currentBorrowedAmount: validVault.borrowedAmount,
+      borrowCapacity: vault.borrowCapacity,
+      currentBorrowedAmount: vault.borrowedAmount,
       DAOFee,
     })
   }
