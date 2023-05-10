@@ -56,12 +56,14 @@ export const fetchUserData = async (
       USER_REWARDS_QUERY_VARIABLES(accountPkh),
     )
 
+    // fetch current cycle data and current user cycle data
     const satelliteCycleData = await fetchFromIndexer(
       SATELLITE_CYCLE_DATA_QUERY,
       SATELLITE_CYCLE_DATA_QUERY_NAME,
       SATELLITE_CYCLE_DATA_QUERY_VARIABLE(accountPkh),
     )
     const { cycle_id: currentCycle, satellite_snapshots } = satelliteCycleData.governance[0]
+    // if user is not a sattelite by default provide lower value of cycle to make "isNewlyRegisteredSatellite" field -> false
     const currentSatelliteCycle = satellite_snapshots.length > 0 ? satellite_snapshots[0].cycle : currentCycle - 1
 
     const {
