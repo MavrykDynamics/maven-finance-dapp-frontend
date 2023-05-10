@@ -83,7 +83,7 @@ export const Dashboard = () => {
 
   const tvlValue = doormanTVL + treasuryTVL + farmsTVL + lendingTvl + vaultsTvl
 
-  const { dormanStatsLoading } = useStakeUpdater(false, [DOORMAN_STATS_SUB])
+  const { isLoading: isDoormanLoading } = useStakeUpdater(false, [DOORMAN_STATS_SUB])
 
   const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {

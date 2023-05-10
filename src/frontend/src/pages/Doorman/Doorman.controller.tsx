@@ -48,7 +48,7 @@ export const Doorman = () => {
     accountPkh,
   }
 
-  const { isLoading } = useStakeUpdater()
+  const { isLoading: isDoormanLoading } = useStakeUpdater()
 
   const stakeCallback = (amount: number) => dispatch(stake(amount))
   const unstakeCallback = (amount: number) => setAmount(amount)
@@ -58,7 +58,7 @@ export const Doorman = () => {
     <Page>
       <PageHeader page={'doorman'} />
 
-      {isLoading ? (
+      {isDoormanLoading ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
           <div className="text">Loading doorman data</div>

@@ -75,7 +75,7 @@ export const BecomeSatellite = () => {
   const { themeSelected } = useSelector((state: State) => state.preferences)
   const isGhostnet = process.env.REACT_APP_NETWORK === 'ghostnet'
 
-  const { userBalanceLoading } = useStakeUpdater(false, [USER_MVK_BALANCE_SUB])
+  const { isLoading: isDoormanLoading } = useStakeUpdater(false, [USER_MVK_BALANCE_SUB])
 
   const { isLoading } = useDataLoader(
     async (isDepsChanged) => {
@@ -247,7 +247,7 @@ export const BecomeSatellite = () => {
 
       <PageContent>
         <div>
-          {isLoading || userBalanceLoading ? (
+          {isLoading || isDoormanLoading ? (
             <DataLoaderWrapper>
               <ClockLoader width={150} height={150} />
               <div className="text">Loading satellite data</div>

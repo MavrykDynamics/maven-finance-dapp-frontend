@@ -28,7 +28,7 @@ export const EmergencyGovernance = () => {
 
   const [showInitiatePopup, setShowInitiatePopup] = useState(false)
 
-  const { dormanStatsLoading } = useStakeUpdater(false, [DOORMAN_STATS_SUB])
+  const { isLoading: isDoormanLoading } = useStakeUpdater(false, [DOORMAN_STATS_SUB])
 
   const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {
@@ -52,7 +52,7 @@ export const EmergencyGovernance = () => {
   return (
     <Page>
       <PageHeader page={'emergency governance'} />
-      {isLoading || dormanStatsLoading ? (
+      {isLoading || isDoormanLoading ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
           <div className="text">Loading emergency governance proposals</div>

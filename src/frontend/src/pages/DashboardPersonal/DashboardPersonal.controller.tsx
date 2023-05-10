@@ -70,7 +70,7 @@ const DashboardPersonal = () => {
 
   const claimRewards = async () => await dispatch(claimAllRewardsAction())
 
-  const { dormanStatsLoading } = useStakeUpdater(false, [DOORMAN_STATS_SUB])
+  const { isLoading: isDoormanLoading } = useStakeUpdater(false, [DOORMAN_STATS_SUB])
 
   const { isLoading } = useDataLoader(
     async (isDepsChanged) => {

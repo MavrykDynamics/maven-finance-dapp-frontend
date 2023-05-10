@@ -43,7 +43,7 @@ const Satellites = () => {
   const { activeSatellitesIds, satelliteMapper } = useSelector((state: State) => state.satellites)
   const { feedsLedger, isLoaded: isFeedsLoaded } = useSelector((state: State) => state.dataFeeds)
 
-  const { userBalanceLoading } = useStakeUpdater(false, [USER_MVK_BALANCE_SUB])
+  const { isLoading: isDoormanLoading } = useStakeUpdater(false, [USER_MVK_BALANCE_SUB])
   const {
     user: { isSatellite, userTokens },
   } = useSelector((state: State) => state.wallet)
@@ -98,7 +98,7 @@ const Satellites = () => {
             </SmallInfoBlock>
           </InfoBlockWrapper>
 
-          {isLoading || userBalanceLoading ? (
+          {isLoading || isDoormanLoading ? (
             <DataLoaderWrapper>
               <ClockLoader width={150} height={150} />
               <div className="text">Loading satellites and data feeds data</div>
